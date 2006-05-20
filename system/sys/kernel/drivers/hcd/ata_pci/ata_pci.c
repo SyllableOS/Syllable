@@ -28,6 +28,7 @@
 #include "ata.h"
 #include <atheos/pci.h>
 #include <atheos/time.h>
+#include <posix/signal.h>
 
 typedef void init_ata_controller( PCI_Info_s sDevice, ATA_controller_s* psCtrl );
 
@@ -424,11 +425,11 @@ status_t ata_pci_add_controller( int nDeviceID, PCI_Info_s sDevice, init_ata_con
 	
 	/* Interrupts */
 	if( bDMAPossible ) {
-		if( request_irq( nIrq1, ata_pci_interrupt, NULL, 0, "ata_pci_irq", psCtrl->psPort[0] ) < 0 ) {
+		if( request_irq( nIrq1, ata_pci_interrupt, NULL, SA_SHIRQ, "ata_pci_irq", psCtrl->psPort[0] ) < 0 ) {
 			kerndbg( KERN_FATAL, "Could not request interrupt %i\n", nIrq1 );
 		} 
 		else if( nIrq1 != nIrq2 ) {
-			if( request_irq( nIrq2, ata_pci_interrupt, NULL, 0, "ata_pci_irq", psCtrl->psPort[2] ) < 0 ) {
+			if( request_irq( nIrq2, ata_pci_interrupt, NULL, SA_SHIRQ, "ata_pci_irq", psCtrl->psPort[2] ) < 0 ) {
 				kerndbg( KERN_FATAL, "Could not request interrupt %i\n", nIrq2 );
 			}
 		}
