@@ -449,6 +449,7 @@ bool ATIRadeon::InitHardware( int nFd ) {
 	rinfo.mmio_base_phys = (m_cPCIInfo.u.h0.nBase2 & PCI_ADDRESS_MEMORY_32_MASK);
 
 	// allocate register area
+	m_pRegisterBase = NULL;
 	m_hRegisterArea = create_area ("radeon_register", (void **)&m_pRegisterBase,
 		get_pci_memory_size(nFd,&m_cPCIInfo, 2), AREA_FULL_ACCESS, AREA_NO_LOCK);
 	if( m_hRegisterArea < 0 ) {
@@ -498,15 +499,15 @@ bool ATIRadeon::InitHardware( int nFd ) {
 	}
 	else
 	{
-		tmp = INREG(CONFIG_MEMSIZE);
-
-		/* mem size is bits [28:0], mask off the rest */
-		rinfo.video_ram = tmp & CONFIG_MEMSIZE_MASK;
-
 		/* XXXKV: This seems to assume that the cards BIOS will have done the memory configuration for us.  This
 		   might not apply on all cards (E.g. IGP card).  If that's the case we need to do the equivilent of the
 		   X.org drivers SetFBLocation() */
 		rinfo.fb_local_base = INREG(MC_FB_LOCATION) << 16;
+
+		tmp = INREG(CONFIG_MEMSIZE);
+
+		/* mem size is bits [28:0], mask off the rest */
+		rinfo.video_ram = tmp & CONFIG_MEMSIZE_MASK;
 	}
 
 	/* ram type */
@@ -679,8 +680,9 @@ bool ATIRadeon::InitHardware( int nFd ) {
 ATIRadeon::ATIRadeon( int nFd ) : m_cLock ("radeon_hardware_lock")
 {
 	m_bIsInitialized = false;
-
 	m_bRetrievedInfos = false;
+
+	memset( &rinfo, 0, sizeof( rinfo ) );
 
 	/* Get Info */
 	if( ioctl( nFd, PCI_GFX_GET_PCI_INFO, &m_cPCIInfo ) != 0 )

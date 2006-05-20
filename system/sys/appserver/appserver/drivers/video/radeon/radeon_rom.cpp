@@ -122,6 +122,7 @@ int ATIRadeon::MapROM( int nFd, PCI_Info_s *dev )
 	RTRACE("Radeon :: ROM size %x\n", (uint) get_pci_rom_memory_size(nFd, dev));
 
 	// map the ROM
+	m_pROMBase = NULL;
 	m_hROMArea = create_area ("radeon_rom", (void **)&m_pROMBase,
 		get_pci_rom_memory_size(nFd, dev), AREA_FULL_ACCESS, AREA_NO_LOCK);
 	if( m_hROMArea < 0 ) {
