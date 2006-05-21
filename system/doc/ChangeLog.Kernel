@@ -1,4 +1,8 @@
 ---- 0.6.1 Released -------------------------------------------------------------------
+* May 20th 2006, Kristian Van Der Vliet *
+
+Working ptrace() implementation and full support for GDB
+All done by Jan L. Hauffa <hauffa@in.tum.de>
 
 * April 14 2006, Arno Klenke *
 
