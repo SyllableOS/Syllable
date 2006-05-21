@@ -21,8 +21,8 @@ Syllable to do more and run faster.
 Most common home computer motherboards, video cards and networks cards are
 supported.  Many common sound cards also work, and some USB devices are also
 supported.  For a comprehensive list of hardware which is known to work with
-Syllable, you should check the hardware compatability list on the Azaka website
-at http://azaka.nutus.com.ar  If your particular hardware is not listed there,
+Syllable, you should check the hardware compatability list at
+http://www.syllable-hardware.info/  If your particular hardware is not listed there,
 it does not mean that your hardware will not work.  You can still try to
 install Syllable; the worst thing that will happen is that it simply will not
 run.
@@ -44,7 +44,7 @@ The downloadable Syllable CD image is distributed as a Gziped "ISO" image.
 Before you can burn this image to a CD you must first ungzip it.  On Linux,
 Syllable or other Unix-like systems such as MacOS X you should do this:
 
-bash$ gzip -d 0.5.3-basic.iso.gz
+bash$ gzip -d 0.6.0-basic.iso.gz
 
 On Windows you can use WinZip to decompress the Gzip file.
 
@@ -81,6 +81,7 @@ the installation described above:
      root   (hd0,1)
      kernel /atheos/sys/kernel.so root=/dev/disk/ata/hda/1
      module /atheos/sys/config/kernel.cfg
+     module /atheos/sys/drivers/bus/acpi
      module /atheos/sys/drivers/bus/pci
      module /atheos/sys/drivers/bus/ata
      module /atheos/sys/drivers/dev/hcd/ata_pci
@@ -224,15 +225,15 @@ these will be useful in helping to solve your problem.  Make a note of your hard
 (Processor & motherboard type, total amount of memory, type of video card).
 
 You should then check the Frequently Asked Questions (FAQ) at
-http://www.syllable.org/modules.php?name=FAQ  These provide answers to very
+http://www.syllable.org/faq.php  These provide answers to very
 common questions concerning Syllable.  There is also a community-maintained FAQ at
 http://www.syllable-wiki.tk/ which may also answer your questions.
 
 If you are sure it is a problem with Syllable check the Forums at
-http://syllable.sourceforge.net/modules.php?name=Forums  Someone may already have
+http://www.syllable.org/forum.php  Someone may already have
 had the same problem as you and received a solution!
 
 Finally, if none of those help, ask on the Syllable Developer mailing list.  You must
 first subscribe to this list.  See
-http://www.syllable.org/modules.php?name=Mailing_Lists for information on
+http://www.syllable.org/mailing_lists.php for information on
 how to subscribe.
