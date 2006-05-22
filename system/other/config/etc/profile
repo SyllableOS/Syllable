@@ -10,7 +10,7 @@ export CPLUS_INCLUDE_PATH=$C_INCLUDE_PATH
 export ATHEOS_SRC=/atheos/src
 export ATHEOS_INCLUDE_PATH=/ainc
 
-# Set this right, or havoc will be wrecked in /system/init.sh
+# Set this right, or havoc will be wreaked in /system/init.sh
 export TEMP=/tmp
 
 export SYSTEM=Syllable
@@ -31,4 +31,3 @@ esac
 alias ll='ls -l'
 alias dir='ls --color -l'
 alias more=less
-
