@@ -322,14 +322,11 @@ int __pt_do_cond_wait( pthread_cond_t *cond, pthread_mutex_t *mutex )
 	
 	if( cond->__head != NULL)
 	{
-		__pt_thread_list_t* __current_thread = cond->__head;
-		
 		__waiting_thread->__next = NULL;
 		assert( cond->__head->__prev->__next == NULL );
 		__waiting_thread->__prev = cond->__head->__prev;
 		cond->__head->__prev->__next = __waiting_thread; 
 		cond->__head->__prev = __waiting_thread;
-		
 	}
 	else
 	{
