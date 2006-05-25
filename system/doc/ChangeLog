@@ -1,3 +1,13 @@
+* May 25 2006, Kristian Van Der Vliet *
+
+Combined updates from Jan L. Hauffa and Arno Klenke
+
+	o Improved conditionals handling
+	o Mutex handling is more compliant
+	o pthread_cleanup_push(), pthread_cleanup_pop() implemented & the cleanup
+	  handlers are called from pthread_exit()
+	o Basic pthread_join() implementation
+
 ---- 0.6.1 Released -------------------------------------------------------------------
 
 * May 14 2006, Kristian Van Der Vliet *
