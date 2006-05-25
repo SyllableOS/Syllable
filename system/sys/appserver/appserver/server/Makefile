@@ -1,7 +1,7 @@
 SCREENSHOT = n
 
-CFLAGS   += -c -fexceptions -ffast-math $(shell freetype-config --cflags)
-CXXFLAGS += -c -fexceptions -ffast-math $(shell freetype-config --cflags)
+CFLAGS   = -c -fexceptions -ffast-math $(shell freetype-config --cflags)
+CXXFLAGS = -c -fexceptions -ffast-math $(shell freetype-config --cflags)
 AOPTS    = -c
 LIBS     = -lsyllable
 
