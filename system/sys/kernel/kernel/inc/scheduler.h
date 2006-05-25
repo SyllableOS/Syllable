@@ -164,12 +164,17 @@ struct _Thread
 	/* Debugging */
 	int tr_nSysTraceMask;
 	SyscallExc_s *psExc;
+	atomic_t tr_nPTraceFlags;
+	thread_id tr_hRealParent;
+	SysCallRegs_s *tr_psPTraceRegs;
+	uint32 tr_nPTraceVMCloneBase;
+	area_id tr_hPTraceVMClone;
+	uint32 tr_nDebugReg[8];
 
 	/* Block cache */
 	int tr_nNumLockedCacheBlocks;
 };
 
-static const flags_t TF_TRACED = 0x0001;	///< ???
 static const flags_t TF_FPU_USED = 0x0002;	///< thread has used FPU
 static const flags_t TF_FPU_DIRTY = 0x0004;	///< thread is currently using FPU
 

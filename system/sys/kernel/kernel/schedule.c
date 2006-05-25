@@ -33,6 +33,7 @@
 #include "inc/global.h"
 #include "inc/smp.h"
 #include "inc/areas.h"
+#include "inc/ptrace.h"
 
 static WaitQueue_s *g_psFirstSleeping = NULL;
 
@@ -1122,7 +1123,9 @@ static Thread_s *find_dead_child( pid_t hPid, pid_t hGroup, int nOptions )
 	{
 		if ( psChild->tr_hParent == psThread->tr_hThreadID && ( psChild->tr_nState == TS_ZOMBIE || psChild->tr_nState == TS_STOPPED ) )
 		{
-			if ( psChild->tr_nState == TS_STOPPED && ( psChild->tr_nExitCode == 0 || ( nOptions & WUNTRACED ) == 0 ) )
+			if (  ( psChild->tr_nState == TS_STOPPED ) &&
+			     !( atomic_read( &psChild->tr_nPTraceFlags ) & PT_PTRACED ) &&
+			      ( psChild->tr_nExitCode == 0 || ( nOptions & WUNTRACED ) == 0 ) )
 			{
 				continue;
 			}
@@ -1754,6 +1757,13 @@ void DoSchedule( SysCallRegs_s* psRegs )
 	
 	g_asProcessorDescs[psNext->tr_nCurrentCPU].pi_sTSS.esp0 = psNext->tr_pESP0;
 	g_asProcessorDescs[psNext->tr_nCurrentCPU].pi_sTSS.IOMapBase = 104;
+
+	if ( psNext->tr_nDebugReg[7] != 0 )
+		load_debug_regs( psNext->tr_nDebugReg );
+	else
+		/* With an x86 CPU, clearing the debug control register on every task switch is less expensive than
+		   keeping track of the register's contents and clearing it only when neccessary. */
+		clear_debug_regs();
 	
 	sched_unlock();
 	

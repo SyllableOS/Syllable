@@ -306,6 +306,9 @@ void write_mtrr_descs( void );
 status_t alloc_mtrr_desc( uint64 nBase, uint64 nSize, int nType );
 status_t free_mtrr_desc( uint64 nBase );
 
+void load_debug_regs( uint32 regs[8] );
+void clear_debug_regs( void );
+uint32 read_debug_status( void );
 #endif /* __KERNEL__ */
 
 // Read the TSC clock

@@ -134,6 +134,9 @@ MemContext_s *clone_mem_context( MemContext_s *psOrig );
 void empty_mem_context( MemContext_s *psCtx );
 void delete_mem_context( MemContext_s *psCtx );
 
+area_id clone_from_inactive_ctx( MemArea_s *psArea, uintptr_t nOffset, size_t nLength );
+status_t update_inactive_ctx( MemArea_s *psOriginalArea, area_id hCloneArea, uintptr_t nOffset );
+
 
 int load_area_page( MemArea_s *psArea, uintptr_t nAddress, bool bWriteAccess );
 int handle_copy_on_write( MemArea_s *psArea, pte_t * pPte, uintptr_t nVirtualAddress );

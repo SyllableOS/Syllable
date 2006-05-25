@@ -24,6 +24,7 @@
 #include <atheos/types.h>
 #include <atheos/atomic.h>
 #include <atheos/semaphore.h>
+#include <atheos/filesystem.h>
 
 #include <posix/types.h>
 #include <posix/stat.h>

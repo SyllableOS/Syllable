@@ -2719,6 +2719,169 @@ void *sys_sbrk( int nDelta )
 	return ( pOldBrk );
 }
 
+/**
+  * clone_from_inactive_ctx() and update_inactive_ctx() are used to access
+  * an inactive address space / memory context (the associated process is not
+  * currently running, page directory is not loaded into CR3).
+  * clone_from_inactive_ctx() will create in kernel space a clone of (a part
+  * of) the specified area. If you have written to the cloned area, call
+  * update_inactive_ctx() to make sure that pages allocated by the
+  * copy-on-write mechanism are transfered to the originating memory context.
+  * \internal
+  * \ingroup Areas
+  * \param psArea a pointer to the area to clone.
+  * \param nOffset
+  * \param nLength specifies, together with nOffset, which part of the area is
+  *        to be cloned. Both nOffset and nLength are expected to be page
+  *        aligned.
+  * \author Jan Hauffa (hauffa@in.tum.de)
+  */
+area_id clone_from_inactive_ctx( MemArea_s *psArea, uintptr_t nOffset,
+                                 size_t nLength )
+{
+	MemArea_s *psNewArea;
+	area_id hArea;
+	uintptr_t nSrcAddr, nDstAddr;
+
+	if ( ( psArea->a_nEnd - psArea->a_nStart + 1 ) < ( nOffset + nLength ) )
+		return -EINVAL;
+	if ( psArea->a_nProtection & AREA_KERNEL )
+		return -EINVAL;
+	if ( psArea->a_psContext->mc_psOwner == CURRENT_PROC )
+		return -EINVAL;
+
+	/* TODO: is this even possible? */
+	if ( atomic_read( &psArea->a_nIOPages ) > 0 )
+	{
+		printk( "clone_from_inactive_ctx(): area has unfinished IO ops\n" );
+		return -EINVAL;
+	}
+
+	lock_area( psArea, LOCK_AREA_READ );
+
+	hArea = create_area( psArea->a_zName, NULL, nLength, nLength,
+		(psArea->a_nProtection | AREA_KERNEL) & ~AREA_ADDR_SPEC_MASK,
+		psArea->a_nLockMode );
+	if ( hArea <= 0 )
+	{
+		printk( "clone_from_inactive_ctx() failed to alloc area\n" );
+		unlock_area( psArea, LOCK_AREA_READ );
+		return -ENOMEM;
+	}
+	printk( "clone_from_inactive_ctx: created area %d\n", hArea );
+
+	LOCK( g_hAreaTableSema );
+	psNewArea = get_area_from_handle( hArea );
+	kassertw( psNewArea != NULL );
+
+	psNewArea->a_psOps = psArea->a_psOps;
+
+	for ( nDstAddr = psNewArea->a_nStart, nSrcAddr = psArea->a_nStart + nOffset;
+	      ( nDstAddr - 1 ) != psNewArea->a_nEnd;
+	      nDstAddr += PAGE_SIZE, nSrcAddr += PAGE_SIZE )
+	{
+		pgd_t *pSrcPgd = pgd_offset( psArea->a_psContext, nSrcAddr );
+		pte_t *pSrcPte = pte_offset( pSrcPgd, nSrcAddr );
+		pgd_t *pDstPgd = pgd_offset( g_psKernelSeg, nDstAddr );
+		pte_t *pDstPte = pte_offset( pDstPgd, nDstAddr );
+
+		kassertw( PGD_PAGE( *pDstPgd ) != 0 );
+		*pDstPte = *pSrcPte;
+
+		if ( PTE_ISPRESENT( *pSrcPte ) )
+			atomic_inc( &g_psFirstPage[PAGE_NR( PTE_PAGE( *pSrcPte ) )].p_nCount );
+		else if ( PTE_PAGE( *pSrcPte ) != 0 )
+			dup_swap_page( PTE_PAGE( *pSrcPte ) );
+	}
+
+	/* If the source area is mapped to a file, the new one should be, too. */
+	if ( psArea->a_psFile )
+	{
+		psNewArea->a_psFile = psArea->a_psFile;
+		psNewArea->a_nFileOffset = psArea->a_nFileOffset + nOffset;
+		psNewArea->a_nFileLength = psArea->a_nFileLength - nOffset;
+		if ( psNewArea->a_nFileLength > nLength )
+			psNewArea->a_nFileLength = nLength;
+		psNewArea->a_psNextShared = psArea->a_psNextShared;
+		psNewArea->a_psNextShared->a_psPrevShared = psNewArea;
+		psArea->a_psNextShared = psNewArea;
+		psNewArea->a_psPrevShared = psArea;
+		atomic_inc( &psNewArea->a_psFile->f_nRefCount );
+	}
+
+	put_area( psNewArea );
+	UNLOCK( g_hAreaTableSema );
+	unlock_area( psArea, LOCK_AREA_READ );
+
+    /* TODO: invalidate only the pages of the newly created area */
+	flush_tlb_global();
+
+	return hArea;
+}
+
+/**
+  * \sa clone_from_inactive_ctx()
+  * \internal
+  * \ingroup Areas
+  * \author Jan Hauffa (hauffa@in.tum.de)
+  */
+status_t update_inactive_ctx( MemArea_s *psOriginalArea, area_id hCloneArea,
+                              uintptr_t nOffset )
+{
+	uintptr_t nSrcAddr, nDstAddr;
+	MemArea_s *psCloneArea;
+
+	kassertw( is_semaphore_locked( g_hAreaTableSema ) == false );
+	LOCK( g_hAreaTableSema );
+	psCloneArea = get_area_from_handle( hCloneArea );
+
+	if ( psCloneArea == NULL )
+	{
+		printk( "update_inactive_ctx: get_area_from_handle failed\n" );
+		goto error;
+	}
+	if ( ( psOriginalArea->a_nEnd - psOriginalArea->a_nStart + 1 ) <
+	     ( psCloneArea->a_nEnd - psCloneArea->a_nStart + nOffset + 1 ) )
+		goto error;
+	
+	lock_area( psCloneArea, LOCK_AREA_READ );
+	lock_area( psOriginalArea, LOCK_AREA_WRITE );
+
+	for ( nSrcAddr = psCloneArea->a_nStart, nDstAddr = psOriginalArea->a_nStart + nOffset;
+	      ( nSrcAddr - 1 ) != psCloneArea->a_nEnd;
+	      nSrcAddr += PAGE_SIZE, nDstAddr += PAGE_SIZE )
+	{
+		pgd_t *pSrcPgd = pgd_offset( g_psKernelSeg, nSrcAddr );
+		pte_t *pSrcPte = pte_offset( pSrcPgd, nSrcAddr );
+		pgd_t *pDstPgd = pgd_offset( psOriginalArea->a_psContext, nDstAddr );
+		pte_t *pDstPte = pte_offset( pDstPgd, nDstAddr );
+
+		kassertw( PGD_PAGE( *pDstPgd ) != 0 );
+
+		if ( PTE_VALUE( *pDstPte ) != PTE_VALUE( *pSrcPte ) )
+		{
+			*pDstPte = *pSrcPte;
+
+			if ( PTE_ISPRESENT( *pSrcPte ) )
+				atomic_inc( &g_psFirstPage[PAGE_NR( PTE_PAGE( *pSrcPte ) )].p_nCount );
+			else if ( PTE_PAGE( *pSrcPte ) != 0 )
+				dup_swap_page( PTE_PAGE( *pSrcPte ) );
+		}
+	}
+
+	unlock_area( psOriginalArea, LOCK_AREA_WRITE );
+	unlock_area( psCloneArea, LOCK_AREA_READ );
+	UNLOCK( g_hAreaTableSema );
+
+    /* TODO: invalidate only the modified pages of the updated area */
+	flush_tlb_global();
+	return 0;
+
+error:
+	UNLOCK( g_hAreaTableSema );
+	return -EINVAL;	
+}
+
 
 /**
  * Creates the memory context for the kernel. This context holds all kernel

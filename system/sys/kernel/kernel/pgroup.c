@@ -258,7 +258,10 @@ pid_t getpgrp( void )
 
 pid_t sys_getppid( void )
 {
-	return ( CURRENT_THREAD->tr_hParent );
+	if ( CURRENT_THREAD->tr_hRealParent == 0 )
+		return ( CURRENT_THREAD->tr_hParent );
+	else
+		return ( CURRENT_THREAD->tr_hRealParent );
 }
 
 pid_t getppid( void )

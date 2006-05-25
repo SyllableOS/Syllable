@@ -293,6 +293,10 @@ _C_SYM( SysCallEntry ):
 
 no_sys:
 _C_SYM( exit_from_sys_call ):
+	cmpl	$__NR_execve, ORIG_EAX(%esp)
+	jne 0f
+	call	_C_SYM( handle_exec_ptrace )
+0:
 	call	_C_SYM( HandleSTrace )
 ret_from_sys_call1:
 	cmpw	$USER_CS, CS(%esp)
@@ -420,6 +424,14 @@ _C_SYM( exc0 ):
 	pushl	$0	/* Fake error code */
 	pushl	$_C_SYM( handle_divide_exception )
 	jmp	error_code
+_C_SYM( exc1 ):
+	pushl	$1	/* Fake error code */
+	pushl	$_C_SYM( handle_debug_exception )
+	jmp	error_code
+_C_SYM( exc3 ):
+	pushl	$3	/* Fake error code */
+	pushl	$_C_SYM( handle_debug_exception )
+	jmp	error_code
 _C_SYM( exc6 ):
 	pushl	$0	/* Fake error code */
 	pushl	$_C_SYM( handle_illegal_inst_exception )
@@ -481,17 +493,9 @@ error_code:
 	jmp	ret_from_sys_call1
 
 
-_C_SYM( exc1 ):            # Exceptions
-	pushl	$0	# pseudo error code
-	pushl	$0x01
-	jmp	exc
-_C_SYM( exc2 ):
+_C_SYM( exc2 ):            # Exceptions
 	pushl	$0	# pseudo error code
 	pushl	$0x02
-	jmp	exc
-_C_SYM( exc3 ):
-	pushl	$0	# pseudo error code
-	pushl	$0x03
 	jmp	exc
 _C_SYM( exc4 ):
 	pushl	$0	# pseudo error code

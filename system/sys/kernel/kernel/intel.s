@@ -29,6 +29,9 @@
 
 	.global	_C_SYM( SwitchCont )
 
+	.global	_C_SYM( load_debug_regs );
+	.global	_C_SYM( clear_debug_regs );
+	.global	_C_SYM( read_debug_status );
 
 
 	.global	_C_SYM( put_cpu_flags )
@@ -88,6 +91,46 @@ _C_SYM( irq0 ):                             # Do IRQs
 
 	popl	%eax
 	iret
+
+_C_SYM( load_debug_regs ):
+	.type	 load_debug_regs, @function
+	pushl	%ebp
+	movl	8(%esp), %ebp
+	movl	(%ebp), %eax
+	movl	%eax, %db0
+	movl	4(%ebp), %eax
+	movl	%eax, %db1
+	movl	8(%ebp), %eax
+	movl	%eax, %db2
+	movl	12(%ebp), %eax
+	movl	%eax, %db3
+	movl	28(%ebp), %eax
+	movl	%eax, %db7
+	popl	%ebp
+	ret
+.Lfe_load_debug_regs:
+	.size	 load_debug_regs,.Lfe_load_debug_regs - load_debug_regs
+
+_C_SYM( clear_debug_regs ):
+	.type	 clear_debug_regs, @function
+	pushl	%eax
+	xorl	%eax, %eax
+	movl	%eax, %db7
+	popl	%eax
+	ret
+.Lfe_clear_debug_regs:
+	.size	 clear_debug_regs,.Lfe_clear_debug_regs - clear_debug_regs
+
+_C_SYM( read_debug_status ):
+	.type	 read_debug_status, @function
+	movl	%db6, %eax
+	pushl	%eax
+	xorl	%eax, %eax
+	movl	%eax, %db6
+	popl	%eax
+	ret
+.Lfe_read_debug_status:
+	.size	 read_debug_status,.Lfe_read_debug_status - read_debug_status
 
 _C_SYM( get_cpu_flags ):
 	.type	 get_cpu_flags,@function

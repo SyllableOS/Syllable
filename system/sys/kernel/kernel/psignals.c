@@ -34,6 +34,7 @@
 #include <macros.h>
 
 #include "inc/scheduler.h"
+#include "inc/ptrace.h"
 #include "inc/sysbase.h"
 
 static const unsigned long _BLOCKABLE = ~( (1L << (SIGKILL - 1)) | (1L << (SIGSTOP - 1)) );
@@ -382,6 +383,34 @@ static void handle_signal( int nSigNum, SigAction_s * psHandler, SysCallRegs_s *
 	}
 }
 
+void handle_signal_ptrace( Thread_s *psThread, SysCallRegs_s *psRegs )
+{
+	uint64 nSignals;
+	uint32 nSigNum = 0;
+
+	if ( atomic_read( &psThread->tr_nPTraceFlags ) & PT_ALLOW_SIGNAL )
+	{
+		atomic_and( &psThread->tr_nPTraceFlags, ~PT_ALLOW_SIGNAL );
+		return;
+	}
+
+	// copy signal mask into a single 64-bit variable
+	nSignals = psThread->tr_sSigPend.__val[0] |
+		( ( uint64_t ) psThread->tr_sSigPend.__val[1] << 32 );
+
+	if ( nSignals & ( 1 << (SIGKILL - 1) ) )
+		return;
+
+	while ( !( nSignals & ( 1 << nSigNum ) ) )
+		nSigNum++;
+	sigemptyset( &psThread->tr_sSigPend );
+	psThread->tr_nExitCode = nSigNum + 1;
+	psThread->tr_psPTraceRegs = psRegs;
+
+	printk( "ptraced thread received signal, stopping...\n" );
+	stop_thread( true );  // does not return, will reschedule
+}
+
 /*****************************************************************************
  * NAME:
  * DESC:
@@ -411,6 +440,10 @@ int handle_signals( int dummy )
 	}
 	if ( is_signal_pending() )
 	{
+		// If the current thread is being ptraced, we might need to stop it.
+		if ( atomic_read( &psThread->tr_nPTraceFlags ) & PT_PTRACED )
+			handle_signal_ptrace( psThread, psRegs );
+
 		// copy signal mask into a 64-bit variable
 		uint64_t nSigMask = ( psThread->tr_sSigPend.__val[0] & ( ~sOldBlockMask.__val[0] ) ) |
 			( ( uint64_t )( psThread->tr_sSigPend.__val[1] & ( ~sOldBlockMask.__val[1] ) ) << 32 );

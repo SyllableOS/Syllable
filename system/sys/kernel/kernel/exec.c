@@ -298,6 +298,8 @@ int sys_execve( const char *a_pzPath, char *const *argv, char *const *envv )
 		strncpy( zCommand, ( NULL != pzCmd ) ? pzCmd + 1 : psArgCopy->apzArgs[0], OS_NAME_LENGTH - 1 );
 		zCommand[OS_NAME_LENGTH - 1] = '\0';
 	}
+	else
+		zCommand[0] = '\0';
 
 #ifdef __PROFILE_EXEC
 	nTime5 = read_pentium_clock();

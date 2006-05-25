@@ -29,6 +29,7 @@
 #include "inc/sysbase.h"
 #include "inc/mman.h"
 #include "inc/smp.h"
+#include "inc/ptrace.h"
 
 
 /*****************************************************************************
@@ -348,6 +349,57 @@ void handle_illegal_inst_exception( SysCallRegs_s * psRegs, int nErrorCode )
 	send_signal( psThread, SIGILL, true );
 
 //	do_exit( 12 << 8 );
+}
+
+/*****************************************************************************
+ * NAME:
+ * DESC:
+ * NOTE:
+ * SEE ALSO:
+ ****************************************************************************/
+
+uint32 handle_exec_ptrace( int dummy )
+{
+	SysCallRegs_s *psRegs = (SysCallRegs_s *) &dummy;
+	Thread_s *psThread = CURRENT_THREAD;
+
+	if ( atomic_read( &psThread->tr_nPTraceFlags ) & PT_PTRACED )
+	{
+		psThread->tr_nExitCode = SIGTRAP;
+		psThread->tr_psPTraceRegs = psRegs;
+
+		printk( "ptraced thread called exec, stopping...\n" );
+		stop_thread( true );
+	}
+
+	return psRegs->orig_eax;
+}
+
+/*****************************************************************************
+ * NAME:
+ * DESC:
+ * NOTE:
+ * SEE ALSO:
+ ****************************************************************************/
+
+void handle_debug_exception( SysCallRegs_s *psRegs, int nType )
+{
+	Thread_s *psThread = CURRENT_THREAD;
+
+	if ( nType == 1 )
+		psThread->tr_nDebugReg[6] = read_debug_status();
+
+	if ( atomic_read( &psThread->tr_nPTraceFlags ) & PT_PTRACED )
+	{
+		psThread->tr_psPTraceRegs = psRegs;
+		psThread->tr_nExitCode = SIGTRAP;
+		stop_thread( true );
+	}
+	else
+	{
+		printk( "caught unexpected debug exception %d!\n", nType );
+		send_signal( psThread, SIGSEGV, true );
+	}
 }
 
 
