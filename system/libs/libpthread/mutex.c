@@ -33,7 +33,6 @@ int pthread_mutex_destroy(pthread_mutex_t *mutex)
 	if( mutex->__attr != NULL )
 	{
 		pthread_mutexattr_destroy( mutex->__attr );
-		free( mutex->__attr );	/* FIXME: This is bogus, the user may not have malloc()'d __attr! */
 	}
 
 	return( 0 );
@@ -54,10 +53,7 @@ int pthread_mutex_init(pthread_mutex_t *mutex, const pthread_mutexattr_t *attr)
 
 	if( attr == NULL )
 	{
-		mutex_attr = malloc( sizeof( pthread_mutexattr_t ) );
-		if( mutex_attr == NULL )
-			return( ENOMEM );
-
+		mutex_attr = &mutex->__def_attr;
 		pthread_mutexattr_init( mutex_attr ); 
 	}
 	else
@@ -94,7 +90,7 @@ int pthread_mutex_init(pthread_mutex_t *mutex, const pthread_mutexattr_t *attr)
 									/* for our purposes                               */
 
 	/* Create the mutex itself */
-	mutex->__mutex = create_semaphore( "pthread_sem", 1, flags );
+	mutex->__mutex = create_semaphore( "pthread_sem", 1, flags | SEM_WARN_DBL_LOCK );
 
 	return( 0 );
 }
@@ -136,23 +132,30 @@ int pthread_mutex_trylock(pthread_mutex_t *mutex)
 	return( pthread_mutex_lock( mutex ) );
 }
 
-int pthread_mutex_unlock(pthread_mutex_t *mutex)
+int __pt_mutex_cannot_unlock(pthread_mutex_t *mutex)
 {
 	if( mutex == NULL )
 		return( EINVAL );
 
 	if( ( mutex->__attr == 0 ) || ( mutex->__mutex == 0 ) )
-		pthread_mutex_init( mutex, NULL );
+		return( pthread_mutex_init( mutex, NULL ) );
 
 	if( ( mutex->__attr->__mutexkind == PTHREAD_MUTEX_ERRORCHECK ) || ( mutex->__attr->__mutexkind == PTHREAD_MUTEX_RECURSIVE ))
 		if( ( mutex->__count == 0 ) || ( pthread_equal( mutex->__owner, pthread_self() ) == 0 ) )
 			return( EPERM );
 
-	__pt_unlock_mutex( mutex->__mutex );
-	atomic_add( (atomic_t*)&mutex->__count, -1 );		/* This takes care of PTHREAD_MUTEX_RECURSIVE */
-
 	return( 0 );
 }
+
+int pthread_mutex_unlock(pthread_mutex_t *mutex)
+{
+	int error;
+	if( (error = __pt_mutex_cannot_unlock(mutex)) )
+		return error;
+		
+	__pt_unlock_mutex( mutex->__mutex );
+	atomic_add( (atomic_t*)&mutex->__count, -1 );		/* This takes care of PTHREAD_MUTEX_RECURSIVE */
+}		
 
 int pthread_mutexattr_destroy(pthread_mutexattr_t *attr)
 {
@@ -241,4 +244,13 @@ int pthread_mutexattr_settype(pthread_mutexattr_t *attr, int type)
 
 	return( 0 );
 }
+
+
+
+
+
+
+
+
+
 

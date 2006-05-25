@@ -30,7 +30,17 @@ typedef struct __pt_timer_args_s
 {
 	struct timespec *abstime;
 	pthread_t thread;
+	pthread_cond_t* cond;
+	int error;
 } __pt_timer_args;
+
+typedef struct __pt_cleanup_s
+{
+	void (*routine)(void*);
+	void *arg;
+	struct __pt_cleanup_s *prev;
+} __pt_cleanup;
+
 
 #define	__DEFAULT_STACK_SIZE	1024 * 128
 
@@ -39,3 +49,12 @@ typedef struct __pt_timer_args_s
 #endif
 
 #endif	/* __F_SYLLABLE_PTHREAD_BITS_H_ */
+
+
+
+
+
+
+
+
+

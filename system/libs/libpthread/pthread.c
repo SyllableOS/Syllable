@@ -25,6 +25,21 @@
 #include <atheos/threads.h>		/* Kernel threads interface         */
 #include <atheos/kernel.h>		/* Additional kernel & thread API's */
 
+#include "inc/bits.h"
+
+
+static pthread_key_t cleanupKey = 0;
+
+void __attribute__((constructor)) __pt_init(void)
+{
+	cleanupKey = alloc_tld( NULL );
+}
+
+void __attribute__((destructor)) __pt_uninit(void)
+{
+	free_tld( cleanupKey );
+}
+
 int pthread_cancel(pthread_t thread)
 {
 	return -ENOSYS;
@@ -32,12 +47,28 @@ int pthread_cancel(pthread_t thread)
 
 void pthread_cleanup_push(void (*routine)(void*), void *arg)
 {
-	return;
+	__pt_cleanup *cleanup;
+
+	cleanup = malloc( sizeof( __pt_cleanup ) );
+	cleanup->routine = routine;
+	cleanup->arg = arg;
+	cleanup->prev = (__pt_cleanup *) pthread_getspecific( cleanupKey );
+
+	pthread_setspecific( cleanupKey, (void *) cleanup );
 }
 
 void pthread_cleanup_pop(int execute)
 {
-	return;
+	__pt_cleanup *cleanup;
+
+	cleanup = (__pt_cleanup *) pthread_getspecific( cleanupKey );
+	if ( cleanup )
+	{
+		if ( execute && cleanup->routine )
+			(*cleanup->routine) (cleanup->arg);
+		pthread_setspecific( cleanupKey, (void *) cleanup->prev );
+		free( cleanup );
+	}
 }
 
 int pthread_create(pthread_t *thread, const pthread_attr_t *attr, void *(*start_routine)(void *), void *arg)
@@ -92,8 +123,21 @@ int pthread_equal(pthread_t t1, pthread_t t2)
 
 void pthread_exit(void *value_ptr)
 {
+	__pt_cleanup *cleanup;
+	
 	/* value_ptr ignored for now */
 	exit_thread(0);
+	
+	/* call all cleanup routines */
+	cleanup = (__pt_cleanup *) pthread_getspecific( cleanupKey );
+	while ( cleanup )
+	{
+		if ( cleanup->routine )
+			(*cleanup->routine) (cleanup->arg);
+		cleanup = cleanup->prev;
+		free( cleanup );
+	}
+
 	return;
 }
 
@@ -114,7 +158,9 @@ void *pthread_getspecific(pthread_key_t key)
 
 int pthread_join(pthread_t thread, void **foo)
 {
-	return -ENOSYS;
+	wait_for_thread( thread );
+	return( 0 );
+	//return -ENOSYS;
 }
 
 int pthread_key_create(pthread_key_t *key, void (*destructor)(void *))
@@ -194,4 +240,10 @@ int pthread_sigmask(int how, const sigset_t *set, sigset_t *oset)
 {
 	return	-ENOSYS;
 }
+
+
+
+
+
+
 
