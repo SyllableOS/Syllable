@@ -1,0 +1,18 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			gnu
+
+licenses			GPL
+home				www.gnu.org/software/make/
+packages			make/make-3.81
+
+build-needs			make
+test-needs			perl
+
+;test-targets
+;	check-loadavg
+;	check
+documentation		README COPYING ABOUT-NLS NEWS ChangeLog AUTHORS
+build-docs			README.customs
+
