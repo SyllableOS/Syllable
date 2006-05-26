@@ -166,6 +166,7 @@ modules
 	sys/kernel/drivers/misc/ps2aux
 	sys/kernel/drivers/misc/random
 	sys/kernel/drivers/misc/serial
+	sys/kernel/drivers/misc/usb_printer
 	sys/kernel/drivers/misc/w8378x
 	sys/kernel/drivers/net/3c509
 	sys/kernel/drivers/net/3c59x
@@ -182,6 +183,7 @@ modules
 	sys/kernel/drivers/sound/es1370
 	sys/kernel/drivers/sound/es1371
 	sys/kernel/drivers/sound/i810
+	sys/kernel/drivers/sound/maestro
 	sys/kernel/drivers/sound/sbpro
 	sys/kernel/drivers/sound/trident
 	sys/kernel/drivers/sound/via686a
@@ -192,6 +194,7 @@ modules
 	sys/kernel/fs/fatfs
 	sys/kernel/fs/iso9660
 	sys/kernel/fs/ramfs
+;	sys/kernel/fs/tmpfs
 
 	system libs/glibc-2.3.6
 	system libs/zlib-1.2.2
@@ -206,7 +209,7 @@ modules
 	stage libraries/gettext-0.14.3
 	stage libraries/flex-2.5.4a
 	stage libraries/bison-1.875
-	stage libraries/binutils-2.15
+	stage libraries/binutils-2.16.1
 
 	libraries libraries/gcc-3.4.3
 
@@ -290,3 +293,4 @@ modules
 	apps/utils/nettools
 	apps/utils/pkgmanager
 	apps/utils/systools
+

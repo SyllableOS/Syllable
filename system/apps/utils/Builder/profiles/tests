@@ -11,7 +11,7 @@ modules
 	sys/kernel/fs/afs
 	libs/libdl
 	libs/libpthread
-	libs/ncurses-5.4
+	libs/ncurses-5.5
 	sys/appserver/libsyllable
 	sys/appserver/appserver/server
 	sys/appserver/appserver/drivers/decorators/amiga

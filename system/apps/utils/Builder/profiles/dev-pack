@@ -2,12 +2,12 @@
 
 modules
 	programming/flex-2.5.4a
-	programming/bison-1.875
+	programming/bison-2.2
 	programming/languages/nasm-0.98.38
-	programming/languages/binutils-2.15
+	programming/languages/binutils-2.16.1
 	programming/languages/gcc-3.4.3
 	programming/m4-1.4.3
-	programming/make-3.80
+	programming/make-3.81
 	programming/gdb-6.4
 ;	programming/languages/perl-5.8.0
 ;	programming/automake-1.7.9
@@ -15,12 +15,13 @@ modules
 	programming/autoconf-2.59
 ;	programming/autoconf-2.13
 	file/versioning/patch-2.5.4
-;	file/versioning/arch-1.3.4
+	file/versioning/arch-1.3.4
 	file/versioning/cvs-1.12.9
 	programming/languages/ruby-1.8.4
-	programming/Builder-0.6.21
+	programming/Builder-0.6.66
 	programming/indent-2.2.9
 ;	programming/sindent-1.1
 	programming/doxygen-1.4.6
 	programming/cscope-15.5
 	programming/splint-3.1.1
+

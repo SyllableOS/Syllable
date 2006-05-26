@@ -44,8 +44,9 @@ modules
 	apps/utils/memmon
 
 ;	Needs objcopy from BinUtils:
-	apps/gnu/binutils-2.15-objcopy
+	apps/gnu/binutils-2.16.1-objcopy
 	apps/utils/rescopy
 
 	apps/utils/shelltools
 	apps/utils/slbmgr
+
