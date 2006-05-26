@@ -1,0 +1,10 @@
+authors				Kaj de Vos
+
+inherits			gnu
+
+packages			bison/bison-2.2
+
+documentation		README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS
+;develop-docs		examples
+internal-docs		PACKAGING
+
