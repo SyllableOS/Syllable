@@ -6,7 +6,7 @@ modules
 	programming/languages/nasm-0.98.39
 	programming/languages/binutils-2.16.1
 	programming/languages/gcc-3.4.3
-	programming/m4-1.4.3
+	programming/m4-1.4.4
 	programming/make-3.81
 	programming/gdb-6.4
 ;	programming/languages/perl-5.8.0

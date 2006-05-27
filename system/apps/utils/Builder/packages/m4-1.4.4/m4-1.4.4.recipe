@@ -11,7 +11,6 @@ licenses			GPL
 home				www.gnu.org/software/m4/
 packages			m4/m4-1.4.4
 
-documentation
-	README COPYING NEWS ChangeLog THANKS TODO
-	examples
+documentation		README COPYING NEWS ChangeLog THANKS TODO
+develop-docs		examples
 
