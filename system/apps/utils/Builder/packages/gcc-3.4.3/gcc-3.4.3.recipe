@@ -34,6 +34,7 @@ needs
 	glibc >= 2.3.3
 build-needs
 ;	autoconf 2.57
+	make <> 3.81
 ;	Without make bootstrap:
 ;	gcc >= 2.95
 ;	For Ada:
@@ -93,3 +94,4 @@ documentation
 links
 	gcc				bin/cc
 	libgcc.a		lib/gcc/i586-pc-syllable/3.4.3/libgcc_static.a
+

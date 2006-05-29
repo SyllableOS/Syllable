@@ -1,5 +1,6 @@
 authors				Kaj de Vos
-status				testing
+status				broken
+notes				Breaks GCC 3.4.3
 
 inherits			gnu
 
