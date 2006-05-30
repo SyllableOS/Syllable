@@ -1,5 +1,5 @@
 authors 			Kaj de Vos
-status				testing
+status				broken
 warnings			Insists on installing in /usr/local/ssl.
 
 licenses			other
@@ -28,7 +28,7 @@ test-targets
 ;	report
 
 ;install-prefix-var	INSTALL_PREFIX
-;documentation		README README.ENGINE FAQ PROBLEMS LICENSE NEWS CHANGES doc
+;documentation		README README.ENGINE FAQ PROBLEMS LICENSE NEWS doc
 ;develop-docs		INSTALL
 ;internal-docs		README.ASN1
 
