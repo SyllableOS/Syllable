@@ -1,6 +1,7 @@
 ; Network Necessities
 
 modules
+;	network/openssl-0.9.7j
 	network/openssh-3.8.1p1
 	network/rsync-2.6.6
 	network/samba-3.0.20b
