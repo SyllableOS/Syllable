@@ -1,0 +1,34 @@
+authors 			Kaj de Vos
+status				testing
+warnings			Insists on installing in /usr/local/ssl.
+
+licenses			other
+home				www.openssl.org
+locations
+	ftp://ftp.openssl.org/source/
+	http://www.openssl.org/source/
+
+build-needs			perl >= 5
+build-recommends	pod2man
+
+no-build-dir
+
+configure-cmd		config
+configure-args
+	--prefix=/usr
+	--openssldir=/usr/openssl
+configure-options
+	shared
+	threads
+;	-D_REENTRANT
+;	386
+
+test-targets
+	test
+;	report
+
+;install-prefix-var	INSTALL_PREFIX
+;documentation		README README.ENGINE FAQ PROBLEMS LICENSE NEWS doc
+;develop-docs		INSTALL
+;internal-docs		README.ASN1
+
