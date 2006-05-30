@@ -1,4 +1,6 @@
 authors				Kaj de Vos
+warnings
+	Hardwires PERL location. /usr/bin/perl and /usr/local/bin/perl should be removed before building a release.
 
 inherits			gnu
 
@@ -6,3 +8,4 @@ licenses			GPL
 packages			automake/automake-1.4-p6
 
 documentation		README COPYING NEWS ChangeLog TODO AUTHORS THANKS
+
