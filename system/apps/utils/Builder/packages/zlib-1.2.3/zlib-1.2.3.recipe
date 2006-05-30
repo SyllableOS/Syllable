@@ -1,0 +1,20 @@
+authors				Kaj de Vos
+notes				Thinks mmap works!
+
+;inherits			sourceforge
+
+licenses			other
+home				www.zlib.org
+;packages			libpng/zlib-1.2.3
+locations
+	http://www.zlib.net
+	http://www.gzip.org/zlib/
+
+no-build-dir
+
+configure-options	--shared
+
+move-files			share/man .
+delete-files		share
+documentation		README ChangeLog FAQ algorithm.txt
+

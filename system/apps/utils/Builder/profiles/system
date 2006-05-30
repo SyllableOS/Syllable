@@ -197,7 +197,7 @@ modules
 ;	sys/kernel/fs/tmpfs
 
 	system libs/glibc-2.3.6
-	system libs/zlib-1.2.2
+	system libs/zlib-1.2.3
 
 	libs/libdl
 	libs/libpthread
@@ -208,7 +208,7 @@ modules
 
 	stage libraries/gettext-0.14.3
 	stage libraries/flex-2.5.4a
-	stage libraries/bison-1.875
+	stage libraries/bison-2.2
 	stage libraries/binutils-2.16.1
 
 	libraries libraries/gcc-3.4.3
