@@ -7,18 +7,22 @@ home				www.openssh.org
 locations			ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/
 
 build-needs
-	zlib--static >= 1.1.4
+	zlib--static >= 1.2.3
 	openssl >= 0.9.6
-build-recommends	pam
+build-recommends
+	pam
+	libedit
 
-patch-config
+;no-build-dir
 
 configure-options
 ;	--with-ssl-dir=/usr/local/ssl
+;	--without-rpath
 	--with-zlib=../stage/lib
-;	--with-libs=-lcrypt
-	--with-libs=-lc
+	--with-libs='-lc'
+;	--disable-libutil
 	--with-ldflags=-L/usr/glibc2/lib
+;	--with-ldflags='-L/usr/gcc/lib/gcc/i586-pc-syllable/3.4.3 -L/usr/glibc2/lib'
 
 documentation
 	README* INSTALL WARNING.RNG RFC.nroff LICENCE ChangeLog TODO CREDITS
