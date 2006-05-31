@@ -1,0 +1,9 @@
+; PERL Pack
+
+modules
+	programming/languages/perl-5.8.0
+;	programming/automake-1.7.9
+	programming/automake-1.4-p6
+	programming/autoconf-2.59
+;	programming/autoconf-2.13
+
