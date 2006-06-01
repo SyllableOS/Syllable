@@ -1,0 +1,26 @@
+authors				Kaj de Vos
+status				broken
+
+inherits			gnu
+
+licenses			GPL
+home
+	cvs.nongnu.org
+;	www.cvshome.org
+packages			non-gnu/cvs/source/feature/1.12.13/cvs-1.12.13
+
+test-needs			gawk
+
+patch-config		build-aux
+
+configure-options
+	--with-external-zlib
+	--with-rsh=ssh
+;	--disable-server
+;	--enable-encryption
+documentation
+	README ABOUT-NLS FAQ BUGS MINOR-BUGS COPYING COPYING.LIB NEWS ChangeLog TODO PROJECTS AUTHORS
+;	doc
+build-docs			TESTS
+internal-docs		HACKING DEVEL-CVS
+
