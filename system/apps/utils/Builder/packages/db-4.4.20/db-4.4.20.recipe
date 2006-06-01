@@ -1,0 +1,26 @@
+authors
+	Kaj de Vos
+	Jan Hauffa
+status				testing
+notes				This version uses the source package with no encryption
+
+name				Berkeley DB
+licenses			OSI
+home				www.sleepycat.com
+packages			db-4.4.20.NC
+locations
+	ftp://ftp.sleepycat.com/releases/
+	http://downloads.sleepycat.com
+
+;build-dir			build_unix
+
+pre-configure		cp ../db-4.4.20/build_unix/* .
+configure-cmd		dist/configure
+configure-options	--enable-cxx
+
+documentation		README LICENSE
+links
+;	Optimize wasteful duplicates:
+	libdb-4.4.a		lib/libdb.a
+	libdb_cxx-4.4.a	lib/libdb_cxx.a
+
