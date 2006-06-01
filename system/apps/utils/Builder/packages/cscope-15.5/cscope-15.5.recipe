@@ -12,8 +12,10 @@ needs				ncurses
 build-needs
 	flex
 	bison
+;	gawk
+build-recommends	pkg-config
 
 patch-config
-documentation
-	README COPYING NEWS ChangeLog AUTHORS TODO
-;	INSTALL 
+documentation		README COPYING NEWS ChangeLog AUTHORS TODO
+build-docs			INSTALL
+
