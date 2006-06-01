@@ -33,5 +33,5 @@ test-targets		test
 documentation
 	src/tla/README src/COPYING src/ChangeLog src/tla/AUTHORS
 	src/docs-tla
-;	web
+	web
 
