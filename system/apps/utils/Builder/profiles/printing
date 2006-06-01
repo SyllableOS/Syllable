@@ -1,4 +1,6 @@
-; Printing
+title	Printing Paraphernalia
+
+name	PrintingParaphernalia
 
 modules
 	cups-1.1.23
