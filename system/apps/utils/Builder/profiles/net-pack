@@ -1,4 +1,6 @@
-; Network Necessities
+title	Network Necessities
+
+name	NetworkNecessities
 
 modules
 ;	network/openssl-0.9.7j

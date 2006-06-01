@@ -1,8 +1,10 @@
-; Editors Extravaganza
+title	Editors Extravaganza
+
+name	EditorsExtravaganza
 
 modules
 ;	CodeEdit
-	text/editors/emacs-19.34
+;	text/editors/emacs-19.34
 ;	Needs Rexx:
 	text/editors/hessling-editor-3.1
 ;	Needs S-Lang:
@@ -11,4 +13,5 @@ modules
 ;	Uses S-Lang:
 	text/editors/nano-1.2.2
 ;	Uses Ruby:
-	text/editors/vim-6.2
+	text/editors/vim-6.4
+

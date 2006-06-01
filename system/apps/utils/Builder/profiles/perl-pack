@@ -1,4 +1,6 @@
-; PERL Pit
+title	PERL Pit
+
+name	PERL-Pit
 
 modules
 	programming/languages/perl-5.8.0

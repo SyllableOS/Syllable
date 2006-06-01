@@ -1,4 +1,6 @@
-; SDL Essentials
+title	SDL Essentials
+
+name	SDL-Essentials
 
 modules
 ;	sdl-1.2.8

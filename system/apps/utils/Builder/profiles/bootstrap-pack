@@ -1,4 +1,6 @@
-; The Bootstrap Bundle
+title	The Bootstrap Bundle
+
+name	BootstrapBundle
 
 modules
 ;	Currently needed for building some packages:

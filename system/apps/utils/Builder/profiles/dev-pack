@@ -1,4 +1,6 @@
-; Developer's Delight
+title	Developer's Delight
+
+name	DevelopersDelight
 
 modules
 	programming/flex-2.5.4a

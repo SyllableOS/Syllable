@@ -1,4 +1,6 @@
-; Command-Line Cornucopia
+title	Command-Line Cornucopia
+
+name	CommandLineCornucopia
 
 modules
 	system/gettext-0.14.3
