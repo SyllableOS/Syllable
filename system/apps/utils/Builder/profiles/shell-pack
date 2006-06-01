@@ -10,5 +10,5 @@ modules
 	file/file-4.07
 	file/mc-4.1
 	file/versioning/diffutils-2.8.1
-	programming/languages/gawk-3.1.3
+	programming/languages/gawk-3.1.5
 
