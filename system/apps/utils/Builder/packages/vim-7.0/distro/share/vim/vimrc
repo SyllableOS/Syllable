@@ -1,0 +1,139 @@
+" Borrowed from Conectiva Linux, and modified to work with AtheOS' ATerm
+" by Rodrigo Parra Novo <rodarvus@terra.com.br>
+" Configuration file for vim
+"
+" To customize it, copy to ~/.vimrc and edit!
+
+set nocompatible	" Use Vim defaults (much better!)
+set bs=2		" allow backspacing over everything in insert mode
+"set autoindent		" always set autoindenting on
+"set smartindent	" always set smartindenting on
+"set backup		" keep a backup file
+set viminfo='20,\"50	" read/write a .viminfo file, don't store more
+			" than 50 lines of registers
+set history=50          " keep 50 lines of command line history
+
+set textwidth=0		" Don't wrap words by default
+set ruler		" Show the line and column numbers of the cursor 
+
+" Suffixes that get lower priority when doing tab completion for filenames.
+" These are files we are not likely to want to edit or read.
+set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
+
+" Don't use Ex mode, use Q for formatting
+map Q gq
+
+" Make p in Visual mode replace the selected text with the "" register.
+vnoremap p <Esc>:let current_reg = @"<CR>gvdi<C-R>=current_reg<CR><Esc>
+
+" Delete key
+:if &term =~ "xterm"
+  set t_kD=[3~
+:endif
+
+
+" And colors
+:if &term =~ "xterm"
+  set background=light
+  set t_Co=16
+  set t_Sf=[3%dm
+  set t_Sb=[4%dm
+:endif
+
+" nice syntax
+if has("syntax") && filereadable($VIMRUNTIME . "/syntax/syntax.vim") && (&t_Co > 2 || has("gui_running"))
+  syntax on
+endif
+
+" Only do this part when compiled with support for autocommands.
+if has("autocmd")
+
+ " C programing
+ augroup cprog
+  " Remove all cprog autocommands
+  au!
+
+  " When starting to edit a file:
+  "   For C and C++ files set formatting of comments and set C-indenting on.
+  "   For other files switch it off.
+  "   Don't change the order, it's important that the line with * comes first.
+  autocmd FileType *      set formatoptions=tcql nocindent comments&
+  autocmd FileType c,cpp  set formatoptions=croql cindent comments=sr:/*,mb:*,el:*/,://
+ augroup END
+
+ " edit gziped files
+ augroup gzip
+  " Remove all gzip autocommands
+  au!
+
+  " Enable editing of gzipped files
+  " set binary mode before reading the file
+  autocmd BufReadPre,FileReadPre	*.gz,*.bz2 set bin
+  autocmd BufReadPost,FileReadPost	*.gz call GZIP_read("gunzip")
+  autocmd BufReadPost,FileReadPost	*.bz2 call GZIP_read("bunzip2")
+  autocmd BufWritePost,FileWritePost	*.gz call GZIP_write("gzip")
+  autocmd BufWritePost,FileWritePost	*.bz2 call GZIP_write("bzip2")
+  autocmd FileAppendPre			*.gz call GZIP_appre("gunzip")
+  autocmd FileAppendPre			*.bz2 call GZIP_appre("bunzip2")
+  autocmd FileAppendPost		*.gz call GZIP_write("gzip")
+  autocmd FileAppendPost		*.bz2 call GZIP_write("bzip2")
+
+  " After reading compressed file: Uncompress text in buffer with "cmd"
+  fun! GZIP_read(cmd)
+    let ch_save = &ch
+    set ch=2
+    execute "'[,']!" . a:cmd
+    set nobin
+    let &ch = ch_save
+    execute ":doautocmd BufReadPost " . expand("%:r")
+  endfun
+
+  " After writing compressed file: Compress written file with "cmd"
+  fun! GZIP_write(cmd)
+    if rename(expand("<afile>"), expand("<afile>:r")) == 0
+      execute "!" . a:cmd . " <afile>:r"
+    endif
+  endfun
+
+  " Before appending to compressed file: Uncompress file with "cmd"
+  fun! GZIP_appre(cmd)
+    execute "!" . a:cmd . " <afile>"
+    call rename(expand("<afile>:r"), expand("<afile>"))
+  endfun
+
+ augroup END
+
+endif " has("autocmd")
+
+" Several maps useful for most terminals
+map [A <Up>
+map! [A <Up>
+map [B <Down>
+map! [B <Down>
+map [D <Left>
+map! [D <Left>
+map [C <Right>
+map! [C <Right>
+map [H <Home>
+map! [H <Home>
+map OH <Home>
+map! OH <Home>
+map [F <End>
+map! [F <End>
+map OF <End>
+map! OF <End>
+map [3~ <Delete>
+map! [3~ <Delete>
+
+" The following are commented out as they cause vim to behave a lot
+" different from regular vi. They are highly recommended though.
+"set showcmd		" Show (partial) command in status line.
+"set showmatch		" Show matching brackets.
+"set ignorecase		" Do case insensitive matching
+"set incsearch		" Incremental search
+"set autowrite		" Automatically save before commands like :next & :make
+
+:hi Statement ctermfg=DarkRed
+:hi Type ctermfg=DarkRed
+:hi Question ctermfg=DarkRed
+:hi Identifier ctermfg=DarkBlue

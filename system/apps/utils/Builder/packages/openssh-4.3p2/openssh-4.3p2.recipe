@@ -18,10 +18,12 @@ build-recommends
 configure-options
 ;	--with-ssl-dir=/usr/local/ssl
 ;	--without-rpath
-	--with-zlib=../stage/lib
-	--with-libs='-lc'
+;	--with-zlib=../stage/lib
+	--with-zlib=/usr/zlib
+	--without-zlib-version-check
+	--with-libs='-lcrypt'
 ;	--disable-libutil
-	--with-ldflags=-L/usr/glibc2/lib
+;	--with-ldflags=-L/usr/glibc2/lib
 ;	--with-ldflags='-L/usr/gcc/lib/gcc/i586-pc-syllable/3.4.3 -L/usr/glibc2/lib'
 
 documentation

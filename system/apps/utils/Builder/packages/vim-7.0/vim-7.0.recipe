@@ -1,0 +1,24 @@
+authors
+	Rodrigo Parra Novo
+	Kaj de Vos
+maintainers			Kaj de Vos
+status				testing
+
+licenses			other
+home				www.vim.org
+packages
+	unix/vim-7.0
+	extra/vim-7.0-lang
+locations			ftp://ftp.vim.org/pub/vim/
+
+build-needs			ruby
+
+no-build-dir
+
+configure-options
+	--with-features=big
+	--enable-rubyinterp
+documentation		README.txt
+build-docs			src/INSTALL
+links				vim bin/vi
+
