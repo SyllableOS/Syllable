@@ -10,8 +10,12 @@ licenses		LGPL GPL
 build-needs		make >= 3.80
 
 home			ffmpeg.org
-packages		FFMpeg-current
-locations		http://mplayerhq.hu/MPlayer/cvs/
+packages
+;	FFMpeg-current
+	ffmpeg
+locations
+;	http://mplayerhq.hu/MPlayer/cvs/
+	http://ftp.syllable-norden.info/Archive/2006/04/
 
 configure-options
 	--extra-cflags='-DPIC -fomit-frame-pointer'
