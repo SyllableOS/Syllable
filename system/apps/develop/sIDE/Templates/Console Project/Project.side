@@ -1,0 +1,9 @@
+
+<CompilerFlags>-Wall -c -O2 -fexceptions
+<LinkerFlags>
+<Target>App
+<Category>Other
+<InstallPath>/Applications/App
+<Group>Source
+<FileName>main.c
+<FileType>

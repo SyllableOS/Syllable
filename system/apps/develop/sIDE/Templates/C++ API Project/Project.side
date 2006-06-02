@@ -1,0 +1,24 @@
+
+<CompilerFlags>-Wall -c -O2 -fexceptions
+<LinkerFlags>
+<Target>App
+<Category>Other
+<InstallPath>/Applications/App
+<Group>Source
+<FileName>main.cpp
+<FileType>
+<FileName>application.cpp
+<FileType>
+<FileName>mainwindow.cpp
+<FileType>
+<Group>Headers
+<FileName>application.h
+<FileType>
+<FileName>mainwindow.h
+<FileType>
+<Group>Libraries
+<FileName>syllable
+<FileType>
+<FileName>stdc++
+<FileType>
+<Group>Resources

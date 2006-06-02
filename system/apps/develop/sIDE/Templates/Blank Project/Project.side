@@ -1,0 +1,10 @@
+
+<CompilerFlags>-Wall -c -O2 -fexceptions
+<LinkerFlags>
+<Target>App
+<Category>Other
+<InstallPath>/Applications/App
+<Group>Source
+<Group>Headers
+<Group>Resources
+<Group>Libraries

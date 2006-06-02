@@ -1,0 +1,96 @@
+//
+// sIDE string catalog
+//
+
+MSG_PWND_TITLE=100						sIDE
+
+
+MSG_PWND_MENU_APPLICATION=200			Anwendung
+MSG_PWND_MENU_APPLICATION_ABOUT			Info...
+MSG_PWND_MENU_APPLICATION_QUIT			Beenden
+
+MSG_PWND_MENU_PROJECT=210				Projekt
+MSG_PWND_MENU_PROJECT_NEW				Neu
+MSG_PWND_MENU_PROJECT_OPEN				Öffnen...
+MSG_PWND_MENU_PROJECT_SAVE				Speichern
+MSG_PWND_MENU_PROJECT_SAVEAS			Speichern als...
+MSG_PWND_MENU_PROJECT_PREF				Einstellungen...
+MSG_PWND_MENU_PROJECT_GROUPS			Gruppen...
+MSG_PWND_MENU_PROJECT_NEW_FILE			Neue Datei...
+MSG_PWND_MENU_PROJECT_ADD_FILE			Datei hinzufügen...
+MSG_PWND_MENU_PROJECT_ADD_LIB			Bibliothek hinzufügen...
+MSG_PWND_MENU_PROJECT_REMOVE_FILE		Datei entfernen
+
+MSG_PWND_MENU_BUILD=230					Erstellen
+MSG_PWND_MENU_BUILD_CLEAN				Bereinigen
+MSG_PWND_MENU_BUILD_MAKE				Erstellen
+MSG_PWND_MENU_BUILD_RUN					Ausführen
+MSG_PWND_MENU_BUILD_EXPORT_MAKEFILE		Makefile exportieren
+
+MSG_PWND_ABOUT_TITLE					Über sIDE
+MSG_PWND_ABOUT							sIDE 0.4.4 CVS\nDie Syllable IDE\nVon Arno Klenke, 2001-2006\nDer \"Neues Project\" Dialog wurde von Rick Caudill erstellt\n\nsIDE is released under the Gnu Public Licencse (GPL)\nPlease see the file COPYING, distributed with sIDE, for\nmore information\n
+
+MSG_PWND_LIST_FILE						Datei
+MSG_PWND_LIST_TYPE						Typ
+
+MSG_PWND_NO_GROUPS=260					Keine Gruppen vorhanden\n
+MSG_PWND_COULD_NOT_OPEN_PROJ			Konnte Projekt nicht öffnen!\n
+MSG_PWND_COULD_NOT_OPEN_FILE			Konnte die ausgewählte Datei nicht öffnen!\n
+MSG_PWND_COULD_NOT_SAVE_PROJ			Konnte das Projekt nicht speichern!\n
+MSG_PWND_NOT_IN_PROJ_DIR				Die ausgewählte Datei ist nicht im Projektordner!\n
+
+MSG_TYPE_HEADER=300						Header
+MSG_TYPE_C								C Datei
+MSG_TYPE_CPP							C++ Datei
+MSG_TYPE_LIB							Bibliothek
+MSG_TYPE_OTHER							Andere
+MSG_TYPE_RES							Resource
+MSG_TYPE_CATALOG						Katalog
+MSG_TYPE_IF								Oberfläche
+MSG_TYPE_UNKNOWN						Unbekannt
+
+MSG_BUTTON_OK=400						Ok
+MSG_BUTTON_CANCEL						Abbrechen
+MSG_BUTTON_UP							Hoch
+MSG_BUTTON_DOWN							Runter
+MSG_BUTTON_ADD							Hinzufügen
+MSG_BUTTON_REMOVE						Entfernen
+
+MSG_ADDWND_TITLE=500					Datei erstellen/hinzufügen
+MSG_ADDWND_NAME							Name
+MSG_ADDWND_FILE							Datei erstellen/hinzufügen
+
+MSG_NEWWND_TITLE=600					Neues Projeckt
+MSG_NEWWND_PROJECTS						Projekte
+MSG_NEWWND_NAME							Name:
+MSG_NEWWMD_DIR							Ordner:
+MSG_NEWWND_ERR_TITLE					Fehler
+MSG_NEWWND_ERR_EXTR						Konnte Projektvorlage nicht entpacken!\n
+MSG_NEWWND_NO_LOC_NAME					Sie haben weder einen Ort noch einen Namen eingegeben.\n
+MSG_NEWWND_NO_LOC						Sie müssen einen Ort für das Projekt festlegen.\n
+MSG_NEWWND_NO_NAME						Sie müssen einen Namen für das Projekt festlegen.\n
+MSG_NEWWND_NO_DIR						Kein Ordner
+MSG_NEWWND_NO_DIR_1						Der Pfad, 
+MSG_NEWWND_NO_DIR_2						, ist kein Ordner\n
+
+MSG_PPREF_TITLE=700						Projekteinstellungen
+MSG_PPREF_TARGET						Ziel
+MSG_PPREF_CATEGORY						Kategorie
+MSG_PPREF_INSTALL_PATH					Zielordner
+MSG_PPREF_CFLAGS						Compiler flags
+MSG_PPREF_LFLAGS						Linker flags
+
+MSG_GROUPS_TITLE=800					Gruppen verwalten
+MSG_GROUPS_LIST							Gruppe
+
+MSG_ADDLIB_TITLE=900					Bibliothek hinzufügen
+MSG_ADDLIB_SELECT						Auswählen
+MSG_ADDLIB_CUSTOM						Andere
+MSG_ADDLIB_GROUP						Gruppe
+
+
+
+
+
+
+
