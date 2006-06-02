@@ -1,0 +1,11 @@
+How to build
+============
+
+You need the freetype library installed.
+
+Build it with:
+
+./configure --with-freetype2-includes=/usr/freetype/include/freetype2
+make xpdf
+
+
