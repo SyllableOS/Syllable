@@ -1,0 +1,54 @@
+authors
+	Kurt Skauen
+	Kaj de Vos
+maintainers			Kaj de Vos
+status				testing
+notes				Doesn't build the documentation yet
+
+licenses			Artistic GPL
+home				www.perl.org
+locations
+;	CPAN selector:
+	ftp://ftp.cpan.org/pub/CPAN/src/
+
+	http://www.cpan.org/src/5.0/
+	ftp://ftp.funet.fi/pub/CPAN/src/5.0/
+	http://ftp.funet.fi/pub/CPAN/src/5.0/
+
+recommends			db
+
+;configure
+;	rm -f config.sh Policy.sh;
+;	sh Configure
+configure-cmd
+;	configure.gnu
+	Configure
+configure-prefix	"-Dprefix="
+configure-options
+	-des
+	-Dmksymlinks
+	-Accflags="-march=i586 -pipe"
+	-Aoptimize="-O2"
+;	-Dinstallprefix=
+;	-Dnoextensions=
+;	-Duseshrplib
+;	-Uusemymalloc
+;	-Dusethreads
+;	-Duseperlio -Dusesfio
+
+test-targets
+	test
+;	minitest
+
+documentation
+	README README.Y2K Artistic Copying AUTHORS
+;	README.linux
+;	May be too huge:
+	Changes
+build-docs			INSTALL
+links
+	perl5.8.8		bin/perl
+	bin/perl		/usr/bin/perl
+;	For OpenSSL:
+	bin/perl		/usr/local/bin/perl
+
