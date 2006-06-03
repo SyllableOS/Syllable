@@ -9,6 +9,7 @@
 #include <util/catalog.h>
 #include <util/locale.h>
 #include <storage/file.h>
+#include <storage/path.h>
 
 #include "ccatalog.h"
 
@@ -227,8 +228,8 @@ int main( int argc, char** argv )
 
 		fp = fopen( ( String( pzFileName ) + String( ".h" ) ).c_str(), "w" );
 		if( fp ) {
-			fprintf( fp, "#ifndef __F_CAT_%s_H__\n", pzFileName );
-			fprintf( fp, "#define __F_CAT_%s_H__\n", pzFileName );
+			fprintf( fp, "#ifndef __F_CAT_%s_H__\n", os::Path( pzFileName ).GetLeaf().c_str() );
+			fprintf( fp, "#define __F_CAT_%s_H__\n", os::Path( pzFileName ).GetLeaf().c_str() );
 			fprintf( fp, "#include <util/catalog.h>\n");
 			fprintf( fp, "#ifndef CATALOG_NO_IDS\n" );
 
@@ -312,5 +313,8 @@ int main( int argc, char** argv )
 
 	g_pcStrings->Release();
 }
+
+
+
 
 

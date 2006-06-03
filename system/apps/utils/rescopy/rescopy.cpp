@@ -105,7 +105,7 @@ static void list_resources( const std::string& cPath )
 
 static status_t embed_resources( const std::string& cTarget, const std::string& cSource )
 {
-    int nError = system( String().Format( "objcopy -R .aresources --add-section \".aresources=%s\" %s\n",
+    int nError = system( String().Format( "objcopy -R .aresources --add-section \".aresources=%s\" \"%s\"\n",
 					   cSource.c_str(), cTarget.c_str() ).c_str() );
     if ( nError == -1 ) {
 	fprintf( stderr, "Error: failed to execute \"objcopy\" : %s\n", strerror(errno) );
@@ -434,4 +434,5 @@ int main( int argc, char** argv )
     
     return( 0 );
 }
+
 
