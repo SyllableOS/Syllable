@@ -1,3 +1,7 @@
+* June 4 2006, Arno Klenke *
+
+Added sIDE, Sourcery, LayoutEditor and Xpdf to CVS
+
 ---- 0.6.1 Released -------------------------------------------------------------------
 ---- 0.6.0a Released -------------------------------------------------------------------
 ---- 0.6.0 Released -------------------------------------------------------------------
@@ -518,6 +522,7 @@ Network Preferences
 		* Added NetworkPreferences from Daryl Dudey(daryl.dudey@ntlworld.com).
 		* Added SlbMgr(AtheMgr renamed).
 		* Patches by Vanders for AEdit.
+
 
 
 
