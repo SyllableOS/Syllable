@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.68
+# Version 0.6.69
 # Copyright (c) 2002-2006 Kaj de Vos
 # License: GPL 2 or any later version
 
@@ -1019,14 +1019,16 @@ def buildPack targets
 	@log.header 'Making compound package ' + name = targets.to_s
 
 	unless
-		unless (modules = targets.modules).is_a? Array and exists? distroDir = File.join(@portsPath, name, 'distro')
+		unless (profile = targets.profile) and exists? imageDir = File.join(@portsPath, name, 'distro')
 			@log.error 'Not a valid compound package'
 			false
 		else
+			if n = profile['name'] then name = n end
+
 			unless action "mkdir " + name
 				false
 			else
-				unless action "cp -a #{File.join distroDir, '*'} " + name
+				unless action "cp -a #{File.join imageDir, '*'} " + name
 					false
 				else
 					Dir.chdir name
@@ -1039,8 +1041,8 @@ def buildPack targets
 						Dir.chdir @workDir
 			
 						unless
-							for package in modules
-								# Try to find the latest release
+							for package in modules = targets.modules
+								# Try to find the latest release. FIXME: alphabetical ordering
 								break unless action "ln -s #{Dir[
 										File.join(@distrosPath, fullName(package)) + '.bin.*.*z*'
 									].last
@@ -1628,7 +1630,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.68',
+	puts 'Syllable Build System 0.6.69',
 		'Copyright (c) 2002-2006 Kaj de Vos',
 		'License: GPL 2 or any later version'
 when '?', '-?', '-h', '-help', '--help'
