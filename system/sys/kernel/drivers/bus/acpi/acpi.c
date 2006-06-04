@@ -49,6 +49,7 @@ extern int acpi_ec_init(void);
 extern int acpi_thermal_init(void);
 extern int acpi_power_init(void);
 extern int acpi_button_init(void);
+extern int acpi_video_init(void);
 
 
 /*
@@ -219,6 +220,7 @@ status_t bus_init()
 		acpi_power_init();		
 		acpi_ec_init();
 		acpi_button_init();
+		//acpi_video_init();
 	}
 	
 	printk( "ACPI: Busmanager initialized\n" );

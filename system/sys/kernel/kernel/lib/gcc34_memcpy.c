@@ -5,7 +5,6 @@
 
 #include <atheos/types.h>
 
-#if __GNUC_MINOR__ == 4
 
 void * memcpy( void* to, const void* from, size_t n )
 {
@@ -25,4 +24,9 @@ void * memcpy( void* to, const void* from, size_t n )
 	return (to);
 }
 
-#endif
+
+
+
+
+
+

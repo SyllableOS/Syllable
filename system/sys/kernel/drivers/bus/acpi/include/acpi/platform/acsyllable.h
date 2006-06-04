@@ -59,6 +59,11 @@
 #define COMPILER_DEPENDENT_UINT64   unsigned long long
 #define ACPI_USE_NATIVE_DIVIDE
 
+/* Full namespace pathname length limit - arbitrary */
+
+#define ACPI_PATHNAME_MAX              256
+
+
 typedef int32_t s32;
 typedef uint8_t u8;
 typedef uint16_t u16;

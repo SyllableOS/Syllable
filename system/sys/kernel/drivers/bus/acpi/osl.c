@@ -631,7 +631,7 @@ acpi_os_delete_lock (
  * flags is *not* the result of save_flags - it is an ACPI-specific flag variable
  *   that indicates whether we are at interrupt level.
  */
-unsigned long
+acpi_cpu_flags
 acpi_os_acquire_lock( acpi_handle handle )
 {
 	unsigned long flags;
@@ -644,7 +644,7 @@ acpi_os_acquire_lock( acpi_handle handle )
  * Release a spinlock. See above.
  */
 void
-acpi_os_release_lock( acpi_handle handle, unsigned long flags )
+acpi_os_release_lock( acpi_handle handle, acpi_cpu_flags flags )
 {
 	spinunlock_restore((SpinLock_s *)handle, flags);
 }

@@ -31,6 +31,7 @@ class TextView;
 class Button;
 class StringView;
 class DropdownMenu;
+class Messenger;
 
 class FileFilter
 {
@@ -75,7 +76,7 @@ public:
 
     virtual void	HandleMessage( Message* pcMessage );
     virtual void	FrameSized( const Point& cDelta );
-	virtual bool FileRequester::OkToQuit(void);
+	virtual bool	OkToQuit(void);
 
     void	SetPath( const String& cPath );
     String GetPath() const;

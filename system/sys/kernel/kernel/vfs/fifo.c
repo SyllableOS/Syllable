@@ -59,7 +59,7 @@ typedef struct
 	int pc_nMode;
 } PipeCookie_s;
 
-extern FSOperations_s g_sOperations;
+static FSOperations_s g_sOperations;
 static sem_id g_hPipeMutex = -1;
 
 Inode_s *create_fifo_inode( Inode_s *psHostInode )

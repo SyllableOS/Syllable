@@ -629,7 +629,7 @@ void DisplayDriver::FillAlpha32( uint32 *pDst, int nMod, int W, int H, uint32 nC
 bool DisplayDriver::FillRect( SrvBitmap * pcBitmap, const IRect & cRect, const Color32_s & sColor, int nMode )
 {
 	int BltX, BltY, BltW, BltH;
-
+	
 	BltX = cRect.left;
 	BltY = cRect.top;
 	BltW = cRect.Width() + 1;

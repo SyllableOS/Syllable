@@ -64,7 +64,7 @@ void Layer::Init()
 	m_bIsUpdating = false;
 	m_bHasInvalidRegs = true;
 	m_nLevel = 0;
-	m_cFontViewListIterator = NULL;
+	//m_cFontViewListIterator = NULL;
 	m_bIsAddedToFont = false;
 
 	m_nHideCount = 0;

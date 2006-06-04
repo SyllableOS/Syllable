@@ -101,9 +101,11 @@ namespace os
   |+------<------------------------------------->------+|
   +-----------------------------------------------------+
  */
+ 
 
 namespace os
 {
+	class ListViewHeader;
 	class ListView::Private {
 		public:
 	    ListViewContainer* m_pcMainView;

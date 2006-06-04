@@ -83,7 +83,7 @@ void DropdownMenu::DropdownTextView::KeyDown( const char *pzString, const char *
 
 DropdownMenu::DropdownMenu( const Rect & cFrame, const String& cName, uint32 nResizeMask, uint32 nFlags ):View( cFrame, cName, nResizeMask, nFlags )
 {
-	m_nSelection = -1;
+	m_nSelection = 0;
 	m_bMenuOpen = false;
 	m_bSendIntermediateMsg = false;
 

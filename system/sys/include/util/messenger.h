@@ -75,10 +75,10 @@ public:
 
 private:
     friend class Message;
-    friend class SrvWidget;
-    friend class SrvWindow;
-    friend class SrvApplication;
-    friend class SrvEvents;
+    friend class ::SrvWidget;
+    friend class ::SrvWindow;
+    friend class ::SrvApplication;
+    friend class ::SrvEvents;
     friend class NodeMonitor;
     friend class Event;
     

@@ -6,7 +6,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2005, R. Byron Moore
+ * Copyright (C) 2000 - 2006, R. Byron Moore
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -150,6 +150,9 @@ acpi_detach_data(acpi_handle obj_handle, acpi_object_handler handler);
 acpi_status
 acpi_get_data(acpi_handle obj_handle, acpi_object_handler handler, void **data);
 
+acpi_status
+acpi_debug_trace(char *name, u32 debug_level, u32 debug_layer, u32 flags);
+
 /*
  * Object manipulation and enumeration
  */
@@ -270,6 +273,12 @@ acpi_status(*ACPI_WALK_RESOURCE_CALLBACK) (struct acpi_resource * resource,
 					   void *context);
 
 acpi_status
+acpi_get_vendor_resource(acpi_handle device_handle,
+			 char *name,
+			 struct acpi_vendor_uuid *uuid,
+			 struct acpi_buffer *ret_buffer);
+
+acpi_status
 acpi_get_current_resources(acpi_handle device_handle,
 			   struct acpi_buffer *ret_buffer);
 
@@ -281,7 +290,7 @@ acpi_get_possible_resources(acpi_handle device_handle,
 
 acpi_status
 acpi_walk_resources(acpi_handle device_handle,
-		    char *path,
+		    char *name,
 		    ACPI_WALK_RESOURCE_CALLBACK user_function, void *context);
 
 acpi_status

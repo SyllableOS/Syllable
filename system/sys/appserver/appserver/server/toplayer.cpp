@@ -18,7 +18,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
  
-
+#include <macros.h>
 #include <gui/window.h>
 #include "toplayer.h"
 #include "ddriver.h"
@@ -49,7 +49,7 @@ void TopLayer::LayerFrameChanged( Layer* pcChild, IRect cFrame )
 	if( pcChild->GetWindow() != NULL && ( pcChild->GetWindow()->GetFlags() & WND_SINGLEBUFFER ) )
 		return;
 	
-	assert( m_pcBitmap != NULL );
+	__assertw( m_pcBitmap != NULL );
 	
 	/* Do not reallocate the backbuffer if there is already one with a matching size */
 	if( pcChild->m_pcBackbuffer != NULL  && cFrame.IsValid() )
@@ -70,9 +70,21 @@ void TopLayer::LayerFrameChanged( Layer* pcChild, IRect cFrame )
 		if( pcBackbuffer != NULL )
 		{
 			pcBackbuffer->m_pcDriver = m_pcBitmap->m_pcDriver;
-			assert( pcBackbuffer->m_pRaster != NULL );
-			//dbprintf( "Reallocated backbuffer %i %i\n", cFrame.Width() + 1, cFrame.Height() + 1 );
+			__assertw( pcBackbuffer->m_pRaster != NULL );
+			//dbprintf( "Reallocated backbuffer %i %i\n", cFrame.Width() + 1, cFrame.Height() + 1 );			
+		} 
+		#if 0 // Enable this code if you want to test backbuffered rendering with system memory bitmaps
+		else {
+			pcBackbuffer = new SrvBitmap( cFrame.Width() + 11, cFrame.Height() + 11, 
+													m_pcBitmap->m_eColorSpc, NULL, 0 );
+			if( pcBackbuffer != NULL )
+			{
+				pcBackbuffer->m_pcDriver = m_pcBitmap->m_pcDriver;
+				__assertw( pcBackbuffer->m_pRaster != NULL );
+				//dbprintf( "Reallocated backbuffer %i %i\n", cFrame.Width() + 1, cFrame.Height() + 1 );
+			}
 		}
+		#endif
 	}
 	if( pcChild->m_pcBackbuffer != NULL )
 	{
@@ -86,10 +98,10 @@ void TopLayer::LayerFrameChanged( Layer* pcChild, IRect cFrame )
 				pcBackbuffer->m_pcDriver->BltBitmap( pcBackbuffer, pcOldBuffer, cBlitRect, cBlitRect, DM_COPY, 0xff );
 			/* Fill new areas with the default color */
 			if( pcBackbuffer->m_nWidth > pcOldBuffer->m_nWidth )
-				pcBackbuffer->m_pcDriver->FillRect( pcBackbuffer, os::IRect( pcOldBuffer->m_nWidth, 0, pcBackbuffer->m_nWidth - 1, pcBackbuffer->m_nHeight ),
+				pcBackbuffer->m_pcDriver->FillRect( pcBackbuffer, os::IRect( pcOldBuffer->m_nWidth, 0, pcBackbuffer->m_nWidth - 1, pcBackbuffer->m_nHeight - 1 ),
 													os::get_default_color( COL_NORMAL ), DM_COPY );
 			if( pcBackbuffer->m_nHeight > pcOldBuffer->m_nHeight )
-				pcBackbuffer->m_pcDriver->FillRect( pcBackbuffer, os::IRect( 0, pcOldBuffer->m_nHeight, pcBackbuffer->m_nWidth - 1, pcBackbuffer->m_nHeight ),
+				pcBackbuffer->m_pcDriver->FillRect( pcBackbuffer, os::IRect( 0, pcOldBuffer->m_nHeight, pcBackbuffer->m_nWidth - 1, pcBackbuffer->m_nHeight - 1 ),
 													os::get_default_color( COL_NORMAL ), DM_COPY );													
 		} else {
 			dbprintf("Error: Failed to allocate new backbuffer -> falling back to singlebuffer!\n" );
@@ -183,7 +195,7 @@ void TopLayer::UpdateLayer( Layer* pcChild, bool bUpdateChildren )
 	if( pcBackbuffer == NULL )
 		return;
 
-	assert( m_pcBitmap != NULL );
+	__assertw( m_pcBitmap != NULL );
 	
 	SrvSprite::Hide( pcChild->GetIBounds() + cTopLeft );
 	
@@ -193,7 +205,6 @@ void TopLayer::UpdateLayer( Layer* pcChild, bool bUpdateChildren )
 		ENUMCLIPLIST( ( bUpdateChildren ? &pcChild->m_pcBitmapFullReg->m_cRects : &pcChild->m_pcBitmapReg->m_cRects ), pcLayerClip )
 		{
 			IRect cDstRect = ( pcWindowClip->m_cBounds ) & ( pcLayerClip->m_cBounds + cTopLeft );
-			cDstRect &= GetIBounds();
 			IRect cSrcRect = cDstRect - pcLayer->GetIFrame().LeftTop();
 			
 			if( cSrcRect.IsValid() && cDstRect.IsValid() )
@@ -260,10 +271,8 @@ static int SortCmp( const void *pNode1, const void *pNode2 )
 /** Updates moved layers.
  * \par Description:
  * This method overrides the implementation in the Layer class. It will move the
- * content of moved layers. Instead of blitting the content from the layers backbuffer
- * it will perform framebuffer to framebuffer blits. This will accelerate it if the
- * graphics card does not support backbuffers in video memory but does support framebuffer
- * to framebuffer blits.
+ * content of moved layers. We use framebuffer to framebuffer blits for non
+ * backbuffered windows and videomemory to framebuffer blits otherwise.
  * \author Arno Klenke
  *****************************************************************************/
 void TopLayer::MoveChilds( void )
@@ -271,7 +280,7 @@ void TopLayer::MoveChilds( void )
 	Layer* pcChild;
 	ClipRect* pcClip;
 	
-	/* Copy the contents of the moved layers. We use framebuffer to framebuffer blits here */
+	/* Copy the contents of the moved layers */
 	for( pcChild = m_pcBottomChild; NULL != pcChild; pcChild = pcChild->m_pcHigherSibling )
 	{
 		if( pcChild->m_nHideCount == 0 && pcChild->m_cDeltaMove != IPoint( 0, 0 ) )
@@ -279,67 +288,65 @@ void TopLayer::MoveChilds( void )
 			if( pcChild->m_bHasInvalidRegs && pcChild->m_pcVisibleFullReg != NULL 
 				&& pcChild->m_pcPrevVisibleFullReg != NULL )
 			{
-				Region cCopy;
-				Region cDamage( *pcChild->m_pcVisibleFullReg );
-				ClipRect* pcOldClip = NULL;
-				ClipRect* pcNewClip = NULL;
-				int nCount = 0;
-				IPoint cChildMove( pcChild->m_cDeltaMove );
-				
-				ENUMCLIPLIST( &pcChild->m_pcPrevVisibleFullReg->m_cRects, pcOldClip )
-				{
-					ENUMCLIPLIST( &pcChild->m_pcVisibleFullReg->m_cRects, pcNewClip )
-					{
-						IRect cRect = ( pcOldClip->m_cBounds + cChildMove ) & pcNewClip->m_cBounds;
-						if( cRect.IsValid() )
-						{
-							nCount++;
-							cCopy.AddRect( cRect );
-							cDamage.Exclude( cRect );
-						}
-					}
-				}
-				
-				if( nCount == 0 )
-				{
-					continue;
-				}
-				
-				ClipRect **apsClips = new ClipRect *[nCount];
-
-				for( int i = 0; i < nCount; ++i )
-				{
-					apsClips[i] = cCopy.m_cRects.RemoveHead();
-					assert( apsClips[i] != NULL );
-				}
-				qsort( apsClips, nCount, sizeof( ClipRect * ), SortCmp );
-
-				for( int i = 0; i < nCount; ++i )
-				{
-					ClipRect *pcClip = apsClips[i];
-
-					m_pcBitmap->m_pcDriver->BltBitmap( m_pcBitmap, m_pcBitmap, pcClip->m_cBounds - cChildMove, pcClip->m_cBounds, DM_COPY, 0xff );
-					Region::FreeClipRect( pcClip );
-				}
-				delete[]apsClips;
 				
 				if( pcChild->m_pcBackbuffer == NULL )
-					continue;
-				
-				cDamage.Optimize();
-			
-				if( !cDamage.IsEmpty() )
 				{
-					/* Update the layer */
-					ENUMCLIPLIST( &cDamage.m_cRects, pcClip )
+					Region cCopy;
+					ClipRect* pcOldClip = NULL;
+					ClipRect* pcNewClip = NULL;
+					int nCount = 0;
+					IPoint cChildMove( pcChild->m_cDeltaMove );
+				
+					ENUMCLIPLIST( &pcChild->m_pcPrevVisibleFullReg->m_cRects, pcOldClip )
 					{
-						IRect cDstRect = pcClip->m_cBounds;
-						cDstRect &= GetIBounds();
-						IRect cSrcRect = cDstRect - pcChild->GetIFrame().LeftTop();
-					
-						if( cSrcRect.IsValid() && cDstRect.IsValid() )
+						ENUMCLIPLIST( &pcChild->m_pcVisibleFullReg->m_cRects, pcNewClip )
 						{
-							m_pcBitmap->m_pcDriver->BltBitmap( m_pcBitmap, pcChild->m_pcBackbuffer, cSrcRect, cDstRect, DM_COPY, 0xff );
+							IRect cRect = ( pcOldClip->m_cBounds + cChildMove ) & pcNewClip->m_cBounds;
+							if( cRect.IsValid() )
+							{
+								nCount++;
+								cCopy.AddRect( cRect );
+							}
+						}
+					}
+					
+					if( nCount == 0 )
+					{
+						continue;
+					}
+				
+					ClipRect **apsClips = new ClipRect *[nCount];
+
+					for( int i = 0; i < nCount; ++i )
+					{
+						apsClips[i] = cCopy.m_cRects.RemoveHead();
+						__assertw( apsClips[i] != NULL );
+					}
+					qsort( apsClips, nCount, sizeof( ClipRect * ), SortCmp );
+
+					for( int i = 0; i < nCount; ++i )
+					{
+						ClipRect *pcClip = apsClips[i];
+	
+						m_pcBitmap->m_pcDriver->BltBitmap( m_pcBitmap, m_pcBitmap, pcClip->m_cBounds - cChildMove, pcClip->m_cBounds, DM_COPY, 0xff );
+						Region::FreeClipRect( pcClip );
+					}
+					delete[]apsClips;
+				}
+				else
+				{			
+					if( !pcChild->m_pcVisibleFullReg->IsEmpty() )
+					{
+						/* Update the layer */
+						ENUMCLIPLIST( &pcChild->m_pcVisibleFullReg->m_cRects, pcClip )
+						{
+							IRect cDstRect = pcClip->m_cBounds;
+							IRect cSrcRect = cDstRect - pcChild->GetIFrame().LeftTop();
+					
+							if( cSrcRect.IsValid() && cDstRect.IsValid() )
+							{
+								m_pcBitmap->m_pcDriver->BltBitmap( m_pcBitmap, pcChild->m_pcBackbuffer, cSrcRect, cDstRect, DM_COPY, 0xff );
+							}
 						}
 					}
 				}
@@ -386,7 +393,7 @@ void TopLayer::InvalidateNewAreas( void )
 				
 			cDamage.Optimize();
 				
-			assert( m_pcBitmap != NULL );
+			__assertw( m_pcBitmap != NULL );
 			
 			if( !cDamage.IsEmpty() )
 			{
@@ -394,7 +401,7 @@ void TopLayer::InvalidateNewAreas( void )
 				ENUMCLIPLIST( &cDamage.m_cRects, pcClip )
 				{
 					IRect cDstRect = pcClip->m_cBounds;
-					cDstRect &= GetIBounds();
+					//cDstRect &= GetIBounds();
 					IRect cSrcRect = cDstRect - pcChild->GetIFrame().LeftTop();
 					
 					if( cSrcRect.IsValid() && cDstRect.IsValid() )
@@ -439,7 +446,7 @@ void TopLayer::RebuildRegion( bool bForce )
 	
 	for( pcChild = m_pcBottomChild; NULL != pcChild; pcChild = pcChild->m_pcHigherSibling )
 	{
-		assert( pcChild->m_pcPrevVisibleFullReg == NULL );
+		__assertw( pcChild->m_pcPrevVisibleFullReg == NULL );
 		pcChild->m_pcPrevVisibleFullReg = pcChild->m_pcVisibleFullReg;
 		pcChild->m_pcVisibleFullReg = NULL;
 		

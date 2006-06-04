@@ -181,7 +181,7 @@ ehci_urb_done (struct ehci_hcd *ehci, USB_packet_s *urb, SysCallRegs_s *regs)
 	USB_packet_s		*resubmit = 0;
 	USB_device_s	*dev = 0;
 
-	static int ehci_urb_enqueue (struct usb_hcd *, USB_packet_s*, int);
+	//static int ehci_urb_enqueue (struct usb_hcd *, USB_packet_s*, int);
 #endif
 
 	if (urb->pHCPrivate != 0) {

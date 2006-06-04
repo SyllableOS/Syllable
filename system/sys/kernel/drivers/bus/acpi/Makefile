@@ -27,16 +27,16 @@ PARSER := parser/psargs.o parser/psloop.o parser/psopcode.o parser/psparse.o par
 
 RESOURCES := resources/rsaddr.o resources/rscalc.o resources/rscreate.o resources/rsdump.o \
 			resources/rsio.o resources/rsirq.o resources/rslist.o resources/rsmemory.o \
-			resources/rsmisc.o resources/rsutils.o resources/rsxface.o
+			resources/rsmisc.o resources/rsutils.o resources/rsxface.o resources/rsinfo.o
 
 TABLES := tables/tbconvrt.o tables/tbget.o tables/tbgetall.o tables/tbinstal.o tables/tbrsdt.o \
 			tables/tbutils.o tables/tbxface.o tables/tbxfroot.o
 
 UTILITIES := utilities/utalloc.o utilities/utcopy.o utilities/utdebug.o utilities/utdelete.o \
 			utilities/uteval.o utilities/utglobal.o utilities/utinit.o utilities/utmath.o \
-			utilities/utmisc.o utilities/utmutex.o utilities/utobject.o utilities/utstate.o utilities/utxface.o
+			utilities/utmisc.o utilities/utmutex.o utilities/utobject.o utilities/utstate.o utilities/utxface.o utilities/utresrc.o
 
-OBJS := acpi.o bus.o button.o ec.o memset.o osl.o power.o scan.o simple_pci.o thermal.o utils.o wakeup.o $(DISPATCHER) $(EVENTS) $(EXECUTER) $(HARDWARE) $(NAMESPACE) $(PARSER) $(RESOURCES) \
+OBJS := acpi.o bus.o button.o ec.o memset.o osl.o power.o scan.o simple_pci.o thermal.o utils.o wakeup.o video.o $(DISPATCHER) $(EVENTS) $(EXECUTER) $(HARDWARE) $(NAMESPACE) $(PARSER) $(RESOURCES) \
 				$(TABLES) $(UTILITIES)
 
 

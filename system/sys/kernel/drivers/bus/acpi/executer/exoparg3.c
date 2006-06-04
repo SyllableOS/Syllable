@@ -6,7 +6,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2005, R. Byron Moore
+ * Copyright (C) 2000 - 2006, R. Byron Moore
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -122,7 +122,8 @@ acpi_status acpi_ex_opcode_3A_0T_0R(struct acpi_walk_state *walk_state)
 
 	default:
 
-		ACPI_REPORT_ERROR(("acpi_ex_opcode_3A_0T_0R: Unknown opcode %X\n", walk_state->opcode));
+		ACPI_ERROR((AE_INFO, "Unknown AML opcode %X",
+			    walk_state->opcode));
 		status = AE_AML_BAD_OPCODE;
 		goto cleanup;
 	}
@@ -226,8 +227,8 @@ acpi_status acpi_ex_opcode_3A_1T_1R(struct acpi_walk_state *walk_state)
 			goto cleanup;
 		}
 
-		if (length > 0) {
-			/* Copy the portion requested */
+		if (buffer) {
+			/* We have a buffer, copy the portion requested */
 
 			ACPI_MEMCPY(buffer, operand[0]->string.pointer + index,
 				    length);
@@ -245,7 +246,8 @@ acpi_status acpi_ex_opcode_3A_1T_1R(struct acpi_walk_state *walk_state)
 
 	default:
 
-		ACPI_REPORT_ERROR(("acpi_ex_opcode_3A_0T_0R: Unknown opcode %X\n", walk_state->opcode));
+		ACPI_ERROR((AE_INFO, "Unknown AML opcode %X",
+			    walk_state->opcode));
 		status = AE_AML_BAD_OPCODE;
 		goto cleanup;
 	}

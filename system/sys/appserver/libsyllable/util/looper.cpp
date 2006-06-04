@@ -23,6 +23,7 @@
 #include <errno.h>
 #include <string.h>
 #include <malloc.h>
+#include <cassert>
 #include <atheos/types.h>
 
 #include <atheos/semaphore.h>

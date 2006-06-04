@@ -18,6 +18,7 @@
  *  MA 02111-1307, USA
  */
 
+#include <cassert>
 #include <util/event.h>
 #include <util/application.h>
 #include <util/messenger.h>

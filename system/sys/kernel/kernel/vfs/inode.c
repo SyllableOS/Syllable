@@ -63,7 +63,7 @@ static HashTable_s g_sHashTable;
 static InodeList_s g_sUsedList;
 static InodeList_s g_sFreeList;
 
-static sem_id g_hInodeHashSem = -1;
+sem_id g_hInodeHashSem = -1;
 static sem_id g_hFSListSema = -1;
 static FileSysDesc_s *g_psFileSystems = NULL;
 static Volume_s *g_psFirstVolume = NULL;

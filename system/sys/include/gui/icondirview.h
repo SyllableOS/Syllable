@@ -47,6 +47,7 @@ class Bitmap;
 class Image;
 class Menu;
 class RegistrarManager;
+class NodeMonitor;
 
 class DirectoryIconData : public IconData
 {
