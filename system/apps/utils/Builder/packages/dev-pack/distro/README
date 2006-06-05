@@ -1,17 +1,20 @@
 Developer Pack for Syllable
 ===========================
 
-14-Oct-2005
+6-Jun-2006
 
 1 Introduction
 ==============
 
 This distribution is a collection of the most important binary
 packages a software developer would want for the Syllable operating
-system. All packages except Ruby were built on Syllable 0.5.7 and
-optimized for a Pentium CPU. They may also run on Syllable 0.5.6(a),
-but this has not been tested, and they will not run on earlier
-versions of Syllable.
+system. Most packages were built on Syllable 0.6.1, and they were
+optimized for a Pentium CPU. Most of them may also run on Syllable
+0.5.6(a) through 0.6.0(a), but this has not been tested, and they
+will not run on earlier versions of Syllable.
+
+For additional functionality, it is recommended to also install
+other collection packs available for Syllable.
 
 If you encounter problems or have any other interesting observations,
 I would be interested to hear about them (see contact information).
@@ -22,11 +25,7 @@ I would be interested to hear about them (see contact information).
 2.1 
 ---
 
-Please note that if you want to use AutoConf or AutoMake, you should
-install PERL separately.
-
-Now for the developer pack installation. You may have to become the
-root user to perform the following operations:
+You may have to become the root user to perform the following operations:
 
     su -l
 

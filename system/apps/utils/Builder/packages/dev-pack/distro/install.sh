@@ -1,6 +1,6 @@
 #! /bin/sh
 
-packages='autoconf automake make binutils gcc patch m4 flex bison cvs ruby Builder indent splint'
+packages='flex bison binutils gcc nasm make m4 gdb patch arch cvs ruby Builder indent sindent doxygen cscope splint'
 
 if [ "$USER" != "root" ]
 then
@@ -10,7 +10,7 @@ then
 	exit 1
 fi
 
-echo "This will install the packages contained in the Developer Pack."
+echo "This will install the packages contained in the developer pack."
 echo "Previously installed packages of the same name will be removed first."
 echo ""
 read -p "Do you want to continue (y/N)? " -e answer
