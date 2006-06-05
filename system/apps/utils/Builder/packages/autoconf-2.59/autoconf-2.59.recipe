@@ -6,6 +6,7 @@ notes				Build: autom4te needs ftruncate()
 inherits			gnu
 
 licenses			GPL
+home				www.gnu.org/software/autoconf/
 packages			autoconf/autoconf-2.59
 
 needs
