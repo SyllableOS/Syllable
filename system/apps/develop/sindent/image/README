@@ -1,0 +1,16 @@
+The sindent.sh script uses GNU Indent and sed to format a C or C++
+file using the standard Syllable indentation and formating. You must
+also have GNU Indent installed to use this script.
+
+To use it, simply pass the name of the file you wish to indent, E.g.
+
+$ sindent.sh window.cpp
+
+Please check that your code compiles *after* you have run the sindent
+script! While GNU Indent should not prove destructive, you can never
+be too careful.
+
+The latest rules concerning the Syllable code style can be found on the
+Syllable Wiki http://www.syllable-wiki.tk or directly via the address
+http://wiki.isaksson.tk/cgi-bin/zwiki.pl?id=Documentation/Coding_Documentation
+
