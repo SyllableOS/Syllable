@@ -980,8 +980,6 @@ retry:
 	sCmd.nCmd[7] = ( nBlockCount >> 8 ) & 0xff;
 	sCmd.nCmd[8] = ( nBlockCount >> 0 ) & 0xff;
 
-	sCmd.bCanDMA = true;
-
 	/* Queue and wait */
 	ata_cmd_queue( psDev->psPort, &sCmd );
 	LOCK( sCmd.hWait );
@@ -1050,8 +1048,6 @@ retry:
 	sCmd.nCmd[7] = ( nBlockCount >> 8 ) & 0xff;
 	sCmd.nCmd[8] = ( nBlockCount >> 0 ) & 0xff;
 	sCmd.nCmd[9] = 0xf8;	/* Set all main-channel selection bits */
-
-	sCmd.bCanDMA = true;
 
 	/* Queue and wait */
 	ata_cmd_queue( psDev->psPort, &sCmd );
@@ -1124,17 +1120,11 @@ retry:
 	sCmd.pTransferBuffer = psDev->psPort->pDataBuf;
 	sCmd.nTransferLength = psRawCmd->nDataLength;
 	
-	/* We can't know all possible commands which may be sent to the device but
-	   we can at least watch for a few common ones and enable DMA for them. */
-	switch( sCmd.nCmd[0] )
-	{
-		case ATAPI_READ_CD:
-		case ATAPI_WRITE_10:
-		case ATAPI_XPWRITE_10:
-			sCmd.bCanDMA = true;
-			break;
-		default:
-			sCmd.bCanDMA = false;
+	/* Disable DMA on commands that are known to be bad */
+ 	switch( sCmd.nCmd[0] )
+ 	{
+		case ATAPI_READ_CD_12:
+ 			sCmd.bCanDMA = false;
 	}
 
 	/* Queue and wait */

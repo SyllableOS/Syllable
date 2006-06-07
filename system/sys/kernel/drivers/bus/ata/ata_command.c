@@ -56,6 +56,7 @@ void ata_cmd_init( ATA_cmd_s* psCmd, ATA_port_s* psPort )
 	memset( psCmd, 0, sizeof( ATA_cmd_s ) );
 	psCmd->psPort = psPort;
 	psCmd->hWait = create_semaphore( "ata_cmd_wait", 0, 0 );
+	psCmd->bCanDMA = true;
 }
 
 /* Free command buffer */

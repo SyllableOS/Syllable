@@ -38,6 +38,7 @@
 #define ATAPI_READ_CD				0xbe
 #define ATAPI_WRITE_10				0x2a
 #define ATAPI_XPWRITE_10			0x51
+#define ATAPI_READ_CD_12			0xd8
 
 /* Sense keys */
 #define ATAPI_NO_SENSE                0x00
