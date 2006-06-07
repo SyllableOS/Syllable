@@ -5,11 +5,11 @@ name	DevelopersDelight
 modules
 	programming/flex-2.5.4a
 	programming/bison-2.2
-	programming/languages/nasm-0.98.39
 	programming/languages/binutils-2.16.1
 	programming/languages/gcc-3.4.3
-	programming/m4-1.4.4
+	programming/languages/nasm-0.98.39
 	programming/make-3.80
+	programming/m4-1.4.4
 	programming/gdb-6.4
 	file/versioning/patch-2.5.4
 	file/versioning/arch-1.3.4
