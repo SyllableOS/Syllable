@@ -211,9 +211,11 @@ static uint ConvertKeyCode( uint8 nCode )
 
 	if ( nPauseKeyCount == 6 ) {
 	    nPauseKeyCount	=	0;
+	    #if 0
 	    sti();
 		reboot();
 		for(;;) {}
+		#endif
 	    return( 0x10 );		/* PAUSE	*/
 	} else {
 	    return( 0 );
