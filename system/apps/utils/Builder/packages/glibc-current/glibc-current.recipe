@@ -1,0 +1,56 @@
+authors
+	Kristian Van Der Vliet
+	Kaj de Vos
+maintainers			Kaj de Vos
+status				developing
+warnings			GLibC has a circular dependency on the LibGCC library in GCC.
+
+inherits			gnu
+
+licenses			LGPL BSD other
+home				www.gnu.org/software/libc/
+;packages			glibc/glibc-2.4
+
+needs				Syllable >= 0.6.2
+build-needs
+;	glibc
+;	autoconf >= 2.53
+	make >= 3.79
+	binutils >= 2.15
+	gcc >= 3.4
+	sed >= 3.02
+	gawk >= 3
+;	gettext >= 0.10.36
+;	gperf
+build-recommends	texinfo >= 3.12f
+test-needs
+	bash <> 2.03
+	perl >= 5
+
+;patch				autoconf
+
+configure-options
+	--enable-hacker-mode
+	--enable-add-ons=syllable
+;	--with-headers=../glibc-2.4/syllable/include
+	--without-cvs
+;	--with-cpu=
+;	--enable-bounded
+;	--disable-profile
+
+;make-targets
+;	For printed documentation:
+;	dvi
+
+_install-env
+	LANGUAGE	C
+	LC_ALL		C
+
+documentation
+	README BUGS INSTALL COPYING.LIB COPYING LICENSES NEWS ChangeLog FAQ CONFORMANCE README.libm PROJECTS
+;	ChangeLog.*
+develop-docs
+	NOTES
+;	INTERFACE NAMESPACE
+	manual/examples
+

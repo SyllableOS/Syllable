@@ -1,0 +1,9 @@
+authors				Kaj de Vos
+status				testing
+warnings			GLibC has a circular dependency on the LibGCC library in GCC.
+
+inherits			gnu
+
+licenses			LGPL BSD other
+home				www.gnu.org/software/libc/
+

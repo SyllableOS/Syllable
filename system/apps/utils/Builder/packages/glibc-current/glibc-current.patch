@@ -1,0 +1,373 @@
+diff -ru glibc-2.4.original/Makerules glibc-2.4/Makerules
+--- glibc-2.4.original/Makerules	2006-03-01 04:20:13.000000000 +0000
++++ glibc-2.4/Makerules	2006-06-12 13:37:50.000000000 +0000
+@@ -575,9 +575,15 @@
+ endif
+ endif
+ 
++ifneq (syllable,$(config-os))
+ build-module-helper-objlist = \
+ 	$(patsubst %_pic.a,$(whole-archive) %_pic.a $(no-whole-archive),\
+ 		   $(filter-out %.lds $(map-file) $(+preinit) $(+postinit),$^))
++else
++build-module-helper-objlist = \
++	$(patsubst %_pic.a,$(whole-archive) %_pic.a $(no-whole-archive),\
++		   $(filter-out %.lds $(map-file) $(+preinit) $(+postinit) %ld.so %ld.so.1,$^))
++endif
+ whole-archive := -Wl,--whole-archive
+ 
+ build-module-objlist = $(build-module-helper-objlist) $(LDLIBS-$(@F:%.so=%).so)
+@@ -605,6 +611,7 @@
+ $(common-objpfx)libc_pic.os: $(common-objpfx)libc_pic.a
+ 	$(LINK.o) -nostdlib -nostartfiles -r -o $@ \
+ 	$(LDFLAGS-c_pic.os) -Wl,-d -Wl,--whole-archive $^
++ifneq ($(config-os),syllable)
+ # Use our own special initializer and finalizer files for libc.so.
+ $(common-objpfx)libc.so: $(elfobjdir)/soinit.os \
+ 			 $(common-objpfx)libc_pic.os \
+@@ -612,6 +619,14 @@
+ 			 $(elfobjdir)/interp.os $(elfobjdir)/ld.so \
+ 			 $(common-objpfx)shlib.lds
+ 	$(build-shlib)
++else
++# No ld.so exists on Syllable
++$(common-objpfx)libc.so: $(elfobjdir)/soinit.os \
++			 $(common-objpfx)libc_pic.os \
++			 $(elfobjdir)/sofini.os \
++			 $(elfobjdir)/interp.os $(common-objpfx)shlib.lds
++	$(build-shlib)
++endif
+ ifeq ($(versioning),yes)
+ $(common-objpfx)libc.so: $(common-objpfx)libc.map
+ endif
+diff -ru glibc-2.4.original/configure glibc-2.4/configure
+--- glibc-2.4.original/configure	2006-03-06 11:18:56.000000000 +0000
++++ glibc-2.4/configure	2006-06-12 13:37:50.000000000 +0000
+@@ -1774,7 +1774,7 @@
+ # i586-linuxaout is mangled into i586-pc-linux-gnuaout
+ linux*ecoff* | linux*aout* | gnu*aout* | gnu*ecoff*)
+   ;;
+-gnu* | linux* | freebsd* | netbsd* | sysv4* | solaris2* | irix6*)
++gnu* | linux* | freebsd* | netbsd* | sysv4* | solaris2* | irix6* | syllable*)
+   # These systems (almost) always use the ELF format.
+   elf=yes
+   ;;
+@@ -2051,7 +2051,7 @@
+   base_os=unix/bsd/bsd4.4 ;;
+ osf* | sunos* | ultrix* | newsos* | dynix* | *bsd*)
+   base_os=unix/bsd ;;
+-sysv* | isc* | esix* | sco* | minix* | irix4* | linux*)
++sysv* | isc* | esix* | sco* | minix* | irix4* | linux* | syllable*)
+   base_os=unix/sysv ;;
+ irix6*)
+   base_os=unix/sysv/irix6/$os ;;
+@@ -5488,6 +5488,9 @@
+     fi
+   fi
+ 
++  if test $host_os = syllable; then
++    libc_cv_initfinit_array=no
++  else
+   echo "$as_me:$LINENO: checking for .preinit_array/.init_array/.fini_array support" >&5
+ echo $ECHO_N "checking for .preinit_array/.init_array/.fini_array support... $ECHO_C" >&6
+ if test "${libc_cv_initfini_array+set}" = set; then
+@@ -5524,6 +5527,7 @@
+ echo "$as_me: error: Need linker with .init_array/.fini_array support." >&2;}
+    { (exit 1); exit 1; }; }
+   fi
++  fi
+ 
+   echo "$as_me:$LINENO: checking for libunwind-support in compiler" >&5
+ echo $ECHO_N "checking for libunwind-support in compiler... $ECHO_C" >&6
+diff -ru glibc-2.4.original/configure.in glibc-2.4/configure.in
+--- glibc-2.4.original/configure.in	2006-03-01 09:17:40.000000000 +0000
++++ glibc-2.4/configure.in	2006-06-12 13:37:50.000000000 +0000
+@@ -283,7 +283,7 @@
+ # i586-linuxaout is mangled into i586-pc-linux-gnuaout
+ linux*ecoff* | linux*aout* | gnu*aout* | gnu*ecoff*)
+   ;;
+-gnu* | linux* | freebsd* | netbsd* | sysv4* | solaris2* | irix6*)
++gnu* | linux* | freebsd* | netbsd* | sysv4* | solaris2* | irix6* | syllable*)
+   # These systems (almost) always use the ELF format.
+   elf=yes
+   ;;
+@@ -538,7 +538,7 @@
+   base_os=unix/bsd/bsd4.4 ;;
+ osf* | sunos* | ultrix* | newsos* | dynix* | *bsd*)
+   base_os=unix/bsd ;;
+-sysv* | isc* | esix* | sco* | minix* | irix4* | linux*)
++sysv* | isc* | esix* | sco* | minix* | irix4* | linux* | syllable*)
+   base_os=unix/sysv ;;
+ irix6*)
+   base_os=unix/sysv/irix6/$os ;;
+@@ -1350,6 +1350,9 @@
+     fi
+   fi
+ 
++  if test $host_os = syllable; then
++    libc_cv_initfinit_array=no
++  else
+   AC_CACHE_CHECK(for .preinit_array/.init_array/.fini_array support,
+ 		 libc_cv_initfini_array, [dnl
+   cat > conftest.c <<EOF
+@@ -1373,6 +1376,7 @@
+   if test $libc_cv_initfini_array != yes; then
+     AC_MSG_ERROR([Need linker with .init_array/.fini_array support.])
+   fi
++  fi
+ 
+   AC_CACHE_CHECK(for libunwind-support in compiler,
+ 		 libc_cv_cc_with_libunwind, [
+diff -ru glibc-2.4.original/csu/Makefile glibc-2.4/csu/Makefile
+--- glibc-2.4.original/csu/Makefile	2006-03-01 10:35:47.000000000 +0000
++++ glibc-2.4/csu/Makefile	2006-06-12 13:37:50.000000000 +0000
+@@ -26,13 +26,15 @@
+ 
+ subdir := csu
+ 
++include ../Makeconfig
++
+ routines = init-first libc-start $(libc-init) sysdep version check_fds \
+ 	   libc-tls elf-init dso_handle
+ aux	 = errno
+ elide-routines.os = libc-tls
+ static-only-routines = elf-init
+ csu-dummies = $(filter-out $(start-installed-name),crt1.o Mcrt1.o)
+-extra-objs = start.o gmon-start.o \
++extra-objs = gmon-start.o start.o \
+ 	     $(start-installed-name) g$(start-installed-name) $(csu-dummies) \
+ 	     S$(start-installed-name)
+ omit-deps = $(patsubst %.o,%,$(start-installed-name) g$(start-installed-name) \
+@@ -49,8 +51,6 @@
+ 
+ all: # Make this the default target; it will be defined in Rules.
+ 
+-include ../Makeconfig
+-
+ ifeq (yes,$(build-shared))
+ extra-objs += S$(start-installed-name)
+ install-lib += S$(start-installed-name)
+diff -ru glibc-2.4.original/dirent/dirent.h glibc-2.4/dirent/dirent.h
+--- glibc-2.4.original/dirent/dirent.h	2005-09-28 21:12:48.000000000 +0000
++++ glibc-2.4/dirent/dirent.h	2006-06-12 13:37:50.000000000 +0000
+@@ -203,6 +203,13 @@
+ 			struct dirent64 **__restrict __result)
+      __nonnull ((1, 2, 3));
+ # endif
++
++# if defined __FOPENDIR
++/* Open a directory stream from FD.
++   Return a DIR stream on the directory, or NULL if it could not be opened.
++*/
++extern DIR *fopendir( int __fd );
++# endif
+ #endif	/* POSIX or misc */
+ 
+ /* Rewind DIRP to the beginning of the directory.  */
+diff -ru glibc-2.4.original/intl/loadmsgcat.c glibc-2.4/intl/loadmsgcat.c
+--- glibc-2.4.original/intl/loadmsgcat.c	2005-04-04 22:33:01.000000000 +0000
++++ glibc-2.4/intl/loadmsgcat.c	2006-06-12 13:23:40.000000000 +0000
+@@ -836,11 +836,11 @@
+       fd = -1;
+       use_mmap = 1;
+     }
+-#endif
+ 
+   /* If the data is not yet available (i.e. mmap'ed) we try to load
+      it manually.  */
+   if (data == MAP_FAILED)
++#endif
+     {
+       size_t to_read;
+       char *read_ptr;
+diff -ru glibc-2.4.original/locale/global-locale.c glibc-2.4/locale/global-locale.c
+--- glibc-2.4.original/locale/global-locale.c	2002-08-30 10:36:18.000000000 +0000
++++ glibc-2.4/locale/global-locale.c	2006-06-12 13:37:50.000000000 +0000
+@@ -67,9 +67,9 @@
+ __libc_tsd_define (, LOCALE)
+ /* This is a bad kludge presuming the variable name used by the macros.
+    Using typeof makes sure to barf if we do not match the macro definition.
+-   This ifndef is a further bad kludge for Hurd, where there is an explicit
+-   initialization.  */
+-# ifndef _HURD_THREADVAR_H
++   This ifndef is a further bad kludge for Hurd & Syllable, where there is
++   an explicit initialization.  */
++# if !defined( _HURD_THREADVAR_H ) && !defined( __SYLLABLE__ )
+ __typeof (__libc_tsd_LOCALE_data) __libc_tsd_LOCALE_data = &_nl_global_locale;
+ # endif
+ #endif
+diff -ru glibc-2.4.original/malloc/Makefile glibc-2.4/malloc/Makefile
+--- glibc-2.4.original/malloc/Makefile	2005-09-27 05:42:25.000000000 +0000
++++ glibc-2.4/malloc/Makefile	2006-06-12 13:37:50.000000000 +0000
+@@ -42,12 +42,16 @@
+ install-lib := libmcheck.a
+ non-lib.a := libmcheck.a
+ 
++include ../Makeconfig
++
++ifneq (syllable,$(config-os))
+ # Additional library.
+ extra-libs = libmemusage
+ extra-libs-others = $(extra-libs)
+ 
+ libmemusage-routines = memusage
+ libmemusage-inhibit-o = $(filter-out .os,$(object-suffixes))
++endif
+ 
+ # These should be removed by `make clean'.
+ extra-objs = mcheck-init.o libmcheck.a
+@@ -55,8 +59,6 @@
+ # Include the cleanup handler.
+ aux := set-freeres thread-freeres
+ 
+-include ../Makeconfig
+-
+ CPPFLAGS-memusagestat = -DNOT_IN_libc
+ 
+ # The Perl script to analyze the output of the mtrace functions.
+diff -ru glibc-2.4.original/rt/Makefile glibc-2.4/rt/Makefile
+--- glibc-2.4.original/rt/Makefile	2006-01-06 04:10:43.000000000 +0000
++++ glibc-2.4/rt/Makefile	2006-06-12 13:37:50.000000000 +0000
+@@ -68,7 +68,7 @@
+ # a statically-linked program that hasn't already loaded it.
+ $(objpfx)librt.so: $(common-objpfx)libc.so $(common-objpfx)libc_nonshared.a \
+ 		   $(shared-thread-library) \
+-		   $(if $(filter yes,$(elf)), $(elfobjdir)/ld.so)
++		   $(ifneq syllable,$(config-os)$(if $(filter yes,$(elf)), $(elfobjdir)/ld.so))
+ 
+ ifeq (yes,$(build-shared))
+ $(addprefix $(objpfx),$(tests)): $(objpfx)librt.so $(shared-thread-library)
+diff -ru glibc-2.4.original/shlib-versions glibc-2.4/shlib-versions
+--- glibc-2.4.original/shlib-versions	2006-03-06 01:25:35.000000000 +0000
++++ glibc-2.4/shlib-versions	2006-06-12 13:37:50.000000000 +0000
+@@ -31,6 +31,7 @@
+ x86_64-.*-linux.*       DEFAULT			GLIBC_2.2.5
+ powerpc64-.*-linux.*	DEFAULT			GLIBC_2.3
+ .*-.*-gnu-gnu.*		DEFAULT			GLIBC_2.2.6
++.*-.*-syllable.*	DEFAULT			GLIBC_2.3
+ 
+ # Configuration		WORDSIZE[32|64]		Alternate configuration
+ # -------------		----------		-----------------------
+@@ -53,6 +54,7 @@
+ sh.*-.*-linux.*		libm=6			GLIBC_2.2
+ .*-.*-linux.*		libm=6
+ .*-.*-gnu-gnu.*		libm=6
++.*-.*-syllable.*	libm=2
+ 
+ # We provide libc.so.6 for Linux kernel versions 2.0 and later.
+ alpha.*-.*-linux.*	libc=6.1
+@@ -60,6 +62,7 @@
+ sh.*-.*-linux.*		libc=6			GLIBC_2.2
+ sparc64.*-.*-linux.*	libc=6			GLIBC_2.2
+ .*-.*-linux.*		libc=6
++.*-.*-syllable.*	libc=2
+ 
+ # libmachuser.so.1 corresponds to mach/*.defs as of Utah's UK22 release.
+ .*-.*-gnu-gnu.*		libmachuser=1
+@@ -91,16 +94,25 @@
+ # So far the -lutil interface is the same on all platforms, except for the
+ # `struct utmp' format, which depends on libc.
+ alpha.*-.*-linux.*	libutil=1.1
++.*-.*-syllable.*	libutil=1.1
+ .*-.*-.*		libutil=1
+ 
+ # Version number 2 is used on other systems for the BIND 4.9.5 resolver
+ # interface.
+ alpha.*-.*-linux.*	libresolv=2.1
++.*-.*-syllable.*	libresolv=2.1
+ .*-.*-.*		libresolv=2
+ 
+ # Interface revision of nss_* modules.  This must match NSS_SHLIB_REVISION
+ # in nss/nsswitch.h, which determines the library names used for service
+ # names given in /etc/nsswitch.conf.
++.*-.*-syllable.*	libnss_files=2.1
++.*-.*-syllable.*	libnss_dns=2.1
++.*-.*-syllable.*	libnss_compat=2.1
++.*-.*-syllable.*	libnss_nis=2.1
++.*-.*-syllable.*	libnss_nisplus=2.1
++.*-.*-syllable.*	libnss_ldap=2.1
++.*-.*-syllable.*	libnss_hesiod=2.1
+ .*-.*-.*		libnss_files=2
+ .*-.*-.*		libnss_dns=2
+ .*-.*-.*		libnss_compat=2
+@@ -111,10 +123,12 @@
+ 
+ # Version for libnsl with YP and NIS+ functions.
+ alpha.*-.*-linux.*	libnsl=1.1
++.*-.*-syllable.*	libnsl=1.1
+ .*-.*-.*		libnsl=1
+ 
+ # This defines the shared library version numbers we will install.
+ alpha.*-.*-linux.*	libcrypt=1.1
++.*-.*-syllable.*	libcrypt=1.1
+ .*-.*-.*		libcrypt=1
+ 
+ # The gross patch for programs assuming broken locale implementations.
+@@ -122,6 +136,7 @@
+ ia64-.*-.*		libBrokenLocale=1	GLIBC_2.2
+ sh.*-.*-.*		libBrokenLocale=1	GLIBC_2.2
+ sparc64.*-.*-.*		libBrokenLocale=1	GLIBC_2.2
++.*-.*-syllable.*	libBrokenLocale=1.1
+ .*-.*-.*		libBrokenLocale=1
+ 
+ # The real-time library from POSIX.1b.
+@@ -129,3 +144,4 @@
+ 
+ # The asynchronous name lookup library.
+ .*-.*-.*		libanl=1
++
+diff -ru glibc-2.4.original/sunrpc/Makefile glibc-2.4/sunrpc/Makefile
+--- glibc-2.4.original/sunrpc/Makefile	2005-06-26 18:24:19.000000000 +0000
++++ glibc-2.4/sunrpc/Makefile	2006-06-12 13:37:50.000000000 +0000
+@@ -99,6 +99,7 @@
+ endif
+ 
+ ifeq (no,$(cross-compiling))
++ifneq (syllable,$(config-os))
+ # We can only build this library if we can run the rpcgen we build.
+ headers += $(rpcsvc:%.x=rpcsvc/%.h)
+ extra-libs := librpcsvc
+@@ -107,6 +108,7 @@
+ librpcsvc-inhibit-o = .os # Build no shared rpcsvc library.
+ omit-deps = $(librpcsvc-routines)
+ endif
++endif
+ 
+ CFLAGS-xbootparam_prot.c = -Wno-unused $(PIC-ccflag)
+ CFLAGS-xnlm_prot.c = -Wno-unused $(PIC-ccflag)
+diff -ru glibc-2.4.original/timezone/Makefile glibc-2.4/timezone/Makefile
+--- glibc-2.4.original/timezone/Makefile	2005-04-15 20:09:08.000000000 +0000
++++ glibc-2.4/timezone/Makefile	2006-06-12 13:37:50.000000000 +0000
+@@ -39,6 +39,8 @@
+ # northamerica.
+ distribute += $(tzfiles) leapseconds pacificnew simplebackw
+ 
++include ../Makeconfig	# Get objpfx & config-os defined so we can use it below.
++
+ generated := $(addprefix z.,$(tzfiles))
+ install-sbin := zic zdump
+ 
+@@ -46,8 +48,6 @@
+ 
+ all: # Make this the default target; it will be defined in Rules.
+ 
+-include ../Makeconfig	# Get objpfx defined so we can use it below.
+-
+ CPPFLAGS-zic = -DNOT_IN_libc
+ 
+ # z.* use this variable.
+@@ -70,12 +70,14 @@
+ 						     $(posixrules-file)))
+ 
+ ifeq ($(cross-compiling),no)
++ifneq (syllable,$(config-os))
+ # Don't try to install the zoneinfo files since we can't run zic.
+ install-others = $(addprefix $(inst_zonedir)/,$(zonenames) \
+ 					      $(zonenames:%=posix/%) \
+ 					      $(zonenames:%=right/%)) \
+ 		 $(installed-localtime-file) $(installed-posixrules-file)
+ endif
++endif
+ 
+ ifeq ($(have-ksh),yes)
+ install-others += $(inst_zonedir)/iso3166.tab $(inst_zonedir)/zone.tab
