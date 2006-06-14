@@ -1,0 +1,96 @@
+authors
+	Kurt Skauen
+	Kaj de Vos
+	Arno Klenke
+	Kristian Van Der Vliet
+	Jake Hamby
+maintainers		Kaj de Vos
+status				testing
+warnings
+	GCC has a circular dependency on GLibC.
+	LibIberty is both in BinUtils and in GCC.
+
+inherits			gnu
+
+licenses			GPL LGPL GFDL
+home				gcc.gnu.org
+packages
+	gcc/gcc-4.1.1/gcc-4.1.1
+;	gcc/gcc-4.1.1/gcc-core-4.1.1
+;	gcc/gcc-4.1.1/gcc-g++-4.1.1
+;	gcc/gcc-4.1.1/gcc-objc-4.1.1
+;	gcc/gcc-4.1.1/gcc-java-4.1.1
+;	gcc/gcc-4.1.1/gcc-g77-4.1.1
+;	gcc/gcc-4.1.1/gcc-ada-4.1.1
+;	gcc/gcc-4.1.1/gcc-testsuite-4.1.1
+;locations			ftp://gcc.gnu.org/pub/gcc/releases/gcc-4.1.1/
+
+needs
+;	Due to new atomics definitions:
+	Syllable >= 0.5.5
+;	For -O3 with -fpic:
+	binutils >= 2.13.1
+;	Syllable switched to the new GLibC ABI in combination with this version of GCC:
+	glibc >= 2.3.3
+build-needs
+;	autoconf 2.57
+	make <> 3.81
+;	Without make bootstrap:
+;	gcc >= 2.95
+;	For Ada:
+;	gnat >= 3.13 | gcc >= 3.1
+	gawk
+;	bison
+build-recommends
+;	diffutils
+;	For documentation:
+	texinfo
+test-needs			dejagnu >= 1.4.1
+conflicts			binutils
+
+;patch
+;	cd gcc
+;	autoconf
+
+configure-options
+	--enable-languages=c,c++
+;		Fortran doesn't build with the new GLibC 2.3.x:
+;		,f77
+;		,treelang
+;		Won't do --enable-shared:
+;		,objc
+;		,java,ada
+	--with-arch=i586
+	--enable-sjlj-exceptions
+	--enable-shared
+	--enable-threads
+	--with-system-zlib
+	--disable-libstdcxx-pch
+;	--with-local-prefix=/usr/local
+
+make-env
+	BOOT_CFLAGS		'-O'
+make-vars
+	CFLAGS			'-O'
+	LIBCFLAGS		'-O2'
+	LIBCXXFLAGS		'-O2'
+;					GCC seems to set this automatically:
+;					' -fno-implicit-templates'
+make-targets
+;	Safest when compiling natively:
+	bootstrap
+;	For printed documentation:
+;	dvi
+
+;test-env
+;	TCL_LIBRARY		'/usr/tcl'
+;	DEJAGNULIBS		'/usr/dejagnu'
+test-options		-k
+
+;install-prefix-var	DESTDIR
+documentation
+	README FAQ faq.html BUGS bugs.html COPYING COPYING.LIB NEWS ChangeLog MAINTAINERS
+	gcc/ABOUT-GCC-NLS
+links
+	gcc				bin/cc
+	libgcc.a		lib/gcc/i586-pc-syllable/4.1.1/libgcc_static.a

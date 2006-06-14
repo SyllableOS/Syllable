@@ -1,0 +1,3 @@
+# On Syllable we must always use vtable thunks.
+#CXXFLAGS_FOR_TARGET = $(CXXFLAGS) -fvtable-thunks -D_GNU_SOURCE
+CXXFLAGS_FOR_TARGET = $(CXXFLAGS) -D_GNU_SOURCE
