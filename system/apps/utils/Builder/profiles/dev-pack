@@ -6,7 +6,7 @@ modules
 	programming/flex-2.5.4a
 	programming/bison-2.2
 	programming/languages/binutils-2.16.1
-	programming/languages/gcc-3.4.3
+	programming/languages/gcc-4.1.1
 	programming/languages/nasm-0.98.39
 	programming/make-3.80
 	programming/m4-1.4.4
@@ -23,4 +23,3 @@ modules
 	programming/doxygen-1.4.6
 	programming/cscope-15.5
 	programming/splint-3.1.1
-

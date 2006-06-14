@@ -116,7 +116,7 @@ tree
 resources
 	boot/grub				GrUB-binaries-0.97
 	boot/grub				menu.lst
-;	atheos/sys/libs			GCC-libraries-3.4.3
+;	atheos/sys/libs			GCC-libraries-4.1.1
 	atheos/sys/keymaps		keymaps/keymaps
 	atheos/sys/fonts		fonts/URW-fonts
 	atheos/Documentation	documentation/Welcome
@@ -189,6 +189,7 @@ modules
 	sys/kernel/drivers/sound/via686a
 	sys/kernel/drivers/sound/vt82xx
 	sys/kernel/drivers/sound/ymfpci
+	sys/kernel/drivers/ps2
 	sys/kernel/fs/afs
 	sys/kernel/fs/ext2
 	sys/kernel/fs/fatfs
@@ -211,7 +212,7 @@ modules
 	stage libraries/bison-2.2
 	stage libraries/binutils-2.16.1
 
-	libraries libraries/gcc-3.4.3
+	libraries libraries/gcc-4.1.1
 
 ;	freetype-config needs to be in the path (use bootstrap):
 	stage libraries/freetype-2.1.10
@@ -297,4 +298,3 @@ modules
 	apps/utils/nettools
 	apps/utils/pkgmanager
 	apps/utils/systools
-
