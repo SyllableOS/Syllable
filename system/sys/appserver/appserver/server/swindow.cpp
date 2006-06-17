@@ -37,6 +37,7 @@
 #include "inputnode.h"
 #include "windowdecorator.h"
 #include "config.h"
+#include "clipboard.h"
 
 #include <atheos/kernel.h>
 
@@ -679,6 +680,32 @@ void SrvWindow::R_Render( WR_Render_s * psPkt )
 				GRndDrawText_s *psMsg = ( GRndDrawText_s * ) psHdr;
 
 				pcView->DrawText( psMsg->cPos, psMsg->zString, psMsg->nLength, psMsg->nFlags );
+				break;
+			}
+		case DRC_DRAW_SELECTED_TEXT:
+			{
+				GRndDrawSelectedText_s *psMsg = ( GRndDrawSelectedText_s * ) psHdr;
+
+				pcView->DrawText( psMsg->cPos, psMsg->zString, psMsg->nLength, psMsg->nFlags, psMsg->cSel1, psMsg->cSel2, psMsg->nMode );
+				break;
+			}
+		case DRC_GET_SELECTION:
+			{
+				GRndGetSelection_s *psMsg = ( GRndGetSelection_s * ) psHdr;
+
+				String cSelection;
+				pcView->GetSelection( cSelection );
+
+				Message cClipData;
+				cClipData.AddString( "text/plain", cSelection.c_str() );
+
+				int nSize = cClipData.GetFlattenedSize();
+				uint8 *pBuffer = new uint8[nSize];
+				cClipData.Flatten( pBuffer, nSize );
+
+				SrvClipboard::SetData( psMsg->m_zName, pBuffer, nSize );
+				delete[] pBuffer;
+
 				break;
 			}
 		case DRC_SET_FRAME:

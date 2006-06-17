@@ -584,7 +584,7 @@ IPoint SFontInstance::GetTextExtent( const char *pzString, int nLength, uint32 n
 	else
 		vRowLens.push_back( nLength );
 
-	int nOffset = 0, nLineLength = 0, nLineExtent;
+	int nOffset = 0, nLineExtent;
 	std::list<int>::iterator l;
 	for( l = vRowLens.begin(); l != vRowLens.end(); l++ )
 	{
@@ -624,6 +624,18 @@ IPoint SFontInstance::GetTextExtent( const char *pzString, int nLength, uint32 n
 									cExt.x = nLineExtent;
 								nLineExtent = 0;
 							}
+							pzLine++;
+							nLineLength--;
+							break;
+						}
+
+						case '\t':
+						{
+							int nSkip = TAB_STOP - int( cExt.x ) % TAB_STOP;
+							if( nSkip < 2 )
+								nSkip = TAB_STOP;
+							cExt.x += nSkip;
+
 							pzLine++;
 							nLineLength--;
 							break;

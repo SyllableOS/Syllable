@@ -1211,11 +1211,11 @@ float TextEdit::GetPixelPosX( const String &cString, int nChar )
 			nStart = i + 1;
 			if( i != nChar )
 			{
-				int nSkip = 28 - int ( x ) % 28;
+				int nSkip = TAB_STOP - int ( x ) % TAB_STOP;
 
 				if( nSkip < 2 )
 				{
-					nSkip = 28;
+					nSkip = TAB_STOP;
 				}
 				x += nSkip;
 			}
@@ -1252,11 +1252,11 @@ int TextEdit::GetCharPosX( const String &cString, float vPos )
 			if( cString[i] == '\t' )
 			{
 				float x = vWidth;
-				int nSkip = 28 - int ( x ) % 28;
+				int nSkip = TAB_STOP - int ( x ) % TAB_STOP;
 
 				if( nSkip < 2 )
 				{
-					nSkip = 28;
+					nSkip = TAB_STOP;
 				}
 				vWidth += nSkip;
 			}
@@ -2201,11 +2201,11 @@ void TextEdit::MaybeDrawString( View * pcView, float vHOffset, const char *pzStr
 		{
 			pcView->Sync();
 			float x = pcView->GetPenPosition().x - vHOffset;
-			int nSkip = 28 - int ( x ) % 28;
+			int nSkip = TAB_STOP - int ( x ) % TAB_STOP;
 
 			if( nSkip < 2 )
 			{
-				nSkip = 28;
+				nSkip = TAB_STOP;
 			}
 			pcView->MovePenBy( nSkip, 0 );
 			nStart = 1;
@@ -2223,11 +2223,11 @@ void TextEdit::MaybeDrawString( View * pcView, float vHOffset, const char *pzStr
 				{
 					pcView->Sync();
 					float x = pcView->GetPenPosition().x - vHOffset;
-					int nSkip = 28 - int ( x ) % 28;
+					int nSkip = TAB_STOP - int ( x ) % TAB_STOP;
 
 					if( nSkip < 2 )
 					{
-						nSkip = 28;
+						nSkip = TAB_STOP;
 					}
 					pcView->MovePenBy( nSkip, 0 );
 				}

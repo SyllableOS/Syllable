@@ -424,7 +424,7 @@ int _FindEndOfLine( const char *pzStr, int nLen )
 	return i;
 }
 
-void Layer::DrawText( const Rect & cRect, const char *pzString, int nLength, uint32 nFlags )
+void Layer::DrawText( const Rect & cRect, const char *pzString, int nLength, uint32 nFlags, const IPoint & cSel1, const IPoint & cSel2, uint32 nMode )
 {
 	if( m_pcBitmap == NULL || m_pcFont == NULL || m_pcFont->GetInstance() == NULL )
 		return;
@@ -433,6 +433,8 @@ void Layer::DrawText( const Rect & cRect, const char *pzString, int nLength, uin
 	Region *pcReg = GetRegion();
 	if( NULL == pcReg )
 		return;
+	// os::String doesn't have a clear() method?  Must fix. */
+	m_cSelectionBuffer = "";
 
 	if( m_nDrawingMode == DM_COPY && m_bFontPalletteValid == false )
 	{
@@ -553,6 +555,37 @@ void Layer::DrawText( const Rect & cRect, const char *pzString, int nLength, uin
 	IPoint cITopLeft( cTopLeft );
 	IPoint cPos( cTopLeft + m_cScrollOffset );
 
+	// Normalise the selection co-ordinates
+	int x1 = 0, x2 = 0, y1 = 0, y2 = 0;
+	if( nMode != SEL_NONE )
+	{
+		if( cSel1.x <= cSel2.x )
+		{
+			// Left-to-right
+			x1 = cSel1.x + ( int )cPos.x + ( int )cRect.left;
+			x2 = cSel2.x + ( int )cPos.x + ( int )cRect.left;
+		}
+		else
+		{
+			// Right-to-left, reverse the co-ordinates
+			x1 = cSel2.x + ( int )cPos.x + ( int )cRect.left;
+			x2 = cSel1.x + ( int )cPos.x + ( int )cRect.left;
+		}
+
+		if( cSel1.y <= cSel2.y )
+		{
+			// Top-down
+			y1 = cSel1.y + ( int )cPos.y + ( int )cRect.top;
+			y2 = cSel2.y + ( int )cPos.y + ( int )cRect.top;
+		}
+		else
+		{
+			// Bottom-up; reverse the co-ordinates
+			y1 = cSel2.y + ( int )cPos.y + ( int )cRect.top;
+			y2 = cSel1.y + ( int )cPos.y + ( int )cRect.top;
+		}
+	}
+
 	cPos.x += ( int )cRect.left;
 	cPos.y += ( int )cRect.top;
 	IPoint cStartPos = cPos;
@@ -562,8 +595,10 @@ void Layer::DrawText( const Rect & cRect, const char *pzString, int nLength, uin
 
 	if( FontServer::Lock() )
 	{
-		bool bNewLine = true;
+		bool bNewLine = true, bSelected = false;
 		int nLineHeight = m_pcFont->GetInstance()->GetAscender(  ) - m_pcFont->GetInstance(  )->GetDescender(  ) + m_pcFont->GetInstance(  )->GetLineGap(  );
+		int nHalfHeight = nLineHeight / 2;
+		char nLast = '\0';
 
 		if( nFlags & DTF_ALIGN_TOP )
 		{
@@ -574,7 +609,7 @@ void Layer::DrawText( const Rect & cRect, const char *pzString, int nLength, uin
 		else
 			cPos.y += ( int )( m_pcFont->GetInstance()->GetAscender(  ) + cRect.Height(  ) * 0.5 - ( nRows * nLineHeight + 0.5 - m_pcFont->GetInstance(  )->GetLineGap(  ) ) * 0.5 );
 
-		int nOffset = 0, nLineLength = 0;
+		int nOffset = 0;
 		std::list<int>::iterator l;
 		for( l = vRowLens.begin(); l != vRowLens.end(); l++ )
 		{
@@ -591,15 +626,19 @@ void Layer::DrawText( const Rect & cRect, const char *pzString, int nLength, uin
 					do
 					{
 						bDone = false;
-						switch ( *pzLine )
+						nLast = *pzLine;
+						switch ( nLast )
 						{
 							case '_':
 							{
 								if( !( nFlags & DTF_UNDERLINES ) )
+								{
 									bDone = true;
+								}
 								else
 								{
 									bUnderlineChar = true;
+									nLast = '\0';
 									pzLine++;
 									nLineLength--;
 								}
@@ -622,6 +661,7 @@ void Layer::DrawText( const Rect & cRect, const char *pzString, int nLength, uin
 							{
 								pzLine++;
 								nLineLength--;
+								nLast = '\0';
 
 								switch ( *pzLine )
 								{
@@ -688,6 +728,53 @@ void Layer::DrawText( const Rect & cRect, const char *pzString, int nLength, uin
 				if( nCharLen > nLineLength )
 					break;
 
+				// Check if the current position falls inside the selection
+				switch( nMode & 0xff )
+				{
+					case SEL_NONE:
+						break;
+
+					case SEL_CHAR:
+					{
+						/* This is a bit fiddly, and the current solution was arrived at through a lot of
+						   trial and error.  However this seems to give the best results without the user
+						   needing to have pixel-perfect alignment.  This could clearly do with some more
+						   tweaking; it still doesn't feel quite right. */
+
+						bSelected = false;
+						if( ( cPos.y + nHalfHeight >= y1 ) && ( cPos.y <= y2 ) )
+						{
+							bSelected = true;
+
+							// If we're on the first line in the selection, are we past the start?
+							if( ( cPos.y < y1 ) && ( cPos.y + nHalfHeight >= y1 ) )
+									if( cPos.x < x1 )
+										bSelected = false;
+							// If we're on the last line in the selection, are we past the end?
+							if( ( cPos.y < y2 ) && ( cPos.y + nHalfHeight >= y2 ) )
+									if( cPos.x > x2 )
+										bSelected = false;
+						}
+						break;
+					}
+
+					/* XXXV: Not implemented */
+					case SEL_WORD:
+						break;
+
+					case SEL_RECT:
+					{
+						if( ( cPos.x >= x1 && cPos.y >= y1 ) && ( cPos.x <= x2 && cPos.y <= y2 ) )
+							bSelected = true;
+						else
+							bSelected = false;
+						break;
+					}
+				}
+
+				if( bSelected && nLast != '\0' )
+					m_cSelectionBuffer += nLast;
+
 				Glyph *pcGlyph = m_pcFont->GetGlyph( utf8_to_unicode( pzLine ) );
 
 				pzLine += nCharLen;
@@ -697,40 +784,82 @@ void Layer::DrawText( const Rect & cRect, const char *pzString, int nLength, uin
 
 				ClipRect *pcClip;
 
-				if( m_nDrawingMode == DM_COPY )
+				// Tabs get special handling; we want to draw them but they do not have a Glyph
+				if( nLast == '\t' )
 				{
-					ENUMCLIPLIST( &pcReg->m_cRects, pcClip )
+					if( bSelected )
 					{
-						pcBitmap->m_pcDriver->RenderGlyph( pcBitmap, pcGlyph, cPos, pcClip->m_cBounds + cITopLeft, m_anFontPalletteConverted );
+						/* Draw a rectangle with the Fg & Bg swapped. */
+						IRect cInvert( cPos.x, ( cPos.y - m_pcFont->GetInstance()->GetAscender() ), ( cPos.x + TAB_STOP ), 0 );
+						cInvert.bottom = cInvert.top + nLineHeight;
+
+						ENUMCLIPLIST( &pcReg->m_cRects, pcClip )
+						{
+							IRect cFillRect = cInvert & ( pcClip->m_cBounds + cITopLeft );
+							if( cFillRect.IsValid() )
+								pcBitmap->m_pcDriver->FillRect( pcBitmap, cFillRect, m_sFgColor, m_nDrawingMode );
+						}
 					}
-				}
-				else if( m_nDrawingMode == DM_BLEND && ( pcBitmap->m_eColorSpc == CS_RGB32 || pcBitmap->m_eColorSpc == CS_RGBA32 ) )
-				{
-					ENUMCLIPLIST( &pcReg->m_cRects, pcClip )
-					{
-						pcBitmap->m_pcDriver->RenderGlyphBlend( pcBitmap, pcGlyph, cPos, pcClip->m_cBounds + cITopLeft, m_sFgColor );
-					}
+
+					int nSkip = TAB_STOP - int( cPos.x ) % TAB_STOP;
+					if( nSkip < 2 )
+						nSkip = TAB_STOP;
+					cPos.x += nSkip;
 				}
 				else
 				{
-					ENUMCLIPLIST( &pcReg->m_cRects, pcClip )
+					/* XXXKV: If we want to draw selected text in DM_COPY we'll have to provide an inverted Font pallette */
+					if( m_nDrawingMode == DM_COPY && bSelected == false )
 					{
-						pcBitmap->m_pcDriver->RenderGlyph( pcBitmap, pcGlyph, cPos, pcClip->m_cBounds + cITopLeft, m_sFgColor );
+						ENUMCLIPLIST( &pcReg->m_cRects, pcClip )
+						{
+							pcBitmap->m_pcDriver->RenderGlyph( pcBitmap, pcGlyph, cPos, pcClip->m_cBounds + cITopLeft, m_anFontPalletteConverted );
+						}
 					}
-				}
-
-				if( bUnderlineChar )
-				{
-					ENUMCLIPLIST( &pcReg->m_cRects, pcClip )
+					else if( m_nDrawingMode == DM_BLEND && ( pcBitmap->m_eColorSpc == CS_RGB32 || pcBitmap->m_eColorSpc == CS_RGBA32 ) && bSelected == false )
 					{
-						IPoint cMax( cPos );
-
-						cMax.x += pcGlyph->m_nAdvance.x;
-						pcBitmap->m_pcDriver->DrawLine( pcBitmap, pcClip->m_cBounds + cITopLeft, cPos, cMax, m_sFgColor, m_nDrawingMode );
+						ENUMCLIPLIST( &pcReg->m_cRects, pcClip )
+						{
+							pcBitmap->m_pcDriver->RenderGlyphBlend( pcBitmap, pcGlyph, cPos, pcClip->m_cBounds + cITopLeft, m_sFgColor );
+						}
 					}
-				}
+					else
+					{
+						ENUMCLIPLIST( &pcReg->m_cRects, pcClip )
+						{
+							if( bSelected )
+							{
+								/* Draw a rectangle then render the glyph, with the Fg & Bg swapped to invert it.  It would be much nicer
+								   if we could fill the rectangle over the glyph with DM_INVERT, but that isn't supported. */
 
-				cPos.x += pcGlyph->m_nAdvance.x;
+								IRect cInvert( cPos.x, ( cPos.y - m_pcFont->GetInstance()->GetAscender() ), ( cPos.x + pcGlyph->m_nAdvance.x ), 0 );
+								cInvert.bottom = cInvert.top + nLineHeight;
+
+								IRect cFillRect = cInvert & ( pcClip->m_cBounds + cITopLeft );
+								if( cFillRect.IsValid() )
+									pcBitmap->m_pcDriver->FillRect( pcBitmap, cFillRect, m_sFgColor, m_nDrawingMode );
+								pcBitmap->m_pcDriver->RenderGlyph( pcBitmap, pcGlyph, cPos, pcClip->m_cBounds + cITopLeft, m_sBgColor );
+							}
+							else
+								pcBitmap->m_pcDriver->RenderGlyph( pcBitmap, pcGlyph, cPos, pcClip->m_cBounds + cITopLeft, m_sFgColor );
+						}
+					}
+
+					if( bUnderlineChar )
+					{
+						ENUMCLIPLIST( &pcReg->m_cRects, pcClip )
+						{
+							IPoint cMax( cPos );
+
+							cMax.x += pcGlyph->m_nAdvance.x;
+							pcBitmap->m_pcDriver->DrawLine( pcBitmap, pcClip->m_cBounds + cITopLeft, cPos, cMax, m_sFgColor, m_nDrawingMode );
+						}
+					}
+
+					cPos.x += pcGlyph->m_nAdvance.x;
+				}	// if('\t')
+
+				bNewLine = false;
 			}	// while()
 
 			if( nFlags & DTF_WRAP_SOFT )
@@ -743,6 +872,9 @@ void Layer::DrawText( const Rect & cRect, const char *pzString, int nLength, uin
 					cPos.x = ( int )( cStartPos.x + cRect.Width() - ( m_pcFont->GetInstance(  )->GetTextExtent( pzLine, _FindEndOfLine( pzLine, nLineLength ), nFlags ) ).x );
 				else
 					cPos.x = cStartPos.x;
+
+				if( bSelected )
+					m_cSelectionBuffer += '\n';
 			}
 
 			nOffset += (*l);
@@ -755,6 +887,11 @@ void Layer::DrawText( const Rect & cRect, const char *pzString, int nLength, uin
 		SrvSprite::Unhide();
 
 	PutRegion( pcReg );
+}
+
+void Layer::GetSelection( os::String &cSelection )
+{
+	cSelection = m_cSelectionBuffer;
 }
 
 //----------------------------------------------------------------------------

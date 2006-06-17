@@ -41,6 +41,8 @@ static const char SYS_FONT_FIXED[]  = "sys_fixed";
 static const char SYS_FONT_PLAIN[]  = "sys_plain";
 static const char SYS_FONT_BOLD[]   = "sys_bold";
 
+static const int TAB_STOP = 28;
+
 enum alignment
 {
     ALIGN_LEFT,
@@ -124,6 +126,15 @@ enum drawtext_flags
 	DTF_IGNORE_FMT		= 0x00000100,
 	DTF_UNDERLINES		= 0x00000200,
 	DTF_WRAP_SOFT		= 0x00001000
+};
+
+enum selection_flags
+{
+	SEL_DEFAULT			= 0x00000000,
+	SEL_NONE			= SEL_DEFAULT,
+	SEL_CHAR			= 0x00000001,
+	SEL_WORD			= 0x00000002,
+	SEL_RECT			= 0x00000004
 };
 
 /**\anchor os_gui_qualifiers

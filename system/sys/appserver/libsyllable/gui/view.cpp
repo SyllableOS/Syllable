@@ -2255,6 +2255,44 @@ void View::DrawText( const Rect& cPos, const String& cString, uint32 nFlags )
 	pcWindow->_PutRenderCmd();	
 }
 
+void View::DrawSelectedText( const Rect& cPos, const String& cString, const IPoint& cSel1, const IPoint& cSel2, uint32 nMode, uint32 nFlags )
+{
+	Window *pcWindow = GetWindow();
+
+	if( pcWindow == NULL )
+	{
+		return;
+	}
+	GRndDrawSelectedText_s *psCmd = static_cast < GRndDrawSelectedText_s * >( pcWindow->_AllocRenderCmd( DRC_DRAW_SELECTED_TEXT, this,
+			sizeof( GRndDrawSelectedText_s ) + cString.size() - 1 ) );
+
+	if( psCmd != NULL )
+	{
+		psCmd->nLength = cString.size();
+		psCmd->nFlags = nFlags;
+		psCmd->cPos = cPos;
+		psCmd->cSel1 = cSel1;
+		psCmd->cSel2 = cSel2;
+		psCmd->nMode = nMode;
+		memcpy( psCmd->zString, cString.c_str(), psCmd->nLength );
+	}
+	pcWindow->_PutRenderCmd();	
+}
+
+void View::GetSelection( const String &cClipboard )
+{
+	Window *pcWindow = GetWindow();
+
+	if( pcWindow == NULL )
+		return;
+
+	GRndGetSelection_s *psCmd = static_cast < GRndGetSelection_s * >( pcWindow->_AllocRenderCmd( DRC_GET_SELECTION, this, sizeof( GRndGetSelection_s ) ) );
+	if( psCmd != NULL )
+		strncpy( psCmd->m_zName, cClipboard.c_str(), 64 );
+
+	pcWindow->_PutRenderCmd();	
+}
+
 void View::DrawString( const Point & cPos, const String& cString )
 {
 	MovePenTo( cPos );

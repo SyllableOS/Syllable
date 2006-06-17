@@ -26,6 +26,7 @@
 #include <gui/region.h>
 #include <gui/view.h>
 #include <gui/font.h>
+#include <gui/point.h>
 #include <string>
 
 #include "fontnode.h"
@@ -140,7 +141,9 @@ public:
     void		DrawLine( const os::Point& cToPnt );
 
     void		DrawString( const char* pzString, int nLength );
-	void		DrawText( const os::Rect& cPos, const char *pzString, int nLength, uint32 nFlags );
+	void		DrawText( const os::Rect& cPos, const char *pzString, int nLength, uint32 nFlags, const os::IPoint& cSel1 = os::IPoint(), const os::IPoint& cSel2 = os::IPoint(), uint32 nMode = 0 );
+
+	void		GetSelection( os::String &cSelection );
 
     void		CopyRect( os::GRndCopyRect_s* psCmd );
 
@@ -243,6 +246,8 @@ public:
     bool			m_bFontPalletteValid;
     bool			m_bIsAddedToFont;
     FontNode::DependencyList_t::iterator	m_cFontViewListIterator;
+
+	os::String m_cSelectionBuffer;
 };
 
 Layer* FindLayer( int nToken );

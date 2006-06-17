@@ -161,7 +161,9 @@ enum
     DRC_INVALIDATE_RECT,
     DRC_SET_DRAW_REGION,
     DRC_SET_SHAPE_REGION,
-    DRC_DRAW_TEXT
+    DRC_DRAW_TEXT,
+    DRC_DRAW_SELECTED_TEXT,
+    DRC_GET_SELECTION
 };
 
 typedef	struct
@@ -256,6 +258,24 @@ typedef	struct
     int				nLength;			/* Length of the string, or -1 if null terminated */
     char			zString[1];			/* String of nLength characters, or null terminated if nLength == -1	*/
 } GRndDrawText_s;
+
+typedef	struct
+{
+    GRndHeader_s	sHdr;				/* Render header */
+	Rect			cPos;
+	uint32			nFlags;				/* Flags */
+    int				nLength;			/* Length of the string, or -1 if null terminated */
+	IPoint			cSel1;				/* First point of the selection */
+	IPoint			cSel2;				/* Second point of the selection */
+	uint32			nMode;				/* Selection mode */
+    char			zString[1];			/* String of nLength characters, or null terminated if nLength == -1	*/
+} GRndDrawSelectedText_s;
+
+typedef struct
+{
+	GRndHeader_s	sHdr;				/* Render header */
+	char    m_zName[64];				/* Clipboard to copy to */
+} GRndGetSelection_s;
 
 struct GRndScrollView_s : GRndHeader_s
 {

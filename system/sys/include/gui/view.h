@@ -400,6 +400,9 @@ public:
     void		DrawString( const String& cString );
     void		DrawString( const char *pzStr, int Len = -1 );
     void		DrawText( const Rect& cPos, const String& cString, uint32 nFlags = 0 );
+    void		DrawSelectedText( const Rect& cPos, const String& cString, const IPoint& cSel1, const IPoint& cSel2, uint32 nMode = SEL_CHAR, uint32 nFlags = 0 );
+
+	void		GetSelection( const String &cClipboard = "__system_clipboard__" );
 
       // Font functions.
     void            	GetTruncatedStrings( const char** pazStringArray,
