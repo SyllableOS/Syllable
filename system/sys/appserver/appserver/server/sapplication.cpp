@@ -94,7 +94,7 @@ SrvApplication::~SrvApplication()
 {
 	SrvApplication **ppcTmp;
 	
-	AppServer::GetInstance()->GetEvents()->ProcessKilled( m_hOwner );
+	g_pcEvents->ProcessKilled( m_hOwner );
 
 	if( m_cFonts.size() > 0 )
 	{
@@ -384,6 +384,47 @@ void SrvApplication::CreateBitmap( port_id hReply, int nWidth, int nHeight, colo
 	send_msg( hReply, 0, &sReply, sizeof( sReply ) );
 }
 
+
+//----------------------------------------------------------------------------
+// NAME:
+// DESC:
+// NOTE:
+// SEE ALSO:
+//----------------------------------------------------------------------------
+
+void SrvApplication::CloneBitmap( port_id hReply, int hHandle )
+{
+	BitmapNode *pcNode = g_pcBitmaps->GetObj( hHandle );
+	
+	if( pcNode == NULL )
+	{
+		AR_CreateBitmapReply_s sReply;
+		sReply.m_hHandle = -EINVAL;
+		send_msg( hReply, 0, &sReply, sizeof( sReply ) );
+		return;
+	}
+	
+	SrvBitmap* pcBitmap = pcNode->m_pcBitmap;
+	__assertw( pcBitmap != NULL );
+	BitmapNode *pcNewNode = new BitmapNode( pcBitmap );
+	
+
+	m_cBitmaps.insert( pcNewNode );
+	AR_CloneBitmapReply_s sReply;
+	sReply.m_hHandle = pcNewNode->GetToken();
+	sReply.m_hArea = pcBitmap->m_hArea;
+	sReply.m_nFlags = pcBitmap->m_nFlags;
+	sReply.m_nWidth = pcBitmap->m_nWidth;
+	sReply.m_nHeight = pcBitmap->m_nHeight;
+	sReply.m_eColorSpc = pcBitmap->m_eColorSpc;
+
+	send_msg( hReply, 0, &sReply, sizeof( sReply ) );
+	
+	__assertw( g_pcBitmaps->GetObj( hHandle ) );
+	
+	dbprintf( "Bitmap %i cloned to %i\n", pcNode->GetToken(), pcNewNode->GetToken() );
+}
+
 //----------------------------------------------------------------------------
 // NAME:
 // DESC:
@@ -443,6 +484,7 @@ void SrvApplication::DispatchMessage( Message * pcReq )
 			}
 			m_cWindows.insert( pcWindow );
 			pcWindow->Show( false );
+			pcWindow->PostEvent();
 			cReply.AddInt32( "top_view", pcWindow->GetClientView()->GetHandle(  ) );
 			cReply.AddInt32( "cmd_port", pcWindow->GetMsgPort() );
 			g_cLayerGate.Open();
@@ -1440,6 +1482,15 @@ bool SrvApplication::DispatchMessage( const void *pMsg, int nCode )
 
 			g_cLayerGate.Close();
 			CreateBitmap( psReq->hReply, psReq->nWidth, psReq->nHeight, psReq->eColorSpc, psReq->nFlags );
+			g_cLayerGate.Open();
+			return ( true );
+		}
+	case AR_CLONE_BITMAP:
+		{
+			AR_CloneBitmap_s *psReq = ( AR_CloneBitmap_s * ) pMsg;
+
+			g_cLayerGate.Close();
+			CloneBitmap( psReq->m_hReply, psReq->m_hHandle );
 			g_cLayerGate.Open();
 			return ( true );
 		}

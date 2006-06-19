@@ -66,10 +66,11 @@ class Bitmap
 public:
     enum { ACCEPT_VIEWS = 0x0001, SHARE_FRAMEBUFFER = 0x0002, NO_ALPHA_CHANNEL = 0x0004 };
     Bitmap( int nWidth, int nHeight, color_space eColorSpc, uint32 nFlags = SHARE_FRAMEBUFFER );
+    Bitmap( int hHandle );
     virtual ~Bitmap();
 
     bool		IsValid( void ) const;
-
+	int			GetHandle( void ) const;
     color_space	GetColorSpace() const;
     Rect		GetBounds( void ) const;
     int		GetBytesPerRow() const;

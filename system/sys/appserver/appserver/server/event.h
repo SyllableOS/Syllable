@@ -27,6 +27,14 @@
 #include <util/message.h>
 #include <vector>
 
+struct SrvEventMonitor_s
+{
+	int64 m_nProcess;
+	os::String m_zID;
+	int m_nTargetPort;
+	uint32 m_nHandlerToken;
+	int m_nMessageCode;
+};
 
 struct SrvEvent_s
 {
@@ -37,23 +45,26 @@ struct SrvEvent_s
 	int m_nMessageCode;
 	os::String m_zDescription;
 	os::Message m_cLastMessage;
+	std::vector<SrvEventMonitor_s*> m_cMonitors;
 };
 
 class SrvEvents
 {
 public:
-	void RegisterEvent( os::Message* pcMessage );
-	void UnregisterEvent( os::Message* pcMessage );
+	SrvEvent_s* RegisterEvent( os::String zID, int64 nProcess, os::String zDescription, 
+						int64 nTargetPort, int64 nToken, int64 nMessageCode );
+	void UnregisterEvent( os::String zID, int64 nProcess, int64 nTargetPort );
 	void GetEventInfo( os::Message* pcMessage );
 	void AddMonitor( os::Message* pcMessage );
 	void RemoveMonitor( os::Message* pcMessage );
 	void GetLastEventMessage( os::Message* pcMessage );
+	void PostEvent( SrvEvent_s* pcEvent, os::Message* pcData );
 	void PostEvent( os::Message* pcMessage );
 	void DispatchMessage( os::Message * pcMessage );
 	void ProcessKilled( proc_id hProc );
 private:
-	std::vector<SrvEvent_s> m_cEvents;
-	std::vector<SrvEvent_s> m_cMonitors;
+	std::vector<SrvEvent_s*> m_cEvents;
+	std::vector<SrvEventMonitor_s*> m_cMonitors;
 };
 
 

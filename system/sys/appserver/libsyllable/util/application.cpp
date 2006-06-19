@@ -784,6 +784,51 @@ int Application::CreateBitmap( int nWidth, int nHeight, color_space eColorSpc, u
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
+int Application::CloneBitmap( int hHandle, int* phHandle, area_id* phArea, uint32 *pnFlags, int* pnWidth,
+				int* pnHeight, color_space* peColorSpc )
+{
+	AR_CloneBitmap_s sReq;
+	AR_CloneBitmapReply_s sReply;
+
+	sReq.m_hReply = m->m_hReplyPort;
+	sReq.m_hHandle = hHandle;
+
+	Lock();
+
+	if( send_msg( m->m_hSrvAppPort, AR_CLONE_BITMAP, &sReq, sizeof( sReq ) ) != 0 )
+	{
+		Unlock();
+		dbprintf( "Error: Application::CloneBitmap() failed to send request to server\n" );
+		return ( -1 );
+	}
+
+	if( get_msg( m->m_hReplyPort, NULL, &sReply, sizeof( sReply ) ) < 0 )
+	{
+		Unlock();
+		dbprintf( "Error: Application::CloneBitmap() failed to read reply from server\n" );
+		return ( -1 );
+	}
+	Unlock();
+	if( sReply.m_hHandle < 0 )
+	{
+		return ( sReply.m_hHandle );
+	}
+	*phHandle = sReply.m_hHandle;
+	*phArea = sReply.m_hArea;
+	*pnFlags = sReply.m_nFlags;
+	*pnWidth = sReply.m_nWidth;
+	*pnHeight = sReply.m_nHeight;
+	*peColorSpc = sReply.m_eColorSpc;
+	return ( 0 );
+}
+
+//----------------------------------------------------------------------------
+// NAME:
+// DESC:
+// NOTE:
+// SEE ALSO:
+//----------------------------------------------------------------------------
+
 int Application::DeleteBitmap( int nBitmap )
 {
 	AR_DeleteBitmap_s sReq( nBitmap );

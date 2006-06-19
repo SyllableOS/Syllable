@@ -104,21 +104,24 @@ void ata_print_drive_speed( ATA_port_s* psPort )
 /* Reset atapi devices */
 void ata_probe_atapi_reset( ATA_port_s* psPort )
 {
-	ATA_WRITE_REG( psPort, ATA_REG_FEATURE, 0 );
-	ATA_WRITE_REG( psPort, ATAPI_REG_IRR, 0 );
-	ATA_WRITE_REG( psPort, ATAPI_REG_SAMTAG, 0 );
-	ATA_WRITE_REG( psPort, ATAPI_REG_COUNT_LOW, 0 );
-	ATA_WRITE_REG( psPort, ATAPI_REG_COUNT_HIGH, 0 );
+	ATA_cmd_s sCmd;
+	ata_cmd_init( &sCmd, psPort );
+	sCmd.bCanDMA = false;
 	
-	ATA_WRITE_REG( psPort, ATA_REG_COMMAND, ATAPI_CMD_RESET );
+	sCmd.nCmd[ATA_REG_CONTROL] = ATA_CONTROL_DEFAULT;
+	sCmd.nCmd[ATA_REG_COMMAND] = ATAPI_CMD_RESET;
+	sCmd.nCmd[ATA_REG_DEVICE] = ATA_DEVICE_DEFAULT;
 	
-	ata_io_wait( psPort, ATA_STATUS_BUSY, 0 );
+	psPort->sOps.ata_cmd_ata( &sCmd );
+	LOCK( sCmd.hWait );
+	ata_cmd_free( &sCmd );	
 }
 
 /* Configure one drive */
 status_t ata_probe_configure_drive( ATA_port_s* psPort )
 {
 	int i;
+	
 	
 	uint8 nSpeed = 0;
 	psPort->nCurrentSpeed = ATA_SPEED_PIO;
@@ -142,6 +145,8 @@ status_t ata_probe_configure_drive( ATA_port_s* psPort )
 		if( ( psPort->nSupportedPortSpeed & ( 1 << i ) ) &&
 			( psPort->nSupportedDriveSpeed & ( 1 << i ) ) )
 		{
+			ATA_cmd_s sCmd;
+			
 			if( i == ATA_SPEED_PIO ) {
 				kerndbg( KERN_INFO, "%s: Using standard PIO mode\n", psPort->zDeviceName );
 				return( 0 );
@@ -163,15 +168,24 @@ status_t ata_probe_configure_drive( ATA_port_s* psPort )
 			}
 			
 			
-			ATA_WRITE_REG( psPort, ATA_REG_COUNT, nSpeed )
-			ATA_WRITE_REG( psPort, ATA_REG_LBA_LOW, 0 )
-			ATA_WRITE_REG( psPort, ATA_REG_LBA_MID, 0 )
-			ATA_WRITE_REG( psPort, ATA_REG_LBA_HIGH, 0 )
-			ATA_WRITE_REG( psPort, ATA_REG_FEATURE, 0x03 )
-			ATA_WRITE_REG( psPort, ATA_REG_CONTROL, ATA_CONTROL_DEFAULT | ATA_CONTROL_INTDISABLE )
-			ATA_WRITE_REG( psPort, ATA_REG_COMMAND, ATA_CMD_SET_FEATURES )
-			if( ata_io_wait( psPort, ATA_STATUS_BUSY, 0 ) < 0 )
+			ata_cmd_init( &sCmd, psPort );
+			sCmd.bCanDMA = false;
+	
+			sCmd.nCmd[ATA_REG_CONTROL] = ATA_CONTROL_DEFAULT;
+			sCmd.nCmd[ATA_REG_COMMAND] = ATA_CMD_SET_FEATURES;
+			sCmd.nCmd[ATA_REG_DEVICE] = ATA_DEVICE_DEFAULT;
+			sCmd.nCmd[ATA_REG_COUNT] = nSpeed;
+			sCmd.nCmd[ATA_REG_FEATURE] = 0x03;
+			
+			psPort->sOps.ata_cmd_ata( &sCmd );
+			LOCK( sCmd.hWait );
+			ata_cmd_free( &sCmd );	
+		
+			if( sCmd.nStatus < 0 )
+			{
+				kerndbg( KERN_WARNING, "%s: Failed to set speed\n", psPort->zDeviceName );
 				return( -1 );
+			}
 			
 			psPort->nCurrentSpeed = i;
 			
@@ -190,12 +204,10 @@ void ata_probe_port( ATA_port_s* psPort )
 	uint8 nID[512];
 	char zNode[10];
 	ATA_identify_info_s* psID;
+	ATA_cmd_s sCmd;
 
 	if( psPort->bConfigured )
 		return;
-	
-	/* Lock port */
-	LOCK( psPort->hPortLock );
 	
 	/* Reset port */
 	if( psPort->sOps.reset( psPort ) != 0 )
@@ -203,70 +215,58 @@ void ata_probe_port( ATA_port_s* psPort )
 		kerndbg( KERN_DEBUG_LOW, "No device connected on %i:%i\n", psPort->nChannel, psPort->nPort );
 		psPort->nDevice = ATA_DEV_NONE;
 		psPort->nCable = ATA_CABLE_NONE;
-		UNLOCK( psPort->hPortLock );
 		return;
 	}
 	
-	/* Read registers */
-	ATA_READ_REG( psPort, ATA_REG_LBA_HIGH, nLbaHigh )
-	ATA_READ_REG( psPort, ATA_REG_LBA_MID, nLbaMid )
-	ATA_READ_REG( psPort, ATA_REG_STATUS, nStatus )
-	ATA_READ_REG( psPort, ATA_REG_ERROR, nError )
+	/* Identify device */
+	psPort->sOps.identify( psPort );
 	
-	if( nError == 1 || ( psPort->nPort == 0 && nError == 0x81 ) )
-	{
-		if( ( ( nLbaMid == 0x00 && nLbaHigh == 0x00 ) ||
-		( nLbaMid == 0xc3 && nLbaHigh == 0xc3 ) ) && nStatus != 0 )
-		{
-			psPort->nDevice = ATA_DEV_ATA;
-			kerndbg( KERN_INFO, "ATA device connected on %s cable\n", g_zCable[psPort->nCable] );
-		} else 
-		{
-			if( ( nLbaMid == 0x14 && nLbaHigh == 0xeb ) ||
-			( nLbaMid == 0x69 && nLbaHigh == 0x96 ) )
-			{
-				psPort->nDevice = ATA_DEV_ATAPI;
-			} else {
-				psPort->nDevice = ATA_DEV_NONE;
-				psPort->nCable = ATA_CABLE_NONE;
-				kerndbg( KERN_DEBUG_LOW, "No device connected on %i:%i\n", psPort->nChannel, psPort->nPort );
-				goto end;
-			}
-		}
-	} else
-	{
-		psPort->nDevice = ATA_DEV_NONE;
-		psPort->nCable = ATA_CABLE_NONE;
-		kerndbg( KERN_DEBUG_LOW, "No device connected on %i:%i\n", psPort->nChannel, psPort->nPort );
-		goto end;
+	if( psPort->nDevice == ATA_DEV_ATA ) {
+		kerndbg( KERN_INFO, "ATA device connected on %s cable\n", g_zCable[psPort->nCable] );
+	}
+	else if( psPort->nDevice == ATA_DEV_ATAPI ) {
+		kerndbg( KERN_INFO, "ATAPI device connected on %s cable\n", g_zCable[psPort->nCable] );
+	}
+	else {
+		kerndbg( KERN_INFO, "No device connected on %i:%i\n", psPort->nChannel, psPort->nPort );
+		return;
 	}
 	
 	psPort->bConfigured = true;
 	
 	if( psPort->nDevice == ATA_DEV_UNKNOWN )
-		goto end;
-
-	/* Select drive */
-	psPort->sOps.select( psPort, 0 );
-	
-	if( ata_io_wait( psPort, ATA_STATUS_BUSY, 0 ) != 0 )
-		goto err_dev_data;
+		return;
 		
 	/* Put identification command and read response data */
+	ata_cmd_init( &sCmd, psPort );
+	sCmd.bCanDMA = false;
+	
+	sCmd.nCmd[ATA_REG_CONTROL] = ATA_CONTROL_DEFAULT;
 	if( psPort->nDevice == ATA_DEV_ATAPI )
-		ATA_WRITE_REG( psPort, ATA_REG_COMMAND, ATAPI_CMD_IDENTIFY )
+		sCmd.nCmd[ATA_REG_COMMAND] = ATAPI_CMD_IDENTIFY;
 	else
-		ATA_WRITE_REG( psPort, ATA_REG_COMMAND, ATA_CMD_IDENTIFY )
-
-	/* Wait for the drive to respond */
-	if( ata_io_wait( psPort, ATA_STATUS_DRQ|ATA_STATUS_BUSY, ATA_STATUS_DRQ ) != 0 )
+		sCmd.nCmd[ATA_REG_COMMAND] = ATA_CMD_IDENTIFY;
+	sCmd.nCmd[ATA_REG_DEVICE] = ATA_DEVICE_DEFAULT;
+	sCmd.pTransferBuffer = psPort->pDataBuf;
+	sCmd.nTransferLength = 512;
+	
+	
+	psPort->sOps.ata_cmd_ata( &sCmd );
+	LOCK( sCmd.hWait );
+	ata_cmd_free( &sCmd );	
+	
+	if( sCmd.nStatus < 0 )
+	{
 		goto err_dev_data;
+	}
 
-	if( ata_io_read( psPort, &nID[0], 512 ) != 512 )
-		goto err_dev_data;
+	
+	
+	memcpy( &nID[0], psPort->pDataBuf, 512 );
+
 	
 	psID = (ATA_identify_info_s*)&nID[0];
-
+	
 	/* Get drive name */
 	extract_model_id( psPort->zDeviceName, psID->model_id );
 
@@ -403,16 +403,13 @@ void ata_probe_port( ATA_port_s* psPort )
 	if( !g_bEnableDMA )
 		psPort->nSupportedPortSpeed = ( 1 << ATA_SPEED_PIO );
 	
-	goto end;
+	return;
 err_dev_data:
 	kerndbg( KERN_FATAL, "Could not get drive data\n" );
 	
 err_id:
 	
 	psPort->nDevice = ATA_DEV_UNKNOWN;
-end:
-	/* Unlock port */
-	UNLOCK( psPort->hPortLock );
 }
 
 

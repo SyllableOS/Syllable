@@ -634,8 +634,7 @@ void WndBorder::MouseUp( Messenger * pcAppTarget, const Point & cPos, int nButto
 		if( m_pcWindow != NULL && !m_pcWindow->IsMinimized() )
 		{
 			m_pcWindow->SetMinimized( true );
-			Show( false );
-			remove_from_focusstack( m_pcWindow );
+			m_pcWindow->Show( false );
 		}
 		if( m_pcParent != NULL )
 		{

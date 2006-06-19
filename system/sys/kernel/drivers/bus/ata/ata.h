@@ -194,20 +194,25 @@ typedef struct
 
 
 struct ATA_port_t;
-
+struct ATA_cmd_t;
 
 /* ATA port operations */
 typedef struct
 {
 	status_t ( *reset )( struct ATA_port_t* psPort ); /* Reset port (required) */
+	void ( *identify )( struct ATA_port_t* psPort ); /* Identify device (optional) */
 	status_t ( *configure )( struct ATA_port_t* psPort ); /* Configure port (optional) */
 	void ( *select )( struct ATA_port_t* psPort, uint8 nAdd ); /* Select port (optional) */
+	uint8 ( *status )( struct ATA_port_t* psPort ); /* Read status (optional) */
+	uint8 ( *altstatus )( struct ATA_port_t* psPort ); /* Read alternate status (optional) */
 	
 	status_t ( *prepare_dma_read )( struct ATA_port_t* psPort, uint8* pBuffer, uint32 nLen ); /* (optional) */
 	status_t ( *prepare_dma_write )( struct ATA_port_t* psPort, uint8* pBuffer, uint32 nLen ); /* (optional) */
 	status_t ( *start_dma )( struct ATA_port_t* psPort ); /* (optional) */
 	
-	void ( *flush_regs )( struct ATA_port_t* psPort ); /* (optional) */
+	void ( *ata_cmd_ata )( struct ATA_cmd_t* psCmd ); /* Process ata command (optional) */
+	void ( *ata_cmd_atapi )( struct ATA_cmd_t* psCmd ); /* Process atapi command (optional) */
+	
 } ATA_port_ops_s;
 
 /* ATA command */

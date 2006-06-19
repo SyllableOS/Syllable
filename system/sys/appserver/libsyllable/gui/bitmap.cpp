@@ -28,7 +28,18 @@
 
 using namespace os;
 
-
+/**
+ * Bitmap constructor.
+ * \par Description:
+ * This is the constructor used to create a standard bitmap.
+ * \param nWidth - Width of the bitmap.
+ * \param nHeight - Height of the bitmap.
+ * \param eColorSpc - ColorSpace of the bitmap
+ * \param nFlags - See description of the class.
+ * \par Note:
+ * An exception will be thrown if the bitmap could not be created. 	
+ * \author Kurt Skauen (kurt@atheos.cx)
+ *****************************************************************************/
 Bitmap::Bitmap( int nWidth, int nHeight, color_space eColorSpc, uint32 nFlags )
 {
 	area_id hArea;
@@ -65,6 +76,54 @@ Bitmap::Bitmap( int nWidth, int nHeight, color_space eColorSpc, uint32 nFlags )
 	}
 }
 
+/**
+ * Create a bitmap from a handle.
+ * \par Description:
+ * This constructor will create a handle from the appserver bitmap handle.
+ * This is only useful in special cases, e.g. to share bitmaps between two
+ * applications.
+ * \param hHandle - The appserver handle of the bitmap.
+ * \par Note:
+ * An exception will be thrown if the bitmap could not be created. 	
+ * \author Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+Bitmap::Bitmap( int hHandle )
+{
+	area_id hArea;
+	int nWidth;
+	int nHeight;
+	uint nFlags;
+	color_space eColorSpc;
+	int hNewHandle;
+	
+	int nError = Application::GetInstance()->CloneBitmap( hHandle, &hNewHandle, &hArea, &nFlags, &nWidth, &nHeight, &eColorSpc );
+
+	if( nError < 0 )
+	{
+		throw( GeneralFailure( "Application server failed to create bitmap", -nError ) );
+	}
+
+
+	m_cBounds = Rect( 0, 0, nWidth - 1, nHeight - 1 );
+
+	m_hHandle = hNewHandle;
+	m_pRaster = NULL;
+	m_eColorSpace = eColorSpc;
+	m_pcWindow = NULL;
+
+	
+	if( nFlags & SHARE_FRAMEBUFFER )
+	{
+		m_hArea = clone_area( "bm_clone", ( void ** )&m_pRaster, AREA_FULL_ACCESS, AREA_NO_LOCK, hArea );
+	}
+	else
+	{
+		throw( GeneralFailure( "Tried to clone bitmap without SHARE_FRAMEBUFFER flags", -nError ) );
+	}
+	
+	printf("Remapped bitmap to %i\n", hNewHandle );
+}
+
 Bitmap::~Bitmap()
 {
 	if( m_hArea != -1 )
@@ -76,11 +135,39 @@ Bitmap::~Bitmap()
 	Application::GetInstance()->DeleteBitmap( m_hHandle );
 }
 
+
+
+/**
+ * Returns the appserver handle
+ * \par Description:
+ * Returns the appserver handle. This method is only useful if you want to
+ * share a bitmap with another application.
+ * \author Kurt Skauen (kurt@atheos.cx)
+ *****************************************************************************/
+int Bitmap::GetHandle() const
+{
+	return ( m_hHandle );
+}
+
+/**
+ * Returns the colorspace of the bitmap.
+ * \par Description:
+ * Returns the colorspace of the bitmap.
+ * \author Kurt Skauen (kurt@atheos.cx)
+ *****************************************************************************/
 color_space Bitmap::GetColorSpace() const
 {
 	return ( m_eColorSpace );
 }
 
+/**
+ * Adds a view to the bitmap.
+ * \par Description:
+ * This method adds a view to the bitmap. This is only valid if the bitmap
+ * has been created with the ACCEPT_VIEWS flag.
+ * \param pcView - The view.
+ * \author Kurt Skauen (kurt@atheos.cx)
+ *****************************************************************************/
 void Bitmap::AddChild( View * pcView )
 {
 	if( NULL != m_pcWindow )
@@ -89,6 +176,14 @@ void Bitmap::AddChild( View * pcView )
 	}
 }
 
+/**
+ * Removes a view from the bitmap.
+ * \par Description:
+ * This method removes a view from the bitmap. This is only valid if the bitmap
+ * has been created with the ACCEPT_VIEWS flag.
+ * \param pcView - The view.
+ * \author Kurt Skauen (kurt@atheos.cx)
+ *****************************************************************************/
 bool Bitmap::RemoveChild( View * pcView )
 {
 	if( NULL != m_pcWindow )
@@ -102,6 +197,13 @@ bool Bitmap::RemoveChild( View * pcView )
 	}
 }
 
+/**
+ * Returns the view with the given name.
+ * \par Description:
+ * This method returns the (previously added) view with the given name. 
+ * This is only valid if the bitmap has been created with the ACCEPT_VIEWS flag.
+ * \author Kurt Skauen (kurt@atheos.cx)
+ *****************************************************************************/
 View *Bitmap::FindView( const char *pzName ) const
 {
 	if( NULL != m_pcWindow )
@@ -114,6 +216,13 @@ View *Bitmap::FindView( const char *pzName ) const
 	}
 }
 
+/**
+ * Flush rendering operations.
+ * \par Description:
+ * This method flushes all pending rendering commands of the views added to
+ * this bitmap. This is only valid if the bitmap has been created with the ACCEPT_VIEWS flag.
+ * \author Kurt Skauen (kurt@atheos.cx)
+ *****************************************************************************/
 void Bitmap::Flush( void )
 {
 	if( NULL != m_pcWindow )
@@ -122,6 +231,13 @@ void Bitmap::Flush( void )
 	}
 }
 
+/**
+ * Flush rendering operations and wait until they have been finished.
+ * \par Description:
+ * This method works like Flush() but waits until all operations have been
+ * finished. This is only valid if the bitmap has been created with the ACCEPT_VIEWS flag.
+ * \author Kurt Skauen (kurt@atheos.cx)
+ *****************************************************************************/
 void Bitmap::Sync( void )
 {
 	if( NULL != m_pcWindow )
@@ -130,11 +246,25 @@ void Bitmap::Sync( void )
 	}
 }
 
+/**
+ * Returns the bounds of the bitmap.
+ * \par Description:
+ * Returns the bounds of the bitmap.
+ * \author Kurt Skauen (kurt@atheos.cx)
+ *****************************************************************************/
 Rect Bitmap::GetBounds( void ) const
 {
 	return ( m_cBounds );
 }
 
+/**
+ * Returns the numer of bytes in one bitmap row.
+ * \par Description:
+ * Returns the numer of bytes in one bitmap row.
+ * \par Note:
+ * This value might differ from (Width of the bitmap) * (Number of bytes per pixel)!
+ * \author Kurt Skauen (kurt@atheos.cx)
+ *****************************************************************************/
 int Bitmap::GetBytesPerRow() const
 {
 	int nBitsPerPix = BitsPerPixel( m_eColorSpace );

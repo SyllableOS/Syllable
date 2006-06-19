@@ -93,6 +93,20 @@ Desktop::~Desktop()
 	delete m;
 }
 
+
+
+/** Return the desktop number.
+ * \par Description:
+ * Returns the number of the desktop this object is set to.
+ * \return Desktop number.
+ * \author	Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+int Desktop::GetDesktop() const
+{
+	return( m->m_nDesktop );
+}
+
+
 screen_mode Desktop::GetScreenMode() const
 {
 	return ( *m->m_psScreenMode );

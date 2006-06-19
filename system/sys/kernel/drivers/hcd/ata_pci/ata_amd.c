@@ -59,6 +59,7 @@ static struct AMD_bridge_s {
 	{ "AMD Viper", 0x1022, 0x7411, 0x40, AMD_UDMA_100 | AMD_BAD_FIFO },
 	{ "AMD Opus", 0x1022, 0x7441, 0x40, AMD_UDMA_100 },
 	{ "AMD 8111", 0x1022, 0x7469, 0x40, AMD_UDMA_100 },
+	{ "AMD CS5536", 0x1022, 0x209a, 0x40, AMD_UDMA_100 },
 	
 	{ "nVIDIA nForce", 0x10de, 0x01bc, 0x50, AMD_UDMA_100 },
 	{ "nVIDIA nForce 2", 0x10de, 0x0065, 0x50, AMD_UDMA_133 },
@@ -68,6 +69,10 @@ static struct AMD_bridge_s {
 	{ "nVIDIA nForce 3S", 0x10de, 0x00e5, 0x50, AMD_UDMA_133 },
 	{ "nVIDIA nForce 3S SATA", 0x10de, 0x00e3, 0x50, AMD_UDMA_133 | AMD_SATA },
 	{ "nVIDIA nForce 3S SATA", 0x10de, 0x00ee, 0x50, AMD_UDMA_133 | AMD_SATA },
+	{ "nVIDIA nForce CK804", 0x10de, 0x0053, 0x50, AMD_UDMA_133 },
+	{ "nVIDIA nForce MCP04", 0x10de, 0x0035, 0x50, AMD_UDMA_133 },
+	{ "nVIDIA nForce MCP51", 0x10de, 0x0265, 0x50, AMD_UDMA_133 },
+	{ "nVIDIA nForce MCP55", 0x10de, 0x036e, 0x50, AMD_UDMA_133 }
 };
 
 struct AMD_private_s

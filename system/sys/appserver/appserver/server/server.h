@@ -57,6 +57,7 @@ extern DisplayDriver*	g_pcDispDrv;
 
 extern Array<Layer>*	g_pcLayers;
 extern os::Locker*		g_pcWinListLock;
+extern SrvEvents*		g_pcEvents;
 
 void config_changed();
 
@@ -68,7 +69,6 @@ public:
 
     static AppServer*	GetInstance();
     os::WindowDecorator*  CreateWindowDecorator( Layer* pcView, uint32 nFlags );
-    SrvEvents* GetEvents() { return( m_pcEvents ); }
   
     void		Run( void );
     static int32 CloseWindows( void* pData );
@@ -102,8 +102,6 @@ private:
 
     FontNode*		m_pcWindowTitleFont;
     FontNode*		m_pcToolWindowTitleFont;
-    
-    SrvEvents*		m_pcEvents;
     
     int nWatchNode;
 };

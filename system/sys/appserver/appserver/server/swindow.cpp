@@ -38,6 +38,7 @@
 #include "windowdecorator.h"
 #include "config.h"
 #include "clipboard.h"
+#include "event.h"
 
 #include <atheos/kernel.h>
 
@@ -92,8 +93,6 @@ SrvWindow::SrvWindow( const char *pzTitle, void *pTopView, uint32 nFlags, uint32
 	m_pcWndBorder->SetFrame( cBorderFrame );
 	m_pcDecorator->SetTitle( pzTitle );
 
-	m_bBorderHit = false;
-
 	m_pcIcon = NULL;
 	m_bMinimized = false;
 
@@ -112,8 +111,60 @@ SrvWindow::SrvWindow( const char *pzTitle, void *pTopView, uint32 nFlags, uint32
 	}
 
 	add_window_to_desktop( this );
-
+	
+	/* Register window event */
+	if( ( m_nFlags & ( WND_SYSTEM | WND_NO_BORDER | WND_BACKMOST ) ) == 0 )
+	{
+		m_pcEvent = g_pcEvents->RegisterEvent( BuildEventIDString(), pcApp->GetOwner(), "Get Window information", 
+									m_hMsgPort, -1, -1 );
+		__assertw( m_pcEvent != NULL );
+	} else
+		m_pcEvent = NULL;
+	
 	m_hThread = Run();
+}
+
+/** Build an events id string.
+ * \par Description:
+ * This method returns the id string "os/Window/<Address>" of the window.
+ * An event is registered using this id string for each window.
+ * \author Arno Klenke
+ *****************************************************************************/
+os::String SrvWindow::BuildEventIDString()
+{
+	char zBuffer[30];
+	sprintf( zBuffer, "os/Window/0x%x", (uint)this );
+	return( zBuffer );
+}
+
+/** Post a window event.
+ * \par Description:
+ * This method posts a window event using the event system. The event includes
+ * attributes like title or desktop mask.
+ * \author Arno Klenke
+ *****************************************************************************/
+void SrvWindow::PostEvent( bool bIconChanged )
+{
+	if( m_pcEvent != NULL )
+	{
+		os::Message cEvent;
+		cEvent.AddString( "application", GetApp()->GetName() );
+		cEvent.AddString( "title", m_cTitle );
+		cEvent.AddInt64( "desktop_mask", m_nDesktopMask );
+		cEvent.AddInt64( "flags", m_nFlags );
+		cEvent.AddBool( "visible", m_pcTopView->IsVisible() );
+		cEvent.AddBool( "minimized", IsMinimized() );
+		if( m_pcIcon != NULL )
+		{
+			cEvent.AddInt64( "icon_handle", m_pcIcon->GetToken() );
+			cEvent.AddIRect( "icon_bounds", m_pcIcon->m_pcBitmap->GetBounds() );
+		}
+		if( bIconChanged )
+		{
+			cEvent.AddBool( "icon_changed", bIconChanged );
+		}
+		g_pcEvents->PostEvent( m_pcEvent, &cEvent );
+	}
 }
 
 void SrvWindow::ReplaceDecorator()
@@ -167,8 +218,6 @@ SrvWindow::SrvWindow( SrvApplication * pcApp, SrvBitmap * pcBitmap ):m_cMutex( "
 	m_pcIcon = NULL;
 	m_bMinimized = false;
 
-	m_bBorderHit = false;
-
 	m_pcTopView = new Layer( NULL, NULL, "bitmap_layer", Rect( 0, 0, pcBitmap->m_nWidth - 1, pcBitmap->m_nHeight - 1 ), 0, NULL );
 	m_pcTopView->SetWindow( this );
 	m_pcWndBorder = NULL;
@@ -176,6 +225,7 @@ SrvWindow::SrvWindow( SrvApplication * pcApp, SrvBitmap * pcBitmap ):m_cMutex( "
 
 	SetBitmap( pcBitmap );
 	m_hThread = -1;
+	m_pcEvent = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -187,6 +237,10 @@ SrvWindow::SrvWindow( SrvApplication * pcApp, SrvBitmap * pcBitmap ):m_cMutex( "
 
 SrvWindow::~SrvWindow()
 {
+	/* Unregister window event */
+	if( m_pcEvent != NULL )
+		g_pcEvents->UnregisterEvent( BuildEventIDString(), m_pcApp->GetOwner(), m_hMsgPort );
+	
 	if( this == s_pcLastMouseWindow )
 	{
 		s_pcLastMouseWindow = NULL;
@@ -368,6 +422,7 @@ void SrvWindow::SetDesktopMask( uint32 nMask )
 	remove_window_from_desktop( this );
 	m_nDesktopMask = nMask;
 	add_window_to_desktop( this );
+	PostEvent();
 }
 
 //----------------------------------------------------------------------------
@@ -451,6 +506,7 @@ void SrvWindow::Show( bool bShow )
 	}
 
 	desktop_windows_changed();
+	PostEvent();
 }
 
 //----------------------------------------------------------------------------
@@ -707,7 +763,7 @@ void SrvWindow::R_Render( WR_Render_s * psPkt )
 				delete[] pBuffer;
 
 				break;
-			}
+			}			
 		case DRC_SET_FRAME:
 			{
 				GRndSetFrame_s *psMsg = static_cast < GRndSetFrame_s * >( psHdr );
@@ -757,6 +813,8 @@ void SrvWindow::R_Render( WR_Render_s * psPkt )
 					{
 						remove_from_focusstack( this );
 					}
+					
+					PostEvent();
 
 					Layer *pcParent = m_pcWndBorder->GetParent();
 
@@ -962,14 +1020,9 @@ void SrvWindow::MouseMoved( Message * pcEvent, int nTransit )
 {
 	__assertw( NULL != m_pcWndBorder );
 	__assertw( NULL != m_pcTopView );
-	/*if( m_pcTopView == NULL )
-	{
-		Point cMousePos;
-		pcEvent->FindPoint( "_scr_pos", &cMousePos );
-		dbprintf( "%x %x %x %x %x %x\n", (uint)this, (uint)s_pcLastMouseWindow, (uint)s_pcDragWindow, (uint)get_active_window( false ), (uint)get_active_window( true ), g_pcTopView->GetChildAt( cMousePos ) );
-	}*/
 
-	if(  /*m_bBorderHit && */ ( m_nFlags & WND_SYSTEM ) == 0 )
+
+	if( ( m_nFlags & WND_SYSTEM ) == 0 )
 	{
 		Point cNewPos;
 
@@ -1019,7 +1072,6 @@ void SrvWindow::MouseDown( Message * pcEvent )
 		int32 nButton;
 
 		pcEvent->FindInt32( "_button", &nButton );
-		m_bBorderHit = true;
 		if( m_pcWndBorder->MouseDown( m_pcAppTarget, cPos - m_pcWndBorder->GetLeftTop(), nButton ) )
 		{
 			s_pcDragWindow = this;
@@ -1435,6 +1487,9 @@ bool SrvWindow::DispatchMessage( Message * pcReq )
 
 			desktop_windows_changed();
 			g_cLayerGate.Open();
+			
+			/* Send event */
+			PostEvent();
 			break;
 		}
 	case WR_SET_FLAGS:
@@ -1646,12 +1701,43 @@ bool SrvWindow::DispatchMessage( Message * pcReq )
 						g_cLayerGate.Close();
 						/* Set icon only if it shares the framebuffer with the application */
 						if( pcNode->m_pcBitmap->m_nFlags & Bitmap::SHARE_FRAMEBUFFER )
-							SetIcon( pcNode->m_pcBitmap );
+							SetIcon( pcNode );
 						desktop_windows_changed();
 						g_cLayerGate.Open();
+						PostEvent( true );
 					}
 				}
 			}
+			break;
+		}
+	case WR_ACTIVATE:
+		{
+			if( ( GetTopView()->IsVisible() || ( GetTopView()->m_nHideCount == 1 && IsMinimized() ) )
+				&& !GetTopView()->IsBackdrop() && GetTopView()->GetParent() )
+				{
+					g_cLayerGate.Close();
+					MakeFocus( true );
+					GetTopView()->MoveToFront();
+					GetTopView()->GetParent()->UpdateRegions( false );
+
+					SrvWindow::HandleMouseTransaction();
+					g_cLayerGate.Open();
+				}
+			break;
+		}
+	case WR_MINIMIZE:
+		{
+			if( GetTopView()->IsVisible() && !IsMinimized()
+				&& !GetTopView()->IsBackdrop() && GetTopView()->GetParent() )
+				{
+					g_cLayerGate.Close();
+					SetMinimized( true );
+					Show( false );
+					remove_from_focusstack( this );
+					GetTopView()->GetParent()->UpdateRegions( false );
+					SrvWindow::HandleMouseTransaction();
+					g_cLayerGate.Open();
+				}
 			break;
 		}
 	case AR_CLOSE_WINDOW:
@@ -1692,6 +1778,8 @@ bool SrvWindow::DispatchMessage( const void *psMsg, int nCode )
 	case WR_GET_MOUSE:
 	case WR_SET_MOUSE_POS:
 	case WR_SET_ICON:
+	case WR_ACTIVATE:
+	case WR_MINIMIZE:
 	case AR_CLOSE_WINDOW:
 		{
 			try
@@ -1733,6 +1821,7 @@ bool SrvWindow::DispatchMessage( const void *psMsg, int nCode )
 			send_msg( psReq->m_hReply, 0, &sReply, sizeof( sReply ) );
 			break;
 		}
+	#if 0
 	case WR_UPDATE_REGIONS:
 		g_cLayerGate.Close();
 		if( m_pcWndBorder != NULL )
@@ -1745,6 +1834,7 @@ bool SrvWindow::DispatchMessage( const void *psMsg, int nCode )
 		}
 		g_cLayerGate.Open();
 		break;
+	#endif
 	case M_QUIT:
 		{
 			bDoLoop = false;

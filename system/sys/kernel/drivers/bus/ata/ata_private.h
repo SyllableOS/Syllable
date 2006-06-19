@@ -56,10 +56,11 @@ static inline void extract_model_id( char *buffer, char *string )
 }
 
 /* ata_port.c */
-status_t ata_port_lock( ATA_port_s* psPort );
-status_t ata_port_unlock( ATA_port_s* psPort );
+void ata_port_identify( ATA_port_s* psPort );
 status_t ata_port_configure( ATA_port_s* psPort );
 void     ata_port_select( ATA_port_s* psPort, uint8 nAdd );
+uint8    ata_port_status( ATA_port_s* psPort );
+uint8    ata_port_altstatus( ATA_port_s* psPort );
 status_t ata_port_prepare_dma_read( ATA_port_s* psPort, uint8* pBuffer, uint32 nLen );
 status_t ata_port_prepare_dma_write( ATA_port_s* psPort, uint8* pBuffer, uint32 nLen );
 status_t ata_port_start_dma( ATA_port_s* psPort );

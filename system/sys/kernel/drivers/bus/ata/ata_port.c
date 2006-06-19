@@ -26,6 +26,42 @@
 #include "ata.h"
 #include "ata_private.h"
 
+/* Identify one device */
+void ata_port_identify( ATA_port_s* psPort )
+{
+	uint8 nError, nStatus, nLbaHigh, nLbaMid;
+	/* Read registers */
+	ATA_READ_REG( psPort, ATA_REG_LBA_HIGH, nLbaHigh )
+	ATA_READ_REG( psPort, ATA_REG_LBA_MID, nLbaMid )
+	ATA_READ_REG( psPort, ATA_REG_STATUS, nStatus )
+	ATA_READ_REG( psPort, ATA_REG_ERROR, nError )
+	
+	if( nError == 1 || ( psPort->nPort == 0 && nError == 0x81 ) )
+	{
+		if( ( ( nLbaMid == 0x00 && nLbaHigh == 0x00 ) ||
+		( nLbaMid == 0xc3 && nLbaHigh == 0xc3 ) ) && nStatus != 0 )
+		{
+			psPort->nDevice = ATA_DEV_ATA;
+			return;
+		} else 
+		{
+			if( ( nLbaMid == 0x14 && nLbaHigh == 0xeb ) ||
+			( nLbaMid == 0x69 && nLbaHigh == 0x96 ) )
+			{
+				psPort->nDevice = ATA_DEV_ATAPI;
+			} else {
+				psPort->nDevice = ATA_DEV_NONE;
+				psPort->nCable = ATA_CABLE_NONE;
+				return;
+			}
+		}
+	} else
+	{
+		psPort->nDevice = ATA_DEV_NONE;
+		psPort->nCable = ATA_CABLE_NONE;
+	}
+}
+
 /* Default configure function */
 status_t ata_port_configure( ATA_port_s* psPort )
 {
@@ -44,6 +80,22 @@ void ata_port_select( ATA_port_s* psPort, uint8 nAdd )
 	
 	ATA_READ_REG( psPort, ATA_REG_CONTROL, nControl )
 	udelay( ATA_CMD_DELAY );
+}
+
+/* Default read status */
+uint8 ata_port_status( ATA_port_s* psPort )
+{
+	uint8 nStatus;
+	ATA_READ_REG( psPort, ATA_REG_STATUS, nStatus );
+	return( nStatus );
+}
+
+/* Default read altstatus */
+uint8 ata_port_altstatus( ATA_port_s* psPort )
+{
+	uint8 nStatus;
+	ATA_READ_REG( psPort, ATA_REG_ALTSTATUS, nStatus );
+	return( nStatus );
 }
 
 /* Prepare DMA table ( Helper function for ata_port_prepare_dma_read/write ) */

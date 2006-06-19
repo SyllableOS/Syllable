@@ -147,8 +147,10 @@ private:
     int   SwitchDesktop( int nDesktop );
     void  SetScreenMode( int nDesktop, uint32 nValidityMask, screen_mode* psMode );
   
-    int CreateBitmap( int nWidth, int nHeight, color_space eColorSpc,
+    int  CreateBitmap( int nWidth, int nHeight, color_space eColorSpc,
 		      uint32 nFlags, int* phHandle, int* phArea );
+	int  CloneBitmap( int hHandle, int* phHandle, area_id* phArea, uint32 *pnFlags, int* pnWidth,
+				int* pnHeight, color_space* peColorSpc );
     int  DeleteBitmap( int nBitmap );
     int  CreateSprite( const Rect& cFrame, int nBitmapHandle, uint32* pnHandle );
     void DeleteSprite( uint32 nSprite );

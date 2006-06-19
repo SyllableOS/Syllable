@@ -34,7 +34,7 @@ status_t ata_io_wait( ATA_port_s* psPort, int nMask, int nValue )
 	
 	while( get_system_time() - nTime < ATA_CMD_TIMEOUT * 20 )
 	{
-		ATA_READ_REG( psPort, ATA_REG_STATUS, nStatus )
+		nStatus = psPort->sOps.status( psPort );
 		if( ( nStatus & nMask ) == nValue )
 			return( 0 );
 	}
@@ -51,7 +51,7 @@ status_t ata_io_wait_alt( ATA_port_s* psPort, int nMask, int nValue )
 	
 	while( get_system_time() - nTime < ATA_CMD_TIMEOUT * 20 )
 	{
-		ATA_READ_REG( psPort, ATA_REG_CONTROL, nStatus )
+		nStatus = psPort->sOps.altstatus( psPort );
 		if( ( nStatus & nMask ) == nValue )
 			return( 0 );
 	}
@@ -86,6 +86,7 @@ int ata_io_read( ATA_port_s* psPort, void *pBuffer, int nBytes )
 			if( nStatus & ATA_STATUS_DRQ )
 			{
 				int i;
+				
 
 				kerndbg( KERN_DEBUG_LOW, "Transferring data for PIO read operation\n" );
 
@@ -115,7 +116,8 @@ int ata_io_read( ATA_port_s* psPort, void *pBuffer, int nBytes )
 	
 	kerndbg( KERN_WARNING, "ata_pio_read() Drive timed out waiting for data.\n" );
 	kerndbg( KERN_WARNING, "ata_pio_read() Status = 0x%4x Error = 0x%4x\n", nStatus, nError );
-		
+	
+	
 	return( nTransfered );
 }
 

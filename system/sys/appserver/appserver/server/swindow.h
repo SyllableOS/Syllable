@@ -37,8 +37,9 @@ namespace os {
 class SrvApplication;
 class WndBorder;
 class SrvBitmap;
+class BitmapNode;
 class SrvSprite;
-
+class SrvEvent_s;
 
 class SrvWindow
 {
@@ -48,6 +49,8 @@ public:
     SrvWindow( SrvApplication* pcApp, SrvBitmap* pcBitmap );
     ~SrvWindow();
 
+	os::String	BuildEventIDString();
+	void	PostEvent( bool bIconChanged = false );
     void	PostUsrMessage( os::Message* pcMsg );
     void	ReplaceDecorator();
     void	NotifyWindowFontChanged( bool bToolWindow );
@@ -58,7 +61,6 @@ public:
     void	Show( bool bShow );
     void	MakeFocus( bool bFocus );
     bool	HasFocus() const;
-//    bool	HasBackbuffer() const;
     void	SetBitmap( SrvBitmap* pcBitmap ) { m_pcTopView->SetBitmap( pcBitmap ); }
 
     void	DesktopActivated( int nNewDesktop, bool bActivated, const os::IPoint cNewRes, os::color_space eColorSpace );
@@ -93,8 +95,8 @@ public:
     static void HandleInputEvent( os::Message* pcEvent );
     static void HandleMouseTransaction();
     
-    void	SetIcon( SrvBitmap* pcIcon ) { m_pcIcon = pcIcon; }
-	SrvBitmap* GetIcon() { return( m_pcIcon ); }
+    void	SetIcon( BitmapNode* pcIcon ) { m_pcIcon = pcIcon; }
+	BitmapNode* GetIcon() { return( m_pcIcon ); }
     
     bool	IsMinimized() { return( m_bMinimized ); }
     void	SetMinimized( bool bMinimized ) { m_bMinimized = bMinimized; }
@@ -127,8 +129,6 @@ private:
     static os::Message	s_cDragMessage;
     static bool		s_bIsDragging;
   
-    SrvWindow*		m_pcNextGlobal;
-
     std::string		m_cTitle;
     uint32		m_nFlags;
     uint32		m_nDesktopMask;
@@ -138,15 +138,15 @@ private:
     Layer*		m_pcTopView;
     WndBorder*		m_pcWndBorder;
     os::WindowDecorator* m_pcDecorator;
+    SrvEvent_s*	m_pcEvent;
     bigtime_t		m_nLastHitTime;	// Time of last mouse click
-    bool		m_bBorderHit;
     bool		m_bOffscreen;	// True for bitmap windows
     thread_id		m_hThread;
     port_id		m_hMsgPort;	// Requests from application
     port_id		m_hEventPort;	// Events to application
     os::Locker		m_cMutex;
     os::Messenger*	m_pcAppTarget;
-    SrvBitmap*		m_pcIcon;
+    BitmapNode*		m_pcIcon;
     bool			m_bMinimized;
 };
 

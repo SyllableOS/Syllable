@@ -94,6 +94,7 @@ namespace os_priv
 		  DirKeeper( const Messenger & cTarget, const String& cPath );
 		virtual void HandleMessage( Message * pcMessage );
 		virtual bool Idle();
+		void Stop();
 		status_t GetNode( os::String zPath, os::FSNode* pcNode, bool *pbBrokenLink );
 		Directory* GetCurrentDir() { return( m_pcCurrentDir ); }
    private:
@@ -564,6 +565,21 @@ void DirKeeper::SendDriveAddMsg( const String& cName, const String& cPath )
 	m_bLayoutNecessary = true;
 }
 
+void DirKeeper::Stop()
+{
+	Lock();
+	m_eState = S_IDLE;
+	m_bLayoutNecessary = false;
+	m_cMonitor.Unset();
+	m_cAddMap.clear();
+	m_cRemoveMap.clear();
+	m_cUpdateMap.clear();
+	m_bWaitForAddReply = false;
+	m_bWaitForRemoveReply = false;
+	m_bWaitForUpdateReply = false;
+	Unlock();
+}
+
 bool DirKeeper::Idle()
 {
 	switch ( m_eState )
@@ -778,6 +794,7 @@ IconDirectoryView::IconDirectoryView( const Rect & cFrame, const String& cPath, 
 	
 	m->m_cPath = cPath;
 	m->m_pcDirChangeMsg = NULL;
+	m->m_pcDirKeeper = NULL;
 	m->m_bLocked = false;
 	m->m_bAutoLaunch = true;
 	m->m_nLastKeyDownTime = 0;
@@ -949,6 +966,8 @@ void IconDirectoryView::KeyDown( const char *pzString, const char *pzRawString, 
 void IconDirectoryView::ReRead()
 {
 	//std::cout<<"REREAD"<<std::endl;
+	if( m->m_pcDirKeeper )
+		m->m_pcDirKeeper->Lock();
 	Clear();
 	Message cMsg( DirKeeper::M_CHANGE_DIR );
 
@@ -956,6 +975,7 @@ void IconDirectoryView::ReRead()
 	if( m->m_pcDirKeeper )
 	{
 		m->m_pcDirKeeper->PostMessage( &cMsg, m->m_pcDirKeeper );
+		m->m_pcDirKeeper->Unlock();
 	}
 
 }
@@ -982,6 +1002,48 @@ os::String IconDirectoryView::GetPath() const
  *****************************************************************************/
 void IconDirectoryView::SetPath( const String& cPath )
 {
+	if( m->m_pcDirKeeper )
+		m->m_pcDirKeeper->Stop();
+
+	/* Make sure we delete all pending messages from the dirkeeper thread */
+	if( GetLooper() )
+	{
+		os::Looper* pcLooper = GetLooper();
+		pcLooper->SpoolMessages();	// Copy all messages from the message port to the message queue.
+		MessageQueue *pcQueue = pcLooper->GetMessageQueue();
+		MessageQueue cTmp;
+		Message *pcMsg;
+
+		pcQueue->Lock();
+
+		while( ( pcMsg = pcQueue->NextMessage() ) != NULL )
+		{
+			switch( pcMsg->GetCode() )
+			{
+				case M_ADD_ENTRY:
+				case M_UPDATE_ENTRY:
+				case M_REMOVE_ENTRY:
+				case M_LAYOUT:
+				case M_NEW_DIR:
+				case M_DELETE:
+				case M_RENAME:
+				case M_OPEN_WITH:
+				case M_INFO:
+				case M_MOVE_TO_TRASH:
+				case M_EMPTY_TRASH:
+				case M_REREAD:
+					break;
+				default:
+					cTmp.AddMessage( pcMsg );
+			}
+		}
+		
+		while( ( pcMsg = cTmp.NextMessage() ) != NULL )
+		{
+			pcQueue->AddMessage( pcMsg );
+		}
+		pcQueue->Unlock();
+	}
 	m->m_cPath.SetTo( cPath.c_str() );
 	DirChanged( m->m_cPath.GetPath() );
 }

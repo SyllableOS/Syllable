@@ -50,6 +50,7 @@ ATA_PCI_dev_s g_sDevices[] =
 	/* VIA */
 	{ 0x1106, 0x1571, init_via_controller },
 	{ 0x1106, 0x0571, init_via_controller },
+	{ 0x1106, 0x3164, init_via_controller },
 	{ 0x1106, 0x3149, init_via_controller },
 	/* Intel */
 	{ 0x8086, 0x122e, init_intel_controller },
@@ -71,6 +72,12 @@ ATA_PCI_dev_s g_sDevices[] =
 	{ 0x8086, 0x245b, init_intel_controller },
 	{ 0x8086, 0x24ca, init_intel_controller },
 	{ 0x8086, 0x24d1, init_intel_controller },
+	{ 0x8086, 0x25a2, init_intel_controller },
+	{ 0x8086, 0x266f, init_intel_controller },
+	{ 0x8086, 0x27df, init_intel_controller },
+	{ 0x8086, 0x24c1, init_intel_controller },
+	{ 0x8086, 0x269e, init_intel_controller },
+	{ 0x8086, 0x2850, init_intel_controller },
 	/* SIS */
 	{ 0x1039, 0x5513, init_sis_controller },
 	/* AMD */
@@ -79,6 +86,7 @@ ATA_PCI_dev_s g_sDevices[] =
 	{ 0x1022, 0x7411, init_amd_controller },
 	{ 0x1022, 0x7441, init_amd_controller },
 	{ 0x1022, 0x7469, init_amd_controller },
+	{ 0x1022, 0x209a, init_amd_controller },
 	/* nVIDIA */
 	{ 0x10de, 0x01bc, init_amd_controller },
 	{ 0x10de, 0x0065, init_amd_controller },
@@ -87,7 +95,11 @@ ATA_PCI_dev_s g_sDevices[] =
 	{ 0x10de, 0x00d5, init_amd_controller },
 	{ 0x10de, 0x00e5, init_amd_controller },
 	{ 0x10de, 0x00e3, init_amd_controller },
-	{ 0x10de, 0x00ee, init_amd_controller }
+	{ 0x10de, 0x00ee, init_amd_controller },
+	{ 0x10de, 0x0053, init_amd_controller },
+	{ 0x10de, 0x0035, init_amd_controller },
+	{ 0x10de, 0x0265, init_amd_controller },
+	{ 0x10de, 0x036e, init_amd_controller }
 };
 
 static bool g_bLegacyController = false;

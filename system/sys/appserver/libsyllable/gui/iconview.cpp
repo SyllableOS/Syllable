@@ -707,7 +707,6 @@ public:
 			FillRect( cUpdateRect );
 		
 		
-		
 		/* Draw icons and selection */
 		SetFgColor( m->m_sSelectionColor );
 		m->Lock();
@@ -715,6 +714,15 @@ public:
 		{
 			os::Rect cFrame( m->m_cIcons[i]->m_cPosition - os::Point( 3, 3 ), m->m_cIcons[i]->m_cPosition +
 																os::Point( m->m_vIconWidth, m->m_vIconHeight ) + os::Point( 3, 3 ) );
+			
+			/* Render a gray background in details mode */			
+			if( m->m_eType == VIEW_DETAILS && ( i & 1 ) ) {
+				os::Rect cGray = cFrame;
+				cGray.right = GetBounds().right;
+				cGray.left = 0;
+				FillRect( cGray, Color32_s( 240, 240, 240 ) );
+			}
+			
 			if( cUpdateRect.DoIntersect( cFrame ) )
 			{
 				/* Draw icon background if selected */

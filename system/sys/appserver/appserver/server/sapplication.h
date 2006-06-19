@@ -52,7 +52,8 @@ public:
     bool		 IsLocked()	{ return( m_cLocker.IsLocked() ); }
 	bool		 IsClosing() { return( m_bClosing ); }
 	void		 SetClosing( bool bClosing ) { m_bClosing = bClosing; }
-    port_id	 GetReqPort() const { return( m_hReqPort ); }
+    port_id		 GetReqPort() const { return( m_hReqPort ); }
+    proc_id		 GetOwner() const { return( m_hOwner ); }
     FontNode*	 GetFont( uint32 nID );
     void	PostUsrMessage( os::Message* pcMsg );
     static void ReplaceDecorators();
@@ -63,6 +64,7 @@ public:
     
 private:
     void CreateBitmap( port_id hReply, int nWidth, int nHeight, os::color_space eColorSpc, uint32 nFlags );
+    void CloneBitmap( port_id hReply, int hHandle );
     void DeleteBitmap( int hHandle );
 
     static SrvApplication* s_pcFirstApp;

@@ -102,6 +102,8 @@ enum
     AR_GET_TEXT_EXTENTS,
     AR_GET_FONT_CHARACTERS,
     
+    AR_CLONE_BITMAP,
+    
     WR_GET_VIEW_FRAME = 20000,
     WR_SET_SIZE_LIMITS,
     WR_TOGGLE_VIEW_DEPTH,
@@ -125,6 +127,8 @@ enum
     WR_UPDATE_VIDEO_OVERLAY,
     WR_DELETE_VIDEO_OVERLAY,
     WR_SET_ICON,
+    WR_ACTIVATE,
+    WR_MINIMIZE,
     
     EV_REGISTER = 30000,
     EV_UNREGISTER,
@@ -299,12 +303,7 @@ struct GRndRegion_s : GRndHeader_s
 };
 
 /***	Messages sendt to main thread of the display server	***/
-#if 0
-typedef struct
-{
-    MouseEvent_s	sEvent;
-} DR_MouseEvent_s;
-#endif
+
 #define CLIPBOARD_FRAGMENT_SIZE (1024 * 32)
 
 struct DR_GetClipboardData_s
@@ -442,9 +441,26 @@ struct AR_CreateBitmapReply_s
 {
     AR_CreateBitmapReply_s() {}
     AR_CreateBitmapReply_s( int hHandle, area_id hArea ) { m_hHandle = hHandle; m_hArea = hArea; }
-    int	  m_hHandle;
+    int	    m_hHandle;
     area_id m_hArea;
 };
+
+struct AR_CloneBitmap_s
+{
+	port_id	m_hReply;
+	int		m_hHandle;
+};
+
+struct AR_CloneBitmapReply_s
+{
+	int	    m_hHandle;
+	area_id m_hArea;
+	uint32	m_nFlags;
+	int		m_nWidth;
+	int		m_nHeight;
+	color_space	m_eColorSpc;
+};
+
 
 struct AR_DeleteBitmap_s
 {

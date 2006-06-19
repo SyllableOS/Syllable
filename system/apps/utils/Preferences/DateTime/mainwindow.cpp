@@ -271,10 +271,14 @@ void CMainWindow::Apply()
 {
   // Delete current timezone, easier to do through system() than calls
   system("rm /usr/glibc2/etc/localtime");
+  
+  int nTimeZone = m_pcDDMTimeZone->GetSelection();
+  if( nTimeZone < 0 )
+    	nTimeZone = 0;
 
   // Find out current file
   std::string strFile = std::string("ln /usr/glibc2/share/zoneinfo");
-  strFile += *m_pcstrFile[m_pcDDMTimeZone->GetSelection()];
+  strFile += *m_pcstrFile[nTimeZone];
   strFile += std::string(" /usr/glibc2/etc/localtime -s");
   system(strFile.c_str());
 }
@@ -318,17 +322,21 @@ void CMainWindow::TimerTick(int nID)
     std::string strDate;
     m_pcTPTime->GetTime(&iHour, &iMin, &iSec);
     m_pcDPDate->GetDate(&iDay, &iMonth, &iYear, &strDate);
-
+    
+    int nTimeZone = m_pcDDMTimeZone->GetSelection();
+    if( nTimeZone < 0 )
+    	nTimeZone = 0;
+	
     // Create the date/time text
     char szScratch[1024];
     if (iHour <= 12) {
       sprintf(szScratch, "%d:%0d:%0d AM, %s %s", iHour, iMin, iSec, 
-	      strDate.c_str(), m_pcstrShort[m_pcDDMTimeZone->GetSelection()]->c_str());
+	      strDate.c_str(), m_pcstrShort[nTimeZone]->c_str());
     } else {
       sprintf(szScratch, "%d:%0d:%0d PM, %s %s", iHour - 12, iMin, iSec, 
-	      strDate.c_str(), m_pcstrShort[m_pcDDMTimeZone->GetSelection()]->c_str());
+	      strDate.c_str(), m_pcstrShort[nTimeZone]->c_str());
     }
-
+	
     m_pcSVFullTimeDate->SetString(szScratch);
   }
 }

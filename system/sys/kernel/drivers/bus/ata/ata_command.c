@@ -211,9 +211,7 @@ dma_again:
 	ATA_WRITE_REG( psPort, ATA_REG_COMMAND, ATAPI_CMD_PACKET )
 	ATA_READ_REG( psPort, ATA_REG_CONTROL, nControl )
 	
-	if( psPort->sOps.flush_regs )
-		psPort->sOps.flush_regs( psPort );
-		
+	
 	/* Wait */
 	if( ata_io_wait( psPort, ATA_STATUS_BUSY, 0 ) != 0 ) {
 		goto err;
@@ -514,6 +512,7 @@ void ata_cmd_ata( ATA_cmd_s* psCmd )
 {
 	bool bWrite = false;
 	bool bDMA = false;
+	bool bChangeCmd = false;
 	int nRetry = 0;
 	uint8 nCommand;
 	uint8 nControl;
@@ -531,9 +530,15 @@ again:
 	psCmd->nError = -EIO;
 	
 	/* Change DMA and WRITE flag if necessary */
+	if( psCmd->nCmd[ATA_REG_COMMAND] == ATA_CMD_READ_PIO )
+		bChangeCmd = true;
 	if( psCmd->nCmd[ATA_REG_COMMAND] == ATA_CMD_WRITE_PIO )
+	{
+		bChangeCmd = true;
 		bWrite = true;
-	if( psPort->nCurrentSpeed >= ATA_SPEED_DMA ) {
+	}
+	if( psPort->nCurrentSpeed >= ATA_SPEED_DMA &&
+		psCmd->bCanDMA ) {
 		bDMA = true;
 	}
 	
@@ -573,35 +578,39 @@ again:
 		goto err;
 	
 	/* Select command */
-	if( bDMA ) {
-		if( bWrite ) {
-			if( psPort->bLBA48bit ) {
-				nCommand = ATA_CMD_WRITE_DMA_48;
+	if( bChangeCmd )
+	{
+		if( bDMA ) {
+			if( bWrite ) {
+				if( psPort->bLBA48bit ) {
+					nCommand = ATA_CMD_WRITE_DMA_48;
+				} else {
+					nCommand = ATA_CMD_WRITE_DMA;
+				}
 			} else {
-				nCommand = ATA_CMD_WRITE_DMA;
+				if( psPort->bLBA48bit ) {
+					nCommand = ATA_CMD_READ_DMA_48;
+				} else {
+					nCommand = ATA_CMD_READ_DMA;
+				}
 			}
 		} else {
-			if( psPort->bLBA48bit ) {
-				nCommand = ATA_CMD_READ_DMA_48;
+			if( bWrite ) {
+				if( psPort->bLBA48bit ) {
+					nCommand = ATA_CMD_WRITE_PIO_48;
+				} else {
+					nCommand = ATA_CMD_WRITE_PIO;
+				}
 			} else {
-				nCommand = ATA_CMD_READ_DMA;
+				if( psPort->bLBA48bit ) {
+					nCommand = ATA_CMD_READ_PIO_48;
+				} else {
+					nCommand = ATA_CMD_READ_PIO;
+				}
 			}
 		}
-	} else {
-		if( bWrite ) {
-			if( psPort->bLBA48bit ) {
-				nCommand = ATA_CMD_WRITE_PIO_48;
-			} else {
-				nCommand = ATA_CMD_WRITE_PIO;
-			}
-		} else {
-			if( psPort->bLBA48bit ) {
-				nCommand = ATA_CMD_READ_PIO_48;
-			} else {
-				nCommand = ATA_CMD_READ_PIO;
-			}
-		}
-	}
+	} else
+		nCommand = psCmd->nCmd[ATA_REG_COMMAND];
 	
 	if( bDMA )
 	{
@@ -628,9 +637,6 @@ dma_again:
 		
 		ATA_READ_REG( psPort, ATA_REG_CONTROL, nControl )
 		
-		if( psPort->sOps.flush_regs )
-			psPort->sOps.flush_regs( psPort );
-		
 		/* Start transfer */
 		nReturn = psPort->sOps.start_dma( psPort );
 		
@@ -654,8 +660,6 @@ dma_again:
 		ATA_READ_REG( psPort, ATA_REG_CONTROL, nControl )
 		udelay( ATA_CMD_DELAY );
 		
-		if( psPort->sOps.flush_regs )
-			psPort->sOps.flush_regs( psPort );
 		while( nLen > 0 && nRetry < 3 )
 		{
 			int nTransferred = -1;
@@ -712,9 +716,9 @@ int32 ata_cmd_thread( void* pData )
 		if( psCmd )
 		{
 			if( psCmd->psPort->nDevice == ATA_DEV_ATAPI )
-				ata_cmd_atapi( psCmd );
+				psCmd->psPort->sOps.ata_cmd_atapi( psCmd );
 			else
-				ata_cmd_ata( psCmd );
+				psCmd->psPort->sOps.ata_cmd_ata( psCmd );
 		}
 
 		LOCK( psBuf->hCount );

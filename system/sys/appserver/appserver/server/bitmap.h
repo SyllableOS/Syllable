@@ -20,6 +20,7 @@
 #include <atheos/types.h>
 
 #include <gui/guidefines.h>
+#include <gui/rect.h>
 #include <util/resource.h>
 #include <util/array.h>
 
@@ -34,6 +35,10 @@ public:
     SrvBitmap( int nWidth, int nHeight,
 	       os::color_space eColorSpc,
 	       uint8* pRaster = NULL, int nBytesPerLine = 0 );
+	os::IRect GetBounds()
+	{
+		return( os::IRect( 0, 0, m_nWidth - 1, m_nHeight - 1 ) );
+	}
 
     area_id	    m_hArea;
     uint32	    m_nFlags;

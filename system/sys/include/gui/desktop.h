@@ -47,6 +47,7 @@ public:
     Desktop( int nDesktop = ACTIVE_DESKTOP );
     ~Desktop();
 
+	int		GetDesktop() const;
     screen_mode GetScreenMode() const;
     IPoint	GetResolution() const;
     color_space	GetColorSpace() const;

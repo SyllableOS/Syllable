@@ -78,7 +78,7 @@ FontServer *g_pcFontServer;
 SrvApplication *g_pcFirstApp = NULL;
 TopLayer *g_pcTopView = NULL;
 DisplayDriver *g_pcDispDrv = NULL;
-
+SrvEvents* g_pcEvents = NULL;
 
 int AppServer::LoadDecorator( const std::string & cPath, op_create_decorator **ppfCreate )
 {
@@ -175,7 +175,7 @@ AppServer::AppServer()
 	s_pcInstance = this;
 	m_pfDecoratorCreator = NULL;
 	
-	m_pcEvents = new SrvEvents;
+	g_pcEvents = new SrvEvents;
 	
 	printf( "Load default fonts\n" );
 
@@ -643,10 +643,10 @@ void AppServer::DispatchMessage( Message * pcReq )
 					if( pcWindow->GetIcon() != NULL )
 					{
 						/* Add bitmap values */
-						cReply.AddInt32( "icon_width", pcWindow->GetIcon()->m_nWidth );
-						cReply.AddInt32( "icon_height", pcWindow->GetIcon()->m_nHeight );
-						cReply.AddInt32( "icon_colorspace", pcWindow->GetIcon()->m_eColorSpc );
-						cReply.AddInt32( "icon_area", pcWindow->GetIcon()->m_hArea );
+						cReply.AddInt32( "icon_width", pcWindow->GetIcon()->m_pcBitmap->m_nWidth );
+						cReply.AddInt32( "icon_height", pcWindow->GetIcon()->m_pcBitmap->m_nHeight );
+						cReply.AddInt32( "icon_colorspace", pcWindow->GetIcon()->m_pcBitmap->m_eColorSpc );
+						cReply.AddInt32( "icon_area", pcWindow->GetIcon()->m_pcBitmap->m_hArea );
 					}
 					else
 					{
@@ -761,7 +761,7 @@ void AppServer::DispatchMessage( Message * pcReq )
 						/* Got it! Copy bitmap if possible */
 						if( pcWindow->GetIcon() == NULL )
 							break;
-						pcSrcBitmap = pcWindow->GetIcon();
+						pcSrcBitmap = pcWindow->GetIcon()->m_pcBitmap;
 						if( pcSrcBitmap->m_nWidth == 24 && pcSrcBitmap->m_nHeight == 24
 							&& pcSrcBitmap->m_eColorSpc == CS_RGB32 ) {
 							for( int i = 0; i < 24; i++ )
@@ -1009,7 +1009,7 @@ void AppServer::Run( void )
 					{
 						Message cReq( pBuffer );
 
-						m_pcEvents->DispatchMessage( &cReq );
+						g_pcEvents->DispatchMessage( &cReq );
 					}
 					catch( ... )
 					{

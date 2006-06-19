@@ -79,12 +79,16 @@ ATA_port_s* ata_alloc_port( ATA_controller_s* psCtrl )
 	
 	
 	psPort->sOps.reset = NULL;
+	psPort->sOps.identify = ata_port_identify;
 	psPort->sOps.select = ata_port_select;
+	psPort->sOps.status = ata_port_status;
+	psPort->sOps.altstatus = ata_port_altstatus;
 	psPort->sOps.configure = ata_port_configure;
 	psPort->sOps.prepare_dma_read = ata_port_prepare_dma_read;
 	psPort->sOps.prepare_dma_write = ata_port_prepare_dma_write;
 	psPort->sOps.start_dma = ata_port_start_dma;
-	psPort->sOps.flush_regs = NULL;
+	psPort->sOps.ata_cmd_ata = ata_cmd_ata;
+	psPort->sOps.ata_cmd_atapi = ata_cmd_atapi;
 	
 	psPort->hPortLock = -1;
 	psPort->hIRQWait = -1;
