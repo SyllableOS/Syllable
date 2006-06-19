@@ -1,3 +1,7 @@
+* June 19 2006, Arno Klenke *
+
+Fixed DateTime preferences to work with the updated dropdown menu code
+
 * June 4 2006, Arno Klenke *
 
 Added sIDE, Sourcery, LayoutEditor and Xpdf to CVS
@@ -522,6 +526,7 @@ Network Preferences
 		* Added NetworkPreferences from Daryl Dudey(daryl.dudey@ntlworld.com).
 		* Added SlbMgr(AtheMgr renamed).
 		* Patches by Vanders for AEdit.
+
 
 
 
