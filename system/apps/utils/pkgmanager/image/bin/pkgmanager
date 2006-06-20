@@ -1,0 +1,289 @@
+#! /usr/bin/env orca
+
+ORCA [
+	Title:		"Package registration tool"
+	Version:	0.0.1
+	Author:		"Kaj de Vos"
+	Rights: {
+		Copyright (c) 2006 Kaj de Vos
+		License: GPL 2 or any later version
+	}
+	Purpose:	"Registers and unregisters binary packages by managing symlinks in the system."
+	Example:	"pkgmanager add example"
+
+	Tabs:		4
+]
+
+
+log: context [  ; Singleton logger object
+	open: func [] [
+	]
+	close: does [
+	]
+
+	header: func [header] [
+		prin newline
+		print header
+	]
+	detail: func [detail] [
+;		print detail
+	]
+	action: func [action] [
+;		prin newline
+;		print action
+;		prin newline
+	]
+	output: func [output] [
+	]
+	error: func [error] [
+		prin newline
+		print ["Error:" error]
+	]
+	warning: func [warning] [
+		prin newline
+		print ["Warning:" warning]
+	]
+	failure: func [module] [
+		prin newline
+		print ["Package" module "failed!"]
+	]
+]
+
+action: func ["Returns the output of a shell command, or false if unsuccessful"
+	command "Shell command"
+][
+	log/action command
+
+	either (status: call/wait/output command stdout: "") = 0 [  ; OK
+		log/output stdout
+		stdout
+	][
+		log/error status
+		log/output stdout
+		no
+	]
+]
+
+build: context [
+	system?: no
+]
+
+stage-proto: context [
+;	packages-root: indexes: none
+	indexes: %/home/kaj/atheos/autolnk/
+	
+	index-node: func [package subdir node] [
+;		source: join packages-root [package "/" file: join subdir ["/" node]]
+		source: join package ["/" file: join subdir ["/" node]]
+		destination: join indexes [file]
+
+		either dir? node [
+			any [
+				exists? destination
+				action join "mkdir " destination
+			]
+		][
+			either exists? destination [
+				either file = "info/dir" [
+					log/warning "info/dir file not registered due to pre-existing file"
+					yes
+				][
+					log/error join "conflict: link " [destination " already exists!"]
+					no
+				]
+			][
+				action join "ln -s " [source " " destination]
+			]
+		]
+	]
+	
+	remove-node: func [subdir node] [
+		index: join indexes [file: join subdir ["/" node]]
+
+		either dir? node [
+			any [
+				yes  ; Bug in Orca list comparison:
+				(read index) <> []  ; Indexes directory empty?
+				action join "rm -rf " index
+			]
+		][
+			either exists? index [
+				either file = "info/dir" [
+					log/warning "info/dir file left untouched"
+					yes
+				][
+					action join "rm -f " [index]
+				]
+			][
+				log/warning join "link " [index " didn't exist"]
+				yes
+			]
+		]
+	]
+]
+
+system-image: make stage-proto [
+	type: none
+	root: %/
+	packages-root: %/usr/
+	indexes: %/atheos/autolnk/
+]
+
+stage: make stage-proto [
+	type: none
+	root: none
+]
+
+package-proto: context [
+	package: stage: none
+
+	new: func [package' stage'] [
+		make self [package: to-file package' stage: stage']
+	]
+
+	register: func [stage] [
+		log/header join "Registering " [package]
+
+		either index-subdirs reduce [system-image] [
+			action "sync"
+		][
+			log/failure package
+			no
+		]
+	]
+
+	unregister: func [stage] [
+		log/header join "Unregistering " [package]
+
+		either remove-subdirs reduce [system-image] [
+			action "sync"
+		][
+			log/failure package
+			no
+		]
+	]
+
+	index-subdir: function [stages subdir nesting?] [
+		dir
+	][
+print subdir
+		any [
+;			not exists? dir: join stage/packages-root [package "/" subdir]
+			not exists? dir: join package ["/" subdir]
+			(
+				log/detail subdir
+				change-dir dir
+
+				foreach node read %. [
+					foreach s stages [
+						unless s/index-node package subdir node
+							[return no]
+					]
+					if nesting? and dir? node [
+						unless index-subdir stages join subdir ["/" node] yes
+							[return no]
+						change-dir dir
+					]
+				]
+				any [
+					subdir <> 'man
+					(	log/header "Adding manual pages"
+						action join "manmanager -a " [package "/man"]
+					)
+				]
+			)
+		]
+	]
+	
+	index-subdirs: func [stages] [
+		foreach subdir [etc bin sbin info early-init init] [  ; Flat directories
+			unless index-subdir stages subdir no
+				[return no]
+		]
+		foreach subdir [lib libexec include share man] [  ; Nested directories
+			unless index-subdir stages subdir yes
+				[return no]
+		]
+	]
+
+	remove-subdir: function [stages subdir nesting?] [
+		dir
+	][
+print subdir
+		any [
+;			not exists? dir: join stage/packages-root [package "/" subdir]
+			not exists? dir: join package ["/" subdir]
+			(
+				log/detail subdir
+				change-dir dir
+
+				foreach node read %. [
+					if nesting? and dir? node [
+						unless remove-subdir stages join subdir ["/" node] yes
+							[return no]
+						change-dir dir
+					]
+					foreach s stages [
+						unless s/remove-node subdir node
+							[return no]
+					]
+				]
+				any [
+					subdir <> 'man
+					(	log/header "Deleting manual pages"
+						action join "manmanager -r " [package "/man"]
+					)
+				]
+			)
+		]
+	]
+	
+	remove-subdirs: func [stages] [
+		foreach subdir [etc bin sbin info early-init init] [  ; Flat directories
+			unless remove-subdir stages subdir no
+				[return no]
+		]
+		foreach subdir [lib libexec include share man] [  ; Nested directories
+			unless remove-subdir stages subdir yes
+				[return no]
+		]
+	]
+]
+
+
+header: system/script/header
+
+either any [
+	not args: system/script/args
+	(
+		command: args/1
+		package: args/2
+
+		find ["help" "-h" "--help" "-help" "-?" "?"] command
+	)
+][
+	print "Usage: pkgmanager <command> [<package>]"
+	print "<command>:"
+	print "  help, -h,     Show this help information"
+	print "    --help, -help, -?, (?)"
+	print "  version, -v   Show version information"
+	print "  add, -a       Register a package"
+	print "  remove, -r    Unregister a package"
+	print "Example:"
+	print [" " select header 'example]
+][
+either find ["version" "-v" "--version"] command [
+	print [select header 'title select header 'version]
+	print select header 'rights
+][
+either find ["add" "-a" "--add"] command [
+	package: package-proto/new package system-image
+	package/register none
+][
+either find ["remove" "-r" "--remove"] command [
+	package: package-proto/new package system-image
+	package/unregister none
+halt
+][
+	print "Unknown command"
+]]]]
