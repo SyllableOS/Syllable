@@ -33,7 +33,6 @@ modules
 	apps/utils/bzoom
 	apps/utils/catalog
 	apps/utils/charmap
-;	apps/utils/CodeEdit
 	apps/utils/cpumon
 	apps/utils/crypt
 	apps/utils/DiskManager
@@ -41,6 +40,7 @@ modules
 	apps/utils/Launch
 	apps/utils/Man
 	apps/utils/memmon
+;	apps/utils/xpdf
 
 ;	Needs objcopy from BinUtils:
 	apps/gnu/binutils-2.16.1-objcopy
@@ -48,4 +48,3 @@ modules
 
 	apps/utils/shelltools
 	apps/utils/slbmgr
-
