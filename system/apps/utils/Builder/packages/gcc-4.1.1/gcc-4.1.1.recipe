@@ -5,7 +5,7 @@ authors
 	Kristian Van Der Vliet
 	Jake Hamby
 maintainers			Kaj de Vos
-status				broken
+status				testing
 warnings
 	GCC has a circular dependency on GLibC.
 	LibIberty is both in BinUtils and in GCC.
@@ -70,6 +70,7 @@ configure-options
 
 make-env
 	BOOT_CFLAGS		'-O'
+	DLL_PATH		"$DLL_PATH:$PWD/gcc"
 make-vars
 	CFLAGS			'-O'
 	LIBCFLAGS		'-O2'
@@ -88,6 +89,10 @@ make-targets
 test-options		-k
 
 ;install-prefix-var	DESTDIR
+install-env
+	PATH		"$PATH:../stage/gcc/bin:../stage/image/gcc/bin:../../stage/image/atheos/usr/gcc/bin:/usr/gcc/bin"
+	DLL_PATH	"$DLL_PATH:../stage/gcc/lib:../stage/image/gcc/lib:../../stage/image/atheos/usr/gcc/lib:/usr/gcc/lib"
+
 documentation
 	README FAQ faq.html BUGS bugs.html COPYING COPYING.LIB NEWS ChangeLog MAINTAINERS
 	ABOUT-NLS gcc/ABOUT-GCC-NLS
