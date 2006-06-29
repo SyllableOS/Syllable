@@ -134,10 +134,12 @@ void GroupWindow::HandleMessage( os::Message* pcMessage )
 			RefreshList();
 		break;
 		case M_SELECT:
+		{
 			if( m_pcList->GetFirstSelected() < 0 )
 				break;
 			os::ListViewStringRow *pcRow = static_cast<os::ListViewStringRow*>( m_pcList->GetRow( m_pcList->GetFirstSelected() ) );
 			m_pcInput->Set( pcRow->GetString( 0 ).c_str() );
+		}
 		break;
 		default:
 			os::Window::HandleMessage( pcMessage );

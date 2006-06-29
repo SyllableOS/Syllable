@@ -329,7 +329,7 @@ void ProjectWindow::RefreshList()
 /* show an about window */
 int ShowAbout(void *data)
 {
-	os::Alert* pcAbout = new os::Alert(MSG_PWND_ABOUT_TITLE, MSG_PWND_ABOUT, os::Alert::ALERT_INFO,
+	os::Alert* pcAbout = new os::Alert(MSG_PWND_ABOUT_TITLE, os::String( "sIDE 0.4.5\n" ) + MSG_PWND_ABOUT, os::Alert::ALERT_INFO,
 											0x00, MSG_BUTTON_OK.c_str(), NULL);
 	pcAbout->Go();
 	return( 0 );

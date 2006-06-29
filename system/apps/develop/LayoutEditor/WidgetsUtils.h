@@ -28,8 +28,8 @@ class HorizontalSliderWidget : public SliderWidget
 public:
 	const std::type_info* GetTypeID() ;
 	const os::String GetName();
-	const os::String GetCodeName();
 	os::LayoutNode* CreateLayoutNode( os::String zName );
+	void CreateHeaderCode( os::StreamableIO* pcFile, os::LayoutNode* pcNode );
 };
 
 class VerticalSliderWidget : public SliderWidget
@@ -37,8 +37,8 @@ class VerticalSliderWidget : public SliderWidget
 public:
 	const std::type_info* GetTypeID() ;
 	const os::String GetName();
-	const os::String GetCodeName();
 	os::LayoutNode* CreateLayoutNode( os::String zName );
+	void CreateHeaderCode( os::StreamableIO* pcFile, os::LayoutNode* pcNode );
 };
 
 #endif

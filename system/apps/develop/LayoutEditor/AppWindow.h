@@ -14,7 +14,7 @@ public:
 	AppWindow( MainWindow* pcMain );
 	void HandleMessage( os::Message* );
 	os::VLayoutNode* GetRootNode() { return( m_pcRoot ); }
-	void ReLayout( os::LayoutNode* pcParentNode );
+	void ReLayout( os::LayoutNode* pcNode );
 	void ReLayout();
 private:
 	bool OkToQuit();

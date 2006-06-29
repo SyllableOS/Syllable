@@ -6,6 +6,7 @@
 
 #include <gui/button.h>
 #include <gui/image.h>
+#include <gui/tabview.h>
 #include <util/resources.h>
 
 AppWindow::AppWindow( MainWindow* pcMain ) : os::Window( os::Rect( 0, 0, 300, 300 ), "app_wnd", "LayoutEditor : Preview" )
@@ -30,31 +31,40 @@ AppWindow::AppWindow( MainWindow* pcMain ) : os::Window( os::Rect( 0, 0, 300, 30
 
 }
 
-void AppWindow::ReLayout( os::LayoutNode* pcParentNode )
+void AppWindow::ReLayout( os::LayoutNode* pcNode )
 {
-	/* Relayout the nodes and all integrated layoutviews */
-	std::vector<os::LayoutNode*> apcWidgets = pcParentNode->GetChildList();
-	for( uint i = 0; i < apcWidgets.size(); i++ )
+	/* Get the widget belonging to this node */
+	Widget* pcWidget = m_pcMain->GetNodeWidget( pcNode );
+	if( pcNode->GetView() != NULL )
 	{
-		os::LayoutNode* pcNode = apcWidgets[i];
-		
-		/* Get the widget belonging to this node */
-		Widget* pcWidget = m_pcMain->GetNodeWidget( pcNode );
-		
-		if( pcWidget == NULL )
+		/* Special handling for embedded layoutviews and tabviews */
+		os::LayoutView* pcView = dynamic_cast<os::LayoutView*>( pcNode->GetView() );
+		if( pcView != NULL )
 		{
-			continue;
+			pcView->InvalidateLayout();
 		}
-		
-		if( pcNode->GetView() != NULL )
+		os::TabView* pcTabView = dynamic_cast<os::TabView*>( pcNode->GetView() );
+		if( pcTabView != NULL )
 		{
-			os::LayoutView* pcView = dynamic_cast<os::LayoutView*>( pcNode->GetView() );
-			if( pcView != NULL )
-			{
+			for( int i = 0; i < pcTabView->GetTabCount(); i++ )
+			{	
+				pcView = dynamic_cast<os::LayoutView*>( pcTabView->GetTabView( i ) );
 				pcView->InvalidateLayout();
 			}
+			return;
 		}
-		ReLayout( pcWidget->GetSubNode( pcNode ) );
+	}
+	
+	/* Relayout the nodes and all integrated layoutviews */
+	std::vector<os::LayoutNode*> apcWidgets;
+	if( pcWidget )
+		apcWidgets = pcWidget->GetChildList( pcNode );
+	else
+		apcWidgets = pcNode->GetChildList();
+	for( uint i = 0; i < apcWidgets.size(); i++ )
+	{
+
+		ReLayout( apcWidgets[i] );
 	}
 }
 

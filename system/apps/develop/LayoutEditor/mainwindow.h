@@ -21,7 +21,7 @@ public:
 	void InitMenus();
 	void DeleteWidgets();
 	Widget* GetNodeWidget( os::LayoutNode* pcNode );
-	void CreateWidgetTreeLevel( int nLevel, os::LayoutNode* pcParentNode );
+	void CreateWidgetTreeLevel( int nLevel, os::LayoutNode* pcNode, os::LayoutNode* pcRealParent );
 	void CreateWidgetTree();
 	void CreatePropertyList( os::LayoutNode* pcNode );
 	bool Save( os::File* pcFile, int nLevel, os::LayoutNode* pcParentNode );

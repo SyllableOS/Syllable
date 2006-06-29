@@ -8,7 +8,7 @@
   class    os::IconView ??
   class    os::ImageButton X
   class    os::ImageView X
-  class    os::ListView ????
+  class    os::ListView X
   class    os::Menu X
   class    os::PopupMenu
   class    os::ProgressBar
@@ -21,7 +21,7 @@
   class    os::StatusBar ???
   class    os::StatusPanel ??
   class    os::StringView X
-  class    os::TabView ????
+  class    os::TabView X
   class    os::TextView X
   class    os::ToolBar ???
   class    os::TreeView ???

@@ -2,7 +2,9 @@
 #include "WidgetsNodes.h"
 
 #include <gui/frameview.h>
+#include <gui/tabview.h>
 #include <util/message.h>
+#include <cassert>
 
 /* HLayoutNode Widget */
 
@@ -19,6 +21,11 @@ const os::String HLayoutNodeWidget::GetName()
 os::LayoutNode* HLayoutNodeWidget::CreateLayoutNode( os::String zName )
 {
 	return( new LEHLayoutNode( zName, 1.0f, NULL ) );
+}
+
+bool HLayoutNodeWidget::CanHaveChildren()
+{
+	return( true );
 }
 
 std::vector<WidgetProperty> HLayoutNodeWidget::GetProperties( os::LayoutNode* pcNode )
@@ -185,6 +192,11 @@ const os::String VLayoutNodeWidget::GetName()
 os::LayoutNode* VLayoutNodeWidget::CreateLayoutNode( os::String zName )
 {
 	return( new LEVLayoutNode( zName, 1.0f, NULL ) );
+}
+
+bool VLayoutNodeWidget::CanHaveChildren()
+{
+	return( true );
 }
 
 static os::String AlignmentToString( os::alignment eAlign )
@@ -515,10 +527,26 @@ os::LayoutNode* FrameViewWidget::CreateLayoutNode( os::String zName )
 	return( new os::LayoutNode( zName, 1.0f, NULL, pcFrameView ) );
 }
 
-os::LayoutNode* FrameViewWidget::GetSubNode( os::LayoutNode* pcNode )
+bool FrameViewWidget::CanHaveChildren()
+{
+	return( true );
+}
+
+void FrameViewWidget::AddChild( os::LayoutNode* pcNode, os::LayoutNode* pcChild )
 {
 	os::FrameView* pcFrameView = static_cast<os::FrameView*>(pcNode->GetView());
-	return( pcFrameView->GetRoot() );
+	pcFrameView->GetRoot()->AddChild( pcChild );
+}
+void FrameViewWidget::RemoveChild( os::LayoutNode* pcNode, os::LayoutNode* pcChild )
+{
+	os::FrameView* pcFrameView = static_cast<os::FrameView*>(pcNode->GetView());
+	pcFrameView->GetRoot()->RemoveChild( pcChild );
+}
+
+const std::vector<os::LayoutNode*> FrameViewWidget::GetChildList( os::LayoutNode* pcNode )
+{
+	os::FrameView* pcFrameView = static_cast<os::FrameView*>(pcNode->GetView());
+	return( pcFrameView->GetRoot()->GetChildList() );
 }
 
 std::vector<WidgetProperty> FrameViewWidget::GetProperties( os::LayoutNode* pcNode )
@@ -586,6 +614,174 @@ void FrameViewWidget::CreateCodeEnd( os::StreamableIO* pcFile, os::LayoutNode* p
 	pcFile->Write( zBuffer, strlen( zBuffer ) );
 	
 }
+
+void FrameViewWidget::CreateHeaderCode( os::StreamableIO* pcFile, os::LayoutNode* pcNode )
+{
+	char nBuffer[8192];
+	sprintf( nBuffer, "os::%s* m_pc%s;\nos::VLayoutNode* m_pc%sLayout;\n", GetName().c_str(), pcNode->GetName().c_str(),
+	pcNode->GetName().c_str() );
+	pcFile->Write( nBuffer, strlen( nBuffer ) );
+}
+
+
+/* TabView Widget */
+
+const std::type_info* TabViewWidget::GetTypeID()
+{
+	return( &typeid( os::TabView ) );
+}
+
+const os::String TabViewWidget::GetName()
+{
+	return( "TabView" );
+}
+
+os::LayoutNode* TabViewWidget::CreateLayoutNode( os::String zName )
+{
+	os::TabView* pcTabView = new os::TabView( os::Rect(), zName );
+	return( new os::LayoutNode( zName, 1.0f, NULL, pcTabView ) );
+}
+
+bool TabViewWidget::CanHaveChildren()
+{
+	return( true );
+}
+
+void TabViewWidget::AddChild( os::LayoutNode* pcNode, os::LayoutNode* pcChild )
+{
+	os::TabView* pcTabView = static_cast<os::TabView*>(pcNode->GetView());
+	
+	os::LayoutView* pcView = new os::LayoutView( os::Rect(), pcChild->GetName() + "Tab" );
+	os::VLayoutNode* pcVNode = new os::VLayoutNode( pcChild->GetName() + "Layout" );
+	
+	pcTabView->AppendTab( pcChild->GetName(), pcView );
+	pcVNode->AddChild( pcChild );
+	pcView->SetRoot( pcVNode );
+}
+void TabViewWidget::RemoveChild( os::LayoutNode* pcNode, os::LayoutNode* pcChild )
+{
+	os::TabView* pcTabView = static_cast<os::TabView*>(pcNode->GetView());
+	
+	for( int i = 0; i < pcTabView->GetTabCount(); i++ )
+	{
+		os::LayoutView* pcView = static_cast<os::LayoutView*>(pcTabView->GetTabView( i ) );
+		if( pcView->GetRoot()->GetChildList()[0] == pcChild )
+		{
+			pcView->GetRoot()->RemoveChild( pcChild );
+			delete( pcTabView->DeleteTab( i ) );
+			pcTabView->Invalidate( true );
+			pcTabView->Flush();
+			return;
+		}
+	}
+	pcTabView->Invalidate( true );
+	pcTabView->Flush();
+	printf( "Error: Tab not found!\n" );
+}
+
+const std::vector<os::LayoutNode*> TabViewWidget::GetChildList( os::LayoutNode* pcNode )
+{
+	os::TabView* pcTabView = static_cast<os::TabView*>(pcNode->GetView());
+	std::vector<os::LayoutNode*> cList;
+	
+	for( int i = 0; i < pcTabView->GetTabCount(); i++ )
+	{
+		os::LayoutView* pcView = static_cast<os::LayoutView*>(pcTabView->GetTabView( i ) );
+		cList.push_back( pcView->GetRoot()->GetChildList()[0] );
+	}
+	return( cList );
+}
+
+std::vector<WidgetProperty> TabViewWidget::GetProperties( os::LayoutNode* pcNode )
+{
+	std::vector<WidgetProperty> cProperties;
+	
+	//cProperties = VLayoutNodeWidget::GetProperties( pcFrameView->GetRoot() );
+	
+	// Weight
+	WidgetProperty cProperty0( 0, PT_FLOAT, "TabView Weight", pcNode->GetWeight() );
+	cProperties.push_back( cProperty0 );
+
+	return( cProperties );
+}
+
+
+void TabViewWidget::SetProperties( os::LayoutNode* pcNode, std::vector<WidgetProperty> cProperties )
+{
+	
+	//VLayoutNodeWidget::SetProperties( pcFrameView->GetRoot(), cProperties );
+	
+	for( uint i = 0; i < cProperties.size(); i++ )
+	{
+		WidgetProperty* pcProp = &cProperties[i];
+		switch( pcProp->GetCode() )
+		{
+			case 0: // Weight
+				pcNode->SetWeight( pcProp->GetValue().AsFloat() );
+			break;
+		}
+	}
+}
+
+void TabViewWidget::CreateCode( os::StreamableIO* pcFile, os::LayoutNode* pcNode )
+{
+	os::TabView* pcTabView = static_cast<os::TabView*>(pcNode->GetView());
+	char zBuffer[8192];
+	sprintf( zBuffer, "m_pc%s = new os::TabView( os::Rect(), \"%s\" );\n",
+						pcNode->GetName().c_str(), pcNode->GetName().c_str() );
+	pcFile->Write( zBuffer, strlen( zBuffer ) );
+	
+	for( int i = 0; i < pcTabView->GetTabCount(); i++ )
+	{
+		os::LayoutView* pcView = static_cast<os::LayoutView*>(pcTabView->GetTabView( i ) );
+		
+		sprintf( zBuffer, "m_pc%s = new os::LayoutView( os::Rect(), \"%s\" );\n"
+						  "m_pc%s = new os::VLayoutNode( \"%s\" );\n"
+						  "m_pc%s->AppendTab(  \"%s\", m_pc%s );\n",
+						pcView->GetName().c_str(), pcView->GetName().c_str(),
+						pcView->GetRoot()->GetName().c_str(), pcView->GetRoot()->GetName().c_str(),
+						pcNode->GetName().c_str(), 
+						pcView->GetRoot()->GetChildList()[0]->GetName().c_str(),
+						pcView->GetName().c_str() );
+		pcFile->Write( zBuffer, strlen( zBuffer ) );
+	}
+	CreateAddCode( pcFile, pcNode );
+}
+
+void TabViewWidget::CreateCodeEnd( os::StreamableIO* pcFile, os::LayoutNode* pcNode )
+{
+	os::TabView* pcTabView = static_cast<os::TabView*>(pcNode->GetView());
+	char zBuffer[8192];
+	for( int i = 0; i < pcTabView->GetTabCount(); i++ )
+	{
+		os::LayoutView* pcView = static_cast<os::LayoutView*>(pcTabView->GetTabView( i ) );
+		
+		sprintf( zBuffer, "m_pc%s->SetRoot( m_pc%s );\n",
+						pcView->GetName().c_str(), pcView->GetRoot()->GetName().c_str() );
+		pcFile->Write( zBuffer, strlen( zBuffer ) );
+	}
+}
+
+void TabViewWidget::CreateHeaderCode( os::StreamableIO* pcFile, os::LayoutNode* pcNode )
+{
+	os::TabView* pcTabView = static_cast<os::TabView*>(pcNode->GetView());
+	char zBuffer[8192];
+	sprintf( zBuffer, "os::%s* m_pc%s;\n", GetName().c_str(), pcNode->GetName().c_str() );
+	pcFile->Write( zBuffer, strlen( zBuffer ) );
+	for( int i = 0; i < pcTabView->GetTabCount(); i++ )
+	{
+		os::LayoutView* pcView = static_cast<os::LayoutView*>(pcTabView->GetTabView( i ) );
+		
+		sprintf( zBuffer, "os::LayoutView* m_pc%s;\nos::VLayoutNode* m_pc%s;\n",
+						pcView->GetName().c_str(), pcView->GetRoot()->GetName().c_str() );
+		pcFile->Write( zBuffer, strlen( zBuffer ) );
+	}
+}
+
+
+
+
+
 
 
 

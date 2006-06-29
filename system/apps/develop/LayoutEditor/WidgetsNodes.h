@@ -30,6 +30,7 @@ public:
 	const std::type_info* GetTypeID();
 	const os::String GetName();
 	os::LayoutNode* CreateLayoutNode( os::String zName );
+	bool CanHaveChildren();
 	std::vector<WidgetProperty> GetProperties( os::LayoutNode* pcNode );
 	void SetProperties( os::LayoutNode* pcNode, std::vector<WidgetProperty> cProperties );
 	void CreateCode( os::StreamableIO* pcFile, os::LayoutNode* pcNode );
@@ -42,6 +43,7 @@ public:
 	virtual const std::type_info* GetTypeID();
 	virtual const os::String GetName();
 	virtual os::LayoutNode* CreateLayoutNode( os::String zName );
+	bool CanHaveChildren();
 	virtual std::vector<WidgetProperty> GetProperties( os::LayoutNode* pcNode );
 	virtual void SetProperties( os::LayoutNode* pcNode, std::vector<WidgetProperty> cProperties );
 	virtual void CreateCode( os::StreamableIO* pcFile, os::LayoutNode* pcNode );
@@ -77,11 +79,32 @@ public:
 	const std::type_info* GetTypeID();
 	const os::String GetName();
 	os::LayoutNode* CreateLayoutNode( os::String zName );
-	os::LayoutNode* GetSubNode( os::LayoutNode* pcNode );
+	bool CanHaveChildren();
+	void AddChild( os::LayoutNode* pcNode, os::LayoutNode* pcChild );
+	void RemoveChild( os::LayoutNode* pcNode, os::LayoutNode* pcChild );
+	const std::vector<os::LayoutNode*> GetChildList( os::LayoutNode* pcNode );
 	std::vector<WidgetProperty> GetProperties( os::LayoutNode* pcNode );
 	void SetProperties( os::LayoutNode* pcNode, std::vector<WidgetProperty> cProperties );
 	void CreateCode( os::StreamableIO* pcFile, os::LayoutNode* pcNode );
 	void CreateCodeEnd( os::StreamableIO* pcFile, os::LayoutNode* pcNode );
+	void CreateHeaderCode( os::StreamableIO* pcFile, os::LayoutNode* pcNode );
+};
+
+class TabViewWidget : public Widget
+{
+public:
+	const std::type_info* GetTypeID();
+	const os::String GetName();
+	os::LayoutNode* CreateLayoutNode( os::String zName );
+	bool CanHaveChildren();
+	void AddChild( os::LayoutNode* pcNode, os::LayoutNode* pcChild );
+	void RemoveChild( os::LayoutNode* pcNode, os::LayoutNode* pcChild );
+	const std::vector<os::LayoutNode*> GetChildList( os::LayoutNode* pcNode );
+	std::vector<WidgetProperty> GetProperties( os::LayoutNode* pcNode );
+	void SetProperties( os::LayoutNode* pcNode, std::vector<WidgetProperty> cProperties );
+	void CreateCode( os::StreamableIO* pcFile, os::LayoutNode* pcNode );
+	void CreateCodeEnd( os::StreamableIO* pcFile, os::LayoutNode* pcNode );
+	void CreateHeaderCode( os::StreamableIO* pcFile, os::LayoutNode* pcNode );
 };
 
 #endif

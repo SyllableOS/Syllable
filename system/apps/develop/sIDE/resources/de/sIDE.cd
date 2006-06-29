@@ -28,7 +28,7 @@ MSG_PWND_MENU_BUILD_RUN					Ausführen
 MSG_PWND_MENU_BUILD_EXPORT_MAKEFILE		Makefile exportieren
 
 MSG_PWND_ABOUT_TITLE					Über sIDE
-MSG_PWND_ABOUT							sIDE 0.4.4 CVS\nDie Syllable IDE\nVon Arno Klenke, 2001-2006\nDer \"Neues Project\" Dialog wurde von Rick Caudill erstellt\n\nsIDE is released under the Gnu Public Licencse (GPL)\nPlease see the file COPYING, distributed with sIDE, for\nmore information\n
+MSG_PWND_ABOUT							Die Syllable IDE\nVon Arno Klenke, 2001-2006\nDer \"Neues Project\" Dialog wurde von Rick Caudill erstellt\n\nsIDE is released under the Gnu Public Licencse (GPL)\nPlease see the file COPYING, distributed with sIDE, for\nmore information\n
 
 MSG_PWND_LIST_FILE						Datei
 MSG_PWND_LIST_TYPE						Typ

@@ -263,16 +263,19 @@ const os::String HorizontalSliderWidget::GetName()
 	return( "Horizontal Slider" );
 }
 
-const os::String HorizontalSliderWidget::GetCodeName()
-{
-	return( "Slider" );
-}
-
 os::LayoutNode* HorizontalSliderWidget::CreateLayoutNode( os::String zName )
 {
 	LESlider* pcView = new LEHSlider( os::Rect(), zName, new os::Message( 0 ) );
 	return( new os::LayoutNode( zName, 1.0f, NULL, pcView ) );
 }
+
+void HorizontalSliderWidget::CreateHeaderCode( os::StreamableIO* pcFile, os::LayoutNode* pcNode )
+{
+	char nBuffer[8192];
+	sprintf( nBuffer, "os::Slider* m_pc%s;\n", pcNode->GetName().c_str() );
+	pcFile->Write( nBuffer, strlen( nBuffer ) );
+}
+
 
 const std::type_info* VerticalSliderWidget::GetTypeID()
 {
@@ -284,18 +287,18 @@ const os::String VerticalSliderWidget::GetName()
 	return( "Vertical Slider" );
 }
 
-const os::String VerticalSliderWidget::GetCodeName()
-{
-	return( "Slider" );
-}
-
-
 os::LayoutNode* VerticalSliderWidget::CreateLayoutNode( os::String zName )
 {
 	LESlider* pcView = new LEVSlider( os::Rect(), zName, new os::Message( 0 ) );
 	return( new os::LayoutNode( zName, 1.0f, NULL, pcView ) );
 }
 
+void VerticalSliderWidget::CreateHeaderCode( os::StreamableIO* pcFile, os::LayoutNode* pcNode )
+{
+	char nBuffer[8192];
+	sprintf( nBuffer, "os::Slider* m_pc%s;\n", pcNode->GetName().c_str() );
+	pcFile->Write( nBuffer, strlen( nBuffer ) );
+}
 
 
 

@@ -22,15 +22,21 @@
 class WidgetTreeRow : public os::TreeViewStringNode
 {
 public:
-	WidgetTreeRow( os::LayoutNode* pcNode )
+	WidgetTreeRow( os::LayoutNode* pcNode, os::LayoutNode* pcRealParent )
 	{
 		m_pcNode = pcNode;
+		m_pcRealParent = pcRealParent;
 	}
 	os::LayoutNode* GetLayoutNode()
 	{
 		return( m_pcNode );
 	}
+	os::LayoutNode* GetRealParent()
+	{
+		return( m_pcRealParent );
+	}
 private:
+	os::LayoutNode* m_pcRealParent;
 	os::LayoutNode* m_pcNode;
 };
 
@@ -145,6 +151,7 @@ void MainWindow::InitWidgets()
 	m_apcWidgets.push_back( static_cast<Widget*>(new HLayoutSpacerWidget) );
 	m_apcWidgets.push_back( static_cast<Widget*>(new VLayoutSpacerWidget) );
 	m_apcWidgets.push_back( static_cast<Widget*>(new FrameViewWidget) );
+	m_apcWidgets.push_back( static_cast<Widget*>(new TabViewWidget) );
 	m_apcWidgets.push_back( static_cast<Widget*>(new SeparatorWidget) );
 	m_apcWidgets.push_back( static_cast<Widget*>(new StringViewWidget) );
 	m_apcWidgets.push_back( static_cast<Widget*>(new ButtonWidget) );
@@ -216,27 +223,41 @@ Widget* MainWindow::GetNodeWidget( os::LayoutNode* pcNode )
 	return( NULL );
 }
 
-void MainWindow::CreateWidgetTreeLevel( int nLevel, os::LayoutNode* pcParentNode )
+void MainWindow::CreateWidgetTreeLevel( int nLevel, os::LayoutNode* pcNode, os::LayoutNode* pcRealParent )
 {
-	/* Create the widget tree entries for the children of one node */
-	std::vector<os::LayoutNode*> apcWidgets = pcParentNode->GetChildList();
-	for( uint i = 0; i < apcWidgets.size(); i++ )
+	/* Create tree entry */
+	Widget* pcWidget = GetNodeWidget( pcNode );
+	WidgetTreeRow* pcRow = new WidgetTreeRow( pcNode, pcRealParent );
+	pcRow->AppendString( pcNode->GetName() );
+	
+	if( pcNode == m_pcAppWindow->GetRootNode() )
 	{
-		os::LayoutNode* pcNode = apcWidgets[i];
-		WidgetTreeRow* pcRow = new WidgetTreeRow( pcNode );
-		pcRow->AppendString( pcNode->GetName() );
+		pcRow->AppendString( "Root Node" );
+	}
+	else
+	{
 		/* Get the widget belonging to this node */
-		Widget* pcWidget = GetNodeWidget( pcNode );
 		if( pcWidget != NULL )
 			pcRow->AppendString( pcWidget->GetName() );
 		else
 			pcRow->AppendString( "Unknown" );
 		pcRow->SetIndent( nLevel );
-		m_pcWidgetTree->InsertNode( pcRow );
-		
-		/* Create child tree */
-		if( pcWidget != NULL )
-			CreateWidgetTreeLevel( nLevel + 1, pcWidget->GetSubNode( pcNode ) );
+	}
+	
+	m_pcWidgetTree->InsertNode( pcRow );
+	
+	/* Create the widget tree entries for the children */
+	std::vector<os::LayoutNode*> apcWidgets;
+	if( pcWidget )
+	{
+		apcWidgets = pcWidget->GetChildList( pcNode ); }
+	else
+	{
+		apcWidgets = pcNode->GetChildList();
+	}
+	for( uint i = 0; i < apcWidgets.size(); i++ )
+	{
+		CreateWidgetTreeLevel( nLevel + 1, apcWidgets[i], pcNode );
 	}
 }
 
@@ -245,13 +266,7 @@ void MainWindow::CreateWidgetTree()
 	/* Creates the widget tree */
 	m_pcWidgetTree->Clear();
 	os::LayoutNode* pcRoot = m_pcAppWindow->GetRootNode();
-	WidgetTreeRow* pcRow = new WidgetTreeRow( pcRoot );
-	pcRow->AppendString( pcRoot->GetName() );
-	pcRow->AppendString( "Root Node" );
-	pcRow->SetIndent( 1 );
-	m_pcWidgetTree->InsertNode( pcRow );
-	
-	CreateWidgetTreeLevel( 2, pcRoot );
+	CreateWidgetTreeLevel( 1, pcRoot, NULL );
 	
 	m_pcWidgetTree->Invalidate();
 	m_pcWidgetTree->Flush();
@@ -296,8 +311,14 @@ void MainWindow::CreatePropertyList( os::LayoutNode* pcNode )
 
 bool MainWindow::Save( os::File* pcFile, int nLevel, os::LayoutNode* pcParentNode )
 {
-	/* Save nodes */	
-	std::vector<os::LayoutNode*> apcWidgets = pcParentNode->GetChildList();
+	/* Save nodes */
+	Widget* pcWidget = GetNodeWidget( pcParentNode );
+	std::vector<os::LayoutNode*> apcWidgets;
+	if( pcWidget )
+		apcWidgets = pcWidget->GetChildList( pcParentNode );
+	else
+		apcWidgets = pcParentNode->GetChildList();
+	
 	std::vector<WidgetProperty> cProperties;
 	for( uint i = 0; i < apcWidgets.size(); i++ )
 	{
@@ -306,7 +327,7 @@ bool MainWindow::Save( os::File* pcFile, int nLevel, os::LayoutNode* pcParentNod
 		uint8 nBuffer[8192];
 		os::LayoutNode* pcNode = apcWidgets[i];
 		/* Get the widget belonging to this node */
-		Widget* pcWidget = GetNodeWidget( pcNode );
+		pcWidget = GetNodeWidget( pcNode );
 		
 		if( pcWidget == NULL )
 		{
@@ -344,7 +365,7 @@ bool MainWindow::Save( os::File* pcFile, int nLevel, os::LayoutNode* pcParentNod
 		pcFile->Write( &nDataLength, 4 );
 		
 		/* Save child nodes */
-		Save( pcFile, nLevel + 1, pcWidget->GetSubNode( pcNode ) );
+		Save( pcFile, nLevel + 1, pcNode );
 	}
 	return( true );
 }
@@ -438,7 +459,12 @@ bool MainWindow::Load( os::File* pcFile, int *pnLevel, os::LayoutNode* pcParentN
 			return( false );
 		}
 		pcLastNode = pcWidget->CreateLayoutNode( zName );
-		pcParentNode->AddChild( pcLastNode );
+		
+		Widget* pcParentWidget = GetNodeWidget( pcParentNode );
+		if( pcParentWidget )
+			pcParentWidget->AddChild( pcParentNode, pcLastNode );
+		else
+			pcParentNode->AddChild( pcLastNode );
 		
 		/* Load properties */
 		std::vector<WidgetProperty> cProperties;
@@ -460,7 +486,6 @@ bool MainWindow::Load( os::File* pcFile, int *pnLevel, os::LayoutNode* pcParentN
 				return( false );
 		}
 		pcWidget->SetProperties( pcLastNode, cProperties );
-		pcLastNode = pcWidget->GetSubNode( pcLastNode );
 		/* Read next level */
 		if( pcFile->Read( &nLoadLevel, 4 ) != 4 )
 		{
@@ -516,7 +541,12 @@ void MainWindow::Load( os::String zFileName )
 bool MainWindow::CreateCode( os::File* pcSourceFile, os::File* pcHeaderFile, int nLevel, os::LayoutNode* pcParentNode )
 {
 	/* Create code for nodes */	
-	std::vector<os::LayoutNode*> apcWidgets = pcParentNode->GetChildList();
+	Widget* pcWidget = GetNodeWidget( pcParentNode );
+	std::vector<os::LayoutNode*> apcWidgets;
+	if( pcWidget )
+		apcWidgets = pcWidget->GetChildList( pcParentNode );
+	else
+		apcWidgets = pcParentNode->GetChildList();
 	for( uint i = 0; i < apcWidgets.size(); i++ )
 	{
 		os::LayoutNode* pcNode = apcWidgets[i];
@@ -528,20 +558,10 @@ bool MainWindow::CreateCode( os::File* pcSourceFile, os::File* pcHeaderFile, int
 			printf("Error: Unknown widget!\n" );
 			return( false );
 		}
-		char nBuffer[8192];
-		sprintf( nBuffer, "os::%s* m_pc%s;\n", pcWidget->GetCodeName().c_str(), pcNode->GetName().c_str() );
-		pcHeaderFile->Write( nBuffer, strlen( nBuffer ) );
-		if( pcWidget->GetSubNode( pcNode ) != pcNode ) {
-			Widget* pcSubWidget = GetNodeWidget( pcWidget->GetSubNode( pcNode ) );
-			if( pcSubWidget != NULL ) {
-				sprintf( nBuffer, "os::%s* m_pc%s;\n", pcSubWidget->GetCodeName().c_str(), pcWidget->GetSubNode( pcNode )->GetName().c_str() );
-				pcHeaderFile->Write( nBuffer, strlen( nBuffer ) );
-			}
-		}			
-		
+		pcWidget->CreateHeaderCode( pcHeaderFile, pcNode );
 		pcWidget->CreateCode( pcSourceFile, pcNode );
 		
-		CreateCode( pcSourceFile, pcHeaderFile, nLevel + 1, pcWidget->GetSubNode( pcNode ) );
+		CreateCode( pcSourceFile, pcHeaderFile, nLevel + 1, pcNode );
 		
 		pcWidget->CreateCodeEnd( pcSourceFile, pcNode );
 	}
@@ -586,7 +606,12 @@ bool MainWindow::FindNode( os::String zName, os::LayoutNode* pcParentNode )
 	/* Find a node using its name */
 	/* NOTE: We cannot use the FindNode() member of the LayoutNode class here
 	because the search doesn’t include integrated layoutvies */
-	std::vector<os::LayoutNode*> apcWidgets = pcParentNode->GetChildList();
+	Widget* pcWidget = GetNodeWidget( pcParentNode );
+	std::vector<os::LayoutNode*> apcWidgets;
+	if( pcWidget )
+		apcWidgets = pcWidget->GetChildList( pcParentNode );
+	else
+		apcWidgets = pcParentNode->GetChildList();
 	for( uint i = 0; i < apcWidgets.size(); i++ )
 	{
 		os::LayoutNode* pcNode = apcWidgets[i];
@@ -602,7 +627,7 @@ bool MainWindow::FindNode( os::String zName, os::LayoutNode* pcParentNode )
 			return( false );
 		}
 		
-		if( FindNode( zName, pcWidget->GetSubNode( pcNode ) ) == true )
+		if( FindNode( zName, pcNode ) == true )
 			return( true );
 	}
 	return( false );
@@ -611,14 +636,18 @@ bool MainWindow::FindNode( os::String zName, os::LayoutNode* pcParentNode )
 void MainWindow::ResetWidthAndHeight( os::LayoutNode* pcNode )
 {
 	/* Called to recreate the width and height settings */
-	std::vector<os::LayoutNode*> apcWidgets = pcNode->GetChildList();
+	Widget* pcWidget = GetNodeWidget( pcNode );
+	std::vector<os::LayoutNode*> apcWidgets;
+	if( pcWidget )
+		apcWidgets = pcWidget->GetChildList( pcNode );
+	else
+		apcWidgets = pcNode->GetChildList();
 	for( uint i = 0; i < apcWidgets.size(); i++ )
 	{
 		apcWidgets[i]->SameWidth( NULL );
 		apcWidgets[i]->SameHeight( NULL );
 	}
 	std::vector<WidgetProperty> cProperties;
-	Widget* pcWidget = GetNodeWidget( pcNode );
 	if( pcWidget == NULL )
 		return;
 	cProperties = pcWidget->GetProperties( pcNode );
@@ -645,15 +674,13 @@ void MainWindow::HandleMessage( os::Message* pcMessage )
 			WidgetTreeRow* pcRow = static_cast<WidgetTreeRow*>(m_pcWidgetTree->GetRow( nSelected ) );
 			Widget* pcRowWidget = GetNodeWidget( pcRow->GetLayoutNode() );
 			os::LayoutNode* pcNode;
-			if( pcRowWidget == NULL )
-				pcNode = pcRow->GetLayoutNode();
-			else
-				pcNode = pcRowWidget->GetSubNode( pcRow->GetLayoutNode() );
+			pcNode = pcRow->GetLayoutNode();
 			
 			/* Check if this is a HLayoutNode or VLayoutNode */
 			if( !( typeid( *pcNode ) == typeid( LEHLayoutNode )
 				|| typeid( *pcNode ) == typeid( LEVLayoutNode )
-				|| typeid( *pcNode ) == typeid( os::VLayoutNode ) ) )
+				|| typeid( *pcNode ) == typeid( os::VLayoutNode )
+				|| ( pcRowWidget && pcRowWidget->CanHaveChildren() ) ) )
 				break;
 			
 			/* Save values */
@@ -661,7 +688,7 @@ void MainWindow::HandleMessage( os::Message* pcMessage )
 			m_pcNewWidget = pcWidget;
 			
 			/* Create edit window */
-			m_pcNewWin = new os::EditStringWin( os::Rect( 0, 0, 150, 50 ), "edit_win", os::String( "Add new " ) + pcWidget->GetName(), pcWidget->GetCodeName(), this );
+			m_pcNewWin = new os::EditStringWin( os::Rect( 0, 0, 150, 50 ), "edit_win", os::String( "Add new " ) + pcWidget->GetName(), pcWidget->GetName(), this );
 			m_pcNewWin->CenterInWindow( m_pcAppWindow );
 			m_pcNewWin->Show();
 			m_pcNewWin->MakeFocus();
@@ -694,7 +721,12 @@ void MainWindow::HandleMessage( os::Message* pcMessage )
 			
 			os::LayoutNode* pcNewNode = pcWidget->CreateLayoutNode( zWidgetName );
 			m_pcAppWindow->Lock();
-			pcNode->AddChild( pcNewNode );
+			
+			Widget* pcParentWidget = GetNodeWidget( pcNode );
+			if( pcParentWidget )
+				pcParentWidget->AddChild( pcNode, pcNewNode );
+			else
+				pcNode->AddChild( pcNewNode );
 			ResetWidthAndHeight( pcNode );
 			
 			m_pcAppWindow->ReLayout();
@@ -702,6 +734,7 @@ void MainWindow::HandleMessage( os::Message* pcMessage )
 			/* Recreate tree */
 			CreateWidgetTree();
 			PostMessage( M_TREE_SEL_CHANGED, this );
+			printf("Add widget %s to %s\n", pcNewNode->GetName().c_str(), pcNode->GetName().c_str() );
 //			printf( "%s\n", pcRow->GetString( 0 ).c_str() );
 		}
 		break;
@@ -716,9 +749,15 @@ void MainWindow::HandleMessage( os::Message* pcMessage )
 				break;
 			WidgetTreeRow* pcRow = static_cast<WidgetTreeRow*>(m_pcWidgetTree->GetRow( nSelected ) );
 			os::LayoutNode* pcNode = pcRow->GetLayoutNode();
-			os::LayoutNode* pcParent = pcNode->GetParent();
+			os::LayoutNode* pcParent = pcRow->GetRealParent();
+			Widget* pcParentWidget = GetNodeWidget( pcParent );
+			
 			/* Delete the node */
 			m_pcAppWindow->Lock();
+			if( pcParentWidget )
+				pcParentWidget->RemoveChild( pcParent, pcNode );
+			else
+				pcParent->RemoveChild( pcNode );
 			delete( pcNode );
 			/* Reset widths and */
 			ResetWidthAndHeight( pcParent );
@@ -743,11 +782,16 @@ void MainWindow::HandleMessage( os::Message* pcMessage )
 			
 			/* Get parent */
 			
-			os::LayoutNode* pcParent = pcNode->GetParent();
+			os::LayoutNode* pcParent = pcRow->GetRealParent();
 			if( pcParent == NULL )
 				break;
+			Widget* pcParentWidget = GetNodeWidget( pcParent );
+			std::vector<os::LayoutNode*> cChildList;
 			m_pcAppWindow->Lock();
-			std::vector<os::LayoutNode*> cChildList = pcParent->GetChildList();
+			if( pcParentWidget )
+				cChildList = pcParentWidget->GetChildList( pcParent );
+			else
+				cChildList = pcParent->GetChildList();
 			int nPos = -1;
 			/* Remove all children */
 			for( uint i = 0; i < cChildList.size(); i++ )
@@ -756,7 +800,10 @@ void MainWindow::HandleMessage( os::Message* pcMessage )
 				{
 					nPos = i;
 				}
-				pcParent->RemoveChild( cChildList[i] );
+				if( pcParentWidget )
+					pcParentWidget->RemoveChild( pcParent, cChildList[i] );
+				else
+					pcParent->RemoveChild( cChildList[i] );
 			}
 			if( pcMessage->GetCode() == M_MOVE_WIDGET_UP && nPos > 0 ) {
 				/* Exchange nodes */
@@ -773,7 +820,7 @@ void MainWindow::HandleMessage( os::Message* pcMessage )
 			/* Add nodes again */
 			for( uint i = 0; i < cChildList.size(); i++ )
 			{
-				pcParent->AddChild( cChildList[i] );
+				pcParentWidget->AddChild( pcParent, cChildList[i] );
 			}
 			
 			/* Update window and the tree */
@@ -844,7 +891,7 @@ void MainWindow::HandleMessage( os::Message* pcMessage )
 		break;
 		case M_APP_ABOUT:
 		{
-			os::Alert* pcAlert = new os::Alert("About Layout Editor", "Layout Editor 0.1 CVS\nEditor for the dynamic layout system\nWritten by Arno Klenke, 2006\n"
+			os::Alert* pcAlert = new os::Alert("About Layout Editor", "Layout Editor 0.1.1\nEditor for the dynamic layout system\nWritten by Arno Klenke, 2006\n"
 														"\n\nLayout Editor is released under the Gnu Public Licencse (GPL)\nPlease see the file COPYING, distributed with Layout Editor, for\nmore information\n", os::Alert::ALERT_INFO,
 											0x00, "Ok", NULL);
 			pcAlert->CenterInWindow(this);

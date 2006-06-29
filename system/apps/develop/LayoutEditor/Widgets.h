@@ -72,16 +72,23 @@ public:
 class Widget
 {
 public:
+	virtual ~Widget()
+	{
+	}
 	virtual const std::type_info* GetTypeID() = 0;
 	virtual const os::String GetName() = 0;
-	virtual const os::String GetCodeName()
-	{
-		return( GetName() );
-	}
 	virtual os::LayoutNode* CreateLayoutNode( os::String zName ) = 0;
-	virtual os::LayoutNode* GetSubNode( os::LayoutNode* pcNode )
-	{
-		return( pcNode );
+	virtual bool CanHaveChildren() {
+		return( false );
+	}
+	virtual void AddChild( os::LayoutNode* pcNode, os::LayoutNode* pcChild ) {
+		pcNode->AddChild( pcChild );
+	}
+	virtual void RemoveChild( os::LayoutNode* pcNode, os::LayoutNode* pcChild ) {
+		pcNode->RemoveChild( pcChild );
+	}
+	virtual const std::vector<os::LayoutNode*> GetChildList( os::LayoutNode* pcNode ) {
+		return( pcNode->GetChildList() );
 	}
 	virtual std::vector<WidgetProperty> GetProperties( os::LayoutNode* pcNode ) {
 		std::vector<WidgetProperty> cDummy;
@@ -95,13 +102,19 @@ public:
 	virtual	void CreateCodeEnd( os::StreamableIO* pcFile, os::LayoutNode* pcNode )
 	{
 	}
-
+	virtual void CreateHeaderCode( os::StreamableIO* pcFile, os::LayoutNode* pcNode )
+	{
+		char nBuffer[8192];
+		sprintf( nBuffer, "os::%s* m_pc%s;\n", GetName().c_str(), pcNode->GetName().c_str() );
+		pcFile->Write( nBuffer, strlen( nBuffer ) );
+	}
 	void CreateAddCode( os::StreamableIO* pcFile, os::LayoutNode* pcNode )
 	{
 		char zBuffer[8192];
 		sprintf( zBuffer, "m_pc%s->AddChild( m_pc%s, %f );\n", pcNode->GetParent()->GetName().c_str(), pcNode->GetName().c_str(), pcNode->GetWeight() );
 		pcFile->Write( zBuffer, strlen( zBuffer ) );
 	}
+	
 };
 
 os::String ConvertString( os::String zString );

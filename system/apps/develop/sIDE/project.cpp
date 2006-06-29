@@ -500,6 +500,26 @@ void project::ExportMakefile()
 	out<<"all : translations objs \""<<m_zTarget.c_str()<<"\""<<std::endl;
 	out<<std::endl;
 	
+	/* Add interface dependencies */
+	for( i = 0; i < GetGroupCount(); i++ )
+	{
+		for( j = 0; j < GetFileCount( i ); j++ )
+		{
+			int nType = GetFileType( i, j );
+			if( nType == TYPE_INTERFACE )
+			{
+				os::String zIFName = GetFileName( i, j );
+				if( zIFName[zIFName.Length()-3] == '.' &&
+					zIFName[zIFName.Length()-2] == 'i' &&
+					zIFName[zIFName.Length()-1] == 'f' )
+				{
+					out<<"$(OBJDIR)/"<<zIFName.substr( 0, zIFName.Length() - 3 ).c_str()<<".o: "<<zIFName.substr( 0, zIFName.Length() - 3 ).c_str()<<"Layout.cpp"<<std::endl;
+				}
+			}
+		}
+	}
+	out<<std::endl;
+	
 	/* Add catalog compiler commands */
 	bool bCatalogsFound = false;
 	out<<"translations:"<<std::endl;
