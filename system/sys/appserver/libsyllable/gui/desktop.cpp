@@ -182,6 +182,8 @@ bool Desktop::Activate() const
 
 /** Return the windows on the desktop.
  * \par Description:
+ * THIS METHOD WILL BE REMOVED IN ONE OF THE FUTURE SYLLABLE RELEASES.
+ * USE THE NEW EVENT INTERFACE INSTEAD.
  * GetWindows( Message* pcMsg ) puts the information about the windows on
  * the desktop into the message pointed to by the pcMsg parameter. The message
  * contains string members with the name "title" that contain the titles of the
@@ -212,6 +214,8 @@ int32 Desktop::GetWindows( Message* pcMsg ) const
 
 /** Activates one window on the desktop.
  * \par Description:
+ * THIS METHOD WILL BE REMOVED IN ONE OF THE FUTURE SYLLABLE RELEASES.
+ * USE THE NEW EVENT INTERFACE INSTEAD.
  * ActivateWindow() activates the window according to the nWindow parameter.
  * \param nWindow - The window.
  * \author	Arno Klenke (arno_klenke@yahoo.de)
@@ -230,6 +234,8 @@ void Desktop::ActivateWindow( int32 nWindow ) const
 
 /** Return the icon of one window.
  * \par Description:
+ * THIS METHOD WILL BE REMOVED IN ONE OF THE FUTURE SYLLABLE RELEASES.
+ * USE THE NEW EVENT INTERFACE INSTEAD. 	
  * GetWindowIcon() returns the icon that has been set by the window. The iconsize
  * is 24x24.
  * \param nWindow - The window.

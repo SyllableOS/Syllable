@@ -424,9 +424,10 @@ View *TabView::DeleteTab( uint nIndex )
 		pcPrevSelection = m->m_cTabList[m->m_nSelectedTab]->GetView();
 	}
 
-	if( nIndex < m->m_nSelectedTab || m->m_nSelectedTab == ( m->m_cTabList.size() - 1 ) )
+	if( nIndex <= m->m_nSelectedTab || m->m_nSelectedTab == ( m->m_cTabList.size() - 1 ) )
 	{
-		m->m_nSelectedTab--;
+		if( m->m_nSelectedTab > 0 )
+			m->m_nSelectedTab--;
 	}
 	m->m_vTotalWidth -= pcTab->GetSize().x;
 

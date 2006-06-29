@@ -372,6 +372,8 @@ void LayoutNode::SetFrame( const Rect & cFrame )
 
 		cViewFrame.Resize( m->m_cBorders.left, m->m_cBorders.top, -m->m_cBorders.right, -m->m_cBorders.bottom );
 		cViewFrame.Floor();
+		
+		
 		m->m_pcView->SetFrame( cViewFrame );
 	}
 	Layout();

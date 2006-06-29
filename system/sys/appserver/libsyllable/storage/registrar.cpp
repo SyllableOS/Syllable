@@ -946,6 +946,8 @@ status_t RegistrarManager::Launch( Window* pcParentWindow, String zFile, bool bV
 
 /** Registers a call.
  * \par Description:
+ * THIS METHOD WILL BE REMOVED IN ONE OF THE FUTURE SYLLABLE RELEASES.
+ * USE THE NEW OS::EVENT CLASS INSTEAD. 	
  * Registers a call that can be used for interprocess communication. All calls 
  * are identified using an id string that has the form class/function/subfunction.
  * An example: class/Mail/CreateNewMail.
@@ -983,6 +985,8 @@ status_t RegistrarManager::RegisterCall( String zID, String zDescription, os::Lo
 
 /** Unregisters a call.
  * \par Description:
+ * THIS METHOD WILL BE REMOVED IN ONE OF THE FUTURE SYLLABLE RELEASES.
+ * USE THE NEW OS::EVENT CLASS INSTEAD.
  * Unregisters a previously registered call.
  * \param zID - ID string.
  * \return 0 if successful.
@@ -1007,6 +1011,8 @@ status_t RegistrarManager::UnregisterCall( String zID )
 
 /** Queries for a specific call.
  * \par Description:
+ * THIS METHOD WILL BE REMOVED IN ONE OF THE FUTURE SYLLABLE RELEASES.
+ * USE THE NEW OS::EVENT CLASS INSTEAD.
  * Queries for a specific call using its id and index. The index is necessary 
  * because there can multiple calls with the same id string.
  * \param zID - ID string.
@@ -1055,6 +1061,8 @@ status_t RegistrarManager::QueryCall( String zID, int nIndex, RegistrarCall_s *p
 
 /** Invokes a call.
  * \par Description:
+ * THIS METHOD WILL BE REMOVED IN ONE OF THE FUTURE SYLLABLE RELEASES.
+ * USE THE NEW OS::EVENT CLASS INSTEAD.
  * Invokes a call using the information from QueryCall().
  * \param psCallInfo - Information about the call from QueryCall();
  * \param pcData - Data that will be submitted.
