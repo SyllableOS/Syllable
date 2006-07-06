@@ -1,0 +1,23 @@
+authors				Kaj de Vos
+status				broken
+
+inherits			gnu
+
+licenses			GPL
+home				www.gnu.org/software/wget/
+packages			wget/wget-1.10.2
+
+build-needs			gettext
+; Currently conflicts with GetText on GLibC 2.3.x:
+build-conflicts		gettext
+build-recommends	openssl
+
+;configure-options
+;	--with-ssl=
+;	--disable-ipv6
+documentation
+	README COPYING NEWS ChangeLog TODO AUTHORS MAILING-LIST
+;	doc
+build-docs			INSTALL
+internal-docs		README.checkout ChangeLog.README PATCHES
+
