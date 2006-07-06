@@ -1,0 +1,12 @@
+authors				Kaj de Vos
+
+inherits			gnu
+
+licenses			GPL
+home				www.gnu.org/software/findutils/
+packages			findutils/findutils-4.2.27
+
+documentation
+	README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS
+;	README-alpha
+
