@@ -1,0 +1,20 @@
+authors				Kaj de Vos
+warnings
+	Hardwires PERL location. /usr/bin/perl and /usr/local/bin/perl should be removed before building a release.
+notes				Build: autom4te needs ftruncate()
+
+inherits			gnu
+
+licenses			GPL
+home				www.gnu.org/software/autoconf/
+packages			autoconf/autoconf-2.60
+
+needs
+	m4 >= 1.4
+	perl >= 5.005_03
+build-recommends	Syllable >= 0.6.1
+; Both BinUtils and AutoConf have info/standards.info:
+conflicts			binutils
+
+documentation		README BUGS COPYING NEWS ChangeLog TODO AUTHORS THANKS
+
