@@ -4,7 +4,7 @@ name	DevelopersDelight
 
 modules
 	programming/flex-2.5.4a
-	programming/bison-2.2
+	programming/bison-2.3
 	programming/languages/binutils-2.16.1
 	programming/languages/gcc-4.1.1
 	programming/languages/nasm-0.98.39
@@ -31,3 +31,4 @@ modules
 ;	apps/develop/Sourcery
 ;	apps/develop/sIDE
 ;	apps/develop/LayoutEditor
+

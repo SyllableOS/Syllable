@@ -209,7 +209,7 @@ modules
 
 	stage libraries/gettext-0.14.3
 	stage libraries/flex-2.5.4a
-	stage libraries/bison-2.2
+	stage libraries/bison-2.3
 	stage libraries/binutils-2.16.1
 
 	libraries libraries/gcc-4.1.1
@@ -298,3 +298,4 @@ modules
 	apps/utils/nettools
 	apps/utils/pkgmanager
 	apps/utils/systools
+
