@@ -43,8 +43,9 @@ modules
 ;	apps/utils/xpdf
 
 ;	Needs objcopy from BinUtils:
-	apps/gnu/binutils-2.16.1-objcopy
+	apps/gnu/binutils-2.17-objcopy
 	apps/utils/rescopy
 
 	apps/utils/shelltools
 	apps/utils/slbmgr
+
