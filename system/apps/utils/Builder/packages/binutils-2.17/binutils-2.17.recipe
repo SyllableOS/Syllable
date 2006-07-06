@@ -1,0 +1,48 @@
+authors
+	Kaj de Vos
+	Arno Klenke
+	Kristian Van Der Vliet
+status				testing
+warnings			LibIberty is both in BinUtils and in GCC.
+
+inherits			gnu
+
+licenses			GPL LGPL
+home				www.gnu.org/software/binutils/
+; For other recipes to inherit:
+packages			binutils/binutils-2.17
+
+build-needs
+	binutils
+;	perl 5.0
+	automake > 1.4p6
+	autoconf >= 2.58
+conflicts
+;	Both BinUtils and AutoConf have info/standards.info:
+	autoconf
+	gcc
+
+patch
+	cd ld
+	automake
+	cd ../gas
+	autoconf
+
+;configure-options	--enable-shared
+
+documentation
+	README COPYING COPYING.LIB
+	binutils/NEWS binutils/ChangeLog binutils/MAINTAINERS
+links
+;	Optimize wasteful duplicates:
+	../../bin/ar				i586-pc-syllable/bin/ar
+	../../bin/as				i586-pc-syllable/bin/as
+	../../bin/ld				i586-pc-syllable/bin/ld
+	../../bin/nm				i586-pc-syllable/bin/nm
+	../../bin/objdump			i586-pc-syllable/bin/objdump
+	../../bin/ranlib			i586-pc-syllable/bin/ranlib
+	../../bin/strip				i586-pc-syllable/bin/strip
+;	For OpenSSL:
+	bin/ranlib					/usr/bin/ranlib
+;	/atheos/autolnk/bin/ranlib	/usr/bin/ranlib
+

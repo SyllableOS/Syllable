@@ -1,0 +1,76 @@
+diff -ru binutils-2.17.original/bfd/config.bfd binutils-2.17/bfd/config.bfd
+--- binutils-2.17.original/bfd/config.bfd	2006-04-05 12:41:57.000000000 +0000
++++ binutils-2.17/bfd/config.bfd	2006-07-06 08:03:01.000000000 +0000
+@@ -594,6 +594,9 @@
+     targ_defvec=bfd_elf32_i386_vec
+     targ_selvecs="i386pe_vec i386pei_vec"
+     ;;
++  i[3-7]86-*-syllable*)
++    targ_defvec=bfd_elf32_i386_vec
++    ;;
+   i[3-7]86-*-interix*)
+     targ_defvec=i386pei_vec
+     targ_selvecs="i386pe_vec"
+diff -ru binutils-2.17.original/binutils/strings.c binutils-2.17/binutils/strings.c
+--- binutils-2.17.original/binutils/strings.c	2005-10-03 19:37:44.000000000 +0000
++++ binutils-2.17/binutils/strings.c	2006-07-06 08:03:01.000000000 +0000
+@@ -98,14 +98,14 @@
+ /* The BFD section flags that identify an initialized data section.  */
+ #define DATA_FLAGS (SEC_ALLOC | SEC_LOAD | SEC_HAS_CONTENTS)
+ 
+-#ifdef HAVE_FOPEN64
++#if defined HAVE_FOPEN64 && ! defined __SYLLABLE__
+ typedef off64_t file_off;
+ #define file_open(s,m) fopen64(s, m)
+ #else
+ typedef off_t file_off;
+ #define file_open(s,m) fopen(s, m)
+ #endif
+-#ifdef HAVE_STAT64
++#if defined HAVE_STAT64 && ! defined __SYLLABLE__
+ typedef struct stat64 statbuf;
+ #define file_stat(f,s) stat64(f, s)
+ #else
+diff -ru binutils-2.17.original/gas/configure.tgt binutils-2.17/gas/configure.tgt
+--- binutils-2.17.original/gas/configure.tgt	2006-04-05 12:41:57.000000000 +0000
++++ binutils-2.17/gas/configure.tgt	2006-07-06 08:03:01.000000000 +0000
+@@ -164,6 +164,7 @@
+   i386-sequent-bsd*)			fmt=aout em=dynix ;;
+   i386-*-beospe*)			fmt=coff em=pe ;;
+   i386-*-beos*)				fmt=elf ;;
++  i386-*-syllable* )		fmt=elf bfd_gas=yes ;;
+   i386-*-coff)				fmt=coff ;;
+   i386-*-elf)				fmt=elf ;;
+   i386-*-kaos*)				fmt=elf ;;
+diff -ru binutils-2.17.original/ld/Makefile.am binutils-2.17/ld/Makefile.am
+--- binutils-2.17.original/ld/Makefile.am	2006-06-03 04:45:50.000000000 +0000
++++ binutils-2.17/ld/Makefile.am	2006-07-06 08:03:01.000000000 +0000
+@@ -194,6 +194,7 @@
+ 	eelf32xtensa.o \
+ 	eelf_i386.o \
+ 	eelf_i386_be.o \
++	eelf_i386_syllable.o \
+ 	eelf_i386_chaos.o \
+ 	eelf_i386_fbsd.o \
+ 	eelf_i386_ldso.o \
+@@ -915,6 +916,9 @@
+ eelf_i386_be.c: $(srcdir)/emulparams/elf_i386_be.sh \
+   $(srcdir)/emultempl/elf32.em $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
+ 	${GENSCRIPTS} elf_i386_be "$(tdir_elf_i386_be)"
++eelf_i386_syllable.c: $(srcdir)/emulparams/elf_i386_syllable.sh \
++  $(srcdir)/emultempl/elf32.em $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
++	${GENSCRIPTS} elf_i386_syllable "$(tdir_elf_i386_syllable)"
+ eelf_i386_chaos.c: $(srcdir)/emulparams/elf_i386_chaos.sh \
+   $(srcdir)/emultempl/elf32.em $(srcdir)/scripttempl/elf_chaos.sc ${GEN_DEPENDS}
+ 	${GENSCRIPTS} elf_i386_chaos "$(tdir_elf_i386_chaos)"
+diff -ru binutils-2.17.original/ld/configure.tgt binutils-2.17/ld/configure.tgt
+--- binutils-2.17.original/ld/configure.tgt	2006-04-05 12:41:57.000000000 +0000
++++ binutils-2.17/ld/configure.tgt	2006-07-06 08:18:12.000000000 +0000
+@@ -221,6 +221,7 @@
+  			targ_extra_ofiles="deffilep.o pe-dll.o" ;;
+ i[3-7]86-*-beospe*)	targ_emul=i386beos ;;
+ i[3-7]86-*-beos*)	targ_emul=elf_i386_be ;;
++i[3-7]86-*-syllable*)	targ_emul=elf_i386_syllable ;;
+ i[3-7]86-*-vxworks*)	targ_emul=elf_i386_vxworks ;;
+ i[3-7]86-*-chaos)	targ_emul=elf_i386_chaos
+ 			;;
