@@ -5,7 +5,8 @@ name	PERL-Pit
 modules
 	programming/languages/perl-5.8.8
 	programming/autoconf-2.59
+	programming/automake-1.9.6
+;	For older packages:
 ;	programming/autoconf-2.13
-;	programming/automake-1.7.9
-	programming/automake-1.4-p6
+;	programming/automake-1.4-p6
 

@@ -1,0 +1,15 @@
+authors				Kaj de Vos
+
+inherits			gnu
+
+licenses			GPL
+home				sources.redhat.com/automake/
+packages			automake/automake-1.9.6
+
+build-needs			autoconf >= 2.54
+run-needs
+	perl
+;	m4
+
+documentation		README COPYING NEWS ChangeLog TODO AUTHORS THANKS
+
