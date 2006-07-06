@@ -71,6 +71,7 @@ configure-options
 make-env
 	BOOT_CFLAGS		'-O'
 	DLL_PATH		"$DLL_PATH:$PWD/gcc"
+	LIBRARY_PATH	"$LIBRARY_PATH:$PWD/gcc"
 make-vars
 	CFLAGS			'-O'
 	LIBCFLAGS		'-O2'
