@@ -5,7 +5,7 @@ modules
 	apps/gnu/gzip-1.3.5
 	apps/gnu/inetutils-1.4.2
 	apps/gnu/less-394
-	apps/gnu/tar-1.14
+	apps/gnu/tar-1.15.1
 	apps/other/unzip-5.51
 	apps/other/zip-2.3
 	apps/desktop/dock_plugins/battery
@@ -40,7 +40,7 @@ modules
 	apps/utils/Launch
 	apps/utils/Man
 	apps/utils/memmon
-;	apps/utils/xpdf
+	apps/utils/xpdf
 
 ;	Needs objcopy from BinUtils:
 	apps/gnu/binutils-2.17-objcopy
