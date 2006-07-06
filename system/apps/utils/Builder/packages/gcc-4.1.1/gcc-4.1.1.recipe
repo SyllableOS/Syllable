@@ -9,6 +9,7 @@ status				testing
 warnings
 	GCC has a circular dependency on GLibC.
 	LibIberty is both in BinUtils and in GCC.
+notes				Build breaks with itself installed
 
 inherits			gnu
 
@@ -71,7 +72,7 @@ configure-options
 make-env
 	BOOT_CFLAGS		'-O'
 	DLL_PATH		"$DLL_PATH:$PWD/gcc"
-	LIBRARY_PATH	"$LIBRARY_PATH:$PWD/gcc"
+;	LIBRARY_PATH	"$LIBRARY_PATH:$PWD/gcc"
 make-vars
 	CFLAGS			'-O'
 	LIBCFLAGS		'-O2'
