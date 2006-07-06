@@ -23,7 +23,7 @@ locations			<Download locations>
 
 ; Dependencies (partly implemented):
 needs
-	<Build- and run-time Dependencies>
+	<Build-, install- and run-time dependencies>
 	<Package> [[> | >= | < | <= | <>] <Version>]
 	Assumed to be always available: SEd, GRep, ZLib
 build-needs
@@ -31,6 +31,8 @@ build-needs
 	Assumed to be always available: GNU Make, BinUtils, GCC
 ;test-needs
 ;	<Test-time dependencies>
+install-needs
+	<Install-time dependencies>
 ;run-needs
 ;	<Run-time dependencies>
 ;recommends
@@ -76,7 +78,7 @@ install-prefix-var	prefix
 
 ; Building:
 ; [<pre-make>]
-; [<make-env>] <make> [<install-prefix-var>=<Final installation path>] [<make-vars>] [<make-options>] <make-targets>
+; [<make-env>] make [<install-prefix-var>=<Final installation path>] [<make-vars>] [<make-options>] <make-targets>
 ; [<post-make>]
 
 pre-make			<Commands preceding make>
@@ -93,7 +95,7 @@ make-options		-option
 post-make			<Commands following make>
 
 ; Testing:
-; <make> [<test-options>] <test-targets>
+; make [<test-options>] <test-targets>
 
 ; Extra test options:
 test-options		-k
@@ -107,7 +109,7 @@ install-tree		<Extra subdirectories to create>
 
 ; Installing:
 ; <install>
-; [<install-env>] <make> [<install-prefix-var>=<(Stage) installation path>] [<install-vars>] <install-targets>
+; [<install-env>] make [<install-prefix-var>=<(Stage) installation path>] [<install-vars>] <install-targets>
 
 install				<Installation commands override>
 
@@ -149,3 +151,4 @@ links
 ;		<Originals>
 ; Don't strip binaries:
 ;no-strip
+

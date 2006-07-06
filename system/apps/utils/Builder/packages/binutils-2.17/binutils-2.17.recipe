@@ -17,6 +17,7 @@ build-needs
 ;	perl 5.0
 	automake > 1.4p6
 	autoconf >= 2.58
+install-needs		binutils
 conflicts
 ;	Both BinUtils and AutoConf have info/standards.info:
 	autoconf

@@ -8,7 +8,7 @@ licenses			GPL
 home				www.gnu.org/software/make/
 packages			make/make-3.81
 
-build-needs			make
+install-needs		make
 test-needs			perl
 
 ;test-targets
