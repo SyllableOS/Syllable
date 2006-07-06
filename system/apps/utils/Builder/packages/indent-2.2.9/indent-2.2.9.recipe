@@ -3,6 +3,7 @@ authors				Kaj de Vos
 inherits			gnu
 
 licenses			GPL
+home				www.gnu.org/software/indent/
 packages			indent/indent-2.2.9
 
 build-recommends
@@ -14,3 +15,4 @@ patch-config		config
 
 ;make-targets		html pdf ps
 documentation		README COPYING ABOUT-NLS NEWS ChangeLog AUTHORS
+
