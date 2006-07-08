@@ -1,0 +1,21 @@
+authors				Kaj de Vos
+status				testing
+notes				See contrib/gregbook/ to build examples
+
+;inherits			sourceforge
+
+licenses			OS
+home				www.libpng.org
+;packages			libpng/libpng-1.2.12
+locations			ftp://ftp.simplesystems.org/pub/libpng/png/src/
+
+_test-targets
+	check
+	test
+
+documentation		README ANNOUNCE LICENSE KNOWNBUG CHANGES TODO Y2KINFO
+build-docs			INSTALL
+develop-docs
+	libpng.txt example.c
+;	contrib/gregbook
+
