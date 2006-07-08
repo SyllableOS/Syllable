@@ -1,0 +1,19 @@
+authors				Kaj de Vos
+status				testing
+
+;inherits			sourceforge
+
+licenses			GPL other
+home				www.freetype.org
+;packages			freetype/freetype-2.2.1
+locations			http://download.savannah.gnu.org/releases/freetype/
+
+;build-recommends	python
+
+; Needs Python:
+;make-targets		refdoc
+documentation
+	README ChangeLog
+	docs
+internal-docs		README.CVS
+
