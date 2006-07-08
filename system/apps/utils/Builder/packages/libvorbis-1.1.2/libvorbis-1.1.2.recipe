@@ -1,0 +1,13 @@
+authors				Kaj de Vos
+
+licenses			BSD GPL
+home				www.xiph.org/ogg/vorbis/
+locations			http://downloads.xiph.org/releases/vorbis/
+
+build-needs			libogg
+
+;configure-options	--enable-docs
+
+documentation		README COPYING todo.txt AUTHORS
+develop-docs		examples
+

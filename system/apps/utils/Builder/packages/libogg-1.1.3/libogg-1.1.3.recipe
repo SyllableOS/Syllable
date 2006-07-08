@@ -1,0 +1,8 @@
+authors				Kaj de Vos
+
+licenses			BSD
+home				www.xiph.org/ogg/
+locations			http://downloads.xiph.org/releases/ogg/
+
+documentation		README COPYING CHANGES AUTHORS
+
