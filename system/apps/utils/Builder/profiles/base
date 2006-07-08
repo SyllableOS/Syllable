@@ -7,7 +7,7 @@ modules
 	apps/gnu/less-394
 	apps/gnu/tar-1.15.1
 	apps/other/unzip-5.52
-	apps/other/zip-2.3
+	apps/other/zip-2.32
 	apps/desktop/dock_plugins/battery
 	apps/desktop/dock_plugins/clock
 	apps/desktop/dock_plugins/Address
