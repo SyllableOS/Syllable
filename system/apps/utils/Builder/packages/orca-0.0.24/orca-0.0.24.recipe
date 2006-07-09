@@ -1,0 +1,41 @@
+authors				Kaj de Vos
+status				unstable
+notes				Tested with M2 0.4.0
+
+;inherits			sourceforge
+
+licenses
+	LGPL
+;	M2:
+	MIT
+home
+;	urlan.sf.net
+	wsrebol.sf.net
+packages
+	urlan/orca-0.0.24
+	m2				orca/support
+locations
+;	http://osdn.dl.sourceforge.net/sourceforge/
+	http://heanet.dl.sourceforge.net/sourceforge/
+;	M2:
+	wsrebol.sf.net/arc/
+
+build-needs
+;	REBOL
+	bzip2
+
+patch
+	cp support/m2/m2			.
+	cp support/m2/m2_linux.r	m2_template.r
+
+; Proprietary REBOL needs to be in /usr/bin/:
+;configure			./m2
+
+install-tree		bin lib include
+install				true
+install-files
+	orca			bin
+	liborca0.a		lib
+	ovalue.h		include
+documentation		README LICENSE ChangeLog TODO
+links				orca bin/rebol
