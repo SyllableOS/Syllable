@@ -21,7 +21,7 @@ install-needs		binutils
 conflicts
 ;	Both BinUtils and AutoConf have info/standards.info:
 	autoconf
-	gcc
+;	gcc
 
 patch
 	cd ld
@@ -46,4 +46,3 @@ links
 ;	For OpenSSL:
 	bin/ranlib					/usr/bin/ranlib
 ;	/atheos/autolnk/bin/ranlib	/usr/bin/ranlib
-

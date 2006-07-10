@@ -47,7 +47,7 @@ build-recommends
 ;	For documentation:
 	texinfo
 test-needs			dejagnu >= 1.4.1
-conflicts			binutils
+;conflicts			binutils
 
 ;patch
 ;	cd gcc
@@ -95,6 +95,9 @@ install-env
 	PATH		"$PATH:../stage/gcc/bin:../stage/image/gcc/bin:../../stage/image/atheos/usr/gcc/bin:/usr/gcc/bin"
 	DLL_PATH	"$DLL_PATH:../stage/gcc/lib:../stage/image/gcc/lib:../../stage/image/atheos/usr/gcc/lib:/usr/gcc/lib"
 
+; Work around conflict with BinUtils:
+delete-files		lib/libiberty.a
+
 documentation
 	README FAQ faq.html BUGS bugs.html COPYING COPYING.LIB NEWS ChangeLog MAINTAINERS
 	ABOUT-NLS gcc/ABOUT-GCC-NLS
@@ -102,4 +105,3 @@ build-docs			INSTALL
 links
 	gcc				bin/cc
 	libgcc.a		lib/gcc/i586-pc-syllable/4.1.1/libgcc_static.a
-
