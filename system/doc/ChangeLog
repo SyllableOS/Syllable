@@ -1,3 +1,8 @@
+* July 10 2006, Kristian Van Der Vliet *
+
+Added a parallel printer (lp_printer) driver, based on the Linux driver and ported
+by Lengyel Sandor <slengyel@chello.hu>
+
 * June 19 2006, Arno Klenke *
 
 The ata busmanager is now more flexible to support non-standard ata hostcontroller drivers
