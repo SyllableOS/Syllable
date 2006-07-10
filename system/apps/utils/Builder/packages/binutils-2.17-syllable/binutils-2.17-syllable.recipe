@@ -1,0 +1,26 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			binutils-2.17
+
+headline			"Cross-assembler for Syllable"
+
+configure-options
+	--target=i586-pc-syllable
+;	--enable-shared
+;	May be needed for porting a limited cross-assembler:
+;	--disable-shared
+;	--disable-nls
+;	This would be for a 64-bits port:
+;	--enable-64-bit-bfd
+
+links
+;	Optimize wasteful duplicates:
+	../../bin/i586-pc-syllable-ar		i586-pc-syllable/bin/ar
+	../../bin/i586-pc-syllable-as		i586-pc-syllable/bin/as
+	../../bin/i586-pc-syllable-ld		i586-pc-syllable/bin/ld
+	../../bin/i586-pc-syllable-nm		i586-pc-syllable/bin/nm
+	../../bin/i586-pc-syllable-objdump	i586-pc-syllable/bin/objdump
+	../../bin/i586-pc-syllable-ranlib	i586-pc-syllable/bin/ranlib
+	../../bin/i586-pc-syllable-strip	i586-pc-syllable/bin/strip
+
