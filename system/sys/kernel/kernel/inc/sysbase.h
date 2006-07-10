@@ -49,9 +49,13 @@ struct SystemBase
 	bigtime_t ex_nRealTime;
 	bigtime_t ex_nBootTime;
 
-      /*** linked list of ready threads ***/
+      /*** linked list of ready threads that haven't consumed all their timeslice ***/
 
 	ThreadList_s ex_sFirstReady;
+
+	  /*** linked list of ready threads that have consumed all their timeslice (expired) ***/
+
+	ThreadList_s ex_sFirstExpired;
 
       /*** Other Globals ***/
 

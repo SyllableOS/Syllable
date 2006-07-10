@@ -101,6 +101,7 @@ static void db_print_sleep_list( int argc, char **argv )
 void init_scheduler( void )
 {
 	DLIST_HEAD_INIT( &g_sSysBase.ex_sFirstReady );
+	DLIST_HEAD_INIT( &g_sSysBase.ex_sFirstExpired );
 	register_debug_cmd( "ls_sleep", "list sleep-list nodes", db_print_sleep_list );
 }
 
@@ -1473,7 +1474,59 @@ void add_thread_to_ready( Thread_s *psThread )
 	}
 }
 
-/** Remove a thread from the ready list
+/** Add a thread to the expired list
+ * \par Description:
+ * Add the given thread to the list of threads that have exhausted their quantum and are still ready to run.
+ *  The list is sorted in descending priority order.  Find the insertion point, and insert, otherwise append.
+ * \par Note:
+ * \par Locks Required:
+ * Scheduler lock
+ * \par Locks Taken:
+ * None
+ * \par Warning:
+ * \param psThread	Thread to add to the expired list
+ * \sa
+ ****************************************************************************/
+void add_thread_to_expired( Thread_s *psThread )
+{
+	Thread_s *psTmp;
+
+	if ( IDLE_THREAD == psThread )
+	{
+		printk( "Error: add_thread_to_expired() attempt to add idle thread to expired list\n" );
+		return;
+	}
+
+	if ( TS_READY != psThread->tr_nState )
+	{
+		// For expired thread, always give it back it's full quantum
+		reset_thread_quantum( psThread );
+
+		psThread->tr_nState = TS_READY;
+
+		for ( psTmp = DLIST_FIRST( &g_sSysBase.ex_sFirstExpired ); NULL != psTmp; psTmp = DLIST_NEXT( psTmp, tr_psNext ) )
+		{
+			if ( psThread->tr_nPriority > ( psTmp )->tr_nPriority )
+			{
+				DLIST_PREPEND( psTmp, psThread, tr_psNext );
+				return;
+			}
+			if ( DLIST_NEXT( psTmp, tr_psNext ) == NULL )
+				break;
+		}
+
+		if ( DLIST_IS_EMPTY( &g_sSysBase.ex_sFirstExpired ) )
+		{
+			DLIST_ADDHEAD( &g_sSysBase.ex_sFirstExpired, psThread, tr_psNext );
+		}
+		else
+		{
+			DLIST_APPEND( psTmp, psThread, tr_psNext );
+		}
+	}
+}
+
+/** Remove a thread from the ready or expired list (can be either since it's done in the same way)
  * \par Description:
  * Remove the given thread from the list of threads ready to run.  This is just a DLIST_REMOVE.
  * \par Note:
@@ -1488,6 +1541,72 @@ void add_thread_to_ready( Thread_s *psThread )
 static void remove_thread_from_ready( Thread_s *psThread )
 {
 	DLIST_REMOVE( psThread, tr_psNext );
+}
+
+/** Get next thread from ready queue
+ * \par Description:
+ * Check if ready queue is empty.  If empty, swap ready and expired queues.
+ * Return first thread on ready queue.
+ * \par Note:
+ * \par Locks Required:
+ * Interrupts
+ * Scheduler lock
+ * \par Locks Taken:
+ * None
+ * \par Warning:
+ * \param none
+ * \return Pointer to first thread on ready queue.
+ * \sa Schedule
+ ****************************************************************************/
+Thread_s *swap_and_get_next_ready_thread( void )
+{
+	if ( DLIST_IS_EMPTY( &g_sSysBase.ex_sFirstReady ) && ! DLIST_IS_EMPTY( &g_sSysBase.ex_sFirstExpired ) )
+	{
+		// Swap ready and expired queues
+		g_sSysBase.ex_sFirstReady.list_head = g_sSysBase.ex_sFirstExpired.list_head;
+		g_sSysBase.ex_sFirstReady.list_head->tr_psNext.list_pprev = 
+			&(g_sSysBase.ex_sFirstReady.list_head);
+		g_sSysBase.ex_sFirstExpired.list_head = NULL;
+	}
+
+	return DLIST_FIRST( &g_sSysBase.ex_sFirstReady );
+}
+
+/** Calculate quantum for thread
+ * \par Description:
+ * Higher-priority threads should get a larger timeslice.  This function calculates
+ * the timeslice and sets tr_nQuantum, which is then decremented as the process runs.
+ * \par Note:
+ * \par Locks Required:
+ * Interrupts
+ * Scheduler lock
+ * \par Locks Taken:
+ * None
+ * \par Warning:
+ * \param none
+ * \return void
+ * \sa Schedule
+ ****************************************************************************/
+void reset_thread_quantum( Thread_s *psThread )
+{
+        /*
+         * Calculate quantum for this process.  It is scaled between 5ms and 800ms.
+         * processes with "idle" priority (-100 and under) get 5ms
+         * those with "normal priority" (0) get 100ms
+         * those with "realtime priority" (150 and above) get 800ms
+         * everything else is scaled.
+         *
+         * if constants in atheos/threads.h change, this should probably change.
+         */
+       if ( psThread->tr_nPriority == NORMAL_PRIORITY )
+                psThread->tr_nQuantum = 100000;
+        else
+        {
+                if ( psThread->tr_nPriority < NORMAL_PRIORITY )
+                        psThread->tr_nQuantum = max(0, psThread->tr_nPriority + 100) * 950 + 5000;
+                else
+                        psThread->tr_nQuantum = min(150, psThread->tr_nPriority) * 4666 + 100000;
+        }
 }
 
 /** Select the best thread to run
@@ -1513,14 +1632,13 @@ static void remove_thread_from_ready( Thread_s *psThread )
  * \return Pointer to next thread to run
  * \sa Schedule
  ****************************************************************************/
-static Thread_s *select_thread( void )
+static Thread_s *select_thread( bool *bTimedOut )
 {
 	int nThisProc = get_processor_id();
 	Thread_s *psPrev = CURRENT_THREAD;
 	Thread_s *psNext = psPrev;
-	Thread_s *psTopProc = DLIST_FIRST( &g_sSysBase.ex_sFirstReady );
+	Thread_s *psTopProc = swap_and_get_next_ready_thread();
 	bigtime_t nCurTime = get_system_time();
-	bool bTimedOut;
 	int nState;
 
 	if ( psPrev != NULL )
@@ -1539,8 +1657,9 @@ static Thread_s *select_thread( void )
 	}
 
 	if ( psPrev == NULL || psPrev->tr_nState == TS_ZOMBIE )
-	{			/* previous task was killed       */
-		psNext = DLIST_FIRST( &g_sSysBase.ex_sFirstReady );
+	{
+		/* previous task was killed       */
+		psNext = psTopProc;
 
 		if ( psPrev != NULL )
 		{
@@ -1558,15 +1677,16 @@ static Thread_s *select_thread( void )
 	nState = psPrev->tr_nState;
 
 	if ( nState == TS_WAIT || nState == TS_SLEEP || nState == TS_STOPPED )
-	{			/* previous task went to sleep  */
+	{
+		/* previous task went to sleep  */
 		kassertw( atomic_read( &psPrev->tr_nInV86 ) == 0 || nThisProc != g_nBootCPU );
-		psNext = DLIST_FIRST( &g_sSysBase.ex_sFirstReady );
+		psNext = psTopProc;
 		goto found;
 	}
 
-	/* normal preemption cycle        */
+	/* normal preemption cycle */
 
-	if ( DLIST_IS_EMPTY( &g_sSysBase.ex_sFirstReady ) )
+	if ( psTopProc == NULL )
 	{
 		psNext = psPrev;
 		goto found;
@@ -1584,15 +1704,15 @@ static Thread_s *select_thread( void )
 		psNext = psTopProc;
 		goto found;
 	}
-	bTimedOut = ( nCurTime >= ( psPrev->tr_nLaunchTime + DEFAULT_QUANTUM ) );
+	*bTimedOut = ( nCurTime >= ( psPrev->tr_nLaunchTime + psPrev->tr_nQuantum ) );
 
-	if ( psTopProc->tr_nPriority == psPrev->tr_nPriority && bTimedOut )
+	if (psTopProc != NULL && *bTimedOut) // NEW
 	{
 		psNext = psTopProc;
 		goto found;
 	}
 	psNext = psPrev;
-      found:
+found:
 	return ( psNext );
 }
 
@@ -1628,7 +1748,8 @@ void DoSchedule( SysCallRegs_s* psRegs )
 	int nFlg;
 	int nThisProc;
 	bigtime_t nCurTime = get_system_time();
-	
+	bool bTimedOut = false;
+
 	nFlg = cli();
 	sched_lock();
 
@@ -1667,7 +1788,7 @@ void DoSchedule( SysCallRegs_s* psRegs )
 
 	g_bNeedSchedule = false;
 
-	psNext = select_thread();
+	psNext = select_thread( &bTimedOut );
 
 	// Skip threads we don't like
 	for ( ; psNext != NULL; psNext = DLIST_NEXT(psNext, tr_psNext) )
@@ -1714,9 +1835,17 @@ void DoSchedule( SysCallRegs_s* psRegs )
 		}
 		else
 		{
+			// Charge thread's quantum for it's use
+			psPrev->tr_nQuantum -= nCPUTime;
+
 			if ( psPrev->tr_nState == TS_RUN )
 			{
-				add_thread_to_ready( psPrev );
+				// If the thread had used it's quantum (bTimedOut), then add to expired queue.
+				// otherwise add to ready queue
+				if (bTimedOut)
+					add_thread_to_expired( psPrev );
+				else
+					add_thread_to_ready( psPrev );
 			}
 		}
 		psPrev->tr_nCurrentCPU = -1;
@@ -1774,7 +1903,7 @@ void DoSchedule( SysCallRegs_s* psRegs )
 		:"r"( g_asProcessorDescs[psNext->tr_nCurrentCPU].pi_nGS ), "r"( psNext->tr_pESP ) );
 	
 	put_cpu_flags( nFlg );
-	
+	g_bNeedSchedule = false;
 }
 
 void sys_do_schedule( void* pPtr )

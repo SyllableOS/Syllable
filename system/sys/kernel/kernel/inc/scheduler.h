@@ -288,6 +288,8 @@ thread_id get_prev_thread( const thread_id hPrev );
 
 int send_signal( Thread_s *psThread, int nSigNum, bool bBypassChecks );
 
+void reset_thread_quantum( Thread_s *psThread );
+
 void DoSchedule( SysCallRegs_s* psRegs );
 
 #ifdef __cplusplus
