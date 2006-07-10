@@ -1,3 +1,14 @@
+* July 10th 2006, Kristian Van Der Vliet *
+
+Checked in Lance Hartfords <Lance.Hartford@libertymutual.com> fair scheduler patches.
+Each thread now has a quantum that is calculated from it's priority; lower priority
+threads have less quantum.  The scheduler now maintains two queues; one for ready
+threads and one for threads whos quantum has expired.  All of the threads on the ready
+queue will be run to their full quantum before the two lists are swapped.
+
+It's a fairly standard round-robin priority based afair, but now high priority threads
+can no longer starve the lower priority threads.
+
 * June 4th 2006, Arno Klenke *
 
 Updated ACPI busmanager
