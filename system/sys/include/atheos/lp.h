@@ -103,6 +103,19 @@ extern "C" {
 #define LP_TIMEOUT_INTERRUPT	(60 * HZ)
 #define LP_TIMEOUT_POLLED	(10 * HZ)
 
+#ifdef LP_STATS
+
+struct lp_stats {
+	unsigned long chars;
+	unsigned long sleeps;
+	unsigned int maxrun;
+	unsigned int maxwait;
+	unsigned int meanwait;
+	unsigned int mdev;
+};
+
+#endif
+
 #ifdef __KERNEL__
 
 /*

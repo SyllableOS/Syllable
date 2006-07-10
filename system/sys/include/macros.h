@@ -32,6 +32,9 @@
 #define	ABS(a)	(((a)>=0) ? (a) : (-(a)))
 #define	SUMADR(a,b)	((void*)(((uintptr_t)(a))+((uintptr_t)(b))))
 
+/* ROUND_UP macro from Linux fs/select.c */
+#define ROUND_UP(x,y) (((x)+(y)-1)/(y))
+
 #ifndef __cplusplus
 #define	min(a,b)	(((a)<(b)) ? (a) : (b) )
 #define	max(a,b)	(((a)>(b)) ? (a) : (b) )
