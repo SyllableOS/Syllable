@@ -167,6 +167,7 @@ modules
 	sys/kernel/drivers/misc/random
 	sys/kernel/drivers/misc/serial
 	sys/kernel/drivers/misc/usb_printer
+	sys/kernel/drivers/misc/lp_printer
 	sys/kernel/drivers/misc/w8378x
 	sys/kernel/drivers/net/3c509
 	sys/kernel/drivers/net/3c59x
