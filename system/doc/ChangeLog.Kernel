@@ -1,3 +1,8 @@
+* July 11th 2006, Kristian Van Der Vliet *
+
+Checked in an NTFS driver, ported from Linux by Jaroslaw Pelczar <jpelczar@interia.pl>
+The driver is currently read-only.
+
 * July 10th 2006, Kristian Van Der Vliet *
 
 Checked in Lance Hartfords <Lance.Hartford@libertymutual.com> fair scheduler patches.

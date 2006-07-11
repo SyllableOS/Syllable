@@ -1,3 +1,8 @@
+* July 11 2006, Kristian Van Der Vliet *
+
+Fixed the Network preferences so that it runs network-init.sh when the
+user applies their changes.
+
 * June 29 2006, Arno Klenke *
 
 sIDE 0.4.5 and LayoutEditor 0.1.1 checked in
