@@ -7,30 +7,31 @@ warnings
 	The Syllable base distribution package needs to be in Builder/sources, so the "atheos" directory will be unpacked into your working directory.
 	To use the static GCC libraries from Syllable, the GCC binary package needs to be in Builder/sources.
 ;	The Syllable source tree "system" directory needs to be in your working directory.
-;	/ainc needs to be linked to the Syllable system headers.
 	Wants to write to the installation directory during configure! May need to run as super user.
 
 inherits				gcc-4.1.1
 
 headline				"Cross-compiler for Syllable"
 packages
-	gcc-4.1.1
-;	gcc-core-4.1.1
-;	gcc-g++-4.1.1
+	gcc/gcc-4.1.1/gcc-4.1.1
+;	gcc/gcc-4.1.1/gcc-core-4.1.1
+;	gcc/gcc-4.1.1/gcc-g++-4.1.1
 ;	Syllable binaries:
 	base-syllable-0.6.1
 ;	gcc-4.1.1.bin.1
+
+;build-needs				Syllable 0.6.1
 
 patch
 ;	cd gcc
 ;	autoconf
 ;	cd ..
 	cd ..
-	mkdir stage
+	mkdir -p stage
 	cp -r atheos/sys/include			stage
 ;	cp -r system/sys/include			stage
 	cp -r atheos/usr/glibc2/include/*	stage/include
-	mkdir stage/lib
+	mkdir -p stage/lib
 	cp atheos/sys/libs/*				stage/lib
 ;	Static libraries:
 ;	cp -r atheos/usr/glibc2/lib/*		stage/lib
@@ -52,12 +53,6 @@ configure-options
 ;	May be needed for porting a limited cross-compiler:
 ;	--without-headers
 ;	--disable-nls
-
-; Requires super-user access.
-; Seems to be unnecessary when setting C_INCLUDE_PATH:
-;pre-make
-;	ln -snf $PWD/../atheos/sys/include
-;	ln -snf $PWD/../stage/include /ainc
 
 make-env
 ;	C_INCLUDE_PATH		$PWD/../atheos/sys/include:$PWD/../atheos/usr/glibc2/include

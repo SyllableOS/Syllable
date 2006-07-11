@@ -2,26 +2,25 @@ authors					Kaj de Vos
 status					developing
 warnings
 	The system and C library headers may need to be replaced with those of your Linux distribution.
-	/ainc will be linked to the Linux system headers.
 
 inherits				gcc-4.1.1
 
 headline				"Cross-compiler for Linux"
 packages
-	gcc-4.1.1
-;	gcc-core-4.1.1
-;	gcc-g++-4.1.1
-;	GoboLinux:
+	gcc/gcc-4.1.1/gcc-4.1.1
+;	gcc/gcc-4.1.1/gcc-core-4.1.1
+;	gcc/gcc-4.1.1/gcc-g++-4.1.1
+;	From GoboLinux:
 	Linux-headers-2.4.20
 	Glibc--2.3.2--i686
-	GCC--3.4.3--i686
+	GCC--4.1.1--i686
 
 patch
 ;	cd gcc
 ;	autoconf
 ;	cd ..
 	cd ..
-	mkdir stage
+	mkdir -p stage
 	cp -r Linux/2.4.20/include	stage
 	cp -r Glibc/2.3.2/include/*	stage/include
 	cp -r Glibc/2.3.2/lib		stage
@@ -40,16 +39,12 @@ configure-options
 ;	--without-headers
 ;	--disable-nls
 
-pre-make				ln -snf $PWD/../stage/include /ainc
-
 make-env
 	C_INCLUDE_PATH		$PWD/../stage/include
 ;	CPLUS_INCLUDE_PATH	$PWD/../stage/include
 make-targets
 ;	all
 	all-gcc
-
-post-make				ln -snf /system/include /ainc
 
 install-targets			install-gcc
 ; The normal links are not relevant:
