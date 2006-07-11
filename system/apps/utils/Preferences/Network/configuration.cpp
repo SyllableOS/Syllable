@@ -274,6 +274,7 @@ void Configuration::Activate()
   }
   fsOut.close();
   chmod("/system/network-init.sh", S_IRWXU | S_IRGRP | S_IROTH);
+  system("/system/network-init.sh");
 }
 
 int Configuration::Detect() {
