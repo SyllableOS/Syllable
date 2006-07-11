@@ -197,6 +197,7 @@ modules
 	sys/kernel/fs/iso9660
 	sys/kernel/fs/ramfs
 ;	sys/kernel/fs/tmpfs
+	sys/kernel/fs/ntfs
 
 	system libs/glibc-2.4
 	system libs/zlib-1.2.3
