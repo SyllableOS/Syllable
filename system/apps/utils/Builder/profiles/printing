@@ -3,7 +3,7 @@ title	Printing Paraphernalia
 name	PrintingParaphernalia
 
 modules
-	cups-1.1.23
+	cups-1.2.1
 	esp-ghostscript-8.15.1
-	cups-1-gutenprint-5.0.0rc2
+	cups-1-gutenprint-5.0.0rc3
 

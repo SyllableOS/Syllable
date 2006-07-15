@@ -1,0 +1,43 @@
+authors
+	Kristian Van Der Vliet
+	Kaj de Vos
+status				testing
+
+licenses			GPL+exception LGPL
+home				www.cups.org
+packages			cups-1.2.1-source
+locations			http://cups.org/software.php?VERSION=1.2.1&FILE=cups/1.2.1/
+
+recommends
+	zlib	>= 1.1.3
+	libpng	>= 1.0.6
+	libjpeg	>= 6b
+	libtiff	>= 3.4
+	esp-ghostscript
+	openssl
+run-recommends		samba
+
+no-build-dir
+
+;configure-options	--enable-ssl
+
+system-prefix-var	DSTROOT
+
+delete-files
+	share/doc
+;	share/cups/templates
+; Epson & HP printers are served by GutenPrint, but we'll leave the Dymo label printer driver
+	lib/cups/filter/rastertoepson
+	lib/cups/filter/rastertohp
+; Same with the PPDs for those printers; we'll leave the Dymo & Zebra label printers
+	share/cups/model/*jet*.ppd
+	share/cups/model/epson*.ppd
+	share/cups/model/okidat*.ppd
+	share/cups/model/st*.ppd
+
+documentation
+	README*.txt LICENSE.* CHANGES.txt CREDITS.txt
+;	doc
+build-docs			INSTALL*.txt
+
+links				/atheos/autolnk/bin/smbspool lib/cups/backend/smb
