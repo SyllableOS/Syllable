@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.71
+# Version 0.6.72
 # Copyright (c) 2002-2006 Kaj de Vos
 # License: GPL 2 or any later version
 
@@ -60,7 +60,7 @@ def downloadModule target
 					break if for location in toList locations
 						break unless for type in ['tar.bz2', 'tbz2', 'tar.gz', 'tgz', 'zip']
 							@log.subheader 'Trying ' + f = File.join(location, file = package + '.' + type)
-							break if action 'wget --tries=5 --passive-ftp ' + f
+							break if action "wget --tries=5 --passive-ftp '#{f}'"
 						end
 					end
 
@@ -1642,7 +1642,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.71',
+	puts 'Syllable Build System 0.6.72',
 		'Copyright (c) 2002-2006 Kaj de Vos',
 		'License: GPL 2 or any later version'
 when '?', '-?', '-h', '-help', '--help'
