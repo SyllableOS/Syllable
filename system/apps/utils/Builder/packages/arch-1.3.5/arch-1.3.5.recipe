@@ -1,0 +1,39 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			gnu
+
+licenses			GPL GFDL
+home				www.gnuarch.org/arch/
+packages			gnu-arch/tla-1.3.5
+;locations			http://www.atai.org/gnuarch/releases/
+
+needs				Syllable >= 0.6.1
+;build-needs
+;	gawk
+;	findutils
+run-needs
+	diffutils
+	patch
+	tar
+run-recommends
+	openssh
+	gnupg
+
+patch-config
+	src/build-tools/gnu
+	src/expat/conftools
+	src/libneon
+
+configure-cmd		src/configure
+;configure-options
+;	--destdir=
+;	--yes ssh-is-lsh
+test-targets		test
+documentation
+	README src/COPYING src/ChangeLog AUTHORS
+	src/docs-tla
+	*.html
+;	*.txt
+	web
+build-docs			INSTALL
