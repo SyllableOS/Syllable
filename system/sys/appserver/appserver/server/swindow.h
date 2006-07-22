@@ -41,6 +41,18 @@ class BitmapNode;
 class SrvSprite;
 class SrvEvent_s;
 
+struct sBlitEntry
+{
+	sBlitEntry( Layer* pcLayer, bool bUpdateChildren )
+	{
+		m_nLayerHandle = pcLayer->GetHandle();
+		m_bUpdateChildren = bUpdateChildren;
+	}
+	int m_nLayerHandle;
+	bool m_bUpdateChildren;
+};
+
+
 class SrvWindow
 {
 public:
@@ -88,7 +100,14 @@ public:
     bool	DispatchMessage( os::Message* pcReq );
     bool	DispatchMessage( const void* psMsg, int nCode );
     bool	IsOffScreen() const	{ return( m_bOffscreen ); }
-
+    int		GetPaintCounter() const { return( atomic_read( &m_nPendingPaintCounter ) ); }
+	void	IncPaintCounter() { atomic_inc( &m_nPendingPaintCounter ); }
+	void	AddToUpdateList( Layer* pcLayer, bool bUpdateChildren )
+	{
+		pcLayer->m_bOnUpdateList = true;
+		m_asUpdateList.push_back( sBlitEntry( pcLayer, bUpdateChildren ) );
+	}
+	
     bool	HasPendingSizeEvents( Layer* pcLayer );
     
     static void SendKbdEvent( int nKeyCode, uint32 nQual, const char* pzConvString, const char* zRawString );
@@ -108,6 +127,8 @@ public:
 	SrvWindow* m_pcNextWindow;
 	SrvWindow* m_pcNextSystemWindow;
     } m_asDTState[32];
+    
+    
   
 private:
     void		R_Render( os::WR_Render_s* psPkt );
@@ -135,15 +156,17 @@ private:
     uint32		m_nDeskTopMask;
     SrvBitmap*		m_pcUserBitmap;
     SrvApplication*	m_pcApp;
-    Layer*		m_pcTopView;
+    Layer*			m_pcTopView;
     WndBorder*		m_pcWndBorder;
     os::WindowDecorator* m_pcDecorator;
-    SrvEvent_s*	m_pcEvent;
+	SrvEvent_s*		m_pcEvent;
     bigtime_t		m_nLastHitTime;	// Time of last mouse click
-    bool		m_bOffscreen;	// True for bitmap windows
+    bool			m_bOffscreen;	// True for bitmap windows
+	atomic_t		m_nPendingPaintCounter;
+	std::vector<sBlitEntry> m_asUpdateList;
     thread_id		m_hThread;
-    port_id		m_hMsgPort;	// Requests from application
-    port_id		m_hEventPort;	// Events to application
+    port_id			m_hMsgPort;	// Requests from application
+    port_id			m_hEventPort;	// Events to application
     os::Locker		m_cMutex;
     os::Messenger*	m_pcAppTarget;
     BitmapNode*		m_pcIcon;

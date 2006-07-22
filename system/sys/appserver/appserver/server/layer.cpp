@@ -501,6 +501,11 @@ void Layer::UpdateIfNeeded()
 	{
 		return;
 	}
+	
+	for( pcChild = m_pcBottomChild; NULL != pcChild; pcChild = pcChild->m_pcHigherSibling )
+	{
+		pcChild->UpdateIfNeeded();
+	}
 
 	if( m_pcDamageReg != NULL )
 	{
@@ -511,10 +516,6 @@ void Layer::UpdateIfNeeded()
 			m_pcActiveDamageReg->Optimize();
 			Paint( static_cast < Rect > ( m_pcActiveDamageReg->GetBounds() ), true );
 		}
-	}
-	for( pcChild = m_pcBottomChild; NULL != pcChild; pcChild = pcChild->m_pcHigherSibling )
-	{
-		pcChild->UpdateIfNeeded();
 	}
 }
 
@@ -1632,6 +1633,8 @@ void Layer::Paint( const IRect & cUpdateRect, bool bUpdate )
 		if( pcTarget->SendMessage( &cMsg ) < 0 )
 		{
 			dbprintf( "Layer::Paint() failed to send M_PAINT message to %s\n", m_cName.c_str() );
+		} else {
+			m_pcWindow->IncPaintCounter();
 		}
 	}
 }

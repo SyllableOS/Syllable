@@ -175,7 +175,13 @@ void TopLayer::UpdateLayer( Layer* pcChild, bool bUpdateChildren )
 	{
 		return;
 	}
-	
+
+	if( pcChild->GetWindow() != NULL && pcChild->GetWindow()->GetPaintCounter() > 0 )
+	{
+		pcChild->GetWindow()->AddToUpdateList( pcChild, bUpdateChildren );
+		return;
+	}
+
 	IPoint cTopLeft( 0, 0 );
 		
 	/* Find the parent layer which is a direct child of us */
@@ -384,6 +390,11 @@ void TopLayer::InvalidateNewAreas( void )
 		if( pcChild->m_cDeltaMove == IPoint( 0, 0 ) && pcChild->m_nHideCount == 0 && 
 			pcChild->m_bHasInvalidRegs && pcChild->m_pcVisibleFullReg != NULL && pcChild->m_pcBackbuffer != NULL )
 		{
+			if( pcChild->GetWindow() && pcChild->GetWindow()->GetPaintCounter() > 0 )
+			{
+				pcChild->GetWindow()->AddToUpdateList( pcChild, true );
+				goto next;
+			}
 			/* Calculate newly visible areas */
 			Region cDamage( *pcChild->m_pcVisibleFullReg );
 			
@@ -419,6 +430,7 @@ void TopLayer::InvalidateNewAreas( void )
 				}
 			}
 		}
+		next:
 		delete( pcChild->m_pcPrevVisibleFullReg );
 		pcChild->m_pcPrevVisibleFullReg = NULL;
 	}

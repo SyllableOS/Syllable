@@ -1652,6 +1652,7 @@ void Window::DispatchMessage( Message * pcMsg, Handler * pcHandler )
 				{
 					dbprintf( "Error: Could not find rectangle in paint message\n" );
 				}
+				send_msg( m->m_hLayerPort, WR_PAINT_FINISHED, NULL, 0 );
 				break;
 			}
 		case M_FONT_CHANGED:
@@ -1818,6 +1819,8 @@ void Window::_DeleteViewFromServer( View * pcView )
 
 		if( pcMsg->FindPointer( "_widget", ( void ** )&pcTmpView ) == 0 && pcTmpView == pcView )
 		{
+			if( pcMsg->GetCode() == M_PAINT )
+				send_msg( m->m_hLayerPort, WR_PAINT_FINISHED, NULL, 0 );
 			delete pcMsg;
 		}
 		else

@@ -129,6 +129,7 @@ enum
     WR_SET_ICON,
     WR_ACTIVATE,
     WR_MINIMIZE,
+    WR_PAINT_FINISHED,
     
     EV_REGISTER = 30000,
     EV_UNREGISTER,
@@ -569,3 +570,14 @@ struct WR_GetPenPositionReply_s
 
 }
 #endif	//	DEVICES_DISPLAY_PACKETS_H
+
+
+
+
+
+
+
+
+
+
+

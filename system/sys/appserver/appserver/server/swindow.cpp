@@ -78,6 +78,8 @@ SrvWindow::SrvWindow( const char *pzTitle, void *pTopView, uint32 nFlags, uint32
 
 	m_nFlags = nFlags;
 	m_bOffscreen = false;
+	atomic_set( &m_nPendingPaintCounter, 0 );
+	m_asUpdateList.clear();
 	Rect cBorderFrame = cRect;
 
 	m_pcWndBorder = new WndBorder( this, NULL, "wnd_border", ( nFlags & WND_BACKMOST ) );
@@ -213,6 +215,7 @@ SrvWindow::SrvWindow( SrvApplication * pcApp, SrvBitmap * pcBitmap ):m_cMutex( "
 	m_pcAppTarget = NULL;
 	m_nFlags = WND_NO_BORDER;
 	m_bOffscreen = true;
+	atomic_set( &m_nPendingPaintCounter, 0 );
 	m_nDesktopMask = ~0;
 
 	m_pcIcon = NULL;
@@ -569,17 +572,6 @@ void SrvWindow::WindowActivated( bool bFocus )
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-/* Entry of the the blit list */
-struct sBlitEntry
-{
-	sBlitEntry( Layer* pcLayer, bool bUpdateChildren )
-	{
-		m_nLayerHandle = pcLayer->GetHandle();
-		m_bUpdateChildren = bUpdateChildren;
-	}
-	int m_nLayerHandle;
-	bool m_bUpdateChildren;
-};
 
 void SrvWindow::R_Render( WR_Render_s * psPkt )
 {
@@ -590,8 +582,6 @@ void SrvWindow::R_Render( WR_Render_s * psPkt )
 	Layer *pcLowestLayer = NULL;
 	uint nBufPos = 0;
 	
-	std::vector<sBlitEntry> asBlitList;
-
 	for( int i = 0; i < psPkt->nCount; ++i )
 	{
 		GRndHeader_s *psHdr = ( GRndHeader_s * ) & psPkt->aBuffer[nBufPos];
@@ -633,7 +623,7 @@ void SrvWindow::R_Render( WR_Render_s * psPkt )
 		
 		/* Copy the last layer to the blitlist */			
 		if( !pcView->m_bOnUpdateList ) {
-			asBlitList.push_back( sBlitEntry( pcView, false ) );
+			m_asUpdateList.push_back( sBlitEntry( pcView, false ) );
 			pcView->m_bOnUpdateList = true;
 		}
 		
@@ -791,7 +781,6 @@ void SrvWindow::R_Render( WR_Render_s * psPkt )
 							nLowest = pcParent->GetLevel();
 							pcLowestLayer = pcParent;
 						}
-						asBlitList[asBlitList.size()-1].m_bUpdateChildren = true;
 					}
 				}
 				bViewsMoved = true;
@@ -853,7 +842,14 @@ void SrvWindow::R_Render( WR_Render_s * psPkt )
 				pcView->ScrollBy( psMsg->cDelta );
 				if( pcView->m_pcBitmap == g_pcScreenBitmap )
 					SrvSprite::Unhide();
-				asBlitList[asBlitList.size()-1].m_bUpdateChildren = true;					
+				for( uint i = 0; i < m_asUpdateList.size(); i++ )
+				{
+					if( m_asUpdateList[i].m_nLayerHandle == pcView->GetHandle() )
+					{
+						m_asUpdateList[i].m_bUpdateChildren = true;
+						break;
+					}
+				}
 				g_cLayerGate.Open();
 				g_cLayerGate.Lock();
 				break;
@@ -958,18 +954,24 @@ void SrvWindow::R_Render( WR_Render_s * psPkt )
 	if( m_pcWndBorder != NULL )
 	{
 		g_cLayerGate.Lock();
-		for( uint i = 0; i < asBlitList.size(); i++ )
-		{
-			Layer *pcView = FindLayer( asBlitList[i].m_nLayerHandle );
-
-			if( pcView == NULL )
-				continue;
-				
-			pcView->m_bOnUpdateList = false;
-			if( asBlitList[i].m_bUpdateChildren == true || ( pcView->m_pcDamageReg == NULL && pcView->m_pcActiveDamageReg == NULL && pcView->m_bIsUpdating == false ) )
-				g_pcTopView->UpdateLayer( pcView, asBlitList[i].m_bUpdateChildren );
-		}	
 		
+		if( atomic_read( &m_nPendingPaintCounter ) == 0 )
+		{
+			/* We only update if there is no paint pending */	
+			for( uint i = 0; i < m_asUpdateList.size(); i++ )
+			{
+				Layer *pcView = FindLayer( m_asUpdateList[i].m_nLayerHandle );
+
+				if( pcView == NULL )
+					continue;
+				
+				pcView->m_bOnUpdateList = false;
+				if( ( m_asUpdateList[i].m_bUpdateChildren == true || ( pcView->m_pcDamageReg == NULL && pcView->m_pcActiveDamageReg == NULL && pcView->m_bIsUpdating == false ) ) )
+					g_pcTopView->UpdateLayer( pcView, m_asUpdateList[i].m_bUpdateChildren );
+			}
+			m_asUpdateList.clear();
+		}	
+
 		g_cLayerGate.Unlock();
 	}
 	
@@ -1797,6 +1799,60 @@ bool SrvWindow::DispatchMessage( const void *psMsg, int nCode )
 	case WR_RENDER:
 		R_Render( ( WR_Render_s * ) psMsg );
 		break;
+	case WR_PAINT_FINISHED:
+		{
+			/* Called by libsyllable after it has processed one paint message. We will update
+			our window if the pending paint counter goes 0 */
+			atomic_dec( &m_nPendingPaintCounter );
+			if( atomic_read( &m_nPendingPaintCounter ) < 0 )
+			{
+				dbprintf( "Error: SrvWindow::DispatchMessage() invalid paint counter\n" );
+				atomic_set( &m_nPendingPaintCounter, 0 );
+			}
+			if( atomic_read( &m_nPendingPaintCounter ) == 0 )
+			{
+				/* Update using the update list */
+				g_cLayerGate.Lock();
+				
+				bool bFullUpdate = false;
+				
+				/* Check if we have an update entry for the whole window */
+				for( uint i = 0; i < m_asUpdateList.size(); i++ )
+				{
+					Layer *pcView = FindLayer( m_asUpdateList[i].m_nLayerHandle );
+
+					if( pcView == NULL )
+						continue;
+				
+					pcView->m_bOnUpdateList = false;
+					
+					if( pcView == m_pcWndBorder ) {
+						bFullUpdate = true;
+					}
+				}
+				if( bFullUpdate )
+				{
+					g_pcTopView->UpdateLayer( m_pcWndBorder, true );
+				}
+				else
+				{
+					for( uint i = 0; i < m_asUpdateList.size(); i++ )
+					{
+						Layer *pcView = FindLayer( m_asUpdateList[i].m_nLayerHandle );
+
+						if( pcView == NULL )
+							continue;
+								
+						if( ( m_asUpdateList[i].m_bUpdateChildren == true || ( pcView->m_pcDamageReg == NULL && pcView->m_pcActiveDamageReg == NULL && pcView->m_bIsUpdating == false ) ) )
+							g_pcTopView->UpdateLayer( pcView, m_asUpdateList[i].m_bUpdateChildren );			
+					}
+				}
+
+				m_asUpdateList.clear();
+				g_cLayerGate.Unlock();
+			}
+			break;
+		}
 	case WR_WND_MOVE_REPLY:
 		if( m_pcWndBorder != NULL )
 		{
@@ -1843,6 +1899,7 @@ bool SrvWindow::DispatchMessage( const void *psMsg, int nCode )
 			m_pcAppTarget = NULL;
 			break;
 		}
+	
 	default:
 		dbprintf( "Warning : SrvWindow::DispatchMessage() Unknown command %d\n", nCode );
 		break;
