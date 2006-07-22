@@ -1,3 +1,8 @@
+* July 22 2006, Arno Klenke *
+
+Switched the Dock to the new event system
+Added Spinner to the LayoutEditor
+
 * July 11 2006, Kristian Van Der Vliet *
 
 Fixed the Network preferences so that it runs network-init.sh when the
@@ -535,6 +540,8 @@ Network Preferences
 		* Added NetworkPreferences from Daryl Dudey(daryl.dudey@ntlworld.com).
 		* Added SlbMgr(AtheMgr renamed).
 		* Patches by Vanders for AEdit.
+
+
 
 
 
