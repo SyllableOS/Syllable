@@ -3,6 +3,7 @@
 
 #include <gui/separator.h>
 #include <gui/slider.h>
+#include <gui/spinner.h>
 
 
 /* Separator Widget */
@@ -299,6 +300,117 @@ void VerticalSliderWidget::CreateHeaderCode( os::StreamableIO* pcFile, os::Layou
 	sprintf( nBuffer, "os::Slider* m_pc%s;\n", pcNode->GetName().c_str() );
 	pcFile->Write( nBuffer, strlen( nBuffer ) );
 }
+
+
+/* Spinner Widget */
+
+class LESpinner : public os::Spinner
+{
+public:
+	LESpinner( os::Rect cFrame, const os::String& cName, double vValue, os::Message* pcMessage )
+				: os::Spinner( cFrame, cName, vValue, pcMessage )
+	{
+		m_zMessageCode = "-1";
+	}
+	os::String m_zMessageCode;
+};
+
+const std::type_info* SpinnerWidget::GetTypeID()
+{
+	return( &typeid( LESpinner ) );
+}
+
+const os::String SpinnerWidget::GetName()
+{
+	return( "Spinner" );
+}
+
+os::LayoutNode* SpinnerWidget::CreateLayoutNode( os::String zName )
+{
+	LESpinner* pcSpinner = new LESpinner( os::Rect(), zName, 0, new os::Message( -1 ) );
+	return( new os::LayoutNode( zName, 1.0f, NULL, pcSpinner ) );
+}
+
+std::vector<WidgetProperty> SpinnerWidget::GetProperties( os::LayoutNode* pcNode )
+{
+	LESpinner* pcSpinner = static_cast<LESpinner*>(pcNode->GetView());
+	std::vector<WidgetProperty> cProperties;
+	// Weight
+	WidgetProperty cProperty0( 0, PT_FLOAT, "Weight", pcNode->GetWeight() );
+	cProperties.push_back( cProperty0 );
+	// Min
+	WidgetProperty cProperty1( 1, PT_FLOAT, "Min", pcSpinner->GetMinValue() );
+	cProperties.push_back( cProperty1 );
+	// Max
+	WidgetProperty cProperty2( 2, PT_FLOAT, "Max", pcSpinner->GetMaxValue() );
+	cProperties.push_back( cProperty2 );
+	// Step
+	WidgetProperty cProperty3( 3, PT_FLOAT, "Step", pcSpinner->GetStep() );
+	cProperties.push_back( cProperty3 );
+	// Value
+	WidgetProperty cProperty4( 4, PT_FLOAT, "Value", pcSpinner->GetValue().AsFloat() );
+	cProperties.push_back( cProperty4 );
+	// Format
+	WidgetProperty cProperty5( 5, PT_STRING, "Format", pcSpinner->GetFormat() );
+	cProperties.push_back( cProperty5 );
+	// Message code
+	WidgetProperty cProperty6( 6, PT_STRING, "Message Code", pcSpinner->m_zMessageCode );
+	cProperties.push_back( cProperty6 );
+	return( cProperties );
+}
+void SpinnerWidget::SetProperties( os::LayoutNode* pcNode, std::vector<WidgetProperty> cProperties )
+{
+	LESpinner* pcSpinner = static_cast<LESpinner*>(pcNode->GetView());
+	for( uint i = 0; i < cProperties.size(); i++ )
+	{
+		WidgetProperty* pcProp = &cProperties[i];
+		switch( pcProp->GetCode() )
+		{
+			case 0: // Weight
+				pcNode->SetWeight( pcProp->GetValue().AsFloat() );
+			break;
+			case 1: // Min
+				pcSpinner->SetMinValue( pcProp->GetValue().AsFloat() );
+			break;
+			case 2: // Max
+				pcSpinner->SetMaxValue( pcProp->GetValue().AsFloat() );
+			break;
+			case 3: // Step
+				pcSpinner->SetStep( pcProp->GetValue().AsFloat() );
+			break;
+			case 4: // Value
+				pcSpinner->SetValue( pcProp->GetValue() );
+			break;
+			case 5: // Format
+				pcSpinner->SetFormat( pcProp->GetValue().AsString().c_str() );
+			break;
+			case 6: // Message Code
+				pcSpinner->m_zMessageCode = pcProp->GetValue().AsString();
+			break;
+		}
+	}
+}
+
+void SpinnerWidget::CreateCode( os::StreamableIO* pcFile, os::LayoutNode* pcNode )
+{
+	LESpinner* pcSpinner = static_cast<LESpinner*>(pcNode->GetView());
+	char zBuffer[8192];
+	sprintf( zBuffer, "m_pc%s = new os::Spinner( os::Rect(), \"%s\", %f, new os::Message( %s ) );\n",
+						pcNode->GetName().c_str(), pcNode->GetName().c_str(), pcSpinner->GetValue().AsFloat(), 
+						pcSpinner->m_zMessageCode.c_str() );
+	pcFile->Write( zBuffer, strlen( zBuffer ) );
+	sprintf( zBuffer, "m_pc%s->SetMinMax( %f, %f );\n",
+						pcNode->GetName().c_str(), pcSpinner->GetMinValue(), pcSpinner->GetMaxValue() );
+	pcFile->Write( zBuffer, strlen( zBuffer ) );
+	sprintf( zBuffer, "m_pc%s->SetStep( %f );\n",
+						pcNode->GetName().c_str(), pcSpinner->GetStep() );
+	pcFile->Write( zBuffer, strlen( zBuffer ) );
+	sprintf( zBuffer, "m_pc%s->SetFormat( \"%s\" );\n",
+						pcNode->GetName().c_str(), pcSpinner->GetFormat().c_str() );
+	pcFile->Write( zBuffer, strlen( zBuffer ) );
+	CreateAddCode( pcFile, pcNode );
+}
+
 
 
 

@@ -165,6 +165,7 @@ void MainWindow::InitWidgets()
 	m_apcWidgets.push_back( static_cast<Widget*>(new VerticalSliderWidget) );
 	m_apcWidgets.push_back( static_cast<Widget*>(new MenuWidget) );
 	m_apcWidgets.push_back( static_cast<Widget*>(new ListViewWidget) );
+	m_apcWidgets.push_back( static_cast<Widget*>(new SpinnerWidget) );
 }
 
 void MainWindow::InitMenus()
