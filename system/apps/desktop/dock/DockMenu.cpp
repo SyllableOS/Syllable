@@ -26,7 +26,7 @@
 #include <util/resources.h>
 #include "DockMenu.h"
 #include <storage/registrar.h>
-
+#include <cassert>
 
 DockMenu::DockMenu( os::Handler* pcHandler, os::Rect cFrame, const char* pzName, os::MenuLayout_e eLayout )
 	 	: os::Menu( cFrame, pzName, eLayout )
@@ -219,4 +219,5 @@ void DockMenu::ScanPath( int nLevel, os::Path cPath )
 	if( pcManager )
 		pcManager->Put();
 }
+
 

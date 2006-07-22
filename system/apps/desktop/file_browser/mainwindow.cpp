@@ -39,7 +39,7 @@ MainWindow::MainWindow( os::String zPath ) : os::Window( os::Rect( 0, 0, 300, 30
 	CenterInScreen();
 	
 	/* Create toolbar */
-	m_pcToolBar = new os::ToolBar( os::Rect( 0, 0, GetBounds().Width(), 35 ), "" );
+	m_pcToolBar = new os::ToolBar( os::Rect( 0, 0, GetBounds().Width(), 40 ), "" );
 	
 	os::HLayoutNode* pcNode = new os::HLayoutNode( "h_root" );
 	pcNode->SetBorders( os::Rect( 0, 4, 5, 4 ) );
@@ -92,7 +92,7 @@ MainWindow::MainWindow( os::String zPath ) : os::Window( os::Rect( 0, 0, 300, 30
 	pcNode->AddChild( m_pcViewMenu );
 	
 	/* Create icon view */
-	m_pcView = new os::IconDirectoryView( os::Rect( 0, 36, GetBounds().Width(), GetBounds().Height() ), zPath, os::CF_FOLLOW_ALL );
+	m_pcView = new os::IconDirectoryView( os::Rect( 0, 41, GetBounds().Width(), GetBounds().Height() ), zPath, os::CF_FOLLOW_ALL );
 	m_pcView->SetDirChangeMsg( new os::Message( M_CHANGE_DIR ) );
 	m_pcView->SetDirectoryLocked( true );
 	os::BitmapImage* pcDirIcon = static_cast<os::BitmapImage*>(m_pcView->GetDirIcon());
@@ -295,6 +295,7 @@ bool MainWindow::OkToQuit()
 	os::Application::GetInstance()->PostMessage( os::M_QUIT );
 	return( true );
 }
+
 
 
 

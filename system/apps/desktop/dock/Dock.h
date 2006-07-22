@@ -40,34 +40,78 @@
 
 class DockWin;
 
-#define ICON_SYLLABLE 0xffff
+#define ICON_SYLLABLE "ICON_SYLLABLE"
 
 class DockIcon
 {
 public:
-	DockIcon( int nId, os::String zTitle )
+	DockIcon( os::String zID, os::String zTitle )
 	{
 		m_zTitle = zTitle;
-		m_nId = nId;
+		m_zID = zID;
 		m_pcBitmap = new os::BitmapImage();
+		m_pcMinimizedBitmap = NULL;
+		m_nHandle = -1;
+		m_bMinimized = false;
+		m_bVisible = true;
+		m_hMsgPort = -1;
+		m_nDesktopMask = 0;
 	}
 	~DockIcon()
 	{
 		delete( m_pcBitmap );
 	}
-	int GetID() { return( m_nId ); }
+	port_id GetMsgPort() { return( m_hMsgPort ); }
+	void SetMsgPort( port_id hPort ) { m_hMsgPort = hPort; }
+	os::String GetID() { return( m_zID ); }
 	os::String GetTitle() { return( m_zTitle ); }
 	void SetTitle( os::String zTitle ) { m_zTitle = zTitle; }
 	os::BitmapImage* GetBitmap()
 	{
-		
 		return( m_pcBitmap );
 	}
-	
+	os::BitmapImage* GetMinimizedBitmap()
+	{
+		if( m_pcMinimizedBitmap == NULL )
+		{
+			m_pcMinimizedBitmap = new os::BitmapImage();
+			os::Bitmap* pcBitmap = m_pcBitmap->LockBitmap();
+			m_pcMinimizedBitmap->SetBitmapData( pcBitmap->LockRaster(), os::IPoint( 24, 24 ), os::CS_RGB32 );
+			m_pcMinimizedBitmap->ApplyFilter( os::Image::F_GRAY );
+			m_pcBitmap->UnlockBitmap();
+		}
+		return( m_pcMinimizedBitmap );
+	}
+	int64 GetHandle()
+	{
+		return( m_nHandle );
+	}
+	void SetHandle( int64 nHandle ) { m_nHandle = nHandle; }
+	bool GetVisible( uint32 nDesktopMask )
+	{
+		return( ( m_bVisible || m_bMinimized ) && ( nDesktopMask & m_nDesktopMask ) );
+	}
+	void SetVisible( bool bVisible ) { m_bVisible = bVisible; }
+	bool GetMinimized()
+	{
+		return( m_bMinimized );
+	}
+	void SetMinimized( bool bMinimized ) { m_bMinimized = bMinimized; }
+	uint32 GetDesktopMask()
+	{
+		return( m_nDesktopMask );
+	}
+	void SetDesktopMask( uint32 nMask ) { m_nDesktopMask = nMask; }
 private:
-	int m_nId;
+	os::String m_zID;
 	os::String m_zTitle;
+	bool m_bVisible;
+	bool m_bMinimized;
 	os::BitmapImage* m_pcBitmap;
+	os::BitmapImage* m_pcMinimizedBitmap;
+	int64 m_nHandle;
+	port_id m_hMsgPort;
+	uint32 m_nDesktopMask;
 };
 
 class DockView : public os::View
@@ -106,11 +150,12 @@ public:
 	void UpdatePlugins();
 	void DeletePlugin( os::DockPlugin* pcPlugin );
 	void ActivateWindow( int32 nWindow );
-	void UpdateWindows( os::Message* pcWindows, int32 nCount );
+	void UpdateWindows( os::Message* pcMessage );
 	void UpdateWindowArea();
-	virtual void WindowsChanged();
+	//virtual void WindowsChanged();
 	virtual void ScreenModeChanged( const os::IPoint& cNewRes, os::color_space eSpace );
 	virtual void DesktopActivated( int nDesktop, bool bActive );
+	int GetDesktop() { return( m_pcDesktop->GetDesktop() ); }
 	std::vector<DockIcon*> GetIcons() { return( m_pcIcons ); }
 	os::BitmapImage* GetAboutIcon() { return( m_pcAboutIcon ); }
 	os::BitmapImage* GetLogoutIcon() { return( m_pcLogoutIcon ); }
@@ -124,13 +169,14 @@ private:
 	os::BitmapImage* m_pcDefaultWindowIcon;
 	os::BitmapImage* m_pcAboutIcon;
 	os::BitmapImage* m_pcLogoutIcon;
-	int32 m_nLastWindowCount;
-	os::Message m_cLastWindows;
+	//int32 m_nLastWindowCount;
+	//os::Message m_cLastWindows;
 	DockIcon* m_pcSyllableIcon;
 	std::vector<DockIcon*> m_pcIcons;
 	std::vector<os::DockPlugin*> m_pcPlugins;
 	std::vector<os::View*> m_pcPluginViews;
 	os::RegistrarManager* m_pcManager;
+	os::Event* m_pcWindowEv;
 	os::Event* m_pcGetPluginsEv;
 	os::Event* m_pcSetPluginsEv;
 	os::Event* m_pcGetPosEv;
@@ -150,6 +196,19 @@ private:
 };
 
 #endif
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

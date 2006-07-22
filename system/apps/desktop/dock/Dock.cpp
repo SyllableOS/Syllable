@@ -36,7 +36,8 @@ enum
 	DOCK_OPEN_APP,
 	DOCK_ABOUT,
 	DOCK_ABOUT_ALERT,
-	DOCK_QUIT_ALERT	
+	DOCK_QUIT_ALERT,
+	DOCK_WINDOW_EV
 };
 
 
@@ -96,7 +97,7 @@ DockView::~DockView()
 void DockView::Paint( const os::Rect& cUpdateRect )
 {
 	bool bHorizontal = m_pcWin->GetPosition() == os::ALIGN_TOP || m_pcWin->GetPosition() == os::ALIGN_BOTTOM;
-	
+	uint32 nDesktopMask = 1 << m_pcWin->GetDesktop();
 	/* Draw the general background */
 	os::Color32_s sCurrentColor = BlendColours(get_default_color(os::COL_SHINE),  get_default_color(os::COL_NORMAL_WND_BORDER), 0.5f);
 	os::Color32_s sBottomColor = BlendColours(get_default_color(os::COL_SHADOW), get_default_color(os::COL_NORMAL_WND_BORDER), 0.5f);
@@ -175,26 +176,35 @@ void DockView::Paint( const os::Rect& cUpdateRect )
 	/* Draw the icons */
 	SetDrawingMode( os::DM_BLEND );
 	g_cWindowLock.Lock();
+	uint nIcon = 0;
 	for( uint i = 0; i < m_pcWin->GetIcons().size(); i++ )
 	{
 		os::Rect cIconFrame;
 		os::Point cIconPos;
 		
+		if( !m_pcWin->GetIcons()[i]->GetVisible( nDesktopMask ) )
+			continue;
+			
 		if( bHorizontal )
 		{
-			cIconFrame = os::Rect( 4 + i * 30, 4, 4 + i * 30 + 23, 4 + 23 );
-			cIconPos = os::Point( 4 + i * 30, 4 );
+			cIconFrame = os::Rect( 4 + nIcon * 30, 4, 4 + nIcon * 30 + 23, 4 + 23 );
+			cIconPos = os::Point( 4 + nIcon * 30, 4 );
 		} else {
-			cIconFrame = os::Rect( 4, 4 + i * 30, 4 + 23, 4 + i * 30 + 23 );
-			cIconPos = os::Point( 4, 4 + i * 30 );
+			cIconFrame = os::Rect( 4, 4 + nIcon * 30, 4 + 23, 4 + nIcon * 30 + 23 );
+			cIconPos = os::Point( 4, 4 + nIcon * 30 );
 		}
 		
 		if( cUpdateRect.DoIntersect( cIconFrame ) ) 
-			if( m_nCurrentIcon == (int)i )
+			if( m_nCurrentIcon == (int)nIcon )
 				m_pcCurrentIcon->Draw( cIconPos, this );
 			else
-				m_pcWin->GetIcons()[i]->GetBitmap()->Draw( cIconPos, this );
-			
+			{
+				if( m_pcWin->GetIcons()[i]->GetMinimized() )
+					m_pcWin->GetIcons()[i]->GetMinimizedBitmap()->Draw( cIconPos, this );
+				else
+					m_pcWin->GetIcons()[i]->GetBitmap()->Draw( cIconPos, this );
+			}	
+		nIcon++;
 	}
 	g_cWindowLock.Unlock();
 	SetDrawingMode( os::DM_COPY );
@@ -209,30 +219,35 @@ void DockView::MouseMove( const os::Point& cNewPos, int nCode, uint32 nButtons, 
 		cLastIconFrame = os::Rect( 4 + m_nCurrentIcon * 30, 4, 4 + m_nCurrentIcon * 30 + 23, 4 + 23 );
 	else
 		cLastIconFrame = os::Rect( 4, 4 + m_nCurrentIcon * 30, 4 + 23, 4 + m_nCurrentIcon * 30 + 23 );
+	uint32 nDesktopMask = 1 << m_pcWin->GetDesktop();
 
 	if( nCode == os::MOUSE_INSIDE )
 	{
 		g_cWindowLock.Lock();
 		/* Check mouse position */
+		uint nIcon = 0;
 		for( uint i = 0; i < m_pcWin->GetIcons().size(); i++ )
 		{
 			os::Rect cIconFrame;
 			
+			if( !m_pcWin->GetIcons()[i]->GetVisible( nDesktopMask ) )
+				continue;
+			
 			if( bHorizontal )
 			{
-				cIconFrame = os::Rect( 4 + i * 30, 4, 4 + i * 30 + 23, 4 + 23 );
+				cIconFrame = os::Rect( 4 + nIcon * 30, 4, 4 + nIcon * 30 + 23, 4 + 23 );
 			} else {
-				cIconFrame = os::Rect( 4, 4 + i * 30, 4 + 23, 4 + i * 30 + 23 );
+				cIconFrame = os::Rect( 4, 4 + nIcon * 30, 4 + 23, 4 + nIcon * 30 + 23 );
 			}
 			
 			if( cIconFrame.DoIntersect( cNewPos ) )
 			{
 				/* Select the current icon */
-				if( m_nCurrentIcon != (int)i )
+				if( m_nCurrentIcon != (int)nIcon )
 				{
 					/* Update the previous icon and delete its highlighted icon and info window */
 					Invalidate( cLastIconFrame );
-					m_nCurrentIcon = i;
+					m_nCurrentIcon = nIcon;
 					if( m_pcCurrentIcon )
 						delete( m_pcCurrentIcon );
 					m_pcCurrentIcon = NULL;
@@ -277,6 +292,7 @@ void DockView::MouseMove( const os::Point& cNewPos, int nCode, uint32 nButtons, 
 				}
 				bIconFound = true;
 			}
+			nIcon++;
 		}
 		g_cWindowLock.Unlock();
 	} 
@@ -305,19 +321,28 @@ void DockView::MouseUp( const os::Point & cPosition, uint32 nButton, os::Message
 	bool bHorizontal = m_pcWin->GetPosition() == os::ALIGN_TOP || m_pcWin->GetPosition() == os::ALIGN_BOTTOM;
 	os::Rect cIconFrame;
 	g_cWindowLock.Lock();
+	uint nIcon = 0;
+	uint32 nDesktopMask = 1 << m_pcWin->GetDesktop();
 	for( uint i = 0; i < m_pcWin->GetIcons().size(); i++ )
 	{
+		if( !m_pcWin->GetIcons()[i]->GetVisible( nDesktopMask ) )
+			continue;
+		
 		if( bHorizontal )
-			cIconFrame = os::Rect( 4 + i * 30, 4, 4 + i * 30 + 23, 4 + 23 );
+			cIconFrame = os::Rect( 4 + nIcon * 30, 4, 4 + nIcon * 30 + 23, 4 + 23 );
 		else
-			cIconFrame = os::Rect( 4, 4 + i * 30, 4 + 23, 4 + i * 30 + 23 );
+			cIconFrame = os::Rect( 4, 4 + nIcon * 30, 4 + 23, 4 + nIcon * 30 + 23 );
 			
 		if( cIconFrame.DoIntersect( cPosition ) )
 		{
 			if( m_pcWin->GetIcons()[i]->GetID() != ICON_SYLLABLE )
 			{
 				/* Activate this window */
-				m_pcWin->ActivateWindow( m_pcWin->GetIcons()[i]->GetID() );
+				printf( "Activate %i\n", m_pcWin->GetIcons()[i]->GetMsgPort() );
+				os::Messenger cMessenger( m_pcWin->GetIcons()[i]->GetMsgPort() );
+				cMessenger.SendMessage( os::WR_ACTIVATE );
+				
+//				m_pcWin->ActivateWindow( m_pcWin->GetIcons()[i]->GetID() );
 			} else {
 				/* Open syllable menu */
 				if( m_bSyllableMenuInvalid )
@@ -353,6 +378,7 @@ void DockView::MouseUp( const os::Point & cPosition, uint32 nButton, os::Message
 				Flush();
 			}
 		}
+		nIcon++;
 	}
 	g_cWindowLock.Unlock();
 	/* Check if it is a drag & drop event */
@@ -369,7 +395,7 @@ void DockView::MouseUp( const os::Point & cPosition, uint32 nButton, os::Message
 
 DockWin::DockWin() : 
 			os::Window( os::Rect(), "dock_win", "Dock", 
-				os::WND_NO_BORDER | os::WND_SEND_WINDOWS_CHANGED, os::ALL_DESKTOPS )
+				os::WND_NO_BORDER, os::ALL_DESKTOPS )
 {
 	/* Get the registrar manager */
 	m_pcManager = NULL;
@@ -416,6 +442,7 @@ DockWin::DockWin() :
 	
 	/* Create Syllable icon */
 	m_pcSyllableIcon = new DockIcon( ICON_SYLLABLE, "Syllable" );
+	m_pcSyllableIcon->SetDesktopMask( 0xffffffff );
 	m_pcSyllableIcon->GetBitmap()->SetBitmapData( pcLogo->LockBitmap()->LockRaster(), 
 			os::IPoint( pcLogo->GetSize() ), pcLogo->GetColorSpace() );
 	delete( pcLogo );
@@ -441,11 +468,17 @@ DockWin::DockWin() :
 					os::Application::GetInstance(), os::DOCK_GET_POSITION );
 	m_pcSetPosEv = os::Event::Register( "os/Dock/SetPosition", "Set the position of the dock",
 					os::Application::GetInstance(), os::DOCK_SET_POSITION );
+
+	/* Bind to window event */					
+	m_pcWindowEv = new os::Event();
+	m_pcWindowEv->SetToRemote( "os/Window/", -1 );
+	m_pcWindowEv->SetMonitorEnabled( true, this, DOCK_WINDOW_EV );
 }
 
 DockWin::~DockWin()
 {
 	/* Unregister events */
+	delete( m_pcWindowEv );
 	delete( m_pcGetPluginsEv );
 	delete( m_pcSetPluginsEv );
 	delete( m_pcGetPosEv );
@@ -518,6 +551,11 @@ void DockWin::HandleMessage( os::Message* pcMessage )
 		case os::M_NODE_MONITOR:
 		{
 			m_pcView->InvalidateSyllableMenu();
+			break;
+		}
+		case DOCK_WINDOW_EV:
+		{
+			UpdateWindows( pcMessage );
 			break;
 		}
 		case DOCK_ABOUT_ALERT:
@@ -848,74 +886,138 @@ void DockWin::ActivateWindow( int32 nWindow )
 	m_pcDesktop->ActivateWindow( nWindow );
 }
 
-void DockWin::UpdateWindows( os::Message* pcWindows, int32 nCount )
+void DockWin::UpdateWindows( os::Message* pcMessage )
 {
-	/* Remove all window icons */
 	g_cWindowLock.Lock();
-	for( uint32 i = 0; i < m_pcIcons.size(); i++ )
+	
+	os::String zID;
+	bool bDummy;
+	os::String zTitle;
+	int64 nHandle;
+	int64 hMsgPort;
+	
+	pcMessage->FindString( "id", &zID );
+	
+	/* Check message */
+	if( pcMessage->FindBool( "event_unregistered", &bDummy ) == 0 )
 	{
-		if( m_pcIcons[i]->GetID() != ICON_SYLLABLE )
-			delete( m_pcIcons[i] );
-	}
-	m_pcIcons.clear();
-	m_pcIcons.push_back( m_pcSyllableIcon );
-	
-	
-	os::String zWinTitle;
-	bool bIconPresent;
-	bool bMinimized;
-	
-	
-	//cout<<"Windows "<<nCount<<endl;
-	
-	
-	int32 nWindow = nCount - 1;
-		
-	/* Iterate through the windows */	
-	while( pcWindows->FindString( "title", &zWinTitle.str(), nWindow ) == 0 && 
-			pcWindows->FindBool( "icon_present", &bIconPresent, nWindow ) == 0 && 
-			pcWindows->FindBool( "minimized", &bMinimized, nWindow ) == 0 &&
-			nWindow >= 0 )
-	{
-		
-		
-		
-		/* Create icon */
-		DockIcon* pcIcon = new DockIcon( nWindow, zWinTitle );
-		
-		if( bIconPresent )
+		/* Remove window */
+		for( uint i = 0; i < m_pcIcons.size(); i++ )
 		{
-			os::Bitmap* pcWindowIcon = m_pcDesktop->GetWindowIcon( nWindow );
-			if( pcWindowIcon ) 
+			if( m_pcIcons[i]->GetID() == zID )
 			{
-				pcIcon->GetBitmap()->SetBitmapData( pcWindowIcon->LockRaster(), os::IPoint( 24, 24 ), os::CS_RGB32 );
-				delete( pcWindowIcon );
+				//printf("Delete icon!\n" );
+				delete( m_pcIcons[i] );
+
+				m_pcIcons.erase( m_pcIcons.begin() + i );
+				m_pcView->Invalidate();
+				Flush();
+				g_cWindowLock.Unlock();
+				return;
 			}
-			
-			/* Scale if necessary */
-			if( !( pcIcon->GetBitmap()->GetSize() == os::Point( 24, 24 ) ) ) {
-				pcIcon->GetBitmap()->SetSize( os::Point( 24, 24 ) );
-			}
-		} else 
-		{
-			pcIcon->GetBitmap()->SetBitmapData( m_pcDefaultWindowIcon->LockBitmap()->LockRaster(), 
-			os::IPoint( m_pcDefaultWindowIcon->GetSize() ), m_pcDefaultWindowIcon->GetColorSpace() );
 		}
-		
-		if( bMinimized ) {
-			pcIcon->GetBitmap()->ApplyFilter( os::Image::F_GRAY );
-		}
-			
-		m_pcIcons.push_back( pcIcon );
-		nWindow--;
+		printf( "Error: Cannot remove entry %s\n", zID.c_str() );
+		g_cWindowLock.Unlock();
+		return;
 	}
-	m_nLastWindowCount = nCount;
-	m_cLastWindows = *pcWindows;
+			
+	DockIcon* pcIcon = NULL;
+	
+	pcMessage->FindString( "title", &zTitle );
+	
+	os::String zApp;
+	pcMessage->FindString( "application", &zApp );
+	//printf( "%s\n", zApp.c_str() );
+	
+	if( pcMessage->FindBool( "event_registered", &bDummy ) == 0 )
+	{
+		/* Add new window */
+		//printf("Add new icon!\n" );
+		
+		pcIcon = new DockIcon( zID, "" );
+		m_pcIcons.push_back( pcIcon );
+		pcIcon = m_pcIcons[m_pcIcons.size()-1];
+		if( pcMessage->FindInt64( "target", &hMsgPort ) == 0 )
+			pcIcon->SetMsgPort( hMsgPort );
+	}
+	else
+	{
+		//printf("Change!\n");
+		/* Change already present window */
+		uint i = 0;
+		for( i = 0; i < m_pcIcons.size(); i++ )
+		{
+			if( m_pcIcons[i]->GetID() == zID )
+			{
+				pcIcon = m_pcIcons[i];
+				break;
+			}
+		}
+		if( i == m_pcIcons.size() )
+		{
+			printf( "Error: Cannot find entry %s\n", zID.c_str() );
+			g_cWindowLock.Unlock();
+			return;
+		}
+	}
+	pcIcon->SetTitle( zTitle );
+
+	bool bDefaultIcon = true;
+	if( pcMessage->FindInt64( "icon_handle", &nHandle ) == 0 )
+	{
+		/* Map icon */
+		bool bIconChanged = false;
+		pcMessage->FindBool( "icon_changed", &bIconChanged );
+		
+		bDefaultIcon = false;
+		if( nHandle != pcIcon->GetHandle() || bIconChanged )
+		{
+			//printf( "Icon Handle %x %i\n", (uint)nHandle, bIconChanged );
+			os::Bitmap* pcBitmap = NULL;
+			try
+			{
+				pcBitmap = new os::Bitmap( nHandle );
+				pcIcon->GetBitmap()->SetBitmapData( pcBitmap->LockRaster(), os::IPoint( 24, 24 ), os::CS_RGB32 );
+				delete( pcBitmap );
+				pcIcon->SetHandle( nHandle );
+			} catch( ... )
+			{
+				bDefaultIcon = true;
+				printf( "Exception!\n" );
+			}
+		}
+	}
+	
+	if( bDefaultIcon )
+	{
+		pcIcon->GetBitmap()->SetBitmapData( m_pcDefaultWindowIcon->LockBitmap()->LockRaster(), 
+		os::IPoint( m_pcDefaultWindowIcon->GetSize() ), m_pcDefaultWindowIcon->GetColorSpace() );
+	}
+		
+	bool bVisible;
+	if( pcMessage->FindBool( "visible", &bVisible ) == 0 )
+	{
+		//printf("Visible %i\n", bVisible );
+		pcIcon->SetVisible( bVisible );
+	}
+	bool bMinimized;
+	if( pcMessage->FindBool( "minimized", &bMinimized ) == 0 )
+		pcIcon->SetMinimized( bMinimized );
+		
+	int64 nDesktopMask;
+	if( pcMessage->FindInt64( "desktop_mask", &nDesktopMask ) == 0 )
+	{
+		pcIcon->SetDesktopMask( nDesktopMask );
+		//printf( "Desktop mask %x\n", (uint)nDesktopMask );
+	}
+			
+
 	g_cWindowLock.Unlock();
 	m_pcView->Invalidate();
 	Flush();
 }
 
+#if 0
 void DockWin::WindowsChanged()
 {
 	/* Check what has changed */
@@ -977,6 +1079,7 @@ void DockWin::WindowsChanged()
 		
 	}
 }
+#endif
 
 void DockWin::UpdateWindowArea()
 {
@@ -1012,12 +1115,14 @@ void DockWin::ScreenModeChanged( const os::IPoint& cNewRes, os::color_space eSpa
 	/* Resize ourself */
 	SetFrame( GetDockFrame() );
 	
+	#if 0
 	/* Reload window list */
 	os::Message cWindows;
 	int32 nCount = m_pcDesktop->GetWindows( &cWindows );
 	
 	/* Update list */
 	UpdateWindows( &cWindows, nCount );
+	#endif
 	UpdatePlugins();
 	
 	UpdateWindowArea();
@@ -1033,11 +1138,14 @@ void DockWin::DesktopActivated( int nDesktop, bool bActive )
 	SetFrame( GetDockFrame() );
 	
 	/* Reload window list */
+	#if 0
 	os::Message cWindows;
 	int32 nCount = m_pcDesktop->GetWindows( &cWindows );
 	
 	/* Update list */
+	
 	UpdateWindows( &cWindows, nCount );
+	#endif
 	UpdatePlugins();
 	
 	UpdateWindowArea();
@@ -1174,6 +1282,36 @@ int main( int argc, char *argv[] )
 	pcApp->Run();
 	return ( 0 );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
