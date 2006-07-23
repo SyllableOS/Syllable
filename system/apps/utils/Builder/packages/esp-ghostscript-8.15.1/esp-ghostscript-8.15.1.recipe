@@ -6,7 +6,10 @@ status				testing
 licenses			GPL
 home				www.cups.org/espgs/
 packages			espgs-8.15.1-source
-locations			http://www.cups.org/espgs/software.php?VERSION=8.15.1&FILE=ghostscript/8.15.1/
+locations
+;	http://www.cups.org/espgs/software.php?VERSION=8.15.1&FILE=ghostscript/8.15.1/
+;	Braunschweig:
+	ftp://ftp.rz.tu-bs.de/pub/mirror/ftp.easysw.com/ftp/pub/ghostscript/8.15.1/
 
 needs
 	zlib >= 1.2.1
@@ -55,3 +58,4 @@ links
 	/system/fonts/NimbusSanL-ReguCond.ttf		share/ghostscript/8.15/Resource/Font/NimbusSanL-ReguCond
 	/system/fonts/NimbusSanL-ReguCondItal.ttf	share/ghostscript/8.15/Resource/Font/NimbusSanL-ReguCondItal
 	/system/fonts/NimbusSanL-ReguItal.ttf		share/ghostscript/8.15/Resource/Font/NimbusSanL-ReguItal
+
