@@ -4,7 +4,8 @@ inherits			gnu
 
 packages			bison/bison-2.3
 
+build-needs			m4 >= 1.4
+
 documentation		README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS
 ;develop-docs		OChangeLog examples
 internal-docs		PACKAGING
-

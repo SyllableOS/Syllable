@@ -4,4 +4,7 @@ inherits			gnu
 
 packages			non-gnu/flex/flex-2.5.4a
 
+; YACC:
+build-needs			bison
+
 documentation		README COPYING NEWS
