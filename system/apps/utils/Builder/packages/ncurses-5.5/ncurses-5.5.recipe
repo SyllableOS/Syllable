@@ -1,9 +1,9 @@
 authors				Kaj de Vos
-warnings			Installs terminal definitions in /usr/share/terminfo/.
 
 inherits			gnu
 
-licenses			?
+; ?:
+licenses			MIT
 home				www.gnu.org/software/ncurses/
 packages			ncurses/ncurses-5.5
 
@@ -15,9 +15,11 @@ configure-options
 ;	--with-shared
 ;	--with-termlib
 	--enable-symlinks
+
+system-prefix-var	DESTDIR
+;move-files			share/terminfo /atheos/usr/share/
 documentation
 	README INSTALL ANNOUNCE NEWS TO-DO
 	doc/html
 ; For INetUtils:
 links				include/ncurses /usr/include
-

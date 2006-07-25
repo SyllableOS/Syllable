@@ -10,12 +10,12 @@ export CPLUS_INCLUDE_PATH=$C_INCLUDE_PATH
 export ATHEOS_SRC=/atheos/src
 export ATHEOS_INCLUDE_PATH=/ainc
 
-# Set this right, or havoc will be wreaked in /system/init.sh
+# Set this right, or havoc may be wreaked in /system/init.sh
 export TEMP=/tmp
 
 export SYSTEM=Syllable
 export COLORTERM=xterm
-export TERMINFO=/usr/share/terminfo
+export TERMINFO=/usr/ncurses/share/terminfo
 export LS_COLORS="ex=35:ln=4;35:di=31;1:*.c=36:*.cpp=34:*.h=34:*.hpp=34:*.c=34"
 export PAGER=less
 export LESSCHARSET=latin1
