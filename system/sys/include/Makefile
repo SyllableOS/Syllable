@@ -12,8 +12,7 @@ install-doc:
 
 dist:
 	@cp -pr * $(DIST_TARGET_PATH)
-	rm -r $(DIST_TARGET_PATH)/CVS
+	rm -rf $(DIST_TARGET_PATH)/CVS
 	rm $(DIST_TARGET_PATH)/Makefile
 
 clean:
-
