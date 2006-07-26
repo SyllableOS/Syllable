@@ -1,3 +1,9 @@
+* July 25 2006, Kaj de Vos *
+
+Finally got NCurses to install the TermInfo database in a staging area during system
+building. It moved from /usr/share/terminfo to usr/ncurses/share/terminfo. We'll have
+to see if this is a good place for it.
+
 * July 10 2006, Kristian Van Der Vliet *
 
 Added a parallel printer (lp_printer) driver, based on the Linux driver and ported
@@ -1107,6 +1113,3 @@ Added the following keymaps:
 * Jun 14 2002, Kristian Van Der Vliet *
 
 Implement get_tld(), set_tld() in process.c
-
-
-
