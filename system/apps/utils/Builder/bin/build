@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.74
+# Version 0.6.75
 # Copyright (c) 2002-2006 Kaj de Vos
 # License: GPL 2 or any later version
 
@@ -1637,7 +1637,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.74',
+	puts 'Syllable Build System 0.6.75',
 		'Copyright (c) 2002-2006 Kaj de Vos',
 		'License: GPL 2 or any later version'
 when '?', '-?', '-h', '-help', '--help'
@@ -1755,9 +1755,8 @@ else
 						(File.join @image, 'atheos/usr/glibc/include') + ':' +
 						# C library headers
 						(File.join @image, 'atheos/usr/glibc2/include') + ':' +
-						# For GoboLinux
-#						'/Programs/Glibc/Current/include' + ':' +
 						# System headers
+						(File.join @image, 'atheos/usr/include') + ':' +
 						(File.join @image, 'atheos/sys/include') + ':' +
 						(File.join @workDir, 'sys/include') + ':'
 					else
@@ -1771,7 +1770,6 @@ else
 					if @systemBuild
 						# Extra headers
 #						':' + (File.join @image, 'atheos/usr/local/include') +
-#						':' + (File.join @image, 'atheos/usr/include')
 						''
 					else
 						''
