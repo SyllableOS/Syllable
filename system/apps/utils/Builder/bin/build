@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.79
+# Version 0.6.80
 # Copyright (c) 2002-2006 Kaj de Vos
 # License: GPL 2 or any later version
 
@@ -396,7 +396,7 @@ def makeModule staging, target
 
 	unless
 		(not (cmdLine = recipe['pre-make']) or action toCommand(cmdLine)) and
-		action(if cmdLine = recipe['install']
+		action(if cmdLine = recipe['make']
 			toCommand cmdLine
 		else
 			((vars = recipe['make-env']) ? toVariables(vars) + ' ' : '') +
@@ -1633,7 +1633,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.79',
+	puts 'Syllable Build System 0.6.80',
 		'Copyright (c) 2002-2006 Kaj de Vos',
 		'License: GPL 2 or any later version'
 when '?', '-?', '-h', '-help', '--help'
