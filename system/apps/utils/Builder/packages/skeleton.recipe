@@ -131,14 +131,18 @@ install-vars
 install-targets		install
 
 post-install		<Commands after make install, before registration>
-; Files to move within the installation:
+; Extra files to install from the source tree:
+install-files
+	<Original> <Destination>
+
+; Files to move within the installation
+; If the destination is an absolute path it will be relative to the very root
+; of the system image.
 move-files
 	<Source> <Destination>
 delete-files		<Files to delete from the installation>
-; Extra files to install:
-install-files
-	<Original> <Destination>
 ; General documentation to install:
+
 documentation		README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS
 ; Documentation for building from source:
 ;build-docs			INSTALL
@@ -150,9 +154,11 @@ develop-docs		docs
 ; The path of the original is relative to the path of the link in the case of
 ; a link that's internal to the package, and relative to the package root
 ; in the case of a link in the system.
+
 links
 	[<Original> <Link>]
 ;	<Links path>
 ;		<Originals>
+
 ; Don't strip binaries:
 ;no-strip
