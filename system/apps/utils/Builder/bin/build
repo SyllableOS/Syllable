@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.75
+# Version 0.6.76
 # Copyright (c) 2002-2006 Kaj de Vos
 # License: GPL 2 or any later version
 
@@ -395,25 +395,21 @@ def makeModule staging, target
 	if exists? dir = buildDir(target) then Dir.chdir dir end
 
 	unless
-		if (cmdLine = recipe['pre-make']) and not action toCommand(cmdLine)
-			false
+		(not (cmdLine = recipe['pre-make']) or action toCommand(cmdLine)) and
+		action(if cmdLine = recipe['install']
+			toCommand cmdLine
 		else
-			unless action(
-				((vars = recipe['make-env']) ? toVariables(vars) + ' ' : '') +
-				makeCommand(target) +
-				(configured ?
-					'' :
-					" #{(var = recipe['install-prefix-var']) ? var : 'prefix'}=" + prefix(staging, target)
-				) +
-				((vars = recipe['make-vars']) ? ' ' + toVariables(vars) : '') +
-				((options = recipe['make-options']) ? ' ' + toString(options) : '') +
-				((targets = recipe['make-targets']) ? ' ' + toString(targets) : '')
-			)
-				false
-			else
-				not (cmdLine = recipe['post-make']) or action toCommand(cmdLine)
-			end
-		end
+			((vars = recipe['make-env']) ? toVariables(vars) + ' ' : '') +
+			makeCommand(target) +
+			(configured ?
+				'' :
+				" #{(var = recipe['install-prefix-var']) ? var : 'prefix'}=" + prefix(staging, target)
+			) +
+			((vars = recipe['make-vars']) ? ' ' + toVariables(vars) : '') +
+			((options = recipe['make-options']) ? ' ' + toString(options) : '') +
+			((targets = recipe['make-targets']) ? ' ' + toString(targets) : '')
+		end) and
+		(not (cmdLine = recipe['post-make']) or action toCommand(cmdLine))
 	then
 		@log.failure target
 		false
@@ -1637,7 +1633,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.75',
+	puts 'Syllable Build System 0.6.76',
 		'Copyright (c) 2002-2006 Kaj de Vos',
 		'License: GPL 2 or any later version'
 when '?', '-?', '-h', '-help', '--help'

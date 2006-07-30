@@ -77,9 +77,14 @@ configure-options	--with-option
 install-prefix-var	prefix
 
 ; Building:
+
+; <make>
+
 ; [<pre-make>]
 ; [<make-env>] make [<install-prefix-var>=<Final installation path>] [<make-vars>] [<make-options>] <make-targets>
 ; [<post-make>]
+
+make				<Build commands override>
 
 pre-make			<Commands preceding make>
 ; Extra environment variables for make:
