@@ -8,8 +8,8 @@ maintainers			Kaj de Vos
 status				testing
 warnings
 	GCC has a circular dependency on GLibC.
-	LibIberty is both in BinUtils and in GCC.
-notes				Build breaks with itself installed
+;	LibIberty is both in BinUtils and in GCC.
+;notes				Build breaks with itself installed
 
 inherits			gnu
 
@@ -105,3 +105,5 @@ build-docs			INSTALL
 links
 	gcc				bin/cc
 	libgcc.a		lib/gcc/i586-pc-syllable/4.1.1/libgcc_static.a
+;	For some packages:
+;	bin/cpp			lib/

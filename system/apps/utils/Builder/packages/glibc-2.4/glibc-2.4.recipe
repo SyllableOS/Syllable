@@ -35,8 +35,12 @@ configure-options
 ;	--disable-profile
 
 ;make-targets
+;	all
+;	localedata/install-locales
 ;	For printed documentation:
 ;	dvi
+
+test-options		-k
 
 _install-env
 	LANGUAGE	C
@@ -49,4 +53,3 @@ develop-docs
 	NOTES
 ;	INTERFACE NAMESPACE
 	manual/examples
-

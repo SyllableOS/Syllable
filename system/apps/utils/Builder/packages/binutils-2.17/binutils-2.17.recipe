@@ -31,6 +31,8 @@ patch
 
 ;configure-options	--enable-shared
 
+;install-prefix-var	tooldir
+
 documentation
 	README COPYING COPYING.LIB
 	binutils/NEWS binutils/ChangeLog binutils/MAINTAINERS
@@ -46,3 +48,5 @@ links
 ;	For OpenSSL:
 	bin/ranlib					/usr/bin/ranlib
 ;	/atheos/autolnk/bin/ranlib	/usr/bin/ranlib
+;	For some packages:
+;	include/libiberty.h			/usr/include/
