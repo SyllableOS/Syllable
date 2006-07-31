@@ -1,0 +1,19 @@
+authors				Kaj de Vos
+status				testing
+
+; BSD?
+licenses			other
+home
+	www.remotesensing.org/libtiff/
+;	www.libtiff.org
+packages			tiff-3.8.2
+locations
+	ftp://ftp.remotesensing.org/pub/libtiff/
+	http://libtiff.maptools.org/dl/
+
+build-needs			libjpeg
+build-recommends	diffutils
+
+documentation		README RELEASE-DATE VERSION COPYRIGHT ChangeLog TODO
+internal-docs		HOWTO-RELEASE
+
