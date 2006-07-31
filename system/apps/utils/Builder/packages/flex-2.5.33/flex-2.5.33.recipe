@@ -1,0 +1,16 @@
+authors				Kaj de Vos
+
+inherits			sourceforge
+
+home				flex.sourceforge.net
+packages			flex/flex-2.5.33
+
+; YACC:
+build-needs			bison
+
+patch-config
+
+documentation
+	README ABOUT-NLS COPYING NEWS ChangeLog AUTHORS THANKS TODO
+;	ONEWS
+
