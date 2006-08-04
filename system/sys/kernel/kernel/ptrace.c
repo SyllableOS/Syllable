@@ -400,7 +400,7 @@ static int ptrace_getfpxregs( Thread_s *psCurrentThread,
 {
 	int nResult = -EIO;
 
-	if ( get_processor()->pi_bHaveFXSR )
+	if ( g_asProcessorDescs[g_nBootCPU].pi_bHaveFXSR )
 		nResult = memcpy_to_user( pData,
 		                          &psTargetThread->tc_FPUState.fpu_sFXSave,
 		                          sizeof( struct i3FXSave_t ) );
@@ -414,7 +414,7 @@ static int ptrace_setfpxregs( Thread_s *psCurrentThread,
 {
 	int nResult = -EIO;
 
-	if ( get_processor()->pi_bHaveFXSR )
+	if ( g_asProcessorDescs[g_nBootCPU].pi_bHaveFXSR )
 	{
 		nResult = memcpy_from_user( &psTargetThread->tc_FPUState.fpu_sFXSave,
 		                            pData, sizeof( struct i3FXSave_t ) );

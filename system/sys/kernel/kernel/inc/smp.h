@@ -118,7 +118,7 @@ typedef struct
 {
 	uint8 mpc_nType;
 	uint8 mpc_busid;
-	uint8 mpc_bustype[6] __attribute( ( packed ) );
+	uint8 mpc_bustype[6];
 } MpConfigBus_s;
 
 #define BUSTYPE_EISA	"EISA"
@@ -218,7 +218,7 @@ extern bool g_bAPICPresent;
 extern int g_nActiveCPUCount;
 extern int g_nBootCPU;
 extern ProcessorInfo_s g_asProcessorDescs[MAX_CPU_COUNT];
-extern uint32 g_nVirtualAPICAddr;
+extern vuint32 *g_pVirtualAPICAddr;
 
 
 /*
@@ -229,20 +229,21 @@ extern uint32 g_nVirtualAPICAddr;
  */
 
 
-extern __inline void apic_write( uint32 nReg, uint32 nValue )
+extern __inline void apic_write( vuint32 nReg, vuint32 nValue )
 {
 	kassertw( g_bAPICPresent );
-	*( ( vuint32 * )( g_nVirtualAPICAddr + nReg ) ) = nValue;
+	*( ( g_pVirtualAPICAddr + nReg / 4 ) ) = nValue;
 }
 
-extern __inline unsigned long apic_read( uint32 nReg )
+extern __inline unsigned long apic_read( vuint32 nReg )
 {
-	return ( *( ( vuint32 * )( g_nVirtualAPICAddr + nReg ) ) );
+	return ( *( ( g_pVirtualAPICAddr + nReg / 4 ) ) );
 }
 
 #ifdef __BUILD_KERNEL__
 extern __inline int get_processor_id( void )
 {
+	kassertw( ( get_cpu_flags() & EFLG_IF ) == 0 );
 	return ( GET_APIC_ID( apic_read( APIC_ID ) ) );
 }
 #endif

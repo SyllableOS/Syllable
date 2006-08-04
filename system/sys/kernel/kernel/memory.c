@@ -1,7 +1,7 @@
 
 /*
  *  The Syllable kernel
- *  Real and physical memory heap manager
+ *  Real memory heap manager
  *  Copyright (C) 2003 The Syllable Team
  *  Copyright (C) 1999 - 2001 Kurt Skauen
  *
@@ -25,7 +25,7 @@
 #include <atheos/kernel.h>
 #include <atheos/spinlock.h>
 #include <atheos/kernel.h>
-
+#include <atheos/resource.h>
 #include <posix/errno.h>
 
 #include <macros.h>
@@ -35,10 +35,8 @@
 
 
 SPIN_LOCK( g_sRealPoolLock, "real_pool_slock" );
-SPIN_LOCK( g_sPhysicalPoolLock, "physical_pool_slock" );
 
 static MemHeader_s g_sRealMemHdr;	/* Real memory  (mem below 1M)          */
-static MemHeader_s g_sPhysicalMemHdr;	/* Physical memory ( RAM, PCI... )          */
 
 
 //****************************************************************************/
@@ -344,68 +342,6 @@ void free_real( void *pAddress )
 	}
 }
 
-
-//****************************************************************************/
-/** Allocates memory in the physical memory region.  Please note that physical 
- *  does not necessarily mean RAM;  it can be any region inside the memory map
- *  of the PC (RAM, PCI memory, etc.).
- * \ingroup DriverAPI
- * \param pnAddress will be set to the <b>real</b> address if the call is successful.
- * \param bExactAddress if <code>true</code>, the memory will be allocated at
- *     the address specified by the <i>pnAddress</i> parameter.
- * \param nSize the size in bytes to allocate.
- * \return <code>0</code> if successful.
- * \sa free_physical()
- * \author Arno Klenke (arno_klenke@yahoo.de)
- *****************************************************************************/
-status_t alloc_physical( uint32 *pnAddress, bool bExactAddress, uint32 nSize )
-{
-	int nFlg;
-	status_t nReturn;
-
-	nFlg = spinlock_disable( &g_sPhysicalPoolLock );
-
-	nReturn = AllocateHeapMem( &g_sPhysicalMemHdr, pnAddress, bExactAddress, true, nSize );
-
-	spinunlock_enable( &g_sPhysicalPoolLock, nFlg );
-
-	if ( nReturn != 0 )
-	{
-		//printk( "ERROR : alloc_physical( %lx ) failed\n", nSize );
-		return ( -ENOMEM );
-	}
-	else
-	{
-		return ( 0 );
-	}
-
-	return ( -ENOMEM );
-}
-
-
-//****************************************************************************/
-/** Frees a region of physical memory.
- * \ingroup DriverAPI
- * \param nAddress the address of the allocated memory.
- * \sa alloc_real()
- * \author Arno Klenke (arno_klenke@yahoo.de)
- *****************************************************************************/
-void free_physical( uint32 nAddress )
-{
-	int nFlg;
-	status_t nReturn;
-
-	nFlg = spinlock_disable( &g_sPhysicalPoolLock );
-	nReturn = FreeHeapMem( &g_sPhysicalMemHdr, nAddress );
-
-	spinunlock_enable( &g_sPhysicalPoolLock, nFlg );
-
-	if ( nReturn != 0 )
-	{
-		printk( "Error: free_physical() called width invalid address %x\n", nAddress );
-	}
-}
-
 void sys_MemClear( void *LinAddr, uint32 Size )
 {
 	memset( LinAddr, 0, Size );
@@ -420,23 +356,12 @@ void init_memory_pools( char* pRealMemBase, MultiBootHeader_s* psHeader )
 	memset( g_sRealMemHdr.mh_psFirst, 0, sizeof( MemChunk_s ) );
 	g_sRealMemHdr.mh_psFirst->mc_nAddress = ( uint )pRealMemBase;
 	g_sRealMemHdr.mh_psFirst->mc_nSize = g_sRealMemHdr.mh_nTotalSize;
-
-	/* Create physical memory pool and reserve RAM region 
-	 * The other regions ( e.g PCI ) will be reserved later
-	 */
-	g_sPhysicalMemHdr.mh_nTotalSize = 0xffffffff;
-	g_sPhysicalMemHdr.mh_psFirst = kmalloc( sizeof( MemChunk_s ), MEMF_KERNEL );
-	memset( g_sPhysicalMemHdr.mh_psFirst, 0, sizeof( MemChunk_s ) );
-	g_sPhysicalMemHdr.mh_psFirst->mc_nAddress = 0;
-	g_sPhysicalMemHdr.mh_psFirst->mc_nSize = g_sPhysicalMemHdr.mh_nTotalSize;
-	{
-		uint32 nAddress = 0;
-
-		if ( alloc_physical( &nAddress, true, g_sSysBase.ex_nTotalPageCount * PAGE_SIZE ) != 0 )
-			printk( "Error: Failed to reserve RAM region\n" );
-	}
 	
-	/* Parse the multiboot memory map */
+	/* Reserve physical memory */
+	boot_reserve_mem_region(0, (g_sSysBase.ex_nTotalPageCount * PAGE_SIZE) - 1, "Physical RAM");
+
+	
+	/* Parse the multiboot memory map and reserver the memory */
 	if( psHeader && psHeader->mbh_nFlags & MB_INFO_MEM_MAP )
 	{
 		printk( "Multiboot memory map:\n" );
@@ -447,8 +372,6 @@ void init_memory_pools( char* pRealMemBase, MultiBootHeader_s* psHeader )
 		{
 			MBMemoryMapEntry_s* psEntry = ( MBMemoryMapEntry_s* )nAddr;
 			
-			alloc_physical( &nAddr, true, ( uint32 )psEntry->mm_nLength );
-
 			switch ( psEntry->mm_nType )
 			{
 				case MB_MM_MEMORY:
@@ -468,6 +391,8 @@ void init_memory_pools( char* pRealMemBase, MultiBootHeader_s* psHeader )
 					break;
 			}
 			
+			boot_reserve_mem_region(psEntry->mm_nBaseAddr,
+			    psEntry->mm_nBaseAddr + psEntry->mm_nLength - 1, pzType);
 			printk( "  %016Lx - %016Lx %s\n", psEntry->mm_nBaseAddr,
 			psEntry->mm_nBaseAddr + psEntry->mm_nLength, pzType );
 		}

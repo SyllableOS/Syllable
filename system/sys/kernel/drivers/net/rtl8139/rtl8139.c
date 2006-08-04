@@ -556,6 +556,7 @@ int rtl8139_probe( int device_handle )
 		
 		if( claim_device( device_handle, sInfo.nHandle, "Realtek 8139", DEVICE_NET ) != 0 )
 			continue;
+			
 		
 		printk( "rtl8139_probe() found NIC\n" );
 		ioaddr = sInfo.u.h0.nBase0 & PCI_ADDRESS_IO_MASK;
@@ -572,6 +573,9 @@ int rtl8139_probe( int device_handle )
 
 		dev = rtl8129_probe1( sInfo.nBus, sInfo.nDevice, sInfo.nFunction, device_handle, sInfo.nHandle,
 										ioaddr, irq, chip_idx, cards_found );
+										
+		set_device_data( sInfo.nHandle, dev );
+		
 		dev = 0;
 		cards_found++;
 		break;
@@ -1833,6 +1837,36 @@ static DeviceOperations_s g_sDevOps = {
     NULL	// dop_rem_select_req
 };
 
+status_t device_suspend( int nDeviceID, int nDeviceHandle, void* pData )
+{
+	struct net_device* dev = pData;
+	long ioaddr = dev->base_addr;
+	struct rtl8129_private *tp = (struct rtl8129_private *)dev->priv;
+	
+	printk( "Suspend %s @ 0x%x\n", dev->name, (uint)ioaddr );
+	
+	outw(0, ioaddr + IntrMask);
+	outw(0, ioaddr + ChipCmd);
+	
+	tp->stats.rx_missed_errors += inl(ioaddr + RxMissed);
+	outl(0, ioaddr + RxMissed);
+	
+	return( 0 );
+}
+
+status_t device_resume( int nDeviceID, int nDeviceHandle, void* pData )
+{
+	struct net_device* dev = pData;
+	long ioaddr = dev->base_addr;
+	struct rtl8129_private *tp = (struct rtl8129_private *)dev->priv;
+	
+	printk( "Resume %s @ 0x%x\n", dev->name, (uint)ioaddr );
+	
+	rtl8129_init_ring (dev);
+	rtl_hw_start (dev);
+	
+	return( 0 );
+}
 
 status_t device_init( int nDeviceID )
 {

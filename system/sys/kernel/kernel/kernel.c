@@ -246,7 +246,7 @@ status_t sys_get_system_info( system_info * psInfo, int nVersion )
 
 int dbprintf( int nPort, const char *fmt, ... )
 {
-	uint8 zBuffer[1024];
+	char zBuffer[1024];
 
 	if ( SysBase == NULL )
 	{
@@ -269,8 +269,8 @@ int printk( const char *fmt, ... )
 {
 #ifdef _ENABLE_PRINTK
 	Thread_s *psThread = CURRENT_THREAD;
-	uint8 String[512];
-	uint8 zBuffer[1024];
+	char String[512];
+	char zBuffer[1024];
 	int nFlg;
 
 
@@ -318,8 +318,8 @@ void sys_dbprintf( const char *fmt, ... )
 	if ( SysBase )
 	{
 		Thread_s *psThread = CURRENT_THREAD;
-		uint8 String[512];
-		uint8 zBuffer[1024];
+		char String[512];
+		char zBuffer[1024];
 		int nFlg;
 
 		nFlg = cli();
@@ -361,8 +361,8 @@ int sys_DebugPrint( const char *fmt, char **pzArgs )
 	if ( SysBase )
 	{
 		Thread_s *psThread = CURRENT_THREAD;
-		uint8 String[512];
-		uint8 zBuffer[1024];
+		char String[512];
+		char zBuffer[1024];
 		uint32 nFlg;
 
 		nFlg = cli();

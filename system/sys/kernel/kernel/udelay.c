@@ -30,7 +30,7 @@ inline void __const_udelay( unsigned long xloops )
 {
 	int d0;
 	xloops *= 4;
-	__asm__( "mull %0" : "=d"( xloops ), "=&a"( d0 ) : "1"( xloops ), "0"( g_asProcessorDescs[get_processor_id()].pi_nDelayCount * ( INT_FREQ / 4 ) ) );
+	__asm__( "mull %0" : "=d"( xloops ), "=&a"( d0 ) : "1"( xloops ), "0"( g_asProcessorDescs[g_nBootCPU].pi_nDelayCount * ( INT_FREQ / 4 ) ) );
 	__delay( ++xloops );
 }
 

@@ -309,7 +309,7 @@ status_t send_msg_x( port_id hPort, uint32 nCode, const void *pBuffer, int nSize
  * SEE ALSO:
  ****************************************************************************/
 
-status_t get_msg_x( port_id hPort, uint32 *pnCode, void *pBuffer, int nSize, bigtime_t nTimeOut )
+static status_t do_get_msg_x( bool bFromKernel, port_id hPort, uint32 *pnCode, void *pBuffer, int nSize, bigtime_t nTimeOut )
 {
 	MsgPort_s *psPort = NULL;
 	MessageNode_s *psNode;
@@ -386,17 +386,39 @@ status_t get_msg_x( port_id hPort, uint32 *pnCode, void *pBuffer, int nSize, big
 
 	if ( NULL != pBuffer )
 	{
-		memcpy( pBuffer, psNode + 1, nRealSize );
+		if( bFromKernel )
+			memcpy( pBuffer, psNode + 1, nRealSize );
+		else
+			memcpy_to_user( pBuffer, psNode + 1, nRealSize );
 	}
 	if ( NULL != pnCode )
 	{
-		*pnCode = psNode->mn_nCode;
+		if( bFromKernel )
+			*pnCode = psNode->mn_nCode;
+		else
+			memcpy_to_user( pnCode, &psNode->mn_nCode, sizeof( psNode->mn_nCode ) );
 	}
 	nError = ( nSize >= psNode->mn_nSize ) ? 0 : -E2BIG;
 
 	kfree( psNode );
       error1:
 	unlock_mutex( g_hPortListSema );
+	return ( nError );
+}
+
+
+/*****************************************************************************
+ * NAME:
+ * DESC:
+ * NOTE:
+ * SEE ALSO:
+ ****************************************************************************/
+
+status_t get_msg_x( port_id hPort, uint32 *pnCode, void *pBuffer, int nSize, bigtime_t nTimeOut )
+{
+	int nError;
+
+	nError = do_get_msg_x( true, hPort, pnCode, pBuffer, nSize, nTimeOut );
 	return ( nError );
 }
 
@@ -443,7 +465,7 @@ status_t sys_get_msg( port_id hPort, uint32 *pnCode, void *pBuffer, int nSize )
 {
 	int nError;
 
-	nError = get_msg_x( hPort, pnCode, pBuffer, nSize, INFINITE_TIMEOUT );
+	nError = do_get_msg_x( false, hPort, pnCode, pBuffer, nSize, INFINITE_TIMEOUT );
 	return ( nError );
 }
 
@@ -458,7 +480,7 @@ status_t sys_raw_get_msg_x( port_id hPort, uint32 *pnCode, void *pBuffer, int nS
 {
 	int nError;
 
-	nError = get_msg_x( hPort, pnCode, pBuffer, nSize, *pnTimeOut );
+	nError = do_get_msg_x( false, hPort, pnCode, pBuffer, nSize, *pnTimeOut );
 	return ( nError );
 }
 

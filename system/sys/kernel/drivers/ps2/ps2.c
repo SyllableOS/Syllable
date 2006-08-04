@@ -501,6 +501,7 @@ static status_t ps2_keyboard_init()
 	g_sKbdPort.nIrq = 1;
 	g_sKbdPort.nDevHandle = register_device( "", "isa" );
 	claim_device( g_nDevNum, g_sKbdPort.nDevHandle, "PS/2 or AT keyboard", DEVICE_INPUT );
+	set_device_data( g_sKbdPort.nDevHandle, &g_sKbdPort );
 	nError = create_device_node( g_nDevNum, g_sKbdPort.nDevHandle, "keybd", &g_sOperations, &g_sKbdPort );
 	
 	printk( "PS2 or AT Keyboard detected\n" );
@@ -567,6 +568,7 @@ static status_t ps2_aux_init()
 	g_sAuxPort.nDevHandle = register_device( "", "isa" );
 	g_sAuxPort.nIrq = 12;
 	claim_device( g_nDevNum, g_sAuxPort.nDevHandle, "PS/2 Aux port", DEVICE_PORT );
+	set_device_data( g_sAuxPort.nDevHandle, &g_sAuxPort );
 	nError = create_device_node( g_nDevNum, g_sAuxPort.nDevHandle, "misc/ps2aux", &g_sOperations, &g_sAuxPort );
 	
 	if( nError < 0 )
@@ -594,6 +596,58 @@ bool get_bool_arg( bool *pbValue, const char *pzName, const char *pzArg, int nAr
 		return ( true );
 	}
 	return ( false );
+}
+
+status_t device_suspend( int nDeviceID, int nDeviceHandle, void* pData )
+{
+	PS2_Port_s* psPort = (PS2_Port_s*)pData;
+	uint32 nFlg;
+	uint8 nControl;	
+	
+	
+	/* Disable interrupt */
+	nFlg = spinlock_disable( &g_sLock );
+	ps2_read_command( PS2_CMD_RCTR, &nControl );
+    
+	if( psPort->bIsAux ) {
+		nControl &= ~PS2_CTR_AUXINT;
+		nControl |= PS2_CTR_AUXDIS;
+		printk( "Suspend AUX port\n" );
+	} else {
+		nControl &= ~PS2_CTR_KBDINT;
+		nControl |= PS2_CTR_KBDDIS;
+		printk( "Suspend keyboard port\n" );
+	}
+	ps2_write_command( PS2_CMD_WCTR, nControl );
+	spinunlock_enable( &g_sLock, nFlg );
+    return( 0 );
+}
+
+status_t device_resume( int nDeviceID, int nDeviceHandle, void* pData )
+{
+	PS2_Port_s* psPort = (PS2_Port_s*)pData;
+	uint32 nFlg;
+	uint8 nControl;
+	
+	/* Enable interrupt */
+	nFlg = spinlock_disable( &g_sLock );
+	ps2_read_command( PS2_CMD_RCTR, &nControl );
+    
+    if( atomic_read( &psPort->nOpenCount ) > 0 )
+    {
+		if( psPort->bIsAux ) {
+			nControl &= ~PS2_CTR_AUXDIS;
+			nControl |= PS2_CTR_AUXINT;
+			printk( "Resume AUX port\n" );
+		} else {
+			nControl &= ~PS2_CTR_KBDDIS;
+			nControl |= PS2_CTR_KBDINT;
+			printk( "Resume keyboard port\n" );
+    	}
+    }
+	ps2_write_command( PS2_CMD_WCTR, nControl );
+    spinunlock_enable( &g_sLock, nFlg );
+    return( 0 );
 }
 
 status_t device_init( int nDeviceID )

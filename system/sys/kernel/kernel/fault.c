@@ -122,6 +122,7 @@ void print_symbol( int nIndex, uint32 nAddress )
 		strcpy( zModuleName, "*unknown*" );
 		strcpy( zSymName, "*unknown*" );
 	}
+	
 	printk( "   %s + %08x -> %s + %08x\n", zModuleName, nAddress - nTxtAddr, zSymName, nAddress - ( uint32 )pSymAddr );
 }
 
@@ -278,15 +279,16 @@ void handle_fpu_exception( SysCallRegs_s * psRegs, int nErrorCode )
 void math_state_restore( SysCallRegs_s * psRegs, int nErrorCode )
 {
 	Thread_s *psThread = CURRENT_THREAD;
+	uint32 nFlags = cli();
 	clts();		// Allow math ops (or we recurse)
 	if ( ( psThread->tr_nFlags & TF_FPU_USED ) == 0 )
 	{
 		// Initialize the FPU state
-		if ( get_processor()->pi_bHaveFXSR )
+		if ( g_asProcessorDescs[g_nBootCPU].pi_bHaveFXSR )
 		{
 			memset( &psThread->tc_FPUState.fpu_sFXSave, 0, sizeof( struct i3FXSave_t ) );
 			psThread->tc_FPUState.fpu_sFXSave.cwd = 0x37f;
-			if ( get_processor()->pi_bHaveXMM )
+			if ( g_asProcessorDescs[g_nBootCPU].pi_bHaveXMM )
 			{
 				psThread->tc_FPUState.fpu_sFXSave.mxcsr = 0x1f80;
 			}
@@ -303,6 +305,7 @@ void math_state_restore( SysCallRegs_s * psRegs, int nErrorCode )
 	}
 	load_fpu_state( &psThread->tc_FPUState );
 	psThread->tr_nFlags |= TF_FPU_DIRTY;
+	put_cpu_flags( nFlags );
 }
 
 /*****************************************************************************

@@ -38,12 +38,12 @@ $(OBJDIR)/usb: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/usb
 
 install: all
-	mkdir -p /system/drivers/bus
-	cp -f $(OBJDIR)/usb /system/drivers/bus/usb
+	mkdir -p /system/drivers/dev/bus
+	cp -f $(OBJDIR)/usb /system/drivers/dev/bus/usb
 
 dist: all
-	mkdir -p $(DIST_DIR)/atheos/sys/drivers/bus
-	cp -f $(OBJDIR)/usb $(DIST_DIR)/atheos/sys/drivers/bus/usb
+	mkdir -p $(DIST_DIR)/atheos/sys/drivers/dev/bus
+	cp -f $(OBJDIR)/usb $(DIST_DIR)/atheos/sys/drivers/dev/bus/usb
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/usb

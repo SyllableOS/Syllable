@@ -38,13 +38,14 @@ extern "C" {
 #define MAX_DEVICE_NAME_LENGTH     255
 
 /* Busmanager functions */
-status_t bus_init( void );
-void     bus_uninit( void );
-void*    bus_get_hooks( int nVersion );
+typedef void* busmanager_get_hooks( int nVersion );
 
 /* Driver functions */
 status_t device_init( int nDeviceID );
 status_t device_uninit( int nDeviceID );
+void device_release( int nDeviceID, int nDeviceHandle, void* pPrivateData );
+status_t device_suspend( int nDeviceID, int nDeviceHandle, void* pPrivateData );
+status_t device_resume( int nDeviceID, int nDeviceHandle, void* pPrivateData );
 
 enum device_type {
 	DEVICE_UNKNOWN,
@@ -72,18 +73,23 @@ typedef struct
 /* Kernel functions */
 void		init_devices_boot( void );
 void		init_devices( void );
-void		add_devices_bootmodule( const char* pzPath );
-void		write_devices_config( void );
 
 int			register_device( const char* pzName, const char* pzBus );
 void		unregister_device( int nHandle );
 status_t	claim_device( int nDeviceID, int nHandle, const char* pzName, enum device_type eType );
 void		release_device( int nHandle );
+void		release_devices( int nDeviceID );
 status_t	get_device_info( DeviceInfo_s* psInfo, int nIndex );
+void		set_device_data( int nHandle, void* pData );
+void*		get_device_data( int nHandle );
 
+status_t	register_busmanager( int nDeviceID, const char* pzName, busmanager_get_hooks* pfHooks );
 void*		get_busmanager( const char* pzName, int nVersion );
+void 		set_device_as_busmanager( int nDeviceID );
 void		disable_device( int nDeviceID );
 void		enable_all_devices( void );
+status_t	suspend_devices( void );
+status_t	resume_devices( void );
 
 #define MK_IOCT(a,b) (a+b)
 enum

@@ -300,7 +300,27 @@ bool get_bool_arg( bool *pbValue, const char *pzName, const char *pzArg, int nAr
 	return ( false );
 }
 
-status_t bus_init()
+ATA_bus_s sBus = {
+	ata_alloc_controller,
+	ata_free_controller,
+	ata_add_controller,
+	ata_remove_controller,
+	ata_alloc_port,
+	ata_free_port,
+	ata_get_controller_count,
+	ata_get_controller
+};
+
+void *ata_bus_get_hooks( int nVersion )
+{
+	if ( nVersion != ATA_BUS_VERSION )
+		return ( NULL );
+	return ( ( void * )&sBus );
+}
+
+
+
+status_t device_init( int nDeviceID )
 {
 	/* Check commandline parameters */
 	int i;
@@ -349,33 +369,21 @@ status_t bus_init()
 	
 	g_hATAListLock = create_semaphore( "ata_list_lock", 1, 0 );
 	
+	register_busmanager( nDeviceID, "ata", ata_bus_get_hooks );
+	
 	printk( "ATA busmanager initialized\n" );
 	
 	return( 0 );
 }
 
 
-void bus_uninit()
+status_t device_uninit( int nDeviceID )
 {
 }
 
-ATA_bus_s sBus = {
-	ata_alloc_controller,
-	ata_free_controller,
-	ata_add_controller,
-	ata_remove_controller,
-	ata_alloc_port,
-	ata_free_port,
-	ata_get_controller_count,
-	ata_get_controller
-};
 
-void *bus_get_hooks( int nVersion )
-{
-	if ( nVersion != ATA_BUS_VERSION )
-		return ( NULL );
-	return ( ( void * )&sBus );
-}
+
+
 
 
 

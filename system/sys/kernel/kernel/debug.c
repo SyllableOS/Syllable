@@ -469,20 +469,20 @@ static void receive_serial_data( void )
 
 	if ( g_bPlainTextDebug )
 	{
-		while ( read_serial( &nChar, 1 ) == 1 )
+		while ( read_serial( (char*)&nChar, 1 ) == 1 )
 		{
 			// Convert telnet <CR><NUL> to <CR><LF>
 			if ( nChar == '\0' )
 			{
 				nChar = '\n';
 			}
-			write_serial( &nChar, 1, false );
+			write_serial( (char*)&nChar, 1, false );
 			write_buffer( &g_asBuffers[1], &nChar, 1 );
 		}
 	}
 	else
 	{
-		while ( read_serial( &nChar, 1 ) == 1 )
+		while ( read_serial( (char*)&nChar, 1 ) == 1 )
 		{
 			switch ( nState )
 			{

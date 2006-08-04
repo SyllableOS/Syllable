@@ -1236,7 +1236,22 @@ bool get_bool_arg( bool *pbValue, const char *pzName, const char *pzArg, int nAr
 	return ( false );
 }
 
-status_t bus_init()
+
+SCSI_bus_s sBus = {
+	scsi_get_command_size,
+	scsi_scan_host,
+	scsi_remove_host
+};
+
+void *scsi_bus_get_hooks( int nVersion )
+{
+	if ( nVersion != SCSI_BUS_VERSION )
+		return ( NULL );
+	return ( ( void * )&sBus );
+}
+
+
+status_t device_init( int nDeviceID )
 {
 	/* Check if the use of the bus is disabled */
 	int i;
@@ -1263,27 +1278,16 @@ status_t bus_init()
 		g_nIDTable[i] = false;
 	}
 	
+	register_busmanager( nDeviceID, "scsi", scsi_bus_get_hooks );
+	
 	printk( "SCSI: Busmanager initialized\n" );
 	
 	return( 0 );
 }
 
 
-void bus_uninit()
+status_t device_uninit( int nDeviceID )
 {
-}
-
-SCSI_bus_s sBus = {
-	scsi_get_command_size,
-	scsi_scan_host,
-	scsi_remove_host
-};
-
-void *bus_get_hooks( int nVersion )
-{
-	if ( nVersion != SCSI_BUS_VERSION )
-		return ( NULL );
-	return ( ( void * )&sBus );
 }
 
 

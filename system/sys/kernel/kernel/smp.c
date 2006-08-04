@@ -41,12 +41,11 @@ int g_nActiveCPUCount = 1;
 int g_nBootCPU = 0;
 ProcessorInfo_s g_asProcessorDescs[MAX_CPU_COUNT];
 
-static uint32 g_nPhysAPICAddr = 0xFEE00000;	// Address of APIC (defaults to 0xFEE00000)
-
  // Alloc get_processor_id() to work on non-smp machines
  // Will be set to the virtual address of local APIC later if this is a SMP machine.
 static uint32 g_nFakeCPUID = 0;
-uint32 g_nVirtualAPICAddr = ( ( uint32 )&g_nFakeCPUID ) - APIC_ID;
+static vuint32 *g_pPhysAPICAddr = (vuint32*)0xFEE00000;	// Address of APIC (defaults to 0xFEE00000)
+vuint32 *g_pVirtualAPICAddr = (vuint32*)((( uint32 )&g_nFakeCPUID ) - APIC_ID);
 static area_id g_hAPICArea;
 static int g_anLogicToRealID[MAX_CPU_COUNT] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
 
@@ -335,6 +334,7 @@ static void ap_entry_proc( void )
 	nReg = apic_read( APIC_LDR ) & ~APIC_LDR_MASK;
 	nReg |= SET_APIC_LOGICAL_ID( 1UL << nProcessor );
 	apic_write( APIC_LDR, nReg );
+	apic_write( APIC_TASKPRI, apic_read( APIC_TASKPRI ) & ~APIC_TPRI_MASK );	
 
 	// Enable the local APIC
 	nReg = apic_read( APIC_SPIV );
@@ -348,6 +348,7 @@ static void ap_entry_proc( void )
 
 	apic_write( APIC_LVT0, APIC_DEST_DM_EXTINT | APIC_LVT_MASKED );
 	apic_write( APIC_LVT1, APIC_DEST_DM_NMI | APIC_LVT_MASKED );
+	
 
 	calibrate_apic_timer( nProcessor );
 
@@ -473,7 +474,7 @@ static int smp_read_mpc( MpConfigTable_s * mpc )
 	printk( "APIC at: 0x%lX\n", mpc->mpc_nAPICAddress );
 #endif
 	// set the local APIC address
-	g_nPhysAPICAddr = mpc->mpc_nAPICAddress;
+	g_pPhysAPICAddr = (vuint32*)mpc->mpc_nAPICAddress;
 
 	//        Now parce the configuration blocks.
 
@@ -589,7 +590,7 @@ static void init_default_config( int nConfig )
 	// We need to know what the local APIC id of the boot CPU is!
 
 	// NOTE: The MMU is still disabled.
-	g_nBootCPU = GET_APIC_ID( *( ( vuint32 * )( g_nPhysAPICAddr + APIC_ID ) ) );
+	g_nBootCPU = GET_APIC_ID( *( g_pPhysAPICAddr + APIC_ID ) );
 	g_nFakeCPUID = SET_APIC_ID( g_nBootCPU );
 
 	// 2 CPUs, numbered 0 & 1.
@@ -814,7 +815,7 @@ static int smp_read_acpi_rsdt( uint32 nRsdt )
 			
 			/* Set the local APIC address */
 			g_bAPICPresent = true;
-			g_nPhysAPICAddr = psMadt->am_nApicAddr;
+			g_pPhysAPICAddr = (vuint32*)psMadt->am_nApicAddr;
 #ifdef SMP_DEBUG
 			printk( "APIC at: 0x%lX\n", psMadt->am_nApicAddr );
 #endif
@@ -1019,6 +1020,8 @@ static void test_apic()
 
 	printk( "Getting LVT0: %x\n", apic_read( APIC_LVT0 ) );
 	printk( "Getting LVT1: %x\n", apic_read( APIC_LVT1 ) );
+	printk( "Getting SPIV: %x\n", apic_read( APIC_SPIV ) );
+	printk( "Getting TASKPRI: %x\n", apic_read( APIC_TASKPRI ) );
 }
 #endif // SMP_DEBUG
 
@@ -1059,6 +1062,7 @@ void smp_boot_cpus( void )
 	nReg = apic_read( APIC_LDR ) & ~APIC_LDR_MASK;
 	nReg |= SET_APIC_LOGICAL_ID( 1UL << get_processor_id() );
 	apic_write( APIC_LDR, nReg );
+	apic_write( APIC_TASKPRI, apic_read( APIC_TASKPRI ) & ~APIC_TPRI_MASK );	
 	
 	// Enable the local APIC
 	nReg = apic_read( APIC_SPIV );
@@ -1072,6 +1076,7 @@ void smp_boot_cpus( void )
 	
 	apic_write( APIC_LVT0, APIC_DEST_DM_EXTINT );
 	apic_write( APIC_LVT1, APIC_DEST_DM_NMI );
+	
 	
 	set_bit( &g_nCpuMask, g_nBootCPU );
 	
@@ -1238,15 +1243,17 @@ void apic_eoi( void )
 
 void do_smp_invalidate_pgt( SysCallRegs_s * psRegs, int nIrqNum )
 {
-	apic_eoi();
 	if( test_and_clear_bit( &g_nTLBInvalidateMask, get_processor_id() ) )
 	{
+		//printk( "Got TLB flush %i!\n", get_processor_id());
 		flush_tlb();
-	}
+	} //else if( nIrqNum == 0 )
+		//printk( "Got unexpected on %i %x %x %x %x!\n", get_processor_id(),  (uint)apic_read( APIC_IRR ),  (uint)apic_read( APIC_ISR ),  (uint)apic_read( APIC_ICR ), (uint)apic_read( APIC_ESR ));
 	if( test_and_clear_bit( &g_nMTRRInvalidateMask, get_processor_id() ) )
 	{
 		write_mtrr_descs();
 	}
+	apic_eoi();
 }
 
 /*****************************************************************************
@@ -1285,6 +1292,7 @@ void init_smp( bool bInitSMP, bool bScanACPI )
 {
 	bool bFound = false;
 	int i;
+	
 
 	if ( bInitSMP )
 	{
@@ -1330,8 +1338,8 @@ void init_smp( bool bInitSMP, bool bScanACPI )
 	if ( ( bFound || ( g_asProcessorDescs[g_nBootCPU].pi_nFeatures & CPU_FEATURE_APIC ) ) && bInitSMP )
 	{
 		/* Map APIC registers */
-		g_nVirtualAPICAddr = 0;
-		g_hAPICArea = create_area( "apic_registers", ( void ** )&g_nVirtualAPICAddr, PAGE_SIZE, PAGE_SIZE, AREA_ANY_ADDRESS | AREA_KERNEL, AREA_FULL_LOCK );
+		g_pVirtualAPICAddr = 0;
+		g_hAPICArea = create_area( "apic_registers", ( void ** )&g_pVirtualAPICAddr, PAGE_SIZE, PAGE_SIZE, AREA_ANY_ADDRESS | AREA_KERNEL, AREA_FULL_LOCK );
 
 		if ( g_hAPICArea < 0 )
 		{
@@ -1340,9 +1348,9 @@ void init_smp( bool bInitSMP, bool bScanACPI )
 		}
 
 #ifdef SMP_DEBUG
-		printk( "Map in local APIC (%08x) to %08x\n", g_nPhysAPICAddr, g_nVirtualAPICAddr );
+		printk( "Map in local APIC (0x%p) to 0x%p\n", g_pPhysAPICAddr, g_pVirtualAPICAddr );
 #endif
-		remap_area( g_hAPICArea, ( void * )g_nPhysAPICAddr );
+		remap_area( g_hAPICArea, ( void * )g_pPhysAPICAddr );
 
 	}
 	if ( !bFound )
@@ -1351,7 +1359,7 @@ void init_smp( bool bInitSMP, bool bScanACPI )
 		if ( ( ( g_asProcessorDescs[g_nBootCPU].pi_nFeatures & CPU_FEATURE_APIC ) ) && bInitSMP )
 		{
 			/* Identify as a smp system */
-			g_nBootCPU = GET_APIC_ID( *( ( vuint32 * )( g_nVirtualAPICAddr + APIC_ID ) ) );
+			g_nBootCPU = GET_APIC_ID( *( g_pVirtualAPICAddr + APIC_ID ) );
 			g_nFakeCPUID = SET_APIC_ID( g_nBootCPU );
 			g_bAPICPresent = true;
 			bFound = true;
@@ -1359,7 +1367,7 @@ void init_smp( bool bInitSMP, bool bScanACPI )
 		else
 		{
 			/* No speed detection for non-SMP machine with no APIC yet */
-			g_nVirtualAPICAddr = ( ( uint32 )&g_nFakeCPUID ) - APIC_ID;
+			g_pVirtualAPICAddr = (vuint32*)( ( ( uint32 )&g_nFakeCPUID ) - APIC_ID );
 			g_asProcessorDescs[g_nBootCPU].pi_nBusSpeed = 0;
 			g_asProcessorDescs[g_nBootCPU].pi_nCoreSpeed = 0;
 			set_bit( &g_nCpuMask, g_nFakeCPUID );
@@ -1418,6 +1426,7 @@ void boot_ap_processors( void )
 
 void flush_tlb_global( void )
 {
+	uint32 nFlags = cli();
 	int nProcessor = get_processor_id();
 	/* Update MTRR descriptors */
 	if( test_and_clear_bit( &g_nMTRRInvalidateMask, nProcessor ) )
@@ -1427,24 +1436,33 @@ void flush_tlb_global( void )
 	
 	if ( g_nActiveCPUCount > 1 )
 	{
-		uint32 nFlags = cli();
+		
 		g_nTLBInvalidateMask = g_nCpuMask;
+		//printk( "Send TLB flush %i\n", get_processor_id() );
  		send_ipi( MSG_ALL_BUT_SELF, APIC_DEST_DM_FIXED, INT_INVAL_PGT );
- 		flush_tlb();
-//		int nTimeout = 50000000;
-//		while( g_nTLBInvalidateMask && nTimeout-- > 1 )
-//		{
+		int nTimeout = 50000000;
+		while( g_nTLBInvalidateMask && nTimeout-- > 1 )
+		{
 			if( test_and_clear_bit( &g_nTLBInvalidateMask, nProcessor ) )
 			{
 				flush_tlb();
 			}
-//		}
-//		if( nTimeout == 0 )
-//			printk("TLB flush timeout!\n");
-//		g_nTLBInvalidateMask = 0;
-		put_cpu_flags( nFlags );
+		}
+		if( nTimeout == 0 )
+		{
+			printk("TLB flush timeout %i %i %x %x %x %x %x %x!\n", get_processor_id(), nProcessor, (uint)apic_read( APIC_ISR ), (uint)apic_read( APIC_IRR ),  (uint)apic_read( APIC_TASKPRI ), (uint)apic_read( APIC_ESR ), (uint)apic_read( APIC_ICR ), g_nTLBInvalidateMask );
+			int nOther = !get_processor_id();
+			if( g_asProcessorDescs[nOther].pi_psCurrentThread == NULL )
+				printk( "Has no thread running\n" );
+			else
+				printk( "%i %i %i:%s:%i %i:%s:%i\n", nOther, get_processor_id(), g_asProcessorDescs[get_processor_id()].pi_psCurrentThread->tr_hThreadID, g_asProcessorDescs[get_processor_id()].pi_psCurrentThread->tr_zName,g_asProcessorDescs[get_processor_id()].pi_psCurrentThread->tr_nCurrentCPU, g_asProcessorDescs[nOther].pi_psCurrentThread->tr_hThreadID, g_asProcessorDescs[nOther].pi_psCurrentThread->tr_zName, g_asProcessorDescs[nOther].pi_psCurrentThread->tr_nCurrentCPU );
+		}
+		//else
+			//printk("TLB flush OK %i %x!\n", get_processor_id(), (uint)apic_read( APIC_ICR ) );
+		//g_nTLBInvalidateMask = 0;
 	} else
 		flush_tlb();
+	put_cpu_flags( nFlags );
 }
 
 int logical_to_physical_cpu_id( int nLogicalID )

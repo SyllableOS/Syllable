@@ -959,7 +959,6 @@ void usb_hub_thread_worker()
 int usb_hub_thread( void* pData )
 {
 	kerndbg( KERN_DEBUG,  "USB hub thread running\n" );
-	snooze( 2 * 1000 * 1000 );
 	while( 1 ) {
 		usb_hub_thread_worker();
 		sleep_on_sem( g_hHubWait, INFINITE_TIMEOUT );

@@ -2968,11 +2968,66 @@ static int alloc_uhci ( int nDeviceID, PCI_Info_s dev, int irq, unsigned int io_
 	/* Claim device */
 	if( claim_device( nDeviceID, dev.nHandle, "USB UHCI controller", DEVICE_CONTROLLER ) != 0 )
 		return( -1 );
+		
+	set_device_data( dev.nHandle, s );
 
 	//chain new uhci device into global list
 	devs=s;
 
 	return 0;
+}
+
+status_t device_suspend( int nDeviceID, int nDeviceHandle, void* pData )
+{
+	uhci_t *s = pData;
+	
+	printk( "Suspend USB UHCI controller @ 0x%x\n", (uint)s->io_addr );
+	/* Delete RH timer */
+	delete_timer( s->rh.rh_int_timer );
+	
+	g_psPCIBus->write_pci_config( s->uhci_pci.nBus, s->uhci_pci.nDevice, s->uhci_pci.nFunction, USBLEGSUP, 2, 0 );
+	
+	/* Suspend */
+	outw( 0, s->io_addr + USBINTR );
+	outw (USBCMD_CF | USBCMD_EGSM, s->io_addr + USBCMD);
+	udelay( 5 );
+	s->last_frame = UHCI_GET_CURRENT_FRAME(s);
+	s->running = 0;
+	
+	return( 0 );
+}
+
+status_t device_resume( int nDeviceID, int nDeviceHandle, void* pData )
+{
+	uhci_t *s = pData;
+	
+	printk( "Resume USB UHCI controller @ 0x%x\n", (uint)s->io_addr );
+	
+	/* Wakeup */
+	outw (USBCMD_FGR | USBCMD_EGSM | USBCMD_CF, s->io_addr + USBCMD);
+	udelay( 20 * 1000 );
+	
+	outw (USBCMD_CF, s->io_addr + USBCMD);
+	
+	/* Turn on all interrupts */
+	outw (USBINTR_TIMEOUT | USBINTR_RESUME | USBINTR_IOC | USBINTR_SP, s->io_addr + USBINTR);
+
+	/* Start at last frame */
+	outw (s->last_frame, s->io_addr + USBFRNUM);
+	outl ((uint32)s->framelist, s->io_addr + USBFLBASEADD);
+
+	/* Run and mark it configured with a 64-byte max packet */
+	outw (USBCMD_RS | USBCMD_CF | USBCMD_MAXP, s->io_addr + USBCMD);
+	s->apm_state = 1;
+	s->running = 1;
+
+	g_psPCIBus->write_pci_config( s->uhci_pci.nBus, s->uhci_pci.nDevice, s->uhci_pci.nFunction, USBLEGSUP, 2, USBLEGSUP_DEFAULT );
+
+	/* Init RH timer */
+	rh_init_int_timer( s->rh.urb );
+
+	
+	return( 0 );
 }
 
 

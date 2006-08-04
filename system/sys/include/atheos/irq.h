@@ -72,9 +72,9 @@ struct irqaction
 #define INT_IRQ14	0x2e
 #define INT_IRQ15	0x2f
 
-#define	INT_INVAL_PGT	0x30	/* Used to broadcast page-table invalidations on SMP machines	*/
-#define	INT_SCHEDULE	0x31	/* Driven by the local APIC timer on SMP machines		*/
-#define	INT_SPURIOUS	0x32	/* Intel APIC spurious(?) interupt vector			*/
+#define	INT_INVAL_PGT	0xf0	/* Used to broadcast page-table invalidations on SMP machines	*/
+#define	INT_SCHEDULE	0xf1	/* Driven by the local APIC timer on SMP machines		*/
+#define	INT_SPURIOUS	0xf2	/* Intel APIC spurious(?) interupt vector			*/
 
 
 uint32	cli( void );

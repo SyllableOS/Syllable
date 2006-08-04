@@ -154,7 +154,7 @@ int save_i387( struct _fpstate *buf )
 		stts();
 	}
 
-	if ( get_processor()->pi_bHaveFXSR )
+	if ( g_asProcessorDescs[g_nBootCPU].pi_bHaveFXSR )
 		save_i387_fxsave( buf, psThread );
 	else
 		save_i387_fsave( buf, psThread );
@@ -237,7 +237,7 @@ void restore_i387( struct _fpstate *buf )
 		stts();
 	}
 
-	if ( get_processor()->pi_bHaveFXSR )
+	if ( g_asProcessorDescs[g_nBootCPU].pi_bHaveFXSR )
 		restore_i387_fxsave( buf, psThread );
 	else
 		restore_i387_fsave( buf, psThread );
@@ -248,7 +248,7 @@ void restore_i387( struct _fpstate *buf )
 
 inline void load_fpu_state( union i3FPURegs_u *pState )
 {
-	if ( get_processor()->pi_bHaveFXSR )
+	if ( g_asProcessorDescs[g_nBootCPU].pi_bHaveFXSR )
 	{
 		if ( ( ( unsigned int )&pState->fpu_sFXSave & 0x0000000f ) != 0 )
 		{
@@ -265,7 +265,7 @@ inline void load_fpu_state( union i3FPURegs_u *pState )
 
 inline void save_fpu_state( union i3FPURegs_u *pState )
 {
-	if ( get_processor()->pi_bHaveFXSR )
+	if ( g_asProcessorDescs[g_nBootCPU].pi_bHaveFXSR )
 	{
 		if ( ( ( unsigned int )&pState->fpu_sFXSave & 0x0000000f ) != 0 )
 		{

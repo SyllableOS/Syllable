@@ -45,6 +45,9 @@ typedef struct SuperInfo SuperInfo_s;
 
 typedef status_t device_init_t ( int nDeviceID );
 typedef status_t device_uninit_t ( int nDeviceID );
+typedef void device_release_t ( int nDeviceID, int nDeviceHandle, void* pPrivateData );
+typedef status_t device_suspend_t ( int nDeviceID, int nDeviceHandle, void* pPrivateData );
+typedef status_t device_resume_t ( int nDeviceID, int nDeviceHandle, void* pPrivateData );
 
 static int g_nDeviceID = BUILTIN_DEVICE_ID + 1;
 static sem_id g_hMutex;
@@ -55,6 +58,7 @@ struct _Device
 	Device_s *d_psNext;
 	const DeviceOperations_s *d_psOps;
 	int d_nDeviceID;
+	bool d_bIsBusmanager;
 	atomic_t d_nNodeCount;
 	atomic_t d_nOpenCount;
 	char d_zPath[512];
@@ -170,7 +174,10 @@ static void unload_device( Device_s *psDevice )
 {
 	int nError;
 	device_uninit_t *pUninitFunc;
-
+	
+	/* Tell the code in devices.c to release the registered devices of this driver */
+	release_devices( psDevice->d_nDeviceID );
+	
 	nError = get_symbol_address( psDevice->d_nDriverImage, "device_uninit", -1, ( void ** )&pUninitFunc );
 
 	if ( nError >= 0 )
@@ -295,6 +302,96 @@ static Device_s *find_device_by_id( int nDeviceID )
 	return ( NULL );
 }
 
+
+//****************************************************************************/
+/** Called by release_devices() (devices.c) to call the device_release function.
+ * \author Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+void do_release_device( int nDeviceID, int nDeviceHandle, void* pPrivateData )
+{
+	Device_s* psDevice = find_device_by_id( nDeviceID );
+	if( psDevice == NULL || ( psDevice->d_nDeviceID != nDeviceID ) )
+	{
+		printk( "Error: do_release_device() called with invalid id\n" );
+		return;
+	}
+	device_release_t *pReleaseFunc;
+	
+	int nError = get_symbol_address( psDevice->d_nDriverImage, "device_release", -1, ( void ** )&pReleaseFunc );
+
+	if ( nError >= 0 )
+	{
+		pReleaseFunc( psDevice->d_nDeviceID, nDeviceHandle, pPrivateData );
+	}
+}
+
+//****************************************************************************/
+/** Called by suspend_devices() (devices.c) to call the device_suspend function.
+ * \author Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+status_t do_suspend_device( int nDeviceID, int nDeviceHandle, void* pPrivateData )
+{
+	Device_s* psDevice = find_device_by_id( nDeviceID );
+	if( psDevice == NULL || ( psDevice->d_nDeviceID != nDeviceID ) )
+	{
+		printk( "Error: do_suspend_device() called with invalid id\n" );
+		return( -EINVAL );
+	}
+	device_suspend_t *pSuspendFunc;
+	
+	int nError = get_symbol_address( psDevice->d_nDriverImage, "device_suspend", -1, ( void ** )&pSuspendFunc );
+
+	if ( nError >= 0 )
+	{
+		nError = pSuspendFunc( psDevice->d_nDeviceID, nDeviceHandle, pPrivateData );
+	} else
+		nError = 0;
+	
+	return( nError );
+}
+
+
+//****************************************************************************/
+/** Called by resume_devices() (devices.c) to call the device_resume function.
+ * \author Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+status_t do_resume_device( int nDeviceID, int nDeviceHandle, void* pPrivateData )
+{
+	Device_s* psDevice = find_device_by_id( nDeviceID );
+	if( psDevice == NULL || ( psDevice->d_nDeviceID != nDeviceID ) )
+	{
+		printk( "Error: do_resume_device() called with invalid id\n" );
+		return( -EINVAL );
+	}
+	device_resume_t *pResumeFunc;
+	
+	int nError = get_symbol_address( psDevice->d_nDriverImage, "device_resume", -1, ( void ** )&pResumeFunc );
+
+	if ( nError >= 0 )
+	{
+		nError = pResumeFunc( psDevice->d_nDeviceID, nDeviceHandle, pPrivateData );
+	} else
+		nError = 0;
+	
+	return( nError );
+}
+
+
+/** Marks a device as a busmanager. This will avoid that it is reloaded and
+ * at shutdown its device_uninit() is called to save its settings.
+ * \author Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+void set_device_as_busmanager( int nDeviceID )
+{
+	Device_s* psDevice = find_device_by_id( nDeviceID );
+	if( psDevice == NULL )
+	{
+		printk( "Error: set_device_as_busmanager() called with invalid id\n" );
+		return;
+	}
+	psDevice->d_bIsBusmanager = true;
+}
+
 /*****************************************************************************
  * NAME:
  * DESC:
@@ -338,11 +435,24 @@ static int load_device( Device_s *psDevice )
 		}
 		if ( psDevice->d_nDriverImage >= 0 )
 		{
+			/* Do not reload the driver if it has not been changed */
 			if ( psDevice->d_nImgDeviceNum == sStat.st_dev && psDevice->d_nImgInode == sStat.st_ino && psDevice->d_nMTime == sStat.st_mtime )
 			{
 				nError = 0;
 				goto error1;
 			}
+			
+			/* Do not reload busmanagers */
+			if( psDevice->d_bIsBusmanager )
+			{
+				psDevice->d_nImgDeviceNum = sStat.st_dev;
+				psDevice->d_nImgInode = sStat.st_ino;
+				psDevice->d_nMTime = sStat.st_mtime;
+				//printk( "Warning: The busmanager is not reloaded until the next reboot\n" );
+				nError = 0;
+				goto error1;
+			}
+			
 			unload_device( psDevice );
 		}
 	}
@@ -2027,12 +2137,29 @@ void write_dev_fs_config( void )
 		const char *pzBreak = "\n";
 		DisabledDevice_s *psPrev = psDevice;
 
-		write_kernel_config_entry_data( &psDevice->dd_zPath[0], strlen( psDevice->dd_zPath ) );
+		write_kernel_config_entry_data( (uint8*)&psDevice->dd_zPath[0], strlen( psDevice->dd_zPath ) );
 		write_kernel_config_entry_data( ( uint8 * )pzBreak, 1 );
 
 		psDevice = psDevice->dd_psNext;
 		kfree( psPrev );
 	}
+	
+	/* Call the device_uninit() functions of the busmanagers to save their config */
+	Device_s* psDev;
+	for ( psDev = g_psFirstDevice; psDev != NULL; psDev = psDev->d_psNext )
+	{
+		if ( psDev->d_bIsBusmanager == true )
+		{
+			printk( "Save config of %s\n", psDev->d_zPath );
+			device_uninit_t *pUninitFunc;
+
+			if ( get_symbol_address( psDev->d_nDriverImage, "device_uninit", -1, ( void ** )&pUninitFunc ) >= 0 )
+			{
+				pUninitFunc( psDev->d_nDeviceID );
+			}
+		}
+	}
+	
 }
 
 

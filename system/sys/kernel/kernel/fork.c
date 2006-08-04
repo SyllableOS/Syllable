@@ -253,7 +253,7 @@ int do_exit( int nErrorCode )
 
 	send_signal( psParentThread, SIGCHLD, true );	
 	psThread->tr_nState = TS_ZOMBIE;
-	wake_up_queue( psThread->tr_psTermWaitList, nErrorCode, true );
+	wake_up_queue( false, psThread->tr_psTermWaitList, nErrorCode, true );
 
 	g_asProcessorDescs[get_processor_id()].pi_psCurrentThread = NULL;
 	sched_unlock();

@@ -535,6 +535,12 @@ done2:
 
 	create_debug_files (ehci);
 	
+	
+	/* Claim device */
+	claim_device( hcd->device_id, info.nHandle, "USB 2.0 EHCI controller", DEVICE_CONTROLLER );
+	set_device_data( info.nHandle, ehci );
+	
+	
 	return 0;
 }
 
@@ -587,6 +593,49 @@ static int ehci_get_frame (struct usb_hcd *hcd)
 }
 
 /*-------------------------------------------------------------------------*/
+
+int	ehci_suspend(struct usb_hcd *hcd, u32 state)
+{
+	struct ehci_hcd		*ehci = hcd_to_ehci (hcd);
+	
+	PCI_Info_s info = ehci->hcd.pdev;
+	
+	printk( "Suspend USB EHCI controller @ 0x%x\n", (uint)info.u.h0.nBase0 );
+	writel (0, &ehci->regs->intr_enable);
+	(void)readl(&ehci->regs->intr_enable);
+	return( 0 );
+}
+
+int	ehci_resume(struct usb_hcd *hcd, u32 old_state)
+{
+	struct ehci_hcd		*ehci = hcd_to_ehci (hcd);
+	
+	printk( "Resume USB EHCI controller\n" );
+	
+	if (readl(&ehci->regs->configured_flag) != FLAG_CF)
+	{
+		printk( "Error: EHCI controller lost power!\n" );
+	}
+	writel (INTR_MASK, &ehci->regs->intr_enable);
+		
+	
+	return( 0 );
+}
+
+status_t device_suspend( int nDeviceID, int nDeviceHandle, void* pData )
+{
+	struct ehci_hcd *s = pData;
+	hcd_bus_suspend( &s->hcd );
+	
+	return( 0 );
+}
+
+status_t device_resume( int nDeviceID, int nDeviceHandle, void* pData )
+{
+	struct ehci_hcd *s = pData;
+	hcd_bus_resume( &s->hcd );
+	return( 0 );
+}
 
 /*-------------------------------------------------------------------------*/
 
@@ -906,6 +955,8 @@ static const struct hc_driver ehci_driver = {
 	 */
 	.start =		ehci_start,
 	.stop =			ehci_stop,
+	.suspend = 		ehci_suspend,
+	.resume = 		ehci_resume,
 
 	/*
 	 * memory lifecycle (except per-request)
@@ -961,10 +1012,8 @@ status_t device_init( int nDeviceID )
     	//printk( "%i %i %i\n", pci.nClassApi, pci.nClassBase, pci.nClassSub );
     	if( pci.nClassApi == 32 && pci.nClassBase == PCI_SERIAL_BUS && pci.nClassSub == PCI_USB )
     	{
-    		if( usb_hcd_pci_probe( pci, (void*)&ehci_driver ) == 0 )
+    		if( usb_hcd_pci_probe( nDeviceID, pci, (void*)&ehci_driver ) == 0 )
     		{
-				/* Claim device */
-				claim_device( nDeviceID, pci.nHandle, "USB 2.0 EHCI controller", DEVICE_CONTROLLER );
     			found = true;
     		}
         }

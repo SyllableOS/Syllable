@@ -272,15 +272,17 @@ thread_id create_idle_thread( const char *Name );
 thread_id add_thread( Thread_s *psThread );
 proc_id add_process( Process_s *psProc );
 
-void add_to_sleeplist( WaitQueue_s *psNode );
+void add_to_sleeplist( bool bLock, WaitQueue_s *psNode );
 void remove_from_sleeplist( WaitQueue_s *psNode );
 void add_thread_to_ready( Thread_s *psThread );
 
-void add_to_waitlist( WaitQueue_s **psList, WaitQueue_s *psNode );
-void remove_from_waitlist( WaitQueue_s **ppsList, WaitQueue_s *psNode );
+void add_to_waitlist( bool bLock, WaitQueue_s **psList, WaitQueue_s *psNode );
+void remove_from_waitlist( bool bLock, WaitQueue_s **ppsList, WaitQueue_s *psNode );
+
+status_t  do_wakeup_thread( thread_id hThread, bool bWakeupSuspended );
 
 void wake_up_sleepers( bigtime_t nCurTime );
-int wake_up_queue( WaitQueue_s *psList, int nCode, bool bAll );
+int wake_up_queue( bool bLock, WaitQueue_s *psList, int nCode, bool bAll );
 int sleep_on_queue( WaitQueue_s **ppsList );
 
 thread_id get_next_thread( const thread_id hPrev );

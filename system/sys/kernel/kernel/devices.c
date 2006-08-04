@@ -48,7 +48,7 @@ struct BusHandle_t;
 struct BusHandle_t
 {
 	struct BusHandle_t *b_psNext;
-	int b_nImage;
+	int b_nDeviceID;
 	char b_zName[MAX_BUSMANAGER_NAME_LENGTH];
 	bus_get_hooks_t *b_pGetHooks;
 };
@@ -69,6 +69,7 @@ struct DeviceHandle_t
 	char d_zBus[MAX_BUSMANAGER_NAME_LENGTH];
 	bool d_bClaimed;
 	enum device_type d_eType;
+	void* d_pData;
 };
 
 typedef struct DeviceHandle_t DeviceHandle_s;
@@ -236,6 +237,7 @@ void release_device( int nHandle )
 
 			/* Overwrite name and type */
 			//printk( "Device %s removed\n", psDevice->d_zName );
+			psDevice->d_nDeviceID = -1;
 			psDevice->d_bClaimed = false;
 			strcpy( psDevice->d_zName, psDevice->d_zOriginalName );
 			UNLOCK( g_hDeviceListLock );
@@ -247,6 +249,97 @@ void release_device( int nHandle )
 	printk( "Error: release_device() called with invalid device\n" );
 	return;
 }
+
+
+//****************************************************************************/
+/** Release all devices of one driver.
+ * \param nDeviceID - The device id of the driver.
+ * \author Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+void release_devices( int nDeviceID )
+{
+	DeviceHandle_s *psDevice = g_psFirstDevice;
+	
+	extern void do_release_device( int nDeviceID, int nDeviceHandle, void* pPrivateData );
+	
+	LOCK( g_hDeviceListLock );
+
+	while ( psDevice != NULL )
+	{
+		DeviceHandle_s *psNext = psDevice->d_psNext;
+		if ( psDevice->d_nDeviceID == nDeviceID )
+		{
+			UNLOCK( g_hDeviceListLock ); // The driver will probably call release_device() or unregister_device()
+			
+			/* Tell the devfs to call device_release() */
+			do_release_device( nDeviceID, psDevice->d_nHandle, psDevice->d_pData );
+		
+			LOCK( g_hDeviceListLock );
+		}
+		psDevice = psNext;
+	}
+	UNLOCK( g_hDeviceListLock );
+	return;
+}
+
+//****************************************************************************/
+/** Suspend all devices.
+ * \author Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+status_t suspend_devices()
+{
+	DeviceHandle_s *psDevice = g_psFirstDevice;
+	int nError = 0;
+	
+	extern status_t do_suspend_device( int nDeviceID, int nDeviceHandle, void* pPrivateData );
+	
+	LOCK( g_hDeviceListLock );
+
+	while ( psDevice != NULL )
+	{
+		DeviceHandle_s *psNext = psDevice->d_psNext;
+		if ( psDevice->d_nDeviceID != -1 )
+			nError = do_suspend_device( psDevice->d_nDeviceID, psDevice->d_nHandle, psDevice->d_pData );
+		if( nError != 0 )
+		{
+			UNLOCK( g_hDeviceListLock );
+			return( nError );
+		}
+		psDevice = psNext;
+	}
+	UNLOCK( g_hDeviceListLock );
+	return( 0 );
+}
+
+//****************************************************************************/
+/** Resume all devices.
+ * \author Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+status_t resume_devices()
+{
+	DeviceHandle_s *psDevice = g_psFirstDevice;
+	int nError = 0;
+	
+	extern status_t do_resume_device( int nDeviceID, int nDeviceHandle, void* pPrivateData );
+	
+	LOCK( g_hDeviceListLock );
+
+	while ( psDevice != NULL )
+	{
+		DeviceHandle_s *psNext = psDevice->d_psNext;
+		if ( psDevice->d_nDeviceID != -1 )
+			nError = do_resume_device( psDevice->d_nDeviceID, psDevice->d_nHandle, psDevice->d_pData );
+		if( nError != 0 )
+		{
+			UNLOCK( g_hDeviceListLock );
+			return( nError );
+		}
+		psDevice = psNext;
+	}
+	UNLOCK( g_hDeviceListLock );
+	return( 0 );
+}
+
 
 //****************************************************************************/
 /** Returns a <code>DeviceInfo_s</code> structure for a registered device.
@@ -286,9 +379,110 @@ status_t get_device_info( DeviceInfo_s * psInfo, int nIndex )
 }
 
 //****************************************************************************/
+/** Sets private device driver data of one device.
+ * \ingroup DriverAPI
+ * \param nHandle the handle returned by the register_device() call.
+ * \param pData the data.
+ * \sa get_device_data()
+ * \author Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+void set_device_data( int nHandle, void* pData )
+{
+	DeviceHandle_s *psDevice = g_psFirstDevice;
+	
+	LOCK( g_hDeviceListLock );
+
+	while ( psDevice != NULL )
+	{
+		if ( psDevice->d_nHandle == nHandle )
+		{
+			if ( !psDevice->d_bClaimed )
+			{
+				printk( "Error: device %s not claimed, but set_device_data() called\n", psDevice->d_zName );
+				UNLOCK( g_hDeviceListLock );
+				return;
+			}
+			
+			psDevice->d_pData = pData;
+			UNLOCK( g_hDeviceListLock );
+			return;
+		}
+		psDevice = psDevice->d_psNext;
+	}
+	UNLOCK( g_hDeviceListLock );
+	printk( "Error: set_device_data() called with invalid device\n" );
+	return;
+}
+
+//****************************************************************************/
+/** Returns the private device driver data of one device.
+ * \ingroup DriverAPI
+ * \param nHandle the handle of the device.
+ * \sa set_device_data()
+ * \author Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+void* get_device_data( int nHandle )
+{
+	DeviceHandle_s *psDevice = g_psFirstDevice;
+	
+	LOCK( g_hDeviceListLock );
+
+	while ( psDevice != NULL )
+	{
+		if ( psDevice->d_nHandle == nHandle )
+		{
+			void* pData = psDevice->d_pData;
+			UNLOCK( g_hDeviceListLock );
+			return( pData );
+		}
+		psDevice = psDevice->d_psNext;
+	}
+	UNLOCK( g_hDeviceListLock );
+	printk( "Error: set_device_data() called with invalid device\n" );
+	return( NULL );
+}
+
+
+//****************************************************************************/
+/** Registers a busmanager.
+ * \ingroup DriverAPI
+ * \param nDeviceID device id of the driver registering this busmanager
+ * \param pzName the name of the busmanager.
+ * \param pfHooks pointer to the function table of the busmanager
+ * \sa get_busmanager()
+ * \return 0 if successful.
+ * \author Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+ status_t register_busmanager( int nDeviceID, const char* pzName, busmanager_get_hooks* pfHooks )
+ {
+ 	/* Check if this busmanager is already registered */
+ 	BusHandle_s *psBus = g_psFirstBus;
+ 	while ( psBus != NULL )
+	{
+		if ( !strcmp( psBus->b_zName, pzName ) )
+			return ( -EEXIST );
+		psBus = psBus->b_psNext;
+	}
+ 	
+ 	/* Create a new entry */
+	psBus = ( BusHandle_s * ) kmalloc( sizeof( BusHandle_s ), MEMF_KERNEL );
+	memset( psBus, 0, sizeof( BusHandle_s ) );
+
+	strcpy( psBus->b_zName, pzName );
+	psBus->b_pGetHooks = pfHooks;
+	psBus->b_psNext = g_psFirstBus;
+	psBus->b_nDeviceID = nDeviceID;
+	g_psFirstBus = psBus;
+	
+	/* Mark this driver as a busmanager (implementation in vfs/dev.c) */
+	set_device_as_busmanager( nDeviceID );
+	
+	return( 0 );
+}
+
+//****************************************************************************/
 /** Returns a pointer to a structure containing function pointers for the
  *  the specified busmanager.
- * \internal
  * \ingroup Devices
  * \param pzName the name of the bus.
  * \param nVersion the version of the busmanager.
@@ -307,209 +501,6 @@ void *get_busmanager( const char *pzName, int nVersion )
 	}
 	return ( NULL );
 }
-
-//****************************************************************************/
-/** Loads the specified busmanager.
- * \internal
- * \ingroup Devices
- * \param pzPath the path of the busmanager.
- * \param pzName the name of the busmanager.
- * \author Arno Klenke (arno_klenke@yahoo.de)
- *****************************************************************************/
-void load_busmanager( const char *pzPath, char *pzName )
-{
-	bus_init_t *pInitFunc;
-	bus_get_hooks_t *pHookFunc;
-	BusHandle_s *psBus;
-	int nError;
-	int nImage;
-
-
-	/* Try to load */
-	nImage = load_kernel_driver( pzPath );
-	if ( nImage < 0 )
-	{
-		printk( "Error: %s is not a valid busmanager\n", pzPath );
-		return;
-	}
-
-	/* Get bus_init() symbol */
-	nError = get_symbol_address( nImage, "bus_init", -1, ( void ** )&pInitFunc );
-
-	if ( nError < 0 )
-	{
-		printk( "Error: busmanager %s does not export bus_init()\n", pzPath );
-		unload_kernel_driver( nImage );
-		return;
-	}
-
-	/* Now get hooks */
-	nError = get_symbol_address( nImage, "bus_get_hooks", -1, ( void ** )&pHookFunc );
-
-	if ( nError < 0 )
-	{
-		printk( "Error: busmanager %s does not export bus_get_hooks()\n", pzPath );
-		unload_kernel_driver( nImage );
-		return;
-	}
-
-
-
-	/* Create a new entry */
-	psBus = ( BusHandle_s * ) kmalloc( sizeof( BusHandle_s ), MEMF_KERNEL );
-	memset( psBus, 0, sizeof( BusHandle_s ) );
-
-	strcpy( psBus->b_zName, pzName );
-	psBus->b_nImage = nImage;
-	psBus->b_pGetHooks = pHookFunc;
-	psBus->b_psNext = g_psFirstBus;
-	g_psFirstBus = psBus;
-
-
-	/* Initialize busmanager */
-
-	nError = pInitFunc();
-
-	/* Look if we had success */
-	if ( nError != 0 )
-	{
-		printk( "Error: busmanager %s failed to initialize\n", pzPath );
-		g_psFirstBus = psBus->b_psNext;
-		kfree( psBus );
-		unload_kernel_driver( nImage );
-		return;
-	}
-}
-
-//****************************************************************************/
-/** Loads all busmanagers in the specified directory.
- * \internal
- * \ingroup Devices
- * \param pzPath the path of the directory to load.
- * \author Arno Klenke (arno_klenke@yahoo.de)
- *****************************************************************************/
-void load_busmanagers( char *pzPath )
-{
-	struct kernel_dirent sDirEnt;
-	int nDir;
-	int nPathLen = strlen( pzPath );
-	int nError;
-
-
-	/* Open directory */
-	nDir = open( pzPath, O_RDONLY );
-	if ( nDir < 0 )
-	{
-		printk( "Error: load_busmanagers() failed to open dir %s!\n", pzPath );
-		return;
-	}
-
-	strcat( pzPath, "/" );
-	nPathLen++;
-
-	/* Look through the directory */
-	while ( getdents( nDir, &sDirEnt, 1 ) == 1 )
-	{
-		struct stat sStat;
-
-		if ( strcmp( sDirEnt.d_name, "." ) == 0 || strcmp( sDirEnt.d_name, ".." ) == 0 )
-		{
-			continue;
-		}
-		strcat( pzPath, sDirEnt.d_name );
-		nError = stat( pzPath, &sStat );
-		if ( nError < 0 )
-		{
-			printk( "Error: load_busmanagers() failed to stat %s\n", pzPath );
-			continue;
-		}
-		if ( S_ISDIR( sStat.st_mode ) )
-		{
-			/* Do recursive calls for directories */
-			load_busmanagers( pzPath );
-		}
-		else
-		{
-			/* Look if the busmanager is already loaded */
-			BusHandle_s *psBus = g_psFirstBus;
-
-			bool bLoaded = false;
-
-			while ( psBus != NULL )
-			{
-				if ( !strcmp( psBus->b_zName, sDirEnt.d_name ) )
-					bLoaded = true;
-				psBus = psBus->b_psNext;
-			}
-			if ( !bLoaded )
-				load_busmanager( pzPath, sDirEnt.d_name );
-		}
-		pzPath[nPathLen] = '\0';	// Remove leaf name
-	}
-
-	/* Close directory */
-	close( nDir );
-}
-
-
-//****************************************************************************/
-/** Called by write_kernel_config() to save the configuration.
- * \internal
- * \ingroup Devices
- * \author Arno Klenke (arno_klenke@yahoo.de)
- *****************************************************************************/
-void write_devices_config( void )
-{
-	int nError;
-	BusHandle_s *psBus = g_psFirstBus;
-	bus_uninit_t *pUninitFunc;
-
-	/* Go through all busses */
-	while ( psBus != NULL )
-	{
-		/* Get bus_uninit symbol */
-		nError = get_symbol_address( psBus->b_nImage, "bus_uninit", -1, ( void ** )&pUninitFunc );
-
-		if ( nError >= 0 )
-		{
-			/* Call it */
-			pUninitFunc();
-		}
-		psBus = psBus->b_psNext;
-	}
-}
-
-//****************************************************************************/
-/** Called by init_boot_modules() to add the specified bootmodule.
- * \internal
- * \ingroup Devices
- * \param pzPath the path of the busmanager to add.
- * \author Arno Klenke (arno_klenke@yahoo.de)
- *****************************************************************************/
-void add_devices_bootmodule( const char *pzPath )
-{
-	if ( strstr( pzPath, "/drivers/bus/" ) != NULL )
-	{
-		/* Build name */
-		char zName[MAX_BUSMANAGER_NAME_LENGTH];
-		int i;
-
-		strcpy( zName, pzPath );
-
-		for ( i = strlen( pzPath ) - 1; i >= 0; i-- )
-		{
-			if ( pzPath[i] == '/' )
-			{
-				memcpy( zName, &pzPath[i] + 1, strlen( pzPath ) - i + 1 );
-				break;
-			}
-		}
-
-		/* Load busmanager */
-		load_busmanager( pzPath, zName );
-	}
-}
-
 //****************************************************************************/
 /** Set defaults.
  * \internal
@@ -553,12 +544,8 @@ static int dummy ( const char *pzPath, struct stat *psStat, void *pArg )
  *****************************************************************************/
 void init_devices( void )
 {
-	char zPath[255];	/* /atheos/sys/drivers/kernel */
-
-	/* Load busmanagers, which are not already loaded */
-	sys_get_system_path( zPath, 256 );
-	strcat( zPath, "sys/drivers/bus" );
-	load_busmanagers( zPath );
+	/* Iterate over /dev/bus to load the busmanager drivers */
+	iterate_directory( "/dev/bus", false, dummy, NULL );
 
 	/* Iterate over /dev/hcd to load the hostcontroller drivers */
 	iterate_directory( "/dev/hcd", false, dummy, NULL );

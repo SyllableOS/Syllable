@@ -38,12 +38,12 @@ $(OBJDIR)/pci: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/pci
 
 install: all
-	mkdir -p /system/drivers/bus
-	cp -f $(OBJDIR)/pci /system/drivers/bus/pci
+	mkdir -p /system/drivers/dev/bus
+	cp -f $(OBJDIR)/pci /system/drivers/dev/bus/pci
 
 dist: all
-	mkdir -p $(DIST_DIR)/atheos/sys/drivers/bus
-	cp -f $(OBJDIR)/pci $(DIST_DIR)/atheos/sys/drivers/bus/pci
+	mkdir -p $(DIST_DIR)/atheos/sys/drivers/dev/bus
+	cp -f $(OBJDIR)/pci $(DIST_DIR)/atheos/sys/drivers/dev/bus/pci
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/pci

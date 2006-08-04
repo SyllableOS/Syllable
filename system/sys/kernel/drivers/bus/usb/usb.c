@@ -1803,53 +1803,6 @@ bool get_bool_arg( bool* pbValue, const char* pzName, const char* pzArg, int nAr
     return( false );
 }
 
-/** 
- * \par Description: Initializes the USB busmanager.
- * \param
- * \return
- * \sa
- * \author	Arno Klenke (arno_klenke@yahoo.de)
- *****************************************************************************/
-status_t bus_init()
-{
-	/* Check if the use of the bus is disabled */
-	int i;
-	int argc;
-	const char* const *argv;
-	bool bDisableUSB = false;
-	get_kernel_arguments( &argc, &argv );
-	
-	for( i = 0; i < argc; ++i )
-	{
-		if( get_bool_arg( &bDisableUSB, "disable_usb=", argv[i], strlen( argv[i] ) ) )
-			if( bDisableUSB ) {
-				kerndbg( KERN_WARNING, "USB bus disabled by user\n" );
-				return( -1 );
-			}
-	}
-
-	
-	/* Clear everything */
-	for( i = 0; i < 64; i++ ) {
-		g_bUSBBusMap[i] = false;
-		g_psUSBBus[i] = NULL;
-	}
-	g_psFirstUSBDriver = NULL;
-	
-	spinlock_init( &g_hUSBLock, "usb_lock" );
-	
-	kerndbg( KERN_INFO, "USB: Busmanager initialized\n" );
-	
-	usb_hub_init();
-	
-	return( 0 );
-}
-
-void bus_uninit()
-{
-	// TODO:
-}
-
 USB_bus_s sBus = {
 	usb_register_driver,
 	usb_register_driver_force,
@@ -1886,7 +1839,7 @@ USB_bus_s sBus = {
  * \sa
  * \author	Arno Klenke (arno_klenke@yahoo.de)
  *****************************************************************************/
-void* bus_get_hooks( int nVersion )
+void* usb_bus_get_hooks( int nVersion )
 {
 	if( nVersion != USB_BUS_VERSION )
 		return( NULL );
@@ -1895,91 +1848,54 @@ void* bus_get_hooks( int nVersion )
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/** 
+ * \par Description: Initializes the USB busmanager.
+ * \param
+ * \return
+ * \sa
+ * \author	Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+status_t device_init( int nDeviceID )
+{
+	/* Check if the use of the bus is disabled */
+	int i;
+	int argc;
+	const char* const *argv;
+	bool bDisableUSB = false;
+	get_kernel_arguments( &argc, &argv );
+	
+	for( i = 0; i < argc; ++i )
+	{
+		if( get_bool_arg( &bDisableUSB, "disable_usb=", argv[i], strlen( argv[i] ) ) )
+			if( bDisableUSB ) {
+				kerndbg( KERN_WARNING, "USB bus disabled by user\n" );
+				return( -1 );
+			}
+	}
+
+	
+	/* Clear everything */
+	for( i = 0; i < 64; i++ ) {
+		g_bUSBBusMap[i] = false;
+		g_psUSBBus[i] = NULL;
+	}
+	g_psFirstUSBDriver = NULL;
+	
+	spinlock_init( &g_hUSBLock, "usb_lock" );
+	
+	kerndbg( KERN_INFO, "USB: Busmanager initialized\n" );
+	
+	usb_hub_init();
+	
+	register_busmanager( nDeviceID, "usb", usb_bus_get_hooks );
+	
+	return( 0 );
+}
+
+status_t device_uninit( int nDeviceID )
+{
+	// TODO:
+}
 
 
 

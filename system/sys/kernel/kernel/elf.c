@@ -52,7 +52,7 @@ static ElfImage_s *g_psFirstImage = NULL;
 #define	CMP_INODES( a, b ) ((a)->i_nInode == (b)->i_nInode && (a)->i_psVolume->v_nDevNum == (b)->i_psVolume->v_nDevNum)
 
 
-static uint32 elf_sym_hash( const uint8 *pzName )
+static uint32 elf_sym_hash( const char *pzName )
 {
 	uint32 h = 0;
 
@@ -1164,18 +1164,25 @@ static int do_reloc_image( ImageContext_s * psCtx, ElfImageInst_s *psInst, int n
 		{
 			pgd_t *pPgd;
 			pte_t *pPte;
-
-			pPgd = pgd_offset( psMemCtx, ( uint32 )pTarget );
-			pPte = pte_offset( pPgd, ( uint32 )pTarget );
-			if ( PTE_ISPRESENT( *pPte ) == false || PTE_ISWRITE( *pPte ) == false )
+			uintptr_t nAddr;
+			uintptr_t nStart = ( uint32 )pTarget & PAGE_MASK;
+			uintptr_t nEnd = ( ( uint32 )pTarget + sizeof( *pTarget ) + PAGE_SIZE - 1 ) & PAGE_MASK;
+			
+			for ( nAddr = nStart; nAddr < nEnd; nAddr += PAGE_SIZE )
 			{
-				nError = lock_mem_area( pTarget, sizeof( *pTarget ), true );
-				if ( nError < 0 )
+				pPgd = pgd_offset( psMemCtx, nAddr );
+				pPte = pte_offset( pPgd, nAddr );
+				if ( !PTE_ISPRESENT( *pPte ) || !PTE_ISWRITE( *pPte ) )
 				{
-					printk( "Error: do_reloc_image() failed to lock reloc target : %d\n", nError );
-					return ( nError );
+					nError = lock_mem_area( pTarget, sizeof( *pTarget ), true );
+					if ( nError < 0 )
+					{
+						printk( "Error: do_reloc_image() failed to lock reloc target : %d\n", nError );
+						return ( nError );
+					}
+					bDoUnlock = true;
+					break;
 				}
-				bDoUnlock = true;
 			}
 		}
 
@@ -2533,10 +2540,6 @@ static void init_boot_modules( void )
 	}
 	for ( i = 0; i < MAX_IMAGE_COUNT; ++i )
 	{
-		if ( g_psKernelCtx->ic_psInstances[i] != NULL && strstr( g_psKernelCtx->ic_psInstances[i]->ii_psImage->im_pzPath, "/drivers/" ) != NULL )
-		{
-			add_devices_bootmodule( g_psKernelCtx->ic_psInstances[i]->ii_psImage->im_pzPath );
-		}
 		if ( g_psKernelCtx->ic_psInstances[i] != NULL && strstr( g_psKernelCtx->ic_psInstances[i]->ii_psImage->im_pzPath, "/drivers/dev/" ) != NULL )
 		{
 			init_boot_device( g_psKernelCtx->ic_psInstances[i]->ii_psImage->im_pzPath );

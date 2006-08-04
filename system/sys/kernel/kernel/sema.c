@@ -623,7 +623,7 @@ static status_t do_delete_semaphore( sem_id hSema )
 	if ( psSema != NULL )
 	{
 		/* Wake up all waiting threads */
-		wake_up_queue( psSema->ss_psWaitQueue, 0, true );
+		wake_up_queue( true, psSema->ss_psWaitQueue, 0, true );
 
 		/* Delete holder and waiter queues for reader-writer lock */
 		if ( ( psSema->ss_nFlags & SEM_STYLE_MASK ) == SEMSTYLE_RWLOCK )
@@ -636,7 +636,7 @@ static status_t do_delete_semaphore( sem_id hSema )
 			{
 				psRWLock->rw_psWaiters = psWaiter->rww_psNext;
 
-				wake_up_queue( psWaiter->rww_psWaitQueue, 0, true );
+				wake_up_queue( true, psWaiter->rww_psWaitQueue, 0, true );
 
 				kfree( psWaiter );
 			}
@@ -1143,7 +1143,7 @@ void release_thread_semaphores( thread_id hThreadId )
 							if ( psRWLock->rw_psHolders == NULL && psRWLock->rw_psWaiters != NULL )
 							{
 								/* We just removed the only holder -- wake up the next queue node */
-								wake_up_queue( psRWLock->rw_psWaiters->rww_psWaitQueue, 0, true );
+								wake_up_queue( true, psRWLock->rw_psWaiters->rww_psWaitQueue, 0, true );
 							}
 						}
 						else
@@ -1166,7 +1166,7 @@ static status_t do_lock_semaphore_ex( bool bKernel, sem_id hSema, int nCount, ui
 	int nError;
 	bigtime_t nResumeTime;
 	bool bDumpStack = true;
-
+	
 	if ( 0 == hSema )
 	{
 		printk( "Error : attempt to lock semaphore 0\n" );
@@ -1239,7 +1239,8 @@ static status_t do_lock_semaphore_ex( bool bKernel, sem_id hSema, int nCount, ui
 				nError = -EWOULDBLOCK;
 				break;
 			}
-
+			
+			sched_lock();
 			sWaitNode.wq_hThread = hMyThread;
 			psMyThread->tr_hBlockSema = hSema;
 
@@ -1259,6 +1260,7 @@ static status_t do_lock_semaphore_ex( bool bKernel, sem_id hSema, int nCount, ui
 				if ( get_system_time() > nResumeTime )
 				{
 					nError = -ETIME;
+					sched_unlock();
 					break;
 				}
 				else
@@ -1266,11 +1268,11 @@ static status_t do_lock_semaphore_ex( bool bKernel, sem_id hSema, int nCount, ui
 					psMyThread->tr_nState = TS_SLEEP;
 					sSleepNode.wq_hThread = hMyThread;
 					sSleepNode.wq_nResumeTime = nResumeTime;
-					add_to_sleeplist( &sSleepNode );
+					add_to_sleeplist( false, &sSleepNode );
 				}
 			}
-			add_to_waitlist( &psSema->ss_psWaitQueue, &sWaitNode );
-
+			add_to_waitlist( false, &psSema->ss_psWaitQueue, &sWaitNode );
+			sched_unlock();
 			spinunlock_enable( &g_sSemListSpinLock, nFlg );
 
 			Schedule();
@@ -1292,7 +1294,7 @@ static status_t do_lock_semaphore_ex( bool bKernel, sem_id hSema, int nCount, ui
 				nError = -EINVAL;
 				break;
 			}
-			remove_from_waitlist( &psSema->ss_psWaitQueue, &sWaitNode );
+			remove_from_waitlist( true, &psSema->ss_psWaitQueue, &sWaitNode );
 
 			nRestDelay = nResumeTime - get_system_time();
 			psMyThread->tr_hBlockSema = -1;
@@ -1306,7 +1308,7 @@ static status_t do_lock_semaphore_ex( bool bKernel, sem_id hSema, int nCount, ui
 		{
 
 	      /*** If we give up we better tell the next one to give it a try	***/
-			wake_up_queue( psSema->ss_psWaitQueue, 0, false );
+			wake_up_queue( true, psSema->ss_psWaitQueue, 0, false );
 			break;
 		}
 	}
@@ -1441,11 +1443,12 @@ status_t lock_mutex( sem_id hSema, bool bIgnoreSignals )
 		WaitQueue_s sWaitNode;
 
 		sWaitNode.wq_hThread = hMyThread;
+		sched_lock();
 		psMyThread->tr_hBlockSema = hSema;
 		psMyThread->tr_nState = TS_WAIT;
 
-		add_to_waitlist( &psSema->ss_psWaitQueue, &sWaitNode );
-
+		add_to_waitlist( false, &psSema->ss_psWaitQueue, &sWaitNode );
+		sched_unlock();
 		spinunlock_enable( &g_sSemListSpinLock, nFlg );
 
 		Schedule();
@@ -1462,7 +1465,7 @@ status_t lock_mutex( sem_id hSema, bool bIgnoreSignals )
 			nError = -EINVAL;
 			break;
 		}
-		remove_from_waitlist( &psSema->ss_psWaitQueue, &sWaitNode );
+		remove_from_waitlist( true, &psSema->ss_psWaitQueue, &sWaitNode );
 
 		psMyThread->tr_hBlockSema = -1;
 
@@ -1475,7 +1478,7 @@ status_t lock_mutex( sem_id hSema, bool bIgnoreSignals )
 		{
 
 	      /*** If we give up we better tell the next one to give it a try	***/
-			wake_up_queue( psSema->ss_psWaitQueue, 0, false );
+			wake_up_queue( true, psSema->ss_psWaitQueue, 0, false );
 			break;
 		}
 	}
@@ -1529,7 +1532,7 @@ status_t unlock_mutex( sem_id hSema )
 	if ( psSema->ss_lNestCount > 0 )
 	{
 		psSema->ss_hHolder = -1;
-		wake_up_queue( psSema->ss_psWaitQueue, 0, false );
+		wake_up_queue( true, psSema->ss_psWaitQueue, 0, false );
 	}
 	spinunlock_enable( &g_sSemListSpinLock, nFlg );
 
@@ -1714,7 +1717,7 @@ static status_t do_unlock_semaphore_ex( bool bKernel, sem_id hSema, int nCount )
 			}
 		}
 #endif // __DETECT_DEADLOCK
-		wake_up_queue( psSema->ss_psWaitQueue, 0, nCount > 1 );
+		wake_up_queue( true, psSema->ss_psWaitQueue, 0, nCount > 1 );
 	}
 	spinunlock_enable( &g_sSemListSpinLock, nFlg );
 	return ( 0 );
@@ -1859,11 +1862,12 @@ status_t unlock_and_suspend( sem_id hWaitQueue, sem_id hSema )
 		goto error;
 	}
 
+	sched_lock();
 	psThread->tr_nState = TS_WAIT;
 	psThread->tr_hBlockSema = hWaitQueue;
 
-	add_to_waitlist( &psWaitQueue->ss_psWaitQueue, &sWaitNode );
-
+	add_to_waitlist( false, &psWaitQueue->ss_psWaitQueue, &sWaitNode );
+	sched_unlock();
 	// NOTE: Leave interrupt's disabled, we don't want to be pre-empted
 	//       until the semaphore is unlocked.
 
@@ -1881,7 +1885,7 @@ status_t unlock_and_suspend( sem_id hWaitQueue, sem_id hSema )
 
 	nFlg = spinlock_disable( &g_sSemListSpinLock );
 
-	remove_from_waitlist( &psWaitQueue->ss_psWaitQueue, &sWaitNode );
+	remove_from_waitlist( true, &psWaitQueue->ss_psWaitQueue, &sWaitNode );
 
 	spinunlock_enable( &g_sSemListSpinLock, nFlg );
 
@@ -1962,7 +1966,7 @@ status_t spinunlock_and_suspend( sem_id hWaitQueue, SpinLock_s * psLock, uint32 
 		spinunlock( psLock );
 		goto error;
 	}
-
+	sched_lock();
 	psThread->tr_hBlockSema = hWaitQueue;
 
 	if ( nTimeOut == INFINITE_TIMEOUT )
@@ -1974,6 +1978,7 @@ status_t spinunlock_and_suspend( sem_id hWaitQueue, SpinLock_s * psLock, uint32 
 		if ( get_system_time() > nResumeTime )
 		{
 			nError = -ETIME;
+			sched_unlock();
 			spinunlock( psLock );
 			goto error;
 		}
@@ -1981,11 +1986,11 @@ status_t spinunlock_and_suspend( sem_id hWaitQueue, SpinLock_s * psLock, uint32 
 		{
 			psThread->tr_nState = TS_SLEEP;
 			sSleepNode.wq_nResumeTime = nResumeTime;
-			add_to_sleeplist( &sSleepNode );
+			add_to_sleeplist( false, &sSleepNode );
 		}
 	}
-	add_to_waitlist( &psWaitQueue->ss_psWaitQueue, &sWaitNode );
-
+	add_to_waitlist( false, &psWaitQueue->ss_psWaitQueue, &sWaitNode );
+	sched_unlock();
 	// NOTE: Leave interrupt's disabled, we don't want to be pre-empted
 	//             until the spinlock is released.
 
@@ -2012,7 +2017,7 @@ status_t spinunlock_and_suspend( sem_id hWaitQueue, SpinLock_s * psLock, uint32 
 		goto error;
 	}
 
-	remove_from_waitlist( &psWaitQueue->ss_psWaitQueue, &sWaitNode );
+	remove_from_waitlist( true, &psWaitQueue->ss_psWaitQueue, &sWaitNode );
 
 	spinunlock( &g_sSemListSpinLock );
 	put_cpu_flags( nCPUFlags );
@@ -2173,6 +2178,7 @@ status_t sleep_on_sem( sem_id hSema, bigtime_t nTimeOut )
 		goto error;
 	}
 
+	sched_lock();
 	sWaitNode.wq_hThread = hMyThread;
 	psMyThread->tr_hBlockSema = hSema;
 
@@ -2185,6 +2191,7 @@ status_t sleep_on_sem( sem_id hSema, bigtime_t nTimeOut )
 		if ( get_system_time() > nResumeTime )
 		{
 			nError = -ETIME;
+			sched_unlock();
 			goto error;
 		}
 		else
@@ -2192,11 +2199,11 @@ status_t sleep_on_sem( sem_id hSema, bigtime_t nTimeOut )
 			psMyThread->tr_nState = TS_SLEEP;
 			sSleepNode.wq_hThread = hMyThread;
 			sSleepNode.wq_nResumeTime = nResumeTime;
-			add_to_sleeplist( &sSleepNode );
+			add_to_sleeplist( false, &sSleepNode );
 		}
 	}
-	add_to_waitlist( &psSema->ss_psWaitQueue, &sWaitNode );
-
+	add_to_waitlist( false, &psSema->ss_psWaitQueue, &sWaitNode );
+	sched_unlock();
 	spinunlock_enable( &g_sSemListSpinLock, nFlg );
 
 	Schedule();
@@ -2219,7 +2226,7 @@ status_t sleep_on_sem( sem_id hSema, bigtime_t nTimeOut )
 		goto error;
 	}
 
-	remove_from_waitlist( &psSema->ss_psWaitQueue, &sWaitNode );
+	remove_from_waitlist( true, &psSema->ss_psWaitQueue, &sWaitNode );
 
 	psMyThread->tr_hBlockSema = -1;
 
@@ -2295,7 +2302,7 @@ status_t wakeup_sem( sem_id hSema, bool bAll )
 	if ( psSema->ss_psWaitQueue != NULL )
 	{
 		bNeetSchedule = true;
-		nError = wake_up_queue( psSema->ss_psWaitQueue, 0, bAll );
+		nError = wake_up_queue( true, psSema->ss_psWaitQueue, 0, bAll );
 	}
 
       error:
@@ -3247,7 +3254,7 @@ static status_t do_rwlock_lock( bool bIgnored, sem_id hSema, bool bWantShared, u
 			nError = -EWOULDBLOCK;
 			break;
 		}
-
+		sched_lock();
 		/* Do we have a timeout at all? */
 		if ( INFINITE_TIMEOUT == nTimeOut )
 		{
@@ -3259,6 +3266,7 @@ static status_t do_rwlock_lock( bool bIgnored, sem_id hSema, bool bWantShared, u
 			if ( get_system_time() > nResumeTime )
 			{
 				nError = -ETIME;
+				sched_unlock();
 				break;
 			}
 			else
@@ -3267,7 +3275,7 @@ static status_t do_rwlock_lock( bool bIgnored, sem_id hSema, bool bWantShared, u
 				psMyThread->tr_nState = TS_SLEEP;
 				sSleepNode.wq_hThread = hMyThread;
 				sSleepNode.wq_nResumeTime = nResumeTime;
-				add_to_sleeplist( &sSleepNode );
+				add_to_sleeplist( false, &sSleepNode );
 			}
 		}
 
@@ -3275,8 +3283,8 @@ static status_t do_rwlock_lock( bool bIgnored, sem_id hSema, bool bWantShared, u
 		sWaitNode.wq_hThread = hMyThread;
 		psMyThread->tr_hBlockSema = hSema;
 
-		add_to_waitlist( ppsWaitQueue, &sWaitNode );
-
+		add_to_waitlist( false, ppsWaitQueue, &sWaitNode );
+		sched_unlock();
 		/* Unlock semaphore list lock, yield processor until we are woken up */
 		spinunlock_enable( &g_sSemListSpinLock, nFlg );
 
@@ -3305,7 +3313,7 @@ static status_t do_rwlock_lock( bool bIgnored, sem_id hSema, bool bWantShared, u
 
 		/* Remove from the current wait queue */
 		bWakeNext = true;	/* We are consuming a wake-up message */
-		remove_from_waitlist( ppsWaitQueue, &sWaitNode );
+		remove_from_waitlist( true, ppsWaitQueue, &sWaitNode );
 		psMyThread->tr_hBlockSema = -1;
 
 		if ( ( nFlags & SEM_NOSIG ) == 0 && is_signal_pending() )
@@ -3334,7 +3342,7 @@ static status_t do_rwlock_lock( bool bIgnored, sem_id hSema, bool bWantShared, u
 		if ( 0 != nError && bWakeNext && psRWLock->rw_psWaiters != NULL )
 		{
 			/* If we give up, we'd better wake up the next wait node */
-			wake_up_queue( psRWLock->rw_psWaiters->rww_psWaitQueue, 0, true );
+			wake_up_queue( true, psRWLock->rw_psWaiters->rww_psWaitQueue, 0, true );
 		}
 	}
 
@@ -3597,7 +3605,7 @@ static status_t do_rwlock_unlock( bool bIgnored, sem_id hSema, bool bShared )
 	}
 
 	if ( psWaitQueue != NULL )
-		wake_up_queue( psWaitQueue, 0, true );
+		wake_up_queue( true, psWaitQueue, 0, true );
 
 	spinunlock_enable( &g_sSemListSpinLock, nFlg );
 

@@ -83,6 +83,7 @@ int find_area( MemContext_s *psCtx, uint32 nAddress )
 	MemArea_s **apsBase = psCtx->mc_apsAreas;
 	int nBase = 0;
 	int i;
+	
 
 	for ( i = psCtx->mc_nAreaCount; i != 0; i >>= 1 )
 	{
@@ -189,6 +190,7 @@ int insert_area( MemContext_s *psCtx, MemArea_s *psArea )
 {
 	int nIndex;
 	int nError;
+	
 
 	psArea->a_nAreaID = MArray_Insert( &g_sAreas, psArea, true );
 
@@ -271,6 +273,8 @@ int insert_area( MemContext_s *psCtx, MemArea_s *psArea )
 void remove_area( MemContext_s *psCtx, MemArea_s *psArea )
 {
 	int nIndex;
+	
+	kassertw( is_semaphore_locked( g_hAreaTableSema ) );
 
 	nIndex = find_area( psCtx, psArea->a_nStart );
 
@@ -316,6 +320,8 @@ uint32 find_unmapped_area( MemContext_s *psCtx, int nAllocMode, uint32 nSize, ui
 	uint32 nStart;
 	uint32 nEnd;
 	int nIndex;
+	
+	kassertw( is_semaphore_locked( g_hAreaTableSema ) );
 
 	switch ( nAllocMode & AREA_ADDR_SPEC_MASK )
 	{

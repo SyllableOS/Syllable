@@ -230,7 +230,7 @@ uint32 get_free_pages( int nPageCount, int nFlags )
 	{
 		memset( ( void * )nPage, 0, PAGE_SIZE * nPageCount );
 	}
-	flush_tlb_global();
+	//flush_tlb_global();
 	
 	return ( nPage );
 }
@@ -312,7 +312,7 @@ void do_free_pages( uint32 nPage, int nCount )
 void free_pages( uint32 nPage, int nCount )
 {
 	do_free_pages( nPage, nCount );
-	flush_tlb_global();
+	//flush_tlb_global();
 }
 
 int shrink_caches( int nBytesNeeded )

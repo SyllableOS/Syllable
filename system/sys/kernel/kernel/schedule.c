@@ -143,6 +143,8 @@ void sched_unlock( void )
 	spinunlock( &g_sSchedSpinLock );
 }
 
+#define CHECK_SCHED_LOCK kassertw( atomic_read( &g_sSchedSpinLock.sl_nLocked ) == 1 );
+
 /** Add an entry to a wait queue
  * \par Description:
  * Add the given entry to the given wait queue.  Wait queues are used to put threads to sleep on a
@@ -156,26 +158,28 @@ void sched_unlock( void )
  * Interrupts
  * Scheduler lock
  * \par Warning:
+ * \param bLock		Take the scheduler lock
  * \param ppsList	Waitqueue to add to
  * \param psNode	Entry to add
  * \sa sleep_on_queue, remove_from_waitlist
  ****************************************************************************/
-void add_to_waitlist( WaitQueue_s **ppsList, WaitQueue_s *psNode )
+void add_to_waitlist( bool bLock, WaitQueue_s **ppsList, WaitQueue_s *psNode )
 {
-	int nFlg;
 	WaitQueue_s *psHead;
-
-	nFlg = cli();
-	sched_lock();
+	
+	int nFlg = cli();
+	if( bLock )
+		sched_lock();
+		
+	CHECK_SCHED_LOCK
 
 	psHead = *ppsList;
 
 	if ( psNode >= ( WaitQueue_s * )0x80000000 )
 	{
 		printk( "PANIC : add_to_waitlist() attempt to add node from user-space!!!\n" );
-
-		sched_unlock();
-
+		if( bLock )
+			sched_unlock();
 		put_cpu_flags( nFlg );
 		return;
 	}
@@ -196,15 +200,16 @@ void add_to_waitlist( WaitQueue_s **ppsList, WaitQueue_s *psNode )
 		psHead->wq_psPrev->wq_psNext = psNode;
 		psHead->wq_psPrev = psNode;
 	}
-	sched_unlock();
+	if( bLock )
+		sched_unlock();
 	put_cpu_flags( nFlg );
 }
 
-/** Internal, unlocked implementation of add_to_sleeplist
+/** Add a wait queue to the global sleep list
  * \par Description:
- * This does the actual work of add_to_sleeplist.  It adds the given wait queue to the global list
- * of sleeping wait queues.  This list is sorted by expire time of the wait queues.  First, see if
- * it should be added first.  If so, add it, otherwise, walk the list to find the insertion point.
+ * This will add the given wait queue to the global sleep list. This list is sorted by expire 
+ * time of the wait queues.  First, see if it should be added first.  
+ * If so, add it, otherwise, walk the list to find the insertion point.
  * \par Note:
  * \par Locks Required:
  * Interrupts
@@ -212,13 +217,20 @@ void add_to_waitlist( WaitQueue_s **ppsList, WaitQueue_s *psNode )
  * \par Locks Taken:
  * none
  * \par Warning:
+ * \param bLock		Take the scheduler lock
  * \param psNode	Wait queue to add
  * \sa add_to_sleeplist
  ****************************************************************************/
-static void do_add_to_sleeplist( WaitQueue_s *psNode )
+
+void add_to_sleeplist( bool bLock, WaitQueue_s *psNode )
 {
 	WaitQueue_s *psTmp;
 	int i = 0;
+	int nFlg = cli();
+	if( bLock )
+		sched_lock();
+		
+	CHECK_SCHED_LOCK
 
 	psNode->wq_bIsMember = true;
 
@@ -231,6 +243,9 @@ static void do_add_to_sleeplist( WaitQueue_s *psNode )
 			g_psFirstSleeping->wq_psPrev = psNode;
 		}
 		g_psFirstSleeping = psNode;
+		if( bLock )
+			sched_unlock();
+		put_cpu_flags( nFlg );
 		return;
 	}
 
@@ -251,6 +266,9 @@ static void do_add_to_sleeplist( WaitQueue_s *psNode )
 				psTmp->wq_psPrev->wq_psNext = psNode;
 			}
 			psTmp->wq_psPrev = psNode;
+			if( bLock )
+				sched_unlock();
+			put_cpu_flags( nFlg );
 			return;
 		}
 		if ( psTmp->wq_psNext == NULL )
@@ -264,34 +282,12 @@ static void do_add_to_sleeplist( WaitQueue_s *psNode )
 	psNode->wq_psPrev = psTmp;
 	psTmp->wq_psNext = psNode;
 
+	if( bLock )
+		sched_unlock();
+	put_cpu_flags( nFlg );
 //done:
 }
 
-/** Add a wait queue to the global sleep list
- * \par Description:
- * This will add the given wait queue to the global sleep list.  This is necessary before the queue
- * is actually used, if it is desired that the queue time out at some point.  The actual work is
- * done by do_add_to_sleeplist().  The queue must already be initialized with it's wakeup time.
- * \par Note:
- * \par Locks Required:
- * None
- * \par Locks Taken:
- * Interrupts
- * Scheduler lock
- * \par Warning:
- * \param psNode	Wait queue to add
- * \sa do_add_to_sleeplist, remove_from_sleeplist
- ****************************************************************************/
-void add_to_sleeplist( WaitQueue_s *psNode )
-{
-	int nFlg;
-
-	nFlg = cli();
-	sched_lock();
-	do_add_to_sleeplist( psNode );
-	sched_unlock();
-	put_cpu_flags( nFlg );
-}
 
 /** Internal, unlocked implementation of remove_from_sleeplist
  * \par Description:
@@ -370,11 +366,14 @@ void remove_from_sleeplist( WaitQueue_s *psNode )
  * \return
  * \sa
  ****************************************************************************/
-void remove_from_waitlist( WaitQueue_s **ppsList, WaitQueue_s *psNode )
+void remove_from_waitlist( bool bLock, WaitQueue_s **ppsList, WaitQueue_s *psNode )
 {
 	int nFlg = cli();
 
-	sched_lock();
+	if( bLock )
+		sched_lock();
+		
+	CHECK_SCHED_LOCK
 
 	kassertw( psNode->wq_bIsMember );
 
@@ -394,7 +393,8 @@ void remove_from_waitlist( WaitQueue_s **ppsList, WaitQueue_s *psNode )
 	psNode->wq_psPrev->wq_psNext = psNode->wq_psNext;
 	psNode->wq_psNext->wq_psPrev = psNode->wq_psPrev;
 
-	sched_unlock();
+	if( bLock )
+		sched_unlock();
 	put_cpu_flags( nFlg );
 }
 
@@ -413,18 +413,23 @@ void remove_from_waitlist( WaitQueue_s **ppsList, WaitQueue_s *psNode )
  * Interrupts
  * Scheduler lock
  * \par Warning:
+ * \param bLock		Take the scheduler lock
  * \param psList	Wait queue to wake
  * \param nReturnCode	Return value to give the newly woken thread
  * \param bAll		If true, wake all threads, otherwise wake first.
  * \return Number of threads woken.
  * \sa
  ****************************************************************************/
-int wake_up_queue( WaitQueue_s *psList, int nReturnCode, bool bAll )
+int wake_up_queue( bool bLock, WaitQueue_s *psList, int nReturnCode, bool bAll )
 {
 	int nThreadsWoken = 0;
+	
 	int nFlg = cli();
-
-	sched_lock();
+	
+	if( bLock )
+		sched_lock();
+		
+	CHECK_SCHED_LOCK
 
 	if ( psList != NULL )
 	{
@@ -470,12 +475,14 @@ int wake_up_queue( WaitQueue_s *psList, int nReturnCode, bool bAll )
 		}
 	}
 
-	sched_unlock();
-	put_cpu_flags( nFlg );
+	
 	if ( nThreadsWoken > 0 )
 	{
 		g_bNeedSchedule = true;
 	}
+	if( bLock )
+		sched_unlock();
+	put_cpu_flags( nFlg );
 	return ( nThreadsWoken );
 }
 
@@ -508,7 +515,7 @@ int sleep_on_queue( WaitQueue_s **ppsList )
 	sched_lock();
 
 	psThread->tr_nState = TS_WAIT;
-	add_to_waitlist( ppsList, &sWaitNode );
+	add_to_waitlist( false, ppsList, &sWaitNode );
 
 	sched_unlock();
 	put_cpu_flags( nFlg );
@@ -520,7 +527,7 @@ int sleep_on_queue( WaitQueue_s **ppsList )
 	nFlg = cli();
 	sched_lock();
 
-	remove_from_waitlist( ppsList, &sWaitNode );
+	remove_from_waitlist( false, ppsList, &sWaitNode );
 
 	sched_unlock();
 	put_cpu_flags( nFlg );
@@ -613,7 +620,7 @@ void wake_up_sleepers( bigtime_t nCurTime )
 		if ( psNode->wq_bOneShot == false )
 		{
 			psNode->wq_nResumeTime = nCurTime + psNode->wq_nTimeout;
-			add_to_sleeplist( psNode );
+			add_to_sleeplist( true, psNode );
 		}
 	}
 }
@@ -689,7 +696,7 @@ void start_timer( ktimer_t hTimer, timer_callback *pfCallback, void *pData, bigt
 		psNode->wq_nTimeout = nPeriode;
 		psNode->wq_pfCallBack = pfCallback;
 		psNode->wq_pUserData = pData;
-		do_add_to_sleeplist( psNode );
+		add_to_sleeplist( false, psNode );
 	}
 	sched_unlock();
 	put_cpu_flags( nFlg );
@@ -810,7 +817,7 @@ status_t snooze( bigtime_t nTimeout )
 
 	psThread->tr_nState = TS_SLEEP;
 
-	do_add_to_sleeplist( &sWaitNode );
+	add_to_sleeplist( false, &sWaitNode );
 
 	sched_unlock();
 	put_cpu_flags( nFlg );
@@ -1051,14 +1058,11 @@ status_t sys_resume_thread( const thread_id hThread )
  * \return 0 on success, negative error code on failure
  * \sa
  ****************************************************************************/
-status_t wakeup_thread( thread_id hThread, bool bWakeupSuspended )
+status_t do_wakeup_thread( thread_id hThread, bool bWakeupSuspended )
 {
 	Thread_s *psThread;
 	int nError = 0;
-	int nFlags = cli();
-
-	sched_lock();
-
+	
 	psThread = get_thread_by_handle( hThread );
 
 	if ( psThread != NULL )
@@ -1072,6 +1076,16 @@ status_t wakeup_thread( thread_id hThread, bool bWakeupSuspended )
 	{
 		nError = -EINVAL;
 	}
+	return ( nError );
+}
+
+status_t wakeup_thread( thread_id hThread, bool bWakeupSuspended )
+{
+	int nError = 0;
+	int nFlags = cli();
+
+	sched_lock();
+	nError = do_wakeup_thread( hThread, bWakeupSuspended );
 	sched_unlock();
 	put_cpu_flags( nFlags );
 	return ( nError );
@@ -1396,7 +1410,7 @@ int sys_wait_for_thread( const thread_id hThread )
 		sWaitNode.wq_hThread = psMyThread->tr_hThreadID;
 
 		psMyThread->tr_nState = TS_WAIT;
-		add_to_waitlist( &psThread->tr_psTermWaitList, &sWaitNode );
+		add_to_waitlist( false, &psThread->tr_psTermWaitList, &sWaitNode );
 
 		sched_unlock();
 		put_cpu_flags( nFlg );
@@ -1409,7 +1423,7 @@ int sys_wait_for_thread( const thread_id hThread )
 		psThread = get_thread_by_handle( hThread );
 		if ( psThread != NULL )
 		{
-			remove_from_waitlist( &psThread->tr_psTermWaitList, &sWaitNode );
+			remove_from_waitlist( false, &psThread->tr_psTermWaitList, &sWaitNode );
 		}
 
 		nResult = ( is_signal_pending() )? -EINTR : sWaitNode.wq_nCode;

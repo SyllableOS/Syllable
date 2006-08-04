@@ -250,6 +250,8 @@ void AddSigHandlerFrame( Thread_s *psThread, SysCallRegs_s * psRegs, SigAction_s
 
 	pStack -= (23 + 3 + 156);    // SigContext_s + trampoline + FPUState_s
 	pStackTop = pStack - 2;		// return trampoline and signal number
+	
+	
 
 	if ( psHandler->sa_flags & SA_SIGINFO )
 	{
@@ -257,6 +259,7 @@ void AddSigHandlerFrame( Thread_s *psThread, SysCallRegs_s * psRegs, SigAction_s
 		pStackTop = pStack - 9;		// 2nd and 3rd arg and ucontext
 		pCode = pStack + 22;
 		pSigInfo = pStack + 181;	// siginfo_t struct
+		lock_mem_area( pStackTop, PAGE_SIZE, true );
 		pStackTop[0] = ( uint32 )pCode;	// return trampoline address
 		pStackTop[1] = nSigNum;
 		pStackTop[2] = ( uint32 )pSigInfo;
@@ -274,6 +277,7 @@ void AddSigHandlerFrame( Thread_s *psThread, SysCallRegs_s * psRegs, SigAction_s
 	else
 	{
 		pStackTop = pStack - 2;		// return trampoline and signal
+		lock_mem_area( pStackTop, PAGE_SIZE, true );
 		pCode = pStack + 22;
 		pStackTop[0] = ( uint32 )( &pCode[1] );	// only pop 1 arg
 		pStackTop[1] = nSigNum;
@@ -317,7 +321,7 @@ void AddSigHandlerFrame( Thread_s *psThread, SysCallRegs_s * psRegs, SigAction_s
 
 	psRegs->oldesp = ( uint32 )pStackTop;
 	psRegs->eip = ( uint32 )psHandler->sa_handler;
-
+	unlock_mem_area( pStackTop, PAGE_SIZE );
 /*
   psRegs->cs = 0x10;
   psRegs->oldss = 0x20;
@@ -434,9 +438,10 @@ int handle_signals( int dummy )
 	{
 		return ( -EINVAL );
 	}
-	if ( get_idle_thread()->tr_hThreadID == psThread->tr_hThreadID )
+	for( int i = 0; i < MAX_CPU_COUNT; i++ )
 	{
-		return ( -EINVAL );	/* Dont do anything silly with the idle thread */
+		if( g_asProcessorDescs[i].pi_bIsRunning && g_asProcessorDescs[i].pi_psIdleThread->tr_hThreadID == psThread->tr_hThreadID )
+			return ( -EINVAL );	/* Dont do anything silly with the idle thread */
 	}
 	if ( is_signal_pending() )
 	{
@@ -766,20 +771,20 @@ int send_signal( Thread_s *psThread, int nSigNum, bool bBypassChecks )
 
 		if ( nSigNum == SIGCONT || nSigNum == SIGKILL )
 		{
-			wakeup_thread( psThread->tr_hThreadID, true );
+			do_wakeup_thread( psThread->tr_hThreadID, true );
 		}
 		else
 		{
 			if ( psThread->tr_sSigPend.__val[0] & ( ( ~psThread->tr_sSigBlock.__val[0] ) | ( 1L << ( SIGCHLD - 1 ) ) ) ||
 			     psThread->tr_sSigPend.__val[1] & ( ~psThread->tr_sSigBlock.__val[1] ) )
 			{
-				wakeup_thread( psThread->tr_hThreadID, false );
+				do_wakeup_thread( psThread->tr_hThreadID, false );
 			}
 		}
 	}
 	else
 	{
-		wakeup_thread( psThread->tr_hThreadID, false );
+		do_wakeup_thread( psThread->tr_hThreadID, false );
 	}
 	return ( 0 );
 }

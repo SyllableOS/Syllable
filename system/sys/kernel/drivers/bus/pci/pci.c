@@ -425,7 +425,7 @@ static int read_pci_header( PCI_Entry_s * psInfo, int nBusNum, int nDevNum, int 
 				
 		nAddr = nAddr & PCI_ADDRESS_MEMORY_32_MASK;
 		
-		alloc_physical( &nAddr, true, get_pci_memory_size( nBusNum, nDevNum, nFncNum, i ) );
+		//alloc_physical( &nAddr, true, get_pci_memory_size( nBusNum, nDevNum, nFncNum, i ) );
 	}
 
 	return( 0 );
@@ -947,6 +947,26 @@ bool get_bool_arg( bool *pbValue, const char *pzName, const char *pzArg, int nAr
 	return ( false );
 }
 
+
+PCI_bus_s sBus = {
+	get_pci_info,
+	read_pci_config,
+	write_pci_config,
+	enable_pci_master,
+	set_pci_latency,
+	get_pci_capability,
+	get_agp_info
+};
+
+void *pci_bus_get_hooks( int nVersion )
+{
+	if ( nVersion != PCI_BUS_VERSION )
+		return ( NULL );
+	return ( ( void * )&sBus );
+}
+
+
+
 /** 
  * \par Description: Initialize the pci busmanager.
  * \par Note:
@@ -957,7 +977,7 @@ bool get_bool_arg( bool *pbValue, const char *pzName, const char *pzArg, int nAr
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-status_t bus_init( void )
+status_t device_init( int nDeviceID )
 {
 	/* Check if the use of the bus is disabled */
 	int i;
@@ -1005,11 +1025,15 @@ status_t bus_init( void )
 			init_acpi_pci_router();
 		}
 	}
+	
+	/* Register busmanager */
+	register_busmanager( nDeviceID, "pci", pci_bus_get_hooks );
+	
 	return ( 0 );
 }
 
 
-void bus_uninit( void )
+status_t device_uninit( int nDeviceID )
 {
 	int i;
 	char zTemp[255];
@@ -1041,22 +1065,7 @@ void bus_uninit( void )
 	}
 }
 
-PCI_bus_s sBus = {
-	get_pci_info,
-	read_pci_config,
-	write_pci_config,
-	enable_pci_master,
-	set_pci_latency,
-	get_pci_capability,
-	get_agp_info
-};
 
-void *bus_get_hooks( int nVersion )
-{
-	if ( nVersion != PCI_BUS_VERSION )
-		return ( NULL );
-	return ( ( void * )&sBus );
-}
 
 
 

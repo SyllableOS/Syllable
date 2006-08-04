@@ -24,7 +24,7 @@
 #include "inc/scheduler.h"
 #include "inc/sysbase.h"
 
-SPIN_LOCK( g_sMemSpinLock, "page_list_slock" );
+SPIN_LOCK( g_sMemSpinLock, "kmalloc_lock" );
 
 
 /* Define this if you want slow routines that try to trip errors */
@@ -512,6 +512,7 @@ int __kfree( void *__ptr )
 	}
 
 	spinunlock_enable( &g_sMemSpinLock, flags );
+	
       null_kfree:
 	return ( 0 );
 

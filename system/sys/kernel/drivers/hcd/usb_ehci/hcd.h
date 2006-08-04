@@ -50,6 +50,7 @@ struct usb_hcd {	/* usb_bus.hcpriv points to this */
 	/*
 	 * housekeeping
 	 */
+	int device_id;
 	USB_bus_driver_s		*bus;		/* hcd is-a bus */
 	struct list_head	hcd_list;
 
@@ -134,7 +135,7 @@ struct hc_driver {
 	int	(*suspend) (struct usb_hcd *hcd, u32 state);
 
 	/* called before any devices get resumed */
-	int	(*resume) (struct usb_hcd *hcd);
+	int	(*resume) (struct usb_hcd *hcd, u32 old_state);
 
 	/* cleanly make HCD stop writing memory and doing I/O */
 	void	(*stop) (struct usb_hcd *hcd);
@@ -168,9 +169,10 @@ struct hc_driver {
 extern void usb_hcd_giveback_urb (struct usb_hcd *hcd, USB_packet_s *urb,
 		SysCallRegs_s *regs);
 
-extern int usb_hcd_pci_probe (PCI_Info_s dev, void* driver_data);
+extern int usb_hcd_pci_probe (int nDeviceID, PCI_Info_s dev, void* driver_data);
 extern void usb_hcd_pci_remove (PCI_Info_s dev, void* driver_data);
-
+extern int hcd_bus_suspend( struct usb_hcd *hcd );
+extern int hcd_bus_resume( struct usb_hcd *hcd );
 
 /*-------------------------------------------------------------------------*/
 

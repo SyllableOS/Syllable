@@ -196,11 +196,11 @@ uint32 memmap_no_page( MemArea_s *psArea, uintptr_t nAddress, bool bWriteAccess 
 		// Wake up threads bumping into the page while we were loading it.
 		if ( psPage->p_psIOThreads != NULL )
 		{
-			wake_up_queue( psPage->p_psIOThreads, 0, true );
+			wake_up_queue( true, psPage->p_psIOThreads, 0, true );
 		}
 		if ( psArea->a_psIOThreads != NULL )
 		{
-			wake_up_queue( psArea->a_psIOThreads, 0, true );
+			wake_up_queue( true, psArea->a_psIOThreads, 0, true );
 		}	
 		return ( 0 );
 	}
@@ -224,11 +224,11 @@ uint32 memmap_no_page( MemArea_s *psArea, uintptr_t nAddress, bool bWriteAccess 
 	// Wake up threads bumping into the page while we was loading it.
 	if ( psPage->p_psIOThreads != NULL )
 	{
-		wake_up_queue( psPage->p_psIOThreads, 0, true );
+		wake_up_queue( true, psPage->p_psIOThreads, 0, true );
 	}
 	if ( psArea->a_psIOThreads != NULL )
 	{
-		wake_up_queue( psArea->a_psIOThreads, 0, true );
+		wake_up_queue( true, psArea->a_psIOThreads, 0, true );
 	}
 
 	if ( nBytesRead != nSize )
@@ -407,13 +407,15 @@ static int handle_not_present( MemArea_s *psArea, pte_t * pPte, uintptr_t nAddre
 			sWaitNode.wq_hThread = psThread->tr_hThreadID;
 
 			nFlg = cli();	// Make sure we are not pre-empted until we are added to the waitlist
-			add_to_waitlist( &psPage->p_psIOThreads, &sWaitNode );
-			UNLOCK( g_hAreaTableSema );
+			sched_lock();
+			add_to_waitlist( false, &psPage->p_psIOThreads, &sWaitNode );
 			psThread->tr_nState = TS_WAIT;
+			sched_unlock();
+			UNLOCK( g_hAreaTableSema );			
 			put_cpu_flags( nFlg );
 			Schedule();
 			LOCK( g_hAreaTableSema );
-			remove_from_waitlist( &psPage->p_psIOThreads, &sWaitNode );
+			remove_from_waitlist( true, &psPage->p_psIOThreads, &sWaitNode );
 		}
 		return ( -EAGAIN );
 
@@ -527,14 +529,14 @@ void handle_page_fault( SysCallRegs_s * psRegs, int nErrorCode )
 	// Get the fault address
       __asm__( "movl %%cr2,%0":"=r"( nFaultAddr ) );
 
-/*
-    if ( (nErrorCode & PFE_USER) == 0 ) {
+#if 0
+    if ( (nErrorCode & PFE_USER) == 0 && g_bKernelInitialized ) {
 	printk( "Warning: pagefault from kernel at %08lx (EIP=%08lx) (%s:%s:%s)\n", nFaultAddr, psRegs->eip,
 		(nErrorCode & PFE_PROTVIOL) ? "PROTV" : "NOTP",
 		(nErrorCode & PFE_WRITE)    ? "WRITE" : "READ",
 		(nErrorCode & PFE_USER)     ? "USER"  : "SUPER" );
     }
-    */
+#endif    
 
       again:
 	kassertw( is_semaphore_locked( g_hAreaTableSema ) == false );

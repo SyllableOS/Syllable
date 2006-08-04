@@ -1,4 +1,4 @@
-CFLAGS   += -D__ENABLE_DEBUG__ -kernel -fno-PIC -c
+CFLAGS   += -D__ENABLE_DEBUG__ -kernel -fno-PIC -c --freestanding
 AFLAGS   = -c
 
 C_INCLUDE_PATH=$(ATHEOS_INCLUDE_PATH)

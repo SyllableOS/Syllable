@@ -32,7 +32,7 @@
    as a single contigous string in the kernel log; printk() and derivitives always prefix
    the CPU #, thread name etc. to the output, which ruins the text. This macro doesn't do
    that. */
-#define strace_print( fmt, arg... ); {uint8 zBuffer[1024]; sprintf( zBuffer, fmt, ## arg ); debug_write( zBuffer, strlen( zBuffer ) ); }
+#define strace_print( fmt, arg... ); {char zBuffer[1024]; sprintf( zBuffer, fmt, ## arg ); debug_write( zBuffer, strlen( zBuffer ) ); }
 
 /*
 	The registers are used as per. the IA32 ELF ABI:

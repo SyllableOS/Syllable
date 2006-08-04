@@ -39,10 +39,10 @@ $(OBJDIR)/ata: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/ata
 
 install: all
-	cp -f $(OBJDIR)/ata /system/drivers/bus/ata
+	cp -f $(OBJDIR)/ata /system/drivers/dev/bus/ata
 
 dist: all
-	cp -f $(OBJDIR)/ata $(DIST_DIR)/atheos/sys/drivers/bus/ata
+	cp -f $(OBJDIR)/ata $(DIST_DIR)/atheos/sys/drivers/dev/bus/ata
 
 clean:
 	-rm -f $(OBJS)

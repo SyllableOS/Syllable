@@ -333,7 +333,7 @@ static int rh_string (
 
  	// id 3 == vendor description
 	} else if (id == 3) {
-                sprintf (buf, "%s %s %s", "Syllable", "0.5",
+                sprintf (buf, "%s %s %s", "Syllable", "0.6",
 			hcd->description);
 
 	// unsupported IDs --> "protocol stall"
@@ -1274,7 +1274,7 @@ static uint32 get_pci_memory_size(const PCI_Info_s *pcPCIInfo, int nResource)
  *
  * Store this function in the HCD's struct pci_driver as probe().
  */
-int usb_hcd_pci_probe (PCI_Info_s dev, void* driver_data)
+int usb_hcd_pci_probe (int nDeviceID, PCI_Info_s dev, void* driver_data)
 {
 	struct hc_driver	*driver;
 	unsigned long		resource, len;
@@ -1386,6 +1386,7 @@ clean_3:
 	bus->pHCPrivate = hcd;
 	hcd->bus = bus;
 	hcd->product_desc = "USB EHCI Root Hub";
+	hcd->device_id = nDeviceID;
 
 	INIT_LIST_HEAD (&hcd->dev_list);
 	INIT_LIST_HEAD (&hcd->hcd_list);
@@ -1459,6 +1460,41 @@ void usb_hcd_pci_remove (PCI_Info_s dev, void* __hcd)
 	hcd->driver->hcd_free (hcd);
 }
 
+
+
+int hcd_bus_suspend (struct usb_hcd *hcd)
+{
+	if (!hcd->driver->suspend)
+		return -ENOENT;
+	
+	/* Stop root hub timer */
+	hcd->state = USB_STATE_SUSPENDED;
+	delete_timer( hcd->rh_timer );
+	
+	/* Suspend */
+	hcd->driver->suspend( hcd, 0 );
+	
+	return( 0 );
+}
+
+int hcd_bus_resume (struct usb_hcd *hcd)
+{
+	if (!hcd->driver->resume)
+		return -ENOENT;
+	
+	/* Resume controller */
+	hcd->state = USB_STATE_RESUMING;
+	hcd->driver->resume( hcd, 0 );
+	hcd->state = USB_STATE_RUNNING;	
+
+	/* Start timer */
+	hcd->rh_timer = create_timer();
+	
+	start_timer( hcd->rh_timer, rh_report_status, hcd->rh_timer_data, 1000 / 4 * 1000, true );
+	
+	
+	return( 0 );
+}
 
 /*-------------------------------------------------------------------------*/
 

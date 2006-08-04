@@ -42,7 +42,7 @@ typedef struct
 
 typedef struct 
 {
-	AcpiTableHeader_s ar_sHeader __attribute__ ((packed));
+	AcpiTableHeader_s ar_sHeader;
 	uint32 ar_nEntry[8];
 } __attribute__ ((packed)) AcpiRsdt_s;
  
@@ -76,7 +76,7 @@ static const uint32_t ACPI_MADT_CPU_ENABLED = 1;
 
 typedef struct
 {
-	AcpiMadtEntry_s amp_sHeader __attribute__ ((packed));
+	AcpiMadtEntry_s amp_sHeader;
 	uint8 amp_nAcpiId;
 	uint8 amp_nApicId;
 	uint32 amp_nFlags;
@@ -85,7 +85,7 @@ typedef struct
 
 typedef struct
 {
-	AcpiMadtEntry_s ami_sHeader __attribute__ ((packed));
+	AcpiMadtEntry_s ami_sHeader;
 	uint8 ami_nId;
 	uint8 ami_nReserved;
 	uint32 ami_nAddr;

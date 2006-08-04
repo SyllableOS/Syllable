@@ -110,9 +110,34 @@ acpi_button_notify (
 	
 	kerndbg( KERN_DEBUG, "ACPI: Button %i pressed\n", button->type );
 	
+
 	if( button->type <= ACPI_BUTTON_TYPE_SLEEPF )
 		send_msg_x( get_app_server_port(), 20, g_nMsg, sizeof( g_nMsg ), INFINITE_TIMEOUT );
+
+	#if 0
+	suspend_devices();
+	#define wmb()	__asm__ __volatile__ ("": : :"memory")
+	ACPI_FLUSH_CPU_CACHE();
+	acpi_enable_wakeup_device_prep(ACPI_STATE_S1);
+	acpi_gpe_sleep_prepare(ACPI_STATE_S1);
+	acpi_enter_sleep_state_prep(ACPI_STATE_S1);
+	ACPI_FLUSH_CPU_CACHE();
+	uint32 flags = cli();
+
+	acpi_enable_wakeup_device( ACPI_STATE_S1 );
+	wmb();	
+	put_cpu_flags( flags );
+	acpi_enter_sleep_state( ACPI_STATE_S1 );
+
 	
+	acpi_leave_sleep_state( ACPI_STATE_S1 );
+	acpi_disable_wakeup_device( ACPI_STATE_S1 );
+	acpi_set_firmware_waking_vector((acpi_physical_address) 0);
+
+	
+	//printk("Back!\n");
+	resume_devices();
+	#endif
 	if (!button || !button->device)
 		return_VOID;
 

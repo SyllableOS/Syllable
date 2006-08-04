@@ -339,7 +339,7 @@ int ip_send_via( PacketBuf_s *psPkt, Route_s *psRoute )
 	if ( nDataSize > nMTU )
 	{
 		int nFragOffset = 0;
-		char *pBuffer = psPkt->pb_uTransportHdr.pRaw;
+		char *pBuffer = (char*)psPkt->pb_uTransportHdr.pRaw;
 
 		kerndbg( KERN_DEBUG, "ip_send_via(): Splitting packet into fragments: %d header/%d data\n", nHdrSize, nDataSize );
 

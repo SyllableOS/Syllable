@@ -67,6 +67,9 @@ Just before the driver is unloaded the kernel will look for a global
 function named "device_uninit()" and if found it will be called to
 allow the driver to clean up.
 
+There is also a "device_release()" function which is called for every
+claimed device before device_uninit() is called for the driver.
+
 This device_init() and device_uninit() are the only functions that will
 be called directly by the kernel. For the driver to do any usefull
 work it must export one or more device-nodes through the Syllable Device
@@ -226,6 +229,21 @@ if( claim_device( nDeviceID, // device ID of the driver
 
 \endcode
 
+If you have claimed any device then the kernel will call the "device_release()" driver function for this
+device. An implementation could look like this:
+
+\code
+
+status_t device_release( int nDeviceID, int nDeviceHandle, void* pData )
+{
+	release_device( nDeviceHandle ); // Release device
+	... // free device data, release irq, ...
+}
+
+\endcode
+
+The data pointer points to the data set which is the by the set_device_data() function.
+
 Please note that if you support hardware that can be removed while the computer is running
 ( e.g. USB devices ) you have to call release_device( nHandle ) if the busmanager informs
 you about the removal. 
@@ -245,7 +263,26 @@ This will not prevent two drivers to access one device, but it will show some
 nice information to the user.
 
 
-\section sec6 Reducing boottime by disabling PCI device drivers.
+\section sec6 Powermanagement
+
+Before the computer goes into standby mode the kernel will call the "device_suspend()" function
+of the driver. In this function you should save the hardware state and put the device into a lower
+power mode:
+
+\code
+
+status_t device_suspend( int nDeviceID, int nDeviceHandle, void* pData )
+{
+	... // save state
+}
+
+\endcode
+
+When the computer wakes up again, the kernel calls the device_resume() function which takes the same 
+parameters as the device_suspend() function. The driver has to wakeup the device and restore its state
+here.
+
+\section sec7 Reducing boottime by disabling PCI device drivers.
 
 To avoid unnecessary tries to load drivers, it is possible to disable device
 drivers. This feature is only available for pure PCI device drivers. If you did not
@@ -259,31 +296,49 @@ disable the device driver until the PCI busmanager detects a hardware change.
 
 \section sec_bus_1 Structure of a busmanager
 
-A busmanager is a normal kernel module that is located in the /system/drivers/bus 
-directory . Unlike the kernel device drivers it does not export device_init() and 
-device_uninit(). Instead, the following functions need to be implemented:
+A busmanager is a normal kernel module that is located in the /system/drivers/dev/bus 
+directory . The only difference is that it calls the register_busmanager() function:
 
 \code
-status_t bus_init();
-void     bus_uninit();
-void*    bus_get_hooks( int nVersion );
+
+status_t	register_busmanager( int nDeviceID, const char* pzName, busmanager_get_hooks* pfHooks );
 
 \endcode
 
-The bus_init() function should initialize the busmanager and do a device scan on the
-bus if possible. Then register_device() should be called for the found devices. If the
-bus does not support hotplugging, the busmanager should also load a previously saved list
-of the attached devices and compare it with the current configuration. If it detects any
-change the busmanager should call enable_all_devices() so that device drivers, which use
-this busmanager, can safely disable themselves. If the initialisation of the bus fails, 
-bus_init() should return a value != 0.
+The pzName parameter is the same name that the device drivers pass to the get_busmanager() function.
+The pfHooks pointer points to the entrypoint of the busmanager. It should return a structure with entries
+to the exported functions of the busmanager:
 
-bus_uninit() is called during shutdown. The busmanager can save a list of the currently
-attached devices here using the write_config_entry...() functions of the kernel.
+\code
 
-Finally bus_get_hooks() returns a pointer to a private structure, that will probably
-contain pointers to the busmanager's functions. The busmanager should respect the nVersion
-flags  to keep backward compatibility with older drivers.
+struct BusHooks_s
+{
+	void (*function_ptr)();
+	....
+};
+
+BusHooks_s sMyHooks =
+{
+	function,
+	....
+};
+
+void* my_bus_get_hooks( int nVersion )
+{
+	if( nVersion == MY_BUS_VERSION )
+		return( &sMyHooks );
+	return( NULL );
+}
+
+....
+
+register_busmanager( nDeviceID, "my_bus", my_bus_get_hooks );
+
+\endcode
+
+Once you have called the register_busmanager() function the kernel will not unload the driver until the
+next reboot. It will also call the device_uninit() function of the driver before shutdown/reboot to give
+it the possibility so save its settings.
 
 */
 

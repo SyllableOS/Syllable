@@ -522,12 +522,12 @@ static ssize_t raw_sendmsg( Socket_s *a_psSocket, const struct msghdr *a_psMsg, 
 	if ( psRawEndPoint->re_nCreateHeader == 1 )
 	{
 		kerndbg( KERN_DEBUG, "RAW_SENDMSG() IP_HDRINCL set, creating the ip-header is left up to the user...yikes\n" );
-		pDestinationBuffer = psPacket->pb_uNetworkHdr.pRaw;
+		pDestinationBuffer = (char*)psPacket->pb_uNetworkHdr.pRaw;
 	}
 	else
 	{
 		kerndbg( KERN_DEBUG_LOW, "RAW_SENDMSG() creating IP-header.\n" );
-		pDestinationBuffer = psPacket->pb_uTransportHdr.pRaw;
+		pDestinationBuffer = (char*)psPacket->pb_uTransportHdr.pRaw;
 		psIPHeader->iph_nHdrSize = 5;	// without options
 		psIPHeader->iph_nVersion = 4;
 		psIPHeader->iph_nTypeOfService = 0;

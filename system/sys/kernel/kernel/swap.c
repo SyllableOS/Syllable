@@ -289,9 +289,9 @@ static int swap_out( pte_t * pPte, Page_s *psPage, uint32 nAddress )
 	pBuffer = ( char * )( psPage->p_nPageNum * PAGE_SIZE );
 	while ( nBlocksLeft > 0 )
 	{
-		off_t nRunStart;
-		int nRunLength;
-		int nBlockCount;
+		off_t nRunStart = 0;
+		int nRunLength = 0;
+		int nBlockCount = 0;
 
 		find_swap_block( nOffset, &nRunStart, &nRunLength );
 
@@ -349,8 +349,8 @@ int swap_in( pte_t * pPte )
 	
 	while ( nBlocksLeft > 0 )
 	{
-		off_t nRunStart;
-		int nRunLength;
+		off_t nRunStart = 0;
+		int nRunLength = 0;
 		int nBlockCount;
 		
 		find_swap_block( nOffset, &nRunStart, &nRunLength );

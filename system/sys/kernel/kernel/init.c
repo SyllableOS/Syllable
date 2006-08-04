@@ -28,7 +28,7 @@
 #include <posix/stat.h>
 
 #include <atheos/kernel.h>
-//#include <atheos/kdebug.h>
+#include <atheos/resource.h>
 #include <atheos/syscall.h>
 #include <atheos/smp.h>
 #include <atheos/irq.h>
@@ -804,14 +804,17 @@ int init_kernel( char *pRealMemBase, int nKernelSize )
 	kassertw( ( get_cpu_flags() & EFLG_IF ) == 0 );
 	
 	g_sSysBase.ex_bSingleUserMode = false;
-	
-	init_memory_pools( pRealMemBase, &g_sMultiBootHeader );
+
 	init_semaphores();
+	init_resource_manager();	
+	init_memory_pools( pRealMemBase, &g_sMultiBootHeader );
 	init_msg_ports();
 	init_processes();
 	init_threads();
 	init_areas();
+
 	init_smp( g_bDisableSMP == false, g_bDisableACPI == false );
+	
 	
 	/* Create the semaphore for the kernel memory context */
 	g_psKernelSeg->mc_hSema = create_semaphore( "krn_seg_lock", 1, SEM_RECURSIVE );

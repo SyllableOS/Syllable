@@ -119,16 +119,12 @@ static Process_s *get_process_by_name( const char *pzName )
 {
 	Process_s *psProc = NULL;
 	Thread_s *psThread;
-	int nFlg = cli();
-
-	sched_lock();
+	
 	psThread = get_thread_by_name( pzName );
 	if ( NULL != psThread )
 	{
 		psProc = psThread->tr_psProcess;
 	}
-	sched_unlock();
-	put_cpu_flags( nFlg );
 	return ( psProc );
 }
 

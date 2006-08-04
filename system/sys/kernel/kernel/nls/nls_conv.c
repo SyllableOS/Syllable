@@ -99,7 +99,7 @@ int nls_conv_cp_to_utf8(enum code_page eSrcCodePage,
  if(eSrcCodePage == NLS_UTF8)
  {
   if(nDstLen < nSrcLen) return -ENOSPC;
-  nSrcLen = strlen(pzSource);
+  nSrcLen = strlen((const char*)pzSource);
   memcpy(pzDest, pzSource, nSrcLen + 1);
   return nSrcLen;
  }
@@ -110,7 +110,7 @@ int nls_conv_cp_to_utf8(enum code_page eSrcCodePage,
  while(nSrcLen > 0) {
 //  if(pzSource[0] == '\0') break;
   if(nDstLen <= 0) return -ENOSPC;
-  j = psTable->char_to_wchar(pzSource, nSrcLen, &nChar);
+  j = psTable->char_to_wchar((const char*)pzSource, nSrcLen, &nChar);
   if( j < 0 ) return -ENOSPC;
   i = unicode_to_utf8(pzDest, nChar);
   if( i > nDstLen ) return -ENOSPC;
@@ -142,7 +142,7 @@ int nls_conv_utf8_to_cp(enum code_page eDstCodePage,
  if(eDstCodePage == NLS_UTF8)
  {
   if(nDestLen < nSrcLen) return -ENOSPC;
-  nSrcLen = strlen(pzSource);
+  nSrcLen = strlen((const char*)pzSource);
   memcpy(pzDest, pzSource, nSrcLen + 1);
   return nSrcLen;
  }
@@ -157,7 +157,7 @@ int nls_conv_utf8_to_cp(enum code_page eDstCodePage,
   i = nls_utf8_char_len( pzSource[0] );
   if( i > nSrcLen ) return -ENOSPC;
   nChar = utf8_to_unicode( pzSource );
-  j = psTable->wchar_to_char(nChar, pzDest, nDestLen);
+  j = psTable->wchar_to_char(nChar, (char*)pzDest, nDestLen);
   if( j < 0 ) return -ENOSPC;
  
   nSrcLen -= i;

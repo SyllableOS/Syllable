@@ -143,11 +143,13 @@ void acpi_print_power_states()
 	kerndbg( KERN_INFO, "ACPI: %ssupported\n", zBuffer );
 }
 
-extern void acpi_wakeup_gpe_poweroff_prepare( void );
+extern void acpi_gpe_sleep_prepare(int state );
 
 void acpi_poweroff()
 {
-	acpi_wakeup_gpe_poweroff_prepare();
+	ACPI_FLUSH_CPU_CACHE();
+	acpi_enable_wakeup_device_prep(ACPI_STATE_S5);
+	acpi_gpe_sleep_prepare(ACPI_STATE_S5);
 	acpi_enter_sleep_state_prep(ACPI_STATE_S5);
 	ACPI_DISABLE_IRQS();
 	acpi_enter_sleep_state(ACPI_STATE_S5);
@@ -173,6 +175,34 @@ bool get_bool_arg( bool *pbValue, const char *pzName, const char *pzArg, int nAr
 	}
 	return ( false );
 }
+ACPI_bus_s sBus = {
+	acpi_poweroff,
+	acpi_evaluate_object,
+	acpi_evaluate_integer,
+	acpi_extract_package,
+	acpi_get_name,
+	acpi_get_handle,
+	acpi_bus_get_device,
+	acpi_bus_get_status,
+	acpi_walk_resources,
+	acpi_set_current_resources,
+	acpi_get_irq_routing_table,
+	acpi_bus_register_driver,
+	acpi_bus_unregister_driver,
+	acpi_install_notify_handler,
+	acpi_remove_notify_handler
+};
+
+void* acpi_bus_get_hooks( int nVersion )
+{
+	if ( nVersion != ACPI_BUS_VERSION )
+		return ( NULL );
+	return ( ( void * )&sBus );
+}
+
+
+
+
 
 /** 
  * \par Description: Initialize the pci busmanager.
@@ -184,7 +214,7 @@ bool get_bool_arg( bool *pbValue, const char *pzName, const char *pzArg, int nAr
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-status_t bus_init()
+status_t device_init( int nDeviceID )
 {
 	/* Check if the use of the bus is disabled */
 	int i;
@@ -215,13 +245,15 @@ status_t bus_init()
 		if( acpi_scan_init() < 0 )
 			return( -ENODEV );
 		acpi_print_power_states();
-		acpi_wakeup_device_init();
 		acpi_thermal_init();
 		acpi_power_init();		
 		acpi_ec_init();
 		acpi_button_init();
+		acpi_wakeup_device_init();
 		//acpi_video_init();
 	}
+	
+	register_busmanager( nDeviceID, "acpi", acpi_bus_get_hooks );
 	
 	printk( "ACPI: Busmanager initialized\n" );
 
@@ -229,34 +261,18 @@ status_t bus_init()
 }
 
 
-void bus_uninit()
+status_t device_uninit( int nDeviceID )
 {
+	return( 0 );
 }
 
-ACPI_bus_s sBus = {
-	acpi_poweroff,
-	acpi_evaluate_object,
-	acpi_evaluate_integer,
-	acpi_extract_package,
-	acpi_get_name,
-	acpi_get_handle,
-	acpi_bus_get_device,
-	acpi_bus_get_status,
-	acpi_walk_resources,
-	acpi_set_current_resources,
-	acpi_get_irq_routing_table,
-	acpi_bus_register_driver,
-	acpi_bus_unregister_driver,
-	acpi_install_notify_handler,
-	acpi_remove_notify_handler
-};
 
-void *bus_get_hooks( int nVersion )
-{
-	if ( nVersion != ACPI_BUS_VERSION )
-		return ( NULL );
-	return ( ( void * )&sBus );
-}
+
+
+
+
+
+
 
 
 

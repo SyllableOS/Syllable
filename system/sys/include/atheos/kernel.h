@@ -231,9 +231,6 @@ int 	__kfree( void* pBlock );
 void*	alloc_real( uint32 nSize, uint32 nFlags );
 void	free_real( void* Block );
 
-status_t alloc_physical( uint32* pnAddress, bool bExactAddress, uint32 nSize );
-void     free_physical( uint32 nAddress );
-
 int	reboot( void );
 void    hard_reset( void );
 int apm_poweroff( void );

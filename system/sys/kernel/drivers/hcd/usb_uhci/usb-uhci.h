@@ -243,6 +243,7 @@ typedef struct uhci {
 	PCI_Info_s uhci_pci;
 	
 	bigtime_t last_error_time;          // last error output in uhci_interrupt()
+	int last_frame;
 } uhci_t, *puhci_t;
 
 

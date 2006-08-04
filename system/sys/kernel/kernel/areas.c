@@ -1264,13 +1264,15 @@ MemContext_s *clone_mem_context( MemContext_s *psOrig )
 			sWaitNode.wq_hThread = psThread->tr_hThreadID;
 
 			flags_t nFlg = cli();	// Make sure we are not pre-empted until we are added to the waitlist
-			add_to_waitlist( &psOldArea->a_psIOThreads, &sWaitNode );
+			sched_lock();
+			add_to_waitlist( false, &psOldArea->a_psIOThreads, &sWaitNode );
 			psThread->tr_nState = TS_WAIT;
+			sched_unlock();
 			UNLOCK( g_hAreaTableSema );
 			put_cpu_flags( nFlg );
 			Schedule();
 			LOCK( g_hAreaTableSema );
-			remove_from_waitlist( &psOldArea->a_psIOThreads, &sWaitNode );
+			remove_from_waitlist( true, &psOldArea->a_psIOThreads, &sWaitNode );
 		}
 
 		lock_area( psOldArea, LOCK_AREA_READ );

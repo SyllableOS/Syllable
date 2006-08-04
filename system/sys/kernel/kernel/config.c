@@ -109,7 +109,7 @@ status_t write_kernel_config_entry_data( uint8 *pBuffer, size_t nSize )
  *****************************************************************************/
 status_t read_kernel_config_entry( char *pzName, uint8 **pBuffer, size_t *pnSize )
 {
-	char *pConfig = g_pConfigAddr;
+	char *pConfig = (char*)g_pConfigAddr;
 	uint32 nRead = 0;
 	char zTempLine[255];
 	char zName[255];
@@ -195,9 +195,6 @@ void write_kernel_config( void )
 	/* Write header */
 	write_kernel_config_entry_header( "<KERNEL_CONFIG>", 0 );
 
-	/* Write devices configuration */
-	write_devices_config();
-
 	/* Write devfs configuration */
 	write_dev_fs_config();
 
@@ -270,7 +267,7 @@ void init_kernel_config( void )
 
 		if ( strstr( zFullPath, "/config/kernel.cfg" ) )
 		{
-			int nSize;
+			size_t nSize;
 			uint8 *pBuffer;
 
 			/* Got it! */

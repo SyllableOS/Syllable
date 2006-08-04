@@ -43,6 +43,7 @@
 #include <atheos/random.h>
 #include <atheos/config.h>
 #include <atheos/nls.h>
+#include <atheos/resource.h>
 
 #include <posix/fcntl.h>
 #include <posix/unistd.h>
@@ -148,11 +149,6 @@ static KernelSymbol_s g_asKernelSymbols[] = {
 //	KSYMBOL( __sched_lock ),
 //	KSYMBOL( sched_unlock ),
 	KSYMBOL( sleep_on_queue ),
-	KSYMBOL( add_to_sleeplist ),
-	KSYMBOL( add_to_waitlist ),
-	KSYMBOL( remove_from_sleeplist ),
-	KSYMBOL( remove_from_waitlist ),
-	KSYMBOL( wake_up_queue ),
 	KSYMBOL( wake_up_sleepers ),
 
 	// Signal functions:
@@ -252,9 +248,7 @@ static KernelSymbol_s g_asKernelSymbols[] = {
 	KSYMBOL( kmalloc ),
 	KSYMBOL( __kfree ),
 	KSYMBOL( alloc_real ),
-	KSYMBOL( alloc_physical ),
 	KSYMBOL( free_real ),
-	KSYMBOL( free_physical ),
 	KSYMBOL( get_free_page ),
 	KSYMBOL( get_free_pages ),
 	KSYMBOL( free_pages ),
@@ -505,10 +499,27 @@ static KernelSymbol_s g_asKernelSymbols[] = {
 	KSYMBOL( unregister_device ),
 	KSYMBOL( claim_device ),
 	KSYMBOL( release_device ),
+	KSYMBOL( set_device_data ),
+	KSYMBOL( get_device_data ),
 	KSYMBOL( get_device_info ),
+	KSYMBOL( register_busmanager ),
 	KSYMBOL( get_busmanager ),
 	KSYMBOL( disable_device ),
 	KSYMBOL( enable_all_devices ),
+	KSYMBOL( suspend_devices ),
+	KSYMBOL( resume_devices ),
+	
+	// Resource manager
+	KSYMBOL( ioport_root_resource ),
+	KSYMBOL( memory_root_resource ),
+	KSYMBOL( request_resource ),
+	KSYMBOL( ____request_resource ),
+	KSYMBOL( release_resource ),
+	KSYMBOL( allocate_resource ),
+	KSYMBOL( insert_resource ),
+	KSYMBOL( adjust_resource ),
+	KSYMBOL( __request_region ),
+	KSYMBOL( __release_region ),
 
 	// NLS
 	KSYMBOL( nls_conv_cp_to_utf8 ),

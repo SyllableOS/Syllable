@@ -21,7 +21,7 @@ OBJS := intel.o cpuid.o descriptors.o kernel.o dbconsole.o ksyms.o init.o fork.o
 	smp.o udelay.o fault.o exec.o pci.o pgroup.o kmalloc.o swap.o dma.o	\
 	elf.o timecalc.o virt86.o irq.o array.o schedule.o psignals.o mman.o	\
 	areas.o vmalloc.o pagefault.o bcache.o bcalloc.o vesa_gfx.o random.o	\
-	devices.o config.o ptrace.o save_i387.o \
+	devices.o config.o ptrace.o save_i387.o resource.o \
 	$(LIBOBJS) $(VFSOBJS) $(NETOBJS) $(NLSOBJS)
 
 IF_OBJS := eth_interface.o arp.o

@@ -385,6 +385,7 @@ _C_SYM( irqf ):
 	
 	
 irq:
+	cli
 	ENTER_SYSCALL
 
 	movl	ORIG_EAX(%esp),%ebx

@@ -196,15 +196,9 @@ proc_id sys_get_thread_proc( const thread_id hThread )
 thread_id get_next_thread( thread_id hPrev )
 {
 	thread_id hNext;
-	int nFlg = cli();
-
-	sched_lock();
 
 	hNext = MArray_GetNextIndex( &g_sThreadTable, hPrev );
 
-	sched_unlock();
-
-	put_cpu_flags( nFlg );
 	return ( hNext );
 }
 
@@ -452,7 +446,7 @@ status_t sys_send_data( const thread_id hThread, const uint32 nCode, void *const
 
 		psMyThread->tr_nState = TS_WAIT;
 		sWaitNode.wq_hThread = psMyThread->tr_hThreadID;
-		add_to_waitlist( &psThread->tr_psSendWaitQueue, &sWaitNode );
+		add_to_waitlist( false, &psThread->tr_psSendWaitQueue, &sWaitNode );
 
 		sched_unlock();
 		put_cpu_flags( nFlg );
@@ -470,7 +464,7 @@ status_t sys_send_data( const thread_id hThread, const uint32 nCode, void *const
 			nError = -ESRCH;
 			goto error;
 		}
-		remove_from_waitlist( &psThread->tr_psSendWaitQueue, &sWaitNode );
+		remove_from_waitlist( true, &psThread->tr_psSendWaitQueue, &sWaitNode );
 		if ( psThread->tr_pData != NULL && is_signal_pending() )
 		{
 			nError = -EINTR;
@@ -533,7 +527,7 @@ uint32 sys_receive_data( thread_id *const phSender, void *const pData, const uin
 		psThread->tr_nMaxDataSize = 0;
 		psThread->tr_hDataSender = -1;
 
-		wake_up_queue( psThread->tr_psSendWaitQueue, 0, true );
+		wake_up_queue( false, psThread->tr_psSendWaitQueue, 0, true );
 
 		sched_unlock();
 		put_cpu_flags( nFlg );
