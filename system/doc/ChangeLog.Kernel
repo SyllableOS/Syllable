@@ -1,3 +1,11 @@
+* August 4th 2006, Arno Klenke *
+
+Fixed some gcc4 related warnings
+Synchronized tlb flushes on smp machines
+Avoid recursive spinlocks
+New busmanager api
+Some work on suspend and resume
+
 * July 11th 2006, Kristian Van Der Vliet *
 
 Checked in an NTFS driver, ported from Linux by Jaroslaw Pelczar <jpelczar@interia.pl>
@@ -962,6 +970,7 @@ required; they are implemented in user space as part of libc.
 
 Applied a fix to sys/kernel/kernel/vfs/vfs.c  The fcntl() F_GETLK command
 now works as expected.
+
 
 
 
