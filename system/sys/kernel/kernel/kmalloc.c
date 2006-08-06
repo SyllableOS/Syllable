@@ -258,6 +258,8 @@ static inline void free_kmalloc_pages( struct page_descriptor *page, unsigned lo
 void init_kmalloc( void )
 {
 	int order;
+	
+	memset( kmalloc_cache, 0, sizeof( kmalloc_cache ) );
 
 /*
  * Check the static info array. Things will blow up terribly if it's
@@ -470,8 +472,8 @@ int __kfree( void *__ptr )
 	{
 		goto bad_order;
 	}
+	flags = spinlock_disable( &g_sMemSpinLock );	
 	ptr->bh_flags = MF_FREE;	/* As of now this block is officially free */
-	flags = spinlock_disable( &g_sMemSpinLock );
 
 	atomic_sub( &g_sSysBase.ex_nKernelMemSize, ptr->bh_length );
 
