@@ -63,9 +63,8 @@ tree
 
 	atheos/sys/drivers
 
-	atheos/sys/drivers/bus
-
 	atheos/sys/drivers/dev
+	atheos/sys/drivers/dev/bus
 	atheos/sys/drivers/dev/disk
 	atheos/sys/drivers/dev/hcd
 	atheos/sys/drivers/dev/misc
