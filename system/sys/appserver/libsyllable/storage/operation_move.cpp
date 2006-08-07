@@ -245,7 +245,7 @@ int32 MoveFileThread( void *pData )
 	ProgressRequester *pcProgress = new ProgressRequester( Rect( 50, 20, 350, 150 ),
 		"progress_window", "Move files:", true );
 	pcProgress->Lock();
-	pcProgress->Start();
+	pcProgress->Show();
 	pcProgress->Unlock();
 	bool bSuccess = true;
 
