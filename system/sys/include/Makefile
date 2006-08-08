@@ -5,13 +5,16 @@ all:
 deps:
 
 install:
+	@cp -rp * /system/include/
+	rm -rf /system/include/CVS
+	rm /system/include/Makefile
 
 doc:
 
 install-doc:
 
 dist:
-	@cp -pr * $(DIST_TARGET_PATH)
+	@cp -rp * $(DIST_TARGET_PATH)/
 	rm -rf $(DIST_TARGET_PATH)/CVS
 	rm $(DIST_TARGET_PATH)/Makefile
 
