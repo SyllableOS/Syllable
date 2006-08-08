@@ -1,7 +1,7 @@
 export PWD
 
 export PATH=/usr/bin:/bin:/atheos/autolnk/bin:/usr/sbin:/atheos/autolnk/sbin
-export LIBRARY_PATH=/system/libs:/usr/glibc2/lib:/usr/lib:/atheos/autolnk/lib
+export LIBRARY_PATH=/system/libs:/usr/glibc/lib:/usr/lib:/atheos/autolnk/lib
 export DLL_PATH=@bindir@/lib:./:/atheos/sys/libs:/atheos/autolnk/lib:/boot/atheos/sys
 
 export C_INCLUDE_PATH=/include:/ainc:/atheos/autolnk/include:/usr/include

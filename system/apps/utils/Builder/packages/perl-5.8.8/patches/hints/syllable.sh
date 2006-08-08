@@ -6,7 +6,7 @@
 ignore_versioned_solibs='y'
 #libc=/system/libs/libc.so.2
 
-libpth='/system/libs /usr/glibc2/lib /atheos/autolnk/lib'
+libpth='/system/libs /usr/glibc/lib /atheos/autolnk/lib'
 #usrinc='/include'
 
 #libs=' '
@@ -39,4 +39,3 @@ ld='gcc'
 cc='gcc'
 
 ldlibpthname=LIBRARY_PATH
-

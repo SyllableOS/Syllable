@@ -18,10 +18,9 @@ configure-options
 	--with-zlib=../stage/lib
 ;	--with-libs=-lcrypt
 	--with-libs=-lc
-	--with-ldflags=-L/usr/glibc2/lib
+	--with-ldflags=-L/usr/glibc/lib
 
 documentation
 	README* INSTALL WARNING.RNG RFC.nroff LICENCE ChangeLog TODO CREDITS
 ;	README.platform
 internal-docs		OVERVIEW
-

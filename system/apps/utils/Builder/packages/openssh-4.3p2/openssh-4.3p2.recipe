@@ -23,11 +23,10 @@ configure-options
 	--without-zlib-version-check
 	--with-libs='-lcrypt'
 ;	--disable-libutil
-;	--with-ldflags=-L/usr/glibc2/lib
-;	--with-ldflags='-L/usr/gcc/lib/gcc/i586-pc-syllable/3.4.3 -L/usr/glibc2/lib'
+;	--with-ldflags=-L/usr/glibc/lib
+;	--with-ldflags='-L/usr/gcc/lib/gcc/i586-pc-syllable/4.1.1 -L/usr/glibc/lib'
 
 documentation
 	README* INSTALL WARNING.RNG RFC.nroff LICENCE ChangeLog TODO CREDITS
 ;	README.platform
 internal-docs		OVERVIEW
-

@@ -1,3 +1,7 @@
+* August 9 2006, Kaj de Vos *
+
+Finished the normalization move of GLibC from /usr/glibc2/ to /usr/glibc/.
+
 * July 25 2006, Kaj de Vos *
 
 Finally got NCurses to install the TermInfo database in a staging area during system
