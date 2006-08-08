@@ -15,7 +15,6 @@ export TEMP=/tmp
 
 export SYSTEM=Syllable
 export COLORTERM=xterm
-export TERMINFO=/usr/ncurses/share/terminfo
 export LS_COLORS="ex=35:ln=4;35:di=31;1:*.c=36:*.cpp=34:*.h=34:*.hpp=34:*.c=34"
 export PAGER=less
 export LESSCHARSET=latin1
@@ -31,3 +30,4 @@ esac
 alias ll='ls -l'
 alias dir='ls --color -l'
 alias more=less
+alias m=less
