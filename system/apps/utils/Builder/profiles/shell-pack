@@ -3,7 +3,7 @@ title	Command-Line Cornucopia
 name	CommandLineCornucopia
 
 modules
-	system/gettext-0.14.6
+	system/gettext-0.15
 	system/libraries/slang-1.4.9
 ;	shell/man-1.5m2
 	productivity/publishing/texinfo-4.7
@@ -14,4 +14,3 @@ modules
 	file/mc-4.1
 	file/versioning/diffutils-2.8.1
 	programming/languages/gawk-3.1.5
-

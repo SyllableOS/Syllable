@@ -208,7 +208,7 @@ modules
 ;	Currently conflicts with GetText on GLibC 2.3.x:
 	apps/gnu/grep-2.5.1a
 
-	stage libraries/gettext-0.14.6
+	stage libraries/gettext-0.15
 	stage libraries/flex-2.5.33
 	stage libraries/bison-2.3
 	stage libraries/binutils-2.17
@@ -297,4 +297,3 @@ modules
 	apps/utils/nettools
 	apps/utils/pkgmanager
 	apps/utils/systools
-
