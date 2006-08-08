@@ -1,0 +1,14 @@
+diff -ru m4-1.4.5.original/configure m4-1.4.5/configure
+--- m4-1.4.5.original/configure	2006-07-16 00:24:14.000000000 +0200
++++ m4-1.4.5/configure	2006-08-09 00:34:03.000000000 +0200
+@@ -13163,8 +13163,8 @@
+ main ()
+ {
+ struct rlimit r; getrlimit (RLIMIT_STACK, &r);
+-#if (!defined(HAVE_SIGACTION) || !defined(SA_ONSTACK)) \
+-    && (!defined(HAVE_SIGVEC) || !defined(SV_ONSTACK))
++#if ((!defined(HAVE_SIGACTION) || !defined(SA_ONSTACK)) \
++     && (!defined(HAVE_SIGVEC) || !defined(SV_ONSTACK))) || defined(__SYLLABLE__)
+ choke me		/* SA_ONSTACK and/or SV_ONSTACK are not defined */
+ #endif
+ 
