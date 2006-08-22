@@ -1,3 +1,8 @@
+* August 22nd 2006, Kristian Van Der Vliet *
+
+Added a Realtek 8169 (& compatible) Gigabit NIC driver ported from the Linux 2.6 r8169
+driver.  Tested at 100Mb & 1000Mb speeds with a Realtek 8169 based card.
+
 * August 4th 2006, Arno Klenke *
 
 Fixed some gcc4 related warnings
