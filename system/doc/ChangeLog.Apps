@@ -1,3 +1,13 @@
+* August 22 2006, Kristian Van Der Vliet *
+
+- AEdit
+ 	o Re-wrote the Save routine so it no longer crashes when the user tries to save a file
+	  that contains long lines (E.g. a configure script)
+	o Now version 2.2
+- ATerm
+	o Changed the way ESC[M is handled so that the attributes are always cleared to start
+	  with.  Fixes the issue with the entire Termianl turning inverse-video with E.g. less
+
 * July 22 2006, Arno Klenke *
 
 Switched the Dock to the new event system
