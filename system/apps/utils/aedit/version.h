@@ -15,8 +15,8 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-#define AEDIT_VERSION "2.1"
-#define AEDIT_RELEASE_STRING "AEdit 2.1"
+#define AEDIT_VERSION "2.2"
+#define AEDIT_RELEASE_STRING "AEdit 2.2"
 
 
 

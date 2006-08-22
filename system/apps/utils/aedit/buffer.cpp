@@ -270,52 +270,33 @@ void Buffer::ContentChanged(bool iContent)
 // Tries to save the buffer. Returns FALSE is anything wrong
 bool Buffer::Save(void)
 {
-	bool bSuccess=true;
-	uint32 nLineCount,nCurrentLine;
-	
-	ofstream hFile(zFilename.c_str());
-
-	if(hFile)
-	{
-		nLineCount=pcEditView->GetLineCount();
-   
-		for(nCurrentLine=0;nCurrentLine<nLineCount;nCurrentLine++)
-			hFile << pcEditView->GetLine(nCurrentLine) << std::endl;
-
-		ContentChanged(false);
-	} // Problem saving file
-	else
-		bSuccess=false;
-
-	hFile.close();
-
-	return bSuccess;
+	return SaveAs( zFilename.c_str() );
 }
 
 bool Buffer::SaveAs(const char* pFileName)
 {
-	bool bSuccess=true;
-	uint32 nLineCount,nCurrentLine;
+	bool bSuccess;
 
-	ofstream hFile(pFileName);
-
-	if(hFile)
+	try
 	{
-		nLineCount=pcEditView->GetLineCount();
-   
-		for(nCurrentLine=0;nCurrentLine<nLineCount;nCurrentLine++)
-			hFile << pcEditView->GetLine(nCurrentLine) << std::endl;
-		
-		// Change name of the buffer
-		zFilename=pFileName;
+		File cFile( pFileName, O_WRONLY );
 
+		uint32 nLineCount = pcEditView->GetLineCount();
+		for( uint32 n = 0; n < nLineCount; n++ )
+		{
+			string cLine = pcEditView->GetLine( n ) + '\n';
+			cFile.Write( cLine.c_str(), cLine.length() );
+		}
+
+		cFile.Flush();
 		ContentChanged(false);
-	
-	} // Problem saving file
-	else
-		bSuccess=false;
-
-	hFile.close();
+		bSuccess = true;
+	}
+	catch( exception &e )
+	{
+		cerr << "Error saving \"" << pFileName << "\": %s" << e.what() << endl;
+		bSuccess = false;
+	}
 
 	return bSuccess;
 }
