@@ -107,6 +107,8 @@ typedef uint32		dma_addr_t;
 #define phys_to_virt(p) ((void*)(p))
 #define bus_to_virt 	phys_to_virt
 
+#define cpu_to_le64(n)	((uint64)(n))
+#define le64_to_cpu(n)	((uint64)(n))
 #define cpu_to_le32(n)	((uint32)(n))
 #define le32_to_cpu(n)	((uint32)(n))
 #define cpu_to_le16(x)	((uint16)(x))
@@ -264,8 +266,14 @@ static inline void* skb_put( PacketBuf_s* psBuffer, int nSize )
 /* The following macros assume that dev has the fields tbusy, start & flags */
 #define netif_wake_queue(dev) \
 	do { clear_bit(0, (void*)&dev->tbusy); } while(0)
+#if 0
 #define netif_start_queue(dev) \
 	clear_bit(0, (void*)&dev->tbusy)
+#else
+#define netif_start_queue(dev) \
+	do { clear_bit(0, (void*)&dev->tbusy); dev->start = 1; } while(0)
+#endif
+
 #define netif_start_tx_queue(dev) \
 	do { (dev)->tbusy = 0; dev->start = 1; } while(0)
 #define netif_stop_tx_queue(dev) \
