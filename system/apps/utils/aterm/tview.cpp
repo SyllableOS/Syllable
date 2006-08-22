@@ -2186,10 +2186,7 @@ void TermView::ParseBraceEsc()
 			SetCsr( nDefault, m_cCsrPos.y, false );
 			break;
 		case 'm':	// Set display characteristics
-			if( 0 == argc )
-			{
-				m_nCurAttrib = g_nDefaultAttribs;
-			}
+			m_nCurAttrib = g_nDefaultAttribs;
 			for( i = 0; i < argc; ++i )
 			{
 				switch ( argv[i] )
