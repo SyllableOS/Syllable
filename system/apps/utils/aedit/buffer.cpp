@@ -279,7 +279,7 @@ bool Buffer::SaveAs(const char* pFileName)
 
 	try
 	{
-		File cFile( pFileName, O_WRONLY );
+		File cFile( pFileName, O_TRUNC | O_CREAT | O_WRONLY );
 
 		uint32 nLineCount = pcEditView->GetLineCount();
 		for( uint32 n = 0; n < nLineCount; n++ )
