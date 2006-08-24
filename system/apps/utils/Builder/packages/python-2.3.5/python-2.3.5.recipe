@@ -10,6 +10,7 @@ notes				See README for GLibC issues
 licenses			OSI
 home				www.python.org
 packages			Python-2.3.5
+locations			http://www.python.org/ftp/python/2.3.5/
 
 build-needs			autoconf >= 2.53
 build-recommends
@@ -35,4 +36,3 @@ documentation
 	Demo
 links				bin/python /usr/bin/python
 ;post-install		rm -r /usr/python/lib/python2.3/test
-
