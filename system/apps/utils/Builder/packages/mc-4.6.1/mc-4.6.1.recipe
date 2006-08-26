@@ -8,7 +8,7 @@ home
 locations			http://www.ibiblio.org/pub/Linux/utils/file/managers/mc/
 
 needs				glib >= 1.2.6
-build-recommends	slang
+build-recommends	s-lang
 
 configure-env		PKG_CONFIG_PATH '/usr/glib/lib/pkgconfig'
 configure-options

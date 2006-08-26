@@ -1,0 +1,35 @@
+authors				Kaj de Vos
+status				broken
+notes				Link problem with GLibC
+
+licenses			GPL
+home				www.s-lang.org
+locations
+	ftp://space.mit.edu/pub/davis/slang/v2.0/
+	ftp://ftp.fu-berlin.de/pub/unix/misc/slang/v2.0/
+	ftp://ftp.ntua.gr/pub/lang/slang/slang/v2.0/
+	ftp://ftp.plig.org/pub/slang/v2.0/
+packages			slang-2.0.5
+
+build-needs			gawk
+build-recommends
+	pcre
+	libpng
+	readline
+
+no-build-dir
+
+test-targets		runtests
+_install-targets
+	install
+;	Shared library and extra stuff:
+	elf
+	install-elf
+	install-links
+
+documentation		README COPYING NEWS changes.txt
+develop-docs
+;	doc demo
+	examples
+build-docs			INSTALL.unx UPGRADE.txt
+
