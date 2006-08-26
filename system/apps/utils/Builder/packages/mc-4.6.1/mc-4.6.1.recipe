@@ -8,11 +8,14 @@ home
 locations			http://www.ibiblio.org/pub/Linux/utils/file/managers/mc/
 
 needs				glib >= 1.2.6
+; 2.x? 1.4.9 has a link problem:
 build-recommends	s-lang
 
 configure-env		PKG_CONFIG_PATH '/usr/glib/lib/pkgconfig'
 configure-options
 	--without-subshell
+;	Built-in S-Lang will be used otherwise:
+;	--with-screen=ncurses
 	--with-mcfs
 ;	--with-samba
 ;	--with-openssl=
