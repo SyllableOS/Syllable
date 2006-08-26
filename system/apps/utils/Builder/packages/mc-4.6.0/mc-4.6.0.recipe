@@ -1,8 +1,18 @@
 authors				Kaj de Vos
 status				broken
 
+licenses			GPL
+home
+	http://www.ibiblio.org/mc/
+;	http://www.gnu.org/software/mc/
+locations			http://www.ibiblio.org/pub/Linux/utils/file/managers/mc/
+
 patch-config		config
 configure-env		PKG_CONFIG_PATH '/usr/glib/lib/pkgconfig'
-configure-options	--without-subshell --with-mcfs
-;	--with-samba --with-openssl=
+configure-options
+	--without-subshell
+	--with-mcfs
+;	--with-samba
+;	--with-openssl=
 documentation		README INSTALL INSTALL.FAST COPYING ABOUT-NLS FAQ NEWS ChangeLog MAINTAINERS
+
