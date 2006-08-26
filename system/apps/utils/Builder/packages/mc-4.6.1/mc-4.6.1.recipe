@@ -1,0 +1,25 @@
+authors				Kaj de Vos
+status				testing
+
+licenses			GPL
+home
+	www.ibiblio.org/mc/
+;	www.gnu.org/software/mc/
+locations			http://www.ibiblio.org/pub/Linux/utils/file/managers/mc/
+
+needs				glib >= 1.2.6
+build-recommends	slang
+
+configure-env		PKG_CONFIG_PATH '/usr/glib/lib/pkgconfig'
+configure-options
+	--without-subshell
+	--with-mcfs
+;	--with-samba
+;	--with-openssl=
+
+;install-prefix-var	DESTDIR
+
+documentation		README COPYING ABOUT-NLS FAQ NEWS ChangeLog AUTHORS MAINTAINERS TODO
+build-docs			INSTALL.FAST INSTALL
+internal-docs		HACKING
+
