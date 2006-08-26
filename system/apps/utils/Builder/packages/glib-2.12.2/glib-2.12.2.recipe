@@ -1,0 +1,13 @@
+authors				Kaj de Vos
+status				testing
+
+home				www.gtk.org
+locations			ftp://ftp.gtk.org/pub/glib/2.12/
+
+build-needs			pkg-config
+needs				gettext
+
+configure-options	--with-threads=none
+
+documentation		README INSTALL COPYING NEWS ChangeLog AUTHORS
+
