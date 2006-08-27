@@ -18,8 +18,8 @@ environment
 
 native-env
 ;	Default compiler settings for native modules:
-	CFLAGS		-Wall -pipe -march=i586 -O2 -fomit-frame-pointer
-	CXXFLAGS	-Wall -pipe -march=i586 -O2 -fomit-frame-pointer
+	CFLAGS		-Wall -pipe -march=i586 -O2
+	CXXFLAGS	-Wall -pipe -march=i586 -O2
 
 ports-env
 ;	Default compiler settings for ports:
