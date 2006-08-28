@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.85
+# Version 0.6.86
 # Copyright (c) 2002-2006 Kaj de Vos
 # License: GPL 2 or any later version
 
@@ -54,7 +54,7 @@ def downloadModule target
 
 			for package in ((packages = recipe['packages']) ?
 				firstColumn(parseList(packages)) :
-				fullName(target)
+				commonName(target)
 			)
 				unless sourcePackageAvailable? package
 					break if for location in toList locations
@@ -122,7 +122,7 @@ def unpackModule target
 			unless
 				for package in (packages = getRecipe(target)['packages']) ?
 					parseList(packages) :
-					[fullName(target)]
+					[commonName(target)]
 		
 					package, dir = package.split
 					base = File.join @sourcesPath, File.basename(package)
@@ -1278,13 +1278,19 @@ def firstColumn list  # Extract the first value of each line from a list of unsp
 end
 
 def fullName port
-	# Extract name including version, if necessary
+	# Extract name including version and flavor, if necessary
 	File.basename port[-1, 1] == '/' ? port.chop : port
+end
+
+def commonName port
+	# Extract name without flavor
+	name = /.+-\d.*-|\.|$/.match(fullName(port)).to_s
+	name[-1, 1] =~ /-|./ ? name.chop : name
 end
 
 def shortName port
 	# Extract name without version
-	/(-\d)|\.|$/.match(fullName(port)).pre_match
+	/-\d|\.|$/.match(fullName(port)).pre_match
 end
 
 def installName port
@@ -1438,7 +1444,7 @@ end
 def sourcePackagesAvailable? target
 	for package in ((packages = getRecipe(target)['packages']) ?
 		firstColumn(parseList(packages)) :
-		fullName(target)
+		commonName(target)
 	)
 		break unless sourcePackageAvailable? package
 	end
@@ -1645,7 +1651,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.85',
+	puts 'Syllable Build System 0.6.86',
 		'Copyright (c) 2002-2006 Kaj de Vos',
 		'License: GPL 2 or any later version'
 when '?', '-?', '-h', '-help', '--help'
