@@ -9,7 +9,6 @@ inherits			gnu
 
 licenses			GPL LGPL
 home				www.gnu.org/software/binutils/
-; For other recipes to inherit:
 packages			binutils/binutils-2.17
 
 build-needs
@@ -50,3 +49,4 @@ links
 ;	/atheos/autolnk/bin/ranlib	/usr/bin/ranlib
 ;	For some packages:
 ;	include/libiberty.h			/usr/include/
+

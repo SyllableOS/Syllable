@@ -2,7 +2,5 @@ authors				Kaj de Vos
 
 inherits			zlib-1.2.3
 
-packages			zlib-1.2.3
-
 configure-options
 
