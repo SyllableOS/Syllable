@@ -5,7 +5,7 @@ maintainers			Kaj de Vos
 status				developing
 warnings			GLibC has a circular dependency on the LibGCC library in GCC.
 
-inherits			gnu
+;inherits			gnu
 
 licenses			LGPL BSD other
 home				www.gnu.org/software/libc/
@@ -32,7 +32,7 @@ test-needs
 configure-options
 	--enable-hacker-mode
 	--enable-add-ons=syllable
-;	--with-headers=../glibc-2.4/syllable/include
+;	--with-headers=../glibc--current/syllable/include
 	--without-cvs
 ;	--with-cpu=
 ;	--enable-bounded
