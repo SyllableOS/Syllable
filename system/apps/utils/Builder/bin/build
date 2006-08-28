@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.83
+# Version 0.6.84
 # Copyright (c) 2002-2006 Kaj de Vos
 # License: GPL 2 or any later version
 
@@ -860,6 +860,10 @@ def prepareModule target
 		var, value = toKeyValue line
 		ENV[var] = value
 	end
+
+	for var in ['CFLAGS', 'CXXFLAGS']
+		@log.extra var + ': ' + ((value = ENV[var]) ? value : '')
+	end
 end
 
 
@@ -1473,7 +1477,7 @@ attr_reader :failures
 		@summary	= File.new File.join(@@logsPath, 'summary'), 'w'
 		@failLog	= File.new File.join(@@logsPath, 'failures'), 'w'
 
-		@log << s = "Building in root directory #{Dir.getwd}\n"
+		@log << s = (@crossCompile ? 'Cross-b' : 'B') + "uilding in root directory #{Dir.getwd}\n"
 		@summary << s
 		@failLog << s
 	end
@@ -1508,6 +1512,10 @@ attr_reader :failures
 	def detail detail
 		puts detail
 		@log << detail + "\n"
+	end
+
+	def extra extra
+		@log << "\n#{extra}\n"
 	end
 
 	def action action
@@ -1637,7 +1645,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.83',
+	puts 'Syllable Build System 0.6.84',
 		'Copyright (c) 2002-2006 Kaj de Vos',
 		'License: GPL 2 or any later version'
 when '?', '-?', '-h', '-help', '--help'
@@ -1715,34 +1723,40 @@ else
 			when 'package'		then buildPackages	target
 			when 'pack'			then buildPack		target
 			else
+				for var in ['CC', 'CXX', 'AS', 'LD']
+					@log.extra var + ': ' + ((value = ENV[var]) ? value : '')
+				end
+
 				# Pick up executables from the staging area
 
 				if @bootstrap then ENV['PATH'] =
-					if @systemBuild
-						(File.join @image, 'atheos/sys/bin') + ':'
-#						Executables may not be position-independent:
-#						(File.join @image, 'atheos/usr/glibc/bin') + ':' +
-#						(File.join @image, 'atheos/usr/glibc/sbin') + ':'
-					else
-						''
-					end +
+						if @systemBuild
+							(File.join @image, 'atheos/sys/bin') + ':'
+#							Executables may not be position-independent:
+#							(File.join @image, 'atheos/usr/glibc/bin') + ':' +
+#							(File.join @image, 'atheos/usr/glibc/sbin') + ':'
+						else
+							''
+						end +
 
-#					(File.join @stage, 'indexes/bin') +
-					(File.join @stage, 'bin') +
-#					':' + (File.join @stage, 'indexes/sbin') +
-					':' + (File.join @stage, 'sbin') +
+#						(File.join @stage, 'indexes/bin') +
+						(File.join @stage, 'bin') +
+#						':' + (File.join @stage, 'indexes/sbin') +
+						':' + (File.join @stage, 'sbin') +
 
-					if @systemBuild
-#						Shouldn't really be used:
-#						':' + (File.join @image, 'atheos/usr/local/bin') +
-#						':' + (File.join @image, 'atheos/usr/bin') +
-#						':' + (File.join @image, 'atheos/usr/sbin')
-						''
-					else
-						''
-					end +
+						if @systemBuild
+#							Shouldn't really be used:
+#							':' + (File.join @image, 'atheos/usr/local/bin') +
+#							':' + (File.join @image, 'atheos/usr/bin') +
+#							':' + (File.join @image, 'atheos/usr/sbin')
+							''
+						else
+							''
+						end +
 
-					(@isolateStage ? '' : ':' + ENV['PATH'])
+						(@isolateStage ? '' : ':' + ENV['PATH'])
+
+					@log.extra 'PATH: ' + ENV['PATH']
 				end
 
 				# Pick up headers from the staging area and system repository
@@ -1777,21 +1791,26 @@ else
 				ENV['CPLUS_INCLUDE_PATH'] = headers +
 					((var = ENV['CPLUS_INCLUDE_PATH']) && !@isolateStage ? ':' + var : '')
 
+				@log.extra 'C_INCLUDE_PATH: ' + ENV['C_INCLUDE_PATH']
+				@log.extra 'CPLUS_INCLUDE_PATH: ' + ENV['CPLUS_INCLUDE_PATH']
+
 				# Pick up libraries from the staging area
 
 				ENV['ATHEOS_LIB_PATH'] = File.join @image, 'atheos/sys/libs' if @systemBuild
 
 				if @bootstrap then ENV['DLL_PATH'] =
-					if @systemBuild
-						(File.join @image, 'atheos/sys/libs') + ':' +
-						(File.join @image, 'atheos/sys') + ':'
-					else
-						''
-					end +
+						if @systemBuild
+							(File.join @image, 'atheos/sys/libs') + ':' +
+							(File.join @image, 'atheos/sys') + ':'
+						else
+							''
+						end +
 
-#					(File.join @stage, 'indexes/lib') +
-					(File.join @stage, 'lib') +
-					((var = ENV['DLL_PATH']) && !@isolateStage ? ':' + var : '')
+#						(File.join @stage, 'indexes/lib') +
+						(File.join @stage, 'lib') +
+						((var = ENV['DLL_PATH']) && !@isolateStage ? ':' + var : '')
+
+					@log.extra 'DLL_PATH: ' + ENV['DLL_PATH']
 				end
 
 				ENV[name = (@syllable ? '' : 'LD_') + 'LIBRARY_PATH'] =
@@ -1816,8 +1835,12 @@ else
 
 					((var = ENV[name]) && !@isolateStage ? ':' + var : '')
 
+				@log.extra name + ': ' + ENV[name]
+
 				# At least Ubuntu doesn't respond to $LD_LIBRARY_PATH. Sigh...
 				ENV['LDFLAGS'] = ((var = ENV['LDFLAGS']) ? var + ' ' : '') + '-L' + libs unless @syllable
+
+				@log.extra 'LDFLAGS: ' + ENV['LDFLAGS']
 
 				case arg1
 				when 'distclean'	then distclean	target
