@@ -587,11 +587,15 @@ void project::ExportMakefile()
 				if( !bCatalogsFound ) {
 					out<<"	@echo Adding catalogs..."<<std::endl;
 				}
-				if( os::Path( GetFileName( i, j ) ).GetDir().GetLeaf().Length() != 2 )
-					out<<"	@rescopy \""<<m_zTarget.c_str()<<( ( !bCatalogsFound && !bResourceFound ) ? "\" -r " : "\" -a ")<<GetFileName( i, j ).c_str()<<std::endl;
+				os::String cCatalogFile = GetFileName( i, j );
+				/* Change extension */
+				cCatalogFile = cCatalogFile.substr( 0, cCatalogFile.Length() - 2 );
+				cCatalogFile += "catalog";
+				if( os::Path( cCatalogFile ).GetDir().GetLeaf().Length() != 2 )
+					out<<"	@rescopy \""<<m_zTarget.c_str()<<( ( !bCatalogsFound && !bResourceFound ) ? "\" -r " : "\" -a ")<<cCatalogFile.c_str()<<std::endl;
 				else				
 					out<<"	@rescopy \""<<m_zTarget.c_str()<<( ( !bCatalogsFound && !bResourceFound ) ? "\" -r " : "\" -a ")<<
-				os::Path( GetFileName( i, j ) ).GetDir().GetLeaf().c_str()<<"/"<<os::Path( GetFileName( i, j ) ).GetLeaf().c_str()<<"="<<GetFileName( i, j ).c_str()<<std::endl;
+				os::Path( cCatalogFile ).GetDir().GetLeaf().c_str()<<"/"<<os::Path( cCatalogFile ).GetLeaf().c_str()<<"="<<cCatalogFile.c_str()<<std::endl;
 				bCatalogsFound = true;
 			}
 		}
