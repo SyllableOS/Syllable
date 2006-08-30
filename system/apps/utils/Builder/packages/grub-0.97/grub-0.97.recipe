@@ -4,12 +4,7 @@ authors
 	Jack Tonkin
 	Kaj de Vos
 maintainers			Kaj de Vos
-status				broken
-warnings			Hangs during configure on Syllable!
-notes
-	Works on Linux.
-	AutoMake warns about bad substitution on Syllable.
-	Doesn't find NCurses on MEPIS Linux.
+notes				Doesn't find NCurses on MEPIS Linux
 
 licenses			GPL
 home				www.gnu.org/software/grub/
@@ -25,8 +20,6 @@ patch
 ;	autoreconf --force
 ;	Makes it work on Linux, if our AutoMake is older than 1.8.2:
 	aclocal
-;	automake stage2/Makefile; automake Makefile; autoconf
-;	Suffices on Linux:
 	automake
 	autoconf
 
@@ -42,3 +35,4 @@ move-files
 documentation		README BUGS COPYING NEWS ChangeLog TODO AUTHORS THANKS
 build-docs			INSTALL netboot/README.netboot
 internal-docs		MAINTENANCE
+
