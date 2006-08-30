@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.87
+# Version 0.6.88
 # Copyright (c) 2002-2006 Kaj de Vos
 # License: GPL 2 or any later version
 
@@ -1284,7 +1284,7 @@ end
 
 def commonName port
 	# Extract name without flavor
-	name = /.+-(|\d.*)-|.+\.|.+$/.match(fullName(port)).to_s
+	name = /.+-(\d.*|)-|.+(-\d.*$|\.|$)/.match(fullName(port)).to_s
 	/(--|-|\.|)$/.match(name).pre_match
 end
 
@@ -1651,7 +1651,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.87',
+	puts 'Syllable Build System 0.6.88',
 		'Copyright (c) 2002-2006 Kaj de Vos',
 		'License: GPL 2 or any later version'
 when '?', '-?', '-h', '-help', '--help'
