@@ -122,7 +122,7 @@ resources
 	atheos/Documentation	documentation/Copyrights
 
 modules
-	sys/boot/grub-0.97
+	sys/boot/grub-0.97-syllable
 
 	other/config/default
 	other/config/etc
@@ -296,4 +296,3 @@ modules
 	apps/utils/nettools
 	apps/utils/pkgmanager
 	apps/utils/systools
-
