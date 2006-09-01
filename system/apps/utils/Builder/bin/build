@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.88
+# Version 0.6.89
 # Copyright (c) 2002-2006 Kaj de Vos
 # License: GPL 2 or any later version
 
@@ -1651,7 +1651,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.88',
+	puts 'Syllable Build System 0.6.89',
 		'Copyright (c) 2002-2006 Kaj de Vos',
 		'License: GPL 2 or any later version'
 when '?', '-?', '-h', '-help', '--help'
@@ -1720,11 +1720,9 @@ else
 			prepare target
 		else
 			case arg1
-			when 'get'			then get			target
 			when 'download'		then download		target
 			when 'update'		then update			target
 			when 'unpack'		then unpack			target
-			when 'patch'		then patch			target
 			when 'uninstall'	then uninstall		target
 			when 'package'		then buildPackages	target
 			when 'pack'			then buildPack		target
@@ -1849,6 +1847,8 @@ else
 				@log.extra 'LDFLAGS: ' + ((var = ENV['LDFLAGS']) ? var : '')
 
 				case arg1
+				when 'get'			then get		target
+				when 'patch'		then patch		target
 				when 'distclean'	then distclean	target
 				when 'clean'		then clean		target
 				when 'configure'	then configure	target
@@ -1877,4 +1877,3 @@ else
 	@log.close
 	exit @log.failures.length  # FIXME: only works when processing a profile
 end
-
