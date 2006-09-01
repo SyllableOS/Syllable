@@ -35,4 +35,3 @@ move-files
 documentation		README BUGS COPYING NEWS ChangeLog TODO AUTHORS THANKS
 build-docs			INSTALL netboot/README.netboot
 internal-docs		MAINTENANCE
-
