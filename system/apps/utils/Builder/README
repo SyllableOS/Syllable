@@ -589,7 +589,12 @@ the base system. The process goes like this:
     build scrub
 
 Along the way you will have to fix build failures, using techniques
-from this manual. Please have patience, and use at your own risk.
+from this manual. Please have patience, and use at your own risk. Or,
+in the words of our enlightened project leader:
+
+"Attempts to build Syllable from source may cause temporary blindness,
+paranoia, madness, rudeness and athlete's foot. Do not use Builder if
+pregnant or stupid. If in doubt, consult a trained arborist."
 
 4 Developing your own packages
 ==============================
