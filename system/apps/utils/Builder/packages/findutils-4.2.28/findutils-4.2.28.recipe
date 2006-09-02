@@ -6,6 +6,10 @@ licenses			GPL
 home				www.gnu.org/software/findutils/
 packages			findutils/findutils-4.2.28
 
+move-files
+	share/info	.
+	share/man	.
 documentation
 	README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS
 ;	README-alpha
+
