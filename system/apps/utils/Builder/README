@@ -1,7 +1,7 @@
 The Syllable Build System
 =========================
 
-25 November 2003
+2 September 2006
 
 Contents
 ========
@@ -39,7 +39,7 @@ Contents
 1 Introduction
 ==============
 
-This documentation applies to version 0.2.2 of the build system for
+This documentation applies to version 0.6.x of the build system for
 the Syllable operating system. If you encounter problems or have any
 other interesting observations, I would be interested to hear about
 them (see contact information).
@@ -54,39 +54,37 @@ Please note that the build system is written in the Ruby language,
 hence you need to have the Ruby interpreter installed. Refer to the
 Ruby package for Syllable for instructions on installing Ruby.
 
-Now for the installation of the build system. You may have to become
-the root user to perform the following operations:
+Now for the installation of the build system. If you received this
+software in a Zip package, you should have unpacked this file with
 
-    su
+    unzip Builder-0.6.66.bin.1.zip
 
-If you received this software in a tarball package, you should have
-unpacked this file with
-
-    tar -xpz
-
-or something equivalent. The 'p' option to tar is important: it
-preserves permissions on the extracted files. Without the proper file
-permissions, the installation will be broken.
-
-Usually, however, it is best to get the build system from the
-Syllable CVS repository. This will ensure that you have the latest
-version, with the latest package definitions. The location of the
-build system in CVS is
+or something equivalent. This package contains an anonymous CVS
+checkout, so you can update it over the Internet. This will ensure
+that you have the latest version, with the latest package definitions.
+It is also possoble to get the build system from the Syllable CVS
+repository manually. The location of the build system in Syllable CVS is
 
     /syllable/system/apps/utils/Builder
 
-The software is contained in the subdirectory Builder. This should be
-installed under /Applications. If you unpacked or copied it somewhere
-else, do:
+The software is contained in the subdirectory Builder. This can be
+installed anywhere. In Syllable, it is usually installed under /usr/.
+If you unpacked or copied it somewhere else, do:
 
-    mv Builder /Applications
+    mv Builder /usr
 
 Then run:
 
-    pkgmanager -a /Applications/Builder
+    pkgmanager -a /usr/Builder
 
 This creates links in Syllable to enable it to find the build
 system's files.
+
+You can also use Builder on Linux (and possibly on other POSIX-like
+systems, but this has not been tested yet). An easy way to do so is
+to install it in your home directory and add the Builder/bin directory
+to your $PATH environment variable. This way you don't need super-user
+access.
 
 You should now be able to use the build system.
 
@@ -103,11 +101,21 @@ Then you should remove the links to the build system from Syllable.
 You should even do this when you want to upgrade the build system,
 because the links may have changed for the new version.
 
-    pkgmanager -r /Applications/Builder
+    pkgmanager -r /usr/Builder
 
 To delete the files belonging to the build system, run:
 
-    rm -r /Applications/Builder
+    rm -r /usr/Builder
+
+Keeping the build system up to date is easy if you have an Internet
+connection. Just do
+
+    build update
+    build log
+
+This requires that you have the CVS program installed. If you have
+made your own modifications to files in the build system, you should
+always check the log for conflicts and resolve them if there are any.
 
 3 Getting started with the build system
 =======================================
@@ -136,12 +144,11 @@ how and where the build command is called.
 
 A single module is built by passing the path to where the module
 resides to the build command. Multiple modules are built by passing
-the name of a profile, which is a list of software modules. The build
-command recognizes a single module by a slash ('/') in the path name.
-This means that if you are building a module that is directly in your
-working directory, as opposed to more levels deep, you have to make
-sure to include a slash in the directory name to distinguish it from
-a profile. You can do this by making sure there is a slash at the end:
+the name of a profile, which is a list of software modules. If there
+is a name conflict between a single module and a profile, you have to
+make sure to include a slash in the directory name of the module to
+distinguish it. You can do this by making sure there is a slash at the
+end:
 
     build example/
 
@@ -198,12 +205,12 @@ typically have the same name as the application. Suppose the root
 directory of the application is called "example". The first step in
 building it would then be
 
-    build example/
+    build example
 
 Or if you placed the application directory in a subdirectory, for
 example "applications":
 
-    build applications/example/
+    build applications/example
 
 Watch the output to see exactly what operations are performed by the
 build system. It will clean the source code, configure it, and then
@@ -215,7 +222,7 @@ well, do
 If the build procedure was successful, you can optionally run a suite
 of tests, if the application has one:
 
-    build test example/
+    build test example
 
 If all is well, you can install the application. You may have to
 become the super user to do that:
@@ -224,7 +231,7 @@ become the super user to do that:
 
 Then run
 
-    build install example/
+    build install example
 
 3.5 Building a third-party package
 ----------------------------------
@@ -269,13 +276,18 @@ have to unpack in the place where you want to build it. However, the
 build system can do this job for you. Just drop the source package
 into the build system in the directory
 
-    /Applications/Builder/sources/
+    /usr/Builder/sources/
 
 When you ask the build system to build a package for which the source
 is not installed, it will look for it in this location and unpack it
 automatically. This is most useful when you regularly have to remove
 sources to clean up. As long as the source package is in the build
 system, the sources will be restored when needed.
+
+Even better, if the package has a build recipe that defines a download
+location, and you have the WGet program installed, the build system
+will download the source package and place it in /usr/Builder/sources
+automatically.
 
 3.5.2.2 Patching the source
 ---------------------------
@@ -289,7 +301,7 @@ patching is also your own responsibility. However, you can still
 explicitly tell the build system to apply any patches it has, like
 this:
 
-    build patch example/
+    build patch example
 
 3.5.2.3 Sources from a CVS repository
 -------------------------------------
@@ -323,7 +335,7 @@ like building a native module. The name of the directory that
 contains the source code will typically include the version number of
 the package. The first step in building it would for example be
 
-    build example-1.2/
+    build example-1.2
 
 If you want to see the standard process output, do
 
@@ -331,7 +343,7 @@ If you want to see the standard process output, do
 
 If the application has a test suite, you can run it:
 
-    build test example-1.2/
+    build test example-1.2
 
 To install the package, you may have to become the super user:
 
@@ -339,7 +351,7 @@ To install the package, you may have to become the super user:
 
 The installion is done with
 
-    build install example-1.2/
+    build install example-1.2
 
 Third-party packages will be installed into their own subdirectories
 in the /usr directory. The Syllable package manager will be run to
@@ -347,12 +359,12 @@ register the package with Syllable.
 
 The installation and registration can be undone with
 
-    build uninstall example-1.2/
+    build uninstall example-1.2
 
 If you want to distribute the package to others, you can build a
 distribution package while the package is installed with
 
-    build distro example-1.2/
+    build package example-1.2
 
 The distribution package will be generated in your working directory.
 Take care that you are not distributing any sensitive data that the
@@ -386,13 +398,9 @@ building a system module, it is still your job to ensure the right
 environment. System modules often rely on particular system headers
 and libraries. Those tend to change when Syllable evolves, which can
 break the build if different versions are not compatible. By default,
-when compiling software, libraries and headers that are installed in
-the running system are used. On the other hand, some modules choose
-to use headers and libraries from the Syllable source tree in which
-you are building. It is also possible to make all build procedures
-use headers from the source tree (typically, those would be the
-newest versions). These things can be tricky, and there is no easy
-recipe for them.
+when compiling software in the "system" directory, headers from the
+Syllable source tree are used. These things can be tricky, and there
+is no easy recipe for them.
 
 3.6.2 Installing the source
 ---------------------------
@@ -407,18 +415,25 @@ as you know what you are doing.
 3.6.3 Building it
 -----------------
 
-The commands for the first steps of building a system module are no
-different than those for stand-alone applications:
+The commands for building a system module are no different than those
+for stand-alone applications:
 
-    build example/
+    build example
 
-However, the installation step is different. Running
+Installing the module into the running system is done with
 
-    build distro example/
+    build install example
+
+However, modifying your installed system can be dangerous. Modules can
+be built and installed in one go into a staging area.
+
+    image example
 
 will install the module in the staging area where a directory tree is
 built for a Syllable distribution. The staging area is located in the
-subdirectory "dist-root" within the "system" directory.
+subdirectory "stage/image" within the "system" directory. From there,
+you can inspect the results of the build and move files into your
+running system selectively.
 
 3.7 Building multiple modules
 -----------------------------
@@ -441,7 +456,7 @@ even if one or more of the modules failed.
 
 You can get a list of the modules in a profile by entering
 
-    build list example-profile
+    build modules example-profile
 
 You can test all the modules in a profile in one go:
 
@@ -459,7 +474,7 @@ respective sections. Because of that, the
 
 command and the
 
-    build distro example-profile
+    build package example-profile
 
 command will have different effects, depending on what modules are in
 the profile and whether you are building stand-alone applications or
@@ -470,7 +485,7 @@ part of the Syllable base system.
 
 Profiles are stored in the build system at this location:
 
-    /Applications/Builder/profiles/
+    /usr/Builder/profiles/
 
 A profile is simply a text file that you can write yourself. Each
 line should contain a module path. Comment lines are allowed; they
@@ -480,15 +495,7 @@ should start with a semicolon (';') in the first position.
 -------------------------
 
 The build system contains some predefined profiles that can be
-useful. As a special case, the profile named "default" is used when
-you specify neither a profile name nor a module path. Just giving the
-command
-
-    build
-
-by itself will build the modules in the default profile.
-
-In addition, some profiles are generated automatically by the build
+useful. Some profiles are generated automatically by the build
 system itself. After a build operation, the profile named "failures"
 will contain a list of the modules that failed. This is very handy if
 you are building a long list of modules where some of them have
@@ -533,7 +540,7 @@ You would have to replace these packages carefully and individually.)
 
 When the packages are installed,
 
-    build distro dev-pack
+    build pack dev-pack
 
 will create one distribution package in your working directory that
 contains all the packages from the profile, and optionally extra
@@ -542,26 +549,60 @@ files like documentation.
 3.9 Building the Syllable base system
 -------------------------------------
 
-At the time of writing, it is not possible to build the entire
-Syllable base system. Although the build system basically is capable
-of doing this, several of the modules that comprise the system are
-not up-to-date enough to allow this. This situation will improve over
-time, and a detailed description of the build procedure will be added
-here. Basically, there is a profile named "base" that defines a list
-of all the modules of the base system. So the process can be started
-by going to the "system" directory and entering
+At the time of writing, it is not possible to give a definitive
+instruction for building the entire Syllable base system. Although
+the build system basically is capable of doing this, this is a work
+in progress that evolves with the development of Syllable. Furthermore,
+if you try to build from CVS sources, you will most likely encounter
+build failures that exist along the way to the next Syllable release.
 
-    build base
+That said, here is a basic description of how the system is built. For
+starters, there is a huge number of prerequisites that you have to
+fulfill before this makes any sense. Here is a - subject to change,
+and probably incomplete - list of packages you need to install. Some
+of them are available as binary packages, others you wil have to build
+from source with the build system.
 
-However, there are a huge number of prerequisites that you have to
-fulfill before this makes any sense. Until this situation is
-remedied, large numbers of build errors should be expected. Please
-have patience, or use at your own risk.
+- The Syllable source code
+- Developer's Delight
+- PERL Pit
+- WGet
+- DiffUtils
+- GAWK
+- TexInfo
+
+There are several profiles that define a list of all the modules of
+the base system. The process goes like this:
+
+    cd system
+
+    image system
+    build log failures
+
+    image base
+    build log failures
+
+    image compatibility
+    build log failures
+
+    cd stage/image
+    build scrub
+
+Along the way you will have to fix build failures, using techniques
+from this manual. Please have patience, and use at your own risk.
 
 4 Developing your own packages
 ==============================
 
-(To be written.)
+To port a third-party package to Syllable and integrate it with the
+build system, you have to write a Builder recipe for it. Full
+documentation for this needs to be written, but there is an up to date
+specification for the syntax of recipes, in the file
+
+    Builder/packages/skeleton.recipe
+
+For examples of recipes, please study the existing ports in
+Builder/packages/.
 
 5 Known problems and limitations
 ================================
@@ -581,7 +622,6 @@ fixes and the like at
     builder@syllable.info
 
 The latest version of this software can be found through the download
-section of the Syllable web site, in the CVS repository:
+section of the Syllable web site, or in the CVS repository:
 
-    http://syllable.sourceforge.net
-
+    http://syllable.org
