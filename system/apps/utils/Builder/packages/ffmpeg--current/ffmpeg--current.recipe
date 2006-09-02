@@ -2,18 +2,19 @@ authors
 	Arno Klenke
 	Kaj de Vos
 	Kristian Van Der Vliet
-status			developing
-notes			Tested with FFMPEG CVS snapshot August 21 2005
+status				developing
+notes				Tested with FFMPEG CVS snapshot August 21 2005
 
-licenses		LGPL GPL
+licenses			LGPL GPL
 
-build-needs		make >= 3.80
+build-needs			make >= 3.80
 
-home			ffmpeg.org
-;packages		FFMpeg-current
+home				ffmpeg.org
+;packages			FFMpeg-current
 locations
 ;	http://mplayerhq.hu/MPlayer/cvs/
 	http://ftp.syllable-norden.info/Archive/2006/04/
+archives			svn://svn.mplayerhq.hu/ffmpeg/trunk ffmpeg
 
 configure-options
 	--extra-cflags='-DPIC -fomit-frame-pointer'
@@ -39,7 +40,7 @@ configure-options
 ;	--disable-ffserver
 ;	--disable-ffplay
 
-install-tree	include lib
+install-tree		include lib
 install-files
 	../ffmpeg--current/libavcodec/avcodec.h				include
 	../ffmpeg--current/libavformat/avformat.h			include
@@ -60,4 +61,3 @@ install-files
 documentation
 	README COPYING Changelog CREDITS doc/TODO
 ;	doc/*.txt
-
