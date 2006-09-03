@@ -1,0 +1,26 @@
+authors
+	Arno Klenke
+	Kaj de Vos
+status				testing
+
+licenses			LGPL-2 PD
+home				www.libsdl.org
+packages			SDL-1.2.9
+locations			http://www.libsdl.org/release/
+
+build-needs
+	automake
+	autoconf
+
+patch
+	aclocal
+	automake
+	autoconf
+
+documentation
+	README README-SDL.txt BUGS COPYING WhatsNew CREDITS TODO
+	docs.html
+build-docs			INSTALL
+develop-docs
+	docs/index.html docs/html
+	test
