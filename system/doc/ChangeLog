@@ -1,3 +1,7 @@
+* September 3 2006, Arno Klenke *
+
+Fixed intel graphics driver
+
 * August 9 2006, Kaj de Vos *
 
 Finished the normalization move of GLibC from /usr/glibc2/ to /usr/glibc/.
@@ -1117,3 +1121,4 @@ Added the following keymaps:
 * Jun 14 2002, Kristian Van Der Vliet *
 
 Implement get_tld(), set_tld() in process.c
+
