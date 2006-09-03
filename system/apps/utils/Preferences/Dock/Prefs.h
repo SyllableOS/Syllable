@@ -51,7 +51,7 @@ class PrefsDockWin : public os::Window
 public:
 	PrefsDockWin( os::Rect cFrame );
 	~PrefsDockWin();
-	bool PrefsDockWin::CheckPlugin( os::String zPath, os::String* pzName );
+	bool CheckPlugin( os::String zPath, os::String* pzName );
 	void UpdatePluginsList();
 	virtual bool OkToQuit();
 	virtual void HandleMessage( os::Message* pcMessage );
