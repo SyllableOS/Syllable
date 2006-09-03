@@ -12,6 +12,7 @@ build-needs
 	automake
 	autoconf
 
+patch-config
 patch
 	aclocal
 	automake
@@ -24,3 +25,4 @@ build-docs			INSTALL
 develop-docs
 	docs/index.html docs/html
 	test
+
