@@ -741,6 +741,34 @@ public:
 				m->RenderIcon( i, this, m->m_cIcons[i]->m_cPosition );
 			}
 		}
+		/* Render selection rectangle */
+		if( m->m_bSelecting )
+		{
+			os::Color32_s sColor = m->m_sSelectionColor;
+			sColor.alpha = 128;
+			
+			os::Rect cSelect( m->m_cSelectStart, m->m_cLastSelectPosition );
+			float vTemp;
+			if( cSelect.left > cSelect.right ) {
+				vTemp = cSelect.right;
+				cSelect.right = cSelect.left;
+				cSelect.left = vTemp;
+			}
+			if( cSelect.top > cSelect.bottom ) {
+				vTemp = cSelect.bottom;
+				cSelect.bottom = cSelect.top;
+				cSelect.top = vTemp;
+			}
+			SetDrawingMode( os::DM_COPY );
+			SetFgColor( sColor );
+			DrawLine( os::Point( cSelect.left, cSelect.top ), os::Point( cSelect.right, cSelect.top ) );
+			DrawLine( os::Point( cSelect.right, cSelect.top ), os::Point( cSelect.right, cSelect.bottom ) );
+			DrawLine( os::Point( cSelect.left, cSelect.bottom ), os::Point( cSelect.right, cSelect.bottom ) );
+			DrawLine( os::Point( cSelect.left, cSelect.top ), os::Point( cSelect.left, cSelect.bottom ) );
+			SetDrawingMode( os::DM_BLEND );
+			cSelect.Resize( 1, 1, -1, -1 );
+			FillRect( cSelect );
+		}
 		m->Unlock();
 	}
 	
@@ -848,15 +876,35 @@ public:
 		{
 			if( !m->m_bSelecting )
 				m->m_bSelecting = true;
-			else {
-				/* Delete old rect */
-				SetDrawingMode( os::DM_INVERT );
-				DrawFrame( os::Rect( m->m_cSelectStart, m->m_cLastSelectPosition ), os::FRAME_THIN | os::FRAME_TRANSPARENT );
-			}
 			/* Draw new frame */
-			SetDrawingMode( os::DM_INVERT );
-			DrawFrame( os::Rect( m->m_cSelectStart, cPosition ), os::FRAME_THIN | os::FRAME_TRANSPARENT );
+					
+			os::Rect cInvalidate( m->m_cLastSelectPosition.x, m->m_cSelectStart.y, cPosition.x, m->m_cLastSelectPosition.y );
+			float vTemp;
+			if( cInvalidate.left > cInvalidate.right ) {
+				vTemp = cInvalidate.right;
+				cInvalidate.right = cInvalidate.left;
+				cInvalidate.left = vTemp;
+			}
+			if( cInvalidate.top > cInvalidate.bottom ) {
+				vTemp = cInvalidate.bottom;
+				cInvalidate.bottom = cInvalidate.top;
+				cInvalidate.top = vTemp;
+			}
+			Invalidate( cInvalidate );
+			cInvalidate = os::Rect( m->m_cSelectStart.x, m->m_cLastSelectPosition.y, cPosition.x, cPosition.y );
+			if( cInvalidate.left > cInvalidate.right ) {
+				vTemp = cInvalidate.right;
+				cInvalidate.right = cInvalidate.left;
+				cInvalidate.left = vTemp;
+			}
+			if( cInvalidate.top > cInvalidate.bottom ) {
+				vTemp = cInvalidate.bottom;
+				cInvalidate.bottom = cInvalidate.top;
+				cInvalidate.top = vTemp;
+			}
+			Invalidate( cInvalidate );
 			m->m_cLastSelectPosition = cPosition;
+
 			Flush();
 		} else 
 		{

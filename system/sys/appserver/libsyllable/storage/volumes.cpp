@@ -415,7 +415,7 @@ void MountDialogScanner::ScanPath( os::Path cPath, int nDepth, MemFile* pcSource
 						
 						pcIcon->Load( pcSource );
 						pcIcon->SetSize( os::Point( 24, 24 ) );
-						
+												
 						/* Create directory node */
 						os::TreeViewStringNode* pcNewRow = new os::TreeViewStringNode();
 						pcNewRow->AppendString( zName );
