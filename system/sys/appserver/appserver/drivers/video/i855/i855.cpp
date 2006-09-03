@@ -199,36 +199,45 @@ i855::i855(  int nFd ) :
 	remap_area(m_hRomArea, (void*)(0x000c0000));
 	
 	/* Create mmio and framebuffer area */
-	int nIoSize = get_pci_memory_size(nFd, &m_cPCIInfo, 1); 
+	uint32 nIoSize = 0;
+	uint32 nIoBase = 0;
+	if( bSwapBases ) {
+		nIoSize = get_pci_memory_size(nFd, &m_cPCIInfo, 0);
+		nIoBase = m_cPCIInfo.u.h0.nBase0 & PCI_ADDRESS_MEMORY_32_MASK;
+	} else {
+		nIoSize = get_pci_memory_size(nFd, &m_cPCIInfo, 1);
+		nIoBase = m_cPCIInfo.u.h0.nBase1 & PCI_ADDRESS_MEMORY_32_MASK;
+	}
+		
 	m_hRegisterArea = create_area("i855_regs", (void**)&m_pRegisterBase, nIoSize,
 	                              AREA_FULL_ACCESS, AREA_NO_LOCK);
-	if( bSwapBases )
-		remap_area(m_hRegisterArea, (void*)(m_cPCIInfo.u.h0.nBase0 & PCI_ADDRESS_MEMORY_32_MASK));
-	else
-		remap_area(m_hRegisterArea, (void*)(m_cPCIInfo.u.h0.nBase1 & PCI_ADDRESS_MEMORY_32_MASK));
+	remap_area(m_hRegisterArea, (void*)(nIoBase));
 	
-	dbprintf( "i855:: MMIO @ 0x%x mapped to 0x%x size 0x%x\n", (uint)(m_cPCIInfo.u.h0.nBase1 & PCI_ADDRESS_MEMORY_32_MASK),
+	dbprintf( "i855:: MMIO @ 0x%x mapped to 0x%x size 0x%x\n", (uint)nIoBase,
 													(uint)m_pRegisterBase, (uint)nIoSize );
 	
-	int nMemSize = get_pci_memory_size(nFd, &m_cPCIInfo, 0) - m_nRingSize;
+	uint32 nMemSize = 0;
+	uint32 nMemBase = 0;
+	if( bSwapBases ) {
+		nMemSize = get_pci_memory_size(nFd, &m_cPCIInfo, 2);
+		nMemBase = m_cPCIInfo.u.h0.nBase2 & PCI_ADDRESS_MEMORY_32_MASK;
+	} else {
+		nMemSize = get_pci_memory_size(nFd, &m_cPCIInfo, 0);
+		nMemBase = m_cPCIInfo.u.h0.nBase0 & PCI_ADDRESS_MEMORY_32_MASK;
+	}
 	m_hFrameBufferArea = create_area("i855_framebuffer", (void**)&m_pFrameBufferBase,
 	                                 nMemSize, AREA_FULL_ACCESS | AREA_WRCOMB, AREA_NO_LOCK);
-	if( bSwapBases )
-		remap_area(m_hFrameBufferArea, (void*)( ( m_cPCIInfo.u.h0.nBase2 & PCI_ADDRESS_MEMORY_32_MASK ) + m_nFrameBufferOffset ));
-	else
-		remap_area(m_hFrameBufferArea, (void*)( ( m_cPCIInfo.u.h0.nBase0 & PCI_ADDRESS_MEMORY_32_MASK ) + m_nFrameBufferOffset ));
-	dbprintf( "i855:: Framebuffer @ 0x%x mapped to 0x%x size 0x%x\n", (uint)(( m_cPCIInfo.u.h0.nBase0 & PCI_ADDRESS_MEMORY_32_MASK ) + m_nFrameBufferOffset),
+	
+	remap_area(m_hFrameBufferArea, (void*)( ( nMemBase ) + m_nFrameBufferOffset ));
+	dbprintf( "i855:: Framebuffer @ 0x%x mapped to 0x%x size 0x%x\n", (uint)((nMemBase) + m_nFrameBufferOffset),
 													(uint)m_pFrameBufferBase, (uint)nMemSize );
 	
 	/* Create command ring area */
 	m_hRingArea = create_area("i855_cmd_ring", (void**)&m_pRingBase,
 	                                 m_nRingSize, AREA_FULL_ACCESS, AREA_NO_LOCK);
-	if( bSwapBases )
-		remap_area(m_hRingArea, (void*)(m_cPCIInfo.u.h0.nBase2 & PCI_ADDRESS_MEMORY_32_MASK));
-	else
-		remap_area(m_hRingArea, (void*)(m_cPCIInfo.u.h0.nBase0 & PCI_ADDRESS_MEMORY_32_MASK));
+	remap_area(m_hRingArea, (void*)(nMemBase));
 	
-	dbprintf( "i855:: Ringbuffer @ 0x%x mapped to 0x%x size 0x%x\n", (uint)(m_cPCIInfo.u.h0.nBase0 & PCI_ADDRESS_MEMORY_32_MASK),
+	dbprintf( "i855:: Ringbuffer @ 0x%x mapped to 0x%x size 0x%x\n", (uint)(nMemBase),
 													(uint)m_pRingBase, (uint)m_nRingSize );
 	/* Initialize the cursor */
 	/* The last 10 pages of the video memory are allocated as linear memory */
