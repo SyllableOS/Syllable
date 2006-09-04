@@ -1,0 +1,16 @@
+authors
+	Flemming Sørensen
+	Kaj de Vos
+maintainers			Kaj de Vos
+status				developing
+
+licenses			LGPL
+home				www.libsdl.org/projects/SDL_net/
+packages			SDL_net-1.2.6
+locations			http://www.libsdl.org/projects/SDL_net/release/
+
+needs				sdl >= 1.2.4
+
+patch-config
+
+documentation		README COPYING CHANGES
