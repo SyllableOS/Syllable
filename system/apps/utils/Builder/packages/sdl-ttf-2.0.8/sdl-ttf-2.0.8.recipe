@@ -10,8 +10,10 @@ packages			SDL_ttf-2.0.8
 locations			http://www.libsdl.org/projects/SDL_ttf/release/
 
 needs				sdl >= 1.2.4
-build-needs			freetype
+; Uses internal headers:
+build-needs			freetype < 2.2
 
 patch-config
 
 documentation		README COPYING CHANGES
+

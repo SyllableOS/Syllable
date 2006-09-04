@@ -2,7 +2,7 @@ authors
 	Flemming Sørensen
 	Kaj de Vos
 maintainers			Kaj de Vos
-status				developing
+status				testing
 
 licenses			LGPL
 home				www.libsdl.org/projects/SDL_net/
@@ -14,3 +14,4 @@ needs				sdl >= 1.2.4
 patch-config
 
 documentation		README COPYING CHANGES
+
