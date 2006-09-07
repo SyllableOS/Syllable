@@ -14,6 +14,8 @@ ORCA [
 	Tabs:		4
 ]
 
+recycle/off  ; Orca bug
+
 
 log: context [  ; Singleton logger object
 	open: func [] [
@@ -77,8 +79,6 @@ stage-proto: context [
 	index-node: function [package node] [
 		source destination
 	][
-		recycle  ; Orca bug
-
 ;		source: join packages-root [package "/" node]
 		source: join package ["/" node]
 		destination: join indexes node
@@ -111,8 +111,6 @@ stage-proto: context [
 	remove-node: function [subdir node] [
 		index file
 	][
-		recycle  ; Orca bug
-
 		index: join indexes [file: join subdir ["/" node]]
 
 		either dir? index [
@@ -206,8 +204,6 @@ package-proto: context [
 	do-subdirs: function [task stages] [
 		subdir
 	][
-		recycle  ; Orca bug
-
 		foreach subdir flat-dirs [
 			unless task stages subdir no
 				[return no]
