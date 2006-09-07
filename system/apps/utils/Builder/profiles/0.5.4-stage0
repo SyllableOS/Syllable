@@ -1,7 +1,0 @@
-; To be (re)built with GCC 2.95.x for Syllable 0.5.4
-
-modules
-	sys/kernel/kernel
-;	The one from CVS - but this one is not buildable anymore?:
-	libs/glibc
-

@@ -1,5 +1,0 @@
-; To be removed for Syllable 0.6.0
-
-modules
-	glibc-2.1.2
-;	Old C++ libraries
