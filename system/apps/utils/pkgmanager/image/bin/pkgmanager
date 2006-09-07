@@ -2,14 +2,14 @@
 
 ORCA [
 	Title:		"Package registration tool"
-	Version:	0.0.1
+	Version:	0.1.0
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006 Kaj de Vos
 		License: GPL 2 or any later version
 	}
 	Purpose:	"Registers and unregisters binary packages by managing symlinks in the system."
-	Example:	"pkgmanager add example"
+	Example:	"pkgmanager add /usr/example"
 
 	Tabs:		4
 ]
@@ -49,12 +49,14 @@ log: context [  ; Singleton logger object
 	]
 ]
 
-action: func ["Returns the output of a shell command, or false if unsuccessful"
+action: function ["Returns the output of a shell command, or false if unsuccessful"
 	command "Shell command"
+][
+	status
 ][
 	log/action command
 
-	either (status: call/wait/output command stdout: "") = 0 [  ; OK
+	either (status: call/wait/output command stdout: "") = 0 [
 		log/output stdout
 		stdout
 	][
@@ -70,21 +72,28 @@ build: context [
 
 stage-proto: context [
 ;	packages-root: indexes: none
-	indexes: %/home/kaj/atheos/autolnk/
+	indexes: %/atheos/autolnk/
 	
-	index-node: func [package subdir node] [
-;		source: join packages-root [package "/" file: join subdir ["/" node]]
-		source: join package ["/" file: join subdir ["/" node]]
-		destination: join indexes [file]
+	index-node: function [package node] [
+		source destination
+	][
+		recycle  ; Orca bug
 
-		either dir? node [
-			any [
-				exists? destination
+;		source: join packages-root [package "/" node]
+		source: join package ["/" node]
+		destination: join indexes node
+
+		either dir? source [
+			either exists? destination [
+;				if link? destination [log/warning join "directory " [destination " is a link"]]
+				yes
+			][
+				if dir? destination [log/warning join "replacing broken directory link " destination]
 				action join "mkdir " destination
 			]
 		][
 			either exists? destination [
-				either file = "info/dir" [
+				either node = "info/dir" [
 					log/warning "info/dir file not registered due to pre-existing file"
 					yes
 				][
@@ -92,30 +101,40 @@ stage-proto: context [
 					no
 				]
 			][
+;				Bug in Orca when path given:
+;				if file? destination [log/warning join "replacing broken link " destination]
 				action join "ln -s " [source " " destination]
 			]
 		]
 	]
 	
-	remove-node: func [subdir node] [
+	remove-node: function [subdir node] [
+		index file
+	][
+		recycle  ; Orca bug
+
 		index: join indexes [file: join subdir ["/" node]]
 
-		either dir? node [
+		either dir? index [
 			any [
-				yes  ; Bug in Orca list comparison:
+;				yes  ; Bug in Orca 0.0.23 list comparison:
 				(read index) <> []  ; Indexes directory empty?
-				action join "rm -rf " index
+				action join "rmdir " index
 			]
 		][
+;			Orca join bug:
+;			change-dir join indexes [subdir]
+;			Orca bug:
+;			either file? node [
 			either exists? index [
 				either file = "info/dir" [
 					log/warning "info/dir file left untouched"
 					yes
 				][
-					action join "rm -f " [index]
+					action join "rm " index
 				]
 			][
-				log/warning join "link " [index " didn't exist"]
+				log/warning join "link " [index " did not exist"]
 				yes
 			]
 		]
@@ -137,14 +156,25 @@ stage: make stage-proto [
 package-proto: context [
 	package: stage: none
 
+	flat-dirs:	 [etc bin sbin info early-init init]
+	nested-dirs: [lib libexec include share man]
+
 	new: func [package' stage'] [
 		make self [package: to-file package' stage: stage']
 	]
 
-	register: func [stage] [
-		log/header join "Registering " [package]
+	register: function [stage] [
+		path
+	][
+		log/header join "Registering " package
 
-		either index-subdirs reduce [system-image] [
+		either all [
+			do-subdirs :index-subdir reduce [system-image]
+			either exists? path: join package "/man" [
+				log/header "Generating manual pages"
+				action join "manmanager -a " path
+			][yes]
+		][
 			action "sync"
 		][
 			log/failure package
@@ -152,10 +182,19 @@ package-proto: context [
 		]
 	]
 
-	unregister: func [stage] [
-		log/header join "Unregistering " [package]
+	unregister: function [stage] [
+		path
+	][
+		log/header join "Unregistering " package
 
-		either remove-subdirs reduce [system-image] [
+		either all [
+			do-subdirs :remove-subdir reduce [system-image]
+;			either no [  ; manmanager fails on deleting non-existing manuals
+			either exists? path: join package "/man" [
+				log/header "Deleting manual pages"
+				action join "manmanager -r " path
+			][yes]
+		][
 			action "sync"
 		][
 			log/failure package
@@ -163,90 +202,67 @@ package-proto: context [
 		]
 	]
 
+
+	do-subdirs: function [task stages] [
+		subdir
+	][
+		recycle  ; Orca bug
+
+		foreach subdir flat-dirs [
+			unless task stages subdir no
+				[return no]
+		]
+		foreach subdir nested-dirs [
+			unless task stages subdir yes
+				[return no]
+		]
+	]
+	
 	index-subdir: function [stages subdir nesting?] [
-		dir
+		dir entry node s
 	][
-print subdir
-		any [
-;			not exists? dir: join stage/packages-root [package "/" subdir]
-			not exists? dir: join package ["/" subdir]
-			(
-				log/detail subdir
-				change-dir dir
+;		either exists? dir: join stage/packages-root [package "/" subdir] [
+		either exists? dir: join package ["/" subdir] [
+			log/detail join "Processing subdirectory " subdir
+			change-dir dir
 
-				foreach node read %. [
-					foreach s stages [
-						unless s/index-node package subdir node
-							[return no]
-					]
-					if nesting? and dir? node [
-						unless index-subdir stages join subdir ["/" node] yes
-							[return no]
-						change-dir dir
-					]
+			foreach entry read %. [
+				node: join subdir ["/" entry]
+				foreach s stages [
+					unless s/index-node package node
+						[return no]
 				]
-				any [
-					subdir <> 'man
-					(	log/header "Adding manual pages"
-						action join "manmanager -a " [package "/man"]
-					)
+				if nesting? and dir? entry [
+					unless index-subdir stages node yes
+						[return no]
+					change-dir dir
 				]
-			)
-		]
+			]
+			yes
+		][yes]
 	]
 	
-	index-subdirs: func [stages] [
-		foreach subdir [etc bin sbin info early-init init] [  ; Flat directories
-			unless index-subdir stages subdir no
-				[return no]
-		]
-		foreach subdir [lib libexec include share man] [  ; Nested directories
-			unless index-subdir stages subdir yes
-				[return no]
-		]
-	]
-
 	remove-subdir: function [stages subdir nesting?] [
-		dir
+		dir entry s
 	][
-print subdir
-		any [
-;			not exists? dir: join stage/packages-root [package "/" subdir]
-			not exists? dir: join package ["/" subdir]
-			(
-				log/detail subdir
-				change-dir dir
+;		either exists? dir: join stage/packages-root [package "/" subdir] [
+		either exists? dir: join package ["/" subdir] [
+			log/detail join "Processing subdirectory " subdir
+			change-dir dir
 
-				foreach node read %. [
-					if nesting? and dir? node [
-						unless remove-subdir stages join subdir ["/" node] yes
-							[return no]
-						change-dir dir
-					]
-					foreach s stages [
-						unless s/remove-node subdir node
-							[return no]
-					]
+			foreach entry read %. [
+				if nesting? and dir? entry [
+					unless remove-subdir stages join subdir ["/" entry] yes
+						[return no]
 				]
-				any [
-					subdir <> 'man
-					(	log/header "Deleting manual pages"
-						action join "manmanager -r " [package "/man"]
-					)
+				foreach s stages [
+					unless s/remove-node subdir entry
+						[return no]
 				]
-			)
-		]
-	]
-	
-	remove-subdirs: func [stages] [
-		foreach subdir [etc bin sbin info early-init init] [  ; Flat directories
-			unless remove-subdir stages subdir no
-				[return no]
-		]
-		foreach subdir [lib libexec include share man] [  ; Nested directories
-			unless remove-subdir stages subdir yes
-				[return no]
-		]
+				change-dir dir
+			]
+			yes
+		][yes]
 	]
 ]
 
@@ -283,7 +299,9 @@ either find ["add" "-a" "--add"] command [
 either find ["remove" "-r" "--remove"] command [
 	package: package-proto/new package system-image
 	package/unregister none
-halt
 ][
 	print "Unknown command"
 ]]]]
+
+; FIXME: no errors returned
+
