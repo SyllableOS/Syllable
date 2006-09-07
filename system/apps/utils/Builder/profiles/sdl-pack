@@ -4,13 +4,13 @@ name	SDL-Essentials
 
 modules
 ;	Official projects:
-	sdl-1.2.9
-	sdl-mixer-1.2.6
-	sdl-net-1.2.6
-	sdl-image-1.2.4
+;	sdl-1.2.9
+;	sdl-mixer-1.2.6
+;	sdl-net-1.2.6
+;	sdl-image-1.2.4
 	sdl-ttf-2.0.8
 	sdl-rtf-0.1.0
 
-	sdl-sound-1.0.1
+;	sdl-sound-1.0.1
 ;	sdl-draw-1.2.1
 	sdl-gfx-2.0.13

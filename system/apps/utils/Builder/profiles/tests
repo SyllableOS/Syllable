@@ -1,6 +1,8 @@
 ; Test cases to run when making important changes to Syllable
 
 modules
+	stage libraries/ffmpeg--current
+
 	sys/kernel/kernel
 	sys/kernel/drivers/bus/ata
 	sys/kernel/drivers/disk/usb
@@ -29,4 +31,3 @@ modules
 	apps/desktop/file_browser
 	apps/utils/Preferences/Appearance
 	apps/utils/systools
-
