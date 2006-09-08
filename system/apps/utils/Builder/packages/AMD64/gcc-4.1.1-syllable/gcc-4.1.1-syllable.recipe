@@ -1,0 +1,19 @@
+authors				Kaj de Vos
+status				developing
+
+configure-options
+	--target=amd64-pc-syllable
+;	GLibC headers for Syllable:
+;	--with-headers=$PWD/../atheos/usr/glibc/include
+;	--with-sysroot=$PWD/../stage
+	--enable-languages=c,c++
+;	--with-arch=amd64
+	--enable-sjlj-exceptions
+	--disable-shared
+	--enable-threads
+	--with-system-zlib
+;	--with-gnu-as
+;	--with-gnu-ld
+;	May be needed for porting a limited cross-compiler:
+;	--without-headers
+;	--disable-nls

@@ -1,0 +1,21 @@
+authors				Kaj de Vos
+status				developing
+
+configure-options
+	--target=amd64-pc-syllable
+;	--enable-shared
+;	May be needed for porting a limited cross-assembler:
+;	--disable-shared
+;	--disable-nls
+;	This would be for a 64-bits port:
+	--enable-64-bit-bfd
+
+links
+;	Optimize wasteful duplicates:
+	../../bin/x86_64-pc-syllable-ar			x86_64-pc-syllable/bin/ar
+	../../bin/x86_64-pc-syllable-as			x86_64-pc-syllable/bin/as
+	../../bin/x86_64-pc-syllable-ld			x86_64-pc-syllable/bin/ld
+	../../bin/x86_64-pc-syllable-nm			x86_64-pc-syllable/bin/nm
+	../../bin/x86_64-pc-syllable-objdump	x86_64-pc-syllable/bin/objdump
+	../../bin/x86_64-pc-syllable-ranlib		x86_64-pc-syllable/bin/ranlib
+	../../bin/x86_64-pc-syllable-strip		x86_64-pc-syllable/bin/strip
