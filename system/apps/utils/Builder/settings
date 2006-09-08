@@ -1,6 +1,7 @@
 ; Project trees:
 ;lineage
 ;	.
+;	AMD64
 
 environment
 ;	For some strange reason, some Linuxes define $OSTYPE and $MACHTYPE, but don't
@@ -35,9 +36,9 @@ cvs-path		syllable/system
 ; For cross-compilation:
 ;target			i586-pc-syllable
 
-; Isolate build in staging area from headers and libraries on the build host?
+; Isolate build in staging area from headers and libraries on the build host:
 ;isolate-stage
-; Run newly built binaries and shared libraries on the build host to bootstrap?
+; Run newly built binaries and shared libraries on the build host to bootstrap:
 ;bootstrap
 
 ; Include version number in the installation path prefix of ports:
