@@ -2,7 +2,7 @@
 
 ORCA [
 	Title:		"Package registration tool"
-	Version:	0.1.0
+	Version:	0.1.1
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006 Kaj de Vos
@@ -51,14 +51,14 @@ log: context [  ; Singleton logger object
 	]
 ]
 
-action: function ["Returns the output of a shell command, or false if unsuccessful"
+action: func ["Returns the output of a shell command, or false if unsuccessful"
 	command "Shell command"
-][
-	status
+	/local status stdout
 ][
 	log/action command
 
 	either (status: call/wait/output command stdout: "") = 0 [
+;		Orca call/output bug:
 		log/output stdout
 		stdout
 	][
@@ -76,8 +76,8 @@ stage-proto: context [
 ;	packages-root: indexes: none
 	indexes: %/atheos/autolnk/
 	
-	index-node: function [package node] [
-		source destination
+	index-node: func [package node
+		/local source destination
 	][
 ;		source: join packages-root [package "/" node]
 		source: join package ["/" node]
@@ -108,21 +108,24 @@ stage-proto: context [
 		]
 	]
 	
-	remove-node: function [subdir node] [
-		index file
+	remove-node: func [subdir node
+		/local index file
 	][
 		index: join indexes [file: join subdir ["/" node]]
 
 		either dir? index [
 			any [
-;				yes  ; Bug in Orca 0.0.23 list comparison:
-				(read index) <> []  ; Indexes directory empty?
+;				Bug in Orca list comparison:
+;				(read index) <> []  ; Indexes directory empty?
+				(length? read index) = 0  ; Indexes directory empty?
 				action join "rmdir " index
+				; May be a symlink from old package manager:
+;				action join "rm -r " index
 			]
 		][
 ;			Orca join bug:
 ;			change-dir join indexes [subdir]
-;			Orca bug:
+;			Orca file? bug:
 ;			either file? node [
 			either exists? index [
 				either file = "info/dir" [
@@ -161,8 +164,8 @@ package-proto: context [
 		make self [package: to-file package' stage: stage']
 	]
 
-	register: function [stage] [
-		path
+	register: func [stage
+		/local path
 	][
 		log/header join "Registering " package
 
@@ -180,8 +183,8 @@ package-proto: context [
 		]
 	]
 
-	unregister: function [stage] [
-		path
+	unregister: func [stage
+		/local path
 	][
 		log/header join "Unregistering " package
 
@@ -201,8 +204,8 @@ package-proto: context [
 	]
 
 
-	do-subdirs: function [task stages] [
-		subdir
+	do-subdirs: func [task stages
+		/local subdir
 	][
 		foreach subdir flat-dirs [
 			unless task stages subdir no
@@ -214,8 +217,8 @@ package-proto: context [
 		]
 	]
 	
-	index-subdir: function [stages subdir nesting?] [
-		dir entry node s
+	index-subdir: func [stages subdir nesting?
+		/local dir entry node s
 	][
 ;		either exists? dir: join stage/packages-root [package "/" subdir] [
 		either exists? dir: join package ["/" subdir] [
@@ -238,8 +241,8 @@ package-proto: context [
 		][yes]
 	]
 	
-	remove-subdir: function [stages subdir nesting?] [
-		dir entry s
+	remove-subdir: func [stages subdir nesting?
+		/local dir entry s
 	][
 ;		either exists? dir: join stage/packages-root [package "/" subdir] [
 		either exists? dir: join package ["/" subdir] [
