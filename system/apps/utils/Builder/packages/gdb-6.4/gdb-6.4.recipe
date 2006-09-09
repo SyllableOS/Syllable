@@ -12,6 +12,8 @@ packages			gdb/gdb-6.4
 ;locations			ftp://sources.redhat.com/pub/gdb/releases/
 
 needs				Syllable >= 0.6.1
+; Replaces part of BinUtils:
+conflicts			binutils
 
 ;test-targets		check-gdb
 
@@ -20,3 +22,4 @@ documentation
 	gdb/README gdb/PROBLEMS gdb/NEWS COPYING COPYING.LIB gdb/MAINTAINERS
 	gdb/ChangeLog
 ;	gdb/doc
+
