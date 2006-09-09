@@ -2,13 +2,13 @@
 
 ORCA [
 	Title:		"Package registration tool"
-	Version:	0.1.1
+	Version:	0.1.2
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006 Kaj de Vos
 		License: GPL 2 or any later version
 	}
-	Purpose:	"Registers and unregisters binary packages by managing symlinks in the system."
+	Purpose:	"Registers and unregisters binary packages by managing symbolic links in the system."
 	Example:	"pkgmanager add /usr/example"
 
 	Tabs:		4
@@ -92,18 +92,17 @@ stage-proto: context [
 				action join "mkdir " destination
 			]
 		][
-			either exists? destination [
-				either node = "info/dir" [
-					log/warning "info/dir file not registered due to pre-existing file"
-					yes
-				][
-					log/error join "conflict: link " [destination " already exists!"]
-					no
-				]
+			either node = "info/dir" and exists? destination [
+				log/warning "info/dir file not registered due to pre-existing file"
+				yes
 			][
-;				Bug in Orca when path given:
-;				if file? destination [log/warning join "replacing broken link " destination]
-				action join "ln -s " [source " " destination]
+				either exists? destination [
+					log/warning join "conflict: replacing " [destination "!"]
+				][
+;					Bug in Orca when path given:
+;					if file? destination [log/warning join "replacing broken link " destination]
+				]
+				action join "ln -sf " [source " " destination]
 			]
 		]
 	]
@@ -116,11 +115,12 @@ stage-proto: context [
 		either dir? index [
 			any [
 ;				Bug in Orca list comparison:
-;				(read index) <> []  ; Indexes directory empty?
-				(length? read index) = 0  ; Indexes directory empty?
-				action join "rmdir " index
+;				(read index) <> []  ; Indexes directory not empty?
+;				Remove non-empty dirs as well for now; they could be from the old package manager:
+;				(length? read index) > 0  ; Indexes directory not empty?
+;				action join "rmdir " index
 				; May be a symlink from old package manager:
-;				action join "rm -r " index
+				action join "rm -r " index
 			]
 		][
 ;			Orca join bug:
