@@ -17,6 +17,9 @@ build-recommends
 
 patch-config
 
-;configure-options	--enable-tif
+;configure-options
+;	--enable-tif
+;	--enable-xcf
 
 documentation		README COPYING CHANGES
+
