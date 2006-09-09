@@ -1,3 +1,9 @@
+* September 9 2006, Kaj de Vos *
+
+Completed the rewrite of PkgManager in Orca. It is smaller, cleaner and more correct.
+There is some code in there to account for oddities in the symlink structures created
+by the old C++ PkgManager, but some quirks can still occur when upgrading.
+
 * September 3 2006, Arno Klenke *
 
 Fixed intel graphics driver
