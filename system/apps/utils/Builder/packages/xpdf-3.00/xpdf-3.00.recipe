@@ -1,0 +1,26 @@
+authors
+	Arno Klenke
+	Kaj de Vos
+status				developing
+
+licenses			GPL-2
+home				www.foolabs.com/xpdf/
+locations			ftp://ftp.foolabs.com/pub/xpdf/
+
+needs
+;	lesstif
+recommends
+	t1lib
+	freetype >= 2.0.5
+
+configure-options
+	--with-freetype2-includes=/usr/freetype/include/freetype2
+	--enable-a4-paper
+
+make-targets		xpdf
+
+documentation
+	README COPYING ANNOUNCE CHANGES
+;	doc
+build-docs			INSTALL
+
