@@ -11,6 +11,7 @@ locations			http://www.libsdl.org/release/
 build-needs
 	automake
 	autoconf
+	gcc < 4.1
 
 patch-config
 patch
