@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.92
+# Version 0.6.93
 # Copyright (c) 2002-2006 Kaj de Vos
 # License: GPL 2 or any later version
 
@@ -1647,7 +1647,7 @@ else  # System build
 end
 
 # Isolate build in staging area from the build host?
-@isolateStage = @crossCompile or @settings['isolate-stage']
+@isolateStage = @crossCompile || @settings['isolate-stage']
 # Or run newly built binaries and libraries on the build host to bootstrap?
 @bootstrap = !@crossCompile && @settings['bootstrap']
 
@@ -1658,7 +1658,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.92',
+	puts 'Syllable Build System 0.6.93',
 		'Copyright (c) 2002-2006 Kaj de Vos',
 		'License: GPL 2 or any later version'
 when '?', '-?', '-h', '-help', '--help'
@@ -1765,7 +1765,7 @@ else
 							''
 						end +
 
-						(@isolateStage ? '' : ':' + ENV['PATH'])
+						ENV['PATH']
 
 					@log.extra 'PATH: ' + ENV['PATH']
 				end
@@ -1819,7 +1819,7 @@ else
 
 #						(File.join @stage, 'indexes/lib') +
 						(File.join @stage, 'lib') +
-						((var = ENV['DLL_PATH']) && !@isolateStage ? ':' + var : '')
+						((var = ENV['DLL_PATH']) ? ':' + var : '')
 
 					@log.extra 'DLL_PATH: ' + ENV['DLL_PATH']
 				end
