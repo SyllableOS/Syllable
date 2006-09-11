@@ -5,9 +5,14 @@ status				developing
 
 licenses			GPL-2
 home				www.foolabs.com/xpdf/
-locations			ftp://ftp.foolabs.com/pub/xpdf/
+locations
+;	Have only the last version:
+;	ftp://ftp.foolabs.com/pub/xpdf/
+;	ftp://gd.tuwien.ac.at/publishing/xpdf/
+	ftp://tug.org/xpdf/
 
-needs
+;needs
+;	On X11 systems:
 ;	lesstif
 recommends
 	t1lib
@@ -23,4 +28,3 @@ documentation
 	README COPYING ANNOUNCE CHANGES
 ;	doc
 build-docs			INSTALL
-
