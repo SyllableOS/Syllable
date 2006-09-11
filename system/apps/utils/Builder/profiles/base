@@ -40,7 +40,6 @@ modules
 	apps/utils/Launch
 	apps/utils/Man
 	apps/utils/memmon
-	apps/utils/xpdf
 
 ;	Needs objcopy from BinUtils:
 	apps/gnu/binutils-2.17-objcopy
@@ -49,9 +48,11 @@ modules
 	apps/utils/shelltools
 	apps/utils/slbmgr
 
-	libs/sdl-1.2.9
-	libs/sdl-mixer-1.2.6
-	libs/sdl-net-1.2.6
-	libs/sdl-image-1.2.4
-	libs/sdl-sound-1.0.1
+;	libs/sdl-1.2.9
+;	libs/sdl-mixer-1.2.6
+;	libs/sdl-net-1.2.6
+;	libs/sdl-image-1.2.4
+;	libs/sdl-sound-1.0.1
 
+	apps/other/xpdf-3.00pl3-syllable
+	apps/other/xpdf-3.00pl3
