@@ -11,7 +11,8 @@ locations			http://www.libsdl.org/release/
 build-needs
 	automake
 	autoconf
-	gcc < 4.1
+;	Needed a Hermes fix:
+;	gcc < 4.1
 
 patch-config
 patch
@@ -26,4 +27,3 @@ build-docs			INSTALL
 develop-docs
 	docs/index.html docs/html
 	test
-
