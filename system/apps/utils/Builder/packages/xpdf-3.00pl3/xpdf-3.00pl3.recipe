@@ -19,9 +19,11 @@ recommends
 
 configure-options
 	--with-freetype2-includes=/usr/freetype/include/freetype2
+;	--enable-multithreaded
 	--enable-a4-paper
 
 documentation
 	README COPYING ANNOUNCE CHANGES
 ;	doc
 build-docs			INSTALL
+
