@@ -1,0 +1,15 @@
+authors
+	Arno Klenke
+	Kaj de Vos
+status				developing
+
+inherits			xpdf-3.00pl3
+
+needs
+	autoconf >= 2.57
+;	On X11 systems:
+;	lesstif
+
+patch				autoconf
+
+make-targets		xpdf

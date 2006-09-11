@@ -1,0 +1,3893 @@
+diff -ru xpdf-3.00pl3/configure.in xpdf/configure.in
+--- xpdf-3.00pl3/configure.in	2006-09-11 04:11:50.000000000 +0200
++++ xpdf/configure.in	2006-09-11 02:57:16.000000000 +0200
+@@ -1,5 +1,5 @@
+ dnl Process this file with autoconf to produce a configure script.
+-dnl Copyright 1998-2003 Glyph & Cog, LLC
++dnl Copyright 1998-2005 Glyph & Cog, LLC
+ 
+ AC_PREREQ(2.57)
+ 
+@@ -23,6 +23,9 @@
+ AC_ARG_ENABLE(wordlist,
+ [  --enable-wordlist       include support for building word lists],
+ AC_DEFINE(TEXTOUT_WORD_LIST))
++AC_ARG_ENABLE(fixedpoint,
++[  --enable-fixedpoint     use fixed point (instead of floating point) arithmetic],
++AC_DEFINE(USE_FIXEDPOINT))
+ AC_ARG_WITH(appdef-dir,
+ [  --with-appdef-dir       set app-defaults directory],
+ AC_DEFINE_UNQUOTED(APPDEFDIR, "$with_appdef_dir"))
+@@ -276,9 +279,6 @@
+                 $Xt_LIBS $X_LIBS $X_PRE_LIBS $Xp_LIBS $Xext_LIBS $X_EXTRA_LIBS -lX11, $X_CFLAGS)
+   AC_SUBST(Xm_LIBS)
+   AC_SUBST(Xm_CFLAGS)
+-  if test "x$smr_have_Xm_library" != xyes; then
+-    no_x="yes"
+-  fi
+   smr_CHECK_LIB(Sgm, Sgm, [SGI Motif library],
+                 SgCreateHorzPanedWindow, Sgm/HPanedW.h,
+                 $Xm_LIBS $Xt_LIBS $X_LIBS $X_PRE_LIBS $Xp_LIBS $Xext_LIBS $X_EXTRA_LIBS -lX11, $X_CFLAGS)
+@@ -294,27 +294,21 @@
+ fi
+ 
+ dnl ##### Check for t1lib.
+-if test -z "$no_x"; then
+-  smr_CHECK_LIB(t1, t1, [Type 1 font rasterizer], 
+-                T1_InitLib, t1lib.h,
+-                $X_LIBS $X_PRE_LIBS $X_EXTRA_LIBS -lX11 -lm, $X_CFLAGS)
+-  AC_SUBST(t1_LIBS)
+-  AC_SUBST(t1_CFLAGS)
+-fi
++smr_CHECK_LIB(t1, t1, [Type 1 font rasterizer], 
++              T1_InitLib, t1lib.h,
++              -lm, $X_CFLAGS)
++AC_SUBST(t1_LIBS)
++AC_SUBST(t1_CFLAGS)
+ 
+ dnl ##### Check for FreeType 2.x.
+ dnl ##### (Note: FT_Get_Name_Index was added in FT 2.0.5, and is
+ dnl ##### the reason that Xpdf requires 2.0.5+.)
+ smr_CHECK_LIB(freetype2, freetype, [FreeType2 font rasterizer - version 2.0.5+],
+-              FT_Get_Name_Index, freetype/freetype.h, -lm)
+-if test x"$freetype2_LIBS" = x; then
+-  smr_CHECK_LIB(freetype2, freetype, [FreeType2 font rasterizer - version 2.0.5+],
+-                FT_Get_Name_Index, freetype.h, -lm)
+-fi
++              FT_Get_Name_Index, ft2build.h, -lm)
+ AC_SUBST(freetype2_LIBS)
+ AC_SUBST(freetype2_CFLAGS)
+-if test "x$smr_have_freetype2_library" != xyes; then
+-  no_x="yes"
++if test "x$smr_have_freetype2_library" = xyes; then
++  AC_DEFINE(HAVE_FREETYPE_FREETYPE_H)
+ fi
+ 
+ dnl ##### Check for libpaper (Debian).
+@@ -323,7 +317,7 @@
+ AC_SUBST(libpaper_CFLAGS)
+ 
+ dnl ##### Disable X-specific stuff in top-level Makefile.
+-if test -n "$no_x"; then
++if test -n "$no_x" -o "x$smr_have_Xm_library" != xyes -o "x$smr_have_freetype2_library" != xyes; then
+   X="#"
+   XPDF_TARGET="all-no-x"
+ else
+@@ -337,8 +331,16 @@
+ AC_OUTPUT(Makefile goo/Makefile fofi/Makefile splash/Makefile xpdf/Makefile)
+ 
+ dnl ##### Warn user if X is missing.
+-if test -n "$no_x"; then
+-  AC_MSG_WARN([Couldn't find X / Motif -- you will be able to compile
+-        pdftops, pdftotext, pdfinfo, pdffonts, pdftoppm, and pdfimages,
+-        but not xpdf])
++if test -n "$no_x" -o "x$smr_have_Xm_library" != xyes -o "x$smr_have_freetype2_library" != xyes; then
++  if test -n "$no_x"; then
++    AC_MSG_WARN([Couldn't find X]);
++  fi
++  if test "x$smr_have_Xm_library" != xyes; then
++    AC_MSG_WARN([Couldn't find Motif]);
++  fi
++  if test "x$smr_have_freetype2_library" != xyes; then
++    AC_MSG_WARN([Couldn't find FreeType]);
++  fi
++  AC_MSG_WARN([-- You will be able to compile pdftops, pdftotext,
++        pdfinfo, pdffonts, and pdfimages, but not xpdf or pdftoppm])
+ fi
+diff -ru xpdf-3.00pl3/splash/SplashFTFontEngine.h xpdf/splash/SplashFTFontEngine.h
+--- xpdf-3.00pl3/splash/SplashFTFontEngine.h	2006-09-11 04:11:50.000000000 +0200
++++ xpdf/splash/SplashFTFontEngine.h	2006-09-11 02:57:16.000000000 +0200
+@@ -15,7 +15,8 @@
+ #pragma interface
+ #endif
+ 
+-#include <freetype/freetype.h>
++#include <ft2build.h>
++#include FT_FREETYPE_H
+ #include "gtypes.h"
+ 
+ class SplashFontFile;
+diff -ru xpdf-3.00pl3/splash/SplashFTFontFile.h xpdf/splash/SplashFTFontFile.h
+--- xpdf-3.00pl3/splash/SplashFTFontFile.h	2006-09-11 04:11:50.000000000 +0200
++++ xpdf/splash/SplashFTFontFile.h	2006-09-11 02:57:16.000000000 +0200
+@@ -15,7 +15,8 @@
+ #pragma interface
+ #endif
+ 
+-#include <freetype/freetype.h>
++#include <ft2build.h>
++#include FT_FREETYPE_H
+ #include "SplashFontFile.h"
+ 
+ class SplashFontFileID;
+diff -ru xpdf-3.00pl3/splash/SplashFTFont.h xpdf/splash/SplashFTFont.h
+--- xpdf-3.00pl3/splash/SplashFTFont.h	2006-09-11 04:11:50.000000000 +0200
++++ xpdf/splash/SplashFTFont.h	2006-09-11 02:57:16.000000000 +0200
+@@ -15,7 +15,8 @@
+ #pragma interface
+ #endif
+ 
+-#include <freetype/freetype.h>
++#include <ft2build.h>
++#include FT_FREETYPE_H
+ #include "SplashFont.h"
+ 
+ class SplashFTFontFile;
+diff -ru xpdf-3.00pl3/xpdf/about-text.h xpdf/xpdf/about-text.h
+--- xpdf-3.00pl3/xpdf/about-text.h	2006-09-11 04:11:50.000000000 +0200
++++ xpdf/xpdf/about-text.h	2006-09-11 02:57:16.000000000 +0200
+@@ -5,7 +5,7 @@
+ // Copyright 2002-2003 Glyph & Cog, LLC
+ //
+ //========================================================================
+-
++#if 0
+ static char *aboutWinText[] = {
+   "http://www.foolabs.com/xpdf/",
+   "derekn@foolabs.com",
+@@ -45,3 +45,18 @@
+   "For more information, please read the xpdf(1) man page.",
+   NULL
+ };
++#endif
++
++static char *aboutWinText = 
++  "http://www.foolabs.com/xpdf/\n"
++  "derekn@foolabs.com\n"
++  " \n"
++  "Licensed under the GNU General Public License (GPL).\n"
++  "See the 'COPYING' file for details.\n"
++  " \n"
++  "Supports PDF version " supportedPDFVersionStr ".\n"
++  " \n"
++  "The PDF data structures, operators, and specification\n"
++  "are copyright 1985-2003 Adobe Systems Inc.\n"
++  " \n";
++
+diff -ru xpdf-3.00pl3/xpdf/GlobalParams.cc xpdf/xpdf/GlobalParams.cc
+--- xpdf-3.00pl3/xpdf/GlobalParams.cc	2006-09-11 04:11:50.000000000 +0200
++++ xpdf/xpdf/GlobalParams.cc	2006-09-11 02:57:16.000000000 +0200
+@@ -58,7 +58,33 @@
+ #define unicodeToUnicodeCacheSize 4
+ 
+ //------------------------------------------------------------------------
++#ifdef __SYLLABLE__
++static struct {
++  char *name;
++  char *fileName;
++} displayFontTab[] = {
++  {"Courier",               "VeraMono.ttf"},
++  {"Courier-Bold",          "VeraMoBd.ttf"},
++  {"Courier-BoldOblique",   "VeraMoBI.ttf"},
++  {"Courier-Oblique",       "VeraMoIt.ttf"},
++  {"Helvetica",             "Vera.ttf"},
++  {"Helvetica-Bold",        "VeraBd.ttf"},
++  {"Helvetica-BoldOblique", "VeraBI.ttf"},
++  {"Helvetica-Oblique",     "VeraIt.ttf"},
++  {"Symbol",                "StandardSymL.ttf"},
++  {"Times-Bold",            "VeraSeBd.ttf"},
++  {"Times-BoldItalic",      "VeraSeBd.ttf"},
++  {"Times-Italic",          "VeraSe.ttf"},
++  {"Times-Roman",           "VeraSe.ttf"},
++  {"ZapfDingbats",          "Dingbats.ttf"},
++  {NULL}
++};
+ 
++static char *displayFontDirs[] = {
++  "/system/fonts",
++  NULL
++};
++#else
+ static struct {
+   char *name;
+   char *fileName;
+@@ -83,9 +109,10 @@
+ static char *displayFontDirs[] = {
+   "/usr/share/ghostscript/fonts",
+   "/usr/local/share/ghostscript/fonts",
+-  "/usr/share/fonts/default/Type1",
++  "/usr/share/fonts/default/Type1"
+   NULL
+ };
++#endif
+ 
+ //------------------------------------------------------------------------
+ 
+@@ -930,8 +957,13 @@
+       delete fontName;
+       continue;
+     }
++#ifdef __SYLLABLE__
++	dfp = new DisplayFontParam(fontName, displayFontTT);
++    dfp->tt.fileName = fileName;
++#else
+     dfp = new DisplayFontParam(fontName, displayFontT1);
+     dfp->t1.fileName = fileName;
++#endif
+     globalParams->addDisplayFont(dfp);
+   }
+ }
+diff -ru xpdf-3.00pl3/xpdf/Makefile.in xpdf/xpdf/Makefile.in
+--- xpdf-3.00pl3/xpdf/Makefile.in	2006-09-11 04:11:50.000000000 +0200
++++ xpdf/xpdf/Makefile.in	2006-09-11 02:57:16.000000000 +0200
+@@ -26,7 +26,7 @@
+ T1LIBS = @t1_LIBS@
+ FTLIBS = @freetype2_LIBS@
+ 
+-XLIBS = @Sgm_LIBS@ @Xm_LIBS@ @Xt_LIBS@ @Xp_LIBS@ @Xext_LIBS@ @Xpm_LIBS@ @X_PRE_LIBS@ @X_LIBS@ -lX11 @X_EXTRA_LIBS@
++XLIBS = @Sgm_LIBS@ @Xm_LIBS@ @Xt_LIBS@ @Xp_LIBS@ @Xext_LIBS@ @Xpm_LIBS@ @X_PRE_LIBS@ @X_LIBS@ -lsyllable @X_EXTRA_LIBS@
+ 
+ SPLASHLIBS = -L$(SPLASHLIBDIR) -lsplash
+ 
+@@ -120,10 +120,17 @@
+ 	UnicodeMap.o UnicodeTypeTable.o XPDFApp.o XPDFCore.o XPDFTree.o \
+ 	XPDFViewer.o XRef.o XSplashOutputDev.o xpdf.o
+ XPDF_LIBS = -L$(GOOLIBDIR) -lGoo $(SPLASHLIBS) $(T1LIBS) $(FTLIBS) \
+-	$(XLIBS) $(OTHERLIBS) -lm
++	$(XLIBS) $(OTHERLIBS) -lm -lz
+ 
+ xpdf$(EXE): $(XPDF_OBJS) $(GOOLIBDIR)/$(LIBPREFIX)Goo.a
+-	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o xpdf$(EXE) $(XPDF_OBJS) $(XPDF_LIBS)
++	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o Xpdf$(EXE) $(XPDF_OBJS) $(XPDF_LIBS)
++	rescopy Xpdf$(EXE) -r *.png
++	rescopy -a Xpdf$(EXE) resources/xpdf.catalog
++	rescopy -a Xpdf$(EXE) de/xpdf.catalog=resources/de/xpdf.catalog
++	rescopy -a Xpdf$(EXE) da/xpdf.catalog=resources/da/xpdf.catalog
++	rescopy -a Xpdf$(EXE) nl/xpdf.catalog=resources/nl/xpdf.catalog
++	rescopy -a Xpdf$(EXE) pl/xpdf.catalog=resources/pl/xpdf.catalog
++	strip --strip-all Xpdf$(EXE)
+ 
+ #------------------------------------------------------------------------
+ 
+@@ -221,7 +228,7 @@
+ #------------------------------------------------------------------------
+ 
+ clean:
+-	rm -f $(XPDF_OBJS) xpdf$(EXE)
++	rm -f $(XPDF_OBJS) Xpdf$(EXE)
+ 	rm -f $(PDFTOPS_OBJS) pdftops$(EXE)
+ 	rm -f $(PDFTOTEXT_OBJS) pdftotext$(EXE)
+ 	rm -f $(PDFINFO_OBJS) pdfinfo$(EXE)
+diff -ru xpdf-3.00pl3/xpdf/XPDFApp.cc xpdf/xpdf/XPDFApp.cc
+--- xpdf-3.00pl3/xpdf/XPDFApp.cc	2006-09-11 04:11:50.000000000 +0200
++++ xpdf/xpdf/XPDFApp.cc	2006-09-11 02:57:16.000000000 +0200
+@@ -19,175 +19,68 @@
+ #include "XPDFApp.h"
+ #include "config.h"
+ 
+-// these macro defns conflict with xpdf's Object class
+-#ifdef LESSTIF_VERSION
+-#undef XtDisplay
+-#undef XtScreen
+-#undef XtWindow
+-#undef XtParent
+-#undef XtIsRealized
+-#endif
+ 
+-//------------------------------------------------------------------------
+-
+-#define remoteCmdSize 512
+-
+-//------------------------------------------------------------------------
+-
+-static String fallbackResources[] = {
+-  "*.zoomComboBox*fontList: -*-helvetica-medium-r-normal--12-*-*-*-*-*-iso8859-1",
+-  "*XmTextField.fontList: -*-courier-medium-r-normal--12-*-*-*-*-*-iso8859-1",
+-  "*.fontList: -*-helvetica-medium-r-normal--12-*-*-*-*-*-iso8859-1",
+-  "*XmTextField.translations: #override\\n"
+-  "  Ctrl<Key>a:beginning-of-line()\\n"
+-  "  Ctrl<Key>b:backward-character()\\n"
+-  "  Ctrl<Key>d:delete-next-character()\\n"
+-  "  Ctrl<Key>e:end-of-line()\\n"
+-  "  Ctrl<Key>f:forward-character()\\n"
+-  "  Ctrl<Key>u:beginning-of-line()delete-to-end-of-line()\\n"
+-  "  Ctrl<Key>k:delete-to-end-of-line()\\n",
+-  NULL
+-};
+-
+-static XrmOptionDescRec xOpts[] = {
+-  {"-display",       ".display",         XrmoptionSepArg,  NULL},
+-  {"-foreground",    "*Foreground",      XrmoptionSepArg,  NULL},
+-  {"-fg",            "*Foreground",      XrmoptionSepArg,  NULL},
+-  {"-background",    "*Background",      XrmoptionSepArg,  NULL},
+-  {"-bg",            "*Background",      XrmoptionSepArg,  NULL},
+-  {"-geometry",      ".geometry",        XrmoptionSepArg,  NULL},
+-  {"-g",             ".geometry",        XrmoptionSepArg,  NULL},
+-  {"-font",          "*.fontList",       XrmoptionSepArg,  NULL},
+-  {"-fn",            "*.fontList",       XrmoptionSepArg,  NULL},
+-  {"-title",         ".title",           XrmoptionSepArg,  NULL},
+-  {"-cmap",          ".installCmap",     XrmoptionNoArg,   (XPointer)"on"},
+-  {"-rgb",           ".rgbCubeSize",     XrmoptionSepArg,  NULL},
+-  {"-rv",            ".reverseVideo",    XrmoptionNoArg,   (XPointer)"true"},
+-  {"-papercolor",    ".paperColor",      XrmoptionSepArg,  NULL},
+-  {"-z",             ".initialZoom",     XrmoptionSepArg,  NULL}
+-};
+-
+-#define nXOpts (sizeof(xOpts) / sizeof(XrmOptionDescRec))
+-
+-struct XPDFAppResources {
+-  String geometry;
+-  String title;
+-  Bool installCmap;
+-  int rgbCubeSize;
+-  Bool reverseVideo;
+-  String paperColor;
+-  String initialZoom;
+-  Bool viKeys;
+-};
+-
+-static Bool defInstallCmap = False;
++static bool defInstallCmap = false;
+ static int defRGBCubeSize = defaultRGBCube;
+-static Bool defReverseVideo = False;
+-static Bool defViKeys = False;
+-
+-static XtResource xResources[] = {
+-  { "geometry",     "Geometry",     XtRString, sizeof(String), XtOffsetOf(XPDFAppResources, geometry),     XtRString, (XtPointer)NULL             },
+-  { "title",        "Title",        XtRString, sizeof(String), XtOffsetOf(XPDFAppResources, title),        XtRString, (XtPointer)NULL             },
+-  { "installCmap",  "InstallCmap",  XtRBool,   sizeof(Bool),   XtOffsetOf(XPDFAppResources, installCmap),  XtRBool,   (XtPointer)&defInstallCmap  },
+-  { "rgbCubeSize",  "RgbCubeSize",  XtRInt,    sizeof(int),    XtOffsetOf(XPDFAppResources, rgbCubeSize),  XtRInt,    (XtPointer)&defRGBCubeSize  },
+-  { "reverseVideo", "ReverseVideo", XtRBool,   sizeof(Bool),   XtOffsetOf(XPDFAppResources, reverseVideo), XtRBool,   (XtPointer)&defReverseVideo },
+-  { "paperColor",   "PaperColor",   XtRString, sizeof(String), XtOffsetOf(XPDFAppResources, paperColor),   XtRString, (XtPointer)NULL             },
+-  { "initialZoom",  "InitialZoom",  XtRString, sizeof(String), XtOffsetOf(XPDFAppResources, initialZoom),  XtRString, (XtPointer)NULL             },
+-  { "viKeys",       "ViKeys",       XtRBool,   sizeof(Bool),   XtOffsetOf(XPDFAppResources, viKeys),       XtRBool,   (XtPointer)&defViKeys       }
+-};
+-
+-#define nXResources (sizeof(xResources) / sizeof(XtResource))
++static bool defReverseVideo = false;
++static bool defViKeys = false;
+ 
+ //------------------------------------------------------------------------
+ // XPDFApp
+ //------------------------------------------------------------------------
+ 
+-#if 0 //~ for debugging
+-static int xErrorHandler(Display *display, XErrorEvent *ev) {
+-  printf("X error:\n");
+-  printf("  resource ID = %08lx\n", ev->resourceid);
+-  printf("  serial = %lu\n", ev->serial);
+-  printf("  error_code = %d\n", ev->error_code);
+-  printf("  request_code = %d\n", ev->request_code);
+-  printf("  minor_code = %d\n", ev->minor_code);
+-  fflush(stdout);
+-  abort();
+-}
+-#endif
+ 
+ XPDFApp::XPDFApp(int *argc, char *argv[]) {
+-  appShell = XtAppInitialize(&appContext, xpdfAppName, xOpts, nXOpts,
+-			     argc, argv, fallbackResources, NULL, 0);
+-  display = XtDisplay(appShell);
+-  screenNum = XScreenNumberOfScreen(XtScreen(appShell));
+-#if XmVERSION > 1
+-  XtVaSetValues(XmGetXmDisplay(XtDisplay(appShell)),
+-		XmNenableButtonTab, True, NULL);
+-#endif
+-#if XmVERSION > 1
+-  // Drag-and-drop appears to be buggy -- I'm seeing weird crashes
+-  // deep in the Motif code when I destroy widgets in the XpdfForms
+-  // code.  Xpdf doesn't use it, so just turn it off.
+-  XtVaSetValues(XmGetXmDisplay(XtDisplay(appShell)),
+-		XmNdragInitiatorProtocolStyle, XmDRAG_NONE,
+-		XmNdragReceiverProtocolStyle, XmDRAG_NONE,
+-		NULL);
+-#endif
+-
+-#if 0 //~ for debugging
+-  XSynchronize(display, True);
+-  XSetErrorHandler(&xErrorHandler);
+-#endif
+ 
+-  fullScreen = gFalse;
+-  remoteAtom = None;
+-  remoteViewer = NULL;
+-  remoteWin = None;
++  appContext = new os::Application( "application/x-vnd.syllable-Xpdf" );
++
++/* Select string catalogue */
++	try {
++		appContext->SetCatalog( "xpdf.catalog" );
++	} catch( ... ) {
++		printf( "Failed to load catalog file!\n" );
++	}
+ 
++/* Register filetypes */
++	m_pcManager = NULL;
++
++	try
++	{
++		m_pcManager = os::RegistrarManager::Get();
++		
++		m_pcManager->RegisterType( "text/x-pdf", "PDF document" );
++		m_pcManager->RegisterTypeExtension( "text/x-pdf", "pdf" );
++		m_pcManager->RegisterTypeIconFromRes( "text/x-pdf", "text_pdf.png" );
++		m_pcManager->RegisterAsTypeHandler( "text/x-pdf" );
++	} catch( ... ) {}
++
++  fullScreen = gFalse;
++  
+   getResources();
+ 
+   viewers = new GList();
+-
+ }
+ 
+ void XPDFApp::getResources() {
+-  XPDFAppResources resources;
+-  XColor xcol, xcol2;
+-  Colormap colormap;
+-  
+-  XtGetApplicationResources(appShell, &resources, xResources, nXResources,
+-			    NULL, 0);
+-  geometry = resources.geometry ? new GString(resources.geometry)
+-                                : (GString *)NULL;
+-  title = resources.title ? new GString(resources.title) : (GString *)NULL;
+-  installCmap = (GBool)resources.installCmap;
+-  rgbCubeSize = resources.rgbCubeSize;
+-  reverseVideo = (GBool)resources.reverseVideo;
+-  if (reverseVideo) {
++	title = new GString( "Xpdf" );
++	installCmap = gFalse;
++	rgbCubeSize = defaultRGBCube;
++	reverseVideo = defReverseVideo;
++	if (reverseVideo) {
+     paperRGB = splashMakeRGB8(0x00, 0x00, 0x00);
+-    paperColor = BlackPixel(display, screenNum);
++    paperColor = 0x00000000;
+   } else {
+     paperRGB = splashMakeRGB8(0xff, 0xff, 0xff);
+-    paperColor = WhitePixel(display, screenNum);
+-  }
+-  if (resources.paperColor) {
+-    XtVaGetValues(appShell, XmNcolormap, &colormap, NULL);
+-    if (XAllocNamedColor(display, colormap, resources.paperColor,
+-			 &xcol, &xcol2)) {
+-      paperRGB = splashMakeRGB8(xcol.red >> 8,
+-				xcol.green >> 8,
+-				xcol.blue >> 8);
+-      paperColor = xcol.pixel;
+-    } else {
+-      error(-1, "Couldn't allocate color '%s'", resources.paperColor);
+-    }
++    paperColor = 0xffffffff;
+   }
+-  initialZoom = resources.initialZoom ? new GString(resources.initialZoom)
+-                                      : (GString *)NULL;
+-  viKeys = (GBool)resources.viKeys;
++  initialZoom = (GString *)NULL;;
++  viKeys = defViKeys;
++
+ }
+ 
+ XPDFApp::~XPDFApp() {
++	if( m_pcManager )
++		m_pcManager->Put();
+   deleteGList(viewers, XPDFViewer);
+   if (geometry) {
+     delete geometry;
+@@ -203,20 +96,14 @@
+ XPDFViewer *XPDFApp::open(GString *fileName, int page,
+ 			  GString *ownerPassword, GString *userPassword) {
+   XPDFViewer *viewer;
+-
+   viewer = new XPDFViewer(this, fileName, page, NULL,
+ 			  ownerPassword, userPassword);
++
+   if (!viewer->isOk()) {
+     delete viewer;
+     return NULL;
+   }
+-  if (remoteAtom != None) {
+-    remoteViewer = viewer;
+-    remoteWin = viewer->getWindow();
+-    XtAddEventHandler(remoteWin, PropertyChangeMask, False,
+-		      &remoteMsgCbk, this);
+-    XSetSelectionOwner(display, remoteAtom, XtWindow(remoteWin), CurrentTime);
+-  }
++
+   viewers->append(viewer);
+   return viewer;
+ }
+@@ -232,13 +119,6 @@
+     delete viewer;
+     return NULL;
+   }
+-  if (remoteAtom != None) {
+-    remoteViewer = viewer;
+-    remoteWin = viewer->getWindow();
+-    XtAddEventHandler(remoteWin, PropertyChangeMask, False,
+-		      &remoteMsgCbk, this);
+-    XSetSelectionOwner(display, remoteAtom, XtWindow(remoteWin), CurrentTime);
+-  }
+   viewers->append(viewer);
+   return viewer;
+ }
+@@ -259,12 +139,6 @@
+     for (i = 0; i < viewers->getLength(); ++i) {
+       if (((XPDFViewer *)viewers->get(i)) == viewer) {
+ 	viewers->del(i);
+-	if (remoteAtom != None && remoteViewer == viewer) {
+-	  remoteViewer = (XPDFViewer *)viewers->get(viewers->getLength() - 1);
+-	  remoteWin = remoteViewer->getWindow();
+-	  XSetSelectionOwner(display, remoteAtom, XtWindow(remoteWin),
+-			     CurrentTime);
+-	}
+ 	delete viewer;
+ 	return;
+       }
+@@ -273,138 +147,17 @@
+ }
+ 
+ void XPDFApp::quit() {
+-  if (remoteAtom != None) {
+-    XSetSelectionOwner(display, remoteAtom, None, CurrentTime);
+-  }
+   while (viewers->getLength() > 0) {
+     delete (XPDFViewer *)viewers->del(0);
+   }
+-#if HAVE_XTAPPSETEXITFLAG
+-  XtAppSetExitFlag(appContext);
+-#else
+-  exit(0);
+-#endif
++  //exit(0);
++  appContext->PostMessage( os::M_TERMINATE );
+ }
+ 
+ void XPDFApp::run() {
+-  XtAppMainLoop(appContext);
+-}
+ 
+-void XPDFApp::setRemoteName(char *remoteName) {
+-  remoteAtom = XInternAtom(display, remoteName, False);
+-  remoteXWin = XGetSelectionOwner(display, remoteAtom);
++	appContext->Run();
+ }
+ 
+-GBool XPDFApp::remoteServerRunning() {
+-  return remoteXWin != None;
+-}
+-
+-void XPDFApp::remoteOpen(GString *fileName, int page, GBool raise) {
+-  char cmd[remoteCmdSize];
+-
+-  sprintf(cmd, "%c %d %.200s",
+-	  raise ? 'D' : 'd', page, fileName->getCString());
+-  XChangeProperty(display, remoteXWin, remoteAtom, remoteAtom, 8,
+-		  PropModeReplace, (Guchar *)cmd, strlen(cmd) + 1);
+-  XFlush(display);
+-}
+ 
+-void XPDFApp::remoteOpenAtDest(GString *fileName, GString *dest, GBool raise) {
+-  char cmd[remoteCmdSize];
+-
+-  sprintf(cmd, "%c +%.256s %.200s",
+-	  raise ? 'D' : 'd', dest->getCString(), fileName->getCString());
+-  XChangeProperty(display, remoteXWin, remoteAtom, remoteAtom, 8,
+-		  PropModeReplace, (Guchar *)cmd, strlen(cmd) + 1);
+-  XFlush(display);
+-}
+-
+-void XPDFApp::remoteReload(GBool raise) {
+-  XChangeProperty(display, remoteXWin, remoteAtom, remoteAtom, 8,
+-		  PropModeReplace, raise ? (Guchar *)"L" : (Guchar *)"l", 2);
+-  XFlush(display);
+-}
+ 
+-void XPDFApp::remoteRaise() {
+-  XChangeProperty(display, remoteXWin, remoteAtom, remoteAtom, 8,
+-		  PropModeReplace, (Guchar *)"r", 2);
+-  XFlush(display);
+-}
+-
+-void XPDFApp::remoteQuit() {
+-  XChangeProperty(display, remoteXWin, remoteAtom, remoteAtom, 8,
+-		  PropModeReplace, (Guchar *)"q", 2);
+-  XFlush(display);
+-}
+-
+-void XPDFApp::remoteMsgCbk(Widget widget, XtPointer ptr,
+-			   XEvent *event, Boolean *cont) {
+-  XPDFApp *app = (XPDFApp *)ptr;
+-  char *cmd;
+-  Atom type;
+-  int format;
+-  Gulong size, remain;
+-  char *p, *q;
+-  GString *fileName;
+-  int page;
+-  GString *destName;
+-
+-  if (event->xproperty.atom != app->remoteAtom) {
+-    *cont = True;
+-    return;
+-  }
+-  *cont = False;
+-
+-  // get command
+-  if (XGetWindowProperty(app->display, XtWindow(app->remoteWin),
+-			 app->remoteAtom, 0, remoteCmdSize/4,
+-			 True, app->remoteAtom,
+-			 &type, &format, &size, &remain,
+-			 (Guchar **)&cmd) != Success) {
+-    return;
+-  }
+-  if (size == 0) {
+-    return;
+-  }
+-
+-  // display file / page
+-  if (cmd[0] == 'd' || cmd[0] == 'D') {
+-    p = cmd + 2;
+-    q = strchr(p, ' ');
+-    if (!q) {
+-      return;
+-    }
+-    *q++ = '\0';
+-    page = 1;
+-    destName = NULL;
+-    if (*p == '+') {
+-      destName = new GString(p + 1);
+-    } else {
+-      page = atoi(p);
+-    }
+-    if (q) {
+-      fileName = new GString(q);
+-      app->remoteViewer->open(fileName, page, destName);
+-      delete fileName;
+-    }
+-    if (destName) {
+-      delete destName;
+-    }
+-
+-  // reload
+-  } else if (cmd[0] == 'l' || cmd[0] == 'L') {
+-    app->remoteViewer->reloadFile();
+-
+-  // quit
+-  } else if (cmd[0] == 'q') {
+-    app->quit();
+-  }
+-
+-  // raise window
+-  if (cmd[0] == 'D' || cmd[0] == 'L' || cmd[0] == 'r'){
+-    XMapRaised(app->display, XtWindow(app->remoteWin));
+-    XFlush(app->display);
+-  }
+-
+-  XFree((XPointer)cmd);
+-}
+diff -ru xpdf-3.00pl3/xpdf/XPDFApp.h xpdf/xpdf/XPDFApp.h
+--- xpdf-3.00pl3/xpdf/XPDFApp.h	2006-09-11 04:11:50.000000000 +0200
++++ xpdf/xpdf/XPDFApp.h	2006-09-11 02:57:16.000000000 +0200
+@@ -15,9 +15,8 @@
+ #pragma interface
+ #endif
+ 
+-#define Object XtObject
+-#include <Xm/XmAll.h>
+-#undef Object
++#include <util/application.h>
++#include <storage/registrar.h>
+ #include "gtypes.h"
+ #include "SplashTypes.h"
+ 
+@@ -50,15 +49,6 @@
+ 
+   void run();
+ 
+-  //----- remote server
+-  void setRemoteName(char *remoteName);
+-  GBool remoteServerRunning();
+-  void remoteOpen(GString *fileName, int page, GBool raise);
+-  void remoteOpenAtDest(GString *fileName, GString *dest, GBool raise);
+-  void remoteReload(GBool raise);
+-  void remoteRaise();
+-  void remoteQuit();
+-
+   //----- resource/option values
+   GString *getGeometry() { return geometry; }
+   GString *getTitle() { return title; }
+@@ -72,25 +62,30 @@
+   void setFullScreen(GBool fullScreenA) { fullScreen = fullScreenA; }
+   GBool getFullScreen() { return fullScreen; }
+ 
+-  XtAppContext getAppContext() { return appContext; }
+-  Widget getAppShell() { return appShell; }
++  os::Application* getAppContext() { return appContext; }
++  //Widget getAppShell() { return appShell; }
+ 
+ private:
+ 
+   void getResources();
++#if 0
+   static void remoteMsgCbk(Widget widget, XtPointer ptr,
+ 			   XEvent *event, Boolean *cont);
+ 
+   Display *display;
+   int screenNum;
++
+   XtAppContext appContext;
+   Widget appShell;
++#endif
++  os::Application* appContext;
++  os::RegistrarManager* m_pcManager;
+   GList *viewers;		// [XPDFViewer]
+ 
+-  Atom remoteAtom;
+-  Window remoteXWin;
+-  XPDFViewer *remoteViewer;
+-  Widget remoteWin;
++ // Atom remoteAtom;
++  //Window remoteXWin;
++  //XPDFViewer *remoteViewer;
++ // Widget remoteWin;
+ 
+   //----- resource/option values
+   GString *geometry;
+diff -ru xpdf-3.00pl3/xpdf/xpdf.cc xpdf/xpdf/xpdf.cc
+--- xpdf-3.00pl3/xpdf/xpdf.cc	2006-09-11 04:11:49.000000000 +0200
++++ xpdf/xpdf/xpdf.cc	2006-09-11 02:57:16.000000000 +0200
+@@ -240,6 +240,7 @@
+   }
+ 
+   // handle remote server stuff
++#if 0
+   if (remoteName[5]) {
+     app->setRemoteName(remoteName);
+     if (app->remoteServerRunning()) {
+@@ -262,10 +263,12 @@
+       goto done2;
+     }
+   }
+-
++#endif
+   // set options
+   app->setFullScreen(fullScreen);
+ 
++
++
+   // check for password string(s)
+   ownerPasswordStr = ownerPassword[0] != '\001' ? new GString(ownerPassword)
+                                                 : (GString *)NULL;
+@@ -280,11 +283,14 @@
+       goto done2;
+     }
+   } else {
++
+     if (!app->open(fileName, pg, ownerPasswordStr, userPasswordStr)) {
++
+       exitCode = 1;
+       goto done2;
+     }
+   }
++
+   app->run();
+ 
+   exitCode = 0;
+diff -ru xpdf-3.00pl3/xpdf/XPDFCore.cc xpdf/xpdf/XPDFCore.cc
+--- xpdf-3.00pl3/xpdf/XPDFCore.cc	2006-09-11 04:11:49.000000000 +0200
++++ xpdf/xpdf/XPDFCore.cc	2006-09-11 02:57:16.000000000 +0200
+@@ -12,8 +12,6 @@
+ #pragma implementation
+ #endif
+ 
+-#include <X11/keysym.h>
+-#include <X11/cursorfont.h>
+ #include <string.h>
+ #include "gmem.h"
+ #include "GString.h"
+@@ -29,61 +27,6 @@
+ #include "XSplashOutputDev.h"
+ #include "XPDFCore.h"
+ 
+-// these macro defns conflict with xpdf's Object class
+-#ifdef LESSTIF_VERSION
+-#undef XtDisplay
+-#undef XtScreen
+-#undef XtWindow
+-#undef XtParent
+-#undef XtIsRealized
+-#endif
+-
+-// hack around old X includes which are missing these symbols
+-#ifndef XK_Page_Up
+-#define XK_Page_Up              0xFF55
+-#endif
+-#ifndef XK_Page_Down
+-#define XK_Page_Down            0xFF56
+-#endif
+-#ifndef XK_KP_Home
+-#define XK_KP_Home              0xFF95
+-#endif
+-#ifndef XK_KP_Left
+-#define XK_KP_Left              0xFF96
+-#endif
+-#ifndef XK_KP_Up
+-#define XK_KP_Up                0xFF97
+-#endif
+-#ifndef XK_KP_Right
+-#define XK_KP_Right             0xFF98
+-#endif
+-#ifndef XK_KP_Down
+-#define XK_KP_Down              0xFF99
+-#endif
+-#ifndef XK_KP_Prior
+-#define XK_KP_Prior             0xFF9A
+-#endif
+-#ifndef XK_KP_Page_Up
+-#define XK_KP_Page_Up           0xFF9A
+-#endif
+-#ifndef XK_KP_Next
+-#define XK_KP_Next              0xFF9B
+-#endif
+-#ifndef XK_KP_Page_Down
+-#define XK_KP_Page_Down         0xFF9B
+-#endif
+-#ifndef XK_KP_End
+-#define XK_KP_End               0xFF9C
+-#endif
+-#ifndef XK_KP_Begin
+-#define XK_KP_Begin             0xFF9D
+-#endif
+-#ifndef XK_KP_Insert
+-#define XK_KP_Insert            0xFF9E
+-#endif
+-#ifndef XK_KP_Delete
+-#define XK_KP_Delete            0xFF9F
+-#endif
+ 
+ //------------------------------------------------------------------------
+ 
+@@ -95,13 +38,106 @@
+ 
+ GString *XPDFCore::currentSelection = NULL;
+ XPDFCore *XPDFCore::currentSelectionOwner = NULL;
+-Atom XPDFCore::targetsAtom;
++
++
++class XPDFView : public os::View
++{
++public:
++	XPDFView( XPDFCore* pcCore, const os::Rect& cFrame, const os::String& cTitle,
++	  uint32 nResizeMask ) : os::View( cFrame, cTitle, nResizeMask, os::WID_WILL_DRAW | os::WID_FULL_UPDATE_ON_RESIZE )
++	{
++		m_pcCore = pcCore;
++		m_pcImage = new os::Bitmap( (int)cFrame.Width() + 1, (int)cFrame.Height() + 1, os::CS_RGB32 );
++	}
++	~XPDFView()
++	{
++		delete( m_pcImage );
++	}
++	void Paint( const os::Rect& cUpdateRect )
++	{
++		os::Rect cUpdate = cUpdateRect;
++		m_pcCore->redrawRectangle( (int)cUpdate.left, (int)cUpdate.top, (int)cUpdate.Width() + 1, (int)cUpdate.Height() + 1 );
++	}
++	void FrameSized( const os::Point& cDelta )
++	{
++		delete( m_pcImage );
++		m_pcImage = new os::Bitmap( (int)GetBounds().Width() + 1, (int)GetBounds().Height() + 1, os::CS_RGB32 );
++		m_pcCore->resizeCbk( m_pcCore );
++		os::View::FrameSized( cDelta );
++	}
++	void MouseMove( const os::Point& cNewPos, int nCode, uint32 nButtons, os::Message* pcData )
++	{
++		m_pcCore->inputCbk( m_pcCore, os::M_MOUSE_MOVED, cNewPos- os::Point( m_pcCore->getScrollX(), m_pcCore->getScrollY() ), nButtons );
++		os::View::MouseMove( cNewPos , nCode, nButtons, pcData );
++	}
++    void MouseDown( const os::Point& cPosition, uint32 nButtons )
++	{
++		MakeFocus();
++		m_pcCore->inputCbk( m_pcCore, os::M_MOUSE_DOWN, cPosition - os::Point( m_pcCore->getScrollX(), m_pcCore->getScrollY() ), nButtons );
++		os::View::MouseDown( cPosition, nButtons );
++	}
++    void MouseUp( const os::Point& cPosition, uint32 nButtons, os::Message* pcData )
++	{
++		m_pcCore->inputCbk( m_pcCore, os::M_MOUSE_UP, cPosition - os::Point( m_pcCore->getScrollX(), m_pcCore->getScrollY() ), nButtons );
++		os::View::MouseUp( cPosition, nButtons, pcData );
++	}
++	void WheelMoved( const os::Point& cDelta )
++	{
++		if( cDelta.y > 0 )
++			m_pcCore->scrollDown( 1 );
++		else
++			m_pcCore->scrollUp( 1 );
++		os::View::WheelMoved( cDelta );
++	}
++	void KeyDown( const char* pzString, const char* pzRawString, uint32 nQualifiers )
++	{
++		m_pcCore->keyPress( pzString, pzRawString, nQualifiers );
++		os::View::KeyDown( pzString, pzRawString, nQualifiers );
++	}
++	void HandleMessage( os::Message* pcMessage )
++	{
++		switch( pcMessage->GetCode() )
++		{
++			case MSG_SCROLLBAR_H:
++			{
++				os::Variant cVar;
++				if( pcMessage->FindVariant( "value", &cVar ) == 0 )
++				{
++					m_pcCore->scrollTo( cVar.AsInt32(), m_pcCore->getScrollY() );
++				}
++			}
++			break;
++			case MSG_SCROLLBAR_V:
++			{
++				os::Variant cVar;
++				if( pcMessage->FindVariant( "value", &cVar ) == 0 )
++				{
++					m_pcCore->scrollTo( m_pcCore->getScrollX(), cVar.AsInt32() );
++				}
++			}
++			break;
++			default:
++				os::View::HandleMessage( pcMessage );
++		}
++	}
++	os::Bitmap* GetBitmap()
++	{
++		return( m_pcImage );
++	}
++	void Redraw()
++	{
++		m_pcCore->outputDevRedrawCbk( m_pcCore );
++	}
++private:
++	os::Bitmap* m_pcImage;
++	XPDFCore* m_pcCore;
++};
+ 
+ //------------------------------------------------------------------------
+ // XPDFCore
+ //------------------------------------------------------------------------
+ 
+-XPDFCore::XPDFCore(Widget shellA, Widget parentWidgetA,
++XPDFCore::XPDFCore(os::Window* shellA, os::View* parentWidgetA,
+ 		   SplashRGB8 paperColorA, GBool fullScreenA,
+ 		   GBool reverseVideo, GBool installCmap, int rgbCubeSize) {
+   GString *initialZoom;
+@@ -110,23 +146,15 @@
+ 
+   shell = shellA;
+   parentWidget = parentWidgetA;
+-  display = XtDisplay(parentWidget);
+-  screenNum = XScreenNumberOfScreen(XtScreen(parentWidget));
+-  targetsAtom = XInternAtom(display, "TARGETS", False);
+-
++ 
+   paperColor = paperColorA;
+   fullScreen = fullScreenA;
+ 
+-  // for some reason, querying XmNvisual doesn't work (even if done
+-  // after the window is mapped)
+-  visual = DefaultVisual(display, screenNum);
+-  XtVaGetValues(shell, XmNcolormap, &colormap, NULL);
+-
+   scrolledWin = NULL;
+   hScrollBar = NULL;
+   vScrollBar = NULL;
+-  drawAreaFrame = NULL;
+-  drawArea = NULL;
++  //drawAreaFrame = NULL;
++  //drawArea = NULL;
+   out = NULL;
+ 
+   doc = NULL;
+@@ -158,12 +186,6 @@
+   panning = gFalse;
+ 
+ 
+-  updateCbk = NULL;
+-  actionCbk = NULL;
+-  keyPressCbk = NULL;
+-  mouseCbk = NULL;
+-  reqPasswordCbk = NULL;
+-
+   // no history yet
+   historyCur = xpdfHistorySize - 1;
+   historyBLen = historyFLen = 0;
+@@ -180,7 +202,7 @@
+ 
+   // create the OutputDev
+   paperColor2.rgb8 = paperColor;
+-  out = new XSplashOutputDev(display, screenNum, visual, colormap,
++  out = new XSplashOutputDev(shellA,
+ 			     reverseVideo, paperColor2,
+ 			     installCmap, rgbCubeSize, gTrue,
+ 			     &outputDevRedrawCbk, this);
+@@ -189,10 +211,11 @@
+ 
+ XPDFCore::~XPDFCore() {
+   int i;
+-
++	
+   if (out) {
+     delete out;
+   }
++
+   if (doc) {
+     delete doc;
+   }
+@@ -206,12 +229,8 @@
+       delete history[i].fileName;
+     }
+   }
+-  if (drawAreaGC) {
+-    XFreeGC(display, drawAreaGC);
+-  }
+-  if (scrolledWin) {
+-    XtDestroyWidget(scrolledWin);
+-  }
++  
++#ifndef __SYLLABLE__
+   if (busyCursor) {
+     XFreeCursor(display, busyCursor);
+   }
+@@ -221,6 +240,7 @@
+   if (selectCursor) {
+     XFreeCursor(display, selectCursor);
+   }
++#endif
+ }
+ 
+ //------------------------------------------------------------------------
+@@ -235,25 +255,28 @@
+   int err;
+ 
+   // busy cursor
+-  setCursor(busyCursor);
++  //setCursor(busyCursor);
+ 
+   // open the PDF file
+   newDoc = new PDFDoc(fileName->copy(), ownerPassword, userPassword);
+   if (!newDoc->isOk()) {
+     err = newDoc->getErrorCode();
+     delete newDoc;
+-    if (err != errEncrypted || !reqPasswordCbk) {
+-      setCursor(None);
++    if (err != errEncrypted /*|| !reqPasswordCbk*/) {
++      //setCursor(None);
+       return err;
+     }
+ 
+     // try requesting a password
+     again = ownerPassword != NULL || userPassword != NULL;
++	
+     while (1) {
++#ifndef __SYLLABLE__
+       if (!(password = (*reqPasswordCbk)(reqPasswordCbkData, again))) {
+ 	setCursor(None);
+ 	return errEncrypted;
+       }
++#endif
+       newDoc = new PDFDoc(fileName->copy(), password, password);
+       if (newDoc->isOk()) {
+ 	break;
+@@ -261,7 +284,7 @@
+       err = newDoc->getErrorCode();
+       delete newDoc;
+       if (err != errEncrypted) {
+-	setCursor(None);
++	//setCursor(None);
+ 	return err;
+       }
+       again = gTrue;
+@@ -284,13 +307,15 @@
+   modTime = getModTime(doc->getFileName()->getCString());
+ 
+   // update the parent window
++
+   if (updateCbk) {
+     (*updateCbk)(updateCbkData, doc->getFileName(), -1,
+ 		 doc->getNumPages(), NULL);
+   }
+ 
++  static_cast<XPDFView*>(scrolledWin)->Redraw();
+   // back to regular cursor
+-  setCursor(None);
++  //setCursor(None);
+ 
+   return errNone;
+ }
+@@ -303,25 +328,27 @@
+   int err;
+ 
+   // busy cursor
+-  setCursor(busyCursor);
++  //setCursor(busyCursor);
+ 
+   // open the PDF file
+   newDoc = new PDFDoc(stream, ownerPassword, userPassword);
+   if (!newDoc->isOk()) {
+     err = newDoc->getErrorCode();
+     delete newDoc;
+-    if (err != errEncrypted || !reqPasswordCbk) {
+-      setCursor(None);
++    if (err != errEncrypted /*|| !reqPasswordCbk*/) {
++     //setCursor(None);
+       return err;
+     }
+ 
+     // try requesting a password
+     again = ownerPassword != NULL || userPassword != NULL;
+     while (1) {
++#ifndef __SYLLABLE__
+       if (!(password = (*reqPasswordCbk)(reqPasswordCbkData, again))) {
+ 	setCursor(None);
+ 	return errEncrypted;
+       }
++#endif
+       newDoc = new PDFDoc(stream, password, password);
+       if (newDoc->isOk()) {
+ 	break;
+@@ -329,7 +356,7 @@
+       err = newDoc->getErrorCode();
+       delete newDoc;
+       if (err != errEncrypted) {
+-	setCursor(None);
++	//setCursor(None);
+ 	return err;
+       }
+       again = gTrue;
+@@ -351,26 +378,31 @@
+   // save the modification time
+   modTime = getModTime(doc->getFileName()->getCString());
+ 
++
+   // update the parent window
+   if (updateCbk) {
+     (*updateCbk)(updateCbkData, doc->getFileName(), -1,
+ 		 doc->getNumPages(), NULL);
+   }
+ 
++  static_cast<XPDFView*>(scrolledWin)->Redraw();
+   // back to regular cursor
+-  setCursor(None);
++  //setCursor(None);
+ 
+   return errNone;
+ }
+ 
+ void XPDFCore::resizeToPage(int pg) {
+-  Dimension width, height;
++  float width, height;
+   double width1, height1;
+-  Dimension topW, topH, topBorder, daW, daH;
+-  Dimension displayW, displayH;
++  float topW, topH, topBorder, daW, daH;
++  float displayW, displayH;
++
++  os::Desktop cDesktop;
++
++  displayW = cDesktop.GetResolution().x;
++  displayH = cDesktop.GetResolution().y;
+ 
+-  displayW = DisplayWidth(display, screenNum);
+-  displayH = DisplayHeight(display, screenNum);
+   if (fullScreen) {
+     width = displayW;
+     height = displayH;
+@@ -387,11 +419,11 @@
+       height1 = doc->getPageHeight(pg);
+     }
+     if (zoom == zoomPage || zoom == zoomWidth) {
+-      width = (Dimension)(width1 * 0.01 * defZoom + 0.5);
+-      height = (Dimension)(height1 * 0.01 * defZoom + 0.5);
++      width = (float)(width1 * 0.01 * defZoom + 0.5);
++      height = (float)(height1 * 0.01 * defZoom + 0.5);
+     } else {
+-      width = (Dimension)(width1 * 0.01 * zoom + 0.5);
+-      height = (Dimension)(height1 * 0.01 * zoom + 0.5);
++      width = (float)(width1 * 0.01 * zoom + 0.5);
++      height = (float)(height1 * 0.01 * zoom + 0.5);
+     }
+     if (width > displayW - 100) {
+       width = displayW - 100;
+@@ -401,15 +433,15 @@
+     }
+   }
+ 
+-  if (XtIsRealized(shell)) {
+-    XtVaGetValues(shell, XmNwidth, &topW, XmNheight, &topH,
+-		  XmNborderWidth, &topBorder, NULL);
+-    XtVaGetValues(drawArea, XmNwidth, &daW, XmNheight, &daH, NULL);
+-    XtVaSetValues(shell, XmNwidth, width + (topW - daW),
+-		  XmNheight, height + (topH - daH), NULL);
+-  } else {
+-    XtVaSetValues(drawArea, XmNwidth, width, XmNheight, height, NULL);
+-  }
++
++  os::Rect cFrame = shell->GetFrame();
++  if( fullScreen )
++  {
++	cFrame.left = cFrame.top = 0;
++  }
++  cFrame.right = cFrame.left + width - 1 + ( fullScreen ? 0 : ( vScrollBar->GetBounds().Width() + 1 ) );
++  cFrame.bottom = cFrame.top + height - 1 + ( fullScreen ? 0 : ( hScrollBar->GetBounds().Height() + 1 ) );
++  shell->SetFrame( cFrame );
+ }
+ 
+ void XPDFCore::clear() {
+@@ -451,7 +483,7 @@
+   }
+ 
+   // busy cursor
+-  setCursor(busyCursor);
++  //setCursor(busyCursor);
+ 
+ 
+   // check for changes to the file
+@@ -541,12 +573,14 @@
+   }
+ 
+   // update the parent window
+-  if (updateCbk) {
++
++if (updateCbk) {
+     (*updateCbk)(updateCbkData, NULL, page, -1, "");
+   }
+ 
++  static_cast<XPDFView*>(scrolledWin)->Redraw();
+   // back to regular cursor
+-  setCursor(None);
++  //setCursor(None);
+ }
+ 
+ void XPDFCore::displayDest(LinkDest *dest, double zoomA, int rotateA,
+@@ -621,7 +655,7 @@
+     }
+     displayPage(pg, zoom, rotate, top, gTrue);
+   } else {
+-    XBell(display, 0);
++    //XBell(display, 0);
+   }
+ }
+ 
+@@ -644,13 +678,13 @@
+     }
+     displayPage(pg, zoom, rotate, top, gTrue);
+   } else {
+-    XBell(display, 0);
++    //XBell(display, 0);
+   }
+ }
+ 
+ void XPDFCore::goForward() {
+   if (historyFLen == 0) {
+-    XBell(display, 0);
++    //XBell(display, 0);
+     return;
+   }
+   if (++historyCur == xpdfHistorySize) {
+@@ -660,7 +694,7 @@
+   ++historyBLen;
+   if (!doc || history[historyCur].fileName->cmp(doc->getFileName()) != 0) {
+     if (loadFile(history[historyCur].fileName) != errNone) {
+-      XBell(display, 0);
++      //XBell(display, 0);
+       return;
+     }
+   }
+@@ -669,7 +703,7 @@
+ 
+ void XPDFCore::goBackward() {
+   if (historyBLen <= 1) {
+-    XBell(display, 0);
++    //XBell(display, 0);
+     return;
+   }
+   if (--historyCur < 0) {
+@@ -679,7 +713,7 @@
+   ++historyFLen;
+   if (!doc || history[historyCur].fileName->cmp(doc->getFileName()) != 0) {
+     if (loadFile(history[historyCur].fileName) != errNone) {
+-      XBell(display, 0);
++      //XBell(display, 0);
+       return;
+     }
+   }
+@@ -724,6 +758,8 @@
+ 
+   needRedraw = gFalse;
+ 
++  //printf( "XPDFCore::scrollTo() %i %i\n", out->getBitmapWidth(), out->getBitmapHeight() );
++
+   maxPos = out ? out->getBitmapWidth() : 1;
+   if (maxPos < drawAreaWidth) {
+     maxPos = drawAreaWidth;
+@@ -737,8 +773,9 @@
+   }
+   if (scrollX != pos) {
+     scrollX = pos;
+-    XmScrollBarSetValues(hScrollBar, scrollX, drawAreaWidth, 16,
+-			 drawAreaWidth, False);
++    hScrollBar->SetValue( scrollX, false );
++//	XmScrollBarSetValues(hScrollBar, scrollX, drawAreaWidth, 16,
++	//		 drawAreaWidth, False);
+     needRedraw = gTrue;
+   }
+ 
+@@ -755,14 +792,20 @@
+   }
+   if (scrollY != pos) {
+     scrollY = pos;
+-    XmScrollBarSetValues(vScrollBar, scrollY, drawAreaHeight, 16,
+-			 drawAreaHeight, False);
++	vScrollBar->SetValue( scrollY, false );
++    //XmScrollBarSetValues(vScrollBar, scrollY, drawAreaHeight, 16,
++	//		 drawAreaHeight, False);
+     needRedraw = gTrue;
+   }
+ 
+-  if (needRedraw) {
++  scrolledWin->GetWindow()->Lock();
++  scrolledWin->ScrollTo( -scrollX, -scrollY );
++  scrolledWin->Flush();
++  scrolledWin->GetWindow()->Unlock();
++
++/*  if (needRedraw) {
+     redrawRectangle(scrollX, scrollY, drawAreaWidth, drawAreaHeight);
+-  }
++  }*/
+ }
+ 
+ //------------------------------------------------------------------------
+@@ -950,10 +993,21 @@
+   currentSelection = out->getText(selectXMin, selectYMin,
+ 				  selectXMax, selectYMax);
+   currentSelectionOwner = this;
+-  XtOwnSelection(drawArea, XA_PRIMARY, XtLastTimestampProcessed(display),
+-		 &convertSelectionCbk, NULL, NULL);
++
++
++  
++  //XtOwnSelection(drawArea, XA_PRIMARY, XtLastTimestampProcessed(display),
++	//	 &convertSelectionCbk, NULL, NULL);
++}
++
++#ifdef __SYLLABLE__
++GString*  XPDFCore::getCurrentSelection()
++{
++	return( currentSelection );
+ }
++#endif
+ 
++#ifndef __SYLLABLE__
+ Boolean XPDFCore::convertSelectionCbk(Widget widget, Atom *selection,
+ 				      Atom *target, Atom *type,
+ 				      XtPointer *value, unsigned long *length,
+@@ -984,7 +1038,7 @@
+ 
+   return False;
+ }
+-
++#endif
+ GBool XPDFCore::getSelection(int *xMin, int *yMin, int *xMax, int *yMax) {
+   if (selectXMin >= selectXMax || selectYMin >= selectYMax) {
+     return gFalse;
+@@ -1175,6 +1229,7 @@
+     } else if (!actionName->cmp("GoForward")) {
+       goForward();
+     } else if (!actionName->cmp("Quit")) {
++	  shell->PostMessage( os::M_QUIT, shell );
+       if (actionCbk) {
+ 	(*actionCbk)(actionCbkData, "Quit");
+       }
+@@ -1305,12 +1360,12 @@
+ 
+   // check for zero-length string
+   if (!s[0]) {
+-    XBell(display, 0);
++    //XBell(display, 0);
+     return;
+   }
+ 
+   // set cursor to watch
+-  setCursor(busyCursor);
++ // setCursor(busyCursor);
+ 
+   // convert to Unicode
+ #if 1 //~ should do something more intelligent here
+@@ -1367,7 +1422,7 @@
+   }
+ 
+   // not found
+-  XBell(display, 0);
++  //XBell(display, 0);
+   goto done;
+ 
+   // found on a different page
+@@ -1391,7 +1446,7 @@
+   gfree(u);
+ 
+   // reset cursors to normal
+-  setCursor(None);
++  //setCursor(None);
+ }
+ 
+ //------------------------------------------------------------------------
+@@ -1399,11 +1454,12 @@
+ //------------------------------------------------------------------------
+ 
+ void XPDFCore::setBusyCursor(GBool busy) {
+-  setCursor(busy ? busyCursor : None);
++  //setCursor(busy ? busyCursor : None);
+ }
+ 
+ void XPDFCore::takeFocus() {
+-  XmProcessTraversal(drawArea, XmTRAVERSE_CURRENT);
++  //scrolledWin->MakeFocus();
++  //XmProcessTraversal(drawArea, XmTRAVERSE_CURRENT);
+ }
+ 
+ //------------------------------------------------------------------------
+@@ -1411,86 +1467,47 @@
+ //------------------------------------------------------------------------
+ 
+ void XPDFCore::initWindow() {
+-  Arg args[20];
+   int n;
+ 
++  
++#ifndef __SYLLABLE__
+   // create the cursors
+   busyCursor = XCreateFontCursor(display, XC_watch);
+   linkCursor = XCreateFontCursor(display, XC_hand2);
+   selectCursor = XCreateFontCursor(display, XC_cross);
+   currentCursor = 0;
++#endif
++
+ 
+   // create the scrolled window and scrollbars
+-  n = 0;
+-  XtSetArg(args[n], XmNscrollingPolicy, XmAPPLICATION_DEFINED); ++n;
+-  XtSetArg(args[n], XmNvisualPolicy, XmVARIABLE); ++n;
+-  scrolledWin = XmCreateScrolledWindow(parentWidget, "scroll", args, n);
+-  XtManageChild(scrolledWin);
+-  n = 0;
+-  XtSetArg(args[n], XmNorientation, XmHORIZONTAL); ++n;
+-  XtSetArg(args[n], XmNminimum, 0); ++n;
+-  XtSetArg(args[n], XmNmaximum, 1); ++n;
+-  XtSetArg(args[n], XmNsliderSize, 1); ++n;
+-  XtSetArg(args[n], XmNvalue, 0); ++n;
+-  XtSetArg(args[n], XmNincrement, 1); ++n;
+-  XtSetArg(args[n], XmNpageIncrement, 1); ++n;
+-  hScrollBar = XmCreateScrollBar(scrolledWin, "hScrollBar", args, n);
+-  XtManageChild(hScrollBar);
+-  XtAddCallback(hScrollBar, XmNvalueChangedCallback,
+-		&hScrollChangeCbk, (XtPointer)this);
+-#ifndef DISABLE_SMOOTH_SCROLL
+-  XtAddCallback(hScrollBar, XmNdragCallback,
+-		&hScrollDragCbk, (XtPointer)this);
+-#endif
+-  n = 0;
+-  XtSetArg(args[n], XmNorientation, XmVERTICAL); ++n;
+-  XtSetArg(args[n], XmNminimum, 0); ++n;
+-  XtSetArg(args[n], XmNmaximum, 1); ++n;
+-  XtSetArg(args[n], XmNsliderSize, 1); ++n;
+-  XtSetArg(args[n], XmNvalue, 0); ++n;
+-  XtSetArg(args[n], XmNincrement, 1); ++n;
+-  XtSetArg(args[n], XmNpageIncrement, 1); ++n;
+-  vScrollBar = XmCreateScrollBar(scrolledWin, "vScrollBar", args, n);
+-  XtManageChild(vScrollBar);
+-  XtAddCallback(vScrollBar, XmNvalueChangedCallback,
+-		&vScrollChangeCbk, (XtPointer)this);
+-#ifndef DISABLE_SMOOTH_SCROLL
+-  XtAddCallback(vScrollBar, XmNdragCallback,
+-		&vScrollDragCbk, (XtPointer)this);
+-#endif
++hScrollBar = new os::ScrollBar( os::Rect(), "xpdf_h_scroll", new os::Message( MSG_SCROLLBAR_H ), 0, 1, os::HORIZONTAL, os::CF_FOLLOW_LEFT | os::CF_FOLLOW_RIGHT | os::CF_FOLLOW_BOTTOM );
++os::Rect cScrollFrame = parentWidget->GetBounds();
++cScrollFrame.top = cScrollFrame.bottom - hScrollBar->GetPreferredSize( false ).y;
++hScrollBar->SetFrame( cScrollFrame );
++parentWidget->AddChild( hScrollBar );
++
++vScrollBar = new os::ScrollBar( os::Rect(), "xpdf_v_scroll", new os::Message( MSG_SCROLLBAR_V ), 0, 1, os::VERTICAL, os::CF_FOLLOW_TOP | os::CF_FOLLOW_RIGHT | os::CF_FOLLOW_BOTTOM );
++cScrollFrame.bottom = cScrollFrame.top;
++cScrollFrame.top = 0;
++cScrollFrame.left = cScrollFrame.right - vScrollBar->GetPreferredSize( false ).x;
++vScrollBar->SetFrame( cScrollFrame );
++parentWidget->AddChild( vScrollBar );
++
++cScrollFrame.right = cScrollFrame.left - 1;
++cScrollFrame.left = 0;
++cScrollFrame.bottom -= 1;
++scrolledWin = new XPDFView( this, cScrollFrame, "xpdf_view", os::CF_FOLLOW_ALL );
++parentWidget->AddChild( scrolledWin );
++hScrollBar->SetTarget( scrolledWin );
++vScrollBar->SetTarget( scrolledWin );
++scrolledWin->MakeFocus();
+ 
+-  // create the drawing area
+-  n = 0;
+-  XtSetArg(args[n], XmNshadowType, XmSHADOW_IN); ++n;
+-  XtSetArg(args[n], XmNmarginWidth, 0); ++n;
+-  XtSetArg(args[n], XmNmarginHeight, 0); ++n;
+-  if (fullScreen) {
+-    XtSetArg(args[n], XmNshadowThickness, 0); ++n;
+-  }
+-  drawAreaFrame = XmCreateFrame(scrolledWin, "drawAreaFrame", args, n);
+-  XtManageChild(drawAreaFrame);
+-  n = 0;
+-  XtSetArg(args[n], XmNresizePolicy, XmRESIZE_ANY); ++n;
+-  XtSetArg(args[n], XmNwidth, 700); ++n;
+-  XtSetArg(args[n], XmNheight, 500); ++n;
+-  drawArea = XmCreateDrawingArea(drawAreaFrame, "drawArea", args, n);
+-  XtManageChild(drawArea);
+-  XtAddCallback(drawArea, XmNresizeCallback, &resizeCbk, (XtPointer)this);
+-  XtAddCallback(drawArea, XmNexposeCallback, &redrawCbk, (XtPointer)this);
+-  XtAddCallback(drawArea, XmNinputCallback, &inputCbk, (XtPointer)this);
+-  resizeCbk(drawArea, this, NULL);
+-
+-  // set up mouse motion translations
+-  XtOverrideTranslations(drawArea, XtParseTranslationTable(
+-      "<Btn1Down>:DrawingAreaInput()\n"
+-      "<Btn1Up>:DrawingAreaInput()\n"
+-      "<Btn1Motion>:DrawingAreaInput()\n"
+-      "<Motion>:DrawingAreaInput()"));
++drawAreaWidth = (int)scrolledWin->GetBounds().Width() + 1;
++drawAreaHeight = (int)scrolledWin->GetBounds().Height() + 1;
+ 
+-  // can't create a GC until the window gets mapped
+-  drawAreaGC = NULL;
+ }
+ 
++#ifndef __SYLLABLE__
+ void XPDFCore::hScrollChangeCbk(Widget widget, XtPointer ptr,
+ 			     XtPointer callData) {
+   XPDFCore *core = (XPDFCore *)ptr;
+@@ -1522,20 +1539,17 @@
+ 
+   core->scrollTo(core->scrollX, data->value);
+ }
+-
+-void XPDFCore::resizeCbk(Widget widget, XtPointer ptr, XtPointer callData) {
+-  XPDFCore *core = (XPDFCore *)ptr;
+-  Arg args[2];
+-  int n;
+-  Dimension w, h;
++#endif
++void XPDFCore::resizeCbk(XPDFCore* core) {
++  int w, h;
+   int oldScrollX, oldScrollY;
+ 
+-  n = 0;
+-  XtSetArg(args[n], XmNwidth, &w); ++n;
+-  XtSetArg(args[n], XmNheight, &h); ++n;
+-  XtGetValues(core->drawArea, args, n);
++  w = (int)core->scrolledWin->GetBounds().Width() + 1;
++  h = (int)core->scrolledWin->GetBounds().Height() + 1;
++
+   core->drawAreaWidth = (int)w;
+   core->drawAreaHeight = (int)h;
++
+   if (core->page >= 0 &&
+       (core->zoom == zoomPage || core->zoom == zoomWidth)) {
+     core->displayPage(core->page, core->zoom, core->rotate,
+@@ -1549,8 +1563,9 @@
+ 			    core->drawAreaWidth, core->drawAreaHeight);
+     }
+   }
+-}
+ 
++}
++#ifndef __SYLLABLE__
+ void XPDFCore::redrawCbk(Widget widget, XtPointer ptr, XtPointer callData) {
+   XPDFCore *core = (XPDFCore *)ptr;
+   XmDrawingAreaCallbackStruct *data = (XmDrawingAreaCallbackStruct *)callData;
+@@ -1569,7 +1584,7 @@
+   }
+   core->redrawRectangle(x, y, w, h);
+ }
+-
++#endif
+ void XPDFCore::outputDevRedrawCbk(void *data) {
+   XPDFCore *core = (XPDFCore *)data;
+ 
+@@ -1577,37 +1592,39 @@
+ 			core->drawAreaWidth, core->drawAreaHeight);
+ }
+ 
+-void XPDFCore::inputCbk(Widget widget, XtPointer ptr, XtPointer callData) {
++void XPDFCore::inputCbk(void* ptr, uint32 nMsg, os::Point cPos, uint32 nButtons) {
+   XPDFCore *core = (XPDFCore *)ptr;
+-  XmDrawingAreaCallbackStruct *data = (XmDrawingAreaCallbackStruct *)callData;
++  //XmDrawingAreaCallbackStruct *data = (XmDrawingAreaCallbackStruct *)callData;
+   LinkAction *action;
+   int mx, my;
+   double x, y;
+   char *s;
+-  KeySym key;
++  //KeySym key;
+   char buf[20];
+   int n;
+ 
+-  switch (data->event->type) {
+-  case ButtonPress:
+-    if (data->event->xbutton.button == 1) {
++  switch (nMsg/*data->event->type*/) {
++  case os::M_MOUSE_DOWN/*ButtonPress*/:
++    if (nButtons/*data->event->xbutton.button*/ == 1) {
+       core->takeFocus();
+       if (core->doc && core->doc->getNumPages() > 0) {
+ 	if (core->selectEnabled) {
+-	  mx = core->scrollX + data->event->xbutton.x;
+-	  my = core->scrollY + data->event->xbutton.y;
++	  mx = core->scrollX + (int)cPos.x/*data->event->xbutton.x*/;
++	  my = core->scrollY + (int)cPos.y/*data->event->xbutton.y*/;
+ 	  core->setSelection(mx, my, mx, my);
+-	  core->setCursor(core->selectCursor);
++	  //core->setCursor(core->selectCursor);
+ 	  core->dragging = gTrue;
+ 	}
+       }
+-    } else if (data->event->xbutton.button == 2) {
++    } else if (nButtons/*data->event->xbutton.button*/ == 2) {
+       if (!core->fullScreen) {
+ 	core->panning = gTrue;
+-	core->panMX = data->event->xbutton.x;
+-	core->panMY = data->event->xbutton.y;
++	core->panMX = (int)cPos.x/*data->event->xbutton.x*/;
++	core->panMY = (int)cPos.y/*data->event->xbutton.y*/;
+       }
+-    } else if (data->event->xbutton.button == 4) { // mouse wheel up
++    } 
++#ifndef __SYLLABLE__
++else if (data->event->xbutton.button == 4) { // mouse wheel up
+       if (core->fullScreen) {
+ 	core->gotoPrevPage(1, gTrue, gFalse);
+       } else if (core->scrollY == 0) {
+@@ -1631,20 +1648,24 @@
+       if (!core->fullScreen) {
+ 	core->scrollRight(1);
+       }
+-    } else {
++    } 
++#endif
++else {
++
+       if (*core->mouseCbk) {
+-	(*core->mouseCbk)(core->mouseCbkData, data->event);
++	(*core->mouseCbk)(core->mouseCbkData, nMsg, cPos, nButtons);
+       }
+     }
++
+     break;
+-  case ButtonRelease:
+-    if (data->event->xbutton.button == 1) {
++  case os::M_MOUSE_UP/*ButtonRelease*/:
++    if (nButtons/*data->event->xbutton.button*/ == 1) {
+       if (core->doc && core->doc->getNumPages() > 0) {
+-	mx = core->scrollX + data->event->xbutton.x;
+-	my = core->scrollY + data->event->xbutton.y;
++	mx = core->scrollX + (int)cPos.x/*data->event->xbutton.x*/;
++	my = core->scrollY + (int)cPos.y/*data->event->xbutton.y*/;
+ 	if (core->dragging) {
+ 	  core->dragging = gFalse;
+-	  core->setCursor(None);
++	  //core->setCursor(None);
+ 	  core->moveSelection(mx, my);
+ #ifndef NO_TEXT_SELECT
+ 	  if (core->selectXMin != core->selectXMax &&
+@@ -1664,24 +1685,26 @@
+ 	  }
+ 	}
+       }
+-    } else if (data->event->xbutton.button == 2) {
++    } else if (nButtons/*data->event->xbutton.button*/ == 2) {
+       core->panning = gFalse;
+     } else {
++#ifndef __SYLLABLE__
+       if (*core->mouseCbk) {
+ 	(*core->mouseCbk)(core->mouseCbkData, data->event);
+       }
++#endif
+     }
+     break;
+-  case MotionNotify:
++  case os::M_MOUSE_MOVED/*MotionNotify*/:
+     if (core->doc && core->doc->getNumPages() > 0) {
+-      mx = core->scrollX + data->event->xbutton.x;
+-      my = core->scrollY + data->event->xbutton.y;
++      mx = core->scrollX + (int)cPos.x/*data->event->xbutton.x*/;
++      my = core->scrollY + (int)cPos.y/*data->event->xbutton.y*/;
+       if (core->dragging) {
+ 	core->moveSelection(mx, my);
+       } else if (core->hyperlinksEnabled) {
+ 	core->out->cvtDevToUser(mx, my, &x, &y);
+ 	if ((action = core->doc->findLink(x, y))) {
+-	  core->setCursor(core->linkCursor);
++	  //core->setCursor(core->linkCursor);
+ 	  if (action != core->linkAction) {
+ 	    core->linkAction = action;
+ 	    if (core->updateCbk) {
+@@ -1713,7 +1736,7 @@
+ 	    }
+ 	  }
+ 	} else {
+-	  core->setCursor(None);
++//	  core->setCursor(None);
+ 	  if (core->linkAction) {
+ 	    core->linkAction = NULL;
+ 	    if (core->updateCbk) {
+@@ -1724,75 +1747,69 @@
+       }
+     }
+     if (core->panning) {
+-      core->scrollTo(core->scrollX - (data->event->xbutton.x - core->panMX),
+-		     core->scrollY - (data->event->xbutton.y - core->panMY));
+-      core->panMX = data->event->xbutton.x;
+-      core->panMY = data->event->xbutton.y;
++      core->scrollTo(core->scrollX - ((int)cPos.x/*data->event->xbutton.x*/ - core->panMX),
++		     core->scrollY - ((int)cPos.y/*data->event->xbutton.y*/ - core->panMY));
++      core->panMX = (int)cPos.x/*data->event->xbutton.x*/;
++      core->panMY = (int)cPos.y/*data->event->xbutton.y*/;
+     }
+     break;
++#ifndef __SYLLABLE__
+   case KeyPress:
+     n = XLookupString(&data->event->xkey, buf, sizeof(buf) - 1,
+ 		      &key, NULL);
+     core->keyPress(buf, key, data->event->xkey.state);
+     break;
++#endif
+   }
+ }
+ 
+-void XPDFCore::keyPress(char *s, KeySym key, Guint modifiers) {
+-  switch (key) {
+-  case XK_Home:
+-  case XK_KP_Home:
+-    if (modifiers & ControlMask) {
++void XPDFCore::keyPress(const char *s, const char* raw, uint32 modifiers) {
++  switch (raw[0]) {
++  case os::VK_HOME:
++    if (modifiers & os::QUAL_CTRL) {
+       displayPage(1, zoom, rotate, gTrue, gTrue);
+     } else if (!fullScreen) {
+       scrollTo(0, 0);
+     }
+     return;
+-  case XK_End:
+-  case XK_KP_End:
+-    if (modifiers & ControlMask) {
++  case os::VK_END:
++    if (modifiers & os::QUAL_CTRL) {
+       displayPage(doc->getNumPages(), zoom, rotate, gTrue, gTrue);
+     } else if (!fullScreen) {
+       scrollTo(out->getBitmapWidth() - drawAreaWidth,
+ 	       out->getBitmapHeight() - drawAreaHeight);
+     }
+     return;
+-  case XK_Page_Up:
+-  case XK_KP_Page_Up:
++  case os::VK_PAGE_UP:
+     if (fullScreen) {
+       gotoPrevPage(1, gTrue, gFalse);
+     } else {
+       scrollPageUp();
+     }
+     return;
+-  case XK_Page_Down:
+-  case XK_KP_Page_Down:
++  case os::VK_PAGE_DOWN:
+     if (fullScreen) {
+       gotoNextPage(1, gTrue);
+     } else {
+       scrollPageDown();
+     }
+     return;
+-  case XK_Left:
+-  case XK_KP_Left:
++ case os::VK_LEFT_ARROW:
+     if (!fullScreen) {
+       scrollLeft();
+     }
+     return;
+-  case XK_Right:
+-  case XK_KP_Right:
++  case os::VK_RIGHT_ARROW:
+     if (!fullScreen) {
+       scrollRight();
+     }
+     return;
+-  case XK_Up:
+-  case XK_KP_Up:
++ case os::VK_UP_ARROW:
+     if (!fullScreen) {
+       scrollUp();
+     }
+     return;
+-  case XK_Down:
+-  case XK_KP_Down:
++ case os::VK_DOWN_ARROW:
+     if (!fullScreen) {
+       scrollDown();
+     }
+@@ -1800,13 +1817,11 @@
+   }
+ 
+   if (*keyPressCbk) {
+-    (*keyPressCbk)(keyPressCbkData, s, key, modifiers);
++    (*keyPressCbk)(keyPressCbkData, s, raw, modifiers);
+   }
+ }
+ 
+ void XPDFCore::redrawRectangle(int x, int y, int w, int h) {
+-  XGCValues gcValues;
+-  Window drawAreaWin;
+ 
+   // clip to window
+   if (x < scrollX) {
+@@ -1825,34 +1840,27 @@
+   }
+ 
+   // create a GC for the drawing area
+-  drawAreaWin = XtWindow(drawArea);
+-  if (!drawAreaGC) {
+-    gcValues.foreground = paperColor;
+-    drawAreaGC = XCreateGC(display, drawAreaWin, GCForeground, &gcValues);
+-  }
++
+ 
+   // draw white background past the edges of the document
+   if (x + w > out->getBitmapWidth()) {
+-    XFillRectangle(display, drawAreaWin, drawAreaGC,
+-		   out->getBitmapWidth() - scrollX, y - scrollY,
+-		   x + w - out->getBitmapWidth(), h);
++	scrolledWin->FillRect( os::Rect( out->getBitmapWidth() /*- scrollX*/, y /*- scrollY*/,
++		   x /*- scrollX*/ + w, y/* - scrollY*/ + h ) );
+     w = out->getBitmapWidth() - x;
+   }
+   if (y + h > out->getBitmapHeight()) {
+-    XFillRectangle(display, drawAreaWin, drawAreaGC,
+-		   x - scrollX, out->getBitmapHeight() - scrollY,
+-		   w, y + h - out->getBitmapHeight());
++	scrolledWin->FillRect( os::Rect( x /*- scrollX*/, out->getBitmapHeight() /*- scrollY*/,
++		   x /*- scrollX*/ + w, y /*- scrollY*/ + h ) );
+     h = out->getBitmapHeight() - y;
+   }
+ 
+   // redraw
+   if (w >= 0 && h >= 0) {
+-    out->redraw(x, y, drawAreaWin, drawAreaGC, x - scrollX, y - scrollY, w, h);
++    out->redraw(x, y, scrolledWin, static_cast<XPDFView*>(scrolledWin)->GetBitmap()/*drawAreaWin, drawAreaGC*/, x - scrollX, y - scrollY, w, h);
+   }
+ }
+ 
+ void XPDFCore::updateScrollBars() {
+-  Arg args[20];
+   int n;
+   int maxPos;
+ 
+@@ -1863,14 +1871,12 @@
+   if (scrollX > maxPos - drawAreaWidth) {
+     scrollX = maxPos - drawAreaWidth;
+   }
+-  n = 0;
+-  XtSetArg(args[n], XmNvalue, scrollX); ++n;
+-  XtSetArg(args[n], XmNmaximum, maxPos); ++n;
+-  XtSetArg(args[n], XmNsliderSize, drawAreaWidth); ++n;
+-  XtSetArg(args[n], XmNincrement, 16); ++n;
+-  XtSetArg(args[n], XmNpageIncrement, drawAreaWidth); ++n;
+-  XtSetValues(hScrollBar, args, n);
+ 
++ 
++  hScrollBar->SetMinMax( 0, maxPos - drawAreaWidth );
++  hScrollBar->SetProportion( (float)drawAreaWidth / (float)maxPos );
++  hScrollBar->SetSteps( 30.0f, (float)drawAreaWidth * 0.8f );
++  hScrollBar->SetValue( scrollX );
+   maxPos = out ? out->getBitmapHeight() : 1;
+   if (maxPos < drawAreaHeight) {
+     maxPos = drawAreaHeight;
+@@ -1878,15 +1884,13 @@
+   if (scrollY > maxPos - drawAreaHeight) {
+     scrollY = maxPos - drawAreaHeight;
+   }
+-  n = 0;
+-  XtSetArg(args[n], XmNvalue, scrollY); ++n;
+-  XtSetArg(args[n], XmNmaximum, maxPos); ++n;
+-  XtSetArg(args[n], XmNsliderSize, drawAreaHeight); ++n;
+-  XtSetArg(args[n], XmNincrement, 16); ++n;
+-  XtSetArg(args[n], XmNpageIncrement, drawAreaHeight); ++n;
+-  XtSetValues(vScrollBar, args, n);
++  vScrollBar->SetMinMax( 0, maxPos - drawAreaHeight );
++  vScrollBar->SetProportion( (float)drawAreaHeight / (float)maxPos );
++  vScrollBar->SetSteps( 30.0f, (float)drawAreaHeight * 0.8f );
++  vScrollBar->SetValue( scrollY );
+ }
+ 
++#ifndef __SYLLABLE__
+ void XPDFCore::setCursor(Cursor cursor) {
+   Window topWin;
+ 
+@@ -1904,21 +1908,25 @@
+   XFlush(display);
+   currentCursor = cursor;
+ }
+-
++#endif
+ GBool XPDFCore::doQuestionDialog(char *title, GString *msg) {
+-  return doDialog(XmDIALOG_QUESTION, gTrue, title, msg);
++  printf( "NOT IMPLEMENTED: XPDFCore::doQuestionDialog()\n" );
++  //return doDialog(XmDIALOG_QUESTION, gTrue, title, msg);
+ }
+ 
+ void XPDFCore::doInfoDialog(char *title, GString *msg) {
+-  doDialog(XmDIALOG_INFORMATION, gFalse, title, msg);
++  printf( "NOT IMPLEMENTED: XPDFCore::doInfoDialog()\n" );
++  //doDialog(XmDIALOG_INFORMATION, gFalse, title, msg);
+ }
+ 
+ void XPDFCore::doErrorDialog(char *title, GString *msg) {
+-  doDialog(XmDIALOG_ERROR, gFalse, title, msg);
++  printf( "NOT IMPLEMENTED: XPDFCore::doErrorDialog()\n" );
++  //doDialog(XmDIALOG_ERROR, gFalse, title, msg);
+ }
+ 
+ GBool XPDFCore::doDialog(int type, GBool hasCancel,
+ 			 char *title, GString *msg) {
++#ifndef __SYLLABLE__
+   Widget dialog, scroll, text;
+   XtAppContext appContext;
+   Arg args[20];
+@@ -1979,8 +1987,9 @@
+   XtDestroyWidget(dialog);
+ 
+   return dialogDone > 0;
++#endif
+ }
+-
++#ifndef __SYLLABLE__
+ void XPDFCore::dialogOkCbk(Widget widget, XtPointer ptr,
+ 			   XtPointer callData) {
+   XPDFCore *core = (XPDFCore *)ptr;
+@@ -1994,3 +2003,4 @@
+ 
+   core->dialogDone = -1;
+ }
++#endif
+diff -ru xpdf-3.00pl3/xpdf/XPDFCore.h xpdf/xpdf/XPDFCore.h
+--- xpdf-3.00pl3/xpdf/XPDFCore.h	2006-09-11 04:11:50.000000000 +0200
++++ xpdf/xpdf/XPDFCore.h	2006-09-11 02:57:16.000000000 +0200
+@@ -15,9 +15,11 @@
+ #pragma interface
+ #endif
+ 
+-#define Object XtObject
+-#include <Xm/XmAll.h>
+-#undef Object
++#include <util/message.h>
++#include <gui/window.h>
++#include <gui/view.h>
++#include <gui/scrollbar.h>
++#include <gui/desktop.h>
+ #include <aconf.h>
+ #include "gtypes.h"
+ #include "gfile.h" // for time_t
+@@ -71,12 +73,33 @@
+ 
+ typedef void (*XPDFActionCbk)(void *data, char *action);
+ 
+-typedef void (*XPDFKeyPressCbk)(void *data, char *s, KeySym key,
+-				Guint modifiers);
+-
+-typedef void (*XPDFMouseCbk)(void *data, XEvent *event);
++typedef void (*XPDFKeyPressCbk)(void *data, const char *s, const char* raw,
++				uint32 modifiers);
+ 
++typedef void (*XPDFMouseCbk)(void *data, uint32 nMsg, os::Point cPos, uint32 nButtons);
++#ifndef __SYLLABLE__
+ typedef GString *(*XPDFReqPasswordCbk)(void *data, GBool again);
++#endif
++
++enum
++{
++	MSG_PASSWORD,
++	MSG_SCROLLBAR_H,
++	MSG_SCROLLBAR_V,
++	
++	MSG_ABOUT,
++	MSG_QUIT,
++	MSG_PREVIOUS_PAGE,
++	MSG_NEXT_PAGE,
++	MSG_SET_ZOOM,
++	MSG_OPEN,
++	MSG_REQUESTER_CLOSED,
++	MSG_FIND,
++	MSG_COPY,
++	MSG_SHOW_FIND,
++	MSG_PAGE_SELECT
++};
++
+ 
+ //------------------------------------------------------------------------
+ // XPDFCore
+@@ -86,7 +109,7 @@
+ public:
+ 
+   // Create viewer core inside <parentWidgetA>.
+-  XPDFCore(Widget shellA, Widget parentWidgetA,
++  XPDFCore(os::Window* shellA, os::View* parentWidgetA,
+ 	   SplashRGB8 paperColorA, GBool fullScreenA,
+ 	   GBool reverseVideo, GBool installCmap, int rgbCubeSize);
+ 
+@@ -139,6 +162,9 @@
+   void setSelection(int newXMin, int newYMin, int newXMax, int newYMax);
+   void moveSelection(int mx, int my);
+   void copySelection();
++#ifdef __SYLLABLE__
++  GString* getCurrentSelection();
++#endif
+   GBool getSelection(int *xMin, int *yMin, int *xMax, int *yMax);
+   GString *extractText(int xMin, int yMin, int xMax, int yMax);
+   GString *extractText(int pageNum, int xMin, int yMin, int xMax, int yMax);
+@@ -160,8 +186,8 @@
+ 
+   //----- misc access
+ 
+-  Widget getWidget() { return scrolledWin; }
+-  Widget getDrawAreaWidget() { return drawArea; }
++  os::View* getWidget() { return scrolledWin; }
++  //os::View* getDrawAreaWidget() { return drawArea; }
+   PDFDoc *getDoc() { return doc; }
+   XSplashOutputDev *getOutputDev() { return out; }
+   int getPageNum() { return page; }
+@@ -175,10 +201,11 @@
+   int getDrawAreaWidth() { return drawAreaWidth; }
+   int getDrawAreaHeight() { return drawAreaHeight; }
+   void setBusyCursor(GBool busy);
+-  Cursor getBusyCursor() { return busyCursor; }
++  //Cursor getBusyCursor() { return busyCursor; }
+   void takeFocus();
+   void enableHyperlinks(GBool on) { hyperlinksEnabled = on; }
+   void enableSelect(GBool on) { selectEnabled = on; }
++
+   void setUpdateCbk(XPDFUpdateCbk cbk, void *data)
+     { updateCbk = cbk; updateCbkData = data; }
+   void setActionCbk(XPDFActionCbk cbk, void *data)
+@@ -187,9 +214,10 @@
+     { keyPressCbk = cbk; keyPressCbkData = data; }
+   void setMouseCbk(XPDFMouseCbk cbk, void *data)
+     { mouseCbk = cbk; mouseCbkData = data; }
++#ifndef __SYLLABLE__
+   void setReqPasswordCbk(XPDFReqPasswordCbk cbk, void *data)
+     { reqPasswordCbk = cbk; reqPasswordCbkData = data; }
+-
++#endif 
+ private:
+ 
+   //----- hyperlinks
+@@ -198,14 +226,16 @@
+   GString *mungeURL(GString *url);
+ 
+   //----- selection
++#ifndef __SYLLABLE__
+   static Boolean convertSelectionCbk(Widget widget, Atom *selection,
+ 				     Atom *target, Atom *type,
+ 				     XtPointer *value, unsigned long *length,
+ 				     int *format);
+ 
+-
++#endif
+   //----- GUI code
+   void initWindow();
++#ifndef __SYLLABLE__
+   static void hScrollChangeCbk(Widget widget, XtPointer ptr,
+ 			       XtPointer callData);
+   static void hScrollDragCbk(Widget widget, XtPointer ptr,
+@@ -214,39 +244,57 @@
+ 			       XtPointer callData);
+   static void vScrollDragCbk(Widget widget, XtPointer ptr,
+ 			     XtPointer callData);
+-  static void resizeCbk(Widget widget, XtPointer ptr, XtPointer callData);
++#endif			     
++  static void resizeCbk(XPDFCore* core);
++#ifndef __SYLLABLE__
+   static void redrawCbk(Widget widget, XtPointer ptr, XtPointer callData);
++#endif
+   static void outputDevRedrawCbk(void *data);
+-  static void inputCbk(Widget widget, XtPointer ptr, XtPointer callData);
+-  void keyPress(char *s, KeySym key, Guint modifiers);
++
++  static void inputCbk(void* ptr, uint32 nMsg, os::Point cPos, uint32 nButtons);
++
++  void keyPress(const char* pzString, const char* pzRawString, uint32 nQualifiers);
++
++
+   void redrawRectangle(int x, int y, int w, int h);
+   void updateScrollBars();
+-  void setCursor(Cursor cursor);
++  //void setCursor(Cursor cursor);
+   GBool doDialog(int type, GBool hasCancel,
+ 		 char *title, GString *msg);
++#ifndef __SYLLABLE__	 
+   static void dialogOkCbk(Widget widget, XtPointer ptr,
+ 			  XtPointer callData);
+   static void dialogCancelCbk(Widget widget, XtPointer ptr,
+ 			      XtPointer callData);
+-
++#endif
+   SplashRGB8 paperColor;
+   GBool fullScreen;
+-
++#ifndef __SYLLABLE__
+   Display *display;
+   int screenNum;
+   Visual *visual;
+   Colormap colormap;
++#endif
++  os::View* parentWidget;
++  os::Window* shell;
++  os::ScrollBar* hScrollBar;
++  os::ScrollBar* vScrollBar;
++  os::View* scrolledWin;
++#ifndef __SYLLABLE__
+   Widget shell;			// top-level shell containing the widget
+   Widget parentWidget;		// parent widget (not created by XPDFCore)
+   Widget scrolledWin;
+   Widget hScrollBar;
+   Widget vScrollBar;
++  
+   Widget drawAreaFrame;
+   Widget drawArea;
++
++	
+   Cursor busyCursor, linkCursor, selectCursor;
+   Cursor currentCursor;
+   GC drawAreaGC;		// GC for blitting into drawArea
+-
++#endif
+   int drawAreaWidth, drawAreaHeight;
+   int scrollX, scrollY;		// current upper-left corner
+ 
+@@ -258,7 +306,7 @@
+   GBool lastDragTop;		// last dragged selection edge was top/bottom
+   static GString *currentSelection;  // selected text
+   static XPDFCore *currentSelectionOwner;
+-  static Atom targetsAtom;
++  //static Atom targetsAtom;
+ 
+   GBool panning;
+   int panMX, panMY;
+@@ -287,17 +335,21 @@
+   void *actionCbkData;
+   XPDFKeyPressCbk keyPressCbk;
+   void *keyPressCbkData;
++
+   XPDFMouseCbk mouseCbk;
+   void *mouseCbkData;
++#ifndef __SYLLABLE__
+   XPDFReqPasswordCbk reqPasswordCbk;
+   void *reqPasswordCbkData;
+-
++#endif
+   GBool hyperlinksEnabled;
+   GBool selectEnabled;
+ 
+   XSplashOutputDev *out;
+ 
+   int dialogDone;
++  
++  friend class XPDFView;
+ };
+ 
+ #endif
+diff -ru xpdf-3.00pl3/xpdf/XPDFTree.cc xpdf/xpdf/XPDFTree.cc
+--- xpdf-3.00pl3/xpdf/XPDFTree.cc	2006-09-11 04:11:50.000000000 +0200
++++ xpdf/xpdf/XPDFTree.cc	2006-09-11 02:57:16.000000000 +0200
+@@ -1,3 +1,4 @@
++#if 0
+ //========================================================================
+ //
+ // XPDFTree.cc
+@@ -929,3 +930,4 @@
+ 		      ArgList argList, Cardinal numArgs) {
+   return XtCreateWidget(name, xpdfTreeWidgetClass, parent, argList, numArgs);
+ }
++#endif
+diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
+--- xpdf-3.00pl3/xpdf/XPDFViewer.cc	2006-09-11 04:11:49.000000000 +0200
++++ xpdf/xpdf/XPDFViewer.cc	2006-09-11 02:57:16.000000000 +0200
+@@ -15,15 +15,8 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <ctype.h>
+-#include <X11/cursorfont.h>
+-#ifdef HAVE_X11_XPM_H
+-#include <X11/xpm.h>
+-#endif
+-#if defined(__sgi) && (XmVERSION <= 1)
+-#define Object XtObject
+-#include <Sgm/HPanedW.h>
+-#undef Object
+-#endif
++
++
+ #include "gmem.h"
+ #include "gfile.h"
+ #include "GString.h"
+@@ -34,34 +27,16 @@
+ #include "ErrorCodes.h"
+ #include "Outline.h"
+ #include "UnicodeMap.h"
+-#ifndef DISABLE_OUTLINE
+-#define Object XtObject
+-#include "XPDFTree.h"
+-#undef Object
+-#endif
+ #include "XPDFApp.h"
+ #include "XPDFViewer.h"
+ #include "PSOutputDev.h"
+ #include "config.h"
+ 
+-// these macro defns conflict with xpdf's Object class
+-#ifdef LESSTIF_VERSION
+-#undef XtDisplay
+-#undef XtScreen
+-#undef XtWindow
+-#undef XtParent
+-#undef XtIsRealized
+-#endif
+-
+-#if XmVERSION <= 1
+-#define XmSET   True
+-#define XmUNSET False
+-#endif
+ 
+ //------------------------------------------------------------------------
+ // GUI includes
+ //------------------------------------------------------------------------
+-
++#ifndef __SYLLABLE__
+ #include "xpdfIcon.xpm"
+ #include "leftArrow.xbm"
+ #include "leftArrowDis.xbm"
+@@ -80,8 +55,10 @@
+ #include "print.xbm"
+ #include "printDis.xbm"
+ #include "about.xbm"
++#endif
+ #include "about-text.h"
+ 
++
+ //------------------------------------------------------------------------
+ 
+ struct ZoomMenuInfo {
+@@ -108,6 +85,307 @@
+ #define zoomPageIdx  8
+ #define zoomWidthIdx 9
+ 
++#include "finddialog.cpp"
++#include "statusbar.cpp"
++#include "resources/xpdf.h"
++
++class XPDFLooper : public os::Looper
++{
++public:
++	XPDFLooper( XPDFViewer* pcViewer ) : os::Looper( "xpdf_looper" )
++	{
++		m_pcViewer = pcViewer;
++	}
++	virtual void HandleMessage( os::Message* pcMessage )
++	{
++		switch( pcMessage->GetCode() )
++		{
++			case MSG_PREVIOUS_PAGE:
++				m_pcViewer->prevPageCbk( m_pcViewer );
++			break;
++			case MSG_NEXT_PAGE:
++				m_pcViewer->nextPageCbk( m_pcViewer );
++			break;
++			case MSG_SET_ZOOM:
++			{
++				int32 nZoom;
++				if( pcMessage->FindInt32( "zoom_idx", &nZoom ) == 0 )
++				{
++					m_pcViewer->setZoomIdx( nZoom );
++					m_pcViewer->displayPage(m_pcViewer->core->getPageNum(), zoomMenuInfo[nZoom].zoom,
++						m_pcViewer->core->getRotate(), gTrue, gFalse);
++				}
++			}
++			break;
++			case MSG_PAGE_SELECT:
++			{
++				int32 nPage;
++				if( pcMessage->FindInt32( "page", &nPage ) == 0 )
++				{
++					m_pcViewer->pageNumCbk( m_pcViewer, nPage );
++				}
++			}
++			break;
++			default:
++				os::Looper::HandleMessage( pcMessage );
++		}
++	}
++private:
++	XPDFViewer* m_pcViewer;
++};
++
++//------------------------------------------------------------------------
++class XPDFWindow : public os::Window
++{
++public:
++	XPDFWindow( XPDFViewer* pcViewer, const os::Rect& cFrame, const os::String& cName, const os::String& cTitle )
++				: os::Window( cFrame, cName, cTitle )
++	{
++		m_pcViewer = pcViewer;
++		m_pcLooper = new XPDFLooper( pcViewer );
++		m_pcLooper->Run();
++
++		/* Create menubar */
++		os::Menu* pcMenuBar = new os::Menu( GetBounds(), "xpdf_menu_bar", os::ITEMS_IN_ROW );
++
++		/* Application menu */
++		os::Menu* pcAppMenu = new os::Menu( os::Rect(), MSG_MAINWND_MENU_APPLICATION, os::ITEMS_IN_COLUMN );
++		pcAppMenu->AddItem( MSG_MAINWND_MENU_APPLICATION_ABOUT, new os::Message( MSG_ABOUT ) );
++		pcAppMenu->AddItem( new os::MenuSeparator() );
++		pcAppMenu->AddItem( MSG_MAINWND_MENU_APPLICATION_QUIT, new os::Message( MSG_QUIT ) );
++		pcMenuBar->AddItem( pcAppMenu );
++
++		/* File menu */
++		os::Menu* pcFileMenu = new os::Menu( os::Rect(), MSG_MAINWND_MENU_FILE, os::ITEMS_IN_COLUMN );
++		pcFileMenu->AddItem( MSG_MAINWND_MENU_FILE_OPEN, new os::Message( MSG_OPEN ) );
++		pcMenuBar->AddItem( pcFileMenu );
++
++		/* Page menu */
++		os::Menu* pcPageMenu = new os::Menu( os::Rect(), MSG_MAINWND_MENU_PAGE, os::ITEMS_IN_COLUMN );
++		pcPageMenu->AddItem( MSG_MAINWND_MENU_PAGE_PREV, new os::Message( MSG_PREVIOUS_PAGE ) );
++		pcPageMenu->AddItem( MSG_MAINWND_MENU_PAGE_NEXT, new os::Message( MSG_NEXT_PAGE ) );
++		pcPageMenu->AddItem( new os::MenuSeparator() );
++		for( int i = 0; i < nZoomMenuItems; i++ )
++		{
++			os::Message* pcZoomMsg = new os::Message( MSG_SET_ZOOM );
++			pcZoomMsg->AddInt32( "zoom_idx", i );
++			if( i == zoomPageIdx )
++				pcPageMenu->AddItem( MSG_MAINWND_MENU_ZOOM_PAGE, pcZoomMsg );
++			else if( i == zoomWidthIdx )
++				pcPageMenu->AddItem( MSG_MAINWND_MENU_ZOOM_WIDTH, pcZoomMsg );
++			else
++				pcPageMenu->AddItem( zoomMenuInfo[i].label, pcZoomMsg );
++		}
++		pcMenuBar->AddItem( pcPageMenu );
++
++		/* Edit menu */
++		os::Menu* pcEditMenu = new os::Menu( os::Rect(), MSG_MAINWND_MENU_EDIT, os::ITEMS_IN_COLUMN );
++		pcEditMenu->AddItem( MSG_MAINWND_MENU_EDIT_COPY, new os::Message( MSG_COPY ) );
++		pcEditMenu->AddItem( new os::MenuSeparator() );
++		pcEditMenu->AddItem( MSG_MAINWND_MENU_EDIT_FIND, new os::Message( MSG_SHOW_FIND ) );
++		pcMenuBar->AddItem( pcEditMenu );
++
++		os::Rect cMenuFrame = pcMenuBar->GetFrame();
++		cMenuFrame.bottom = cMenuFrame.top + pcMenuBar->GetPreferredSize( false ).y - 1;
++		pcMenuBar->SetFrame( cMenuFrame );
++		pcMenuBar->SetTargetForItems( this );
++		AddChild( pcMenuBar );
++
++		/* Toolbar */
++		os::ToolBar* pcToolBar = new os::ToolBar( os::Rect( 0, cMenuFrame.bottom + 1, GetBounds().Width(), 38 + cMenuFrame.bottom ), "xpdf_toolbar" );
++		pcToolBar->AddChild( new os::ImageView( os::Rect(), "breaker", GetImageFromResource( "breaker.png" ) ), os::ToolBar::TB_FIXED_MINIMUM );
++		pcToolBar->AddChild( new os::ImageButton( os::Rect(), "open", MSG_MAINWND_MENU_FILE_OPEN, new os::Message( MSG_OPEN ), GetImageFromResource( "fileopen.png" ), os::ImageButton::IB_TEXT_BOTTOM, true, false, true ), os::ToolBar::TB_FIXED_MINIMUM );
++		m_pcPrevButton = pcToolBar->AddChild( new os::ImageButton( os::Rect(), "prev", MSG_MAINWND_MENU_PAGE_PREV, new os::Message( MSG_PREVIOUS_PAGE ), GetImageFromResource( "previous.png" ), os::ImageButton::IB_TEXT_BOTTOM, true, false, true ), os::ToolBar::TB_FIXED_MINIMUM );
++		
++		static_cast<os::Control*>(m_pcPrevButton->GetView())->SetEnable( false );
++		
++		m_pcPageSelect = new os::TextView( os::Rect(), "page_select", NULL );
++		m_pcPageSelect->SetMultiLine( false );
++		m_pcPageSelect->SetNumeric( true );
++		m_pcPageSelect->SetReadOnly( false );
++		m_pcPageSelect->SetMinPreferredSize( 5, 1 );
++		m_pcPageSelect->SetMaxPreferredSize( 5, 1 );
++		m_pcPageSelect->SetMessage( new os::Message( MSG_PAGE_SELECT ) );
++		m_pcPageSelect->SetTarget( this );
++		pcToolBar->AddChild( m_pcPageSelect, os::ToolBar::TB_FIXED_MINIMUM );
++
++		m_pcNextButton = pcToolBar->AddChild( new os::ImageButton( os::Rect(), "prev", MSG_MAINWND_MENU_PAGE_NEXT, new os::Message( MSG_NEXT_PAGE ), GetImageFromResource( "next.png" ), os::ImageButton::IB_TEXT_BOTTOM, true, false, true ), os::ToolBar::TB_FIXED_WIDTH );
++		static_cast<os::Control*>(m_pcNextButton->GetView())->SetEnable( false );
++		
++		AddChild( pcToolBar );
++
++		m_pcStatusBar = new os::StatusBar( GetBounds(), "xpdf_statusbar", 3 );
++		m_pcStatusBar->ConfigurePanel( 0, os::StatusBar::CONSTANT, 50 );
++		m_pcStatusBar->ConfigurePanel( 1, os::StatusBar::CONSTANT, 50 );
++		m_pcStatusBar->ConfigurePanel( 2, os::StatusBar::FILL, 0 );
++		os::Rect cStatusFrame = m_pcStatusBar->GetFrame();
++		cStatusFrame.top = cStatusFrame.bottom - m_pcStatusBar->GetPreferredSize( false ).y + 1;
++		m_pcStatusBar->SetFrame( cStatusFrame );
++		AddChild( m_pcStatusBar );
++
++		m_pcForm = new os::View( os::Rect( 0, pcToolBar->GetFrame().bottom + 1, GetBounds().right, cStatusFrame.top - 1 ), "xpdf_form", os::CF_FOLLOW_ALL );
++		AddChild( m_pcForm );
++
++		
++		/* Set Icon */
++		os::Resources cCol( get_image_id() );
++		os::ResStream *pcStream = cCol.GetResourceStream( "icon24x24.png" );
++		os::BitmapImage *pcIcon = new os::BitmapImage( pcStream );
++		SetIcon( pcIcon->LockBitmap() );
++		delete( pcIcon );
++		delete( pcStream );
++
++		SetSizeLimits( os::Point( 150, 120 ), os::Point( MAX_SIZE, MAX_SIZE ) );
++
++		m_bOpenDialogShown = false;
++	}
++	~XPDFWindow()
++	{
++		m_pcLooper->Quit();
++	}
++	virtual void HandleMessage( os::Message* pcMessage )
++	{
++		switch( pcMessage->GetCode() )
++		{
++			case MSG_ABOUT:
++			{
++				os::Alert* pcAlert = new os::Alert( "About Xpdf " xpdfVersion, aboutWinText, os::Alert::ALERT_INFO, 0, "Ok", NULL );
++				pcAlert->Go( new os::Invoker( new os::Message( MSG_REQUESTER_CLOSED ) ) );
++			}
++			break;
++			case MSG_QUIT:
++				PostMessage( os::M_QUIT, this );
++			break;
++			case MSG_PREVIOUS_PAGE:
++			case MSG_NEXT_PAGE:
++			case MSG_SET_ZOOM:
++				m_pcLooper->PostMessage( pcMessage, m_pcLooper );
++			break;
++			case MSG_OPEN:
++				m_pcViewer->mapOpenDialog( gFalse );
++			break;
++			case MSG_FIND:
++				m_pcViewer->doFind( gFalse );
++			break;
++			case MSG_PAGE_SELECT:
++			{
++				int32 nEvent;
++				if( pcMessage->FindInt32( "events", &nEvent ) == 0 )
++				{
++					if( nEvent & os::TextView::EI_ENTER_PRESSED )
++					{
++						pcMessage->AddInt32( "page", m_pcPageSelect->GetValue().AsInt32() );
++						m_pcLooper->PostMessage( pcMessage, m_pcLooper );
++					}
++				}
++			}
++			break;
++			case MSG_COPY:
++			{
++				if( m_pcViewer->core->getCurrentSelection() ) {
++					os::Clipboard cClipboard;
++
++					cClipboard.Lock();
++					cClipboard.Clear();
++					os::Message *pcData = cClipboard.GetData();
++
++					pcData->AddString( "text/plain", m_pcViewer->core->getCurrentSelection()->getCString() );
++					cClipboard.Commit();
++					cClipboard.Unlock();
++				}
++			}
++			break;
++			case MSG_SHOW_FIND:
++				if (m_pcViewer->core->getDoc()) {
++					m_pcViewer->findDialog->Lock();
++					m_pcViewer->findDialog->ShowDialog();
++					m_pcViewer->findDialog->Unlock();
++				}
++			break;
++			case os::M_LOAD_REQUESTED:
++			{
++				os::String zPath;
++				if( pcMessage->FindString( "file/path", &zPath ) == 0 )
++				{
++					GString* fileNameStr = new GString( zPath.c_str() );
++					if (m_pcViewer->openInNewWindow) {
++						m_pcViewer->app->open(fileNameStr);
++					} else {
++						if (m_pcViewer->loadFile(fileNameStr)) {
++							m_pcViewer->displayPage(1, m_pcViewer->core->getZoom(),
++							m_pcViewer->core->getRotate(), gTrue, gTrue);
++						} else {
++							os::Alert* pcAlert = new os::Alert( "Xpdf", zPath + " " + MSG_ERRWND_CANTOPEN, os::Alert::ALERT_WARNING, 0, "Ok", NULL );
++							pcAlert->Go( new os::Invoker( new os::Message( MSG_REQUESTER_CLOSED ) ) );
++						}
++					}
++					delete( fileNameStr );
++				}
++				m_bOpenDialogShown = false;
++			}
++			break;
++			case os::M_FILE_REQUESTER_CANCELED:
++			{
++				m_bOpenDialogShown = false;
++			}
++			break;
++			
++			default:
++				os::Window::HandleMessage( pcMessage );
++		}
++	}
++	bool OkToQuit()
++	{
++		os::Application::GetInstance()->PostMessage( os::M_QUIT );
++		return( true );
++	}
++	os::View* GetForm()
++	{
++		return( m_pcForm );
++	}
++	bool GetOpenDialogShown()
++	{
++		return( m_bOpenDialogShown );
++	}
++	void SetOpenDialogShown()
++	{
++		m_bOpenDialogShown = true;
++	}
++	void SetStatusBarText( os::String cLabel, int nPanel )
++	{
++		m_pcStatusBar->SetText( cLabel, nPanel, 0 );
++	}
++	void EnableButtons( bool bNext, bool bPrev )
++	{
++		static_cast<os::Control*>(m_pcNextButton->GetView())->SetEnable( bNext );
++		static_cast<os::Control*>(m_pcPrevButton->GetView())->SetEnable( bPrev );
++	}
++	void SetPage( int nPage )
++	{
++		m_pcPageSelect->SetValue( nPage );
++	}
++	os::Image* GetImageFromResource( os::String zResource )
++	{
++		os::File cSelf( open_image_file( get_image_id() ) );
++		os::Resources cCol( &cSelf );		
++		os::ResStream *pcStream = cCol.GetResourceStream( zResource );
++		os::BitmapImage* pcImage = new os::BitmapImage();
++		pcImage->Load( pcStream );
++		delete( pcStream );
++		return( pcImage );
++	}
++private:
++	XPDFViewer* m_pcViewer;
++	os::View* m_pcForm;
++	os::StatusBar* m_pcStatusBar;
++	bool m_bOpenDialogShown;
++	os::LayoutNode* m_pcNextButton;
++	os::LayoutNode* m_pcPrevButton;
++	os::TextView* m_pcPageSelect;
++	XPDFLooper* m_pcLooper;
++};
++
++
+ //------------------------------------------------------------------------
+ 
+ XPDFViewer::XPDFViewer(XPDFApp *appA, GString *fileName,
+@@ -167,6 +445,7 @@
+   // an annoying on-screen resize
+   mapWindow();
+ 
++
+   // display the first page
+   z = app->getFullScreen() ? zoomPage : core->getZoom();
+   if (dest) {
+@@ -176,15 +455,19 @@
+     displayPage(pg, z, core->getRotate(), gTrue, gTrue);
+   }
+ 
++
+   ok = gTrue;
+ }
+ 
+ XPDFViewer::~XPDFViewer() {
+   delete core;
+-  XmFontListFree(aboutBigFont);
++#ifndef __SYLLABLE__
++XmFontListFree(aboutBigFont);
+   XmFontListFree(aboutVersionFont);
+   XmFontListFree(aboutFixedFont);
++
+   closeWindow();
++#endif
+ #ifndef DISABLE_OUTLINE
+   if (outlineLabels) {
+     gfree(outlineLabels);
+@@ -217,13 +500,19 @@
+ 
+ void XPDFViewer::clear() {
+   char *title;
+-  XmString s;
++//  XmString s;
+ 
+   core->clear();
+ 
+   // set up title, number-of-pages display
+   title = app->getTitle() ? app->getTitle()->getCString()
+                           : (char *)xpdfAppName;
++  
++
++  win->SetTitle( title );
++  static_cast<XPDFWindow*>(win)->SetPage( 0 );
++  static_cast<XPDFWindow*>(win)->EnableButtons( false, false );
++#ifndef __SYLLABLE__
+   XtVaSetValues(win, XmNtitle, title, XmNiconName, title, NULL);
+   s = XmStringCreateLocalized("");
+   XtVaSetValues(pageNumText, XmNlabelString, s, NULL);
+@@ -237,7 +526,7 @@
+   XtVaSetValues(prevPageBtn, XmNsensitive, False, NULL);
+   XtVaSetValues(nextTenPageBtn, XmNsensitive, False, NULL);
+   XtVaSetValues(nextPageBtn, XmNsensitive, False, NULL);
+-
++#endif
+   // remove the old outline
+ #ifndef DISABLE_OUTLINE
+   setupOutline();
+@@ -304,14 +593,14 @@
+ //------------------------------------------------------------------------
+ // password dialog
+ //------------------------------------------------------------------------
+-
++#ifndef __SYLLABLE__
+ GString *XPDFViewer::reqPasswordCbk(void *data, GBool again) {
+   XPDFViewer *viewer = (XPDFViewer *)data;
+ 
+   viewer->getPassword(again);
+   return viewer->password;
+ }
+-
++#endif
+ //------------------------------------------------------------------------
+ // actions
+ //------------------------------------------------------------------------
+@@ -328,8 +617,8 @@
+ // keyboard/mouse input
+ //------------------------------------------------------------------------
+ 
+-void XPDFViewer::keyPressCbk(void *data, char *s, KeySym key,
+-			     Guint modifiers) {
++void XPDFViewer::keyPressCbk(void *data, const char *s, const char* raw,
++			     uint32 modifiers) {
+   XPDFViewer *viewer = (XPDFViewer *)data;
+   int z;
+ 
+@@ -347,7 +636,10 @@
+     case 'f':
+     case '\006':		// ctrl-F
+       if (viewer->core->getDoc()) {
+-	XtManageChild(viewer->findDialog);
++		viewer->findDialog->Lock();
++		
++		viewer->findDialog->ShowDialog();
++		viewer->findDialog->Unlock();
+       }
+       break;
+     case '\007':		// ctrl-G
+@@ -357,16 +649,16 @@
+       break;
+     case '\020':		// ctrl-P
+       if (viewer->core->getDoc()) {
+-	XtManageChild(viewer->printDialog);
++	//XtManageChild(viewer->printDialog);
+       }
+       break;
+     case 'N':
+     case 'n':
+-      viewer->core->gotoNextPage(1, !(modifiers & Mod5Mask));
++      viewer->core->gotoNextPage(1, (modifiers & os::QUAL_CTRL/*Mod5Mask*/));
+       break;
+     case 'P':
+     case 'p':
+-      viewer->core->gotoPrevPage(1, !(modifiers & Mod5Mask), gFalse);
++      viewer->core->gotoPrevPage(1, !(modifiers & os::QUAL_CTRL/*Mod5Mask*/), gFalse);
+       break;
+     case ' ':
+       if (viewer->app->getFullScreen()) {
+@@ -391,11 +683,13 @@
+       break;
+     case 'g':
+       if (!viewer->app->getFullScreen()) {
++#ifndef __SYLLABLE__
+ 	XmTextFieldSetSelection(
+             viewer->pageNumText, 0,
+ 	    strlen(XmTextFieldGetString(viewer->pageNumText)),
+ 	    XtLastTimestampProcessed(viewer->display));
+ 	XmProcessTraversal(viewer->pageNumText, XmTRAVERSE_CURRENT);
++#endif
+       }
+       break;
+     case 'h':			// vi-style left
+@@ -427,6 +721,7 @@
+       }
+       break;
+     case '+':
++
+       if (!viewer->app->getFullScreen()) {
+ 	z = viewer->getZoomIdx();
+ 	if (z <= minZoomIdx && z > maxZoomIdx) {
+@@ -439,6 +734,7 @@
+       }
+       break;
+     case '-':
++
+       if (!viewer->app->getFullScreen()) {
+ 	z = viewer->getZoomIdx();
+ 	if (z < minZoomIdx && z >= maxZoomIdx) {
+@@ -474,7 +770,7 @@
+       viewer->app->close(viewer, gFalse);
+       break;
+     case '?':
+-      XtManageChild(viewer->aboutDialog);
++      //XtManageChild(viewer->aboutDialog);
+       break;
+     case 'Q':
+     case 'q':
+@@ -483,7 +779,7 @@
+     }
+   }
+ }
+-
++#ifndef __SYLLABLE__
+ void XPDFViewer::mouseCbk(void *data, XEvent *event) {
+   XPDFViewer *viewer = (XPDFViewer *)data;
+ 
+@@ -497,29 +793,31 @@
+     XtUngrabButton(viewer->core->getDrawAreaWidget(), AnyButton, AnyModifier);
+   }
+ }
+-
++#endif
+ //------------------------------------------------------------------------
+ // GUI code: main window
+ //------------------------------------------------------------------------
+ 
+ void XPDFViewer::initWindow() {
+-  Widget btn, label, lastBtn, zoomWidget;
++  //Widget btn, label, lastBtn, zoomWidget;
+ #ifndef DISABLE_OUTLINE
+   Widget clipWin;
+ #endif
+-  Colormap colormap;
+-  XColor xcol;
+-  Arg args[20];
++  //Colormap colormap;
++  //XColor xcol;
++  //Arg args[20];
+   int n;
+   char *title;
+-  XmString s, s2, emptyString;
++  //XmString s, s2, emptyString;
+   int i;
+ 
+-  display = XtDisplay(app->getAppShell());
+-  screenNum = XScreenNumberOfScreen(XtScreen(app->getAppShell()));
++  //display = XtDisplay(app->getAppShell());
++  //screenNum = XScreenNumberOfScreen(XtScreen(app->getAppShell()));
+ 
+   // private colormap
+   if (app->getInstallCmap()) {
++    printf("app->getInstallCmap()\n" );
++	#ifndef __SYLLABLE__
+     XtVaGetValues(app->getAppShell(), XmNcolormap, &colormap, NULL);
+     // ensure that BlackPixel and WhitePixel are reserved in the
+     // new colormap
+@@ -528,12 +826,17 @@
+     xcol.red = xcol.green = xcol.blue = 65535;
+     XAllocColor(display, colormap, &xcol);
+     colormap = XCopyColormapAndFree(display, colormap);
++	#endif
+   }
+ 
+   // top-level window
+   n = 0;
+   title = app->getTitle() ? app->getTitle()->getCString()
+                           : (char *)xpdfAppName;
++
++  win = new XPDFWindow( this, os::Rect( 50, 50, 700, 500 ), "xpdf_window", title );
++#ifndef __SYLLABLE__
++
+   XtSetArg(args[n], XmNtitle, title); ++n;
+   XtSetArg(args[n], XmNiconName, title); ++n;
+   XtSetArg(args[n], XmNminWidth, 100); ++n;
+@@ -556,11 +859,15 @@
+ 			  &closeMsgCbk, this);
+ 
+   // form
++
+   n = 0;
+   form = XmCreateForm(win, "form", args, n);
+   XtManageChild(form);
++#endif
++  form = static_cast<XPDFWindow*>(win)->GetForm();
+ 
+   // toolbar
++#ifndef __SYLLABLE__
+   n = 0;
+   XtSetArg(args[n], XmNleftAttachment, XmATTACH_FORM); ++n;
+   XtSetArg(args[n], XmNrightAttachment, XmATTACH_FORM); ++n;
+@@ -810,14 +1117,16 @@
+ #ifndef DISABLE_OUTLINE
+   if (app->getFullScreen()) {
+ #endif
+-
++#endif
+     // core
+     core = new XPDFCore(win, form, app->getPaperRGB(),
+ 			app->getFullScreen(), app->getReverseVideo(),
+ 			app->getInstallCmap(), app->getRGBCubeSize());
++
+     core->setUpdateCbk(&updateCbk, this);
+     core->setActionCbk(&actionCbk, this);
+     core->setKeyPressCbk(&keyPressCbk, this);
++#ifndef __SYLLABLE__
+     core->setMouseCbk(&mouseCbk, this);
+     core->setReqPasswordCbk(&reqPasswordCbk, this);
+     n = 0;
+@@ -827,7 +1136,7 @@
+     XtSetArg(args[n], XmNleftAttachment, XmATTACH_FORM); ++n;
+     XtSetArg(args[n], XmNrightAttachment, XmATTACH_FORM); ++n;
+     XtSetValues(core->getWidget(), args, n);
+-
++#endif
+ #ifndef DISABLE_OUTLINE
+   } else {
+ 
+@@ -891,6 +1200,7 @@
+   setZoomVal(core->getZoom());
+ 
+   // set traversal order
++#ifndef __SYLLABLE__
+   XtVaSetValues(core->getDrawAreaWidget(),
+ 		XmNnavigationType, XmEXCLUSIVE_TAB_GROUP, NULL);
+   XtVaSetValues(backBtn, XmNnavigationType, XmEXCLUSIVE_TAB_GROUP,
+@@ -1016,6 +1326,7 @@
+   XtUngrabButton(core->getDrawAreaWidget(), AnyButton, AnyModifier);
+ 
+   XmStringFree(emptyString);
++#endif
+ }
+ 
+ void XPDFViewer::mapWindow() {
+@@ -1023,13 +1334,19 @@
+   Pixmap iconPixmap;
+ #endif
+   int depth;
+-  Pixel fg, bg, arm;
+-
++  //Pixel fg, bg, arm;
+   // show the window
+-  XtPopup(win, XtGrabNone);
++  win->Show();
++
++  win->MakeFocus();
++
++//  XtPopup(win, XtGrabNone);
+   core->takeFocus();
+ 
++
++
+   // create the icon
++#ifndef __SYLLABLE__
+ #ifdef HAVE_X11_XPM_H
+   if (XpmCreatePixmapFromData(display, XtWindow(win), xpdfIcon,
+ 			      &iconPixmap, NULL, NULL) == XpmSuccess) {
+@@ -1215,14 +1532,18 @@
+ 					    about_height,
+ 					    fg, arm, depth),
+ 		NULL);
++#endif
++
+ }
+ 
+ void XPDFViewer::closeWindow() {
+-  XtPopdown(win);
+-  XtDestroyWidget(win);
++//  XtPopdown(win);
++//  XtDestroyWidget(win);
++  win->Close();
+ }
+ 
+ int XPDFViewer::getZoomIdx() {
++#ifndef __SYLLABLE__
+ #if USE_COMBO_BOX
+   int z;
+ 
+@@ -1241,17 +1562,24 @@
+   // this should never happen
+   return 0;
+ #endif
++#endif
++  return( zoom );
++  return( 0 );
+ }
+ 
+ void XPDFViewer::setZoomIdx(int idx) {
++#ifndef __SYLLABLE__
+ #if USE_COMBO_BOX
+   XtVaSetValues(zoomComboBox, XmNselectedPosition, idx + 1, NULL);
+ #else
+   XtVaSetValues(zoomMenu, XmNmenuHistory, zoomMenuBtns[idx], NULL);
+ #endif
++#endif
++	zoom = idx;
+ }
+ 
+ void XPDFViewer::setZoomVal(double z) {
++#ifndef __SYLLABLE__
+ #if USE_COMBO_BOX
+   char buf[32];
+   XmString s;
+@@ -1283,40 +1611,44 @@
+   }
+   XtVaSetValues(zoomMenu, XmNmenuHistory, zoomMenuBtns[i], NULL);
+ #endif
++#endif
++  int i;
++   for (i = 0; i < nZoomMenuItems; ++i) {
++    if (z == zoomMenuInfo[i].zoom) {
++	  zoom = i;
++      break;
++    }
++  }
+ }
+ 
+-void XPDFViewer::prevPageCbk(Widget widget, XtPointer ptr,
+-			     XtPointer callData) {
++void XPDFViewer::prevPageCbk( void* ptr ) {
+   XPDFViewer *viewer = (XPDFViewer *)ptr;
+ 
+   viewer->core->gotoPrevPage(1, gTrue, gFalse);
+   viewer->core->takeFocus();
+ }
+ 
+-void XPDFViewer::prevTenPageCbk(Widget widget, XtPointer ptr,
+-				XtPointer callData) {
++void XPDFViewer::prevTenPageCbk( void* ptr ) {
+   XPDFViewer *viewer = (XPDFViewer *)ptr;
+ 
+   viewer->core->gotoPrevPage(10, gTrue, gFalse);
+   viewer->core->takeFocus();
+ }
+ 
+-void XPDFViewer::nextPageCbk(Widget widget, XtPointer ptr,
+-			     XtPointer callData) {
++void XPDFViewer::nextPageCbk( void* ptr ) {
+   XPDFViewer *viewer = (XPDFViewer *)ptr;
+ 
+   viewer->core->gotoNextPage(1, gTrue);
+   viewer->core->takeFocus();
+ }
+ 
+-void XPDFViewer::nextTenPageCbk(Widget widget, XtPointer ptr,
+-				XtPointer callData) {
++void XPDFViewer::nextTenPageCbk( void* ptr ) {
+   XPDFViewer *viewer = (XPDFViewer *)ptr;
+ 
+   viewer->core->gotoNextPage(10, gTrue);
+   viewer->core->takeFocus();
+ }
+-
++#ifndef __SYLLABLE__
+ void XPDFViewer::backCbk(Widget widget, XtPointer ptr,
+ 			 XtPointer callData) {
+   XPDFViewer *viewer = (XPDFViewer *)ptr;
+@@ -1492,11 +1824,12 @@
+ 
+   viewer->app->close(viewer, gTrue);
+ }
+-
+-void XPDFViewer::pageNumCbk(Widget widget, XtPointer ptr,
+-			    XtPointer callData) {
++#endif
++void XPDFViewer::pageNumCbk(void* ptr, int pg) {
+   XPDFViewer *viewer = (XPDFViewer *)ptr;
++#ifndef __SYLLABLE__
+   char *s, *p;
++
+   int pg;
+   char buf[20];
+ 
+@@ -1510,6 +1843,7 @@
+     }
+   }
+   pg = atoi(s);
++#endif
+   if (pg < 1 || pg > viewer->core->getDoc()->getNumPages()) {
+     goto err;
+   }
+@@ -1519,9 +1853,12 @@
+   return;
+ 
+  err:
++#ifndef __SYLLABLE__
+   XBell(viewer->display, 0);
+   sprintf(buf, "%d", viewer->core->getPageNum());
+   XmTextFieldSetString(viewer->pageNumText, buf);
++#endif
++	static_cast<XPDFWindow*>(viewer->win)->SetPage( viewer->core->getPageNum() );
+ }
+ 
+ void XPDFViewer::updateCbk(void *data, GString *fileName,
+@@ -1529,17 +1866,16 @@
+   XPDFViewer *viewer = (XPDFViewer *)data;
+   GString *title;
+   char buf[20];
+-  XmString s;
++//  XmString s;
+ 
+   if (fileName) {
+-    if (!(title = viewer->app->getTitle())) {
+-      title = (new GString(xpdfAppName))->append(": ")->append(fileName);
+-    }
+-    XtVaSetValues(viewer->win, XmNtitle, title->getCString(),
+-		  XmNiconName, title->getCString(), NULL);
+-    if (!viewer->app->getTitle()) {
++    //if (!(title = viewer->app->getTitle())) {
++      title = (new GString(xpdfAppName))->append(" : ")->append(fileName);
++    //}
++	viewer->win->SetTitle( title->getCString() );
++    //if (!viewer->app->getTitle()) {
+       delete title;
+-    }
++    //}
+ #ifndef DISABLE_OUTLINE
+     if (!viewer->app->getFullScreen()) {
+       viewer->setupOutline();
+@@ -1549,6 +1885,12 @@
+   }
+ 
+   if (pageNum >= 0) {
++	sprintf(buf, "%s %d", MSG_STATUS_PAGE.c_str(), pageNum);
++	static_cast<XPDFWindow*>(viewer->win)->SetStatusBarText( buf, 0 );
++	static_cast<XPDFWindow*>(viewer->win)->SetStatusBarText( "", 2 );
++	static_cast<XPDFWindow*>(viewer->win)->EnableButtons( pageNum < viewer->core->getDoc()->getNumPages(),
++															pageNum > 1 );
++#ifndef __SYLLABLE__
+     s = XmStringCreateLocalized("");
+     XtVaSetValues(viewer->linkLabel, XmNlabelString, s, NULL);
+     XmStringFree(s);
+@@ -1566,20 +1908,29 @@
+ 		  viewer->core->canGoBack(), NULL);
+     XtVaSetValues(viewer->forwardBtn, XmNsensitive,
+ 		  viewer->core->canGoForward(), NULL);
++#endif
++	static_cast<XPDFWindow*>(viewer->win)->SetPage( pageNum );
+   }
+ 
+   if (numPages >= 0) {
+-    sprintf(buf, " of %d", numPages);
+-    s = XmStringCreateLocalized(buf);
++    sprintf(buf, "%s %d", MSG_STATUS_PAGE_OF.c_str(), numPages);
++	static_cast<XPDFWindow*>(viewer->win)->SetStatusBarText( buf, 1 );
++#ifndef __SYLLABLE__
++	s = XmStringCreateLocalized(buf);
+     XtVaSetValues(viewer->pageCountLabel, XmNlabelString, s, NULL);
+     XmStringFree(s);
++#endif
+   }
+ 
+   if (linkString) {
++	static_cast<XPDFWindow*>(viewer->win)->SetStatusBarText( linkString, 2 );
++#ifndef __SYLLABLE__
+     s = XmStringCreateLocalized(linkString);
+     XtVaSetValues(viewer->linkLabel, XmNlabelString, s, NULL);
+     XmStringFree(s);
++#endif
+   }
++
+ }
+ 
+ 
+@@ -1694,6 +2045,7 @@
+ //------------------------------------------------------------------------
+ 
+ void XPDFViewer::initAboutDialog() {
++#ifndef __SYLLABLE__
+   Widget scrolledWin, col, label, sep, closeBtn;
+   Arg args[20];
+   int n, i;
+@@ -1799,6 +2151,7 @@
+     XtManageChild(label);
+     XmStringFree(s);
+   }
++#endif
+ }
+ 
+ //------------------------------------------------------------------------
+@@ -1806,6 +2159,10 @@
+ //------------------------------------------------------------------------
+ 
+ void XPDFViewer::initOpenDialog() {
++	openDialog = new os::FileRequester( os::FileRequester::LOAD_REQ, new os::Messenger( win ), "", os::FileRequester::NODE_FILE,
++										false );
++	openDialog->Start();
++#ifndef __SYLLABLE__
+   Arg args[20];
+   int n;
+   XmString s1, s2, s3;
+@@ -1827,24 +2184,40 @@
+ 					     XmDIALOG_HELP_BUTTON));
+   XtAddCallback(openDialog, XmNokCallback,
+ 		&openOkCbk, (XtPointer)this);
++#endif
+ }
+ 
+ void XPDFViewer::setOpenDialogDir(char *dir) {
++	openDialog->SetPath( dir );
++#ifndef __SYLLABLE__
+   XmString s;
+ 
+   s = XmStringCreateLocalized(dir);
+   XtVaSetValues(openDialog, XmNdirectory, s, NULL);
+   XmStringFree(s);
++#endif
+ }
+ 
+ void XPDFViewer::mapOpenDialog(GBool openInNewWindowA) {
++	openDialog->Lock();
++	if( !static_cast<XPDFWindow*>(win)->GetOpenDialogShown() )
++	{
++		openDialog->Show();
++		static_cast<XPDFWindow*>(win)->SetOpenDialogShown();
++	}
++	openDialog->MakeFocus();
++	openDialog->Unlock();
++	openInNewWindow = openInNewWindowA;
++#ifndef __SYLLABLE__
+   openInNewWindow = openInNewWindowA;
+   XmFileSelectionDoSearch(openDialog, NULL);
+   XtManageChild(openDialog);
++#endif
+ }
+-
++#ifndef __SYLLABLE__
+ void XPDFViewer::openOkCbk(Widget widget, XtPointer ptr,
+ 			   XtPointer callData) {
++
+   XPDFViewer *viewer = (XPDFViewer *)ptr;
+   XmFileSelectionBoxCallbackStruct *data =
+     (XmFileSelectionBoxCallbackStruct *)callData;
+@@ -1872,12 +2245,15 @@
+   }
+   XmStringFreeContext(context);
+ }
+-
++#endif
+ //------------------------------------------------------------------------
+ // GUI code: "find" dialog
+ //------------------------------------------------------------------------
+ 
+ void XPDFViewer::initFindDialog() {
++	findDialog = new os::FindDialog(os::Rect(200,200,450,310),win);
++	findDialog->Start();
++#ifndef __SYLLABLE__
+   Widget form1, label, okBtn, closeBtn;
+   Arg args[20];
+   int n;
+@@ -1956,16 +2332,21 @@
+   XtSetArg(args[n], XmNinitialFocus, findText); ++n;
+ #endif
+   XtSetValues(findDialog, args, n);
++#endif
+ }
+-
++#ifndef __SYLLABLE__
+ void XPDFViewer::findFindCbk(Widget widget, XtPointer ptr,
+ 			     XtPointer callData) {
+   XPDFViewer *viewer = (XPDFViewer *)ptr;
+ 
+   viewer->doFind(gFalse);
+ }
+-
++#endif
+ void XPDFViewer::doFind(GBool next) {
++	GString* text = new GString( findDialog->GetFindText().c_str() );
++	core->find( text->getCString(), next );
++	delete( text );
++#ifndef __SYLLABLE__
+   if (XtWindow(findDialog)) {
+     XDefineCursor(display, XtWindow(findDialog), core->getBusyCursor());
+   }
+@@ -1973,20 +2354,22 @@
+   if (XtWindow(findDialog)) {
+     XUndefineCursor(display, XtWindow(findDialog));
+   }
++#endif
+ }
+-
++#ifndef __SYLLABLE__
+ void XPDFViewer::findCloseCbk(Widget widget, XtPointer ptr,
+ 			      XtPointer callData) {
+   XPDFViewer *viewer = (XPDFViewer *)ptr;
+ 
+   XtUnmanageChild(viewer->findDialog);
+ }
+-
++#endif
+ //------------------------------------------------------------------------
+ // GUI code: "save as" dialog
+ //------------------------------------------------------------------------
+ 
+ void XPDFViewer::initSaveAsDialog() {
++#ifndef __SYLLABLE__
+   Arg args[20];
+   int n;
+   XmString s1, s2, s3;
+@@ -2008,21 +2391,26 @@
+ 					     XmDIALOG_HELP_BUTTON));
+   XtAddCallback(saveAsDialog, XmNokCallback,
+ 		&saveAsOkCbk, (XtPointer)this);
++#endif
+ }
+ 
+ void XPDFViewer::setSaveAsDialogDir(char *dir) {
++#ifndef __SYLLABLE__
+   XmString s;
+ 
+   s = XmStringCreateLocalized(dir);
+   XtVaSetValues(saveAsDialog, XmNdirectory, s, NULL);
+   XmStringFree(s);
++#endif
+ }
+ 
+ void XPDFViewer::mapSaveAsDialog() {
++#ifndef __SYLLABLE__
+   XmFileSelectionDoSearch(saveAsDialog, NULL);
+   XtManageChild(saveAsDialog);
++#endif
+ }
+-
++#ifndef __SYLLABLE__
+ void XPDFViewer::saveAsOkCbk(Widget widget, XtPointer ptr,
+ 			     XtPointer callData) {
+   XPDFViewer *viewer = (XPDFViewer *)ptr;
+@@ -2045,12 +2433,13 @@
+   }
+   XmStringFreeContext(context);
+ }
+-
++#endif
+ //------------------------------------------------------------------------
+ // GUI code: "print" dialog
+ //------------------------------------------------------------------------
+ 
+ void XPDFViewer::initPrintDialog() {
++#ifndef __SYLLABLE__
+   Widget sep1, sep2, row, label1, label2, okBtn, cancelBtn;
+   Arg args[20];
+   int n;
+@@ -2215,9 +2604,11 @@
+     }
+     delete psFileName;
+   }
++#endif
+ }
+ 
+ void XPDFViewer::setupPrintDialog() {
++#ifndef __SYLLABLE__
+   PDFDoc *doc;
+   char buf[20];
+   GString *pdfFileName, *psFileName, *psFileName2;
+@@ -2245,8 +2636,9 @@
+   sprintf(buf, "%d", doc->getNumPages());
+   XmTextFieldSetString(printFirstPage, "1");
+   XmTextFieldSetString(printLastPage, buf);
++#endif
+ }
+-
++#ifndef __SYLLABLE__
+ void XPDFViewer::printWithCmdBtnCbk(Widget widget, XtPointer ptr,
+ 				    XtPointer callData) {
+   XPDFViewer *viewer = (XPDFViewer *)ptr;
+@@ -2325,12 +2717,13 @@
+ 
+   viewer->core->setBusyCursor(gFalse);
+ }
+-
++#endif
+ //------------------------------------------------------------------------
+ // GUI code: password dialog
+ //------------------------------------------------------------------------
+ 
+ void XPDFViewer::initPasswordDialog() {
++#ifndef __SYLLABLE__
+   Widget row, label, okBtn, cancelBtn;
+   Arg args[20];
+   int n;
+@@ -2414,8 +2807,9 @@
+   XtSetArg(args[n], XmNinitialFocus, passwordText); ++n;
+ #endif
+   XtSetValues(passwordDialog, args, n);
++#endif
+ }
+-
++#ifndef __SYLLABLE__
+ void XPDFViewer::passwordTextVerifyCbk(Widget widget, XtPointer ptr,
+ 				       XtPointer callData) {
+   XPDFViewer *viewer = (XPDFViewer *)ptr;
+@@ -2453,8 +2847,9 @@
+ 
+   viewer->passwordDone = -1;
+ }
+-
++#endif
+ void XPDFViewer::getPassword(GBool again) {
++#ifndef __SYLLABLE__
+   XmString s;
+   XEvent event;
+ 
+@@ -2480,12 +2875,13 @@
+     delete password;
+     password = NULL;
+   }
++#endif
+ }
+ 
+ //------------------------------------------------------------------------
+ // Motif support
+ //------------------------------------------------------------------------
+-
++#ifndef __SYLLABLE__
+ XmFontList XPDFViewer::createFontList(char *xlfd) {
+   XmFontList fontList;
+ 
+@@ -2521,3 +2917,14 @@
+ 
+   return fontList;
+ }
++#endif
++
++
++
++
++
++
++
++
++
++
+diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.h xpdf/xpdf/XPDFViewer.h
+--- xpdf-3.00pl3/xpdf/XPDFViewer.h	2006-09-11 04:11:50.000000000 +0200
++++ xpdf/xpdf/XPDFViewer.h	2006-09-11 02:57:16.000000000 +0200
+@@ -15,21 +15,25 @@
+ #pragma interface
+ #endif
+ 
+-#define Object XtObject
+-#include <Xm/XmAll.h>
+-#undef Object
++#include <gui/window.h>
++#include <gui/view.h>
++#include <gui/menu.h>
++#include <gui/toolbar.h>
++#include <gui/requesters.h>
++#include <gui/filerequester.h>
++#include <gui/image.h>
++#include <gui/imageview.h>
++#include <gui/layoutview.h>
++#include <gui/button.h>
++#include <gui/imagebutton.h>
++#include <gui/textview.h>
++#include <util/resources.h>
++#include <util/clipboard.h>
+ #include "gtypes.h"
+ #include "XPDFCore.h"
++#include "finddialog.h"
+ 
+-#if (XmVERSION <= 1) && !defined(__sgi)
+ #define DISABLE_OUTLINE
+-#endif
+-
+-#if (XmVERSION >= 2 && !defined(LESSTIF_VERSION))
+-#  define USE_COMBO_BOX 1
+-#else
+-#  undef USE_COMBO_BOX
+-#endif
+ 
+ class GString;
+ class GList;
+@@ -59,7 +63,7 @@
+   void clear();
+   void reloadFile();
+ 
+-  Widget getWindow() { return win; }
++  os::Window* getWindow() { return win; }
+ 
+ private:
+ 
+@@ -72,17 +76,21 @@
+ 		   GBool addToHist);
+   void getPageAndDest(int pageA, GString *destName,
+ 		      int *pageOut, LinkDest **destOut);
+-
++#ifndef __SYLLABLE__
+   //----- password dialog
+   static GString *reqPasswordCbk(void *data, GBool again);
+-
++#endif
+   //----- actions
+   static void actionCbk(void *data, char *action);
+ 
+   //----- keyboard/mouse input
+-  static void keyPressCbk(void *data, char *s, KeySym key,
+-			  Guint modifiers);
+-  static void mouseCbk(void *data, XEvent *event);
++
++  static void keyPressCbk(void *data, const char *s, const char* raw,
++			  uint32 modifiers);
++#ifndef __SYLLABLE__		  
++	static void mouseCbk(void *data, XEvent *event);
++#endif			  
++  
+ 
+   //----- GUI code: main window
+   void initWindow();
+@@ -91,14 +99,12 @@
+   int getZoomIdx();
+   void setZoomIdx(int idx);
+   void setZoomVal(double z);
+-  static void prevPageCbk(Widget widget, XtPointer ptr,
+-			  XtPointer callData);
+-  static void prevTenPageCbk(Widget widget, XtPointer ptr,
+-			     XtPointer callData);
+-  static void nextPageCbk(Widget widget, XtPointer ptr,
+-			  XtPointer callData);
+-  static void nextTenPageCbk(Widget widget, XtPointer ptr,
+-			     XtPointer callData);
++
++  static void prevPageCbk(void* ptr);
++  static void prevTenPageCbk(void* ptr);
++  static void nextPageCbk(void* ptr);
++  static void nextTenPageCbk(void* ptr);
++#ifndef __SYLLABLE__
+   static void backCbk(Widget widget, XtPointer ptr,
+ 		      XtPointer callData);
+   static void forwardCbk(Widget widget, XtPointer ptr,
+@@ -134,8 +140,9 @@
+ 		       XtPointer callData);
+   static void closeMsgCbk(Widget widget, XtPointer ptr,
+ 			  XtPointer callData);
+-  static void pageNumCbk(Widget widget, XtPointer ptr,
+-			 XtPointer callData);
++#endif	
++  static void pageNumCbk( void* ptr, int pg );
++		
+   static void updateCbk(void *data, GString *fileName,
+ 			int pageNum, int numPages, char *linkString);
+ 
+@@ -154,55 +161,72 @@
+   void initOpenDialog();
+   void setOpenDialogDir(char *dir);
+   void mapOpenDialog(GBool openInNewWindowA);
++#ifndef __SYLLABLE__
+   static void openOkCbk(Widget widget, XtPointer ptr,
+ 			XtPointer callData);
++#endif
+ 
+   //----- GUI code: "find" dialog
+   void initFindDialog();
++#ifndef __SYLLABLE__
+   static void findFindCbk(Widget widget, XtPointer ptr,
+ 			  XtPointer callData);
++#endif
+   void doFind(GBool next);
++#ifndef __SYLLABLE__
+   static void findCloseCbk(Widget widget, XtPointer ptr,
+ 			   XtPointer callData);
+-
++#endif
+   //----- GUI code: "save as" dialog
+   void initSaveAsDialog();
++  
+   void setSaveAsDialogDir(char *dir);
++
+   void mapSaveAsDialog();
++  #if 0
+   static void saveAsOkCbk(Widget widget, XtPointer ptr,
+ 			  XtPointer callData);
+-
++#endif
+   //----- GUI code: "print" dialog
+   void initPrintDialog();
+   void setupPrintDialog();
++#ifndef __SYLLABLE__
+   static void printWithCmdBtnCbk(Widget widget, XtPointer ptr,
+ 				 XtPointer callData);
+   static void printToFileBtnCbk(Widget widget, XtPointer ptr,
+ 				XtPointer callData);
+   static void printPrintCbk(Widget widget, XtPointer ptr,
+ 			    XtPointer callData);
+-
++#endif
+   //----- GUI code: password dialog
+   void initPasswordDialog();
++#ifndef __SYLLABLE__
+   static void passwordTextVerifyCbk(Widget widget, XtPointer ptr,
+ 				    XtPointer callData);
+   static void passwordOkCbk(Widget widget, XtPointer ptr,
+ 			    XtPointer callData);
+   static void passwordCancelCbk(Widget widget, XtPointer ptr,
+ 				XtPointer callData);
++#endif				
+   void getPassword(GBool again);
+ 
+   //----- Motif support
+-  XmFontList createFontList(char *xlfd);
++  //XmFontList createFontList(char *xlfd);
+ 
+   XPDFApp *app;
+   GBool ok;
+-
++#ifndef __SYLLABLE__
+   Display *display;
+   int screenNum;
+   Widget win;			// top-level window
+   Widget form;
+   Widget panedWin;
++#endif
++  os::Window* win;
++  os::View* form;
++  int zoom;
++  os::FileRequester* openDialog;
++  os::FindDialog* findDialog;
+ #ifndef DISABLE_OUTLINE
+   Widget outlineScroll;
+   Widget outlineTree;
+@@ -211,6 +235,7 @@
+   int outlineLabelsSize;
+ #endif
+   XPDFCore *core;
++#ifndef __SYLLABLE__
+   Widget toolBar;
+   Widget backBtn;
+   Widget prevTenPageBtn;
+@@ -237,8 +262,9 @@
+   XmFontList aboutBigFont, aboutVersionFont, aboutFixedFont;
+ 
+   Widget openDialog;
++#endif  
+   GBool openInNewWindow;
+-
++#ifndef __SYLLABLE__
+   Widget findDialog;
+   Widget findText;
+ 
+@@ -255,8 +281,12 @@
+   Widget passwordDialog;
+   Widget passwordMsg;
+   Widget passwordText;
++#endif  
+   int passwordDone;
+   GString *password;
++  
++  friend class XPDFWindow;
++  friend class XPDFLooper;
+ };
+ 
+ #endif
+diff -ru xpdf-3.00pl3/xpdf/XSplashOutputDev.cc xpdf/xpdf/XSplashOutputDev.cc
+--- xpdf-3.00pl3/xpdf/XSplashOutputDev.cc	2006-09-11 04:11:50.000000000 +0200
++++ xpdf/xpdf/XSplashOutputDev.cc	2006-09-11 02:57:16.000000000 +0200
+@@ -12,8 +12,7 @@
+ #pragma implementation
+ #endif
+ 
+-#include <X11/Xlib.h>
+-#include <X11/Xutil.h>
++
+ #include "gmem.h"
+ #include "SplashTypes.h"
+ #include "SplashBitmap.h"
+@@ -32,8 +31,7 @@
+ // XSplashOutputDev
+ //------------------------------------------------------------------------
+ 
+-XSplashOutputDev::XSplashOutputDev(Display *displayA, int screenNumA,
+-				   Visual *visualA, Colormap colormapA,
++XSplashOutputDev::XSplashOutputDev(os::Window* win,
+ 				   GBool reverseVideoA,
+ 				   SplashColor paperColorA,
+ 				   GBool installCmapA, int rgbCubeSizeA,
+@@ -42,12 +40,8 @@
+ 				   void *redrawCbkDataA):
+   SplashOutputDev(splashModeRGB8, reverseVideoA, paperColorA)
+ {
+-  XVisualInfo visualTempl;
+-  XVisualInfo *visualList;
+   Gulong mask;
+   int nVisuals;
+-  XColor xcolor;
+-  XColor *xcolors;
+   int r, g, b, n, m;
+   GBool ok;
+ 
+@@ -59,116 +53,15 @@
+   text = new TextPage(gFalse);
+ 
+   //----- set up the X color stuff
++  trueColor = gTrue;
+ 
+-  display = displayA;
+-  visual = visualA;
+-
+-  // check for TrueColor visual
+-  //~ this should scan the list, not just look at the first one
+-  visualTempl.visualid = XVisualIDFromVisual(visual);
+-  visualList = XGetVisualInfo(display, VisualIDMask,
+-			      &visualTempl, &nVisuals);
+-  if (nVisuals < 1) {
+-    // this shouldn't happen
+-    XFree((XPointer)visualList);
+-    visualList = XGetVisualInfo(display, VisualNoMask, &visualTempl,
+-				&nVisuals);
+-  }
+-  depth = visualList->depth;
+-  if (visualList->c_class == TrueColor) {
+-    trueColor = gTrue;
+-    for (mask = visualList->red_mask, rShift = 0;
+-	 mask && !(mask & 1);
+-	 mask >>= 1, ++rShift) ;
+-    for (rDiv = 8; mask; mask >>= 1, --rDiv) ;
+-    for (mask = visualList->green_mask, gShift = 0;
+-	 mask && !(mask & 1);
+-	 mask >>= 1, ++gShift) ;
+-    for (gDiv = 8; mask; mask >>= 1, --gDiv) ;
+-    for (mask = visualList->blue_mask, bShift = 0;
+-	 mask && !(mask & 1);
+-	 mask >>= 1, ++bShift) ;
+-    for (bDiv = 8; mask; mask >>= 1, --bDiv) ;
+-  } else {
+-    trueColor = gFalse;
+-  }
+-  XFree((XPointer)visualList);
+-
+-  // allocate a color cube
+-  if (!trueColor) {
+-
+-    // set colors in private colormap
+-    if (installCmapA) {
+-      for (rgbCubeSize = xOutMaxRGBCube; rgbCubeSize >= 2; --rgbCubeSize) {
+-	m = rgbCubeSize * rgbCubeSize * rgbCubeSize;
+-	if (XAllocColorCells(display, colormapA, False, NULL, 0, colors, m)) {
+-	  break;
+-	}
+-      }
+-      if (rgbCubeSize >= 2) {
+-	m = rgbCubeSize * rgbCubeSize * rgbCubeSize;
+-	xcolors = (XColor *)gmalloc(m * sizeof(XColor));
+-	n = 0;
+-	for (r = 0; r < rgbCubeSize; ++r) {
+-	  for (g = 0; g < rgbCubeSize; ++g) {
+-	    for (b = 0; b < rgbCubeSize; ++b) {
+-	      xcolors[n].pixel = colors[n];
+-	      xcolors[n].red = (r * 65535) / (rgbCubeSize - 1);
+-	      xcolors[n].green = (g * 65535) / (rgbCubeSize - 1);
+-	      xcolors[n].blue = (b * 65535) / (rgbCubeSize - 1);
+-	      xcolors[n].flags = DoRed | DoGreen | DoBlue;
+-	      ++n;
+-	    }
+-	  }
+-	}
+-	XStoreColors(display, colormapA, xcolors, m);
+-	gfree(xcolors);
+-      } else {
+-	rgbCubeSize = 1;
+-	colors[0] = BlackPixel(display, screenNumA);
+-	colors[1] = WhitePixel(display, screenNumA);
+-      }
+-
+-    // allocate colors in shared colormap
+-    } else {
+-      if (rgbCubeSize > xOutMaxRGBCube) {
+-	rgbCubeSize = xOutMaxRGBCube;
+-      }
+-      ok = gFalse;
+-      for (rgbCubeSize = rgbCubeSizeA; rgbCubeSize >= 2; --rgbCubeSize) {
+-	ok = gTrue;
+-	n = 0;
+-	for (r = 0; r < rgbCubeSize && ok; ++r) {
+-	  for (g = 0; g < rgbCubeSize && ok; ++g) {
+-	    for (b = 0; b < rgbCubeSize && ok; ++b) {
+-	      if (n == 0) {
+-		colors[n] = BlackPixel(display, screenNumA);
+-		++n;
+-	      } else {
+-		xcolor.red = (r * 65535) / (rgbCubeSize - 1);
+-		xcolor.green = (g * 65535) / (rgbCubeSize - 1);
+-		xcolor.blue = (b * 65535) / (rgbCubeSize - 1);
+-		if (XAllocColor(display, colormapA, &xcolor)) {
+-		  colors[n++] = xcolor.pixel;
+-		} else {
+-		  ok = gFalse;
+-		}
+-	      }
+-	    }
+-	  }
+-	}
+-	if (ok) {
+-	  break;
+-	}
+-	XFreeColors(display, colormapA, &colors[1], n-1, 0);
+-      }
+-      if (!ok) {
+-	rgbCubeSize = 1;
+-	colors[0] = BlackPixel(display, screenNumA);
+-	colors[1] = WhitePixel(display, screenNumA);
+-      }
+-    }
+-  }
++ rShift = 16;
++ gShift = 8;
++ bShift = 0;
++ rDiv = 0;
++ gDiv = 0;
++ bDiv = 0;
++ 
+ }
+ 
+ XSplashOutputDev::~XSplashOutputDev() {
+@@ -210,6 +103,7 @@
+ }
+ 
+ void XSplashOutputDev::dump() {
++
+   if (incrementalUpdate) {
+     (*redrawCbk)(redrawCbkData);
+   }
+@@ -221,77 +115,41 @@
+ }
+ 
+ void XSplashOutputDev::redraw(int srcX, int srcY,
+-			      Drawable destDrawable, GC destGC,
++			      os::View* view, os::Bitmap* image/*Drawable destDrawable, GC destGC*/,
+ 			      int destX, int destY,
+ 			      int width, int height) {
+-  XImage *image;
++  //XImage *image;
+   SplashColorPtr dataPtr;
+   SplashRGB8 *p;
+   SplashRGB8 rgb;
+   Gulong pixel;
+   int bw, x, y, r, g, b, gray;
+ 
+-  //~ allocate this image once (whenever the window changes size)
+-  //~ use XShm
+-  image = XCreateImage(display, visual, depth, ZPixmap, 0, NULL,
+-		       width, height, 8, 0);
+-  image->data = (char *)gmalloc(height * image->bytes_per_line);
++  //printf( "%i %i %i %i %i %i\n", srcX, srcY, destX, destY, width, height );
+ 
++ 
+   //~ optimize for known XImage formats
+   bw = getBitmap()->getWidth();
+   dataPtr = getBitmap()->getDataPtr();
+ 
+   if (trueColor) {
++     uint32* pPtr = (uint32*)image->LockRaster() + image->GetBytesPerRow() / 4 * destY + destX;
+     for (y = 0; y < height; ++y) {
+       p = dataPtr.rgb8 + (y + srcY) * bw + srcX;
+       for (x = 0; x < width; ++x) {
+-	rgb = *p++;
+-	r = splashRGB8R(rgb) >> rDiv;
+-	g = splashRGB8G(rgb) >> gDiv;
+-	b = splashRGB8B(rgb) >> bDiv;
+-	pixel = ((Gulong)r << rShift) +
+-	        ((Gulong)g << gShift) +
+-	        ((Gulong)b << bShift);
+-	XPutPixel(image, x, y, pixel);
+-      }
+-    }
+-  } else if (rgbCubeSize == 1) {
+-    //~ this should really use splashModeMono, with non-clustered dithering
+-    for (y = 0; y < height; ++y) {
+-      p = dataPtr.rgb8 + (y + srcY) * bw + srcX;
+-      for (x = 0; x < width; ++x) {
+-	rgb = *p++;
+-	gray = xoutRound(0.299 * splashRGB8R(rgb) +
+-			 0.587 * splashRGB8G(rgb) +
+-			 0.114 * splashRGB8B(rgb));
+-	if (gray < 128) {
+-	  pixel = colors[0];
+-	} else {
+-	  pixel = colors[1];
+-	}
+-	XPutPixel(image, x, y, pixel);
+-      }
+-    }
+-  } else {
+-    for (y = 0; y < height; ++y) {
+-      p = dataPtr.rgb8 + (y + srcY) * bw + srcX;
+-      for (x = 0; x < width; ++x) {
+-	rgb = *p++;
+-	r = (splashRGB8R(rgb) * (rgbCubeSize - 1)) / 255;
+-	g = (splashRGB8G(rgb) * (rgbCubeSize - 1)) / 255;
+-	b = (splashRGB8B(rgb) * (rgbCubeSize - 1)) / 255;
+-	pixel = colors[(r * rgbCubeSize + g) * rgbCubeSize + b];
+-	XPutPixel(image, x, y, pixel);
++    *pPtr++ = *p++/*pixel*/;
+       }
++	pPtr += image->GetBytesPerRow() / 4 - width;
+     }
++  } 
++  else {
++   printf( "SHOULD NOT HAPPEN!\n" );
+   }
+ 
+-  XPutImage(display, destDrawable, destGC, image,
+-	    0, 0, destX, destY, width, height);
+-
+-  gfree(image->data);
+-  image->data = NULL;
+-  XDestroyImage(image);
++  os::Rect cFrame = os::Rect( destX, destY, destX + width - 1, destY + height - 1 );
++  os::Rect cDest = os::Rect( srcX, srcY, srcX + width - 1, srcY + height - 1 );
++  view->DrawBitmap( image, cFrame, cDest );
++  view->Flush();
+ }
+ 
+ GBool XSplashOutputDev::findText(Unicode *s, int len,
+diff -ru xpdf-3.00pl3/xpdf/XSplashOutputDev.h xpdf/xpdf/XSplashOutputDev.h
+--- xpdf-3.00pl3/xpdf/XSplashOutputDev.h	2006-09-11 04:11:49.000000000 +0200
++++ xpdf/xpdf/XSplashOutputDev.h	2006-09-11 02:57:16.000000000 +0200
+@@ -13,7 +13,9 @@
+ #pragma interface
+ #endif
+ 
+-#include <X11/Xlib.h>
++#include <gui/window.h>
++#include <gui/view.h>
++#include <gui/bitmap.h>
+ #include "SplashTypes.h"
+ #include "SplashOutputDev.h"
+ 
+@@ -28,8 +30,7 @@
+ class XSplashOutputDev: public SplashOutputDev {
+ public:
+ 
+-  XSplashOutputDev(Display *displayA, int screenNumA,
+-		   Visual *visualA, Colormap colormapA,
++  XSplashOutputDev(os::Window* win,
+ 		   GBool reverseVideoA, SplashColor paperColorA,
+ 		   GBool installCmapA, int rgbCubeSizeA,
+ 		   GBool incrementalUpdateA,
+@@ -68,8 +69,8 @@
+ 
+   // Copy the rectangle (srcX, srcY, width, height) to (destX, destY)
+   // in destDC.
+-  void redraw(int srcX, int srcY,
+-	      Drawable destDrawable, GC destGC,
++  void redraw(int srcX, int srcY, os::View*,
++	      os::Bitmap*/*Drawable destDrawable, GC destGC*/,
+ 	      int destX, int destY,
+ 	      int width, int height);
+ 
+@@ -96,8 +97,7 @@
+   void *redrawCbkData;
+   TextPage *text;               // text from the current page
+ 
+-  Display *display;		// X display pointer
+-  Visual *visual;		// X visual
++  os::Window* win;
+   Guint depth;			// visual depth
+   GBool trueColor;		// set if using a TrueColor visual
+   int rDiv, gDiv, bDiv;		// RGB right shifts (for TrueColor)

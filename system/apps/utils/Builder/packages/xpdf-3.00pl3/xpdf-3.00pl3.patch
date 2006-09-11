@@ -1,0 +1,280 @@
+diff -ru xpdf-3.00.original/xpdf/Gfx.cc xpdf-3.00pl3/xpdf/Gfx.cc
+--- xpdf-3.00.original/xpdf/Gfx.cc	2004-01-22 02:26:45.000000000 +0100
++++ xpdf-3.00pl3/xpdf/Gfx.cc	2006-09-11 04:14:17.000000000 +0200
+@@ -2654,7 +2654,9 @@
+     haveMask = gFalse;
+     dict->lookup("Mask", &maskObj);
+     if (maskObj.isArray()) {
+-      for (i = 0; i < maskObj.arrayGetLength(); ++i) {
++      for (i = 0;
++	   i < maskObj.arrayGetLength() && i < 2*gfxColorMaxComps;
++	   ++i) {
+ 	maskObj.arrayGet(i, &obj1);
+ 	maskColors[i] = obj1.getInt();
+ 	obj1.free();
+diff -ru xpdf-3.00.original/xpdf/GfxState.cc xpdf-3.00pl3/xpdf/GfxState.cc
+--- xpdf-3.00.original/xpdf/GfxState.cc	2004-01-22 02:26:45.000000000 +0100
++++ xpdf-3.00pl3/xpdf/GfxState.cc	2006-09-11 04:14:17.000000000 +0200
+@@ -708,6 +708,11 @@
+   }
+   nCompsA = obj2.getInt();
+   obj2.free();
++  if (nCompsA > gfxColorMaxComps) {
++    error(-1, "ICCBased color space with too many (%d > %d) components",
++	  nCompsA, gfxColorMaxComps);
++    nCompsA = gfxColorMaxComps;
++  }
+   if (dict->lookup("Alternate", &obj2)->isNull() ||
+       !(altA = GfxColorSpace::parse(&obj2))) {
+     switch (nCompsA) {
+@@ -1054,7 +1059,7 @@
+   }
+   nCompsA = obj1.arrayGetLength();
+   if (nCompsA > gfxColorMaxComps) {
+-    error(-1, "DeviceN color space with more than %d > %d components",
++    error(-1, "DeviceN color space with too many (%d > %d) components",
+ 	  nCompsA, gfxColorMaxComps);
+     nCompsA = gfxColorMaxComps;
+   }
+diff -ru xpdf-3.00.original/xpdf/XRef.cc xpdf-3.00pl3/xpdf/XRef.cc
+--- xpdf-3.00.original/xpdf/XRef.cc	2004-01-22 02:26:45.000000000 +0100
++++ xpdf-3.00pl3/xpdf/XRef.cc	2006-09-11 04:14:23.000000000 +0200
+@@ -96,7 +96,7 @@
+   }
+   nObjects = obj1.getInt();
+   obj1.free();
+-  if (nObjects == 0) {
++  if (nObjects <= 0) {
+     goto err1;
+   }
+ 
+@@ -106,6 +106,9 @@
+   }
+   first = obj1.getInt();
+   obj1.free();
++  if (first < 0) {
++    goto err1;
++  }
+ 
+   objs = new Object[nObjects];
+   objNums = (int *)gmalloc(nObjects * sizeof(int));
+@@ -130,6 +133,12 @@
+     offsets[i] = obj2.getInt();
+     obj1.free();
+     obj2.free();
++    if (objNums[i] < 0 || offsets[i] < 0 ||
++	(i > 0 && offsets[i] < offsets[i-1])) {
++      delete parser;
++      gfree(offsets);
++      goto err1;
++    }
+   }
+   while (str->getChar() != EOF) ;
+   delete parser;
+@@ -369,10 +378,16 @@
+     }
+     n = obj.getInt();
+     obj.free();
++    if (first < 0 || n < 0 || first + n < 0) {
++      goto err1;
++    }
+     if (first + n > size) {
+       for (newSize = size ? 2 * size : 1024;
+-	   first + n > newSize;
++	   first + n > newSize && newSize > 0;
+ 	   newSize <<= 1) ;
++      if (newSize < 0) {
++	goto err1;
++      }
+       entries = (XRefEntry *)grealloc(entries, newSize * sizeof(XRefEntry));
+       for (i = size; i < newSize; ++i) {
+ 	entries[i].offset = 0xffffffff;
+@@ -443,7 +458,7 @@
+ 
+   // check for an 'XRefStm' key
+   if (obj.getDict()->lookup("XRefStm", &obj2)->isInt()) {
+-    pos2 = obj2.getInt();
++    pos2 = (Guint)obj2.getInt();
+     readXRef(&pos2);
+     if (!ok) {
+       goto err1;
+@@ -474,6 +489,9 @@
+   }
+   newSize = obj.getInt();
+   obj.free();
++  if (newSize < 0) {
++    goto err1;
++  }
+   if (newSize > size) {
+     entries = (XRefEntry *)grealloc(entries, newSize * sizeof(XRefEntry));
+     for (i = size; i < newSize; ++i) {
+@@ -494,6 +512,9 @@
+     }
+     w[i] = obj2.getInt();
+     obj2.free();
++    if (w[i] < 0 || w[i] > 4) {
++      goto err1;
++    }
+   }
+   obj.free();
+ 
+@@ -513,13 +534,14 @@
+       }
+       n = obj.getInt();
+       obj.free();
+-      if (!readXRefStreamSection(xrefStr, w, first, n)) {
++      if (first < 0 || n < 0 ||
++	  !readXRefStreamSection(xrefStr, w, first, n)) {
+ 	idx.free();
+ 	goto err0;
+       }
+     }
+   } else {
+-    if (!readXRefStreamSection(xrefStr, w, 0, size)) {
++    if (!readXRefStreamSection(xrefStr, w, 0, newSize)) {
+       idx.free();
+       goto err0;
+     }
+@@ -551,10 +573,16 @@
+   Guint offset;
+   int type, gen, c, newSize, i, j;
+ 
++  if (first + n < 0) {
++    return gFalse;
++  }
+   if (first + n > size) {
+     for (newSize = size ? 2 * size : 1024;
+-	 first + n > newSize;
++	 first + n > newSize && newSize > 0;
+ 	 newSize <<= 1) ;
++    if (newSize < 0) {
++      return gFalse;
++    }
+     entries = (XRefEntry *)grealloc(entries, newSize * sizeof(XRefEntry));
+     for (i = size; i < newSize; ++i) {
+       entries[i].offset = 0xffffffff;
+@@ -585,24 +613,26 @@
+       }
+       gen = (gen << 8) + c;
+     }
+-    switch (type) {
+-    case 0:
+-      entries[i].offset = offset;
+-      entries[i].gen = gen;
+-      entries[i].type = xrefEntryFree;
+-      break;
+-    case 1:
+-      entries[i].offset = offset;
+-      entries[i].gen = gen;
+-      entries[i].type = xrefEntryUncompressed;
+-      break;
+-    case 2:
+-      entries[i].offset = offset;
+-      entries[i].gen = gen;
+-      entries[i].type = xrefEntryCompressed;
+-      break;
+-    default:
+-      return gFalse;
++    if (entries[i].offset == 0xffffffff) {
++      switch (type) {
++      case 0:
++	entries[i].offset = offset;
++	entries[i].gen = gen;
++	entries[i].type = xrefEntryFree;
++	break;
++      case 1:
++	entries[i].offset = offset;
++	entries[i].gen = gen;
++	entries[i].type = xrefEntryUncompressed;
++	break;
++      case 2:
++	entries[i].offset = offset;
++	entries[i].gen = gen;
++	entries[i].type = xrefEntryCompressed;
++	break;
++      default:
++	return gFalse;
++      }
+     }
+   }
+ 
+@@ -664,38 +694,44 @@
+     // look for object
+     } else if (isdigit(*p)) {
+       num = atoi(p);
+-      do {
+-	++p;
+-      } while (*p && isdigit(*p));
+-      if (isspace(*p)) {
++      if (num > 0) {
+ 	do {
+ 	  ++p;
+-	} while (*p && isspace(*p));
+-	if (isdigit(*p)) {
+-	  gen = atoi(p);
++	} while (*p && isdigit(*p));
++	if (isspace(*p)) {
+ 	  do {
+ 	    ++p;
+-	  } while (*p && isdigit(*p));
+-	  if (isspace(*p)) {
++	  } while (*p && isspace(*p));
++	  if (isdigit(*p)) {
++	    gen = atoi(p);
+ 	    do {
+ 	      ++p;
+-	    } while (*p && isspace(*p));
+-	    if (!strncmp(p, "obj", 3)) {
+-	      if (num >= size) {
+-		newSize = (num + 1 + 255) & ~255;
+-		entries = (XRefEntry *)
+-		            grealloc(entries, newSize * sizeof(XRefEntry));
+-		for (i = size; i < newSize; ++i) {
+-		  entries[i].offset = 0xffffffff;
+-		  entries[i].type = xrefEntryFree;
++	    } while (*p && isdigit(*p));
++	    if (isspace(*p)) {
++	      do {
++		++p;
++	      } while (*p && isspace(*p));
++	      if (!strncmp(p, "obj", 3)) {
++		if (num >= size) {
++		  newSize = (num + 1 + 255) & ~255;
++		  if (newSize < 0) {
++		    error(-1, "Bad object number");
++		    return gFalse;
++		  }
++		  entries = (XRefEntry *)
++		      grealloc(entries, newSize * sizeof(XRefEntry));
++		  for (i = size; i < newSize; ++i) {
++		    entries[i].offset = 0xffffffff;
++		    entries[i].type = xrefEntryFree;
++		  }
++		  size = newSize;
++		}
++		if (entries[num].type == xrefEntryFree ||
++		    gen >= entries[num].gen) {
++		  entries[num].offset = pos - start;
++		  entries[num].gen = gen;
++		  entries[num].type = xrefEntryUncompressed;
+ 		}
+-		size = newSize;
+-	      }
+-	      if (entries[num].type == xrefEntryFree ||
+-		  gen >= entries[num].gen) {
+-		entries[num].offset = pos - start;
+-		entries[num].gen = gen;
+-		entries[num].type = xrefEntryUncompressed;
+ 	      }
+ 	    }
+ 	  }
+@@ -757,6 +793,9 @@
+ 	} else {
+ 	  keyLength = 5;
+ 	}
++	if (keyLength > 16) {
++	  keyLength = 16;
++	}
+ 	permFlags = permissions.getInt();
+ 	if (encVersion >= 1 && encVersion <= 2 &&
+ 	    encRevision >= 2 && encRevision <= 3) {
