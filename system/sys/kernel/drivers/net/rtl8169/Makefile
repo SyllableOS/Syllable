@@ -24,7 +24,7 @@ $(OBJDIR)/%.o : $(SOURCE_DIR)/%.S
 	$(CC) $(CFLAGS) -x assembler-with-cpp $< -o $@
 
 
-all :	objs $(OBJDIR)/r8169
+all:	objs $(OBJDIR)/r8169
 
 deps:
 
@@ -43,6 +43,4 @@ dist: all
 clean:
 	-rm -f $(OBJS)
 	-rm -f $(OBJDIR)/$(DRIVER)
-
-DIR)/$(DRIVER)
 
