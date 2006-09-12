@@ -3,18 +3,17 @@ authors
 	Kaj de Vos
 	Kristian Van Der Vliet
 status				developing
-notes				Tested with FFMPEG CVS snapshot August 21 2005
+notes				Tested with FFMPEG SNV snapshot September 12, 2006
+
+inherits			sourceforge
 
 licenses			LGPL GPL
+home				ffmpeg.org
+packages			syllable/ffmpeg-6239
+;locations			http://mplayerhq.hu/MPlayer/cvs/
+archives			svn://svn.mplayerhq.hu/ffmpeg/trunk ffmpeg
 
 build-needs			make >= 3.80
-
-home				ffmpeg.org
-;packages			FFMpeg-current
-locations
-;	http://mplayerhq.hu/MPlayer/cvs/
-	http://ftp.syllable-norden.info/Archive/2006/04/
-archives			svn://svn.mplayerhq.hu/ffmpeg/trunk ffmpeg
 
 configure-options
 	--extra-cflags='-DPIC -fomit-frame-pointer'
@@ -40,24 +39,11 @@ configure-options
 ;	--disable-ffserver
 ;	--disable-ffplay
 
-install-tree		include lib
-install-files
-	../ffmpeg--current/libavcodec/avcodec.h				include
-	../ffmpeg--current/libavformat/avformat.h			include
-	../ffmpeg--current/libavformat/avio.h				include
-	../ffmpeg--current/libavformat/rtp.h				include
-	../ffmpeg--current/libavformat/rtsp.h				include
-	../ffmpeg--current/libavformat/rtspcodes.h			include
-	../ffmpeg--current/libavutil/avutil.h				include
-	../ffmpeg--current/libavutil/common.h				include
-	../ffmpeg--current/libavutil/mathematics.h			include
-	../ffmpeg--current/libavutil/rational.h				include
-	../ffmpeg--current/libavutil/integer.h				include
-	../ffmpeg--current/libavutil/intfloat_readwrite.h	include
-	../ffmpeg--current/config.h							include
-	libavcodec/libavcodec.a								lib
-	libavformat/libavformat.a							lib
-	libavutil/libavutil.a								lib
+;install-files		../ffmpeg--current/config.h include
 documentation
-	README COPYING Changelog CREDITS doc/TODO
+	README COPYING Changelog CREDITS MAINTAINERS doc/TODO
 ;	doc/*.txt
+build-docs			INSTALL
+internal-docs
+	doc/soc.txt
+	doc/optimization.txt
