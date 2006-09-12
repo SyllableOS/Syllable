@@ -16,7 +16,8 @@ locations
 build-needs			gcc < 4
 recommends
 	t1lib
-	freetype >= 2.0.5
+;	Uses internal headers:
+	freetype >= 2.0.5 < 2.2
 
 no-build-dir
 
