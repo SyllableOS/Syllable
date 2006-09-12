@@ -17,6 +17,8 @@ recommends
 	t1lib
 	freetype >= 2.0.5
 
+no-build-dir
+
 configure-options
 	--with-freetype2-includes=/usr/freetype/include/freetype2
 ;	--enable-multithreaded
@@ -26,4 +28,3 @@ documentation
 	README COPYING ANNOUNCE CHANGES
 ;	doc
 build-docs			INSTALL
-
