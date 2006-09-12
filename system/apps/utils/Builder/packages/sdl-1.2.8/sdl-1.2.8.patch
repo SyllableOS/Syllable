@@ -1,0 +1,212 @@
+diff -ru sdl-1.2.8.original/acinclude.m4 sdl-1.2.8/acinclude.m4
+--- sdl-1.2.8.original/acinclude.m4	2004-12-13 08:54:29.000000000 +0100
++++ sdl-1.2.8/acinclude.m4	2006-09-03 15:02:15.000000000 +0200
+@@ -1173,6 +1173,12 @@
+     lt_cv_dlopen_libs=
+     lt_cv_dlopen_self=yes
+     ;;
++  syllable*)
++    lt_cv_dlopen="load_library"
++    lt_cv_dlopen_libs=
++    lt_cv_dlopen_self=yes
++    ;;
++
+ 
+   mingw* | pw32*)
+     lt_cv_dlopen="LoadLibrary"
+@@ -1535,6 +1541,12 @@
+   dynamic_linker="$host_os ld.so"
+   shlibpath_var=LIBRARY_PATH
+   ;;
++syllable*)
++  library_names_spec='${libname}${release}${shared_ext}$versuffix ${libname}${release}${shared_ext}${major} ${libname}${shared_ext}'
++  dynamic_linker="$host_os ld.so"
++  shlibpath_var=LIBRARY_PATH
++  ;;
++
+ 
+ bsdi[[45]]*)
+   version_type=linux
+@@ -2474,6 +2486,10 @@
+ beos*)
+   lt_cv_deplibs_check_method=pass_all
+   ;;
++syllable*)
++  lt_cv_deplibs_check_method=pass_all
++  ;;
++
+ 
+ bsdi[[45]]*)
+   lt_cv_deplibs_check_method='file_magic ELF [[0-9]][[0-9]]*-bit [[ML]]SB (shared object|dynamic lib)'
+@@ -4919,7 +4935,7 @@
+       # like `-m68040'.
+       _LT_AC_TAGVAR(lt_prog_compiler_pic, $1)='-m68020 -resident32 -malways-restore-a4'
+       ;;
+-    beos* | cygwin* | irix5* | irix6* | nonstopux* | osf3* | osf4* | osf5*)
++    beos* | syllable* | cygwin* | irix5* | irix6* | nonstopux* | osf3* | osf4* | osf5*)
+       # PIC is the default for these OSes.
+       ;;
+     mingw* | os2* | pw32*)
+@@ -5180,7 +5196,7 @@
+       _LT_AC_TAGVAR(lt_prog_compiler_pic, $1)='-m68020 -resident32 -malways-restore-a4'
+       ;;
+ 
+-    beos* | cygwin* | irix5* | irix6* | nonstopux* | osf3* | osf4* | osf5*)
++    beos* | syllable* | cygwin* | irix5* | irix6* | nonstopux* | osf3* | osf4* | osf5*)
+       # PIC is the default for these OSes.
+       ;;
+ 
+diff -ru sdl-1.2.8.original/configure.in sdl-1.2.8/configure.in
+--- sdl-1.2.8.original/configure.in	2004-12-13 10:02:08.000000000 +0100
++++ sdl-1.2.8/configure.in	2006-09-03 15:02:15.000000000 +0200
+@@ -1564,6 +1564,14 @@
+     fi
+ }
+ 
++dnl Set up the Syllable video driver on Syllable
++CheckSyllable()
++{
++    CFLAGS="$CFLAGS -DENABLE_SYLLABLE"
++    VIDEO_SUBDIRS="$VIDEO_SUBDIRS syllable"
++    VIDEO_DRIVERS="$VIDEO_DRIVERS syllable/libvideo_syllable.la"
++}
++
+ dnl Set up the BWindow video driver on BeOS
+ CheckBWINDOW()
+ {
+@@ -2511,6 +2519,49 @@
+         # The BeOS platform requires special libraries
+         SYSTEM_LIBS="$SYSTEM_LIBS -lroot -lbe -lmedia -lgame -ldevice -ltextencoding"
+         ;;
++    *-*-syllable*)
++        ARCH=syllable
++        ac_default_prefix=/usr/sdl
++        CheckDummyVideo
++        CheckDiskAudio
++        CheckNASM
++        CheckSyllable
++        # Set up files for the audio library
++        if test x$enable_audio = xyes; then
++            AUDIO_SUBDIRS="$AUDIO_SUBDIRS syllable"
++            AUDIO_DRIVERS="$AUDIO_DRIVERS syllable/libaudio_syllable.la"
++        fi
++        # Set up files for the joystick library
++        # (No joystick support yet)
++        if test x$enable_joystick = xyes; then
++            JOYSTICK_SUBDIRS="$JOYSTICK_SUBDIRS dummy"
++            JOYSTICK_DRIVERS="$JOYSTICK_DRIVERS dummy/libjoystick_dummy.la"
++        fi
++        # Set up files for the cdrom library
++        # (No cdrom support yet)
++        if test x$enable_cdrom = xyes; then
++            CDROM_SUBDIRS="$CDROM_SUBDIRS dummy"
++            CDROM_DRIVERS="$CDROM_DRIVERS dummy/libcdrom_dummy.la"
++        fi
++        # Set up files for the thread library
++        if test x$enable_threads = xyes; then
++            COPY_ARCH_SRC(src/thread, syllable, SDL_systhread.c)
++            COPY_ARCH_SRC(src/thread, syllable, SDL_systhread_c.h)
++            COPY_ARCH_SRC(src/thread, generic, SDL_sysmutex.c)
++            COPY_ARCH_SRC(src/thread, generic, SDL_sysmutex_c.h)
++            COPY_ARCH_SRC(src/thread, syllable, SDL_syssem.c)
++            COPY_ARCH_SRC(src/thread, generic, SDL_syssem_c.h)
++            COPY_ARCH_SRC(src/thread, generic, SDL_syscond.c)
++            COPY_ARCH_SRC(src/thread, generic, SDL_syscond_c.h)
++        fi
++        # Set up files for the timer library
++        if test x$enable_timers = xyes; then
++            COPY_ARCH_SRC(src/timer, syllable, SDL_systimer.c)
++        fi
++        # The Syllable platform requires special libraries
++        SYSTEM_LIBS="$SYSTEM_LIBS -lsyllable -lmedia -lstdc++"
++        ;;
++
+     *-*-macos*)
+         # This would be used if cross-compiling to MacOS 9.  No way to
+         # use it at present, but Apple is working on a X-to-9 compiler
+@@ -2707,6 +2758,7 @@
+ AM_CONDITIONAL(TARGET_AIX, test $ARCH = aix)
+ AM_CONDITIONAL(TARGET_WIN32, test $ARCH = win32)
+ AM_CONDITIONAL(TARGET_BEOS, test $ARCH = beos)
++AM_CONDITIONAL(TARGET_SYLLABLE, test $ARCH = syllable)
+ AM_CONDITIONAL(TARGET_MACOS, test $ARCH = macos)
+ AM_CONDITIONAL(TARGET_MACOSX, test $ARCH = macosx)
+ AM_CONDITIONAL(TARGET_QNX, test $ARCH = qnx)
+@@ -2846,6 +2898,7 @@
+ src/audio/alsa/Makefile
+ src/audio/arts/Makefile
+ src/audio/baudio/Makefile
++src/audio/syllable/Makefile
+ src/audio/dc/Makefile
+ src/audio/disk/Makefile
+ src/audio/dma/Makefile
+@@ -2869,6 +2922,7 @@
+ src/video/aalib/Makefile
+ src/video/ataricommon/Makefile
+ src/video/bwindow/Makefile
++src/video/syllable/Makefile
+ src/video/cybergfx/Makefile
+ src/video/dc/Makefile
+ src/video/dga/Makefile
+diff -ru sdl-1.2.8.original/include/SDL_syswm.h sdl-1.2.8/include/SDL_syswm.h
+--- sdl-1.2.8.original/include/SDL_syswm.h	2004-12-13 08:54:31.000000000 +0100
++++ sdl-1.2.8/include/SDL_syswm.h	2006-09-03 15:02:15.000000000 +0200
+@@ -51,7 +51,7 @@
+ /* This is the structure for custom window manager events */
+ #if (defined(unix) || defined(__unix__) || defined(_AIX) || defined(__OpenBSD__)) && \
+     (!defined(DISABLE_X11) && !defined(__CYGWIN32__) && !defined(ENABLE_NANOX) && \
+-     !defined(__QNXNTO__))
++     !defined(__QNXNTO__) && !defined(__SYLLABLE__))
+  /* AIX is unix, of course, but the native compiler CSet doesn't define unix */
+ #include <X11/Xlib.h>
+ #include <X11/Xatom.h>
+diff -ru sdl-1.2.8.original/src/audio/SDL_sysaudio.h sdl-1.2.8/src/audio/SDL_sysaudio.h
+--- sdl-1.2.8.original/src/audio/SDL_sysaudio.h	2004-12-13 08:54:31.000000000 +0100
++++ sdl-1.2.8/src/audio/SDL_sysaudio.h	2006-09-03 15:02:15.000000000 +0200
+@@ -141,6 +141,9 @@
+ #ifdef _AIX
+ extern AudioBootStrap Paud_bootstrap;
+ #endif
++#ifdef __SYLLABLE__
++extern AudioBootStrap SYLLABLE_Audio_bootstrap;
++#endif
+ #ifdef __BEOS__
+ extern AudioBootStrap BAUDIO_bootstrap;
+ #endif
+diff -ru sdl-1.2.8.original/src/main/Makefile.am sdl-1.2.8/src/main/Makefile.am
+--- sdl-1.2.8.original/src/main/Makefile.am	2004-02-18 18:22:01.000000000 +0100
++++ sdl-1.2.8/src/main/Makefile.am	2006-09-03 15:02:15.000000000 +0200
+@@ -5,6 +5,7 @@
+ # entry points, which require special application initialization.
+ 
+ ARCH_SUBDIRS = $(srcdir)/beos \
++			   $(srcdir)/syllable \
+                $(srcdir)/epoc \
+                $(srcdir)/dummy \
+                $(srcdir)/macos \
+diff -ru sdl-1.2.8.original/src/video/SDL_sysvideo.h sdl-1.2.8/src/video/SDL_sysvideo.h
+--- sdl-1.2.8.original/src/video/SDL_sysvideo.h	2004-02-18 18:22:04.000000000 +0100
++++ sdl-1.2.8/src/video/SDL_sysvideo.h	2006-09-03 15:02:15.000000000 +0200
+@@ -368,6 +368,9 @@
+ #ifdef ENABLE_BWINDOW
+ extern VideoBootStrap BWINDOW_bootstrap;
+ #endif
++#ifdef __SYLLABLE__
++extern VideoBootStrap SYLLABLE_Video_bootstrap;
++#endif
+ /* MacOS X gets the proper defines from configure */
+ #if defined(macintosh) && !defined(MACOSX)
+ #define ENABLE_TOOLBOX
+diff -ru sdl-1.2.8.original/src/video/SDL_video.c sdl-1.2.8/src/video/SDL_video.c
+--- sdl-1.2.8.original/src/video/SDL_video.c	2004-12-13 08:54:34.000000000 +0100
++++ sdl-1.2.8/src/video/SDL_video.c	2006-09-03 15:02:15.000000000 +0200
+@@ -87,6 +87,9 @@
+ #ifdef ENABLE_BWINDOW
+ 	&BWINDOW_bootstrap,
+ #endif
++#ifdef __SYLLABLE__
++	&SYLLABLE_Video_bootstrap,
++#endif
+ #ifdef ENABLE_TOOLBOX
+ 	&TOOLBOX_bootstrap,
+ #endif
