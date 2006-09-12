@@ -13,6 +13,7 @@ locations
 ;needs
 ;	On X11 systems:
 ;	lesstif
+build-needs			gcc < 4
 recommends
 	t1lib
 	freetype >= 2.0.5
@@ -28,3 +29,4 @@ documentation
 	README COPYING ANNOUNCE CHANGES
 ;	doc
 build-docs			INSTALL
+
