@@ -4,7 +4,7 @@ name	SDL-Essentials
 
 modules
 ;	Official projects:
-;	sdl-1.2.9
+;	sdl-1.2.8
 ;	sdl-mixer-1.2.6
 ;	sdl-net-1.2.6
 ;	sdl-image-1.2.4

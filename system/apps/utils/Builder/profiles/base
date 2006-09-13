@@ -29,7 +29,6 @@ modules
 	apps/utils/aedit
 	apps/utils/archiver
 	apps/utils/aview
-;	apps/utils/Builder
 	apps/utils/bzoom
 	apps/utils/catalog
 	apps/utils/charmap
@@ -48,7 +47,7 @@ modules
 	apps/utils/shelltools
 	apps/utils/slbmgr
 
-	libs/sdl-1.2.9
+	libs/sdl-1.2.8
 ;	libs/sdl-mixer-1.2.6
 ;	libs/sdl-net-1.2.6
 ;	libs/sdl-image-1.2.4
@@ -56,4 +55,3 @@ modules
 
 ;	apps/other/xpdf-3.00pl3-syllable
 ;	apps/other/xpdf-3.00pl3
-
