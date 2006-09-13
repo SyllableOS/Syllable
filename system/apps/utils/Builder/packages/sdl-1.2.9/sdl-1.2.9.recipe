@@ -1,7 +1,7 @@
 authors
 	Arno Klenke
 	Kaj de Vos
-status				testing
+status				broken
 
 licenses			LGPL-2 PD
 home				www.libsdl.org
@@ -12,7 +12,7 @@ build-needs
 	automake
 	autoconf
 ;	Needed a Hermes fix:
-;	gcc < 4.1
+	gcc < 4.1
 
 patch-config
 patch
