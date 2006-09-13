@@ -44,7 +44,7 @@ configure-options
 ;	--disable-ffserver
 ;	--disable-ffplay
 
-;install-files		../ffmpeg--current/config.h include
+install-files		../ffmpeg--current/config.h include
 documentation
 	README COPYING Changelog CREDITS MAINTAINERS doc/TODO
 ;	doc/*.txt
