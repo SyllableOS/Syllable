@@ -24,7 +24,7 @@
 #include <iostream>
 extern "C" 
 {
-	#include <avformat.h>
+	#include <ffmpeg/avformat.h>
 }
 
 class FFMpegDemuxer : public os::MediaInput

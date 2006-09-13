@@ -24,8 +24,8 @@
 
 extern "C"
 {
-	#include <avformat.h>
-	#include <avcodec.h>
+	#include <ffmpeg/avformat.h>
+	#include <ffmpeg/avcodec.h>
 }
 
 class FFMpegCodec : public os::MediaCodec
