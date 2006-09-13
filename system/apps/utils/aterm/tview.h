@@ -121,8 +121,8 @@ class TermView:public View
       private:
 	Color32_s GetAttrFgColor( int nAttrib );
 	Color32_s GetAttrBgColor( int nAttrib );
-	uint TermView::GetStartBoundary( TextLine * pcLineBuf, uint pos );
-	uint TermView::GetEndBoundary( TextLine * pcLineBuf, uint pos );
+	uint GetStartBoundary( TextLine * pcLineBuf, uint pos );
+	uint GetEndBoundary( TextLine * pcLineBuf, uint pos );
 	void SortSelection( IPoint * pcPnt1, IPoint * pcPnt2 );
 	void HighlightSelection();
 	void RemoveSelection();
