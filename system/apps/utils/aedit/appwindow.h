@@ -45,6 +45,7 @@ class FindDialog;
 class ReplaceDialog;
 class GotoDialog;
 class MyTabView;
+class Buffer;
 
 class AEditWindow : public Window
 {
