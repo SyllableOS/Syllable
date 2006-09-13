@@ -16,7 +16,6 @@ archives			svn://svn.mplayerhq.hu/ffmpeg/trunk ffmpeg
 build-needs
 	bash <> 2.03
 	make >= 3.80
-;	gcc < 4.1
 
 configure-options
 	--extra-cflags='-DPIC -fomit-frame-pointer'
@@ -24,7 +23,6 @@ configure-options
 ;	--enable-shared
 ;	--enable-pthreads
 	--disable-debug
-;	Fails with GCC 4.1:
 ;	--disable-mmx
 ;	IPv6 code used to fail (on GLibC 2.1.2?):
 ;	--disable-network
