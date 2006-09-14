@@ -1,3 +1,7 @@
+* September 14 2006, Kaj de Vos *
+
+Added SDL to the base system.
+
 * September 9 2006, Kaj de Vos *
 
 Completed the rewrite of PkgManager in Orca. It is smaller, cleaner and more correct.
