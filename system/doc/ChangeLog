@@ -1,5 +1,10 @@
 * September 14 2006, Kaj de Vos *
 
+Added the latest keymaps from Maritimus' keymaps pack 2.5, in source form.
+Deleted the previous binary versions.
+
+* September 14 2006, Kaj de Vos *
+
 Added SDL to the base system.
 
 * September 9 2006, Kaj de Vos *
@@ -1131,4 +1136,3 @@ Added the following keymaps:
 * Jun 14 2002, Kristian Van Der Vliet *
 
 Implement get_tld(), set_tld() in process.c
-
