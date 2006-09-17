@@ -1,6 +1,6 @@
-diff -ru glibc-2.4.original/Makerules glibc-2.4/Makerules
---- glibc-2.4.original/Makerules	2006-03-01 04:20:13.000000000 +0000
-+++ glibc-2.4/Makerules	2006-06-12 13:37:50.000000000 +0000
+diff -ur glibc-2.4_orig/Makerules glibc-2.4/Makerules
+--- glibc-2.4_orig/Makerules	2006-03-01 04:20:13.000000000 +0000
++++ glibc-2.4/Makerules	2006-09-16 22:02:06.000000000 +0000
 @@ -575,9 +575,15 @@
  endif
  endif
@@ -40,9 +40,19 @@ diff -ru glibc-2.4.original/Makerules glibc-2.4/Makerules
  ifeq ($(versioning),yes)
  $(common-objpfx)libc.so: $(common-objpfx)libc.map
  endif
-diff -ru glibc-2.4.original/configure glibc-2.4/configure
---- glibc-2.4.original/configure	2006-03-06 11:18:56.000000000 +0000
-+++ glibc-2.4/configure	2006-06-12 13:37:50.000000000 +0000
+@@ -982,8 +997,7 @@
+ 	 echo '   the static library, so try that secondarily.  */';\
+ 	 cat $<; \
+ 	 echo 'GROUP ( $(slibdir)/libc.so$(libc.so-version)' \
+-	      '$(libdir)/$(patsubst %,$(libtype.oS),$(libprefix)$(libc-name))'\
+-	      ' AS_NEEDED (' $(slibdir)/$(rtld-installed-name) ') )' \
++	      '$(libdir)/$(patsubst %,$(libtype.oS),$(libprefix)$(libc-name)) )'\
+ 	) > $@.new
+ 	mv -f $@.new $@
+ 
+diff -ur glibc-2.4_orig/configure glibc-2.4/configure
+--- glibc-2.4_orig/configure	2006-03-06 11:18:56.000000000 +0000
++++ glibc-2.4/configure	2006-09-16 21:48:33.000000000 +0000
 @@ -1774,7 +1774,7 @@
  # i586-linuxaout is mangled into i586-pc-linux-gnuaout
  linux*ecoff* | linux*aout* | gnu*aout* | gnu*ecoff*)
@@ -79,9 +89,9 @@ diff -ru glibc-2.4.original/configure glibc-2.4/configure
  
    echo "$as_me:$LINENO: checking for libunwind-support in compiler" >&5
  echo $ECHO_N "checking for libunwind-support in compiler... $ECHO_C" >&6
-diff -ru glibc-2.4.original/configure.in glibc-2.4/configure.in
---- glibc-2.4.original/configure.in	2006-03-01 09:17:40.000000000 +0000
-+++ glibc-2.4/configure.in	2006-06-12 13:37:50.000000000 +0000
+diff -ur glibc-2.4_orig/configure.in glibc-2.4/configure.in
+--- glibc-2.4_orig/configure.in	2006-03-01 09:17:40.000000000 +0000
++++ glibc-2.4/configure.in	2006-09-16 21:48:33.000000000 +0000
 @@ -283,7 +283,7 @@
  # i586-linuxaout is mangled into i586-pc-linux-gnuaout
  linux*ecoff* | linux*aout* | gnu*aout* | gnu*ecoff*)
@@ -118,9 +128,9 @@ diff -ru glibc-2.4.original/configure.in glibc-2.4/configure.in
  
    AC_CACHE_CHECK(for libunwind-support in compiler,
  		 libc_cv_cc_with_libunwind, [
-diff -ru glibc-2.4.original/csu/Makefile glibc-2.4/csu/Makefile
---- glibc-2.4.original/csu/Makefile	2006-03-01 10:35:47.000000000 +0000
-+++ glibc-2.4/csu/Makefile	2006-06-12 13:37:50.000000000 +0000
+diff -ur glibc-2.4_orig/csu/Makefile glibc-2.4/csu/Makefile
+--- glibc-2.4_orig/csu/Makefile	2006-03-01 10:35:47.000000000 +0000
++++ glibc-2.4/csu/Makefile	2006-09-16 21:48:33.000000000 +0000
 @@ -26,13 +26,15 @@
  
  subdir := csu
@@ -147,9 +157,9 @@ diff -ru glibc-2.4.original/csu/Makefile glibc-2.4/csu/Makefile
  ifeq (yes,$(build-shared))
  extra-objs += S$(start-installed-name)
  install-lib += S$(start-installed-name)
-diff -ru glibc-2.4.original/dirent/dirent.h glibc-2.4/dirent/dirent.h
---- glibc-2.4.original/dirent/dirent.h	2005-09-28 21:12:48.000000000 +0000
-+++ glibc-2.4/dirent/dirent.h	2006-06-12 13:37:50.000000000 +0000
+diff -ur glibc-2.4_orig/dirent/dirent.h glibc-2.4/dirent/dirent.h
+--- glibc-2.4_orig/dirent/dirent.h	2005-09-28 21:12:48.000000000 +0000
++++ glibc-2.4/dirent/dirent.h	2006-09-16 21:48:33.000000000 +0000
 @@ -203,6 +203,13 @@
  			struct dirent64 **__restrict __result)
       __nonnull ((1, 2, 3));
@@ -164,9 +174,9 @@ diff -ru glibc-2.4.original/dirent/dirent.h glibc-2.4/dirent/dirent.h
  #endif	/* POSIX or misc */
  
  /* Rewind DIRP to the beginning of the directory.  */
-diff -ru glibc-2.4.original/intl/loadmsgcat.c glibc-2.4/intl/loadmsgcat.c
---- glibc-2.4.original/intl/loadmsgcat.c	2005-04-04 22:33:01.000000000 +0000
-+++ glibc-2.4/intl/loadmsgcat.c	2006-06-12 13:23:40.000000000 +0000
+diff -ur glibc-2.4_orig/intl/loadmsgcat.c glibc-2.4/intl/loadmsgcat.c
+--- glibc-2.4_orig/intl/loadmsgcat.c	2005-04-04 22:33:01.000000000 +0000
++++ glibc-2.4/intl/loadmsgcat.c	2006-09-16 21:48:33.000000000 +0000
 @@ -836,11 +836,11 @@
        fd = -1;
        use_mmap = 1;
@@ -180,9 +190,9 @@ diff -ru glibc-2.4.original/intl/loadmsgcat.c glibc-2.4/intl/loadmsgcat.c
      {
        size_t to_read;
        char *read_ptr;
-diff -ru glibc-2.4.original/locale/global-locale.c glibc-2.4/locale/global-locale.c
---- glibc-2.4.original/locale/global-locale.c	2002-08-30 10:36:18.000000000 +0000
-+++ glibc-2.4/locale/global-locale.c	2006-06-12 13:37:50.000000000 +0000
+diff -ur glibc-2.4_orig/locale/global-locale.c glibc-2.4/locale/global-locale.c
+--- glibc-2.4_orig/locale/global-locale.c	2002-08-30 10:36:18.000000000 +0000
++++ glibc-2.4/locale/global-locale.c	2006-09-16 21:48:33.000000000 +0000
 @@ -67,9 +67,9 @@
  __libc_tsd_define (, LOCALE)
  /* This is a bad kludge presuming the variable name used by the macros.
@@ -196,9 +206,9 @@ diff -ru glibc-2.4.original/locale/global-locale.c glibc-2.4/locale/global-local
  __typeof (__libc_tsd_LOCALE_data) __libc_tsd_LOCALE_data = &_nl_global_locale;
  # endif
  #endif
-diff -ru glibc-2.4.original/malloc/Makefile glibc-2.4/malloc/Makefile
---- glibc-2.4.original/malloc/Makefile	2005-09-27 05:42:25.000000000 +0000
-+++ glibc-2.4/malloc/Makefile	2006-06-12 13:37:50.000000000 +0000
+diff -ur glibc-2.4_orig/malloc/Makefile glibc-2.4/malloc/Makefile
+--- glibc-2.4_orig/malloc/Makefile	2005-09-27 05:42:25.000000000 +0000
++++ glibc-2.4/malloc/Makefile	2006-09-16 21:48:34.000000000 +0000
 @@ -42,12 +42,16 @@
  install-lib := libmcheck.a
  non-lib.a := libmcheck.a
@@ -225,9 +235,9 @@ diff -ru glibc-2.4.original/malloc/Makefile glibc-2.4/malloc/Makefile
  CPPFLAGS-memusagestat = -DNOT_IN_libc
  
  # The Perl script to analyze the output of the mtrace functions.
-diff -ru glibc-2.4.original/rt/Makefile glibc-2.4/rt/Makefile
---- glibc-2.4.original/rt/Makefile	2006-01-06 04:10:43.000000000 +0000
-+++ glibc-2.4/rt/Makefile	2006-06-12 13:37:50.000000000 +0000
+diff -ur glibc-2.4_orig/rt/Makefile glibc-2.4/rt/Makefile
+--- glibc-2.4_orig/rt/Makefile	2006-01-06 04:10:43.000000000 +0000
++++ glibc-2.4/rt/Makefile	2006-09-16 21:48:34.000000000 +0000
 @@ -68,7 +68,7 @@
  # a statically-linked program that hasn't already loaded it.
  $(objpfx)librt.so: $(common-objpfx)libc.so $(common-objpfx)libc_nonshared.a \
@@ -237,9 +247,9 @@ diff -ru glibc-2.4.original/rt/Makefile glibc-2.4/rt/Makefile
  
  ifeq (yes,$(build-shared))
  $(addprefix $(objpfx),$(tests)): $(objpfx)librt.so $(shared-thread-library)
-diff -ru glibc-2.4.original/shlib-versions glibc-2.4/shlib-versions
---- glibc-2.4.original/shlib-versions	2006-03-06 01:25:35.000000000 +0000
-+++ glibc-2.4/shlib-versions	2006-06-12 13:37:50.000000000 +0000
+diff -ur glibc-2.4_orig/shlib-versions glibc-2.4/shlib-versions
+--- glibc-2.4_orig/shlib-versions	2006-03-06 01:25:35.000000000 +0000
++++ glibc-2.4/shlib-versions	2006-09-16 21:48:34.000000000 +0000
 @@ -31,6 +31,7 @@
  x86_64-.*-linux.*       DEFAULT			GLIBC_2.2.5
  powerpc64-.*-linux.*	DEFAULT			GLIBC_2.3
@@ -316,9 +326,9 @@ diff -ru glibc-2.4.original/shlib-versions glibc-2.4/shlib-versions
  # The asynchronous name lookup library.
  .*-.*-.*		libanl=1
 +
-diff -ru glibc-2.4.original/sunrpc/Makefile glibc-2.4/sunrpc/Makefile
---- glibc-2.4.original/sunrpc/Makefile	2005-06-26 18:24:19.000000000 +0000
-+++ glibc-2.4/sunrpc/Makefile	2006-06-12 13:37:50.000000000 +0000
+diff -ur glibc-2.4_orig/sunrpc/Makefile glibc-2.4/sunrpc/Makefile
+--- glibc-2.4_orig/sunrpc/Makefile	2005-06-26 18:24:19.000000000 +0000
++++ glibc-2.4/sunrpc/Makefile	2006-09-16 21:48:34.000000000 +0000
 @@ -99,6 +99,7 @@
  endif
  
@@ -335,9 +345,9 @@ diff -ru glibc-2.4.original/sunrpc/Makefile glibc-2.4/sunrpc/Makefile
  
  CFLAGS-xbootparam_prot.c = -Wno-unused $(PIC-ccflag)
  CFLAGS-xnlm_prot.c = -Wno-unused $(PIC-ccflag)
-diff -ru glibc-2.4.original/timezone/Makefile glibc-2.4/timezone/Makefile
---- glibc-2.4.original/timezone/Makefile	2005-04-15 20:09:08.000000000 +0000
-+++ glibc-2.4/timezone/Makefile	2006-06-12 13:37:50.000000000 +0000
+diff -ur glibc-2.4_orig/timezone/Makefile glibc-2.4/timezone/Makefile
+--- glibc-2.4_orig/timezone/Makefile	2005-04-15 20:09:08.000000000 +0000
++++ glibc-2.4/timezone/Makefile	2006-09-16 21:48:34.000000000 +0000
 @@ -39,6 +39,8 @@
  # northamerica.
  distribute += $(tzfiles) leapseconds pacificnew simplebackw
