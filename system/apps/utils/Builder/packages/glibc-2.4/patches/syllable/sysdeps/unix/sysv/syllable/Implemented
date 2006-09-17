@@ -1,0 +1,210 @@
+Dist
+_G_config.h
+$ adjtime.c
+* bits/in.h
+* bits/poll.h
+* bits/posix_opt.h
+$ bits/pthreadtypes.h
+* bits/resource.h
+$ bits/sched.h
+* bits/sigaction.h
+* bits/siginfo.h
+$ bits/sigstack.h
+* bits/statfs.h
+* bits/statvfs.h
+$ bits/stdio-lock.h
+* bits/time.h
+$ bits/types.h
+* bits/uio.h
+$ bits/ustat.h
+* bits/utsname.h
+$ bits/waitflags.h
+* clock.c
+* close_attrdir.c
+* close_indexdir.c
+* cmsg_nxthdr.c
+configure.in
+$ errlist.c
+$ errlist.h
+* execve.c
+* exit_thread.c
+* fopendir.c
+* fstatfs64.c
+* fstatvfs.c
+* fstatvfs64.c
+* fxstat.c
+* fxstat64.c
+* get_fs_info.c
+* get_idle_time.c
+* get_msg_x.c
+* get_process_id.c
+* get_semaphore_count.c
+* get_semaphore_holder.c
+* get_thread_id.c
+* gethostid.c
+* gethostname.c
+* getpid.c
+$ getpriority.c
+$ getpt.c
+* getresgid.c
+* getresuid.c
+* getsysstats.c
+$ gettimeofday.c
+* glob64.c
+* grantpt.c
+i386/.cvsignore
+i386/Dist
+i386/Makefile
+$ i386/atomic.S
+$ i386/dl-librecon.h
+$ i386/dl-procinfo.h
+i386/i686
+$ i386/i686/sysdep.h
+$ i386/ioperm.c
+$ i386/iopl.c
+* i386/register-dump.h
+* i386/setegid.c
+* i386/seteuid.c
+$ i386/setfsgid.c
+$ i386/setfsuid.c
+* i386/setgid.c
+* i386/setregid.c
+* i386/setreuid.c
+* i386/setuid.c
+i386/sys
+$ i386/sys/debugreg.h
+$ i386/sys/elf.h
+$ i386/sys/perm.h
+$ i386/sys/procfs.h
+* i386/sys/reg.h
+$ i386/sys/ucontext.h
+$ i386/sys/user.h
+$ i386/sys/vm86.h
+$ init-first.h
+* lock_semaphore_x.c
+* lseek.c
+* lseek64.c
+* lxstat.c
+* lxstat64.c
+$ madvise.c
+$ mmap64.c
+$ msgctl.c
+$ msgget.c
+$ msgrcv.c
+$ msgsnd.c
+* nanosleep.c
+net
+* net/ethernet.h
+$ net/if.h
+* net/if_arp.h
+$ net/if_packet.h
+$ net/if_ppp.h
+$ net/if_shaper.h
+$ net/if_slip.h
+$ net/ppp-comp.h
+$ net/ppp_defs.h
+* net/route.h
+netash
+$ netash/ash.h
+netatalk
+$ netatalk/at.h
+netax25
+$ netax25/ax25.h
+neteconet
+$ neteconet/ec.h
+netinet
+* netinet/if_ether.h
+$ netinet/if_fddi.h
+$ netinet/if_tr.h
+$ netinet/igmp.h
+$ netinet/ip.h
+netipx
+$ netipx/ipx.h
+netpacket
+$ netpacket/packet.h
+netrom
+$ netrom/netrom.h
+netrose
+$ netrose/rose.h
+$ ntp_gettime.c
+* open_attrdir.c
+* open_indexdir.c
+$ openpty.c
+* paths.h
+* pci.c
+* probe_fs.c
+* ptrace.c
+$ ptsname.c
+* read_attr.c
+* read_attrdir.c
+* read_indexdir.c
+$ readdir64.c
+$ readdir64_r.c
+* recv.c
+* recvfrom.c
+* rewind_attrdir.c
+* rewind_indexdir.c
+$ rt_sigaction.c
+$ rt_sigpending.c
+$ rt_sigprocmask.c
+$ rt_sigqueueinfo.c
+$ rt_sigreturn.c
+$ rt_sigsuspend.c
+$ rt_sigtimedwait.c
+$ s_pread64.c
+$ s_pwrite64.c
+* send.c
+* send_msg_x.c
+* sendto.c
+* setegid.c
+* seteuid.c
+* sethostid.c
+* sigpending.c
+* sigprocmask.c
+$ sigqueue.c
+$ sigreturn.c
+$ sigstack.c
+$ sigtimedwait.c
+$ sigwaitinfo.c
+$ sizes.h
+* sleep.c
+* spawn_thread.c
+* statfs64.c
+* statvfs.c
+* statvfs64.c
+* stime.c
+stricmp.c
+strnicmp.c
+$ sys/acct.h
+$ sys/fsuid.h
+* sys/ptrace.h
+$ sys/sendfile.h
+* sys/ttydefaults.h
+$ sysctl.c
+* syslog.c
+* system.c
+* tcdrain.c
+* tcflow.c
+* tcflush.c
+* tcgetpgrp.c
+* tcsetpgrp.c
+$ termio.h
+$ testrtsig.h
+* truncate.c
+* ttyname.c
+* ttyname_r.c
+* ualarm.c
+* unlockpt.c
+* updwtmp.c
+* usleep.c
+$ ustat.c
+* utmp_file.c
+* wait3.c
+* waitpid.c
+* write_attr.c
+$ xget_fs_info.c
+* xmknod.c
+* xprobe_fs.c
+* xstat.c
+* xstat64.c
+

@@ -1,0 +1,9 @@
+# The gnu subdirectory exists for things common to Linux-based, Hurd-based
+# and Syllable GNU systems.
+gnu
+
+# Syllable shares most of the syscalls which are also common to BSD and SVR4.
+unix/common
+
+# Syllable has network support in the kernel.
+unix/inet

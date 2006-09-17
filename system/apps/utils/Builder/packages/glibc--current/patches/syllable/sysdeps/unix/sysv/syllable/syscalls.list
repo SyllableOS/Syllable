@@ -1,0 +1,149 @@
+# File name	Caller	Syscall name	# args	Strong name	Weak names
+
+fdatasync	-	fdatasync	1	fdatasync
+flock		-	flock		2	__flock		flock
+fork		-	fork		i:	__libc_fork	__fork fork
+getegid		-	getegid		i:	__getegid	getegid
+geteuid		-	geteuid		i:	__geteuid	geteuid
+getpgid		-	getpgid		i:i	__getpgid	getpgid
+getpgrp		-	getpgrp		i:	getpgrp
+getppid		-	getppid		i:	__getppid	getppid
+getsid		-	getsid		i:i	getsid
+ioperm		-	ioperm		3	ioperm
+iopl		-	iopl		1	iopl
+lchown		-	lchown		3	__lchown	lchown
+nanosleep	-	nanosleep	2	__libc_nanosleep	__nanosleep nanosleep
+pause		-	pause		i:	__libc_pause	pause
+pipe		-	pipe		i:p	__pipe		pipe
+sched_getp	-	sched_getparam	2	__sched_getparam	sched_getparam
+sched_gets	-	sched_getscheduler	1	__sched_getscheduler	sched_getscheduler
+sched_primax	-	sched_get_priority_max	1	__sched_get_priority_max	sched_get_priority_max
+sched_primin	-	sched_get_priority_min	1	__sched_get_priority_min	sched_get_priority_min
+sched_rr_gi	-	sched_rr_get_interval	2	__sched_rr_get_interval	sched_rr_get_interval
+sched_setp	-	sched_setparam	2	__sched_setparam	sched_setparam
+sched_sets	-	sched_setscheduler	3	__sched_setscheduler	sched_setscheduler
+sched_yield	-	sched_yield	0	__sched_yield	sched_yield
+select		-	_newselect	5	__select	select
+setfsgid	EXTRA	setfsgid	1	setfsgid
+setfsuid	EXTRA	setfsuid	1	setfsuid
+setpgid		-	setpgid		i:ii	__setpgid	setpgid
+sigaltstack	-	sigaltstack	i:PP	__sigaltstack	sigaltstack
+wait4		-	wait4		i:iWip	__wait4		wait4
+sigaction	-	sigaction	i:ipp	__sigaction	sigaction
+socket		-	socket		i:iii	__socket	socket
+
+get_system_path		EXTRA	get_system_path		i:bn	__get_system_path	get_system_path
+
+set_real_time		EXTRA	set_real_time		i:i	__set_real_time		set_real_time
+
+kill_proc		EXTRA	kill_proc		i:ii	__kill_proc		kill_proc
+realint			EXTRA	realint			i:ip	__realint		realint
+
+reboot			EXTRA	reboot			i:	__reboot		reboot
+apm_poweroff		EXTRA	apm_poweroff		i:	__apm_poweroff		apm_poweroff
+
+debug_write		EXTRA	debug_write		i:ibn	__debug_write		debug_write
+debug_read		EXTRA	debug_read		i:ibn	__debug_read		debug_read
+
+get_vesa_mode_info	EXTRA	get_vesa_mode_info	i:pi	__get_vesa_mode_info	get_vesa_mode_info
+get_vesa_info		EXTRA	get_vesa_info		i:pNi	__get_vesa_info		get_vesa_info
+
+get_pci_info		EXTRA	get_pci_info		i:pi	__get_pci_info		get_pci_info
+
+get_mount_point_count	EXTRA	get_mount_point_count   i:	__get_mount_point_count get_mount_point_count
+get_mount_point		EXTRA	get_mount_point		i:ibi	__get_mount_point	get_mount_point
+
+mount			EXTRA	mount			i:sssiB	__mount			mount
+unmount			EXTRA	unmount			i:si	__unmount		unmount
+initialize_fs		EXTRA	initialize_fs		i:sssBi	__initialize_fs		initialize_fs
+
+remove_attr		EXTRA	remove_attr		i:is	__remove_attr		remove_attr
+stat_attr		EXTRA	stat_attr		i:isp	__stat_attr		stat_attr
+
+create_index		EXTRA	create_index		4	__create_index		create_index
+remove_index		EXTRA	remove_index		2	__remove_index		remove_index
+stat_index		EXTRA	stat_index		3	__stat_index		stat_index
+
+freadlink		EXTRA	freadlink		i:ibn	__freadlink		freadlink
+get_directory_path	EXTRA	get_directory_path	i:ibn	__get_directory_path	get_directory_path
+
+watch_node		EXTRA	watch_node		i:iiiB	__watch_node		watch_node
+delete_node_monitor	EXTRA	delete_node_monitor	i:i	__delete_node_monitor	delete_node_monitor
+
+set_app_server_port	EXTRA	set_app_server_port	i:i	__set_app_server_port	set_app_server_port
+get_app_server_port	EXTRA	get_app_server_port	i:	__get_app_server_port	get_app_server_port
+
+strace	EXTRA	strace	i:iii	__strace	strace
+strace_exclude	EXTRA	strace_exclude	i:ii	__strace_exclude	strace_exclude
+strace_include	EXTRA	strace_include	i:ii	__strace_include	strace_include
+
+suspend_thread		EXTRA	suspend_thread		i:i	__suspend_thread	suspend_thread
+resume_thread		EXTRA	resume_thread		i:i	__resume_thread		resume_thread
+wait_for_thread		EXTRA	wait_for_thread		i:i	__wait_for_thread	wait_for_thread
+
+rename_thread		EXTRA	rename_thread		i:is	__rename_thread		rename_thread
+#rename_process		EXTRA	rename_process		i:is	__rename_process	rename_process
+#FIXME: ensure rename_process is dead & remove
+
+send_data		EXTRA	send_data		i:iibn	__send_data		send_data
+receive_data		EXTRA	receive_data		i:pbn	__receive_data		receive_data
+thread_data_size	EXTRA	thread_data_size	i:	__thread_data_size	thread_data_size
+has_data		EXTRA	has_data		i:i	__has_data		has_data
+
+get_thread_info		EXTRA	get_thread_info		i:ib	__get_thread_info	get_thread_info
+get_next_thread_info	EXTRA	get_next_thread_info	i:b	__get_next_thread_info	get_next_thread_info
+get_thread_proc		EXTRA	get_thread_proc		i:i	__get_thread_proc	get_thread_proc
+set_thread_priority	EXTRA	set_thread_priority	i:ii	__set_thread_priority	set_thread_priority
+exit_thread		EXTRA	exit_thread	i:i	__exit_thread	exit_thread
+
+#snooze			EXTRA	snooze			i:i	__snooze		snooze
+snooze			EXTRA	snooze			2	__snooze		snooze
+
+create_semaphore	EXTRA	create_semaphore	i:sii	__create_semaphore	create_semaphore
+delete_semaphore	EXTRA	delete_semaphore	i:i	__delete_semaphore	delete_semaphore
+lock_semaphore		EXTRA	lock_semaphore		i:i	__lock_semaphore	lock_semaphore
+unlock_semaphore_x	EXTRA	unlock_semaphore_x	i:ii	__unlock_semaphore_x	unlock_semaphore_x
+get_semaphore_info	EXTRA	get_semaphore_info	i:iib	__get_semaphore_info	get_semaphore_info
+get_next_semaphore_info	EXTRA	get_next_semaphore_info	i:b	__get_next_semaphore_info get_next_semaphore_info
+
+clone_area		EXTRA	clone_area		i:saiii	__clone_area		clone_area
+delete_area		EXTRA	delete_area		i:i	__delete_area		delete_area
+get_area_info		EXTRA	get_area_info		i:ib	__get_area_info		get_area_info
+remap_area		EXTRA	remap_area		i:ia	__remap_area		remap_area
+
+create_port		EXTRA	create_port		i:si	__create_port		create_port
+delete_port		EXTRA	delete_port		i:i	__delete_port		delete_port
+send_msg		EXTRA	send_msg		i:iibn	__send_msg		send_msg
+get_msg			EXTRA	get_msg			i:ipbn	__get_msg		get_msg
+get_msg_size	EXTRA	get_msg_size	i:i	__get_msg_size		get_msg_size
+get_port_info		EXTRA	get_port_info		i:ip	__get_port_info		get_port_info
+get_next_port_info	EXTRA	get_next_port_info	i:p	__get_next_port_info	get_next_port_info
+
+make_port_public	EXTRA	make_port_public	i:i	__make_port_public	make_port_public
+make_port_private	EXTRA	make_port_private	i:i	__make_port_private	make_port_private
+find_port		EXTRA	find_port		i:s	__find_port		find_port
+
+get_image_info		EXTRA	get_image_info		i:iiib	__get_image_info	get_image_info
+get_symbol_address	EXTRA	get_symbol_address	i:isib	__get_symbol_address	get_symbol_address
+open_image_file		EXTRA	open_image_file		i:i	__open_image_file	open_image_file
+find_module_by_address	EXTRA	find_module_by_address	i:p	__find_module_by_address	find_module_by_address
+
+based_open		EXTRA	based_open		i:isiv	__based_open		based_open
+based_mkdir		EXTRA	based_mkdir		i:isi	__based_mkdir		based_mkdir
+based_rmdir		EXTRA	based_rmdir		i:is	__based_rmdir		based_rmdir
+based_unlink		EXTRA	based_unlink		i:is	__based_unlink		based_unlink
+based_symlink		EXTRA	based_symlink		i:iss	__based_symlink		based_symlink
+
+#read_pos		EXTRA	read_pos		i:iibn	__read_pos		read_pos
+#readv_pos		EXTRA	readv_pos		i:iipi	__readv_pos		readv_pos
+#write_pos		EXTRA	write_pos		i:iibn	__write_pos		write_pos
+#writev_pos		EXTRA	writev_pos		i:iipi	__writev_pos		writev_pos
+
+read_pos		EXTRA	read_pos		5	__read_pos		read_pos
+readv_pos		EXTRA	readv_pos		5	__readv_pos		readv_pos
+
+write_pos		EXTRA	write_pos		5	__write_pos		write_pos
+writev_pos		EXTRA	writev_pos		5	__writev_pos		writev_pos
+
+event			EXTRA	event			i:iiipi	__event		event
+

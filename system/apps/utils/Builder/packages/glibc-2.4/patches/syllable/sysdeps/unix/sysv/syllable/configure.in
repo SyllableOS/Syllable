@@ -1,0 +1,12 @@
+GLIBC_PROVIDES dnl See aclocal.m4 in the top level source directory.
+# Local configure fragment for sysdeps/unix/sysv/syllable.
+
+# Don't bother trying to generate any glue code to be compatible with the
+# existing system library, because we are the only system library.
+inhibit_glue=yes
+
+#Compiling libc for Syllable without thread support whould be a crime.
+DEFINES="$DEFINES -D_LIBC_REENTRANT -D_THREAD_SAFE"
+
+profile=no
+
