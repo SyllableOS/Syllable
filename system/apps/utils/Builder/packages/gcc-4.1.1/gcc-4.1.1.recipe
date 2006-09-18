@@ -7,9 +7,9 @@ authors
 maintainers			Kaj de Vos
 status				testing
 warnings
+	Build breaks with itself installed.
 	GCC has a circular dependency on GLibC.
 ;	LibIberty is both in BinUtils and in GCC.
-;notes				Build breaks with itself installed
 
 inherits			gnu
 
@@ -31,13 +31,13 @@ needs
 	Syllable >= 0.5.5
 ;	For -O3 with -fpic:
 	binutils >= 2.13.1
-;	Syllable switched to the new GLibC ABI in combination with this version of GCC:
+;	Syllable switched to the new GLibC ABI:
 	glibc >= 2.3.3
 build-needs
 ;	autoconf 2.57
 	make <> 3.81
 ;	Without make bootstrap:
-	gcc >= 2.95
+	gcc >= 2.95 < 4
 ;	For Ada:
 ;	gnat >= 3.13 | gcc >= 3.1
 	gawk
@@ -107,3 +107,4 @@ links
 	libgcc.a		lib/gcc/i586-pc-syllable/4.1.1/libgcc_static.a
 ;	For some packages:
 ;	bin/cpp			lib/
+
