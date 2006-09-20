@@ -972,12 +972,15 @@ void DockWin::UpdateWindows( os::Message* pcMessage )
 		bDefaultIcon = false;
 		if( nHandle != pcIcon->GetHandle() || bIconChanged )
 		{
-			//printf( "Icon Handle %x %i\n", (uint)nHandle, bIconChanged );
+//			printf( "Icon Handle %x %i\n", (uint)nHandle, bIconChanged );
 			os::Bitmap* pcBitmap = NULL;
 			try
 			{
 				pcBitmap = new os::Bitmap( nHandle );
-				pcIcon->GetBitmap()->SetBitmapData( pcBitmap->LockRaster(), os::IPoint( 24, 24 ), os::CS_RGB32 );
+				os::Point cSize = pcBitmap->GetBounds().Size();
+				pcIcon->GetBitmap()->SetBitmapData( pcBitmap->LockRaster(), os::IPoint( (int)cSize.x + 1, (int)cSize.y + 1 ), os::CS_RGB32 );
+				if( pcIcon->GetBitmap()->GetSize() != os::Point( 24, 24 ) )
+					pcIcon->GetBitmap()->SetSize( os::Point( 24, 24 ) );
 				delete( pcBitmap );
 				pcIcon->SetHandle( nHandle );
 			} catch( ... )
