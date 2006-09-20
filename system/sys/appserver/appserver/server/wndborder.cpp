@@ -559,6 +559,9 @@ bool WndBorder::MouseMoved( Messenger * pcAppTarget, const Point & cNewPos, int 
 		SrvSprite::Hide();
 		m_pcParent->UpdateRegions( false );
 		SrvSprite::Unhide();
+		
+		m_cDeltaMove = IPoint( 0, 0 );
+		m_cDeltaSize = IPoint( 0, 0 );
 	}
 
 	return ( m_eHitItem != WindowDecorator::HIT_NONE );
@@ -758,7 +761,8 @@ void WndBorder::WndMoveReply( Messenger * pcAppTarget )
 //          }
 
 //          m_cClientDeltaSize = IPoint( 0, 0 );
-
+			m_cDeltaMove = IPoint( 0, 0 );
+			m_cDeltaSize = IPoint( 0, 0 );
 			m_bWndMovePending = true;
 		}
 	}
