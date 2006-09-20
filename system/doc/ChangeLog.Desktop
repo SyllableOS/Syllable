@@ -1,3 +1,7 @@
+* September 20 2006, Arno Klenke *
+
+Hide login window at the right place
+
 ---- 0.6.1 Released -------------------------------------------------------------------
 
 * April 14 2006, Arno Klenke *
@@ -165,6 +169,7 @@ Cleaned up message texts in DLogin.
 		* Moved code around.  It makes the code easier to read.
 		* Added error testing for scaling images.  If the image is not bigger than the 				screen resolution, the desktop will not scale the image.
 		* Fixed icon text color problems.
+
 
 
 
