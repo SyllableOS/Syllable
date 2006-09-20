@@ -168,9 +168,10 @@ int BecomeUser( struct passwd *psPwd, MainWindow* pcWindow )
     default: /* parent process */
         int nDesktopPid, nExitStatus;
         nDesktopPid = nError;
-        nError = waitpid( nDesktopPid, &nExitStatus, 0 );
         pcWindow->Hide();
         pcWindow->ClearPassword();
+        nError = waitpid( nDesktopPid, &nExitStatus, 0 );
+       
         
         if( nError < 0 || nError != nDesktopPid ) // Something went wrong ;-)
             break;
