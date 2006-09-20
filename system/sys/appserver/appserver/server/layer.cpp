@@ -575,8 +575,6 @@ int Layer::ToggleDepth()
 			{
 				pcSibling->SetDirtyRegFlags( m_cIFrame - pcSibling->m_cIFrame.LeftTop() );
 			}
-			if( GetParent() == g_pcTopView )
-				pcSibling->Invalidate();
 		}
 	}
 	return ( false );
@@ -609,8 +607,6 @@ void Layer::MoveToFront()
 		{
 			pcSibling->SetDirtyRegFlags( m_cIFrame - pcSibling->m_cIFrame.LeftTop() );
 		}
-		if( GetParent() == g_pcTopView )
-			pcSibling->Invalidate();
 	}
 }
 
@@ -641,8 +637,6 @@ void Layer::MoveToBack()
 		{
 			pcSibling->SetDirtyRegFlags( m_cIFrame - pcSibling->m_cIFrame.LeftTop() );
 		}
-		if( GetParent() == g_pcTopView )
-			pcSibling->Invalidate();
 	}
 }
 

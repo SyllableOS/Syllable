@@ -358,27 +358,6 @@ void set_desktop_screenmode( int nDesktop, const screen_mode & sMode )
 }
 
 
-/** Called whenenever the windows on the desktop change. Calling this function
- * will go through all windows on the desktop and call their WindowsChanged() method.
- * \par Note: g_cLayerGate has to be opened.
- * \author	Arno Klenke (arno_klenke@yahoo.de)
- *****************************************************************************/
-void desktop_windows_changed()
-{
-	/* Inform windows about the change */
-	Layer *pcLayer;
-
-	for( pcLayer = g_pcTopView->GetTopChild(); pcLayer != NULL; pcLayer = pcLayer->GetLowerSibling(  ) )
-	{
-		SrvWindow *pcSWindow = pcLayer->GetWindow();
-
-		if( pcSWindow != NULL && ( pcSWindow->GetFlags() & WND_SEND_WINDOWS_CHANGED ) )
-		{
-			pcSWindow->WindowsChanged();
-		}
-	}
-}
-
 //----------------------------------------------------------------------------
 // NAME:
 // DESC:
@@ -410,7 +389,6 @@ void add_window_to_desktop( SrvWindow * pcWindow )
 		}
 	}
 
-	desktop_windows_changed();
 
 }
 
@@ -494,7 +472,6 @@ void remove_window_from_desktop( SrvWindow * pcWindow )
 		}
 	}
 
-	desktop_windows_changed();
 
 }
 
@@ -533,7 +510,6 @@ void remove_from_focusstack( SrvWindow * pcWindow )
 		set_active_window( NULL, false );
 	}
 
-	desktop_windows_changed();
 }
 
 //----------------------------------------------------------------------------

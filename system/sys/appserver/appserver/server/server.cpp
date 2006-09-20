@@ -71,7 +71,7 @@ static WinSelect *g_pcWinSelector = NULL;
 AppServer *AppServer::s_pcInstance = NULL;
 
 Array < Layer > *g_pcLayers;
-Array < BitmapNode > *g_pcBitmaps;
+Array < SrvBitmap > *g_pcBitmaps;
 
 FontServer *g_pcFontServer;
 
@@ -616,6 +616,7 @@ void AppServer::DispatchMessage( Message * pcReq )
 				SwitchDesktop( nDesktop );
 			break;
 		}
+	/* REMOVE IN THE NEXT RELEASE */
 	case DR_GET_WINDOW_LIST:
 		{
 			int32 nCount = 0;
@@ -643,10 +644,10 @@ void AppServer::DispatchMessage( Message * pcReq )
 					if( pcWindow->GetIcon() != NULL )
 					{
 						/* Add bitmap values */
-						cReply.AddInt32( "icon_width", pcWindow->GetIcon()->m_pcBitmap->m_nWidth );
-						cReply.AddInt32( "icon_height", pcWindow->GetIcon()->m_pcBitmap->m_nHeight );
-						cReply.AddInt32( "icon_colorspace", pcWindow->GetIcon()->m_pcBitmap->m_eColorSpc );
-						cReply.AddInt32( "icon_area", pcWindow->GetIcon()->m_pcBitmap->m_hArea );
+						cReply.AddInt32( "icon_width", pcWindow->GetIcon()->m_nWidth );
+						cReply.AddInt32( "icon_height", pcWindow->GetIcon()->m_nHeight );
+						cReply.AddInt32( "icon_colorspace", pcWindow->GetIcon()->m_eColorSpc );
+						cReply.AddInt32( "icon_area", pcWindow->GetIcon()->m_hArea );
 					}
 					else
 					{
@@ -711,7 +712,6 @@ void AppServer::DispatchMessage( Message * pcReq )
 			int32 nCount = 0;
 			int hHandle = -1;
 			int32 nError = -EINVAL;
-			BitmapNode *pcNode = NULL;
 			SrvBitmap* pcDstBitmap;
 			SrvBitmap* pcSrcBitmap;
 			Message cReply;
@@ -739,14 +739,13 @@ void AppServer::DispatchMessage( Message * pcReq )
 			}
 					
 			/* Get bitmap object */
-			pcNode = g_pcBitmaps->GetObj( hHandle );
-			if( pcNode == NULL ) {
+			pcDstBitmap = g_pcBitmaps->GetObj( hHandle );
+			if( pcDstBitmap == NULL ) {
 				pcReq->SendReply( &cReply );
 				break;
 			}
 				
-			pcDstBitmap = pcNode->m_pcBitmap;
-
+		
 			/* Interate through the windows of the desktop */
 			SrvWindow *pcWindow;
 
@@ -761,7 +760,7 @@ void AppServer::DispatchMessage( Message * pcReq )
 						/* Got it! Copy bitmap if possible */
 						if( pcWindow->GetIcon() == NULL )
 							break;
-						pcSrcBitmap = pcWindow->GetIcon()->m_pcBitmap;
+						pcSrcBitmap = pcWindow->GetIcon();
 						if( pcSrcBitmap->m_nWidth == 24 && pcSrcBitmap->m_nHeight == 24
 							&& pcSrcBitmap->m_eColorSpc == CS_RGB32 ) {
 							for( int i = 0; i < 24; i++ )
@@ -780,7 +779,7 @@ void AppServer::DispatchMessage( Message * pcReq )
 			pcReq->SendReply( &cReply );
 			break;
 		}
-
+	/* REMOVE END */
 	case DR_MINIMIZE_ALL:
 	{
 		dbprintf("minimize all\n");
@@ -1135,7 +1134,7 @@ int main( int argc, char **argv )
 	
 	g_pcFontServer = new FontServer();
 
-	g_pcBitmaps = new Array < BitmapNode >;
+	g_pcBitmaps = new Array < SrvBitmap >;
 	g_pcLayers = new Array < Layer >;
 
 	AppserverConfig *pcConfig = new AppserverConfig();

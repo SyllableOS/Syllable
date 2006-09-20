@@ -398,9 +398,10 @@ void init_irq_controller( void )
 	outb( cached_A1, PIC_SLAVE_IMR );
 	outb( cached_21, PIC_MASTER_IMR );
 	
-	/* Enable IRQ 0 (Timer) and 2 (Connection to slave) */
+	/* Enable IRQ 0 (Timer), 2 (Connection to slave) and 6 (floppy) */
 	enable_8259A_irq( 0 );
 	enable_8259A_irq( 2 );
+	enable_8259A_irq( 6 );
 }
 
 

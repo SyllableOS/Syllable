@@ -118,9 +118,9 @@ SrvApplication::~SrvApplication()
 	}
 	while( m_cBitmaps.empty() == false )
 	{
-		std::set < BitmapNode * >::iterator i = m_cBitmaps.begin();
-		BitmapNode *pcNode = ( *i );
-		delete pcNode;
+		std::set < SrvBitmap * >::iterator i = m_cBitmaps.begin();
+		SrvBitmap *pcNode = ( *i );
+		pcNode->Release();
 
 		m_cBitmaps.erase( i );
 	}
@@ -374,12 +374,8 @@ void SrvApplication::CreateBitmap( port_id hReply, int nWidth, int nHeight, colo
 	pcBitmap->m_nFlags = nFlags;
 	pcBitmap->m_pcDriver = g_pcDispDrv;
 
-	BitmapNode *pcNode = new BitmapNode( pcBitmap );
-
-	pcBitmap->Release();
-
-	m_cBitmaps.insert( pcNode );
-	AR_CreateBitmapReply_s sReply( pcNode->GetToken(), hArea );
+	m_cBitmaps.insert( pcBitmap );
+	AR_CreateBitmapReply_s sReply( pcBitmap->GetToken(), hArea );
 
 	send_msg( hReply, 0, &sReply, sizeof( sReply ) );
 }
@@ -394,9 +390,9 @@ void SrvApplication::CreateBitmap( port_id hReply, int nWidth, int nHeight, colo
 
 void SrvApplication::CloneBitmap( port_id hReply, int hHandle )
 {
-	BitmapNode *pcNode = g_pcBitmaps->GetObj( hHandle );
+	SrvBitmap *pcBitmap = g_pcBitmaps->GetObj( hHandle );
 	
-	if( pcNode == NULL )
+	if( pcBitmap == NULL )
 	{
 		AR_CreateBitmapReply_s sReply;
 		sReply.m_hHandle = -EINVAL;
@@ -404,14 +400,12 @@ void SrvApplication::CloneBitmap( port_id hReply, int hHandle )
 		return;
 	}
 	
-	SrvBitmap* pcBitmap = pcNode->m_pcBitmap;
 	__assertw( pcBitmap != NULL );
-	BitmapNode *pcNewNode = new BitmapNode( pcBitmap );
-	
+	pcBitmap->AddRef();
 
-	m_cBitmaps.insert( pcNewNode );
+	m_cBitmaps.insert( pcBitmap );
 	AR_CloneBitmapReply_s sReply;
-	sReply.m_hHandle = pcNewNode->GetToken();
+	sReply.m_hHandle = pcBitmap->GetToken();
 	sReply.m_hArea = pcBitmap->m_hArea;
 	sReply.m_nFlags = pcBitmap->m_nFlags;
 	sReply.m_nWidth = pcBitmap->m_nWidth;
@@ -422,7 +416,7 @@ void SrvApplication::CloneBitmap( port_id hReply, int hHandle )
 	
 	__assertw( g_pcBitmaps->GetObj( hHandle ) );
 	
-	dbprintf( "Bitmap %i cloned to %i\n", pcNode->GetToken(), pcNewNode->GetToken() );
+	//dbprintf( "Bitmap %i cloned\n", pcBitmap->GetToken() );
 }
 
 //----------------------------------------------------------------------------
@@ -434,15 +428,15 @@ void SrvApplication::CloneBitmap( port_id hReply, int hHandle )
 
 void SrvApplication::DeleteBitmap( int hHandle )
 {
-	BitmapNode *pcNode = g_pcBitmaps->GetObj( hHandle );
+	SrvBitmap *pcBitmap = g_pcBitmaps->GetObj( hHandle );
 
-	if( pcNode == NULL )
+	if( pcBitmap == NULL )
 	{
 		dbprintf( "Error: Attempt to delete invalid bitmap %d\n", hHandle );
 		return;
 	}
-	m_cBitmaps.erase( pcNode );
-	delete pcNode;
+	m_cBitmaps.erase( pcBitmap );
+	pcBitmap->Release();
 }
 
 void SrvApplication::DispatchMessage( Message * pcReq )
@@ -500,9 +494,9 @@ void SrvApplication::DispatchMessage( Message * pcReq )
 			pcReq->FindPointer( "user_obj", &pUserObj );
 
 			g_cLayerGate.Close();
-			BitmapNode *pcBmNode = g_pcBitmaps->GetObj( hBitmapHandle );
+			SrvBitmap *pcBitmap = g_pcBitmaps->GetObj( hBitmapHandle );
 
-			if( pcBmNode == NULL )
+			if( pcBitmap == NULL )
 			{
 				dbprintf( "Error: SrvApplication::DispatchMessage() invalid bitmap-handle %d, cant create window\n", hBitmapHandle );
 				Message cReply;
@@ -515,7 +509,7 @@ void SrvApplication::DispatchMessage( Message * pcReq )
 				break;
 			}
 
-			SrvWindow *pcWindow = new SrvWindow( this, pcBmNode->m_pcBitmap );
+			SrvWindow *pcWindow = new SrvWindow( this, pcBitmap );
 
 			m_cWindows.insert( pcWindow );
 
@@ -1514,7 +1508,6 @@ bool SrvApplication::DispatchMessage( const void *pMsg, int nCode )
 	case AR_CREATE_SPRITE:
 		{
 			AR_CreateSprite_s *psReq = ( AR_CreateSprite_s * ) pMsg;
-			BitmapNode *pcNode;
 			SrvBitmap *pcBitmap = NULL;
 			int nError;
 			uint32 nHandle;
@@ -1523,13 +1516,9 @@ bool SrvApplication::DispatchMessage( const void *pMsg, int nCode )
 
 			if( psReq->m_nBitmap != -1 )
 			{
-				pcNode = g_pcBitmaps->GetObj( psReq->m_nBitmap );
+				pcBitmap = g_pcBitmaps->GetObj( psReq->m_nBitmap );
 
-				if( pcNode != NULL )
-				{
-					pcBitmap = pcNode->m_pcBitmap;
-				}
-				else
+				if( pcBitmap == NULL )
 				{
 					dbprintf( "Error: Attempt to create sprite with invalid bitmap %d\n", psReq->m_nBitmap );
 				}

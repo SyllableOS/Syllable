@@ -171,11 +171,6 @@ void TopLayer::UpdateLayer( Layer* pcChild, bool bUpdateChildren )
 	if( pcChild->m_nHideCount > 0 || pcChild->m_pcBitmapReg == NULL ) 
 		return;
 		
-	if( pcChild->GetWindow() != NULL && pcChild->GetWindow()->HasPendingSizeEvents( this ) )
-	{
-		return;
-	}
-
 	if( pcChild->GetWindow() != NULL && pcChild->GetWindow()->GetPaintCounter() > 0 )
 	{
 		pcChild->GetWindow()->AddToUpdateList( pcChild, bUpdateChildren );

@@ -107,12 +107,10 @@ class Window::Private
 		m_pcDefaultButton = NULL;
 		m_pcDefaultWheelView = NULL;
 		m_bDidScrollRect = false;
-		m_pcIcon = NULL;
 		memset( m_apcFocusStack, 0, FOCUS_STACK_SIZE * sizeof( View * ) );
 	}
 
 	String m_cTitle;
-	Bitmap* m_pcIcon;
 	WR_Render_s *m_psRenderPkt;
 	uint32 m_nRndBufSize;
 
@@ -160,19 +158,6 @@ void Window::_Cleanup()
 		}
 		m->m_cShortcuts.erase(i);
 	}
-
-	if( m->m_pcIcon != NULL ) {
-		Message cReq( WR_SET_ICON );
-		cReq.AddInt32( "handle", -1 );
-
-		if( Messenger( m->m_hLayerPort ).SendMessage( &cReq ) < 0 )
-		{
-			dbprintf( "Error: Window::_Cleanup() failed to send WR_SET_ICON request to server\n" );
-		}
-		delete( m->m_pcIcon );
-		m->m_pcIcon = NULL;
-	}
-	
 	if( m->m_pcTopView != NULL )
 	{
 		Message cReq( AR_CLOSE_WINDOW );
@@ -476,7 +461,7 @@ void Window::SetTitle( const String & cTitle )
  *	The Bitmap will be copied, so you can delete the bitmap
  *  afterwards,
  * \param pcIcon
- *	The new window icon. The icon format is supposed to be 24x24 CS_RGB32.
+ *	The new window icon.
  * \sa GetIcon(), SetTitle()
  * \author	Arno Klenke (arno_klenke@yahoo.de)
  *****************************************************************************/
@@ -488,36 +473,14 @@ void Window::SetIcon( Bitmap* pcIcon )
 		dbprintf( "Error: Window::SetIcon() called with empty icon\n" );
 		return;
 	}
-	
-	if( pcIcon->GetBounds() != Rect( 0, 0, 23, 23 ) ||
-		pcIcon->GetColorSpace() != CS_RGB32 )
-	{
-		dbprintf( "Error: Window::SetIcon() called with invalid icon\n" );
-		return;
-	}
-	
-	if( m->m_pcIcon != NULL )
-	{
-		/* Delete old icon */
-		delete( m->m_pcIcon );
-	}
-	m->m_pcIcon = NULL;
-	
-	
-	/* Create a new bitmap and copy the attributes of the old one */
-	m->m_pcIcon = new Bitmap( (int)pcIcon->GetBounds().Width() + 1, (int)pcIcon->GetBounds().Height() + 1,
-							pcIcon->GetColorSpace(), Bitmap::SHARE_FRAMEBUFFER );
-	memcpy( m->m_pcIcon->LockRaster(), pcIcon->LockRaster(), pcIcon->GetBytesPerRow() * 
-			(int)( pcIcon->GetBounds().Height() + 1 ) );
-	
-	
+
 	if( m->m_hLayerPort >= 0 )
 	{
 		Message cReq( WR_SET_ICON );
+		Message cReply;
+		cReq.AddInt32( "handle", pcIcon->m_hHandle );
 
-		cReq.AddInt32( "handle", m->m_pcIcon->m_hHandle );
-
-		if( Messenger( m->m_hLayerPort ).SendMessage( &cReq ) < 0 )
+		if( Messenger( m->m_hLayerPort ).SendMessage( &cReq, &cReply ) < 0 )
 		{
 			dbprintf( "Error: Window::SetIcon() failed to send request to server\n" );
 		}
@@ -598,15 +561,16 @@ String Window::GetTitle( void ) const
 }
 
 
-/** Obtain the current window icon.
- * \return A pointer to the icon of the window or NULL if the window has no icon.
+/** Not longer supported
+ * \return Not longer supported.
  * \sa SetIcon(), GetTitle()
  * \author	Arno Klenke (arno_klenke@yahoo.de)
  *****************************************************************************/
-
+/* REMOVE */
 Bitmap* Window::GetIcon( void ) const
 {
-	return ( m->m_pcIcon );
+	
+	return( NULL );
 }
 
 /** Activate/Deactivate the window.
@@ -1979,7 +1943,8 @@ port_id Window::_GetAppserverPort() const
 }
 /** Called whenever the currently shown windows change.
  * \par Description:
- * WindowsChanged() will be called when the windows on the desktop change.
+ * THIS METHOD WILL BE REMOVED IN ONE OF THE FUTURE SYLLABLE RELEASES.
+ * USE THE NEW EVENT INTERFACE INSTEAD. 	
  * \par Note:
  * This will only work if you have set the WND_SEND_WINDOWS_CHANGED flag.
  * \author	Kurt Skauen (kurt@atheos.cx)

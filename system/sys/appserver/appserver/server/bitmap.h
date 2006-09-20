@@ -39,6 +39,7 @@ public:
 	{
 		return( os::IRect( 0, 0, m_nWidth - 1, m_nHeight - 1 ) );
 	}
+	int	GetToken( void ) const	{ return( m_hHandle ); }
 
     area_id	    m_hArea;
     uint32	    m_nFlags;
@@ -51,23 +52,18 @@ public:
     DisplayDriver*  m_pcDriver;
     bool	    m_bVideoMem;
     uint32		m_nVideoMemOffset;
+   	int	m_hHandle;
 protected:
     ~SrvBitmap();
 };
 
-class BitmapNode
-{
-public:
-    BitmapNode( SrvBitmap* pcBitmap );
-    ~BitmapNode();
 
-    int	GetToken( void ) const	{ return( m_hHandle ); }
-
-    SrvBitmap*	m_pcBitmap;
-
-private:
-    int	m_hHandle;
-};
+extern Array<SrvBitmap>* g_pcBitmaps;
 
 
-extern Array<BitmapNode>* g_pcBitmaps;
+
+
+
+
+
+

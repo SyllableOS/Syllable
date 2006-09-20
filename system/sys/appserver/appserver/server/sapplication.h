@@ -28,7 +28,7 @@
 
 class SrvWindow;
 class FontNode;
-class BitmapNode;
+class SrvBitmap;
 class SrvSprite;
 class SFontInstance;
 
@@ -99,7 +99,7 @@ private:
 
     static std::vector<Cursor*> s_cCursorStack;
     static bool			s_bBorderCursor;
-    std::set<BitmapNode*> m_cBitmaps;
+    std::set<SrvBitmap*> m_cBitmaps;
     std::set<SrvWindow*>  m_cWindows;
     std::set<FontNode*>   m_cFonts;
     std::set<SrvSprite*>  m_cSprites;

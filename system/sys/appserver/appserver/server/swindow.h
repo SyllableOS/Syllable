@@ -37,7 +37,6 @@ namespace os {
 class SrvApplication;
 class WndBorder;
 class SrvBitmap;
-class BitmapNode;
 class SrvSprite;
 class SrvEvent_s;
 
@@ -78,7 +77,6 @@ public:
     void	DesktopActivated( int nNewDesktop, bool bActivated, const os::IPoint cNewRes, os::color_space eColorSpace );
     void	WindowActivated( bool bActive );
     void	ScreenModeChanged( const os::IPoint cNewRes, os::color_space eColorSpace );
-    void	WindowsChanged();
   
     void	SetFrame( const os::Rect& cFrame );
     os::Rect	GetFrame( bool bClient = true ) const;
@@ -114,8 +112,7 @@ public:
     static void HandleInputEvent( os::Message* pcEvent );
     static void HandleMouseTransaction();
     
-    void	SetIcon( BitmapNode* pcIcon ) { m_pcIcon = pcIcon; }
-	BitmapNode* GetIcon() { return( m_pcIcon ); }
+	SrvBitmap* GetIcon() { return( m_pcIcon ); }
     
     bool	IsMinimized() { return( m_bMinimized ); }
     void	SetMinimized( bool bMinimized ) { m_bMinimized = bMinimized; }
@@ -169,7 +166,7 @@ private:
     port_id			m_hEventPort;	// Events to application
     os::Locker		m_cMutex;
     os::Messenger*	m_pcAppTarget;
-    BitmapNode*		m_pcIcon;
+    SrvBitmap*		m_pcIcon;
     bool			m_bMinimized;
 };
 

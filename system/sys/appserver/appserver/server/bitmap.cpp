@@ -72,6 +72,7 @@ SrvBitmap::SrvBitmap( int nWidth, int nHeight, color_space eColorSpc, uint8 *pRa
 		m_bFreeRaster = true;
 		m_pRaster = ( uint8 * )calloc( m_nHeight, m_nBytesPerLine );
 	}
+	m_hHandle = g_pcBitmaps->Insert( this );
 }
 
 //----------------------------------------------------------------------------
@@ -83,6 +84,7 @@ SrvBitmap::SrvBitmap( int nWidth, int nHeight, color_space eColorSpc, uint8 *pRa
 
 SrvBitmap::~SrvBitmap()
 {
+	g_pcBitmaps->Remove( m_hHandle );
 	if( m_bFreeRaster )
 	{
 		if( m_bVideoMem )
@@ -96,30 +98,3 @@ SrvBitmap::~SrvBitmap()
 	}
 }
 
-
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
-BitmapNode::BitmapNode( SrvBitmap * pcBitmap )
-{
-	pcBitmap->AddRef();
-	m_pcBitmap = pcBitmap;
-	m_hHandle = g_pcBitmaps->Insert( this );
-}
-
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
-BitmapNode::~BitmapNode()
-{
-	g_pcBitmaps->Remove( m_hHandle );
-	m_pcBitmap->Release();
-}

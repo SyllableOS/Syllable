@@ -159,7 +159,7 @@ void SrvWindow::PostEvent( bool bIconChanged )
 		if( m_pcIcon != NULL )
 		{
 			cEvent.AddInt64( "icon_handle", m_pcIcon->GetToken() );
-			cEvent.AddIRect( "icon_bounds", m_pcIcon->m_pcBitmap->GetBounds() );
+			cEvent.AddIRect( "icon_bounds", m_pcIcon->GetBounds() );
 		}
 		if( bIconChanged )
 		{
@@ -280,6 +280,13 @@ SrvWindow::~SrvWindow()
 	}
 	
 	delete m_pcDecorator;
+
+	/* Release icon */	
+	if( m_pcIcon )
+	{
+		m_pcIcon->Release();
+		m_pcIcon = NULL;
+	}
 }
 
 bool SrvWindow::HasFocus() const
@@ -315,22 +322,6 @@ void SrvWindow::ScreenModeChanged( const IPoint cNewRes, color_space eColorSpace
 		if( m_pcAppTarget->SendMessage( &cMsg ) < 0 )
 		{
 			dbprintf( "Error: SrvWindow::ScreenModeChanged() failed to send message to target %s\n", m_cTitle.c_str() );
-		}
-	}
-}
-
-/** Called whenever the windows on the screen change.
- * \author	Arno Klenke (arno_klenke@yahoo.de)
- *****************************************************************************/
-void SrvWindow::WindowsChanged()
-{
-	if( m_pcAppTarget != NULL )
-	{
-		Message cMsg( M_WINDOWS_CHANGED );
-
-		if( m_pcAppTarget->SendMessage( &cMsg ) < 0 )
-		{
-			dbprintf( "Error: SrvWindow::WindowsChanged() failed to send message to target %s\n", m_cTitle.c_str() );
 		}
 	}
 }
@@ -508,7 +499,6 @@ void SrvWindow::Show( bool bShow )
 		m_pcWndBorder->Show( bShow );
 	}
 
-	desktop_windows_changed();
 	PostEvent();
 }
 
@@ -663,11 +653,11 @@ void SrvWindow::R_Render( WR_Render_s * psPkt )
 			{
 				GRndDrawBitmap_s *psReq = ( GRndDrawBitmap_s * ) psHdr;
 
-				BitmapNode *pcNode = g_pcBitmaps->GetObj( psReq->hBitmapToken );
+				SrvBitmap *pcBitmap = g_pcBitmaps->GetObj( psReq->hBitmapToken );
 
-				if( NULL != pcNode )
+				if( NULL != pcBitmap )
 				{
-					pcView->DrawBitMap( pcNode->m_pcBitmap, psReq->cSrcRect, psReq->cDstRect );
+					pcView->DrawBitMap( pcBitmap, psReq->cSrcRect, psReq->cDstRect );
 				}
 			}
 			break;
@@ -781,6 +771,14 @@ void SrvWindow::R_Render( WR_Render_s * psPkt )
 							nLowest = pcParent->GetLevel();
 							pcLowestLayer = pcParent;
 						}
+						for( uint i = 0; i < m_asUpdateList.size(); i++ )
+						{
+							if( m_asUpdateList[i].m_nLayerHandle == pcView->GetHandle() )
+							{
+								m_asUpdateList[i].m_bUpdateChildren = true;
+								break;
+							}
+						}
 					}
 				}
 				bViewsMoved = true;
@@ -796,7 +794,6 @@ void SrvWindow::R_Render( WR_Render_s * psPkt )
 					if( psMsg->bVisible )
 					{
 						m_pcWndBorder->MoveToFront();
-						desktop_windows_changed();
 					}
 					else
 					{
@@ -1487,7 +1484,6 @@ bool SrvWindow::DispatchMessage( Message * pcReq )
 			}
 			rename_thread( -1, String ().Format( "W:%.62s", pzTitle ).c_str(  ) );
 
-			desktop_windows_changed();
 			g_cLayerGate.Open();
 			
 			/* Send event */
@@ -1611,7 +1607,6 @@ bool SrvWindow::DispatchMessage( Message * pcReq )
 		}
 	case WR_BEGIN_DRAG:
 		{
-			BitmapNode *pcNode;
 			SrvBitmap *pcBitmap = NULL;
 			int hBitmap = -1;
 			Rect cBounds( 0, 0, 0, 0 );
@@ -1630,13 +1625,12 @@ bool SrvWindow::DispatchMessage( Message * pcReq )
 
 			if( hBitmap != -1 )
 			{
-				pcNode = g_pcBitmaps->GetObj( hBitmap );
-				if( pcNode == NULL )
+				pcBitmap = g_pcBitmaps->GetObj( hBitmap );
+				if( pcBitmap == NULL )
 				{
 					dbprintf( "Error: Attempt to start drag operation with invalid bitmap %d\n", hBitmap );
 					break;
 				}
-				pcBitmap = pcNode->m_pcBitmap;
 			}
 			else
 			{
@@ -1690,26 +1684,40 @@ bool SrvWindow::DispatchMessage( Message * pcReq )
 				{
 					g_cLayerGate.Close();
 					/* Remove icon */
-					SetIcon( NULL );
+					if( m_pcIcon )
+					{
+						m_pcIcon->Release();
+					}
+					m_pcIcon = NULL;
 					g_cLayerGate.Open();
 				}
 				else
 				{
 					/* Get bitmap object */
-					BitmapNode *pcNode = g_pcBitmaps->GetObj( hHandle );
+					SrvBitmap *pcBitmap = g_pcBitmaps->GetObj( hHandle );
 
-					if( pcNode != NULL )
+					if( pcBitmap != NULL )
 					{
 						g_cLayerGate.Close();
+
 						/* Set icon only if it shares the framebuffer with the application */
-						if( pcNode->m_pcBitmap->m_nFlags & Bitmap::SHARE_FRAMEBUFFER )
-							SetIcon( pcNode );
-						desktop_windows_changed();
+						if( pcBitmap->m_nFlags & Bitmap::SHARE_FRAMEBUFFER )
+						{
+							if( m_pcIcon )
+							{
+								m_pcIcon->Release();
+							}
+							m_pcIcon = pcBitmap;
+							m_pcIcon->AddRef();
+						}
 						g_cLayerGate.Open();
 						PostEvent( true );
-					}
+					} else
+						dbprintf( "Error: Tried to set invalid icon!\n");
 				}
 			}
+			if( pcReq->IsSourceWaiting() )
+				pcReq->SendReply( M_REPLY );
 			break;
 		}
 	case WR_ACTIVATE:
@@ -1826,7 +1834,7 @@ bool SrvWindow::DispatchMessage( const void *psMsg, int nCode )
 				
 					pcView->m_bOnUpdateList = false;
 					
-					if( pcView == m_pcWndBorder ) {
+					if( pcView == m_pcWndBorder && m_asUpdateList[i].m_bUpdateChildren ) {
 						bFullUpdate = true;
 					}
 				}

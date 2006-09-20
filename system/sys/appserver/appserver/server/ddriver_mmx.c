@@ -134,17 +134,23 @@ static inline void mmx_rgb16_to_rgb32( uint8 *pSrc, uint8 *pDst, unsigned nPixel
 	const uint16 *pS = ( uint16 * )pSrc;
 	const uint16 *pEnd;
 	const uint16 *pMMXend;
+	uint8 nMask[8];
 
 	uint8 *pD = ( uint8 * )pDst;
 
 	pEnd = pS + nPixels;
 	__asm __volatile( PREFETCH "%0	"::"m"( *pS ):"memory" );
 	__asm __volatile( "pxor	%%mm7,%%mm7\n\t":::"memory" );
+	*(uint64 *)nMask = 0xFF000000FF000000ULL;
+	__asm__ volatile (
+		  "movq (%0), %%mm6\n"
+	: : "r" (nMask) );
+	__asm __volatile( "pxor	%%mm7,%%mm7\n\t":::"memory" );
 
 	pMMXend = pEnd - 3;
 	while ( pS < pMMXend )
 	{
-		__asm __volatile( PREFETCH " 32%1\n\t" "movq	%1, %%mm0\n\t" "movq	%1, %%mm1\n\t" "movq	%1, %%mm2\n\t" "pand	%2, %%mm0\n\t" "pand	%3, %%mm1\n\t" "pand	%4, %%mm2\n\t" "psllq	$3, %%mm0\n\t" "psrlq	$3, %%mm1\n\t" "psrlq	$8, %%mm2\n\t" "movq	%%mm0, %%mm3\n\t" "movq	%%mm1, %%mm4\n\t" "movq	%%mm2, %%mm5\n\t" "punpcklwd %%mm7, %%mm0\n\t" "punpcklwd %%mm7, %%mm1\n\t" "punpcklwd %%mm7, %%mm2\n\t" "punpckhwd %%mm7, %%mm3\n\t" "punpckhwd %%mm7, %%mm4\n\t" "punpckhwd %%mm7, %%mm5\n\t" "psllq	$8, %%mm1\n\t" "psllq	$16, %%mm2\n\t" "por	%%mm1, %%mm0\n\t" "por	%%mm2, %%mm0\n\t" "psllq	$8, %%mm4\n\t" "psllq	$16, %%mm5\n\t" "por	%%mm4, %%mm3\n\t" "por	%%mm5, %%mm3\n\t" MOVNTQ "	%%mm0, %0\n\t" MOVNTQ "	%%mm3, 8%0\n\t":"=m"( *pD ):"m"( *pS ), "m"( blue_16to32mask ), "m"( green_16to32mask ), "m"( red_16to32mask ):"memory" );
+		__asm __volatile( PREFETCH " 32%1\n\t" "movq	%1, %%mm0\n\t" "movq	%1, %%mm1\n\t" "movq	%1, %%mm2\n\t" "pand	%2, %%mm0\n\t" "pand	%3, %%mm1\n\t" "pand	%4, %%mm2\n\t" "psllq	$3, %%mm0\n\t" "psrlq	$3, %%mm1\n\t" "psrlq	$8, %%mm2\n\t" "movq	%%mm0, %%mm3\n\t" "movq	%%mm1, %%mm4\n\t" "movq	%%mm2, %%mm5\n\t" "punpcklwd %%mm7, %%mm0\n\t" "punpcklwd %%mm7, %%mm1\n\t" "punpcklwd %%mm7, %%mm2\n\t" "punpckhwd %%mm7, %%mm3\n\t" "punpckhwd %%mm7, %%mm4\n\t" "punpckhwd %%mm7, %%mm5\n\t" "psllq	$8, %%mm1\n\t" "psllq	$16, %%mm2\n\t" "por	%%mm1, %%mm0\n\t" "por	%%mm2, %%mm0\n\t" "psllq	$8, %%mm4\n\t" "psllq	$16, %%mm5\n\t" "por	%%mm4, %%mm3\n\t" "por	%%mm5, %%mm3\n\t" "por %%mm6, %%mm0\n\t" "por %%mm6, %%mm3\n\t" MOVNTQ "	%%mm0, %0\n\t" MOVNTQ "	%%mm3, 8%0\n\t":"=m"( *pD ):"m"( *pS ), "m"( blue_16to32mask ), "m"( green_16to32mask ), "m"( red_16to32mask ):"memory" );
 
 		pD += 16;
 		pS += 4;
@@ -157,6 +163,11 @@ static inline void mmx_rgb16_to_rgb32( uint8 *pSrc, uint8 *pDst, unsigned nPixel
 		*pD++ = ( nBGR & 0x1F ) << 3;
 		*pD++ = ( nBGR & 0x7E0 ) >> 3;
 		*pD++ = ( nBGR & 0xF800 ) >> 8;
-		*pD++ = 0;
+		*pD++ = 0xff;
 	}
 }
+
+
+
+
+

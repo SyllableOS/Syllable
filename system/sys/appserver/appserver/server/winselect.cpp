@@ -254,7 +254,7 @@ void WinSelect::Paint( const IRect & cUpdateRect, bool bUpdate )
 		/* Draw window icon */
 		if( pcWindow->GetIcon() != NULL )
 		{
-			SrvBitmap* pcBitmap = pcWindow->GetIcon()->m_pcBitmap;
+			SrvBitmap* pcBitmap = pcWindow->GetIcon();
 			Rect cBitmapBounds( 0, 0, pcBitmap->m_nWidth - 1, pcBitmap->m_nHeight - 1 );
 			SetDrawingMode( DM_BLEND );
 			DrawBitMap( pcBitmap, cBitmapBounds, cBitmapBounds + Point( 3, cRect.top + 6 ) );
