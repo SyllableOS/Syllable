@@ -1,3 +1,8 @@
+* September 20, 2006 Arno Klenke *
+
+Window icons can now be any size
+Fixed some color space conversion errors in the appserver
+
 * September 3, 2006 Arno Klenke *
 
 Changed the libsyllable icons
@@ -1161,6 +1166,7 @@ disabled controls.  The following files have been patched:
 
 	The sub-menu arrow is now drawn corretly, and menus which have children
 	are now drawn slightly larger to allow for the arrow.
+
 
 
 
