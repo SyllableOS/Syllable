@@ -1,7 +1,7 @@
 The Syllable Build System
 =========================
 
-2 September 2006
+21 September 2006
 
 Contents
 ========
@@ -576,13 +576,15 @@ the base system. The process goes like this:
 
     cd system
 
+    build prepare system
+
     image system
     build log failures
 
     image base
     build log failures
 
-    image compatibility
+    image finish
     build log failures
 
     cd stage/image

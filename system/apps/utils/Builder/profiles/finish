@@ -1,0 +1,8 @@
+; Parts to complete a system build
+
+resources
+;	Old libraries for compatibility with applications for older versions of Syllable:
+	atheos/sys/libs	GCC-libraries-3.4.3
+
+modules
+	system libs/glibc-2.4-finish
