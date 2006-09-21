@@ -1,0 +1,8 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			glibc-2.4
+
+post-install
+	echo 'OUTPUT_FORMAT(elf32-i386)' > lib/libc.so
+	echo "GROUP ( $PWD/../../stage/image/atheos/sys/libs/libc.so.2 $PWD/../../stage/image/atheos/usr/glibc/lib/libc_nonshared.a )" >> lib/libc.so

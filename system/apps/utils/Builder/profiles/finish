@@ -5,4 +5,4 @@ resources
 	atheos/sys/libs	GCC-libraries-3.4.3
 
 modules
-	system libs/glibc-2.4-finish
+	system libs/glibc--finish
