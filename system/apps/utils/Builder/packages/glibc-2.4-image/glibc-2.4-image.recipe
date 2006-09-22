@@ -3,6 +3,7 @@ status				testing
 
 inherits			glibc-2.4
 
+; This assumes that GLibC is built in a parent subdirectory, e.g. libs/glibc-2.4-image:
 post-install
 	echo 'OUTPUT_FORMAT(elf32-i386)' > ../../stage/image/atheos/usr/glibc/lib/libc.so
 	echo "GROUP ( $PWD/../../stage/image/atheos/sys/libs/libc.so.2 $PWD/../../stage/image/atheos/usr/glibc/lib/libc_nonshared.a )" >> ../../stage/image/atheos/usr/glibc/lib/libc.so
