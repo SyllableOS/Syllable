@@ -1,8 +1,7 @@
 ; Parts to complete a system build
 
 resources
+;	Make GLibC suitable for running in an installed system:
+	atheos/sys/libs	libc.so
 ;	Old libraries for compatibility with applications for older versions of Syllable:
 	atheos/sys/libs	GCC-libraries-3.4.3
-
-modules
-	system libs/glibc--finish
