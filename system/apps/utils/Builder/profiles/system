@@ -116,7 +116,8 @@ resources
 ;	boot/grub				GrUB-binaries-0.97
 	boot/grub				menu.lst					text/plain
 ;	atheos/sys/libs			GCC-libraries-4.1.1
-	atheos/sys/fonts		fonts/URW-fonts
+	atheos/sys/fonts		fonts/URW/*.ttf
+	atheos/sys/fonts		fonts/URW/Mandriva/*.ttf
 	atheos/Documentation	documentation/Welcome		text/plain
 	atheos/Documentation	documentation/Copyrights	text/plain
 
@@ -126,7 +127,7 @@ modules
 	other/config/default
 	other/config/etc
 	other/config/template
-	other/fonts
+;	other/fonts
 	other/fonts/bitstream-vera-1.10
 	other/fonts/freefont-20060126
 	other/icons
