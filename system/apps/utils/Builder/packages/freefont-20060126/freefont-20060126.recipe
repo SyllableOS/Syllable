@@ -1,0 +1,15 @@
+authors				Kaj de Vos
+
+licenses			GPL-2+
+home				www.nongnu.org/freefont/
+packages			freefont-ttf-20060126
+locations			http://download.savannah.gnu.org/releases/freefont/
+
+install-tree
+install				true
+install-files		*.ttf .
+
+move-files			*.ttf /atheos/sys/fonts/
+
+documentation		README COPYING ChangeLog AUTHORS CREDITS
+build-docs			INSTALL

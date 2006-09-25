@@ -127,6 +127,8 @@ modules
 	other/config/etc
 	other/config/template
 	other/fonts
+	other/fonts/bitstream-vera-1.10
+	other/fonts/freefont-20060126
 	other/icons
 	other/init
 	other/keymaps

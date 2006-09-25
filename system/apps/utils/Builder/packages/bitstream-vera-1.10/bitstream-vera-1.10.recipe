@@ -1,0 +1,25 @@
+authors				Kaj de Vos
+
+licenses			other
+home				www.gnome.org/fonts/
+packages			ttf-bitstream-vera-1.10
+locations			http://ftp.gnome.org/pub/GNOME/sources/ttf-bitstream-vera/1.10/
+
+install-tree
+install				true
+install-files
+	Vera.ttf		.
+	VeraIt.ttf		Vera-Italic.ttf
+	VeraBd.ttf		Vera-Bold.ttf
+	VeraBI.ttf		Vera-BoldItalic.ttf
+	VeraSe.ttf		VeraSerif.ttf
+	VeraSeBd.ttf	VeraSerif-Bold.ttf
+	VeraMono.ttf	.
+	VeraMoIt.ttf	VeraMono-Italic.ttf
+	VeraMoBd.ttf	VeraMono-Bold.ttf
+	VeraMoBI.ttf	VeraMono-BoldItalic.ttf
+;	local.conf		.
+
+move-files			*.ttf /atheos/sys/fonts/
+
+documentation		README.TXT RELEASENOTES.TXT COPYRIGHT.TXT
