@@ -1,0 +1,39 @@
+11 March 2006
+
+These fonts are the collection of the URW-fonts used
+in the Mandriva Linux urw-fonts RPM package. The package includes
+the version of URW fonts from Valek Filippov
+(urw-fonts-1.0.7pre40) which includes also the cyrillic and
+vietnamese glyphs.
+
+With respect to the Filippov set, this collection
+was resaved through FontForge to ensure that the /FontBBox array 
+is executable. In this way we can avoid problems with PostScript
+programs which (incorrectly) made this assumption. Other modifications
+regards:
+
+- Fixing of some font for problems with FamilyName and Weight 
+  (e.g. use DemiBold instead of Demibold or remove trailing spaces in
+   FamilyName).
+
+- Fixing the /FontMatrix of the fixed-width fonts: NimbusMonL of the 
+  Filippov's set.
+
+- Fixing NimbusRomNo9L-Regu Fontname (previous was NimbusRomanNo9L-Regu).
+  
+- The FontBBox in each font has also been faked (only in the Y-axis direction)
+  to match the original FontBBox size of the URW ghostscript-fonts-8.11. 
+  This fix problems with vertical spacing for programs (like OpenOffice 
+  1.1.5) which relies on the FontBBox information to calculate the line
+  spacing. A better solution would be to rebuild the accents of most of
+  the vietnamese glyphs in a way that would take a smaller height, and thus
+  not exceeding the maximum height and depth of the original URW 
+  ghostscript fonts.
+
+To distinguish from the original fonts,
+the "version" field of the fonts is filled with <originalversion>_2.0-16mdk.
+
+These fonts are released under the same license as of the Filippov version,
+i.e. GNU GPL (http://www.ghostscript.com/article/44.html).
+
+Giuseppe Ghibò <ghibo@mandriva.com>
