@@ -158,11 +158,9 @@ modules
 	sys/kernel/drivers/hcd/usb_ohci
 	sys/kernel/drivers/hcd/usb_uhci
 	sys/kernel/drivers/input/usb_mouse
-	sys/kernel/drivers/keyboard
 	sys/kernel/drivers/misc/apm
 	sys/kernel/drivers/misc/battery
 	sys/kernel/drivers/misc/devices
-	sys/kernel/drivers/misc/ps2aux
 	sys/kernel/drivers/misc/random
 	sys/kernel/drivers/misc/serial
 	sys/kernel/drivers/misc/usb_printer
