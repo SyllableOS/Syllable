@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.94
+# Version 0.6.95
 # Copyright (c) 2002-2006 Kaj de Vos
 # License: GPL 2 or any later version
 
@@ -1083,20 +1083,20 @@ def build staging, targets
 
 		for line in parseList resources
 			dir, resource, type = line.split
-			file = File.join @resourcesPath, resource
+			files = File.join @resourcesPath, resource
 			@log.detail resource
 
 			unless
-				if exists? file
-					action "cp -a #{file} " + dir and (
+				if Dir[files] == []  # Not single files; look for a pack
+					action "unzip -o #{files}.zip -d " + dir
+				else
+					action "cp -a #{files} " + dir and (
 						not type or
 						begin
 							@log.detail 'Setting type ' + type
-							action "addattrib #{File.join dir, File.basename(file)} os::MimeType " + type
+							action "addattrib #{File.join dir, File.basename(files)} os::MimeType " + type
 						end
 					)
-				else
-					action "unzip -o #{file}.zip -d " + dir
 				end
 			then
 				@log.failure targets.to_s
@@ -1658,7 +1658,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.94',
+	puts 'Syllable Build System 0.6.95',
 		'Copyright (c) 2002-2006 Kaj de Vos',
 		'License: GPL 2 or any later version'
 when '?', '-?', '-h', '-help', '--help'
