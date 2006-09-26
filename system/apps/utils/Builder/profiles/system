@@ -127,7 +127,7 @@ modules
 	other/config/default
 	other/config/etc
 	other/config/template
-;	other/fonts
+	other/fonts/luxi-fonts
 	other/fonts/bitstream-vera-1.10
 	other/fonts/freefont-20060126
 	other/icons
