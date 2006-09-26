@@ -7,6 +7,8 @@ licenses			GPL+exception
 packages			urw-fonts-1.0.7pre41
 locations			ftp://ftp.gnome.ru/fonts/urw/release/
 
+make				true
+
 install-tree
 install				true
 install-files		*.?f? .
