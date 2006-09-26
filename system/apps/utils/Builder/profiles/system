@@ -115,6 +115,7 @@ tree
 resources
 ;	boot/grub				GrUB-binaries-0.97
 	boot/grub				menu.lst					text/plain
+	atheos/sys/config		kernel.cfg					text/plain
 ;	atheos/sys/libs			GCC-libraries-4.1.1
 	atheos/Documentation	documentation/Welcome		text/plain
 	atheos/Documentation	documentation/Copyrights	text/plain
