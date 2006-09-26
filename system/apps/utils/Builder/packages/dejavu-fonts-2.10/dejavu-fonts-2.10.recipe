@@ -1,0 +1,17 @@
+authors				Kaj de Vos
+
+inherits			sourceforge
+
+licenses			other PD
+home				dejavu.sourceforge.net
+packages			dejavu/dejavu-ttf-2.10
+
+make				true
+
+install-tree
+install				true
+install-files		*.ttf .
+
+move-files			*.ttf /atheos/sys/fonts/
+
+documentation		README BUGS LICENSE NEWS AUTHORS status.txt langcover.txt unicover.txt

@@ -1,0 +1,24 @@
+authors				Kaj de Vos
+
+licenses			other
+home				www.spinwardstars.com/scrfonts/
+packages			lcdwintt
+locations			http://www.spinwardstars.com/scrfonts/zip/
+
+make				true
+
+install-tree
+install				true
+install-files
+;	LCDWinTT/LCD-N___.TTF	LCD-Normal.ttf
+;	LCDWinTT/LCD-L___.TTF	LCD-Light.ttf
+;	LCDWinTT/LCD-BOLD.TTF	LCD-Bold.ttf
+;	LCDWinTT/LCD-U___.TTF	LCD-Ultra.ttf
+	LCDWinTT/LCD2-N___.TTF	LCD2-Normal.ttf
+;	LCDWinTT/LCD2-L___.TTF	LCD2-Light.ttf
+;	LCDWinTT/LCD2-B___.TTF	LCD2-Bold.ttf
+;	LCDWinTT/LCD2-U___.TTF	LCD2-Ultra.ttf
+
+move-files			*.ttf /atheos/sys/fonts/
+
+documentation		README.TXT LICENSE.TXT
