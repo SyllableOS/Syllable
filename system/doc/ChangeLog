@@ -1,3 +1,17 @@
+* September 27 2006, Kaj de Vos *
+
+Moved fonts to ports to have modular packages. Added several new ones.
+Added FreeFont to compensate for the CodeAlt font that we had to drop some time ago.
+Updated our ancient original URW GhostScript fonts to the latest ones, from Gnome
+Russia and Mandriva, so we support Cyrillic again.
+Replaced Bitstream Vera fonts with their successor, the Deja Vu fonts, and made them
+the default fonts. Unfortunately, ABrowse can't handle Deja Vu and FreeFont. When
+that's fixed, we can drop Vera.
+We have box drawing glyphs in our Mono fonts now, but the terminal doesn't seem to
+find them yet. They're boxy, but they're good, so we should find a fix for this. It
+worked in AtheOS times.
+Dropped the SyllableConsole font. No NIH syndrome here.
+
 * September 22 2006, Kaj de Vos *
 
 Added more keymaps, by BurningShadow. (How come these keymap makers all go by
@@ -8,6 +22,7 @@ Normalized keymap names.
 
 Added the latest keymaps from Maritimus' keymaps pack 2.5, in source form.
 Deleted the previous binary versions.
+Please let us know if older keymaps were better.
 
 * September 14 2006, Kaj de Vos *
 
