@@ -17,7 +17,7 @@ doc:
 install-doc:
 
 dist:
-	@cp -a appserver dev $(DIST_TARGET_PATH)
+	@cp -a dev $(DIST_TARGET_PATH)
 
 clean:
 
