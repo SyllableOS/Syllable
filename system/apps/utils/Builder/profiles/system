@@ -156,7 +156,7 @@ modules
 	sys/kernel/drivers/hcd/usb_ehci
 	sys/kernel/drivers/hcd/usb_ohci
 	sys/kernel/drivers/hcd/usb_uhci
-	sys/kernel/drivers/input/usb_mouse
+	sys/kernel/drivers/input/usb_hid
 	sys/kernel/drivers/misc/apm
 	sys/kernel/drivers/misc/battery
 	sys/kernel/drivers/misc/devices
@@ -239,6 +239,7 @@ modules
 	sys/appserver/appserver/drivers/input/ps2mouse
 	sys/appserver/appserver/drivers/input/sermouse
 	sys/appserver/appserver/drivers/input/usbmouse
+	sys/appserver/appserver/drivers/input/usbkeyboard
 	sys/appserver/appserver/drivers/video/geforcefx
 	sys/appserver/appserver/drivers/video/i855
 	sys/appserver/appserver/drivers/video/mach64
