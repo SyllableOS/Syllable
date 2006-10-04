@@ -1,3 +1,7 @@
+* October 4 2006, Arno Klenke *
+
+Added usb_hid / usbkeyboard drivers
+
 * September 27 2006, Kaj de Vos *
 
 Moved fonts to ports to have modular packages. Added several new ones.
@@ -1157,3 +1161,4 @@ Added the following keymaps:
 * Jun 14 2002, Kristian Van Der Vliet *
 
 Implement get_tld(), set_tld() in process.c
+
