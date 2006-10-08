@@ -1,3 +1,8 @@
+* October 7, Arno Klenke *
+
+The VIEW_ICONS_DESKTOP view of the os::IconView now uses the information of the appserver about
+the maximal window frame.
+
 * September 20, 2006 Arno Klenke *
 
 Window icons can now be any size
@@ -1166,6 +1171,7 @@ disabled controls.  The following files have been patched:
 
 	The sub-menu arrow is now drawn corretly, and menus which have children
 	are now drawn slightly larger to allow for the arrow.
+
 
 
 

@@ -1,3 +1,11 @@
+* October 7 2006, Arno Klenke *
+
+Added page validation code and fix the timer wakeup code
+Added pci id for via8237a to the ata driver
+Do not reconfigure pci bridges that are already configured
+Use acpi to find additional pci busses that are not connected to the primary bus
+Fixed a memory leak in the usb ehci driver
+
 * September 20 2006, Arno Klenke *
 
 The floppy drive should work again
@@ -979,6 +987,8 @@ required; they are implemented in user space as part of libc.
 
 Applied a fix to sys/kernel/kernel/vfs/vfs.c  The fcntl() F_GETLK command
 now works as expected.
+
+
 
 
 
