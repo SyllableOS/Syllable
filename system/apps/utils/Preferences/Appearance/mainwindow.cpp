@@ -19,12 +19,12 @@
 #include <util/application.h>
 #include <util/message.h>
 #include <util/resources.h>
+#include <util/event.h>
 #include <gui/desktop.h>
 #include <gui/guidefines.h>
 #include <gui/requesters.h>
 #include <gui/image.h>
 #include <storage/filereference.h>
-#include <storage/registrar.h>
 
 #include "main.h"
 #include "mainwindow.h"
@@ -325,15 +325,13 @@ void MainWindow::Apply()
 
   os::Application::GetInstance()->CommitColorConfig();
 
-  /*added a call to desktop so we can make the icon color change on default*/
-  os::RegistrarManager* pcManager = os::RegistrarManager::Get();
-  os::RegistrarCall_s sCall;
-  os::Message cReply;
-  
-	if( pcManager->QueryCall( "os/Desktop/Refresh", 0, &sCall ) == 0 )
-		pcManager->InvokeCall( &sCall, &cReply, NULL );
-
-	pcManager->Put();
+  /* Refresh desktop */
+  os::Event cEvent;
+  if( cEvent.SetToRemote( "os/Desktop/Refresh" ) == 0 )
+  {
+  	os::Message cDummy;
+  	cEvent.PostEvent( &cDummy );
+  }
 }
 
 void MainWindow::Default()
