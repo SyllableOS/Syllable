@@ -66,6 +66,9 @@ static void db_print_sleep_list( int argc, char **argv )
 	for ( psTmp = g_psFirstSleeping; NULL != psTmp; psTmp = psTmp->wq_psNext )
 	{
 		Thread_s *psThread;
+		
+		if( i >= 10000 )
+			break;
 
 		kassertw( psTmp->wq_psNext == NULL || psTmp->wq_nResumeTime <= psTmp->wq_psNext->wq_nResumeTime );
 
@@ -231,9 +234,12 @@ void add_to_sleeplist( bool bLock, WaitQueue_s *psNode )
 		sched_lock();
 		
 	CHECK_SCHED_LOCK
+	
+	if( psNode->wq_bIsMember )
+		printk( "Error: Trying to add already present node %i %i\n", psNode->wq_hThread, (int)psNode->wq_nResumeTime );
 
 	psNode->wq_bIsMember = true;
-
+	
 	if ( g_psFirstSleeping == NULL || psNode->wq_nResumeTime <= g_psFirstSleeping->wq_nResumeTime )
 	{
 		psNode->wq_psPrev = NULL;
@@ -254,6 +260,7 @@ void add_to_sleeplist( bool bLock, WaitQueue_s *psNode )
 		if ( i++ > 10000 )
 		{
 			printk( "add_to_sleeplist() looped 10000 times, give up\n" );
+			db_print_sleep_list( 0, NULL );
 			break;
 		}
 		if ( psNode->wq_nResumeTime < psTmp->wq_nResumeTime )
@@ -266,9 +273,7 @@ void add_to_sleeplist( bool bLock, WaitQueue_s *psNode )
 				psTmp->wq_psPrev->wq_psNext = psNode;
 			}
 			psTmp->wq_psPrev = psNode;
-			if( bLock )
-				sched_unlock();
-			put_cpu_flags( nFlg );
+			goto end;
 			return;
 		}
 		if ( psTmp->wq_psNext == NULL )
@@ -281,10 +286,11 @@ void add_to_sleeplist( bool bLock, WaitQueue_s *psNode )
 	psNode->wq_psNext = NULL;
 	psNode->wq_psPrev = psTmp;
 	psTmp->wq_psNext = psNode;
-
+end:
 	if( bLock )
 		sched_unlock();
 	put_cpu_flags( nFlg );
+	
 //done:
 }
 
@@ -586,6 +592,7 @@ void wake_up_sleepers( bigtime_t nCurTime )
 		{
 			g_psFirstSleeping->wq_psPrev = NULL;
 		}
+		kassertw( psNode->wq_bIsMember == true );
 		psNode->wq_bIsMember = false;
 
 		if ( psNode->wq_hThread != -1 )
@@ -610,19 +617,19 @@ void wake_up_sleepers( bigtime_t nCurTime )
 		}
 	}
 	sched_unlock();
-	put_cpu_flags( nFlg );
 	while ( psFirstTimer != NULL )
 	{
 		WaitQueue_s *psNode = psFirstTimer;
 
 		psFirstTimer = psNode->wq_psNext;
-		psNode->wq_pfCallBack( psNode->wq_pUserData );
 		if ( psNode->wq_bOneShot == false )
 		{
 			psNode->wq_nResumeTime = nCurTime + psNode->wq_nTimeout;
 			add_to_sleeplist( true, psNode );
 		}
+		psNode->wq_pfCallBack( psNode->wq_pUserData );
 	}
+	put_cpu_flags( nFlg );
 }
 
 /** Create a timer
@@ -649,6 +656,7 @@ ktimer_t create_timer( void )
 		return ( NULL );
 	}
 	psNode->wq_hThread = -1;
+	psNode->wq_bIsMember = false;
 	return ( psNode );
 }
 
@@ -811,6 +819,7 @@ status_t snooze( bigtime_t nTimeout )
 
 	sWaitNode.wq_nResumeTime = get_system_time() + nTimeout;
 	sWaitNode.wq_hThread = psThread->tr_hThreadID;
+	sWaitNode.wq_bIsMember = false;
 
 	nFlg = cli();
 	sched_lock();

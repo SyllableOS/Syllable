@@ -831,7 +831,6 @@ void AppServer::DispatchMessage( Message * pcReq )
 		}
 	case DR_SET_DESKTOP_MAX_WINFRAME:
 		{
-			g_cLayerGate.Close();
 			int nDesktop = 0;
 			os::Rect cFrame;
 
@@ -839,6 +838,7 @@ void AppServer::DispatchMessage( Message * pcReq )
 				break;
 			if( pcReq->FindRect( "frame", &cFrame ) != 0 )
 				break;
+			g_cLayerGate.Close();
 			if( ( nDesktop < 32 && nDesktop >= 0 ) || ( nDesktop == os::Desktop::ACTIVE_DESKTOP ) )
 				set_desktop_max_window_frame( nDesktop, cFrame );
 			g_cLayerGate.Open();
@@ -852,6 +852,7 @@ void AppServer::DispatchMessage( Message * pcReq )
 
 			if( pcReq->FindInt( "desktop", &nDesktop ) != 0 )
 				break;
+			g_cLayerGate.Close();				
 			if( ( nDesktop < 32 && nDesktop >= 0 ) || ( nDesktop == os::Desktop::ACTIVE_DESKTOP ) )
 				cFrame = get_desktop_max_window_frame( nDesktop );
 			g_cLayerGate.Open();

@@ -2708,13 +2708,6 @@ void View::EraseRect( const Rect & cRect )
  *		on the bitmaps alpha channel. This mode only works for CS_RGB32
  *		bitmaps.</dl>
  *
- * \note
- *	In the future this member will scale the bitmap if \p cSrcRect and
- *	\p cDstRect differ in size. This is not yet implemented so only
- *	the position (top/left corner) of the destination rectangle is
- *	considered. It is therefor important that you make sure that the
- *	size of the two rectangles are equal or you will get some nasty
- *	surprises when scaling is implemented.
  * \param pcBitmap
  *	The bitmap to render. Only CS_CMAP8, CS_RGB15, CS_RGB16, and CS_RGB32
  *	type bitmaps are currently supported.
@@ -2722,11 +2715,7 @@ void View::EraseRect( const Rect & cRect )
  *	The source rectangle. Only the area described by this rectangle will
  *	be copyed into the view.
  * \param cDstRect
- *	Destination rectangle. Currently only the position is considered.
- *	The top/left corner from cSrcRect will be placed at the top/left
- *	position of cDstRect. In the future the bitmap will be scaled
- *	to fit into the destination rectangle. This is not yet implemented
- *	(see note).
+ *	Destination rectangle.
  * \sa Bitmap
  * \author Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/

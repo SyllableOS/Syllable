@@ -671,19 +671,28 @@ void pci_scan_bus( int nBusNum, int nBridgeFrom, int nBusDev )
 				{
 					psInfo->nHandle = register_device( "", PCI_BUS_NAME );
 					claim_device( -1, psInfo->nHandle, "PCI->PCI/AGP Bridge", DEVICE_SYSTEM );
-					/* Disable bridge */
-					write_pci_config( nBusNum, nDev, nFnc, PCI_COMMAND, 2, read_pci_config( nBusNum, nDev, nFnc, PCI_COMMAND, 2 ) & ~( PCI_COMMAND_IO | PCI_COMMAND_MEMORY ) );
+					/* Check if it is already configured */
+					if( read_pci_config( nBusNum, nDev, nFnc, PCI_BUS_SECONDARY, 1 ) != 0xff &&
+						read_pci_config( nBusNum, nDev, nFnc, PCI_BUS_PRIMARY, 1 ) == nBusNum )
+					{
+						pci_scan_bus( read_pci_config( nBusNum, nDev, nFnc, PCI_BUS_SECONDARY, 1 ), nBusNum, g_nPCINumDevices - 1 );
+					}
+					else
+					{					
+						/* Disable bridge */
+						write_pci_config( nBusNum, nDev, nFnc, PCI_COMMAND, 2, read_pci_config( nBusNum, nDev, nFnc, PCI_COMMAND, 2 ) & ~( PCI_COMMAND_IO | PCI_COMMAND_MEMORY ) );
 
-					/* Write new values */
-					write_pci_config( nBusNum, nDev, nFnc, PCI_BUS_PRIMARY, 1, nBusNum );
-					write_pci_config( nBusNum, nDev, nFnc, PCI_BUS_SECONDARY, 1, g_nPCINumBusses );
-					write_pci_config( nBusNum, nDev, nFnc, PCI_BUS_SUBORDINATE, 1, 0xff );
-					pci_scan_bus( g_nPCINumBusses, nBusNum, g_nPCINumDevices - 1 );
-					/* Note : g_nPCINumBusses - 1 because the number of busses will be increased by 
-					   pci_scan_bus() */
-					write_pci_config( nBusNum, nDev, nFnc, PCI_BUS_SUBORDINATE, 1, g_nPCINumBusses - 1 );
-					/* Enable bridge */
-					write_pci_config( nBusNum, nDev, nFnc, PCI_COMMAND, 2, read_pci_config( nBusNum, nDev, nFnc, PCI_COMMAND, 2 ) | ( PCI_COMMAND_IO | PCI_COMMAND_MEMORY ) );
+						/* Write new values */
+						write_pci_config( nBusNum, nDev, nFnc, PCI_BUS_PRIMARY, 1, nBusNum );
+						write_pci_config( nBusNum, nDev, nFnc, PCI_BUS_SECONDARY, 1, g_nPCINumBusses );
+						write_pci_config( nBusNum, nDev, nFnc, PCI_BUS_SUBORDINATE, 1, 0xff );
+						pci_scan_bus( g_nPCINumBusses, nBusNum, g_nPCINumDevices - 1 );
+						/* Note : g_nPCINumBusses - 1 because the number of busses will be increased by 
+						   pci_scan_bus() */
+						write_pci_config( nBusNum, nDev, nFnc, PCI_BUS_SUBORDINATE, 1, g_nPCINumBusses - 1 );
+						/* Enable bridge */
+						write_pci_config( nBusNum, nDev, nFnc, PCI_COMMAND, 2, read_pci_config( nBusNum, nDev, nFnc, PCI_COMMAND, 2 ) | ( PCI_COMMAND_IO | PCI_COMMAND_MEMORY ) );
+					}
 				}
 				else
 				{
@@ -985,6 +994,8 @@ status_t device_init( int nDeviceID )
 	const char *const *argv;
 	bool bDisablePCI = false;
 	bool bDisableIRQRouting = false;
+	
+	memset( g_apsPCIBus, 0, sizeof( g_apsPCIBus ) );
 
 	get_kernel_arguments( &argc, &argv );
 

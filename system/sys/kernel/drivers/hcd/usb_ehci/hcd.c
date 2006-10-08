@@ -493,7 +493,7 @@ static int rh_status_urb (struct usb_hcd *hcd, USB_packet_s *urb)
 	}
 
 	urb->pHCPrivate = hcd;	/* nonzero to indicate it's queued */
-	hcd->rh_timer = create_timer();
+	
 	
 	//hcd->rh_timer.function = rh_report_status;
 	//hcd->rh_timer.data = (unsigned long) urb;
@@ -564,6 +564,7 @@ static int rh_urb_enqueue (struct usb_hcd *hcd, USB_packet_s *urb)
 		unsigned long	flags;
 
 		spin_lock_irqsave (&hcd_data_lock, flags);
+		hcd->rh_timer = create_timer();
 		retval = rh_status_urb (hcd, urb);
 		spin_unlock_irqrestore (&hcd_data_lock, flags);
 		return retval;

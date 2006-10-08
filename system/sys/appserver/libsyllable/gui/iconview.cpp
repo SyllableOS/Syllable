@@ -25,8 +25,11 @@
 #include <gui/scrollbar.h>
 #include <gui/guidefines.h>
 #include <gui/iconview.h>
+#include <gui/desktop.h>
 #include <util/resources.h>
 #include <util/looper.h>
+#include <util/application.h>
+#include <appserver/protocol.h>
 #include <vector>
 #include <iostream>
 
@@ -191,6 +194,22 @@ public:
 		Unlock();
 	}
 	
+	/* Returns the frame in which we draw the icons */
+	os::Rect GetViewFrame()
+	{
+		os::Rect cViewFrame = m_pcView->GetBounds();
+		if( m_eType == VIEW_ICONS_DESKTOP )
+		{
+			os::Message cReq( os::DR_GET_DESKTOP_MAX_WINFRAME );
+			os::Message cReply;
+			cReq.AddInt32( "desktop", os::Desktop::ACTIVE_DESKTOP );
+			os::Application* pcApp = os::Application::GetInstance();
+			os::Messenger( pcApp->GetServerPort() ).SendMessage( &cReq, &cReply );
+			cReply.FindRect( "frame", &cViewFrame );
+		}
+		return( cViewFrame );
+	}
+	
 	/* Layout the icons */
 	void LayoutIcons()
 	{
@@ -206,16 +225,17 @@ public:
 			return;
 		}
 		
+		os::Rect cViewFrame = GetViewFrame();
+		
 		/* Calculate icons per row */
 		if( m_eType == VIEW_ICONS || m_eType == VIEW_DETAILS )
-			m_nIconsPerRow = (int)m_pcView->GetBounds().Width() / (int)( m_vIconWidth + 6 );
+			m_nIconsPerRow = (int)cViewFrame.Width() / (int)( m_vIconWidth + 6 );
 		else
-			m_nIconsPerRow = ( (int)m_pcView->GetBounds().Height() - ( ( m_eType == VIEW_ICONS_DESKTOP ) ? 40 : 0 ) ) 
-							/ (int)( m_vIconHeight + 6 );
+			m_nIconsPerRow = (int)cViewFrame.Height() / (int)( m_vIconHeight + 6 );
 		m_nIconsPerRow = std::max( m_nIconsPerRow, 1 );
 		
-		float vX = 5;
-		float vY = ( m_eType == VIEW_ICONS_DESKTOP ) ? 40 : 5; // HACK FOR DOCK
+		float vX = cViewFrame.left + 5;
+		float vY = cViewFrame.top + 5;
 		int nCurrent = 0;
 		
 		/* Assign positions */
@@ -231,14 +251,11 @@ public:
 			if( nCurrent == m_nIconsPerRow && m_eType != VIEW_DETAILS )
 			{
 				if( m_eType == VIEW_ICONS ) {
-					vX = 5;
+					vX = cViewFrame.left + 5;
 					vY += m_vIconHeight + 6;
 				} else {
 					vX += m_vIconWidth + 6;
-					if( m_eType == VIEW_ICONS_DESKTOP )
-						vY = 40;
-					else
-						vY = 5;
+					vY = cViewFrame.top + 5;
 				}
 				nCurrent = 0;
 			}
@@ -248,12 +265,12 @@ public:
 		/* Update scrollbar */
 		m_vLastXPos = vX + ( ( nCurrent == 0 ) ? 0 : m_vIconWidth );
 		m_vLastYPos = vY + ( ( ( nCurrent == 0 ) || m_eType == VIEW_DETAILS ) ? 0 : m_vIconHeight );
-		m_pcHScrollBar->SetMinMax( 0, m_vLastXPos - m_pcView->GetBounds().Width() );
-		m_pcVScrollBar->SetMinMax( 0, m_vLastYPos - m_pcView->GetBounds().Height() );
+		m_pcHScrollBar->SetMinMax( 0, m_vLastXPos - cViewFrame.Width() );
+		m_pcVScrollBar->SetMinMax( 0, m_vLastYPos - cViewFrame.Height() );
 		AdjustScrollBars();
-		m_pcHScrollBar->SetProportion( m_pcView->GetBounds().Width() / m_vLastXPos );
+		m_pcHScrollBar->SetProportion( cViewFrame.Width() / m_vLastXPos );
 		m_pcHScrollBar->SetValue( 0 );
-		m_pcVScrollBar->SetProportion( m_pcView->GetBounds().Height() / m_vLastYPos );
+		m_pcVScrollBar->SetProportion( cViewFrame.Height() / m_vLastYPos );
 		m_pcVScrollBar->SetValue( 0 );
 
 		/* Update view */
@@ -266,22 +283,24 @@ public:
 	{
 		if( m_vIconWidth == 0 )
 			return;
+			
+		os::Rect cViewFrame = GetViewFrame();
 		
 		/* Look if the number of icons in one row has changed */
 		int nIconsPerRow = 0;
 		if( m_eType == VIEW_ICONS || m_eType == VIEW_DETAILS )
-			nIconsPerRow = (int)m_pcView->GetBounds().Width() / (int)( m_vIconWidth + 6 );
+			nIconsPerRow = (int)cViewFrame.Width() / (int)( m_vIconWidth + 6 );
 		else
-			nIconsPerRow = (int)m_pcView->GetBounds().Height() / (int)( m_vIconHeight + 6 );
+			nIconsPerRow = (int)cViewFrame.Height() / (int)( m_vIconHeight + 6 );
 		nIconsPerRow = std::max( nIconsPerRow, 1 );
 		
 		AdjustScrollBars();
 		m_pcHScrollBar->SetValue( 0 );
-		m_pcHScrollBar->SetMinMax( 0, m_vLastXPos - m_pcView->GetBounds().Width() );
-		m_pcHScrollBar->SetProportion( m_pcView->GetBounds().Width() / m_vLastXPos );
+		m_pcHScrollBar->SetMinMax( 0, m_vLastXPos - cViewFrame.Width() );
+		m_pcHScrollBar->SetProportion( cViewFrame.Width() / m_vLastXPos );
 		m_pcVScrollBar->SetValue( 0 );
-		m_pcVScrollBar->SetMinMax( 0, m_vLastYPos - m_pcView->GetBounds().Height() );
-		m_pcVScrollBar->SetProportion( m_pcView->GetBounds().Height() / m_vLastYPos );
+		m_pcVScrollBar->SetMinMax( 0, m_vLastYPos - cViewFrame.Height() );
+		m_pcVScrollBar->SetProportion( cViewFrame.Height() / m_vLastYPos );
 		
 		if( nIconsPerRow != m_nIconsPerRow )
 			LayoutIcons();

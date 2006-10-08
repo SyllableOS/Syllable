@@ -1266,6 +1266,7 @@ static status_t do_lock_semaphore_ex( bool bKernel, sem_id hSema, int nCount, ui
 				else
 				{
 					psMyThread->tr_nState = TS_SLEEP;
+					sSleepNode.wq_bIsMember = false;
 					sSleepNode.wq_hThread = hMyThread;
 					sSleepNode.wq_nResumeTime = nResumeTime;
 					add_to_sleeplist( false, &sSleepNode );
@@ -1985,6 +1986,8 @@ status_t spinunlock_and_suspend( sem_id hWaitQueue, SpinLock_s * psLock, uint32 
 		else
 		{
 			psThread->tr_nState = TS_SLEEP;
+			sSleepNode.wq_bIsMember = false;
+			sSleepNode.wq_hThread = -1;
 			sSleepNode.wq_nResumeTime = nResumeTime;
 			add_to_sleeplist( false, &sSleepNode );
 		}
@@ -2197,6 +2200,7 @@ status_t sleep_on_sem( sem_id hSema, bigtime_t nTimeOut )
 		else
 		{
 			psMyThread->tr_nState = TS_SLEEP;
+			sSleepNode.wq_bIsMember = false;
 			sSleepNode.wq_hThread = hMyThread;
 			sSleepNode.wq_nResumeTime = nResumeTime;
 			add_to_sleeplist( false, &sSleepNode );
@@ -3273,6 +3277,7 @@ static status_t do_rwlock_lock( bool bIgnored, sem_id hSema, bool bWantShared, u
 			{
 				/* Add to sleep queue as well so we will be woken after timeout */
 				psMyThread->tr_nState = TS_SLEEP;
+				sSleepNode.wq_bIsMember = false;
 				sSleepNode.wq_hThread = hMyThread;
 				sSleepNode.wq_nResumeTime = nResumeTime;
 				add_to_sleeplist( false, &sSleepNode );

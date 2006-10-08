@@ -194,7 +194,7 @@ static void acpi_pci_parse_bus( struct acpi_device *psDevice, int nSegment, int 
 		{
 			PCI_Bus_s* psBus = g_apsPCIBus[i];
 		
-			if( psBus->nPCIDeviceNumber == -1 )
+			if( psBus == NULL || psBus->nPCIDeviceNumber == -1 )
 				continue;
 			
 			PCI_Entry_s* psDevice = g_apsPCIDevice[psBus->nPCIDeviceNumber];
@@ -282,13 +282,23 @@ static int acpi_pci_root_add( struct acpi_device *psDevice )
 	kerndbg( KERN_INFO, "PCI: %s [%s] (%02x:%02x)\n", 
 		acpi_device_name( psDevice ), acpi_device_bid( psDevice ),
 		nSegment, nBus);
-
+		
+	/* Check if this bus is already registered */
+	PCI_Bus_s* psBus = g_apsPCIBus[nBus];
+		
+	if( psBus == NULL )
+	{
+		/* Add bus */
+		pci_scan_bus( nBus, -1, -1 );
+	}
+	
 	/*
 	 * PCI Routing Table
 	 * -----------------
 	 * Parse _PRT
 	 */
 	acpi_pci_parse_bus( psDevice, nSegment, nBus, nDevice, nFunc );
+	
 
 	return( 0 );
 }

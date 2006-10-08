@@ -110,6 +110,24 @@ void list_areas( MemContext_s *psCtx )
 //  UNLOCK( g_hAreaTableSema );
 }
 
+void validate_kernel_pages(void)
+{
+	bool bError = false;
+	printk( "Validating kernel pages...\n");
+	for ( count_t i = 0; i < g_sSysBase.ex_nTotalPageCount; ++i )
+	{
+		pgd_t *pPgd = pgd_offset( g_psKernelSeg, i * PAGE_SIZE );
+		pte_t *pPte = pte_offset( pPgd, i * PAGE_SIZE );
+		if( PTE_PAGE( *pPte ) != i * PAGE_SIZE )
+		{
+			printk( "Kernel pages at %08x corrupted: %08x\n", (uint)( i * PAGE_SIZE ), PTE_VALUE( *pPte ) );
+			bError = true;
+		}
+	}
+	if( !bError )
+		printk( "Kernel pages validated\n" );
+}
+
 /**
  * Clears all page-table entries for the virtual memory region from nAddress
  *  to (nAddress + nSize - 1) and frees the associated physical memory pages.
@@ -126,9 +144,10 @@ void list_areas( MemContext_s *psCtx )
  * \sa free_pages()
  * \author Kurt Skauen (kurt@atheos.cx)
  */
-static int clear_pagedir( pgd_t * pPgd, uintptr_t nAddress, size_t nSize )
+static int clear_pagedir( MemArea_s *psArea, pgd_t * pPgd, uintptr_t nAddress, size_t nSize )
 {
 	uintptr_t nEnd;
+	uintptr_t nStartAddress = nAddress;
 	pte_t *pPte = pte_offset( pPgd, nAddress );
 
 	nAddress &= ~PGDIR_MASK;
@@ -138,10 +157,20 @@ static int clear_pagedir( pgd_t * pPgd, uintptr_t nAddress, size_t nSize )
 	{
 		nEnd = PGDIR_SIZE - 1;
 	}
+	
+	if( !( PGD_VALUE( *pPgd ) & PTE_PRESENT ) )
+	{
+		printk( "Error: clear_pagedir() Page table at %08x not present\n", nStartAddress );
+		printk( "Area %s ( %08x -> %08x ) PGD: %x\n", psArea->a_zName, psArea->a_nStart, psArea->a_nEnd, PGD_VALUE( *pPgd ) );
+	}
 
 	if ( 0 == PGD_PAGE( *pPgd ) )
 	{
-		printk( "Error: clear_pagedir() No page directory for address %08x\n", nAddress );
+		printk( "Error: clear_pagedir() No page directory for address %08x\n", nStartAddress );
+		printk( "Area %s ( %08x -> %08x ) PGD: %x\n", psArea->a_zName, psArea->a_nStart, psArea->a_nEnd, PGD_VALUE( *pPgd ) );
+		printk( "Area list:\n" );
+		list_areas( psArea->a_psContext );
+		validate_kernel_pages();
 		return ( -EINVAL );
 	}
 
@@ -219,7 +248,7 @@ static int free_area_pages( MemArea_s *psArea, uint32_t nStart, uint32_t nEnd )
 
 	while ( nStart - 1 < nEnd )
 	{
-		clear_pagedir( pPgd++, nStart, nEnd - nStart + 1 );
+		clear_pagedir( psArea, pPgd++, nStart, nEnd - nStart + 1 );
 		nStart = ( nStart + PGDIR_SIZE ) & PGDIR_MASK;
 	}
 	return ( 0 );
@@ -252,6 +281,7 @@ static void free_area_page_tables( MemArea_s *psArea, uint32_t nStart, uint32_t 
 		uint32_t nCurAddr = i << PGDIR_SHIFT;
 		uint32_t nCurEnd = nCurAddr + PGDIR_SIZE - 1;
 		uint32_t nPage;
+		count_t nPageNr;
 
 		// Skip tables still used by the resized area
 		if ( bResized && nCurAddr <= psArea->a_nEnd )
@@ -274,8 +304,8 @@ static void free_area_page_tables( MemArea_s *psArea, uint32_t nStart, uint32_t 
 			printk( "Error: free_area_page_tables() found NULL pointer in page table at address 0x%x8\n", nCurAddr );
 			continue;
 		}
-		do_free_pages( nPage, 1 );
-		PGD_VALUE( psCtx->mc_pPageDir[i] ) = 0;
+		nPageNr = PAGE_NR( nPage );
+		PGD_VALUE( psCtx->mc_pPageDir[i] ) = PTE_DELETED;
 		if ( nCurEnd < AREA_FIRST_USER_ADDRESS )
 		{
 			MemContext_s *psTmp;
@@ -285,6 +315,11 @@ static void free_area_page_tables( MemArea_s *psArea, uint32_t nStart, uint32_t 
 				psTmp->mc_pPageDir[i] = psCtx->mc_pPageDir[i];
 			}
 		}
+		if ( atomic_read( &g_psFirstPage[nPageNr].p_nCount ) != 1 )
+			printk( "Error: free_area_page_tables(%s) has reference counter %i at address 0x%x8\n\n", 
+					psArea->a_zName, atomic_read( &g_psFirstPage[nPageNr].p_nCount ), nCurAddr ); 
+		
+		do_free_pages( nPage, 1 );
 	}
 	flush_tlb_global();
 }
@@ -306,6 +341,11 @@ static int do_delete_area( MemContext_s *psCtx, MemArea_s *psArea )
 	if ( atomic_read( &psArea->a_nRefCount ) != 0 )
 	{
 		panic( "do_delete_area() area ref count = %d\n", atomic_read( &psArea->a_nRefCount ) );
+		return ( -EINVAL );
+	}
+	if ( psArea->a_bDeleted == true )
+	{
+		panic( "do_delete_area() tried to delete already deleted area %s\n", psArea->a_zName );
 		return ( -EINVAL );
 	}
 	if ( psArea->a_psFile != NULL )
@@ -422,14 +462,15 @@ static int alloc_area_page_tables( MemArea_s *psArea, uintptr_t nStart, uintptr_
 	MemContext_s *psCtx = psArea->a_psContext;
 	uintptr_t nFirstPTE = nStart >> PAGE_SHIFT;
 	uintptr_t nLastPTE = nEnd >> PAGE_SHIFT;
-
+	
+	/* Allocate page tables */
 	for ( uintptr_t i = nFirstPTE; i <= nLastPTE; ++i )
 	{
-		uintptr_t nDir = i >> 10;
+		uintptr_t nDir = i >> ( PGDIR_SHIFT - PAGE_SHIFT );
 		uint32_t *pDir = ( uint32_t * )PGD_PAGE( psCtx->mc_pPageDir[nDir] );
-
 		if ( NULL == pDir )
 		{
+			/* Allocate new page table */
 			pDir = ( uint32_t * )get_free_page( GFP_CLEAR );
 			if ( pDir == NULL )
 			{
@@ -437,6 +478,7 @@ static int alloc_area_page_tables( MemArea_s *psArea, uintptr_t nStart, uintptr_
 				return ( -ENOMEM );
 			}
 			PGD_VALUE( psCtx->mc_pPageDir[nDir] ) = MK_PGDIR( ( uint32_t )pDir );
+			/* Copy page tables to other contexts if we have created a kernel area */
 			if ( nStart < AREA_FIRST_USER_ADDRESS )
 			{
 				MemContext_s *psTmp;
@@ -447,11 +489,10 @@ static int alloc_area_page_tables( MemArea_s *psArea, uintptr_t nStart, uintptr_
 				}
 			}
 		}
-		if ( NULL != pDir )
-		{
-			pDir[i % 1024] = ( uintptr_t )( g_sSysBase.ex_pNullPage ) | PTE_PRESENT | PTE_USER;
-		}
+		kassertw( pDir != NULL );
+		pDir[i % 1024] = ( uintptr_t )( g_sSysBase.ex_pNullPage ) | PTE_PRESENT | PTE_USER;
 	}
+
 	flush_tlb_global();
 	return ( 0 );
 }
@@ -1188,13 +1229,16 @@ static void do_clone_area( MemContext_s *psDstSeg, MemContext_s *psSrcSeg, MemAr
 
 		*pDstPte = *pSrcPte;
 
-		if ( PTE_ISPRESENT( *pSrcPte ) )
+		if( PAGE_NR( PTE_PAGE( *pSrcPte ) ) < g_sSysBase.ex_nTotalPageCount )
 		{
-			atomic_inc( &g_psFirstPage[PAGE_NR( PTE_PAGE( *pSrcPte ) )].p_nCount );
-		}
-		else if ( PTE_PAGE( *pSrcPte ) != 0 )
-		{
-			dup_swap_page( PTE_PAGE( *pSrcPte ) );
+			if ( PTE_ISPRESENT( *pSrcPte ) )
+			{
+				atomic_inc( &g_psFirstPage[PAGE_NR( PTE_PAGE( *pSrcPte ) )].p_nCount );
+			}
+			else if ( PTE_PAGE( *pSrcPte ) != 0 )
+			{
+				dup_swap_page( PTE_PAGE( *pSrcPte ) );
+			}
 		}
 	}
 }
