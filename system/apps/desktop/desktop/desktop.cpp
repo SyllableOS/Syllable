@@ -181,11 +181,14 @@ void Desktop::HandleMessage( os::Message* pcMessage )
 		case M_REFRESH:
 		{
 			m_pcView->SetSelectionColor(os::get_default_color(os::COL_ICON_SELECTED));
-			m_pcView->Invalidate();
-			m_pcView->Flush();
+			m_pcView->Layout();
 			break;
 		}
-
+		case M_RELAYOUT:
+		{
+			
+			break;
+		}
 		break;
 	}
 }
@@ -331,6 +334,11 @@ void Desktop::LoadBackground()
 		
 	m_pcView->SetBackground( m_pcBackground );
 }
+
+
+
+
+
 
 
 

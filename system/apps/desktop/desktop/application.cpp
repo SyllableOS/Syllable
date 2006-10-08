@@ -43,33 +43,6 @@ void App::HandleMessage( os::Message* pcMessage )
 	//dbprintf( "Got message!\n" );
 	switch( pcMessage->GetCode() )
 	{
-		case M_GET_SETTINGS:
-		{
-			/* Called by another application to get the desktop settings */
-			if( !pcMessage->IsSourceWaiting() )
-				break;
-			os::Message cMsg( M_GET_SETTINGS );
-			cMsg.AddString( "background_image", m_pcDesktop->GetBackground() );
-			cMsg.AddBool( "single_click", m_pcDesktop->GetSingleClick() );
-			pcMessage->SendReply( &cMsg );
-			break;
-		}
-		case M_SET_SETTINGS:
-		{
-			/* Called by another application to set the desktop settings */
-			os::Message cMsg( M_SET_SETTINGS );
-			os::String zImage;
-			if( pcMessage->FindString( "background_image", &zImage.str() ) == 0 )
-			{
-				m_pcDesktop->SetBackground( zImage );
-			}
-			bool bSingleClick;
-			if( pcMessage->FindBool( "single_click", &bSingleClick ) == 0 )
-			{
-				m_pcDesktop->SetSingleClick( bSingleClick );
-			}
-			break;
-		}
 		case M_GET_SINGLE_CLICK:
 		{
 			os::Message cReply( 0 );
@@ -135,6 +108,7 @@ void App::HandleMessage( os::Message* pcMessage )
 			os::Application::HandleMessage( pcMessage );
 	}
 }
+
 
 
 

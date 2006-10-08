@@ -1106,6 +1106,14 @@ void DockWin::UpdateWindowArea()
 				
 	os::Application* pcApp = os::Application::GetInstance();
 	os::Messenger( pcApp->GetServerPort() ).SendMessage( &cReq );
+	
+	/* Tell the desktop */
+	os::Event cEvent;
+	if( cEvent.SetToRemote( "os/Desktop/Refresh" ) == 0 )
+	{
+		os::Message cDummy;
+		cEvent.PostEvent( &cDummy );
+	}
 }
 
 void DockWin::ScreenModeChanged( const os::IPoint& cNewRes, os::color_space eSpace )
@@ -1166,6 +1174,7 @@ void DockWin::SetPosition( os::alignment eAlign )
 	Sync();
 	
 	UpdateWindowArea();
+	
 }
 
 DockApp::DockApp( const char *pzMimeType ):os::Application( pzMimeType )
