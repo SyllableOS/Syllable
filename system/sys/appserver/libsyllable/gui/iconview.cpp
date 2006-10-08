@@ -197,7 +197,7 @@ public:
 	/* Returns the frame in which we draw the icons */
 	os::Rect GetViewFrame()
 	{
-		os::Rect cViewFrame = m_pcView->GetBounds();
+		os::Rect cViewFrame = m_pcView->GetBounds() + m_pcView->GetScrollOffset();
 		if( m_eType == VIEW_ICONS_DESKTOP )
 		{
 			os::Message cReq( os::DR_GET_DESKTOP_MAX_WINFRAME );
