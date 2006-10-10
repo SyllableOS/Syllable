@@ -606,8 +606,9 @@ int sys_reboot( void )
 	printk( "shut down block cache()\n" );
 	shutdown_block_cache();
 
+	shutdown_ap_processors();
 
-	printk( "Rebooting AtheOS...\n" );
+	printk( "Rebooting Syllable...\n" );
 
 	// Just to be sure :)
 	snooze( 1000000 );
@@ -684,6 +685,8 @@ int sys_apm_poweroff( void )
 	shutdown_vfs();
 	printk( "shut down block cache()\n" );
 	shutdown_block_cache();
+	
+	shutdown_ap_processors();
 
 	/* end copied from sys_reboot */
 

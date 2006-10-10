@@ -261,6 +261,8 @@ static const uint32_t NO_PROC_ID	= 0xFF;		/* No processor magic marker */
 
 void init_smp( bool bInitSMP, bool bScanACPI );
 void boot_ap_processors( void );
+void shutdown_processor( void );
+void shutdown_ap_processors();
 
 static const uint32_t MSG_ALL_BUT_SELF	= 0x8000;	/* Assume < 32768 CPU's */
 static const uint32_t MSG_ALL		= 0x8001;

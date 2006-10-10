@@ -1874,7 +1874,12 @@ void DoSchedule( SysCallRegs_s* psRegs )
 		psPrev->tr_nCurrentCPU = -1;
 	}
 
-
+	/* Check if we should shutdown this cpu */
+	if( g_bKernelInitialized && g_asProcessorDescs[nThisProc].pi_bIsRunning == false ) {
+		sched_unlock();
+		shutdown_processor(); // never returns
+	}
+	
 	if ( psNext != IDLE_THREAD )
 	{
 		remove_thread_from_ready( psNext );

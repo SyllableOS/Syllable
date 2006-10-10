@@ -23,6 +23,7 @@
 #include <atheos/udelay.h>
 #include <atheos/irq.h>
 #include <atheos/spinlock.h>
+#include <atheos/bitops.h>
 
 #include "inc/scheduler.h"
 #include "inc/sysbase.h"
@@ -70,18 +71,7 @@ uint8 g_anTrampoline[] = {
 #include "objs/smp_entry.hex"
 };
 
-static __inline__ void set_bit( volatile void * pAddr, int nNr )
-{
-	__asm__ __volatile__( "lock\n\tbtsl %1,%0" :"=m" ( *(volatile long *)pAddr ) :"Ir" ( nNr ) );
-}
 
-static inline int test_and_clear_bit( volatile void* pAddr, int nNr )
-{
-	int nBit;
-	__asm__ __volatile__( "lock\n\tbtrl %2,%1\n\tsbbl %0,%0" :"=r" ( nBit ),
-			"=m" ( *(volatile long *)pAddr ) :"Ir" ( nNr ) : "memory" );
-	return( nBit );
-}
 
 /*****************************************************************************
  * NAME:
@@ -353,7 +343,7 @@ static void ap_entry_proc( void )
 	calibrate_apic_timer( nProcessor );
 
 	flush_tlb();
-	set_bit( &g_nCpuMask, nProcessor );
+	set_bit( nProcessor, &g_nCpuMask );
 	write_mtrr_descs();
 
 	g_asProcessorDescs[nProcessor].pi_bIsRunning = true;
@@ -1078,7 +1068,7 @@ void smp_boot_cpus( void )
 	apic_write( APIC_LVT1, APIC_DEST_DM_NMI );
 	
 	
-	set_bit( &g_nCpuMask, g_nBootCPU );
+	set_bit( g_nBootCPU, &g_nCpuMask );
 	
 	//        Now scan the cpu present map and fire up the other CPUs.
 
@@ -1243,13 +1233,13 @@ void apic_eoi( void )
 
 void do_smp_invalidate_pgt( SysCallRegs_s * psRegs, int nIrqNum )
 {
-	if( test_and_clear_bit( &g_nTLBInvalidateMask, get_processor_id() ) )
+	if( test_and_clear_bit( get_processor_id(), &g_nTLBInvalidateMask ) )
 	{
 		//printk( "Got TLB flush %i!\n", get_processor_id());
 		flush_tlb();
 	} //else if( nIrqNum == 0 )
 		//printk( "Got unexpected on %i %x %x %x %x!\n", get_processor_id(),  (uint)apic_read( APIC_IRR ),  (uint)apic_read( APIC_ISR ),  (uint)apic_read( APIC_ICR ), (uint)apic_read( APIC_ESR ));
-	if( test_and_clear_bit( &g_nMTRRInvalidateMask, get_processor_id() ) )
+	if( test_and_clear_bit( get_processor_id(), &g_nMTRRInvalidateMask ) )
 	{
 		write_mtrr_descs();
 	}
@@ -1370,7 +1360,7 @@ void init_smp( bool bInitSMP, bool bScanACPI )
 			g_pVirtualAPICAddr = (vuint32*)( ( ( uint32 )&g_nFakeCPUID ) - APIC_ID );
 			g_asProcessorDescs[g_nBootCPU].pi_nBusSpeed = 0;
 			g_asProcessorDescs[g_nBootCPU].pi_nCoreSpeed = 0;
-			set_bit( &g_nCpuMask, g_nFakeCPUID );
+			set_bit( g_nFakeCPUID, &g_nCpuMask );
 		}
 		g_asProcessorDescs[g_nBootCPU].pi_bIsPresent = true;
 		g_asProcessorDescs[g_nBootCPU].pi_bIsRunning = true;
@@ -1416,6 +1406,48 @@ void boot_ap_processors( void )
 	}
 }
 
+/**
+ * Shutdown the current processor. Needs to be called with disabled interrupts.
+ * \internal
+ * \ingroup CPU.
+ * \author Arno Klenke (arno_klenke@yahoo.de)
+ */
+void shutdown_processor( void )
+{
+	kassertw( !( get_cpu_flags() & EFLG_IF ) );
+	int nProcessor = get_processor_id();
+	printk( "Shutting down processor %i...\n", nProcessor );	
+	clear_bit( nProcessor, &g_nCpuMask );
+	clear_bit( nProcessor, &g_nTLBInvalidateMask );
+	g_nActiveCPUCount--;
+	for ( ;; )
+		__asm__( "hlt" );
+}
+
+/**
+ * Shutdown all but the boot processor.
+ * \internal
+ * \ingroup CPU.
+ * \author Arno Klenke (arno_klenke@yahoo.de)
+ */
+void shutdown_ap_processors( void )
+{
+	int i;
+	uint32 nFlags = cli();
+	while( get_processor_id() != g_nBootCPU )
+		Schedule();
+	sched_lock();
+	for ( i = 0; i < MAX_CPU_COUNT; ++i )
+	{
+		if( i == g_nBootCPU )
+			continue;
+		printk( "Shutting down CPU %i\n", i );
+		g_asProcessorDescs[i].pi_bIsRunning = false;
+	}
+	sched_unlock();
+	put_cpu_flags( nFlags );
+	snooze( 100000 );
+}
 
 /*****************************************************************************
  * NAME:
@@ -1429,7 +1461,7 @@ void flush_tlb_global( void )
 	uint32 nFlags = cli();
 	int nProcessor = get_processor_id();
 	/* Update MTRR descriptors */
-	if( test_and_clear_bit( &g_nMTRRInvalidateMask, nProcessor ) )
+	if( test_and_clear_bit( nProcessor, &g_nMTRRInvalidateMask ) )
 	{
 		write_mtrr_descs();
 	}
@@ -1443,7 +1475,7 @@ void flush_tlb_global( void )
 		int nTimeout = 50000000;
 		while( g_nTLBInvalidateMask && nTimeout-- > 1 )
 		{
-			if( test_and_clear_bit( &g_nTLBInvalidateMask, nProcessor ) )
+			if( test_and_clear_bit( nProcessor, &g_nTLBInvalidateMask ) )
 			{
 				flush_tlb();
 			}
