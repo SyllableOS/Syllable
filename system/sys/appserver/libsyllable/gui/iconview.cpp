@@ -44,6 +44,7 @@ public:
 	os::IconData* 		m_pcData;
 	
 	bool				m_bSelected;
+	bool				m_bLayouted;
 };
 
 struct IconSort
@@ -76,7 +77,6 @@ public:
 		m_vLastYPos = 0;
 		m_nLastClick = 0;
 		m_pcSelChangeMsg = NULL;
-		m_pcInvokeMsg = NULL;
 		m_bScrollDown = false;
 		m_bScrollUp = false;
 		m_bAdjusting = false;
@@ -195,7 +195,7 @@ public:
 	}
 	
 	/* Returns the frame in which we draw the icons */
-	os::Rect GetViewFrame()
+	inline os::Rect GetViewFrame()
 	{
 		os::Rect cViewFrame = m_pcView->GetBounds() + m_pcView->GetScrollOffset();
 		if( m_eType == VIEW_ICONS_DESKTOP )
@@ -221,7 +221,7 @@ public:
 			m_vLastYPos = 0;
 			AdjustScrollBars();
 			m_pcView->Invalidate();
-			m_pcView->Sync();
+			m_pcView->Flush();
 			return;
 		}
 		
@@ -259,6 +259,7 @@ public:
 				}
 				nCurrent = 0;
 			}
+			m_cIcons[i]->m_bLayouted = true;
 		}
 		Unlock();
 		
@@ -275,7 +276,7 @@ public:
 
 		/* Update view */
 		m_pcView->Invalidate();
-		m_pcView->Sync();
+		m_pcView->Flush();
 	}
 	
 	/* Relayout the icons only if the number of icons per row has changed */
@@ -313,6 +314,9 @@ public:
 		Lock();
 		for( uint i = 0; i < m_cIcons.size(); i++ )
 		{
+			if( !m_cIcons[i]->m_bLayouted )
+				continue;
+				
 			os::Point cIconPos;
 			os::Point cIconSize;
 			if( m_eType == VIEW_ICONS || m_eType == VIEW_ICONS_DESKTOP ) {
@@ -396,6 +400,8 @@ public:
 		/* Check positions */
 		for( uint i = 0; i < m_cIcons.size(); i++ )
 		{
+			if( !m_cIcons[i]->m_bLayouted )
+				continue;
 			os::Point cIconPos = os::Point( m_cIcons[i]->m_cPosition.x + 
 										( m_vIconWidth - m_cIcons[i]->m_pcImage->GetSize().x ) / 2, 
 										m_cIcons[i]->m_cPosition.y );
@@ -682,7 +688,6 @@ public:
 	os::Point m_cLastSelectPosition;
 	bigtime_t m_nLastClick;
 	os::Message* m_pcSelChangeMsg;
-	os::Message* m_pcInvokeMsg;
 	bool m_bAdjusting;
 	bool m_bScrollDown;
 	bool m_bScrollUp;
@@ -731,6 +736,9 @@ public:
 		m->Lock();
 		for( uint i = 0; i < m->m_cIcons.size(); i++ )
 		{
+			if( !m->m_cIcons[i]->m_bLayouted )
+				continue;
+			
 			os::Rect cFrame( m->m_cIcons[i]->m_cPosition - os::Point( 3, 3 ), m->m_cIcons[i]->m_cPosition +
 																os::Point( m->m_vIconWidth, m->m_vIconHeight ) + os::Point( 3, 3 ) );
 			
@@ -752,6 +760,9 @@ public:
 		SetFgColor( m->m_sTextColor );
 		for( uint i = 0; i < m->m_cIcons.size(); i++ )
 		{
+			if( !m->m_cIcons[i]->m_bLayouted )
+				continue;
+			
 			os::Rect cFrame( m->m_cIcons[i]->m_cPosition - os::Point( 3, 3 ), m->m_cIcons[i]->m_cPosition +
 																os::Point( m->m_vIconWidth, m->m_vIconHeight ) + os::Point( 3, 3 ) );
 			if( cUpdateRect.DoIntersect( cFrame ) )
@@ -1113,7 +1124,6 @@ IconView::~IconView()
 	delete( m->m_pcVScrollBar );
 	delete( m->m_pcHScrollBar );
 	delete( m->m_pcSelChangeMsg );
-	delete( m->m_pcInvokeMsg );
 	delete( m->m_pcIconLock );
 	
 	delete( m );
@@ -1332,6 +1342,7 @@ uint IconView::AddIcon( os::Image* pcImage, os::IconData* pcData )
 	psIcon->m_pcImage = pcImage;
 	psIcon->m_pcData = pcData;
 	psIcon->m_bSelected = false;
+	psIcon->m_bLayouted = false;
 	m->Lock();
 	m->m_cIcons.push_back( psIcon );
 	m->Unlock();
@@ -1733,11 +1744,7 @@ void IconView::SetSelChangeMsg( os::Message* pcMessage )
  *****************************************************************************/
 void IconView::SetInvokeMsg( os::Message* pcMessage )
 {
-	if( m->m_pcInvokeMsg != pcMessage )
-	{
-		delete( m->m_pcInvokeMsg );
-		m->m_pcInvokeMsg = pcMessage;
-	}
+	SetMessage( pcMessage );
 }
 
 
@@ -1759,7 +1766,7 @@ os::Message* IconView::GetSelChangeMsg()
  *****************************************************************************/
 os::Message* IconView::GetInvokeMsg()
 {
-	return( m->m_pcInvokeMsg );
+	return( GetMessage() );
 }
 
 /** Called when an icon is invoked.
@@ -1772,10 +1779,7 @@ os::Message* IconView::GetInvokeMsg()
  *****************************************************************************/
 void IconView::Invoked( uint nIcon, os::IconData* pcData )
 {
-	if( m->m_pcInvokeMsg != NULL )
-	{
-		Invoke( m->m_pcInvokeMsg );
-	}
+	Invoke( NULL );
 }
 
 

@@ -58,7 +58,7 @@
 #include <set>
 //#include <iostream>
 
-#define LAYOUT_TIME 500000
+#define LAYOUT_TIME 800000
 
 static uint8 g_aCDImage[] = {
 #include "pixmaps/cd.h"
@@ -90,16 +90,17 @@ namespace os_priv
 	{
 	    public:
 		enum
-		{ M_CHANGE_DIR = 1, M_COPY_FILES, M_MOVE_FILES, M_DELETE_FILES, M_RENAME_FILES, M_ENTRIES_ADDED, M_ENTRIES_REMOVED, M_ENTRIES_UPDATED };
+		{ M_CHANGE_DIR = 1, M_COPY_FILES, M_MOVE_FILES, M_DELETE_FILES, M_RENAME_FILES, M_ENTRIES_ADDED, M_ENTRIES_REMOVED, M_ENTRIES_UPDATED, M_LAYOUT_UPDATED };
 		  DirKeeper( const Messenger & cTarget, const String& cPath );
 		virtual void HandleMessage( Message * pcMessage );
 		virtual bool Idle();
 		void Stop();
 		status_t GetNode( os::String zPath, os::FSNode* pcNode, bool *pbBrokenLink );
 		Directory* GetCurrentDir() { return( m_pcCurrentDir ); }
+		bool IsReading() { return( m_eState == S_READDIR ); }
    private:
 		
-		void SendAddMsg( const String& cName );
+		void SendAddMsg( const String& cName, dev_t nDevice, ino_t nInode );
 		void SendRemoveMsg( const String& cName, dev_t nDevice, ino_t nInode );
 		void SendUpdateMsg( const String& cName, dev_t nDevice, ino_t nInode, bool bReloadIcon );
 		void SendDriveAddMsg( const String& cName, const String& cPath );
@@ -112,36 +113,10 @@ namespace os_priv
 		Directory *m_pcCurrentDir;
 		NodeMonitor m_cMonitor;
 		state_t m_eState;
-		bool m_bWaitForAddReply;
-		bool m_bWaitForRemoveReply;
-		bool m_bWaitForUpdateReply;
+		int m_nPendingReplies;
 		bool m_bLayoutNecessary;
+		bool m_bWaitForLayoutReply;
 		bigtime_t m_nLastLayout;
-
-		struct FileNode
-		{
-			FileNode( const String& cName, const String& cPath, struct stat sStat, bool bBrokenLink, bool bReloadIcon = true, os::NodeMonitor* pcMonitor = NULL ):
-												m_cName( cName ), m_cPath( cPath ), m_sStat( sStat ), m_bBrokenLink( bBrokenLink ),
-												m_bReloadIcon( bReloadIcon ), m_pcMonitor( pcMonitor )
-			{
-			}
-
-			bool operator<( const FileNode & cNode ) const
-			{
-				return ( m_sStat.st_ino == cNode.m_sStat.st_ino ? ( m_sStat.st_dev < cNode.m_sStat.st_dev ) : ( m_sStat.st_ino < cNode.m_sStat.st_ino ) );
-			}
-
-			mutable String m_cName;
-			mutable String m_cPath;
-			struct stat m_sStat;
-			bool m_bBrokenLink;
-			bool m_bReloadIcon;
-			os::NodeMonitor* m_pcMonitor;
-		};
-
-		std::vector < FileNode > m_cAddMap;
-		std::vector < FileNode > m_cUpdateMap;
-		std::vector < FileNode > m_cRemoveMap;
 	};
 }
 
@@ -162,10 +137,9 @@ DirKeeper::DirKeeper( const Messenger & cTarget, const String& cPath ):Looper( "
 	{
 	}
 	m_eState = S_IDLE;
-	m_bWaitForAddReply = false;
-	m_bWaitForRemoveReply = false;
-	m_bWaitForUpdateReply = false;
+	m_nPendingReplies = 0;
 	m_bLayoutNecessary = false;
+	m_bWaitForLayoutReply = false;
 	m_nLastLayout = get_system_time() - LAYOUT_TIME;
 }
 
@@ -194,6 +168,7 @@ void DirKeeper::HandleMessage( Message * pcMessage )
 			pcMessage->FindString( "path", &cNewPath );
 			try
 			{
+				Stop();
 				m_cPath = cNewPath;
 				Directory *pcNewDir = new Directory( cNewPath );
 				delete m_pcCurrentDir;
@@ -206,12 +181,7 @@ void DirKeeper::HandleMessage( Message * pcMessage )
 					m_cMonitor.SetTo( m_pcCurrentDir, NWATCH_DIR | NWATCH_NAME, this, this );
 				else
 					m_cMonitor.Unset();
-				m_cAddMap.clear();
-				m_cRemoveMap.clear();
-				m_cUpdateMap.clear();
-				m_bWaitForAddReply = false;
-				m_bWaitForRemoveReply = false;
-				m_bWaitForUpdateReply = false;
+				
 			}
 			catch( std::exception & )
 			{
@@ -220,92 +190,20 @@ void DirKeeper::HandleMessage( Message * pcMessage )
 			break;
 		}
 	case M_ENTRIES_ADDED:
-		{
-			m_bWaitForAddReply = false;
-			if( m_cAddMap.empty() == false )
-			{
-				Message cMsg( IconDirectoryView::M_ADD_ENTRY );
-				int nCount = 0;
-
-				while( m_cAddMap.empty() == false )
-				{
-					std::vector < FileNode >::iterator i = m_cAddMap.begin();
-					
-					FSNode cNode;
-									
-					cMsg.AddString( "name", ( *i ).m_cName );
-					cMsg.AddString( "path", ( *i ).m_cPath );
-					cMsg.AddData( "stat", T_ANY_TYPE, &( *i ).m_sStat, sizeof( struct stat ) );
-					cMsg.AddBool( "broken_link", ( *i ).m_bBrokenLink );
-					cMsg.AddPointer( "node_monitor", ( *i ).m_pcMonitor );
-					
-					m_cAddMap.erase( i );
-					if( ++nCount > 5 )
-					{
-						break;
-					}
-				}
-				m_bWaitForAddReply = true;
-				m_cTarget.SendMessage( &cMsg );
-			}
-			break;
-		}
 	case M_ENTRIES_UPDATED:
+	case M_ENTRIES_REMOVED:		
 		{
-			m_bWaitForUpdateReply = false;
-			if( m_cUpdateMap.empty() == false )
-			{
-				Message cMsg( IconDirectoryView::M_UPDATE_ENTRY );
-				int nCount = 0;
-
-				while( m_cUpdateMap.empty() == false )
-				{
-					std::vector < FileNode >::iterator i = m_cUpdateMap.begin();
-					
-					FSNode cNode;
-									
-					cMsg.AddString( "name", ( *i ).m_cName );
-					cMsg.AddString( "path", ( *i ).m_cPath );
-					cMsg.AddData( "stat", T_ANY_TYPE, &( *i ).m_sStat, sizeof( struct stat ) );
-					cMsg.AddBool( "broken_link", ( *i ).m_bBrokenLink );
-					cMsg.AddBool( "reload_icon", ( *i ).m_bReloadIcon );
-					
-					m_cUpdateMap.erase( i );
-					if( ++nCount > 5 )
-					{
-						break;
-					}
-				}
-				m_bWaitForUpdateReply = true;
-				m_cTarget.SendMessage( &cMsg );
-			}
+			m_nPendingReplies--;
+			//printf("Pending now %i\n", m_nPendingReplies );
 			break;
 		}
-	case M_ENTRIES_REMOVED:
+	case M_LAYOUT_UPDATED:
 		{
-			m_bWaitForRemoveReply = false;
-			if( m_cRemoveMap.empty() == false )
-			{
-				Message cMsg( IconDirectoryView::M_REMOVE_ENTRY );
-				int nCount = 0;
-
-				while( m_cRemoveMap.empty() == false )
-				{
-					std::vector < FileNode >::iterator i = m_cRemoveMap.begin();
-
-					cMsg.AddInt32( "device", ( *i ).m_sStat.st_dev );
-					cMsg.AddInt64( "node", ( *i ).m_sStat.st_ino );
-					m_cRemoveMap.erase( i );
-					if( ++nCount > 10 )
-					{
-						break;
-					}
-				}
-				m_cTarget.SendMessage( &cMsg );
-				m_bWaitForRemoveReply = true;
-			}
+			m_bWaitForLayoutReply = false;
+			m_nLastLayout = get_system_time();
 			break;
 		}
+	
 	case M_NODE_MONITOR:
 		{
 			int32 nEvent = -1;
@@ -316,11 +214,15 @@ void DirKeeper::HandleMessage( Message * pcMessage )
 			case NWEVENT_CREATED:
 				{
 					String cName;
+					dev_t nDevice;
+					int64 nInode;
 					
 					//std::cout<<"CREATE"<<std::endl;
 
+					pcMessage->FindInt( "device", &nDevice );
+					pcMessage->FindInt64( "node", &nInode );
 					pcMessage->FindString( "name", &cName );
-					SendAddMsg( cName );
+					SendAddMsg( cName, nDevice, nInode );
 					break;
 				}
 			case NWEVENT_DELETED:
@@ -341,7 +243,6 @@ void DirKeeper::HandleMessage( Message * pcMessage )
 				{
 					dev_t nDevice;
 					int64 nInode;
-					//std::cout<<"STAT"<<std::endl;
 
 					String cName;
 
@@ -363,7 +264,6 @@ void DirKeeper::HandleMessage( Message * pcMessage )
 					int64 nOldDir;
 					int64 nNewDir;
 					int64 nInode;
-					//std::cout<<"MOVE"<<std::endl;
 
 					String cName;
 
@@ -392,7 +292,7 @@ void DirKeeper::HandleMessage( Message * pcMessage )
 							}
 							else
 							{
-								SendAddMsg( cName );
+								SendAddMsg( cName, nDevice, nInode );
 							}
 						}
 					}
@@ -432,71 +332,63 @@ void DirKeeper::SendUpdateMsg( const String& cName, dev_t nDevice, ino_t nInode,
 		//std::cout<<"Update "<<cName<<" "<<sStat.st_dev<<" "<<sStat.st_ino<<" "<<nInode<<std::endl;
 
 
-		FileNode cFileNode( cName, cName, sStat, bBrokenLink, bReloadIcon );
+		//FileNode cFileNode( cName, cName, sStat, bBrokenLink, bReloadIcon );
+		
+		Message cMsg( IconDirectoryView::M_UPDATE_ENTRY );
+		cMsg.AddString( "name", cName );
+		cMsg.AddString( "path", cName );
+		cMsg.AddData( "stat", T_ANY_TYPE, &sStat, sizeof( sStat ) );
+		cMsg.AddBool( "broken_link", bBrokenLink );
+		cMsg.AddBool( "reload_icon", bReloadIcon );
+			
+			
 
-		if( m_bWaitForUpdateReply )
-		{
-			m_cUpdateMap.push_back( cFileNode );
-		}
-		else
-		{
-			
-			Message cMsg( IconDirectoryView::M_UPDATE_ENTRY );
-			cMsg.AddString( "name", cName );
-			cMsg.AddString( "path", cName );
-			cMsg.AddData( "stat", T_ANY_TYPE, &sStat, sizeof( sStat ) );
-			cMsg.AddBool( "broken_link", bBrokenLink );
-			cMsg.AddBool( "reload_icon", bReloadIcon );
-			
-			m_cTarget.SendMessage( &cMsg );
-			m_bWaitForUpdateReply = true;
-		}
+		m_nPendingReplies++;
+		m_cTarget.SendMessage( &cMsg );
+		//printf("Send Update %s %i %i!\n", cName.c_str(), (int)nInode, m_nPendingReplies);
 	} catch( std::exception & )
 	{
 		m_cTarget.SendMessage( IconDirectoryView::M_REREAD );
 	}
+	m_bLayoutNecessary = true;
 }
 
-void DirKeeper::SendAddMsg( const String& cName )
+void DirKeeper::SendAddMsg( const String& cName, dev_t nDevice, ino_t nInode )
 {
 	try
 	{
 		
 		FSNode cNode;
-		bool bBrokenLink;
+		bool bBrokenLink = true;
 		os::NodeMonitor* pcMonitor = NULL;
-		
-		if( GetNode( cName, &cNode, &bBrokenLink ) < 0 )
-			return;
-	
 		struct stat sStat;
-
-		cNode.GetStat( &sStat, false );
+		memset( &sStat, 0, sizeof( sStat ) );
 		
-		//std::cout<<"Add "<<sStat.st_dev<<" "<<sStat.st_ino<<std::endl;
-		
+		if( GetNode( cName, &cNode, &bBrokenLink ) >= 0 )
+			cNode.GetStat( &sStat, false );
+		else {
+			if( nDevice == -1 && nInode == -1 )
+				return;
+			sStat.st_dev = nDevice;
+			sStat.st_ino = nInode;
+		}
 		if( !bBrokenLink )
 			pcMonitor = new os::NodeMonitor( &cNode, NWATCH_STAT | NWATCH_ATTR, this, this );
 
-		FileNode cFileNode( cName, cName, sStat, bBrokenLink, false, pcMonitor );
+		//std::cout<<"Add "<<sStat.st_dev<<" "<<sStat.st_ino<<std::endl;
 		
 		
-		if( m_bWaitForAddReply )
-		{
-			m_cAddMap.push_back( cFileNode );
-		}
-		else
-		{
-			Message cMsg( IconDirectoryView::M_ADD_ENTRY );
-			cMsg.AddString( "name", cName );
-			cMsg.AddString( "path", cName );
-			cMsg.AddData( "stat", T_ANY_TYPE, &sStat, sizeof( sStat ) );
-			cMsg.AddBool( "broken_link", bBrokenLink );
-			cMsg.AddPointer( "node_monitor", pcMonitor );
-
-			m_cTarget.SendMessage( &cMsg );
-			m_bWaitForAddReply = true;
-		}
+		Message cMsg( IconDirectoryView::M_ADD_ENTRY );
+		cMsg.AddString( "name", cName );
+		cMsg.AddString( "path", cName );
+		cMsg.AddData( "stat", T_ANY_TYPE, &sStat, sizeof( sStat ) );
+		cMsg.AddBool( "broken_link", bBrokenLink );
+		cMsg.AddPointer( "node_monitor", pcMonitor );
+		
+		
+		m_nPendingReplies++;
+		m_cTarget.SendMessage( &cMsg );
+		//printf("Send add %s %i %i!\n", cName.c_str(), (int)sStat.st_ino, m_nPendingReplies);
 	}
 	catch( ... /*std::exception& */  )
 	{
@@ -510,23 +402,16 @@ void DirKeeper::SendRemoveMsg( const String& cName, dev_t nDevice, ino_t nInode 
 	sStat.st_dev = nDevice;
 	sStat.st_ino = nInode;
 	
-	FileNode cFileNode( cName, cName, sStat, false );
 	
-		
-	if( m_bWaitForRemoveReply )
-	{
-		m_cRemoveMap.push_back( cFileNode );
-	}
-	else
-	{
-		Message cMsg( IconDirectoryView::M_REMOVE_ENTRY );
-		cMsg.AddInt32( "device", nDevice );
-		cMsg.AddInt64( "node", nInode );
-		m_cTarget.SendMessage( &cMsg );
-		m_bWaitForRemoveReply = true;
-
-	}
+	Message cMsg( IconDirectoryView::M_REMOVE_ENTRY );
+	cMsg.AddInt32( "device", nDevice );
+	cMsg.AddInt64( "node", nInode );
+	
+	
+	m_nPendingReplies++;
+	m_cTarget.SendMessage( &cMsg );
 	m_bLayoutNecessary = true;
+	//printf("Send Remove %i %i!\n", (int)nInode, m_nPendingReplies);
 }
 
 
@@ -540,24 +425,17 @@ void DirKeeper::SendDriveAddMsg( const String& cName, const String& cPath )
 
 		cNode.GetStat( &sStat, false );
 
-		FileNode cFileNode( cName, cPath, sStat, false );
+		
+		Message cMsg( IconDirectoryView::M_ADD_ENTRY );
+		cMsg.AddString( "name", cName );
+		cMsg.AddString( "path", cPath );
+		cMsg.AddData( "stat", T_ANY_TYPE, &sStat, sizeof( sStat ) );
+		cMsg.AddBool( "broken_link", false );
+		cMsg.AddPointer( "node_monitor", NULL );
 
-		if( m_bWaitForAddReply )
-		{
-			m_cAddMap.push_back( cFileNode );
-		}
-		else
-		{
-			Message cMsg( IconDirectoryView::M_ADD_ENTRY );
-			cMsg.AddString( "name", cName );
-			cMsg.AddString( "path", cPath );
-			cMsg.AddData( "stat", T_ANY_TYPE, &sStat, sizeof( sStat ) );
-			cMsg.AddBool( "broken_link", false );
-			cMsg.AddPointer( "node_monitor", NULL );
-
-			m_cTarget.SendMessage( &cMsg );
-			m_bWaitForAddReply = true;
-		}
+		m_nPendingReplies++;
+		m_cTarget.SendMessage( &cMsg );
+		
 	}
 	catch( ... /*std::exception& */  )
 	{
@@ -570,13 +448,37 @@ void DirKeeper::Stop()
 	Lock();
 	m_eState = S_IDLE;
 	m_bLayoutNecessary = false;
+	m_bWaitForLayoutReply = false;
 	m_cMonitor.Unset();
-	m_cAddMap.clear();
-	m_cRemoveMap.clear();
-	m_cUpdateMap.clear();
-	m_bWaitForAddReply = false;
-	m_bWaitForRemoveReply = false;
-	m_bWaitForUpdateReply = false;
+	
+	m_nPendingReplies = 0;
+	
+	/* Make sure we delete all pending messages */
+	SpoolMessages();	// Copy all messages from the message port to the message queue.
+	MessageQueue *pcQueue = GetMessageQueue();
+	MessageQueue cTmp;
+	Message* pcMsg;
+	pcQueue->Lock();
+	while( ( pcMsg = pcQueue->NextMessage() ) != NULL )
+	{
+		switch( pcMsg->GetCode() )
+		{
+			case M_ENTRIES_ADDED:
+			case M_ENTRIES_UPDATED:
+			case M_ENTRIES_REMOVED:
+			case M_NODE_MONITOR:
+				break;
+			default:
+				cTmp.AddMessage( pcMsg );
+		}
+		
+		while( ( pcMsg = cTmp.NextMessage() ) != NULL )
+		{
+			pcQueue->AddMessage( pcMsg );
+		}
+		
+	}
+	pcQueue->Unlock();
 	Unlock();
 }
 
@@ -622,11 +524,30 @@ bool DirKeeper::Idle()
 			else
 			{
 				/* Show files */
+				if( m_bLayoutNecessary )
+				{
+					if( m_nPendingReplies > 0 )
+					{
+						if( get_system_time() - m_nLastLayout > LAYOUT_TIME && !m_bWaitForLayoutReply )
+						{
+							/* Update regulary */
+							Message cMsg( IconDirectoryView::M_LAYOUT );
+							m_cTarget.SendMessage( &cMsg );
+							m_bWaitForLayoutReply = true;
+							m_bLayoutNecessary = false;
+							m_nLastLayout = get_system_time();
+						}
+					}
+				}
+			
+				if( m_nPendingReplies > 5 )
+					return( false );
+					
 				if( m_pcCurrentDir->GetNextEntry( &cName ) == 1 )
 				{
 					if( !( cName == "." ) && !( cName == ".." ) )
 					{
-						SendAddMsg( cName );
+						SendAddMsg( cName, -1, -1 );
 					}
 					return ( true );
 				}
@@ -641,21 +562,14 @@ bool DirKeeper::Idle()
 	case S_IDLE:
 		if( m_bLayoutNecessary )
 		{
-			if( m_cAddMap.empty() == false || m_cUpdateMap.empty() == false ||
-				m_cRemoveMap.empty() == false  )
-			{
-				if( get_system_time() - m_nLastLayout > LAYOUT_TIME )
-				{
-					/* Update regulary */
-					Message cMsg( IconDirectoryView::M_LAYOUT );
-					m_cTarget.SendMessage( &cMsg );
-					m_nLastLayout = get_system_time();
-				}
-				return( true );
-			}
-			
+			if( m_nPendingReplies > 0 )
+				return( false );
+
+			/* Final layout */			
 			Message cMsg( IconDirectoryView::M_LAYOUT );
 			m_cTarget.SendMessage( &cMsg );
+			m_nLastLayout = get_system_time();
+			m_bWaitForLayoutReply = true;
 			m_bLayoutNecessary = false;
 		}
 		return ( false );
@@ -966,45 +880,13 @@ void IconDirectoryView::KeyDown( const char *pzString, const char *pzRawString, 
 void IconDirectoryView::ReRead()
 {
 	//std::cout<<"REREAD"<<std::endl;
-	if( m->m_pcDirKeeper )
-		m->m_pcDirKeeper->Lock();
-	Clear();
-	Message cMsg( DirKeeper::M_CHANGE_DIR );
-
-	cMsg.AddString( "path", m->m_cPath.GetPath() );
+	
 	if( m->m_pcDirKeeper )
 	{
-		m->m_pcDirKeeper->PostMessage( &cMsg, m->m_pcDirKeeper );
-		m->m_pcDirKeeper->Unlock();
-	}
-
-}
-
-
-
-/** Returns the current path.
- * \par Description:
- * Returns the current path.
- * \return The current path.
- * \author	Arno Klenke (arno_klenke@yahoo.de)
- *****************************************************************************/
-os::String IconDirectoryView::GetPath() const
-{
-	return ( m->m_cPath.GetPath() );
-}
-
-
-/** Sets the current path.
- * \par Description:
- * Sets the current path. After this call you have to call the ReRead() method.
- * \param cPath - The new path. Please make sure that is is valid.
- * \author	Arno Klenke (arno_klenke@yahoo.de)
- *****************************************************************************/
-void IconDirectoryView::SetPath( const String& cPath )
-{
-	if( m->m_pcDirKeeper )
+		m->m_pcDirKeeper->Lock();
 		m->m_pcDirKeeper->Stop();
-
+	}
+	Clear();
 	/* Make sure we delete all pending messages from the dirkeeper thread */
 	if( GetLooper() )
 	{
@@ -1044,6 +926,40 @@ void IconDirectoryView::SetPath( const String& cPath )
 		}
 		pcQueue->Unlock();
 	}
+		
+	Message cMsg( DirKeeper::M_CHANGE_DIR );
+
+	cMsg.AddString( "path", m->m_cPath.GetPath() );
+	if( m->m_pcDirKeeper )
+	{
+		m->m_pcDirKeeper->PostMessage( &cMsg, m->m_pcDirKeeper );
+		m->m_pcDirKeeper->Unlock();
+	}
+
+}
+
+
+
+/** Returns the current path.
+ * \par Description:
+ * Returns the current path.
+ * \return The current path.
+ * \author	Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+os::String IconDirectoryView::GetPath() const
+{
+	return ( m->m_cPath.GetPath() );
+}
+
+
+/** Sets the current path.
+ * \par Description:
+ * Sets the current path. After this call you have to call the ReRead() method.
+ * \param cPath - The new path. Please make sure that is is valid.
+ * \author	Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+void IconDirectoryView::SetPath( const String& cPath )
+{
 	m->m_cPath.SetTo( cPath.c_str() );
 	DirChanged( m->m_cPath.GetPath() );
 }
@@ -1419,29 +1335,26 @@ void IconDirectoryView::HandleMessage( Message * pcMessage )
 			const struct stat * psStat;
 			bool bBrokenLink;
 			size_t nSize;
-			int nCount = 0;
 			os::NodeMonitor* pcMonitor;
 
-			pcMessage->GetNameInfo( "stat", NULL, &nCount );
-			for( int i = 0; i < nCount; ++i )
-			{
-				if( pcMessage->FindString( "name", &pzName, i ) != 0 )
+			
+				if( pcMessage->FindString( "name", &pzName ) != 0 )
 				{
 					break;
 				}
-				if( pcMessage->FindString( "path", &pzPath, i ) != 0 )
+				if( pcMessage->FindString( "path", &pzPath ) != 0 )
 				{
 					break;
 				}
-				if( pcMessage->FindData( "stat", T_ANY_TYPE, ( const void ** )&psStat, &nSize, i ) != 0 )
+				if( pcMessage->FindData( "stat", T_ANY_TYPE, ( const void ** )&psStat, &nSize ) != 0 )
 				{
 					break;
 				}
-				if( pcMessage->FindBool( "broken_link", &bBrokenLink, i ) != 0 )
+				if( pcMessage->FindBool( "broken_link", &bBrokenLink ) != 0 )
 				{
 					break;
 				}
-				if( pcMessage->FindPointer( "node_monitor", (void**)&pcMonitor, i ) != 0 )
+				if( pcMessage->FindPointer( "node_monitor", (void**)&pcMonitor ) != 0 )
 				{
 					break;
 				}
@@ -1507,7 +1420,7 @@ void IconDirectoryView::HandleMessage( Message * pcMessage )
 				catch( std::exception & )
 				{
 				}
-			}
+			
 			if( m->m_pcDirKeeper )
 				m->m_pcDirKeeper->PostMessage( DirKeeper::M_ENTRIES_ADDED, m->m_pcDirKeeper, m->m_pcDirKeeper );
 			break;
@@ -1520,36 +1433,47 @@ void IconDirectoryView::HandleMessage( Message * pcMessage )
 			struct stat sNewStat;
 			size_t nSize;
 			long long nNodeSize;
-			int nCount = 0;
+//			int nCount = 0;
 			bool bBrokenLink;
 			bool bReloadIcon;
 			
-			pcMessage->GetNameInfo( "stat", NULL, &nCount );
-			for( int i = 0; i < nCount; ++i )
-			{
-				if( pcMessage->FindString( "name", &pzName, i ) != 0 )
+//			pcMessage->GetNameInfo( "stat", NULL, &nCount );
+//			for( int i = 0; i < nCount; ++i )
+//			{
+				if( pcMessage->FindString( "name", &pzName ) != 0 )
 				{
 					break;
 				}
-				if( pcMessage->FindString( "path", &pzPath, i ) != 0 )
+				if( pcMessage->FindString( "path", &pzPath ) != 0 )
 				{
 					break;
 				}
-				if( pcMessage->FindData( "stat", T_ANY_TYPE, ( const void ** )&psStat, &nSize, i ) != 0 )
+				if( pcMessage->FindData( "stat", T_ANY_TYPE, ( const void ** )&psStat, &nSize ) != 0 )
 				{
 					break;
 				}
-				if( pcMessage->FindBool( "broken_link", &bBrokenLink, i ) != 0 )
+				if( pcMessage->FindBool( "broken_link", &bBrokenLink ) != 0 )
 				{
 					break;
 				}
-				if( pcMessage->FindBool( "reload_icon", &bReloadIcon, i ) != 0 )
+				if( pcMessage->FindBool( "reload_icon", &bReloadIcon ) != 0 )
 				{
 					break;
 				}
 				try
 				{
 					//std::cout<<"UPDATE "<<bReloadIcon<<std::endl;
+					/* Check if we need to remove an old entry */
+					for( uint j = 0; j < GetIconCount(); j++ )
+					{
+						DirectoryIconData *pcData = static_cast < DirectoryIconData * >( GetIconData( j ) );
+	
+						if( GetIconString( j, 0 ) == pzName )
+						{
+							RemoveIcon( j );
+							break;
+						}
+					}
 					
 					for( uint j = 0; j < GetIconCount(); j++ )
 					{
@@ -1577,7 +1501,8 @@ void IconDirectoryView::HandleMessage( Message * pcMessage )
 								nNodeSize = psStat->st_size;
 								sNewStat = *psStat;
 							}
-					
+							
+							
 							/* Update Icon if requested */
 							if( !( m->m_cPath.GetPath() == "/" ) && bReloadIcon )
 							{
@@ -1606,15 +1531,16 @@ void IconDirectoryView::HandleMessage( Message * pcMessage )
 									pcImage = pcBitmap;
 								}
 								SetIconImage( j, pcImage );
-							}
+							} 
 							
 							/* Set a new name if one is provided */
 							if( strcmp( pzName, "" ) != 0 )
 								SetIconString( j, 0, os::String( pzName ) );
 								
 							char zSize[255];
-							if( m->m_cPath.GetPath() == "/" )
-								sprintf( zSize, m->m_pcCatalog->GetString( ID_MSG_ICONDIRVIEW_PERCENT_FREE, "%i%% free" ).c_str(), ( int )( sInfo.fi_free_blocks * 100 / sInfo.fi_total_blocks ) );
+							if( m->m_cPath.GetPath() == "/" ) {
+								//sprintf( zSize, m->m_pcCatalog->GetString( ID_MSG_ICONDIRVIEW_PERCENT_FREE, "%i%% free" ).c_str(), ( int )( sInfo.fi_free_blocks * 100 / sInfo.fi_total_blocks ) );
+							}
 							else if( nNodeSize >= 1000000 )
 								sprintf( zSize, "%i Mb", ( int )( nNodeSize / 1000000 + 1 ) );
 							else
@@ -1633,7 +1559,7 @@ void IconDirectoryView::HandleMessage( Message * pcMessage )
 				catch( std::exception & )
 				{
 				}
-			}
+//			}
 			if( m->m_pcDirKeeper )
 				m->m_pcDirKeeper->PostMessage( DirKeeper::M_ENTRIES_UPDATED, m->m_pcDirKeeper, m->m_pcDirKeeper );
 			
@@ -1645,14 +1571,14 @@ void IconDirectoryView::HandleMessage( Message * pcMessage )
 			int64 nInode;
 			bool bFound = false;
 
-			int nCount = 0;
+//			int nCount = 0;
 
-			pcMessage->GetNameInfo( "device", NULL, &nCount );
+	//		pcMessage->GetNameInfo( "device", NULL, &nCount );
 
-			for( int i = 0; i < nCount; ++i )
-			{
-				pcMessage->FindInt( "device", &nDevice, i );
-				pcMessage->FindInt64( "node", &nInode, i );
+//			for( int i = 0; i < nCount; ++i )
+//			{
+				pcMessage->FindInt( "device", &nDevice );
+				pcMessage->FindInt64( "node", &nInode );
 
 				uint j;
 				for( j = 0; j < GetIconCount(); j++ )
@@ -1666,9 +1592,8 @@ void IconDirectoryView::HandleMessage( Message * pcMessage )
 						break;
 					}
 				}
-			}
+//			}
 			
-			Layout();
 			if( m->m_pcDirKeeper )
 				m->m_pcDirKeeper->PostMessage( DirKeeper::M_ENTRIES_REMOVED, m->m_pcDirKeeper, m->m_pcDirKeeper );
 			if( !bFound )
@@ -1679,7 +1604,11 @@ void IconDirectoryView::HandleMessage( Message * pcMessage )
 		}
 	case M_LAYOUT:
 	{
+//		bigtime_t nTime = get_system_time();
 		Layout();
+//		printf( "Relayout took %i\n", (int)( get_system_time() - nTime ) );
+		if( m->m_pcDirKeeper )
+			m->m_pcDirKeeper->PostMessage( DirKeeper::M_LAYOUT_UPDATED, m->m_pcDirKeeper, m->m_pcDirKeeper );
 		break;
 	}
 	case M_MOUNT:
