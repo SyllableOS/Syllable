@@ -1,3 +1,8 @@
+* October 12, Arno Klenke *
+
+Do not draw icons in a os::IconView until they are layouted
+Rewrite of the directory read code in the os::IconDirView class
+
 * October 7, Arno Klenke *
 
 The VIEW_ICONS_DESKTOP view of the os::IconView now uses the information of the appserver about
@@ -1171,6 +1176,7 @@ disabled controls.  The following files have been patched:
 
 	The sub-menu arrow is now drawn corretly, and menus which have children
 	are now drawn slightly larger to allow for the arrow.
+
 
 
 
