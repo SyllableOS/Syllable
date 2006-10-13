@@ -1,0 +1,15 @@
+authors				Kaj de Vos
+status				broken
+notes				Bombs out on incomplete pthreads implementation in libtransmission/platform.h
+
+licenses			MIT
+home				transmission.m0k.org
+packages			Transmission-0.6.1
+locations			http://download.m0k.org/transmission/files/
+
+recommends			openssl
+
+no-build-dir
+
+documentation		README LICENSE NEWS AUTHORS
+

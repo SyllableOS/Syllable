@@ -1,0 +1,13 @@
+diff -ru transmission-0.6.1-original/configure transmission-0.6.1/configure
+--- transmission-0.6.1-original/configure	2006-06-25 21:34:41.000000000 +0000
++++ transmission-0.6.1/configure	2006-10-12 23:52:23.000000000 +0000
+@@ -278,6 +278,9 @@
+     PTHREAD=yes
+     ;;
+ 
++  syllable)
++    ;;
++
+   *)
+     echo "Unsupported operating system"
+     exit 1 ;;

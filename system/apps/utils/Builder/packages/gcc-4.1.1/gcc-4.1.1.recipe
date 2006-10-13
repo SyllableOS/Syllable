@@ -7,7 +7,7 @@ authors
 maintainers			Kaj de Vos
 status				testing
 warnings
-	Build breaks with itself installed.
+	Build breaks with GCC 4.1.1 itself installed.
 	GCC has a circular dependency on GLibC.
 ;	LibIberty is both in BinUtils and in GCC.
 
@@ -70,13 +70,14 @@ configure-options
 ;	--with-local-prefix=/usr/local
 
 make-env
-	BOOT_CFLAGS		'-O'
-	DLL_PATH		"$DLL_PATH:$PWD/gcc"
-;	LIBRARY_PATH	"$LIBRARY_PATH:$PWD/gcc"
+	BOOT_CFLAGS		"-O -I$PWD/gcc"
+	DLL_PATH		"$PWD/gcc:$DLL_PATH"
+	LIBRARY_PATH	"$PWD/gcc:$LIBRARY_PATH"
+	LDFLAGS 		"-L$PWD/gcc $LDFLAGS"
 make-vars
-	CFLAGS			'-O'
-	LIBCFLAGS		'-O2'
-	LIBCXXFLAGS		'-O2'
+	CFLAGS			"-O -I$PWD/gcc"
+	LIBCFLAGS		"-O2 -I$PWD/gcc"
+	LIBCXXFLAGS		"-O2 -I$PWD/gcc"
 ;					GCC seems to set this automatically:
 ;					' -fno-implicit-templates'
 make-targets
