@@ -70,14 +70,13 @@ configure-options
 ;	--with-local-prefix=/usr/local
 
 make-env
-	BOOT_CFLAGS		"-O -I$PWD/gcc"
-	DLL_PATH		"$PWD/gcc:$DLL_PATH"
-	LIBRARY_PATH	"$PWD/gcc:$LIBRARY_PATH"
-	LDFLAGS 		"-L$PWD/gcc $LDFLAGS"
+	BOOT_CFLAGS		'-O'
+	DLL_PATH		"$DLL_PATH:$PWD/gcc"
+;	LIBRARY_PATH	"$PWD/gcc:$LIBRARY_PATH"
 make-vars
-	CFLAGS			"-O -I$PWD/gcc"
-	LIBCFLAGS		"-O2 -I$PWD/gcc"
-	LIBCXXFLAGS		"-O2 -I$PWD/gcc"
+	CFLAGS			'-O'
+	LIBCFLAGS		'-O2'
+	LIBCXXFLAGS		'-O2'
 ;					GCC seems to set this automatically:
 ;					' -fno-implicit-templates'
 make-targets
@@ -108,4 +107,3 @@ links
 	libgcc.a		lib/gcc/i586-pc-syllable/4.1.1/libgcc_static.a
 ;	For some packages:
 ;	bin/cpp			lib/
-
