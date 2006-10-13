@@ -104,11 +104,14 @@ void TopLayer::LayerFrameChanged( Layer* pcChild, IRect cFrame )
 				pcBackbuffer->m_pcDriver->FillRect( pcBackbuffer, os::IRect( 0, pcOldBuffer->m_nHeight, pcBackbuffer->m_nWidth - 1, pcBackbuffer->m_nHeight - 1 ),
 													os::get_default_color( COL_NORMAL ), DM_COPY );													
 		} else {
-			dbprintf("Error: Failed to allocate new backbuffer -> falling back to singlebuffer!\n" );
-			/* Fall back to singlebuffer */
-			pcChild->Invalidate( true );
-			if( pcChild->GetWindow() != NULL )
-				pcChild->GetWindow()->SetFlags( pcChild->GetWindow()->GetFlags() | WND_SINGLEBUFFER );
+			if( cFrame.IsValid() )
+			{
+				dbprintf("Error: Failed to allocate new backbuffer -> falling back to singlebuffer!\n" );
+				/* Fall back to singlebuffer */
+				pcChild->Invalidate( true );
+				if( pcChild->GetWindow() != NULL )
+					pcChild->GetWindow()->SetFlags( pcChild->GetWindow()->GetFlags() | WND_SINGLEBUFFER );
+			}
 		}
 		pcOldBuffer->Release();
 		//dbprintf( "Released old backbuffer\n" );

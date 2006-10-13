@@ -256,8 +256,9 @@ void WinSelect::Paint( const IRect & cUpdateRect, bool bUpdate )
 		{
 			SrvBitmap* pcBitmap = pcWindow->GetIcon();
 			Rect cBitmapBounds( 0, 0, pcBitmap->m_nWidth - 1, pcBitmap->m_nHeight - 1 );
+			Rect cDst( 0, 0, 23, 24 );
 			SetDrawingMode( DM_BLEND );
-			DrawBitMap( pcBitmap, cBitmapBounds, cBitmapBounds + Point( 3, cRect.top + 6 ) );
+			DrawBitMap( pcBitmap, cBitmapBounds, cDst + Point( 3, cRect.top + 6 ) );
 			SetDrawingMode( DM_COPY );			
 		}
 		
