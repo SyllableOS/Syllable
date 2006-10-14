@@ -114,6 +114,7 @@ function create_home_dir
 	if [ -e $SKELETON_DIR ]
 	then
 		mkdir -p $userhome
+		cp $SKELETON_DIR/.profile $userhome 1>/dev/null
 		cp -a $SKELETON_DIR/* $userhome 1>/dev/null
 		if [ $? != 0 ]
 		then
@@ -125,9 +126,12 @@ function create_home_dir
 	create_desktop $userhome
 
 	# Own everything to the user (If they exist)
-	if [ $(cat /etc/passwd | cut -d : -f 1 | grep $username) ]
+	if [[ "$(whoami)" == "root" ]]
 	then
-		chown -R $username:users $userhome
+		if [ $(cat /etc/passwd | cut -d : -f 1 | grep $username) ]
+		then
+			chown -R $username:users $userhome
+		fi
 	fi
 }
 

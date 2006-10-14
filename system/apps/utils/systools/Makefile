@@ -66,9 +66,11 @@ deps:
 
 install:
 	cp -f $(EXES) /bin/
+	chmod +x /bin/$(EXES)
 
 dist:
 	cp -f $(EXES) $(DIST_DIR)/atheos/sys/bin/
+	chmod +x $(DIST_DIR)/atheos/sys/bin/$(EXES)
 
 clean:
 	-rm -Rv $(OBJDIR)
