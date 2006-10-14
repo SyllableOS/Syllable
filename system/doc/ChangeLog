@@ -1,3 +1,11 @@
+* October 15 2006, Kristian Van Der Vliet *
+
+Moved the template and root users home directory into a Builder resource.  Removed
+the old template stuff from CVS.
+Only the template directory and root users home directory are created.
+Removed the default guest user account from the default passwd file.
+Fixed the mkhome script to copy the .profile file when a new home directory is created.
+
 * October 4 2006, Arno Klenke *
 
 Added usb_hid / usbkeyboard drivers
