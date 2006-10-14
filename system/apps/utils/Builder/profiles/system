@@ -18,7 +18,6 @@ tree
 	atheos/home				home.png
 	atheos/home/.template	home.png
 	atheos/home/root		home.png
-	atheos/home/guest		home.png
 
 	atheos/autolnk
 	atheos/autolnk/bin
@@ -123,13 +122,13 @@ resources
 ;	atheos/sys/libs			GCC-libraries-4.1.1
 	atheos/Documentation	documentation/Welcome		text/plain
 	atheos/Documentation	documentation/Copyrights	text/plain
+	atheos/home				Home-directories
 
 modules
 	sys/boot/grub-0.97-syllable
 
 	other/config/default
 	other/config/etc
-	other/config/template
 	other/fonts/dejavu-fonts-2.10
 	other/icons
 	other/init
