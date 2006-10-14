@@ -122,7 +122,7 @@ resources
 ;	atheos/sys/libs			GCC-libraries-4.1.1
 	atheos/Documentation	documentation/Welcome		text/plain
 	atheos/Documentation	documentation/Copyrights	text/plain
-	atheos/home				Home-directories
+	atheos/home				Home-Directories
 
 modules
 	sys/boot/grub-0.97-syllable
