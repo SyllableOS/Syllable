@@ -2,8 +2,10 @@ authors
 	Arno Klenke
 	Kaj de Vos
 	Kristian Van Der Vliet
-status				developing
-notes				Tested with FFMPEG SNV snapshot September 12, 2006
+status				testing
+notes
+	Tested with FFMPEG SVN snapshot September 12, 2006.
+	Can't be build image'd.
 
 inherits			sourceforge
 
@@ -42,12 +44,12 @@ configure-options
 ;	--disable-ffserver
 ;	--disable-ffplay
 
-install-files		../_ffmpeg--current/config.h include/ffmpeg
+install-files
+	../_ffmpeg--current/config.h				include/ffmpeg
+	../ffmpeg--current/libavformat/allformats.h	include/ffmpeg
+
 documentation
 	README COPYING Changelog CREDITS MAINTAINERS doc/TODO
 ;	doc/*.txt
 build-docs			INSTALL
-internal-docs
-	doc/soc.txt
-	doc/optimization.txt
-
+internal-docs		doc/soc.txt	doc/optimization.txt
