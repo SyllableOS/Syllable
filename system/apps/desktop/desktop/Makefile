@@ -4,7 +4,7 @@ COPTS = -c -fexceptions -ffast-math
 APPBIN = /system/bin
 OBJS = main.o application.o desktop.o
 
-OBJDIR := objs
+OBJDIR	:= objs
 OBJS	:= $(addprefix $(OBJDIR)/,$(OBJS))
 
 # Rules
@@ -29,7 +29,7 @@ desktop: $(OBJS)
 	@echo Linking...
 	@$(CXX) $(OBJS) -o desktop -lsyllable
 	@echo Adding resources...
-	@rescopy desktop -r icon48x48.png background.jpg 
+	@rescopy desktop -r icon48x48.png background.png
 
 clean:
 	@echo Cleaning...
@@ -40,11 +40,8 @@ deps:
 
 dist: all
 	@echo Distribution...
-	@mkdir -p $(DIST_DIR)/atheos/sys/bin
 	@cp desktop $(DIST_DIR)/atheos/sys/bin/desktop
 
 install: all
 	@echo Installing...
-	@mkdir -p /system/bin
 	@cp desktop /system/bin/desktop
-
