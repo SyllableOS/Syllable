@@ -66,6 +66,7 @@ tree
 	atheos/sys/drivers
 
 	atheos/sys/drivers/dev
+	atheos/sys/drivers/dev/audio
 	atheos/sys/drivers/dev/bus
 	atheos/sys/drivers/dev/disk
 	atheos/sys/drivers/dev/hcd
@@ -135,6 +136,9 @@ modules
 	other/keymaps
 	sys/include
 	sys/kernel/kernel
+	sys/kernel/drivers/audio/i8xx
+	sys/kernel/drivers/audio/vt82xx
+	sys/kernel/drivers/audio/hda
 	sys/kernel/drivers/bus/acpi
 	sys/kernel/drivers/bus/ata
 	sys/kernel/drivers/bus/pci
@@ -182,12 +186,12 @@ modules
 	sys/kernel/drivers/sound/emu10k1
 	sys/kernel/drivers/sound/es1370
 	sys/kernel/drivers/sound/es1371
-	sys/kernel/drivers/sound/i810
+;	sys/kernel/drivers/sound/i810
 	sys/kernel/drivers/sound/maestro
 	sys/kernel/drivers/sound/sbpro
 	sys/kernel/drivers/sound/trident
 	sys/kernel/drivers/sound/via686a
-	sys/kernel/drivers/sound/vt82xx
+;	sys/kernel/drivers/sound/vt82xx
 	sys/kernel/drivers/sound/ymfpci
 	sys/kernel/drivers/ps2
 	sys/kernel/fs/afs
@@ -258,9 +262,11 @@ modules
 	sys/translators
 	sys/media/libmedia
 	sys/media/mediaserver
+	sys/media/drivers/ac97_audio
 	sys/media/drivers/cdda
 	sys/media/drivers/cdrom
 	sys/media/drivers/ffmpeg
+	sys/media/drivers/hd_audio
 	sys/media/drivers/oss
 	sys/media/drivers/raw
 	sys/media/drivers/screen
@@ -299,3 +305,5 @@ modules
 	apps/utils/nettools
 	apps/utils/pkgmanager
 	apps/utils/systools
+
+
