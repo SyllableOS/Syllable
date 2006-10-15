@@ -5,6 +5,8 @@ home				www.nongnu.org/freefont/
 packages			freefont-ttf-20060126
 locations			http://download.savannah.gnu.org/releases/freefont/
 
+make				true
+
 install-tree
 install				true
 install-files		*.ttf .
