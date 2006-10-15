@@ -4,7 +4,7 @@ COPTS = -c -fexceptions -ffast-math
 APPBIN = /bin/dlogin
 OBJS = main.o application.o mainwindow.o loginview.o loginimageview.o commonfuncs.o shutdown.o
 
-OBJDIR := objs
+OBJDIR	:= objs
 OBJS	:= $(addprefix $(OBJDIR)/,$(OBJS))
 
 # Rules
@@ -29,7 +29,7 @@ dlogin: $(OBJS)
 	@echo Linking...
 	@$(CXX) $(OBJS) -o dlogin -lsyllable -lcrypt
 	@echo Adding resources...
-	@rescopy dlogin -r images/*.png images/*.jpg
+	@rescopy dlogin -r images/*.png
 
 clean:
 	@echo Cleaning...
@@ -45,4 +45,3 @@ dist: all
 install: all
 	@echo Installing...
 	@cp dlogin /bin/dlogin
-
