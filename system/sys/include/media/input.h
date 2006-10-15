@@ -20,7 +20,9 @@
 #ifndef __F_MEDIA_DEMUXER_H_
 #define __F_MEDIA_DEMUXER_H_
 
+#include <util/resource.h>
 #include <gui/view.h>
+#include <gui/image.h>
 #include <atheos/types.h>
 #include <util/string.h>
 #include <media/packet.h>
@@ -42,17 +44,21 @@ namespace os
  * \author	Arno Klenke
  *****************************************************************************/
 
-class MediaInput
+class MediaInput : public Resource
 {
+protected:
+	virtual ~MediaInput();
 public:
 	MediaInput();
-	virtual ~MediaInput();
+	
 	virtual String 			GetIdentifier();
+	virtual uint32			GetPhysicalType();
 	virtual View*			GetConfigurationView();
 	
 	virtual bool			FileNameRequired();
 	virtual status_t		Open( String zFileName );
 	virtual void			Close();
+	virtual void			Clear();
 	
 	virtual bool			PacketBased();
 	virtual bool			StreamBased();

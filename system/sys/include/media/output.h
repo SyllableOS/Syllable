@@ -20,13 +20,13 @@
 #ifndef __F_MEDIA_OUTPUT_H_
 #define __F_MEDIA_OUTPUT_H_
 
+#include <util/resource.h>
 #include <atheos/types.h>
 #include <atheos/time.h>
 #include <gui/view.h>
 #include <util/string.h>
 #include <media/packet.h>
 #include <media/format.h>
-#include <media/timesource.h>
 
 namespace os
 {
@@ -44,34 +44,34 @@ namespace os
  * \author	Arno Klenke
  *****************************************************************************/
 
-class MediaOutput
+class MediaOutput : public Resource
 {
+protected:
+	virtual ~MediaOutput();
 public:
 	MediaOutput();
-	virtual ~MediaOutput();
+	
 	virtual String 			GetIdentifier();
+	virtual uint32			GetPhysicalType();
 	virtual View*			GetConfigurationView();
 	
 	virtual bool			FileNameRequired();
 	virtual status_t		Open( String zFileName );
 	virtual void			Close();
-	
 	virtual void			Clear();
-	virtual void			Flush();
 	
 	virtual uint32			GetOutputFormatCount();
 	virtual MediaFormat_s	GetOutputFormat( uint32 nIndex );
 	virtual uint32			GetSupportedStreamCount();
 	virtual status_t		AddStream( String zName, MediaFormat_s sFormat );
 	
-	virtual void			SetTimeSource( MediaTimeSource* pcSource );
 	
 	virtual View*			GetVideoView( uint32 nStream );
 	virtual void			UpdateView( uint32 nStream );
 	
 	virtual status_t		WritePacket( uint32 nStream, MediaPacket_s* psPacket );
-	virtual uint64			GetDelay();
-	virtual uint32			GetUsedBufferPercentage();
+	virtual uint64			GetDelay( bool bNonSharedOnly = false );
+	virtual uint64			GetBufferSize( bool bNonSharedOnly = false );
 private:
 };
 

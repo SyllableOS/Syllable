@@ -30,8 +30,59 @@ namespace os
 }
 #endif // Fool Emacs auto-indent
 
+/** Media physical object types.
+ * \ingroup media
+ * \par Description:
+ * Physical object types. Returned by the GetPhysicalType() method.
+ * It is a 32bit value with the following format:
+ * Byte   4: Class (e.g. hardware or software )
+ * Byte 2-3: Subclass (e.g. soundcard)
+ * Byte   1: Connector
+ *
+ * \author	Arno Klenke
+ *****************************************************************************/
 
-/** Media Types..
+enum media_physical_types {
+	MEDIA_PHY_UNKNOWN = 0x00000000,
+	
+	/* Software objects */
+	MEDIA_PHY_SOFTWARE = 0x01000000,
+	MEDIA_PHY_SOFT_DEMUX = 0x01000100,
+	MEDIA_PHY_SOFT_CODEC = 0x0100200,
+	MEDIA_PHY_SOFT_MUX = 0x01000300,
+	MEDIA_PHY_SOFT_FILTER = 0x01000400,
+	MEDIA_PHY_SOFT_SYNC = 0x01000500,
+	
+	/* Hardware objects */
+	MEDIA_PHY_HARDWARE = 0x02000000,
+	
+	/* Soundcard */
+	MEDIA_PHY_SOUNDCARD = 0x02000100,
+	MEDIA_PHY_SOUNDCARD_LINE_OUT = 0x02000101,
+	MEDIA_PHY_SOUNDCARD_SPDIF_OUT = 0x02000102,
+	MEDIA_PHY_SOUNDCARD_LINE_IN = 0x02000103,
+	MEDIA_PHY_SOUNDCARD_MIC_IN = 0x02000104,
+	MEDIA_PHY_SOUNDCARD_SPDIF_IN = 0x02000105,
+	
+	/* Videocard */
+	MEDIA_PHY_VIDEOCARD = 0x02000200,
+	MEDIA_PHY_VIDEOCARD_ANALOG_IN = 0x02000201,
+	
+	/* CDROM */
+	MEDIA_PHY_CD_DVD = 0x02000300,
+	MEDIA_PHY_CD_DVD_ANALOG_IN = 0x02000301,
+	MEDIA_PHY_CD_DVD_DIGITAL_IN = 0x02000302,
+	
+	/* Screen */
+	MEDIA_PHY_SCREEN = 0x02000400,
+	MEDIA_PHY_SCREEN_OUT = 0x02000401
+};
+
+#define MEDIA_PHY_CLASS(x) ( x & 0xff000000 )
+#define MEDIA_PHY_SUBCLASS(x) ( x & 0x00ffff00 )
+#define MEDIA_PHY_CONNECTOR(x) ( x & 0x000000ff )
+
+/** Media types.
  * \ingroup media
  * \par Description:
  * Types of AV data. Used by the MediaFormat_s structure.

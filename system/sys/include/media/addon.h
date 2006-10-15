@@ -63,7 +63,7 @@ public:
 private:
 };
 
-typedef MediaAddon* init_media_addon();
+typedef MediaAddon* init_media_addon( os::String zDevice );
 
 }
 

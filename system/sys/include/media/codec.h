@@ -21,6 +21,7 @@
 #define __F_MEDIA_CODEC_H_
 
 #include <gui/view.h>
+#include <util/resource.h>
 #include <atheos/types.h>
 #include <util/string.h>
 #include <media/packet.h>
@@ -42,12 +43,15 @@ namespace os
  * \author	Arno Klenke
  *****************************************************************************/
 
-class MediaCodec
+class MediaCodec : public Resource
 {
+protected:
+	virtual ~MediaCodec();
 public:
 	MediaCodec();
-	virtual ~MediaCodec();
+	
 	virtual String 			GetIdentifier();
+	virtual uint32			GetPhysicalType();
 	virtual View*			GetConfigurationView();
 	
 	virtual status_t		Open( MediaFormat_s sInternalFormat, MediaFormat_s sExternalFormat, bool bEncode );
