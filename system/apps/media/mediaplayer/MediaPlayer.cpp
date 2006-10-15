@@ -63,8 +63,9 @@ MPWindow::MPWindow( const os::Rect & cFrame, const std::string & cName, const st
 	pcFileMenu->AddItem( MSG_MAINWND_MENU_FILE_OPEN, new os::Message( MP_GUI_OPEN ) );
 	pcFileMenu->AddItem( MSG_MAINWND_MENU_FILE_OPEN_INPUT, new os::Message( MP_GUI_OPEN_INPUT ) );
 	pcFileMenu->AddItem( new os::MenuSeparator() );
+	pcFileMenu->AddItem( MSG_MAINWND_MENU_FILE_INFO, new os::Message( MP_GUI_FILE_INFO ) );
 	pcFileMenu->AddItem( MSG_MAINWND_MENU_FILE_FULLSCREEN, new os::Message( MP_GUI_FULLSCREEN ) );
-	pcFileMenu->GetItemAt( 3 )->SetEnable( false );
+	pcFileMenu->GetItemAt( 4 )->SetEnable( false );
 	m_pcMenuBar->AddItem( pcFileMenu );
 	
 	m_pcTracksMenu = new os::Menu( os::Rect(), MSG_MAINWND_MENU_TRACKS, os::ITEMS_IN_COLUMN );
@@ -119,7 +120,7 @@ MPWindow::MPWindow( const os::Rect & cFrame, const std::string & cName, const st
 	
 	/* Set Icon */
 	os::Resources cCol( get_image_id() );
-	os::ResStream *pcStream = cCol.GetResourceStream( "icon24x24.png" );
+	os::ResStream *pcStream = cCol.GetResourceStream( "icon48x48.png" );
 	os::BitmapImage *pcIcon = new os::BitmapImage( pcStream );
 	SetIcon( pcIcon->LockBitmap() );
 	delete( pcIcon );
@@ -148,6 +149,10 @@ void MPWindow::HandleMessage( os::Message * pcMessage )
 		/* Forward message to the MPApp class */
 		os::Application::GetInstance()->PostMessage( MP_GUI_SEEK, os::Application::GetInstance(  ) );
 		break;
+	case MP_GUI_FILE_INFO:
+		/* Forward message to the MPApp class */
+		os::Application::GetInstance()->PostMessage( MP_GUI_FILE_INFO, os::Application::GetInstance(  ) );
+		break;
 	case MP_GUI_FULLSCREEN:
 		/* Forward message to the MPApp class */
 		os::Application::GetInstance()->PostMessage( MP_GUI_FULLSCREEN, os::Application::GetInstance(  ) );
@@ -155,6 +160,7 @@ void MPWindow::HandleMessage( os::Message * pcMessage )
 	case MP_GUI_OPEN:
 		/* Open file selector */
 		os::Application::GetInstance()->PostMessage( MP_GUI_STOP, os::Application::GetInstance(  ) );
+		os::Application::GetInstance()->PostMessage( MP_GUI_OPEN, os::Application::GetInstance(  ) );
 		m_pcFileDialog->Show();
 		m_pcFileDialog->MakeFocus( true );
 		break;
@@ -171,7 +177,7 @@ void MPWindow::HandleMessage( os::Message * pcMessage )
 		{
 		/* Show about alert */
 		os::String cBodyText;
-		cBodyText = os::String( "Media Player V1.1\n" ) + MSG_ABOUTWND_TEXT;
+		cBodyText = os::String( "Media Player V1.2\n" ) + MSG_ABOUTWND_TEXT;
 		
 		os::Alert* pcAbout = new os::Alert( MSG_ABOUTWND_TITLE, cBodyText, os::Alert::ALERT_INFO, 
 										os::WND_NOT_RESIZABLE, MSG_ABOUTWND_OK.c_str(), NULL );
@@ -190,10 +196,24 @@ void MPWindow::HandleMessage( os::Message * pcMessage )
 				if ( cFrame.Width() < nWidth )
 					cFrame.right = cFrame.left + nWidth;
 				cFrame.bottom = cFrame.top + nHeight + 40 + m_pcMenuBar->GetPreferredSize( false ).y;
+				
+				/* Resize window to keep it on the desktop */
+				os::Desktop cDesktop;
+				float vDeltaX = 0;
+				float vDeltaY = 0;
+				if( cFrame.right >= cDesktop.GetResolution().x )
+					vDeltaX = cFrame.right - cDesktop.GetResolution().x;
+				if( cFrame.bottom >= cDesktop.GetResolution().y )
+					vDeltaY = cFrame.bottom - cDesktop.GetResolution().y;
+				m_pcVideo->ResizeBy( -vDeltaX, -vDeltaY );
+				cFrame.right -= vDeltaX;
+				cFrame.bottom -= vDeltaY;
+				
 				SetFrame( cFrame );
 				AddChild( m_pcVideo );
 				SetFlags( GetFlags() & ~os::WND_NOT_RESIZABLE );
-				m_pcMenuBar->GetSubMenuAt( 1 )->GetItemAt( 3 )->SetEnable( true );
+				m_pcMenuBar->GetSubMenuAt( 1 )->GetItemAt( 4 )->SetEnable( true );
+				
 			}
 		}
 		break;
@@ -211,7 +231,7 @@ void MPWindow::HandleMessage( os::Message * pcMessage )
 			cFrame.bottom = cFrame.top + 40 + m_pcMenuBar->GetPreferredSize( false ).y;
 			SetFrame( cFrame );
 			SetFlags( GetFlags() | os::WND_NOT_RESIZABLE );
-			m_pcMenuBar->GetSubMenuAt( 1 )->GetItemAt( 3 )->SetEnable( false );
+			m_pcMenuBar->GetSubMenuAt( 1 )->GetItemAt( 4 )->SetEnable( false );
 		}
 		break;
 	case MP_STATE_CHANGED:
@@ -304,16 +324,10 @@ MPApp::MPApp( const char *pzMimeType, os::String zFileName, bool bLoad ):os::App
 	/* Open file if neccessary */
 	if ( bLoad )
 	{
-		os::MediaInput * pcInput = m_pcManager->GetBestInput( zFileName );
-		if ( pcInput != NULL )
-		{
-			Open( zFileName, pcInput->GetIdentifier() );
-			delete( pcInput );
-		}
+		os::Message cMsg( os::M_LOAD_REQUESTED );
+		cMsg.AddString( "file/path", zFileName );
+		PostMessage( &cMsg, this );
 	}
-	
-	
-
 }
 
 MPApp::~MPApp()
@@ -326,41 +340,26 @@ MPApp::~MPApp()
 	m_pcManager->Put();
 }
 
-class AVSyncTime : public os::MediaTimeSource
-{
-public:
-	AVSyncTime( os::MediaOutput* pcOutput ) { m_pcOutput = pcOutput; m_nTime = 0; }
-	void SetTime( bigtime_t nTime ) { m_nTime = nTime; }
-	os::String GetIdentifier() { return( "Media Player AV Sync" ); }
-	bigtime_t GetCurrentTime() { return( m_nTime - m_pcOutput->GetDelay() ); }
-private:
-	os::MediaOutput* m_pcOutput;
-	bigtime_t m_nTime;
-};
 
 /* Thread which is responsible to play the file */
 void MPApp::PlayThread()
 {
 	bigtime_t nTime = get_system_time();
-
+	bigtime_t nPlayTime = 0;
 	m_bPlayThread = true;
-	bool bGrab;
-	bool bNoGrab;
-	bool bStarted = false;
-
+	
 	os::MediaPacket_s sPacket;
 	os::MediaPacket_s sAudioPacket;
 	os::MediaPacket_s sVideoFrame;
+	bool bVideoValid = false;
+	bool bAudioValid = false;
 	uint64 nVideoFrames = 0;
 	uint64 nAudioBytes = 0;
 	uint8 nErrorCount = 0;
 	bool bError = false;
-	uint32 nGrabValue = 80;
-	bool bDoubleDraw = false;
-	bool bSkipFrame = false;
 	bigtime_t nLastVideo = 0;
 	bigtime_t nLastAudio = 0;
-	AVSyncTime cAVTime( m_pcAudioOutput ); 
+	std::vector<os::MediaPacket_s> acPackets;
 	
 	std::cout << "Play thread running" << std::endl;
 	/* Seek to last position */
@@ -376,113 +375,133 @@ void MPApp::PlayThread()
 	{
 		m_pcVideoCodec->CreateVideoOutputPacket( &sVideoFrame );
 	}
-	/* Set sync object */
-	if( m_bVideo && m_bAudio )
-		m_pcVideoOutput->SetTimeSource( &cAVTime );
+	
 	while ( m_bPlayThread )
 	{
 		if ( m_bPacket )
 		{
-		      grab:
-			/* Look if we have to grab data */
-			bGrab = false;
-			bNoGrab = false;
-			if ( m_bVideo )
+			bool bCheckError = false;
+again:
+			if( acPackets.size() < 100 )
 			{
-				if ( m_pcVideoOutput->GetUsedBufferPercentage() < nGrabValue )
-					bGrab = true;
-				if ( m_pcVideoOutput->GetUsedBufferPercentage() >= nGrabValue )
-					bNoGrab = true;
-			}
-			if ( m_bAudio )
-			{
-				if ( m_pcAudioOutput->GetUsedBufferPercentage() < nGrabValue )
-					bGrab = true;
-				if ( m_pcAudioOutput->GetUsedBufferPercentage() >= nGrabValue )
-					bNoGrab = true;
-			}
-			if ( bGrab && !bNoGrab )
-			{
-				/* Grab data */
-				if ( m_pcInput->ReadPacket( &sPacket ) == 0 )
+				if( m_pcInput->ReadPacket( &sPacket ) == 0 )
 				{
-					nErrorCount = 0;
-					/* Decode audio data */
-					if ( m_bAudio && sPacket.nStream == m_nAudioStream )
+					if( ( ( m_bVideo && sPacket.nStream == m_nVideoStream ) ||
+							( m_bAudio && sPacket.nStream == m_nAudioStream ) ) ) {
+						//printf( "Read Packet at %i:%i:%i\n", (int)acPackets.size(), sPacket.nStream, (int)sPacket.nSize[0] );
+						acPackets.push_back( sPacket );
+					}
+					else
+						m_pcInput->FreePacket( &sPacket );
+					goto again;
+				}
+				else
+					bCheckError = true;
+			}
+video_again:		
+			/* Read Video frame */
+			if( m_bVideo && !bVideoValid )
+			{
+				for( uint i = 0; i < acPackets.size(); i++ )
+				{
+					if( acPackets[i].nStream == m_nVideoStream )
 					{
-						//std::cout<<"Audio "<<sPacket.nTimeStamp<<" "<<m_pcAudioOutput->GetUsedBufferPercentage()<<std::endl;
+						sPacket = acPackets[i];
+						//printf("Found video packet at position %i\n", i );
+						if ( m_pcVideoCodec->DecodePacket( &sPacket, &sVideoFrame ) == 0 )
+						{
+							if ( sVideoFrame.nSize[0] > 0 )
+							{
+								bVideoValid = true;								
+							}
+						}
+						m_pcInput->FreePacket( &sPacket );
+						acPackets.erase( acPackets.begin() + i );
+						if( !bVideoValid )
+							goto video_again;
+						break;
+					}
+				}
+			}
+			
+			/* Show videoframe */
+			if( m_bVideo && bVideoValid )
+			{
+				/* Calculate current time */
+				bigtime_t nCurrentTime = nPlayTime;
+				if( m_bAudio )
+				 	nCurrentTime -= m_pcAudioOutput->GetDelay();
+				 
+				uint64 nVideoFrameLength = 1000 / (uint64)m_sVideoFormat.vFrameRate;
+			 
+				if( nCurrentTime > sVideoFrame.nTimeStamp + nVideoFrameLength * 2 )
+				{
+					printf( "Droping Frame %i %i!\n", (int)sVideoFrame.nTimeStamp, (int)nCurrentTime );
+					bVideoValid = false;
+				}
+				else if( !( nCurrentTime < sVideoFrame.nTimeStamp ) )
+				{
+					/* Write video frame */
+					//printf( "Write video frame %i %i\n", (int)sVideoFrame.nTimeStamp, (int)nCurrentTime );
+					nLastVideo = sVideoFrame.nTimeStamp;
+					m_pcVideoOutput->WritePacket( 0, &sVideoFrame );	
+					nVideoFrames++;
+					bVideoValid = false;						
+				}
+			}
+			/* Read audio packet */
+			if( m_bAudio && !bCheckError && !bAudioValid  )
+			{
+				for( uint i = 0; i < acPackets.size(); i++ )
+				{
+					if( acPackets[i].nStream == m_nAudioStream )
+					{
+						//printf("Found audio packet at position %i\n", i );
+						sPacket = acPackets[i];
 						if ( m_pcAudioCodec->DecodePacket( &sPacket, &sAudioPacket ) == 0 )
 						{
 							if ( sAudioPacket.nSize[0] > 0 )
 							{
-								nLastAudio = sAudioPacket.nTimeStamp;
-								
-								sAudioPacket.nTimeStamp = ~0;
-								m_pcAudioOutput->WritePacket( 0, &sAudioPacket );
-								nAudioBytes += sAudioPacket.nSize[0];
-								cAVTime.SetTime( nLastAudio );
+								bAudioValid = true;
 							}
-						}
+						} else
+							printf( "Audio decode error!\n" );
+						m_pcInput->FreePacket( &sPacket );
+						acPackets.erase( acPackets.begin() + i );
+						break;
 					}
-					if ( m_bVideo && sPacket.nStream == m_nVideoStream )
-					{
-						//std::cout<<"Video "<<sPacket.nTimeStamp<<" "<<m_pcVideoOutput->GetUsedBufferPercentage()<<std::endl;
-						if ( m_pcVideoCodec->DecodePacket( &sPacket, &sVideoFrame ) == 0 )
-							if ( sVideoFrame.nSize[0] > 0 )
-							{
-								if ( !bSkipFrame )
-								{
-									nLastVideo = sVideoFrame.nTimeStamp;
-									m_pcVideoOutput->WritePacket( 0, &sVideoFrame );
-									if ( bDoubleDraw )
-									{
-										m_pcVideoOutput->WritePacket( 0, &sVideoFrame );
-										bDoubleDraw = false;
-									}
-								}
-								nVideoFrames++;
-								bSkipFrame = false;
-							}
-					}
-					m_pcInput->FreePacket( &sPacket );
-					goto grab;
 				}
-				else
-				{
-					/* Increase error count */
+			}
+			
+			/* Write audio */
+			if( m_bAudio && !bCheckError && bAudioValid /*&& ( m_pcAudioOutput->GetDelay() < m_pcAudioOutput->GetBufferSize() / 2 )*/ )
+			{
+				if( sAudioPacket.nTimeStamp != ~0 )
+					nLastAudio = sAudioPacket.nTimeStamp;
+				bigtime_t nAudioLength = (bigtime_t)sAudioPacket.nSize[0] * 1000;
+				nAudioLength /= bigtime_t( 2 * m_sAudioFormat.nChannels * m_sAudioFormat.nSampleRate );
+				sAudioPacket.nTimeStamp = ~0;
+				uint64 nBufferFree = ( m_pcAudioOutput->GetBufferSize() - m_pcAudioOutput->GetDelay() );
+				m_pcAudioOutput->WritePacket( 0, &sAudioPacket );
+				bAudioValid = false;
+				nLastAudio += nAudioLength;
+				nAudioBytes += sAudioPacket.nSize[0];
+				nPlayTime = nLastAudio;
+			}		
+			/* Increase error count */
+			if( bCheckError )
+			{
 					nErrorCount++;
-					if ( ( m_bVideo && m_pcVideoOutput->GetDelay() > 0 ) || ( m_bAudio && m_pcAudioOutput->GetDelay(  ) > 0 ) )
+					if ( ( m_bVideo && m_pcVideoOutput->GetDelay( true ) > 0 ) || ( m_bAudio && m_pcAudioOutput->GetDelay( true ) > 0 ) )
 						nErrorCount--;
-					
 					if ( nErrorCount > 10 && !bError )
 					{
 						os::Application::GetInstance()->PostMessage( MP_GUI_STOP, os::Application::GetInstance(  ) );
 						bError = true;
 					}
-				}
-
-			}
-
-			/* Look if we have to start now */
-			if ( !bStarted )
-			{
-				if ( bNoGrab == true || m_pcInput->GetLength() < 5 )
-				{
-					bStarted = true;
-					std::cout << "Go" << std::endl;
-				}
-			}
-			/* If we have started then flush the media data */
-			if ( bStarted )
-			{
-				if ( m_bAudio )
-					m_pcAudioOutput->Flush();
-				if ( m_bVideo )
-					m_pcVideoOutput->Flush();
-				
-			}
-
+			} 	
 		}
+		
 		snooze( 1000 );
 
 		if ( !m_bStream && get_system_time() > nTime + 1000000 )
@@ -490,35 +509,7 @@ void MPApp::PlayThread()
 			/* Move slider */
 			m_pcWin->GetSlider()->SetValue( os::Variant( ( int )( m_pcInput->GetCurrentPosition(  ) * 1000 / m_pcInput->GetLength(  ) ) ), false );
 			//cout<<"Position "<<m_pcInput->GetCurrentPosition()<<endl;
-			if ( m_bPacket && m_bVideo && m_bAudio )
-			{
-#if 0				
-				uint64 nVideo = ( ( uint64 )nVideoFrames * 1000 / ( uint64 )m_sVideoFormat.vFrameRate - m_pcVideoOutput->GetDelay() );
-				uint64 nAudio = ( ( uint64 )nAudioBytes * 1000 / 2 / ( uint64 )m_sAudioFormat.nSampleRate  / m_sAudioFormat.nChannels - m_pcAudioOutput->GetDelay() );
-
-				std::cout<<"Video "<<nVideo<<" "<<nLastVideo<<" Audio "<<nAudio<<" "<<nLastAudio<<std::endl;
-
-				if ( nVideo > nAudio )
-				{
-					std::cout << "AV delay ( Video ahead ): " << nVideo - nAudio << std::endl;
-					if ( nVideo - nAudio > 100 )
-					{
-						std::cout << "Draw frame two times" << std::endl;
-						bDoubleDraw = true;
-					}
-				}
-				else
-				{
-					std::cout << "AV delay ( Audio ahead ): " << nAudio - nVideo << std::endl;
-					if ( nAudio - nVideo > 100 )
-					{
-						std::cout << "Skip frame" << std::endl;
-						bSkipFrame = true;
-					}
-				}
-#endif
-			}
-
+	
 			nTime = get_system_time();
 			/* For non packet based devices check if we have finished */
 			if ( !m_bPacket && m_nLastPosition == m_pcInput->GetCurrentPosition() )
@@ -541,6 +532,10 @@ void MPApp::PlayThread()
 	if ( !m_bPacket )
 	{
 		m_pcInput->StopTrack();
+	} 
+	else
+	{
+		m_pcInput->Clear();
 	}
 	if ( m_bPacket && m_bVideo )
 	{
@@ -575,7 +570,7 @@ void MPApp::Open( os::String zFileName, os::String zInput )
 		{
 			break;
 		}
-		delete( m_pcInput );
+		m_pcInput->Release();
 		m_pcInput = NULL;
 		i++;
 	}
@@ -666,7 +661,7 @@ void MPApp::Open( os::String zFileName, os::String zInput )
 		{
 			if ( m_pcVideoOutput )
 			{
-				delete( m_pcVideoOutput );
+				m_pcVideoOutput->Release();
 				m_pcVideoOutput = NULL;
 			}
 			m_bVideo = false;
@@ -681,7 +676,7 @@ void MPApp::Open( os::String zFileName, os::String zInput )
 		{
 			if ( m_pcAudioOutput )
 			{
-				delete( m_pcAudioOutput );
+				m_pcAudioOutput->Release();
 				m_pcAudioOutput = NULL;
 			}
 			m_bAudio = false;
@@ -700,7 +695,7 @@ void MPApp::Open( os::String zFileName, os::String zInput )
 					break;
 				else
 				{
-					delete( m_pcVideoCodec );
+					m_pcVideoCodec->Release();
 					m_pcVideoCodec = NULL;
 				}
 		}
@@ -724,7 +719,7 @@ void MPApp::Open( os::String zFileName, os::String zInput )
 					break;
 				else
 				{
-					delete( m_pcAudioCodec );
+					m_pcAudioCodec->Release();
 					m_pcAudioCodec = NULL;
 				}
 		}
@@ -743,7 +738,7 @@ void MPApp::Open( os::String zFileName, os::String zInput )
 	{
 		Close();
 		os::Alert * pcAlert = new os::Alert( MSG_ERRWND_TITLE, MSG_ERRWND_CANTPLAY, os::Alert::ALERT_WARNING, 0, MSG_ERRWND_OK.c_str(), NULL );
-		pcAlert->Go();
+		pcAlert->Go( new os::Invoker( 0 ) );
 		return;
 	}
 	/* Fill tracks menu */
@@ -780,6 +775,7 @@ void MPApp::Open( os::String zFileName, os::String zInput )
 		os::Message cVideoMsg( MP_CREATE_VIDEO );
 		cVideoMsg.AddInt32( "width", m_sVideoFormat.nWidth );
 		cVideoMsg.AddInt32( "height", m_sVideoFormat.nHeight );
+		printf( "%ix%i\n", m_sVideoFormat.nWidth, m_sVideoFormat.nHeight );
 		m_pcWin->PostMessage( &cVideoMsg, m_pcWin );
 	}
 
@@ -798,14 +794,15 @@ void MPApp::Close()
 	}
 	if ( m_pcAudioOutput )
 	{
+		printf("Close audio output!\n");
 		m_pcAudioOutput->Close();
-		delete( m_pcAudioOutput );
+		m_pcAudioOutput->Release();
 		m_pcAudioOutput = NULL;
 	}
 	if ( m_pcVideoOutput )
 	{
 		m_pcVideoOutput->Close();
-		delete( m_pcVideoOutput );
+		m_pcVideoOutput->Release();
 		/* Delete video view */
 		if ( m_pcWin )
 		{
@@ -817,19 +814,19 @@ void MPApp::Close()
 	if ( m_pcAudioCodec )
 	{
 		m_pcAudioCodec->Close();
-		delete( m_pcAudioCodec );
+		m_pcAudioCodec->Release();
 		m_pcAudioCodec = NULL;
 	}
 	if ( m_pcVideoCodec )
 	{
 		m_pcVideoCodec->Close();
-		delete( m_pcVideoCodec );
+		m_pcVideoCodec->Release();
 		m_pcVideoCodec = NULL;
 	}
 	if ( m_pcInput )
 	{
 		m_pcInput->Close();
-		delete( m_pcInput );
+		m_pcInput->Release();
 		m_pcInput = NULL;
 	}
 	m_bVideo = m_bAudio = false;
@@ -924,6 +921,12 @@ void MPApp::HandleMessage( os::Message * pcMessage )
 			m_pcWin->GetSlider()->SetValue( os::Variant( 0 ) );
 		}
 		break;
+	case MP_GUI_OPEN:
+		/* Open ( sent by the MPWindow class ) */
+		/* Change fullscreen mode if necessary */
+		if ( m_bFullScreen )
+			ChangeFullScreen();
+		break;
 	case MP_GUI_OPEN_INPUT:
 		/* Open ( sent by the MPWindow class ) */
 		if ( m_nState != MP_STATE_STOPPED )
@@ -1004,6 +1007,33 @@ void MPApp::HandleMessage( os::Message * pcMessage )
 			}
 		}
 		break;
+	case MP_GUI_FILE_INFO:
+		/* Show information about the open file ( sent by the MPWindow class ) */
+		{
+			if( m_pcInput == NULL )
+				break;
+			char zTemp[255];
+			os::String cBodyText;
+			if( m_bVideo )
+			{
+				sprintf( zTemp, "%s: %s %ix%i, %ifps\n", MSG_INFOWND_VIDEO.c_str(), m_sVideoFormat.zName.c_str(), m_sVideoFormat.nWidth,
+						m_sVideoFormat.nHeight, (int)m_sVideoFormat.vFrameRate );
+				
+				cBodyText += zTemp;
+			}
+			if( m_bAudio )
+			{
+				sprintf( zTemp, "%s: %s %i %s, %ihz\n", MSG_INFOWND_AUDIO.c_str(), m_sAudioFormat.zName.c_str(), m_sAudioFormat.nChannels,
+						MSG_INFOWND_CHANNELS.c_str(), m_sAudioFormat.nSampleRate );
+				
+				cBodyText += zTemp;
+			}
+		
+			os::Alert* pcInfo = new os::Alert( MSG_INFOWND_TITLE, cBodyText, os::Alert::ALERT_INFO, 
+										os::WND_NOT_RESIZABLE, MSG_INFOWND_OK.c_str(), NULL );
+			pcInfo->Go( new os::Invoker( 0 ) ); 
+		}
+		break;
 	case MP_GUI_FULLSCREEN:
 		/* Change to / from fullscreen mode ( sent by the MPWindow class ) */
 		ChangeFullScreen();
@@ -1039,7 +1069,7 @@ void MPApp::HandleMessage( os::Message * pcMessage )
 				if ( pcInput != NULL )
 				{
 					Open( zFile, pcInput->GetIdentifier() );
-					delete( pcInput );
+					pcInput->Release();
 				}
 			}
 		}

@@ -35,11 +35,13 @@
 #include <atheos/image.h>
 #include <atheos/areas.h>
 #include <atheos/time.h>
+#include <atheos/device.h>
 #include <media/manager.h>
 #include <media/server.h>
 #include <media/input.h>
 #include <media/codec.h>
 #include <media/output.h>
+#include <media/addon.h>
 #include <media/soundplayer.h>
 #include <storage/directory.h>
 #include <storage/file.h>
@@ -66,28 +68,22 @@ struct MediaAudioStream_s {
 	bool bUsed;
 	char zName[255];
 	bool bActive;
-	bool bResample;
 	int32 nChannels;
 	int32 nSampleRate;
 	area_id hArea;
-	uint8* pAddress;
+	int nBufferSize;
+	uint8* pData;
+	atomic_t* pnHWDelay;
+	atomic_t* pnReadPointer;
+	atomic_t* pnWritePointer;
 	int nVolume;
-	uint32 nValueCount;
-	float vValue;
-	bigtime_t nBufferPlayed;
 };
 
 struct MediaDSP_s {
-	bool bUsed;
+	bool bUsed;	
+	os::MediaAddon* pcAddon;
+	int nOutputStream;
 	char zName[MAXNAMLEN];
-	char zPath[4096];
-};
-
-struct MediaMixer_s {
-	bool bUsed;
-	char zPath[4096];
-	int hMixerDev;
-	View* pcFrame;
 };
 
 class MediaControls;
@@ -113,17 +109,21 @@ public:
 	{
 		m_nMasterVolume = nVolume;
 	}
+	int GetMasterVolume() 
+	{
+		return( m_nMasterVolume );
+	}
 	void ControlsHidden( Rect cFrame )
 	{
-		m_cControlsFrame = cFrame;
-		m_bControlsShown = false;
+		m_pcControls = NULL;
 	}
 private:
+	friend class MediaControls;
 	void SaveSettings();
+	int LoadAudioPlugins();
 	
-	int FindDsps( const char *pzPath );
-
-	bool OpenSoundCard( int nDevice );
+	bool CheckFormat( int nChannels, int nSampleRate, int nRealChannels, int nRealSampleRate );
+	bool OpenSoundCard( int nDevice, int nChannels, int nSampleRate );
 	void CloseSoundCard();
 	
 	void GetDefaultInput( Message* pcMessage );
@@ -137,15 +137,10 @@ private:
 	void CreateAudioStream( Message* pcMessage );
 	void DeleteAudioStream( Message* pcMessage );
 	
-	void FlushAudioStream( Message* pcMessage );
-	void GetDelay( Message* pcMessage );
-	void GetPercentage( Message* pcMessage );
 	void Clear( Message* pcMessage );
 	void Start( Message* pcMessage );
 	
 	
-	uint32 Resample( os::MediaFormat_s sSrcFormat, os::MediaFormat_s sDstFormat, uint16* pDst, uint16* pSrc, uint32 nLength );
-
 	void GetDspCount( Message* pcMessage );
 	void GetDspInfo( Message* pcMessage );
 	void GetDefaultDsp( Message* pcMessage );
@@ -156,28 +151,23 @@ private:
 	String 			m_zDefaultVideoOutput;
 	String			m_zStartupSound;
 	MediaAudioStream_s m_sAudioStream[MEDIA_MAX_AUDIO_STREAMS];
-	os::MediaPacket_s* m_psPacket[MEDIA_MAX_AUDIO_STREAMS][MEDIA_MAX_STREAM_PACKETS];
-	uint32			m_nQueuedPackets[MEDIA_MAX_AUDIO_STREAMS];
 	MediaDSP_s		m_sDsps[MEDIA_MAX_DSPS];
 	int				m_nDspCount;
 	int				m_nDefaultDsp;
-	int				m_hOSS;
-	int				m_nBufferSize;
+	MediaOutput*	m_pcCurrentOutput;
+	uint64			m_nBufferSize;
 	MediaFormat_s	m_sCardFormat;
 	sem_id			m_hLock;
-	sem_id			m_hClearLock;
+	sem_id			m_hActiveStreamCount;
+	int				m_nActiveStreamCount;
 	thread_id		m_hThread;
 	bool			m_bRunThread;
-	uint32			m_nActiveStreamCount;
 	signed int*		m_pMixBuffer;
-	uint32*			m_pValueBuffer;
-	uint32 			m_nMasterValueCount;
-	float 			m_vMasterValue;
 	int				m_nMasterVolume;
 	
 	MediaControls*	m_pcControls;
 	Rect			m_cControlsFrame;
-	bool			m_bControlsShown;
+
 };
 	
 

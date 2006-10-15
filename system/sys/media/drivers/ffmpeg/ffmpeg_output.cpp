@@ -34,6 +34,10 @@ public:
 	FFMpegOutput();
 	~FFMpegOutput();
 	os::String		GetIdentifier();
+	uint32			GetPhysicalType()
+	{
+		return( os::MEDIA_PHY_SOFT_MUX );
+	}
 	os::View*		GetConfigurationView();
 	
 	bool			FileNameRequired();
@@ -41,7 +45,7 @@ public:
 	void 			Close();
 	
 	void			Clear();
-	void			Flush();
+//	void			Flush();
 	
 	uint32			GetOutputFormatCount();
 	os::MediaFormat_s	GetOutputFormat( uint32 nIndex );
@@ -50,8 +54,8 @@ public:
 	
 	status_t		WritePacket( uint32 nIndex, os::MediaPacket_s* psPacket );
 	
-	uint64			GetDelay();
-	uint32			GetUsedBufferPercentage();
+	uint64			GetDelay( bool bNonSharedOnly );
+	uint64			GetBufferSize( bool bNonSharedOnly );
 	
 private:
 	void			StartEncoding();
@@ -85,10 +89,6 @@ os::View* FFMpegOutput::GetConfigurationView()
 	return( NULL );
 }
 
-void FFMpegOutput::Flush()
-{
-}
-
 bool FFMpegOutput::FileNameRequired()
 {
 	return( true );
@@ -119,6 +119,24 @@ status_t FFMpegOutput::Open( os::String zFileName )
 	if( url_fopen( &m_psContext->pb, zFileName.c_str(), URL_WRONLY ) < 0 )
 		return( -1 );
 		
+	   
+    /* Set parameters */
+	AVFormatParameters sParams;
+	memset( &sParams, 0, sizeof( sParams ) );
+	sParams.image_format = NULL;
+	if( av_set_parameters( m_psContext, &sParams ) < 0 ) {
+		std::cout<<"Could not set parameters"<<std::endl;
+		return( -1 );
+	}
+	
+	
+	
+	m_psContext->packet_size= 0;
+    m_psContext->mux_rate= 0;
+	m_psContext->preload= (int)(0.5*AV_TIME_BASE);
+    m_psContext->max_delay= (int)(0.7*AV_TIME_BASE);
+    m_psContext->loop_output = AVFMT_NOOUTPUTLOOP;
+ 
 	
 	m_nCurrentStream = 0;
 	m_bStarted = false;
@@ -155,15 +173,6 @@ void FFMpegOutput::StartEncoding()
 	
 	m_psContext->timestamp = 0;
 	strcpy( m_psContext->filename, m_zFileName.c_str() );
-	
-	/* Set parameters */
-	AVFormatParameters sParams;
-	memset( &sParams, 0, sizeof( sParams ) );
-	sParams.image_format = NULL;
-	if( av_set_parameters( m_psContext, &sParams ) < 0 ) {
-		std::cout<<"Could not set parameters"<<std::endl;
-		return;
-	}
 	
 	/* Writing header */
 	if( av_write_header( m_psContext ) < 0 ) {
@@ -241,6 +250,8 @@ status_t FFMpegOutput::AddStream( os::String zName, os::MediaFormat_s sFormat )
     
 	m_nCurrentStream++;
 	
+	
+	
 	return( 0 );
 }
 
@@ -272,9 +283,10 @@ status_t FFMpegOutput::WritePacket( uint32 nIndex, os::MediaPacket_s* psPacket )
 			sPacket.data = pBuffer;
 			sPacket.size = psFrames->nSize;
 			sPacket.flags |= PKT_FLAG_KEY;
-			if( m_sStream[nIndex]->codec->coded_frame )
+			if( m_sStream[nIndex]->codec->coded_frame && m_sStream[nIndex]->codec->coded_frame->pts != AV_NOPTS_VALUE )
+			{
 				sPacket.pts= av_rescale_q( m_sStream[nIndex]->codec->coded_frame->pts, m_sStream[nIndex]->codec->time_base, m_sStream[nIndex]->time_base );
-                        
+			}
 		//cout<<"Write :"<<psFrames->nSize<<endl;
 			av_interleaved_write_frame( m_psContext, &sPacket );
 			pBuffer += psFrames->nSize;
@@ -293,8 +305,7 @@ status_t FFMpegOutput::WritePacket( uint32 nIndex, os::MediaPacket_s* psPacket )
 		if( m_sStream[nIndex]->codec->coded_frame && m_sStream[nIndex]->codec->coded_frame->key_frame )
 			sPacket.flags |= PKT_FLAG_KEY;
 		if( m_sStream[nIndex]->codec->coded_frame )
-				sPacket.pts= av_rescale_q( m_sStream[nIndex]->codec->coded_frame->pts, m_sStream[nIndex]->codec->time_base, m_sStream[nIndex]->time_base );
-      			
+			sPacket.pts= av_rescale_q( m_sStream[nIndex]->codec->coded_frame->pts, m_sStream[nIndex]->codec->time_base, m_sStream[nIndex]->time_base );
 		av_interleaved_write_frame( m_psContext, &sPacket );
 	}
 	
@@ -303,12 +314,12 @@ status_t FFMpegOutput::WritePacket( uint32 nIndex, os::MediaPacket_s* psPacket )
 	return( 0 );
 }
 
-uint64 FFMpegOutput::GetDelay()
+uint64 FFMpegOutput::GetDelay( bool bNonSharedOnly )
 {
 	return( 0 );
 }
 
-uint32 FFMpegOutput::GetUsedBufferPercentage()
+uint64 FFMpegOutput::GetBufferSize( bool bNonSharedOnly )
 {
 	return( 0 );
 }

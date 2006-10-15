@@ -55,6 +55,7 @@ enum {
 	MP_GUI_QUIT,
 	MP_GUI_OPEN,
 	MP_GUI_OPEN_INPUT,
+	MP_GUI_FILE_INFO,
 		
 	/* Input selector messages */
 	MP_IS_OPEN,

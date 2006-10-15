@@ -35,6 +35,10 @@ public:
 	CDRom( os::String zDevicePath );
 	~CDRom();
 	os::String 		GetIdentifier();
+		uint32			GetPhysicalType()
+	{
+		return( os::MEDIA_PHY_CD_DVD_ANALOG_IN );
+	}
 	os::View*		GetConfigurationView();
 	
 	bool			FileNameRequired();

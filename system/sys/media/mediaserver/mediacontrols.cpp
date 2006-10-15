@@ -31,75 +31,33 @@ MediaControls::MediaControls( MediaServer* pcServer, Rect cFrame )
 			: Window( cFrame, "media_server_controls", "Media Controls" )
 {
 	m_pcServer = pcServer;
-	uint32 nYPos = 10;
-
+	
 	Lock();
+	
 	
 	/* Create Tabview */
 	m_pcTabs = new TabView( GetBounds(), "tabs", CF_FOLLOW_ALL );
-
-	/* Find all available mixer devices */
-	m_nMixerCount = FindMixers( "/dev/sound/" );
-
-	/* Try to open soundcard mixers */
-	for( int j=0; j<m_nMixerCount; j++ )
+	
+	/* Add views */
+	for( uint i = 0; i < MEDIA_MAX_DSPS; i++ )
 	{
-		/* Reset vertical position for new mixer tab */
-		nYPos = 10;
-
-		m_pcMixerDev[j].hMixerDev = open( m_pcMixerDev[j].zPath, O_RDWR );
-		if( m_pcMixerDev[j].hMixerDev >= 0 )
+		if( m_pcServer->m_sDsps[i].bUsed )
 		{
-		
-			mixer_info sInfo;
-			ioctl( m_pcMixerDev[j].hMixerDev, SOUND_MIXER_INFO, &sInfo );
-		
-			/* Create frame */
-			m_pcMixerDev[j].pcFrame = new View( os::Rect( 5, 5, cFrame.Width() - 5, 20 ), "soundcard" );
-		
-			/* Add channels */
-			unsigned int nSetting;
-			int nVolume;
-			int nLeft, nRight;
-			static const char *zSources[] = SOUND_DEVICE_LABELS;
-			ioctl( m_pcMixerDev[j].hMixerDev, MIXER_READ(SOUND_MIXER_DEVMASK), &nSetting);
-		
-		
-			for ( int i = 0; i < SOUND_MIXER_NRDEVICES; i++ ) {
-				if ( nSetting & (1 << i) ) {
-					if (ioctl( m_pcMixerDev[j].hMixerDev, MIXER_READ(i), &nVolume ) > -1 ) {
-			
-						m_pcMixerChannel[j][i] = new MixerChannel( Rect( 5, nYPos, 240, nYPos + 40 ), 
-						zSources[i], this, i, j );
-			
-						nLeft  = nVolume & 0x00FF;
-						nRight = (nVolume & 0xFF00) >> 8;
-				
-						m_pcMixerChannel[j][i]->SetLeftValue( nLeft );
-						m_pcMixerChannel[j][i]->SetRightValue( nRight );
-			
-						if( nLeft == nRight )
-							m_pcMixerChannel[j][i]->SetLockValue( 1 );
-						else
-							m_pcMixerChannel[j][i]->SetLockValue( 0 );
-				
-						m_pcMixerDev[j].pcFrame->AddChild( m_pcMixerChannel[j][i] );
-						nYPos += 45;
-					}
-				}
+			os::MediaOutput* pcOutput = m_pcServer->m_sDsps[i].pcAddon->GetOutput( m_pcServer->m_sDsps[i].nOutputStream );
+			if( pcOutput == NULL )
+				continue;
+			os::View* pcView = pcOutput->GetConfigurationView();
+			if( pcView )
+			{
+				m_apcOutputs.push_back( pcOutput );
+				m_pcTabs->AppendTab( m_pcServer->m_sDsps[i].zName, pcView );
 			}
-			/* Set framesize */
-			Rect cNewFrame = m_pcMixerDev[j].pcFrame->GetFrame();
-			cNewFrame.bottom = nYPos + 15;
-			m_pcMixerDev[j].pcFrame->SetFrame( cNewFrame );
-		
-			/* Create tab */
-			m_pcTabs->AppendTab( sInfo.name, m_pcMixerDev[j].pcFrame );
+			else
+				pcOutput->Release();
 		}
 	}
-
 	/* Create streams tab */
-	
+
 	/* Clear */
 	for( uint32 i = 0; i < MEDIA_MAX_AUDIO_STREAMS; i++ )
 	{
@@ -108,94 +66,49 @@ MediaControls::MediaControls( MediaServer* pcServer, Rect cFrame )
 	
 	/* Create stream barview */
 	View* pcFrame = new View( os::Rect( 5, 0, cFrame.Width() - 5, 300 ), "streams" );
-	
+
 	m_pcStreamBar = new BarView( Rect( 5, 10, pcFrame->GetBounds().Width() - 10, 300 ) );
 	m_pcStreamBar->SetStreamLabel( 0, "Master" );
-	m_pcStreamBar->SetStreamVolume( 0, 100 );
+	m_pcStreamBar->SetStreamVolume( 0, pcServer->GetMasterVolume() );
 	m_pcStreamBar->SetStreamActive( 0, true );
-	m_pcStreamBar->SetStreamValue( 0, 0 );
+	
+	for( int i = 0; i < MEDIA_MAX_AUDIO_STREAMS; i++ )
+		StreamChanged( i );
 
 	pcFrame->AddChild( m_pcStreamBar );
 	/* Create tab */
 	m_pcTabs->AppendTab( "Streams", pcFrame );
 	
 	AddChild( m_pcTabs );
-	
-	cFrame.bottom = cFrame.top + nYPos + 45;
-	SetFrame( cFrame );
-	
+
 	Unlock();
 	
 	/* Set Icon */
 	os::Resources cCol( get_image_id() );
-	os::ResStream *pcStream = cCol.GetResourceStream( "icon24x24.png" );
+	os::ResStream *pcStream = cCol.GetResourceStream( "icon48x48.png" );
 	os::BitmapImage *pcIcon = new os::BitmapImage( pcStream );
+	pcIcon->SetSize( os::Point( 24, 24 ) );
 	SetIcon( pcIcon->LockBitmap() );
 	delete( pcIcon );
 }
 
 MediaControls::~MediaControls()
 {
+	for( uint i = 0; i < m_apcOutputs.size(); i++ )
+		m_apcOutputs[i]->Release();
 }
 
 bool MediaControls::OkToQuit()
 {
 	m_pcServer->ControlsHidden( GetFrame() );
-	Show( false );
-	return( false );
+	//Show( false );
+	return( true );
 }
 
 void MediaControls::HandleMessage( Message* pcMessage )
 {
-	int8 nChannel, nMixer;
-	int nLeft, nRight;
 	switch( pcMessage->GetCode() )
 	{
-		case MESSAGE_LOCK_CHANGED:
-			if( !pcMessage->FindInt8( "mixer", &nMixer ) ) {
-				if( !pcMessage->FindInt8( "channel", &nChannel ) ) {
-					if( m_pcMixerChannel[nMixer][nChannel]->GetLockValue() == 1 )
-					{
-						nLeft = m_pcMixerChannel[nMixer][nChannel]->GetLeftValue();
-						nRight = m_pcMixerChannel[nMixer][nChannel]->GetRightValue();
-					
-						m_pcMixerChannel[nMixer][nChannel]->SetLeftValue( ( nLeft + nRight ) / 2 );
-						m_pcMixerChannel[nMixer][nChannel]->SetRightValue( ( nLeft + nRight ) / 2 );
-					}
-				}
-			}
-		break;
-		
-		case MESSAGE_CHANNEL_CHANGED:
-			bool bLeftSlider;
-			int nSetting, nVolume;
-			if( !pcMessage->FindInt8( "mixer", &nMixer ) ) {
-				if( !pcMessage->FindInt8( "channel", &nChannel ) ) {
-
-					nLeft = m_pcMixerChannel[nMixer][nChannel]->GetLeftValue();
-					nRight = m_pcMixerChannel[nMixer][nChannel]->GetRightValue();
-				
-					if( m_pcMixerChannel[nMixer][nChannel]->GetLockValue() == 1 ) {
-						if( !pcMessage->FindBool( "left", &bLeftSlider ) ) {
-							if( bLeftSlider == true ) 
-								nRight = nLeft;
-							else 
-								nLeft = nRight;
-						}
-					}	
-				
-					nSetting = ( nLeft & 0xFF ) + ( ( nRight & 0xFF ) << 8 );
-					ioctl( m_pcMixerDev[nMixer].hMixerDev, MIXER_WRITE( nChannel ), &nSetting );
-				
-					ioctl( m_pcMixerDev[nMixer].hMixerDev, MIXER_READ( nChannel ), &nVolume );		
-					nLeft  = nVolume & 0x00FF;
-					nRight = (nVolume & 0xFF00) >> 8;
-				
-					m_pcMixerChannel[nMixer][nChannel]->SetLeftValue( nLeft );
-					m_pcMixerChannel[nMixer][nChannel]->SetRightValue( nRight );
-				}
-			}
-		break;
 		case MESSAGE_STREAM_VOLUME_CHANGED:
 			{
 			int8 nVolume;
@@ -219,21 +132,11 @@ void MediaControls::HandleMessage( Message* pcMessage )
 	}
 
 }
-
-void MediaControls::SetMasterValue( float vValue )
-{
-	m_pcStreamBar->SetStreamValue( 0, sin( vValue * M_PI / 2 ) );
-}
-
 void MediaControls::SetMasterVolume( int nValue )
 {
 	m_pcStreamBar->SetStreamVolume( 0, nValue );
 }
 
-void MediaControls::SetStreamValue( uint32 nNum, float vValue )
-{
-	m_pcStreamBar->SetStreamValue( nNum + 1, sin( vValue * M_PI / 2 ) );
-}
 
 void MediaControls::StreamChanged( uint32 nNum )
 {
@@ -246,7 +149,6 @@ void MediaControls::StreamChanged( uint32 nNum )
 		m_pcStreamBar->SetStreamLabel( nNum + 1, psStream->zName );
 		m_pcStreamBar->SetStreamVolume( nNum + 1, 100 );
 		m_pcStreamBar->SetStreamActive( nNum + 1, true );
-		m_pcStreamBar->SetStreamValue( nNum + 1, 0 );
 	}
 	
 	if( !psStream->bUsed && m_bStreamActive[nNum] )
@@ -260,89 +162,24 @@ void MediaControls::StreamChanged( uint32 nNum )
 
 int MediaControls::FindMixers( const char *pzPath )
 {
-	int nRet = 0, nMixerCount = 0;
-	DIR *hAudioDir, *hMixerDir;
-	struct dirent *hAudioDev, *hMixerNode;
-	char *zCurrentPath = NULL;
-
-	hAudioDir = opendir( pzPath );
-	if( hAudioDir == NULL )
-	{
-		std::cout<<"Unable to open"<<pzPath<<std::endl;
-		return nRet;
-	}
-
-	while( (hAudioDev = readdir( hAudioDir )) )
-	{
-		if( !strcmp( hAudioDev->d_name, "." ) || !strcmp( hAudioDev->d_name, ".." ) )
-			continue;
-
-		zCurrentPath = (char*)calloc( 1, strlen( pzPath ) + strlen( hAudioDev->d_name ) + 7 );
-		if( zCurrentPath == NULL )
-		{
-			std::cout<<"Out of memory"<<std::endl;
-			closedir( hAudioDir );
-			return nRet;
-		}
-
-		zCurrentPath = strcpy( zCurrentPath, pzPath );
-		zCurrentPath = strcat( zCurrentPath, hAudioDev->d_name );
-		zCurrentPath = strcat( zCurrentPath, "/mixer" );
-
-		/* Look for mixer device nodes for this device */
-		hMixerDir = opendir( zCurrentPath );
-		if( hMixerDir == NULL )
-		{
-			std::cout<<"Unable to open"<<zCurrentPath<<std::endl;
-			free( zCurrentPath );
-			continue;
-		}
-
-		while( (hMixerNode = readdir( hMixerDir )) )
-		{
-			char *zMixerPath = NULL;
-
-			if( !strcmp( hMixerNode->d_name, "." ) || !strcmp( hMixerNode->d_name, ".." ) )
-				continue;
-
-			/* We have found a mixer device node */
-			++nMixerCount;
-
-			zMixerPath = (char*)calloc( 1, strlen( zCurrentPath ) + strlen( hMixerNode->d_name ) + 1 );
-			if( zMixerPath == NULL )
-			{
-				std::cout<<"Out of memory"<<std::endl;
-				closedir( hMixerDir );
-				free( zCurrentPath );
-				closedir( hAudioDir );
-				return nRet;
-			}
-
-			zMixerPath = strcpy( zMixerPath, zCurrentPath );
-			zMixerPath = strcat( zMixerPath, "/" );
-			zMixerPath = strcat( zMixerPath, hMixerNode->d_name );
-
-			/* Find next free mixer handle */
-			for( int i=0; i<MEDIA_MAX_DSPS; i++ )
-			{
-				if( m_pcMixerDev[i].bUsed )
-					continue;
-
-				m_pcMixerDev[i].bUsed = true;
-				strcpy( m_pcMixerDev[i].zPath, zMixerPath );
-				break;
-			}
-			free( zMixerPath );
-		}
-
-		closedir( hMixerDir );
-		free( zCurrentPath );
-	}
-
-	nRet = nMixerCount;
-	closedir( hAudioDir );
-	return nRet;
+	return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

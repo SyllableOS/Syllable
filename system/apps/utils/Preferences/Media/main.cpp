@@ -36,11 +36,7 @@ PrefsMediaApp::PrefsMediaApp():os::Application( "application/x-vnd-MediaPreferen
 {
 	// Get screen width and height to centre the window
 	os::Desktop * pcDesktop = new os::Desktop();
-	int iWidth = pcDesktop->GetScreenMode().m_nWidth;
-	int iHeight = pcDesktop->GetScreenMode().m_nHeight;
-	int iLeft = ( iWidth - 500 ) / 2;
-	int iTop = ( iHeight - 350 ) / 2;
-
+	
 	// Create media manager 
 	m_pcManager = new os::MediaManager();
 
@@ -52,20 +48,20 @@ PrefsMediaApp::PrefsMediaApp():os::Application( "application/x-vnd-MediaPreferen
 	}
 
 	// Show main window
-	pcWindow = new MainWindow( os::Rect( iLeft, iTop, iLeft + 520, iTop + 350 ) );
+	pcWindow = new MainWindow( os::Rect( 0, 0, 600, 350 ) );
+	pcWindow->CenterInScreen();
 	pcWindow->Show();
 	pcWindow->MakeFocus();
 }
 
 bool PrefsMediaApp::OkToQuit()
 {
-	delete( m_pcManager );
 	return ( true );
 }
 
 PrefsMediaApp::~PrefsMediaApp()
 {
-
+	m_pcManager->Put();
 }
 
 

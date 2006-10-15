@@ -26,10 +26,10 @@ using namespace os;
 
 enum
 {
-    NUM_SQUARES = 21,
+    NUM_SQUARES = 30,
     LEFT_BORDER = 4,
     RIGHT_BORDER = 8,
-    BAR_WIDTH = 8,
+    BAR_WIDTH = 6,
     BAR_HEIGHT = 22,
     BAR_HSPACING = 0,
     BAR_VSPACING = 10
@@ -39,18 +39,10 @@ static Color32_s g_sBgColor( 130, 130, 130 );
 
 static Color32_s get_bar_color( int nIndex )
 {
-    int nRedMarking = NUM_SQUARES - 4;
-    
-    float vRed;
-    float vGreen = float(nIndex) / float(NUM_SQUARES-1);
-    
-    if ( nIndex <= nRedMarking ) {
-	vRed = 0.0f;
-    } else {
-	vRed = float(nIndex - nRedMarking) / float(NUM_SQUARES - nRedMarking - 1);
-	vRed = 0.6f + vRed * 0.4f;
-    }
-    return( Color32_s( int(255.0f*vRed), int(((100.0f + ( 155.0f * vGreen )) * (1.0f-vRed))*0.8f), 0 ) );
+
+    float vGreen = float(nIndex) / float(NUM_SQUARES-1);    
+   
+    return( Color32_s( 0, int(((100.0f + ( 155.0f * vGreen )) )*0.8f), 0 ) );
 }
 
 
@@ -120,20 +112,18 @@ void BarView::MouseMove( const os::Point& cNewPos, int nCode, uint32 nButtons, o
 					if( nNumber == nBar )
 					{
 						/* Got it! -> Calculate column */
-						int nCol = (int)( ( cNewPos.x - m_vNumWidth - LEFT_BORDER ) / ( BAR_WIDTH + BAR_HSPACING ) );
+						int nCol = (int)( ( cNewPos.x - m_vNumWidth - LEFT_BORDER + 1.0f ) / ( BAR_WIDTH + BAR_HSPACING ) );
+				
+					
+						m_anSliderPos[i] = nCol * 100 / NUM_SQUARES;
+						m_anNumLighted[i] = nCol;
 						
-						/* Set value */
-						Rect cRect = GetBarRect( m_anSliderPos[i] / 5, i );
-						if( m_anSliderPos[i] / 5 < m_anNumLighted[i] )
-							FillRect( cRect, get_bar_color( m_anSliderPos[i] / 5 ) );
-						else
-							FillRect( cRect, g_sBgColor/*get_default_color( COL_NORMAL )*/ );
-						
-						m_anSliderPos[i] = nCol * 5;
-						cRect = GetBarRect( nCol, i );
-						FillRect( cRect, get_default_color( COL_SEL_MENU_BACKGROUND ) );
-						
+						os::Rect cRect = GetBarRect( NUM_SQUARES, i );
+						cRect.left = 0;
+						cRect.right = GetBounds().right;
+						Invalidate( cRect );
 						Flush();
+						
 						
 						/* Send message */
 						Message* pcMsg = new os::Message( MESSAGE_STREAM_VOLUME_CHANGED );
@@ -187,7 +177,7 @@ void BarView::Paint( const Rect& cUpdateRect )
 	
 	for ( int j = 0 ; j < NUM_SQUARES ; ++j ) {
 	    cORect += Point( BAR_WIDTH + BAR_HSPACING, 0.0f );
-	    if( m_anSliderPos[i] / 5 == j ) {
+	    if( m_anSliderPos[i] * NUM_SQUARES / 101 == j ) {
 	    FillRect( cIRect, get_default_color( COL_SEL_MENU_BACKGROUND ) );
 	    } else if ( j < m_anNumLighted[i] ) {
 		FillRect( cIRect, get_bar_color( j ) );
@@ -229,6 +219,7 @@ void BarView::SetStreamLabel( int nNum, String zLabel )
 void BarView::SetStreamVolume( int nNum, int nVolume )
 {
 	m_anSliderPos[nNum] = nVolume;
+	m_anNumLighted[nNum] = int((float)m_anSliderPos[nNum] * float(NUM_SQUARES) + 0.5f);
 	os::Rect cRect = GetBarRect( NUM_SQUARES, nNum );
 	cRect.left = 0;
 	cRect.right = GetBounds().right;
@@ -236,35 +227,9 @@ void BarView::SetStreamVolume( int nNum, int nVolume )
 	Flush();
 } 
 
-void BarView::SetStreamValue( int nNum, float vValues )
-{
-	int nNumHighlighted = int(vValues * float(NUM_SQUARES) + 0.5f);
 
-	
-	if ( nNumHighlighted > m_anNumLighted[nNum] ) {
-	    Rect cRect = GetBarRect( m_anNumLighted[nNum], nNum );
-	    
-	    for ( int j = m_anNumLighted[nNum] ; j < nNumHighlighted ; ++j ) {
-		FillRect( cRect, get_bar_color( j ) );
-		cRect += Point( BAR_WIDTH + BAR_HSPACING, 0.0f );
-	    }
-	    /* Draw slider */
-		cRect = GetBarRect( m_anSliderPos[nNum] / 5, nNum );
-		FillRect( cRect, get_default_color( COL_SEL_MENU_BACKGROUND ) );
-	    Flush();
-	} else if ( nNumHighlighted < m_anNumLighted[nNum] ) {
-	    Rect cRect = GetBarRect( nNumHighlighted, nNum );
-	    for ( int j = nNumHighlighted ; j < m_anNumLighted[nNum] ; ++j ) {
-		FillRect( cRect, g_sBgColor/*get_default_color( COL_NORMAL )*/ );
-		cRect += Point( BAR_WIDTH + BAR_HSPACING, 0.0f );
-	    }
-	    /* Draw slider */
-		cRect = GetBarRect( m_anSliderPos[nNum] / 5, nNum );
-		FillRect( cRect, get_default_color( COL_SEL_MENU_BACKGROUND ) );
-	    Flush();
-	}
-	m_anNumLighted[nNum] = nNumHighlighted;
-}
+
+
 
 
 

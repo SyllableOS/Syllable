@@ -68,8 +68,10 @@ class MCWindow:public os::Window
 	{
 		return ( m_pcProgress );
 	}
+	void SetTrackCount( int nTrackCount );
 	void SetVideoAudio( os::MediaFormat_s sVideoFormat, os::MediaFormat_s sAudioFormat, bool bVideo, bool bAudio )
 	{
+
 		m_sVideoFormat = sVideoFormat;
 		m_sAudioFormat = sAudioFormat;
 		m_bVideo = bVideo;
@@ -81,10 +83,13 @@ class MCWindow:public os::Window
 	bool m_bVideo;
 	bool m_bAudio;
 
+	int m_nTrackCount;
 	os::MediaFormat_s m_sVideoFormat;
 	os::MediaFormat_s m_sAudioFormat;
 	os::TextView * m_pcFileInput;
 	os::StringView * m_pcFileLabel;
+	os::DropdownMenu * m_pcTrackList;
+	os::StringView * m_pcTrackLabel;
 	os::DropdownMenu * m_pcOutputList;
 	os::StringView * m_pcOutputLabel;
 	os::DropdownMenu * m_pcVideoList;

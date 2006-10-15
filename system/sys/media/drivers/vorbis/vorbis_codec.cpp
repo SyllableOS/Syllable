@@ -27,6 +27,11 @@ public:
 	~RAWCodec();
 	
 	os::String 		GetIdentifier();
+	uint32			GetPhysicalType()
+	{
+		return( os::MEDIA_PHY_SOFT_CODEC );
+	}
+	
 	os::View*		GetConfigurationView();
 	
 	status_t 		Open( os::MediaFormat_s sFormat, os::MediaFormat_s sExternal, bool bEncode );

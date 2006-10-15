@@ -25,14 +25,21 @@
 #include <util/message.h>
 #include <atheos/msgport.h>
 #include <atheos/areas.h>
+#include <atheos/kernel.h>
 #include <iostream>
-
+#include <cassert>
+#include "resampler.h"
 
 class ServerOutput : public os::MediaOutput
 {
 public:
 	ServerOutput( int nIndex );
 	~ServerOutput();
+	uint32			GetPhysicalType()
+	{
+		/* TODO: Get this from the mediaserver */
+		return( os::MEDIA_PHY_SOUNDCARD );
+	}
 	os::String		GetIdentifier();
 	os::View*		GetConfigurationView();
 	
@@ -49,27 +56,36 @@ public:
 	status_t		AddStream( os::String zName, os::MediaFormat_s sFormat );
 	
 	status_t		WritePacket( uint32 nIndex, os::MediaPacket_s* psPacket );
-	uint64			GetDelay();
-	uint32			GetUsedBufferPercentage();
+	uint64			GetDelay( bool bNonSharedOnly );
+	uint64			GetBufferSize( bool bNonSharedOnly );
 	
 private:
 	int					m_nIndex;
 	os::Messenger		m_cMediaServerLink;
-	os::MediaFormat_s 	m_sFormat;
+	os::MediaFormat_s 	m_sSrcFormat;
+	os::MediaFormat_s 	m_sDstFormat;
+	bool				m_bResample;
 	int32				m_nHandle;
+	int32				m_nBufferSize;
+	int32				m_nHWBufferSize;
 	area_id				m_hServerArea;
 	area_id				m_hArea;
-	uint8*				m_pBuffer;
+	atomic_t*			m_pnHWDelay;
+	atomic_t*			m_pnReadPointer;
+	atomic_t*			m_pnWritePointer;
+	uint8*				m_pData;
 };
 
 
 ServerOutput::ServerOutput( int nIndex )
 {
 	m_nIndex = nIndex;
+	m_hArea = -1;
 }
 
 ServerOutput::~ServerOutput()
 {
+	Close();
 }
 
 os::String ServerOutput::GetIdentifier()
@@ -82,7 +98,7 @@ os::String ServerOutput::GetIdentifier()
 	os::MediaManager::GetInstance()->GetServerLink().SendMessage( &cMsg, &cReply );
 
 	if ( cReply.GetCode() == os::MEDIA_SERVER_OK && cReply.FindString( "name", &cName ) == 0 )
-		return( os::String( os::String( "Media Server (" ) + cName + os::String( ")" ) ) );
+		return( os::String( "Media Server - " ) + cName );
 	else
 		return( "Media Server Audio Output" );
 }
@@ -91,15 +107,8 @@ os::String ServerOutput::GetIdentifier()
 os::View* ServerOutput::GetConfigurationView()
 {
 	return( NULL );
-//	return( new PrefsView( os::Rect() ) );
 }
 
-void ServerOutput::Flush()
-{
-	os::Message cMsg( os::MEDIA_SERVER_START_AUDIO_STREAM );
-	cMsg.AddInt32( "handle", m_nHandle );
-	m_cMediaServerLink.SendMessage( &cMsg );
-}
 
 bool ServerOutput::FileNameRequired()
 {
@@ -108,9 +117,9 @@ bool ServerOutput::FileNameRequired()
 
 status_t ServerOutput::Open( os::String zFileName )
 {
-	
 	/* Look for media manager port */	
 	port_id nPort;
+	m_hArea = -1;
 	os::Message cReply;
 	if( ( nPort = find_port( "l:media_server" ) ) < 0 ) {
 		std::cout<<"Could not connect to media server!"<<std::endl;
@@ -146,6 +155,8 @@ void ServerOutput::Close()
 		cMsg.AddInt32( "handle", m_nHandle );
 		m_cMediaServerLink.SendMessage( &cMsg, &cReply );
 		m_nHandle = -1;
+		if( m_hArea > -1 )
+			delete_area( m_hArea );
 	}
 }
 
@@ -184,74 +195,156 @@ status_t ServerOutput::AddStream( os::String zName, os::MediaFormat_s sFormat )
 	else
 		return( -1 );
 	
-	/* Save Media format  */
-	m_sFormat = sFormat;
+	/* Save source format  */
+	m_sSrcFormat = sFormat;
 	
 	/* Tell media server */
 	os::Message cMsg( os::MEDIA_SERVER_CREATE_AUDIO_STREAM );
 	os::Message cReply;
 	
 	cMsg.AddString( "name", zName );
-	cMsg.AddInt32( "channels", m_sFormat.nChannels );
-	cMsg.AddInt32( "sample_rate", m_sFormat.nSampleRate );
+	cMsg.AddInt32( "channels", m_sSrcFormat.nChannels );
+	cMsg.AddInt32( "sample_rate", m_sSrcFormat.nSampleRate );
 	m_cMediaServerLink.SendMessage( &cMsg, &cReply );
 	if( cReply.GetCode() != os::MEDIA_SERVER_OK ) {
 		return( -1 );
 	}
 	if( cReply.FindInt32( "handle", &m_nHandle ) != 0 ||
-		cReply.FindInt32( "area", (int32*)&m_hServerArea ) != 0 )
+		cReply.FindInt32( "area", (int32*)&m_hServerArea ) != 0 ||
+		cReply.FindInt32( "buffer_size", &m_nBufferSize ) != 0 ) {
 		return( -1 );
+	}
+	if(	cReply.FindInt32( "hw_buffer_size", &m_nHWBufferSize ) != 0 ||
+		cReply.FindInt32( "channels", &m_sDstFormat.nChannels ) != 0 ||
+		cReply.FindInt32( "sample_rate", &m_sDstFormat.nSampleRate ) != 0 ) {
+		return( -1 );
+	}
+	printf( "Buffer size %i Channels %i Samplerate %i\n", m_nBufferSize, m_sDstFormat.nChannels,
+	m_sDstFormat.nSampleRate );
+	
+	if( m_sSrcFormat.nChannels != m_sDstFormat.nChannels ||
+		m_sSrcFormat.nSampleRate != m_sDstFormat.nSampleRate )
+	{
+		printf( "Resampler enabled\n" );
+		m_bResample = true;
+	} else
+		m_bResample = false;
+	
 	/* Clone area */
-	m_pBuffer = NULL;
-	m_hArea = clone_area( "media_server_output", (void**)&m_pBuffer, AREA_FULL_ACCESS, AREA_NO_LOCK,
+	m_pnHWDelay = NULL;
+	m_hArea = clone_area( "media_server_output", (void**)&m_pnHWDelay, AREA_FULL_ACCESS, AREA_NO_LOCK,
 						m_hServerArea );
 	if( m_hArea < 0 )
 		return( -1 );
+	m_pnReadPointer = m_pnHWDelay + 1;
+	m_pnWritePointer = m_pnReadPointer + 1;
+	m_pData = (uint8*)( m_pnWritePointer + 1 );
 		
 	return( 0 );
 }
 
 status_t ServerOutput::WritePacket( uint32 nIndex, os::MediaPacket_s* psPacket )
 {
-	/* Copy the packet into the area */
-	memcpy( m_pBuffer, psPacket->pBuffer[0], psPacket->nSize[0] );
 	
-	/* Tell the media server about this */
-	os::Message cMsg( os::MEDIA_SERVER_FLUSH_AUDIO_STREAM );
-	os::Message cReply;
-	cMsg.AddInt32( "handle", m_nHandle );
-	cMsg.AddInt32( "size", psPacket->nSize[0] );
-	m_cMediaServerLink.SendMessage( &cMsg, &cReply );
 	
-	if( cReply.GetCode() != os::MEDIA_SERVER_OK )
-		return( -1 );
+	uint8* pSource = psPacket->pBuffer[0];
+	uint32 nBytesLeft = psPacket->nSize[0];
+	
+	while( nBytesLeft > 0 )
+	{
+		
+	
+		/* Calculate number of free samples in the ringbuffer */
+		int32 nRp = atomic_read( m_pnReadPointer );
+		int32 nWp = atomic_read( m_pnWritePointer );
+		
+		uint32 nFreeBytes = 0;
+		if( nWp >= nRp )
+			nFreeBytes = m_nBufferSize - ( nWp - nRp );
+		else
+			nFreeBytes = nRp - nWp;
+		uint32 nFreeSamples = nFreeBytes / m_sDstFormat.nChannels / 2 - 1;
+		assert( ( nBytesLeft % ( m_sSrcFormat.nChannels * 2 ) ) == 0 );
+		uint32 nFreeSrcSamples = nBytesLeft / m_sSrcFormat.nChannels / 2;
+		
+		if( nFreeSamples == 0 )
+		{
+			snooze( 1000 );
+			continue;
+		}
+		
+		//printf( "Read pointer %i, Write pointer %i ( %i ) %i\n", nRp, nWp, m_nBufferSize, nBytesLeft );
+		
+		//printf( "Free %i %i %i\n", nFreeBytes, nFreeSamples, nFreeSrcSamples );
+	
+		
+		if( m_bResample )
+		{
+			nFreeSamples = nFreeSamples * m_sSrcFormat.nSampleRate / m_sDstFormat.nSampleRate;
+			if( nFreeSamples == 0 )
+			{
+				snooze( 10000 );
+				continue;
+			}
+		}
+		
+		if( nFreeSrcSamples < nFreeSamples )
+			nFreeSamples = nFreeSrcSamples;
+		
+		
+		nFreeBytes = nFreeSamples * m_sSrcFormat.nChannels * 2;
+
+	
+		/* Copy into the ringbuffer */
+		if( !m_bResample )
+		{
+			for( int i = 0; i < nFreeBytes; i++ )
+			{
+				m_pData[nWp++] = *pSource++;
+				if( nWp == m_nBufferSize )
+					nWp = 0;
+			}			
+		}
+		else
+		{
+			uint32 nBytesWritten = Resample( m_sSrcFormat, m_sDstFormat, (uint16*)m_pData, nWp, m_nBufferSize, (uint16*)pSource, nFreeBytes );
+			pSource += nFreeBytes;
+			nWp = ( nWp + nBytesWritten ) % m_nBufferSize;
+			if( nBytesWritten == 0 )
+				return( -EIO );
+			
+		}
+		
+		//printf( "Write pointer now %i\n", nWp );
+		/* Set write pointer */
+		atomic_set( m_pnWritePointer, nWp );
+		nBytesLeft -= nFreeBytes;
+	}
 	
 	return( 0 );
 }
 
-uint64 ServerOutput::GetDelay()
+uint64 ServerOutput::GetDelay( bool bNonSharedOnly )
 {
-	int64 nDelay;
-	os::Message cMsg( os::MEDIA_SERVER_GET_AUDIO_STREAM_DELAY );
-	os::Message cReply;
-	cMsg.AddInt32( "handle", m_nHandle );
-	m_cMediaServerLink.SendMessage( &cMsg, &cReply );
-	if( cReply.FindInt64( "delay", &nDelay ) != 0 )
-		return( 0 );
-	//std::cout<<"Delay "<<nDelay<<std::endl;
+	/* Calculate number of free samples in the ringbuffer */
+	int32 nRp = atomic_read( m_pnReadPointer );
+	int32 nWp = atomic_read( m_pnWritePointer );
+		
+	uint32 nUsedBytes = 0;
+	if( nWp >= nRp )
+		nUsedBytes = ( nWp - nRp );
+	else
+		nUsedBytes = m_nBufferSize - ( nRp - nWp );
+	uint32 nUsedSamples = nUsedBytes / m_sDstFormat.nChannels / 2;
+	int64 nDelay = nUsedSamples * 1000 / m_sDstFormat.nSampleRate + ( bNonSharedOnly ? 0 : atomic_read( m_pnHWDelay ) );
+//	std::cout<<"Delay "<<nUsedSamples<<" "<<atomic_read( m_pnHWDelay )<<" "<<nDelay<<std::endl;
 	return( nDelay );
 }
 
-uint32 ServerOutput::GetUsedBufferPercentage()
+uint64 ServerOutput::GetBufferSize( bool bNonSharedOnly )
 {
-	int32 nPercentage;
-	os::Message cMsg( os::MEDIA_SERVER_GET_AUDIO_STREAM_PERCENTAGE );
-	os::Message cReply;
-	cMsg.AddInt32( "handle", m_nHandle );
-	m_cMediaServerLink.SendMessage( &cMsg, &cReply );
-	if( cReply.FindInt32( "percentage", &nPercentage ) != 0 )
-		return( 0 );
-	return( nPercentage );
+	int64 nTotal = m_nBufferSize * 1000 / m_sDstFormat.nSampleRate / m_sDstFormat.nChannels / 2 + ( bNonSharedOnly ? 0 : m_nHWBufferSize );
+	return( nTotal );	
 }
 
 class ServerOutputAddon : public os::MediaAddon
@@ -280,7 +373,7 @@ private:
 
 extern "C"
 {
-	os::MediaAddon* init_media_addon()
+	os::MediaAddon* init_media_addon( os::String zDevice )
 	{
 		return( new ServerOutputAddon() );
 	}

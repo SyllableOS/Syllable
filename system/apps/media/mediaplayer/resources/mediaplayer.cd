@@ -12,17 +12,26 @@ MSG_MAINWND_MENU_APPLICATION_QUIT			Quit
 MSG_MAINWND_MENU_FILE=300					File
 MSG_MAINWND_MENU_FILE_OPEN					Open...
 MSG_MAINWND_MENU_FILE_OPEN_INPUT			Open Input...
+MSG_MAINWND_MENU_FILE_INFO					Info...
 MSG_MAINWND_MENU_FILE_FULLSCREEN			Fullscreen
 
 MSG_MAINWND_MENU_TRACKS=400					Tracks
 
 MSG_ABOUTWND_TITLE=1000						About Media Player
-MSG_ABOUTWND_TEXT							\nA Media Player\nCopyright 2003 Arno Klenke\n\nThe Syllable Media Player is released under the LGPL.
+MSG_ABOUTWND_TEXT							\nA Media Player\nCopyright 2003-2006 Arno Klenke\n\nThe Syllable Media Player is released under the LGPL.
 MSG_ABOUTWND_OK								OK
 
 MSG_ERRWND_TITLE=1100						Error
 MSG_ERRWND_OK								OK
 MSG_ERRWND_CANTPLAY							File could not be opened.\nPlease check your media settings.
 
+MSG_INFOWND_TITLE=1200						Information
+MSG_INFOWND_VIDEO							Video
+MSG_INFOWND_AUDIO							Audio
+MSG_INFOWND_CHANNELS						channels
+MSG_INFOWND_OK								OK
+
 MSG_TRACK_MENU_ITEM=2000					Track
+
+
 

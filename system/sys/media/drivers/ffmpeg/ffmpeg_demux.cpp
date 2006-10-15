@@ -22,10 +22,13 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <iostream>
+#include <vector>
 extern "C" 
 {
 	#include <ffmpeg/avformat.h>
 }
+
+#define MAX_STREAM 8
 
 class FFMpegDemuxer : public os::MediaInput
 {
@@ -33,12 +36,16 @@ public:
 	FFMpegDemuxer();
 	~FFMpegDemuxer();
 	os::String 		GetIdentifier();
+	uint32			GetPhysicalType()
+	{
+		return( os::MEDIA_PHY_SOFT_DEMUX );
+	}
 	os::View*		GetConfigurationView();
 	
 	 bool			FileNameRequired();
 	status_t 		Open( os::String zFileName );
 	void 			Close();
-	
+	void			Clear();
 	
 	bool			PacketBased();
 	bool			StreamBased();
@@ -100,6 +107,8 @@ status_t FFMpegDemuxer::Open( os::String zFileName )
 		
 		/* Calculate total bitrate */
 		m_nBitRate = 0;
+		
+		
 		for( int i = 0; i < m_psContext->nb_streams; i++ ) 
 		{
 			m_nBitRate += m_psContext->streams[i]->codec->bit_rate;
@@ -122,6 +131,7 @@ status_t FFMpegDemuxer::Open( os::String zFileName )
 		
 		m_nCurrentPosition = 0;
 		
+		
 		return( 0 );
 	}
 	return( -1 );
@@ -133,6 +143,11 @@ void FFMpegDemuxer::Close()
 		av_close_input_file( m_psContext );
 		m_psContext = NULL;
 	}
+}
+
+
+void FFMpegDemuxer::Clear()
+{
 }
 
 bool FFMpegDemuxer::PacketBased()
@@ -158,42 +173,42 @@ uint32 FFMpegDemuxer::SelectTrack( uint32 nTrack )
 
 status_t FFMpegDemuxer::ReadPacket( os::MediaPacket_s* psPacket )
 {
-	AVPacket sPacket;
-	
-	if( av_read_frame( m_psContext, &sPacket ) < 0 )
+	AVPacket* psAVPacket = (AVPacket*)malloc( sizeof( AVPacket ) );
+
+	if( av_read_frame( m_psContext, psAVPacket ) < 0 )
 	{
 		printf("Read packet error!\n" );
+		free( psAVPacket );
 		return( -1 );
 	}
+		
+	psPacket->nStream = psAVPacket->stream_index;
+	psPacket->pBuffer[0] = (uint8*)malloc( psAVPacket->size );
+	memcpy( psPacket->pBuffer[0], psAVPacket->data, psAVPacket->size );
+	psPacket->nSize[0] = psAVPacket->size;
+	psPacket->pPrivate = ( void* )psAVPacket;
 	
-	AVPacket* psSavePacket = ( AVPacket* )malloc( sizeof( AVPacket ) );
-	*psSavePacket = sPacket;
-	psPacket->nStream = sPacket.stream_index;
-	psPacket->pBuffer[0] = sPacket.data;
-	psPacket->nSize[0] = sPacket.size;
-	psPacket->pPrivate = ( void* )psSavePacket;
-	
-	if( sPacket.dts == AV_NOPTS_VALUE )
+	if( psAVPacket->dts == AV_NOPTS_VALUE )
 	{
 		m_nCurrentPosition = m_psContext->pb.pos * 8 / m_nBitRate;
 		psPacket->nTimeStamp = ~0;
 	}
 	else if( m_psContext->start_time == AV_NOPTS_VALUE )
 	{
-		m_nCurrentPosition = ( av_rescale_q( sPacket.dts, m_psContext->streams[sPacket.stream_index]->time_base, AV_TIME_BASE_Q ) ) / AV_TIME_BASE;
-		psPacket->nTimeStamp = ( av_rescale_q( sPacket.dts, m_psContext->streams[sPacket.stream_index]->time_base, AV_TIME_BASE_Q ) ) / 1000;
+		m_nCurrentPosition = ( av_rescale_q( psAVPacket->dts, m_psContext->streams[psAVPacket->stream_index]->time_base, AV_TIME_BASE_Q ) ) / AV_TIME_BASE;
+		psPacket->nTimeStamp = ( av_rescale_q( psAVPacket->dts, m_psContext->streams[psAVPacket->stream_index]->time_base, AV_TIME_BASE_Q ) ) / 1000;
 	}
 	else
 	{
-		m_nCurrentPosition = ( av_rescale_q( sPacket.dts, m_psContext->streams[sPacket.stream_index]->time_base, AV_TIME_BASE_Q ) - m_psContext->start_time ) / AV_TIME_BASE;
-		if( m_psContext->streams[sPacket.stream_index]->start_time > sPacket.dts )
+		m_nCurrentPosition = ( av_rescale_q( psAVPacket->dts, m_psContext->streams[psAVPacket->stream_index]->time_base, AV_TIME_BASE_Q ) - m_psContext->start_time ) / AV_TIME_BASE;
+		if( m_psContext->streams[psAVPacket->stream_index]->start_time > psAVPacket->dts )
 			psPacket->nTimeStamp = 0;
 		else
-			psPacket->nTimeStamp =  ( av_rescale_q( sPacket.dts - m_psContext->streams[sPacket.stream_index]->start_time, m_psContext->streams[sPacket.stream_index]->time_base, AV_TIME_BASE_Q ) ) / 1000;
+			psPacket->nTimeStamp =  ( av_rescale_q( psAVPacket->dts - m_psContext->streams[psAVPacket->stream_index]->start_time, m_psContext->streams[psAVPacket->stream_index]->time_base, AV_TIME_BASE_Q ) ) / 1000;
 	}
 	
 	
-//	std::cout<<"Stream "<<sPacket.stream_index<<" Start "<<m_psContext->streams[sPacket.stream_index]->start_time<<" DTS "<<sPacket.dts<<" PTS "<<sPacket.pts<<" STAMP "<<
+//	std::cout<<"Stream "<<psAVPacket->stream_index<<" Start "<<m_psContext->streams[psAVPacket->stream_index]->start_time<<" DTS "<<psAVPacket->dts<<" PTS "<<psAVPacket->pts<<" STAMP "<<
 //		psPacket->nTimeStamp<<std::endl;
 //	printf("Read packet %i\n", (int)m_nCurrentPosition );
 		
@@ -202,6 +217,7 @@ status_t FFMpegDemuxer::ReadPacket( os::MediaPacket_s* psPacket )
 
 void FFMpegDemuxer::FreePacket( os::MediaPacket_s* psPacket )
 {
+	free( psPacket->pBuffer[0] );
 	AVPacket* psSavePacket = ( AVPacket* )psPacket->pPrivate;
 	av_free_packet( psSavePacket );
 }

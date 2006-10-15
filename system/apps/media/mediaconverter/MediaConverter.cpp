@@ -22,7 +22,6 @@
 #include <iostream>
 
 /* TODO:
- * - Track selection
  * - Stream selection
  * - Respect possible number of streams in the media output
  * - Do not reencode data if not necessary
@@ -33,47 +32,53 @@ MCWindow::MCWindow( const os::Rect & cFrame, const std::string & cName, const st
 {
 	m_bEncode = false;
 
+	/* Create track list */
+	m_pcTrackLabel = new os::StringView( os::Rect( 0, 0, 1, 1 ), "track_label", "Track " );
+	m_pcTrackLabel->SetFrame( os::Rect( 5, 10, m_pcTrackLabel->GetPreferredSize( false ).x + 5, m_pcTrackLabel->GetPreferredSize( false ).y + 10 ) );
+	m_pcTrackList = new os::DropdownMenu( os::Rect( 0, 0, 1, 1 ), "track_list" );
+	m_pcTrackList->SetFrame( os::Rect( m_pcTrackLabel->GetPreferredSize( false ).x + 10, 5, 250, m_pcTrackList->GetPreferredSize( false ).y + 5 ) );
+	m_pcTrackList->SetTarget( this );
 
 	/* Create output selection list */
 	m_pcOutputLabel = new os::StringView( os::Rect( 0, 0, 1, 1 ), "output_label", "Output" );
-	m_pcOutputLabel->SetFrame( os::Rect( 5, 10, m_pcOutputLabel->GetPreferredSize( false ).x + 5, m_pcOutputLabel->GetPreferredSize( false ).y + 10 ) );
+	m_pcOutputLabel->SetFrame( os::Rect( 5, 40, m_pcOutputLabel->GetPreferredSize( false ).x + 5, m_pcOutputLabel->GetPreferredSize( false ).y + 40 ) );
 	m_pcOutputList = new os::DropdownMenu( os::Rect( 0, 0, 1, 1 ), "output_list" );
-	m_pcOutputList->SetFrame( os::Rect( m_pcOutputLabel->GetPreferredSize( false ).x + 10, 5, 250, m_pcOutputList->GetPreferredSize( false ).y + 5 ) );
+	m_pcOutputList->SetFrame( os::Rect( m_pcTrackLabel->GetPreferredSize( false ).x + 10, 35, 250, m_pcOutputList->GetPreferredSize( false ).y + 5 + 30 ) );
 	m_pcOutputList->SetSelectionMessage( new os::Message( MC_GUI_OUTPUT_CHANGE ) );
 	m_pcOutputList->SetTarget( this );
 	/* Create video list */
 	m_pcVideoLabel = new os::StringView( os::Rect( 0, 0, 1, 1 ), "video_label", "Video" );
-	m_pcVideoLabel->SetFrame( os::Rect( 5, 40, m_pcVideoLabel->GetPreferredSize( false ).x + 5, m_pcVideoLabel->GetPreferredSize( false ).y + 40 ) );
+	m_pcVideoLabel->SetFrame( os::Rect( 5, 70, m_pcVideoLabel->GetPreferredSize( false ).x + 5, m_pcVideoLabel->GetPreferredSize( false ).y + 70 ) );
 	m_pcVideoList = new os::DropdownMenu( os::Rect( 0, 0, 1, 1 ), "video_list" );
-	m_pcVideoList->SetFrame( os::Rect( m_pcOutputLabel->GetPreferredSize( false ).x + 10, 35, 250, m_pcVideoList->GetPreferredSize( false ).y + 5 + 30 ) );
+	m_pcVideoList->SetFrame( os::Rect( m_pcTrackLabel->GetPreferredSize( false ).x + 10, 65, 250, m_pcVideoList->GetPreferredSize( false ).y + 5 + 60 ) );
 	m_pcVideoList->SetSelectionMessage( new os::Message( MC_GUI_VIDEO_CHANGE ) );
 	m_pcVideoList->SetTarget( this );
 	m_pcVideoBitRateLabel = new os::StringView( os::Rect( 0, 0, 1, 1 ), "video_bitrate_label", "kbit/s" );
-	m_pcVideoBitRateLabel->SetFrame( os::Rect( 310, 40, m_pcVideoBitRateLabel->GetPreferredSize( false ).x + 310, m_pcVideoBitRateLabel->GetPreferredSize( false ).y + 40 ) );
+	m_pcVideoBitRateLabel->SetFrame( os::Rect( 310, 70, m_pcVideoBitRateLabel->GetPreferredSize( false ).x + 310, m_pcVideoBitRateLabel->GetPreferredSize( false ).y + 70 ) );
 	m_pcVideoBitRate = new os::Spinner( os::Rect( 0, 0, 1, 1 ), "video_bitrate", 32, new os::Message( MC_GUI_VIDEO_CHANGE ) );
-	m_pcVideoBitRate->SetFrame( os::Rect( 255, 35, 305, m_pcVideoBitRate->GetPreferredSize( false ).y + 35 ) );
+	m_pcVideoBitRate->SetFrame( os::Rect( 255, 65, 305, m_pcVideoBitRate->GetPreferredSize( false ).y + 65 ) );
 	m_pcVideoBitRate->SetMinMax( 32, 8000 );
 	m_pcVideoBitRate->SetFormat( "%.0f" );
 	m_pcVideoBitRate->SetStep( 16 );
 
 	/* Create audio list */
 	m_pcAudioLabel = new os::StringView( os::Rect( 0, 0, 1, 1 ), "audio_label", "Audio" );
-	m_pcAudioLabel->SetFrame( os::Rect( 5, 70, m_pcAudioLabel->GetPreferredSize( false ).x + 5, m_pcAudioLabel->GetPreferredSize( false ).y + 70 ) );
+	m_pcAudioLabel->SetFrame( os::Rect( 5, 100, m_pcAudioLabel->GetPreferredSize( false ).x + 5, m_pcAudioLabel->GetPreferredSize( false ).y + 100 ) );
 	m_pcAudioList = new os::DropdownMenu( os::Rect( 0, 0, 1, 1 ), "audio_list" );
-	m_pcAudioList->SetFrame( os::Rect( m_pcOutputLabel->GetPreferredSize( false ).x + 10, 65, 250, m_pcAudioList->GetPreferredSize( false ).y + 5 + 60 ) );
+	m_pcAudioList->SetFrame( os::Rect( m_pcTrackLabel->GetPreferredSize( false ).x + 10, 95, 250, m_pcAudioList->GetPreferredSize( false ).y + 5 + 90 ) );
 	m_pcAudioList->SetSelectionMessage( new os::Message( MC_GUI_AUDIO_CHANGE ) );
 	m_pcAudioList->SetTarget( this );
 	m_pcAudioBitRateLabel = new os::StringView( os::Rect( 0, 0, 1, 1 ), "audio_bitrate_label", "kbit/s" );
-	m_pcAudioBitRateLabel->SetFrame( os::Rect( 310, 70, m_pcAudioBitRateLabel->GetPreferredSize( false ).x + 310, m_pcAudioBitRateLabel->GetPreferredSize( false ).y + 70 ) );
+	m_pcAudioBitRateLabel->SetFrame( os::Rect( 310, 100, m_pcAudioBitRateLabel->GetPreferredSize( false ).x + 310, m_pcAudioBitRateLabel->GetPreferredSize( false ).y + 100 ) );
 	m_pcAudioBitRate = new os::Spinner( os::Rect( 0, 0, 1, 1 ), "audio_bitrate", 32, new os::Message( MC_GUI_AUDIO_CHANGE ) );
-	m_pcAudioBitRate->SetFrame( os::Rect( 255, 65, 305, m_pcAudioBitRate->GetPreferredSize( false ).y + 65 ) );
+	m_pcAudioBitRate->SetFrame( os::Rect( 255, 95, 305, m_pcAudioBitRate->GetPreferredSize( false ).y + 95 ) );
 	m_pcAudioBitRate->SetMinMax( 32, 8000 );
 	m_pcAudioBitRate->SetFormat( "%.0f" );
 	m_pcAudioBitRate->SetStep( 16 );
 
 	/* Create output file text field */
 	m_pcFileLabel = new os::StringView( os::Rect( 0, 0, 1, 1 ), "file_label", "File" );
-	m_pcFileLabel->SetFrame( os::Rect( 5, 100, m_pcFileLabel->GetPreferredSize( false ).x + 5, m_pcFileLabel->GetPreferredSize( false ).y + 100 ) );
+	m_pcFileLabel->SetFrame( os::Rect( 5, 130, m_pcFileLabel->GetPreferredSize( false ).x + 5, m_pcFileLabel->GetPreferredSize( false ).y + 130 ) );
 
 	os::String cPath;
 	const char *pzHome = getenv( "HOME" );
@@ -93,17 +98,17 @@ MCWindow::MCWindow( const os::Rect & cFrame, const std::string & cName, const st
 	cPath += os::String ( "output.avi" );
 
 	m_pcFileInput = new os::TextView( os::Rect( 0, 0, 1, 1 ), "file_field", cPath.c_str() );
-	m_pcFileInput->SetFrame( os::Rect( m_pcOutputLabel->GetPreferredSize( false ).x + 10, 95, 305, 95 + m_pcFileInput->GetPreferredSize( false ).y ) );
+	m_pcFileInput->SetFrame( os::Rect( m_pcTrackLabel->GetPreferredSize( false ).x + 10, 125, 305, 125 + m_pcFileInput->GetPreferredSize( false ).y ) );
 	m_pcFileInput->SetMultiLine( false );
 
 
 	/* Create progressbar */
 	m_pcProgress = new os::ProgressBar( os::Rect( 0, 0, 1, 1 ), "progress" );
-	m_pcProgress->SetFrame( os::Rect( 10, 125, 280, 125 + m_pcProgress->GetPreferredSize( false ).y ) );
+	m_pcProgress->SetFrame( os::Rect( 10, 155, 280, 155 + m_pcProgress->GetPreferredSize( false ).y ) );
 
 	/* Create button */
 	m_pcStartButton = new os::Button( os::Rect( 0, 0, 1, 1 ), "start", "Start", new os::Message( MC_GUI_START ) );
-	m_pcStartButton->SetFrame( os::Rect( 285, 123, 340, 123 + m_pcStartButton->GetPreferredSize( false ).y ) );
+	m_pcStartButton->SetFrame( os::Rect( 285, 153, 340, 153 + m_pcStartButton->GetPreferredSize( false ).y ) );
 
 	/* Fill output list */
 	os::MediaManager * pcManager = os::MediaManager::GetInstance();
@@ -113,12 +118,13 @@ MCWindow::MCWindow( const os::Rect & cFrame, const std::string & cName, const st
 	while ( ( pcOutput = pcManager->GetOutput( nIndex ) ) != NULL )
 	{
 		m_pcOutputList->AppendItem( pcOutput->GetIdentifier().c_str(  ) );
-		delete( pcOutput );
+		pcOutput->Release();
 		nIndex++;
 	}
 	m_pcOutputList->SetSelection( 0, false );
 
-
+	AddChild( m_pcTrackLabel );
+	AddChild( m_pcTrackList );
 	AddChild( m_pcOutputLabel );
 	AddChild( m_pcOutputList );
 	AddChild( m_pcVideoList );
@@ -167,6 +173,20 @@ MCWindow::~MCWindow()
 	delete( m_pcStartButton );
 }
 
+void MCWindow::SetTrackCount( int nTrackCount )
+{
+	m_nTrackCount = nTrackCount;
+	m_pcTrackList->Clear();
+	for( int i = 0; i < nTrackCount; i++ )
+	{
+		char zBuffer[255];
+		sprintf( zBuffer, "Track %i", i + 1 );
+		m_pcTrackList->AppendItem( zBuffer );
+	}
+	m_pcTrackList->SetSelection( 0 );
+	if( nTrackCount == 1 )
+		m_pcTrackList->SetEnable( false );
+}
 
 void MCWindow::FillLists()
 {
@@ -181,7 +201,7 @@ void MCWindow::FillLists()
 	m_pcAudioList->AppendItem( "None" );
 	
 	if( !pcOutput->FileNameRequired() ) {
-		delete( pcOutput );
+		pcOutput->Release();
 		return;
 	}
 
@@ -224,7 +244,7 @@ void MCWindow::FillLists()
 		m_pcVideoBitRate->SetEnable( m_bVideo );
 		m_pcAudioList->SetEnable( m_bAudio );
 		m_pcAudioBitRate->SetEnable( m_bAudio );
-		delete( pcOutput );
+		pcOutput->Release();
 	}
 
 }
@@ -250,6 +270,7 @@ void MCWindow::HandleMessage( os::Message * pcMessage )
 			pcOutput = pcManager->GetOutput( m_pcOutputList->GetSelection() );
 			/* Add number of the output, audio and video object to the message */
 
+			pcNewMessage->AddInt32( "track", m_pcTrackList->GetSelection() );
 			if ( pcOutput != NULL )
 			{
 				pcNewMessage->AddInt32( "output", m_pcOutputList->GetSelection() );
@@ -276,7 +297,7 @@ void MCWindow::HandleMessage( os::Message * pcMessage )
 						nAudCount++;
 					}
 				}
-				delete( pcOutput );
+				pcOutput->Release();
 				if ( !m_bVideo || m_pcVideoList->GetSelection() == 0 )
 					pcNewMessage->AddInt32( "video", -1 );
 				if ( !m_bAudio || m_pcAudioList->GetSelection() == 0 )
@@ -340,7 +361,7 @@ MCApp::MCApp( const char *pzMimeType, os::String zFileName, bool bLoad ):os::App
 		if ( pcInput != NULL )
 		{
 			Open( zFileName, pcInput->GetIdentifier() );
-			delete( pcInput );
+			pcInput->Release();
 		}
 		else
 		{
@@ -375,7 +396,7 @@ void MCApp::Open( os::String zFile, os::String zInput )
 		{
 			break;
 		}
-		delete( m_pcInput );
+		m_pcInput->Release();
 		m_pcInput = NULL;
 		i++;
 	}
@@ -395,13 +416,6 @@ void MCApp::Open( os::String zFile, os::String zInput )
 	if ( m_pcInput->StreamBased() || !m_pcInput->PacketBased(  ) )
 	{
 		os::Alert * pcAlert = new os::Alert( "Error", "This file / device is not supported by the Media Converter.", os::Alert::ALERT_WARNING, 0, "Ok", NULL );
-		pcAlert->Go();
-		return;
-	}
-	/* TODO: */
-	if ( m_pcInput->GetTrackCount() > 1 )
-	{
-		os::Alert * pcAlert = new os::Alert( "Error", "Files / devices with more than one track are not yet supported. Sorry!", os::Alert::ALERT_WARNING, 0, "Ok", NULL );
 		pcAlert->Go();
 		return;
 	}
@@ -444,9 +458,10 @@ void MCApp::Open( os::String zFile, os::String zInput )
 		}
 	}
 	/* Create main window */
-	m_pcWin = new MCWindow( os::Rect( 100, 100, 450, 250 ), "mc_window", "Select destination - Media Converter", os::WND_NOT_RESIZABLE );
+	m_pcWin = new MCWindow( os::Rect( 100, 100, 450, 300 ), "mc_window", "Select destination - Media Converter", os::WND_NOT_RESIZABLE );
 	m_pcWin->Show();
 	m_pcWin->MakeFocus( true );
+	m_pcWin->SetTrackCount( m_pcInput->GetTrackCount() );
 	m_pcWin->SetVideoAudio( m_sVideoFormat, m_sAudioFormat, m_bVideo, m_bAudio );
 }
 
@@ -619,7 +634,6 @@ void MCApp::Encode()
 			}
 		}
 		m_pcInput->FreePacket( &sPacket );
-		m_pcOutput->Flush();
 		/* Update progressbar */
 		if ( m_pcInput->GetCurrentPosition() * 100 / m_pcInput->GetLength(  ) != nOldValue )
 		{
@@ -631,15 +645,15 @@ void MCApp::Encode()
 	}
 	/* Close everything */
 	m_pcOutput->Close();
-	delete( m_pcOutput );
+	m_pcOutput->Release();
 	if ( m_bAudio )
 	{
 		m_pcInputAudio->DeleteAudioOutputPacket( &sAIPacket );
 		m_pcOutputAudio->DeleteAudioOutputPacket( &sAOPacket );
 		m_pcInputAudio->Close();
 		m_pcOutputAudio->Close();
-		delete( m_pcInputAudio );
-		delete( m_pcOutputAudio );
+		m_pcInputAudio->Release();
+		m_pcOutputAudio->Release();
 	}
 	if ( m_bVideo )
 	{
@@ -647,8 +661,8 @@ void MCApp::Encode()
 		m_pcOutputVideo->DeleteVideoOutputPacket( &sVOPacket );
 		m_pcInputVideo->Close();
 		m_pcOutputVideo->Close();
-		delete( m_pcInputVideo );
-		delete( m_pcOutputVideo );
+		m_pcInputVideo->Release();
+		m_pcOutputVideo->Release();
 	}
 	m_pcInput->Seek( 0 );
 
@@ -699,10 +713,18 @@ void MCApp::HandleMessage( os::Message * pcMessage )
 	case MC_GUI_START:
 		{
 			int32 nOutput;
+			int32 nTrack;
 
-			if ( !m_bEncode && pcMessage->FindInt32( "output", &nOutput ) == 0 && pcMessage->FindInt32( "video", &m_nVideoOutputFormat ) == 0 && pcMessage->FindInt32( "audio", &m_nAudioOutputFormat ) == 0 && pcMessage->FindInt32( "video_bitrate", &m_nVideoBitRate ) == 0 && pcMessage->FindInt32( "audio_bitrate", &m_nAudioBitRate ) == 0 && pcMessage->FindString( "file", &m_zFile.str() ) == 0 )
+			if ( !m_bEncode && pcMessage->FindInt32( "output", &nOutput ) == 0 && 
+						pcMessage->FindInt32( "track", &nTrack ) == 0 && 
+						pcMessage->FindInt32( "video", &m_nVideoOutputFormat ) == 0 && 
+						pcMessage->FindInt32( "audio", &m_nAudioOutputFormat ) == 0 && 
+						pcMessage->FindInt32( "video_bitrate", &m_nVideoBitRate ) == 0 && 
+						pcMessage->FindInt32( "audio_bitrate", &m_nAudioBitRate ) == 0 && 
+						pcMessage->FindString( "file", &m_zFile.str() ) == 0 )
 			{
 				/* Start encoding */
+				m_pcInput->SelectTrack( nTrack );
 				m_pcOutput = m_pcManager->GetOutput( nOutput );
 				if ( m_pcOutput != NULL )
 				{

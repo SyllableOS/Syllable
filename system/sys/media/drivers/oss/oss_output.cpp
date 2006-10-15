@@ -38,8 +38,6 @@
 #include <stdio.h>
 #include "mixerview.h"
 
-#define OSS_PACKET_NUMBER 20
-
 class OSSOutput : public os::MediaOutput
 {
 public:
@@ -47,6 +45,10 @@ public:
 	~OSSOutput();
 	os::String		GetMixerPath();
 	os::String		GetIdentifier();
+	uint32			GetPhysicalType()
+	{
+		return( os::MEDIA_PHY_SOUNDCARD );
+	}
 	os::View*		GetConfigurationView();
 	
 	bool			FileNameRequired();
@@ -54,18 +56,15 @@ public:
 	void 			Close();
 	
 	void			Clear();
-	void			Flush();
 	
 	uint32			GetOutputFormatCount();
 	os::MediaFormat_s	GetOutputFormat( uint32 nIndex );
 	uint32			GetSupportedStreamCount();
 	status_t		AddStream( os::String zName, os::MediaFormat_s sFormat );
 	
-	void			SetTimeSource( os::MediaTimeSource* pcSource );
-	
 	status_t		WritePacket( uint32 nIndex, os::MediaPacket_s* psPacket );
-	uint64			GetDelay();
-	uint32			GetUsedBufferPercentage();
+	uint64			GetDelay( bool bNonSharedOnly );
+	uint64			GetBufferSize( bool bNonSharedOnly );
 
 private:
 
@@ -75,17 +74,11 @@ private:
 	uint64			m_nFactor;
 	int				m_hOSS;
 	int				m_nBufferSize;
-	int				m_nQueuedPackets;
-	os::MediaPacket_s* m_psPacket[OSS_PACKET_NUMBER];
-	uint8*			m_pPacketPointer;
 	sem_id			m_hLock;
 	os::MediaFormat_s m_sSrcFormat;
 	os::MediaFormat_s m_sDstFormat;
 	bool			m_bResample;
 	os::Messenger	m_cMediaServerLink;
-	uint64			m_nFirstTimeStamp;
-	bigtime_t		m_nStartTime;
-	os::MediaTimeSource* m_pcTimeSource;
 };
 
 
@@ -95,11 +88,7 @@ OSSOutput::OSSOutput( os::String zDSPPath )
 	/* Set default values */
 	m_hOSS = -1;
 	m_hLock = create_semaphore( "oss_lock", 1, 0 );
-	m_nQueuedPackets = 0;
-	m_pPacketPointer = NULL;
 	m_zDSPPath = zDSPPath;
-	m_nStartTime = 0;
-	m_pcTimeSource = NULL;
 }
 
 OSSOutput::~OSSOutput()
@@ -111,6 +100,13 @@ OSSOutput::~OSSOutput()
 
 os::String OSSOutput::GetMixerPath()
 {
+	if( m_zDSPPath.substr( 0, strlen( "/dev/audio" ) ) == "/dev/audio" )
+	{
+		os::String zMixerPath = "/dev/audio/mixer";
+		zMixerPath += m_zDSPPath.substr( strlen( "/dev/audio" ), m_zDSPPath.Length() - strlen( "/dev/audio" ) );
+		return( zMixerPath );
+	}
+	
 	/* Remove "dsp/x" from the path and add "mixer/x" */
 	char zPath[255];
 	memset( zPath, 0, 255 );
@@ -132,124 +128,13 @@ os::String OSSOutput::GetIdentifier()
 	if( ioctl( nMixerDev, SOUND_MIXER_INFO, &sInfo ) == 0 )
 		zName = os::String( sInfo.name );
 	
-	return( os::String( "Direct OSS (") + zName + os::String( ")" ) );
+	return( os::String( "OSS (") + zName + os::String( ")" ) );
 }
 
 os::View* OSSOutput::GetConfigurationView()
 {	
 	os::MixerView* pcView = new os::MixerView( GetMixerPath().c_str(), os::Rect( 0, 0, 1, 1 ) );
 	return( pcView );
-}
-
-void OSSOutput::Flush()
-{
-	os::MediaPacket_s *psNextPacket;
-	lock_semaphore( m_hLock );
-
-	if( m_nQueuedPackets > 0 ) 
-	{
-		/* Get first packet */
-		psNextPacket = m_psPacket[0];
-		
-		/* Set pointer to packet data */
-		if( m_pPacketPointer == NULL )
-		{
-			m_pPacketPointer = psNextPacket->pBuffer[0];
-		}
-		
-		/* Start timer */
-		if( m_nStartTime == 0 )
-		{
-			std::cout<<"Start! "<<get_system_time()<<std::endl;
-			m_nFirstTimeStamp = psNextPacket->nTimeStamp;
-			m_nStartTime = get_system_time();
-		}
-		
-		
-		uint64 nNoTimeStamp = ~0;
-		if( psNextPacket->nTimeStamp != nNoTimeStamp )
-		{
-			/* Use the timestamp of the stream  */
-			int nDelay = 0;
-			ioctl( m_hOSS, SNDCTL_DSP_GETODELAY, &nDelay );
-		
-			uint64 nCardDelay = (uint64)nDelay * 1000 / (uint64)m_nFactor;
-			uint64 nSampleLength = psNextPacket->nSize[0] * 1000 / (uint64)m_nFactor;	
-			uint64 nPacketPosition = psNextPacket->nTimeStamp + 
-									( ( (uint64)((uint32)m_pPacketPointer - (uint32)psNextPacket->pBuffer[0]) ) * 1000 / (uint64)m_nFactor ) 
-									- ( m_pcTimeSource != NULL ? 0 : m_nFirstTimeStamp );
-			uint64 nRealPosition;
-			
-			if( m_pcTimeSource )
-				nRealPosition = m_pcTimeSource->GetCurrentTime();
-			else
-				nRealPosition = ( get_system_time() - m_nStartTime ) / 1000 + nCardDelay;
-		
-			#if 0
-			std::cout<<"Time "<<nRealPosition<<" Stamp "<<
-						nPacketPosition<<" "<<" "<< ( (uint64)((uint32)m_pPacketPointer - (uint32)psNextPacket->pBuffer[0]) ) * 1000 / (uint64)m_nFactor<<" "<<(uint32)m_pPacketPointer<<" "<<(uint32)psNextPacket->pBuffer[0]<<std::endl;
-			std::cout<<(int64)nPacketPosition - (int64)nRealPosition<<std::endl;
-			#endif
-		
-			if( nSampleLength > 50 )
-				nSampleLength = 50;
-		
-			if( nPacketPosition > nRealPosition + nSampleLength )
-			{
-				/* Wait with writing the sample */
-				//std::cout<<"Waiting with writing!"<<std::endl;
-				goto skip;
-			} else if( nRealPosition > nPacketPosition + nSampleLength * 2 )
-			{
-				/* Skip the sample */
-			
-			} else {
-				unlock_semaphore( m_hLock );
-				uint32 nDelay = 0;
-				ioctl( m_hOSS, SNDCTL_DSP_GETODELAY, &nDelay );
-				int nFlush = std::min( m_nBufferSize - nDelay, psNextPacket->nSize[0] );
-				write( m_hOSS, m_pPacketPointer, nFlush );
-				psNextPacket->nSize[0] -= nFlush;
-				m_pPacketPointer += nFlush;
-				if( nFlush > 0 )
-				{
-					return;
-				}
-				lock_semaphore( m_hLock );
-			}
-		} else {
-			unlock_semaphore( m_hLock );
-			uint32 nDelay = 0;
-			ioctl( m_hOSS, SNDCTL_DSP_GETODELAY, &nDelay );
-			int nFlush = std::min( m_nBufferSize - nDelay, psNextPacket->nSize[0] );
-			write( m_hOSS, m_pPacketPointer, nFlush/*psNextPacket->nSize[0]*/ );
-			psNextPacket->nSize[0] -= nFlush;
-			m_pPacketPointer += nFlush;
-			if( nFlush > 0 )
-			{
-				return;
-		
-			}
-			lock_semaphore( m_hLock );
-		}
-	
-		
-		//std::cout<<"Packet of "<<psNextPacket->nSize[0]<<" flushed"<<std::endl;
-		m_pPacketPointer = NULL;
-		free( psNextPacket->pBuffer[0] );
-		free( psNextPacket );
-		m_nQueuedPackets--;
-		for( int i = 0; i < m_nQueuedPackets; i++ )
-		{
-			if( i == OSS_PACKET_NUMBER - 1 )
-				m_psPacket[i] = NULL;
-			else
-				m_psPacket[i] = m_psPacket[i+1];
-		}
-		//cout<<"Audio :"<<m_nQueuedPackets<<" packets left"<<endl;
-	}
-	skip:
-	unlock_semaphore( m_hLock );
 }
 
 bool OSSOutput::FileNameRequired()
@@ -268,14 +153,7 @@ status_t OSSOutput::Open( os::String zFileName )
 		return( -1 );
 	
 	
-	/* Clear packet buffer */
-	m_nQueuedPackets = 0;
-	for( int i = 0; i < OSS_PACKET_NUMBER; i++ ) {
-		m_psPacket[i] = NULL;
-	}
-	
-	m_nStartTime = 0;
-	
+
 	
 	return( 0 );
 }
@@ -308,15 +186,6 @@ void OSSOutput::Clear()
 		nVal = AFMT_S16_LE;
 		ioctl( m_hOSS, SNDCTL_DSP_SETFMT, &nVal );
 	}
-	/* Delete all pending packets */
-	for( int i = 0; i < m_nQueuedPackets; i++ ) {
-		free( m_psPacket[i]->pBuffer[0] );
-		free( m_psPacket[i] );
-	}
-	m_nQueuedPackets = 0;
-	m_nStartTime = 0;
-	m_pPacketPointer = NULL;
-	m_nFirstTimeStamp = 0;
 }
 
 uint32 OSSOutput::GetOutputFormatCount()
@@ -380,11 +249,6 @@ status_t OSSOutput::AddStream( os::String zName, os::MediaFormat_s sFormat )
 	return( 0 );
 }
 
-void OSSOutput::SetTimeSource( os::MediaTimeSource* pcSource )
-{
-	std::cout<<"Using timesource "<<pcSource->GetIdentifier().c_str()<<std::endl;
-	m_pcTimeSource = pcSource;
-}
 
 uint32 OSSOutput::Resample( os::MediaFormat_s sSrcFormat, os::MediaFormat_s sDstFormat, uint16* pDst, uint16* pSrc, uint32 nLength )
 {
@@ -462,51 +326,28 @@ status_t OSSOutput::WritePacket( uint32 nIndex, os::MediaPacket_s* psPacket )
 	/* Create a new media packet and queue it */
 	if( psPacket->nSize[0] < 1 )
 		return( -1 );
-	os::MediaPacket_s* psQueuePacket = ( os::MediaPacket_s* )malloc( sizeof( os::MediaPacket_s ) );
-	if( psQueuePacket == NULL )
-		return( -1 );
-	memset( psQueuePacket, 0, sizeof( os::MediaPacket_s ) );
-	
-	psQueuePacket->nTimeStamp = psPacket->nTimeStamp;
-	
+		
+	uint8* pBuffer = psPacket->pBuffer[0];
+	int nSize = psPacket->nSize[0];
+		
+
 	if( m_bResample ) {
-		psQueuePacket->pBuffer[0] = ( uint8* )malloc( psPacket->nSize[0] * m_sDstFormat.nChannels / m_sSrcFormat.nChannels
+		pBuffer = ( uint8* )malloc( psPacket->nSize[0] * m_sDstFormat.nChannels / m_sSrcFormat.nChannels
 													* m_sDstFormat.nSampleRate / m_sSrcFormat.nSampleRate + 4096 );
-		psQueuePacket->nSize[0] = Resample( m_sSrcFormat, m_sDstFormat, (uint16*)psQueuePacket->pBuffer[0], (uint16*)psPacket->pBuffer[0], psPacket->nSize[0] );
+		nSize = Resample( m_sSrcFormat, m_sDstFormat, (uint16*)pBuffer, (uint16*)psPacket->pBuffer[0], psPacket->nSize[0] );
 	}
-	else {
-		psQueuePacket->pBuffer[0] = ( uint8* )malloc( psPacket->nSize[0] );
-		memcpy( psQueuePacket->pBuffer[0], psPacket->pBuffer[0], psPacket->nSize[0] );
-		psQueuePacket->nSize[0] = psPacket->nSize[0];
-	}
-	lock_semaphore( m_hLock );
-	/* Queue packet */
-	if( m_nQueuedPackets > OSS_PACKET_NUMBER - 1 ) {
-		unlock_semaphore( m_hLock );
-		free( psQueuePacket->pBuffer[0] );
-		free( psQueuePacket );
-		std::cout<<"Packet buffer full"<<std::endl;
-		return( -1 );
-	}
-	m_psPacket[m_nQueuedPackets] = psQueuePacket;
-	m_nQueuedPackets++;
-	unlock_semaphore( m_hLock );
-	//std::cout<<"Packet queued at position "<<m_nQueuedPackets - 1<<"( "<<m_nQueuedPackets * 100 / OSS_PACKET_NUMBER<<
-	//"% of the buffer used )"<<std::endl;
+	
+	
+	write( m_hOSS, pBuffer, nSize );
 	return( 0 );	
 }
 
-uint64 OSSOutput::GetDelay()
+uint64 OSSOutput::GetDelay( bool bNonSharedOnly )
 {
 	int nDataSize = 0;
 	int nDelay;
 	uint64 nTime;
-	/* Get data size in the packet buffer */
-	lock_semaphore( m_hLock );
-	for( int i = 0; i < m_nQueuedPackets; i++ ) 
-	{
-		nDataSize += m_psPacket[i]->nSize[0];
-	}
+
 	/* Add the data in the soundcard buffer */
 	ioctl( m_hOSS, SNDCTL_DSP_GETODELAY, &nDelay );
 	
@@ -518,18 +359,33 @@ uint64 OSSOutput::GetDelay()
 	return( nTime );
 }
 
-uint32 OSSOutput::GetUsedBufferPercentage()
+uint64 OSSOutput::GetBufferSize( bool bNonSharedOnly )
 {
-	uint32 nValue;
-	lock_semaphore( m_hLock );
-	nValue = m_nQueuedPackets * 100 / OSS_PACKET_NUMBER;
+	int nDataSize = 0;
+	
+	uint64 nTime;
+
+	nDataSize = m_nBufferSize;
 	unlock_semaphore( m_hLock );
-	return( nValue );
+	nTime = nDataSize;
+	nTime *= 1000;
+	nTime /= (uint64)m_nFactor;
+	return( nTime );
 }
+
 
 class OSSAddon : public os::MediaAddon
 {
 public:
+	OSSAddon( os::String zDevice )
+	{
+		m_bSingleMode = false;
+		if( zDevice == "" )
+			return;
+		m_bSingleMode = true;
+		printf( "OSS: %s\n", zDevice.c_str() );
+		m_zDSP.push_back( zDevice );
+	}
 	status_t Initialize()
 	{
 		int nDspCount = 0;
@@ -537,6 +393,11 @@ public:
 		struct dirent *hAudioDev, *hDspNode;
 		char *zCurrentPath = NULL;
 		const char* pzPath = "/dev/sound/";
+		
+		if( m_bSingleMode )
+			return( true );
+			
+		printf( "OSS device scan...\n" );
 
 		hAudioDir = opendir( pzPath );
 		if( hAudioDir == NULL )
@@ -613,14 +474,15 @@ public:
 	uint32			GetOutputCount() { return( m_zDSP.size() ); }
 	os::MediaOutput*	GetOutput( uint32 nIndex ) { return( new OSSOutput( m_zDSP[nIndex] ) ); }
 private:
+	bool m_bSingleMode;
 	std::vector<os::String> m_zDSP;
 };
 
 extern "C"
 {
-	os::MediaAddon* init_media_addon()
+	os::MediaAddon* init_media_addon( os::String zDevice )
 	{
-		return( new OSSAddon() );
+		return( new OSSAddon( zDevice ) );
 	}
 
 }

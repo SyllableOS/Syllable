@@ -4,11 +4,11 @@ AOPTS    = -c
 
 LIBBIN = /system/libs
 
-LIBNAME = libmedia.so.1
+LIBNAME = libmedia.so.2
 
 VPATH = ./
 
-OBJS	= codec.o input.o output.o manager.o inputselector.o soundplayer.o
+OBJS	= codec.o input.o output.o manager.o inputselector.o soundplayer.o stage.o
 
 OBJDIR	:= objs
 

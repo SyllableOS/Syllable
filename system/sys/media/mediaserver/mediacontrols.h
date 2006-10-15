@@ -21,7 +21,6 @@
 #define _MEDIACONTROLS_H_
 
 #include <atheos/soundcard.h>
-#include "mixerchannel.h"
 #include "barview.h"
 
 namespace os
@@ -36,19 +35,15 @@ public:
 	virtual bool OkToQuit();
 	virtual void HandleMessage( Message* pcMessage );
 	
-	void SetMasterValue( float vValue );
 	void SetMasterVolume( int nValue );
 	void StreamChanged( uint32 nNum );
-	void SetStreamValue( uint32 nNum, float vValue );
 
 	int FindMixers( const char *pzPath );
 
 private:
 	MediaServer*	m_pcServer;
-	MediaMixer_s	m_pcMixerDev[MEDIA_MAX_DSPS];
-	int				m_nMixerCount;
+	std::vector<os::MediaOutput*> m_apcOutputs;
 	TabView*		m_pcTabs;
-	MixerChannel*	m_pcMixerChannel[MEDIA_MAX_DSPS][SOUND_MIXER_NRDEVICES];
 	bool			m_bStreamActive[MEDIA_MAX_AUDIO_STREAMS];
 	BarView*		m_pcStreamBar;
 };

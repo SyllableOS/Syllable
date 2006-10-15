@@ -1,4 +1,4 @@
-/*! \mainpage Documentation of the AtheOS highlevel C++ API
+/*! \mainpage Documentation of the Syllable highlevel C++ API
 
 
 
@@ -15,9 +15,12 @@ Here you will find documentation of the various C++ classes involved
 in the Media API
 
 The Media API can be used to play or record audio and video content 
-aswell as converting media data from one format to the other. Your
-starting point should be the MediaManager class, but you should also
-look at the example applications.
+aswell as converting media data from one format to the other. It contains 
+a lowlevel api that is especially important if you want to write drivers for
+the media system. Otherwise you can use the highlevel api (media stage objects) 
+in most cases. To do anything with the media system you need to create a MediaManager 
+object using MediaManager::Get() and keep it as long as you need to use any object of
+the media system. Call MediaManager::Put() when you have finished.
 
 */
 

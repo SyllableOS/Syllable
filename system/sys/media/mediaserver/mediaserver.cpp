@@ -19,6 +19,7 @@
  
 #include "mediaserver.h" 
 #include "mediacontrols.h"
+#include <cassert>
 
 using namespace os;
 
@@ -38,6 +39,7 @@ MediaServer::MediaServer()
 	m_zDefaultVideoOutput = "Screen Video Output";
 	m_zStartupSound = "startup.wav";
 	
+	
 	/* Load Settings */
 	try
 	{
@@ -56,23 +58,18 @@ MediaServer::MediaServer()
 	{
 	}
 	
-	
 	m_hLock = create_semaphore( "media_server_lock", 1, 0 );
-	m_hClearLock = create_semaphore( "media_server_clear_lock", 1, 0 );
-	
+	m_hActiveStreamCount = create_semaphore( "media_active_stream_count", 0, 0 );
 	/* Find available DSP devices */
-	m_nDspCount = FindDsps( "/dev/sound/" );
+	m_nDspCount = LoadAudioPlugins();
+
 	std::cout<<"Found "<<m_nDspCount<<" DSP's"<<std::endl;
 	if( m_nDspCount < 0 )
 		m_nDefaultDsp = -1;
-
-	/* Create mix buffer */
-	m_pMixBuffer = ( signed int* )malloc( MEDIA_SERVER_AUDIO_BUFFER * 2 );
-	memset( m_pMixBuffer, 0, MEDIA_SERVER_AUDIO_BUFFER * 2 );
 	
-	/* Create value buffer */
-	m_pValueBuffer = ( uint32* )malloc( MEDIA_SERVER_AUDIO_BUFFER * 2 );
-	memset( m_pValueBuffer, 0, MEDIA_SERVER_AUDIO_BUFFER * 2 );
+	/* Create mix buffer */
+	m_pMixBuffer = ( signed int* )malloc( PAGE_SIZE * 32 * 2 );
+	memset( m_pMixBuffer, 0, PAGE_SIZE * 32 * 2 );
 	
 	m_nActiveStreamCount = 0;
 	
@@ -80,26 +77,16 @@ MediaServer::MediaServer()
 	for( int i = 0; i < MEDIA_MAX_AUDIO_STREAMS; i++ )
 		m_sAudioStream[i].bUsed = false;
 		
-	/* Clear packet buffer */
-	for( int i = 0; i < MEDIA_MAX_AUDIO_STREAMS; i++ ) {
-		m_nQueuedPackets[i] = 0;
-		for( int j = 0; j < MEDIA_MAX_STREAM_PACKETS; j++ ) {
-			m_psPacket[i][j] = NULL;
-		}
-	}
+	
 	/* Spawn flush thread */
 	m_hThread = spawn_thread( "media_server_flush", (void*)media_flush_entry, 0, 0, this );
 	resume_thread( m_hThread );
 	
-	
-	m_nMasterValueCount = 0;
-	m_vMasterValue = 0;
 	m_nMasterVolume = 100;
 	
-	/* Create controls window */
-	m_pcControls = new MediaControls( this, Rect( 50, 50, 350, 400 ) );
-	m_cControlsFrame = m_pcControls->GetFrame();
-	m_bControlsShown = false;
+	/* Set defaults for controls window */
+	m_cControlsFrame = os::Rect( 50, 50, 500, 350 );
+	m_pcControls = NULL;
 }
 
 MediaServer::~MediaServer()
@@ -108,11 +95,11 @@ MediaServer::~MediaServer()
 	m_bRunThread = false;
 	wait_for_thread( m_hThread );
 	delete_semaphore( m_hLock );
-	delete_semaphore( m_hClearLock );
+	delete_semaphore( m_hActiveStreamCount );
 	free( m_pMixBuffer );
-	free( m_pValueBuffer );
 	/* Close window */
-	m_pcControls->Close();
+	if( m_pcControls )
+		m_pcControls->Close();
 }
 
 /* Save all settings */
@@ -129,143 +116,185 @@ void MediaServer::SaveSettings()
 	delete( pcSettings );
 }
 
-int MediaServer::FindDsps( const char *pzPath )
+int MediaServer::LoadAudioPlugins()
 {
-	int nRet = 0, nDspCount = 0;
-	DIR *hAudioDir, *hDspDir;
-	struct dirent *hAudioDev, *hDspNode;
-	char *zCurrentPath = NULL;
-
-	hAudioDir = opendir( pzPath );
-	if( hAudioDir == NULL )
+	String zFileName;
+	String zPath = String( "/dev/audio" );
+	
+	int nDspCount = 0;
+	
+	/* Load audio drivers */
+	Directory *pcDirectory = new Directory();
+	zPath = String( "/dev/audio" );
+	if( pcDirectory->SetTo( zPath ) != 0 )
+		return( 0 );
+	while( pcDirectory->GetNextEntry( &zFileName ) )
 	{
-		std::cout<<"Unable to open"<<pzPath<<std::endl;
-		return nRet;
-	}
-
-	while( (hAudioDev = readdir( hAudioDir )) )
-	{
-		if( !strcmp( hAudioDev->d_name, "." ) || !strcmp( hAudioDev->d_name, ".." ) )
+		if( zFileName == "." || zFileName == ".." )
 			continue;
-
-		std::cout<<"Found audio device "<<hAudioDev->d_name<<std::endl;
-		zCurrentPath = (char*)calloc( 1, strlen( pzPath ) + strlen( hAudioDev->d_name ) + 5 );
-		if( zCurrentPath == NULL )
-		{
-			std::cout<<"Out of memory"<<std::endl;
-			closedir( hAudioDir );
-			return nRet;
-		}
-
-		zCurrentPath = strcpy( zCurrentPath, pzPath );
-		zCurrentPath = strcat( zCurrentPath, hAudioDev->d_name );
-		zCurrentPath = strcat( zCurrentPath, "/dsp" );
-
-		/* Look for DSP device nodes for this device */
-		hDspDir = opendir( zCurrentPath );
-		if( hDspDir == NULL )
-		{
-			std::cout<<"Unable to open"<<zCurrentPath<<std::endl;
-			free( zCurrentPath );
+		zPath = String( "/dev/audio" );
+		os::String zDevFileName = zPath + String( "/" ) + zFileName;
+			
+		/* Get userspace driver name */
+		char zDriverPath[PATH_MAX];
+		memset( zDriverPath, 0, PATH_MAX );
+		int nFd = open( zDevFileName.c_str(), O_RDONLY );
+		if( nFd < 0 )
 			continue;
-		}
+		if( ioctl( nFd, IOCTL_GET_USERSPACE_DRIVER, zDriverPath ) != 0 )
+			continue;
+		close( nFd );
+			
+		/* Construct plugin path */
+		zPath = String( "/system/extensions/media" );
+		zFileName = zPath + String( "/" ) + zDriverPath;
+			
+		image_id nID = load_library( zFileName.c_str(), 0 );
+		if( nID >= 0 ) {
+			init_media_addon *pInit;
+			/* Call init_media_addon() */
+			if( get_symbol_address( nID, "init_media_addon",
+			-1, (void**)&pInit ) == 0 ) {
+				MediaAddon* pcAddon = pInit( zDevFileName );
+				if( pcAddon ) {
+					if( pcAddon->Initialize() != 0 )
+					{
+						std::cout<<pcAddon->GetIdentifier().c_str()<<" failed to initialize"<<std::endl;
+						delete( pcAddon );
+						unload_library( nID );
+					} else {
+						std::cout<<pcAddon->GetIdentifier().c_str()<<" initialized"<<std::endl;			
+						/* Find output streams */
+						for( uint i = 0; i < pcAddon->GetOutputCount(); i++ )
+						{
+							os::MediaOutput* pcOutput = pcAddon->GetOutput( i );
+							if( pcOutput == NULL )
+								continue;
+							if( pcOutput->FileNameRequired() )
+							{
+								pcOutput->Release();
+								continue;
+							}	
+							/* Find next free sound card handle */
+							for( int j=0; j<MEDIA_MAX_DSPS; j++ )
+							{
+								if( m_sDsps[j].bUsed )
+									continue;
 
-		while( (hDspNode = readdir( hDspDir )) )
-		{
-			char *zDspPath = NULL;
-
-			if( !strcmp( hDspNode->d_name, "." ) || !strcmp( hDspNode->d_name, ".." ) )
-				continue;
-
-			/* We have found a DSP device node */
-			++nDspCount;
-
-			zDspPath = (char*)calloc( 1, strlen( zCurrentPath ) + strlen( hDspNode->d_name ) + 1 );
-			if( zDspPath == NULL )
-			{
-				printf( "Out of memory\n" );
-				closedir( hDspDir );
-				free( zCurrentPath );
-				closedir( hAudioDir );
-				return nRet;
+								m_sDsps[j].bUsed = true;
+								sprintf( m_sDsps[j].zName, "%s", pcOutput->GetIdentifier().c_str() );
+								m_sDsps[j].pcAddon = pcAddon;
+								m_sDsps[j].nOutputStream = i;
+								nDspCount++;
+								pcOutput->Release();
+								std::cout<<"Added "<<m_sDsps[j].zName<<" with handle #"<<i<<std::endl;
+								break;
+							}
+						}
+					}
+				}
+			} else {
+				std::cout<<zFileName.c_str()<<" does not export init_media_addon()"<<std::endl;
 			}
-
-			zDspPath = strcpy( zDspPath, zCurrentPath );
-			zDspPath = strcat( zDspPath, "/" );
-			zDspPath = strcat( zDspPath, hDspNode->d_name );
-
-			/* Find next free sound card handle */
-			for( int i=0; i<MEDIA_MAX_DSPS; i++ )
-			{
-				if( m_sDsps[i].bUsed )
-					continue;
-
-				m_sDsps[i].bUsed = true;
-				sprintf( m_sDsps[i].zName, "%s - %s", hAudioDev->d_name, hDspNode->d_name );
-				strcpy( m_sDsps[i].zPath, zDspPath );
-
-				std::cout<<"Added "<<zDspPath<<" with handle #"<<i<<std::endl;
-				break;
-			}
-			free( zDspPath );
 		}
+	}		
 
-		closedir( hDspDir );
-		free( zCurrentPath );
-	}
-
-	nRet = nDspCount;
-	closedir( hAudioDir );
-	return nRet;
+	return( nDspCount );
 }
 
-bool MediaServer::OpenSoundCard( int nDevice )
+bool MediaServer::CheckFormat( int nChannels, int nSampleRate, int nRealChannels, int nRealSampleRate )
+{
+	/* Try to set the provided format */
+	MediaFormat_s sFormat;
+	for( uint i = 0; i < m_pcCurrentOutput->GetOutputFormatCount(); i++ )
+	{
+		sFormat = m_pcCurrentOutput->GetOutputFormat( i );
+		if( sFormat.zName == "Raw Audio" && ( nSampleRate == 0 || sFormat.nSampleRate == nSampleRate )
+			&& ( nChannels == 0 || sFormat.nChannels == nChannels ) && ( sFormat.nChannels >= 2 ||
+			sFormat.nChannels == 0 ) ) {
+			m_sCardFormat = sFormat;
+			if( nChannels == 0 && m_sCardFormat.nChannels == 0 )
+				m_sCardFormat.nChannels = nRealChannels;
+			if( nSampleRate == 0 && m_sCardFormat.nSampleRate == 0 )
+				m_sCardFormat.nSampleRate = nRealSampleRate;
+			return( true );
+		}
+	}
+	return( false );
+}
+
+
+bool MediaServer::OpenSoundCard( int nDevice, int nChannels, int nSampleRate )
 {
 	/* Try to open the soundcard device */
 	if( nDevice < 0 || nDevice > MEDIA_MAX_DSPS )
 		return( false );
-
-	m_hOSS = open( m_sDsps[nDevice].zPath, O_RDWR );
-	if( m_hOSS < 0 )
+		
+	m_pcCurrentOutput = m_sDsps[nDevice].pcAddon->GetOutput( m_sDsps[nDevice].nOutputStream );
+	
+	if( m_pcCurrentOutput == NULL )
 		return( false );
-		
-	/* Get buffer size */
-	audio_buf_info sInfo;
-	ioctl( m_hOSS, SNDCTL_DSP_GETOSPACE, &sInfo );
-	m_nBufferSize = sInfo.bytes;
 
-	//std::cout<<"Using "<<m_nBufferSize<<" Bytes of soundcard buffer"<<std::endl;
-		
-	/* Set parameters */
-	ioctl( m_hOSS, SNDCTL_DSP_RESET, NULL );
-	int nVal = 44100;
-	ioctl( m_hOSS, SNDCTL_DSP_SPEED, &nVal );
-	m_sCardFormat.nSampleRate = nVal;
+	if( m_pcCurrentOutput->Open( "" ) != 0 ) {
+		m_pcCurrentOutput->Release();
+		return( false );
+	}
 	
-	nVal = 1;
-	ioctl( m_hOSS, SNDCTL_DSP_STEREO, &nVal );
-	m_sCardFormat.nChannels = nVal + 1;
-	nVal = AFMT_S16_LE;
-	ioctl( m_hOSS, SNDCTL_DSP_SETFMT, &nVal );
+	/* We want at least 2 channels */
+	if( nChannels < 2 )
+		nChannels = 2;
 	
-	std::cout<<m_sCardFormat.nChannels<<" channels, "<<m_sCardFormat.nSampleRate<<" samplerate"<<std::endl;
+	/* Try to set provided format */
+	if( !CheckFormat( nChannels, nSampleRate, nChannels, nSampleRate ) )
+	{
+		/* Try to set a format with the same number of channels */
+		if( !CheckFormat( nChannels, 0, nChannels, nSampleRate ) )
+		{
+			/* Try to set a format with the same samplerate */
+			if( !CheckFormat( 0, nSampleRate, nChannels, nSampleRate ) )
+			{
+				/* Try 44100 stereo */
+				if( !CheckFormat( 2, 44100, nChannels, nSampleRate ) )
+				{
+					/* Try anything with two channels */
+					if( !CheckFormat( 2, 0, nChannels, nSampleRate ) )
+					{
+						/* Anything else */
+						if( !CheckFormat( 0, 0, nChannels, nSampleRate ) )
+						{
+							dbprintf( "Could not find a matching sound format\n" );
+							m_pcCurrentOutput->Release();
+							return( false );
+						}
+					}
+				}
+			}
+		}
+	}
 	
-	m_nMasterValueCount = 0;
-	m_vMasterValue = 0;
-	m_pcControls->SetMasterValue( 0 );
+	if( m_pcCurrentOutput->AddStream( "MediaServer", m_sCardFormat ) != 0 )
+	{
+		dbprintf( "Could not add sound stream\n" );
+		m_pcCurrentOutput->Release();
+		return( false );
+	}
+	
+	/* Get buffer size */
+	m_nBufferSize = m_pcCurrentOutput->GetBufferSize();
+
+	std::cout<<"Hardware format: "<<m_sCardFormat.nChannels<<" channels, "<<m_sCardFormat.nSampleRate<<" samplerate, "<<m_nBufferSize<<"ms buffer"<<std::endl;
+	
 	return( true );
 }
 
 void MediaServer::CloseSoundCard()
 {
 	std::cout<<"Closing soundcard device"<<std::endl;
-	m_nMasterValueCount = 0;
-	m_vMasterValue = 0;
-	m_pcControls->SetMasterValue( 0 );
 	/* Close soundcard */
-	if( m_hOSS >= 0 ) {
-		ioctl( m_hOSS, SNDCTL_DSP_SYNC, NULL ); 
-		close( m_hOSS );
+	if( m_pcCurrentOutput != NULL ) {
+		m_pcCurrentOutput->Clear();
+		m_pcCurrentOutput->Close();
+		m_pcCurrentOutput->Release();
 	}
 }
 
@@ -273,141 +302,151 @@ void MediaServer::CloseSoundCard()
 void MediaServer::FlushThread()
 {
 	uint32 nSize = 0;
-	MediaPacket_s *psNextPacket;
 	m_bRunThread = true;
+	
 	while( m_bRunThread ) 
 	{
-		lock_semaphore( m_hClearLock );
+		
+		lock_semaphore( m_hActiveStreamCount );
 		lock_semaphore( m_hLock );
 		
-		if( m_nActiveStreamCount > 0 ) 
-		{
+		uint64 nDelay = m_pcCurrentOutput->GetDelay();
+		
 		nSize = 0;
-	
-		/* Go through all audio streams and look for the smallest amount of data */
+		bool bSizeSet = false;
 		for( uint32 i = 0; i < MEDIA_MAX_AUDIO_STREAMS; i++ ) 
 		{
-			if( m_sAudioStream[i].bUsed && m_sAudioStream[i].bActive ) {
-				if( m_nQueuedPackets[i] > 0 ) {
-					if( m_psPacket[i][0]->nSize[0] > 0 && ( m_psPacket[i][0]->nSize[0] < nSize || nSize == 0 ) ) {
-						nSize = m_psPacket[i][0]->nSize[0];
-					}
-				}
-			}
-		}
-
-		/* Avoid blocks */		
-		int nDelay;		
-		ioctl( m_hOSS, SNDCTL_DSP_GETODELAY, &nDelay );
-		nSize = std::min( (int)nSize, m_nBufferSize - nDelay );
+			if( m_sAudioStream[i].bUsed )
+			{
+				int32 nRp = atomic_read( m_sAudioStream[i].pnReadPointer );
+				int32 nWp = atomic_read( m_sAudioStream[i].pnWritePointer );
 				
-		unlock_semaphore( m_hLock );
-		
-		/* We have data to flush */
-		if( nSize > 0 ) 
-		{
-			lock_semaphore( m_hLock );
-
-			//cout<<"Flushing "<<nSize<<endl;
-			memset( m_pMixBuffer, 0, nSize * 2 );
-			memset( m_pValueBuffer, 0, nSize * 2 );
-			for( uint32 i = 0; i < MEDIA_MAX_AUDIO_STREAMS; i++ ) 
-			{
-				if( m_sAudioStream[i].bUsed && m_sAudioStream[i].bActive && m_nQueuedPackets[i] > 0 ) {
-					psNextPacket = m_psPacket[i][0];
-					//std::cout<<"Flushing data of Stream "<<i<<" of "<<psNextPacket->nSize[0]<<std::endl;
+				if( nRp != nWp )
+				{
 					
-					/* Write packet into mix buffer */
-					signed short *pData = ( signed short* )psNextPacket->pBuffer[0];
-					signed int *pMix = m_pMixBuffer;
-					uint32* pValue = m_pValueBuffer;
-					for( uint32 j = 0; j < nSize / 2; j++ ) {
-						
-						pMix[0] += (signed int)( ( pData[0] ) * m_sAudioStream[i].nVolume / 100 );
-						if( ( uint32 )( ( uint16 )pData[0] * m_sAudioStream[i].nVolume / 100 ) > pValue[0] )
-							pValue[0] = ( uint16 )pData[0] * m_sAudioStream[i].nVolume / 100;
-						
-						m_sAudioStream[i].vValue += ( ( float )( uint16 )pData[0] ) * ( float )m_sAudioStream[i].nVolume / 100;
-		
-						m_sAudioStream[i].nValueCount++;
-						if( m_sAudioStream[i].nValueCount > 2500 ) {
-							if( m_bControlsShown )
-								m_pcControls->SetStreamValue( i, ( float )( m_sAudioStream[i].vValue / 2500 / 0xffff ) );
-							m_sAudioStream[i].nValueCount = 0;
-							m_sAudioStream[i].vValue = 0;
-						
-						}
-						
-						pMix++;
-						pData++;
-						pValue++;
-					}
-						
-					if( nSize == psNextPacket->nSize[0] )
-					{
-						/* Move packet queue up */
-						free( psNextPacket->pBuffer[0] );
-						free( psNextPacket );
-						m_nQueuedPackets[i]--;
-						for( uint32 j = 0; j < m_nQueuedPackets[i]; j++ )
-						{
-							m_psPacket[i][j] = m_psPacket[i][j+1];
-						}
-						//std::cout<<"Audio :"<<m_nQueuedPackets[i]<<" packets left"<<std::endl;
-					} else {
-						/* Split packet */
-						psNextPacket->nSize[0] -= nSize;
-						memcpy( psNextPacket->pBuffer[0], psNextPacket->pBuffer[0] + nSize, psNextPacket->nSize[0] );
-					}
-					m_sAudioStream[i].nBufferPlayed = get_system_time() + nSize * 10 * 1000 / ( (uint64)m_sCardFormat.nSampleRate / 100 ) / 2 / 2 + 1000 * 1000;
+					uint32 nUsedBytes = 0;
+					if( nWp > nRp )
+						nUsedBytes = ( nWp - nRp );
+					else
+						nUsedBytes = m_sAudioStream[i].nBufferSize - ( nRp - nWp );
+					//printf( "Data to flush %i %i %i!\n", nUsedBytes, nRp, nWp );
+					assert( ( nUsedBytes % ( m_sCardFormat.nChannels * 2 ) ) == 0 );
+					if( nSize == 0 && !bSizeSet )
+						nSize = nUsedBytes;
+					else
+						nSize = std::min( nSize, nUsedBytes );
+					bSizeSet = true;
+					m_sAudioStream[i].bActive = true;
 				}
-			}
-
-			unlock_semaphore( m_hLock );
-			
-			/* Do signed int -> signed short conversion and update stream bars */
-			signed int* pData = m_pMixBuffer;
-			signed short* pMix = ( signed short* )m_pMixBuffer;
-			uint32* pValue = m_pValueBuffer;
-			
-			for( uint32 i = 0; i < nSize / 2; i++ )
-			{
-				signed int nData = *pData * (signed int)m_nMasterVolume / 100;
-				if( nData > 0xffff / 2 )
-					*pMix = 0xffff / 2;
-				else if( nData < -0xffff / 2 )
-					*pMix = -0xffff / 2;
 				else
-					*pMix = (signed short)nData;
-				
-				
-				m_vMasterValue += (float)( *pValue * m_nMasterVolume / 100 );
-				m_nMasterValueCount++;
-				if( m_nMasterValueCount > 2500 ) {
-					float vValue = m_vMasterValue / 2500 / 0xffff;
-					if( vValue > 1.0f )
-						vValue = 1.0f;
-					if( m_bControlsShown )
-						m_pcControls->SetMasterValue( vValue );
-					
-					m_nMasterValueCount = 0;
-					m_vMasterValue = 0;
+				{
+					if( m_sAudioStream[i].bActive )
+					{
+						nSize = 0;
+						bSizeSet = true;
+					}
 				}
-					
-				pData++;
-				pMix++;
-				pValue++;
+				atomic_set( m_sAudioStream[i].pnHWDelay, nDelay );
 			}
-			
-			write( m_hOSS, m_pMixBuffer, nSize );
-		} else {
-			if( m_pcControls )
-				m_pcControls->SetMasterValue( 0 );
+		}		
+		
+		
+		if( nSize == 0 )
+		{
+			unlock_semaphore( m_hLock );
+			unlock_semaphore( m_hActiveStreamCount );
+			snooze( 1000 );
+			continue;
 		}
-		lock_semaphore( m_hLock );
-		} 
+		
+		/* Avoid blocks */
+		nDelay = m_pcCurrentOutput->GetDelay();
+		uint64 nFree = m_nBufferSize - nDelay;
+		nFree = nFree * m_sCardFormat.nSampleRate * m_sCardFormat.nChannels * 2 / 1000;
+		nSize = std::min( (int)nSize, (int)nFree );
+		nSize -= nSize % ( m_sCardFormat.nChannels * 2 );
+		
+		//printf( "Total %i\n", nSize );
+		assert( ( nSize % ( m_sCardFormat.nChannels * 2 ) ) == 0 );
+		
+		memset( m_pMixBuffer, 0, nSize * 2 );
+		
+		for( uint32 i = 0; i < MEDIA_MAX_AUDIO_STREAMS; i++ ) 
+		{
+			if( m_sAudioStream[i].bUsed && m_sAudioStream[i].bActive )
+			{
+				signed int *pMix = m_pMixBuffer;
+				int32 nRp = atomic_read( m_sAudioStream[i].pnReadPointer );
+				signed short* pSrc = (signed short*)( &(m_sAudioStream[i].pData[nRp]) );
+				
+				if( m_sAudioStream[i].nVolume == 100 )				
+					for( uint32 j = 0; j < nSize / 2; j++ )
+					{
+						*pMix++ += *pSrc++;
+						nRp += 2;
+						if( nRp > m_sAudioStream[i].nBufferSize )
+						{
+							dbprintf( "Error: Invalid read pointer %i %i\n", (int)nRp, (int)m_sAudioStream[i].nBufferSize );
+							nRp = 0;
+						}
+						if( nRp == m_sAudioStream[i].nBufferSize )
+						{
+							nRp = 0;
+
+							pSrc = (signed short*)( m_sAudioStream[i].pData );
+						}
+					}
+				else
+					for( uint32 j = 0; j < nSize / 2; j++ )
+					{
+						*pMix++ += ( (signed int)( *pSrc ) * m_sAudioStream[i].nVolume / 100 );
+						pSrc++;
+						nRp += 2;
+						if( nRp > m_sAudioStream[i].nBufferSize )
+						{
+							dbprintf( "Error: Invalid read pointer %i %i\n", (int)nRp, (int)m_sAudioStream[i].nBufferSize );
+							nRp = 0;
+						}
+						if( nRp == m_sAudioStream[i].nBufferSize )
+						{
+							nRp = 0;
+
+							pSrc = (signed short*)( m_sAudioStream[i].pData );
+						}
+					}
+				atomic_set( m_sAudioStream[i].pnReadPointer, nRp );
+				atomic_set( m_sAudioStream[i].pnHWDelay, nDelay );
+			}
+		}
+		
+		/* Do signed int -> signed short conversion and update stream bars */
+		signed int* pData = m_pMixBuffer;
+		signed short* pMix = ( signed short* )m_pMixBuffer;
+			
+		for( uint32 i = 0; i < nSize / 2; i++ )
+		{
+			signed int nData = *pData * (signed int)m_nMasterVolume / 100;
+			if( nData > 0xffff / 2 )
+				*pMix = 0xffff / 2;
+			else if( nData < -0xffff / 2 )
+				*pMix = -0xffff / 2;
+			else
+					*pMix = (signed short)nData;
+			
+							
+			pData++;
+			pMix++;
+		}
+		
+		/* Write */
+		os::MediaPacket_s sPacket;
+		sPacket.pBuffer[0] = (uint8*)m_pMixBuffer;
+		sPacket.nSize[0] = nSize;
+			
+		m_pcCurrentOutput->WritePacket( 0, &sPacket );
+		
 		unlock_semaphore( m_hLock );
-		unlock_semaphore( m_hClearLock );
+		unlock_semaphore( m_hActiveStreamCount );
 		snooze( 1000 );
 	}
 }
@@ -495,7 +534,7 @@ void MediaServer::SetStartupSound( Message* pcMessage )
 	/* Play startup sound if it has changed */
 	if( !( zSound == m_zStartupSound ) ) {
 		m_zStartupSound = zSound;
-		resume_thread( spawn_thread( "play_startup_sound", (void*)play_startup_sound, 0, 0, &m_zStartupSound ) );
+//		resume_thread( spawn_thread( "play_startup_sound", (void*)play_startup_sound, 0, 0, &m_zStartupSound ) );
 	}
 	SaveSettings();
 	
@@ -508,26 +547,21 @@ void MediaServer::CreateAudioStream( Message* pcMessage )
 	int32 nHandle = -1;
 	Message cReply( MEDIA_SERVER_OK );
 	
-	/* Open soundcard */
-	if( m_nActiveStreamCount == 0 )
-		if( !OpenSoundCard( m_nDefaultDsp ) ) {
-			/* No soundcard found */
-			pcMessage->SendReply( MEDIA_SERVER_ERROR );
-			return;
-		}
 	
 	/* Search free handle */
+	lock_semaphore( m_hLock );
 	for( int i = 0; i < MEDIA_MAX_AUDIO_STREAMS; i++ )
 	{
 		if( !m_sAudioStream[i].bUsed ) {
+			memset( &m_sAudioStream[i], 0, sizeof( m_sAudioStream[i] ) );
+			m_sAudioStream[i].bUsed = true;
 			nHandle = i;
 			break;
 		}
 	}
+	unlock_semaphore( m_hLock );
 	
 	if( nHandle < 0 ) {
-		if( m_nActiveStreamCount == 0 )
-			CloseSoundCard();
 		/* No free stream found */
 		pcMessage->SendReply( MEDIA_SERVER_ERROR );
 		return;
@@ -537,26 +571,29 @@ void MediaServer::CreateAudioStream( Message* pcMessage )
 	if( pcMessage->FindString( "name", &pzName ) != 0 ||
 		pcMessage->FindInt32( "channels", &m_sAudioStream[nHandle].nChannels ) != 0 ||
 		pcMessage->FindInt32( "sample_rate", &m_sAudioStream[nHandle].nSampleRate ) != 0 ) {
-		if( m_nActiveStreamCount == 0 )
-			CloseSoundCard();
 		/* Message not complete */
 		pcMessage->SendReply( MEDIA_SERVER_ERROR );
 		return;
 	}
+	
+	/* Open soundcard */
+	if( m_nActiveStreamCount == 0 )
+		if( !OpenSoundCard( m_nDefaultDsp, m_sAudioStream[nHandle].nChannels, m_sAudioStream[nHandle].nSampleRate ) ) {
+			/* No soundcard found */
+			pcMessage->SendReply( MEDIA_SERVER_ERROR );
+			return;
+		}
+	
+	
 	strcpy( m_sAudioStream[nHandle].zName, pzName );
 	
-	m_sAudioStream[nHandle].bActive = false;
-	if( m_sAudioStream[nHandle].nChannels != m_sCardFormat.nChannels || 
-		m_sAudioStream[nHandle].nSampleRate != m_sCardFormat.nSampleRate ) {
-		m_sAudioStream[nHandle].bResample = true;
-	} else {
-		m_sAudioStream[nHandle].bResample = false;
-	}
 	
 	/* Create area */
-	m_sAudioStream[nHandle].pAddress = NULL;
-	m_sAudioStream[nHandle].hArea = create_area( "media_server_audio", (void**)&m_sAudioStream[nHandle].pAddress,
-										MEDIA_SERVER_AUDIO_BUFFER, AREA_FULL_ACCESS, AREA_NO_LOCK );
+	m_sAudioStream[nHandle].nBufferSize = ( 32 * PAGE_SIZE );
+	m_sAudioStream[nHandle].nBufferSize -= m_sAudioStream[nHandle].nBufferSize % ( m_sCardFormat.nChannels * 2 );
+	printf( "Buffer size %i\n", m_sAudioStream[nHandle].nBufferSize );
+	m_sAudioStream[nHandle].hArea = create_area( "media_server_audio", (void**)&m_sAudioStream[nHandle].pnHWDelay,
+										PAGE_ALIGN( m_sAudioStream[nHandle].nBufferSize + 12 ), AREA_FULL_ACCESS, AREA_NO_LOCK );
 	if( m_sAudioStream[nHandle].hArea < 0 ) {
 		if( m_nActiveStreamCount == 0 )
 			CloseSoundCard();
@@ -566,28 +603,42 @@ void MediaServer::CreateAudioStream( Message* pcMessage )
 		return;
 	}
 	
+	/* Set write pointer and data pointer */
+	m_sAudioStream[nHandle].pnReadPointer = m_sAudioStream[nHandle].pnHWDelay + 1;
+	m_sAudioStream[nHandle].pnWritePointer = m_sAudioStream[nHandle].pnReadPointer + 1;
+	m_sAudioStream[nHandle].pData = (uint8*)( m_sAudioStream[nHandle].pnWritePointer + 1 );
+	atomic_set( m_sAudioStream[nHandle].pnReadPointer, 0 );
+	atomic_set( m_sAudioStream[nHandle].pnWritePointer, 0 );
+	
+//	printf( "%x %x %x\n", m_sAudioStream[nHandle].pnReadPointer, m_sAudioStream[nHandle].pnWritePointer, 
+//							m_sAudioStream[nHandle].pData );
+	
 	std::cout<<"New Audio Stream "<<nHandle<<" ( "<<m_sAudioStream[nHandle].nChannels<<" Channels, "<<
-							m_sAudioStream[nHandle].nSampleRate<<" Hz"<<(m_sAudioStream[nHandle].bResample
-							? ", Resampling" : "")<<" )"<<std::endl;
+							m_sAudioStream[nHandle].nSampleRate<<" Hz )"<<std::endl;
 	
 	/* Send information back */
 	cReply.AddInt32( "area", m_sAudioStream[nHandle].hArea );
 	cReply.AddInt32( "handle", nHandle );
-	pcMessage->SendReply( &cReply );
+	cReply.AddInt32( "hw_buffer_size", m_nBufferSize );
+	cReply.AddInt32( "buffer_size", m_sAudioStream[nHandle].nBufferSize );
+	cReply.AddInt32( "channels", m_sCardFormat.nChannels );
+	cReply.AddInt32( "sample_rate", m_sCardFormat.nSampleRate );
 	
 	m_sAudioStream[nHandle].nVolume = 100;
-	m_sAudioStream[nHandle].nValueCount = 0;
-	m_sAudioStream[nHandle].vValue = 0;
 	
 	/* Mark stream as used */
 	lock_semaphore( m_hLock );
 	
 	m_sAudioStream[nHandle].bUsed = true;
 	m_nActiveStreamCount++;
+	unlock_semaphore( m_hActiveStreamCount );
 	unlock_semaphore( m_hLock );
 	
 	/* Tell controls window */
-	m_pcControls->StreamChanged( nHandle ); 
+	if( m_pcControls )
+		m_pcControls->StreamChanged( nHandle );
+		
+	pcMessage->SendReply( &cReply );
 }
 
 /* Delete one audio stream */
@@ -606,6 +657,7 @@ void MediaServer::DeleteAudioStream( Message* pcMessage )
 	lock_semaphore( m_hLock );
 	m_sAudioStream[nHandle].bUsed = false;
 	m_nActiveStreamCount--;
+	lock_semaphore( m_hActiveStreamCount );
 	if( m_nActiveStreamCount == 0 )
 		CloseSoundCard();
 	unlock_semaphore( m_hLock );
@@ -616,179 +668,11 @@ void MediaServer::DeleteAudioStream( Message* pcMessage )
 	pcMessage->SendReply( MEDIA_SERVER_OK );
 	
 	/* Tell controls window */
-	m_pcControls->StreamChanged( nHandle ); 
+	if( m_pcControls )
+		m_pcControls->StreamChanged( nHandle ); 
 }
 
-/* Resampler */
-uint32 MediaServer::Resample( os::MediaFormat_s sSrcFormat, os::MediaFormat_s sDstFormat, uint16* pDst, uint16* pSrc, uint32 nLength )
-{
-	uint32 nSkipBefore = 0;
-	uint32 nSkipBehind = 0;
-	bool bOneChannel = false;
 
-	/* Calculate skipping ( I just guess what is right here ) */
-	if( sSrcFormat.nChannels == 1 && sDstFormat.nChannels == 2 ) {
-		
-		bOneChannel = true;
-	} else if( sSrcFormat.nChannels == 3 && sDstFormat.nChannels == 2 ) {
-		nSkipBefore = 0;
-		nSkipBehind = 1;
-	} else if( sSrcFormat.nChannels == 4 && sDstFormat.nChannels == 2 ) {
-		nSkipBefore = 2;
-		nSkipBehind = 0;
-	} else if( sSrcFormat.nChannels == 5 && sDstFormat.nChannels == 2 ) {
-		nSkipBefore = 2;
-		nSkipBehind = 1;
-	} else if( sSrcFormat.nChannels == 6 && sDstFormat.nChannels == 2 ) {
-		nSkipBefore = 2;
-		nSkipBehind = 2;
-	} else if( sSrcFormat.nChannels > sDstFormat.nChannels ) {
-		nSkipBehind = sSrcFormat.nChannels - sDstFormat.nChannels;
-	}
-	
-	/* Calculate samplerate factors */
-	float vFactor = (float)sDstFormat.nSampleRate / (float)sSrcFormat.nSampleRate;
-	float vSrcActiveSample = 0;
-	float vDstActiveSample = 0;
-	float vSrcFactor = 0;
-	float vDstFactor = 0;
-	uint32 nSamples = 0;
-	
-	vSrcFactor = 1 / vFactor;
-	vDstFactor = 1;
-	float vSamples = (float)nLength * vFactor / (float)sSrcFormat.nChannels / 2;
-	nSamples = (uint32)vSamples;
-	
-	uint32 nSrcPitch;
-	uint32 nDstPitch = 2;
-	if( bOneChannel )
-		nSrcPitch = nSkipBefore + 1 + nSkipBehind;
-	else
-		nSrcPitch = nSkipBefore + 2 + nSkipBehind;
-	uint32 nBytes = 0;
-	
-	for( uint32 i = 0; i < nSamples; i++ ) 
-	{
-		uint16* pSrcWrite = &pSrc[nSrcPitch * (int)vSrcActiveSample];
-		uint16* pDstWrite = &pDst[nDstPitch * (int)vDstActiveSample];
-		/* Skip */
-		pSrcWrite += nSkipBefore;
-		
-		if( bOneChannel )
-		{
-			*pDstWrite++ = *pSrcWrite;
-			*pDstWrite++ = *pSrcWrite;
-		} else {
-			/* Channel 1 */
-			*pDstWrite++ = *pSrcWrite++;
-		
-			/* Channel 2 */
-			*pDstWrite++ = *pSrcWrite++;
-		}
-		vSrcActiveSample += vSrcFactor;
-		vDstActiveSample += vDstFactor;
-		nBytes += 4;
-	}
-	return( nBytes );
-}
-
-/* Flush one audio stream */
-void MediaServer::FlushAudioStream( Message* pcMessage )
-{
-	int32 nSize;
-	int32 nHandle;
-	if( pcMessage->FindInt32( "handle", &nHandle ) != 0 ||
-		pcMessage->FindInt32( "size", &nSize ) != 0 ) {
-		pcMessage->SendReply( MEDIA_SERVER_ERROR );
-		return;
-	}
-	/* Create new packet */
-	MediaPacket_s* psQueuePacket = ( MediaPacket_s* )malloc( sizeof( MediaPacket_s ) );
-	memset( psQueuePacket, 0, sizeof( MediaPacket_s ) );
-	psQueuePacket->nSize[0] = nSize;
-	if( !m_sAudioStream[nHandle].bResample )
-	{
-		psQueuePacket->pBuffer[0] = ( uint8* )malloc( nSize );
-		memcpy( psQueuePacket->pBuffer[0], m_sAudioStream[nHandle].pAddress, psQueuePacket->nSize[0] );
-	} else {
-		uint64 nFullSize = ( uint64 )nSize * (uint64)m_sCardFormat.nChannels * (uint64)m_sCardFormat.nSampleRate;
-		nFullSize /= ( uint64 )m_sAudioStream[nHandle].nChannels * (uint64)m_sAudioStream[nHandle].nSampleRate;
-		psQueuePacket->pBuffer[0] = ( uint8* )malloc( (uint32) nFullSize + 4096 );
-		os::MediaFormat_s sFormat;
-		sFormat.nSampleRate = m_sAudioStream[nHandle].nSampleRate;
-		sFormat.nChannels = m_sAudioStream[nHandle].nChannels;
-		psQueuePacket->nSize[0] = Resample( sFormat, m_sCardFormat, ( uint16* )psQueuePacket->pBuffer[0], ( uint16* )m_sAudioStream[nHandle].pAddress, nSize );
-	}
-	lock_semaphore( m_hLock );
-	
-	if( m_nQueuedPackets[nHandle] > MEDIA_MAX_STREAM_PACKETS ) {
-		unlock_semaphore( m_hLock );
-		free( psQueuePacket->pBuffer[0] );
-		free( psQueuePacket );
-		std::cout<<"Packet buffer of Stream "<<nHandle<<" full"<<std::endl;
-		pcMessage->SendReply( MEDIA_SERVER_ERROR );
-		return;
-	}
-	m_psPacket[nHandle][m_nQueuedPackets[nHandle]] = psQueuePacket;
-	m_nQueuedPackets[nHandle]++;
-	unlock_semaphore( m_hLock );
-	//std::cout<<"Packet queued at position "<<m_nQueuedPackets[nHandle] - 1<<"( "<<
-		//m_nQueuedPackets[nHandle] * 100 / MEDIA_MAX_STREAM_PACKETS<<"% of the buffer used )"<<std::endl;
-	pcMessage->SendReply( MEDIA_SERVER_OK );
-}
-
-/* Get delay of the stream */
-void MediaServer::GetDelay( Message* pcMessage )
-{
-	int nDataSize = 0;
-	int nDelay;
-	uint64 nTime;
-	int32 nHandle;
-	Message cReply( MEDIA_SERVER_OK );
-	
-	if( pcMessage->FindInt32( "handle", &nHandle ) != 0 ) {
-		printf("Could not find stream\n" );
-		pcMessage->SendReply( MEDIA_SERVER_ERROR );
-		return;
-	}
-	
-	/* Get data size in the packet buffer */
-	lock_semaphore( m_hLock );
-	for( uint32 i = 0; i < m_nQueuedPackets[nHandle]; i++ ) 
-	{
-		nDataSize += m_psPacket[nHandle][i]->nSize[0];
-	}
-	/* Add the data in the soundcard buffer */
-	ioctl( m_hOSS, SNDCTL_DSP_GETODELAY, &nDelay );
-	if( m_sAudioStream[nHandle].nBufferPlayed > get_system_time() )
-		nDataSize += nDelay;
-	unlock_semaphore( m_hLock );
-	nTime = nDataSize;
-	nTime *= 1000;
-	nTime /= ( 2 * (uint64)m_sCardFormat.nChannels * (uint64)m_sCardFormat.nSampleRate );
-	
-	cReply.AddInt64( "delay", nTime );
-	pcMessage->SendReply( &cReply );
-}
-
-/* Get used percentage of the audio stream */
-void MediaServer::GetPercentage( Message* pcMessage )
-{
-	uint32 nValue;
-	int32 nHandle;
-	Message cReply( MEDIA_SERVER_OK );
-	
-	if( pcMessage->FindInt32( "handle", &nHandle ) != 0 ) {
-		pcMessage->SendReply( MEDIA_SERVER_ERROR );
-		return;
-	}
-	
-	lock_semaphore( m_hLock );
-	nValue = m_nQueuedPackets[nHandle] * 100 / MEDIA_MAX_STREAM_PACKETS;
-	unlock_semaphore( m_hLock );
-	cReply.AddInt32( "percentage", nValue );
-	pcMessage->SendReply( &cReply );
-}
 
 /* Clear audio buffer of one stream */
 void MediaServer::Clear( Message* pcMessage )
@@ -799,32 +683,17 @@ void MediaServer::Clear( Message* pcMessage )
 		return;
 	}
 	/* Stop thread */
-	lock_semaphore( m_hClearLock );
-	for( uint32 i = 0; i < m_nQueuedPackets[nHandle]; i++ ) {
-		free( m_psPacket[nHandle][i]->pBuffer[0] );
-		free( m_psPacket[nHandle][i] );
-	}
-	m_nQueuedPackets[nHandle] = 0;
+	lock_semaphore( m_hLock );
 	m_sAudioStream[nHandle].bActive = false;
-	m_sAudioStream[nHandle].nValueCount = 0;
-	m_sAudioStream[nHandle].vValue = 0;
-	m_pcControls->SetStreamValue( nHandle, 0 );
+	atomic_set( m_sAudioStream[nHandle].pnReadPointer, 0 );
+	atomic_set( m_sAudioStream[nHandle].pnWritePointer, 0 );
 	
 	/* Look if we are the only active stream */
 	if( m_nActiveStreamCount == 1 ) {
-		/* Reset to avoid playing the data which is still in the soundcard buffer */
-		ioctl( m_hOSS, SNDCTL_DSP_RESET, NULL );
-		int nVal = 44100;
-		ioctl( m_hOSS, SNDCTL_DSP_SPEED, &nVal );
-		m_sCardFormat.nSampleRate = nVal;
-		nVal = 1;
-		ioctl( m_hOSS, SNDCTL_DSP_STEREO, &nVal );
-		m_sCardFormat.nChannels = nVal + 1;
-		nVal = AFMT_S16_LE;
-		ioctl( m_hOSS, SNDCTL_DSP_SETFMT, &nVal );
+		m_pcCurrentOutput->Clear();
 	}
 	
-	unlock_semaphore( m_hClearLock );
+	unlock_semaphore( m_hLock );
 	pcMessage->SendReply( MEDIA_SERVER_OK );
 }
 
@@ -864,8 +733,6 @@ void MediaServer::GetDspInfo( Message* pcMessage )
 
 	cName = m_sDsps[nHandle].zName;
 	cReply.AddString( "name", cName );
-	cPath = m_sDsps[nHandle].zPath;
-	cReply.AddString( "path", cPath );
 	pcMessage->SendReply( &cReply );
 }
 
@@ -946,18 +813,6 @@ void MediaServer::HandleMessage( Message* pcMessage )
 			if( pcMessage->IsSourceWaiting() )
 				DeleteAudioStream( pcMessage );
 		break;
-		case MEDIA_SERVER_FLUSH_AUDIO_STREAM:
-			if( pcMessage->IsSourceWaiting() )
-				FlushAudioStream( pcMessage );
-		break;
-		case MEDIA_SERVER_GET_AUDIO_STREAM_DELAY:
-			if( pcMessage->IsSourceWaiting() )
-				GetDelay( pcMessage );
-		break;
-		case MEDIA_SERVER_GET_AUDIO_STREAM_PERCENTAGE:
-			if( pcMessage->IsSourceWaiting() )
-				GetPercentage( pcMessage );
-		break;
 		case MEDIA_SERVER_CLEAR_AUDIO_STREAM:
 			if( pcMessage->IsSourceWaiting() )
 				Clear( pcMessage );
@@ -966,13 +821,13 @@ void MediaServer::HandleMessage( Message* pcMessage )
 			Start( pcMessage );
 		break;
 		case MEDIA_SERVER_SHOW_CONTROLS:
-			if( !m_bControlsShown ) {
+			if( m_pcControls == NULL ) {
+				m_pcControls = new MediaControls( this, m_cControlsFrame );
 				m_pcControls->Lock();
 				m_pcControls->Show();
 				m_pcControls->Unlock();
 			}
 			m_pcControls->MakeFocus();
-			m_bControlsShown = true;
 		break;
 		case MEDIA_SERVER_GET_DSP_COUNT:
 			if( pcMessage->IsSourceWaiting() )
@@ -998,7 +853,8 @@ void MediaServer::HandleMessage( Message* pcMessage )
 				if( nVolume > 100 )
 					nVolume = 100;
 				m_nMasterVolume = nVolume;
-				m_pcControls->SetMasterVolume( m_nMasterVolume );
+				if( m_pcControls )
+					m_pcControls->SetMasterVolume( m_nMasterVolume );
 			}
 		}
 		break;
@@ -1020,37 +876,10 @@ void MediaServer::HandleMessage( Message* pcMessage )
 
 
 
-/* Called to play the startup sound */
-int play_startup_sound( void* pData )
-{
-	String zSound = String( "/system/sounds/" ) + *( String* )pData; 
-	snooze( 10000 );
-	
-	/* Create media manager ( yes, we connect to this server ) */
-	if( MediaManager::GetInstance() == NULL ) {
-		MediaManager* pcManager = new MediaManager();
-		pcManager->IsValid();
-	}
-	
-	/* Create sound player and play the sound */
-	MediaSoundPlayer* pcPlayer = new MediaSoundPlayer();
-	
-	if( pcPlayer->SetFile( zSound ) == 0 )
-	{
-		pcPlayer->Play();
-		while( pcPlayer->IsPlaying() ) { snooze( 1000 ); }
-	}
-	delete( pcPlayer );
-	
-	return( 0 );
-}
-
 thread_id MediaServer::Start()
 {
 	make_port_public( GetMsgPort() );
 	std::cout<<"Media Server running at port "<<GetMsgPort()<<std::endl;
-	/* Play startup sound */
-	resume_thread( spawn_thread( "play_startup_sound", (void*)play_startup_sound, 0, 0, &m_zStartupSound ) );
 	
 	return( Application::Run() );
 }

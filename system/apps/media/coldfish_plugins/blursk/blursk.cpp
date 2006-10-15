@@ -971,6 +971,7 @@ public:
 		if( !activated )
 			return;
 			
+			
 		config.signal_style = m_zType;
 		
 		blursk_view = pcTarget;
@@ -979,6 +980,7 @@ public:
 		
 		if( width < 32 || height < 32 )
 			return;
+			
 		
 		if ((width != img_physwidth || height != img_physheight))
 		{

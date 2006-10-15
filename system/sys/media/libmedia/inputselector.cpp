@@ -49,6 +49,7 @@ public:
 /** Open new input selector.
  * \par Description:
  * Opens a new input selector.
+ * \param cPosition - Position of the window.
  * \param zTitle - Title of the created window.
  * \param pcTarget - Target to where the event messages should be send.
  * \param pcOpenMessage - This message is sent if a file / device has been selected.
@@ -125,11 +126,11 @@ MediaInputSelector::MediaInputSelector( const Point cPosition, const String zTit
 		{
 			m->m_pcInputList->SetSelection( i );
 		}
-		delete( pcInput );
+		pcInput->Release();
 		i++;
 	}
-	if( pcDefaultInput );
-		delete( pcDefaultInput );
+	if( pcDefaultInput )
+		pcDefaultInput->Release();
 		
 	/* Look if we have to disable the file input field */
 	if( !bAutoDetect ) {
@@ -139,7 +140,7 @@ MediaInputSelector::MediaInputSelector( const Point cPosition, const String zTit
 			m->m_pcFileButton->SetEnable( false );
 		}
 		if( pcInput )
-			delete( pcInput );	
+			pcInput->Release();
 	}
 	
 	/* Create file selector */
@@ -232,7 +233,7 @@ void MediaInputSelector::HandleMessage( Message* pcMessage )
 					m->m_pcOpenMessage->AddString( "input", pcInput->GetIdentifier() );
 					m->m_pcTarget->SendMessage( m->m_pcOpenMessage );
 				}
-				delete( pcInput );
+				pcInput->Release();
 				delete( m->m_pcCancelMessage );
 				m->m_pcCancelMessage = NULL;
 				PostMessage( M_QUIT );
@@ -252,7 +253,7 @@ void MediaInputSelector::HandleMessage( Message* pcMessage )
 				if( pcInput ) {
 					m->m_pcFileInput->SetEnable( pcInput->FileNameRequired() );
 					m->m_pcFileButton->SetEnable( pcInput->FileNameRequired() );
-					delete( pcInput );
+					pcInput->Release();
 				}
 			}
 		break;

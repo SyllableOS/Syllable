@@ -191,8 +191,9 @@ CFWindow::CFWindow( const os::Rect & cFrame, const os::String & cName, const os:
 
 	/* Set Icon */
 	os::Resources cCol( get_image_id() );
-	os::ResStream *pcStream = cCol.GetResourceStream( "icon24x24.png" );
+	os::ResStream *pcStream = cCol.GetResourceStream( "icon48x48.png" );
 	os::BitmapImage *pcIcon = new os::BitmapImage( pcStream );
+	//pcIcon->SetSize( os::Point( 24, 24 ) );
 	SetIcon( pcIcon->LockBitmap() );
 	delete( pcIcon );
 	
@@ -251,7 +252,7 @@ void CFWindow::HandleMessage( os::Message * pcMessage )
 			/* Show about alert */
 			os::String cBodyText;
 			
-			cBodyText = os::String( "ColdFish V1.2.2\n" ) + MSG_ABOUTWND_TEXT;
+			cBodyText = os::String( "ColdFish V1.2.3\n" ) + MSG_ABOUTWND_TEXT;
 			
 			os::Alert* pcAbout = new os::Alert( MSG_ABOUTWND_TITLE, cBodyText, os::Alert::ALERT_INFO, 
 											os::WND_NOT_RESIZABLE, MSG_ABOUTWND_OK.c_str(), NULL );
@@ -545,10 +546,7 @@ void CFApp::PlayThread()
 	bigtime_t nNextAnimationTime = get_system_time();
 	
 	m_bPlayThread = true;
-	bool bGrab;
-	bool bNoGrab;
-	bool bStarted = false;
-
+	
 	os::MediaPacket_s sPacket;
 	os::MediaPacket_s sCurrentAudioPacket;
 	std::queue<os::MediaPacket_s> cAudioPackets;
@@ -556,7 +554,6 @@ void CFApp::PlayThread()
 	uint64 nAudioBytes = 0;
 	uint8 nErrorCount = 0;
 	bool bError = false;
-	uint32 nGrabValue = 80;
 	int16 nAnimationBuffer[2][512];
 	uint64 nAnBufferPosition = 0;
 	
@@ -566,7 +563,6 @@ void CFApp::PlayThread()
 	/* Seek to last position */
 	if ( !m_bStream )
 		m_pcInput->Seek( m_nLastPosition );
-	
 	/* Create audio output packet */
 	if ( m_bPacket )
 	{
@@ -576,16 +572,10 @@ void CFApp::PlayThread()
 	{
 		if ( m_bPacket )
 		{
-		      grab:
 			/* Look if we have to grab data */
-			bGrab = false;
-			bNoGrab = false;
-
-			if ( m_pcAudioOutput->GetUsedBufferPercentage() < nGrabValue )
-				bGrab = true;
-			if ( m_pcAudioOutput->GetUsedBufferPercentage() >= nGrabValue )
-				bNoGrab = true;
-			if ( bGrab && !bNoGrab )
+			//printf("%i %i\n", (int)m_pcAudioOutput->GetDelay(), (int)m_pcAudioOutput->GetBufferSize() );
+			
+			if ( m_pcAudioOutput->GetDelay() < m_pcAudioOutput->GetBufferSize() )
 			{
 				/* Grab data */
 				if ( m_pcInput->ReadPacket( &sPacket ) == 0 )
@@ -594,7 +584,6 @@ void CFApp::PlayThread()
 					/* Decode audio data */
 					if ( sPacket.nStream == m_nAudioStream )
 					{
-						
 						if ( m_pcAudioCodec->DecodePacket( &sPacket, &sCurrentAudioPacket ) == 0 )
 						{
 							if ( sCurrentAudioPacket.nSize[0] > 0 )
@@ -602,21 +591,22 @@ void CFApp::PlayThread()
 								sCurrentAudioPacket.nTimeStamp = ~0;
 								m_pcAudioOutput->WritePacket( 0, &sCurrentAudioPacket );
 								nAudioBytes += sCurrentAudioPacket.nSize[0];
-				
 								/* Put the packet in the queue and allocate a new one */
-								cAudioPackets.push( sCurrentAudioPacket );
-								m_pcAudioCodec->CreateAudioOutputPacket( &sCurrentAudioPacket );
+								if( cAudioPackets.size() < 20 )
+								{
+									cAudioPackets.push( sCurrentAudioPacket );
+									m_pcAudioCodec->CreateAudioOutputPacket( &sCurrentAudioPacket );
+								}
 							}
 						}
 					}
 					m_pcInput->FreePacket( &sPacket );
-					goto grab;
 				}
 				else
 				{
 					/* Increase error count */
 					nErrorCount++;
-					if ( m_pcAudioOutput->GetDelay() > 0 )
+					if ( m_pcAudioOutput->GetDelay( true ) > 0 )
 						nErrorCount--;
 					if ( nErrorCount > 10 && !bError )
 					{
@@ -626,30 +616,14 @@ void CFApp::PlayThread()
 				}
 
 			}
-
-			/* Look if we have to start now */
-			if ( !bStarted )
-			{
-				if ( bNoGrab == true || m_pcInput->GetLength() < 5 )
-				{
-					bStarted = true;
-					nNextAnimationTime = get_system_time();
-					std::cout << "Go" << std::endl;
-				}
-			}
-			/* If we have started then flush the media data */
-			if ( bStarted )
-			{
-				m_pcAudioOutput->Flush();
-			}
-
 		}
+		
 		snooze( 1000 );
+		
 
 		/* Build animation buffer and pass it to the plugin */
-		if( m_bPacket && bStarted && get_system_time() > nNextAnimationTime  )
+		if( m_bPacket && get_system_time() > nNextAnimationTime && m_bPlayThread )
 		{
-			
 			while( ( nAnBufferPosition < 512 ) && !cAudioPackets.empty() )
 			{
 				
@@ -676,24 +650,18 @@ void CFApp::PlayThread()
 				}	
 			}
 			
-			
 			if( nAnBufferPosition == 512 && m_bPlayThread )
 			{
 				GetWindow()->Lock();
 				if( m_pcCurrentVisPlugin )
-				{
-					if( get_system_time() - nNextAnimationTime <= ( 512 * 1000000 / m_sAudioFormat.nSampleRate ) )
-						m_pcCurrentVisPlugin->AudioData( m_pcWin->GetVisView(), nAnimationBuffer );
-					//printf( "%i %i\n", (int)nNextAnimationTime, (int)get_system_time() );
+				{					
+					m_pcCurrentVisPlugin->AudioData( m_pcWin->GetVisView(), nAnimationBuffer );
 				}
 				GetWindow()->Unlock();
 				nAnBufferPosition = 0;
-				
-			}
-			
-			nNextAnimationTime += ( 512 * 1000000 / m_sAudioFormat.nSampleRate );
+				nNextAnimationTime += ( 512 * 1000000 / m_sAudioFormat.nSampleRate );
+			}			
 		}
-
 		if ( !m_bStream && get_system_time() > nTime + 1000000 )
 		{
 			/* Move slider */
@@ -789,6 +757,7 @@ bool CFApp::OpenList( os::String zFileName )
 	int nTrack = 0;
 	int nStream = 0;
 	
+	
 	m_pcWin->Lock();
 	m_pcWin->SetTitle( "Loading... - ColdFish" );
 	m_pcWin->Unlock();
@@ -847,7 +816,7 @@ bool CFApp::OpenList( os::String zFileName )
 					cNode.Unset();
 				} catch( ... ) {
 				}
-				delete( pcInput );
+				pcInput->Release();
 			}
 			
 			/* Add new row */
@@ -909,6 +878,7 @@ void CFApp::SaveList()
 {
 	uint32 i;
 	
+		
 	if( m_bLockedInput || m_zListName == "" )
 		return;
 		
@@ -944,6 +914,8 @@ void CFApp::SaveList()
 	hOut << "<END>" << std::endl;
 
 	hOut.close();
+	
+
 }
 
 /* Open an input */
@@ -971,7 +943,7 @@ void CFApp::OpenInput( os::String zFileName, os::String zInput )
 		{
 			break;
 		}
-		delete( m_pcInput );
+		m_pcInput->Release();
 		m_pcInput = NULL;
 		i++;
 	}
@@ -1033,7 +1005,7 @@ void CFApp::OpenInput( os::String zFileName, os::String zInput )
 	if ( m_pcInput )
 	{
 		m_pcInput->Close();
-		delete( m_pcInput );
+		m_pcInput->Release();
 		m_pcInput = NULL;
 	}
 	os::Alert * pcAlert = new os::Alert( MSG_ERRWND_TITLE, MSG_ERRWND_CANTPLAY, os::Alert::ALERT_WARNING, 0, MSG_ERRWND_OK.c_str(), NULL );
@@ -1108,7 +1080,7 @@ void CFApp::AddFile( os::String zFileName )
 	}
 	
 	pcInput->Close();
-	delete( pcInput );
+	pcInput->Release();
 
 	SaveList();
 	UpdatePluginPlaylist();
@@ -1117,7 +1089,7 @@ void CFApp::AddFile( os::String zFileName )
 	if ( pcInput )
 	{
 		pcInput->Close();
-		delete( pcInput );
+		pcInput->Release();
 	}
 	os::Alert * pcAlert = new os::Alert( MSG_ERRWND_TITLE, MSG_ERRWND_CANTPLAY, os::Alert::ALERT_WARNING, 0, MSG_ERRWND_OK.c_str(), NULL );
 	pcAlert->Go( new os::Invoker( 0 ) );
@@ -1129,7 +1101,7 @@ int CFApp::OpenFile( os::String zFileName, uint32 nTrack, uint32 nStream )
 	/* Close */
 	CloseCurrentFile();
 	uint32 i = 0;
-
+	
 	if( !m_bLockedInput )
 	{
 		m_pcInput = m_pcManager->GetBestInput( zFileName );
@@ -1215,7 +1187,7 @@ int CFApp::OpenFile( os::String zFileName, uint32 nTrack, uint32 nStream )
 				break;
 			else
 			{
-				delete( m_pcAudioCodec );
+				m_pcAudioCodec->Release();
 				m_pcAudioCodec = NULL;
 			}
 	}
@@ -1273,21 +1245,21 @@ void CFApp::CloseCurrentFile()
 	if ( m_pcAudioOutput )
 	{
 		m_pcAudioOutput->Close();
-		delete( m_pcAudioOutput );
+		m_pcAudioOutput->Release();
 		m_pcAudioOutput = NULL;
 	}
 
 	if ( m_pcAudioCodec )
 	{
 		m_pcAudioCodec->Close();
-		delete( m_pcAudioCodec );
+		m_pcAudioCodec->Release();
 		m_pcAudioCodec = NULL;
 	}
 
 	if ( m_pcInput && !m_bLockedInput )
 	{
 		m_pcInput->Close();
-		delete( m_pcInput );
+		m_pcInput->Release();
 		m_pcInput = NULL;
 	}
 	m_pcWin->SetTitle( os::String ( os::Path( m_zListName.c_str() ).GetLeaf(  ) ) + " - ColdFish" );
@@ -1824,17 +1796,21 @@ CFApplication::CFApplication( const char *pzMimeType, os::String zFileName, bool
 
 CFApplication::~CFApplication()
 {
-	m_pcApp->Terminate();
+	m_pcApp->Quit();
 }
 
 void CFApplication::HandleMessage( os::Message * pcMessage )
 {
 	m_pcApp->PostMessage( pcMessage, m_pcApp );
+	return( os::Application::HandleMessage( pcMessage ) );
 }
 
 bool CFApplication::OkToQuit()
 {
-	return( m_pcApp->OkToQuit() );
+	m_pcApp->Lock();
+	bool bReturn = m_pcApp->OkToQuit();
+	m_pcApp->Unlock();
+	return( bReturn );
 }
 
 int main( int argc, char *argv[] )

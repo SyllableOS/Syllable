@@ -24,8 +24,11 @@
 #include <util/message.h>
 #include <util/resources.h>
 #include <atheos/msgport.h>
+#include <atheos/device.h>
 #include <iostream>
 #include <cassert>
+#include <unistd.h>
+#include <sys/ioctl.h>
 
 using namespace os;
 
@@ -47,13 +50,14 @@ public:
 	{
 		if( m_bPluginsLoaded )
 			return;
-
+			
+		
 		String zFileName;
 		String zPath = String( "/system/extensions/media" );
 
 		/* Open all media plugins in /system/media */
 		Directory *pcDirectory = new Directory();
-		if( pcDirectory->SetTo( zPath.c_str() ) != 0 )
+		if( pcDirectory->SetTo( zPath ) != 0 )
 			return;
 
 		std::cout<<"Start plugin scan.."<<std::endl;
@@ -65,6 +69,16 @@ public:
 			if( zFileName == "." || zFileName == ".." )
 				continue;
 			zFileName = zPath + String( "/" ) + zFileName;
+			
+			/* Check category attribute. We load audio drivers later */
+			char zCategory[256];
+			memset( zCategory, 0, 256 );
+			os::FSNode cNode( zFileName );
+			if( cNode.ReadAttr( "os::Category", ATTR_TYPE_STRING, zCategory, 0, 255 ) > 0 )
+			{
+				if( os::String( zCategory ) == "AudioDriver" )
+					continue;
+			}
 
 			image_id nID = load_library( zFileName.c_str(), 0 );
 			if( nID >= 0 ) {
@@ -72,7 +86,7 @@ public:
 				/* Call init_media_addon() */
 				if( get_symbol_address( nID, "init_media_addon",
 				-1, (void**)&pInit ) == 0 ) {
-					MediaAddon* pcAddon = pInit();
+					MediaAddon* pcAddon = pInit( "" );
 					if( pcAddon ) {
 						if( pcAddon->Initialize() != 0 )
 						{
@@ -88,6 +102,57 @@ public:
 			}
 		}
 		m_bPluginsLoaded = true;
+		
+		/* Load audio drivers */
+		
+		zPath = String( "/dev/audio" );
+		if( pcDirectory->SetTo( zPath ) != 0 )
+			return;
+		while( pcDirectory->GetNextEntry( &zFileName ) )
+		{
+			if( zFileName == "." || zFileName == ".." )
+				continue;
+			zPath = String( "/dev/audio" );
+			os::String zDevFileName = zPath + String( "/" ) + zFileName;
+			
+			/* Get userspace driver name */
+			char zDriverPath[PATH_MAX];
+			memset( zDriverPath, 0, PATH_MAX );
+			int nFd = open( zDevFileName.c_str(), O_RDONLY );
+			if( nFd < 0 )
+				continue;
+			if( ioctl( nFd, IOCTL_GET_USERSPACE_DRIVER, zDriverPath ) != 0 )
+				continue;
+			close( nFd );
+			
+		
+			/* Construct plugin path */
+			zPath = String( "/system/extensions/media" );
+			zFileName = zPath + String( "/" ) + zDriverPath;
+			
+			image_id nID = load_library( zFileName.c_str(), 0 );
+			if( nID >= 0 ) {
+				init_media_addon *pInit;
+				/* Call init_media_addon() */
+				if( get_symbol_address( nID, "init_media_addon",
+				-1, (void**)&pInit ) == 0 ) {
+					MediaAddon* pcAddon = pInit( zDevFileName );
+					if( pcAddon ) {
+						if( pcAddon->Initialize() != 0 )
+						{
+							std::cout<<pcAddon->GetIdentifier().c_str()<<" failed to initialize"<<std::endl;
+						} else {
+							std::cout<<pcAddon->GetIdentifier().c_str()<<" initialized"<<std::endl;
+							m_nPlugins.push_back( MediaPlugin( nID, pcAddon ) );
+						}
+					}
+				} else {
+					std::cout<<zFileName.c_str()<<" does not export init_media_addon()"<<std::endl;
+				}
+			}
+		}		
+		
+
 		std::cout<<"Plugin scan finished"<<std::endl;
 	}
 	
@@ -267,7 +332,7 @@ MediaInput* MediaManager::GetBestInput( String zFileName )
 					pcInput->Close();
 					return( pcInput );
 				}
-				delete( pcInput );
+				pcInput->Release();
 			}
 				
 		}
@@ -303,7 +368,7 @@ MediaInput* MediaManager::GetDefaultInput()
 					if( pcInput->GetIdentifier() == zPlugin ) {
 						return( pcInput );
 					}
-					delete( pcInput );
+					pcInput->Release();
 				}
 				
 			}
@@ -354,7 +419,7 @@ MediaInput* MediaManager::GetInput( uint32 nIndex )
 				if( nCount == nIndex )
 					return( pcInput );
 				nCount++;
-				delete( pcInput );
+				pcInput->Release();
 			}
 		}
 	}
@@ -386,7 +451,7 @@ MediaCodec* MediaManager::GetBestCodec( MediaFormat_s sInternal, MediaFormat_s s
 					return( pcCodec );
 				}
 				else
-					delete( pcCodec );
+					pcCodec->Release();
 			}
 		}
 	}
@@ -417,7 +482,7 @@ MediaCodec* MediaManager::GetCodec( uint32 nIndex )
 				if( nCount == nIndex )
 					return( pcCodec );
 				nCount++;
-				delete( pcCodec );
+				pcCodec->Release();
 			}
 		}
 	}
@@ -451,7 +516,7 @@ MediaOutput* MediaManager::GetBestOutput( String zFileName, String zIdentifier )
 						return( pcOutput );
 					}
 				}
-				delete( pcOutput );
+				pcOutput->Release();
 			}
 			
 		}
@@ -487,7 +552,7 @@ MediaOutput* MediaManager::GetDefaultAudioOutput()
 				if( pcOutput->GetIdentifier() == zPlugin ) {
 					return( pcOutput );
 				}
-				delete( pcOutput );
+				pcOutput->Release();
 			}
 		}
 	}
@@ -541,7 +606,7 @@ MediaOutput* MediaManager::GetDefaultVideoOutput()
 				if( pcOutput->GetIdentifier() == zPlugin ) {
 					return( pcOutput );
 				}
-				delete( pcOutput );
+				pcOutput->Release();
 			}
 		}
 	}
@@ -591,7 +656,7 @@ MediaOutput* MediaManager::GetOutput( uint32 nIndex )
 				if( nCount == nIndex )
 					return( pcOutput );
 				nCount++;
-				delete( pcOutput );
+				pcOutput->Release();
 			}
 		}
 	}

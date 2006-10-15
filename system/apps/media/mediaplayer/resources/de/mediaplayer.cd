@@ -12,16 +12,26 @@ MSG_MAINWND_MENU_APPLICATION_QUIT			Beenden
 MSG_MAINWND_MENU_FILE=300					Datei
 MSG_MAINWND_MENU_FILE_OPEN					Öffnen...
 MSG_MAINWND_MENU_FILE_OPEN_INPUT			Eingang öffnen...
+MSG_MAINWND_MENU_FILE_INFO					Info...
 MSG_MAINWND_MENU_FILE_FULLSCREEN			Vollbild
 
 MSG_MAINWND_MENU_TRACKS=400					Titel
 
 MSG_ABOUTWND_TITLE=1000						Info Media Player
-MSG_ABOUTWND_TEXT							\nEine Abspielsoftware für Musik und Videos\nCopyright 2003 Arno Klenke\n\nDer Syllable Media Player ist unter der LGPL veröffentlicht.
+MSG_ABOUTWND_TEXT							\nEine Abspielsoftware für Musik und Videos\nCopyright 2003-2006 Arno Klenke\n\nDer Syllable Media Player ist unter der LGPL veröffentlicht.
 MSG_ABOUTWND_OK								O.K
 
 MSG_ERRWND_TITLE=1100						Fehler
 MSG_ERRWND_OK								Ok
 MSG_ERRWND_CANTPLAY							Die Datei konnte nicht geöffnet werden\nÜberprüfen sie die Einstellungen.
 
+MSG_INFOWND_TITLE=1200						Information
+MSG_INFOWND_VIDEO							Video
+MSG_INFOWND_AUDIO							Audio
+MSG_INFOWND_CHANNELS						kanäle
+MSG_INFOWND_OK								OK
+
+
 MSG_TRACK_MENU_ITEM=2000					Titel
+
+

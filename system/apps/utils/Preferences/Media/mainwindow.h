@@ -29,6 +29,7 @@
 #include <gui/stringview.h>
 #include <gui/dropdownmenu.h>
 #include <gui/slider.h>
+#include <gui/separator.h>
 #include <gui/splitter.h>
 #include <gui/treeview.h>
 #include <gui/checkbox.h>
@@ -71,26 +72,13 @@ private:
 class OutputPrefs : public os::VLayoutNode
 {
 public:
-	OutputPrefs( os::MediaOutput* pcOutput, bool bDefaultVideo, bool bDefaultAudio );
+	OutputPrefs( os::MediaOutput* pcOutput );
 	~OutputPrefs();
 private:
-	os::CheckBox* m_pcDefaultVideo;
-	os::CheckBox* m_pcDefaultAudio;
 	os::View* m_pcConfigView;
 	os::MediaOutput* m_pcOutput;
 };
 
-
-class SoundPrefs : public os::VLayoutNode
-{
-public:
-	SoundPrefs( os::Window* pcParent,os::String zCurrentStartup );
-	~SoundPrefs();
-	os::String GetString() { return( m_pcStartupSound->GetCurrentString() ); }
-private:
-	os::DropdownMenu* m_pcStartupSound;
-	
-};
 
 class MainWindow:public os::Window
 {
@@ -107,10 +95,10 @@ class MainWindow:public os::Window
 	void Apply();
 	void Undo();
 	void Default();
-	void Treeview();
+	void DeviceChanged();
+	void InputChange();
 	void VideoOutputChange();
 	void AudioOutputChange();
-	void StartupSoundChange();
 
 	// Default outputs
 	os::String cCurrentVideo;
@@ -118,24 +106,26 @@ class MainWindow:public os::Window
 
 	os::String cCurrentAudio;
 	os::String cUndoAudio;
-
-	os::String cCurrentStartupSound;
-	os::String cUndoStartupSound;
+	
+	os::String cCurrentInput;
+	os::String cUndoInput;
 
 	// Refresh flag/custom or not
 
 	os::LayoutView * pcLRoot;
 	os::VLayoutNode * pcVLRoot;
-	os::HLayoutNode* pcHLSettings;
+	os::LayoutView* pcSettingsView;
 	os::Splitter *pcSplitter;
-	SettingsTree* m_pcTree;
-	os::VLayoutNode* m_pcPrefs;
+	os::DropdownMenu* pcDevice;
+	os::DropdownMenu* pcDefaultInput;
+	os::DropdownMenu* pcDefaultAudioOut;
+	os::DropdownMenu* pcDefaultVideoOut;
 	os::HLayoutNode * pcHLButtons;
 	os::Button * pcBDefault, *pcBApply, *pcBUndo, *pcBControls;
 	
 	// State
 	
-	int m_nTreeSelect;
+	int m_nDeviceSelect;
 	
 	int m_nOutputStart;
 	int m_nInputStart;

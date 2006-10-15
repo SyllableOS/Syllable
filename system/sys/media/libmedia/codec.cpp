@@ -39,6 +39,15 @@ String MediaCodec::GetIdentifier()
 	return( "Unknown" );
 }
 
+/** Physical type.
+ * \par Description:
+ * Returns the physical type of the device.
+ * \author	Arno Klenke
+ *****************************************************************************/
+uint32 MediaCodec::GetPhysicalType()
+{
+	return( MEDIA_PHY_UNKNOWN );
+}
 
 /** Configuration view.
  * \par Description:
@@ -160,7 +169,7 @@ void MediaCodec::DeleteVideoOutputPacket( MediaPacket_s* psOutput )
  * Decodes one packet of media data. The packet can be retrieved by calling 
  * the ReadPacket() method of a media input object. Returns 0 if successful.
  * \param psPacket - packet of media data.
- * \param pOutput - Output packet which has been allocated with the Create - Video / Audio - OutputPacket()
+ * \param psOutput - Output packet which has been allocated with the Create - Video / Audio - OutputPacket()
  *					method.
  *
  * \author	Arno Klenke
@@ -176,7 +185,7 @@ status_t MediaCodec::DecodePacket( MediaPacket_s* psPacket, MediaPacket_s* psOut
  * Encodes one packet of media data. The packet can be retrieved by calling 
  * the ReadPacket() method of a media input object. Returns 0 if successful.
  * \param psPacket - packet of media data.
- * \param pOutput - Output packet which has been allocated with the Create - Video / Audio - OutputPacket()
+ * \param psOutput - Output packet which has been allocated with the Create - Video / Audio - OutputPacket()
  *					method.
  *
  * \author	Arno Klenke

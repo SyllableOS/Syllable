@@ -28,6 +28,10 @@ public:
 	~RAWCodec();
 	
 	os::String 		GetIdentifier();
+	uint32			GetPhysicalType()
+	{
+		return( os::MEDIA_PHY_SOFT_CODEC );
+	}
 	os::View*		GetConfigurationView();
 	
 	status_t 		Open( os::MediaFormat_s sFormat, os::MediaFormat_s sExternal, bool bEncode );
@@ -79,18 +83,24 @@ status_t RAWCodec::Open( os::MediaFormat_s sFormat, os::MediaFormat_s sExternal,
 	if( !bEncode )
 	{
 		/* Check decoding parameters */
-		if( sExternal.nSampleRate !=0 || sExternal.nChannels != 0
-		|| sExternal.nWidth != 0 || sExternal.nHeight != 0 ) {
-			std::cout<<"Format conversion not supported by the RAW codec"<<std::endl;
+		if( ( sExternal.nSampleRate !=0 && sFormat.nSampleRate != sExternal.nSampleRate ) || 
+		( sExternal.nChannels != 0 && sFormat.nChannels != sExternal.nChannels )
+		|| ( sExternal.nWidth != 0 && sExternal.nWidth != sFormat.nWidth )
+		 || ( sExternal.nHeight != 0 && sExternal.nHeight != sFormat.nHeight ) ) {
+		 	printf( "%i %i %i %i\n", sExternal.nSampleRate, sFormat.nSampleRate, sExternal.nChannels, sFormat.nChannels );
+			std::cout<<"Format conversion not supported by the FFMpeg codec"<<std::endl;
 			return( -1 );
 		}
 		m_sFormat = sFormat;
 	} else
 	{
 		/* Check encoding parameters */
-		if( sFormat.nSampleRate !=0 || sFormat.nChannels != 0
-		|| sFormat.nWidth != 0 || sFormat.nHeight != 0 ) {
-			std::cout<<"Format conversion not supported by the RAW codec"<<std::endl;
+		if( ( sFormat.nSampleRate !=0 && sFormat.nSampleRate != sExternal.nSampleRate ) || 
+		( sFormat.nChannels != 0 && sFormat.nChannels != sExternal.nChannels )
+		|| ( sFormat.nWidth != 0 && sExternal.nWidth != sFormat.nWidth )
+		 || ( sFormat.nHeight != 0 && sExternal.nHeight != sFormat.nHeight ) ) {
+		 	printf( "%i %i %i %i\n", sExternal.nSampleRate, sFormat.nSampleRate, sExternal.nChannels, sFormat.nChannels );		 	
+			std::cout<<"Format conversion not supported by the FFMpeg codec"<<std::endl;
 			return( -1 );
 		}
 		m_sFormat = sExternal;
@@ -214,7 +224,7 @@ public:
 
 extern "C"
 {
-	os::MediaAddon* init_media_addon()
+	os::MediaAddon* init_media_addon( os::String zDevice )
 	{
 		return( new RAWAddon() );
 	}

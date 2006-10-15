@@ -6,7 +6,7 @@ APPBIN = /system
 
 VPATH = ./
 
-OBJS = mediaserver.o mediacontrols.o mixerchannel.o barview.o
+OBJS = mediaserver.o mediacontrols.o barview.o
 
 OBJDIR	:= objs
 

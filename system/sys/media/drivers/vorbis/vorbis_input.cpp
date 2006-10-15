@@ -35,6 +35,10 @@ public:
 	VorbisInput();
 	~VorbisInput();
 	os::String 		GetIdentifier();
+	uint32			GetPhysicalType()
+	{
+		return( os::MEDIA_PHY_SOFT_DEMUX );
+	}	
 	os::View*		GetConfigurationView();
 	
 	 bool			FileNameRequired();

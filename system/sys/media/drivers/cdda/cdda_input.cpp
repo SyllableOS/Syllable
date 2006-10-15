@@ -44,6 +44,10 @@ class CddaInput : public os::MediaInput
 public:
 	CddaInput( os::String zDevicePath );
 	~CddaInput();
+	uint32			GetPhysicalType()
+	{
+		return( os::MEDIA_PHY_CD_DVD_DIGITAL_IN );
+	}
 	os::String 		GetIdentifier();
 	os::View*		GetConfigurationView();
 	
@@ -409,10 +413,14 @@ public:
 		os::String zDrives[] = { "/dev/disk/ata/cda/raw",
 							"/dev/disk/ata/cdb/raw",
 							"/dev/disk/ata/cdc/raw",
-							"/dev/disk/ata/cdd/raw" };
+							"/dev/disk/ata/cdd/raw",
+							"/dev/disk/ata/cde/raw",
+							"/dev/disk/ata/cdf/raw",
+							"/dev/disk/ata/cdg/raw",
+							"/dev/disk/ata/cdh/raw" };
 							
 		/* Try all cd drives */
-		for( int i = 0; i < 4; i++ )
+		for( int i = 0; i < 8; i++ )
 		{
 			struct stat sStat;
 			if( lstat( zDrives[i].c_str(), &sStat ) == 0 )
@@ -431,7 +439,7 @@ private:
 
 extern "C"
 {
-	os::MediaAddon* init_media_addon()
+	os::MediaAddon* init_media_addon( os::String zDevice )
 	{
 		return( new CddaAddon() );
 	}

@@ -49,7 +49,7 @@ os::Point SettingsTree::GetPreferredSize( bool bLargest ) const
 {
 	if( !bLargest )
 		return( os::Point( 220, 100 ) );
-	return( os::Point( 200, 10000 ) );
+	return( os::Point( 220, 10000 ) );
 }
 
 
@@ -58,7 +58,6 @@ os::Point SettingsTree::GetPreferredSize( bool bLargest ) const
 InputPrefs::InputPrefs( os::MediaInput* pcInput ) : os::VLayoutNode( "Prefs" )
 {
 	m_pcInput = pcInput;
-	
 	m_pcConfigView = m_pcInput->GetConfigurationView();
 	if( m_pcConfigView == NULL )
 	{
@@ -72,7 +71,7 @@ InputPrefs::InputPrefs( os::MediaInput* pcInput ) : os::VLayoutNode( "Prefs" )
 }
 InputPrefs::~InputPrefs()
 {
-	delete( m_pcInput );
+	m_pcInput->Release();
 }
 
 
@@ -95,13 +94,13 @@ CodecPrefs::CodecPrefs( os::MediaCodec* pcCodec ) : os::VLayoutNode( "Prefs" )
 }
 CodecPrefs::~CodecPrefs()
 {
-	delete( m_pcCodec );
+	m_pcCodec->Release();
 }
 
 
 // Preferences view for one output
 
-OutputPrefs::OutputPrefs( os::MediaOutput* pcOutput, bool bDefaultVideo, bool bDefaultAudio ) : os::VLayoutNode( "Prefs" )
+OutputPrefs::OutputPrefs( os::MediaOutput* pcOutput ) : os::VLayoutNode( "Prefs" )
 {
 	m_pcOutput = pcOutput;
 	
@@ -113,91 +112,13 @@ OutputPrefs::OutputPrefs( os::MediaOutput* pcOutput, bool bDefaultVideo, bool bD
 	AddChild( m_pcConfigView );
 	AddChild( new os::VLayoutSpacer( "" ) );
 
-	m_pcDefaultVideo = new os::CheckBox( os::Rect(), "DefaultVideo", "Default video output", new os::Message( M_MW_VIDEOOUTPUT ) );
-	m_pcDefaultAudio = new os::CheckBox( os::Rect(), "DefaultAudio", "Default audio output", new os::Message( M_MW_AUDIOOUTPUT ) );
-	
-	m_pcDefaultVideo->SetEnable( false );
-	m_pcDefaultAudio->SetEnable( false );
-	
-	// Set value
-	m_pcDefaultVideo->SetValue( bDefaultVideo );
-	m_pcDefaultAudio->SetValue( bDefaultAudio );
-	
-	// Enable checkboxes if possible
-	if( !m_pcOutput->FileNameRequired() )
-	for( uint32 i = 0; i < m_pcOutput->GetOutputFormatCount(); i++ )
-	{
-		if( m_pcOutput->GetOutputFormat( i ).nType == os::MEDIA_TYPE_VIDEO )
-			m_pcDefaultVideo->SetEnable( true );
-		if( m_pcOutput->GetOutputFormat( i ).nType == os::MEDIA_TYPE_AUDIO )
-			m_pcDefaultAudio->SetEnable( true );
-	}
-	
-	
-	// Disable chekboxes if they are marked
-	if( bDefaultVideo )
-		m_pcDefaultVideo->SetEnable( false );	
-	if( bDefaultAudio )
-		m_pcDefaultAudio->SetEnable( false );
-	
-	
-	AddChild( m_pcDefaultVideo );
-	AddChild( new os::VLayoutSpacer( "", 5.0f, 5.0f ) );
-	AddChild( m_pcDefaultAudio );
-	AddChild( new os::VLayoutSpacer( "", 5.0f, 5.0f ) );
 	
 	SetHAlignment( os::ALIGN_LEFT );
 	
-	SameWidth( "DefaultVideo", "DefaultAudio", NULL );
-	SameHeight( "DefaultVideo", "DefaultAudio", NULL );
 }
 OutputPrefs::~OutputPrefs()
 {
-	delete( m_pcOutput );
-}
-
-// Preferences view for sounds
-
-SoundPrefs::SoundPrefs( os::Window* pcParent, os::String zCurrentStartup ) : os::VLayoutNode( "Prefs" )
-{
-	// Add Sounds
-	m_pcStartupSound = new os::DropdownMenu( os::Rect(), "StartupSound" );
-	m_pcStartupSound->SetMinPreferredSize( 22 );
-	m_pcStartupSound->SetMaxPreferredSize( 22 );
-	m_pcStartupSound->SetReadOnly( true );
-	m_pcStartupSound->SetSelectionMessage( new os::Message( M_MW_STARTUPSOUND ) );
-	m_pcStartupSound->SetTarget( pcParent );
-	
-	m_pcStartupSound->Clear();
-	m_pcStartupSound->AppendItem( "None" );
-	m_pcStartupSound->SetSelection( 0, false );
-
-	os::FSNode cDirNode = os::FSNode( "/system/sounds" );
-	if ( cDirNode.IsValid() )
-	{
-		os::Directory * pcDir = new os::Directory( cDirNode );
-		os::FileReference cFileRef;
-		// Read all files of the /system/sounds directory
-		pcDir->Rewind();
-		while ( pcDir->GetNextEntry( &cFileRef ) == 1 )
-		{
-			if ( cFileRef.GetName() == ".." || cFileRef.GetName(  ) == "." )
-				continue;
-			m_pcStartupSound->AppendItem( cFileRef.GetName().c_str(  ) );
-			if ( cFileRef.GetName() == zCurrentStartup.str(  ) )
-				m_pcStartupSound->SetSelection( m_pcStartupSound->GetItemCount() - 1, false );
-		}
-		delete( pcDir );
-	}
-	
-	AddChild( m_pcStartupSound );
-	AddChild( new os::VLayoutSpacer( "" ) );
-
-	SetHAlignment( os::ALIGN_LEFT );
-	
-}
-SoundPrefs::~SoundPrefs()
-{
+	m_pcOutput->Release();
 }
 
 
@@ -206,40 +127,89 @@ MainWindow::MainWindow( const os::Rect & cFrame ):os::Window( cFrame, "MainWindo
 	os::Rect cBounds = GetBounds();
 	os::Rect cRect = os::Rect( 0, 0, 0, 0 );
 	
-	m_nTreeSelect = -1;
+	m_nDeviceSelect = -1;
+	
+	os::MediaManager::Get();
 
 	// Create the layouts/views
 	pcLRoot = new os::LayoutView( cBounds, "L", NULL, os::CF_FOLLOW_ALL );
 	pcVLRoot = new os::VLayoutNode( "VL" );
 	pcVLRoot->SetBorders( os::Rect( 10, 5, 10, 5 ) );
 	
-	
-	// Store v-node to store output settings
-	pcHLSettings = new os::HLayoutNode( "HLSettings" );
-	pcHLSettings->SetBorders( os::Rect( 5, 5, 5, 5 ) );
 
-	
 	// Create settings tree
-	m_pcTree = new SettingsTree();
-	m_pcTree->InsertColumn( "", (int)cBounds.Width() );
-	m_pcTree->SetSelChangeMsg( new os::Message( M_MW_TREEVIEW ) );
-	
-	// Create prefs node
-	m_pcPrefs = NULL;
- 
-	// Add everything
-	pcHLSettings->AddChild( m_pcTree );
-	pcHLSettings->AddChild( new os::HLayoutSpacer( "", 10.0f, 10.0f ) );
-	pcVLRoot->AddChild( pcHLSettings );
+	os::HLayoutNode* pcHDevice = new os::HLayoutNode( "HDevice", 0.0f );
+	pcHDevice->SetBorders( os::Rect( 0, 5, 0, 5 ) );
+	pcHDevice->AddChild( new os::StringView( os::Rect(), "DeviceLabel", "Device" ), 0.0f );
+	pcDevice = new os::DropdownMenu( os::Rect(), "Device" );
+	pcDevice->SetMinPreferredSize( 18 );
+	pcDevice->SetSelectionMessage( new os::Message( M_MW_DEVICE ) );
+	pcDevice->SetTarget( this );
+	pcDevice->SetReadOnly( true );
+	pcHDevice->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f ) );
+	pcHDevice->AddChild( pcDevice );
+	pcHDevice->AddChild( new os::HLayoutSpacer( "" ) );
+	pcVLRoot->AddChild( pcHDevice );
+
+	// Create settings view
+	pcSettingsView = new os::FrameView( os::Rect(), "SettingView", "" );
+	pcVLRoot->AddChild( new os::VLayoutSpacer( "", 5.0f, 5.0f ) );
+	pcVLRoot->AddChild( pcSettingsView );
 	
 	pcVLRoot->SetHAlignment( os::ALIGN_LEFT );
 	
-	
+	pcVLRoot->AddChild( new os::Separator( os::Rect(), "", os::HORIZONTAL ), 0.0f );
 
+	// Create default dropdown menus
+	os::HLayoutNode* pcHDefaultInput = new os::HLayoutNode( "HDefaultInput", 0.0f );
+	pcHDefaultInput->SetBorders( os::Rect( 0, 5, 0, 5 ) );
+	pcHDefaultInput->AddChild( new os::StringView( os::Rect(), "DefInputString", "Default input" ) );
+	pcDefaultInput = new os::DropdownMenu( os::Rect(), "DefaultInput" );
+	pcDefaultInput->SetMinPreferredSize( 18 );
+	pcDefaultInput->SetSelectionMessage( new os::Message( M_MW_INPUT ) );
+	pcDefaultInput->SetTarget( this );
+	pcDefaultInput->SetReadOnly( true );
+	pcHDefaultInput->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f ) );
+	pcHDefaultInput->AddChild( pcDefaultInput );
+	pcHDefaultInput->AddChild( new os::HLayoutSpacer( "" ) );
+	pcVLRoot->AddChild( pcHDefaultInput );
+	
+	os::HLayoutNode* pcHDefaultAudioOut = new os::HLayoutNode( "HDefaultAudioOut", 0.0f );
+	pcHDefaultAudioOut->SetBorders( os::Rect( 0, 5, 0, 5 ) );
+	pcHDefaultAudioOut->AddChild( new os::StringView( os::Rect(), "DefAudioOutString", "Default audio output" ) );
+	pcDefaultAudioOut = new os::DropdownMenu( os::Rect(), "DefaultAudioOut" );
+	pcDefaultAudioOut->SetMinPreferredSize( 18 );
+	pcDefaultAudioOut->SetSelectionMessage( new os::Message( M_MW_AUDIOOUTPUT ) );
+	pcDefaultAudioOut->SetTarget( this );
+	pcDefaultAudioOut->SetReadOnly( true );
+	pcHDefaultAudioOut->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f ) );
+	pcHDefaultAudioOut->AddChild( pcDefaultAudioOut );
+	pcHDefaultAudioOut->AddChild( new os::HLayoutSpacer( "" ) );
+	pcVLRoot->AddChild( pcHDefaultAudioOut );
+
+	os::HLayoutNode* pcHDefaultVideoOut = new os::HLayoutNode( "HDefaultVideoOut", 0.0f );
+	pcHDefaultVideoOut->SetBorders( os::Rect( 0, 5, 0, 5 ) );
+	pcHDefaultVideoOut->AddChild( new os::StringView( os::Rect(), "DefVideoOutString", "Default video output" ) );
+	pcDefaultVideoOut = new os::DropdownMenu( os::Rect(), "DefaultVideoOut" );
+	pcDefaultVideoOut->SetMinPreferredSize( 18 );
+	pcDefaultVideoOut->SetSelectionMessage( new os::Message( M_MW_VIDEOOUTPUT ) );
+	pcDefaultVideoOut->SetTarget( this );
+	pcDefaultVideoOut->SetReadOnly( true );
+	pcHDefaultVideoOut->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f ) );
+	pcHDefaultVideoOut->AddChild( pcDefaultVideoOut );
+	pcHDefaultAudioOut->AddChild( new os::HLayoutSpacer( "" ) );
+	pcVLRoot->AddChild( pcHDefaultVideoOut );
+	pcVLRoot->SameWidth( "DefInputString", "DefAudioOutString", "DefVideoOutString", NULL );
+	pcVLRoot->SameWidth( "DefaultInput", "DefaultAudioOut", "DefaultVideoOut", NULL );
+	
+	pcVLRoot->AddChild( new os::Separator( os::Rect(), "", os::HORIZONTAL ), 0.0f );
+	
+	
 	// Create apply/revert/close buttons
 	pcHLButtons = new os::HLayoutNode( "HLButtons" );
+	pcHLButtons->SetBorders( os::Rect( 0, 5, 0, 0 ) );
 	pcHLButtons->AddChild( new os::HLayoutSpacer( "" ) );
-	pcHLButtons->AddChild( pcBControls = new os::Button( cRect, "BControls", "Controls...", new os::Message( M_MW_CONTROLS ) ) );
+	pcHLButtons->AddChild( pcBControls = new os::Button( cRect, "BControls", "Stream volumes...", new os::Message( M_MW_CONTROLS ) ) );
 	pcHLButtons->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f ) );
 	pcHLButtons->AddChild( pcBApply = new os::Button( cRect, "BApply", "Apply", new os::Message( M_MW_APPLY ) ) );
 	pcHLButtons->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f ) );
@@ -268,88 +238,83 @@ MainWindow::MainWindow( const os::Rect & cFrame ):os::Window( cFrame, "MainWindo
 	pcBApply->SetTabOrder( iTabOrder++ );
 	pcBControls->SetTabOrder( iTabOrder++ );
 	pcBApply->MakeFocus();
+	
 
 	// Set default outputs 
+	os::MediaInput * pcDefaultInput = os::MediaManager::GetInstance()->GetDefaultInput(  );
 	os::MediaOutput * pcDefaultVideo = os::MediaManager::GetInstance()->GetDefaultVideoOutput(  );
 	os::MediaOutput * pcDefaultAudio = os::MediaManager::GetInstance()->GetDefaultAudioOutput(  );
+
+	if ( pcDefaultInput )
+	{
+		cCurrentInput = pcDefaultInput->GetIdentifier();
+		pcDefaultInput->Release();
+	}
 
 	if ( pcDefaultAudio )
 	{
 		cCurrentAudio = pcDefaultAudio->GetIdentifier();
-		delete( pcDefaultAudio );
+		pcDefaultAudio->Release();
 	}
 
 	if ( pcDefaultVideo )
 	{
 		cCurrentVideo = pcDefaultVideo->GetIdentifier();
-		delete( pcDefaultVideo );
+		pcDefaultVideo->Release();
 	}
 
-	os::Message cReply;
-	os::MediaManager::GetInstance()->GetServerLink().SendMessage( os::MEDIA_SERVER_GET_STARTUP_SOUND, &cReply );
-	os::String zTemp;
-
-	if ( cReply.GetCode() == os::MEDIA_SERVER_OK && cReply.FindString( "sound", &zTemp.str(  ) ) == 0 )
-		cCurrentStartupSound = zTemp;
-	else
-		cCurrentStartupSound = "None";
-
-
+	
+	cUndoInput = cCurrentInput;
 	cUndoVideo = cCurrentVideo;
 	cUndoAudio = cCurrentAudio;
-	cUndoStartupSound = cCurrentStartupSound;
 	
 	// Set Icon
 	os::Resources cCol( get_image_id() );
-	os::ResStream *pcStream = cCol.GetResourceStream( "icon24x24.png" );
+	os::ResStream *pcStream = cCol.GetResourceStream( "icon48x48.png" );
 	os::BitmapImage *pcIcon = new os::BitmapImage( pcStream );
 	SetIcon( pcIcon->LockBitmap() );
 	delete( pcIcon );
 
 	// Show data
 	ShowData();
+	
+	// Select first item */
+	if( pcDevice->GetItemCount() > 0 )
+		pcDevice->SetSelection( 0 );
 }
 
 MainWindow::~MainWindow()
 {
-	// Clear treeview
-	m_pcTree->Clear();
+	os::LayoutNode* pcOld = pcSettingsView->GetRoot();
+	pcSettingsView->SetRoot( NULL );
+	delete( pcOld );
+	os::MediaManager::GetInstance()->Put();
 }
 
 void MainWindow::ShowData()
 {
-	// Clear treeview
-	m_pcTree->Clear();
-	
-	// Load icons
-	os::Resources cCol( get_image_id() );
-	os::ResStream *pcStream = cCol.GetResourceStream( "plugins.png" );
-	os::BitmapImage *pcPluginNodeIcon = new os::BitmapImage( pcStream );
-	
-	pcStream = cCol.GetResourceStream( "sounds.png" );
-	os::BitmapImage *pcSoundsNodeIcon = new os::BitmapImage( pcStream );
-	
-	
-	// Add plugins node
-	os::TreeViewStringNode* pcPluginNode = new os::TreeViewStringNode();
-	pcPluginNode->AppendString( os::String( "Plugins" ) );
-	pcPluginNode->SetIndent( 1 );
-	m_pcTree->InsertNode( pcPluginNode );
-	pcPluginNode->SetExpanded( true );
-	pcPluginNode->SetIcon( pcPluginNodeIcon );
+	// Default dropdownmenu entries 
+	pcDevice->Clear();
+	pcDefaultInput->Clear();
+	pcDefaultAudioOut->Clear();
+	pcDefaultVideoOut->Clear();
 	
 	// Add inputs
 	os::MediaInput* pcInput;
 	uint32 nIndex = 0;
-	m_nInputStart = 1;
+	m_nInputStart = 0;
 
 	while ( ( pcInput = os::MediaManager::GetInstance()->GetInput( nIndex ) ) != NULL )
 	{
-		os::TreeViewStringNode* pcNode = new os::TreeViewStringNode();
-		pcNode->AppendString( pcInput->GetIdentifier() );
-		pcNode->SetIndent( 2 );
-		m_pcTree->InsertNode( pcNode );
-		delete( pcInput );
+		pcDevice->AppendItem( pcInput->GetIdentifier() );
+		
+		if( !pcInput->FileNameRequired() )
+		{
+			pcDefaultInput->AppendItem( pcInput->GetIdentifier() );
+			if( pcInput->GetIdentifier() == cCurrentInput )
+				pcDefaultInput->SetSelection( pcDefaultInput->GetItemCount() - 1, false );
+		}
+		pcInput->Release();
 		nIndex++;
 	}
 	
@@ -360,11 +325,8 @@ void MainWindow::ShowData()
 
 	while ( ( pcCodec = os::MediaManager::GetInstance()->GetCodec( nIndex ) ) != NULL )
 	{
-		os::TreeViewStringNode* pcNode = new os::TreeViewStringNode();
-		pcNode->AppendString( pcCodec->GetIdentifier() );
-		pcNode->SetIndent( 2 );
-		m_pcTree->InsertNode( pcNode );
-		delete( pcCodec );
+		pcDevice->AppendItem( pcCodec->GetIdentifier() );
+		pcCodec->Release();
 		nIndex++;
 	}
 	
@@ -375,58 +337,57 @@ void MainWindow::ShowData()
 
 	while ( ( pcOutput = os::MediaManager::GetInstance()->GetOutput( nIndex ) ) != NULL )
 	{
-		os::TreeViewStringNode* pcNode = new os::TreeViewStringNode();
-		pcNode->AppendString( pcOutput->GetIdentifier() );
-		pcNode->SetIndent( 2 );
-		
-		if( pcOutput->GetIdentifier() == cCurrentVideo || pcOutput->GetIdentifier() == cCurrentAudio )
+		if( !pcOutput->FileNameRequired() )
 		{
-			pcStream = cCol.GetResourceStream( "default.png" );
-			os::BitmapImage *pcDefaultNodeIcon = new os::BitmapImage( pcStream );
-			pcNode->SetIcon( pcDefaultNodeIcon );
+			// Add to default dropdown menus 
+			for( int i = 0; i < pcOutput->GetOutputFormatCount(); i++ )
+			{
+				os::MediaFormat_s sFormat = pcOutput->GetOutputFormat( i );
+				if( sFormat.nType == os::MEDIA_TYPE_AUDIO ) {
+					pcDefaultAudioOut->AppendItem( pcOutput->GetIdentifier() );
+					if( pcOutput->GetIdentifier() == cCurrentAudio )
+						pcDefaultAudioOut->SetSelection( pcDefaultAudioOut->GetItemCount() - 1, false );
+					break;
+				}
+			}
+			for( int i = 0; i < pcOutput->GetOutputFormatCount(); i++ )
+			{
+				os::MediaFormat_s sFormat = pcOutput->GetOutputFormat( i );
+				if( sFormat.nType == os::MEDIA_TYPE_VIDEO ) {
+					pcDefaultVideoOut->AppendItem( pcOutput->GetIdentifier() );
+					if( pcOutput->GetIdentifier() == cCurrentVideo )
+						pcDefaultVideoOut->SetSelection( pcDefaultVideoOut->GetItemCount() - 1, false );
+
+					break;
+				}
+			}
 		}
-		m_pcTree->InsertNode( pcNode );
+		pcDevice->AppendItem( pcOutput->GetIdentifier() );
 		
-		delete( pcOutput );
+		pcOutput->Release();
 		nIndex++;
 	}
 	
-	// Add sounds node
-	os::TreeViewStringNode* pcSoundsNode = new os::TreeViewStringNode();
-	pcSoundsNode->AppendString( os::String( "Sounds" ) );
-	pcSoundsNode->SetIndent( 1 );
-	m_pcTree->InsertNode( pcSoundsNode );
-	pcSoundsNode->SetExpanded( true );
-	pcSoundsNode->SetIcon( pcSoundsNodeIcon );
-	
-	// Add startup node
-	os::TreeViewStringNode* pcNode = new os::TreeViewStringNode();
-	pcNode->AppendString( "Startup" );
-	pcNode->SetIndent( 2 );
-	m_pcTree->InsertNode( pcNode );
-	
-	
-	if( m_nTreeSelect > -1 )
-		m_pcTree->Select( m_nTreeSelect );
-	Treeview();
+	if( m_nDeviceSelect > -1 )
+		pcDevice->SetSelection( m_nDeviceSelect, false );
+
+	Flush();
 }
 
 void MainWindow::Apply()
 {
+	os::MediaManager::GetInstance()->SetDefaultInput( cCurrentInput );
 	os::MediaManager::GetInstance()->SetDefaultAudioOutput( cCurrentAudio );
 	os::MediaManager::GetInstance()->SetDefaultVideoOutput( cCurrentVideo );
-	os::Message cMsg( os::MEDIA_SERVER_SET_STARTUP_SOUND );
-	cMsg.AddString( "sound", cCurrentStartupSound );
-	os::MediaManager::GetInstance()->GetServerLink(  ).SendMessage( &cMsg );
 }
 
 void MainWindow::Undo()
 {
 	// Copy original state back
+	cCurrentInput = cUndoInput;
 	cCurrentVideo = cUndoVideo;
 	cCurrentAudio = cUndoAudio;
-	cCurrentStartupSound = cUndoStartupSound;
-
+	
 	// Update controls
 	ShowData();
 }
@@ -435,102 +396,60 @@ void MainWindow::Default()
 {
 	// TODO: What to do here ?
 	// Copy original state back
+	cCurrentInput = cUndoInput;
 	cCurrentVideo = cUndoVideo;
 	cCurrentAudio = cUndoAudio;
-	cCurrentStartupSound = cUndoStartupSound;
 
 	// Update controls
 	ShowData();
 }
 
-void MainWindow::Treeview()
+void MainWindow::DeviceChanged()
 {
-	/* Delete old view */
-	if( m_pcPrefs != NULL )
-	{
-		pcHLSettings->RemoveChild( m_pcPrefs );
-		delete( m_pcPrefs );
-		m_pcPrefs = NULL;
-	}
-	
 	/* Look what has been selected */
-	int nSelected = m_pcTree->GetFirstSelected();
-	m_nTreeSelect = nSelected;
-	
+	int nSelected = pcDevice->GetSelection();
+	m_nDeviceSelect = nSelected;
+
 	if( nSelected >= m_nInputStart && nSelected < m_nCodecStart ) {
-		pcLRoot->SetRoot( NULL );
 		os::MediaInput* pcInput = os::MediaManager::GetInstance()->GetInput( nSelected - m_nInputStart );
-		m_pcPrefs = new InputPrefs( pcInput );
 		
-		pcVLRoot->RemoveChild( pcHLSettings );
-		pcVLRoot->RemoveChild( pcHLButtons );
-		pcHLSettings->AddChild( m_pcPrefs );
-		pcVLRoot->AddChild( pcHLSettings );
-		pcVLRoot->AddChild( pcHLButtons );
-		pcLRoot->SetRoot( pcVLRoot );
+		os::LayoutNode* pcOld = pcSettingsView->GetRoot();
+		pcSettingsView->SetRoot( new InputPrefs( pcInput ) );
+		delete( pcOld );
 		pcLRoot->InvalidateLayout();
 	} else if( nSelected >= m_nCodecStart && nSelected < m_nOutputStart ) {
-		pcLRoot->SetRoot( NULL );		
 		os::MediaCodec* pcCodec = os::MediaManager::GetInstance()->GetCodec( nSelected - m_nCodecStart );
-		m_pcPrefs = new CodecPrefs( pcCodec );
-		pcVLRoot->RemoveChild( pcHLSettings );
-		pcVLRoot->RemoveChild( pcHLButtons );
-		pcHLSettings->AddChild( m_pcPrefs );
-		pcVLRoot->AddChild( pcHLSettings );
-		pcVLRoot->AddChild( pcHLButtons );
-		pcLRoot->SetRoot( pcVLRoot );
+		os::LayoutNode* pcOld = pcSettingsView->GetRoot();
+		pcSettingsView->SetRoot( new CodecPrefs( pcCodec ) );
+		delete( pcOld );
 		pcLRoot->InvalidateLayout();
-	} else if( nSelected >= m_nOutputStart && nSelected < ( (int)m_pcTree->GetRowCount() - 2 ) ) {
-		pcLRoot->SetRoot( NULL );		
+	} else if( nSelected >= m_nOutputStart && nSelected < (int)pcDevice->GetItemCount() ) {
 		os::MediaOutput* pcOutput = os::MediaManager::GetInstance()->GetOutput( nSelected - m_nOutputStart );
-		m_pcPrefs = new OutputPrefs( pcOutput, pcOutput->GetIdentifier() == cCurrentVideo, pcOutput->GetIdentifier() == cCurrentAudio );
-		pcVLRoot->RemoveChild( pcHLSettings );
-		pcVLRoot->RemoveChild( pcHLButtons );
-		pcHLSettings->AddChild( m_pcPrefs );
-		pcVLRoot->AddChild( pcHLSettings );
-		pcVLRoot->AddChild( pcHLButtons );
-		pcLRoot->SetRoot( pcVLRoot );
-		pcLRoot->InvalidateLayout();
-	} else if( nSelected == (int)( m_pcTree->GetRowCount() - 1 ) ) {
-		pcLRoot->SetRoot( NULL );		
-		m_pcPrefs = new SoundPrefs( this, cCurrentStartupSound );
-		pcVLRoot->RemoveChild( pcHLSettings );
-		pcVLRoot->RemoveChild( pcHLButtons );
-		pcHLSettings->AddChild( m_pcPrefs );
-		pcVLRoot->AddChild( pcHLSettings );
-		pcVLRoot->AddChild( pcHLButtons );
-		pcLRoot->SetRoot( pcVLRoot );
+		os::LayoutNode* pcOld = pcSettingsView->GetRoot();
+		pcSettingsView->SetRoot( new OutputPrefs( pcOutput ) );
+		delete( pcOld );
 		pcLRoot->InvalidateLayout();
 	} else {
 		pcLRoot->InvalidateLayout();
 	}
-	
+	pcSettingsView->Invalidate();
+	Flush();
+}
+
+void MainWindow::InputChange()
+{
+	cCurrentInput = pcDefaultInput->GetCurrentString();
 }
 
 void MainWindow::VideoOutputChange()
 {
-	int nSelected = m_pcTree->GetFirstSelected();
-	os::MediaOutput* pcOutput = os::MediaManager::GetInstance()->GetOutput( nSelected - m_nOutputStart );
-	cCurrentVideo = pcOutput->GetIdentifier();
-	delete( pcOutput );
-	ShowData();
+	cCurrentVideo = pcDefaultVideoOut->GetCurrentString();
 }
 
 
 void MainWindow::AudioOutputChange()
 {
-	int nSelected = m_pcTree->GetFirstSelected();
-	os::MediaOutput* pcOutput = os::MediaManager::GetInstance()->GetOutput( nSelected - m_nOutputStart );
-	cCurrentAudio = pcOutput->GetIdentifier();
-	delete( pcOutput );
-	ShowData();
-}
-
-
-void MainWindow::StartupSoundChange()
-{
-	cCurrentStartupSound = (static_cast<SoundPrefs*>(m_pcPrefs))->GetString();
-	//std::cout<<cCurrentStartupSound.c_str()<<std::endl;
+	cCurrentAudio = pcDefaultAudioOut->GetCurrentString();
 }
 
 void MainWindow::HandleMessage( os::Message * pcMessage )
@@ -538,17 +457,16 @@ void MainWindow::HandleMessage( os::Message * pcMessage )
 	// Get message code and act on it
 	switch ( pcMessage->GetCode() )
 	{
-
+	case M_MW_INPUT:
+		InputChange();
+		break;
 	case M_MW_VIDEOOUTPUT:
 		VideoOutputChange();
 		break;
 	case M_MW_AUDIOOUTPUT:
 		AudioOutputChange();
 		break;
-	case M_MW_STARTUPSOUND:
-		StartupSoundChange();
-		break;
-
+		
 	case M_MW_APPLY:
 		Apply();
 		break;
@@ -561,8 +479,8 @@ void MainWindow::HandleMessage( os::Message * pcMessage )
 		Undo();
 		break;
 
-	case M_MW_TREEVIEW:
-		Treeview();
+	case M_MW_DEVICE:
+		DeviceChanged();
 		break;
 	
 	case M_MW_CONTROLS:

@@ -34,7 +34,6 @@ public:
 
 	void	SetStreamActive( int nNum, bool bActive );
 	void	SetStreamLabel( int nNum, os::String zLabel );
-    void    SetStreamValue( int nNum, float vValues );
     void    SetStreamVolume( int nNum, int nVolume );
 	
 	virtual void MouseMove( const os::Point& cNewPos, int nCode, uint32 nButtons, os::Message* pcData );

@@ -200,6 +200,7 @@ public:
 		}
 
 		/* Save information */
+		
 		m_sOverlay.m_nSrcWidth = cSrcSize.x;
 		m_sOverlay.m_nSrcHeight = cSrcSize.y;
 		m_sOverlay.m_nDstX = cDstRect.left;
@@ -283,6 +284,10 @@ public:
 	ScreenOutput();
 	~ScreenOutput();
 	os::String		GetIdentifier();
+	uint32			GetPhysicalType()
+	{
+		return( os::MEDIA_PHY_SCREEN_OUT );
+	}
 	os::View*		GetConfigurationView();
 	
 	bool			FileNameRequired();
@@ -291,34 +296,26 @@ public:
 	void 			Close();
 	
 	void			Clear();
-	void			Flush();
 	
 	uint32			GetOutputFormatCount();
 	os::MediaFormat_s	GetOutputFormat( uint32 nIndex );
 	uint32			GetSupportedStreamCount();
 	status_t		AddStream( os::String zName, os::MediaFormat_s sFormat );
 	
-	void			SetTimeSource( os::MediaTimeSource* pcSource );
 	
 	os::View*		GetVideoView( uint32 nIndex );
 	void			UpdateView( uint32 nStream );
 	
 	status_t		WritePacket( uint32 nIndex, os::MediaPacket_s *psFrame );
-	uint64			GetDelay();
-	uint32			GetUsedBufferPercentage();
+	uint64			GetDelay( bool bNonSharedOnly );
+	uint64			GetBufferSize( bool bNonSharedOnly );
 private:
 	bool			CheckVideoOverlay( os::color_space eSpace );
 	bool			m_bUseOverlay;
 	os::color_space m_eColorSpace;
 	VideoView*		m_pcView;
 	os::MediaFormat_s	m_sFormat;
-	int				m_nQueuedFrames;
-	os::MediaPacket_s* m_psFrame[VIDEO_FRAME_NUMBER];
 	sem_id			m_hLock;
-	uint32			m_nCurrentFrame;
-	uint64			m_nFirstTimeStamp;
-	bigtime_t		m_nStartTime;
-	os::MediaTimeSource* m_pcTimeSource;
 };
 
 
@@ -327,11 +324,7 @@ ScreenOutput::ScreenOutput()
 	/* Set default values */
 	m_bUseOverlay = false;
 	m_pcView = NULL;
-	m_nQueuedFrames = 0;
-	m_nStartTime = 0;
-	m_nCurrentFrame = 0;
 	m_hLock = create_semaphore( "overlay_lock", 1, 0 );
-	m_pcTimeSource = NULL;
 }
 
 ScreenOutput::~ScreenOutput()
@@ -367,151 +360,6 @@ void ScreenOutput::UpdateView( uint32 nIndex )
 	}
 }
 
-
-void ScreenOutput::Flush()
-{
-	/* Always play the next packet in the queue */
-	os::MediaPacket_s *psFrame;
-	
-	lock_semaphore( m_hLock );
-	if( m_nQueuedFrames > 0 ) 
-	{
-		/* Get next frame */
-		psFrame = m_psFrame[0];
-		bool bDrawFrame = false;
-		uint64 nNoTimeStamp = ~0;
-		
-		/* Start timer */
-		if( m_nStartTime == 0 )
-		{
-			std::cout<<"Video Start!"<<std::endl;
-			m_nFirstTimeStamp = psFrame->nTimeStamp;
-			m_nStartTime = get_system_time();
-		}
-		
-		if( psFrame->nTimeStamp != nNoTimeStamp )
-		{
-			/* Use the timestamp */
-			uint64 nFrameLength = 1000 / (uint64)m_sFormat.vFrameRate;
-			uint64 nPacketPosition = psFrame->nTimeStamp + nFrameLength - ( m_pcTimeSource != NULL ? 0 : m_nFirstTimeStamp );
-			uint64 nRealPosition;
-			if( m_pcTimeSource )
-				nRealPosition = m_pcTimeSource->GetCurrentTime();
-			else
-				nRealPosition = ( get_system_time() - m_nStartTime ) / 1000;
-			
-			//std::cout<<psFrame->nTimeStamp<<std::endl;
-			#if 0
-			std::cout<<"VIDEO Time "<<nRealPosition<<" Stamp "<<
-							nPacketPosition<<" "<<nFrameLength<<" "<<m_nQueuedFrames<<std::endl;
-			#endif							
-			//std::cout<<(int64)nPacketPosition - (int64)nRealPosition<<std::endl;
-			
-			if( nPacketPosition > nRealPosition )
-			{
-				/* Frame in the future */
-				unlock_semaphore( m_hLock );
-				return;
-			}
-			
-			
-			if( nRealPosition > nPacketPosition + nFrameLength * 2 )
-			{
-				std::cout<<"Framedrop"<<std::endl;
-			} else {
-				//std::cout<<"Draw!"<<std::endl;
-				bDrawFrame = true;
-			}
-			
-		} else {
-			/* Calculate time for the next frame */
-			bigtime_t nNextTime;
-			if( m_pcTimeSource )
-				nNextTime = ( bigtime_t )( (float)m_nCurrentFrame  / m_sFormat.vFrameRate * 1000000 );
-			else
-				nNextTime = m_nStartTime + ( bigtime_t )( (float)m_nCurrentFrame / m_sFormat.vFrameRate * 1000000 );
-
-			if( nNextTime < ( m_pcTimeSource ? m_pcTimeSource->GetCurrentTime() : get_system_time() ) )
-			{
-			
-				bigtime_t nNextNextTime = nNextTime + 1000000 / (bigtime_t)m_sFormat.vFrameRate * 1000000;
-				if( ( nNextNextTime >= nNextTime ) ) {
-					bDrawFrame = true;
-				} else {
-					std::cout<<"Framedrop"<<std::endl;
-				}
-			} else {
-				/* Frame in the future */
-				unlock_semaphore( m_hLock );
-				return;
-			}
-		}
-		
-		if( bDrawFrame )
-		{
-			/* Draw frame */
-			if( !m_bUseOverlay )
-			{
-				/* No video overlay */
-				memcpy( m_pcView->GetRaster(), psFrame->pBuffer[0], m_sFormat.nWidth * m_sFormat.nHeight * BitsPerPixel( m_eColorSpace ) / 8 );
-				m_pcView->Paint( m_pcView->GetBounds() );
-				m_pcView->Sync();
-			}
-			else if( m_eColorSpace == os::CS_YUV12 )
-			{
-				/* YV12 Overlay */
-				uint32 nDstPitch = ( ( m_sFormat.nWidth ) + 0x1ff ) & ~0x1ff;
-				for( int i = 0; i < m_sFormat.nHeight; i++ )
-				{
-					memcpy( m_pcView->GetRaster() + i * nDstPitch, psFrame->pBuffer[0] + psFrame->nSize[0] * i, m_sFormat.nWidth );
-				}
-				for( int i = 0; i < m_sFormat.nHeight / 2; i++ )
-				{
-					memcpy( m_pcView->GetRaster() + m_sFormat.nHeight * nDstPitch * 5 / 4 + nDstPitch * i / 2, 
-						psFrame->pBuffer[1] + psFrame->nSize[1] * i, m_sFormat.nWidth / 2 );
-				}
-				for( int i = 0; i < m_sFormat.nHeight / 2; i++ )
-				{
-					memcpy( m_pcView->GetRaster() +  m_sFormat.nHeight * nDstPitch + nDstPitch * i / 2, 
-							psFrame->pBuffer[2] + psFrame->nSize[2] * i, m_sFormat.nWidth / 2 );
-				}
-				free( psFrame->pBuffer[1] );
-				free( psFrame->pBuffer[2] );
-			} 
-			else if( m_eColorSpace == os::CS_YUV422 || m_eColorSpace == os::CS_YUY2 )
-			{
-				/* UYVY Overlay */
-				uint32 nDstPitch = ( ( m_sFormat.nWidth * 2 ) + 0xff ) & ~0xff;
-				for( int i = 0; i < m_sFormat.nHeight; i++ )
-				{
-					memcpy( m_pcView->GetRaster() + i * nDstPitch, psFrame->pBuffer[0] + m_sFormat.nWidth * 2 * i, m_sFormat.nWidth * 2 );
-				}
-			} else {
-				/* RGB32 */
-				for( int i = 0; i < m_sFormat.nHeight; i++ )
-				{
-					memcpy( m_pcView->GetRaster() + i * m_sFormat.nWidth * 4, psFrame->pBuffer[0] + m_sFormat.nWidth * 4 * i, m_sFormat.nWidth * 4 );
-				}
-			}
-			
-			m_pcView->Update();
-		}
-		
-		/* Move frames up */
-		free( psFrame->pBuffer[0] );
-		free( psFrame );
-		
-		m_nQueuedFrames--;
-		for( int i = 0; i < m_nQueuedFrames; i++ )
-		{
-			m_psFrame[i] = m_psFrame[i+1];
-		}
-		
-		/* Frame counter */
-		m_nCurrentFrame++;
-	}
-	unlock_semaphore( m_hLock );
-}
 
 
 bool ScreenOutput::FileNameRequired()
@@ -550,11 +398,7 @@ status_t ScreenOutput::Open( os::String zFileName )
 {
 	/* Clear frame buffer */
 	Close();
-	m_nQueuedFrames = 0;
-	m_nStartTime = 0;
-	for( int i = 0; i < VIDEO_FRAME_NUMBER; i++ ) {
-		m_psFrame[i] = NULL;
-	}
+	
 		
 	/* Intialize cpu structure for mplayer code */
 	memset( &gCpuCaps, 0, sizeof( CpuCaps ) );
@@ -612,18 +456,6 @@ void ScreenOutput::Close()
 
 void ScreenOutput::Clear()
 {
-	m_nStartTime = 0;
-	m_nCurrentFrame = 0;
-	/* Delete all pending frames */
-	for( int i = 0; i < m_nQueuedFrames; i++ ) {
-		free( m_psFrame[i]->pBuffer[0] );
-		if( m_eColorSpace == os::CS_YUV12 ) {
-			free( m_psFrame[i]->pBuffer[1] );
-			free( m_psFrame[i]->pBuffer[2] );
-		}
-		free( m_psFrame[i] );
-	}
-	m_nQueuedFrames = 0;
 }
 
 uint32 ScreenOutput::GetOutputFormatCount()
@@ -665,115 +497,84 @@ status_t ScreenOutput::AddStream( os::String zName, os::MediaFormat_s sFormat )
 	return( 0 );
 }
 
-
-void ScreenOutput::SetTimeSource( os::MediaTimeSource* pcSource )
-{
-	std::cout<< "Using timesource "<<pcSource->GetIdentifier().c_str()<<std::endl;
-	m_pcTimeSource = pcSource;
-}
-
-status_t ScreenOutput::WritePacket( uint32 nIndex, os::MediaPacket_s* psFrame )
+status_t ScreenOutput::WritePacket( uint32 nIndex, os::MediaPacket_s* psNewFrame )
 {
 	/* Create a new media frame and queue it */
-	os::MediaPacket_s* psQueueFrame = ( os::MediaPacket_s* )malloc( sizeof( os::MediaPacket_s ) );
-	if( psQueueFrame == NULL )
-		return( -1 );
-	memset( psQueueFrame, 0, sizeof( os::MediaPacket_s ) );
-	psQueueFrame->nTimeStamp = psFrame->nTimeStamp;
-	
+	bigtime_t nTime = get_system_time();
 	if( !m_bUseOverlay )
 	{
 		/* No overlay */
-		psQueueFrame->nSize[0] = m_sFormat.nWidth * BitsPerPixel( m_eColorSpace ) / 8;
-		psQueueFrame->pBuffer[0] = ( uint8* )malloc( m_sFormat.nWidth * m_sFormat.nHeight * BitsPerPixel( m_eColorSpace ) / 8 );
-		psQueueFrame->nTimeStamp = psFrame->nTimeStamp;
-	
-		yuv2rgb( psQueueFrame->pBuffer[0], psFrame->pBuffer[0], psFrame->pBuffer[1], psFrame->pBuffer[2],
-			m_sFormat.nWidth, m_sFormat.nHeight, psQueueFrame->nSize[0], psFrame->nSize[0],
-			psFrame->nSize[1] );
+		
+		yuv2rgb( m_pcView->GetRaster(), psNewFrame->pBuffer[0], psNewFrame->pBuffer[1], psNewFrame->pBuffer[2],
+			m_sFormat.nWidth, m_sFormat.nHeight, m_sFormat.nWidth * BitsPerPixel( m_eColorSpace ) / 8, psNewFrame->nSize[0],
+			psNewFrame->nSize[1] );
+		
+		m_pcView->Paint( m_pcView->GetBounds() );
+		m_pcView->Sync();
+		
 	}
 	else if( m_eColorSpace == os::CS_YUV12 )
 	{
-		/* YV12 */
-		psQueueFrame->nSize[0] = psFrame->nSize[0];
-		psQueueFrame->nSize[1] = psFrame->nSize[1];
-		psQueueFrame->nSize[2] = psFrame->nSize[2];
-		psQueueFrame->pBuffer[0] = ( uint8* )malloc( psQueueFrame->nSize[0] * m_sFormat.nHeight );
-		psQueueFrame->pBuffer[1] = ( uint8* )malloc( psQueueFrame->nSize[1] * m_sFormat.nHeight / 2 );
-		psQueueFrame->pBuffer[2] = ( uint8* )malloc( psQueueFrame->nSize[2] * m_sFormat.nHeight / 2 );
-	
-		memcpy( psQueueFrame->pBuffer[0], psFrame->pBuffer[0], psQueueFrame->nSize[0] * m_sFormat.nHeight );
-		memcpy( psQueueFrame->pBuffer[1], psFrame->pBuffer[1], psQueueFrame->nSize[1] * m_sFormat.nHeight / 2 );
-		memcpy( psQueueFrame->pBuffer[2], psFrame->pBuffer[2], psQueueFrame->nSize[2] * m_sFormat.nHeight / 2 );
+		/* YV12 overlay */
+		uint32 nDstPitch = ( ( m_sFormat.nWidth ) + 0x1ff ) & ~0x1ff;
+		for( int i = 0; i < m_sFormat.nHeight; i++ )
+		{
+			memcpy( m_pcView->GetRaster() + i * nDstPitch, psNewFrame->pBuffer[0] + psNewFrame->nSize[0] * i, m_sFormat.nWidth );
+		}
+		for( int i = 0; i < m_sFormat.nHeight / 2; i++ )
+		{
+			memcpy( m_pcView->GetRaster() + m_sFormat.nHeight * nDstPitch * 5 / 4 + nDstPitch * i / 2, 
+				psNewFrame->pBuffer[1] + psNewFrame->nSize[1] * i, m_sFormat.nWidth / 2 );
+		}
+		for( int i = 0; i < m_sFormat.nHeight / 2; i++ )
+		{
+			memcpy( m_pcView->GetRaster() +  m_sFormat.nHeight * nDstPitch + nDstPitch * i / 2, 
+						psNewFrame->pBuffer[2] + psNewFrame->nSize[2] * i, m_sFormat.nWidth / 2 );
+		}
 	} 
 	else if( m_eColorSpace == os::CS_YUV422 )
 	{
-		/* Convert to UYVY */
-		psQueueFrame->nSize[0] = m_sFormat.nWidth * 2;
-		psQueueFrame->pBuffer[0] = ( uint8* )malloc( psQueueFrame->nSize[0] * m_sFormat.nHeight );
-		yv12touyvy( psFrame->pBuffer[0], psFrame->pBuffer[1], psFrame->pBuffer[2], psQueueFrame->pBuffer[0],
-					m_sFormat.nWidth, m_sFormat.nHeight, psFrame->nSize[0], psFrame->nSize[1],
-					psQueueFrame->nSize[0] );
+		/* UYVY overlay */
+		uint32 nDstPitch = ( ( m_sFormat.nWidth * 2 ) + 0xff ) & ~0xff;
+		
+		yv12touyvy( psNewFrame->pBuffer[0], psNewFrame->pBuffer[1], psNewFrame->pBuffer[2], m_pcView->GetRaster(),
+					m_sFormat.nWidth, m_sFormat.nHeight, psNewFrame->nSize[0], psNewFrame->nSize[1],
+					nDstPitch );
+		
 	}
 	else if( m_eColorSpace == os::CS_YUY2 )
 	{
-		/* Convert to YUY2 */
-		psQueueFrame->nSize[0] = m_sFormat.nWidth * 2;
-		psQueueFrame->pBuffer[0] = ( uint8* )malloc( psQueueFrame->nSize[0] * m_sFormat.nHeight );
-		yv12toyuy2( psFrame->pBuffer[0], psFrame->pBuffer[1], psFrame->pBuffer[2], psQueueFrame->pBuffer[0],
-					m_sFormat.nWidth, m_sFormat.nHeight, psFrame->nSize[0], psFrame->nSize[1],
-					psQueueFrame->nSize[0] );
+		/* YUY2 */
+		uint32 nDstPitch = ( ( m_sFormat.nWidth * 2 ) + 0xff ) & ~0xff;
+		
+		yv12toyuy2( psNewFrame->pBuffer[0], psNewFrame->pBuffer[1], psNewFrame->pBuffer[2], m_pcView->GetRaster(),
+					m_sFormat.nWidth, m_sFormat.nHeight, psNewFrame->nSize[0], psNewFrame->nSize[1],
+					nDstPitch );
 	}
-
 	else 
 	{
-		/* Convert to RGB32 */
-		psQueueFrame->nSize[0] = m_sFormat.nWidth * 4;
-		psQueueFrame->pBuffer[0] = ( uint8* )malloc( psQueueFrame->nSize[0] * m_sFormat.nHeight );
-		yuv2rgb( psQueueFrame->pBuffer[0], psFrame->pBuffer[0], psFrame->pBuffer[1], psFrame->pBuffer[2],
-			m_sFormat.nWidth, m_sFormat.nHeight, psQueueFrame->nSize[0], psFrame->nSize[0],
-			psFrame->nSize[1] );
+		/* RGB32 */
+		yuv2rgb( m_pcView->GetRaster(), psNewFrame->pBuffer[0], psNewFrame->pBuffer[1], psNewFrame->pBuffer[2],
+			m_sFormat.nWidth, m_sFormat.nHeight, m_sFormat.nWidth * 4, psNewFrame->nSize[0],
+			psNewFrame->nSize[1] );
 		
 	}
 	
-	lock_semaphore( m_hLock );
-	/* Queue packet */
-	if( m_nQueuedFrames > VIDEO_FRAME_NUMBER - 1 ) {
-		unlock_semaphore( m_hLock );
-		if( m_eColorSpace == os::CS_YUV12 ) {
-			/* YV12 */
-			free( psQueueFrame->pBuffer[0] );
-			free( psQueueFrame->pBuffer[1] );
-			free( psQueueFrame->pBuffer[2] );
-		} else {
-			/* UYVY / YUY2 / RGB32 / RGB16 */
-			free( psQueueFrame->pBuffer[0] );
-		}
-		free( psQueueFrame );
-		std::cout<<"Frame buffer full"<<std::endl;
-		return( -1 );
-	}
-	m_psFrame[m_nQueuedFrames] = psQueueFrame;
-	m_nQueuedFrames++;
-	unlock_semaphore( m_hLock );
-	//cout<<"Frame queued at position "<<m_nQueuedFrames - 1<<"( "<<m_nQueuedFrames * 100 / VIDEO_FRAME_NUMBER<<
-	//"% of the buffer used )"<<endl;
+	
+	m_pcView->Update();
+	
 	return( 0 );	
 }
 
-uint64 ScreenOutput::GetDelay()
+uint64 ScreenOutput::GetDelay( bool bNonSharedOnly )
 {
-	return( 1000 * m_nQueuedFrames / (int)m_sFormat.vFrameRate );
+	return( 0 );
 }
 
 
-uint32 ScreenOutput::GetUsedBufferPercentage()
+uint64 ScreenOutput::GetBufferSize( bool bNonSharedOnly )
 {
-	uint32 nValue;
-	lock_semaphore( m_hLock );
-	nValue = m_nQueuedFrames * 100 / VIDEO_FRAME_NUMBER;
-	unlock_semaphore( m_hLock );
-	return( nValue );
+	return( 0 );
 }
 
 
@@ -791,7 +592,7 @@ private:
 
 extern "C"
 {
-	os::MediaAddon* init_media_addon()
+	os::MediaAddon* init_media_addon( os::String zDevice )
 	{
 		return( new ScreenAddon() );
 	}

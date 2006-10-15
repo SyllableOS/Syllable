@@ -42,6 +42,16 @@ String MediaInput::GetIdentifier()
 }
 
 
+/** Physical type.
+ * \par Description:
+ * Returns the physical type of the device.
+ * \author	Arno Klenke
+ *****************************************************************************/
+uint32 MediaInput::GetPhysicalType()
+{
+	return( MEDIA_PHY_UNKNOWN );
+}
+
 /** Configuration view.
  * \par Description:
  * Returns a view which includes configuration controls or NULL if this is 
@@ -84,6 +94,15 @@ status_t MediaInput::Open( String zFileName )
  * \author	Arno Klenke
  *****************************************************************************/
 void MediaInput::Close()
+{
+}
+
+/** Clear the input.
+ * \par Description:
+ * Clears all caches of the input.
+ * \author	Arno Klenke
+ *****************************************************************************/
+void MediaInput::Clear()
 {
 }
 

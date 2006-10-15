@@ -61,17 +61,17 @@ void MediaSoundPlayer::Clear()
 {
 	if( m->m_pcInput ) {
 		m->m_pcInput->Close();
-		delete( m->m_pcInput );
+		m->m_pcInput->Release();
 		m->m_pcInput = NULL;
 	}
 	if( m->m_pcAudioOutput ) {
 		m->m_pcAudioOutput->Close();
-		delete( m->m_pcAudioOutput );
+		m->m_pcAudioOutput->Release();
 		m->m_pcAudioOutput = NULL;
 	}
 	if( m->m_pcAudioCodec ) {
 		m->m_pcAudioCodec->Close();
-		delete( m->m_pcAudioCodec );
+		m->m_pcAudioCodec->Release();
 		m->m_pcAudioCodec = NULL;
 	}
 }
@@ -88,12 +88,14 @@ status_t MediaSoundPlayer::SetFile( String zFileName )
 	Stop();
 	Clear();
 	
+	
 	/* Check if we have a media manager */
 	if( MediaManager::GetInstance() == NULL ) {
 		m->m_bReady = false;
 		return( -1 );
 	}
-		
+	
+	
 	MediaManager* pcManager = MediaManager::GetInstance();
 	
 	/* Get input */
@@ -102,14 +104,14 @@ status_t MediaSoundPlayer::SetFile( String zFileName )
 		m->m_bReady = false;
 		return( -1 );
 	}
-		
+	
 	m->m_pcInput->Open( zFileName );
 		
 	/* We do not support non packet based devices */
 	if( !m->m_pcInput->PacketBased() )
 	{
 		m->m_bReady = false;
-		delete( m->m_pcInput );
+		m->m_pcInput->Release();
 		return( -1 );
 	}
 	/* Always select the first track */
@@ -146,7 +148,7 @@ status_t MediaSoundPlayer::SetFile( String zFileName )
 			if( m->m_pcAudioCodec->Open( m->m_sAudioFormat, m->m_pcAudioOutput->GetOutputFormat( i ), false ) == 0 )
 				break;
 			else {
-				delete( m->m_pcAudioCodec );
+				m->m_pcAudioCodec->Release();
 				m->m_pcAudioCodec = NULL;
 			}
 	}
@@ -166,10 +168,6 @@ status_t MediaSoundPlayer::SetFile( String zFileName )
 
 void MediaSoundPlayer::PlayThread()
 {
-	bool bGrab;
-	bool bNoGrab;
-	bool bStarted = false;
-	uint32 nGrabValue = 80;
 	os::MediaPacket_s sPacket;
 	os::MediaPacket_s sAudioPacket;
 	uint8 nErrorCount = 0;
@@ -182,18 +180,8 @@ void MediaSoundPlayer::PlayThread()
 	
 	while( m->m_bRunThread )
 	{
-grab:	
-		/* Look if we have to grab data */
-		bGrab = false;
-		bNoGrab = false;
 		
-			
-		if( m->m_pcAudioOutput->GetUsedBufferPercentage() < nGrabValue )
-			bGrab = true;
-		if( m->m_pcAudioOutput->GetUsedBufferPercentage() >= nGrabValue )
-			bNoGrab = true;
-			
-		if( bGrab && !bNoGrab ) {
+		if( m->m_pcAudioOutput->GetDelay() < m->m_pcAudioOutput->GetBufferSize() ) {
 			/* Grab data */
 			if( m->m_pcInput->ReadPacket( &sPacket ) == 0 ) {
 				nErrorCount = 0;
@@ -207,7 +195,6 @@ grab:
 				}
 					
 				m->m_pcInput->FreePacket( &sPacket );
-				goto grab;
 			} else {
 				/* Increase error count */
 				nErrorCount++;
@@ -220,15 +207,6 @@ grab:
 			}
 		}
 				
-		/* Look if we have to start now */
-		if( !bStarted ) {
-			if( bNoGrab == true || m->m_pcInput->GetLength() < 5 ) {
-				bStarted = true;
-			}
-		}
-		/* If we have started then flush the media data */
-		if( bStarted )
-			m->m_pcAudioOutput->Flush();
 		snooze( 1000 );
 		
 	}

@@ -39,6 +39,16 @@ String MediaOutput::GetIdentifier()
 	return( "Unknown" );
 }
 
+/** Physical type.
+ * \par Description:
+ * Returns the physical type of the device.
+ * \author	Arno Klenke
+ *****************************************************************************/
+uint32 MediaOutput::GetPhysicalType()
+{
+	return( MEDIA_PHY_UNKNOWN );
+}
+
 /** Configuration view.
  * \par Description:
  * Returns a view which includes configuration controls or NULL if this is 
@@ -90,16 +100,6 @@ void MediaOutput::Clear()
 {
 }
 
-
-/** Flush data.
- * \par Description:
- * Flushes the data which has been cached before. Has to be called periodically.
- * \author	Arno Klenke
- *****************************************************************************/
-void MediaOutput::Flush()
-{
-}
-
 /** Format Count.
  * \par Description:
  * Returns the number of supported output formats. The Open() method needs to be
@@ -144,20 +144,9 @@ uint32 MediaOutput::GetSupportedStreamCount()
  * \param sFormat - Requested format.
  * \author	Arno Klenke
  *****************************************************************************/
-status_t MediaOutput::AddStream( os::String zName, MediaFormat_s sFormat )
+status_t MediaOutput::AddStream( String zName, MediaFormat_s sFormat )
 {
 	return( -1 );
-}
-
-
-/** Set the timesource.
- * \par Description:
- * Sets the timesource the output. The default is to use the system time.
- * \param pcSource - The timesource.
- * \author	Arno Klenke
- *****************************************************************************/
-void MediaOutput::SetTimeSource( MediaTimeSource* pcSource )
-{
 }
 
 
@@ -205,21 +194,25 @@ status_t MediaOutput::WritePacket( uint32 nStream, MediaPacket_s* psPacket )
 /** Delay.
  * \par Description:
  * Returns the time it takes till the last queued packet has been played.
- *
+ * \param bUserOnly - If the output has shared and non-shared buffers then
+ *					  true will return the delay of the non-shared buffer only.
+ *					  Otherwise the complete delay will be returned.
  * \author	Arno Klenke
  *****************************************************************************/
-uint64 MediaOutput::GetDelay()
+uint64 MediaOutput::GetDelay( bool bNonSharedOnly )
 {
 	return( 0 );
 }
 
-/** Used percentage of the buffer.
+/** Returns the size of the buffer.
  * \par Description:
- * Returns the used percentage of the buffer.
- *
+ * Returns the size of the output buffer in msecs.
+ * \param bUserOnly - If the output has shared and non-shared buffers then
+ *					  true will return the buffer size of the non-shared buffer only.
+ *					  Otherwise the complete buffer size will be returned.
  * \author	Arno Klenke
  *****************************************************************************/
-uint32 MediaOutput::GetUsedBufferPercentage()
+uint64 MediaOutput::GetBufferSize( bool bNonSharedOnly )
 {
 	return( 0 );
 }
