@@ -7,6 +7,8 @@ resources
 modules
 ;	other/fonts/bitstream-vera-1.10
 	other/fonts/luxi-fonts
+;	The first one will produce a harmless unpacking error:
+	other/fonts/lcd-fonts-1.1
 	other/fonts/lcd-fonts-1.1
 	other/fonts/freefont-20060126
 
