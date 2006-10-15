@@ -1,3 +1,36 @@
+* October 15 2006 Arno Klenke *
+
+Added the update media framework:
+
+low-level api:
+- Added reference counters and the GetPhysicalType() method
+- Removed the caches from the output plugins
+- Removed the os::MediaTimeSource class
+
+high-level api:
+- Added the new high-level api
+- Currently limited to decoding
+
+mediaserver:
+- Rewritten communication with the serveraudio plugin
+- Better hardware format selection
+- Uses the media output drivers instead of oss
+
+audio drivers:
+- intel i8xx compatible
+- via 8233/8235
+- intel hd audio compatible
+
+mediaplayer:
+- Added new file info dialog
+- New a/v sync code added because of the removal of os::MediaTimeSource
+
+coldfish:
+- Do not corrupt the playlist if you close it when still loading
+
+mediaconverter:
+- Added track selection box
+
 * September 14 2006 Kaj de Vos *
 
 Updated the FFMPEG port and plug-in to a new Subversion checkout.
@@ -145,4 +178,5 @@ Added multiple soundcard support to the media server
 * Nov 18 2003, Kristian Van Der Vliet *
 
 Created this ChangeLog for changes specific to the media framework.
+
 
