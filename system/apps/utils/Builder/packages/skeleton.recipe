@@ -17,7 +17,7 @@ home				syllable.org
 packages
 	<Source package names, if different from the recipe name or the package is at a subpath relative to the download location.
 	Common package extensions (.tgz, .tar.gz, .tbz2, .tar.bz2, .zip) should be left off.>
-	[<Path>]<Package> [<Subdirectory to unpack into (for packages after the first that should be unpacked inside the first)>]
+	[<Path>]<Package> [<Subdirectory to unpack into (for packages after the first that should be unpacked inside the first, or for a package that doesn't contain a master subdirectory)>]
 locations			<Download locations>
 ;archives			<Arch archives>
 

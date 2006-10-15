@@ -1,8 +1,9 @@
 authors				Kaj de Vos
+warnings			Unpacking produces an error with unzip, although the source is unpacked alright.
 
 licenses			other
 home				www.spinwardstars.com/scrfonts/
-packages			lcdwintt
+packages			lcdwintt lcd-fonts-1.1
 locations			http://www.spinwardstars.com/scrfonts/zip/
 
 make				true
@@ -14,10 +15,10 @@ install-files
 ;	LCDWinTT/LCD-L___.TTF	LCD-Light.ttf
 ;	LCDWinTT/LCD-BOLD.TTF	LCD-Bold.ttf
 ;	LCDWinTT/LCD-U___.TTF	LCD-Ultra.ttf
-	LCDWinTT/LCD2-N___.TTF	LCD2-Normal.ttf
-;	LCDWinTT/LCD2-L___.TTF	LCD2-Light.ttf
-;	LCDWinTT/LCD2-B___.TTF	LCD2-Bold.ttf
-;	LCDWinTT/LCD2-U___.TTF	LCD2-Ultra.ttf
+	LCDWinTT/LCD2N___.TTF	LCD2-Normal.ttf
+;	LCDWinTT/LCD2L___.TTF	LCD2-Light.ttf
+;	LCDWinTT/LCD2B___.TTF	LCD2-Bold.ttf
+;	LCDWinTT/LCD2U___.TTF	LCD2-Ultra.ttf
 
 move-files			*.ttf /atheos/sys/fonts/
 
