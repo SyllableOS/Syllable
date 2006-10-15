@@ -742,6 +742,9 @@ void yv12touyvy(const uint8_t *ysrc, const uint8_t *usrc, const uint8_t *vsrc, u
 	unsigned int width, unsigned int height,
 	unsigned int lumStride, unsigned int chromStride, unsigned int dstStride)
 {
+	if(gCpuCaps.hasMMX2)
+		yv12touyvy_MMX2(ysrc, usrc, vsrc, dst, width, height, lumStride, chromStride, dstStride);
+	else
 		yv12touyvy_C(ysrc, usrc, vsrc, dst, width, height, lumStride, chromStride, dstStride);
 }
 
