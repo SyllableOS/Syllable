@@ -24,8 +24,8 @@
 static char rcsid =
  "@(#) $Id$";
 #endif
-#if 0
-/* This is the BeOS version of SDL YUV video overlays */
+
+/* This is the Syllable version of SDL YUV video overlays */
 
 #include <stdlib.h>
 #include <string.h>
@@ -39,128 +39,25 @@ static char rcsid =
 extern "C" {
 
 /* The functions used to manipulate software video overlays */
-static struct private_yuvhwfuncs be_yuvfuncs =
+static struct private_yuvhwfuncs syl_yuvfuncs =
 {
-    BE_LockYUVOverlay,
-    BE_UnlockYUVOverlay,
-    BE_DisplayYUVOverlay,
-    BE_FreeYUVOverlay
+    SYL_LockYUVOverlay,
+    SYL_UnlockYUVOverlay,
+    SYL_DisplayYUVOverlay,
+    SYL_FreeYUVOverlay
 };
 
-BBitmap * BE_GetOverlayBitmap(BRect bounds, color_space cs) {
-	BBitmap *bbitmap;
-	bbitmap = new BBitmap(bounds,B_BITMAP_WILL_OVERLAY,cs);
-	if (!bbitmap || bbitmap->InitCheck() != B_OK) {
-		delete bbitmap;
-		return 0;
-	}
-	overlay_restrictions r;
-	bbitmap->GetOverlayRestrictions(&r);
-	uint32 width = bounds.IntegerWidth() + 1;
-	uint32 height = bounds.IntegerHeight() + 1;
-	uint32 width_padding = 0;
-	uint32 height_padding = 0;
-	if ((r.source.horizontal_alignment != 0) ||
-	    (r.source.vertical_alignment != 0)) {
-		delete bbitmap;
-		return 0;
-	}
-	if (r.source.width_alignment != 0) {
-		uint32 aligned_width = r.source.width_alignment + 1;
-		if (width % aligned_width > 0) {
-			width_padding = aligned_width - width % aligned_width;
-		}
-	}
-	if (r.source.height_alignment != 0) {
-		uint32 aligned_height = r.source.height_alignment + 1;
-		if (height % aligned_height > 0) {
-			fprintf(stderr,"GetOverlayBitmap failed height alignment\n");
-			fprintf(stderr,"- height = %lu, aligned_height = %lu\n",height,aligned_height);
-			delete bbitmap;
-			return 0;
-		}
-	}
-	if ((r.source.min_width > width) ||
-	    (r.source.min_height > height) ||
-	    (r.source.max_width < width) ||
-	    (r.source.max_height < height)) {
-		fprintf(stderr,"GetOverlayBitmap failed bounds tests\n");
-	    delete bbitmap;
-	    return 0;
-	}
-	if ((width_padding != 0) || (height_padding != 0)) {
-		delete bbitmap;
-		bounds.Set(bounds.left,bounds.top,bounds.right+width_padding,bounds.bottom+height_padding);
-		bbitmap = new BBitmap(bounds,B_BITMAP_WILL_OVERLAY,cs);
-		if (!bbitmap || bbitmap->InitCheck() != B_OK) {
-			fprintf(stderr,"GetOverlayBitmap failed late\n");
-			delete bbitmap;
-			return 0;
-		}
-	}		
-	return bbitmap;	    
-}
 
-// See <GraphicsDefs.h> [btw: Cb=U, Cr=V]
-// See also http://www.fourcc.org/indexyuv.htm
-enum color_space convert_color_space(Uint32 format) {
-	switch (format) {
-	case SDL_YV12_OVERLAY:
-		return B_YUV9;
-	case SDL_IYUV_OVERLAY:
-		return B_YUV12;
-	case SDL_YUY2_OVERLAY:
-		return B_YCbCr422;
-	case SDL_UYVY_OVERLAY:
-		return B_YUV422;
-	case SDL_YVYU_OVERLAY: // not supported on beos?
-		return B_NO_COLOR_SPACE;
-	default:
-		return B_NO_COLOR_SPACE;
-	}
-}
 
-// See SDL_video.h
-int count_planes(Uint32 format) {
-	switch (format) {
-	case SDL_YV12_OVERLAY:
-	case SDL_IYUV_OVERLAY:
-		return 3;
-	case SDL_YUY2_OVERLAY:
-	case SDL_UYVY_OVERLAY:
-	case SDL_YVYU_OVERLAY:
-		return 1;
-	default:
-		return 0;
-	}
-}		
-
-SDL_Overlay *BE_CreateYUVOverlay(_THIS, int width, int height, Uint32 format, SDL_Surface *display) {
+SDL_Overlay *SYL_CreateYUVOverlay(_THIS, int width, int height, Uint32 format, SDL_Surface *display) {
 	SDL_Overlay* overlay;
 	struct private_yuvhwdata* hwdata;
-	BBitmap *bbitmap;
-	int planes;
-	BRect bounds;
-	color_space cs;
-	
-	/* find the appropriate BeOS colorspace descriptor */
-	cs = convert_color_space(format);
-	if (cs == B_NO_COLOR_SPACE)
-	{
-		return NULL;
-	}
-	
-	/* count planes */
-	planes = count_planes(format);
-	if (planes == 0)
-	{
-		return NULL;
-	}
-	/* TODO: figure out planar modes, if anyone cares */
-	if (planes == 3)
-	{
-		return NULL;
-	}
+
+	/* Check format */
+	if( format != SDL_YV12_OVERLAY )
+		return( NULL );
+
+	//printf("Create!\n" );
 
     /* Create the overlay structure */
     overlay = (SDL_Overlay*)calloc(1, sizeof(SDL_Overlay));
@@ -171,6 +68,52 @@ SDL_Overlay *BE_CreateYUVOverlay(_THIS, int width, int height, Uint32 format, SD
         return NULL;
     }
 
+	/* Calculate size */
+
+	uint32 nDstPitch = ( ( width ) + 0x1ff ) & ~0x1ff;
+	int nSize = nDstPitch * height * 2;
+
+	//printf("%i %i bytes\n", nSize, (int)nDstPitch );
+
+	/* Get media manager */
+
+	os::MediaManager* pcManager = NULL;
+	try
+	{
+		pcManager = os::MediaManager::Get();
+	}
+	catch( ... )
+	{
+		printf("Could not get media manager!\n" );
+		SDL_FreeYUVOverlay(overlay);
+		return( NULL );
+	}
+
+	/* Get media output */
+	os::MediaOutput* pcOutput = pcManager->GetDefaultVideoOutput();
+	if( pcOutput == NULL || pcOutput->FileNameRequired() || ( pcOutput->Open( "" ) != 0 ) )
+	{
+		printf("Could not get output!\n" );
+		SDL_FreeYUVOverlay(overlay);
+		return( NULL );
+	}
+
+	/* Add stream */
+	os::MediaFormat_s sFormat;
+	MEDIA_CLEAR_FORMAT( sFormat );
+	sFormat.nType = os::MEDIA_TYPE_VIDEO;
+	sFormat.zName = "Raw Video";
+	sFormat.nWidth = width;
+	sFormat.nHeight = height;
+	sFormat.eColorSpace = os::CS_YUV12;
+
+	if( pcOutput->AddStream( "SDL Overlay", sFormat ) != 0 )
+	{
+		printf("Could not get create overlay!\n" );
+		SDL_FreeYUVOverlay(overlay);
+		return( NULL );
+	}
+
     /* Fill in the basic members */
     overlay->format = format;
     overlay->w = width;
@@ -178,7 +121,7 @@ SDL_Overlay *BE_CreateYUVOverlay(_THIS, int width, int height, Uint32 format, SD
     overlay->hwdata = NULL;
 	
     /* Set up the YUV surface function structure */
-    overlay->hwfuncs = &be_yuvfuncs;
+    overlay->hwfuncs = &syl_yuvfuncs;
 
     /* Create the pixel data and lookup tables */
     hwdata = (struct private_yuvhwdata*)calloc(1, sizeof(struct private_yuvhwdata));
@@ -190,38 +133,28 @@ SDL_Overlay *BE_CreateYUVOverlay(_THIS, int width, int height, Uint32 format, SD
         return NULL;
     }
 
-    overlay->hwdata = hwdata;
-	overlay->hwdata->display = display;
-	overlay->hwdata->bview = NULL;
-	overlay->hwdata->bbitmap = NULL;
-	overlay->hwdata->locked = 0;
-
-	/* Create the BBitmap framebuffer */
-	bounds.top = 0;	bounds.left = 0;
-	bounds.right = width-1;
-	bounds.bottom = height-1;
-	
-	BView * bview = new BView(bounds,"overlay",B_FOLLOW_NONE,B_WILL_DRAW); 
-	if (!bview) {
+	/* Allocate buffer */
+	uint8* pBuffer = (uint8*)malloc( nSize );
+	if( pBuffer == NULL )
+	{
 		SDL_OutOfMemory();
-        SDL_FreeYUVOverlay(overlay);
-        return NULL;
-	}
-	overlay->hwdata->bview = bview;
-	overlay->hwdata->first_display = true;
-	bview->Hide();
-	
-	bbitmap = BE_GetOverlayBitmap(bounds,cs);
-	if (!bbitmap) {
-		overlay->hwdata->bbitmap = NULL;
 		SDL_FreeYUVOverlay(overlay);
 		return NULL;
 	}
-	overlay->hwdata->bbitmap = bbitmap;
+
+    overlay->hwdata = hwdata;
+	overlay->hwdata->pcManager = pcManager;
+	overlay->hwdata->pBuffer = pBuffer;
+	overlay->hwdata->pcOutput = pcOutput;
+	overlay->hwdata->locked = 0;
+	overlay->hwdata->pcView = pcOutput->GetVideoView( 0 );
+	overlay->hwdata->first_display = true;
+	if( overlay->hwdata->pcView )
+		overlay->hwdata->pcView->Hide();
 	
-	overlay->planes = planes;
-	overlay->pitches = (Uint16*)calloc(overlay->planes, sizeof(Uint16));
-	overlay->pixels  = (Uint8**)calloc(overlay->planes, sizeof(Uint8*));
+	overlay->planes = 3;
+	overlay->pitches = (Uint16*)calloc(3, sizeof(Uint16));
+	overlay->pixels  = (Uint8**)calloc(3, sizeof(Uint8*));
 	if (!overlay->pitches || !overlay->pixels)
 	{
         SDL_OutOfMemory();
@@ -229,29 +162,33 @@ SDL_Overlay *BE_CreateYUVOverlay(_THIS, int width, int height, Uint32 format, SD
         return(NULL);
     }
 
-   	overlay->pitches[0] = bbitmap->BytesPerRow();
-   	overlay->pixels[0]  = (Uint8 *)bbitmap->Bits();
+	overlay->pitches[0] = nDstPitch;
+	overlay->pitches[1] = nDstPitch / 2;
+	overlay->pitches[2] = nDstPitch / 2;
+	
+	overlay->pixels[0]  = overlay->hwdata->pBuffer;
+	overlay->pixels[1]  = overlay->hwdata->pBuffer + height * nDstPitch * 5 / 4;
+	overlay->pixels[2]  = overlay->hwdata->pBuffer + height * nDstPitch;
+
 	overlay->hw_overlay = 1;
 	
-	if (SDL_Win->LockWithTimeout(1000000) != B_OK) {
+	if (SDL_Win->Lock() != 0) {
+		printf("Could not lock window!\n" );
         SDL_FreeYUVOverlay(overlay);
         return(NULL);
     }
-	BView * view = SDL_Win->View();
-    view->AddChild(bview);
-    rgb_color key;
-    bview->SetViewOverlay(bbitmap,bounds,bview->Bounds(),&key,B_FOLLOW_ALL,
-                         B_OVERLAY_FILTER_HORIZONTAL|B_OVERLAY_FILTER_VERTICAL);
-    bview->SetViewColor(key);
-    bview->Flush();
+	os::View * view = SDL_Win->View();
+	if( overlay->hwdata->pcView )
+	    view->AddChild(overlay->hwdata->pcView);
 	SDL_Win->Unlock();
 	
 	current_overlay=overlay;
+
         
 	return overlay;
 }
 
-int BE_LockYUVOverlay(_THIS, SDL_Overlay* overlay)
+int SYL_LockYUVOverlay(_THIS, SDL_Overlay* overlay)
 {
     if (overlay == NULL)
     {
@@ -262,7 +199,7 @@ int BE_LockYUVOverlay(_THIS, SDL_Overlay* overlay)
     return 0;
 }
 
-void BE_UnlockYUVOverlay(_THIS, SDL_Overlay* overlay)
+void SYL_UnlockYUVOverlay(_THIS, SDL_Overlay* overlay)
 {
     if (overlay == NULL)
     {
@@ -272,37 +209,55 @@ void BE_UnlockYUVOverlay(_THIS, SDL_Overlay* overlay)
     overlay->hwdata->locked = 0;
 }
 
-int BE_DisplayYUVOverlay(_THIS, SDL_Overlay* overlay, SDL_Rect* dstrect)
+int SYL_DisplayYUVOverlay(_THIS, SDL_Overlay* overlay, SDL_Rect* dstrect)
 {
+	//printf("Display!\n" );
     if ((overlay == NULL) || (overlay->hwdata==NULL)
-        || (overlay->hwdata->bview==NULL) || (SDL_Win->View() == NULL))
+        || (overlay->hwdata->pcOutput==NULL) || (SDL_Win->View() == NULL))
     {
         return -1;
     }
-    if (SDL_Win->LockWithTimeout(50000) != B_OK) {
+
+	os::MediaPacket_s sPacket;
+	sPacket.nStream = 0;
+	sPacket.nTimeStamp = ~0;
+	sPacket.pBuffer[0] = overlay->pixels[0];
+	sPacket.pBuffer[2] = overlay->pixels[1];
+	sPacket.pBuffer[1] = overlay->pixels[2];
+	sPacket.nSize[0] = overlay->pitches[0];
+	sPacket.nSize[1] = overlay->pitches[1];
+	sPacket.nSize[2] = overlay->pitches[2];
+
+	overlay->hwdata->pcOutput->WritePacket( 0, &sPacket );
+
+    if (SDL_Win->Lock() != 0) {
         return 0;
     }
-    BView * bview = overlay->hwdata->bview;
-    if (SDL_Win->IsFullScreen()) {
-    	int left,top;
-    	SDL_Win->GetXYOffset(left,top);
-	    bview->MoveTo(left+dstrect->x,top+dstrect->y);
-    } else {
-	    bview->MoveTo(dstrect->x,dstrect->y);
-    }
-    bview->ResizeTo(dstrect->w,dstrect->h);
-    bview->Flush();
-	if (overlay->hwdata->first_display) {
-		bview->Show();
-		overlay->hwdata->first_display = false;
+    os::View* pcView = overlay->hwdata->pcView;
+	if( pcView )
+	{
+	    if (SDL_Win->IsFullScreen()) {
+    		int left,top;
+	    	SDL_Win->GetXYOffset(left,top);
+		    pcView->MoveTo(left+dstrect->x,top+dstrect->y);
+	    } else {
+		    pcView->MoveTo(dstrect->x,dstrect->y);
+    	}
+	    pcView->ResizeTo(dstrect->w-1,dstrect->h-1);
+    	pcView->Flush();
+		if (overlay->hwdata->first_display) {
+			//printf("Show overlay!\n" );
+			pcView->Show();
+			overlay->hwdata->first_display = false;
+		}
 	}
     SDL_Win->Unlock();
-    
 	return 0;
 }
 
-void BE_FreeYUVOverlay(_THIS, SDL_Overlay *overlay)
+void SYL_FreeYUVOverlay(_THIS, SDL_Overlay *overlay)
 {
+	//printf("SYL_FreeYUVOverlay\n");
     if (overlay == NULL)
     {
         return;
@@ -313,12 +268,26 @@ void BE_FreeYUVOverlay(_THIS, SDL_Overlay *overlay)
         return;
     }
 
-    current_overlay=NULL;
+	if( overlay->hwdata->pcView )
+		overlay->hwdata->pcView->RemoveThis();
+	overlay->hwdata->pcOutput->Close();
+	overlay->hwdata->pcOutput->Release();
+	overlay->hwdata->pcManager->Put();
 
-	delete overlay->hwdata->bbitmap;
+    current_overlay=NULL;
 
     free(overlay->hwdata);
 }
 
 }; // extern "C"
-#endif
+
+
+
+
+
+
+
+
+
+
+

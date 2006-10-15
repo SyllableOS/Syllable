@@ -40,6 +40,7 @@ void SYL_SetWMCaption(_THIS, const char *title, const char *icon)
 int SYL_IconifyWindow(_THIS)
 {
 //	SDL_Win->Minimize(true);
+	return 0;
 }
 
 int SYL_GetWMInfo(_THIS, SDL_SysWMinfo *info)
@@ -57,3 +58,4 @@ int SYL_GetWMInfo(_THIS, SDL_SysWMinfo *info)
 }
 
 }; /* Extern C */
+

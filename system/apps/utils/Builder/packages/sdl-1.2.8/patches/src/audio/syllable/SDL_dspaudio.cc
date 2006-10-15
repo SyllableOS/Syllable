@@ -86,13 +86,14 @@ static int Audio_Available(void)
 	os::MediaOutput* pcOutput = pcManager->GetDefaultAudioOutput();
 	if( pcOutput == NULL )
 		return( 0 );
-	delete( pcOutput );
+	pcOutput->Release();
 	return( 1 );
 }
 
 static void Audio_DeleteDevice(_THIS)
 {
-	delete( output );
+	if( output )
+		output->Release();
 	manager->Put();
 	free(_this->hidden);
 	free(_this);
@@ -140,12 +141,10 @@ AudioBootStrap SYLLABLE_Audio_bootstrap = {
 /* This function waits until it is possible to write a full sound buffer */
 static void DSP_WaitAudio(_THIS)
 {
-	output->Flush();
 	if( output )
 	{
-		while( output->GetUsedBufferPercentage() > 20 || output->GetDelay() > 100 )
+		while( output->GetDelay() > 50 )
 		{
-			output->Flush();
 			snooze( 1000 );
 		}
 	}
@@ -162,7 +161,6 @@ static void DSP_PlayAudio(_THIS)
 	packet.pBuffer[0] = mixbuf;
 	packet.nSize[0] = mixlen;
 	output->WritePacket( 0, &packet );
-	output->Flush();
 #if 0
 	if (write(audio_fd, mixbuf, mixlen)==-1)
 	{
@@ -190,7 +188,7 @@ static void DSP_CloseAudio(_THIS)
 	if( output )
 	{
 		output->Close();
-		delete( output );
+		output->Release();
 		output = NULL;
 	}
 }
@@ -211,13 +209,13 @@ static int DSP_OpenAudio(_THIS, SDL_AudioSpec *spec)
 	format.nChannels = spec->channels;
 	format.nSampleRate = spec->freq;
 	if( output->Open("") != 0 ) {
-		delete( output );
+		output->Release();
 		output = NULL;
 		return( -1 );
 	}
 	if( output->AddStream( "SDL", format ) != 0 ) {
 		output->Close();
-		delete( output );
+		output->Release();
 		output = NULL;
 		return( -1 );
 	}
@@ -236,3 +234,13 @@ static int DSP_OpenAudio(_THIS, SDL_AudioSpec *spec)
 	/* We're ready to rock and roll. :-) */
 	return(0);
 }
+
+
+
+
+
+
+
+
+
+

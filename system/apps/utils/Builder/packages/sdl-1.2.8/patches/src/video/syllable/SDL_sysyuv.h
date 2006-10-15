@@ -19,7 +19,7 @@
     Sam Lantinga
     slouken@libsdl.org
 */
-#if 0
+
 
 #ifndef __SDL_SYS_YUV_H__
 #define __SDL_SYS_YUV_H__
@@ -29,50 +29,35 @@ static char rcsid =
  "@(#) $Id$";
 #endif /* SAVE_RCSID */
 
-/* This is the BeOS implementation of YUV video overlays */
+/* This is the Syllable implementation of YUV video overlays */
 
 #include "SDL_video.h"
 #include "SDL_lowvideo.h"
+
+#include <media/manager.h>
+#include <media/format.h>
+#include <media/output.h>
 
 extern "C" {
 
 struct private_yuvhwdata
 {
-/*  FRAMEDATA* CurrentFrameData;
-    FRAMEDATA* FrameData0;
-    FRAMEDATA* FrameData1;
-    PgScalerProps_t   props;
-    PgScalerCaps_t    caps;
-    PgVideoChannel_t* channel;
-    PhArea_t CurrentViewPort;
-    PhPoint_t CurrentWindowPos;
-    long format;
-    int scaler_on;
-    int current;
-    long YStride;
-    long VStride;
-    long UStride;
-    int ischromakey;
-    long chromakey;
-    int forcedredraw;
-    unsigned long State;
-    long flags;
-*/
-	SDL_Surface *display;
-	BView *bview;
-	bool first_display;
-	BBitmap *bbitmap;
+	uint8* pBuffer;
+	os::MediaManager* pcManager;
+	os::MediaOutput* pcOutput;
+	os::View* pcView;
+	int first_display;
     int locked;
 };
 
-extern BBitmap * BE_GetOverlayBitmap(BRect bounds, color_space cs);
-extern SDL_Overlay* BE_CreateYUVOverlay(_THIS, int width, int height, Uint32 format, SDL_Surface* display);
-extern int BE_LockYUVOverlay(_THIS, SDL_Overlay* overlay);
-extern void BE_UnlockYUVOverlay(_THIS, SDL_Overlay* overlay);
-extern int BE_DisplayYUVOverlay(_THIS, SDL_Overlay* overlay, SDL_Rect* dstrect);
-extern void BE_FreeYUVOverlay(_THIS, SDL_Overlay* overlay);
+extern SDL_Overlay* SYL_CreateYUVOverlay(_THIS, int width, int height, Uint32 format, SDL_Surface* display);
+extern int SYL_LockYUVOverlay(_THIS, SDL_Overlay* overlay);
+extern void SYL_UnlockYUVOverlay(_THIS, SDL_Overlay* overlay);
+extern int SYL_DisplayYUVOverlay(_THIS, SDL_Overlay* overlay, SDL_Rect* dstrect);
+extern void SYL_FreeYUVOverlay(_THIS, SDL_Overlay* overlay);
 
 };
 
 #endif /* __SDL_PH_YUV_H__ */
-#endif
+
+

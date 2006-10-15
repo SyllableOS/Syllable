@@ -68,9 +68,7 @@ static void SYL_UnlockHWSurface(_THIS, SDL_Surface *surface);
 static void SYL_FreeHWSurface(_THIS, SDL_Surface *surface);
 
 static int SYL_ToggleFullScreen(_THIS, int fullscreen);
-#if 0
-static SDL_Overlay *SYL_CreateYUVOverlay(_THIS, int width, int height, Uint32 format, SDL_Surface *display);
-#endif
+extern SDL_Overlay *SYL_CreateYUVOverlay(_THIS, int width, int height, Uint32 format, SDL_Surface *display);
 
 /* OpenGL functions */
 #ifdef HAVE_OPENGL
@@ -121,7 +119,7 @@ static SDL_VideoDevice *SYL_CreateDevice(int devindex)
 	device->SetVideoMode = SYL_SetVideoMode;
 	device->ToggleFullScreen = SYL_ToggleFullScreen;
 	device->UpdateMouse = SYL_UpdateMouse;
-	device->CreateYUVOverlay = NULL/*BE_CreateYUVOverlay*/;
+	device->CreateYUVOverlay = SYL_CreateYUVOverlay;
 	device->SetColors = SYL_SetColors;
 	device->UpdateRects = NULL;
 	device->VideoQuit = SYL_VideoQuit;
@@ -334,8 +332,7 @@ int SYL_VideoInit(_THIS, SDL_PixelFormat *vformat)
 
 	for ( i=0; i<nmodes; ++i ) {
 		bpp = ColorSpaceToBitsPerPixel(modes[i].m_eColorSpace);
-		if ( bpp != 0 ) { // There are bugs in changing colorspace
-		//if ( modes[i].m_eColorSpace == saved_mode.m_eColorSpace ) {
+		if ( bpp != 0 ) {
 			SYL_AddMode(_this, ((bpp+7)/8)-1,
 				modes[i].m_nWidth,
 				modes[i].m_nHeight, modes[i].m_vRefreshRate);
@@ -392,7 +389,7 @@ static bool SYL_FindClosestFSMode(_THIS, int width, int height, int bpp,
 					 os::screen_mode *mode)
 {
 	os::Desktop screen;
-	uint32 i, nmodes;
+	int32 i, nmodes;
 	os::screen_mode smode;
 	os::screen_mode current;
 	float current_refresh;
@@ -560,14 +557,14 @@ SDL_Surface *SYL_SetVideoMode(_THIS, SDL_Surface *current,
 	current->h = height;
 	if ( flags & SDL_NOFRAME ) {
 		current->flags |= SDL_NOFRAME;
-		SDL_Win->SetFlags(/*os::WND_SINGLEBUFFER|*/os::WND_NO_BORDER);
+		SDL_Win->SetFlags(os::WND_SINGLEBUFFER|os::WND_NO_BORDER);
 	} else {
 		if ( (flags & SDL_RESIZABLE) && !(flags & SDL_OPENGL) )  {
 			current->flags |= SDL_RESIZABLE;
 			/* We don't want opaque resizing (TM). :-) */
-			SDL_Win->SetFlags(0/*os::WND_SINGLEBUFFER*/);
+			SDL_Win->SetFlags(os::WND_SINGLEBUFFER);
 		} else {
-			SDL_Win->SetFlags(/*os::WND_SINGLEBUFFER|*/os::WND_NOT_RESIZABLE|os::WND_NO_ZOOM_BUT);
+			SDL_Win->SetFlags(os::WND_SINGLEBUFFER|os::WND_NOT_RESIZABLE|os::WND_NO_ZOOM_BUT);
 		}
 	}
 
@@ -862,3 +859,9 @@ void SYL_VideoQuit(_THIS)
 }
 
 }; /* Extern C */
+
+
+
+
+
+

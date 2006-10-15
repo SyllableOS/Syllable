@@ -56,6 +56,7 @@ public:
 		image = NULL;
 		xoff = yoff = 0;
 		cursor = false;
+		last_qual = 0;
 		SetFgColor(0,0,0,0);
 		SetBgColor(0,0,0,0);
 	}
@@ -104,7 +105,7 @@ public:
 				dest.right  = updateRect.right + xoff;
 				DrawBitmap(image, updateRect, dest);
 			} else {
-				DrawBitmap(image, updateRect, updateRect);
+				DrawBitmap(image, updateRect & image->GetBounds(), updateRect & image->GetBounds() );
 			}
 		}
 	}
@@ -119,7 +120,7 @@ public:
 				dest.right  = updateRect.right + xoff;
 				DrawBitmap(image, updateRect, dest);
 			} else {
-				DrawBitmap(image, updateRect, updateRect);
+				DrawBitmap(image, updateRect & image->GetBounds(), updateRect & image->GetBounds() );
 			}
 		}
 
@@ -223,7 +224,7 @@ public:
 		keymap[os::VK_PAGE_UP] = SDLK_PAGEUP;
 		keymap[os::VK_PAGE_DOWN] = SDLK_PAGEDOWN;
 	}    
-	SDLKey ConvertQualifiers( uint32 nQual )
+	inline SDLKey ConvertQualifiers( uint32 nQual )
 	{
 		switch( nQual )
 		{
@@ -248,6 +249,31 @@ public:
 		}
 		return( SDLK_UNKNOWN );
 	}
+	inline void CheckQualifiers( uint32 nQualifiers, bool bPressed )
+	{
+		static uint32 anQualifierList[] =
+		{
+			os::QUAL_LSHIFT,
+			os::QUAL_RSHIFT,
+			os::QUAL_LCTRL,
+			os::QUAL_RCTRL,
+			os::QUAL_LALT,
+			os::QUAL_RALT
+		};
+		
+		for( uint i = 0; i < sizeof( anQualifierList ) / 4; i++ )
+		{
+			if( nQualifiers & anQualifierList[i] )
+			{
+				SDL_keysym keysym;
+				keysym.scancode = 0;
+				keysym.sym = ConvertQualifiers( anQualifierList[i] );
+				keysym.mod = KMOD_NONE;
+				keysym.unicode = 0;
+				SDL_PrivateKeyboard( bPressed ? SDL_PRESSED : SDL_RELEASED, &keysym);
+			}
+		}
+	}
 	virtual void KeyDown( const char* pzString, const char* pzRawString, uint32 nQualifiers )
     {
     	SDL_keysym keysym;
@@ -262,7 +288,14 @@ public:
 			keysym.sym = (SDLKey)(SDLK_F1 + nRawKey - 2);
 		}
 		else if( pzRawString[0] == 0 && nQualifiers != 0  )
-			keysym.sym = last_qual = ConvertQualifiers( nQualifiers );
+		{
+			/* Compare to last qualifiers */
+			uint32 nNewQualifiers = nQualifiers ^ last_qual;
+			nNewQualifiers &= nQualifiers;
+			CheckQualifiers( nNewQualifiers, true );
+			last_qual = nQualifiers;
+			return( os::View::KeyDown( pzString, pzRawString, nQualifiers ) );
+		}
 		else if( (uint8)pzRawString[0] < 128 )
 			keysym.sym = keymap[(uint8)pzRawString[0]];
 		else 
@@ -292,8 +325,12 @@ public:
 			keysym.sym = (SDLKey)(SDLK_F1 + nRawKey - 130);
 		}
 		else if( pzRawString[0] == 0 ) {
-			keysym.sym = last_qual;
-			last_qual = SDLK_UNKNOWN;
+			/* Compare to last qualifiers */
+			uint32 nNewQualifiers = nQualifiers ^ last_qual;
+			nNewQualifiers &= last_qual;
+			CheckQualifiers( nNewQualifiers, false );
+			last_qual = nQualifiers;
+			return( os::View::KeyUp( pzString, pzRawString, nQualifiers ) );
 		}
 		else if( (uint8)pzRawString[0] < 128 )
 			keysym.sym = keymap[(uint8)pzRawString[0]];
@@ -323,10 +360,13 @@ public:
 private:
 	WMcursor *CurrentCursor;
 	SDLKey keymap[128];
-	SDLKey last_qual;
+	uint32 last_qual;
 	os::Bitmap *image;
 	int xoff, yoff;
 	bool cursor;
 };
 
 #endif /* _SDL_SylView_h */
+
+
+

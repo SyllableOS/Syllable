@@ -46,7 +46,7 @@ class SDL_SylWin : public os::Window
 {
 public:
 	SDL_SylWin(os::Rect bounds) :
-			os::Window(bounds, "sdl", "SDL", 0/*os::WND_SINGLEBUFFER*/) {
+			os::Window(bounds, "sdl", "SDL", os::WND_SINGLEBUFFER) {
 		fullscreen = false;
 
 		the_view = NULL;
