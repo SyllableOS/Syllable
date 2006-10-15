@@ -16,8 +16,8 @@ tree
 	atheos/etc
 
 	atheos/home				home.png
-	atheos/home/.template	home.png
-	atheos/home/root		home.png
+;	atheos/home/.template	home.png
+;	atheos/home/root		home.png
 
 	atheos/autolnk
 	atheos/autolnk/bin
@@ -121,9 +121,9 @@ resources
 	atheos/sys/config		kernel.cfg					text/plain
 	atheos/sys/config		appserver					text/plain
 ;	atheos/sys/libs			GCC-libraries-4.1.1
+	atheos/home				Home-Directories
 	atheos/Documentation	documentation/Welcome		text/plain
 	atheos/Documentation	documentation/Copyrights	text/plain
-	atheos/home				Home-Directories
 
 modules
 	sys/boot/grub-0.97-syllable
@@ -305,5 +305,3 @@ modules
 	apps/utils/nettools
 	apps/utils/pkgmanager
 	apps/utils/systools
-
-
