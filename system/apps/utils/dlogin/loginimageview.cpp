@@ -2,7 +2,7 @@
 
 LoginImageView::LoginImageView(const Rect& cRect) : View(cRect,"login_image_view")
 {
-	pcImage = LoadImageFromResource("background.jpg");
+	pcImage = LoadImageFromResource("background.png");
 	ResizeBackground();
 }
 
@@ -12,7 +12,7 @@ void LoginImageView::ResizeBackground()
 	os::Point cPoint(cDesktop.GetResolution());
 	if (cPoint != pcImage->GetSize())
 	{
-		pcImage->SetSize(cPoint );
+		pcImage->SetSize(cPoint);
 	}
 }
 
@@ -26,5 +26,3 @@ void LoginImageView::Paint(const Rect& cRect)
 	pcImage->Draw(Point(0,0),this);
 	DrawText(Rect(0,0,100,100),GetSystemInfo(),DTF_ALIGN_CENTER);
 }
-
-
