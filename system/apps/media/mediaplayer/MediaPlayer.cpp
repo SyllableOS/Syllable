@@ -347,6 +347,7 @@ void MPApp::PlayThread()
 	bigtime_t nTime = get_system_time();
 	bigtime_t nPlayTime = 0;
 	m_bPlayThread = true;
+	bigtime_t nStartTime = 0;
 	
 	os::MediaPacket_s sPacket;
 	os::MediaPacket_s sAudioPacket;
@@ -398,7 +399,7 @@ again:
 				else
 					bCheckError = true;
 			}
-video_again:		
+//video_again:
 			/* Read Video frame */
 			if( m_bVideo && !bVideoValid )
 			{
@@ -417,8 +418,8 @@ video_again:
 						}
 						m_pcInput->FreePacket( &sPacket );
 						acPackets.erase( acPackets.begin() + i );
-						if( !bVideoValid )
-							goto video_again;
+						//if( !bVideoValid )
+							//goto video_again;
 						break;
 					}
 				}
@@ -427,6 +428,13 @@ video_again:
 			/* Show videoframe */
 			if( m_bVideo && bVideoValid )
 			{
+				if( !m_bAudio )
+				{
+					if( nStartTime == 0 )
+						nStartTime = get_system_time();
+					nPlayTime = ( get_system_time() - nStartTime ) / 1000;
+				}
+				
 				/* Calculate current time */
 				bigtime_t nCurrentTime = nPlayTime;
 				if( m_bAudio )
@@ -434,7 +442,7 @@ video_again:
 				 
 				uint64 nVideoFrameLength = 1000 / (uint64)m_sVideoFormat.vFrameRate;
 			 
-				if( nCurrentTime > sVideoFrame.nTimeStamp + nVideoFrameLength * 2 )
+				if( nCurrentTime > sVideoFrame.nTimeStamp + nVideoFrameLength/* * 2*/ )
 				{
 					printf( "Droping Frame %i %i!\n", (int)sVideoFrame.nTimeStamp, (int)nCurrentTime );
 					bVideoValid = false;
@@ -449,6 +457,7 @@ video_again:
 					bVideoValid = false;						
 				}
 			}
+audio_again:			
 			/* Read audio packet */
 			if( m_bAudio && !bCheckError && !bAudioValid  )
 			{
@@ -487,6 +496,9 @@ video_again:
 				nLastAudio += nAudioLength;
 				nAudioBytes += sAudioPacket.nSize[0];
 				nPlayTime = nLastAudio;
+				
+				if( m_pcAudioOutput->GetDelay() < m_pcAudioOutput->GetBufferSize() / 4 )
+					goto audio_again;
 			}		
 			/* Increase error count */
 			if( bCheckError )
