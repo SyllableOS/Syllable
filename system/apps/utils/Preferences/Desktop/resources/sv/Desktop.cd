@@ -1,0 +1,22 @@
+//
+// Preferences/Desktop String Catalog
+//
+// Translated by: Daniel Eriksson
+//
+
+MSG_MAINWND_TITLE=0							Skrivbord
+
+MSG_MAINWND_BACKGGROUND=100					Bakgrund
+MSG_MAINWND_BACKGGROUND_IMAGE				Bild
+MSG_MAINWND_BACKGGROUND_NONE				Ingen
+MSG_MAINWND_BACKGGROUND_TEXT				Obs: Kopiera bilder till Documents/Pictures
+
+MSG_MAINWND_WINDOWS_TEXT=200				Fönster
+MSG_MAINWND_WINDOWS_TEXT_POPUP				Framhäv valt fönster
+MSG_MAINWND_WINDOWS_TEXT_SINGLECLICK		Använd enkel-klicks gränssnitt
+MSG_MAINWND_WINDOWS_TEXT_SHADOWTEXT			Visa ikontext med skugga
+
+MSG_MAINWND_BUTTON_APPLY=300				Verkställ
+MSG_MAINWND_BUTTON_UNDO						Ångra
+MSG_MAINWND_BUTTON_DEFAULT					Grundinställningar
+

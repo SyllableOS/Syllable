@@ -2,6 +2,8 @@ COPTS = -Wno-deprecated -c -DENABLE_UNDO
 
 OBJSDIR = objs/
 
+CATALOGS = da de es fr fy hu it nl pl pt-br ru sv
+
 OBJS = $(OBJSDIR)main.o $(OBJSDIR)appwindow.o $(OBJSDIR)button_bar.o $(OBJSDIR)editview.o $(OBJSDIR)aboutdialog.o $(OBJSDIR)gotodialog.o $(OBJSDIR)finddialog.o $(OBJSDIR)replacedialog.o $(OBJSDIR)buffer.o $(OBJSDIR)status_bar.o $(OBJSDIR)mytabview.o $(OBJSDIR)icons.o
 EXE = aedit
 
@@ -10,18 +12,9 @@ all: $(OBJSDIR) $(EXE)
 $(OBJSDIR):
 	mkdir $(OBJSDIR)
 
-$(EXE): $(OBJS)
+$(EXE): catalogs $(OBJS)
 	$(CXX) $(OBJS) -lsyllable -o $(EXE)
 	rescopy -r $(EXE) resources/aedit.catalog
-	rescopy -a $(EXE) da/aedit.catalog=resources/da/aedit.catalog
-	rescopy -a $(EXE) de/aedit.catalog=resources/de/aedit.catalog
-	rescopy -a $(EXE) es/aedit.catalog=resources/es/aedit.catalog
-	rescopy -a $(EXE) fr/aedit.catalog=resources/fr/aedit.catalog
-	rescopy -a $(EXE) fy/aedit.catalog=resources/fy/aedit.catalog
-	rescopy -a $(EXE) it/aedit.catalog=resources/it/aedit.catalog
-	rescopy -a $(EXE) nl/aedit.catalog=resources/nl/aedit.catalog
-	rescopy -a $(EXE) pl/aedit.catalog=resources/pl/aedit.catalog
-	rescopy -a $(EXE) sv/aedit.catalog=resources/sv/aedit.catalog
 	rescopy -a $(EXE) stock_copy_16=pixmaps/stock_copy_16.png
 	rescopy -a $(EXE) stock_copy_24=pixmaps/stock_copy_24.png
 	rescopy -a $(EXE) stock_cut_16=pixmaps/stock_cut_16.png
@@ -55,6 +48,20 @@ $(EXE): $(OBJS)
 	rescopy -a $(EXE) icon24x24.png=pixmaps/icon24x24.png
 	rescopy -a $(EXE) icon48x48.png=pixmaps/icon48x48.png
 	rescopy -a $(EXE) about=pixmaps/about.png
+	for CATALOG in $(CATALOGS);do \
+		echo $$CATALOG; \
+		rescopy -a $(EXE) $$CATALOG/$(EXE).catalog=resources/$$CATALOG/$(EXE).catalog; \
+	done;
+
+catalogs:
+	cd resources; \
+	catcomp -c $(EXE).cd; \
+	for CATALOG in $(CATALOGS);do \
+		echo $$CATALOG; \
+		cd $$CATALOG; \
+		catcomp -t $(EXE).cd; \
+		cd ..; \
+	done;
 
 deps:
 
@@ -70,7 +77,7 @@ dist: all
 	install -s $(EXE) $(DIST_DIR)/atheos/Applications/AEdit/AEdit
 	ln -sf /Applications/AEdit/AEdit $(DIST_DIR)/atheos/sys/bin/$(EXE)
 
-clean:
+clean: catalog-clean
 	-rm $(OBJS)
 	-rm $(EXE)
 
@@ -109,4 +116,10 @@ $(OBJSDIR)mytabview.o: mytabview.cpp mytabview.h
 
 $(OBJSDIR)icons.o: icons.cpp icons.h
 	$(CXX) $(COPTS) icons.cpp -o $@
+
+catalog-clean:
+	-rm resources/$(EXE).catalog resources/$(EXE).h; \
+	for CATALOG in $(CATALOGS);do \
+		rm resources/$$CATALOG/$(EXE).catalog; \
+	done;
 

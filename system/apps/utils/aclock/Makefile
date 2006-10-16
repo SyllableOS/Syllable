@@ -3,8 +3,25 @@ COPTS	= -c
 OBJS	= main.o gui/clockview.o
 EXE	= aclock
 
-$(EXE) : $(OBJS)
+CATALOGS = da es hu pt-br
+
+$(EXE) : catalogs $(OBJS)
 	$(CXX) $(OBJS) -lsyllable -lm -o $@
+	rescopy -r $(EXE) resources/$(EXE).catalog
+	for CATALOG in $(CATALOGS);do \
+		echo $$CATALOG; \
+		rescopy -a $(EXE) $$CATALOG/$(EXE).catalog=resources/$$CATALOG/$(EXE).catalog; \
+	done;
+
+catalogs:
+	cd resources; \
+	catcomp -c $(EXE).cd; \
+	for CATALOG in $(CATALOGS);do \
+		echo $$CATALOG; \
+		cd $$CATALOG; \
+		catcomp -t $(EXE).cd; \
+		cd ..; \
+	done;
 
 install: $(EXE)
 	cp -f $(EXE) /system/bin/$(EXE)
@@ -20,12 +37,18 @@ dist: $(EXE)
 	cp lcd2n.ttf $(DIST_DIR)/atheos/sys/fonts/
 	strip --strip-all $(DIST_DIR)/atheos/sys/bin/$(EXE)
 
-clean:
+clean: catalog-clean
 	-rm $(OBJS)
 #.c.o :
 #	$(CC) $(COPTS) $< -o $@
 .cpp.o:
 	$(CXX) $(COPTS) $< -o $@
+
+catalog-clean:
+	-rm resources/$(EXE).catalog resources/$(EXE).h; \
+	for CATALOG in $(CATALOGS);do \
+		rm resources/$$CATALOG/$(EXE).catalog; \
+	done;
 
 main.o:	main.cpp gui/clockview.h mywindow.h
 gui/clockview.o: gui/clockview.cpp gui/clockview.h

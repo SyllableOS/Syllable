@@ -1,0 +1,28 @@
+//
+// Preferences/Dock String Catalog
+//
+// Translated by: Edgar Domingo de Albuquerque (contato@edgar.pro.br)
+// Brazilian Portuguese pt_BR @ 29-Jul-2006 Sorocaba/SP - Brasil
+//
+
+MSG_MAINWND_TITLE=0								Dock
+
+MSG_MAINWND_POSITION=100						Posição
+MSG_MAINWND_POSITION_TOP						Topo
+MSG_MAINWND_POSITION_BOTTOM						Base
+MSG_MAINWND_POSITION_LEFT						Esquerda
+MSG_MAINWND_POSITION_RIGHT						Direita
+
+MSG_MAINWND_PLUGINS=200							Extensões
+MSG_MAINWND_PLUGINS_PLUGIN						Extensão
+MSG_MAINWND_PLUGINS_ENABLED						Ativada
+MSG_MAINWND_PLUGINS_TEXT						Nota: por favor, copie as extensões para /system/extensions/dock/
+MSG_MAINWND_PLUGINS_BUTTON_ENABLE				Ativar
+MSG_MAINWND_PLUGINS_BUTTON_DISABLE				Desativar
+MSG_MAINWND_PLUGINS_STATE_ENABLED_YES			Sim
+MSG_MAINWND_PLUGINS_STATE_ENABLED_NO			Não
+
+MSG_MAINWND_BUTTON_APPLY=300					Aplicar
+MSG_MAINWND_BUTTON_UNDO							Desfazer
+MSG_MAINWND_BUTTON_DEFAULT						Padrão
+

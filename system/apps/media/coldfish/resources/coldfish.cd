@@ -11,6 +11,7 @@ MSG_MAINWND_FILE							File
 MSG_MAINWND_TRACK							Track
 MSG_MAINWND_STREAM							Stream
 MSG_MAINWND_LENGTH							Length
+MSG_MAINWND_PLAYING							Playing
 
 MSG_MAINWND_MENU_APPLICATION=200			Application
 MSG_MAINWND_MENU_APPLICATION_ABOUT			About...
@@ -38,6 +39,7 @@ MSG_ERRWND_CANTDELETE						The currently played track cannot be deleted.
 MSG_ERRWND_NOTPLAYLIST						Selected file is not a playlist.
 
 MSG_PLAYLIST_UNKNOWN=2000					Unknown
+MSG_PLAYLIST_DEFAULT						Default Playlist
 
 MSG_PLAYLISTWND_TITLE=2100					Select Playlist - ColdFish
 MSG_PLAYLISTWND_FILE						File
@@ -45,4 +47,6 @@ MSG_PLAYLISTWND_OPEN						Open
 MSG_PLAYLISTWND_NOTE						Note: if you try to open a non-existent\nplaylist then it will be created
 
 MSG_LCD_TRACK=3000							Track
+
+MSG_MIMETYPE_APPLICATION_XCOLDFISHPLAYLIST=10000		ColdFish Playlist
 

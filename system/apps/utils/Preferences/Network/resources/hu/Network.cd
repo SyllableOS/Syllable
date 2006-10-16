@@ -1,0 +1,60 @@
+//
+// Preferences/Network String Catalog
+//
+// Translated by: Dávid Horváth
+//
+
+MSG_MAINWND_TITLE=0								Hálózat
+
+MSG_MAINWND_NAMES=100							Nevek
+MSG_MAINWND_NAMES_HOST							Kiszolgáló:
+MSG_MAINWND_NAMES_HOST_DEFAULT					alapértelmezett
+MSG_MAINWND_NAMES_DOMAIN						Domain:
+MSG_MAINWND_NAMES_DOMAIN_DEFAULT				domain
+MSG_MAINWND_NAMES_DNS_PRIMARY					Elsödl. DNS:
+MSG_MAINWND_NAMES_DNS_SECONDARY					Másodl. DNS:
+
+MSG_MAINWND_NICINT=200							Hálózati csatoló
+MSG_MAINWND_NICINT_ENABLED						(Engedélyezve)
+MSG_MAINWND_NICINT_DISABLED						(Tiltva)
+MSG_MAINWND_NICINT_BUTTON_MODIFY				Módosítás
+
+MSG_MAINWND_BUTTON_APPLY=300					Alkalmaz
+MSG_MAINWND_BUTTON_REVERT						Visszaállítás
+
+MSG_MODIFYWND_TITLE=400							Hálózat módosítása
+MSG_MODIFYWND_INTERFACE							Csatoló:
+MSG_MODIFYWND_ENABLED							(Engedélyezve)
+MSG_MODIFYWND_DISABLED							(Tiltva)
+MSG_MODIFYWND_USEDHCP							DHCP használata
+MSG_MODIFYWND_BUTTON_ENABLE						Engedélyez
+MSG_MODIFYWND_BUTTON_DISABLE					Tilt
+MSG_MODIFYWND_SETTINGS							Beállítások
+MSG_MODIFYWND_SETTINGS_IPADD					IP-cím:
+MSG_MODIFYWND_SETTINGS_SUBNET					Alhálózati maszk:
+MSG_MODIFYWND_SETTINGS_GATEWAY					Gateway-cím:
+
+MSG_CONFCHANGEDWND_TITLE=1000					Hálózat
+MSG_CONFCHANGEDWND_TEXT							Lépj be rendszergazdaként és állítsd be a hálózatot!
+MSG_CONFCHANGEDWND_OK							Ok
+
+MSG_ALERTWND_PRIDNS=2000						Hálózat
+MSG_ALERTWND_PRIDNS_TEXT						Az elsödleges DNS értéke érvénytelen.
+MSG_ALERTWND_PRIDNS_OK							Ok
+
+MSG_ALERTWND_SECDNS=3000						Hálózat
+MSG_ALERTWND_SECDNS_TEXT						A másodlagos DNS értéke érvénytelen.
+MSG_ALERTWND_SECDNS_OK							Ok
+
+MSG_ALERTWND_IPADD=4000							Hálózat
+MSG_ALERTWND_IPADD_TEXT							Az IP-cím értéke érvénytelen.
+MSG_ALERTWND_IPADD_OK							Ok
+
+MSG_ALERTWND_SUBNET=5000						Hálózat
+MSG_ALERTWND_SUBNET_TEXT						Az alhálózati maszk értéke érvénytelen.
+MSG_ALERTWND_SUBNET_OK							Ok
+
+MSG_ALERTWND_GATEWAY=6000						Hálózat
+MSG_ALERTWND_GATEWAY_TEXT						A Gateway-cím értéke érvénytelen.
+MSG_ALERTWND_GATEWAY_OK							Ok
+

@@ -35,6 +35,8 @@
 #include <util/exceptions.h>
 #include <gui/exceptions.h>
 
+#include "resources/memmon.h"
+
 using namespace os;
 
 enum
@@ -112,6 +114,8 @@ private:
 
 MyApp::MyApp( const char* pzName ) : Application( pzName )
 {
+  SetCatalog("memmon.catalog");
+
   m_nDelay 	  = 1000000;
   m_pcWindow 	  = new MonWindow( Rect( 20, 20, 200, 100 ) );
 
@@ -170,7 +174,7 @@ void MyApp::HandleMessage( Message* pcMsg )
 //----------------------------------------------------------------------------
 
 MonWindow::MonWindow( const Rect& cFrame ) :
-    Window( cFrame, "sysmon_wnd", "Memory usage", 0 )
+    Window( cFrame, "sysmon_wnd", MSG_MAINWND_TITLE, 0 )
 {
     Lock();
 
@@ -277,43 +281,43 @@ void MonWindow::TimerTick( int nID )
 
     get_system_info( &sInfo );
   
-    char* pzPostfix;
-    char* pzCachePF;
-    char* pzDirtyPF;
+    os::String pzPostfix;
+    os::String pzCachePF;
+    os::String pzDirtyPF;
     float	vFreeMem = float(sInfo.nFreePages * PAGE_SIZE);
     float	vCache   = float(sInfo.nBlockCacheSize);
     float	vDirty   = float(sInfo.nDirtyCacheSize);
     
     if ( vFreeMem > 1000000.0f ) {
 	vFreeMem /= 1000000.0f;
-	pzPostfix = "Mb";
+	pzPostfix = os::String( MSG_MAINWND_UNITS_MEGABYTE );
     } else if ( vFreeMem > 1000.0f ) {
 	vFreeMem /= 1000.0f;
-	pzPostfix = "Kb";
+	pzPostfix = os::String( MSG_MAINWND_UNITS_KILOBYTE );
     } else {
-	pzPostfix = "b";
+	pzPostfix = os::String( MSG_MAINWND_UNITS_BYTE );
     }
     if ( vCache > 1000000.0f ) {
 	vCache /= 1000000.0f;
-	pzCachePF = "Mb";
+	pzCachePF = os::String( MSG_MAINWND_UNITS_MEGABYTE );
     } else if ( vCache > 1000.0f ) {
 	vCache /= 1000.0f;
-	pzCachePF = "Kb";
+	pzCachePF = os::String( MSG_MAINWND_UNITS_KILOBYTE );
     } else {
-	pzCachePF = "b";
+	pzCachePF = os::String( MSG_MAINWND_UNITS_BYTE );
     }
     if ( vDirty > 1000000.0f ) {
 	vDirty /= 1000000.0f;
-	pzDirtyPF = "Mb";
+	pzDirtyPF = os::String( MSG_MAINWND_UNITS_MEGABYTE );
     } else if ( vDirty > 1000.0f ) {
 	vDirty /= 1000.0f;
-	pzDirtyPF = "Kb";
+	pzDirtyPF = os::String( MSG_MAINWND_UNITS_KILOBYTE );
     } else {
-	pzDirtyPF = "b";
+	pzDirtyPF = os::String( MSG_MAINWND_UNITS_BYTE );
     }
     
     char zBuffer[256];
-    sprintf( zBuffer, "%.2f%s / %.2f%s / %.2f%s", vFreeMem, pzPostfix, vCache, pzCachePF, vDirty, pzDirtyPF );
+    sprintf( zBuffer, "%.2f%s / %.2f%s / %.2f%s", vFreeMem, pzPostfix.c_str(), vCache, pzCachePF.c_str(), vDirty, pzDirtyPF.c_str() );
 
     m_pcMemUsageStr->SetString( zBuffer );
     if ( (m_nUpdateCount++ % 2) == 0 ) {
@@ -337,16 +341,16 @@ MultiMeter::MultiMeter(  const Rect& cFrame, const char* pzTitle, uint32 nResize
     : View( cFrame, pzTitle, nResizeMask, nFlags  )
 {
   m_pcPopupMenu     = new Menu( Rect( 0, 0, 10, 10 ), "popup", ITEMS_IN_COLUMN );
-  Menu* pcSpeedMenu = new Menu( Rect( 0, 0, 10, 10 ), "Speed", ITEMS_IN_COLUMN );
+  Menu* pcSpeedMenu = new Menu( Rect( 0, 0, 10, 10 ), MSG_MAINWND_MENU_SPEED, ITEMS_IN_COLUMN );
   
-  m_pcPopupMenu->AddItem( new MenuItem( "Quit", new Message( M_QUIT ) ) );
+  m_pcPopupMenu->AddItem( new MenuItem( MSG_MAINWND_MENU_QUIT, new Message( M_QUIT ) ) );
   m_pcPopupMenu->AddItem( pcSpeedMenu );
   
-  pcSpeedMenu->AddItem( new MenuItem( "Low",       new Message( ID_SPEED_LOW ) ) );
-  pcSpeedMenu->AddItem( new MenuItem( "Medium",    new Message( ID_SPEED_MEDIUM ) ) );
-  pcSpeedMenu->AddItem( new MenuItem( "High",      new Message( ID_SPEED_HIGH ) ) );
-  pcSpeedMenu->AddItem( new MenuItem( "Very high", new Message( ID_SPEED_VERY_HIGH ) ) );
-  pcSpeedMenu->AddItem( new MenuItem( "Full speed", new Message( ID_SPEED_FULL ) ) );
+  pcSpeedMenu->AddItem( new MenuItem( MSG_MAINWND_MENU_SPEED_LOW,       new Message( ID_SPEED_LOW ) ) );
+  pcSpeedMenu->AddItem( new MenuItem( MSG_MAINWND_MENU_SPEED_MEDIUM,    new Message( ID_SPEED_MEDIUM ) ) );
+  pcSpeedMenu->AddItem( new MenuItem( MSG_MAINWND_MENU_SPEED_HIGH,      new Message( ID_SPEED_HIGH ) ) );
+  pcSpeedMenu->AddItem( new MenuItem( MSG_MAINWND_MENU_SPEED_VERYHIGH, new Message( ID_SPEED_VERY_HIGH ) ) );
+  pcSpeedMenu->AddItem( new MenuItem( MSG_MAINWND_MENU_SPEED_FULLSPEED, new Message( ID_SPEED_FULL ) ) );
 
   m_pcPopupMenu->SetTargetForItems( Application::GetInstance() );
   pcSpeedMenu->SetTargetForItems( Application::GetInstance() );

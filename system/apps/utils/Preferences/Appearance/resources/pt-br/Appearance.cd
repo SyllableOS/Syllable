@@ -1,0 +1,55 @@
+//
+// Preferences/Appearance String Catalog
+//
+// Translated by: Edgar Domingo de Albuquerque (contato@edgar.pro.br)
+// Brazilian Portuguese pt_BR @ 29-Jul-2006 Sorocaba/SP - Brasil
+//
+
+MSG_MAINWND_TITLE=0								Aparência
+
+MSG_MAINWND_WINDEC_WINDOWSDECORATION=100		Decoração da Janela
+MSG_MAINWND_WINDEC_DECOR						Decoração
+
+MSG_MAINWND_CLRSCM_COLOURSCHEME=200				Esquema de Cores
+MSG_MAINWND_CLRSCM_THEME						Temas
+MSG_MAINWND_CLRSCM_RED							Vermelho
+MSG_MAINWND_CLRSCM_GREEN						Verde
+MSG_MAINWND_CLRSCM_BLUE							Azul
+MSG_MAINWND_CLRSCM_DEC							Dec
+MSG_MAINWND_CLRSCM_HEX							Hex
+MSG_MAINWND_CLRSCM_BUTTON_SAVE					_Salvar Esquema
+MSG_MAINWND_CLRSCM_BUTTON_DEL					_Excluir Esquema
+
+MSG_MAINWND_BUTTON_APPLY=300					_Aplicar
+MSG_MAINWND_BUTTON_DEFAULT						_Padrão
+
+MSG_MAINWND_THEMEDROPDOWN_APPLICATION=400		Aplicativo
+MSG_MAINWND_THEMEDROPDOWN_HIGHLIGHT				Destaque
+MSG_MAINWND_THEMEDROPDOWN_SHADOW				Sombreado
+MSG_MAINWND_THEMEDROPDOWN_ACTIVEWINDOW			Janela Ativa
+MSG_MAINWND_THEMEDROPDOWN_WINDOWBORDER			Borda da Janela
+MSG_MAINWND_THEMEDROPDOWN_MENUTEXT				Texto do Menu
+MSG_MAINWND_THEMEDROPDOWN_MENUHIGHLIGHTTEXT		Texto em Destaque do Menu
+MSG_MAINWND_THEMEDROPDOWN_MENUBACKGROUND		Plano de Fundo do Menu
+MSG_MAINWND_THEMEDROPDOWN_MENUHIGHLIGHT			Destaque do Menu
+MSG_MAINWND_THEMEDROPDOWN_SCROLLBARBACKGROUND	Plano de Fundo da Barra de Rolagem
+MSG_MAINWND_THEMEDROPDOWN_SCROLLBARKNOB			Guia da Barra de Rolagem
+MSG_MAINWND_THEMEDROPDOWN_LISTVIEWTAB			Guia da Lista de Visualização
+MSG_MAINWND_THEMEDROPDOWN_LISTVIEWTABTEXT		Texto da Guia da Lista de Visualização
+MSG_MAINWND_THEMEDROPDOWN_ICONTEXT				Texto do Ícone
+MSG_MAINWND_THEMEDROPDOWN_ICONSELECTION			Ícone Selecionado
+MSG_MAINWND_THEMEDROPDOWN_ICONBACKGROUND		Plano de Fundo do Ícone
+MSG_MAINWND_THEMEDROPDOWN_FOCUSEDITEM			Item Selecionado
+
+MSG_ALERT_NODECORDIR_TITLE=1000					Erro
+MSG_ALERT_NODECORDIR_TEXT						Diretório /system/drivers/appserver/decorators/ não existe, não é possível carregar Decorações.
+MSG_ALERT_NODECORDIR_OK							Ok
+
+MSG_ALERT_NOCLRSCMDIR_TITLE=2000				Erro
+MSG_ALERT_NOCLRSCMDIR_TEXT						Diretório /system/config/appearance/colour-schemes/ não existe, não é possível carregar Esquemas de Cores.
+MSG_ALERT_NOCLRSCMDIR_OK						Ok
+
+MSG_ALERT_CLRSCMERR_TITLE=3000					Erro
+MSG_ALERT_CLRSCMERR_TEXT						Não é possível carregar o arquivo de Esquema de Cores selecionado
+MSG_ALERT_CLRSCMERR_OK							Ok
+

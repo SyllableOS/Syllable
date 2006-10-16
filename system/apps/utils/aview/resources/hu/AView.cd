@@ -1,0 +1,32 @@
+//
+// AView String Catalog
+//
+// Translated by: Dávid Horváth
+//
+
+MSG_MAINWND_TITLE=0							AView
+
+MSG_MAINWND_MENU_APPLICATION=100			Program
+MSG_MAINWND_MENU_APPLICATION_QUIT				Kilépés
+MSG_MAINWND_MENU_APPLICATION_ABOUT				Névjegy
+
+MSG_MAINWND_MENU_FILE=200					Fájl
+MSG_MAINWND_MENU_FILE_OPEN						Megnyitás
+
+MSG_MAINWND_MENU_VIEW=300					Nézet
+MSG_MAINWND_MENU_VIEW_FITTOIMAGE				Teljes ablakos megjelenítés
+MSG_MAINWND_MENU_VIEW_PREVIOUS					Elözö
+MSG_MAINWND_MENU_VIEW_NEXT						Következö
+MSG_MAINWND_MENU_VIEW_FIRST						Elsö
+MSG_MAINWND_MENU_VIEW_LAST						Utolsó
+
+MSG_ABOUTWND_TITLE=1000					Az AView névjegye
+MSG_ABOUTWND_TEXT								AView\n\nKépnézegetö Syllable operációs rendszerre    \nCopyright 2005 Syllable Team\n\nAz AView a GNU, azaz General\nPublic License védelme alatt áll. További információért látogasd meg a www.gnu.org\nwebhelyet.\n
+MSG_ABOUTWND_OK									Ok
+
+MSG_STATUSBAR_OF=2000					%i / %i
+
+MSG_MIMETYPE_IMAGE_PNG=10000			PNG kép
+MSG_MIMETYPE_IMAGE_JPEG					JPEG kép
+MSG_MIMETYPE_IMAGE_GIF					GIF kép
+

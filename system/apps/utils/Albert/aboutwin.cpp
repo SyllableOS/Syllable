@@ -24,6 +24,7 @@
  */
 
 #include "aboutwin.h"
+#include "resources/Albert.h"
 #include <gui/font.h>
 #include <gui/desktop.h>
 
@@ -50,8 +51,6 @@ class BitmapView : public View {
 
 	void Paint(const Rect &cUpdateRect)
 	{
-		char *text1 = "Albert V0.5 2004-02-07 Copyright (C) 2002-2004 Henrik Isaksson.";
-		char *text2 = "Albert is released under the GNU General Public License.";
 		SetDrawingMode(DM_COPY);
 		m_pcImage->Draw( Point( 0, 0 ), this  );
 
@@ -60,11 +59,11 @@ class BitmapView : public View {
 		font_height fh;
 		GetFontHeight(&fh);
 		
-		MovePenTo(GetBounds().Width()/2 - GetStringWidth(text1)/2, 2 + fh.ascender);
-		DrawString(text1);
+		MovePenTo(GetBounds().Width()/2 - GetStringWidth(MSG_ABOUTWND_TEXTONE)/2, 2 + fh.ascender);
+		DrawString(MSG_ABOUTWND_TEXTONE);
 
-		MovePenTo(GetBounds().Width()/2 - GetStringWidth(text2)/2, GetBounds().Height() - 2 - fh.descender);
-		DrawString(text2);
+		MovePenTo(GetBounds().Width()/2 - GetStringWidth(MSG_ABOUTWND_TEXTTWO)/2, GetBounds().Height() - 2 - fh.descender);
+		DrawString(MSG_ABOUTWND_TEXTTWO);
 
 	}
 
@@ -73,13 +72,13 @@ class BitmapView : public View {
 };
 
 AboutWindow::AboutWindow(const Rect & r)
-	:Window(r, "AboutAlbert", "About Albert",
+	:Window(r, "AboutAlbert", MSG_ABOUTWND_TITLE,
 //	WND_NO_CLOSE_BUT | WND_NO_ZOOM_BUT | WND_NO_DEPTH_BUT |
 //	WND_NO_BORDER | WND_NO_TITLE |
 	WND_NOT_RESIZABLE,
 	CURRENT_DESKTOP)
 {
-    os::Resources cRes(get_image_id());
+	os::Resources cRes(get_image_id());
 	os::ResStream* pcStream = cRes.GetResourceStream("albert.png");
 	if(pcStream == NULL)
 		throw(os::errno_exception("Can't find resource albert.png!"));

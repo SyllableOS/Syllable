@@ -1,0 +1,34 @@
+//
+// Preferences/Screen String Catalog
+//
+// Translated by: Maximo Pech Jaramillo <makzpj@gmail.com>
+//
+
+MSG_MAINWND_TITLE=0							Pantalla
+
+MSG_MAINWND_DISPLAY=100						Visualización
+MSG_MAINWND_DISPLAY_APPLYTO					Aplicar a
+MSG_MAINWND_DISPLAY_RESOLUTION				Resolución
+MSG_MAINWND_DISPLAY_COLORDEPTH				Profundidad de color
+MSG_MAINWND_DISPLAY_REFRESHRATE				Tasa de Refresco
+
+
+MSG_MAINWND_DROPDOWN_APPLY_THIS=200			Este espacio de trabajo
+MSG_MAINWND_DROPDOWN_APPLY_ALL				Todos los espacios de trabajo
+MSG_MAINWND_DROPDOWN_COLOUR_BIT				Bit
+MSG_MAINWND_DROPDOWN_COLOUR_UNKNOWN			Desconocido
+MSG_MAINWND_DROPDOWN_HERTZ					%i Hz
+
+MSG_MAINWND_BUTTON_APPLY=300				Aplicar
+MSG_MAINWND_BUTTON_CLOSE					Cerrar
+
+MSG_ALERTWND_CHANGERES=1000					Cambiar resolución
+MSG_ALERTWND_CHANGERES_TEXT					La resolución va a cambiar.\nSi el monitor no soporta el modo de video seleccionado\nla pantalla podría apagarse. Si eso sucede, espera 15\nsegundos para regresar al modo anterior.\n\n¿Continuar?
+MSG_ALERTWND_CHANGERES_YES					Sí
+MSG_ALERTWND_CHANGERES_NO					No
+
+MSG_ALERTWND_CONFIRMRES=2000				Confirmar resolución
+MSG_ALERTWND_CONFIRMRES_TEXT				¿El nuevo modo de video funciona correctamente?\n\nSi no es así, espera un poco y automáticamente\nregresarás al modo de video anterior.
+MSG_ALERTWND_CONFIRMRES_YES					Sí
+MSG_ALERTWND_CONFIRMRES_NO					No
+

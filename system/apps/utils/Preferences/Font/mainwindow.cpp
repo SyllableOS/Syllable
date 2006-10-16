@@ -23,8 +23,9 @@
 #include "main.h"
 #include "mainwindow.h"
 #include "messages.h"
+#include "resources/Font.h"
 
-MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow", "Font", /*os::WND_NOT_RESIZABLE*/ 0)
+MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow", MSG_MAINWND_TITLE, /*os::WND_NOT_RESIZABLE*/ 0)
 {
   os::Rect cBounds = GetBounds();
   os::Rect cRect = os::Rect(0,0,0,0);
@@ -37,7 +38,7 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   // Normal
   pcHLNormal = new os::HLayoutNode("HLNormal");
   pcHLNormal->AddChild( new os::HLayoutSpacer("") );
-  pcHLNormal->AddChild( new os::StringView(cRect, "SVNormal", "N_ormal") );
+  pcHLNormal->AddChild( new os::StringView(cRect, "SVNormal", MSG_MAINWND_FONTSELECTION_NORMAL) );
   pcHLNormal->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
   pcHLNormal->AddChild( pcDDMNormal = new os::DropdownMenu(cRect, "DDMNormal") );
   pcDDMNormal->SetShortcut( os::ShortcutKey( "O" ) );
@@ -53,7 +54,7 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   // Bold
   pcHLBold = new os::HLayoutNode("HLBold");
   pcHLBold->AddChild( new os::HLayoutSpacer("") );
-  pcHLBold->AddChild( new os::StringView(cRect, "SVBold", "_Bold") );
+  pcHLBold->AddChild( new os::StringView(cRect, "SVBold", MSG_MAINWND_FONTSELECTION_BOLD) );
   pcHLBold->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
   pcHLBold->AddChild( pcDDMBold = new os::DropdownMenu(cRect, "DDMBold") );
   pcDDMBold->SetShortcut( os::ShortcutKey( "B" ) );
@@ -69,7 +70,7 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   // Fixed
   pcHLFixed = new os::HLayoutNode("HLFixed");
   pcHLFixed->AddChild( new os::HLayoutSpacer("") );
-  pcHLFixed->AddChild( new os::StringView(cRect, "SVFixed", "_Fixed") );
+  pcHLFixed->AddChild( new os::StringView(cRect, "SVFixed", MSG_MAINWND_FONTSELECTION_FIXED) );
   pcHLFixed->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
   pcHLFixed->AddChild( pcDDMFixed = new os::DropdownMenu(cRect, "DDMFixed") );
   pcDDMFixed->SetShortcut( os::ShortcutKey( "F" ) );
@@ -85,7 +86,7 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   // Window
   pcHLWindow = new os::HLayoutNode("HLWindow");
   pcHLWindow->AddChild( new os::HLayoutSpacer("") );
-  pcHLWindow->AddChild( new os::StringView(cRect, "SVWindow", "_Window") );
+  pcHLWindow->AddChild( new os::StringView(cRect, "SVWindow", MSG_MAINWND_FONTSELECTION_WINDOW) );
   pcHLWindow->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
   pcHLWindow->AddChild( pcDDMWindow = new os::DropdownMenu(cRect, "DDMWindow") );
   pcDDMWindow->SetShortcut( os::ShortcutKey( "W" ) );
@@ -101,7 +102,7 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   // Toolwindow
   pcHLTWindow = new os::HLayoutNode("HLTWindow");
   pcHLTWindow->AddChild( new os::HLayoutSpacer("") );
-  pcHLTWindow->AddChild( new os::StringView(cRect, "SVTWindow", "_Tool Window") );
+  pcHLTWindow->AddChild( new os::StringView(cRect, "SVTWindow", MSG_MAINWND_FONTSELECTION_TOOLWIN) );
   pcHLTWindow->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
   pcHLTWindow->AddChild( pcDDMTWindow = new os::DropdownMenu(cRect, "DDMTWindow") );
   pcDDMTWindow->SetShortcut( os::ShortcutKey( "T" ) );
@@ -117,7 +118,7 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   // Anti-aliasing option (global for now, should probably be a per-font setting or based on font size)
   os::LayoutNode *pcHLTAntiAliasing = new os::HLayoutNode("HLTAntiAliasing");
   pcHLTAntiAliasing->AddChild( new os::HLayoutSpacer("", 100.0f) );
-  pcHLTAntiAliasing->AddChild( ( pcCBAntiAliasing = new os::CheckBox( cRect, "CBAntiAliasing", "A_nti-Aliasing (Smooth font edges)", new os::Message( M_MW_ANTIALIASING ) ) ), true );
+  pcHLTAntiAliasing->AddChild( ( pcCBAntiAliasing = new os::CheckBox( cRect, "CBAntiAliasing", MSG_MAINWND_FONTSELECTION_TEXT, new os::Message( M_MW_ANTIALIASING ) ) ), true );
   pcHLTAntiAliasing->AddChild( new os::HLayoutSpacer("", 100.0f) );
 
   // Add types to types layout node
@@ -137,7 +138,7 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   if (bRoot)
 	  pcVLTypes->AddChild( pcHLTAntiAliasing );
   pcVLTypes->AddChild( new os::VLayoutSpacer("") );
-  pcFVTypes = new os::FrameView( cBounds, "FVTypes", "Font Selection", os::CF_FOLLOW_ALL);
+  pcFVTypes = new os::FrameView( cBounds, "FVTypes", MSG_MAINWND_FONTSELECTION, os::CF_FOLLOW_ALL);
   pcFVTypes->SetRoot(pcVLTypes);
 
   // Set widths the same
@@ -157,7 +158,7 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
     pcSVExample->SetMinPreferredSize(30);
     pcSVExample->SetMaxPreferredSize(30);
     pcHLExample->AddChild( new os::HLayoutSpacer("") );
-    pcFVExample = new os::FrameView( cBounds, "FVExample", "Example of Selected Font", os::CF_FOLLOW_ALL);
+    pcFVExample = new os::FrameView( cBounds, "FVExample", MSG_MAINWND_EXAMPLE, os::CF_FOLLOW_ALL);
     pcFVExample->SetRoot(pcHLExample);
     pcVLRoot->AddChild(pcFVExample);
   }
@@ -167,11 +168,11 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
     pcHLButtons = new os::HLayoutNode("HLButtons");
     pcVLRoot->AddChild( new os::VLayoutSpacer("", 10.f, 10.0f));
     pcHLButtons->AddChild( new os::HLayoutSpacer(""));
-    pcHLButtons->AddChild( pcBApply = new os::Button(cRect, "BApply", "_Apply", new os::Message(M_MW_APPLY) ));
+    pcHLButtons->AddChild( pcBApply = new os::Button(cRect, "BApply", MSG_MAINWND_BUTTON_APPLY, new os::Message(M_MW_APPLY) ));
     pcHLButtons->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
-    pcHLButtons->AddChild( pcBRevert = new os::Button(cRect, "BRevert", "_Revert", new os::Message(M_MW_REVERT) ));
+    pcHLButtons->AddChild( pcBRevert = new os::Button(cRect, "BRevert", MSG_MAINWND_BUTTON_REVERT, new os::Message(M_MW_REVERT) ));
     pcHLButtons->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
-    pcHLButtons->AddChild( pcBDefault = new os::Button(cRect, "BDefault", "_Default", new os::Message(M_MW_DEFAULT) ));
+    pcHLButtons->AddChild( pcBDefault = new os::Button(cRect, "BDefault", MSG_MAINWND_BUTTON_DEFAULT, new os::Message(M_MW_DEFAULT) ));
     pcHLButtons->SameWidth( "BApply", "BRevert", "BDefault", NULL );
     pcHLButtons->SameHeight( "BApply", "BRevert", "BDefault", NULL );
     pcVLRoot->AddChild( pcHLButtons );

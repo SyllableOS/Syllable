@@ -30,6 +30,7 @@
 #include <pwd.h>
 
 #include "group_propertiesdlg.h"
+#include "resources/UsersAndGroups.h"
 
 using namespace os;
 
@@ -55,8 +56,8 @@ GroupProperties::GroupProperties( const Rect& cFrame, const string& cName,
     string     name;
     const char *value, *caption;
   } *psLine, asLines[] = {
-    { &m_pcName, "name", psDetails->gr_name, "_Name:" },
-    { &m_pcGid,   "gid",   acGidBuf,          "_Group ID:" },
+    { &m_pcName, "name", psDetails->gr_name, MSG_NEWGROUPWND_NAME.c_str() },
+    { &m_pcGid,   "gid",   acGidBuf,          MSG_NEWGROUPWND_GROUPID.c_str() },
     { NULL, "", NULL, NULL }
   };
 
@@ -86,11 +87,11 @@ GroupProperties::GroupProperties( const Rect& cFrame, const string& cName,
   Button *pcButton;
   
 
-  pcButton = new Button( cRect, "cancel", "_Cancel", new Message( ID_CANCEL ) );
+  pcButton = new Button( cRect, "cancel", MSG_NEWGROUPWND_BUTTON_CANCEL, new Message( ID_CANCEL ) );
   pcButton->SetTabOrder(  );
   pcLayout->AddChild( pcButton );
   
-  pcButton = new Button( cRect, "ok", "_OK", new Message( ID_OK ) );
+  pcButton = new Button( cRect, "ok", MSG_NEWGROUPWND_BUTTON_OK, new Message( ID_OK ) );
   pcButton->SetTabOrder(  );
   pcLayout->AddChild( pcButton );
   

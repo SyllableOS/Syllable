@@ -38,6 +38,8 @@ int main(int argc, char* argv[])
 
 PrefsKeyboardApp::PrefsKeyboardApp() : os::Application("application/x-vnd-KeyboardPreferences")
 {
+  SetCatalog("Keyboard.catalog");
+
   // Get screen width and height to centre the window
   os::Desktop *pcDesktop = new os::Desktop();
   int iWidth = pcDesktop->GetScreenMode().m_nWidth;

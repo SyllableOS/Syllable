@@ -1,0 +1,35 @@
+//
+// Preferences/Login String Catalog
+//
+// Translated by: Dávid Horváth
+//
+
+MSG_MAINWND_TITLE=0						Belépés
+
+MSG_MAINWND_INFORMATION=100				Információ
+MSG_MAINWND_INFORMATION_WHO				Jelenleg a következöként vagy belépve: %s
+MSG_MAINWND_INFORMATION_NOPERM			A rendszergazda nem adott jogot\na részletek megváltoztatására .
+
+MSG_MAINWND_LOGINICON=200				Belépési ikon
+MSG_MAINWND_LOGINICON_TEXT				Belépéskor ez az ikon jelenjen meg.
+
+MSG_MAINWND_CHANGEPASS=300				Jelszó megváltoztatása
+MSG_MAINWND_CHANGEPASS_CURRENTPASS		Eredeti jelszó
+MSG_MAINWND_CHANGEPASS_NEWPASS			Új jelszó
+MSG_MAINWND_CHANGEPASS_CONFIRMPASS		Új jelszó megint
+
+MSG_MAINWND_BUTTON_OK=400				Ok
+MSG_MAINWND_BUTTON_CANCEL				Mégsem
+
+MSG_ALERTWND_FILEERROR=1000				Fájlhiba
+MSG_ALERTWND_FILEERROR_TEXT				Nem tudtam írni az új fájlt a /etc/passwd könyvtárba.  A jelszavad nem lett megváltoztatva.
+MSG_ALERTWND_FILEERROR_OK				Bezárás
+
+MSG_ALERTWND_NOMATCH=2000				Új jelszó
+MSG_ALERTWND_NOMATCH_TEXT				A két jelszó nem egyezik.  Kérlek írd be újra!
+MSG_ALERTWND_NOMATCH_OK					Bezárás
+
+MSG_ALERTWND_INCORRECTPASS=3000			Érvénytelen jelszó
+MSG_ALERTWND_INCORRECTPASS_TEXT			Az általad beírt eredeti jelszó érvénytelen.  Kérlek, ellenörizd és próbáld újra.
+MSG_ALERTWND_INCORRECTPASS_OK			Ok
+

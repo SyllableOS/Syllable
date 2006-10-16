@@ -17,6 +17,8 @@ class LoginApplication : public Application
 
 LoginApplication::LoginApplication() : Application( "application/x-vnd-LoginPreferences" )
 {
+	SetCatalog("Login.catalog");
+
 	m_pcLoginWindow = new LoginWindow( Rect( 0, 0, 399, 449 ) );
 
 	m_pcLoginWindow->CenterInScreen();

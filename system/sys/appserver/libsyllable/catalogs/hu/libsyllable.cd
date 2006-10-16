@@ -1,0 +1,77 @@
+//
+// LibSyllable string catalog
+//
+// Translated by: Dávid Horváth
+//
+
+// FileRequester strings
+MSG_FILEREQUESTER_LOAD_BUTTON=1000                Megnyitás
+MSG_FILEREQUESTER_SAVE_BUTTON                     Mentés
+MSG_FILEREQUESTER_CANCEL_BUTTON                   Mégsem
+MSG_FILEREQUESTER_FILE_NAME_LABEL                 Fájlnév:
+MSG_FILEREQUESTER_BROWSE_LOCATION_LABEL           Tallózás:
+MSG_FILEREQUESTER_FILE_ALREADY_EXISTS_TEXT        A(z) '%s' fájl már létezik!\nFelülírod?\n
+MSG_FILEREQUESTER_FILE_ALREADY_EXISTS_TITLE       Felülírás:
+MSG_FILEREQUESTER_FILE_ALREADY_EXISTS_YES_BUTTON  Igen
+MSG_FILEREQUESTER_FILE_ALREADY_EXISTS_NO_BUTTON   Nem
+
+// IconDirectoryView strings
+MSG_ICONDIRVIEW_WINDOW_OPEN_WITH=2000             Megnyitás mással
+MSG_ICONDIRVIEW_NUMBER_OF_OBJECTS_SELECTED        %i objektum
+MSG_ICONDIRVIEW_MENU_MOUNT                        Meghajtó beolvasása
+MSG_ICONDIRVIEW_MENU_UNMOUNT                      Meghajtó leválasztása
+MSG_ICONDIRVIEW_MENU_NEW_DIRECTORY                Új mappa
+MSG_ICONDIRVIEW_MENU_EMPTY_TRASH                  Kuka ürítése
+MSG_ICONDIRVIEW_MENU_OPEN_WITH                    Megnyitás mással
+MSG_ICONDIRVIEW_MENU_INFO                         Tulajdonságok
+MSG_ICONDIRVIEW_MENU_RENAME                       Átnevezés
+MSG_ICONDIRVIEW_MENU_MOVE_TO_TRASH                Kukába dob...
+MSG_ICONDIRVIEW_MENU_DELETE                       Törlés
+MSG_ICONDIRVIEW_PERCENT_FREE                      %i%% szabad
+MSG_ICONDIRVIEW_VOLUMENAME_UNKNOWN                Ismeretlen kötetnév
+
+// File information window
+MSG_FILEINFO_WINDOW_TITLE=3000                    	Tulajdonságok
+MSG_FILEINFO_WINDOW_NAME_LABEL                    	Név:
+MSG_FILEINFO_WINDOW_PATH_LABEL                    	Forrás:
+MSG_FILEINFO_WINDOW_SIZE_LABEL                    	Méret:
+MSG_FILEINFO_WINDOW_MODIFIEDDATE_LABEL            	Létrehozás dátuma:
+MSG_FILEINFO_WINDOW_FILETYPE_LABEL                	Tipus:
+MSG_FILEINFO_WINDOW_FILETYPE_DROPDOWN_CURRENT_LABEL	Jelenlegi:_
+MSG_FILEINFO_WINDOW_FILETYPE_DROPDOWN_EXECUTABLE  	Futtatható
+MSG_FILEINFO_WINDOW_OK_BUTTON                     	Ok
+MSG_FILEINFO_FILESIZE_ZERO                        	Nincs
+MSG_FILEINFO_FILETYPE_UNKNOWN                     	Ismeretlen
+
+// Rename file window
+MSG_RENAMEFILE_WINDOW_TITLE=4000                  %s átnevezése
+MSG_RENAMEFILE_WINDOW_OK_BUTTON                   Ok
+MSG_RENAMEFILE_ERROR_TITLE                        Hiba
+MSG_RENAMEFILE_ERROR_TEXT                         A(z) %s fájlt nem lehet átnevezni!
+MSG_RENAMEFILE_ERROR_CLOSE                        Bezárás
+
+// New directory window
+MSG_NEWDIR_WINDOW_TITLE=5000                      Új mappa létrehozása
+MSG_NEWDIR_WINDOW_OK_BUTTON                       Ok
+MSG_NEWDIR_ERROR_TITLE                            Hiba
+MSG_NEWDIR_ERROR_TEXT                             A(z) %s mappa nem hozható létre!
+MSG_NEWDIR_ERROR_CLOSE                            Bezárás
+
+// Mount window
+MSG_MOUNT_WINDOW_TITLE=6000                       Meghajtó beolvasása
+MSG_MOUNT_WINDOW_NAME_COLUMN                      Név
+MSG_MOUNT_WINDOW_PATH_COLUMN                      Forrás
+MSG_MOUNT_WINDOW_MOUNT_BUTTON                     Beolvasás
+MSG_MOUNT_SCANNING_PATH                           %s forrásának keresése...
+MSG_MOUNT_SCANNING                                Beolvasás...
+MSG_MOUNT_LOCAL_DISKS_LABEL                       Helyi lemez
+MSG_MOUNT_TYPE_HARDDISK                           Merevlemez
+MSG_MOUNT_TYPE_CD_DVD                             CD/DVD
+MSG_MOUNT_TYPE_FLOPPY                             Hajlékonylemez
+MSG_MOUNT_DEVICE_PARTITION                        Partíció
+MSG_MOUNT_ERROR_TITLE                             Hiba
+MSG_MOUNT_ERROR_CLOSE                             Bezárás
+MSG_MOUNT_ERROR_CREATE_MOUNTPOINT                 A(z) %s meghajtót/partíciót nem lehet beolvasni!
+MSG_MOUNT_ERROR_OTHER_ERROR                       Hiba a(z) %s meghajtó/partíció beolvasásakor:\n%s
+MSG_MOUNT_ERROR_UNMOUNT                           Hiba a(z) %s: meghajtó/partíció leválasztásakor:\n%s
+

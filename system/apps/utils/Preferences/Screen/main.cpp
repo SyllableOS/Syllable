@@ -42,6 +42,7 @@ int main(int argc, char* argv[])
 
 PrefsScreenApp::PrefsScreenApp() : os::Application("application/x-vnd-ScreenPreferences")
 {
+  SetCatalog("Screen.catalog");
 
   // Show main window
   pcWindow = new MainWindow(os::Rect());

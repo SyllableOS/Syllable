@@ -19,10 +19,11 @@
 
 #include "mywindow.h"
 #include <gui/requesters.h>
+#include "resources/BZoom.h"
 
 // ---------------------------------------------------------------------------
 
-MyWindow::MyWindow( const Rect& cFrame ) : Window( cFrame, "main_window", "Zoom" )
+MyWindow::MyWindow( const Rect& cFrame ) : Window( cFrame, "main_window", MSG_MAINWND_TITLE )
 {
    // Create a menu bar.
    Rect cMenuBounds = GetBounds();
@@ -31,13 +32,13 @@ MyWindow::MyWindow( const Rect& cFrame ) : Window( cFrame, "main_window", "Zoom"
    Menu* pcMenuBar = new Menu( cMenuBounds, "main_menu", ITEMS_IN_ROW, CF_FOLLOW_LEFT | CF_FOLLOW_RIGHT, WID_FULL_UPDATE_ON_H_RESIZE );
 
    // Create the menus within the bar.
-   Menu* pcFileMenu = new Menu( Rect(0,0,1,1), "App", ITEMS_IN_COLUMN );
-   pcFileMenu->AddItem( "Exit", new Message (ID_EXIT) );
+   Menu* pcFileMenu = new Menu( Rect(0,0,1,1), MSG_MAINWND_MENU_APP, ITEMS_IN_COLUMN );
+   pcFileMenu->AddItem( MSG_MAINWND_MENU_APP_EXIT, new Message (ID_EXIT) );
    
    pcMenuBar->AddItem( pcFileMenu );
    
-   Menu* pcViewMenu = new Menu( Rect(0,0,1,1), "View", ITEMS_IN_COLUMN );
-   Menu* pcScaleMenu = new Menu( Rect(0,0,1,1), "Magnification", ITEMS_IN_COLUMN );
+   Menu* pcViewMenu = new Menu( Rect(0,0,1,1), MSG_MAINWND_MENU_VIEW, ITEMS_IN_COLUMN );
+   Menu* pcScaleMenu = new Menu( Rect(0,0,1,1), MSG_MAINWND_MENU_VIEW_MAGNIFICATION, ITEMS_IN_COLUMN );
    
    pcScaleMenu->AddItem( "2x", new Message( ID_VIEW_SCALE_2 ) );   
    pcScaleMenu->AddItem( "3x", new Message( ID_VIEW_SCALE_3 ) );
@@ -48,8 +49,8 @@ MyWindow::MyWindow( const Rect& cFrame ) : Window( cFrame, "main_window", "Zoom"
    
    pcMenuBar->AddItem( pcViewMenu );
    
-   Menu* pcHelpMenu = new Menu( Rect(0,0,1,1), "Help", ITEMS_IN_COLUMN );
-   pcHelpMenu->AddItem( "About", new Message( ID_HELP_ABOUT ) );
+   Menu* pcHelpMenu = new Menu( Rect(0,0,1,1), MSG_MAINWND_MENU_HELP, ITEMS_IN_COLUMN );
+   pcHelpMenu->AddItem( MSG_MAINWND_MENU_HELP_ABOUT, new Message( ID_HELP_ABOUT ) );
    
    pcMenuBar->AddItem( pcHelpMenu );
    pcMenuBar->SetTargetForItems( this );
@@ -97,7 +98,7 @@ void MyWindow::HandleMessage( Message* pcMessage )
         break;
       case ID_HELP_ABOUT:
     {
-         Alert* pcAboutAlert=new Alert("About BZoom","\t    BZoom V1.0\n\nA simple pixel zoomer for AtheOS.\nBased on AZoom by Chir.\nBZoom is released under the\nGNU GPL",Alert::ALERT_INFO,0x00,"O.K",NULL);
+         Alert* pcAboutAlert=new Alert(MSG_ABOUTWND_TITLE, MSG_ABOUTWND_TEXT,Alert::ALERT_INFO,0x00,MSG_ABOUTWND_OK.c_str(),NULL);
          pcAboutAlert->CenterInWindow(this);
          pcAboutAlert->Go(new Invoker());
     }
@@ -111,6 +112,7 @@ void MyWindow::HandleMessage( Message* pcMessage )
 
 MyApp::MyApp() : Application( "application/x-VND.KHS-digitaliz-Zoom" )
 {
+	SetCatalog("BZoom.catalog");
     m_pcMainWindow = new MyWindow( Rect(10,20,150,150) );
     m_pcMainWindow->Show();
     m_pcMainWindow->MakeFocus();

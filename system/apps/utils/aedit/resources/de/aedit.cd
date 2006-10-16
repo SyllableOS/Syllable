@@ -1,70 +1,112 @@
 //
 // AEdit string catalog
 //
+// Translated by: Uwe Olszewski
+//
 
-MSG_APPWND_TITLE                    AEdit
-MSG_APPWND_TITLE_NEW_FILE            Neue Datei
+MSG_APPWND_TITLE							AEdit
+MSG_APPWND_TITLE_NEW_FILE					Neues Dokument
 
-MSG_MENU_APPLICATION=100            Programm
-MSG_MENU_APPLICATION_QUIT            Beenden
-MSG_MENU_APPLICATION_ABOUT            Info
+MSG_MENU_APPLICATION=100					Anwendung
+MSG_MENU_APPLICATION_QUIT					Beenden
+MSG_MENU_APPLICATION_ABOUT					Über AEdit...
 
-MSG_MENU_FILE=200                    Datei
-MSG_MENU_FILE_NEW                    Neu
-MSG_MENU_FILE_OPEN                    Öffnen
-MSG_MENU_FILE_SAVE                    Speichern
-MSG_MENU_FILE_SAVE_AS                Speichern als...
+MSG_MENU_FILE=200							Datei
+MSG_MENU_FILE_NEW							Neu
+MSG_MENU_FILE_OPEN							Öffnen...
+MSG_MENU_FILE_CLOSE							Schließen
+MSG_MENU_FILE_SAVE							Speichern
+MSG_MENU_FILE_SAVE_AS						Speichern unter...
+MSG_MENU_FILE_SAVE_ALL						Alle speichern
+MSG_MENU_FILE_NEXT_FILE						Nächste Datei
+MSG_MENU_FILE_PREVIOUS_FILE					Vorherige Datei
 
-MSG_MENU_EDIT=300                    Bearbeiten
-MSG_MENU_EDIT_CUT                    Ausschneiden
-MSG_MENU_EDIT_COPY                    Kopieren
-MSG_MENU_EDIT_PASTE                    Einfügen
-MSG_MENU_EDIT_SELECT_ALL            Alles auswählen
-MSG_MENU_EDIT_UNDO                    Rückgängig
-MSG_MENU_EDIT_REDO                    Wiederholen
+MSG_MENU_EDIT=300							Bearbeiten
+MSG_MENU_EDIT_CUT							Ausschneiden
+MSG_MENU_EDIT_COPY							Kopieren
+MSG_MENU_EDIT_PASTE							Einfügen
+MSG_MENU_EDIT_SELECT_ALL					Alles makieren
+MSG_MENU_EDIT_UNDO							Rückgängig machen
+MSG_MENU_EDIT_REDO							Wiederherstellen
 
-MSG_MENU_FIND=400                    Suchen
-MSG_MENU_FIND_FIND                    Suchen
-MSG_MENU_FIND_REPLACE                Ersetzen
-MSG_MENU_FIND_GOTO_LINE                Gehe zu Zeile...
+MSG_MENU_FIND=400							Suchen
+MSG_MENU_FIND_FIND							Suchen...
+MSG_MENU_FIND_REPLACE						Ersetzen...
+MSG_MENU_FIND_GOTO_LINE						Gehe zu Zeile...
 
-MSG_MENU_FONT=500                    Schriftart
-MSG_MENU_FONT_SIZE                    Größe
+MSG_MENU_FONT=500							Schriftart
+MSG_MENU_FONT_SIZE							Größe
 
-MSG_MENU_SETTINGS=600                Einstellungen
-MSG_MENU_SETTINGS_SAVE_ON_CLOSE        Einstellungen beim Beenden speichern
-MSG_MENU_SETTINGS_SAVE_NOW            Einstellungen jetzt speichern
-MSG_MENU_SETTINGS_RESET                Einstellungen zurücksetzen
+MSG_MENU_SETTINGS=600						Einstellungen
+MSG_MENU_SETTINGS_SAVE_ON_CLOSE				Einstellungen beim beenden speichern
+MSG_MENU_SETTINGS_SAVE_NOW					Einstellungen jetzt speichern
+MSG_MENU_SETTINGS_RESET						Einstellungen zurücksetzen
 
-MSG_MENU_HELP=700                    Hilfe
-MSG_MENU_HELP_TABLE_OF_CONTENTS        Inhalt
-MSG_MENU_HELP_HOMEPAGE                AEdit Homepage
+MSG_MENU_HELP=700							Hilfe
+MSG_MENU_HELP_TABLE_OF_CONTENTS				Anleitung...
+MSG_MENU_HELP_HOMEPAGE						AEdit Internetseite
 
-MSG_ABOUT_TITLE=800                    Info
-MSG_ABOUT_TEXT                        \n\nText Editor für Syllable\nCopyright 2000-2003 Kristian Van Der Vliet\n\nAEdit ist unter der GNU General\nPublic License veröffentlicht. Informationen dazu in der Datei COPYING,\n die Bestandteil von AEdit ist, oder unter http://www.gnu.org\n.
-MSG_ABOUT_CLOSE                        OK
+MSG_ABOUT_TITLE=800							Über AEdit
+MSG_ABOUT_TEXT								\n\nText Editor für Syllable\nCopyright 2000-2003 Kristian Van Der Vliet\n\nAEdit ist lizenziert unter der GNU General\nPublic License. Weitere Information in der Datei COPYING,\ndie mit AEdit vertrieben wird, oder http://www.gnu.org\n
+MSG_ABOUT_CLOSE								Schließen
+MSG_ABOUT_VERSION							Version:
+MSG_ABOUT_LINE_1 							Ein Text Editor für Syllable
+MSG_ABOUT_LINE_2							(c) 2005 Das Syllable Team
+MSG_ABOUT_LINE_3							w w w . s y l l a b l e . o r g
 
-MSG_ERROR_TITLE=900                    AEdit
-MSG_ERROR_CANT_SAVE                    Datei kann nicht gespeichert werden
-MSG_ERROR_CLOSE                        OK
+MSG_ERROR_TITLE=900							Speichern
+MSG_ERROR_CANT_SAVE							Speichern nicht möglich.
+MSG_ERROR_CLOSE								OK
 
-MSG_FIND_TITLE=1000                    Suchen
-MSG_FIND_FIND_LABEL                    Suchen
-MSG_FIND_CASE_SENSITIVE                Groß-/Kleinschreibung beachten
-MSG_FIND_FIND                        _Suchen
-MSG_FIND_FIND_NEXT                    _Nächstes suchen
-MSG_FIND_CLOSE                        S_chließen
+MSG_FIND_TITLE=1000							Suchen
+MSG_FIND_FIND_LABEL							Suchen
+MSG_FIND_CASE_SENSITIVE						Groß-/Kleinschreibung beachten
+MSG_FIND_FIND								_Erste Suche
+MSG_FIND_FIND_NEXT							_Weitersuchen
+MSG_FIND_CLOSE					    		_Schließen
 
-MSG_GOTO_TITLE=1100                    Gehe zu Zeile
-MSG_GOTO_GOTO                        Gehe zu Zeile
-MSG_GOTO_CLOSE                        Schließen
+MSG_GOTO_TITLE=1100							Gehe zu Zeile
+MSG_GOTO_GOTO								_Gehe zu Zeile
+MSG_GOTO_CLOSE								_Abbrechen
 
-MSG_REPLACE_TITLE=1200                Ersetzen
-MSG_REPLACE_LBLFIND                    Suchen
-MSG_REPLACE_WITH                    Ersetzen durch
-MSG_REPLACE_CASE_SENSITIVE            _Groß-/Kleinschreibung beachten
-MSG_REPLACE_FIND                    _Suchen
-MSG_REPLACE_FIND_NEXT                _Nächstes suchen
-MSG_REPLACE_REPLACE                    _Ersetzen
-MSG_REPLACE_CLOSE                    S_chließen
+MSG_REPLACE_TITLE=1200						Ersetzen
+MSG_REPLACE_LBLFIND							Suchen
+MSG_REPLACE_WITH							Ersetzen mit
+MSG_REPLACE_CASE_SENSITIVE					Groß-/Kleinschreibung beachten
+MSG_REPLACE_FIND							_Erste Suche
+MSG_REPLACE_FIND_NEXT						_Weitersuchen
+MSG_REPLACE_REPLACE							_Ersetzen
+MSG_REPLACE_CLOSE				    		_Schließen
+
+MSG_ALERT_CLOSE_FILE_TITLE=1500				Datei speichern?
+MSG_ALERT_CLOSE_FILE_BODY					Möchten Sie die Datei vor dem beenden Speichern?
+MSG_ALERT_CLOSE_FILE_YES					Speichern
+MSG_ALERT_CLOSE_FILE_NO						Verwerfen
+MSG_ALERT_CLOSE_FILE_CANCEL					Abbrechen
+MSG_ALERT_SAVE_FILE_TITLE					Fehler
+MSG_ALERT_SAVE_FILE_BODY					Speichern nicht möglich "%s".
+MSG_ALERT_SAVE_FILE_OK						OK
+MSG_ALERT_QUIT_TITLE						Wirklich beenden?
+MSG_ALERT_QUIT_BODY							Sie haben nicht gespeicherte Dateien. Diese gehen verloren wenn Sie beenden.\nSind Sie sicher das Sie beenden wollen?
+MSG_ALERT_QUIT_YES							Beenden
+MSG_ALERT_QUIT_NO							Abbrechen
+MSG_ALERT_FILE_OPEN_TITLE					Fehler
+MSG_ALERT_FILE_OPEN_OK						OK
+
+MSG_STATUSBAR_WELCOME=2000					Willkommen zu AEdit!
+MSG_STATUSBAR_CLOSED_FILE					Datei "%s" wurde geschlossen.
+MSG_STATUSBAR_SAVED_FILE					Datei "%s" wurde gespeichert.
+MSG_STATUSBAR_FILE_CLOSED_AND_SAVED			Datei "%s" wurde geschlossen, Änderungen gespeichert.
+MSG_STATUSBAR_FILE_CLOSED_AND_NOT_SAVED		Datei "%s" wurde geschlossen, Änderungen nicht gespeichert.
+MSG_STATUSBAR_NEW_FILE_CREATED				Neue Datei "%s" wurde erstellt.
+MSG_STATUSBAR_FILE_LOADED_OK				Datei "%s" erfolgreich geöffnet.
+MSG_STATUSBAR_FILE_UNABLE_TO_OPEN			Datei konnte nicht geöffnet werden "%s".
+MSG_STATUSBAR_SEARCH_FOUND					Suchwort "%s" wurde gefunden.
+MSG_STATUSBAR_SEARCH_NOT_FOUND_1			Suchwort \"%s\" wurde nicht gefunden.
+MSG_STATUSBAR_SEARCH_NOT_FOUND_2			Suchwort wurde nicht gefunden.
+MSG_STATUSBAR_REPLACE_OK					"%s" wurde ersetzt mit "%s".
+MSG_STATUSBAR_REPLACE_NOT_OK				Suchwort nicht ersetzt.
+
+MSG_BUFFER_UNTITLED=2100					Neu - %d
+MSG_BUFFER_CURSOR							Zeile: %d Spalte: %d
 

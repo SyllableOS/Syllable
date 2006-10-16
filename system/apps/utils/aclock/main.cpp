@@ -18,10 +18,11 @@
  */
 
 #include "mywindow.h"
+#include "resources/aclock.h"
 
 // ---------------------------------------------------------------------------
 
-MyWindow::MyWindow( const Rect& cFrame) : Window( cFrame, "main_window", "Clock", WND_NO_ZOOM_BUT )
+MyWindow::MyWindow( const Rect& cFrame) : Window( cFrame, "main_window", MSG_MAINWND_TITLE, WND_NO_ZOOM_BUT )
 {
     settings = new Settings();
     settings->Load();
@@ -37,26 +38,26 @@ MyWindow::MyWindow( const Rect& cFrame) : Window( cFrame, "main_window", "Clock"
     Menu* pcMenuBar = new Menu( cMenuBounds, "main_menu", ITEMS_IN_ROW, CF_FOLLOW_LEFT | CF_FOLLOW_RIGHT, WID_FULL_UPDATE_ON_H_RESIZE );
 
     // Create the menus within the bar.
-    Menu* pcFileMenu = new Menu( Rect(0,0,1,1), "File", ITEMS_IN_COLUMN );
-    pcFileMenu->AddItem( "Exit", new Message (ID_FILE_EXIT) );
+    Menu* pcFileMenu = new Menu( Rect(0,0,1,1), MSG_MAINWND_MENU_FILE, ITEMS_IN_COLUMN );
+    pcFileMenu->AddItem( MSG_MAINWND_MENU_FILE_EXIT, new Message (ID_FILE_EXIT) );
 
     pcMenuBar->AddItem( pcFileMenu );
 
-    Menu* pcViewMenu = new Menu( Rect(0,0,1,1), "View", ITEMS_IN_COLUMN );
+    Menu* pcViewMenu = new Menu( Rect(0,0,1,1), MSG_MAINWND_MENU_VIEW, ITEMS_IN_COLUMN );
 
-    Menu* pcScaleMenu = new Menu( Rect(0,0,1,1), "Seconds", ITEMS_IN_COLUMN );
-    pcScaleMenu->AddItem( "On", new Message( ID_VIEW_SECONDS_ON ) );
-    pcScaleMenu->AddItem( "Off", new Message( ID_VIEW_SECONDS_OFF ) );
+    Menu* pcScaleMenu = new Menu( Rect(0,0,1,1), MSG_MAINWND_MENU_VIEW_SECONDS, ITEMS_IN_COLUMN );
+    pcScaleMenu->AddItem( MSG_MAINWND_MENU_VIEW_SECONDS_ON, new Message( ID_VIEW_SECONDS_ON ) );
+    pcScaleMenu->AddItem( MSG_MAINWND_MENU_VIEW_SECONDS_OFF, new Message( ID_VIEW_SECONDS_OFF ) );
     pcViewMenu->AddItem( pcScaleMenu );
 
-    Menu* pcModeMenu = new Menu( Rect(0,0,1,1), "Mode", ITEMS_IN_COLUMN );
-    pcModeMenu->AddItem( "Digital", new Message( ID_VIEW_DIGITAL_ON ) );
-    pcModeMenu->AddItem( "Analog", new Message( ID_VIEW_DIGITAL_OFF ) );
+    Menu* pcModeMenu = new Menu( Rect(0,0,1,1), MSG_MAINWND_MENU_VIEW_MODE, ITEMS_IN_COLUMN );
+    pcModeMenu->AddItem( MSG_MAINWND_MENU_VIEW_MODE_DIGITAL, new Message( ID_VIEW_DIGITAL_ON ) );
+    pcModeMenu->AddItem( MSG_MAINWND_MENU_VIEW_MODE_ANALOG, new Message( ID_VIEW_DIGITAL_OFF ) );
     pcViewMenu->AddItem( pcModeMenu );
 
-    Menu* pcColorMenu = new Menu( Rect(0,0,1,1), "Color", ITEMS_IN_COLUMN );
-    pcColorMenu->AddItem( "White", new Message( ID_WHITE ) );
-    pcColorMenu->AddItem( "Black", new Message( ID_BLACK ) );
+    Menu* pcColorMenu = new Menu( Rect(0,0,1,1), MSG_MAINWND_MENU_VIEW_COLOR, ITEMS_IN_COLUMN );
+    pcColorMenu->AddItem( MSG_MAINWND_MENU_VIEW_COLOR_WHITE, new Message( ID_WHITE ) );
+    pcColorMenu->AddItem( MSG_MAINWND_MENU_VIEW_COLOR_BLACK, new Message( ID_BLACK ) );
     pcViewMenu->AddItem( pcColorMenu );
 
     pcMenuBar->AddItem( pcViewMenu );
@@ -165,6 +166,7 @@ MyApp::MyApp() : Application( "application/x-vnd-RGC-" APP_NAME )
     settings = new Settings();
     LoadSettings();
 
+	SetCatalog("aclock.catalog");
 
     m_pcMainWindow = new MyWindow( Rect(150,150,270,270));
     m_pcMainWindow->CenterInScreen();

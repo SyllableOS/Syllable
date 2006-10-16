@@ -16,6 +16,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include "resources/Albert.h"
+
 #include <gui/window.h>
 #include <gui/view.h>
 #include <gui/rect.h>
@@ -100,49 +102,49 @@ void CalcWindow::BuildMenus(void)
 
 	// Create the menus within the bar
 
-	Menu* pcFileMenu = new Menu(Rect(0,0,1,1),"File", ITEMS_IN_COLUMN);
-	pcFileMenu->AddItem("Clear All", new Message('a'), "CTRL+C");
+	Menu* pcFileMenu = new Menu(Rect(0,0,1,1),MSG_MAINWND_MENU_FILE, ITEMS_IN_COLUMN);
+	pcFileMenu->AddItem(MSG_MAINWND_MENU_FILE_CLEARALL, new Message('a'), "CTRL+C");
 //	pcFileMenu->AddItem(new MenuSeparator);
-	pcFileMenu->AddItem("Exit", new Message('q'), "CTRL+Q" );
+	pcFileMenu->AddItem(MSG_MAINWND_MENU_FILE_EXIT, new Message('q'), "CTRL+Q" );
 
 	m_pcMenuBar->AddItem(pcFileMenu);
 
-	Menu* pcBaseMenu = new Menu(Rect(0,0,1,1),"Base", ITEMS_IN_COLUMN);
-	pcBaseMenu->AddItem("Binary (2)", new Message(ID_BASE_2), "CTRL+B" );
-	pcBaseMenu->AddItem("Octal (8)", new Message(ID_BASE_8), "CTRL+O");
-	pcBaseMenu->AddItem("Decimal (10)", new Message(ID_BASE_10), "CTRL+D");
-	pcBaseMenu->AddItem("Hexadecimal (16)", new Message(ID_BASE_16), "CTRL+H");
+	Menu* pcBaseMenu = new Menu(Rect(0,0,1,1),MSG_MAINWND_MENU_BASE, ITEMS_IN_COLUMN);
+	pcBaseMenu->AddItem(MSG_MAINWND_MENU_BASE_BINARY, new Message(ID_BASE_2), "CTRL+B" );
+	pcBaseMenu->AddItem(MSG_MAINWND_MENU_BASE_OCTAL, new Message(ID_BASE_8), "CTRL+O");
+	pcBaseMenu->AddItem(MSG_MAINWND_MENU_BASE_DECIMAL, new Message(ID_BASE_10), "CTRL+D");
+	pcBaseMenu->AddItem(MSG_MAINWND_MENU_BASE_HEXADECIMAL, new Message(ID_BASE_16), "CTRL+H");
 
 
 	m_pcMenuBar->AddItem(pcBaseMenu);
 
-	Menu* pcConstMenu = new Menu(Rect(0,0,1,1),"Constants", ITEMS_IN_COLUMN);
-	pcConstMenu->AddItem("Pi", new Message(ID_CONSTANT_PI));
-	pcConstMenu->AddItem("e", new Message(ID_CONSTANT_E));
-	pcConstMenu->AddItem("Speed of light (c)", new Message(ID_CONSTANT_C));
-	pcConstMenu->AddItem("Magnitude of charge of electron", new Message(ID_CONSTANT_ELECTRON));
-	pcConstMenu->AddItem("Gravitational constant (G)", new Message(ID_CONSTANT_GRAV));
-	pcConstMenu->AddItem("Planck's constant (h)", new Message(ID_CONSTANT_PLANCK));
-	pcConstMenu->AddItem("Boltzmann constant", new Message(ID_CONSTANT_BOLTZMANN));
-	pcConstMenu->AddItem("Avogadro's number", new Message(ID_CONSTANT_AVOGADRO));
-	pcConstMenu->AddItem("Gas constant (R)", new Message(ID_CONSTANT_GAS));
-	pcConstMenu->AddItem("Mass of electron", new Message(ID_CONSTANT_MASS_ELECTRON));
-	pcConstMenu->AddItem("Mass of proton", new Message(ID_CONSTANT_MASS_PROTON));
-	pcConstMenu->AddItem("Mass of neutron", new Message(ID_CONSTANT_MASS_NEUTRON));
-	pcConstMenu->AddItem("Permeability of free space", new Message(ID_CONSTANT_PERME));
-	pcConstMenu->AddItem("Permittivity of free space", new Message(ID_CONSTANT_PERMI));
+	Menu* pcConstMenu = new Menu(Rect(0,0,1,1),MSG_MAINWND_MENU_CONSTANTS, ITEMS_IN_COLUMN);
+	pcConstMenu->AddItem(MSG_MAINWND_MENU_CONSTANTS_PI, new Message(ID_CONSTANT_PI));
+	pcConstMenu->AddItem(MSG_MAINWND_MENU_CONSTANTS_E, new Message(ID_CONSTANT_E));
+	pcConstMenu->AddItem(MSG_MAINWND_MENU_CONSTANTS_C, new Message(ID_CONSTANT_C));
+	pcConstMenu->AddItem(MSG_MAINWND_MENU_CONSTANTS_ELECTRON, new Message(ID_CONSTANT_ELECTRON));
+	pcConstMenu->AddItem(MSG_MAINWND_MENU_CONSTANTS_GRAV, new Message(ID_CONSTANT_GRAV));
+	pcConstMenu->AddItem(MSG_MAINWND_MENU_CONSTANTS_PLANCK, new Message(ID_CONSTANT_PLANCK));
+	pcConstMenu->AddItem(MSG_MAINWND_MENU_CONSTANTS_BOLTZMANN, new Message(ID_CONSTANT_BOLTZMANN));
+	pcConstMenu->AddItem(MSG_MAINWND_MENU_CONSTANTS_AVOGADRO, new Message(ID_CONSTANT_AVOGADRO));
+	pcConstMenu->AddItem(MSG_MAINWND_MENU_CONSTANTS_GAS, new Message(ID_CONSTANT_GAS));
+	pcConstMenu->AddItem(MSG_MAINWND_MENU_CONSTANTS_MASSELECTRON, new Message(ID_CONSTANT_MASS_ELECTRON));
+	pcConstMenu->AddItem(MSG_MAINWND_MENU_CONSTANTS_MASSPROTON, new Message(ID_CONSTANT_MASS_PROTON));
+	pcConstMenu->AddItem(MSG_MAINWND_MENU_CONSTANTS_MASSNEUTRON, new Message(ID_CONSTANT_MASS_NEUTRON));
+	pcConstMenu->AddItem(MSG_MAINWND_MENU_CONSTANTS_PERME, new Message(ID_CONSTANT_PERME));
+	pcConstMenu->AddItem(MSG_MAINWND_MENU_CONSTANTS_PERMI, new Message(ID_CONSTANT_PERMI));
 
 	m_pcMenuBar->AddItem(pcConstMenu);
 
-	Menu* pcWinMenu = new Menu(Rect(0,0,1,1),"Windows", ITEMS_IN_COLUMN);
-	pcWinMenu->AddItem("Paper Roll", new Message(ID_WINDOW_PAPER), "CTRL+P");
-	pcWinMenu->AddItem("Base-N", new Message(ID_WINDOW_BASEN), "CTRL+N");
+	Menu* pcWinMenu = new Menu(Rect(0,0,1,1),MSG_MAINWND_MENU_WINDOWS, ITEMS_IN_COLUMN);
+	pcWinMenu->AddItem(MSG_MAINWND_MENU_WINDOWS_PAPERROLL, new Message(ID_WINDOW_PAPER), "CTRL+P");
+	pcWinMenu->AddItem(MSG_MAINWND_MENU_WINDOWS_BASEN, new Message(ID_WINDOW_BASEN), "CTRL+N");
 
 	m_pcMenuBar->AddItem(pcWinMenu);
 
-	Menu* pcHelpMenu = new Menu(Rect(0,0,1,1),"Help", ITEMS_IN_COLUMN);
-	pcHelpMenu->AddItem("About", new Message('?'));
-	pcHelpMenu->AddItem("Keyboard", new Message(ID_SHOW_KEYS));
+	Menu* pcHelpMenu = new Menu(Rect(0,0,1,1),MSG_MAINWND_MENU_HELP, ITEMS_IN_COLUMN);
+	pcHelpMenu->AddItem(MSG_MAINWND_MENU_HELP_ABOUT, new Message('?'));
+	pcHelpMenu->AddItem(MSG_MAINWND_MENU_HELP_KEYBOARD, new Message(ID_SHOW_KEYS));
 
 	m_pcMenuBar->AddItem(pcHelpMenu);
 
@@ -448,20 +450,20 @@ void CalcWindow::ShowAbout(void)
 
 void CalcWindow::ShowKeys(void)
 {
-	Alert* sAbout = new Alert("Keyboard Shortcuts",
-		"Keyboard Shortcuts\n\n"
-		"0..9 - Decimal digits 0 through 9\n"
-		"A..F - Hexadecimal digits A through F\n"
-		"+-*/ - Addition, subtraction, multiplication and division\n"
-		"ENTER - Calculate result\n"
-		"BACKSPACE - Backspace (surpise!)"
+	Alert* sAbout = new Alert(MSG_KBDWND_TITLE,
+		MSG_KBDWND_TEXTONE + "\n\n"
+		"0..9 - " + MSG_KBDWND_TEXT09 + "\n"
+		"A..F - " + MSG_KBDWND_TEXTAF + "\n"
+		"+-*/ - " + MSG_KBDWND_TEXTASMD + "\n"
+		""+ MSG_KBDWND_TEXTENTER + "\n"
+		""+ MSG_KBDWND_TEXTBACKSPACE +""
 		,
-		0x00, "Close", NULL);
+		0x00, MSG_KBDWND_CLOSE.c_str(), NULL);
 	sAbout->Go(new Invoker);
 }
 
 CalcWindow::CalcWindow(const Rect & r)
-	:Window(r, "CalcWindow", "Albert " ALBERT_VERSION, WND_NOT_H_RESIZABLE | WND_NOT_V_RESIZABLE, CURRENT_DESKTOP)
+	:Window(r, "CalcWindow", MSG_MAINWND_TITLE + " " + ALBERT_VERSION, WND_NOT_H_RESIZABLE | WND_NOT_V_RESIZABLE, CURRENT_DESKTOP)
 {
 	Rect bounds = GetBounds();
 	m_CalcView = new CalcView(bounds);
@@ -607,6 +609,7 @@ bool CalcWindow::OkToQuit(void)
 CalcApp::CalcApp()
 	:Application("application/x-vnd.digitaliz-Albert")
 {
+	SetCatalog("Albert.catalog");
 	win = new CalcWindow(CRect(350,178));
 	win->Show();
 }

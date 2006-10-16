@@ -26,8 +26,9 @@
 #include "mainwindow.h"
 #include "messages.h"
 #include "main.h"
+#include "resources/Keyboard.h"
 
-MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow", "Keyboard", os::WND_NOT_RESIZABLE)
+MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow", MSG_MAINWND_TITLE, os::WND_NOT_RESIZABLE)
 {
   os::Rect cBounds = GetBounds();
   os::Rect cRect = os::Rect(0,0,0,0);
@@ -52,11 +53,11 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
 
   // Add delay to settings 
   pcHLDelay = new os::HLayoutNode("HLDelay");
-  pcHLDelay->AddChild( pcSVDelay = new os::StringView(cRect, "SVDelay", "Initial Delay") );
+  pcHLDelay->AddChild( pcSVDelay = new os::StringView(cRect, "SVDelay", MSG_MAINWND_SETTINGS_INITIALDELAY) );
   pcHLDelay->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
   pcHLDelay->AddChild( pcSLDelay = new os::Slider(cRect, "SLDelay", new os::Message(M_MW_SLDELAY), os::Slider::TICKS_BELOW, 11) );
   pcSLDelay->SetStepCount(11);
-  pcSLDelay->SetLimitLabels("Short", "Long");
+  pcSLDelay->SetLimitLabels(MSG_MAINWND_SETTINGS_INITIALDELAY_SHORT, MSG_MAINWND_SETTINGS_INITIALDELAY_LONG);
   pcSLDelay->SetMinMax(0,1000);
   pcVLSettings->AddChild(pcHLDelay);
 
@@ -65,11 +66,11 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
 
   // And add repeat to settings
   pcHLRepeat = new os::HLayoutNode("HLRepeat");
-  pcHLRepeat->AddChild( pcSVRepeat = new os::StringView(cRect, "SVRepeat", "Repeat Delay") );
+  pcHLRepeat->AddChild( pcSVRepeat = new os::StringView(cRect, "SVRepeat", MSG_MAINWND_SETTINGS_REPEATDELAY) );
   pcHLRepeat->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
   pcHLRepeat->AddChild( pcSLRepeat = new os::Slider(cRect, "SLRepeat", new os::Message(M_MW_SLREPEAT), os::Slider::TICKS_BELOW, 11) );
   pcSLRepeat->SetStepCount(11);
-  pcSLRepeat->SetLimitLabels("Fast", "Slow");
+  pcSLRepeat->SetLimitLabels(MSG_MAINWND_SETTINGS_REPEATDELAY_FAST, MSG_MAINWND_SETTINGS_REPEATDELAY_SLOW);
   pcSLRepeat->SetMinMax(0,200);
   pcVLSettings->AddChild(pcHLRepeat);
   pcVLSettings->AddChild( new os::VLayoutSpacer("") );
@@ -79,14 +80,14 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   pcVLSettings->SameWidth( "SLDelay", "SLRepeat", NULL );
 
   // Create settings frameview and add to windows
-  pcFVSettings = new os::FrameView(cBounds, "FVSettings", "Settings", os::CF_FOLLOW_ALL);
+  pcFVSettings = new os::FrameView(cBounds, "FVSettings", MSG_MAINWND_SETTINGS, os::CF_FOLLOW_ALL);
   pcFVSettings->SetRoot(pcVLSettings);
   pcHLTop->AddChild(pcFVSettings);
   pcHLTop->AddChild(new os::HLayoutSpacer("", 10.0f, 10.0f) );
 
   // Set slider values
-  pcSLDelay->SetProgStrFormat("%.f msecs");
-  pcSLRepeat->SetProgStrFormat("%.f msecs");
+  pcSLDelay->SetProgStrFormat(MSG_MAINWND_SETTINGS_MILISECONDS.c_str());
+  pcSLRepeat->SetProgStrFormat(MSG_MAINWND_SETTINGS_MILISECONDS.c_str());
   pcSLDelay->SetValue( (float)iDelay, true);
   pcSLRepeat->SetValue( (float)iRepeat, true);
 
@@ -97,7 +98,7 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   pcHLLayout->AddChild( pcLVLayout = new os::ListView(cBounds, "LVLayout", os::ListView::F_RENDER_BORDER | os::ListView::F_NO_HEADER, os::CF_FOLLOW_ALL) );
   pcHLLayout->AddChild( new os::HLayoutNode("") );
   pcLVLayout->InsertColumn("Keyboard Layouts", 1);
-  pcFVLayout = new os::FrameView(cBounds, "FVLayout", "Keyboard Layout", os::CF_FOLLOW_ALL);
+  pcFVLayout = new os::FrameView(cBounds, "FVLayout", MSG_MAINWND_KEYBOARDLAYOUT, os::CF_FOLLOW_ALL);
   pcFVLayout->SetRoot(pcHLLayout);
   pcHLTop->AddChild(pcFVLayout);
   pcVLRoot->AddChild(pcHLTop);
@@ -110,7 +111,7 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
     pcHLTest->AddChild( new os::HLayoutNode("") );
     pcHLTest->AddChild( pcTVTest = new os::TextView(cRect, "TVTest", "") );
     pcHLTest->AddChild( new os::HLayoutNode("") );
-    pcFVTest = new os::FrameView(cBounds, "FVTest", "Test Area (Apply changes first)", os::CF_FOLLOW_ALL);
+    pcFVTest = new os::FrameView(cBounds, "FVTest", MSG_MAINWND_TESTAREA, os::CF_FOLLOW_ALL);
     pcFVTest->SetRoot(pcHLTest);
     pcVLRoot->AddChild(pcFVTest);
     pcVLRoot->AddChild( new os::VLayoutSpacer("", 10.0f, 10.0f) );
@@ -120,11 +121,11 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   pcHLButtons = new os::HLayoutNode("HLButtons");
   if (bRoot) {
     pcHLButtons->AddChild( new os::HLayoutSpacer(""));
-    pcHLButtons->AddChild( pcBApply = new os::Button(cRect, "BApply", "_Apply", new os::Message(M_MW_APPLY)) );
+    pcHLButtons->AddChild( pcBApply = new os::Button(cRect, "BApply", MSG_MAINWND_BUTTON_APPLY, new os::Message(M_MW_APPLY)) );
     pcHLButtons->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f) );
-    pcHLButtons->AddChild( pcBUndo = new os::Button(cRect, "BUndo", "_Undo", new os::Message(M_MW_UNDO)) );
+    pcHLButtons->AddChild( pcBUndo = new os::Button(cRect, "BUndo", MSG_MAINWND_BUTTON_UNDO, new os::Message(M_MW_UNDO)) );
     pcHLButtons->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
-    pcHLButtons->AddChild( pcBDefault = new os::Button(cRect, "BDefault", "_Default", new os::Message(M_MW_DEFAULT)) );
+    pcHLButtons->AddChild( pcBDefault = new os::Button(cRect, "BDefault", MSG_MAINWND_BUTTON_DEFAULT, new os::Message(M_MW_DEFAULT)) );
     pcHLButtons->SameWidth( "BApply", "BUndo", "BDefault", NULL );
   }
   pcVLRoot->AddChild(pcHLButtons);

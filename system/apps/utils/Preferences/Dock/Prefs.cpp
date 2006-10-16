@@ -18,6 +18,7 @@
  */
  
 #include "Prefs.h" 
+#include "resources/Dock.h"
 
 enum {
 	DP_APPLY,
@@ -65,7 +66,7 @@ private:
 };
 
 PrefsDockWin::PrefsDockWin( os::Rect cFrame )
-			: os::Window( cFrame, "dock_prefs_win", "Dock", 0/*os::WND_NOT_RESIZABLE*/ )
+			: os::Window( cFrame, "dock_prefs_win", MSG_MAINWND_TITLE, 0/*os::WND_NOT_RESIZABLE*/ )
 {
 	/* Create root view */
 	m_pcRoot = new os::LayoutView( GetBounds(), "dock_prefs_root" );
@@ -77,21 +78,21 @@ PrefsDockWin::PrefsDockWin( os::Rect cFrame )
 	/* Create position frame */
 	m_pcHPos = new os::HLayoutNode( "dock_prefs_hpos" );
 	m_pcHPos->SetBorders( os::Rect( 5, 5, 5, 5 ) );
-	m_pcPosition = new os::FrameView( os::Rect(), "dock_prefs_position", "Position" );
+	m_pcPosition = new os::FrameView( os::Rect(), "dock_prefs_position", MSG_MAINWND_POSITION );
 	
 	/* Create position selector */
 	m_pcPos = new os::DropdownMenu( os::Rect(), "dock_prefs_pos" );
-	m_pcPos->AppendItem( "Top" );
-	m_pcPos->AppendItem( "Bottom" );
-	m_pcPos->AppendItem( "Left" );
-	m_pcPos->AppendItem( "Right" );
+	m_pcPos->AppendItem( MSG_MAINWND_POSITION_TOP );
+	m_pcPos->AppendItem( MSG_MAINWND_POSITION_BOTTOM );
+	m_pcPos->AppendItem( MSG_MAINWND_POSITION_LEFT );
+	m_pcPos->AppendItem( MSG_MAINWND_POSITION_RIGHT );
 	m_pcHPos->AddChild( m_pcPos );
 	m_pcHPos->AddChild( new os::HLayoutSpacer( "" ) );
 	
 	/* Create plugins frame */
 	m_pcVPlugins = new os::VLayoutNode( "dock_prefs_vplugins" );
 	m_pcVPlugins->SetBorders( os::Rect( 5, 5, 5, 5 ) );
-	m_pcPlugins = new os::FrameView( os::Rect(), "dock_prefs_plugins", "Plugins" );
+	m_pcPlugins = new os::FrameView( os::Rect(), "dock_prefs_plugins", MSG_MAINWND_PLUGINS );
 	
 	
 	/* Create plugins list */
@@ -99,11 +100,11 @@ PrefsDockWin::PrefsDockWin( os::Rect cFrame )
 	m_pcPluginsList->SetAutoSort( false );
 	m_pcPluginsList->SetSelChangeMsg( new os::Message( DP_PLUGIN_CHANGED ) );
 	m_pcPluginsList->SetInvokeMsg( new os::Message( DP_ENABLE ) );
-	m_pcPluginsList->InsertColumn( "Plugin", 200 );
-	m_pcPluginsList->InsertColumn( "Enabled", 100 );
+	m_pcPluginsList->InsertColumn( MSG_MAINWND_PLUGINS_PLUGIN.c_str(), 200 );
+	m_pcPluginsList->InsertColumn( MSG_MAINWND_PLUGINS_ENABLED.c_str(), 100 );
 	m_pcEnable = new os::Button( os::Rect(), "dock_prefs_enable", "Enable", new os::Message( DP_ENABLE ) );
 	m_pcEnable->SetEnable( false );
-	m_pcPluginNote = new os::StringView( os::Rect(), "dock_prefs_note", "Note: Please copy plugins to /system/extensions/dock/" );
+	m_pcPluginNote = new os::StringView( os::Rect(), "dock_prefs_note", MSG_MAINWND_PLUGINS_TEXT );
 	m_pcVPlugins->AddChild( m_pcPluginsList );
 	m_pcVPlugins->AddChild( new os::VLayoutSpacer( "", 5.0f, 5.0f ) );
 	m_pcVPlugins->AddChild( m_pcEnable );
@@ -116,13 +117,13 @@ PrefsDockWin::PrefsDockWin( os::Rect cFrame )
 	m_pcHButtons->AddChild( new os::HLayoutSpacer( "" ) );
 	
 	/* Create Apply Button */
-	m_pcApply = new os::Button( os::Rect(), "dock_prefs_apply", "Apply", new os::Message( DP_APPLY ) );
+	m_pcApply = new os::Button( os::Rect(), "dock_prefs_apply", MSG_MAINWND_BUTTON_APPLY, new os::Message( DP_APPLY ) );
 	m_pcHButtons->AddChild( m_pcApply );
 	m_pcHButtons->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f ) );
-	m_pcUndo = new os::Button( os::Rect(), "dock_prefs_undo", "Undo", new os::Message( DP_UNDO ) );
+	m_pcUndo = new os::Button( os::Rect(), "dock_prefs_undo", MSG_MAINWND_BUTTON_UNDO, new os::Message( DP_UNDO ) );
 	m_pcHButtons->AddChild( m_pcUndo );
 	m_pcHButtons->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f ) );
-	m_pcDefault = new os::Button( os::Rect(), "dock_prefs_default", "Default", new os::Message( DP_DEFAULT ) );
+	m_pcDefault = new os::Button( os::Rect(), "dock_prefs_default", MSG_MAINWND_BUTTON_DEFAULT, new os::Message( DP_DEFAULT ) );
 	m_pcHButtons->AddChild( m_pcDefault );
 	m_pcHButtons->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f ) );
 	m_pcHButtons->SameWidth( "dock_prefs_apply", "dock_prefs_undo", "dock_prefs_default", NULL );
@@ -254,7 +255,7 @@ void PrefsDockWin::UpdatePluginsList()
 	m_cPluginFiles.clear();
 	m_cDefaultEnabledPlugins.clear();
 	m_pcPluginsList->Clear();
-	m_pcEnable->SetLabel( "Enable" );
+	m_pcEnable->SetLabel( MSG_MAINWND_PLUGINS_BUTTON_ENABLE );
 	m_pcEnable->SetEnable( false );
 	
 	/* Fill list with entries from /system/extensions/dock/ */
@@ -306,13 +307,13 @@ void PrefsDockWin::UpdatePluginsList()
 			
 			os::ListViewStringRow* pcRow = new os::ListViewStringRow();
 			pcRow->AppendString( zPlugin );
-			pcRow->AppendString( "No" );
+			pcRow->AppendString( MSG_MAINWND_PLUGINS_STATE_ENABLED_NO );
 			
 			/* Check if the plugin is enabled */
 			for( uint i = 0; i < m_cEnabledPlugins.size(); i++ )
 			{
 				if( m_cEnabledPlugins[i] == cFilePath.GetPath() ) {
-					pcRow->SetString( 1, "Yes" );
+					pcRow->SetString( 1, MSG_MAINWND_PLUGINS_STATE_ENABLED_YES );
 					break;
 				}
 			}
@@ -399,8 +400,8 @@ void PrefsDockWin::HandleMessage( os::Message* pcMessage )
 				os::String zPlugin = pcRow->GetString( 0 );
 				os::String zNewState;
 				/* Check if the plugin is disabled or enabled */
-				if( pcRow->GetString( 1 ) == "Yes" ) {
-					zNewState = "No";
+				if( pcRow->GetString( 1 ) == MSG_MAINWND_PLUGINS_STATE_ENABLED_YES ) {
+					zNewState = MSG_MAINWND_PLUGINS_STATE_ENABLED_NO;
 					/* Remove from list */
 					for( uint i = 0; i < m_cPluginFiles.size(); i++ )
 					{
@@ -416,7 +417,7 @@ void PrefsDockWin::HandleMessage( os::Message* pcMessage )
 					}	
 					
 				} else {
-					zNewState = "Yes";
+					zNewState = MSG_MAINWND_PLUGINS_STATE_ENABLED_YES;
 					/* Add to list */
 					for( uint i = 0; i < m_cPluginFiles.size(); i++ )
 					{
@@ -443,10 +444,10 @@ void PrefsDockWin::HandleMessage( os::Message* pcMessage )
 			if( pcRow )
 			{
 				/* Check if the plugin is disabled or enabled */
-				if( pcRow->GetString( 1 ) == "Yes" )
-					m_pcEnable->SetLabel( "Disable" );
+				if( pcRow->GetString( 1 ) == MSG_MAINWND_PLUGINS_STATE_ENABLED_YES )
+					m_pcEnable->SetLabel( MSG_MAINWND_PLUGINS_BUTTON_DISABLE );
 				else
-					m_pcEnable->SetLabel( "Enable" );
+					m_pcEnable->SetLabel( MSG_MAINWND_PLUGINS_BUTTON_ENABLE );
 				m_pcEnable->SetEnable( true );
 			}
 			break;
@@ -458,6 +459,8 @@ void PrefsDockWin::HandleMessage( os::Message* pcMessage )
  
 PrefsDockApp::PrefsDockApp():os::Application( "application/x-vnd-DockPreferences" )
 {
+	SetCatalog("Dock.catalog");
+
 	/* Show main window */
 	PrefsDockWin* pcWindow = new PrefsDockWin( os::Rect( 0, 0, 360, 350 ) );
 	pcWindow->CenterInScreen();

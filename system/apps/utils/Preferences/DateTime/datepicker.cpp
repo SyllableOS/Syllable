@@ -20,6 +20,7 @@
 #include <time.h>
 #include <string>
 #include "datepicker.h"
+#include "resources/DateTime.h"
 
 using namespace os;
 
@@ -40,18 +41,18 @@ DatePicker::DatePicker(const os::Rect& cFrame, const char *pszName) :
   m_pcHLCurrentDate->AddChild(m_pcDDMMonth = new os::DropdownMenu(cRect, "DDMMonth"), 1.0f);
   m_pcDDMMonth->SetMinPreferredSize( 2 );
   m_pcDDMMonth->SetSelectionMessage(new os::Message(M_MONTHCHANGED));
-  m_pcDDMMonth->AppendItem("January");
-  m_pcDDMMonth->AppendItem("February");
-  m_pcDDMMonth->AppendItem("March");
-  m_pcDDMMonth->AppendItem("April");
-  m_pcDDMMonth->AppendItem("May");
-  m_pcDDMMonth->AppendItem("June");
-  m_pcDDMMonth->AppendItem("July");
-  m_pcDDMMonth->AppendItem("August");
-  m_pcDDMMonth->AppendItem("September");
-  m_pcDDMMonth->AppendItem("October");
-  m_pcDDMMonth->AppendItem("November");
-  m_pcDDMMonth->AppendItem("December");
+  m_pcDDMMonth->AppendItem(MSG_DAYMONTH_MONTH_JANUARY);
+  m_pcDDMMonth->AppendItem(MSG_DAYMONTH_MONTH_FEBRUARY);
+  m_pcDDMMonth->AppendItem(MSG_DAYMONTH_MONTH_MARCH);
+  m_pcDDMMonth->AppendItem(MSG_DAYMONTH_MONTH_APRIL);
+  m_pcDDMMonth->AppendItem(MSG_DAYMONTH_MONTH_MAY);
+  m_pcDDMMonth->AppendItem(MSG_DAYMONTH_MONTH_JUNE);
+  m_pcDDMMonth->AppendItem(MSG_DAYMONTH_MONTH_JULY);
+  m_pcDDMMonth->AppendItem(MSG_DAYMONTH_MONTH_AUGUST);
+  m_pcDDMMonth->AppendItem(MSG_DAYMONTH_MONTH_SEPTEMBER);
+  m_pcDDMMonth->AppendItem(MSG_DAYMONTH_MONTH_OCTOBER);
+  m_pcDDMMonth->AppendItem(MSG_DAYMONTH_MONTH_NOVEMBER);
+  m_pcDDMMonth->AppendItem(MSG_DAYMONTH_MONTH_DECEMBER);
   m_pcHLCurrentDate->AddChild(new os::HLayoutSpacer("", 5.0f, 5.0f));
 
   // Year
@@ -67,19 +68,19 @@ DatePicker::DatePicker(const os::Rect& cFrame, const char *pszName) :
   
   // Create row with days for header
   m_pcHLDateRows[0] = new os::HLayoutNode("", 1.0f, m_pcVLRoot);
-  m_pcHLDateRows[0]->AddChild(m_pcSVDays[0] = new os::DatePickerDay(cRect, "SVSu", "Su", false, true, new os::Message(M_DAYCHANGED)));
+  m_pcHLDateRows[0]->AddChild(m_pcSVDays[0] = new os::DatePickerDay(cRect, "SVSu", MSG_DAYMONTH_SHORTDAY_SUNDAY.c_str(), false, true, new os::Message(M_DAYCHANGED)));
   m_pcHLDateRows[0]->AddChild(new os::HLayoutSpacer("", 2.0f, 2.0f));
-  m_pcHLDateRows[0]->AddChild(m_pcSVDays[1] = new os::DatePickerDay(cRect, "SVMo", "Mo", false, true, new os::Message(M_DAYCHANGED)));
+  m_pcHLDateRows[0]->AddChild(m_pcSVDays[1] = new os::DatePickerDay(cRect, "SVMo", MSG_DAYMONTH_SHORTDAY_MONDAY.c_str(), false, true, new os::Message(M_DAYCHANGED)));
   m_pcHLDateRows[0]->AddChild(new os::HLayoutSpacer("", 2.0f, 2.0f));
-  m_pcHLDateRows[0]->AddChild(m_pcSVDays[2] = new os::DatePickerDay(cRect, "SVTu", "Tu", false, true, new os::Message(M_DAYCHANGED)));
+  m_pcHLDateRows[0]->AddChild(m_pcSVDays[2] = new os::DatePickerDay(cRect, "SVTu", MSG_DAYMONTH_SHORTDAY_TUESDAY.c_str(), false, true, new os::Message(M_DAYCHANGED)));
   m_pcHLDateRows[0]->AddChild(new os::HLayoutSpacer("", 2.0f, 2.0f));
-  m_pcHLDateRows[0]->AddChild(m_pcSVDays[3] = new os::DatePickerDay(cRect, "SVWe", "We", false, true, new os::Message(M_DAYCHANGED)));
+  m_pcHLDateRows[0]->AddChild(m_pcSVDays[3] = new os::DatePickerDay(cRect, "SVWe", MSG_DAYMONTH_SHORTDAY_WEDNESDAY.c_str(), false, true, new os::Message(M_DAYCHANGED)));
   m_pcHLDateRows[0]->AddChild(new os::HLayoutSpacer("", 2.0f, 2.0f));
-  m_pcHLDateRows[0]->AddChild(m_pcSVDays[4] = new os::DatePickerDay(cRect, "SVTh", "Th", false, true, new os::Message(M_DAYCHANGED)));
+  m_pcHLDateRows[0]->AddChild(m_pcSVDays[4] = new os::DatePickerDay(cRect, "SVTh", MSG_DAYMONTH_SHORTDAY_THURSDAY.c_str(), false, true, new os::Message(M_DAYCHANGED)));
   m_pcHLDateRows[0]->AddChild(new os::HLayoutSpacer("", 2.0f, 2.0f));
-  m_pcHLDateRows[0]->AddChild(m_pcSVDays[5] = new os::DatePickerDay(cRect, "SVFr", "Fr", false, true, new os::Message(M_DAYCHANGED)));
+  m_pcHLDateRows[0]->AddChild(m_pcSVDays[5] = new os::DatePickerDay(cRect, "SVFr", MSG_DAYMONTH_SHORTDAY_FRIDAY.c_str(), false, true, new os::Message(M_DAYCHANGED)));
   m_pcHLDateRows[0]->AddChild(new os::HLayoutSpacer("", 2.0f, 2.0f));
-  m_pcHLDateRows[0]->AddChild(m_pcSVDays[6] = new os::DatePickerDay(cRect, "SVSa", "Sa", false, true, new os::Message(M_DAYCHANGED)));
+  m_pcHLDateRows[0]->AddChild(m_pcSVDays[6] = new os::DatePickerDay(cRect, "SVSa", MSG_DAYMONTH_SHORTDAY_SATURDAY.c_str(), false, true, new os::Message(M_DAYCHANGED)));
   m_pcVLRoot->AddChild(new os::VLayoutSpacer("", 2.0f, 2.0f));
 
   // Fill in 6 rows with numbers
@@ -299,32 +300,32 @@ void DatePicker::GetDate(int *iDay, int *iMonth, int *iYear, std::string *strFor
   // Return day of week
   std::string strDayOfWeek;
   switch (m_iDayOfWeek) {
-  case 0: strDayOfWeek = "Sunday"; break;
-  case 1: strDayOfWeek = "Monday"; break;
-  case 2: strDayOfWeek = "Tuesday"; break;
-  case 3: strDayOfWeek = "Wednesday"; break;
-  case 4: strDayOfWeek = "Thursday"; break;
-  case 5: strDayOfWeek = "Friday"; break;
-  case 6: strDayOfWeek = "Saturday"; break;
-  default: strDayOfWeek = "Unknown"; break; // Should never happen!
+  case 0: strDayOfWeek = MSG_DAYMONTH_DAY_SUNDAY; break;
+  case 1: strDayOfWeek = MSG_DAYMONTH_DAY_MONDAY; break;
+  case 2: strDayOfWeek = MSG_DAYMONTH_DAY_TUESDAY; break;
+  case 3: strDayOfWeek = MSG_DAYMONTH_DAY_WEDNESDAY; break;
+  case 4: strDayOfWeek = MSG_DAYMONTH_DAY_THURSDAY; break;
+  case 5: strDayOfWeek = MSG_DAYMONTH_DAY_FRIDAY; break;
+  case 6: strDayOfWeek = MSG_DAYMONTH_DAY_SATURDAY; break;
+  default: strDayOfWeek = MSG_DAYMONTH_DAY_UNKNOWN; break; // Should never happen!
   }
 
   // Return text month string
   std::string strMonth;
   switch (m_iMonth) {
-  case 0: strMonth = "January"; break;
-  case 1: strMonth = "Febraury"; break;
-  case 2: strMonth = "March"; break;
-  case 3: strMonth = "April"; break;
-  case 4: strMonth = "May"; break;
-  case 5: strMonth = "June"; break;
-  case 6: strMonth = "July"; break;
-  case 7: strMonth = "August"; break;
-  case 8: strMonth = "September"; break;
-  case 9: strMonth = "October"; break;
-  case 10: strMonth = "November"; break;
-  case 11: strMonth = "December"; break;
-  default: strMonth = "Unknown"; break; // Obviously this should never happen!
+  case 0: strMonth = MSG_DAYMONTH_MONTH_JANUARY; break;
+  case 1: strMonth = MSG_DAYMONTH_MONTH_FEBRUARY; break;
+  case 2: strMonth = MSG_DAYMONTH_MONTH_MARCH; break;
+  case 3: strMonth = MSG_DAYMONTH_MONTH_APRIL; break;
+  case 4: strMonth = MSG_DAYMONTH_MONTH_MAY; break;
+  case 5: strMonth = MSG_DAYMONTH_MONTH_JUNE; break;
+  case 6: strMonth = MSG_DAYMONTH_MONTH_JULY; break;
+  case 7: strMonth = MSG_DAYMONTH_MONTH_AUGUST; break;
+  case 8: strMonth = MSG_DAYMONTH_MONTH_SEPTEMBER; break;
+  case 9: strMonth = MSG_DAYMONTH_MONTH_OCTOBER; break;
+  case 10: strMonth = MSG_DAYMONTH_MONTH_NOVEMBER; break;
+  case 11: strMonth = MSG_DAYMONTH_MONTH_DECEMBER; break;
+  default: strMonth = MSG_DAYMONTH_MONTH_UNKNOWN; break; // Obviously this should never happen!
   }
 
   // Set day of week

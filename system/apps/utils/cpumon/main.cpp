@@ -41,6 +41,8 @@
 #include "graphview.h"
 #include "w8378x_driver.h"
 
+#include "resources/cpumon.h"
+
 using namespace os;
 
 static int  g_nShowHelp = 0;
@@ -112,7 +114,7 @@ void GetLoad( int nCPUCount, float* pavLoads )
 //----------------------------------------------------------------------------
 
 MonWindow::MonWindow( const Rect& cFrame ) :
-    Window( cFrame, "atheos_cpu_mon", "CPU usage", 0 )
+    Window( cFrame, "atheos_cpu_mon", MSG_MAINWND_TITLE, 0 )
 {
     if ( g_bWindowRectSet ) {
 	SetFrame( g_cWinRect );
@@ -236,6 +238,7 @@ bool MonWindow::OkToQuit( void )
 
 MyApp::MyApp() : Application( "application/x-vnd.KHS.atheos-cpu-monitor" )
 {
+	SetCatalog("cpumon.catalog");
     m_pcWindow = new MonWindow( Rect( 20, 20, 200, 100 ) );
 }
 
@@ -252,13 +255,12 @@ MyApp::~MyApp()
 
 static void usage( const char* pzName, bool bFull )
 {
-    printf( "Usage: %s [-hvfbp]\n", pzName );
+    printf( "Usage: %s [-hvfgb]\n", pzName );
     if ( bFull )
     {
 	printf( "  -h --help          display this help and exit\n" );
 	printf( "  -v --version       display version information and exit\n" );
 	printf( "  -f --frame=l,t,r,b set window position/size (left,top,right,bottom)\n" );
-	printf( "  -b --noborder      hide the window border\n" );
 	printf( "  -g --graph_view    display load as graphs\n" );
 	printf( "  -b --bar_view      display load as bars\n" );
     }
@@ -279,7 +281,7 @@ int main( int argc, char ** argv )
     if ( nNameLen >= 5 && strcasecmp( argv[0] + nNameLen - 5, "pulse" ) == 0 ) {
 	g_bBarView = true;
     }
-    while( (c = getopt_long (argc, argv, "hvfbg", long_opts, (int *) 0)) != EOF )
+    while( (c = getopt_long (argc, argv, "hvfgb", long_opts, (int *) 0)) != EOF )
     {
 	switch( c )
 	{

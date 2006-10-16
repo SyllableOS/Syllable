@@ -6,6 +6,8 @@ OBJS = main.o application.o commonfuncs.o execute.o mainwindow.o
 
 EXE = Launch
 
+CATALOGS = da de es hu nl pl pt-br ru sv
+
 OBJDIR := objs
 OBJS	:= $(addprefix $(OBJDIR)/,$(OBJS))
 
@@ -27,20 +29,37 @@ all : objs $(EXE)
 objs:
 	@mkdir -p objs
 
-$(EXE): $(OBJS)
+$(EXE): catalogs $(OBJS)
 	@echo Linking...
 	@$(CXX) $(OBJS) -o $(EXE) -lsyllable
 	@echo Adding resources...
-	@rescopy $(EXE) -r images/*.png resources/*.catalog
-	@rescopy $(EXE) -a da/Launch.catalog=resources/da/Launch.catalog
-	@rescopy $(EXE) -a nl/Launch.catalog=resources/nl/Launch.catalog
-	@rescopy $(EXE) -a pl/Launch.catalog=resources/pl/Launch.catalog
-	@rescopy $(EXE) -a sv/Launch.catalog=resources/sv/Launch.catalog
+	@rescopy $(EXE) -r images/*.png
+	rescopy -a $(EXE) resources/$(EXE).catalog
+	for CATALOG in $(CATALOGS);do \
+		echo $$CATALOG; \
+		rescopy -a $(EXE) $$CATALOG/$(EXE).catalog=resources/$$CATALOG/$(EXE).catalog; \
+	done;
 
-clean:
+catalogs:
+	cd resources; \
+	catcomp -c $(EXE).cd; \
+	for CATALOG in $(CATALOGS);do \
+		echo $$CATALOG; \
+		cd $$CATALOG; \
+		catcomp -t $(EXE).cd; \
+		cd ..; \
+	done;
+
+clean: catalog-clean
 	@echo Cleaning...
-	@rm -f $(OBJDIR)/*
-	@rm -f $(EXE)
+	-rm $(OBJS)
+	-rm $(EXE)
+
+catalog-clean:
+	-rm resources/$(EXE).catalog resources/$(EXE).h; \
+	for CATALOG in $(CATALOGS);do \
+		rm resources/$$CATALOG/$(EXE).catalog; \
+	done;
 
 deps:
 

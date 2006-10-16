@@ -34,10 +34,12 @@
 
 #include <login_window.h>
 
+#include "resources/Login.h"
+
 using namespace os;
 using namespace std;
 
-LoginWindow::LoginWindow( const os::Rect cFrame ) : Window( cFrame, "Login", "Login" )
+LoginWindow::LoginWindow( const os::Rect cFrame ) : Window( cFrame, "Login", MSG_MAINWND_TITLE )
 {
 	m_nUid = getuid();
 
@@ -60,7 +62,7 @@ LoginWindow::LoginWindow( const os::Rect cFrame ) : Window( cFrame, "Login", "Lo
 	/* The top of the window contains some basic information, with an icon and some text */
 	cChildFrame.bottom = cChildFrame.top + 80;
 
-	m_pcInfoFrame = new FrameView( cChildFrame, "login_info_frame", "Information", CF_FOLLOW_LEFT | CF_FOLLOW_TOP | CF_FOLLOW_RIGHT );
+	m_pcInfoFrame = new FrameView( cChildFrame, "login_info_frame", MSG_MAINWND_INFORMATION, CF_FOLLOW_LEFT | CF_FOLLOW_TOP | CF_FOLLOW_RIGHT );
 	HLayoutNode *pcInfoLayoutNode = new HLayoutNode( "login_info_layout" );
 	Rect cInnerBounds = m_pcInfoFrame->GetBounds();
 	cInnerBounds.left += 5;
@@ -76,7 +78,9 @@ LoginWindow::LoginWindow( const os::Rect cFrame ) : Window( cFrame, "Login", "Lo
 	pcInfoLayoutNode->AddChild( m_pcLockIconView, 0.0f );
 
 	const unsigned MSG_BUF_LEN = 256;
-	char acMsgBuf[MSG_BUF_LEN] = "Your system administrator has not given you permission\nto change your login details.";
+	/* Ugly Workaround to make localization work. Someone should have a look at it... */	
+	char acMsgBuf[MSG_BUF_LEN] = "";
+	snprintf( acMsgBuf, MSG_BUF_LEN, MSG_MAINWND_INFORMATION_NOPERM.c_str() );
 
 	StringView *pcInfoText = new StringView( Rect(), "login_info_text", "" );
 	pcInfoLayoutNode->AddChild( pcInfoText );
@@ -90,7 +94,7 @@ LoginWindow::LoginWindow( const os::Rect cFrame ) : Window( cFrame, "Login", "Lo
 	cChildFrame.top = cChildFrame.bottom + 10;
 	cChildFrame.bottom = cChildFrame.top + 130;
 
-	m_pcIconFrame = new FrameView( cChildFrame, "login_icon_frame", "Login Icon", CF_FOLLOW_LEFT | CF_FOLLOW_TOP | CF_FOLLOW_RIGHT );
+	m_pcIconFrame = new FrameView( cChildFrame, "login_icon_frame", MSG_MAINWND_LOGINICON, CF_FOLLOW_LEFT | CF_FOLLOW_TOP | CF_FOLLOW_RIGHT );
 
 	cInnerBounds = m_pcIconFrame->GetBounds();
 	cInnerBounds.left += 10;
@@ -100,7 +104,7 @@ LoginWindow::LoginWindow( const os::Rect cFrame ) : Window( cFrame, "Login", "Lo
 
 	cControlFrame = cInnerBounds;
 
-	StringView *pcIconText = new StringView( Rect(), "login_icon_text", "When I login to this computer, display\nthis icon for my user account." );
+	StringView *pcIconText = new StringView( Rect(), "login_icon_text", MSG_MAINWND_LOGINICON_TEXT );
 
 	cSize = pcIconText->GetPreferredSize( false );
 	cControlFrame.right = cControlFrame.left + cSize.x;
@@ -129,7 +133,7 @@ LoginWindow::LoginWindow( const os::Rect cFrame ) : Window( cFrame, "Login", "Lo
 	cChildFrame.top = cChildFrame.bottom + 10;
 	cChildFrame.bottom = cChildFrame.top + 170;
 
-	m_pcPasswordFrame = new FrameView( cChildFrame, "login_password_frame", "Change Password", CF_FOLLOW_LEFT | CF_FOLLOW_TOP | CF_FOLLOW_RIGHT );
+	m_pcPasswordFrame = new FrameView( cChildFrame, "login_password_frame", MSG_MAINWND_CHANGEPASS, CF_FOLLOW_LEFT | CF_FOLLOW_TOP | CF_FOLLOW_RIGHT );
 
 	cInnerBounds = m_pcPasswordFrame->GetBounds();
 	cInnerBounds.left += 10;
@@ -142,7 +146,7 @@ LoginWindow::LoginWindow( const os::Rect cFrame ) : Window( cFrame, "Login", "Lo
 	/* Current password, if the user is not UID 0 (root) */
 	if( m_nUid > 0 )
 	{
-		StringView *pcCurrentPasswordText = new StringView( Rect(), "login_password_current_text", "Current password" );
+		StringView *pcCurrentPasswordText = new StringView( Rect(), "login_password_current_text", MSG_MAINWND_CHANGEPASS_CURRENTPASS );
 
 		cSize = pcCurrentPasswordText->GetPreferredSize( false );
 		cControlFrame.top += 3;
@@ -170,7 +174,7 @@ LoginWindow::LoginWindow( const os::Rect cFrame ) : Window( cFrame, "Login", "Lo
 		m_pcCurrentPassword = NULL;
 
 	/* New password */
-	StringView *pcNew1PasswordText = new StringView( Rect(), "login_password_new1_text", "New password" );
+	StringView *pcNew1PasswordText = new StringView( Rect(), "login_password_new1_text", MSG_MAINWND_CHANGEPASS_NEWPASS );
 
 	cSize = pcNew1PasswordText->GetPreferredSize( false );
 	cControlFrame.top += 3;
@@ -195,7 +199,7 @@ LoginWindow::LoginWindow( const os::Rect cFrame ) : Window( cFrame, "Login", "Lo
 	cControlFrame.left = cInnerBounds.left;
 
 	/* Confirm new password */
-	StringView *pcNew2PasswordText = new StringView( Rect(), "login_password_new2_text", "Confirm password" );
+	StringView *pcNew2PasswordText = new StringView( Rect(), "login_password_new2_text", MSG_MAINWND_CHANGEPASS_CONFIRMPASS );
 
 	cSize = pcNew2PasswordText->GetPreferredSize( false );
 	cControlFrame.top += 3;
@@ -230,10 +234,10 @@ LoginWindow::LoginWindow( const os::Rect cFrame ) : Window( cFrame, "Login", "Lo
 
 	HLayoutNode *pcButtons = new HLayoutNode( "login_buttons_buttons"/*, 0.0f*/ );
 	pcButtons->AddChild( new HLayoutSpacer( "login_buttons_h_spacer", 200.0f ) );
-	Button *pcOkButton = new Button( Rect(), "login_buttons_ok", "_OK", new Message( ID_WINDOW_OK ) );
+	Button *pcOkButton = new Button( Rect(), "login_buttons_ok", MSG_MAINWND_BUTTON_OK, new Message( ID_WINDOW_OK ) );
 	pcButtons->AddChild( pcOkButton );
 	pcButtons->AddChild( new HLayoutSpacer( "login_buttons_h_spacer" ) );
-	Button *pcCancelButton = new Button( Rect(), "login_buttons_cancel", "_Cancel", new Message( ID_WINDOW_CANCEL ) );
+	Button *pcCancelButton = new Button( Rect(), "login_buttons_cancel", MSG_MAINWND_BUTTON_CANCEL, new Message( ID_WINDOW_CANCEL ) );
 	pcButtons->AddChild( pcCancelButton );
 	pcButtons->AddChild( new HLayoutSpacer( "login_buttons_h_spacer" ) );
 
@@ -246,7 +250,7 @@ LoginWindow::LoginWindow( const os::Rect cFrame ) : Window( cFrame, "Login", "Lo
 	if( geteuid() == 0 )
 	{
 		/* Create a short message */
-		snprintf( acMsgBuf, MSG_BUF_LEN, "You are currently logged in as %s.", m_cLogin.c_str() );
+		snprintf( acMsgBuf, MSG_BUF_LEN, MSG_MAINWND_INFORMATION_WHO.c_str(), m_cLogin.c_str() );
 	}
 	else
 	{
@@ -363,7 +367,7 @@ void LoginWindow::HandleMessage( Message *pcMessage )
 						if( SavePassword( cNew1 ) != EOK )
 						{
 							/* Warn the user */
-							Alert *pcAlert = new Alert( "File error", "Failed to write new file to /etc/passwd.  Your password was not changed.", Alert::ALERT_WARNING,0, "Close", NULL );
+							Alert *pcAlert = new Alert( MSG_ALERTWND_FILEERROR, MSG_ALERTWND_FILEERROR_TEXT, Alert::ALERT_WARNING,0, MSG_ALERTWND_FILEERROR_OK.c_str(), NULL );
 							pcAlert->CenterInWindow( this );
 							pcAlert->Go();
 						}
@@ -371,7 +375,7 @@ void LoginWindow::HandleMessage( Message *pcMessage )
 					else
 					{
 						/* Password mismatch */
-						Alert *pcAlert = new Alert( "New Password", "The passwords you have entered do not match.  Please re-enter your password.", Alert::ALERT_WARNING,0, "Close", NULL );
+						Alert *pcAlert = new Alert( MSG_ALERTWND_NOMATCH, MSG_ALERTWND_NOMATCH_TEXT, Alert::ALERT_WARNING,0, MSG_ALERTWND_NOMATCH_OK.c_str(), NULL );
 						pcAlert->CenterInWindow( this );
 						pcAlert->Go( new Invoker() );
 
@@ -413,7 +417,7 @@ status_t LoginWindow::Validate( const std::string cOld )
 		if( strcmp( psEntry->pw_passwd, crypt( cOld.c_str(), "$1$" ) ) != 0 )
 		{
 			/* Password does not match */
-			Alert *pcAlert = new Alert( "Incorrect Password", "The current password you have entered is incorrect.  Please check and re-try.", Alert::ALERT_WARNING,0, "OK", NULL );
+			Alert *pcAlert = new Alert( MSG_ALERTWND_INCORRECTPASS, MSG_ALERTWND_INCORRECTPASS_TEXT, Alert::ALERT_WARNING,0, MSG_ALERTWND_INCORRECTPASS_OK.c_str(), NULL );
 			pcAlert->CenterInWindow( this );
 			pcAlert->Go( new Invoker() );
 

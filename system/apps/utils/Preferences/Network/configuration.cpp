@@ -31,6 +31,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include "configuration.h"
+#include "resources/Network.h"
 
 // Constants for stream output
 const char newl = '\n';
@@ -86,8 +87,8 @@ void Configuration::Load()
   if (!fsIn.is_open()) {
 
     // Configuration file did not exist, therefore set default values
-    strncpy(pzHost, "default", C_CO_HOSTLEN);
-    strncpy(pzDomain,"domain", C_CO_DOMAINLEN);
+    strncpy(pzHost, MSG_MAINWND_NAMES_HOST_DEFAULT.c_str(), C_CO_HOSTLEN);
+    strncpy(pzDomain, MSG_MAINWND_NAMES_DOMAIN_DEFAULT.c_str(), C_CO_DOMAINLEN);
     strncpy(pzName1, "", C_CO_IPLEN);
     strncpy(pzName2, "", C_CO_IPLEN);
     for (int i=0;i<C_CO_MAXADAPTORS;i++) {

@@ -1,0 +1,21 @@
+//
+// BZoom String Catalog
+//
+// Translated by: Flemming H. Sørensen (BurningShadow)
+//
+
+MSG_MAINWND_TITLE=100						BZoom
+
+MSG_MAINWND_MENU_APP=200					Program
+MSG_MAINWND_MENU_APP_EXIT						Afslut
+
+MSG_MAINWND_MENU_VIEW=300					Vis
+MSG_MAINWND_MENU_VIEW_MAGNIFICATION				Forstørrelse
+
+MSG_MAINWND_MENU_HELP=400					Hjælp
+MSG_MAINWND_MENU_HELP_ABOUT						Om...
+
+MSG_ABOUTWND_TITLE=1000						Om BZoom
+MSG_ABOUTWND_TEXT								BZoom V1.0\n\nEn simpel pixel zoomer for Syllable.\nBaseret på AZoom fra Chir.\nBZoom er udgivet under GNU GPL
+MSG_ABOUTWND_OK									Ok
+

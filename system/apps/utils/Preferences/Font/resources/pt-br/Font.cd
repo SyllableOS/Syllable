@@ -1,0 +1,23 @@
+//
+// Preferences/Font String Catalog
+//
+// Translated by: Edgar Domingo de Albuquerque (contato@edgar.pro.br)
+// Brazilian Portuguese pt_BR @ 29-Jul-2006 Sorocaba/SP - Brasil
+//
+
+MSG_MAINWND_TITLE=0								Fontes
+
+MSG_MAINWND_FONTSELECTION=100					Seleção de Fontes
+MSG_MAINWND_FONTSELECTION_NORMAL				Normal
+MSG_MAINWND_FONTSELECTION_BOLD					Negrito
+MSG_MAINWND_FONTSELECTION_FIXED					Fixa
+MSG_MAINWND_FONTSELECTION_WINDOW				Janela
+MSG_MAINWND_FONTSELECTION_TOOLWIN				Janela de Ferramentas
+MSG_MAINWND_FONTSELECTION_TEXT					A_nti-Aliasing (Bordas suaves)
+
+MSG_MAINWND_EXAMPLE=200							Exemplo da Fonte Selecionada
+
+MSG_MAINWND_BUTTON_APPLY=300					_Aplicar
+MSG_MAINWND_BUTTON_REVERT						_Reverter
+MSG_MAINWND_BUTTON_DEFAULT						_Padrão
+

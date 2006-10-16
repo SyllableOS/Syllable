@@ -1,0 +1,35 @@
+//
+// Preferences/Screen String Catalog
+//
+// Translated by: Edgar Domingo de Albuquerque (contato@edgar.pro.br)
+// Brazilian Portuguese pt_BR @ 29-Jul-2006 Sorocaba/SP - Brasil
+//
+
+MSG_MAINWND_TITLE=0							Tela
+
+MSG_MAINWND_DISPLAY=100						Monitor
+MSG_MAINWND_DISPLAY_APPLYTO					Aplicar ao
+MSG_MAINWND_DISPLAY_RESOLUTION				Resolução
+MSG_MAINWND_DISPLAY_COLORDEPTH				Profundidade de Cor
+MSG_MAINWND_DISPLAY_REFRESHRATE				Taxa de Refresh
+
+
+MSG_MAINWND_DROPDOWN_APPLY_THIS=200			Esta área de trabalho
+MSG_MAINWND_DROPDOWN_APPLY_ALL				Todas as áreas de trabalho
+MSG_MAINWND_DROPDOWN_COLOUR_BIT				Bit
+MSG_MAINWND_DROPDOWN_COLOUR_UNKNOWN			Desconhecido
+MSG_MAINWND_DROPDOWN_HERTZ					%i Hz
+
+MSG_MAINWND_BUTTON_APPLY=300				Aplicar
+MSG_MAINWND_BUTTON_CLOSE					Fechar
+
+MSG_ALERTWND_CHANGERES=1000					Mudar resolução
+MSG_ALERTWND_CHANGERES_TEXT					Você está prestes a mudar a resoluçã do seu monitor.\nSe o seu monitor não suportar o modo escolhido\nele voltará ao que estava antes. Espere 15 segundo para retornar ao que era antes.\n\nDeseja continuar?
+MSG_ALERTWND_CHANGERES_YES					Sim
+MSG_ALERTWND_CHANGERES_NO					Não
+
+MSG_ALERTWND_CONFIRMRES=2000				Confirmar resolução
+MSG_ALERTWND_CONFIRMRES_TEXT				A nova resolução está funcionando perfeitamente?\n\nCaso não esteja, aguarde que altomaticamente ela\nretornará à resolução antiga.
+MSG_ALERTWND_CONFIRMRES_YES					Sim
+MSG_ALERTWND_CONFIRMRES_NO					Não
+

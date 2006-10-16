@@ -1,0 +1,23 @@
+//
+// AClock String Catalog
+//
+// Translated by: Edgar Domingo de Albuquerque (contato@edgar.pro.br)
+// Brazilian Portuguese pt_BR @ 29-Jul-2006 Sorocaba/SP - Brasil
+//
+
+MSG_MAINWND_TITLE=0							Relógio
+
+MSG_MAINWND_MENU_FILE=100					Arquivo
+MSG_MAINWND_MENU_FILE_EXIT						Sair
+
+MSG_MAINWND_MENU_VIEW=200					Visualizar
+MSG_MAINWND_MENU_VIEW_SECONDS=210				Segundos
+MSG_MAINWND_MENU_VIEW_SECONDS_ON					Ligado
+MSG_MAINWND_MENU_VIEW_SECONDS_OFF					Desligado
+MSG_MAINWND_MENU_VIEW_MODE=220					Modo
+MSG_MAINWND_MENU_VIEW_MODE_DIGITAL					Digital
+MSG_MAINWND_MENU_VIEW_MODE_ANALOG					Analógico
+MSG_MAINWND_MENU_VIEW_COLOR=230					Cor
+MSG_MAINWND_MENU_VIEW_COLOR_WHITE					Branco
+MSG_MAINWND_MENU_VIEW_COLOR_BLACK					Preto
+

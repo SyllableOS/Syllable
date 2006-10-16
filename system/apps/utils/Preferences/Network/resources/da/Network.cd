@@ -1,0 +1,61 @@
+//
+// Preferences/Network String Catalog
+//
+// Translated by: Flemming H. Sørensen (BurningShadow)
+// Korrekturlæsning og Rettelser: Jakob Wolffhechel
+//
+
+MSG_MAINWND_TITLE=0								Netværk
+
+MSG_MAINWND_NAMES=100							Navne
+MSG_MAINWND_NAMES_HOST							Vært:
+MSG_MAINWND_NAMES_HOST_DEFAULT					computernavn
+MSG_MAINWND_NAMES_DOMAIN						Domæne:
+MSG_MAINWND_NAMES_DOMAIN_DEFAULT				domain
+MSG_MAINWND_NAMES_DNS_PRIMARY					Primær DNS:
+MSG_MAINWND_NAMES_DNS_SECONDARY					Sekundær DNS:
+
+MSG_MAINWND_NICINT=200							Netkort
+MSG_MAINWND_NICINT_ENABLED						(I brug)
+MSG_MAINWND_NICINT_DISABLED						(Ikke i brug)
+MSG_MAINWND_NICINT_BUTTON_MODIFY				_Indstil...
+
+MSG_MAINWND_BUTTON_APPLY=300					_Aktiver
+MSG_MAINWND_BUTTON_REVERT						_Gendan
+
+MSG_MODIFYWND_TITLE=400							Indstillinger for netkort
+MSG_MODIFYWND_INTERFACE							netkort:
+MSG_MODIFYWND_ENABLED							(I brug)
+MSG_MODIFYWND_DISABLED							(Ikke  brug)
+MSG_MODIFYWND_USEDHCP							_Brug DHCP (Automatisk tildeling af IP)
+MSG_MODIFYWND_BUTTON_ENABLE						_I brug
+MSG_MODIFYWND_BUTTON_DISABLE					I_kke i brug
+MSG_MODIFYWND_SETTINGS							Indstillinger
+MSG_MODIFYWND_SETTINGS_IPADD					IP-adresse:
+MSG_MODIFYWND_SETTINGS_SUBNET					Net-maske:
+MSG_MODIFYWND_SETTINGS_GATEWAY					Gateway-adresse:
+
+MSG_CONFCHANGEDWND_TITLE=1000					Konfigurationen er ændret - netværk
+MSG_CONFCHANGEDWND_TEXT							Netværkskonfigurationen er ændret\nLog ind som root og konfigurer netværket.
+MSG_CONFCHANGEDWND_OK							_Ok
+
+MSG_ALERTWND_PRIDNS=2000						Fejl - Netværk
+MSG_ALERTWND_PRIDNS_TEXT						IP-adressen til Primær DNS er ikke gyldig
+MSG_ALERTWND_PRIDNS_OK							_Ok
+
+MSG_ALERTWND_SECDNS=3000						Fejl - Netværk
+MSG_ALERTWND_SECDNS_TEXT						IP-adressen til Sekundær DNS er ikke gyldig
+MSG_ALERTWND_SECDNS_OK							_Ok
+
+MSG_ALERTWND_IPADD=4000							Fejl - Netværk
+MSG_ALERTWND_IPADD_TEXT							IP-adressen er ikke gyldig
+MSG_ALERTWND_IPADD_OK							_Ok
+
+MSG_ALERTWND_SUBNET=5000						Fejl - Netværk
+MSG_ALERTWND_SUBNET_TEXT						Net-masken er ikke gyldig
+MSG_ALERTWND_SUBNET_OK							_Ok
+
+MSG_ALERTWND_GATEWAY=6000						Fejl - Netværk
+MSG_ALERTWND_GATEWAY_TEXT						Gateway-adressen er ikke gyldig
+MSG_ALERTWND_GATEWAY_OK							_Ok
+

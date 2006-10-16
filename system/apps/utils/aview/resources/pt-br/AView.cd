@@ -1,0 +1,33 @@
+//
+// AView String Catalog
+//
+// Translated by: Edgar Domingo de Albuquerque (contato@edgar.pro.br)
+// Brazilian Portuguese pt_BR @ 29-Jul-2006 Sorocaba/SP - Brasil
+//
+
+MSG_MAINWND_TITLE=0							AView
+
+MSG_MAINWND_MENU_APPLICATION=100			Aplicativo
+MSG_MAINWND_MENU_APPLICATION_QUIT				Sair
+MSG_MAINWND_MENU_APPLICATION_ABOUT				Sobre	
+
+MSG_MAINWND_MENU_FILE=200					Arquivo
+MSG_MAINWND_MENU_FILE_OPEN						Abrir
+
+MSG_MAINWND_MENU_VIEW=300					Visializar
+MSG_MAINWND_MENU_VIEW_FITTOIMAGE				Ajusta à imagem
+MSG_MAINWND_MENU_VIEW_PREVIOUS					Anterior
+MSG_MAINWND_MENU_VIEW_NEXT						Próximo
+MSG_MAINWND_MENU_VIEW_FIRST						Primeiro
+MSG_MAINWND_MENU_VIEW_LAST						Último
+
+MSG_ABOUTWND_TITLE=1000					Sobre AView
+MSG_ABOUTWND_TEXT								AView\n\nImage Viewer para o Syllable    \nCopyright 2005 Syllable Team\n\nAView sob a GNU General\nPublic License. Por favor, acesse www.gnu.org\npara maiores informações.\n
+MSG_ABOUTWND_OK									Ok
+
+MSG_STATUSBAR_OF=2000					%i de %i
+
+MSG_MIMETYPE_IMAGE_PNG=10000			Imagem PNG 
+MSG_MIMETYPE_IMAGE_JPEG					Imagem JPEG
+MSG_MIMETYPE_IMAGE_GIF					GIF Image
+

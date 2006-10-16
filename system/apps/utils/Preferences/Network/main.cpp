@@ -86,6 +86,8 @@ int main(int argc, char* argv[])
 
 PrefsNetApp::PrefsNetApp() : os::Application("application/x-vnd-NetworkPreferences")
 {
+  SetCatalog("Network.catalog");
+
   // Get screen width and height to centre the window
   os::Desktop *pcDesktop = new os::Desktop();
   int iWidth = pcDesktop->GetScreenMode().m_nWidth;

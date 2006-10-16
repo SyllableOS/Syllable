@@ -37,6 +37,8 @@ class UsersApplication : public Application
 
 UsersApplication::UsersApplication() : Application( "application/x-vnd-UsersPreferences" )
 {
+	SetCatalog("UsersAndGroups.catalog");
+
 	m_pcUsersWindow = new UsersWindow( Rect( 0, 0, 399, 449 ) );
 
 	m_pcUsersWindow->CenterInScreen();

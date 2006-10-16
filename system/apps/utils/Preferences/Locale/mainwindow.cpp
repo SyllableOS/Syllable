@@ -32,7 +32,7 @@
 #include <iostream>
 #include <sys/stat.h>
 
-#include "catalog.h"
+#include "resources/Locale.h"
 
 /*
   // Create the layouts/views

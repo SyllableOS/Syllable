@@ -1,0 +1,69 @@
+//
+// Albert String Catalog
+//
+// Translated by: Edgar Domingo de Albuquerque (contato@edgar.pro.br)
+// Brazilian Portuguese pt_BR @ 29-Jul-2006 Sorocaba/SP - Brasil
+//
+
+MSG_MAINWND_TITLE=0									Albert
+
+MSG_MAINWND_MENU_FILE=100							Arquivo
+MSG_MAINWND_MENU_FILE_CLEARALL							Limpar Tudo
+MSG_MAINWND_MENU_FILE_EXIT								Sair
+
+MSG_MAINWND_MENU_BASE=200							Base
+MSG_MAINWND_MENU_BASE_BINARY							Binário (2)
+MSG_MAINWND_MENU_BASE_OCTAL							Octal (8)
+MSG_MAINWND_MENU_BASE_DECIMAL							Decimal (10)
+MSG_MAINWND_MENU_BASE_HEXADECIMAL						Hexadecimal (16)
+
+MSG_MAINWND_MENU_CONSTANTS=300						Constantes
+MSG_MAINWND_MENU_CONSTANTS_PI							Pi
+MSG_MAINWND_MENU_CONSTANTS_E							e
+MSG_MAINWND_MENU_CONSTANTS_C							Velocidade da Luz (c)
+MSG_MAINWND_MENU_CONSTANTS_ELECTRON						Magnitude da carga do elétron
+MSG_MAINWND_MENU_CONSTANTS_GRAV							Constante Gravitacional (G)
+MSG_MAINWND_MENU_CONSTANTS_PLANCK						Constante de Planck (h)
+MSG_MAINWND_MENU_CONSTANTS_BOLTZMANN					Constante de Boltzmann
+MSG_MAINWND_MENU_CONSTANTS_AVOGADRO						Número Avogadro
+MSG_MAINWND_MENU_CONSTANTS_GAS							Constante de Gas (R)
+MSG_MAINWND_MENU_CONSTANTS_MASSELECTRON					Massa do elétron
+MSG_MAINWND_MENU_CONSTANTS_MASSPROTON					Massa do próton
+MSG_MAINWND_MENU_CONSTANTS_MASSNEUTRON					Massa do neutron
+MSG_MAINWND_MENU_CONSTANTS_PERME						Permeabilidade do Espaço Livre
+MSG_MAINWND_MENU_CONSTANTS_PERMI						permissividade do Espaço Livre
+
+MSG_MAINWND_MENU_WINDOWS=400						Janela
+MSG_MAINWND_MENU_WINDOWS_PAPERROLL						Rolagem
+MSG_MAINWND_MENU_WINDOWS_BASEN							Base-N
+
+MSG_MAINWND_MENU_HELP=500							Ajuda
+MSG_MAINWND_MENU_HELP_ABOUT								Sobre
+MSG_MAINWND_MENU_HELP_KEYBOARD							Teclado
+
+MSG_PAPERROLL_TITLE=1000							Albert
+MSG_PAPERROLL_CMENU_COPY								Copiar
+MSG_PAPERROLL_CMENU_CLEAR								Limpar
+MSG_PAPERROLL_CMENU_SAVE								Salvar
+
+MSG_BASENWND_TITLE=2000								Base-N
+MSG_BASENWND_BINARY										Binário
+MSG_BASENWND_OCTAL										Octal
+MSG_BASENWND_DECIMAL									Decimal
+MSG_BASENWND_HEXADECIMAL								Hexadecimal
+MSG_BASENWND_BASE64										Base-64
+MSG_BASENWND_ROMAN										Roman
+
+MSG_ABOUTWND_TITLE=3000								Sobre Albert
+MSG_ABOUTWND_TEXTONE									Albert V0.5 2004-02-07 Copyright (C) 2002-2004 Henrik Isaksson.
+MSG_ABOUTWND_TEXTTWO									Albert sob GNU General Public License.
+
+MSG_KBDWND_TITLE=4000								Atalhos do Teclado
+MSG_KBDWND_TEXTONE										Atalhos do Teclado
+MSG_KBDWND_TEXT09										Digitos decimais 0 até 9
+MSG_KBDWND_TEXTAF										Digitos Hexadecimais A até F
+MSG_KBDWND_TEXTASMD										Adição, Subtração, Multiplicação e Divisão
+MSG_KBDWND_TEXTENTER									ENTER - Calcular resultado
+MSG_KBDWND_TEXTBACKSPACE								BACKSPACE - Backspace (surpresa!)
+MSG_KBDWND_CLOSE										Fechar
+

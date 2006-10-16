@@ -1,6 +1,8 @@
 #Makefile for Desktop
 COPTS = -c
 
+CATALOGS = da es hu pt-br
+
 APPBIN = /atheos/Applications/Preferences
 OBJS = Prefs.o
 
@@ -20,7 +22,7 @@ $(OBJDIR)/%.o : %.s
 	@echo Assembling : $<
 	@$(CC) $(COPTS) -x assembler-with-cpp $< -o $@
 
-all : objs Desktop
+all : objs catalogs Desktop
 
 objs:
 	@mkdir -p objs
@@ -30,11 +32,32 @@ Desktop: $(OBJS)
 	@$(CXX) $(OBJS) -o Desktop -lsyllable
 	@echo Adding resources...
 	@rescopy Desktop -r icon48x48.png icon24x24.png 
+	rescopy -a Desktop resources/Desktop.catalog
+	for CATALOG in $(CATALOGS);do \
+		echo $$CATALOG; \
+		rescopy -a Desktop $$CATALOG/Desktop.catalog=resources/$$CATALOG/Desktop.catalog; \
+	done;
 
-clean:
+catalogs:
+	cd resources; \
+	catcomp -c Desktop.cd; \
+	for CATALOG in $(CATALOGS);do \
+		echo $$CATALOG; \
+		cd $$CATALOG; \
+		catcomp -t Desktop.cd; \
+		cd ..; \
+	done;
+
+clean: catalog-clean
 	@echo Cleaning...
 	@rm -f $(OBJDIR)/*
 	@rm -f Desktop
+
+catalog-clean:
+	-rm resources/Desktop.catalog resources/Desktop.h; \
+	for CATALOG in $(CATALOGS);do \
+		rm resources/$$CATALOG/Desktop.catalog; \
+	done;
 
 deps:
 

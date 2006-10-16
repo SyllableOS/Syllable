@@ -1,70 +1,111 @@
 //
 // AEdit string catalog
 //
+// Translated by: Maximo Pech Jaramillo <makzpj@gmail.com>
+//
 
-MSG_APPWND_TITLE					AEdit
-MSG_APPWND_TITLE_NEW_FILE			Nuevo Archivo
+MSG_APPWND_TITLE							AEdit
+MSG_APPWND_TITLE_NEW_FILE				    Archivo Nuevo
 
-MSG_MENU_APPLICATION=100			Aplicación
-MSG_MENU_APPLICATION_QUIT			Salir
-MSG_MENU_APPLICATION_ABOUT			Acerca de
+MSG_MENU_APPLICATION=100					Aplicación
+MSG_MENU_APPLICATION_QUIT					Salir
+MSG_MENU_APPLICATION_ABOUT					Acerca de AEdit...
 
-MSG_MENU_FILE=200					Archivo
-MSG_MENU_FILE_NEW					Nuevo
-MSG_MENU_FILE_OPEN					Abrir
-MSG_MENU_FILE_SAVE					Guardar
-MSG_MENU_FILE_SAVE_AS				Guardar como...
+MSG_MENU_FILE=200							Archivo
+MSG_MENU_FILE_NEW							Nuevo
+MSG_MENU_FILE_OPEN							Abrir...
+MSG_MENU_FILE_CLOSE							Cerrar
+MSG_MENU_FILE_SAVE							Guardar
+MSG_MENU_FILE_SAVE_AS						Guardar Como...
+MSG_MENU_FILE_SAVE_ALL						Guardar Todos
+MSG_MENU_FILE_NEXT_FILE						Archivo Siguiente
+MSG_MENU_FILE_PREVIOUS_FILE					Archivo Anterior
 
-MSG_MENU_EDIT=300					Edición
-MSG_MENU_EDIT_CUT					Cortar
-MSG_MENU_EDIT_COPY					Copiar
-MSG_MENU_EDIT_PASTE					Pegar
-MSG_MENU_EDIT_SELECT_ALL			Seleccionar todo
-MSG_MENU_EDIT_UNDO					Deshacer
-MSG_MENU_EDIT_REDO					Rehacer
+MSG_MENU_EDIT=300							Editar
+MSG_MENU_EDIT_CUT							Cortar
+MSG_MENU_EDIT_COPY							Copiar
+MSG_MENU_EDIT_PASTE							Pegar
+MSG_MENU_EDIT_SELECT_ALL					Seleccionar Todo
+MSG_MENU_EDIT_UNDO							Deshacer
+MSG_MENU_EDIT_REDO							Rehacer
 
-MSG_MENU_FIND=400					Buscar
-MSG_MENU_FIND_FIND					Buscar
-MSG_MENU_FIND_REPLACE				Reemplazar
-MSG_MENU_FIND_GOTO_LINE				Ir a la línea...
+MSG_MENU_FIND=400							Buscar
+MSG_MENU_FIND_FIND							Buscar...
+MSG_MENU_FIND_REPLACE						Reemplazar...
+MSG_MENU_FIND_GOTO_LINE						Ir a la línea...
 
-MSG_MENU_FONT=500					Fuente
-MSG_MENU_FONT_SIZE					Tamaño
+MSG_MENU_FONT=500							Fuente
+MSG_MENU_FONT_SIZE							Tamaño
 
-MSG_MENU_SETTINGS=600				Configuración
-MSG_MENU_SETTINGS_SAVE_ON_CLOSE		Guardar la configuración al Cerrrar
-MSG_MENU_SETTINGS_SAVE_NOW			Guardar la configuración ahora
-MSG_MENU_SETTINGS_RESET				Volver a la configuración original
+MSG_MENU_SETTINGS=600						Configuración
+MSG_MENU_SETTINGS_SAVE_ON_CLOSE				Guardar la Configuración al Salir
+MSG_MENU_SETTINGS_SAVE_NOW					Guardar la Configuración Ahora
+MSG_MENU_SETTINGS_RESET						Volver a la COnfiguración Original
 
-MSG_MENU_HELP=700					Ayuda
-MSG_MENU_HELP_TABLE_OF_CONTENTS		Tabla de Contenidos
-MSG_MENU_HELP_HOMEPAGE				Página de AEdit
+MSG_MENU_HELP=700							Ayuda
+MSG_MENU_HELP_TABLE_OF_CONTENTS				Manual...
+MSG_MENU_HELP_HOMEPAGE						Página web de AEdit
 
-MSG_ABOUT_TITLE=800					Acerca de
-MSG_ABOUT_TEXT						\n\nEditor de texto para Syllable\nCopyright 2000-2003 Kristian Van Der Vliet\n\nAEdit se distribuye bajo los términos de la\n licencia GNU General Public License.\n  Por favor, vea el archivo COPYING,\ndistribuido con AEdit, o visite http://www.gnu.org\npara más información.
-MSG_ABOUT_CLOSE						Aceptar
+MSG_ABOUT_TITLE=800							Acerca de AEdit
+MSG_ABOUT_TEXT								\n\nEditor de Texto para Syllable\nCopyright 2000-2003 Kristian Van Der Vliet\n\nAEdit is released under the GNU General\nPublic License. Please see the file COPYING,\ndistributed with AEdit, or http://www.gnu.org\nfor more information.
+MSG_ABOUT_CLOSE								Cerrar
+MSG_ABOUT_VERSION							versión: 
+MSG_ABOUT_LINE_1 							Un Editor de Texto para Syllable
+MSG_ABOUT_LINE_2							(c) 2005 The Syllable Team
+MSG_ABOUT_LINE_3							w w w . s y l l a b l e . o r g
 
-MSG_ERROR_TITLE=900					AEdit
-MSG_ERROR_CANT_SAVE					No se puede guardar el archivo
-MSG_ERROR_CLOSE						Aceptar
+MSG_ERROR_TITLE=900							Guardar
+MSG_ERROR_CANT_SAVE							No se puede guardar el archivo.
+MSG_ERROR_CLOSE								OK
 
-MSG_FIND_TITLE=1000					Buscar
-MSG_FIND_FIND_LABEL					Buscar
-MSG_FIND_CASE_SENSITIVE				Busqueda sensible a Mayúsculas
-MSG_FIND_FIND						_Buscar
-MSG_FIND_FIND_NEXT					Buscar _Siguiente
-MSG_FIND_CLOSE						_Cerrar
+MSG_FIND_TITLE=1000							Buscar
+MSG_FIND_FIND_LABEL							Buscar
+MSG_FIND_CASE_SENSITIVE						Distinguir entre Mayúsculas y minúsculas
+MSG_FIND_FIND								_Buscar 
+MSG_FIND_FIND_NEXT							Buscar _Siguiente
+MSG_FIND_CLOSE					    		_Cerrar
 
-MSG_GOTO_TITLE=1100					Ir a la línea
-MSG_GOTO_GOTO						Ir
-MSG_GOTO_CLOSE						Cerrar
+MSG_GOTO_TITLE=1100							Ir a la Línea
+MSG_GOTO_GOTO								_Ir a la Línea
+MSG_GOTO_CLOSE								_Cancelar
 
-MSG_REPLACE_TITLE=1200				Remplazar
-MSG_REPLACE_LBLFIND					Buscar
-MSG_REPLACE_WITH					Remplaza con
-MSG_REPLACE_CASE_SENSITIVE			Busqueda _sensible a Mayúsculas
-MSG_REPLACE_FIND					_Buscar
-MSG_REPLACE_FIND_NEXT				Buscar _Siguienet
-MSG_REPLACE_REPLACE					_Remplazar
-MSG_REPLACE_CLOSE					_Cerrar
+MSG_REPLACE_TITLE=1200						Reemplazar
+MSG_REPLACE_LBLFIND							Buscar
+MSG_REPLACE_WITH							Reemplazar con
+MSG_REPLACE_CASE_SENSITIVE					Distinguir entre _Mayúsculas y minúsculas
+MSG_REPLACE_FIND							_Buscar
+MSG_REPLACE_FIND_NEXT						Buscar _Siguiente
+MSG_REPLACE_REPLACE							_Reemplazar
+MSG_REPLACE_CLOSE				    		_Cerrar
 
+MSG_ALERT_CLOSE_FILE_TITLE=1500				Deseas Guardar el Archivo?
+MSG_ALERT_CLOSE_FILE_BODY					¿Deseas Guardar el Archivo antes de cerrarlo?
+MSG_ALERT_CLOSE_FILE_YES					Guardar
+MSG_ALERT_CLOSE_FILE_NO						Descartar
+MSG_ALERT_CLOSE_FILE_CANCEL					Cancelar
+MSG_ALERT_SAVE_FILE_TITLE					Error
+MSG_ALERT_SAVE_FILE_BODY					No se puede guardar el archivo "%s".
+MSG_ALERT_SAVE_FILE_OK						OK
+MSG_ALERT_QUIT_TITLE						¿Realmente deseas salir?
+MSG_ALERT_QUIT_BODY							Tienes archivos sin guardar. Los cambios se perderán si sales ahora.\n¿Estas seguro de que desear salir?
+MSG_ALERT_QUIT_YES							Salir
+MSG_ALERT_QUIT_NO							Cancelar
+MSG_ALERT_FILE_OPEN_TITLE					Error
+MSG_ALERT_FILE_OPEN_OK						OK
+
+MSG_STATUSBAR_WELCOME=2000					Bienvenido a AEdit!
+MSG_STATUSBAR_CLOSED_FILE					Se ha cerrado el archivo "%s" .
+MSG_STATUSBAR_SAVED_FILE					El archivo "%s" ha sido guardado.
+MSG_STATUSBAR_FILE_CLOSED_AND_SAVED			El archivo "%s" ha sido cerrado y sus cambios fueron guardados.
+MSG_STATUSBAR_FILE_CLOSED_AND_NOT_SAVED		El archivo "%s" ha sido cerrado sin guardar sus cambios.
+MSG_STATUSBAR_NEW_FILE_CREATED				Nuevo archivo "%s" creado.
+MSG_STATUSBAR_FILE_LOADED_OK				El archivo "%s" fue abierto exitosamente.
+MSG_STATUSBAR_FILE_UNABLE_TO_OPEN			No se puede abrir el archivo "%s".
+MSG_STATUSBAR_SEARCH_FOUND					Frase "%s" encontrada.
+MSG_STATUSBAR_SEARCH_NOT_FOUND_1			Frase \"%s\" no encontrada.
+MSG_STATUSBAR_SEARCH_NOT_FOUND_2			Frase no encontrada.
+MSG_STATUSBAR_REPLACE_OK					Frase "%s" reemplazada con "%s".
+MSG_STATUSBAR_REPLACE_NOT_OK				No se reemplazó la frase.
+
+MSG_BUFFER_UNTITLED=2100					Sin título - %d
+MSG_BUFFER_CURSOR							Columna: %d Fila: %d

@@ -1,0 +1,61 @@
+//
+// Preferences/Network String Catalog
+//
+// Translated by: Edgar Domingo de Albuquerque (contato@edgar.pro.br)
+// Brazilian Portuguese pt_BR @ 29-Jul-2006 Sorocaba/SP - Brasil
+//
+
+MSG_MAINWND_TITLE=0								Rede
+
+MSG_MAINWND_NAMES=100							Nomes
+MSG_MAINWND_NAMES_HOST							Host:
+MSG_MAINWND_NAMES_HOST_DEFAULT					Padrão
+MSG_MAINWND_NAMES_DOMAIN						Domínio:
+MSG_MAINWND_NAMES_DOMAIN_DEFAULT				domínio
+MSG_MAINWND_NAMES_DNS_PRIMARY					DNS Primário:
+MSG_MAINWND_NAMES_DNS_SECONDARY					DNS Secundário:
+
+MSG_MAINWND_NICINT=200							Interfaces de Rede
+MSG_MAINWND_NICINT_ENABLED						(Ativada)
+MSG_MAINWND_NICINT_DISABLED						(Desativada)
+MSG_MAINWND_NICINT_BUTTON_MODIFY				_Modificar
+
+MSG_MAINWND_BUTTON_APPLY=300					_Aplicar
+MSG_MAINWND_BUTTON_REVERT						_Reverter
+
+MSG_MODIFYWND_TITLE=400							Modificar - Rede
+MSG_MODIFYWND_INTERFACE							Interface:
+MSG_MODIFYWND_ENABLED							(Ativada)
+MSG_MODIFYWND_DISABLED							(Desativada)
+MSG_MODIFYWND_USEDHCP							_Usar DHCP
+MSG_MODIFYWND_BUTTON_ENABLE						_Ativar
+MSG_MODIFYWND_BUTTON_DISABLE					_Desativar
+MSG_MODIFYWND_SETTINGS							Configurações
+MSG_MODIFYWND_SETTINGS_IPADD					Endereço IP:
+MSG_MODIFYWND_SETTINGS_SUBNET					Máscara de SubRede:
+MSG_MODIFYWND_SETTINGS_GATEWAY					Roteador padrão:
+
+MSG_CONFCHANGEDWND_TITLE=1000					Configuração modificada - Rede
+MSG_CONFCHANGEDWND_TEXT							A configuração da Rede foi alterada\nFaça Login como root e a Prefrências de Rede para configurar.
+MSG_CONFCHANGEDWND_OK							_Ok
+
+MSG_ALERTWND_PRIDNS=2000						Invalido - Rede
+MSG_ALERTWND_PRIDNS_TEXT						O valor digitado para o DNS Primário é inválido
+MSG_ALERTWND_PRIDNS_OK							_Ok
+
+MSG_ALERTWND_SECDNS=3000						Invalid - Rede
+MSG_ALERTWND_SECDNS_TEXT						O valor digitado para o DNS Secundário é inválido
+MSG_ALERTWND_SECDNS_OK							_Ok
+
+MSG_ALERTWND_IPADD=4000							Invalid - Rede
+MSG_ALERTWND_IPADD_TEXT							O valor digitado para o Endereço IP é inválido
+MSG_ALERTWND_IPADD_OK							_Ok
+
+MSG_ALERTWND_SUBNET=5000						Invalid - Rede
+MSG_ALERTWND_SUBNET_TEXT						O valor digitado para a Máscara de SubRede é inválido
+MSG_ALERTWND_SUBNET_OK							_Ok
+
+MSG_ALERTWND_GATEWAY=6000						Invalid - Rede
+MSG_ALERTWND_GATEWAY_TEXT						O valor digitado para o Roteador padrão é inválido
+MSG_ALERTWND_GATEWAY_OK							_Ok
+

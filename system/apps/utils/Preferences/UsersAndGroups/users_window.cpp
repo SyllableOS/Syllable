@@ -36,11 +36,12 @@
 #include <changepwddlg.h>
 #include <user_propertiesdlg.h>
 #include <group_propertiesdlg.h>
+#include "resources/UsersAndGroups.h"
 
 using namespace os;
 using namespace std;
 
-UsersWindow::UsersWindow( const os::Rect cFrame ) : Window( cFrame, "Users", "Users & Groups" )
+UsersWindow::UsersWindow( const os::Rect cFrame ) : Window( cFrame, "Users", MSG_MAINWND_TITLE )
 {
 	Rect cBounds = GetBounds();
 
@@ -53,10 +54,10 @@ UsersWindow::UsersWindow( const os::Rect cFrame ) : Window( cFrame, "Users", "Us
 	Rect cTabBounds = m_pcTabView->GetBounds();
 
 	m_pcUsersView = new UsersView( cTabBounds );
-	m_pcTabView->AppendTab( "Users", m_pcUsersView );
+	m_pcTabView->AppendTab( MSG_MAINWND_TAB_USERS, m_pcUsersView );
 
 	m_pcGroupsView = new GroupsView( cTabBounds );
-	m_pcTabView->AppendTab( "Groups", m_pcGroupsView );
+	m_pcTabView->AppendTab( MSG_MAINWND_TAB_GROUPS, m_pcGroupsView );
 
 	AddChild( m_pcTabView );
 
@@ -72,10 +73,10 @@ UsersWindow::UsersWindow( const os::Rect cFrame ) : Window( cFrame, "Users", "Us
 
 	HLayoutNode *pcButtons = new HLayoutNode( "users_window_buttons", 0.0f );
 	pcButtons->AddChild( new HLayoutSpacer( "users_window_h_spacer", 200.0f ) );
-	Button *pcOkButton = new Button( Rect(), "users_window_ok", "_OK", new Message( ID_WINDOW_OK ) );
+	Button *pcOkButton = new Button( Rect(), "users_window_ok", MSG_MAINWND_BUTTON_OK, new Message( ID_WINDOW_OK ) );
 	pcButtons->AddChild( pcOkButton );
 	pcButtons->AddChild( new HLayoutSpacer( "users_window_h_spacer" ) );
-	pcButtons->AddChild( new Button( Rect(), "users_window_cancel", "_Cancel", new Message( ID_WINDOW_CANCEL ) ) );
+	pcButtons->AddChild( new Button( Rect(), "users_window_cancel", MSG_MAINWND_BUTTON_CANCEL, new Message( ID_WINDOW_CANCEL ) ) );
 	pcButtons->AddChild( new HLayoutSpacer( "users_window_h_spacer" ) );
 
 	pcNode->AddChild( pcButtons );
@@ -143,11 +144,11 @@ UsersView::UsersView( const Rect cFrame ) : View( cFrame, "users_users_view" )
 	VLayoutNode *pcUsersRoot = new VLayoutNode( "users_root" );
 
 	m_pcUsersList = new ListView( Rect(), "users_list", ListView::F_NO_AUTO_SORT | ListView::F_RENDER_BORDER );
-	m_pcUsersList->InsertColumn( "Name", 120 );
-	m_pcUsersList->InsertColumn( "Login", 60 );
-	m_pcUsersList->InsertColumn( "ID", 40 );
-	m_pcUsersList->InsertColumn( "Group", 60 );
-	m_pcUsersList->InsertColumn( "Home", 160 );
+	m_pcUsersList->InsertColumn( MSG_MAINWND_TAB_USERS_NAME.c_str(), 120 );
+	m_pcUsersList->InsertColumn( MSG_MAINWND_TAB_USERS_LOGIN.c_str(), 60 );
+	m_pcUsersList->InsertColumn( MSG_MAINWND_TAB_USERS_ID.c_str(), 40 );
+	m_pcUsersList->InsertColumn( MSG_MAINWND_TAB_USERS_GROUP.c_str(), 60 );
+	m_pcUsersList->InsertColumn( MSG_MAINWND_TAB_USERS_HOME.c_str(), 160 );
 	m_pcUsersList->SetSelChangeMsg( new Message( ID_USERS_SELECT ) );
 
 	pcUsersRoot->AddChild( m_pcUsersList, 200.0f );
@@ -155,16 +156,16 @@ UsersView::UsersView( const Rect cFrame ) : View( cFrame, "users_users_view" )
 
 	HLayoutNode *pcUsersButtons = new HLayoutNode( "users_buttons", 0.0f, pcUsersRoot );
 
-	m_pcAdd = new Button( Rect(), "add_button", "_Add User..", new Message( ID_USERS_ADD ) );
+	m_pcAdd = new Button( Rect(), "add_button", MSG_MAINWND_TAB_USERS_BUTTON_ADD, new Message( ID_USERS_ADD ) );
 	pcUsersButtons->AddChild( m_pcAdd, 1.0f );
 
-	m_pcEdit = new Button( Rect(), "edit_button", "_Edit...", new Message( ID_USERS_EDIT ) );
+	m_pcEdit = new Button( Rect(), "edit_button", MSG_MAINWND_TAB_USERS_BUTTON_EDIT, new Message( ID_USERS_EDIT ) );
 	pcUsersButtons->AddChild( m_pcEdit, 1.0f );
 
-	m_pcDelete = new Button( Rect(), "delete_button", "_Delete User", new Message( ID_USERS_DELETE ) );
+	m_pcDelete = new Button( Rect(), "delete_button", MSG_MAINWND_TAB_USERS_BUTTON_DEL, new Message( ID_USERS_DELETE ) );
 	pcUsersButtons->AddChild( m_pcDelete, 1.0f );
 
-	m_pcPassword = new Button( Rect(), "set_password_button", "_Set Password...", new Message( ID_USERS_SET_PASSWD ) );
+	m_pcPassword = new Button( Rect(), "set_password_button", MSG_MAINWND_TAB_USERS_BUTTON_PASS, new Message( ID_USERS_SET_PASSWD ) );
 	pcUsersButtons->AddChild( m_pcPassword, 1.0f );
 
 	m_pcAdd->SetEnable( getuid() == 0 );
@@ -287,15 +288,15 @@ void UsersView::HandleMessage( Message *pcMessage )
 			psPasswd->pw_uid = 100;
 			psPasswd->pw_gid = 100;
 
-			psPasswd->pw_name = "new";
-			psPasswd->pw_gecos = "New user";
+			psPasswd->pw_name = "New user";
+			psPasswd->pw_gecos = "new";
 			psPasswd->pw_dir = "/home/new";
 			psPasswd->pw_shell = "/bin/bash";
 
 			Message *pcChangeMsg = new Message( ID_USERS_POST_ADD );
 			pcChangeMsg->AddPointer( "data", (void*)psPasswd );
 
-			DisplayProperties( "New user", psPasswd, pcChangeMsg );
+			DisplayProperties( MSG_NEWUSERWND_TITLE, psPasswd, pcChangeMsg );
 			break;
 		}
 
@@ -381,7 +382,7 @@ void UsersView::HandleMessage( Message *pcMessage )
 			pcChangeMsg->AddInt32( "selection", nSelected );
 
 			string cTitle;
-			cTitle = "Properties for " + string( m_psSelected->pw_gecos );
+			cTitle = MSG_EDITUSERWND_TITLE + " " + string( m_psSelected->pw_gecos );
 
 			DisplayProperties( cTitle, m_psSelected, pcChangeMsg );
 			break;
@@ -496,7 +497,7 @@ void UsersView::HandleMessage( Message *pcMessage )
 
 			ChangePasswordDlg *pcDlg;
 
-			pcDlg = new ChangePasswordDlg( Rect( 0, 0, 299, 109 ), "change_password", "Change Password", m_psSelected->pw_name, this, pcChangeMsg );
+			pcDlg = new ChangePasswordDlg( Rect( 0, 0, 299, 109 ), "change_password", MSG_CHANGEPASS_TITLE, m_psSelected->pw_name, this, pcChangeMsg );
 			pcDlg->CenterInWindow( GetWindow() );
 			pcDlg->Show();
 			pcDlg->MakeFocus( true );
@@ -634,8 +635,8 @@ GroupsView::GroupsView( const Rect cFrame ) : View( cFrame, "users_groups_view" 
 	VLayoutNode *pcGroupsRoot = new VLayoutNode( "groups_root" );
 
 	m_pcGroupsList = new ListView( Rect(), "groups_list", ListView::F_NO_AUTO_SORT | ListView::F_RENDER_BORDER );
-	m_pcGroupsList->InsertColumn( "Name", 250 );
-	m_pcGroupsList->InsertColumn( "ID", 40 );
+	m_pcGroupsList->InsertColumn( MSG_MAINWND_TAB_GROUPS_NAME.c_str(), 250 );
+	m_pcGroupsList->InsertColumn( MSG_MAINWND_TAB_GROUPS_ID.c_str(), 40 );
 	m_pcGroupsList->SetSelChangeMsg( new Message( ID_GROUPS_SELECT ) );
 
 	pcGroupsRoot->AddChild( m_pcGroupsList, 200.0f );
@@ -643,13 +644,13 @@ GroupsView::GroupsView( const Rect cFrame ) : View( cFrame, "users_groups_view" 
 
 	HLayoutNode *pcGroupsButtons = new HLayoutNode( "groups_buttons", 0.0f, pcGroupsRoot );
 
-	m_pcAdd = new Button( Rect(), "add_button", "_Add Group..", new Message( ID_GROUPS_ADD ) );
+	m_pcAdd = new Button( Rect(), "add_button", MSG_MAINWND_TAB_GROUPS_BUTTON_ADD, new Message( ID_GROUPS_ADD ) );
 	pcGroupsButtons->AddChild( m_pcAdd, 1.0f );
 
-	m_pcEdit = new Button( Rect(), "edit_button", "_Edit...", new Message( ID_GROUPS_EDIT ) );
+	m_pcEdit = new Button( Rect(), "edit_button", MSG_MAINWND_TAB_GROUPS_BUTTON_EDIT, new Message( ID_GROUPS_EDIT ) );
 	pcGroupsButtons->AddChild( m_pcEdit, 1.0f );
 
-	m_pcDelete = new Button( Rect(), "delete_button", "_Delete Group", new Message( ID_GROUPS_DELETE ) );
+	m_pcDelete = new Button( Rect(), "delete_button", MSG_MAINWND_TAB_GROUPS_BUTTON_DEL, new Message( ID_GROUPS_DELETE ) );
 	pcGroupsButtons->AddChild( m_pcDelete, 1.0f );
 
 	m_pcAdd->SetEnable( getuid() == 0 );
@@ -766,7 +767,7 @@ void GroupsView::HandleMessage( Message *pcMessage )
 			Message *pcChangeMsg = new Message( ID_GROUPS_POST_ADD );
 			pcChangeMsg->AddPointer( "data", (void*)psGroup );
 
-			DisplayProperties( "New group", psGroup, pcChangeMsg );
+			DisplayProperties( MSG_NEWGROUPWND_TITLE, psGroup, pcChangeMsg );
 			break;
 		}
 
@@ -824,7 +825,7 @@ void GroupsView::HandleMessage( Message *pcMessage )
 			pcChangeMsg->AddInt32( "selection", nSelected );
 
 			string cTitle;
-			cTitle = "Properties for " + string( m_psSelected->gr_name );
+			cTitle = MSG_EDITGROUPWND_TITLE + " " + string( m_psSelected->gr_name );
 
 			DisplayProperties( cTitle, m_psSelected, pcChangeMsg );
 			break;
@@ -932,7 +933,7 @@ status_t GroupsView::SaveChanges( void )
 		unlink( zTemp );
 
 		/* Warn the user */
-		Alert *pcAlert = new Alert( "File error", "Failed to write new file to /etc/group.  The groups have not been changed.", Alert::ALERT_WARNING,0, "Close", NULL );
+		Alert *pcAlert = new Alert( MSG_ALERTWND_GRPWRTERR, MSG_ALERTWND_GRPWRTERR_TEXT, Alert::ALERT_WARNING,0, MSG_ALERTWND_GRPWRTERR_OK.c_str(), NULL );
 		pcAlert->CenterInWindow( GetWindow() );
 		pcAlert->Go( new Invoker() );
 

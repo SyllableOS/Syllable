@@ -5,10 +5,27 @@ OBJDIR = objs/
 OBJS = $(OBJDIR)main.o $(OBJDIR)appwindow.o $(OBJDIR)iview.o $(OBJDIR)statusbar.o $(OBJDIR)toolbar.o
 EXE = AView
 
-all: $(OBJDIR) $(OBJS)
+CATALOGS = da es hu pt-br
+
+all: $(OBJDIR) catalogs $(OBJS)
 	$(CXX) $(OBJS) -lsyllable -o $(EXE)
 	strip --strip-all $(EXE)
 	rescopy -r $(EXE) *.png
+	rescopy -a $(EXE) resources/$(EXE).catalog
+	for CATALOG in $(CATALOGS);do \
+		echo $$CATALOG; \
+		rescopy -a $(EXE) $$CATALOG/$(EXE).catalog=resources/$$CATALOG/$(EXE).catalog; \
+	done;
+
+catalogs:
+	cd resources; \
+	catcomp -c $(EXE).cd; \
+	for CATALOG in $(CATALOGS);do \
+		echo $$CATALOG; \
+		cd $$CATALOG; \
+		catcomp -t $(EXE).cd; \
+		cd ..; \
+	done;
 
 $(OBJDIR):
 	mkdir -p $(OBJDIR)
@@ -23,7 +40,7 @@ dist: $(EXE)
 	-cp -pf $(EXE) $(DIST_DIR)/atheos/Applications/AView/
 	-ln -sf /Applications/AView/$(EXE) $(DIST_DIR)/atheos/sys/bin/aview
 
-clean:
+clean: catalog-clean
 	-rm $(OBJS)
 	-rm $(EXE)
 
@@ -41,4 +58,10 @@ $(OBJDIR)statusbar.o: statusbar.cpp statusbar.h
 
 $(OBJDIR)toolbar.o: toolbar.cpp toolbar.h
 	$(CXX) $(COPTS) toolbar.cpp -o $@
+
+catalog-clean:
+	-rm resources/$(EXE).catalog resources/$(EXE).h; \
+	for CATALOG in $(CATALOGS);do \
+		rm resources/$$CATALOG/$(EXE).catalog; \
+	done;
 

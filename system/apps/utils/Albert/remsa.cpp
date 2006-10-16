@@ -18,6 +18,7 @@
 
 #include "remsa.h"
 #include "postoffice.h"
+#include "resources/Albert.h"
 
 enum {
 	ID_COPY = 5, ID_CLEAR, ID_SAVE
@@ -27,9 +28,9 @@ PaperRoll::PaperRoll(const Rect& cWindowBounds, char* pzTitle, char* pzBuffer, u
 	:TextView (cWindowBounds, pzTitle, pzBuffer, nResizeMask , nFlags)
 {
 	m_ContextMenu=new Menu(Rect(0,0,0,0),"",ITEMS_IN_COLUMN);
-	m_ContextMenu->AddItem("Copy", new Message(ID_COPY));
-	m_ContextMenu->AddItem("Clear", new Message(ID_CLEAR));
-	//m_ContextMenu->AddItem("Save", new Message(ID_SAVE));
+	m_ContextMenu->AddItem(MSG_PAPERROLL_CMENU_COPY, new Message(ID_COPY));
+	m_ContextMenu->AddItem(MSG_PAPERROLL_CMENU_CLEAR, new Message(ID_CLEAR));
+	//m_ContextMenu->AddItem(MSG_PAPERROLL_CMENU_SAVE, new Message(ID_SAVE));
 }
 
 void Remsa::HandleMessage(Message *msg)
@@ -63,7 +64,7 @@ void Remsa::Show(void)
 }
 
 Remsa::Remsa(const Rect & r)
-	:Window(r, "PaperRoll", "Albert", 0, CURRENT_DESKTOP)
+	:Window(r, "PaperRoll", MSG_PAPERROLL_TITLE, 0, CURRENT_DESKTOP)
 {
 	Rect bounds = GetBounds();
 

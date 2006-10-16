@@ -1,6 +1,8 @@
 //
 // Coldfish string catalog
 //
+// Translated by:
+//
 
 MSG_MAINWND_TITLE=100						Coldfish
 MSG_MAINWND_PLAY							Start
@@ -11,6 +13,7 @@ MSG_MAINWND_FILE							Datei
 MSG_MAINWND_TRACK							Titel
 MSG_MAINWND_STREAM							Stream
 MSG_MAINWND_LENGTH							Dauer
+MSG_MAINWND_PLAYING							Abspielen
 
 MSG_MAINWND_MENU_APPLICATION=200			Anwendung
 MSG_MAINWND_MENU_APPLICATION_ABOUT			Info...
@@ -39,6 +42,7 @@ MSG_ERRWND_CANTDELETE						Das gerade gespielte Stück kann nicht entfernt werde
 MSG_ERRWND_NOTPLAYLIST						Die ausgewählte Datei ist keine Abspielliste.
 
 MSG_PLAYLIST_UNKNOWN=2000					Unbekannt
+MSG_PLAYLIST_DEFAULT						Standard-abspielliste
 
 MSG_PLAYLISTWND_TITLE=2100					Abspielliste auswählen - ColdFish
 MSG_PLAYLISTWND_FILE						Datei
@@ -47,4 +51,5 @@ MSG_PLAYLISTWND_NOTE						Eine nicht vorhandene Abspielliste\nwird automatisch a
 
 MSG_LCD_TRACK=3000							Titel
 
+MSG_MIMETYPE_APPLICATION_XCOLDFISHPLAYLIST=10000		ColdFish Abspielliste
 

@@ -1,0 +1,54 @@
+//
+// ColdFish string catalog
+//
+// Translated by: Dávid Horváth
+//
+
+MSG_MAINWND_TITLE=100						ColdFish
+MSG_MAINWND_PLAY							Lejátszás
+MSG_MAINWND_STOP							Leállítás
+MSG_MAINWND_PAUSE							Szünet
+MSG_MAINWND_PLAYLIST						Játéklista
+MSG_MAINWND_FILE							Fájl
+MSG_MAINWND_TRACK							Szám
+MSG_MAINWND_STREAM							Töltés...
+MSG_MAINWND_LENGTH							Hossz
+MSG_MAINWND_PLAYING							Lejátszás
+
+MSG_MAINWND_MENU_APPLICATION=200			Program
+MSG_MAINWND_MENU_APPLICATION_ABOUT			Névjegy
+MSG_MAINWND_MENU_APPLICATION_QUIT			Kilépés
+
+MSG_MAINWND_MENU_PLAYLIST=300				Játéklista
+MSG_MAINWND_MENU_PLAYLIST_SELECT			Kiválasztás
+MSG_MAINWND_MENU_PLAYLIST_INPUT				Bemenet megnyitása
+
+MSG_MAINWND_MENU_FILE=400					Fájl
+MSG_MAINWND_MENU_FILE_ADD					Hozzáadás
+MSG_MAINWND_MENU_FILE_REMOVE				Eltávolítás
+
+MSG_MAINWND_MENU_VIEW=500					Nézet
+MSG_MAINWND_MENU_VIEW_PLAYLIST				Játéklista
+
+MSG_ABOUTWND_TITLE=1000						A ColdFish névjegye
+MSG_ABOUTWND_TEXT							\nZenelejátszó szoftver\nCopyright 2003 Arno Klenke\nCopyright 2003 Kristian Van Der Vliet\nCopyright 2005 Rick Caudill\n\nA ColdFish-t az LGPL védi.
+MSG_ABOUTWND_OK								OK
+
+MSG_ERRWND_TITLE=1100						ColdFish Hiba
+MSG_ERRWND_OK								OK
+MSG_ERRWND_CANTPLAY							A ColdFish nem tudja lejátszani a kiválasztott fájlt.
+MSG_ERRWND_CANTDELETE						A lejátszás alatt lévö számot nem lehet törölni.
+MSG_ERRWND_NOTPLAYLIST						A kiválasztott fájl nem játéklista.
+
+MSG_PLAYLIST_UNKNOWN=2000					Ismeretlen
+MSG_PLAYLIST_DEFAULT						Alapértelmezett játéklista
+
+MSG_PLAYLISTWND_TITLE=2100					Játéklista kiválasztása - ColdFish
+MSG_PLAYLISTWND_FILE						Fájl
+MSG_PLAYLISTWND_OPEN						Megnyitás
+MSG_PLAYLISTWND_NOTE						Megjegyzés: ha egy nem létezö játéklistát választassz ki,\nakkor az létrehozásra kerül.
+
+MSG_LCD_TRACK=3000							Szám
+
+MSG_MIMETYPE_APPLICATION_XCOLDFISHPLAYLIST=10000		ColdFish játéklista
+

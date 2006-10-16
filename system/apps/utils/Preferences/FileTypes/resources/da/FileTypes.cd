@@ -1,0 +1,33 @@
+//
+// Preferences/FileTypes String Catalog
+//
+// Translated by: Flemming H. Sørensen (BurningShadow)
+// Korrekturlæsning og Rettelser: Jakob Wolffhechel
+//
+
+MSG_MAINWND_TITLE=0							Fil-typer
+
+MSG_MAINWND_GENERAL=100						Generelt
+MSG_MAINWND_GENERAL_MIMETYPE				Mimetype:
+MSG_MAINWND_GENERAL_NAME					Navn:
+
+MSG_MAINWND_EXTENTIONS=200					Filtype-endelser
+MSG_MAINWND_EXTENTIONS_EXTENTIONS			Filtype-endelser
+MSG_MAINWND_EXTENTIONS_BUTTON_ADD			Tilføj
+MSG_MAINWND_EXTENTIONS_BUTTON_REMOVE		Fjern
+
+MSG_MAINWND_HANDLERS=300					Håndtering
+MSG_MAINWND_HANDLERS_HANDLER				Programmer til håndtering af filerne
+MSG_MAINWND_HANDLERS_BUTTON_ADD				Tilføj...
+MSG_MAINWND_HANDLERS_BUTTON_REMOVE			Fjern
+
+MSG_MAINWND_NEWTYPE=400						Ny type
+MSG_MAINWND_BUTTON_APPLY					Aktiver
+MSG_MAINWND_BUTTON_ADDTYPE					Tilføj filtype...
+MSG_MAINWND_BUTTON_REMOVETYPE				Fjern filtype
+
+MSG_NEWTYPEWND_TITLE=1000					Ny filtype
+MSG_NEWTYPEWND_MIMETYPE						Mimetype
+MSG_NEWTYPEWND_OK							Ok
+
+MSG_MIMETYPE_TEXT_PLAIN=10000				Alm. Tekst

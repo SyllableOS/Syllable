@@ -1,0 +1,60 @@
+//
+// Preferences/Network String Catalog
+//
+// Translated by: Not Translated
+//
+
+MSG_MAINWND_TITLE=0								Network
+
+MSG_MAINWND_NAMES=100							Names
+MSG_MAINWND_NAMES_HOST							Host:
+MSG_MAINWND_NAMES_HOST_DEFAULT					default
+MSG_MAINWND_NAMES_DOMAIN						Domain:
+MSG_MAINWND_NAMES_DOMAIN_DEFAULT				domain
+MSG_MAINWND_NAMES_DNS_PRIMARY					Primary DNS:
+MSG_MAINWND_NAMES_DNS_SECONDARY					Secondary DNS:
+
+MSG_MAINWND_NICINT=200							Network Interfaces
+MSG_MAINWND_NICINT_ENABLED						(Enabled)
+MSG_MAINWND_NICINT_DISABLED						(Disabled)
+MSG_MAINWND_NICINT_BUTTON_MODIFY				_Modify
+
+MSG_MAINWND_BUTTON_APPLY=300					_Apply
+MSG_MAINWND_BUTTON_REVERT						_Revert
+
+MSG_MODIFYWND_TITLE=400							Modify - Network
+MSG_MODIFYWND_INTERFACE							Interface:
+MSG_MODIFYWND_ENABLED							(Enabled)
+MSG_MODIFYWND_DISABLED							(Disabled)
+MSG_MODIFYWND_USEDHCP							_Use DHCP
+MSG_MODIFYWND_BUTTON_ENABLE						_Enable
+MSG_MODIFYWND_BUTTON_DISABLE					_Disable
+MSG_MODIFYWND_SETTINGS							Settings
+MSG_MODIFYWND_SETTINGS_IPADD					IP Address:
+MSG_MODIFYWND_SETTINGS_SUBNET					Subnet Mask:
+MSG_MODIFYWND_SETTINGS_GATEWAY					Gateway Address:
+
+MSG_CONFCHANGEDWND_TITLE=1000					Configuration Changed - Network
+MSG_CONFCHANGEDWND_TEXT							The network interface configuration has changed\nLog in as root and use network preferences to configure.
+MSG_CONFCHANGEDWND_OK							_Ok
+
+MSG_ALERTWND_PRIDNS=2000						Invalid - Network
+MSG_ALERTWND_PRIDNS_TEXT						The value entered in Primary DNS is invalid
+MSG_ALERTWND_PRIDNS_OK							_Ok
+
+MSG_ALERTWND_SECDNS=3000						Invalid - Network
+MSG_ALERTWND_SECDNS_TEXT						The value entered in Secondary DNS is invalid
+MSG_ALERTWND_SECDNS_OK							_Ok
+
+MSG_ALERTWND_IPADD=4000							Invalid - Network
+MSG_ALERTWND_IPADD_TEXT							The value entered in IP Address is invalid
+MSG_ALERTWND_IPADD_OK							_Ok
+
+MSG_ALERTWND_SUBNET=5000						Invalid - Network
+MSG_ALERTWND_SUBNET_TEXT						The value entered in Subnet Mask is invalid
+MSG_ALERTWND_SUBNET_OK							_Ok
+
+MSG_ALERTWND_GATEWAY=6000						Invalid - Network
+MSG_ALERTWND_GATEWAY_TEXT						The value entered in Gateway is invalid
+MSG_ALERTWND_GATEWAY_OK							_Ok
+

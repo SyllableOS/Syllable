@@ -1,0 +1,22 @@
+//
+// Preferences/Font String Catalog
+//
+// Translated by: Maximo Pech Jaramillo <makzpj@gmail.com>
+//
+
+MSG_MAINWND_TITLE=0								Fuente
+
+MSG_MAINWND_FONTSELECTION=100					Selección de Fuente
+MSG_MAINWND_FONTSELECTION_NORMAL				Normal
+MSG_MAINWND_FONTSELECTION_BOLD					Negritas
+MSG_MAINWND_FONTSELECTION_FIXED					Mono-espaciada
+MSG_MAINWND_FONTSELECTION_WINDOW				Ventana
+MSG_MAINWND_FONTSELECTION_TOOLWIN				Ventana de Herramientas
+MSG_MAINWND_FONTSELECTION_TEXT					A_nti-Aliasing (bordes suavizados)
+
+MSG_MAINWND_EXAMPLE=200							Ejemplo de Fuente Seleccionada
+
+MSG_MAINWND_BUTTON_APPLY=300					_Aplicar
+MSG_MAINWND_BUTTON_REVERT						_Revertir
+MSG_MAINWND_BUTTON_DEFAULT						_Predeterminado
+

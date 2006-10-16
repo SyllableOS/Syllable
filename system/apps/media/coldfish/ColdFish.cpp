@@ -335,7 +335,7 @@ void CFApp::Start( os::String zFileName, bool bLoad )
 	/* Set default values */
 	m_nState = CF_STATE_STOPPED;
 
-	m_zListName = os::String ( getenv( "HOME" ) ) + "/Default Playlist.plst";
+	m_zListName = os::String ( getenv( "HOME" ) ) + "/" + MSG_PLAYLIST_DEFAULT + ".plst";
 	m_pcInput = NULL;
 	m_bLockedInput = false;
 	m_nPlaylistPosition = 0;
@@ -366,7 +366,7 @@ void CFApp::Start( os::String zFileName, bool bLoad )
 		m_pcRegManager = os::RegistrarManager::Get();
 		
 		/* Register playlist type */
-		m_pcRegManager->RegisterType( "application/x-coldfish-playlist", "ColdFish Playlist" );
+		m_pcRegManager->RegisterType( "application/x-coldfish-playlist", MSG_MIMETYPE_APPLICATION_XCOLDFISHPLAYLIST );
 		m_pcRegManager->RegisterTypeIconFromRes( "application/x-coldfish-playlist", "application_coldfish_playlist.png" );
 		m_pcRegManager->RegisterTypeExtension( "application/x-coldfish-playlist", "plst" );
 		m_pcRegManager->RegisterAsTypeHandler( "application/x-coldfish-playlist" );
@@ -386,7 +386,7 @@ void CFApp::Start( os::String zFileName, bool bLoad )
 	}
 
 	/* Create window */
-	m_pcWin = new CFWindow( os::Rect( 0, 0, 500, 350 ), "cf_window", "Default Playlist.plst - ColdFish",0);
+	m_pcWin = new CFWindow( os::Rect( 0, 0, 500, 350 ), "cf_window", MSG_PLAYLIST_DEFAULT + ".plst - ColdFish",0);
 	m_pcWin->CenterInScreen();
 	m_pcWin->Show();
 	m_pcWin->MakeFocus( true );
@@ -404,7 +404,7 @@ void CFApp::Start( os::String zFileName, bool bLoad )
 	{
 		if ( !OpenList( m_zListName ) )
 		{
-			OpenList( os::String ( getenv( "HOME" ) ) + "/Default Playlist.plst" );
+			OpenList( os::String ( getenv( "HOME" ) ) + "/" + MSG_PLAYLIST_DEFAULT + ".plst" );
 		}
 	}	
 }
@@ -1213,7 +1213,7 @@ int CFApp::OpenFile( os::String zFileName, uint32 nTrack, uint32 nStream )
 	else
 		m_zAudioName = m_pcInput->GetIdentifier();
 	
-	m_pcWin->SetTitle( os::String ( os::Path( m_zListName.c_str() ).GetLeaf(  ) ) + " - ColdFish (Playing " + m_zAudioName + ")" );
+	m_pcWin->SetTitle( os::String ( os::Path( m_zListName.c_str() ).GetLeaf(  ) ) + " - ColdFish (" + MSG_MAINWND_PLAYING + " " + m_zAudioName + ")" );
 
 	/* Save information */
 	m_nAudioTrack = nTrack;

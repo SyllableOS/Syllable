@@ -104,8 +104,5 @@ class AViewWindow : public Window
 #define AW_TOOLBAR_HEIGHT		35
 #define AW_STATUSBAR_HEIGHT		24
 
-#define AV_TITLE	"AView 1.1"
-#define AV_ABOUT	"AView 1.1\n\nImage Viewer for Syllable    \nCopyright 2005 Syllable Team\n\nAView is released under the GNU General\nPublic License. Please go to www.gnu.org\nmore information.\n"
-
 #endif		// __F_AVIEW_NG_APPWINDOW_H_
 

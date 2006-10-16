@@ -1,0 +1,60 @@
+//
+// Preferences/Network String Catalog
+//
+// Translated by: Daniel Eriksson
+//
+
+MSG_MAINWND_TITLE=0								Nätverk
+
+MSG_MAINWND_NAMES=100							Namn
+MSG_MAINWND_NAMES_HOST							Värd:
+MSG_MAINWND_NAMES_HOST_DEFAULT					standard
+MSG_MAINWND_NAMES_DOMAIN						Domän:
+MSG_MAINWND_NAMES_DOMAIN_DEFAULT				domän
+MSG_MAINWND_NAMES_DNS_PRIMARY					Primär DNS:
+MSG_MAINWND_NAMES_DNS_SECONDARY					Sekundär DNS:
+
+MSG_MAINWND_NICINT=200							Nätverksgränssnitt
+MSG_MAINWND_NICINT_ENABLED						(Aktiverad)
+MSG_MAINWND_NICINT_DISABLED						(Deaktiverad)
+MSG_MAINWND_NICINT_BUTTON_MODIFY				_Ändra
+
+MSG_MAINWND_BUTTON_APPLY=300					_Verkställ
+MSG_MAINWND_BUTTON_REVERT						_Återställ
+
+MSG_MODIFYWND_TITLE=400							Ändra - Nätverk
+MSG_MODIFYWND_INTERFACE							Gränssnitt:
+MSG_MODIFYWND_ENABLED							(Aktiverad)
+MSG_MODIFYWND_DISABLED							(Deaktiverad)
+MSG_MODIFYWND_USEDHCP							_Använd DHCP
+MSG_MODIFYWND_BUTTON_ENABLE						_Aktivera
+MSG_MODIFYWND_BUTTON_DISABLE					_Deaktivera
+MSG_MODIFYWND_SETTINGS							Inställningar
+MSG_MODIFYWND_SETTINGS_IPADD					IP Adress:
+MSG_MODIFYWND_SETTINGS_SUBNET					Subnätsmask:
+MSG_MODIFYWND_SETTINGS_GATEWAY					Portaddress:
+
+MSG_CONFCHANGEDWND_TITLE=1000					Inställningar ändrade - Nätverk
+MSG_CONFCHANGEDWND_TEXT							Nätverskinställningarna har ändrats.\nLogga in som root och används nätverksinställningarna för att konfigurera .
+MSG_CONFCHANGEDWND_OK							_Ok
+
+MSG_ALERTWND_PRIDNS=2000						Ogiltig - Nätverk
+MSG_ALERTWND_PRIDNS_TEXT						Värdet på Primär DNS är ogiltigt
+MSG_ALERTWND_PRIDNS_OK							_Ok
+
+MSG_ALERTWND_SECDNS=3000						Ogiltig - Nätverk
+MSG_ALERTWND_SECDNS_TEXT						Värdet på Sekundär DNS är ogiltigt
+MSG_ALERTWND_SECDNS_OK							_Ok
+
+MSG_ALERTWND_IPADD=4000							Ogiltig - Nätverk
+MSG_ALERTWND_IPADD_TEXT							Värdet på IP-adressen är ogiltigt
+MSG_ALERTWND_IPADD_OK							_Ok
+
+MSG_ALERTWND_SUBNET=5000						Ogiltig - Nätverk
+MSG_ALERTWND_SUBNET_TEXT						Värdet på Subnätsmasken är ogiltigt
+MSG_ALERTWND_SUBNET_OK							_Ok
+
+MSG_ALERTWND_GATEWAY=6000						Ogiltig - Nätverk
+MSG_ALERTWND_GATEWAY_TEXT						Värdet på Portadressen är ogiltigt
+MSG_ALERTWND_GATEWAY_OK							_Ok
+

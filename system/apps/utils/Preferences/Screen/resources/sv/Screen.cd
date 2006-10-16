@@ -1,0 +1,34 @@
+//
+// Preferences/Screen String Catalog
+//
+// Translated by: Daniel Eriksson
+//
+
+MSG_MAINWND_TITLE=0							Skärm
+
+MSG_MAINWND_DISPLAY=100						Bildskärm
+MSG_MAINWND_DISPLAY_APPLYTO					Verkställ till
+MSG_MAINWND_DISPLAY_RESOLUTION				Upplösning
+MSG_MAINWND_DISPLAY_COLORDEPTH				Färgdjup
+MSG_MAINWND_DISPLAY_REFRESHRATE				Uppdateringsfrekvens
+
+
+MSG_MAINWND_DROPDOWN_APPLY_THIS=200			Den här arbetsytan
+MSG_MAINWND_DROPDOWN_APPLY_ALL				Alla arbetsytor
+MSG_MAINWND_DROPDOWN_COLOUR_BIT				Bit
+MSG_MAINWND_DROPDOWN_COLOUR_UNKNOWN			Okänd
+MSG_MAINWND_DROPDOWN_HERTZ					%i Hz
+
+MSG_MAINWND_BUTTON_APPLY=300				Verkställ
+MSG_MAINWND_BUTTON_CLOSE					Stäng
+
+MSG_ALERTWND_CHANGERES=1000					Ändra upplösning
+MSG_ALERTWND_CHANGERES_TEXT					Du håller på att ändra upplösningen på din skärm.\nOm din monitor inte har stöd för det valda läget kommer\nskärmen att bli svart. Om så sker, vänta 15\nsekunder så återställs tidigare inställningar.\n\nVill du fortsätta?
+MSG_ALERTWND_CHANGERES_YES					Ja
+MSG_ALERTWND_CHANGERES_NO					Nej
+
+MSG_ALERTWND_CONFIRMRES=2000				Verkställ upplösning
+MSG_ALERTWND_CONFIRMRES_TEXT				Fungerar det nya läget bra?\n\nOm inte, vänta så kommer det tidigare lägety\natt återställas.
+MSG_ALERTWND_CONFIRMRES_YES					Ja
+MSG_ALERTWND_CONFIRMRES_NO					Nej
+

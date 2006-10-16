@@ -1,0 +1,32 @@
+//
+// AView String Catalog
+//
+// Translated by: Flemming H. Sørensen (BurningShadow)
+//
+
+MSG_MAINWND_TITLE=0							AView
+
+MSG_MAINWND_MENU_APPLICATION=100			Program
+MSG_MAINWND_MENU_APPLICATION_QUIT				Afslut
+MSG_MAINWND_MENU_APPLICATION_ABOUT				Om...
+
+MSG_MAINWND_MENU_FILE=200					Filer
+MSG_MAINWND_MENU_FILE_OPEN						Åbn
+
+MSG_MAINWND_MENU_VIEW=300					Vis
+MSG_MAINWND_MENU_VIEW_FITTOIMAGE				Tilpas til billede
+MSG_MAINWND_MENU_VIEW_PREVIOUS					Tilbage
+MSG_MAINWND_MENU_VIEW_NEXT						Frem
+MSG_MAINWND_MENU_VIEW_FIRST						Første
+MSG_MAINWND_MENU_VIEW_LAST						Sidste
+
+MSG_ABOUTWND_TITLE=1000					Om AView
+MSG_ABOUTWND_TEXT								AView\n\nBillede-viser for Syllable\nCopyright 2005 Syllable Team\n\nAView er udgivet under GNU General\nPublic License. Besøg venligst www.gnu.org\nfor flere informationer.\n
+MSG_ABOUTWND_OK									Ok
+
+MSG_STATUSBAR_OF=2000					%i af %i
+
+MSG_MIMETYPE_IMAGE_PNG=10000			PNG Billede
+MSG_MIMETYPE_IMAGE_JPEG					JPEG Billede
+MSG_MIMETYPE_IMAGE_GIF					GIF Billede
+

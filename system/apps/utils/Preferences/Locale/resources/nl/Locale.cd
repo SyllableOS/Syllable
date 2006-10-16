@@ -4,8 +4,8 @@
 //
 
 STR_MAIN_TITLE=1000						Taalinstellingen
-STR_MAIN_APPLY							_Doorvoeren
-STR_MAIN_REVERT							_Terugdraaien
+STR_MAIN_APPLY							_Toepassen
+STR_MAIN_REVERT							Te_rugdraaien
 STR_MAIN_DEFAULT						_Standaard
 
 STR_MAIN_LANGUAGE_TAB=1100				Taal

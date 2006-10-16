@@ -1,0 +1,34 @@
+//
+// Preferences/Screen String Catalog
+//
+// Translated by: Dávid Horváth
+//
+
+MSG_MAINWND_TITLE=0							Képernyö
+
+MSG_MAINWND_DISPLAY=100						Megjelenítés
+MSG_MAINWND_DISPLAY_APPLYTO					Érvényesség
+MSG_MAINWND_DISPLAY_RESOLUTION				Felbontás
+MSG_MAINWND_DISPLAY_COLORDEPTH				Színmélység
+MSG_MAINWND_DISPLAY_REFRESHRATE				Frissítés
+
+
+MSG_MAINWND_DROPDOWN_APPLY_THIS=200			Ezen az asztalon
+MSG_MAINWND_DROPDOWN_APPLY_ALL				Minden asztalon
+MSG_MAINWND_DROPDOWN_COLOUR_BIT				Bit
+MSG_MAINWND_DROPDOWN_COLOUR_UNKNOWN			Ismeretlen
+MSG_MAINWND_DROPDOWN_HERTZ					%i Hz
+
+MSG_MAINWND_BUTTON_APPLY=300				Alkalmaz
+MSG_MAINWND_BUTTON_CLOSE					Bezár
+
+MSG_ALERTWND_CHANGERES=1000					Felbontás megváltoztatása
+MSG_ALERTWND_CHANGERES_TEXT					Megváltoztattad a képernyö beállításait.\nHa a monitorod nem támogatja ezt a megjelenítést,\nakkor a képernyö fekete lesz.\nEkkor 15 másodperc múlva visszaáll az eredeti beállításra.\n\nFolytatod?
+MSG_ALERTWND_CHANGERES_YES					Igen
+MSG_ALERTWND_CHANGERES_NO					Nem
+
+MSG_ALERTWND_CONFIRMRES=2000				Megjelenítési mód megerösítése
+MSG_ALERTWND_CONFIRMRES_TEXT				Szeretnéd használni ezt a beállítást?\n\nHa nem, akkor várj\nés visszaáll az elözö beállításra.
+MSG_ALERTWND_CONFIRMRES_YES					Igen
+MSG_ALERTWND_CONFIRMRES_NO					Nem
+

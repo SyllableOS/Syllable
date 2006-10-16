@@ -1,0 +1,27 @@
+//
+// Preferences/Dock String Catalog
+//
+// Translated by: Dávid Horváth
+//
+
+MSG_MAINWND_TITLE=0								Dock
+
+MSG_MAINWND_POSITION=100						Pozíció
+MSG_MAINWND_POSITION_TOP						Fent
+MSG_MAINWND_POSITION_BOTTOM						Lent
+MSG_MAINWND_POSITION_LEFT						Bal
+MSG_MAINWND_POSITION_RIGHT						Jobb
+
+MSG_MAINWND_PLUGINS=200							Pluginek
+MSG_MAINWND_PLUGINS_PLUGIN						Plugin
+MSG_MAINWND_PLUGINS_ENABLED						Engedélyezve
+MSG_MAINWND_PLUGINS_TEXT						Megjegyzés: másold a plugineket ide: /system/extensions/dock/
+MSG_MAINWND_PLUGINS_BUTTON_ENABLE				Engedélyez
+MSG_MAINWND_PLUGINS_BUTTON_DISABLE				Tilt
+MSG_MAINWND_PLUGINS_STATE_ENABLED_YES			Igen
+MSG_MAINWND_PLUGINS_STATE_ENABLED_NO			Nem
+
+MSG_MAINWND_BUTTON_APPLY=300					Alkalmaz
+MSG_MAINWND_BUTTON_UNDO							Visszavonás
+MSG_MAINWND_BUTTON_DEFAULT						Alapértelmezett
+

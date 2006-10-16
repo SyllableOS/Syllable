@@ -31,6 +31,7 @@
 #include <util/messenger.h>
 
 #include "changepwddlg.h"
+#include "resources/UsersAndGroups.h"
 
 using namespace os;
 using namespace std;
@@ -49,7 +50,7 @@ ChangePasswordDlg::ChangePasswordDlg( const Rect& cFrame,
   
   HLayoutNode *pcLine;
 
-  string cCaption = "Changing password for " + cLogin + ":";
+  string cCaption = MSG_CHANGEPASS_TEXT + " " + cLogin + ":";
   
   StringView *pSV = new StringView( Rect( 0, 0, 100, 20 ), "caption",
                                     cCaption.c_str(), ALIGN_LEFT );
@@ -71,7 +72,7 @@ ChangePasswordDlg::ChangePasswordDlg( const Rect& cFrame,
     pcLine->SetHAlignment( ALIGN_RIGHT );
     
     pcLine->AddChild( new StringView( Rect( 0, 0, 100, 20 ),
-                                      "old_pwd_lbl", "Old Password:",
+                                      "old_pwd_lbl", MSG_CHANGEPASS_OLDPASS,
                                       ALIGN_RIGHT ) );
     m_pcOldPwd = new TextView( Rect( 0, 0, 80, 22 ), "old_pwd", "" );
     m_pcOldPwd->SetPasswordMode( true );
@@ -84,7 +85,7 @@ ChangePasswordDlg::ChangePasswordDlg( const Rect& cFrame,
   pcLine->SetHAlignment( ALIGN_RIGHT );
   
   pcLine->AddChild( new StringView( Rect( 0, 0, 100, 20 ),
-                                    "new_pwd_1_lbl", "New Password:",
+                                    "new_pwd_1_lbl", MSG_CHANGEPASS_NEWPASS,
                                     ALIGN_RIGHT) );
   m_pcNewPwd1 = new TextView( Rect( 0, 0, 80, 22 ), "new_pwd_1", "" );
   m_pcNewPwd1->SetPasswordMode( true );
@@ -96,7 +97,7 @@ ChangePasswordDlg::ChangePasswordDlg( const Rect& cFrame,
   pcLine->SetHAlignment( ALIGN_RIGHT );
   
   pcLine->AddChild( new StringView( Rect( 0, 0, 100, 20 ),
-                                    "new_pwd_2_lbl", "Confirm Password:",
+                                    "new_pwd_2_lbl", MSG_CHANGEPASS_CONFIRMPASS,
                                     ALIGN_RIGHT) );
   m_pcNewPwd2 = new TextView( Rect( 0, 0, 80, 22 ), "new_pwd_2", "" );
   m_pcNewPwd2->SetPasswordMode( true );
@@ -109,12 +110,12 @@ ChangePasswordDlg::ChangePasswordDlg( const Rect& cFrame,
 
   Button *pcButton;
   
-  pcButton = new Button( Rect( 0, 0, 60, 20 ), "cancel", "_Cancel",
+  pcButton = new Button( Rect( 0, 0, 60, 20 ), "cancel", MSG_CHANGEPASS_BUTTON_CANCEL,
                          new Message( ID_CANCEL ) );
   pcButton->SetTabOrder( nTabOrder += 2 );
   pcLine->AddChild( pcButton );
 
-  pcButton = new Button( Rect( 0, 0, 60, 20 ), "ok", "_OK",
+  pcButton = new Button( Rect( 0, 0, 60, 20 ), "ok", MSG_CHANGEPASS_BUTTON_OK,
                          new Message( ID_OK ) );
   pcButton->SetTabOrder( --nTabOrder );
   pcLine->AddChild( pcButton );
@@ -180,10 +181,7 @@ void ChangePasswordDlg::OnOK( Message *pcMessage ) {
 
   if( strcmp( pzNew1, pzNew2 ) != 0 ) {
     // Alert
-    Alert *pcAlert = new Alert( "Password Don't Match",
-                                "The new passwords you have entered "
-                                "do not match. Please check and "
-                                "re-try.", 0, "OK", NULL );
+    Alert *pcAlert = new Alert( MSG_ALERTWND_PASSDONTMATCH, MSG_ALERTWND_PASSDONTMATCH_TEXT, 0, MSG_ALERTWND_PASSDONTMATCH_OK.c_str(), NULL );
     pcAlert->Go();
     return;
   }

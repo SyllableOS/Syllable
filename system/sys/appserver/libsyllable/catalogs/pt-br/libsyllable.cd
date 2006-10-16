@@ -1,0 +1,78 @@
+//
+// LibSyllable string catalog
+//
+// Translated by: Edgar Domingo de Albuquerque (contato@edgar.pro.br)
+// Brazilian Portuguese pt_BR @ 29-Jul-2006 Sorocaba/SP - Brasil
+//
+
+// FileRequester strings
+MSG_FILEREQUESTER_LOAD_BUTTON=1000						_Abrir
+MSG_FILEREQUESTER_SAVE_BUTTON							_Savar
+MSG_FILEREQUESTER_CANCEL_BUTTON							_Cancelar
+MSG_FILEREQUESTER_FILE_NAME_LABEL						Nome do Arquivo:
+MSG_FILEREQUESTER_BROWSE_LOCATION_LABEL					buscando em:
+MSG_FILEREQUESTER_FILE_ALREADY_EXISTS_TEXT				O Arquivo '%s' já existe.\nDeseja sobreescreve-lo?\n
+MSG_FILEREQUESTER_FILE_ALREADY_EXISTS_TITLE				Aviso:
+MSG_FILEREQUESTER_FILE_ALREADY_EXISTS_YES_BUTTON		Sim
+MSG_FILEREQUESTER_FILE_ALREADY_EXISTS_NO_BUTTON			Não
+
+// IconDirectoryView strings
+MSG_ICONDIRVIEW_WINDOW_OPEN_WITH=2000					Abrir com...
+MSG_ICONDIRVIEW_NUMBER_OF_OBJECTS_SELECTED				%i entradas
+MSG_ICONDIRVIEW_MENU_MOUNT								Montar...
+MSG_ICONDIRVIEW_MENU_UNMOUNT							Desmontar...
+MSG_ICONDIRVIEW_MENU_NEW_DIRECTORY						Novo Diretório...
+MSG_ICONDIRVIEW_MENU_EMPTY_TRASH						Vazio
+MSG_ICONDIRVIEW_MENU_OPEN_WITH							Abrir com...
+MSG_ICONDIRVIEW_MENU_INFO								Informação...
+MSG_ICONDIRVIEW_MENU_RENAME								Renomear...
+MSG_ICONDIRVIEW_MENU_MOVE_TO_TRASH						Mover para Lixeira
+MSG_ICONDIRVIEW_MENU_DELETE								Excluir...
+MSG_ICONDIRVIEW_PERCENT_FREE							%i%% livre
+MSG_ICONDIRVIEW_VOLUMENAME_UNKNOWN						Desconhecido
+
+// File information window
+MSG_FILEINFO_WINDOW_TITLE=3000							Informação
+MSG_FILEINFO_WINDOW_NAME_LABEL							Nome:
+MSG_FILEINFO_WINDOW_PATH_LABEL							Caminho:
+MSG_FILEINFO_WINDOW_SIZE_LABEL							Tamanho:
+MSG_FILEINFO_WINDOW_MODIFIEDDATE_LABEL					Modificado:
+MSG_FILEINFO_WINDOW_FILETYPE_LABEL						Tipo:
+MSG_FILEINFO_WINDOW_FILETYPE_DROPDOWN_CURRENT_LABEL		Atual:
+MSG_FILEINFO_WINDOW_FILETYPE_DROPDOWN_EXECUTABLE		Executável
+MSG_FILEINFO_WINDOW_OK_BUTTON							OK
+MSG_FILEINFO_FILESIZE_ZERO								Nenhum
+MSG_FILEINFO_FILETYPE_UNKNOWN							Descinhecido
+
+// Rename file window
+MSG_RENAMEFILE_WINDOW_TITLE=4000						Renomear %s
+MSG_RENAMEFILE_WINDOW_OK_BUTTON							OK
+MSG_RENAMEFILE_ERROR_TITLE								Renomear
+MSG_RENAMEFILE_ERROR_TEXT								%s não pode ser renomeado!
+MSG_RENAMEFILE_ERROR_CLOSE								OK
+
+// New directory window
+MSG_NEWDIR_WINDOW_TITLE=5000							Novo Diretório
+MSG_NEWDIR_WINDOW_OK_BUTTON								OK
+MSG_NEWDIR_ERROR_TITLE									Novo Diretório
+MSG_NEWDIR_ERROR_TEXT									O diretório %s não pode ser criado!
+MSG_NEWDIR_ERROR_CLOSE									OK
+
+// Mount window
+MSG_MOUNT_WINDOW_TITLE=6000								Montar
+MSG_MOUNT_WINDOW_NAME_COLUMN							Nome
+MSG_MOUNT_WINDOW_PATH_COLUMN							Caminho
+MSG_MOUNT_WINDOW_MOUNT_BUTTON							Montar
+MSG_MOUNT_SCANNING_PATH									Pesquisando %s...
+MSG_MOUNT_SCANNING										Pesquisando...
+MSG_MOUNT_LOCAL_DISKS_LABEL								Mídia local
+MSG_MOUNT_TYPE_HARDDISK									Disco Rígido
+MSG_MOUNT_TYPE_CD_DVD									CD/DVD
+MSG_MOUNT_TYPE_FLOPPY									Disco Flexível
+MSG_MOUNT_DEVICE_PARTITION								Partição
+MSG_MOUNT_ERROR_TITLE									Montar
+MSG_MOUNT_ERROR_CLOSE									OK
+MSG_MOUNT_ERROR_CREATE_MOUNTPOINT						Não foi possível criar um ponto de montagem para o dispositivo %s
+MSG_MOUNT_ERROR_OTHER_ERROR								Não foi possível montar %s:\n%s
+MSG_MOUNT_ERROR_UNMOUNT									Não foi possível desmontar %s:\n%s
+

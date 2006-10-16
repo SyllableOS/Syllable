@@ -27,8 +27,9 @@
 #include "main.h"
 #include "mainwindow.h"
 #include "messages.h"
+#include "resources/Screen.h"
 
-MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow", "Screen"/*, os::WND_NOT_RESIZABLE*/)
+MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow", MSG_MAINWND_TITLE/*, os::WND_NOT_RESIZABLE*/)
 {
   os::Rect cBounds = GetBounds();
   os::Rect cRect = os::Rect(0,0,0,0);
@@ -44,7 +45,7 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   
   // Workspaces
   pcHLWorkspace = new os::HLayoutNode("HLWorkspace");
-  pcHLWorkspace->AddChild( new os::StringView(cRect, "SVWorkspace", "Apply to") );
+  pcHLWorkspace->AddChild( new os::StringView(cRect, "SVWorkspace", MSG_MAINWND_DISPLAY_APPLYTO) );
   pcHLWorkspace->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
   pcHLWorkspace->AddChild( pcDDMWorkspace = new os::DropdownMenu(cRect, "DDMWorkspace"));
   pcDDMWorkspace->SetMinPreferredSize(12);
@@ -54,7 +55,7 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
 
   // Resolution
   pcHLResolution = new os::HLayoutNode("HLResolution");
-  pcHLResolution->AddChild( new os::StringView(cRect, "SVResolution", "Resolution") );
+  pcHLResolution->AddChild( new os::StringView(cRect, "SVResolution", MSG_MAINWND_DISPLAY_RESOLUTION) );
   pcHLResolution->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
   pcHLResolution->AddChild( pcDDMResolution = new os::DropdownMenu(cRect, "DDMResolution"));
   pcDDMResolution->SetMinPreferredSize(12);
@@ -66,7 +67,7 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
 
   // Colour space
   pcHLColour = new os::HLayoutNode("HLColour");
-  pcHLColour->AddChild( new os::StringView(cRect, "SVColour", "Colour Depth") );
+  pcHLColour->AddChild( new os::StringView(cRect, "SVColour", MSG_MAINWND_DISPLAY_COLORDEPTH) );
   pcHLColour->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
   pcHLColour->AddChild( pcDDMColour = new os::DropdownMenu(cRect, "DDMColour"));
   pcDDMColour->SetMinPreferredSize(12);
@@ -78,7 +79,7 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
 
   // Refresh
   pcHLRefresh = new os::HLayoutNode("HLRefresh");
-  pcHLRefresh->AddChild( new os::StringView(cRect, "SVRefresh", "Refresh Rate") );
+  pcHLRefresh->AddChild( new os::StringView(cRect, "SVRefresh", MSG_MAINWND_DISPLAY_REFRESHRATE) );
   pcHLRefresh->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
   pcHLRefresh->AddChild( pcDDMRefresh = new os::DropdownMenu(cRect, "DDMRefresh"));
   pcDDMRefresh->SetMinPreferredSize(12);
@@ -92,7 +93,7 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   pcVLSettings->SameWidth( "DDMWorkspace", "DDMResolution", "DDMColour", "DDMRefresh", NULL);
 
   // Create frameview to store settings
-  pcFVSettings = new os::FrameView( cBounds, "FVSettings", "Display", 0/*os::CF_FOLLOW_ALL*/);
+  pcFVSettings = new os::FrameView( cBounds, "FVSettings", MSG_MAINWND_DISPLAY, 0/*os::CF_FOLLOW_ALL*/);
   pcFVSettings->SetRoot(pcVLSettings);
   pcVLRoot->AddChild( pcFVSettings );
   
@@ -101,9 +102,9 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   pcVLRoot->AddChild( new os::VLayoutSpacer("", 10.0f, 10.0f));
   pcHLButtons = new os::HLayoutNode("HLButtons", 0.0f);
   pcHLButtons->AddChild( new os::HLayoutSpacer(""));
-  pcHLButtons->AddChild( pcBApply = new os::Button(cRect, "BApply", "Apply", new os::Message(M_MW_APPLY)) );
+  pcHLButtons->AddChild( pcBApply = new os::Button(cRect, "BApply", MSG_MAINWND_BUTTON_APPLY, new os::Message(M_MW_APPLY)) );
   pcHLButtons->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
-  pcHLButtons->AddChild( pcBClose = new os::Button(cRect, "BClose", "Close", new os::Message(M_MW_CLOSE)) );
+  pcHLButtons->AddChild( pcBClose = new os::Button(cRect, "BClose", MSG_MAINWND_BUTTON_CLOSE, new os::Message(M_MW_CLOSE)) );
   pcHLButtons->SameWidth( "BApply", "BClose", NULL );
   pcVLRoot->AddChild(pcHLButtons);
 
@@ -217,22 +218,26 @@ void MainWindow::ShowData()
 	// Add them to the list
 	for( uint16 i = 0; i < m_cColorSpaces.size(); i++ ) 
 	{
+		/* Ugly Workaround to make localization work. Someone should have a look at it... */	
+		os::String zBitWorkaround;
+		zBitWorkaround = os::String( "" );
+
 		switch( m_cColorSpaces[i] )
 		{
 			case os::CS_RGB15:
-				strcpy( pzScratch, "15 Bit" );
+				strcpy( pzScratch, "15 " );
 			break;
 			case os::CS_RGB16:
-				strcpy( pzScratch, "16 Bit" );
+				strcpy( pzScratch, "16 " );
 			break;
 			case os::CS_RGB32:
-				strcpy( pzScratch, "32 Bit" );
+				strcpy( pzScratch, "32 " );
 			break;
 			default:
-				strcpy( pzScratch, "Unknown" );
+				strcpy( pzScratch, MSG_MAINWND_DROPDOWN_COLOUR_UNKNOWN.c_str() );
 			break;
 		}
-		pcDDMColour->AppendItem( pzScratch );
+		pcDDMColour->AppendItem( zBitWorkaround+pzScratch+MSG_MAINWND_DROPDOWN_COLOUR_BIT );
 		if( i == 0 )
 			pcDDMColour->SetSelection( pcDDMColour->GetItemCount() - 1, false );
 		if( m_cColorSpaces[i] == (uint32)cCurrentMode.m_eColorSpace ) 
@@ -248,7 +253,7 @@ void MainWindow::ShowData()
 	{
 		if( m_pcModes[i].m_nWidth == cCurrentMode.m_nWidth && m_pcModes[i].m_nHeight == cCurrentMode.m_nHeight 
 		 && m_pcModes[i].m_eColorSpace == cCurrentMode.m_eColorSpace ) { 
-			sprintf( pzScratch, "%i Hz", (int)m_pcModes[i].m_vRefreshRate );
+			sprintf( pzScratch, MSG_MAINWND_DROPDOWN_HERTZ.c_str(), (int)m_pcModes[i].m_vRefreshRate );
 			m_cRefreshRates.push_back( (uint32)m_pcModes[i].m_vRefreshRate );
 			pcDDMRefresh->AppendItem( pzScratch );
 			if( bFirst ) {
@@ -262,8 +267,8 @@ void MainWindow::ShowData()
 	
 	// Populate workspace dropdown
 	pcDDMWorkspace->Clear();
-	pcDDMWorkspace->AppendItem("This workspace");
-	pcDDMWorkspace->AppendItem("All workspaces");
+	pcDDMWorkspace->AppendItem(MSG_MAINWND_DROPDOWN_APPLY_THIS);
+	pcDDMWorkspace->AppendItem(MSG_MAINWND_DROPDOWN_APPLY_ALL);
 	pcDDMWorkspace->SetSelection(0);
 	
 	delete( pzScratch );
@@ -328,8 +333,7 @@ void MainWindow::HandleMessage(os::Message* pcMessage)
   case M_MW_APPLY:
   {	
 	DisableAll();
-    std::string cApplyText="You are about to change the resolution of your screen.\nIf your monitor doesnt support the selected videomode\nthe screen might go black. If it does, please wait 15\nseconds to return to the old mode.\n\nDo you want to proceed?";
-    os::Alert* pcApplyAlert=new os::Alert("Change resolution", cApplyText, os::Alert::ALERT_WARNING, "Yes", "No", NULL);
+    os::Alert* pcApplyAlert=new os::Alert(MSG_ALERTWND_CHANGERES, MSG_ALERTWND_CHANGERES_TEXT, os::Alert::ALERT_WARNING, MSG_ALERTWND_CHANGERES_YES.c_str(), MSG_ALERTWND_CHANGERES_NO.c_str(), NULL);
 	// Set flags
 	pcApplyAlert->SetFlags(pcApplyAlert->GetFlags() | os::WND_NO_CLOSE_BUT);
 	pcApplyAlert->CenterInWindow(this);
@@ -350,8 +354,7 @@ void MainWindow::HandleMessage(os::Message* pcMessage)
 	    SaveOldMode();		
 		Apply();
 		// Create Confirm message box
-  		std::string cConfirmText="Is the new videomode working properly?\n\nIf not please wait and you will automatically\nreturn to the old mode.";
-  		pcConfirmAlert=new os::Alert("Confirm resolution", cConfirmText, os::Alert::ALERT_QUESTION, "Yes", "No", NULL);
+  		pcConfirmAlert=new os::Alert(MSG_ALERTWND_CONFIRMRES, MSG_ALERTWND_CONFIRMRES_TEXT, os::Alert::ALERT_QUESTION, MSG_ALERTWND_CONFIRMRES_YES.c_str(), MSG_ALERTWND_CONFIRMRES_NO.c_str(), NULL);
 		// Set flags
 	    pcConfirmAlert->SetFlags(pcConfirmAlert->GetFlags() | os::WND_NO_CLOSE_BUT);
         pcConfirmAlert->CenterInWindow(this);

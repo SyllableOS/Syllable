@@ -1,0 +1,34 @@
+//
+// Preferences/Screen String Catalog
+//
+// Translated by: Flemming H. Sørensen (BurningShadow)
+//
+
+MSG_MAINWND_TITLE=0							Skærm
+
+MSG_MAINWND_DISPLAY=100						Skærm
+MSG_MAINWND_DISPLAY_APPLYTO					Brug på:
+MSG_MAINWND_DISPLAY_RESOLUTION				Opløsning:
+MSG_MAINWND_DISPLAY_COLORDEPTH				Farvedybde:
+MSG_MAINWND_DISPLAY_REFRESHRATE				Opdateringshastighed:
+
+
+MSG_MAINWND_DROPDOWN_APPLY_THIS=200			Dette skrivebord
+MSG_MAINWND_DROPDOWN_APPLY_ALL				Alle skriveborde
+MSG_MAINWND_DROPDOWN_COLOUR_BIT				Bit
+MSG_MAINWND_DROPDOWN_COLOUR_UNKNOWN			Ukendt
+MSG_MAINWND_DROPDOWN_HERTZ					%i Hz
+
+MSG_MAINWND_BUTTON_APPLY=300				Aktiver
+MSG_MAINWND_BUTTON_CLOSE					Luk
+
+MSG_ALERTWND_CHANGERES=1000					Nye indstillinger
+MSG_ALERTWND_CHANGERES_TEXT					Du er ved at ændre skærm-opløsningen.\nHvis din skærm ikke understøtter de valgte indstillinger\nbliver den muligvis sort. Hvis det sker skal du vente i 15\nsekunder, hvorefter de gamle indstillinger vil blive gendannet\n\nØnsker du at fortsætte?
+MSG_ALERTWND_CHANGERES_YES					Ja
+MSG_ALERTWND_CHANGERES_NO					Nej
+
+MSG_ALERTWND_CONFIRMRES=2000				Bekræft Indstillinger
+MSG_ALERTWND_CONFIRMRES_TEXT				Virker de nye indstillinger?\n\nEllers skal du vente lidt, hvorefter de\ngamle indstillinger vil blive gendannet.
+MSG_ALERTWND_CONFIRMRES_YES					Ja
+MSG_ALERTWND_CONFIRMRES_NO					Nej
+

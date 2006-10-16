@@ -1,0 +1,77 @@
+//
+// LibSyllable string catalog
+//
+// Translated by: Ilya Krol
+//
+
+// FileRequester strings
+MSG_FILEREQUESTER_LOAD_BUTTON=1000						_Открыть
+MSG_FILEREQUESTER_SAVE_BUTTON							_Сохранить
+MSG_FILEREQUESTER_CANCEL_BUTTON							_Отменить
+MSG_FILEREQUESTER_FILE_NAME_LABEL						Имя файла:
+MSG_FILEREQUESTER_BROWSE_LOCATION_LABEL					Поиск в:
+MSG_FILEREQUESTER_FILE_ALREADY_EXISTS_TEXT				Файл '%s' уже существует.\nВы хотите перезаписать его?\n
+MSG_FILEREQUESTER_FILE_ALREADY_EXISTS_TITLE				Предупреждение:
+MSG_FILEREQUESTER_FILE_ALREADY_EXISTS_YES_BUTTON		Да
+MSG_FILEREQUESTER_FILE_ALREADY_EXISTS_NO_BUTTON			Нет
+
+// IconDirectoryView strings
+MSG_ICONDIRVIEW_WINDOW_OPEN_WITH=2000					Открыть с помощью...
+MSG_ICONDIRVIEW_NUMBER_OF_OBJECTS_SELECTED				%i обьектов
+MSG_ICONDIRVIEW_MENU_MOUNT								Смонтировать...
+MSG_ICONDIRVIEW_MENU_UNMOUNT							Размонтировать...
+MSG_ICONDIRVIEW_MENU_NEW_DIRECTORY						Новая папка...
+MSG_ICONDIRVIEW_MENU_EMPTY_TRASH						Пусто
+MSG_ICONDIRVIEW_MENU_OPEN_WITH							Открыть с помощью...
+MSG_ICONDIRVIEW_MENU_INFO								Информация...
+MSG_ICONDIRVIEW_MENU_RENAME								Переименовать...
+MSG_ICONDIRVIEW_MENU_MOVE_TO_TRASH						Переместить в корзину
+MSG_ICONDIRVIEW_MENU_DELETE								Удалить...
+MSG_ICONDIRVIEW_PERCENT_FREE							%i%% свободно
+MSG_ICONDIRVIEW_VOLUMENAME_UNKNOWN						Неизвестный
+
+// File information window
+MSG_FILEINFO_WINDOW_TITLE=3000							Информация
+MSG_FILEINFO_WINDOW_NAME_LABEL							Имя:
+MSG_FILEINFO_WINDOW_PATH_LABEL							Путь:
+MSG_FILEINFO_WINDOW_SIZE_LABEL							Размер:
+MSG_FILEINFO_WINDOW_MODIFIEDDATE_LABEL					Изменен:
+MSG_FILEINFO_WINDOW_FILETYPE_LABEL						Тип:
+MSG_FILEINFO_WINDOW_FILETYPE_DROPDOWN_CURRENT_LABEL		Текущий:
+MSG_FILEINFO_WINDOW_FILETYPE_DROPDOWN_EXECUTABLE		Исполняемый
+MSG_FILEINFO_WINDOW_OK_BUTTON							OK
+MSG_FILEINFO_FILESIZE_ZERO								Отсутствует
+MSG_FILEINFO_FILETYPE_UNKNOWN							Неизвестный
+
+// Rename file window
+MSG_RENAMEFILE_WINDOW_TITLE=4000						Переименовать %s
+MSG_RENAMEFILE_WINDOW_OK_BUTTON							OK
+MSG_RENAMEFILE_ERROR_TITLE								Переименовать
+MSG_RENAMEFILE_ERROR_TEXT								%s не может быть переименован!
+MSG_RENAMEFILE_ERROR_CLOSE								OK
+
+// New directory window
+MSG_NEWDIR_WINDOW_TITLE=5000							Новая папка
+MSG_NEWDIR_WINDOW_OK_BUTTON								OK
+MSG_NEWDIR_ERROR_TITLE									Новая папка
+MSG_NEWDIR_ERROR_TEXT									Папка %s не может быть создана!
+MSG_NEWDIR_ERROR_CLOSE									OK
+
+// Mount window
+MSG_MOUNT_WINDOW_TITLE=6000								Монтировать
+MSG_MOUNT_WINDOW_NAME_COLUMN							Имя
+MSG_MOUNT_WINDOW_PATH_COLUMN							Путь
+MSG_MOUNT_WINDOW_MOUNT_BUTTON							Смонтировать
+MSG_MOUNT_SCANNING_PATH									Сканируется %s...
+MSG_MOUNT_SCANNING										Сканируется...
+MSG_MOUNT_LOCAL_DISKS_LABEL								Локальные медиа
+MSG_MOUNT_TYPE_HARDDISK									Жесткий диск
+MSG_MOUNT_TYPE_CD_DVD									CD/DVD
+MSG_MOUNT_TYPE_FLOPPY									Флоппи
+MSG_MOUNT_DEVICE_PARTITION								Раздел
+MSG_MOUNT_ERROR_TITLE									Монтировать
+MSG_MOUNT_ERROR_CLOSE									OK
+MSG_MOUNT_ERROR_CREATE_MOUNTPOINT						Не удается создать точку монтирования устройства %s
+MSG_MOUNT_ERROR_OTHER_ERROR								Не удается смонтировать %s:\n%s
+MSG_MOUNT_ERROR_UNMOUNT									Не удается размонтировать %s:\n%s
+

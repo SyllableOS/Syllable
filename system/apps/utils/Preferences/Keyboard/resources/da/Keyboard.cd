@@ -1,0 +1,24 @@
+//
+// Preferences/Keyboard String Catalog
+//
+// Translated by: Flemming H. Sørensen (BurningShadow)
+// Korrekturlæsning og Rettelser: Jakob Wolffhechel
+//
+
+MSG_MAINWND_TITLE=0								Tastatur
+
+MSG_MAINWND_SETTINGS=100						Indstillinger
+MSG_MAINWND_SETTINGS_INITIALDELAY				Reaktionstid
+MSG_MAINWND_SETTINGS_INITIALDELAY_SHORT			Kort
+MSG_MAINWND_SETTINGS_INITIALDELAY_LONG			Lang
+MSG_MAINWND_SETTINGS_REPEATDELAY				Gentagelsestid
+MSG_MAINWND_SETTINGS_REPEATDELAY_FAST			Hurtig
+MSG_MAINWND_SETTINGS_REPEATDELAY_SLOW			Langsom
+MSG_MAINWND_SETTINGS_MILISECONDS				%.f milli-sek.
+
+MSG_MAINWND_TESTAREA=200						Test-boks (Aktiver ændringer først)
+MSG_MAINWND_KEYBOARDLAYOUT						Tastatur
+MSG_MAINWND_BUTTON_APPLY						_Aktiver
+MSG_MAINWND_BUTTON_UNDO							_Gendan
+MSG_MAINWND_BUTTON_DEFAULT						_Standard
+

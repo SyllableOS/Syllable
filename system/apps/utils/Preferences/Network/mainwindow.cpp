@@ -25,8 +25,9 @@
 #include "messages.h"
 #include "main.h"
 #include "validator.h"
+#include "resources/Network.h"
 
-MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow", "Network", os::WND_NOT_RESIZABLE)
+MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow", MSG_MAINWND_TITLE, os::WND_NOT_RESIZABLE)
 {
   os::Rect cBounds = GetBounds();
   os::Rect cRect = os::Rect(0,0,0,0);
@@ -42,7 +43,7 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
 
   pcHLHost = new os::HLayoutNode("HLHost");
   pcHLHost->AddChild( new os::HLayoutSpacer("") );
-  pcHLHost->AddChild( new os::StringView(cRect, "SVHost", "Host") );
+  pcHLHost->AddChild( new os::StringView(cRect, "SVHost", MSG_MAINWND_NAMES_HOST) );
   pcHLHost->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f) );
   pcHLHost->AddChild( pcTVHost = new os::TextView(cRect, "TVHost", "") );
   pcHLHost->AddChild( new os::HLayoutSpacer("") );
@@ -53,7 +54,7 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
 
   pcHLDomain = new os::HLayoutNode("HLDomain");
   pcHLDomain->AddChild( new os::HLayoutSpacer("") );
-  pcHLDomain->AddChild( new os::StringView(cRect, "SVDomain", "Domain") );
+  pcHLDomain->AddChild( new os::StringView(cRect, "SVDomain", MSG_MAINWND_NAMES_DOMAIN) );
   pcHLDomain->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f) );
   pcHLDomain->AddChild( pcTVDomain = new os::TextView(cRect, "TVDomain", "") );
   pcHLDomain->AddChild( new os::HLayoutSpacer("") );
@@ -64,7 +65,7 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
 
   pcHLName1 = new os::HLayoutNode("HLName1");
   pcHLName1->AddChild( new os::HLayoutSpacer("") );
-  pcHLName1->AddChild( new os::StringView(cRect, "SVName1", "Primary DNS") );
+  pcHLName1->AddChild( new os::StringView(cRect, "SVName1", MSG_MAINWND_NAMES_DNS_PRIMARY) );
   pcHLName1->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f) );
   pcHLName1->AddChild( pcTVName1 = new os::TextView(cRect, "TVName1", "") );
   pcHLName1->AddChild( new os::HLayoutSpacer("") );
@@ -75,7 +76,7 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
 
   pcHLName2 = new os::HLayoutNode("HLName2");
   pcHLName2->AddChild( new os::HLayoutSpacer("") );
-  pcHLName2->AddChild( new os::StringView(cRect, "SVName2", "Secondary DNS") );
+  pcHLName2->AddChild( new os::StringView(cRect, "SVName2", MSG_MAINWND_NAMES_DNS_SECONDARY) );
   pcHLName2->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f) );
   pcHLName2->AddChild( pcTVName2 = new os::TextView(cRect, "TVName2", "") );
   pcHLName2->AddChild( new os::HLayoutSpacer("") );
@@ -85,7 +86,7 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
 
   pcVLNames->SameWidth( "SVHost", "SVDomain", "SVName1", "SVName2", NULL);
   pcVLNames->SameWidth( "TVHost", "TVDomain", "TVName1", "TVName2", NULL);
-  pcFVNames = new os::FrameView(cBounds, "FVNames", "Names", os::CF_FOLLOW_ALL);
+  pcFVNames = new os::FrameView(cBounds, "FVNames", MSG_MAINWND_NAMES, os::CF_FOLLOW_ALL);
   pcFVNames->SetRoot(pcVLNames);
   pcVLRoot->AddChild(pcFVNames);
 
@@ -101,7 +102,7 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   pcVLConnectionButtons = new os::VLayoutNode("VLConnectionButton", 1.0f); 
   pcVLConnectionButtons->SetBorders( os::Rect(5,5,5,5) );
   pcVLConnectionButtons->AddChild( new os::VLayoutSpacer( "", 5.0f, 5.0f) );
-  pcVLConnectionButtons->AddChild( pcBModify = new os::Button(cRect, "BModify", "_Modify", new os::Message(M_MW_MODIFY)) );
+  pcVLConnectionButtons->AddChild( pcBModify = new os::Button(cRect, "BModify", MSG_MAINWND_NICINT_BUTTON_MODIFY, new os::Message(M_MW_MODIFY)) );
   if (!bRoot) {
     pcBModify->SetLabel("View");
   }
@@ -110,7 +111,7 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   pcHLConnection->SetBorders( os::Rect(5,5,5,5) );
   pcHLConnection->AddChild(pcVLConnectionList);
   pcHLConnection->AddChild(pcVLConnectionButtons); 
-  pcFVConnections = new os::FrameView(cBounds, "FVConnections", "Network Interfaces", os::CF_FOLLOW_ALL);
+  pcFVConnections = new os::FrameView(cBounds, "FVConnections", MSG_MAINWND_NICINT, os::CF_FOLLOW_ALL);
   pcFVConnections->SetRoot(pcHLConnection);
   pcVLRoot->AddChild(pcFVConnections);
   
@@ -119,9 +120,9 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
     pcVLRoot->AddChild( new os::VLayoutSpacer("", 10.0f, 10.0f));
     pcHLButtons = new os::HLayoutNode("HLButtons");
     pcHLButtons->AddChild( new os::HLayoutSpacer(""));
-    pcHLButtons->AddChild( pcBApply = new os::Button(cRect, "BApply", "_Apply", new os::Message(M_MW_APPLY)) );
+    pcHLButtons->AddChild( pcBApply = new os::Button(cRect, "BApply", MSG_MAINWND_BUTTON_APPLY, new os::Message(M_MW_APPLY)) );
     pcHLButtons->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f));
-    pcHLButtons->AddChild( pcBRevert = new os::Button(cRect, "BRevert", "_Revert", new os::Message(M_MW_REVERT)) );
+    pcHLButtons->AddChild( pcBRevert = new os::Button(cRect, "BRevert", MSG_MAINWND_BUTTON_REVERT, new os::Message(M_MW_REVERT)) );
     pcHLButtons->SameWidth( "BApply", "BRevert", NULL );
     pcHLButtons->SameHeight( "BApply", "BRevert", NULL );
     pcVLRoot->AddChild(pcHLButtons);
@@ -207,10 +208,10 @@ void MainWindow::ShowList()
       pcLVRow = new os::ListViewStringRow;
       strcpy( pzScratch, pcConfig->pcAdaptors[i].pzDescription );
       if (pcConfig->pcAdaptors[i].bEnabled) {
-	strcat( pzScratch, " (Enabled)");
+	strcat( pzScratch, MSG_MAINWND_NICINT_ENABLED.c_str());
 	pcLVRow->AppendString( pzScratch );
       } else {
-	strcat (pzScratch, " (Disabled)");
+	strcat (pzScratch, MSG_MAINWND_NICINT_DISABLED.c_str());
 	pcLVRow->AppendString( pzScratch );
       }
       pcLVConnections->InsertRow(pcLVRow, true);
@@ -224,12 +225,12 @@ void MainWindow::Apply()
   // Check data is valid first
   if (ValidateIP((char *)pcTVName1->GetBuffer()[0].c_str())!=0) {
 
-    os::Alert *pcError = new os::Alert("Invalid - Network", "The value entered in Primary DNS is invalid", os::Alert::ALERT_WARNING, os::WND_NOT_RESIZABLE || os::WND_MODAL, "_OK", NULL);
+    os::Alert *pcError = new os::Alert(MSG_ALERTWND_PRIDNS, MSG_ALERTWND_PRIDNS_TEXT, os::Alert::ALERT_WARNING, os::WND_NOT_RESIZABLE || os::WND_MODAL, MSG_ALERTWND_PRIDNS_OK.c_str(), NULL);
     pcError->Go();
 
   } else if(ValidateIP((char *)pcTVName2->GetBuffer()[0].c_str())!=0) {
 
-    os::Alert *pcError = new os::Alert("Invalid - Network", "The value entered in Secondary DNS is invalid", os::Alert::ALERT_WARNING, os::WND_NOT_RESIZABLE || os::WND_MODAL, "_OK", NULL);
+    os::Alert *pcError = new os::Alert(MSG_ALERTWND_SECDNS, MSG_ALERTWND_SECDNS_TEXT, os::Alert::ALERT_WARNING, os::WND_NOT_RESIZABLE || os::WND_MODAL, MSG_ALERTWND_SECDNS_OK.c_str(), NULL);
     pcError->Go();
 
   } else {

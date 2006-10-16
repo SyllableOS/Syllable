@@ -16,6 +16,7 @@
 #include <util/resources.h>
 #include "mainwin.h"
 #include "charmap.h"
+#include "resources/CharMap.h"
 
 #include <iostream>
 
@@ -39,7 +40,7 @@ enum MessageIDs {
 };
 
 MainWin::MainWin( const Rect& cRect )
- : Window( cRect, "MainWin", "Character map" )
+ : Window( cRect, "MainWin", MSG_MAINWND_TITLE )
 {
     LayoutNode* pcRootLayout = new VLayoutNode( "pcRootLayout" );
    
@@ -96,15 +97,15 @@ Menu* MainWin::_CreateMenuBar()
 	Menu* pcMenuBar = new Menu(Rect(), "pcMenuBar", ITEMS_IN_ROW, CF_FOLLOW_LEFT | CF_FOLLOW_RIGHT, WID_FULL_UPDATE_ON_H_RESIZE);
 
 	// Create the menus within the bar
-	Menu* pcFileMenu = new Menu(Rect(),"File", ITEMS_IN_COLUMN);
-	pcFileMenu->AddItem("Choose Font...", new Message( ID_FONT ) );
-	pcFileMenu->AddItem("Exit", new Message( ID_EXIT ), "CTRL+Q");
+	Menu* pcFileMenu = new Menu(Rect(),MSG_MAINWND_MENU_FILE, ITEMS_IN_COLUMN);
+	pcFileMenu->AddItem(MSG_MAINWND_MENU_FILE_CHOOSEFONT, new Message( ID_FONT ) );
+	pcFileMenu->AddItem(MSG_MAINWND_MENU_FILE_EXIT, new Message( ID_EXIT ), "CTRL+Q");
 	
 	pcMenuBar->AddItem(pcFileMenu);
 
-	Menu* pcHelpMenu = new Menu(Rect(),"Help", ITEMS_IN_COLUMN);
-	pcHelpMenu->AddItem("Help", new Message( ID_HELP ), "CTRL+?");
-	pcHelpMenu->AddItem("About", new Message( ID_ABOUT ) );
+	Menu* pcHelpMenu = new Menu(Rect(),MSG_MAINWND_MENU_HELP, ITEMS_IN_COLUMN);
+	pcHelpMenu->AddItem(MSG_MAINWND_MENU_HELP_HELP, new Message( ID_HELP ), "CTRL+?");
+	pcHelpMenu->AddItem(MSG_MAINWND_MENU_HELP_ABOUT, new Message( ID_ABOUT ) );
 
 	pcMenuBar->AddItem(pcHelpMenu);
 
@@ -206,21 +207,21 @@ void MainWin::HandleMessage( Message *pcMsg )
 			break;
 		case ID_ABOUT:
 			{
-				Alert *pcAlert = new Alert( "CharMap",
-                                  "CharMap V1.1\nCharacter map viewer for Syllable.",
+				Alert *pcAlert = new Alert( MSG_ABOUTWND_TITLE,
+                                  MSG_ABOUTWND_TEXT,
                                   Alert::ALERT_INFO, 0,
-                                  "Ok", 0 );
+                                  MSG_ABOUTWND_OK.c_str(), 0 );
     	    	pcAlert->CenterInWindow( this );
 	    	    pcAlert->Go( new Invoker(NULL) );
         	}
 			break;
 		case ID_HELP:
 			{
-				Alert *pcAlert = new Alert( "CharMap",
-                                  "When you click on a character, it will be copied to the clipboard.\n"
+				Alert *pcAlert = new Alert( MSG_HELPWND_TITLE,
+                                  MSG_HELPWND_TEXT +"\n"
                                   "",
                                   Alert::ALERT_INFO, 0,
-                                  "Ok", 0 );
+                                  MSG_HELPWND_OK.c_str(), 0 );
     	    	pcAlert->CenterInWindow( this );
 	    	    pcAlert->Go( new Invoker(NULL) );
         	}

@@ -1,6 +1,8 @@
 #Makefile for FileTypes
 COPTS = -c
 
+CATALOGS = da es hu pt-br
+
 APPBIN = /atheos/Applications/Preferences/
 OBJS = main.o application.o mainwindow.o newtype.o
 
@@ -20,7 +22,7 @@ $(OBJDIR)/%.o : %.s
 	@echo Assembling : $<
 	@$(CC) $(COPTS) -x assembler-with-cpp $< -o $@
 
-all : objs FileTypes
+all : objs catalogs FileTypes
 
 objs:
 	@mkdir -p objs
@@ -30,11 +32,32 @@ FileTypes: $(OBJS)
 	@$(CXX) $(OBJS) -o FileTypes -lsyllable
 	@echo Adding resources...
 	@rescopy FileTypes -r icon48x48.png icon24x24.png 
+	rescopy -a FileTypes resources/FileTypes.catalog
+	for CATALOG in $(CATALOGS);do \
+		echo $$CATALOG; \
+		rescopy -a FileTypes $$CATALOG/FileTypes.catalog=resources/$$CATALOG/FileTypes.catalog; \
+	done;
 
-clean:
+catalogs:
+	cd resources; \
+	catcomp -c FileTypes.cd; \
+	for CATALOG in $(CATALOGS);do \
+		echo $$CATALOG; \
+		cd $$CATALOG; \
+		catcomp -t FileTypes.cd; \
+		cd ..; \
+	done;
+
+clean: catalog-clean
 	@echo Cleaning...
 	@rm -f $(OBJDIR)/*
 	@rm -f FileTypes
+
+catalog-clean:
+	-rm resources/FileTypes.catalog resources/FileTypes.h; \
+	for CATALOG in $(CATALOGS);do \
+		rm resources/$$CATALOG/FileTypes.catalog; \
+	done;
 
 deps:
 

@@ -1,0 +1,35 @@
+//
+// Preferences/Login String Catalog
+//
+// Translated by: Not Translated
+//
+
+MSG_MAINWND_TITLE=0						Login
+
+MSG_MAINWND_INFORMATION=100				Information
+MSG_MAINWND_INFORMATION_WHO				You are currently logged in as %s
+MSG_MAINWND_INFORMATION_NOPERM			Your system administrator has not given you permission\nto change your login details.
+
+MSG_MAINWND_LOGINICON=200				Login Icon
+MSG_MAINWND_LOGINICON_TEXT				When I login to this computer, display\nthis icon for my user account.
+
+MSG_MAINWND_CHANGEPASS=300				Change Password
+MSG_MAINWND_CHANGEPASS_CURRENTPASS		Current password
+MSG_MAINWND_CHANGEPASS_NEWPASS			New password
+MSG_MAINWND_CHANGEPASS_CONFIRMPASS		Confirm password
+
+MSG_MAINWND_BUTTON_OK=400				_Ok
+MSG_MAINWND_BUTTON_CANCEL				_Cancel
+
+MSG_ALERTWND_FILEERROR=1000				File error
+MSG_ALERTWND_FILEERROR_TEXT				Failed to write new file to /etc/passwd.  Your password was not changed.
+MSG_ALERTWND_FILEERROR_OK				Close
+
+MSG_ALERTWND_NOMATCH=2000				New Password
+MSG_ALERTWND_NOMATCH_TEXT				The passwords you have entered do not match.  Please re-enter your password.
+MSG_ALERTWND_NOMATCH_OK					Close
+
+MSG_ALERTWND_INCORRECTPASS=3000			Incorrect Password
+MSG_ALERTWND_INCORRECTPASS_TEXT			The current password you have entered is incorrect.  Please check and re-try.
+MSG_ALERTWND_INCORRECTPASS_OK			Ok
+

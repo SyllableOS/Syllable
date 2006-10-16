@@ -1,11 +1,12 @@
 #include "mainwindow.h"
 #include "messages.h"
 #include "newtype.h"
+#include "resources/FileTypes.h"
 
 /* New filetype window */
 
 NewTypeWin::NewTypeWin( os::Looper* pcParent, os::Rect cFrame ) : os::Window( cFrame, "newtype_window", 
-																		"New filetype", os::WND_NOT_V_RESIZABLE )
+																		MSG_NEWTYPEWND_TITLE, os::WND_NOT_V_RESIZABLE )
 
 {
 	m_pcParent = pcParent;
@@ -24,14 +25,14 @@ NewTypeWin::NewTypeWin( os::Looper* pcParent, os::Rect cFrame ) : os::Window( cF
 							os::CF_FOLLOW_LEFT | os::CF_FOLLOW_RIGHT);
 	m_pcInput->SetReadOnly( false );
 	m_pcInput->SetMultiLine( false );
-	m_pcInput->Set( "Mimetype" );
+	m_pcInput->Set( MSG_NEWTYPEWND_MIMETYPE.c_str() );
 	pcVRoot->AddChild( m_pcInput ); 
 	pcVRoot->AddChild( new os::VLayoutSpacer( "" ) );
 		
 	
 	/* create buttons */
 	m_pcOk = new os::Button( os::Rect(), "ok", 
-					"Ok", new os::Message( 0 ), os::CF_FOLLOW_RIGHT | os::CF_FOLLOW_BOTTOM );
+					MSG_NEWTYPEWND_OK, new os::Message( 0 ), os::CF_FOLLOW_RIGHT | os::CF_FOLLOW_BOTTOM );
 			
 	
 	pcHNode->AddChild( new os::HLayoutSpacer( "" ) );

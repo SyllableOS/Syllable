@@ -11,6 +11,7 @@ MSG_MAINWND_FILE							Fil
 MSG_MAINWND_TRACK							Spår
 MSG_MAINWND_STREAM							Ström
 MSG_MAINWND_LENGTH							Längd
+MSG_MAINWND_PLAYING							Spelar
 
 MSG_MAINWND_MENU_APPLICATION=200			Program
 MSG_MAINWND_MENU_APPLICATION_ABOUT			Om...
@@ -18,7 +19,7 @@ MSG_MAINWND_MENU_APPLICATION_QUIT			Avsluta
 
 MSG_MAINWND_MENU_PLAYLIST=300				Spellista
 MSG_MAINWND_MENU_PLAYLIST_SELECT			Välj...
-MSG_MAINWND_MENU_PLAYLIST_INPUT				Open Input...
+MSG_MAINWND_MENU_PLAYLIST_INPUT				Öppna ingångsdata...
 
 MSG_MAINWND_MENU_FILE=400					Fil
 MSG_MAINWND_MENU_FILE_ADD					Lägg till...
@@ -38,6 +39,7 @@ MSG_ERRWND_CANTDELETE						Det spår som håller på att spelas upp kan inte rad
 MSG_ERRWND_NOTPLAYLIST						Den valda filen är inte en spellista.
 
 MSG_PLAYLIST_UNKNOWN=2000					Okänd
+MSG_PLAYLIST_DEFAULT						Standard spellista
 
 MSG_PLAYLISTWND_TITLE=2100					Välj spellista - ColdFish
 MSG_PLAYLISTWND_FILE						Fil
@@ -45,3 +47,6 @@ MSG_PLAYLISTWND_OPEN						Öppna
 MSG_PLAYLISTWND_NOTE						OBS: Om du försöker öppna en spellista som\ninte finns, så skapas den automatiskt.
 
 MSG_LCD_TRACK=3000							Spår
+
+MSG_MIMETYPE_APPLICATION_XCOLDFISHPLAYLIST=10000		Spellista för ColdFish
+

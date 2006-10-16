@@ -1,0 +1,19 @@
+//
+// Launch String Catalog
+//
+// Translated by: Maximo Pech Jaramillo <makzpj@gmail.com>
+//
+
+MSG_ERROR_LAUNCHING_ONE		El archivo '
+MSG_ERROR_LAUNCHING_TWO		' no tiene ningún tipo de archivo asociado.\Contacte al Equipo de Desarrollo de Syllable\npara más información.
+
+MSG_BUTTON_LAUNCH			_Ejecutar
+MSG_BUTTON_BROWSE			_Buscar
+MSG_BUTTON_CANCEL			_Cancelar
+MSG_ALERT_BUTTON			_OK
+
+MSG_STRING_LAUNCH			Ejecutar:
+MSG_STRING_DESC				Escriba aquí el nombre de un sitio web, archivo, directorio, o aplicación.
+
+MSG_WINDOW_TITLE			Ejecutar
+

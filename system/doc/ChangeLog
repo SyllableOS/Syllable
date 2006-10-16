@@ -1,3 +1,8 @@
+* October 17 2006, Kaj de Vos *
+
+Merged localization patches from BurningShadow and new translations that he collected
+from several contributors.
+
 * October 15 2006, Kristian Van Der Vliet *
 
 Moved the template and root users home directory into a Builder resource.  Removed
@@ -1169,4 +1174,3 @@ Added the following keymaps:
 * Jun 14 2002, Kristian Van Der Vliet *
 
 Implement get_tld(), set_tld() in process.c
-

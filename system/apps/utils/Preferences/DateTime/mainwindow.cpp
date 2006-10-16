@@ -24,9 +24,10 @@
 #include "main.h"
 #include "mainwindow.h"
 #include "messages.h"
+#include "resources/DateTime.h"
 
 CMainWindow::CMainWindow(const os::Rect& cFrame) : 
-  os::Window(cFrame, "MainWindow", "Date & Time", os::WND_NOT_RESIZABLE)
+  os::Window(cFrame, "MainWindow", MSG_MAINWND_TITLE, os::WND_NOT_RESIZABLE)
 {
   os::Rect cBounds = GetBounds();
   os::Rect cRect = os::Rect(0,0,0,0);
@@ -51,7 +52,7 @@ CMainWindow::CMainWindow(const os::Rect& cFrame) :
   m_pcHLTime = new os::HLayoutNode("HLTime");
   m_pcHLTime->SetBorders(os::Rect(5, 5, 5, 5));
   m_pcHLTime->AddChild( m_pcTPTime );
-  m_pcFVTime = new os::FrameView(cBounds, "FVTime", "Time", os::CF_FOLLOW_ALL);
+  m_pcFVTime = new os::FrameView(cBounds, "FVTime", MSG_MAINWND_TIME, os::CF_FOLLOW_ALL);
   m_pcFVTime->SetRoot(m_pcHLTime);
   m_pcHLTimeDate->AddChild(m_pcFVTime);
   
@@ -64,7 +65,7 @@ CMainWindow::CMainWindow(const os::Rect& cFrame) :
   m_pcHLDate = new os::HLayoutNode("HLDate");
   m_pcHLDate->SetBorders(os::Rect(5, 5, 5, 5));
   m_pcHLDate->AddChild( m_pcDPDate );
-  m_pcFVDate = new os::FrameView(cBounds, "FVDate", "Date", os::CF_FOLLOW_ALL);
+  m_pcFVDate = new os::FrameView(cBounds, "FVDate", MSG_MAINWND_DATE, os::CF_FOLLOW_ALL);
   m_pcFVDate->SetRoot(m_pcHLDate);
   m_pcHLTimeDate->AddChild(m_pcFVDate);
  
@@ -77,7 +78,7 @@ CMainWindow::CMainWindow(const os::Rect& cFrame) :
  
   // Add time/date tab
   m_pcLTimeDate->SetRoot(m_pcVLTimeDate);
-  m_pcTVRoot->AppendTab("Time & Date", m_pcLTimeDate);
+  m_pcTVRoot->AppendTab(MSG_MAINWND_TIMEDATE, m_pcLTimeDate);
 
   // Create bitmap object and Load map
   m_pcBIImage = new os::BitmapImage();
@@ -116,7 +117,7 @@ CMainWindow::CMainWindow(const os::Rect& cFrame) :
   
   // Add frameview and add to tab
   m_pcLTimeZone->SetRoot(m_pcVLTimeZone);
-  m_pcTVRoot->AppendTab("Time Zone", m_pcLTimeZone);
+  m_pcTVRoot->AppendTab(MSG_MAINWND_TIMEZONE, m_pcLTimeZone);
   
   // Add tabview to root
   m_pcVLRoot->AddChild(m_pcTVRoot);
@@ -126,7 +127,7 @@ CMainWindow::CMainWindow(const os::Rect& cFrame) :
     m_pcVLRoot->AddChild(new os::VLayoutSpacer("", 10.0f, 10.0f));
     m_pcHLButtons = new os::HLayoutNode("HLButtons", 1.0f, m_pcVLRoot);
     m_pcHLButtons->AddChild(new os::HLayoutSpacer(""));
-    m_pcHLButtons->AddChild(m_pcBApply = new os::Button(cRect, "BApply", "Apply", new os::Message(M_MW_APPLY)));
+    m_pcHLButtons->AddChild(m_pcBApply = new os::Button(cRect, "BApply", MSG_MAINWND_BUTTON_APPLY, new os::Message(M_MW_APPLY)));
     m_pcHLButtons->AddChild(new os::HLayoutSpacer("", 5.0f, 5.0f) );
     m_pcHLButtons->SameWidth("BApply", NULL);
   }

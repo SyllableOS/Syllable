@@ -3,11 +3,12 @@
 #include "messages.h"
 #include "newtype.h"
 #include <iostream>
+#include "resources/FileTypes.h"
 
 
 /* Main window */
 
-MainWindow::MainWindow() : os::Window( os::Rect( 0, 0, 500, 400 ), "main_wnd", "File Types" )
+MainWindow::MainWindow() : os::Window( os::Rect( 0, 0, 500, 400 ), "main_wnd", MSG_MAINWND_TITLE )
 {
 	/* Create type manager */
 	try
@@ -46,7 +47,7 @@ MainWindow::MainWindow() : os::Window( os::Rect( 0, 0, 500, 400 ), "main_wnd", "
 	m_pcVType->SetBorders( os::Rect( 5, 5, 5, 5 ) );
 	
 	/* ---------------------------- General settings --------------------------------- */
-	m_pcGeneralFrame = new os::FrameView( os::Rect(), "type_prefs_gframe", "General" );
+	m_pcGeneralFrame = new os::FrameView( os::Rect(), "type_prefs_gframe", MSG_MAINWND_GENERAL );
 	
 	os::HLayoutNode* pcHGeneral = new os::HLayoutNode( "type_prefs_hgeneral" );
 	pcHGeneral->SetBorders( os::Rect( 5, 5, 5, 5 ) );
@@ -65,7 +66,7 @@ MainWindow::MainWindow() : os::Window( os::Rect( 0, 0, 500, 400 ), "main_wnd", "
 	
 	/* Mimetype */
 	os::HLayoutNode* pcHMimeType = new os::HLayoutNode( "type_prefs_hmimetype" );
-	os::StringView* pcMimeTypeLabel = new os::StringView( os::Rect(), "type_prefs_mlabel", "Mime Type:" );
+	os::StringView* pcMimeTypeLabel = new os::StringView( os::Rect(), "type_prefs_mlabel", MSG_MAINWND_GENERAL_MIMETYPE );
 	m_pcMimeType = new os::StringView( os::Rect(), "type_prefs_mimetype", "" );
 	pcHMimeType->AddChild( pcMimeTypeLabel );
 	pcHMimeType->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f ) );
@@ -75,7 +76,7 @@ MainWindow::MainWindow() : os::Window( os::Rect( 0, 0, 500, 400 ), "main_wnd", "
 	
 	/* Identifier */
 	os::HLayoutNode* pcHIdentifier = new os::HLayoutNode( "type_prefs_identifier" );
-	os::StringView* pcIdentifierLabel = new os::StringView( os::Rect(), "type_prefs_ilabel", "Name:" ); 
+	os::StringView* pcIdentifierLabel = new os::StringView( os::Rect(), "type_prefs_ilabel", MSG_MAINWND_GENERAL_NAME ); 
 	m_pcIdentifier = new os::TextView( os::Rect(), "type_prefs_identifier", "" );
 	pcHIdentifier->AddChild( pcIdentifierLabel );
 	pcHIdentifier->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f ) );
@@ -91,7 +92,7 @@ MainWindow::MainWindow() : os::Window( os::Rect( 0, 0, 500, 400 ), "main_wnd", "
 	
 	
 	/* ------------------------------ Extensions -------------------------------- */
-	m_pcExtFrame = new os::FrameView( os::Rect(), "type_prefs_eframe", "Extensions" );
+	m_pcExtFrame = new os::FrameView( os::Rect(), "type_prefs_eframe", MSG_MAINWND_EXTENTIONS );
 	
 	os::VLayoutNode* pcVExtensions = new os::VLayoutNode( "type_prefs_extensions_v" );
 	pcVExtensions->SetBorders( os::Rect( 5, 5, 5, 5 ) );
@@ -99,7 +100,7 @@ MainWindow::MainWindow() : os::Window( os::Rect( 0, 0, 500, 400 ), "main_wnd", "
 	/* List */
 	m_pcExtensionList = new os::TreeView( os::Rect(), "type_prefs_extensions_list", os::ListView::F_RENDER_BORDER, 
 									0, os::WID_FULL_UPDATE_ON_RESIZE );
-	m_pcExtensionList->InsertColumn( "Extensions", 500 );
+	m_pcExtensionList->InsertColumn( MSG_MAINWND_EXTENTIONS_EXTENTIONS.c_str(), 500 );
 	m_pcExtensionList->SetSelChangeMsg( new os::Message( M_EXTENSION_SELECT ) );
 	pcVExtensions->AddChild( m_pcExtensionList );
 	pcVExtensions->AddChild( new os::VLayoutSpacer( "", 5.0f, 5.0f ) );
@@ -112,8 +113,8 @@ MainWindow::MainWindow() : os::Window( os::Rect( 0, 0, 500, 400 ), "main_wnd", "
 	pcHExtensions->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f ) );
 	
 	/* Buttons */
-	m_pcExtensionAdd = new os::Button( os::Rect(), "type_prefs_ext_add", "Add", new os::Message( M_ADD_EXTENSION ) );
-	m_pcExtensionRemove = new os::Button( os::Rect(), "type_prefs_ext_remove", "Remove", new os::Message( M_REMOVE_EXTENSION ) );
+	m_pcExtensionAdd = new os::Button( os::Rect(), "type_prefs_ext_add", MSG_MAINWND_EXTENTIONS_BUTTON_ADD, new os::Message( M_ADD_EXTENSION ) );
+	m_pcExtensionRemove = new os::Button( os::Rect(), "type_prefs_ext_remove", MSG_MAINWND_EXTENTIONS_BUTTON_REMOVE, new os::Message( M_REMOVE_EXTENSION ) );
 	
 	pcHExtensions->AddChild( m_pcExtensionAdd, 0.0f );
 	pcHExtensions->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f ) );
@@ -128,7 +129,7 @@ MainWindow::MainWindow() : os::Window( os::Rect( 0, 0, 500, 400 ), "main_wnd", "
 	
 	
 	/* ------------------------------ Handlers --------------------------------- */
-	m_pcHandlerFrame = new os::FrameView( os::Rect(), "type_prefs_hframe", "Handlers" );
+	m_pcHandlerFrame = new os::FrameView( os::Rect(), "type_prefs_hframe", MSG_MAINWND_HANDLERS );
 	
 	os::VLayoutNode* pcVHandlers = new os::VLayoutNode( "type_prefs_handlers_v" );
 	pcVHandlers->SetBorders( os::Rect( 5, 5, 5, 5 ) );
@@ -136,13 +137,13 @@ MainWindow::MainWindow() : os::Window( os::Rect( 0, 0, 500, 400 ), "main_wnd", "
 	/* List */
 	m_pcHandlerList = new os::TreeView( os::Rect(), "type_prefs_handlers", os::ListView::F_RENDER_BORDER, 
 									0, os::WID_FULL_UPDATE_ON_RESIZE );
-	m_pcHandlerList->InsertColumn( "Default handler", 500 );
+	m_pcHandlerList->InsertColumn( MSG_MAINWND_HANDLERS_HANDLER.c_str(), 500 );
 	
 	os::HLayoutNode* pcHHandlers = new os::HLayoutNode( "type_prefs_handlers_h", 0.0f );
 	
 	/* Buttons */
-	m_pcAddHandler = new os::Button( os::Rect(), "type_prefs_addhandler", "Add handler...", new os::Message( M_ADD_HANDLER ) );
-	m_pcRemoveHandler = new os::Button( os::Rect(), "type_prefs_removehandler", "Remove handler", new os::Message( M_REMOVE_HANDLER ) );
+	m_pcAddHandler = new os::Button( os::Rect(), "type_prefs_addhandler", MSG_MAINWND_HANDLERS_BUTTON_ADD, new os::Message( M_ADD_HANDLER ) );
+	m_pcRemoveHandler = new os::Button( os::Rect(), "type_prefs_removehandler", MSG_MAINWND_HANDLERS_BUTTON_REMOVE, new os::Message( M_REMOVE_HANDLER ) );
 	
 	pcHHandlers->AddChild( new os::HLayoutSpacer( "" ) );
 	pcHHandlers->AddChild( m_pcAddHandler );
@@ -164,10 +165,10 @@ MainWindow::MainWindow() : os::Window( os::Rect( 0, 0, 500, 400 ), "main_wnd", "
 	
 	/* --------------------------------- Create buttons ------------------------------- */
 	m_pcHButtons = new os::HLayoutNode( "type_prefs_buttons", 0.0f );
-	m_pcAddType = new os::Button( os::Rect(), "type_prefs_addtype", "Add type...", new os::Message( M_ADD_TYPE ) );
-	m_pcRemoveType = new os::Button( os::Rect(), "type_prefs_removetype", "Remove type", new os::Message( M_REMOVE_TYPE ) );
+	m_pcAddType = new os::Button( os::Rect(), "type_prefs_addtype", MSG_MAINWND_BUTTON_ADDTYPE, new os::Message( M_ADD_TYPE ) );
+	m_pcRemoveType = new os::Button( os::Rect(), "type_prefs_removetype", MSG_MAINWND_BUTTON_REMOVETYPE, new os::Message( M_REMOVE_TYPE ) );
 	
-	m_pcApply = new os::Button( os::Rect(), "type_prefs_apply", "Apply", new os::Message( M_APPLY ) );
+	m_pcApply = new os::Button( os::Rect(), "type_prefs_apply", MSG_MAINWND_BUTTON_APPLY, new os::Message( M_APPLY ) );
 	m_pcHButtons->AddChild( new os::HLayoutSpacer( "" ) );
 	m_pcHButtons->AddChild( m_pcAddType, 0.0f );
 	m_pcHButtons->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f ) );
@@ -190,7 +191,7 @@ MainWindow::MainWindow() : os::Window( os::Rect( 0, 0, 500, 400 ), "main_wnd", "
 	m_bHandlerReqShown = false;
 	
 	/* Register at least one type */
-	m_pcManager->RegisterType( "text/plain", "Plain text" );
+	m_pcManager->RegisterType( "text/plain", MSG_MIMETYPE_TEXT_PLAIN );
 	m_pcManager->RegisterTypeIcon( "text/plain", os::Path( "/system/icons/file.png" ) );
 	m_pcManager->RegisterTypeHandler( "text/plain", os::Path( "/system/bin/aedit" ) );
 	
@@ -591,7 +592,7 @@ void MainWindow::HandleMessage( os::Message* pcMessage )
 			os::String zMimetype;
 			if( pcMessage->FindString( "mimetype", &zMimetype ) == 0 )
 			{
-				m_pcManager->RegisterType( zMimetype, "New type" );
+				m_pcManager->RegisterType( zMimetype, MSG_MAINWND_NEWTYPE );
 				m_pcManager->RegisterTypeIcon( zMimetype, os::Path( "/system/icons/file.png" ) );
 				UpdateList();
 			}

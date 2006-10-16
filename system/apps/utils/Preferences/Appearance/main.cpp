@@ -36,6 +36,8 @@ int main(int argc, char* argv[])
 
 PrefsAppearanceApp::PrefsAppearanceApp() : os::Application("application/x-vnd-AppearancePreferences")
 {
+  SetCatalog("Appearance.catalog");
+
   // Get screen width and height to centre the window
   os::Desktop *pcDesktop = new os::Desktop();
   int iWidth = pcDesktop->GetScreenMode().m_nWidth;

@@ -1,6 +1,7 @@
 //
 // ColdFish string catalog
-// Nederlandse vertaling door Rik van Achterberg <rikratva@xs4all.nl>
+//
+// Translated by: Rik van Achterberg <rikratva@xs4all.nl>
 //
 
 MSG_MAINWND_TITLE=100						ColdFish
@@ -12,6 +13,7 @@ MSG_MAINWND_FILE							Bestand
 MSG_MAINWND_TRACK							Nummer
 MSG_MAINWND_STREAM							Audiostroom
 MSG_MAINWND_LENGTH							Lengte
+MSG_MAINWND_PLAYING							Afspelen
 
 MSG_MAINWND_MENU_APPLICATION=200			Applicatie
 MSG_MAINWND_MENU_APPLICATION_ABOUT			Over...
@@ -39,6 +41,7 @@ MSG_ERRWND_CANTDELETE						Het nummer dat afgespeeld wordt kan niet verwijderd w
 MSG_ERRWND_NOTPLAYLIST						Het geselecteerde bestand is geen afspeellijst.
 
 MSG_PLAYLIST_UNKNOWN=2000					Onbekend
+MSG_PLAYLIST_DEFAULT						Standaardafspeellijst
 
 MSG_PLAYLISTWND_TITLE=2100					Afspeellijst selecteren - ColdFish
 MSG_PLAYLISTWND_FILE						Bestand
@@ -46,4 +49,6 @@ MSG_PLAYLISTWND_OPEN						Openen
 MSG_PLAYLISTWND_NOTE						Let op: als u een niet bestaande\nafspeellijst probeert te openen,\nzal deze aangemaakt worden
 
 MSG_LCD_TRACK=3000							Nummer
+
+MSG_MIMETYPE_APPLICATION_XCOLDFISHPLAYLIST=10000		ColdFish-afspeellijst
 

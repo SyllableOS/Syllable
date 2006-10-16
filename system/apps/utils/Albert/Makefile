@@ -3,12 +3,35 @@ COPTS	= -c
 OBJS	= calc.o calculator.o stack.o calcbuttons.o calcdisplay.o togglebutton.o remsa.o base-n.o postoffice.o aboutwin.o
 EXE	= Albert
 
-$(EXE) : $(OBJS)
+CATALOGS = da es hu pt-br
+
+$(EXE) : catalogs $(OBJS)
 	$(CXX) $(OBJS) -lsyllable -lm -o $@
 	rescopy -r $(EXE) *.png
+	rescopy -a $(EXE) resources/$(EXE).catalog
+	for CATALOG in $(CATALOGS);do \
+		echo $$CATALOG; \
+		rescopy -a $(EXE) $$CATALOG/$(EXE).catalog=resources/$$CATALOG/$(EXE).catalog; \
+	done;
 
-clean:
+catalogs:
+	cd resources; \
+	catcomp -c $(EXE).cd; \
+	for CATALOG in $(CATALOGS);do \
+		echo $$CATALOG; \
+		cd $$CATALOG; \
+		catcomp -t $(EXE).cd; \
+		cd ..; \
+	done;
+
+clean: catalog-clean
 	-rm $(OBJS)
+
+catalog-clean:
+	-rm resources/$(EXE).catalog resources/$(EXE).h; \
+	for CATALOG in $(CATALOGS);do \
+		rm resources/$$CATALOG/$(EXE).catalog; \
+	done;
 
 tar:
 	-rm $(OBJS)

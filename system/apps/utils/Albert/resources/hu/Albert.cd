@@ -1,0 +1,68 @@
+//
+// Albert String Catalog
+//
+// Translated by: Dávid Horváth
+//
+
+MSG_MAINWND_TITLE=0									Albert
+
+MSG_MAINWND_MENU_FILE=100							Fájl
+MSG_MAINWND_MENU_FILE_CLEARALL							Összes törlése
+MSG_MAINWND_MENU_FILE_EXIT								Kilépés
+
+MSG_MAINWND_MENU_BASE=200							Számrendszerek
+MSG_MAINWND_MENU_BASE_BINARY							Bin (2)
+MSG_MAINWND_MENU_BASE_OCTAL								Oct (8)
+MSG_MAINWND_MENU_BASE_DECIMAL							Dec (10)
+MSG_MAINWND_MENU_BASE_HEXADECIMAL						Hex (16)
+
+MSG_MAINWND_MENU_CONSTANTS=300						Állandók
+MSG_MAINWND_MENU_CONSTANTS_PI							Pí
+MSG_MAINWND_MENU_CONSTANTS_E							e
+MSG_MAINWND_MENU_CONSTANTS_C							Fénysebesség (c)
+MSG_MAINWND_MENU_CONSTANTS_ELECTRON						Elektron-töltés-méret
+MSG_MAINWND_MENU_CONSTANTS_GRAV							Gravitációs állandó (G)
+MSG_MAINWND_MENU_CONSTANTS_PLANCK						Planck féle állandó (h)
+MSG_MAINWND_MENU_CONSTANTS_BOLTZMANN					Boltzmann féle állandó
+MSG_MAINWND_MENU_CONSTANTS_AVOGADRO						Avogadro-szám
+MSG_MAINWND_MENU_CONSTANTS_GAS							Gáz-állandó(R)
+MSG_MAINWND_MENU_CONSTANTS_MASSELECTRON					Elektron-tömeg
+MSG_MAINWND_MENU_CONSTANTS_MASSPROTON					Proton-tömeg
+MSG_MAINWND_MENU_CONSTANTS_MASSNEUTRON					Neutron-tömeg
+MSG_MAINWND_MENU_CONSTANTS_PERME						Permeability of free space
+MSG_MAINWND_MENU_CONSTANTS_PERMI						Permittivity of free space
+
+MSG_MAINWND_MENU_WINDOWS=400						Ablakok
+MSG_MAINWND_MENU_WINDOWS_PAPERROLL						Számolócédula
+MSG_MAINWND_MENU_WINDOWS_BASEN							Számrendszerek szerinti megjelenítés
+
+MSG_MAINWND_MENU_HELP=500							Súgó
+MSG_MAINWND_MENU_HELP_ABOUT								Névjegy
+MSG_MAINWND_MENU_HELP_KEYBOARD							Gyorsbillentyük
+
+MSG_PAPERROLL_TITLE=1000							Albert
+MSG_PAPERROLL_CMENU_COPY								Másolás
+MSG_PAPERROLL_CMENU_CLEAR								Törlés
+MSG_PAPERROLL_CMENU_SAVE								Mentés
+
+MSG_BASENWND_TITLE=2000								Számrendszerek szerinti megjelenítés
+MSG_BASENWND_BINARY										Bin
+MSG_BASENWND_OCTAL										Oct
+MSG_BASENWND_DECIMAL									Dec
+MSG_BASENWND_HEXADECIMAL								Hex
+MSG_BASENWND_BASE64										Base-64
+MSG_BASENWND_ROMAN										Roman
+
+MSG_ABOUTWND_TITLE=3000								Az Albert névjegye
+MSG_ABOUTWND_TEXTONE									Albert V0.5 2004-02-07 Copyright (C) 2002-2004 Henrik Isaksson.
+MSG_ABOUTWND_TEXTTWO									Az Albert a GNU General Public License védelme alatt áll.
+
+MSG_KBDWND_TITLE=4000								Gyorsbillentyük
+MSG_KBDWND_TEXTONE										Gyorsbillentyük
+MSG_KBDWND_TEXT09										Dec 0 - 9
+MSG_KBDWND_TEXTAF										Hex A - F
+MSG_KBDWND_TEXTASMD										Összeadás, kivonás, szorzás és osztás
+MSG_KBDWND_TEXTENTER									ENTER - Végeredmény
+MSG_KBDWND_TEXTBACKSPACE								BACKSPACE - Törlés egyenként
+MSG_KBDWND_CLOSE										Bezárás
+

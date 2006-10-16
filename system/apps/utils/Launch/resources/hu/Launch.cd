@@ -1,0 +1,19 @@
+//
+// Launch String Catalog
+//
+// Translated by: Dávid Horváth
+//
+
+MSG_ERROR_LAUNCHING_ONE		A(z) '
+MSG_ERROR_LAUNCHING_TWO		' fájlnak nincs hozzárendelt tipusa.\nTovábbi információkért keresd meg a\nSyllable Fejlesztöi Csapatát!
+
+MSG_BUTTON_LAUNCH			Futtatás
+MSG_BUTTON_BROWSE			Tallózás
+MSG_BUTTON_CANCEL			Mégsem
+MSG_ALERT_BUTTON			OK
+
+MSG_STRING_LAUNCH			Futtatás:
+MSG_STRING_DESC				Megadhatsz weboldalt, fájlt, mappát, vagy alkalmazást is.
+
+MSG_WINDOW_TITLE			Futtatás
+

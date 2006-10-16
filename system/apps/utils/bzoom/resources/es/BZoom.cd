@@ -1,0 +1,20 @@
+//
+// BZoom String Catalog
+//
+// Translated by: Maximo Pech Jaramillo <makzpj@gmail.com>
+//
+
+MSG_MAINWND_TITLE=100						BZoom
+
+MSG_MAINWND_MENU_APP=200					Aplicación
+MSG_MAINWND_MENU_APP_EXIT						Salir
+
+MSG_MAINWND_MENU_VIEW=300					Ver
+MSG_MAINWND_MENU_VIEW_MAGNIFICATION				Ampliación
+
+MSG_MAINWND_MENU_HELP=400					Ayuda
+MSG_MAINWND_MENU_HELP_ABOUT						Acerca de
+
+MSG_ABOUTWND_TITLE=1000						Acerca de BZoom
+MSG_ABOUTWND_TEXT								BZoom V1.0\n\nUn simple zoomer de píxeles para AtheOS.\nBasado en el AZoom de Chir.\nBZoom se distribuye bajo\nla licencia GNU GPL.
+MSG_ABOUTWND_OK									Ok

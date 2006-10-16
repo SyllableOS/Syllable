@@ -1,0 +1,21 @@
+//
+// Memory Monitor String Catalog
+//
+// Translated by: Maximo Pech Jaramillo <makzpj@gmail.com>
+//
+
+MSG_MAINWND_TITLE=0						Uso de Memoria
+
+MSG_MAINWND_UNITS_BYTE=100				b
+MSG_MAINWND_UNITS_KILOBYTE				Kb
+MSG_MAINWND_UNITS_MEGABYTE				Mb
+
+MSG_MAINWND_MENU_QUIT=200				Salir
+MSG_MAINWND_MENU_SPEED					Velocidad
+
+MSG_MAINWND_MENU_SPEED_LOW=300			Baja
+MSG_MAINWND_MENU_SPEED_MEDIUM			Media
+MSG_MAINWND_MENU_SPEED_HIGH				Alta
+MSG_MAINWND_MENU_SPEED_VERYHIGH			Muy alta
+MSG_MAINWND_MENU_SPEED_FULLSPEED		Velocidad máxima
+

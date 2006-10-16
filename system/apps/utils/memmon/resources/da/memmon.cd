@@ -1,0 +1,22 @@
+//
+// Memory Monitor String Catalog
+//
+// Translated by: Flemming H. Sørensen (BurningShadow)
+// Korrekturlæsning og Rettelser: Jakob Wolffhechel
+//
+
+MSG_MAINWND_TITLE=0						Hukommelsesforbrug
+
+MSG_MAINWND_UNITS_BYTE=100				B
+MSG_MAINWND_UNITS_KILOBYTE				KB
+MSG_MAINWND_UNITS_MEGABYTE				MB
+
+MSG_MAINWND_MENU_QUIT=200				Afslut
+MSG_MAINWND_MENU_SPEED					Hastighed
+
+MSG_MAINWND_MENU_SPEED_LOW=300			Langsom
+MSG_MAINWND_MENU_SPEED_MEDIUM			Normal
+MSG_MAINWND_MENU_SPEED_HIGH				Hurtig
+MSG_MAINWND_MENU_SPEED_VERYHIGH			Meget hurtig
+MSG_MAINWND_MENU_SPEED_FULLSPEED		Ekstremt hurtig
+

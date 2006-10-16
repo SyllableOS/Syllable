@@ -1,0 +1,60 @@
+//
+// Preferences/Network String Catalog
+//
+// Translated by: Maximo Pech Jaramillo <makzpj@gmail.com>
+//
+
+MSG_MAINWND_TITLE=0								Red
+
+MSG_MAINWND_NAMES=100							Nombres
+MSG_MAINWND_NAMES_HOST							Host:
+MSG_MAINWND_NAMES_HOST_DEFAULT					predeterminado
+MSG_MAINWND_NAMES_DOMAIN						Dominio:
+MSG_MAINWND_NAMES_DOMAIN_DEFAULT				dominio
+MSG_MAINWND_NAMES_DNS_PRIMARY					DNS primario:
+MSG_MAINWND_NAMES_DNS_SECONDARY					DNS secundario:
+
+MSG_MAINWND_NICINT=200							Interfaces de Red
+MSG_MAINWND_NICINT_ENABLED						(Activada)
+MSG_MAINWND_NICINT_DISABLED						(Desactivada)
+MSG_MAINWND_NICINT_BUTTON_MODIFY				_Modificar
+
+MSG_MAINWND_BUTTON_APPLY=300					_Aplicar
+MSG_MAINWND_BUTTON_REVERT						_Revertir
+
+MSG_MODIFYWND_TITLE=400							Modificar - Red
+MSG_MODIFYWND_INTERFACE							Interfaz:
+MSG_MODIFYWND_ENABLED							(Activada)
+MSG_MODIFYWND_DISABLED							(Desactivada)
+MSG_MODIFYWND_USEDHCP							_Usar DHCP
+MSG_MODIFYWND_BUTTON_ENABLE						_Activar
+MSG_MODIFYWND_BUTTON_DISABLE					_Desactivar
+MSG_MODIFYWND_SETTINGS							Configuración
+MSG_MODIFYWND_SETTINGS_IPADD					Dirección IP:
+MSG_MODIFYWND_SETTINGS_SUBNET					Máscara de subred:
+MSG_MODIFYWND_SETTINGS_GATEWAY					Puerta de enlace:
+
+MSG_CONFCHANGEDWND_TITLE=1000					Red - Configuración modificada
+MSG_CONFCHANGEDWND_TEXT							Ha cambiado la configuración de las interfaces de red\nIngresa como root y cambia la configuración desde preferencias de red.
+MSG_CONFCHANGEDWND_OK							_Ok
+
+MSG_ALERTWND_PRIDNS=2000						Red - Valor incorrecto
+MSG_ALERTWND_PRIDNS_TEXT						El valor introducido en "DNS primario" no es válido.
+MSG_ALERTWND_PRIDNS_OK							_Ok
+
+MSG_ALERTWND_SECDNS=3000						Red - Valor incorrecto
+MSG_ALERTWND_SECDNS_TEXT						El valor introducido en "DNS Secundario" no es válido.
+MSG_ALERTWND_SECDNS_OK							_Ok
+
+MSG_ALERTWND_IPADD=4000							Red - Valor incorrecto
+MSG_ALERTWND_IPADD_TEXT							El valor introducido en "Dirección IP" no es válido.
+MSG_ALERTWND_IPADD_OK							_Ok
+
+MSG_ALERTWND_SUBNET=5000						Red - Valor incorrecto
+MSG_ALERTWND_SUBNET_TEXT						El valor introducido en "Máscara de subred" no es válido.
+MSG_ALERTWND_SUBNET_OK							_Ok
+
+MSG_ALERTWND_GATEWAY=6000						Red - Valor incorrecto
+MSG_ALERTWND_GATEWAY_TEXT						El valor introducido en "Puerta de enlace" no es válido.
+MSG_ALERTWND_GATEWAY_OK							_Ok
+

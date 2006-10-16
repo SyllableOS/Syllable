@@ -1,0 +1,20 @@
+//
+// Launch String Catalog
+//
+// Translated by: Edgar Domingo de Albuquerque (contato@edgar.pro.br)
+// Brazilian Portuguese pt_BR @ 29-Jul-2006 Sorocaba/SP - Brasil
+//
+
+MSG_ERROR_LAUNCHING_ONE		O Arquivo '
+MSG_ERROR_LAUNCHING_TWO		' está associado a algum tipo.\nPor favor, verifique com o time de desenvolvimento do Syllable\npor maiores instruções.
+
+MSG_BUTTON_LAUNCH			_Executar
+MSG_BUTTON_BROWSE			_Navegar
+MSG_BUTTON_CANCEL			_Cancelar
+MSG_ALERT_BUTTON			_OK
+
+MSG_STRING_LAUNCH			Executar:
+MSG_STRING_DESC				Digite um site da Web, arquivo, diretório ou aplicativo aqui.
+
+MSG_WINDOW_TITLE			Executar
+

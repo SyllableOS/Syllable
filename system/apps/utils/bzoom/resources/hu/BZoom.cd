@@ -1,0 +1,20 @@
+//
+// BZoom String Catalog
+//
+// Translated by: Dávid Horváth
+//
+
+MSG_MAINWND_TITLE=100						BZoom
+
+MSG_MAINWND_MENU_APP=200					Program
+MSG_MAINWND_MENU_APP_EXIT						Kilépés
+
+MSG_MAINWND_MENU_VIEW=300					Nézet
+MSG_MAINWND_MENU_VIEW_MAGNIFICATION				Nagyítás mértéke
+
+MSG_MAINWND_MENU_HELP=400					Súgó
+MSG_MAINWND_MENU_HELP_ABOUT						Névjegy
+
+MSG_ABOUTWND_TITLE=1000						A BZoom névjegye
+MSG_ABOUTWND_TEXT								BZoom V1.0\n\nNagyító alkalmazás AtheOS-hoz.\nAz eredeti AZoom Chir munkája.\nA BZoom-ot a következö licencek védik:\nGNU GPL
+MSG_ABOUTWND_OK									Ok

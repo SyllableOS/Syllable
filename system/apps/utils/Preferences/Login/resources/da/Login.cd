@@ -1,0 +1,36 @@
+//
+// Preferences/Login String Catalog
+//
+// Translated by: Flemming H. Sørensen (BurningShadow)
+// Korrekturlæsning og Rettelser: Jakob Wolffhechel
+//
+
+MSG_MAINWND_TITLE=0						Log-ind
+
+MSG_MAINWND_INFORMATION=100				Information
+MSG_MAINWND_INFORMATION_WHO				Du er logget ind som %s
+MSG_MAINWND_INFORMATION_NOPERM			Din system administrator har ikke givet dig rettigheder\ntil at ændre dine indstillinger.
+
+MSG_MAINWND_LOGINICON=200				Bruger Ikon
+MSG_MAINWND_LOGINICON_TEXT				Når du bruger denne computer, vises\ndenne ikon ved din bruger-konto.
+
+MSG_MAINWND_CHANGEPASS=300				Kodeord
+MSG_MAINWND_CHANGEPASS_CURRENTPASS		Nuværende kodeord
+MSG_MAINWND_CHANGEPASS_NEWPASS			Nyt kodeord
+MSG_MAINWND_CHANGEPASS_CONFIRMPASS		Nyt kodeord (igen)
+
+MSG_MAINWND_BUTTON_OK=400				_Ok
+MSG_MAINWND_BUTTON_CANCEL				_Annuller
+
+MSG_ALERTWND_FILEERROR=1000				Fejl
+MSG_ALERTWND_FILEERROR_TEXT				Kunne ikke skrive til filen /etc/passwd.  Kodeordet er ikke blevet opdateret.
+MSG_ALERTWND_FILEERROR_OK				Luk
+
+MSG_ALERTWND_NOMATCH=2000				Kodeord
+MSG_ALERTWND_NOMATCH_TEXT				Det nye og det genindtastede kodeord er ikke ens.\nPrøv venligst igen.
+MSG_ALERTWND_NOMATCH_OK					Luk
+
+MSG_ALERTWND_INCORRECTPASS=3000			Kodeord
+MSG_ALERTWND_INCORRECTPASS_TEXT			Det nuværende kodeord er ikke korrekt.\nPrøv venligst igen.
+MSG_ALERTWND_INCORRECTPASS_OK			Ok
+

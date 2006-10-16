@@ -1,0 +1,21 @@
+//
+// Preferences/Locale string catalog
+//
+// Translated by: Edgar Domingo de Albuquerque (contato@edgar.pro.br)
+// Brazilian Portuguese pt_BR @ 29-Jul-2006 Sorocaba/SP - Brasil
+//
+
+STR_MAIN_TITLE=1000						Localização
+STR_MAIN_APPLY							_Aplicar
+STR_MAIN_REVERT							_Reverter
+STR_MAIN_DEFAULT						_Padrão
+
+STR_MAIN_LANGUAGE_TAB=1100				Idíomas
+STR_MAIN_LANGUAGE_ACTIVATE				Ativar Idíoma>
+STR_MAIN_LANGUAGE_DEACTIVATE			< Desativar Idioma
+STR_MAIN_LANGUAGE_AVAILABLE				Idíomas Suportados
+STR_MAIN_LANGUAGE_USED					Idíomas ativados
+
+STR_MAIN_COUNTRY_TAB=1200				Pais
+
+STR_ERROR_SAVE=2000						Erro durante a tentativa de salvar as preferências de Idíomas.

@@ -29,7 +29,9 @@
 #include "iview.h"
 #include "messages.h"
 
-AViewWindow::AViewWindow( const Rect &cFrame, bool bFitToImage, char **ppzArgList, int nArgCount ) : Window( cFrame, "aview_ng", AV_TITLE )
+#include "resources/AView.h"
+
+AViewWindow::AViewWindow( const Rect &cFrame, bool bFitToImage, char **ppzArgList, int nArgCount ) : Window( cFrame, "aview_ng", MSG_MAINWND_TITLE )
 {
 	m_pcImage = NULL;
 	m_bFitToImage = bFitToImage;
@@ -40,30 +42,30 @@ AViewWindow::AViewWindow( const Rect &cFrame, bool bFitToImage, char **ppzArgLis
 
 	// Menus
 	m_pcMenuBar = new Menu( cMenuFrame, "main_menu", ITEMS_IN_ROW, CF_FOLLOW_LEFT | CF_FOLLOW_RIGHT | CF_FOLLOW_TOP );
-	m_pcApplicationMenu = new Menu( Rect( 0, 0, 1, 1 ), "Application", ITEMS_IN_COLUMN );
-	m_pcApplicationMenu->AddItem( "Quit", new Message( ID_MENU_APP_QUIT ), "CTRL+Q" );
+	m_pcApplicationMenu = new Menu( Rect( 0, 0, 1, 1 ), MSG_MAINWND_MENU_APPLICATION, ITEMS_IN_COLUMN );
+	m_pcApplicationMenu->AddItem( MSG_MAINWND_MENU_APPLICATION_QUIT, new Message( ID_MENU_APP_QUIT ), "CTRL+Q" );
 	m_pcApplicationMenu->AddItem( new MenuSeparator() );
-	m_pcApplicationMenu->AddItem( "About", new Message( ID_MENU_APP_ABOUT ) );
+	m_pcApplicationMenu->AddItem( MSG_MAINWND_MENU_APPLICATION_ABOUT, new Message( ID_MENU_APP_ABOUT ) );
 	m_pcMenuBar->AddItem( m_pcApplicationMenu );
 
-	m_pcFileMenu = new Menu( Rect( 0, 0, 1, 1 ), "File", ITEMS_IN_COLUMN );
-	m_pcFileMenu->AddItem( "Open", new Message( ID_MENU_FILE_OPEN ), "CTRL+O" );
+	m_pcFileMenu = new Menu( Rect( 0, 0, 1, 1 ), MSG_MAINWND_MENU_FILE, ITEMS_IN_COLUMN );
+	m_pcFileMenu->AddItem( MSG_MAINWND_MENU_FILE_OPEN, new Message( ID_MENU_FILE_OPEN ), "CTRL+O" );
 	m_pcMenuBar->AddItem( m_pcFileMenu );
 
-	m_pcViewMenu = new Menu( Rect( 0, 0, 1, 1 ), "View", ITEMS_IN_COLUMN );
-	m_pcViewMenu->AddItem( new CheckMenu( "Fit to image" , new Message( ID_MENU_VIEW_FITTO ), m_bFitToImage ) );
+	m_pcViewMenu = new Menu( Rect( 0, 0, 1, 1 ), MSG_MAINWND_MENU_VIEW, ITEMS_IN_COLUMN );
+	m_pcViewMenu->AddItem( new CheckMenu( MSG_MAINWND_MENU_VIEW_FITTOIMAGE, new Message( ID_MENU_VIEW_FITTO ), m_bFitToImage ) );
 	m_pcViewMenu->AddItem( new MenuSeparator() );
 
 	// The navigation menu items are created specially as we need to be able to access
 	// the objects after they are created here
-	m_pcViewPrevItem = new MenuItem( "Previous", new Message( ID_MENU_VIEW_PREV ) );
+	m_pcViewPrevItem = new MenuItem( MSG_MAINWND_MENU_VIEW_PREVIOUS, new Message( ID_MENU_VIEW_PREV ) );
 	m_pcViewMenu->AddItem( m_pcViewPrevItem );
-	m_pcViewNextItem = new MenuItem( "Next", new Message( ID_MENU_VIEW_NEXT ) );
+	m_pcViewNextItem = new MenuItem( MSG_MAINWND_MENU_VIEW_NEXT, new Message( ID_MENU_VIEW_NEXT ) );
 	m_pcViewMenu->AddItem( m_pcViewNextItem );
 	m_pcViewMenu->AddItem( new MenuSeparator() );
-	m_pcViewFirstItem = new MenuItem( "First", new Message( ID_MENU_VIEW_FIRST ) );
+	m_pcViewFirstItem = new MenuItem( MSG_MAINWND_MENU_VIEW_FIRST, new Message( ID_MENU_VIEW_FIRST ) );
 	m_pcViewMenu->AddItem( m_pcViewFirstItem );
-	m_pcViewLastItem = new MenuItem( "Last", new Message( ID_MENU_VIEW_LAST ) );
+	m_pcViewLastItem = new MenuItem( MSG_MAINWND_MENU_VIEW_LAST, new Message( ID_MENU_VIEW_LAST ) );
 	m_pcViewMenu->AddItem( m_pcViewLastItem );
 
 	m_pcMenuBar->AddItem( m_pcViewMenu );
@@ -182,7 +184,7 @@ void AViewWindow::HandleMessage( Message *pcMessage )
 		case ID_MENU_APP_ABOUT:
 		{
 			m_pcAlertInvoker = new Invoker( new Message( ID_ALERT_OK ) );
-			Alert* pcAbout = new Alert("About AView", AV_ABOUT, Alert::ALERT_INFO, 0x00, "OK", NULL);
+			Alert* pcAbout = new Alert( MSG_ABOUTWND_TITLE, MSG_ABOUTWND_TEXT, Alert::ALERT_INFO, 0x00, MSG_ABOUTWND_OK.c_str(), NULL);
 			pcAbout->CenterInWindow( this );
 			pcAbout->Go( m_pcAlertInvoker );
 			break;
@@ -381,7 +383,7 @@ status_t AViewWindow::Load( uint nIndex )
 		if( !m_pcIView->IsVisible() )
 			m_pcIView->Show();
 
-		sprintf( zStatusText, "%i of %i", m_nCurrentIndex + 1, m_vzFileList.size() );
+		sprintf( zStatusText, MSG_STATUSBAR_OF.c_str(), m_nCurrentIndex + 1, m_vzFileList.size() );
 		m_pcStatusBar->SetText( zStatusText, 0 );
 		m_pcStatusBar->SetText( m_sCurrentFilename, 1 );
 	}

@@ -1,0 +1,23 @@
+//
+// CharMap String Catalog
+//
+// Translated by: Flemming H. Sørensen (BurningShadow)
+//
+
+MSG_MAINWND_TITLE=0								Tegnvælger
+
+MSG_MAINWND_MENU_FILE=100						Program
+MSG_MAINWND_MENU_FILE_CHOOSEFONT					Vælg Skrifttype...
+MSG_MAINWND_MENU_FILE_EXIT							Afslut
+
+MSG_MAINWND_MENU_HELP=200						Hjælp
+MSG_MAINWND_MENU_HELP_HELP							Hjælp
+MSG_MAINWND_MENU_HELP_ABOUT							Om...
+
+MSG_HELPWND_TITLE=1000							Tegnvælger - Hjælp
+MSG_HELPWND_TEXT									Når du klikker på et tegn,\nbliver det kopieret til udklipsholderen
+MSG_HELPWND_OK										Ok
+
+MSG_ABOUTWND_TITLE=2000							Om Tegnvælger
+MSG_ABOUTWND_TEXT									CharMap V1.1\nTegnvælger for Syllable.
+MSG_ABOUTWND_OK										Ok

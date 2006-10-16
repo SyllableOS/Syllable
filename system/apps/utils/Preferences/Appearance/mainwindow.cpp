@@ -29,8 +29,9 @@
 #include "main.h"
 #include "mainwindow.h"
 #include "messages.h"
+#include "resources/Appearance.h"
 
-MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow", "Appearance", os::WND_NOT_RESIZABLE)
+MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow", MSG_MAINWND_TITLE, os::WND_NOT_RESIZABLE)
 {
   os::Rect cBounds = GetBounds();
   os::Rect cRect = os::Rect(0,0,0,0);
@@ -47,7 +48,7 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
  
   // Window Decor
   pcHLDecor = new os::HLayoutNode("HLDecor");
-  pcHLDecor->AddChild( new os::StringView(cRect, "SVDecor", "Decor"));
+  pcHLDecor->AddChild( new os::StringView(cRect, "SVDecor", MSG_MAINWND_WINDEC_DECOR));
   pcHLDecor->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
   pcHLDecor->AddChild( pcDDMDecor = new os::DropdownMenu(cRect, "DDMDecor" ));
   pcDDMDecor->SetMinPreferredSize(15);
@@ -58,7 +59,7 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   pcVLAppearance->AddChild(pcHLDecor);
     
   // Create appearance frameview
-  pcFVAppearance = new os::FrameView( cBounds, "FVAppearance", "Window Decoration", os::CF_FOLLOW_ALL);
+  pcFVAppearance = new os::FrameView( cBounds, "FVAppearance", MSG_MAINWND_WINDEC_WINDOWSDECORATION, os::CF_FOLLOW_ALL);
   pcFVAppearance->SetRoot(pcVLAppearance);
   pcVLRoot->AddChild( pcFVAppearance );
   pcVLRoot->AddChild( new os::VLayoutSpacer("", 5.0f, 5.0f));
@@ -67,7 +68,7 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   pcVLColour = new os::VLayoutNode("VLColour");
   pcVLColour->SetBorders( os::Rect(5,5,5,5) );
   pcHLTheme = new os::HLayoutNode("HLTheme");
-  pcHLTheme->AddChild( new os::StringView(cRect, "SVTheme", "Theme"));
+  pcHLTheme->AddChild( new os::StringView(cRect, "SVTheme", MSG_MAINWND_CLRSCM_THEME));
   pcHLTheme->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f));
   pcHLTheme->AddChild( pcDDMTheme = new os::DropdownMenu(cRect, "DDMTheme"));
   pcDDMTheme->SetMinPreferredSize(15);
@@ -87,23 +88,23 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   pcDDMItem->SetTarget(this);
 
   // Add colour items to dropdown
-  pcDDMItem->AppendItem("Application "); // NORMAL
-  pcDDMItem->AppendItem("Highlight"); // SHINE
-  pcDDMItem->AppendItem("Shadow");  // SHADOW
-  pcDDMItem->AppendItem("Active Window"); // SELECTED WINDOW
-  pcDDMItem->AppendItem("Window Border"); // WINDOW BORDER
-  pcDDMItem->AppendItem("Menu Text"); // MENU TEXT
-  pcDDMItem->AppendItem("Menu Highlight Text"); // MENU HIGHLIGHT TEXT
-  pcDDMItem->AppendItem("Menu Background"); // MENU BACKGROUND
-  pcDDMItem->AppendItem("Menu Highlight"); // MENU HIGHLIGHT
-  pcDDMItem->AppendItem("Scrollbar Background"); // SCROLLBAR BACKGROUND
-  pcDDMItem->AppendItem("Scrollbar Knob"); // SCROLLBAR KNOB
-  pcDDMItem->AppendItem("Listview Tab"); // LISTVIEW TAB
-  pcDDMItem->AppendItem("Listview Tab Text"); // LISTVIEW TAB TEXT
-  pcDDMItem->AppendItem("Icon Text");
-  pcDDMItem->AppendItem("Icon Selection");
-  pcDDMItem->AppendItem("Icon Background");
-  pcDDMItem->AppendItem("Focused Item");
+  pcDDMItem->AppendItem(MSG_MAINWND_THEMEDROPDOWN_APPLICATION); // NORMAL
+  pcDDMItem->AppendItem(MSG_MAINWND_THEMEDROPDOWN_HIGHLIGHT); // SHINE
+  pcDDMItem->AppendItem(MSG_MAINWND_THEMEDROPDOWN_SHADOW);  // SHADOW
+  pcDDMItem->AppendItem(MSG_MAINWND_THEMEDROPDOWN_ACTIVEWINDOW); // SELECTED WINDOW
+  pcDDMItem->AppendItem(MSG_MAINWND_THEMEDROPDOWN_WINDOWBORDER); // WINDOW BORDER
+  pcDDMItem->AppendItem(MSG_MAINWND_THEMEDROPDOWN_MENUTEXT); // MENU TEXT
+  pcDDMItem->AppendItem(MSG_MAINWND_THEMEDROPDOWN_MENUHIGHLIGHTTEXT); // MENU HIGHLIGHT TEXT
+  pcDDMItem->AppendItem(MSG_MAINWND_THEMEDROPDOWN_MENUBACKGROUND); // MENU BACKGROUND
+  pcDDMItem->AppendItem(MSG_MAINWND_THEMEDROPDOWN_MENUHIGHLIGHT); // MENU HIGHLIGHT
+  pcDDMItem->AppendItem(MSG_MAINWND_THEMEDROPDOWN_SCROLLBARBACKGROUND); // SCROLLBAR BACKGROUND
+  pcDDMItem->AppendItem(MSG_MAINWND_THEMEDROPDOWN_SCROLLBARKNOB); // SCROLLBAR KNOB
+  pcDDMItem->AppendItem(MSG_MAINWND_THEMEDROPDOWN_LISTVIEWTAB); // LISTVIEW TAB
+  pcDDMItem->AppendItem(MSG_MAINWND_THEMEDROPDOWN_LISTVIEWTABTEXT); // LISTVIEW TAB TEXT
+  pcDDMItem->AppendItem(MSG_MAINWND_THEMEDROPDOWN_ICONTEXT);
+  pcDDMItem->AppendItem(MSG_MAINWND_THEMEDROPDOWN_ICONSELECTION);
+  pcDDMItem->AppendItem(MSG_MAINWND_THEMEDROPDOWN_ICONBACKGROUND);
+  pcDDMItem->AppendItem(MSG_MAINWND_THEMEDROPDOWN_FOCUSEDITEM);
   pcDDMItem->SetSelection(1);
   pcDDMItem->SetSelection(0);
   
@@ -124,13 +125,13 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   pcHLHeader = new os::HLayoutNode("HLHeader");
   pcHLHeader->AddChild( new os::StringView(cRect, "SVHeader", ""));
   pcHLHeader->AddChild( new os::StringView(cRect, "SLHeader", ""));
-  pcHLHeader->AddChild( new os::StringView(cRect, "TVHeader", "Dec", os::ALIGN_CENTER));
-  pcHLHeader->AddChild( new os::StringView(cRect, "TVHeaderHex", "Hex", os::ALIGN_CENTER));
+  pcHLHeader->AddChild( new os::StringView(cRect, "TVHeader", MSG_MAINWND_CLRSCM_DEC, os::ALIGN_CENTER));
+  pcHLHeader->AddChild( new os::StringView(cRect, "TVHeaderHex", MSG_MAINWND_CLRSCM_HEX, os::ALIGN_CENTER));
   pcVLSlider->AddChild( pcHLHeader );
 
   // Red
   pcHLRed = new os::HLayoutNode("HLRed");
-  pcHLRed->AddChild( new os::StringView(cRect, "SVRed", "Red "));
+  pcHLRed->AddChild( new os::StringView(cRect, "SVRed", MSG_MAINWND_CLRSCM_RED));
   pcHLRed->AddChild( pcSLRed = new os::Slider(cRect, "SLRed", new os::Message(M_MW_SLRED)));
   pcSLRed->SetTarget(this);
   pcSLRed->SetStepCount(64);
@@ -146,7 +147,7 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
 
   // Green
   pcHLGreen = new os::HLayoutNode("HLGreen");
-  pcHLGreen->AddChild( new os::StringView(cRect, "SVGreen", "Green "));
+  pcHLGreen->AddChild( new os::StringView(cRect, "SVGreen", MSG_MAINWND_CLRSCM_GREEN));
   pcHLGreen->AddChild( pcSLGreen = new os::Slider(cRect, "SLGreen", new os::Message(M_MW_SLGREEN)));
   pcSLGreen->SetTarget(this);
   pcSLGreen->SetStepCount(64);
@@ -162,7 +163,7 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   
   // Blue
   pcHLBlue = new os::HLayoutNode("HLBlue");
-  pcHLBlue->AddChild( new os::StringView(cRect, "SVBlue", "Blue "));
+  pcHLBlue->AddChild( new os::StringView(cRect, "SVBlue", MSG_MAINWND_CLRSCM_BLUE));
   pcHLBlue->AddChild( pcSLBlue = new os::Slider(cRect, "SLBlue", new os::Message(M_MW_SLBLUE)));
   pcSLBlue->SetTarget(this);
   pcSLBlue->SetStepCount(64);
@@ -203,14 +204,14 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   // Add scheme delete/save
   pcHLSchemeButtons = new os::HLayoutNode("HLSchemeButtons");
   pcHLSchemeButtons->AddChild( new os::HLayoutSpacer("") );
-  pcHLSchemeButtons->AddChild( pcBSave = new os::Button(cRect, "BSave", "_Save Scheme", new os::Message(M_MW_SAVE)) );
+  pcHLSchemeButtons->AddChild( pcBSave = new os::Button(cRect, "BSave", MSG_MAINWND_CLRSCM_BUTTON_SAVE, new os::Message(M_MW_SAVE)) );
   pcHLSchemeButtons->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f));
-  pcHLSchemeButtons->AddChild( pcBDelete = new os::Button(cRect, "BDelete", "D_elete Scheme", new os::Message(M_MW_DELETE)) );
+  pcHLSchemeButtons->AddChild( pcBDelete = new os::Button(cRect, "BDelete", MSG_MAINWND_CLRSCM_BUTTON_DEL, new os::Message(M_MW_DELETE)) );
   pcHLSchemeButtons->SameWidth( "BSave", "BDelete", NULL );
   pcVLColour->AddChild( pcHLSchemeButtons );
 
   // Create colours frameview
-  pcFVColour = new os::FrameView( cBounds, "FVColour", "Colour Scheme", os::CF_FOLLOW_ALL);
+  pcFVColour = new os::FrameView( cBounds, "FVColour", MSG_MAINWND_CLRSCM_COLOURSCHEME, os::CF_FOLLOW_ALL);
   pcFVColour->SetRoot(pcVLColour);
   pcVLRoot->AddChild(pcFVColour);
 
@@ -219,9 +220,9 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
     pcVLRoot->AddChild( new os::VLayoutSpacer("", 10.0f, 10.0f));
     pcHLButtons = new os::HLayoutNode("HLButtons");
     pcHLButtons->AddChild( new os::HLayoutSpacer(""));
-    pcHLButtons->AddChild( pcBApply = new os::Button(cRect, "BApply", "_Apply", new os::Message(M_MW_APPLY)) );
+    pcHLButtons->AddChild( pcBApply = new os::Button(cRect, "BApply", MSG_MAINWND_BUTTON_APPLY, new os::Message(M_MW_APPLY)) );
     pcHLButtons->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
-    pcHLButtons->AddChild( pcBDefault = new os::Button(cRect, "BDefault", "_Default", new os::Message(M_MW_DEFAULT)) );
+    pcHLButtons->AddChild( pcBDefault = new os::Button(cRect, "BDefault", MSG_MAINWND_BUTTON_DEFAULT, new os::Message(M_MW_DEFAULT)) );
     pcHLButtons->SameWidth( "BApply", "BDefault", NULL );
     pcHLButtons->SameHeight( "BApply", "BDefault", NULL );
     pcVLRoot->AddChild(pcHLButtons);
@@ -279,7 +280,7 @@ void MainWindow::ShowData()
       pcDDMDecor->AppendItem( psEntry->d_name );
     }
   } else {
-    os::Alert *pcAlert = new os::Alert("Error", "Directory /system/drivers/appserver/decorators/ does not exist, can not load decorators", os::Alert::ALERT_WARNING, os::WND_NOT_RESIZABLE, "OK", NULL);
+    os::Alert *pcAlert = new os::Alert(MSG_ALERT_NODECORDIR_TITLE, MSG_ALERT_NODECORDIR_TEXT, os::Alert::ALERT_WARNING, os::WND_NOT_RESIZABLE, MSG_ALERT_NODECORDIR_OK.c_str(), NULL);
     pcAlert->Go();
   }
   closedir( pDir );
@@ -302,7 +303,7 @@ void MainWindow::ShowData()
       pcDDMTheme->AppendItem( psEntry->d_name);
     }
   } else {
-    os::Alert *pcAlert = new os::Alert("Error","Directory /system/config/appearance/colour-schemes/ does not exist, can not load colour schemes", os::Alert::ALERT_WARNING, os::WND_NOT_RESIZABLE, "OK", NULL);
+    os::Alert *pcAlert = new os::Alert(MSG_ALERT_NOCLRSCMDIR_TITLE,MSG_ALERT_NOCLRSCMDIR_TEXT, os::Alert::ALERT_WARNING, os::WND_NOT_RESIZABLE, MSG_ALERT_NOCLRSCMDIR_OK.c_str(), NULL);
     pcAlert->Go();
   }
   closedir( pDir );
@@ -407,7 +408,7 @@ void MainWindow::Load()
 
   // Read in magic number first
   if (!fsIn.is_open()) {
-    os::Alert *pcAlert = new os::Alert("Error", "Can not load selected colour scheme file", os::Alert::ALERT_WARNING, os::WND_NOT_RESIZABLE, "OK", NULL);
+    os::Alert *pcAlert = new os::Alert(MSG_ALERT_CLRSCMERR_TITLE, MSG_ALERT_CLRSCMERR_TEXT, os::Alert::ALERT_WARNING, os::WND_NOT_RESIZABLE, MSG_ALERT_CLRSCMERR_OK.c_str(), NULL);
     pcAlert->Go();
   } else { 
     char pzScratch[1024];

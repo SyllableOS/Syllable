@@ -1,0 +1,22 @@
+//
+// Preferences/Font String Catalog
+//
+// Translated by: Not Translated
+//
+
+MSG_MAINWND_TITLE=0								Font
+
+MSG_MAINWND_FONTSELECTION=100					Font Selection
+MSG_MAINWND_FONTSELECTION_NORMAL				Normal
+MSG_MAINWND_FONTSELECTION_BOLD					Bold
+MSG_MAINWND_FONTSELECTION_FIXED					Fixed
+MSG_MAINWND_FONTSELECTION_WINDOW				Window
+MSG_MAINWND_FONTSELECTION_TOOLWIN				Tool Window
+MSG_MAINWND_FONTSELECTION_TEXT					A_nti-Aliasing (Smooth font edges)
+
+MSG_MAINWND_EXAMPLE=200							Example of Selected Font
+
+MSG_MAINWND_BUTTON_APPLY=300					_Apply
+MSG_MAINWND_BUTTON_REVERT						_Revert
+MSG_MAINWND_BUTTON_DEFAULT						_Default
+

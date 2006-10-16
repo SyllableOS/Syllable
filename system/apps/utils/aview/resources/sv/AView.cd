@@ -1,0 +1,32 @@
+//
+// AView String Catalog
+//
+// Translated by: Daniel Eriksson
+//
+
+MSG_MAINWND_TITLE=0							AView
+
+MSG_MAINWND_MENU_APPLICATION=100			Applikation
+MSG_MAINWND_MENU_APPLICATION_QUIT				Avsluta
+MSG_MAINWND_MENU_APPLICATION_ABOUT				Om
+
+MSG_MAINWND_MENU_FILE=200					Fil
+MSG_MAINWND_MENU_FILE_OPEN						Öppna
+
+MSG_MAINWND_MENU_VIEW=300					Visa
+MSG_MAINWND_MENU_VIEW_FITTOIMAGE				Passa till bild
+MSG_MAINWND_MENU_VIEW_PREVIOUS					Föregående
+MSG_MAINWND_MENU_VIEW_NEXT						Nästa
+MSG_MAINWND_MENU_VIEW_FIRST						Första
+MSG_MAINWND_MENU_VIEW_LAST						Sista
+
+MSG_ABOUTWND_TITLE=1000					Om AView
+MSG_ABOUTWND_TEXT								AView\n\nBildvisare för Syllable    \nCopyright 2005 Syllable Team\n\nAView är släppt under GNU GPL\n. Gå till www.gnu.org\nför mer information.\n
+MSG_ABOUTWND_OK									Ok
+
+MSG_STATUSBAR_OF=2000					%i av %i
+
+MSG_MIMETYPE_IMAGE_PNG=10000			PNG Bild
+MSG_MIMETYPE_IMAGE_JPEG					JPEG Bild
+MSG_MIMETYPE_IMAGE_GIF					GIF Bild
+

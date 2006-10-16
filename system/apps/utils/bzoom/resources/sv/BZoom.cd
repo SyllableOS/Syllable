@@ -1,0 +1,21 @@
+//
+// BZoom String Catalog
+//
+// Translated by: Daniel Eriksson
+//
+
+MSG_MAINWND_TITLE=100						BZoom
+
+MSG_MAINWND_MENU_APP=200					Applikation
+MSG_MAINWND_MENU_APP_EXIT						Stäng
+
+MSG_MAINWND_MENU_VIEW=300					Visa
+MSG_MAINWND_MENU_VIEW_MAGNIFICATION				Förstoring
+
+MSG_MAINWND_MENU_HELP=400					Hjälp
+MSG_MAINWND_MENU_HELP_ABOUT						Om
+
+MSG_ABOUTWND_TITLE=1000						Om BZoom
+MSG_ABOUTWND_TEXT								BZoom V1.0\n\nA enkel pixel-zoomare för AtheOS.\nBaserad på AZoom av Chir.\nBZoom är släppt under\nGNU GPL
+MSG_ABOUTWND_OK									Ok
+

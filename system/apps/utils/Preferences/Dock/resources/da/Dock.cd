@@ -1,0 +1,27 @@
+//
+// Preferences/Dock String Catalog
+//
+// Translated by: Flemming H. Sørensen (BurningShadow)
+//
+
+MSG_MAINWND_TITLE=0								Dock
+
+MSG_MAINWND_POSITION=100						Position
+MSG_MAINWND_POSITION_TOP						Top
+MSG_MAINWND_POSITION_BOTTOM						Bund
+MSG_MAINWND_POSITION_LEFT						Venstre
+MSG_MAINWND_POSITION_RIGHT						Højre
+
+MSG_MAINWND_PLUGINS=200							Indstiksmoduler
+MSG_MAINWND_PLUGINS_PLUGIN						Indstiksmoduler
+MSG_MAINWND_PLUGINS_ENABLED						I brug
+MSG_MAINWND_PLUGINS_TEXT						Note: Kopier indstiksmoduler til /system/extensions/dock/
+MSG_MAINWND_PLUGINS_BUTTON_ENABLE				Tag i brug
+MSG_MAINWND_PLUGINS_BUTTON_DISABLE				Ophør med at bruge
+MSG_MAINWND_PLUGINS_STATE_ENABLED_YES			Ja
+MSG_MAINWND_PLUGINS_STATE_ENABLED_NO			Nej
+
+MSG_MAINWND_BUTTON_APPLY=300					Aktiver
+MSG_MAINWND_BUTTON_UNDO							Gendan
+MSG_MAINWND_BUTTON_DEFAULT						Standard
+

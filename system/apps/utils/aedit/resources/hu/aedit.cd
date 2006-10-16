@@ -1,0 +1,111 @@
+//
+// AEdit string catalog
+//
+// Translated by: Dávid Horváth
+//
+
+MSG_APPWND_TITLE							AEdit
+MSG_APPWND_TITLE_NEW_FILE					Új dokumentum
+
+MSG_MENU_APPLICATION=100					Program
+MSG_MENU_APPLICATION_QUIT					Kilépés
+MSG_MENU_APPLICATION_ABOUT					Névjegy
+
+MSG_MENU_FILE=200							Fájl
+MSG_MENU_FILE_NEW							Új
+MSG_MENU_FILE_OPEN							Megnyitás
+MSG_MENU_FILE_CLOSE							Bezárás
+MSG_MENU_FILE_SAVE							Mentés
+MSG_MENU_FILE_SAVE_AS						Mentés másként...
+MSG_MENU_FILE_SAVE_ALL						Összes mentése
+MSG_MENU_FILE_NEXT_FILE						Következö fájl
+MSG_MENU_FILE_PREVIOUS_FILE					Elözö fájl
+
+MSG_MENU_EDIT=300							Szerkesztés
+MSG_MENU_EDIT_CUT							Kivágás
+MSG_MENU_EDIT_COPY							Másolás
+MSG_MENU_EDIT_PASTE							Beillesztés
+MSG_MENU_EDIT_SELECT_ALL					Összes kijelölése
+MSG_MENU_EDIT_UNDO							Visszavonás
+MSG_MENU_EDIT_REDO							Újra
+
+MSG_MENU_FIND=400							Keresés
+MSG_MENU_FIND_FIND							Keres...
+MSG_MENU_FIND_REPLACE						Cserél...
+MSG_MENU_FIND_GOTO_LINE						Sorra ugrás
+
+MSG_MENU_FONT=500							Betükészlet
+MSG_MENU_FONT_SIZE							Méret
+
+MSG_MENU_SETTINGS=600						Beállítások
+MSG_MENU_SETTINGS_SAVE_ON_CLOSE				Beállítások mentése bezáráskor
+MSG_MENU_SETTINGS_SAVE_NOW					Beállítások mentése most
+MSG_MENU_SETTINGS_RESET						Beállítások alaphelyzetbe állítása
+
+MSG_MENU_HELP=700							Súgó
+MSG_MENU_HELP_TABLE_OF_CONTENTS				Kézikönyv
+MSG_MENU_HELP_HOMEPAGE						Az AEdit honlapja
+
+MSG_ABOUT_TITLE=800							Az AEdit névjegye
+MSG_ABOUT_TEXT								\n\nSzövegszerkesztö Syllable operációs rendszerre.\nCopyright 2000-2003 Kristian Van Der Vliet\n\nAz AEdit-et a GNU General\nPublic License védi. További információ a COPYING fájlban,\nvagy a http://www.gnu.org\n honlapon.
+MSG_ABOUT_CLOSE								Bezárás
+MSG_ABOUT_VERSION							Verzió: 
+MSG_ABOUT_LINE_1 							Szövegszerkesztö Syllable rendszerre.
+MSG_ABOUT_LINE_2							(c) 2005 The Syllable Team
+MSG_ABOUT_LINE_3							w w w . s y l l a b l e . o r g
+
+MSG_ERROR_TITLE=900							Mentés
+MSG_ERROR_CANT_SAVE							A fájlt nem lehet elmenteni.
+MSG_ERROR_CLOSE								OK
+
+MSG_FIND_TITLE=1000							Keresés
+MSG_FIND_FIND_LABEL							Keresendö kifejezés
+MSG_FIND_CASE_SENSITIVE						Betüméret figyelése
+MSG_FIND_FIND								Elsö keresése
+MSG_FIND_FIND_NEXT							Következö
+MSG_FIND_CLOSE					    		Bezárás
+
+MSG_GOTO_TITLE=1100							Sorra ugrás
+MSG_GOTO_GOTO								Ugorj!
+MSG_GOTO_CLOSE								Mégsem
+
+MSG_REPLACE_TITLE=1200						Csere
+MSG_REPLACE_LBLFIND							Cserélendö
+MSG_REPLACE_WITH							Csere erre
+MSG_REPLACE_CASE_SENSITIVE					Betüméret figyelése
+MSG_REPLACE_FIND							Elsö keresése
+MSG_REPLACE_FIND_NEXT						Következö
+MSG_REPLACE_REPLACE							Kicserél
+MSG_REPLACE_CLOSE				    		Bezárás
+
+MSG_ALERT_CLOSE_FILE_TITLE=1500				Fájl nincs mentve!
+MSG_ALERT_CLOSE_FILE_BODY					Elmented mielött bezárod?
+MSG_ALERT_CLOSE_FILE_YES					Mentés
+MSG_ALERT_CLOSE_FILE_NO						Eldobás
+MSG_ALERT_CLOSE_FILE_CANCEL					Mégsem
+MSG_ALERT_SAVE_FILE_TITLE					Hiba
+MSG_ALERT_SAVE_FILE_BODY					Nem lehet menteni a következöt: "%s"
+MSG_ALERT_SAVE_FILE_OK						OK
+MSG_ALERT_QUIT_TITLE						Figyelem!
+MSG_ALERT_QUIT_BODY							Vannak nem mentett fájlok. Ha kilépsz, a nem mentett információk elvesznek.\nBiztos ki akarsz lépni?
+MSG_ALERT_QUIT_YES							Kilépés
+MSG_ALERT_QUIT_NO							Mégsem
+MSG_ALERT_FILE_OPEN_TITLE					Hiba
+MSG_ALERT_FILE_OPEN_OK						OK
+
+MSG_STATUSBAR_WELCOME=2000					Üdvözöl az AEdit!
+MSG_STATUSBAR_CLOSED_FILE					A(z) "%s" fájl sikeresen bezárva.
+MSG_STATUSBAR_SAVED_FILE					A(z) "%s" fájl sikeresen mentve.
+MSG_STATUSBAR_FILE_CLOSED_AND_SAVED			A(z) "%s" fájl sikeresen mentve és bezárva.
+MSG_STATUSBAR_FILE_CLOSED_AND_NOT_SAVED		A(z) "%s" fájl mentés nélkül sikeresen bezárva.
+MSG_STATUSBAR_NEW_FILE_CREATED				A(z) új "%s" fájl sikeresen létrehozva.
+MSG_STATUSBAR_FILE_LOADED_OK				A(z) "%s" fájl sikeresen megnyitva.
+MSG_STATUSBAR_FILE_UNABLE_TO_OPEN			Nem lehet megnyitni a(z) "%s" fájlt.
+MSG_STATUSBAR_SEARCH_FOUND					Találat a(z) "%s" kifejezésre.
+MSG_STATUSBAR_SEARCH_NOT_FOUND_1			A(z) \"%s\" kifejezésre nincs találat.
+MSG_STATUSBAR_SEARCH_NOT_FOUND_2			Nincs találat.
+MSG_STATUSBAR_REPLACE_OK					A(z) "%s" kifejezés kicserélve a következöre: "%s".
+MSG_STATUSBAR_REPLACE_NOT_OK				Nincs csere.
+
+MSG_BUFFER_UNTITLED=2100					Névtelen - %d
+MSG_BUFFER_CURSOR							%d. karakter, %d. sor

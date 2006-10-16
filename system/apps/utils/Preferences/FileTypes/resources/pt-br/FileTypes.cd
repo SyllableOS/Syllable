@@ -1,0 +1,33 @@
+//
+// Preferences/FileTypes String Catalog
+//
+// Translated by: Edgar Domingo de Albuquerque (contato@edgar.pro.br)
+// Brazilian Portuguese pt_BR @ 29-Jul-2006 Sorocaba/SP - Brasil
+//
+
+MSG_MAINWND_TITLE=0							Tipos de Arquivos
+
+MSG_MAINWND_GENERAL=100						Geral
+MSG_MAINWND_GENERAL_MIMETYPE				Tipo Mime:
+MSG_MAINWND_GENERAL_NAME					Nome:
+
+MSG_MAINWND_EXTENTIONS=200					Extensão
+MSG_MAINWND_EXTENTIONS_EXTENTIONS			Extensões
+MSG_MAINWND_EXTENTIONS_BUTTON_ADD			Adicionar
+MSG_MAINWND_EXTENTIONS_BUTTON_REMOVE		Remover
+
+MSG_MAINWND_HANDLERS=300					Identificador
+MSG_MAINWND_HANDLERS_HANDLER				Identificador Padrão
+MSG_MAINWND_HANDLERS_BUTTON_ADD				Adicionar Identificador...
+MSG_MAINWND_HANDLERS_BUTTON_REMOVE			Remover Identificador
+
+MSG_MAINWND_NEWTYPE=400						novo Tipo
+MSG_MAINWND_BUTTON_APPLY					Aplicar
+MSG_MAINWND_BUTTON_ADDTYPE					Adicionar Tipo...
+MSG_MAINWND_BUTTON_REMOVETYPE				Remover tipo
+
+MSG_NEWTYPEWND_TITLE=1000					Novo Tipo de Arquivo
+MSG_NEWTYPEWND_MIMETYPE						Mimetype
+MSG_NEWTYPEWND_OK							Ok
+
+MSG_MIMETYPE_TEXT_PLAIN=10000				Texto simples

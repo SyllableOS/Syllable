@@ -1,0 +1,20 @@
+//
+// Preferences/Locale string catalog
+//
+// Translated by: Maximo Pech Jaramillo <makzpj@gmail.com>
+//
+
+STR_MAIN_TITLE=1000						Localización
+STR_MAIN_APPLY							_Aplicar
+STR_MAIN_REVERT							_Revertir
+STR_MAIN_DEFAULT						_Predeterminado
+
+STR_MAIN_LANGUAGE_TAB=1100				Idioma
+STR_MAIN_LANGUAGE_ACTIVATE				Idioma Activo >
+STR_MAIN_LANGUAGE_DEACTIVATE			< Desactivar Idioma
+STR_MAIN_LANGUAGE_AVAILABLE				Idiomas Disponibles
+STR_MAIN_LANGUAGE_USED				    Idiomas Activos
+
+STR_MAIN_COUNTRY_TAB=1200				País
+
+STR_ERROR_SAVE=2000						Error al tratar de guardar preferencias de localización

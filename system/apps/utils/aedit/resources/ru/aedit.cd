@@ -1,0 +1,112 @@
+//
+// AEdit string catalog
+//
+// Translated by: Ilya Krol
+//
+
+MSG_APPWND_TITLE							AEdit
+MSG_APPWND_TITLE_NEW_FILE					Новый документ
+
+MSG_MENU_APPLICATION=100					Приложение
+MSG_MENU_APPLICATION_QUIT					Выход
+MSG_MENU_APPLICATION_ABOUT					О программе AEdit...
+
+MSG_MENU_FILE=200							Файл
+MSG_MENU_FILE_NEW							Новый
+MSG_MENU_FILE_OPEN							Открыть...
+MSG_MENU_FILE_CLOSE							Закрыть
+MSG_MENU_FILE_SAVE							Сохранить
+MSG_MENU_FILE_SAVE_AS						Сохранить как...
+MSG_MENU_FILE_SAVE_ALL						Сохранить все
+MSG_MENU_FILE_NEXT_FILE						Следующий файл
+MSG_MENU_FILE_PREVIOUS_FILE					Предыдущий файл
+
+MSG_MENU_EDIT=300							Редактировать
+MSG_MENU_EDIT_CUT							Вырезать
+MSG_MENU_EDIT_COPY							Копировать
+MSG_MENU_EDIT_PASTE							Вставить
+MSG_MENU_EDIT_SELECT_ALL					Выделить все
+MSG_MENU_EDIT_UNDO							Отменить
+MSG_MENU_EDIT_REDO							Вернуть
+
+MSG_MENU_FIND=400							Поиск
+MSG_MENU_FIND_FIND							Найти...
+MSG_MENU_FIND_REPLACE						Заменить...
+MSG_MENU_FIND_GOTO_LINE						Перейти к строке №...
+
+MSG_MENU_FONT=500							Шрифт
+MSG_MENU_FONT_SIZE							Размер
+
+MSG_MENU_SETTINGS=600						Настройки
+MSG_MENU_SETTINGS_SAVE_ON_CLOSE				Сохранить настройки при закрытии
+MSG_MENU_SETTINGS_SAVE_NOW					Сохранить настройки сейчас
+MSG_MENU_SETTINGS_RESET						Сбросить настройки
+
+MSG_MENU_HELP=700							Помощь
+MSG_MENU_HELP_TABLE_OF_CONTENTS				Руководство...
+MSG_MENU_HELP_HOMEPAGE						Веб-Сайт AEdit
+
+MSG_ABOUT_TITLE=800							О программе AEdit
+MSG_ABOUT_TEXT								\n\nТекстовый редактор для Syllable\nCopyright 2000-2003 Kristian Van Der Vliet\n\nAEdit распространяется на условиях лицензии GNU General\nPublic License. Ее текст Вы можете найти в файле COPYING,\nпоставляемом с AEdit, или на веб-сайте http://www.gnu.org.
+MSG_ABOUT_CLOSE								Закрыть
+MSG_ABOUT_VERSION							версия: 
+MSG_ABOUT_LINE_1 							Текстовый редактор для Syllable
+MSG_ABOUT_LINE_2							(c) 2005 The Syllable Team
+MSG_ABOUT_LINE_3							w w w . s y l l a b l e . o r g
+
+MSG_ERROR_TITLE=900							Сохранение
+MSG_ERROR_CANT_SAVE							Не удается сохранить файл.
+MSG_ERROR_CLOSE								OK
+
+MSG_FIND_TITLE=1000							Поиск
+MSG_FIND_FIND_LABEL							Найти
+MSG_FIND_CASE_SENSITIVE						Поиск с учетом регистра
+MSG_FIND_FIND								Искать _Вверх
+MSG_FIND_FIND_NEXT							Искать _Вниз
+MSG_FIND_CLOSE					    		_Закрыть
+
+MSG_GOTO_TITLE=1100							Перейти к строке 
+MSG_GOTO_GOTO								_Перейти к строке №...
+MSG_GOTO_CLOSE								_Отменить
+
+MSG_REPLACE_TITLE=1200						Замена
+MSG_REPLACE_LBLFIND							Найти
+MSG_REPLACE_WITH							Заменить на ...
+MSG_REPLACE_CASE_SENSITIVE					Поиск с учетом регистра
+MSG_REPLACE_FIND							Искать _вверх
+MSG_REPLACE_FIND_NEXT						Искать _вниз
+MSG_REPLACE_REPLACE							_Заменить
+MSG_REPLACE_CLOSE				    		_Закрыть
+
+MSG_ALERT_CLOSE_FILE_TITLE=1500				Сохранить файл?
+MSG_ALERT_CLOSE_FILE_BODY					Сохранить файл перед закрытием?
+MSG_ALERT_CLOSE_FILE_YES					Сохранить
+MSG_ALERT_CLOSE_FILE_NO						Не сохранять
+MSG_ALERT_CLOSE_FILE_CANCEL					Отмена
+MSG_ALERT_SAVE_FILE_TITLE					Ошибка
+MSG_ALERT_SAVE_FILE_BODY					Не удается сохранить файл "%s".
+MSG_ALERT_SAVE_FILE_OK						OK
+MSG_ALERT_QUIT_TITLE						Действительно выйти?
+MSG_ALERT_QUIT_BODY							У Вас остались несохраненные файлы. Если вы выйдете из программы, несохраненные данные будут потеряны.\nВы уверены, что хотите выйти?
+MSG_ALERT_QUIT_YES							Выход
+MSG_ALERT_QUIT_NO							Отмена
+MSG_ALERT_FILE_OPEN_TITLE					Ошибка
+MSG_ALERT_FILE_OPEN_OK						OK
+
+MSG_STATUSBAR_WELCOME=2000					Добро пожаловать в AEdit!
+MSG_STATUSBAR_CLOSED_FILE					Файл "%s" был закрыт.
+MSG_STATUSBAR_SAVED_FILE					Файл "%s" был сохранен.
+MSG_STATUSBAR_FILE_CLOSED_AND_SAVED			Файл "%s" был закрыт и все изменения были сохранены.
+MSG_STATUSBAR_FILE_CLOSED_AND_NOT_SAVED		Файл "%s" был закрыт без сохранения изменений.
+MSG_STATUSBAR_NEW_FILE_CREATED				Новый файл "%s" был создан.
+MSG_STATUSBAR_FILE_LOADED_OK				Файл "%s" был успешно открыт.
+MSG_STATUSBAR_FILE_UNABLE_TO_OPEN			Не удается открыть файл "%s".
+MSG_STATUSBAR_SEARCH_FOUND					Выражение "%s" было найдено.
+MSG_STATUSBAR_SEARCH_NOT_FOUND_1			Выражение \"%s\" не было найдено.
+MSG_STATUSBAR_SEARCH_NOT_FOUND_2			Выражение не было найдено
+MSG_STATUSBAR_REPLACE_OK					Выражение "%s" было заменено на "%s".
+MSG_STATUSBAR_REPLACE_NOT_OK				Выражение не было заменено.
+
+MSG_BUFFER_UNTITLED=2100					Безымянный- %d
+MSG_BUFFER_CURSOR							столбец: %d Строка: %d
+

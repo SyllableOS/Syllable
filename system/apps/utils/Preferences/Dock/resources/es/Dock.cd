@@ -1,0 +1,27 @@
+//
+// Preferences/Dock String Catalog
+//
+// Translated by: Maximo Pech Jaramillo <makzpj@gmail.com>
+//
+
+MSG_MAINWND_TITLE=0								Barra de Tareas
+
+MSG_MAINWND_POSITION=100						Posición
+MSG_MAINWND_POSITION_TOP						Superior
+MSG_MAINWND_POSITION_BOTTOM						Inferior
+MSG_MAINWND_POSITION_LEFT						Izquierda
+MSG_MAINWND_POSITION_RIGHT						Derecha
+
+MSG_MAINWND_PLUGINS=200							Plugins
+MSG_MAINWND_PLUGINS_PLUGIN						Plugin
+MSG_MAINWND_PLUGINS_ENABLED						Activado
+MSG_MAINWND_PLUGINS_TEXT						Nota: Por favor copia los plugins al directorio /system/extensions/dock/
+MSG_MAINWND_PLUGINS_BUTTON_ENABLE				Activar
+MSG_MAINWND_PLUGINS_BUTTON_DISABLE				Desactivar
+MSG_MAINWND_PLUGINS_STATE_ENABLED_YES			Sí
+MSG_MAINWND_PLUGINS_STATE_ENABLED_NO			No
+
+MSG_MAINWND_BUTTON_APPLY=300					Aplicar
+MSG_MAINWND_BUTTON_UNDO							Deshacer
+MSG_MAINWND_BUTTON_DEFAULT						Predeterminado
+

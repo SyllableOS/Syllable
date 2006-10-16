@@ -1,0 +1,35 @@
+//
+// Preferences/Login String Catalog
+//
+// Translated by: Maximo Pech Jaramillo <makzpj@gmail.com>
+//
+
+MSG_MAINWND_TITLE=0						Cuenta
+
+MSG_MAINWND_INFORMATION=100				Información
+MSG_MAINWND_INFORMATION_WHO				Te has identificado como %s
+MSG_MAINWND_INFORMATION_NOPERM			El administrador del sistema no te ha otorgado permiso\npara cambiar tus detalles de login.
+
+MSG_MAINWND_LOGINICON=200				Ícono de cuenta
+MSG_MAINWND_LOGINICON_TEXT				Mostrar este ícono cuando ingrese\na mi cuenta de usuario.
+
+MSG_MAINWND_CHANGEPASS=300				Cambiar contraseña
+MSG_MAINWND_CHANGEPASS_CURRENTPASS		Contraseña actual
+MSG_MAINWND_CHANGEPASS_NEWPASS			Contraseña nueva
+MSG_MAINWND_CHANGEPASS_CONFIRMPASS		Confirmar contraseña
+
+MSG_MAINWND_BUTTON_OK=400				_Ok
+MSG_MAINWND_BUTTON_CANCEL				_Cancelar
+
+MSG_ALERTWND_FILEERROR=1000				Error de archi
+MSG_ALERTWND_FILEERROR_TEXT				Error al escribir en /etc/passwd.  No se cambió la contraseña.
+MSG_ALERTWND_FILEERROR_OK				Close
+
+MSG_ALERTWND_NOMATCH=2000				Contraseña nueva
+MSG_ALERTWND_NOMATCH_TEXT				Las contraseñas introducidas no coinciden.  Por favor escribe de nuevo tu contraseña.
+MSG_ALERTWND_NOMATCH_OK					Close
+
+MSG_ALERTWND_INCORRECTPASS=3000			Contraseña incorrecta
+MSG_ALERTWND_INCORRECTPASS_TEXT			La contraseña proporcionada es incorrecta.  Verifícala e intentalo de nuevo.
+MSG_ALERTWND_INCORRECTPASS_OK			Ok
+

@@ -1,0 +1,22 @@
+//
+// Preferences/Desktop String Catalog
+//
+// Translated by: Dávid Horváth
+//
+
+MSG_MAINWND_TITLE=0							Asztal
+
+MSG_MAINWND_BACKGGROUND=100					Háttér
+MSG_MAINWND_BACKGGROUND_IMAGE				Kép
+MSG_MAINWND_BACKGGROUND_NONE				Nincs
+MSG_MAINWND_BACKGGROUND_TEXT				Megjegyzés: másold a képet a Documents/Pictures könyvtárba
+
+MSG_MAINWND_WINDOWS_TEXT=200				Ablakok
+MSG_MAINWND_WINDOWS_TEXT_POPUP				Kiválasztott ablak felugrása
+MSG_MAINWND_WINDOWS_TEXT_SINGLECLICK		Egy kattintás használata
+MSG_MAINWND_WINDOWS_TEXT_SHADOWTEXT			Ikonszövegek megjelenítése árnyékkal
+
+MSG_MAINWND_BUTTON_APPLY=300				Alkalmaz
+MSG_MAINWND_BUTTON_UNDO						Visszavonás
+MSG_MAINWND_BUTTON_DEFAULT					Alapértelmezett
+

@@ -23,6 +23,7 @@
 #include <appserver/protocol.h>
 #include <util/event.h>
 #include <iostream>
+#include "resources/Desktop.h"
 
 enum {
 	DP_APPLY,
@@ -74,7 +75,7 @@ private:
 
 
 PrefsDesktopWin::PrefsDesktopWin( os::Rect cFrame )
-			: os::Window( cFrame, "desktop_prefs_win", "Desktop", 0/*os::WND_NOT_RESIZABLE*/ )
+			: os::Window( cFrame, "desktop_prefs_win", MSG_MAINWND_TITLE, 0/*os::WND_NOT_RESIZABLE*/ )
 {
 	/* Create root view */
 	m_pcRoot = new os::LayoutView( GetBounds(), "desktop_prefs_root" );
@@ -86,15 +87,15 @@ PrefsDesktopWin::PrefsDesktopWin( os::Rect cFrame )
 	/* Create background frame */
 	m_pcVBackground = new os::VLayoutNode( "desktop_prefs_vbackground" );
 	m_pcVBackground->SetBorders( os::Rect( 5, 5, 5, 5 ) );
-	m_pcBackground = new os::FrameView( os::Rect(), "desktop_prefs_background", "Background" );
+	m_pcBackground = new os::FrameView( os::Rect(), "desktop_prefs_background", MSG_MAINWND_BACKGGROUND );
 	
 	
 	/* Create background list */
 	m_pcBackgroundList = new os::ListView( os::Rect(), "desktop_prefs_plist", os::ListView::F_RENDER_BORDER );
 	m_pcBackgroundList->SetAutoSort( false );
 	m_pcBackgroundList->SetSelChangeMsg( new os::Message( DP_BACKGROUND_CHANGED ) );
-	m_pcBackgroundList->InsertColumn( "Image", (int)GetBounds().Width() );
-	m_pcBackgroundNote = new os::StringView( os::Rect(), "desktop_prefs_note", "Note: Please copy images to Documents/Pictures" );
+	m_pcBackgroundList->InsertColumn( MSG_MAINWND_BACKGGROUND_IMAGE.c_str(), (int)GetBounds().Width() );
+	m_pcBackgroundNote = new os::StringView( os::Rect(), "desktop_prefs_note", MSG_MAINWND_BACKGGROUND_TEXT );
 	m_pcVBackground->AddChild( m_pcBackgroundList, 1.0f );
 	m_pcVBackground->AddChild( new os::VLayoutSpacer( "", 5.0f, 5.0f ) );
 	m_pcVBackground->AddChild( m_pcBackgroundNote, 0.0f );
@@ -102,9 +103,9 @@ PrefsDesktopWin::PrefsDesktopWin( os::Rect cFrame )
 	/* Create window settings */
 	m_pcVWindows = new os::VLayoutNode( "desktop_prefs_vwindows" );
 	m_pcVWindows->SetBorders( os::Rect( 5, 5, 5, 5 ) );
-	m_pcPopupWindows = new os::CheckBox( os::Rect(), "desktop_prefs_popup", "Popup selected window", NULL );
-	m_pcSingleClick = new os::CheckBox( os::Rect(), "desktop_prefs_sc", "Use single-click interface", NULL );
-	m_pcFontShadow = new os::CheckBox( os::Rect(), "desktop_prefs_font_shadow", "Show icontext with shadow", NULL );
+	m_pcPopupWindows = new os::CheckBox( os::Rect(), "desktop_prefs_popup", MSG_MAINWND_WINDOWS_TEXT_POPUP, NULL );
+	m_pcSingleClick = new os::CheckBox( os::Rect(), "desktop_prefs_sc", MSG_MAINWND_WINDOWS_TEXT_SINGLECLICK, NULL );
+	m_pcFontShadow = new os::CheckBox( os::Rect(), "desktop_prefs_font_shadow", MSG_MAINWND_WINDOWS_TEXT_SHADOWTEXT, NULL );
 
 	m_pcVWindows->AddChild( m_pcPopupWindows );
 	m_pcVWindows->AddChild( new os::VLayoutSpacer( "", 5.0f, 5.0f ) );
@@ -113,20 +114,20 @@ PrefsDesktopWin::PrefsDesktopWin( os::Rect cFrame )
 	m_pcVWindows->AddChild( m_pcFontShadow );
 	
 	/* Create windows frame */
-	m_pcWindows = new os::FrameView( os::Rect(), "desktop_prefs_windows", "Windows" );
+	m_pcWindows = new os::FrameView( os::Rect(), "desktop_prefs_windows", MSG_MAINWND_WINDOWS_TEXT );
 	
 	/* Create buttons node */
 	m_pcHButtons = new os::HLayoutNode( "desktop_prefs_buttons" );
 	m_pcHButtons->AddChild( new os::HLayoutSpacer( "" ) );
 	
 	/* Create Apply Button */
-	m_pcApply = new os::Button( os::Rect(), "desktop_prefs_apply", "Apply", new os::Message( DP_APPLY ) );
+	m_pcApply = new os::Button( os::Rect(), "desktop_prefs_apply", MSG_MAINWND_BUTTON_APPLY, new os::Message( DP_APPLY ) );
 	m_pcHButtons->AddChild( m_pcApply );
 	m_pcHButtons->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f ) );
-	m_pcUndo = new os::Button( os::Rect(), "desktop_prefs_undo", "Undo", new os::Message( DP_UNDO ) );
+	m_pcUndo = new os::Button( os::Rect(), "desktop_prefs_undo", MSG_MAINWND_BUTTON_UNDO, new os::Message( DP_UNDO ) );
 	m_pcHButtons->AddChild( m_pcUndo );
 	m_pcHButtons->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f ) );
-	m_pcDefault = new os::Button( os::Rect(), "desktop_prefs_default", "Default", new os::Message( DP_DEFAULT ) );
+	m_pcDefault = new os::Button( os::Rect(), "desktop_prefs_default", MSG_MAINWND_BUTTON_DEFAULT, new os::Message( DP_DEFAULT ) );
 	m_pcHButtons->AddChild( m_pcDefault );
 	m_pcHButtons->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f ) );
 	m_pcHButtons->SameWidth( "desktop_prefs_apply", "desktop_prefs_undo", "desktop_prefs_default", NULL );
@@ -165,7 +166,7 @@ PrefsDesktopWin::PrefsDesktopWin( os::Rect cFrame )
 	{
 	os::Message cReply;
 	os::Message cDummy;
-	m_zBackground = "None";
+	m_zBackground = MSG_MAINWND_BACKGGROUND_NONE;
 	m_bSingleClickSave = false;
 	m_bFontShadowSave = true;
 	
@@ -230,7 +231,7 @@ void PrefsDesktopWin::UpdateBackgroundList()
 	int nSelect = 0;
 	
 	os::ListViewStringRow* pcRow = new os::ListViewStringRow();
-	pcRow->AppendString( "None" );
+	pcRow->AppendString( MSG_MAINWND_BACKGGROUND_NONE );
 	m_pcBackgroundList->InsertRow( pcRow );
 	
 	
@@ -378,6 +379,8 @@ void PrefsDesktopWin::HandleMessage( os::Message* pcMessage )
  
 PrefsDesktopApp::PrefsDesktopApp():os::Application( "application/x-vnd-DesktopPreferences" )
 {
+	SetCatalog("Desktop.catalog");
+
 	/* Show main window */
 	PrefsDesktopWin* pcWindow = new PrefsDesktopWin( os::Rect( 0, 0, 340, 350 ) );
 	pcWindow->CenterInScreen();

@@ -10,6 +10,7 @@ class MyApp : public Application
 {
     public:
     MyApp() : Application( "application/x-vnd.digitaliz-Charmap" ) {
+		SetCatalog("CharMap.catalog");
     	m_pcWindow = new MainWin( Rect( 0, 0, 500, 250 ) );
     	m_pcWindow->CenterInScreen();
     	m_pcWindow->Show();

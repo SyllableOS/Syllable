@@ -1,6 +1,8 @@
 #Makefile for Dock
 COPTS = -c
 
+CATALOGS = da es hu pt-br
+
 APPBIN = /atheos/Applications/Preferences
 OBJS = Prefs.o
 
@@ -20,7 +22,7 @@ $(OBJDIR)/%.o : %.s
 	@echo Assembling : $<
 	@$(CC) $(COPTS) -x assembler-with-cpp $< -o $@
 
-all : objs Dock
+all : objs catalogs Dock
 
 objs:
 	@mkdir -p objs
@@ -30,11 +32,32 @@ Dock: $(OBJS)
 	@$(CXX) $(OBJS) -o Dock -lsyllable
 	@echo Adding resources...
 	@rescopy Dock -r icon48x48.png icon24x24.png 
+	rescopy -a Dock resources/Dock.catalog
+	for CATALOG in $(CATALOGS);do \
+		echo $$CATALOG; \
+		rescopy -a Dock $$CATALOG/Dock.catalog=resources/$$CATALOG/Dock.catalog; \
+	done;
 
-clean:
+catalogs:
+	cd resources; \
+	catcomp -c Dock.cd; \
+	for CATALOG in $(CATALOGS);do \
+		echo $$CATALOG; \
+		cd $$CATALOG; \
+		catcomp -t Dock.cd; \
+		cd ..; \
+	done;
+
+clean: catalog-clean
 	@echo Cleaning...
 	@rm -f $(OBJDIR)/*
 	@rm -f Dock
+
+catalog-clean:
+	-rm resources/Dock.catalog resources/Dock.h; \
+	for CATALOG in $(CATALOGS);do \
+		rm resources/$$CATALOG/Dock.catalog; \
+	done;
 
 deps:
 

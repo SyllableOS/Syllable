@@ -1,6 +1,8 @@
 //
 // Coldfish string catalog
 //
+// Translated by: Flemming H. Sørensen (BurningShadow)
+//
 
 MSG_MAINWND_TITLE=100						Coldfish
 MSG_MAINWND_PLAY							Afspil
@@ -11,6 +13,7 @@ MSG_MAINWND_FILE							Filer
 MSG_MAINWND_TRACK							Nummer
 MSG_MAINWND_STREAM							Stream
 MSG_MAINWND_LENGTH							Længde
+MSG_MAINWND_PLAYING							Spiller
 
 MSG_MAINWND_MENU_APPLICATION=200			Program
 MSG_MAINWND_MENU_APPLICATION_ABOUT			Om...
@@ -38,12 +41,14 @@ MSG_ERRWND_CANTDELETE						Det pt. afspillede nummer kan ikke slettes.
 MSG_ERRWND_NOTPLAYLIST						Den valgte fil er ikke en afspilningsliste.
 
 MSG_PLAYLIST_UNKNOWN=2000					Ukendt
+MSG_PLAYLIST_DEFAULT						Standard-afspilningsliste
 
 MSG_PLAYLISTWND_TITLE=2100					Vælg afspilningsliste - ColdFish
 MSG_PLAYLISTWND_FILE						Filer
 MSG_PLAYLISTWND_OPEN						Åbn
-MSG_PLAYLISTWND_NOTE						Bemærk: Hvis du forsøger at åbne en ikke-eksisterende/nafspillingsliste, vil den blive oprettet.
+MSG_PLAYLISTWND_NOTE						Bemærk: Hvis du forsøger at åbne en ikke-eksisterende\nafspillingsliste, vil den blive oprettet.
 
 MSG_LCD_TRACK=3000							Nummer
 
-// Oversat af BurningShadow 2004,2005
+MSG_MIMETYPE_APPLICATION_XCOLDFISHPLAYLIST=10000		ColdFish Afspilningsliste
+

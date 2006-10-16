@@ -33,6 +33,8 @@ int main(int argc, char* argv[])
 
 CDateTimeApp::CDateTimeApp() : os::Application("application/x-vnd.Preferences-DateTime")
 {
+  SetCatalog("DateTime.catalog");
+
   // Get screen width and height to centre the window
   os::Desktop *pcDesktop = new os::Desktop();
   int iWidth = pcDesktop->GetScreenMode().m_nWidth;

@@ -36,6 +36,8 @@ int main(int argc, char* argv[])
 
 PrefsFontApp::PrefsFontApp() : os::Application("application/x-vnd-FontPreferences")
 {
+	SetCatalog("Font.catalog");
+
   // Get screen width and height to centre the window
   os::Desktop *pcDesktop = new os::Desktop();
   int iWidth = pcDesktop->GetScreenMode().m_nWidth;

@@ -1,0 +1,54 @@
+//
+// ColdFish string catalog
+//
+// Translated by: Maximo Pech Jaramillo <makzpj@gmail.com>
+//
+
+MSG_MAINWND_TITLE=100						ColdFish
+MSG_MAINWND_PLAY							Reproducir
+MSG_MAINWND_STOP							Detener
+MSG_MAINWND_PAUSE							Pausa
+MSG_MAINWND_PLAYLIST						Lista de Reproducción
+MSG_MAINWND_FILE							Archivo
+MSG_MAINWND_TRACK							Pista
+MSG_MAINWND_STREAM							Flujo
+MSG_MAINWND_LENGTH							Duración
+MSG_MAINWND_PLAYING							Reproduciendo
+
+MSG_MAINWND_MENU_APPLICATION=200			Aplicación
+MSG_MAINWND_MENU_APPLICATION_ABOUT			Acerca de...
+MSG_MAINWND_MENU_APPLICATION_QUIT			Salir
+
+MSG_MAINWND_MENU_PLAYLIST=300				Lista de Reproducción
+MSG_MAINWND_MENU_PLAYLIST_SELECT			Seleccionar...
+MSG_MAINWND_MENU_PLAYLIST_INPUT				Abrir archivo de Entrada...
+
+MSG_MAINWND_MENU_FILE=400					Archivo
+MSG_MAINWND_MENU_FILE_ADD					Agregar...
+MSG_MAINWND_MENU_FILE_REMOVE				Remover
+
+MSG_MAINWND_MENU_VIEW=500					Ver
+MSG_MAINWND_MENU_VIEW_PLAYLIST				Lista de Reproducción
+
+MSG_ABOUTWND_TITLE=1000						Acerca de ColdFish
+MSG_ABOUTWND_TEXT							\nUn Reproductor de Música\nCopyright 2003 Arno Klenke\nCopyright 2003 Kristian Van Der Vliet\nCopyright 2005 Rick Caudill\n\nColdFish se distribuye bajo la licencia LGPL.
+MSG_ABOUTWND_OK								OK
+
+MSG_ERRWND_TITLE=1100						Error de ColdFish
+MSG_ERRWND_OK								OK
+MSG_ERRWND_CANTPLAY							ColdFish no puede reproducir este archivo.
+MSG_ERRWND_CANTDELETE						No se puede borrar la pista que se está reproduciendo.
+MSG_ERRWND_NOTPLAYLIST						El archivo seleccionado no es una lista de reproducción.
+
+MSG_PLAYLIST_UNKNOWN=2000					Desconocido
+MSG_PLAYLIST_DEFAULT						Lista de reproducción predeterminada
+
+MSG_PLAYLISTWND_TITLE=2100					Seleccionar Lista de Reprodución - ColdFish
+MSG_PLAYLISTWND_FILE						Archivo
+MSG_PLAYLISTWND_OPEN						Abrir
+MSG_PLAYLISTWND_NOTE						Nota: Al tratar de abrir una lista de reproducción\ninexistente, esta será creada
+
+MSG_LCD_TRACK=3000							Pista
+
+MSG_MIMETYPE_APPLICATION_XCOLDFISHPLAYLIST=10000		Lista de reproducción de ColdFish
+

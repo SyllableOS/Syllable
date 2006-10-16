@@ -30,6 +30,7 @@
 #include <pwd.h>
 
 #include "user_propertiesdlg.h"
+#include "resources/UsersAndGroups.h"
 
 using namespace os;
 
@@ -57,12 +58,12 @@ UserProperties::UserProperties( const Rect& cFrame, const string& cName,
     string     name;
     const char *value, *caption;
   } *psLine, asLines[] = {
-    { &m_pcGecos, "gecos", psDetails->pw_gecos, "_Name:" },
-    { &m_pcName,  "name",  psDetails->pw_name,  "_Login:" },
-    { &m_pcUid,   "uid",   acUidBuf,          "_User ID:" },
-    { &m_pcGid,   "gid",   acGidBuf,          "_Group ID:" },
-    { &m_pcHome,  "home",  psDetails->pw_dir,   "_Home:" },
-    { &m_pcShell, "shell", psDetails->pw_shell, "_Shell:" },
+    { &m_pcGecos, "gecos", psDetails->pw_gecos, MSG_NEWUSERWND_NAME.c_str() },
+    { &m_pcName,  "name",  psDetails->pw_name,  MSG_NEWUSERWND_LOGIN.c_str() },
+    { &m_pcUid,   "uid",   acUidBuf,          MSG_NEWUSERWND_USERID.c_str() },
+    { &m_pcGid,   "gid",   acGidBuf,          MSG_NEWUSERWND_GROUPID.c_str() },
+    { &m_pcHome,  "home",  psDetails->pw_dir,   MSG_NEWUSERWND_HOME.c_str() },
+    { &m_pcShell, "shell", psDetails->pw_shell, MSG_NEWUSERWND_SHELL.c_str() },
     { NULL, "", NULL, NULL }
   };
 
@@ -92,11 +93,11 @@ UserProperties::UserProperties( const Rect& cFrame, const string& cName,
   Button *pcButton;
   
 
-  pcButton = new Button( cRect, "cancel", "_Cancel", new Message( ID_CANCEL ) );
+  pcButton = new Button( cRect, "cancel", MSG_NEWUSERWND_BUTTON_CANCEL, new Message( ID_CANCEL ) );
   pcButton->SetTabOrder(  );
   pcLayout->AddChild( pcButton );
   
-  pcButton = new Button( cRect, "ok", "_OK", new Message( ID_OK ) );
+  pcButton = new Button( cRect, "ok", MSG_NEWUSERWND_BUTTON_OK, new Message( ID_OK ) );
   pcButton->SetTabOrder(  );
   pcLayout->AddChild( pcButton );
   

@@ -2,18 +2,41 @@ COPTS = -Wall -c
 OBJS = main.o mainwindow.o
 EXE = Appearance
 
-$(EXE): $(OBJS)
+CATALOGS = da es hu pt-br
+
+$(EXE): catalogs $(OBJS)
 	$(CXX) $(OBJS) -lsyllable -o $(EXE)
 	strip --strip-all $(EXE)
 	rescopy $(EXE) -r *.png
+	rescopy -a $(EXE) resources/$(EXE).catalog
+	for CATALOG in $(CATALOGS);do \
+		echo $$CATALOG; \
+		rescopy -a $(EXE) $$CATALOG/$(EXE).catalog=resources/$$CATALOG/$(EXE).catalog; \
+	done;
+
+catalogs:
+	cd resources; \
+	catcomp -c $(EXE).cd; \
+	for CATALOG in $(CATALOGS);do \
+		echo $$CATALOG; \
+		cd $$CATALOG; \
+		catcomp -t $(EXE).cd; \
+		cd ..; \
+	done;
 
 dist: $(EXE)
 	mkdir -p $(DIST_DIR)/atheos/Applications/Preferences
 	install -s $(EXE) $(DIST_DIR)/atheos/Applications/Preferences/$(EXE)
 
-clean:
+clean: catalog-clean
 	-rm $(OBJS)
 	-rm $(EXE)
+
+catalog-clean:
+	-rm resources/$(EXE).catalog resources/$(EXE).h; \
+	for CATALOG in $(CATALOGS);do \
+		rm resources/$$CATALOG/$(EXE).catalog; \
+	done;
 
 .cpp.o:
 	$(CC) $(COPTS) $< -o $@

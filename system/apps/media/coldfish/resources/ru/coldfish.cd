@@ -1,0 +1,54 @@
+//
+// ColdFish string catalog
+//
+// Translated by: Ilya Krol
+//
+
+MSG_MAINWND_TITLE=100						ColdFish
+MSG_MAINWND_PLAY							Воспроизведение
+MSG_MAINWND_STOP							Стоп
+MSG_MAINWND_PAUSE							Пауза
+MSG_MAINWND_PLAYLIST						Список воспроизведения
+MSG_MAINWND_FILE							Файл
+MSG_MAINWND_TRACK							Трек
+MSG_MAINWND_STREAM							Поток
+MSG_MAINWND_LENGTH							Длительность
+MSG_MAINWND_PLAYING							Playing
+
+MSG_MAINWND_MENU_APPLICATION=200			Приложение
+MSG_MAINWND_MENU_APPLICATION_ABOUT			О программе...
+MSG_MAINWND_MENU_APPLICATION_QUIT			Выход
+
+MSG_MAINWND_MENU_PLAYLIST=300				Список воспроизведения
+MSG_MAINWND_MENU_PLAYLIST_SELECT			Выбрать...
+MSG_MAINWND_MENU_PLAYLIST_INPUT				Открыть ввод...
+
+MSG_MAINWND_MENU_FILE=400					Файл
+MSG_MAINWND_MENU_FILE_ADD					Добавить...
+MSG_MAINWND_MENU_FILE_REMOVE				Удалить
+
+MSG_MAINWND_MENU_VIEW=500					Вид
+MSG_MAINWND_MENU_VIEW_PLAYLIST				Список воспроизведения
+
+MSG_ABOUTWND_TITLE=1000						О программе ColdFish
+MSG_ABOUTWND_TEXT							\nA Музыкальный проигрыватель\nCopyright 2003 Arno Klenke\nCopyright 2003 Kristian Van Der Vliet\nCopyright 2005 Rick Caudill\n\nColdFish распространяется на условиях лицензии LGPL.
+MSG_ABOUTWND_OK								OK
+
+MSG_ERRWND_TITLE=1100						Ошибка ColdFish
+MSG_ERRWND_OK								OK
+MSG_ERRWND_CANTPLAY							ColdFish не может воспроизвести этот файл.
+MSG_ERRWND_CANTDELETE						Трек, проигрываемый в настоящее время, не может быть удален.
+MSG_ERRWND_NOTPLAYLIST						Выбранный файл не является списком воспроизведения.
+
+MSG_PLAYLIST_UNKNOWN=2000					Неизвестный
+MSG_PLAYLIST_DEFAULT						Default Playlist
+
+MSG_PLAYLISTWND_TITLE=2100					Выбор списка воспроизведения - ColdFish
+MSG_PLAYLISTWND_FILE						Файл
+MSG_PLAYLISTWND_OPEN						Открыть
+MSG_PLAYLISTWND_NOTE						Примечание: если Вы пытаетесь открыть несуществующий\nсписок воспроизведения, он будет создан
+
+MSG_LCD_TRACK=3000							Трек
+
+MSG_MIMETYPE_APPLICATION_XCOLDFISHPLAYLIST=10000		ColdFish Playlist
+

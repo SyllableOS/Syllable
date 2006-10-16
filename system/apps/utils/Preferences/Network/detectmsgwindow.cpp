@@ -20,8 +20,9 @@
 #include <util/message.h>
 #include "detectmsgwindow.h"
 #include "messages.h"
+#include "resources/Network.h"
 
-DetectMsgWindow::DetectMsgWindow(const os::Rect& cFrame) : os::Window(cFrame, "DetectMsgWindow", "Configuration Changed - Network", os::WND_NOT_RESIZABLE | os::WND_MODAL | os::WND_NO_CLOSE_BUT | os::WND_NO_ZOOM_BUT | os::WND_NO_DEPTH_BUT)
+DetectMsgWindow::DetectMsgWindow(const os::Rect& cFrame) : os::Window(cFrame, "DetectMsgWindow", MSG_CONFCHANGEDWND_TITLE, os::WND_NOT_RESIZABLE | os::WND_MODAL | os::WND_NO_CLOSE_BUT | os::WND_NO_ZOOM_BUT | os::WND_NO_DEPTH_BUT)
 {
   os::Rect cBounds = GetBounds();
   os::Rect cRect = os::Rect(0,0,0,0);
@@ -32,12 +33,11 @@ DetectMsgWindow::DetectMsgWindow(const os::Rect& cFrame) : os::Window(cFrame, "D
   pcVLRoot->SetBorders( os::Rect(10,10,10,10) );
 
   // Add the message text
-  pcVLRoot->AddChild( new os::StringView(cRect, "", "The network interface configuration has changed\n"
-													"Log in as root and use network preferences to configure.") );
+  pcVLRoot->AddChild( new os::StringView(cRect, "", MSG_CONFCHANGEDWND_TEXT ) );
 //  pcVLRoot->AddChild( new os::VLayoutSpacer("", 5.0f, 5.0f) );
 //  pcVLRoot->AddChild( new os::StringView(cRect, "", "Log in as root and use network preferences to configure") );
   pcVLRoot->AddChild( new os::VLayoutSpacer("", 5.0f, 5.0f) );
-  pcVLRoot->AddChild( new os::Button(cRect, "", "_OK", new os::Message(M_DM_OK)) );
+  pcVLRoot->AddChild( new os::Button(cRect, "", MSG_CONFCHANGEDWND_OK, new os::Message(M_DM_OK)) );
 
   // Set root and add to window
   pcLRoot->SetRoot(pcVLRoot);

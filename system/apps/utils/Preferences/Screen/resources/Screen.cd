@@ -1,0 +1,34 @@
+//
+// Preferences/Screen String Catalog
+//
+// Translated by: Not Translated
+//
+
+MSG_MAINWND_TITLE=0							Screen
+
+MSG_MAINWND_DISPLAY=100						Display
+MSG_MAINWND_DISPLAY_APPLYTO					Apply to
+MSG_MAINWND_DISPLAY_RESOLUTION				Resolution
+MSG_MAINWND_DISPLAY_COLORDEPTH				Color Depth
+MSG_MAINWND_DISPLAY_REFRESHRATE				Refresh Rate
+
+
+MSG_MAINWND_DROPDOWN_APPLY_THIS=200			This workspace
+MSG_MAINWND_DROPDOWN_APPLY_ALL				All workspaces
+MSG_MAINWND_DROPDOWN_COLOUR_BIT				Bit
+MSG_MAINWND_DROPDOWN_COLOUR_UNKNOWN			Unknown
+MSG_MAINWND_DROPDOWN_HERTZ					%i Hz
+
+MSG_MAINWND_BUTTON_APPLY=300				Apply
+MSG_MAINWND_BUTTON_CLOSE					Close
+
+MSG_ALERTWND_CHANGERES=1000					Change resolution
+MSG_ALERTWND_CHANGERES_TEXT					You are about to change the resolution of your screen.\nIf your monitor doesnt support the selected videomode\nthe screen might go black. If it does, please wait 15\nseconds to return to the old mode.\n\nDo you want to proceed?
+MSG_ALERTWND_CHANGERES_YES					Yes
+MSG_ALERTWND_CHANGERES_NO					No
+
+MSG_ALERTWND_CONFIRMRES=2000				Confirm resolution
+MSG_ALERTWND_CONFIRMRES_TEXT				Is the new videomode working properly?\n\nIf not please wait and you will automatically\nreturn to the old mode.
+MSG_ALERTWND_CONFIRMRES_YES					Yes
+MSG_ALERTWND_CONFIRMRES_NO					No
+

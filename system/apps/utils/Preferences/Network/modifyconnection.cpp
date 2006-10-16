@@ -23,11 +23,12 @@
 #include "messages.h"
 #include "main.h"
 #include "validator.h"
+#include "resources/Network.h"
 
 // Boolean to signal if window is already open
 bool bModifyOpen[C_CO_MAXADAPTORS];
 
-ModifyConnectionWindow::ModifyConnectionWindow(const os::Rect& cFrame, AdaptorConfiguration *pcAdaptorIn, int iAdaptorIDIn) : os::Window(cFrame, "ModifyConnectionWindow", "Modify - Network" ,os::WND_NOT_RESIZABLE)
+ModifyConnectionWindow::ModifyConnectionWindow(const os::Rect& cFrame, AdaptorConfiguration *pcAdaptorIn, int iAdaptorIDIn) : os::Window(cFrame, "ModifyConnectionWindow", MSG_MODIFYWND_TITLE ,os::WND_NOT_RESIZABLE)
 {
   pcAdaptor = pcAdaptorIn;
   iAdaptorID = iAdaptorIDIn;
@@ -43,16 +44,16 @@ ModifyConnectionWindow::ModifyConnectionWindow(const os::Rect& cFrame, AdaptorCo
   // Show adaptor description
   pcHLDesc = new os::HLayoutNode("HLDesc");
   pcHLDesc->AddChild( new os::HLayoutSpacer("") );
-  pcHLDesc->AddChild( new os::StringView(cRect, "AdaptorDesc1", "Interface : " ) );
+  pcHLDesc->AddChild( new os::StringView(cRect, "AdaptorDesc1", MSG_MODIFYWND_INTERFACE+" " ) );
   pcHLDesc->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f ) );
   pcHLDesc->AddChild( new os::StringView(cRect, "AdaptorDesc2", pcAdaptor->pzDescription ) );
   pcHLDesc->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f ) );
   pcHLDesc->AddChild( pcSVAdaptor = new os::StringView(cRect, "", "") );
   pcSVAdaptor->SetMinPreferredSize(10);
   if (pcAdaptor->bEnabled) {
-    pcSVAdaptor->SetString("(Enabled)");
+    pcSVAdaptor->SetString(MSG_MODIFYWND_ENABLED);
   } else {
-    pcSVAdaptor->SetString("(Disabled)");
+    pcSVAdaptor->SetString(MSG_MODIFYWND_DISABLED);
   }
   pcHLDesc->AddChild( new os::HLayoutSpacer("") );
   pcVLRoot->AddChild( pcHLDesc );
@@ -65,7 +66,7 @@ ModifyConnectionWindow::ModifyConnectionWindow(const os::Rect& cFrame, AdaptorCo
   // Create IP Address layout
   pcHLIP = new os::HLayoutNode("HLIP");
   pcHLIP->AddChild( new os::HLayoutSpacer("") );
-  pcHLIP->AddChild( new os::StringView(cRect, "SVIPAddr", "IP Address") );
+  pcHLIP->AddChild( new os::StringView(cRect, "SVIPAddr", MSG_MODIFYWND_SETTINGS_IPADD) );
   pcHLIP->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
   pcHLIP->AddChild( pcTVIPAddr = new os::TextView(cRect, "TVIPAddr", "") );
   pcHLIP->AddChild( new os::HLayoutSpacer("") );
@@ -77,7 +78,7 @@ ModifyConnectionWindow::ModifyConnectionWindow(const os::Rect& cFrame, AdaptorCo
   // Create Subnet mask layout
   pcHLSN = new os::HLayoutNode("HLSN");
   pcHLSN->AddChild( new os::HLayoutSpacer("") );
-  pcHLSN->AddChild( new os::StringView(cRect, "SVSubNet", "Subnet Mask") );
+  pcHLSN->AddChild( new os::StringView(cRect, "SVSubNet", MSG_MODIFYWND_SETTINGS_SUBNET) );
   pcHLSN->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
   pcHLSN->AddChild( pcTVSubNet = new os::TextView(cRect, "TVSubNet", "") );
   pcHLSN->AddChild( new os::HLayoutSpacer("") );
@@ -89,7 +90,7 @@ ModifyConnectionWindow::ModifyConnectionWindow(const os::Rect& cFrame, AdaptorCo
   // Create gateway layout
   pcHLGW = new os::HLayoutNode("HLGW");
   pcHLGW->AddChild( new os::HLayoutSpacer("") );
-  pcHLGW->AddChild( new os::StringView(cRect, "SVGateway", "Gateway Address") );
+  pcHLGW->AddChild( new os::StringView(cRect, "SVGateway", MSG_MODIFYWND_SETTINGS_GATEWAY) );
   pcHLGW->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
   pcHLGW->AddChild( pcTVGateway = new os::TextView(cRect, "TVGateway", "") );
   pcHLGW->AddChild( new os::HLayoutSpacer("") );
@@ -100,12 +101,12 @@ ModifyConnectionWindow::ModifyConnectionWindow(const os::Rect& cFrame, AdaptorCo
   // Make sure all controls are same width
   pcVLSettings->SameWidth("TVIPAddr", "TVSubNet", "TVGateway", NULL);
   pcVLSettings->SameWidth("SVIPAddr", "SVSubNet", "SVGateway", NULL);
-  pcFVSettings = new os::FrameView(cBounds, "FVSettings", "Settings", os::CF_FOLLOW_ALL);
+  pcFVSettings = new os::FrameView(cBounds, "FVSettings", MSG_MODIFYWND_SETTINGS, os::CF_FOLLOW_ALL);
   pcFVSettings->SetRoot(pcVLSettings);
   pcVLRoot->AddChild(pcFVSettings);
 
   // Allow the user to switch DHCP On or Off
-  pcCBDhcp = new os::CheckBox( os::Rect( 0,0,0,0 ), "CBDhcp", "_Use DHCP", new os::Message( M_MC_DHCP ) );
+  pcCBDhcp = new os::CheckBox( os::Rect( 0,0,0,0 ), "CBDhcp", MSG_MODIFYWND_USEDHCP, new os::Message( M_MC_DHCP ) );
   pcVLRoot->AddChild( pcCBDhcp );
  
   // Add buttons to enable/disable
@@ -114,9 +115,9 @@ ModifyConnectionWindow::ModifyConnectionWindow(const os::Rect& cFrame, AdaptorCo
   if (bRoot) {
     pcVLRoot->AddChild( new os::VLayoutSpacer("", 10.0f, 10.0f));
     pcHLButtons = new os::HLayoutNode("HLButtons");
-    pcHLButtons->AddChild( pcBEnable = new os::Button(cRect, "BEnable", "_Enable", new os::Message(M_MC_ENABLE)) );
+    pcHLButtons->AddChild( pcBEnable = new os::Button(cRect, "BEnable", MSG_MODIFYWND_BUTTON_ENABLE, new os::Message(M_MC_ENABLE)) );
     pcHLButtons->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
-    pcHLButtons->AddChild( pcBDisable = new os::Button(cRect, "BDisable", "_Disable", new os::Message(M_MC_DISABLE)) );
+    pcHLButtons->AddChild( pcBDisable = new os::Button(cRect, "BDisable", MSG_MODIFYWND_BUTTON_DISABLE, new os::Message(M_MC_DISABLE)) );
     pcHLButtons->SameWidth( "BEnable", "BDisable", NULL );
     pcHLButtons->SameHeight( "BEnable", "BDisable", NULL );
     pcVLRoot->AddChild(pcHLButtons);
@@ -196,13 +197,13 @@ void ModifyConnectionWindow::HandleMessage(os::Message* pcMessage)
   case M_MC_ENABLE:
     pcBEnable->SetEnable(false);
     pcBDisable->SetEnable(true);
-    pcSVAdaptor->SetString("(Enabled)");
+    pcSVAdaptor->SetString(MSG_MODIFYWND_ENABLED);
     break;
 
   case M_MC_DISABLE:
     pcBEnable->SetEnable(true);
     pcBDisable->SetEnable(false);
-    pcSVAdaptor->SetString("(Disabled)");
+    pcSVAdaptor->SetString(MSG_MODIFYWND_DISABLED);
     break;
 
   case M_MC_DHCP:
@@ -239,19 +240,19 @@ bool ModifyConnectionWindow::OkToQuit()
   // Check everything is valid (if root)
   if (ValidateIP(pcTVIPAddr->GetBuffer()[0].c_str())!=0) {
     
-    os::Alert *pcError = new os::Alert("Invalid - Network", "The value entered in IP Address is invalid", os::Alert::ALERT_WARNING, os::WND_NOT_RESIZABLE || os::WND_MODAL, "_OK", NULL);
+    os::Alert *pcError = new os::Alert(MSG_ALERTWND_IPADD, MSG_ALERTWND_IPADD_TEXT, os::Alert::ALERT_WARNING, os::WND_NOT_RESIZABLE || os::WND_MODAL, MSG_ALERTWND_IPADD_OK.c_str(), NULL);
     pcError->Go();
     return false;
     
   } else if(ValidateIP(pcTVSubNet->GetBuffer()[0].c_str())!=0) {
 
-    os::Alert *pcError = new os::Alert("Invalid - Network", "The value entered in Subnet Mask is invalid", os::Alert::ALERT_WARNING, os::WND_NOT_RESIZABLE || os::WND_MODAL, "_OK", NULL);
+    os::Alert *pcError = new os::Alert(MSG_ALERTWND_SUBNET, MSG_ALERTWND_SUBNET_TEXT, os::Alert::ALERT_WARNING, os::WND_NOT_RESIZABLE || os::WND_MODAL, MSG_ALERTWND_SUBNET_OK.c_str(), NULL);
     pcError->Go();
     return false;
 
   } else if(ValidateIP(pcTVGateway->GetBuffer()[0].c_str())!=0) {
 
-    os::Alert *pcError = new os::Alert("Invalid - Network","The value entered in Gateway is invalid", os::Alert::ALERT_WARNING, os::WND_NOT_RESIZABLE || os::WND_MODAL, "_OK", NULL);
+    os::Alert *pcError = new os::Alert(MSG_ALERTWND_GATEWAY,MSG_ALERTWND_GATEWAY_TEXT, os::Alert::ALERT_WARNING, os::WND_NOT_RESIZABLE || os::WND_MODAL, MSG_ALERTWND_GATEWAY_OK.c_str(), NULL);
     pcError->Go();
     return false;
 

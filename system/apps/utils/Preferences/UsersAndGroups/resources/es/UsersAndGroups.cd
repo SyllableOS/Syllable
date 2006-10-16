@@ -1,0 +1,69 @@
+//
+// Preferences/UsersAndGroups String Catalog
+//
+// Translated by: Maximo Pech Jaramillo <makzpj@gmail.com>
+//
+
+MSG_MAINWND_TITLE=0							Usuarios y Grupos
+
+MSG_MAINWND_BUTTON_OK=100					_Ok
+MSG_MAINWND_BUTTON_CANCEL					_Cancelar
+
+MSG_MAINWND_TAB_USERS=200					Usuarios
+MSG_MAINWND_TAB_USERS_NAME					Nombre
+MSG_MAINWND_TAB_USERS_LOGIN					Login (nombre en el sistema)
+MSG_MAINWND_TAB_USERS_ID					ID
+MSG_MAINWND_TAB_USERS_GROUP					Grupo
+MSG_MAINWND_TAB_USERS_HOME					Home (directorio inicial)
+MSG_MAINWND_TAB_USERS_BUTTON_ADD			_Agregar Usuario...
+MSG_MAINWND_TAB_USERS_BUTTON_EDIT			_Editar...
+MSG_MAINWND_TAB_USERS_BUTTON_DEL			_Eliminar Usuario
+MSG_MAINWND_TAB_USERS_BUTTON_PASS			_Establecer contraseña...
+
+MSG_MAINWND_TAB_GROUPS=300					Grupos
+MSG_MAINWND_TAB_GROUPS_NAME					Nombre
+MSG_MAINWND_TAB_GROUPS_ID					ID
+MSG_MAINWND_TAB_GROUPS_BUTTON_ADD			_Agregar Group...
+MSG_MAINWND_TAB_GROUPS_BUTTON_EDIT			_Editar...
+MSG_MAINWND_TAB_GROUPS_BUTTON_DEL			_Eliminar Grupo
+
+MSG_NEWUSERWND_TITLE=1000					Usuario nuevo
+MSG_NEWUSERWND_NAME							Nombre:
+MSG_NEWUSERWND_LOGIN						Login:
+MSG_NEWUSERWND_USERID						ID de usuario:
+MSG_NEWUSERWND_GROUPID						ID de grupo:
+MSG_NEWUSERWND_HOME							Home:
+MSG_NEWUSERWND_SHELL						Shell:
+MSG_NEWUSERWND_DEFAULT_NAME					Usuario nuevo
+MSG_NEWUSERWND_DEFAULT_LOGIN				nuevo
+MSG_NEWUSERWND_DEFAULT_HOME					/home/new
+MSG_NEWUSERWND_BUTTON_OK					_Ok
+MSG_NEWUSERWND_BUTTON_CANCEL				_Cancelar
+
+MSG_EDITUSERWND_TITLE=2000					Propiedades para
+
+MSG_NEWGROUPWND_TITLE=3000					Grupo nuevo
+MSG_NEWGROUPWND_GROUPID						ID de grupo:
+MSG_NEWGROUPWND_NAME						Nombre:
+MSG_NEWGROUPWND_DEFAULT_NAME				new
+MSG_NEWGROUPWND_BUTTON_OK					_Ok
+MSG_NEWGROUPWND_BUTTON_CANCEL				_Cancelar
+
+MSG_EDITGROUPWND_TITLE=4000					Propiedades para
+
+MSG_CHANGEPASS_TITLE=5000					Cambiar contraseña
+MSG_CHANGEPASS_TEXT							Cambiar contraseña para
+MSG_CHANGEPASS_OLDPASS						Contraseña actual:
+MSG_CHANGEPASS_NEWPASS						Contraseña nueva:
+MSG_CHANGEPASS_CONFIRMPASS					Confirmar contraseña:
+MSG_CHANGEPASS_BUTTON_OK					_Ok
+MSG_CHANGEPASS_BUTTON_CANCEL				_Cancelar
+
+MSG_ALERTWND_GRPWRTERR=10000				Error de Archivo
+MSG_ALERTWND_GRPWRTERR_TEXT					Error al escribir en el archivo /etc/group.  No se cambiaron los grupos.
+MSG_ALERTWND_GRPWRTERR_OK					Close
+
+MSG_ALERTWND_PASSDONTMATCH=20000			Las contraseñas no concuerdan.
+MSG_ALERTWND_PASSDONTMATCH_TEXT				Las nuevas contraseñas introducidas\nno concuerdan. Por favor verifícalas\ne inténtalo de nuevo.
+MSG_ALERTWND_PASSDONTMATCH_OK				Ok
+

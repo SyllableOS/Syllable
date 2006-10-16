@@ -1,0 +1,24 @@
+//
+// Preferences/Keyboard String Catalog
+//
+// Translated by: Edgar Domingo de Albuquerque (contato@edgar.pro.br)
+// Brazilian Portuguese pt_BR @ 29-Jul-2006 Sorocaba/SP - Brasil
+//
+
+MSG_MAINWND_TITLE=0								Teclado
+
+MSG_MAINWND_SETTINGS=100						Configuração
+MSG_MAINWND_SETTINGS_INITIALDELAY				Intervalo Inicial
+MSG_MAINWND_SETTINGS_INITIALDELAY_SHORT			Curto
+MSG_MAINWND_SETTINGS_INITIALDELAY_LONG			Longo
+MSG_MAINWND_SETTINGS_REPEATDELAY				Repetição do Intervalo
+MSG_MAINWND_SETTINGS_REPEATDELAY_FAST			Rápida
+MSG_MAINWND_SETTINGS_REPEATDELAY_SLOW			Lenta
+MSG_MAINWND_SETTINGS_MILISECONDS				%.f msegs
+
+MSG_MAINWND_TESTAREA=200						Área de Teste (Aplicar mudanças antes)
+MSG_MAINWND_KEYBOARDLAYOUT						Esquema de Teclado
+MSG_MAINWND_BUTTON_APPLY						_Aplicar
+MSG_MAINWND_BUTTON_UNDO							_Desfazer
+MSG_MAINWND_BUTTON_DEFAULT						_Padrão
+

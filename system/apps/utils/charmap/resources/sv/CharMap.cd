@@ -1,0 +1,24 @@
+//
+// CharMap String Catalog
+//
+// Translated by: Daniel Eriksson
+//
+
+MSG_MAINWND_TITLE=0								Symbolkarta
+
+MSG_MAINWND_MENU_FILE=100						Fil
+MSG_MAINWND_MENU_FILE_CHOOSEFONT					Välj typsnitt...
+MSG_MAINWND_MENU_FILE_EXIT							Avsluta
+
+MSG_MAINWND_MENU_HELP=200						Hjälp
+MSG_MAINWND_MENU_HELP_HELP							Hjälp
+MSG_MAINWND_MENU_HELP_ABOUT							Om
+
+MSG_HELPWND_TITLE=1000							CharMap
+MSG_HELPWND_TEXT									När du klickar på en symbol,\nkopieras den till urklippen.
+MSG_HELPWND_OK										Ok
+
+MSG_ABOUTWND_TITLE=2000							CharMap
+MSG_ABOUTWND_TEXT									CharMap V1.1\nSymbolkarta för Syllable.
+MSG_ABOUTWND_OK										Ok
+

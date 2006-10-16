@@ -1,0 +1,36 @@
+//
+// Preferences/Login String Catalog
+//
+// Translated by: Edgar Domingo de Albuquerque (contato@edgar.pro.br)
+// Brazilian Portuguese pt_BR @ 29-Jul-2006 Sorocaba/SP - Brasil
+//
+
+MSG_MAINWND_TITLE=0						Login
+
+MSG_MAINWND_INFORMATION=100				Informação
+MSG_MAINWND_INFORMATION_WHO				Você está atualmente logado como %s
+MSG_MAINWND_INFORMATION_NOPERM			Seu administrador de sistema não te deu permissão\npara alterar os detalhes do seu login.
+
+MSG_MAINWND_LOGINICON=200				Ícone de Login
+MSG_MAINWND_LOGINICON_TEXT				Quando eu logar neste computador, mostre\neste ícone para minha conta de usuário.
+
+MSG_MAINWND_CHANGEPASS=300				Mudar Senha
+MSG_MAINWND_CHANGEPASS_CURRENTPASS		Senha atual
+MSG_MAINWND_CHANGEPASS_NEWPASS			Nova senha
+MSG_MAINWND_CHANGEPASS_CONFIRMPASS		Confirmar senha
+
+MSG_MAINWND_BUTTON_OK=400				_Ok
+MSG_MAINWND_BUTTON_CANCEL				_Cancelar
+
+MSG_ALERTWND_FILEERROR=1000				Erro no arquivo
+MSG_ALERTWND_FILEERROR_TEXT				Falha ao gravar em /etc/passwd.  Sua senha não foi alterada.
+MSG_ALERTWND_FILEERROR_OK				Fechar
+
+MSG_ALERTWND_NOMATCH=2000				Nova senha
+MSG_ALERTWND_NOMATCH_TEXT				As senhas digitadas não conferem.  Por favor, redigite sua senha.
+MSG_ALERTWND_NOMATCH_OK					Fechar
+
+MSG_ALERTWND_INCORRECTPASS=3000			Senha incorreta
+MSG_ALERTWND_INCORRECTPASS_TEXT			A senha que você digitou está incorreta.  Por favor, verifique e tente novamente.
+MSG_ALERTWND_INCORRECTPASS_OK			Ok
+

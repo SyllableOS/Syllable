@@ -1,0 +1,22 @@
+//
+// Preferences/Desktop String Catalog
+//
+// Translated by: Not Translated
+//
+
+MSG_MAINWND_TITLE=0							Desktop
+
+MSG_MAINWND_BACKGGROUND=100					Background
+MSG_MAINWND_BACKGGROUND_IMAGE				Image
+MSG_MAINWND_BACKGGROUND_NONE				None
+MSG_MAINWND_BACKGGROUND_TEXT				Note: Please copy images to Documents/Pictures
+
+MSG_MAINWND_WINDOWS_TEXT=200				Windows
+MSG_MAINWND_WINDOWS_TEXT_POPUP				Popup selected window
+MSG_MAINWND_WINDOWS_TEXT_SINGLECLICK		Use single-click interface
+MSG_MAINWND_WINDOWS_TEXT_SHADOWTEXT			Show icontext with shadow
+
+MSG_MAINWND_BUTTON_APPLY=300				Apply
+MSG_MAINWND_BUTTON_UNDO						Undo
+MSG_MAINWND_BUTTON_DEFAULT					Default
+

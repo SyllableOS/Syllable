@@ -1,0 +1,35 @@
+//
+// Preferences/Login String Catalog
+//
+// Translated by: Daniel Eriksson
+//
+
+MSG_MAINWND_TITLE=0						Login
+
+MSG_MAINWND_INFORMATION=100				Information
+MSG_MAINWND_INFORMATION_WHO				Du är för närvarande inloggad som %s
+MSG_MAINWND_INFORMATION_NOPERM			Din systemadministratör har inte givit dig tillåtelse att ändra dina login\ninställningar.
+
+MSG_MAINWND_LOGINICON=200				Inloggningsikon
+MSG_MAINWND_LOGINICON_TEXT				När jag loggar in på den här datorn, visa\nden här ikonen för min användare.
+
+MSG_MAINWND_CHANGEPASS=300				Ändra Lösenord
+MSG_MAINWND_CHANGEPASS_CURRENTPASS		Nuvarande lösenord
+MSG_MAINWND_CHANGEPASS_NEWPASS			Nytt lösenord
+MSG_MAINWND_CHANGEPASS_CONFIRMPASS		Konfirmera lösenord
+
+MSG_MAINWND_BUTTON_OK=400				_Ok
+MSG_MAINWND_BUTTON_CANCEL				_Avbryt
+
+MSG_ALERTWND_FILEERROR=1000				Fel på filen
+MSG_ALERTWND_FILEERROR_TEXT				Kunde inte skriva till /etc/passwd.  Ditt lösenord har inte ändrats.
+MSG_ALERTWND_FILEERROR_OK				Stäng
+
+MSG_ALERTWND_NOMATCH=2000				Nytt Lösenord
+MSG_ALERTWND_NOMATCH_TEXT				Lösenorden du har skrivit in matchar inte.  Vänligen skriv in ditt lösenord igen.
+MSG_ALERTWND_NOMATCH_OK					Stäng
+
+MSG_ALERTWND_INCORRECTPASS=3000			Felaktigt Lösenord
+MSG_ALERTWND_INCORRECTPASS_TEXT			Det nuvarande lösenordet du skrivit in stämmer inte.  Kolla det och försök igen.
+MSG_ALERTWND_INCORRECTPASS_OK			Ok
+

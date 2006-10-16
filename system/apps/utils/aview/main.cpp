@@ -23,6 +23,7 @@
 #include <iostream>
 
 #include "appwindow.h"
+#include "resources/AView.h"
 
 using namespace os;
 
@@ -37,17 +38,20 @@ class AViewApplication : public Application
 
 AViewApplication::AViewApplication( char **ppzArgv, int nArgc ) : Application( "application/x-VND.syllable-aview" )
 {
+	// Set locale catalog
+	SetCatalog("AView.catalog");
+
 	// Register some common image formats and make ourselves the default handler for them
 	try
 	{
 		RegistrarManager *pcRegistrar = RegistrarManager::Get();
 
-		pcRegistrar->RegisterType( "image/png", "PNG Image" );
+		pcRegistrar->RegisterType( "image/png", MSG_MIMETYPE_IMAGE_PNG );
 		pcRegistrar->RegisterTypeExtension( "image/png", "png" );
 		pcRegistrar->RegisterTypeIcon( "image/png", Path( "/system/icons/filetypes/image_png.png" ) );
 		pcRegistrar->RegisterAsTypeHandler( "image/png" );
 
-		pcRegistrar->RegisterType( "image/jpeg", "JPEG Image" );
+		pcRegistrar->RegisterType( "image/jpeg", MSG_MIMETYPE_IMAGE_JPEG );
 		pcRegistrar->RegisterTypeExtension( "image/jpeg", "jpeg" );
 		pcRegistrar->RegisterTypeExtension( "image/jpeg", "jpg" );
 		pcRegistrar->RegisterTypeExtension( "image/jpeg", "jpe" );
@@ -56,7 +60,7 @@ AViewApplication::AViewApplication( char **ppzArgv, int nArgc ) : Application( "
 		pcRegistrar->RegisterTypeIcon( "image/jpeg", Path( "/system/icons/filetypes/image_jpeg.png" ) );
 		pcRegistrar->RegisterAsTypeHandler( "image/jpeg" );
 
-		pcRegistrar->RegisterType( "image/gif", "GIF Image" );
+		pcRegistrar->RegisterType( "image/gif", MSG_MIMETYPE_IMAGE_GIF );
 		pcRegistrar->RegisterTypeExtension( "image/gif", "gif" );
 		pcRegistrar->RegisterTypeIcon( "image/jpeg", Path( "/system/icons/filetypes/image_gif.png" ) );
 		pcRegistrar->RegisterAsTypeHandler( "image/gif" );

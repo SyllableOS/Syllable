@@ -21,6 +21,7 @@
 #include <gui/tableview.h>
 #include "postoffice.h"
 #include <iostream.h>
+#include "resources/Albert.h"
 
 void BaseN::HandleMessage(Message *msg)
 {
@@ -36,7 +37,7 @@ void BaseN::HandleMessage(Message *msg)
 }
 
 BaseN::BaseN(const Rect & r)
-	:Window(r, "BaseN", "Base-N", 0, CURRENT_DESKTOP)
+	:Window(r, "BaseN", MSG_BASENWND_TITLE, 0, CURRENT_DESKTOP)
 {
 	Rect bounds = GetBounds();
 
@@ -44,12 +45,12 @@ BaseN::BaseN(const Rect & r)
 
 	TableView	*table = new TableView(bounds, "tv", "", 2, 6, CF_FOLLOW_ALL);
 
-	table->SetChild(new StringView(bounds, "s1", "Binary"), 0, 0, 0.0f);
-	table->SetChild(new StringView(bounds, "s2", "Octal"), 0, 1, 0.0f);
-	table->SetChild(new StringView(bounds, "s3", "Decimal"), 0, 2, 0.0f);
-	table->SetChild(new StringView(bounds, "s4", "Hexadecimal"), 0, 3, 0.0f);
-	table->SetChild(new StringView(bounds, "s5", "Base-64"), 0, 4, 0.0f);
-	table->SetChild(new StringView(bounds, "s6", "Roman"), 0, 5, 0.0f);
+	table->SetChild(new StringView(bounds, "s1", MSG_BASENWND_BINARY), 0, 0, 0.0f);
+	table->SetChild(new StringView(bounds, "s2", MSG_BASENWND_OCTAL), 0, 1, 0.0f);
+	table->SetChild(new StringView(bounds, "s3", MSG_BASENWND_DECIMAL), 0, 2, 0.0f);
+	table->SetChild(new StringView(bounds, "s4", MSG_BASENWND_HEXADECIMAL), 0, 3, 0.0f);
+	table->SetChild(new StringView(bounds, "s5", MSG_BASENWND_BASE64), 0, 4, 0.0f);
+	table->SetChild(new StringView(bounds, "s6", MSG_BASENWND_ROMAN), 0, 5, 0.0f);
 
 	m_Bin = new TextView(bounds, "bin", "");
 	m_Bin->SetMinPreferredSize( 10, 1 );
