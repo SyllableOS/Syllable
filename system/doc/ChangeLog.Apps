@@ -1,3 +1,11 @@
+* October 16 2006, Kristian Van Der Vliet *
+
+- DiskManager
+	o Modernised and expanded the list of available partition types
+	o Different partitions are displayed with different colours
+	o The first partition must now start at or above block #63
+	o Added Danish, Spanish and Hungarian translations
+
 * August 22 2006, Kristian Van Der Vliet *
 
 - AEdit
