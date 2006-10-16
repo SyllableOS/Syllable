@@ -24,6 +24,7 @@
 
 #include "partitionview.h"
 #include "main.h"
+#include "resources/DiskManager.h"
 
 using namespace os;
 
@@ -61,29 +62,30 @@ public:
 
 struct PartitionType
 {
-    const char* pt_pzName;
-    int		pt_nType;
+	const int pt_nType;			// Partition type ID
+	const char* pt_pzName;		// Associated file system name E.g. "AFS", "FAT32", "ext2"
+	const char* pt_pzSystem;	// "Owning" OS E.g. "Syllable", "Windows"
+	uint32 pt_nColor;			// RGB32 Color to drawn the partition bar with
 };
-
+  
 PartitionType g_asPartitionTypes[] =
 {
-    { "0x00 - Free space",      0x00 },
-    { "0x2a - AtheOS",          0x2a },
-    { "0x01 - FAT12",           0x01 },
-    { "0x04 - FAT16(<32M)",     0x04 },
-    { "0x05 - Extended",        0x05 },
-    { "0x06 - FAT16(>32M)",     0x06 },
-    { "0x0b - FAT32",     	0x0b },
-    { "0x0c - FAT32(LBA)",     	0x0c },
-    { "0x0e - FAT16(LBA)",      0x0e },
-//    { "0x0f - Extended(Win95)", 0x0f },
-    { "0x80 - Minix", 	        0x80 },
-    { "0x81 - Linux(Minix)",    0x81 },
-    { "0x83 - Linux(Ext2FS)",   0x83 },
-    { "0xeb - BeOS",            0xeb },
-    { NULL, 0 },
+	{ 0x00, "Unused", "", COL_TO_RGB32( Color32_s( 225, 225, 225, 0 ) ) },
+	{ 0x2a, "Syllable", "AFS", COL_TO_RGB32( Color32_s( 150, 190, 255, 0 ) ) },
+	{ 0xeb, "BeOS", "BeFS", COL_TO_RGB32( Color32_s( 255, 255, 0, 0 ) ) },
+	{ 0x83, "Linux", "", COL_TO_RGB32( Color32_s( 255, 0, 0, 0 ) ) },
+	{ 0x82, "Linux", "Swap", COL_TO_RGB32( Color32_s( 150, 0, 0, 0 ) ) },
+	{ 0x07, "Windows", "NTFS", COL_TO_RGB32( Color32_s( 0, 170, 0, 0 ) ) },
+	{ 0x0c, "Windows", "FAT32 (LBA)", COL_TO_RGB32( Color32_s( 0, 0, 255, 0 ) ) },
+	{ 0x05, "Extended", "", COL_TO_RGB32( Color32_s( 125, 125, 125, 0 ) ) },
+	{ 0x8e, "Linux", "LVM", COL_TO_RGB32( Color32_s( 200, 0, 0, 0 ) ) },
+	{ 0xa5, "FreeBSD", "", COL_TO_RGB32( Color32_s( 255, 0, 255, 0 ) ) },
+	{ 0xa6, "OpenBSD", "", COL_TO_RGB32( Color32_s( 0, 255, 255, 0 ) ) },
+	{ 0xa9, "NetBSD", "", COL_TO_RGB32( Color32_s( 255, 150, 0, 0 ) ) },
+	{ 0x0b, "Windows", "FAT32", COL_TO_RGB32( Color32_s( 0, 0, 200, 0 ) ) },
+	{ 0x0e, "Windows", "FAT16 (LBA)", COL_TO_RGB32( Color32_s( 0, 255, 0, 0 ) ) },
+	{ 0x06, "Windows", "FAT16", COL_TO_RGB32( Color32_s( 0, 200, 0, 0 ) ) }
 };
-
 
 #define H_POINTER_WIDTH  20
 #define H_POINTER_HEIGHT 9
@@ -155,23 +157,11 @@ static void load_logical( PartitionList_t* pcList, MountMap_t* pcMountMap, const
 	}
     }
     if ( nExtendedCount > 1 ) {
-	(new Alert( "Error!",
-		    "Invalid extended partition table!\n"
-		    "The extended partition contain more\n"
-		    "than one nested extended partitions\n"
-		    "Editing the partition table might cause\n"
-		    "loss of one or more logical partitions.\n",Alert::ALERT_INFO, 0,
-		    "Ok", NULL ))->Go();
+	(new Alert( MSG_ALERTWND_ERREXT_EXTENDED, MSG_ALERTWND_ERREXT_EXTENDED_TEXT,Alert::ALERT_INFO, 0, MSG_ALERTWND_ERREXT_EXTENDED_OK.c_str(), NULL ))->Go();
 	return;
     }
     if ( nLogicalCount > 1 ) {
-	(new Alert( "Error!",
-		    "Invalid extended partition table!\n"
-		    "The extended partition contain more\n"
-		    "than one logical partitions\n"
-		    "Editing the partition table might cause\n"
-		    "loss of one or more logical partitions.\n",Alert::ALERT_INFO, 0,
-		    "Ok", NULL ))->Go();
+	(new Alert( MSG_ALERTWND_ERREXT_LOGICAL, MSG_ALERTWND_ERREXT_LOGICAL_TEXT,Alert::ALERT_INFO, 0, MSG_ALERTWND_ERREXT_LOGICAL_OK.c_str(), NULL ))->Go();
 	return;
     }
     
@@ -208,7 +198,7 @@ static void load_logical( PartitionList_t* pcList, MountMap_t* pcMountMap, const
 		if ( probe_fs( pcEntry->m_cPartitionPath.c_str(), &sInfo ) >= 0 ) {
 		    pcEntry->m_cVolumeName = sInfo.fi_volume_name;
 		} else {
-		    pcEntry->m_cVolumeName = "*UNKNOWN*";
+		    pcEntry->m_cVolumeName = MSG_PARTWND_PARTINFO_UNKNOWN;
 		}
 	    }
 	    pcList->push_back( pcEntry );
@@ -275,7 +265,7 @@ static PartitionTable* load_ptable( PartitionTable* pcParent, MountMap_t* pcMoun
 		    if ( probe_fs( pcTable->m_acPartitionPaths[i].c_str(), &sInfo ) >= 0 ) {
 			pcTable->m_acVolumeNames[i] = sInfo.fi_volume_name;
 		    } else {
-			pcTable->m_acVolumeNames[i] = "*UNKNOWN*";
+			pcTable->m_acVolumeNames[i] = MSG_PARTWND_PARTINFO_UNKNOWN;
 		    }
 		}
 	    }
@@ -314,7 +304,7 @@ off_t PartitionEntry::GetByteSize( const device_geometry& sDiskGeom ) const
 **** PartitionEditReq *********************************************************
 ******************************************************************************/
 
-PartitionEditReq::PartitionEditReq( const DiskInfo& cDisk ) : Window( Rect(0,0,0,0), "partition_edit", "Partition Setup" )
+PartitionEditReq::PartitionEditReq( const DiskInfo& cDisk ) : Window( Rect(0,0,0,0), "partition_edit", MSG_PARTWND_TITLE )
 {
     IPoint cScreenRes;
     m_cDiskInfo = cDisk;
@@ -494,25 +484,11 @@ void PartitionEditReq::HandleMessage( os::Message* pcMessage )
 		    }
 		    
 		    if ( m_bLayoutChanged ) {
-			(new Alert( "Warning!",
-				    "You have changed the layout on one or more partitions.\n"
-				    "All data on this partitions will be lost.\n"
-				    "Are you sure you want to write back the partition table?", Alert::ALERT_INFO,0,
-				    "Cancel", "Ok", NULL ))->Go( new Invoker( new Message( ID_WRITE_PARTITION_TABLE ), this ) );
+			(new Alert( MSG_ALERTWND_CHANGEDLAYOUT, MSG_ALERTWND_CHANGEDLAYOUT_TEXT, Alert::ALERT_INFO,0, MSG_ALERTWND_CHANGEDLAYOUT_CANCEL.c_str(), MSG_ALERTWND_CHANGEDLAYOUT_OK.c_str(), NULL ))->Go( new Invoker( new Message( ID_WRITE_PARTITION_TABLE ), this ) );
 		    } else if ( m_bTypeChanged ) {
-			(new Alert( "Warning!",
-				    "You have changed the type on one or more of the partitions.\n"
-				    "This should not damage any data on the partitions but might\n"
-				    "make it impossible to mount the partition again.\n"
-				    "Are you sure you want to write back the partition table?", Alert::ALERT_INFO,0,
-				    "Cancel", "Ok", NULL ))->Go( new Invoker( new Message( ID_WRITE_PARTITION_TABLE ), this ) );
+			(new Alert( MSG_ALERTWND_CHANGEDTYPE, MSG_ALERTWND_CHANGEDTYPE_TEXT, Alert::ALERT_INFO,0, MSG_ALERTWND_CHANGEDTYPE_CANCEL.c_str(), MSG_ALERTWND_CHANGEDTYPE_OK.c_str(), NULL ))->Go( new Invoker( new Message( ID_WRITE_PARTITION_TABLE ), this ) );
 		    } else {
-			(new Alert( "Warning!",
-				    "You have changed the status on one or more of the partitions.\n"
-				    "This should not damage any data on the partitions but might\n"
-				    "make it impossible to boot from the partition again.\n"
-				    "Are you sure you want to write back the partition table?",Alert::ALERT_INFO, 0,
-				    "Cancel", "Ok", NULL ))->Go( new Invoker( new Message( ID_WRITE_PARTITION_TABLE ), this ) );
+			(new Alert( MSG_ALERTWND_CHANGEDSTATUS, MSG_ALERTWND_CHANGEDSTATUS_TEXT,Alert::ALERT_INFO, 0, MSG_ALERTWND_CHANGEDSTATUS_CANCEL.c_str(), MSG_ALERTWND_CHANGEDSTATUS_OK.c_str(), NULL ))->Go( new Invoker( new Message( ID_WRITE_PARTITION_TABLE ), this ) );
 		    }
 		} else {
 		    PostMessage( M_QUIT );
@@ -686,7 +662,7 @@ PartitionEdit::PartitionEdit( const os::Rect& cFrame, const std::string& cName, 
     m_bStatusChanged = false;
     m_nFirstVisible  = 0;
     
-    FrameView* pcLabelFrame = new FrameView( Rect(0,0,0,0), "label_frame", "Disk parameters:" );
+    FrameView* pcLabelFrame = new FrameView( Rect(0,0,0,0), "label_frame", MSG_PARTWND_DISKPARAM );
     VLayoutNode* pcLabelRoot = new VLayoutNode( "label_root" );
 
     m_sDiskGeom = cDisk.m_sDriveInfo;
@@ -697,19 +673,19 @@ PartitionEdit::PartitionEdit( const os::Rect& cFrame, const std::string& cName, 
     char zString[512];
 
     if ( bIsExtended == false ) {
-	sprintf( zString, "Disk Size: %.2fMB",
+	sprintf( zString, MSG_PARTWND_DISKPARAM_DISKSIZE.c_str(),
 		 double(m_nPartitionSize*m_sDiskGeom.sectors_per_track*m_sDiskGeom.bytes_per_sector) / (1024.0*1024.0) );
     } else {
-	sprintf( zString, "Extended Partition Size: %.2fMB",
+	sprintf( zString, MSG_PARTWND_DISKPARAM_EXTSIZE.c_str(),
 		 double(m_nPartitionSize*m_sDiskGeom.sectors_per_track*m_sDiskGeom.bytes_per_sector) / (1024.0*1024.0) );
     }
     m_pcDiskSizeLabel = new StringView( Rect(), "disk_size", zString );
     
-    sprintf( zString, "Unit Size: %ld sectors of %ld bytes (%ld bytes)",
+    sprintf( zString, MSG_PARTWND_DISKPARAM_UNITSIZE.c_str(),
 	     m_sDiskGeom.sectors_per_track, m_sDiskGeom.bytes_per_sector,
 	     m_sDiskGeom.sectors_per_track*m_sDiskGeom.bytes_per_sector );
     m_pcUnitSizeLabel = new StringView( Rect(), "unit_size", zString );
-    StringView*	pcUnusedSizeHeader = new StringView( Rect(), "unused_size_label", "Unused Space: " );
+    StringView*	pcUnusedSizeHeader = new StringView( Rect(), "unused_size_label", MSG_PARTWND_DISKPARAM_UNUSESSPACE + " " );
     m_pcUnusedSizeLabel = new StringView( Rect(), "unused_size", "" );
 
     HLayoutNode* pcLabelCont1 = new HLayoutNode( "label_cont1" );
@@ -747,22 +723,22 @@ PartitionEdit::PartitionEdit( const os::Rect& cFrame, const std::string& cName, 
 	m_cPartitionViews.push_back( pcView );
     }
 
-    m_pcOkBut = new Button( Rect(), "ok_but", (m_bIsExtended) ? "Done" : "Ok", new Message( ID_OK ) );
+    m_pcOkBut = new Button( Rect(), "ok_but", (m_bIsExtended) ? MSG_PARTWND_BUTTONS_DONE : MSG_PARTWND_BUTTONS_OK, new Message( ID_OK ) );
 
     if ( m_bIsExtended == false ) {
-	m_pcPartitionBut = new Button( Rect(), "partition_but", "Edit Extended", new Message( ID_PARTITION_EXTENDED ) );
-	m_pcCancelBut = new Button( Rect(), "cancel_but", "Cancel", new Message( ID_CANCEL ) );
+	m_pcPartitionBut = new Button( Rect(), "partition_but", MSG_PARTWND_BUTTONS_EDITEXT, new Message( ID_PARTITION_EXTENDED ) );
+	m_pcCancelBut = new Button( Rect(), "cancel_but", MSG_PARTWND_BUTTONS_CANCEL, new Message( ID_CANCEL ) );
     } else {
 	m_pcPartitionBut = NULL;
 	m_pcCancelBut = NULL;
     }
-    m_pcClearBut = new Button( Rect(), "clear_but", "Clear", new Message( ID_CLEAR ) );
+    m_pcClearBut = new Button( Rect(), "clear_but", MSG_PARTWND_BUTTONS_CLEAR, new Message( ID_CLEAR ) );
 
     if ( m_bIsExtended ) {
-	m_pcAddBut       = new Button( Rect(), "add_but", "Add", new Message( ID_ADD ) );
+	m_pcAddBut       = new Button( Rect(), "add_but", MSG_PARTWND_BUTTONS_ADD, new Message( ID_ADD ) );
 	m_pcPrevBut      = new Button( Rect(), "prev_but", "<<", new Message( ID_PREV ) );
 	m_pcNextBut      = new Button( Rect(), "next_but", ">>", new Message( ID_NEXT ) );
-	m_pcSortBut      = new Button( Rect(), "sort_but", "Sort", new Message( ID_SORT ) );
+	m_pcSortBut      = new Button( Rect(), "sort_but", MSG_PARTWND_BUTTONS_SORT, new Message( ID_SORT ) );
     } else {
 	m_pcAddBut       = NULL;
 	m_pcPrevBut      = NULL;
@@ -948,7 +924,7 @@ void PartitionEdit::CreatePartition( int nType )
     pcEntry->m_nOrigStatus = pcEntry->m_nStatus;
     
     pcEntry->m_bIsMounted     = false;
-    pcEntry->m_cVolumeName    = "*UNKNOWN*";
+    pcEntry->m_cVolumeName    = MSG_PARTWND_PARTINFO_UNKNOWN;
     m_pcPList->push_back( pcEntry );
 
     if ( m_pcPList->size() > m_cPartitionViews.size() ) {
@@ -1113,7 +1089,7 @@ void PartitionEdit::UpdateFreeSpace()
 	}
     }
     char zString[256];
-    sprintf( zString, "%.2fMB", double(m_nPartitionSize*nUnitSize - nSize) / (1024.0*1024.0) );
+    sprintf( zString, MSG_PARTWND_PARTINFO_PARTSIZE.c_str(), double(m_nPartitionSize*nUnitSize - nSize) / (1024.0*1024.0) );
     m_pcUnusedSizeLabel->SetString( zString );
       // FIXME: Remove this when auto-relayout is implemented in the layout kit.
     ((LayoutView*)m_pcUnusedSizeLabel->GetParent())->FindNode( "label_cont3" )->Layout();
@@ -1125,7 +1101,7 @@ void PartitionEdit::UpdateFreeSpace()
 
 PartitionView::PartitionView( PartitionEdit* pcParent, const std::string& cName,
 			      off_t nDiskSize, int nCylSize, int nSectorSize ) :
-	FrameView( Rect(), cName, "unused", CF_FOLLOW_NONE )
+	FrameView( Rect(), cName, MSG_PARTWND_PARTINFO_UNUSED, CF_FOLLOW_NONE )
 {
     m_pcPInfo = NULL;
 
@@ -1150,7 +1126,14 @@ PartitionView::PartitionView( PartitionEdit* pcParent, const std::string& cName,
     m_pcPartitionSize= new StringView( Rect(), "partition_size", "", ALIGN_RIGHT );
 
     for ( int i = 0 ; g_asPartitionTypes[i].pt_pzName != NULL ; ++i ) {
-	m_pcTypeMenu->AppendItem( g_asPartitionTypes[i].pt_pzName );
+	String cType = g_asPartitionTypes[i].pt_pzName;
+
+	if( strcmp( g_asPartitionTypes[i].pt_pzSystem, "" ) != 0 )
+		cType.Format( "%s - %s", g_asPartitionTypes[i].pt_pzName, g_asPartitionTypes[i].pt_pzSystem );
+	else
+		cType.Format( "%s", g_asPartitionTypes[i].pt_pzName );
+
+	m_pcTypeMenu->AppendItem( cType );
     }
     
 
@@ -1225,7 +1208,7 @@ void PartitionView::SetPInfo( PartitionEntry* pcPInfo )
 
 	m_pcBarView->SetStart( double(m_pcPInfo->m_nStart) / double(m_nDiskSize-1) );
 	m_pcBarView->SetEnd( double(m_pcPInfo->m_nEnd) / double(m_nDiskSize-1) );
-	
+
 	m_pcVolumeName->SetString( m_pcPInfo->m_cVolumeName.c_str() );
 	
 	m_pcStartSpinner->SetEnable( m_pcPInfo->m_nType != 0 && m_pcPInfo->m_bIsMounted == false );
@@ -1234,6 +1217,7 @@ void PartitionView::SetPInfo( PartitionEntry* pcPInfo )
 	bool bNumerical = true;
 	for ( int i = 0 ; g_asPartitionTypes[i].pt_pzName != NULL ; ++i ) {
 	    if ( g_asPartitionTypes[i].pt_nType == m_pcPInfo->m_nType ) {
+		m_pcBarView->SetColor( g_asPartitionTypes[i].pt_nColor );
 		m_pcTypeMenu->SetSelection( i, false );
 		bNumerical = false;
 	    }
@@ -1246,7 +1230,7 @@ void PartitionView::SetPInfo( PartitionEntry* pcPInfo )
 	SetSizeString();
 	SetSpinnerLimits();
     } else {
-	SetLabel( "unused" );
+	SetLabel( MSG_PARTWND_PARTINFO_UNUSED );
 	m_pcTypeMenu->SetSelection( 0, false );
 	m_pcStartSpinner->SetEnable( false );
 	m_pcEndSpinner->SetEnable( false );
@@ -1256,7 +1240,7 @@ void PartitionView::SetPInfo( PartitionEntry* pcPInfo )
 
 	m_pcTypeMenu->SetEnable( false );
 	
-	m_pcVolumeName->SetString( "*UNKNOWN*" );
+	m_pcVolumeName->SetString( MSG_PARTWND_PARTINFO_UNKNOWN );
 	SetSizeString();
 	m_pcBarView->Invalidate();
     }
@@ -1286,10 +1270,10 @@ void PartitionView::SetSizeString()
 {
     if ( m_pcPInfo != NULL && m_pcPInfo->m_nType != 0 ) {
 	char zString[128];
-	sprintf( zString, "%.2fMB", double((m_pcPInfo->m_nEnd - m_pcPInfo->m_nStart + 1) * m_nCylinderSize * m_nSectorSize) / (1024.0*1024.0) );
+	sprintf( zString, MSG_PARTWND_PARTINFO_PARTSIZE.c_str(), double((m_pcPInfo->m_nEnd - m_pcPInfo->m_nStart + 1) * m_nCylinderSize * m_nSectorSize) / (1024.0*1024.0) );
 	m_pcPartitionSize->SetString( zString );
     } else {
-	m_pcPartitionSize->SetString( "0.0MB" );
+	m_pcPartitionSize->SetString( MSG_PARTWND_PARTINFO_PARTSIZEZERO );
     }
 }
 
@@ -1327,7 +1311,7 @@ void PartitionView::SetSpinnerLimits()
     int nSpacing = (m_pcParent->IsExtended()) ? 1 : 0;
     
     for ( uint i = 0 ; i < m_pcParent->m_pcPList->size() ; ++i ) {
-	(*m_pcParent->m_pcPList)[i]->m_nMin = 1;
+	(*m_pcParent->m_pcPList)[i]->m_nMin = 63;
 	(*m_pcParent->m_pcPList)[i]->m_nMax = m_nDiskSize - 1;
     }
     for ( uint i = 0 ; i < m_pcParent->m_pcPList->size() ; ++i ) {
@@ -1339,7 +1323,12 @@ void PartitionView::SetSpinnerLimits()
 		}
 	    } else {
 		if ( (*m_pcParent->m_pcPList)[j]->m_nMin <= (*m_pcParent->m_pcPList)[i]->m_nEnd + nSpacing ) {
+		{
 		    (*m_pcParent->m_pcPList)[j]->m_nMin = (*m_pcParent->m_pcPList)[i]->m_nEnd + 1 + nSpacing;
+			if( (*m_pcParent->m_pcPList)[j]->m_nMin < 63 )
+				(*m_pcParent->m_pcPList)[j]->m_nMin = 63;
+		}
+
 		}
 	    }
 	}
@@ -1370,8 +1359,8 @@ void PartitionView::SliderStartChanged( float* pvStart )
     
     m_pcPInfo->m_nStart = off_t( double(m_nDiskSize-1) * (*pvStart) );
 
-    if ( m_pcPInfo->m_nStart < 1 ) {
-	m_pcPInfo->m_nStart = 1;
+    if ( m_pcPInfo->m_nStart < 63 ) {
+	m_pcPInfo->m_nStart = 63;
     }
     uint nIndex = GetIndex();
 
@@ -1497,12 +1486,12 @@ bool PartitionView::FindFreeSpace()
     std::sort( cList.begin(), cList.end() );
 
     if ( cList.size() == 0 ) {
-	m_pcPInfo->m_nStart = 1;
+	m_pcPInfo->m_nStart = 63;
 	m_pcPInfo->m_nEnd = m_nDiskSize - 1;
 	return( true );
     } else {
 	if ( cList[0].m_nStart > 1 ) {
-	    m_pcPInfo->m_nStart = 1;
+	    m_pcPInfo->m_nStart = 63;
 	    m_pcPInfo->m_nEnd = cList[0].m_nStart - 1;
 	    return( true );
 	} else {
@@ -1545,11 +1534,7 @@ void PartitionView::SetPartitionType( int nType, bool bPromptDelete )
     } else {
 	if ( nType == 0 && bPromptDelete ) {
 	    if ( m_pcPInfo->m_bIsMounted == false ) {
-		(new Alert( "Warning!",
-			    "This operation will delete the current partition.\n"
-			    "All data on the partition will be lost.\n"
-			    "Really sure this was what you meant?", Alert::ALERT_INFO,0,
-			    "Cancel", "Ok", NULL ))->Go( new Invoker( new Message( ID_DELETE_PARTITION ), this ) );
+		(new Alert( MSG_ALERTWND_DELPART, MSG_ALERTWND_DELPART_TEXT, Alert::ALERT_INFO,0, MSG_ALERTWND_DELPART_CANCEL.c_str(), MSG_ALERTWND_DELPART_OK.c_str(), NULL ))->Go( new Invoker( new Message( ID_DELETE_PARTITION ), this ) );
 	    }
 	} else {
 	    if ( nType == 0 && m_pcParent->IsExtended() ) {
@@ -1563,6 +1548,7 @@ void PartitionView::SetPartitionType( int nType, bool bPromptDelete )
     bool bNumerical = true;
     for ( int i = 0 ; g_asPartitionTypes[i].pt_pzName != NULL ; ++i ) {
 	if ( g_asPartitionTypes[i].pt_nType == m_pcPInfo->m_nType ) {
+	    m_pcBarView->SetColor( g_asPartitionTypes[i].pt_nColor );
 	    m_pcTypeMenu->SetSelection( i, false );
 	    bNumerical = false;
 	    break;
@@ -1640,13 +1626,13 @@ void PartitionView::HandleMessage( os::Message* pcMessage )
 	}
 	case ID_TYPE_SELECTED:
 	{
-	    if ( m_pcPInfo == NULL ) {
-		break;
-	    }
+	    if ( m_pcPInfo == NULL )
+			break;
+
 	    int nSelection = m_pcTypeMenu->GetSelection();
-	    if ( nSelection >= 0 ) {
-		SetPartitionType( g_asPartitionTypes[nSelection].pt_nType, true );
-	    }
+	    if ( nSelection >= 0 )
+			SetPartitionType( g_asPartitionTypes[nSelection].pt_nType, true );
+
 	    break;
 	}
 	case ID_TYPE_EDITED:
@@ -1743,6 +1729,7 @@ PartitionBar::PartitionBar( const Rect& cFrame, PartitionView* pcParent, const s
     m_bDragPointer = false;
     m_bDragStart   = false;
     m_bDragEnd     = false;
+	m_nColor       = 0;
     m_pcParent     = pcParent;
 }
 
@@ -1773,6 +1760,13 @@ void PartitionBar::SetEnd( float vValue )
     Flush();
 }
 
+void PartitionBar::SetColor( uint32 nColor )
+{
+	m_nColor = nColor;
+	Invalidate();
+	Flush();
+}
+
 void PartitionBar::Paint( const Rect& cUpdateRect )
 {
     Rect cBounds = GetNormalizedBounds();
@@ -1796,13 +1790,13 @@ void PartitionBar::Paint( const Rect& cUpdateRect )
 	    if ( m_pcParent->IsMounted() ) {
 		FillRect( Rect( x1, cBounds.top, x2, cBounds.bottom ), Color32_s( 100, 100, 100 ) );
 	    } else {
-		FillRect( Rect( x1, cBounds.top, x2, cBounds.bottom ), Color32_s( 100, 220, 0 ) );
+		FillRect( Rect( x1, cBounds.top, x2, cBounds.bottom ), Color32_s( m_nColor ) );
 	    }
 	} else {
 	    if ( m_pcParent->IsMounted() ) {
 		FillRect( Rect( x1, cBounds.top, x2, cBounds.bottom ), Color32_s( 100, 100, 100 ) );
 	    } else {
-		FillRect( Rect( x1, cBounds.top, x2, cBounds.bottom ), Color32_s( 0, 0, 220 ) );
+		FillRect( Rect( x1, cBounds.top, x2, cBounds.bottom ), Color32_s( m_nColor ) );
 	    }
 	}
     }

@@ -1,0 +1,68 @@
+//
+// DiskManager String Catalog
+//
+// Translated by: David Horvath
+//
+
+MSG_MAINWND_TITLE=0							Syllable Partíció-szerkesztö
+
+MSG_MAINWND_MENU_PROGRAM=100				Program
+MSG_MAINWND_MENU_PROGRAM_EXIT				Kilépés
+
+MSG_MAINWND_LIST_DEVICE=200					Eszköz
+MSG_MAINWND_LIST_PARTITIONS					Partíciók
+MSG_MAINWND_LIST_SIZE						Méret
+MSG_MAINWND_LIST_MB							%.2fMB
+
+MSG_MAINWND_BUTONS_QUIT=300					Kilépés
+MSG_MAINWND_BUTONS_PARTITION				Felosztás
+
+MSG_PARTWND_TITLE=500						Partíció beállítása
+
+MSG_PARTWND_DISKPARAM=600					Lemez tulajdonságai:
+MSG_PARTWND_DISKPARAM_DISKSIZE				Lemez mérete: %.2fMB
+MSG_PARTWND_DISKPARAM_EXTSIZE				Kiterjesztett partíció mérete: %.2fMB
+MSG_PARTWND_DISKPARAM_UNITSIZE				Méretegység: %ld szektor %ld bytes (%ld bytes) méretü
+MSG_PARTWND_DISKPARAM_UNUSESSPACE			Nem használt terület:
+
+MSG_PARTWND_PARTINFO_UNUSED=700				nem használt
+MSG_PARTWND_PARTINFO_UNKNOWN				*ISMERETLEN*
+MSG_PARTWND_PARTINFO_PARTSIZEZERO			0.0MB
+MSG_PARTWND_PARTINFO_PARTSIZE				%.2fMB
+
+MSG_PARTWND_BUTTONS_CANCEL=800				Mégsem
+MSG_PARTWND_BUTTONS_OK						Ok
+MSG_PARTWND_BUTTONS_DONE					Kész
+MSG_PARTWND_BUTTONS_CLEAR					Törlés
+MSG_PARTWND_BUTTONS_EDITEXT					Kiterjesztés szerkesztése
+MSG_PARTWND_BUTTONS_SORT					Tipus
+MSG_PARTWND_BUTTONS_ADD						Hozzáad
+
+MSG_ALERTWND_ERREXT_EXTENDED=1000			Hiba!
+MSG_ALERTWND_ERREXT_EXTENDED_TEXT			Érvénytelen kiterjesztett partíciós tábla!\nA kiterjesztett partíció többet foglal magába.\nA partíciós tábla szerkesztése\nadatvesztéssel járhat a logikai partíción.
+MSG_ALERTWND_ERREXT_EXTENDED_OK				Ok
+
+MSG_ALERTWND_ERREXT_LOGICAL=2000			Hiba!
+MSG_ALERTWND_ERREXT_LOGICAL_TEXT			Érvénytelen kiterjesztett partíciós tábla!\nA kiterjesztett partíció többet foglal magába,\nmint egy logikai partíció.\nA partíciós tábla szerkesztése\nadatvesztéssel járhat a logikai partíción.
+MSG_ALERTWND_ERREXT_LOGICAL_OK				Ok
+
+MSG_ALERTWND_CHANGEDLAYOUT=3000				Figyelmeztetés!
+MSG_ALERTWND_CHANGEDLAYOUT_TEXT				Egy, vagy több partíción változást készülsz eszközölni,\nígy minden rajta lévö adat elvész!\nBiztosan ezt szeretnéd?
+MSG_ALERTWND_CHANGEDLAYOUT_CANCEL			Mégsem
+MSG_ALERTWND_CHANGEDLAYOUT_OK				Ok
+
+MSG_ALERTWND_CHANGEDTYPE=4000				Figyelmeztetés!
+MSG_ALERTWND_CHANGEDTYPE_TEXT				Egy, vagy több partíció tipusát készülsz megváltoztatni.\nEz járhat adatvesztéssel, \nvagy azzal, hogy nem fogod tudni beolvasni.\nBiztos, hogy ezt szeretnéd?
+MSG_ALERTWND_CHANGEDTYPE_CANCEL				Mégsem
+MSG_ALERTWND_CHANGEDTYPE_OK					Ok
+
+MSG_ALERTWND_CHANGEDSTATUS=5000				Figyelmeztetés!
+MSG_ALERTWND_CHANGEDSTATUS_TEXT				Egy, vagy több partíción változást készülsz eszközölni.\nEz járhat adatvesztéssel, \nvagy azzal, hogy nem fogsz tudni boot-olni.\nBiztos, hogy ezt szeretnéd?
+MSG_ALERTWND_CHANGEDSTATUS_CANCEL			Mégsem
+MSG_ALERTWND_CHANGEDSTATUS_OK				Ok
+
+MSG_ALERTWND_DELPART=6000					Figyelmeztetés!
+MSG_ALERTWND_DELPART_TEXT					Ez a müvelet törli a partíciót,\nígy minden rajta lévö adat el fog veszni!\nBiztosan folytatod?
+MSG_ALERTWND_DELPART_CANCEL					Mégsem
+MSG_ALERTWND_DELPART_OK						Ok
+

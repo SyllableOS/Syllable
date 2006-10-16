@@ -1,0 +1,69 @@
+//
+// DiskManager String Catalog
+//
+// Translated by: Flemming H. Sørensen (BurningShadow)
+// Korrekturlæsning og Rettelser: Jakob Wolffhechel
+//
+
+MSG_MAINWND_TITLE=0							Syllable Drev-inddelingsværktøj
+
+MSG_MAINWND_MENU_PROGRAM=100				Program
+MSG_MAINWND_MENU_PROGRAM_EXIT				Afslut
+
+MSG_MAINWND_LIST_DEVICE=200					Drev
+MSG_MAINWND_LIST_PARTITIONS					Disk-afsnit
+MSG_MAINWND_LIST_SIZE						Størrelse
+MSG_MAINWND_LIST_MB							%.2fMB
+
+MSG_MAINWND_BUTONS_QUIT=300					Afslut
+MSG_MAINWND_BUTONS_PARTITION				Inddel Drev
+
+MSG_PARTWND_TITLE=500						Drev-inddeling
+
+MSG_PARTWND_DISKPARAM=600					Drev-information:
+MSG_PARTWND_DISKPARAM_DISKSIZE				Drev-størrelse: %.2fMB
+MSG_PARTWND_DISKPARAM_EXTSIZE				Størrelse på udvidet disk-afsnit %.2fMB
+MSG_PARTWND_DISKPARAM_UNITSIZE				Enheds-størrelse: %ld sektor(er) á %ld byte (%ld byte)
+MSG_PARTWND_DISKPARAM_UNUSESSPACE			Ubrugt plads:
+
+MSG_PARTWND_PARTINFO_UNUSED=700				Ubrugt
+MSG_PARTWND_PARTINFO_UNKNOWN				*UKENDT*
+MSG_PARTWND_PARTINFO_PARTSIZEZERO			0.0MB
+MSG_PARTWND_PARTINFO_PARTSIZE				%.2fMB
+
+MSG_PARTWND_BUTTONS_CANCEL=800				Annuller
+MSG_PARTWND_BUTTONS_OK						Ok
+MSG_PARTWND_BUTTONS_DONE					Færdig
+MSG_PARTWND_BUTTONS_CLEAR					Ryd alle
+MSG_PARTWND_BUTTONS_EDITEXT					Ændre udvidet disk-afsnit
+MSG_PARTWND_BUTTONS_SORT					Sorter
+MSG_PARTWND_BUTTONS_ADD						Tilføj
+
+MSG_ALERTWND_ERREXT_EXTENDED=1000			Fejl!
+MSG_ALERTWND_ERREXT_EXTENDED_TEXT			Problemer med partitions-tabellen!\nDet udvidede disk-afsnit indeholder mere\nend et udvidet disk-afsnit\nAt rette partitions-tabellen kan forårsage\ntab af et eller flere logiske disk-afsnit.
+MSG_ALERTWND_ERREXT_EXTENDED_OK				Ok
+
+MSG_ALERTWND_ERREXT_LOGICAL=2000			Fejl!
+MSG_ALERTWND_ERREXT_LOGICAL_TEXT			Problemer med partitions-tabellen!\nDet udvidede disk-afsnit indeholder mere\nend et logisk disk-afsnit\nAt rette partitions-tabellen kan forårsage\ntab af et eller flere logiske disk-afsnit.
+MSG_ALERTWND_ERREXT_LOGICAL_OK				Ok
+
+MSG_ALERTWND_CHANGEDLAYOUT=3000				Advarsel!
+MSG_ALERTWND_CHANGEDLAYOUT_TEXT				Du har ændret et eller flere disk-afsnit.\nDu mister alle data på disse disk-afsnit.\nEr du sikker på at du vil gemme den nye partitions-tabel?
+MSG_ALERTWND_CHANGEDLAYOUT_CANCEL			Annuller
+MSG_ALERTWND_CHANGEDLAYOUT_OK				Ok
+
+MSG_ALERTWND_CHANGEDTYPE=4000				Advarsel!
+MSG_ALERTWND_CHANGEDTYPE_TEXT				Du har ændret partitions-typen for et eller flere disk-afsnit.\nDette burde ikke resultere i tab af data, men det kan\ngøre det umuligt at aktivere dette disk-afsnit igen.\nEr du sikker på at du vil gemme den nye partitions-tabel?
+MSG_ALERTWND_CHANGEDTYPE_CANCEL				Annuller
+MSG_ALERTWND_CHANGEDTYPE_OK					Ok
+
+MSG_ALERTWND_CHANGEDSTATUS=5000				Advarsel!
+MSG_ALERTWND_CHANGEDSTATUS_TEXT				Du har ændret status for et eller flere disk-afsnit.\nDette burde ikke resultere i tab af data, men det kan gøre det\numuligt at starte (boote) fra dette/disse disk-afsnit igen.\nEr du sikker på at du vil gemme den nye partitions-tabel?
+MSG_ALERTWND_CHANGEDSTATUS_CANCEL			Annuller
+MSG_ALERTWND_CHANGEDSTATUS_OK				Ok
+
+MSG_ALERTWND_DELPART=6000					Advarsel!
+MSG_ALERTWND_DELPART_TEXT					Dette vil slette det aktuelle disk-afsnit.\nDu mister alle data på dette disk-afsnit.\nEr du sikker på at du vil fortsætte?
+MSG_ALERTWND_DELPART_CANCEL					Annuller
+MSG_ALERTWND_DELPART_OK						Ok
+

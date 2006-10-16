@@ -1,0 +1,68 @@
+//
+// DiskManager String Catalog
+//
+// Translated by: Not Translated
+//
+
+MSG_MAINWND_TITLE=0							Syllable Partition Editor
+
+MSG_MAINWND_MENU_PROGRAM=100				Program
+MSG_MAINWND_MENU_PROGRAM_EXIT				Quit
+
+MSG_MAINWND_LIST_DEVICE=200					Device
+MSG_MAINWND_LIST_PARTITIONS					Partitions
+MSG_MAINWND_LIST_SIZE						Size
+MSG_MAINWND_LIST_MB							%.2fMB
+
+MSG_MAINWND_BUTONS_QUIT=300					Quit
+MSG_MAINWND_BUTONS_PARTITION				Partition...
+
+MSG_PARTWND_TITLE=500						Partition Setup
+
+MSG_PARTWND_DISKPARAM=600					Disk parameters:
+MSG_PARTWND_DISKPARAM_DISKSIZE				Disk Size: %.2fMB
+MSG_PARTWND_DISKPARAM_EXTSIZE				Extended Partition Size: %.2fMB
+MSG_PARTWND_DISKPARAM_UNITSIZE				Unit Size: %ld sectors of %ld bytes (%ld bytes)
+MSG_PARTWND_DISKPARAM_UNUSESSPACE			Unused Space:
+
+MSG_PARTWND_PARTINFO_UNUSED=700				unused
+MSG_PARTWND_PARTINFO_UNKNOWN				*UNKNOWN*
+MSG_PARTWND_PARTINFO_PARTSIZEZERO			0.0MB
+MSG_PARTWND_PARTINFO_PARTSIZE				%.2fMB
+
+MSG_PARTWND_BUTTONS_CANCEL=800				Cancel
+MSG_PARTWND_BUTTONS_OK						Ok
+MSG_PARTWND_BUTTONS_DONE					Done
+MSG_PARTWND_BUTTONS_CLEAR					Clear
+MSG_PARTWND_BUTTONS_EDITEXT					Edit Extended
+MSG_PARTWND_BUTTONS_SORT					Sort
+MSG_PARTWND_BUTTONS_ADD						Add
+
+MSG_ALERTWND_ERREXT_EXTENDED=1000			Error!
+MSG_ALERTWND_ERREXT_EXTENDED_TEXT			Invalid extended partition table!\nThe extended partition contain more\nthan one nested extended partitions\nEditing the partition table might cause\nloss of one or more logical partitions.
+MSG_ALERTWND_ERREXT_EXTENDED_OK				Ok
+
+MSG_ALERTWND_ERREXT_LOGICAL=2000			Error!
+MSG_ALERTWND_ERREXT_LOGICAL_TEXT			Invalid extended partition table!\nThe extended partition contain more\nthan one logical partitions\nEditing the partition table might cause\nloss of one or more logical partitions.
+MSG_ALERTWND_ERREXT_LOGICAL_OK				Ok
+
+MSG_ALERTWND_CHANGEDLAYOUT=3000				Warning!
+MSG_ALERTWND_CHANGEDLAYOUT_TEXT				You have changed the layout on one or more partitions.\nAll data on this partitions will be lost.\nAre you sure you want to write back the partition table?
+MSG_ALERTWND_CHANGEDLAYOUT_CANCEL			Cancel
+MSG_ALERTWND_CHANGEDLAYOUT_OK				Ok
+
+MSG_ALERTWND_CHANGEDTYPE=4000				Warning!
+MSG_ALERTWND_CHANGEDTYPE_TEXT				You have changed the type on one or more of the partitions.\nThis should not damage any data on the partitions but might\nmake it impossible to mount the partition again.\nAre you sure you want to write back the partition table?
+MSG_ALERTWND_CHANGEDTYPE_CANCEL				Cancel
+MSG_ALERTWND_CHANGEDTYPE_OK					Ok
+
+MSG_ALERTWND_CHANGEDSTATUS=5000				Warning!
+MSG_ALERTWND_CHANGEDSTATUS_TEXT				You have changed the status on one or more of the partitions.\nThis should not damage any data on the partitions but might\nmake it impossible to boot from the partition again.\nAre you sure you want to write back the partition table?
+MSG_ALERTWND_CHANGEDSTATUS_CANCEL			Cancel
+MSG_ALERTWND_CHANGEDSTATUS_OK				Ok
+
+MSG_ALERTWND_DELPART=6000					Warning!
+MSG_ALERTWND_DELPART_TEXT					This operation will delete the current partition.\nAll data on the partition will be lost.\nReally sure this was what you meant?
+MSG_ALERTWND_DELPART_CANCEL					Cancel
+MSG_ALERTWND_DELPART_OK						Ok
+

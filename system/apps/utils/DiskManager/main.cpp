@@ -41,6 +41,7 @@
 #include <gui/desktop.h>
 
 #include "diskview.h"
+#include "resources/DiskManager.h"
 
 using namespace os;
 
@@ -159,9 +160,9 @@ void MainWindow::SetupMenus()
   m_pcMenu = new Menu( cMenuFrame, "Menu", ITEMS_IN_ROW,
 		       CF_FOLLOW_LEFT | CF_FOLLOW_RIGHT | CF_FOLLOW_TOP, WID_FULL_UPDATE_ON_H_RESIZE );
 
-  Menu*	pcItem1	= new Menu( Rect( 0, 0, 100, 20 ), "File", ITEMS_IN_COLUMN, CF_FOLLOW_LEFT | CF_FOLLOW_TOP );
+  Menu*	pcItem1	= new Menu( Rect( 0, 0, 100, 20 ), MSG_MAINWND_MENU_PROGRAM, ITEMS_IN_COLUMN, CF_FOLLOW_LEFT | CF_FOLLOW_TOP );
 
-  pcItem1->AddItem( "Quit", new Message( M_QUIT ) );
+  pcItem1->AddItem( MSG_MAINWND_MENU_PROGRAM_EXIT, new Message( M_QUIT ) );
 
   m_pcMenu->AddItem( pcItem1 );
 
@@ -205,7 +206,8 @@ bool MainWindow::OkToQuit()
 
 PEditApp::PEditApp() : Application( "application/x-vnd.KHS.atheos-partitionedit" )
 {
-    m_pcMainWindow = new MainWindow( "Syllable Partition Editor" );
+	SetCatalog("DiskManager.catalog");
+    m_pcMainWindow = new MainWindow( MSG_MAINWND_TITLE );
     m_pcMainWindow->Show();
 }
 

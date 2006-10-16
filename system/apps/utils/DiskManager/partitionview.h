@@ -62,7 +62,8 @@ public:
 
     void		SetStart( float vValue );
     void		SetEnd( float vValue );
-    
+    void		SetColor( uint32 nColor );
+
     virtual os::Point	GetPreferredSize( bool bLargest ) const;
     virtual void	Paint( const os::Rect& cUpdateRect );
   
@@ -77,6 +78,7 @@ private:
     bool  m_bDragPointer;
     bool  m_bDragStart;
     bool  m_bDragEnd;
+	uint32 m_nColor;
 };
 
 

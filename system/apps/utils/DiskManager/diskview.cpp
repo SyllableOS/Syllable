@@ -31,6 +31,7 @@
 #include "diskview.h"
 #include "partitionview.h"
 #include "main.h"
+#include "resources/DiskManager.h"
 
 #include <stdexcept>
 
@@ -223,12 +224,12 @@ DiskView::DiskView( const Rect& cFrame, const std::string& cName ) : LayoutView(
     VLayoutNode* pcButtonFrame = new VLayoutNode( "button_frame" );
     
     m_pcDiskList = new ListView( Rect(), "disk_list", ListView::F_RENDER_BORDER );
-    m_pcPartitionButton = new Button( Rect(), "partition_but", "Partition...", new Message( ID_PARTITION ) );
-    m_pcQuitButton = new Button( Rect(), "quit_but", "Quit", new Message( M_QUIT ) );
+    m_pcPartitionButton = new Button( Rect(), "partition_but", MSG_MAINWND_BUTONS_PARTITION, new Message( ID_PARTITION ) );
+    m_pcQuitButton = new Button( Rect(), "quit_but", MSG_MAINWND_BUTONS_QUIT, new Message( M_QUIT ) );
 
-    m_pcDiskList->InsertColumn( "Device", 150 );
-    m_pcDiskList->InsertColumn( "Partitions", 100 );
-    m_pcDiskList->InsertColumn( "Size", 100 );
+    m_pcDiskList->InsertColumn( MSG_MAINWND_LIST_DEVICE.c_str(), 150 );
+    m_pcDiskList->InsertColumn( MSG_MAINWND_LIST_PARTITIONS.c_str(), 100 );
+    m_pcDiskList->InsertColumn( MSG_MAINWND_LIST_SIZE.c_str(), 100 );
     m_pcDiskList->SetSelChangeMsg( new Message( ID_NEW_SELECTION ) );
 	
     m_pcPartitionButton->SetEnable( false );
@@ -248,7 +249,7 @@ DiskView::DiskView( const Rect& cFrame, const std::string& cName ) : LayoutView(
 	pcRow->AppendString( cDiskInfoList[i].m_cPath );
 	pcRow->AppendString( "" );
 	char zSize[64];
-	sprintf( zSize, "%.2fMB",
+	sprintf( zSize, MSG_MAINWND_LIST_MB.c_str(),
 		 double(cDiskInfoList[i].m_sDriveInfo.sector_count * cDiskInfoList[i].m_sDriveInfo.bytes_per_sector) / (1024.0*1024.0) );
 	pcRow->AppendString( zSize );
 	m_pcDiskList->InsertRow( pcRow, false );
