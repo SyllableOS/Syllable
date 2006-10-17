@@ -53,7 +53,7 @@ static int GetDeviceBlockSize(int fd)
 	return dg.bytes_per_sector; 
 } 
 
-int ISO_HIDDEN ISOMount(const char *path, const int flags, nspace** newVol, bool allow_joliet)
+int ISO_HIDDEN ISOMount(const char *path, const int flags, nspace** newVol, bool allow_rockridge, bool allow_joliet )
 {
 	// path: 		path to device (eg, /dev/disk/scsi/030/raw)
 	// partition:	partition number on device ????
@@ -113,6 +113,7 @@ int ISO_HIDDEN ISOMount(const char *path, const int flags, nspace** newVol, bool
 						InitVolDesc(vol, buf);
 						strncpy(vol->devicePath, path, 127);
 						vol->id = vol->rootDirRec.id;
+						vol->rockRidge = allow_rockridge;
 						multiplier = deviceBlockSize / vol->logicalBlkSize[FS_DATA_FORMAT];
 						kerndbg( KERN_DEBUG_LOW, "ISOMount: block size multiplier is %d\n", multiplier );
 						is_iso = true;
@@ -129,7 +130,10 @@ int ISO_HIDDEN ISOMount(const char *path, const int flags, nspace** newVol, bool
 						    
 						    kerndbg( KERN_DEBUG_LOW, "ISOMount: Microsoft Joliet level %d\n", vol->joliet_level);
 						    if(vol->joliet_level > 0)
+							{
+							vol->rockRidge = false;
 							InitNode(vol, &(vol->rootDirRec), &buf[156], NULL, 0);
+							}
 						}
 					    } else if(*(unsigned char *)buf == 0xff) {
 						kerndbg( KERN_DEBUG_LOW, "ISOMount: found ISO_VD_END\n");

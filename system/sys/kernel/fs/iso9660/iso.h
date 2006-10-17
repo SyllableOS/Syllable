@@ -253,7 +253,7 @@ typedef struct nspace
 	uint8			fileStructVers;		// File structure version								byte882
 }nspace;
 
-int 	ISOMount(const char *path, const int flags, nspace** newVol,bool allowJoliet);
+int 	ISOMount(const char *path, const int flags, nspace** newVol, bool allow_rockridge, bool allow_joliet );
 int	ISOReadDirEnt(nspace* ns, dircookie* cookie, struct kernel_dirent* buf, size_t bufsize);
 int	InitNode( nspace * volume, vnode* rec, char* buf, int * bytesRead, uint8 jolietLevel );
 int	ConvertRecDate(ISORecDate* inDate, time_t* outDate);

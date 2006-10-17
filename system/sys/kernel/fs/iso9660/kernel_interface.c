@@ -140,7 +140,7 @@ iso_probe( const char* devicePath, fs_info* info )
 		return ( device ); 
 	}
 
-	error = ISOMount( devicePath, 0, &vol, false );
+	error = ISOMount( devicePath, 0, &vol, false, false );
 	if ( error < 0 )
 	{
 		kerndbg( KERN_DEBUG_LOW, "iso_probe - failed to mount device %s\n -> not an iso volume", devicePath );
@@ -211,7 +211,7 @@ iso_mount( kdev_t volumeID, const char *devicePath, uint32 flags, const void *pa
 {	
 	int 		result = -EINVAL;
 	nspace*		volume;
-	bool		allow_joliet;
+	bool		allow_rockridge, allow_joliet;
 
 	kerndbg( KERN_DEBUG, "iso_mount - ENTER\n");	
 	kerndbg( KERN_DEBUG, "%s: volumeID: %d device paht: %s\n",gFSName, volumeID, devicePath);
@@ -219,7 +219,7 @@ iso_mount( kdev_t volumeID, const char *devicePath, uint32 flags, const void *pa
 	//printk("iso_mount - Parameters(%d): %s\n", len, (char*)parameters );
 
 	// here we should parse the options and act accordingly
-	volume->rockRidge = true;
+	allow_rockridge = true;
 	allow_joliet = true;
 
 	if(parameters)
@@ -235,10 +235,10 @@ iso_mount( kdev_t volumeID, const char *devicePath, uint32 flags, const void *pa
 		    kerndbg( KERN_INFO, "iso_mount - disabling Joliet\n");
 		    allow_joliet = false;
 		}
-		if(strstr(pzParameters, "disablerockridge"))
+		if(strstr(pzParameters, "norockridge") || strstr(pzParameters, "norr") )
 		{
 		    kerndbg( KERN_INFO, "iso_mount - disabling RockRidge\n");
-		    volume->rockRidge = false;
+		    allow_rockridge = false;
 		}
 
 		kfree(pzParameters);
@@ -248,7 +248,7 @@ iso_mount( kdev_t volumeID, const char *devicePath, uint32 flags, const void *pa
 	}
 
 	// flags is currently unused
-	result = ISOMount( devicePath, flags, &volume, allow_joliet );
+	result = ISOMount( devicePath, flags, &volume, allow_rockridge, allow_joliet );
 
 	// If the mount succeeded, setup the block cache
 	if ( result == -EOK )
