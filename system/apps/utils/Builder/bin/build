@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.95
+# Version 0.6.96
 # Copyright (c) 2002-2006 Kaj de Vos
 # License: GPL 2 or any later version
 
@@ -242,66 +242,44 @@ def patchModule target
 	end
 end
 
-def getModule target
+def deleteModule target
 	unless
-		unless exists? target
+		exists? target or
+		begin
+			@log.header 'Deleting source'
+			action 'rm --recursive --force ' + target
+		end
+	then
+		@log.error 'Failed to delete source'
+		@log.failure target
+		false
+	else
+		action 'sync'
+	end
+end
+
+def getModule target
+	begin
+		exists? target or
+		begin
 			@log.subheader 'Installing source'
 
-			if sourcePackagesAvailable? target
-				unpackModule target
-			else
-				downloadModule target and
-				if exists? target  # It was a repository checkout
-					# FIXME: crude way to remove CVS files
-					Dir.chdir target
-					deleteCVSData
-				else  # It was a package download
-					unpackModule target
-				end
-			end and
+			(sourcePackagesAvailable? target or downloadModule target) and (
+				exists? target or  # It was a repository checkout
+				unpackModule target  # It was a package download
+			) and
 			begin
 				Dir.chdir @workDir
 				Dir.chdir target
 				patchModule target
 			end
-		else
-			unless exists? File.join(target, 'CVS')
-				# Source already prepared
-				true
-			else
-				if sourcePackagesAvailable? target
-					puts "\nWARNING! If this is a CVS repository, it will be clobbered!"
-					@log.subheader 'Replacing source'
-
-					unless action 'rm -r ' + target
-						@log.error 'Failed to delete source'
-						false
-					else
-						unless unpackModule target
-							false
-						else
-							Dir.chdir @workDir
-							Dir.chdir target
-							patchModule target
-						end
-					end
-				else
-					native? target or
-					begin
-						Dir.chdir target
-						deleteCVSData
-						patchModule target
-					end
-				end
-			end
 		end
-	then
+	end or
+	begin
 		# FIXME: cascading error reporting
 		@log.error 'Source not (completely) installed'
 		@log.failure target
 		false
-	else
-		true
 	end
 end
 
@@ -924,6 +902,15 @@ def patch targets
 	end
 end
 
+def delete targets
+	@log.header 'Deleting ' + targets.to_s
+
+	for target in targets.modules
+		prepareModule target
+		deleteModule target
+	end
+end
+
 def distclean targets
 	@log.header 'Cleaning distribution ' + targets.to_s
 
@@ -1032,32 +1019,24 @@ def buildPack targets
 		else
 			if n = profile['name'] then name = n end
 
-			unless action "mkdir " + name
-				false
-			else
-				unless action "cp -a #{File.join imageDir, '*'} " + name
-					false
-				else
+			action "mkdir " + name and
+			begin
+				action "cp -a #{File.join imageDir, '*'} " + name and
+				begin
 					Dir.chdir name
 			
-					unless
-						deleteCVSData
-					then
-						false
-					else
+					deleteCVSData and
+					begin
 						Dir.chdir @workDir
 			
-						unless
-							for package in modules = targets.modules
-								# Try to find the latest release. FIXME: alphabetical ordering
-								break unless action "ln -s #{Dir[
-										File.join(@distrosPath, fullName(package)) + '.bin.*.*z*'
-									].last
-								} " + name
-							end
-						then
-							false
-						else
+						for package in modules = targets.modules
+							# Try to find the latest release. FIXME: alphabetical ordering
+							break unless action "ln -s #{Dir[
+									File.join(@distrosPath, fullName(package)) + '.bin.*.*z*'
+								].last
+							} " + name
+						end and
+						begin
 #							action "tar --dereference --remove-files -cvzf #{name}.bin.1.tgz " + name
 							action "zip -rm #{name}.bin.1.zip " + name
 #								toString(modules.collect {|package| installName package})
@@ -1657,27 +1636,29 @@ end
 arg1, arg2, arg3 = ARGV
 
 case arg1
-when '-v', '--version'
-	puts 'Syllable Build System 0.6.95',
+when 'version', '-v', '--version'
+	puts 'Syllable Build System 0.6.96',
 		'Copyright (c) 2002-2006 Kaj de Vos',
 		'License: GPL 2 or any later version'
-when '?', '-?', '-h', '-help', '--help'
+when 'help', '?', '-?', '-h', '-help', '--help'
 	puts 'Usage:',
 		'  build [<command>] [<module> | <profile> | <package> | <log>]',
 		'  stage [<module> | <profile> | <package>]',
 		'  image [<module> | <profile> | <package>]',
 		'<command>:',
-		'  -h, --help,   Show this help information',
+		'  help,         Show this help information',
+		'    -h, --help,',
 		'    -help, -?, (?)',
-		'  -v, --version Show version information',
+		'  version,      Show version information',
+		'    -v, --version',
 		'  scrub         Delete CVS control files recursively from the current directory',
 		'  prepare       Initialize project image tree in staging area',
-		'  get           Fetch and patch sources (deleting CVS control files)',
-		'  download      Download sources (leaving CVS checkouts intact)',
+		'  get           Fetch and patch sources',
+		'  download      Download sources',
 		'  update        Update sources, or the build system itself, from repositories',
 		'  unpack        Unpack sources from source packages',
 		'  patch         Patch sources',
-#		'  delete        Delete sources and build directories (or installation?)',
+		'  delete        Delete sources',
 		'  distclean',
 		'  clean',
 		'  configure',
@@ -1730,6 +1711,7 @@ else
 			when 'download'		then download		target
 			when 'update'		then update			target
 			when 'unpack'		then unpack			target
+			when 'delete'		then delete			target
 			when 'uninstall'	then uninstall		target
 			when 'package'		then buildPackages	target
 			when 'pack'			then buildPack		target
