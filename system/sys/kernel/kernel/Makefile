@@ -1,4 +1,4 @@
-CFLAGS   = -Wall -c -O3 -std=gnu99 -fno-optimize-sibling-calls -Wstrict-prototypes -I./ -D__KERNEL__ -D__BUILD_KERNEL__ -ffreestanding -no-fPIC -mpreferred-stack-boundary=2 -fno-strict-aliasing
+CFLAGS   = -Wall -c -O2 -std=gnu99 -fno-optimize-sibling-calls -Wstrict-prototypes -I./ -D__KERNEL__ -D__BUILD_KERNEL__ -ffreestanding -no-fPIC -mpreferred-stack-boundary=2 -fno-strict-aliasing
 AFLAGS   = -c
 
 OLD_INCLUDE_PATH:=$(C_INCLUDE_PATH)
@@ -18,7 +18,7 @@ NLSOBJS := nls_conv.o nls_iso8859-1.o nls_iso8859-2.o nls_iso8859-3.o nls_ascii.
 
 OBJS := intel.o cpuid.o descriptors.o kernel.o dbconsole.o ksyms.o init.o fork.o syscall.o 	  		\
 	debug.o timer.o process.o threads.o sema.o msgport.o memory.o strace.o	\
-	smp.o udelay.o fault.o exec.o pci.o pgroup.o kmalloc.o swap.o dma.o	\
+	smp.o apic.o udelay.o fault.o exec.o pci.o pgroup.o kmalloc.o swap.o dma.o	\
 	elf.o timecalc.o virt86.o irq.o array.o schedule.o psignals.o mman.o	\
 	areas.o vmalloc.o pagefault.o bcache.o bcalloc.o vesa_gfx.o random.o	\
 	devices.o config.o ptrace.o save_i387.o resource.o \

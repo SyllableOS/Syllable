@@ -446,7 +446,6 @@ void init_descriptors()
 	IDT.Base = ( uint32 )g_sSysBase.ex_GDT;
 	IDT.Limit = 0xffff;
 	SetGDT( &IDT );
-	SetTR( ( 8 + get_processor_id() ) << 3 );
 	__asm__ volatile ( "mov %0,%%ds;mov %0,%%es;mov %0,%%fs;mov %0,%%gs;mov %0,%%ss;"::"r" ( 0x18 ) );
 
 	/* mark the first descriptors in GDT as used      */

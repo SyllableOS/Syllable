@@ -1808,7 +1808,6 @@ void DoSchedule( SysCallRegs_s* psRegs )
 		}
 	}
 
-
 	g_bNeedSchedule = false;
 
 	psNext = select_thread( &bTimedOut );
@@ -1900,7 +1899,6 @@ void DoSchedule( SysCallRegs_s* psRegs )
 	}
 	g_asProcessorDescs[nThisProc].pi_psCurrentThread = psNext;
 
-
 	//load_fpu_state( &psNext->tc_FPUState );
 	__asm__ __volatile__( "movl %0,%%cr2"::"r"( psNext->tr_nCR2 ) );
 
@@ -1922,16 +1920,14 @@ void DoSchedule( SysCallRegs_s* psRegs )
 		   keeping track of the register's contents and clearing it only when neccessary. */
 		clear_debug_regs();
 	
-	sched_unlock();
-	
 	stts();
 	set_page_directory_base_reg( psNext->tr_psProcess->tc_psMemSeg->mc_pPageDir );
 	g_bNeedSchedule = false;
+
+	sched_unlock();
+
 	__asm__ __volatile__( "movl %0,%%gs\n\t" "movl %1,%%esp\n\t" "jmp ret_from_sys_call":	/* no outputs */
-		:"r"( g_asProcessorDescs[psNext->tr_nCurrentCPU].pi_nGS ), "r"( psNext->tr_pESP ) );
-	
-	put_cpu_flags( nFlg );
-	g_bNeedSchedule = false;
+ 		:"r"( g_asProcessorDescs[psNext->tr_nCurrentCPU].pi_nGS ), "r"( psNext->tr_pESP ) );
 }
 
 void sys_do_schedule( void* pPtr )

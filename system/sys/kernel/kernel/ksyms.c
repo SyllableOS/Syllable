@@ -82,11 +82,6 @@ const char *ksym_get_symbol( int nIndex, void **ppValue )
 	return ( g_asKernelSymbols[nIndex].pzName );
 }
 
-int get_processor_id( void )
-{
-	return ( GET_APIC_ID( apic_read( APIC_ID ) ) );
-}
-
 static KernelSymbol_s g_asKernelSymbols[] = {
 	// General functions:
 	KSYMBOL( get_processor_id ),
