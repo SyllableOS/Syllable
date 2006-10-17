@@ -1,3 +1,4 @@
+
 /*
 	
 	Copyright 1999, Be Incorporated.   All Rights Reserved.
@@ -17,10 +18,10 @@
 #define __ENABLE_DEBUG__
 //#define DEBUG_LIMIT KERN_WARNING
 
-#include <atheos/types.h> // uints
-#include <posix/stat.h> // stat
+#include <atheos/types.h>	// uints
+#include <posix/stat.h>		// stat
 #include <posix/errno.h>
-#include <atheos/filesystem.h> //kdev_t
+#include <atheos/filesystem.h>	//kdev_t
 
 // This should be long enough for rock ridge and joliet extensions
 #define ISO_MAX_FILENAME_LENGTH 256
@@ -60,36 +61,36 @@ enum
 // to match.
 typedef struct ISOVolDate
 {
- 	char	year[5];
- 	char	month[3];
- 	char	day[3];
- 	char	hour[3];
- 	char	minute[3];
- 	char	second[3];
- 	char	hunSec[3];
- 	int8	offsetGMT;
-}ISOVolDate;
+	char year[5];
+	char month[3];
+	char day[3];
+	char hour[3];
+	char minute[3];
+	char second[3];
+	char hunSec[3];
+	int8 offsetGMT;
+} ISOVolDate;
 
 typedef struct ISORecDate
 {
-	uint8	year;			// Year - 1900
-	uint8	month;
-	uint8	date;
-	uint8	hour;
-	uint8	minute;
-	uint8	second;
-	int8	offsetGMT;
-}ISORecDate;
+	uint8 year;		// Year - 1900
+	uint8 month;
+	uint8 date;
+	uint8 hour;
+	uint8 minute;
+	uint8 second;
+	int8 offsetGMT;
+} ISORecDate;
 
 /* This next section is data structure to hold the data found in the rock ridge extensions. */
 typedef struct RRAttr
 {
-	char*			slName;
-	struct stat		stat[2];
-	uint8			nmVer;
-	uint8			pxVer;
-	uint8			slVer;
-}RRAttr;
+	char *slName;
+	struct stat stat[2];
+	uint8 nmVer;
+	uint8 pxVer;
+	uint8 slVer;
+} RRAttr;
 
 /* For each item on the disk (directory, file, etc), your filesystem should allocate a vnode struct and 
 	pass it back to the kernel when fs_read_vnode is called. This struct is then passed back in to 
@@ -105,40 +106,40 @@ typedef struct RRAttr
 typedef struct vnode
 {
 	/* Most drivers will probably want the first things defined here. */
-	ino_t	id; 
-	ino_t 	parID;		// parent vnode ID.
-	
+	ino_t id;
+	ino_t parID;		// parent vnode ID.
+
 	// End of members other drivers will definitely want.
-	
+
 	/* The rest of this struct is very ISO-specific. You should replace the rest of this
-		definition with the stuff your file system needs.
-	*/
-	uint8		extAttrRecLen;			// Length of extended attribute record.
-	uint32		startLBN[2];			// Logical block # of start of file/directory data
-	uint32		dataLen[2];				// Length of file section in bytes
-	ISORecDate	recordDate;				// Date file was recorded.
-	
-										// BIT MEANING
-										// --- -----------------------------
-	uint8		flags;					// 0 - is hidden
-										// 1 - is directory
-										// 2 - is "Associated File"
-										// 3 - Info is structed according to extended attr record
-										// 4 - Owner, group, ppermisssions are specified in the
-										//		extended attr record
-										// 5 - Reserved
-										// 6 - Reserved
-										// 7 - File has more that one directory record
-									
-	uint8		fileUnitSize;			// Interleave only
-	uint8		interleaveGapSize;		// Interleave only
-	uint32		volSeqNum;				// Volume sequence number of volume
-	uint8		fileIDLen;				// Length of volume "ID" (name)
-	char*		fileIDString;			// Volume "ID" (name)
+	   definition with the stuff your file system needs.
+	 */
+	uint8 extAttrRecLen;	// Length of extended attribute record.
+	uint32 startLBN[2];	// Logical block # of start of file/directory data
+	uint32 dataLen[2];	// Length of file section in bytes
+	ISORecDate recordDate;	// Date file was recorded.
+
+	// BIT MEANING
+	// --- -----------------------------
+	uint8 flags;		// 0 - is hidden
+	// 1 - is directory
+	// 2 - is "Associated File"
+	// 3 - Info is structed according to extended attr record
+	// 4 - Owner, group, ppermisssions are specified in the
+	//              extended attr record
+	// 5 - Reserved
+	// 6 - Reserved
+	// 7 - File has more that one directory record
+
+	uint8 fileUnitSize;	// Interleave only
+	uint8 interleaveGapSize;	// Interleave only
+	uint32 volSeqNum;	// Volume sequence number of volume
+	uint8 fileIDLen;	// Length of volume "ID" (name)
+	char *fileIDString;	// Volume "ID" (name)
 
 	// The rest is Rock Ridge extensions. I suggest www.leo.org for spec info.
-	RRAttr		attr;
-}vnode;
+	RRAttr attr;
+} vnode;
 
 // Convert a block number & offset within the block to a virtual node ID (vnid)
 #define BLOCK_TO_INO( block, pos )	(((off_t)block << 30) + ((off_t)pos & 0x3FFFFFFF))
@@ -149,7 +150,7 @@ typedef struct vnode
 enum
 {
 	ISO_ISHIDDEN = 0,
-	ISO_ISDIR		= 2,
+	ISO_ISDIR = 2,
 	ISO_ISASSOCFILE = 4,
 	ISO_EXTATTR = 8,
 	ISO_EXTPERM = 16,
@@ -169,22 +170,22 @@ enum
 typedef struct dircookie
 {
 	off_t startBlock;
-	off_t block;			// Current block
-	off_t pos;				// Position within block.
-	off_t totalSize;		// Size of directory file
+	off_t block;		// Current block
+	off_t pos;		// Position within block.
+	off_t totalSize;	// Size of directory file
 	off_t id;
 } dircookie;
- 
+
 /* You may also need to define a cookie for files, which again is 
 	allocated every time a file is opened and freed when the free
 	cookie function is called. For ISO, we didn't need one.
 */
 
-typedef struct attrfilemap 
-{ 
-	char  *name; 
-	off_t offset; 
-} attrfilemap; 
+typedef struct attrfilemap
+{
+	char *name;
+	off_t offset;
+} attrfilemap;
 
 
 /* This is the global volume nspace struct. When mount is called , this struct should
@@ -195,68 +196,68 @@ typedef struct attrfilemap
 typedef struct nspace
 {
 	// Start of members other drivers will definitely want.
-	kdev_t			id;				// ID passed in to fs_mount
-	int				fd;				// File descriptor
-	int				fdOfSession; 
-	//unsigned int 	blockSize;  	//  usually need this, but it's part of ISO
-		
-	char			devicePath[127];
-	//off_t			numBlocks;		// May need this, but it's part of ISO
-	
+	kdev_t id;		// ID passed in to fs_mount
+	int fd;			// File descriptor
+	int fdOfSession;
+	//unsigned int  blockSize;      //  usually need this, but it's part of ISO
+
+	char devicePath[127];
+	//off_t                 numBlocks;              // May need this, but it's part of ISO
+
 	// End of members other drivers will definitely want.
 
 	// attribute extensions 
-	int32			readAttributes; 
-	attrfilemap		*attrFileMap; 
-	ino_t		attributesID; 
+	int32 readAttributes;
+	attrfilemap *attrFileMap;
+	ino_t attributesID;
 
 	// JOLIET extension: joliet_level for this volume 
-	uint8			joliet_level; 
-	bool			rockRidge;
+	uint8 joliet_level;
+	bool rockRidge;
 
 	// All this stuff comes straight from ISO primary volume
 	// descriptor structure.
-	uint8			volDescType;		// Volume Descriptor type								byte1
-	char			stdIDString[6];		// Standard ID, 1 extra for null						byte2-6
-	uint8			volDescVersion;		// Volume Descriptor version							byte7
-																			// 8th byte unused
-	char			systemIDString[33];	// System ID, 1 extra for null							byte9-40
-	char			volIDString[33];	// Volume ID, 1 extra for null							byte41-72
-																			// bytes 73-80 unused
-	uint32			volSpaceSize[2];	// #logical blocks, lsb and msb									byte81-88
-																		// bytes 89-120 unused
-	uint16			volSetSize[2];		// Assigned Volume Set Size of Vol						byte121-124
-	uint16			volSeqNum[2];		// Ordinal number of volume in Set						byte125-128
-	uint16			logicalBlkSize[2];	// Logical blocksize, usually 2048						byte129-132
-	uint32			pathTblSize[2];		// Path table size										byte133-149
-	uint16			lPathTblLoc[2];		// Loc (Logical block #) of "Type L" path table		byte141-144
-	uint16			optLPathTblLoc[2];	// Loc (Logical block #) of optional Type L path tbl		byte145-148
-	uint16			mPathTblLoc[2];		// Loc (Logical block #) of "Type M" path table		byte149-152
-	uint16			optMPathTblLoc[2];		// Loc (Logical block #) of optional Type M path tbl	byte153-156
-	vnode			rootDirRec;			// Directory record for root directory					byte157-190
+	uint8 volDescType;	// Volume Descriptor type                                                               byte1
+	char stdIDString[6];	// Standard ID, 1 extra for null                                                byte2-6
+	uint8 volDescVersion;	// Volume Descriptor version                                                    byte7
+	// 8th byte unused
+	char systemIDString[33];	// System ID, 1 extra for null                                                  byte9-40
+	char volIDString[33];	// Volume ID, 1 extra for null                                                  byte41-72
+	// bytes 73-80 unused
+	uint32 volSpaceSize[2];	// #logical blocks, lsb and msb                                                                 byte81-88
+	// bytes 89-120 unused
+	uint16 volSetSize[2];	// Assigned Volume Set Size of Vol                                              byte121-124
+	uint16 volSeqNum[2];	// Ordinal number of volume in Set                                              byte125-128
+	uint16 logicalBlkSize[2];	// Logical blocksize, usually 2048                                              byte129-132
+	uint32 pathTblSize[2];	// Path table size                                                                              byte133-149
+	uint16 lPathTblLoc[2];	// Loc (Logical block #) of "Type L" path table         byte141-144
+	uint16 optLPathTblLoc[2];	// Loc (Logical block #) of optional Type L path tbl            byte145-148
+	uint16 mPathTblLoc[2];	// Loc (Logical block #) of "Type M" path table         byte149-152
+	uint16 optMPathTblLoc[2];	// Loc (Logical block #) of optional Type M path tbl    byte153-156
+	vnode rootDirRec;	// Directory record for root directory                                  byte157-190
 
-	off_t	rootBlock;		// Block number of the start of the root directory entry
+	off_t rootBlock;	// Block number of the start of the root directory entry
 
-	char			volSetIDString[29];	// Name of multi-volume set where vol is member		byte191-318
-	char			pubIDString[129];	// Name of publisher									byte319-446
-	char			dataPreparer[129];	// Name of data preparer								byte447-574
-	char			appIDString[129];	// Identifies data fomrat								byte575-702
-	char			copyright[38];		// Copyright string										byte703-739
-	char			abstractFName[38];	// Name of file in root that has abstract				byte740-776
-	char			biblioFName[38];	// Name of file in root that has biblio				byte777-813
+	char volSetIDString[29];	// Name of multi-volume set where vol is member         byte191-318
+	char pubIDString[129];	// Name of publisher                                                                    byte319-446
+	char dataPreparer[129];	// Name of data preparer                                                                byte447-574
+	char appIDString[129];	// Identifies data fomrat                                                               byte575-702
+	char copyright[38];	// Copyright string                                                                             byte703-739
+	char abstractFName[38];	// Name of file in root that has abstract                               byte740-776
+	char biblioFName[38];	// Name of file in root that has biblio                         byte777-813
 
-	ISOVolDate		createDate;			// Creation date										byte
-	ISOVolDate		modDate;			// Modification date
-	ISOVolDate		expireDate;			// Data expiration date
-	ISOVolDate		effectiveDate;		// Data effective data
-	
-	uint8			fileStructVers;		// File structure version								byte882
-}nspace;
+	ISOVolDate createDate;	// Creation date                                                                                byte
+	ISOVolDate modDate;	// Modification date
+	ISOVolDate expireDate;	// Data expiration date
+	ISOVolDate effectiveDate;	// Data effective data
 
-int 	ISOMount(const char *path, const int flags, nspace** newVol, bool allow_rockridge, bool allow_joliet );
-int	ISOReadDirEnt(nspace* ns, dircookie* cookie, struct kernel_dirent* buf, size_t bufsize);
-int	InitNode( nspace * volume, vnode* rec, char* buf, int * bytesRead, uint8 jolietLevel );
-int	ConvertRecDate(ISORecDate* inDate, time_t* outDate);
+	uint8 fileStructVers;	// File structure version                                                               byte882
+} nspace;
+
+int ISOMount( const char *path, const int flags, nspace ** newVol, bool allow_rockridge, bool allow_joliet );
+int ISOReadDirEnt( nspace * ns, dircookie *cookie, struct kernel_dirent *buf, size_t bufsize );
+int InitNode( nspace * volume, vnode *rec, char *buf, int *bytesRead, uint8 jolietLevel );
+int ConvertRecDate( ISORecDate * inDate, time_t *outDate );
 
 #define ISO_HIDDEN		__attribute__((visibility("hidden")))
 
