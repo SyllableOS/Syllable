@@ -1,5 +1,9 @@
 * October 17 2006, Kristian Van Der Vliet *
 
+Improved SATA configuration for VIA SATA and Intel ICH-5 controllers
+
+* October 17 2006, Kristian Van Der Vliet *
+
 Rewrite of the APIC & SMP startup code
 Split smp.c into smp.c & apic.c, and inc/smp.h into smp.h, apic.h & mpc.h
 The APIC code has been re-written to be much closer to the original Linux version
