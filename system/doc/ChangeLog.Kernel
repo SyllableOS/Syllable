@@ -1,5 +1,12 @@
 * October 17 2006, Kristian Van Der Vliet *
 
+iso9660 driver:
+ o Fixed RockRidge selection
+ o Rationalised the optional paramaters to be "nojoliet" and "norockridge" or "norr"
+ o sindent'ed everything
+
+* October 17 2006, Kristian Van Der Vliet *
+
 Improved SATA configuration for VIA SATA and Intel ICH-5 controllers
 
 * October 17 2006, Kristian Van Der Vliet *
