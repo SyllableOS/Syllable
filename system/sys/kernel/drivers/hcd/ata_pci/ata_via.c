@@ -3,7 +3,8 @@
  *
  *  VIA chipset support
  *
- *	Copyright (C) 2004 Arno Klenke
+ *  Copyright (C) 2006 Kristian Van Der Vliet
+ *  Copyright (C) 2004 Arno Klenke
  *  Copyright (c) 2000-2002 Vojtech Pavlik
  *  Based on the work of:
  *   Michel Aubry
@@ -84,10 +85,32 @@ static struct VIA_bridge_s {
 	{ "VT82C576b", 0x0576, 0x00, 0x2f, VIA_UDMA_NONE | VIA_SET_FIFO | VIA_NO_UNMASK }
 };
 
+static struct VIA_sata_hcd_s {
+	char *pzName;
+	uint16 nDeviceID;
+} g_sVIAHcds[] = {
+	{ "VT6420", 0x0591 },
+	{ "VT6420", 0x3149 },
+	{ "VT6421", 0x3249 }
+};
+
 struct VIA_private_s
 {
 	PCI_Info_s sDevice;
 	struct VIA_bridge_s* psBridge;
+};
+
+enum {
+	SATA_CHAN_ENAB		= 0x40, /* SATA channel enable */
+	SATA_INT_GATE		= 0x41, /* SATA interrupt gating */
+	SATA_NATIVE_MODE	= 0x42, /* Native mode enable */
+	SATA_PATA_SHARING	= 0x49, /* PATA/SATA sharing func ctrl */
+
+	PORT0			= (1 << 1),
+	PORT1			= (1 << 0),
+	ALL_PORTS		= PORT0 | PORT1,
+
+	NATIVE_MODE_ALL		= (1 << 7) | (1 << 6) | (1 << 5) | (1 << 4)
 };
 
 /* Set speed on one drive */
@@ -193,31 +216,14 @@ status_t via_port_configure( ATA_port_s* psPort )
 void init_via_controller( PCI_Info_s sDevice, ATA_controller_s* psCtrl )
 {
 	PCI_Info_s sBridgeDev;
-	int i;
-	int j;
+	int i, j;
 	bool bFound = false;
 	struct VIA_bridge_s* psBridge = NULL;
 	uint32 nU;
 	uint8 nV, nT;
 	int n80W = 0;
 	struct VIA_private_s* psPrivate = kmalloc( sizeof( struct VIA_private_s ), MEMF_KERNEL | MEMF_CLEAR );
-	
-	/* Check for SATA controller */
-	if( sDevice.nDeviceID == 0x3149 )
-	{
-		kerndbg( KERN_INFO, "VIA Serial ATA controller detected\n" );
-		strcpy( psCtrl->zName, "VIA Serial ATA controller" );
-		
-		/* Only one port per channel (right?) */
-		kfree( psCtrl->psPort[1] );
-		kfree( psCtrl->psPort[3] );
-		psCtrl->psPort[1] = psCtrl->psPort[2];
-		psCtrl->psPort[2] = NULL;
-		psCtrl->nPortsPerChannel = 1;
-		psCtrl->psPort[0]->nCable = psCtrl->psPort[1]->nCable = ATA_CABLE_SATA;
-		return;
-	}
-	
+
 	/* Scan bridges */
 	for( i = 0; g_psPCIBus->get_pci_info( &sBridgeDev, i ) == 0; ++i )
 	{
@@ -345,31 +351,123 @@ void init_via_controller( PCI_Info_s sDevice, ATA_controller_s* psCtrl )
 	claim_device( psCtrl->nDeviceID, sDevice.nHandle, "VIA ATA controller", DEVICE_CONTROLLER );
 }
 
+static uint32 vt6420_scr_addr( uint32 nAddr, uint8 nPort )
+{
+	return nAddr + ( nPort * 128 );
+}
 
+static uint32 vt6421_scr_addr( uint32 nAddr, uint8 nPort )
+{
+	return nAddr + ( nPort * 64 );
+}
 
+static void vt6421_set_addrs( ATA_port_s *psPort, uint32 nCommand, uint32 nDMA, uint32 nSCR, uint8 nPort )
+{
+	int i;
 
+	for( i = 0; i < 8; i++ )
+		psPort->nRegs[i] = nCommand + i;
 
+	psPort->nDmaRegs[ATA_REG_DMA_CONTROL] = nDMA;
+	psPort->nDmaRegs[ATA_REG_DMA_STATUS] = nDMA + 2;
+	psPort->nDmaRegs[ATA_REG_DMA_TABLE] = nDMA + 4;
 
+	uint32 nSCRAddr = vt6421_scr_addr( nSCR, nPort );
+	for( i = 0; i < SATA_TOTAL_REGS; i++ )
+		psPort->nSATARegisters[i] = nSCRAddr + i;
+}
 
+void init_via_sata_controller( PCI_Info_s sDevice, ATA_controller_s* psCtrl )
+{
+	int i, j;
+	bool bFound = false;
+	struct VIA_sata_hcd_s* psHcd = NULL;
+	uint8 nT;
 
+	for( i = 0; i < ( sizeof( g_sVIABridges ) / sizeof( struct VIA_bridge_s ) ); i++ )
+	{
+		if( sDevice.nVendorID == 0x1106 && sDevice.nDeviceID == g_sVIAHcds[i].nDeviceID )
+		{
+			psHcd = &g_sVIAHcds[i];
+			bFound = true;
+			break;
+		}
+	}
 
+	if( !bFound )
+	{
+		kerndbg( KERN_WARNING, "Unknown VIA SATA controller detected\n" );
+		return;
+	}
 
+	kerndbg( KERN_INFO, "VIA %s HCD detected\n", psHcd->pzName );
 
+	/* Only one port per channel (right?) */
+	kfree( psCtrl->psPort[1] );
+	kfree( psCtrl->psPort[3] );
+	psCtrl->psPort[1] = psCtrl->psPort[2];
+	psCtrl->psPort[2] = NULL;
+	psCtrl->nPortsPerChannel = 1;
+	psCtrl->psPort[0]->nCable = psCtrl->psPort[1]->nCable = ATA_CABLE_SATA;
+	psCtrl->psPort[0]->nType = psCtrl->psPort[1]->nType = ATA_SATA;
+	psCtrl->psPort[0]->nSupportedPortSpeed = psCtrl->psPort[1]->nSupportedPortSpeed |= 0x7fff;	/* UDMA133 */
 
+	uint32 nSCR = sDevice.u.h0.nBase4 & PCI_ADDRESS_MEMORY_32_MASK;
 
+	if( sDevice.nDeviceID == 0x3249 )
+	{
+		/* vt6421 */
+		uint32 nCommand, nDMA;
 
+		nCommand = sDevice.u.h0.nBase0 & PCI_ADDRESS_MEMORY_32_MASK;
+		nDMA = sDevice.u.h0.nBase3 & PCI_ADDRESS_MEMORY_32_MASK;
+		vt6421_set_addrs( psCtrl->psPort[0], nCommand, nDMA, nSCR, 0 );
 
+		nCommand = sDevice.u.h0.nBase1 & PCI_ADDRESS_MEMORY_32_MASK;
+		nDMA = (sDevice.u.h0.nBase3 & PCI_ADDRESS_MEMORY_32_MASK) + 8;
+		vt6421_set_addrs( psCtrl->psPort[1], nCommand, nDMA, nSCR, 1 );
+	}
+	else
+	{
+		/* vt6420 */
+		for( i = 0; i < 2; i++ )
+		{
+			uint32 nSCRAddr = vt6420_scr_addr( nSCR, i );
+			for( j = 0; i < SATA_TOTAL_REGS; j++ )
+				psCtrl->psPort[i]->nSATARegisters[j] = nSCRAddr + j;
+		}
+	}
 
+	/* Make sure SATA channels are enabled */
+	nT = g_psPCIBus->read_pci_config( sDevice.nBus, sDevice.nDevice, sDevice.nFunction, SATA_CHAN_ENAB, 1 );
+	if( (nT & ALL_PORTS) != ALL_PORTS)
+	{
+		kerndbg( KERN_DEBUG, "Enabling SATA channels (0x%x)\n", (int)nT );
+		nT |= ALL_PORTS;
+		g_psPCIBus->write_pci_config( sDevice.nBus, sDevice.nDevice, sDevice.nFunction, SATA_CHAN_ENAB, 1, nT );
+	}
 
+	/* Make sure interrupts for each channel sent to us */
+	nT = g_psPCIBus->read_pci_config( sDevice.nBus, sDevice.nDevice, sDevice.nFunction, SATA_INT_GATE, 1 );
+	if( (nT & ALL_PORTS) != ALL_PORTS)
+	{
+		kerndbg( KERN_DEBUG, "Enabling SATA channel interrupts (0x%x)\n", (int)nT );
+		nT |= ALL_PORTS;
+		g_psPCIBus->write_pci_config( sDevice.nBus, sDevice.nDevice, sDevice.nFunction, SATA_INT_GATE, 1, nT );
+	}
 
+	/* Make sure native mode is enabled */
+	nT = g_psPCIBus->read_pci_config( sDevice.nBus, sDevice.nDevice, sDevice.nFunction, SATA_NATIVE_MODE, 1 );
+	if( (nT & NATIVE_MODE_ALL) != NATIVE_MODE_ALL)
+	{
+		kerndbg( KERN_DEBUG, "Enabling SATA channel native mode (0x%x)\n", (int)nT );
+		nT |= NATIVE_MODE_ALL;
+		g_psPCIBus->write_pci_config( sDevice.nBus, sDevice.nDevice, sDevice.nFunction, SATA_NATIVE_MODE, 1, nT );
+	}
 
+	strcpy( psCtrl->zName, "VIA Serial ATA controller" );
+	claim_device( psCtrl->nDeviceID, sDevice.nHandle, "VIA Serial ATA controller", DEVICE_CONTROLLER );
 
-
-
-
-
-
-
-
-
+	return;
+}
 

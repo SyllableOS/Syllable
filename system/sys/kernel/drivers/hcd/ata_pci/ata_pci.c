@@ -40,7 +40,9 @@ typedef struct
 } ATA_PCI_dev_s;
 
 void init_via_controller( PCI_Info_s sDevice, ATA_controller_s* psCtrl );
+void init_via_sata_controller( PCI_Info_s sDevice, ATA_controller_s* psCtrl );
 void init_intel_controller( PCI_Info_s sDevice, ATA_controller_s* psCtrl );
+void init_intel_sata_controller( PCI_Info_s sDevice, ATA_controller_s* psCtrl );
 void init_sis_controller( PCI_Info_s sDevice, ATA_controller_s* psCtrl );
 void init_amd_controller( PCI_Info_s sDevice, ATA_controller_s* psCtrl );
 
@@ -51,7 +53,10 @@ ATA_PCI_dev_s g_sDevices[] =
 	{ 0x1106, 0x1571, init_via_controller },
 	{ 0x1106, 0x0571, init_via_controller },
 	{ 0x1106, 0x3164, init_via_controller },
-	{ 0x1106, 0x3149, init_via_controller },
+	/* VIA SATA */
+	{ 0x1106, 0x0591, init_via_sata_controller },	/* vt6420 */
+	{ 0x1106, 0x3149, init_via_sata_controller },	/* vt6420 */
+	{ 0x1106, 0x3249, init_via_sata_controller },	/* vt6421 */
 	/* Intel */
 	{ 0x8086, 0x122e, init_intel_controller },
 	{ 0x8086, 0x1230, init_intel_controller },
@@ -71,13 +76,14 @@ ATA_PCI_dev_s g_sDevices[] =
 	{ 0x8086, 0x24db, init_intel_controller },
 	{ 0x8086, 0x245b, init_intel_controller },
 	{ 0x8086, 0x24ca, init_intel_controller },
-	{ 0x8086, 0x24d1, init_intel_controller },
 	{ 0x8086, 0x25a2, init_intel_controller },
 	{ 0x8086, 0x266f, init_intel_controller },
 	{ 0x8086, 0x27df, init_intel_controller },
 	{ 0x8086, 0x24c1, init_intel_controller },
 	{ 0x8086, 0x269e, init_intel_controller },
 	{ 0x8086, 0x2850, init_intel_controller },
+	/* Intel SATA */
+	{ 0x8086, 0x24d1, init_intel_sata_controller },	/* ICH5 SATA */
 	/* SIS */
 	{ 0x1039, 0x5513, init_sis_controller },
 	/* AMD */
@@ -664,79 +670,4 @@ status_t device_uninit( int nDeviceID )
 {
 	return( 0 );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

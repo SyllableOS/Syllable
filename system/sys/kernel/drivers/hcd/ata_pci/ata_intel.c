@@ -248,22 +248,7 @@ void init_intel_controller( PCI_Info_s sDevice, ATA_controller_s* psCtrl )
 	uint8 n54, n55;
 	int n80W = 0;
 	struct Intel_private_s* psPrivate = kmalloc( sizeof( struct Intel_private_s ), MEMF_KERNEL | MEMF_CLEAR );
-	
-	/* Check for SATA controller */
-	if( sDevice.nDeviceID == 0x24d1 )
-	{
-		kerndbg( KERN_INFO, "Intel Serial ATA controller detected\n" );
-		strcpy( psCtrl->zName, "Intel Serial ATA controller" );
-		
-		/* Only one port per channel (right?) */
-		kfree( psCtrl->psPort[1] );
-		kfree( psCtrl->psPort[3] );
-		psCtrl->psPort[1] = psCtrl->psPort[2];
-		psCtrl->psPort[2] = NULL;
-		psCtrl->nPortsPerChannel = 1;
-		psCtrl->psPort[0]->nCable = psCtrl->psPort[1]->nCable = ATA_CABLE_SATA;
-		return;
-	}
+
 	/* Scan bus */
 	for( i = 0; g_psPCIBus->get_pci_info( &sIDEDev, i ) == 0; ++i )
 	{
@@ -342,25 +327,38 @@ void init_intel_controller( PCI_Info_s sDevice, ATA_controller_s* psCtrl )
 	claim_device( psCtrl->nDeviceID, sDevice.nHandle, "Intel ATA controller", DEVICE_CONTROLLER );
 }
 
+void init_intel_sata_controller( PCI_Info_s sDevice, ATA_controller_s* psCtrl )
+{
+	int i;
+	struct Intel_private_s* psPrivate = kmalloc( sizeof( struct Intel_private_s ), MEMF_KERNEL | MEMF_CLEAR );
 
+	/* Only one port per channel (right?) */
+	kfree( psCtrl->psPort[1] );
+	kfree( psCtrl->psPort[3] );
+	psCtrl->psPort[1] = psCtrl->psPort[2];
+	psCtrl->psPort[2] = NULL;
+	psCtrl->nPortsPerChannel = 1;
 
+	for( i = 0; i < 2; i++ )
+	{
+		ATA_port_s *psPort = psCtrl->psPort[i];
 
+		psPort->nCable = ATA_CABLE_SATA;
+		psPort->nType = ATA_SATA;
+		psPort->nSupportedPortSpeed |= 0x3fff;	/* UDMA100 */
+		psPort->sOps.configure = intel_port_configure;
+		psPort->pPrivate = psPrivate;
+	}
 
+	kerndbg( KERN_INFO, "Intel ICH5 Serial ATA controller detected\n" );
 
+	/* Initialize */
+	unsigned int nExtra = g_psPCIBus->read_pci_config( sDevice.nBus, sDevice.nDevice, sDevice.nFunction, 0x54, 4 );
+	g_psPCIBus->write_pci_config( sDevice.nBus, sDevice.nDevice, sDevice.nFunction, 0x54, 4, nExtra | 0x400 );
 
+	strcpy( psCtrl->zName, "Intel Serial ATA controller" );
+	claim_device( psCtrl->nDeviceID, sDevice.nHandle, "Intel Serial ATA controller", DEVICE_CONTROLLER );
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	return;
+}
 
