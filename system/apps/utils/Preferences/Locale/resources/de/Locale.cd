@@ -1,0 +1,21 @@
+//
+// Preferences/Locale string catalog
+//
+// Translated by: Uwe Olszewski
+//
+
+STR_MAIN_TITLE=1000						Lokalisierung
+STR_MAIN_APPLY							_Übernehmen
+STR_MAIN_REVERT							_Zurücksetzen
+STR_MAIN_DEFAULT						_Standard
+
+STR_MAIN_LANGUAGE_TAB=1100				Sprache
+STR_MAIN_LANGUAGE_ACTIVATE				Aktiviere Sprache >
+STR_MAIN_LANGUAGE_DEACTIVATE			< Deaktiviere Sprache
+STR_MAIN_LANGUAGE_AVAILABLE				Ünterstützte Sprachen
+STR_MAIN_LANGUAGE_USED					Aktive Sprachen
+
+STR_MAIN_COUNTRY_TAB=1200				Land
+
+STR_ERROR_SAVE=2000						Fehler beim speichern der Einstellungen.
+
