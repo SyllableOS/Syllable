@@ -1,3 +1,13 @@
+* October 17 2006, Kristian Van Der Vliet *
+
+Rewrite of the APIC & SMP startup code
+Split smp.c into smp.c & apic.c, and inc/smp.h into smp.h, apic.h & mpc.h
+The APIC code has been re-written to be much closer to the original Linux version
+Bug fixes
+ o Booting from a CPU other than #0 now works
+ o Non-SMP machines should no longer have "phantom" CPU's I.e. showing the CPU as #15
+ o Various over bug fixes and code cleanups
+
 * October 10 2006, Arno Klenke *
 
 Shutdown processors before trying to power off in smp mode
