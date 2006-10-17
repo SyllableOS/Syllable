@@ -745,22 +745,21 @@ int init_apic( bool bScanACPI )
 		else
 		{
 			/* At this point the AP processors havn't been started, so we must be running on the
-			   boot CPU.  By default it is assumed the boot CPU is #0, but it may not be.  If the
-			   local APIC ID is not what we expect it to be, we have to tweak the task register. */
+			   boot CPU.  By default it is assumed the boot CPU is #0, but it may not be. */
 
 			int nCPU = get_processor_id();
 			if( g_nBootCPU != nCPU )
 			{
 				g_nBootCPU = nCPU;	/* g_asProcessorDescs is the same for every processor at this point: see init_cpuid() */
-
-				/* We can't just change the boot CPU without doing some housekeeping */
 				g_anLogicToRealID[0] = nCPU;
-				SetTR( ( 8 + nCPU ) << 3 );
 			}
-
-			/* This may be useful information */
-			printk( "Bootup from CPU #%d.\n", g_nBootCPU );
 		}
+
+		/* g_nBootCPU is now valid no matter which CPU we booted on, so we can set the task register */
+		SetTR( ( 8 + g_nBootCPU ) << 3 );
+
+		/* This may be useful information */
+		printk( "Boot from CPU #%d.\n", g_nBootCPU );
 	}
 
 	return bFound;
