@@ -3,6 +3,7 @@ authors
 	Kaj de Vos
 maintainers			Kaj de Vos
 status				testing
+notes				Doesn't build a shared library yet
 
 licenses			LGPL
 home				www.libsdl.org/projects/SDL_image/
@@ -10,12 +11,16 @@ packages			SDL_image-1.2.4
 locations			http://www.libsdl.org/projects/SDL_image/release/
 
 needs				sdl
+build-needs			automake
 build-recommends
 	libpng
 	libjpeg
 	libtiff
 
 patch-config
+_patch
+	aclocal
+	automake
 
 ;configure-options
 ;	--enable-tif

@@ -3,6 +3,7 @@ authors
 	Kaj de Vos
 maintainers			Kaj de Vos
 status				testing
+notes				Doesn't build a shared library yet
 
 licenses			LGPL
 home				icculus.org/SDL_sound/
@@ -10,6 +11,7 @@ packages			SDL_sound-1.0.1
 locations			http://icculus.org/SDL_sound/downloads/
 
 needs				sdl >= 1.2
+build-needs			automake
 build-recommends
 	libvorbis
 	smpeg
@@ -19,7 +21,11 @@ build-recommends
 	libspeex
 
 patch-config
+_patch
+	aclocal
+	automake
 
 documentation
 	README COPYING CREDITS CHANGELOG TODO
 ;	docs
+

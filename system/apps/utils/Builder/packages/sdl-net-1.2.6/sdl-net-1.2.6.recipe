@@ -10,8 +10,12 @@ packages			SDL_net-1.2.6
 locations			http://www.libsdl.org/projects/SDL_net/release/
 
 needs				sdl >= 1.2.4
+build-needs			automake
 
 patch-config
+patch
+	aclocal
+	automake
 
 documentation		README COPYING CHANGES
 
