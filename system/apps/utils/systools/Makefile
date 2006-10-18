@@ -70,7 +70,7 @@ install:
 
 dist:
 	cp -f $(EXES) $(DIST_DIR)/atheos/sys/bin/
-	chmod +x $(DIST_DIR)/atheos/sys/bin/$(EXES)
+	chmod +x $(DIST_DIR)/atheos/sys/bin/mkhome
 
 clean:
 	-rm -Rv $(OBJDIR)
