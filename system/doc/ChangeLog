@@ -1,3 +1,8 @@
+* October 18 2006, Kaj de Vos *
+
+Added SDL_mixer, SDL_net, SDL_image and SDL_sound to the base distribution, but only
+got SDL_net to build a shared library so far.
+
 * October 17 2006, Kaj de Vos *
 
 Merged localization patches from BurningShadow and new translations that he collected
