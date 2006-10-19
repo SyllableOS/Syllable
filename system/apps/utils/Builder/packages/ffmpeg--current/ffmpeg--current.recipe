@@ -4,15 +4,14 @@ authors
 	Kristian Van Der Vliet
 status				testing
 notes
-	Tested with FFMPEG SVN snapshot September 12, 2006.
+	Tested with FFMPEG SVN snapshot October 19, 2006.
 	Can't be build image'd.
 
 inherits			sourceforge
 
 licenses			LGPL GPL
 home				ffmpeg.org
-packages			syllable/ffmpeg-6239
-;locations			http://mplayerhq.hu/MPlayer/cvs/
+packages			syllable/ffmpeg-6736
 archives			svn://svn.mplayerhq.hu/ffmpeg/trunk ffmpeg
 
 build-needs
