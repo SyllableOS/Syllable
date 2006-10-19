@@ -18,7 +18,8 @@ resources
 modules
 ;	other/fonts/bitstream-vera-1.10
 	other/fonts/luxi-fonts
-;	The first one will produce a harmless unpacking error:
+;	For AClock:
+;	The first one will produce two harmless unpacking errors:
 	other/fonts/lcd-fonts-1.1
 	other/fonts/lcd-fonts-1.1
 	other/fonts/freefont-20060126
@@ -77,4 +78,3 @@ modules
 
 ;	apps/other/xpdf-3.00pl3-syllable
 ;	apps/other/xpdf-3.00pl3
-
