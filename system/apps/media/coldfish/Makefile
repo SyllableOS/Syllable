@@ -2,7 +2,7 @@ CFLAGS   += -c -fexceptions -ffast-math
 CXXFLAGS += -c -fexceptions -ffast-math
 AOPTS   = -c
 
-CATALOGS = da de es hu nl pl pt-br ru sv
+CATALOGS = da de es hu nl pl ru sv
 
 APPBIN = /Applications/Media
 
@@ -61,4 +61,3 @@ catalog-clean:
 	done;
 
 -include $(OBJDIR)/*.d
-
