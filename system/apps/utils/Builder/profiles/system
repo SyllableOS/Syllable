@@ -137,14 +137,17 @@ modules
 	other/keymaps
 	sys/include
 	sys/kernel/kernel
-	sys/kernel/drivers/audio/i8xx
-	sys/kernel/drivers/audio/vt82xx
-	sys/kernel/drivers/audio/hda
 	sys/kernel/drivers/bus/acpi
 	sys/kernel/drivers/bus/ata
 	sys/kernel/drivers/bus/pci
 	sys/kernel/drivers/bus/scsi
 	sys/kernel/drivers/bus/usb
+	sys/kernel/drivers/hcd/ata_pci
+	sys/kernel/drivers/hcd/usb_ehci
+	sys/kernel/drivers/hcd/usb_ohci
+	sys/kernel/drivers/hcd/usb_uhci
+	sys/kernel/drivers/ps2
+	sys/kernel/drivers/input/usb_hid
 	sys/kernel/drivers/disk/bios
 	sys/kernel/drivers/disk/usb
 	sys/kernel/drivers/graphics/geforcefx
@@ -159,11 +162,6 @@ modules
 	sys/kernel/drivers/graphics/tdfx
 	sys/kernel/drivers/graphics/trident
 	sys/kernel/drivers/graphics/vmware
-	sys/kernel/drivers/hcd/ata_pci
-	sys/kernel/drivers/hcd/usb_ehci
-	sys/kernel/drivers/hcd/usb_ohci
-	sys/kernel/drivers/hcd/usb_uhci
-	sys/kernel/drivers/input/usb_hid
 	sys/kernel/drivers/misc/apm
 	sys/kernel/drivers/misc/battery
 	sys/kernel/drivers/misc/devices
@@ -184,6 +182,9 @@ modules
 	sys/kernel/drivers/net/sis
 	sys/kernel/drivers/net/tulip
 	sys/kernel/drivers/net/via
+	sys/kernel/drivers/audio/i8xx
+	sys/kernel/drivers/audio/vt82xx
+	sys/kernel/drivers/audio/hda
 	sys/kernel/drivers/sound/emu10k1
 	sys/kernel/drivers/sound/es1370
 	sys/kernel/drivers/sound/es1371
@@ -194,7 +195,6 @@ modules
 	sys/kernel/drivers/sound/via686a
 ;	sys/kernel/drivers/sound/vt82xx
 	sys/kernel/drivers/sound/ymfpci
-	sys/kernel/drivers/ps2
 	sys/kernel/fs/afs
 	sys/kernel/fs/ext2
 	sys/kernel/fs/fatfs
