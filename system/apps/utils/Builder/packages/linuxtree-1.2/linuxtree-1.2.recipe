@@ -1,0 +1,15 @@
+authors				Kaj de Vos
+status				broken
+notes				Can't find (n)curses.h
+
+licenses			GPL
+home				ww.xtreefanpage.org/x64linux.htm#lxt
+packages			lxt-1.2
+locations
+	http://www.xtreefanpage.org/lowres/download/
+	http://modzer0.cs.uaf.edu/~dan/code/
+
+no-build-dir
+
+documentation		INSTALL COPYING bugs Changes
+
