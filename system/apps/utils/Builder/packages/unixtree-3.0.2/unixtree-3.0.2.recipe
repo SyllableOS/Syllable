@@ -1,0 +1,18 @@
+authors				Kaj de Vos
+status				broken
+notes				libsys tries to use threads, although they are disabled
+
+inherits			sourceforge
+
+licenses			GPL other
+home				www.unixtree.org
+packages			unixtree/xt-source-3.0.2
+
+make
+	source ./build -r syllable
+	make all
+
+install-prefix-var	INS_DIR
+
+documentation		README COPYING CHANGES
+
