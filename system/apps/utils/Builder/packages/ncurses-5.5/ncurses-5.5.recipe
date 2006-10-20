@@ -21,5 +21,12 @@ system-prefix-var	DESTDIR
 documentation
 	README INSTALL ANNOUNCE NEWS TO-DO
 	doc/html
-; For INetUtils:
-links				include/ncurses /usr/include
+links
+;	Usually for older packages:
+	include/ncurses/ncurses.h	include/
+	include/ncurses/curses.h	include/
+;	For INetUtils:
+	include/ncurses				/usr/include/
+;	For LinuxTree:
+	bin/clear					/usr/bin/
+

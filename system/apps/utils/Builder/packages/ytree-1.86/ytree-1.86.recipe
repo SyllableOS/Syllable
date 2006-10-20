@@ -1,0 +1,12 @@
+authors				Kaj de Vos
+status				broken
+notes				Compile error on statfs()
+
+licenses			GPL
+home				http://www.han.de/~werner/ytree.html
+locations			http://www.han.de/~werner/
+
+needs				ncurses
+
+documentation		README COPYING CHANGES THANKS
+

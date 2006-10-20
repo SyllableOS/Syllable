@@ -1,15 +1,18 @@
 authors				Kaj de Vos
-status				broken
-notes				Can't find (n)curses.h
+status				testing
+notes				Terminal output is messed up on Syllable 0.6.1
 
 licenses			GPL
-home				ww.xtreefanpage.org/x64linux.htm#lxt
+home				www.xtreefanpage.org/x64linux.htm#lxt
 packages			lxt-1.2
 locations
 	http://www.xtreefanpage.org/lowres/download/
 	http://modzer0.cs.uaf.edu/~dan/code/
 
+needs				ncurses
+
 no-build-dir
 
+install-tree		bin
 documentation		INSTALL COPYING bugs Changes
 
