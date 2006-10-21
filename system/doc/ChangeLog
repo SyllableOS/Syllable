@@ -1,3 +1,15 @@
+* October 21 2006, Kaj de Vos *
+
+AtheOS seems to have had a modified xterm terminfo entry. The standard NCurses one
+hardly works with ATerm. The AtheOS definition doesn't provide all features anymore
+for the current ATerm, either. The NCurses rxvt-16color definition turns out to work
+best, so I made that default. However, unlike the original AtheOS xterm, it doesn't
+map box drawing characters to the right font glyphs - unless something else is wrong
+with the font rendering.
+
+Also, the delete key still doesn't work in the terminal - another regression from
+AtheOS.
+
 * October 18 2006, Kaj de Vos *
 
 Added SDL_mixer, SDL_net, SDL_image and SDL_sound to the base distribution, but only

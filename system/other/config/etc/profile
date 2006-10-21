@@ -1,33 +1,31 @@
 export PWD
 
-export PATH=/usr/bin:/bin:/atheos/autolnk/bin:/usr/sbin:/atheos/autolnk/sbin
-export LIBRARY_PATH=/system/libs:/usr/glibc/lib:/usr/lib:/atheos/autolnk/lib
-export DLL_PATH=@bindir@/lib:./:/atheos/sys/libs:/atheos/autolnk/lib:/boot/atheos/sys
+export PATH=/usr/local/bin:/bin:/atheos/autolnk/bin:/atheos/autolnk/sbin
+export DLL_PATH=@bindir@/lib:./:/usr/local/lib:/system/libs:/system:/atheos/autolnk/lib
+export LIBRARY_PATH=/usr/local/lib:/system/libs:/atheos/autolnk/lib
 
-export C_INCLUDE_PATH=/include:/ainc:/atheos/autolnk/include:/usr/include
+export C_INCLUDE_PATH=/usr/local/include:/system/include:/atheos/autolnk/include
 export CPLUS_INCLUDE_PATH=$C_INCLUDE_PATH
-
-export ATHEOS_SRC=/atheos/src
-export ATHEOS_INCLUDE_PATH=/ainc
 
 # Set this right, or havoc may be wreaked in /system/init.sh
 export TEMP=/tmp
 
 export SYSTEM=Syllable
-export COLORTERM=xterm
+export TERM=rxvt-16color
+export COLORTERM=rxvt-16color
 export LS_COLORS="ex=35:ln=4;35:di=31;1:*.c=36:*.cpp=34:*.h=34:*.hpp=34:*.c=34"
 export PAGER=less
 export LESSCHARSET=latin1
 export EDITOR=aedit
 
 case $TERM in
-	xterm | xterm-color)
+	xterm | rxvt-16color)
 		PROMPT_COMMAND="echo -en \"\33]0;$(whoami)@$(hostname):\$PWD - Syllable Terminal\7\"";;
 	*)
 		unset PROMPT_COMMAND;;
 esac
 
 alias ll='ls -l'
-alias dir='ls --color -l'
+alias dir='ls -l --color'
 alias more=less
 alias m=less
