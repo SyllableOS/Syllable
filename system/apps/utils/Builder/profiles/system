@@ -16,8 +16,6 @@ tree
 	atheos/etc
 
 	atheos/home				home.png
-;	atheos/home/.template	home.png
-;	atheos/home/root		home.png
 
 	atheos/autolnk
 	atheos/autolnk/bin
@@ -98,19 +96,19 @@ tree
 	atheos/var/log
 
 	atheos/usr
+;	For env:
 	atheos/usr/bin
-	atheos/usr/etc
-	atheos/usr/include
-	atheos/usr/info
-	atheos/usr/lib
+;	atheos/usr/etc
+;	atheos/usr/include
+;	atheos/usr/info
+;	atheos/usr/lib
 	atheos/usr/local
 ;	For PERL:
 	atheos/usr/local/bin
-	atheos/usr/man
-	atheos/usr/sbin
+;	atheos/usr/man
+;	atheos/usr/sbin
+;	(For terminfo:)
 	atheos/usr/share
-;	atheos/usr/share/terminfo
-;	atheos/usr/share/terminfo/x
 
 	atheos/Applications					applications.png
 	atheos/Applications/Preferences		settings.png
