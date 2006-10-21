@@ -102,13 +102,22 @@ tree
 ;	atheos/usr/include
 ;	atheos/usr/info
 ;	atheos/usr/lib
-	atheos/usr/local
-;	For PERL:
-	atheos/usr/local/bin
 ;	atheos/usr/man
 ;	atheos/usr/sbin
 ;	(For terminfo:)
 	atheos/usr/share
+;	For manually compiled software:
+	atheos/usr/local
+;	For PERL:
+	atheos/usr/local/bin
+	atheos/usr/local/etc
+	atheos/usr/local/include
+	atheos/usr/local/info
+	atheos/usr/local/lib
+	atheos/usr/local/libexec
+	atheos/usr/local/man
+	atheos/usr/local/sbin
+	atheos/usr/local/share
 
 	atheos/Applications					applications.png
 	atheos/Applications/Preferences		settings.png
