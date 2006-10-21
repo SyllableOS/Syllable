@@ -5,3 +5,6 @@ resources
 	atheos/sys/libs	libc.so
 ;	Old libraries for compatibility with applications for older versions of Syllable:
 	atheos/sys/libs	GCC-libraries-3.4.3
+;	May work better than the standard ones:
+	atheos/usr/share/ncurses/terminfo/x binaries/xterm-atheos
+
