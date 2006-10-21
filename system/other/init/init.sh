@@ -17,7 +17,6 @@ dbterm 8 >>/var/log/kernel &
 
 # Add a few additional symlinks which simplify navigation around the
 # filesystem
-ln -s /usr/glibc/include /include
 ln -s /atheos/Applications /Applications
 ln -s /home/root /root
 
