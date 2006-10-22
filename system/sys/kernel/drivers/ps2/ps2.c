@@ -140,14 +140,11 @@ static status_t ps2_read_command( uint8 nCmd, uint8* pnData )
 	}
 	outb( nCmd, PS2_COMMAND_REG );
 	nError = ps2_wait_read();
-	if( nError < 0 ) {
+	if( nError < 0 ) {	
 		spinunlock_restore( &g_sLock, nFlags );
 		return( -EIO );
-	}
-	if( inb( PS2_STATUS_REG ) & PS2_STS_AUXDATA )
-		*pnData = ~inb( PS2_DATA_REG );
-	else
-		*pnData = inb( PS2_DATA_REG );
+	}	
+	*pnData = inb( PS2_DATA_REG );
 	
 	spinunlock_restore( &g_sLock, nFlags );
 	return( 0 );
@@ -165,6 +162,11 @@ static status_t ps2_write_command( uint8 nCmd, uint8 nData )
 		return( -EIO );
 	}
 	outb( nCmd, PS2_COMMAND_REG );
+	nError = ps2_wait_write();
+	if( nError < 0 ) {
+		spinunlock_restore( &g_sLock, nFlags );
+		return( -EIO );
+	}
 	outb( nData, PS2_DATA_REG );
 	spinunlock_restore( &g_sLock, nFlags );
 	return( 0 );
@@ -182,16 +184,18 @@ static status_t ps2_write_read_command( uint8 nCmd, uint8* pnData )
 		return( -EIO );
 	}
 	outb( nCmd, PS2_COMMAND_REG );
+	nError = ps2_wait_write();
+	if( nError < 0 ) {
+		spinunlock_restore( &g_sLock, nFlags );
+		return( -EIO );
+	}
 	outb( *pnData, PS2_DATA_REG );
 	nError = ps2_wait_read();
 	if( nError < 0 ) {
 		spinunlock_restore( &g_sLock, nFlags );
 		return( -EIO );
 	}
-	if( inb( PS2_STATUS_REG ) & PS2_STS_AUXDATA )
-		*pnData = ~inb( PS2_DATA_REG );
-	else
-		*pnData = inb( PS2_DATA_REG );
+	*pnData = inb( PS2_DATA_REG );
 	spinunlock_restore( &g_sLock, nFlags );
 	return( 0 );
 }
@@ -288,6 +292,7 @@ static int ps2_interrupt( int nIrqNum, void* pData, SysCallRegs_s* psRegs )
 status_t ps2_open( void* pNode, uint32 nFlags, void **pCookie )
 {
     uint8 nControl;
+    uint32 nFlg;
     PS2_Port_s* psPort = (PS2_Port_s*)pNode;
     
     printk( "ps2_open()\n" );
@@ -308,6 +313,7 @@ status_t ps2_open( void* pNode, uint32 nFlags, void **pCookie )
     /* Enable device */
     if( psPort->bIsAux )
 		ps2_command( PS2_CMD_AUX_ENABLE );
+	nFlg = spinlock_disable( &g_sLock );
 	ps2_read_command( PS2_CMD_RCTR, &nControl );
     
 	if( psPort->bIsAux ) {
@@ -318,7 +324,7 @@ status_t ps2_open( void* pNode, uint32 nFlags, void **pCookie )
     	nControl |= PS2_CTR_KBDINT;
     }
 	ps2_write_command( PS2_CMD_WCTR, nControl );
-    
+    spinunlock_enable( &g_sLock, nFlg );
   
     atomic_set( &psPort->nBytesReceived, 0 );
     atomic_set( &psPort->nInPos, 0 );
@@ -341,6 +347,7 @@ status_t ps2_close( void* pNode, void* pCookie )
 status_t ps2_ioctl( void* pNode, void* pCookie, uint32 nCommand, void* pArgs, bool bFromKernel )
 {
 	PS2_Port_s* psPort = (PS2_Port_s*)pNode;
+	uint32 nFlg;
 	
 	if( psPort->bIsAux )
 		return( 0 );
@@ -372,8 +379,10 @@ status_t ps2_ioctl( void* pNode, void* pCookie, uint32 nCommand, void* pArgs, bo
 	
 	/* Write command */
 	psPort->nAckReceived = 0;
+	nFlg = spinlock_disable( &g_sLock );
 	ps2_wait_write();
 	outb( PS2_CMD_KBD_SETLEDS, PS2_DATA_REG );
+	spinunlock_enable( &g_sLock, nFlg );
 	int i = 0;
 	while( psPort->nAckReceived == 0 && i < 200 )
 	{
@@ -381,7 +390,7 @@ status_t ps2_ioctl( void* pNode, void* pCookie, uint32 nCommand, void* pArgs, bo
 		i++;
 	}
 	if( psPort->nAckReceived == -1 ) {
-		printk( "Could not set LED status: Hardware reported an error!\n" );
+		printk( "Could not set LED status: Hardware reported an error for the command!\n" );
 		return( 0 );
 	}
 	if( i == 200 ) {
@@ -389,8 +398,10 @@ status_t ps2_ioctl( void* pNode, void* pCookie, uint32 nCommand, void* pArgs, bo
 		return( 0 );
 	}
 	psPort->nAckReceived = 0;
+	nFlg = spinlock_disable( &g_sLock );
 	ps2_wait_write();
 	outb( g_nKbdLedStatus, PS2_DATA_REG );
+	spinunlock_enable( &g_sLock, nFlg );
 	i = 0;
 	while( psPort->nAckReceived == 0 && i < 200 )
 	{
@@ -398,7 +409,7 @@ status_t ps2_ioctl( void* pNode, void* pCookie, uint32 nCommand, void* pArgs, bo
 		i++;
 	}
 	if( psPort->nAckReceived == -1 ) {
-		printk( "Could not set LED status: Hardware reported an error!\n" );
+		printk( "Could not set LED status: Hardware reported an error for the data!\n" );
 		return( 0 );
 	}
 	if( i == 200 ) {
@@ -526,7 +537,7 @@ static status_t ps2_aux_init()
 	if( nError < 0 || nData != 0xa5 )
 	{
 		/* According to linux driver the loop test fails on some chipsets */
-		printk( "PS2 Aux loop test failed! Trying test command...\n" );
+		printk( "PS2 Aux loop test failed (error = %i, data = %x)! Trying test command...\n", nError, (uint)nData );
 		if( ps2_read_command( PS2_CMD_AUX_TEST, &nData ) < 0 )
 		{
 			printk( "Failed -> Aux port not present!\n" );

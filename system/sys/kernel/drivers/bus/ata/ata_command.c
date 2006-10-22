@@ -668,7 +668,7 @@ dma_again:
 			else
 				nTransferred = ata_io_read( psPort, pBuffer, 512 );
 				
-			if( nTransferred < 0 )
+			if( nTransferred <= 0 )
 			{
 				nRetry++;
 				continue;
