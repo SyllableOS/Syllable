@@ -138,7 +138,7 @@ modules
 
 	other/config/default
 	other/config/etc
-	other/fonts/dejavu-fonts-2.10
+	other/fonts/dejavu-fonts-2.11
 	other/icons
 	other/init
 	other/keymaps
@@ -228,7 +228,8 @@ modules
 ;	Currently doesn't build with GCC 4.1.1 itself installed:
 ;	libraries libraries/gcc-4.1.1
 
-;	freetype-config needs to be in the path (use bootstrap directive):
+;	freetype-config needs to be in the path, and will point to the running system!
+;	Use the bootstrap settings directive, or install the same FreeType in the host system:
 	stage libraries/freetype-2.2.1
 
 	stage libraries/libjpeg-6b-static
