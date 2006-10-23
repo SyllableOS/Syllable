@@ -57,44 +57,10 @@ function exit_with_error
 	exit $1
 }
 
-# function create_desktop
-#
-# Creates the default symlinks in the users Desktop directory
-#
-# $1 path to the directory to create
-
-function create_desktop
-{
-	userhome=$1
-	userdesktop=$userhome/Desktop
-
-	mkdir $userdesktop
-	if [ $? != 0 ]
-	then
-		exit_with_error 3 $userdesktop
-	fi
-
-	pushd $userdesktop 1>/dev/null
-
-	# Add new symlinks below these
-	ln -sf /Applications Applications
-	ln -sf / Disks
-	ln -sf $userhome Home
-	ln -sf /Applications/Preferences Preferences
-	ln -sf /system/bin/aterm Terminal
-	if [ -e $userhome/Trash ]
-	then
-		ln -sf $userhome/Trash Trash
-	fi
-
-	popd 1>/dev/null
-}
-
 # function create_home_dir
 #
-# Creates the home directory, copies the default configuration from
-# the skeleton directory and configures the users default desktop
-# settings
+# Creates the home directory and copies the default configuration from
+# the skeleton directory.
 #
 # $1 home directory
 # $2 username
@@ -122,11 +88,8 @@ function create_home_dir
 		fi
 	fi
 
-	# Create default desktop symlinks
-	create_desktop $userhome
-
 	# Own everything to the user (If they exist)
-	if [[ "$(whoami)" == "root" ]]
+	if [[ `id -u` == 0 ]]
 	then
 		if [ $(cat /etc/passwd | cut -d : -f 1 | grep $username) ]
 		then
