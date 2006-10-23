@@ -1,0 +1,20 @@
+authors				Kaj de Vos
+status				testing
+warnings			The servers reportedly don't work.
+notes
+	configure misgenerates some path definition files, except with Bash 2.03. Possibly a problem with echo.
+
+inherits			gnu
+
+licenses			GPL
+home				www.gnu.org/software/inetutils/
+packages			inetutils/inetutils-1.5
+
+build-needs			bash 2.03
+
+configure-options
+;	Ping acts irregular, and Syllable has its own:
+	--disable-ping
+;	--disable-servers
+documentation		README COPYING NEWS ChangeLog TODO AUTHORS THANKS
+
