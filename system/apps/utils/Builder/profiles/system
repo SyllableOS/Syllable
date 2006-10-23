@@ -130,7 +130,7 @@ resources
 	atheos/sys/config		appserver					text/plain
 ;	atheos/sys/libs			GCC-libraries-4.1.1
 	atheos/home				Home-Directories
-	atheos/Documentation	documentation/Welcome		text/plain
+	atheos/Documentation	documentation/Welcome.html	text/html
 	atheos/Documentation	documentation/Copyrights	text/plain
 
 modules
