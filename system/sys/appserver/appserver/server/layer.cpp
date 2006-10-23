@@ -89,6 +89,7 @@ void Layer::Init()
 	m_bBackdrop = false;
 
 	m_bOnUpdateList = false;	
+	m_bUpdateChildren = false;
 	m_pcBackbuffer = NULL;
 	m_pcVisibleFullReg = NULL;
 	m_pcPrevVisibleFullReg = NULL;

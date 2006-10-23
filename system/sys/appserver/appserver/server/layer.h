@@ -226,6 +226,7 @@ public:
     bool	m_bBackdrop;
     
     bool	m_bOnUpdateList;
+    bool	m_bUpdateChildren;
     
     // Members for layers connected to the top screen layer:
     SrvBitmap* m_pcBackbuffer; // If != NULL then this layer has its own backbuffer.

@@ -292,7 +292,6 @@ void TopLayer::MoveChilds( void )
 			if( pcChild->m_bHasInvalidRegs && pcChild->m_pcVisibleFullReg != NULL 
 				&& pcChild->m_pcPrevVisibleFullReg != NULL )
 			{
-				
 				if( pcChild->m_pcBackbuffer == NULL )
 				{
 					Region cCopy;
@@ -457,6 +456,9 @@ void TopLayer::RebuildRegion( bool bForce )
 	for( pcChild = m_pcBottomChild; NULL != pcChild; pcChild = pcChild->m_pcHigherSibling )
 	{
 		__assertw( pcChild->m_pcPrevVisibleFullReg == NULL );
+		if( !pcChild->m_bHasInvalidRegs )
+			continue;
+			
 		pcChild->m_pcPrevVisibleFullReg = pcChild->m_pcVisibleFullReg;
 		pcChild->m_pcVisibleFullReg = NULL;
 		

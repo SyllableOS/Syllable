@@ -40,16 +40,6 @@ class SrvBitmap;
 class SrvSprite;
 class SrvEvent_s;
 
-struct sBlitEntry
-{
-	sBlitEntry( Layer* pcLayer, bool bUpdateChildren )
-	{
-		m_nLayerHandle = pcLayer->GetHandle();
-		m_bUpdateChildren = bUpdateChildren;
-	}
-	int m_nLayerHandle;
-	bool m_bUpdateChildren;
-};
 
 
 class SrvWindow
@@ -102,8 +92,15 @@ public:
 	void	IncPaintCounter() { atomic_inc( &m_nPendingPaintCounter ); }
 	void	AddToUpdateList( Layer* pcLayer, bool bUpdateChildren )
 	{
-		pcLayer->m_bOnUpdateList = true;
-		m_asUpdateList.push_back( sBlitEntry( pcLayer, bUpdateChildren ) );
+		if( pcLayer->m_bOnUpdateList ) {
+			if( bUpdateChildren )
+				pcLayer->m_bUpdateChildren = true;
+		}
+		else {
+			pcLayer->m_bOnUpdateList = true;
+			pcLayer->m_bUpdateChildren = bUpdateChildren;
+		}
+		m_asUpdateList.push_back( pcLayer->GetHandle() );
 	}
 	
     bool	HasPendingSizeEvents( Layer* pcLayer );
@@ -160,7 +157,7 @@ private:
     bigtime_t		m_nLastHitTime;	// Time of last mouse click
     bool			m_bOffscreen;	// True for bitmap windows
 	atomic_t		m_nPendingPaintCounter;
-	std::vector<sBlitEntry> m_asUpdateList;
+	std::vector<int> m_asUpdateList;
     thread_id		m_hThread;
     port_id			m_hMsgPort;	// Requests from application
     port_id			m_hEventPort;	// Events to application

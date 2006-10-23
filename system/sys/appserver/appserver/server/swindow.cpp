@@ -613,7 +613,8 @@ void SrvWindow::R_Render( WR_Render_s * psPkt )
 		
 		/* Copy the last layer to the blitlist */			
 		if( !pcView->m_bOnUpdateList ) {
-			m_asUpdateList.push_back( sBlitEntry( pcView, false ) );
+			m_asUpdateList.push_back( pcView->GetHandle() );
+			pcView->m_bUpdateChildren = false;
 			pcView->m_bOnUpdateList = true;
 		}
 		
@@ -771,14 +772,7 @@ void SrvWindow::R_Render( WR_Render_s * psPkt )
 							nLowest = pcParent->GetLevel();
 							pcLowestLayer = pcParent;
 						}
-						for( uint i = 0; i < m_asUpdateList.size(); i++ )
-						{
-							if( m_asUpdateList[i].m_nLayerHandle == pcView->GetHandle() )
-							{
-								m_asUpdateList[i].m_bUpdateChildren = true;
-								break;
-							}
-						}
+						pcView->m_bUpdateChildren = true;
 					}
 				}
 				bViewsMoved = true;
@@ -839,14 +833,7 @@ void SrvWindow::R_Render( WR_Render_s * psPkt )
 				pcView->ScrollBy( psMsg->cDelta );
 				if( pcView->m_pcBitmap == g_pcScreenBitmap )
 					SrvSprite::Unhide();
-				for( uint i = 0; i < m_asUpdateList.size(); i++ )
-				{
-					if( m_asUpdateList[i].m_nLayerHandle == pcView->GetHandle() )
-					{
-						m_asUpdateList[i].m_bUpdateChildren = true;
-						break;
-					}
-				}
+				pcView->m_bUpdateChildren = true;
 				g_cLayerGate.Open();
 				g_cLayerGate.Lock();
 				break;
@@ -957,14 +944,14 @@ void SrvWindow::R_Render( WR_Render_s * psPkt )
 			/* We only update if there is no paint pending */	
 			for( uint i = 0; i < m_asUpdateList.size(); i++ )
 			{
-				Layer *pcView = FindLayer( m_asUpdateList[i].m_nLayerHandle );
+				Layer *pcView = FindLayer( m_asUpdateList[i] );
 
 				if( pcView == NULL )
 					continue;
 				
 				pcView->m_bOnUpdateList = false;
-				if( ( m_asUpdateList[i].m_bUpdateChildren == true || ( pcView->m_pcDamageReg == NULL && pcView->m_pcActiveDamageReg == NULL && pcView->m_bIsUpdating == false ) ) )
-					g_pcTopView->UpdateLayer( pcView, m_asUpdateList[i].m_bUpdateChildren );
+				if( ( pcView->m_bUpdateChildren == true || ( pcView->m_pcDamageReg == NULL && pcView->m_pcActiveDamageReg == NULL && pcView->m_bIsUpdating == false ) ) )
+					g_pcTopView->UpdateLayer( pcView, pcView->m_bUpdateChildren );
 			}
 			m_asUpdateList.clear();
 		}	
@@ -1827,14 +1814,14 @@ bool SrvWindow::DispatchMessage( const void *psMsg, int nCode )
 				/* Check if we have an update entry for the whole window */
 				for( uint i = 0; i < m_asUpdateList.size(); i++ )
 				{
-					Layer *pcView = FindLayer( m_asUpdateList[i].m_nLayerHandle );
+					Layer *pcView = FindLayer( m_asUpdateList[i] );
 
 					if( pcView == NULL )
 						continue;
 				
 					pcView->m_bOnUpdateList = false;
 					
-					if( pcView == m_pcWndBorder && m_asUpdateList[i].m_bUpdateChildren ) {
+					if( pcView == m_pcWndBorder && pcView->m_bUpdateChildren ) {
 						bFullUpdate = true;
 					}
 				}
@@ -1846,13 +1833,13 @@ bool SrvWindow::DispatchMessage( const void *psMsg, int nCode )
 				{
 					for( uint i = 0; i < m_asUpdateList.size(); i++ )
 					{
-						Layer *pcView = FindLayer( m_asUpdateList[i].m_nLayerHandle );
+						Layer *pcView = FindLayer( m_asUpdateList[i] );
 
 						if( pcView == NULL )
 							continue;
 								
-						if( ( m_asUpdateList[i].m_bUpdateChildren == true || ( pcView->m_pcDamageReg == NULL && pcView->m_pcActiveDamageReg == NULL && pcView->m_bIsUpdating == false ) ) )
-							g_pcTopView->UpdateLayer( pcView, m_asUpdateList[i].m_bUpdateChildren );			
+						if( ( pcView->m_bUpdateChildren == true || ( pcView->m_pcDamageReg == NULL && pcView->m_pcActiveDamageReg == NULL && pcView->m_bIsUpdating == false ) ) )
+							g_pcTopView->UpdateLayer( pcView, pcView->m_bUpdateChildren );			
 					}
 				}
 
