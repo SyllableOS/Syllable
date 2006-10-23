@@ -414,6 +414,12 @@ status_t emu10k1_audio_ioctl(void *node, void *cookie, uint32 cmd, void *arg, bo
 			return 0;
 		}
 
+		case IOCTL_GET_USERSPACE_DRIVER:
+		{
+			memcpy_to_user( arg, "oss.so", strlen( "oss.so" ) );
+			break;
+		}
+
 		default:		/* Default is unrecognized command */
 		{
 			debug_ioctl(cmd);

@@ -411,7 +411,13 @@ sb_ioctl( void *node, void *cookie, uint32 com, void *args, bool bFromKernel )
 			if( *((int *)args) != 8 )
 				return -EINVAL;
 			return 1;
-				
+
+		case IOCTL_GET_USERSPACE_DRIVER:
+		{
+			memcpy_to_user( args, "oss.so", strlen( "oss.so" ) );
+			break;
+		}
+
 		default :
 			return -EINVAL;
 	}
@@ -493,7 +499,7 @@ device_init( int nDeviceID )
 	if( sb_dsp_init() ) {
 		nHandle = register_device( "", "isa" );
 		claim_device( nDeviceID, nHandle, "Soundblaster Pro", DEVICE_AUDIO );
-		nError = nDeviceNode = create_device_node( nDeviceID, nHandle, "sound/sbpro/dsp/0", &dsp_ops, NULL );
+		nError = nDeviceNode = create_device_node( nDeviceID, nHandle, "audio/sbpro", &dsp_ops, NULL );
 	}
 	if ( nError < 0 )
 		DEBUG( "Failed to create 1 node %d\n", nError );

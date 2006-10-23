@@ -2247,6 +2247,13 @@ status_t maestro_dsp_ioctl( void *pNode, void *pCookie, uint32 nCmd, void *pArg,
 			put_user((s->fmt & ((s->open_mode & FMODE_READ) ? (ESS_FMT_16BIT << ESS_ADC_SHIFT) 
 					   : (ESS_FMT_16BIT << ESS_DAC_SHIFT))) ? 16 : 8, p);
 			return 0;
+
+		case IOCTL_GET_USERSPACE_DRIVER:
+		{
+			memcpy_to_user( p, "oss.so", strlen( "oss.so" ) );
+			break;
+		}
+
 	}
 	return -EINVAL;
 
@@ -2747,9 +2754,8 @@ status_t device_init( int nDeviceID )
 {
 	PCI_Info_s sDevice;
 	struct maestro_card *psCard;
-	char zNodeName[OS_NAME_LENGTH];
 	bool bFound = false;
-	int i,j, k = 0;
+	int i,j;
 
 	g_psBus = get_busmanager( PCI_BUS_NAME, PCI_BUS_VERSION );
 	if( NULL == g_psBus )
@@ -2774,24 +2780,22 @@ status_t device_init( int nDeviceID )
 						break;
 
 					/* Create device nodes */
-					sprintf( zNodeName, "sound/maestro/dsp/%i", k );
-					if( create_device_node( nDeviceID, sDevice.nHandle, zNodeName, &maestro_dsp_fops, (void*)psCard ) < 0 )
+					if( create_device_node( nDeviceID, sDevice.nHandle, "audio/maestro", &maestro_dsp_fops, (void*)psCard ) < 0 )
 					{
-						kerndbg( KERN_WARNING, "Failed to create device node %s\n", zNodeName );
+						kerndbg( KERN_WARNING, "Failed to create device node audio/maestro\n" );
 						break;
 					}
 
-					sprintf( zNodeName, "sound/maestro/mixer/%i", k++ );
-					if( create_device_node( nDeviceID, sDevice.nHandle, zNodeName, &maestro_mixer_fops, (void*)psCard ) < 0 )
+					if( create_device_node( nDeviceID, sDevice.nHandle, "audio/mixer/maestro", &maestro_mixer_fops, (void*)psCard ) < 0 )
 					{
-						kerndbg( KERN_WARNING, "Failed to create device node %s\n", zNodeName );
+						kerndbg( KERN_WARNING, "Failed to create device node audio/mixer/maestro\n" );
 						break;
 					}
 
 					/* Log what we've got */
 					kerndbg( KERN_INFO, "%s found at 0x%4lx\n", card_names[j], sDevice.u.h0.nBase0 & PCI_ADDRESS_MEMORY_32_MASK );
 					bFound = true;
-					k++;
+					break;
 				}
 			}
 		}

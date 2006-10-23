@@ -1340,6 +1340,12 @@ status_t es1371_ioctl (void *node, void *cookie, uint32 cmd, void *arg, bool frk
 		put_user(16, (int *)arg);
 	        return 0;
 
+		case IOCTL_GET_USERSPACE_DRIVER:
+		{
+			memcpy_to_user( arg, "oss.so", strlen( "oss.so" ) );
+			break;
+		}
+
         case SOUND_PCM_WRITE_FILTER:
         case SNDCTL_DSP_SETSYNCRO:
         case SOUND_PCM_READ_FILTER:
@@ -1548,12 +1554,12 @@ status_t device_init( int nDeviceID )
     
 	if(found) {
     	/* create DSP node */
-		if( create_device_node( nDeviceID, pci.nHandle, "sound/es1371/dsp/0", &es1371_dsp_fops, es1371_driver_data ) < 0 ) {
+		if( create_device_node( nDeviceID, pci.nHandle, "audio/es1371", &es1371_dsp_fops, es1371_driver_data ) < 0 ) {
 			printk( "Failed to create dsp node \n");
 			return ( -EINVAL );
 		}
 	        /* create mixer node */
-		if( create_device_node( nDeviceID, pci.nHandle, "sound/es1371/mixer/0", &es1371_mixer_fops, es1371_driver_data ) < 0 ) {
+		if( create_device_node( nDeviceID, pci.nHandle, "audio/mixer/es1371", &es1371_mixer_fops, es1371_driver_data ) < 0 ) {
 			printk( "Failed to create mixer node \n");
 			return ( -EINVAL );
 		}

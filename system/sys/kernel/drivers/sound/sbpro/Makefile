@@ -40,10 +40,10 @@ $(OBJDIR)/sbpro: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/sbpro
 
 install: all
-	cp -f $(OBJDIR)/sbpro /system/drivers/dev/sound/sbpro
+	cp -f $(OBJDIR)/sbpro /system/drivers/dev/audio/sbpro
 
 dist: all
-	cp -f $(OBJDIR)/$(DRIVER) $(DIST_DIR)/atheos/sys/drivers/dev/sound/$(DRIVER)
+	cp -f $(OBJDIR)/$(DRIVER) $(DIST_DIR)/atheos/sys/drivers/dev/audio/$(DRIVER)
 
 clean:
 	-rm -f $(OBJS)

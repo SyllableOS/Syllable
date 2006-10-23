@@ -799,6 +799,12 @@ status_t es1370_ioctl (void *node, void *cookie, uint32 cmd, void *arg, bool frk
 		put_user(16, (int *)arg);
 	        return 0;
 
+		case IOCTL_GET_USERSPACE_DRIVER:
+		{
+			memcpy_to_user( arg, "oss.so", strlen( "oss.so" ) );
+			break;
+		}
+
         case SOUND_PCM_WRITE_FILTER:
         case SNDCTL_DSP_SETSYNCRO:
         case SOUND_PCM_READ_FILTER:

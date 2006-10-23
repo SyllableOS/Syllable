@@ -1816,6 +1816,12 @@ status_t ymfpci_ioctl( void *pNode, void *pCookie, uint32 nCmd, void *pArg, bool
 			return 0;
 		}
 
+		case IOCTL_GET_USERSPACE_DRIVER:
+		{
+			memcpy_to_user( pArg, "oss.so", strlen( "oss.so" ) );
+			break;
+		}
+
 		default:
 			return -EINVAL;
 	}
@@ -1989,11 +1995,10 @@ status_t ymfpci_init_one( PCI_bus_s *psBus, PCI_Info_s *psPCIDevice, struct YMFD
 
 status_t device_init( int nDeviceID )
 {
-	int i,j, k = 0;
+	int i,j;
 	bool bFound = false;
 	PCI_Info_s sDevice;
 	PCI_bus_s *psBus = get_busmanager( PCI_BUS_NAME, PCI_BUS_VERSION );
-	char zNodeName[OS_NAME_LENGTH];
 	struct YMFDevice *psInstanceData;
 
 	if( NULL == psBus )
@@ -2021,17 +2026,15 @@ status_t device_init( int nDeviceID )
 						break;
 
 					/* Create device nodes */
-					sprintf( zNodeName, "sound/ymfpci/dsp/%i", k );
-					if( create_device_node( nDeviceID, sDevice.nHandle, zNodeName, &ymfpci_dsp_fops, (void*)psInstanceData ) < 0 )
+					if( create_device_node( nDeviceID, sDevice.nHandle, "audio/ymfpci", &ymfpci_dsp_fops, (void*)psInstanceData ) < 0 )
 					{
-						kerndbg( KERN_WARNING, "Failed to create device node %s\n", zNodeName );
+						kerndbg( KERN_WARNING, "Failed to create device node audio/ymfpci\n" );
 						break;
 					}
 
-					sprintf( zNodeName, "sound/ymfpci/mixer/%i", k++ );
-					if( create_device_node( nDeviceID, sDevice.nHandle, zNodeName, &ymfpci_mixer_fops, (void*)psInstanceData ) < 0 )
+					if( create_device_node( nDeviceID, sDevice.nHandle, "audio/mixer/ymfpci", &ymfpci_mixer_fops, (void*)psInstanceData ) < 0 )
 					{
-						kerndbg( KERN_WARNING, "Failed to create device node %s\n", zNodeName );
+						kerndbg( KERN_WARNING, "Failed to create device node audio/mixer/ymfpci\n" );
 						break;
 					}
 
@@ -2041,6 +2044,7 @@ status_t device_init( int nDeviceID )
 					kerndbg( KERN_INFO, "%s found at 0x%4lx\n", aYMFDevices[j].zName,
 						sDevice.u.h0.nBase0 & PCI_ADDRESS_MEMORY_32_MASK );
 					bFound = true;
+					break;
 				}
 			}
 		}

@@ -1658,6 +1658,12 @@ int trident_dsp_ioctl(void *node, void *cookie, uint32 cmd, void *args, bool b_f
 				AFMT_S16_LE : AFMT_U8, (int *)arg);
 		return 0;
 
+	case IOCTL_GET_USERSPACE_DRIVER:
+	{
+		memcpy_to_user( args, "oss.so", strlen( "oss.so" ) );
+		break;
+	}
+
 	case SNDCTL_DSP_GETISPACE:
 	case SNDCTL_DSP_GETIPTR:
 	case SNDCTL_DSP_MAPINBUF:
@@ -2072,10 +2078,10 @@ static int trident_ac97_init(struct trident_card *card)
                if ((devname = kmalloc(30,MEMF_KERNEL)) == NULL) {
                        kfree(codec); return -ENOMEM;
                }
-               strcpy(devname,"sound/trident/mixer/0");
+               strcpy(devname,"audio/mixer/trident");
                devname[strlen(devname)-1] = '0'+num_ac97;
 
-               if( create_device_node( card->nDeviceID, card->pci_dev->nHandle, devname, &trident_mixer_fops, codec ) < 0 ) {
+               if( create_device_node( card->nDeviceID, card->pci_dev->nHandle, "audio/mixer/trident", &trident_mixer_fops, codec ) < 0 ) {
 			printk( "trident: failed to create mixer node \n");
                        kfree(codec); kfree(devname);
 			break;
@@ -2155,7 +2161,7 @@ static int trident_probe(PCI_Info_s *pci_dev, int pci_id, int nDeviceID, struct 
 		return -ENODEV;
 	}
 	/* register /dev/dsp */
-	if( create_device_node( nDeviceID, pci_dev->nHandle, "sound/trident/dsp/0", &trident_dsp_fops, trident_card_data ) < 0 ) {
+	if( create_device_node( nDeviceID, pci_dev->nHandle, "audio/trident", &trident_dsp_fops, trident_card_data ) < 0 ) {
 		printk(KERN_ERR "trident: failed to create DSP node \n");
 		release_irq(card->irq, 0);
 		kfree(card);

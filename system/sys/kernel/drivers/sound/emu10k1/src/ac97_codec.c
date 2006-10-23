@@ -481,9 +481,6 @@ static int ac97_mixer_ioctl(struct ac97_codec *codec, unsigned int cmd, unsigned
 		return 0;
 	}
 
-	if (_IOC_TYPE(cmd) != 'M' || _SIOC_SIZE(cmd) != sizeof(int))
-		return -EINVAL;
-
 	if (cmd == OSS_GETVERSION)
 	{
 		int val=SOUND_VERSION;

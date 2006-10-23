@@ -118,12 +118,12 @@ status_t device_init( int nDeviceID )
 
 	if(found) {
     	/* create DSP node */
-		if( create_device_node( nDeviceID, pci.nHandle, "sound/es1370/dsp/0", &es1370_dsp_fops, es1370_driver_data ) < 0 ) {
+		if( create_device_node( nDeviceID, pci.nHandle, "audio/es1370", &es1370_dsp_fops, es1370_driver_data ) < 0 ) {
 			printk( "Failed to create dsp node \n");
 			return ( -EINVAL );
 		}
 	        /* create mixer node */
-		/*if( create_device_node( nDeviceID, "sound/es1370/mixer/0", &es1370_mixer_fops, es1370_driver_data ) < 0 ) {
+		/*if( create_device_node( nDeviceID, "audio/mixer/es1370", &es1370_mixer_fops, es1370_driver_data ) < 0 ) {
 			printk( "Failed to create mixer node \n");
 			return ( -EINVAL );
 		}*/

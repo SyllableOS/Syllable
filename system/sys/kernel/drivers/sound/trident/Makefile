@@ -40,10 +40,10 @@ $(OBJDIR)/trident: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/trident
 
 install: all
-	cp -f $(OBJDIR)/$(DRIVER) /system/drivers/dev/sound/$(DRIVER)
+	cp -f $(OBJDIR)/$(DRIVER) /system/drivers/dev/audio/$(DRIVER)
 
 dist: all
-	cp -f $(OBJDIR)/$(DRIVER) $(DIST_DIR)/atheos/sys/drivers/dev/sound/$(DRIVER)
+	cp -f $(OBJDIR)/$(DRIVER) $(DIST_DIR)/atheos/sys/drivers/dev/audio/$(DRIVER)
 
 clean:
 	-rm -f $(OBJS)
