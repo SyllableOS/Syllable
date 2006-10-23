@@ -187,8 +187,8 @@ status_t ata_pci_reset( ATA_port_s* psPort )
 	ATA_READ_REG( psPort, ATA_REG_COUNT, nCount )
 	ATA_READ_REG( psPort, ATA_REG_LBA_LOW, nLbaLow )
 	
-
-	if( !( nCount == 0x55 && nLbaLow == 0xaa ) )
+	/* Some drives (E.g. NEC, Toshiba) drives can't get this right and set nCount to 0x01. */
+	if( !( ( nCount == 0x55 || nCount == 0x01 ) && nLbaLow == 0xaa ) )
 		return( -1 );
 
 	/* Bus reset */
@@ -218,7 +218,7 @@ status_t ata_pci_reset( ATA_port_s* psPort )
 	
 	if( psPort->nPort == 1 && !( nCount & 0x01 && nLbaLow & 0x01 ) )
 		return( -1 );
-	
+
 	udelay( 50 );
 	
 	/* Select again */
