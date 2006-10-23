@@ -1,5 +1,11 @@
 * October 23 2006, Kristian Van Der Vliet *
 
+Patched drive probing in the ata_pci driver for certain drives that set the ATA
+count register to 0x01 during the probe.  This has been observed on certain drives
+from NEC and Toshiba, and possibly others.
+
+* October 23 2006, Kristian Van Der Vliet *
+
 Updated the OSS drivers to work with the OSS driver in the new audio framework,
 and fixed the mixer ioctl() so it doesn't return -EINVAL any more.
 
