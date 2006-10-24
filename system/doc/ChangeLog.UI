@@ -1,3 +1,7 @@
+* October 24, Arno Klenke *
+
+Fixed drawing errors if the window takes a long time to update the content
+
 * October 23, Arno Klenke *
 
 Optimized blit list in the appserver
@@ -1180,6 +1184,7 @@ disabled controls.  The following files have been patched:
 
 	The sub-menu arrow is now drawn corretly, and menus which have children
 	are now drawn slightly larger to allow for the arrow.
+
 
 
 
