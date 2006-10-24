@@ -2,7 +2,7 @@
 
 ORCA [
 	Title:		"Package registration tool"
-	Version:	0.1.2
+	Version:	0.1.3
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006 Kaj de Vos
@@ -14,8 +14,22 @@ ORCA [
 	Tabs:		4
 ]
 
-recycle/off  ; Orca bug
+recycle/off  ; FIXME: Orca bug
 
+
+; TODO: implement quit/return natively:
+
+write result-file: join what-dir ["/" %result] "0"
+bail: :quit
+
+quit: func ["End the program"
+;	FIXME: Orca bug: doesn't handle help text:
+;	/return "Return a value to the caller" result [integer!]
+	/return result [integer!]
+][
+	if return [write result-file form result]
+	bail
+]
 
 log: context [  ; Singleton logger object
 	open: func [] [
@@ -58,7 +72,7 @@ action: func ["Returns the output of a shell command, or false if unsuccessful"
 	log/action command
 
 	either (status: call/wait/output command stdout: "") = 0 [
-;		Orca call/output bug:
+;		FIXME: Orca call/output bug:
 		log/output stdout
 		stdout
 	][
@@ -99,7 +113,7 @@ stage-proto: context [
 				either exists? destination [
 					log/warning join "conflict: replacing " [destination "!"]
 				][
-;					Bug in Orca when path given:
+;					FIXME: Bug in Orca when path given:
 ;					if file? destination [log/warning join "replacing broken link " destination]
 				]
 				action join "ln -sf " [source " " destination]
@@ -114,7 +128,7 @@ stage-proto: context [
 
 		either dir? index [
 			any [
-;				Bug in Orca list comparison:
+;				FIXME: Bug in Orca list comparison:
 ;				(read index) <> []  ; Indexes directory not empty?
 ;				Remove non-empty dirs as well for now; they could be from the old package manager:
 ;				(length? read index) > 0  ; Indexes directory not empty?
@@ -123,9 +137,9 @@ stage-proto: context [
 				action join "rm -r " index
 			]
 		][
-;			Orca join bug:
+;			FIXME: Orca join bug:
 ;			change-dir join indexes [subdir]
-;			Orca file? bug:
+;			FIXME: Orca file? bug:
 ;			either file? node [
 			either exists? index [
 				either file = "info/dir" [
@@ -190,7 +204,7 @@ package-proto: context [
 
 		either all [
 			do-subdirs :remove-subdir reduce [system-image]
-;			either no [  ; manmanager fails on deleting non-existing manuals
+;			either no [  ; FIXME: manmanager fails on deleting non-existing manuals
 			either exists? path: join package "/man" [
 				log/header "Deleting manual pages"
 				action join "manmanager -r " path
@@ -293,14 +307,15 @@ either find ["version" "-v" "--version"] command [
 ][
 either find ["add" "-a" "--add"] command [
 	package: package-proto/new package system-image
-	package/register none
+	unless package/register none
+		[quit/return 1]
 ][
 either find ["remove" "-r" "--remove"] command [
 	package: package-proto/new package system-image
-	package/unregister none
+	unless package/unregister none
+		[quit/return 1]
 ][
 	print "Unknown command"
+	quit/return 1
 ]]]]
-
-; FIXME: no errors returned
 
