@@ -1448,6 +1448,10 @@ void Layer::EndUpdate( void )
 	m_pcDrawReg = NULL;
 	m_bIsUpdating = false;
 
+	/* Do not send the paint message until the resize has been finished */
+	if( m_pcWindow != NULL && m_pcWindow->HasPendingSizeEvents( this ) )
+		return;
+		
 	if( m_pcDamageReg != NULL )
 	{
 		m_pcActiveDamageReg = m_pcDamageReg;
