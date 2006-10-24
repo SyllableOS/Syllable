@@ -70,6 +70,8 @@ modules
 	apps/utils/shelltools
 	apps/utils/slbmgr
 
+;	sdl-config needs to be in the path, and will point to the running system!
+;	Install the same SDL in the host system:
 	libs/sdl-1.2.8
 	libs/sdl-mixer-1.2.6
 	libs/sdl-net-1.2.6

@@ -230,7 +230,7 @@ modules
 ;	Currently doesn't build with GCC 4.1.1 itself installed:
 ;	libraries libraries/gcc-4.1.1
 
-;	freetype-config needs to be in the path, and will point to the running system!
+;	freetype-config needs to be in the path!
 ;	Use the bootstrap settings directive, or install the same FreeType in the host system:
 	stage libraries/freetype-2.2.1
 
