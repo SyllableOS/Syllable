@@ -1,3 +1,7 @@
+* October 25 2006 Arno Klenke *
+
+Close the device if the IOCTL_GET_USERSPACE_DRIVER ioctl fails
+
 * October 15 2006 Arno Klenke *
 
 Added the update media framework:
@@ -178,5 +182,6 @@ Added multiple soundcard support to the media server
 * Nov 18 2003, Kristian Van Der Vliet *
 
 Created this ChangeLog for changes specific to the media framework.
+
 
 
