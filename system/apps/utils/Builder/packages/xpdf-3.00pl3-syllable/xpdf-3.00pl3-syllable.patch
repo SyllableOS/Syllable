@@ -1,6 +1,21 @@
-diff -ru xpdf-3.00pl3/configure.in xpdf/configure.in
---- xpdf-3.00pl3/configure.in	2006-09-11 04:11:50.000000000 +0200
-+++ xpdf/configure.in	2006-09-11 02:57:16.000000000 +0200
+diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resources xpdf-3.00pl3/README.syllable /home/root/xpdf/README.syllable
+--- xpdf-3.00pl3/README.syllable	1970-01-01 00:00:00.000000000 +0000
++++ /home/root/xpdf/README.syllable	2006-06-02 17:05:52.000000000 +0000
+@@ -0,0 +1,11 @@
++How to build
++============
++
++You need the freetype library installed.
++
++Build it with:
++
++./configure --with-freetype2-includes=/usr/freetype/include/freetype2
++make xpdf
++
++
+diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resources xpdf-3.00pl3/configure.in /home/root/xpdf/configure.in
+--- xpdf-3.00pl3/configure.in	2004-01-22 01:26:44.000000000 +0000
++++ /home/root/xpdf/configure.in	2005-12-04 13:54:43.000000000 +0000
 @@ -1,5 +1,5 @@
  dnl Process this file with autoconf to produce a configure script.
 -dnl Copyright 1998-2003 Glyph & Cog, LLC
@@ -94,35 +109,9 @@ diff -ru xpdf-3.00pl3/configure.in xpdf/configure.in
 +  AC_MSG_WARN([-- You will be able to compile pdftops, pdftotext,
 +        pdfinfo, pdffonts, and pdfimages, but not xpdf or pdftoppm])
  fi
-diff -ru xpdf-3.00pl3/splash/SplashFTFontEngine.h xpdf/splash/SplashFTFontEngine.h
---- xpdf-3.00pl3/splash/SplashFTFontEngine.h	2006-09-11 04:11:50.000000000 +0200
-+++ xpdf/splash/SplashFTFontEngine.h	2006-09-11 02:57:16.000000000 +0200
-@@ -15,7 +15,8 @@
- #pragma interface
- #endif
- 
--#include <freetype/freetype.h>
-+#include <ft2build.h>
-+#include FT_FREETYPE_H
- #include "gtypes.h"
- 
- class SplashFontFile;
-diff -ru xpdf-3.00pl3/splash/SplashFTFontFile.h xpdf/splash/SplashFTFontFile.h
---- xpdf-3.00pl3/splash/SplashFTFontFile.h	2006-09-11 04:11:50.000000000 +0200
-+++ xpdf/splash/SplashFTFontFile.h	2006-09-11 02:57:16.000000000 +0200
-@@ -15,7 +15,8 @@
- #pragma interface
- #endif
- 
--#include <freetype/freetype.h>
-+#include <ft2build.h>
-+#include FT_FREETYPE_H
- #include "SplashFontFile.h"
- 
- class SplashFontFileID;
-diff -ru xpdf-3.00pl3/splash/SplashFTFont.h xpdf/splash/SplashFTFont.h
---- xpdf-3.00pl3/splash/SplashFTFont.h	2006-09-11 04:11:50.000000000 +0200
-+++ xpdf/splash/SplashFTFont.h	2006-09-11 02:57:16.000000000 +0200
+diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resources xpdf-3.00pl3/splash/SplashFTFont.h /home/root/xpdf/splash/SplashFTFont.h
+--- xpdf-3.00pl3/splash/SplashFTFont.h	2004-01-22 01:26:44.000000000 +0000
++++ /home/root/xpdf/splash/SplashFTFont.h	2005-12-04 13:57:21.000000000 +0000
 @@ -15,7 +15,8 @@
  #pragma interface
  #endif
@@ -133,40 +122,35 @@ diff -ru xpdf-3.00pl3/splash/SplashFTFont.h xpdf/splash/SplashFTFont.h
  #include "SplashFont.h"
  
  class SplashFTFontFile;
-diff -ru xpdf-3.00pl3/xpdf/about-text.h xpdf/xpdf/about-text.h
---- xpdf-3.00pl3/xpdf/about-text.h	2006-09-11 04:11:50.000000000 +0200
-+++ xpdf/xpdf/about-text.h	2006-09-11 02:57:16.000000000 +0200
-@@ -5,7 +5,7 @@
- // Copyright 2002-2003 Glyph & Cog, LLC
- //
- //========================================================================
--
-+#if 0
- static char *aboutWinText[] = {
-   "http://www.foolabs.com/xpdf/",
-   "derekn@foolabs.com",
-@@ -45,3 +45,18 @@
-   "For more information, please read the xpdf(1) man page.",
-   NULL
- };
-+#endif
-+
-+static char *aboutWinText = 
-+  "http://www.foolabs.com/xpdf/\n"
-+  "derekn@foolabs.com\n"
-+  " \n"
-+  "Licensed under the GNU General Public License (GPL).\n"
-+  "See the 'COPYING' file for details.\n"
-+  " \n"
-+  "Supports PDF version " supportedPDFVersionStr ".\n"
-+  " \n"
-+  "The PDF data structures, operators, and specification\n"
-+  "are copyright 1985-2003 Adobe Systems Inc.\n"
-+  " \n";
-+
-diff -ru xpdf-3.00pl3/xpdf/GlobalParams.cc xpdf/xpdf/GlobalParams.cc
---- xpdf-3.00pl3/xpdf/GlobalParams.cc	2006-09-11 04:11:50.000000000 +0200
-+++ xpdf/xpdf/GlobalParams.cc	2006-09-11 02:57:16.000000000 +0200
+diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resources xpdf-3.00pl3/splash/SplashFTFontEngine.h /home/root/xpdf/splash/SplashFTFontEngine.h
+--- xpdf-3.00pl3/splash/SplashFTFontEngine.h	2004-01-22 01:26:44.000000000 +0000
++++ /home/root/xpdf/splash/SplashFTFontEngine.h	2005-12-04 13:57:02.000000000 +0000
+@@ -15,7 +15,8 @@
+ #pragma interface
+ #endif
+ 
+-#include <freetype/freetype.h>
++#include <ft2build.h>
++#include FT_FREETYPE_H
+ #include "gtypes.h"
+ 
+ class SplashFontFile;
+diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resources xpdf-3.00pl3/splash/SplashFTFontFile.h /home/root/xpdf/splash/SplashFTFontFile.h
+--- xpdf-3.00pl3/splash/SplashFTFontFile.h	2004-01-22 01:26:44.000000000 +0000
++++ /home/root/xpdf/splash/SplashFTFontFile.h	2005-12-04 13:57:38.000000000 +0000
+@@ -15,7 +15,8 @@
+ #pragma interface
+ #endif
+ 
+-#include <freetype/freetype.h>
++#include <ft2build.h>
++#include FT_FREETYPE_H
+ #include "SplashFontFile.h"
+ 
+ class SplashFontFileID;
+diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resources xpdf-3.00pl3/xpdf/GlobalParams.cc /home/root/xpdf/xpdf/GlobalParams.cc
+--- xpdf-3.00pl3/xpdf/GlobalParams.cc	2004-01-22 01:26:45.000000000 +0000
++++ /home/root/xpdf/xpdf/GlobalParams.cc	2006-10-21 00:09:31.000000000 +0000
 @@ -58,7 +58,33 @@
  #define unicodeToUnicodeCacheSize 4
  
@@ -176,19 +160,19 @@ diff -ru xpdf-3.00pl3/xpdf/GlobalParams.cc xpdf/xpdf/GlobalParams.cc
 +  char *name;
 +  char *fileName;
 +} displayFontTab[] = {
-+  {"Courier",               "VeraMono.ttf"},
-+  {"Courier-Bold",          "VeraMoBd.ttf"},
-+  {"Courier-BoldOblique",   "VeraMoBI.ttf"},
-+  {"Courier-Oblique",       "VeraMoIt.ttf"},
-+  {"Helvetica",             "Vera.ttf"},
-+  {"Helvetica-Bold",        "VeraBd.ttf"},
-+  {"Helvetica-BoldOblique", "VeraBI.ttf"},
-+  {"Helvetica-Oblique",     "VeraIt.ttf"},
++  {"Courier",               "DejaVuSansMono.ttf"},
++  {"Courier-Bold",          "DejaVuSansMono-Bold.ttf"},
++  {"Courier-BoldOblique",   "DejaVuSansMono-BoldOblique.ttf"},
++  {"Courier-Oblique",       "DejaVuSansMono-Oblique.ttf"},
++  {"Helvetica",             "DejaVuSans.ttf"},
++  {"Helvetica-Bold",        "DejaVuSans-Bold.ttf"},
++  {"Helvetica-BoldOblique", "DejaVuSans-BoldOblique.ttf"},
++  {"Helvetica-Oblique",     "DejaVuSans-Oblique.ttf"},
 +  {"Symbol",                "StandardSymL.ttf"},
-+  {"Times-Bold",            "VeraSeBd.ttf"},
-+  {"Times-BoldItalic",      "VeraSeBd.ttf"},
-+  {"Times-Italic",          "VeraSe.ttf"},
-+  {"Times-Roman",           "VeraSe.ttf"},
++  {"Times-Bold",            "DejaVuSans-Bold.ttf"},
++  {"Times-BoldItalic",      "DejaVuSans-BoldOblique.ttf"},
++  {"Times-Italic",          "DejaVuSans-Oblique.ttf"},
++  {"Times-Roman",           "DejaVuSans.ttf"},
 +  {"ZapfDingbats",          "Dingbats.ttf"},
 +  {NULL}
 +};
@@ -227,9 +211,9 @@ diff -ru xpdf-3.00pl3/xpdf/GlobalParams.cc xpdf/xpdf/GlobalParams.cc
      globalParams->addDisplayFont(dfp);
    }
  }
-diff -ru xpdf-3.00pl3/xpdf/Makefile.in xpdf/xpdf/Makefile.in
---- xpdf-3.00pl3/xpdf/Makefile.in	2006-09-11 04:11:50.000000000 +0200
-+++ xpdf/xpdf/Makefile.in	2006-09-11 02:57:16.000000000 +0200
+diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resources xpdf-3.00pl3/xpdf/Makefile.in /home/root/xpdf/xpdf/Makefile.in
+--- xpdf-3.00pl3/xpdf/Makefile.in	2004-01-22 01:26:45.000000000 +0000
++++ /home/root/xpdf/xpdf/Makefile.in	2006-06-02 17:04:05.000000000 +0000
 @@ -26,7 +26,7 @@
  T1LIBS = @t1_LIBS@
  FTLIBS = @freetype2_LIBS@
@@ -268,10 +252,40 @@ diff -ru xpdf-3.00pl3/xpdf/Makefile.in xpdf/xpdf/Makefile.in
  	rm -f $(PDFTOPS_OBJS) pdftops$(EXE)
  	rm -f $(PDFTOTEXT_OBJS) pdftotext$(EXE)
  	rm -f $(PDFINFO_OBJS) pdfinfo$(EXE)
-diff -ru xpdf-3.00pl3/xpdf/XPDFApp.cc xpdf/xpdf/XPDFApp.cc
---- xpdf-3.00pl3/xpdf/XPDFApp.cc	2006-09-11 04:11:50.000000000 +0200
-+++ xpdf/xpdf/XPDFApp.cc	2006-09-11 02:57:16.000000000 +0200
-@@ -19,175 +19,68 @@
+diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resources xpdf-3.00pl3/xpdf/TextOutputDev.h /home/root/xpdf/xpdf/TextOutputDev.h
+--- xpdf-3.00pl3/xpdf/TextOutputDev.h	2004-01-22 01:26:45.000000000 +0000
++++ /home/root/xpdf/xpdf/TextOutputDev.h	2006-10-09 13:24:48.000000000 +0000
+@@ -165,7 +165,7 @@
+ //------------------------------------------------------------------------
+ // TextLine
+ //------------------------------------------------------------------------
+-
++class TextBlock;
+ class TextLine {
+ public:
+ 
+@@ -222,7 +222,7 @@
+ //------------------------------------------------------------------------
+ // TextBlock
+ //------------------------------------------------------------------------
+-
++class TextPage;
+ class TextBlock {
+ public:
+ 
+@@ -341,7 +341,7 @@
+ //------------------------------------------------------------------------
+ // TextPage
+ //------------------------------------------------------------------------
+-
++class TextLineFrag;
+ class TextPage {
+ public:
+ 
+diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resources xpdf-3.00pl3/xpdf/XPDFApp.cc /home/root/xpdf/xpdf/XPDFApp.cc
+--- xpdf-3.00pl3/xpdf/XPDFApp.cc	2004-01-22 01:26:45.000000000 +0000
++++ /home/root/xpdf/xpdf/XPDFApp.cc	2006-02-13 14:22:51.000000000 +0000
+@@ -19,131 +19,43 @@
  #include "XPDFApp.h"
  #include "config.h"
  
@@ -429,7 +443,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFApp.cc xpdf/xpdf/XPDFApp.cc
    getResources();
  
    viewers = new GList();
--
+@@ -151,43 +62,25 @@
  }
  
  void XPDFApp::getResources() {
@@ -485,15 +499,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFApp.cc xpdf/xpdf/XPDFApp.cc
    deleteGList(viewers, XPDFViewer);
    if (geometry) {
      delete geometry;
-@@ -203,20 +96,14 @@
- XPDFViewer *XPDFApp::open(GString *fileName, int page,
- 			  GString *ownerPassword, GString *userPassword) {
-   XPDFViewer *viewer;
--
-   viewer = new XPDFViewer(this, fileName, page, NULL,
- 			  ownerPassword, userPassword);
-+
-   if (!viewer->isOk()) {
+@@ -210,13 +103,7 @@
      delete viewer;
      return NULL;
    }
@@ -677,9 +683,9 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFApp.cc xpdf/xpdf/XPDFApp.cc
 -
 -  XFree((XPointer)cmd);
 -}
-diff -ru xpdf-3.00pl3/xpdf/XPDFApp.h xpdf/xpdf/XPDFApp.h
---- xpdf-3.00pl3/xpdf/XPDFApp.h	2006-09-11 04:11:50.000000000 +0200
-+++ xpdf/xpdf/XPDFApp.h	2006-09-11 02:57:16.000000000 +0200
+diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resources xpdf-3.00pl3/xpdf/XPDFApp.h /home/root/xpdf/xpdf/XPDFApp.h
+--- xpdf-3.00pl3/xpdf/XPDFApp.h	2004-01-22 01:26:45.000000000 +0000
++++ /home/root/xpdf/xpdf/XPDFApp.h	2005-03-11 16:01:26.000000000 +0000
 @@ -15,9 +15,8 @@
  #pragma interface
  #endif
@@ -708,7 +714,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFApp.h xpdf/xpdf/XPDFApp.h
    //----- resource/option values
    GString *getGeometry() { return geometry; }
    GString *getTitle() { return title; }
-@@ -72,25 +62,30 @@
+@@ -72,12 +62,13 @@
    void setFullScreen(GBool fullScreenA) { fullScreen = fullScreenA; }
    GBool getFullScreen() { return fullScreen; }
  
@@ -723,6 +729,8 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFApp.h xpdf/xpdf/XPDFApp.h
 +#if 0
    static void remoteMsgCbk(Widget widget, XtPointer ptr,
  			   XEvent *event, Boolean *cont);
+ 
+@@ -83,14 +74,18 @@
  
    Display *display;
    int screenNum;
@@ -745,49 +753,9 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFApp.h xpdf/xpdf/XPDFApp.h
  
    //----- resource/option values
    GString *geometry;
-diff -ru xpdf-3.00pl3/xpdf/xpdf.cc xpdf/xpdf/xpdf.cc
---- xpdf-3.00pl3/xpdf/xpdf.cc	2006-09-11 04:11:49.000000000 +0200
-+++ xpdf/xpdf/xpdf.cc	2006-09-11 02:57:16.000000000 +0200
-@@ -240,6 +240,7 @@
-   }
- 
-   // handle remote server stuff
-+#if 0
-   if (remoteName[5]) {
-     app->setRemoteName(remoteName);
-     if (app->remoteServerRunning()) {
-@@ -262,10 +263,12 @@
-       goto done2;
-     }
-   }
--
-+#endif
-   // set options
-   app->setFullScreen(fullScreen);
- 
-+
-+
-   // check for password string(s)
-   ownerPasswordStr = ownerPassword[0] != '\001' ? new GString(ownerPassword)
-                                                 : (GString *)NULL;
-@@ -280,11 +283,14 @@
-       goto done2;
-     }
-   } else {
-+
-     if (!app->open(fileName, pg, ownerPasswordStr, userPasswordStr)) {
-+
-       exitCode = 1;
-       goto done2;
-     }
-   }
-+
-   app->run();
- 
-   exitCode = 0;
-diff -ru xpdf-3.00pl3/xpdf/XPDFCore.cc xpdf/xpdf/XPDFCore.cc
---- xpdf-3.00pl3/xpdf/XPDFCore.cc	2006-09-11 04:11:49.000000000 +0200
-+++ xpdf/xpdf/XPDFCore.cc	2006-09-11 02:57:16.000000000 +0200
+diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resources xpdf-3.00pl3/xpdf/XPDFCore.cc /home/root/xpdf/xpdf/XPDFCore.cc
+--- xpdf-3.00pl3/xpdf/XPDFCore.cc	2004-01-22 01:26:45.000000000 +0000
++++ /home/root/xpdf/xpdf/XPDFCore.cc	2005-03-11 16:10:44.000000000 +0000
 @@ -12,8 +12,6 @@
  #pragma implementation
  #endif
@@ -1017,7 +985,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFCore.cc xpdf/xpdf/XPDFCore.cc
  			     reverseVideo, paperColor2,
  			     installCmap, rgbCubeSize, gTrue,
  			     &outputDevRedrawCbk, this);
-@@ -189,10 +211,11 @@
+@@ -189,7 +211,7 @@
  
  XPDFCore::~XPDFCore() {
    int i;
@@ -1025,10 +993,6 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFCore.cc xpdf/xpdf/XPDFCore.cc
 +	
    if (out) {
      delete out;
-   }
-+
-   if (doc) {
-     delete doc;
    }
 @@ -206,12 +229,8 @@
        delete history[i].fileName;
@@ -1094,13 +1058,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFCore.cc xpdf/xpdf/XPDFCore.cc
  	return err;
        }
        again = gTrue;
-@@ -284,13 +307,15 @@
-   modTime = getModTime(doc->getFileName()->getCString());
- 
-   // update the parent window
-+
-   if (updateCbk) {
-     (*updateCbk)(updateCbkData, doc->getFileName(), -1,
+@@ -289,8 +313,9 @@
  		 doc->getNumPages(), NULL);
    }
  
@@ -1151,14 +1109,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFCore.cc xpdf/xpdf/XPDFCore.cc
  	return err;
        }
        again = gTrue;
-@@ -351,26 +378,31 @@
-   // save the modification time
-   modTime = getModTime(doc->getFileName()->getCString());
- 
-+
-   // update the parent window
-   if (updateCbk) {
-     (*updateCbk)(updateCbkData, doc->getFileName(), -1,
+@@ -357,20 +385,24 @@
  		 doc->getNumPages(), NULL);
    }
  
@@ -1395,6 +1346,15 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFCore.cc xpdf/xpdf/XPDFCore.cc
        if (actionCbk) {
  	(*actionCbk)(actionCbkData, "Quit");
        }
+@@ -1182,7 +1237,7 @@
+       error(-1, "Unknown named action: '%s'", actionName->getCString());
+     }
+     break;
+-
++	
+   // Movie action
+   case actionMovie:
+     if (!(cmd = globalParams->getMovieCommand())) {
 @@ -1305,12 +1360,12 @@
  
    // check for zero-length string
@@ -1969,9 +1929,9 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFCore.cc xpdf/xpdf/XPDFCore.cc
    core->dialogDone = -1;
  }
 +#endif
-diff -ru xpdf-3.00pl3/xpdf/XPDFCore.h xpdf/xpdf/XPDFCore.h
---- xpdf-3.00pl3/xpdf/XPDFCore.h	2006-09-11 04:11:50.000000000 +0200
-+++ xpdf/xpdf/XPDFCore.h	2006-09-11 02:57:16.000000000 +0200
+diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resources xpdf-3.00pl3/xpdf/XPDFCore.h /home/root/xpdf/xpdf/XPDFCore.h
+--- xpdf-3.00pl3/xpdf/XPDFCore.h	2004-01-22 01:26:45.000000000 +0000
++++ /home/root/xpdf/xpdf/XPDFCore.h	2005-03-12 16:07:36.000000000 +0000
 @@ -15,9 +15,11 @@
  #pragma interface
  #endif
@@ -2055,7 +2015,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFCore.h xpdf/xpdf/XPDFCore.h
    PDFDoc *getDoc() { return doc; }
    XSplashOutputDev *getOutputDev() { return out; }
    int getPageNum() { return page; }
-@@ -175,10 +201,11 @@
+@@ -175,7 +201,7 @@
    int getDrawAreaWidth() { return drawAreaWidth; }
    int getDrawAreaHeight() { return drawAreaHeight; }
    void setBusyCursor(GBool busy);
@@ -2064,10 +2024,6 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFCore.h xpdf/xpdf/XPDFCore.h
    void takeFocus();
    void enableHyperlinks(GBool on) { hyperlinksEnabled = on; }
    void enableSelect(GBool on) { selectEnabled = on; }
-+
-   void setUpdateCbk(XPDFUpdateCbk cbk, void *data)
-     { updateCbk = cbk; updateCbkData = data; }
-   void setActionCbk(XPDFActionCbk cbk, void *data)
 @@ -187,9 +214,10 @@
      { keyPressCbk = cbk; keyPressCbkData = data; }
    void setMouseCbk(XPDFMouseCbk cbk, void *data)
@@ -2195,9 +2151,9 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFCore.h xpdf/xpdf/XPDFCore.h
  };
  
  #endif
-diff -ru xpdf-3.00pl3/xpdf/XPDFTree.cc xpdf/xpdf/XPDFTree.cc
---- xpdf-3.00pl3/xpdf/XPDFTree.cc	2006-09-11 04:11:50.000000000 +0200
-+++ xpdf/xpdf/XPDFTree.cc	2006-09-11 02:57:16.000000000 +0200
+diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resources xpdf-3.00pl3/xpdf/XPDFTree.cc /home/root/xpdf/xpdf/XPDFTree.cc
+--- xpdf-3.00pl3/xpdf/XPDFTree.cc	2004-01-22 01:26:45.000000000 +0000
++++ /home/root/xpdf/xpdf/XPDFTree.cc	2005-02-20 19:25:34.000000000 +0000
 @@ -1,3 +1,4 @@
 +#if 0
  //========================================================================
@@ -2208,9 +2164,9 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFTree.cc xpdf/xpdf/XPDFTree.cc
    return XtCreateWidget(name, xpdfTreeWidgetClass, parent, argList, numArgs);
  }
 +#endif
-diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
---- xpdf-3.00pl3/xpdf/XPDFViewer.cc	2006-09-11 04:11:49.000000000 +0200
-+++ xpdf/xpdf/XPDFViewer.cc	2006-09-11 02:57:16.000000000 +0200
+diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resources xpdf-3.00pl3/xpdf/XPDFViewer.cc /home/root/xpdf/xpdf/XPDFViewer.cc
+--- xpdf-3.00pl3/xpdf/XPDFViewer.cc	2004-01-22 01:26:45.000000000 +0000
++++ /home/root/xpdf/xpdf/XPDFViewer.cc	2006-10-23 18:00:39.000000000 +0000
 @@ -15,15 +15,8 @@
  #include <stdlib.h>
  #include <string.h>
@@ -2276,7 +2232,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
  //------------------------------------------------------------------------
  
  struct ZoomMenuInfo {
-@@ -108,6 +85,307 @@
+@@ -108,6 +85,308 @@
  #define zoomPageIdx  8
  #define zoomWidthIdx 9
  
@@ -2387,7 +2343,8 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
 +		AddChild( pcMenuBar );
 +
 +		/* Toolbar */
-+		os::ToolBar* pcToolBar = new os::ToolBar( os::Rect( 0, cMenuFrame.bottom + 1, GetBounds().Width(), 38 + cMenuFrame.bottom ), "xpdf_toolbar" );
++		os::ToolBar* pcToolBar = new os::ToolBar( os::Rect( 0, cMenuFrame.bottom + 1, GetBounds().Width(), 38 + cMenuFrame.bottom ), "xpdf_toolbar",
++								os::CF_FOLLOW_LEFT | os::CF_FOLLOW_RIGHT | os::CF_FOLLOW_TOP, os::WID_WILL_DRAW );
 +		pcToolBar->AddChild( new os::ImageView( os::Rect(), "breaker", GetImageFromResource( "breaker.png" ) ), os::ToolBar::TB_FIXED_MINIMUM );
 +		pcToolBar->AddChild( new os::ImageButton( os::Rect(), "open", MSG_MAINWND_MENU_FILE_OPEN, new os::Message( MSG_OPEN ), GetImageFromResource( "fileopen.png" ), os::ImageButton::IB_TEXT_BOTTOM, true, false, true ), os::ToolBar::TB_FIXED_MINIMUM );
 +		m_pcPrevButton = pcToolBar->AddChild( new os::ImageButton( os::Rect(), "prev", MSG_MAINWND_MENU_PAGE_PREV, new os::Message( MSG_PREVIOUS_PAGE ), GetImageFromResource( "previous.png" ), os::ImageButton::IB_TEXT_BOTTOM, true, false, true ), os::ToolBar::TB_FIXED_MINIMUM );
@@ -2584,21 +2541,16 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
  //------------------------------------------------------------------------
  
  XPDFViewer::XPDFViewer(XPDFApp *appA, GString *fileName,
-@@ -167,6 +445,7 @@
-   // an annoying on-screen resize
-   mapWindow();
- 
-+
-   // display the first page
-   z = app->getFullScreen() ? zoomPage : core->getZoom();
-   if (dest) {
-@@ -176,15 +455,19 @@
-     displayPage(pg, z, core->getRotate(), gTrue, gTrue);
-   }
- 
-+
-   ok = gTrue;
- }
+@@ -127,7 +406,7 @@
+   outlineLabels = NULL;
+   outlineLabelsLength = outlineLabelsSize = 0;
+ #endif
+-
++ 
+   // do Motif-specific initialization and create the window;
+   // this also creates the core object
+   initWindow();
+@@ -181,10 +462,13 @@
  
  XPDFViewer::~XPDFViewer() {
    delete core;
@@ -2613,7 +2565,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
  #ifndef DISABLE_OUTLINE
    if (outlineLabels) {
      gfree(outlineLabels);
-@@ -217,13 +500,19 @@
+@@ -217,13 +501,19 @@
  
  void XPDFViewer::clear() {
    char *title;
@@ -2634,7 +2586,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
    XtVaSetValues(win, XmNtitle, title, XmNiconName, title, NULL);
    s = XmStringCreateLocalized("");
    XtVaSetValues(pageNumText, XmNlabelString, s, NULL);
-@@ -237,7 +526,7 @@
+@@ -237,7 +527,7 @@
    XtVaSetValues(prevPageBtn, XmNsensitive, False, NULL);
    XtVaSetValues(nextTenPageBtn, XmNsensitive, False, NULL);
    XtVaSetValues(nextPageBtn, XmNsensitive, False, NULL);
@@ -2643,7 +2595,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
    // remove the old outline
  #ifndef DISABLE_OUTLINE
    setupOutline();
-@@ -304,14 +593,14 @@
+@@ -304,14 +594,14 @@
  //------------------------------------------------------------------------
  // password dialog
  //------------------------------------------------------------------------
@@ -2660,7 +2612,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
  //------------------------------------------------------------------------
  // actions
  //------------------------------------------------------------------------
-@@ -328,8 +617,8 @@
+@@ -328,8 +618,8 @@
  // keyboard/mouse input
  //------------------------------------------------------------------------
  
@@ -2671,7 +2623,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
    XPDFViewer *viewer = (XPDFViewer *)data;
    int z;
  
-@@ -347,7 +636,10 @@
+@@ -347,7 +637,10 @@
      case 'f':
      case '\006':		// ctrl-F
        if (viewer->core->getDoc()) {
@@ -2683,7 +2635,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
        }
        break;
      case '\007':		// ctrl-G
-@@ -357,16 +649,16 @@
+@@ -357,16 +650,16 @@
        break;
      case '\020':		// ctrl-P
        if (viewer->core->getDoc()) {
@@ -2703,7 +2655,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
        break;
      case ' ':
        if (viewer->app->getFullScreen()) {
-@@ -391,11 +683,13 @@
+@@ -391,11 +684,13 @@
        break;
      case 'g':
        if (!viewer->app->getFullScreen()) {
@@ -2717,23 +2669,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
        }
        break;
      case 'h':			// vi-style left
-@@ -427,6 +721,7 @@
-       }
-       break;
-     case '+':
-+
-       if (!viewer->app->getFullScreen()) {
- 	z = viewer->getZoomIdx();
- 	if (z <= minZoomIdx && z > maxZoomIdx) {
-@@ -439,6 +734,7 @@
-       }
-       break;
-     case '-':
-+
-       if (!viewer->app->getFullScreen()) {
- 	z = viewer->getZoomIdx();
- 	if (z < minZoomIdx && z >= maxZoomIdx) {
-@@ -474,7 +770,7 @@
+@@ -474,7 +771,7 @@
        viewer->app->close(viewer, gFalse);
        break;
      case '?':
@@ -2742,7 +2678,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
        break;
      case 'Q':
      case 'q':
-@@ -483,7 +779,7 @@
+@@ -483,7 +780,7 @@
      }
    }
  }
@@ -2751,7 +2687,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
  void XPDFViewer::mouseCbk(void *data, XEvent *event) {
    XPDFViewer *viewer = (XPDFViewer *)data;
  
-@@ -497,29 +793,31 @@
+@@ -497,29 +794,31 @@
      XtUngrabButton(viewer->core->getDrawAreaWidget(), AnyButton, AnyModifier);
    }
  }
@@ -2791,7 +2727,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
      XtVaGetValues(app->getAppShell(), XmNcolormap, &colormap, NULL);
      // ensure that BlackPixel and WhitePixel are reserved in the
      // new colormap
-@@ -528,12 +826,17 @@
+@@ -528,12 +827,17 @@
      xcol.red = xcol.green = xcol.blue = 65535;
      XAllocColor(display, colormap, &xcol);
      colormap = XCopyColormapAndFree(display, colormap);
@@ -2809,11 +2745,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
    XtSetArg(args[n], XmNtitle, title); ++n;
    XtSetArg(args[n], XmNiconName, title); ++n;
    XtSetArg(args[n], XmNminWidth, 100); ++n;
-@@ -556,11 +859,15 @@
- 			  &closeMsgCbk, this);
- 
-   // form
-+
+@@ -559,8 +864,11 @@
    n = 0;
    form = XmCreateForm(win, "form", args, n);
    XtManageChild(form);
@@ -2825,7 +2757,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
    n = 0;
    XtSetArg(args[n], XmNleftAttachment, XmATTACH_FORM); ++n;
    XtSetArg(args[n], XmNrightAttachment, XmATTACH_FORM); ++n;
-@@ -810,14 +1117,16 @@
+@@ -810,7 +1118,7 @@
  #ifndef DISABLE_OUTLINE
    if (app->getFullScreen()) {
  #endif
@@ -2834,8 +2766,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
      // core
      core = new XPDFCore(win, form, app->getPaperRGB(),
  			app->getFullScreen(), app->getReverseVideo(),
- 			app->getInstallCmap(), app->getRGBCubeSize());
-+
+@@ -818,6 +1127,7 @@
      core->setUpdateCbk(&updateCbk, this);
      core->setActionCbk(&actionCbk, this);
      core->setKeyPressCbk(&keyPressCbk, this);
@@ -2843,7 +2774,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
      core->setMouseCbk(&mouseCbk, this);
      core->setReqPasswordCbk(&reqPasswordCbk, this);
      n = 0;
-@@ -827,7 +1136,7 @@
+@@ -827,7 +1137,7 @@
      XtSetArg(args[n], XmNleftAttachment, XmATTACH_FORM); ++n;
      XtSetArg(args[n], XmNrightAttachment, XmATTACH_FORM); ++n;
      XtSetValues(core->getWidget(), args, n);
@@ -2852,7 +2783,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
  #ifndef DISABLE_OUTLINE
    } else {
  
-@@ -891,6 +1200,7 @@
+@@ -891,6 +1201,7 @@
    setZoomVal(core->getZoom());
  
    // set traversal order
@@ -2860,7 +2791,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
    XtVaSetValues(core->getDrawAreaWidget(),
  		XmNnavigationType, XmEXCLUSIVE_TAB_GROUP, NULL);
    XtVaSetValues(backBtn, XmNnavigationType, XmEXCLUSIVE_TAB_GROUP,
-@@ -1016,6 +1326,7 @@
+@@ -1016,6 +1327,7 @@
    XtUngrabButton(core->getDrawAreaWidget(), AnyButton, AnyModifier);
  
    XmStringFree(emptyString);
@@ -2868,7 +2799,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
  }
  
  void XPDFViewer::mapWindow() {
-@@ -1023,13 +1334,19 @@
+@@ -1023,13 +1335,19 @@
    Pixmap iconPixmap;
  #endif
    int depth;
@@ -2891,7 +2822,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
  #ifdef HAVE_X11_XPM_H
    if (XpmCreatePixmapFromData(display, XtWindow(win), xpdfIcon,
  			      &iconPixmap, NULL, NULL) == XpmSuccess) {
-@@ -1215,14 +1532,18 @@
+@@ -1215,14 +1533,18 @@
  					    about_height,
  					    fg, arm, depth),
  		NULL);
@@ -2912,7 +2843,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
  #if USE_COMBO_BOX
    int z;
  
-@@ -1241,17 +1562,24 @@
+@@ -1241,17 +1563,24 @@
    // this should never happen
    return 0;
  #endif
@@ -2937,7 +2868,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
  #if USE_COMBO_BOX
    char buf[32];
    XmString s;
-@@ -1283,40 +1611,44 @@
+@@ -1283,40 +1612,44 @@
    }
    XtVaSetValues(zoomMenu, XmNmenuHistory, zoomMenuBtns[i], NULL);
  #endif
@@ -2991,7 +2922,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
  void XPDFViewer::backCbk(Widget widget, XtPointer ptr,
  			 XtPointer callData) {
    XPDFViewer *viewer = (XPDFViewer *)ptr;
-@@ -1492,11 +1824,12 @@
+@@ -1492,11 +1825,12 @@
  
    viewer->app->close(viewer, gTrue);
  }
@@ -3007,7 +2938,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
    int pg;
    char buf[20];
  
-@@ -1510,6 +1843,7 @@
+@@ -1510,6 +1844,7 @@
      }
    }
    pg = atoi(s);
@@ -3015,7 +2946,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
    if (pg < 1 || pg > viewer->core->getDoc()->getNumPages()) {
      goto err;
    }
-@@ -1519,9 +1853,12 @@
+@@ -1519,9 +1854,12 @@
    return;
  
   err:
@@ -3028,7 +2959,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
  }
  
  void XPDFViewer::updateCbk(void *data, GString *fileName,
-@@ -1529,17 +1866,16 @@
+@@ -1529,17 +1867,16 @@
    XPDFViewer *viewer = (XPDFViewer *)data;
    GString *title;
    char buf[20];
@@ -3053,7 +2984,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
  #ifndef DISABLE_OUTLINE
      if (!viewer->app->getFullScreen()) {
        viewer->setupOutline();
-@@ -1549,6 +1885,12 @@
+@@ -1549,6 +1886,12 @@
    }
  
    if (pageNum >= 0) {
@@ -3066,7 +2997,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
      s = XmStringCreateLocalized("");
      XtVaSetValues(viewer->linkLabel, XmNlabelString, s, NULL);
      XmStringFree(s);
-@@ -1566,20 +1908,29 @@
+@@ -1566,20 +1909,29 @@
  		  viewer->core->canGoBack(), NULL);
      XtVaSetValues(viewer->forwardBtn, XmNsensitive,
  		  viewer->core->canGoForward(), NULL);
@@ -3098,7 +3029,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
  }
  
  
-@@ -1694,6 +2045,7 @@
+@@ -1694,6 +2046,7 @@
  //------------------------------------------------------------------------
  
  void XPDFViewer::initAboutDialog() {
@@ -3106,7 +3037,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
    Widget scrolledWin, col, label, sep, closeBtn;
    Arg args[20];
    int n, i;
-@@ -1799,6 +2151,7 @@
+@@ -1799,6 +2152,7 @@
      XtManageChild(label);
      XmStringFree(s);
    }
@@ -3114,7 +3045,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
  }
  
  //------------------------------------------------------------------------
-@@ -1806,6 +2159,10 @@
+@@ -1806,6 +2160,10 @@
  //------------------------------------------------------------------------
  
  void XPDFViewer::initOpenDialog() {
@@ -3125,7 +3056,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
    Arg args[20];
    int n;
    XmString s1, s2, s3;
-@@ -1827,24 +2184,40 @@
+@@ -1827,24 +2185,40 @@
  					     XmDIALOG_HELP_BUTTON));
    XtAddCallback(openDialog, XmNokCallback,
  		&openOkCbk, (XtPointer)this);
@@ -3167,7 +3098,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
    XPDFViewer *viewer = (XPDFViewer *)ptr;
    XmFileSelectionBoxCallbackStruct *data =
      (XmFileSelectionBoxCallbackStruct *)callData;
-@@ -1872,12 +2245,15 @@
+@@ -1872,12 +2246,15 @@
    }
    XmStringFreeContext(context);
  }
@@ -3184,7 +3115,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
    Widget form1, label, okBtn, closeBtn;
    Arg args[20];
    int n;
-@@ -1956,16 +2332,21 @@
+@@ -1956,16 +2333,21 @@
    XtSetArg(args[n], XmNinitialFocus, findText); ++n;
  #endif
    XtSetValues(findDialog, args, n);
@@ -3208,7 +3139,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
    if (XtWindow(findDialog)) {
      XDefineCursor(display, XtWindow(findDialog), core->getBusyCursor());
    }
-@@ -1973,20 +2354,22 @@
+@@ -1973,20 +2355,22 @@
    if (XtWindow(findDialog)) {
      XUndefineCursor(display, XtWindow(findDialog));
    }
@@ -3233,7 +3164,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
    Arg args[20];
    int n;
    XmString s1, s2, s3;
-@@ -2008,21 +2391,26 @@
+@@ -2008,21 +2392,26 @@
  					     XmDIALOG_HELP_BUTTON));
    XtAddCallback(saveAsDialog, XmNokCallback,
  		&saveAsOkCbk, (XtPointer)this);
@@ -3261,7 +3192,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
  void XPDFViewer::saveAsOkCbk(Widget widget, XtPointer ptr,
  			     XtPointer callData) {
    XPDFViewer *viewer = (XPDFViewer *)ptr;
-@@ -2045,12 +2433,13 @@
+@@ -2045,12 +2434,13 @@
    }
    XmStringFreeContext(context);
  }
@@ -3276,7 +3207,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
    Widget sep1, sep2, row, label1, label2, okBtn, cancelBtn;
    Arg args[20];
    int n;
-@@ -2215,9 +2604,11 @@
+@@ -2215,9 +2605,11 @@
      }
      delete psFileName;
    }
@@ -3288,7 +3219,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
    PDFDoc *doc;
    char buf[20];
    GString *pdfFileName, *psFileName, *psFileName2;
-@@ -2245,8 +2636,9 @@
+@@ -2245,8 +2637,9 @@
    sprintf(buf, "%d", doc->getNumPages());
    XmTextFieldSetString(printFirstPage, "1");
    XmTextFieldSetString(printLastPage, buf);
@@ -3299,7 +3230,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
  void XPDFViewer::printWithCmdBtnCbk(Widget widget, XtPointer ptr,
  				    XtPointer callData) {
    XPDFViewer *viewer = (XPDFViewer *)ptr;
-@@ -2325,12 +2717,13 @@
+@@ -2325,12 +2718,13 @@
  
    viewer->core->setBusyCursor(gFalse);
  }
@@ -3314,7 +3245,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
    Widget row, label, okBtn, cancelBtn;
    Arg args[20];
    int n;
-@@ -2414,8 +2807,9 @@
+@@ -2414,8 +2808,9 @@
    XtSetArg(args[n], XmNinitialFocus, passwordText); ++n;
  #endif
    XtSetValues(passwordDialog, args, n);
@@ -3325,7 +3256,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
  void XPDFViewer::passwordTextVerifyCbk(Widget widget, XtPointer ptr,
  				       XtPointer callData) {
    XPDFViewer *viewer = (XPDFViewer *)ptr;
-@@ -2453,8 +2847,9 @@
+@@ -2453,8 +2848,9 @@
  
    viewer->passwordDone = -1;
  }
@@ -3336,7 +3267,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
    XmString s;
    XEvent event;
  
-@@ -2480,12 +2875,13 @@
+@@ -2480,12 +2876,13 @@
      delete password;
      password = NULL;
    }
@@ -3351,7 +3282,7 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
  XmFontList XPDFViewer::createFontList(char *xlfd) {
    XmFontList fontList;
  
-@@ -2521,3 +2917,14 @@
+@@ -2521,3 +2918,18 @@
  
    return fontList;
  }
@@ -3366,9 +3297,13 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.cc xpdf/xpdf/XPDFViewer.cc
 +
 +
 +
-diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.h xpdf/xpdf/XPDFViewer.h
---- xpdf-3.00pl3/xpdf/XPDFViewer.h	2006-09-11 04:11:50.000000000 +0200
-+++ xpdf/xpdf/XPDFViewer.h	2006-09-11 02:57:16.000000000 +0200
++
++
++
++
+diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resources xpdf-3.00pl3/xpdf/XPDFViewer.h /home/root/xpdf/xpdf/XPDFViewer.h
+--- xpdf-3.00pl3/xpdf/XPDFViewer.h	2004-01-22 01:26:45.000000000 +0000
++++ /home/root/xpdf/xpdf/XPDFViewer.h	2005-05-13 18:27:34.000000000 +0000
 @@ -15,21 +15,25 @@
  #pragma interface
  #endif
@@ -3585,9 +3520,9 @@ diff -ru xpdf-3.00pl3/xpdf/XPDFViewer.h xpdf/xpdf/XPDFViewer.h
  };
  
  #endif
-diff -ru xpdf-3.00pl3/xpdf/XSplashOutputDev.cc xpdf/xpdf/XSplashOutputDev.cc
---- xpdf-3.00pl3/xpdf/XSplashOutputDev.cc	2006-09-11 04:11:50.000000000 +0200
-+++ xpdf/xpdf/XSplashOutputDev.cc	2006-09-11 02:57:16.000000000 +0200
+diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resources xpdf-3.00pl3/xpdf/XSplashOutputDev.cc /home/root/xpdf/xpdf/XSplashOutputDev.cc
+--- xpdf-3.00pl3/xpdf/XSplashOutputDev.cc	2004-01-22 01:26:45.000000000 +0000
++++ /home/root/xpdf/xpdf/XSplashOutputDev.cc	2005-03-12 17:20:06.000000000 +0000
 @@ -12,8 +12,7 @@
  #pragma implementation
  #endif
@@ -3746,14 +3681,6 @@ diff -ru xpdf-3.00pl3/xpdf/XSplashOutputDev.cc xpdf/xpdf/XSplashOutputDev.cc
  }
  
  XSplashOutputDev::~XSplashOutputDev() {
-@@ -210,6 +103,7 @@
- }
- 
- void XSplashOutputDev::dump() {
-+
-   if (incrementalUpdate) {
-     (*redrawCbk)(redrawCbkData);
-   }
 @@ -221,77 +115,41 @@
  }
  
@@ -3846,9 +3773,9 @@ diff -ru xpdf-3.00pl3/xpdf/XSplashOutputDev.cc xpdf/xpdf/XSplashOutputDev.cc
  }
  
  GBool XSplashOutputDev::findText(Unicode *s, int len,
-diff -ru xpdf-3.00pl3/xpdf/XSplashOutputDev.h xpdf/xpdf/XSplashOutputDev.h
---- xpdf-3.00pl3/xpdf/XSplashOutputDev.h	2006-09-11 04:11:49.000000000 +0200
-+++ xpdf/xpdf/XSplashOutputDev.h	2006-09-11 02:57:16.000000000 +0200
+diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resources xpdf-3.00pl3/xpdf/XSplashOutputDev.h /home/root/xpdf/xpdf/XSplashOutputDev.h
+--- xpdf-3.00pl3/xpdf/XSplashOutputDev.h	2004-01-22 01:26:45.000000000 +0000
++++ /home/root/xpdf/xpdf/XSplashOutputDev.h	2005-03-10 15:54:36.000000000 +0000
 @@ -13,7 +13,9 @@
  #pragma interface
  #endif
@@ -3891,3 +3818,54 @@ diff -ru xpdf-3.00pl3/xpdf/XSplashOutputDev.h xpdf/xpdf/XSplashOutputDev.h
    Guint depth;			// visual depth
    GBool trueColor;		// set if using a TrueColor visual
    int rDiv, gDiv, bDiv;		// RGB right shifts (for TrueColor)
+diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resources xpdf-3.00pl3/xpdf/about-text.h /home/root/xpdf/xpdf/about-text.h
+--- xpdf-3.00pl3/xpdf/about-text.h	2004-01-22 01:26:45.000000000 +0000
++++ /home/root/xpdf/xpdf/about-text.h	2005-02-24 20:55:52.000000000 +0000
+@@ -5,7 +5,7 @@
+ // Copyright 2002-2003 Glyph & Cog, LLC
+ //
+ //========================================================================
+-
++#if 0
+ static char *aboutWinText[] = {
+   "http://www.foolabs.com/xpdf/",
+   "derekn@foolabs.com",
+@@ -45,3 +45,18 @@
+   "For more information, please read the xpdf(1) man page.",
+   NULL
+ };
++#endif
++
++static char *aboutWinText = 
++  "http://www.foolabs.com/xpdf/\n"
++  "derekn@foolabs.com\n"
++  " \n"
++  "Licensed under the GNU General Public License (GPL).\n"
++  "See the 'COPYING' file for details.\n"
++  " \n"
++  "Supports PDF version " supportedPDFVersionStr ".\n"
++  " \n"
++  "The PDF data structures, operators, and specification\n"
++  "are copyright 1985-2003 Adobe Systems Inc.\n"
++  " \n";
++
+diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resources xpdf-3.00pl3/xpdf/xpdf.cc /home/root/xpdf/xpdf/xpdf.cc
+--- xpdf-3.00pl3/xpdf/xpdf.cc	2004-01-22 01:26:45.000000000 +0000
++++ /home/root/xpdf/xpdf/xpdf.cc	2005-02-23 20:23:02.000000000 +0000
+@@ -240,6 +240,7 @@
+   }
+ 
+   // handle remote server stuff
++#if 0
+   if (remoteName[5]) {
+     app->setRemoteName(remoteName);
+     if (app->remoteServerRunning()) {
+@@ -262,7 +263,7 @@
+       goto done2;
+     }
+   }
+-
++#endif
+   // set options
+   app->setFullScreen(fullScreen);
+ 
