@@ -2251,7 +2251,7 @@ status_t maestro_dsp_ioctl( void *pNode, void *pCookie, uint32 nCmd, void *pArg,
 		case IOCTL_GET_USERSPACE_DRIVER:
 		{
 			memcpy_to_user( p, "oss.so", strlen( "oss.so" ) );
-			break;
+			return( 0 );
 		}
 
 	}

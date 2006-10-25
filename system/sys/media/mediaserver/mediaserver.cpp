@@ -142,7 +142,10 @@ int MediaServer::LoadAudioPlugins()
 		if( nFd < 0 )
 			continue;
 		if( ioctl( nFd, IOCTL_GET_USERSPACE_DRIVER, zDriverPath ) != 0 )
+		{
+			close( nFd );
 			continue;
+		}
 		close( nFd );
 			
 		/* Construct plugin path */

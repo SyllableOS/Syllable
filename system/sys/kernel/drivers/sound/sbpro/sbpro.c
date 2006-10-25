@@ -415,7 +415,7 @@ sb_ioctl( void *node, void *cookie, uint32 com, void *args, bool bFromKernel )
 		case IOCTL_GET_USERSPACE_DRIVER:
 		{
 			memcpy_to_user( args, "oss.so", strlen( "oss.so" ) );
-			break;
+			return( 0 );
 		}
 
 		default :

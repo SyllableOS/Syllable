@@ -1819,7 +1819,7 @@ status_t ymfpci_ioctl( void *pNode, void *pCookie, uint32 nCmd, void *pArg, bool
 		case IOCTL_GET_USERSPACE_DRIVER:
 		{
 			memcpy_to_user( pArg, "oss.so", strlen( "oss.so" ) );
-			break;
+			return( 0 );
 		}
 
 		default:

@@ -1661,7 +1661,7 @@ int trident_dsp_ioctl(void *node, void *cookie, uint32 cmd, void *args, bool b_f
 	case IOCTL_GET_USERSPACE_DRIVER:
 	{
 		memcpy_to_user( args, "oss.so", strlen( "oss.so" ) );
-		break;
+		return( 0 );
 	}
 
 	case SNDCTL_DSP_GETISPACE:

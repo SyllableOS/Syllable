@@ -1343,7 +1343,7 @@ status_t es1371_ioctl (void *node, void *cookie, uint32 cmd, void *arg, bool frk
 		case IOCTL_GET_USERSPACE_DRIVER:
 		{
 			memcpy_to_user( arg, "oss.so", strlen( "oss.so" ) );
-			break;
+			return( 0 );
 		}
 
         case SOUND_PCM_WRITE_FILTER:
