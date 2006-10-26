@@ -1,0 +1,28 @@
+authors				Kaj de Vos
+status				testing
+
+licenses			MIT
+home				www.lua.org
+locations			http://www.lua.org/ftp/
+
+; For linux target:
+_build-needs
+	ncurses
+	readline
+	history
+
+make-targets
+;	generic
+;	ansi
+	posix
+;	linux
+test-targets		test
+
+install-prefix-var	INSTALL_TOP
+
+documentation		README COPYRIGHT HISTORY
+develop-docs
+	doc test
+;	etc
+build-docs			INSTALL
+
