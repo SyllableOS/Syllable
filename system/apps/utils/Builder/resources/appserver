@@ -34,8 +34,8 @@ Desktop 31 =  640  480 80.00 50.00 70.00 80.00 60.00  RGB16 ""
 DefaultFont: "System/Bold" "DejaVu Sans" "Bold" 80000002 8.00 0.00 0.00
 DefaultFont: "System/Fixed" "DejaVu Sans Mono" "Book" 80000002 8.50 0.00 0.00
 DefaultFont: "System/Regular" "DejaVu Sans" "Book" 80000002 8.50 0.00 0.00
-DefaultFont: "System/ToolWindow" "DejaVu Sans" "ExtraLight" 80000002 7.00 0.00 0.00
-DefaultFont: "System/Window" "DejaVu Sans" "ExtraLight" 80000002 8.00 0.00 0.00
+DefaultFont: "System/ToolWindow" "DejaVu Sans" "Condensed" 80000002 7.00 0.00 0.00
+DefaultFont: "System/Window" "DejaVu Sans" "Condensed" 80000002 8.00 0.00 0.00
 
 WndDecorator     = /system/drivers/appserver/decorators/Photon
 Keymap           = /system/keymaps/American
