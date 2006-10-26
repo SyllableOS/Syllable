@@ -22,7 +22,7 @@
 
 #define MAJOR	0LL
 #define MINOR	6LL
-#define RELEASE	1LL
+#define RELEASE	2LL
 
 const int64 g_nKernelVersion = ( MAJOR << 32 ) | ( MINOR << 16 ) | ( RELEASE );
 const char *g_pzKernelName = "kernel.so";
@@ -36,6 +36,6 @@ const char *g_pzSystem = "syllable";
  * of Syllable, add a letter and revision number; for example a patch to
  * Build 1023 becomes Build 1023r1.
  */
-const char *g_pzBuildVersion = "0016";
+const char *g_pzBuildVersion = "0001";
 
 
