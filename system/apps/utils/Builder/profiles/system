@@ -134,7 +134,7 @@ resources
 	atheos/home					Home-Directories
 	atheos/Documentation		documentation/Welcome.html			text/html
 	atheos/Documentation/images	documentation/images/Syllable.gif	image/gif
-	atheos/Documentation		documentation/Copyrights			text/plain
+	atheos/Documentation		documentation/Copyrights.html		text/html
 
 modules
 	sys/boot/grub-0.97-syllable
