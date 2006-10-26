@@ -311,11 +311,13 @@ public:
 	uint64			GetBufferSize( bool bNonSharedOnly );
 private:
 	bool			CheckVideoOverlay( os::color_space eSpace );
+	inline void		mmx_memcpy( uint8 *pTo, uint8 *pFrom, int nLen );
 	bool			m_bUseOverlay;
 	os::color_space m_eColorSpace;
 	VideoView*		m_pcView;
 	os::MediaFormat_s	m_sFormat;
 	sem_id			m_hLock;
+	bool			m_bUseMMX;
 };
 
 
@@ -325,6 +327,14 @@ ScreenOutput::ScreenOutput()
 	m_bUseOverlay = false;
 	m_pcView = NULL;
 	m_hLock = create_semaphore( "overlay_lock", 1, 0 );
+	
+	/* Get system information and check if we have MMX support */
+	system_info sSysInfo;
+
+	if( get_system_info( &sSysInfo ) == 0 && sSysInfo.nCPUType & CPU_FEATURE_MMX )
+		m_bUseMMX = true;
+	else
+		m_bUseMMX = false;
 }
 
 ScreenOutput::~ScreenOutput()
@@ -497,6 +507,28 @@ status_t ScreenOutput::AddStream( os::String zName, os::MediaFormat_s sFormat )
 	return( 0 );
 }
 
+inline void ScreenOutput::mmx_memcpy( uint8 *pTo, uint8 *pFrom, int nLen )
+{
+	int i;
+	
+	if( !m_bUseMMX ) {
+		memcpy( pTo, pFrom, nLen );
+		return;
+	}
+
+	for ( i = 0; i < nLen / 8; i++ )
+	{
+		__asm__ __volatile__( "movq (%0), %%mm0\n" "movq %%mm0, (%1)\n"::"r"( pFrom ), "r"( pTo ):"memory" );
+
+		pFrom += 8;
+		pTo += 8;
+	}
+
+	if ( nLen & 7 )
+		memcpy( pTo, pFrom, nLen & 7 );
+}
+
+
 status_t ScreenOutput::WritePacket( uint32 nIndex, os::MediaPacket_s* psNewFrame )
 {
 	/* Create a new media frame and queue it */
@@ -515,22 +547,26 @@ status_t ScreenOutput::WritePacket( uint32 nIndex, os::MediaPacket_s* psNewFrame
 	}
 	else if( m_eColorSpace == os::CS_YUV12 )
 	{
+		bigtime_t nTime = get_system_time();
 		/* YV12 overlay */
 		uint32 nDstPitch = ( ( m_sFormat.nWidth ) + 0x1ff ) & ~0x1ff;
 		for( int i = 0; i < m_sFormat.nHeight; i++ )
 		{
-			memcpy( m_pcView->GetRaster() + i * nDstPitch, psNewFrame->pBuffer[0] + psNewFrame->nSize[0] * i, m_sFormat.nWidth );
+			mmx_memcpy( m_pcView->GetRaster() + i * nDstPitch, psNewFrame->pBuffer[0] + psNewFrame->nSize[0] * i, m_sFormat.nWidth );
 		}
 		for( int i = 0; i < m_sFormat.nHeight / 2; i++ )
 		{
-			memcpy( m_pcView->GetRaster() + m_sFormat.nHeight * nDstPitch * 5 / 4 + nDstPitch * i / 2, 
+			mmx_memcpy( m_pcView->GetRaster() + m_sFormat.nHeight * nDstPitch * 5 / 4 + nDstPitch * i / 2, 
 				psNewFrame->pBuffer[1] + psNewFrame->nSize[1] * i, m_sFormat.nWidth / 2 );
 		}
 		for( int i = 0; i < m_sFormat.nHeight / 2; i++ )
 		{
-			memcpy( m_pcView->GetRaster() +  m_sFormat.nHeight * nDstPitch + nDstPitch * i / 2, 
+			mmx_memcpy( m_pcView->GetRaster() +  m_sFormat.nHeight * nDstPitch + nDstPitch * i / 2, 
 						psNewFrame->pBuffer[2] + psNewFrame->nSize[2] * i, m_sFormat.nWidth / 2 );
 		}
+		
+		if( m_bUseMMX )
+			__asm __volatile( "emms":::"memory" );
 	} 
 	else if( m_eColorSpace == os::CS_YUV422 )
 	{
