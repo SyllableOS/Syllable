@@ -16,9 +16,9 @@ patch				autoconf
 
 make-targets		xpdf
 
-;install-tree		bin
-;install				true
-;install-files		Xpdf bin/
+install-tree		bin
+install				true
+install-files		xpdf/xpdf bin/
 
-move-files			bin/Xpdf /atheos/Applications/Xpdf/
+move-files			bin/xpdf /atheos/Applications/Xpdf/Xpdf
 
