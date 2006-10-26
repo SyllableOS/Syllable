@@ -1312,8 +1312,8 @@ static inline void blit_convert_alpha( SrvBitmap * pcDst, SrvBitmap * pcSrc, con
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-extern uint8 g_pCopyRowCode[4096] __attribute__ ((alias ("g_nCopyRow")));
-static uint8 g_nCopyRow[4096];
+extern uint8 g_pCopyRowCode[16384] __attribute__ ((alias ("g_nCopyRow")));
+static uint8 g_nCopyRow[16834];
 Locker g_cCopyRowLock( "copy_row_lock" );
 
 static inline void blit_convert_stretch_copy( SrvBitmap * pcDst, SrvBitmap * pcSrc, const IRect & cSrcRect, const IRect & cDstRect )
