@@ -78,5 +78,5 @@ modules
 	libs/sdl-image-1.2.4
 	libs/sdl-sound-1.0.1
 
-;	apps/other/xpdf-3.00pl3-syllable
+	apps/other/xpdf-3.00pl3-syllable
 ;	apps/other/xpdf-3.00pl3

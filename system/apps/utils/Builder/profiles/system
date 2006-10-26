@@ -121,6 +121,7 @@ tree
 
 	atheos/Applications					applications.png
 	atheos/Applications/Preferences		settings.png
+	atheos/Applications/Xpdf
 	atheos/Documentation
 	atheos/Documentation/images
 

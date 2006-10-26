@@ -1,7 +1,7 @@
 authors
 	Arno Klenke
 	Kaj de Vos
-status				developing
+status				testing
 
 inherits			xpdf-3.00pl3
 
@@ -9,7 +9,10 @@ needs
 	autoconf >= 2.57
 ;	On X11 systems:
 ;	lesstif
+; Patched for GCC 4:
+build-needs
 
 patch				autoconf
 
 make-targets		xpdf
+
