@@ -263,8 +263,14 @@ os::MediaFormat_s FFMpegDemuxer::GetStreamFormat( uint32 nIndex )
 		
 	if( avcodec_find_decoder( m_psContext->streams[nIndex]->codec->codec_id ) == NULL )
 	{
-		std::cout<<"Warning Unknown Codec :"<<m_psContext->streams[nIndex]->codec->codec_id<<std::endl;
-		sFormat.zName = "Unknown";
+		if( m_psContext->streams[nIndex]->codec->codec_id == CODEC_ID_AAC ||
+			m_psContext->streams[nIndex]->codec->codec_id == CODEC_ID_MPEG4AAC ) {
+			/* Pass to aac plugin */
+			sFormat.zName = "aac";
+		} else {
+			std::cout<<"Warning Unknown Codec :"<<m_psContext->streams[nIndex]->codec->codec_id<<std::endl;
+			sFormat.zName = "Unknown";
+		}
 	} else {
 		sFormat.zName = avcodec_find_decoder( m_psContext->streams[nIndex]->codec->codec_id )->name;
 	}

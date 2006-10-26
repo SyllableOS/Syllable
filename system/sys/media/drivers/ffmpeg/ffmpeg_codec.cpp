@@ -477,6 +477,26 @@ status_t FFMpegCodec::DecodePacket( os::MediaPacket_s * psPacket, os::MediaPacke
 			nSize -= nLen;
 			pInput += nLen;
 		}
+		
+		if( m_sInternalFormat.nChannels == 6 )
+		{
+			/* Reorder samples:
+				Left - Right - Center - LFE - Back left - Back right
+				->
+				Left - Right - Back left - Back right - Center - LFE
+			*/
+			uint32 *pSwap1 = (uint32*)psOutput->pBuffer[0] + 1;
+			uint32 *pSwap2 = (uint32*)psOutput->pBuffer[0] + 2;
+			uint32 nTemp;
+			for( uint i = 0; i < psOutput->nSize[0]; i+= 12 )
+			{
+				nTemp = *pSwap1;
+				*pSwap1 = *pSwap2;
+				*pSwap2 = nTemp;
+				pSwap1 += 3;
+				pSwap2 += 3;
+			}
+		}
 
 		if( psOutput->nSize[0] > 0 )
 			psOutput->nTimeStamp = psPacket->nTimeStamp;

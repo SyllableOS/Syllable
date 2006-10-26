@@ -237,6 +237,8 @@ status_t OSSOutput::AddStream( os::String zName, os::MediaFormat_s sFormat )
 	
 	if( m_sDstFormat.nChannels != m_sSrcFormat.nChannels || m_sDstFormat.nSampleRate != m_sSrcFormat.nSampleRate )
 		m_bResample = true;
+	else
+		m_bResample = false;
 	
 	std::cout<<"Channels: "<<m_sSrcFormat.nChannels<<" -> "<<m_sDstFormat.nChannels<<std::endl;
 	

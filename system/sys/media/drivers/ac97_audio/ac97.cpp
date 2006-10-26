@@ -250,8 +250,9 @@ status_t AC97AudioOutputStream::AddStream( os::String zName, os::MediaFormat_s s
 		m_bResample = true;
 		m_sDstFormat = sHWFormat;
 		printf("Resampler enabled %i %i!\n", (int)sHWFormat.nSampleRate, (int)sHWFormat.nSampleRate );
-	}
-	
+	} else
+		m_bResample = false;
+		
 	/* Calculate size -> time factor */
 	m_nFactor = (uint64)sHWFormat.nSampleRate * (uint64)sHWFormat.nChannels * 2;
 	return( 0 );
@@ -273,7 +274,7 @@ status_t AC97AudioOutputStream::WritePacket( uint32 nIndex, os::MediaPacket_s* p
 		//printf("Resample! %i %i\n", (int)psPacket->nSize[0], (int)nSize );
 	}
 	
-	
+
 	write( m_nFd, pBuffer, nSize );
 
 	if( m_bResample )

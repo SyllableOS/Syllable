@@ -249,7 +249,8 @@ status_t HDAAudioOutputStream::AddStream( os::String zName, os::MediaFormat_s sF
 		m_bResample = true;
 		m_sDstFormat = sHWFormat;
 		printf("Resampler enabled %i -> %i!\n", (int)sFormat.nSampleRate, (int)sHWFormat.nSampleRate );
-	}
+	} else
+		m_bResample = false;
 	
 	/* Calculate size -> time factor */
 	m_nFactor = (uint64)sHWFormat.nSampleRate * (uint64)sHWFormat.nChannels * 2;

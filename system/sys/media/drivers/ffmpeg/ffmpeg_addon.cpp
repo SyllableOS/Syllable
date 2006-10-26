@@ -748,6 +748,7 @@ void FFMpegAddon::RegisterCodecs()
 #ifdef CONFIG_FRAPS_DECODER
     register_avcodec(&fraps_decoder);
 #endif //CONFIG_FRAPS_DECODER
+#if 0
 #ifdef CONFIG_FAAD
 #ifdef CONFIG_AAC_DECODER
     register_avcodec(&aac_decoder);
@@ -755,6 +756,7 @@ void FFMpegAddon::RegisterCodecs()
 #ifdef CONFIG_MPEG4AAC_DECODER
     register_avcodec(&mpeg4aac_decoder);
 #endif //CONFIG_MPEG4AAC_DECODER
+#endif
 #endif
 #ifdef CONFIG_MPEG1VIDEO_DECODER
     register_avcodec(&mpeg1video_decoder);

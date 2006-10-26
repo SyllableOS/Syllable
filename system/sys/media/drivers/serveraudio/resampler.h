@@ -7,9 +7,9 @@ static uint32 Resample( os::MediaFormat_s sSrcFormat, os::MediaFormat_s sDstForm
 {
 	uint32 nSkipBefore = 0;
 	uint32 nSkipBehind = 0;
-	bool bOneChannel = false;
 	uint32 nSampleMultiply = 1;
 	uint32 nWriteSamples = 0;
+	uint32 nSkipBetween = 1;
 	
 	/* Calculate skipping ( I just guess what is right here ) */
 	if( sSrcFormat.nChannels == sDstFormat.nChannels )
@@ -28,16 +28,18 @@ static uint32 Resample( os::MediaFormat_s sSrcFormat, os::MediaFormat_s sDstForm
 		nSkipBehind = 1;
 		nWriteSamples = 2;
 	} else if( sSrcFormat.nChannels == 4 && sDstFormat.nChannels == 2 ) {
-		nSkipBefore = 2;
-		nSkipBehind = 0;
+		nSkipBefore = 0;
+		nSkipBehind = 2;
 		nWriteSamples = 2;
 	} else if( sSrcFormat.nChannels == 5 && sDstFormat.nChannels == 2 ) {
-		nSkipBefore = 2;
-		nSkipBehind = 1;
+		nSkipBefore = 0;
+		nSkipBetween = 3;
+		nSkipBehind = 0;
 		nWriteSamples = 2;
 	} else if( sSrcFormat.nChannels == 6 && sDstFormat.nChannels == 2 ) {
-		nSkipBefore = 2;
-		nSkipBehind = 2;
+		nSkipBefore = 0;
+		nSkipBetween = 4;
+		nSkipBehind = 1;
 		nWriteSamples = 2;
 	} else if( sSrcFormat.nChannels > sDstFormat.nChannels ) {
 		nSkipBehind = sSrcFormat.nChannels - sDstFormat.nChannels;
@@ -58,41 +60,68 @@ static uint32 Resample( os::MediaFormat_s sSrcFormat, os::MediaFormat_s sDstForm
 	nSamples = (uint32)vSamples;
 	
 	uint32 nSrcPitch;
-	uint32 nDstPitch = sDstFormat.nChannels;
 	
-	nSrcPitch = nSkipBefore + nWriteSamples + nSkipBehind;
+	nSrcPitch = nSkipBefore + nWriteSamples + ( nSkipBetween - 1 ) + nSkipBehind;
 	
 	uint32 nBytes = 0;
 	
 	assert( ( nRingPos % 2 ) == 0 );
 	uint16* pDstWrite = &pDst[nRingPos / 2];
 	
-	for( uint32 i = 0; i < nSamples; i++ ) 
+	if( nSampleMultiply > 1 )
 	{
-		uint16* pSrcWrite = &pSrc[nSrcPitch * (int)vSrcActiveSample];
-		/* Skip */
-		pSrcWrite += nSkipBefore;
-		
-		for( int j = 0; j < nWriteSamples; j++ )
+		for( uint32 i = 0; i < nSamples; i++ ) 
 		{
-			for( int k = 0; k < nSampleMultiply; k++ )
+			uint16* pSrcWrite = &pSrc[nSrcPitch * (int)vSrcActiveSample];
+			/* Skip */
+			pSrcWrite += nSkipBefore;
+		
+			for( uint32 j = 0; j < nWriteSamples; j++ )
+			{
+				for( uint32 k = 0; k < nSampleMultiply; k++ )
+				{
+				
+					*pDstWrite++ = *pSrcWrite;
+					nRingPos += 2;
+					if( nRingPos >= nRingSize )
+					{
+						nRingPos = 0;
+						pDstWrite = pDst;
+					}
+				}
+				pSrcWrite += nSkipBetween;
+			}
+			
+			vSrcActiveSample += vSrcFactor;
+			
+		}
+		nBytes = nSamples * nWriteSamples * nSampleMultiply * 2;
+	}
+	else
+	{
+		for( uint32 i = 0; i < nSamples; i++ ) 
+		{
+			uint16* pSrcWrite = &pSrc[nSrcPitch * (int)vSrcActiveSample];
+			/* Skip */
+			pSrcWrite += nSkipBefore;
+		
+			for( uint32 j = 0; j < nWriteSamples; j++ )
 			{
 				
-				*pDstWrite++ = *pSrcWrite++;
+				*pDstWrite++ = *pSrcWrite;
 				nRingPos += 2;
 				if( nRingPos >= nRingSize )
 				{
 					nRingPos = 0;
 					pDstWrite = pDst;
 				}
+				pSrcWrite += nSkipBetween;
 			}
+			vSrcActiveSample += vSrcFactor;
 		}
-		
-		pSrcWrite += nSkipBehind;
-		
-		vSrcActiveSample += vSrcFactor;
-		nBytes += nWriteSamples * nSampleMultiply * 2;
+		nBytes = nSamples * nWriteSamples * 2;
 	}
+	
 	//printf("Ring pos %i %i %i\n", nRingPos, nBytes, nLength );
 	
 	return( nBytes );
