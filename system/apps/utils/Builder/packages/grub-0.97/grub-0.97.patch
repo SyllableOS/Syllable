@@ -1,6 +1,6 @@
-diff -ru grub-0.97.original/configure grub-0.97/configure
---- grub-0.97.original/configure	2005-05-08 04:48:12.000000000 +0200
-+++ grub-0.97/configure	2006-09-01 02:24:35.000000000 +0200
+diff -ur grub-0.97_orig/configure grub-0.97/configure
+--- grub-0.97_orig/configure	2005-05-08 02:48:12.000000000 +0000
++++ grub-0.97/configure	2006-10-27 20:31:15.000000000 +0000
 @@ -3485,9 +3485,9 @@
  echo "$as_me:$LINENO: result: $size_flag" >&5
  echo "${ECHO_T}$size_flag" >&6
@@ -13,9 +13,9 @@ diff -ru grub-0.97.original/configure grub-0.97/configure
      fi
      # OpenBSD has a GCC extension for protecting applications from
      # stack smashing attacks, but GRUB doesn't want this feature.
-diff -ru grub-0.97.original/configure.ac grub-0.97/configure.ac
---- grub-0.97.original/configure.ac	2005-05-08 04:36:03.000000000 +0200
-+++ grub-0.97/configure.ac	2006-09-01 02:24:58.000000000 +0200
+diff -ur grub-0.97_orig/configure.ac grub-0.97/configure.ac
+--- grub-0.97_orig/configure.ac	2005-05-08 02:36:03.000000000 +0000
++++ grub-0.97/configure.ac	2006-10-27 20:31:15.000000000 +0000
 @@ -93,9 +93,9 @@
        CFLAGS=$saved_CFLAGS
      ])
@@ -42,9 +42,9 @@ diff -ru grub-0.97.original/configure.ac grub-0.97/configure.ac
  dnl AC_ARG_ENABLE(tftp,
  dnl [  --enable-tftp           enable TFTP support in Stage 2])
  dnl 
-diff -ru grub-0.97.original/lib/device.c grub-0.97/lib/device.c
---- grub-0.97.original/lib/device.c	2005-03-28 01:14:25.000000000 +0200
-+++ grub-0.97/lib/device.c	2006-09-01 02:24:35.000000000 +0200
+diff -ur grub-0.97_orig/lib/device.c grub-0.97/lib/device.c
+--- grub-0.97_orig/lib/device.c	2005-03-27 23:14:25.000000000 +0000
++++ grub-0.97/lib/device.c	2006-10-27 20:31:15.000000000 +0000
 @@ -131,6 +131,152 @@
  #include <shared.h>
  #include <device.h>
@@ -272,9 +272,104 @@ diff -ru grub-0.97.original/lib/device.c grub-0.97/lib/device.c
    
    if (write (fd, buf, size * SECTOR_SIZE) != (size * SECTOR_SIZE))
      {
-diff -ru grub-0.97.original/stage2/boot.c grub-0.97/stage2/boot.c
---- grub-0.97.original/stage2/boot.c	2004-03-30 13:44:08.000000000 +0200
-+++ grub-0.97/stage2/boot.c	2006-09-01 02:24:35.000000000 +0200
+diff -ur grub-0.97_orig/stage2/Makefile.am grub-0.97/stage2/Makefile.am
+--- grub-0.97_orig/stage2/Makefile.am	2005-02-02 20:37:35.000000000 +0000
++++ grub-0.97/stage2/Makefile.am	2006-10-27 20:31:16.000000000 +0000
+@@ -7,7 +7,7 @@
+         fat.h filesys.h freebsd.h fs.h hercules.h i386-elf.h \
+ 	imgact_aout.h iso9660.h jfs.h mb_header.h mb_info.h md5.h \
+ 	nbi.h pc_slice.h serial.h shared.h smp-imps.h term.h \
+-	terminfo.h tparm.h nbi.h ufs2.h vstafs.h xfs.h
++	terminfo.h tparm.h nbi.h ufs2.h vstafs.h xfs.h afs.h
+ EXTRA_DIST = setjmp.S apm.S $(noinst_SCRIPTS)
+ 
+ # For <stage1.h>.
+@@ -18,13 +18,14 @@
+ libgrub_a_SOURCES = boot.c builtins.c char_io.c cmdline.c common.c \
+ 	disk_io.c fsys_ext2fs.c fsys_fat.c fsys_ffs.c fsys_iso9660.c \
+ 	fsys_jfs.c fsys_minix.c fsys_reiserfs.c fsys_ufs2.c \
+-	fsys_vstafs.c fsys_xfs.c gunzip.c md5.c serial.c stage2.c \
++	fsys_vstafs.c fsys_xfs.c fsys_afs.c gunzip.c md5.c serial.c stage2.c \
+ 	terminfo.c tparm.c
+ libgrub_a_CFLAGS = $(GRUB_CFLAGS) -I$(top_srcdir)/lib \
+ 	-DGRUB_UTIL=1 -DFSYS_EXT2FS=1 -DFSYS_FAT=1 -DFSYS_FFS=1 \
+ 	-DFSYS_ISO9660=1 -DFSYS_JFS=1 -DFSYS_MINIX=1 -DFSYS_REISERFS=1 \
+-	-DFSYS_UFS2=1 -DFSYS_VSTAFS=1 -DFSYS_XFS=1 \
+-	-DUSE_MD5_PASSWORDS=1 -DSUPPORT_SERIAL=1 -DSUPPORT_HERCULES=1
++	-DFSYS_UFS2=1 -DFSYS_VSTAFS=1 -DFSYS_XFS=1 -DFSYS_AFS=1 \
++	-DUSE_MD5_PASSWORDS=1 -DSUPPORT_SERIAL=1 -DSUPPORT_HERCULES=1 \
++	-fno-strict-aliasing
+ 
+ # Stage 2 and Stage 1.5's.
+ pkglibdir = $(libdir)/$(PACKAGE)/$(host_cpu)-$(host_vendor)
+@@ -35,23 +36,24 @@
+ pkglib_DATA = stage2 stage2_eltorito e2fs_stage1_5 fat_stage1_5 \
+ 	ffs_stage1_5 iso9660_stage1_5 jfs_stage1_5 minix_stage1_5 \
+ 	reiserfs_stage1_5 ufs2_stage1_5 vstafs_stage1_5 xfs_stage1_5 \
+-	nbgrub pxegrub
++	afs_stage1_5 nbgrub pxegrub
+ noinst_DATA = pre_stage2 start start_eltorito nbloader pxeloader diskless
+ noinst_PROGRAMS = pre_stage2.exec start.exec start_eltorito.exec \
+ 	e2fs_stage1_5.exec fat_stage1_5.exec ffs_stage1_5.exec \
+ 	iso9660_stage1_5.exec jfs_stage1_5.exec minix_stage1_5.exec \
+ 	reiserfs_stage1_5.exec ufs2_stage1_5.exec vstafs_stage1_5.exec \
+-	xfs_stage1_5.exec nbloader.exec pxeloader.exec diskless.exec
++	xfs_stage1_5.exec afs_stage1_5.exec nbloader.exec pxeloader.exec diskless.exec
+ else
+ pkglib_DATA = stage2 stage2_eltorito e2fs_stage1_5 fat_stage1_5 \
+ 	ffs_stage1_5 iso9660_stage1_5 jfs_stage1_5 minix_stage1_5 \
+-	reiserfs_stage1_5 ufs2_stage1_5 vstafs_stage1_5 xfs_stage1_5
++	reiserfs_stage1_5 ufs2_stage1_5 vstafs_stage1_5 xfs_stage1_5 \
++	afs_stage1_5
+ noinst_DATA = pre_stage2 start start_eltorito
+ noinst_PROGRAMS = pre_stage2.exec start.exec start_eltorito.exec \
+ 	e2fs_stage1_5.exec fat_stage1_5.exec ffs_stage1_5.exec \
+ 	iso9660_stage1_5.exec jfs_stage1_5.exec minix_stage1_5.exec \
+ 	reiserfs_stage1_5.exec ufs2_stage1_5.exec vstafs_stage1_5.exec \
+-	xfs_stage1_5.exec
++	xfs_stage1_5.exec afs_stage1_5.exec
+ endif
+ MOSTLYCLEANFILES = $(noinst_PROGRAMS)
+ 
+@@ -89,7 +91,7 @@
+ pre_stage2_exec_SOURCES = asm.S bios.c boot.c builtins.c char_io.c \
+ 	cmdline.c common.c console.c disk_io.c fsys_ext2fs.c \
+ 	fsys_fat.c fsys_ffs.c fsys_iso9660.c fsys_jfs.c fsys_minix.c \
+-	fsys_reiserfs.c fsys_ufs2.c fsys_vstafs.c fsys_xfs.c gunzip.c \
++	fsys_reiserfs.c fsys_ufs2.c fsys_vstafs.c fsys_xfs.c fsys_afs.c gunzip.c \
+ 	hercules.c md5.c serial.c smp-imps.c stage2.c terminfo.c tparm.c
+ pre_stage2_exec_CFLAGS = $(STAGE2_COMPILE) $(FSYS_CFLAGS)
+ pre_stage2_exec_CCASFLAGS = $(STAGE2_COMPILE) $(FSYS_CFLAGS)
+@@ -226,6 +228,15 @@
+ 	-DNO_BLOCK_FILES=1
+ iso9660_stage1_5_exec_LDFLAGS = $(STAGE1_5_LINK)
+ 
++# For afs_stage1_5 target.
++afs_stage1_5_exec_SOURCES = start.S asm.S common.c char_io.c \
++	disk_io.c stage1_5.c fsys_afs.c bios.c
++afs_stage1_5_exec_CFLAGS = $(STAGE1_5_COMPILE) -DFSYS_AFS=1 \
++	-DNO_BLOCK_FILES=1
++afs_stage1_5_exec_CCASFLAGS = $(STAGE1_5_COMPILE) -DFSYS_AFS=1 \
++	-DNO_BLOCK_FILES=1
++afs_stage1_5_exec_LDFLAGS = $(STAGE1_5_LINK)
++
+ # For diskless target.
+ diskless_exec_SOURCES = $(pre_stage2_exec_SOURCES)
+ diskless_exec_CFLAGS = $(STAGE2_COMPILE) $(FSYS_CFLAGS) \
+diff -ur grub-0.97_orig/stage2/bios.c grub-0.97/stage2/bios.c
+--- grub-0.97_orig/stage2/bios.c	2004-03-27 16:34:04.000000000 +0000
++++ grub-0.97/stage2/bios.c	2006-10-27 20:34:10.000000000 +0000
+@@ -147,6 +147,7 @@
+   grub_memset (&cdrp, 0, sizeof (cdrp));
+   cdrp.size = sizeof (cdrp) - sizeof (cdrp.dummy);
+   err = biosdisk_int13_extensions (0x4B01, drive, &cdrp);
++  err = 0; /* really ugly hack to circumvent faulty BIOS versions like Acer 292LMi */
+   if (! err && cdrp.drive_no == drive)
+     {
+       if ((cdrp.media_type & 0x0F) == 0)
+diff -ur grub-0.97_orig/stage2/boot.c grub-0.97/stage2/boot.c
+--- grub-0.97_orig/stage2/boot.c	2004-03-30 11:44:08.000000000 +0000
++++ grub-0.97/stage2/boot.c	2006-10-27 20:31:15.000000000 +0000
 @@ -55,7 +55,7 @@
    pu;
    /* presuming that MULTIBOOT_SEARCH is large enough to encompass an
@@ -306,9 +401,9 @@ diff -ru grub-0.97.original/stage2/boot.c grub-0.97/stage2/boot.c
    if (moveto + len >= max_addr)
      moveto = (max_addr - len) & 0xfffff000;
    
-diff -ru grub-0.97.original/stage2/builtins.c grub-0.97/stage2/builtins.c
---- grub-0.97.original/stage2/builtins.c	2005-02-15 22:58:23.000000000 +0100
-+++ grub-0.97/stage2/builtins.c	2006-09-01 02:24:58.000000000 +0200
+diff -ur grub-0.97_orig/stage2/builtins.c grub-0.97/stage2/builtins.c
+--- grub-0.97_orig/stage2/builtins.c	2005-02-15 21:58:23.000000000 +0000
++++ grub-0.97/stage2/builtins.c	2006-10-27 20:35:31.000000000 +0000
 @@ -3881,7 +3881,8 @@
      {"minix",    "/minix_stage1_5"},
      {"reiserfs", "/reiserfs_stage1_5"},
@@ -319,9 +414,18 @@ diff -ru grub-0.97.original/stage2/builtins.c grub-0.97/stage2/builtins.c
    };
  
    tmp_drive = saved_drive;
-diff -ru grub-0.97.original/stage2/disk_io.c grub-0.97/stage2/disk_io.c
---- grub-0.97.original/stage2/disk_io.c	2004-05-23 18:35:24.000000000 +0200
-+++ grub-0.97/stage2/disk_io.c	2006-09-01 02:24:58.000000000 +0200
+@@ -4002,7 +4003,7 @@
+ 		{
+ 		  grub_strcpy (real_config_filename, config_filename);
+ 		  sprint_device (image_drive, image_partition);
+-		  grub_sprintf (config_filename, "%s%s", device, stage2);
++		  grub_sprintf (config_filename, "%s%s", device, prefix, "/stage2");
+ 		  grub_strcpy (stage2, buffer);
+ 		}
+ 	    }
+diff -ur grub-0.97_orig/stage2/disk_io.c grub-0.97/stage2/disk_io.c
+--- grub-0.97_orig/stage2/disk_io.c	2004-05-23 16:35:24.000000000 +0000
++++ grub-0.97/stage2/disk_io.c	2006-10-27 20:31:15.000000000 +0000
 @@ -78,6 +78,9 @@
  # ifdef FSYS_ISO9660
    {"iso9660", iso9660_mount, iso9660_read, iso9660_dir, 0, 0},
@@ -357,9 +461,9 @@ diff -ru grub-0.97.original/stage2/disk_io.c grub-0.97/stage2/disk_io.c
    return word;
  }
  
-diff -ru grub-0.97.original/stage2/filesys.h grub-0.97/stage2/filesys.h
---- grub-0.97.original/stage2/filesys.h	2004-05-14 21:36:43.000000000 +0200
-+++ grub-0.97/stage2/filesys.h	2006-09-01 02:24:58.000000000 +0200
+diff -ur grub-0.97_orig/stage2/filesys.h grub-0.97/stage2/filesys.h
+--- grub-0.97_orig/stage2/filesys.h	2004-05-14 19:36:43.000000000 +0000
++++ grub-0.97/stage2/filesys.h	2006-10-27 20:31:15.000000000 +0000
 @@ -105,6 +105,16 @@
  #define FSYS_XFS_NUM 0
  #endif
@@ -386,9 +490,9 @@ diff -ru grub-0.97.original/stage2/filesys.h grub-0.97/stage2/filesys.h
  #endif
  
  /* defines for the block filesystem info area */
-diff -ru grub-0.97.original/stage2/freebsd.h grub-0.97/stage2/freebsd.h
---- grub-0.97.original/stage2/freebsd.h	2003-07-09 13:45:52.000000000 +0200
-+++ grub-0.97/stage2/freebsd.h	2006-09-01 02:24:35.000000000 +0200
+diff -ur grub-0.97_orig/stage2/freebsd.h grub-0.97/stage2/freebsd.h
+--- grub-0.97_orig/stage2/freebsd.h	2003-07-09 11:45:52.000000000 +0000
++++ grub-0.97/stage2/freebsd.h	2006-10-27 20:31:16.000000000 +0000
 @@ -78,7 +78,7 @@
  struct bootinfo
    {
@@ -398,9 +502,9 @@ diff -ru grub-0.97.original/stage2/freebsd.h grub-0.97/stage2/freebsd.h
      struct nfs_diskless *bi_nfs_diskless;
      /* End of fields that are always present. */
  #define bi_endcommon            bi_n_bios_used
-diff -ru grub-0.97.original/stage2/fsys_fat.c grub-0.97/stage2/fsys_fat.c
---- grub-0.97.original/stage2/fsys_fat.c	2005-03-15 17:52:00.000000000 +0100
-+++ grub-0.97/stage2/fsys_fat.c	2006-09-01 02:24:35.000000000 +0200
+diff -ur grub-0.97_orig/stage2/fsys_fat.c grub-0.97/stage2/fsys_fat.c
+--- grub-0.97_orig/stage2/fsys_fat.c	2005-03-15 16:52:00.000000000 +0000
++++ grub-0.97/stage2/fsys_fat.c	2006-10-27 20:31:16.000000000 +0000
 @@ -54,12 +54,19 @@
  
  #define FAT_CACHE_SIZE 2048
@@ -424,9 +528,9 @@ diff -ru grub-0.97.original/stage2/fsys_fat.c grub-0.97/stage2/fsys_fat.c
    return word;
  }
  
-diff -ru grub-0.97.original/stage2/fsys_iso9660.c grub-0.97/stage2/fsys_iso9660.c
---- grub-0.97.original/stage2/fsys_iso9660.c	2004-05-11 14:11:19.000000000 +0200
-+++ grub-0.97/stage2/fsys_iso9660.c	2006-09-01 02:24:35.000000000 +0200
+diff -ur grub-0.97_orig/stage2/fsys_iso9660.c grub-0.97/stage2/fsys_iso9660.c
+--- grub-0.97_orig/stage2/fsys_iso9660.c	2004-05-11 12:11:19.000000000 +0000
++++ grub-0.97/stage2/fsys_iso9660.c	2006-10-27 20:31:16.000000000 +0000
 @@ -55,13 +55,19 @@
  #define RRCONT_BUF      ((unsigned char *)(FSYS_BUF + 6144))
  #define NAME_BUF        ((unsigned char *)(FSYS_BUF + 8192))
@@ -509,9 +613,9 @@ diff -ru grub-0.97.original/stage2/fsys_iso9660.c grub-0.97/stage2/fsys_iso9660.
  #endif
  		    }
  		}
-diff -ru grub-0.97.original/stage2/fsys_reiserfs.c grub-0.97/stage2/fsys_reiserfs.c
---- grub-0.97.original/stage2/fsys_reiserfs.c	2004-02-18 23:09:10.000000000 +0100
-+++ grub-0.97/stage2/fsys_reiserfs.c	2006-09-01 02:24:35.000000000 +0200
+diff -ur grub-0.97_orig/stage2/fsys_reiserfs.c grub-0.97/stage2/fsys_reiserfs.c
+--- grub-0.97_orig/stage2/fsys_reiserfs.c	2004-02-18 22:09:10.000000000 +0000
++++ grub-0.97/stage2/fsys_reiserfs.c	2006-10-27 20:31:16.000000000 +0000
 @@ -365,13 +365,19 @@
  #define JOURNAL_START    ((__u32 *) (INFO + 1))
  #define JOURNAL_END      ((__u32 *) (FSYS_BUF + FSYS_BUFLEN))
@@ -535,9 +639,9 @@ diff -ru grub-0.97.original/stage2/fsys_reiserfs.c grub-0.97/stage2/fsys_reiserf
    return word;
  }
  
-diff -ru grub-0.97.original/stage2/fsys_vstafs.c grub-0.97/stage2/fsys_vstafs.c
---- grub-0.97.original/stage2/fsys_vstafs.c	2003-07-09 13:45:53.000000000 +0200
-+++ grub-0.97/stage2/fsys_vstafs.c	2006-09-01 02:24:35.000000000 +0200
+diff -ur grub-0.97_orig/stage2/fsys_vstafs.c grub-0.97/stage2/fsys_vstafs.c
+--- grub-0.97_orig/stage2/fsys_vstafs.c	2003-07-09 11:45:53.000000000 +0000
++++ grub-0.97/stage2/fsys_vstafs.c	2006-10-27 20:31:16.000000000 +0000
 @@ -186,35 +186,35 @@
  int 
  vstafs_read (char *addr, int len)
@@ -611,9 +715,9 @@ diff -ru grub-0.97.original/stage2/fsys_vstafs.c grub-0.97/stage2/fsys_vstafs.c
        offset = 0;
      }
    
-diff -ru grub-0.97.original/stage2/fsys_xfs.c grub-0.97/stage2/fsys_xfs.c
---- grub-0.97.original/stage2/fsys_xfs.c	2005-05-08 04:15:55.000000000 +0200
-+++ grub-0.97/stage2/fsys_xfs.c	2006-09-01 02:24:35.000000000 +0200
+diff -ur grub-0.97_orig/stage2/fsys_xfs.c grub-0.97/stage2/fsys_xfs.c
+--- grub-0.97_orig/stage2/fsys_xfs.c	2005-05-08 02:15:55.000000000 +0000
++++ grub-0.97/stage2/fsys_xfs.c	2006-10-27 20:31:16.000000000 +0000
 @@ -97,7 +97,7 @@
  	return ino & XFS_INO_MASK(XFS_INO_OFFSET_BITS);
  }
@@ -650,9 +754,9 @@ diff -ru grub-0.97.original/stage2/fsys_xfs.c grub-0.97/stage2/fsys_xfs.c
  			sfe = (xfs_dir2_sf_entry_t *)
  				  ((char *)sfe + namelen + 11 - xfs.i8param);
  		}
-diff -ru grub-0.97.original/stage2/gunzip.c grub-0.97/stage2/gunzip.c
---- grub-0.97.original/stage2/gunzip.c	2003-07-09 13:45:53.000000000 +0200
-+++ grub-0.97/stage2/gunzip.c	2006-09-01 02:24:35.000000000 +0200
+diff -ur grub-0.97_orig/stage2/gunzip.c grub-0.97/stage2/gunzip.c
+--- grub-0.97_orig/stage2/gunzip.c	2003-07-09 11:45:53.000000000 +0000
++++ grub-0.97/stage2/gunzip.c	2006-10-27 20:31:16.000000000 +0000
 @@ -277,7 +277,7 @@
     *  is a compressed file, and simply mark it as such.
     */
@@ -754,93 +858,9 @@ diff -ru grub-0.97.original/stage2/gunzip.c grub-0.97/stage2/gunzip.c
      {
  #if 0
        if (i == 1)
-diff -ru grub-0.97.original/stage2/Makefile.am grub-0.97/stage2/Makefile.am
---- grub-0.97.original/stage2/Makefile.am	2005-02-02 21:37:35.000000000 +0100
-+++ grub-0.97/stage2/Makefile.am	2006-09-01 02:37:22.000000000 +0200
-@@ -7,7 +7,7 @@
-         fat.h filesys.h freebsd.h fs.h hercules.h i386-elf.h \
- 	imgact_aout.h iso9660.h jfs.h mb_header.h mb_info.h md5.h \
- 	nbi.h pc_slice.h serial.h shared.h smp-imps.h term.h \
--	terminfo.h tparm.h nbi.h ufs2.h vstafs.h xfs.h
-+	terminfo.h tparm.h nbi.h ufs2.h vstafs.h xfs.h afs.h
- EXTRA_DIST = setjmp.S apm.S $(noinst_SCRIPTS)
- 
- # For <stage1.h>.
-@@ -18,13 +18,14 @@
- libgrub_a_SOURCES = boot.c builtins.c char_io.c cmdline.c common.c \
- 	disk_io.c fsys_ext2fs.c fsys_fat.c fsys_ffs.c fsys_iso9660.c \
- 	fsys_jfs.c fsys_minix.c fsys_reiserfs.c fsys_ufs2.c \
--	fsys_vstafs.c fsys_xfs.c gunzip.c md5.c serial.c stage2.c \
-+	fsys_vstafs.c fsys_xfs.c fsys_afs.c gunzip.c md5.c serial.c stage2.c \
- 	terminfo.c tparm.c
- libgrub_a_CFLAGS = $(GRUB_CFLAGS) -I$(top_srcdir)/lib \
- 	-DGRUB_UTIL=1 -DFSYS_EXT2FS=1 -DFSYS_FAT=1 -DFSYS_FFS=1 \
- 	-DFSYS_ISO9660=1 -DFSYS_JFS=1 -DFSYS_MINIX=1 -DFSYS_REISERFS=1 \
--	-DFSYS_UFS2=1 -DFSYS_VSTAFS=1 -DFSYS_XFS=1 \
--	-DUSE_MD5_PASSWORDS=1 -DSUPPORT_SERIAL=1 -DSUPPORT_HERCULES=1
-+	-DFSYS_UFS2=1 -DFSYS_VSTAFS=1 -DFSYS_XFS=1 -DFSYS_AFS=1 \
-+	-DUSE_MD5_PASSWORDS=1 -DSUPPORT_SERIAL=1 -DSUPPORT_HERCULES=1 \
-+	-fno-strict-aliasing
- 
- # Stage 2 and Stage 1.5's.
- pkglibdir = $(libdir)/$(PACKAGE)/$(host_cpu)-$(host_vendor)
-@@ -35,23 +36,24 @@
- pkglib_DATA = stage2 stage2_eltorito e2fs_stage1_5 fat_stage1_5 \
- 	ffs_stage1_5 iso9660_stage1_5 jfs_stage1_5 minix_stage1_5 \
- 	reiserfs_stage1_5 ufs2_stage1_5 vstafs_stage1_5 xfs_stage1_5 \
--	nbgrub pxegrub
-+	afs_stage1_5 nbgrub pxegrub
- noinst_DATA = pre_stage2 start start_eltorito nbloader pxeloader diskless
- noinst_PROGRAMS = pre_stage2.exec start.exec start_eltorito.exec \
- 	e2fs_stage1_5.exec fat_stage1_5.exec ffs_stage1_5.exec \
- 	iso9660_stage1_5.exec jfs_stage1_5.exec minix_stage1_5.exec \
- 	reiserfs_stage1_5.exec ufs2_stage1_5.exec vstafs_stage1_5.exec \
--	xfs_stage1_5.exec nbloader.exec pxeloader.exec diskless.exec
-+	xfs_stage1_5.exec afs_stage1_5.exec nbloader.exec pxeloader.exec diskless.exec
- else
- pkglib_DATA = stage2 stage2_eltorito e2fs_stage1_5 fat_stage1_5 \
- 	ffs_stage1_5 iso9660_stage1_5 jfs_stage1_5 minix_stage1_5 \
--	reiserfs_stage1_5 ufs2_stage1_5 vstafs_stage1_5 xfs_stage1_5
-+	reiserfs_stage1_5 ufs2_stage1_5 vstafs_stage1_5 xfs_stage1_5 \
-+	afs_stage1_5
- noinst_DATA = pre_stage2 start start_eltorito
- noinst_PROGRAMS = pre_stage2.exec start.exec start_eltorito.exec \
- 	e2fs_stage1_5.exec fat_stage1_5.exec ffs_stage1_5.exec \
- 	iso9660_stage1_5.exec jfs_stage1_5.exec minix_stage1_5.exec \
- 	reiserfs_stage1_5.exec ufs2_stage1_5.exec vstafs_stage1_5.exec \
--	xfs_stage1_5.exec
-+	xfs_stage1_5.exec afs_stage1_5.exec
- endif
- MOSTLYCLEANFILES = $(noinst_PROGRAMS)
- 
-@@ -89,7 +91,7 @@
- pre_stage2_exec_SOURCES = asm.S bios.c boot.c builtins.c char_io.c \
- 	cmdline.c common.c console.c disk_io.c fsys_ext2fs.c \
- 	fsys_fat.c fsys_ffs.c fsys_iso9660.c fsys_jfs.c fsys_minix.c \
--	fsys_reiserfs.c fsys_ufs2.c fsys_vstafs.c fsys_xfs.c gunzip.c \
-+	fsys_reiserfs.c fsys_ufs2.c fsys_vstafs.c fsys_xfs.c fsys_afs.c gunzip.c \
- 	hercules.c md5.c serial.c smp-imps.c stage2.c terminfo.c tparm.c
- pre_stage2_exec_CFLAGS = $(STAGE2_COMPILE) $(FSYS_CFLAGS)
- pre_stage2_exec_CCASFLAGS = $(STAGE2_COMPILE) $(FSYS_CFLAGS)
-@@ -226,6 +228,15 @@
- 	-DNO_BLOCK_FILES=1
- iso9660_stage1_5_exec_LDFLAGS = $(STAGE1_5_LINK)
- 
-+# For afs_stage1_5 target.
-+afs_stage1_5_exec_SOURCES = start.S asm.S common.c char_io.c \
-+	disk_io.c stage1_5.c fsys_afs.c bios.c
-+afs_stage1_5_exec_CFLAGS = $(STAGE1_5_COMPILE) -DFSYS_AFS=1 \
-+	-DNO_BLOCK_FILES=1
-+afs_stage1_5_exec_CCASFLAGS = $(STAGE1_5_COMPILE) -DFSYS_AFS=1 \
-+	-DNO_BLOCK_FILES=1
-+afs_stage1_5_exec_LDFLAGS = $(STAGE1_5_LINK)
-+
- # For diskless target.
- diskless_exec_SOURCES = $(pre_stage2_exec_SOURCES)
- diskless_exec_CFLAGS = $(STAGE2_COMPILE) $(FSYS_CFLAGS) \
-diff -ru grub-0.97.original/stage2/md5.c grub-0.97/stage2/md5.c
---- grub-0.97.original/stage2/md5.c	2003-07-09 13:45:53.000000000 +0200
-+++ grub-0.97/stage2/md5.c	2006-09-01 02:24:35.000000000 +0200
+diff -ur grub-0.97_orig/stage2/md5.c grub-0.97/stage2/md5.c
+--- grub-0.97_orig/stage2/md5.c	2003-07-09 11:45:53.000000000 +0000
++++ grub-0.97/stage2/md5.c	2006-10-27 20:31:16.000000000 +0000
 @@ -166,7 +166,7 @@
    inputlen -= 64 - buflen;
    while (inputlen >= 64)
@@ -859,9 +879,9 @@ diff -ru grub-0.97.original/stage2/md5.c grub-0.97/stage2/md5.c
    unsigned char *digest;
  
    if (check)
-diff -ru grub-0.97.original/stage2/shared.h grub-0.97/stage2/shared.h
---- grub-0.97.original/stage2/shared.h	2004-06-19 18:40:09.000000000 +0200
-+++ grub-0.97/stage2/shared.h	2006-09-01 02:24:58.000000000 +0200
+diff -ur grub-0.97_orig/stage2/shared.h grub-0.97/stage2/shared.h
+--- grub-0.97_orig/stage2/shared.h	2004-06-19 16:40:09.000000000 +0000
++++ grub-0.97/stage2/shared.h	2006-10-27 20:31:16.000000000 +0000
 @@ -212,6 +212,7 @@
  #define STAGE2_ID_XFS_STAGE1_5		8
  #define STAGE2_ID_ISO9660_STAGE1_5	9
@@ -879,9 +899,9 @@ diff -ru grub-0.97.original/stage2/shared.h grub-0.97/stage2/shared.h
  # else
  #  error "unknown Stage 2"
  # endif
-diff -ru grub-0.97.original/stage2/start_eltorito.S grub-0.97/stage2/start_eltorito.S
---- grub-0.97.original/stage2/start_eltorito.S	2004-03-27 17:14:20.000000000 +0100
-+++ grub-0.97/stage2/start_eltorito.S	2006-09-01 02:24:35.000000000 +0200
+diff -ur grub-0.97_orig/stage2/start_eltorito.S grub-0.97/stage2/start_eltorito.S
+--- grub-0.97_orig/stage2/start_eltorito.S	2004-03-27 16:14:20.000000000 +0000
++++ grub-0.97/stage2/start_eltorito.S	2006-10-27 20:31:16.000000000 +0000
 @@ -40,9 +40,9 @@
  #define ABS(x)			(x-_start+BOOTSEC_LOCATION)
  
@@ -1013,9 +1033,9 @@ diff -ru grub-0.97.original/stage2/start_eltorito.S grub-0.97/stage2/start_eltor
 +	   we can't reload the first sector. So we have to align the code
 +	   to ISO_SECTOR_SIZE. */
 +	. = _start + ISO_SECTOR_SIZE
-diff -ru grub-0.97.original/util/grub-install.in grub-0.97/util/grub-install.in
---- grub-0.97.original/util/grub-install.in	2004-07-24 20:57:31.000000000 +0200
-+++ grub-0.97/util/grub-install.in	2006-09-01 02:24:35.000000000 +0200
+diff -ur grub-0.97_orig/util/grub-install.in grub-0.97/util/grub-install.in
+--- grub-0.97_orig/util/grub-install.in	2004-07-24 18:57:31.000000000 +0000
++++ grub-0.97/util/grub-install.in	2006-10-27 20:31:16.000000000 +0000
 @@ -336,6 +336,10 @@
      # Create a safe temporary file.
      test -n "$mklog" && log_file=`$mklog`
