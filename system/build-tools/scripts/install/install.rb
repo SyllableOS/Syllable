@@ -41,7 +41,7 @@ if(choice.downcase == 'i')	# choice should never be nil, but better safe than so
 		when "fifty five"
 			# a no-op to satisfy ruby1.8
 		else
-			puts "\n\nThe installation failed for an unknown reason.  Please report this to the mailing list at:\n\t<syllable-developer@lists.sourceforge.net>\n\n"
+			puts "\n\nThe installation failed for an unknown reason. Please report this on the Syllable web forum at:\n\thttp://www.syllable.org/forum.php\n\n"
 			$stdout.flush
 			exec "/bin/bash", "--login"
 		end
@@ -52,4 +52,3 @@ else
 	$stdout.flush
 	exec "/bin/bash", "--login"
 end
-

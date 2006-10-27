@@ -31,4 +31,3 @@ def read_to_user(filename, full_path = false)
 	system "clear"
 	system "less", "--quit-at-eof", "--no-init", "--tilde", filename
 end
-

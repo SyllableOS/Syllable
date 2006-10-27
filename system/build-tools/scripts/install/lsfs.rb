@@ -60,4 +60,3 @@ module_function :scan, :list
 end #module LSFS
 
 LSFS::list if __FILE__ == $0
-

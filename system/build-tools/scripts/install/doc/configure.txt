@@ -4,7 +4,7 @@ configuration file will mean that you will not be able to boot Syllable.
 
 First you must tell GRUB where to find the kernel and the required
 disk/FS drivers to load before booting Syllable. This information is
-found in "/afs/boot/grub/menu.lst". If you have other OS's installed
+found in "/inst/boot/grub/menu.lst". If you have other OS's installed
 on the machine you must either configure GRUB as a boot-manager or
 install another boot-manager that can "chainload" GRUB from the AFS
 partition.
@@ -16,9 +16,11 @@ the installation described above:
      root   (hd0,1)
      kernel /atheos/sys/kernel.so root=/dev/disk/ata/hda/0
      module /atheos/sys/config/kernel.cfg
-     module /atheos/sys/drivers/bus/pci
+     module /atheos/sys/drivers/dev/bus/acpi
+     module /atheos/sys/drivers/dev/bus/pci
+     module /atheos/sys/drivers/dev/bus/ata
+     module /atheos/sys/drivers/dev/hcd/ata_pci
      module /atheos/sys/drivers/fs/afs
-     module /atheos/sys/drivers/dev/disk/ata
 
 This will tell GRUB to boot partition number 2 on the first drive
 through the "root (hd0,1)" command and where to find the kernel, the

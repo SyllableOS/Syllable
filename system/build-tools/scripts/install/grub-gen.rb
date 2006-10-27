@@ -7,7 +7,7 @@
 # Last modified by xsdg for installer version 0.1.11.
 
 module GrubGen
-	SyllableVersion = "0.5.6"
+	SyllableVersion = "0.6.2"
 	Templates = {
 		"syllable" => File.read("templates/grubgen/top"),
 		"other"    => File.read("templates/grubgen/subsequent")
@@ -84,4 +84,3 @@ if(__FILE__ == $0)
 	
 	puts GrubGen::gen(parts, sylpart)
 end
-
