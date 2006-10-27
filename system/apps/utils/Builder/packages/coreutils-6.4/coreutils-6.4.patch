@@ -1,0 +1,301 @@
+diff -ur coreutils-6.4_orig/lib/fsusage.c coreutils-6.4/lib/fsusage.c
+--- coreutils-6.4_orig/lib/fsusage.c	2006-10-17 07:55:28.000000000 +0000
++++ coreutils-6.4/lib/fsusage.c	2006-10-27 12:05:47.000000000 +0000
+@@ -24,6 +24,10 @@
+ #include <limits.h>
+ #include <sys/types.h>
+ 
++#ifdef __SYLLABLE__
++# include <atheos/filesystem.h>
++#endif
++
+ #if STAT_STATVFS		/* POSIX 1003.1-2001 (and later) with XSI */
+ # include <sys/statvfs.h>
+ #else
+@@ -90,6 +94,28 @@
+ int
+ get_fs_usage (char const *file, char const *disk, struct fs_usage *fsp)
+ {
++#ifdef __SYLLABLE__
++  fs_info info;
++  int mnt;
++
++  mnt = open( path, O_RDONLY );
++  if ( mnt < 0 ) {
++    return -1;
++  }
++  if ( get_fs_info( mnt, &info ) < 0 ) {
++    close( mnt );
++    return -1;
++  }
++  close( mnt );
++  fsp->fsu_blocksize = info.fi_block_size;
++  fsp->fsu_blocks = PROPAGATE_ALL_ONES (info.fi_total_blocks);
++  fsp->fsu_bfree = PROPAGATE_ALL_ONES (info.fi_free_blocks);
++  fsp->fsu_bavail = PROPAGATE_TOP_BIT (info.fi_free_user_blocks);
++  fsp->fsu_bavail_top_bit_set = EXTRACT_TOP_BIT (info.fi_free_user_blocks) != 0;
++  fsp->fsu_files = PROPAGATE_ALL_ONES (info.fi_total_inodes);
++  fsp->fsu_ffree = PROPAGATE_ALL_ONES (info.fi_free_inodes);
++#endif
++
+ #if defined STAT_STATVFS		/* POSIX */
+ 
+   struct statvfs fsd;
+@@ -217,7 +243,7 @@
+ #endif
+ 
+ #if (defined STAT_STATVFS \
+-     || (!defined STAT_STATFS2_FS_DATA && !defined STAT_READ_FILSYS))
++     || (!defined STAT_STATFS2_FS_DATA && !defined STAT_READ_FILSYS && !defined __SYLLABLE__))
+ 
+   fsp->fsu_blocks = PROPAGATE_ALL_ONES (fsd.f_blocks);
+   fsp->fsu_bfree = PROPAGATE_ALL_ONES (fsd.f_bfree);
+diff -ur coreutils-6.4_orig/lib/mountlist.c coreutils-6.4/lib/mountlist.c
+--- coreutils-6.4_orig/lib/mountlist.c	2006-09-14 09:53:59.000000000 +0000
++++ coreutils-6.4/lib/mountlist.c	2006-10-27 11:45:11.000000000 +0000
+@@ -28,6 +28,10 @@
+ 
+ #include "xalloc.h"
+ 
++#ifdef __SYLLABLE__
++# include <atheos/filesystem.h>
++#endif
++
+ #ifndef strstr
+ char *strstr ();
+ #endif
+@@ -340,6 +344,51 @@
+   struct mount_entry *me;
+   struct mount_entry **mtail = &mount_list;
+ 
++#ifdef __SYLLABLE__
++  {
++    int count = get_mount_point_count();
++    int i;
++
++    if ( count < 0 ) {
++      return -1;
++    }
++    for ( i = 0 ; i < count ; ++i )
++    {
++      fs_info info;
++      int mnt;
++      char path[PATH_MAX];
++
++      if ( get_mount_point( i, path, PATH_MAX ) < 0 ) {
++        goto free_then_fail;
++      }
++
++      mnt = open( path, O_RDONLY );
++      if ( mnt < 0 ) {
++        goto free_then_fail;
++      }
++      if ( get_fs_info( mnt, &info ) < 0 ) {
++        close( mnt );
++        continue;
++      }
++      close( mnt );
++
++      me = (struct mount_entry *) xmalloc (sizeof (struct mount_entry));
++      me->me_devname = xstrdup (info.fi_device_path);
++      me->me_mountdir = xstrdup (path);
++      me->me_type = xstrdup (info.fi_driver_name);
++      me->me_dummy = ME_DUMMY (info.fi_device_path, info.fi_driver_name);
++      me->me_remote = (info.fi_flags & FS_IS_SHARED) != 0;
++      me->me_dev = info.fi_dev;
++
++      /* Add to the linked list. */
++      *mtail = me;
++      mtail = &me->me_next;
++    }
++    *mtail = NULL;
++    return( mount_list );
++  }
++#endif
++
+ #ifdef MOUNTED_LISTMNTENT
+   {
+     struct tabmntent *mntlist, *p;
+diff -ur coreutils-6.4_orig/man/Makefile.in coreutils-6.4/man/Makefile.in
+--- coreutils-6.4_orig/man/Makefile.in	2006-10-22 20:36:24.000000000 +0000
++++ coreutils-6.4/man/Makefile.in	2006-10-27 11:45:11.000000000 +0000
+@@ -640,7 +640,9 @@
+ cut.1:		$(common_dep)	$(srcdir)/cut.x		../src/cut.c
+ date.1:		$(common_dep)	$(srcdir)/date.x	../src/date.c
+ dd.1:		$(common_dep)	$(srcdir)/dd.x		../src/dd.c
+-df.1:		$(common_dep)	$(srcdir)/df.x		../src/df.c
++df.1:
++# df is not built on Syllable.
++#		$(common_dep)	$(srcdir)/df.x		../src/df.c
+ 
+ # Note that dir depends on ls.c, since that's where it's --help text is.
+ dir.1:		$(common_dep)	$(srcdir)/dir.x		../src/ls.c
+diff -ur coreutils-6.4_orig/src/copy.c coreutils-6.4/src/copy.c
+--- coreutils-6.4_orig/src/copy.c	2006-10-22 16:54:15.000000000 +0000
++++ coreutils-6.4/src/copy.c	2006-10-27 12:21:26.000000000 +0000
+@@ -53,6 +53,78 @@
+ #include "xreadlink.h"
+ #include "yesno.h"
+ 
++/* Syllable patch for extended attributes handling
++   2002 by Sebastien Keim
++*/
++#ifdef __SYLLABLE__
++
++#include <atheos/fs_attribs.h>
++
++/* Copy src_path attributes to dst_path
++     dst_path must exist
++   dst_path arguments are not removed
++*/
++
++#define CPATTR_BUF_SIZE 1024
++
++int cp_attribs (const char* src_path, const char* dst_path)
++{
++  int  nSrcFile = -1;
++  DIR* pSrcDir = NULL;
++  int  nDstFile = -1;
++  bool status = 1;
++
++  struct dirent* psEntry;
++
++  nSrcFile = open (src_path, O_RDWR);
++  nDstFile = open (dst_path, O_RDWR);
++  if (nSrcFile < 0 || nDstFile < 0)
++    goto END_CP; /* Failed to open source or dest file */
++
++  pSrcDir = open_attrdir (nSrcFile);
++  if (NULL == pSrcDir)
++    goto END_CP; /* Failed to open source attrib dir */
++
++  while (psEntry = read_attrdir (pSrcDir))
++  {
++    attr_info_s sInfo;
++
++    if (stat_attr (nSrcFile, psEntry->d_name, &sInfo) == 0)
++    {
++      char zBuffer[CPATTR_BUF_SIZE];
++      int index=0;
++      int length;
++      while (length = (index+CPATTR_BUF_SIZE < sInfo.ai_size ?
++        CPATTR_BUF_SIZE :
++        sInfo.ai_size-index))
++      {
++        if (read_attr (nSrcFile, psEntry->d_name, sInfo.ai_type, zBuffer,
++            index, length ) != length)
++          goto END_CP; /* Failed to read attribute */
++
++        write_attr (nDstFile, psEntry->d_name, O_TRUNC, sInfo.ai_type,
++          zBuffer, index, length);
++        index+=length;
++      }
++    } 
++    else 
++    {
++      /* Failed to stat attrib */
++      goto END_CP;
++    }
++  }
++  status = 0;
++
++END_CP:
++  close (nSrcFile);
++  close (nDstFile);
++  if (pSrcDir != NULL)
++    close_attrdir (pSrcDir);
++  return status;
++}
++
++#endif /* __SYLLABLE__ */
++
+ #ifndef HAVE_FCHOWN
+ # define HAVE_FCHOWN false
+ # define fchown(fd, uid, gid) (-1)
+@@ -1721,6 +1793,12 @@
+   if (command_line_arg)
+     record_file (x->dest_info, dst_name, NULL);
+ 
++#ifdef __SYLLABLE__
++  /* Copy extended file attributes */
++  if (delayed_ok)
++    cp_attribs (src_name, dst_name);
++#endif
++
+   if ( ! preserve_metadata)
+     return true;
+ 
+diff -ur coreutils-6.4_orig/src/df.c coreutils-6.4/src/df.c
+--- coreutils-6.4_orig/src/df.c	2006-10-22 16:54:15.000000000 +0000
++++ coreutils-6.4/src/df.c	2006-10-27 12:00:47.000000000 +0000
+@@ -329,19 +329,19 @@
+     {
+       size_t disk_name_len = strlen (disk);
+       size_t fstype_len = strlen (fstype);
+-      if (disk_name_len + fstype_len < 18)
+-	printf ("%s%*s  ", disk, 18 - (int) disk_name_len, fstype);
++      if (disk_name_len + fstype_len < 28)
++	printf ("%s%*s  ", disk, 28 - (int) disk_name_len, fstype);
+       else if (!posix_format)
+-	printf ("%s\n%18s  ", disk, fstype);
++	printf ("%s\n%28s  ", disk, fstype);
+       else
+ 	printf ("%s %s", disk, fstype);
+     }
+   else
+     {
+-      if (strlen (disk) > 20 && !posix_format)
+-	printf ("%s\n%20s", disk, "");
++      if (strlen (disk) > 30 && !posix_format)
++	printf ("%s\n%30s", disk, "");
+       else
+-	printf ("%-20s", disk);
++	printf ("%-30s", disk);
+     }
+ 
+   if (inode_format)
+diff -ur coreutils-6.4_orig/src/du.c coreutils-6.4/src/du.c
+--- coreutils-6.4_orig/src/du.c	2006-10-22 16:54:15.000000000 +0000
++++ coreutils-6.4/src/du.c	2006-10-27 12:01:38.000000000 +0000
+@@ -522,7 +522,9 @@
+   if (skip
+       || (!opt_count_all
+ 	  && ! S_ISDIR (sb->st_mode)
++#ifndef __SYLLABLE__
+ 	  && 1 < sb->st_nlink
++#endif
+ 	  && ! hash_ins (sb->st_ino, sb->st_dev)))
+     {
+       /* Note that we must not simply return here.
+diff -ur coreutils-6.4_orig/src/system.h coreutils-6.4/src/system.h
+--- coreutils-6.4_orig/src/system.h	2006-10-22 16:54:15.000000000 +0000
++++ coreutils-6.4/src/system.h	2006-10-27 12:02:38.000000000 +0000
+@@ -115,7 +115,12 @@
+ # define ENOSYS (-1)
+ #endif
+ 
+-#include <stdbool.h>
++#ifdef __SYLLABLE__
++# include <atheos/types.h>
++#else
++# include <stdbool.h>
++#endif
++
+ #include <stdlib.h>
+ #include <exit.h>
+ 
+@@ -223,8 +228,12 @@
+ # endif /* !hpux */
+ #endif /* HAVE_STRUCT_STAT_ST_BLOCKS */
+ 
+-#ifndef ST_NBLOCKS
+-# define ST_NBLOCKS(statbuf) ((statbuf).st_blocks)
++#ifdef __SYLLABLE__
++# define ST_NBLOCKS(statbuf) ((statbuf).st_size / ST_NBLOCKSIZE + ((statbuf).st_size % ST_NBLOCKSIZE != 0))
++#else
++# ifndef ST_NBLOCKS
++#  define ST_NBLOCKS(statbuf) ((statbuf).st_blocks)
++# endif
+ #endif
+ 
+ #ifndef ST_NBLOCKSIZE

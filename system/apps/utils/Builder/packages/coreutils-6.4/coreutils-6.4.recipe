@@ -3,7 +3,7 @@ authors
 	Sebastien Keim
 	Kaj de Vos
 maintainers			Kaj de Vos
-status				developing
+status				testing
 
 inherits			gnu
 
