@@ -27,11 +27,6 @@ patch
 configure-env		CFLAGS ''
 make-env			CFLAGS ''
 
-move-files
-	lib/grub/i386-pc/*	/boot/grub/
-	man					/boot/grub/documentation/
-	info				/boot/grub/documentation/
-
 documentation		README BUGS COPYING NEWS ChangeLog TODO AUTHORS THANKS
 build-docs			INSTALL netboot/README.netboot
 internal-docs		MAINTENANCE

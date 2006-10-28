@@ -2,6 +2,7 @@ authors
 	Kurt Skauen
 	Sebastien Keim
 	Kaj de Vos
+	Kristian Van Der Vliet
 maintainers			Kaj de Vos
 status				testing
 
@@ -47,4 +48,3 @@ links
 	bin/sync		/bin
 	bin/true		/bin
 	bin/uname		/bin
-
