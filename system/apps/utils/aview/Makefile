@@ -5,7 +5,7 @@ OBJDIR = objs/
 OBJS = $(OBJDIR)main.o $(OBJDIR)appwindow.o $(OBJDIR)iview.o $(OBJDIR)statusbar.o $(OBJDIR)toolbar.o
 EXE = AView
 
-CATALOGS = da es hu pt-br
+CATALOGS = da es hu pt-br sv
 
 all: $(OBJDIR) catalogs $(OBJS)
 	$(CXX) $(OBJS) -lsyllable -o $(EXE)

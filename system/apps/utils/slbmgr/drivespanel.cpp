@@ -50,6 +50,7 @@
 #include <util/appserverconfig.h>
 
 #include "drivespanel.h"
+#include "resources/SlbMgr.h"
 
 using namespace os;
 
@@ -107,12 +108,12 @@ DriveRow *DrivesPanel::AddRow( int nRow, off_t nSize, const char *pzCol, ... )
 
 void DrivesPanel::SetUpHDView()
 {
-	m_pcHDView->InsertColumn( "Volume", 78 );
-	m_pcHDView->InsertColumn( "Type", 50 );
-	m_pcHDView->InsertColumn( "Size", 62 );
-	m_pcHDView->InsertColumn( "Used", 75 );
-	m_pcHDView->InsertColumn( "Avail", 58 );
-	m_pcHDView->InsertColumn( "Percent Free", 80 );
+	m_pcHDView->InsertColumn( MSG_TAB_DRIVES_VOLUME.c_str(), 78 );
+	m_pcHDView->InsertColumn( MSG_TAB_DRIVES_TYPE.c_str(), 50 );
+	m_pcHDView->InsertColumn( MSG_TAB_DRIVES_SIZE.c_str(), 62 );
+	m_pcHDView->InsertColumn( MSG_TAB_DRIVES_USED.c_str(), 75 );
+	m_pcHDView->InsertColumn( MSG_TAB_DRIVES_AVAIL.c_str(), 58 );
+	m_pcHDView->InsertColumn( MSG_TAB_DRIVES_PERFREE.c_str(), 80 );
 }
 
 void DrivesPanel::UpdateHDInfo( bool bUpdate )

@@ -1,0 +1,35 @@
+//
+// DLogin String Catalog
+//
+// Translated by: Daniel Eriksson
+//
+
+MSG_MAINWND_TITLE=0						Inloggning:
+
+MSG_MAINWND_PASSWORD=100				Lösenord:
+MSG_MAINWND_BUTTON_LOGIN				_Logga in
+MSG_MAINWND_BUTTON_SHUTDOWN				_Stäng av
+
+MSG_SHUTDOWNWND_TITLE=200				Stäng av eller starta om?
+MSG_SHUTDOWNWND_TEXT						Vad vill du göra:
+MSG_SHUTDOWNWND_BUTTON_CANCEL				_Avbryt
+MSG_SHUTDOWNWND_BUTTON_OK					_Ok
+MSG_SHUTDOWNWND_DROPDOWN_SHUTDOWN			Stäng av
+MSG_SHUTDOWNWND_DROPDOWN_REBOOT				Starta om
+
+MSG_ALERT_NOTSELECTED_TITLE=1000		Välj en ikon.
+MSG_ALERT_NOTSELECTED_TEXT					Du måste välja en användarikon innan du loggar in.
+MSG_ALERT_NOTSELECTED_OK					Ok
+
+MSG_ALERT_WRONGPASS_TITLE=2000			Inloggning misslyckades
+MSG_ALERT_WRONGPASS_TEXT					Felaktigt lösenord.
+MSG_ALERT_WRONGPASS_OK						Tyvärr
+
+MSG_ALERT_NOUSER_TITLE=3000				Inloggning misslyckades
+MSG_ALERT_NOUSER_TEXT						Det finns,\n\ningen sådan användare\nregistrerad på\nden här datorn.
+MSG_ALERT_NOUSER_OK							Ok
+
+MSG_ALERT_CANTFINDUSERS_TITLE=4000		Kunde inte ladda användare
+MSG_ALERT_CANTFINDUSERS_TEXT				Jag kan inte ladda användarna, vänligen kontakta Syllables utvecklingsgrupp.
+MSG_ALERT_CANTFINDUSERS_OK					Åh nej!!!
+

@@ -3,6 +3,8 @@
 
 App::App():os::Application( "application/x-vnd.syllable-login_application" )
 {
+	SetCatalog("dlogin.catalog");
+
 	mkdir("/system/icons/users",S_IRWXU | S_IRWXG | S_IRWXO);
 	SetPublic(true);
 

@@ -43,6 +43,8 @@
 
 #include "processpanel.h"
 
+#include "resources/SlbMgr.h"
+
 using namespace os;
 
 enum
@@ -83,14 +85,14 @@ ProcessPanel::ProcessPanel( const Rect& cFrame ) : LayoutView( cFrame, "", NULL,
 
     SetThreadCount( ThreadCount() );
    
-    m_pcEndProcBut     = new Button( Rect( 0, 0, 0, 0 ), "endproc_but", "_End Process", new Message( ID_ENDPROC ), CF_FOLLOW_NONE );
+    m_pcEndProcBut     = new Button( Rect( 0, 0, 0, 0 ), "endproc_but", MSG_TAB_PROCESSES_BUTTON_ENDPROCESS, new Message( ID_ENDPROC ), CF_FOLLOW_NONE );
     m_pcProcessList    = new ListView( Rect(0 ,0, 0, 0 ), "proc_list", ListView::F_RENDER_BORDER | ListView::F_NO_AUTO_SORT );
    
-    m_pcProcessList->InsertColumn( "PId", 30 );
-    m_pcProcessList->InsertColumn( "Process Name", 100 );
-    m_pcProcessList->InsertColumn( "TId", 30 );
-    m_pcProcessList->InsertColumn( "Thread Name", 120 );
-    m_pcProcessList->InsertColumn( "State", 120 );
+    m_pcProcessList->InsertColumn( MSG_TAB_PROCESSES_LIST_PID.c_str(), 40 );
+    m_pcProcessList->InsertColumn( MSG_TAB_PROCESSES_LIST_PROCESSNAME.c_str(), 100 );
+    m_pcProcessList->InsertColumn( MSG_TAB_PROCESSES_LIST_TID.c_str(), 40 );
+    m_pcProcessList->InsertColumn( MSG_TAB_PROCESSES_LIST_THREADNAME.c_str(), 120 );
+    m_pcProcessList->InsertColumn( MSG_TAB_PROCESSES_LIST_STATE.c_str(), 100 );
  
     pcRoot->AddChild( m_pcProcessList, 1.0f );
     pcRoot->AddChild( m_pcEndProcBut, 0.0f );
@@ -183,32 +185,32 @@ void ProcessPanel::UpdateProcessList()
     for ( nError = get_thread_info( -1, &sInfo ) ; nError >= 0 ; nError = get_next_thread_info( &sInfo ) )
     {
 	char*	pzLockSemName = NULL;
-	char*	pzState;
+	String	pzState;
 
 	pzLockSemName = "none";
 					
 	switch( sInfo.ti_state )
 	{
 	    case TS_STOPPED:
-		pzState = "Stopped";
+		pzState = MSG_TAB_PROCESSES_STATES_STOPPED;
 		break;
 	    case TS_RUN:
-		pzState = "Run";
+		pzState = MSG_TAB_PROCESSES_STATES_RUN;
 		break;
 	    case TS_READY:
-		pzState = "Ready";
+		pzState = MSG_TAB_PROCESSES_STATES_READY;
 		break;
 	    case TS_WAIT:
-		pzState = "Wait";
+		pzState = MSG_TAB_PROCESSES_STATES_WAIT;
 		break;
 	    case TS_SLEEP:
-		pzState = "Sleep";
+		pzState = MSG_TAB_PROCESSES_STATES_SLEEP;
 		break;
 	    case TS_ZOMBIE:
-		pzState = "Zombie";
+		pzState = MSG_TAB_PROCESSES_STATES_ZOMBIE;
 		break;
 	    default:
-		pzState = "Invalid";
+		pzState = MSG_TAB_PROCESSES_STATES_INVALID;
 		break;
 	}
 
@@ -236,7 +238,7 @@ void ProcessPanel::UpdateProcessList()
 	sprintf( zBuf, "%13.13s", sInfo.ti_thread_name);
 	pcRow->AppendString( zBuf );
 
-        sprintf( zBuf, "%18s", pzState);
+        sprintf( zBuf, "%18s", pzState.c_str());
 	pcRow->AppendString( zBuf );
 	  
 	m_pcProcessList->InsertRow( pcRow, false );

@@ -1,0 +1,35 @@
+//
+// DLogin String Catalog
+//
+// Translated by: Not Translated
+//
+
+MSG_MAINWND_TITLE=0						Login:
+
+MSG_MAINWND_PASSWORD=100				Password:
+MSG_MAINWND_BUTTON_LOGIN				_Login
+MSG_MAINWND_BUTTON_SHUTDOWN				_Shutdown
+
+MSG_SHUTDOWNWND_TITLE=200				Shutdown or Restart?
+MSG_SHUTDOWNWND_TEXT						What do you want to do:
+MSG_SHUTDOWNWND_BUTTON_CANCEL				_Cancel
+MSG_SHUTDOWNWND_BUTTON_OK					_Okay
+MSG_SHUTDOWNWND_DROPDOWN_SHUTDOWN			Shutdown
+MSG_SHUTDOWNWND_DROPDOWN_REBOOT				Restart
+
+MSG_ALERT_NOTSELECTED_TITLE=1000		Select an icon, please.
+MSG_ALERT_NOTSELECTED_TEXT					You must select a user icon before logging in.
+MSG_ALERT_NOTSELECTED_OK					Okay
+
+MSG_ALERT_WRONGPASS_TITLE=2000			Login failed
+MSG_ALERT_WRONGPASS_TEXT					Incorrect password.
+MSG_ALERT_WRONGPASS_OK						Sorry
+
+MSG_ALERT_NOUSER_TITLE=3000				Login failed
+MSG_ALERT_NOUSER_TEXT						Please be advised,\n\nno such user is\nregistered to use\nthis computer.
+MSG_ALERT_NOUSER_OK							Ok
+
+MSG_ALERT_CANTFINDUSERS_TITLE=4000		Unable to load users
+MSG_ALERT_CANTFINDUSERS_TEXT				I am unable to load users, please contact the Syllable development group.
+MSG_ALERT_CANTFINDUSERS_OK					Oh no!!!
+

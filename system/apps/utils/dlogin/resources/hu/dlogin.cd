@@ -1,0 +1,35 @@
+//
+// DLogin String Catalog
+//
+// Translated by: David Horvath
+//
+
+MSG_MAINWND_TITLE=0						Belépés:
+
+MSG_MAINWND_PASSWORD=100				Jelszó:
+MSG_MAINWND_BUTTON_LOGIN				Belépés
+MSG_MAINWND_BUTTON_SHUTDOWN				Leállítás
+
+MSG_SHUTDOWNWND_TITLE=200				Leállítás, vagy újraindítás?
+MSG_SHUTDOWNWND_TEXT						Kérlek, válassz!
+MSG_SHUTDOWNWND_BUTTON_CANCEL				Mégsem
+MSG_SHUTDOWNWND_BUTTON_OK					Ok
+MSG_SHUTDOWNWND_DROPDOWN_SHUTDOWN			Leállítás
+MSG_SHUTDOWNWND_DROPDOWN_REBOOT				Újraindítás
+
+MSG_ALERT_NOTSELECTED_TITLE=1000		Figyelem!.
+MSG_ALERT_NOTSELECTED_TEXT					A belépéshez ki kell választanod a megfelelö ikont.
+MSG_ALERT_NOTSELECTED_OK					Ok
+
+MSG_ALERT_WRONGPASS_TITLE=2000			Belépés sikertelen
+MSG_ALERT_WRONGPASS_TEXT					Érvénytelen jelszó. Kérlek, próbáld újra!
+MSG_ALERT_WRONGPASS_OK						Ok
+
+MSG_ALERT_NOUSER_TITLE=3000				Belépés sikertelen
+MSG_ALERT_NOUSER_TEXT						Nincs ilyen felhasználó.
+MSG_ALERT_NOUSER_OK							Ok
+
+MSG_ALERT_CANTFINDUSERS_TITLE=4000		Sikertelen betöltés
+MSG_ALERT_CANTFINDUSERS_TEXT				Sajnos nem tudtam betölteni a felhasználói beállításokat.\nKérlek, jelezd a hibát a Syllable fejlesztöinek!
+MSG_ALERT_CANTFINDUSERS_OK					Ok
+

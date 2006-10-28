@@ -3,7 +3,7 @@ COPTS	= -c
 OBJS	= main.o gui/clockview.o
 EXE	= aclock
 
-CATALOGS = da es hu pt-br
+CATALOGS = da es hu pt-br sv
 
 $(EXE) : catalogs $(OBJS)
 	$(CXX) $(OBJS) -lsyllable -lm -o $@

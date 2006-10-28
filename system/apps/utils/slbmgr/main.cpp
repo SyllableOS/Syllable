@@ -40,6 +40,8 @@
 #include "devicespanel.h"
 #include "drivespanel.h"
 
+#include "resources/SlbMgr.h"
+
 #include <gui/tabview.h>
 using namespace os;
 
@@ -110,6 +112,8 @@ class MyApp:public Application
 
 MyApp::MyApp( const char *pzName ):Application( pzName )
 {
+	SetCatalog("SlbMgr.catalog");
+
 	m_pcWindow = new MyWindow();
 	m_pcWindow->SetDelay( 500000 );
 	m_pcWindow->Show();
@@ -197,10 +201,10 @@ void MyWindow::ShowAbout()
 	char szTitle[128];
 	char szMessage[1024];
 
-	sprintf( szTitle, "About Syllable Manager v.%s", APP_VERSION );
-	sprintf( szMessage, "SLBMgr v.%s\n\nResource Manager For Syllable\nJohn Hall, 2001\n\nAtheMgr is released under the GNU Public License (GPL)\n\nAtheMgr: http://www.triumvirate.net/athemgr.htm\nGNU: http://www.gnu.org/", APP_VERSION );
+	sprintf( szTitle, MSG_ABOUTWND_TITLE.c_str(), APP_VERSION );
+	sprintf( szMessage, MSG_ABOUTWND_TEXT.c_str(), APP_VERSION );
 
-	Alert *sAbout = new Alert( szTitle, szMessage, Alert::ALERT_INFO, 0x00, "O.K", NULL );
+	Alert *sAbout = new Alert( szTitle, szMessage, Alert::ALERT_INFO, 0x00, MSG_ABOUTWND_OK.c_str(), NULL );
 
 	sAbout->Go( new Invoker(NULL) );
 }
@@ -215,22 +219,22 @@ void MyWindow::SetupMenus()
 
 	m_pcMenu = new Menu( cMenuFrame, "Menu", ITEMS_IN_ROW, CF_FOLLOW_LEFT | CF_FOLLOW_RIGHT | CF_FOLLOW_TOP, WID_FULL_UPDATE_ON_H_RESIZE );
 
-	Menu *pcApp = new Menu( Rect(), "Application", ITEMS_IN_COLUMN, CF_FOLLOW_LEFT | CF_FOLLOW_TOP );
-	pcApp->AddItem( new MenuItem( "About", new Message( ID_ABOUT ) ) );
+	Menu *pcApp = new Menu( Rect(), MSG_MAINWND_MENU_APPLICATION, ITEMS_IN_COLUMN, CF_FOLLOW_LEFT | CF_FOLLOW_TOP );
+	pcApp->AddItem( new MenuItem( MSG_MAINWND_MENU_APPLICATION_ABOUT, new Message( ID_ABOUT ) ) );
 	pcApp->AddItem( new MenuSeparator() );
-	pcApp->AddItem( "Quit", new Message( ID_QUIT ) );
+	pcApp->AddItem( MSG_MAINWND_MENU_APPLICATION_QUIT, new Message( ID_QUIT ) );
 	
 	
-	Menu *pcOption = new Menu( Rect(), "Options", ITEMS_IN_COLUMN, CF_FOLLOW_LEFT | CF_FOLLOW_TOP );
-	Menu *pcSpeed = new Menu( Rect(), "Speed", ITEMS_IN_COLUMN, CF_FOLLOW_LEFT | CF_FOLLOW_TOP );
+	Menu *pcOption = new Menu( Rect(), MSG_MAINWND_MENU_OPTIONS, ITEMS_IN_COLUMN, CF_FOLLOW_LEFT | CF_FOLLOW_TOP );
+	Menu *pcSpeed = new Menu( Rect(), MSG_MAINWND_MENU_OPTIONS_SPEED, ITEMS_IN_COLUMN, CF_FOLLOW_LEFT | CF_FOLLOW_TOP );
 
-	pcSpeed->AddItem( m_pcMenuLow = new CheckMenu( "Low", new Message( ID_SPEED_LOW ), false ) );
-	pcSpeed->AddItem( m_pcMenuMedium = new CheckMenu( "Medium", new Message( ID_SPEED_MEDIUM ), true ) );
-	pcSpeed->AddItem( m_pcMenuHigh = new CheckMenu( "High", new Message( ID_SPEED_HIGH ), false ) );
-	pcSpeed->AddItem( m_pcMenuPause = new CheckMenu( "Pause", new Message( ID_SPEED_PAUSE ), false ) );
+	pcSpeed->AddItem( m_pcMenuLow = new CheckMenu( MSG_MAINWND_MENU_OPTIONS_SPEED_LOW, new Message( ID_SPEED_LOW ), false ) );
+	pcSpeed->AddItem( m_pcMenuMedium = new CheckMenu( MSG_MAINWND_MENU_OPTIONS_SPEED_MEDIUM, new Message( ID_SPEED_MEDIUM ), true ) );
+	pcSpeed->AddItem( m_pcMenuHigh = new CheckMenu( MSG_MAINWND_MENU_OPTIONS_SPEED_HIGH, new Message( ID_SPEED_HIGH ), false ) );
+	pcSpeed->AddItem( m_pcMenuPause = new CheckMenu( MSG_MAINWND_MENU_OPTIONS_SPEED_PAUSE, new Message( ID_SPEED_PAUSE ), false ) );
 	pcOption->AddItem( pcSpeed );
 
-	pcOption->AddItem( "Save Window Position", new Message( ID_SAVE_WINFRAME ) );
+	pcOption->AddItem( MSG_MAINWND_MENU_OPTIONS_SAVEWINPOS, new Message( ID_SAVE_WINFRAME ) );
 
 
 	/* DEPRECATED:  John Hall 8/17/2001
@@ -257,7 +261,7 @@ void MyWindow::SetupMenus()
 }
 
 //----------------------------------------------------------------------------
-MyWindow::MyWindow():Window( Rect(), "athe_wnd", APP_WINDOW_TITLE, 0 )
+MyWindow::MyWindow():Window( Rect(), "athe_wnd", MSG_MAINWND_TITLE, 0 )
 {
 	m_nUpdateCount = 0;
 
@@ -278,11 +282,11 @@ MyWindow::MyWindow():Window( Rect(), "athe_wnd", APP_WINDOW_TITLE, 0 )
 	pcDevicesPanel = new DevicesPanel( cMainFrame );
 	pcDrivesPanel = new DrivesPanel( cMainFrame );
 
-	m_pcView->AppendTab( "System Info", pcSysInfoPanel );
-	m_pcView->AppendTab( "Drives", pcDrivesPanel );
-	m_pcView->AppendTab( "Devices", pcDevicesPanel );
-	m_pcView->AppendTab( "Processes", pcProcessPanel );
-	m_pcView->AppendTab( "Performance", pcPerformancePanel );
+	m_pcView->AppendTab( MSG_TAB_SYSINFO, pcSysInfoPanel );
+	m_pcView->AppendTab( MSG_TAB_DRIVES, pcDrivesPanel );
+	m_pcView->AppendTab( MSG_TAB_DEVICES, pcDevicesPanel );
+	m_pcView->AppendTab( MSG_TAB_PROCESSES, pcProcessPanel );
+	m_pcView->AppendTab( MSG_TAB_PERFORMANCE, pcPerformancePanel );
 	
 	m_pcView->SetMessage( new Message( ID_UPDATE ) );
 	m_pcView->SetTarget( this );

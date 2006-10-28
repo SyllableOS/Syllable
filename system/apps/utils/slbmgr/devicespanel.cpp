@@ -44,6 +44,8 @@
 
 #include "devicespanel.h"
 
+#include "resources/SlbMgr.h"
+
 using namespace os;
 
 enum
@@ -58,12 +60,12 @@ DevicesPanel::DevicesPanel( const Rect & cFrame ):LayoutView( cFrame, "", NULL, 
 	VLayoutNode *pcRoot = new VLayoutNode( "root" );
 
 
-	m_pcRefreshBut = new Button( Rect( 0, 0, 0, 0 ), "refresh_but", "_Refresh", new Message( ID_REFRESH ), CF_FOLLOW_NONE );
+	m_pcRefreshBut = new Button( Rect( 0, 0, 0, 0 ), "refresh_but", MSG_TAB_DEVICES_BUTTON_REFRESH, new Message( ID_REFRESH ), CF_FOLLOW_NONE );
 	m_pcDevicesList = new TreeView( Rect( 0, 0, 0, 0 ), "devices_list", ListView::F_RENDER_BORDER | ListView::F_NO_AUTO_SORT );
 
 
 	
-	m_pcDevicesList->InsertColumn( "Device", (int)GetBounds().Width() );
+	m_pcDevicesList->InsertColumn( MSG_TAB_DEVICES_DEVICE.c_str(), (int)GetBounds().Width() );
 	
 
 	pcRoot->AddChild( m_pcDevicesList, 1.0f );
@@ -134,7 +136,7 @@ void DevicesPanel::RefreshDevicesList()
 	char zBuf[255];
 	gethostname( zBuf, 255 );
 	os::TreeViewStringNode* pcRootNode = new os::TreeViewStringNode();
-	pcRootNode->AppendString( os::String( "Computer - " ) + os::String( zBuf ) );
+	pcRootNode->AppendString( os::String( MSG_TAB_DEVICES_TREE_COMPUTER.c_str() ) +  os::String( " - " ) + os::String( zBuf ) );
 	pcRootNode->SetIndent( 1 );
 	m_pcDevicesList->InsertNode( pcRootNode );
 	pcRootNode->SetExpanded( true );

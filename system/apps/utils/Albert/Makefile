@@ -3,7 +3,7 @@ COPTS	= -c
 OBJS	= calc.o calculator.o stack.o calcbuttons.o calcdisplay.o togglebutton.o remsa.o base-n.o postoffice.o aboutwin.o
 EXE	= Albert
 
-CATALOGS = da es hu pt-br
+CATALOGS = da es hu pt-br sv
 
 $(EXE) : catalogs $(OBJS)
 	$(CXX) $(OBJS) -lsyllable -lm -o $@

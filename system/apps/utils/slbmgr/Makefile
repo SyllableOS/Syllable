@@ -1,10 +1,27 @@
 COPTS	= -c
 
+CATALOGS = da es hu nl sv
+
 OBJS	= main.o sysinfopanel.o drivespanel.o processpanel.o memview.o cpuview.o performancepanel.o devicespanel.o
 EXE	= SlbMgr
 
-$(EXE) : $(OBJS)
+$(EXE) : catalogs $(OBJS)
 	$(CXX) $(OBJS) -lsyllable -o $@
+	rescopy -r $(EXE) resources/SlbMgr.catalog
+	for CATALOG in $(CATALOGS);do \
+		echo $$CATALOG; \
+		rescopy -a $(EXE) $$CATALOG/SlbMgr.catalog=resources/$$CATALOG/SlbMgr.catalog; \
+	done;
+
+catalogs:
+	cd resources; \
+	catcomp -c SlbMgr.cd; \
+	for CATALOG in $(CATALOGS);do \
+		echo $$CATALOG; \
+		cd $$CATALOG; \
+		catcomp -t SlbMgr.cd; \
+		cd ..; \
+	done;
 
 dist: $(EXE)
 	cp -f $(EXE) $(DIST_DIR)/atheos/sys/bin/$(EXE)
@@ -12,6 +29,10 @@ dist: $(EXE)
 clean:  
 	-rm -f $(OBJS)
 	-rm -f $(EXE)
+	-rm resources/SlbMgr.catalog resources/SlbMgr.h; \
+	for CATALOG in $(CATALOGS);do \
+		rm resources/$$CATALOG/SlbMgr.catalog; \
+	done;
 
 .cpp.o:
 	$(CXX) $(COPTS) $< -o $@

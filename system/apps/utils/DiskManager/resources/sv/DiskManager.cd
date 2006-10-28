@@ -1,0 +1,68 @@
+//
+// DiskManager String Catalog
+//
+// Translated by: Daniel Eriksson
+//
+
+MSG_MAINWND_TITLE=0							Syllable Partitionsredigerare
+
+MSG_MAINWND_MENU_PROGRAM=100				Program
+MSG_MAINWND_MENU_PROGRAM_EXIT				Avsluta
+
+MSG_MAINWND_LIST_DEVICE=200					Enhet
+MSG_MAINWND_LIST_PARTITIONS					Partitioner
+MSG_MAINWND_LIST_SIZE						Storlek
+MSG_MAINWND_LIST_MB							%.2fMB
+
+MSG_MAINWND_BUTONS_QUIT=300					Avsluta
+MSG_MAINWND_BUTONS_PARTITION				Partitionera...
+
+MSG_PARTWND_TITLE=500						Partitionsinställningar
+
+MSG_PARTWND_DISKPARAM=600					Diskparameterar:
+MSG_PARTWND_DISKPARAM_DISKSIZE				Diskstorlek: %.2fMB
+MSG_PARTWND_DISKPARAM_EXTSIZE				Utökad Partitionsstorlek : %.2fMB
+MSG_PARTWND_DISKPARAM_UNITSIZE				Enhetsstorlek: %ld sektorer av %ld bytes (%ld bytes)
+MSG_PARTWND_DISKPARAM_UNUSESSPACE			Unused Space:
+
+MSG_PARTWND_PARTINFO_UNUSED=700				oanvänd
+MSG_PARTWND_PARTINFO_UNKNOWN				*OKÄND*
+MSG_PARTWND_PARTINFO_PARTSIZEZERO			0.0MB
+MSG_PARTWND_PARTINFO_PARTSIZE				%.2fMB
+
+MSG_PARTWND_BUTTONS_CANCEL=800				Avbryt
+MSG_PARTWND_BUTTONS_OK						Ok
+MSG_PARTWND_BUTTONS_DONE					Klar
+MSG_PARTWND_BUTTONS_CLEAR					Rensa
+MSG_PARTWND_BUTTONS_EDITEXT					Redigera Utökad
+MSG_PARTWND_BUTTONS_SORT					Sortera
+MSG_PARTWND_BUTTONS_ADD						Lägg till
+
+MSG_ALERTWND_ERREXT_EXTENDED=1000			Fel!
+MSG_ALERTWND_ERREXT_EXTENDED_TEXT			Ogiltigt utökat partitionsregister!\nDet utökade registret innehåller mer\nän en kapslad utökad partition\nÄndring av partitionsregistret kan orsaka\nförlust av en eller fler logiska partitioner.
+MSG_ALERTWND_ERREXT_EXTENDED_OK				Ok
+
+MSG_ALERTWND_ERREXT_LOGICAL=2000			Fel!
+MSG_ALERTWND_ERREXT_LOGICAL_TEXT			Ogiltigt utökat partitionsregister!\nDet utökade registret innehåller mer\nän  en logisk partition\nÄndring av partitionsregistret kan orsaka\nförlust av en eller fler logiska partitioner.
+MSG_ALERTWND_ERREXT_LOGICAL_OK				Ok
+
+MSG_ALERTWND_CHANGEDLAYOUT=3000				Varning!
+MSG_ALERTWND_CHANGEDLAYOUT_TEXT				Du har ändrat upplägget för en eller flera partitioner.\nAll information på dessa partitioner kommer att gå förlerad.\nÄr du säker på att du vill skriva till partitionsregistret?
+MSG_ALERTWND_CHANGEDLAYOUT_CANCEL			Avbryt
+MSG_ALERTWND_CHANGEDLAYOUT_OK				Ok
+
+MSG_ALERTWND_CHANGEDTYPE=4000				Varning!
+MSG_ALERTWND_CHANGEDTYPE_TEXT				Du har ändrat typen hos en eller fler partitioner.\nDetta borde inte skada någon information på partitionerna men det kan\ngöra det omöjligt att montera partitionerna.\nÄr du säker på att du vill skriva till partitionsregistret?
+MSG_ALERTWND_CHANGEDTYPE_CANCEL				Avbryt
+MSG_ALERTWND_CHANGEDTYPE_OK					Ok
+
+MSG_ALERTWND_CHANGEDSTATUS=5000				Varning!
+MSG_ALERTWND_CHANGEDSTATUS_TEXT				Du har ändrat status på en eller flera partitioner.\nDetta borde inte skada någon information på partitionerna men det kan\ngöra det omöjligt att starta från partitionerna.\nÄr du säker på att du vill skriva till partitionsregistret?
+MSG_ALERTWND_CHANGEDSTATUS_CANCEL			Avbryt
+MSG_ALERTWND_CHANGEDSTATUS_OK				Ok
+
+MSG_ALERTWND_DELPART=6000					Varning!
+MSG_ALERTWND_DELPART_TEXT					Den här operationen kommer att ta bort den nuvarande partitionen.\nAll information på partitionen kommer att gå förlorad.\nÄr du säker på att du vill göra detta?
+MSG_ALERTWND_DELPART_CANCEL					Avbryt
+MSG_ALERTWND_DELPART_OK						Ok
+

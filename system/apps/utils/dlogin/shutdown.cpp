@@ -4,7 +4,9 @@
 
 #include <gui/requesters.h>
 
-ShutdownWindow::ShutdownWindow(Window* pcParent) : Window(Rect(0,0,300,90),"shut_window","Shutdown or Restart?",WND_NO_DEPTH_BUT | WND_NO_ZOOM_BUT | WND_NOT_RESIZABLE)
+#include "resources/dlogin.h"
+
+ShutdownWindow::ShutdownWindow(Window* pcParent) : Window(Rect(0,0,300,90),"shut_window",MSG_SHUTDOWNWND_TITLE,WND_NO_DEPTH_BUT | WND_NO_ZOOM_BUT | WND_NOT_RESIZABLE)
 {
 	pcParentWindow = pcParent;
 	Layout();
@@ -21,12 +23,12 @@ void ShutdownWindow::Layout()
 	HLayoutNode* pcButtonNode = new HLayoutNode("but_node");
 	pcButtonNode->SetVAlignment(ALIGN_CENTER);
 	pcButtonNode->SetHAlignment(ALIGN_CENTER);
-	pcButtonNode->AddChild(pcCancelButton = new Button(Rect(),"cancel_but","_Cancel",new Message(M_CANCEL)));
+	pcButtonNode->AddChild(pcCancelButton = new Button(Rect(),"cancel_but",MSG_SHUTDOWNWND_BUTTON_CANCEL,new Message(M_CANCEL)));
 	pcButtonNode->AddChild(new HLayoutSpacer("",10,10));	
-	pcButtonNode->AddChild(pcOkButton = new Button(Rect(),"ok_but","_Okay",new Message(M_SHUTDOWN)));
+	pcButtonNode->AddChild(pcOkButton = new Button(Rect(),"ok_but",MSG_SHUTDOWNWND_BUTTON_OK,new Message(M_SHUTDOWN)));
 	pcButtonNode->SameWidth("cancel_but","ok_but",NULL);
 	pcButtonNode->SameHeight("cancel_but","ok_but",NULL);
-	pcRoot->AddChild(pcShutString = new StringView(Rect(),"shut_string","What do you want to do:"));
+	pcRoot->AddChild(pcShutString = new StringView(Rect(),"shut_string",MSG_SHUTDOWNWND_TEXT));
 	pcRoot->AddChild(pcShutDrop = new DropdownMenu(Rect(),""));
 	pcShutDrop->SetMinPreferredSize(20);
 	pcShutDrop->SetMaxPreferredSize(20);
@@ -76,8 +78,8 @@ bool ShutdownWindow::OkToQuit()
 
 void ShutdownWindow::AddDropItems()
 {
-	pcShutDrop->AppendItem("Shutdown");
-	pcShutDrop->AppendItem("Restart");
+	pcShutDrop->AppendItem(MSG_SHUTDOWNWND_DROPDOWN_SHUTDOWN);
+	pcShutDrop->AppendItem(MSG_SHUTDOWNWND_DROPDOWN_REBOOT);
 	pcShutDrop->SetSelection(0,false);
 }
 

@@ -6,10 +6,12 @@
 #include <crypt.h>
 #include <gui/requesters.h>
 
+#include "resources/dlogin.h"
+
 using namespace os;
 
 
-MainWindow::MainWindow(const Rect& cRect) : os::Window(cRect,"login_window", "Login:",WND_NO_BORDER | WND_BACKMOST )
+MainWindow::MainWindow(const Rect& cRect) : os::Window(cRect,"login_window", MSG_MAINWND_TITLE,WND_NO_BORDER | WND_BACKMOST )
 {
 	/*do nothing in here, let init do all the work*/
 }
@@ -80,7 +82,7 @@ void MainWindow::HandleMessage( os::Message * pcMessage )
 			
 			else /*a user is not selected*/
 			{
-				Alert* pcError = new Alert("Select an icon, please.","You must select a user icon before logging in.",Alert::ALERT_INFO,0,"Okay",NULL);
+				Alert* pcError = new Alert(MSG_ALERT_NOTSELECTED_TITLE, MSG_ALERT_NOTSELECTED_TEXT,Alert::ALERT_INFO,0,MSG_ALERT_NOTSELECTED_OK.c_str(),NULL);
 				pcError->Go(new Invoker());
 			}
 			
@@ -163,7 +165,7 @@ void MainWindow::Authorize(const char* pzLoginName, const char* pzPassword )
                 else
                 {
 					/*passwords don't match... flag error*/
-                    Alert* pcAlert = new Alert( "Login failed",  "Incorrect password.\n",Alert::ALERT_WARNING,0, "Sorry", NULL );
+                    Alert* pcAlert = new Alert( MSG_ALERT_WRONGPASS_TITLE, MSG_ALERT_WRONGPASS_TEXT+"\n",Alert::ALERT_WARNING,0, MSG_ALERT_WRONGPASS_OK.c_str(), NULL );
                     pcAlert->Go(new Invoker(new Message (M_BAD_PASS), this));
                 }
                 break;
@@ -171,7 +173,7 @@ void MainWindow::Authorize(const char* pzLoginName, const char* pzPassword )
             else
             {
 				/*no such user available*/
-                Alert* pcAlert = new Alert( "Login failed",  "Please be advised,\n\nno such user is\nregistered to use\nthis computer.\n",Alert::ALERT_WARNING, 0, "OK", NULL );
+                Alert* pcAlert = new Alert( MSG_ALERT_NOUSER_TITLE, MSG_ALERT_NOUSER_TEXT+"\n",Alert::ALERT_WARNING, 0, MSG_ALERT_NOUSER_OK.c_str(), NULL );
                 pcAlert->Go(new Invoker());
             }
             break;

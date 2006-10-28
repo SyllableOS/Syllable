@@ -44,6 +44,7 @@
 #include "cpuview.h"
 #include "memview.h"
 #include "w8378x_driver.h"
+#include "resources/SlbMgr.h"
 
 using namespace os;
 
@@ -111,11 +112,11 @@ PerformancePanel::PerformancePanel( const Rect& cFrame ) : LayoutView( cFrame, "
    
     /* All of the Mem. Fields */ 
     m_pcMemUsage     = new MemMeter( Rect( 0, 0, 0, 0 ), "mem_usage", WID_WILL_DRAW | WID_FULL_UPDATE_ON_RESIZE );
-    m_pcMemTitle     = new StringView( Rect( 0, 0, 0, 0 ), "mem_title", "Memory Usage", ALIGN_CENTER, WID_WILL_DRAW );
-    m_pcCpuTitle     = new StringView( Rect( 0, 0, 0, 0 ), "cpu_title", "Processor Usage", ALIGN_CENTER, WID_WILL_DRAW );
-    m_pcMemTitleStr1 = new StringView( Rect( 0, 0, 0, 0 ), "mem_title_str1", "Total", ALIGN_LEFT, WID_WILL_DRAW );
-    m_pcMemTitleStr2 = new StringView( Rect( 0, 0, 0, 0 ), "mem_title_str2", "Free", ALIGN_LEFT, WID_WILL_DRAW );
-    m_pcMemTitleStr3 = new StringView( Rect( 0, 0, 0, 0 ), "mem_title_str3", "Cache", ALIGN_LEFT, WID_WILL_DRAW );
+    m_pcMemTitle     = new StringView( Rect( 0, 0, 0, 0 ), "mem_title", MSG_TAB_PERFORMANCE_MEMORYUSAGE, ALIGN_CENTER, WID_WILL_DRAW );
+    m_pcCpuTitle     = new StringView( Rect( 0, 0, 0, 0 ), "cpu_title", MSG_TAB_PERFORMANCE_PROCESSORUSAGE, ALIGN_CENTER, WID_WILL_DRAW );
+    m_pcMemTitleStr1 = new StringView( Rect( 0, 0, 0, 0 ), "mem_title_str1", MSG_TAB_PERFORMANCE_MEMTOTAL, ALIGN_LEFT, WID_WILL_DRAW );
+    m_pcMemTitleStr2 = new StringView( Rect( 0, 0, 0, 0 ), "mem_title_str2", MSG_TAB_PERFORMANCE_MEMFREE, ALIGN_LEFT, WID_WILL_DRAW );
+    m_pcMemTitleStr3 = new StringView( Rect( 0, 0, 0, 0 ), "mem_title_str3", MSG_TAB_PERFORMANCE_MEMCACHE, ALIGN_LEFT, WID_WILL_DRAW );
 
     m_pcMemUsageStr1 = new StringView( Rect( 0, 0, 0, 0 ), "mem_usage_str1", "MaxPages", ALIGN_CENTER, WID_WILL_DRAW );
     m_pcMemUsageStr2 = new StringView( Rect( 0, 0, 0, 0 ), "mem_usage_str2", "BlockCache", ALIGN_CENTER, WID_WILL_DRAW );
@@ -272,51 +273,51 @@ void PerformancePanel::UpdatePerformanceList()
     float avLoads[MAX_CPU_COUNT];
     GetLoad( m_nCPUCount, avLoads );
   
-    char* pzPostfix;
-    char* pzCachePF;
-    char* pzTotalPF;
+    String pzPostfix;
+    String pzCachePF;
+    String pzTotalPF;
     float vFreeMem = float(sInfo.nFreePages * PAGE_SIZE);
     float vCache   = float(sInfo.nBlockCacheSize);
     float vTotal   = float(sInfo.nMaxPages * PAGE_SIZE);
     
     if ( vFreeMem > 1000000.0f ) {
 	vFreeMem /= 1000000.0f;
-	pzPostfix = "Mb";
+	pzPostfix = MSG_TAB_PERFORMANCE_MEGABYTE;
     } else if ( vFreeMem > 1000.0f ) {
 	vFreeMem /= 1000.0f;
-	pzPostfix = "Kb";
+	pzPostfix = MSG_TAB_PERFORMANCE_KILOBYTE;
     } else {
-	pzPostfix = "b";
+	pzPostfix = MSG_TAB_PERFORMANCE_BYTE;
     }
     if ( vCache > 1000000.0f ) {
 	vCache /= 1000000.0f;
-	pzCachePF = "Mb";
+	pzCachePF = MSG_TAB_PERFORMANCE_MEGABYTE;
     } else if ( vCache > 1000.0f ) {
 	vCache /= 1000.0f;
-	pzCachePF = "Kb";
+	pzCachePF = MSG_TAB_PERFORMANCE_KILOBYTE;
     } else {
-	pzCachePF = "b";
+	pzCachePF = MSG_TAB_PERFORMANCE_BYTE;
     }
     if ( vTotal > 1000000.0f ) {
 	vTotal /= 1000000.0f;
-	pzTotalPF = "Mb";
+	pzTotalPF = MSG_TAB_PERFORMANCE_MEGABYTE;
     } else if ( vTotal > 1000.0f ) {
 	vTotal /= 1000.0f;
-	pzTotalPF = "Kb";
+	pzTotalPF = MSG_TAB_PERFORMANCE_KILOBYTE;
     } else {
-	pzTotalPF = "b";
+	pzTotalPF = MSG_TAB_PERFORMANCE_BYTE;
     }
     
     char zBuffer[256];
     
     /* Setting Memory Strings */
-    sprintf( zBuffer, "%.2f%s", vTotal, pzTotalPF );
+    sprintf( zBuffer, "%.2f%s", vTotal, pzTotalPF.c_str() );
     m_pcMemUsageStr1->SetString( zBuffer );
 
-    sprintf( zBuffer, "%.2f%s", vFreeMem, pzPostfix );
+    sprintf( zBuffer, "%.2f%s", vFreeMem, pzPostfix.c_str() );
     m_pcMemUsageStr2->SetString( zBuffer );
 
-    sprintf( zBuffer, "%.2f%s", vCache, pzCachePF );
+    sprintf( zBuffer, "%.2f%s", vCache, pzCachePF.c_str() );
     m_pcMemUsageStr3->SetString( zBuffer );
     /**************************/
 

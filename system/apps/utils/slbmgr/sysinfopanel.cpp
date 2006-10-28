@@ -50,6 +50,7 @@
 #include <util/appserverconfig.h>
 
 #include "sysinfopanel.h"
+#include "resources/SlbMgr.h"
 
 using namespace os;
 
@@ -64,19 +65,19 @@ void human( char *pzBuffer, off_t nValue )
 {
 	if( nValue > ( 1024 * 1024 * 1024 ) )
 	{
-		sprintf( pzBuffer, "%.1f Gb", ( ( double )nValue ) / ( 1024.0 * 1024.0 * 1024.0 ) );
+		sprintf( pzBuffer, MSG_TAB_SYSINFO_GIGABYTE.c_str(), ( ( double )nValue ) / ( 1024.0 * 1024.0 * 1024.0 ) );
 	}
 	else if( nValue > ( 1024 * 1024 ) )
 	{
-		sprintf( pzBuffer, "%.1f Mb", ( ( double )nValue ) / ( 1024.0 * 1024.0 ) );
+		sprintf( pzBuffer, MSG_TAB_SYSINFO_MEGABYTE.c_str(), ( ( double )nValue ) / ( 1024.0 * 1024.0 ) );
 	}
 	else if( nValue > 1024 )
 	{
-		sprintf( pzBuffer, "%.1f Kb", ( ( double )nValue ) / 1024.0 );
+		sprintf( pzBuffer, MSG_TAB_SYSINFO_KILOBYTE.c_str(), ( ( double )nValue ) / 1024.0 );
 	}
 	else
 	{
-		sprintf( pzBuffer, "%.1f b", ( ( double )nValue ) );
+		sprintf( pzBuffer, MSG_TAB_SYSINFO_BYTE.c_str(), ( ( double )nValue ) );
 	}
 }
 
@@ -130,9 +131,9 @@ SysInfoPanel::SysInfoPanel( const Rect & cFrame ):LayoutView( cFrame, "", NULL, 
 
 void SysInfoPanel::SetUpVersionView()
 {
-	m_pcVersionView->InsertColumn( "Name", 100 );
-	m_pcVersionView->InsertColumn( "Number", 80 );
-	m_pcVersionView->InsertColumn( "Build Date", 80 );
+	m_pcVersionView->InsertColumn( MSG_TAB_SYSINFO_VER_NAME.c_str(), 100 );
+	m_pcVersionView->InsertColumn( MSG_TAB_SYSINFO_VER_VERSION.c_str(), 80 );
+	m_pcVersionView->InsertColumn( MSG_TAB_SYSINFO_VER_BUILDDATE.c_str(), 80 );
 }
 
 /**
@@ -154,22 +155,22 @@ ListViewStringRow *SysInfoPanel::AddRow( char *pzCol1, char *pzCol2, char *pzCol
 
 void SysInfoPanel::SetUpCPUView()
 {
-	m_pcCPUView->InsertColumn( "CPU", 40 );
-	m_pcCPUView->InsertColumn( "Core Speed", 80 );
-	m_pcCPUView->InsertColumn( "Bus Speed", 80 );
-	m_pcCPUView->InsertColumn( "Features", 100 );
+	m_pcCPUView->InsertColumn( MSG_TAB_SYSINFO_CPU_CPU.c_str(), 40 );
+	m_pcCPUView->InsertColumn( MSG_TAB_SYSINFO_CPU_CORESPEED.c_str(), 80 );
+	m_pcCPUView->InsertColumn( MSG_TAB_SYSINFO_CPU_BUSSPEED.c_str(), 80 );
+	m_pcCPUView->InsertColumn( MSG_TAB_SYSINFO_CPU_FEATURES.c_str(), 100 );
 }
 
 void SysInfoPanel::SetUpMemoryView()
 {
-	m_pcMemoryView->InsertColumn( "Memory Type", 120 );
-	m_pcMemoryView->InsertColumn( "Amount", 100 );
+	m_pcMemoryView->InsertColumn( MSG_TAB_SYSINFO_MEM_MEMTYPE.c_str(), 120 );
+	m_pcMemoryView->InsertColumn( MSG_TAB_SYSINFO_MEM_AMOUNT.c_str(), 100 );
 }
 
 void SysInfoPanel::SetUpAdditionView()
 {
-	m_pcAdditionView->InsertColumn( "Additional Info", 150 );
-	m_pcAdditionView->InsertColumn( "Amount", 100 );
+	m_pcAdditionView->InsertColumn( MSG_TAB_SYSINFO_ADD_ADDINFO.c_str(), 150 );
+	m_pcAdditionView->InsertColumn( MSG_TAB_SYSINFO_ADD_AMOUNT.c_str(), 100 );
 }
 
 void SysInfoPanel::UpdateAdditionalInfo( bool bUpdate )
@@ -346,7 +347,7 @@ void SysInfoPanel::UpdateUptime( bool bUpdate )
 	nSec = nUpTime / 1000000LL;
 
  /*** SETTING THE UPTIME ***/
-	sprintf( szTmp, "Running For: %3d days, %2d hrs, %2d mins, %2d secs", nDays, nHour, nMin, nSec );
+	sprintf( szTmp, MSG_TAB_SYSINFO_UPTIME_UPTIME.c_str(), nDays, nHour, nMin, nSec );
 
 	m_pcUptime->SetString( szTmp );
 	//m_pcUptimeView->Clear();
@@ -378,7 +379,7 @@ void SysInfoPanel::SetupPanel()
 
 	uname( &uInfo );
 
-	sprintf( szRow1, "Syllable" );
+	sprintf( szRow1, MSG_TAB_SYSINFO_VER_SYLLABLE.c_str() );
 	sprintf( szRow3, "%s", sSysInfo.zKernelBuildDate );
 
 	if( sSysInfo.nKernelVersion & 0xffff000000000000LL )
@@ -401,7 +402,7 @@ void SysInfoPanel::SetupPanel()
      *  Done with adding AtheMgr's Information
      *********************************************/
 
-	sprintf( szRow1, "SlbMgr" );
+	sprintf( szRow1, MSG_TAB_SYSINFO_VER_SLBMGR.c_str() );
 	sprintf( szRow2, "%s", APP_VERSION );
 	sprintf( szRow3, "%s", gApp_Date );
 
@@ -431,8 +432,8 @@ void SysInfoPanel::SetupPanel()
 
 
 		sprintf( szRow1, "%d", x );
-		sprintf( szRow2, "%lld MHz", ( sSysInfo.asCPUInfo[x].nCoreSpeed + 500000 ) / 1000000 );
-		sprintf( szRow3, "%lld MHz", ( sSysInfo.asCPUInfo[x].nBusSpeed + 500000 ) / 1000000 );
+		sprintf( szRow2, MSG_TAB_SYSINFO_MHZ.c_str(), ( sSysInfo.asCPUInfo[x].nCoreSpeed + 500000 ) / 1000000 );
+		sprintf( szRow3, MSG_TAB_SYSINFO_MHZ.c_str(), ( sSysInfo.asCPUInfo[x].nBusSpeed + 500000 ) / 1000000 );
 		strcpy( szRow4, "" );
 
 		if( sSysInfo.nCPUType & CPU_FEATURE_MMX )
