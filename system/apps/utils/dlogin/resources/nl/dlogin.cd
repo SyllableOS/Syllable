@@ -1,0 +1,35 @@
+//
+// DLogin Vertalingen
+//
+// Vertaald door: Kaj de Vos
+//
+
+MSG_MAINWND_TITLE=0						Aanmelden
+
+MSG_MAINWND_PASSWORD=100					Wachtwoord:
+MSG_MAINWND_BUTTON_LOGIN					_Aanmelden
+MSG_MAINWND_BUTTON_SHUTDOWN					Af_sluiten
+
+MSG_SHUTDOWNWND_TITLE=200				Afsluiten of herstarten
+MSG_SHUTDOWNWND_TEXT						Wat te doen:
+MSG_SHUTDOWNWND_BUTTON_CANCEL				_Annuleren
+MSG_SHUTDOWNWND_BUTTON_OK					_OK
+MSG_SHUTDOWNWND_DROPDOWN_SHUTDOWN			Afsluiten
+MSG_SHUTDOWNWND_DROPDOWN_REBOOT				Herstarten
+
+MSG_ALERT_NOTSELECTED_TITLE=1000		Graag een pictogram selecteren
+MSG_ALERT_NOTSELECTED_TEXT					Selecteer alsjeblieft een pictogram van een gebruiker voor het aanmelden.
+MSG_ALERT_NOTSELECTED_OK					OK
+
+MSG_ALERT_WRONGPASS_TITLE=2000			Aanmelding mislukt
+MSG_ALERT_WRONGPASS_TEXT					Dit wachtwoord is onjuist.
+MSG_ALERT_WRONGPASS_OK						OK
+
+MSG_ALERT_NOUSER_TITLE=3000				Aanmelding mislukt
+MSG_ALERT_NOUSER_TEXT						Deze gebruikersnaam is onbekend.
+MSG_ALERT_NOUSER_OK							OK
+
+MSG_ALERT_CANTFINDUSERS_TITLE=4000		Kon geen gebruikers vinden
+MSG_ALERT_CANTFINDUSERS_TEXT				Systeemfout: kon geen gebruikersgegevens inlezen.
+MSG_ALERT_CANTFINDUSERS_OK					OK
+
