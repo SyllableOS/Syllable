@@ -2,7 +2,7 @@ COPTS = -c
 OBJS = main.o mainwindow.o modifyconnection.o configuration.o detectmsgwindow.o validator.o
 EXE = Network
 
-CATALOGS = da es hu pt-br
+CATALOGS = da es hu pt-br sv
 
 $(EXE): catalogs $(OBJS)
 	$(CXX) $(OBJS) -lsyllable -o $(EXE)

@@ -1,0 +1,22 @@
+//
+// Preferences/Media String Catalog
+//
+// Translated by: Maximo Pech Jaramillo <makzpj@gmail.com>
+//
+
+MSG_MAINWND_TITLE=0								Multimedia
+
+MSG_MAINWND_DEVICE=100							Dispositivo
+MSG_MAINWND_DEFAULT_INPUT						Entrada predeterminada
+MSG_MAINWND_DEFAULT_OUTPUT_AUDIO				Salida de audio predeterminada
+MSG_MAINWND_DEFAULT_OUTPUT_VIDEO				Salida de video predeterminada
+
+MSG_MAINWND_BUTTON_STREAMVOLUMES=200			Volumen de flujos...
+MSG_MAINWND_BUTTON_APPLY						_Aplicar
+MSG_MAINWND_BUTTON_UNDO							_Deshacer
+MSG_MAINWND_BUTTON_DEFAULT						_Predeterminado
+
+MSG_MAINWND_THISINPUTHASNOCONTROLS=300			Este plugin de entrada no tiene controles
+MSG_MAINWND_THISCODECHASNOCONTROLS				Este codec no tiene controles
+MSG_MAINWND_THISOUTPUTHASNOCONTROLS				Este plugin de salida no tiene controles
+

@@ -1,7 +1,7 @@
 #Makefile for Dock
 COPTS = -c
 
-CATALOGS = da es hu pt-br
+CATALOGS = da es hu pt-br sv
 
 APPBIN = /atheos/Applications/Preferences
 OBJS = Prefs.o

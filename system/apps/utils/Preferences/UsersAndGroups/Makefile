@@ -3,7 +3,7 @@ OBJS = main.o users_window.o user_propertiesdlg.o changepwddlg.o group_propertie
 EXE = Users
 TARGET_EXE = Users\ \&\ Groups
 
-CATALOGS = da es hu pt-br
+CATALOGS = da es hu pt-br sv
 
 #Define TEST if you're testing the Preferences; doesn't overwrite system files
 #CXXFLAGS += -DTEST

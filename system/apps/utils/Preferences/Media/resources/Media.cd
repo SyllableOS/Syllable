@@ -1,0 +1,22 @@
+//
+// Preferences/Media String Catalog
+//
+// Translated by: Not Translated
+//
+
+MSG_MAINWND_TITLE=0								Media
+
+MSG_MAINWND_DEVICE=100							Device
+MSG_MAINWND_DEFAULT_INPUT						Default input
+MSG_MAINWND_DEFAULT_OUTPUT_AUDIO				Default audio output
+MSG_MAINWND_DEFAULT_OUTPUT_VIDEO				Default video output
+
+MSG_MAINWND_BUTTON_STREAMVOLUMES=200			_Stream volumes...
+MSG_MAINWND_BUTTON_APPLY						_Apply
+MSG_MAINWND_BUTTON_UNDO							_Undo
+MSG_MAINWND_BUTTON_DEFAULT						_Default
+
+MSG_MAINWND_THISINPUTHASNOCONTROLS=300			This input has no controls
+MSG_MAINWND_THISCODECHASNOCONTROLS				This codec has no controls
+MSG_MAINWND_THISOUTPUTHASNOCONTROLS				This output has no controls
+

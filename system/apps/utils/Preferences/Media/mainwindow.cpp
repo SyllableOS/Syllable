@@ -32,6 +32,7 @@
 #include "main.h"
 #include "mainwindow.h"
 #include "messages.h"
+#include "resources/Media.h"
 
 // Settings treeview
 
@@ -61,7 +62,7 @@ InputPrefs::InputPrefs( os::MediaInput* pcInput ) : os::VLayoutNode( "Prefs" )
 	m_pcConfigView = m_pcInput->GetConfigurationView();
 	if( m_pcConfigView == NULL )
 	{
-		m_pcConfigView = new os::StringView( os::Rect(), "String", "This input has no controls" ); 
+		m_pcConfigView = new os::StringView( os::Rect(), "String", MSG_MAINWND_THISINPUTHASNOCONTROLS );
 	}
 	AddChild( m_pcConfigView );
 	AddChild( new os::VLayoutSpacer( "" ) );
@@ -84,7 +85,7 @@ CodecPrefs::CodecPrefs( os::MediaCodec* pcCodec ) : os::VLayoutNode( "Prefs" )
 	m_pcConfigView = m_pcCodec->GetConfigurationView();
 	if( m_pcConfigView == NULL )
 	{
-		m_pcConfigView = new os::StringView( os::Rect(), "String", "This codec has no controls" ); 
+		m_pcConfigView = new os::StringView( os::Rect(), "String", MSG_MAINWND_THISCODECHASNOCONTROLS );
 	}
 	AddChild( m_pcConfigView );
 	AddChild( new os::VLayoutSpacer( "" ) );
@@ -107,7 +108,7 @@ OutputPrefs::OutputPrefs( os::MediaOutput* pcOutput ) : os::VLayoutNode( "Prefs"
 	m_pcConfigView = m_pcOutput->GetConfigurationView();
 	if( m_pcConfigView == NULL )
 	{
-		m_pcConfigView = new os::StringView( os::Rect(), "String", "This output has no controls" ); 
+		m_pcConfigView = new os::StringView( os::Rect(), "String", MSG_MAINWND_THISOUTPUTHASNOCONTROLS );
 	}
 	AddChild( m_pcConfigView );
 	AddChild( new os::VLayoutSpacer( "" ) );
@@ -122,7 +123,7 @@ OutputPrefs::~OutputPrefs()
 }
 
 
-MainWindow::MainWindow( const os::Rect & cFrame ):os::Window( cFrame, "MainWindow", "Media" )
+MainWindow::MainWindow( const os::Rect & cFrame ):os::Window( cFrame, "MainWindow", MSG_MAINWND_TITLE )
 {
 	os::Rect cBounds = GetBounds();
 	os::Rect cRect = os::Rect( 0, 0, 0, 0 );
@@ -140,7 +141,7 @@ MainWindow::MainWindow( const os::Rect & cFrame ):os::Window( cFrame, "MainWindo
 	// Create settings tree
 	os::HLayoutNode* pcHDevice = new os::HLayoutNode( "HDevice", 0.0f );
 	pcHDevice->SetBorders( os::Rect( 0, 5, 0, 5 ) );
-	pcHDevice->AddChild( new os::StringView( os::Rect(), "DeviceLabel", "Device" ), 0.0f );
+	pcHDevice->AddChild( new os::StringView( os::Rect(), "DeviceLabel", MSG_MAINWND_DEVICE ), 0.0f );
 	pcDevice = new os::DropdownMenu( os::Rect(), "Device" );
 	pcDevice->SetMinPreferredSize( 18 );
 	pcDevice->SetSelectionMessage( new os::Message( M_MW_DEVICE ) );
@@ -163,7 +164,7 @@ MainWindow::MainWindow( const os::Rect & cFrame ):os::Window( cFrame, "MainWindo
 	// Create default dropdown menus
 	os::HLayoutNode* pcHDefaultInput = new os::HLayoutNode( "HDefaultInput", 0.0f );
 	pcHDefaultInput->SetBorders( os::Rect( 0, 5, 0, 5 ) );
-	pcHDefaultInput->AddChild( new os::StringView( os::Rect(), "DefInputString", "Default input" ) );
+	pcHDefaultInput->AddChild( new os::StringView( os::Rect(), "DefInputString", MSG_MAINWND_DEFAULT_INPUT ) );
 	pcDefaultInput = new os::DropdownMenu( os::Rect(), "DefaultInput" );
 	pcDefaultInput->SetMinPreferredSize( 18 );
 	pcDefaultInput->SetSelectionMessage( new os::Message( M_MW_INPUT ) );
@@ -176,7 +177,7 @@ MainWindow::MainWindow( const os::Rect & cFrame ):os::Window( cFrame, "MainWindo
 	
 	os::HLayoutNode* pcHDefaultAudioOut = new os::HLayoutNode( "HDefaultAudioOut", 0.0f );
 	pcHDefaultAudioOut->SetBorders( os::Rect( 0, 5, 0, 5 ) );
-	pcHDefaultAudioOut->AddChild( new os::StringView( os::Rect(), "DefAudioOutString", "Default audio output" ) );
+	pcHDefaultAudioOut->AddChild( new os::StringView( os::Rect(), "DefAudioOutString", MSG_MAINWND_DEFAULT_OUTPUT_AUDIO ) );
 	pcDefaultAudioOut = new os::DropdownMenu( os::Rect(), "DefaultAudioOut" );
 	pcDefaultAudioOut->SetMinPreferredSize( 18 );
 	pcDefaultAudioOut->SetSelectionMessage( new os::Message( M_MW_AUDIOOUTPUT ) );
@@ -189,7 +190,7 @@ MainWindow::MainWindow( const os::Rect & cFrame ):os::Window( cFrame, "MainWindo
 
 	os::HLayoutNode* pcHDefaultVideoOut = new os::HLayoutNode( "HDefaultVideoOut", 0.0f );
 	pcHDefaultVideoOut->SetBorders( os::Rect( 0, 5, 0, 5 ) );
-	pcHDefaultVideoOut->AddChild( new os::StringView( os::Rect(), "DefVideoOutString", "Default video output" ) );
+	pcHDefaultVideoOut->AddChild( new os::StringView( os::Rect(), "DefVideoOutString", MSG_MAINWND_DEFAULT_OUTPUT_VIDEO ) );
 	pcDefaultVideoOut = new os::DropdownMenu( os::Rect(), "DefaultVideoOut" );
 	pcDefaultVideoOut->SetMinPreferredSize( 18 );
 	pcDefaultVideoOut->SetSelectionMessage( new os::Message( M_MW_VIDEOOUTPUT ) );
@@ -209,13 +210,13 @@ MainWindow::MainWindow( const os::Rect & cFrame ):os::Window( cFrame, "MainWindo
 	pcHLButtons = new os::HLayoutNode( "HLButtons" );
 	pcHLButtons->SetBorders( os::Rect( 0, 5, 0, 0 ) );
 	pcHLButtons->AddChild( new os::HLayoutSpacer( "" ) );
-	pcHLButtons->AddChild( pcBControls = new os::Button( cRect, "BControls", "Stream volumes...", new os::Message( M_MW_CONTROLS ) ) );
+	pcHLButtons->AddChild( pcBControls = new os::Button( cRect, "BControls", MSG_MAINWND_BUTTON_STREAMVOLUMES, new os::Message( M_MW_CONTROLS ) ) );
 	pcHLButtons->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f ) );
-	pcHLButtons->AddChild( pcBApply = new os::Button( cRect, "BApply", "Apply", new os::Message( M_MW_APPLY ) ) );
+	pcHLButtons->AddChild( pcBApply = new os::Button( cRect, "BApply", MSG_MAINWND_BUTTON_APPLY, new os::Message( M_MW_APPLY ) ) );
 	pcHLButtons->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f ) );
-	pcHLButtons->AddChild( pcBUndo = new os::Button( cRect, "BUndo", "Undo", new os::Message( M_MW_UNDO ) ) );
+	pcHLButtons->AddChild( pcBUndo = new os::Button( cRect, "BUndo", MSG_MAINWND_BUTTON_UNDO, new os::Message( M_MW_UNDO ) ) );
 	pcHLButtons->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f ) );
-	pcHLButtons->AddChild( pcBDefault = new os::Button( cRect, "BDefault", "Default", new os::Message( M_MW_DEFAULT ) ) );
+	pcHLButtons->AddChild( pcBDefault = new os::Button( cRect, "BDefault", MSG_MAINWND_BUTTON_DEFAULT, new os::Message( M_MW_DEFAULT ) ) );
 	pcHLButtons->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f ) );
 	pcHLButtons->SameWidth( "BControls", "BApply", "BUndo", "BDefault", NULL );
 	pcHLButtons->SameHeight( "BControls", "BApply", "BUndo", "BDefault", NULL );
@@ -499,17 +500,4 @@ bool MainWindow::OkToQuit()
 	os::Application::GetInstance()->PostMessage( os::M_QUIT );
 	return true;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 

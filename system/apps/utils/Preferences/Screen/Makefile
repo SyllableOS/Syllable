@@ -2,7 +2,7 @@ COPTS = -c
 OBJS = main.o mainwindow.o
 EXE = Screen
 
-CATALOGS = da es hu pt-br
+CATALOGS = da es hu pt-br sv
 
 $(EXE): catalogs $(OBJS)
 	$(CXX) $(OBJS) -lsyllable -o $(EXE)

@@ -1,0 +1,22 @@
+//
+// Preferences/Media String Catalog
+//
+// Translated by: Flemming H. Sørensen (BurningShadow)
+//
+
+MSG_MAINWND_TITLE=0								Media Indstillinger
+
+MSG_MAINWND_DEVICE=100							Enhed:
+MSG_MAINWND_DEFAULT_INPUT						Standard input
+MSG_MAINWND_DEFAULT_OUTPUT_AUDIO				Standard Lyd-output
+MSG_MAINWND_DEFAULT_OUTPUT_VIDEO				Standard Video-output
+
+MSG_MAINWND_BUTTON_STREAMVOLUMES=200			_Lyd-styrke...
+MSG_MAINWND_BUTTON_APPLY						_Aktiver
+MSG_MAINWND_BUTTON_UNDO							_Gendan
+MSG_MAINWND_BUTTON_DEFAULT						_Standard
+
+MSG_MAINWND_THISINPUTHASNOCONTROLS=300			Dette input har ingen indstillinger
+MSG_MAINWND_THISCODECHASNOCONTROLS				Dette codec har ingen indstillinger
+MSG_MAINWND_THISOUTPUTHASNOCONTROLS				Dette output har ingen indstillinger
+

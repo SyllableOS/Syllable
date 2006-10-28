@@ -34,6 +34,8 @@ int main( int argc, char *argv[] )
 
 PrefsMediaApp::PrefsMediaApp():os::Application( "application/x-vnd-MediaPreferences" )
 {
+	SetCatalog("Media.catalog");
+
 	// Get screen width and height to centre the window
 	os::Desktop * pcDesktop = new os::Desktop();
 	
@@ -63,7 +65,4 @@ PrefsMediaApp::~PrefsMediaApp()
 {
 	m_pcManager->Put();
 }
-
-
-
 
