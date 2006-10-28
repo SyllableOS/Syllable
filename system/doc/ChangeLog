@@ -1,3 +1,7 @@
+* October 23 2006, Flemming Sørensen *
+
+Merged localization patches, and new translations collected from several contributors.
+
 * October 23 2006, Kristian Van Der Vliet *
 
 Patched drive probing in the ata_pci driver for certain drives that set the ATA
