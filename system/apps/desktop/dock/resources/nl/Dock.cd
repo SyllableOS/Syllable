@@ -1,0 +1,37 @@
+//
+// Dock String Catalog
+//
+// Translated by: Ruud Kuin en Bas de Lange
+//
+
+MSG_MENU_CATEGORY_OTHER=1000				Hulpmiddelen
+MSG_MENU_CATEGORY_PREFERENCES				Voorkeuren
+MSG_MENU_CATEGORY_INTERNET					Internet
+MSG_MENU_CATEGORY_MEDIA						Multi Media
+MSG_MENU_CATEGORY_OFFICE					Kantoor
+MSG_MENU_CATEGORY_DEVELOPMENT				Ontwikkeling
+MSG_MENU_CATEGORY_GAMES						Spellen
+MSG_MENU_CATEGORY_EMULATORS					Emulators
+
+MSG_MENU_ABOUT_MENU=2000					Informatie...
+MSG_MENU_ABOUT_TITLE						Informatie over Syllable
+MSG_MENU_ABOUT_BUILDDATE					Ontwikkelingsdatum:
+MSG_MENU_ABOUT_TEXTONE						Kijk
+MSG_MENU_ABOUT_TEXTTWO						voor updates en informatie
+MSG_MENU_ABOUT_BUTTON_OK					Ok
+MSG_MENU_ABOUT_BUTTON_ADVANCED				Geavanceerd...
+
+MSG_MENU_QUIT_MENU=3000						Stop...
+MSG_MENU_QUIT_TITLE							Stop
+MSG_MENU_QUIT_TEXT							Wat wil je doen?
+MSG_MENU_QUIT_LOGOUT						Uitloggen
+MSG_MENU_QUIT_SHUTDOWN						Afsluiten
+MSG_MENU_QUIT_REBOOT						Herstarten
+MSG_MENU_QUIT_CANCEL						Annuleren
+
+MSG_PLUGIN_ALERT_TITLE=4000					Dock
+MSG_PLUGIN_ALERT_TEXT						Kopieer de Dock-plugins naar /system/extensions/dock\n voor je ze aan de Dock probeert toe te voegen.
+MSG_PLUGIN_ALERT_OK							Ok
+
+MSG_OPENAPP=5000							Openen met...
+

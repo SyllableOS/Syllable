@@ -1,0 +1,14 @@
+//
+// Desktop String Catalog
+//
+// Translated by: Maximo Pech Jaramillo <makzpj@gmail.com>
+//
+
+MSG_DESKTOP_TITLE=0								Escritorio
+
+MSG_DESKTOP_SYMLINKS_APPLICATIONS=100			Aplicaciones
+MSG_DESKTOP_SYMLINKS_DISKS						Discos
+MSG_DESKTOP_SYMLINKS_HOME						Inicio
+MSG_DESKTOP_SYMLINKS_PREFERENCES				Preferencias
+MSG_DESKTOP_SYMLINKS_TERMINAL					Terminal
+MSG_DESKTOP_SYMLINKS_TRASH						Papelera

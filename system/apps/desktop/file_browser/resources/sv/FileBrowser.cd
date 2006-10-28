@@ -1,0 +1,14 @@
+//
+// FileBrowser String Catalog
+//
+// Translated by: Daniel Eriksson
+//
+
+MSG_MAINWND_TITLE=0			Filhanterare
+
+MSG_MENU_VIEW=100			Visa
+MSG_MENU_VIEW_ICONS				Ikoner
+MSG_MENU_VIEW_LIST				Lista
+MSG_MENU_VIEW_DETAILS			Detaljer
+MSG_MENU_VIEW_SAVE				Spara
+

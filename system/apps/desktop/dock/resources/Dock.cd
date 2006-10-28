@@ -1,0 +1,37 @@
+//
+// Dock String Catalog
+//
+// Translated by: Not Translated
+//
+
+MSG_MENU_CATEGORY_OTHER=1000			Other
+MSG_MENU_CATEGORY_PREFERENCES			Preference
+MSG_MENU_CATEGORY_INTERNET				Internet
+MSG_MENU_CATEGORY_MEDIA					Media
+MSG_MENU_CATEGORY_OFFICE				Office
+MSG_MENU_CATEGORY_DEVELOPMENT			Development
+MSG_MENU_CATEGORY_GAMES					Games
+MSG_MENU_CATEGORY_EMULATORS				Emulators
+
+MSG_MENU_ABOUT_MENU=2000				About...
+MSG_MENU_ABOUT_TITLE					About Syllable
+MSG_MENU_ABOUT_BUILDDATE				Build date:
+MSG_MENU_ABOUT_TEXTONE					See
+MSG_MENU_ABOUT_TEXTTWO					for updates and information
+MSG_MENU_ABOUT_BUTTON_OK				Ok
+MSG_MENU_ABOUT_BUTTON_ADVANCED			Advanced...
+
+MSG_MENU_QUIT_MENU=3000					Quit...
+MSG_MENU_QUIT_TITLE						Quit
+MSG_MENU_QUIT_TEXT						What do you want to do?
+MSG_MENU_QUIT_LOGOUT					Logout
+MSG_MENU_QUIT_SHUTDOWN					Shutdown
+MSG_MENU_QUIT_REBOOT					Reboot
+MSG_MENU_QUIT_CANCEL					Cancel
+
+MSG_PLUGIN_ALERT_TITLE=4000				Dock
+MSG_PLUGIN_ALERT_TEXT					Please copy dock plugins to /system/extensions/dock\nbefore you try to add them to the dock
+MSG_PLUGIN_ALERT_OK						Ok
+
+MSG_OPENAPP=5000						Open with...
+

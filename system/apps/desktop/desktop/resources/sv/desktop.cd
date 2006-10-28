@@ -1,0 +1,15 @@
+//
+// Desktop String Catalog
+//
+// Translated by: Daniel Eriksson
+//
+
+MSG_DESKTOP_TITLE=0								Skrivbord
+
+MSG_DESKTOP_SYMLINKS_APPLICATIONS=100			Program
+MSG_DESKTOP_SYMLINKS_DISKS						Diskar
+MSG_DESKTOP_SYMLINKS_HOME						Hem
+MSG_DESKTOP_SYMLINKS_PREFERENCES				Inställningar
+MSG_DESKTOP_SYMLINKS_TERMINAL					Terminal
+MSG_DESKTOP_SYMLINKS_TRASH						Papperskorg
+

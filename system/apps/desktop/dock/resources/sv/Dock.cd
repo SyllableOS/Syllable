@@ -1,0 +1,37 @@
+//
+// Dock String Catalog
+//
+// Translated by: Daniel Eriksson
+//
+
+MSG_MENU_CATEGORY_OTHER=1000			Andra
+MSG_MENU_CATEGORY_PREFERENCES			Inställningar
+MSG_MENU_CATEGORY_INTERNET				Internet
+MSG_MENU_CATEGORY_MEDIA					Media
+MSG_MENU_CATEGORY_OFFICE				Kontor
+MSG_MENU_CATEGORY_DEVELOPMENT			Utveckling
+MSG_MENU_CATEGORY_GAMES					Spel
+MSG_MENU_CATEGORY_EMULATORS				Emulatorer
+
+MSG_MENU_ABOUT_MENU=2000				Om...
+MSG_MENU_ABOUT_TITLE					Om Syllable
+MSG_MENU_ABOUT_BUILDDATE				Versionsdatum:
+MSG_MENU_ABOUT_TEXTONE					Se
+MSG_MENU_ABOUT_TEXTTWO					för uppdateringar och information
+MSG_MENU_ABOUT_BUTTON_OK				Ok
+MSG_MENU_ABOUT_BUTTON_ADVANCED			Advancerat...
+
+MSG_MENU_QUIT_MENU=3000					Avsluta...
+MSG_MENU_QUIT_TITLE						Avsluta
+MSG_MENU_QUIT_TEXT						Vad vill du göra?
+MSG_MENU_QUIT_LOGOUT					Logga ut
+MSG_MENU_QUIT_SHUTDOWN					Stäng av
+MSG_MENU_QUIT_REBOOT					Starta om
+MSG_MENU_QUIT_CANCEL					Avbryt
+
+MSG_PLUGIN_ALERT_TITLE=4000				Docka
+MSG_PLUGIN_ALERT_TEXT					Kopiera insticksmoduler för dockan till /system/extensions/dock\ninnan du försöker lägga till dom till dockan
+MSG_PLUGIN_ALERT_OK						Ok
+
+MSG_OPENAPP=5000						Öppna med...
+

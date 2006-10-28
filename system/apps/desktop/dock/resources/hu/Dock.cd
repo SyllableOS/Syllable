@@ -1,0 +1,37 @@
+//
+// Dock String Catalog
+//
+// Translated by: David Horvath
+//
+
+MSG_MENU_CATEGORY_OTHER=1000			Egyebek
+MSG_MENU_CATEGORY_PREFERENCES			Beállítások
+MSG_MENU_CATEGORY_INTERNET				Internet
+MSG_MENU_CATEGORY_MEDIA					Média
+MSG_MENU_CATEGORY_OFFICE				Iroda
+MSG_MENU_CATEGORY_DEVELOPMENT			Fejlesztés
+MSG_MENU_CATEGORY_GAMES					Játékok
+MSG_MENU_CATEGORY_EMULATORS				Emulátorok
+
+MSG_MENU_ABOUT_MENU=2000				Névjegy
+MSG_MENU_ABOUT_TITLE					A Syllable névjegye
+MSG_MENU_ABOUT_BUILDDATE				Kiadás dátuma:
+MSG_MENU_ABOUT_TEXTONE					A frissítésekért keresd fel a 
+MSG_MENU_ABOUT_TEXTTWO					weblapot!
+MSG_MENU_ABOUT_BUTTON_OK				Ok
+MSG_MENU_ABOUT_BUTTON_ADVANCED			Szakértöknek
+
+MSG_MENU_QUIT_MENU=3000					Kilépés
+MSG_MENU_QUIT_TITLE						Kilépés
+MSG_MENU_QUIT_TEXT						Mit szeretnél tenni?
+MSG_MENU_QUIT_LOGOUT					Kilpés
+MSG_MENU_QUIT_SHUTDOWN					Leállítás
+MSG_MENU_QUIT_REBOOT					Újraindítás
+MSG_MENU_QUIT_CANCEL					Mégsem
+
+MSG_PLUGIN_ALERT_TITLE=4000				Dock
+MSG_PLUGIN_ALERT_TEXT					A plugineket másold a /system/extensions/dock könyvtárba\nmajd utána tudod használni öket.
+MSG_PLUGIN_ALERT_OK						Ok
+
+MSG_OPENAPP=5000						Megnyitás mással
+

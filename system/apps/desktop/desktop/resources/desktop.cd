@@ -1,0 +1,15 @@
+//
+// Desktop String Catalog
+//
+// Translated by: Not Translated
+//
+
+MSG_DESKTOP_TITLE=0								Desktop
+
+MSG_DESKTOP_SYMLINKS_APPLICATIONS=100			Applications
+MSG_DESKTOP_SYMLINKS_DISKS						Disks
+MSG_DESKTOP_SYMLINKS_HOME						Home
+MSG_DESKTOP_SYMLINKS_PREFERENCES				Preferences
+MSG_DESKTOP_SYMLINKS_TERMINAL					Terminal
+MSG_DESKTOP_SYMLINKS_TRASH						Trash
+

@@ -1,0 +1,14 @@
+//
+// FileBrowser String Catalog
+//
+// Translated by: Not Translated
+//
+
+MSG_MAINWND_TITLE=0			FileBrowser
+
+MSG_MENU_VIEW=100			View
+MSG_MENU_VIEW_ICONS				Icons
+MSG_MENU_VIEW_LIST				List
+MSG_MENU_VIEW_DETAILS			Details
+MSG_MENU_VIEW_SAVE				Save
+

@@ -1,0 +1,15 @@
+//
+// Desktop String Catalog
+//
+// Translated by: David Horvath
+//
+
+MSG_DESKTOP_TITLE=0								Asztal
+
+MSG_DESKTOP_SYMLINKS_APPLICATIONS=100			Alkalmazások
+MSG_DESKTOP_SYMLINKS_DISKS						Meghajtók
+MSG_DESKTOP_SYMLINKS_HOME						Saját
+MSG_DESKTOP_SYMLINKS_PREFERENCES				Beállítások
+MSG_DESKTOP_SYMLINKS_TERMINAL					Terminál
+MSG_DESKTOP_SYMLINKS_TRASH						Kuka
+

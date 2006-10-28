@@ -1,0 +1,37 @@
+//
+// Dock String Catalog
+//
+// Translated by: Flemming H. Sørensen (BurningShadow)
+//
+
+MSG_MENU_CATEGORY_OTHER=1000			Tilbehør
+MSG_MENU_CATEGORY_PREFERENCES			Indstillinger
+MSG_MENU_CATEGORY_INTERNET				Internet
+MSG_MENU_CATEGORY_MEDIA					Medie
+MSG_MENU_CATEGORY_OFFICE				Kontor
+MSG_MENU_CATEGORY_DEVELOPMENT			Udvikling
+MSG_MENU_CATEGORY_GAMES					Spil
+MSG_MENU_CATEGORY_EMULATORS				Emulatorer
+
+MSG_MENU_ABOUT_MENU=2000				Om Syllable
+MSG_MENU_ABOUT_TITLE					Om Syllable
+MSG_MENU_ABOUT_BUILDDATE				Dato:
+MSG_MENU_ABOUT_TEXTONE					Se
+MSG_MENU_ABOUT_TEXTTWO					for opdateringer og information
+MSG_MENU_ABOUT_BUTTON_OK				Ok
+MSG_MENU_ABOUT_BUTTON_ADVANCED			Avanceret...
+
+MSG_MENU_QUIT_MENU=3000					Afslut...
+MSG_MENU_QUIT_TITLE						Afslut
+MSG_MENU_QUIT_TEXT						Hvad ønsker du at gøre?
+MSG_MENU_QUIT_LOGOUT					Log ud
+MSG_MENU_QUIT_SHUTDOWN					Sluk
+MSG_MENU_QUIT_REBOOT					Genstart
+MSG_MENU_QUIT_CANCEL					Annuller
+
+MSG_PLUGIN_ALERT_TITLE=4000				Dock
+MSG_PLUGIN_ALERT_TEXT					Kopier indstiksmoduler til /system/extensions/dock\ninden du forsøger at tilføje dem til Dock
+MSG_PLUGIN_ALERT_OK						Ok
+
+MSG_OPENAPP=5000						Åbn med...
+

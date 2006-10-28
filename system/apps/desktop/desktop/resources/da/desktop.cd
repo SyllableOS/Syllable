@@ -1,0 +1,15 @@
+//
+// Desktop String Catalog
+//
+// Translated by: Flemming H. Sørensen (BurningShadow)
+//
+
+MSG_DESKTOP_TITLE=0								Skrivebord
+
+MSG_DESKTOP_SYMLINKS_APPLICATIONS=100			Programmer
+MSG_DESKTOP_SYMLINKS_DISKS						Drev
+MSG_DESKTOP_SYMLINKS_HOME						Privat Mappe
+MSG_DESKTOP_SYMLINKS_PREFERENCES				Indstillinger
+MSG_DESKTOP_SYMLINKS_TERMINAL					Terminal
+MSG_DESKTOP_SYMLINKS_TRASH						Papirkurv
+
