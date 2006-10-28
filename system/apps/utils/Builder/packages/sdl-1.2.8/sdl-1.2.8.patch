@@ -1,6 +1,6 @@
-diff -ru sdl-1.2.8.original/acinclude.m4 sdl-1.2.8/acinclude.m4
---- sdl-1.2.8.original/acinclude.m4	2004-12-13 08:54:29.000000000 +0100
-+++ sdl-1.2.8/acinclude.m4	2006-09-03 15:02:15.000000000 +0200
+diff -NBaur -x Makefile.in -x '*.spec' -x SDL_audiodev.c -x Makefile -x syllable -x test -x hermes test/SDL-1.2.8/acinclude.m4 SDL-1.2.8/acinclude.m4
+--- test/SDL-1.2.8/acinclude.m4	2004-12-13 07:54:29.000000000 +0000
++++ SDL-1.2.8/acinclude.m4	2005-06-04 19:54:51.000000000 +0000
 @@ -1173,6 +1173,12 @@
      lt_cv_dlopen_libs=
      lt_cv_dlopen_self=yes
@@ -56,9 +56,9 @@ diff -ru sdl-1.2.8.original/acinclude.m4 sdl-1.2.8/acinclude.m4
        # PIC is the default for these OSes.
        ;;
  
-diff -ru sdl-1.2.8.original/configure.in sdl-1.2.8/configure.in
---- sdl-1.2.8.original/configure.in	2004-12-13 10:02:08.000000000 +0100
-+++ sdl-1.2.8/configure.in	2006-09-03 15:02:15.000000000 +0200
+diff -NBaur -x Makefile.in -x '*.spec' -x SDL_audiodev.c -x Makefile -x syllable -x test -x hermes test/SDL-1.2.8/configure.in SDL-1.2.8/configure.in
+--- test/SDL-1.2.8/configure.in	2004-12-13 09:02:08.000000000 +0000
++++ SDL-1.2.8/configure.in	2005-06-04 21:13:59.000000000 +0000
 @@ -1564,6 +1564,14 @@
      fi
  }
@@ -74,7 +74,7 @@ diff -ru sdl-1.2.8.original/configure.in sdl-1.2.8/configure.in
  dnl Set up the BWindow video driver on BeOS
  CheckBWINDOW()
  {
-@@ -2511,6 +2519,49 @@
+@@ -2511,6 +2520,49 @@
          # The BeOS platform requires special libraries
          SYSTEM_LIBS="$SYSTEM_LIBS -lroot -lbe -lmedia -lgame -ldevice -ltextencoding"
          ;;
@@ -124,7 +124,7 @@ diff -ru sdl-1.2.8.original/configure.in sdl-1.2.8/configure.in
      *-*-macos*)
          # This would be used if cross-compiling to MacOS 9.  No way to
          # use it at present, but Apple is working on a X-to-9 compiler
-@@ -2707,6 +2758,7 @@
+@@ -2707,6 +2759,7 @@
  AM_CONDITIONAL(TARGET_AIX, test $ARCH = aix)
  AM_CONDITIONAL(TARGET_WIN32, test $ARCH = win32)
  AM_CONDITIONAL(TARGET_BEOS, test $ARCH = beos)
@@ -132,7 +132,7 @@ diff -ru sdl-1.2.8.original/configure.in sdl-1.2.8/configure.in
  AM_CONDITIONAL(TARGET_MACOS, test $ARCH = macos)
  AM_CONDITIONAL(TARGET_MACOSX, test $ARCH = macosx)
  AM_CONDITIONAL(TARGET_QNX, test $ARCH = qnx)
-@@ -2846,6 +2898,7 @@
+@@ -2846,6 +2899,7 @@
  src/audio/alsa/Makefile
  src/audio/arts/Makefile
  src/audio/baudio/Makefile
@@ -140,7 +140,7 @@ diff -ru sdl-1.2.8.original/configure.in sdl-1.2.8/configure.in
  src/audio/dc/Makefile
  src/audio/disk/Makefile
  src/audio/dma/Makefile
-@@ -2869,6 +2922,7 @@
+@@ -2869,6 +2923,7 @@
  src/video/aalib/Makefile
  src/video/ataricommon/Makefile
  src/video/bwindow/Makefile
@@ -148,9 +148,9 @@ diff -ru sdl-1.2.8.original/configure.in sdl-1.2.8/configure.in
  src/video/cybergfx/Makefile
  src/video/dc/Makefile
  src/video/dga/Makefile
-diff -ru sdl-1.2.8.original/include/SDL_syswm.h sdl-1.2.8/include/SDL_syswm.h
---- sdl-1.2.8.original/include/SDL_syswm.h	2004-12-13 08:54:31.000000000 +0100
-+++ sdl-1.2.8/include/SDL_syswm.h	2006-09-03 15:02:15.000000000 +0200
+diff -NBaur -x Makefile.in -x '*.spec' -x SDL_audiodev.c -x Makefile -x syllable -x test -x hermes test/SDL-1.2.8/include/SDL_syswm.h SDL-1.2.8/include/SDL_syswm.h
+--- test/SDL-1.2.8/include/SDL_syswm.h	2004-12-13 07:54:31.000000000 +0000
++++ SDL-1.2.8/include/SDL_syswm.h	2005-06-04 21:04:34.000000000 +0000
 @@ -51,7 +51,7 @@
  /* This is the structure for custom window manager events */
  #if (defined(unix) || defined(__unix__) || defined(_AIX) || defined(__OpenBSD__)) && \
@@ -160,9 +160,22 @@ diff -ru sdl-1.2.8.original/include/SDL_syswm.h sdl-1.2.8/include/SDL_syswm.h
   /* AIX is unix, of course, but the native compiler CSet doesn't define unix */
  #include <X11/Xlib.h>
  #include <X11/Xatom.h>
-diff -ru sdl-1.2.8.original/src/audio/SDL_sysaudio.h sdl-1.2.8/src/audio/SDL_sysaudio.h
---- sdl-1.2.8.original/src/audio/SDL_sysaudio.h	2004-12-13 08:54:31.000000000 +0100
-+++ sdl-1.2.8/src/audio/SDL_sysaudio.h	2006-09-03 15:02:15.000000000 +0200
+diff -NBaur -x Makefile.in -x '*.spec' -x SDL_audiodev.c -x Makefile -x syllable -x test -x hermes test/SDL-1.2.8/src/audio/SDL_audio.c SDL-1.2.8/src/audio/SDL_audio.c
+--- test/SDL-1.2.8/src/audio/SDL_audio.c	2004-12-13 07:54:31.000000000 +0000
++++ SDL-1.2.8/src/audio/SDL_audio.c	2005-06-04 20:17:29.000000000 +0000
+@@ -77,6 +77,9 @@
+ #ifdef __BEOS__
+ 	&BAUDIO_bootstrap,
+ #endif
++#ifdef __SYLLABLE__
++	&SYLLABLE_Audio_bootstrap,
++#endif
+ #ifdef MACOSX
+ 	&COREAUDIO_bootstrap,
+ #endif
+diff -NBaur -x Makefile.in -x '*.spec' -x SDL_audiodev.c -x Makefile -x syllable -x test -x hermes test/SDL-1.2.8/src/audio/SDL_sysaudio.h SDL-1.2.8/src/audio/SDL_sysaudio.h
+--- test/SDL-1.2.8/src/audio/SDL_sysaudio.h	2004-12-13 07:54:31.000000000 +0000
++++ SDL-1.2.8/src/audio/SDL_sysaudio.h	2005-06-04 20:17:01.000000000 +0000
 @@ -141,6 +141,9 @@
  #ifdef _AIX
  extern AudioBootStrap Paud_bootstrap;
@@ -173,9 +186,9 @@ diff -ru sdl-1.2.8.original/src/audio/SDL_sysaudio.h sdl-1.2.8/src/audio/SDL_sys
  #ifdef __BEOS__
  extern AudioBootStrap BAUDIO_bootstrap;
  #endif
-diff -ru sdl-1.2.8.original/src/main/Makefile.am sdl-1.2.8/src/main/Makefile.am
---- sdl-1.2.8.original/src/main/Makefile.am	2004-02-18 18:22:01.000000000 +0100
-+++ sdl-1.2.8/src/main/Makefile.am	2006-09-03 15:02:15.000000000 +0200
+diff -NBaur -x Makefile.in -x '*.spec' -x SDL_audiodev.c -x Makefile -x syllable -x test -x hermes test/SDL-1.2.8/src/main/Makefile.am SDL-1.2.8/src/main/Makefile.am
+--- test/SDL-1.2.8/src/main/Makefile.am	2004-02-18 17:22:01.000000000 +0000
++++ SDL-1.2.8/src/main/Makefile.am	2005-06-04 21:39:21.000000000 +0000
 @@ -5,6 +5,7 @@
  # entry points, which require special application initialization.
  
@@ -184,9 +197,9 @@ diff -ru sdl-1.2.8.original/src/main/Makefile.am sdl-1.2.8/src/main/Makefile.am
                 $(srcdir)/epoc \
                 $(srcdir)/dummy \
                 $(srcdir)/macos \
-diff -ru sdl-1.2.8.original/src/video/SDL_sysvideo.h sdl-1.2.8/src/video/SDL_sysvideo.h
---- sdl-1.2.8.original/src/video/SDL_sysvideo.h	2004-02-18 18:22:04.000000000 +0100
-+++ sdl-1.2.8/src/video/SDL_sysvideo.h	2006-09-03 15:02:15.000000000 +0200
+diff -NBaur -x Makefile.in -x '*.spec' -x SDL_audiodev.c -x Makefile -x syllable -x test -x hermes test/SDL-1.2.8/src/video/SDL_sysvideo.h SDL-1.2.8/src/video/SDL_sysvideo.h
+--- test/SDL-1.2.8/src/video/SDL_sysvideo.h	2004-02-18 17:22:04.000000000 +0000
++++ SDL-1.2.8/src/video/SDL_sysvideo.h	2005-06-04 20:18:06.000000000 +0000
 @@ -368,6 +368,9 @@
  #ifdef ENABLE_BWINDOW
  extern VideoBootStrap BWINDOW_bootstrap;
@@ -197,9 +210,9 @@ diff -ru sdl-1.2.8.original/src/video/SDL_sysvideo.h sdl-1.2.8/src/video/SDL_sys
  /* MacOS X gets the proper defines from configure */
  #if defined(macintosh) && !defined(MACOSX)
  #define ENABLE_TOOLBOX
-diff -ru sdl-1.2.8.original/src/video/SDL_video.c sdl-1.2.8/src/video/SDL_video.c
---- sdl-1.2.8.original/src/video/SDL_video.c	2004-12-13 08:54:34.000000000 +0100
-+++ sdl-1.2.8/src/video/SDL_video.c	2006-09-03 15:02:15.000000000 +0200
+diff -NBaur -x Makefile.in -x '*.spec' -x SDL_audiodev.c -x Makefile -x syllable -x test -x hermes test/SDL-1.2.8/src/video/SDL_video.c SDL-1.2.8/src/video/SDL_video.c
+--- test/SDL-1.2.8/src/video/SDL_video.c	2004-12-13 07:54:34.000000000 +0000
++++ SDL-1.2.8/src/video/SDL_video.c	2005-06-14 17:45:12.000000000 +0000
 @@ -87,6 +87,9 @@
  #ifdef ENABLE_BWINDOW
  	&BWINDOW_bootstrap,
