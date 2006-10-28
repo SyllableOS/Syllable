@@ -1,0 +1,7 @@
+			   Syllable 0.6.2
+			   ==============
+
+Welcome to the Syllable 0.6.2 installation CD. This script will guide you
+through the process of configuring your computer, installing Syllable, and
+installing additional software packages.
+

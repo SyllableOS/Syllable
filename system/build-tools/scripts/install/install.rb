@@ -1,6 +1,4 @@
-#! ruby
-
-# last modified for installer version 0.1.11.6
+#!/usr/ruby/bin/ruby
 
 INSTALL_DIR="/boot/Install"
 

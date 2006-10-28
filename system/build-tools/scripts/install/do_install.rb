@@ -3,7 +3,7 @@
 # 26 March 2005, Kaj de Vos
 #   Ask confirmation for both recognized and unrecognized partitions.
 #   Removed invalid hardcoded paths.
-# Last modified by xsdg for installer version 0.1.11.6.
+# Modified by xsdg for installer version 0.1.11.6.
 
 require "helpers.rb"
 require "lsfs.rb"
@@ -142,12 +142,53 @@ Packages.sort_by{|name, info| name}.each {|pkgname, info|
 
 system "sync"
 
+
 system "clear"
 puts 'Syllable has now been installed!'
-puts 'Please press "r" to reboot your computer. (Remember to install Grub.)'
-puts 'Press any other key to exit this installation script.'
+puts 'To finish the installation, the GrUB boot loader needs to be installed.'
+#puts 'GrUB can now be installed automatically, or you can choose to skip this.'
+#puts 'If you skip the GrUB installation, you will have to install GrUB manually.'
+#puts 'This can be preferable if you have a complicated drive or partition setup.'
+#puts 'GrUB can not always detect the right hard disk that Syllable was installed to.'
+#puts 'Please check carefully that GrUB is using the right disk and partition.'
+puts "Please note that you must install Syllable's version of GrUB to boot Syllable."
+puts 'You can not use a different GrUB from another system such as Linux.'
+puts
+puts 'You also have to decide whether to install the GrUB boot loader in the Master'
+puts 'Boot Record (MBR) of your hard disk (before any partitions), or on the'
+puts 'partition where you installed Syllable. In the MBR it will start automatically,'
+puts 'but on a partition you would have to chain-load to it from some other boot'
+puts 'loader that you have in the MBR.'
+puts
+
+puts 'To install GrUB, reboot your computer and start the Syllable installation CD'
+puts 'again. At the GrUB boot menu, press "c" to go into the GrUB command line.'
+puts 'Then carefully follow the remainder of the written Syllable installation'
+puts 'instructions at'
+puts 'http://syllable.org/docs/0.6.2/install.txt'
+puts
+
+#puts 'Press "m" to install GrUB automatically in the Master Boot Record of disk'
+#puts (disk = File.join(File.dirname($part), 'raw')) + ','
+#puts 'press "p" to install GrUB automatically on partition'
+#puts $part + ','
+#print 'or press any other key to skip this step: '
+
+#if (resp = $stdin.getuc.downcase) == "m" or resp == "p"
+#	unless system 'grub-install', '--root-directory=/inst', loader = resp == "m" ? disk : $part
+#		puts
+#		puts "ERROR: failed to install GrUB on #{loader}."
+#		puts "Stopping."
+#		exit 4
+#	end
+#end
+
+
+#system "clear"
+puts 'Please press "b" to reboot your computer.'
+puts 'Press any other key to exit to the command line.'
 resp = $stdin.getuc
 
-system "/bin/reboot" if resp.downcase == "r"
+system "/bin/reboot" if resp.downcase == "b"
 
 exec "/bin/bash", "--login"
