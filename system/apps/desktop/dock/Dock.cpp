@@ -27,6 +27,7 @@
 #include <signal.h>
 #include <math.h>
 #include "Dock.h"
+#include "resources/Dock.h"
 
 
 enum 
@@ -357,9 +358,9 @@ void DockView::MouseUp( const os::Point & cPosition, uint32 nButton, os::Message
 					m_pcSyllableMenu->SetCloseMessage( os::Message( DOCK_MENU_CLOSED ) );
 					m_pcSyllableMenu->SetCloseMsgTarget( m_pcWin );
 					m_pcSyllableMenu->AddItem( new os::MenuSeparator() );
-					m_pcSyllableMenu->AddItem( new os::MenuItem( "About...", new os::Message( DOCK_ABOUT ),
+					m_pcSyllableMenu->AddItem( new os::MenuItem( MSG_MENU_ABOUT_MENU, new os::Message( DOCK_ABOUT ),
 					 "", new os::BitmapImage( *m_pcWin->GetAboutIcon() ) ) );
-					m_pcSyllableMenu->AddItem( new os::MenuItem( "Quit...", new os::Message( DOCK_QUIT ),
+					m_pcSyllableMenu->AddItem( new os::MenuItem( MSG_MENU_QUIT_MENU, new os::Message( DOCK_QUIT ),
 					 "", new os::BitmapImage( *m_pcWin->GetLogoutIcon() ) ) );
 					m_pcSyllableMenu->SetTargetForItems( m_pcWin );
 					m_bSyllableMenuInvalid = false;
@@ -604,25 +605,33 @@ void DockWin::HandleMessage( os::Message* pcMessage )
 			get_system_info( &sSysInfo );
 			
 			char zInfo[255];
-			char zWWWInfo[128];
+			os::String zWWWInfo;
+			os::String zBuildDateA;
+			os::String zBuildDateB;
 			
+			/* Ugly Workaround to make localization work. Someone should have a look at it... */	
+			os::String zBuildDateWorkaround;
+			zBuildDateWorkaround = os::String( "" );
+
 			/* Build information text */
 			
-			sprintf( zWWWInfo, "See http://syllable.sf.net for updates and information" );
+			zWWWInfo = os::String( MSG_MENU_ABOUT_TEXTONE + " http://www.syllable.org " + MSG_MENU_ABOUT_TEXTTWO );
+			zBuildDateA = os::String( zBuildDateWorkaround + "Syllable %d.%d.%d%c\n\n" + MSG_MENU_ABOUT_BUILDDATE + " %s\n\n%s" );
+			zBuildDateB = os::String( zBuildDateWorkaround + "Syllable %d.%d.%d\n\n" + MSG_MENU_ABOUT_BUILDDATE + " %s\n\n%s" );
 			
 			if( sSysInfo.nKernelVersion & 0xffff000000000000LL )
 			{
-				sprintf( zInfo, "Syllable %d.%d.%d%c\n\nBuild date: %s\n\n%s", ( int )( ( sSysInfo.nKernelVersion >> 32 ) & 0xffff ), ( int )( ( sSysInfo.nKernelVersion >> 16 ) & 0xffff ), 
-									( int )( sSysInfo.nKernelVersion & 0xffff ), 'a' + ( int )( sSysInfo.nKernelVersion >> 48 ), sSysInfo.zKernelBuildDate, zWWWInfo );
+				sprintf( zInfo, zBuildDateA.c_str(), ( int )( ( sSysInfo.nKernelVersion >> 32 ) & 0xffff ), ( int )( ( sSysInfo.nKernelVersion >> 16 ) & 0xffff ), 
+									( int )( sSysInfo.nKernelVersion & 0xffff ), 'a' + ( int )( sSysInfo.nKernelVersion >> 48 ), sSysInfo.zKernelBuildDate, zWWWInfo.c_str() );
 			}
 			else
 			{
-				sprintf( zInfo, "Syllable %d.%d.%d\n\nBuild date: %s\n\n%s", ( int )( ( sSysInfo.nKernelVersion >> 32 ) & 0xffff ), ( int )( ( sSysInfo.nKernelVersion >> 16 ) % 0xffff ),
-									 ( int )( sSysInfo.nKernelVersion & 0xffff ), sSysInfo.zKernelBuildDate, zWWWInfo );
+				sprintf( zInfo, zBuildDateB.c_str(), ( int )( ( sSysInfo.nKernelVersion >> 32 ) & 0xffff ), ( int )( ( sSysInfo.nKernelVersion >> 16 ) % 0xffff ),
+									 ( int )( sSysInfo.nKernelVersion & 0xffff ), sSysInfo.zKernelBuildDate, zWWWInfo.c_str() );
 			}
 			
-			os::Alert* pcAlert = new os::Alert( "About Syllable", zInfo, os::Alert::ALERT_INFO,
-												0, "Ok", "Advanced...", NULL );
+			os::Alert* pcAlert = new os::Alert( MSG_MENU_ABOUT_TITLE, zInfo, os::Alert::ALERT_INFO,
+												0, MSG_MENU_ABOUT_BUTTON_OK.c_str(), MSG_MENU_ABOUT_BUTTON_ADVANCED.c_str(), NULL );
 			os::Invoker* pcInvoker = new os::Invoker( new os::Message( DOCK_ABOUT_ALERT ), this );
 			pcAlert->Go( pcInvoker );
 			
@@ -630,8 +639,8 @@ void DockWin::HandleMessage( os::Message* pcMessage )
 		}
 		case DOCK_QUIT:
 		{
-			os::Alert* pcAlert = new os::Alert( "Quit", "What do you want to do?", os::Alert::ALERT_QUESTION,
-												0, "Logout", "Shutdown", "Reboot", "Cancel", NULL );
+			os::Alert* pcAlert = new os::Alert( MSG_MENU_QUIT_TITLE, MSG_MENU_QUIT_TEXT, os::Alert::ALERT_QUESTION,
+												0, MSG_MENU_QUIT_LOGOUT.c_str(), MSG_MENU_QUIT_SHUTDOWN.c_str(), MSG_MENU_QUIT_REBOOT.c_str(), MSG_MENU_QUIT_CANCEL.c_str(), NULL );
 			os::Invoker* pcInvoker = new os::Invoker( new os::Message( DOCK_QUIT_ALERT ), this );
 			pcAlert->Go( pcInvoker );
 			
@@ -650,7 +659,7 @@ void DockWin::HandleMessage( os::Message* pcMessage )
 				if( m_pcManager )
 				{
 					/* Tell the filetype manager to open it */
-					m_pcManager->Launch( NULL, zPath, true, "Open with..." );
+					m_pcManager->Launch( NULL, zPath, true, MSG_OPENAPP );
 				} else if( fork() == 0 )
 				{
 					set_thread_priority( -1, 0 );
@@ -747,9 +756,9 @@ void DockWin::AddPlugin( os::String zPath )
 		   os::String( cPath.GetDir().GetPath() ) == "/boot/atheos/sys/extensions/dock" ||
 		   os::String( cPath.GetDir().GetPath() ) == "/boot/system/extensions/dock" ) )
 	{
-		os::Alert* pcAlert = new os::Alert( "Dock", "Please copy dock plugins to /system/extensions/dock\n"
-													"before you try to add them to the dock", os::Alert::ALERT_INFO,
-													0, "Ok", NULL );
+		os::Alert* pcAlert = new os::Alert( "Dock", MSG_PLUGIN_ALERT_TEXT,
+													os::Alert::ALERT_INFO,
+													0, MSG_PLUGIN_ALERT_OK.c_str(), NULL );
 		pcAlert->Go( new os::Invoker( 0 ) );
 		return;
 	}
@@ -1179,6 +1188,7 @@ void DockWin::SetPosition( os::alignment eAlign )
 
 DockApp::DockApp( const char *pzMimeType ):os::Application( pzMimeType )
 {
+	SetCatalog("Dock.catalog");
 	/* Create window */
 	m_pcWindow = new DockWin();
 	m_pcWindow->Show();
@@ -1294,36 +1304,4 @@ int main( int argc, char *argv[] )
 	pcApp->Run();
 	return ( 0 );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

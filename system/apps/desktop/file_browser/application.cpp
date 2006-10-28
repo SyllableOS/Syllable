@@ -23,6 +23,7 @@
 
 App::App( os::String zPath ) : os::Application( "application/x-vnd.syllable-FileBrowser" )
 {
+	SetCatalog("FileBrowser.catalog");
 	m_pcMainWindow = new MainWindow( zPath );
 	m_pcMainWindow->Show();
 	m_pcMainWindow->MakeFocus();

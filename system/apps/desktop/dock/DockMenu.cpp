@@ -27,6 +27,7 @@
 #include "DockMenu.h"
 #include <storage/registrar.h>
 #include <cassert>
+#include "resources/Dock.h"
 
 DockMenu::DockMenu( os::Handler* pcHandler, os::Rect cFrame, const char* pzName, os::MenuLayout_e eLayout )
 	 	: os::Menu( cFrame, pzName, eLayout )
@@ -74,6 +75,20 @@ void DockMenu::AddEntry( os::RegistrarManager* pcManager, os::String zCategory, 
 	os::Menu* pcAddMenu = this;
 	if( zCategory != "" )
 	{
+		/* Localizable Category */
+		if( zCategory == "Internet" )
+			zCategory = MSG_MENU_CATEGORY_INTERNET;
+		if( zCategory == "Media" )
+			zCategory = MSG_MENU_CATEGORY_MEDIA;
+		if( zCategory == "Office" )
+			zCategory = MSG_MENU_CATEGORY_OFFICE;
+		if( zCategory == "Development" )
+			zCategory = MSG_MENU_CATEGORY_DEVELOPMENT;
+		if( zCategory == "Games" )
+			zCategory = MSG_MENU_CATEGORY_GAMES;
+		if( zCategory == "Emulators" )
+			zCategory = MSG_MENU_CATEGORY_EMULATORS;
+
 		/* Create category if necessary */
 		os::MenuItem* pcSubMenuItem = FindMenuItem( zCategory );
 		if( !pcSubMenuItem )
@@ -174,9 +189,9 @@ void DockMenu::ScanPath( int nLevel, os::Path cPath )
 		}
 		
 		/* Set default category */
-		os::String zCategory = "Other";
+		os::String zCategory = MSG_MENU_CATEGORY_OTHER;
 		if( cPath.GetLeaf() == "Preferences" )
-			zCategory = "Preferences";
+			zCategory = MSG_MENU_CATEGORY_PREFERENCES;
 		
 		
 		/* Check if this is an executable and read the category attribute
@@ -213,7 +228,7 @@ void DockMenu::ScanPath( int nLevel, os::Path cPath )
 		
 		cFileNode.Unset();
 		
-		AddEntry( pcManager, zCategory, cFilePath, zCategory == "Preferences", cPath/*cCurrentDir*/ );
+		AddEntry( pcManager, zCategory, cFilePath, zCategory == MSG_MENU_CATEGORY_PREFERENCES, cPath/*cCurrentDir*/ );
 	}
 	
 	if( pcManager )

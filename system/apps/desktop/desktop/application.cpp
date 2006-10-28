@@ -25,6 +25,8 @@
 
 App::App() : os::Application( "application/syllable-Desktop" )
 {
+	SetCatalog("desktop.catalog");
+
 	m_pcDesktop = new Desktop();
 	m_pcDesktop->Show();
 	m_pcDesktop->MakeFocus();

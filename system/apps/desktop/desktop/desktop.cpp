@@ -28,6 +28,7 @@
 #include <storage/directory.h>
 #include "desktop.h"
 #include "messages.h"
+#include "resources/desktop.h"
 
 #undef NEW_FILESYSTEM
 
@@ -46,7 +47,7 @@ static void create_desktop_icon( os::String cAim, os::String cName, os::String c
 	}
 }
 
-Desktop::Desktop() : os::Window( os::Rect(), "desktop", "Desktop", os::WND_NO_BORDER | os::WND_BACKMOST, os::ALL_DESKTOPS )
+Desktop::Desktop() : os::Window( os::Rect(), "desktop", MSG_DESKTOP_TITLE, os::WND_NO_BORDER | os::WND_BACKMOST, os::ALL_DESKTOPS )
 {
 	const char *pzHome = getenv( "HOME" );
 	os::Path cPath = os::Path( pzHome );
@@ -84,18 +85,18 @@ Desktop::Desktop() : os::Window( os::Rect(), "desktop", "Desktop", os::WND_NO_BO
 		/* Create default links */
 		os::String zTemp = os::String( pzHome ) + ( "/Desktop/" );
 		#ifdef NEW_FILESYSTEM
-		create_desktop_icon( "/boot/applications", "Applications", "/system/icons/applications.png" );
-		create_desktop_icon( "/", "Disks", "" );
-		create_desktop_icon( "/boot/applications/preferences", "Preferences", "/system/icons/settings.png" );
-		create_desktop_icon( "/boot/system/bin/aterm", "Terminal", "/system/icons/aterm.png" );
+		create_desktop_icon( "/boot/applications", MSG_DESKTOP_SYMLINKS_APPLICATIONS, "/system/icons/applications.png" );
+		create_desktop_icon( "/", MSG_DESKTOP_SYMLINKS_DISKS, "" );
+		create_desktop_icon( "/boot/applications/preferences", MSG_DESKTOP_SYMLINKS_PREFERENCES, "/system/icons/settings.png" );
+		create_desktop_icon( "/boot/system/bin/aterm", MSG_DESKTOP_SYMLINKS_TERMINAL, "/system/icons/aterm.png" );
 		#else
-		create_desktop_icon( "/boot/atheos/Applications", "Applications", "/system/icons/applications.png" );
-		create_desktop_icon( "/", "Disks", "" );
-		create_desktop_icon( "/boot/atheos/Applications/Preferences", "Preferences", "/system/icons/settings.png" );
-		create_desktop_icon( "/boot/atheos/sys/bin/aterm", "Terminal", "/system/icons/aterm.png" );
+		create_desktop_icon( "/boot/atheos/Applications", MSG_DESKTOP_SYMLINKS_APPLICATIONS, "/system/icons/applications.png" );
+		create_desktop_icon( "/", MSG_DESKTOP_SYMLINKS_DISKS, "" );
+		create_desktop_icon( "/boot/atheos/Applications/Preferences", MSG_DESKTOP_SYMLINKS_PREFERENCES, "/system/icons/settings.png" );
+		create_desktop_icon( "/boot/atheos/sys/bin/aterm", MSG_DESKTOP_SYMLINKS_TERMINAL, "/system/icons/aterm.png" );
 		#endif
-		create_desktop_icon( pzHome, "Home", "/system/icons/home.png" );
-		create_desktop_icon( os::String( pzHome ) + "/Trash", "Trash", "/system/icons/trash.png" );
+		create_desktop_icon( pzHome, MSG_DESKTOP_SYMLINKS_HOME, "/system/icons/home.png" );
+		create_desktop_icon( os::String( pzHome ) + "/Trash", MSG_DESKTOP_SYMLINKS_TRASH, "/system/icons/trash.png" );
 	}
 	delete( pcSettings );
 	

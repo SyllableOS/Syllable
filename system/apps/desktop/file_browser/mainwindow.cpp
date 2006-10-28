@@ -22,6 +22,7 @@
 #include <iostream>
 #include "mainwindow.h"
 #include "messages.h"
+#include "resources/FileBrowser.h"
 
 void SetButtonImageFromResource( os::ImageButton* pcButton, os::String zResource )
 {
@@ -32,7 +33,7 @@ void SetButtonImageFromResource( os::ImageButton* pcButton, os::String zResource
 	delete( pcStream );
 }
 
-MainWindow::MainWindow( os::String zPath ) : os::Window( os::Rect( 0, 0, 300, 300 ), "main_wnd", "FileBrowser" )
+MainWindow::MainWindow( os::String zPath ) : os::Window( os::Rect( 0, 0, 300, 300 ), "main_wnd", MSG_MAINWND_TITLE )
 {
 	
 	SetTitle( zPath );
@@ -72,11 +73,11 @@ MainWindow::MainWindow( os::String zPath ) : os::Window( os::Rect( 0, 0, 300, 30
 	
 	/* Create popupmenu */
 	os::Menu* pcPopupMenu = new os::Menu( os::Rect(), "", os::ITEMS_IN_COLUMN );
-	pcPopupMenu->AddItem( "Icons", new os::Message( M_VIEW_ICONS ) );
-	pcPopupMenu->AddItem( "List", new os::Message( M_VIEW_LIST ) );
-	pcPopupMenu->AddItem( "Details", new os::Message( M_VIEW_DETAILS ) );
+	pcPopupMenu->AddItem( MSG_MENU_VIEW_ICONS, new os::Message( M_VIEW_ICONS ) );
+	pcPopupMenu->AddItem( MSG_MENU_VIEW_LIST, new os::Message( M_VIEW_LIST ) );
+	pcPopupMenu->AddItem( MSG_MENU_VIEW_DETAILS, new os::Message( M_VIEW_DETAILS ) );
 	pcPopupMenu->AddItem( new os::MenuSeparator() );
-	pcPopupMenu->AddItem( "Save", new os::Message( M_SAVE_WINDOW ) );
+	pcPopupMenu->AddItem( MSG_MENU_VIEW_SAVE, new os::Message( M_SAVE_WINDOW ) );
 	pcPopupMenu->SetTargetForItems( this );
 	
 	
@@ -87,7 +88,7 @@ MainWindow::MainWindow( os::String zPath ) : os::Window( os::Rect( 0, 0, 300, 30
 	pcView->Load( pcStream );
 	delete( pcStream );
 	
-	m_pcViewMenu = new os::PopupMenu( os::Rect( GetBounds().Width() - 70, 2,  GetBounds().Width() - 5, 32 ), "", "View", pcPopupMenu, pcView,
+	m_pcViewMenu = new os::PopupMenu( os::Rect( GetBounds().Width() - 70, 2,  GetBounds().Width() - 5, 32 ), "", MSG_MENU_VIEW, pcPopupMenu, pcView,
 						os::CF_FOLLOW_RIGHT | os::CF_FOLLOW_RIGHT );
 	pcNode->AddChild( m_pcViewMenu );
 	
