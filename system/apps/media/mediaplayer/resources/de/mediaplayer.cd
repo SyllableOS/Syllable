@@ -1,9 +1,10 @@
 //
 // Media Player string catalog
 //
+// Translated by:
+//
 
 MSG_MAINWND_TITLE=100						Media Player
-
 
 MSG_MAINWND_MENU_APPLICATION=200			Anwendung
 MSG_MAINWND_MENU_APPLICATION_ABOUT			Info...
@@ -31,7 +32,5 @@ MSG_INFOWND_AUDIO							Audio
 MSG_INFOWND_CHANNELS						kanäle
 MSG_INFOWND_OK								OK
 
-
 MSG_TRACK_MENU_ITEM=2000					Titel
-
 

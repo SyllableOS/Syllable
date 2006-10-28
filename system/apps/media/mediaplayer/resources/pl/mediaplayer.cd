@@ -1,9 +1,10 @@
 //
 // Media Player string catalog
 //
+// Translated by:
+//
 
 MSG_MAINWND_TITLE=100						Media Player
-
 
 MSG_MAINWND_MENU_APPLICATION=200			Aplikacja
 MSG_MAINWND_MENU_APPLICATION_ABOUT			O porgramie...
@@ -12,6 +13,7 @@ MSG_MAINWND_MENU_APPLICATION_QUIT			Koniec
 MSG_MAINWND_MENU_FILE=300					Plik
 MSG_MAINWND_MENU_FILE_OPEN					Otwórz...
 MSG_MAINWND_MENU_FILE_OPEN_INPUT			Otwórz wejście...
+MSG_MAINWND_MENU_FILE_INFO					Info...
 MSG_MAINWND_MENU_FILE_FULLSCREEN			Pełny ekran
 
 MSG_MAINWND_MENU_TRACKS=400					Scieżki
@@ -24,4 +26,11 @@ MSG_ERRWND_TITLE=1100						Błąd
 MSG_ERRWND_OK								Ok
 MSG_ERRWND_CANTPLAY							Nie można otworzyć pliku.\n Sprawdź ustawienia multimedialne.
 
+MSG_INFOWND_TITLE=1200						Information
+MSG_INFOWND_VIDEO							Video
+MSG_INFOWND_AUDIO							Audio
+MSG_INFOWND_CHANNELS						channels
+MSG_INFOWND_OK								OK
+
 MSG_TRACK_MENU_ITEM=2000					Ścieżka
+

@@ -1,9 +1,10 @@
 //
 // Media Player string catalog
 //
+// Translated by: Not Translated
+//
 
 MSG_MAINWND_TITLE=100						Media Player
-
 
 MSG_MAINWND_MENU_APPLICATION=200			Application
 MSG_MAINWND_MENU_APPLICATION_ABOUT			About...

@@ -2,6 +2,8 @@ CFLAGS   += -c -fexceptions -ffast-math
 CXXFLAGS += -c -fexceptions -ffast-math
 AOPTS   = -c
 
+CATALOGS = da de es hu nl pl pt-br ru sv
+
 APPBIN = /Applications/Media
 
 VPATH = ./
@@ -12,7 +14,7 @@ OBJDIR	:= objs
 
 include $(ATHEOS_SRC)/makefile.rules
 
-all :	$(OBJDIR) $(OBJS) $(OBJDIR)/MediaPlayer
+all :	$(OBJDIR) catalogs $(OBJS) $(OBJDIR)/MediaPlayer
 
 $(OBJDIR):
 	mkdir $(OBJDIR)
@@ -20,13 +22,22 @@ $(OBJDIR):
 $(OBJDIR)/MediaPlayer: $(OBJS)
 	$(CXX) $(OBJS) -lsyllable -lmedia -o MediaPlayer
 	rescopy -r MediaPlayer *.png
-	rescopy -a MediaPlayer resources/mediaplayer.catalog
-	rescopy -a MediaPlayer de/mediaplayer.catalog=resources/de/mediaplayer.catalog
-	rescopy -a MediaPlayer da/mediaplayer.catalog=resources/da/mediaplayer.catalog
-	rescopy -a MediaPlayer nl/mediaplayer.catalog=resources/nl/mediaplayer.catalog
-	rescopy -a MediaPlayer pl/mediaplayer.catalog=resources/pl/mediaplayer.catalog
-	rescopy -a MediaPlayer sv/mediaplayer.catalog=resources/sv/mediaplayer.catalog
 	addattrib MediaPlayer os::Category Media
+	for CATALOG in $(CATALOGS);do \
+		echo $$CATALOG; \
+		rescopy -a MediaPlayer $$CATALOG/mediaplayer.catalog=resources/$$CATALOG/mediaplayer.catalog; \
+	done;
+
+catalogs:
+	cd resources; \
+	catcomp -c mediaplayer.cd; \
+	for CATALOG in $(CATALOGS);do \
+		echo $$CATALOG; \
+		cd $$CATALOG; \
+		catcomp -t mediaplayer.cd; \
+		cd ..; \
+	done;
+
 deps:
 
 install:  $(OBJDIR)/MediaPlayer
@@ -41,6 +52,10 @@ deps: $(OBJDIR) $(DEPS)
 
 clean:
 	rm -f $(OBJS) $(OBJDIR)/*.d MediaPlayer
+	rm resources/mediaplayer.catalog resources/mediaplayer.h; \
+	for CATALOG in $(CATALOGS);do \
+		rm resources/$$CATALOG/v.catalog; \
+	done;
 
 -include $(OBJDIR)/*.d
 
