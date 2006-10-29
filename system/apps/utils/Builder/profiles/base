@@ -50,7 +50,8 @@ modules
 	apps/utils/Albert
 	apps/utils/aclock
 	apps/utils/aedit
-	apps/utils/archiver
+;	Too broken to include:
+;	apps/utils/archiver
 	apps/utils/aview
 	apps/utils/bzoom
 	apps/utils/catalog
