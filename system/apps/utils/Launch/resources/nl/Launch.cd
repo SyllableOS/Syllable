@@ -1,10 +1,10 @@
 //
-// Launch String Catalog
-// Nederlandse vertaling door Rik van Achterberg <rikratva@xs4all.nl>
+// Launch Vertalingen
+// Nederlandse vertaling door: Rik van Achterberg <rikratva@xs4all.nl> en Kaj de Vos
 //
 
 MSG_ERROR_LAUNCHING_ONE		Het bestand '
-MSG_ERROR_LAUNCHING_TWO		' heeft geen bekende bestandsassociatie.\nNeem a.u.b. contact op met het Syllable-ontwikkelaarsteam\nvoor verdere instructies.
+MSG_ERROR_LAUNCHING_TWO		' heeft geen bekende typeaanduiding.
 
 MSG_BUTTON_LAUNCH			_Starten
 MSG_BUTTON_BROWSE			_Bladeren
@@ -12,7 +12,7 @@ MSG_BUTTON_CANCEL			_Annuleren
 MSG_ALERT_BUTTON			_OK
 
 MSG_STRING_LAUNCH			Starten:
-MSG_STRING_DESC				Geef een webadres, bestand, map of applicatie op.
+MSG_STRING_DESC				Geef een webadres, bestand, map of programma op.
 
 MSG_WINDOW_TITLE			Starten
 

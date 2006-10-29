@@ -1,28 +1,28 @@
 //
-// AEdit string catalog
-// Dutch translation by Kaj de Vos and others
+// AEdit Vertalingen
+// Vertaald door Kaj de Vos en anderen
 //
 
 MSG_APPWND_TITLE							AEdit
 MSG_APPWND_TITLE_NEW_FILE					Nieuw document
 
-MSG_MENU_APPLICATION=100					Applicatie
+MSG_MENU_APPLICATION=100					Toepassing
 MSG_MENU_APPLICATION_QUIT					Afsluiten
 MSG_MENU_APPLICATION_ABOUT					Over AEdit...
 
 MSG_MENU_FILE=200							Bestand
-MSG_MENU_FILE_NEW							Nieuw
+MSG_MENU_FILE_NEW							Nieuw document
 MSG_MENU_FILE_OPEN							Openen...
 MSG_MENU_FILE_CLOSE							Sluiten
 MSG_MENU_FILE_SAVE							Opslaan
 MSG_MENU_FILE_SAVE_AS						Opslaan als...
 MSG_MENU_FILE_SAVE_ALL						Alle opslaan
-MSG_MENU_FILE_NEXT_FILE						Volgend bestand
-MSG_MENU_FILE_PREVIOUS_FILE					Vorig bestand
+MSG_MENU_FILE_NEXT_FILE						Volgend document
+MSG_MENU_FILE_PREVIOUS_FILE					Vorig document
 
 MSG_MENU_EDIT=300							Bewerken
 MSG_MENU_EDIT_CUT							Knippen
-MSG_MENU_EDIT_COPY							Kopiëren
+MSG_MENU_EDIT_COPY							KopiÃ«ren
 MSG_MENU_EDIT_PASTE							Plakken
 MSG_MENU_EDIT_SELECT_ALL					Alles selecteren
 MSG_MENU_EDIT_UNDO							Bewerking ongedaan maken
@@ -46,15 +46,15 @@ MSG_MENU_HELP_TABLE_OF_CONTENTS				Handleiding...
 MSG_MENU_HELP_HOMEPAGE						AEdit-webpagina...
 
 MSG_ABOUT_TITLE=800							Over AEdit
-MSG_ABOUT_TEXT								\n\nEenvoudige tekstverwerker voor Syllable\nAuteursrecht 2000-2003 Kristian Van Der Vliet\n\nAEdit is gepubliceerd onder de GNU\nGeneral Public License. Gelieve het bestand\nCOPYING, gedistribueerd samen met AEdit, of\nhttp://www.gnu.org\nte raadplegen voor meer informatie.\n\nNederlandse vertaling door Kaj de Vos en anderen.
+MSG_ABOUT_TEXT								\n\nEenvoudige tekstverwerker voor Syllable\nAuteursrecht 2000-2003 Kristian Van Der Vliet\n\nAEdit is gepubliceerd onder de GNU\nGeneral Public License. Gelieve\nhttp://www.gnu.org\nte raadplegen voor meer informatie.\n\nNederlandse vertaling door Kaj de Vos en anderen.
 MSG_ABOUT_CLOSE								OK
-MSG_ABOUT_VERSION							versie: 
+MSG_ABOUT_VERSION							Versie:
 MSG_ABOUT_LINE_1 							Een tekstverwerker voor Syllable
 MSG_ABOUT_LINE_2							(c) 2005 het Syllable-team
 MSG_ABOUT_LINE_3							w w w . s y l l a b l e . o r g
 
 MSG_ERROR_TITLE=900							Opslaan
-MSG_ERROR_CANT_SAVE							Kon bestand niet bewaren.
+MSG_ERROR_CANT_SAVE							Kon bestand niet opslaan.
 MSG_ERROR_CLOSE								OK
 
 MSG_FIND_TITLE=1000							Zoeken
@@ -78,7 +78,7 @@ MSG_REPLACE_REPLACE							_Vervangen
 MSG_REPLACE_CLOSE							_Sluiten
 
 MSG_ALERT_CLOSE_FILE_TITLE=1500				Document opslaan?
-MSG_ALERT_CLOSE_FILE_BODY					Wilt u het document opslaan?
+MSG_ALERT_CLOSE_FILE_BODY					Moet het document opgeslagen worden?
 MSG_ALERT_CLOSE_FILE_YES					Opslaan
 MSG_ALERT_CLOSE_FILE_NO						Niet opslaan
 MSG_ALERT_CLOSE_FILE_CANCEL					Annuleren
@@ -86,7 +86,7 @@ MSG_ALERT_SAVE_FILE_TITLE					Fout
 MSG_ALERT_SAVE_FILE_BODY					Kon bestand "%s" niet opslaan.
 MSG_ALERT_SAVE_FILE_OK						OK
 MSG_ALERT_QUIT_TITLE						Werkelijk afsluiten?
-MSG_ALERT_QUIT_BODY							U hebt niet-opgeslagen documenten. Gegevens zullen verloren gaan als u nu afsluit.\nWeet u zeker dat u AEdit wilt verlaten?
+MSG_ALERT_QUIT_BODY							Er zijn nog niet-opgeslagen documenten.\nGegevens zullen verloren gaan als nu afgesloten wordt.\nWeet je zeker dat je AEdit wilt verlaten?
 MSG_ALERT_QUIT_YES							Afsluiten
 MSG_ALERT_QUIT_NO							Annuleren
 MSG_ALERT_FILE_OPEN_TITLE					Fout
@@ -106,5 +106,6 @@ MSG_STATUSBAR_SEARCH_NOT_FOUND_2			Tekst niet gevonden.
 MSG_STATUSBAR_REPLACE_OK					Tekst "%s" is vervangen door "%s".
 MSG_STATUSBAR_REPLACE_NOT_OK				Tekst is niet vervangen.
 
-MSG_BUFFER_UNTITLED=2100					Titelloos - %d
+MSG_BUFFER_UNTITLED=2100					Naamloos - %d
 MSG_BUFFER_CURSOR							Kolom: %d Regel: %d
+

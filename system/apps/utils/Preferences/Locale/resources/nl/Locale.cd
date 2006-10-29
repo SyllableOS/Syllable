@@ -1,6 +1,7 @@
 //
-// Locale string catalog
-// Dutch translation by Kaj de Vos
+// Locale Vertalingen
+//
+// Vertaald door Kaj de Vos
 //
 
 STR_MAIN_TITLE=1000						Taalinstellingen
@@ -17,3 +18,4 @@ STR_MAIN_LANGUAGE_USED					Geactiveerde talen
 STR_MAIN_COUNTRY_TAB=1200				Land
 
 STR_ERROR_SAVE=2000						Fout bij het opslaan van de instellingen.
+
