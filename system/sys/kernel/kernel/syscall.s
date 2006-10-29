@@ -311,6 +311,7 @@ _C_SYM( ret_from_sys_call ):
 
 _C_SYM( Schedule ):
 	movl 0(%esp), %eax;
+	addl $4,%esp;
 	pushfl
 	pushl $KERNEL_CS
 	pushl %eax
