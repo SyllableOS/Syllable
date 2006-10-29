@@ -89,11 +89,10 @@ deps: $(OBJDIR) $(DEPS)
 
 clean:
 	rm -f $(OBJS) $(OBJDIR)/*.d
-	rm resources/libsyllable.catalog resources/libsyllable.h; \
+	rm catalogs/libsyllable.catalog catalogs/libsyllable.h; \
 	for CATALOG in $(CATALOGS);do \
-		rm resources/$$CATALOG/libsyllable.catalog; \
+		rm catalogs/$$CATALOG/libsyllable.catalog; \
 	done;
 
 -include $(OBJDIR)/*.d
-
 

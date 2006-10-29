@@ -1,7 +1,7 @@
 //
-// FileBrowser String Catalog
+// FileBrowser Vertalingen
 //
-// Translated by: Ruud Kuin en Bas de Lange
+// Translated by: Ruud Kuin, Bas de Lange en Kaj de Vos
 //
 
 MSG_MAINWND_TITLE=0				Bestandsbeheer
@@ -9,6 +9,6 @@ MSG_MAINWND_TITLE=0				Bestandsbeheer
 MSG_MENU_VIEW=100				Weergave
 MSG_MENU_VIEW_ICONS				Pictogramweergave
 MSG_MENU_VIEW_LIST				Lijstweergave
-MSG_MENU_VIEW_DETAILS			Gedetailleerde Weergave
+MSG_MENU_VIEW_DETAILS			Detailweergave
 MSG_MENU_VIEW_SAVE				Opslaan
 

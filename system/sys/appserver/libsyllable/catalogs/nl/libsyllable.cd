@@ -1,6 +1,6 @@
 //
-// LibSyllable string catalog
-// Nederlandse vertaling door Rik van Achterberg <rikratva@xs4all.nl>
+// LibSyllable Vertalingen
+// Nederlandse vertaling door Rik van Achterberg <rikratva@xs4all.nl> en Kaj de Vos
 //
 
 // FileRequester strings
@@ -9,7 +9,7 @@ MSG_FILEREQUESTER_SAVE_BUTTON						Op_slaan
 MSG_FILEREQUESTER_CANCEL_BUTTON						_Annuleren
 MSG_FILEREQUESTER_FILE_NAME_LABEL					Bestandsnaam:
 MSG_FILEREQUESTER_BROWSE_LOCATION_LABEL				Zoeken in:
-MSG_FILEREQUESTER_FILE_ALREADY_EXISTS_TEXT			Het bestand '%s' bestaat al.\nWilt u dit bestand overschrijven?\n
+MSG_FILEREQUESTER_FILE_ALREADY_EXISTS_TEXT			Het bestand '%s' bestaat al.\nWil je dit bestand overschrijven?\n
 MSG_FILEREQUESTER_FILE_ALREADY_EXISTS_TITLE			Waarschuwing:
 MSG_FILEREQUESTER_FILE_ALREADY_EXISTS_YES_BUTTON	Ja
 MSG_FILEREQUESTER_FILE_ALREADY_EXISTS_NO_BUTTON		Nee

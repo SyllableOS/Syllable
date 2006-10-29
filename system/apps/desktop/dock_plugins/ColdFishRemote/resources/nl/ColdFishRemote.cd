@@ -1,9 +1,9 @@
 //
-// ColdFishRemote String Catalog
-// Nederlandse vertaling door Rik van Achterberg <rikratva@xs4all.nl>
+// ColdFishRemote Vertalingen
+// Nederlandse vertaling door Rik van Achterberg <rikratva@xs4all.nl> en Kaj de Vos
 //
 
-MSG_MENU_ABOUT	Over
-MSG_MENU_ADD 	Bestand toevoegen
+MSG_MENU_ABOUT	Over ColdFishRemote...
+MSG_MENU_ADD 	Bestand toevoegen...
 MSG_UNKNOWN		Onbekend
 
