@@ -138,7 +138,8 @@ resources
 	atheos/Documentation		documentation/Copyrights.html		text/html
 
 modules
-	sys/boot/grub-0.97-syllable
+;	Currently requires GCC 3.4.3
+;	sys/boot/grub-0.97-syllable
 
 	other/config/default
 	other/config/etc
