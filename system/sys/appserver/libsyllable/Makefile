@@ -44,14 +44,16 @@ $(OBJDIR):
 $(OBJDIR)/$(LIBNAME): $(OBJS)
 	$(CXX) -shared -Xlinker "-soname=$(LIBNAME)" $(OBJS) -lm -o $(OBJDIR)/$(LIBNAME)
 
-catalogs:
+catalogs: catalogs/libsyllable.h
+
+catalogs/libsyllable.h: catalogs/libsyllable.cd
 	cd catalogs
 	catcomp -c libsyllable.cd
 	for CATALOG in $(CATALOGS); do \
-		echo $$CATALOG \
-		cd $$CATALOG \
-		catcomp -t libsyllable.cd \
-		cd .. \
+		echo $$CATALOG; \
+		cd $$CATALOG; \
+		catcomp -t libsyllable.cd; \
+		cd ..; \
 	done
 
 deps:
@@ -62,8 +64,8 @@ install: $(OBJDIR)/$(LIBNAME)
 	ln -sf $(LIBNAME) $(LIBBIN)/libsyllable.so
 	cp catalogs/libsyllable.catalog /system/resources/catalogs/
 	for CATALOG in $(CATALOGS); do \
-		echo $$CATALOG \
-		cp catalogs/$$CATALOG/libsyllable.catalog /system/resources/catalogs/$$CATALOG/ \
+		echo $$CATALOG; \
+		cp catalogs/$$CATALOG/libsyllable.catalog /system/resources/catalogs/$$CATALOG/; \
 	done
 
 dist: $(OBJDIR)/$(LIBNAME)
@@ -71,8 +73,8 @@ dist: $(OBJDIR)/$(LIBNAME)
 	ln -sf $(LIBNAME) $(DIST_DIR)/atheos/sys/libs/libsyllable.so
 	cp catalogs/libsyllable.catalog $(DIST_DIR)/atheos/sys/resources/catalogs/
 	for CATALOG in $(CATALOGS); do \
-		echo $$CATALOG \
-		cp catalogs/$$CATALOG/libsyllable.catalog $(DIST_DIR)/atheos/sys/resources/catalogs/$$CATALOG/ \
+		echo $$CATALOG; \
+		cp catalogs/$$CATALOG/libsyllable.catalog $(DIST_DIR)/atheos/sys/resources/catalogs/$$CATALOG/; \
 	done
 
 doc:
@@ -87,7 +89,7 @@ clean:
 	-rm -f $(OBJS) $(OBJDIR)/*
 	-rm catalogs/libsyllable.catalog catalogs/libsyllable.h
 	for CATALOG in $(CATALOGS); do \
-		rm catalogs/$$CATALOG/libsyllable.catalog \
+		rm catalogs/$$CATALOG/libsyllable.catalog; \
 	done
 
 -include $(OBJDIR)/*.d
