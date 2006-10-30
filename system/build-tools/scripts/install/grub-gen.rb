@@ -7,7 +7,6 @@
 # Last modified by xsdg for installer version 0.1.11.
 
 module GrubGen
-	SyllableVersion = "0.6.2"
 	Templates = {
 		"syllable" => File.read("templates/grubgen/top"),
 		"other"    => File.read("templates/grubgen/subsequent")
@@ -21,7 +20,6 @@ module GrubGen
 		output	= Templates["syllable"].dup
 		
 		# replace placeholders with actual data
-		output.gsub!("##SYLLABLE VERSION##", SyllableVersion)
 		output.gsub!("##SYLLABLE ROOT DEVICE PATH##", sylpart)
 		output.gsub!("##GRUB ROOT DEVICE##", syl_to_grub(sylpart))
 				

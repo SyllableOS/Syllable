@@ -11,7 +11,6 @@ require "grub-gen.rb"
 
 # Remember to always update the version numbers below!
 
-Base = ["0.6.2", "base-syllable-%s.zip"]
 Packages = {
 	"ABrowse"	=> ["0.4a", "abrowse-%s.bin.zip"],
 	"Whisper"	=> ["1.0a", "whisper-%s.bin.zip"],
@@ -95,7 +94,7 @@ Dir.mkdir "/inst"
 system "/bin/mount", "-t", "afs", $part, "/inst"
 
 pkg = sprintf(Base[1], Base[0])
-retval = system "unzip", "-d", "/inst/", "/boot/Packages/base/#{pkg}"
+retval = system "unzip", "-d", "/inst/", "/boot/Packages/base/base-syllable.zip"
 system "sync"
 
 if(retval)
