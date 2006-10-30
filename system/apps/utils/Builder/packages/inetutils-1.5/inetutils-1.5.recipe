@@ -16,5 +16,6 @@ configure-options
 ;	Ping acts irregular, and Syllable has its own:
 	--disable-ping
 ;	--disable-servers
-documentation		README COPYING NEWS ChangeLog TODO AUTHORS THANKS
 
+move-files			share/info .
+documentation		README COPYING NEWS ChangeLog TODO AUTHORS THANKS
