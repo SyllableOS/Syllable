@@ -13,7 +13,7 @@ MSG_MAINWND_MENU_APPLICATION_QUIT			Выход
 MSG_MAINWND_MENU_FILE=300					Файл
 MSG_MAINWND_MENU_FILE_OPEN					Открыть...
 MSG_MAINWND_MENU_FILE_OPEN_INPUT			Открыть ввод...
-MSG_MAINWND_MENU_FILE_INFO					Info...
+MSG_MAINWND_MENU_FILE_INFO					Информация...
 MSG_MAINWND_MENU_FILE_FULLSCREEN			Полноэкранный режим
 
 MSG_MAINWND_MENU_TRACKS=400					Треки
@@ -26,11 +26,11 @@ MSG_ERRWND_TITLE=1100						Ошибка
 MSG_ERRWND_OK								OK
 MSG_ERRWND_CANTPLAY							Файл не может быть открыт.\nПожалуйста, проверьте Ваши настройки.
 
-MSG_INFOWND_TITLE=1200						Information
-MSG_INFOWND_VIDEO							Video
-MSG_INFOWND_AUDIO							Audio
-MSG_INFOWND_CHANNELS						channels
-MSG_INFOWND_OK								OK
+MSG_INFOWND_TITLE=1200						Информация
+MSG_INFOWND_VIDEO							Видео
+MSG_INFOWND_AUDIO							Аудио
+MSG_INFOWND_CHANNELS						каналы
+MSG_INFOWND_OK								ОК
 
 MSG_TRACK_MENU_ITEM=2000					Трек
 

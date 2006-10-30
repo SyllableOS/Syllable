@@ -1,5 +1,7 @@
 //
-// Coldfish string catalog
+// ColdFish string catalog
+//
+// Translated by:
 //
 
 MSG_MAINWND_TITLE=100						Coldfish
@@ -11,6 +13,7 @@ MSG_MAINWND_FILE							Plik
 MSG_MAINWND_TRACK							Ścieżka
 MSG_MAINWND_STREAM							Strumień
 MSG_MAINWND_LENGTH							Długość
+MSG_MAINWND_PLAYING							Playing
 
 MSG_MAINWND_MENU_APPLICATION=200			Aplikacja
 MSG_MAINWND_MENU_APPLICATION_ABOUT			O programie...
@@ -38,6 +41,7 @@ MSG_ERRWND_CANTDELETE						Nie można usunąć aktualnie odtwarzanego pliku.
 MSG_ERRWND_NOTPLAYLIST						Wybrany plik nie jest playlistą.
 
 MSG_PLAYLIST_UNKNOWN=2000					Nieznany
+MSG_PLAYLIST_DEFAULT						Default Playlist
 
 MSG_PLAYLISTWND_TITLE=2100					Wybierz Playlistę - ColdFish
 MSG_PLAYLISTWND_FILE						Plik
@@ -46,4 +50,5 @@ MSG_PLAYLISTWND_NOTE						Uwaga: Jeżeli podasz nazwę nieistniejącego pliku zo
 
 MSG_LCD_TRACK=3000							ścieżka
 
+MSG_MIMETYPE_APPLICATION_XCOLDFISHPLAYLIST=10000		ColdFish Playlist
 
