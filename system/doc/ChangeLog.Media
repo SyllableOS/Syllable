@@ -1,3 +1,8 @@
+* October 26 2006 Arno Klenke *
+
+The ffmpeg codec now reorders the samples in 6 channel mode to match the hardware format
+Fixed uninitialized members
+
 * October 25 2006 Arno Klenke *
 
 Close the device if the IOCTL_GET_USERSPACE_DRIVER ioctl fails
@@ -182,6 +187,7 @@ Added multiple soundcard support to the media server
 * Nov 18 2003, Kristian Van Der Vliet *
 
 Created this ChangeLog for changes specific to the media framework.
+
 
 
 
