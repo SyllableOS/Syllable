@@ -44,16 +44,15 @@ $(OBJDIR):
 $(OBJDIR)/$(LIBNAME): $(OBJS)
 	$(CXX) -shared -Xlinker "-soname=$(LIBNAME)" $(OBJS) -lm -o $(OBJDIR)/$(LIBNAME)
 
-
 catalogs:
-	cd resources; \
-	catcomp -c libsyllable.cd; \
-	for CATALOG in $(CATALOGS);do \
-		echo $$CATALOG; \
-		cd $$CATALOG; \
-		catcomp -t libsyllable.cd; \
-		cd ..; \
-	done;
+	cd catalogs
+	catcomp -c libsyllable.cd
+	for CATALOG in $(CATALOGS); do \
+		echo $$CATALOG \
+		cd $$CATALOG \
+		catcomp -t libsyllable.cd \
+		cd .. \
+	done
 
 deps:
 
@@ -62,20 +61,19 @@ install: $(OBJDIR)/$(LIBNAME)
 	install -s $(OBJDIR)/$(LIBNAME) $(LIBBIN)/$(LIBNAME)
 	ln -sf $(LIBNAME) $(LIBBIN)/libsyllable.so
 	cp catalogs/libsyllable.catalog /system/resources/catalogs/
-	for CATALOG in $(CATALOGS);do \
-		echo $$CATALOG; \
-		cp catalogs/$$CATALOG/libsyllable.catalog /system/resources/catalogs/$$CATALOG/
-	done;
-
+	for CATALOG in $(CATALOGS); do \
+		echo $$CATALOG \
+		cp catalogs/$$CATALOG/libsyllable.catalog /system/resources/catalogs/$$CATALOG/ \
+	done
 
 dist: $(OBJDIR)/$(LIBNAME)
 	install -s $(OBJDIR)/$(LIBNAME) $(DIST_DIR)/atheos/sys/libs/$(LIBNAME)
 	ln -sf $(LIBNAME) $(DIST_DIR)/atheos/sys/libs/libsyllable.so
-	cp catalogs/libsyllable.catalog /system/resources/catalogs/
-	for CATALOG in $(CATALOGS);do \
-		echo $$CATALOG; \
-		cp catalogs/$$CATALOG/libsyllable.catalog /system/resources/catalogs/$$CATALOG/
-	done;
+	cp catalogs/libsyllable.catalog $(DIST_DIR)/atheos/sys/resources/catalogs/
+	for CATALOG in $(CATALOGS); do \
+		echo $$CATALOG \
+		cp catalogs/$$CATALOG/libsyllable.catalog $(DIST_DIR)/atheos/sys/resources/catalogs/$$CATALOG/ \
+	done
 
 doc:
 	-rm -R docs/*
@@ -85,14 +83,12 @@ install-doc:
 	-rm -R /atheos/Documentation/gui/*
 	cp -R docs/html/* /atheos/Documentation/gui
 
-deps: $(OBJDIR) $(DEPS)
-
 clean:
-	rm -f $(OBJS) $(OBJDIR)/*.d
-	rm catalogs/libsyllable.catalog catalogs/libsyllable.h; \
-	for CATALOG in $(CATALOGS);do \
-		rm catalogs/$$CATALOG/libsyllable.catalog; \
-	done;
+	-rm -f $(OBJS) $(OBJDIR)/*
+	-rm catalogs/libsyllable.catalog catalogs/libsyllable.h
+	for CATALOG in $(CATALOGS); do \
+		rm catalogs/$$CATALOG/libsyllable.catalog \
+	done
 
 -include $(OBJDIR)/*.d
 
