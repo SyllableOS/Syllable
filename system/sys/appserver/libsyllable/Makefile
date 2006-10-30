@@ -56,7 +56,7 @@ catalogs/libsyllable.h: catalogs/libsyllable.cd
 		cd ..; \
 	done
 
-deps:
+deps: $(OBJDIR) catalogs $(DEPS)
 
 install: $(OBJDIR)/$(LIBNAME)
 	strip --strip-all $(OBJDIR)/$(LIBNAME)
