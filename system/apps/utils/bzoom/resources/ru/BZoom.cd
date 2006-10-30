@@ -1,0 +1,21 @@
+//
+// BZoom String Catalog
+//
+// Translated by: Ilya Krol
+//
+
+MSG_MAINWND_TITLE=100						BZoom
+
+MSG_MAINWND_MENU_APP=200					Приложение
+MSG_MAINWND_MENU_APP_EXIT					Выход
+
+MSG_MAINWND_MENU_VIEW=300					Вид
+MSG_MAINWND_MENU_VIEW_MAGNIFICATION			Увеличение
+
+MSG_MAINWND_MENU_HELP=400					Помощь
+MSG_MAINWND_MENU_HELP_ABOUT					О программе
+
+MSG_ABOUTWND_TITLE=1000						О программе BZoom
+MSG_ABOUTWND_TEXT							BZoom V1.0\n\nПростейший попиксельный увеличитель для AtheOS.\nОн основан на AZoom, написанной Chir.\nBZoom распространяется на условиях \nУниверсальной Общественной Лицензии (GNU GPL)
+MSG_ABOUTWND_OK								Ок
+

@@ -1,0 +1,32 @@
+//
+// AView String Catalog
+//
+// Translated by: Ilya Krol
+//
+
+MSG_MAINWND_TITLE=0							AView
+
+MSG_MAINWND_MENU_APPLICATION=100			Приложение
+MSG_MAINWND_MENU_APPLICATION_QUIT			Выход
+MSG_MAINWND_MENU_APPLICATION_ABOUT			О программе
+
+MSG_MAINWND_MENU_FILE=200					Файл
+MSG_MAINWND_MENU_FILE_OPEN					Открыть
+
+MSG_MAINWND_MENU_VIEW=300					Вид
+MSG_MAINWND_MENU_VIEW_FITTOIMAGE			Размер страницы
+MSG_MAINWND_MENU_VIEW_PREVIOUS				Предыдущая
+MSG_MAINWND_MENU_VIEW_NEXT					Следующая
+MSG_MAINWND_MENU_VIEW_FIRST					Первая
+MSG_MAINWND_MENU_VIEW_LAST					Последняя
+
+MSG_ABOUTWND_TITLE=1000						О программе AView
+MSG_ABOUTWND_TEXT							AView\n\nПрограмма просмотра изображений для Syllable\nCopyright 2005 команда Syllable\n\nAView распространяется на условиях Универсальной Общественной Лицензии (GNU GPL). Для получения дополнительной информации, пожалуйста, посетите www.gnu.org.
+MSG_ABOUTWND_OK								Ok
+
+MSG_STATUSBAR_OF=2000						%i из %i
+
+MSG_MIMETYPE_IMAGE_PNG=10000				Изображение в формате PNG
+MSG_MIMETYPE_IMAGE_JPEG						Изображение в формате JPEG
+MSG_MIMETYPE_IMAGE_GIF						Изображение в формате GIF
+

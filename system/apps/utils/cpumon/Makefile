@@ -3,7 +3,7 @@ COPTS	= -c -I../../kernel/drivers/misc/w8378x/
 OBJS	= main.o graphview.o barview.o
 EXE	= cpumon
 
-CATALOGS = da es hu pt-br sv
+CATALOGS = da es hu pt-br ru sv
 
 $(EXE) : catalogs $(OBJS)
 	$(CXX) $(OBJS) -lsyllable -o $@

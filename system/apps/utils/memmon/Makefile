@@ -3,7 +3,7 @@ COPTS	= -c
 OBJS	= main.o
 EXE	= memmon
 
-CATALOGS = da es hu pt-br sv
+CATALOGS = da es hu pt-br ru sv
 
 $(EXE) : catalogs $(OBJS)
 	$(CXX) $(OBJS) -lsyllable -o $@
