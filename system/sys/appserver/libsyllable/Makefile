@@ -47,8 +47,8 @@ $(OBJDIR)/$(LIBNAME): $(OBJS)
 catalogs: catalogs/libsyllable.h
 
 catalogs/libsyllable.h: catalogs/libsyllable.cd
-	cd catalogs
-	catcomp -c libsyllable.cd
+	cd catalogs; \
+	catcomp -c libsyllable.cd; \
 	for CATALOG in $(CATALOGS); do \
 		echo $$CATALOG; \
 		cd $$CATALOG; \
