@@ -99,7 +99,8 @@ tree
 ;	For env:
 	atheos/usr/bin
 ;	atheos/usr/etc
-;	atheos/usr/include
+;	For NCurses:
+	atheos/usr/include
 ;	atheos/usr/info
 ;	atheos/usr/lib
 ;	atheos/usr/man
