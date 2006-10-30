@@ -1,21 +1,7 @@
-diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resources xpdf-3.00pl3/README.syllable /home/root/xpdf/README.syllable
---- xpdf-3.00pl3/README.syllable	1970-01-01 00:00:00.000000000 +0000
-+++ /home/root/xpdf/README.syllable	2006-06-02 17:05:52.000000000 +0000
-@@ -0,0 +1,11 @@
-+How to build
-+============
-+
-+You need the freetype library installed.
-+
-+Build it with:
-+
-+./configure --with-freetype2-includes=/usr/freetype/include/freetype2
-+make xpdf
-+
-+
-diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resources xpdf-3.00pl3/configure.in /home/root/xpdf/configure.in
---- xpdf-3.00pl3/configure.in	2004-01-22 01:26:44.000000000 +0000
-+++ /home/root/xpdf/configure.in	2005-12-04 13:54:43.000000000 +0000
+Only in xpdf-3.00: README.syllable
+diff -ur xpdf-3.00_orig/configure.in xpdf-3.00/configure.in
+--- xpdf-3.00_orig/configure.in	2004-01-22 01:26:44.000000000 +0000
++++ xpdf-3.00/configure.in	2006-10-30 21:26:07.000000000 +0000
 @@ -1,5 +1,5 @@
  dnl Process this file with autoconf to produce a configure script.
 -dnl Copyright 1998-2003 Glyph & Cog, LLC
@@ -109,9 +95,9 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
 +  AC_MSG_WARN([-- You will be able to compile pdftops, pdftotext,
 +        pdfinfo, pdffonts, and pdfimages, but not xpdf or pdftoppm])
  fi
-diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resources xpdf-3.00pl3/splash/SplashFTFont.h /home/root/xpdf/splash/SplashFTFont.h
---- xpdf-3.00pl3/splash/SplashFTFont.h	2004-01-22 01:26:44.000000000 +0000
-+++ /home/root/xpdf/splash/SplashFTFont.h	2005-12-04 13:57:21.000000000 +0000
+diff -ur xpdf-3.00_orig/splash/SplashFTFont.h xpdf-3.00/splash/SplashFTFont.h
+--- xpdf-3.00_orig/splash/SplashFTFont.h	2004-01-22 01:26:44.000000000 +0000
++++ xpdf-3.00/splash/SplashFTFont.h	2006-10-30 21:26:07.000000000 +0000
 @@ -15,7 +15,8 @@
  #pragma interface
  #endif
@@ -122,9 +108,9 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  #include "SplashFont.h"
  
  class SplashFTFontFile;
-diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resources xpdf-3.00pl3/splash/SplashFTFontEngine.h /home/root/xpdf/splash/SplashFTFontEngine.h
---- xpdf-3.00pl3/splash/SplashFTFontEngine.h	2004-01-22 01:26:44.000000000 +0000
-+++ /home/root/xpdf/splash/SplashFTFontEngine.h	2005-12-04 13:57:02.000000000 +0000
+diff -ur xpdf-3.00_orig/splash/SplashFTFontEngine.h xpdf-3.00/splash/SplashFTFontEngine.h
+--- xpdf-3.00_orig/splash/SplashFTFontEngine.h	2004-01-22 01:26:44.000000000 +0000
++++ xpdf-3.00/splash/SplashFTFontEngine.h	2006-10-30 21:26:07.000000000 +0000
 @@ -15,7 +15,8 @@
  #pragma interface
  #endif
@@ -135,9 +121,9 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  #include "gtypes.h"
  
  class SplashFontFile;
-diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resources xpdf-3.00pl3/splash/SplashFTFontFile.h /home/root/xpdf/splash/SplashFTFontFile.h
---- xpdf-3.00pl3/splash/SplashFTFontFile.h	2004-01-22 01:26:44.000000000 +0000
-+++ /home/root/xpdf/splash/SplashFTFontFile.h	2005-12-04 13:57:38.000000000 +0000
+diff -ur xpdf-3.00_orig/splash/SplashFTFontFile.h xpdf-3.00/splash/SplashFTFontFile.h
+--- xpdf-3.00_orig/splash/SplashFTFontFile.h	2004-01-22 01:26:44.000000000 +0000
++++ xpdf-3.00/splash/SplashFTFontFile.h	2006-10-30 21:26:07.000000000 +0000
 @@ -15,7 +15,8 @@
  #pragma interface
  #endif
@@ -148,9 +134,9 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  #include "SplashFontFile.h"
  
  class SplashFontFileID;
-diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resources xpdf-3.00pl3/xpdf/GlobalParams.cc /home/root/xpdf/xpdf/GlobalParams.cc
---- xpdf-3.00pl3/xpdf/GlobalParams.cc	2004-01-22 01:26:45.000000000 +0000
-+++ /home/root/xpdf/xpdf/GlobalParams.cc	2006-10-21 00:09:31.000000000 +0000
+diff -ur xpdf-3.00_orig/xpdf/GlobalParams.cc xpdf-3.00/xpdf/GlobalParams.cc
+--- xpdf-3.00_orig/xpdf/GlobalParams.cc	2004-01-22 01:26:45.000000000 +0000
++++ xpdf-3.00/xpdf/GlobalParams.cc	2006-10-30 21:26:07.000000000 +0000
 @@ -58,7 +58,33 @@
  #define unicodeToUnicodeCacheSize 4
  
@@ -211,10 +197,19 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
      globalParams->addDisplayFont(dfp);
    }
  }
-diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resources xpdf-3.00pl3/xpdf/Makefile.in /home/root/xpdf/xpdf/Makefile.in
---- xpdf-3.00pl3/xpdf/Makefile.in	2004-01-22 01:26:45.000000000 +0000
-+++ /home/root/xpdf/xpdf/Makefile.in	2006-06-02 17:04:05.000000000 +0000
-@@ -26,7 +26,7 @@
+diff -ur xpdf-3.00_orig/xpdf/Makefile.in xpdf-3.00/xpdf/Makefile.in
+--- xpdf-3.00_orig/xpdf/Makefile.in	2004-01-22 01:26:45.000000000 +0000
++++ xpdf-3.00/xpdf/Makefile.in	2006-10-30 21:27:26.000000000 +0000
+@@ -12,6 +12,8 @@
+ srcdir = @srcdir@
+ VPATH = @srcdir@
+ 
++CATALOGS = da de es hu nl pl pt-br ru sv
++
+ GOOSRCDIR = $(srcdir)/../goo
+ GOOLIBDIR = ../goo
+ FOFISRCDIR = $(srcdir)/../fofi
+@@ -26,7 +28,7 @@
  T1LIBS = @t1_LIBS@
  FTLIBS = @freetype2_LIBS@
  
@@ -223,38 +218,71 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  
  SPLASHLIBS = -L$(SPLASHLIBDIR) -lsplash
  
-@@ -120,10 +120,17 @@
+@@ -120,10 +122,27 @@
  	UnicodeMap.o UnicodeTypeTable.o XPDFApp.o XPDFCore.o XPDFTree.o \
  	XPDFViewer.o XRef.o XSplashOutputDev.o xpdf.o
  XPDF_LIBS = -L$(GOOLIBDIR) -lGoo $(SPLASHLIBS) $(T1LIBS) $(FTLIBS) \
 -	$(XLIBS) $(OTHERLIBS) -lm
 +	$(XLIBS) $(OTHERLIBS) -lm -lz
  
- xpdf$(EXE): $(XPDF_OBJS) $(GOOLIBDIR)/$(LIBPREFIX)Goo.a
+-xpdf$(EXE): $(XPDF_OBJS) $(GOOLIBDIR)/$(LIBPREFIX)Goo.a
 -	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o xpdf$(EXE) $(XPDF_OBJS) $(XPDF_LIBS)
++xpdf$(EXE): catalogs $(XPDF_OBJS) $(GOOLIBDIR)/$(LIBPREFIX)Goo.a
 +	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o Xpdf$(EXE) $(XPDF_OBJS) $(XPDF_LIBS)
 +	rescopy Xpdf$(EXE) -r *.png
 +	rescopy -a Xpdf$(EXE) resources/xpdf.catalog
-+	rescopy -a Xpdf$(EXE) de/xpdf.catalog=resources/de/xpdf.catalog
-+	rescopy -a Xpdf$(EXE) da/xpdf.catalog=resources/da/xpdf.catalog
-+	rescopy -a Xpdf$(EXE) nl/xpdf.catalog=resources/nl/xpdf.catalog
-+	rescopy -a Xpdf$(EXE) pl/xpdf.catalog=resources/pl/xpdf.catalog
++	for CATALOG in $(CATALOGS);do \
++		echo $$CATALOG; \
++		rescopy -a Xpdf$(EXE) $$CATALOG/xpdf.catalog=resources/$$CATALOG/xpdf.catalog; \
++	done;
 +	strip --strip-all Xpdf$(EXE)
++
++catalogs:
++	cd resources; \
++	catcomp -c xpdf.cd; \
++	for CATALOG in $(CATALOGS);do \
++		echo $$CATALOG; \
++		cd $$CATALOG; \
++		catcomp -t xpdf.cd; \
++		cd ..; \
++	done;
  
  #------------------------------------------------------------------------
  
-@@ -221,7 +228,7 @@
+@@ -220,8 +239,8 @@
+ 
  #------------------------------------------------------------------------
  
- clean:
+-clean:
 -	rm -f $(XPDF_OBJS) xpdf$(EXE)
++clean: catalog-clean
 +	rm -f $(XPDF_OBJS) Xpdf$(EXE)
  	rm -f $(PDFTOPS_OBJS) pdftops$(EXE)
  	rm -f $(PDFTOTEXT_OBJS) pdftotext$(EXE)
  	rm -f $(PDFINFO_OBJS) pdfinfo$(EXE)
-diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resources xpdf-3.00pl3/xpdf/TextOutputDev.h /home/root/xpdf/xpdf/TextOutputDev.h
---- xpdf-3.00pl3/xpdf/TextOutputDev.h	2004-01-22 01:26:45.000000000 +0000
-+++ /home/root/xpdf/xpdf/TextOutputDev.h	2006-10-09 13:24:48.000000000 +0000
+@@ -229,9 +248,19 @@
+ 	rm -f $(PDFTOPPM_OBJS) pdftoppm$(EXE)
+ 	rm -f $(PDFIMAGES_OBJS) pdfimages$(EXE)
+ 
++catalog-clean:
++	-rm resources/xpdf.catalog resources/xpdf.h; \
++	for CATALOG in $(CATALOGS);do \
++		rm resources/$$CATALOG/xpdf.catalog; \
++	done;
++
+ #------------------------------------------------------------------------
+ 
+ depend:
+ 	$(CXX) $(CXXFLAGS) -MM $(CXX_SRC) >Makefile.dep
+ 
+ include Makefile.dep
++
++
++
++
+diff -ur xpdf-3.00_orig/xpdf/TextOutputDev.h xpdf-3.00/xpdf/TextOutputDev.h
+--- xpdf-3.00_orig/xpdf/TextOutputDev.h	2004-01-22 01:26:45.000000000 +0000
++++ xpdf-3.00/xpdf/TextOutputDev.h	2006-10-30 21:26:08.000000000 +0000
 @@ -165,7 +165,7 @@
  //------------------------------------------------------------------------
  // TextLine
@@ -282,12 +310,14 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  class TextPage {
  public:
  
-diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resources xpdf-3.00pl3/xpdf/XPDFApp.cc /home/root/xpdf/xpdf/XPDFApp.cc
---- xpdf-3.00pl3/xpdf/XPDFApp.cc	2004-01-22 01:26:45.000000000 +0000
-+++ /home/root/xpdf/xpdf/XPDFApp.cc	2006-02-13 14:22:51.000000000 +0000
-@@ -19,131 +19,43 @@
+diff -ur xpdf-3.00_orig/xpdf/XPDFApp.cc xpdf-3.00/xpdf/XPDFApp.cc
+--- xpdf-3.00_orig/xpdf/XPDFApp.cc	2004-01-22 01:26:45.000000000 +0000
++++ xpdf-3.00/xpdf/XPDFApp.cc	2006-10-30 21:26:36.000000000 +0000
+@@ -18,132 +18,45 @@
+ #include "XPDFViewer.h"
  #include "XPDFApp.h"
  #include "config.h"
++#include "resources/xpdf.h"
  
 -// these macro defns conflict with xpdf's Object class
 -#ifdef LESSTIF_VERSION
@@ -424,7 +454,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
 +	} catch( ... ) {
 +		printf( "Failed to load catalog file!\n" );
 +	}
- 
++
 +/* Register filetypes */
 +	m_pcManager = NULL;
 +
@@ -432,18 +462,18 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
 +	{
 +		m_pcManager = os::RegistrarManager::Get();
 +		
-+		m_pcManager->RegisterType( "text/x-pdf", "PDF document" );
++		m_pcManager->RegisterType( "text/x-pdf", MSG_MIMETYPE_TEXT_XPDF );
 +		m_pcManager->RegisterTypeExtension( "text/x-pdf", "pdf" );
 +		m_pcManager->RegisterTypeIconFromRes( "text/x-pdf", "text_pdf.png" );
 +		m_pcManager->RegisterAsTypeHandler( "text/x-pdf" );
 +	} catch( ... ) {}
-+
+ 
 +  fullScreen = gFalse;
 +  
    getResources();
  
    viewers = new GList();
-@@ -151,43 +62,25 @@
+@@ -151,43 +64,25 @@
  }
  
  void XPDFApp::getResources() {
@@ -471,7 +501,8 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
    } else {
      paperRGB = splashMakeRGB8(0xff, 0xff, 0xff);
 -    paperColor = WhitePixel(display, screenNum);
--  }
++    paperColor = 0xffffffff;
+   }
 -  if (resources.paperColor) {
 -    XtVaGetValues(appShell, XmNcolormap, &colormap, NULL);
 -    if (XAllocNamedColor(display, colormap, resources.paperColor,
@@ -483,8 +514,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
 -    } else {
 -      error(-1, "Couldn't allocate color '%s'", resources.paperColor);
 -    }
-+    paperColor = 0xffffffff;
-   }
+-  }
 -  initialZoom = resources.initialZoom ? new GString(resources.initialZoom)
 -                                      : (GString *)NULL;
 -  viKeys = (GBool)resources.viKeys;
@@ -499,7 +529,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
    deleteGList(viewers, XPDFViewer);
    if (geometry) {
      delete geometry;
-@@ -210,13 +103,7 @@
+@@ -210,13 +105,7 @@
      delete viewer;
      return NULL;
    }
@@ -514,7 +544,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
    viewers->append(viewer);
    return viewer;
  }
-@@ -232,13 +119,6 @@
+@@ -232,13 +121,6 @@
      delete viewer;
      return NULL;
    }
@@ -528,7 +558,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
    viewers->append(viewer);
    return viewer;
  }
-@@ -259,12 +139,6 @@
+@@ -259,12 +141,6 @@
      for (i = 0; i < viewers->getLength(); ++i) {
        if (((XPDFViewer *)viewers->get(i)) == viewer) {
  	viewers->del(i);
@@ -541,7 +571,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  	delete viewer;
  	return;
        }
-@@ -273,138 +147,17 @@
+@@ -273,138 +149,17 @@
  }
  
  void XPDFApp::quit() {
@@ -563,13 +593,12 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  void XPDFApp::run() {
 -  XtAppMainLoop(appContext);
 -}
- 
+-
 -void XPDFApp::setRemoteName(char *remoteName) {
 -  remoteAtom = XInternAtom(display, remoteName, False);
 -  remoteXWin = XGetSelectionOwner(display, remoteAtom);
-+	appContext->Run();
- }
- 
+-}
+-
 -GBool XPDFApp::remoteServerRunning() {
 -  return remoteXWin != None;
 -}
@@ -583,23 +612,24 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
 -		  PropModeReplace, (Guchar *)cmd, strlen(cmd) + 1);
 -  XFlush(display);
 -}
- 
+-
 -void XPDFApp::remoteOpenAtDest(GString *fileName, GString *dest, GBool raise) {
 -  char cmd[remoteCmdSize];
--
+ 
 -  sprintf(cmd, "%c +%.256s %.200s",
 -	  raise ? 'D' : 'd', dest->getCString(), fileName->getCString());
 -  XChangeProperty(display, remoteXWin, remoteAtom, remoteAtom, 8,
 -		  PropModeReplace, (Guchar *)cmd, strlen(cmd) + 1);
 -  XFlush(display);
--}
--
++	appContext->Run();
+ }
+ 
 -void XPDFApp::remoteReload(GBool raise) {
 -  XChangeProperty(display, remoteXWin, remoteAtom, remoteAtom, 8,
 -		  PropModeReplace, raise ? (Guchar *)"L" : (Guchar *)"l", 2);
 -  XFlush(display);
 -}
- 
+-
 -void XPDFApp::remoteRaise() {
 -  XChangeProperty(display, remoteXWin, remoteAtom, remoteAtom, 8,
 -		  PropModeReplace, (Guchar *)"r", 2);
@@ -674,18 +704,18 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
 -  } else if (cmd[0] == 'q') {
 -    app->quit();
 -  }
--
+ 
 -  // raise window
 -  if (cmd[0] == 'D' || cmd[0] == 'L' || cmd[0] == 'r'){
 -    XMapRaised(app->display, XtWindow(app->remoteWin));
 -    XFlush(app->display);
 -  }
--
+ 
 -  XFree((XPointer)cmd);
 -}
-diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resources xpdf-3.00pl3/xpdf/XPDFApp.h /home/root/xpdf/xpdf/XPDFApp.h
---- xpdf-3.00pl3/xpdf/XPDFApp.h	2004-01-22 01:26:45.000000000 +0000
-+++ /home/root/xpdf/xpdf/XPDFApp.h	2005-03-11 16:01:26.000000000 +0000
+diff -ur xpdf-3.00_orig/xpdf/XPDFApp.h xpdf-3.00/xpdf/XPDFApp.h
+--- xpdf-3.00_orig/xpdf/XPDFApp.h	2004-01-22 01:26:45.000000000 +0000
++++ xpdf-3.00/xpdf/XPDFApp.h	2006-10-30 21:26:08.000000000 +0000
 @@ -15,9 +15,8 @@
  #pragma interface
  #endif
@@ -714,7 +744,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
    //----- resource/option values
    GString *getGeometry() { return geometry; }
    GString *getTitle() { return title; }
-@@ -72,12 +62,13 @@
+@@ -72,25 +62,30 @@
    void setFullScreen(GBool fullScreenA) { fullScreen = fullScreenA; }
    GBool getFullScreen() { return fullScreen; }
  
@@ -729,8 +759,6 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
 +#if 0
    static void remoteMsgCbk(Widget widget, XtPointer ptr,
  			   XEvent *event, Boolean *cont);
- 
-@@ -83,14 +74,18 @@
  
    Display *display;
    int screenNum;
@@ -753,9 +781,9 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  
    //----- resource/option values
    GString *geometry;
-diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resources xpdf-3.00pl3/xpdf/XPDFCore.cc /home/root/xpdf/xpdf/XPDFCore.cc
---- xpdf-3.00pl3/xpdf/XPDFCore.cc	2004-01-22 01:26:45.000000000 +0000
-+++ /home/root/xpdf/xpdf/XPDFCore.cc	2005-03-11 16:10:44.000000000 +0000
+diff -ur xpdf-3.00_orig/xpdf/XPDFCore.cc xpdf-3.00/xpdf/XPDFCore.cc
+--- xpdf-3.00_orig/xpdf/XPDFCore.cc	2004-01-22 01:26:45.000000000 +0000
++++ xpdf-3.00/xpdf/XPDFCore.cc	2006-10-30 21:26:08.000000000 +0000
 @@ -12,8 +12,6 @@
  #pragma implementation
  #endif
@@ -994,7 +1022,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
    if (out) {
      delete out;
    }
-@@ -206,12 +229,8 @@
+@@ -206,12 +228,8 @@
        delete history[i].fileName;
      }
    }
@@ -1009,7 +1037,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
    if (busyCursor) {
      XFreeCursor(display, busyCursor);
    }
-@@ -221,6 +240,7 @@
+@@ -221,6 +239,7 @@
    if (selectCursor) {
      XFreeCursor(display, selectCursor);
    }
@@ -1017,7 +1045,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  }
  
  //------------------------------------------------------------------------
-@@ -235,25 +255,28 @@
+@@ -235,25 +254,28 @@
    int err;
  
    // busy cursor
@@ -1049,7 +1077,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
        newDoc = new PDFDoc(fileName->copy(), password, password);
        if (newDoc->isOk()) {
  	break;
-@@ -261,7 +284,7 @@
+@@ -261,7 +283,7 @@
        err = newDoc->getErrorCode();
        delete newDoc;
        if (err != errEncrypted) {
@@ -1058,7 +1086,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  	return err;
        }
        again = gTrue;
-@@ -289,8 +313,9 @@
+@@ -289,8 +311,9 @@
  		 doc->getNumPages(), NULL);
    }
  
@@ -1069,7 +1097,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  
    return errNone;
  }
-@@ -303,25 +328,27 @@
+@@ -303,25 +326,27 @@
    int err;
  
    // busy cursor
@@ -1100,7 +1128,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
        newDoc = new PDFDoc(stream, password, password);
        if (newDoc->isOk()) {
  	break;
-@@ -329,7 +356,7 @@
+@@ -329,7 +354,7 @@
        err = newDoc->getErrorCode();
        delete newDoc;
        if (err != errEncrypted) {
@@ -1109,7 +1137,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  	return err;
        }
        again = gTrue;
-@@ -357,20 +385,24 @@
+@@ -357,20 +382,24 @@
  		 doc->getNumPages(), NULL);
    }
  
@@ -1140,7 +1168,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
    if (fullScreen) {
      width = displayW;
      height = displayH;
-@@ -387,11 +419,11 @@
+@@ -387,11 +416,11 @@
        height1 = doc->getPageHeight(pg);
      }
      if (zoom == zoomPage || zoom == zoomWidth) {
@@ -1156,7 +1184,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
      }
      if (width > displayW - 100) {
        width = displayW - 100;
-@@ -401,15 +433,15 @@
+@@ -401,15 +430,15 @@
      }
    }
  
@@ -1181,7 +1209,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  }
  
  void XPDFCore::clear() {
-@@ -451,7 +483,7 @@
+@@ -451,7 +480,7 @@
    }
  
    // busy cursor
@@ -1190,7 +1218,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  
  
    // check for changes to the file
-@@ -541,12 +573,14 @@
+@@ -541,12 +570,14 @@
    }
  
    // update the parent window
@@ -1207,7 +1235,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  }
  
  void XPDFCore::displayDest(LinkDest *dest, double zoomA, int rotateA,
-@@ -621,7 +655,7 @@
+@@ -621,7 +652,7 @@
      }
      displayPage(pg, zoom, rotate, top, gTrue);
    } else {
@@ -1216,7 +1244,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
    }
  }
  
-@@ -644,13 +678,13 @@
+@@ -644,13 +675,13 @@
      }
      displayPage(pg, zoom, rotate, top, gTrue);
    } else {
@@ -1232,7 +1260,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
      return;
    }
    if (++historyCur == xpdfHistorySize) {
-@@ -660,7 +694,7 @@
+@@ -660,7 +691,7 @@
    ++historyBLen;
    if (!doc || history[historyCur].fileName->cmp(doc->getFileName()) != 0) {
      if (loadFile(history[historyCur].fileName) != errNone) {
@@ -1241,7 +1269,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
        return;
      }
    }
-@@ -669,7 +703,7 @@
+@@ -669,7 +700,7 @@
  
  void XPDFCore::goBackward() {
    if (historyBLen <= 1) {
@@ -1250,7 +1278,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
      return;
    }
    if (--historyCur < 0) {
-@@ -679,7 +713,7 @@
+@@ -679,7 +710,7 @@
    ++historyFLen;
    if (!doc || history[historyCur].fileName->cmp(doc->getFileName()) != 0) {
      if (loadFile(history[historyCur].fileName) != errNone) {
@@ -1259,7 +1287,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
        return;
      }
    }
-@@ -724,6 +758,8 @@
+@@ -724,6 +755,8 @@
  
    needRedraw = gFalse;
  
@@ -1268,7 +1296,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
    maxPos = out ? out->getBitmapWidth() : 1;
    if (maxPos < drawAreaWidth) {
      maxPos = drawAreaWidth;
-@@ -737,8 +773,9 @@
+@@ -737,8 +770,9 @@
    }
    if (scrollX != pos) {
      scrollX = pos;
@@ -1280,7 +1308,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
      needRedraw = gTrue;
    }
  
-@@ -755,14 +792,20 @@
+@@ -755,14 +789,20 @@
    }
    if (scrollY != pos) {
      scrollY = pos;
@@ -1305,7 +1333,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  }
  
  //------------------------------------------------------------------------
-@@ -950,10 +993,21 @@
+@@ -950,10 +990,21 @@
    currentSelection = out->getText(selectXMin, selectYMin,
  				  selectXMax, selectYMax);
    currentSelectionOwner = this;
@@ -1316,20 +1344,20 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
 +  
 +  //XtOwnSelection(drawArea, XA_PRIMARY, XtLastTimestampProcessed(display),
 +	//	 &convertSelectionCbk, NULL, NULL);
-+}
-+
+ }
+ 
 +#ifdef __SYLLABLE__
 +GString*  XPDFCore::getCurrentSelection()
 +{
 +	return( currentSelection );
- }
++}
 +#endif
- 
++
 +#ifndef __SYLLABLE__
  Boolean XPDFCore::convertSelectionCbk(Widget widget, Atom *selection,
  				      Atom *target, Atom *type,
  				      XtPointer *value, unsigned long *length,
-@@ -984,7 +1038,7 @@
+@@ -984,7 +1035,7 @@
  
    return False;
  }
@@ -1338,7 +1366,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  GBool XPDFCore::getSelection(int *xMin, int *yMin, int *xMax, int *yMax) {
    if (selectXMin >= selectXMax || selectYMin >= selectYMax) {
      return gFalse;
-@@ -1175,6 +1229,7 @@
+@@ -1175,6 +1226,7 @@
      } else if (!actionName->cmp("GoForward")) {
        goForward();
      } else if (!actionName->cmp("Quit")) {
@@ -1346,7 +1374,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
        if (actionCbk) {
  	(*actionCbk)(actionCbkData, "Quit");
        }
-@@ -1182,7 +1237,7 @@
+@@ -1182,7 +1234,7 @@
        error(-1, "Unknown named action: '%s'", actionName->getCString());
      }
      break;
@@ -1355,7 +1383,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
    // Movie action
    case actionMovie:
      if (!(cmd = globalParams->getMovieCommand())) {
-@@ -1305,12 +1360,12 @@
+@@ -1305,12 +1357,12 @@
  
    // check for zero-length string
    if (!s[0]) {
@@ -1370,7 +1398,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  
    // convert to Unicode
  #if 1 //~ should do something more intelligent here
-@@ -1367,7 +1422,7 @@
+@@ -1367,7 +1419,7 @@
    }
  
    // not found
@@ -1379,7 +1407,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
    goto done;
  
    // found on a different page
-@@ -1391,7 +1446,7 @@
+@@ -1391,7 +1443,7 @@
    gfree(u);
  
    // reset cursors to normal
@@ -1388,7 +1416,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  }
  
  //------------------------------------------------------------------------
-@@ -1399,11 +1454,12 @@
+@@ -1399,11 +1451,12 @@
  //------------------------------------------------------------------------
  
  void XPDFCore::setBusyCursor(GBool busy) {
@@ -1403,7 +1431,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  }
  
  //------------------------------------------------------------------------
-@@ -1411,86 +1467,47 @@
+@@ -1411,86 +1464,47 @@
  //------------------------------------------------------------------------
  
  void XPDFCore::initWindow() {
@@ -1518,7 +1546,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  void XPDFCore::hScrollChangeCbk(Widget widget, XtPointer ptr,
  			     XtPointer callData) {
    XPDFCore *core = (XPDFCore *)ptr;
-@@ -1522,20 +1539,17 @@
+@@ -1522,20 +1536,17 @@
  
    core->scrollTo(core->scrollX, data->value);
  }
@@ -1546,7 +1574,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
    if (core->page >= 0 &&
        (core->zoom == zoomPage || core->zoom == zoomWidth)) {
      core->displayPage(core->page, core->zoom, core->rotate,
-@@ -1549,8 +1563,9 @@
+@@ -1549,8 +1560,9 @@
  			    core->drawAreaWidth, core->drawAreaHeight);
      }
    }
@@ -1557,7 +1585,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  void XPDFCore::redrawCbk(Widget widget, XtPointer ptr, XtPointer callData) {
    XPDFCore *core = (XPDFCore *)ptr;
    XmDrawingAreaCallbackStruct *data = (XmDrawingAreaCallbackStruct *)callData;
-@@ -1569,7 +1584,7 @@
+@@ -1569,7 +1581,7 @@
    }
    core->redrawRectangle(x, y, w, h);
  }
@@ -1566,7 +1594,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  void XPDFCore::outputDevRedrawCbk(void *data) {
    XPDFCore *core = (XPDFCore *)data;
  
-@@ -1577,37 +1592,39 @@
+@@ -1577,37 +1589,39 @@
  			core->drawAreaWidth, core->drawAreaHeight);
  }
  
@@ -1619,7 +1647,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
        if (core->fullScreen) {
  	core->gotoPrevPage(1, gTrue, gFalse);
        } else if (core->scrollY == 0) {
-@@ -1631,20 +1648,24 @@
+@@ -1631,20 +1645,24 @@
        if (!core->fullScreen) {
  	core->scrollRight(1);
        }
@@ -1651,7 +1679,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  	  core->moveSelection(mx, my);
  #ifndef NO_TEXT_SELECT
  	  if (core->selectXMin != core->selectXMax &&
-@@ -1664,24 +1685,26 @@
+@@ -1664,24 +1682,26 @@
  	  }
  	}
        }
@@ -1683,7 +1711,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  	  if (action != core->linkAction) {
  	    core->linkAction = action;
  	    if (core->updateCbk) {
-@@ -1713,7 +1736,7 @@
+@@ -1713,7 +1733,7 @@
  	    }
  	  }
  	} else {
@@ -1692,7 +1720,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  	  if (core->linkAction) {
  	    core->linkAction = NULL;
  	    if (core->updateCbk) {
-@@ -1724,75 +1747,69 @@
+@@ -1724,75 +1744,69 @@
        }
      }
      if (core->panning) {
@@ -1786,7 +1814,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
      if (!fullScreen) {
        scrollDown();
      }
-@@ -1800,13 +1817,11 @@
+@@ -1800,13 +1814,11 @@
    }
  
    if (*keyPressCbk) {
@@ -1801,7 +1829,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  
    // clip to window
    if (x < scrollX) {
-@@ -1825,34 +1840,27 @@
+@@ -1825,34 +1837,27 @@
    }
  
    // create a GC for the drawing area
@@ -1842,7 +1870,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
    int n;
    int maxPos;
  
-@@ -1863,14 +1871,12 @@
+@@ -1863,14 +1868,12 @@
    if (scrollX > maxPos - drawAreaWidth) {
      scrollX = maxPos - drawAreaWidth;
    }
@@ -1862,7 +1890,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
    maxPos = out ? out->getBitmapHeight() : 1;
    if (maxPos < drawAreaHeight) {
      maxPos = drawAreaHeight;
-@@ -1878,15 +1884,13 @@
+@@ -1878,15 +1881,13 @@
    if (scrollY > maxPos - drawAreaHeight) {
      scrollY = maxPos - drawAreaHeight;
    }
@@ -1883,7 +1911,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  void XPDFCore::setCursor(Cursor cursor) {
    Window topWin;
  
-@@ -1904,21 +1908,25 @@
+@@ -1904,21 +1905,25 @@
    XFlush(display);
    currentCursor = cursor;
  }
@@ -1913,7 +1941,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
    Widget dialog, scroll, text;
    XtAppContext appContext;
    Arg args[20];
-@@ -1979,8 +1987,9 @@
+@@ -1979,8 +1984,9 @@
    XtDestroyWidget(dialog);
  
    return dialogDone > 0;
@@ -1924,14 +1952,14 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  void XPDFCore::dialogOkCbk(Widget widget, XtPointer ptr,
  			   XtPointer callData) {
    XPDFCore *core = (XPDFCore *)ptr;
-@@ -1994,3 +2003,4 @@
+@@ -1994,3 +2000,4 @@
  
    core->dialogDone = -1;
  }
 +#endif
-diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resources xpdf-3.00pl3/xpdf/XPDFCore.h /home/root/xpdf/xpdf/XPDFCore.h
---- xpdf-3.00pl3/xpdf/XPDFCore.h	2004-01-22 01:26:45.000000000 +0000
-+++ /home/root/xpdf/xpdf/XPDFCore.h	2005-03-12 16:07:36.000000000 +0000
+diff -ur xpdf-3.00_orig/xpdf/XPDFCore.h xpdf-3.00/xpdf/XPDFCore.h
+--- xpdf-3.00_orig/xpdf/XPDFCore.h	2004-01-22 01:26:45.000000000 +0000
++++ xpdf-3.00/xpdf/XPDFCore.h	2006-10-30 21:26:08.000000000 +0000
 @@ -15,9 +15,11 @@
  #pragma interface
  #endif
@@ -2024,7 +2052,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
    void takeFocus();
    void enableHyperlinks(GBool on) { hyperlinksEnabled = on; }
    void enableSelect(GBool on) { selectEnabled = on; }
-@@ -187,9 +214,10 @@
+@@ -187,9 +213,10 @@
      { keyPressCbk = cbk; keyPressCbkData = data; }
    void setMouseCbk(XPDFMouseCbk cbk, void *data)
      { mouseCbk = cbk; mouseCbkData = data; }
@@ -2036,7 +2064,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  private:
  
    //----- hyperlinks
-@@ -198,14 +226,16 @@
+@@ -198,14 +225,16 @@
    GString *mungeURL(GString *url);
  
    //----- selection
@@ -2054,7 +2082,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
    static void hScrollChangeCbk(Widget widget, XtPointer ptr,
  			       XtPointer callData);
    static void hScrollDragCbk(Widget widget, XtPointer ptr,
-@@ -214,39 +244,57 @@
+@@ -214,39 +243,57 @@
  			       XtPointer callData);
    static void vScrollDragCbk(Widget widget, XtPointer ptr,
  			     XtPointer callData);
@@ -2119,7 +2147,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
    int drawAreaWidth, drawAreaHeight;
    int scrollX, scrollY;		// current upper-left corner
  
-@@ -258,7 +306,7 @@
+@@ -258,7 +305,7 @@
    GBool lastDragTop;		// last dragged selection edge was top/bottom
    static GString *currentSelection;  // selected text
    static XPDFCore *currentSelectionOwner;
@@ -2128,7 +2156,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  
    GBool panning;
    int panMX, panMY;
-@@ -287,17 +335,21 @@
+@@ -287,17 +334,21 @@
    void *actionCbkData;
    XPDFKeyPressCbk keyPressCbk;
    void *keyPressCbkData;
@@ -2151,9 +2179,9 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  };
  
  #endif
-diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resources xpdf-3.00pl3/xpdf/XPDFTree.cc /home/root/xpdf/xpdf/XPDFTree.cc
---- xpdf-3.00pl3/xpdf/XPDFTree.cc	2004-01-22 01:26:45.000000000 +0000
-+++ /home/root/xpdf/xpdf/XPDFTree.cc	2005-02-20 19:25:34.000000000 +0000
+diff -ur xpdf-3.00_orig/xpdf/XPDFTree.cc xpdf-3.00/xpdf/XPDFTree.cc
+--- xpdf-3.00_orig/xpdf/XPDFTree.cc	2004-01-22 01:26:45.000000000 +0000
++++ xpdf-3.00/xpdf/XPDFTree.cc	2006-10-30 21:26:08.000000000 +0000
 @@ -1,3 +1,4 @@
 +#if 0
  //========================================================================
@@ -2164,9 +2192,9 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
    return XtCreateWidget(name, xpdfTreeWidgetClass, parent, argList, numArgs);
  }
 +#endif
-diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resources xpdf-3.00pl3/xpdf/XPDFViewer.cc /home/root/xpdf/xpdf/XPDFViewer.cc
---- xpdf-3.00pl3/xpdf/XPDFViewer.cc	2004-01-22 01:26:45.000000000 +0000
-+++ /home/root/xpdf/xpdf/XPDFViewer.cc	2006-10-23 18:00:39.000000000 +0000
+diff -ur xpdf-3.00_orig/xpdf/XPDFViewer.cc xpdf-3.00/xpdf/XPDFViewer.cc
+--- xpdf-3.00_orig/xpdf/XPDFViewer.cc	2004-01-22 01:26:45.000000000 +0000
++++ xpdf-3.00/xpdf/XPDFViewer.cc	2006-10-30 21:26:08.000000000 +0000
 @@ -15,15 +15,8 @@
  #include <stdlib.h>
  #include <string.h>
@@ -2550,7 +2578,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
    // do Motif-specific initialization and create the window;
    // this also creates the core object
    initWindow();
-@@ -181,10 +462,13 @@
+@@ -181,10 +460,13 @@
  
  XPDFViewer::~XPDFViewer() {
    delete core;
@@ -2565,7 +2593,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  #ifndef DISABLE_OUTLINE
    if (outlineLabels) {
      gfree(outlineLabels);
-@@ -217,13 +501,19 @@
+@@ -217,13 +499,19 @@
  
  void XPDFViewer::clear() {
    char *title;
@@ -2586,7 +2614,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
    XtVaSetValues(win, XmNtitle, title, XmNiconName, title, NULL);
    s = XmStringCreateLocalized("");
    XtVaSetValues(pageNumText, XmNlabelString, s, NULL);
-@@ -237,7 +527,7 @@
+@@ -237,7 +525,7 @@
    XtVaSetValues(prevPageBtn, XmNsensitive, False, NULL);
    XtVaSetValues(nextTenPageBtn, XmNsensitive, False, NULL);
    XtVaSetValues(nextPageBtn, XmNsensitive, False, NULL);
@@ -2595,7 +2623,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
    // remove the old outline
  #ifndef DISABLE_OUTLINE
    setupOutline();
-@@ -304,14 +594,14 @@
+@@ -304,14 +592,14 @@
  //------------------------------------------------------------------------
  // password dialog
  //------------------------------------------------------------------------
@@ -2612,7 +2640,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  //------------------------------------------------------------------------
  // actions
  //------------------------------------------------------------------------
-@@ -328,8 +618,8 @@
+@@ -328,8 +616,8 @@
  // keyboard/mouse input
  //------------------------------------------------------------------------
  
@@ -2623,7 +2651,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
    XPDFViewer *viewer = (XPDFViewer *)data;
    int z;
  
-@@ -347,7 +637,10 @@
+@@ -347,7 +635,10 @@
      case 'f':
      case '\006':		// ctrl-F
        if (viewer->core->getDoc()) {
@@ -2635,7 +2663,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
        }
        break;
      case '\007':		// ctrl-G
-@@ -357,16 +650,16 @@
+@@ -357,16 +648,16 @@
        break;
      case '\020':		// ctrl-P
        if (viewer->core->getDoc()) {
@@ -2655,7 +2683,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
        break;
      case ' ':
        if (viewer->app->getFullScreen()) {
-@@ -391,11 +684,13 @@
+@@ -391,11 +682,13 @@
        break;
      case 'g':
        if (!viewer->app->getFullScreen()) {
@@ -2669,7 +2697,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
        }
        break;
      case 'h':			// vi-style left
-@@ -474,7 +771,7 @@
+@@ -474,7 +767,7 @@
        viewer->app->close(viewer, gFalse);
        break;
      case '?':
@@ -2678,7 +2706,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
        break;
      case 'Q':
      case 'q':
-@@ -483,7 +780,7 @@
+@@ -483,7 +776,7 @@
      }
    }
  }
@@ -2687,7 +2715,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  void XPDFViewer::mouseCbk(void *data, XEvent *event) {
    XPDFViewer *viewer = (XPDFViewer *)data;
  
-@@ -497,29 +794,31 @@
+@@ -497,29 +790,31 @@
      XtUngrabButton(viewer->core->getDrawAreaWidget(), AnyButton, AnyModifier);
    }
  }
@@ -2727,7 +2755,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
      XtVaGetValues(app->getAppShell(), XmNcolormap, &colormap, NULL);
      // ensure that BlackPixel and WhitePixel are reserved in the
      // new colormap
-@@ -528,12 +827,17 @@
+@@ -528,12 +823,17 @@
      xcol.red = xcol.green = xcol.blue = 65535;
      XAllocColor(display, colormap, &xcol);
      colormap = XCopyColormapAndFree(display, colormap);
@@ -2745,7 +2773,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
    XtSetArg(args[n], XmNtitle, title); ++n;
    XtSetArg(args[n], XmNiconName, title); ++n;
    XtSetArg(args[n], XmNminWidth, 100); ++n;
-@@ -559,8 +864,11 @@
+@@ -559,8 +859,11 @@
    n = 0;
    form = XmCreateForm(win, "form", args, n);
    XtManageChild(form);
@@ -2757,7 +2785,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
    n = 0;
    XtSetArg(args[n], XmNleftAttachment, XmATTACH_FORM); ++n;
    XtSetArg(args[n], XmNrightAttachment, XmATTACH_FORM); ++n;
-@@ -810,7 +1118,7 @@
+@@ -810,7 +1113,7 @@
  #ifndef DISABLE_OUTLINE
    if (app->getFullScreen()) {
  #endif
@@ -2766,7 +2794,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
      // core
      core = new XPDFCore(win, form, app->getPaperRGB(),
  			app->getFullScreen(), app->getReverseVideo(),
-@@ -818,6 +1127,7 @@
+@@ -818,6 +1121,7 @@
      core->setUpdateCbk(&updateCbk, this);
      core->setActionCbk(&actionCbk, this);
      core->setKeyPressCbk(&keyPressCbk, this);
@@ -2774,7 +2802,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
      core->setMouseCbk(&mouseCbk, this);
      core->setReqPasswordCbk(&reqPasswordCbk, this);
      n = 0;
-@@ -827,7 +1137,7 @@
+@@ -827,7 +1131,7 @@
      XtSetArg(args[n], XmNleftAttachment, XmATTACH_FORM); ++n;
      XtSetArg(args[n], XmNrightAttachment, XmATTACH_FORM); ++n;
      XtSetValues(core->getWidget(), args, n);
@@ -2783,7 +2811,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  #ifndef DISABLE_OUTLINE
    } else {
  
-@@ -891,6 +1201,7 @@
+@@ -891,6 +1195,7 @@
    setZoomVal(core->getZoom());
  
    // set traversal order
@@ -2791,7 +2819,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
    XtVaSetValues(core->getDrawAreaWidget(),
  		XmNnavigationType, XmEXCLUSIVE_TAB_GROUP, NULL);
    XtVaSetValues(backBtn, XmNnavigationType, XmEXCLUSIVE_TAB_GROUP,
-@@ -1016,6 +1327,7 @@
+@@ -1016,6 +1321,7 @@
    XtUngrabButton(core->getDrawAreaWidget(), AnyButton, AnyModifier);
  
    XmStringFree(emptyString);
@@ -2799,7 +2827,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  }
  
  void XPDFViewer::mapWindow() {
-@@ -1023,13 +1335,19 @@
+@@ -1023,13 +1329,19 @@
    Pixmap iconPixmap;
  #endif
    int depth;
@@ -2822,7 +2850,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  #ifdef HAVE_X11_XPM_H
    if (XpmCreatePixmapFromData(display, XtWindow(win), xpdfIcon,
  			      &iconPixmap, NULL, NULL) == XpmSuccess) {
-@@ -1215,14 +1533,18 @@
+@@ -1215,14 +1527,18 @@
  					    about_height,
  					    fg, arm, depth),
  		NULL);
@@ -2843,7 +2871,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  #if USE_COMBO_BOX
    int z;
  
-@@ -1241,17 +1563,24 @@
+@@ -1241,17 +1557,24 @@
    // this should never happen
    return 0;
  #endif
@@ -2868,7 +2896,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  #if USE_COMBO_BOX
    char buf[32];
    XmString s;
-@@ -1283,40 +1612,44 @@
+@@ -1283,40 +1606,44 @@
    }
    XtVaSetValues(zoomMenu, XmNmenuHistory, zoomMenuBtns[i], NULL);
  #endif
@@ -2922,7 +2950,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  void XPDFViewer::backCbk(Widget widget, XtPointer ptr,
  			 XtPointer callData) {
    XPDFViewer *viewer = (XPDFViewer *)ptr;
-@@ -1492,11 +1825,12 @@
+@@ -1492,11 +1819,12 @@
  
    viewer->app->close(viewer, gTrue);
  }
@@ -2938,7 +2966,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
    int pg;
    char buf[20];
  
-@@ -1510,6 +1844,7 @@
+@@ -1510,6 +1838,7 @@
      }
    }
    pg = atoi(s);
@@ -2946,7 +2974,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
    if (pg < 1 || pg > viewer->core->getDoc()->getNumPages()) {
      goto err;
    }
-@@ -1519,9 +1854,12 @@
+@@ -1519,9 +1848,12 @@
    return;
  
   err:
@@ -2959,7 +2987,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  }
  
  void XPDFViewer::updateCbk(void *data, GString *fileName,
-@@ -1529,17 +1867,16 @@
+@@ -1529,17 +1861,16 @@
    XPDFViewer *viewer = (XPDFViewer *)data;
    GString *title;
    char buf[20];
@@ -2984,7 +3012,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  #ifndef DISABLE_OUTLINE
      if (!viewer->app->getFullScreen()) {
        viewer->setupOutline();
-@@ -1549,6 +1886,12 @@
+@@ -1549,6 +1880,12 @@
    }
  
    if (pageNum >= 0) {
@@ -2997,7 +3025,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
      s = XmStringCreateLocalized("");
      XtVaSetValues(viewer->linkLabel, XmNlabelString, s, NULL);
      XmStringFree(s);
-@@ -1566,20 +1909,29 @@
+@@ -1566,20 +1903,29 @@
  		  viewer->core->canGoBack(), NULL);
      XtVaSetValues(viewer->forwardBtn, XmNsensitive,
  		  viewer->core->canGoForward(), NULL);
@@ -3029,7 +3057,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  }
  
  
-@@ -1694,6 +2046,7 @@
+@@ -1694,6 +2040,7 @@
  //------------------------------------------------------------------------
  
  void XPDFViewer::initAboutDialog() {
@@ -3037,7 +3065,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
    Widget scrolledWin, col, label, sep, closeBtn;
    Arg args[20];
    int n, i;
-@@ -1799,6 +2152,7 @@
+@@ -1799,6 +2146,7 @@
      XtManageChild(label);
      XmStringFree(s);
    }
@@ -3045,7 +3073,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  }
  
  //------------------------------------------------------------------------
-@@ -1806,6 +2160,10 @@
+@@ -1806,6 +2154,10 @@
  //------------------------------------------------------------------------
  
  void XPDFViewer::initOpenDialog() {
@@ -3056,7 +3084,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
    Arg args[20];
    int n;
    XmString s1, s2, s3;
-@@ -1827,24 +2185,40 @@
+@@ -1827,24 +2179,40 @@
  					     XmDIALOG_HELP_BUTTON));
    XtAddCallback(openDialog, XmNokCallback,
  		&openOkCbk, (XtPointer)this);
@@ -3098,7 +3126,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
    XPDFViewer *viewer = (XPDFViewer *)ptr;
    XmFileSelectionBoxCallbackStruct *data =
      (XmFileSelectionBoxCallbackStruct *)callData;
-@@ -1872,12 +2246,15 @@
+@@ -1872,12 +2240,15 @@
    }
    XmStringFreeContext(context);
  }
@@ -3115,7 +3143,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
    Widget form1, label, okBtn, closeBtn;
    Arg args[20];
    int n;
-@@ -1956,16 +2333,21 @@
+@@ -1956,16 +2327,21 @@
    XtSetArg(args[n], XmNinitialFocus, findText); ++n;
  #endif
    XtSetValues(findDialog, args, n);
@@ -3139,7 +3167,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
    if (XtWindow(findDialog)) {
      XDefineCursor(display, XtWindow(findDialog), core->getBusyCursor());
    }
-@@ -1973,20 +2355,22 @@
+@@ -1973,20 +2349,22 @@
    if (XtWindow(findDialog)) {
      XUndefineCursor(display, XtWindow(findDialog));
    }
@@ -3164,7 +3192,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
    Arg args[20];
    int n;
    XmString s1, s2, s3;
-@@ -2008,21 +2392,26 @@
+@@ -2008,21 +2386,26 @@
  					     XmDIALOG_HELP_BUTTON));
    XtAddCallback(saveAsDialog, XmNokCallback,
  		&saveAsOkCbk, (XtPointer)this);
@@ -3192,7 +3220,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  void XPDFViewer::saveAsOkCbk(Widget widget, XtPointer ptr,
  			     XtPointer callData) {
    XPDFViewer *viewer = (XPDFViewer *)ptr;
-@@ -2045,12 +2434,13 @@
+@@ -2045,12 +2428,13 @@
    }
    XmStringFreeContext(context);
  }
@@ -3207,7 +3235,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
    Widget sep1, sep2, row, label1, label2, okBtn, cancelBtn;
    Arg args[20];
    int n;
-@@ -2215,9 +2605,11 @@
+@@ -2215,9 +2599,11 @@
      }
      delete psFileName;
    }
@@ -3219,7 +3247,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
    PDFDoc *doc;
    char buf[20];
    GString *pdfFileName, *psFileName, *psFileName2;
-@@ -2245,8 +2637,9 @@
+@@ -2245,8 +2631,9 @@
    sprintf(buf, "%d", doc->getNumPages());
    XmTextFieldSetString(printFirstPage, "1");
    XmTextFieldSetString(printLastPage, buf);
@@ -3230,7 +3258,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  void XPDFViewer::printWithCmdBtnCbk(Widget widget, XtPointer ptr,
  				    XtPointer callData) {
    XPDFViewer *viewer = (XPDFViewer *)ptr;
-@@ -2325,12 +2718,13 @@
+@@ -2325,12 +2712,13 @@
  
    viewer->core->setBusyCursor(gFalse);
  }
@@ -3245,7 +3273,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
    Widget row, label, okBtn, cancelBtn;
    Arg args[20];
    int n;
-@@ -2414,8 +2808,9 @@
+@@ -2414,8 +2802,9 @@
    XtSetArg(args[n], XmNinitialFocus, passwordText); ++n;
  #endif
    XtSetValues(passwordDialog, args, n);
@@ -3256,7 +3284,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  void XPDFViewer::passwordTextVerifyCbk(Widget widget, XtPointer ptr,
  				       XtPointer callData) {
    XPDFViewer *viewer = (XPDFViewer *)ptr;
-@@ -2453,8 +2848,9 @@
+@@ -2453,8 +2842,9 @@
  
    viewer->passwordDone = -1;
  }
@@ -3267,7 +3295,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
    XmString s;
    XEvent event;
  
-@@ -2480,12 +2876,13 @@
+@@ -2480,12 +2870,13 @@
      delete password;
      password = NULL;
    }
@@ -3282,7 +3310,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  XmFontList XPDFViewer::createFontList(char *xlfd) {
    XmFontList fontList;
  
-@@ -2521,3 +2918,18 @@
+@@ -2521,3 +2912,18 @@
  
    return fontList;
  }
@@ -3301,9 +3329,9 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
 +
 +
 +
-diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resources xpdf-3.00pl3/xpdf/XPDFViewer.h /home/root/xpdf/xpdf/XPDFViewer.h
---- xpdf-3.00pl3/xpdf/XPDFViewer.h	2004-01-22 01:26:45.000000000 +0000
-+++ /home/root/xpdf/xpdf/XPDFViewer.h	2005-05-13 18:27:34.000000000 +0000
+diff -ur xpdf-3.00_orig/xpdf/XPDFViewer.h xpdf-3.00/xpdf/XPDFViewer.h
+--- xpdf-3.00_orig/xpdf/XPDFViewer.h	2004-01-22 01:26:45.000000000 +0000
++++ xpdf-3.00/xpdf/XPDFViewer.h	2006-10-30 21:26:08.000000000 +0000
 @@ -15,21 +15,25 @@
  #pragma interface
  #endif
@@ -3520,9 +3548,9 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  };
  
  #endif
-diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resources xpdf-3.00pl3/xpdf/XSplashOutputDev.cc /home/root/xpdf/xpdf/XSplashOutputDev.cc
---- xpdf-3.00pl3/xpdf/XSplashOutputDev.cc	2004-01-22 01:26:45.000000000 +0000
-+++ /home/root/xpdf/xpdf/XSplashOutputDev.cc	2005-03-12 17:20:06.000000000 +0000
+diff -ur xpdf-3.00_orig/xpdf/XSplashOutputDev.cc xpdf-3.00/xpdf/XSplashOutputDev.cc
+--- xpdf-3.00_orig/xpdf/XSplashOutputDev.cc	2004-01-22 01:26:45.000000000 +0000
++++ xpdf-3.00/xpdf/XSplashOutputDev.cc	2006-10-30 21:26:08.000000000 +0000
 @@ -12,8 +12,7 @@
  #pragma implementation
  #endif
@@ -3681,7 +3709,7 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  }
  
  XSplashOutputDev::~XSplashOutputDev() {
-@@ -221,77 +115,41 @@
+@@ -221,77 +114,41 @@
  }
  
  void XSplashOutputDev::redraw(int srcX, int srcY,
@@ -3773,9 +3801,9 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
  }
  
  GBool XSplashOutputDev::findText(Unicode *s, int len,
-diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resources xpdf-3.00pl3/xpdf/XSplashOutputDev.h /home/root/xpdf/xpdf/XSplashOutputDev.h
---- xpdf-3.00pl3/xpdf/XSplashOutputDev.h	2004-01-22 01:26:45.000000000 +0000
-+++ /home/root/xpdf/xpdf/XSplashOutputDev.h	2005-03-10 15:54:36.000000000 +0000
+diff -ur xpdf-3.00_orig/xpdf/XSplashOutputDev.h xpdf-3.00/xpdf/XSplashOutputDev.h
+--- xpdf-3.00_orig/xpdf/XSplashOutputDev.h	2004-01-22 01:26:45.000000000 +0000
++++ xpdf-3.00/xpdf/XSplashOutputDev.h	2006-10-30 21:26:09.000000000 +0000
 @@ -13,7 +13,9 @@
  #pragma interface
  #endif
@@ -3818,9 +3846,9 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
    Guint depth;			// visual depth
    GBool trueColor;		// set if using a TrueColor visual
    int rDiv, gDiv, bDiv;		// RGB right shifts (for TrueColor)
-diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resources xpdf-3.00pl3/xpdf/about-text.h /home/root/xpdf/xpdf/about-text.h
---- xpdf-3.00pl3/xpdf/about-text.h	2004-01-22 01:26:45.000000000 +0000
-+++ /home/root/xpdf/xpdf/about-text.h	2005-02-24 20:55:52.000000000 +0000
+diff -ur xpdf-3.00_orig/xpdf/about-text.h xpdf-3.00/xpdf/about-text.h
+--- xpdf-3.00_orig/xpdf/about-text.h	2004-01-22 01:26:45.000000000 +0000
++++ xpdf-3.00/xpdf/about-text.h	2006-10-30 21:26:09.000000000 +0000
 @@ -5,7 +5,7 @@
  // Copyright 2002-2003 Glyph & Cog, LLC
  //
@@ -3849,9 +3877,9 @@ diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resour
 +  "are copyright 1985-2003 Adobe Systems Inc.\n"
 +  " \n";
 +
-diff -NBaur -x configure -x '*.png' -x 'finddialog.*' -x 'statusbar.*' -x resources xpdf-3.00pl3/xpdf/xpdf.cc /home/root/xpdf/xpdf/xpdf.cc
---- xpdf-3.00pl3/xpdf/xpdf.cc	2004-01-22 01:26:45.000000000 +0000
-+++ /home/root/xpdf/xpdf/xpdf.cc	2005-02-23 20:23:02.000000000 +0000
+diff -ur xpdf-3.00_orig/xpdf/xpdf.cc xpdf-3.00/xpdf/xpdf.cc
+--- xpdf-3.00_orig/xpdf/xpdf.cc	2004-01-22 01:26:45.000000000 +0000
++++ xpdf-3.00/xpdf/xpdf.cc	2006-10-30 21:26:09.000000000 +0000
 @@ -240,6 +240,7 @@
    }
  

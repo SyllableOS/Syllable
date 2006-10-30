@@ -1,0 +1,32 @@
+//
+// Xpdf string catalog
+//
+// Translated by: Dávid Horváth
+//
+
+MSG_MAINWND_TITLE=100						Xpdf
+
+MSG_MAINWND_MENU_APPLICATION=200			Program
+MSG_MAINWND_MENU_APPLICATION_ABOUT			Névjegy
+MSG_MAINWND_MENU_APPLICATION_QUIT			Kilépés
+
+MSG_MAINWND_MENU_FILE=300					Fájl
+MSG_MAINWND_MENU_FILE_OPEN					Megnyitás
+
+MSG_MAINWND_MENU_PAGE=400					Oldal
+MSG_MAINWND_MENU_PAGE_PREV					Elözö
+MSG_MAINWND_MENU_PAGE_NEXT					Következö
+MSG_MAINWND_MENU_ZOOM_PAGE					Teljes ablakos megjelenítés
+MSG_MAINWND_MENU_ZOOM_WIDTH					Normál ablakos megjelenítés
+
+MSG_MAINWND_MENU_EDIT=500					Szerkesztés
+MSG_MAINWND_MENU_EDIT_COPY					Másolás
+MSG_MAINWND_MENU_EDIT_FIND					Keresés
+
+MSG_STATUS_PAGE=1000						Oldal
+MSG_STATUS_PAGE_OF							/
+
+MSG_ERRWND_CANTOPEN=2000					nem nyitható meg.
+
+MSG_MIMETYPE_TEXT_XPDF=10000				PDF Document
+

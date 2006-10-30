@@ -1,9 +1,10 @@
 //
 // Xpdf string catalog
 //
+// Translated by:
+//
 
 MSG_MAINWND_TITLE=100						Xpdf
-
 
 MSG_MAINWND_MENU_APPLICATION=200			Anwendung
 MSG_MAINWND_MENU_APPLICATION_ABOUT			Info...
@@ -26,3 +27,6 @@ MSG_STATUS_PAGE=1000						Seite
 MSG_STATUS_PAGE_OF							von
 
 MSG_ERRWND_CANTOPEN=2000					konnte nicht geöffnet werden
+
+MSG_MIMETYPE_TEXT_XPDF=10000				PDF Dokumente
+

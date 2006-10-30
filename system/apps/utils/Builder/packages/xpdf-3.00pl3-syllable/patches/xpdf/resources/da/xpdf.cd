@@ -1,10 +1,12 @@
 //
 // Xpdf string catalog
 //
+// Translated by: Flemming H. Sørensen (BurningShadow)
+//
 
 MSG_MAINWND_TITLE=100						Xpdf
 
-MSG_MAINWND_MENU_APPLICATION=200				Program
+MSG_MAINWND_MENU_APPLICATION=200			Program
 MSG_MAINWND_MENU_APPLICATION_ABOUT			Om...
 MSG_MAINWND_MENU_APPLICATION_QUIT			Afslut
 
@@ -25,4 +27,6 @@ MSG_STATUS_PAGE=1000						Side
 MSG_STATUS_PAGE_OF							af
 
 MSG_ERRWND_CANTOPEN=2000					Kunne ikke åbnes
+
+MSG_MIMETYPE_TEXT_XPDF=10000				PDF Dokument
 

@@ -1,0 +1,31 @@
+//
+// Xpdf string catalog
+//
+// Translated by: Edgar Domingo de Albuquerque (contato@edgar.pro.br)
+// Brazilian Portuguese pt_BR @ 29-Jul-2006 Sorocaba/SP - Brasil
+//
+
+MSG_MAINWND_TITLE=100						Xpdf
+
+
+MSG_MAINWND_MENU_APPLICATION=200			Applicação
+MSG_MAINWND_MENU_APPLICATION_ABOUT			Sobre...
+MSG_MAINWND_MENU_APPLICATION_QUIT			Sair
+
+MSG_MAINWND_MENU_FILE=300					Arquivo
+MSG_MAINWND_MENU_FILE_OPEN					Abrir...
+
+MSG_MAINWND_MENU_PAGE=400					Página
+MSG_MAINWND_MENU_PAGE_PREV					Anterior
+MSG_MAINWND_MENU_PAGE_NEXT					Próxima
+MSG_MAINWND_MENU_ZOOM_PAGE					Ajustar página
+MSG_MAINWND_MENU_ZOOM_WIDTH					Ajustar largura
+
+MSG_MAINWND_MENU_EDIT=500					Editar
+MSG_MAINWND_MENU_EDIT_COPY					Copiar
+MSG_MAINWND_MENU_EDIT_FIND					Procurar
+
+MSG_STATUS_PAGE=1000						Página
+MSG_STATUS_PAGE_OF							de
+
+MSG_ERRWND_CANTOPEN=2000					não pode ser aberto
