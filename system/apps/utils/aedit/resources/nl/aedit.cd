@@ -36,7 +36,7 @@ MSG_MENU_FIND_GOTO_LINE						Ga naar regel...
 MSG_MENU_FONT=500							Lettertype
 MSG_MENU_FONT_SIZE							Grootte
 
-MSG_MENU_SETTINGS=600						Instellingen
+MSG_MENU_SETTINGS=600						Opties
 MSG_MENU_SETTINGS_SAVE_ON_CLOSE				Instellingen opslaan bij afsluiten
 MSG_MENU_SETTINGS_SAVE_NOW					Instellingen nu opslaan
 MSG_MENU_SETTINGS_RESET						Instellingen herstellen
