@@ -18,7 +18,7 @@ make-targets		xpdf
 
 install-tree		bin
 install				true
-install-files		xpdf/xpdf bin/
+install-files		xpdf/Xpdf bin/
 
-move-files			bin/xpdf /atheos/Applications/Xpdf/Xpdf
+move-files			bin/Xpdf /atheos/Applications/Xpdf/
 
