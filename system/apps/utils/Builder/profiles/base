@@ -4,16 +4,16 @@ resources
 ;	addattrib can't handle wildcards:
 ;	atheos/sys/fonts							fonts/URW/*.ttf				application/x-font-ttf
 ;	atheos/sys/fonts							fonts/URW/Mandriva/*.ttf	application/x-font-ttf
-;	atheos/home/root/Documents/Pictures			wallpapers/*.png			image/png
-;	atheos/home/root/Documents/Pictures			wallpapers/*.jpg			image/jpeg
 ;	atheos/home/.template/Documents/Pictures	wallpapers/*.png			image/png
 ;	atheos/home/.template/Documents/Pictures	wallpapers/*.jpg			image/jpeg
 	atheos/sys/fonts							fonts/URW/*.ttf
 	atheos/sys/fonts							fonts/URW/Mandriva/*.ttf
 	atheos/home/root/Documents/Pictures			wallpapers/*.png
 	atheos/home/root/Documents/Pictures			wallpapers/*.jpg
+	atheos/home/root/Documents/Pictures			wallpapers/Ruud/*.jpg
 	atheos/home/.template/Documents/Pictures	wallpapers/*.png
 	atheos/home/.template/Documents/Pictures	wallpapers/*.jpg
+	atheos/home/.template/Documents/Pictures	wallpapers/Ruud/*.jpg
 
 modules
 ;	other/fonts/bitstream-vera-1.10
