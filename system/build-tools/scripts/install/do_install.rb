@@ -93,7 +93,6 @@ puts "\nPlease wait...\n\n"
 Dir.mkdir "/inst"
 system "/bin/mount", "-t", "afs", $part, "/inst"
 
-pkg = sprintf(Base[1], Base[0])
 retval = system "unzip", "-d", "/inst/", "/boot/Packages/base/base-syllable.zip"
 system "sync"
 
