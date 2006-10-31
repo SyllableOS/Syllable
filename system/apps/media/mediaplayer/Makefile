@@ -22,11 +22,11 @@ $(OBJDIR):
 $(OBJDIR)/MediaPlayer: $(OBJS)
 	$(CXX) $(OBJS) -lsyllable -lmedia -o MediaPlayer
 	rescopy -r MediaPlayer *.png
-	addattrib MediaPlayer os::Category Media
 	for CATALOG in $(CATALOGS);do \
 		echo $$CATALOG; \
 		rescopy -a MediaPlayer $$CATALOG/mediaplayer.catalog=resources/$$CATALOG/mediaplayer.catalog; \
 	done;
+	addattrib MediaPlayer os::Category Media
 
 catalogs:
 	cd resources; \

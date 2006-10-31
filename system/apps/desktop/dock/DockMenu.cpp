@@ -76,6 +76,8 @@ void DockMenu::AddEntry( os::RegistrarManager* pcManager, os::String zCategory, 
 	if( zCategory != "" )
 	{
 		/* Localizable Category */
+		if( zCategory == "Other" )
+			zCategory = MSG_MENU_CATEGORY_OTHER;
 		if( zCategory == "Internet" )
 			zCategory = MSG_MENU_CATEGORY_INTERNET;
 		if( zCategory == "Media" )
