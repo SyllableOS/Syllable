@@ -159,30 +159,30 @@ puts 'but on a partition you would have to chain-load to it from some other boot
 puts 'loader that you have in the MBR.'
 puts
 
-#puts 'To install GrUB, reboot your computer and start the Syllable installation CD'
-#puts 'again. At the GrUB boot menu, press "c" to go into the GrUB command line.'
-#puts 'Then carefully follow the remainder of the written Syllable installation'
-#puts 'instructions at'
-#puts 'http://syllable.org/docs/0.6.2/install.txt'
-#puts
+puts 'To install GrUB, reboot your computer and start the Syllable installation CD'
+puts 'again. At the GrUB boot menu, press "c" to go into the GrUB command line.'
+puts 'Then carefully follow the remainder of the written Syllable installation'
+puts 'instructions in the INSTALL.TXT file on this CD or at'
+puts 'http://syllable.org/docs/0.6.2/install.txt'
+puts
 
-puts 'Press "m" to install GrUB automatically in the Master Boot Record of disk'
-puts (disk = File.join(File.dirname($part), 'raw')) + ','
-puts 'press "p" to install GrUB automatically on partition'
-puts $part + ','
-print 'or press any other key to skip this step: '
+#puts 'Press "m" to install GrUB automatically in the Master Boot Record of disk'
+#puts (disk = File.join(File.dirname($part), 'raw')) + ','
+#puts 'press "p" to install GrUB automatically on partition'
+#puts $part + ','
+#print 'or press any other key to skip this step: '
 
-if (resp = $stdin.getuc.downcase) == "m" or resp == "p"
-	unless system 'grub-install', '--root-directory=/inst', loader = resp == "m" ? disk : $part
-		puts
-		puts "ERROR: failed to install GrUB on #{loader}."
-		puts "Stopping."
-		exit 4
-	end
-end
+#if (resp = $stdin.getuc.downcase) == "m" or resp == "p"
+#	unless system 'grub-install', '--root-directory=/inst', loader = resp == "m" ? disk : $part
+#		puts
+#		puts "ERROR: failed to install GrUB on #{loader}."
+#		puts "Stopping."
+#		exit 4
+#	end
+#end
 
 
-system "clear"
+#system "clear"
 puts 'Please press "b" to reboot your computer.'
 puts 'Press any other key to exit to the command line.'
 resp = $stdin.getuc
