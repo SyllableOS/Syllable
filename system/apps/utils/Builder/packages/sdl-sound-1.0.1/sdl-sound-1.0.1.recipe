@@ -14,10 +14,10 @@ needs				sdl >= 1.2
 build-needs			automake
 build-recommends
 	libvorbis
-	smpeg
+	smpeg >= 0.4.3
 	libflac
 	libmodplug
-	libmikmod
+	libmikmod >= 3.1.5
 	libspeex
 
 patch-config
@@ -25,7 +25,10 @@ _patch
 	aclocal
 	automake
 
+; Try to find LibOgg and LibVorbis.
+; This assumes that SDL-Sound is built in a parent subdirectory, for example libs/sdl-sound-1.0.1:
+make-env			LDFLAGS -L$PWD/../../stage/lib
+
 documentation
 	README COPYING CREDITS CHANGELOG TODO
 ;	docs
-
