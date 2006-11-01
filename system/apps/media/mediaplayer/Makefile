@@ -22,6 +22,7 @@ $(OBJDIR):
 $(OBJDIR)/MediaPlayer: $(OBJS)
 	$(CXX) $(OBJS) -lsyllable -lmedia -o MediaPlayer
 	rescopy -r MediaPlayer *.png
+	rescopy -a MediaPlayer resources/mediaplayer.catalog
 	for CATALOG in $(CATALOGS);do \
 		echo $$CATALOG; \
 		rescopy -a MediaPlayer $$CATALOG/mediaplayer.catalog=resources/$$CATALOG/mediaplayer.catalog; \
