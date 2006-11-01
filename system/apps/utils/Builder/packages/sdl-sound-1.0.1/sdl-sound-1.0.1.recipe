@@ -27,7 +27,7 @@ _patch
 
 ; Try to find LibOgg and LibVorbis.
 ; This assumes that SDL-Sound is built in a parent subdirectory, for example libs/sdl-sound-1.0.1:
-make-env			LDFLAGS -L$PWD/../../stage/lib
+make-env			LDFLAGS "-L$PWD/../../stage/lib"
 
 documentation
 	README COPYING CREDITS CHANGELOG TODO
