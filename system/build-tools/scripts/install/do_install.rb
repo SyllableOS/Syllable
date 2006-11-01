@@ -144,11 +144,11 @@ system "sync"
 system "clear"
 puts 'Syllable has now been installed!'
 puts 'To finish the installation, the GrUB boot loader needs to be installed.'
-puts 'GrUB can now be installed automatically, or you can choose to skip this.'
-puts 'If you skip the GrUB installation, you will have to install GrUB manually.'
-puts 'This can be preferable if you have a complicated drive or partition setup.'
-puts 'GrUB can not always detect the right hard disk that Syllable was installed to.'
-puts 'Please check carefully that GrUB is using the right disk and partition.'
+#puts 'GrUB can now be installed automatically, or you can choose to skip this.'
+#puts 'If you skip the GrUB installation, you will have to install GrUB manually.'
+#puts 'This can be preferable if you have a complicated drive or partition setup.'
+#puts 'GrUB can not always detect the right hard disk that Syllable was installed to.'
+#puts 'Please check carefully that GrUB is using the right disk and partition.'
 puts "Please note that you must install Syllable's version of GrUB to boot Syllable."
 puts 'You can not use a different GrUB from another system such as Linux.'
 puts
