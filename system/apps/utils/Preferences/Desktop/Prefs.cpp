@@ -369,6 +369,8 @@ void PrefsDesktopWin::HandleMessage( os::Message* pcMessage )
 			if( pcRow )
 			{
 				m_zBackground = pcRow->GetString( 0 );
+				if( m_zBackground == MSG_MAINWND_BACKGGROUND_NONE )
+					m_zBackground = "None";
 			}
 			break;
 		}
