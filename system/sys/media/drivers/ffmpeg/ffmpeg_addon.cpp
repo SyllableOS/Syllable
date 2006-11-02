@@ -507,16 +507,6 @@ void FFMpegAddon::RegisterCodecs()
     register_avcodec(&mp3lame_encoder);
 #endif //CONFIG_MP3LAME_ENCODER
 #endif
-#if 0
-#ifdef CONFIG_LIBVORBIS
-#ifdef CONFIG_OGGVORBIS_ENCODER
-    register_avcodec(&oggvorbis_encoder);
-#endif //CONFIG_OGGVORBIS_ENCODER
-#if (defined CONFIG_OGGVORBIS_DECODER && !defined CONFIG_VORBIS_DECODER)
-    register_avcodec(&oggvorbis_decoder);
-#endif //CONFIG_OGGVORBIS_DECODER
-#endif
-#endif
 #ifdef CONFIG_FAAC
 #ifdef CONFIG_FAAC_ENCODER
     register_avcodec(&faac_encoder);
@@ -967,11 +957,6 @@ void FFMpegAddon::RegisterCodecs()
 #ifdef CONFIG_WS_SND1_DECODER
     register_avcodec(&ws_snd1_decoder);
 #endif //CONFIG_WS_SND1_DECODER
-#if 0
-#ifdef CONFIG_VORBIS_DECODER
-    register_avcodec(&vorbis_decoder);
-#endif
-#endif
 #ifdef CONFIG_LIBGSM
     register_avcodec(&libgsm_decoder);
 #endif //CONFIG_LIBGSM
