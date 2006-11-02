@@ -4,14 +4,14 @@ authors
 	Kristian Van Der Vliet
 status				testing
 notes
-	Tested with FFMPEG SVN snapshot November 2, 2006.
+	Tested with FFMPEG SVN snapshot September 12, 2006.
 	Can't be build image'd.
 
 inherits			sourceforge
 
 licenses			LGPL GPL
 home				ffmpeg.org
-packages			syllable/ffmpeg-6869
+packages			syllable/ffmpeg-6239
 archives			svn://svn.mplayerhq.hu/ffmpeg/trunk ffmpeg
 
 build-needs
