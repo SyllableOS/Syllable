@@ -1063,14 +1063,14 @@ status_t MediaSyncStage::Run()
 			 
 		if( (uint64)nCurrentTime > m_sVideoPacket.nTimeStamp + nVideoFrameLength * 2 )
 		{
-			printf( "Droping Frame %i %i!\n", (int)m_sVideoPacket.nTimeStamp, (int)nCurrentTime );
+			printf( "Dropping frame %i %i!\n", (int)m_sVideoPacket.nTimeStamp, (int)nCurrentTime );
 			pcVidPrevStage->FreePacket( &m_sVideoPacket );
 			m_bVideoValid = false;
 		}
 		else if( !( (uint64)nCurrentTime < m_sVideoPacket.nTimeStamp ) )
 		{
 			/* Write video frame */
-			//printf( "Write video frame %i %i\n", (int)m_sVideoPacket.nTimeStamp, (int)nCurrentTime );
+			//printf( "Writing video frame %i %i\n", (int)m_sVideoPacket.nTimeStamp, (int)nCurrentTime );
 			pcVidNextStage->GetPacket( nVidNextInput, NULL );
 			m_bVideoValid = false;						
 		}
@@ -1126,24 +1126,3 @@ MediaSyncStage* MediaSyncStage::CreateStage()
 {
 	return( new MediaSyncStage() );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
