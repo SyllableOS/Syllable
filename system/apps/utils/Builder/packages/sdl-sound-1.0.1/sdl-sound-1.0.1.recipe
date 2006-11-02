@@ -3,6 +3,8 @@ authors
 	Kaj de Vos
 maintainers			Kaj de Vos
 status				testing
+warnings
+	LibVorbis must be available in a stage subdirectory in the same parent directory as SDL-Sound.
 notes				Doesn't build a shared library yet
 
 licenses			LGPL
@@ -25,10 +27,16 @@ _patch
 	aclocal
 	automake
 
-; Try to find LibOgg and LibVorbis.
-; This assumes that SDL-Sound is built in a parent subdirectory, for example libs/sdl-sound-1.0.1:
-make-env			LDFLAGS "-L$PWD/../../stage/lib"
+configure-options
+;	--enable-static
+;	--disable-shared
+;	--with-sdl-prefix=
+;	--disable-sdltest
+;	--with-vorbis-prefix=/usr/vorbis
+	--with-vorbis-prefix=$PWD/../stage
+;	--disable-vorbistest
 
 documentation
 	README COPYING CREDITS CHANGELOG TODO
 ;	docs
+
