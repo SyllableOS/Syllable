@@ -1,16 +1,13 @@
 authors
 	Arno Klenke
 	Kaj de Vos
+	Flemming Sørensen
 status				testing
 
 inherits			xpdf-3.00pl3
 
-needs
-	autoconf >= 2.57
-;	On X11 systems:
-;	lesstif
 ; Patched for GCC 4:
-build-needs
+build-needs			autoconf >= 2.57
 
 patch				autoconf
 
@@ -21,4 +18,3 @@ install				true
 install-files		xpdf/Xpdf bin/
 
 move-files			bin/Xpdf /atheos/Applications/Xpdf/
-
