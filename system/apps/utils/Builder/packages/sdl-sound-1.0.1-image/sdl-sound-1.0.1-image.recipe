@@ -1,0 +1,7 @@
+authors
+	Kristian Van Der Vliet
+status				testing
+notes				This is a terrible hack
+
+inherits			sdl-sound-1.0.1
+
