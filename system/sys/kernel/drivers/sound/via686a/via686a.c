@@ -1229,7 +1229,8 @@ status_t via_dsp_ioctl (void *node, void *cookie, uint32 cmd, void *args, bool b
 	case IOCTL_GET_USERSPACE_DRIVER:
 	{
 		memcpy_to_user( args, "oss.so", strlen( "oss.so" ) );
-		return( 0 );
+		rc = 0;
+		break;
 	}
 	/* not implemented */
 	default:
