@@ -25,14 +25,10 @@ $(OBJDIR)/$(LIBNAME): $(OBJS)
 deps:
 
 install: $(OBJDIR)/$(LIBNAME)
-	mkdir -p /system/drivers/media
-	mkdir -p /system/sounds
 	install -s $(OBJDIR)/$(LIBNAME) $(LIBBIN)/$(LIBNAME)
 	ln -sf $(LIBNAME) $(LIBBIN)/libmedia.so
 
 dist: $(OBJDIR)/$(LIBNAME)
-	mkdir -p $(DIST_DIR)/atheos/sys/drivers/media
-	mkdir -p $(DIST_DIR)/atheos/sys/sounds
 	install -s $(OBJDIR)/$(LIBNAME) $(DIST_DIR)/atheos/sys/libs/$(LIBNAME)
 	ln -sf $(LIBNAME) $(DIST_DIR)/atheos/sys/libs/libmedia.so
 
@@ -50,4 +46,3 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*.d $(OBJDIR)/$(LIBNAME)
 
 -include $(OBJDIR)/*.d
-

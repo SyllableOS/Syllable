@@ -48,6 +48,7 @@ tree
 	atheos/sys/fonts
 	atheos/sys/icons
 	atheos/sys/keymaps
+	atheos/sys/sounds
 
 	atheos/sys/resources
 	atheos/sys/resources/catalogs
