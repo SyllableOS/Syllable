@@ -73,7 +73,6 @@ tree
 	atheos/sys/drivers/dev/net
 	atheos/sys/drivers/dev/net/eth
 	atheos/sys/drivers/dev/graphics
-	atheos/sys/drivers/dev/sound
 
 	atheos/sys/drivers/fs
 
