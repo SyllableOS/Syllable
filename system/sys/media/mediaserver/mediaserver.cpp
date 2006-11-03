@@ -79,7 +79,7 @@ MediaServer::MediaServer()
 		
 	
 	/* Spawn flush thread */
-	m_hThread = spawn_thread( "media_server_flush", (void*)media_flush_entry, 0, 0, this );
+	m_hThread = spawn_thread( "media_server_flush", (void*)media_flush_entry, DISPLAY_PRIORITY, 0, this );
 	resume_thread( m_hThread );
 	
 	m_nMasterVolume = 100;
@@ -314,7 +314,6 @@ void MediaServer::FlushThread()
 		lock_semaphore( m_hLock );
 		
 		uint64 nDelay = m_pcCurrentOutput->GetDelay();
-		
 		nSize = 0;
 		bool bSizeSet = false;
 		for( uint32 i = 0; i < MEDIA_MAX_AUDIO_STREAMS; i++ ) 
@@ -365,9 +364,21 @@ void MediaServer::FlushThread()
 		/* Avoid blocks */
 		nDelay = m_pcCurrentOutput->GetDelay();
 		uint64 nFree = m_nBufferSize - nDelay;
+		
+		if( nFree < 40 && !( m_nBufferSize <= 80 ) )
+		{
+			unlock_semaphore( m_hLock );
+			unlock_semaphore( m_hActiveStreamCount );
+			snooze( 1000 );
+			continue;
+		}
+		
 		nFree = nFree * m_sCardFormat.nSampleRate * m_sCardFormat.nChannels * 2 / 1000;
+		
 		nSize = std::min( (int)nSize, (int)nFree );
 		nSize -= nSize % ( m_sCardFormat.nChannels * 2 );
+		
+		nDelay += nSize * 1000 / m_sCardFormat.nSampleRate / m_sCardFormat.nChannels / 2;
 		
 		//printf( "Total %i\n", nSize );
 		assert( ( nSize % ( m_sCardFormat.nChannels * 2 ) ) == 0 );

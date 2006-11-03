@@ -36,7 +36,9 @@
 #include <iostream>
 #include <vector>
 #include <stdio.h>
+#include <cassert>
 #include "mixerview.h"
+#include "resampler.h"
 
 class OSSOutput : public os::MediaOutput
 {
@@ -68,13 +70,10 @@ public:
 
 private:
 
-	uint32 Resample( os::MediaFormat_s sSrcFormat, os::MediaFormat_s sDstFormat, 
-						uint16* pDst, uint16* pSrc, uint32 nLength );
 	os::String		m_zDSPPath;
 	uint64			m_nFactor;
 	int				m_hOSS;
 	int				m_nBufferSize;
-	sem_id			m_hLock;
 	os::MediaFormat_s m_sSrcFormat;
 	os::MediaFormat_s m_sDstFormat;
 	bool			m_bResample;
@@ -87,14 +86,12 @@ OSSOutput::OSSOutput( os::String zDSPPath )
 {
 	/* Set default values */
 	m_hOSS = -1;
-	m_hLock = create_semaphore( "oss_lock", 1, 0 );
 	m_zDSPPath = zDSPPath;
 }
 
 OSSOutput::~OSSOutput()
 {
 	Close();
-	delete_semaphore( m_hLock );
 }
 
 
@@ -127,7 +124,7 @@ os::String OSSOutput::GetIdentifier()
 	int nMixerDev = open( GetMixerPath().c_str(), O_RDWR );
 	if( ioctl( nMixerDev, SOUND_MIXER_INFO, &sInfo ) == 0 )
 		zName = os::String( sInfo.name );
-	
+	close( nMixerDev );
 	return( os::String( "OSS (") + zName + os::String( ")" ) );
 }
 
@@ -252,76 +249,6 @@ status_t OSSOutput::AddStream( os::String zName, os::MediaFormat_s sFormat )
 }
 
 
-uint32 OSSOutput::Resample( os::MediaFormat_s sSrcFormat, os::MediaFormat_s sDstFormat, uint16* pDst, uint16* pSrc, uint32 nLength )
-{
-	uint32 nSkipBefore = 0;
-	uint32 nSkipBehind = 0;
-	bool bOneChannel = false;
-	
-	/* Calculate skipping ( I just guess what is right here ) */
-	if( sSrcFormat.nChannels == 1 && sDstFormat.nChannels == 2 ) {
-		bOneChannel = true;
-	} else if( sSrcFormat.nChannels == 3 && sDstFormat.nChannels == 2 ) {
-		nSkipBefore = 0;
-		nSkipBehind = 1;
-	} else if( sSrcFormat.nChannels == 4 && sDstFormat.nChannels == 2 ) {
-		nSkipBefore = 2;
-		nSkipBehind = 0;
-	} else if( sSrcFormat.nChannels == 5 && sDstFormat.nChannels == 2 ) {
-		nSkipBefore = 2;
-		nSkipBehind = 1;
-	} else if( sSrcFormat.nChannels == 6 && sDstFormat.nChannels == 2 ) {
-		nSkipBefore = 2;
-		nSkipBehind = 2;
-	} else if( sSrcFormat.nChannels > sDstFormat.nChannels ) {
-		nSkipBehind = sSrcFormat.nChannels - sDstFormat.nChannels;
-	}
-	
-	/* Calculate samplerate factors */
-	float vFactor = (float)sDstFormat.nSampleRate / (float)sSrcFormat.nSampleRate;
-	float vSrcActiveSample = 0;
-	float vDstActiveSample = 0;
-	float vSrcFactor = 0;
-	float vDstFactor = 0;
-	uint32 nSamples = 0;
-	
-	vSrcFactor = 1 / vFactor;
-	vDstFactor = 1;
-	float vSamples = (float)nLength * vFactor / (float)sSrcFormat.nChannels / 2;
-	nSamples = (uint32)vSamples;
-	
-	uint32 nSrcPitch;
-	uint32 nDstPitch = 2;
-	if( bOneChannel )
-		nSrcPitch = nSkipBefore + 1 + nSkipBehind;
-	else
-		nSrcPitch = nSkipBefore + 2 + nSkipBehind;
-	uint32 nBytes = 0;
-	
-	for( uint32 i = 0; i < nSamples; i++ ) 
-	{
-		uint16* pSrcWrite = &pSrc[nSrcPitch * (int)vSrcActiveSample];
-		uint16* pDstWrite = &pDst[nDstPitch * (int)vDstActiveSample];
-		/* Skip */
-		pSrcWrite += nSkipBefore;
-		
-		if( bOneChannel )
-		{
-			*pDstWrite++ = *pSrcWrite;
-			*pDstWrite++ = *pSrcWrite;
-		} else {
-			/* Channel 1 */
-			*pDstWrite++ = *pSrcWrite++;
-		
-			/* Channel 2 */
-			*pDstWrite++ = *pSrcWrite++;
-		}
-		vSrcActiveSample += vSrcFactor;
-		vDstActiveSample += vDstFactor;
-		nBytes += 4;
-	}
-	return( nBytes );
-}
 
 status_t OSSOutput::WritePacket( uint32 nIndex, os::MediaPacket_s* psPacket )
 {
@@ -336,7 +263,7 @@ status_t OSSOutput::WritePacket( uint32 nIndex, os::MediaPacket_s* psPacket )
 	if( m_bResample ) {
 		pBuffer = ( uint8* )malloc( psPacket->nSize[0] * m_sDstFormat.nChannels / m_sSrcFormat.nChannels
 													* m_sDstFormat.nSampleRate / m_sSrcFormat.nSampleRate + 4096 );
-		nSize = Resample( m_sSrcFormat, m_sDstFormat, (uint16*)pBuffer, (uint16*)psPacket->pBuffer[0], psPacket->nSize[0] );
+		nSize = Resample( m_sSrcFormat, m_sDstFormat, (uint16*)pBuffer, 0, INT_MAX, (uint16*)psPacket->pBuffer[0], psPacket->nSize[0] );
 	}
 	
 	
@@ -354,7 +281,6 @@ uint64 OSSOutput::GetDelay( bool bNonSharedOnly )
 	ioctl( m_hOSS, SNDCTL_DSP_GETODELAY, &nDelay );
 	
 	nDataSize += nDelay;
-	unlock_semaphore( m_hLock );
 	nTime = nDataSize;
 	nTime *= 1000;
 	nTime /= (uint64)m_nFactor;
@@ -368,7 +294,6 @@ uint64 OSSOutput::GetBufferSize( bool bNonSharedOnly )
 	uint64 nTime;
 
 	nDataSize = m_nBufferSize;
-	unlock_semaphore( m_hLock );
 	nTime = nDataSize;
 	nTime *= 1000;
 	nTime /= (uint64)m_nFactor;
@@ -397,7 +322,7 @@ public:
 		const char* pzPath = "/dev/sound/";
 		
 		if( m_bSingleMode )
-			return( true );
+			return( 0 );
 			
 		printf( "OSS device scan...\n" );
 
