@@ -5,8 +5,8 @@ export PATH=/bin:/usr/local/sbin:/usr/local/bin:/atheos/autolnk/sbin:/atheos/aut
 export DLL_PATH=@bindir@/lib:./:/system/libs:/system:/usr/local/lib:/atheos/autolnk/lib
 
 # Paths for software compilation
-export LIBRARY_PATH=/usr/local/lib:/atheos/autolnk/lib:/system/libs
-export C_INCLUDE_PATH=/usr/local/include:/atheos/autolnk/include:/system/include
+export LIBRARY_PATH=/usr/local/lib:/system/libs:/atheos/autolnk/lib
+export C_INCLUDE_PATH=/usr/local/include:/system/include:/atheos/autolnk/include
 export CPLUS_INCLUDE_PATH=$C_INCLUDE_PATH
 
 # Set this right, or havoc may be wreaked in /system/init.sh
