@@ -1,6 +1,6 @@
 //
 // Launch Vertalingen
-// Nederlandse vertaling door: Rik van Achterberg <rikratva@xs4all.nl> en Kaj de Vos
+// Nederlandse vertaling door: Rik van Achterberg en Kaj de Vos
 //
 
 MSG_ERROR_LAUNCHING_ONE		Het bestand '
@@ -15,4 +15,3 @@ MSG_STRING_LAUNCH			Starten:
 MSG_STRING_DESC				Geef een webadres, bestand, map of programma op.
 
 MSG_WINDOW_TITLE			Starten
-

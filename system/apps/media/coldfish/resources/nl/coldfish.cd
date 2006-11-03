@@ -1,7 +1,7 @@
 //
 // ColdFish Vertalingen
 //
-// Vertaald door: Rik van Achterberg <rikratva@xs4all.nl> en Kaj de Vos
+// Vertaald door: Rik van Achterberg en Kaj de Vos
 //
 
 MSG_MAINWND_TITLE=100								ColdFish
@@ -51,4 +51,3 @@ MSG_PLAYLISTWND_NOTE								Als je een niet bestaande\nafspeellijst probeert te 
 MSG_LCD_TRACK=3000									Nummer
 
 MSG_MIMETYPE_APPLICATION_XCOLDFISHPLAYLIST=10000	ColdFish-afspeellijst
-

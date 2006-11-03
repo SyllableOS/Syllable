@@ -1,6 +1,6 @@
 //
 // Catalog Compiler Vertalingen
-// Nederlandse vertaling door Rik van Achterberg <rikratva@xs4all.nl> en Kaj de Vos
+// Nederlandse vertaling door Rik van Achterberg en Kaj de Vos
 //
 
 MSG_SYNTAX_ERROR				Syntaxisfout op regelnummer %d.
@@ -15,4 +15,3 @@ MSG_HELP_HELP					Toon deze helptekst.
 MSG_CREATING_CATALOG_FILE=200	Maken van catalogbestand:
 MSG_CREATING_HEADER_FILE		Maken van headerbestand:
 MSG_DESCR						Hulpmiddel voor het maken van tekstlijsten voor het vertalen van software.
-
