@@ -187,7 +187,7 @@ uint32 generic_stream_get_delay( GenericStream_s* psStream )
 	if( nValue > 0 )
 	{
 		nValue *= psStream->pfGetFragSize(psStream->pDriverData );
-		nValue -= psStream->pfGetFragSize( psStream->pDriverData ) - psStream->pfGetCurrentPosition( psStream->pDriverData );
+		nValue -= psStream->pfGetCurrentPosition( psStream->pDriverData );
 	}
 	nValue += psStream->nPartialBufSize;
 	
