@@ -7,10 +7,10 @@
 
 MSG_MAINWND_TITLE=0							Área de trabalho
 
-MSG_MAINWND_BACKGGROUND=100					Plano de Fundo
-MSG_MAINWND_BACKGGROUND_IMAGE				Imagem
-MSG_MAINWND_BACKGGROUND_NONE				Nenhuma
-MSG_MAINWND_BACKGGROUND_TEXT				Nota: Por favor, copie as imagens para Documents/Pictures
+MSG_MAINWND_BACKGROUND=100					Plano de Fundo
+MSG_MAINWND_BACKGROUND_IMAGE				Imagem
+MSG_MAINWND_BACKGROUND_NONE					Nenhuma
+MSG_MAINWND_BACKGROUND_TEXT					Nota: Por favor, copie as imagens para Documents/Pictures
 
 MSG_MAINWND_WINDOWS_TEXT=200				Janelas
 MSG_MAINWND_WINDOWS_TEXT_POPUP				Janela selecionada de PopUp

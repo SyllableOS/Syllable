@@ -87,15 +87,15 @@ PrefsDesktopWin::PrefsDesktopWin( os::Rect cFrame )
 	/* Create background frame */
 	m_pcVBackground = new os::VLayoutNode( "desktop_prefs_vbackground" );
 	m_pcVBackground->SetBorders( os::Rect( 5, 5, 5, 5 ) );
-	m_pcBackground = new os::FrameView( os::Rect(), "desktop_prefs_background", MSG_MAINWND_BACKGGROUND );
+	m_pcBackground = new os::FrameView( os::Rect(), "desktop_prefs_background", MSG_MAINWND_BACKGROUND );
 	
 	
 	/* Create background list */
 	m_pcBackgroundList = new os::ListView( os::Rect(), "desktop_prefs_plist", os::ListView::F_RENDER_BORDER );
 	m_pcBackgroundList->SetAutoSort( false );
 	m_pcBackgroundList->SetSelChangeMsg( new os::Message( DP_BACKGROUND_CHANGED ) );
-	m_pcBackgroundList->InsertColumn( MSG_MAINWND_BACKGGROUND_IMAGE.c_str(), (int)GetBounds().Width() );
-	m_pcBackgroundNote = new os::StringView( os::Rect(), "desktop_prefs_note", MSG_MAINWND_BACKGGROUND_TEXT );
+	m_pcBackgroundList->InsertColumn( MSG_MAINWND_BACKGROUND_IMAGE.c_str(), (int)GetBounds().Width() );
+	m_pcBackgroundNote = new os::StringView( os::Rect(), "desktop_prefs_note", MSG_MAINWND_BACKGROUND_TEXT );
 	m_pcVBackground->AddChild( m_pcBackgroundList, 1.0f );
 	m_pcVBackground->AddChild( new os::VLayoutSpacer( "", 5.0f, 5.0f ) );
 	m_pcVBackground->AddChild( m_pcBackgroundNote, 0.0f );
@@ -166,7 +166,7 @@ PrefsDesktopWin::PrefsDesktopWin( os::Rect cFrame )
 	{
 	os::Message cReply;
 	os::Message cDummy;
-	m_zBackground = MSG_MAINWND_BACKGGROUND_NONE;
+	m_zBackground = MSG_MAINWND_BACKGROUND_NONE;
 	m_bSingleClickSave = false;
 	m_bFontShadowSave = true;
 	
@@ -231,7 +231,7 @@ void PrefsDesktopWin::UpdateBackgroundList()
 	int nSelect = 0;
 	
 	os::ListViewStringRow* pcRow = new os::ListViewStringRow();
-	pcRow->AppendString( MSG_MAINWND_BACKGGROUND_NONE );
+	pcRow->AppendString( MSG_MAINWND_BACKGROUND_NONE );
 	m_pcBackgroundList->InsertRow( pcRow );
 	
 	
@@ -369,7 +369,7 @@ void PrefsDesktopWin::HandleMessage( os::Message* pcMessage )
 			if( pcRow )
 			{
 				m_zBackground = pcRow->GetString( 0 );
-				if( m_zBackground == MSG_MAINWND_BACKGGROUND_NONE )
+				if( m_zBackground == MSG_MAINWND_BACKGROUND_NONE )
 					m_zBackground = "None";
 			}
 			break;
