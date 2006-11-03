@@ -135,6 +135,7 @@ private:
 	os::MediaCodec* m_pcAudioCodec;
 	os::MediaCodec* m_pcVideoCodec;
 	os::MediaOutput* m_pcAudioOutput;
+	os::MediaFormat_s m_sAudioOutFormat;
 	os::MediaOutput* m_pcVideoOutput;
 	
 	bool m_bPlayThread;

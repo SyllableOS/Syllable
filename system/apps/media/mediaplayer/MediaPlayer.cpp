@@ -19,6 +19,7 @@
 
 #include "MediaPlayer.h"
 #include <iostream>
+#include <cassert>
 
 /* TODO: 
  * - Reopen streams after track change.
@@ -356,6 +357,7 @@ void MPApp::PlayThread()
 	bool bAudioValid = false;
 	uint64 nVideoFrames = 0;
 	uint64 nAudioBytes = 0;
+	uint32 nAudioPacketPos = 0;
 	uint8 nErrorCount = 0;
 	bool bError = false;
 	bigtime_t nLastVideo = 0;
@@ -434,7 +436,6 @@ again:
 						nStartTime = get_system_time();
 					nPlayTime = ( get_system_time() - nStartTime ) / 1000;
 				}
-				
 				/* Calculate current time */
 				bigtime_t nCurrentTime = nPlayTime;
 				if( m_bAudio )
@@ -471,6 +472,7 @@ audio_again:
 						{
 							if ( sAudioPacket.nSize[0] > 0 )
 							{
+								nAudioPacketPos = 0;
 								bAudioValid = true;
 							}
 						} else
@@ -483,23 +485,54 @@ audio_again:
 			}
 			
 			/* Write audio */
-			if( m_bAudio && !bCheckError && bAudioValid /*&& ( m_pcAudioOutput->GetDelay() < m_pcAudioOutput->GetBufferSize() / 2 )*/ )
+
+			if( m_bAudio && !bCheckError && bAudioValid )
 			{
-				if( sAudioPacket.nTimeStamp != ~0 )
-					nLastAudio = sAudioPacket.nTimeStamp;
-				bigtime_t nAudioLength = (bigtime_t)sAudioPacket.nSize[0] * 1000;
-				nAudioLength /= bigtime_t( 2 * m_sAudioFormat.nChannels * m_sAudioFormat.nSampleRate );
-				sAudioPacket.nTimeStamp = ~0;
-				uint64 nBufferFree = ( m_pcAudioOutput->GetBufferSize() - m_pcAudioOutput->GetDelay() );
-				m_pcAudioOutput->WritePacket( 0, &sAudioPacket );
-				bAudioValid = false;
-				nLastAudio += nAudioLength;
-				nAudioBytes += sAudioPacket.nSize[0];
-				nPlayTime = nLastAudio;
+				uint64 nAudioBufferSize= m_pcAudioOutput->GetBufferSize( true );
+				uint32 nFreeAudioBufSize = nAudioBufferSize - m_pcAudioOutput->GetDelay( true );
 				
-				if( m_pcAudioOutput->GetDelay() < m_pcAudioOutput->GetBufferSize() / 4 )
-					goto audio_again;
-			}		
+				/* We only write as much bytes as the free buffer size because we 
+				do not want to block here */
+				if( nAudioBufferSize <= 80 || ( nFreeAudioBufSize > 40 ) )
+				{
+					uint32 nFreeAudioBufBytes = (uint32)( nFreeAudioBufSize * bigtime_t( 2 * m_sAudioOutFormat.nChannels * m_sAudioOutFormat.nSampleRate ) / 1000 );
+					uint32 nWriteBytes = std::min( nFreeAudioBufBytes, sAudioPacket.nSize[0] - nAudioPacketPos );
+
+					bigtime_t nAudioLength = (bigtime_t)nWriteBytes * 1000;
+					nAudioLength /= bigtime_t( 2 * m_sAudioOutFormat.nChannels * m_sAudioOutFormat.nSampleRate );
+					
+					//printf( "%i %i %i %i %i %i %i\n", (int)m_sAudioOutFormat.nChannels, (int)nAudioBufferSize, (int)nFreeAudioBufSize, sAudioPacket.nSize[0], nAudioPacketPos, nWriteBytes, (int)nAudioLength );
+					
+					if( nAudioPacketPos == 0 )
+						if( sAudioPacket.nTimeStamp != ~0 ) {
+							nLastAudio = sAudioPacket.nTimeStamp;
+							//printf("Audio time stamp %i\n", (int)nLastAudio );
+						}
+					
+					nLastAudio += nAudioLength;
+					nAudioBytes += nWriteBytes;
+					
+					os::MediaPacket_s sWritePacket = sAudioPacket;
+					sWritePacket.pBuffer[0] += nAudioPacketPos;
+					sWritePacket.nSize[0] = nWriteBytes;
+					
+					m_pcAudioOutput->WritePacket( 0, &sWritePacket );
+
+					nPlayTime = nLastAudio;
+					
+					nAudioPacketPos += nWriteBytes;
+					
+					if( nAudioPacketPos == sAudioPacket.nSize[0] )
+					{
+						//printf( "Packet complete!\n" );
+						bAudioValid = false;
+					}
+					
+					if( m_pcAudioOutput->GetDelay( true ) < m_pcAudioOutput->GetBufferSize( true ) / 4 )
+						goto audio_again;
+				}
+			}
+
 			/* Increase error count */
 			if( bCheckError )
 			{
@@ -742,6 +775,7 @@ void MPApp::Open( os::String zFileName, os::String zInput )
 		}
 		else
 		{
+			m_sAudioOutFormat = m_pcAudioCodec->GetExternalFormat();
 			std::cout << "Using Audio codec " << m_pcAudioCodec->GetIdentifier().c_str(  ) << std::endl;
 		}
 	}
