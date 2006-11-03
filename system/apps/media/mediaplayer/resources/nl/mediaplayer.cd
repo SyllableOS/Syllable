@@ -16,7 +16,7 @@ MSG_MAINWND_MENU_APPLICATION_QUIT			Afsluiten
 MSG_MAINWND_MENU_FILE=300					Bestand
 MSG_MAINWND_MENU_FILE_OPEN					Openen...
 MSG_MAINWND_MENU_FILE_OPEN_INPUT			Audio/videobron openen...
-MSG_MAINWND_MENU_FILE_INFO					Informatie
+MSG_MAINWND_MENU_FILE_INFO					Eigenschappen...
 MSG_MAINWND_MENU_FILE_FULLSCREEN			Volledig scherm
 
 MSG_MAINWND_MENU_TRACKS=400					Nummers
@@ -29,7 +29,7 @@ MSG_ERRWND_TITLE=1100						Fout
 MSG_ERRWND_OK								OK
 MSG_ERRWND_CANTPLAY							Bestand kon niet worden afgespeeld.\nControleer alsjeblieft de multimedia-instellingen\nvan het systeem.
 
-MSG_INFOWND_TITLE=1200						Informatie
+MSG_INFOWND_TITLE=1200						Eigenschappen
 MSG_INFOWND_VIDEO							Video
 MSG_INFOWND_AUDIO							Audio
 MSG_INFOWND_CHANNELS						Kanalen
