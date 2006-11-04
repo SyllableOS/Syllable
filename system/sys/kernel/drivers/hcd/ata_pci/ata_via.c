@@ -384,7 +384,7 @@ void init_via_sata_controller( PCI_Info_s sDevice, ATA_controller_s* psCtrl )
 	struct VIA_sata_hcd_s* psHcd = NULL;
 	uint8 nT;
 
-	for( i = 0; i < ( sizeof( g_sVIABridges ) / sizeof( struct VIA_bridge_s ) ); i++ )
+	for( i = 0; i < ( sizeof( g_sVIAHcds ) / sizeof( struct VIA_sata_hcd_s ) ); i++ )
 	{
 		if( sDevice.nVendorID == 0x1106 && sDevice.nDeviceID == g_sVIAHcds[i].nDeviceID )
 		{
@@ -433,7 +433,7 @@ void init_via_sata_controller( PCI_Info_s sDevice, ATA_controller_s* psCtrl )
 		for( i = 0; i < 2; i++ )
 		{
 			uint32 nSCRAddr = vt6420_scr_addr( nSCR, i );
-			for( j = 0; i < SATA_TOTAL_REGS; j++ )
+			for( j = 0; j < SATA_TOTAL_REGS; j++ )
 				psCtrl->psPort[i]->nSATARegisters[j] = nSCRAddr + j;
 		}
 	}
