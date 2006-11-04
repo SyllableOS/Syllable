@@ -271,14 +271,6 @@ void FFMpegAddon::RegisterFormats()
 #ifdef CONFIG_NUV_DEMUXER
     av_register_input_format(&nuv_demuxer);
 #endif
-#ifdef CONFIG_OGG_DEMUXER
-    av_register_input_format(&ogg_demuxer);
-#endif
-#ifdef CONFIG_LIBOGG
-#ifdef CONFIG_OGG_MUXER
-    av_register_output_format(&ogg_muxer);
-#endif
-#endif /* CONFIG_LIBOGG */
 #ifdef CONFIG_STR_DEMUXER
     av_register_input_format(&str_demuxer);
 #endif
