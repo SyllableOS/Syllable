@@ -34,8 +34,8 @@ read_to_user "format.txt"
 valid_partitions, shortmap = LSFS::list
 
 loop {
-	puts "\nEnter the letter or full path of the partition that you would like to install Syllable onto,"
-	puts 'or "ls" to see the partition list again'
+	puts "\nEnter the letter or full path of the partition that you would like to install"
+	puts 'Syllable onto, or "ls" to see the partition list again'
 	print '(For example: b or /dev/disk/ata/hda/1): '
 	
 	resp = $stdin.getsc
@@ -48,17 +48,20 @@ loop {
 		
 		unless info[0] == "unknown"
 			# Overwriting a recognized partition
-			puts "WARNING: formatting #{$part} will destroy the #{info[1]} #{info[0]} partition that already exists here."
+			puts "WARNING: formatting #{$part} will destroy the"
+			puts "#{info[1]} #{info[0]} partition that already exists there."
 		else
 			# Overwriting an unrecognized partition
-			puts "WARNING: formatting #{$part} will destroy the unknown partition that already exists here."
+			puts "WARNING: formatting #{$part} will destroy"
+			puts 'the unknown partition that already exists there.'
 		end
 
 		puts 'Are you sure? Type "yes" to continue:'
 		resp = $stdin.getsc
 		break if resp == "yes"
 		
-		puts "User entered #{resp.inspect} instead of \"yes\"; returning to partition selection."
+		puts "User entered #{resp.inspect} instead of \"yes\"."
+		puts 'Returning to partition selection.'
 	else
 		case resp
 		when "ls", "list"
@@ -67,7 +70,9 @@ loop {
 			# time to leave
 			exit 1
 		else
-			puts "User entered #{resp.inspect}, which is not a valid partition; returning to partition selection.  Type \"ls\" if you wish to see the list of valid partitions again."
+			puts "User entered #{resp.inspect}, which is not a valid partition."
+			puts 'Returning to partition selection. Type "ls" if you wish to see the list of'
+			puts 'valid partitions again.'
 		end
 	end
 }
@@ -81,7 +86,7 @@ if(retval)
 else
 	# whoops!
 	puts
-	puts "ERROR: Failed to format #{$part}.  Stopping"
+	puts "ERROR: Failed to format #{$part}. Stopping"
 	# take care of this in the caller
 	exit 2
 end
@@ -97,10 +102,10 @@ retval = system "unzip", "-d", "/inst/", "/boot/Packages/base/base-syllable.zip"
 system "sync"
 
 if(retval)
-	print "The base package has been installed.  Please press any key to continue."
+	print "The base package has been installed. Please press any key to continue."
 	$stdin.getuc
 else
-	puts "\nFailed to extract base package to #{$part}.  Stopping."
+	puts "\nFailed to extract base package to #{$part}. Stopping."
 	exit 3
 end
 
@@ -109,7 +114,9 @@ GrubGen::save(valid_partitions, $part, "/inst/boot/grub/menu.lst")
 puts "done.\n"
 
 loop {
-	print "\n" + 'Press "l" to view the menu.lst file, "e" to edit it manually, "?" for an explanation of the menu.lst file, or any other key to continue with the installation: '
+	puts "\n" + 'Press "l" to view the menu.lst file, "e" to edit it manually, "?" for an'
+	puts 'explanation of the menu.lst file, or any other key to continue with the'
+	print 'installation: '
 	resp = $stdin.getuc
 
 	case resp.downcase
@@ -184,7 +191,7 @@ puts
 
 #system "clear"
 puts 'Please press "b" to reboot your computer.'
-puts 'Press any other key to exit to the command line.'
+print 'Press any other key to exit to the command line: '
 resp = $stdin.getuc
 
 system "/bin/reboot" if resp.downcase == "b"

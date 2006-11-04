@@ -1,7 +1,7 @@
 			   Syllable VER
 			   ==============
 
-Welcome to the Syllable VER installation CD.  This script will guide you through
-the process of configuring your computer, installing Syllable, and installing
-any additional software packages that you require.
+Welcome to the Syllable VER installation CD.  This script will guide you
+through the process of configuring your computer, installing Syllable, and
+installing any additional software packages that you require.
 
