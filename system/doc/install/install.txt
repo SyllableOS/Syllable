@@ -183,14 +183,9 @@ interface.  You will see a single window in the centre of the screen with two
 input fields and a "Login" button.
 
 Before you will be able to do anything you will have to log in using a
-user-name and a password. The base-installation comes with two predefined users.
-"root"  with the password "root" is the super-user and has unrestricted access
-to the system. The other user is "guest" with the password "guest". This is a
-normal user. 
-
-It is recommended that you log in as the "root" user this first time.  Enter the
-username "root" and password "root" and click "Login" (Or press enter)  Syllable
-will then load the Desktop and Launcher.
+user-name and a password. The base-installation comes with one predefined user,
+"root"  with the password "root".  This is the super-user and has unrestricted
+access to the system.
 
 If something went wrong or Syllable failed to boot, please read section 3.2 of this
 document ("SOLVING PROBLEMS").
