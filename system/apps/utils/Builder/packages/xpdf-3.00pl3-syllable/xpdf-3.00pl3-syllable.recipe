@@ -9,7 +9,7 @@ inherits			xpdf-3.00pl3
 ; Patched for GCC 4:
 build-needs			autoconf >= 2.57
 
-patch				autoconf
+;patch				autoconf
 
 make-targets		xpdf
 
