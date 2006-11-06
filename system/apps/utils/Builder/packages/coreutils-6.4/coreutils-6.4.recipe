@@ -5,6 +5,7 @@ authors
 	Kristian Van Der Vliet
 maintainers			Kaj de Vos
 status				testing
+warnings			su is not installed properly without root access.
 
 inherits			gnu
 
@@ -15,6 +16,10 @@ packages			coreutils/coreutils-6.4
 build-needs
 	coreutils
 	perl
+
+; Really needs root access:
+;make-targets		install-root
+install-files		src/su bin/
 
 documentation		README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS THANKS-to-translators
 links
