@@ -7,7 +7,6 @@ tree
 
 	boot
 	boot/grub
-	boot/grub/documentation
 
 ;	Main directory structure
 
@@ -127,12 +126,10 @@ tree
 	atheos/Documentation/images
 
 resources
-;	boot/grub					GrUB-binaries-0.97
 	boot/grub					menu.lst							text/plain
 	atheos/sys/config			kernel.cfg							text/plain
 	atheos/sys/config			net.cfg								text/plain
 	atheos/sys/config			appserver							text/plain
-;	atheos/sys/libs				GCC-libraries-4.1.1
 	atheos/home					Home-Directories
 	atheos/Documentation		documentation/Welcome.html			text/html
 	atheos/Documentation/images	documentation/images/Syllable.gif	image/gif
