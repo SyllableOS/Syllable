@@ -102,7 +102,11 @@ status_t FFMpegDemuxer::Open( os::String zFileName )
 	if( av_open_input_file( &m_psContext, zFileName.c_str(), NULL,
 		4096, NULL ) == 0 )
 	{
-		av_find_stream_info( m_psContext );
+		if( av_find_stream_info( m_psContext ) < 0 )
+		{
+			av_close_input_file( m_psContext );
+			return( -1 );
+		}
 		
 		
 		/* Calculate total bitrate */
