@@ -5,10 +5,10 @@
 // Brazilian Portuguese pt_BR @ 29-Jul-2006 Sorocaba/SP - Brasil
 //
 
-MSG_MAINWND_TITLE=0								AparÍncia
+MSG_MAINWND_TITLE=0								Apar√™ncia
 
-MSG_MAINWND_WINDEC_WINDOWSDECORATION=100		DecoraÁ„o da Janela
-MSG_MAINWND_WINDEC_DECOR						DecoraÁ„o
+MSG_MAINWND_WINDEC_WINDOWSDECORATION=100		Decora√ß√£o da Janela
+MSG_MAINWND_WINDEC_DECOR						Decora√ß√£o
 
 MSG_MAINWND_CLRSCM_COLOURSCHEME=200				Esquema de Cores
 MSG_MAINWND_CLRSCM_THEME						Temas
@@ -21,7 +21,7 @@ MSG_MAINWND_CLRSCM_BUTTON_SAVE					_Salvar Esquema
 MSG_MAINWND_CLRSCM_BUTTON_DEL					_Excluir Esquema
 
 MSG_MAINWND_BUTTON_APPLY=300					_Aplicar
-MSG_MAINWND_BUTTON_DEFAULT						_Padr„o
+MSG_MAINWND_BUTTON_DEFAULT						_Padr√£o
 
 MSG_MAINWND_THEMEDROPDOWN_APPLICATION=400		Aplicativo
 MSG_MAINWND_THEMEDROPDOWN_HIGHLIGHT				Destaque
@@ -34,22 +34,21 @@ MSG_MAINWND_THEMEDROPDOWN_MENUBACKGROUND		Plano de Fundo do Menu
 MSG_MAINWND_THEMEDROPDOWN_MENUHIGHLIGHT			Destaque do Menu
 MSG_MAINWND_THEMEDROPDOWN_SCROLLBARBACKGROUND	Plano de Fundo da Barra de Rolagem
 MSG_MAINWND_THEMEDROPDOWN_SCROLLBARKNOB			Guia da Barra de Rolagem
-MSG_MAINWND_THEMEDROPDOWN_LISTVIEWTAB			Guia da Lista de VisualizaÁ„o
-MSG_MAINWND_THEMEDROPDOWN_LISTVIEWTABTEXT		Texto da Guia da Lista de VisualizaÁ„o
-MSG_MAINWND_THEMEDROPDOWN_ICONTEXT				Texto do Õcone
-MSG_MAINWND_THEMEDROPDOWN_ICONSELECTION			Õcone Selecionado
-MSG_MAINWND_THEMEDROPDOWN_ICONBACKGROUND		Plano de Fundo do Õcone
+MSG_MAINWND_THEMEDROPDOWN_LISTVIEWTAB			Guia da Lista de Visualiza√ß√£o
+MSG_MAINWND_THEMEDROPDOWN_LISTVIEWTABTEXT		Texto da Guia da Lista de Visualiza√ß√£o
+MSG_MAINWND_THEMEDROPDOWN_ICONTEXT				Texto do √çcone
+MSG_MAINWND_THEMEDROPDOWN_ICONSELECTION			√çcone Selecionado
+MSG_MAINWND_THEMEDROPDOWN_ICONBACKGROUND		Plano de Fundo do √çcone
 MSG_MAINWND_THEMEDROPDOWN_FOCUSEDITEM			Item Selecionado
 
 MSG_ALERT_NODECORDIR_TITLE=1000					Erro
-MSG_ALERT_NODECORDIR_TEXT						DiretÛrio /system/drivers/appserver/decorators/ n„o existe, n„o È possÌvel carregar DecoraÁıes.
+MSG_ALERT_NODECORDIR_TEXT						Diret√≥rio /system/drivers/appserver/decorators/ n√£o existe, n√£o √© poss√≠vel carregar Decora√ß√µes.
 MSG_ALERT_NODECORDIR_OK							Ok
 
 MSG_ALERT_NOCLRSCMDIR_TITLE=2000				Erro
-MSG_ALERT_NOCLRSCMDIR_TEXT						DiretÛrio /system/config/appearance/colour-schemes/ n„o existe, n„o È possÌvel carregar Esquemas de Cores.
+MSG_ALERT_NOCLRSCMDIR_TEXT						Diret√≥rio /system/config/appearance/colour-schemes/ n√£o existe, n√£o √© poss√≠vel carregar Esquemas de Cores.
 MSG_ALERT_NOCLRSCMDIR_OK						Ok
 
 MSG_ALERT_CLRSCMERR_TITLE=3000					Erro
-MSG_ALERT_CLRSCMERR_TEXT						N„o È possÌvel carregar o arquivo de Esquema de Cores selecionado
+MSG_ALERT_CLRSCMERR_TEXT						N√£o √© poss√≠vel carregar o arquivo de Esquema de Cores selecionado
 MSG_ALERT_CLRSCMERR_OK							Ok
-

@@ -9,11 +9,11 @@ MSG_MAINWND_TITLE=0								Rede
 
 MSG_MAINWND_NAMES=100							Nomes
 MSG_MAINWND_NAMES_HOST							Host:
-MSG_MAINWND_NAMES_HOST_DEFAULT					Padr„o
-MSG_MAINWND_NAMES_DOMAIN						DomÌnio:
-MSG_MAINWND_NAMES_DOMAIN_DEFAULT				domÌnio
-MSG_MAINWND_NAMES_DNS_PRIMARY					DNS Prim·rio:
-MSG_MAINWND_NAMES_DNS_SECONDARY					DNS Secund·rio:
+MSG_MAINWND_NAMES_HOST_DEFAULT					Padr√£o
+MSG_MAINWND_NAMES_DOMAIN						Dom√≠nio:
+MSG_MAINWND_NAMES_DOMAIN_DEFAULT				dom√≠nio
+MSG_MAINWND_NAMES_DNS_PRIMARY					DNS Prim√°rio:
+MSG_MAINWND_NAMES_DNS_SECONDARY					DNS Secund√°rio:
 
 MSG_MAINWND_NICINT=200							Interfaces de Rede
 MSG_MAINWND_NICINT_ENABLED						(Ativada)
@@ -30,32 +30,31 @@ MSG_MODIFYWND_DISABLED							(Desativada)
 MSG_MODIFYWND_USEDHCP							_Usar DHCP
 MSG_MODIFYWND_BUTTON_ENABLE						_Ativar
 MSG_MODIFYWND_BUTTON_DISABLE					_Desativar
-MSG_MODIFYWND_SETTINGS							ConfiguraÁıes
-MSG_MODIFYWND_SETTINGS_IPADD					EndereÁo IP:
-MSG_MODIFYWND_SETTINGS_SUBNET					M·scara de SubRede:
-MSG_MODIFYWND_SETTINGS_GATEWAY					Roteador padr„o:
+MSG_MODIFYWND_SETTINGS							Configura√ß√µes
+MSG_MODIFYWND_SETTINGS_IPADD					Endere√ßo IP:
+MSG_MODIFYWND_SETTINGS_SUBNET					M√°scara de SubRede:
+MSG_MODIFYWND_SETTINGS_GATEWAY					Roteador padr√£o:
 
-MSG_CONFCHANGEDWND_TITLE=1000					ConfiguraÁ„o modificada - Rede
-MSG_CONFCHANGEDWND_TEXT							A configuraÁ„o da Rede foi alterada\nFaÁa Login como root e a PrefrÍncias de Rede para configurar.
+MSG_CONFCHANGEDWND_TITLE=1000					Configura√ß√£o modificada - Rede
+MSG_CONFCHANGEDWND_TEXT							A configura√ß√£o da Rede foi alterada\nFa√ßa Login como root e a Prefr√™ncias de Rede para configurar.
 MSG_CONFCHANGEDWND_OK							_Ok
 
 MSG_ALERTWND_PRIDNS=2000						Invalido - Rede
-MSG_ALERTWND_PRIDNS_TEXT						O valor digitado para o DNS Prim·rio È inv·lido
+MSG_ALERTWND_PRIDNS_TEXT						O valor digitado para o DNS Prim√°rio √© inv√°lido
 MSG_ALERTWND_PRIDNS_OK							_Ok
 
 MSG_ALERTWND_SECDNS=3000						Invalid - Rede
-MSG_ALERTWND_SECDNS_TEXT						O valor digitado para o DNS Secund·rio È inv·lido
+MSG_ALERTWND_SECDNS_TEXT						O valor digitado para o DNS Secund√°rio √© inv√°lido
 MSG_ALERTWND_SECDNS_OK							_Ok
 
 MSG_ALERTWND_IPADD=4000							Invalid - Rede
-MSG_ALERTWND_IPADD_TEXT							O valor digitado para o EndereÁo IP È inv·lido
+MSG_ALERTWND_IPADD_TEXT							O valor digitado para o Endere√ßo IP √© inv√°lido
 MSG_ALERTWND_IPADD_OK							_Ok
 
 MSG_ALERTWND_SUBNET=5000						Invalid - Rede
-MSG_ALERTWND_SUBNET_TEXT						O valor digitado para a M·scara de SubRede È inv·lido
+MSG_ALERTWND_SUBNET_TEXT						O valor digitado para a M√°scara de SubRede √© inv√°lido
 MSG_ALERTWND_SUBNET_OK							_Ok
 
 MSG_ALERTWND_GATEWAY=6000						Invalid - Rede
-MSG_ALERTWND_GATEWAY_TEXT						O valor digitado para o Roteador padr„o È inv·lido
+MSG_ALERTWND_GATEWAY_TEXT						O valor digitado para o Roteador padr√£o √© inv√°lido
 MSG_ALERTWND_GATEWAY_OK							_Ok
-

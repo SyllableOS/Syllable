@@ -8,7 +8,7 @@
 MSG_APPWND_TITLE							AEdit
 MSG_APPWND_TITLE_NEW_FILE					Novo Documento
 
-MSG_MENU_APPLICATION=100					Aplicação
+MSG_MENU_APPLICATION=100					AplicaÃ§Ã£o
 MSG_MENU_APPLICATION_QUIT					Sair
 MSG_MENU_APPLICATION_ABOUT					Sobre AEdit...
 
@@ -19,7 +19,7 @@ MSG_MENU_FILE_CLOSE							Fechar
 MSG_MENU_FILE_SAVE							Salvar
 MSG_MENU_FILE_SAVE_AS						Salvar como...
 MSG_MENU_FILE_SAVE_ALL						Salar Todos
-MSG_MENU_FILE_NEXT_FILE						Próximo Arquivo
+MSG_MENU_FILE_NEXT_FILE						PrÃ³ximo Arquivo
 MSG_MENU_FILE_PREVIOUS_FILE					Arquivo Anterior
 
 MSG_MENU_EDIT=300							Editar
@@ -38,10 +38,10 @@ MSG_MENU_FIND_GOTO_LINE						Ir para Linha...
 MSG_MENU_FONT=500							Fonte
 MSG_MENU_FONT_SIZE							Tamanho
 
-MSG_MENU_SETTINGS=600						Configurações
-MSG_MENU_SETTINGS_SAVE_ON_CLOSE				Savar Configuração ao Sair
-MSG_MENU_SETTINGS_SAVE_NOW					Savar Configuração Agora
-MSG_MENU_SETTINGS_RESET						Limpar Configuração
+MSG_MENU_SETTINGS=600						ConfiguraÃ§Ãµes
+MSG_MENU_SETTINGS_SAVE_ON_CLOSE				Savar ConfiguraÃ§Ã£o ao Sair
+MSG_MENU_SETTINGS_SAVE_NOW					Savar ConfiguraÃ§Ã£o Agora
+MSG_MENU_SETTINGS_RESET						Limpar ConfiguraÃ§Ã£o
 
 MSG_MENU_HELP=700							Ajuda
 MSG_MENU_HELP_TABLE_OF_CONTENTS				Manual...
@@ -50,20 +50,20 @@ MSG_MENU_HELP_HOMEPAGE						AEdit Web Page
 MSG_ABOUT_TITLE=800							Sobre AEdit
 MSG_ABOUT_TEXT								\n\nEditor de Texto para Syllable\nCopyright 2000-2003 Kristian Van Der Vliet\n\nAEdit is released under the GNU General\nPublic License. Please see the file COPYING,\ndistributed with AEdit, or http://www.gnu.org\nfor more information.
 MSG_ABOUT_CLOSE								Fechar
-MSG_ABOUT_VERSION							versão: 
+MSG_ABOUT_VERSION							versÃ£o: 
 MSG_ABOUT_LINE_1 							Editor de Texto para Syllable
 MSG_ABOUT_LINE_2							(c) 2005 The Syllable Team
 MSG_ABOUT_LINE_3							w w w . s y l l a b l e . o r g
 
 MSG_ERROR_TITLE=900							Savar
-MSG_ERROR_CANT_SAVE							Impossível savar o arquivo.
+MSG_ERROR_CANT_SAVE							ImpossÃ­vel savar o arquivo.
 MSG_ERROR_CLOSE								OK
 
 MSG_FIND_TITLE=1000							Procurar
 MSG_FIND_FIND_LABEL							Procurar
-MSG_FIND_CASE_SENSITIVE						Busca Maiúsculas/Minúsculas
+MSG_FIND_CASE_SENSITIVE						Busca MaiÃºsculas/MinÃºsculas
 MSG_FIND_FIND								_Primeiro Resultado
-MSG_FIND_FIND_NEXT							Buscar _Próximo
+MSG_FIND_FIND_NEXT							Buscar _PrÃ³ximo
 MSG_FIND_CLOSE					    		_Fechar
 
 MSG_GOTO_TITLE=1100							Ir para Linha
@@ -73,9 +73,9 @@ MSG_GOTO_CLOSE								_Cancelar
 MSG_REPLACE_TITLE=1200						Substituir
 MSG_REPLACE_LBLFIND							Procurar
 MSG_REPLACE_WITH							Substituir por
-MSG_REPLACE_CASE_SENSITIVE					Busca _Maiúsculas/Minúsculas
+MSG_REPLACE_CASE_SENSITIVE					Busca _MaiÃºsculas/MinÃºsculas
 MSG_REPLACE_FIND							_Primeiro Resultado
-MSG_REPLACE_FIND_NEXT						Procurar _Próximo
+MSG_REPLACE_FIND_NEXT						Procurar _PrÃ³ximo
 MSG_REPLACE_REPLACE							_Substituir
 MSG_REPLACE_CLOSE				    		_Fechar
 
@@ -85,10 +85,10 @@ MSG_ALERT_CLOSE_FILE_YES					Savar
 MSG_ALERT_CLOSE_FILE_NO						Descartar
 MSG_ALERT_CLOSE_FILE_CANCEL					Cancelar
 MSG_ALERT_SAVE_FILE_TITLE					Erro
-MSG_ALERT_SAVE_FILE_BODY					Impossível salvar o arquivo "%s".
+MSG_ALERT_SAVE_FILE_BODY					ImpossÃ­vel salvar o arquivo "%s".
 MSG_ALERT_SAVE_FILE_OK						OK
 MSG_ALERT_QUIT_TITLE						Deseja realmente sair?
-MSG_ALERT_QUIT_BODY							Você tem arquivos não salvos. Os dados serão perdidos se você sair.\nDeseja realmente sair?
+MSG_ALERT_QUIT_BODY							VocÃª tem arquivos nÃ£o salvos. Os dados serÃ£o perdidos se vocÃª sair.\nDeseja realmente sair?
 MSG_ALERT_QUIT_YES							Sair
 MSG_ALERT_QUIT_NO							Cancelar
 MSG_ALERT_FILE_OPEN_TITLE					Erro
@@ -97,16 +97,16 @@ MSG_ALERT_FILE_OPEN_OK						OK
 MSG_STATUSBAR_WELCOME=2000					Bem vindo ao AEdit!
 MSG_STATUSBAR_CLOSED_FILE					O Arquivo "%s" foi fechado.
 MSG_STATUSBAR_SAVED_FILE					O Arquivo "%s" foi salvo.
-MSG_STATUSBAR_FILE_CLOSED_AND_SAVED			O Arquivo "%s" foi fechado e as alterações foram salvas.
-MSG_STATUSBAR_FILE_CLOSED_AND_NOT_SAVED		O Arquivo "%s" foi fechado sem salvar as alterações.
+MSG_STATUSBAR_FILE_CLOSED_AND_SAVED			O Arquivo "%s" foi fechado e as alteraÃ§Ãµes foram salvas.
+MSG_STATUSBAR_FILE_CLOSED_AND_NOT_SAVED		O Arquivo "%s" foi fechado sem salvar as alteraÃ§Ãµes.
 MSG_STATUSBAR_NEW_FILE_CREATED				Novo Arquivo "%s" foi criado.
 MSG_STATUSBAR_FILE_LOADED_OK				Arquivo "%s" foi aberto com sucesso.
-MSG_STATUSBAR_FILE_UNABLE_TO_OPEN			Impossível abrir o arquivo "%s".
-MSG_STATUSBAR_SEARCH_FOUND					frase "%s" não encontrada.
-MSG_STATUSBAR_SEARCH_NOT_FOUND_1			Frase \"%s\" não encontrada.
-MSG_STATUSBAR_SEARCH_NOT_FOUND_2			Frase não encontrada.
-MSG_STATUSBAR_REPLACE_OK					frase "%s" foi substituída por "%s".
-MSG_STATUSBAR_REPLACE_NOT_OK				Frase não foi substituída.
+MSG_STATUSBAR_FILE_UNABLE_TO_OPEN			ImpossÃ­vel abrir o arquivo "%s".
+MSG_STATUSBAR_SEARCH_FOUND					frase "%s" nÃ£o encontrada.
+MSG_STATUSBAR_SEARCH_NOT_FOUND_1			Frase \"%s\" nÃ£o encontrada.
+MSG_STATUSBAR_SEARCH_NOT_FOUND_2			Frase nÃ£o encontrada.
+MSG_STATUSBAR_REPLACE_OK					frase "%s" foi substituÃ­da por "%s".
+MSG_STATUSBAR_REPLACE_NOT_OK				Frase nÃ£o foi substituÃ­da.
 
 MSG_BUFFER_UNTITLED=2100					Sem nome - %d
 MSG_BUFFER_CURSOR							Coluna: %d Linha: %d

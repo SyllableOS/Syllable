@@ -9,13 +9,13 @@ MSG_MAINWND_TITLE=0							Tela
 
 MSG_MAINWND_DISPLAY=100						Monitor
 MSG_MAINWND_DISPLAY_APPLYTO					Aplicar ao
-MSG_MAINWND_DISPLAY_RESOLUTION				ResoluÁ„o
+MSG_MAINWND_DISPLAY_RESOLUTION				Resolu√ß√£o
 MSG_MAINWND_DISPLAY_COLORDEPTH				Profundidade de Cor
 MSG_MAINWND_DISPLAY_REFRESHRATE				Taxa de Refresh
 
 
-MSG_MAINWND_DROPDOWN_APPLY_THIS=200			Esta ·rea de trabalho
-MSG_MAINWND_DROPDOWN_APPLY_ALL				Todas as ·reas de trabalho
+MSG_MAINWND_DROPDOWN_APPLY_THIS=200			Esta √°rea de trabalho
+MSG_MAINWND_DROPDOWN_APPLY_ALL				Todas as √°reas de trabalho
 MSG_MAINWND_DROPDOWN_COLOUR_BIT				Bit
 MSG_MAINWND_DROPDOWN_COLOUR_UNKNOWN			Desconhecido
 MSG_MAINWND_DROPDOWN_HERTZ					%i Hz
@@ -23,13 +23,12 @@ MSG_MAINWND_DROPDOWN_HERTZ					%i Hz
 MSG_MAINWND_BUTTON_APPLY=300				Aplicar
 MSG_MAINWND_BUTTON_CLOSE					Fechar
 
-MSG_ALERTWND_CHANGERES=1000					Mudar resoluÁ„o
-MSG_ALERTWND_CHANGERES_TEXT					VocÍ est· prestes a mudar a resoluÁ„ do seu monitor.\nSe o seu monitor n„o suportar o modo escolhido\nele voltar· ao que estava antes. Espere 15 segundo para retornar ao que era antes.\n\nDeseja continuar?
+MSG_ALERTWND_CHANGERES=1000					Mudar resolu√ß√£o
+MSG_ALERTWND_CHANGERES_TEXT					Voc√™ est√° prestes a mudar a resolu√ß√£ do seu monitor.\nSe o seu monitor n√£o suportar o modo escolhido\nele voltar√° ao que estava antes. Espere 15 segundo para retornar ao que era antes.\n\nDeseja continuar?
 MSG_ALERTWND_CHANGERES_YES					Sim
-MSG_ALERTWND_CHANGERES_NO					N„o
+MSG_ALERTWND_CHANGERES_NO					N√£o
 
-MSG_ALERTWND_CONFIRMRES=2000				Confirmar resoluÁ„o
-MSG_ALERTWND_CONFIRMRES_TEXT				A nova resoluÁ„o est· funcionando perfeitamente?\n\nCaso n„o esteja, aguarde que altomaticamente ela\nretornar· ‡ resoluÁ„o antiga.
+MSG_ALERTWND_CONFIRMRES=2000				Confirmar resolu√ß√£o
+MSG_ALERTWND_CONFIRMRES_TEXT				A nova resolu√ß√£o est√° funcionando perfeitamente?\n\nCaso n√£o esteja, aguarde que altomaticamente ela\nretornar√° √† resolu√ß√£o antiga.
 MSG_ALERTWND_CONFIRMRES_YES					Sim
-MSG_ALERTWND_CONFIRMRES_NO					N„o
-
+MSG_ALERTWND_CONFIRMRES_NO					N√£o

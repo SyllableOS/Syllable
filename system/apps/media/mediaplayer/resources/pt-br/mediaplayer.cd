@@ -5,9 +5,9 @@
 // Brazilian Portuguese pt_BR @ 29-Jul-2006 Sorocaba/SP - Brasil
 //
 
-MSG_MAINWND_TITLE=100						Reprodutor de Mídia
+MSG_MAINWND_TITLE=100						Reprodutor de MÃ­dia
 
-MSG_MAINWND_MENU_APPLICATION=200			Applicação
+MSG_MAINWND_MENU_APPLICATION=200			ApplicaÃ§Ã£o
 MSG_MAINWND_MENU_APPLICATION_ABOUT			Sobre...
 MSG_MAINWND_MENU_APPLICATION_QUIT			Sair
 
@@ -19,13 +19,13 @@ MSG_MAINWND_MENU_FILE_FULLSCREEN			Tela Cheia
 
 MSG_MAINWND_MENU_TRACKS=400					Faixas
 
-MSG_ABOUTWND_TITLE=1000						Sobre o Reprodutor de Mídia
-MSG_ABOUTWND_TEXT							\nA Media Player\nCopyright 2003 Arno Klenke\n\nThe Syllable Media Player lançado sob LGPL.
+MSG_ABOUTWND_TITLE=1000						Sobre o Reprodutor de MÃ­dia
+MSG_ABOUTWND_TEXT							\nA Media Player\nCopyright 2003 Arno Klenke\n\nThe Syllable Media Player lanÃ§ado sob LGPL.
 MSG_ABOUTWND_OK								OK
 
 MSG_ERRWND_TITLE=1100						Erro
 MSG_ERRWND_OK								OK
-MSG_ERRWND_CANTPLAY							O arquivo não foi aberto.\nPor favor, verifique suas configurações de mídia.
+MSG_ERRWND_CANTPLAY							O arquivo nÃ£o foi aberto.\nPor favor, verifique suas configuraÃ§Ãµes de mÃ­dia.
 
 MSG_INFOWND_TITLE=1200						Information
 MSG_INFOWND_VIDEO							Video
@@ -34,4 +34,3 @@ MSG_INFOWND_CHANNELS						channels
 MSG_INFOWND_OK								OK
 
 MSG_TRACK_MENU_ITEM=2000					Faixa
-

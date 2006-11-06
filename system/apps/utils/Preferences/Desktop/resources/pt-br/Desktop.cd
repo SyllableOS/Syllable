@@ -5,7 +5,7 @@
 // Brazilian Portuguese pt_BR @ 29-Jul-2006 Sorocaba/SP - Brasil
 //
 
-MSG_MAINWND_TITLE=0							¡rea de trabalho
+MSG_MAINWND_TITLE=0							√Årea de trabalho
 
 MSG_MAINWND_BACKGROUND=100					Plano de Fundo
 MSG_MAINWND_BACKGROUND_IMAGE				Imagem
@@ -14,10 +14,9 @@ MSG_MAINWND_BACKGROUND_TEXT					Nota: Por favor, copie as imagens para Documents
 
 MSG_MAINWND_WINDOWS_TEXT=200				Janelas
 MSG_MAINWND_WINDOWS_TEXT_POPUP				Janela selecionada de PopUp
-MSG_MAINWND_WINDOWS_TEXT_SINGLECLICK		Usar interface de um sÛ clique
-MSG_MAINWND_WINDOWS_TEXT_SHADOWTEXT			Mostrar texto dos Ìcones sombreados
+MSG_MAINWND_WINDOWS_TEXT_SINGLECLICK		Usar interface de um s√≥ clique
+MSG_MAINWND_WINDOWS_TEXT_SHADOWTEXT			Mostrar texto dos √≠cones sombreados
 
 MSG_MAINWND_BUTTON_APPLY=300				Aplicar
 MSG_MAINWND_BUTTON_UNDO						Desfazer
-MSG_MAINWND_BUTTON_DEFAULT					Padr„o
-
+MSG_MAINWND_BUTTON_DEFAULT					Padr√£o

@@ -12,7 +12,7 @@ MSG_MAINWND_MENU_FILE_CLEARALL							Limpar Tudo
 MSG_MAINWND_MENU_FILE_EXIT								Sair
 
 MSG_MAINWND_MENU_BASE=200							Base
-MSG_MAINWND_MENU_BASE_BINARY							Bin·rio (2)
+MSG_MAINWND_MENU_BASE_BINARY							Bin√°rio (2)
 MSG_MAINWND_MENU_BASE_OCTAL							Octal (8)
 MSG_MAINWND_MENU_BASE_DECIMAL							Decimal (10)
 MSG_MAINWND_MENU_BASE_HEXADECIMAL						Hexadecimal (16)
@@ -21,17 +21,17 @@ MSG_MAINWND_MENU_CONSTANTS=300						Constantes
 MSG_MAINWND_MENU_CONSTANTS_PI							Pi
 MSG_MAINWND_MENU_CONSTANTS_E							e
 MSG_MAINWND_MENU_CONSTANTS_C							Velocidade da Luz (c)
-MSG_MAINWND_MENU_CONSTANTS_ELECTRON						Magnitude da carga do elÈtron
+MSG_MAINWND_MENU_CONSTANTS_ELECTRON						Magnitude da carga do el√©tron
 MSG_MAINWND_MENU_CONSTANTS_GRAV							Constante Gravitacional (G)
 MSG_MAINWND_MENU_CONSTANTS_PLANCK						Constante de Planck (h)
 MSG_MAINWND_MENU_CONSTANTS_BOLTZMANN					Constante de Boltzmann
-MSG_MAINWND_MENU_CONSTANTS_AVOGADRO						N˙mero Avogadro
+MSG_MAINWND_MENU_CONSTANTS_AVOGADRO						N√∫mero Avogadro
 MSG_MAINWND_MENU_CONSTANTS_GAS							Constante de Gas (R)
-MSG_MAINWND_MENU_CONSTANTS_MASSELECTRON					Massa do elÈtron
-MSG_MAINWND_MENU_CONSTANTS_MASSPROTON					Massa do prÛton
+MSG_MAINWND_MENU_CONSTANTS_MASSELECTRON					Massa do el√©tron
+MSG_MAINWND_MENU_CONSTANTS_MASSPROTON					Massa do pr√≥ton
 MSG_MAINWND_MENU_CONSTANTS_MASSNEUTRON					Massa do neutron
-MSG_MAINWND_MENU_CONSTANTS_PERME						Permeabilidade do EspaÁo Livre
-MSG_MAINWND_MENU_CONSTANTS_PERMI						permissividade do EspaÁo Livre
+MSG_MAINWND_MENU_CONSTANTS_PERME						Permeabilidade do Espa√ßo Livre
+MSG_MAINWND_MENU_CONSTANTS_PERMI						permissividade do Espa√ßo Livre
 
 MSG_MAINWND_MENU_WINDOWS=400						Janela
 MSG_MAINWND_MENU_WINDOWS_PAPERROLL						Rolagem
@@ -47,7 +47,7 @@ MSG_PAPERROLL_CMENU_CLEAR								Limpar
 MSG_PAPERROLL_CMENU_SAVE								Salvar
 
 MSG_BASENWND_TITLE=2000								Base-N
-MSG_BASENWND_BINARY										Bin·rio
+MSG_BASENWND_BINARY										Bin√°rio
 MSG_BASENWND_OCTAL										Octal
 MSG_BASENWND_DECIMAL									Decimal
 MSG_BASENWND_HEXADECIMAL								Hexadecimal
@@ -60,10 +60,9 @@ MSG_ABOUTWND_TEXTTWO									Albert sob GNU General Public License.
 
 MSG_KBDWND_TITLE=4000								Atalhos do Teclado
 MSG_KBDWND_TEXTONE										Atalhos do Teclado
-MSG_KBDWND_TEXT09										Digitos decimais 0 atÈ 9
-MSG_KBDWND_TEXTAF										Digitos Hexadecimais A atÈ F
-MSG_KBDWND_TEXTASMD										AdiÁ„o, SubtraÁ„o, MultiplicaÁ„o e Divis„o
+MSG_KBDWND_TEXT09										Digitos decimais 0 at√© 9
+MSG_KBDWND_TEXTAF										Digitos Hexadecimais A at√© F
+MSG_KBDWND_TEXTASMD										Adi√ß√£o, Subtra√ß√£o, Multiplica√ß√£o e Divis√£o
 MSG_KBDWND_TEXTENTER									ENTER - Calcular resultado
 MSG_KBDWND_TEXTBACKSPACE								BACKSPACE - Backspace (surpresa!)
 MSG_KBDWND_CLOSE										Fechar
-

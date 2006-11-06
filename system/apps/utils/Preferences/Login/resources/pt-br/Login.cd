@@ -7,12 +7,12 @@
 
 MSG_MAINWND_TITLE=0						Login
 
-MSG_MAINWND_INFORMATION=100				InformaÁ„o
-MSG_MAINWND_INFORMATION_WHO				VocÍ est· atualmente logado como %s
-MSG_MAINWND_INFORMATION_NOPERM			Seu administrador de sistema n„o te deu permiss„o\npara alterar os detalhes do seu login.
+MSG_MAINWND_INFORMATION=100				Informa√ß√£o
+MSG_MAINWND_INFORMATION_WHO				Voc√™ est√° atualmente logado como %s
+MSG_MAINWND_INFORMATION_NOPERM			Seu administrador de sistema n√£o te deu permiss√£o\npara alterar os detalhes do seu login.
 
-MSG_MAINWND_LOGINICON=200				Õcone de Login
-MSG_MAINWND_LOGINICON_TEXT				Quando eu logar neste computador, mostre\neste Ìcone para minha conta de usu·rio.
+MSG_MAINWND_LOGINICON=200				√çcone de Login
+MSG_MAINWND_LOGINICON_TEXT				Quando eu logar neste computador, mostre\neste √≠cone para minha conta de usu√°rio.
 
 MSG_MAINWND_CHANGEPASS=300				Mudar Senha
 MSG_MAINWND_CHANGEPASS_CURRENTPASS		Senha atual
@@ -23,14 +23,13 @@ MSG_MAINWND_BUTTON_OK=400				_Ok
 MSG_MAINWND_BUTTON_CANCEL				_Cancelar
 
 MSG_ALERTWND_FILEERROR=1000				Erro no arquivo
-MSG_ALERTWND_FILEERROR_TEXT				Falha ao gravar em /etc/passwd.  Sua senha n„o foi alterada.
+MSG_ALERTWND_FILEERROR_TEXT				Falha ao gravar em /etc/passwd.  Sua senha n√£o foi alterada.
 MSG_ALERTWND_FILEERROR_OK				Fechar
 
 MSG_ALERTWND_NOMATCH=2000				Nova senha
-MSG_ALERTWND_NOMATCH_TEXT				As senhas digitadas n„o conferem.  Por favor, redigite sua senha.
+MSG_ALERTWND_NOMATCH_TEXT				As senhas digitadas n√£o conferem.  Por favor, redigite sua senha.
 MSG_ALERTWND_NOMATCH_OK					Fechar
 
 MSG_ALERTWND_INCORRECTPASS=3000			Senha incorreta
-MSG_ALERTWND_INCORRECTPASS_TEXT			A senha que vocÍ digitou est· incorreta.  Por favor, verifique e tente novamente.
+MSG_ALERTWND_INCORRECTPASS_TEXT			A senha que voc√™ digitou est√° incorreta.  Por favor, verifique e tente novamente.
 MSG_ALERTWND_INCORRECTPASS_OK			Ok
-

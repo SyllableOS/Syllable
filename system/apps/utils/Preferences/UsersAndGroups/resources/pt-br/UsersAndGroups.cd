@@ -5,20 +5,20 @@
 // Brazilian Portuguese pt_BR @ 29-Jul-2006 Sorocaba/SP - Brasil
 //
 
-MSG_MAINWND_TITLE=0							Usu·rios & Grupos
+MSG_MAINWND_TITLE=0							Usu√°rios & Grupos
 
 MSG_MAINWND_BUTTON_OK=100					_Ok
 MSG_MAINWND_BUTTON_CANCEL					_Cancela
 
-MSG_MAINWND_TAB_USERS=200					Usu·rios
+MSG_MAINWND_TAB_USERS=200					Usu√°rios
 MSG_MAINWND_TAB_USERS_NAME					Nome
 MSG_MAINWND_TAB_USERS_LOGIN					Login
 MSG_MAINWND_TAB_USERS_ID					ID
 MSG_MAINWND_TAB_USERS_GROUP					Grupo
-MSG_MAINWND_TAB_USERS_HOME					DiretÛrio Pessoal
-MSG_MAINWND_TAB_USERS_BUTTON_ADD			_Adicionar Usu·rio...
+MSG_MAINWND_TAB_USERS_HOME					Diret√≥rio Pessoal
+MSG_MAINWND_TAB_USERS_BUTTON_ADD			_Adicionar Usu√°rio...
 MSG_MAINWND_TAB_USERS_BUTTON_EDIT			_Editar...
-MSG_MAINWND_TAB_USERS_BUTTON_DEL			_Remover Usu·rio
+MSG_MAINWND_TAB_USERS_BUTTON_DEL			_Remover Usu√°rio
 MSG_MAINWND_TAB_USERS_BUTTON_PASS			_Definir Senha...
 
 MSG_MAINWND_TAB_GROUPS=300					Grupos
@@ -28,14 +28,14 @@ MSG_MAINWND_TAB_GROUPS_BUTTON_ADD			_Adicionar Grupo...
 MSG_MAINWND_TAB_GROUPS_BUTTON_EDIT			_Editar...
 MSG_MAINWND_TAB_GROUPS_BUTTON_DEL			_Remover Grupo
 
-MSG_NEWUSERWND_TITLE=1000					Novo usu·rio
+MSG_NEWUSERWND_TITLE=1000					Novo usu√°rio
 MSG_NEWUSERWND_NAME							Nome:
 MSG_NEWUSERWND_LOGIN						Login:
-MSG_NEWUSERWND_USERID						ID do usu·rio:
+MSG_NEWUSERWND_USERID						ID do usu√°rio:
 MSG_NEWUSERWND_GROUPID						ID do grupo:
-MSG_NEWUSERWND_HOME							DiretÛrio Pessoal:
+MSG_NEWUSERWND_HOME							Diret√≥rio Pessoal:
 MSG_NEWUSERWND_SHELL						Linha de comando:
-MSG_NEWUSERWND_DEFAULT_NAME					Novo usu·rio
+MSG_NEWUSERWND_DEFAULT_NAME					Novo usu√°rio
 MSG_NEWUSERWND_DEFAULT_LOGIN				novo
 MSG_NEWUSERWND_DEFAULT_HOME					/home/novo
 MSG_NEWUSERWND_BUTTON_OK					_Ok
@@ -61,10 +61,9 @@ MSG_CHANGEPASS_BUTTON_OK					_Ok
 MSG_CHANGEPASS_BUTTON_CANCEL				_Cancelar
 
 MSG_ALERTWND_GRPWRTERR=10000				Erro
-MSG_ALERTWND_GRPWRTERR_TEXT					Falha ao criar novo grupo em /etc/group.  O grupo n„o foi criado.
+MSG_ALERTWND_GRPWRTERR_TEXT					Falha ao criar novo grupo em /etc/group.  O grupo n√£o foi criado.
 MSG_ALERTWND_GRPWRTERR_OK					Fechar
 
-MSG_ALERTWND_PASSDONTMATCH=20000			Senhas n„o conferem
-MSG_ALERTWND_PASSDONTMATCH_TEXT				As senhas que vocÍ digitou \nn„o conferem. Por favor, verifique e tente novamente.
+MSG_ALERTWND_PASSDONTMATCH=20000			Senhas n√£o conferem
+MSG_ALERTWND_PASSDONTMATCH_TEXT				As senhas que voc√™ digitou \nn√£o conferem. Por favor, verifique e tente novamente.
 MSG_ALERTWND_PASSDONTMATCH_OK				Ok
-

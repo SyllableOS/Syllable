@@ -16,7 +16,7 @@ MSG_MAINWND_MENU_HELP_HELP							Ajuda
 MSG_MAINWND_MENU_HELP_ABOUT							Sobre
 
 MSG_HELPWND_TITLE=1000							CharMap
-MSG_HELPWND_TEXT									Quando vocÍ clicar num caracter,\nele ser· copiado para a ¡rea de TransferÍncia.
+MSG_HELPWND_TEXT									Quando voc√™ clicar num caracter,\nele ser√° copiado para a √Årea de Transfer√™ncia.
 MSG_HELPWND_OK										Ok
 
 MSG_ABOUTWND_TITLE=2000							CharMap

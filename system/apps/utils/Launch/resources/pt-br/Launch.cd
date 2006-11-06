@@ -6,7 +6,7 @@
 //
 
 MSG_ERROR_LAUNCHING_ONE		O Arquivo '
-MSG_ERROR_LAUNCHING_TWO		' está associado a algum tipo.\nPor favor, verifique com o time de desenvolvimento do Syllable\npor maiores instruções.
+MSG_ERROR_LAUNCHING_TWO		' estÃ¡ associado a algum tipo.\nPor favor, verifique com o time de desenvolvimento do Syllable\npor maiores instruÃ§Ãµes.
 
 MSG_BUTTON_LAUNCH			_Executar
 MSG_BUTTON_BROWSE			_Navegar
@@ -14,7 +14,6 @@ MSG_BUTTON_CANCEL			_Cancelar
 MSG_ALERT_BUTTON			_OK
 
 MSG_STRING_LAUNCH			Executar:
-MSG_STRING_DESC				Digite um site da Web, arquivo, diretório ou aplicativo aqui.
+MSG_STRING_DESC				Digite um site da Web, arquivo, diretÃ³rio ou aplicativo aqui.
 
 MSG_WINDOW_TITLE			Executar
-
