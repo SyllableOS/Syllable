@@ -534,7 +534,7 @@ static status_t ps2_aux_init()
 	
 	nError = ps2_write_read_command( PS2_CMD_AUX_LOOP, &nData );
 	
-	if( nError < 0 || nData != 0xa5 )
+	if( nError < 0 || nData != 0x5a )
 	{
 		/* According to linux driver the loop test fails on some chipsets */
 		printk( "PS2 Aux loop test failed (error = %i, data = %x)! Trying test command...\n", nError, (uint)nData );
