@@ -1,0 +1,15 @@
+authors				Kaj de Vos
+status				testing
+warnings			Needs to run as root.
+
+inherits			coreutils-6.4
+
+merge-install
+
+install-targets		install-root
+
+; Should already be installed:
+;documentation
+links
+;	bin/su			/bin/
+

@@ -1,6 +1,9 @@
 ; Parts to complete a system build
 
 resources
+;	Needs to be installed as root:
+;	coreutils-6.4-su
+
 ;	Make GLibC suitable for running in an installed system:
 	atheos/sys/libs	libc.so
 ;	Old libraries for compatibility with applications for older versions of Syllable:
