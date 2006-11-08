@@ -288,8 +288,8 @@ void UsersView::HandleMessage( Message *pcMessage )
 			psPasswd->pw_uid = 100;
 			psPasswd->pw_gid = 100;
 
-			psPasswd->pw_name = "New user";
-			psPasswd->pw_gecos = "new";
+			psPasswd->pw_name = "new";
+			psPasswd->pw_gecos = "New User";
 			psPasswd->pw_dir = "/home/new";
 			psPasswd->pw_shell = "/bin/bash";
 
