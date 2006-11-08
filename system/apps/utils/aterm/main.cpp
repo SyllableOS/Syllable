@@ -134,7 +134,7 @@ MyWindow::MyWindow( Rect cFrame, const char *pzName, const char *pzTitle, int nF
 	/* Set Dock icon */
 	os::BitmapImage *pcImage = new os::BitmapImage();
 	os::Resources cRes( get_image_id() );
-	pcImage->Load( cRes.GetResourceStream( "icon24x24.png" ) );
+	pcImage->Load( cRes.GetResourceStream( "icon48x48.png" ) );
 	SetIcon(pcImage->LockBitmap());
 	delete(pcImage);
 }
