@@ -98,7 +98,7 @@ puts "\nPlease wait...\n\n"
 Dir.mkdir "/inst"
 system "/bin/mount", "-t", "afs", $part, "/inst"
 
-retval = system "unzip", "-d", "/inst/", "/boot/Packages/base/base-syllable.zip"
+retval = system "unzip", "-K", "-d", "/inst/", "/boot/Packages/base/base-syllable.zip"
 system "sync"
 
 if(retval)
