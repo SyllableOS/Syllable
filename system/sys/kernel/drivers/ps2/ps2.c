@@ -215,11 +215,6 @@ static uint ConvertKeyCode( uint8 nCode )
 
 	if ( nPauseKeyCount == 6 ) {
 	    nPauseKeyCount	=	0;
-	    #if 0
-	    sti();
-		reboot();
-		for(;;) {}
-		#endif
 	    return( 0x10 );		/* PAUSE	*/
 	} else {
 	    return( 0 );
@@ -227,6 +222,11 @@ static uint ConvertKeyCode( uint8 nCode )
     }
 
     if ( 0xe1 == nCode ) {
+#if 0    	
+	    sti();
+		reboot();
+		for(;;) {}
+#endif		
 	nPauseKeyCount = 1;
 	return( 0 );
     }
@@ -522,6 +522,16 @@ static status_t ps2_keyboard_init()
 static status_t ps2_aux_init()
 {
 	int nError = 0;
+	struct RMREGS rm;
+
+	/* TODO: Do this without calling the bios */
+	memset( &rm, 0, sizeof( struct RMREGS ) );
+	realint( 0x11, &rm );
+
+	if( ( rm.EAX & 0x04 ) == 0 ) {
+		printk( "No PS2 mouse present\n" );
+		return( -EIO );
+    }
 	
 	memset( &g_sAuxPort, 0, sizeof( g_sAuxPort ) );
 	g_sAuxPort.bIsAux = true;
