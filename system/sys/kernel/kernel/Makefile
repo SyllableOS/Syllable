@@ -102,6 +102,7 @@ doc:
 
 install-doc:
 	-rm -R /atheos/Documentation/kernel/*
+	-mkdir -p /atheos/Documentation/kernel
 	cp -R docs/* /atheos/Documentation/kernel/
 
 deps: $(OBJDIR) $(DEPS)
