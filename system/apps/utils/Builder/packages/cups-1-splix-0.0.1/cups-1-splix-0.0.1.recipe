@@ -1,0 +1,11 @@
+authors
+	Kristian Van Der Vliet
+status				developing
+
+inherits			splix-0.0.1
+
+; splix is a CUPS driver so it makes sense to build splix into CUPS:
+merge-install
+
+; Don't overwrite CUPS documentation:
+;documentation

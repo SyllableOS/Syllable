@@ -1,0 +1,27 @@
+diff -ur splix_orig/Makefile splix/Makefile
+--- splix_orig/Makefile	2006-08-26 00:00:58.000000000 +0000
++++ splix/Makefile	2006-09-01 11:59:54.000000000 +0000
+@@ -6,7 +6,7 @@
+ 
+ CXXFLAGS	:= -O2
+ LDFLAGS		:= 
+-CUPSPREFIX	:= /usr
++CUPSPREFIX	:= /usr/cups
+ CUPSFILTER	:= lib/cups/filter
+ CUPSPPD		:= share/cups/model
+ 
+diff -ur splix_orig/ppd/Makefile splix/ppd/Makefile
+--- splix_orig/ppd/Makefile	2006-08-26 00:01:02.000000000 +0000
++++ splix/ppd/Makefile	2006-09-01 12:00:11.000000000 +0000
+@@ -38,10 +38,7 @@
+ .PHONY:
+ install:
+ 	for filename in ${DRIVERS}; do \
+-		install -m 644 $$filename.${DRIVERSEXT} ${CUPSPREFIX}/${CUPSPPD}/samsung;\
+-		for lang in ${LANGUAGES}; do \
+-			install -m 644 $$filename$$lang.${DRIVERSEXT} ${CUPSPREFIX}/${CUPSPPD}/samsung;\
+-		done; \
++		install -m 644 $$filename.${DRIVERSEXT} ${CUPSPREFIX}/${CUPSPPD}/C;\
+ 	done \
+ 
+ .PHONY: clean distclean
