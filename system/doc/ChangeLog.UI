@@ -1,3 +1,5 @@
+---- 0.6.2 Released -------------------------------------------------------------------
+
 * October 24, Arno Klenke *
 
 Fixed drawing errors if the window takes a long time to update the content

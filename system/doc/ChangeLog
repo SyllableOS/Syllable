@@ -1,3 +1,5 @@
+---- 0.6.2 Released -------------------------------------------------------------------
+
 * October 31 2006, Flemming Sørensen *
 
 Fixing the MediaPlayer Makefile, so the Category is written after the catalogs is added.
