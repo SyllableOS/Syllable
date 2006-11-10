@@ -83,6 +83,7 @@ doc:
 
 install-doc:
 	-rm -R /atheos/Documentation/gui/*
+	-mkdir -p /atheos/Documentation/gui
 	cp -R docs/html/* /atheos/Documentation/gui
 
 clean:

@@ -38,6 +38,7 @@ doc:
 
 install-doc:
 	-rm -R /atheos/Documentation/media/*
+	-mkdir -p /atheos/Documentation/media
 	cp -R docs/html/* /atheos/Documentation/media
 
 deps: $(OBJDIR) $(DEPS)
