@@ -71,8 +71,7 @@ configure-options
 
 make-env
 	BOOT_CFLAGS		'-O'
-	DLL_PATH		"$DLL_PATH:$PWD/gcc"
-;	LIBRARY_PATH	"$PWD/gcc:$LIBRARY_PATH"
+;	DLL_PATH		"$DLL_PATH:$PWD/gcc"
 make-vars
 	CFLAGS			'-O'
 	LIBCFLAGS		'-O2'
@@ -91,9 +90,10 @@ make-targets
 test-options		-k
 
 ;install-prefix-var	DESTDIR
+; Needs itself during installation:
 install-env
 	PATH		"$PATH:../stage/gcc/bin:../stage/image/gcc/bin:../../stage/image/atheos/usr/gcc/bin:/usr/gcc/bin"
-	DLL_PATH	"$DLL_PATH:../stage/gcc/lib:../stage/image/gcc/lib:../../stage/image/atheos/usr/gcc/lib:/usr/gcc/lib"
+;	DLL_PATH	"$DLL_PATH:../stage/gcc/lib:../stage/image/gcc/lib:../../stage/image/atheos/usr/gcc/lib:/usr/gcc/lib"
 
 ; Work around conflict with BinUtils:
 delete-files		lib/libiberty.a
