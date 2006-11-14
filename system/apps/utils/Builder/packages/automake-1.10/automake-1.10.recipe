@@ -15,5 +15,6 @@ run-needs
 	perl
 ;	m4
 
+move-files			share/info .
 documentation		README COPYING NEWS ChangeLog TODO AUTHORS THANKS
 
