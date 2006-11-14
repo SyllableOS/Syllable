@@ -1,17 +1,16 @@
 PERL Pack for Syllable
 ======================
 
-5-Jun-2006
+14-Nov-2006
 
 1 Introduction
 ==============
 
 This distribution contains binary packages of the PERL programming
 language and some packages that depend on it for the Syllable operating
-system. All packages were built on Syllable 0.6.1 and optimized for a
-Pentium CPU. They may also run on Syllable 0.5.6(a) through 0.6.0(a),
-but this has not been tested, and they will not run on earlier
-versions of Syllable.
+system. All packages were built on Syllable 0.6.2 and optimized for a
+Pentium CPU. They may also run on earlier versions of Syllable, but this
+has not been tested.
 
 If you encounter problems or have any other interesting observations,
 I would be interested to hear about them (see contact information).
