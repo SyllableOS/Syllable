@@ -1,4 +1,3 @@
-
 /*
  *  The Syllable kernel
  *  Simple SCSI layer
@@ -19,7 +18,6 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- 
  */
 
 
@@ -38,7 +36,7 @@ extern "C" {
 #include <atheos/kernel.h>
 #include <atheos/semaphore.h>
 #include <atheos/atomic.h>
-
+#include <atheos/cdrom.h>
 
 /*
  *  SCSI command sets
@@ -123,6 +121,7 @@ extern "C" {
 #define SCSI_SEARCH_LOW_12         0xb2
 #define SCSI_READ_ELEMENT_STATUS   0xb8
 #define SCSI_SEND_VOLUME_TAG       0xb6
+#define SCSI_READ_CD               0xbe
 #define SCSI_WRITE_LONG_2          0xea
 
 /*
@@ -138,11 +137,39 @@ extern "C" {
 #define SCSI_UNIT_ATTENTION      0x06
 #define SCSI_DATA_PROTECT        0x07
 #define SCSI_BLANK_CHECK         0x08
+#define SCSI_VENDOR_SPECIFIC     0x09
 #define SCSI_COPY_ABORTED        0x0a
 #define SCSI_ABORTED_COMMAND     0x0b
 #define SCSI_VOLUME_OVERFLOW     0x0d
 #define SCSI_MISCOMPARE          0x0e
 
+/*
+ * Additional sense codes
+ */
+
+#define SCSI_NO_ASC_DATA					0x00
+#define SCSI_LOGICAL_UNIT_NOT_READY			0x04
+	#define SCSI_NOT_REPORTABLE				0x00
+	#define SCSI_BECOMING_READY				0x01
+	#define SCSI_MUST_INITIALIZE			0x02
+	#define SCSI_MANUAL_INTERVENTION		0x03
+	#define SCSI_FORMAT_IN_PROGRESS			0x04
+	#define SCSI_REBUILD_IN_PROGRESS		0x05
+	#define SCSI_RECALC_IN_PROGRESS			0x06
+	#define SCSI_OP_IN_PROGRESS				0x07
+	#define SCSI_LONG_WRITE_IN_PROGRESS		0x08
+	#define SCSI_SELF_TEST_IN_PROGRESS		0x09
+	#define SCSI_ASSYM_ACCESS_STATE_TRANS	0x0a
+	#define SCSI_TARGET_PORT_STANDBY		0x0b
+	#define SCSI_TARGET_PORT_UNAVAILABLE	0x0c
+	#define SCSI_AUX_MEM_UNAVAILABLE		0x10
+	#define SCSI_NOTIFY_REQUIRED			0x11
+#define SCSI_NOT_RESPONDING					0x05
+#define SCSI_MEDIUM							0x3a
+	#define SCSI_MEDIUM_NOT_PRESENT			0x00
+	#define SCSI_MEDIUM_TRAY_CLOSED			0x01
+	#define	SCSI_MEDIUM_TRAY_OPEN			0x02
+	#define	SCSI_MEDIUM_LOADABLE			0x03
 
 /*
  * Transfer directions
@@ -242,6 +269,29 @@ extern "C" {
 #define SCSI_STATUS_HOST(result)   (((result) >> 16) & 0xff)
 #define SCSI_STATUS_DRIVER(result) (((result) >> 24) & 0xff)
 
+/*
+ * Sense data
+ */
+
+typedef struct
+{
+	uint8 error_code	: 7;
+	uint8 valid			: 1;
+	uint8 segment_number;
+	uint8 sense_key		: 4;
+	uint8 reserved2		: 1;
+	uint8 ili			: 1;
+	uint8 reserved1		: 2;
+	uint8 information[4];
+	uint8 add_sense_len;
+	uint8 command_info[4];
+	uint8 asc;
+	uint8 ascq;
+	uint8 fruc;
+	uint8 sks[3];
+	uint8 asb[46];
+} SCSI_sense_s;
+
 /* 
  * SCSI controller
  */
@@ -301,6 +351,12 @@ struct SCSI_device_t
 	int nPartitionType;
 	off_t nStart;
 	off_t nSize;
+
+	/* For CD-ROM drives */
+	bool bMediaChanged;
+	bool bTocValid;
+	cdrom_toc_s	sToc;
+
 };
 
 typedef struct SCSI_device_t SCSI_device_s;
@@ -325,7 +381,11 @@ struct SCSI_cmd_t
 	int nDirection;
 	unsigned char nCmd[SCSI_CMD_SIZE];
 	int nCmdLen;
-	unsigned char nSense[SCSI_SENSE_SIZE];
+	union
+	{
+		unsigned char nSense[SCSI_SENSE_SIZE];
+		SCSI_sense_s sSense;
+	} s;
 
 	uint8 *pRequestBuffer;
 	unsigned nRequestSize;

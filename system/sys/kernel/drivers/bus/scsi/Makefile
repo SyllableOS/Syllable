@@ -1,9 +1,11 @@
-CFLAGS   += -kernel -fno-PIC -c
+CFLAGS   += -kernel -fno-PIC -c -I.
 AFLAGS   = -c
+
+CFLAGS += -D__ENABLE_DEBUG__
 
 C_INCLUDE_PATH=$(ATHEOS_INCLUDE_PATH)
 
-OBJS := scsi.o
+OBJS := scsi.o scsi_common.o scsi_generic.o scsi_disk.o scsi_cdrom.o
 
 
 OBJDIR	:= objs
