@@ -7,7 +7,7 @@ modules
 	system/gettext-0.15
 	system/libraries/slang-1.4.9
 ;	shell/man-1.5m2
-	productivity/publishing/texinfo-4.7
+	productivity/publishing/texinfo-4.8a
 	shell/which-2.16
 	security/gnupg-1.4.3
 	file/cdrtools-2.01

@@ -1,0 +1,18 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			gnu
+
+licenses			GPL
+home				www.gnu.org/software/texinfo/
+packages			texinfo/texinfo-4.8a
+
+install-vars
+	TEXMF /usr/texinfo/share/texmf
+;	TEXMF /usr/share/texmf
+install-targets		install install-tex
+
+documentation		README INTRODUCTION COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS
+build-docs			INSTALL
+internal-docs		README.dev
+
