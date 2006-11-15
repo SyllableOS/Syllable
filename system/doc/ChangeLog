@@ -1,3 +1,12 @@
+* November 15 2006, Kristian Van Der Vliet *
+
+Overhauled the SCSI bus manager.  The code has been split down and modulerised,
+and a lot of the ATAPI code has been imported to improve error handling and
+clean up a lot of the direct command manipulation code.  SCSI CD-ROM drives
+are now supported; by extension, USB CD-ROM drives work.  The CD-ROM device
+supports reading, CD-DA and packet command (Used by cdrecord), but no analogue
+audio playback functions have been implemented.
+
 ---- 0.6.2 Released -------------------------------------------------------------------
 
 * October 31 2006, Flemming Sørensen *
