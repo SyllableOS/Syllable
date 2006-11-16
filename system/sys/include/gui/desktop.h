@@ -56,11 +56,7 @@ public:
     bool	SetResolution( int nWidth, int nHeight );
     bool	SetColorSpace( color_space eColorSpace );
     bool	SetRefreshRate( float vRefreshRate );
-    bool	Activate() const;
     int		MinimizeAll() const;
-	int32	GetWindows( Message* pcMsg ) const;
-	void	ActivateWindow( int32 nWindow ) const;
-	Bitmap*	GetWindowIcon( int32 nWindow ) const;
 private:
 	class Private;
 	Private* m;

@@ -149,10 +149,8 @@ public:
 	void AddPlugin( os::String zPath );
 	void UpdatePlugins();
 	void DeletePlugin( os::DockPlugin* pcPlugin );
-	void ActivateWindow( int32 nWindow );
 	void UpdateWindows( os::Message* pcMessage );
 	void UpdateWindowArea();
-	//virtual void WindowsChanged();
 	virtual void ScreenModeChanged( const os::IPoint& cNewRes, os::color_space eSpace );
 	virtual void DesktopActivated( int nDesktop, bool bActive );
 	int GetDesktop() { return( m_pcDesktop->GetDesktop() ); }

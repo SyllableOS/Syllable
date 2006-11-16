@@ -1292,6 +1292,7 @@ void FX::CommonSetup()
 	 * Register mappings
 	 */
 
+	m_sHW.REGS = ( unsigned * )( m_pRegisterBase );
 	m_sHW.PRAMIN = ( unsigned * )( m_pRegisterBase + 0x00710000 );
 	m_sHW.PCRTC0 = ( unsigned * )( m_pRegisterBase + 0x00600000 );
 	m_sHW.PRAMDAC0 = ( unsigned * )( m_pRegisterBase + 0x00680000 );

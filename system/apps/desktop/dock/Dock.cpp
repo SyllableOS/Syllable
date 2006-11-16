@@ -343,7 +343,6 @@ void DockView::MouseUp( const os::Point & cPosition, uint32 nButton, os::Message
 				os::Messenger cMessenger( m_pcWin->GetIcons()[i]->GetMsgPort() );
 				cMessenger.SendMessage( os::WR_ACTIVATE );
 				
-//				m_pcWin->ActivateWindow( m_pcWin->GetIcons()[i]->GetID() );
 			} else {
 				/* Open syllable menu */
 				if( m_bSyllableMenuInvalid )
@@ -889,12 +888,6 @@ void DockWin::SaveSettings()
 	delete( pcSettings );
 }
 
-void DockWin::ActivateWindow( int32 nWindow )
-{
-	/* Activate window */
-	m_pcDesktop->ActivateWindow( nWindow );
-}
-
 void DockWin::UpdateWindows( os::Message* pcMessage )
 {
 	g_cWindowLock.Lock();
@@ -1029,70 +1022,6 @@ void DockWin::UpdateWindows( os::Message* pcMessage )
 	Flush();
 }
 
-#if 0
-void DockWin::WindowsChanged()
-{
-	/* Check what has changed */
-	os::Message cWindows;
-	int32 nCount = m_pcDesktop->GetWindows( &cWindows );
-	
-	/* Number of windows has changed */
-	if( nCount != m_nLastWindowCount )
-	{
-		/* Check if one of the information windows is currently openened */
-		return( UpdateWindows( &cWindows, nCount ) );
-	}
-	
-	/* Compare list */
-	for( int32 i = 0; i < m_nLastWindowCount; i++ )
-	{
-		os::String zWinTitle, zLastWinTitle;
-		bool bIconPresent, bLastIconPresent;
-		area_id hIconArea, hLastIconArea;
-		int32 nIconWidth, nLastIconWidth;
-		int32 nIconHeight, nLastIconHeight;
-		os::color_space eSpace, eLastSpace;
-		bool bMinimized, bLastMinimized;
-		
-		int32 nWindow = i;
-		
-		if( cWindows.FindString( "title", &zWinTitle.str(), nWindow ) == 0 && 
-			cWindows.FindBool( "icon_present", &bIconPresent, nWindow ) == 0 && 
-			cWindows.FindInt32( "icon_area", (int32*)&hIconArea, nWindow ) == 0 && 
-			cWindows.FindInt32( "icon_width", &nIconWidth, nWindow ) == 0 && 
-			cWindows.FindInt32( "icon_height", &nIconHeight, nWindow ) == 0 && 
-			cWindows.FindInt32( "icon_colorspace", (int32*)&eSpace, nWindow ) == 0 &&
-			cWindows.FindBool( "minimized", &bMinimized, nWindow ) == 0 &&
-			m_cLastWindows.FindString( "title", &zLastWinTitle.str(), nWindow ) == 0 && 
-			m_cLastWindows.FindBool( "icon_present", &bLastIconPresent, nWindow ) == 0 && 
-			m_cLastWindows.FindInt32( "icon_area", (int32*)&hLastIconArea, nWindow ) == 0 && 
-			m_cLastWindows.FindInt32( "icon_width", &nLastIconWidth, nWindow ) == 0 && 
-			m_cLastWindows.FindInt32( "icon_height", &nLastIconHeight, nWindow ) == 0 && 
-			m_cLastWindows.FindInt32( "icon_colorspace", (int32*)&eLastSpace, nWindow ) == 0 &&
-			m_cLastWindows.FindBool( "minimized", &bLastMinimized, nWindow ) == 0 )
-		{
-			if( !( zLastWinTitle == zWinTitle ) )
-			{
-				/* We don’t update the information window here if its opened */
-				m_pcIcons[m_nLastWindowCount-i]->SetTitle( zWinTitle );
-				//cout<<"Title changed"<<endl;
-			}
-			if( ( bIconPresent != bLastIconPresent ) ||
-				( hIconArea != hLastIconArea ) || 
-				( bMinimized != bLastMinimized ) ) 
-			{
-				return( UpdateWindows( &cWindows, nCount ) );
-				
-			}
-				
-		} else {
-			return( UpdateWindows( &cWindows, nCount ) );
-		}
-		
-	}
-}
-#endif
-
 void DockWin::UpdateWindowArea()
 {
 	if( m_pcDesktop == NULL )
@@ -1110,11 +1039,12 @@ void DockWin::UpdateWindowArea()
 		cFrame = os::Rect( 0, 0, m_pcDesktop->GetResolution().x - 31, m_pcDesktop->GetResolution().y - 1 );
 	
 	os::Message cReq( os::DR_SET_DESKTOP_MAX_WINFRAME );
+	os::Message cReply;
 	cReq.AddInt32( "desktop", os::Desktop::ACTIVE_DESKTOP );
 	cReq.AddRect( "frame", cFrame );
 				
 	os::Application* pcApp = os::Application::GetInstance();
-	os::Messenger( pcApp->GetServerPort() ).SendMessage( &cReq );
+	os::Messenger( pcApp->GetServerPort() ).SendMessage( &cReq, &cReply );
 	
 	/* Tell the desktop */
 	os::Event cEvent;
@@ -1146,6 +1076,9 @@ void DockWin::ScreenModeChanged( const os::IPoint& cNewRes, os::color_space eSpa
 	UpdatePlugins();
 	
 	UpdateWindowArea();
+	
+	m_pcView->Invalidate();
+	Flush();
 }
 
 void DockWin::DesktopActivated( int nDesktop, bool bActive )
@@ -1157,18 +1090,13 @@ void DockWin::DesktopActivated( int nDesktop, bool bActive )
 	/* Resize ourself */
 	SetFrame( GetDockFrame() );
 	
-	/* Reload window list */
-	#if 0
-	os::Message cWindows;
-	int32 nCount = m_pcDesktop->GetWindows( &cWindows );
 	
-	/* Update list */
-	
-	UpdateWindows( &cWindows, nCount );
-	#endif
 	UpdatePlugins();
 	
 	UpdateWindowArea();
+	
+	m_pcView->Invalidate();
+	Flush();
 }
 
 void DockWin::SetPosition( os::alignment eAlign )

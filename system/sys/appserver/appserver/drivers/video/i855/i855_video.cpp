@@ -55,7 +55,7 @@ void i855::UpdateVideo()
 {
 	m_cGELock.Lock();
 
-	BEGIN_RING( 6 );
+	BEGIN_RING( 8 );
 	OUTRING( MI_FLUSH | MI_WRITE_DIRTY_STATE );
 	OUTRING( MI_NOOP );
 	if ( !m_bVideoIsOn )
@@ -72,6 +72,8 @@ void i855::UpdateVideo()
 		OUTRING( MI_OVERLAY_FLIP | MI_OVERLAY_FLIP_CONTINUE );
 	}
 	OUTRING( m_nVideoAddress | 1 );
+	OUTRING( MI_WAIT_FOR_EVENT | MI_WAIT_FOR_OVERLAY_FLIP );
+	OUTRING( MI_NOOP );	
 	FLUSH_RING();
 
 	m_cGELock.Unlock();
@@ -83,13 +85,11 @@ void i855::VideoOff()
 
 	if ( m_bVideoIsOn )
 	{
-		BEGIN_RING( 8 );
+		BEGIN_RING( 6 );
 		OUTRING( MI_FLUSH | MI_WRITE_DIRTY_STATE );
 		OUTRING( MI_NOOP );
-		OUTRING( MI_WAIT_FOR_EVENT | MI_WAIT_FOR_OVERLAY_FLIP );
-		OUTRING( MI_NOOP );
 		OUTRING( MI_OVERLAY_FLIP | MI_OVERLAY_FLIP_OFF );
-		OUTRING( m_nCursorAddress );
+		OUTRING( m_nVideoAddress | 1 );
 		OUTRING( MI_WAIT_FOR_EVENT | MI_WAIT_FOR_OVERLAY_FLIP );
 		OUTRING( MI_NOOP );
 		FLUSH_RING();
@@ -569,7 +569,7 @@ void i855::SetupVideoOneLine()
 
 bool i855::CreateVideoOverlay( const os::IPoint & cSize, const os::IRect & cDst, os::color_space eFormat, os::Color32_s sColorKey, area_id *pBuffer )
 {
-	if ( ( eFormat == os::CS_YUV422 || eFormat == os::CS_YUV12 ) && !m_bVideoOverlayUsed)
+	if ( ( eFormat == os::CS_YUV422/* || eFormat == os::CS_YUV12*/ ) && !m_bVideoOverlayUsed)
 	{
 		/* Start video */
 		switch ( os::BitsPerPixel( GetCurrentScreenMode().m_eColorSpace ) )
@@ -604,7 +604,7 @@ bool i855::CreateVideoOverlay( const os::IPoint & cSize, const os::IRect & cDst,
 bool i855::RecreateVideoOverlay( const os::IPoint & cSize, const os::IRect & cDst, os::color_space eFormat, area_id *pBuffer )
 {
 
-	if ( eFormat == os::CS_YUV422 || eFormat == os::CS_YUV12 )
+	if ( eFormat == os::CS_YUV422/* || eFormat == os::CS_YUV12*/ )
 	{
 		delete_area( *pBuffer );
 		FreeMemory( m_nVideoOffset - m_nFrameBufferOffset );
