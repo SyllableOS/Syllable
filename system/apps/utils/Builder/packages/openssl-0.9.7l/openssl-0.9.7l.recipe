@@ -1,0 +1,38 @@
+authors 			Kaj de Vos
+status				testing
+
+licenses			other
+home				www.openssl.org
+locations
+	ftp://ftp.openssl.org/source/
+	http://www.openssl.org/source/
+
+build-needs			perl >= 5
+build-recommends	pod2man
+
+no-build-dir
+
+configure-cmd		config
+; Doesn't work as advertized:
+_configure-args
+	--openssldir=/usr/openssl
+;	--prefix=/usr/openssl
+_configure-options
+	shared
+	threads
+;	-D_REENTRANT
+;	386
+
+test-targets
+	test
+;	report
+
+system-prefix-var	INSTALL_PREFIX
+install-vars
+	OPENSSLDIR '/usr/openssl'
+	INSTALLTOP '/usr/openssl'
+
+documentation		README README.ENGINE FAQ PROBLEMS LICENSE NEWS CHANGES doc
+develop-docs		INSTALL demos
+internal-docs		README.ASN1
+
