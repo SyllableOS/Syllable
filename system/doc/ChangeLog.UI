@@ -1,3 +1,10 @@
+* November 16, Arno Klenke *
+
+Removed old functions from the os::Desktop class
+(Hopefully) fixed the nvidia driver for >= nv40
+Disabled yv12 overlays in the i855 driver, they caused lockups for big video sizes
+The icons in the dock are correctly updated when you switch desktops
+
 ---- 0.6.2 Released -------------------------------------------------------------------
 
 * October 24, Arno Klenke *
@@ -1186,6 +1193,7 @@ disabled controls.  The following files have been patched:
 
 	The sub-menu arrow is now drawn corretly, and menus which have children
 	are now drawn slightly larger to allow for the arrow.
+
 
 
 
