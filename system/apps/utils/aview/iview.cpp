@@ -54,11 +54,14 @@ void IView::FrameSized( const Point &cDelta )
 	m_pcHScrollBar->SetValue( 0 );
 	m_pcVScrollBar->SetValue( 0 );
 
-	m_pcHScrollBar->SetMinMax( 0.0f, m_nImageX - ( GetBounds().Width() - IV_SCROLL_WIDTH ) );
-	m_pcVScrollBar->SetMinMax( 0.0f, m_nImageY - ( GetBounds().Height() - IV_SCROLL_HEIGHT ) );
+	if( m_bFitToWindow == false )
+	{
+		m_pcHScrollBar->SetMinMax( 0.0f, m_nImageX - ( GetBounds().Width() - IV_SCROLL_WIDTH ) );
+		m_pcVScrollBar->SetMinMax( 0.0f, m_nImageY - ( GetBounds().Height() - IV_SCROLL_HEIGHT ) );
 
-	m_pcHScrollBar->SetProportion( ( GetBounds().Width() - IV_SCROLL_WIDTH ) / m_nImageX );
-	m_pcVScrollBar->SetProportion( ( GetBounds().Height() - IV_SCROLL_HEIGHT ) / m_nImageY );
+		m_pcHScrollBar->SetProportion( ( GetBounds().Width() - IV_SCROLL_WIDTH ) / m_nImageX );
+		m_pcVScrollBar->SetProportion( ( GetBounds().Height() - IV_SCROLL_HEIGHT ) / m_nImageY );
+	}
 }
 
 void IView::WheelMoved( const Point &cDelta )
@@ -97,6 +100,12 @@ void IView::WindowActivated( bool bIsActive )
 
 void IView::SetImage( Image *pcImage )
 {
+	m_pcImageView->SetImage( pcImage );
+	Update( pcImage->GetSize() );
+}
+
+void IView::Update( Point cImageSize )
+{
 	Rect cBounds, cFrame;
 
 	cBounds = cFrame = GetBounds();
@@ -104,10 +113,8 @@ void IView::SetImage( Image *pcImage )
 	m_pcHScrollBar->SetValue( 0 );
 	m_pcVScrollBar->SetValue( 0 );
 
-	m_pcImageView->SetImage( pcImage );
-
-	m_nImageX = (int32)pcImage->GetSize().x;
-	m_nImageY = (int32)pcImage->GetSize().y;
+	m_nImageX = (int32)cImageSize.x;
+	m_nImageY = (int32)cImageSize.y;
 
 	// Set the ImageView frame to the correct size.  If the image is smaller than
 	// the Window on the X or Y axis use the Image sizes.  If the image is bigger
@@ -120,7 +127,7 @@ void IView::SetImage( Image *pcImage )
 	else
 		cFrame.right -= IV_SCROLL_WIDTH;
 
-	if( m_nImageX < cFrame.Height() )
+	if( m_nImageY < cFrame.Height() )
 	{
 		cFrame.top = 0;
 		cFrame.bottom = m_nImageY;
@@ -133,14 +140,37 @@ void IView::SetImage( Image *pcImage )
 	// It would be nice to hide or show the scrollbars depending on the size of the
 	// image, but Show() doesn't work properly for Scrollbars.
 
-	// Set the Scrollbars to work with the new Image dimensions
-	m_pcHScrollBar->SetMinMax( 0.0f, m_nImageX - ( cBounds.Width() - IV_SCROLL_WIDTH ) );
-	m_pcVScrollBar->SetMinMax( 0.0f, m_nImageY - ( cBounds.Height() - IV_SCROLL_HEIGHT ) );
+	if( m_bFitToWindow )
+	{
+		m_pcHScrollBar->SetMinMax( 0.0f, 0.0f );
+		m_pcVScrollBar->SetMinMax( 0.0f, 0.0f );
 
-	m_pcHScrollBar->SetProportion( ( cBounds.Width() - IV_SCROLL_WIDTH ) / m_nImageX );
-	m_pcVScrollBar->SetProportion( ( cBounds.Height() - IV_SCROLL_HEIGHT ) / m_nImageY );
+		m_pcHScrollBar->SetProportion( 1.0f );
+		m_pcVScrollBar->SetProportion( 1.0f );
 
-	m_pcHScrollBar->SetSteps( m_nImageX / 50, m_nImageX / 10 );
-	m_pcVScrollBar->SetSteps( m_nImageY / 50, m_nImageY / 10 );
+		m_pcHScrollBar->SetSteps( 0.0f, 0.0f );
+		m_pcVScrollBar->SetSteps( 0.0f, 0.0f );
+	}
+	else
+	{
+		// Set the Scrollbars to work with the new Image dimensions
+		m_pcHScrollBar->SetMinMax( 0.0f, m_nImageX - ( cBounds.Width() - IV_SCROLL_WIDTH ) );
+		m_pcVScrollBar->SetMinMax( 0.0f, m_nImageY - ( cBounds.Height() - IV_SCROLL_HEIGHT ) );
+
+		m_pcHScrollBar->SetProportion( ( cBounds.Width() - IV_SCROLL_WIDTH ) / m_nImageX );
+		m_pcVScrollBar->SetProportion( ( cBounds.Height() - IV_SCROLL_HEIGHT ) / m_nImageY );
+
+		m_pcHScrollBar->SetSteps( m_nImageX / 50, m_nImageX / 10 );
+		m_pcVScrollBar->SetSteps( m_nImageY / 50, m_nImageY / 10 );
+	}
+
+	m_pcImageView->Refresh();
 }
+
+void IView::SetMode( bool bFitToImage, bool bFitToWindow )
+{
+	m_bFitToImage = bFitToImage;
+	m_bFitToWindow = bFitToWindow;
+}
+
 

@@ -2,7 +2,7 @@ COPTS = -c
 
 OBJDIR = objs/
 
-OBJS = $(OBJDIR)main.o $(OBJDIR)appwindow.o $(OBJDIR)iview.o $(OBJDIR)statusbar.o $(OBJDIR)toolbar.o
+OBJS = $(OBJDIR)main.o $(OBJDIR)appwindow.o $(OBJDIR)iview.o $(OBJDIR)statusbar.o
 EXE = AView
 
 CATALOGS = da es hu pt-br ru sv
@@ -10,7 +10,7 @@ CATALOGS = da es hu pt-br ru sv
 all: $(OBJDIR) catalogs $(OBJS)
 	$(CXX) $(OBJS) -lsyllable -o $(EXE)
 	strip --strip-all $(EXE)
-	rescopy -r $(EXE) *.png
+	rescopy -r $(EXE) icons/*.png
 	rescopy -a $(EXE) resources/$(EXE).catalog
 	for CATALOG in $(CATALOGS);do \
 		echo $$CATALOG; \

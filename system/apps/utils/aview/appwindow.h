@@ -23,15 +23,16 @@
 #include <gui/image.h>
 #include <gui/scrollbar.h>
 #include <gui/menu.h>
+#include <gui/checkmenu.h>
 #include <gui/filerequester.h>
 #include <gui/imagebutton.h>
+#include <gui/toolbar.h>
 #include <storage/file.h>
 
 #include <vector>
 #include <string>
 
 #include "iview.h"
-#include "toolbar.h"
 #include "statusbar.h"
 
 #ifndef __F_AVIEW_NG_APPWINDOW_H_
@@ -48,18 +49,22 @@ using namespace os;
 class AViewWindow : public Window
 {
 	public:
-		AViewWindow( const Rect &cFrame, bool bFitToImage, char **ppzArgList, int nArgCount );
+		AViewWindow( const Rect &cFrame, bool bFitToImage, bool bFitToWindow, char **ppzArgList, int nArgCount );
 		~AViewWindow();
 		void HandleMessage( Message *pcMessage );
 		bool OkToQuit( void );
+		void FrameSized( const Point &cDelta );
 
 		status_t Load( uint nIndex );
 
 		void DisableNav( nav_id nId );
-
 	private:
 		void EnableNav( nav_id nId );
 		void HideIView( void );
+		void ResetWindow( void );
+		void DoResize( int nScaleBy );
+		void Scale( void );
+		void ResetResizeMenu( void );
 
 		BitmapImage* LoadImageFromResource( String zResource );
 		void SetButtonImageFromResource( ImageButton* pcButton, String zResource );
@@ -74,10 +79,24 @@ class AViewWindow : public Window
 		Menu *m_pcFileMenu;
 		Menu *m_pcViewMenu;
 
+		CheckMenu *m_pcViewFitImageItem;
+		CheckMenu *m_pcViewFitWindowItem;
+
 		MenuItem *m_pcViewPrevItem;
 		MenuItem *m_pcViewNextItem;
 		MenuItem *m_pcViewFirstItem;
 		MenuItem *m_pcViewLastItem;
+
+		Menu *m_pcResizeMenu;
+
+		CheckMenu *m_pcResize10pcItem;
+		CheckMenu *m_pcResize25pcItem;
+		CheckMenu *m_pcResize50pcItem;
+		CheckMenu *m_pcResize75pcItem;
+		CheckMenu *m_pcResize100pcItem;
+		CheckMenu *m_pcResize150pcItem;
+		CheckMenu *m_pcResize200pcItem;
+		CheckMenu *m_pcResize400pcItem;
 
 		ImageButton *m_pcOpenButton;
 		ImageButton *m_pcBreakerButton;
@@ -93,7 +112,12 @@ class AViewWindow : public Window
 		Invoker *m_pcAlertInvoker;
 
 		float m_vMenuHeight;
+
 		bool m_bFitToImage;
+		bool m_bFitToWindow;
+
+		Point m_cOriginalSize;
+		int m_nScaleBy;
 
 		std::vector <std::string> m_vzFileList;
 		uint m_nCurrentIndex;
@@ -101,8 +125,8 @@ class AViewWindow : public Window
 		Point *m_pcMinWindowSize;
 };
 
-#define AW_TOOLBAR_HEIGHT		35
-#define AW_STATUSBAR_HEIGHT		24
+#define AW_TOOLBAR_HEIGHT		48
+#define AW_STATUSBAR_HEIGHT		30
 
 #endif		// __F_AVIEW_NG_APPWINDOW_H_
 

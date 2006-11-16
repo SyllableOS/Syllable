@@ -40,6 +40,8 @@ class IView : public View
 		void WindowActivated( bool bIsActive );
 
 		void SetImage( Image *pcImage );
+		void Update( Point cImageSize );
+		void SetMode( bool bFitToImage, bool bFitToWindow );
 
 	private:
 		ImageView *m_pcImageView;
@@ -48,6 +50,7 @@ class IView : public View
 		ScrollBar *m_pcVScrollBar;
 
 		int32 m_nImageX, m_nImageY;
+		bool m_bFitToImage, m_bFitToWindow;
 
 		Window *m_pcParent;
 };

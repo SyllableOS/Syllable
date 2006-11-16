@@ -76,11 +76,12 @@ AViewApplication::AViewApplication( char **ppzArgv, int nArgc ) : Application( "
 	Settings cSettings;
 	cSettings.Load();
 
-	Rect cBounds = cSettings.GetRect( "window_position", Rect( 100,125,350,400 ) );
+	Rect cBounds = cSettings.GetRect( "window_position", Rect( 100,125,400,400 ) );
 	bool bFitToImage = cSettings.GetBool( "fit_to_image", false );
+	bool bFitToWindow = cSettings.GetBool( "fit_to_window", false );
 
 	// Create the application window and load any initial image
-	m_pcWindow = new AViewWindow( cBounds, bFitToImage, ppzArgv, nArgc );
+	m_pcWindow = new AViewWindow( cBounds, bFitToImage, bFitToWindow, ppzArgv, nArgc );
 
 	// We must call Show() first as Load() will call Show() on a child View
 	m_pcWindow->Show();
