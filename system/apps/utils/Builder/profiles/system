@@ -296,7 +296,7 @@ modules
 	apps/gnu/sed-4.1.5
 
 	apps/gnu/bzip2-1.0.3
-	apps/other/orca-0.0.24
+	apps/other/orca--current
 
 	apps/utils/Preferences/Appearance
 	apps/utils/Preferences/DateTime
