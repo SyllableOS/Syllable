@@ -1,3 +1,12 @@
+* November 16 2006, Kristian Van Der Vliet *
+
+- AView
+	o Added "Fit to window" option (scales image)
+	o Added option to scale images (E.g. 10%, 50%, 200% etc.)
+	o Use system os::ToolBar class instead of our own
+	o Use Tango icons
+	o Bug fixes
+
 * November 10 2006, Kristian Van Der Vliet *
 
 Added a Print Queue manager and Printers Preferences
