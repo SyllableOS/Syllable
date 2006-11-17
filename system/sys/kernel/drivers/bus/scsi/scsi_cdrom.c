@@ -3,7 +3,6 @@
  *  Simple SCSI layer
  *  Contains some linux kernel code
  *  Copyright (C) 2003 Arno Klenke
- *  Copyright (C) 2006 Kristian Van Der Vliet
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU
@@ -95,6 +94,8 @@ retry:
 			}
 		}
 	}
+	else
+		UNLOCK( psDevice->hLock );
 
 	memcpy( buf, psDevice->pDataBuffer, buflen );
 
@@ -259,6 +260,8 @@ retry:
 			}
 		}
 	}
+	else
+		UNLOCK( psDevice->hLock );
 
 error:
 	return nError;
@@ -401,6 +404,9 @@ static status_t scsi_cdrom_ioctl( void *pNode, void *pCookie, uint32 nCommand, v
 			memcpy( &psDevice->sToc, &toc, sizeof( toc ) );
 			psDevice->bMediaChanged = false;
 			psDevice->bTocValid = true;
+
+			kerndbg( KERN_DEBUG, "scsi_cdrom_ioctl( CD_READ_TOC ) done\n" );
+
 			break;
 		}
 
@@ -439,6 +445,8 @@ static status_t scsi_cdrom_ioctl( void *pNode, void *pCookie, uint32 nCommand, v
 		{
 			struct cdda_block *psBlock = ( struct cdda_block * )pArgs;
 
+			kerndbg( KERN_DEBUG, "scsi_cdrom_ioctl( CD_READ_CDDA )\n" );
+
 			if( psBlock != NULL )
 			{
 				nError = scsi_cdrom_cdda_read( psDevice, psBlock->nBlock, psBlock->nSize );
@@ -447,6 +455,8 @@ static status_t scsi_cdrom_ioctl( void *pNode, void *pCookie, uint32 nCommand, v
 			}
 			else
 				nError = -EINVAL;
+
+			kerndbg( KERN_DEBUG, "scsi_cdrom_ioctl( CD_READ_CDDA ) done\n" );
 
 			break;
 		}
