@@ -13,20 +13,22 @@ build-recommends
 	pam
 	libedit
 
-;no-build-dir
+no-build-dir
 
 configure-options
-;	--with-ssl-dir=/usr/local/ssl
+	--with-ssl-dir=/usr/openssl
 ;	--without-rpath
 ;	--with-zlib=../stage/lib
-	--with-zlib=/usr/zlib
-	--without-zlib-version-check
-	--with-libs='-lcrypt'
-;	--disable-libutil
+;	--with-zlib=/usr/zlib
+;	--without-zlib-version-check
+;	--with-libs='-lcrypt'
+	--disable-libutil
 ;	--with-ldflags=-L/usr/glibc/lib
+;	--with-ldflags='-L/system/libs -L/usr/glibc/lib'
 ;	--with-ldflags='-L/usr/gcc/lib/gcc/i586-pc-syllable/4.1.1 -L/usr/glibc/lib'
 
 documentation
 	README* INSTALL WARNING.RNG RFC.nroff LICENCE ChangeLog TODO CREDITS
 ;	README.platform
 internal-docs		OVERVIEW
+

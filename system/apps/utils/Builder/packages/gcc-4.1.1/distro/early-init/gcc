@@ -1,3 +1,4 @@
 export CC=gcc
 export CXX=g++
+export LD=gcc
 

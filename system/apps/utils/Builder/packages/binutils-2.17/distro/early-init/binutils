@@ -1,3 +1,4 @@
 export AS=as
-export LD=ld
+# Will be overridden by GCC:
+#export LD=ld
 

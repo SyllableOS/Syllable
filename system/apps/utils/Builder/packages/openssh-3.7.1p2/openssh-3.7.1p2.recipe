@@ -1,5 +1,18 @@
 authors				Kaj de Vos
-status				testing
+status				broken
+
+licenses			BSD MIT ISC other PD
+home				www.openssh.org
+locations
+;	ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/
+	ftp://ftp.bit.nl/mirror/openssh/
+
 patch-config
-configure-options	--with-libs=-lcrypt
-documentation		README* INSTALL WARNING.RNG OVERVIEW RFC.nroff LICENCE ChangeLog TODO CREDITS
+
+configure-options
+	--with-libs=-lcrypt
+	--disable-libutil
+
+documentation		README* INSTALL WARNING.RNG RFC.nroff LICENCE ChangeLog TODO CREDITS
+internal-docs		OVERVIEW
+
