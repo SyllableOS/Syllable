@@ -22,7 +22,7 @@
 
 #define MAJOR	0LL
 #define MINOR	6LL
-#define RELEASE	2LL
+#define RELEASE	3LL
 
 const int64 g_nKernelVersion = ( MAJOR << 32 ) | ( MINOR << 16 ) | ( RELEASE );
 const char *g_pzKernelName = "kernel.so";
