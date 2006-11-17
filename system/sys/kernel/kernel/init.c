@@ -313,97 +313,83 @@ int get_kernel_arguments( int *argc, const char *const **argv )
  * SEE ALSO:
  ****************************************************************************/
 
-#ifndef __ENABLE_DEBUG__
-#define __ENABLE_DEBUG__
-#endif
-
 #include <atheos/kdebug.h>
 #include <atheos/udelay.h>
 
 #undef DEBUG_LIMIT
-#define DEBUG_LIMIT	KERN_DEBUG_LOW
+#define DEBUG_LIMIT   KERN_DEBUG_LOW
 
 static int find_boot_dev( void )
 {
-	int hBaseDir;
-	struct kernel_dirent sDevDirEnt;
-	char *pzDevPathBuf, *pzDiskPathBuf;
+	char *pzDiskPathBuf;
 	bool bFound = false;
 
-	pzDevPathBuf = kmalloc( 4096, MEMF_KERNEL );
 	pzDiskPathBuf = kmalloc( 4096, MEMF_KERNEL );
 
-	if ( NULL == pzDevPathBuf || NULL == pzDiskPathBuf )
+	if ( NULL == pzDiskPathBuf )
 	{
 		kerndbg( KERN_PANIC, "Unable to allocate buffer memory.\n" );
-		if ( NULL != pzDevPathBuf )
-			kfree( pzDevPathBuf );
 		if ( NULL != pzDiskPathBuf )
 			kfree( pzDiskPathBuf );
 
 		return ( -ENOMEM );
 	}
 
-	hBaseDir = open( "/dev/disk", O_RDONLY );
-	if ( hBaseDir < 0 )
+	do
 	{
-		kerndbg( KERN_PANIC, "Unable to open directory /dev/disk\n" );
-		return ( hBaseDir );
-	}
-
-	while ( getdents( hBaseDir, &sDevDirEnt, sizeof( sDevDirEnt ) ) == 1 && bFound == false )
-	{
-		int hDevDir, nError = 0;
-
-		if ( strcmp( sDevDirEnt.d_name, "." ) == 0 || strcmp( sDevDirEnt.d_name, ".." ) == 0 )
-			continue;
-
-		strcpy( pzDevPathBuf, "/dev/disk" );
-		strcat( pzDevPathBuf, "/" );
-		strcat( pzDevPathBuf, sDevDirEnt.d_name );
-
-		hDevDir = open( pzDevPathBuf, O_RDONLY );
-		if ( hDevDir < 0 )
-			continue;
-		else
+		char *azDevs[] = { "/dev/disk/ata", "/dev/disk/scsi", NULL };
+		for ( int n = 0; azDevs[n] != NULL; n++ )
 		{
-			struct kernel_dirent sDiskDirEnt;
-			while ( getdents( hDevDir, &sDiskDirEnt, sizeof( sDiskDirEnt ) ) == 1 && bFound == false )
+			int hDevDir, nError = 0;
+			char *zDev = azDevs[n];
+
+			hDevDir = open( zDev, O_RDONLY );
+			if ( hDevDir < 0 )
+				continue;
+			else
 			{
-				if ( strcmp( sDiskDirEnt.d_name, "." ) == 0 || strcmp( sDiskDirEnt.d_name, ".." ) == 0 )
-					continue;
+				struct kernel_dirent sDiskDirEnt;
 
-				if ( sDiskDirEnt.d_name[0] != 'c' )	/* Ignore any drives which are not CD's */
-					continue;
+				printk( "Checking under %s\n", zDev );
 
-				strcpy( pzDiskPathBuf, pzDevPathBuf );
-				strcat( pzDiskPathBuf, "/" );
-				strcat( pzDiskPathBuf, sDiskDirEnt.d_name );
-				strcat( pzDiskPathBuf, "/raw" );
-
-				kerndbg( KERN_INFO, "Checking for disk in %s\n", pzDiskPathBuf );
-
-				/* Try to mount the disk */
-				nError = sys_mount( pzDiskPathBuf, "/boot", g_zBootFS, MNTF_SLOW_DEVICE, g_zBootFSArgs );
-
-				if ( nError < 0 )
+				while ( getdents( hDevDir, &sDiskDirEnt, sizeof( sDiskDirEnt ) ) == 1 && bFound == false )
 				{
-					kerndbg( KERN_INFO, "Unable to mount %s\n", pzDiskPathBuf );
-					continue;
+					if ( strcmp( sDiskDirEnt.d_name, "." ) == 0 || strcmp( sDiskDirEnt.d_name, ".." ) == 0 )
+						continue;
+
+					if ( sDiskDirEnt.d_name[0] != 'c' )	/* Ignore any drives which are not CD's */
+						continue;
+
+					strcpy( pzDiskPathBuf, zDev );
+					strcat( pzDiskPathBuf, "/" );
+					strcat( pzDiskPathBuf, sDiskDirEnt.d_name );
+					strcat( pzDiskPathBuf, "/raw" );
+
+					kerndbg( KERN_INFO, "Checking for disk in %s\n", pzDiskPathBuf );
+
+					/* Try to mount the disk */
+					nError = sys_mount( pzDiskPathBuf, "/boot", g_zBootFS, MNTF_SLOW_DEVICE, g_zBootFSArgs );
+
+					if ( nError < 0 )
+					{
+						kerndbg( KERN_INFO, "Unable to mount %s\n", pzDiskPathBuf );
+						continue;
+					}
+
+					kerndbg( KERN_INFO, "Found disk in %s\n", pzDiskPathBuf );
+					strcpy( g_zBootDev, pzDiskPathBuf );
+					bFound = true;
 				}
 
-				kerndbg( KERN_INFO, "Found disk in %s\n", pzDiskPathBuf );
-				strcpy( g_zBootDev, pzDiskPathBuf );
-				bFound = true;
+				close( hDevDir );
 			}
-
-			close( hDevDir );
 		}
+
+		if( bFound == false )
+			snooze( 1000000 );
 	}
+	while( bFound == false );
 
-	close( hBaseDir );
-
-	kfree( pzDevPathBuf );
 	kfree( pzDiskPathBuf );
 
 	return ( bFound ? 0 : -1 );
