@@ -1,0 +1,41 @@
+authors				Kaj de Vos
+status				incomplete
+notes				Tested with Rune and M2 SVN snapshot November 16, 2006
+
+inherits			sourceforge
+
+licenses
+	LGPL
+;	M2:
+	MIT
+home				urlan.sf.net
+packages
+	syllable/thune-309
+;	syllable/m2-309 thune-309
+archives
+	svn://svn.geekisp.com/orca/trunk/thune
+;	M2:
+;	svn://svn.geekisp.com/orca/trunk/m2
+
+build-needs
+;	REBOL
+	bzip2
+
+_patch
+	mv m2/m2			rune/configure
+	cp m2/m2_linux.r	rune/m2_template.r
+
+;no-build-dir
+
+;configure-cmd		rune/configure
+; Proprietary REBOL needs to be in /usr/bin/ to run M2 configure
+configure			cp rune/Makefile.fixed rune/Makefile
+
+install-tree		bin lib include
+install				true
+install-files
+	rune/rune		bin
+	rune/librune0.a	lib
+	urlan.h			include
+documentation		README LICENSE ChangeLog TODO
+;links				rune bin/rebol
