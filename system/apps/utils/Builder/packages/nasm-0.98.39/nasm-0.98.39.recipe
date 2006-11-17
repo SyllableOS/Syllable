@@ -5,8 +5,8 @@ inherits			sourceforge
 
 licenses			LGPL
 home				nasm.sf.net
-locations			http://www.kernel.org/pub/software/devel/nasm/source/
-;packages			nasm/nasm-0.98.39
+packages			nasm/nasm-0.98.39
+;locations			http://www.kernel.org/pub/software/devel/nasm/source/
 
 ; For documentation:
 ;build-needs
