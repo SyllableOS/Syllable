@@ -9,7 +9,7 @@ modules
 ;	shell/man-1.5m2
 	productivity/publishing/texinfo-4.8a
 	shell/which-2.16
-	security/gnupg-1.4.3
+	security/gnupg-1.4.5
 	file/cdrtools-2.01
 	file/file-4.07
 	file/mc-4.6.1

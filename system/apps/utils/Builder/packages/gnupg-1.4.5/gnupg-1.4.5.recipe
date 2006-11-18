@@ -1,0 +1,18 @@
+authors				Kaj de Vos
+status				testing
+warnings
+	The /dev/random device on Syllable is currently not a very good source of randomness for cryptographic purposes. Please use GnuPG on Syllable with caution.
+
+licenses			GPL
+home				www.gnupg.org
+locations			ftp://ftp.gnupg.org/gcrypt/gnupg/
+
+;build-needs			gettext
+build-recommends	bzip2
+
+;configure-options
+;	--enable-m-guard
+;	--enable-sha512
+;	--with-capabilities
+documentation		README COPYING BUGS ABOUT-NLS NEWS ChangeLog TODO PROJECTS AUTHORS THANKS
+
