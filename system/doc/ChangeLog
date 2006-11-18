@@ -1,3 +1,7 @@
+* November 18 2006, Kristian Van Der Vliet *
+
+Put the auto build "nightly" build scripts in CVS under build-tools/scripts/auto-build
+
 * November 15 2006, Kristian Van Der Vliet *
 
 Overhauled the SCSI bus manager.  The code has been split down and modulerised,
