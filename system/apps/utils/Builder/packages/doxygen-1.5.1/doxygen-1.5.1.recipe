@@ -1,9 +1,9 @@
 authors
 	Arno Klenke
 	Kaj de Vos
-	Kristian Van Der Vliet
 maintainers			Kaj de Vos
 status				testing
+notes				Need to install more documentation
 
 licenses			GPL
 
@@ -26,5 +26,6 @@ configure-options
 
 documentation
 	README INSTALL LICENSE
-;	doc
-;	LANGUAGE.HOWTO
+	doc/*.txt
+internal-docs		LANGUAGE.HOWTO
+

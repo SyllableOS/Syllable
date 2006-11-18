@@ -22,7 +22,7 @@ modules
 ;	1.1:
 	apps/develop/sindent
 
-	programming/doxygen-1.4.6
+	programming/doxygen-1.5.1
 	programming/cscope-15.5
 	programming/splint-3.1.1
 
