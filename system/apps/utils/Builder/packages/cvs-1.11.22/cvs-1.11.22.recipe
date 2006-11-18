@@ -1,7 +1,7 @@
 authors				Kaj de Vos
 status				broken
 notes
-	"cannot get working directory: Function not implemented"
+	"rsh: must be setuid root."
 
 inherits			gnu
 
@@ -9,19 +9,18 @@ licenses			GPL
 home
 	cvs.nongnu.org
 ;	www.cvshome.org
-packages			non-gnu/cvs/source/feature/1.12.13/cvs-1.12.13
+packages			non-gnu/cvs/source/stable/1.11.22/cvs-1.11.22
 
 test-needs			gawk
 
-patch-config		build-aux
-
 configure-options
 	--with-external-zlib
+;	Doesn't seem to work:
 	--with-rsh=ssh
 ;	--disable-server
 ;	--enable-encryption
 documentation
-	README ABOUT-NLS FAQ BUGS MINOR-BUGS COPYING COPYING.LIB NEWS ChangeLog TODO PROJECTS AUTHORS
+	README FAQ BUGS MINOR-BUGS COPYING COPYING.LIB NEWS ChangeLog TODO PROJECTS AUTHORS
 ;	doc
 build-docs			TESTS
 internal-docs		HACKING DEVEL-CVS
