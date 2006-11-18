@@ -56,6 +56,7 @@ public:
     bool	SetResolution( int nWidth, int nHeight );
     bool	SetColorSpace( color_space eColorSpace );
     bool	SetRefreshRate( float vRefreshRate );
+    bool	Activate() const;
     int		MinimizeAll() const;
 private:
 	class Private;
