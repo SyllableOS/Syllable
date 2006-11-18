@@ -15,12 +15,14 @@ FILES=(	"/atheos/etc/profile, /atheos/etc/profile" 															\
 																											\
 		"/atheos/sys/drivers/dev/ps2, /atheos/sys/drivers/dev/ps2"											\
 		"/atheos/sys/drivers/dev/disk/bios, /atheos/sys/drivers/dev/disk/bios"								\
+		"/atheos/sys/drivers/dev/disk/usb, /atheos/sys/drivers/dev/disk/usb"								\
 		"/atheos/sys/drivers/dev/misc/serial, /atheos/sys/drivers/dev/misc/serial"							\
 		"/atheos/sys/drivers/dev/graphics/*, /atheos/sys/drivers/dev/graphics/."							\
 																											\
 		"/atheos/sys/drivers/dev/bus/pci, /atheos/sys/drivers/dev/bus/pci"									\
 		"/atheos/sys/drivers/dev/bus/ata, /atheos/sys/drivers/dev/bus/ata"									\
 		"/atheos/sys/drivers/dev/bus/usb, /atheos/sys/drivers/dev/bus/usb"									\
+		"/atheos/sys/drivers/dev/bus/scsi, /atheos/sys/drivers/dev/bus/scsi"								\
 																											\
 		"/atheos/sys/drivers/dev/hcd/ata_pci, /atheos/sys/drivers/dev/hcd/ata_pci"							\
 		"/atheos/sys/drivers/dev/hcd/usb_ehci, /atheos/sys/drivers/dev/hcd/usb_ehci"						\
@@ -134,13 +136,27 @@ ENV=(	"PATH=/usr/local/bin:/usr/grub/bin:/usr/grub/sbin:/boot/atheos/sys/bin"		\
 
 declare -a GRUB
 
-GRUB=(	"timeout	10"																						\
+GRUB=(	"color	cyan/blue white/blue"																		\
+		"timeout	10"																						\
 		""																									\
-		"title	Syllable"																					\
+		"title	Install Syllable"																			\
 		"kernel /atheos/sys/kernel.so rootfs=iso9660 root=@boot disable_config=true uspace_end=0xf7ffffff"	\
 		"module /atheos/sys/drivers/dev/bus/pci"															\
 		"module /atheos/sys/drivers/dev/bus/ata"															\
 		"module /atheos/sys/drivers/dev/hcd/ata_pci"														\
+		"module /atheos/sys/drivers/fs/iso9660"																\
+		""																									\
+		"title	Install Syllable from a USB CD-ROM drive"													\
+		"kernel /atheos/sys/kernel.so rootfs=iso9660 root=@boot disable_config=true uspace_end=0xf7ffffff"	\
+		"module /atheos/sys/drivers/dev/bus/pci"															\
+		"module /atheos/sys/drivers/dev/bus/ata"															\
+		"module /atheos/sys/drivers/dev/bus/usb"															\
+		"module /atheos/sys/drivers/dev/bus/scsi"															\
+		"module /atheos/sys/drivers/dev/hcd/ata_pci"														\
+		"module /atheos/sys/drivers/dev/hcd/usb_ohci"														\
+		"module /atheos/sys/drivers/dev/hcd/usb_uhci"														\
+		"module /atheos/sys/drivers/dev/hcd/usb_ehci"														\
+		"module /atheos/sys/drivers/dev/disk/usb"															\
 		"module /atheos/sys/drivers/fs/iso9660"																\
 )
 
