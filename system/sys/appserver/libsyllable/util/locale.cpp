@@ -281,7 +281,7 @@ Catalog* Locale::GetLocalizedSystemCatalog( const String& cName )
 	Catalog* pcCatalog = new Catalog;
 	bool bDef = false, bLoc = false;
 
-	pcStream = GetSystemResourceStream( cName );
+	pcStream = GetSystemResourceStream( os::String( "catalogs/" ) + cName );
 	if( pcStream ) {
 		pcCatalog->Load( pcStream );
 		delete pcStream;

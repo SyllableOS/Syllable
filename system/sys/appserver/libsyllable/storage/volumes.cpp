@@ -550,7 +550,8 @@ int32 UnmountThread( void *pData )
 		os::Alert* pcAlert = new os::Alert( UGS( ID_MSG_MOUNT_ERROR_TITLE, "Mount" ), cErrMsg, 
 												os::Alert::ALERT_WARNING, 0, UGS( ID_MSG_MOUNT_ERROR_CLOSE, "Ok" ).c_str(), NULL );	
 
-		pcCatalog->Release();
+		if( pcCatalog )
+			pcCatalog->Release();
 
 		pcAlert->Go( new os::Invoker( 0 ) );
 		goto out;

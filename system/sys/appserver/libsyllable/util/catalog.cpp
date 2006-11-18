@@ -143,7 +143,7 @@ status_t Catalog::Load( StreamableIO* pcSource )
 				pzBfr = new char[ nBufSize ];
 			}
 			pcSource->Read( pzBfr, nLen );
-			SetString( nID, pzBfr );
+			m->m_cStrings[ nID ] = os::String( pzBfr );
 		}
 	
 		delete pzBfr;
