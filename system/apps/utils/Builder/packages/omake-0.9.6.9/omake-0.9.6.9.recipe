@@ -1,0 +1,31 @@
+authors				Kaj de Vos
+status				broken
+notes
+	File "omake_gen_magic.ml", line 83, characters 14-33:
+	Unbound value Lm_string_util.trim
+
+licenses			GPL MIT
+home				omake.metaprl.org
+packages			omake-0.9.6.9-1
+locations			http://omake.metaprl.org/downloads/
+
+build-needs			ocaml
+
+install-prefix-var	PREFIX
+
+make-targets
+;	Bootstrap phase only:
+;	boot
+	all
+
+system-prefix-var	INSTALL_ROOT
+no-strip
+documentation
+	LICENSE CHANGELOG.txt
+;	doc/html
+build-docs			INSTALL
+
+post-install
+	omake-boot
+	omake-boot install
+
