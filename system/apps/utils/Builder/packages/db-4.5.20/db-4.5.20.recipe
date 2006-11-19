@@ -1,0 +1,26 @@
+authors
+	Kaj de Vos
+	Jan Hauffa
+status				testing
+warnings			Oracle makes you download the source package manually.
+notes				This version uses the source package with no encryption
+
+name				Berkeley DB
+licenses			OSI
+home				www.sleepycat.com
+packages			db-4.5.20.NC
+; Works only with the right file extension:
+;locations			http://download-east.oracle.com/berkeley-db/db-4.5.20.NC.tar.gz
+
+;build-dir			build_unix
+
+pre-configure		cp ../db-4.5.20/build_unix/* .
+configure-cmd		dist/configure
+configure-options	--enable-cxx
+
+documentation		README LICENSE
+links
+;	Optimize wasteful duplicates:
+	libdb-4.5.a		lib/libdb.a
+	libdb_cxx-4.5.a	lib/libdb_cxx.a
+
