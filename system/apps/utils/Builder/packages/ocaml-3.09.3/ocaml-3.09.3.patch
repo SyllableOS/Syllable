@@ -1,0 +1,11 @@
+diff -ru ocaml-3.09.3-original/configure ocaml-3.09.3/configure
+--- ocaml-3.09.3-original/configure	2006-11-19 19:47:22.000000000 +0000
++++ ocaml-3.09.3/configure	2006-11-19 19:54:37.000000000 +0000
+@@ -572,6 +572,7 @@
+   sparc*-*-linux*)              arch=sparc; system=linux;;
+   sparc*-*-gnu*)                arch=sparc; system=gnu;;
+   i[3456]86-*-linux*)           arch=i386; system=linux_`sh ./runtest elf.c`;;
++  i[3456]86-*-syllable*)        arch=i386; system=linux_`sh ./runtest elf.c`;;
+   i[3456]86-*-*bsd*)            arch=i386; system=bsd_`sh ./runtest elf.c`;;
+   i[3456]86-*-nextstep*)        arch=i386; system=nextstep;;
+   i[3456]86-*-solaris*)         arch=i386; system=solaris;;
