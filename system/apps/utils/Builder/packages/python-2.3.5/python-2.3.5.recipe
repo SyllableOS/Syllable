@@ -21,7 +21,6 @@ build-recommends
 
 patch				autoconf
 
-configure-env		CPPFLAGS '-I/usr/ncurses/include/ncurses'
 ;configure-options
 ;	--with-threads=atheos
 ;	--with-libs=
@@ -31,8 +30,9 @@ test-targets		test
 
 ;install-prefix-var	DESTDIR
 ;install-targets		altinstall
+delete-files		lib/python2.3/test
 documentation
 	README LICENSE Misc/NEWS Misc/HISTORY
 	Demo
 links				bin/python /usr/bin/python
-;post-install		rm -r /usr/python/lib/python2.3/test
+
