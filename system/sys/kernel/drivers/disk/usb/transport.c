@@ -655,7 +655,7 @@ void usb_stor_invoke_transport( SCSI_cmd_s * srb, USB_disk_s * psDisk )
 
 		/* use the new buffer we have */
 		old_request_buffer = srb->pRequestBuffer;
-		srb->pRequestBuffer = srb->nSense;
+		srb->pRequestBuffer = srb->s.nSense;
 
 		/* set the buffer length for transfer */
 		old_request_bufflen = srb->nRequestSize;
@@ -682,10 +682,10 @@ void usb_stor_invoke_transport( SCSI_cmd_s * srb, USB_disk_s * psDisk )
 
 		/*printk("-- Result from auto-sense is %d\n", temp_result);
 		   printk("-- code: 0x%x, key: 0x%x, ASC: 0x%x, ASCQ: 0x%x\n",
-		   srb->nSense[0],
-		   srb->nSense[2] & 0xf,
-		   srb->nSense[12], 
-		   srb->nSense[13]); */
+		   srb->s.nSense[0],
+		   srb->s.nSense[2] & 0xf,
+		   srb->s.nSense[12], 
+		   srb->s.nSense[13]); */
 
 
 		/* set the result so the higher layers expect this data */
@@ -698,7 +698,7 @@ void usb_stor_invoke_transport( SCSI_cmd_s * srb, USB_disk_s * psDisk )
 		memcpy( srb->nCmd, old_cmnd, SCSI_CMD_SIZE );
 
 		/* If things are really okay, then let's show that */
-		if ( ( srb->nSense[2] & 0xf ) == 0x0 )
+		if ( ( srb->s.nSense[2] & 0xf ) == 0x0 )
 			srb->nResult = SCSI_GOOD << 1;
 	}
 	else			/* if (need_auto_sense) */
@@ -714,8 +714,8 @@ void usb_stor_invoke_transport( SCSI_cmd_s * srb, USB_disk_s * psDisk )
 	 * This is necessary because the auto-sense for some devices always
 	 * sets byte 0 == 0x70, even if there is no error
 	 */
-	if ( ( psDisk->protocol == US_PR_CB || psDisk->protocol == US_PR_DPCM_USB ) && ( result == USB_STOR_TRANSPORT_GOOD ) && ( ( srb->nSense[2] & 0xf ) == 0x0 ) )
-		srb->nSense[0] = 0x0;
+	if ( ( psDisk->protocol == US_PR_CB || psDisk->protocol == US_PR_DPCM_USB ) && ( result == USB_STOR_TRANSPORT_GOOD ) && ( ( srb->s.nSense[2] & 0xf ) == 0x0 ) )
+		srb->s.nSense[0] = 0x0;
 }
 
 /*
