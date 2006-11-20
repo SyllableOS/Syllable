@@ -1,0 +1,19 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			gnu
+
+licenses			GPL
+home				cnswww.cns.cwru.edu/php/chet/readline/rltop.html
+packages			readline/readline-5.2
+
+patch-config		support
+
+configure-options
+	--disable-shared
+	--with-curses
+;make-targets		everything shared
+;install-targets		install install-static install-shared
+documentation		README USAGE COPYING NEWS CHANGES CHANGELOG
+build-docs			INSTALL
+
