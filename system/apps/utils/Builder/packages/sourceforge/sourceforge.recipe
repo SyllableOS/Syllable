@@ -7,6 +7,9 @@ locations
 ;	Seems to have been shut down for automatic downloading:
 ;	http://osdn.dl.sourceforge.net/sourceforge/
 
+;	Downloads are probably counted:
+;	http://prdownloads.sourceforge.net/PROJECT/FILE?use_mirror=heanet
+;	Downloads are not counted according to SF:
 	http://heanet.dl.sourceforge.net/sourceforge/
 	http://surfnet.dl.sourceforge.net/sourceforge/
 	http://citkit.dl.sourceforge.net/sourceforge/
