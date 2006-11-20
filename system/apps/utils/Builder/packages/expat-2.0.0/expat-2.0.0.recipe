@@ -1,0 +1,21 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			sourceforge
+
+licenses			MIT
+home				www.libexpat.org
+packages			expat/expat-2.0.0
+
+test-needs			check
+
+patch-config		conftools
+
+;configure-env		CPPFLAGS '-DXML_UNICODE'
+;make-targets		buildlib
+;install-targets		installlib
+documentation
+	README COPYING Changes
+	doc
+develop-docs		examples
+
