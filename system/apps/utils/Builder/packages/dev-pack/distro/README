@@ -1,17 +1,16 @@
 Developer Pack for Syllable
 ===========================
 
-6-Jun-2006
+21-Nov-2006
 
 1 Introduction
 ==============
 
 This distribution is a collection of the most important binary
 packages a software developer would want for the Syllable operating
-system. Most packages were built on Syllable 0.6.1, and they were
-optimized for a Pentium CPU. Most of them may also run on Syllable
-0.5.6(a) through 0.6.0(a), but this has not been tested, and they
-will not run on earlier versions of Syllable.
+system. Most packages were built on Syllable 0.6.2 and optimized for a
+Pentium CPU. They may also run on earlier versions of Syllable, but this
+has not been tested.
 
 For additional functionality, it is recommended to also install
 other collection packs available for Syllable.
