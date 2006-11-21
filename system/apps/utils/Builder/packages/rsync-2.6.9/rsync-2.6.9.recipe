@@ -1,0 +1,20 @@
+authors				Kaj de Vos
+status				testing
+
+licenses			GPL
+home				rsync.samba.org
+locations
+	ftp://ftp.samba.org/pub/rsync/
+	http://rsync.samba.org/ftp/rsync/
+	rsync://rsync.samba.org/rsyncftp/
+
+build-recommends	popt
+run-recommends		openssh
+
+configure-options
+	--disable-debug
+;	--disable-ipv6
+documentation		README COPYING NEWS OLDNEWS rsyncsh.txt TODO rsync3.txt
+build-docs			INSTALL
+internal-docs		csprotocol.txt
+
