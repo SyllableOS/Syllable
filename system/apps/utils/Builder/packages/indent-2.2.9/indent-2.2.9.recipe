@@ -6,6 +6,7 @@ licenses			GPL
 home				www.gnu.org/software/indent/
 packages			indent/indent-2.2.9
 
+build-needs			gcc < 4
 build-recommends
 	libiconv
 	texinfo
