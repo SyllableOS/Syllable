@@ -1,0 +1,19 @@
+authors				Kaj de Vos
+status				testing
+
+licenses			BSD
+home				www.bitchx.org
+packages			ircii-pana-1.1-final
+locations
+	http://www.bitchx.org/files/source/
+;	ftp://ftp.bitchx.org
+
+_configure-options
+	--with-plugins
+	--with-ssl
+
+documentation
+	README README-1.1-FINAL bugs Changelog
+;	doc bitchx-docs
+build-docs			INSTALL COMPILE-PROBLEMS
+
