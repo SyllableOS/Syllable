@@ -1,9 +1,12 @@
 authors				Kaj de Vos
 status				testing
 
+locations			http://thekonst.net/download/
+
 patch-config
 	.
 	kkconsui-0.1
 	kkstrtext-0.1
 configure-options	--with-openssl
 documentation		README COPYING ABOUT-NLS FAQ NEWS ChangeLog TODO AUTHORS THANKS
+

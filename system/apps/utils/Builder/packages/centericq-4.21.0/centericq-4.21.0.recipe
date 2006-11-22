@@ -1,0 +1,21 @@
+authors				Kaj de Vos
+status				broken
+
+licenses			GPL
+home				thekonst.net/centericq/
+locations			http://thekonst.net/download/
+
+needs
+	curl
+recommends
+	gpgme
+
+patch-config
+	.
+;	kkconsui-0.1
+;	kkstrtext-0.1
+configure-options
+	--with-openssl
+;	--disable-msn
+documentation		README COPYING ABOUT-NLS FAQ POLICY NEWS ChangeLog TODO AUTHORS THANKS
+
