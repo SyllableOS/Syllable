@@ -8,8 +8,10 @@ modules
 	network/rsync-2.6.9
 	network/samba-3.0.20b
 	network/wget-1.9.1
-;	network/ftp/ncftp-3.1.7
-	network/im/centericq-4.9.10
-	network/irc/bitchx-1.0c19
+
+;	All broken:
+;	network/ftp/ncftp-3.2.0
+;	network/im/centericq-4.21.0
+;	network/irc/epic4-2.6
 ;	network/web/links-2.1pre14
 

@@ -1,0 +1,22 @@
+authors				Kaj de Vos
+status				incomplete
+notes				Thinks Syllable terminal doesn't do 8-bit characters
+
+licenses			other
+home				www.epicsol.org
+locations
+	ftp://ftp.epicsol.org/pub/epic/EPIC4-PRODUCTION/
+	http://ftp.epicsol.org/pub/epic/EPIC4-PRODUCTION/
+
+needs				openssl
+recommends			perl > 5.6
+
+configure-options
+	--with-ssl
+	--with-perl
+
+documentation
+	README COPYRIGHT KNOWNBUGS BUG_FORM UPDATES VOTES
+	doc
+build-docs			INSTALL
+
