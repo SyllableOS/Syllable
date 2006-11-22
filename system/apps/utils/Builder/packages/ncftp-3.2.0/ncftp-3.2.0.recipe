@@ -3,12 +3,12 @@ status				broken
 
 licenses			other
 home				www.ncftp.com
-packages			ncftp-3.1.7-src
+packages			ncftp-3.2.0-src
 locations			ftp://ftp.ncftp.com/ncftp/
 
-patch				sed -i 's/ln /ln -s /' Makefile.in
-
 no-build-dir
+
+;patch				sed -i 's/ln /ln -s /' Makefile.in
 
 _make-targets
 	all
@@ -16,5 +16,5 @@ _make-targets
 _install-targets
 	install
 	soinstall
-documentation		README.txt doc
+documentation		README.txt DONATE.txt doc
 
