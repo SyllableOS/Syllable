@@ -1,6 +1,6 @@
 #! /bin/sh
 
-packages='flex bison binutils gcc nasm make m4 gdb patch arch cvs ruby Builder indent sindent doxygen cscope splint'
+packages='openssh wget rsync samba'
 
 if [ "$USER" != "root" ]
 then
@@ -10,7 +10,7 @@ then
 	exit 1
 fi
 
-echo "This will install the packages contained in the developer pack."
+echo "This will install the packages contained in the Network Necessities."
 echo "Previously installed packages of the same name will be removed first."
 echo ""
 read -p "Do you want to continue (y/N)? " -e answer
@@ -53,6 +53,5 @@ done
 
 echo ""
 echo "Done."
-echo "To fully initialize BinUtils and GCC for compiling software, please reboot"
-echo "the computer."
+echo "The SaMBa server will be started when rebooting the computer."
 
