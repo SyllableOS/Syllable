@@ -1,6 +1,6 @@
 #! /bin/sh
 
-packages='openssh wget rsync samba'
+packages='openssh wget rsync'
 
 if [ "$USER" != "root" ]
 then
