@@ -29,7 +29,6 @@ modules
 	apps/gnu/inetutils-1.5
 	apps/gnu/less-394
 	apps/gnu/tar-1.16
-	apps/other/unzip-5.52
 	apps/other/zip-2.32
 	apps/desktop/dock_plugins/battery
 	apps/desktop/dock_plugins/clock

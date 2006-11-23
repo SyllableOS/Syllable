@@ -294,6 +294,7 @@ modules
 	apps/gnu/bash-2.03
 	apps/gnu/coreutils-6.4
 	apps/gnu/sed-4.1.5
+	apps/other/unzip-5.52
 
 	apps/gnu/bzip2-1.0.3
 	apps/other/orca--current
