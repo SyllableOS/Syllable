@@ -3,9 +3,9 @@ authors
 	Kristian Van Der Vliet
 status				testing
 notes
-	"Using Samba" is in the documentation twice.
 	ADS support is currently buggy.
 	OpenLDAP & Kerberos5 are not required if ADS support is disabled.
+	swat/help/Samba3-Developers-Guide should be classified as developer's documentation.
 
 licenses			GPL
 home				samba.org
@@ -35,6 +35,10 @@ make-env
 
 documentation
 	README COPYING Manifest WHATSNEW.txt MAINTAINERS Roadmap
-	docs/THANKS docs/history docs/Samba3-HOWTO.pdf docs/Samba3-ByExample.pdf
-	docs/htmldocs examples
+	docs/THANKS docs/history
+	examples
+;	Included in swat/help:
+;	docs/htmldocs
+;	Included as HTML:
+;	docs/Samba3-HOWTO.pdf docs/Samba3-ByExample.pdf
 
