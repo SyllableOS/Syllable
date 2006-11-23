@@ -20,7 +20,9 @@ dbterm 8 >>/var/log/kernel &
 ln -s /atheos/Applications /Applications
 ln -s /home/root /root
 
-# Configure basic environment
+# Configure basic environment.
+# BASh runs this, too, but do it earlier for the benefit of processes started
+# here.
 source /etc/profile
 
 # Silently empty the temporary directory
