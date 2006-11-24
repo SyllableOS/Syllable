@@ -1,0 +1,20 @@
+authors				Kaj de Vos
+status				testing
+
+licenses			MIT
+home				xmlsoft.org/XSLT/
+locations
+	ftp://xmlsoft.org/libxslt/
+	http://xmlsoft.org/sources/
+
+needs				libxml2
+recommends			python
+
+patch-config
+
+documentation
+	README Copyright NEWS ChangeLog FEATURES TODO AUTHORS
+;	Double:
+;	COPYING
+build-docs			INSTALL
+
