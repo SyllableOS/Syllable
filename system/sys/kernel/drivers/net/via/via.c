@@ -323,7 +323,8 @@ enum register_offsets {
 	MIICmd=0x70, MIIRegAddr=0x71, MIIData=0x72, MACRegEEcsr=0x74,
 	ConfigA=0x78, ConfigB=0x79, ConfigC=0x7A, ConfigD=0x7B,
 	RxMissed=0x7C, RxCRCErrs=0x7E,
-	StickyHW=0x83, WOLcrClr=0xA4, WOLcgClr=0xA7, PwrcsrClr=0xAC,
+	StickyHW=0x83, WOLcrClr=0xA4, WOLcgClr=0xA7, 
+	PwrcsrSet=0xA8, PwrcsrClr=0xAC,
 };
 
 #ifdef USE_MEM
@@ -344,6 +345,15 @@ enum intr_status_bits {
 	IntrTxAborted=0x2000, IntrLinkChange=0x4000,
 	IntrRxWakeUp=0x8000,
 	IntrNormalSummary=0x0003, IntrAbnormalSummary=0xC260,
+};
+
+/* Bits in WOLcrSet/WOLcrClr and PwrcsrSet/PwrcsrClr */
+enum wol_bits {
+	WOLucast	= 0x10,
+	WOLmagic	= 0x20,
+	WOLbmcast	= 0x30,
+	WOLlnkon	= 0x40,
+	WOLlnkoff	= 0x80,
 };
 
 /* MII interface, status flags.
@@ -575,6 +585,64 @@ static int  via_rhine_close(struct device *dev);
 static inline void clear_tally_counters(long ioaddr);
 
 
+/*
+ * Get power related registers into sane state.
+ * Notify user about past WOL event.
+ */
+static void rhine_power_init(struct device *dev, int drv_flags)
+{
+	long ioaddr = dev->base_addr;
+	uint16 wolstat;
+
+	if (drv_flags & HasWOL) {
+		/* Make sure chip is in power state D0 */
+		writeb(readb(ioaddr + StickyHW) & 0xFC, ioaddr + StickyHW);
+
+		/* Disable "force PME-enable" */
+		writeb(0x80, ioaddr + WOLcgClr);
+
+		/* Clear power-event config bits (WOL) */
+		writeb(0xFF, ioaddr + WOLcrClr);
+		/* More recent cards can manage two additional patterns */
+		//if (drv_flags & rq6patterns)
+		//	iowrite8(0x03, ioaddr + WOLcrClr1);
+
+		/* Save power-event status bits */
+		wolstat = readb(ioaddr + PwrcsrSet);
+		//if (drv_flags & rq6patterns)
+		//	wolstat |= (ioread8(ioaddr + PwrcsrSet1) & 0x03) << 8;
+
+		/* Clear power-event status bits */
+		writeb(0xFF, ioaddr + PwrcsrClr);
+		//if (drv_flags & rq6patterns)
+		//	iowrite8(0x03, ioaddr + PwrcsrClr1);
+
+		if (wolstat) {
+			char *reason;
+			switch (wolstat) {
+			case WOLmagic:
+				reason = "Magic packet";
+				break;
+			case WOLlnkon:
+				reason = "Link went up";
+				break;
+			case WOLlnkoff:
+				reason = "Link went down";
+				break;
+			case WOLucast:
+				reason = "Unicast packet";
+				break;
+			case WOLbmcast:
+				reason = "Multicast/broadcast packet";
+				break;
+			default:
+				reason = "Unknown";
+			}
+			printk(KERN_INFO "%s: Woke system up. Reason: %s.\n",
+			       DRV_NAME, reason);
+		}
+	}
+}
 
 static int via_rhine_init_one ( int device_handle, PCI_Info_s pdev, int chip_id )
 {
@@ -645,6 +713,9 @@ static int via_rhine_init_one ( int device_handle, PCI_Info_s pdev, int chip_id 
 	
 #endif
 
+	dev->base_addr = ioaddr;
+	rhine_power_init(dev, via_rhine_chip_info[chip_id].drv_flags);
+	
 	for (i = 0; i < 6; i++)
 		dev->dev_addr[i] = readb(ioaddr + StationAddr + i);
 
@@ -667,9 +738,6 @@ static int via_rhine_init_one ( int device_handle, PCI_Info_s pdev, int chip_id 
 	/* Reset the chip to erase previous misconfiguration. */
 	writew(CmdReset, ioaddr + ChipCmd);
 
-	dev->base_addr = ioaddr;
-	
-	
 	/*if (!is_valid_ether_addr(dev->dev_addr)) {
 		printk(KERN_ERR "Invalid MAC address for card #%d\n", card_idx);
 		goto err_out_unmap;
@@ -1745,42 +1813,3 @@ status_t device_uninit( int nDeviceID )
 {
     return( 0 );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
