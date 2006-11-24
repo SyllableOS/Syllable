@@ -1,3 +1,9 @@
+* November 24 2006, Kristian Van Der Vliet *
+
+Patched the VIA Rhine driver to fix initalisation on certain Rhine II & III chips
+with Wake-On-LAN  The patch was provided by Tim ter Laak <timl@scintilla.utwente.nl>,
+based on an older patch from an unknown source. 
+
 ---- 0.6.2 Released -------------------------------------------------------------------
 
 * October 25 2006, Arno Klenke *
