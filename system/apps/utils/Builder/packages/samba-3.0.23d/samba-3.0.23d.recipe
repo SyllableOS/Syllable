@@ -1,8 +1,10 @@
 authors
 	Kaj de Vos
 	Kristian Van Der Vliet
-status				testing
+status				broken
 notes
+	Dumps core.
+	lib/charset/LOCALE.so is missing.
 	ADS support is currently buggy.
 	OpenLDAP & Kerberos5 are not required if ADS support is disabled.
 	swat/help/Samba3-Developers-Guide should be classified as developer's documentation.
@@ -12,13 +14,13 @@ home				samba.org
 locations			http://us2.samba.org/samba/ftp/stable/
 
 needs				Syllable >= 0.6.1
-;build-needs
-;	kerberos5
-;	openldap
-recommends			libiconv
+recommends
+	libiconv
+	kerberos5
+	openldap
 
-_configure-env
-;	Samba will not work if we try to override the CFLAGS its configure script picks
+configure-env
+;	Samba will not work if we try to override the CFLAGS its configure script picks:
 	CFLAGS	''
 ;	libldap requires libresolv:
 ;	LDFLAGS	'-lresolv'
@@ -29,7 +31,7 @@ configure-cmd		source/configure
 ;	--with-manpages-langs=
 ;	--with-ads
 
-_make-env
+make-env
 	CFLAGS	''
 ;	LDFLAGS	'-lresolv'
 

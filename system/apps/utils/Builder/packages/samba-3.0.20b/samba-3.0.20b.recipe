@@ -12,10 +12,11 @@ home				samba.org
 locations			http://us2.samba.org/samba/ftp/stable/
 
 needs				Syllable >= 0.6.1
-;build-needs
-;	kerberos5
-;	openldap
-recommends			libiconv
+build-needs			gcc < 4
+recommends
+	libiconv
+	kerberos5
+	openldap
 
 configure-env
 ;	Samba will not work if we try to override the CFLAGS its configure script picks
