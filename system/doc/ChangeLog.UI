@@ -1,4 +1,8 @@
-* November 18, Arno Klenke *
+* November 25, 2006, Rick Caudill *
+The DateTime class is now flattened, so it can be passed through messages.
+Changes were in datetime.h, typecodes.h, and datetime.cpp
+	
+* November 18, 2006 Arno Klenke *
 
 Fixed libsyllable catalog handling
 

@@ -1,4 +1,4 @@
-/*  libatheos.so - the highlevel API library for AtheOS
+/*  libsyllable.so - the highlevel API library for Syllable
  *  Copyright (C) 1999 - 2001 Kurt Skauen
  *
  *  This library is free software; you can redistribute it and/or
@@ -63,6 +63,7 @@ enum type_code
     
     T_SHORTCUTKEY,
 	T_FONT,
+    T_DATETIME,
     
     T_USER = 0x80000000
 };
@@ -71,3 +72,4 @@ enum type_code
 
 
 #endif // __F_UTIL_TYPECODES_H__
+

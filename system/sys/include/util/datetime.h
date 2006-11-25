@@ -21,6 +21,7 @@
 #define	__F_UTIL_DATETIME_H__
 
 #include <atheos/types.h>
+#include <util/flattenable.h>
 #include <util/string.h>
 #include <string>
 
@@ -42,7 +43,7 @@ namespace os
  *
  * \author	Henrik Isaksson (henrik@isaksson.tk)
  *****************************************************************************/
-class DateTime {
+class DateTime : public Flattenable{
 	public:
 	DateTime();
 	DateTime( const DateTime& cDateTime );
@@ -92,6 +93,11 @@ class DateTime {
 	inline		operator std::string() const;
 	inline		operator os::String() const;
 	
+	virtual size_t		GetFlattenedSize( void ) const;
+	virtual status_t	Flatten( uint8* pBuffer, size_t nSize ) const;
+	virtual status_t	Unflatten( const uint8* pBuffer );
+	virtual int			GetType( void )	const;
+	
 	private:
 	class Private;
 	Private	*m;
@@ -115,3 +121,4 @@ DateTime::operator os::String() const
 };
 
 #endif // __F_UTIL_DATETIME_H__
+

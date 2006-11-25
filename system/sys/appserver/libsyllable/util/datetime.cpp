@@ -10,6 +10,29 @@ using namespace os;
 const static int days_elapsed[13] = {	0, 306, 337, 0, 31, 61, 92, 122, 153, 184, 214, 245, 275 };
 const static int days_in_month[13] = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 
+
+/*this is a private struct for flattening DateTime*/
+/*Please do not touch the order of this struct*/
+struct FlattenStruct
+{
+	FlattenStruct(bool bJulian, double vTimeVal, long nYear, long nMonth, long nDay, double vSec)
+	{
+		m_bJulian = bJulian;
+		m_vTimeVal = vTimeVal;
+		m_nYear = nYear;
+		m_nMonth = nMonth;
+		m_nDay = nDay;
+		m_vSec = vSec;
+	}
+	
+	bool		m_bJulian;
+	double		m_vTimeVal;
+	long		m_nYear;
+	long		m_nMonth;
+	long		m_nDay;
+	double		m_vSec;
+};
+
 // -----------------------------------------------------------------------------
 // Private members
 // -----------------------------------------------------------------------------
@@ -17,13 +40,14 @@ const static int days_in_month[13] = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31
 class DateTime::Private {
 
 	public:
-	bool		m_bJulian;
-	double		m_vTimeVal;
-	long		m_nYear;
-	long		m_nMonth;
-	long		m_nDay;
-	double		m_vSec;
+	bool			m_bJulian;
+	double			m_vTimeVal;
+	long			m_nYear;
+	long			m_nMonth;
+	long			m_nDay;
+	double			m_vSec;
 	
+	 
 	Private() {
 		m_bJulian = false;
 	}
@@ -98,6 +122,23 @@ class DateTime::Private {
 
 		m_bJulian = false;
 	}
+	
+	struct FlattenStruct GetFlattenedStruct()
+	{
+		FlattenStruct m_sFlattenable(m_bJulian,m_vTimeVal,m_nYear,m_nMonth,m_nDay,m_vSec);
+		return m_sFlattenable;
+	}
+	
+	void SetFromFlattenStruct(struct FlattenStruct* m_sFlattenedStruct)
+	{
+		m_bJulian = m_sFlattenedStruct->m_bJulian;
+		m_vTimeVal = m_sFlattenedStruct->m_vTimeVal;
+		m_nYear = m_sFlattenedStruct->m_nYear;
+		m_nMonth = m_sFlattenedStruct->m_nMonth;
+		m_nDay = m_sFlattenedStruct->m_nDay;
+		m_vSec = m_sFlattenedStruct->m_vSec;
+	}
+
 };
 
 // -----------------------------------------------------------------------------
@@ -638,4 +679,40 @@ int DateTime::GetDayOfWeek() const
 
 	return (m->m_nDay + y + y/4 - y/100 + y/400 + (31*(m->m_nMonth+12*a-2))/12) % 7;
 }
+
+
+size_t DateTime::GetFlattenedSize( void ) const
+{
+	return sizeof(m->GetFlattenedStruct());
+}
+
+status_t DateTime::Flatten( uint8* pBuffer, size_t nSize ) const
+{
+	FlattenStruct sProps = m->GetFlattenedStruct();
+	if( nSize >= sizeof(sProps) ) 
+	{
+		memcpy( pBuffer, &sProps, sizeof(sProps ) );
+		return 0;
+    } 
+	else 
+	{
+		return -1;
+	}	
+}
+
+status_t DateTime::Unflatten( const uint8* pBuffer )
+{
+	FlattenStruct* psProps;
+	memcpy(psProps,pBuffer,GetFlattenedSize());
+	m->SetFromFlattenStruct(psProps);
+	return 0;
+}
+
+int DateTime::GetType( void ) const
+{
+	return T_DATETIME;
+}
+
+
+
 
