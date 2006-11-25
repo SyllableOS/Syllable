@@ -21,7 +21,7 @@
 
 #include "calc.h"
 
-#include <iostream.h>
+#include <iostream>
 
 using namespace os;
 
@@ -41,5 +41,6 @@ class ToggleButton : public Button
 	private:
 	int		m_Down;
 };
+
 
 

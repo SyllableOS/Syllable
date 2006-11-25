@@ -24,7 +24,7 @@
  */
 
 #include "aboutwin.h"
-#include "resources/Albert.h"
+#include "resources/Calculator.h"
 #include <gui/font.h>
 #include <gui/desktop.h>
 
@@ -112,6 +112,7 @@ void AboutWindow::HandleMessage(Message *msg)
 {
 	Window::HandleMessage(msg);
 }
+
 
 
 

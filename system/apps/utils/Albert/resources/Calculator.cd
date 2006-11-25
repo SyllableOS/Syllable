@@ -1,0 +1,68 @@
+//
+// Albert String Catalog
+//
+// Translated by: Not Translated
+//
+
+MSG_MAINWND_TITLE=0									Calculator
+
+MSG_MAINWND_MENU_FILE=100							File
+MSG_MAINWND_MENU_FILE_CLEARALL							Clear All
+MSG_MAINWND_MENU_FILE_EXIT								Exit
+
+MSG_MAINWND_MENU_BASE=200							Base
+MSG_MAINWND_MENU_BASE_BINARY							Binary (2)
+MSG_MAINWND_MENU_BASE_OCTAL								Octal (8)
+MSG_MAINWND_MENU_BASE_DECIMAL							Decimal (10)
+MSG_MAINWND_MENU_BASE_HEXADECIMAL						Hexadecimal (16)
+
+MSG_MAINWND_MENU_CONSTANTS=300						Constants
+MSG_MAINWND_MENU_CONSTANTS_PI							Pi
+MSG_MAINWND_MENU_CONSTANTS_E							e
+MSG_MAINWND_MENU_CONSTANTS_C							Speed of light (c)
+MSG_MAINWND_MENU_CONSTANTS_ELECTRON						Magnitude of charge of electron
+MSG_MAINWND_MENU_CONSTANTS_GRAV							Gravitational constant (G)
+MSG_MAINWND_MENU_CONSTANTS_PLANCK						Planck's constant (h)
+MSG_MAINWND_MENU_CONSTANTS_BOLTZMANN					Boltzmann constant
+MSG_MAINWND_MENU_CONSTANTS_AVOGADRO						Avogadro's number
+MSG_MAINWND_MENU_CONSTANTS_GAS							Gas constant (R)
+MSG_MAINWND_MENU_CONSTANTS_MASSELECTRON					Mass of electron
+MSG_MAINWND_MENU_CONSTANTS_MASSPROTON					Mass of proton
+MSG_MAINWND_MENU_CONSTANTS_MASSNEUTRON					Mass of neutron
+MSG_MAINWND_MENU_CONSTANTS_PERME						Permeability of free space
+MSG_MAINWND_MENU_CONSTANTS_PERMI						Permittivity of free space
+
+MSG_MAINWND_MENU_WINDOWS=400						Windows
+MSG_MAINWND_MENU_WINDOWS_PAPERROLL						Paper Roll
+MSG_MAINWND_MENU_WINDOWS_BASEN							Base-N
+
+MSG_MAINWND_MENU_HELP=500							Help
+MSG_MAINWND_MENU_HELP_ABOUT								About
+MSG_MAINWND_MENU_HELP_KEYBOARD							Keyboard
+
+MSG_PAPERROLL_TITLE=1000							Albert
+MSG_PAPERROLL_CMENU_COPY								Copy
+MSG_PAPERROLL_CMENU_CLEAR								Clear
+MSG_PAPERROLL_CMENU_SAVE								Save
+
+MSG_BASENWND_TITLE=2000								Base-N
+MSG_BASENWND_BINARY										Binary
+MSG_BASENWND_OCTAL										Octal
+MSG_BASENWND_DECIMAL									Decimal
+MSG_BASENWND_HEXADECIMAL								Hexadecimal
+MSG_BASENWND_BASE64										Base-64
+MSG_BASENWND_ROMAN										Roman
+
+MSG_ABOUTWND_TITLE=3000								About Albert
+MSG_ABOUTWND_TEXTONE									Albert V0.5 2004-02-07 Copyright (C) 2002-2004 Henrik Isaksson.
+MSG_ABOUTWND_TEXTTWO									Albert is released under the GNU General Public License.
+
+MSG_KBDWND_TITLE=4000								Keyboard Shortcuts
+MSG_KBDWND_TEXTONE										Keyboard Shortcuts
+MSG_KBDWND_TEXT09										Decimal digits 0 through 9
+MSG_KBDWND_TEXTAF										Hexadecimal digits A through F
+MSG_KBDWND_TEXTASMD										Addition, Subtraction, Multiplication and Division
+MSG_KBDWND_TEXTENTER									ENTER - Calculate result
+MSG_KBDWND_TEXTBACKSPACE								BACKSPACE - Backspace (surpise!)
+MSG_KBDWND_CLOSE										Close
+

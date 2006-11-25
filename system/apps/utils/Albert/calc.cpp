@@ -16,7 +16,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "resources/Albert.h"
+#include "resources/Calculator.h"
 
 #include <gui/window.h>
 #include <gui/view.h>
@@ -497,6 +497,12 @@ CalcWindow::CalcWindow(const Rect & r)
 	AddMailbox("Main");
 
 	MakeFocus(true);
+	
+	os::Resources cCol( get_image_id() );
+	os::ResStream *pcStream = cCol.GetResourceStream( "icon48x48.png" );
+	os::BitmapImage *pcIcon = new os::BitmapImage( pcStream );
+	SetIcon( pcIcon->LockBitmap() );
+	delete( pcIcon );
 }
 
 CalcWindow::~CalcWindow()
@@ -607,9 +613,9 @@ bool CalcWindow::OkToQuit(void)
 }
 
 CalcApp::CalcApp()
-	:Application("application/x-vnd.digitaliz-Albert")
+	:Application("application/x-vnd.digitaliz-Calculator")
 {
-	SetCatalog("Albert.catalog");
+	SetCatalog("Calculator.catalog");
 	win = new CalcWindow(CRect(350,178));
 	win->Show();
 }
@@ -630,4 +636,7 @@ int main(void)
 
 	return 0;
 }
+
+
+
 

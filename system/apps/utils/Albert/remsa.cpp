@@ -18,7 +18,7 @@
 
 #include "remsa.h"
 #include "postoffice.h"
-#include "resources/Albert.h"
+#include "resources/Calculator.h"
 
 enum {
 	ID_COPY = 5, ID_CLEAR, ID_SAVE
@@ -102,3 +102,4 @@ void Remsa::_AddText( const char *txt )
 		m_TextView->Insert(txt, false);
 	}
 }
+

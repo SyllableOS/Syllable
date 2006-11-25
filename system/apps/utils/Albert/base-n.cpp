@@ -20,8 +20,8 @@
 #include <gui/stringview.h>
 #include <gui/tableview.h>
 #include "postoffice.h"
-#include <iostream.h>
-#include "resources/Albert.h"
+#include <iostream>
+#include "resources/Calculator.h"
 
 void BaseN::HandleMessage(Message *msg)
 {
@@ -255,4 +255,6 @@ void BaseN::Update(int64 i)
 	IToRom(i, txt);
 	m_Roman->Set(txt);
 }
+
+
 
