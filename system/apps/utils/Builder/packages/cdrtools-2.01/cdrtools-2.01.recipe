@@ -8,13 +8,13 @@ warnings
 	build patch cdrtools-2.01
 	build cdrtools-2.01
 
-licenses			GPL
+licenses			CDDL
 
-home				www.fokus.fhg.de/research/cc/glone/employees/joerg.schilling/private/cdrecord.html
+home				cdrecord.berlios.de/old/private/cdrecord.html
 locations			ftp://ftp.berlios.de/pub/cdrecord/
 
 ; Prevent configure - it's deliberately broken:
-configure
+configure			true
 
 install-prefix-var	INS_BASE
 
