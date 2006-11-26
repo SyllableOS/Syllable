@@ -3,22 +3,18 @@ authors
 	Kaj de Vos
 status				broken
 warnings			You have to download and split the source package manually.
+notes				Static libraries do not work in this release
 
 licenses			BSD
 home				web.mit.edu/kerberos/www/
 packages
 ;	Contains the tar.gz and the signature:
-;	krb5-1.4.3-signed.tar
-	krb5-1.4.3
-locations			http://web.mit.edu/kerberos/dist/krb5/1.4/
+;	krb5-1.5.1-signed.tar
+	krb5-1.5.1
+locations			http://web.mit.edu/kerberos/dist/krb5/1.5/
 
-build-needs
-	gawk
-	perl
 recommends			openssl
 test-needs			dejagnu
-
-patch-config		src/config
 
 configure-cmd		src/configure
 configure-options

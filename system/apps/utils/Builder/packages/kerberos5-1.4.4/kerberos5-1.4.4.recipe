@@ -8,8 +8,8 @@ licenses			BSD
 home				web.mit.edu/kerberos/www/
 packages
 ;	Contains the tar.gz and the signature:
-;	krb5-1.4.3-signed.tar
-	krb5-1.4.3
+;	krb5-1.4.4-signed.tar
+	krb5-1.4.4
 locations			http://web.mit.edu/kerberos/dist/krb5/1.4/
 
 build-needs
