@@ -169,6 +169,16 @@ void SrvWindow::PostEvent( bool bIconChanged )
 	}
 }
 
+WindowDecorator* SrvWindow::GetDecorator() const
+{
+	return m_pcDecorator;
+}
+
+WndBorder* SrvWindow::GetWndBorder() const
+{
+	return m_pcWndBorder;
+}
+
 void SrvWindow::ReplaceDecorator()
 {
 	if( m_pcWndBorder == NULL )
@@ -480,6 +490,20 @@ bool SrvWindow::IsLocked( void )
 	return ( m_cMutex.IsLocked() );
 }
 
+void SrvWindow::AddToUpdateList( Layer* pcLayer, bool bUpdateChildren )
+{
+	if( pcLayer->m_bOnUpdateList ) {
+		if( bUpdateChildren )
+			pcLayer->m_bUpdateChildren = true;
+	}
+	else {
+		pcLayer->m_bOnUpdateList = true;
+		pcLayer->m_bUpdateChildren = bUpdateChildren;
+	}
+	m_asUpdateList.push_back( pcLayer->GetHandle() );
+}
+
+
 bool SrvWindow::HasPendingSizeEvents( Layer * pcLayer )
 {
 	return ( m_pcWndBorder != NULL && pcLayer != m_pcWndBorder && m_pcWndBorder->HasPendingSizeEvents() );
@@ -754,10 +778,28 @@ void SrvWindow::R_Render( WR_Render_s * psPkt )
 					Layer *pcParent = m_pcWndBorder->GetParent();
 
 					if( pcParent != NULL )
-					{	// Cant move windows not attached to a desktop
+					{	/* Window is attached to desktop */
 						SetFrame( psMsg->cFrame );
 						nLowest = 0;
 						pcLowestLayer = pcParent;
+					}
+					else
+					{	/* Window is not yet attached to desktop. In this case, change the saved positions for each desktop */
+						if( GetFlags() & WND_INDEP_DESKTOP_FRAMES )
+						{	/* set only for active desktop */
+							if( get_active_desktop() != -1 )
+							{
+								m_asDTState[get_active_desktop()].m_cFrame = psMsg->cFrame;
+							}
+							else { dbprintf( "Attempt to SetFrame when g_nActiveDesktop == -1!?" ); }
+						}
+						else
+						{	/* set for all desktops */
+							for( int i = 0; i < 32; i++ )
+							{
+								m_asDTState[i].m_cFrame = psMsg->cFrame;
+							}
+						}
 					}
 				}
 				else
@@ -1980,4 +2022,5 @@ thread_id SrvWindow::Run()
 	}
 	return ( hThread );
 }
+
 

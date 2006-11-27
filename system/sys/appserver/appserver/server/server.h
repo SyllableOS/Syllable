@@ -88,7 +88,7 @@ public:
     port_id m_hWndReplyPort;
 private:
 	void RescanFonts(void);
-	void SwitchDesktop(int nDesktop);
+	void SwitchDesktop(int nDesktop, bool bBringWindow = true );
     int	LoadDecorator( const std::string& cPath, os::op_create_decorator** ppfCreate );
 
     void	DispatchMessage( os::Message* pcReq );
@@ -107,4 +107,5 @@ private:
 };
 
 #endif	/*	INTERFACE_SERVER_HPP	*/
+
 

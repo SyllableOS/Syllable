@@ -17,7 +17,9 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
+ 
+#define DEBUG( level, fmt, args... ) do { if ( level < g_nDebugLevel ) printf( fmt, ## args ); } while(0)
+ 
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
@@ -50,7 +52,7 @@
 
 using namespace os;
 
-void SetDesktop( uint32 );
+void SetDesktop( int nDesktop );
 
 class MyWindow:public Window
 {
@@ -63,7 +65,6 @@ class MyWindow:public Window
 	void FrameMoved( const Point & cDelta );
 };
 
-
 class MyApp:public Application
 {
       public:
@@ -71,6 +72,7 @@ class MyApp:public Application
 
 	bool OkToQuit();
 	void HandleMessage( Message * pcMessage );
+	thread_id Run();
 };
 
 TermSettings *g_pcSettings = NULL;
@@ -81,16 +83,17 @@ ScrollBar *g_pcScrollBar = NULL;
 int g_nShowHelp = 0;
 int g_nShowVersion = 0;
 int g_nDebugLevel = 0;
-uint32 g_nDesktop = CURRENT_DESKTOP;
+uint32 g_nDesktop = os::Desktop::ACTIVE_DESKTOP;
 bool g_bWindowBorder = true;
 bool g_bFullScreen = false;
 extern char **environ;
 
 int g_nMasterPTY;
 
-thread_id g_hShellThread;
-thread_id g_hUpdateThread;
-thread_id g_hReadThread;
+thread_id g_hShellThread = 0;
+thread_id g_hUpdateThread = 0;
+thread_id g_hReadThread = 0;
+thread_id g_hMainThread = 0;
 
 static volatile bool g_bWindowActive = true;
 
@@ -102,10 +105,23 @@ MyApp::MyApp():Application( "application/x-vnd.KHS-aterm" )
 {
 }
 
+thread_id MyApp::Run()
+{
+	return( Looper::Run() );  /* Want it to run in a new thread */
+}
+
+
+/**
+ * Called when M_QUIT message received; possibly from user pressing Alt+Q or system shutting down.
+ *
+ * Kills the shell thread, whose death will be caught by main thread.
+ */
 bool MyApp::OkToQuit()
 {
-	return ( true );
+	if( g_hShellThread > 0 ) kill( g_hShellThread, SIGKILL );
+	return( false );
 }
+
 
 /**
  * Generic message handler
@@ -160,19 +176,12 @@ void MyWindow::HandleMessage( Message * pcMsg )
 /**
  * Generic window closing handler
  *
- * When user choose to close the terminal window, the shell process is killed.
+ * When user closes the window, kill the shell. Its death will be caught by main thread.
  */
 bool MyWindow::OkToQuit()
 {
-	g_bWindowActive = false;
-	close( g_nMasterPTY );
-	if( g_hShellThread > 0 )
-	{
-		/* If shell thread is not yet finished, kill it. */
-		kill( g_hShellThread, SIGKILL );
-		/* Shell termination will be catched by main() */
-	}
-	return ( true );
+	if( g_hShellThread > 0 ) kill( g_hShellThread, SIGKILL );
+	return( false );
 }
 
 
@@ -206,7 +215,7 @@ void OpenWindow()
 		cWinRect.bottom = cWinRect.top + 200;
 	}
 	/* Instanciate window */
-	g_pcWindow = new MyWindow( cWinRect, "_sterm_", "Syllable Terminal", g_bWindowBorder ? 0 : WND_NO_CLOSE_BUT | WND_NO_ZOOM_BUT | WND_NO_DEPTH_BUT | WND_NO_TITLE | WND_NO_BORDER, g_nDesktop );
+	g_pcWindow = new MyWindow( cWinRect, "_sterm_", "Syllable Terminal", g_bWindowBorder ? 0 : WND_NO_CLOSE_BUT | WND_NO_ZOOM_BUT | WND_NO_DEPTH_BUT | WND_NO_TITLE | WND_NO_BORDER, (g_nDesktop == os::Desktop::ACTIVE_DESKTOP ? CURRENT_DESKTOP : 1 << g_nDesktop) );
 
 	Rect cTermFrame = g_pcWindow->GetBounds();
 	Rect cScrollBarFrame = cTermFrame;
@@ -242,7 +251,6 @@ void OpenWindow()
 
 	else
 		g_pcWindow->SetFrame( cWinRect, true );
-
 
 	//Declare resize alignment 
 	if( !g_bFullScreen )
@@ -350,7 +358,7 @@ static void usage( const char *pzName, bool bFull )
 		printf( "  -F --fullscreen     Fullscreen the terminal\n" );
 		printf( "  -h --help           Display this help and exit\n" );
 		printf( "  -i --ibeam_halo     Put an white halo around the i-beam cursor\n" );
-		printf( "  -s --screen         Set the desktop number for the terminal\n" );
+		printf( "  -s --screen=n       Open the terminal window on desktop n (between 1 and 32)\n" );
 		printf( "  -v --version        Display version information and exit\n" );
 	}
 }
@@ -369,7 +377,7 @@ int main( int argc, char **argv )
 	MyApp *pcMyApp;
 
 	pcMyApp = new MyApp();
-	pcMyApp->Unlock();
+	pcMyApp->Run();
 
 	/* load user's settings */
 	g_pcSettings = new TermSettings();
@@ -423,7 +431,7 @@ int main( int argc, char **argv )
 			break;
 
 		case 's':
-			SetDesktop( atol( optarg ) );
+			SetDesktop( atoi( optarg ) );
 			break;
 
 		default:
@@ -527,56 +535,36 @@ int main( int argc, char **argv )
 
 		OpenWindow();
 
+		g_hMainThread = getpid();
+
 		g_hUpdateThread = spawn_thread( "update", ( void * )RefreshThread, 5, 0, NULL );
 		resume_thread( g_hUpdateThread );
 
 		g_hReadThread = spawn_thread( "read", ( void * )ReadPTY, 10, 0, NULL );
 		resume_thread( g_hReadThread );
+		
+		pid_t hPid = waitpid( g_hShellThread, NULL, 0 );
+		g_hShellThread = 0;
+		g_bWindowActive = false;
+	
+		/* Kill all threads */
+		if( g_hReadThread > 0 ) kill( g_hReadThread, SIGKILL );
+		if( g_hUpdateThread > 0 ) kill( g_hReadThread, SIGKILL );
+		close( g_nMasterPTY );
 
-		while( g_bWindowActive && NULL != g_pcWindow )
-		{
-			pid_t hPid = waitpid( g_hShellThread, NULL, 0 );
-
-			if( hPid == g_hShellThread )
-			{
-				g_hShellThread = 0;
-				// thread was killed by ourselve, by closing the window
-				// g_bWindowActive is false
-			}
-			else if( hPid < 0 && errno == ECHILD )
-			{
-				// It seems that "No child process" error is raised
-				// when shell ends...
-				// g_bWindowActive is left true.
-				break;
-			}
-			else
-			{
-				perror( "ATERM: Waiting for shell to finish" );
-				// g_bWindowActive is left true.
-				break;
-			}
-		}
-
-		if( g_bWindowActive )
-		{
-			if( g_pcWindow != NULL )
-			{
-				g_pcWindow->Quit();
-			}
-		}
-
-		kill( g_hReadThread, SIGKILL );
-		kill( g_hUpdateThread, SIGKILL );
+		MyApp::GetInstance()->Quit();  /* this will close the window, kill the application thread */
 	}
 	return ( 0 );
 }
 
-/*taken from atail :)*/
-void SetDesktop( uint32 d )
+void SetDesktop( int nDesktop )
 {
-	if( d < 32 )
-		g_nDesktop = d ? ( 1L << ( d - 1 ) ) : ~0;
-	else
-		printf( "ATERM:  Invalid desktop number\n" );
+	if( nDesktop > 0 && nDesktop <= 32 ) /* Passed a specific desktop number */
+	{
+		g_nDesktop = nDesktop - 1;  /* system counts from 0, user counts from 1 */
+	}
+	else printf( "aterm: invalid parameter '%i' for -s option; defaulting to current desktop.\n" );
 }
+
+
+

@@ -346,32 +346,12 @@ void AppServer::SendKeyCode( int nKeyCode, int nQual )
 	{
 		if( nKeyCode >= 0x02 && nKeyCode <= 0x0d )	// F1-F12
 		{
-			SwitchDesktop( nKeyCode - 0x02 );
+			SwitchDesktop( nKeyCode - 0x02, true );
 			return;
 		}
 		if( nKeyCode == 17 )
 		{
-			g_cLayerGate.Close();
-			SrvWindow *pcActiveWnd = get_active_window( false );
-
-			SrvSprite::Hide();
-			if( toggle_desktops() )
-			{
-				if( pcActiveWnd != NULL && ( InputNode::GetMouseButtons() & 0x01 ) )
-				{
-					uint32 nNewMask = 1 << get_active_desktop();
-
-					if( InputNode::GetMouseButtons() & 0x02 )
-					{
-						nNewMask |= pcActiveWnd->GetDesktopMask();
-					}
-					pcActiveWnd->SetDesktopMask( nNewMask );
-					set_active_window( pcActiveWnd );
-				}
-				g_pcTopView->UpdateRegions();
-			}
-			SrvSprite::Unhide();
-			g_cLayerGate.Open();
+			SwitchDesktop( get_prev_desktop(), true );
 			return;
 		}
 		if( nKeyCode == 0x26 )	// ALT
@@ -613,7 +593,18 @@ void AppServer::DispatchMessage( Message * pcReq )
 
 			pcReq->FindInt( "desktop", &nDesktop );
 			if( nDesktop < 32 && nDesktop >= 0 )
-				SwitchDesktop( nDesktop );
+				SwitchDesktop( nDesktop, false );
+				/* 
+				NOTE: As currently implemented (November 2006), appserver crashes could result if the user is
+				dragging or resizing a window or clicking on a minimise, etc button when an app sends DR_SET_DESKTOP.
+				This is because when bBringWindow is false in SwitchDesktop(), no checking is done if something is being clicked or dragged,
+				and the appserver is left in an undefined state with the dragged/clicked window not attached to the screen.
+				This does not occur when changing desktops via Alt+Fn as bBringWindow is true in that case.
+				However, bBringWindow needs to be false here, as if it were true, clicking a 'change desktop' button in an app would always
+				have the side-effect of bringing that app to the new desktop. In the case of the Dock & switcher, the dock would be moved
+				off the old desktop to only the new desktop.
+				  -- AWM  awmorp@gmail.com
+				*/
 			break;
 		}
 	case DR_MINIMIZE_ALL:
@@ -652,7 +643,6 @@ void AppServer::DispatchMessage( Message * pcReq )
 		
 		break;
 	}
-
 	case DR_CLOSE_WINDOWS:
 		{
 			g_cLayerGate.Close();
@@ -678,12 +668,6 @@ void AppServer::DispatchMessage( Message * pcReq )
 			if( ( nDesktop < 32 && nDesktop >= 0 ) || ( nDesktop == os::Desktop::ACTIVE_DESKTOP ) )
 				set_desktop_max_window_frame( nDesktop, cFrame );
 			g_cLayerGate.Open();
-			
-			if( pcReq->IsSourceWaiting() )
-			{
-				os::Message cReply;
-				pcReq->SendReply( &cReply );
-			}
 			break;
 		}
 	case DR_GET_DESKTOP_MAX_WINFRAME:
@@ -895,7 +879,7 @@ int32 AppServer::CloseWindows( void *pData )
 		{
 			if( !pcApp->IsClosing() )
 			{
-				dbprintf( "Closing %s ...\n", pcApp->GetName().c_str() );
+				dbprintf( "Closing %s ... \n", pcApp->GetName().c_str() );
 				pcApp->SetClosing( true );
 				os::Message cMsg( os::M_QUIT );
 				if( pcApp->GetName() == "application/syllable-Dock" )
@@ -933,25 +917,42 @@ int32 AppServer::CloseWindows( void *pData )
 	return ( 0 );
 }
 
-void AppServer::SwitchDesktop( int nDesktop )
+/* SwitchDesktop: change to desktop nDesktop, bringing the active window along if necessary */
+void AppServer::SwitchDesktop( int nDesktop, bool bBringWindow )
 {
+	if( nDesktop == get_active_desktop() ) return;
+	
 	g_cLayerGate.Close();
 
 	SrvWindow *pcActiveWnd = get_active_window( false );
 
 	SrvSprite::Hide();
-	set_desktop( nDesktop );
-	if( pcActiveWnd != NULL && ( InputNode::GetMouseButtons() & 0x01 ) )
+	/* See note in DispatchMessage(), DR_SET_DESKTOP, about bBringWindow = false 
+	   - appserver will crash if user is clicking on a titlebar button (eg minimize) when SwitchDesktop( n, false ) is called */
+	if( bBringWindow && pcActiveWnd != NULL && ( InputNode::GetMouseButtons() ) ) /* If clicking on a window, bring it to new desktop */
 	{
-		uint32 nNewMask = 1 << nDesktop;
+		Rect cFrame = pcActiveWnd->GetFrame();
+		uint32 nNewMask = pcActiveWnd->GetDesktopMask();
 
-		if( InputNode::GetMouseButtons() & 0x02 )
+		if( !(InputNode::GetMouseButtons() & 0x02) && !(nNewMask == os::ALL_DESKTOPS) )
 		{
-			nNewMask |= pcActiveWnd->GetDesktopMask();
+			nNewMask &= ~(1 << get_active_desktop());  /* Remove it from the old desktop */
 		}
+		nNewMask |= 1 << nDesktop;   /* Add window to new desktop */
 		pcActiveWnd->SetDesktopMask( nNewMask );
+		set_active_window( pcActiveWnd ); /* Restore focus to pcActiveWnd, which is messed up by SetDesktopMask() */
+		
+		/* If moving a window between desktops, make it keep its previous frame */
+		pcActiveWnd->m_asDTState[nDesktop].m_cFrame = cFrame;
+
+		set_desktop( nDesktop, false ); 
 		set_active_window( pcActiveWnd );
 	}
+	else
+	{
+		set_desktop( nDesktop, true );
+	}
+	
 	g_pcTopView->UpdateRegions();
 	SrvSprite::Unhide();
 	g_cLayerGate.Open();
@@ -1020,7 +1021,6 @@ int main( int argc, char **argv )
 	dbprintf( "WARNING : layers.device failed to initiate itself!!!\n" );
 	return ( 0 );
 }
-
 
 
 

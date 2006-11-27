@@ -78,17 +78,7 @@ SrvSprite::SrvSprite( const IRect & cBounds, const IPoint & cPos, const IPoint &
 	if( pcImage == NULL )
 		s_cInstances.push_back( this );
 	else {
-		uint nPos = 0;
-		
-		if( bLastPos )
-		{
-			for( ; nPos < s_cInstances.size(); ++nPos )
-			{
-				if( pcImage == NULL )
-					break;
-			}
-		}
-		s_cInstances.insert( s_cInstances.begin() + nPos, this );
+		s_cInstances.insert( s_cInstances.begin() + (bLastPos ? s_cInstances.size() : 0), this );
 	}
 	SrvSprite::Unhide();
 	s_cLock.Unlock();
@@ -565,3 +555,5 @@ void SrvSprite::MoveBy( const IPoint & cDelta )
 	}
 	s_cLock.Unlock();
 }
+
+

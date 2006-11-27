@@ -40,6 +40,7 @@ public:
     void	     	 SetSizeLimits( const os::Point& cMinSize, const os::Point& cMaxSize );
     void	     	 GetSizeLimits( os::Point* pcMinSize, os::Point* pcMaxSize );
     void		 SetAlignment( const os::IPoint& cSize, const os::IPoint& cSizeOffset, const os::IPoint& cPos, const os::IPoint& cPosOffset );
+    os::Rect	 AlignFrame( const os::Rect& cFrame );
     
     virtual void	 SetFrame( const os::Rect& cRect );
     virtual void	 Paint( const os::IRect& cUpdateRect, bool bUpdate = false );
@@ -75,4 +76,6 @@ private:
 };
 
 #endif // __F_WNDBORDER_H__
+
+
 

@@ -53,6 +53,8 @@ public:
 	os::String	BuildEventIDString();
 	void	PostEvent( bool bIconChanged = false );
     void	PostUsrMessage( os::Message* pcMsg );
+	os::WindowDecorator*	GetDecorator() const;
+	WndBorder*	GetWndBorder() const;
     void	ReplaceDecorator();
     void	NotifyWindowFontChanged( bool bToolWindow );
     void	Quit();
@@ -90,18 +92,7 @@ public:
     bool	IsOffScreen() const	{ return( m_bOffscreen ); }
     int		GetPaintCounter() const { return( atomic_read( &m_nPendingPaintCounter ) ); }
 	void	IncPaintCounter() { atomic_inc( &m_nPendingPaintCounter ); }
-	void	AddToUpdateList( Layer* pcLayer, bool bUpdateChildren )
-	{
-		if( pcLayer->m_bOnUpdateList ) {
-			if( bUpdateChildren )
-				pcLayer->m_bUpdateChildren = true;
-		}
-		else {
-			pcLayer->m_bOnUpdateList = true;
-			pcLayer->m_bUpdateChildren = bUpdateChildren;
-		}
-		m_asUpdateList.push_back( pcLayer->GetHandle() );
-	}
+	void	AddToUpdateList( Layer* pcLayer, bool bUpdateChildren );
 	
     bool	HasPendingSizeEvents( Layer* pcLayer );
     
@@ -147,7 +138,6 @@ private:
     std::string		m_cTitle;
     uint32		m_nFlags;
     uint32		m_nDesktopMask;
-    uint32		m_nDeskTopMask;
     SrvBitmap*		m_pcUserBitmap;
     SrvApplication*	m_pcApp;
     Layer*			m_pcTopView;
@@ -168,4 +158,5 @@ private:
 };
 
 #endif	//	INTERFACE_SLAYER_HPP
+
 

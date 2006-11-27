@@ -11,7 +11,7 @@
 using namespace os;
 
 
-MainWindow::MainWindow(const Rect& cRect) : os::Window(cRect,"login_window", MSG_MAINWND_TITLE,WND_NO_BORDER | WND_BACKMOST )
+MainWindow::MainWindow(const Rect& cRect) : os::Window(cRect,"login_window", MSG_MAINWND_TITLE, WND_NO_BORDER | WND_BACKMOST, ALL_DESKTOPS )
 {
 	/*do nothing in here, let init do all the work*/
 }
@@ -181,3 +181,4 @@ void MainWindow::Authorize(const char* pzLoginName, const char* pzPassword )
         pzLoginName = NULL;
     }
 }
+

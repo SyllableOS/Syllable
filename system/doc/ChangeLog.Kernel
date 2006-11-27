@@ -1,3 +1,8 @@
+* November 27 2006, Kristian Van Der Vliet *
+
+Applied a further set of code cleanups to the Via Rhine driver from
+Tim ter Laak <timl@scintilla.utwente.nl>
+
 * November 24 2006, Kristian Van Der Vliet *
 
 Patched the VIA Rhine driver to fix initalisation on certain Rhine II & III chips

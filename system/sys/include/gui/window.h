@@ -53,6 +53,7 @@ enum
     WND_SEND_WINDOWS_CHANGED = 0x00000800,
     WND_SYSTEM		= 0x00010000,
     WND_SINGLEBUFFER = 0x00020000,
+    WND_INDEP_DESKTOP_FRAMES 	= 0x00040000,
 };
 
 enum
@@ -199,3 +200,4 @@ private:
 } // end of namespace
 
 #endif	// __F_GUI_WINDOW_H__
+

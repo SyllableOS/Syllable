@@ -30,6 +30,7 @@ int  get_desktop_config( int* pnActiveDesktop, os::screen_mode* psMode, std::str
 void set_desktop_screenmode( int nDesktop, const os::screen_mode& sMode );
 
 int get_active_desktop();
+int get_prev_desktop();
 os::Rect get_desktop_max_window_frame( int nDesktop );
 void set_desktop_max_window_frame( int nDesktop, os::Rect cWinSize );
 
@@ -40,10 +41,11 @@ void set_active_window( SrvWindow* pcWindow, bool bNotifyPrevious = true );
 void add_window_to_desktop( SrvWindow* pcWindow );
 void remove_window_from_desktop( SrvWindow* pcWindow );
 void remove_from_focusstack( SrvWindow* pcWindow );
-void set_desktop( int nNum );
-bool toggle_desktops();
+void set_desktop( int nNum, bool bNotifyActiveWnd = true );
 
 //void set_desktop_screenmode( int nDesktop, int nWidth, int nHeight, os::color_space eColorSpace, float vRefreshRate,
 //			     float vHPos, float vVPos, float vHSize, float vVSize );
 
 #endif // __F_DESKTOP_H__
+
+

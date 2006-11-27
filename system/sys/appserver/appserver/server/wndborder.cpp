@@ -234,6 +234,11 @@ void WndBorder::SetAlignment( const IPoint & cSize, const IPoint & cSizeOffset, 
 	m_cAlignPosOff.y = cPosOffset.y % cPos.y;
 }
 
+os::Rect WndBorder::AlignFrame( const os::Rect & cFrame )
+{
+	return( static_cast < IRect > (AlignRect( static_cast < IRect > (cFrame), static_cast < IRect > (m_pcDecorator->GetBorderSize()) ) ) );
+}
+
 //----------------------------------------------------------------------------
 // NAME:
 // DESC:
@@ -781,3 +786,4 @@ bool WndBorder::HasPendingSizeEvents() const
 {
 	return ( m_bWndMovePending );
 }
+

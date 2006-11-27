@@ -26,6 +26,7 @@
 #include "config.h"
 
 #include <gui/desktop.h>
+#include <gui/window.h>
 #include <util/messenger.h>
 
 using namespace os;
@@ -89,6 +90,11 @@ WinSelect::WinSelect():Layer( NULL, g_pcTopView, "", Rect( 0, 0, 1, 1 ), 0, NULL
 		{
 			continue;
 		}
+		if( pcWindow->GetFlags() & WND_SYSTEM )
+		{
+			continue;
+		}
+		
 		m_cWindows.push_back( pcWindow );
 		nHeight += nAscender + ( -nDescender ) + 2;
 		const char *pzStr = pcWindow->GetTitle();
@@ -327,3 +333,4 @@ std::vector < SrvWindow * >WinSelect::GetWindows()
 {
 	return m_cWindows;
 }
+

@@ -37,6 +37,7 @@
 #include <unistd.h>
 
 #include "swindow.h"
+#include "wndborder.h"
 #include "layer.h"
 #include "server.h"
 #include "config.h"
@@ -268,6 +269,9 @@ static bool setup_screenmode( int nDesktop, bool bForce )
 				g_asDesktops[nDesktop].m_sScreenMode.m_nBytesPerLine = cModes[i].m_nBytesPerLine;
 				g_asDesktops[nDesktop].m_sScreenMode.m_eColorSpace = cModes[i].m_eColorSpace;
 				g_asDesktops[nDesktop].m_sScreenMode.m_vRefreshRate = 60.0f;
+				g_asDesktops[nDesktop].m_cMaxWindowFrame = os::Rect( 0, 0, g_asDesktops[nDesktop].m_sScreenMode.m_nWidth - 1,
+												g_asDesktops[nDesktop].m_sScreenMode.m_nHeight - 1 );
+
 
 				// If this fails we try all the screen-modes before giving up.
 				if( g_pcDispDrv->SetScreenMode( g_asDesktops[nDesktop].m_sScreenMode ) == 0 )
@@ -284,6 +288,9 @@ static bool setup_screenmode( int nDesktop, bool bForce )
 					g_asDesktops[nDesktop].m_sScreenMode.m_nBytesPerLine = cModes[i].m_nBytesPerLine;
 					g_asDesktops[nDesktop].m_sScreenMode.m_eColorSpace = cModes[i].m_eColorSpace;
 					g_asDesktops[nDesktop].m_sScreenMode.m_vRefreshRate = 60.0f;
+					g_asDesktops[nDesktop].m_cMaxWindowFrame = os::Rect( 0, 0, g_asDesktops[nDesktop].m_sScreenMode.m_nWidth - 1,
+												g_asDesktops[nDesktop].m_sScreenMode.m_nHeight - 1 );
+
 					if( g_pcDispDrv->SetScreenMode( g_asDesktops[nDesktop].m_sScreenMode ) == 0 )
 					{
 						bModeSet = true;
@@ -313,9 +320,6 @@ static bool setup_screenmode( int nDesktop, bool bForce )
 	// update screenmode with correct nBytesPerLine
 	g_asDesktops[nDesktop].m_sScreenMode.m_nBytesPerLine = g_pcScreenBitmap->m_nBytesPerLine;
 	
-	g_asDesktops[nDesktop].m_cMaxWindowFrame = os::Rect( 0, 0, g_asDesktops[nDesktop].m_sScreenMode.m_nWidth - 1,
-												g_asDesktops[nDesktop].m_sScreenMode.m_nHeight - 1 );
-
 	if( g_nActiveDesktop != -1 )
 	{
 		g_pcTopView->SetFrame( Rect( 0, 0, g_pcScreenBitmap->m_nWidth - 1, g_pcScreenBitmap->m_nHeight - 1 ) );
@@ -337,23 +341,77 @@ void set_desktop_screenmode( int nDesktop, const screen_mode & sMode )
 {
 	assert( nDesktop >= 0 && nDesktop < 32 );
 	SrvWindow *pcWindow;
+	int nOldWidth = g_asDesktops[nDesktop].m_sScreenMode.m_nWidth, nOldHeight = g_asDesktops[nDesktop].m_sScreenMode.m_nHeight;
 
 	g_asDesktops[nDesktop].m_sScreenMode = sMode;
 
 	if( nDesktop == g_nActiveDesktop )
 	{
 		setup_screenmode( nDesktop, true );
+		g_asDesktops[nDesktop].m_cMaxWindowFrame.left = g_asDesktops[nDesktop].m_cMaxWindowFrame.top = 0;
+		g_asDesktops[nDesktop].m_cMaxWindowFrame.right = g_asDesktops[nDesktop].m_sScreenMode.m_nWidth - 1;
+		g_asDesktops[nDesktop].m_cMaxWindowFrame.bottom = g_asDesktops[nDesktop].m_sScreenMode.m_nHeight - 1;
+		
+		/* The following code copied from set_desktop() */
+		int nMoveTally = 0;
+		
+		/* Notify windows of res change, make sure all windows are on-screen if changing to smaller resolution */
+		for( pcWindow = g_asDesktops[nDesktop].m_pcFirstWindow; pcWindow != NULL; pcWindow = pcWindow->m_asDTState[nDesktop].m_pcNextWindow )
+		{
+			Layer *pcTopWid = pcWindow->GetTopView();
+			Rect cFrame = pcWindow->GetFrame();
+			
+			if( g_asDesktops[nDesktop].m_sScreenMode.m_nWidth < nOldWidth || g_asDesktops[nDesktop].m_sScreenMode.m_nHeight < nOldHeight )
+			{
+				bool bMoved = false;
+				/* Check if bottom-right of window is offscreen */
+				if( cFrame.right > g_asDesktops[nDesktop].m_cMaxWindowFrame.right )
+				{
+					cFrame.left = 5 + 12*(nMoveTally % 6) + g_asDesktops[nDesktop].m_cMaxWindowFrame.left;
+					/* if window size exceeds screen resolution, then resize it; else just move it to top-left of screen so it is visible */
+					cFrame.right = ( (pcWindow->m_asDTState[nDesktop].m_cFrame.Width() > g_asDesktops[nDesktop].m_cMaxWindowFrame.Width() && !(pcWindow->GetFlags() & WND_NOT_H_RESIZABLE)) ? g_asDesktops[nDesktop].m_cMaxWindowFrame.right - 56 + cFrame.left : pcWindow->m_asDTState[nDesktop].m_cFrame.Width() + cFrame.left );
+					bMoved = true;
+				}
+				/* Check if bottom-right of window is offscreen */
+				if( cFrame.bottom > g_asDesktops[nDesktop].m_cMaxWindowFrame.bottom )
+				{
+					cFrame.top = 50 + 12*(nMoveTally % 6) + g_asDesktops[nDesktop].m_cMaxWindowFrame.top;
+					/* if window size exceeds screen resolution, then resize it; else just move it to top-left of screen so it is visible */
+					cFrame.bottom = ( (pcWindow->m_asDTState[nDesktop].m_cFrame.Height() > g_asDesktops[nDesktop].m_cMaxWindowFrame.Height() && !(pcWindow->GetFlags() & WND_NOT_V_RESIZABLE)) ? g_asDesktops[nDesktop].m_cMaxWindowFrame.bottom - 111 + cFrame.top : pcWindow->m_asDTState[nDesktop].m_cFrame.Height() + cFrame.top );
+					bMoved = true;
+				}
+				if( bMoved )
+				{
+					nMoveTally++;
+					if( pcWindow->GetWndBorder() )
+					{
+						cFrame = pcWindow->GetWndBorder()->AlignFrame( cFrame );
+					}
+					pcWindow->m_asDTState[nDesktop].m_cFrame = cFrame;
+					
+					pcWindow->SetFrame( cFrame );
+					pcTopWid->Invalidate( true );  /* Window needs to be redrawn */
+					Messenger *pcTarget = pcWindow->GetAppTarget();
+
+					if( pcTarget != NULL )
+					{
+						Message cMsg( M_WINDOW_FRAME_CHANGED );
+
+						cMsg.AddRect( "_new_frame", cFrame );
+						if( pcTarget->SendMessage( &cMsg ) < 0 )
+						{
+							dbprintf( "Error: set_desktop_screenmode() failed to send M_WINDOW_FRAME_CHANGED to %s\n", pcWindow->GetTitle() );
+						}
+					}
+				}
+			}
+			pcWindow->ScreenModeChanged( IPoint( g_pcScreenBitmap->m_nWidth, g_pcScreenBitmap->m_nHeight ), g_pcScreenBitmap->m_eColorSpc );
+		}
+
 		g_pcTopView->ScreenModeChanged();
 		g_pcTopView->Invalidate( true );
 		g_pcTopView->SetDirtyRegFlags();
 		g_pcTopView->UpdateRegions();
-
-		/* Tell the windows about the screenmode change */
-		for( pcWindow = g_asDesktops[g_nActiveDesktop].m_pcFirstWindow; pcWindow != NULL; pcWindow = pcWindow->m_asDTState[g_nActiveDesktop].m_pcNextWindow )
-		{
-
-			pcWindow->ScreenModeChanged( IPoint( g_pcScreenBitmap->m_nWidth, g_pcScreenBitmap->m_nHeight ), g_pcScreenBitmap->m_eColorSpc );
-		}
 	}
 }
 
@@ -513,13 +571,13 @@ void remove_from_focusstack( SrvWindow * pcWindow )
 }
 
 //----------------------------------------------------------------------------
-// NAME:
-// DESC:
+// NAME: set_desktop
+// DESC: Activates the specified desktop. nNum: number of desktop to activate; bNotifyActiveWnd: if false, do not activate any windows on new desktop - this is used when moving a window between desktops
 // NOTE:
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-void set_desktop( int nNum )
+void set_desktop( int nNum, bool bNotifyActiveWnd )
 {
 	Layer *pcLayer;
 	SrvWindow *pcPrev = NULL;
@@ -528,6 +586,7 @@ void set_desktop( int nNum )
 	{
 		return;
 	}
+
 
 //    SrvSprite::Hide();
 	std::set < Layer * >cViews;
@@ -539,11 +598,13 @@ void set_desktop( int nNum )
 		while( ( pcLayer = g_pcTopView->GetTopChild() ) )
 		{
 			SrvWindow *pcWindow = pcLayer->GetWindow();
-
 			__assertw( pcWindow != NULL );
 
+			Rect cFrame = pcWindow->GetFrame();
+			
 			pcWindow->DesktopActivated( g_nPrevDesktop, false, IPoint( g_pcScreenBitmap->m_nWidth, g_pcScreenBitmap->m_nHeight ), g_pcScreenBitmap->m_eColorSpc );
 
+			/* Save the old desktop's window list */
 			if( pcPrev == NULL )
 			{
 				g_asDesktops[g_nActiveDesktop].m_pcFirstWindow = pcWindow;
@@ -553,7 +614,19 @@ void set_desktop( int nNum )
 				pcPrev->m_asDTState[g_nActiveDesktop].m_pcNextWindow = pcWindow;
 			}
 			pcWindow->m_asDTState[g_nActiveDesktop].m_pcNextWindow = NULL;
-			pcWindow->m_asDTState[g_nActiveDesktop].m_cFrame = pcWindow->GetFrame();
+			
+			/* Save each window's position  */
+			if( pcWindow->GetFlags() & WND_INDEP_DESKTOP_FRAMES )
+			{ /* save frame position only for this desktop */
+				pcWindow->m_asDTState[g_nActiveDesktop].m_cFrame = cFrame;
+			}
+			else
+			{  /* save frame position to all desktops */
+				for( int i = 0; i < 32; i++ )
+				{
+					pcWindow->m_asDTState[i].m_cFrame = cFrame;
+				}
+			}
 
 			pcPrev = pcWindow;
 			g_pcTopView->RemoveChild( pcLayer );
@@ -561,22 +634,66 @@ void set_desktop( int nNum )
 			cViews.insert( pcLayer );
 		}
 	}
+	/* deactivate active window of old desktop */
+	if( bNotifyActiveWnd && g_asDesktops[g_nActiveDesktop].m_pcActiveWindow != NULL ) { g_asDesktops[g_nActiveDesktop].m_pcActiveWindow->WindowActivated( false ); }
+	
 	bool bScreenModeChanged = setup_screenmode( nNum, false );
-
+	/* Has screen resolution decreased? */
+	bool bResolutionDecreased = ( (g_asDesktops[nNum].m_sScreenMode.m_nWidth < g_asDesktops[g_nActiveDesktop].m_sScreenMode.m_nWidth) || (g_asDesktops[nNum].m_sScreenMode.m_nHeight < g_asDesktops[g_nActiveDesktop].m_sScreenMode.m_nHeight) );
+	
 	g_nActiveDesktop = nNum;
 
 	SrvWindow *pcWindow;
 
+	int nMoveTally = 0;
 	for( pcWindow = g_asDesktops[nNum].m_pcFirstWindow; pcWindow != NULL; pcWindow = pcWindow->m_asDTState[nNum].m_pcNextWindow )
 	{
 		Layer *pcTopWid = pcWindow->GetTopView();
+		Rect cFrame = pcWindow->m_asDTState[nNum].m_cFrame;
 
 		g_pcTopView->AddChild( pcTopWid, false );
+		/* Make sure all windows are unfocused */
+		if( pcWindow->GetDecorator() ) pcWindow->GetDecorator()->SetFocusState( false );  /* GetDecorator() could be NULL for bitmap windows? */
 
 		cViews.erase( pcTopWid );
+		
+		/* If changing to desktop with smaller resolution, make sure all windows are on-screen */
+		/* The following code is re-used in set_desktop_screenmode() */
+		if( bResolutionDecreased )
+		{
+			bool bMoved = false;
+			/* Check if bottom-right of window is offscreen */
+			if( cFrame.right > g_asDesktops[nNum].m_cMaxWindowFrame.right )
+			{
+				cFrame.left = 5 + 12*(nMoveTally % 6) + g_asDesktops[nNum].m_cMaxWindowFrame.left;
+				/* if window size exceeds screen resolution, then resize it; else just move it to top-left of screen so it is visible */
+				cFrame.right = ( (pcWindow->m_asDTState[nNum].m_cFrame.Width() > g_asDesktops[nNum].m_cMaxWindowFrame.Width() && !(pcWindow->GetFlags() & WND_NOT_H_RESIZABLE)) ? g_asDesktops[nNum].m_cMaxWindowFrame.right - 56 + cFrame.left : pcWindow->m_asDTState[nNum].m_cFrame.Width() + cFrame.left );
+				bMoved = true;
+			}
+			/* Check if bottom-right of window is offscreen */
+			if( cFrame.bottom > g_asDesktops[nNum].m_cMaxWindowFrame.bottom )
+			{
+				cFrame.top = 20 + 12*(nMoveTally % 6) + g_asDesktops[nNum].m_cMaxWindowFrame.top;
+				/* if window size exceeds screen resolution, then resize it; else just move it to top-left of screen so it is visible */
+				cFrame.bottom = ( (pcWindow->m_asDTState[nNum].m_cFrame.Height() > g_asDesktops[nNum].m_cMaxWindowFrame.Height() && !(pcWindow->GetFlags() & WND_NOT_V_RESIZABLE)) ? g_asDesktops[nNum].m_cMaxWindowFrame.bottom - 81 + cFrame.top : pcWindow->m_asDTState[nNum].m_cFrame.Height() + cFrame.top );
+				bMoved = true;
+			}
+			if( bMoved )
+			{
+				if( pcWindow->GetWndBorder() )
+				{
+					cFrame = pcWindow->GetWndBorder()->AlignFrame( cFrame );
+				}
+				pcWindow->m_asDTState[nNum].m_cFrame = cFrame;
+				nMoveTally++; 
+			}
+		}
+		/* TODO: compensate for window borders when calculating new positions, using pcWindow->GetDecorator()->GetBorderSize() [see wndborder.cpp line 655] */
+		
 		if( pcWindow->GetFrame() != pcWindow->m_asDTState[nNum].m_cFrame )
 		{
 			pcWindow->SetFrame( pcWindow->m_asDTState[nNum].m_cFrame );
+			pcTopWid->Invalidate( true );  /* Window needs to be redrawn */
 			Messenger *pcTarget = pcWindow->GetAppTarget();
 
 			if( pcTarget != NULL )
@@ -596,12 +713,15 @@ void set_desktop( int nNum )
 			pcWindow->ScreenModeChanged( IPoint( g_pcScreenBitmap->m_nWidth, g_pcScreenBitmap->m_nHeight ), g_pcScreenBitmap->m_eColorSpc );
 		}
 	}
+	/* Activate the new desktop's active window */
+	if( bNotifyActiveWnd && g_asDesktops[nNum].m_pcActiveWindow != NULL ) { g_asDesktops[nNum].m_pcActiveWindow->WindowActivated( true ); }
+	
 	if( bScreenModeChanged )
 	{
 		g_pcTopView->Invalidate( true );
 	}
-	std::set < Layer * >::iterator i;
 
+	std::set < Layer * >::iterator i;
 	for( i = cViews.begin(); i != cViews.end(  ); ++i )
 	{
 		( *i )->DeleteRegions();
@@ -610,22 +730,14 @@ void set_desktop( int nNum )
 //    SrvSprite::Unhide();
 }
 
-bool toggle_desktops()
-{
-	if( g_nPrevDesktop != g_nActiveDesktop )
-	{
-		set_desktop( g_nPrevDesktop );
-		return ( true );
-	}
-	else
-	{
-		return ( false );
-	}
-}
-
 int get_active_desktop()
 {
 	return ( g_nActiveDesktop );
+}
+
+int get_prev_desktop()
+{
+	return ( g_nPrevDesktop );
 }
 
 os::Rect get_desktop_max_window_frame( int nDesktop )
@@ -769,5 +881,7 @@ bool init_desktops()
 	g_pcDispDrv->MouseOn();
 	return ( 0 );
 }
+
+
 
 

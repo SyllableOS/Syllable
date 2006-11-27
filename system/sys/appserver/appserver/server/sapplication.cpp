@@ -27,6 +27,7 @@
 #include <appserver/protocol.h>
 #include <util/messenger.h>
 #include <signal.h>
+#include <gui/desktop.h>
 
 #include "sapplication.h"
 #include "swindow.h"
@@ -930,7 +931,7 @@ void SrvApplication::DispatchMessage( Message * pcReq )
 			{
 				cReply.AddInt32( "error", EINVAL );
 			}
-			else
+			else if( (nDesktop < 32 && nDesktop >= 0) || nDesktop == os::Desktop::ACTIVE_DESKTOP )
 			{
 				screen_mode sMode;
 
@@ -947,11 +948,16 @@ void SrvApplication::DispatchMessage( Message * pcReq )
 				cReply.AddFloat( "h_size", sMode.m_vHSize );
 				cReply.AddFloat( "v_size", sMode.m_vVSize );
 				cReply.AddString( "backdrop_path", cBackdropPath.c_str() );
-				if( nDesktop == get_active_desktop() )
+				if( nDesktop == get_active_desktop() || nDesktop == os::Desktop::ACTIVE_DESKTOP )
 				{
 					cReply.AddInt32( "screen_area", g_pcScreenBitmap->m_hArea );
 				}
 				cReply.AddInt32( "error", 0 );
+			}
+			else
+			{  /* out-of-range desktop number */
+			    dbprintf( "AR_LOCK_DESKTOP: Invalid desktop number %i\n", nDesktop );
+				cReply.AddInt32( "error", EINVAL );
 			}
 			pcReq->SendReply( &cReply );
 			break;
@@ -1732,3 +1738,6 @@ SrvApplication *get_active_app()
 		return ( pcWnd->GetApp() );
 	}
 }
+
+
+
