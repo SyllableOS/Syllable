@@ -1,3 +1,14 @@
+* November 27, 2006, Kristian Van Der Vliet *
+
+- ATerm
+	Run() the application in a new thread, so message loop is running and M_QUIT messages will be handled
+	Fixed handling of -s option
+
+- dlogin
+	Added ALL_DESKTOPS to constructor so window is shown on all desktops
+
+Both changes from Anthony Morphett <awmorp@gmail.com>
+
 * November 25 2006, Rick Caudill *
 
 - Albert

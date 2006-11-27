@@ -1,4 +1,35 @@
+* November 27, 2006, Kristian Van Der Vliet *
+
+Changes to appserver & libsyllable
+	* libsyllable Window::SetFrame() before Window::Show() now properly handled
+	* os::Desktop class now doesn't crash appserver app_thread if constructed with
+	  invalid desktop number
+	* Added flag WND_INDEP_DESKTOP_FRAMES to indicate that a window's frames on
+	  different desktops should be independent (ie moving a window on one desktop
+	  doesn't move it on all desktops)
+	* Aterm -s switch fixed; Application message loop started via Application->Run()
+	  so now M_QUIT messages are handled properly
+	* Login window set to show on all desktops
+	* System windows not shown on Alt-Tab windowselector
+	* Changes to appserver's desktop-switching behaviour:
+		- window resizes/moves on one desktop affect the window on all desktops
+		  (unless flag WND_INDEP_DESKTOP_FRAMES is set)
+		- clicking any mouse button on a window while switching desktops with
+		  Alt+Fn/Alt+~ will bring the window to the new desktop.
+		- clicking right mouse button clones the window, so it will be present
+		  on both old and new desktops.
+		- clicking other buttons removes the window from the old desktop and adds
+		  it to the new desktop (old behaviour: left mouse button puts window only
+		  on new deskop; left+right click puts window only on new & prev desktops)
+		- fixed problems & appserver crashes if switching desktop while dragging a
+		  window or clicking minimise button, etc
+		- when switching to lower-resolution, all desktop windows are moved into
+		  visible screen area
+
+All from Anthony Morphett <awmorp@gmail.com>
+
 * November 25, 2006, Rick Caudill *
+
 The DateTime class is now flattened, so it can be passed through messages.
 Changes were in datetime.h, typecodes.h, and datetime.cpp
 	
