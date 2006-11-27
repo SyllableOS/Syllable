@@ -589,12 +589,13 @@ static inline void clear_tally_counters(long ioaddr);
  * Get power related registers into sane state.
  * Notify user about past WOL event.
  */
-static void rhine_power_init(struct device *dev, int drv_flags)
+static void rhine_power_init(struct device *dev)
 {
 	long ioaddr = dev->base_addr;
 	uint16 wolstat;
+	struct netdev_private *np = dev->priv;
 
-	if (drv_flags & HasWOL) {
+	if (np->drv_flags & HasWOL) {
 		/* Make sure chip is in power state D0 */
 		writeb(readb(ioaddr + StickyHW) & 0xFC, ioaddr + StickyHW);
 
@@ -687,6 +688,12 @@ static int via_rhine_init_one ( int device_handle, PCI_Info_s pdev, int chip_id 
 	memset(np, 0, sizeof(*np));
 	dev->priv = np;
 
+	np->next_module = root_via_dev;
+	root_via_dev = dev;
+	
+	np->chip_id = chip_id;
+	np->drv_flags = via_rhine_chip_info[chip_id].drv_flags;
+	np->pdev = pdev;
 	
 
 #ifdef USE_MEM
@@ -714,7 +721,7 @@ static int via_rhine_init_one ( int device_handle, PCI_Info_s pdev, int chip_id 
 #endif
 
 	dev->base_addr = ioaddr;
-	rhine_power_init(dev, via_rhine_chip_info[chip_id].drv_flags);
+	rhine_power_init(dev);
 	
 	for (i = 0; i < 6; i++)
 		dev->dev_addr[i] = readb(ioaddr + StationAddr + i);
@@ -746,12 +753,6 @@ static int via_rhine_init_one ( int device_handle, PCI_Info_s pdev, int chip_id 
 	dev->irq = pdev.u.h0.nInterruptLine;
 
 	spinlock_init( &np->lock, "via_spinlock" );
-	np->next_module = root_via_dev;
-	root_via_dev = dev;
-	
-	np->chip_id = chip_id;
-	np->drv_flags = via_rhine_chip_info[chip_id].drv_flags;
-	np->pdev = pdev;
 
 
 	/* The lower four bits are the media type. */
