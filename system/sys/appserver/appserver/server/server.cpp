@@ -668,6 +668,12 @@ void AppServer::DispatchMessage( Message * pcReq )
 			if( ( nDesktop < 32 && nDesktop >= 0 ) || ( nDesktop == os::Desktop::ACTIVE_DESKTOP ) )
 				set_desktop_max_window_frame( nDesktop, cFrame );
 			g_cLayerGate.Open();
+			
+			if( pcReq->IsSourceWaiting() )
+			{
+				os::Message cReply;
+				pcReq->SendReply( &cReply );
+			}
 			break;
 		}
 	case DR_GET_DESKTOP_MAX_WINFRAME:
