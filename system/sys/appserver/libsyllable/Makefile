@@ -2,7 +2,7 @@ CFLAGS   += -c -fexceptions
 CXXFLAGS += -c -fexceptions -I.
 AOPTS    = -c
 
-CATALOGS = da de es hu nl pl pt-br ru sv
+CATALOGS = da de es fr hu nl pl pt-br ru sv
 
 LIBBIN = /system/libs
 
