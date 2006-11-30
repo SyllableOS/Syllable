@@ -1,0 +1,21 @@
+//
+// BZoom String Catalog
+//
+// Translated by: nebu/Jan Niemeyer
+//
+
+MSG_MAINWND_TITLE=100							BZoom
+
+MSG_MAINWND_MENU_APP=200						Anwendung
+MSG_MAINWND_MENU_APP_EXIT						Beenden
+
+MSG_MAINWND_MENU_VIEW=300						Ansicht
+MSG_MAINWND_MENU_VIEW_MAGNIFICATION				Vergrößerung
+
+MSG_MAINWND_MENU_HELP=400						Hilfe
+MSG_MAINWND_MENU_HELP_ABOUT						Über
+
+MSG_ABOUTWND_TITLE=1000							Über BZoom
+MSG_ABOUTWND_TEXT								BZoom V1.0\n\nEine simple Bildschirmlupe für AtheOS.\nBasiert auf AZoom von Chir.\nBZoom wurde unter den Bedingungen\nder GNU GPL veröffentlicht.
+MSG_ABOUTWND_OK									Ok
+
