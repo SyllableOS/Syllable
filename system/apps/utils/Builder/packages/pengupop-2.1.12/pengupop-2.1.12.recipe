@@ -1,0 +1,21 @@
+authors				Kaj de Vos
+status				testing
+
+headline			Networked multiplayer puzzle game
+description
+	Finally a networked multiplayer game in the vein of the puzzle classic Bust a Move/Puzzle Bobble! Beat your friends in this addictive game, or play against a random opponent! Remember to sign up to participate in the score system.
+licenses			GPL-2
+
+home				www.junoplay.com/pengupop
+;packages			pengupop-latest
+locations			http://www.junoplay.com/files/
+
+needs				sdl >= 1.2
+
+configure-env		LDFLAGS '-lm'
+
+documentation
+	README COPYING ChangeLog AUTHORS
+;	Currently empty:
+;	NEWS
+
