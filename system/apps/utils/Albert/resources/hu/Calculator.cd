@@ -4,7 +4,7 @@
 // Translated by: Dávid Horváth
 //
 
-MSG_MAINWND_TITLE=0									Albert
+MSG_MAINWND_TITLE=0									Calculator
 
 MSG_MAINWND_MENU_FILE=100							Fájl
 MSG_MAINWND_MENU_FILE_CLEARALL							Összes törlése
@@ -53,9 +53,9 @@ MSG_BASENWND_HEXADECIMAL								Hex
 MSG_BASENWND_BASE64										Base-64
 MSG_BASENWND_ROMAN										Roman
 
-MSG_ABOUTWND_TITLE=3000								Az Albert névjegye
-MSG_ABOUTWND_TEXTONE									Albert V0.5 2004-02-07 Copyright (C) 2002-2004 Henrik Isaksson.
-MSG_ABOUTWND_TEXTTWO									Az Albert a GNU General Public License védelme alatt áll.
+MSG_ABOUTWND_TITLE=3000								Az Calculator névjegye
+MSG_ABOUTWND_TEXTONE									Calculator V0.5 2004-02-07 Copyright (C) 2002-2004 Henrik Isaksson.
+MSG_ABOUTWND_TEXTTWO									Az Calculator a GNU General Public License védelme alatt áll.
 
 MSG_KBDWND_TITLE=4000								Gyorsbillentyük
 MSG_KBDWND_TEXTONE										Gyorsbillentyük

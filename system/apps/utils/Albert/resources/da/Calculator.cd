@@ -5,7 +5,7 @@
 // With help from the users on Newz.dk
 //
 
-MSG_MAINWND_TITLE=0									Albert
+MSG_MAINWND_TITLE=0									Regnemaskine
 
 MSG_MAINWND_MENU_FILE=100							Program
 MSG_MAINWND_MENU_FILE_CLEARALL							Slet alt
@@ -54,9 +54,9 @@ MSG_BASENWND_HEXADECIMAL								Hexadecimal
 MSG_BASENWND_BASE64										Base-64
 MSG_BASENWND_ROMAN										Romertal
 
-MSG_ABOUTWND_TITLE=3000								Om Albert
-MSG_ABOUTWND_TEXTONE									Albert V0.5 2004-02-07 Copyright (C) 2002-2004 Henrik Isaksson.
-MSG_ABOUTWND_TEXTTWO									Albert er udgivet under GNU General Public License.
+MSG_ABOUTWND_TITLE=3000								Om Regnemaskine
+MSG_ABOUTWND_TEXTONE									Regnemaskine V0.5 2004-02-07 Copyright (C) 2002-2004 Henrik Isaksson.
+MSG_ABOUTWND_TEXTTWO									Regnemaskine er udgivet under GNU General Public License.
 
 MSG_KBDWND_TITLE=4000								Tastatur Genveje
 MSG_KBDWND_TEXTONE										Tastatur Genveje

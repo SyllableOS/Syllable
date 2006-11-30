@@ -4,7 +4,7 @@
 // Translated by: Christos KYRATZIS
 //
 
-MSG_MAINWND_TITLE=0									Albert
+MSG_MAINWND_TITLE=0									Calculator
 
 MSG_MAINWND_MENU_FILE=100							Fichier
 MSG_MAINWND_MENU_FILE_CLEARALL						Tout vider
@@ -53,9 +53,9 @@ MSG_BASENWND_HEXADECIMAL							Hexadecimale
 MSG_BASENWND_BASE64									Base-64
 MSG_BASENWND_ROMAN									Romane
 
-MSG_ABOUTWND_TITLE=3000								À propos d'Albert
-MSG_ABOUTWND_TEXTONE								Albert V0.5 2004-02-07 Copyright (C) 2002-2004 Henrik Isaksson.
-MSG_ABOUTWND_TEXTTWO								Albert est mis à disposition sous license GNU General Public License.
+MSG_ABOUTWND_TITLE=3000								À propos d'Calculator
+MSG_ABOUTWND_TEXTONE								Calculator V0.5 2004-02-07 Copyright (C) 2002-2004 Henrik Isaksson.
+MSG_ABOUTWND_TEXTTWO								Calculator est mis à disposition sous license GNU General Public License.
 
 MSG_KBDWND_TITLE=4000								Raccourcis clavier
 MSG_KBDWND_TEXTONE									Raccourcis clavier

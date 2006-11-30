@@ -4,7 +4,7 @@
 // Translated by: Daniel Eriksson
 //
 
-MSG_MAINWND_TITLE=0									Albert
+MSG_MAINWND_TITLE=0									Calculator
 
 MSG_MAINWND_MENU_FILE=100							Fil
 MSG_MAINWND_MENU_FILE_CLEARALL							Rensa allt
@@ -53,9 +53,9 @@ MSG_BASENWND_HEXADECIMAL								Hexadecimal
 MSG_BASENWND_BASE64										Bas-64
 MSG_BASENWND_ROMAN										Romersk
 
-MSG_ABOUTWND_TITLE=3000								Om Albert
-MSG_ABOUTWND_TEXTONE									Albert V0.5 2004-02-07 Copyright (C) 2002-2004 Henrik Isaksson.
-MSG_ABOUTWND_TEXTTWO									Albert har släppts under GNU GPL.
+MSG_ABOUTWND_TITLE=3000								Om Calculator
+MSG_ABOUTWND_TEXTONE									Calculator V0.5 2004-02-07 Copyright (C) 2002-2004 Henrik Isaksson.
+MSG_ABOUTWND_TEXTTWO									Calculator har släppts under GNU GPL.
 
 MSG_KBDWND_TITLE=4000								Tangentbordsgenvägar
 MSG_KBDWND_TEXTONE										Tangentbordsgenvägar
