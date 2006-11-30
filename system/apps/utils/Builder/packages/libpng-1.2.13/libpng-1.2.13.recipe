@@ -2,13 +2,12 @@ authors				Kaj de Vos
 status				testing
 notes				See contrib/gregbook/ to build examples
 
-;inherits			sourceforge
+inherits			sourceforge
 
 licenses			OS
 home				www.libpng.org
-;packages			libpng/libpng-1.2.13
+packages			libpng/libpng-1.2.13
 ;locations			ftp://ftp.simplesystems.org/pub/libpng/png/src/
-locations			http://prdownloads.sourceforge.net/libpng/
 
 _test-targets
 	check
