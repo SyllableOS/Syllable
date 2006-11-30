@@ -1,0 +1,35 @@
+//
+// DLogin String Catalog
+//
+// Translated by: nebu/Jan Niemeyer
+//
+
+MSG_MAINWND_TITLE=0							Anmelden:
+
+MSG_MAINWND_PASSWORD=100					Passwort:
+MSG_MAINWND_BUTTON_LOGIN					_Anmelden
+MSG_MAINWND_BUTTON_SHUTDOWN					_Herunterfahren
+
+MSG_SHUTDOWNWND_TITLE=200					Ausschalten oder Neustarten?
+MSG_SHUTDOWNWND_TEXT						Wie möchten sie fortfahren?:
+MSG_SHUTDOWNWND_BUTTON_CANCEL				_Abbrechen
+MSG_SHUTDOWNWND_BUTTON_OK					_Ok
+MSG_SHUTDOWNWND_DROPDOWN_SHUTDOWN			Herunterfahren
+MSG_SHUTDOWNWND_DROPDOWN_REBOOT				Neustart
+
+MSG_ALERT_NOTSELECTED_TITLE=1000			Bitte wählen Sie ein Symbol.
+MSG_ALERT_NOTSELECTED_TEXT					Sie müssen ein Benutzersymbol vor dem Anmelden auswählen.
+MSG_ALERT_NOTSELECTED_OK					Ok
+
+MSG_ALERT_WRONGPASS_TITLE=2000				Anmeldung fehlgeschlagen
+MSG_ALERT_WRONGPASS_TEXT					Falsches Passwort.
+MSG_ALERT_WRONGPASS_OK						Ok
+
+MSG_ALERT_NOUSER_TITLE=3000					Anmeldung fehlgeschlagen
+MSG_ALERT_NOUSER_TEXT						Dieser Benutzer ist nicht zur Benutzung des Computers eingetragen.
+MSG_ALERT_NOUSER_OK							Ok
+
+MSG_ALERT_CANTFINDUSERS_TITLE=4000			Benutzer konnten nicht geladen werden
+MSG_ALERT_CANTFINDUSERS_TEXT				Die Benutzer konnten nicht geladen werden, wenden Sie sich bitte an das Entwicklerteam.
+MSG_ALERT_CANTFINDUSERS_OK					Ok
+

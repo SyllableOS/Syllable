@@ -1,0 +1,68 @@
+//
+// DiskManager String Catalog
+//
+// Translated by: Ruud kuin
+//
+
+MSG_MAINWND_TITLE=0							Syllable Partitie Manager
+
+MSG_MAINWND_MENU_PROGRAM=100				Programma
+MSG_MAINWND_MENU_PROGRAM_EXIT				Stop
+
+MSG_MAINWND_LIST_DEVICE=200					Schijf
+MSG_MAINWND_LIST_PARTITIONS					Partities
+MSG_MAINWND_LIST_SIZE						Grootte
+MSG_MAINWND_LIST_MB							%.2fMb
+
+MSG_MAINWND_BUTONS_QUIT=300					Stop
+MSG_MAINWND_BUTONS_PARTITION				Partitioneren...
+
+MSG_PARTWND_TITLE=500						Partitie Instellingen 
+
+MSG_PARTWND_DISKPARAM=600					Schijf parameters:
+MSG_PARTWND_DISKPARAM_DISKSIZE				Schijfgrootte: %.2fMb
+MSG_PARTWND_DISKPARAM_EXTSIZE				Uitgebreide Partitie Size: %.2fMb
+MSG_PARTWND_DISKPARAM_UNITSIZE				Eenheidsgrootte: %ld sectoren van %ld bytes (%ld bytes)
+MSG_PARTWND_DISKPARAM_UNUSESSPACE			Ongebruikte ruimte:
+
+MSG_PARTWND_PARTINFO_UNUSED=700				Ongebruikt
+MSG_PARTWND_PARTINFO_UNKNOWN				*ONBEKEND*
+MSG_PARTWND_PARTINFO_PARTSIZEZERO			0.0Mb
+MSG_PARTWND_PARTINFO_PARTSIZE				%.2fMb
+
+MSG_PARTWND_BUTTONS_CANCEL=800				Annuleren
+MSG_PARTWND_BUTTONS_OK						OK
+MSG_PARTWND_BUTTONS_DONE					Klaar
+MSG_PARTWND_BUTTONS_CLEAR					Wissen
+MSG_PARTWND_BUTTONS_EDITEXT					Aanpassing Uitgebreid
+MSG_PARTWND_BUTTONS_SORT					Sorteer
+MSG_PARTWND_BUTTONS_ADD						Toevoegen
+
+MSG_ALERTWND_ERREXT_EXTENDED=1000			Fout!
+MSG_ALERTWND_ERREXT_EXTENDED_TEXT			Ongeldige uitgebreide partitietabel!\nDe uitgebreide partitie bevat meer dan\neen geneste uitgebreide partities\nAanpassing van de partitietabel kan verlies\nvan een of meer logische partitie(-s) veroorzaken!
+MSG_ALERTWND_ERREXT_EXTENDED_OK				OK
+
+MSG_ALERTWND_ERREXT_LOGICAL=2000			Fout!
+MSG_ALERTWND_ERREXT_LOGICAL_TEXT			Ongeldige uitgebreide partitietabel!\nDe uitgebreide partitie bevat meer dan\neen logische partities\nAanpassing van de partitietabel kan verlies\nvan een of meer logische partitie(-s) veroorzaken!
+MSG_ALERTWND_ERREXT_LOGICAL_OK				OK
+
+MSG_ALERTWND_CHANGEDLAYOUT=3000				Waarschuwing!
+MSG_ALERTWND_CHANGEDLAYOUT_TEXT				U heeft de indeling van een of meer partities aangepast.\nAlle data op deze partities zal verloren gaan.\nWeet u zeker dat u de partitietabel wilt overschrijven?
+MSG_ALERTWND_CHANGEDLAYOUT_CANCEL			Annuleren
+MSG_ALERTWND_CHANGEDLAYOUT_OK				OK
+
+MSG_ALERTWND_CHANGEDTYPE=4000				Waarschuwing!
+MSG_ALERTWND_CHANGEDTYPE_TEXT				U heeft het type van een of meer partities aangepast.\nDit zou de data van de partities niet hoeven beschadigen\nmaar, het zou kunnen dat de partitie niet meer gekoppeld kan worden.\nWeet u zeker dat u de partitietabel wilt overschrijven?
+MSG_ALERTWND_CHANGEDTYPE_CANCEL				Annuleren
+MSG_ALERTWND_CHANGEDTYPE_OK					OK
+
+MSG_ALERTWND_CHANGEDSTATUS=5000				Waarschuwing!
+MSG_ALERTWND_CHANGEDSTATUS_TEXT				U heeft de status van een of meer partities aangepast.\nDit zou de data van de partities niet hoeven beschadigen\nmaar, het zou kunnen dat van deze partitie niet meer opgestart kan worden.\nWeet u zeker dat u de partitietabel wilt overschrijven?
+MSG_ALERTWND_CHANGEDSTATUS_CANCEL			Annuleren
+MSG_ALERTWND_CHANGEDSTATUS_OK				OK
+
+MSG_ALERTWND_DELPART=6000					Waarschuwing!
+MSG_ALERTWND_DELPART_TEXT					Deze handeling zal de huidige partitie wissen.\nAlle data op deze partities zal verloren gaan.\nWeet u zeker dat dit de bedoeling is?
+MSG_ALERTWND_DELPART_CANCEL					Annuleren
+MSG_ALERTWND_DELPART_OK						OK
+

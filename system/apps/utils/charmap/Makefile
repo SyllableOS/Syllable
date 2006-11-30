@@ -2,7 +2,7 @@ OPTS   = -c
 
 EXE	= CharMap
 
-CATALOGS = da es hu pt-br ru sv
+CATALOGS = da de es hu nl pt-br ru sv
 
 OBJDIR	:= objs
 INSTALLDIR := /Applications/CharMap

@@ -1,0 +1,68 @@
+//
+// Albert String Catalog
+//
+// Translated by: nebu/Jan Niemeyer
+//
+
+MSG_MAINWND_TITLE=0									Albert
+
+MSG_MAINWND_MENU_FILE=100							Datei
+MSG_MAINWND_MENU_FILE_CLEARALL						Alles löschen
+MSG_MAINWND_MENU_FILE_EXIT							Beenden
+
+MSG_MAINWND_MENU_BASE=200							Base
+MSG_MAINWND_MENU_BASE_BINARY						Binär (2)
+MSG_MAINWND_MENU_BASE_OCTAL							Octal (8)
+MSG_MAINWND_MENU_BASE_DECIMAL						Dezimal (10)
+MSG_MAINWND_MENU_BASE_HEXADECIMAL					Hexadezimal (16)
+
+MSG_MAINWND_MENU_CONSTANTS=300						Konstanten
+MSG_MAINWND_MENU_CONSTANTS_PI						Pi
+MSG_MAINWND_MENU_CONSTANTS_E						e
+MSG_MAINWND_MENU_CONSTANTS_C						Lichtgeschwindigkeit (c)
+MSG_MAINWND_MENU_CONSTANTS_ELECTRON					Elementarladung
+MSG_MAINWND_MENU_CONSTANTS_GRAV						Gravitationskonstante (G)
+MSG_MAINWND_MENU_CONSTANTS_PLANCK					Planck'sches Wirkungsquantum (h)
+MSG_MAINWND_MENU_CONSTANTS_BOLTZMANN				Boltzmann constant
+MSG_MAINWND_MENU_CONSTANTS_AVOGADRO					Avogadro-Konstante
+MSG_MAINWND_MENU_CONSTANTS_GAS						Universelle Gaskonstante (R)
+MSG_MAINWND_MENU_CONSTANTS_MASSELECTRON				Masse eines Elektrons
+MSG_MAINWND_MENU_CONSTANTS_MASSPROTON				Masse eine Protons
+MSG_MAINWND_MENU_CONSTANTS_MASSNEUTRON				Masse eines Neutrons
+MSG_MAINWND_MENU_CONSTANTS_PERME					Permeability of free space
+MSG_MAINWND_MENU_CONSTANTS_PERMI					Permittivity of free space
+
+MSG_MAINWND_MENU_WINDOWS=400						Fenster
+MSG_MAINWND_MENU_WINDOWS_PAPERROLL					Papierrolle
+MSG_MAINWND_MENU_WINDOWS_BASEN						Base-N
+
+MSG_MAINWND_MENU_HELP=500							Hilfe
+MSG_MAINWND_MENU_HELP_ABOUT							Über
+MSG_MAINWND_MENU_HELP_KEYBOARD						Tastatur
+
+MSG_PAPERROLL_TITLE=1000							Albert
+MSG_PAPERROLL_CMENU_COPY							Kopieren
+MSG_PAPERROLL_CMENU_CLEAR							Löschen
+MSG_PAPERROLL_CMENU_SAVE							Speichern
+
+MSG_BASENWND_TITLE=2000								Base-N
+MSG_BASENWND_BINARY									Binär
+MSG_BASENWND_OCTAL									Octal
+MSG_BASENWND_DECIMAL								Dezimal
+MSG_BASENWND_HEXADECIMAL							Hexadezimal
+MSG_BASENWND_BASE64									Base-64
+MSG_BASENWND_ROMAN									Roman
+
+MSG_ABOUTWND_TITLE=3000								Über Albert
+MSG_ABOUTWND_TEXTONE								Albert V0.5 2004-02-07 Copyright (C) 2002-2004 Henrik Isaksson.
+MSG_ABOUTWND_TEXTTWO								Albert wurde unter den Bedingungen der GNU General Public License veröffentlicht.
+
+MSG_KBDWND_TITLE=4000								Tastenkürzel
+MSG_KBDWND_TEXTONE									Tastenkürzel
+MSG_KBDWND_TEXT09									Dezimalzahlen von 0 bis 9
+MSG_KBDWND_TEXTAF									Hexadezimalzahlen von A bis F
+MSG_KBDWND_TEXTASMD									Addition, Subtraktion, Multiplikation und Division
+MSG_KBDWND_TEXTENTER								Eingabe - Berechne das Ergebnis
+MSG_KBDWND_TEXTBACKSPACE							BACKSPACE - Backspace (Überraschung!)
+MSG_KBDWND_CLOSE									Schließen
+

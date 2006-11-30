@@ -1,0 +1,54 @@
+//
+// ColdFish string catalog
+//
+// Translated by: Christos KYRATZIS
+//
+
+MSG_MAINWND_TITLE=100						ColdFish
+MSG_MAINWND_PLAY							Jouer
+MSG_MAINWND_STOP							Stop
+MSG_MAINWND_PAUSE							Pause
+MSG_MAINWND_PLAYLIST						Liste de lecture
+MSG_MAINWND_FILE							Fichier
+MSG_MAINWND_TRACK							Piste
+MSG_MAINWND_STREAM							Flux de données
+MSG_MAINWND_LENGTH							Longueur
+MSG_MAINWND_PLAYING							Lecture en cours
+
+MSG_MAINWND_MENU_APPLICATION=200			Application
+MSG_MAINWND_MENU_APPLICATION_ABOUT			À propos...
+MSG_MAINWND_MENU_APPLICATION_QUIT			Quitter
+
+MSG_MAINWND_MENU_PLAYLIST=300				Liste de lecture
+MSG_MAINWND_MENU_PLAYLIST_SELECT			Selectionner...
+MSG_MAINWND_MENU_PLAYLIST_INPUT				Ouvrir l'Entrée...
+
+MSG_MAINWND_MENU_FILE=400					Fichier
+MSG_MAINWND_MENU_FILE_ADD					Ajouter...
+MSG_MAINWND_MENU_FILE_REMOVE				Retirer
+
+MSG_MAINWND_MENU_VIEW=500					Vue
+MSG_MAINWND_MENU_VIEW_PLAYLIST				Liste de lecture
+
+MSG_ABOUTWND_TITLE=1000						A propos ColdFish
+MSG_ABOUTWND_TEXT							\nA Music Player\nCopyright 2003 Arno Klenke\nCopyright 2003 Kristian Van Der Vliet\nCopyright 2005 Rick Caudill\n\nColdFish est mis à disposition sous license LGPL.
+MSG_ABOUTWND_OK								OK
+
+MSG_ERRWND_TITLE=1100						ColdFish Erreur
+MSG_ERRWND_OK								OK
+MSG_ERRWND_CANTPLAY							ColdFish ne peut jouer ce fichier.
+MSG_ERRWND_CANTDELETE						La piste jou�e actuellement ne peut être effacé.
+MSG_ERRWND_NOTPLAYLIST						Le fichier sélectionné n'est pas une liste de lecture.
+
+MSG_PLAYLIST_UNKNOWN=2000					Inconnu
+MSG_PLAYLIST_DEFAULT						Liste de lecture par d�faut
+
+MSG_PLAYLISTWND_TITLE=2100					Sélectionner liste de lecture - ColdFish
+MSG_PLAYLISTWND_FILE						Fichier
+MSG_PLAYLISTWND_OPEN						Ouvrir
+MSG_PLAYLISTWND_NOTE						Note: Si vous essayez d'ouvrir une liste de lecture inexistante,\nalors une nouvelle liste de lecture sera créée
+
+MSG_LCD_TRACK=3000							Piste
+
+MSG_MIMETYPE_APPLICATION_XCOLDFISHPLAYLIST=10000		ColdFish Liste de lecture
+

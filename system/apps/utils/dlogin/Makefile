@@ -4,7 +4,7 @@ COPTS = -c -fexceptions -ffast-math
 APPBIN = /bin/dlogin
 OBJS = main.o application.o mainwindow.o loginview.o loginimageview.o commonfuncs.o shutdown.o
 
-CATALOGS = da nl es hu sv
+CATALOGS = da de es hu nl sv
 
 OBJDIR	:= objs
 OBJS	:= $(addprefix $(OBJDIR)/,$(OBJS))

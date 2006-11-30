@@ -1,0 +1,15 @@
+//
+// Desktop String Catalog
+//
+// Translated by: nebu/Jan Niemeyer
+//
+
+MSG_DESKTOP_TITLE=0								Desktop
+
+MSG_DESKTOP_SYMLINKS_APPLICATIONS=100			Anwendungen
+MSG_DESKTOP_SYMLINKS_DISKS						Laufwerke
+MSG_DESKTOP_SYMLINKS_HOME						Home-Verzeichnis
+MSG_DESKTOP_SYMLINKS_PREFERENCES				Einstellungen
+MSG_DESKTOP_SYMLINKS_TERMINAL					Terminal
+MSG_DESKTOP_SYMLINKS_TRASH						Papierkorb
+

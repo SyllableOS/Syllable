@@ -1,0 +1,37 @@
+//
+// Dock String Catalog
+//
+// Translated by: Christos KYRATZIS
+//
+
+MSG_MENU_CATEGORY_OTHER=1000			Autres
+MSG_MENU_CATEGORY_PREFERENCES			Préférences
+MSG_MENU_CATEGORY_INTERNET				Internet
+MSG_MENU_CATEGORY_MEDIA					Médias
+MSG_MENU_CATEGORY_OFFICE				Bureautique
+MSG_MENU_CATEGORY_DEVELOPMENT			Développement
+MSG_MENU_CATEGORY_GAMES					Jeux
+MSG_MENU_CATEGORY_EMULATORS				Émulateurs
+
+MSG_MENU_ABOUT_MENU=2000				À propos...
+MSG_MENU_ABOUT_TITLE					À propos de Syllable
+MSG_MENU_ABOUT_BUILDDATE				Date de création:
+MSG_MENU_ABOUT_TEXTONE					Voyez
+MSG_MENU_ABOUT_TEXTTWO					pour les mises à jour et informations
+MSG_MENU_ABOUT_BUTTON_OK				Ok
+MSG_MENU_ABOUT_BUTTON_ADVANCED			Avancé...
+
+MSG_MENU_QUIT_MENU=3000					Quitter...
+MSG_MENU_QUIT_TITLE						Quitter
+MSG_MENU_QUIT_TEXT						Que voulez-vous faire?
+MSG_MENU_QUIT_LOGOUT					Déconnexion
+MSG_MENU_QUIT_SHUTDOWN					Arrêter
+MSG_MENU_QUIT_REBOOT					Redémarrer
+MSG_MENU_QUIT_CANCEL					Annuler
+
+MSG_PLUGIN_ALERT_TITLE=4000				Dock
+MSG_PLUGIN_ALERT_TEXT					Veuillez copier les plugins de dock dans le répertoire /system/extensions/dock\navant que vous essayiez de les ajouter au dock
+MSG_PLUGIN_ALERT_OK						Ok
+
+MSG_OPENAPP=5000						Ouvrir avec...
+

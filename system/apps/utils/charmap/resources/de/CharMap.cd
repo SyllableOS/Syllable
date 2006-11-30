@@ -1,0 +1,24 @@
+//
+// CharMap String Catalog
+//
+// Translated by: nebu/Jan Niemeyer
+//
+
+MSG_MAINWND_TITLE=0								Character map
+
+MSG_MAINWND_MENU_FILE=100						Datei
+MSG_MAINWND_MENU_FILE_CHOOSEFONT				Wähle Schrift...
+MSG_MAINWND_MENU_FILE_EXIT						Beenden
+
+MSG_MAINWND_MENU_HELP=200						Hilfe
+MSG_MAINWND_MENU_HELP_HELP						Hilfe
+MSG_MAINWND_MENU_HELP_ABOUT						Über
+
+MSG_HELPWND_TITLE=1000							CharMap
+MSG_HELPWND_TEXT								Wenn Sie auf ein Zeichen klicken,\nwird es in die Zwischenablage kopiert..
+MSG_HELPWND_OK									Ok
+
+MSG_ABOUTWND_TITLE=2000							CharMap
+MSG_ABOUTWND_TEXT								CharMap V1.1\nCharacter map viewer for Syllable.
+MSG_ABOUTWND_OK									Ok
+

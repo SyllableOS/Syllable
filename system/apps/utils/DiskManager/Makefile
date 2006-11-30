@@ -3,7 +3,7 @@ CXXFLAGS += -c
 
 EXE = DiskManager
 
-CATALOGS = da es hu sv
+CATALOGS = da de es hu nl sv
 
 OBJS =	main.o diskview.o partitionview.o
 

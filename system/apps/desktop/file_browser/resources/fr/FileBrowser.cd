@@ -1,0 +1,14 @@
+//
+// FileBrowser String Catalog
+//
+// Translated by: Christos KYRATZIS
+//
+
+MSG_MAINWND_TITLE=0				FileBrowser
+
+MSG_MENU_VIEW=100				Vue
+MSG_MENU_VIEW_ICONS				Icônes
+MSG_MENU_VIEW_LIST				Liste
+MSG_MENU_VIEW_DETAILS			Détails
+MSG_MENU_VIEW_SAVE				Enregistrer
+

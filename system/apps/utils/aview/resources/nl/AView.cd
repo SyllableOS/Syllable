@@ -1,0 +1,32 @@
+//
+// AView String Catalog
+//
+// Translated by: Ruud kuin
+//
+
+MSG_MAINWND_TITLE=0							AView
+
+MSG_MAINWND_MENU_APPLICATION=100			Programma
+MSG_MAINWND_MENU_APPLICATION_QUIT			Stop
+MSG_MAINWND_MENU_APPLICATION_ABOUT			Over
+
+MSG_MAINWND_MENU_FILE=200					Bestand
+MSG_MAINWND_MENU_FILE_OPEN					Open
+
+MSG_MAINWND_MENU_VIEW=300					Toon
+MSG_MAINWND_MENU_VIEW_FITTOIMAGE			Aan beeld aanpassen
+MSG_MAINWND_MENU_VIEW_PREVIOUS				Vorige
+MSG_MAINWND_MENU_VIEW_NEXT					Volgende
+MSG_MAINWND_MENU_VIEW_FIRST					Eerste
+MSG_MAINWND_MENU_VIEW_LAST					Laatste
+
+MSG_ABOUTWND_TITLE=1000						Over AView
+MSG_ABOUTWND_TEXT							AView\n\nBeeldprogramma Syllable    \nCopyright 2005 Syllable Team\n\nAView is vrijgegeven onder de GNU General\nPublic Licentie. Please go to www.gnu.org\nmore information.\n\nNederlandse vertaling door Ruud kuin <rudi.kuin@gmail.com>.
+MSG_ABOUTWND_OK								Ok
+
+MSG_STATUSBAR_OF=2000						%i vanf %i
+
+MSG_MIMETYPE_IMAGE_PNG=10000				PNG beeld
+MSG_MIMETYPE_IMAGE_JPEG						JPEG beeld
+MSG_MIMETYPE_IMAGE_GIF						GIF beeld
+

@@ -1,0 +1,24 @@
+//
+// CharMap String Catalog
+//
+// Translated by: Ruud kuin
+//
+
+MSG_MAINWND_TITLE=0								CharMap
+
+MSG_MAINWND_MENU_FILE=100						Bestand
+MSG_MAINWND_MENU_FILE_CHOOSEFONT				Kies lettertype/font...
+MSG_MAINWND_MENU_FILE_EXIT						Verlaten
+
+MSG_MAINWND_MENU_HELP=200						Help
+MSG_MAINWND_MENU_HELP_HELP						Help
+MSG_MAINWND_MENU_HELP_ABOUT						Over
+
+MSG_HELPWND_TITLE=1000							CharMap
+MSG_HELPWND_TEXT								Wanneer u op een lettertype/font klikt,\nwordt het naar het klembord gekopieerd.
+MSG_HELPWND_OK									Ok
+
+MSG_ABOUTWND_TITLE=2000							CharMap
+MSG_ABOUTWND_TEXT								CharMap V1.1\nLettertypen-/fontprogramma voor Syllable.\n\nNederlandse vertaling door Ruud kuin <rudi.kuin@gmail.com>.
+MSG_ABOUTWND_OK									Ok
+

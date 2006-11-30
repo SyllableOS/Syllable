@@ -1,0 +1,38 @@
+//
+// Media Player string catalog
+//
+// Translated by: Christos KYRATZIS
+//
+
+MSG_MAINWND_TITLE=100						Media Player
+
+MSG_MAINWND_MENU_APPLICATION=200			Application
+MSG_MAINWND_MENU_APPLICATION_ABOUT			À propos...
+MSG_MAINWND_MENU_APPLICATION_QUIT			Quitter
+
+MSG_MAINWND_MENU_FILE=300					Fichier
+MSG_MAINWND_MENU_FILE_OPEN					Ouvrir...
+MSG_MAINWND_MENU_FILE_OPEN_INPUT			Ouvrir entrée...
+MSG_MAINWND_MENU_FILE_INFO					Info...
+MSG_MAINWND_MENU_FILE_FULLSCREEN			Plein écran
+
+MSG_MAINWND_MENU_TRACKS=400					Pistes
+
+MSG_ABOUTWND_TITLE=1000						À propos de Media Player
+MSG_ABOUTWND_TEXT							\nA Media Player\nCopyright 2003-2006 Arno Klenke\n\nLe Syllable Media Player est mis à disposition sous license LGPL.
+MSG_ABOUTWND_OK								OK
+
+MSG_ERRWND_TITLE=1100						Erreur
+MSG_ERRWND_OK								OK
+MSG_ERRWND_CANTPLAY							Le fichier ne peut être ouvert.\nVeuillez vérifier vos paramètres multimédia.
+
+MSG_INFOWND_TITLE=1200						Information
+MSG_INFOWND_VIDEO							Video
+MSG_INFOWND_AUDIO							Audio
+MSG_INFOWND_CHANNELS						canaux
+MSG_INFOWND_OK								OK
+
+MSG_TRACK_MENU_ITEM=2000					Piste
+
+
+

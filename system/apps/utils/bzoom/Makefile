@@ -3,7 +3,7 @@ COPTS	= -c
 OBJS	= main.o gui/zoomview.o
 EXE	= BZoom
 
-CATALOGS = da es hu pt-br ru sv
+CATALOGS = da es fr hu nl pt-br ru sv
 
 $(EXE) : catalogs $(OBJS)
 	$(CXX) $(OBJS) -lsyllable -lm -o $@
