@@ -1,0 +1,34 @@
+//
+// Preferences/Screen String Catalog
+//
+// Translated by: Christos KYRATZIS
+//
+
+MSG_MAINWND_TITLE=0							Écran
+
+MSG_MAINWND_DISPLAY=100						Affichage
+MSG_MAINWND_DISPLAY_APPLYTO					Appliquer à
+MSG_MAINWND_DISPLAY_RESOLUTION				Résolution
+MSG_MAINWND_DISPLAY_COLORDEPTH				Profondeur de couleur
+MSG_MAINWND_DISPLAY_REFRESHRATE				Taux de rafraichissement
+
+
+MSG_MAINWND_DROPDOWN_APPLY_THIS=200			Cet espace de travail
+MSG_MAINWND_DROPDOWN_APPLY_ALL				Tous les espaces de travail
+MSG_MAINWND_DROPDOWN_COLOUR_BIT				Bit
+MSG_MAINWND_DROPDOWN_COLOUR_UNKNOWN			Inconnu
+MSG_MAINWND_DROPDOWN_HERTZ					%i Hz
+
+MSG_MAINWND_BUTTON_APPLY=300				Appliquer
+MSG_MAINWND_BUTTON_CLOSE					Fermer
+
+MSG_ALERTWND_CHANGERES=1000					Changement de résolution
+MSG_ALERTWND_CHANGERES_TEXT					Vous êtes sur le point de changer la résolution de votre écran.\nSi votre moniteur ne supporte pas le mode vidéo\nl'écran peut devenir noir. Si cela se présente, attendez 15\nsecondes pour revenir à l'ancien mode.\n\nVoulez-vous procéder au changement?
+MSG_ALERTWND_CHANGERES_YES					Oui
+MSG_ALERTWND_CHANGERES_NO					Non
+
+MSG_ALERTWND_CONFIRMRES=2000				Confirmation de changement de résolution
+MSG_ALERTWND_CONFIRMRES_TEXT				Ce nouveau mode vidéo fonctionne-t-il correctement?\n\nSi ce n'est pas le cas, veuillez patienter et vous retournerez\nautomatiquement à l'ancien mode.
+MSG_ALERTWND_CONFIRMRES_YES					Oui
+MSG_ALERTWND_CONFIRMRES_NO					Non
+

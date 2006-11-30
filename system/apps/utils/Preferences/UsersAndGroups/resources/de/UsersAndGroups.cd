@@ -1,0 +1,69 @@
+//
+// Preferences/UsersAndGroups String Catalog
+//
+// Translated by: nebu/Jan Niemeyer
+//
+
+MSG_MAINWND_TITLE=0							Benutzer und Gruppen
+
+MSG_MAINWND_BUTTON_OK=100					_Ok
+MSG_MAINWND_BUTTON_CANCEL					_Abbrechen
+
+MSG_MAINWND_TAB_USERS=200					Benutzer
+MSG_MAINWND_TAB_USERS_NAME					Name
+MSG_MAINWND_TAB_USERS_LOGIN					Systemname
+MSG_MAINWND_TAB_USERS_ID					ID
+MSG_MAINWND_TAB_USERS_GROUP					Gruppe
+MSG_MAINWND_TAB_USERS_HOME					Heimverzeichnis
+MSG_MAINWND_TAB_USERS_BUTTON_ADD			Benutzer _hinzufügen...
+MSG_MAINWND_TAB_USERS_BUTTON_EDIT			_Bearbeiten...
+MSG_MAINWND_TAB_USERS_BUTTON_DEL			_Lösche Benutzer
+MSG_MAINWND_TAB_USERS_BUTTON_PASS			_Setze Passwort...
+
+MSG_MAINWND_TAB_GROUPS=300					Gruppen
+MSG_MAINWND_TAB_GROUPS_NAME					Name
+MSG_MAINWND_TAB_GROUPS_ID					ID
+MSG_MAINWND_TAB_GROUPS_BUTTON_ADD			_Gruppe hinzufügen...
+MSG_MAINWND_TAB_GROUPS_BUTTON_EDIT			B_earbeiten...
+MSG_MAINWND_TAB_GROUPS_BUTTON_DEL			Lösche Gruppe
+
+MSG_NEWUSERWND_TITLE=1000					Neuer Benutzer
+MSG_NEWUSERWND_NAME							Name:
+MSG_NEWUSERWND_LOGIN						Systemname:
+MSG_NEWUSERWND_USERID						Benutzer ID:
+MSG_NEWUSERWND_GROUPID						Gruppen ID:
+MSG_NEWUSERWND_HOME							Heimverzeichnis:
+MSG_NEWUSERWND_SHELL						Shell:
+MSG_NEWUSERWND_DEFAULT_NAME					DerNeue
+MSG_NEWUSERWND_DEFAULT_LOGIN				neu
+MSG_NEWUSERWND_DEFAULT_HOME					/home/neu
+MSG_NEWUSERWND_BUTTON_OK					_Ok
+MSG_NEWUSERWND_BUTTON_CANCEL				_Abbrechen
+
+MSG_EDITUSERWND_TITLE=2000					Eigenschaften von
+
+MSG_NEWGROUPWND_TITLE=3000					Neue Gruppe
+MSG_NEWGROUPWND_GROUPID						Gruppen ID:
+MSG_NEWGROUPWND_NAME						Name:
+MSG_NEWGROUPWND_DEFAULT_NAME				NeueGruppe
+MSG_NEWGROUPWND_BUTTON_OK					_Ok
+MSG_NEWGROUPWND_BUTTON_CANCEL				_Abbrechen
+
+MSG_EDITGROUPWND_TITLE=4000					Eigenschaften von
+
+MSG_CHANGEPASS_TITLE=5000					_Ändere Passwort
+MSG_CHANGEPASS_TEXT							Ändere Passwort für
+MSG_CHANGEPASS_OLDPASS						Altes Passwort:
+MSG_CHANGEPASS_NEWPASS						Neues Passwort:
+MSG_CHANGEPASS_CONFIRMPASS					Passwort bestätigen:
+MSG_CHANGEPASS_BUTTON_OK					_Ok
+MSG_CHANGEPASS_BUTTON_CANCEL				_Abbrechen
+
+MSG_ALERTWND_GRPWRTERR=10000				Dateifehler
+MSG_ALERTWND_GRPWRTERR_TEXT					Das Schreiben von /etc/group schlug fehl.  Die Gruppen wurden nicht verändert.
+MSG_ALERTWND_GRPWRTERR_OK					Close
+
+MSG_ALERTWND_PASSDONTMATCH=20000			Passwörter unterschiedlich
+MSG_ALERTWND_PASSDONTMATCH_TEXT				Das neue Passwort und dessen Bestätigung stimmen nicht überein.\nBitte überprüfen Sie diese und versuchen es noch einmal.
+MSG_ALERTWND_PASSDONTMATCH_OK				Ok
+

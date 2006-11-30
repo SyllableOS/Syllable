@@ -1,0 +1,22 @@
+//
+// Preferences/Media String Catalog
+//
+// Translated by: nebu/Jan Niemeyer
+//
+
+MSG_MAINWND_TITLE=0								Medien
+
+MSG_MAINWND_DEVICE=100							Gerät
+MSG_MAINWND_DEFAULT_INPUT						Standardeingang
+MSG_MAINWND_DEFAULT_OUTPUT_AUDIO				Standardausgang für Audio
+MSG_MAINWND_DEFAULT_OUTPUT_VIDEO				Standardausgang für Video
+
+MSG_MAINWND_BUTTON_STREAMVOLUMES=200			Kanal _Lautstärken...
+MSG_MAINWND_BUTTON_APPLY						_Anwenden
+MSG_MAINWND_BUTTON_UNDO							_Rückgängig
+MSG_MAINWND_BUTTON_DEFAULT						_Standard
+
+MSG_MAINWND_THISINPUTHASNOCONTROLS=300			Dieser Eingang hat keine Einstellungsmöglichkeiten.
+MSG_MAINWND_THISCODECHASNOCONTROLS				Dieser Codec hat keine Einstellungsmöglichkeiten.
+MSG_MAINWND_THISOUTPUTHASNOCONTROLS				Dieser Ausgang hat keine Einstellungsmöglichkeiten.
+

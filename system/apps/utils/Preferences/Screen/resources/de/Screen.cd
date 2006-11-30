@@ -1,0 +1,34 @@
+//
+// Preferences/Screen String Catalog
+//
+// Translated by: nebu/Jan Niemeyer
+//
+
+MSG_MAINWND_TITLE=0							Bildschirm
+
+MSG_MAINWND_DISPLAY=100						Anzeige
+MSG_MAINWND_DISPLAY_APPLYTO					Anwenden auf
+MSG_MAINWND_DISPLAY_RESOLUTION				Auflösung
+MSG_MAINWND_DISPLAY_COLORDEPTH				Farbtiefe
+MSG_MAINWND_DISPLAY_REFRESHRATE				Wiederholrate
+
+
+MSG_MAINWND_DROPDOWN_APPLY_THIS=200			diese Arbeitsfläche
+MSG_MAINWND_DROPDOWN_APPLY_ALL				alle Arbeitsflächen
+MSG_MAINWND_DROPDOWN_COLOUR_BIT				Bit
+MSG_MAINWND_DROPDOWN_COLOUR_UNKNOWN			Unbekannt
+MSG_MAINWND_DROPDOWN_HERTZ					%i Hz
+
+MSG_MAINWND_BUTTON_APPLY=300				Anwenden
+MSG_MAINWND_BUTTON_CLOSE					Schließen
+
+MSG_ALERTWND_CHANGERES=1000					Auflösung ändern
+MSG_ALERTWND_CHANGERES_TEXT					Sie sind dabei, die Bildschirmeinstellungen zu ändern.\nWenn ihr Monitor die Einstellungen nicht unterstützen sollte, so könnte \nder Bildschirm schwarz werden Ist dies der Fall, so warten sie bitte 15 Sekunden bis die Einstellungen zurückgestellt werden.\n\nMöchten sie fortfahren?
+MSG_ALERTWND_CHANGERES_YES					Ja
+MSG_ALERTWND_CHANGERES_NO					Nein
+
+MSG_ALERTWND_CONFIRMRES=2000				Auflösung bestätigen
+MSG_ALERTWND_CONFIRMRES_TEXT				Funktioniert die Einstellung wie gewünscht?\n\nWenn nicht, haben Sie Geduld, bis die Einstellungen\nzurückgestellt werden.
+MSG_ALERTWND_CONFIRMRES_YES					Ja
+MSG_ALERTWND_CONFIRMRES_NO					Nein
+

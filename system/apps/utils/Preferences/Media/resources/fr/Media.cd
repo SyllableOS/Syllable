@@ -1,0 +1,22 @@
+//
+// Preferences/Media String Catalog
+//
+// Translated by: Christos KYRATZIS
+//
+
+MSG_MAINWND_TITLE=0								Multimédia
+
+MSG_MAINWND_DEVICE=100							Matériel
+MSG_MAINWND_DEFAULT_INPUT						Entrée par défaut
+MSG_MAINWND_DEFAULT_OUTPUT_AUDIO				Sortie audio par défaut
+MSG_MAINWND_DEFAULT_OUTPUT_VIDEO				Sortie vidéo par défaut
+
+MSG_MAINWND_BUTTON_STREAMVOLUMES=200			_Stream de volumes...
+MSG_MAINWND_BUTTON_APPLY						_Appliquer
+MSG_MAINWND_BUTTON_UNDO							_Défaire
+MSG_MAINWND_BUTTON_DEFAULT						_Defaut
+
+MSG_MAINWND_THISINPUTHASNOCONTROLS=300			Cette entrée ne dispose d'aucun élément
+MSG_MAINWND_THISCODECHASNOCONTROLS				Ce codec ne dispose d'aucun élément
+MSG_MAINWND_THISOUTPUTHASNOCONTROLS				Cette sortie ne dispose d'aucun élément
+

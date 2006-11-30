@@ -1,0 +1,22 @@
+//
+// Preferences/Font String Catalog
+//
+// Translated by: Ruud Kuin
+//
+
+MSG_MAINWND_TITLE=0								Font
+
+MSG_MAINWND_FONTSELECTION=100					Font Selectie
+MSG_MAINWND_FONTSELECTION_NORMAL				Normaal
+MSG_MAINWND_FONTSELECTION_BOLD					Vet
+MSG_MAINWND_FONTSELECTION_FIXED					Gefixeerd
+MSG_MAINWND_FONTSELECTION_WINDOW				Venster
+MSG_MAINWND_FONTSELECTION_TOOLWIN				Gereedschapsvenster
+MSG_MAINWND_FONTSELECTION_TEXT					A_nti-Aliasing (Font randen polijsten)
+
+MSG_MAINWND_EXAMPLE=200							Voorbeeld van geselecteerd Font
+
+MSG_MAINWND_BUTTON_APPLY=300					_Toepassen
+MSG_MAINWND_BUTTON_REVERT						_Herstel
+MSG_MAINWND_BUTTON_DEFAULT						_Standaard
+

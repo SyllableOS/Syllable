@@ -1,0 +1,60 @@
+//
+// Preferences/Network String Catalog
+//
+// Translated by: nebu/Jan Niemeyer
+//
+
+MSG_MAINWND_TITLE=0								Netzwerk
+
+MSG_MAINWND_NAMES=100							Namen
+MSG_MAINWND_NAMES_HOST							Host:
+MSG_MAINWND_NAMES_HOST_DEFAULT					Standard
+MSG_MAINWND_NAMES_DOMAIN						Domain:
+MSG_MAINWND_NAMES_DOMAIN_DEFAULT				domain
+MSG_MAINWND_NAMES_DNS_PRIMARY					Erster DNS:
+MSG_MAINWND_NAMES_DNS_SECONDARY					Zweiter DNS:
+
+MSG_MAINWND_NICINT=200							Netzwerkschnittstellen
+MSG_MAINWND_NICINT_ENABLED						(Aktviert)
+MSG_MAINWND_NICINT_DISABLED						(Deaktiviert)
+MSG_MAINWND_NICINT_BUTTON_MODIFY				_Bearbeiten
+
+MSG_MAINWND_BUTTON_APPLY=300					_Anwenden
+MSG_MAINWND_BUTTON_REVERT						_Rückgängig
+
+MSG_MODIFYWND_TITLE=400							Netzwerkeinstellungen bearbeiten
+MSG_MODIFYWND_INTERFACE							Schnittstelle:
+MSG_MODIFYWND_ENABLED							(Aktiviert)
+MSG_MODIFYWND_DISABLED							(Deaktiviert)
+MSG_MODIFYWND_USEDHCP							_Benutze DHCP
+MSG_MODIFYWND_BUTTON_ENABLE						_Aktivieren
+MSG_MODIFYWND_BUTTON_DISABLE					_Deaktvieren
+MSG_MODIFYWND_SETTINGS							Einstellungen
+MSG_MODIFYWND_SETTINGS_IPADD					IP-Addresse:
+MSG_MODIFYWND_SETTINGS_SUBNET					Subnetzmaske:
+MSG_MODIFYWND_SETTINGS_GATEWAY					Gatewayaddresse:
+
+MSG_CONFCHANGEDWND_TITLE=1000					Einstellungen verändert - Netzwerk
+MSG_CONFCHANGEDWND_TEXT							Die Netzwerkeinstellungen wurden verändert vorgefunden.\nBitte melden Sie sich als root an und nehmen Sie die Einstellungen unter Einstellungen/Netzwerk vor. 
+MSG_CONFCHANGEDWND_OK							_Ok
+
+MSG_ALERTWND_PRIDNS=2000						Ungültig - Netzwerk
+MSG_ALERTWND_PRIDNS_TEXT						Der für den ersten DNS angegebene Wert ist ungültig.
+MSG_ALERTWND_PRIDNS_OK							_Ok
+
+MSG_ALERTWND_SECDNS=3000						Ungültig - Netzwerk
+MSG_ALERTWND_SECDNS_TEXT						Der für den zweiten DNS angegebene Wert ist ungültig.
+MSG_ALERTWND_SECDNS_OK							_Ok
+
+MSG_ALERTWND_IPADD=4000							Ungültig - Netzwerk
+MSG_ALERTWND_IPADD_TEXT							Der für die IP-Addresse angegebene Wert ist ungültig.
+MSG_ALERTWND_IPADD_OK							_Ok
+
+MSG_ALERTWND_SUBNET=5000						Ungültig - Netzwerk
+MSG_ALERTWND_SUBNET_TEXT						Der für die Subnetzmaske angegebene Wert ist ungültig.
+MSG_ALERTWND_SUBNET_OK							_Ok
+
+MSG_ALERTWND_GATEWAY=6000						Ungültig - Netzwerk
+MSG_ALERTWND_GATEWAY_TEXT						Der für die Gateway-Adresse angegebene Wert ist ungültig.
+MSG_ALERTWND_GATEWAY_OK							_Ok
+

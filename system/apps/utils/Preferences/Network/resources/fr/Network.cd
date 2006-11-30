@@ -1,0 +1,60 @@
+//
+// Preferences/Network String Catalog
+//
+// Translated by: Christos KYRATZIS
+//
+
+MSG_MAINWND_TITLE=0								Réseau
+
+MSG_MAINWND_NAMES=100							Noms
+MSG_MAINWND_NAMES_HOST							Hôte:
+MSG_MAINWND_NAMES_HOST_DEFAULT					défaut
+MSG_MAINWND_NAMES_DOMAIN						Domaine:
+MSG_MAINWND_NAMES_DOMAIN_DEFAULT				domaine
+MSG_MAINWND_NAMES_DNS_PRIMARY					DNS primaire:
+MSG_MAINWND_NAMES_DNS_SECONDARY					DNS secondaire:
+
+MSG_MAINWND_NICINT=200							Interfaces réseau
+MSG_MAINWND_NICINT_ENABLED						(Activé)
+MSG_MAINWND_NICINT_DISABLED						(Desactivé)
+MSG_MAINWND_NICINT_BUTTON_MODIFY				_Modifier
+
+MSG_MAINWND_BUTTON_APPLY=300					_Appliquer
+MSG_MAINWND_BUTTON_REVERT						_Revenir au précédent
+
+MSG_MODIFYWND_TITLE=400							Modifier - Réseau
+MSG_MODIFYWND_INTERFACE							Interface:
+MSG_MODIFYWND_ENABLED							(Activé)
+MSG_MODIFYWND_DISABLED							(Désactivé)
+MSG_MODIFYWND_USEDHCP							_Utiliser DHCP
+MSG_MODIFYWND_BUTTON_ENABLE						Activ_er
+MSG_MODIFYWND_BUTTON_DISABLE					_Désactiver
+MSG_MODIFYWND_SETTINGS							Paramètres
+MSG_MODIFYWND_SETTINGS_IPADD					Adresse IP:
+MSG_MODIFYWND_SETTINGS_SUBNET					Masque de sous-réseau:
+MSG_MODIFYWND_SETTINGS_GATEWAY					Adresse de passerelle:
+
+MSG_CONFCHANGEDWND_TITLE=1000					Configuration Changée - Réseau
+MSG_CONFCHANGEDWND_TEXT							La configuration de l'interface réseau a changé\nLogguez-vous en tant que root et utiliser les préférences réseau pour configurer.
+MSG_CONFCHANGEDWND_OK							_Ok
+
+MSG_ALERTWND_PRIDNS=2000						Invalide - Réseau
+MSG_ALERTWND_PRIDNS_TEXT						La valeur de DNS primaire entrée est invalide
+MSG_ALERTWND_PRIDNS_OK							_Ok
+
+MSG_ALERTWND_SECDNS=3000						Invalide - Réseau
+MSG_ALERTWND_SECDNS_TEXT						La valeur de DNS secondaire entrée est invalide
+MSG_ALERTWND_SECDNS_OK							_Ok
+
+MSG_ALERTWND_IPADD=4000							Invalide - Réseau
+MSG_ALERTWND_IPADD_TEXT							La valeur d'adresse IP entrée est invalide
+MSG_ALERTWND_IPADD_OK							_Ok
+
+MSG_ALERTWND_SUBNET=5000						Invalide - Réseau
+MSG_ALERTWND_SUBNET_TEXT						La valeur de masque de sous-réseau entrée est invalide
+MSG_ALERTWND_SUBNET_OK							_Ok
+
+MSG_ALERTWND_GATEWAY=6000						Invalide - Réseau
+MSG_ALERTWND_GATEWAY_TEXT						La valeur de passerelle entrée est invalide
+MSG_ALERTWND_GATEWAY_OK							_Ok
+

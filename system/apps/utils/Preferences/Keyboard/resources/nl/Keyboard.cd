@@ -1,0 +1,23 @@
+//
+// Preferences/Keyboard String Catalog
+//
+// Translated by: Ruud Kuin
+//
+
+MSG_MAINWND_TITLE=0								Toetsenbord
+
+MSG_MAINWND_SETTINGS=100						Instellingen
+MSG_MAINWND_SETTINGS_INITIALDELAY				Toetsaanslag vertraging
+MSG_MAINWND_SETTINGS_INITIALDELAY_SHORT			Kort
+MSG_MAINWND_SETTINGS_INITIALDELAY_LONG			Lang
+MSG_MAINWND_SETTINGS_REPEATDELAY				Herhalings vertraging
+MSG_MAINWND_SETTINGS_REPEATDELAY_FAST			Snel
+MSG_MAINWND_SETTINGS_REPEATDELAY_SLOW			Langzaam
+MSG_MAINWND_SETTINGS_MILISECONDS				%.f milliseconden
+
+MSG_MAINWND_TESTAREA=200						Test gebied (Eerst veranderingen toepassen)
+MSG_MAINWND_KEYBOARDLAYOUT						Toetsenbord indeling
+MSG_MAINWND_BUTTON_APPLY						_Toepassen
+MSG_MAINWND_BUTTON_UNDO							_Herstel
+MSG_MAINWND_BUTTON_DEFAULT						_Standaard
+

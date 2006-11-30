@@ -1,0 +1,54 @@
+//
+// Preferences/Appearance String Catalog
+//
+// Translated by: Christos KYRATZIS
+//
+
+MSG_MAINWND_TITLE=0								Apparence
+
+MSG_MAINWND_WINDEC_WINDOWSDECORATION=100		Décoration de fenêtre
+MSG_MAINWND_WINDEC_DECOR						Décor
+
+MSG_MAINWND_CLRSCM_COLOURSCHEME=200				Schéma de couleurs
+MSG_MAINWND_CLRSCM_THEME						Thème
+MSG_MAINWND_CLRSCM_RED							Rouge
+MSG_MAINWND_CLRSCM_GREEN						Vert
+MSG_MAINWND_CLRSCM_BLUE							Bleu
+MSG_MAINWND_CLRSCM_DEC							Dec
+MSG_MAINWND_CLRSCM_HEX							Hex
+MSG_MAINWND_CLRSCM_BUTTON_SAVE					_Sauvegarder Schéma
+MSG_MAINWND_CLRSCM_BUTTON_DEL					_Effacer Schéma
+
+MSG_MAINWND_BUTTON_APPLY=300					_Appliquer
+MSG_MAINWND_BUTTON_DEFAULT						_Défaut
+
+MSG_MAINWND_THEMEDROPDOWN_APPLICATION=400		Application
+MSG_MAINWND_THEMEDROPDOWN_HIGHLIGHT				Surbrillance
+MSG_MAINWND_THEMEDROPDOWN_SHADOW				Ombre
+MSG_MAINWND_THEMEDROPDOWN_ACTIVEWINDOW			Fenêtre active
+MSG_MAINWND_THEMEDROPDOWN_WINDOWBORDER			Bord de fenêtre
+MSG_MAINWND_THEMEDROPDOWN_MENUTEXT				Text de menu
+MSG_MAINWND_THEMEDROPDOWN_MENUHIGHLIGHTTEXT		Text de menu en surbrillance
+MSG_MAINWND_THEMEDROPDOWN_MENUBACKGROUND		Arrière-plan de menu
+MSG_MAINWND_THEMEDROPDOWN_MENUHIGHLIGHT			Surbrillance de menu
+MSG_MAINWND_THEMEDROPDOWN_SCROLLBARBACKGROUND	Arrière-plan de barre de défilement
+MSG_MAINWND_THEMEDROPDOWN_SCROLLBARKNOB			Bouton de défilement
+MSG_MAINWND_THEMEDROPDOWN_LISTVIEWTAB			Onglet de liste de vues (listview)
+MSG_MAINWND_THEMEDROPDOWN_LISTVIEWTABTEXT		Texte d'onglet de liste de vues (listview)
+MSG_MAINWND_THEMEDROPDOWN_ICONTEXT				Texte d'icône
+MSG_MAINWND_THEMEDROPDOWN_ICONSELECTION			Sélection d'icône
+MSG_MAINWND_THEMEDROPDOWN_ICONBACKGROUND		Arrière-plan d'icône
+MSG_MAINWND_THEMEDROPDOWN_FOCUSEDITEM			Élément ayant le focus
+
+MSG_ALERT_NODECORDIR_TITLE=1000					Erreur
+MSG_ALERT_NODECORDIR_TEXT						Le répertoire /system/drivers/appserver/decorators/ n'existe pas, impossible de charger les décorateurs.
+MSG_ALERT_NODECORDIR_OK							Ok
+
+MSG_ALERT_NOCLRSCMDIR_TITLE=2000				Erreur
+MSG_ALERT_NOCLRSCMDIR_TEXT						Le répertoire /system/config/appearance/colour-schemes/ n'existe pas, impossible de charger les schémas de couleurs.
+MSG_ALERT_NOCLRSCMDIR_OK						Ok
+
+MSG_ALERT_CLRSCMERR_TITLE=3000					Erreur
+MSG_ALERT_CLRSCMERR_TEXT						Impossible de charger le fichier de schéma de couleurs
+MSG_ALERT_CLRSCMERR_OK							Ok
+

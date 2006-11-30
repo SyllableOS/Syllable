@@ -1,0 +1,27 @@
+//
+// Preferences/Dock String Catalog
+//
+// Translated by: nebu/Jan Niemeyer
+//
+
+MSG_MAINWND_TITLE=0							Dock
+
+MSG_MAINWND_POSITION=100					Position
+MSG_MAINWND_POSITION_TOP					Oben
+MSG_MAINWND_POSITION_BOTTOM					Unten
+MSG_MAINWND_POSITION_LEFT					Links
+MSG_MAINWND_POSITION_RIGHT					Rechts
+
+MSG_MAINWND_PLUGINS=200						Erweiterungen
+MSG_MAINWND_PLUGINS_PLUGIN					Erweiterung
+MSG_MAINWND_PLUGINS_ENABLED					Aktiviert
+MSG_MAINWND_PLUGINS_TEXT					Anmerkung: Erweiterungen bitte in /system/extensions/dock/ ablegen.
+MSG_MAINWND_PLUGINS_BUTTON_ENABLE			Aktivieren
+MSG_MAINWND_PLUGINS_BUTTON_DISABLE			Deaktivieren
+MSG_MAINWND_PLUGINS_STATE_ENABLED_YES		Ja
+MSG_MAINWND_PLUGINS_STATE_ENABLED_NO		Nein
+
+MSG_MAINWND_BUTTON_APPLY=300				Anwenden
+MSG_MAINWND_BUTTON_UNDO						Rückgängig
+MSG_MAINWND_BUTTON_DEFAULT					Standard
+

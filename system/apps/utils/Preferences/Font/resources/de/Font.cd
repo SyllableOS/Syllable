@@ -1,0 +1,22 @@
+//
+// Preferences/Font String Catalog
+//
+// Translated by: nebu/Jan Niemeyer
+//
+
+MSG_MAINWND_TITLE=0								Schrift
+
+MSG_MAINWND_FONTSELECTION=100					Schriftauswahl
+MSG_MAINWND_FONTSELECTION_NORMAL				Normal
+MSG_MAINWND_FONTSELECTION_BOLD					Fett
+MSG_MAINWND_FONTSELECTION_FIXED					Fixiert
+MSG_MAINWND_FONTSELECTION_WINDOW				Fenster
+MSG_MAINWND_FONTSELECTION_TOOLWIN				Werkzeugfenster
+MSG_MAINWND_FONTSELECTION_TEXT					A_nti-Aliasing (Geglättete Kanten)
+
+MSG_MAINWND_EXAMPLE=200							Beispiel der gewählten Schrift:
+
+MSG_MAINWND_BUTTON_APPLY=300					_Anwenden
+MSG_MAINWND_BUTTON_REVERT						_Rückgängig
+MSG_MAINWND_BUTTON_DEFAULT						_Standard
+

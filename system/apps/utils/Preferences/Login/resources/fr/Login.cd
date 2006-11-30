@@ -1,0 +1,35 @@
+//
+// Preferences/Login String Catalog
+//
+// Translated by: Christos KYRATZIS
+//
+
+MSG_MAINWND_TITLE=0						Login
+
+MSG_MAINWND_INFORMATION=100				Information
+MSG_MAINWND_INFORMATION_WHO				Vous êtes actuellement loggué en tant que %s
+MSG_MAINWND_INFORMATION_NOPERM			Votre administrateur système ne vous a pas donné la permission\nde changer vos détails de login.
+
+MSG_MAINWND_LOGINICON=200				Icône de Login
+MSG_MAINWND_LOGINICON_TEXT				Quand je me loggue sur cet ordinateur, afficher\ncette icône pour mon compte utilisateur.
+
+MSG_MAINWND_CHANGEPASS=300				Changer mot de passe
+MSG_MAINWND_CHANGEPASS_CURRENTPASS		Mot de passe actuel
+MSG_MAINWND_CHANGEPASS_NEWPASS			Nouveau mot de passe
+MSG_MAINWND_CHANGEPASS_CONFIRMPASS		Confirmer mot de passe
+
+MSG_MAINWND_BUTTON_OK=400				_Ok
+MSG_MAINWND_BUTTON_CANCEL				_Annuler
+
+MSG_ALERTWND_FILEERROR=1000				Erreur de fichier
+MSG_ALERTWND_FILEERROR_TEXT				Erreur d'écriture dans /etc/passwd.  Votre mot de passe n'a pas été changé.
+MSG_ALERTWND_FILEERROR_OK				Fermer
+
+MSG_ALERTWND_NOMATCH=2000				Nouveau mot de passe
+MSG_ALERTWND_NOMATCH_TEXT				Les mot de passes que vous avez entrés ne sont pas identiques.  Veuillez entrer à nouveau votre mot de passe.
+MSG_ALERTWND_NOMATCH_OK					Fermer
+
+MSG_ALERTWND_INCORRECTPASS=3000			Mot de passe incorrect
+MSG_ALERTWND_INCORRECTPASS_TEXT			Le mot de passe que vous venez d'entrer est incorrect.  Veuillez le vérifier et essayer à nouveau.
+MSG_ALERTWND_INCORRECTPASS_OK			Ok
+

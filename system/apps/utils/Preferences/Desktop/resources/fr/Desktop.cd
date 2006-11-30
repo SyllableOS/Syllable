@@ -1,0 +1,22 @@
+//
+// Preferences/Desktop String Catalog
+//
+// Translated by: Christos KYRATZIS
+//
+
+MSG_MAINWND_TITLE=0							Bureau
+
+MSG_MAINWND_BACKGROUND=100					Arrière-plan
+MSG_MAINWND_BACKGROUND_IMAGE				Image
+MSG_MAINWND_BACKGROUND_NONE					Aucun
+MSG_MAINWND_BACKGROUND_TEXT					Note: Veuillez copier les images dans le répertoire Documents/Pictures
+
+MSG_MAINWND_WINDOWS_TEXT=200				Fenêtres
+MSG_MAINWND_WINDOWS_TEXT_POPUP				Fenêtre Popup sélectionnée
+MSG_MAINWND_WINDOWS_TEXT_SINGLECLICK		Utiliser l'interface mono-click
+MSG_MAINWND_WINDOWS_TEXT_SHADOWTEXT			Afficher le texte d'icône avec ombre
+
+MSG_MAINWND_BUTTON_APPLY=300				Appliquer
+MSG_MAINWND_BUTTON_UNDO						Défaire
+MSG_MAINWND_BUTTON_DEFAULT					Défaut
+

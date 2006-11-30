@@ -1,0 +1,32 @@
+//
+// Preferences/FileTypes String Catalog
+//
+// Translated by: Christos KYRATZIS
+//
+
+MSG_MAINWND_TITLE=0							Types de fichiers
+
+MSG_MAINWND_GENERAL=100						Général
+MSG_MAINWND_GENERAL_MIMETYPE				Type MIME:
+MSG_MAINWND_GENERAL_NAME					Nom:
+
+MSG_MAINWND_EXTENTIONS=200					Extensions
+MSG_MAINWND_EXTENTIONS_EXTENTIONS			Extensions
+MSG_MAINWND_EXTENTIONS_BUTTON_ADD			Ajouter
+MSG_MAINWND_EXTENTIONS_BUTTON_REMOVE		Retirer
+
+MSG_MAINWND_HANDLERS=300					Programmes associés
+MSG_MAINWND_HANDLERS_HANDLER				Programme associé
+MSG_MAINWND_HANDLERS_BUTTON_ADD				Ajouter programme associé...
+MSG_MAINWND_HANDLERS_BUTTON_REMOVE			Retirer programme associé
+
+MSG_MAINWND_NEWTYPE=400						Nouveau type
+MSG_MAINWND_BUTTON_APPLY					Appliquer
+MSG_MAINWND_BUTTON_ADDTYPE					Ajouter type...
+MSG_MAINWND_BUTTON_REMOVETYPE				Retirer type
+
+MSG_NEWTYPEWND_TITLE=1000					Nouveau type de fichier
+MSG_NEWTYPEWND_MIMETYPE						Type MIME
+MSG_NEWTYPEWND_OK							Ok
+
+MSG_MIMETYPE_TEXT_PLAIN=10000				Texte plein

@@ -1,0 +1,35 @@
+//
+// Preferences/Login String Catalog
+//
+// Translated by: nebu/Jan Niemeyer
+//
+
+MSG_MAINWND_TITLE=0						Anmeldung
+
+MSG_MAINWND_INFORMATION=100				Information
+MSG_MAINWND_INFORMATION_WHO				Momentan sind Sie eingeloggt als %s
+MSG_MAINWND_INFORMATION_NOPERM			Der Administator dieses Systems hat sie nicht\n mit den nötigen Rechten ausgestattet\n, um ihre Anmeldedetails zu verändern.
+
+MSG_MAINWND_LOGINICON=200				Benutzersymbol
+MSG_MAINWND_LOGINICON_TEXT				Diese Symbol anzeigen, wenn ich mich anmelde.
+
+MSG_MAINWND_CHANGEPASS=300				Passwort ändern
+MSG_MAINWND_CHANGEPASS_CURRENTPASS		Jetziges Passwort
+MSG_MAINWND_CHANGEPASS_NEWPASS			Neues Passwort
+MSG_MAINWND_CHANGEPASS_CONFIRMPASS		Passwort bestätigen
+
+MSG_MAINWND_BUTTON_OK=400				_Ok
+MSG_MAINWND_BUTTON_CANCEL				_Abbrechen
+
+MSG_ALERTWND_FILEERROR=1000				Dateifehler
+MSG_ALERTWND_FILEERROR_TEXT				Das Schreiben von /etc/passwd schlug fehl. Die Änderungen konnten nicht vollzogen werden.
+MSG_ALERTWND_FILEERROR_OK				Schließen
+
+MSG_ALERTWND_NOMATCH=2000				Neues Passwort
+MSG_ALERTWND_NOMATCH_TEXT				Das neue Passwort und dessen Bestätigung stimmen nicht überein.\nBitte überprüfen Sie diese und versuchen es noch einmal.
+MSG_ALERTWND_NOMATCH_OK					Schließen
+
+MSG_ALERTWND_INCORRECTPASS=3000			Ungültiges Passwort
+MSG_ALERTWND_INCORRECTPASS_TEXT			Das neue Passwort und dessen Bestätigung stimmen nicht überein.\nBitte überprüfen Sie diese und versuchen es noch einmal.
+MSG_ALERTWND_INCORRECTPASS_OK			Ok
+

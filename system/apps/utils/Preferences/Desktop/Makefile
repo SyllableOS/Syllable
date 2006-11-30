@@ -1,7 +1,7 @@
 #Makefile for Desktop
 COPTS = -c
 
-CATALOGS = da es hu pt-br sv
+CATALOGS = da de es fr hu nl pt-br sv
 
 APPBIN = /atheos/Applications/Preferences
 OBJS = Prefs.o

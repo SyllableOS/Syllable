@@ -1,0 +1,23 @@
+//
+// Preferences/Keyboard String Catalog
+//
+// Translated by: Jan Niemeyer/nebu
+//
+
+MSG_MAINWND_TITLE=0								Tastatur
+
+MSG_MAINWND_SETTINGS=100						Einstellungen
+MSG_MAINWND_SETTINGS_INITIALDELAY				Anschlagsverzögerung
+MSG_MAINWND_SETTINGS_INITIALDELAY_SHORT			Kurz
+MSG_MAINWND_SETTINGS_INITIALDELAY_LONG			Lang
+MSG_MAINWND_SETTINGS_REPEATDELAY				Repeat Delay
+MSG_MAINWND_SETTINGS_REPEATDELAY_FAST			Schnell
+MSG_MAINWND_SETTINGS_REPEATDELAY_SLOW			Langsam
+MSG_MAINWND_SETTINGS_MILISECONDS				%.f ms
+
+MSG_MAINWND_TESTAREA=200						Testfeld (Vorher bitte die Änderungen speichern.)
+MSG_MAINWND_KEYBOARDLAYOUT						Tastaturlayout
+MSG_MAINWND_BUTTON_APPLY						_Anwenden
+MSG_MAINWND_BUTTON_UNDO							_Rückgängig
+MSG_MAINWND_BUTTON_DEFAULT						_Standard
+
