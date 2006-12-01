@@ -249,11 +249,12 @@ int32 MoveFileThread( void *pData )
 	pcProgress->Unlock();
 	bool bSuccess = true;
 
-	for( uint i = 0; i < psParams->m_cSrcPaths.size(); ++i )
-	{
-		bool bReplaceFiles = psParams->m_bReplace;
-		bool bDontOverwrite = psParams->m_bDontOverwrite;
+	bool bReplaceFiles = psParams->m_bReplace;
+	bool bDontOverwrite = psParams->m_bDontOverwrite;
 
+
+	for( uint i = 0; i < psParams->m_cSrcPaths.size(); ++i )
+	{		
 		if( OperationMoveFile( psParams->m_cDstPaths[i].c_str(), psParams->m_cSrcPaths[i].c_str() , &bReplaceFiles, &bDontOverwrite, pcProgress ) == false )
 		{
 			bSuccess = false;

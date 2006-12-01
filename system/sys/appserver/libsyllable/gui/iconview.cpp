@@ -680,6 +680,8 @@ public:
 	int m_nIconsPerRow;
 	bool m_bMouseDown;
 	bool m_bMouseDownOverIcon;
+	os::Point m_cMouseDownPos;
+	bool m_bMouseSelectedIcon;
 	bool m_bDragging;
 	bool m_bSelecting;
 	float m_vLastXPos;
@@ -802,15 +804,38 @@ public:
 		m->Unlock();
 	}
 	
+	void WindowActivated( bool bFocus )
+	{
+		if( bFocus )
+			return;
+		
+		if( m->m_bSelecting )
+		{
+			Invalidate();
+			Flush();
+		}
+		
+		/* Reset values */
+		m->m_bMouseDown = false;
+		m->m_bMouseDownOverIcon = false;
+		m->m_bSelecting = false;
+		m->m_bDragging = false;
+		m->m_bMouseSelectedIcon = false;
+	}
+	
 	void MouseDown( const os::Point& cPosition, uint32 nButtons )
 	{
 		int nIcon = 0;
+		
+		AutoLocker cLocker( m->m_pcIconLock );
 		
 		MakeFocus();
 		
 		m->m_bMouseDown = true;
 		m->m_bSelecting = false;
-			
+		m->m_cMouseDownPos = cPosition;
+		m->m_bMouseSelectedIcon = false;
+		
 		if( ( nIcon = m->HitTest( cPosition ) ) < 0 )
 		{
 			/* Deselect all icons if ctrl is not pressed */
@@ -820,87 +845,66 @@ public:
 				m->m_pcControl->SelectionChanged();
 				Flush();
 			}
-			m->m_bMouseDownOverIcon = false;
 			m->m_cSelectStart = cPosition;
 			
-			if( nButtons == 1 ) 
-				return;
+			if( nButtons == 1 )
+				return( os::View::MouseDown( cPosition, nButtons ) );
 		}
-		
-		/* Open context menu...*/
-		if( nButtons != 1 ) {
-			//std::cout<<"Open context menu!!"<<std::endl;
-			if( nIcon >= 0 )
-			{
-				m->Lock();
-				if( GetQualifiers() & os::QUAL_CTRL ) {
-					
-					/* Select/Deselect this icon */
-					m->Select( nIcon, !m->m_cIcons[nIcon]->m_bSelected );
-				}
-				else {
-					if( !m->m_cIcons[nIcon]->m_bSelected )
-						/* Deselect all icons */
-						m->DeselectAll();
-					/* Select this icon */
-					m->Select( nIcon, true );
-				}
-				m->Unlock();
+		else
+		{
+			/* Select icon if we hit one */
+			if( !m->m_cIcons[nIcon]->m_bSelected ) {
+				if( !( ( GetQualifiers() & os::QUAL_CTRL ) && m->m_bMultiSelect ) )
+					/* Deselect all icons */
+					m->DeselectAll();		
+				m->Select( nIcon, true );
+				m->m_bMouseSelectedIcon = true;
 			}
+			
 			m->m_pcControl->SelectionChanged();
 			Flush();
 			
+			
+		}
+		
+		/* Open context menu */
+		if( nButtons != 1 )
+		{
 			m->m_pcControl->OpenContextMenu( cPosition + m->m_pcView->GetScrollOffset(), nIcon >= 0 );
-			return( os::View::MouseDown( cPosition, nButtons ) );
+			if( nIcon < 0 )
+				return( os::View::MouseDown( cPosition, nButtons ) );
 		}
 			
 		/* Check if we have a double click */
-		if( get_system_time() - m->m_nLastClick < 500000 && m->m_cIcons[nIcon]->m_bSelected )
+		if( get_system_time() - m->m_nLastClick < 500000 && m->m_cIcons[nIcon]->m_bSelected && !( GetQualifiers() & os::QUAL_CTRL ) )
 		{
-			/* Deselect all icons */
-			m->DeselectAll();
-			/* Select this icon */
-			m->Select( nIcon, true );
-			m->m_pcControl->SelectionChanged();
-			/* Invoke method */
-			
-			Flush();
-			
 			/* Invoke */
 			m->Lock();
 			m->m_pcControl->Invoked( nIcon, m->m_cIcons[nIcon]->m_pcData );
 			m->Unlock();
 			
 			m->m_bMouseDown = false;
+			m->m_bMouseSelectedIcon = true;
 			return( os::View::MouseDown( cPosition, nButtons ) );
 		}
 		
-		/* Handle single click */
+		/* Save values */
 		m->m_nLastClick = get_system_time();
-		m->m_bMouseDownOverIcon = true;
+		if( nIcon >= 0 )
+			m->m_bMouseDownOverIcon = true;
 		
-		if( ( GetQualifiers() & os::QUAL_CTRL ) && m->m_bMultiSelect ) {
-			/* Select/Deselect this icon */
-			m->Select( nIcon, !m->m_cIcons[nIcon]->m_bSelected );
-		}
-		else {
-			if( !m->m_cIcons[nIcon]->m_bSelected )
-				/* Deselect all icons */
-				m->DeselectAll();
-			/* Select this icon */
-			m->Select( nIcon, true );
-		}
-		m->m_pcControl->SelectionChanged();
-		Flush();
 		os::View::MouseDown( cPosition, nButtons );
 	}
 	
-	
+	#define DRAG_START_DISTANCE 30
 	void MouseMove( const os::Point& cPosition, int nCode, uint32 nButtons, os::Message *pcData )
 	{
+		
+		AutoLocker cLocker( m->m_pcIconLock );		
 		if( !m->m_bMouseDown || !( nButtons & 1 ) )	
 			return( os::View::MouseMove( cPosition, nCode, nButtons, pcData ) );
 			
+		
 		/* Check what we should do */
 		if( !m->m_bMouseDownOverIcon )
 		{
@@ -939,7 +943,8 @@ public:
 		} else 
 		{
 			/* Start drag operation */
-			if( !m->m_bDragging )
+			if( !m->m_bDragging && ( ( m->m_cMouseDownPos.x - cPosition.x ) * ( m->m_cMouseDownPos.x - cPosition.x )
+				  + ( m->m_cMouseDownPos.y - cPosition.y ) * ( m->m_cMouseDownPos.y - cPosition.y ) ) > DRAG_START_DISTANCE )
 			{
 				m->m_pcControl->DragSelection( cPosition );
 				m->m_bDragging = true;
@@ -951,7 +956,23 @@ public:
 	
 	void MouseUp( const os::Point& cPosition, uint32 nButtons, os::Message *pcData )
 	{
+		AutoLocker cLocker( m->m_pcIconLock );		
+		/* Handle deselection with pressed ctrl key. We cannot handle it in MouseDown()
+		   because we want dragging operations to start with pressed ctrl key */
+		int nIcon = 0;
+		if( nButtons == 1 && ( GetQualifiers() & os::QUAL_CTRL ) && m->m_bMultiSelect
+			&& ( ( nIcon = m->HitTest( cPosition ) ) >= 0 ) && !m->m_bSelecting && !m->m_bDragging ) 
+		{
+			if( !m->m_bMouseSelectedIcon && m->m_cIcons[nIcon]->m_bSelected ) {
+				/* Deselect this icon */
+				m->Select( nIcon, false );
+				m->m_pcControl->SelectionChanged();
+				Flush();
+			}
+			
+		}
 		
+		/* Handle single click interface */
 		if( m->m_bMouseDown && m->m_bMouseDownOverIcon && nButtons == 1 && !m->m_bDragging && !m->m_bSelecting
 			&& m->m_bSingleClick && !( GetQualifiers() & ( os::QUAL_CTRL | os::QUAL_SHIFT ) ) )
 		{
@@ -965,13 +986,9 @@ public:
 				m->Unlock();
 			}
 		}
-		
-		m->m_bMouseDown = false;
-		m->m_bMouseDownOverIcon = false;
-		
+		/* Select the icons in the selection area */
 		if( m->m_bSelecting )
 		{
-			/* Select this icons */
 			m->Select( m->m_cSelectStart, m->m_cLastSelectPosition, GetQualifiers() & os::QUAL_CTRL );
 			m->m_pcControl->SelectionChanged();
 			
@@ -979,14 +996,19 @@ public:
 			Flush();		
 		}
 		
+		/* Reset values */
+		m->m_bMouseDown = false;
+		m->m_bMouseDownOverIcon = false;
 		m->m_bDragging = false;
 		m->m_bSelecting = false;
+		m->m_bMouseSelectedIcon = false;
 		
 		os::View::MouseUp( cPosition, nButtons, pcData );
 	}
 	
 	void KeyDown( const char* pzString, const char* pzRawString, uint32 nQualifiers )
 	{
+		AutoLocker cLocker( m->m_pcIconLock );		
 		/* Handle keyboard events */
 		switch( pzString[0] )
 		{

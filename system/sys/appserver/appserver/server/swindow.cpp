@@ -1160,18 +1160,16 @@ void SrvWindow::HandleMouseMoved( const Point & cMousePos, Message * pcEvent )
 		return;
 	}
 
-	if( pcActiveWindow == NULL || ( pcActiveWindow->GetFlags() & WND_SYSTEM ) == 0 )
-	{
-		Layer *pcView = g_pcTopView->GetChildAt( cMousePos );
+	
+	Layer *pcView = g_pcTopView->GetChildAt( cMousePos );
 
-		if( pcView != NULL )
-		{
-			pcMouseWnd = pcView->GetWindow();
-		}
-		else
-		{
-			pcMouseWnd = NULL;
-		}
+	if( pcView != NULL )
+	{
+		pcMouseWnd = pcView->GetWindow();
+	}
+	else
+	{
+		pcMouseWnd = NULL;
 	}
 	if( s_pcLastMouseWindow != pcMouseWnd )
 	{
@@ -1280,9 +1278,9 @@ void SrvWindow::HandleMouseUp( const Point & cMousePos, int nButton, Message * p
 	SrvWindow *pcMouseWnd = NULL;
 
 	if( pcActiveWindow == NULL || ( pcActiveWindow->GetFlags() & WND_SYSTEM ) == 0 )
-	{
 		pcMouseWnd = s_pcLastMouseWindow;
-	}
+	else
+		pcMouseWnd = get_active_window( true );
 
 	if( pcMouseWnd != NULL )
 	{
@@ -1343,7 +1341,7 @@ void SrvWindow::HandleInputEvent( Message * pcEvent )
 	}
 	else if( pcEvent->GetCode() == M_WHEEL_MOVED )
 	{
-		if( s_pcLastMouseWindow != NULL && s_pcLastMouseWindow->m_pcAppTarget != NULL )
+		if( s_pcLastMouseWindow != NULL && s_pcLastMouseWindow->m_pcAppTarget != NULL && ( s_pcLastMouseWindow->GetFlags() & WND_SYSTEM ) == 0 )
 		{
 			Message cMsg( *pcEvent );
 

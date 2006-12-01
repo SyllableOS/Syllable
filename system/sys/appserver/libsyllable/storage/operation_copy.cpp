@@ -621,12 +621,13 @@ static int32 CopyFileThread( void *pData )
 	pcProgress->Show();
 	pcProgress->Unlock();
 	bool bSuccess = true;
+	
+	bool bReplaceFiles = psParams->m_bReplace;
+	bool bDontOverwrite = psParams->m_bDontOverwrite;
+
 
 	for( uint i = 0; i < psParams->m_cSrcPaths.size(); ++i )
-	{
-		bool bReplaceFiles = psParams->m_bReplace;
-		bool bDontOverwrite = psParams->m_bDontOverwrite;
-
+	{		
 		if( OperationCopyFile( psParams->m_cDstPaths[i].c_str(), psParams->m_cSrcPaths[i].c_str(  ), &bReplaceFiles, &bDontOverwrite, false, pcProgress ) == false )
 		{
 			bSuccess = false;

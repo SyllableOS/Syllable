@@ -1196,10 +1196,11 @@ void IconDirectoryView::DragSelection( os::Point cStartPoint )
 		sprintf( zString, m->m_pcCatalog->GetString( ID_MSG_ICONDIRVIEW_NUMBER_OF_OBJECTS_SELECTED, "%i Entries" ).c_str(), nNumObjects );
 		MemFile* pcSource = new MemFile( g_aFolderImage, sizeof( g_aFolderImage ) );
 		pcBitmapIcon->Load( pcSource );
+		if( GetView() == VIEW_LIST || GetView() == VIEW_DETAILS )
+			pcBitmapIcon->SetSize( os::Point( 24, 24 ) );
 		pcIcon = pcBitmapIcon;
 		delete( pcSource );
 	}
-	
 	if( pcIcon )
 		RenderIcon( zString, pcIcon, pcView, os::Point( 0, 0 ) );
 	cImage.Sync();
@@ -1207,6 +1208,7 @@ void IconDirectoryView::DragSelection( os::Point cStartPoint )
 		delete( pcIcon );
 	
 	BeginDrag( &cData, cStartPoint - cIconPos, &cImage/*os::Rect( os::Point(), GetIconSize() )*/ );
+	SetIconSelected( 0, false );
 }
 
 
@@ -1840,6 +1842,7 @@ void IconDirectoryView::MouseUp( const Point & cPosition, uint32 nButtons, Messa
 
 	if( pcData->FindString( "file/path", &pzPath ) != 0 )
 	{
+		IconView::MouseUp( cPosition, nButtons, NULL );
 		return;
 	}
 	
@@ -1862,6 +1865,8 @@ void IconDirectoryView::MouseUp( const Point & cPosition, uint32 nButtons, Messa
 			}
 		}
 	}
+	
+	
 	//std::cout<<pzPath<<" "<<cDstDir.GetPath().c_str()<<std::endl;
 	
 	if( m->m_cPath == Path( pzPath ).GetDir() && ( ( cDstDir == m->m_cPath ) || ( cDstDir == Path( pzPath ) ) ) 
@@ -1906,6 +1911,9 @@ void IconDirectoryView::MouseUp( const Point & cPosition, uint32 nButtons, Messa
 		std::vector < os::String > cDstPaths;
 		for( int i = 0; pcData->FindString( "file/path", &pzPath, i ) == 0; ++i )
 		{
+			/* Check that none of the source items is the same as our destination */
+			if( os::String( pzPath ) == cDstDir )
+				return( IconView::MouseUp( cPosition, nButtons, NULL ) );
 			Path cSrcPath( pzPath );
 			Path cDstPath = cDstDir;
 
@@ -1933,6 +1941,7 @@ void IconDirectoryView::MouseUp( const Point & cPosition, uint32 nButtons, Messa
 			m->m_nJobsPending++;
 			move_files( cDstPaths, cSrcPaths, Messenger( this ), new os::Message( M_JOB_END ) );
 		}
+		return( os::IconView::MouseUp( cPosition, nButtons, NULL ) );
 	}
 }
 
@@ -1992,18 +2001,22 @@ void IconDirectoryView::MouseMove( const Point & cNewPos, int nCode, uint32 nBut
 		if( os::Rect( GetIconPosition( i ), GetIconPosition( i ) + GetIconSize() ).DoIntersect(
 				ConvertToView( cNewPos ) ) )
 		{
-			DirectoryIconData *pcData = static_cast < DirectoryIconData * >( GetIconData( i ) );
-			if( S_ISDIR( pcData->m_sStat.st_mode ) )
+			DirectoryIconData *pcIconData = static_cast < DirectoryIconData * >( GetIconData( i ) );
+			if( S_ISDIR( pcIconData->m_sStat.st_mode ) )
 			{
 				Path cRowPath = m->m_cPath;
 
-				cRowPath.Append( pcData->m_zPath.c_str() );
-				if( !( cRowPath == Path( pzPath ) ) )
+				cRowPath.Append( pcIconData->m_zPath.c_str() );
+				os::String cSrcPath;
+				for( int j = 0; pcData->FindString( "file/path", &cSrcPath, j) == 0; ++j )
 				{
-					SetIconSelected( i, true );
-					return;
+					if( cSrcPath == cRowPath )
+						return;
 				}
+				SetIconSelected( i, true );
+				return;
 			}
+			break;
 		}
 	}
 	SetIconSelected( 0, false );

@@ -1341,13 +1341,13 @@ void Window::DispatchMessage( Message * pcMsg, Handler * pcHandler )
 		{
 		case M_MOUSE_DOWN:
 			{
-				int32 nButtons;
+				int32 nButton;
 
-				if( pcMsg->FindInt32( "_buttons", &nButtons ) == 0 )
+				if( pcMsg->FindInt32( "_button", &nButton ) == 0 )
 				{
 					View *pcChild;
 
-					m->m_nButtons |= 1 << ( nButtons - 1 );
+					m->m_nButtons |= 1 << ( nButton - 1 );
 					/*
 					   if ( pcChild = GetFocusChild() ) {
 					   pcChild->MouseDown( pcChild->ConvertFromScreen( m->m_cMousePos ), m->m_nButtons );
@@ -1356,7 +1356,7 @@ void Window::DispatchMessage( Message * pcMsg, Handler * pcHandler )
 					pcChild = FindView( m->m_pcTopView->ConvertFromScreen( m->m_cMousePos ) );
 					if( pcChild != NULL /*  && pcChild != GetFocusChild() */  )
 					{
-						pcChild->MouseDown( pcChild->ConvertFromScreen( m->m_cMousePos ), nButtons );
+						pcChild->MouseDown( pcChild->ConvertFromScreen( m->m_cMousePos ), nButton );
 					}
 					else
 					{
@@ -1364,7 +1364,7 @@ void Window::DispatchMessage( Message * pcMsg, Handler * pcHandler )
 
 						if( pcFocusView != NULL )
 						{
-							pcFocusView->MouseDown( pcFocusView->ConvertFromScreen( m->m_cMousePos ), nButtons );
+							pcFocusView->MouseDown( pcFocusView->ConvertFromScreen( m->m_cMousePos ), nButton );
 						}
 					}
 				}
@@ -1376,9 +1376,9 @@ void Window::DispatchMessage( Message * pcMsg, Handler * pcHandler )
 			}
 		case M_MOUSE_UP:
 			{
-				int32 nButtons;
+				int32 nButton;
 
-				if( pcMsg->FindInt32( "_buttons", &nButtons ) == 0 )
+				if( pcMsg->FindInt32( "_button", &nButton ) == 0 )
 				{
 					Message *pcData = NULL;
 					Message cData( 0 );
@@ -1390,20 +1390,20 @@ void Window::DispatchMessage( Message * pcMsg, Handler * pcHandler )
 						pcData = &cData;
 					}
 
-					m->m_nButtons &= ~( 1 << ( nButtons - 1 ) );
+					m->m_nButtons &= ~( 1 << ( nButton - 1 ) );
 					Point cPos = m->m_pcTopView->ConvertFromScreen( m->m_cMousePos );
 
 					pcChild = FindView( cPos );
 					if( pcChild != NULL )
 					{
-						pcChild->MouseUp( pcChild->ConvertFromScreen( m->m_cMousePos ), nButtons, pcData );
+						pcChild->MouseUp( pcChild->ConvertFromScreen( m->m_cMousePos ), nButton, pcData );
 					}
 					if( pcChild != GetFocusChild() )
 					{
 						pcChild = GetFocusChild();
 						if( pcChild != NULL )
 						{
-							pcChild->MouseUp( pcChild->ConvertFromScreen( m->m_cMousePos ), nButtons, NULL );
+							pcChild->MouseUp( pcChild->ConvertFromScreen( m->m_cMousePos ), nButton, NULL );
 						}
 					}
 				}
@@ -1413,6 +1413,9 @@ void Window::DispatchMessage( Message * pcMsg, Handler * pcHandler )
 			{
 				MessageQueue *pcQueue = GetMessageQueue();
 
+				int32 nButtons;
+				pcMsg->FindInt32( "_buttons", &nButtons );
+				m->m_nButtons = nButtons;
 				if( pcMsg->FindInt32( "_transit", &m->m_nMouseTransition ) != 0 )
 				{
 					dbprintf( "Warning: Window::DispatchMessage() could not find '_transit' in M_MOUSE_MOVED message\n" );
