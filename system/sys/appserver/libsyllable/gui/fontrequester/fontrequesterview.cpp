@@ -394,6 +394,7 @@ FontHandle* FontRequesterView::GetFontHandle()
 
 FontRequesterView::~FontRequesterView()
 {
+	delete( pcFontHandle );
 }
 
 

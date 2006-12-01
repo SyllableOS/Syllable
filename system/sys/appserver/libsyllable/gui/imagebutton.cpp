@@ -207,9 +207,9 @@ void ImageButton::MouseMove( const Point & cNewPos, int nCode, uint32 nButtons, 
 {
 	Button::MouseMove( cNewPos, nCode, nButtons, pcData );
 
-	if( m->bMouseOver )
+	if( m->bMouseOver && ( nCode == MOUSE_ENTERED || nCode == MOUSE_EXITED ) )
 	{
-		bool mouseover = GetBounds().DoIntersect( cNewPos );
+		bool mouseover = nCode == MOUSE_ENTERED;
 
 		if( mouseover != m->bMouseTwo )
 		{

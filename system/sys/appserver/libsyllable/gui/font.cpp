@@ -33,6 +33,16 @@
 
 using namespace os;
 
+struct flattened_font_properties
+{
+    char	m_zFamily[FONT_FAMILY_LENGTH];
+    char	m_zStyle[FONT_STYLE_LENGTH];
+    uint32	m_nFlags;
+    float	m_vSize;
+    float	m_vShear;
+    float	m_vRotation;
+};
+
 void Font::_CommonInit()
 {
 	Message cReq( AR_CREATE_FONT );
@@ -815,16 +825,22 @@ bool Font::Rescan()
 
 size_t 		Font::GetFlattenedSize( void ) const
 {
-	return sizeof(m_sProps);
+	return sizeof(flattened_font_properties);
 }
 
 status_t Font::Flatten( uint8* pBuffer, size_t nSize ) const 
 {
 	//sProps = GetFontProperties();
-
-	if( nSize >= sizeof( m_sProps ) ) 
+	flattened_font_properties sProps;
+	strncpy( sProps.m_zFamily, m_sProps.m_cFamily.c_str(), 63 );
+	strncpy( sProps.m_zStyle, m_sProps.m_cStyle.c_str(), 63 );
+	sProps.m_nFlags = m_sProps.m_nFlags;
+	sProps.m_vSize = m_sProps.m_vSize;
+	sProps.m_vShear = m_sProps.m_vShear;
+	sProps.m_vRotation = m_sProps.m_vRotation;
+	if( nSize >= sizeof( sProps ) ) 
 	{
-		memcpy( pBuffer, &m_sProps, sizeof( m_sProps ) );
+		memcpy( pBuffer, &sProps, sizeof( sProps ) );
 		return 0;
     } 
 	else 
@@ -835,7 +851,13 @@ status_t Font::Flatten( uint8* pBuffer, size_t nSize ) const
 	
 status_t	Font::Unflatten( const uint8* pBuffer )
 {
-	memcpy(&m_sProps,pBuffer,GetFlattenedSize());
+	flattened_font_properties* psProps = (flattened_font_properties*)pBuffer;
+	m_sProps.m_cFamily = psProps->m_zFamily;
+	m_sProps.m_cStyle = psProps->m_zStyle;
+	m_sProps.m_nFlags = psProps->m_nFlags;
+	m_sProps.m_vSize =  psProps->m_vSize;
+	m_sProps.m_vShear =  psProps->m_vShear;
+	m_sProps.m_vRotation = psProps->m_vRotation;
 	SetProperties(m_sProps);
 	return 0;
 }

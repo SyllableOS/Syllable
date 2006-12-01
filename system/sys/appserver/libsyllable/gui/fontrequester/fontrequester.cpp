@@ -18,17 +18,14 @@ public:
 	{
 		m_bShowAdvanced = false;
 		m_pcTarget = NULL;  //target is null to start
-		m_pcFont = new Font();
-//		m_pcFont->AddRef();  //add a reference to the font
 	}
 	
 	~Private()
 	{
-		//if( m_pcFont ) m_pcFont->Release();
+		delete m_pcTarget;
 	}
 	
 	Messenger* m_pcTarget;
-	Font* m_pcFont;
 	bool m_bShowAdvanced;
 };
 
@@ -84,14 +81,12 @@ void FontRequester::HandleMessage(Message* pcMessage)
 			/*a simple test for null...  it should never be null, but you never know :)*/
 			if (m->m_pcTarget != NULL)
 			{
-				m->m_pcFont->Release();
-				m->m_pcFont = new Font(GetFontProperties(pcRequesterView->GetFontHandle()));
-				//m->m_pcFont->AddRef();
-
-				Message *pcMsg = new Message( M_FONT_REQUESTED );
-				pcMsg->AddPointer( "source", this );
-				pcMsg->AddObject("font",*m->m_pcFont);
-				m->m_pcTarget->SendMessage( pcMsg );
+				os::Font* pcFont = new Font(GetFontProperties(pcRequesterView->GetFontHandle()));
+				Message cMsg( M_FONT_REQUESTED );
+				cMsg.AddPointer( "source", this );
+				cMsg.AddObject("font",*pcFont);
+				m->m_pcTarget->SendMessage( &cMsg );
+				pcFont->Release();
 			}
 			else
 				dbprintf("No place to send messages to.\n");
@@ -105,9 +100,9 @@ void FontRequester::HandleMessage(Message* pcMessage)
 			/*a simple test for null...  it should never be null, but you never know :)*/
 			if (m->m_pcTarget != NULL)
 			{
-				Message *pcMsg = new Message( M_FONT_REQUESTER_CANCELED );
-				pcMsg->AddPointer( "source", this );
-				m->m_pcTarget->SendMessage( pcMsg );
+				Message cMsg( M_FONT_REQUESTER_CANCELED );
+				cMsg.AddPointer( "source", this );
+				m->m_pcTarget->SendMessage( &cMsg );
 			}
 			else
 				dbprintf("No place to send messages to.\n");
@@ -127,9 +122,9 @@ bool FontRequester::OkToQuit()
 	/*a simple test for null...  it should never be null, but you never know :)*/
 	if (m->m_pcTarget != NULL)
 	{
-		Message *pcMsg = new Message( M_FONT_REQUESTER_CANCELED );
-		pcMsg->AddPointer( "source", this );
-		m->m_pcTarget->SendMessage( pcMsg );
+		Message cMsg( M_FONT_REQUESTER_CANCELED );
+		cMsg.AddPointer( "source", this );
+		m->m_pcTarget->SendMessage( &cMsg );
 	}
 	else
 		dbprintf("No place to send messages to.\n");
