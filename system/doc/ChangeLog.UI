@@ -1,3 +1,9 @@
+* November 30, 2006, Arno Klenke *
+
+Improve drag and drop in the iconview class
+Send mouse up events when system windows like menus are opened
+Send correct mouse events for system windows. This has fixed the menu open timers
+
 * November 27, 2006, Kristian Van Der Vliet *
 
 Changes to appserver & libsyllable
@@ -1232,6 +1238,9 @@ disabled controls.  The following files have been patched:
 
 	The sub-menu arrow is now drawn corretly, and menus which have children
 	are now drawn slightly larger to allow for the arrow.
+
+
+
 
 
 
