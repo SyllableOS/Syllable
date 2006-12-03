@@ -1,3 +1,22 @@
+* December 3, 2006, Kristian Van Der Vliet *
+
+- AEdit
+	o Imported AEdit 2.3c from Jonas Jarvoll
+		o New icons
+		o Removed custom made widgets. Now using libsyllable StatusBar and ToolBar
+		o Added new TabView widget which enables the user to hide or show tabs
+		o Remove the font menu and replaced with a font requester dialog instead
+		o Fixed bug when changing font (bug #21)
+		o Replaced Search, Replace and Goto window dialog with a panel 
+		o Removed use of snprintf
+		o Removed icons not used
+		o Fixed About dialog so that all text is actually visible
+		o Automatic convert from DOS to Unix when loading file
+		o Minor code cleanup in some files
+		o Added AEdit as default filehandler (bug #28) for plain text files
+		o Localize MIME content description
+		o Added patch from Anthony Morphett to handle ctrl+left/right
+
 * November 27, 2006, Kristian Van Der Vliet *
 
 - ATerm

@@ -1,3 +1,22 @@
+* December 3, 2006, Kristian Van Der Vliet *
+
+Improved FileRequester keyboard handling and general usability
+	* Change the order of the buttons: Now the "Cancel" button is the first button
+	  and "Open" the second button (according to Syllable HIG)
+	* For cases ID_OK and ID_INVOKED I have added a check to see if the user selected
+	  a directory or not. If a directory was selected the path of the filerequester
+	  is set to that directory. For ID_PATH_CHANGED, ID_BACK_BUT, ID_HOME_BUT and
+	  ID_UP_BUT was changed to make a call to the private function PathChanged. This
+	  ensures that the title and dropdown menu are in fact correctly updated.
+	* If SetPath() is called, make sure that the IconDirView always gets the focus.
+
+All from Jonas Jarvoll
+
+* December 3, 2006, Kristian Van Der Vliet *
+
+Patch to add Ctrl+Left & Ctrl+Right handling to TextView, which selects the previous
+and next word in the text. Patch from Anthony Morphett <awmorp@gmail.com>
+
 * December 1, 2006, Arno Klenke *
 
 Corrected mouse over behaviour in the textview and imagebutton class
