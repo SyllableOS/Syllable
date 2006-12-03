@@ -1,10 +1,10 @@
-COPTS = -Wno-deprecated -c -DENABLE_UNDO
+COPTS = -Wno-deprecated -c
 
 OBJSDIR = objs/
 
 CATALOGS = da de es fr fy hu it nl pl pt-br ru sv
 
-OBJS = $(OBJSDIR)main.o $(OBJSDIR)appwindow.o $(OBJSDIR)button_bar.o $(OBJSDIR)editview.o $(OBJSDIR)aboutdialog.o $(OBJSDIR)gotodialog.o $(OBJSDIR)finddialog.o $(OBJSDIR)replacedialog.o $(OBJSDIR)buffer.o $(OBJSDIR)status_bar.o $(OBJSDIR)mytabview.o $(OBJSDIR)icons.o
+OBJS = $(OBJSDIR)main.o $(OBJSDIR)appwindow.o $(OBJSDIR)editview.o $(OBJSDIR)aboutdialog.o $(OBJSDIR)gotodialog.o $(OBJSDIR)finddialog.o $(OBJSDIR)replacedialog.o $(OBJSDIR)buffer.o $(OBJSDIR)mytabview.o $(OBJSDIR)tabview.o $(OBJSDIR)icons.o $(OBJSDIR)dialog.o
 EXE = aedit
 
 all: $(OBJSDIR) $(EXE)
@@ -20,11 +20,8 @@ $(EXE): catalogs $(OBJS)
 	rescopy -a $(EXE) stock_cut_16=pixmaps/stock_cut_16.png
 	rescopy -a $(EXE) stock_cut_24=pixmaps/stock_cut_24.png
 	rescopy -a $(EXE) stock_exit_16=pixmaps/stock_exit_16.png
-	rescopy -a $(EXE) stock_exit_24=pixmaps/stock_exit_24.png
 	rescopy -a $(EXE) stock_jump_to_16=pixmaps/stock_jump_to_16.png
-	rescopy -a $(EXE) stock_jump_to_24=pixmaps/stock_jump_to_24.png
 	rescopy -a $(EXE) stock_left_arrow_16=pixmaps/stock_left_arrow_16.png
-	rescopy -a $(EXE) stock_left_arrow_24=pixmaps/stock_left_arrow_24.png
 	rescopy -a $(EXE) stock_new_16=pixmaps/stock_new_16.png
 	rescopy -a $(EXE) stock_new_24=pixmaps/stock_new_24.png
 	rescopy -a $(EXE) stock_open_16=pixmaps/stock_open_16.png
@@ -34,19 +31,20 @@ $(EXE): catalogs $(OBJS)
 	rescopy -a $(EXE) stock_redo_16=pixmaps/stock_redo_16.png
 	rescopy -a $(EXE) stock_redo_24=pixmaps/stock_redo_24.png
 	rescopy -a $(EXE) stock_right_arrow_16=pixmaps/stock_right_arrow_16.png
-	rescopy -a $(EXE) stock_right_arrow_24=pixmaps/stock_right_arrow_24.png
 	rescopy -a $(EXE) stock_save_16=pixmaps/stock_save_16.png
-	rescopy -a $(EXE) stock_save_24=pixmaps/stock_save_24.png
+	rescopy -a $(EXE) stock_save_24=pixmaps/stock_save_16.png
 	rescopy -a $(EXE) stock_save_as_16=pixmaps/stock_save_as_16.png
-	rescopy -a $(EXE) stock_save_as_24=pixmaps/stock_save_as_24.png
 	rescopy -a $(EXE) stock_search_16=pixmaps/stock_search_16.png
 	rescopy -a $(EXE) stock_search_24=pixmaps/stock_search_24.png
 	rescopy -a $(EXE) stock_search_replace_16=pixmaps/stock_search_replace_16.png
-	rescopy -a $(EXE) stock_search_replace_24=pixmaps/stock_search_replace_24.png
 	rescopy -a $(EXE) stock_undo_16=pixmaps/stock_undo_16.png
 	rescopy -a $(EXE) stock_undo_24=pixmaps/stock_undo_24.png
+	rescopy -a $(EXE) stock_select_all_16=pixmaps/stock_select_all_16.png
+	rescopy -a $(EXE) stock_close_16=pixmaps/stock_close_16.png
+	rescopy -a $(EXE) stock_font_16=pixmaps/stock_font_16.png
 	rescopy -a $(EXE) icon24x24.png=pixmaps/icon24x24.png
 	rescopy -a $(EXE) icon48x48.png=pixmaps/icon48x48.png
+	rescopy -a $(EXE) text_plain.png=pixmaps/text_plain.png
 	rescopy -a $(EXE) about=pixmaps/about.png
 	for CATALOG in $(CATALOGS);do \
 		echo $$CATALOG; \
@@ -114,8 +112,14 @@ $(OBJSDIR)status_bar.o: status_bar.cpp status_bar.h
 $(OBJSDIR)mytabview.o: mytabview.cpp mytabview.h
 	$(CXX) $(COPTS) mytabview.cpp -o $@
 
+$(OBJSDIR)tabview.o: tabview.cpp tabview.h
+	$(CXX) $(COPTS) tabview.cpp -o $@
+
 $(OBJSDIR)icons.o: icons.cpp icons.h
 	$(CXX) $(COPTS) icons.cpp -o $@
+
+$(OBJSDIR)dialog.o: dialog.cpp dialog.h
+	$(CXX) $(COPTS) dialog.cpp -o $@
 
 catalog-clean:
 	-rm resources/$(EXE).catalog resources/$(EXE).h; \

@@ -1,5 +1,5 @@
 //  AEdit -:-  (C)opyright 2000-2002 Kristian Van Der Vliet
-//             (C)opyright 2004 Jonas Jarvoll
+//             (C)opyright 2004-2006 Jonas Jarvoll
 //
 // This is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by
@@ -16,188 +16,218 @@
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include "finddialog.h"
-#include "appwindow.h"
 #include "buffer.h"
+#include "main.h"
+#include "icons.h"
 #include "messages.h"
 #include "resources/aedit.h"
 
-#include <gui/window.h>
-#include <util/message.h>
+using namespace os;
 
-FindDialog::FindDialog(const Rect& cFrame, AEditWindow* pcParent) : Window(cFrame, "find_dialog", MSG_FIND_TITLE, WND_NO_ZOOM_BUT | WND_NO_DEPTH_BUT | WND_NOT_RESIZABLE)
+FindDialog :: FindDialog() : Dialog()
 {
-	pcTarget=pcParent;		// We need to know the parent window so we can send messages back to it
+	// Create layout
+	pcLayoutView = new LayoutView( Rect(), "" );
+	AddChild( pcLayoutView );
 
-	// Create the Layoutviews
-	pcMainLayoutView=new LayoutView(GetBounds(),"", NULL,CF_FOLLOW_ALL);
+	// Create basepanel	
+	pcRoot = new VLayoutNode( "" );
+	pcRoot->SetVAlignment( os::ALIGN_LEFT );
+	pcRoot->SetHAlignment( os::ALIGN_LEFT );
+	pcLayoutView->SetRoot( pcRoot );
 
-	// Make the base Vertical LayoutNode
-	pcHLayoutNode=new HLayoutNode("main_layout_node");
+	// Create panels
+	pcTopPanel = new HLayoutNode( "" );
+	pcTopPanel->SetVAlignment( os::ALIGN_LEFT );
+	pcTopPanel->SetHAlignment( os::ALIGN_LEFT );
+	pcRoot->AddChild( pcTopPanel );
 
-	// Create the InputNode
-	pcInputNode=new VLayoutNode("input_layout_node");
+	pcBottomPanel = new HLayoutNode( "" );
+	pcBottomPanel->SetVAlignment( os::ALIGN_LEFT );
+	pcBottomPanel->SetHAlignment( os::ALIGN_LEFT );
+	pcRoot->AddChild( pcBottomPanel );
 
-	pcInputNode->AddChild(new VLayoutSpacer("spacer", 5.0f, 5.0f, pcInputNode, 1.0f));
+	// Create close button
+	pcCloseButton = new ImageButton( Rect(), "close","", new Message( M_BUT_FIND_CLOSE ), GetStockIcon( STOCK_CLOSE, STOCK_SIZE_MENUITEM ) );
+	pcTopPanel->AddChild( pcCloseButton );
 
-	pcFindLabel=new StringView(Rect(0,0,0,0),"find_label",MSG_FIND_FIND_LABEL,ALIGN_LEFT,CF_FOLLOW_NONE,WID_WILL_DRAW);
-	pcInputNode->AddChild(pcFindLabel);
-	
-	pcFindTextView= new TextView(Rect(0,0,0,0), "find_text_view", NULL, CF_FOLLOW_NONE);
-	pcFindTextView->SetMinPreferredSize( 15, 1 );
-	pcInputNode->AddChild(pcFindTextView);
+	// Create space
+	pcTopPanel->AddChild( new HLayoutSpacer( "", 8, 8 ) );
 
-	pcInputNode->AddChild(new VLayoutSpacer("spacer", 5.0f, 5.0f, pcInputNode, 1.0f));
+	// Create string
+	pcFindString = new StringView( Rect(), "find_string", MSG_FIND_FIND_LABEL );
+	pcTopPanel->AddChild( pcFindString );
 
-	pcCaseCheckBox=new CheckBox(Rect(0,0,0,0),"case_checkbox", MSG_FIND_CASE_SENSITIVE, new Message(M_VOID), CF_FOLLOW_NONE, WID_WILL_DRAW);
-	pcInputNode->AddChild(pcCaseCheckBox);
+	// Create space
+	pcTopPanel->AddChild( new HLayoutSpacer( "", 4, 4 ) );
 
-	pcInputNode->SameWidth("find_label","find_text_view","case_checkbox",NULL);
+	// Create textview
+	pcFindTextView = new TextView( Rect(), "", "" );
+	pcFindTextView->SetMessage( new Message( M_BUT_FIND_TEXTVIEW ) );
+	pcFindTextView->SetEventMask( TextView::EI_ENTER_PRESSED );
+	pcFindTextView->SetMinPreferredSize( 20, 1 );
+	pcFindTextView->SetMaxPreferredSize( 200, 1 );
+	pcTopPanel->AddChild( pcFindTextView );
 
-	// Add a spacer to force the edit box to the top
-	pcInputNode->AddChild(new VLayoutSpacer("spacer", 1));
+	// Create space
+	pcTopPanel->AddChild( new HLayoutSpacer( "", 4, 4 ) );
 
-	// Add a spacer on the far left
-	pcHLayoutNode->AddChild(new HLayoutSpacer("spacer", 5.0f, 5.0f, pcHLayoutNode, 1.0f));
+	// Create the find/find next button
+	pcFirstButton = new Button( Rect(), "first_button", MSG_FIND_FIND, new Message( M_BUT_FIND_GO ) );
+	pcTopPanel->AddChild( pcFirstButton );
 
-	pcHLayoutNode->AddChild(pcInputNode);
+	// Create space
+	pcTopPanel->AddChild( new HLayoutSpacer( "", 4, 4 ) );
 
-	// Add a spacer between the Edit box & the Buttons
-	pcHLayoutNode->AddChild(new HLayoutSpacer("spacer", 5.0f, 5.0f, pcHLayoutNode, 1.0f));
+	pcNextButton = new Button( Rect(), "next_button", MSG_FIND_FIND_NEXT, new Message( M_BUT_FIND_NEXT ) );
+	pcTopPanel->AddChild( pcNextButton );
 
-	// Create the ButtonNode
-	pcButtonNode= new VLayoutNode("button_layout_node");
-
-	pcFindButton=new Button(Rect(0,0,0,0), "find_button", MSG_FIND_FIND, new Message(M_BUT_FIND_GO), CF_FOLLOW_NONE);
-	pcButtonNode->AddChild(pcFindButton);
-	pcButtonNode->AddChild(new VLayoutSpacer("spacer", 5.0f, 5.0f, pcButtonNode, 1.0f ) );
-
-	pcNextButton=new Button(Rect(0,0,0,0), "find_next_button", MSG_FIND_FIND_NEXT, new Message(M_BUT_FIND_NEXT), CF_FOLLOW_NONE);
-	pcButtonNode->AddChild(pcNextButton);
-	pcButtonNode->AddChild(new VLayoutSpacer("spacer", 5.0f, 5.0f, pcButtonNode, 1.0f ) );
-
-	pcCloseButton=new Button(Rect(0,0,0,0), "close_button", MSG_FIND_CLOSE, new Message(M_BUT_FIND_CLOSE), CF_FOLLOW_NONE);
-	pcButtonNode->AddChild(pcCloseButton);
-	pcButtonNode->AddChild(new VLayoutSpacer("spacer", 5.0f, 5.0f, pcButtonNode, 1.0f ) );
-
-	pcButtonNode->SameWidth("find_button","find_next_button","close_button", NULL);
-
-	pcHLayoutNode->AddChild(pcButtonNode);
-
-	// Add a spacer on the far right
-	pcHLayoutNode->AddChild(new HLayoutSpacer("spacer", 5.0f, 5.0f, pcHLayoutNode, 1.0f));
-
-	// Add the LayoutNodes to the layoutview
-	pcMainLayoutView->SetRoot(pcHLayoutNode);
-
-	// Add the View to the Window
-	AddChild(pcMainLayoutView);
+	// Create checkbox for case sensitivity
+	pcCaseCheckbox = new CheckBox( Rect(),"case_checkbox", MSG_FIND_CASE_SENSITIVE, new Message( M_VOID ) );
+	pcBottomPanel->AddChild( pcCaseCheckbox );
 
 	// Set the focus
-	SetFocusChild(pcFindTextView);
-	SetDefaultButton(pcFindButton);
-
-	Point cTopLeft = GetBounds().LeftTop();
-	Point cSize = pcMainLayoutView->GetPreferredSize( false );
-	Rect cWFrame( cTopLeft.x, cTopLeft.y, cTopLeft.x + cSize.x, cTopLeft.y + cSize.y );
-	SetFrame( cWFrame );
+	MakeFocus();
 }
 
-void FindDialog::HandleMessage(Message* pcMessage)
+FindDialog :: ~FindDialog()
 {
-	switch(pcMessage->GetCode())
+	delete pcLayoutView;
+	delete pcRoot;
+	delete pcTopPanel;
+	delete pcBottomPanel;
+	delete pcFirstButton;
+	delete pcNextButton;
+	delete pcCloseButton;
+	delete pcFindString;
+	delete pcFindTextView;
+	delete pcCaseCheckbox;
+}
+
+void FindDialog :: FrameSized( const Point& cDelta )
+{
+	View::FrameSized( cDelta );
+	_Layout();
+}
+
+void FindDialog :: AllAttached()
+{
+	View::AllAttached();
+	pcFirstButton->SetTarget( this );
+	pcNextButton->SetTarget( this );
+	pcCloseButton->SetTarget( this );
+	pcFindTextView->SetTarget( this );
+	pcCaseCheckbox->SetTarget( this );
+}
+
+void FindDialog :: HandleMessage( Message* pcMessage )
+{
+	switch( pcMessage->GetCode() )
 	{
 		case M_BUT_FIND_GO:
 		{
-			if(pcTarget->pcCurrentBuffer!=NULL)
-			{
-				std::string text=pcFindTextView->GetBuffer()[0];
-
-				if(pcTarget->pcCurrentBuffer->FindFirst(text, (pcCaseCheckBox->GetValue()? true : false)))
-				{
-					char buffer[1024];
-					sprintf(buffer,MSG_STATUSBAR_SEARCH_FOUND.c_str(), text.c_str());
-
-					pcTarget->SetStatus(string(buffer));
-				}
-				else
-				{
-					char buffer[1024];
-					sprintf(buffer,MSG_STATUSBAR_SEARCH_NOT_FOUND_1.c_str(), text.c_str());
-
-					pcTarget->SetStatus(string(buffer));
-				}
-			}
+			_FindFirst();
 			break;
 		}
-
 		case M_BUT_FIND_NEXT:
 		{
-			if(pcTarget->pcCurrentBuffer!=NULL)
+			_FindNext();
+			break;
+		}
+		case M_BUT_FIND_CLOSE:
+		{
+			AEditApp::GetAEditWindow()->SetDialog( NULL );
+			break;
+		}
+		case M_BUT_FIND_TEXTVIEW:
+		{
+			int32 nEvent;
+			
+			if( pcMessage->FindInt32( "events", &nEvent ) == EOK )
 			{
-				std::string text;
-
-				text=pcTarget->pcCurrentBuffer->FindNext();
-
-				if(text!="")
-				{
-					char buffer[1024];
-					sprintf(buffer,MSG_STATUSBAR_SEARCH_FOUND.c_str(), text.c_str());
-
-					pcTarget->SetStatus(string(buffer));
-				}
-				else
-				{
-					pcTarget->SetStatus(MSG_STATUSBAR_SEARCH_NOT_FOUND_2);
-				}
+				if( nEvent & TextView::EI_ENTER_PRESSED )
+					_FindFirst();			
 			}
 			break;
 		}
-
-		case M_BUT_FIND_CLOSE:
-		{
-			// Hide the Window
-			Hide();
-
-			break;
-		}
-
 		default:
-		{
-			pcTarget->PostMessage(pcMessage,pcTarget);	// Send the messages from the dialog back to the parent window
+			View::HandleMessage( pcMessage );
 			break;
-		}
 	}
 }
 
 // Disable/enable buttons in dialog depending on the parameter
-void FindDialog::SetEnable(bool bEnable)
+void FindDialog :: SetEnable( bool bEnable )
 {
-	pcFindButton->SetEnable(bEnable);
-	pcNextButton->SetEnable(bEnable);
+	pcFirstButton->SetEnable( bEnable );
+	pcNextButton->SetEnable( bEnable );
 }
 
-bool FindDialog::OkToQuit(void)
+void FindDialog :: Init()
 {
-	Message *msg=new Message(M_BUT_FIND_CLOSE);
-	HandleMessage(msg);
-	delete msg;
-	return (false);
-}
-
-void FindDialog::MakeFocus()
-{
-	Window::MakeFocus();
 	// Set cursor on the text entry
+	pcFindTextView->SelectAll();
 	pcFindTextView->MakeFocus();
 }
 
-void FindDialog::Raise()
+Point FindDialog :: GetPreferredSize( bool bSize ) const
 {
-	if(IsVisible())
-		Show(false);
-
-	Show(true);
-
-	MakeFocus();
+	Point p = pcLayoutView->GetPreferredSize( bSize );
+	p.x += 4;
+	p.y += 4;
+	return p;
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// P R I V A T E
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+void FindDialog :: _FindFirst()
+{
+	Buffer* current = AEditApp::GetAEditWindow()->pcCurrentBuffer;
+
+	if( current != NULL )
+	{
+		String text = pcFindTextView->GetBuffer()[0];
+
+		if( current->FindFirst( text, pcCaseCheckbox->GetValue() ? true : false ) )
+		{
+			AEditApp::GetAEditWindow()->SetStatus( MSG_STATUSBAR_SEARCH_FOUND.c_str(), text.c_str() );
+			current->MakeFocus();
+		}
+		else
+			AEditApp::GetAEditWindow()->SetStatus( MSG_STATUSBAR_SEARCH_NOT_FOUND_1.c_str(), text.c_str() );
+	}
+}
+
+void FindDialog :: _FindNext()
+{
+	Buffer* current = AEditApp::GetAEditWindow()->pcCurrentBuffer;
+
+	if( current != NULL )
+	{
+		String text;
+		text = current->FindNext();
+
+		if( text != "" )
+		{
+			AEditApp::GetAEditWindow()->SetStatus( MSG_STATUSBAR_SEARCH_FOUND.c_str(), text.c_str() );
+			current->MakeFocus();
+		}
+		else
+		{
+			AEditApp::GetAEditWindow()->SetStatus( MSG_STATUSBAR_SEARCH_NOT_FOUND_2 );
+		}
+	}
+}
+
+void FindDialog :: _Layout()
+{
+	Rect cFrame = GetBounds();
+	cFrame.Resize( 2, 2, -2, -2 );
+	cFrame.right = cFrame.left + GetPreferredSize( false ).x;
+
+	pcLayoutView->SetFrame( cFrame );	
+}

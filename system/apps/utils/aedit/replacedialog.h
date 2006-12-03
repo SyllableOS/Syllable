@@ -1,5 +1,5 @@
 //  AEdit -:-  (C)opyright 2000-2002 Kristian Van Der Vliet
-//             (C)opyright 2004 Jonas Jarvoll
+//             (C)opyright 2004-2006 Jonas Jarvoll
 //
 // This is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by
@@ -18,48 +18,53 @@
 #ifndef __REPLACE_DIALOG_H__
 #define __REPLACE_DIALOG_H__
 
-#include "appwindow.h"
-#include <gui/window.h>
-#include <gui/textview.h>
+#include "dialog.h"
+
 #include <gui/layoutview.h>
-#include <gui/checkbox.h>
-#include <gui/stringview.h>
 #include <gui/button.h>
+#include <gui/stringview.h>
+#include <gui/textview.h>
+#include <gui/imagebutton.h>
+#include <gui/checkbox.h>
+#include <util/message.h>
 
-using namespace os;
-
-class AEditWindow;
-
-class ReplaceDialog : public Window
+class ReplaceDialog : public Dialog
 {
-	public:
-		ReplaceDialog(const Rect& cFrame, AEditWindow* pcParent);
-		void HandleMessage(Message* pcMessage);
-		bool OkToQuit(void);
-		void SetEnable(bool bEnable);
-		void Raise();
+public:
+	ReplaceDialog();
+	~ReplaceDialog();
 
-	private:
-		AEditWindow* pcTarget;
+	void FrameSized( const os::Point& cDelta );
+	void HandleMessage( os::Message* pcMessage );
+	void AllAttached();
+	os::Point GetPreferredSize( bool bSize ) const;
 
-		LayoutView* pcMainLayoutView;
+	void Init();
 
-		HLayoutNode* pcHLayoutNode;
-		VLayoutNode* pcButtonNode;
-		VLayoutNode* pcInputNode;
+	void SetEnable( bool bEnable );
 
-		Button* pcFindButton;
-		Button* pcNextButton;
-		Button* pcReplaceButton;
-		Button* pcCloseButton;
+private:
+	void _FindFirst();
+	void _FindNext();
+	void _Replace();
+	void _Layout();
 
-		TextView* pcFindTextView;
-		TextView* pcReplaceTextView;
+	// Layouts
+	os::LayoutView* pcLayoutView;
+	os::LayoutNode* pcRoot;
+	os::LayoutNode* pcTopPanel;
+	os::LayoutNode* pcBottomPanel;
 
-		CheckBox* pcCaseCheckBox;
-
-		StringView* pcFindLabel;
-		StringView* pcReplaceLabel;
+	// Widgets
+	os::Button* pcFirstButton;
+	os::Button* pcNextButton;
+	os::Button* pcReplaceButton;
+	os::ImageButton* pcCloseButton;
+	os::StringView* pcFindString;
+	os::TextView* pcFindTextView;
+	os::StringView* pcReplaceString;
+	os::TextView* pcReplaceTextView;
+	os::CheckBox* pcCaseCheckbox;
 };
 
 #endif

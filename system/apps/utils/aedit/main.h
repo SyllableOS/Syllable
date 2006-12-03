@@ -22,15 +22,14 @@
 
 #include "appwindow.h"
 
-using namespace os;
-
-class AEditApp : public Application
+class AEditApp : public os::Application
 {
 	public:
 		AEditApp(int argc, char* argv[]);
-   
+   		
+		static AEditWindow* GetAEditWindow() { return pcMainWindow; };
 	private:
-		AEditWindow* pcMainWindow;
+		static AEditWindow* pcMainWindow;
 };
 
 #endif

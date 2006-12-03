@@ -14,11 +14,11 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-#include <gui/tabview.h>
 #include <gui/view.h>
 #include <util/invoker.h>
 #include "mytabview.h"
-#include "appwindow.h"
+
+using namespace os;
 
 MyTabView::MyTabView(const Rect& cFrame, AEditWindow* pcMain) : TabView(cFrame, "appwindow_tab_view", CF_FOLLOW_ALL, WID_WILL_DRAW)
 {

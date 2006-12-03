@@ -1,4 +1,4 @@
-// AEdit -:-  (C)opyright 2004 Jonas Jarvoll
+// AEdit -:-  (C)opyright 2004-2006 Jonas Jarvoll
 //
 // This is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by
@@ -17,19 +17,19 @@
 #ifndef __MYTABVIEW_H
 #define __MYTABVIEW_H
 
-#include <gui/tabview.h>
 #include <gui/rect.h>
 #include <gui/view.h>
 #include "appwindow.h"
+#include "tabview.h"
 
-using namespace os;
+class AEditWindow;
 
 class MyTabView : public TabView
 {
 	public:
-  		MyTabView(const Rect& cFrame, AEditWindow* pcMain);
-		void Paint(const Rect& cUpdate);
-		void MouseUp(const Point& cPosition, uint32 nButtons, Message* pcData);
+  		MyTabView(const os::Rect& cFrame, AEditWindow* pcMain);
+		void Paint(const os::Rect& cUpdate);
+		void MouseUp(const os::Point& cPosition, uint32 nButtons, os::Message* pcData);
 	private:
 		AEditWindow* pcMainWindow;
 };

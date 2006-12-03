@@ -27,9 +27,18 @@ MSG_MENU_EDIT_SELECT_ALL			Välj alla
 MSG_MENU_EDIT_UNDO					Ångra
 MSG_MENU_EDIT_REDO					Redo
 
+MSG_MENU_VIEW_VIEW=350				Visa
+MSG_MENU_VIEW_TOOLBAR				Verktygsfält
+MSG_MENU_VIEW_STATUSBAR				Statusfält
+MSG_MENU_VIEW_SETFONT				Välj font...
+MSG_MENU_VIEW_TABS					Tabbar
+MSG_MENU_VIEW_SHOW					Visa
+MSG_MENU_VIEW_HIDE					Göm
+MSG_MENU_VIEW_AUTO					Automatisk
+
 MSG_MENU_FIND=400					Sök
-MSG_MENU_FIND_FIND					Sök
-MSG_MENU_FIND_REPLACE				Ersätt
+MSG_MENU_FIND_FIND					Sök...
+MSG_MENU_FIND_REPLACE				Ersätt...
 MSG_MENU_FIND_GOTO_LINE				Gå till rad...
 
 MSG_MENU_FONT=500					Font
@@ -49,7 +58,7 @@ MSG_ABOUT_TEXT						\n\nText Editor for Syllable\nCopyright 2000-2003 Kristian V
 MSG_ABOUT_CLOSE						Stäng
 MSG_ABOUT_VERSION					version: 
 MSG_ABOUT_LINE_1 					En Texteditor För Syllable
-MSG_ABOUT_LINE_2					(C)2005 Syllable team
+MSG_ABOUT_LINE_2					(C) 2006 Syllable team
 MSG_ABOUT_LINE_3					w w w . s y l l a b l e . o r g
 
 MSG_ERROR_TITLE=900					Om AEdit
@@ -57,7 +66,7 @@ MSG_ERROR_CANT_SAVE					Unable to save file
 MSG_ERROR_CLOSE						O.K
 
 MSG_FIND_TITLE=1000					Sök
-MSG_FIND_FIND_LABEL					Sök
+MSG_FIND_FIND_LABEL					Sök efter
 MSG_FIND_CASE_SENSITIVE				Lägeskänslig sökning
 MSG_FIND_FIND						_Sök
 MSG_FIND_FIND_NEXT					Sök _Nästa
@@ -66,10 +75,11 @@ MSG_FIND_CLOSE					    _Stäng
 MSG_GOTO_TITLE=1100					Gå till rad
 MSG_GOTO_GOTO						Gå till rad
 MSG_GOTO_CLOSE						Stäng
+MSG_GOTO_LINE						Rad:
 
 MSG_REPLACE_TITLE=1200				Ersätt
-MSG_REPLACE_LBLFIND					Sök
-MSG_REPLACE_WITH					Ersätt med
+MSG_REPLACE_LBLFIND					Sök efter
+MSG_REPLACE_WITH					och ersätt med
 MSG_REPLACE_CASE_SENSITIVE			Lägeskänslig sökning
 MSG_REPLACE_FIND					_Sök
 MSG_REPLACE_FIND_NEXT				Sök _Nästa
@@ -108,3 +118,5 @@ MSG_STATUSBAR_REPLACE_NOT_OK				Frasen var ej ersatt.
 
 MSG_BUFFER_UNTITLED=2100					Namnlös-%d
 MSG_BUFFER_CURSOR							Kol: %d Rad: %d
+
+MSG_MIMETYPE_TEXT_PLAIN=2200				Text filer

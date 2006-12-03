@@ -27,6 +27,15 @@ MSG_MENU_EDIT_SELECT_ALL					Select All
 MSG_MENU_EDIT_UNDO							Undo
 MSG_MENU_EDIT_REDO							Redo
 
+MSG_MENU_VIEW_VIEW=350						View
+MSG_MENU_VIEW_TOOLBAR						Toolbar
+MSG_MENU_VIEW_STATUSBAR						Statusbar
+MSG_MENU_VIEW_SETFONT						Set font...
+MSG_MENU_VIEW_TABS							Tabs
+MSG_MENU_VIEW_SHOW							Show
+MSG_MENU_VIEW_HIDE							Hide
+MSG_MENU_VIEW_AUTO							Automatic
+
 MSG_MENU_FIND=400							Find
 MSG_MENU_FIND_FIND							Find...
 MSG_MENU_FIND_REPLACE						Replace...
@@ -49,7 +58,7 @@ MSG_ABOUT_TEXT								\n\nText Editor for Syllable\nCopyright 2000-2003 Kristian
 MSG_ABOUT_CLOSE								Close
 MSG_ABOUT_VERSION							version: 
 MSG_ABOUT_LINE_1 							A Text Editor for Syllable
-MSG_ABOUT_LINE_2							(c) 2005 The Syllable Team
+MSG_ABOUT_LINE_2							(c) 2006 The Syllable Team
 MSG_ABOUT_LINE_3							w w w . s y l l a b l e . o r g
 
 MSG_ERROR_TITLE=900							Save
@@ -66,10 +75,11 @@ MSG_FIND_CLOSE					    		_Close
 MSG_GOTO_TITLE=1100							Go to Line
 MSG_GOTO_GOTO								_Go to Line
 MSG_GOTO_CLOSE								_Cancel
+MSG_GOTO_LINE								Row:
 
 MSG_REPLACE_TITLE=1200						Replace
 MSG_REPLACE_LBLFIND							Find
-MSG_REPLACE_WITH							Replace with
+MSG_REPLACE_WITH							and replace with
 MSG_REPLACE_CASE_SENSITIVE					Case _Sensitive Search
 MSG_REPLACE_FIND							_Find First
 MSG_REPLACE_FIND_NEXT						Find _Next
@@ -107,3 +117,5 @@ MSG_STATUSBAR_REPLACE_NOT_OK				Phrase was not replaced.
 
 MSG_BUFFER_UNTITLED=2100					Untitled - %d
 MSG_BUFFER_CURSOR							Column: %d Row: %d
+
+MSG_MIMETYPE_TEXT_PLAIN=2200					Plain text files

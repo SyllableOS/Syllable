@@ -1,5 +1,5 @@
-//  AEdit -:-  (C)opyright 2005 Jonas Jarvoll
-//
+//  AEdit -:-  (C)opyright 2005-2006 Jonas Jarvoll
+//             
 // This is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
@@ -18,6 +18,7 @@
 #define __ABOUT_DIALOG_H__
 
 #include "appwindow.h"
+
 #include <gui/window.h>
 #include <gui/layoutview.h>
 #include <gui/button.h>
@@ -25,28 +26,32 @@
 #include <gui/image.h>
 #include <gui/stringview.h>
 
-using namespace os;
-
-class AEditWindow;
-
-class AboutDialog : public Window
+class AboutDialog : public os::Window
 {
-	public:
-		AboutDialog(const Rect& cFrame, AEditWindow* pcParent);
-		void HandleMessage(Message* pcMessage);
-		bool OkToQuit(void);
-		void Raise();
-	private:
-		AEditWindow* pcTarget;
+public:
+	AboutDialog();
+	~AboutDialog();
 
-		Image* pcAEditImage;
-		ImageView* pcAEditImageView;
+	void HandleMessage( os::Message* pcMessage );
+	void FrameSized( const os::Point& cDelta );	
+	bool OkToQuit( void );
+	void Raise();
 
-		StringView* pcVersionLabel;
-		StringView* pcVersionNumberLabel;
-		StringView* pcTextEditorLabel;
+private:
+	void _Close();
 
-		Button* pcCloseButton;
+	// Layouts
+	os::LayoutView* pcLayoutView;
+	os::LayoutNode* pcRoot;
+
+	// Widgets
+	os::Image* pcAEditImage;
+	os::ImageView* pcAEditImageView;
+
+	os::StringView* pcVersionLabel;
+	os::StringView* pcTextEditorLabel;
+
+	os::Button* pcCloseButton;
 };
 
 #endif

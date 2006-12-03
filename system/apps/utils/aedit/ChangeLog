@@ -117,3 +117,42 @@ First inoffical release of the Beta version
 * Removed the help menu
 * You can select multiple files in the open file dialog
 
+2006-??-?? AEdit 2.2 Kristian Van Der Vliet
+===================================================================
+* Fix a bug when saving/loading large files
+
+2006-11-28 AEdit 2.3 Jonas Jarvoll
+===================================================================
+* New icons
+* Removed custom made widgets. Now using libsyllable StatusBar
+  and ToolBar
+* Added new TabView widget which enables the user to hide or
+  show tabs
+* Remove the font menu and replaced with a font requester dialog 
+  instead
+* Fixed bug when changing font (bug #21)
+* Replaced Search, Replace and Goto window dialog with a panel 
+* Removed use of snprintf
+* Removed icons not used
+* Fixed About dialog so that all text is actually visible
+* Automatic convert from DOS to Unix when loading file
+* Minor code cleanup in some files
+* Added AEdit as default filehandler (bug #28) for plain text files
+
+2006-12-01 AEdit 2.3b Jonas Jarvoll
+===================================================================
+* When AEdit is opened without a Setting file the window must be
+  resized for the widgets to be seen
+* Fixed title of About window
+* Fixed so that AEdit doesnt crash when exiting and the 
+  About window has been opened
+* Fixed graphical misses with the TabView
+
+2006-12-02 AEdit 2.3c Jonas Jarvoll
+===================================================================
+* Wrong MIME type plain/text -> text/plain
+* Localize MIME content description
+* Added icon for Set Font menu
+* Added patch from Anthony Morphett to handle ctrl+left/right
+
+

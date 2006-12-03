@@ -28,6 +28,7 @@
 #define STOCK_CUT "stock_cut"
 #define STOCK_COPY "stock_copy"
 #define STOCK_PASTE "stock_paste"
+#define STOCK_SELECT_ALL "stock_select_all"
 #define STOCK_UNDO "stock_undo"
 #define STOCK_REDO "stock_redo"
 #define STOCK_JUMP_TO "stock_jump_to"
@@ -36,6 +37,8 @@
 #define STOCK_EXIT "stock_exit"
 #define STOCK_SEARCH "stock_search"
 #define STOCK_SEARCH_REPLACE "stock_search_replace"
+#define STOCK_CLOSE "stock_close"
+#define STOCK_FONT "stock_font"
 
 typedef enum
 {

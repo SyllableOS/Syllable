@@ -1,5 +1,5 @@
 //  AEdit -:-  (C)opyright 2000-2002 Kristian Van Der Vliet
-//             (C)opyright 2004 Jonas Jarvoll
+//             (C)opyright 2004-2006 Jonas Jarvoll
 //
 // This is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by
@@ -18,47 +18,49 @@
 #ifndef __FIND_DIALOG_H__
 #define __FIND_DIALOG_H__
 
-#include "appwindow.h"
-#include <gui/window.h>
+#include "dialog.h"
+
 #include <gui/layoutview.h>
-#include <gui/checkbox.h>
+#include <gui/button.h>
 #include <gui/stringview.h>
 #include <gui/textview.h>
-#include <gui/button.h>
+#include <gui/imagebutton.h>
+#include <gui/checkbox.h>
+#include <util/message.h>
 
-#include "messages.h"
-
-using namespace os;
-
-class AEditWindow;
-
-class FindDialog : public Window
+class FindDialog : public Dialog
 {
-	public:
-		FindDialog(const Rect& cFrame, AEditWindow* pcParent);
-		void HandleMessage(Message* pcMessage);
-		bool OkToQuit(void);
-		void SetEnable(bool bEnable);
-		void MakeFocus();
-		void Raise();
+public:
+	FindDialog();
+	~FindDialog();
 
-	private:
-		AEditWindow* pcTarget;
+	void FrameSized( const os::Point& cDelta );
+	void HandleMessage( os::Message* pcMessage );
+	void AllAttached();
+	os::Point GetPreferredSize( bool bSize ) const;
 
-		LayoutView* pcMainLayoutView;
-		HLayoutNode* pcHLayoutNode;
-		VLayoutNode* pcButtonNode;
-		VLayoutNode* pcInputNode;
+	void Init();
 
-		Button* pcFindButton;
-		Button* pcNextButton;
-		Button* pcCloseButton;
+	void SetEnable( bool bEnable );
 
-		TextView* pcFindTextView;
+private:
+	void _FindFirst();
+	void _FindNext();
+	void _Layout();
 
-		CheckBox* pcCaseCheckBox;
+	// Layouts
+	os::LayoutView* pcLayoutView;
+	os::LayoutNode* pcRoot;
+	os::LayoutNode* pcTopPanel;
+	os::LayoutNode* pcBottomPanel;
 
-		StringView* pcFindLabel;
+	// Widgets
+	os::Button* pcFirstButton;
+	os::Button* pcNextButton;
+	os::ImageButton* pcCloseButton;
+	os::StringView* pcFindString;
+	os::TextView* pcFindTextView;
+	os::CheckBox* pcCaseCheckbox;
 };
 
 #endif

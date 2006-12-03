@@ -1,112 +1,70 @@
-//
-// AEdit string catalog
-//
-// Translated by: Not Translated
-//
-
-MSG_APPWND_TITLE							AEdit
-MSG_APPWND_TITLE_NEW_FILE					Nouveau Document
-
-MSG_MENU_APPLICATION=100					Application
-MSG_MENU_APPLICATION_QUIT					Quitter
-MSG_MENU_APPLICATION_ABOUT					À propos de AEdit...
-
-MSG_MENU_FILE=200							Fichier
-MSG_MENU_FILE_NEW							Nouveau
-MSG_MENU_FILE_OPEN							Ouvrir...
-MSG_MENU_FILE_CLOSE							Fermer
-MSG_MENU_FILE_SAVE							Sauvegarder
-MSG_MENU_FILE_SAVE_AS						Sauvegarder en tant que...
-MSG_MENU_FILE_SAVE_ALL						Tout sauvegarder
-MSG_MENU_FILE_NEXT_FILE						Fichier suivant
-MSG_MENU_FILE_PREVIOUS_FILE					Fichier précédent
-
-MSG_MENU_EDIT=300							Édition
-MSG_MENU_EDIT_CUT							Couper
-MSG_MENU_EDIT_COPY							Copier
-MSG_MENU_EDIT_PASTE							Coller
-MSG_MENU_EDIT_SELECT_ALL					Tout sélectionner
-MSG_MENU_EDIT_UNDO							Défaire
-MSG_MENU_EDIT_REDO							Refaire
-
-MSG_MENU_FIND=400							Recherche
-MSG_MENU_FIND_FIND							Rechercher...
-MSG_MENU_FIND_REPLACE						Remplacer...
-MSG_MENU_FIND_GOTO_LINE						Aller à la ligne...
-
-MSG_MENU_FONT=500							Police
-MSG_MENU_FONT_SIZE							Taille
-
-MSG_MENU_SETTINGS=600						Paramètres
-MSG_MENU_SETTINGS_SAVE_ON_CLOSE				Sauvegarder les paramètres lors de la fermeture
-MSG_MENU_SETTINGS_SAVE_NOW					Sauvegarder les paramètres maintenant
-MSG_MENU_SETTINGS_RESET						Remettre à défaut les paramètres
-
-MSG_MENU_HELP=700							Aide
-MSG_MENU_HELP_TABLE_OF_CONTENTS				Manuel...
-MSG_MENU_HELP_HOMEPAGE						Page Web de AEdit
-
-MSG_ABOUT_TITLE=800							À propos de AEdit
-MSG_ABOUT_TEXT								\n\nÉditeur de texte pour Syllable\nCopyright 2000-2003 Kristian Van Der Vliet\n\nAEdit est mis à disposition sous license GNU General\nPublic License. Veuillez lire le fichier COPYING,\nfourni avec AEdit, ou http://www.gnu.org\npour plus d'informations.
-MSG_ABOUT_CLOSE								Fermer
-MSG_ABOUT_VERSION							version: 
-MSG_ABOUT_LINE_1 							Un Éditeur de texte pour Syllable
-MSG_ABOUT_LINE_2							(c) 2005 L'Équipe de Syllable
-MSG_ABOUT_LINE_3							w w w . s y l l a b l e . o r g
-
-MSG_ERROR_TITLE=900							Sauvegarde de fichier
-MSG_ERROR_CANT_SAVE							Impossible de sauvegarder le fichier.
-MSG_ERROR_CLOSE								OK
-
-MSG_FIND_TITLE=1000							Recherche
-MSG_FIND_FIND_LABEL							Rechercher
-MSG_FIND_CASE_SENSITIVE						Recherche sensible à la casse
-MSG_FIND_FIND								_Find First
-MSG_FIND_FIND_NEXT							Find _Next
-MSG_FIND_CLOSE					    		_Close
-
-MSG_GOTO_TITLE=1100							Aller à la ligne
-MSG_GOTO_GOTO								_Go to Line
-MSG_GOTO_CLOSE								_Cancel
-
-MSG_REPLACE_TITLE=1200						Remplacer
-MSG_REPLACE_LBLFIND							Rechercher
-MSG_REPLACE_WITH							Remplacer avec
-MSG_REPLACE_CASE_SENSITIVE					Recherche _Sensible à la casse
-MSG_REPLACE_FIND							_Find First
-MSG_REPLACE_FIND_NEXT						Find _Next
-MSG_REPLACE_REPLACE							_Remplacer
-MSG_REPLACE_CLOSE				    		_Close
-
-MSG_ALERT_CLOSE_FILE_TITLE=1500				Sauvegarde du fichier?
-MSG_ALERT_CLOSE_FILE_BODY					Voulez-vous sauver le fichier avant de le fermer?
-MSG_ALERT_CLOSE_FILE_YES					Sauver
-MSG_ALERT_CLOSE_FILE_NO						Ne pas sauver
-MSG_ALERT_CLOSE_FILE_CANCEL					Annuler
-MSG_ALERT_SAVE_FILE_TITLE					Erreur
-MSG_ALERT_SAVE_FILE_BODY					Impossible de sauver le fichier "%s".
-MSG_ALERT_SAVE_FILE_OK						OK
-MSG_ALERT_QUIT_TITLE						Voulez-vous réellement quitter?
-MSG_ALERT_QUIT_BODY							Il reste des fichiers non sauvegardés. Ces données seront perdues si vous quitter le programme.\nVoulez-vous réellement quitter le programme?
-MSG_ALERT_QUIT_YES							Quitter
-MSG_ALERT_QUIT_NO							Annuler
-MSG_ALERT_FILE_OPEN_TITLE					Erreur
-MSG_ALERT_FILE_OPEN_OK						OK
-
-MSG_STATUSBAR_WELCOME=2000					Bienvenue chez AEdit!
-MSG_STATUSBAR_CLOSED_FILE					Le fichier "%s" a été fermé.
-MSG_STATUSBAR_SAVED_FILE					Le fichier "%s" a été sauvegardé.
-MSG_STATUSBAR_FILE_CLOSED_AND_SAVED			Le fichier "%s" a été fermé et les changements ont été enregistrés.
-MSG_STATUSBAR_FILE_CLOSED_AND_NOT_SAVED		Le fichier "%s" a été fermé et sans sauvegarder les changements.
-MSG_STATUSBAR_NEW_FILE_CREATED				Le fichier "%s" a été nouvellement créé.
-MSG_STATUSBAR_FILE_LOADED_OK				Le fichier "%s" a été ouvert avec succès.
-MSG_STATUSBAR_FILE_UNABLE_TO_OPEN			Impossible d'ouvrir le fichier "%s".
-MSG_STATUSBAR_SEARCH_FOUND					La phrase "%s" a été trouvée.
-MSG_STATUSBAR_SEARCH_NOT_FOUND_1			La phrase \"%s\" a été trouvée.
-MSG_STATUSBAR_SEARCH_NOT_FOUND_2			La phrase n'a pas été trouvée.
-MSG_STATUSBAR_REPLACE_OK					La phrase "%s" a été remplacée par "%s".
-MSG_STATUSBAR_REPLACE_NOT_OK				La phrase n'a pas été remplacée.
-
-MSG_BUFFER_UNTITLED=2100					Sans titre - %d
-MSG_BUFFER_CURSOR							Colonne: %d Ligne: %d
-
+//
+// AEdit string catalog
+//
+
+MSG_APPWND_TITLE					AEdit
+MSG_APPWND_TITLE_NEW_FILE			Nouveau Fichier
+
+MSG_MENU_APPLICATION=100			Application
+MSG_MENU_APPLICATION_QUIT			Quitter
+MSG_MENU_APPLICATION_ABOUT			Concernant
+
+MSG_MENU_FILE=200					Fichier
+MSG_MENU_FILE_NEW					Nouveau
+MSG_MENU_FILE_OPEN					Open
+MSG_MENU_FILE_SAVE					Enregister
+MSG_MENU_FILE_SAVE_AS				Enregister sous...
+
+MSG_MENU_EDIT=300					Éditer
+MSG_MENU_EDIT_CUT					Couper
+MSG_MENU_EDIT_COPY					Copier
+MSG_MENU_EDIT_PASTE					Coller
+MSG_MENU_EDIT_SELECT_ALL			Sélectionner tout
+MSG_MENU_EDIT_UNDO					Annuler
+MSG_MENU_EDIT_REDO					Restaurer
+
+MSG_MENU_FIND=400					Trouver
+MSG_MENU_FIND_FIND					Trouver
+MSG_MENU_FIND_REPLACE				Remplacer
+MSG_MENU_FIND_GOTO_LINE				Aller au ligne...
+
+MSG_MENU_FONT=500					Police
+MSG_MENU_FONT_SIZE					Taille
+
+MSG_MENU_SETTINGS=600				Paramètres
+MSG_MENU_SETTINGS_SAVE_ON_CLOSE		Enregister Paramètres en Quitter
+MSG_MENU_SETTINGS_SAVE_NOW			Enregister Paramètres Maintenant
+MSG_MENU_SETTINGS_RESET				Remettre Paramètres
+
+MSG_MENU_HELP=700					Aide
+MSG_MENU_HELP_TABLE_OF_CONTENTS		Table de Contenu
+MSG_MENU_HELP_HOMEPAGE				Page d'accueil d'AEdit
+
+MSG_ABOUT_TITLE=800					Concrenant
+MSG_ABOUT_TEXT						\n\nÉditeur de texte pour Syllable\nDroit d'auter 2000-2003 Kristian Van Der Vliet\n\nAEdit est laissé sur le GNU \n LeLu vous COPYING,\nlaissé avec AEdit, ou http://www.gnu.org\npour plus information.
+MSG_ABOUT_CLOSE						OK
+
+MSG_ERROR_TITLE=900					AEdit
+MSG_ERROR_CANT_SAVE					Pas capable enregister fichier
+MSG_ERROR_CLOSE						OK
+
+MSG_FIND_TITLE=1000					Rechercher
+MSG_FIND_FIND_LABEL					Rechercher
+MSG_FIND_CASE_SENSITIVE				Rechercher Sensible du Cas 
+MSG_FIND_FIND						_Recherceher
+MSG_FIND_FIND_NEXT					Rechercher _Prochaine
+MSG_FIND_CLOSE						_Quitter
+
+MSG_GOTO_TITLE=1100					Aller au ligne
+MSG_GOTO_GOTO						Aller au ligne
+MSG_GOTO_CLOSE						Quitter
+
+MSG_REPLACE_TITLE=1200				Remplacer
+MSG_REPLACE_LBLFIND					Rechercher
+MSG_REPLACE_WITH					Remplacer avec
+MSG_REPLACE_CASE_SENSITIVE			 Rechercher _Sensible du Cas
+MSG_REPLACE_FIND					_Rechercher
+MSG_REPLACE_FIND_NEXT				Rechercher _Prochaine
+MSG_REPLACE_REPLACE					_Remplacer
+MSG_REPLACE_CLOSE					_Quitter
+

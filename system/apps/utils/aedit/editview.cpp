@@ -34,11 +34,9 @@ EditView::EditView(const Rect& cFrame, AEditWindow *pcMain) : TextView(cFrame,"e
 	pcContextMenu->AddItem(MSG_MENU_EDIT_PASTE, new Message(M_MENU_EDIT_PASTE));
 	pcContextMenu->AddItem(new MenuSeparator());
 	pcContextMenu->AddItem(MSG_MENU_EDIT_SELECT_ALL, new Message(M_MENU_EDIT_SELECT_ALL));
-#ifdef ENABLE_UNDO
 	pcContextMenu->AddItem(new MenuSeparator());
 	pcContextMenu->AddItem(MSG_MENU_EDIT_UNDO, new Message(M_MENU_EDIT_UNDO));
 	pcContextMenu->AddItem(MSG_MENU_EDIT_REDO, new Message(M_MENU_EDIT_REDO));
-#endif
 }
 
 void EditView::AttachedToWindow(void)
@@ -73,113 +71,103 @@ void EditView::KeyDown(const char* pzString, const char* pzRawString, uint32 nQu
 
 	if((nQualifiers & QUAL_CTRL) && (nQualifiers & QUAL_SHIFT))
 	{
-		if(!(nQualifiers & QUAL_REPEAT))
+		switch(*pzRawString)
 		{
-			switch(*pzString)
+			case 9:	    // Prev tab (Shift+Ctrl+Tab)
 			{
-				case 9:	    // Prev tab (Shift+Ctrl+Tab)
-				{
-					GetWindow()->HandleMessage(new Message(M_MENU_FILE_PREV_TAB));
-					break;
-				}
+				if( !(nQualifiers & QUAL_REPEAT) ) GetWindow()->HandleMessage(new Message(M_MENU_FILE_PREV_TAB));
+				return;
+			}
 
-				default:
-					TextView::KeyDown(pzString,pzRawString,nQualifiers);
+			//default:
+				/* Fall through to be handled by TextView::KeyDown() later */
 
-			}	// End of switch() block
-
-		}	// End of if() testing the repeat
+		}	// End of switch() block
 	}
 	else if(nQualifiers & QUAL_CTRL)
 	{
-		if(!(nQualifiers & QUAL_REPEAT))
+		switch(*pzString)
 		{
-			switch(*pzString)
+			case 14:	// New (Ctrl+N)
 			{
-				case 14:	// New (Ctrl+N)
-				{
-					GetWindow()->HandleMessage(new Message(M_MENU_FILE_NEW));
-					break;
-				}
+				if( !(nQualifiers & QUAL_REPEAT) ) GetWindow()->HandleMessage(new Message(M_MENU_FILE_NEW));
+				return;
+			}
 
-				case 15:	// Open (Ctrl+O)
-				{
-					GetWindow()->HandleMessage(new Message(M_MENU_FILE_OPEN));
-					break;
-				}
+			case 15:	// Open (Ctrl+O)
+			{
+				if( !(nQualifiers & QUAL_REPEAT) ) GetWindow()->HandleMessage(new Message(M_MENU_FILE_OPEN));
+				return;
+			}
 
-				case 19:	// Save (Ctrl+S)
-				{
-					GetWindow()->HandleMessage(new Message(M_MENU_FILE_SAVE));
-					break;
-				}
+			case 19:	// Save (Ctrl+S)
+			{
+				if( !(nQualifiers & QUAL_REPEAT) ) GetWindow()->HandleMessage(new Message(M_MENU_FILE_SAVE));
+				return;
+			}
 
-				case 12:	// Save All (Ctrl+L)
-				{
-					GetWindow()->HandleMessage(new Message(M_MENU_FILE_SAVE_ALL));
-					break;
-				}
+			case 12:	// Save All (Ctrl+L)
+			{
+				if( !(nQualifiers & QUAL_REPEAT) ) GetWindow()->HandleMessage(new Message(M_MENU_FILE_SAVE_ALL));
+				return;
+			}
 
-				case 23:	// Close (Ctrl+W)
-				{
-					GetWindow()->HandleMessage(new Message(M_MENU_FILE_CLOSE));
-					break;
-				}
+			case 23:	// Close (Ctrl+W)
+			{
+				if( !(nQualifiers & QUAL_REPEAT) ) GetWindow()->HandleMessage(new Message(M_MENU_FILE_CLOSE));
+				return;
+			}
 
-				case 44:	// Prev tab (Ctrl+,)
-				{
-					GetWindow()->HandleMessage(new Message(M_MENU_FILE_PREV_TAB));
-					break;
-				}
+			case 6:	// Find (Ctrl+F)
+			{
+				if( !(nQualifiers & QUAL_REPEAT) ) GetWindow()->HandleMessage(new Message(M_MENU_FIND_FIND));
+				return;
+			}
 
-				case 9:	    // (Ctrl+Tab)
-				case 46:	// Next tab (Ctrl+.)
-				{
-					GetWindow()->HandleMessage(new Message(M_MENU_FILE_NEXT_TAB));
-					break;
-				}
+			case 18:	// Replace (Ctrl+R)
+			{
+				if( !(nQualifiers & QUAL_REPEAT) ) GetWindow()->HandleMessage(new Message(M_MENU_FIND_REPLACE));
+				return;
+			}
 
-				case 6:	// Find (Ctrl+F)
-				{
-					GetWindow()->HandleMessage(new Message(M_MENU_FIND_FIND));
-					break;
-				}
+			case 7:	// Goto Line (Ctrl+G)
+			{
+				if( !(nQualifiers & QUAL_REPEAT) ) GetWindow()->HandleMessage(new Message(M_MENU_FIND_GOTO));
+				return;
+			}
 
-				case 18:	// Replace (Ctrl+R)
-				{
-					GetWindow()->HandleMessage(new Message(M_MENU_FIND_REPLACE));
-					break;
-				}
+			case 17:	// Exit (Ctrl+Q)
+			{
+				if( !(nQualifiers & QUAL_REPEAT) ) GetWindow()->HandleMessage(new Message(M_MENU_APP_QUIT));
+				return;
+			}
 
-				case 7:	// Goto Line (Ctrl+G)
-				{
-					GetWindow()->HandleMessage(new Message(M_MENU_FIND_GOTO));
-					break;
-				}
+			case 1:	// Select all (Ctrl+A)
+			{
+				if( !(nQualifiers & QUAL_REPEAT) ) GetWindow()->HandleMessage(new Message(M_MENU_EDIT_SELECT_ALL));
+				return;
+			}
+		}	// End of switch() block
+		switch( *pzRawString )           /* Non-alphanumeric keys seem to produce *pzString == 0, so check *pzRawString instead. (as of OS v0.6.2) */
+		{
+			case 44:	// Prev tab (Ctrl+,)
+			{
+				if( !(nQualifiers & QUAL_REPEAT) ) GetWindow()->HandleMessage(new Message(M_MENU_FILE_PREV_TAB));
+				return;
+			}
 
-				case 17:	// Exit (Ctrl+Q)
-				{
-					GetWindow()->HandleMessage(new Message(M_MENU_APP_QUIT));
-					break;
-				}
-
-				case 1:	// Select all (Ctrl+A)
-				{
-					GetWindow()->HandleMessage(new Message(M_MENU_EDIT_SELECT_ALL));
-					break;
-				}		
-				default:
-					TextView::KeyDown(pzString,pzRawString,nQualifiers);
-
-			}	// End of switch() block
-
-		}	// End of if() testing the repeat
+			case 9:	    // (Ctrl+Tab)
+			case 46:	// Next tab (Ctrl+.)
+			{
+				if( !(nQualifiers & QUAL_REPEAT) ) GetWindow()->HandleMessage(new Message(M_MENU_FILE_NEXT_TAB));
+				return;
+			}
+			//default:
+				/* fall through to TextView::KeyDown() */
+		}
 
 	}
-	else
-	{
-		TextView::KeyDown(pzString,pzRawString,nQualifiers);
-	}
+	TextView::KeyDown(pzString,pzRawString,nQualifiers);
 }
 
 int EditView::Find(std::string zOriginal, std::string zFind, bool bCaseSensitive, int nStartPosition){

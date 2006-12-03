@@ -1,5 +1,5 @@
-//  AEdit -:-  (C)opyright 2005 Jonas Jarvoll
-//
+//  AEdit -:-  (C)opyright 2005-2006 Jonas Jarvoll
+//             
 // This is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
@@ -14,87 +14,131 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
+#include <util/message.h>
+#include <gui/stringview.h>
+
 #include "aboutdialog.h"
-#include "appwindow.h"
+#include "main.h"
 #include "buffer.h"
 #include "messages.h"
 #include "resources/aedit.h"
 #include "version.h"
 
-#include <util/message.h>
-#include <gui/stringview.h>
+using namespace os;
 
-AboutDialog::AboutDialog(const Rect& cFrame, AEditWindow* pcParent) : Window(cFrame, "about_dialog", MSG_ERROR_TITLE, WND_NO_ZOOM_BUT | WND_NO_DEPTH_BUT | WND_NOT_RESIZABLE)
+AboutDialog::AboutDialog() : Window( Rect(), "about_dialog", MSG_ABOUT_TITLE, WND_NO_ZOOM_BUT | WND_NO_DEPTH_BUT | WND_NOT_RESIZABLE)
 {
-	pcTarget=pcParent;		// We need to know the parent window so we can send messages back to it
+	// Create layout
+	pcLayoutView = new LayoutView( Rect(), "" );
+	AddChild( pcLayoutView );
+
+	// Create basepanel	
+	pcRoot = new VLayoutNode( "" );
+	pcRoot->SetVAlignment( os::ALIGN_CENTER );
+	pcRoot->SetHAlignment( os::ALIGN_CENTER );
+	pcLayoutView->SetRoot( pcRoot );
 
 	// Create the AEdit image
-	pcAEditImage=new BitmapImage();
-	Resources cRes(get_image_id());
-	ResStream* pcStream=cRes.GetResourceStream("about");
+	pcAEditImage = new BitmapImage();
+	Resources cRes( get_image_id() );
+	ResStream* pcStream = cRes.GetResourceStream( "about" );
 
-    if(pcStream!=NULL)
+    if( pcStream != NULL)
         pcAEditImage->Load( pcStream );
 
-	// Get size of image
-	Point size=pcAEditImage->GetSize();
+	pcAEditImageView = new ImageView( Rect(), "aedit_image", pcAEditImage );
+	pcRoot->AddChild( pcAEditImageView );
 
-	ImageView* pcAEditImageView = new ImageView(Rect(10, 5, 5+size.x, 5+size.y), "aedit_image", pcAEditImage);
-	AddChild(pcAEditImageView);
+	pcRoot->AddChild( new VLayoutSpacer( "", 8, 8 ) );
 
 	// Create version label
-	pcVersionLabel=new StringView(Rect(size.x+30, 20, size.x+30+100, 35), "version_label", MSG_ABOUT_VERSION);
-	AddChild(pcVersionLabel);
+	String version;
+	version = MSG_ABOUT_VERSION + AEDIT_VERSION;
+	pcVersionLabel = new StringView( Rect(), "version_label", version, ALIGN_RIGHT );
+	pcRoot->AddChild( pcVersionLabel );
+	Font* f = pcVersionLabel->GetFont();
+	f->SetSize( 8 );
+	pcVersionLabel->SetFont( f );
 
-	// Create version number label
-	pcVersionNumberLabel=new StringView(Rect(size.x+30+25, 35, size.x+30+100+25, 50), "version_number_label", AEDIT_VERSION);
-	AddChild(pcVersionNumberLabel);
+	pcRoot->AddChild( new VLayoutSpacer( "", 6, 6 ) );
 
 	// Create syllable label
-	pcTextEditorLabel=new StringView(Rect(10+50, 5+size.y+15, 200, 10+size.y+15+15), "texteditor_label", MSG_ABOUT_LINE_1);
-	AddChild(pcTextEditorLabel);
-	pcTextEditorLabel=new StringView(Rect(10+40+5, 5+size.y+15+20, 200+5, 10+size.y+15+35), "texteditor_label", MSG_ABOUT_LINE_2);
-	AddChild(pcTextEditorLabel);
-	pcTextEditorLabel=new StringView(Rect(10+50, 5+size.y+15+40, 200, 10+size.y+15+50), "texteditor_label", MSG_ABOUT_LINE_3);
-	AddChild(pcTextEditorLabel);
+	pcTextEditorLabel = new StringView( Rect(), "texteditor_label", MSG_ABOUT_LINE_1, ALIGN_CENTER );
+	pcRoot->AddChild( pcTextEditorLabel );
+
+	pcRoot->AddChild( new VLayoutSpacer( "", 4, 4 ) );
+
+	pcTextEditorLabel = new StringView( Rect(), "texteditor_label", MSG_ABOUT_LINE_2, ALIGN_CENTER );
+	pcRoot->AddChild( pcTextEditorLabel );
+
+	pcRoot->AddChild( new VLayoutSpacer( "", 4, 4 ) );
+
+	pcTextEditorLabel = new StringView( Rect(), "texteditor_label", MSG_ABOUT_LINE_3, ALIGN_CENTER );
+	pcRoot->AddChild( pcTextEditorLabel );
+
+	pcRoot->AddChild( new VLayoutSpacer( "", 8, 8 ) );
 
 	// Create close button
-	pcCloseButton=new Button(Rect(10+75, size.y+5+82, 100+75,size.y+5+82+25), "close_button", MSG_ABOUT_CLOSE, new Message(M_BUT_ABOUT_CLOSE));
-	AddChild(pcCloseButton);
+	pcCloseButton = new Button( Rect(), "close_button", MSG_ABOUT_CLOSE, new Message( M_BUT_ABOUT_CLOSE ) );
+	pcCloseButton->SetTarget( this );
+	pcRoot->AddChild( pcCloseButton );
+	SetDefaultButton( pcCloseButton );
+	
+	// Set size of window
+	Point size = pcLayoutView->GetPreferredSize( false );
+	ResizeTo( size.x + 20, size.y + 20 );
+	CenterInScreen();
+}
+
+AboutDialog :: ~AboutDialog()
+{
+	delete pcLayoutView;
 }
 
 void AboutDialog::HandleMessage(Message* pcMessage)
 {
-	switch(pcMessage->GetCode())
-	{
-		case M_BUT_ABOUT_CLOSE:
-		{
-			// Close the About window
-			Hide();
-
-			if(pcTarget->pcCurrentBuffer!=NULL)
-				pcTarget->pcCurrentBuffer->MakeFocus();
-
-			break;
-		}
-	
-	}
+	if( pcMessage->GetCode() == M_BUT_ABOUT_CLOSE)
+		_Close();
 }
 
-bool AboutDialog::OkToQuit(void)
+bool AboutDialog::OkToQuit()
 {
-	Message *msg=new Message(M_BUT_ABOUT_CLOSE);
-	HandleMessage(msg);
-	delete msg;
-	return (false);
+	_Close();
+	return false;
 }
 
 void AboutDialog::Raise()
 {
-	if(IsVisible())
-		Show(false);
+	if( IsVisible() )
+		Show( false );
 
-	Show(true);
+	Show( true );
 
 	MakeFocus();
+}
+
+void AboutDialog :: FrameSized( const Point& cDelta )
+{
+	Window::FrameSized( cDelta );
+
+	Rect cFrame = GetBounds();
+	cFrame.Resize( 2, 2, -2, -2 );
+	pcLayoutView->SetFrame( cFrame );	
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// P R I V A T E
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+void AboutDialog :: _Close()
+{
+	// Close the About window
+	Hide();
+
+	Buffer* current = AEditApp::GetAEditWindow()->pcCurrentBuffer;
+
+	if( current != NULL )
+		current->MakeFocus();
 }

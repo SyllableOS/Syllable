@@ -24,12 +24,6 @@
 
 using namespace os;
 
-void SetCurrentTab(int iSel);
-bool AnyBufferNeedsToBeSaved(void);
-bool MenuItemSaveAllShallBeActive(void);
-bool SaveAllBuffers(void);
-int CheckIfAlreadyOpened(std::string name);
-
 class Buffer
 {
 	public:
@@ -46,7 +40,7 @@ class Buffer
 		void Cut(void) {pcEditView->Cut();};
 		void Copy(void) {pcEditView->Copy();};
 		void Paste(void) {pcEditView->Paste();};
-		void SelectAll(void) {pcEditView->SelectAll();};
+		void SelectAll(void) {pcEditView->SelectAll(); pcEditView->Invalidate(); pcEditView->Flush(); };
 		void Undo(void) {pcEditView->Undo();};
 		void Redo(void) {pcEditView->Redo();};
 		void Invoked(int32 nEvent);
@@ -61,6 +55,7 @@ class Buffer
 		std::string &FindNext(void);
 		bool Replace(std::string zFText, std::string zRText);
 		void ForceRedraw(void);
+		void SetFont( Font* font );
 
 		friend void SetCurrentTab(int iSel);
 		friend bool AnyBufferNeedsToBeSaved(void);

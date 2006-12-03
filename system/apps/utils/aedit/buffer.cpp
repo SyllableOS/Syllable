@@ -1,4 +1,4 @@
-// AEdit -:-  (C)opyright 2004 Jonas Jarvoll
+// AEdit -:-  (C)opyright 2004 - 2006 Jonas Jarvoll
 //
 // This is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by
@@ -17,6 +17,8 @@
 #include <list>
 #include <fstream.h>
 #include <string>
+
+using namespace std;
 
 #include "buffer.h"
 #include "messages.h"
@@ -169,7 +171,7 @@ std::string &Buffer::GetNameOfBuffer(void)
 std::string &Buffer::GetTabNameOfBuffer(void)
 {
 	std::string s;
-	static::string ret;
+	static std::string ret;
 	unsigned int i;
 
 	s=GetRealName();
@@ -217,7 +219,6 @@ void Buffer::Invoked(int32 nEvent)
 	// Update cursor location
 	if(nEvent & TextView::EI_CURSOR_MOVED)
 	{
-		static char zStatusLine[32];
 		int x, y;
 
 		// Get the cursor position in the TextView
@@ -227,11 +228,8 @@ void Buffer::Invoked(int32 nEvent)
 		x++;
 		y++;
 
-		// Make nice line (this you must be able to do nicer or??
-		sprintf(zStatusLine, MSG_BUFFER_CURSOR.c_str(), x, y);
-
 		// And then make the StatusBar update
-		pcTarget->pcStatusBar->SetStatus(std::string(zStatusLine));
+		pcTarget->SetStatus( MSG_BUFFER_CURSOR, x, y );
 	}
 
 }
@@ -289,6 +287,10 @@ bool Buffer::SaveAs(const char* pFileName)
 		}
 
 		cFile.Flush();
+
+		// Change the name of the buffer
+		zFilename = pFileName;
+
 		ContentChanged(false);
 		bSuccess = true;
 	}
@@ -311,6 +313,11 @@ void Buffer::GotoLine(int32 iLineNo)
 void Buffer::MakeFocus(void)
 {
 	pcEditView->MakeFocus();
+}
+
+void Buffer :: SetFont( Font* font )
+{
+	pcEditView->SetFont( font );
 }
 
 // Changes the font in the TextView

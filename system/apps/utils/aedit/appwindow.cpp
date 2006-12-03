@@ -1,5 +1,5 @@
 //  AEdit -:-  (C)opyright 2000-2002 Kristian Van Der Vliet
-//			   (C)opyright 2004 Jonas Jarvoll	
+//			   (C)opyright 2004-2006 Jonas Jarvoll	
 //
 // This is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by
@@ -15,30 +15,21 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-#include "appwindow.h"
-#include "buffer.h"
-#include "editview.h"
-#include "status_bar.h"
-#include "messages.h"
-#include "version.h"
-#include "mytabview.h"
-#include "icons.h"
-
-#include "resources/aedit.h"
-
-#include <fstream.h>
-
-#include <gui/window.h>
-#include <gui/requesters.h>
 #include <gui/font.h>
 #include <gui/checkmenu.h>
 #include <gui/textview.h>
 #include <gui/image.h>
 
-#include <util/invoker.h>
 #include <util/application.h>
-#include <util/string.h>
-#include <util/resources.h>
+
+#include "appwindow.h"
+#include "messages.h"
+#include "version.h"
+#include "icons.h"
+#include "resources/aedit.h"
+#include "buffer.h"
+#include "editview.h"
+#include <fstream.h>
 
 using namespace os;
 
@@ -51,63 +42,68 @@ AEditWindow::AEditWindow(const Rect& cFrame) : Window(cFrame, "main_window", AED
 	LatestOpenPath=cSettings.GetString("LoadPath", "");
 	LatestSavePath=cSettings.GetString("SavePath", "");
 
-	// Set window position
-	Rect cWinSize=cSettings.GetRect("WindowPos", cFrame);
-	ResizeTo(cWinSize.Width(),cWinSize.Height());
-	MoveTo(cWinSize.left,cWinSize.top);
-
 	// Make all menus
-	SetupMenus();
+	_SetupMenus();
 
 	// Create & attach the button bar
-	Rect cBounds=GetBounds();
-	cBounds.top =pcMenuBar->GetBounds().bottom +1.0f;
-	cBounds.bottom = BUTTON_HEIGHT + 4 + cBounds.top;
-
-	pcButtonBar=new ButtonBar(Rect(0,cBounds.top,GetBounds().Width(),cBounds.bottom),"button_bar");
-	AddChild(pcButtonBar);
+	pcToolBar = new ToolBar( Rect(), "button_bar");
+	AddChild( pcToolBar );
 
 	// Attach the buttons to the button bar
-	pcImageFileNew=pcButtonBar->AddButton(GetStockIcon(STOCK_NEW, STOCK_SIZE_TOOLBAR), "appwindow_filenew",new Message(M_BUT_FILE_NEW));
-	pcImageFileOpen=pcButtonBar->AddButton(GetStockIcon(STOCK_OPEN, STOCK_SIZE_TOOLBAR),"appwindow_fileopen",new Message(M_BUT_FILE_OPEN));
-	pcImageFileSave=pcButtonBar->AddButton(GetStockIcon(STOCK_SAVE, STOCK_SIZE_TOOLBAR),"appwindow_filesave",new Message(M_BUT_FILE_SAVE));
-	pcImageEditCut=pcButtonBar->AddButton(GetStockIcon(STOCK_CUT, STOCK_SIZE_TOOLBAR),"appwindow_editcut",new Message(M_BUT_EDIT_CUT));
-	pcImageEditCopy=pcButtonBar->AddButton(GetStockIcon(STOCK_COPY, STOCK_SIZE_TOOLBAR),"appwindow_editcopy",new Message(M_BUT_EDIT_COPY));
-	pcImageEditPaste=pcButtonBar->AddButton(GetStockIcon(STOCK_PASTE, STOCK_SIZE_TOOLBAR),"appwindow_editpaste",new Message(M_BUT_EDIT_PASTE));
-	pcImageFindFind=pcButtonBar->AddButton(GetStockIcon(STOCK_SEARCH, STOCK_SIZE_TOOLBAR),"appwindow_find",new Message(M_BUT_FIND_FIND));
-#ifdef ENABLE_UNDO
-	pcImageEditUndo=pcButtonBar->AddButton(GetStockIcon(STOCK_REDO, STOCK_SIZE_TOOLBAR),"appwindow_redo",new Message(M_BUT_EDIT_UNDO));
-	pcImageEditRedo=pcButtonBar->AddButton(GetStockIcon(STOCK_UNDO, STOCK_SIZE_TOOLBAR),"appwindow_undo",new Message(M_BUT_EDIT_REDO));
-#endif
+	pcImageFileNew = new ImageButton( Rect(),  "appwindow_filenew", MSG_MENU_FILE_NEW, new Message( M_BUT_FILE_NEW ), GetStockIcon(STOCK_NEW, STOCK_SIZE_TOOLBAR), ImageButton::IB_TEXT_BOTTOM, true, true, true );
+	pcToolBar->AddChild( pcImageFileNew, ToolBar::TB_FIXED_WIDTH );
+
+	pcImageFileOpen = new ImageButton( Rect(),  "appwindow_fileopen", MSG_MENU_FILE_OPEN, new Message( M_BUT_FILE_OPEN ), GetStockIcon(STOCK_OPEN, STOCK_SIZE_TOOLBAR), ImageButton::IB_TEXT_BOTTOM, true, true, true );
+	pcToolBar->AddChild( pcImageFileOpen, ToolBar::TB_FIXED_WIDTH );
+
+	pcImageFileSave = new ImageButton( Rect(),  "appwindow_filesave", MSG_MENU_FILE_SAVE, new Message(M_BUT_FILE_SAVE), GetStockIcon(STOCK_SAVE, STOCK_SIZE_TOOLBAR), ImageButton::IB_TEXT_BOTTOM, true, true, true );
+	pcToolBar->AddChild( pcImageFileSave, ToolBar::TB_FIXED_WIDTH );
+
+	pcImageEditCut = new ImageButton( Rect(),  "appwindow_editcut", MSG_MENU_EDIT_CUT, new Message(M_BUT_EDIT_CUT), GetStockIcon(STOCK_CUT, STOCK_SIZE_TOOLBAR), ImageButton::IB_TEXT_BOTTOM, true, true, true );
+	pcToolBar->AddChild( pcImageEditCut, ToolBar::TB_FIXED_WIDTH );
+
+	pcImageEditCopy = new ImageButton( Rect(),  "appwindow_editcopy", MSG_MENU_EDIT_COPY, new Message(M_BUT_EDIT_COPY), GetStockIcon(STOCK_COPY, STOCK_SIZE_TOOLBAR), ImageButton::IB_TEXT_BOTTOM, true, true, true );	
+	pcToolBar->AddChild( pcImageEditCopy, ToolBar::TB_FIXED_WIDTH );
+
+	pcImageEditPaste = new ImageButton( Rect(),  "appwindow_editpaste", MSG_MENU_EDIT_PASTE, new Message(M_BUT_EDIT_PASTE), GetStockIcon(STOCK_PASTE, STOCK_SIZE_TOOLBAR), ImageButton::IB_TEXT_BOTTOM, true, true, true );	
+	pcToolBar->AddChild( pcImageEditPaste, ToolBar::TB_FIXED_WIDTH );
+
+	pcImageFindFind = new ImageButton( Rect(),  "appwindow_find", MSG_MENU_FIND_FIND, new Message(M_BUT_FIND_FIND), GetStockIcon(STOCK_SEARCH, STOCK_SIZE_TOOLBAR), ImageButton::IB_TEXT_BOTTOM, true, true, true );	
+	pcToolBar->AddChild( pcImageFindFind, ToolBar::TB_FIXED_WIDTH );
+
+	pcImageEditUndo = new ImageButton( Rect(),  "appwindow_redo", MSG_MENU_EDIT_REDO, new Message(M_BUT_EDIT_REDO), GetStockIcon(STOCK_REDO, STOCK_SIZE_TOOLBAR), ImageButton::IB_TEXT_BOTTOM, true, true, true );
+	pcToolBar->AddChild( pcImageEditUndo, ToolBar::TB_FIXED_WIDTH );
+
+	pcImageEditRedo = new ImageButton( Rect(),  "appwindow_undo", MSG_MENU_EDIT_UNDO, new Message(M_BUT_EDIT_UNDO), GetStockIcon(STOCK_UNDO, STOCK_SIZE_TOOLBAR), ImageButton::IB_TEXT_BOTTOM, true, true, true );
+	pcToolBar->AddChild( pcImageEditRedo, ToolBar::TB_FIXED_WIDTH );
 
 	// Create & attach TabView
-	cBounds=GetBounds();
-	cBounds.top=pcButtonBar->GetBounds().bottom + pcMenuBar->GetBounds().bottom + 1.0f;
-	cBounds.bottom-=24;
-	pcMyTabView=new MyTabView(cBounds, this);
-	pcMyTabView->SetTarget(this);
-	pcMyTabView->SetMessage(new Message(M_INVOKED_TAB_CHANGED));
-	AddChild(pcMyTabView);
-	
+	pcMyTabView = new MyTabView( Rect(), this );
+	pcMyTabView->SetTabType( TabView::AUTOMATIC_TABS );
+	pcMyTabView->SetTarget( this );
+	pcMyTabView->SetMessage( new Message( M_INVOKED_TAB_CHANGED ) );
+	AddChild( pcMyTabView );
+
 	// Create the status bar
-	cBounds=GetBounds();
-	cBounds.top=pcButtonBar->GetBounds().bottom + pcMenuBar->GetBounds().bottom + pcMyTabView->GetBounds().bottom + 1.0f;
-	pcStatusBar=new StatusBar(cBounds, "appwindow_status_bar");
-	AddChild(pcStatusBar);
+	pcStatusBar = new StatusBar( Rect(), "appwindow_status_bar" );
+	pcStatusBar->AddPanel( "message", "" );
+	AddChild( pcStatusBar );
 
 	// Set the window title etc.
-	SetTitle(AEDIT_RELEASE_STRING);
-	SetSizeLimits(Point(300,250),Point(4096,4096));
+	SetTitle( AEDIT_RELEASE_STRING );
+	SetSizeLimits( Point( 300, 250 ), Point( 4096, 4096 ) );
 
 	// Set pointers to a well defined value
-	pcCurrentBuffer=NULL;
-	pcFindDialog=NULL;
-	pcReplaceDialog=NULL;
-	pcGotoDialog=NULL;
-	pcAboutDialog=NULL;
+	pcCurrentBuffer = NULL;
+	pcFindDialog = NULL;
+	pcReplaceDialog = NULL;
+	pcGotoDialog = NULL;
+	pcAboutDialog = NULL;
+	pcFontRequester = NULL;
+	pcCurrentDialog = NULL;
 
 	// Set welcome message
-	SetStatus(MSG_STATUSBAR_WELCOME);
+	SetStatus( MSG_STATUSBAR_WELCOME );
 
 	// Update menu items
 	UpdateMenuItemStatus();
@@ -118,155 +114,35 @@ AEditWindow::AEditWindow(const Rect& cFrame) : Window(cFrame, "main_window", AED
 	pcSaveAsRequester = NULL;
 
 	// Set an application icon for Dock
-	os::BitmapImage *pcImage = new os::BitmapImage();
-	os::Resources cRes( get_image_id() );
+	BitmapImage* pcImage = new BitmapImage();
+	Resources cRes( get_image_id() );
 	pcImage->Load( cRes.GetResourceStream( "icon24x24.png" ) );
-	SetIcon(pcImage->LockBitmap());
+	SetIcon( pcImage->LockBitmap() );
 
+	// Set up view
+	pcViewToolbar->SetChecked( cSettings.GetBool( "Toolbar", true ) );
+	pcViewStatusbar->SetChecked( cSettings.GetBool( "Statusbar", true ) );
+	pcViewTabShow->SetChecked( cSettings.GetBool( "ShowTab", false ) );
+	pcViewTabHide->SetChecked( cSettings.GetBool( "HideTab", false ) );
+	pcViewTabAutomatic->SetChecked( cSettings.GetBool( "AutoTab", true ) );
+
+	if( pcViewTabShow->IsChecked() )	
+		pcMyTabView->SetTabType( TabView::SHOW_TABS );
+	if( pcViewTabHide->IsChecked() )	
+		pcMyTabView->SetTabType( TabView::HIDE_TABS );
+	if( pcViewTabAutomatic->IsChecked() )	
+		pcMyTabView->SetTabType( TabView::AUTOMATIC_TABS );
+
+	// Fix layout by setting the position of the window
+	Rect cWinSize = cSettings.GetRect( "WindowPos", Rect( 101, 125, 700, 500 ) );
+	ResizeTo( cWinSize.Width(), cWinSize.Height() );
+	MoveTo( cWinSize.left, cWinSize.top );
 }
 
-void AEditWindow::SetupMenus()
+void AEditWindow :: FrameSized( const Point& cDelta )
 {
-	Rect cMenuFrame = GetBounds();
-    Rect cMainFrame = cMenuFrame;
-    cMenuFrame.bottom = 18;
-	pcMenuBar=new Menu(cMenuFrame, "main_menu", ITEMS_IN_ROW, CF_FOLLOW_LEFT | CF_FOLLOW_RIGHT | CF_FOLLOW_TOP);
-
-	// Create the menus
-	pcAppMenu=new Menu(Rect(0,0,1,1),MSG_MENU_APPLICATION,ITEMS_IN_COLUMN);
-	pcAppMenu->AddItem(MSG_MENU_APPLICATION_QUIT,new Message(M_MENU_APP_QUIT), "Ctrl+Q", GetStockIcon(STOCK_EXIT, STOCK_SIZE_MENUITEM));
-	pcAppMenu->AddItem(new MenuSeparator());
-	pcAppMenu->AddItem(MSG_MENU_APPLICATION_ABOUT,new Message(M_MENU_APP_ABOUT));
-
-	pcFileMenu=new Menu(Rect(0,0,1,1),MSG_MENU_FILE,ITEMS_IN_COLUMN);
-	pcFileNew=new MenuItem(MSG_MENU_FILE_NEW,new Message(M_MENU_FILE_NEW), "Ctrl+N", GetStockIcon(STOCK_NEW, STOCK_SIZE_MENUITEM));
-	pcFileMenu->AddItem(pcFileNew);
-	pcFileMenu->AddItem(new MenuSeparator());
-	pcFileOpen=new MenuItem(MSG_MENU_FILE_OPEN,new Message(M_MENU_FILE_OPEN), "Ctrl+O", GetStockIcon(STOCK_OPEN, STOCK_SIZE_MENUITEM));
-	pcFileMenu->AddItem(pcFileOpen);
-	pcFileMenu->AddItem(new MenuSeparator());
-	pcFileClose=new MenuItem(MSG_MENU_FILE_CLOSE,new Message(M_MENU_FILE_CLOSE), "Ctrl+W");
-	pcFileMenu->AddItem(pcFileClose);
-	pcFileSave=new MenuItem(MSG_MENU_FILE_SAVE,new Message(M_MENU_FILE_SAVE), "Ctrl+S", GetStockIcon(STOCK_SAVE, STOCK_SIZE_MENUITEM));
-	pcFileMenu->AddItem(pcFileSave);
-	pcFileSaveAs=new MenuItem(MSG_MENU_FILE_SAVE_AS,new Message(M_MENU_FILE_SAVE_AS), "", GetStockIcon(STOCK_SAVE_AS, STOCK_SIZE_MENUITEM));
-	pcFileMenu->AddItem(pcFileSaveAs);
-	pcFileSaveAll=new MenuItem(MSG_MENU_FILE_SAVE_ALL,new Message(M_MENU_FILE_SAVE_ALL), "Ctrl+L");
-	pcFileMenu->AddItem(pcFileSaveAll);
-	pcFileMenu->AddItem(new MenuSeparator());
-	pcFileNextTab=new MenuItem(MSG_MENU_FILE_NEXT_FILE,new Message(M_MENU_FILE_NEXT_TAB), "Ctrl+.", GetStockIcon(STOCK_RIGHT_ARROW, STOCK_SIZE_MENUITEM));
-	pcFileMenu->AddItem(pcFileNextTab);
-	pcFilePrevTab=new MenuItem(MSG_MENU_FILE_PREVIOUS_FILE,new Message(M_MENU_FILE_PREV_TAB), "Ctrl+,", GetStockIcon(STOCK_LEFT_ARROW, STOCK_SIZE_MENUITEM));
-	pcFileMenu->AddItem(pcFilePrevTab);
-
-	pcEditMenu=new Menu(Rect(0,0,1,1),MSG_MENU_EDIT,ITEMS_IN_COLUMN);
-	pcEditCut=new MenuItem(MSG_MENU_EDIT_CUT,new Message(M_MENU_EDIT_CUT), "Ctrl+X", GetStockIcon(STOCK_CUT, STOCK_SIZE_MENUITEM));
-	pcEditMenu->AddItem(pcEditCut);
-	pcEditCopy=new MenuItem(MSG_MENU_EDIT_COPY,new Message(M_MENU_EDIT_COPY), "Ctrl+C", GetStockIcon(STOCK_COPY, STOCK_SIZE_MENUITEM));
-	pcEditMenu->AddItem(pcEditCopy);
-	pcEditPaste=new MenuItem(MSG_MENU_EDIT_PASTE,new Message(M_MENU_EDIT_PASTE), "Ctrl+V", GetStockIcon(STOCK_PASTE, STOCK_SIZE_MENUITEM));
-	pcEditMenu->AddItem(pcEditPaste);
-	pcEditMenu->AddItem(new MenuSeparator());
-	pcEditSelectAll=new MenuItem(MSG_MENU_EDIT_SELECT_ALL,new Message(M_MENU_EDIT_SELECT_ALL), "Ctrl+A");
-	pcEditMenu->AddItem(pcEditSelectAll);
-#ifdef ENABLE_UNDO
-	pcEditMenu->AddItem(new MenuSeparator());
-	pcEditUndo=new MenuItem(MSG_MENU_EDIT_UNDO,new Message(M_MENU_EDIT_UNDO), "Ctrl+Z", GetStockIcon(STOCK_UNDO, STOCK_SIZE_MENUITEM));
-	pcEditMenu->AddItem(pcEditUndo);
-	pcEditRedo=new MenuItem(MSG_MENU_EDIT_REDO,new Message(M_MENU_EDIT_REDO), "", GetStockIcon(STOCK_REDO, STOCK_SIZE_MENUITEM));
-	pcEditMenu->AddItem(pcEditRedo);
-#endif
-
-	pcFindMenu=new Menu(Rect(0,0,1,1),MSG_MENU_FIND,ITEMS_IN_COLUMN);
-	pcFindMenu->AddItem(MSG_MENU_FIND_FIND,new Message(M_MENU_FIND_FIND), "Ctrl+F", GetStockIcon(STOCK_SEARCH, STOCK_SIZE_MENUITEM));
-	pcFindMenu->AddItem(MSG_MENU_FIND_REPLACE,new Message(M_MENU_FIND_REPLACE), "Ctrl+R", GetStockIcon(STOCK_SEARCH_REPLACE, STOCK_SIZE_MENUITEM));
-	pcFindMenu->AddItem(new MenuSeparator());
-	pcFindMenu->AddItem(MSG_MENU_FIND_GOTO_LINE,new Message(M_MENU_FIND_GOTO), "Ctrl+G", GetStockIcon(STOCK_JUMP_TO, STOCK_SIZE_MENUITEM));
-
-	// Create Font Menu
-	pcFontMenu = new Menu(Rect(0,0,1,1), MSG_MENU_FONT, ITEMS_IN_COLUMN);
-
-	// Add Size Submenu
-	Menu* pcSizeMenu = new Menu(Rect(0,0,1,1), MSG_MENU_FONT_SIZE, ITEMS_IN_COLUMN);
-
-	float sz,del=1.0;
-
-	Message *pcSizeMsg;
-	char zSizeLabel[8];
-
-	for (sz=5.0; sz < 30.0; sz += del)
-	{
-		pcSizeMsg = new Message(M_MENU_FONT_SIZE);
-
-		pcSizeMsg->AddFloat("size",sz);
-		sprintf(zSizeLabel,"%.1f",sz);
-		pcSizeMenu->AddItem(zSizeLabel,pcSizeMsg);
-
-		if (sz == 10.0)
-			del = 2.0;
-		else if (sz == 16.0)
-			del = 4.0;
-   }
-
-	pcFontMenu->AddItem(pcSizeMenu);
-	pcFontMenu->AddItem(new MenuSeparator());
-
-	// Add Family and Style Menu
-	int fc = Font::GetFamilyCount();
-	int sc,i=0,j=0;
-	char zFFamily[FONT_FAMILY_LENGTH],zFStyle[FONT_STYLE_LENGTH];
-	uint32 flags;
-
-	Menu *pcFamilyMenu;
-	Message *pcFontMsg;
-
-	for (i=0; i<fc; i++)
-	{
-		if (Font::GetFamilyInfo(i,zFFamily) == 0)
-		{
-			sc = Font::GetStyleCount(zFFamily);
-			pcFamilyMenu = new Menu(Rect(0,0,1,1),zFFamily,ITEMS_IN_COLUMN);
-
-			for (j=0; j<sc; j++)
-			{
-				if (Font::GetStyleInfo(zFFamily,j,zFStyle,&flags) == 0)
-				{
-					pcFontMsg = new Message(M_MENU_FONT_FAMILY_AND_STYLE);
-					pcFontMsg->AddString("family",zFFamily);
-					pcFontMsg->AddString("style",zFStyle);
-					pcFontMsg->AddInt32("flags", flags);
-
-					pcFamilyMenu->AddItem(zFStyle,pcFontMsg);
-				}
-			}
-
-		pcFontMenu->AddItem(pcFamilyMenu);
-
-		}
-	}
-
-	// Create the Settings menu
-	pcSettingsMenu=new Menu(Rect(0,0,1,1),MSG_MENU_SETTINGS,ITEMS_IN_COLUMN);
-	pcSettingsSaveOnClose=new CheckMenu(MSG_MENU_SETTINGS_SAVE_ON_CLOSE,new Message(M_MENU_SETTINGS_SAVE_ON_CLOSE), 
-							cSettings.GetBool("SaveOnExit", true));
-	pcSettingsMenu->AddItem(pcSettingsSaveOnClose);
-	pcSettingsMenu->AddItem(new MenuSeparator());
-	pcSettingsMenu->AddItem(MSG_MENU_SETTINGS_SAVE_NOW, new Message(M_MENU_SETTINGS_SAVE_NOW));
-	pcSettingsMenu->AddItem(MSG_MENU_SETTINGS_RESET, new Message(M_MENU_SETTINGS_RESET));
-
-	// Attach the menus.  Attach the menu bar to the window
-	pcMenuBar->AddItem(pcAppMenu);
-	pcMenuBar->AddItem(pcFileMenu);
-	pcMenuBar->AddItem(pcEditMenu);
-	pcMenuBar->AddItem(pcFindMenu);
-	pcMenuBar->AddItem(pcFontMenu);
-	pcMenuBar->AddItem(pcSettingsMenu);
-	
-	cMenuFrame.bottom = pcMenuBar->GetPreferredSize( true ).y;
-    cMainFrame.top = cMenuFrame.bottom + 1;
-    pcMenuBar->SetFrame( cMenuFrame );
-	pcMenuBar->SetTargetForItems(this);
-	AddChild(pcMenuBar);
+	Window::FrameSized( cDelta );
+	_Layout();
 }
 
 void AEditWindow::HandleMessage(Message* pcMessage)
@@ -282,12 +158,11 @@ void AEditWindow::HandleMessage(Message* pcMessage)
 		case M_MENU_APP_ABOUT:
 		{
 			// Create dialog if it doesnt exists
-			if(pcAboutDialog==NULL)
-				pcAboutDialog=new AboutDialog(Rect(200,200,450,380), this);
+			if( pcAboutDialog == NULL )
+				pcAboutDialog=new AboutDialog();
 
 			UpdateMenuItemStatus();
 
-			pcAboutDialog->CenterInWindow(this);
 			pcAboutDialog->Raise();
 
 			break;
@@ -359,9 +234,7 @@ void AEditWindow::HandleMessage(Message* pcMessage)
 				}
 				else // If the buffer doesnt need to be save just delete the buffer
 				{
-					char buffer[1024];
-					sprintf(buffer, MSG_STATUSBAR_CLOSED_FILE.c_str(), pcCurrentBuffer->GetRealName().c_str());
-					SetStatus(string(buffer));	
+					SetStatus( MSG_STATUSBAR_CLOSED_FILE, pcCurrentBuffer->GetRealName().c_str() );
 					delete pcCurrentBuffer;
 			   	}
 
@@ -379,18 +252,16 @@ void AEditWindow::HandleMessage(Message* pcMessage)
 			{
 				if(pcCurrentBuffer->Save())
 				{
-					char buffer[1024];
-					sprintf(buffer, MSG_STATUSBAR_SAVED_FILE.c_str(), pcCurrentBuffer->GetRealName().c_str());
-					pcStatusBar->SetStatus(buffer);
+					SetStatus( MSG_STATUSBAR_SAVED_FILE, pcCurrentBuffer->GetRealName().c_str() );
 				}
 				else
 				{
-					char buffer[1024];
-					sprintf(buffer, MSG_ALERT_SAVE_FILE_BODY.c_str(), pcCurrentBuffer->GetRealName().c_str());
+					String f;
+					f.Format( MSG_ALERT_SAVE_FILE_BODY.c_str(), pcCurrentBuffer->GetRealName().c_str() );
 
-					Alert* pcSaveErrorAlert=new Alert(MSG_ALERT_SAVE_FILE_TITLE, string(buffer), Alert::ALERT_WARNING, MSG_ALERT_SAVE_FILE_OK.c_str(),NULL);
+					Alert* pcSaveErrorAlert=new Alert(MSG_ALERT_SAVE_FILE_TITLE, f, Alert::ALERT_WARNING, MSG_ALERT_SAVE_FILE_OK.c_str(),NULL);
 					pcSaveErrorAlert->Go(new Invoker());
-					SetStatus(string(buffer));	
+					SetStatus( f );	
 				}
 		
 				// Update menu items
@@ -433,18 +304,16 @@ void AEditWindow::HandleMessage(Message* pcMessage)
 				{
 					if(pcCurrentBuffer->SaveAs(pzFPath))
 					{
-						char buffer[1024];
-						sprintf(buffer, MSG_STATUSBAR_SAVED_FILE.c_str(), pcCurrentBuffer->GetRealName().c_str());
-						SetStatus(string(buffer));		
+						SetStatus( MSG_STATUSBAR_SAVED_FILE, pcCurrentBuffer->GetRealName().c_str() );
 					}
 					else
 					{
-						char buffer[1024];
-						sprintf(buffer, MSG_ALERT_SAVE_FILE_BODY.c_str(), pcCurrentBuffer->GetRealName().c_str());
+						String f;
+						f.Format( MSG_ALERT_SAVE_FILE_BODY.c_str(), pcCurrentBuffer->GetRealName().c_str() );
 
-						Alert* pcSaveErrorAlert=new Alert(MSG_ALERT_SAVE_FILE_TITLE, string(buffer), Alert::ALERT_WARNING, MSG_ALERT_SAVE_FILE_OK.c_str(),NULL);
+						Alert* pcSaveErrorAlert=new Alert(MSG_ALERT_SAVE_FILE_TITLE, f, Alert::ALERT_WARNING, MSG_ALERT_SAVE_FILE_OK.c_str(),NULL);
 						pcSaveErrorAlert->Go(new Invoker());
-						SetStatus(string(buffer));		
+						SetStatus( f );		
 					}
 				}
 
@@ -550,73 +419,88 @@ void AEditWindow::HandleMessage(Message* pcMessage)
 			break;
 		}
 
+		case M_MENU_VIEW_TOOLBAR:
+			pcToolBar->Show( pcViewToolbar->IsChecked() );
+			_Layout();
+			break;
+		case M_MENU_VIEW_STATUSBAR:
+			pcStatusBar->Show( pcViewStatusbar->IsChecked() );
+			_Layout();
+			break;
+		case M_MENU_VIEW_TABSHOW:
+			pcMyTabView->SetTabType( TabView::SHOW_TABS );
+			pcViewTabAutomatic->SetChecked( false );
+			pcViewTabShow->SetChecked( true );
+			pcViewTabHide->SetChecked( false );
+			break;
+		case M_MENU_VIEW_TABHIDE:
+			pcMyTabView->SetTabType( TabView::HIDE_TABS );
+			pcViewTabAutomatic->SetChecked( false );
+			pcViewTabShow->SetChecked( false );
+			pcViewTabHide->SetChecked( true );
+			break;
+		case M_MENU_VIEW_TABAUTO:
+			pcMyTabView->SetTabType( TabView::AUTOMATIC_TABS );
+			pcViewTabAutomatic->SetChecked( true );
+			pcViewTabShow->SetChecked( false );
+			pcViewTabHide->SetChecked( false );
+			break;
+		case M_MENU_VIEW_SETFONT:
+		{
+			if( pcFontRequester == NULL )
+				pcFontRequester = new FontRequester( new Messenger(this), true);
+
+			pcFontRequester->CenterInWindow( this );
+			if( pcFontRequester->IsVisible() )
+				pcFontRequester->Show( false );
+			pcFontRequester->Show();
+			break;
+		}
+		case M_FONT_REQUESTED:
+		{
+			Font* f = new Font();
+			if( pcMessage->FindObject( "font", *f ) == EOK )
+			{
+				if( pcCurrentBuffer != NULL )
+					pcCurrentBuffer->SetFont( f );
+			}
+			break;
+		}
+
 		case M_MENU_FIND_FIND:
 		case M_BUT_FIND_FIND:
 		{
 			// Create dialog if it doesnt exists
-			if(pcFindDialog==NULL)
-				pcFindDialog=new FindDialog(Rect(200,200,450,310),this);
+			if( pcFindDialog == NULL)
+				pcFindDialog = new FindDialog();
 
 			UpdateMenuItemStatus();
 
-			pcFindDialog->CenterInWindow(this);
-			pcFindDialog->Raise();
-
+			SetDialog( pcFindDialog );
 			break;
 		}
 
 		case M_MENU_FIND_REPLACE:
 		{
 			// Create dialog if it doesnt exists
-			if(pcReplaceDialog==NULL)
-				pcReplaceDialog=new ReplaceDialog(Rect(200,200,450,310),this);
+			if( pcReplaceDialog == NULL)
+				pcReplaceDialog = new ReplaceDialog();
 
 			UpdateMenuItemStatus();
 
-			pcReplaceDialog->CenterInWindow(this);
-			pcReplaceDialog->Raise();
-
+ 			SetDialog( pcReplaceDialog );
 			break;
 		}
 
 		case M_MENU_FIND_GOTO:
 		{
 			// Create dialog if it doesnt exists
-			if(pcGotoDialog==NULL)
-				pcGotoDialog=new GotoDialog(Rect(200,200,450,250),this);
+			if( pcGotoDialog == NULL )
+				pcGotoDialog = new GotoDialog();
 
 			UpdateMenuItemStatus();
 
-			pcGotoDialog->CenterInWindow(this);
-			pcGotoDialog->Raise();
-
-			break;
-		}
-
-		case M_MENU_FONT_SIZE:
-		{
-			float size;
-
-			if (pcMessage->FindFloat("size",&size) == 0)
-			{
-				if(pcCurrentBuffer!=NULL)
-					pcCurrentBuffer->SetFontSize(size);
-			}
-
-			break;
-		}
-
-		case M_MENU_FONT_FAMILY_AND_STYLE:
-		{
-			const char *family,*style;
-			int32 flags;
-
-			if (pcMessage->FindString("family",&family) == 0 && pcMessage->FindString("style",&style) == 0 && pcMessage->FindInt32( "flags", &flags) == 0 )
-			{
-				if(pcCurrentBuffer!=NULL)
-					pcCurrentBuffer->SetFontFamily(family, style, flags);			
-			}
-
+			SetDialog( pcGotoDialog );
 			break;
 		}
 
@@ -708,11 +592,8 @@ void AEditWindow::HandleMessage(Message* pcMessage)
 					}
 					else
 					{
-						char buffer[1024];
-						sprintf(buffer, MSG_STATUSBAR_FILE_CLOSED_AND_SAVED.c_str(), pcCurrentBuffer->GetRealName().c_str());
-
 						// Delete the buffer (in the destructor the new current buffer will be set)
-						SetStatus(string(buffer));
+						SetStatus( MSG_STATUSBAR_FILE_CLOSED_AND_SAVED, pcCurrentBuffer->GetRealName().c_str() );
 
 						// Update menu items
 						UpdateMenuItemStatus();
@@ -720,12 +601,10 @@ void AEditWindow::HandleMessage(Message* pcMessage)
 					}
 					break;
 				case 1:  // User doesnt want to save it
-					{
-						char buffer[1024];
-						sprintf(buffer, MSG_STATUSBAR_FILE_CLOSED_AND_NOT_SAVED.c_str(), pcCurrentBuffer->GetRealName().c_str());
-	
+					{					
+						SetStatus( MSG_STATUSBAR_FILE_CLOSED_AND_NOT_SAVED, pcCurrentBuffer->GetRealName().c_str() );
+
 						// Delete the buffer (in the destructor the new current buffer will be set)
-						SetStatus(buffer);
 						delete pcCurrentBuffer;
 						// Update menu items
 						UpdateMenuItemStatus();
@@ -748,21 +627,20 @@ void AEditWindow::HandleMessage(Message* pcMessage)
 				{
 					if(pcCurrentBuffer->SaveAs(pzFPath))
 					{
-						char buffer[1024];
-						sprintf(buffer, MSG_STATUSBAR_FILE_CLOSED_AND_SAVED.c_str(), pcCurrentBuffer->GetRealName().c_str());
-						SetStatus(string(buffer));
+						SetStatus( MSG_STATUSBAR_FILE_CLOSED_AND_SAVED, pcCurrentBuffer->GetRealName().c_str() );
 						delete pcCurrentBuffer;
+
 						// Update menu items
 						UpdateMenuItemStatus();
 					}
 					else
 					{
-						char buffer[1024];
-						sprintf(buffer, MSG_ALERT_SAVE_FILE_BODY.c_str(), pcCurrentBuffer->GetRealName().c_str());
+						String f;
+						f.Format( MSG_ALERT_SAVE_FILE_BODY.c_str(), pcCurrentBuffer->GetRealName().c_str() );
 
-						Alert* pcSaveErrorAlert=new Alert(MSG_ALERT_SAVE_FILE_TITLE, string(buffer), Alert::ALERT_WARNING, MSG_ALERT_SAVE_FILE_OK.c_str(),NULL);
+						Alert* pcSaveErrorAlert=new Alert(MSG_ALERT_SAVE_FILE_TITLE, f, Alert::ALERT_WARNING, MSG_ALERT_SAVE_FILE_OK.c_str(),NULL);
 						pcSaveErrorAlert->Go(new Invoker());
-						SetStatus(string(buffer));		
+						SetStatus( f );		
 					}
 				}
 			}
@@ -787,8 +665,14 @@ void AEditWindow::HandleMessage(Message* pcMessage)
 					cSettings.SetRect("WindowPos", GetFrame());
 					cSettings.SetString("LoadPath", LatestOpenPath);
 					cSettings.SetString("SavePath", LatestSavePath);
+					cSettings.SetBool("Toolbar", pcViewToolbar->IsChecked() );
+					cSettings.SetBool("Statusbar", pcViewStatusbar->IsChecked() );
+					cSettings.SetBool("ShowTab", pcViewTabShow->IsChecked() );
+					cSettings.SetBool("HideTab", pcViewTabHide->IsChecked() );
+					cSettings.SetBool("AutoTab", pcViewTabAutomatic->IsChecked() );
 					cSettings.Save();
-				}
+				}			
+
 				Application::GetInstance()->PostMessage(M_QUIT);
 			}
 			break;
@@ -852,14 +736,12 @@ void AEditWindow::UpdateMenuItemStatus(void)
 	pcFilePrevTab->SetEnable(pcMyTabView->GetTabCount()>1);
 
 	// Check button bar
-	pcImageFileSave->SetEnable(pcFileSave->IsEnabled());
-	pcImageEditCopy->SetEnable(pcEditCopy->IsEnabled());
-	pcImageEditCut->SetEnable(pcEditCut->IsEnabled());
-	pcImageEditPaste->SetEnable(pcEditPaste->IsEnabled());
-#ifdef ENABLE_UNDO
-	pcImageEditUndo->SetEnable(pcEditUndo->IsEnabled());
-	pcImageEditRedo->SetEnable(pcEditRedo->IsEnabled());
-#endif
+	pcImageFileSave->SetEnable( pcFileSave->IsEnabled() );
+	pcImageEditCopy->SetEnable( pcEditCopy->IsEnabled() );
+	pcImageEditCut->SetEnable( pcEditCut->IsEnabled() );
+	pcImageEditPaste->SetEnable( pcEditPaste->IsEnabled() );
+	pcImageEditUndo->SetEnable( pcEditUndo->IsEnabled() );
+	pcImageEditRedo->SetEnable( pcEditRedo->IsEnabled() );
 }
 
 void AEditWindow::CreateNewBuffer(void)
@@ -874,10 +756,7 @@ void AEditWindow::CreateNewBuffer(void)
 	pcMyTabView->SetSelection(iSel, false);
 
 	// Set status bar
-	char buffer[1024];
-	sprintf(buffer, MSG_STATUSBAR_NEW_FILE_CREATED.c_str(), pcCurrentBuffer->GetRealName().c_str());
-				
-	SetStatus(string(buffer));
+	SetStatus( MSG_STATUSBAR_NEW_FILE_CREATED, pcCurrentBuffer->GetRealName().c_str() );
 
 	// Update menu items
 	UpdateMenuItemStatus();
@@ -931,19 +810,27 @@ void AEditWindow::Load(char* pzFileName)
 			char* pnBuffer=(char*)malloc(nFileSize+1);
 			pnBuffer=(char*)memset(pnBuffer,0,nFileSize+1);
 
-			uint32 nCount;
+			uint32 nCount, nCount2;
 
 			FILE *hFile=fopen(pzFileName,"r");
 
 			if(hFile)
 			{
-				for(nCount=0;nCount<nFileSize;nCount++)
-					pnBuffer[nCount]=fgetc(hFile);
+				for(nCount=0, nCount2 = 0;nCount<nFileSize;nCount++)
+				{
+					char c = fgetc(hFile);
+
+					if( c != '\r' )
+					{
+						pnBuffer[nCount2]=c;
+						nCount2++;
+					}
+				}
 			}
 
 			fclose(hFile);
 
-			pnBuffer[nFileSize-1]=0;  // This stops the string running off of the end and producing garbage.
+			pnBuffer[nCount2-1]=0;  // This stops the string running off of the end and producing garbage.
 
 			// File has been loaded. Lets open a new Buffer for this file
 
@@ -960,9 +847,7 @@ void AEditWindow::Load(char* pzFileName)
 			buf->ContentChanged(false);
 
 			// Set status bar
-			char buffer[1024];
-			sprintf(buffer, MSG_STATUSBAR_FILE_LOADED_OK.c_str(), pcCurrentBuffer->GetRealName().c_str());
-			SetStatus(string(buffer));
+			SetStatus( MSG_STATUSBAR_FILE_LOADED_OK, pcCurrentBuffer->GetRealName().c_str() );
 
 			// Update menu items
 			UpdateMenuItemStatus();
@@ -977,12 +862,12 @@ void AEditWindow::Load(char* pzFileName)
 		else
 		{
 			// Set status bar
-			char buffer[1024];
-			sprintf(buffer, MSG_STATUSBAR_FILE_UNABLE_TO_OPEN.c_str(), pzFileName);
-			SetStatus(string(buffer));
+			String f;
+			f.Format( MSG_STATUSBAR_FILE_UNABLE_TO_OPEN.c_str(), pzFileName );
+			SetStatus( f );
 
 			// Pop error window, file is not a "regular" file
-			Alert* pcFileAlert = new Alert(MSG_ALERT_FILE_OPEN_TITLE, string(buffer), Alert::ALERT_WARNING, 0x00, MSG_ALERT_FILE_OPEN_OK.c_str(), NULL);
+			Alert* pcFileAlert = new Alert(MSG_ALERT_FILE_OPEN_TITLE, f, Alert::ALERT_WARNING, 0x00, MSG_ALERT_FILE_OPEN_OK.c_str(), NULL);
 			pcFileAlert->Go();
 		}
 	}
@@ -1001,9 +886,7 @@ void AEditWindow::Load(char* pzFileName)
 		buf->ContentChanged(false);
 
 		// Set status bar
-		char buffer[1024];
-		sprintf(buffer, MSG_STATUSBAR_NEW_FILE_CREATED.c_str(), pzFileName);
-		SetStatus(string(buffer));
+		SetStatus( MSG_STATUSBAR_NEW_FILE_CREATED, pzFileName );
 
 		// Update menu items
 		UpdateMenuItemStatus();
@@ -1013,15 +896,217 @@ void AEditWindow::Load(char* pzFileName)
 	}
 }
 
-// Set title of the window
-void AEditWindow::SetTitle(std::string zTitle)
+// Set the status bar
+void AEditWindow::SetStatus( String zTitle, ... )
 {
-	Window::SetTitle(zTitle);
+	String f;
+	va_list sArgList;
+
+	va_start( sArgList, zTitle.c_str() );
+	f.Format( zTitle.c_str(), sArgList );
+	va_end( sArgList );
+
+	pcStatusBar->SetText( "message", f );
 }
 
-// Set the status bar 
-void AEditWindow::SetStatus(std::string zTitle)
+void AEditWindow :: SetDialog( Dialog* dialog )
 {
-	pcStatusBar->SetStatus(zTitle);
+	if( pcCurrentDialog != NULL )
+	{
+		pcCurrentDialog->Close();
+		RemoveChild( pcCurrentDialog );
+		pcCurrentDialog	= NULL;
+	}
+
+	if( dialog != NULL )
+	{
+		pcCurrentDialog = dialog;
+		AddChild( pcCurrentDialog );
+		pcCurrentDialog->Init();
+	}
+
+	_Layout();
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// P R I V A T E
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+void AEditWindow :: _Layout()
+{
+	static bool first1 = true, first2 = true;
+
+	Rect cFrame = GetBounds();
+
+	// Set up menu
+	Point menu = pcMenuBar->GetPreferredSize( false );
+	Rect menu_frame( cFrame.left, cFrame.top, cFrame.right, cFrame.top + menu.y );
+	pcMenuBar->SetFrame( menu_frame );
+
+	cFrame.top = menu_frame.bottom + 2;
+
+	// Toolbar
+	if( pcViewToolbar->IsChecked() )
+	{
+
+		Point toolbar = pcToolBar->GetPreferredSize( false );
+		Rect toolbar_frame( cFrame.left, cFrame.top, cFrame.right, cFrame.top + toolbar.y );
+		pcToolBar->SetFrame( toolbar_frame );
+		cFrame.top = toolbar_frame.bottom + 2;
+
+		if( !pcToolBar->IsVisible() && !first1 )
+		{
+			pcToolBar->Show();
+		}
+		else
+			first1 = false;
+	}
+	else
+	{
+		pcToolBar->Hide();
+	}
+
+
+	// Statusbar
+	if( pcViewStatusbar->IsChecked() )
+	{
+		Point statusbar = pcStatusBar->GetPreferredSize( false );
+		Rect statusbar_frame( cFrame.left, cFrame.bottom - statusbar.y, cFrame.right, cFrame.bottom );
+		pcStatusBar->SetFrame( statusbar_frame );
+
+		cFrame.bottom = statusbar_frame.top;
+
+		if( !pcStatusBar->IsVisible() && !first2 )
+		{
+			pcStatusBar->Show();
+		}
+		else
+			first2 = false;
+	}
+	else
+	{
+		pcStatusBar->Hide();
+	}
+
+	if( first1 || first2 )
+		first1 = first2 = false;
+	
+	// Current dialog
+	if( pcCurrentDialog != NULL )
+	{
+		Point dialog = pcCurrentDialog->GetPreferredSize( false );
+		Rect dialog_frame( cFrame.left, cFrame.bottom - dialog.y, cFrame.right, cFrame.bottom );
+		pcCurrentDialog->SetFrame( dialog_frame );
+
+		cFrame.bottom = dialog_frame.top;
+	}
+
+	// Tabview
+	pcMyTabView->SetFrame( cFrame );
+}
+
+void AEditWindow::_SetupMenus()
+{
+	Rect cMenuFrame = GetBounds();
+    Rect cMainFrame = cMenuFrame;
+    cMenuFrame.bottom = 18;
+	pcMenuBar=new Menu(cMenuFrame, "main_menu", ITEMS_IN_ROW, CF_FOLLOW_LEFT | CF_FOLLOW_RIGHT | CF_FOLLOW_TOP);
+
+	// Create the menus
+	pcAppMenu=new Menu(Rect(),MSG_MENU_APPLICATION,ITEMS_IN_COLUMN);
+	pcAppMenu->AddItem(MSG_MENU_APPLICATION_QUIT,new Message(M_MENU_APP_QUIT), "Ctrl+Q", GetStockIcon(STOCK_EXIT, STOCK_SIZE_MENUITEM));
+	pcAppMenu->AddItem(new MenuSeparator());
+	pcAppMenu->AddItem(MSG_MENU_APPLICATION_ABOUT,new Message(M_MENU_APP_ABOUT));
+
+	pcFileMenu=new Menu(Rect(),MSG_MENU_FILE,ITEMS_IN_COLUMN);
+	pcFileNew=new MenuItem(MSG_MENU_FILE_NEW,new Message(M_MENU_FILE_NEW), "Ctrl+N", GetStockIcon(STOCK_NEW, STOCK_SIZE_MENUITEM));
+	pcFileMenu->AddItem(pcFileNew);
+	pcFileMenu->AddItem(new MenuSeparator());
+	pcFileOpen=new MenuItem(MSG_MENU_FILE_OPEN,new Message(M_MENU_FILE_OPEN), "Ctrl+O", GetStockIcon(STOCK_OPEN, STOCK_SIZE_MENUITEM));
+	pcFileMenu->AddItem(pcFileOpen);
+	pcFileMenu->AddItem(new MenuSeparator());
+	pcFileClose=new MenuItem(MSG_MENU_FILE_CLOSE,new Message(M_MENU_FILE_CLOSE), "Ctrl+W");
+	pcFileMenu->AddItem(pcFileClose);
+	pcFileSave=new MenuItem(MSG_MENU_FILE_SAVE,new Message(M_MENU_FILE_SAVE), "Ctrl+S", GetStockIcon(STOCK_SAVE, STOCK_SIZE_MENUITEM));
+	pcFileMenu->AddItem(pcFileSave);
+	pcFileSaveAs=new MenuItem(MSG_MENU_FILE_SAVE_AS,new Message(M_MENU_FILE_SAVE_AS), "", GetStockIcon(STOCK_SAVE_AS, STOCK_SIZE_MENUITEM));
+	pcFileMenu->AddItem(pcFileSaveAs);
+	pcFileSaveAll=new MenuItem(MSG_MENU_FILE_SAVE_ALL,new Message(M_MENU_FILE_SAVE_ALL), "Ctrl+L");
+	pcFileMenu->AddItem(pcFileSaveAll);
+	pcFileMenu->AddItem(new MenuSeparator());
+	pcFileNextTab=new MenuItem(MSG_MENU_FILE_NEXT_FILE,new Message(M_MENU_FILE_NEXT_TAB), "Ctrl+.", GetStockIcon(STOCK_RIGHT_ARROW, STOCK_SIZE_MENUITEM));
+	pcFileMenu->AddItem(pcFileNextTab);
+	pcFilePrevTab=new MenuItem(MSG_MENU_FILE_PREVIOUS_FILE,new Message(M_MENU_FILE_PREV_TAB), "Ctrl+,", GetStockIcon(STOCK_LEFT_ARROW, STOCK_SIZE_MENUITEM));
+	pcFileMenu->AddItem(pcFilePrevTab);
+
+	pcEditMenu=new Menu(Rect(),MSG_MENU_EDIT,ITEMS_IN_COLUMN);
+	pcEditCut=new MenuItem(MSG_MENU_EDIT_CUT,new Message(M_MENU_EDIT_CUT), "Ctrl+X", GetStockIcon(STOCK_CUT, STOCK_SIZE_MENUITEM));
+	pcEditMenu->AddItem(pcEditCut);
+	pcEditCopy=new MenuItem(MSG_MENU_EDIT_COPY,new Message(M_MENU_EDIT_COPY), "Ctrl+C", GetStockIcon(STOCK_COPY, STOCK_SIZE_MENUITEM));
+	pcEditMenu->AddItem(pcEditCopy);
+	pcEditPaste=new MenuItem(MSG_MENU_EDIT_PASTE,new Message(M_MENU_EDIT_PASTE), "Ctrl+V", GetStockIcon(STOCK_PASTE, STOCK_SIZE_MENUITEM));
+	pcEditMenu->AddItem(pcEditPaste);
+	pcEditMenu->AddItem(new MenuSeparator());
+	pcEditSelectAll=new MenuItem(MSG_MENU_EDIT_SELECT_ALL,new Message(M_MENU_EDIT_SELECT_ALL), "Ctrl+A", GetStockIcon(STOCK_SELECT_ALL, STOCK_SIZE_MENUITEM));
+	pcEditMenu->AddItem(pcEditSelectAll);
+	pcEditMenu->AddItem(new MenuSeparator());
+	pcEditUndo=new MenuItem(MSG_MENU_EDIT_UNDO,new Message(M_MENU_EDIT_UNDO), "Ctrl+Z", GetStockIcon(STOCK_UNDO, STOCK_SIZE_MENUITEM));
+	pcEditMenu->AddItem(pcEditUndo);
+	pcEditRedo=new MenuItem(MSG_MENU_EDIT_REDO,new Message(M_MENU_EDIT_REDO), "", GetStockIcon(STOCK_REDO, STOCK_SIZE_MENUITEM));
+	pcEditMenu->AddItem(pcEditRedo);
+
+	// Tab view submenu
+	pcTabsMenu = new Menu( Rect(), MSG_MENU_VIEW_TABS, ITEMS_IN_COLUMN );
+	pcViewTabShow = new CheckMenu( MSG_MENU_VIEW_SHOW, new Message( M_MENU_VIEW_TABSHOW ) );
+	pcViewTabShow->SetChecked( false );
+	pcTabsMenu->AddItem( pcViewTabShow );
+	pcViewTabHide = new CheckMenu( MSG_MENU_VIEW_HIDE, new Message( M_MENU_VIEW_TABHIDE ) );
+	pcViewTabHide->SetChecked( false );
+	pcTabsMenu->AddItem( pcViewTabHide );
+	pcTabsMenu->AddItem( new MenuSeparator() );
+	pcViewTabAutomatic = new CheckMenu( MSG_MENU_VIEW_AUTO, new Message( M_MENU_VIEW_TABAUTO ) );
+	pcViewTabAutomatic->SetChecked( true );
+	pcTabsMenu->AddItem( pcViewTabAutomatic );
+
+	// Create the view menu
+	pcViewMenu = new Menu( Rect(), MSG_MENU_VIEW_VIEW, ITEMS_IN_COLUMN );
+	pcViewToolbar = new CheckMenu( MSG_MENU_VIEW_TOOLBAR, new Message( M_MENU_VIEW_TOOLBAR ), "" );
+	pcViewToolbar->SetChecked( true );
+	pcViewMenu->AddItem( pcViewToolbar );
+	pcViewMenu->AddItem( pcTabsMenu );
+	pcViewStatusbar = new CheckMenu( MSG_MENU_VIEW_STATUSBAR, new Message( M_MENU_VIEW_STATUSBAR ), "" );
+	pcViewStatusbar->SetChecked( true );
+	pcViewMenu->AddItem( pcViewStatusbar );
+	pcViewMenu->AddItem( new MenuSeparator() );
+	pcViewFont = new MenuItem( MSG_MENU_VIEW_SETFONT, new Message( M_MENU_VIEW_SETFONT ), "", GetStockIcon(STOCK_FONT, STOCK_SIZE_MENUITEM) );
+	pcViewMenu->AddItem( pcViewFont );
+
+	// Find menu
+	pcFindMenu=new Menu(Rect(),MSG_MENU_FIND,ITEMS_IN_COLUMN);
+	pcFindMenu->AddItem(MSG_MENU_FIND_FIND,new Message(M_MENU_FIND_FIND), "Ctrl+F", GetStockIcon(STOCK_SEARCH, STOCK_SIZE_MENUITEM));
+	pcFindMenu->AddItem(MSG_MENU_FIND_REPLACE,new Message(M_MENU_FIND_REPLACE), "Ctrl+R", GetStockIcon(STOCK_SEARCH_REPLACE, STOCK_SIZE_MENUITEM));
+	pcFindMenu->AddItem(new MenuSeparator());
+	pcFindMenu->AddItem(MSG_MENU_FIND_GOTO_LINE,new Message(M_MENU_FIND_GOTO), "Ctrl+G", GetStockIcon(STOCK_JUMP_TO, STOCK_SIZE_MENUITEM));
+
+	// Create the Settings menu
+	pcSettingsMenu=new Menu(Rect(0,0,1,1),MSG_MENU_SETTINGS,ITEMS_IN_COLUMN);
+	pcSettingsSaveOnClose=new CheckMenu(MSG_MENU_SETTINGS_SAVE_ON_CLOSE,new Message(M_MENU_SETTINGS_SAVE_ON_CLOSE), 
+							cSettings.GetBool("SaveOnExit", true));
+	pcSettingsMenu->AddItem(pcSettingsSaveOnClose);
+	pcSettingsMenu->AddItem(new MenuSeparator());
+	pcSettingsMenu->AddItem(MSG_MENU_SETTINGS_SAVE_NOW, new Message(M_MENU_SETTINGS_SAVE_NOW));
+	pcSettingsMenu->AddItem(MSG_MENU_SETTINGS_RESET, new Message(M_MENU_SETTINGS_RESET));
+
+	// Attach the menus.  Attach the menu bar to the window
+	pcMenuBar->AddItem( pcAppMenu );
+	pcMenuBar->AddItem( pcFileMenu );
+	pcMenuBar->AddItem( pcEditMenu );
+	pcMenuBar->AddItem( pcViewMenu );
+	pcMenuBar->AddItem( pcFindMenu );
+	pcMenuBar->AddItem( pcSettingsMenu );
+	AddChild( pcMenuBar );
+	pcMenuBar->SetTargetForItems( this );
 }
 

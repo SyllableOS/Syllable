@@ -1,5 +1,4 @@
-// AEdit -:-  (C)opyright 2000-2002 Kristian Van Der Vliet
-//            (C)opyright 2005 - 2006 Jonas Jarvoll
+//  AEdit -:-  (C)opyright 2006 Jonas Jarvoll
 //
 // This is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by
@@ -15,8 +14,10 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-#define AEDIT_VERSION "2.3"
-#define AEDIT_RELEASE_STRING "AEdit 2.3"
+#include "dialog.h"
 
+using namespace os;
 
-
+Dialog :: Dialog() : View( Rect(), "" )
+{
+}

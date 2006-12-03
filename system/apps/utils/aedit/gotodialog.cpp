@@ -1,5 +1,5 @@
-//  hhAEdit -:-  (C)opyright 2000-2002 Kristian Van Der Vliet
-//             (C)opyright 2004 Jonas Jarvoll
+//  AEdit -:-  (C)opyright 2000-2002 Kristian Van Der Vliet
+//             (C)opyright 2004-2006 Jonas Jarvoll
 //
 // This is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by
@@ -16,134 +16,156 @@
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include "gotodialog.h"
-#include "appwindow.h"
 #include "buffer.h"
+#include "main.h"
+#include "icons.h"
 #include "messages.h"
 #include "resources/aedit.h"
 
-#include <util/message.h>
+using namespace os;
 
-GotoDialog::GotoDialog(const Rect& cFrame, AEditWindow* pcParent) : Window(cFrame, "goto_dialog", MSG_GOTO_TITLE, WND_NO_ZOOM_BUT | WND_NO_DEPTH_BUT | WND_NOT_RESIZABLE)
+GotoDialog :: GotoDialog() : Dialog()
 {
-	pcTarget=pcParent;		// We need to know the parent window so we can send messages back to it
+	// Create layout
+	pcLayoutView = new LayoutView( Rect(), "" );
+	AddChild( pcLayoutView );
 
-	// Create the Layoutviews
-	pcMainLayoutView=new LayoutView(GetBounds(),"", NULL, CF_FOLLOW_ALL);
+	pcRoot = new HLayoutNode( "" );
+	pcRoot->SetVAlignment( os::ALIGN_LEFT );
+	pcRoot->SetHAlignment( os::ALIGN_LEFT );
+	pcLayoutView->SetRoot( pcRoot );
 
-	// Make the base Vertical LayoutNode
-	pcHLayoutNode=new HLayoutNode("main_layout_node");
+	// Create close button
+	pcCloseButton = new ImageButton( Rect(), "close","", new Message( M_BUT_GOTO_CLOSE ), GetStockIcon( STOCK_CLOSE, STOCK_SIZE_MENUITEM ) );
+	pcRoot->AddChild( pcCloseButton );
 
-	// Add a spacer on the far left
-	pcHLayoutNode->AddChild(new HLayoutSpacer("spacer", 5.0f, 5.0f, pcHLayoutNode, 1.0f));
+	// Create space
+	pcRoot->AddChild( new HLayoutSpacer( "", 8, 8 ) );
 
-	// Create the InputNode
-	pcHLayoutNode->AddChild(new VLayoutSpacer("spacer", 5.0f, 5.0f, pcHLayoutNode, 1.0f));
+	// Create string
+	pcGotoString = new StringView( Rect(), "goto_string", MSG_GOTO_LINE );
+	pcRoot->AddChild( pcGotoString );
 
-	pcLineNoTextView= new TextView(Rect(0,0,0,0), "find_text_view", NULL, CF_FOLLOW_NONE);
-	pcLineNoTextView->SetNumeric(true);
-	pcLineNoTextView->SetMinPreferredSize( 10, 1 );
-	pcHLayoutNode->AddChild(pcLineNoTextView);
+	// Create space
+	pcRoot->AddChild( new HLayoutSpacer( "", 4, 4 ) );
 
-	// Add a spacer to force the edit box to the top
-	pcHLayoutNode->AddChild(new VLayoutSpacer("spacer", 1));
+	// Create textview
+	pcLineNoTextView = new TextView( Rect(), "", "" );
+	pcLineNoTextView->SetMessage( new Message( M_BUT_GOTO_TEXTVIEW ) );
+	pcLineNoTextView->SetEventMask( TextView::EI_ENTER_PRESSED );
+	pcLineNoTextView->SetNumeric( true );
+	pcLineNoTextView->SetMinPreferredSize( 20, 1 );
+	pcLineNoTextView->SetMaxPreferredSize( 200, 1 );
+	pcRoot->AddChild( pcLineNoTextView );
 
-	// Add a spacer between the Edit box & the Buttons
-	pcHLayoutNode->AddChild(new HLayoutSpacer("spacer", 5.0f, 5.0f, pcHLayoutNode, 1.0f));
+	// Create space
+	pcRoot->AddChild( new HLayoutSpacer( "", 4, 4 ) );
 
-	// Create the ButtonNode
-	pcButtonNode= new VLayoutNode("button_layout_node");
-
-	pcGotoButton=new Button(Rect(0,0,0,0), "goto_button", MSG_GOTO_GOTO, new Message(M_BUT_GOTO_GOTO), CF_FOLLOW_NONE);
-	pcButtonNode->AddChild(pcGotoButton);
-
-	pcButtonNode->AddChild(new VLayoutSpacer("spacer", 5.0f, 5.0f, pcButtonNode, 1.0f ) );
-
-	pcCloseButton=new Button(Rect(0,0,0,0), "close_button", MSG_GOTO_CLOSE, new Message(M_BUT_GOTO_CLOSE), CF_FOLLOW_NONE);
-	pcButtonNode->AddChild(pcCloseButton);
-
-	pcButtonNode->SameWidth("goto_button","close_button", NULL);
-
-	// Add the ButtonNode to the layout
-	pcHLayoutNode->AddChild(pcButtonNode);
-
-	// Add a spacer on the far right
-	pcHLayoutNode->AddChild(new HLayoutSpacer("spacer", 5.0f, 5.0f, pcHLayoutNode, 1.0f));
-
-	// Add the LayoutNodes to the layoutview
-	//pcMainLayoutView->AddChild(pcHLayoutNode);
-	pcMainLayoutView->SetRoot(pcHLayoutNode);
-	
-	// Add the View to the Window
-	AddChild(pcMainLayoutView);
+	// Create the goto button
+	pcGotoButton = new Button( Rect(), "goto_button", MSG_GOTO_GOTO, new Message( M_BUT_GOTO_GOTO ) );
+	pcRoot->AddChild( pcGotoButton );
 
 	// Set the focus
-	SetFocusChild(pcLineNoTextView);
-	SetDefaultButton(pcGotoButton);
-
-	Point cTopLeft = GetBounds().LeftTop();
-	Point cSize = pcMainLayoutView->GetPreferredSize( false );
-	Rect cWFrame( cTopLeft.x, cTopLeft.y, cTopLeft.x + cSize.x, cTopLeft.y + cSize.y );
-	SetFrame( cWFrame );
+	MakeFocus();
 }
 
-void GotoDialog::HandleMessage(Message* pcMessage)
+GotoDialog :: ~GotoDialog()
 {
-	switch(pcMessage->GetCode())
+	delete pcGotoButton;
+	delete pcLineNoTextView;
+	delete pcGotoString;
+	delete pcRoot;
+	delete pcLayoutView;
+}
+
+void GotoDialog :: FrameSized( const Point& cDelta )
+{
+	View::FrameSized( cDelta );
+	_Layout();
+}
+
+void GotoDialog :: AllAttached()
+{
+	View::AllAttached();
+	pcGotoButton->SetTarget( this );
+	pcCloseButton->SetTarget( this );
+	pcLineNoTextView->SetTarget( this );
+}
+
+void GotoDialog :: HandleMessage( Message* pcMessage )
+{
+	switch( pcMessage->GetCode() )
 	{
 		case M_BUT_GOTO_GOTO:
 		{
-			if(pcTarget->pcCurrentBuffer!=NULL)
-				pcTarget->pcCurrentBuffer->GotoLine(atoi(pcLineNoTextView->GetBuffer()[0].c_str()));
-
-			// Fall through to close the GotoDialog
+			_Goto();
+			break;
 		}
-
 		case M_BUT_GOTO_CLOSE:
 		{
-			// Close the Goto window
-			Hide();
-
-			if(pcTarget->pcCurrentBuffer!=NULL)
-				pcTarget->pcCurrentBuffer->MakeFocus();
-
+			AEditApp::GetAEditWindow()->SetDialog( NULL );
 			break;
 		}
-
-		default:
+		case M_BUT_GOTO_TEXTVIEW:
 		{
-			pcTarget->PostMessage(pcMessage,pcTarget);	// Send the messages from the dialog back to the parent window
+			int32 nEvent;
+			
+			if( pcMessage->FindInt32( "events", &nEvent ) == EOK )
+			{
+				if( nEvent & TextView::EI_ENTER_PRESSED )
+					_Goto();			
+			}
 			break;
 		}
+		default:
+			View::HandleMessage( pcMessage );
+			break;
 	}
 }
 
 // Disable/enable buttons in dialog depending on the parameter
-void GotoDialog::SetEnable(bool bEnable)
+void GotoDialog :: SetEnable( bool bEnable )
 {
-	pcGotoButton->SetEnable(bEnable);
+	pcGotoButton->SetEnable( bEnable );
 }
 
-bool GotoDialog::OkToQuit(void)
+void GotoDialog :: Init()
 {
-	Message *msg=new Message(M_BUT_GOTO_CLOSE);
-	HandleMessage(msg);
-	delete msg;
-	return (false);
-}
-
-void GotoDialog::MakeFocus()
-{
-	Window::MakeFocus();
 	// Set cursor on the text entry
+	pcLineNoTextView->SelectAll();
 	pcLineNoTextView->MakeFocus();
 }
 
-void GotoDialog::Raise()
+Point GotoDialog :: GetPreferredSize( bool bSize ) const
 {
-	if(IsVisible())
-		Show(false);
+	Point p = pcLayoutView->GetPreferredSize( bSize );
+	p.x += 4;
+	p.y += 4;
+	return p;
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// P R I V A T E
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
-	Show(true);
+void GotoDialog :: _Goto()
+{
+	Buffer* current = AEditApp::GetAEditWindow()->pcCurrentBuffer;
 
-	MakeFocus();
+	if( current != NULL )
+	{
+		int line_no = atoi( pcLineNoTextView->GetBuffer()[0].c_str() );
+		current->GotoLine( line_no );
+		current->MakeFocus();
+	}
+}
+
+void GotoDialog :: _Layout()
+{
+	Rect cFrame = GetBounds();
+	cFrame.Resize( 2, 2, -2, -2 );
+	cFrame.right = cFrame.left + GetPreferredSize( false ).x;
+
+	pcLayoutView->SetFrame( cFrame );	
 }

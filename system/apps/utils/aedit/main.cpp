@@ -1,4 +1,5 @@
 // AEdit -:-  (C)opyright 2000-2001 Kristian Van Der Vliet
+//	  			(C)opyright 2006 Jonas Jarvoll
 //
 // This is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by
@@ -16,10 +17,14 @@
 
 #include "main.h"
 #include "settings.h"
+#include "resources/aedit.h"
+
+#include <storage/registrar.h>
 
 #include <iostream>
 
 using namespace std;
+using namespace os;
 
 int main(int argc, char* argv[]);
 
@@ -31,7 +36,9 @@ int main(int argc, char* argv[])
 	return(0);
 }
 
-AEditApp::AEditApp(int argc, char* argv[]) : Application("application/x-VND.Vanders-AEdit")
+AEditWindow* AEditApp::pcMainWindow = NULL;
+
+AEditApp::AEditApp(int argc, char* argv[]) : Application("application/x-aedit")
 {
 	int i;
 
@@ -41,7 +48,33 @@ AEditApp::AEditApp(int argc, char* argv[]) : Application("application/x-VND.Vand
 		cout << e.what() << endl;
 	}
 
-	pcMainWindow = new AEditWindow(Rect(100,125,700,500));
+	// Set default filehandler
+	try
+	{
+		RegistrarManager* regman= os::RegistrarManager::Get();
+		
+		/* Register playlist type */
+		regman->RegisterType( "text/plain", MSG_MIMETYPE_TEXT_PLAIN );
+		regman->RegisterTypeIconFromRes( "text/plain", "text_plain.png" );
+		regman->RegisterTypeExtension( "text/plain", "txt" );
+		regman->RegisterTypeExtension( "text/plain", "text" );
+		regman->RegisterTypeExtension( "text/plain", "unx" );
+		regman->RegisterTypeExtension( "text/plain", "asc" );
+		regman->RegisterTypeExtension( "text/plain", "ascii" );
+		regman->RegisterTypeExtension( "text/plain", "log" );
+		regman->RegisterTypeExtension( "text/plain", "utf8" );
+		regman->RegisterTypeExtension( "text/plain", "map" );
+		regman->RegisterTypeExtension( "text/plain", "utxt" );
+		regman->RegisterTypeExtension( "text/plain", "ans" );
+		regman->RegisterTypeExtension( "text/plain", "dos" );
+		regman->RegisterTypeExtension( "text/plain", "ini" );
+		regman->RegisterAsTypeHandler( "text/plain" );
+	}
+	catch(...)
+	{
+	}
+
+	pcMainWindow = new AEditWindow( Rect( 100, 125, 700, 500 ) );
 
 	// If we do not have any arguments open empty buffer
 	if(argc<2)
