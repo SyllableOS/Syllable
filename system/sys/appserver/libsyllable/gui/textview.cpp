@@ -173,6 +173,7 @@ namespace os
 		void InsertChar( char nChar );
 		void MoveHoriz( int nDelta, bool bExpBlock );
 		void MoveVert( int nDelta, bool bExpBlock );
+		void MoveWord( bool bDirection, bool bExpBlock );
 		void RecalcPrefWidth();
 		void AddUndoNode( UndoNode * psNode );
 		void Undo();
@@ -2515,6 +2516,83 @@ void TextEdit::MoveVert( int nDelta, bool bExpBlock )
 	}
 }
 
+/* TextEdit::MoveWord: move the cursor to the previous/next word.
+ *  bDirection: true=move to next word (to the right), false=move to prev word (to the left)
+ *  bExpBlock: if true, extend the selection block
+ * 
+ *  Anthony Morphett, awmorp@gmail.com
+ */
+void TextEdit::MoveWord( bool bDirection, bool bExpBlock )
+{
+	IPoint cNewPos = m_cCsrPos;
+	int nLineLength = m_cBuffer[cNewPos.y].size();
+	int nTotalLines = m_cBuffer.size();
+	
+	if( bDirection )  /* Moving right */
+	{
+		/* first move to the end of the word (if the cursor is already sitting inside a word) */
+		while( isalnum( m_cBuffer[cNewPos.y][cNewPos.x] ) )  /* while the character to the right of cursor is part of a word */
+		{
+			if( cNewPos.x < nLineLength )
+			{  /* move to next char */
+				cNewPos.x++;
+			}
+			else
+			{  /* wrap over to next line */
+				if( cNewPos.y == nTotalLines-1 ) { goto done; }
+				else { cNewPos.x = 0; cNewPos.y++; nLineLength = m_cBuffer[cNewPos.y].size(); }
+			}
+		}
+		
+		/* if cursor currently sitting on non-word character, move to start of next word character */
+		while( !isalnum( m_cBuffer[cNewPos.y][cNewPos.x] ) )  /* while the character to the right of cursor is not part of a word */
+		{
+			if( cNewPos.x < nLineLength )
+			{  /* move to next char */
+				cNewPos.x++;
+			}
+			else
+			{  /* at end of line; wrap over to next line */
+				if( cNewPos.y == nTotalLines-1 ) { goto done; }  /* at end of data; can't go further */
+				else { cNewPos.x = 0; cNewPos.y++; nLineLength = m_cBuffer[cNewPos.y].size(); }
+			}
+		}
+	}
+	else  /* Moving left */
+	{
+		/* if cursor is currently sitting in some whitespace, first move to the end of prev word */
+		while( !( cNewPos.x > 0 ? isalnum( m_cBuffer[cNewPos.y][cNewPos.x-1] ) : ( cNewPos.y > 0 ? isalnum( m_cBuffer[cNewPos.y-1][(m_cBuffer[cNewPos.y-1].size() > 0 ? m_cBuffer[cNewPos.y-1].size()-1:0)] ) : false ) ) )
+		{  /* this ugly-looking expression is asking if the character immediately left of cursor is part of a word (ie alphanumeric); taking into account linewrapping and possibly being at pos (0,0) */
+			if( cNewPos.x > 0 )
+			{  /* move to prev char on line */
+				cNewPos.x--;
+			}
+			else
+			{  /* at start of line; wrap to previous line */
+				if( cNewPos.y == 0 ) { goto done; }  /* at beginning of textarea; can't go any further */
+				else { cNewPos.y--; nLineLength = m_cBuffer[cNewPos.y].size(); cNewPos.x = nLineLength; }
+			}
+		}
+
+		/* now move to the start of the word */
+		while( ( cNewPos.x > 0 ? isalnum( m_cBuffer[cNewPos.y][cNewPos.x-1] ) : ( cNewPos.y > 0 ? isalnum( m_cBuffer[cNewPos.y-1][(m_cBuffer[cNewPos.y-1].size() > 0 ? m_cBuffer[cNewPos.y-1].size()-1:0)] ) : false ) ) )
+		{
+			if( cNewPos.x > 0 )
+			{  /* move to prev char on line */
+				cNewPos.x--;
+			}
+			else
+			{  /* at start of line; wrap to previous line */
+				if( cNewPos.y == 0 ) { goto done; }  /* at beginning of textarea; can't go any further */
+				else { cNewPos.y--; nLineLength = m_cBuffer[cNewPos.y].size(); cNewPos.x = nLineLength; }
+			}
+		}
+	}
+	
+	done:
+	if( cNewPos != m_cCsrPos ) { SetCursor( cNewPos, bExpBlock ); }
+}
+
 bool TextEdit::HandleMouseMove( const Point & cPosition, int nCode, uint32 nButtons, Message * pcData )
 {
 	Rect	cBounds( GetBounds() );
@@ -2615,7 +2693,7 @@ bool TextEdit::HandleKeyDown( const char *pzString, const char *pzRawString, uin
 	bool bAlt = nQualifiers & QUAL_ALT;
 	bool bCtrl = nQualifiers & QUAL_CTRL;
 	bool bDead = nQualifiers & QUAL_DEADKEY;
-
+	
 	if( m_bEnabled == false )
 	{
 		return ( false );
@@ -2757,6 +2835,12 @@ bool TextEdit::HandleKeyDown( const char *pzString, const char *pzRawString, uin
 		}
 		break;
 	case VK_LEFT_ARROW:
+		if( bCtrl )
+		{
+			MoveWord( false, bShift );
+			m_vCsrGfxPos = -1.0f; /* what is this for? */
+		}
+		else
 		{
 			int nDelta = -1;
 
@@ -2771,11 +2855,19 @@ bool TextEdit::HandleKeyDown( const char *pzString, const char *pzRawString, uin
 			}
 			MoveHoriz( nDelta, bShift );
 			m_vCsrGfxPos = -1.0f;
-			break;
 		}
+		break;
 	case VK_RIGHT_ARROW:
-		MoveHoriz( utf8_char_length( m_cBuffer[m_cCsrPos.y][m_cCsrPos.x] ), bShift );
-		m_vCsrGfxPos = -1.0f;
+		if( bCtrl )
+		{ /* move cursor to next word */
+			MoveWord( true, bShift );
+			m_vCsrGfxPos = -1.0f;  /* what is this for? */
+		}
+		else
+		{ /* move cursor right one character */
+			MoveHoriz( utf8_char_length( m_cBuffer[m_cCsrPos.y][m_cCsrPos.x] ), bShift );
+			m_vCsrGfxPos = -1.0f;
+		}
 		break;
 	case VK_UP_ARROW:
 		MoveVert( -1, bShift );
