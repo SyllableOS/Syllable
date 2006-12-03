@@ -19,6 +19,7 @@ FILES=(	"/atheos/etc/profile, /atheos/etc/profile" 															\
 		"/atheos/sys/drivers/dev/misc/serial, /atheos/sys/drivers/dev/misc/serial"							\
 		"/atheos/sys/drivers/dev/graphics/*, /atheos/sys/drivers/dev/graphics/."							\
 																											\
+		"/atheos/sys/drivers/dev/bus/acpi, /atheos/sys/drivers/dev/bus/acpi"								\
 		"/atheos/sys/drivers/dev/bus/pci, /atheos/sys/drivers/dev/bus/pci"									\
 		"/atheos/sys/drivers/dev/bus/ata, /atheos/sys/drivers/dev/bus/ata"									\
 		"/atheos/sys/drivers/dev/bus/usb, /atheos/sys/drivers/dev/bus/usb"									\
@@ -141,6 +142,7 @@ GRUB=(	"color	cyan/blue white/blue"																		\
 		""																									\
 		"title	Install Syllable"																			\
 		"kernel /atheos/sys/kernel.so rootfs=iso9660 root=@boot disable_config=true uspace_end=0xf7ffffff"	\
+		"module /atheos/sys/drivers/dev/bus/acpi"															\
 		"module /atheos/sys/drivers/dev/bus/pci"															\
 		"module /atheos/sys/drivers/dev/bus/ata"															\
 		"module /atheos/sys/drivers/dev/hcd/ata_pci"														\
@@ -148,6 +150,7 @@ GRUB=(	"color	cyan/blue white/blue"																		\
 		""																									\
 		"title	Install Syllable from a USB CD-ROM drive"													\
 		"kernel /atheos/sys/kernel.so rootfs=iso9660 root=@boot disable_config=true uspace_end=0xf7ffffff"	\
+		"module /atheos/sys/drivers/dev/bus/acpi"															\
 		"module /atheos/sys/drivers/dev/bus/pci"															\
 		"module /atheos/sys/drivers/dev/bus/ata"															\
 		"module /atheos/sys/drivers/dev/bus/usb"															\
