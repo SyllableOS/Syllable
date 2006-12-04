@@ -299,6 +299,9 @@ modules
 	apps/gnu/bzip2-1.0.3
 	apps/other/orca--current
 
+	apps/utils/Packager
+;	Deprecated:
+	apps/utils/pkgmanager
 	apps/utils/Preferences/Appearance
 	apps/utils/Preferences/DateTime
 	apps/utils/Preferences/Desktop
@@ -318,5 +321,4 @@ modules
 	apps/utils/fsutils
 	apps/utils/man2html
 	apps/utils/nettools
-	apps/utils/pkgmanager
 	apps/utils/systools
