@@ -14,7 +14,7 @@ packages			nasm/nasm-0.98.39
 ;	ghostscript
 
 ; For documentation:
-;no-build-dir
+;build-dir			.
 
 ;make-targets
 ;	all

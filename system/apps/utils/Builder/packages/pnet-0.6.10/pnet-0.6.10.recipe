@@ -14,7 +14,7 @@ build-needs
 
 patch-config		. libgc
 
-no-build-dir
+build-dir			.
 
 configure-options
 ;	--enable-threads=none

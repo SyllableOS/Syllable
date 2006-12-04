@@ -21,9 +21,11 @@ recommends
 	sdl
 
 patch-config
-;no-build-dir
+
+;build-dir			.
 configure-options
 	--without-x
 ;	--disable-qt
 ;	--disable-kde
 documentation		README INSTALL COPYING NEWS ChangeLog TODO AUTHORS
+

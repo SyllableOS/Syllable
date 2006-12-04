@@ -11,7 +11,7 @@ locations
 
 needs				ncurses
 
-no-build-dir
+build-dir			.
 
 install-tree		bin
 documentation		INSTALL COPYING bugs Changes

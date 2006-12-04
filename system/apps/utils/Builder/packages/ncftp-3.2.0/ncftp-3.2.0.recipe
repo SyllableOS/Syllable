@@ -6,9 +6,9 @@ home				www.ncftp.com
 packages			ncftp-3.2.0-src
 locations			ftp://ftp.ncftp.com/ncftp/
 
-no-build-dir
-
 ;patch				sed -i 's/ln /ln -s /' Makefile.in
+
+build-dir			.
 
 _make-targets
 	all

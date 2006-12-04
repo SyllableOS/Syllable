@@ -1,6 +1,10 @@
 authors				Kaj de Vos
 
-no-build-dir
-configure-options	--enable-graphics --enable-javascript
-; --with-libfl
+build-dir			.
+
+configure-options
+	--enable-graphics
+	--enable-javascript
+;	--with-libfl
 documentation		README SITES BUGS COPYING NEWS ChangeLog TODO AUTHORS doc
+

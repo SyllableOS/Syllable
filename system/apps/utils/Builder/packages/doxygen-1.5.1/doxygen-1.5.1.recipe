@@ -17,7 +17,7 @@ recommends
 	qt
 	graphviz
 
-no-build-dir
+build-dir			.
 
 configure-prefix	"--prefix "
 configure-options

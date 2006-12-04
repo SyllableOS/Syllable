@@ -16,7 +16,8 @@ patch-config
 	build
 ;	When using internal Expat:
 	xml/expat/conftools
-no-build-dir
+
+build-dir			.
 configure-options
 	--with-apr=/usr/apr
 	--with-berkeley-db=/usr/db
@@ -24,3 +25,4 @@ configure-options
 ;	--with-ldap=
 ;	--with-iconv=
 documentation		CHANGES LICENSE STATUS renames_pending
+

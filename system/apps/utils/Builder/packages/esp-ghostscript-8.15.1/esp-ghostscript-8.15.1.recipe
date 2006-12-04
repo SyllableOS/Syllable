@@ -18,7 +18,7 @@ needs
 	cups
 ;recommends			libtiff
 
-no-build-dir
+build-dir			.
 
 ; The intention of these configure options is to produce the smallest gs binary possible.
 ; I can't seem to drop the PNG output driver though.
@@ -58,3 +58,4 @@ links
 	/system/fonts/NimbusSansL-RegularCondensed.ttf			share/ghostscript/8.15/Resource/Font/NimbusSanL-ReguCond
 	/system/fonts/NimbusSansL-RegularCondensedItalic.ttf	share/ghostscript/8.15/Resource/Font/NimbusSanL-ReguCondItal
 	/system/fonts/NimbusSansL-RegularItalic.ttf				share/ghostscript/8.15/Resource/Font/NimbusSanL-ReguItal
+

@@ -19,7 +19,7 @@ needs
 	libjpeg	>= 6b
 	cups
 
-no-build-dir
+build-dir			.
 
 configure-options
 	--with-cups=/usr/cups

@@ -1,10 +1,11 @@
-authors			Jamie Clarkson
-status			contributed
+authors				Jamie Clarkson
+status				contributed
 
-licenses		GPL LGPL
-home			www.68k.org/~michael/audiofile/
+licenses			GPL LGPL
+home				www.68k.org/~michael/audiofile/
 
 patch-config
-no-build-dir
-documentation	README NEWS COPYING NOTES ACKNOWLEDGEMENTS ChangeLog TODO AUTHORS
+
+build-dir			.
+documentation		README NEWS COPYING NOTES ACKNOWLEDGEMENTS ChangeLog TODO AUTHORS
 

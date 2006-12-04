@@ -7,4 +7,5 @@ status				testing
 
 inherits			grub-0.97
 
-no-build-dir
+build-dir			.
+

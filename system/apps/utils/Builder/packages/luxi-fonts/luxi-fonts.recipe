@@ -4,7 +4,7 @@ licenses			other
 packages			font-bh-ttf-1.0.0
 locations			http://xorg.freedesktop.org/releases/individual/font/
 
-no-build-dir
+build-dir			.
 
 install-tree
 install				true
@@ -27,3 +27,4 @@ move-files			*.ttf /atheos/sys/fonts/
 documentation
 	COPYING
 ;	COPYRIGHT.BH
+

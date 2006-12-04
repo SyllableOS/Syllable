@@ -27,7 +27,7 @@ _patch
 	mv m2/m2			configure
 	cp m2/m2_linux.r	m2_template.r
 
-;no-build-dir
+;build-dir			.
 
 ; Proprietary REBOL needs to be in /usr/bin/ to run M2 configure
 configure			cp Makefile.fixed Makefile
@@ -40,3 +40,4 @@ install-files
 	ovalue.h		include
 documentation		README LICENSE ChangeLog TODO
 links				orca bin/rebol
+

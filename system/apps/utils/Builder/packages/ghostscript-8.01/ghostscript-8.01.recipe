@@ -25,7 +25,7 @@ patch
 ;	mv libpng-1.2.5 libpng
 ;	mv zlib-1.2.1 zlib
 
-no-build-dir
+build-dir			.
 
 ;make-targets
 ;	fonts_standard_c
@@ -35,3 +35,4 @@ no-build-dir
 documentation
 	README LICENSE COPYING
 ;	doc examples
+

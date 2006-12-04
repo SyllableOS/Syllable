@@ -1,8 +1,11 @@
-authors			Kaj de Vos
+authors				Kaj de Vos
 
-licenses		GPL
-home			www.jedsoft.org/jed/
+licenses			GPL
+home				www.jedsoft.org/jed/
 
-no-build-dir
-;install			make install && jed -batch -n -l preparse.sl
-documentation	README INSTALL INSTALL.unx changes.txt COPYRIGHT COPYING
+build-dir			.
+_install
+	make install
+	jed -batch -n -l preparse.sl
+documentation		README INSTALL INSTALL.unx changes.txt COPYRIGHT COPYING
+

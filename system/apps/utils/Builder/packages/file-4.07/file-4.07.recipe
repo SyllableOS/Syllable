@@ -1,4 +1,7 @@
-authors			Kaj de Vos
+authors				Kaj de Vos
+
 patch-config
-no-build-dir
-documentation	README LEGAL.NOTICE ChangeLog MAINT
+
+build-dir			.
+documentation		README LEGAL.NOTICE ChangeLog MAINT
+

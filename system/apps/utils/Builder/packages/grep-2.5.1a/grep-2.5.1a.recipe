@@ -12,8 +12,9 @@ build-conflicts		gettext
 patch-config
 
 ; Seems to be necessary for internationalization:
-;no-build-dir
+;build-dir			.
 
 ;configure-options	--without-included-gettext
 
 documentation		README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS
+

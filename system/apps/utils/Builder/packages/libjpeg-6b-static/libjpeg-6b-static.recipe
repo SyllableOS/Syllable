@@ -10,7 +10,7 @@ locations
 
 patch-config
 
-no-build-dir
+build-dir			.
 
 configure-options
 ;	Somehow, on GLibC 2.3.x, --enable-shared is needed to also get it to build a static library. However, not having the patch for a shared library on Syllable in this recipe, the shared version is not built. :-)

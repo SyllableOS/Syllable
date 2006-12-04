@@ -12,7 +12,7 @@ locations
 	http://caml.inria.fr/pub/distrib/ocaml-3.09/
 	ftp://ftp.inria.fr/INRIA/caml-light/ocaml-3.09/
 
-no-build-dir
+build-dir			.
 
 configure-prefix	"-prefix "
 configure-options	-no-pthread

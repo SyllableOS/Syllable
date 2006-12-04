@@ -19,7 +19,8 @@ recommends
 build-recommends	libiconv
 
 patch-config
-no-build-dir
+
+build-dir			.
 ;configure-options
 ;	--enable-NTLM
 ;	--with-gssapi=
@@ -33,3 +34,4 @@ no-build-dir
 documentation
 	README README.NTLM README.SSL INSTALL ABOUT-NLS COPYING FAQ FEATURES NEWS TODO NOTES
 	fetchmail-FAQ.html fetchmail-features.html todo.html design-notes.html
+

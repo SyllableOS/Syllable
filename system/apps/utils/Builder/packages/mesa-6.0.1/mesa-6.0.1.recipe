@@ -1,26 +1,26 @@
 authors
 	Jamie Clarkson
 	Kaj de Vos
-status			developing
+status				developing
 
-licenses		MIT LGPL other
-home			www.mesa3d.org
-packages		MesaLib-6.0.1
+licenses			MIT LGPL other
+home				www.mesa3d.org
+packages			MesaLib-6.0.1
 
-no-build-dir
+build-dir			.
 
-make-targets	syllable
+make-targets		syllable
 
 install-tree
 	include
 	include/gui
-install			true
+install				true
 install-files
 	lib									.
 	include								.
 	src/mesa/drivers/syllable/GLView.h	include/gui/
-documentation	docs
-system-links
+documentation		docs
+_links
 	lib/libGL.so		/system/libs/
 	lib/libGLU.so		/system/libs/
 	lib/libOSMesa.so	/system/libs/

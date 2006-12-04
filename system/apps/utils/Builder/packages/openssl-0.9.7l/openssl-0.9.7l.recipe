@@ -10,7 +10,7 @@ locations
 build-needs			perl >= 5
 build-recommends	pod2man
 
-no-build-dir
+build-dir			.
 
 configure-cmd		config
 ; Doesn't work as advertized:
