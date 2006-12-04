@@ -13,7 +13,7 @@ locations			ftp://ftp.vim.org/pub/vim/
 
 build-needs			ruby
 
-no-build-dir
+build-dir			.
 
 configure-options
 	--with-features=big

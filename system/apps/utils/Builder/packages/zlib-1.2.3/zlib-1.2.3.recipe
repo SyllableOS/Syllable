@@ -10,7 +10,7 @@ locations
 	http://www.zlib.net
 	http://www.gzip.org/zlib/
 
-no-build-dir
+build-dir			.
 
 configure-options	--shared
 

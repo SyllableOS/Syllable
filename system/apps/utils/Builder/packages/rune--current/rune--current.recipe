@@ -21,21 +21,23 @@ build-needs
 ;	REBOL
 	bzip2
 
-_patch
-	mv m2/m2			rune/configure
-	cp m2/m2_linux.r	rune/m2_template.r
+patch
+;	mv m2/m2			rune/configure
+;	cp m2/m2_linux.r	rune/m2_template.r
+	mkdir rune/obj
 
-;no-build-dir
+build-dir			rune
 
+; Proprietary REBOL needs to be in /usr/bin/ to run M2 configure:
 ;configure-cmd		rune/configure
-; Proprietary REBOL needs to be in /usr/bin/ to run M2 configure
-configure			cp rune/Makefile.fixed rune/Makefile
+configure			cp Makefile.fixed Makefile
 
 install-tree		bin lib include
 install				true
 install-files
-	rune/rune		bin
-	rune/librune0.a	lib
-	urlan.h			include
+	rune			bin
+	librune0.a		lib
+	../urlan.h		include
 documentation		README LICENSE ChangeLog TODO
 ;links				rune bin/rebol
+

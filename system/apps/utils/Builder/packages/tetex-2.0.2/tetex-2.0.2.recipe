@@ -29,7 +29,7 @@ patch-config
 	utils/texinfo
 	texk
 
-no-build-dir
+build-dir			.
 
 configure-options
 ;	--datadir=/usr/tetex/share/texmf

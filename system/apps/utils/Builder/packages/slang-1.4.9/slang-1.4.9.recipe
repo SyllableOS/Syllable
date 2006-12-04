@@ -1,9 +1,11 @@
-authors			Kaj de Vos
+authors				Kaj de Vos
 
-locations		ftp://space.mit.edu/pub/davis/slang/
+locations			ftp://space.mit.edu/pub/davis/slang/
 
-no-build-dir
-patch-config	autoconf
-;test-targets	runtests
-;install			make install && make elf && make install-elf && make install-links
-documentation	README INSTALL.unx UPGRADE.txt NEWS examples
+patch-config		autoconf
+build-dir			.
+
+;test-targets		runtests
+;install				make install && make elf && make install-elf && make install-links
+documentation		README INSTALL.unx UPGRADE.txt NEWS examples
+

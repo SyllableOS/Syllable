@@ -19,7 +19,7 @@ recommends
 ;	Uses internal headers:
 	freetype >= 2.0.5 < 2.2
 
-no-build-dir
+build-dir			.
 
 configure-options
 	--with-freetype2-includes=/usr/freetype/include/freetype2

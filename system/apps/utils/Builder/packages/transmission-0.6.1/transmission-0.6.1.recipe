@@ -9,7 +9,7 @@ locations			http://download.m0k.org/transmission/files/
 
 recommends			openssl
 
-no-build-dir
+build-dir			.
 
 documentation		README LICENSE NEWS AUTHORS
 

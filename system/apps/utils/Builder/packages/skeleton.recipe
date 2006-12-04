@@ -47,8 +47,8 @@ patch-config		[<Directories>]
 patch-legacy-config
 patch				<Extra patching commands>
 
-; Don't use a separate build directory:
-no-build-dir
+; Can't build outside the source directory:
+build-dir			<Subdirectory>
 
 ; Makefile, if non-standard or in a non-standard location:
 makefile			Makefile
@@ -162,3 +162,4 @@ links
 
 ; Don't strip binaries:
 ;no-strip
+
