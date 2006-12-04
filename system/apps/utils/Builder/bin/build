@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.102
+# Version 0.6.103
 # Copyright (c) 2002-2006 Kaj de Vos
 # License: GPL 2 or any later version
 
@@ -284,16 +284,15 @@ def getModule target
 end
 
 def configureModule staging, target
+	Dir.chdir target
+
 	if native? target
 		@log.header 'Building dependencies'
 
-		Dir.chdir target
 		action makeCommand(target) + ' deps'
 		# Continue building even if dependencies failed
 		action 'sync'
 	else
-		Dir.chdir target
-
 		unless
 			if cmdLine = (recipe = getRecipe target)['configure']
 				@log.header 'Configuring'
@@ -303,7 +302,7 @@ def configureModule staging, target
 					# Nothing to be done here
 					true
 				else
-					unless noBuildDir = recipe['no-build-dir'] or exists? dir = buildDir(target) or
+					unless exists? dir = buildDir(target) or
 						begin
 							@log.header 'Creating build directory'
 							action 'mkdir ' + dir
@@ -312,10 +311,10 @@ def configureModule staging, target
 						false
 					else
 						@log.header 'Configuring'
-	
+
 						# Some ports require an absolute path to the configure command
-						cmdPath = File.join(Dir.getwd, d = File.dirname(cmd))
-						Dir.chdir noBuildDir ? d : dir
+						cmd = File.join(Dir.getwd, cmd)
+						Dir.chdir dir
 	
 						if exists? 'config.cache' and not action 'rm config.cache'
 							false
@@ -324,7 +323,7 @@ def configureModule staging, target
 								false
 							else
 								action(((vars = recipe['configure-env']) ? toVariables(vars) + ' ' : '') +
-									File.join((noBuildDir ? '.' : cmdPath), File.basename(cmd)) +
+									cmd +
 									((args = recipe['configure-args']) ?
 										' ' + toString(args) :
 										((p = recipe['configure-prefix']) ?
@@ -351,11 +350,13 @@ end
 
 def cleanModule target
 	unless
-		if exists? dir = buildDir(target)
+		not exists? dir = buildDir(target) or
+		if getRecipe(target)['build-dir']
+			Dir.chdir dir
+			action makeCommand(target) + ' clean'
+		else
 			@log.header 'Deleting build directory'
 			action 'rm --recursive --force ' + dir
-		else
-			action makeCommand(target) + ' clean'
 		end
 	then
 #		@log.failure target
@@ -684,7 +685,7 @@ end
 
 def uninstallModule staging, target
 	unless
-		if dir? target and native? target and not exists? File.join target, 'image'
+		if dir? target and native? target and not exists? File.join(target, 'image')
 		then  # A native non-resource module
 			Dir.chdir target
 			if exists? dir = buildDir(target) then Dir.chdir dir end
@@ -1297,7 +1298,7 @@ def sourcePath target
 end
 
 def buildDir target
-	'../_' + fullName(target)
+	(dir = getRecipe(target)['build-dir']) ? dir : '../_' + fullName(target)
 end
 
 def prefix staging, port
@@ -1643,7 +1644,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.6.102',
+	puts 'Syllable Build System 0.6.103',
 		'Copyright (c) 2002-2006 Kaj de Vos',
 		'License: GPL 2 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
