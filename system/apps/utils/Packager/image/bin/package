@@ -1,7 +1,7 @@
 #! /usr/bin/env orca
 
 ORCA [
-	Title:		"Legacy package registration tool"
+	Title:		"Package installation tool"
 	Version:	0.2.0
 	Author:		"Kaj de Vos"
 	Rights: {
@@ -9,7 +9,7 @@ ORCA [
 		License: GPL 2 or any later version
 	}
 	Purpose:	"Registers and unregisters binary packages by managing symbolic links in the system."
-	Example:	"pkgmanager --add /usr/example"
+	Example:	"package register example"
 
 	Tabs:		4
 ]
@@ -26,18 +26,18 @@ either any [
 	not args: system/script/args
 	(
 		command: args/1
-		package: args/2
+		if package: args/2 [package: join %/usr/ package]
 
 		find ["help" "-h" "--help" "-help" "-?" "?"] command
 	)
 ][
-	print "Usage: pkgmanager <command> [<package>]"
+	print "Usage: package <command> [<package>]"
 	print "<command>:"
 	print "  help, -h,     Show this help information"
 	print "    --help, -help, -?, (?)"
 	print "  version, -v   Show version information"
-	print "  --add, -a     Register a package"
-	print "  --remove, -r  Unregister a package"
+	print "  register      Register a package"
+	print "  unregister    Unregister a package"
 	print "Example:"
 	print [" " select header 'example]
 ][
@@ -45,12 +45,12 @@ either find ["version" "-v" "--version"] command [
 	print [select header 'title select header 'version]
 	print select header 'rights
 ][
-either find ["--add" "-a"] command [
+either command = "register" [
 	package: package-proto/new package system-image
 	unless package/register none
 		[quit/return 1]
 ][
-either find ["--remove" "-r"] command [
+either command = "unregister" [
 	package: package-proto/new package system-image
 	unless package/unregister none
 		[quit/return 1]
