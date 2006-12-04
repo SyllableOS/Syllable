@@ -38,6 +38,7 @@ install-files
 	rune			bin
 	librune0.a		lib
 	../urlan.h		include
-documentation		README LICENSE ChangeLog TODO
+documentation		doc/UserManual
+develop-docs		doc/thune.vim
 ;links				rune bin/rebol
 
