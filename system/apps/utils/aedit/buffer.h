@@ -24,6 +24,12 @@
 
 using namespace os;
 
+void SetCurrentTab(int iSel);
+bool AnyBufferNeedsToBeSaved(void);
+bool MenuItemSaveAllShallBeActive(void);
+bool SaveAllBuffers(void);
+int CheckIfAlreadyOpened(std::string name);
+
 class Buffer
 {
 	public:
