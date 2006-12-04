@@ -2,7 +2,7 @@
 
 ORCA [
 	Title:		"Legacy package registration tool"
-	Version:	0.2.0
+	Version:	0.2.1
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006 Kaj de Vos
@@ -31,7 +31,7 @@ either any [
 		find ["help" "-h" "--help" "-help" "-?" "?"] command
 	)
 ][
-	print "Usage: pkgmanager <command> [<package>]"
+	print "Usage: pkgmanager <command> [/usr/<package>]"
 	print "<command>:"
 	print "  help, -h,     Show this help information"
 	print "    --help, -help, -?, (?)"
