@@ -1,6 +1,8 @@
 //
 // AEdit string catalog
 //
+// Translated by: Not Translated
+//
 
 MSG_APPWND_TITLE							AEdit
 MSG_APPWND_TITLE_NEW_FILE					New Document
@@ -118,4 +120,5 @@ MSG_STATUSBAR_REPLACE_NOT_OK				Phrase was not replaced.
 MSG_BUFFER_UNTITLED=2100					Untitled - %d
 MSG_BUFFER_CURSOR							Column: %d Row: %d
 
-MSG_MIMETYPE_TEXT_PLAIN=2200					Plain text files
+MSG_MIMETYPE_TEXT_PLAIN=10000				Plain text files
+

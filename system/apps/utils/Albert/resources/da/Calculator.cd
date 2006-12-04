@@ -1,5 +1,5 @@
 //
-// Albert String Catalog
+// Calculator String Catalog
 //
 // Translated by: Flemming H. Sørensen (BurningShadow)
 // With help from the users on Newz.dk
@@ -8,62 +8,62 @@
 MSG_MAINWND_TITLE=0									Regnemaskine
 
 MSG_MAINWND_MENU_FILE=100							Program
-MSG_MAINWND_MENU_FILE_CLEARALL							Slet alt
-MSG_MAINWND_MENU_FILE_EXIT								Afslut
+MSG_MAINWND_MENU_FILE_CLEARALL						Slet alt
+MSG_MAINWND_MENU_FILE_EXIT							Afslut
 
 MSG_MAINWND_MENU_BASE=200							Talsystemer
-MSG_MAINWND_MENU_BASE_BINARY							Binær (2)
-MSG_MAINWND_MENU_BASE_OCTAL								Oktal (8)
-MSG_MAINWND_MENU_BASE_DECIMAL							Decimal (10)
-MSG_MAINWND_MENU_BASE_HEXADECIMAL						Hexadecimal (16)
+MSG_MAINWND_MENU_BASE_BINARY						Binær (2)
+MSG_MAINWND_MENU_BASE_OCTAL							Oktal (8)
+MSG_MAINWND_MENU_BASE_DECIMAL						Decimal (10)
+MSG_MAINWND_MENU_BASE_HEXADECIMAL					Hexadecimal (16)
 
 MSG_MAINWND_MENU_CONSTANTS=300						Konstanter
-MSG_MAINWND_MENU_CONSTANTS_PI							Pi
-MSG_MAINWND_MENU_CONSTANTS_E							e
-MSG_MAINWND_MENU_CONSTANTS_C							Lysets hastighed i vakuum (c)
-MSG_MAINWND_MENU_CONSTANTS_ELECTRON						Elektronens ladning
-MSG_MAINWND_MENU_CONSTANTS_GRAV							Gravitationskonstanten (G)
-MSG_MAINWND_MENU_CONSTANTS_PLANCK						Plancks konstant (h)
-MSG_MAINWND_MENU_CONSTANTS_BOLTZMANN					Boltzmanns konstant
-MSG_MAINWND_MENU_CONSTANTS_AVOGADRO						Avogadros tal
-MSG_MAINWND_MENU_CONSTANTS_GAS							Gaskonstanten (R)
-MSG_MAINWND_MENU_CONSTANTS_MASSELECTRON					Elektronens masse
-MSG_MAINWND_MENU_CONSTANTS_MASSPROTON					Protonens masse
-MSG_MAINWND_MENU_CONSTANTS_MASSNEUTRON					Neutronens masse
-MSG_MAINWND_MENU_CONSTANTS_PERME						Permeabiliteten i vakuum
-MSG_MAINWND_MENU_CONSTANTS_PERMI						Permittiviteten i vakuum
+MSG_MAINWND_MENU_CONSTANTS_PI						Pi
+MSG_MAINWND_MENU_CONSTANTS_E						e
+MSG_MAINWND_MENU_CONSTANTS_C						Lysets hastighed i vakuum (c)
+MSG_MAINWND_MENU_CONSTANTS_ELECTRON					Elektronens ladning
+MSG_MAINWND_MENU_CONSTANTS_GRAV						Gravitationskonstanten (G)
+MSG_MAINWND_MENU_CONSTANTS_PLANCK					Plancks konstant (h)
+MSG_MAINWND_MENU_CONSTANTS_BOLTZMANN				Boltzmanns konstant
+MSG_MAINWND_MENU_CONSTANTS_AVOGADRO					Avogadros tal
+MSG_MAINWND_MENU_CONSTANTS_GAS						Gaskonstanten (R)
+MSG_MAINWND_MENU_CONSTANTS_MASSELECTRON				Elektronens masse
+MSG_MAINWND_MENU_CONSTANTS_MASSPROTON				Protonens masse
+MSG_MAINWND_MENU_CONSTANTS_MASSNEUTRON				Neutronens masse
+MSG_MAINWND_MENU_CONSTANTS_PERME					Permeabiliteten i vakuum
+MSG_MAINWND_MENU_CONSTANTS_PERMI					Permittiviteten i vakuum
 
 MSG_MAINWND_MENU_WINDOWS=400						Vinduer
-MSG_MAINWND_MENU_WINDOWS_PAPERROLL						Udregnings Strimmel
-MSG_MAINWND_MENU_WINDOWS_BASEN							Talsystemer
+MSG_MAINWND_MENU_WINDOWS_PAPERROLL					Udregnings Strimmel
+MSG_MAINWND_MENU_WINDOWS_BASEN						Talsystemer
 
 MSG_MAINWND_MENU_HELP=500							Hjælp
-MSG_MAINWND_MENU_HELP_ABOUT								Om...
-MSG_MAINWND_MENU_HELP_KEYBOARD							Tastatur
+MSG_MAINWND_MENU_HELP_ABOUT							Om...
+MSG_MAINWND_MENU_HELP_KEYBOARD						Tastatur
 
-MSG_PAPERROLL_TITLE=1000							Albert
-MSG_PAPERROLL_CMENU_COPY								Kopier
-MSG_PAPERROLL_CMENU_CLEAR								Slet alt
-MSG_PAPERROLL_CMENU_SAVE								Gem
+MSG_PAPERROLL_TITLE=1000							Regnemaskine
+MSG_PAPERROLL_CMENU_COPY							Kopier
+MSG_PAPERROLL_CMENU_CLEAR							Slet alt
+MSG_PAPERROLL_CMENU_SAVE							Gem
 
 MSG_BASENWND_TITLE=2000								Talsystemer
-MSG_BASENWND_BINARY										Binær
-MSG_BASENWND_OCTAL										Oktal
-MSG_BASENWND_DECIMAL									Decimal
-MSG_BASENWND_HEXADECIMAL								Hexadecimal
-MSG_BASENWND_BASE64										Base-64
-MSG_BASENWND_ROMAN										Romertal
+MSG_BASENWND_BINARY									Binær
+MSG_BASENWND_OCTAL									Oktal
+MSG_BASENWND_DECIMAL								Decimal
+MSG_BASENWND_HEXADECIMAL							Hexadecimal
+MSG_BASENWND_BASE64									Base-64
+MSG_BASENWND_ROMAN									Romertal
 
 MSG_ABOUTWND_TITLE=3000								Om Regnemaskine
-MSG_ABOUTWND_TEXTONE									Regnemaskine V0.5 2004-02-07 Copyright (C) 2002-2004 Henrik Isaksson.
-MSG_ABOUTWND_TEXTTWO									Regnemaskine er udgivet under GNU General Public License.
+MSG_ABOUTWND_TEXTONE								Regnemaskine V0.5 2004-02-07 Copyright (C) 2002-2004 Henrik Isaksson.
+MSG_ABOUTWND_TEXTTWO								Regnemaskine er udgivet under GNU General Public License.
 
 MSG_KBDWND_TITLE=4000								Tastatur Genveje
-MSG_KBDWND_TEXTONE										Tastatur Genveje
-MSG_KBDWND_TEXT09										Decimaltal 0 til 9
-MSG_KBDWND_TEXTAF										Hexadecimale tal A til F
-MSG_KBDWND_TEXTASMD										Addition, Subtraction, Multiplication og Division
-MSG_KBDWND_TEXTENTER									ENTER - Udregn resultat
-MSG_KBDWND_TEXTBACKSPACE								BACKSPACE - Slet
-MSG_KBDWND_CLOSE										Luk
+MSG_KBDWND_TEXTONE									Tastatur Genveje
+MSG_KBDWND_TEXT09									Decimaltal 0 til 9
+MSG_KBDWND_TEXTAF									Hexadecimale tal A til F
+MSG_KBDWND_TEXTASMD									Addition, Subtraction, Multiplication og Division
+MSG_KBDWND_TEXTENTER								ENTER - Udregn resultat
+MSG_KBDWND_TEXTBACKSPACE							BACKSPACE - Slet
+MSG_KBDWND_CLOSE									Luk
 
