@@ -332,8 +332,10 @@ void AppServer::SendKeyCode( int nKeyCode, int nQual )
 			delete g_pcWinSelector;
 
 			g_pcWinSelector = NULL;
+			SrvSprite::Hide();
 			g_pcTopView->UpdateRegions();
 			SrvWindow::HandleMouseTransaction();
+			SrvSprite::Unhide();
 		}
 		else if( nKeyCode == 0x26 )
 		{

@@ -384,6 +384,8 @@ void Layer::RemoveChild( Layer * pcChild )
 	pcChild->m_pcLowerSibling = NULL;
 	pcChild->m_pcHigherSibling = NULL;
 	pcChild->m_pcParent = NULL;
+	pcChild->m_cDeltaSize = IPoint( 0, 0 );
+	pcChild->m_cDeltaMove = IPoint( 0, 0 );
 }
 
 //----------------------------------------------------------------------------

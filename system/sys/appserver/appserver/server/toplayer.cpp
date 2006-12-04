@@ -289,10 +289,9 @@ void TopLayer::MoveChilds( void )
 	{
 		if( pcChild->m_nHideCount == 0 && pcChild->m_cDeltaMove != IPoint( 0, 0 ) )
 		{
-			if( pcChild->m_bHasInvalidRegs && pcChild->m_pcVisibleFullReg != NULL 
-				&& pcChild->m_pcPrevVisibleFullReg != NULL )
+			if( pcChild->m_bHasInvalidRegs && pcChild->m_pcVisibleFullReg != NULL  )
 			{
-				if( pcChild->m_pcBackbuffer == NULL )
+				if( pcChild->m_pcBackbuffer == NULL && pcChild->m_pcPrevVisibleFullReg != NULL )
 				{
 					Region cCopy;
 					ClipRect* pcOldClip = NULL;
@@ -336,7 +335,7 @@ void TopLayer::MoveChilds( void )
 					}
 					delete[]apsClips;
 				}
-				else
+				else if( pcChild->m_pcBackbuffer != NULL )
 				{			
 					if( !pcChild->m_pcVisibleFullReg->IsEmpty() )
 					{
@@ -456,7 +455,7 @@ void TopLayer::RebuildRegion( bool bForce )
 	for( pcChild = m_pcBottomChild; NULL != pcChild; pcChild = pcChild->m_pcHigherSibling )
 	{
 		__assertw( pcChild->m_pcPrevVisibleFullReg == NULL );
-		if( !pcChild->m_bHasInvalidRegs )
+		if( !pcChild->m_bHasInvalidRegs && !bForce )
 			continue;
 			
 		pcChild->m_pcPrevVisibleFullReg = pcChild->m_pcVisibleFullReg;

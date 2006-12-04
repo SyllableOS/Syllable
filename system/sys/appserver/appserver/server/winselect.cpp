@@ -52,7 +52,7 @@ static Color32_s Tint( const Color32_s & sColor, float vTint )
 	return ( Color32_s( r, g, b, sColor.alpha ) );
 }
 
-WinSelect::WinSelect():Layer( NULL, g_pcTopView, "", Rect( 0, 0, 1, 1 ), 0, NULL )
+WinSelect::WinSelect():Layer( NULL, g_pcTopView, "win_select", Rect( 0, 0, 1, 1 ), 0, NULL )
 {
 	FontNode *pcNode = new FontNode();
 	const font_properties *psProp = AppserverConfig::GetInstance()->GetFontConfig( DEFAULT_FONT_REGULAR );
@@ -141,43 +141,36 @@ void WinSelect::UpdateWinList( bool bMoveToFront, bool bSetFocus )
 	{
 		return;
 	}
-	if( m_nCurSelect != 0 || m_cWindows.size() == 1 )
 
+	SrvWindow *pcWindow = m_cWindows[m_nCurSelect];
+	// We search for the window to assert it's not been closed,
+	// or moved to another desctop since we built the list.
+	if( bMoveToFront )
 	{
-		SrvWindow *pcWindow = m_cWindows[m_nCurSelect];
-
-		// We search for the window to assert it's not been closed,
-		// or moved to another desctop since we built the list.
-		if( bMoveToFront )
+		for( Layer * pcLayer = g_pcTopView->GetTopChild(); NULL != pcLayer; pcLayer = pcLayer->GetLowerSibling(  ) )
 		{
-			for( Layer * pcLayer = g_pcTopView->GetTopChild(); NULL != pcLayer; pcLayer = pcLayer->GetLowerSibling(  ) )
+			if( pcWindow == pcLayer->GetWindow() )
 			{
-				if( pcWindow == pcLayer->GetWindow() )
+				pcWindow->GetTopView()->MoveToFront();				
+				// Move the window inside screen boundaries if necesarry.
+				if( pcWindow->GetFrame( false ).DoIntersect( Rect( 0, 0, g_pcScreenBitmap->m_nWidth - 1, g_pcScreenBitmap->m_nHeight - 1 ) ) == false )
 				{
-					g_pcTopView->RemoveChild( pcWindow->GetTopView() );
-					g_pcTopView->AddChild( pcWindow->GetTopView(), true );
+					Rect cFrame = pcWindow->GetFrame();
+					cFrame = Rect( 0, 0, cFrame.Width(), cFrame.Height(  ) ) + Point( g_pcScreenBitmap->m_nWidth / 2 - ( cFrame.Width(  ) + 1.0f ) / 2, g_pcScreenBitmap->m_nHeight / 2 - ( cFrame.Height(  ) + 1.0f ) / 2 );
 
-					// Move the window inside screen boundaries if necesarry.
-					if( pcWindow->GetFrame( false ).DoIntersect( Rect( 0, 0, g_pcScreenBitmap->m_nWidth - 1, g_pcScreenBitmap->m_nHeight - 1 ) ) == false )
-
+					pcWindow->SetFrame( cFrame );
+					if( pcWindow->GetAppTarget() != NULL )
 					{
-						Rect cFrame = pcWindow->GetFrame();
+						Message cMsg( M_WINDOW_FRAME_CHANGED );
 
-						cFrame = Rect( 0, 0, cFrame.Width(), cFrame.Height(  ) ) + Point( g_pcScreenBitmap->m_nWidth / 2 - ( cFrame.Width(  ) + 1.0f ) / 2, g_pcScreenBitmap->m_nHeight / 2 - ( cFrame.Height(  ) + 1.0f ) / 2 );
-						pcWindow->SetFrame( cFrame );
-						if( pcWindow->GetAppTarget() != NULL )
+						cMsg.AddRect( "_new_frame", cFrame );
+						if( pcWindow->GetAppTarget()->SendMessage( &cMsg ) < 0 )
 						{
-							Message cMsg( M_WINDOW_FRAME_CHANGED );
-
-							cMsg.AddRect( "_new_frame", cFrame );
-							if( pcWindow->GetAppTarget()->SendMessage( &cMsg ) < 0 )
-							{
-								dbprintf( "WinSelect::UpdateWinList() failed to send M_WINDOW_FRAME_CHANGED to %s\n", pcWindow->GetTitle() );
-							}
+							dbprintf( "WinSelect::UpdateWinList() failed to send M_WINDOW_FRAME_CHANGED to %s\n", pcWindow->GetTitle() );
 						}
 					}
-					break;
 				}
+				break;
 			}
 		}
 	}
