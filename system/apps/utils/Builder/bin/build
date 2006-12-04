@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.101
+# Version 0.6.102
 # Copyright (c) 2002-2006 Kaj de Vos
 # License: GPL 2 or any later version
 
@@ -441,10 +441,19 @@ def installModule originalStaging, staging, directive, target
 				Dir.chdir target
 
 				if exists? 'image'  # Command-line resource module without makefile
-					@log.header 'Installing image files'
-					action "mkdir " + root and
-						copyFiles 'image', root and
-						registerModule staging, target, root
+					if exists? root and not
+						begin
+							@log.header 'Uninstalling ' + name
+							uninstallModule staging, target  # FIXME: double failure logging!
+						end
+					then
+						false
+					else
+						@log.header 'Installing image files'
+						action "mkdir " + root and
+							copyFiles 'image', root and
+							registerModule staging, target, root
+					end
 				else
 					if exists? dir = buildDir(target) then Dir.chdir dir end
 
@@ -675,8 +684,8 @@ end
 
 def uninstallModule staging, target
 	unless
-		if dir? target and native? target
-		then  # A native module
+		if dir? target and native? target and not exists? File.join target, 'image'
+		then  # A native non-resource module
 			Dir.chdir target
 			if exists? dir = buildDir(target) then Dir.chdir dir end
 
@@ -1634,7 +1643,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.6.101',
+	puts 'Syllable Build System 0.6.102',
 		'Copyright (c) 2002-2006 Kaj de Vos',
 		'License: GPL 2 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
