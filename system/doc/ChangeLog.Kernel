@@ -1,3 +1,7 @@
+* December 4 2006 , Arno Klenke *
+
+Align the stack of threads to 16 bytes
+
 * November 27 2006, Kristian Van Der Vliet *
 
 Applied a further set of code cleanups to the Via Rhine driver from
@@ -1034,6 +1038,7 @@ required; they are implemented in user space as part of libc.
 
 Applied a fix to sys/kernel/kernel/vfs/vfs.c  The fcntl() F_GETLK command
 now works as expected.
+
 
 
 
