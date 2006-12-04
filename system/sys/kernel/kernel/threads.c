@@ -847,13 +847,16 @@ thread_id sys_spawn_thread( const char *const pzName, void *const pfEntry, const
 	psNewThread->tr_pData = NULL;
 	psNewThread->tr_hDataSender = -1;
 
-	pCode = ( uint8 * )&pnUserStack[-4];
+	pCode = ( uint8 * )&pnUserStack[-5];
 
-	/*  [0] - exit function
+	/*  [0] - alignment to 16 bytes
 	 *  [1]
 	 *  [2]
-	 * >[3] - exit return pointer
-	 *  [4] - thread entry point arg
+	 *  [3] - exit function
+	 *  [4]
+	 *  [5]
+	 *  [6] - thread entry point arg
+	 *  [7] - exit return pointer
 	 */
 
 	anStackInit[0] = ( uint32 )pCode;
@@ -871,9 +874,9 @@ thread_id sys_spawn_thread( const char *const pzName, void *const pfEntry, const
 
 	// int $0x80
 	pExitFunction[7] = 0xcd;
-	pExitFunction[8] = 0x80;;
+	pExitFunction[8] = 0x80;
 
-	nError = memcpy_to_user( pnUserStack - 6, anStackInit, 5 * 4 );
+	nError = memcpy_to_user( pnUserStack - 7, anStackInit, 5 * 4 );
 	if ( nError < 0 )
 	{
 		goto error2;
@@ -890,7 +893,7 @@ thread_id sys_spawn_thread( const char *const pzName, void *const pfEntry, const
 	psRegs->eip = (uint32)pfEntry;
 	psRegs->cs = CS_USER;
 	psRegs->eflags = 0x203246;
-	psRegs->oldesp = (uint32)&pnUserStack[-6];
+	psRegs->oldesp = (uint32)&pnUserStack[-7];
 	psRegs->oldss = DS_USER;
 
 	psNewThread->tr_pESP = ( void* )psRegs;
