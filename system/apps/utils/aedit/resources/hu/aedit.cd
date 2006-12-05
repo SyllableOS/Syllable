@@ -29,6 +29,15 @@ MSG_MENU_EDIT_SELECT_ALL					Összes kijelölése
 MSG_MENU_EDIT_UNDO							Visszavonás
 MSG_MENU_EDIT_REDO							Újra
 
+MSG_MENU_VIEW_VIEW=350						Nézet
+MSG_MENU_VIEW_TOOLBAR						Eszköztár
+MSG_MENU_VIEW_STATUSBAR						Állapotpanel
+MSG_MENU_VIEW_SETFONT						Betűkészletek
+MSG_MENU_VIEW_TABS							Tabulátorok
+MSG_MENU_VIEW_SHOW							Mutat
+MSG_MENU_VIEW_HIDE							Rejt
+MSG_MENU_VIEW_AUTO							Automatikus
+
 MSG_MENU_FIND=400							Keresés
 MSG_MENU_FIND_FIND							Keres...
 MSG_MENU_FIND_REPLACE						Cserél...
@@ -68,6 +77,7 @@ MSG_FIND_CLOSE					    		Bezárás
 MSG_GOTO_TITLE=1100							Sorra ugrás
 MSG_GOTO_GOTO								Ugorj!
 MSG_GOTO_CLOSE								Mégsem
+MSG_GOTO_LINE								Sor:
 
 MSG_REPLACE_TITLE=1200						Csere
 MSG_REPLACE_LBLFIND							Cserélendö
@@ -109,3 +119,6 @@ MSG_STATUSBAR_REPLACE_NOT_OK				Nincs csere.
 
 MSG_BUFFER_UNTITLED=2100					Névtelen - %d
 MSG_BUFFER_CURSOR							%d. karakter, %d. sor
+
+MSG_MIMETYPE_TEXT_PLAIN=10000				Egyszerű szöveg fájl
+
