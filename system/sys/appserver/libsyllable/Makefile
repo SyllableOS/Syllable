@@ -21,6 +21,7 @@ OBJS	= rect.o region.o desktop.o bitmap.o view.o tabview.o			\
 
 OBJS += colorselector.o colorview.o colorwheel.o gradientview.o
 OBJS += fontrequester.o fontrequesterview.o
+OBJS += colorrequester.o
 
 OBJS += appserverconfig.o looper.o handler.o application.o message.o messenger.o messagequeue.o	\
 	invoker.o clipboard.o string.o regexp.o variant.o circularbuffer.o	\

@@ -334,6 +334,10 @@ enum {
 
 	M_BOX_REQUESTED,
 	M_BOX_REQUESTER_CANCELED,
+
+	M_COLOR_REQUESTER_CANCELED,
+	M_COLOR_REQUESTED,
+	M_COLOR_REQUESTER_CHANGED,
     
     /* Add new libsyllable message codes here. */
     
