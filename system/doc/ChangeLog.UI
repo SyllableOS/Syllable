@@ -1,3 +1,12 @@
+* December 6, 2006, Rick Caudill *
+
+Added a new ColorRequester.  This is to be the new default way to change colors
+in an application.
+
+Fixed an error in FontRequester where it was sending the wrong message when hitting the cancel shortcut
+
+Changes were in: guidefines.h, colorrequester.h colorrequster.cpp, Makefile fontrequester.cpp
+
 * December 4, 2006, Kristian Van Der Vliet *
 
 Fixed some graphical errors when using the window selector

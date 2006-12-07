@@ -59,7 +59,6 @@ FontRequester::FontRequester(Messenger* pcTarget, bool bEnableAdvanced) : Window
 	
 	SetDefaultButton(pcOkButton);
 	SetFocusChild(pcRequesterView);
-	AddShortcut(os::ShortcutKey(27), new os::Message(M_FILE_REQUESTER_CANCELED));
 
 	ResizeTo(pcView->GetPreferredSize(false).x+350,pcView->GetPreferredSize(false).y+75);
 	CenterInScreen();
