@@ -1,3 +1,7 @@
+* December 8, 2006, Kristian Van Der Vliet *
+
+Added MakeFocus() method to IconView class, from Jonas Jarvoll
+
 * December 6, 2006, Rick Caudill *
 
 Added a new ColorRequester.  This is to be the new default way to change colors

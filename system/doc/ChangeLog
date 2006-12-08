@@ -1,3 +1,8 @@
+* December 8 2006, Kristian Van Der Vliet *
+
+The registrar scans file extensions backwards to avoid "double extensions". Patch
+from Anthony Morphett, fixes bug #23 
+
 * December 8 2006, Flemming Sørensen *
 
 Added a patch from "computrius", that will let ColdFish load a dir. full of audio,
