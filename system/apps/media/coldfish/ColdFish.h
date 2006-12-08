@@ -45,6 +45,7 @@
 #include <storage/path.h>
 #include <storage/registrar.h>
 #include <storage/directory.h>
+#include <storage/fsnode.h>
 
 #include "resources/coldfish.h"
 #include "messages.h"

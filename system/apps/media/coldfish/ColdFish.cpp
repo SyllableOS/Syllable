@@ -184,7 +184,8 @@ CFWindow::CFWindow( const os::Rect & cFrame, const os::String & cName, const os:
 	
 	
 	/* Create file selector */
-	m_pcFileDialog = new os::FileRequester( os::FileRequester::LOAD_REQ, new os::Messenger( os::Application::GetInstance() ), "", os::FileRequester::NODE_FILE, true );
+	m_pcFileDialog = new os::FileRequester( os::FileRequester::LOAD_REQ, new os::Messenger( os::Application::GetInstance() ), "", os::FileRequester::NODE_DIR, true );
+
 	m_pcFileDialog->Lock();
 	m_pcFileDialog->Start();
 	m_pcFileDialog->Unlock();
@@ -1656,14 +1657,37 @@ void CFApp::HandleMessage( os::Message * pcMessage )
 	case os::M_LOAD_REQUESTED:
 	case CF_ADD_FILE:
 		{
-			
 			/* Add one file ( sent by the CFWindow class or the filerequester ) */
 			os::String zFile;
 			int i = 0;
 
 			while( pcMessage->FindString( "file/path", &zFile.str(), i ) == 0 && !m_bLockedInput )
 			{
-				AddFile( zFile );
+				os::FSNode fileNode(zFile);
+
+				if(fileNode.IsFile()) {
+					/* Add file as normal */
+					AddFile( zFile );
+				}
+				else if(fileNode.IsDir()) {
+					os::Directory dirEntry(zFile);
+					os::String lastFile;
+					os::String nextFile;
+					os::String finalString;
+
+					dirEntry.GetNextEntry(&nextFile);
+
+					while(lastFile != nextFile) {
+						lastFile = nextFile;
+
+						if(nextFile != "." && nextFile != "..") {
+							finalString = zFile + "/" + nextFile;
+							AddFile( finalString );
+						}
+
+						dirEntry.GetNextEntry(&nextFile);
+					}
+				}
 				i++;
 			}
 		}
