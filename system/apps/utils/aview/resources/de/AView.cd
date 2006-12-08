@@ -15,10 +15,21 @@ MSG_MAINWND_MENU_FILE_OPEN						Öffnen
 
 MSG_MAINWND_MENU_VIEW=300						Ansicht
 MSG_MAINWND_MENU_VIEW_FITTOIMAGE				An Bild anpassen
+MSG_MAINWND_MENU_VIEW_FITTOWINDOW				An Fenster anpassen
 MSG_MAINWND_MENU_VIEW_PREVIOUS					Vorheriges
 MSG_MAINWND_MENU_VIEW_NEXT						Nächstes
 MSG_MAINWND_MENU_VIEW_FIRST						Erstes
 MSG_MAINWND_MENU_VIEW_LAST						Letztes
+
+MSG_MAINWND_MENU_RESIZE=400						Größe
+MSG_MAINWND_MENU_RESIZE_10						10%
+MSG_MAINWND_MENU_RESIZE_25						25%
+MSG_MAINWND_MENU_RESIZE_50						50%
+MSG_MAINWND_MENU_RESIZE_75						75%
+MSG_MAINWND_MENU_RESIZE_100						100%
+MSG_MAINWND_MENU_RESIZE_150						150%
+MSG_MAINWND_MENU_RESIZE_200						200%
+MSG_MAINWND_MENU_RESIZE_400						400%
 
 MSG_ABOUTWND_TITLE=1000							Über AView
 MSG_ABOUTWND_TEXT								AView\n\nBildbetrachter für Syllable    \nCopyright 2005 Syllable Team\n\nAView wurde unter den Bedingungen der GNU General\nPublic License veröffentlicht. Unter www.gnu.org\n erhalten sie mehr Informationen.\n

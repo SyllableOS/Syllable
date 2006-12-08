@@ -29,6 +29,15 @@ MSG_MENU_EDIT_SELECT_ALL					Alles makieren
 MSG_MENU_EDIT_UNDO							Rückgängig machen
 MSG_MENU_EDIT_REDO							Wiederherstellen
 
+MSG_MENU_VIEW_VIEW=350						Ansicht
+MSG_MENU_VIEW_TOOLBAR						Werkzeugleiste
+MSG_MENU_VIEW_STATUSBAR						Statusleiste
+MSG_MENU_VIEW_SETFONT						Setze Schrifttyp...
+MSG_MENU_VIEW_TABS							Tabs
+MSG_MENU_VIEW_SHOW							Anzeigen
+MSG_MENU_VIEW_HIDE							Verstecken
+MSG_MENU_VIEW_AUTO							Automatisch
+
 MSG_MENU_FIND=400							Suchen
 MSG_MENU_FIND_FIND							Suchen...
 MSG_MENU_FIND_REPLACE						Ersetzen...
@@ -68,6 +77,7 @@ MSG_FIND_CLOSE					    		_Schließen
 MSG_GOTO_TITLE=1100							Gehe zu Zeile
 MSG_GOTO_GOTO								_Gehe zu Zeile
 MSG_GOTO_CLOSE								_Abbrechen
+MSG_GOTO_LINE								Spalte:
 
 MSG_REPLACE_TITLE=1200						Ersetzen
 MSG_REPLACE_LBLFIND							Suchen
@@ -109,4 +119,6 @@ MSG_STATUSBAR_REPLACE_NOT_OK				Suchwort nicht ersetzt.
 
 MSG_BUFFER_UNTITLED=2100					Neu - %d
 MSG_BUFFER_CURSOR							Zeile: %d Spalte: %d
+
+MSG_MIMETYPE_TEXT_PLAIN=10000				Einfache Textdateien
 
