@@ -1,3 +1,8 @@
+* December 8 2006, Flemming Sørensen *
+
+Added a patch from "computrius", that will let ColdFish load a dir. full of audio,
+instead of just a number of selected files.
+
 * December 4 2006, Kaj de Vos *
 
 Introduced a "package" command, written in Orca. pkgmanager is now deprecated, but
