@@ -132,8 +132,9 @@ public:
 	void SetInvokeMsg( os::Message* pcMessage );
 	virtual os::Message* GetSelChangeMsg();
 	virtual os::Message* GetInvokeMsg();
+
+	virtual void MakeFocus( bool bFocus = true );
 private:
-	virtual void __ICV_reserved1__();
 	virtual void __ICV_reserved2__();
 	virtual void __ICV_reserved3__();
 	virtual void __ICV_reserved4__();

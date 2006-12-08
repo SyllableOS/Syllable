@@ -1844,7 +1844,17 @@ void IconView::OpenContextMenu( os::Point cPosition, bool bMouseOverIcon )
 {
 }
 
-void IconView::__ICV_reserved1__() {}
+/** Change focus of the IconView
+ * \par Description:
+ * Change focus of the IconView
+ * \param bFocus - if true set focus else unfocus the IconView
+ * \author	Jonas Jarvoll (jonas-jarvoll@syllable-norden.info)
+ *****************************************************************************/
+void IconView::MakeFocus( bool bFocus )
+{
+	m->m_pcView->MakeFocus( bFocus );
+}
+
 void IconView::__ICV_reserved2__() {}
 void IconView::__ICV_reserved3__() {}
 void IconView::__ICV_reserved4__() {}
