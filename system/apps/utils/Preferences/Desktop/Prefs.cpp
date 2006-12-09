@@ -95,10 +95,8 @@ PrefsDesktopWin::PrefsDesktopWin( os::Rect cFrame )
 	m_pcBackgroundList->SetAutoSort( false );
 	m_pcBackgroundList->SetSelChangeMsg( new os::Message( DP_BACKGROUND_CHANGED ) );
 	m_pcBackgroundList->InsertColumn( MSG_MAINWND_BACKGROUND_IMAGE.c_str(), (int)GetBounds().Width() );
-	m_pcBackgroundNote = new os::StringView( os::Rect(), "desktop_prefs_note", MSG_MAINWND_BACKGROUND_TEXT );
 	m_pcVBackground->AddChild( m_pcBackgroundList, 1.0f );
 	m_pcVBackground->AddChild( new os::VLayoutSpacer( "", 5.0f, 5.0f ) );
-	m_pcVBackground->AddChild( m_pcBackgroundNote, 0.0f );
 	
 	/* Create window settings */
 	m_pcVWindows = new os::VLayoutNode( "desktop_prefs_vwindows" );
@@ -241,8 +239,7 @@ void PrefsDesktopWin::UpdateBackgroundList()
 	
 	try
 	{
-		cPath = getenv( "HOME" );
-		cPath.Append( "Documents/Pictures" );
+		cPath = "/system/resources/wallpapers";
 		pcDir = new os::Directory( cPath.GetPath() );
 	} catch( ... )
 	{

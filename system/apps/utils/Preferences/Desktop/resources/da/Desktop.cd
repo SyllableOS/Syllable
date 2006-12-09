@@ -9,7 +9,6 @@ MSG_MAINWND_TITLE=0							Skrivebord
 MSG_MAINWND_BACKGROUND=100					Baggrund
 MSG_MAINWND_BACKGROUND_IMAGE				Billede
 MSG_MAINWND_BACKGROUND_NONE					Ingen
-MSG_MAINWND_BACKGROUND_TEXT					Note: Kopier billederne til Documents/Pictures
 
 MSG_MAINWND_WINDOWS_TEXT=200				Vinduer
 MSG_MAINWND_WINDOWS_TEXT_POPUP				Aktivt vindue øverst

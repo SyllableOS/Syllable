@@ -9,7 +9,6 @@ MSG_MAINWND_TITLE=0							Escritorio
 MSG_MAINWND_BACKGROUND=100					Fondo
 MSG_MAINWND_BACKGROUND_IMAGE				Imagen
 MSG_MAINWND_BACKGROUND_NONE					Ninguno
-MSG_MAINWND_BACKGROUND_TEXT					Nota: Por favor copia las imagenes al directorio Documents/Pictures
 
 MSG_MAINWND_WINDOWS_TEXT=200				Ventanas
 MSG_MAINWND_WINDOWS_TEXT_POPUP				Elevar ventana seleccionada

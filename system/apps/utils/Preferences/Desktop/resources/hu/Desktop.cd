@@ -9,7 +9,6 @@ MSG_MAINWND_TITLE=0							Asztal
 MSG_MAINWND_BACKGROUND=100					Háttér
 MSG_MAINWND_BACKGROUND_IMAGE				Kép
 MSG_MAINWND_BACKGROUND_NONE					Nincs
-MSG_MAINWND_BACKGROUND_TEXT					Megjegyzés: másold a képet a Documents/Pictures könyvtárba
 
 MSG_MAINWND_WINDOWS_TEXT=200				Ablakok
 MSG_MAINWND_WINDOWS_TEXT_POPUP				Kiválasztott ablak felugrása

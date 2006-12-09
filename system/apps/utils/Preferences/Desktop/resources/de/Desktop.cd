@@ -9,7 +9,6 @@ MSG_MAINWND_TITLE=0							Desktop
 MSG_MAINWND_BACKGROUND=100					Hintergrund
 MSG_MAINWND_BACKGROUND_IMAGE				Bild
 MSG_MAINWND_BACKGROUND_NONE					Kein
-MSG_MAINWND_BACKGROUND_TEXT					Anmerkung: Bilder bitte in Documents/Pictures ablegen.
 
 MSG_MAINWND_WINDOWS_TEXT=200				Fenster
 MSG_MAINWND_WINDOWS_TEXT_POPUP				Gewähltes Fenster nach vorne holen

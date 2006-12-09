@@ -9,7 +9,6 @@ MSG_MAINWND_TITLE=0							Bureaublad
 MSG_MAINWND_BACKGGROUND=100					Achtergrond
 MSG_MAINWND_BACKGGROUND_IMAGE				Beeld
 MSG_MAINWND_BACKGGROUND_NONE				Geen
-MSG_MAINWND_BACKGGROUND_TEXT				Let Op: kopieer beelden naar Documenten/Beelden
 
 MSG_MAINWND_WINDOWS_TEXT=200				Vensters
 MSG_MAINWND_WINDOWS_TEXT_POPUP				Geselecteerd venster openen

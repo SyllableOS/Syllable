@@ -54,7 +54,6 @@ private:
 	os::VLayoutNode* m_pcVWindows;
 	os::FrameView* m_pcBackground;
 	os::ListView* m_pcBackgroundList;
-	os::StringView* m_pcBackgroundNote;
 	os::FrameView* m_pcWindows;
 	os::CheckBox* m_pcPopupWindows;
 	os::CheckBox* m_pcSingleClick;
