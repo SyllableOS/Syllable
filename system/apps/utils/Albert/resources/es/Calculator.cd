@@ -1,22 +1,22 @@
 //
-// Albert String Catalog
+// Calculator String Catalog
 //
 // Translated by: Maximo Pech Jaramillo <makzpj@gmail.com>
 //
 
-MSG_MAINWND_TITLE=0									Calculator
+MSG_MAINWND_TITLE=0										Calculadora
 
-MSG_MAINWND_MENU_FILE=100							Archivo
+MSG_MAINWND_MENU_FILE=100								Archivo
 MSG_MAINWND_MENU_FILE_CLEARALL							Borrar Todo
 MSG_MAINWND_MENU_FILE_EXIT								Salir
 
-MSG_MAINWND_MENU_BASE=200							Base
+MSG_MAINWND_MENU_BASE=200								Base
 MSG_MAINWND_MENU_BASE_BINARY							Binario (2)
 MSG_MAINWND_MENU_BASE_OCTAL								Octal (8)
 MSG_MAINWND_MENU_BASE_DECIMAL							Decimal (10)
 MSG_MAINWND_MENU_BASE_HEXADECIMAL						Hexadecimal (16)
 
-MSG_MAINWND_MENU_CONSTANTS=300						Constantes
+MSG_MAINWND_MENU_CONSTANTS=300							Constantes
 MSG_MAINWND_MENU_CONSTANTS_PI							Pi
 MSG_MAINWND_MENU_CONSTANTS_E							e
 MSG_MAINWND_MENU_CONSTANTS_C							Velocidad de la luz (c)
@@ -25,27 +25,27 @@ MSG_MAINWND_MENU_CONSTANTS_GRAV							Constante gravitacional (G)
 MSG_MAINWND_MENU_CONSTANTS_PLANCK						Constante de Planck (h)
 MSG_MAINWND_MENU_CONSTANTS_BOLTZMANN					Constante de Boltzmann
 MSG_MAINWND_MENU_CONSTANTS_AVOGADRO						Número de Avogadro
-MSG_MAINWND_MENU_CONSTANTS_GAS							Constante de los gases (R)
+MSG_MAINWND_MENU_CONSTANTS_GAS							Constante universal de los gases (R)
 MSG_MAINWND_MENU_CONSTANTS_MASSELECTRON					Masa del electrón
 MSG_MAINWND_MENU_CONSTANTS_MASSPROTON					Masa del protón
 MSG_MAINWND_MENU_CONSTANTS_MASSNEUTRON					Masa del neutrón
 MSG_MAINWND_MENU_CONSTANTS_PERME						Permeabilidad del vacío
 MSG_MAINWND_MENU_CONSTANTS_PERMI						Permitividad del vacío
 
-MSG_MAINWND_MENU_WINDOWS=400						Ventana
+MSG_MAINWND_MENU_WINDOWS=400							Ventana
 MSG_MAINWND_MENU_WINDOWS_PAPERROLL						Rollo de papel
 MSG_MAINWND_MENU_WINDOWS_BASEN							Base-N
 
-MSG_MAINWND_MENU_HELP=500							Ayuda
+MSG_MAINWND_MENU_HELP=500								Ayuda
 MSG_MAINWND_MENU_HELP_ABOUT								Acerca de
 MSG_MAINWND_MENU_HELP_KEYBOARD							Teclado
 
-MSG_PAPERROLL_TITLE=1000							Albert
+MSG_PAPERROLL_TITLE=1000								Calculadora
 MSG_PAPERROLL_CMENU_COPY								Copiar
 MSG_PAPERROLL_CMENU_CLEAR								Borrar
 MSG_PAPERROLL_CMENU_SAVE								Guardar
 
-MSG_BASENWND_TITLE=2000								Base-N
+MSG_BASENWND_TITLE=2000									Base-N
 MSG_BASENWND_BINARY										Binario
 MSG_BASENWND_OCTAL										Octal
 MSG_BASENWND_DECIMAL									Decimal
@@ -53,16 +53,16 @@ MSG_BASENWND_HEXADECIMAL								Hexadecimal
 MSG_BASENWND_BASE64										Base-64
 MSG_BASENWND_ROMAN										Romano
 
-MSG_ABOUTWND_TITLE=3000								About Calculator
+MSG_ABOUTWND_TITLE=3000									Acerca de Calculator
 MSG_ABOUTWND_TEXTONE									Calculator V0.5 2004-02-07 Copyright (C) 2002-2004 Henrik Isaksson.
 MSG_ABOUTWND_TEXTTWO									Calculator se distribuye bajo la Licencia Pública General GNU GPL.
 
-MSG_KBDWND_TITLE=4000								Atajos de Teclado
+MSG_KBDWND_TITLE=4000									Atajos de Teclado
 MSG_KBDWND_TEXTONE										Atajos de Teclado
 MSG_KBDWND_TEXT09										Dígitos decimales del 0 al 9
 MSG_KBDWND_TEXTAF										Dígitos hexadecimales de la A a la F
 MSG_KBDWND_TEXTASMD										Suma, Resta, Multiplicación y División
 MSG_KBDWND_TEXTENTER									ENTER - Calcular resultado
-MSG_KBDWND_TEXTBACKSPACE								RETROCESO - borrar hacia atrás (¡sorpresa!)
+MSG_KBDWND_TEXTBACKSPACE								RETROCESO - borrar hacia atrás (¡qué sorpresa!)
 MSG_KBDWND_CLOSE										Cerrar
 

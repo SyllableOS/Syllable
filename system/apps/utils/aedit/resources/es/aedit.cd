@@ -29,6 +29,15 @@ MSG_MENU_EDIT_SELECT_ALL					Seleccionar Todo
 MSG_MENU_EDIT_UNDO							Deshacer
 MSG_MENU_EDIT_REDO							Rehacer
 
+MSG_MENU_VIEW_VIEW=350						Ver
+MSG_MENU_VIEW_TOOLBAR						Barra de herramientas
+MSG_MENU_VIEW_STATUSBAR						Barra de estado
+MSG_MENU_VIEW_SETFONT						Establecer fuente...
+MSG_MENU_VIEW_TABS							Pestañas
+MSG_MENU_VIEW_SHOW							Mostrar
+MSG_MENU_VIEW_HIDE							Ocultar
+MSG_MENU_VIEW_AUTO							Automático
+
 MSG_MENU_FIND=400							Buscar
 MSG_MENU_FIND_FIND							Buscar...
 MSG_MENU_FIND_REPLACE						Reemplazar...
@@ -68,6 +77,7 @@ MSG_FIND_CLOSE					    		_Cerrar
 MSG_GOTO_TITLE=1100							Ir a la Línea
 MSG_GOTO_GOTO								_Ir a la Línea
 MSG_GOTO_CLOSE								_Cancelar
+MSG_GOTO_LINE								Fila:
 
 MSG_REPLACE_TITLE=1200						Reemplazar
 MSG_REPLACE_LBLFIND							Buscar
@@ -109,3 +119,6 @@ MSG_STATUSBAR_REPLACE_NOT_OK				No se reemplazó la frase.
 
 MSG_BUFFER_UNTITLED=2100					Sin título - %d
 MSG_BUFFER_CURSOR							Columna: %d Fila: %d
+
+MSG_MIMETYPE_TEXT_PLAIN=10000				Archivos de texto plano
+
