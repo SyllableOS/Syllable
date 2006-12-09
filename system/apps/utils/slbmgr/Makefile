@@ -24,7 +24,10 @@ catalogs:
 	done;
 
 dist: $(EXE)
-	cp -f $(EXE) $(DIST_DIR)/atheos/sys/bin/$(EXE)
+	-mkdir -p "$(DIST_DIR)/atheos/Applications/System Tools"
+	cp -f $(EXE) "$(DIST_DIR)/atheos/Applications/System Tools/System Information"
+	addattrib "$(DIST_DIR)/atheos/Applications/System Tools/System Information" "os::Category" "System Tools"
+	ln -sf "$(DIST_DIR)/atheos/Applications/System Tools/System Information" $(DIST_DIR)/atheos/sys/bin/$(EXE)
 
 clean:  
 	-rm -f $(OBJS)

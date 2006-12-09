@@ -35,10 +35,14 @@ catalogs:
 	done;
 
 install: $(OBJDIR)/$(EXE)
-	install -s $(OBJDIR)/$(EXE) /bin/$(EXE)
+	-mkdir -p "/Applications/System Tools"
+	cp -f $(OBJDIR)/$(EXE) "/Applications/System Tools/Disk Manager"
+	addattrib "/Applications/System Tools/Disk Manager" "os::Category" "System Tools"
 
 dist: $(OBJDIR)/$(EXE)
-	install -s $(OBJDIR)/$(EXE) $(DIST_DIR)/atheos/sys/bin/$(EXE)
+	-mkdir -p "$(DIST_DIR)/atheos/Applications/System Tools"
+	cp -f $(OBJDIR)/$(EXE) "$(DIST_DIR)/atheos/Applications/System Tools/Disk Manager"
+	addattrib "$(DIST_DIR)/atheos/Applications/System Tools/Disk Manager" "os::Category" "System Tools"
 
 deps: $(OBJDIR) $(DEPS)
 
