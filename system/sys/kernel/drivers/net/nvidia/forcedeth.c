@@ -98,6 +98,7 @@
 #include <atheos/ctype.h>
 #include <atheos/device.h>
 #include <atheos/bitops.h>
+#include <atheos/linux_compat.h>
 
 #include <posix/unistd.h>
 #include <posix/errno.h>
@@ -107,11 +108,10 @@
 #include <net/net.h>
 #include <net/ip.h>
 #include <net/sockios.h>
+#include <net/net_device.h>
 
 static PCI_bus_s *g_psBus;
 static DeviceOperations_s g_sDevOps;
-
-#include "linuxcomp.h"
 
 #if 0
 #define dprintk			printk
@@ -440,82 +440,6 @@ static struct mac_chip_info  mac_chip_table[] = {
 	  PCI_COMMAND_IO|PCI_COMMAND_MASTER, DEV_NEED_LASTPACKET1|DEV_IRQMASK_2|DEV_NEED_TIMERIRQ },
 	{0,},					       /* 0 terminated list. */
 };
-
-
-
-struct device
-{
-
-    /*
-     * This is the first field of the "visible" part of this structure
-     * (i.e. as seen by users in the "Space.c" file).  It is the name
-     * the interface.
-     */
-    char            *name;
-
-     /*
-     *  I/O specific fields
-     *  FIXME: Merge these and struct ifmap into one
-     */
-    unsigned long   rmem_end; /* shmem "recv" end */
-    unsigned long   rmem_start; /* shmem "recv" start */
-    unsigned long   mem_end;  /* shared mem end */
-    unsigned long   mem_start;  /* shared mem start */
-    unsigned long       base_addr;  /* device I/O address   */
-    unsigned int        irq;        /* device IRQ number    */
-    
-    /* Low-level status flags. */
-    volatile unsigned char  start;      /* start an operation   */
-    /*
-     * These two are just single-bit flags, but due to atomicity
-     * reasons they have to be inside a "unsigned long". However,
-     * they should be inside the SAME unsigned long instead of
-     * this wasteful use of memory..
-     */
-    unsigned char   if_port;  /* Selectable AUI, TP,..*/
-    unsigned char   dma;    /* DMA channel    */
-                                                                                                                                                                                                        
-//  unsigned long   state;
-    
-    unsigned long       interrupt;  /* bitops.. */
-    unsigned long       tbusy;      /* transmitter busy */
-    
-    struct device       *next;
-    
-    /*
-     * This marks the end of the "visible" part of the structure. All
-     * fields hereafter are internal to the system, and may change at
-     * will (read: may be cleaned up at will).
-     */
-
-    /* These may be needed for future network-power-down code. */
-    unsigned long       trans_start;    /* Time (in jiffies) of last Tx */
-    unsigned long           last_rx;        /* Time of last Rx      */
-    unsigned    mtu;  /* interface MTU value    */
-    unsigned short    type; /* interface hardware type  */
-    unsigned short    hard_header_len;  /* hardware hdr length  */   
-    unsigned short      flags;  /* interface flags (a la BSD) */
-    void            *priv;  /* pointer to private data  */
-
-    /* Interface address info. */
-    unsigned char   broadcast[MAX_ADDR_LEN];  /* hw bcast add */
-    unsigned char   pad;    /* make dev_addr aligned to 8 bytes */
-    unsigned char   dev_addr[MAX_ADDR_LEN]; /* hw address */
-    unsigned char   addr_len; /* hardware address length  */    
-
-//	struct dev_mc_list	*mc_list;	/* Multicast mac addresses	*/
-	int			mc_count;	/* Number of installed mcasts	*/
-//	int			promiscuity;
-//	int			allmulti;
-
-    NetQueue_s		*packet_queue;
-    int irq_handle; /* IRQ handler handle */
-
-	int device_handle; /* device handle from probing */
-    
-    int node_handle;    /* handle of device node in /dev */
-};
-
 
 /*
  * SMP locking:
@@ -1566,17 +1490,17 @@ static int nv_probe1 (struct mac_chip_info *id, PCI_Info_s *pci_dev,
 	}
 #endif
 
-	if(get_pci_memory_size(pci_dev, 0) >= NV_PCI_REGSZ)
+	if(pci_resource_len(pci_dev, 0) >= NV_PCI_REGSZ)
 		addr = pci_dev->u.h0.nBase0 & PCI_ADDRESS_MEMORY_32_MASK;
-	else if(get_pci_memory_size(pci_dev, 1) >= NV_PCI_REGSZ)
+	else if(pci_resource_len(pci_dev, 1) >= NV_PCI_REGSZ)
 		addr = pci_dev->u.h0.nBase1 & PCI_ADDRESS_MEMORY_32_MASK;
-	else if(get_pci_memory_size(pci_dev, 2) >= NV_PCI_REGSZ)
+	else if(pci_resource_len(pci_dev, 2) >= NV_PCI_REGSZ)
 		addr = pci_dev->u.h0.nBase2 & PCI_ADDRESS_MEMORY_32_MASK;
-	else if(get_pci_memory_size(pci_dev, 3) >= NV_PCI_REGSZ)
+	else if(pci_resource_len(pci_dev, 3) >= NV_PCI_REGSZ)
 		addr = pci_dev->u.h0.nBase3 & PCI_ADDRESS_MEMORY_32_MASK;
-	else if(get_pci_memory_size(pci_dev, 4) >= NV_PCI_REGSZ)
+	else if(pci_resource_len(pci_dev, 4) >= NV_PCI_REGSZ)
 		addr = pci_dev->u.h0.nBase4 & PCI_ADDRESS_MEMORY_32_MASK;
-	else if(get_pci_memory_size(pci_dev, 5) >= NV_PCI_REGSZ)
+	else if(pci_resource_len(pci_dev, 5) >= NV_PCI_REGSZ)
 		addr = pci_dev->u.h0.nBase5 & PCI_ADDRESS_MEMORY_32_MASK;
 	else {
 		printk("forcedeth: No proper MM I/O address found!\n");
@@ -1745,7 +1669,7 @@ static status_t nv_close_dev( void* pNode, void* pCookie )
 
 static status_t nv_ioctl( void* pNode, void* pCookie, uint32 nCommand, void* pArgs, bool bFromKernel )
 {
-	struct device* psDev = pNode;
+	struct net_device* psDev = pNode;
     int nError = 0;
 
     switch( nCommand )
@@ -1784,7 +1708,7 @@ static int nv_read( void* pNode, void* pCookie, off_t nPosition, void* pBuffer, 
 
 static int nv_write( void* pNode, void* pCookie, off_t nPosition, const void* pBuffer, size_t nSize )
 {
-	struct device* dev = pNode;
+	struct net_device* dev = pNode;
 	PacketBuf_s* psBuffer = alloc_pkt_buffer( nSize );
 	if ( psBuffer != NULL ) {
 		memcpy( psBuffer->pb_pData, pBuffer, nSize );
