@@ -499,8 +499,8 @@ void SrvWindow::AddToUpdateList( Layer* pcLayer, bool bUpdateChildren )
 	else {
 		pcLayer->m_bOnUpdateList = true;
 		pcLayer->m_bUpdateChildren = bUpdateChildren;
+		m_asUpdateList.push_back( pcLayer->GetHandle() );
 	}
-	m_asUpdateList.push_back( pcLayer->GetHandle() );
 }
 
 

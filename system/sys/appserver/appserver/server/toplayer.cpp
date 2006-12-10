@@ -289,7 +289,7 @@ void TopLayer::MoveChilds( void )
 	{
 		if( pcChild->m_nHideCount == 0 && pcChild->m_cDeltaMove != IPoint( 0, 0 ) )
 		{
-			if( pcChild->m_bHasInvalidRegs && pcChild->m_pcVisibleFullReg != NULL  )
+			if( pcChild->m_bHasInvalidRegs && pcChild->m_pcVisibleFullReg != NULL   )
 			{
 				if( pcChild->m_pcBackbuffer == NULL && pcChild->m_pcPrevVisibleFullReg != NULL )
 				{
@@ -337,6 +337,12 @@ void TopLayer::MoveChilds( void )
 				}
 				else if( pcChild->m_pcBackbuffer != NULL )
 				{			
+					if( pcChild->GetWindow() && ( pcChild->GetWindow()->GetPaintCounter() > 0
+						|| pcChild->m_pcDamageReg != NULL ) )
+					{
+						pcChild->GetWindow()->AddToUpdateList( pcChild, true );
+						continue;
+					}
 					if( !pcChild->m_pcVisibleFullReg->IsEmpty() )
 					{
 						/* Update the layer */
@@ -386,7 +392,8 @@ void TopLayer::InvalidateNewAreas( void )
 		if( pcChild->m_cDeltaMove == IPoint( 0, 0 ) && pcChild->m_nHideCount == 0 && 
 			pcChild->m_bHasInvalidRegs && pcChild->m_pcVisibleFullReg != NULL && pcChild->m_pcBackbuffer != NULL )
 		{
-			if( pcChild->GetWindow() && pcChild->GetWindow()->GetPaintCounter() > 0 )
+			if( pcChild->GetWindow() && ( pcChild->GetWindow()->GetPaintCounter() > 0
+				|| pcChild->m_pcDamageReg != NULL ) )
 			{
 				pcChild->GetWindow()->AddToUpdateList( pcChild, true );
 				goto next;
@@ -556,7 +563,9 @@ void TopLayer::UpdateRegions( bool bForce )
 		m_pcDamageReg = NULL;
 	}
 	
+
 	UpdateIfNeeded();
+		
 	ClearDirtyRegFlags();
 }
 

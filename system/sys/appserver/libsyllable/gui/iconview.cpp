@@ -25,6 +25,7 @@
 #include <gui/scrollbar.h>
 #include <gui/guidefines.h>
 #include <gui/iconview.h>
+#include <gui/icondirview.h>
 #include <gui/desktop.h>
 #include <util/resources.h>
 #include <util/looper.h>
@@ -47,17 +48,50 @@ public:
 	bool				m_bLayouted;
 };
 
-struct IconSort
+class IconSort
 {
+public:
+	IconSort( os::IconView* pcView )
+	{
+		m_pcView = pcView;
+	}
 	bool operator() ( const Icon * x, const Icon * y ) const
 	{
-		if( x->m_zStrings.size() < 1 || y->m_zStrings.size() < 1 )
-			return( false );
+		/* We handle the icondirview stuff here because of performance reasons */
+		os::IconDirectoryView* pcView = dynamic_cast<os::IconDirectoryView*>( m_pcView );
 		
+		if( pcView != NULL )
+		{
+			os::DirectoryIconData* pcData1 = static_cast<os::DirectoryIconData*>(x->m_pcData);
+			os::DirectoryIconData* pcData2 = static_cast<os::DirectoryIconData*>(y->m_pcData);
+			
+			if( S_ISDIR( pcData1->m_sStat.st_mode ) && !S_ISDIR( pcData2->m_sStat.st_mode ) )
+				return( true );
+			if( !S_ISDIR( pcData1->m_sStat.st_mode ) && S_ISDIR( pcData2->m_sStat.st_mode ) )
+				return( false );
+				
+		}
 		
+		const char* pz1 = x->m_zStrings[0].c_str();
+		const char* pz2 = y->m_zStrings[0].c_str();
 		
-		return ( x->m_zStrings[0] < y->m_zStrings[0] );
+		int nLength = std::min( x->m_zStrings[0].Length(), y->m_zStrings[0].Length() );
+		for( int i = 0; i < nLength; i++ )
+		{
+			char c1 = tolower( *pz1 );
+			char c2 = tolower( *pz2 );
+			if( c1 < c2 )
+				return( true );
+			if( c1 > c2 )
+				return( false );
+			pz1++;
+			pz2++;
+		}
+		
+		return( x->m_zStrings[0].Length() <= y->m_zStrings[0].Length() );
 	}
+private:
+	os::IconView* m_pcView;
 };
 
 class IconView::Private
@@ -189,7 +223,7 @@ public:
 		}
 		for( uint i = 0; i < m_cIcons.size(); i++ )
 		{
-			std::sort( m_cIcons.begin(), m_cIcons.end(  ), IconSort() );
+			std::sort( m_cIcons.begin(), m_cIcons.end(), IconSort( m_pcControl ) );
 		}
 		Unlock();
 	}
