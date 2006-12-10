@@ -45,6 +45,9 @@ typedef uint32		dma_addr_t;
 #define spinlock_t	SpinLock_s
 
 /* Generic macros */
+#define DECLARE_PCI_UNMAP_ADDR(VAR) \
+	dma_addr_t VAR;
+
 #define assert		kassertw
 
 #define ARRAY_SIZE(x) \
@@ -119,6 +122,15 @@ typedef uint32		dma_addr_t;
 #define le32desc_to_virt(addr) \
 	bus_to_virt(le32_to_cpu(addr))
 
+#define swab32(val)	\
+((uint32)	(((uint32)(val) & (uint32)0xff000000 ) >> 24 ) | \
+	   		(((uint32)(val) & (uint32)0x00ff0000 ) >> 8 ) | \
+	   		(((uint32)(val) & (uint32)0x0000ff00 ) << 8 ) | \
+	   		(((uint32)(val) & (uint32)0x000000ff ) << 24 ) )
+
+#define be32_to_cpu(n)	swab32(n)
+#define cpu_to_be32(n)	swab32(n)
+
 static inline void * ioremap( unsigned long phys_addr, unsigned long size )
 {
 	area_id hArea;
@@ -184,6 +196,12 @@ static inline void* pci_alloc_consistent( PCI_Info_s *psDev, size_t nSize, dma_a
 	virt_to_bus( address )
 #define pci_unmap_single( cookie, address, size, dir ) \
 	{/* EMPTY */}
+#define pci_unmap_page( cookie, address, size, dir ) \
+	{/* EMPTY */}
+
+/* The following do nothing */
+#define pci_unmap_addr( s, m )	(0)
+#define pci_unmap_len( s, m )	(0)
 
 /* psBus must be available & be a valid PCI bus instance */
 #define pci_read_config_byte(dev, address, val) \
@@ -220,9 +238,95 @@ static inline PCI_Info_s * pci_find_device( int vendor_id, int device_id, PCI_In
 	return NULL;
 }
 
+static inline uint32 pci_resource_len( PCI_Info_s * pci_dev, int resource )
+{
+	int nOffset;
+	uint32 nBase, nSize;
+
+	PCI_bus_s *psBus = get_busmanager( PCI_BUS_NAME, PCI_BUS_VERSION );
+	if( psBus == NULL )
+		return 0;
+
+	nOffset = PCI_BASE_REGISTERS + resource * 4;
+	nBase = psBus->read_pci_config( pci_dev->nBus, pci_dev->nDevice, pci_dev->nFunction, nOffset, 4 );
+
+	psBus->write_pci_config( pci_dev->nBus, pci_dev->nDevice, pci_dev->nFunction, nOffset, 4, ~0 );
+	nSize = psBus->read_pci_config( pci_dev->nBus, pci_dev->nDevice, pci_dev->nFunction, nOffset, 4 );
+	psBus->write_pci_config( pci_dev->nBus, pci_dev->nDevice, pci_dev->nFunction, nOffset, 4, nBase );
+	if( nSize == 0 || nSize == ~0 )
+		return 0;
+	if( nBase == ~0 )
+		nBase = 0;
+	if( ( nSize & PCI_ADDRESS_SPACE ) == 0 )
+	{
+		nSize &= PCI_ADDRESS_MEMORY_32_MASK;
+		nSize &= ~( nSize - 1 );
+	}
+	else
+	{
+		nSize &= ( PCI_ADDRESS_IO_MASK & 0xffff );
+		nSize &= ~( nSize - 1 );
+	}
+	return nSize;
+}
+
+static inline int pci_save_state( PCI_Info_s *dev, uint32 *buf )
+{
+	int i;
+	PCI_bus_s *psBus = get_busmanager( PCI_BUS_NAME, PCI_BUS_VERSION );
+	if( psBus == NULL )
+		return -1;
+
+	if( buf )
+		for( i = 0; i < 16; i++ )
+			buf[i] = psBus->read_pci_config(dev->nBus, dev->nDevice, dev->nFunction, i * 4, 4);
+
+	return 0;
+}
+
+static inline int pci_restore_state( PCI_Info_s *dev, uint32 *buf )
+{
+	int i;
+	PCI_bus_s *psBus = get_busmanager( PCI_BUS_NAME, PCI_BUS_VERSION );
+	if( psBus == NULL )
+		return -1;
+
+	if( buf )
+		for( i = 0; i < 16; i++ )
+			psBus->write_pci_config(dev->nBus, dev->nDevice, dev->nFunction, i * 4, 4, buf[i]);
+
+	return 0;
+}
+
+/* No implementation possible until the PCI bus manager supports MSI */
+static inline int pci_disable_msi( PCI_Info_s *dev )
+{
+	kerndbg( KERN_WARNING, "%s not implemented!\n", __FUNCTION__ );
+	return 1;
+}
+
+static inline int pci_enable_msi( PCI_Info_s *dev )
+{
+	kerndbg( KERN_WARNING, "%s not implemented!\n", __FUNCTION__ );
+	return 1;
+}
+
+/* prefetch() may not be needed at all: check */
+#define prefetch(x);
+
 #define PCI_ANY_ID (~0)
 #define PCIBIOS_MAX_LATENCY 255
 #define PCI_CLASS_REVISION 0x08
+
+typedef int pci_power_t;
+
+#define PCI_D0		((pci_power_t) 0)
+#define PCI_D1		((pci_power_t) 1)
+#define PCI_D2		((pci_power_t) 2)
+#define PCI_D3hot	((pci_power_t) 3)
+#define PCI_D3cold	((pci_power_t) 4)
+#define PCI_UNKNOWN	((pci_power_t) 5)
+#define PCI_POWER_ERROR	((pci_power_t) -1)
 
 struct pci_device_id
 {
@@ -254,14 +358,14 @@ static inline void* skb_put( PacketBuf_s* psBuffer, int nSize )
 	return( pOldEnd );
 }
 
-/* A lot of net drivers will do this for some reason */
-#ifndef net_device
-# define net_device device
-#endif
-
 #define MAX_ADDR_LEN IFHWADDRLEN
 
 #define IFF_RUNNING 0x40
+
+static inline is_valid_ether_addr( uint8 * addr )
+{
+	return !( addr[0] & 1 ) && memcmp( addr, "\0\0\0\0\0\0", 6 );
+}
 
 /* The following macros assume that dev has the fields tbusy, start & flags */
 #define netif_wake_queue(dev) \

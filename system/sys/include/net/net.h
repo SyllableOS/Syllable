@@ -8,6 +8,8 @@
 #include <net/in.h>
 #include <net/if.h>
 #include <net/if_ether.h>
+#include <net/route.h>
+#include <net/packet.h>
 
 #define __BYTE(v,n) ((((uint32)v) >> (n*8))&0xff)
 #define htonw(n) ( (__BYTE(n, 0 ) << 8) | __BYTE(n, 1 ) )

@@ -429,7 +429,11 @@ typedef struct
 #define PCI_CAP_ID_MSI		0x05		/* Message Signalled Interrupts */
 #define PCI_CAP_ID_CHSWP	0x06		/* CompactPCI HotSwap */
 #define PCI_CAP_ID_PCIX		0x07		/* PCI-X */
-
+#define PCI_CAP_ID_HT_IRQCONF	0x08	/* HyperTransport IRQ Configuration */
+#define PCI_CAP_ID_VNDR		0x09		/* Vendor specific capability */
+#define PCI_CAP_ID_SHPC 	0x0C		/* PCI Standard Hot-Plug Controller */
+#define PCI_CAP_ID_EXP 		0x10		/* PCI Express */
+#define PCI_CAP_ID_MSIX		0x11		/* MSI-X */
 
 /***	offsets for the agp capability flags ***/
 
@@ -462,6 +466,44 @@ typedef struct
 #define PCI_AGP_COMMAND_RATE2	0x0002		/* Use 2x rate */
 #define PCI_AGP_COMMAND_RATE1	0x0001		/* Use 1x rate */
 
+/* Vital Product Data */
+
+#define PCI_VPD_ADDR		2	/* Address to access (15 bits!) */
+#define  PCI_VPD_ADDR_MASK	0x7fff	/* Address mask */
+#define  PCI_VPD_ADDR_F		0x8000	/* Write 0, 1 indicates completion */
+#define PCI_VPD_DATA		4	/* 32-bits of data returned here */
+
+/* Power Management Registers */
+
+#define PCI_PM_PMC		2	/* PM Capabilities Register */
+#define  PCI_PM_CAP_VER_MASK	0x0007	/* Version */
+#define  PCI_PM_CAP_PME_CLOCK	0x0008	/* PME clock required */
+#define  PCI_PM_CAP_RESERVED    0x0010  /* Reserved field */
+#define  PCI_PM_CAP_DSI			0x0020	/* Device specific initialization */
+#define  PCI_PM_CAP_AUX_POWER	0x01C0	/* Auxilliary power support mask */
+#define  PCI_PM_CAP_D1			0x0200	/* D1 power state support */
+#define  PCI_PM_CAP_D2			0x0400	/* D2 power state support */
+#define  PCI_PM_CAP_PME			0x0800	/* PME pin supported */
+#define  PCI_PM_CAP_PME_MASK	0xF800	/* PME Mask of all supported states */
+#define  PCI_PM_CAP_PME_D0		0x0800	/* PME# from D0 */
+#define  PCI_PM_CAP_PME_D1		0x1000	/* PME# from D1 */
+#define  PCI_PM_CAP_PME_D2		0x2000	/* PME# from D2 */
+#define  PCI_PM_CAP_PME_D3		0x4000	/* PME# from D3 (hot) */
+#define  PCI_PM_CAP_PME_D3cold	0x8000	/* PME# from D3 (cold) */
+#define PCI_PM_CTRL		4	/* PM control and status register */
+#define  PCI_PM_CTRL_STATE_MASK	0x0003	/* Current power state (D0 to D3) */
+#define  PCI_PM_CTRL_NO_SOFT_RESET	0x0004	/* No reset for D3hot->D0 */
+#define  PCI_PM_CTRL_PME_ENABLE	0x0100	/* PME pin enable */
+#define  PCI_PM_CTRL_DATA_SEL_MASK	0x1e00	/* Data select (??) */
+#define  PCI_PM_CTRL_DATA_SCALE_MASK	0x6000	/* Data scale (??) */
+#define  PCI_PM_CTRL_PME_STATUS	0x8000	/* PME pin status */
+#define PCI_PM_PPB_EXTENSIONS	6	/* PPB support extensions (??) */
+#define  PCI_PM_PPB_B2_B3	0x40	/* Stop clock when in D3hot (??) */
+#define  PCI_PM_BPCC_ENABLE	0x80	/* Bus power/clock control enable (??) */
+#define PCI_PM_DATA_REGISTER	7	/* (??) */
+#define PCI_PM_SIZEOF		8
+
+
 /***	masks for flags in the various base address registers ***/
 
 #define PCI_ADDRESS_SPACE		0x01		/* 0 = memory space, 1 = i/o space */
@@ -488,6 +530,18 @@ typedef struct
 
 #define PCI_ROM_ENABLE		0x00000001	/* 1 = expansion rom decode enabled */
 #define PCI_ROM_ADDRESS_MASK	0xFFFFF800	/* mask to get expansion rom addr */
+
+/* Message Signalled Interrupts */
+#define PCI_MSI_FLAGS			2		/* Various flags */
+#define  PCI_MSI_FLAGS_64BIT	0x80	/* 64bit addresses allowed */
+#define  PCI_MSI_FLAGS_QSIZE	0x70	/* Message queue size configured */
+#define  PCI_MSI_FLAGS_QMASK	0x0e	/* Maximum queue size available */
+#define  PCI_MSI_FLAGS_ENABLE	0x01	/* MSI feature enabled */
+#define PCI_MSI_RFU				3		/* Rest of compatability flags */
+#define PCI_MSI_ADDRESS_LO		4		/* Lower 32 bits */
+#define PCI_MSI_ADDRESS_HI		8		/* Upper 32 bits (if PCI_MSI_FLAGS_64BIT set) */
+#define PCI_MSI_DATA_32			8		/* 16 bits of data for 32-bit devices */
+#define PCI_MSI_DATA_64			12		/* 16 bits of data for 64-bit devices */
 
 #ifndef __KERNEL__
 
