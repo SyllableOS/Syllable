@@ -148,8 +148,6 @@ static int options[] = {-1, -1, -1, -1, -1, -1, -1, -1};
 #define netif_wake_queue(dev)   do { \
 									clear_bit(0, (void*)&dev->tbusy); \
 								} while(0)
-#define netif_start_queue(dev)  clear_bit(0, (void*)&dev->tbusy)
-#define netif_stop_queue(dev)   set_bit(0, (void*)&dev->tbusy)
 
 #ifndef PCI_VENDOR_ID_INTEL
 #define PCI_VENDOR_ID_INTEL 0x8086
