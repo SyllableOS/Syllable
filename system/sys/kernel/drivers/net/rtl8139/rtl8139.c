@@ -52,6 +52,7 @@ static const char versionB[] =
 #include <net/net.h>
 #include <net/ip.h>
 #include <net/sockios.h>
+#include <net/net_device.h>
 
 #define KERN_ERR "Error: "
 #define KERN_DEBUG "Debug: "
@@ -60,122 +61,7 @@ static const char versionB[] =
 #define KERN_NOTICE "Note: "
 
 static DeviceOperations_s g_sDevOps;
-
 PCI_bus_s* g_psBus;
-
-/*
- *	The DEVICE structure.
- *	Actually, this whole structure is a big mistake.  It mixes I/O
- *	data with strictly "high-level" data, and it has to know about
- *	almost every data structure used in the INET module.
- *
- *	FIXME: cleanup struct device such that network protocol info
- *	moves out.
- */
-
-struct /*enet_statistics*/  net_device_stats
-{
-	unsigned long	rx_packets;		/* total packets received	*/
-	unsigned long	tx_packets;		/* total packets transmitted	*/
-	unsigned long	rx_bytes;		/* total bytes received 	*/
-	unsigned long	tx_bytes;		/* total bytes transmitted	*/
-	unsigned long	rx_errors;		/* bad packets received		*/
-	unsigned long	tx_errors;		/* packet transmit problems	*/
-	unsigned long	rx_dropped;		/* no space in linux buffers	*/
-	unsigned long	tx_dropped;		/* no space available in linux	*/
-	unsigned long	multicast;		/* multicast packets received	*/
-	unsigned long	collisions;
-
-	/* detailed rx_errors: */
-	unsigned long	rx_length_errors;
-	unsigned long	rx_over_errors;		/* receiver ring buff overflow	*/
-	unsigned long	rx_crc_errors;		/* recved pkt with crc error	*/
-	unsigned long	rx_frame_errors;	/* recv'd frame alignment error */
-	unsigned long	rx_fifo_errors;		/* recv'r fifo overrun		*/
-	unsigned long	rx_missed_errors;	/* receiver missed packet	*/
-
-	/* detailed tx_errors */
-	unsigned long	tx_aborted_errors;
-	unsigned long	tx_carrier_errors;
-	unsigned long	tx_fifo_errors;
-	unsigned long	tx_heartbeat_errors;
-	unsigned long	tx_window_errors;
-	
-	/* for cslip etc */
-	unsigned long	rx_compressed;
-	unsigned long	tx_compressed;
-};
-/*
-struct sk_buff
-{
-	void* data;
-	int	  len;
-	int	  protocol;
-};
-*/
-
-struct device
-{
-
-	/*
-	 * This is the first field of the "visible" part of this structure
-	 * (i.e. as seen by users in the "Space.c" file).  It is the name
-	 * the interface.
-	 */
-	char			*name;
-
-	/*
-	 *	I/O specific fields
-	 *	FIXME: Merge these and struct ifmap into one
-	 */
-	unsigned long		base_addr;	/* device I/O address	*/
-	unsigned int		irq;		/* device IRQ number	*/
-	
-	/* Low-level status flags. */
-	volatile unsigned char	start;		/* start an operation	*/
-	/*
-	 * These two are just single-bit flags, but due to atomicity
-	 * reasons they have to be inside a "unsigned long". However,
-	 * they should be inside the SAME unsigned long instead of
-	 * this wasteful use of memory..
-	 */
-	unsigned long		interrupt;	/* bitops.. */
-	unsigned long		tbusy;		/* transmitter busy */
-	
-	struct device		*next;
-	
-	/*
-	 * This marks the end of the "visible" part of the structure. All
-	 * fields hereafter are internal to the system, and may change at
-	 * will (read: may be cleaned up at will).
-	 */
-
-	/* These may be needed for future network-power-down code. */
-	unsigned long		trans_start;	/* Time (in jiffies) of last Tx	*/
-	
-	unsigned short		flags;	/* interface flags (a la BSD)	*/
-	void			*priv;	/* pointer to private data	*/
-	
-	/* Interface address info. */
-//	unsigned char		broadcast[MAX_ADDR_LEN];	/* hw bcast add	*/
-	unsigned char		pad;		/* make dev_addr aligned to 8 bytes */
-	unsigned char		dev_addr[MAX_ADDR_LEN];	/* hw address	*/
-//	unsigned char		addr_len;	/* hardware address length	*/
-
-	struct dev_mc_list	*mc_list;	/* Multicast mac addresses	*/
-	int			mc_count;	/* Number of installed mcasts	*/
-//	int			promiscuity;
-//	int			allmulti;
-    
-	/* For load balancing driver pair support */
-  
-
-	NetQueue_s*   packet_queue;
-	volatile bool run_timer;
-	thread_id	  timer_thread;
-	int irq_handle; /* IRQ handler handle */
-};
-
 
 /* Note: Register access width and timing restrictions apply in MMIO mode.
    This updated driver should nominally work, but I/O mode is better tested. */
@@ -300,7 +186,7 @@ struct pci_id_info {
 };
 
 
-static struct device * rtl8129_probe1( int bus, int device, int function,
+static struct net_device * rtl8129_probe1( int bus, int device, int function,
 									   int device_handle, int nHandle, long ioaddr,
 									   int irq, int chp_idx, int fnd_cnt);
 
@@ -532,7 +418,7 @@ int rtl8139_probe( int device_handle )
 	int cards_found = 0;
 //	int pci_index = 0;
 //	unsigned char pci_bus, pci_device_fn;
-	struct device* dev;
+	struct net_device* dev;
 	
     int i;
     PCI_Info_s sInfo;
@@ -586,7 +472,7 @@ int rtl8139_probe( int device_handle )
 }
 
 
-static struct device * rtl8129_probe1( int pci_bus, int pci_device, int pci_func,
+static struct net_device * rtl8129_probe1( int pci_bus, int pci_device, int pci_func,
 									   int device_handle, int nHandle, long ioaddr,
 									   int irq, int chip_idx, int found_cnt)
 {
@@ -1776,7 +1662,7 @@ static status_t rtl8129_close_dev( void* pNode, void* pCookie )
 
 static status_t rtl8129_ioctl( void* pNode, void* pCookie, uint32 nCommand, void* pArgs, bool bFromKernel )
 {
-	struct device* psDev = pNode;
+	struct net_device* psDev = pNode;
     int nError = 0;
 
     switch( nCommand )
@@ -1815,7 +1701,7 @@ static int rtl8129_read( void* pNode, void* pCookie, off_t nPosition, void* pBuf
 
 static int rtl8129_write( void* pNode, void* pCookie, off_t nPosition, const void* pBuffer, size_t nSize )
 {
-	struct device* dev = pNode;
+	struct net_device* dev = pNode;
 	PacketBuf_s* psBuffer = alloc_pkt_buffer( nSize );
 	if ( psBuffer != NULL ) {
 		memcpy( psBuffer->pb_pData, pBuffer, nSize );
