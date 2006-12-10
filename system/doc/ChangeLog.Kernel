@@ -1,4 +1,15 @@
-* December 4 2006 , Arno Klenke *
+* December 10 2006, Kristian Van Der Vliet *
+
+o Added a tg3 driver for Broadcom NetExtreme Tigon3 NICs, ported from the Linux 2.6 tg3
+  driver. Tested at 100Mbps and 1000Mbps with various Broadcom chips.
+o Updated the PCI vendors list in pci_vendors.h from Linux
+o Updated linux_compat.h and added net/mii.h from Linux. Added net/net_device.h with
+  common definitions for the net_device and net_device_stats structures.
+o Checked the ethernet drivers still compile and fixed any problems with the updated
+  headers. There is still work to do here to move to the common headers but they all
+  compile.
+
+* December 4 2006, Arno Klenke *
 
 Align the stack of threads to 16 bytes
 
