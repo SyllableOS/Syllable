@@ -54,8 +54,6 @@ FILES=(	"/atheos/etc/profile, /atheos/etc/profile" 															\
 																											\
 		"/atheos/sys/keymaps/American, /atheos/sys/keymaps/American"										\
 																											\
-		"/atheos/sys/bin/DiskManager, /atheos/sys/bin/DiskManager"											\
-		"/atheos/sys/bin/aterm, /atheos/sys/bin/aterm"														\
 		"/atheos/sys/bin/dbterm, /atheos/sys/bin/dbterm"													\
 		"/atheos/sys/bin/devstat, /atheos/sys/bin/devstat"													\
 		"/atheos/sys/bin/format, /atheos/sys/bin/format"													\
@@ -366,6 +364,11 @@ function copy_files()
     let "INDEX = $INDEX + 1"
   done
   sync
+
+  # XXXKV: This has to be hacked in right now because the script can't handle paths with spaces!
+  printf "Copying System Tools\n"
+  cp -f "$BASE_DIR/atheos/Applications/System Tools/Disk Manager" "$CD_DIR/atheos/sys/bin/DiskManager"
+  cp -f "$BASE_DIR/atheos/Applications/System Tools/Terminal" "$CD_DIR/atheos/sys/bin/aterm"
 
   # Install Ruby (Must be done before links)
   unzip $RUBY_PACKAGE -d $CD_DIR/atheos/usr/
