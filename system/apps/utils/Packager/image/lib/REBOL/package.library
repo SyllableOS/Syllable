@@ -1,6 +1,6 @@
 ORCA [
 	Title:		"Package installation library"
-	Version:	0.2.0
+	Version:	0.2.1
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006 Kaj de Vos
@@ -111,8 +111,7 @@ stage-proto: context [
 			any [
 ;				FIXME: Bug in Orca list comparison:
 ;				(read index) <> []  ; Indexes directory not empty?
-;				Remove non-empty dirs as well for now; they could be from the old package manager:
-;				(length? read index) > 0  ; Indexes directory not empty?
+				(length? read index) > 0  ; Indexes directory not empty?
 ;				action join "rmdir " index
 				; May be a symlink from old package manager:
 				action join "rm -r " index
