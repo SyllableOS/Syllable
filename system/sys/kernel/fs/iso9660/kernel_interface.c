@@ -460,7 +460,7 @@ static int iso_walk( void *_volume, void *_baseNode, const char *_fileName, int 
 
 							if( fileName[0] == '.' && fileName[1] == '.' )
 							{
-								vnode *parentNode;
+								vnode *parentNode = NULL;
 
 								iso_read_vnode( volume, *vNodeID, ( void ** )&parentNode );
 
@@ -474,6 +474,8 @@ static int iso_walk( void *_volume, void *_baseNode, const char *_fileName, int 
 									kerndbg( KERN_DEBUG_LOW, "(grep)iso_walk : Directory entry for non volume root\n" );
 									*vNodeID = BLOCK_TO_INO( parentNode->startLBN[FS_DATA_FORMAT], 0 );
 								}
+								
+								iso_write_vnode( volume, parentNode );
 							}
 
 							result = -EOK;
@@ -617,7 +619,7 @@ static int iso_read_stat( void *_volume, void *_node, struct stat *st )
 //      st->st_ino = node->id;
 
 	// KV
-	iso_read_vnode( volume, node->id, ( void ** )&parentNode );
+	get_vnode( volume->id, node->id, ( void ** )&parentNode );
 	st->st_ino = BLOCK_TO_INO( parentNode->startLBN[FS_DATA_FORMAT], 0 );
 
 	st->st_nlink = node->attr.stat[FS_DATA_FORMAT].st_nlink;
@@ -630,6 +632,7 @@ static int iso_read_stat( void *_volume, void *_node, struct stat *st )
 	if( ConvertRecDate( &( node->recordDate ), &time ) == -EOK )
 		st->st_ctime = st->st_mtime = st->st_atime = time;
 
+	put_vnode( volume->id, node->id );
 	kerndbg( KERN_DEBUG, "iso_rstat - EXIT (%d)\n", result );
 
 	return result;
@@ -911,7 +914,7 @@ static int iso_read_dir( void *_volume, void *_node, void *_cookie, int position
 	nspace *volume = ( nspace * ) _volume;
 	dircookie *dirCookie = ( dircookie * )_cookie;
 
-	vnode *parentNode;
+	vnode *parentNode = NULL;
 
 	kerndbg( KERN_DEBUG, "iso_readdir - ENTER\n" );
 
@@ -940,6 +943,8 @@ static int iso_read_dir( void *_volume, void *_node, void *_cookie, int position
 	{
 		result = 0;
 	}
+	
+	iso_write_vnode( volume, parentNode );
 
 	kerndbg( KERN_DEBUG, "iso_readdir - EXIT (%d)\n", result );
 	return result;

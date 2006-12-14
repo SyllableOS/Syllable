@@ -123,6 +123,8 @@ static int expand_heap( CacheHeap_s *psHeap )
 		printk( "expand_heap() failed to resize area from %u to %u.4 bytes\n", psHeap->ch_nSize, nNewSize );
 		return ( -ENOMEM );
 	}
+	atomic_add( &g_sSysBase.ex_nBlockCacheSize, nNewSize - psHeap->ch_nSize );
+	
 	psHeap->ch_nSize = nNewSize;
 
 	for ( i = 0; i < nNewBlocks; ++i )
@@ -134,6 +136,7 @@ static int expand_heap( CacheHeap_s *psHeap )
 
 		psBlock = ( CacheBlock_s * )( ( ( uint8 * )psBlock ) + nBlockSize );
 	}
+	
 	
 	return ( 0 );
 }
@@ -162,6 +165,8 @@ static void init_heap( CacheHeap_s *psHeap )
       retry:
 	psHeap->ch_nSize = 4096 * 10;
 	psHeap->ch_nUsedBlocks = 0;
+	
+	atomic_add( &g_sSysBase.ex_nBlockCacheSize, psHeap->ch_nSize );
 
 	psHeap->ch_hAreaID = create_area( "bcache_1024", &psHeap->ch_pAddress, psHeap->ch_nSize, nMaxBufSize, AREA_FULL_ACCESS | AREA_KERNEL, AREA_FULL_LOCK );
 	if ( psHeap->ch_hAreaID < 0 )
@@ -263,7 +268,6 @@ int alloc_cache_blocks( CacheBlock_s **apsBlocks, int nCount, int nBlockSize, bo
 		psBlock->cb_psPrev = NULL;
 
 		g_sBlockCache.bc_nMemUsage += nBlockSize;
-		atomic_add( &g_sSysBase.ex_nBlockCacheSize, nBlockSize );
 		apsBlocks[nAllocCount++] = psBlock;
 	}
 	return ( nAllocCount );
@@ -285,7 +289,6 @@ void free_cache_block( CacheBlock_s *psBlock )
 	int nOrder = get_block_order( nBlockSize );
 	CacheHeap_s *psHeap = &g_asCacheHeaps[nOrder];
 
-	atomic_sub( &g_sSysBase.ex_nBlockCacheSize, nBlockSize );
 	g_sBlockCache.bc_nMemUsage -= nBlockSize;
 
 	psBlock->cb_nFlags &= CBF_SIZE_MASK;
@@ -359,7 +362,7 @@ ssize_t shrink_cache_heaps( int nIgnoredOrder )
 					nBlocksToRemove = j;
 					nNewSize = ( ( nMaxBlocks - nBlocksToRemove ) * nBlockSize + PAGE_SIZE - 1 ) & PAGE_MASK;
 					nNewCount = nNewSize / nBlockSize;
-					printk( "%i Limited to %u4 %u4 %x %i %i\n", (int)psHeap->ch_nBlockSize, nNewCount, nNewSize, (uint)psBlock->cb_nFlags, nBlocksToRemove, nMaxBlocks - nNewCount );
+					printk( "%i Limited to %u %u %x %i %i (%i %i)\n", (int)psHeap->ch_nBlockSize, nNewCount, nNewSize, (uint)psBlock->cb_nFlags, nBlocksToRemove, nMaxBlocks - nNewCount, (int)psHeap->ch_nSize, (int)psHeap->ch_nSize / nBlockSize );
 					nBlocksToRemove = nMaxBlocks - nNewCount;
 					break;
 				} 
@@ -462,6 +465,9 @@ ssize_t shrink_cache_heaps( int nIgnoredOrder )
 			nBytesFreed += psHeap->ch_nSize - nNewSize;
 			psHeap->ch_nSize = nNewSize;
 			UNLOCK( g_sBlockCache.bc_hLock );
+			
+			atomic_sub( &g_sSysBase.ex_nBlockCacheSize, nBytesFreed );
+			
 			if( resize_area( psHeap->ch_hAreaID, psHeap->ch_nSize, false ) != 0 )
 				printk( "shrink_cache_heaps(): Resize heap area failed!\n" );
 			LOCK( g_sBlockCache.bc_hLock );
