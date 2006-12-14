@@ -1,3 +1,8 @@
+* December 14 2006, Arno Klenke *
+
+o Report the total size of the blockcache and not just the allocated blocks
+o Fixed memory leak in the iso9660 driver
+
 * December 10 2006, Kristian Van Der Vliet *
 
 o Added a tg3 driver for Broadcom NetExtreme Tigon3 NICs, ported from the Linux 2.6 tg3
@@ -1049,6 +1054,7 @@ required; they are implemented in user space as part of libc.
 
 Applied a fix to sys/kernel/kernel/vfs/vfs.c  The fcntl() F_GETLK command
 now works as expected.
+
 
 
 
