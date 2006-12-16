@@ -43,7 +43,7 @@ $(OBJDIR):
 
 
 $(OBJDIR)/kernel.so: $(OBJDIR)/version.o
-	$(LD) -m elf_i386_syllable -Tkernel.lnk $(OBJS) $(OBJDIR)/version.o -o \
+	$(LD) -m elf_i386_syllable -Tkernel.lnk -kernel $(OBJS) $(OBJDIR)/version.o -o \
 	   $(OBJDIR)/kernel.so `$(CC) -kernel -print-libgcc-file-name`
 	$(CC) -nostdlib -w $(OBJDIR)/kernel.exports.c -o $(OBJDIR)/libkernel.so
 
