@@ -1640,13 +1640,19 @@ void Layer::Paint( const IRect & cUpdateRect, bool bUpdate )
 		return;
 	}
 	Messenger *pcTarget = m_pcWindow->GetAppTarget();
-
+	
 	if( NULL != pcTarget )
 	{
 		Message cMsg( M_PAINT );
 
 		cMsg.AddPointer( "_widget", GetUserObject() );
-		cMsg.AddRect( "_rect", cUpdateRect - m_cIScrollOffset );
+		if( cUpdateRect.IsValid() )
+			cMsg.AddRect( "_rect", cUpdateRect - m_cIScrollOffset );
+		else {
+			delete( m_pcActiveDamageReg );
+			m_pcActiveDamageReg = NULL;
+			return;
+		}
 
 		if( pcTarget->SendMessage( &cMsg ) < 0 )
 		{
