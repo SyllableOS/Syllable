@@ -506,11 +506,6 @@ void Layer::UpdateIfNeeded()
 		return;
 	}
 	
-	for( pcChild = m_pcBottomChild; NULL != pcChild; pcChild = pcChild->m_pcHigherSibling )
-	{
-		pcChild->UpdateIfNeeded();
-	}
-	
 	if( m_pcDamageReg != NULL )
 	{
 		if( m_pcActiveDamageReg == NULL )
@@ -520,6 +515,11 @@ void Layer::UpdateIfNeeded()
 			m_pcActiveDamageReg->Optimize();
 			Paint( static_cast < Rect > ( m_pcActiveDamageReg->GetBounds() ), true );
 		}
+	}
+	
+	for( pcChild = m_pcBottomChild; NULL != pcChild; pcChild = pcChild->m_pcHigherSibling )
+	{
+		pcChild->UpdateIfNeeded();
 	}
 }
 

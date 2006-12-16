@@ -198,9 +198,15 @@ void TopLayer::MarkLayerForRedraw( Layer* pcBackbufferedLayer, Layer* pcChild, b
 					}
 					else if( cDstRect.Includes( pcVisibleClip->m_cBounds ) )
 					{
-						bFound = true;
-						pcVisibleClip->m_cBounds = cDstRect;
-						break;
+						if( !bFound ) {
+							pcVisibleClip->m_cBounds = cDstRect;
+						}
+						else {
+							os::ClipRect* pcOldClip = pcVisibleClip;
+							pcVisibleClip = pcOldClip->m_pcPrev;
+							pcBackbufferedLayer->m_pcVisibleDamageReg->m_cRects.RemoveRect( pcOldClip );
+						}
+						bFound = true;						
 					}
 				}
 				if( !bFound )

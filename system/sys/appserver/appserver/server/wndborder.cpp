@@ -263,7 +263,7 @@ void WndBorder::Paint( const IRect & cUpdateRect, bool bUpdate )
 	{
 		EndUpdate();
 	}
-	g_pcTopView->RedrawLayer( this, this, false );
+	g_pcTopView->MarkLayerForRedraw( this, this, false );
 }
 
 IRect WndBorder::AlignRect( const IRect & cRect, const IRect & cBorders )
