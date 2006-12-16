@@ -79,7 +79,6 @@ SrvWindow::SrvWindow( const char *pzTitle, void *pTopView, uint32 nFlags, uint32
 	m_nFlags = nFlags;
 	m_bOffscreen = false;
 	atomic_set( &m_nPendingPaintCounter, 0 );
-	m_asUpdateList.clear();
 	Rect cBorderFrame = cRect;
 
 	m_pcWndBorder = new WndBorder( this, NULL, "wnd_border", ( nFlags & WND_BACKMOST ) );
@@ -490,19 +489,6 @@ bool SrvWindow::IsLocked( void )
 	return ( m_cMutex.IsLocked() );
 }
 
-void SrvWindow::AddToUpdateList( Layer* pcLayer, bool bUpdateChildren )
-{
-	if( pcLayer->m_bOnUpdateList ) {
-		if( bUpdateChildren )
-			pcLayer->m_bUpdateChildren = true;
-	}
-	else {
-		pcLayer->m_bOnUpdateList = true;
-		pcLayer->m_bUpdateChildren = bUpdateChildren;
-		m_asUpdateList.push_back( pcLayer->GetHandle() );
-	}
-}
-
 
 bool SrvWindow::HasPendingSizeEvents( Layer * pcLayer )
 {
@@ -573,7 +559,7 @@ void SrvWindow::WindowActivated( bool bFocus )
 		if( m_pcWndBorder != NULL )
 		{
 			m_pcDecorator->SetFocusState( bFocus );
-			g_pcTopView->UpdateLayer( m_pcWndBorder, false );
+			g_pcTopView->RedrawLayer( m_pcWndBorder, m_pcWndBorder, false );
 		}
 	}
 }
@@ -627,6 +613,8 @@ void SrvWindow::R_Render( WR_Render_s * psPkt )
 			}
 			bViewsMoved = false;
 		}
+		
+		bool bForceRedraw = false;
 
 		Layer *pcView = FindLayer( psHdr->hViewToken );
 
@@ -635,14 +623,7 @@ void SrvWindow::R_Render( WR_Render_s * psPkt )
 			continue;
 		}
 		
-		/* Copy the last layer to the blitlist */			
-		if( !pcView->m_bOnUpdateList ) {
-			m_asUpdateList.push_back( pcView->GetHandle() );
-			pcView->m_bUpdateChildren = false;
-			pcView->m_bOnUpdateList = true;
-		}
-		
-		
+	
 		switch ( psHdr->nCmd )
 		{
 		case DRC_BEGIN_UPDATE:
@@ -814,10 +795,10 @@ void SrvWindow::R_Render( WR_Render_s * psPkt )
 							nLowest = pcParent->GetLevel();
 							pcLowestLayer = pcParent;
 						}
-						pcView->m_bUpdateChildren = true;
 					}
 				}
 				bViewsMoved = true;
+				bForceRedraw = true;
 				break;
 			}
 		case DRC_SHOW_VIEW:
@@ -859,8 +840,10 @@ void SrvWindow::R_Render( WR_Render_s * psPkt )
 							pcLowestLayer = pcParent;
 						}
 					}
+					
 				}
 				bViewsMoved = true;
+				bForceRedraw = true;
 				break;
 			}
 
@@ -875,7 +858,6 @@ void SrvWindow::R_Render( WR_Render_s * psPkt )
 				pcView->ScrollBy( psMsg->cDelta );
 				if( pcView->m_pcBitmap == g_pcScreenBitmap )
 					SrvSprite::Unhide();
-				pcView->m_bUpdateChildren = true;
 				g_cLayerGate.Open();
 				g_cLayerGate.Lock();
 				break;
@@ -950,9 +932,17 @@ void SrvWindow::R_Render( WR_Render_s * psPkt )
 					}
 				}
 				bViewsMoved = true;
+				bForceRedraw = ( psHdr->nCmd == DRC_SET_SHAPE_REGION );
 				break;
 			}
 		}
+		
+		/* Mark the layer for redrawing if we use backbuffered rendering */
+		if( m_pcWndBorder && m_pcWndBorder->m_pcBackbuffer != NULL && ( !pcView->m_bNeedsRedraw || bForceRedraw ) ) {
+			pcView->m_bNeedsRedraw = true;
+			g_pcTopView->MarkLayerForRedraw( m_pcWndBorder, pcView, true );
+		
+		}		
 	}
 	
 	if( bViewsMoved )
@@ -979,26 +969,13 @@ void SrvWindow::R_Render( WR_Render_s * psPkt )
 	/* Update the content of the modified layers */
 	if( m_pcWndBorder != NULL )
 	{
-		g_cLayerGate.Lock();
+		g_cLayerGate.Close();
 		
 		if( atomic_read( &m_nPendingPaintCounter ) == 0 )
 		{
-			/* We only update if there is no paint pending */	
-			for( uint i = 0; i < m_asUpdateList.size(); i++ )
-			{
-				Layer *pcView = FindLayer( m_asUpdateList[i] );
-
-				if( pcView == NULL )
-					continue;
-				
-				pcView->m_bOnUpdateList = false;
-				if( ( pcView->m_bUpdateChildren == true || ( pcView->m_pcDamageReg == NULL && pcView->m_pcActiveDamageReg == NULL && pcView->m_bIsUpdating == false ) ) )
-					g_pcTopView->UpdateLayer( pcView, pcView->m_bUpdateChildren );
-			}
-			m_asUpdateList.clear();
-		}	
-
-		g_cLayerGate.Unlock();
+			g_pcTopView->UpdateIfNeeded();
+		}
+		g_cLayerGate.Open();
 	}
 	
 	if( psPkt->hReply != -1 )
@@ -1507,7 +1484,7 @@ bool SrvWindow::DispatchMessage( Message * pcReq )
 			if( m_pcDecorator != NULL )
 			{
 				m_pcDecorator->SetTitle( m_cTitle.c_str() );
-				g_pcTopView->UpdateLayer( m_pcWndBorder, false );
+				g_pcTopView->RedrawLayer( m_pcWndBorder, m_pcWndBorder, false );
 			}
 			rename_thread( -1, String ().Format( "W:%.62s", pzTitle ).c_str(  ) );
 
@@ -1838,6 +1815,8 @@ bool SrvWindow::DispatchMessage( const void *psMsg, int nCode )
 		{
 			/* Called by libsyllable after it has processed one paint message. We will update
 			our window if the pending paint counter goes 0 */
+			
+			
 			atomic_dec( &m_nPendingPaintCounter );
 			if( atomic_read( &m_nPendingPaintCounter ) < 0 )
 			{
@@ -1846,45 +1825,9 @@ bool SrvWindow::DispatchMessage( const void *psMsg, int nCode )
 			}
 			if( atomic_read( &m_nPendingPaintCounter ) == 0 )
 			{
-				/* Update using the update list */
-				g_cLayerGate.Lock();
-				
-				bool bFullUpdate = false;
-				
-				/* Check if we have an update entry for the whole window */
-				for( uint i = 0; i < m_asUpdateList.size(); i++ )
-				{
-					Layer *pcView = FindLayer( m_asUpdateList[i] );
-
-					if( pcView == NULL )
-						continue;
-				
-					pcView->m_bOnUpdateList = false;
-					
-					if( pcView == m_pcWndBorder && pcView->m_bUpdateChildren ) {
-						bFullUpdate = true;
-					}
-				}
-				if( bFullUpdate )
-				{
-					g_pcTopView->UpdateLayer( m_pcWndBorder, true );
-				}
-				else
-				{
-					for( uint i = 0; i < m_asUpdateList.size(); i++ )
-					{
-						Layer *pcView = FindLayer( m_asUpdateList[i] );
-
-						if( pcView == NULL )
-							continue;
-								
-						if( ( pcView->m_bUpdateChildren == true || ( pcView->m_pcDamageReg == NULL && pcView->m_pcActiveDamageReg == NULL && pcView->m_bIsUpdating == false ) ) )
-							g_pcTopView->UpdateLayer( pcView, pcView->m_bUpdateChildren );			
-					}
-				}
-
-				m_asUpdateList.clear();
-				g_cLayerGate.Unlock();
+				g_cLayerGate.Close();
+				g_pcTopView->UpdateIfNeeded();
+				g_cLayerGate.Open();
 			}
 			break;
 		}

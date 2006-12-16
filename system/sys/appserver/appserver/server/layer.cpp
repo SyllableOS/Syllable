@@ -64,7 +64,6 @@ void Layer::Init()
 	m_bIsUpdating = false;
 	m_bHasInvalidRegs = true;
 	m_nLevel = 0;
-	//m_cFontViewListIterator = NULL;
 	m_bIsAddedToFont = false;
 
 	m_nHideCount = 0;
@@ -88,13 +87,12 @@ void Layer::Init()
 	m_hHandle = g_pcLayers->Insert( this );
 	m_bBackdrop = false;
 
-	m_bOnUpdateList = false;	
-	m_bUpdateChildren = false;
+	m_bNeedsRedraw = false;	
 	m_pcBackbuffer = NULL;
 	m_pcVisibleFullReg = NULL;
 	m_pcPrevVisibleFullReg = NULL;
-	
-
+	m_pcVisibleDamageReg = NULL;
+	m_bForceRedraw = false;
 
 	memset( m_asFontPallette, 255, sizeof( m_asFontPallette ) );
 	memset( m_anFontPalletteConverted, NUM_FONT_GRAYS, sizeof( uint32 ) );
@@ -200,7 +198,10 @@ void Layer::Show( bool bFlag )
 	{
 		m_nHideCount++;
 	}
-
+	
+	m_cDeltaSize = IPoint( 0, 0 );
+	m_cDeltaMove = IPoint( 0, 0 );
+	
 	m_pcParent->m_bHasInvalidRegs = true;
 	SetDirtyRegFlags();
 
@@ -509,7 +510,7 @@ void Layer::UpdateIfNeeded()
 	{
 		pcChild->UpdateIfNeeded();
 	}
-
+	
 	if( m_pcDamageReg != NULL )
 	{
 		if( m_pcActiveDamageReg == NULL )
@@ -1336,6 +1337,22 @@ void Layer::ClearDirtyRegFlags()
 	for( Layer * pcChild = m_pcBottomChild; NULL != pcChild; pcChild = pcChild->m_pcHigherSibling )
 	{
 		pcChild->ClearDirtyRegFlags();
+	}
+}
+
+//----------------------------------------------------------------------------
+// NAME:
+// DESC:
+// NOTE:
+// SEE ALSO:
+//----------------------------------------------------------------------------
+
+void Layer::ClearRedrawFlags()
+{
+	m_bNeedsRedraw = false;
+	for( Layer * pcChild = m_pcBottomChild; NULL != pcChild; pcChild = pcChild->m_pcHigherSibling )
+	{
+		pcChild->ClearRedrawFlags();
 	}
 }
 

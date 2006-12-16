@@ -179,6 +179,7 @@ private:
   
 
     void ClearDirtyRegFlags();
+    void ClearRedrawFlags();
     virtual void RebuildRegion( bool bForce );
     virtual void MoveChilds();
     virtual void InvalidateNewAreas( void );  
@@ -225,15 +226,16 @@ public:
     bool	m_bIsUpdating;		// True while we paint areas from the damage list
     bool	m_bBackdrop;
     
-    bool	m_bOnUpdateList;
-    bool	m_bUpdateChildren;
+    bool	m_bNeedsRedraw;
     
     // Members for layers connected to the top screen layer:
     SrvBitmap* m_pcBackbuffer; // If != NULL then this layer has its own backbuffer.
     							// This is only possible for window borders.
     							// The backbuffer is managed by the TopLayer class
     os::Region* m_pcVisibleFullReg; // Visible areas, including child areas
-    os::Region* m_pcPrevVisibleFullReg;
+    os::Region* m_pcPrevVisibleFullReg; // The previous visible area. Only valid during updates.
+    os::Region* m_pcVisibleDamageReg; // The visible damage region
+    bool m_bForceRedraw; // If set then the layer will be redrawn even if not all drawing operations are finished
     
 	// Render state:
     os::Point		m_cPenPos;

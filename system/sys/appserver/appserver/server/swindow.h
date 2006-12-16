@@ -92,7 +92,6 @@ public:
     bool	IsOffScreen() const	{ return( m_bOffscreen ); }
     int		GetPaintCounter() const { return( atomic_read( &m_nPendingPaintCounter ) ); }
 	void	IncPaintCounter() { atomic_inc( &m_nPendingPaintCounter ); }
-	void	AddToUpdateList( Layer* pcLayer, bool bUpdateChildren );
 	
     bool	HasPendingSizeEvents( Layer* pcLayer );
     
@@ -147,7 +146,6 @@ private:
     bigtime_t		m_nLastHitTime;	// Time of last mouse click
     bool			m_bOffscreen;	// True for bitmap windows
 	atomic_t		m_nPendingPaintCounter;
-	std::vector<int> m_asUpdateList;
     thread_id		m_hThread;
     port_id			m_hMsgPort;	// Requests from application
     port_id			m_hEventPort;	// Events to application

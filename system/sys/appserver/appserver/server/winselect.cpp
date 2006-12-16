@@ -299,7 +299,7 @@ void WinSelect::Paint( const IRect & cUpdateRect, bool bUpdate )
 	{
 		EndUpdate();
 	}
-	g_pcTopView->UpdateLayer( this, true );
+	g_pcTopView->RedrawLayer( this, this, false );
 }
 void WinSelect::Step( bool bForward )
 {

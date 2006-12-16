@@ -11,7 +11,22 @@ __VW_reserved1____Q22os4View:
 .type __WI_reserved1____Q22os6Window,@function
 __WI_reserved1____Q22os6Window:
 	ret
-.size	__WI_reserved1____Q22os6Window,1	
+.size	__WI_reserved1____Q22os6Window,1
+
+	.global _ZN2os8IconView17__ICV_reserved1__Ev
+
+.type _ZN2os8IconView17__ICV_reserved1__Ev,@function
+_ZN2os8IconView17__ICV_reserved1__Ev:
+	ret
+.size	_ZN2os8IconView17__ICV_reserved1__Ev,1	
+
+
+
+
+
+
+
+
 
 
 

@@ -263,7 +263,7 @@ void WndBorder::Paint( const IRect & cUpdateRect, bool bUpdate )
 	{
 		EndUpdate();
 	}
-	g_pcTopView->UpdateLayer( this, false );
+	g_pcTopView->RedrawLayer( this, this, false );
 }
 
 IRect WndBorder::AlignRect( const IRect & cRect, const IRect & cBorders )
@@ -433,7 +433,7 @@ bool WndBorder::MouseMoved( Messenger * pcAppTarget, const Point & cNewPos, int 
 		}
 	}
 	if( bNeedRedraw )
-		g_pcTopView->UpdateLayer( this, false );
+		g_pcTopView->RedrawLayer( this, this, false );
 	
 
 	if( m_eHitItem == WindowDecorator::HIT_DRAG )
@@ -603,7 +603,7 @@ bool WndBorder::MouseDown( Messenger * pcAppTarget, const Point & cPos, int nBut
 		{
 			m_nButtonDown[m_eHitItem] = 1;
 			m_pcDecorator->SetButtonState( m_eHitItem, true );
-			g_pcTopView->UpdateLayer( this, false );
+			g_pcTopView->RedrawLayer( this, this, false );
 		}
 	}
 
@@ -716,7 +716,7 @@ void WndBorder::MouseUp( Messenger * pcAppTarget, const Point & cPos, int nButto
 		m_nButtonDown[i] = 0;
 	}
 	if( bNeedRedraw )
-		g_pcTopView->UpdateLayer( this, false );
+		g_pcTopView->RedrawLayer( this, this, false );
 
 	m_cRawFrame = m_cIFrame;
 

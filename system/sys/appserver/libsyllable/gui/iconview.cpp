@@ -908,9 +908,10 @@ public:
 			if( nIcon < 0 )
 				return( os::View::MouseDown( cPosition, nButtons ) );
 		}
-			
+		
+		
 		/* Check if we have a double click */
-		if( get_system_time() - m->m_nLastClick < 500000 && m->m_cIcons[nIcon]->m_bSelected && !( GetQualifiers() & os::QUAL_CTRL ) )
+		if( !m->m_bMouseSelectedIcon && get_system_time() - m->m_nLastClick < 500000 && m->m_cIcons[nIcon]->m_bSelected && !( GetQualifiers() & os::QUAL_CTRL ) )
 		{
 			/* Invoke */
 			m->Lock();

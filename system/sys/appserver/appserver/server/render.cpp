@@ -1169,6 +1169,12 @@ void Layer::DrawBitMap( SrvBitmap * pcBitMap, Rect cSrcRect, Rect cDstRect )
 
 	IRect cISrcRect( cSrcRect );
 	IRect cIDstRect( cDstRect + m_cScrollOffset );
+	
+	if( !pcBitMap->GetBounds().Includes( cISrcRect ) )
+	{
+		dbprintf( "Error: Tried to draw bitmap with source rectangle larger than the bitmap size\n" );
+		return;
+	}
 
 	if( ( m_pcWindow == NULL || m_pcWindow->IsOffScreen() == false ) && m_pcBitmap == g_pcScreenBitmap )
 	{

@@ -98,12 +98,13 @@ void ImageView::Paint( const Rect & cUpdateRect )
 	{
 		/* TODO: First rect should be changed to the section of the Image that will result    */
 		/* in cUpdateRect when scaled according to the ration between CBounds and Image size. */
-		/* NOTE: View->DrawBitmap() scaling must be implemented first! */
-		m->m_pcImage->Draw( cUpdateRect, cUpdateRect, this );
+		m->m_pcImage->Draw( m->m_pcImage->GetBounds(), GetBounds(), this );
 	}
 	else
 	{
-		m->m_pcImage->Draw( cUpdateRect, cUpdateRect, this );
+		os::Rect cRect = cUpdateRect & m->m_pcImage->GetBounds();
+		if( cRect.IsValid() )
+			m->m_pcImage->Draw( cRect, cRect, this );
 	}
 }
 

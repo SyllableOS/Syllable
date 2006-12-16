@@ -72,6 +72,12 @@ public:
   
     bool DoIntersect( const Rect& cRect ) const
     { return( !( cRect.right < left || cRect.left > right || cRect.bottom < top || cRect.top > bottom ) ); }
+    
+    bool Includes( const Rect& cRect ) const
+    {
+    	return( cRect.IsValid() && IsValid() &&
+    			cRect.left >= left && cRect.top >= top && cRect.right <= right && cRect.bottom <= bottom );
+    }
 
     float  Width( void ) const	 { return( right - left ); }
     float  Height( void ) const	 { return( bottom - top ); }
@@ -158,6 +164,12 @@ public:
   
     bool DoIntersect( const IRect& cRect ) const
     { return( !( cRect.right < left || cRect.left > right || cRect.bottom < top || cRect.top > bottom ) ); }
+    
+    bool Includes( const Rect& cRect ) const
+    {
+    	return( cRect.IsValid() && IsValid() &&
+    			cRect.left >= left && cRect.top >= top && cRect.right <= right && cRect.bottom <= bottom );
+    }
 
     int	   Width() const	{ return( right - left ); }
     int	   Height() const	{ return( bottom - top ); }

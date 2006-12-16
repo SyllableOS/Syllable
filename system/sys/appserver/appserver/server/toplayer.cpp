@@ -153,67 +153,104 @@ void TopLayer::FreeBackbuffers( void )
 	}
 }
 
-/** Updates the content of one layer.
+/** Marks the layer for redrawing.
  * \par Description:
- * Called from various places. The method will iterate through the parent layers
- * until it has found the one that is directly attached to the top layer. It will
- * then calculate the visible region of the layer and blit the content of the backbuffer
- * to the framebuffer.
+ * Called from various places. It will
+ * calculate the visible region of the layer and set the visible damage region.
+ * \param pcBackbufferedLayer - The backbuffered layer.
  * \param pcChild - Pointer to the layer.
- * \param bUpdateChildren - If true then also the child areas will be updated.
+ * \param bRedrawChildren - Redraw children.
  * \author Arno Klenke
  *****************************************************************************/
-void TopLayer::UpdateLayer( Layer* pcChild, bool bUpdateChildren )
+void TopLayer::MarkLayerForRedraw( Layer* pcBackbufferedLayer, Layer* pcChild, bool bRedrawChildren )
+{
+	ClipRect* pcLayerClip;
+	ClipRect* pcVisibleClip;
+	
+	if( pcChild->m_nHideCount > 0 || pcChild->m_pcBitmapReg == NULL ) 
+		return;
+	
+	if( pcBackbufferedLayer->m_pcBackbuffer == NULL )
+		return;
+				
+	IPoint cTopLeft = IPoint( pcChild->ConvertToRoot( Point( 0, 0 ) ) );
+		
+
+	__assertw( m_pcBitmap != NULL );
+	
+	/* Intersect the visible region of the directly connected layer with the frame of the layer */		
+	ENUMCLIPLIST( ( bRedrawChildren ? &pcChild->m_pcBitmapFullReg->m_cRects : &pcChild->m_pcBitmapReg->m_cRects ), pcLayerClip )
+	{
+		IRect cDstRect = ( ( pcBackbufferedLayer->m_cIFrame ) & ( pcLayerClip->m_cBounds + cTopLeft ) ) - pcBackbufferedLayer->GetIFrame().LeftTop();
+		
+		if( cDstRect.IsValid() )
+		{
+			if( pcBackbufferedLayer->m_pcVisibleDamageReg == NULL )
+				pcBackbufferedLayer->m_pcVisibleDamageReg = new Region( cDstRect );
+			else {
+				bool bFound = false;
+				ENUMCLIPLIST( ( &pcBackbufferedLayer->m_pcVisibleDamageReg->m_cRects ), pcVisibleClip )
+				{
+					/* Check if this cliprect is already covered in the damage list */
+					if( pcVisibleClip->m_cBounds.Includes( cDstRect ) ) {
+						bFound = true;
+						break;
+					}
+					else if( cDstRect.Includes( pcVisibleClip->m_cBounds ) )
+					{
+						bFound = true;
+						pcVisibleClip->m_cBounds = cDstRect;
+						break;
+					}
+				}
+				if( !bFound )
+					pcBackbufferedLayer->m_pcVisibleDamageReg->AddRect( cDstRect );
+			}
+		}
+	}
+}
+
+/** Redraws a layer.
+ * \par Description:
+ * Called from various places. It will redraw a layer.
+ * \param pcBackbufferedLayer - The backbuffered layer.
+ * \param pcChild - Pointer to the layer.
+ * \param bRedrawChildren - If true then also the child areas will be updated.
+ * \author Arno Klenke
+ *****************************************************************************/
+void TopLayer::RedrawLayer( Layer* pcBackbufferedLayer, Layer* pcChild, bool bRedrawChildren )
 {
 	ClipRect* pcWindowClip;
 	ClipRect* pcLayerClip;
-	SrvBitmap* pcBackbuffer = NULL;
-	Layer* pcLayer = NULL;
-	
-	
 	if( pcChild->m_nHideCount > 0 || pcChild->m_pcBitmapReg == NULL ) 
 		return;
 		
 	if( pcChild->GetWindow() != NULL && pcChild->GetWindow()->GetPaintCounter() > 0 )
 	{
-		pcChild->GetWindow()->AddToUpdateList( pcChild, bUpdateChildren );
-		return;
-	}
-
-	IPoint cTopLeft( 0, 0 );
-		
-	/* Find the parent layer which is a direct child of us */
-	pcLayer = pcChild;
-	while( pcLayer->GetParent() != NULL )
-	{		
-		cTopLeft += pcLayer->GetIFrame().LeftTop();
-		if( pcLayer->GetParent() == this && pcLayer->m_pcBackbuffer != NULL 
-			&& pcLayer->m_pcVisibleFullReg != NULL )
-		{
-			pcBackbuffer = pcLayer->m_pcBackbuffer;
-			break;
-		}
-		pcLayer = pcLayer->GetParent();
+		return( MarkLayerForRedraw( pcBackbufferedLayer, pcChild, bRedrawChildren ) );
 	}
 	
-	if( pcBackbuffer == NULL )
+	
+	if( pcBackbufferedLayer->m_pcBackbuffer == NULL || pcBackbufferedLayer->m_pcVisibleFullReg == NULL )
 		return;
-
+		
+	IPoint cTopLeft = IPoint( pcChild->ConvertToRoot( Point( 0, 0 ) ) );
+	
 	__assertw( m_pcBitmap != NULL );
 	
 	SrvSprite::Hide( pcChild->GetIBounds() + cTopLeft );
 	
 	/* Intersect the visible region of the directly connected layer with the visible region of the layer */		
-	ENUMCLIPLIST( &pcLayer->m_pcVisibleFullReg->m_cRects, pcWindowClip )
+	ENUMCLIPLIST( &pcBackbufferedLayer->m_pcVisibleFullReg->m_cRects, pcWindowClip )
 	{
-		ENUMCLIPLIST( ( bUpdateChildren ? &pcChild->m_pcBitmapFullReg->m_cRects : &pcChild->m_pcBitmapReg->m_cRects ), pcLayerClip )
+		ENUMCLIPLIST( ( bRedrawChildren ? &pcChild->m_pcBitmapFullReg->m_cRects : &pcChild->m_pcBitmapReg->m_cRects ), pcLayerClip )
 		{
 			IRect cDstRect = ( pcWindowClip->m_cBounds ) & ( pcLayerClip->m_cBounds + cTopLeft );
-			IRect cSrcRect = cDstRect - pcLayer->GetIFrame().LeftTop();
-			
+			IRect cSrcRect = cDstRect - pcBackbufferedLayer->GetIFrame().LeftTop();
+
 			if( cSrcRect.IsValid() && cDstRect.IsValid() )
-			{
-				m_pcBitmap->m_pcDriver->BltBitmap( m_pcBitmap, pcLayer->m_pcBackbuffer, cSrcRect, cDstRect, DM_COPY, 0xff );
+			{				
+				m_pcBitmap->m_pcDriver->BltBitmap( m_pcBitmap, pcBackbufferedLayer->m_pcBackbuffer, cSrcRect, cDstRect, DM_COPY, 0xff );
 			}
 		}
 	}
@@ -284,12 +321,12 @@ void TopLayer::MoveChilds( void )
 	Layer* pcChild;
 	ClipRect* pcClip;
 	
-	/* Copy the contents of the moved layers */
+	/* Update the contents of the moved layers */
 	for( pcChild = m_pcBottomChild; NULL != pcChild; pcChild = pcChild->m_pcHigherSibling )
 	{
 		if( pcChild->m_nHideCount == 0 && pcChild->m_cDeltaMove != IPoint( 0, 0 ) )
 		{
-			if( pcChild->m_bHasInvalidRegs && pcChild->m_pcVisibleFullReg != NULL   )
+			if( pcChild->m_bHasInvalidRegs && pcChild->m_pcVisibleFullReg != NULL )
 			{
 				if( pcChild->m_pcBackbuffer == NULL && pcChild->m_pcPrevVisibleFullReg != NULL )
 				{
@@ -337,25 +374,17 @@ void TopLayer::MoveChilds( void )
 				}
 				else if( pcChild->m_pcBackbuffer != NULL )
 				{			
-					if( pcChild->GetWindow() && ( pcChild->GetWindow()->GetPaintCounter() > 0
-						|| pcChild->m_pcDamageReg != NULL ) )
+					/* Mark the invalid regions */
+					pcChild->m_bForceRedraw = true;
+					ENUMCLIPLIST( &pcChild->m_pcVisibleFullReg->m_cRects, pcClip )
 					{
-						pcChild->GetWindow()->AddToUpdateList( pcChild, true );
-						continue;
-					}
-					if( !pcChild->m_pcVisibleFullReg->IsEmpty() )
-					{
-						/* Update the layer */
-						ENUMCLIPLIST( &pcChild->m_pcVisibleFullReg->m_cRects, pcClip )
-						{
-							IRect cDstRect = pcClip->m_cBounds;
-							IRect cSrcRect = cDstRect - pcChild->GetIFrame().LeftTop();
-					
-							if( cSrcRect.IsValid() && cDstRect.IsValid() )
-							{
-								m_pcBitmap->m_pcDriver->BltBitmap( m_pcBitmap, pcChild->m_pcBackbuffer, cSrcRect, cDstRect, DM_COPY, 0xff );
-							}
-						}
+						IRect cDstRect = pcClip->m_cBounds;
+						if( cDstRect.IsValid() ) {
+							if( pcChild->m_pcVisibleDamageReg == NULL )
+								pcChild->m_pcVisibleDamageReg = new Region( cDstRect - pcChild->GetIFrame().LeftTop() );
+							else
+								pcChild->m_pcVisibleDamageReg->AddRect( cDstRect - pcChild->GetIFrame().LeftTop() );
+						}						
 					}
 				}
 			}
@@ -383,8 +412,8 @@ void TopLayer::InvalidateNewAreas( void )
 	Layer* pcChild;
 	ClipRect* pcClip;
 	
-	bool bSpritesHidden = false;
 	
+	Layer::InvalidateNewAreas();
 	
 	/* Update the contents of layers which have not been moved */
 	for( pcChild = m_pcBottomChild; NULL != pcChild; pcChild = pcChild->m_pcHigherSibling )
@@ -392,56 +421,30 @@ void TopLayer::InvalidateNewAreas( void )
 		if( pcChild->m_cDeltaMove == IPoint( 0, 0 ) && pcChild->m_nHideCount == 0 && 
 			pcChild->m_bHasInvalidRegs && pcChild->m_pcVisibleFullReg != NULL && pcChild->m_pcBackbuffer != NULL )
 		{
-			if( pcChild->GetWindow() && ( pcChild->GetWindow()->GetPaintCounter() > 0
-				|| pcChild->m_pcDamageReg != NULL ) )
-			{
-				pcChild->GetWindow()->AddToUpdateList( pcChild, true );
-				goto next;
-			}
 			/* Calculate newly visible areas */
 			Region cDamage( *pcChild->m_pcVisibleFullReg );
 			
 			if( pcChild->m_pcPrevVisibleFullReg != NULL )
 				cDamage.Exclude( *pcChild->m_pcPrevVisibleFullReg );
 			
-				
 			cDamage.Optimize();
-				
-			__assertw( m_pcBitmap != NULL );
 			
 			if( !cDamage.IsEmpty() )
 			{
-				/* Update the layer */
+				/* Mark the invalid regions */
 				ENUMCLIPLIST( &cDamage.m_cRects, pcClip )
 				{
-					IRect cDstRect = pcClip->m_cBounds;
-					//cDstRect &= GetIBounds();
-					IRect cSrcRect = cDstRect - pcChild->GetIFrame().LeftTop();
-					
-					if( cSrcRect.IsValid() && cDstRect.IsValid() )
-					{						
-						if( bSpritesHidden == false )
-						{
-							if( SrvSprite::DoIntersect( cDstRect ) )
-							{
-								SrvSprite::Hide();
-								bSpritesHidden = true;
-							}
-						}
-						m_pcBitmap->m_pcDriver->BltBitmap( m_pcBitmap, pcChild->m_pcBackbuffer, cSrcRect, cDstRect, DM_COPY, 0xff );
-					}
+					if( pcChild->m_pcVisibleDamageReg == NULL )
+						pcChild->m_pcVisibleDamageReg = new Region( pcClip->m_cBounds - pcChild->GetIFrame().LeftTop() );
+					else
+						pcChild->m_pcVisibleDamageReg->AddRect( pcClip->m_cBounds - pcChild->GetIFrame().LeftTop() );
 				}
 			}
 		}
-		next:
 		delete( pcChild->m_pcPrevVisibleFullReg );
 		pcChild->m_pcPrevVisibleFullReg = NULL;
 	}
 	
-	if( bSpritesHidden )
-		SrvSprite::Unhide();
-	
-	Layer::InvalidateNewAreas();
 }
 
 
@@ -456,6 +459,7 @@ void TopLayer::RebuildRegion( bool bForce )
 {
 	Layer* pcChild;
 	Layer* pcSibling;
+	
 	
 	Layer::RebuildRegion( bForce );
 	
@@ -486,6 +490,66 @@ void TopLayer::RebuildRegion( bool bForce )
 	}
 }
 
+void TopLayer::UpdateIfNeeded()
+{
+	Layer::UpdateIfNeeded();
+	
+	Layer* pcChild;
+	ClipRect* pcSrcClip;
+	ClipRect* pcDstClip;
+	
+	bool bSpritesHidden = false;
+	
+	
+	__assertw( m_pcBitmap != NULL );
+	
+	/* Update the contents of layers which have not been moved */
+	for( pcChild = m_pcBottomChild; NULL != pcChild; pcChild = pcChild->m_pcHigherSibling )
+	{
+		if( pcChild->m_nHideCount == 0 && pcChild->m_pcBackbuffer != NULL
+			&& pcChild->m_pcVisibleDamageReg != NULL )
+		{
+			if( pcChild->GetWindow() != NULL && pcChild->GetWindow()->GetPaintCounter() > 0 && !pcChild->m_bForceRedraw )
+				continue;
+			
+			/* Update the layer */
+			if( !pcChild->m_pcVisibleDamageReg->IsEmpty() )
+			{
+				pcChild->m_pcVisibleDamageReg->Optimize();
+				ENUMCLIPLIST( &pcChild->m_pcVisibleDamageReg->m_cRects, pcSrcClip )
+				{
+					ENUMCLIPLIST( &pcChild->m_pcVisibleFullReg->m_cRects, pcDstClip )
+					{
+						IRect cDstRect = pcSrcClip->m_cBounds + pcChild->GetIFrame().LeftTop();
+						cDstRect &= pcDstClip->m_cBounds;
+						IRect cSrcRect = cDstRect - pcChild->GetIFrame().LeftTop();
+					
+						if( cSrcRect.IsValid() && cDstRect.IsValid() )
+						{						
+							if( bSpritesHidden == false )
+							{
+								if( SrvSprite::DoIntersect( cDstRect ) )
+								{
+									SrvSprite::Hide();
+									bSpritesHidden = true;
+								}
+							}
+							m_pcBitmap->m_pcDriver->BltBitmap( m_pcBitmap, pcChild->m_pcBackbuffer, cSrcRect, cDstRect, DM_COPY, 0xff );
+						}
+					}
+				}
+			}
+		}	
+		pcChild->m_bForceRedraw = false;		
+		delete( pcChild->m_pcVisibleDamageReg );
+		pcChild->m_pcVisibleDamageReg = NULL;
+	}
+						
+	if( bSpritesHidden )
+		SrvSprite::Unhide();
+		
+	ClearRedrawFlags();
+}
 
 /** Adds a child to the toplayer.
  * \par Description:
@@ -522,7 +586,8 @@ void TopLayer::RemoveChild( Layer * pcChild )
 	/* Delete the visible areas of the child */
 	delete( pcChild->m_pcVisibleFullReg );
 	pcChild->m_pcVisibleFullReg = NULL;
-	
+	delete( pcChild->m_pcVisibleDamageReg );
+	pcChild->m_pcVisibleDamageReg = NULL;
 }
 
 

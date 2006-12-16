@@ -30,7 +30,8 @@ public:
 	
 	// Public methods
 	void LayerFrameChanged( Layer* pcChild, os::IRect cFrame );
-	void UpdateLayer( Layer* pcChild, bool bUpdateChildren );
+	void MarkLayerForRedraw( Layer* pcBackbufferedLayer, Layer* pcChild, bool bRedrawChildren );
+	void RedrawLayer( Layer* pcBackbufferedLayer, Layer* pcChild, bool bRedrawChildren );
 	void FreeBackbuffers( void );
 	
 	// Implementation of the layer methods
@@ -38,6 +39,7 @@ public:
 	void RebuildRegion( bool bForce );
 	void MoveChilds( void );
 	void InvalidateNewAreas( void );
+	void UpdateIfNeeded();
 	
 	void AddChild( Layer* pcChild, bool bTopmost );
     void RemoveChild( Layer* pcChild );
