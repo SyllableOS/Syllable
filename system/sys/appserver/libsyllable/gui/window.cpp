@@ -1596,7 +1596,8 @@ void Window::DispatchMessage( Message * pcMsg, Handler * pcHandler )
 				{
 					pcView->_BeginUpdate();
 					pcView->_ConstrictRectangle( &cRect, Point( 0, 0 ) );
-					pcView->Paint( cRect );
+					if( cRect.IsValid() )			
+						pcView->Paint( cRect );
 					pcView->_EndUpdate();
 					if( m->m_bDidScrollRect )
 					{
