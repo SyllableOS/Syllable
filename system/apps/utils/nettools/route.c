@@ -7,7 +7,7 @@
 
 #include <netinet/in.h>
 #include <net/net.h>
-#include </ainc/net/route.h>
+#include <net/route.h>
 #include <sys/ioctl.h>
 
 int g_nShowHelp = 0;
