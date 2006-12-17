@@ -1,22 +1,22 @@
 //
-// Albert String Catalog
+// Calculator String Catalog
 //
 // Translated by: Daniel Eriksson
 //
 
-MSG_MAINWND_TITLE=0									Calculator
+MSG_MAINWND_TITLE=0										Kalkylator
 
-MSG_MAINWND_MENU_FILE=100							Fil
+MSG_MAINWND_MENU_FILE=100								Fil
 MSG_MAINWND_MENU_FILE_CLEARALL							Rensa allt
 MSG_MAINWND_MENU_FILE_EXIT								Avsluta
 
-MSG_MAINWND_MENU_BASE=200							Bas
+MSG_MAINWND_MENU_BASE=200								Bas
 MSG_MAINWND_MENU_BASE_BINARY							Binär (2)
 MSG_MAINWND_MENU_BASE_OCTAL								Octal (8)
 MSG_MAINWND_MENU_BASE_DECIMAL							Decimal (10)
 MSG_MAINWND_MENU_BASE_HEXADECIMAL						Hexadecimal (16)
 
-MSG_MAINWND_MENU_CONSTANTS=300						Konstanter
+MSG_MAINWND_MENU_CONSTANTS=300							Konstanter
 MSG_MAINWND_MENU_CONSTANTS_PI							Pi
 MSG_MAINWND_MENU_CONSTANTS_E							e
 MSG_MAINWND_MENU_CONSTANTS_C							Ljushastigheten (c)
@@ -32,20 +32,20 @@ MSG_MAINWND_MENU_CONSTANTS_MASSNEUTRON					Neutronmassan
 MSG_MAINWND_MENU_CONSTANTS_PERME						Permeabilitet i fri rymd
 MSG_MAINWND_MENU_CONSTANTS_PERMI						Permittivitet i fri rymd
 
-MSG_MAINWND_MENU_WINDOWS=400						Fönster
+MSG_MAINWND_MENU_WINDOWS=400							Fönster
 MSG_MAINWND_MENU_WINDOWS_PAPERROLL						Pappersrullning
 MSG_MAINWND_MENU_WINDOWS_BASEN							Bas-N
 
-MSG_MAINWND_MENU_HELP=500							Hjälp
+MSG_MAINWND_MENU_HELP=500								Hjälp
 MSG_MAINWND_MENU_HELP_ABOUT								Om
 MSG_MAINWND_MENU_HELP_KEYBOARD							Tangentbord
 
-MSG_PAPERROLL_TITLE=1000							Albert
+MSG_PAPERROLL_TITLE=1000								Kalkylator
 MSG_PAPERROLL_CMENU_COPY								Kopiera
 MSG_PAPERROLL_CMENU_CLEAR								Rensa
 MSG_PAPERROLL_CMENU_SAVE								Spara
 
-MSG_BASENWND_TITLE=2000								Bas-N
+MSG_BASENWND_TITLE=2000									Bas-N
 MSG_BASENWND_BINARY										Binär
 MSG_BASENWND_OCTAL										Octal
 MSG_BASENWND_DECIMAL									Decimal
@@ -53,11 +53,11 @@ MSG_BASENWND_HEXADECIMAL								Hexadecimal
 MSG_BASENWND_BASE64										Bas-64
 MSG_BASENWND_ROMAN										Romersk
 
-MSG_ABOUTWND_TITLE=3000								Om Calculator
-MSG_ABOUTWND_TEXTONE									Calculator V0.5 2004-02-07 Copyright (C) 2002-2004 Henrik Isaksson.
-MSG_ABOUTWND_TEXTTWO									Calculator har släppts under GNU GPL.
+MSG_ABOUTWND_TITLE=3000									Om Kalkylatorn
+MSG_ABOUTWND_TEXTONE									Kalkylator V0.5 2004-02-07 Copyright (C) 2002-2004 Henrik Isaksson.
+MSG_ABOUTWND_TEXTTWO									Kalkylator har släppts under GNU GPL.
 
-MSG_KBDWND_TITLE=4000								Tangentbordsgenvägar
+MSG_KBDWND_TITLE=4000									Tangentbordsgenvägar
 MSG_KBDWND_TEXTONE										Tangentbordsgenvägar
 MSG_KBDWND_TEXT09										Decimala siffror 0 till 9
 MSG_KBDWND_TEXTAF										Hexadecimala siffror A till F

@@ -1,106 +1,107 @@
 //
 // AEdit string catalog
 //
+// Translated by: 
+//
 
-MSG_APPWND_TITLE					AEdit
-MSG_APPWND_TITLE_NEW_FILE			New File
+MSG_APPWND_TITLE							AEdit
+MSG_APPWND_TITLE_NEW_FILE					Ny Fil
 
-MSG_MENU_APPLICATION=100			Applikation
-MSG_MENU_APPLICATION_QUIT			Avsluta
-MSG_MENU_APPLICATION_ABOUT			Om
+MSG_MENU_APPLICATION=100					Program
+MSG_MENU_APPLICATION_QUIT					Avsluta
+MSG_MENU_APPLICATION_ABOUT					Om
 
-MSG_MENU_FILE=200					Fil
-MSG_MENU_FILE_NEW					Ny
-MSG_MENU_FILE_OPEN					Öppna...
-MSG_MENU_FILE_CLOSE					Stäng
-MSG_MENU_FILE_SAVE					Spara
-MSG_MENU_FILE_SAVE_AS				Spara som...
-MSG_MENU_FILE_SAVE_ALL				Spara alla
-MSG_MENU_FILE_NEXT_FILE				Nästa fil
-MSG_MENU_FILE_PREVIOUS_FILE			Föregående fil
+MSG_MENU_FILE=200							Fil
+MSG_MENU_FILE_NEW							Ny
+MSG_MENU_FILE_OPEN							Öppna...
+MSG_MENU_FILE_CLOSE							Stäng
+MSG_MENU_FILE_SAVE							Spara
+MSG_MENU_FILE_SAVE_AS						Spara som...
+MSG_MENU_FILE_SAVE_ALL						Spara alla
+MSG_MENU_FILE_NEXT_FILE						Nästa fil
+MSG_MENU_FILE_PREVIOUS_FILE					Föregående fil
 
-MSG_MENU_EDIT=300					Editera
-MSG_MENU_EDIT_CUT					Klipp ut
-MSG_MENU_EDIT_COPY					Kopiera
-MSG_MENU_EDIT_PASTE					Klistra in
-MSG_MENU_EDIT_SELECT_ALL			Välj alla
-MSG_MENU_EDIT_UNDO					Ångra
-MSG_MENU_EDIT_REDO					Redo
+MSG_MENU_EDIT=300							Redigera
+MSG_MENU_EDIT_CUT							Klipp ut
+MSG_MENU_EDIT_COPY							Kopiera
+MSG_MENU_EDIT_PASTE							Klistra in
+MSG_MENU_EDIT_SELECT_ALL					Välj alla
+MSG_MENU_EDIT_UNDO							Ångra
+MSG_MENU_EDIT_REDO							Återställ
 
-MSG_MENU_VIEW_VIEW=350				Visa
-MSG_MENU_VIEW_TOOLBAR				Verktygsfält
-MSG_MENU_VIEW_STATUSBAR				Statusfält
-MSG_MENU_VIEW_SETFONT				Välj font...
-MSG_MENU_VIEW_TABS					Tabbar
-MSG_MENU_VIEW_SHOW					Visa
-MSG_MENU_VIEW_HIDE					Göm
-MSG_MENU_VIEW_AUTO					Automatisk
+MSG_MENU_VIEW_VIEW=350						Visa
+MSG_MENU_VIEW_TOOLBAR						Verktygsfält
+MSG_MENU_VIEW_STATUSBAR						Statusfält
+MSG_MENU_VIEW_SETFONT						Välj font...
+MSG_MENU_VIEW_TABS							Tabbar
+MSG_MENU_VIEW_SHOW							Visa
+MSG_MENU_VIEW_HIDE							Göm
+MSG_MENU_VIEW_AUTO							Automatisk
 
-MSG_MENU_FIND=400					Sök
-MSG_MENU_FIND_FIND					Sök...
-MSG_MENU_FIND_REPLACE				Ersätt...
-MSG_MENU_FIND_GOTO_LINE				Gå till rad...
+MSG_MENU_FIND=400							Sök
+MSG_MENU_FIND_FIND							Sök...
+MSG_MENU_FIND_REPLACE						Ersätt...
+MSG_MENU_FIND_GOTO_LINE						Gå till rad...
 
-MSG_MENU_FONT=500					Font
-MSG_MENU_FONT_SIZE					Storlek
+MSG_MENU_FONT=500							Font
+MSG_MENU_FONT_SIZE							Storlek
 
-MSG_MENU_SETTINGS=600				Inställningar
-MSG_MENU_SETTINGS_SAVE_ON_CLOSE		Spara inställingar vid avslut
-MSG_MENU_SETTINGS_SAVE_NOW			Spara inställningar nu
-MSG_MENU_SETTINGS_RESET				Reseta inställningar
+MSG_MENU_SETTINGS=600						Inställningar
+MSG_MENU_SETTINGS_SAVE_ON_CLOSE				Spara inställingar vid avslut
+MSG_MENU_SETTINGS_SAVE_NOW					Spara inställningar nu
+MSG_MENU_SETTINGS_RESET						Återställ inställningar
 
-MSG_MENU_HELP=700					Help
-MSG_MENU_HELP_TABLE_OF_CONTENTS		Table of Contents
-MSG_MENU_HELP_HOMEPAGE				AEdit Homepage
+MSG_MENU_HELP=700							Hjälp
+MSG_MENU_HELP_TABLE_OF_CONTENTS				Innehåll
+MSG_MENU_HELP_HOMEPAGE						AEdit Hemsida
 
-MSG_ABOUT_TITLE=800					Om
-MSG_ABOUT_TEXT						\n\nText Editor for Syllable\nCopyright 2000-2003 Kristian Van Der Vliet\n\nAEdit is released under the GNU General\nPublic License.  Please see the file COPYING,\ndistributed with AEdit, or http://www.gnu.org\nfor more information.
-MSG_ABOUT_CLOSE						Stäng
-MSG_ABOUT_VERSION					version: 
-MSG_ABOUT_LINE_1 					En Texteditor För Syllable
-MSG_ABOUT_LINE_2					(C) 2006 Syllable team
-MSG_ABOUT_LINE_3					w w w . s y l l a b l e . o r g
+MSG_ABOUT_TITLE=800							Om
+MSG_ABOUT_TEXT								\n\nText Redigerare för Syllable\nCopyright 2000-2003 Kristian Van Der Vliet\n\nAEdit är släppt under GNU General\nPublic License.  Se filen COPYING,\nsom följer med AEdit, eller http://www.gnu.org\nför mer information.
+MSG_ABOUT_CLOSE								Stäng
+MSG_ABOUT_VERSION							version: 
+MSG_ABOUT_LINE_1 							En Texteditor För Syllable
+MSG_ABOUT_LINE_2							(C) 2006 Syllable team
+MSG_ABOUT_LINE_3							w w w . s y l l a b l e . o r g
 
-MSG_ERROR_TITLE=900					Om AEdit
-MSG_ERROR_CANT_SAVE					Unable to save file
-MSG_ERROR_CLOSE						O.K
+MSG_ERROR_TITLE=900							Om AEdit
+MSG_ERROR_CANT_SAVE							Kunde inte spara fil
+MSG_ERROR_CLOSE								O.K
 
-MSG_FIND_TITLE=1000					Sök
-MSG_FIND_FIND_LABEL					Sök efter
-MSG_FIND_CASE_SENSITIVE				Lägeskänslig sökning
-MSG_FIND_FIND						_Sök
-MSG_FIND_FIND_NEXT					Sök _Nästa
-MSG_FIND_CLOSE					    _Stäng
+MSG_FIND_TITLE=1000							Sök
+MSG_FIND_FIND_LABEL							Sök efter
+MSG_FIND_CASE_SENSITIVE						Lägeskänslig sökning
+MSG_FIND_FIND								_Sök
+MSG_FIND_FIND_NEXT							Sök _Nästa
+MSG_FIND_CLOSE							    _Stäng
 
-MSG_GOTO_TITLE=1100					Gå till rad
-MSG_GOTO_GOTO						Gå till rad
-MSG_GOTO_CLOSE						Stäng
-MSG_GOTO_LINE						Rad:
+MSG_GOTO_TITLE=1100							Gå till rad
+MSG_GOTO_GOTO								Gå till rad
+MSG_GOTO_CLOSE								Stäng
+MSG_GOTO_LINE								Rad:
 
-MSG_REPLACE_TITLE=1200				Ersätt
-MSG_REPLACE_LBLFIND					Sök efter
-MSG_REPLACE_WITH					och ersätt med
-MSG_REPLACE_CASE_SENSITIVE			Lägeskänslig sökning
-MSG_REPLACE_FIND					_Sök
-MSG_REPLACE_FIND_NEXT				Sök _Nästa
-MSG_REPLACE_REPLACE					_Ersätt
-MSG_REPLACE_CLOSE				    _Stäng
+MSG_REPLACE_TITLE=1200						Ersätt
+MSG_REPLACE_LBLFIND							Sök efter
+MSG_REPLACE_WITH							och ersätt med
+MSG_REPLACE_CASE_SENSITIVE					Lägeskänslig sökning
+MSG_REPLACE_FIND							_Sök
+MSG_REPLACE_FIND_NEXT						Sök _Nästa
+MSG_REPLACE_REPLACE							_Ersätt
+MSG_REPLACE_CLOSE						    _Stäng
 
-MSG_ALERT_CLOSE_FILE_TITLE=1500		Spara fil?
-MSG_ALERT_CLOSE_FILE_BODY			Vill du spara filen innan du stänger den?
-MSG_ALERT_CLOSE_FILE_YES			Ja
-MSG_ALERT_CLOSE_FILE_NO				Nej
-MSG_ALERT_CLOSE_FILE_CANCEL			Avbryt
-MSG_ALERT_SAVE_FILE_TITLE			Fel
-MSG_ALERT_SAVE_FILE_BODY			Kan ej spara filen "%s".
-MSG_ALERT_SAVE_FILE_OK				OK
-MSG_ALERT_QUIT_TITLE				Avsluta?
-MSG_ALERT_QUIT_BODY					Du har osparade filer. Ändringarna kommar att gå förlorade.\nÄr du säker att du vill avsluta?
-MSG_ALERT_QUIT_YES					Ja
-MSG_ALERT_QUIT_NO					Nej
-MSG_ALERT_FILE_OPEN_TITLE			Fel
-MSG_ALERT_FILE_OPEN_OK				OK
-
+MSG_ALERT_CLOSE_FILE_TITLE=1500				Spara fil?
+MSG_ALERT_CLOSE_FILE_BODY					Vill du spara filen innan du stänger den?
+MSG_ALERT_CLOSE_FILE_YES					Ja
+MSG_ALERT_CLOSE_FILE_NO						Nej
+MSG_ALERT_CLOSE_FILE_CANCEL					Avbryt
+MSG_ALERT_SAVE_FILE_TITLE					Fel
+MSG_ALERT_SAVE_FILE_BODY					Kan ej spara filen "%s".
+MSG_ALERT_SAVE_FILE_OK						OK
+MSG_ALERT_QUIT_TITLE						Avsluta?
+MSG_ALERT_QUIT_BODY							Du har osparade filer. Ändringarna kommar att gå förlorade.\nÄr du säker att du vill avsluta?
+MSG_ALERT_QUIT_YES							Ja
+MSG_ALERT_QUIT_NO							Nej
+MSG_ALERT_FILE_OPEN_TITLE					Fel
+MSG_ALERT_FILE_OPEN_OK						OK
 
 MSG_STATUSBAR_WELCOME=2000					Välkommen till AEdit!
 MSG_STATUSBAR_CLOSED_FILE					Filen "%s" har stängts.
@@ -119,4 +120,5 @@ MSG_STATUSBAR_REPLACE_NOT_OK				Frasen var ej ersatt.
 MSG_BUFFER_UNTITLED=2100					Namnlös-%d
 MSG_BUFFER_CURSOR							Kol: %d Rad: %d
 
-MSG_MIMETYPE_TEXT_PLAIN=2200				Text filer
+MSG_MIMETYPE_TEXT_PLAIN=10000				Text filer
+
