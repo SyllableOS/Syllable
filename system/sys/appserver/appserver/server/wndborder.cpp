@@ -564,7 +564,7 @@ bool WndBorder::MouseMoved( Messenger * pcAppTarget, const Point & cNewPos, int 
 		SrvSprite::Hide();
 		m_pcParent->UpdateRegions( false );
 		SrvSprite::Unhide();
-		
+				
 		m_cDeltaMove = IPoint( 0, 0 );
 		m_cDeltaSize = IPoint( 0, 0 );
 	}

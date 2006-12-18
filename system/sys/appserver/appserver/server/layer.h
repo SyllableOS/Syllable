@@ -103,8 +103,8 @@ public:
     os::Point		GetLeftTop( void ) const	{ return( os::Point( m_cFrame.left, m_cFrame.top ) );	}
     os::IPoint		GetILeftTop( void ) const	{ return( os::IPoint( m_cIFrame.left, m_cIFrame.top ) );	}
 
-    void		Invalidate( const os::IRect& cRect );
-    void		Invalidate( bool bReqursive = false );
+    void		Invalidate( const os::IRect& cRect, bool bRecursive = false );
+    void		Invalidate( bool bRecursive = false );
     void		SetDirtyRegFlags();
 	void		SetDirtyRegFlags( const os::IRect& cRect );
 	

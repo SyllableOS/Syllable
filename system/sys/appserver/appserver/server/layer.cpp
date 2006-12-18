@@ -958,7 +958,7 @@ void Layer::SetShapeRegion( Region * pcReg )
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-void Layer::Invalidate( const IRect & cRect )
+void Layer::Invalidate( const IRect & cRect, bool bRecursive )
 {
 	if( m_nHideCount == 0 )
 	{
@@ -970,17 +970,24 @@ void Layer::Invalidate( const IRect & cRect )
 		{
 			m_pcDamageReg->Include( cRect );
 		}
+		if( bRecursive )
+		{
+			for( Layer * pcChild = m_pcBottomChild; NULL != pcChild; pcChild = pcChild->m_pcHigherSibling )
+			{
+				pcChild->Invalidate( cRect - pcChild->GetIFrame().LeftTop() + pcChild->m_cIScrollOffset, true );
+			}
+		}
 	}
 }
 
-void Layer::Invalidate( bool bReqursive )
+void Layer::Invalidate( bool bRecursive )
 {
 	if( m_nHideCount == 0 )
 	{
 		delete m_pcDamageReg;
 
 		m_pcDamageReg = new Region( static_cast < IRect > ( GetBounds() ) );
-		if( bReqursive )
+		if( bRecursive )
 		{
 			for( Layer * pcChild = m_pcBottomChild; NULL != pcChild; pcChild = pcChild->m_pcHigherSibling )
 			{

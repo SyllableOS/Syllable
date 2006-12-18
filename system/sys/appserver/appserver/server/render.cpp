@@ -1173,6 +1173,8 @@ void Layer::DrawBitMap( SrvBitmap * pcBitMap, Rect cSrcRect, Rect cDstRect )
 	if( !pcBitMap->GetBounds().Includes( cISrcRect ) )
 	{
 		dbprintf( "Error: Tried to draw bitmap with source rectangle larger than the bitmap size\n" );
+		dbprintf( "Source rectangle: %i %i %i %i Bitmap size: %ix%i\n", cISrcRect.left, cISrcRect.top,
+			cISrcRect.right, cISrcRect.bottom, pcBitMap->m_nWidth, pcBitMap->m_nHeight );
 		return;
 	}
 

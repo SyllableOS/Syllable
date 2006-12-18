@@ -869,7 +869,7 @@ void SrvWindow::R_Render( WR_Render_s * psPkt )
 			{
 				IRect cRect( static_cast < GRndInvalidateRect_s * >( psHdr )->m_cRect );
 
-				pcView->Invalidate( cRect + pcView->m_cIScrollOffset /*, static_cast<GRndInvalidateRect_s*>(psHdr)->m_bRecurse */  );
+				pcView->Invalidate( cRect + pcView->m_cIScrollOffset, static_cast<GRndInvalidateRect_s*>(psHdr)->m_bRecurse );
 				if( pcView->GetLevel() < nLowest )
 				{
 					nLowest = pcView->GetLevel();
