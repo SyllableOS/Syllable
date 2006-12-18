@@ -12,7 +12,7 @@ locations			ftp://alpha.gnu.org/gnu/grub/
 
 build-needs
 ;	automake >= 1.8.2
-	automake >= 1.7
+	automake >= 1.7 < 1.10
 	autoconf >= 2.57
 build-recommends	texinfo >= 4.0
 

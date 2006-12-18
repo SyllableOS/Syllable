@@ -5,8 +5,8 @@ name	PERL-Pit
 modules
 	programming/languages/perl-5.8.8
 	programming/autoconf-2.60
-	programming/automake-1.10
+;	GrUB doesn't work with 1.10:
+	programming/automake-1.9.6
 ;	For older packages:
 ;	programming/autoconf-2.13
 ;	programming/automake-1.4-p6
-
