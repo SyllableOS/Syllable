@@ -2,6 +2,7 @@
 #define __F_GUI_COLORREQUESTER_H__
 
 #include <gui/window.h>
+#include <gui/fontrequester.h>
 #include <util/messenger.h>
 
 namespace os
@@ -82,7 +83,7 @@ protected:
 		
 private:
 	ColorRequester();
-	ColorRequester(const FontRequester&);
+	ColorRequester(const os::FontRequester&);
 	void _Layout();
 	
 private:
