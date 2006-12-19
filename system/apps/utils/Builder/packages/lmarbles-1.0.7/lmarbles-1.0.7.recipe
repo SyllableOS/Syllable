@@ -1,0 +1,36 @@
+authors				Kaj de Vos
+status				broken
+warnings
+	The source package contains hard links. This fails on Syllable of course, but the source is installed, so you have to patch the source separately and continue the build:
+	build get lmarbles-1.0.7
+	build patch lmarbles-1.0.7
+	build lmarbles-1.0.7
+notes				May need older LibOGG and LibVorbis
+
+inherits			sourceforge
+
+headline			Atomix-like puzzle game
+description
+	LMarbles is an Atomix clone with a slight change in concept. Instead of assembling molecules you create figures out of marbles. Nevertheless, the basic game play is the same: If a marble starts to move it will not stop until it hits a wall or another marble. To make it more interesting there are obstacles like one-way streets, crumbling walls and portals. As Marbles is meant as a puzzle game you play against a move limit and not a time limit. This way you have as much time as you need to think.
+licenses			GPL
+
+home				lgames.sourceforge.net/index.php?project=LMarbles
+packages			lgames/lmarbles-1.0.7
+
+needs
+	sdl
+	sdl-mixer
+
+patch-config
+
+build-dir			.
+
+configure-env		CPPFLAGS '-I/atheos/autolnk/include/SDL'
+
+documentation
+	README COPYING ChangeLog AUTHORS TODO
+;	Currently empty:
+;	NEWS
+;	src/manual
+build-docs			README-SDL.txt
+
