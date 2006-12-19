@@ -18,7 +18,7 @@ dist: $(EXE)
 	-mkdir -p "$(DIST_DIR)/atheos/Applications/System Tools"
 	cp -f $(EXE) "$(DIST_DIR)/atheos/Applications/System Tools/Terminal"
 	addattrib "$(DIST_DIR)/atheos/Applications/System Tools/Terminal" "os::Category" "System Tools"
-	ln -sf "$(DIST_DIR)/atheos/Applications/System Tools/Terminal" $(DIST_DIR)/atheos/sys/bin/aterm
+	ln -sf "$(DIST_DIR)/atheos/Applications/System Tools/Terminal" /atheos/sys/bin/aterm
 
 clean:
 	-rm $(OBJS)
