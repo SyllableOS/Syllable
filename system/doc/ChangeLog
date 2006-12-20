@@ -1,3 +1,10 @@
+* December 20, 2006, Kristian Van Der Vliet *
+
+Fixed the screen-mode list enumaration in the Vesa driver SetScreenMode(), and
+also fixed the alignment of objects in off-screen video memory on the Savage
+driver. Both patches fix issues with certain Savage video cards, and both patches
+are from Tim ter Laak <timl@scintilla.utwente.nl>
+
 * December 9, 2006, Kristian Van Der Vliet *
 
 Moved the wallpapers to /system/resources/wallpapers instead of having copies in
