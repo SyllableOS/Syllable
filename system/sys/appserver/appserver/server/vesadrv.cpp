@@ -224,7 +224,7 @@ int VesaDriver::SetScreenMode( screen_mode sMode )
 {
 	m_nCurrentMode = -1;
 
-	for( int i = GetScreenModeCount() - 1; i >= 0; --i )
+	for( int i = m_cModeList.size() - 1; i >= 0; --i )
 	{
 		if( m_cModeList[i].m_nWidth == sMode.m_nWidth && m_cModeList[i].m_nHeight == sMode.m_nHeight && m_cModeList[i].m_eColorSpace == sMode.m_eColorSpace )
 		{

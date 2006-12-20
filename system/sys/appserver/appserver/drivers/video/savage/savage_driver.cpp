@@ -423,7 +423,7 @@ SavageDriver::SavageDriver( int nFd ) : m_cGELock( "savage_ge_lock" )
 	psCard->nVRAM = nVRAM;
 
 	if( ( nVRAM > ( 1024 * 1024 * 1 ) ) && ( nVRAM < psCard->FramebufferSize ) )
-		InitMemory( nVidTop, nVRAM, 4096 - 1, 32 - 1 );
+		InitMemory( nVidTop, nVRAM, 4096 - 1, 64 - 1 );
 
 	//dbprintf( "initialisation complete.\n" );
 
