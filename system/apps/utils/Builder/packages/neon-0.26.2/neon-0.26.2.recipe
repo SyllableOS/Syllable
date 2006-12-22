@@ -1,0 +1,34 @@
+authors
+	Jan L. Hauffa
+	Kaj de Vos
+status				testing
+
+licenses			LGPL GFDL
+home				www.webdav.org/neon/
+locations			http://www.webdav.org/neon/
+
+build-needs
+	expat | libxml2
+build-recommends
+	openssl >= 0.9.7 | gnutls
+	kerberos5
+
+patch-config
+
+; Just for installation:
+build-dir			.
+
+configure-options
+;	--enable-shared
+;	--disable-debug
+;	--with-expat
+	--with-ssl
+;	--with-libs=/usr/openssl
+;	For Windows?
+;	--with-zlib
+documentation
+	README BUGS src/COPYING.LIB ChangeLog NEWS THANKS TODO AUTHORS
+;	Mostly double:
+;	test/COPYING
+;develop-docs		doc
+
