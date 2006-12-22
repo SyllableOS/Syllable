@@ -14,7 +14,4 @@ build-dir			.
 
 configure-options	--shared
 
-move-files			share/man .
-delete-files		share
 documentation		README ChangeLog FAQ algorithm.txt
-

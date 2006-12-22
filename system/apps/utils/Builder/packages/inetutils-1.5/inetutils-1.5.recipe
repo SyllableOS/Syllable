@@ -17,5 +17,4 @@ configure-options
 	--disable-ping
 ;	--disable-servers
 
-move-files			share/info .
 documentation		README COPYING NEWS ChangeLog TODO AUTHORS THANKS

@@ -26,8 +26,4 @@ install-vars
 	SYSCONFDIR		/usr/nail/etc
 	UCBINSTALL		/atheos/autolnk/bin/install
 
-move-files			share/man .
-delete-files		share
-
 documentation		README I18N INSTALL COPYING ChangeLog TODO AUTHORS nail.1.html
-

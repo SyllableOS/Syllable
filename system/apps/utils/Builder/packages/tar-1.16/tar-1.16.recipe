@@ -7,8 +7,6 @@ licenses			GPL
 home				www.gnu.org/software/tar/
 packages			tar/tar-1.16
 
-move-files			share/info .
 documentation
 	README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS
 ;	PORTS
-
