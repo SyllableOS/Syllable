@@ -151,11 +151,11 @@ system "sync"
 system "clear"
 puts 'Syllable has now been installed!'
 puts 'To finish the installation, the GrUB boot loader needs to be installed.'
-#puts 'GrUB can now be installed automatically, or you can choose to skip this.'
-#puts 'If you skip the GrUB installation, you will have to install GrUB manually.'
-#puts 'This can be preferable if you have a complicated drive or partition setup.'
-#puts 'GrUB can not always detect the right hard disk that Syllable was installed to.'
-#puts 'Please check carefully that GrUB is using the right disk and partition.'
+puts 'GrUB can now be installed automatically, or you can choose to skip this.'
+puts 'If you skip the GrUB installation, you will have to install GrUB manually.'
+puts 'This can be preferable if you have a complicated drive or partition setup.'
+puts 'GrUB can not always detect the right hard disk that Syllable was installed to.'
+puts 'Please check carefully that GrUB is using the right disk and partition.'
 puts "Please note that you must install Syllable's version of GrUB to boot Syllable."
 puts 'You can not use a different GrUB from another system such as Linux.'
 puts
@@ -166,30 +166,30 @@ puts 'but on a partition you would have to chain-load to it from some other boot
 puts 'loader that you have in the MBR.'
 puts
 
-puts 'To install GrUB, reboot your computer and start the Syllable installation CD'
-puts 'again. At the GrUB boot menu, press "c" to go into the GrUB command line.'
-puts 'Then carefully follow the remainder of the written Syllable installation'
-puts 'instructions in the INSTALL.TXT file on this CD or at'
-puts 'http://syllable.org/docs/0.6.2/install.txt'
-puts
+#puts 'To install GrUB, reboot your computer and start the Syllable installation CD'
+#puts 'again. At the GrUB boot menu, press "c" to go into the GrUB command line.'
+#puts 'Then carefully follow the remainder of the written Syllable installation'
+#puts 'instructions in the INSTALL.TXT file on this CD or at'
+#puts 'http://syllable.org/docs/0.6.2/install.txt'
+#puts
 
-#puts 'Press "m" to install GrUB automatically in the Master Boot Record of disk'
-#puts (disk = File.join(File.dirname($part), 'raw')) + ','
-#puts 'press "p" to install GrUB automatically on partition'
-#puts $part + ','
-#print 'or press any other key to skip this step: '
+puts 'Press "m" to install GrUB automatically in the Master Boot Record of disk'
+puts (disk = File.join(File.dirname($part), 'raw')) + ','
+puts 'press "p" to install GrUB automatically on partition'
+puts $part + ','
+print 'or press any other key to skip this step: '
 
-#if (resp = $stdin.getuc.downcase) == "m" or resp == "p"
-#	unless system 'grub-install', '--root-directory=/inst', loader = resp == "m" ? disk : $part
-#		puts
-#		puts "ERROR: failed to install GrUB on #{loader}."
-#		puts "Stopping."
-#		exit 4
-#	end
-#end
+if (resp = $stdin.getuc.downcase) == "m" or resp == "p"
+	unless system 'grub-install', '--root-directory=/inst', loader = resp == "m" ? disk : $part
+		puts
+		puts "ERROR: failed to install GrUB on #{loader}."
+		puts "Stopping."
+		exit 4
+	end
+end
 
 
-#system "clear"
+system "clear"
 puts 'Please press "b" to reboot your computer.'
 print 'Press any other key to exit to the command line: '
 resp = $stdin.getuc
