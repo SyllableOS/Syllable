@@ -1,0 +1,20 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			sourceforge
+
+licenses			BSD
+home				www.pcre.org
+packages			pcre/pcre-7.0
+;locations			ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/
+
+configure-options
+;	--disable-shared
+	--enable-utf8
+	--enable-unicode-properties
+
+documentation
+	README COPYING NEWS ChangeLog AUTHORS
+;	Double:
+;	LICENCE
+
