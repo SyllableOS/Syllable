@@ -1,4 +1,4 @@
 export AS=as
-# Will be overridden by GCC:
+# Trips up some packages, such as OpenSSH:
 #export LD=ld
 
