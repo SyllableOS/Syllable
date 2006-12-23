@@ -73,7 +73,8 @@ void TopLayer::LayerFrameChanged( Layer* pcChild, IRect cFrame )
 			__assertw( pcBackbuffer->m_pRaster != NULL );
 			//dbprintf( "Reallocated backbuffer %i %i\n", cFrame.Width() + 1, cFrame.Height() + 1 );			
 		} 
-		#if 0 // Enable this code if you want to test backbuffered rendering with system memory bitmaps
+		// Enable this code if you want to test backbuffered rendering with system memory bitmaps
+		#if 0
 		else {
 			pcBackbuffer = new SrvBitmap( cFrame.Width() + 11, cFrame.Height() + 11, 
 													m_pcBitmap->m_eColorSpc, NULL, 0 );
@@ -160,18 +161,19 @@ void TopLayer::FreeBackbuffers( void )
  * \param pcBackbufferedLayer - The backbuffered layer.
  * \param pcChild - Pointer to the layer.
  * \param bRedrawChildren - Redraw children.
+ * \return Whether the layer was marked for redrawing.
  * \author Arno Klenke
  *****************************************************************************/
-void TopLayer::MarkLayerForRedraw( Layer* pcBackbufferedLayer, Layer* pcChild, bool bRedrawChildren )
+bool TopLayer::MarkLayerForRedraw( Layer* pcBackbufferedLayer, Layer* pcChild, bool bRedrawChildren )
 {
 	ClipRect* pcLayerClip;
 	ClipRect* pcVisibleClip;
 	
 	if( pcChild->m_nHideCount > 0 || pcChild->m_pcBitmapReg == NULL ) 
-		return;
+		return( false );
 	
 	if( pcBackbufferedLayer->m_pcBackbuffer == NULL )
-		return;
+		return( false );
 				
 	IPoint cTopLeft = IPoint( pcChild->ConvertToRoot( Point( 0, 0 ) ) );
 		
@@ -214,6 +216,7 @@ void TopLayer::MarkLayerForRedraw( Layer* pcBackbufferedLayer, Layer* pcChild, b
 			}
 		}
 	}
+	return( true );
 }
 
 /** Redraws a layer.
@@ -231,9 +234,9 @@ void TopLayer::RedrawLayer( Layer* pcBackbufferedLayer, Layer* pcChild, bool bRe
 	if( pcChild->m_nHideCount > 0 || pcChild->m_pcBitmapReg == NULL ) 
 		return;
 		
-	if( pcChild->GetWindow() != NULL && pcChild->GetWindow()->GetPaintCounter() > 0 )
+	if( pcChild->GetWindow() != NULL && ( pcChild->GetWindow()->GetPaintCounter() > 0 /* || pcChild->GetWindow()->HasPendingSizeEvents( this )*/ ))
 	{
-		return( MarkLayerForRedraw( pcBackbufferedLayer, pcChild, bRedrawChildren ) );
+		return( (void)MarkLayerForRedraw( pcBackbufferedLayer, pcChild, bRedrawChildren ) );
 	}
 	
 	
@@ -515,7 +518,8 @@ void TopLayer::UpdateIfNeeded()
 		if( pcChild->m_nHideCount == 0 && pcChild->m_pcBackbuffer != NULL
 			&& pcChild->m_pcVisibleDamageReg != NULL )
 		{
-			if( pcChild->GetWindow() != NULL && pcChild->GetWindow()->GetPaintCounter() > 0 && !pcChild->m_bForceRedraw )
+			if( pcChild->GetWindow() != NULL && ( ( pcChild->GetWindow()->GetPaintCounter() > 0 /*
+				|| pcChild->GetWindow()->HasPendingSizeEvents( this )*/ ) && !pcChild->m_bForceRedraw ) )
 				continue;
 			
 			/* Update the layer */
