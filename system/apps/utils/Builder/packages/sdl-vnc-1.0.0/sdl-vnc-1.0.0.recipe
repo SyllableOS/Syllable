@@ -1,0 +1,21 @@
+authors
+	Flemming Sørensen
+	Kaj de Vos
+maintainers			Kaj de Vos
+status				testing
+
+licenses			LGPL
+home				www.ferzkopp.net/joomla/content/view/21/14/
+packages			SDL_vnc-1.0.0
+locations			http://www.ferzkopp.net/Software/SDL_vnc/
+
+needs				sdl >= 1.2
+
+patch-config
+
+documentation
+	README COPYING LICENSE ChangeLog AUTHORS
+;	Currently empty:
+;	NEWS
+build-docs			INSTALL
+
