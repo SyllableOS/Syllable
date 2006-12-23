@@ -1,3 +1,7 @@
+* December 23, 2006, Arno Klenke *
+
+Fixed a drawing bug in the appserver
+
 * December 16, 2006, Arno Klenke *
 
 Reworked parts of the appserver code for backbuffered windows
@@ -1286,6 +1290,7 @@ disabled controls.  The following files have been patched:
 
 	The sub-menu arrow is now drawn corretly, and menus which have children
 	are now drawn slightly larger to allow for the arrow.
+
 
 
 
