@@ -154,71 +154,6 @@ void TopLayer::FreeBackbuffers( void )
 	}
 }
 
-/** Marks the layer for redrawing.
- * \par Description:
- * Called from various places. It will
- * calculate the visible region of the layer and set the visible damage region.
- * \param pcBackbufferedLayer - The backbuffered layer.
- * \param pcChild - Pointer to the layer.
- * \param bRedrawChildren - Redraw children.
- * \return Whether the layer was marked for redrawing.
- * \author Arno Klenke
- *****************************************************************************/
-bool TopLayer::MarkLayerForRedraw( Layer* pcBackbufferedLayer, Layer* pcChild, bool bRedrawChildren )
-{
-	ClipRect* pcLayerClip;
-	ClipRect* pcVisibleClip;
-	
-	if( pcChild->m_nHideCount > 0 || pcChild->m_pcBitmapReg == NULL ) 
-		return( false );
-	
-	if( pcBackbufferedLayer->m_pcBackbuffer == NULL )
-		return( false );
-				
-	IPoint cTopLeft = IPoint( pcChild->ConvertToRoot( Point( 0, 0 ) ) );
-		
-
-	__assertw( m_pcBitmap != NULL );
-	
-	/* Intersect the visible region of the directly connected layer with the frame of the layer */		
-	ENUMCLIPLIST( ( bRedrawChildren ? &pcChild->m_pcBitmapFullReg->m_cRects : &pcChild->m_pcBitmapReg->m_cRects ), pcLayerClip )
-	{
-		IRect cDstRect = ( ( pcBackbufferedLayer->m_cIFrame ) & ( pcLayerClip->m_cBounds + cTopLeft ) ) - pcBackbufferedLayer->GetIFrame().LeftTop();
-		
-		if( cDstRect.IsValid() )
-		{
-			if( pcBackbufferedLayer->m_pcVisibleDamageReg == NULL )
-				pcBackbufferedLayer->m_pcVisibleDamageReg = new Region( cDstRect );
-			else {
-				bool bFound = false;
-				ENUMCLIPLIST( ( &pcBackbufferedLayer->m_pcVisibleDamageReg->m_cRects ), pcVisibleClip )
-				{
-					/* Check if this cliprect is already covered in the damage list */
-					if( pcVisibleClip->m_cBounds.Includes( cDstRect ) ) {
-						bFound = true;
-						break;
-					}
-					else if( cDstRect.Includes( pcVisibleClip->m_cBounds ) )
-					{
-						if( !bFound ) {
-							pcVisibleClip->m_cBounds = cDstRect;
-						}
-						else {
-							os::ClipRect* pcOldClip = pcVisibleClip;
-							pcVisibleClip = pcOldClip->m_pcPrev;
-							pcBackbufferedLayer->m_pcVisibleDamageReg->m_cRects.RemoveRect( pcOldClip );
-						}
-						bFound = true;						
-					}
-				}
-				if( !bFound )
-					pcBackbufferedLayer->m_pcVisibleDamageReg->AddRect( cDstRect );
-			}
-		}
-	}
-	return( true );
-}
-
 /** Redraws a layer.
  * \par Description:
  * Called from various places. It will redraw a layer.
@@ -236,7 +171,8 @@ void TopLayer::RedrawLayer( Layer* pcBackbufferedLayer, Layer* pcChild, bool bRe
 		
 	if( pcChild->GetWindow() != NULL && ( pcChild->GetWindow()->GetPaintCounter() > 0 /* || pcChild->GetWindow()->HasPendingSizeEvents( this )*/ ))
 	{
-		return( (void)MarkLayerForRedraw( pcBackbufferedLayer, pcChild, bRedrawChildren ) );
+		m_bNeedsRedraw = true;
+		return;
 	}
 	
 	
@@ -515,15 +451,17 @@ void TopLayer::UpdateIfNeeded()
 	/* Update the contents of layers which have not been moved */
 	for( pcChild = m_pcBottomChild; NULL != pcChild; pcChild = pcChild->m_pcHigherSibling )
 	{
-		if( pcChild->m_nHideCount == 0 && pcChild->m_pcBackbuffer != NULL
-			&& pcChild->m_pcVisibleDamageReg != NULL )
+		if( pcChild->m_nHideCount == 0 && pcChild->m_pcBackbuffer != NULL )
 		{
 			if( pcChild->GetWindow() != NULL && ( ( pcChild->GetWindow()->GetPaintCounter() > 0 /*
 				|| pcChild->GetWindow()->HasPendingSizeEvents( this )*/ ) && !pcChild->m_bForceRedraw ) )
 				continue;
 			
+			pcChild->RebuildRedrawRegion( pcChild );
+			
+			
 			/* Update the layer */
-			if( !pcChild->m_pcVisibleDamageReg->IsEmpty() )
+			if( pcChild->m_pcVisibleDamageReg != NULL && !pcChild->m_pcVisibleDamageReg->IsEmpty() )
 			{
 				pcChild->m_pcVisibleDamageReg->Optimize();
 				ENUMCLIPLIST( &pcChild->m_pcVisibleDamageReg->m_cRects, pcSrcClip )
@@ -558,7 +496,6 @@ void TopLayer::UpdateIfNeeded()
 	if( bSpritesHidden )
 		SrvSprite::Unhide();
 		
-	ClearRedrawFlags();
 }
 
 /** Adds a child to the toplayer.

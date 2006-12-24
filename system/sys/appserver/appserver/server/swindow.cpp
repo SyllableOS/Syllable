@@ -614,8 +614,6 @@ void SrvWindow::R_Render( WR_Render_s * psPkt )
 			bViewsMoved = false;
 		}
 		
-		bool bForceRedraw = false;
-
 		Layer *pcView = FindLayer( psHdr->hViewToken );
 
 		if( pcView == NULL )
@@ -798,7 +796,6 @@ void SrvWindow::R_Render( WR_Render_s * psPkt )
 					}
 				}
 				bViewsMoved = true;
-				bForceRedraw = true;
 				break;
 			}
 		case DRC_SHOW_VIEW:
@@ -842,7 +839,6 @@ void SrvWindow::R_Render( WR_Render_s * psPkt )
 					}
 					
 				}
-				bForceRedraw = true;									
 				bViewsMoved = true;
 				break;
 			}
@@ -932,14 +928,13 @@ void SrvWindow::R_Render( WR_Render_s * psPkt )
 					}
 				}
 				bViewsMoved = true;
-				bForceRedraw = ( psHdr->nCmd == DRC_SET_SHAPE_REGION );
 				break;
 			}
 		}
 		
 		/* Mark the layer for redrawing if we use backbuffered rendering */
-		if( m_pcWndBorder && m_pcWndBorder->m_pcBackbuffer != NULL && ( !pcView->m_bNeedsRedraw || bForceRedraw ) ) {
-			pcView->m_bNeedsRedraw = g_pcTopView->MarkLayerForRedraw( m_pcWndBorder, pcView, true );
+		if( m_pcWndBorder && m_pcWndBorder->m_pcBackbuffer != NULL ) {
+			pcView->m_bNeedsRedraw = true;
 		}		
 	}
 	

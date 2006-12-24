@@ -179,10 +179,10 @@ private:
   
 
     void ClearDirtyRegFlags();
-    void ClearRedrawFlags();
     virtual void RebuildRegion( bool bForce );
     virtual void MoveChilds();
-    virtual void InvalidateNewAreas( void );  
+    virtual void InvalidateNewAreas( void );
+    void RebuildRedrawRegion( Layer* pcBackbufferedLayer, bool bClearRedrawFlagOnly = false );
 protected:
 public:
     std::string	m_cName;

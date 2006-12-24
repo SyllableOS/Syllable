@@ -1354,13 +1354,14 @@ void Layer::ClearDirtyRegFlags()
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-void Layer::ClearRedrawFlags()
+void Layer::UpdateRegions( bool bForce )
 {
-	m_bNeedsRedraw = false;
-	for( Layer * pcChild = m_pcBottomChild; NULL != pcChild; pcChild = pcChild->m_pcHigherSibling )
-	{
-		pcChild->ClearRedrawFlags();
-	}
+	RebuildRegion( bForce );
+	MoveChilds();
+	InvalidateNewAreas();
+
+	UpdateIfNeeded();
+	ClearDirtyRegFlags();
 }
 
 //----------------------------------------------------------------------------
@@ -1370,14 +1371,69 @@ void Layer::ClearRedrawFlags()
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-void Layer::UpdateRegions( bool bForce )
+void Layer::RebuildRedrawRegion( Layer* pcBackbufferedLayer, bool bClearRedrawFlagOnly )
 {
-	RebuildRegion( bForce );
-	MoveChilds();
-	InvalidateNewAreas();
+	ClipRect* pcLayerClip;
+	ClipRect* pcVisibleClip;
+	
+	if( m_nHideCount > 0 || m_pcBitmapReg == NULL ) 
+		return;
+	
+	if( pcBackbufferedLayer->m_pcBackbuffer == NULL )
+		return;
+				
+	IPoint cTopLeft = IPoint( ConvertToRoot( Point( 0, 0 ) ) );
+		
 
-	UpdateIfNeeded();
-	ClearDirtyRegFlags();
+	__assertw( m_pcBitmap != NULL );
+	
+	/* Intersect the visible region of the directly connected layer with the frame of the layer */		
+	if( !bClearRedrawFlagOnly && m_bNeedsRedraw )
+	{
+		ENUMCLIPLIST( &m_pcBitmapFullReg->m_cRects, pcLayerClip )
+		{
+			IRect cDstRect = ( ( pcBackbufferedLayer->m_cIFrame ) & ( pcLayerClip->m_cBounds + cTopLeft ) ) - pcBackbufferedLayer->GetIFrame().LeftTop();
+		
+			if( cDstRect.IsValid() )
+			{
+				if( pcBackbufferedLayer->m_pcVisibleDamageReg == NULL )
+					pcBackbufferedLayer->m_pcVisibleDamageReg = new Region( cDstRect );
+				else {
+					bool bFound = false;
+					ENUMCLIPLIST( ( &pcBackbufferedLayer->m_pcVisibleDamageReg->m_cRects ), pcVisibleClip )
+					{
+						/* Check if this cliprect is already covered in the damage list */
+						if( pcVisibleClip->m_cBounds.Includes( cDstRect ) ) {
+							bFound = true;
+							break;
+						}
+						else if( cDstRect.Includes( pcVisibleClip->m_cBounds ) )
+						{
+							if( !bFound ) {
+								pcVisibleClip->m_cBounds = cDstRect;
+							}
+							else {
+								os::ClipRect* pcOldClip = pcVisibleClip;
+								pcVisibleClip = pcOldClip->m_pcPrev;
+								pcBackbufferedLayer->m_pcVisibleDamageReg->m_cRects.RemoveRect( pcOldClip );
+							}
+							bFound = true;						
+						}
+					}
+					if( !bFound )
+						pcBackbufferedLayer->m_pcVisibleDamageReg->AddRect( cDstRect );
+				}
+			}
+		}
+	}
+	
+	for( Layer * pcChild = m_pcBottomChild; NULL != pcChild; pcChild = pcChild->m_pcHigherSibling )
+	{
+		/* If m_bNeedRedraw is set then we have already added the damage region of all children */
+		pcChild->RebuildRedrawRegion( pcBackbufferedLayer, bClearRedrawFlagOnly || m_bNeedsRedraw );
+	}
+	
+	m_bNeedsRedraw = false;
 }
 
 //----------------------------------------------------------------------------

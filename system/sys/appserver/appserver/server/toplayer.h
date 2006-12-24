@@ -30,7 +30,6 @@ public:
 	
 	// Public methods
 	void LayerFrameChanged( Layer* pcChild, os::IRect cFrame );
-	bool MarkLayerForRedraw( Layer* pcBackbufferedLayer, Layer* pcChild, bool bRedrawChildren );
 	void RedrawLayer( Layer* pcBackbufferedLayer, Layer* pcChild, bool bRedrawChildren );
 	void FreeBackbuffers( void );
 	
