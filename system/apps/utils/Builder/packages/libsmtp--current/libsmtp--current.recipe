@@ -1,0 +1,23 @@
+authors
+	Kristian Van Der Vliet
+	Kaj de Vos
+status				testing
+
+licenses			LGPL
+home				www.liqwyd.com
+packages			whisper-alpha6.src
+locations			http://www.liqwyd.com/syllable/
+
+build-dir			libsmtp
+
+test-targets		test
+
+install-tree		include lib
+install				true
+install-files
+	libsmtp.h		include/
+	libsmtp.a		lib/
+	libsmtp.so		lib/
+
+documentation		libsmtp/CHANGES
+

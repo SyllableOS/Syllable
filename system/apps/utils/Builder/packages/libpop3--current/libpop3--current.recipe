@@ -1,0 +1,23 @@
+authors
+	Kristian Van Der Vliet
+	Kaj de Vos
+status				testing
+
+licenses			LGPL
+home				www.liqwyd.com
+packages			whisper-alpha6.src
+locations			http://www.liqwyd.com/syllable/
+
+build-dir			libpop3
+
+test-targets		test
+
+install-tree		include lib
+install				true
+install-files
+	libpop3.h		include/
+	libpop3.a		lib/
+	libpop3.so		lib/
+
+documentation		libpop3/CHANGES
+

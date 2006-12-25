@@ -1,0 +1,26 @@
+authors
+	Kristian Van Der Vliet
+	Kaj de Vos
+status				testing
+warnings
+	Installation will end with an error trying to access /usr/whisper, but it can be ignored.
+
+licenses			GPL
+home				www.liqwyd.com
+packages			whisper-alpha6.src
+locations			http://www.liqwyd.com/syllable/
+
+patch				mv libsmtp libpop3 whisper
+
+build-needs
+	libsmtp
+	libpop3
+
+build-dir			whisper
+
+;install-tree		bin
+;install				true
+;install-files		Whisper bin/
+
+;documentation		whisper/Changes whisper/Libsyllable-Bugs
+
