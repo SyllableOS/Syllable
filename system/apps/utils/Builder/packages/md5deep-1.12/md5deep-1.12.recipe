@@ -1,0 +1,24 @@
+authors
+	Flemming Sørensen
+	Kaj de Vos
+maintainers			Kaj de Vos
+status				testing
+
+inherits			sourceforge
+
+licenses			PD
+headline			Computes several types of checksums
+description
+	MD5Deep is a cross-platform set of programs to compute MD5, SHA-1, SHA-256 Tiger, or Whirlpool message digests on an arbitrary number of files.
+
+home				md5deep.sourceforge.net
+packages			md5deep/md5deep-1.12
+
+install-prefix-var	PREFIX
+
+make-targets
+	unix
+;	linux
+
+documentation		README CHANGES
+
