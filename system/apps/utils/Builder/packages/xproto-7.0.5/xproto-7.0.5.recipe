@@ -1,0 +1,12 @@
+authors				Kaj de Vos
+status				testing
+
+licenses			MIT
+home				x.org
+packages			xproto-X11R7.1-7.0.5
+locations
+	http://xorg.freedesktop.org/releases/X11R7.1/src/proto/
+	http://ftp.x.org/pub/X11R7.1/src/proto/
+
+documentation		COPYING ChangeLog AUTHORS
+
