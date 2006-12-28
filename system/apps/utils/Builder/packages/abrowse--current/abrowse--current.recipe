@@ -5,7 +5,7 @@ authors
 	Rick Caudill
 	Kaj de Vos
 maintainers			Arno Klenke
-status				developing
+status				incomplete
 
 licenses			GPL
 home				www.konqueror.org/embedded/
@@ -26,4 +26,3 @@ documentation
 	konq-embed/README konq-embed/COPYING konq-embed/ChangeLog konq-embed/AUTHORS konq-embed/TODO
 	src/docs
 internal-docs		konq-embed/HACKS
-

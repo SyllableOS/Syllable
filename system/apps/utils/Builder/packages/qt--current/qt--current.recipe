@@ -3,7 +3,7 @@ authors
 	Arno Klenke
 	Kaj de Vos
 maintainers			Arno Klenke
-status				developing
+status				incomplete
 
 licenses			GPL
 home				www.konqueror.org/embedded/
@@ -26,4 +26,3 @@ configure-options
 ;	--with-gui=qpe
 
 ;install-files		konq-embed/dropin/qt_syllable/ bin/
-

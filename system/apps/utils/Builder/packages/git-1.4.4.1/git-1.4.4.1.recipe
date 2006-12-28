@@ -1,0 +1,24 @@
+authors				Kaj de Vos
+status				testing
+warnings			Hardwired to install in the running system!
+
+licenses			GPL
+home				git.or.cz
+locations			http://kernel.org/pub/software/scm/git/
+
+needs
+	autoconf
+	perl
+	python
+	openssl
+	expat
+	curl
+
+; make clean deletes configure:
+configure
+	autoconf
+	../git-1.4.4.1/configure --prefix=/usr/git
+
+documentation
+	README
+;	Documentation
