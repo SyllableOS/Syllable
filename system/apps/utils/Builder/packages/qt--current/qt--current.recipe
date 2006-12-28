@@ -1,0 +1,29 @@
+authors
+	Kurt Skauen
+	Arno Klenke
+	Kaj de Vos
+maintainers			Arno Klenke
+status				developing
+
+licenses			GPL
+home				www.konqueror.org/embedded/
+packages			abrowse-a3a-src
+locations			http://www.liqwyd.com/arno/
+
+build-needs
+	perl
+	pcre
+
+build-dir			konq-embed/dropin/qt_syllable
+
+_configure
+	echo $PWD
+;	cd ../../..
+	./configure --prefix=/usr/qt --enable-embedded
+;	--with-gui=qpe
+configure-options
+	--enable-embedded
+;	--with-gui=qpe
+
+;install-files		konq-embed/dropin/qt_syllable/ bin/
+

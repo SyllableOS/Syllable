@@ -1,0 +1,29 @@
+authors
+	Kurt Skauen
+	Arno Klenke
+	Kristian Van Der Vliet
+	Rick Caudill
+	Kaj de Vos
+maintainers			Arno Klenke
+status				developing
+
+licenses			GPL
+home				www.konqueror.org/embedded/
+packages			abrowse-a3a-src
+locations			http://www.liqwyd.com/arno/
+
+build-needs
+	perl
+	qt >= 3.1
+	pcre
+
+build-dir			konq-embed
+
+configure			true
+
+install-files		konq-embed/src/ABrowse bin/
+documentation
+	konq-embed/README konq-embed/COPYING konq-embed/ChangeLog konq-embed/AUTHORS konq-embed/TODO
+	src/docs
+internal-docs		konq-embed/HACKS
+

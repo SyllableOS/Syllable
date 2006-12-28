@@ -10,9 +10,10 @@ home				www.liqwyd.com
 packages			whisper-alpha6.src
 locations			http://www.liqwyd.com/syllable/
 
-patch				mv libsmtp libpop3 whisper
+patch				mv libsmtp libpop3 whisper/
 
-build-needs
+; Included in source package:
+_build-needs
 	libsmtp
 	libpop3
 
