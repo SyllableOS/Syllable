@@ -307,9 +307,7 @@ void Desktop::LoadBackground()
 		if( m_zBackground == "None" )
 			bLoadDefault = true;
 		else {
-			const char *pzHome = getenv( "HOME" );
-			os::Path cPath = os::Path( pzHome );
-			cPath.Append( "Documents/Pictures" );
+			os::Path cPath = os::Path( "/system/resources/wallpapers/" );
 			cPath.Append( m_zBackground.c_str() );
 			cFile.SetTo( cPath );
 			m_pcBackground = new os::BitmapImage( &cFile );
