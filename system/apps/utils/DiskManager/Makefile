@@ -18,6 +18,8 @@ $(OBJDIR):
 
 $(OBJDIR)/$(EXE): catalogs $(OBJS)
 	$(CXX) $(OBJS) -o $(OBJDIR)/$(EXE) -lsyllable
+	strip --strip-all $(EXE)
+	rescopy -r $(EXE) icons/*.png
 	rescopy -r $(OBJDIR)/$(EXE) resources/$(EXE).catalog
 	for CATALOG in $(CATALOGS);do \
 		echo $$CATALOG; \
