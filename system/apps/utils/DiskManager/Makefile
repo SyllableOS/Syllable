@@ -18,9 +18,9 @@ $(OBJDIR):
 
 $(OBJDIR)/$(EXE): catalogs $(OBJS)
 	$(CXX) $(OBJS) -o $(OBJDIR)/$(EXE) -lsyllable
-	strip --strip-all $(EXE)
-	rescopy -r $(EXE) icons/*.png
-	rescopy -r $(OBJDIR)/$(EXE) resources/$(EXE).catalog
+	strip --strip-all $(OBJDIR)/$(EXE)
+	rescopy -r $(OBJDIR)/$(EXE) icons/*.png
+	rescopy -a $(OBJDIR)/$(EXE) resources/$(EXE).catalog
 	for CATALOG in $(CATALOGS);do \
 		echo $$CATALOG; \
 		rescopy -a $(OBJDIR)/$(EXE) $$CATALOG/$(EXE).catalog=resources/$$CATALOG/$(EXE).catalog; \

@@ -9,7 +9,7 @@ $(EXE) : catalogs $(OBJS)
 	$(CXX) $(OBJS) -lsyllable -o $@
 	strip --strip-all $(EXE)
 	rescopy -r $(EXE) icons/*.png
-	rescopy -r $(EXE) resources/SlbMgr.catalog
+	rescopy -a $(EXE) resources/SlbMgr.catalog
 	for CATALOG in $(CATALOGS);do \
 		echo $$CATALOG; \
 		rescopy -a $(EXE) $$CATALOG/SlbMgr.catalog=resources/$$CATALOG/SlbMgr.catalog; \
