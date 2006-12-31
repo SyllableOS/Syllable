@@ -4,7 +4,7 @@
 // Translated by: Flemming H. Sørensen (BurningShadow)
 //
 
-MSG_MAINWND_TITLE=0							Syllable Manager
+MSG_MAINWND_TITLE=0							System Information
 
 MSG_MAINWND_MENU_APPLICATION=100			Program
 MSG_MAINWND_MENU_APPLICATION_ABOUT			Om...
@@ -18,8 +18,8 @@ MSG_MAINWND_MENU_OPTIONS_SPEED_MEDIUM		Normal
 MSG_MAINWND_MENU_OPTIONS_SPEED_HIGH			Hurtig
 MSG_MAINWND_MENU_OPTIONS_SPEED_PAUSE		Pause
 
-MSG_ABOUTWND_TITLE=900						Om Syllable Manager v.%s
-MSG_ABOUTWND_TEXT							SLBMgr v.%s\n\nResource Manager for Syllable\nJohn Hall, 2001\n\nAtheMgr er udgivet under GNU Public License (GPL)\n\nAtheMgr: http://www.triumvirate.net/athemgr.htm\nGNU: http://www.gnu.org/"
+MSG_ABOUTWND_TITLE=900						Om System Information v.%s
+MSG_ABOUTWND_TEXT							System Information v.%s\n\nSystem Information for Syllable\nJohn Hall, 2001\n\nSystem Information er udgivet under GNU Public License (GPL)\n
 MSG_ABOUTWND_OK								_Ok
 
 MSG_TAB_SYSINFO=1000						System Info
@@ -27,7 +27,7 @@ MSG_TAB_SYSINFO_VER_NAME					Navn
 MSG_TAB_SYSINFO_VER_VERSION					Version
 MSG_TAB_SYSINFO_VER_BUILDDATE				Dato
 MSG_TAB_SYSINFO_VER_SYLLABLE				Syllable
-MSG_TAB_SYSINFO_VER_SLBMGR					SlbMgr
+MSG_TAB_SYSINFO_VER_SLBMGR					System Information
 MSG_TAB_SYSINFO_CPU_CPU						CPU
 MSG_TAB_SYSINFO_CPU_CORESPEED				CPU Hastighed
 MSG_TAB_SYSINFO_CPU_BUSSPEED				Bus Hastighed

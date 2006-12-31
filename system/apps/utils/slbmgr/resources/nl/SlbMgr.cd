@@ -4,10 +4,10 @@
 // Vertaald door: Ruud Kuin en Kaj de Vos
 //
 
-MSG_MAINWND_TITLE=0							Syllable Manager
+MSG_MAINWND_TITLE=0							System Information
 
 MSG_MAINWND_MENU_APPLICATION=100			Toepassing
-MSG_MAINWND_MENU_APPLICATION_ABOUT			Over Syllable Manager...
+MSG_MAINWND_MENU_APPLICATION_ABOUT			Over System Information...
 MSG_MAINWND_MENU_APPLICATION_QUIT			Afsluiten
 
 MSG_MAINWND_MENU_OPTIONS=200				Opties
@@ -18,8 +18,8 @@ MSG_MAINWND_MENU_OPTIONS_SPEED_MEDIUM		Midden
 MSG_MAINWND_MENU_OPTIONS_SPEED_HIGH			Hoog
 MSG_MAINWND_MENU_OPTIONS_SPEED_PAUSE		Pauzeren
 
-MSG_ABOUTWND_TITLE=900						Over Syllable Manager versie %s
-MSG_ABOUTWND_TEXT							Syllable Manager versie %s\nSysteembeheer voor Syllable\n\nAtheMgr copyright John Hall, 2001\n\nSyllable Manager is vrijgegeven onder de GNU Public License (GPL).\nGNU: http://www.gnu.org
+MSG_ABOUTWND_TITLE=900						Over System Information versie %s
+MSG_ABOUTWND_TEXT							System Information versie %s\nSysteembeheer voor Syllable\n\nAtheMgr copyright John Hall, 2001\n
 MSG_ABOUTWND_OK								OK
 
 MSG_TAB_SYSINFO=1000						Systeeminfo
@@ -27,7 +27,7 @@ MSG_TAB_SYSINFO_VER_NAME					Onderdeel
 MSG_TAB_SYSINFO_VER_VERSION					Versie
 MSG_TAB_SYSINFO_VER_BUILDDATE				Bouwdatum
 MSG_TAB_SYSINFO_VER_SYLLABLE				Syllable
-MSG_TAB_SYSINFO_VER_SLBMGR					Syllable Manager
+MSG_TAB_SYSINFO_VER_SLBMGR					System Information
 MSG_TAB_SYSINFO_CPU_CPU						CVE
 MSG_TAB_SYSINFO_CPU_CORESPEED				Kloksnelheid
 MSG_TAB_SYSINFO_CPU_BUSSPEED				Bussnelheid

@@ -19,7 +19,7 @@ MSG_MAINWND_MENU_OPTIONS_SPEED_HIGH			Alta
 MSG_MAINWND_MENU_OPTIONS_SPEED_PAUSE		Pausa
 
 MSG_ABOUTWND_TITLE=900						Acerca del Administrador de Syllable v.%s
-MSG_ABOUTWND_TEXT							SLBMgr v.%s\n\nAdministrador de recursos para Syllable\nJohn Hall, 2001\n\nAtheMgr se distribuye bajo la licencia GNU Public License (GPL)\n\nAtheMgr: http://www.triumvirate.net/athemgr.htm\nGNU: http://www.gnu.org/"
+MSG_ABOUTWND_TEXT							System Information v.%s\n\nAdministrador de recursos para Syllable\nJohn Hall, 2001\n
 MSG_ABOUTWND_OK								_Ok
 
 MSG_TAB_SYSINFO=1000						Información del sistema
@@ -27,7 +27,7 @@ MSG_TAB_SYSINFO_VER_NAME					Nombre
 MSG_TAB_SYSINFO_VER_VERSION					Versión
 MSG_TAB_SYSINFO_VER_BUILDDATE				Fecha de compilación
 MSG_TAB_SYSINFO_VER_SYLLABLE				Syllable
-MSG_TAB_SYSINFO_VER_SLBMGR					SlbMgr
+MSG_TAB_SYSINFO_VER_SLBMGR					System Information
 MSG_TAB_SYSINFO_CPU_CPU						CPU
 MSG_TAB_SYSINFO_CPU_CORESPEED				Velocidad del CPU
 MSG_TAB_SYSINFO_CPU_BUSSPEED				Velocidad de bus

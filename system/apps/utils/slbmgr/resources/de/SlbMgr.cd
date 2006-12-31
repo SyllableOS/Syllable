@@ -4,7 +4,7 @@
 // Translated by: nebu/Jan Niemeyer
 //
 
-MSG_MAINWND_TITLE=0							Syllable Manager
+MSG_MAINWND_TITLE=0							System Information
 
 MSG_MAINWND_MENU_APPLICATION=100			Anwendung
 MSG_MAINWND_MENU_APPLICATION_ABOUT			Über
@@ -18,8 +18,8 @@ MSG_MAINWND_MENU_OPTIONS_SPEED_MEDIUM		Mittel
 MSG_MAINWND_MENU_OPTIONS_SPEED_HIGH			Hoch
 MSG_MAINWND_MENU_OPTIONS_SPEED_PAUSE		Pause
 
-MSG_ABOUTWND_TITLE=900						Über Syllable Manager v.%s
-MSG_ABOUTWND_TEXT							SLBMgr v.%s\n\nResourcenverwaltung für Syllable\nJohn Hall, 2001\n\nAtheMgr wurde unter den Bedingungen der GNU Public License (GPL) veröffentlicht.\n\nAtheMgr: http://www.triumvirate.net/athemgr.htm\nGNU: http://www.gnu.org/"
+MSG_ABOUTWND_TITLE=900						Über System Information v.%s
+MSG_ABOUTWND_TEXT							System Information v.%s\n\nSystem Information für Syllable\nJohn Hall, 2001\n
 MSG_ABOUTWND_OK								_Ok
 
 MSG_TAB_SYSINFO=1000						Systeminfo
@@ -27,7 +27,7 @@ MSG_TAB_SYSINFO_VER_NAME					Name
 MSG_TAB_SYSINFO_VER_VERSION					Version
 MSG_TAB_SYSINFO_VER_BUILDDATE				Build Date
 MSG_TAB_SYSINFO_VER_SYLLABLE				Syllable
-MSG_TAB_SYSINFO_VER_SLBMGR					SlbMgr
+MSG_TAB_SYSINFO_VER_SLBMGR					System Information
 MSG_TAB_SYSINFO_CPU_CPU						CPU
 MSG_TAB_SYSINFO_CPU_CORESPEED				Kerntakt
 MSG_TAB_SYSINFO_CPU_BUSSPEED				Bustakt

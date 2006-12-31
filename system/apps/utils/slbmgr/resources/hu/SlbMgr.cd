@@ -4,7 +4,7 @@
 // Translated by: David Horvath
 //
 
-MSG_MAINWND_TITLE=0							Syllable Manager
+MSG_MAINWND_TITLE=0							System Information
 
 MSG_MAINWND_MENU_APPLICATION=100			Program
 MSG_MAINWND_MENU_APPLICATION_ABOUT			Névjegy
@@ -18,8 +18,8 @@ MSG_MAINWND_MENU_OPTIONS_SPEED_MEDIUM		Közepes
 MSG_MAINWND_MENU_OPTIONS_SPEED_HIGH			Magas
 MSG_MAINWND_MENU_OPTIONS_SPEED_PAUSE		Szünet
 
-MSG_ABOUTWND_TITLE=900						A Syllable Manager v.%s névjegye
-MSG_ABOUTWND_TEXT							SLBMgr v.%s\n\nEröforráskezelö Syllable operációs rendszerre.\nJohn Hall, 2001\n\nAz AtheMgr-t a GNU Public License (GPL) védi.\n\nAtheMgr: http://www.triumvirate.net/athemgr.htm\nGNU: http://www.gnu.org/"
+MSG_ABOUTWND_TITLE=900						A System Information v.%s névjegye
+MSG_ABOUTWND_TEXT							System Information v.%s\n\nEröforráskezelö Syllable operációs rendszerre.\nJohn Hall, 2001\n
 MSG_ABOUTWND_OK								Ok
 
 MSG_TAB_SYSINFO=1000						Rendszerinformáció
@@ -27,7 +27,7 @@ MSG_TAB_SYSINFO_VER_NAME					Név
 MSG_TAB_SYSINFO_VER_VERSION					Verzió
 MSG_TAB_SYSINFO_VER_BUILDDATE				Kiadás dátuma
 MSG_TAB_SYSINFO_VER_SYLLABLE				Syllable
-MSG_TAB_SYSINFO_VER_SLBMGR					SlbMgr
+MSG_TAB_SYSINFO_VER_SLBMGR					System Information
 MSG_TAB_SYSINFO_CPU_CPU						CPU
 MSG_TAB_SYSINFO_CPU_CORESPEED				Sebesség
 MSG_TAB_SYSINFO_CPU_BUSSPEED				Busz-sebesség

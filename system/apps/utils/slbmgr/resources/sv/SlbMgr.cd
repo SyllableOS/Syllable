@@ -19,7 +19,7 @@ MSG_MAINWND_MENU_OPTIONS_SPEED_HIGH			Hög
 MSG_MAINWND_MENU_OPTIONS_SPEED_PAUSE		Paus
 
 MSG_ABOUTWND_TITLE=900						Om Syllable Hanteraren v.%s
-MSG_ABOUTWND_TEXT							SLBMgr v.%s\n\nResurshanterare för Syllable\nJohn Hall, 2001\n\nAtheMgr är släppt under GNU Public License (GPL)\n\nAtheMgr: http://www.triumvirate.net/athemgr.htm\nGNU: http://www.gnu.org/"
+MSG_ABOUTWND_TEXT							System Information v.%s\n\nResurshanterare för Syllable\nJohn Hall, 2001\n
 MSG_ABOUTWND_OK								_Ok
 
 MSG_TAB_SYSINFO=1000						Systeminformation
@@ -27,7 +27,7 @@ MSG_TAB_SYSINFO_VER_NAME					Namn
 MSG_TAB_SYSINFO_VER_VERSION					Version
 MSG_TAB_SYSINFO_VER_BUILDDATE				Versionsdatum
 MSG_TAB_SYSINFO_VER_SYLLABLE				Syllable
-MSG_TAB_SYSINFO_VER_SLBMGR					SlbMgr
+MSG_TAB_SYSINFO_VER_SLBMGR					System Information
 MSG_TAB_SYSINFO_CPU_CPU						CPU
 MSG_TAB_SYSINFO_CPU_CORESPEED				Kärnhastighet
 MSG_TAB_SYSINFO_CPU_BUSSPEED				Busshastighet
