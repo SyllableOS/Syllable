@@ -4,7 +4,7 @@
 // Translated by: nebu/Jan Niemeyer
 //
 
-MSG_MAINWND_TITLE=0							Syllable Partitionsverwaltung
+MSG_MAINWND_TITLE=0							Disk Manager
 
 MSG_MAINWND_MENU_PROGRAM=100				Programm
 MSG_MAINWND_MENU_PROGRAM_EXIT				Beenden

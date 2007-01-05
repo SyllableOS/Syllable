@@ -4,7 +4,7 @@
 // Translated by: Maximo Pech Jaramillo <makzpj@gmail.com>
 //
 
-MSG_MAINWND_TITLE=0							Editor de particiones de Syllable
+MSG_MAINWND_TITLE=0							Disk Manager
 
 MSG_MAINWND_MENU_PROGRAM=100				Programa
 MSG_MAINWND_MENU_PROGRAM_EXIT				Salir

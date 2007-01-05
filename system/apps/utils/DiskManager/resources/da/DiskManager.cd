@@ -5,7 +5,7 @@
 // Korrekturlæsning og Rettelser: Jakob Wolffhechel
 //
 
-MSG_MAINWND_TITLE=0							Syllable Drev-inddelingsværktøj
+MSG_MAINWND_TITLE=0							Disk Manager
 
 MSG_MAINWND_MENU_PROGRAM=100				Program
 MSG_MAINWND_MENU_PROGRAM_EXIT				Afslut
