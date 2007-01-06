@@ -31,6 +31,7 @@
 
 #include <util/application.h>
 #include <util/message.h>
+#include <util/resources.h>
 #include <gui/window.h>
 #include <gui/menu.h>
 #include <gui/layoutview.h>
@@ -75,6 +76,13 @@ PartitionInfo::~PartitionInfo()
 */
 MainWindow::MainWindow( const std::string& cTitle ) : Window( Rect(0,0,300,200), "main_window", cTitle )
 {
+	/* Set Icon */
+	os::Resources cCol( get_image_id() );
+	os::ResStream *pcStream = cCol.GetResourceStream( "icon24x24.png" );
+	os::BitmapImage *pcIcon = new os::BitmapImage( pcStream );
+	SetIcon( pcIcon->LockBitmap() );
+	delete( pcIcon );
+
     SetupMenus();
 
     Rect cMainFrame = GetBounds();
