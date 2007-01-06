@@ -44,7 +44,7 @@
 #include "cpuview.h"
 #include "memview.h"
 #include "w8378x_driver.h"
-#include "resources/SlbMgr.h"
+#include "resources/SysInfo.h"
 
 using namespace os;
 

@@ -30,6 +30,7 @@
 #include <util/application.h>
 #include <util/message.h>
 #include <util/settings.h>
+#include <util/resources.h>
 
 #include <atheos/time.h>
 #include <atheos/kernel.h>
@@ -40,7 +41,7 @@
 #include "devicespanel.h"
 #include "drivespanel.h"
 
-#include "resources/SlbMgr.h"
+#include "resources/SysInfo.h"
 
 #include <gui/tabview.h>
 using namespace os;
@@ -112,7 +113,7 @@ class MyApp:public Application
 
 MyApp::MyApp( const char *pzName ):Application( pzName )
 {
-	SetCatalog("SlbMgr.catalog");
+	SetCatalog("SysInfo.catalog");
 
 	m_pcWindow = new MyWindow();
 	m_pcWindow->SetDelay( 500000 );
@@ -263,6 +264,13 @@ void MyWindow::SetupMenus()
 //----------------------------------------------------------------------------
 MyWindow::MyWindow():Window( Rect(), "athe_wnd", MSG_MAINWND_TITLE, 0 )
 {
+	/* Set Icon */
+	os::Resources cCol( get_image_id() );
+	os::ResStream *pcStream = cCol.GetResourceStream( "icon24x24.png" );
+	os::BitmapImage *pcIcon = new os::BitmapImage( pcStream );
+	SetIcon( pcIcon->LockBitmap() );
+	delete( pcIcon );
+
 	m_nUpdateCount = 0;
 
 	SetupMenus();

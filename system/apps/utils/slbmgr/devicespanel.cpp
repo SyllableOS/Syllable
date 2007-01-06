@@ -44,7 +44,7 @@
 
 #include "devicespanel.h"
 
-#include "resources/SlbMgr.h"
+#include "resources/SysInfo.h"
 
 using namespace os;
 

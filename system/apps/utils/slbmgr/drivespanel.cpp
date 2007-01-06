@@ -50,7 +50,7 @@
 #include <util/appserverconfig.h>
 
 #include "drivespanel.h"
-#include "resources/SlbMgr.h"
+#include "resources/SysInfo.h"
 
 using namespace os;
 

@@ -2,41 +2,41 @@ COPTS	= -c
 
 CATALOGS = da de es hu nl sv
 
-OBJS	= main.o sysinfopanel.o drivespanel.o processpanel.o memview.o cpuview.o performancepanel.o devicespanel.o
-EXE	= SlbMgr
+OBJS = main.o sysinfopanel.o drivespanel.o processpanel.o memview.o cpuview.o performancepanel.o devicespanel.o
+EXE	= "System Information"
 
 $(EXE) : catalogs $(OBJS)
-	$(CXX) $(OBJS) -lsyllable -o $@
+	$(CXX) $(OBJS) -lsyllable -o "System Information"
 	strip --strip-all $(EXE)
-	rescopy -r $(EXE) icons/*.png
-	rescopy -a $(EXE) resources/SlbMgr.catalog
+	rescopy -r $(EXE) icons/icon24x24.png
+	rescopy -a $(EXE) resources/SysInfo.catalog
 	for CATALOG in $(CATALOGS);do \
 		echo $$CATALOG; \
-		rescopy -a $(EXE) $$CATALOG/SlbMgr.catalog=resources/$$CATALOG/SlbMgr.catalog; \
+		rescopy -a $(EXE) $$CATALOG/SysInfo.catalog=resources/$$CATALOG/SysInfo.catalog; \
 	done;
+	addattrib $(EXE) os::Category "System Tools"
 
 catalogs:
 	cd resources; \
-	catcomp -c SlbMgr.cd; \
+	catcomp -c SysInfo.cd; \
 	for CATALOG in $(CATALOGS);do \
 		echo $$CATALOG; \
 		cd $$CATALOG; \
-		catcomp -t SlbMgr.cd; \
+		catcomp -t SysInfo.cd; \
 		cd ..; \
 	done;
 
 dist: $(EXE)
 	-mkdir -p "$(DIST_DIR)/atheos/Applications/System Tools"
 	cp -f $(EXE) "$(DIST_DIR)/atheos/Applications/System Tools/System Information"
-	addattrib "$(DIST_DIR)/atheos/Applications/System Tools/System Information" "os::Category" "System Tools"
-	ln -sf "/Applications/System Tools/System Information" $(DIST_DIR)/atheos/sys/bin/$(EXE)
+	ln -sf "/Applications/System Tools/System Information" $(DIST_DIR)/atheos/sys/bin/SlbMgr
 
 clean:  
 	-rm -f $(OBJS)
 	-rm -f $(EXE)
-	-rm resources/SlbMgr.catalog resources/SlbMgr.h; \
+	-rm resources/SysInfo.catalog resources/SysInfo.h; \
 	for CATALOG in $(CATALOGS);do \
-		rm resources/$$CATALOG/SlbMgr.catalog; \
+		rm resources/$$CATALOG/SysInfo.catalog; \
 	done;
 
 .cpp.o:
