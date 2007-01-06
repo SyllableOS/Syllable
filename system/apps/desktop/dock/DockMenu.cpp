@@ -90,6 +90,8 @@ void DockMenu::AddEntry( os::RegistrarManager* pcManager, os::String zCategory, 
 			zCategory = MSG_MENU_CATEGORY_GAMES;
 		if( zCategory == "Emulators" )
 			zCategory = MSG_MENU_CATEGORY_EMULATORS;
+		if( zCategory == "System Tools" )
+			zCategory = MSG_MENU_CATEGORY_SYSTEMTOOLS;
 
 		/* Create category if necessary */
 		os::MenuItem* pcSubMenuItem = FindMenuItem( zCategory );
