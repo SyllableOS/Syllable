@@ -8,7 +8,7 @@ EXE	= "System Information"
 $(EXE) : catalogs $(OBJS)
 	$(CXX) $(OBJS) -lsyllable -o "System Information"
 	strip --strip-all $(EXE)
-	rescopy -r $(EXE) icons/icon24x24.png
+	rescopy -r $(EXE) icons/*.png
 	rescopy -a $(EXE) resources/SysInfo.catalog
 	for CATALOG in $(CATALOGS);do \
 		echo $$CATALOG; \
