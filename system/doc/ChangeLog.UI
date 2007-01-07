@@ -1,3 +1,7 @@
+* January 7, 2007, Kristian Van Der Vliet *
+
+Fixed a potential infinite loop in IconDirView, patch from Jonas Jarvoll
+
 * December 23, 2006, Arno Klenke *
 
 Fixed a drawing bug in the appserver
