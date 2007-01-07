@@ -47,6 +47,7 @@ modules
 	apps/desktop/dock_plugins/WallpaperChanger
 	apps/desktop/dock_plugins/Eyes
 	apps/desktop/dock_plugins/Clipper
+	apps/desktop/dock_plugins/Printer
 	apps/media/coldfish
 	apps/media/coldfish_plugins/blursk
 	apps/media/coldfish_plugins/remote
