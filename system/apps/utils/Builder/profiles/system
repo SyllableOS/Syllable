@@ -293,7 +293,7 @@ modules
 	apps/desktop/dock
 	apps/desktop/dock_plugins/mixer
 	apps/desktop/file_browser
-	apps/gnu/bash-2.03
+	apps/gnu/bash-3.2
 	apps/gnu/coreutils-6.4
 	apps/gnu/sed-4.1.5
 	apps/other/unzip-5.52
