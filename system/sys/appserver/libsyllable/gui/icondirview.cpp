@@ -471,13 +471,13 @@ void DirKeeper::Stop()
 			default:
 				cTmp.AddMessage( pcMsg );
 		}
-		
-		while( ( pcMsg = cTmp.NextMessage() ) != NULL )
-		{
-			pcQueue->AddMessage( pcMsg );
-		}
-		
 	}
+	
+	while( ( pcMsg = cTmp.NextMessage() ) != NULL )
+	{
+		pcQueue->AddMessage( pcMsg );
+	}
+	
 	pcQueue->Unlock();
 	Unlock();
 }
