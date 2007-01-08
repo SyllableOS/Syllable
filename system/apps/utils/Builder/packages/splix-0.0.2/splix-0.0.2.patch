@@ -1,0 +1,18 @@
+diff -ur splix-0.0.2_orig/ppd/Makefile splix-0.0.2/ppd/Makefile
+--- splix-0.0.2_orig/ppd/Makefile	2006-11-11 13:26:27.000000000 +0000
++++ splix-0.0.2/ppd/Makefile	2007-01-08 11:32:46.000000000 +0000
+@@ -37,12 +37,9 @@
+ 
+ .PHONY:
+ install:
+-	install -d -m 755 ${CUPSPPD}/samsung
++	install -d -m 755 ${CUPSPPD}/C
+ 	for filename in ${DRIVERS}; do \
+-		install -m 644 $$filename.${DRIVERSEXT} ${CUPSPPD}/samsung;\
+-		for lang in ${LANGUAGES}; do \
+-			install -m 644 $$filename$$lang.${DRIVERSEXT} ${CUPSPPD}/samsung;\
+-		done; \
++		install -m 644 $$filename.${DRIVERSEXT} ${CUPSPPD}/C;\
+ 	done \
+ 
+ .PHONY: clean distclean
