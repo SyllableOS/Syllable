@@ -476,7 +476,7 @@ void CameraDelayedLooper::TimerTick(int nID)
 	pcBitmapImage->Draw( os::Point( 0, 0 ), pcSaveImage->GetView() );
 	pcSaveImage->Sync();
 	
-	sprintf(cScreenShotPath,"%s/Documents/Pictures/Screenshot-%d-%d-%d-%d:%d:%d.png",getenv("HOME"),pcTime.GetYear(),pcTime.GetMonth(),pcTime.GetDay(),pcTime.GetHour(),pcTime.GetMin(),pcTime.GetSec());
+	sprintf(cScreenShotPath,"%s/Pictures/Screenshot-%d-%d-%d-%d:%d:%d.png",getenv("HOME"),pcTime.GetYear(),pcTime.GetMonth(),pcTime.GetDay(),pcTime.GetHour(),pcTime.GetMin(),pcTime.GetSec());
 	
 	File vNewFile = os::File(cScreenShotPath,O_CREAT | O_TRUNC | O_WRONLY);
 	vNewFile.WriteAttr("os::MimeType", O_TRUNC, ATTR_TYPE_STRING,"image/png", 0,10 );
