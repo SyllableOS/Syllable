@@ -1,3 +1,10 @@
+* January 9, Arno Klenke *
+
+Replaced lock_mem_area()/unlock_mem_area() by verify_mem_area()
+Use the tsc timer for thread scheduling
+Use the elf symbol hash tables
+Added additional error checks to the usb hid driver to work with at least one keyboard
+
 * December 14 2006, Arno Klenke *
 
 o Report the total size of the blockcache and not just the allocated blocks
@@ -1054,6 +1061,7 @@ required; they are implemented in user space as part of libc.
 
 Applied a fix to sys/kernel/kernel/vfs/vfs.c  The fcntl() F_GETLK command
 now works as expected.
+
 
 
 
