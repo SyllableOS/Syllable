@@ -354,10 +354,12 @@ static void hash_delete_inode( HashTable_s * psTable, Inode_s *psInode )
 void dump_list( InodeList_s * psList )
 {
 	Inode_s *psInode;
+	
+	printk( "Dump List!\n" );
 
 	for ( psInode = psList->il_psLRU; NULL != psInode; psInode = psInode->i_psNext )
 	{
-		dbprintf( DBP_DEBUGGER, "%03d::%08Ld cnt=%d vol=%p mnt=%p vno=%p busy=%d\n", psInode->i_psVolume->v_nDevNum, psInode->i_nInode, atomic_read( &psInode->i_nCount ), psInode->i_psVolume, psInode->i_psMount, psInode->i_pFSData, psInode->i_bBusy );
+		dbprintf( DBP_DEBUGGER, "%03d::%08Ld cnt=%d vol=%p mnt=%p vno=%p busy=%d\n", 0/*psInode->i_psVolume->v_nDevNum*/, psInode->i_nInode, atomic_read( &psInode->i_nCount ), psInode->i_psVolume, psInode->i_psMount, psInode->i_pFSData, psInode->i_bBusy );
 	}
 }
 
@@ -1620,7 +1622,7 @@ status_t sys_probe_fs( int nVersion, const char *pzDevicePath, fs_info * psInfo 
 	int nPathLen;
 	int nError = 0;
 
-	if ( lock_mem_area( psInfo, sizeof( *psInfo ), true ) < 0 )
+	if ( verify_mem_area( psInfo, sizeof( *psInfo ), true ) < 0 )
 	{
 		return ( -EFAULT );
 	}
@@ -1643,7 +1645,6 @@ status_t sys_probe_fs( int nVersion, const char *pzDevicePath, fs_info * psInfo 
 	}
 	UNLOCK( g_hFSListSema );
 
-	unlock_mem_area( psInfo, sizeof( *psInfo ) );
 
 	return ( nError );
 }

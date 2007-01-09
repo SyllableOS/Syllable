@@ -105,7 +105,7 @@ struct _Thread
 
       /*** Timing members	***/
 
-	int64 tr_nSysTime;	/* Micros in kernal mode                */
+	int64 tr_nSysTime;	/* Micros in kernel mode                */
 	int64 tr_nCPUTime;	/* Total micros of execution            */
 	int64 tr_nQuantum;	/* Maximum allowed micros of execution before preemption        */
 	int64 tr_nLaunchTime;

@@ -143,13 +143,13 @@ int handle_copy_on_write( MemArea_s *psArea, pte_t * pPte, uintptr_t nVirtualAdd
 uint32_t memmap_no_page( MemArea_s *psArea, uintptr_t nAddress, bool bWriteAccess );
 int insert_area( MemContext_s *psCtx, MemArea_s *psArea );
 void remove_area( MemContext_s *psCtx, MemArea_s *psArea );
-int find_area( MemContext_s *psCtx, uintptr_t nAddress );
+inline int find_area( MemContext_s *psCtx, uintptr_t nAddress );
 
 uint32_t find_unmapped_area( MemContext_s *psCtx, int nAllocMode, uint32_t nSize, uintptr_t nAddress );
 
 int unmap_area( MemContext_s *psSegment, MemArea_s *psArea );
 
-MemArea_s *get_area( MemContext_s *psCtx, uintptr_t nAddress );
+inline MemArea_s *get_area( MemContext_s *psCtx, uintptr_t nAddress );
 MemArea_s *get_area_from_handle( area_id hArea );
 MemArea_s *verify_area( const void *pAddr, uint32_t nSize, bool bWrite );
 int put_area( MemArea_s *psArea );

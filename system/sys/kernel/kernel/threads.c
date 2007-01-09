@@ -87,7 +87,7 @@ status_t sys_get_thread_info( const thread_id hThread, thread_info * const psInf
 	uint32 nOldFlags;
 	status_t nError;
 
-	nError = lock_mem_area( psInfo, sizeof( *psInfo ), true );
+	nError = verify_mem_area( psInfo, sizeof( *psInfo ), true );
 	if ( nError < 0 )
 	{
 		printk( "Error: sys_get_thread_info() failed to lock info buffer\n" );
@@ -119,7 +119,6 @@ status_t sys_get_thread_info( const thread_id hThread, thread_info * const psInf
 	sched_unlock();
 	put_cpu_flags( nOldFlags );
 
-	unlock_mem_area( psInfo, sizeof( *psInfo ) );
 	return ( nError );
 }
 
@@ -129,7 +128,7 @@ status_t sys_get_next_thread_info( thread_info * const psInfo )
 	int nOldFlags;
 	status_t nError;
 
-	nError = lock_mem_area( psInfo, sizeof( *psInfo ), true );
+	nError = verify_mem_area( psInfo, sizeof( *psInfo ), true );
 	if ( nError < 0 )
 	{
 		printk( "Error: sys_get_next_thread_info() failed to lock info buffer\n" );
@@ -153,7 +152,6 @@ status_t sys_get_next_thread_info( thread_info * const psInfo )
 	sched_unlock();
 	put_cpu_flags( nOldFlags );
 
-	unlock_mem_area( psInfo, sizeof( *psInfo ) );
 	return ( nError );
 }
 

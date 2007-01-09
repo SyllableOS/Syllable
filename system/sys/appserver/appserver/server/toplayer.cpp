@@ -171,7 +171,7 @@ void TopLayer::RedrawLayer( Layer* pcBackbufferedLayer, Layer* pcChild, bool bRe
 		
 	if( pcChild->GetWindow() != NULL && ( pcChild->GetWindow()->GetPaintCounter() > 0 /* || pcChild->GetWindow()->HasPendingSizeEvents( this )*/ ))
 	{
-		m_bNeedsRedraw = true;
+		pcChild->m_bNeedsRedraw = true;
 		return;
 	}
 	

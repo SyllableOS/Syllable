@@ -1949,7 +1949,13 @@ int i810_dsp_ioctl(void *node, void *cookie, uint32 cmd, void *args, bool b_from
 		printk("SNDCTL_* -EINVAL\n");
 #endif
 		return -EINVAL;
+	case IOCTL_GET_USERSPACE_DRIVER:
+	{
+		memcpy_to_user( args, "oss.so", strlen( "oss.so" ) );
+		return( 0 );
 	}
+	}
+	
 	return -EINVAL;
 }
 
@@ -1962,7 +1968,7 @@ static status_t i810_dsp_open (void* pNode, uint32 nFlags, void **pCookie )
 	struct i810_state *state = NULL;
 	struct dmabuf *dmabuf = NULL;
 	
-	//printk( "i810_dps_open\n" );
+	printk( "i810_dps_open\n" );
 
 	/* find an available virtual channel (instance of /dev/dsp) */
 	while (card != NULL) {
@@ -2041,7 +2047,7 @@ static status_t i810_dsp_release( void *pNode, void *pCookie )
 	struct dmabuf *dmabuf = &state->dmabuf;
 	unsigned long flags;
 	
-	//printk( "i810_dps_release\n" );
+	printk( "i810_dps_release\n" );
 
 	/* stop DMA state machine and free DMA buffers/channels */
 	if(dmabuf->trigger & PCM_ENABLE_OUTPUT) {
@@ -2438,7 +2444,7 @@ static int i810_ac97_init(struct i810_card *card)
 		
 		if( create_device_node( card->nDeviceID, card->pci_dev->nHandle, 
 #ifdef ENABLE_DEVNODE_052
-			"sound/i810/mixer/0", &i810_mixer_fops, codec ) < 0 ) {
+			"audio/mixer/i810", &i810_mixer_fops, codec ) < 0 ) {
 #else
 			"sound/mixer", &i810_mixer_fops, codec ) < 0 ) {
 #endif
@@ -2641,7 +2647,7 @@ static int i810_probe(PCI_Info_s *pci_dev, int pci_id, int nDeviceID, struct pci
 	/* register /dev/dsp */
 	//if ((card->dev_audio = register_sound_dsp(&i810_audio_fops, -1)) < 0) {
 #ifdef ENABLE_DEVNODE_052
-	if( create_device_node( nDeviceID, pci_dev->nHandle,"sound/i810/dsp/0",
+	if( create_device_node( nDeviceID, pci_dev->nHandle,"audio/i810",
 #else
 	if( create_device_node( nDeviceID, pci_dev->nHandle,"sound/dsp",
 #endif

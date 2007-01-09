@@ -129,7 +129,7 @@ void calibrate_delay( int nProcessor )
 	wait_pit_wrap();
 	nEndPerf = read_pentium_clock();
 
-	g_asProcessorDescs[nProcessor].pi_nCoreSpeed = ( uint32 )( ( uint64 )PIT_TICKS_PER_SEC * ( nEndPerf - nStartPerf ) / 0xffff );
+	g_asProcessorDescs[nProcessor].pi_nCoreSpeed = ( ( uint64 )PIT_TICKS_PER_SEC * ( nEndPerf - nStartPerf ) / 0xffff );
 
 	isa_writeb( PIT_MODE, 0x34 );	/* loop mode */
 	isa_writeb( PIT_CH0, 0x0 );
@@ -139,7 +139,7 @@ void calibrate_delay( int nProcessor )
 
 	/* Round the value and print it. */
 	printk( "CPU %d - %lu.%02lu BogoMIPS (lpj=%lu)\n", nProcessor, loops_per_jiffy / ( 500000 / INT_FREQ ), ( loops_per_jiffy / ( 5000 / INT_FREQ ) ) % 100, loops_per_jiffy );
-	printk( "CPU %d runs at %d.%04d MHz\n", nProcessor,  g_asProcessorDescs[nProcessor].pi_nCoreSpeed / 1000000, ( g_asProcessorDescs[nProcessor].pi_nCoreSpeed / 100 ) % 10000 );
+	printk( "CPU %d runs at %d.%04d MHz\n", nProcessor, (int)( g_asProcessorDescs[nProcessor].pi_nCoreSpeed / 1000000 ), (int)( ( g_asProcessorDescs[nProcessor].pi_nCoreSpeed / 100 ) % 10000 ) );
 }
 
 static void calibrate_apic_timer( int nProcessor )
@@ -162,8 +162,8 @@ static void calibrate_apic_timer( int nProcessor )
 	wait_pit_wrap();
 	nAPICCount = apic_read( APIC_TMCCT );
 
-	g_asProcessorDescs[nProcessor].pi_nBusSpeed = ( uint32 )( ( uint64 )PIT_TICKS_PER_SEC * ( 0xffffffffLL - nAPICCount ) / 0xffff );
-	printk( "CPU %d bus runs at %d.%04d MHz\n", nProcessor, g_asProcessorDescs[nProcessor].pi_nBusSpeed / 1000000, ( g_asProcessorDescs[nProcessor].pi_nBusSpeed / 100 ) % 10000 );
+	g_asProcessorDescs[nProcessor].pi_nBusSpeed = (uint64)( ( uint64 )PIT_TICKS_PER_SEC * ( 0xffffffffLL - nAPICCount ) / 0xffff );
+	printk( "CPU %d bus runs at %d.%04d MHz\n", nProcessor, (int)( g_asProcessorDescs[nProcessor].pi_nBusSpeed / 1000000 ), (int)( ( g_asProcessorDescs[nProcessor].pi_nBusSpeed / 100 ) % 10000 ) );
 }
 
 /* Entry point into the kernel from the 16bit trampoline for aux. processors */
@@ -180,6 +180,7 @@ static void ap_entry_proc( void )
 
 	nCPU = get_processor_id();
 	kerndbg( KERN_DEBUG, "CPU #%d in ap_entry_proc()\n", nCPU );
+	
 
 	/* Workaround for lazy bios'es that forget to enable the cache on AP processors.
 	   Also set NE and MP flags and clear EM flag for x87 native mode */
@@ -607,11 +608,13 @@ void do_smp_preempt( SysCallRegs_s * psRegs )
 	DoSchedule( psRegs );
 }
 
+static void ( *g_pIdleLoopHandler )( int ) = NULL;
+
 void idle_loop( void )
 {
 	char zThreadName[32];
 	int nProcessor = 0;
-
+	
 	cli();
 
 	nProcessor = get_processor_id();
@@ -622,11 +625,16 @@ void idle_loop( void )
 	if( g_bAPICPresent )
 	{
 		uint32 nAPICDiv;
+		uint32 nReg;
 
 		nAPICDiv = g_asProcessorDescs[nProcessor].pi_nBusSpeed / INT_FREQ;
-		nAPICDiv += nProcessor * 10000;	/* Avoid re-scheduling all processors at the same time */
+		nAPICDiv /= 16;
 
-		kerndbg( KERN_DEBUG, "APIC divisor = %d\n", nAPICDiv );
+		kerndbg( KERN_WARNING, "APIC divisor = %d\n", nAPICDiv );
+		
+		nReg = apic_read( APIC_TDCR ) & ~0x0f;
+		nReg |= APIC_TDR_DIV_16;
+		apic_write( APIC_TDCR, nReg );
 
 		apic_write( APIC_LVTT, APIC_LVT_TIMER_PERIODIC | INT_SCHEDULE );	/* Make APIC local timer trig int INT_SCHEDULE */
 		apic_write( APIC_TMICT, nAPICDiv );									/* Start APIC timer */
@@ -634,22 +642,41 @@ void idle_loop( void )
 	
 	sti();
 	for(;;)
-		__asm__( "hlt" );
+	{
+		__asm__ volatile ( "nop" : : : "memory" );
+		if( g_pIdleLoopHandler == NULL ) {
+			__asm__ volatile ( "hlt" );
+		} else {
+			g_pIdleLoopHandler( nProcessor );
+		}
+	}
+}
+
+void set_idle_loop_handler( void ( *pHandler )( int ) )
+{
+	g_pIdleLoopHandler = pHandler;
+}
+
+static void db_disable_idle_handler( int argc, char **argv )
+{
+	set_idle_loop_handler( NULL );
+	dbprintf( DBP_DEBUGGER, "Idle handler disabled\n" );
 }
 
 /* Initialise the SMP subsystem */
 void init_smp( bool bInitSMP, bool bScanACPI )
 {
 	kerndbg( KERN_DEBUG, "init_smp( %s, %s )\n", bInitSMP ? "true" : "false", bScanACPI ? "true" : "false" );
+	
+	register_debug_cmd( "disable_idle_handler", "Disables a custom idle handler.", db_disable_idle_handler );
 
 	if( bInitSMP )
 		g_bAPICPresent = init_apic( bScanACPI );
 
 	if( g_bAPICPresent == false )
 	{
-		/* No speed detection for non-SMP machine with no APIC yet */
+		/* No busspeed detection for non-SMP machine with no APIC yet */
 		g_asProcessorDescs[g_nBootCPU].pi_nBusSpeed = 0;
-		g_asProcessorDescs[g_nBootCPU].pi_nCoreSpeed = 0;
 
 		/* startup_ap_processors() will not be called, so we'd better make sure we put ourselves in the CPU mask */
 		set_bit( g_nBootCPU, &g_nCpuMask );
@@ -659,6 +686,15 @@ void init_smp( bool bInitSMP, bool bScanACPI )
 
 		/* May as well take task register #0 */
 		SetTR( 8 << 3 );
+	}
+	
+	calibrate_delay( g_nBootCPU );
+	
+	if( g_bAPICPresent == true )
+	{
+		/* Initialize the local apic of the boot cpu */
+		setup_local_apic();
+		calibrate_apic_timer( g_nBootCPU );
 	}
 }
 
@@ -674,14 +710,10 @@ void boot_ap_processors( void )
 	if( nCPU != g_nBootCPU )
 		kerndbg( KERN_WARNING, "This is not the boot CPU! (%d, booted on %d)\n", nCPU, g_nBootCPU );
 
-	/* Get CPU core & bus speed */
-	calibrate_delay( nCPU );
+	/* Start ap processors */
 	if( g_bAPICPresent )
 	{
-		setup_local_apic();
-
 		nFlags = cli();
-		calibrate_apic_timer( nCPU );
 		startup_ap_processors( nCPU );
 		put_cpu_flags( nFlags );
 	}

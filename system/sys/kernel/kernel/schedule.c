@@ -1473,6 +1473,7 @@ void add_thread_to_ready( Thread_s *psThread )
 
 	if ( TS_READY != psThread->tr_nState )
 	{
+		reset_thread_quantum( psThread );
 		psThread->tr_nState = TS_READY;
 
 		for ( psTmp = DLIST_FIRST( &g_sSysBase.ex_sFirstReady ); NULL != psTmp; psTmp = DLIST_NEXT( psTmp, tr_psNext ) )
@@ -1661,7 +1662,7 @@ static Thread_s *select_thread( bool *bTimedOut )
 	Thread_s *psPrev = CURRENT_THREAD;
 	Thread_s *psNext = psPrev;
 	Thread_s *psTopProc = swap_and_get_next_ready_thread();
-	bigtime_t nCurTime = get_system_time();
+	int64 nCurTime = read_pentium_clock() / ( g_asProcessorDescs[nThisProc].pi_nCoreSpeed / 1000000 );
 	int nState;
 
 	if ( psPrev != NULL )
@@ -1684,9 +1685,10 @@ static Thread_s *select_thread( bool *bTimedOut )
 		/* previous task was killed       */
 		psNext = psTopProc;
 
+#if 0
 		if ( psPrev != NULL )
 		{
-			bigtime_t nCPUTime = nCurTime - psPrev->tr_nLaunchTime;
+			uint64 nCPUTime = nCurTime - psPrev->tr_nLaunchTime;
 
 			psPrev->tr_nCPUTime += nCPUTime;
 			if ( psPrev->tr_nPriority <= IDLE_PRIORITY )
@@ -1694,6 +1696,7 @@ static Thread_s *select_thread( bool *bTimedOut )
 				g_asProcessorDescs[nThisProc].pi_nIdleTime += nCPUTime;
 			}
 		}
+#endif
 		g_asProcessorDescs[nThisProc].pi_psCurrentThread = NULL;
 		goto found;
 	}
@@ -1770,13 +1773,17 @@ void DoSchedule( SysCallRegs_s* psRegs )
 	Thread_s *psNext;
 	int nFlg;
 	int nThisProc;
-	bigtime_t nCurTime = get_system_time();
+	int64 nCurTime;
+	
 	bool bTimedOut = false;
 
 	nFlg = cli();
 	sched_lock();
-
+		
 	nThisProc = get_processor_id();
+	nCurTime = read_pentium_clock() / ( g_asProcessorDescs[nThisProc].pi_nCoreSpeed / 1000000 );
+	g_asProcessorDescs[nThisProc].pi_nCPUTime = nCurTime;
+
 
 	// If the previous thread was in ready state
 	// it means that it tried to sleep, but was woken
@@ -1845,12 +1852,11 @@ void DoSchedule( SysCallRegs_s* psRegs )
 	if ( psPrev != NULL )
 	{
 		int64 nCPUTime = nCurTime - psPrev->tr_nLaunchTime;
-
-		psPrev->tr_nCPUTime += nCPUTime;
 		if ( psPrev->tr_nPriority <= IDLE_PRIORITY )
 		{
 			g_asProcessorDescs[nThisProc].pi_nIdleTime += nCPUTime;
 		}
+		psPrev->tr_nCPUTime += nCPUTime;
 		if ( IDLE_THREAD == psPrev )
 		{
 			psPrev->tr_nState = TS_READY;
@@ -1923,7 +1929,7 @@ void DoSchedule( SysCallRegs_s* psRegs )
 	stts();
 	set_page_directory_base_reg( psNext->tr_psProcess->tc_psMemSeg->mc_pPageDir );
 	g_bNeedSchedule = false;
-
+	
 	sched_unlock();
 
 	__asm__ __volatile__( "movl %0,%%gs\n\t" "movl %1,%%esp\n\t" "jmp ret_from_sys_call":	/* no outputs */

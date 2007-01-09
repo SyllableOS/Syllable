@@ -103,7 +103,7 @@ i855::i855(  int nFd ) :
 	char nBiosVersion[5];
 	m_nRingSize = RING_BUFFER_SIZE;
 	m_nRingMask = m_nRingSize - 1;
-	m_nFrameBufferOffset = m_nRingSize;
+	m_nFrameBufferOffset = ( m_nRingSize + 0xffff ) & ~( 0xffff );
 	m_bTwoPipes = false;
 	m_bEngineDirty = false;
 	bool bSwapBases = false;
@@ -567,14 +567,18 @@ int i855::SetScreenMode( screen_mode sMode )
 			/* Put the framebuffer behind the ringbuffer */
 			
 			OUTREG( DSPASTRIDE, m_cModeList[m_nCurrentMode].m_nBytesPerLine );
-			OUTREG( DSPABASE, m_nFrameBufferOffset );
 			OUTREG( DSPASIZE, ( ( m_cModeList[m_nCurrentMode].m_nHeight - 1 ) << 16 ) | 
-								 ( m_cModeList[m_nCurrentMode].m_nWidth - 1 ) );
+								 ( m_cModeList[m_nCurrentMode].m_nWidth - 1 ) );			
+			OUTREG( DSPABASE, m_nFrameBufferOffset );
+			uint32 nTemp = INREG( DSPABASE );
+			OUTREG( DSPABASE, nTemp );
 			if( m_bTwoPipes ) {
 				OUTREG( DSPBSTRIDE, m_cModeList[m_nCurrentMode].m_nBytesPerLine );
-				OUTREG( DSPBBASE, m_nFrameBufferOffset );
 				OUTREG( DSPBSIZE, ( ( m_cModeList[m_nCurrentMode].m_nHeight - 1 ) << 16 ) | 
-								 ( m_cModeList[m_nCurrentMode].m_nWidth - 1 ) );
+								 ( m_cModeList[m_nCurrentMode].m_nWidth - 1 ) );				
+				OUTREG( DSPBBASE, m_nFrameBufferOffset );
+				uint32 nTemp = INREG( DSPBBASE );
+				OUTREG( DSPBBASE, nTemp );
 			}
 			
 			WaitForIdle();
@@ -657,6 +661,13 @@ bool i855::FillRect(SrvBitmap *pcBitMap, const IRect& cRect, const Color32_s& sC
 	
 	os::screen_mode sMode = GetCurrentScreenMode();
 	
+	if( !cRect.IsValid() || cRect.Width() > 2000 || cRect.Height() > 2000
+		|| cRect.left < 0 || cRect.top < 0 )
+	{
+		dbprintf( "Error: Invalid FILL!\n" );
+	}
+
+	
 	uint32 nBR13 = pcBitMap->m_nBytesPerLine | ( 0xF0 << 16 );
 	int nSize = cRect.Width() + 1;
 	int nBpp;
@@ -686,6 +697,8 @@ bool i855::FillRect(SrvBitmap *pcBitMap, const IRect& cRect, const Color32_s& sC
 	
 	m_bEngineDirty = true;
 	m_cGELock.Unlock();
+	
+
 
 	return( true );
 }
@@ -706,6 +719,12 @@ bool i855::BltBitmap(SrvBitmap *pcDstBitMap, SrvBitmap *pcSrcBitMap,
 	}
 	
 	IPoint cDstPos = cDstRect.LeftTop();
+	
+	if( !cSrcRect.IsValid() || !cDstRect.IsValid() || cDstPos.x < 0 || cDstPos.y < 0 || cSrcRect.Width() > 2000 || cSrcRect.Height() > 2000
+		|| cSrcRect.left < 0 || cSrcRect.top < 0 )
+	{
+		dbprintf( "Error: Invalid BLIT!\n" );
+	}
 	
 	m_cGELock.Lock();
 	
@@ -793,15 +812,29 @@ void i855::WaitForIdle()
 	/* Wait for the commands to be processed */
 	bool bTimeout = false;
 	bigtime_t nLastTime = get_system_time();
+	uint32 nLastHead = INREG( LP_RING + RING_HEAD ) & I830_HEAD_MASK;
 	do {
 		nHead = INREG( LP_RING + RING_HEAD ) & I830_HEAD_MASK;
 		nTail = INREG( LP_RING + RING_TAIL ) & I830_TAIL_MASK;
-		if( get_system_time() - nLastTime > 1000000 ) {
+		
+		if( nHead != nLastHead )
+		{
+			nLastHead = nHead;
+			nLastTime = get_system_time();
+		}
+		if( get_system_time() - nLastTime > 2000000 ) {
+			if( nHead == nTail )
+				return;
 			dbprintf( "i855:: Engine timed out! %i %i\n", nHead, nTail );	
 			bTimeout = true;
 			OUTREG( LP_RING + RING_HEAD, 0 );
 			OUTREG( LP_RING + RING_TAIL, 0 );
 			m_nRingPos = 0;
+			dbprintf( "Dump buffer...\n" );
+			for( uint i = 0; i < m_nRingSize / 4; i++ )
+			{
+				dbprintf( "Value %x %x\n", i * 4, ((uint32*)m_pRingBase)[i] );
+			}
 		}
 	} while( ( nHead != nTail ) && !bTimeout );
 }

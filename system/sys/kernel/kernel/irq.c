@@ -31,6 +31,7 @@
 
 #include "inc/scheduler.h"
 #include "inc/io_ports.h"
+#include "inc/smp.h"
 
 static IrqAction_s *g_psIrqHandlerLists[IRQ_COUNT] = { 0, };
 
@@ -273,6 +274,9 @@ void handle_irq( SysCallRegs_s * psRegs, int nIrqNum )
 	static atomic_t nBottomOut = ATOMIC_INIT(0);
 	int nIn;
 	bool bNeedSchedule = false;
+	
+	if( get_processor_id() != g_nBootCPU )
+		printk( "Error: Got hardware interrupt on non boot cpu!\n" );
 	
 	
 	if ( NULL != g_psIrqHandlerLists[nIrqNum] )

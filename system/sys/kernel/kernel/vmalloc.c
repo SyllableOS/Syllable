@@ -78,7 +78,7 @@ MemArea_s *get_area_from_handle( area_id hArea )
  * SEE ALSO:
  ****************************************************************************/
 
-int find_area( MemContext_s *psCtx, uint32 nAddress )
+inline int find_area( MemContext_s *psCtx, uint32 nAddress )
 {
 	MemArea_s **apsBase = psCtx->mc_apsAreas;
 	int nBase = 0;
@@ -111,9 +111,9 @@ int find_area( MemContext_s *psCtx, uint32 nAddress )
  * SEE ALSO:
  ****************************************************************************/
 
-MemArea_s *get_area( MemContext_s *psCtx, uint32 nAddress )
+inline MemArea_s *get_area( MemContext_s *psCtx, uint32 nAddress )
 {
-	MemArea_s *psArea;
+	MemArea_s *psArea = NULL;
 	int nIndex;
 
 	if ( nAddress < AREA_FIRST_USER_ADDRESS )
@@ -126,20 +126,11 @@ MemArea_s *get_area( MemContext_s *psCtx, uint32 nAddress )
 		printk( "Error: get_area() called with g_hAreaTableSema locked\n" );
 	}
 	LOCK( g_hAreaTableSema );
-	for ( ;; )
+	nIndex = find_area( psCtx, nAddress );
+	if ( nIndex >= 0 )
 	{
-		nIndex = find_area( psCtx, nAddress );
-		if ( nIndex >= 0 )
-		{
-			psArea = psCtx->mc_apsAreas[nIndex];
-			atomic_inc( &psArea->a_nRefCount );
-			break;
-		}
-		else
-		{
-			psArea = NULL;
-			break;
-		}
+		psArea = psCtx->mc_apsAreas[nIndex];
+		atomic_inc( &psArea->a_nRefCount );
 	}
 	UNLOCK( g_hAreaTableSema );
 	return ( psArea );
@@ -425,7 +416,7 @@ uint32 find_unmapped_area( MemContext_s *psCtx, int nAllocMode, uint32 nSize, ui
 		psArea = psCtx->mc_apsAreas[nIndex];
 		if ( nStart > psArea->a_nMaxEnd )
 		{
-			if ( ( psArea->a_psNext == NULL && ( nStart + nSize - 1 ) > nStart && ( nStart + nSize - 1 ) < nEnd ) || ( psArea->a_psNext != NULL && ( nStart + nSize ) < psArea->a_psNext->a_nStart ) )
+			if ( ( psArea->a_psNext == NULL && ( nStart + nSize - 1 ) > nStart && ( nStart + nSize - 1 ) <= nEnd ) || ( psArea->a_psNext != NULL && ( nStart + nSize ) <= psArea->a_psNext->a_nStart ) )
 			{
 				return ( nStart );
 			}

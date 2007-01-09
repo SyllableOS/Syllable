@@ -2297,23 +2297,22 @@ status_t remap_area( area_id hArea, void *pPhysAddress )
  * \param pDst the starting address of the destination region.
  * \param pSrc the starting address of the source region.
  * \param nSize the number of bytes to copy.
- * \return The error code from lock_mem_area() on failure; <code>0</code>
+ * \return The error code from verify_mem_area() on failure; <code>0</code>
  *     otherwise.
- * \sa lock_mem_area()
+ * \sa verify_mem_area()
  * \author Kurt Skauen (kurt@atheos.cx)
  */
 status_t memcpy_to_user( void *pDst, const void *pSrc, size_t nSize )
 {
 	if ( g_bKernelInitialized )
 	{
-		status_t nError = lock_mem_area( pDst, nSize, true );
+		status_t nError = verify_mem_area( pDst, nSize, true );
 
 		if ( nError < 0 )
 		{
 			return ( nError );
 		}
 		memcpy( pDst, pSrc, nSize );
-		unlock_mem_area( pDst, nSize );
 		return ( 0 );
 	}
 	else
@@ -2329,23 +2328,22 @@ status_t memcpy_to_user( void *pDst, const void *pSrc, size_t nSize )
  * \param pDst the starting address of the destination region.
  * \param pSrc the starting address of the source region.
  * \param nSize the number of bytes to copy.
- * \return The error code from lock_mem_area() on failure; <code>0</code>
+ * \return The error code from verify_mem_area() on failure; <code>0</code>
  *     otherwise.
- * \sa lock_mem_area()
+ * \sa verify_mem_area()
  * \author Kurt Skauen (kurt@atheos.cx)
  */
 status_t memcpy_from_user( void *pDst, const void *pSrc, size_t nSize )
 {
 	if ( g_bKernelInitialized )
 	{
-		status_t nError = lock_mem_area( pSrc, nSize, false );
+		status_t nError = verify_mem_area( pSrc, nSize, false );
 
 		if ( nError < 0 )
 		{
 			return ( nError );
 		}
 		memcpy( pDst, pSrc, nSize );
-		unlock_mem_area( pSrc, nSize );
 		return ( 0 );
 	}
 	else
@@ -2361,9 +2359,9 @@ status_t memcpy_from_user( void *pDst, const void *pSrc, size_t nSize )
  * \param pzDst the starting address of the destination region.
  * \param pzSrc the address of the string to copy.
  * \param nMaxLen the maximum size of the string to copy.
- * \return The error code from lock_mem_area() on failure; <code>0</code>
+ * \return The error code from verify_mem_area() on failure; <code>0</code>
  *     otherwise.
- * \sa lock_mem_area()
+ * \sa verify_mem_area()
  * \author Kurt Skauen (kurt@atheos.cx)
  */
 status_t strncpy_from_user( char *pzDst, const char *pzSrc, size_t nMaxLen )
@@ -2381,7 +2379,7 @@ status_t strncpy_from_user( char *pzDst, const char *pzSrc, size_t nMaxLen )
 
 		while ( bDone == false && nLen < nMaxLen )
 		{
-			status_t nError = lock_mem_area( pzSrc, nMaxSize, false );
+			status_t nError = verify_mem_area( pzSrc, nMaxSize, false );
 
 			if ( nError < 0 )
 			{
@@ -2397,7 +2395,6 @@ status_t strncpy_from_user( char *pzDst, const char *pzSrc, size_t nMaxLen )
 				}
 				nLen++;
 			}
-			unlock_mem_area( pzSrc, nMaxSize );
 			pzSrc += nMaxSize;
 			pzDst += nMaxSize;
 			nMaxSize = PAGE_SIZE;
@@ -2425,9 +2422,9 @@ status_t strncpy_from_user( char *pzDst, const char *pzSrc, size_t nMaxLen )
  * \return <code>-ENAMETOOLONG</code> if the length of the string, including
  *     the trailing <code>'\\0'</code>, is greater than <i>nMaxLen</i>,
  *     <code>-ENOMEM</code> if there isn't enough free memory for kmalloc(),
- *     any error code from lock_mem_area() on failure; <code>0</code>
+ *     any error code from verify_mem_area() on failure; <code>0</code>
  *     otherwise.
- * \sa lock_mem_area(), kmalloc()
+ * \sa verify_mem_area(), kmalloc()
  * \author Kurt Skauen (kurt@atheos.cx)
  */
 status_t strndup_from_user( const char *pzSrc, size_t nMaxLen, char **ppzDst )
@@ -2471,9 +2468,9 @@ status_t strndup_from_user( const char *pzSrc, size_t nMaxLen, char **ppzDst )
  * \ingroup DriverAPI
  * \param pzDst the starting address of the destination region.
  * \param pzSrc the address of the string to copy.
- * \return The error code from lock_mem_area() on failure; <code>0</code>
+ * \return The error code from verify_mem_area() on failure; <code>0</code>
  *     otherwise.
- * \sa lock_mem_area()
+ * \sa verify_mem_area()
  * \author Kurt Skauen (kurt@atheos.cx)
  */
 status_t strcpy_to_user( char *pzDst, const char *pzSrc )
@@ -2485,9 +2482,9 @@ status_t strcpy_to_user( char *pzDst, const char *pzSrc )
  * Returns the length of the specified string.
  * \ingroup DriverAPI
  * \param pzString the starting address of the string.
- * \return The error code from lock_mem_area() on failure; the length of the
+ * \return The error code from verify_mem_area() on failure; the length of the
  *     string otherwise.
- * \sa lock_mem_area()
+ * \sa verify_mem_area()
  * \author Kurt Skauen (kurt@atheos.cx)
  */
 status_t strlen_from_user( const char *pzString )
@@ -2500,7 +2497,7 @@ status_t strlen_from_user( const char *pzString )
 
 		while ( bDone == false )
 		{
-			status_t nError = lock_mem_area( pzString, nMaxSize, false );
+			status_t nError = verify_mem_area( pzString, nMaxSize, false );
 
 			if ( nError < 0 )
 			{
@@ -2515,7 +2512,6 @@ status_t strlen_from_user( const char *pzString )
 				}
 				nLen++;
 			}
-			unlock_mem_area( pzString, nMaxSize );
 			pzString += nMaxSize;
 			nMaxSize = PAGE_SIZE;
 		}
@@ -2528,7 +2524,7 @@ status_t strlen_from_user( const char *pzString )
 }
 
 /**
- * Locks a region of user memory for kernel access.
+ * Verifies a region of user memory for kernel access.
  * \ingroup DriverAPI
  * \param pAddress the start address of the region to lock.
  * \param nSize the size in bytes of the region to lock.
@@ -2539,34 +2535,57 @@ status_t strlen_from_user( const char *pzString )
  *     <code>(pAddress + nSize - 1)</code> extends beyond the end of the area;
  *     <code>-ENOMEM</code> if there isn't enough physical memory available;
  *     <code>0</code> otherwise.
- * \sa alloc_area_pages(), unlock_mem_area()
+ * \sa alloc_area_pages()
  * \author Kurt Skauen (kurt@atheos.cx)
  */
-status_t lock_mem_area( const void *pAddress, size_t nSize, bool bWriteAccess )
+status_t verify_mem_area( const void *pAddress, size_t nSize, bool bWriteAccess )
 {
 	MemArea_s *psArea;
 	uintptr_t nAddr = ( uintptr_t )pAddress;
+	uintptr_t nCurrent = nAddr & PAGE_MASK;
+	uintptr_t nEnd = ( nAddr + nSize + PAGE_SIZE - 1 ) & PAGE_MASK;
 	status_t nError;
+	bool bPagesAllocated = true;
 
 	if ( nAddr < AREA_FIRST_USER_ADDRESS )
 	{
-		printk( "lock_mem_area() got kernel address %08x\n", nAddr );
+		printk( "verify_mem_area() got kernel address %08x\n", nAddr );
 		return ( -EFAULT );
 	}
-      again:
+	
+	/* For performance reasons we are satified if all pages are allocated */
+	for ( ; ( nCurrent < nEnd ) && bPagesAllocated; nCurrent += PAGE_SIZE )
+	{
+		pgd_t *pPgd = pgd_offset( CURRENT_PROC->tc_psMemSeg, nCurrent );
+		pte_t *pPte = pte_offset( pPgd, nCurrent );
+
+		if ( PTE_ISPRESENT( *pPte ) )
+		{
+			if ( bWriteAccess == false || PTE_ISWRITE( *pPte ) )
+			{
+				continue;	// It is present and writable so nothing to do here.
+			}
+		} else
+			bPagesAllocated = false;
+	}
+	
+	if( bPagesAllocated )
+		return( 0 );
+	
+	    again:
 	psArea = get_area( CURRENT_PROC->tc_psMemSeg, nAddr );
 
 	if ( psArea == NULL )
 	{
-		printk( "lock_mem_area() no area for address %08x\n", nAddr );
+		printk( "verify_mem_area() no area for address %08x\n", nAddr );
 		return ( -EFAULT );
 	}
-
+	
 	LOCK( g_hAreaTableSema );
 
 	if ( nAddr + nSize - 1 > psArea->a_nEnd )
 	{
-		printk( "lock_mem_area() adr=%08x size=%d does not fit in area %08x-%08x\n", nAddr, nSize, psArea->a_nStart, psArea->a_nEnd );
+		printk( "verify_mem_area() adr=%08x size=%d does not fit in area %08x-%08x\n", nAddr, nSize, psArea->a_nStart, psArea->a_nEnd );
 		UNLOCK( g_hAreaTableSema );
 		put_area( psArea );
 		return ( -EFAULT );
@@ -2574,11 +2593,12 @@ status_t lock_mem_area( const void *pAddress, size_t nSize, bool bWriteAccess )
 
 	nError = alloc_area_pages( psArea, nAddr & PAGE_MASK, ( nAddr + nSize + PAGE_SIZE - 1 ) & PAGE_MASK, bWriteAccess );
 
+	put_area( psArea );
 	UNLOCK( g_hAreaTableSema );
+	
 
 	if ( nError < 0 )
 	{
-		put_area( psArea );
 		if ( nError == -ENOMEM )
 		{
 			shrink_caches( 65536 );
@@ -2586,51 +2606,6 @@ status_t lock_mem_area( const void *pAddress, size_t nSize, bool bWriteAccess )
 		}
 	}
 	return ( nError );
-}
-
-/**
- * Unlocks a region of user memory locked for kernel access.
- * \ingroup DriverAPI
- * \param pAddress the start address of the region to unlock.
- * \param nSize the size in bytes of the region to unlock.
- * \return <code>-EFAULT</code> if <i>pAddress</i> points to an address in
- *     kernel space, doesn't correspond to an area in user space, or if
- *     <code>(pAddress + nSize - 1)</code> extends beyond the end of the area;
- *     <code>0</code> otherwise.
- * \sa lock_mem_area()
- * \author Kurt Skauen (kurt@atheos.cx)
- */
-status_t unlock_mem_area( const void *pAddress, size_t nSize )
-{
-	MemArea_s *psArea;
-
-	uintptr_t nAddr = ( uintptr_t )pAddress;
-
-	if ( nAddr < AREA_FIRST_USER_ADDRESS )
-	{
-		printk( "unlock_mem_area() got kernel address %08x\n", nAddr );
-		return ( -EFAULT );
-	}
-
-	psArea = get_area( CURRENT_PROC->tc_psMemSeg, nAddr );
-
-	if ( psArea == NULL )
-	{
-		printk( "unlock_mem_area() no area for address %08x\n", nAddr );
-		return ( -EFAULT );
-	}
-
-	if ( nAddr + nSize - 1 > psArea->a_nEnd )
-	{
-		printk( "unlock_mem_area() adr=%08x size=%d does not fit in area %08x-%08x\n", nAddr, nSize, psArea->a_nStart, psArea->a_nEnd );
-		put_area( psArea );
-		return ( -EFAULT );
-	}
-
-	put_area( psArea );	// The lock we just got
-	put_area( psArea );	// The lock taken by lock_mem_area()
-
-	return ( 0 );
 }
 
 /**

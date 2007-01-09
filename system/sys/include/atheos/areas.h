@@ -137,8 +137,7 @@ void*	 get_area_address( area_id nArea );
 area_id  get_next_area( area_id hArea );
 status_t get_area_physical_address( area_id hArea, uintptr_t* pnAddress );
 
-status_t lock_mem_area( const void* pAddress, size_t nSize, bool bWriteAccess );
-status_t unlock_mem_area( const void* pAddress, size_t nSize );
+status_t verify_mem_area( const void* pAddress, size_t nSize, bool bWriteAccess );
 
 status_t memcpy_to_user( void* pDst, const void* pSrc, size_t nSize );
 status_t memcpy_from_user( void* pDst, const void* pSrc, size_t nSize );

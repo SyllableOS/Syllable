@@ -1976,12 +1976,11 @@ int sys_freadlink( int nFile, char *pzBuffer, size_t nBufSize )
 {
 	int nError;
 
-	if ( lock_mem_area( pzBuffer, nBufSize, true ) < 0 )
+	if ( verify_mem_area( pzBuffer, nBufSize, true ) < 0 )
 	{
 		return ( -EFAULT );
 	}
 	nError = do_freadlink( false, nFile, pzBuffer, nBufSize );
-	unlock_mem_area( pzBuffer, nBufSize );
 	return ( nError );
 }
 
@@ -2013,20 +2012,18 @@ int sys_readlink( const char *a_pzPath, char *pzBuffer, size_t nBufSize )
 	char *pzPath;
 	int nError;
 
-	if ( lock_mem_area( pzBuffer, nBufSize, true ) < 0 )
+	if ( verify_mem_area( pzBuffer, nBufSize, true ) < 0 )
 	{
 		return ( -EFAULT );
 	}
 	nError = strndup_from_user( a_pzPath, PATH_MAX, &pzPath );
 	if ( nError < 0 )
 	{
-		unlock_mem_area( pzBuffer, nBufSize );
 		printk( "Error: sys_readlink() failed to dup source path\n" );
 		return ( nError );
 	}
 	nError = readlink( pzPath, pzBuffer, nBufSize );
 	kfree( pzPath );
-	unlock_mem_area( pzBuffer, nBufSize );
 	return ( nError );
 }
 
@@ -2177,7 +2174,7 @@ static int lock_iovec_buffers( const struct iovec *psVector, size_t nCount, bool
 	{
 		return ( 0 );
 	}
-	if ( lock_mem_area( psVector, sizeof( struct iovec ) * nCount, false ) < 0 )
+	if ( verify_mem_area( psVector, sizeof( struct iovec ) * nCount, false ) < 0 )
 	{
 		return ( -EFAULT );
 	}
@@ -2187,15 +2184,8 @@ static int lock_iovec_buffers( const struct iovec *psVector, size_t nCount, bool
 		{
 			continue;
 		}
-		if ( lock_mem_area( psVector[i].iov_base, psVector[i].iov_len, bWrite ) < 0 )
+		if ( verify_mem_area( psVector[i].iov_base, psVector[i].iov_len, bWrite ) < 0 )
 		{
-			int j;
-
-			for ( j = 0; j < i; ++j )
-			{
-				unlock_mem_area( psVector[j].iov_base, psVector[j].iov_len );
-			}
-			unlock_mem_area( psVector, sizeof( struct iovec ) * nCount );
 			return ( -EFAULT );
 		}
 	}
@@ -2211,17 +2201,10 @@ static int lock_iovec_buffers( const struct iovec *psVector, size_t nCount, bool
 
 static void unlock_iovec_buffers( const struct iovec *psVector, size_t nCount )
 {
-	int i;
-
 	if ( nCount <= 0 )
 	{
 		return;
 	}
-	for ( i = 0; i < nCount; ++i )
-	{
-		unlock_mem_area( psVector[i].iov_base, psVector[i].iov_len );
-	}
-	unlock_mem_area( psVector, sizeof( struct iovec ) * nCount );
 }
 
 /*****************************************************************************
@@ -2431,7 +2414,7 @@ ssize_t sys_read_pos( int nFile, off_t nPos, void *pBuffer, size_t nLength )
 	}
 	if ( nLength != 0 )
 	{
-		if ( lock_mem_area( pBuffer, nLength, true ) < 0 )
+		if ( verify_mem_area( pBuffer, nLength, true ) < 0 )
 		{
 			printk( "Error: sys_read_pos() failed to lock buffer\n" );
 			nError = -EFAULT;
@@ -2440,10 +2423,6 @@ ssize_t sys_read_pos( int nFile, off_t nPos, void *pBuffer, size_t nLength )
 	}
 
 	nError = read_pos_p( psFile, nPos, pBuffer, nLength );
-	if ( nLength != 0 )
-	{
-		unlock_mem_area( pBuffer, nLength );
-	}
       error:
 	put_fd( psFile );
 
@@ -2502,7 +2481,7 @@ ssize_t sys_read( int nFile, void *pBuffer, size_t nLength )
 	}
 	if ( nLength != 0 )
 	{
-		if ( lock_mem_area( pBuffer, nLength, true ) < 0 )
+		if ( verify_mem_area( pBuffer, nLength, true ) < 0 )
 		{
 			printk( "Error: sys_read() failed to lock buffer\n" );
 			nError = -EFAULT;
@@ -2511,10 +2490,6 @@ ssize_t sys_read( int nFile, void *pBuffer, size_t nLength )
 	}
 
 	nError = read_p( psFile, pBuffer, nLength );
-	if ( nLength != 0 )
-	{
-		unlock_mem_area( pBuffer, nLength );
-	}
       error:
 	put_fd( psFile );
 
@@ -2781,7 +2756,7 @@ ssize_t sys_write( int nFile, const void *pBuffer, size_t nLength )
 	}
 	if ( nLength != 0 )
 	{
-		if ( lock_mem_area( pBuffer, nLength, false ) < 0 )
+		if ( verify_mem_area( pBuffer, nLength, false ) < 0 )
 		{
 			printk( "Error: sys_write() failed to lock buffer\n" );
 			nError = -EFAULT;
@@ -2790,11 +2765,6 @@ ssize_t sys_write( int nFile, const void *pBuffer, size_t nLength )
 	}
 
 	nError = write_p( psFile, pBuffer, nLength );
-
-	if ( nLength != 0 )
-	{
-		unlock_mem_area( pBuffer, nLength );
-	}
 
       error:
 	put_fd( psFile );
@@ -2827,7 +2797,7 @@ ssize_t sys_write_pos( int nFile, off_t nPos, const void *pBuffer, size_t nLengt
 	}
 	if ( nLength != 0 )
 	{
-		if ( lock_mem_area( pBuffer, nLength, false ) < 0 )
+		if ( verify_mem_area( pBuffer, nLength, false ) < 0 )
 		{
 			printk( "Error: sys_write_pos() failed to lock buffer\n" );
 			nError = -EFAULT;
@@ -2837,10 +2807,6 @@ ssize_t sys_write_pos( int nFile, off_t nPos, const void *pBuffer, size_t nLengt
 
 	nError = write_pos_p( psFile, nPos, pBuffer, nLength );
 
-	if ( nLength != 0 )
-	{
-		unlock_mem_area( pBuffer, nLength );
-	}
       error:
 	put_fd( psFile );
 
@@ -3159,14 +3125,13 @@ int sys_getdents( int nFile, struct kernel_dirent *psDirEnt, int nBufSize )
 {
 	int nError;
 
-	nError = lock_mem_area( psDirEnt, nBufSize, true );
+	nError = verify_mem_area( psDirEnt, nBufSize, true );
 	if ( nError < 0 )
 	{
 		printk( "sys_getdents() failed to lock destination buffer (%d)\n", nBufSize );
 		return ( -EFAULT );
 	}
 	nError = do_getdents( false, nFile, psDirEnt, nBufSize );
-	unlock_mem_area( psDirEnt, nBufSize );
 	return ( nError );
 }
 
@@ -5583,10 +5548,9 @@ status_t sys_get_directory_path( int nFD, char *pzBuffer, int nBufLen )
 	{
 		return ( -EBADF );
 	}
-	if ( lock_mem_area( pzBuffer, nBufLen, true ) >= 0 )
+	if ( verify_mem_area( pzBuffer, nBufLen, true ) >= 0 )
 	{
 		nError = get_dirname( psFile->f_psInode, pzBuffer, nBufLen );
-		unlock_mem_area( pzBuffer, nBufLen );
 	}
 	else
 	{

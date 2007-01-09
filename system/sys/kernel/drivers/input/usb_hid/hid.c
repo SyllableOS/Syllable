@@ -278,6 +278,9 @@ void usb_hid_irq( USB_packet_s *psPacket )
 	}
 	
 	struct HID_report_s* psReport = &psHID->asReport[nReport];
+	
+	if( nLen == 0 || psReport->pBuffer == NULL )
+		return;
 
 	/* We might receive the data in smaller packets */	
 	nSize = ( ( psReport->nSize - 1 ) >> 3 ) + 1;

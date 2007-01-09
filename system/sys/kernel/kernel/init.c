@@ -313,6 +313,10 @@ int get_kernel_arguments( int *argc, const char *const **argv )
  * SEE ALSO:
  ****************************************************************************/
 
+#ifndef __ENABLE_DEBUG__
+#define __ENABLE_DEBUG__
+#endif
+
 #include <atheos/kdebug.h>
 #include <atheos/udelay.h>
 

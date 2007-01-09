@@ -313,6 +313,19 @@ enum
     DT_HIPROC  = 0x7fffffff
 };
 
+
+typedef struct
+{
+	uint32 h_nBucketEntries;
+	uint32 h_nChainEntries;
+} Elf32_HashTable_s;
+
+enum
+{
+	STN_UNDEF
+};
+
+
 #ifdef __cplusplus
 }
 #endif

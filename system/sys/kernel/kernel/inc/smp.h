@@ -32,10 +32,11 @@ typedef struct
 {
 	char pi_anVendorID[16];
 	char pi_zName[255];
-	uint32 pi_nCoreSpeed;
-	uint32 pi_nBusSpeed;
+	uint64 pi_nCoreSpeed;
+	uint64 pi_nBusSpeed;
 	uint32 pi_nDelayCount;
 	uint32 pi_nGS;			/* GS segment, used for thread specific data */
+	int64 pi_nCPUTime; /* Time of last schedule */	
 	int pi_nFamily;
 	int pi_nModel;
 	int pi_nAPICVersion;
@@ -90,6 +91,7 @@ void init_smp( bool bInitSMP, bool bScanACPI );
 void boot_ap_processors( void );
 void shutdown_ap_processors( void );
 void shutdown_processor( void );
+void set_idle_loop_handler( void ( *pHandler )( int ) );
 
 #endif	/* __F_SMP_H__ */
 

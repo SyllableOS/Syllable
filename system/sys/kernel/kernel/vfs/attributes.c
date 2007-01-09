@@ -653,12 +653,11 @@ int sys_read_indexdir( int nDir, struct kernel_dirent *psBuffer, size_t nBufferS
 {
 	int nError;
 
-	if ( lock_mem_area( psBuffer, nBufferSize, true ) < 0 )
+	if ( verify_mem_area( psBuffer, nBufferSize, true ) < 0 )
 	{
 		return ( -EFAULT );
 	}
 	nError = do_read_indexdir( false, nDir, psBuffer, nBufferSize );
-	unlock_mem_area( psBuffer, nBufferSize );
 	return ( nError );
 }
 

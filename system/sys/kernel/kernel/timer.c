@@ -126,12 +126,25 @@ bigtime_t get_real_time( void )
  *****************************************************************************/
 bigtime_t get_idle_time( int nProcessor )
 {
+	uint32 nFlags;
+	uint32 nPhysCPU;
+	bigtime_t nTime;
 	if ( nProcessor < 0 || nProcessor >= g_nActiveCPUCount )
 	{
 		return ( 0 );
 	}
-	// this needs to be locked...
-	return ( g_asProcessorDescs[logical_to_physical_cpu_id( nProcessor )].pi_nIdleTime );
+	nPhysCPU = logical_to_physical_cpu_id( nProcessor );
+	nFlags = cli();
+	sched_lock();
+	/* On smp machines this cpu might currently run the idle thread */
+	nTime = g_asProcessorDescs[nPhysCPU].pi_nIdleTime;
+	if( g_asProcessorDescs[nPhysCPU].pi_psCurrentThread == g_asProcessorDescs[nPhysCPU].pi_psIdleThread )
+	{
+		nTime += g_asProcessorDescs[nPhysCPU].pi_nCPUTime - g_asProcessorDescs[nPhysCPU].pi_psCurrentThread->tr_nLaunchTime;
+	}
+	sched_unlock();
+	put_cpu_flags( nFlags );
+	return( nTime );
 }
 
 //****************************************************************************/

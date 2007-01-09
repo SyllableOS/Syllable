@@ -183,6 +183,12 @@ static int smp_read_acpi_rsdt( uint32 nRsdt )
 						printk( "I/O APIC %d at 0x%08X.\n", psP->ami_nId, psP->ami_nAddr );
 						break;
 					}
+					case ACPI_MADT_LAPIC_OVR:
+					{
+						AcpiMadtLapicOvr_s *psP = ( AcpiMadtLapicOvr_s * )psEntry;
+						printk( "WARNING: FOUND LAPIC OVERRIDE!!! to 0x%x\n", (uint)psP->aml_nAddress );
+						break;
+					}
 				}
 				psEntry = ( AcpiMadtEntry_s* )( (uint32)psEntry + psEntry->ame_nLength );
 			}
@@ -710,6 +716,7 @@ int init_apic( bool bScanACPI )
 		g_asProcessorDescs[g_nBootCPU].pi_bIsRunning = true;
 
 		bFound = true;
+		
 	}
 
 	if( bFound )

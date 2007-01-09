@@ -361,7 +361,7 @@ void init_memory_pools( char* pRealMemBase, MultiBootHeader_s* psHeader )
 	boot_reserve_mem_region(0, (g_sSysBase.ex_nTotalPageCount * PAGE_SIZE) - 1, "Physical RAM");
 
 	
-	/* Parse the multiboot memory map and reserver the memory */
+	/* Parse the multiboot memory map and reserve the memory */
 	if( psHeader && psHeader->mbh_nFlags & MB_INFO_MEM_MAP )
 	{
 		printk( "Multiboot memory map:\n" );

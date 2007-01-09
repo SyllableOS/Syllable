@@ -64,7 +64,7 @@ typedef struct
 
 #define ACPI_MADT_PROCESSOR	0
 #define ACPI_MADT_IOAPIC	1
-#define ACPI_MADT_LAPIC_OVR	2
+#define ACPI_MADT_LAPIC_OVR	5
 
 typedef struct
 {
@@ -92,4 +92,14 @@ typedef struct
 	uint32 ami_nReserved2;
 } __attribute__ ((packed)) AcpiMadtIoApic_s;
 
+typedef struct
+{
+	AcpiMadtEntry_s ami_sHeader;
+	uint16 aml_nReserved;
+	uint64 aml_nAddress;
+} __attribute__ ((packed)) AcpiMadtLapicOvr_s;
+
 #endif
+
+
+

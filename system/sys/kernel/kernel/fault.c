@@ -211,6 +211,9 @@ void handle_general_protection( SysCallRegs_s * psRegs, int nErrorCode )
 	printk( "ERROR CODE = %08x\n", nErrorCode );
 	print_registers( psRegs );
 	printk( "\n" );
+	
+	printk( "Areas :\n" );
+	list_areas( CURRENT_PROC->tc_psMemSeg );
 
 	send_signal( psThread, SIGSEGV, true );
 

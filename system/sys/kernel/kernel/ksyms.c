@@ -96,6 +96,7 @@ static KernelSymbol_s g_asKernelSymbols[] = {
 	KSYMBOL( get_idle_time ),
 	KSYMBOL( sys_GetTime ),
 	KSYMBOL( sys_SetTime ),
+	KSYMBOL( set_idle_loop_handler ),
 		
 	// Process functions:
 	KSYMBOL( sys_get_process_id ),
@@ -168,6 +169,7 @@ static KernelSymbol_s g_asKernelSymbols[] = {
 	KSYMBOL( sys_debug_write ),
 	KSYMBOL( panic ),
 	KSYMBOL( printk ),
+	KSYMBOL( dbprintf ),
 	
 	// I/O functions:
 	KSYMBOL( isa_readb ),
@@ -270,8 +272,6 @@ static KernelSymbol_s g_asKernelSymbols[] = {
 	KSYMBOL( memcpy_from_user ),
 	KSYMBOL( strncpy_from_user ),
 	KSYMBOL( strcpy_to_user ),
-	KSYMBOL( lock_mem_area ),
-	KSYMBOL( unlock_mem_area ),
 	KSYMBOL( get_next_area ),
 
 	// Inode functions:

@@ -259,7 +259,7 @@ void AddSigHandlerFrame( Thread_s *psThread, SysCallRegs_s * psRegs, SigAction_s
 		pStackTop = pStack - 9;		// 2nd and 3rd arg and ucontext
 		pCode = pStack + 22;
 		pSigInfo = pStack + 181;	// siginfo_t struct
-		lock_mem_area( pStackTop, PAGE_SIZE, true );
+		verify_mem_area( pStackTop, PAGE_SIZE, true );
 		pStackTop[0] = ( uint32 )pCode;	// return trampoline address
 		pStackTop[1] = nSigNum;
 		pStackTop[2] = ( uint32 )pSigInfo;
@@ -277,7 +277,7 @@ void AddSigHandlerFrame( Thread_s *psThread, SysCallRegs_s * psRegs, SigAction_s
 	else
 	{
 		pStackTop = pStack - 2;		// return trampoline and signal
-		lock_mem_area( pStackTop, PAGE_SIZE, true );
+		verify_mem_area( pStackTop, PAGE_SIZE, true );
 		pCode = pStack + 22;
 		pStackTop[0] = ( uint32 )( &pCode[1] );	// only pop 1 arg
 		pStackTop[1] = nSigNum;
@@ -321,7 +321,6 @@ void AddSigHandlerFrame( Thread_s *psThread, SysCallRegs_s * psRegs, SigAction_s
 
 	psRegs->oldesp = ( uint32 )pStackTop;
 	psRegs->eip = ( uint32 )psHandler->sa_handler;
-	unlock_mem_area( pStackTop, PAGE_SIZE );
 /*
   psRegs->cs = 0x10;
   psRegs->oldss = 0x20;

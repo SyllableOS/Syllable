@@ -67,7 +67,7 @@ struct _ElfImageInst
 	bool ii_bRelocated;
 };
 
-#define ELF_SYM_HASHTAB_SIZE	(1024)
+#define ELF_KERNEL_SYM_HASHTAB_SIZE	(1024)
 struct _ElfImage
 {
 	ElfImage_s *im_psNext;
@@ -81,9 +81,13 @@ struct _ElfImage
 	char *im_pzStrings;
 	int im_nSymCount;
 	ElfSymbol_s *im_pasSymbols;
-	ElfSymbol_s *im_apsSymHash[ELF_SYM_HASHTAB_SIZE];
+	ElfSymbol_s *im_apsKernelSymHash[ELF_KERNEL_SYM_HASHTAB_SIZE];
 	int im_nRelocCount;
 	Elf32_Reloc_s *im_pasRelocs;
+	
+	Elf32_HashTable_s* im_psHashTable;
+	uint32* im_pnHashBucket;
+	uint32* im_pnHashChain;
 
 	int im_nSubImageCount;
 	const char **im_apzSubImages;

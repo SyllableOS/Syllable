@@ -67,6 +67,22 @@ static uint32 elf_sym_hash( const char *pzName )
 	return ( h );
 }
 
+static uint32 elf_sysv_sym_hash( const char *pzName )
+{
+	uint32 h = 0, g;
+
+	while ( *pzName )
+	{
+		
+		h = ( h << 4 ) + ( *pzName++ );
+		if( ( g = ( h & 0xf0000000 ) ) )
+			h ^= g >> 24;
+		h &= ~g;
+	}	
+
+	return ( h );
+}
+
 static void create_kernel_image( void )
 {
 	ElfImage_s *psImage;
@@ -116,9 +132,9 @@ static void create_kernel_image( void )
 		psImage->im_pasSymbols[i].s_nSize = 0;
 		psImage->im_pasSymbols[i].s_nSection = 1;
 
-		nHash = elf_sym_hash( pzName ) % ELF_SYM_HASHTAB_SIZE;
-		psImage->im_pasSymbols[i].s_psHashNext = psImage->im_apsSymHash[nHash];
-		psImage->im_apsSymHash[nHash] = &psImage->im_pasSymbols[i];
+		nHash = elf_sym_hash( pzName ) % ELF_KERNEL_SYM_HASHTAB_SIZE;
+		psImage->im_pasSymbols[i].s_psHashNext = psImage->im_apsKernelSymHash[nHash];
+		psImage->im_apsKernelSymHash[nHash] = &psImage->im_pasSymbols[i];
 	}
 	psImage->im_psNext = NULL;
 	strcpy( psImage->im_zName, "libkernel.so" );
@@ -448,12 +464,13 @@ static int parse_section_headers( ElfImage_s *psImage )
 	Elf32_Symbol_s *psSymTab = NULL;
 	int nDynSymSec = -1;
 	int nDynamicSec = -1;
+	int nHashSec = -1;
 	uint32 nEndAddress = 0;
 	int nError = EOK;
 	int i;
 
 	psImage->im_nVirtualAddress = -1;
-
+	
 	for ( i = 0; i < psImage->im_nSectionCount; ++i )
 	{
 		Elf32_SectionHeader_s *psSection;
@@ -480,6 +497,9 @@ static int parse_section_headers( ElfImage_s *psImage )
 		case SHT_DYNAMIC:
 			nDynamicSec = i;
 			break;
+		case SHT_HASH:
+			nHashSec = i;
+			break;
 		}
 	}
 
@@ -488,7 +508,7 @@ static int parse_section_headers( ElfImage_s *psImage )
 		printk( "Error: parse_section_headers() : Image has no text segment!\n" );
 		return ( -ENOEXEC );
 	}
-
+	
 	psImage->im_nOffset -= psImage->im_nVirtualAddress & ~PAGE_MASK;
 	psImage->im_nVirtualAddress &= PAGE_MASK;
 
@@ -548,7 +568,7 @@ static int parse_section_headers( ElfImage_s *psImage )
 
 		for ( i = 0; i < psImage->im_nSymCount; ++i )
 		{
-			uint32 nHash;
+//			uint32 nHash;
 
 			psImage->im_pasSymbols[i].s_pzName = psImage->im_pzStrings + psSymTab[i].st_nName;
 			psImage->im_pasSymbols[i].s_nInfo = psSymTab[i].st_nInfo;
@@ -557,12 +577,14 @@ static int parse_section_headers( ElfImage_s *psImage )
 			psImage->im_pasSymbols[i].s_nSection = psSymTab[i].st_nSecIndex;
 			psImage->im_pasSymbols[i].s_nImage = 0;
 
+			#if 0
 			if ( psImage->im_pasSymbols[i].s_nSection != SHN_UNDEF )
 			{
 				nHash = elf_sym_hash( psImage->im_pasSymbols[i].s_pzName ) % ELF_SYM_HASHTAB_SIZE;
 				psImage->im_pasSymbols[i].s_psHashNext = psImage->im_apsSymHash[nHash];
 				psImage->im_apsSymHash[nHash] = &psImage->im_pasSymbols[i];
 			}
+			#endif
 		}
 		kfree( psSymTab );
 		psSymTab = NULL;
@@ -576,7 +598,44 @@ static int parse_section_headers( ElfImage_s *psImage )
 			goto error4;
 		}
 	}
+	
+	if( nHashSec != -1 )
+	{
+		/* Load hash table */
+		Elf32_SectionHeader_s *psSection = &psImage->im_pasSections[nHashSec];
+
+		psImage->im_psHashTable = kmalloc( psSection->sh_nSize, MEMF_KERNEL | MEMF_OKTOFAILHACK );
+	
+		if ( psImage->im_psHashTable == NULL )
+		{
+			nError = -ENOMEM;
+			printk( "parse_section_headers() no memory for hash symbol table\n" );
+			goto error4;
+		}
+		nError = read_image_data( psImage, psImage->im_psHashTable, psSection->sh_nOffset, psSection->sh_nSize );
+		
+		if ( nError != psSection->sh_nSize )
+		{
+			printk( "parse_section_headers() failed to load hash table\n" );
+			if ( nError >= 0 )
+			{
+				nError = -ENOEXEC;
+			}
+			goto error5;
+		}
+		psImage->im_pnHashBucket = (uint32*)( psImage->im_psHashTable + 1 );
+		psImage->im_pnHashChain = psImage->im_pnHashBucket + psImage->im_psHashTable->h_nBucketEntries;
+		
+		kerndbg( KERN_DEBUG_LOW, "Buckets: %i Chains: %i\n", (int)psImage->im_psHashTable->h_nBucketEntries, (int)psImage->im_psHashTable->h_nChainEntries );
+		
+		for( i = 0; i < psImage->im_psHashTable->h_nBucketEntries; i++ )
+			kerndbg( KERN_DEBUG_LOW, "Entry at %i\n", psImage->im_pnHashBucket[i] );
+		
+	}
+
 	return ( 0 );
+	  error5:
+	kfree( psImage->im_psHashTable );
       error4:
 	kfree( psImage->im_pasSymbols );
 	psImage->im_pasSymbols = NULL;
@@ -599,13 +658,41 @@ static int parse_section_headers( ElfImage_s *psImage )
 static ElfSymbol_s *lookup_symbol( ElfImage_s *psImage, const char *pzName )
 {
 	ElfSymbol_s *psSym;
-	uint32 nHash = elf_sym_hash( pzName ) % ELF_SYM_HASHTAB_SIZE;
-
-	for ( psSym = psImage->im_apsSymHash[nHash]; psSym != NULL; psSym = psSym->s_psHashNext )
+	
+	if( psImage->im_psHashTable )
 	{
-		if ( psSym->s_nSection != SHN_UNDEF && strcmp( psSym->s_pzName, pzName ) == 0 )
+		/* Use hashtable provided by the image */
+		Elf32_HashTable_s* psHashTab = psImage->im_psHashTable;
+		uint32 nSysvHash = elf_sysv_sym_hash( pzName );
+		kerndbg( KERN_DEBUG_LOW, "Symbol %s Hash %x Entry %x\n", pzName, nSysvHash, nSysvHash % psHashTab->h_nBucketEntries );
+		nSysvHash %= psHashTab->h_nBucketEntries;
+		
+	
+		if( psImage->im_pnHashBucket[nSysvHash] != STN_UNDEF )
 		{
-			return ( psSym );
+			uint32 nSymbol = psImage->im_pnHashBucket[nSysvHash];
+			do
+			{
+				psSym = &psImage->im_pasSymbols[nSymbol];
+				if ( psSym->s_nSection != SHN_UNDEF && strcmp( psSym->s_pzName, pzName ) == 0 )
+				{
+					kerndbg( KERN_DEBUG_LOW, "Found symbol Num: %i Name: %s\n", nSymbol, psSym->s_pzName );
+					return ( psSym );
+				}
+				nSymbol = psImage->im_pnHashChain[nSymbol];
+			} while( nSymbol != STN_UNDEF );
+		}	
+	}
+	else
+	{
+		/* For the kernel library use the created hash table */
+		uint32 nHash = elf_sym_hash( pzName ) % ELF_KERNEL_SYM_HASHTAB_SIZE;
+		for ( psSym = psImage->im_apsKernelSymHash[nHash]; psSym != NULL; psSym = psSym->s_psHashNext )
+		{
+			if ( psSym->s_nSection != SHN_UNDEF && strcmp( psSym->s_pzName, pzName ) == 0 )
+			{			
+				return ( psSym );
+			}
 		}
 	}
 	return ( NULL );
@@ -720,6 +807,11 @@ static void unload_image( ElfImage_s *psImage )
 		if ( psImage->im_pasRelocs != NULL )
 		{
 			kfree( psImage->im_pasRelocs );
+		}
+		if ( psImage->im_psHashTable != NULL )
+		{
+			//printk( "Freeing hash table!\n" );
+			kfree( psImage->im_psHashTable );
 		}
 		if ( psImage->im_apzSubImages != NULL )
 		{
@@ -1043,6 +1135,7 @@ static status_t memmap_instance( ElfImageInst_s *psInst, int nMode )
 	anAreaSizes[0] = nMemTextSize;
 	anAreaSizes[1] = nMemDataSize;
 	anAreas[1] = -1;
+	
 
 	nAreaCount = ( nMemDataSize > 0 ) ? 2 : 1;
 
@@ -1152,7 +1245,6 @@ static int do_reloc_image( ImageContext_s * psCtx, ElfImageInst_s *psInst, int n
 		ElfSymbol_s *psSym = &psImage->im_pasSymbols[ELF32_R_SYM( psReloc->r_nInfo )];
 		int nRelocType = ELF32_R_TYPE( psReloc->r_nInfo );
 		uint32 *pTarget;
-		bool bDoUnlock = false;
 
 		if ( bNeedReloc == false && ( psSym->s_nSection != SHN_UNDEF || nRelocType == R_386_RELATIVE ) )
 		{
@@ -1174,13 +1266,12 @@ static int do_reloc_image( ImageContext_s * psCtx, ElfImageInst_s *psInst, int n
 				pPte = pte_offset( pPgd, nAddr );
 				if ( !PTE_ISPRESENT( *pPte ) || !PTE_ISWRITE( *pPte ) )
 				{
-					nError = lock_mem_area( pTarget, sizeof( *pTarget ), true );
+					nError = verify_mem_area( pTarget, sizeof( *pTarget ), true );
 					if ( nError < 0 )
 					{
 						printk( "Error: do_reloc_image() failed to lock reloc target : %d\n", nError );
 						return ( nError );
 					}
-					bDoUnlock = true;
 					break;
 				}
 			}
@@ -1190,7 +1281,7 @@ static int do_reloc_image( ImageContext_s * psCtx, ElfImageInst_s *psInst, int n
 		switch ( nRelocType )
 		{
 		case R_386_NONE:
-			kerndbg( KERN_DBUG, "R_386_NONE <%s>\n", psImage->im_zName );
+			kerndbg( KERN_DEBUG, "R_386_NONE <%s>\n", psImage->im_zName );
 			break;
 		case R_386_32:
 			{
@@ -1305,10 +1396,6 @@ static int do_reloc_image( ImageContext_s * psCtx, ElfImageInst_s *psInst, int n
 		default:
 			printk( "Error: Unknown relocation type %d\n", ELF32_R_TYPE( psReloc->r_nInfo ) );
 			break;
-		}
-		if ( bDoUnlock )
-		{
-			unlock_mem_area( pTarget, sizeof( *pTarget ) );
 		}
 		if ( nError < 0 )
 		{
@@ -2399,12 +2486,11 @@ int sys_get_image_info( int nImage, int nSubImage, image_info * psInfo )
 {
 	int nError;
 
-	if ( lock_mem_area( psInfo, sizeof( *psInfo ), true ) < 0 )
+	if ( verify_mem_area( psInfo, sizeof( *psInfo ), true ) < 0 )
 	{
 		return ( -EFAULT );
 	}
 	nError = get_image_info( false, nImage, nSubImage, psInfo );
-	unlock_mem_area( psInfo, sizeof( *psInfo ) );
 	return ( nError );
 }
 

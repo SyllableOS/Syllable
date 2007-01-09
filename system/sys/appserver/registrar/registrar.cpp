@@ -939,7 +939,7 @@ void Registrar::GetTypeAndIcon( Message* pcMessage )
 	{
 		os::String zLeaf = os::Path( zPath ).GetLeaf();
 		
-		for( uint e = zLeaf.Length(); e >= 0; e-- )
+		for( int e = zLeaf.Length() - 1; e >= 0; e-- )
 		{
 			//std::cout<<zPath.c_str()<<" "<<zPath.Length()<<" "<<e<<" "<<zPath[e]<<std::endl;
 			if( zLeaf[e] == '.' )
