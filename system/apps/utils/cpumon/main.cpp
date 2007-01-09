@@ -83,12 +83,13 @@ void GetLoad( int nCPUCount, float* pavLoads )
 	
 	static float	avLoad[8];
 
-	nCurIdleTime	= get_idle_time( i % 2 );
+	nCurIdleTime	= get_idle_time( i );
 	nCurSysTime 	= get_real_time();
+
 	
 	nIdleTime	= nCurIdleTime - anLastIdle[i];
 	nSysTime	= nCurSysTime  - anLastSys[i];
-
+	
 	anLastIdle[i] = nCurIdleTime;
 	anLastSys[i]  = nCurSysTime;
 
@@ -102,6 +103,7 @@ void GetLoad( int nCPUCount, float* pavLoads )
 
 	avLoad[i] += ( (1.0 - double(nIdleTime) / double(nSysTime)) - avLoad[i]) * 0.5f;
 	pavLoads[i] = avLoad[i];
+	
     }
 }
 
@@ -114,7 +116,7 @@ void GetLoad( int nCPUCount, float* pavLoads )
 //----------------------------------------------------------------------------
 
 MonWindow::MonWindow( const Rect& cFrame ) :
-    Window( cFrame, "atheos_cpu_mon", MSG_MAINWND_TITLE, 0 )
+    Window( cFrame, "syllable_cpu_mon", MSG_MAINWND_TITLE, 0 )
 {
     if ( g_bWindowRectSet ) {
 	SetFrame( g_cWinRect );
@@ -170,6 +172,8 @@ MonWindow::MonWindow( const Rect& cFrame ) :
     } else {
 	m_pcLoadView = new GraphView( cWndBounds, m_nCPUCount );
 	AddChild( m_pcLoadView );
+	if( m_nCPUCount > 1 )
+		ResizeBy( os::Point( 0, 80 * ( m_nCPUCount - 1 ) ) );
     }
     SetFlags( nFlags );
     
@@ -236,7 +240,7 @@ bool MonWindow::OkToQuit( void )
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-MyApp::MyApp() : Application( "application/x-vnd.KHS.atheos-cpu-monitor" )
+MyApp::MyApp() : Application( "application/x-vnd.KHS.syllable-cpu-monitor" )
 {
 	SetCatalog("cpumon.catalog");
     m_pcWindow = new MonWindow( Rect( 20, 20, 200, 100 ) );
@@ -311,7 +315,7 @@ int main( int argc, char ** argv )
 	}
     }
     if ( g_nShowVersion ) {
-	printf( "AtheOS CPU monitor V1.0\n" );
+	printf( "Syllable CPU monitor V1.0\n" );
 	exit( 0 );
     }
     if ( g_nShowHelp ) {
