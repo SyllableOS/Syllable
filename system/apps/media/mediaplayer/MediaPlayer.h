@@ -79,9 +79,10 @@ class MPWindow : public os::Window
 public:
 	MPWindow( const os::Rect& cFrame, const std::string& cName, const std::string& cTitle );
 	~MPWindow();
-	virtual void HandleMessage( os::Message* pcMessage );
-	virtual bool OkToQuit();
-	virtual void FrameMoved( const os::Point& cDelta );
+	void HandleMessage( os::Message* pcMessage );
+	bool OkToQuit();
+	void FrameMoved( const os::Point& cDelta );
+	void FrameSized( const os::Point& cDelta );
 	void SetState( uint8 nState ) { m_nState = nState; }
 	void SetVideo( os::View* pcView ) { m_pcVideo = pcView; }
 	os::View* GetControlView() { return( m_pcControls ); }
@@ -94,6 +95,7 @@ private:
 	os::View* m_pcVideoView;
 	os::View* m_pcControls;
 	os::View* m_pcVideo;
+	os::IPoint m_cVideoSize;
 	os::CImageButton* m_pcPlayPause;
 	os::CImageButton* m_pcStop;
 	os::CImageButton* m_pcFullScreen;
@@ -106,8 +108,8 @@ class MPApp : public os::Application
 public:
 	MPApp( const char* pzMimeType, os::String zFileName, bool bLoad );
 	~MPApp();
-	virtual void HandleMessage( os::Message* pcMessage );
-	virtual bool OkToQuit();
+	void HandleMessage( os::Message* pcMessage );
+	bool OkToQuit();
 	void Open( os::String zFileName, os::String zInput );
 	void Close();
 	void PlayThread();

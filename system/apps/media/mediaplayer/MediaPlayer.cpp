@@ -36,11 +36,24 @@ void SetCButtonImageFromResource( os::CImageButton* pcButton, os::String zResour
 	delete( pcStream );
 }
 
+/* Background view class */
 
+class MPBackgroundView : public os::View
+{
+public:
+	MPBackgroundView( os::Rect cFrame ) : os::View( cFrame, "background", os::CF_FOLLOW_ALL )
+	{
+		SetFgColor( os::Color32_s( 0, 0, 0 ) );
+	}
+	void Paint( const os::Rect& cUpdate )
+	{
+		FillRect( cUpdate );
+	}
+};
 
 /* MPWindow class */
 
-MPWindow::MPWindow( const os::Rect & cFrame, const std::string & cName, const std::string & cTitle ):os::Window( cFrame, cName, cTitle )
+MPWindow::MPWindow( const os::Rect & cFrame, const std::string & cName, const std::string & cTitle ):os::Window( cFrame, cName, cTitle, os::WND_SINGLEBUFFER )
 {
 	m_nState = MP_STATE_STOPPED;
 	m_pcVideo = NULL;
@@ -74,14 +87,14 @@ MPWindow::MPWindow( const os::Rect & cFrame, const std::string & cName, const st
 	
 	cNewFrame = m_pcMenuBar->GetFrame();
 	cNewFrame.right = GetBounds().Width();
-	cNewFrame.bottom = cNewFrame.top + m_pcMenuBar->GetPreferredSize( false ).y;
+	cNewFrame.bottom = cNewFrame.top + m_pcMenuBar->GetPreferredSize( false ).y - 1;
 	m_pcMenuBar->SetFrame( cNewFrame );
 	m_pcMenuBar->SetTargetForItems( this );
 	
 	/* Set window size */
 	cNewFrame = cFrame;
 	cNewFrame.right = cNewFrame.left + 300;
-	cNewFrame.bottom = cNewFrame.top + 40 + m_pcMenuBar->GetPreferredSize( false ).y;
+	cNewFrame.bottom = cNewFrame.top + 40 + m_pcMenuBar->GetPreferredSize( false ).y - 1;
 	SetFrame( cNewFrame );
 	
 	
@@ -193,26 +206,36 @@ void MPWindow::HandleMessage( os::Message * pcMessage )
 			os::Rect cFrame = GetFrame();
 			if ( pcMessage->FindInt32( "width", &nWidth ) == 0 && pcMessage->FindInt32( "height", &nHeight ) == 0 )
 			{
-				m_pcVideo->MoveBy( 0, m_pcMenuBar->GetPreferredSize( false ).y + 1 );
+				/* Resize window if necessary */
+				m_cVideoSize = os::IPoint( nWidth, nHeight );
 				if ( cFrame.Width() < nWidth )
-					cFrame.right = cFrame.left + nWidth;
-				cFrame.bottom = cFrame.top + nHeight + 40 + m_pcMenuBar->GetPreferredSize( false ).y;
-				
+					cFrame.right = cFrame.left + nWidth - 1;
+				cFrame.bottom = cFrame.top + nHeight + 40 + m_pcMenuBar->GetPreferredSize( false ).y - 1;
+
 				/* Resize window to keep it on the desktop */
 				os::Desktop cDesktop;
 				float vDeltaX = 0;
 				float vDeltaY = 0;
 				if( cFrame.right >= cDesktop.GetResolution().x )
-					vDeltaX = cFrame.right - cDesktop.GetResolution().x;
+					vDeltaX = cFrame.right - cDesktop.GetResolution().x + 5;
 				if( cFrame.bottom >= cDesktop.GetResolution().y )
-					vDeltaY = cFrame.bottom - cDesktop.GetResolution().y;
+					vDeltaY = cFrame.bottom - cDesktop.GetResolution().y + 5;
 				m_pcVideo->ResizeBy( -vDeltaX, -vDeltaY );
 				cFrame.right -= vDeltaX;
 				cFrame.bottom -= vDeltaY;
+				nHeight -= (int32)vDeltaY;
 				
 				SetFrame( cFrame );
-				AddChild( m_pcVideo );
-				SetFlags( GetFlags() & ~os::WND_NOT_RESIZABLE );
+				
+				/* Create a black background view and add the video */
+				os::View* pcView = new MPBackgroundView( os::Rect( 0, m_pcMenuBar->GetPreferredSize( false ).y, cFrame.Width(),
+														m_pcMenuBar->GetPreferredSize( false ).y + nHeight - 1 ) );
+				AddChild( pcView );
+				pcView->AddChild( m_pcVideo );
+				pcView->SetEraseColor( os::Color32_s( 0, 0, 0 ) );
+				
+				FrameSized( os::Point() ); /* Set the video frame correctly */
+ 				SetFlags( GetFlags() & ~os::WND_NOT_RESIZABLE );
 				m_pcMenuBar->GetSubMenuAt( 1 )->GetItemAt( 4 )->SetEnable( true );
 				
 			}
@@ -224,8 +247,7 @@ void MPWindow::HandleMessage( os::Message * pcMessage )
 			os::Rect cFrame = GetFrame();
 			if ( m_pcVideo )
 			{
-				RemoveChild( m_pcVideo );
-				delete( m_pcVideo );
+				delete( m_pcVideo->GetParent() );
 			}
 			m_pcVideo = NULL;
 			cFrame.right = cFrame.left + 300;
@@ -283,6 +305,39 @@ void MPWindow::FrameMoved( const os::Point & cDelta )
 	os::Window::FrameMoved( cDelta );
 }
 
+void MPWindow::FrameSized( const os::Point & cDelta )
+{
+	/* Calculate the frame of the video view */	
+	if( m_pcVideo == NULL || m_pcVideo->GetParent() == NULL )
+		return;
+	
+	
+	/* Try to use the full width of the window first, then the full height */
+	float vWidth = m_pcVideo->GetParent()->GetBounds().Width() + 1;
+	float vHeight = m_pcVideo->GetParent()->GetBounds().Height() + 1;
+	
+	int nTargetWidth = m_cVideoSize.x;
+	int nTargetHeight = m_cVideoSize.y;
+	
+	if( m_cVideoSize.y * (int)vWidth / m_cVideoSize.x > vHeight )
+	{
+		nTargetWidth = m_cVideoSize.x * (int)vHeight / m_cVideoSize.y;
+		nTargetHeight = (int)vHeight;
+	}
+	else
+	{
+		nTargetWidth = (int)vWidth;
+		nTargetHeight = m_cVideoSize.y * (int)vWidth / m_cVideoSize.x;
+	}
+	
+	int nXPos = ( (int)vWidth - nTargetWidth ) / 2;
+	int nYPos = ( (int)vHeight - nTargetHeight ) / 2;
+	
+	/* Set frame */
+	m_pcVideo->SetFrame( os::Rect( nXPos, nYPos, nXPos + nTargetWidth - 1, nYPos + nTargetHeight ) ); 
+	if ( m_nState != MP_STATE_PLAYING )
+		os::Application::GetInstance()->PostMessage( MP_UPDATE_VIDEO, os::Application::GetInstance(  ) );
+}
 
 /* MPApp class */
 MPApp::MPApp( const char *pzMimeType, os::String zFileName, bool bLoad ):os::Application( pzMimeType )

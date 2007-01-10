@@ -55,7 +55,7 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*.d MediaPlayer
 	rm resources/mediaplayer.catalog resources/mediaplayer.h; \
 	for CATALOG in $(CATALOGS);do \
-		rm resources/$$CATALOG/v.catalog; \
+		rm resources/$$CATALOG/mediaplayer.catalog; \
 	done;
 
 -include $(OBJDIR)/*.d
