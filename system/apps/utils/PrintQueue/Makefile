@@ -19,7 +19,7 @@ install: all
 	install -s $(EXE) /system/bin/$(EXE)
 
 dist: all
-	install -s $(EXE) $(DIST_DIR)/system/bin/$(EXE)
+	install -s $(EXE) $(DIST_DIR)/atheos/sys/bin/$(EXE)
 
 clean:
 	-rm $(OBJS)
