@@ -1,3 +1,8 @@
+* January 12, 2007, Arno Klenke *
+
+New icons for most preferences applications
+Delete fonts properly in the font prefs
+
 * December 9, 2006, Kristian Van Der Vliet *
 
 Moved DiskManager, SlbMgr and aterm binaries to /Application/System Tools and renamed the binaries
@@ -617,6 +622,7 @@ Network Preferences
 		* Added NetworkPreferences from Daryl Dudey(daryl.dudey@ntlworld.com).
 		* Added SlbMgr(AtheMgr renamed).
 		* Patches by Vanders for AEdit.
+
 
 
 
