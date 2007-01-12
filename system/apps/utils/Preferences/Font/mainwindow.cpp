@@ -225,7 +225,7 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   
   // Set Icon
   os::Resources cCol( get_image_id() );
-  os::ResStream *pcStream = cCol.GetResourceStream( "icon24x24.png" );
+  os::ResStream *pcStream = cCol.GetResourceStream( "icon48x48.png" );
   os::BitmapImage *pcIcon = new os::BitmapImage( pcStream );
   SetIcon( pcIcon->LockBitmap() );
   delete( pcIcon );
@@ -291,6 +291,8 @@ void MainWindow::ShowData()
   // Clear dropdowns
   pcDDMNormal->Clear();
   pcDDMBold->Clear();
+  
+  bool bUpdateSet = false;
 
   for ( int i=0 ; i<iFamilyCount; i++ ) {
     char zFamily[FONT_FAMILY_LENGTH+1];
@@ -307,44 +309,51 @@ void MainWindow::ShowData()
       uint32 nFlags;
       bool bFixed = true;
 
+      os::Font::GetStyleInfo( zFamily, j, zStyle, &nFlags);
+      sprintf(zCombined, "%s-%s", zFamily, zStyle);
+      
+
       // Check if fixed font
       if ( !(nFlags & os::FONT_IS_FIXED)) {
 	bFixed = false;
       }
-
-      os::Font::GetStyleInfo( zFamily, j, zStyle, &nFlags);
-      sprintf(zCombined, "%s-%s", zFamily, zStyle);
+      
     
       // Add to normal
       pcDDMNormal->AppendItem(zCombined);
       if ( strcmp(zFamily,cNorDefFam.c_str())==0 && strcmp(zStyle,cNorDefSty.c_str())==0 ) {
-	pcDDMNormal->SetSelection( pcDDMNormal->GetItemCount()-1 );
+	pcDDMNormal->SetSelection( pcDDMNormal->GetItemCount()-1, !bUpdateSet );
+	bUpdateSet = true;
       }
 
       // And bold
       pcDDMBold->AppendItem(zCombined);
       if ( strcmp(zFamily,cBldDefFam.c_str())==0 && strcmp(zStyle,cBldDefSty.c_str())==0 ) {
-	pcDDMBold->SetSelection( pcDDMBold->GetItemCount()-1 );
+	pcDDMBold->SetSelection( pcDDMBold->GetItemCount()-1, !bUpdateSet );
+	bUpdateSet = true;
       }
 
       // And Fixed
       if (bFixed==true || bFixed==false) {
 	pcDDMFixed->AppendItem(zCombined);
 	if ( strcmp(zFamily,cFxdDefFam.c_str())==0 && strcmp(zStyle,cFxdDefSty.c_str())==0) {
-	  pcDDMFixed->SetSelection( pcDDMFixed->GetItemCount()-1 );
+	  pcDDMFixed->SetSelection( pcDDMFixed->GetItemCount()-1, !bUpdateSet );
+	  bUpdateSet = true;
 	}
       }
       
       // And Window
       pcDDMWindow->AppendItem(zCombined);
       if ( strcmp(zFamily,cWndDefFam.c_str())==0 && strcmp(zStyle,cWndDefSty.c_str())==0) {
-	pcDDMWindow->SetSelection( pcDDMWindow->GetItemCount()-1 );
+	pcDDMWindow->SetSelection( pcDDMWindow->GetItemCount()-1, !bUpdateSet );
+	bUpdateSet = true;
       }
 
       // And ToolWindow
       pcDDMTWindow->AppendItem(zCombined);
       if ( strcmp(zFamily,cTWdDefFam.c_str())==0 && strcmp(zStyle,cTWdDefSty.c_str())==0) {
-	pcDDMTWindow->SetSelection( pcDDMTWindow->GetItemCount()-1 );
+	pcDDMTWindow->SetSelection( pcDDMTWindow->GetItemCount()-1, !bUpdateSet );
+	bUpdateSet = true;
       }
     }  
   }
@@ -448,6 +457,7 @@ void MainWindow::UpdateExample(const char *pzFont , float fNewSize)
       // Now update stringview
       pcSVExample->SetFont(pcFont);
       pcSVExample->SetString("aAbBcCdD 1234 !$%^ []{}");
+      pcFont->Release();      
     }
   }
 }

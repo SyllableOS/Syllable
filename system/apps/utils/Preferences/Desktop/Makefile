@@ -31,7 +31,7 @@ Desktop: $(OBJS)
 	@echo Linking...
 	@$(CXX) $(OBJS) -o Desktop -lsyllable
 	@echo Adding resources...
-	@rescopy Desktop -r icon48x48.png icon24x24.png 
+	@rescopy Desktop -r icon48x48.png
 	rescopy -a Desktop resources/Desktop.catalog
 	for CATALOG in $(CATALOGS);do \
 		echo $$CATALOG; \

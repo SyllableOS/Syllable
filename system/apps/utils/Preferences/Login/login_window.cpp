@@ -282,7 +282,7 @@ LoginWindow::LoginWindow( const os::Rect cFrame ) : Window( cFrame, "Login", MSG
 
 	/* Set an application icon */
 	BitmapImage *pcAppIcon = new BitmapImage();
-	pcAppIcon->Load( cRes.GetResourceStream( "icon24x24.png" ) );
+	pcAppIcon->Load( cRes.GetResourceStream( "icon48x48.png" ) );
 	SetIcon( pcAppIcon->LockBitmap() );
 	delete( pcAppIcon );
 }

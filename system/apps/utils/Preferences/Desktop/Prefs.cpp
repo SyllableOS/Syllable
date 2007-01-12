@@ -153,7 +153,7 @@ PrefsDesktopWin::PrefsDesktopWin( os::Rect cFrame )
 	/* Set Icon */
 	os::File cFile( open_image_file( get_image_id() ) );
 	os::Resources cCol( &cFile );
-	os::ResStream *pcStream = cCol.GetResourceStream( "icon24x24.png" );
+	os::ResStream *pcStream = cCol.GetResourceStream( "icon48x48.png" );
 	os::BitmapImage *pcIcon = new os::BitmapImage( pcStream );
 	SetIcon( pcIcon->LockBitmap() );
 	delete( pcIcon );

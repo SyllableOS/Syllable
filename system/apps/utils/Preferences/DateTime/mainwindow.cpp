@@ -154,7 +154,7 @@ CMainWindow::CMainWindow(const os::Rect& cFrame) :
   
   
   // Set Icon
-  pcStream = cCol.GetResourceStream( "icon24x24.png" );
+  pcStream = cCol.GetResourceStream( "icon48x48.png" );
   os::BitmapImage *pcIcon = new os::BitmapImage( pcStream );
   SetIcon( pcIcon->LockBitmap() );
   delete( pcIcon );

@@ -31,7 +31,7 @@ FileTypes: $(OBJS)
 	@echo Linking...
 	@$(CXX) $(OBJS) -o FileTypes -lsyllable
 	@echo Adding resources...
-	@rescopy FileTypes -r icon48x48.png icon24x24.png 
+	@rescopy FileTypes -r icon48x48.png
 	rescopy -a FileTypes resources/FileTypes.catalog
 	for CATALOG in $(CATALOGS);do \
 		echo $$CATALOG; \
