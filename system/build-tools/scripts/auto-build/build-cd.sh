@@ -37,6 +37,7 @@ FILES=(	"/atheos/etc/profile, /atheos/etc/profile" 															\
 		"/atheos/sys/drivers/fs/fatfs, /atheos/sys/drivers/fs/fatfs"										\
 		"/atheos/sys/drivers/fs/ext2, /atheos/sys/drivers/fs/ext2"											\
 		"/atheos/sys/drivers/fs/ntfs, /atheos/sys/drivers/fs/ntfs"											\
+		"/atheos/sys/drivers/fs/ramfs, /atheos/sys/drivers/fs/ramfs"										\
 																											\
 		"/atheos/sys/kernel.so, /atheos/sys/kernel.so"														\
 																											\
@@ -166,7 +167,7 @@ BASE_DIR=$WORKING_DIR/base
 CD_DIR=$WORKING_DIR/cdrom
 
 # Default for the Ruby package if one is not specified
-RUBY_PACKAGE=ruby-1.8.4.bin.1.zip
+RUBY_PACKAGE=ruby-1.8.5.bin.1.zip
 
 # Default for the Installer scripts if a directory is not specified
 INSTALLER_DIR=installer
@@ -305,6 +306,11 @@ function generate_init_script()
     let "INDEX = $INDEX + 1"
   done
 
+  # Create a writable /tmp for Grub
+  printf "\nmkdir /tmp" >> $CD_DIR/atheos/sys/init.sh
+  printf "\nmount -t ramfs /tmp\n" >> $CD_DIR/atheos/sys/init.sh
+
+  # Start the installer
   printf "\naterm /usr/ruby/bin/ruby /boot/Install/install.rb &\n" >> $CD_DIR/atheos/sys/init.sh
 
   # Enable this to get an extra shell when testing
