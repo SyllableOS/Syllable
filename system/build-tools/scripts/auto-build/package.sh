@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION=0.6.2
+VERSION=0.6.3
 
 BUILD_DIR=$HOME/Build
 INSTALLER_DIR=$BUILD_DIR/Installer
@@ -43,19 +43,23 @@ sync
 # Build the CD
 cd $INSTALLER_DIR
 ./build-cd.sh "base-syllable.zip" "$BUILD_DIR/Net-Binaries" "$VERSION"
-if [ -e syllable.iso.bz2 ]
+
+ISO="syllable-$VERSION-$(date +%Y%m%d).iso"
+
+if [ -e syllable*.iso.bz2 ]
 then
-  rm syllable.iso.bz2
+  rm syllable*.iso.bz2
 fi
-bzip2 -k9 syllable.iso
+bzip2 -k9 $ISO
 
 # Transfer the files
-FILES=`printf "base-syllable.zip syllable.iso.bz2\n"`
+FILES=`printf "base-syllable.zip $ISO.bz2\n"`
 if [ -n "$FTP_USER" ]
 then
   ftp -n $FTP_SERVER << END
 quote user $FTP_USER
 quote pass $FTP_PASSWD
+passive
 prompt
 mput $FILES
 quit
