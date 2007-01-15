@@ -1,3 +1,9 @@
+* January 15, Arno Klenke *
+
+Fixed a bug in the usb hub driver and added hub reset code
+Add a timeout for the codec reset in the i8xx audio driver
+Show symbol names for kernel drivers in the stack traces
+
 * January 9, Arno Klenke *
 
 Replaced lock_mem_area()/unlock_mem_area() by verify_mem_area()
@@ -1061,6 +1067,7 @@ required; they are implemented in user space as part of libc.
 
 Applied a fix to sys/kernel/kernel/vfs/vfs.c  The fcntl() F_GETLK command
 now works as expected.
+
 
 
 
