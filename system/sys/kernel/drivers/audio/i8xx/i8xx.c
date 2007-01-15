@@ -194,17 +194,23 @@ status_t ich_ac97_reset( ICHAudioDriver_s* psDriver )
 	nCnt &= ~( ICH_ACLINK | ICH_PCM_246_MASK);
 	nCnt |= ( ( nCnt & ICH_AC97COLD ) == 0 ) ? ICH_AC97COLD : ICH_AC97WARM;
 	io_outl( psDriver, nCnt, psDriver->nBaseAddr + ICH_REG_GLOB_CNT );
+	
+	int nTries = 1000;
 	/* Wait until the reset has finished */
 	do
 	{
 		snooze( 1000 );
-	} while( ( io_inl( psDriver, psDriver->nBaseAddr + ICH_REG_GLOB_CNT ) & ICH_AC97WARM ) != 0 );
+	} while( --nTries > 0 && ( io_inl( psDriver, psDriver->nBaseAddr + ICH_REG_GLOB_CNT ) & ICH_AC97WARM ) != 0 );
+	if( nTries <= 0 )
+		printk( "AC97 Reset failed: card still not reset (GLOB_CNT 0x%x)\n", (uint)io_inl( psDriver, psDriver->nBaseAddr + ICH_REG_GLOB_CNT ) );
 	/* Wait for codecs */
-	
+	nTries = 1000;
 	do
 	{
 		snooze( 1000 );
-	} while( ( io_inl( psDriver, psDriver->nBaseAddr + ICH_REG_GLOB_STA ) & (ICH_PCR | ICH_SCR | ICH_TCR ) ) == 0 );
+	} while( --nTries > 0 && ( io_inl( psDriver, psDriver->nBaseAddr + ICH_REG_GLOB_STA ) & (ICH_PCR | ICH_SCR | ICH_TCR ) ) == 0 );
+	if( nTries <= 0 )
+		printk( "AC97 Reset failed: codecs still not ready (GLOB_CNT 0x%x)\n", (uint)io_inl( psDriver, psDriver->nBaseAddr + ICH_REG_GLOB_CNT ) );
 	
 	/* Unmute SiS */
 	if( psDriver->bSIS )
@@ -921,6 +927,7 @@ status_t device_init( int nDeviceID )
 	int nDeviceNum;
 	PCI_Info_s sInfo;
 	int nPCINum;
+	
 
 	bool bDevFound = false;
 

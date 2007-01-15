@@ -109,7 +109,7 @@ void print_symbol( int nIndex, uint32 nAddress )
 			nTxtAddr = ( uint32 )sInfo.ii_text_addr;
 		}
 		else
-		{
+		{			
 			strcpy( zModuleName, "*unknown*" );
 		}
 		if ( get_symbol_by_address( nModule, ( const char * )nAddress, zSymName, 256, &pSymAddr ) < 0 )

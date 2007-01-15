@@ -174,6 +174,7 @@ typedef struct {
 struct USB_hub_t
 {
 	struct USB_hub_t* psNext;
+	sem_id hLock;
 	bool bNeedsAttention;
 	USB_device_s* psDevice;
 	USB_desc_hub* psDesc;
@@ -191,6 +192,7 @@ static USB_hub* g_psFirstHub;
 static sem_id g_hHubWait; 
 static SpinLock_s g_hHubLock;
 static sem_id g_hHubAddressLock;
+static sem_id g_hHubThreadLock;
 
 /* USB 2.0 spec Section 11.24.4.5 */
 int usb_get_hub_descriptor( USB_device_s* psDevice, void *pData, int nSize )
@@ -261,6 +263,8 @@ void usb_hub_irq( USB_packet_s* psPacket )
 		
 		if( ( ++psHub->nErrors < 10 ) || psHub->nError )
 			return;
+			
+		psHub->nError = psPacket->nStatus;
 	}
 	psHub->nErrors = 0;
 	spinlock_cli( &g_hHubLock, nFlags );
@@ -380,7 +384,7 @@ int usb_hub_configure( USB_hub* psHub, USB_desc_endpoint_s* psEndpoint )
 		portstr[i] = psHub->psDesc->bDeviceRemovable[((i + 1) / 8)] & (1 << ((i + 1) % 8)) ? 'F' : 'R';
 	portstr[psDevice->nMaxChild] = 0;
 
-	kerndbg( KERN_DEBUG, "Port removable status: %s\n", portstr );
+	kerndbg( KERN_DEBUG, "Port removable status: %s (HUB %x)\n", portstr, psHub );
 
 	nRet = usb_get_hub_status( psDevice, &sStatus );
 	if( nRet < 0) {
@@ -405,13 +409,17 @@ int usb_hub_configure( USB_hub* psHub, USB_desc_endpoint_s* psEndpoint )
 	}
 
 	USB_FILL_INT( psHub->psPacket, psDevice, nPipe, psHub->nBuffer, nMaxp, usb_hub_irq,
-		psHub, psEndpoint->nInterval );
+		psHub, ( psDevice->eSpeed == USB_SPEED_HIGH )
+			? 1 << ( psEndpoint->nInterval - 1 )
+			: psEndpoint->nInterval );
 	nRet = usb_submit_packet( psHub->psPacket );
 	if( nRet ) {
 		kerndbg( KERN_WARNING, "USB: usb_submit_packet failed (%d)", nRet );
 		kfree( psHub->psDesc );
 		return( -1 );
 	}
+	
+	wakeup_sem( g_hHubWait, false );
 	
 	usb_hub_power_on( psHub );
 
@@ -489,6 +497,7 @@ bool usb_hub_add( USB_device_s* psDevice, unsigned int nIF,
 
 	memset( psHub, 0, sizeof( *psHub ) );
 	psHub->psDevice = psDevice;
+	psHub->hLock = create_semaphore( "usb_hub_thread_lock", 1, SEM_RECURSIVE );
 	
 	/* Now we know that we had success -> add ourself to the list */
 	
@@ -525,6 +534,9 @@ void usb_hub_remove( USB_device_s* psDevice, void* pPrivate )
 	
 	release_device( psDevice->nHandle );
 	
+	LOCK( psHub->hLock );
+	UNLOCK( psHub->hLock );
+	
 	while( psNextHub != NULL )
 	{
 		if( psNextHub == psHub )
@@ -532,16 +544,19 @@ void usb_hub_remove( USB_device_s* psDevice, void* pPrivate )
 			/* Remove it */
 			if( psPrevHub )
 				psPrevHub->psNext = psNextHub->psNext;
+			else
+				g_psFirstHub = psNextHub->psNext;
 				
-				if( psHub->psPacket ) {
-					usb_cancel_packet( psHub->psPacket );
-					usb_free_packet( psHub->psPacket );
-					psHub->psPacket = NULL;
-				}
-				if( psHub->psDesc ) {
-					kfree( psHub->psDesc );
-					psHub->psDesc = NULL;
-				}
+			if( psHub->psPacket ) {
+				usb_cancel_packet( psHub->psPacket );
+				usb_free_packet( psHub->psPacket );
+				psHub->psPacket = NULL;
+			}
+			if( psHub->psDesc ) {
+				kfree( psHub->psDesc );
+				psHub->psDesc = NULL;
+			}
+			delete_semaphore( psHub->hLock );
 			kfree( psHub );
 			spinunlock_enable( &g_hHubLock, nFlags );
 			return;
@@ -562,6 +577,35 @@ inline char *portspeed (int portstatus)
 		return "12 Mb/s";
 }
 
+static int usb_hub_reset( USB_hub *psHub )
+{
+	USB_device_s *psDev = psHub->psDevice;
+	int i;
+
+	/* Disconnect any attached devices */
+	for (i = 0; i < psHub->psDesc->nNbrPorts; i++ ) {
+		if ( psDev->psChildren[i] )
+			usb_disconnect( &psDev->psChildren[i] );
+	}
+
+	/* Attempt to reset the hub */
+	if( psHub->psPacket )
+		usb_cancel_packet( psHub->psPacket );
+	else
+		return -1;
+
+	if( usb_reset_device( psDev ) )
+		return -1;
+
+	psHub->psPacket->psDevice = psDev;
+	psHub->psPacket->nStatus = 0;
+	if( usb_submit_packet( psHub->psPacket ) )
+		return -1;
+
+	usb_hub_power_on( psHub );
+
+	return 0;
+}
 
 #define HUB_RESET_TRIES		5
 #define HUB_PROBE_TRIES		2
@@ -777,7 +821,7 @@ void usb_hub_port_connect_change( USB_hub* psH, int nPort,
 		usb_connect( psDevice );
 		
 		/* Set up TT records, if needed  */
-		if( psH->psTT ) {
+		if( psHub->psTT ) {
 			psDevice->psTT = psHub->psTT;
 			psDevice->nTTPort = psHub->nTTPort;
 		} else if( psDevice->eSpeed != USB_SPEED_HIGH
@@ -875,15 +919,24 @@ void usb_hub_thread_worker()
 		psHub->bNeedsAttention = false;
 		psDevice = psHub->psDevice;
 		
+		LOCK( psHub->hLock );
 		spinunlock_restore( &g_hHubLock, nFlags );
 	
-		kerndbg( KERN_DEBUG, "Working...\n" );
+		kerndbg( KERN_DEBUG, "Working... (HUB %x DEVICE %x DESC %x)\n", psHub,
+		( psHub != NULL ) ? psHub->psDevice : NULL, ( psHub != NULL ) ? psHub->psDesc : NULL );
 		
 		if( psHub->nError ) {
-			kerndbg( KERN_WARNING, "USB: Hub reports an error, reset not implemented yet\n" );
+			kerndbg( KERN_WARNING, "USB: Hub reports an error, trying to reset...\n" );
 			psHub->nError = 0;
 			psHub->nErrors = 0;
+			
+			if( usb_hub_reset( psHub ) ) {
+				kerndbg( KERN_WARNING, "USB: Hub reset failed!\n" );
+				UNLOCK( psHub->hLock );
+				continue;
+			}
 		}
+		kerndbg( KERN_DEBUG, "Check ports...\n" );
 		for( i = 0; i < psHub->psDesc->nNbrPorts; i++ ) {
 			USB_port_status sPortsts;
 			unsigned short portstatus, portchange;
@@ -934,6 +987,9 @@ void usb_hub_thread_worker()
 				usb_clear_port_feature( psDevice, i + 1, USB_PORT_FEAT_C_RESET );
 			}
 		} /* end for i */
+		
+		
+		kerndbg( KERN_DEBUG, "Check hub...\n" );
 
 		/* deal with hub status changes */
 		if( usb_get_hub_status( psDevice, &hubsts ) < 0 )
@@ -952,6 +1008,8 @@ void usb_hub_thread_worker()
 				usb_hub_power_on( psHub );
 			}
 		}
+		kerndbg( KERN_DEBUG, "Finished...\n" );
+		UNLOCK( psHub->hLock );
 	}
 	spinunlock_restore( &g_hHubLock, nFlags );
 }
@@ -986,3 +1044,100 @@ void usb_hub_init()
 	/* Start thread */
 	wakeup_thread( spawn_kernel_thread( "usb_hub_thread", usb_hub_thread, 0, 4096, NULL ), true );
 }
+
+int usb_reset_device( USB_device_s* dev )
+{
+	USB_device_s *parent = dev->psParent;
+	USB_desc_device_s *descriptor;
+	int i, ret, port = -1;
+	
+	kerndbg( KERN_DEBUG, "Resetting device...\n");
+
+	if( !parent ) {
+		kerndbg( KERN_WARNING, "USB: attempting to reset root hub!\n" );
+		return -EINVAL;
+	}
+
+	for( i = 0; i < parent->nMaxChild; i++ )
+		if( parent->psChildren[i] == dev ) {
+			port = i;
+			break;
+		}
+
+	if( port < 0 )
+		return -ENOENT;
+
+	LOCK( g_hHubAddressLock );
+
+	/* Send a reset to the device */
+	if( usb_hub_port_reset( parent, port, dev, HUB_SHORT_RESET_TIME ) ) {
+		usb_hub_port_disable( parent, port );
+		UNLOCK( g_hHubAddressLock );
+		return(-ENODEV);
+	}
+
+	/* Reprogram the Address */
+	ret = usb_set_address( dev );
+	if( ret < 0 ) {
+		kerndbg( KERN_FATAL, "USB: USB device not accepting new address (error=%d)", ret );
+		usb_hub_port_disable( parent, port );
+		UNLOCK( g_hHubAddressLock );
+		return ret;
+	}
+
+	/* Let the SET_ADDRESS settle */
+	snooze( 10000 );
+
+	UNLOCK( g_hHubAddressLock );
+
+	/*
+	 * Now we fetch the configuration descriptors for the device and
+	 * see if anything has changed. If it has, we dump the current
+	 * parsed descriptors and reparse from scratch. Then we leave
+	 * the device alone for the caller to finish setting up.
+	 *
+	 * If nothing changed, we reprogram the configuration and then
+	 * the alternate settings.
+	 */
+	descriptor = kmalloc( sizeof *descriptor, MEMF_KERNEL );
+	if( !descriptor ) {
+		return -ENOMEM;
+	}
+	ret = usb_get_descriptor(dev, USB_DT_DEVICE, 0, descriptor,
+			sizeof( *descriptor ) );
+	if( ret < 0 ) {
+		kfree(descriptor);
+		return ret;
+	}
+
+	if( memcmp( &dev->sDeviceDesc, descriptor, sizeof( *descriptor ) ) ) {
+		kfree( descriptor );
+		kerndbg( KERN_FATAL, "USB: Device descriptor has changed during reset!\n" );
+		return 1;
+	}
+
+	kfree( descriptor );
+
+	ret = usb_set_configuration( dev, dev->psActConfig->nConfigValue );
+	if( ret < 0 ) {
+		kerndbg( KERN_FATAL, "USB: failed to set active configuration (error=%d)\n", ret );
+		return ret;
+	}
+
+	for (i = 0; i < dev->psActConfig->nNumInterfaces; i++ ) {
+		USB_interface_s *intf = &dev->psActConfig->psInterface[i];
+		USB_desc_interface_s *as = &intf->psSetting[intf->nActSetting];
+
+		ret = usb_set_interface( dev, as->nInterfaceNumber, as->nAlternateSettings );
+		if( ret < 0 ) {
+			kerndbg( KERN_FATAL, "USB: failed to set active alternate setting for interface %d (error=%d)\n", i, ret );
+			return ret;
+		}
+	}
+
+	return 0;
+}
+
+
+
+

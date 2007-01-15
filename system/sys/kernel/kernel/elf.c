@@ -2030,7 +2030,17 @@ int sys_find_module_by_address( const void *pAddress )
 
 int get_symbol_by_address( int nLibrary, const char *pAddress, char *pzName, int nMaxNamLen, void **ppAddress )
 {
-	ImageContext_s *psCtx = CURRENT_PROC->pr_psImageContext;	// FIXME: Should also consider kernel images
+	ImageContext_s *psCtx;
+	
+	if ( ( ( uint32 )pAddress ) < AREA_FIRST_USER_ADDRESS )
+	{
+		psCtx = g_psKernelCtx;
+	}
+	else
+	{
+		psCtx = CURRENT_PROC->pr_psImageContext;
+	}
+	
 	ElfImageInst_s *psInst;
 	ElfImage_s *psImage;
 	ElfSymbol_s *psClosestSymbol = NULL;

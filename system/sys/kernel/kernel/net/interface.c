@@ -243,7 +243,7 @@ static int get_interface_list( struct ifconf *psConf )
 	char *pBuffer;
 
 	kassertw( sizeof( psConf->ifc_len ) == sizeof( int ) );
-
+	
 	nError = memcpy_from_user( &nBufSize, &psConf->ifc_len, sizeof( int ) );
 	if ( nError < 0 )
 		return ( nError );
@@ -251,6 +251,9 @@ static int get_interface_list( struct ifconf *psConf )
 	nError = memcpy_from_user( &pBuffer, &psConf->ifc_buf, sizeof( pBuffer ) );
 	if ( nError < 0 )
 		return ( nError );
+		
+	if( pBuffer == NULL )
+		return( -EINVAL );
 
 	if ( ( nError = RWL_LOCK_RO( g_hIfListMutex ) ) < 0 )
 	{

@@ -2550,6 +2550,7 @@ status_t verify_mem_area( const void *pAddress, size_t nSize, bool bWriteAccess 
 	if ( nAddr < AREA_FIRST_USER_ADDRESS )
 	{
 		printk( "verify_mem_area() got kernel address %08x\n", nAddr );
+		trace_stack( 0, NULL );
 		return ( -EFAULT );
 	}
 	
