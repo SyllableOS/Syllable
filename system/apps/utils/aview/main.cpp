@@ -46,11 +46,13 @@ AViewApplication::AViewApplication( char **ppzArgv, int nArgc ) : Application( "
 	{
 		RegistrarManager *pcRegistrar = RegistrarManager::Get();
 
+		/* PNG */
 		pcRegistrar->RegisterType( "image/png", MSG_MIMETYPE_IMAGE_PNG );
 		pcRegistrar->RegisterTypeExtension( "image/png", "png" );
 		pcRegistrar->RegisterTypeIcon( "image/png", Path( "/system/icons/filetypes/image_png.png" ) );
 		pcRegistrar->RegisterAsTypeHandler( "image/png" );
 
+		/* JPEG */
 		pcRegistrar->RegisterType( "image/jpeg", MSG_MIMETYPE_IMAGE_JPEG );
 		pcRegistrar->RegisterTypeExtension( "image/jpeg", "jpeg" );
 		pcRegistrar->RegisterTypeExtension( "image/jpeg", "jpg" );
@@ -65,10 +67,52 @@ AViewApplication::AViewApplication( char **ppzArgv, int nArgc ) : Application( "
 		pcRegistrar->RegisterTypeIcon( "image/jpeg", Path( "/system/icons/filetypes/image_jpeg.png" ) );
 		pcRegistrar->RegisterAsTypeHandler( "image/jpeg" );
 
+		/* GIF */
 		pcRegistrar->RegisterType( "image/gif", MSG_MIMETYPE_IMAGE_GIF );
 		pcRegistrar->RegisterTypeExtension( "image/gif", "gif" );
-		pcRegistrar->RegisterTypeIcon( "image/jpeg", Path( "/system/icons/filetypes/image_gif.png" ) );
+		pcRegistrar->RegisterTypeIcon( "image/gif", Path( "/system/icons/filetypes/image_gif.png" ) );
 		pcRegistrar->RegisterAsTypeHandler( "image/gif" );
+
+		/* BMP */
+		pcRegistrar->RegisterType( "image/bmp", MSG_MIMETYPE_IMAGE_BMP );
+		pcRegistrar->RegisterTypeExtension( "image/bmp", "bmp" );
+		pcRegistrar->RegisterTypeIcon( "image/bmp", Path( "/system/icons/filetypes/image_bmp.png" ) );
+		pcRegistrar->RegisterAsTypeHandler( "image/bmp" );
+
+		/* TIFF */
+		pcRegistrar->RegisterType( "image/tiff", MSG_MIMETYPE_IMAGE_TIFF );
+		pcRegistrar->RegisterTypeExtension( "image/tiff", "tif" );
+		pcRegistrar->RegisterTypeExtension( "image/tiff", "tiff" );
+		pcRegistrar->RegisterTypeIcon( "image/tiff", Path( "/system/icons/filetypes/image_tiff.png" ) );
+		pcRegistrar->RegisterAsTypeHandler( "image/tiff" );
+
+		/* XBM */
+		pcRegistrar->RegisterType( "image/x-bitmap", MSG_MIMETYPE_IMAGE_XBM );
+		pcRegistrar->RegisterTypeExtension( "image/x-bitmap", "xbm" );
+		pcRegistrar->RegisterTypeIcon( "image/x-bitmap", Path( "/system/icons/filetypes/image_xbm.png" ) );
+		pcRegistrar->RegisterAsTypeHandler( "image/x-bitmap" );
+
+		/* XPM */
+		pcRegistrar->RegisterType( "image/x-pixmap", MSG_MIMETYPE_IMAGE_XPM );
+		pcRegistrar->RegisterTypeExtension( "image/x-pixmap", "xpm" );
+		pcRegistrar->RegisterTypeIcon( "image/x-pixmap", Path( "/system/icons/filetypes/image_xpm.png" ) );
+		pcRegistrar->RegisterAsTypeHandler( "image/x-pixmap" );
+
+		/* TGA */
+		pcRegistrar->RegisterType( "image/x-tga", MSG_MIMETYPE_IMAGE_TGA );
+		pcRegistrar->RegisterTypeExtension( "image/x-tga", "tga" );
+		pcRegistrar->RegisterTypeExtension( "image/x-tga", "icb" );
+		pcRegistrar->RegisterTypeExtension( "image/x-tga", "tpic" );
+		pcRegistrar->RegisterTypeExtension( "image/x-tga", "vda" );
+		pcRegistrar->RegisterTypeExtension( "image/x-tga", "vst" );
+		pcRegistrar->RegisterTypeIcon( "image/x-tga", Path( "/system/icons/filetypes/image_tga.png" ) );
+		pcRegistrar->RegisterAsTypeHandler( "image/x-tga" );
+
+		/* PCX */
+		pcRegistrar->RegisterType( "image/x-pcx", MSG_MIMETYPE_IMAGE_PCX );
+		pcRegistrar->RegisterTypeExtension( "image/x-pcx", "pcx" );
+		pcRegistrar->RegisterTypeIcon( "image/x-pcx", Path( "/system/icons/filetypes/image_pcx.png" ) );
+		pcRegistrar->RegisterAsTypeHandler( "image/x-pcx" );
 
 		pcRegistrar->Put();
 	}
