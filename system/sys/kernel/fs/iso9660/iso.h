@@ -138,6 +138,7 @@ typedef struct vnode
 	char *fileIDString;	// Volume "ID" (name)
 
 	// The rest is Rock Ridge extensions. I suggest www.leo.org for spec info.
+	bool has_rockridge;
 	RRAttr attr;
 } vnode;
 

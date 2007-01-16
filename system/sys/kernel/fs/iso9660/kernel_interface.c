@@ -251,7 +251,7 @@ static int iso_mount( kdev_t volumeID, const char *devicePath, uint32 flags, con
 	result = ISOMount( devicePath, flags, &volume, allow_rockridge, allow_joliet );
 
 	// If the mount succeeded, setup the block cache
-	if( result == -EOK )
+	if( result == EOK )
 	{
 		int error = 0;
 
@@ -455,7 +455,9 @@ static int iso_walk( void *_volume, void *_baseNode, const char *_fileName, int 
 							release_cache_block( volume->fd, block );
 							blockReleased = true;
 							kerndbg( KERN_DEBUG_LOW, "iso_walk - success, found vnode at block %Ld, pos %Ld\n", block, blockBytesRead );
-							*vNodeID = ( ( block << 30 ) + ( blockBytesRead & 0x3FFFFFFF ) );
+
+							*vNodeID = BLOCK_TO_INO( block, blockBytesRead );
+
 							kerndbg( KERN_DEBUG_LOW, "iso_walk - New vnode id is %Ld\n", *vNodeID );
 
 							if( fileName[0] == '.' && fileName[1] == '.' )
@@ -466,18 +468,17 @@ static int iso_walk( void *_volume, void *_baseNode, const char *_fileName, int 
 
 								if( parentNode->startLBN[FS_DATA_FORMAT] == volume->rootBlock )
 								{
-									kerndbg( KERN_DEBUG, "(grep)iso_walk : Directory entry for volume root\n" );
+									kerndbg( KERN_DEBUG, "iso_walk : Directory entry for volume root\n" );
 									*vNodeID = volume->rootDirRec.id;
 								}
 								else
 								{
-									kerndbg( KERN_DEBUG_LOW, "(grep)iso_walk : Directory entry for non volume root\n" );
+									kerndbg( KERN_DEBUG_LOW, "iso_walk : Directory entry for non volume root\n" );
 									*vNodeID = BLOCK_TO_INO( parentNode->startLBN[FS_DATA_FORMAT], 0 );
 								}
 								
 								iso_write_vnode( volume, parentNode );
 							}
-
 							result = -EOK;
 						}
 						else

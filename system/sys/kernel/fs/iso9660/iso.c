@@ -96,13 +96,18 @@ int ISO_HIDDEN ISOMount( const char *path, const int flags, nspace ** newVol, bo
 				kerndbg( KERN_DEBUG_LOW, "ISOMount: block size is %d\n", deviceBlockSize );
 
 				// determine if it is an ISO volume.
-				char buf[ISO_PVD_SIZE];
+				char buf[ISO_PVD_SIZE], svd_buf[ISO_PVD_SIZE];
 				bool done = false;
-				bool is_iso = false;
+				bool is_iso = false, has_joliet = false;
+				uint8 joliet_level = 0;
 				off_t offset = 0x8000;
 				ssize_t retval;
 
+				/* Always assume that RockRidge is available when the root inode is read by InitVolDesc().
+				   We'll switch it off later if required. */
+				vol->rockRidge = true;
 				vol->joliet_level = 0;
+
 				while( ( !done ) && ( offset < 0x10000 ) )
 				{
 					retval = read_pos( vol->fd, offset, ( void * )buf, ISO_PVD_SIZE );
@@ -112,47 +117,52 @@ int ISO_HIDDEN ISOMount( const char *path, const int flags, nspace ** newVol, bo
 						{
 							if( ( *buf == 0x01 ) && ( !is_iso ) )
 							{
-								// ISO_VD_PRIMARY
+								/* ISO_VD_PRIMARY */
 								kerndbg( KERN_DEBUG_LOW, "ISOMount: Is an ISO9660 volume, initializing rec\n" );
+
 								InitVolDesc( vol, buf );
 								strncpy( vol->devicePath, path, 127 );
-
 								vol->id = vol->rootDirRec.id;
-								vol->rockRidge = allow_rockridge;
+
 								multiplier = deviceBlockSize / vol->logicalBlkSize[FS_DATA_FORMAT];
 								kerndbg( KERN_DEBUG_LOW, "ISOMount: block size multiplier is %d\n", multiplier );
+
 								is_iso = true;
 							}
-							else if( ( *buf == 0x02 ) && is_iso && allow_joliet )
+							else if( ( *buf == 0x02 ) && is_iso )
 							{
-								// ISO_VD_SUPPLEMENTARY
+								/* ISO_VD_SUPPLEMENTARY */
+								kerndbg( KERN_DEBUG_LOW, "ISOMount: found ISO_VD_SUPPLEMENTARY\n" );
+
+								/* Joliet SVD */
 								if( buf[88] == 0x25 && buf[89] == 0x2f )
 								{
+									has_joliet = true;
+
 									switch ( buf[90] )
 									{
 									case 0x40:
-										vol->joliet_level = 1;
+										joliet_level = 1;
 										break;
 									case 0x43:
-										vol->joliet_level = 2;
+										joliet_level = 2;
 										break;
 									case 0x45:
-										vol->joliet_level = 3;
+										joliet_level = 3;
 										break;
 									}
 
-									kerndbg( KERN_DEBUG_LOW, "ISOMount: Microsoft Joliet level %d\n", vol->joliet_level );
-									if( vol->joliet_level > 0 )
-									{
-										vol->rockRidge = false;
-										InitNode( vol, &( vol->rootDirRec ), &buf[156], NULL, 0 );
-									}
+									/* We'll need a copy of the SVD later if we decide to use Joliet */
+									memcpy( svd_buf, buf, ISO_PVD_SIZE );
+
+									kerndbg( KERN_DEBUG_LOW, "ISOMount: Microsoft Joliet level %d\n", joliet_level );
 								}
 							}
 							else if( *( unsigned char * )buf == 0xff )
 							{
+								/* ISO_VD_END */
+
 								kerndbg( KERN_DEBUG_LOW, "ISOMount: found ISO_VD_END\n" );
-								// ISO_VD_END
 								done = true;
 							}
 						}
@@ -166,7 +176,64 @@ int ISO_HIDDEN ISOMount( const char *path, const int flags, nspace ** newVol, bo
 					}
 				}
 
-				if( !is_iso )
+				if( is_iso )
+				{
+					/* If the CD has both Joliet & RockRidge, we want to select RockRidge over
+					   Joliet. We'll have to read the "." entry from the root directory of the volume
+					   to find out if any RockRidge SUSP extensions are in use. This is necasary because
+					   the "root" directory record contained within the PVD can not contain any System Use
+					   entries, so they have to be stored on the entry for "." instead.
+
+					   Note: according to the SUSP spec, a System Use entry "ER" should appear in the
+					   entry to indicate that SUSP is in use, but on the CDs I've tried there was none.
+					   This is possibly because the ER entry is contained within the CE (Continuation Area),
+					   which this driver does not support. Instead we use the SP field, which is mandatory
+					   for all SUSP nodes, to inidicate if RockRidge extensions are in use).
+					*/
+
+					off_t block = vol->rootBlock;
+					size_t blockSize = vol->logicalBlkSize[FS_DATA_FORMAT];
+
+					char root_buf[blockSize];
+					read_pos( vol->fd, block * blockSize, (void *)root_buf, blockSize );
+
+					char fileIDString[2] = {0};
+					vnode *root = calloc( 1, sizeof( vnode ) );
+					root->fileIDString = fileIDString;
+					InitNode( vol, root, root_buf, NULL, 0 );
+
+					kerndbg( KERN_DEBUG, "has_rockridge=%s, allow_rockridge=%s, has_joliet=%s (joilet_level=%d), allow_joliet=%s\n",
+						(root->has_rockridge?"true":"false"),
+						(allow_rockridge?"true":"false"),
+						(has_joliet?"true":"false"),
+						joliet_level,
+						(allow_joliet?"true":"false")
+					);
+
+					/* If the disc uses RockRidge, ignore Joliet */
+
+					if( root->has_rockridge && allow_rockridge )
+					{
+						vol->joliet_level = 0;
+						vol->rockRidge = true;
+					}
+					else if( has_joliet && allow_joliet )
+					{
+						vol->joliet_level = joliet_level;
+						vol->rockRidge = false;
+
+						/* Re-read the root inode from the SVD */
+						InitNode( vol, &(vol->rootDirRec), &svd_buf[156], NULL, 0 );
+					}
+					else
+					{
+						vol->joliet_level = 0;
+						vol->rockRidge = false;
+					}
+
+					free( root );
+				}
+				else
 				{
 					kerndbg( KERN_DEBUG_LOW, "ISOMount: This is not iso volume\n" );
 					if( vol->fd >= 0 )
@@ -289,15 +356,11 @@ int ISO_HIDDEN ISOReadDirEnt( nspace * volume, dircookie *cookie, struct kernel_
 
 // InitVolDesc handles only Primary Volume Descriptors.
 
-int ISO_HIDDEN InitVolDesc( nspace * _vol, char *buf )
+int ISO_HIDDEN InitVolDesc( nspace * vol, char *buf )
 {
-	nspace *vol = ( nspace * ) _vol;
-
-//      char * fileName;
 	vnode *node;
 
 	kerndbg( KERN_DEBUG, "InitVolDesc - ENTER\n" );
-
 
 	vol->volDescType = *( uint8 * )buf++;
 
@@ -367,7 +430,7 @@ int ISO_HIDDEN InitVolDesc( nspace * _vol, char *buf )
 	node = &( vol->rootDirRec );
 	node->fileIDString = calloc( ISO_MAX_FILENAME_LENGTH, 1 );
 	node->attr.slName = calloc( ISO_MAX_FILENAME_LENGTH, 1 );
-	InitNode( _vol, &( vol->rootDirRec ), buf, NULL, 0 );
+	InitNode( vol, &( vol->rootDirRec ), buf, NULL, 0 );
 
 	// error checking...FIXME!!!
 
@@ -439,6 +502,9 @@ int ISO_HIDDEN InitNode( nspace * volume, vnode *rec, char *buf, int *bytesRead,
 
 	kerndbg( KERN_DEBUG, "InitNode - ENTER\n" );
 
+	/* Assume the node does not have RockRidge by default */
+	rec->has_rockridge = false;
+
 	if( recLen > 0 )
 	{
 		rec->extAttrRecLen = *( uint8 * )( buf++ );
@@ -496,7 +562,7 @@ int ISO_HIDDEN InitNode( nspace * volume, vnode *rec, char *buf, int *bytesRead,
 				// JOLIET extension: convert Unicode 16 to UTF8
 				if( joliet_level > 0 )
 				{
-					int i, err;
+					int err;
 
 					err = nls_conv_cp_to_utf8( NLS_UTF16_BE, buf, rec->fileIDString, rec->fileIDLen, ISO_MAX_FILENAME_LENGTH );
 					if( err < 0 )
@@ -541,11 +607,12 @@ int ISO_HIDDEN InitNode( nspace * volume, vnode *rec, char *buf, int *bytesRead,
 			else
 			{
 				kerndbg( KERN_DEBUG_LOW, "ROCK RIDGE extensions ENABLED\n" );
-				if( result == -EOK )
+				//if( result == EOK )
 				{
 					buf += rec->fileIDLen;
 					if( !( rec->fileIDLen % 2 ) )
 						buf++;
+
 					// Now we're at the start of the rock ridge stuff
 					{
 						char altName[ISO_MAX_FILENAME_LENGTH];
@@ -557,11 +624,15 @@ int ISO_HIDDEN InitNode( nspace * volume, vnode *rec, char *buf, int *bytesRead,
 						bool done = false;
 
 						kerndbg( KERN_DEBUG_LOW, "RR: Start of extensions, but at %p\n", buf );
+
 						while( !done )
 						{
 							buf += length;
 							length = *( uint8 * )( buf + 2 );
-							switch ( 0x100 * buf[0] + buf[1] )
+
+							kerndbg( KERN_DEBUG_LOW, "%c %c\n", buf[0], buf[1] );
+
+							switch ( SUSP_TAG( buf[0], buf[1] ) )
 							{
 								// POSIX file attributes
 							case SUSP_TAG( 'P', 'X' ):
@@ -569,6 +640,7 @@ int ISO_HIDDEN InitNode( nspace * volume, vnode *rec, char *buf, int *bytesRead,
 									uint8 bytePos = 3;
 
 									kerndbg( KERN_DEBUG_LOW, "RR: found PX, length %u\n", length );
+
 									rec->attr.pxVer = *( uint8 * )( buf + bytePos++ );
 									no_rock_ridge_stat_struct = false;
 									memset( &( rec->attr.stat ), 0, 2 * sizeof( struct stat ) );
@@ -740,6 +812,21 @@ int ISO_HIDDEN InitNode( nspace * volume, vnode *rec, char *buf, int *bytesRead,
 							case SUSP_TAG( 'R', 'R' ):
 								kerndbg( KERN_DEBUG, "RR: found RR, length %u - WHAT'S THIS??\n", length );
 								break;
+							case SUSP_TAG( 'S', 'P' ):
+							{
+								kerndbg( KERN_DEBUG, "RR: found SP, length %u - NOT IMPLEMENTED\n", length );
+
+								/* XXXKV: An SP entry is mandatory, so we can abuse it for the purposes of knowing
+								   if any SUSP is in use (Which is mearly part of a much larger hack: see the stuff
+								   in InitVolDesc() for more information) */
+								rec->has_rockridge = true;
+								break;
+							}
+								// Continuation Area
+							case SUSP_TAG( 'C', 'E' ):
+								kerndbg( KERN_DEBUG, "RR: found CE, length %u - NOT IMPLEMENTED\n", length );
+								break;
+
 							default:
 								kerndbg( KERN_DEBUG_LOW, "RockRidge: End of extensions.\n" );
 								done = true;
@@ -763,7 +850,7 @@ int ISO_HIDDEN InitNode( nspace * volume, vnode *rec, char *buf, int *bytesRead,
 	kerndbg( KERN_DEBUG, "InitNode - EXIT (%d),  name is \'%s\'\n", result, rec->fileIDString );
 
 	// "A "PX" System Use Entry shall be recorded in each Directory Record -> move this to RR DISABLED
-	if( no_rock_ridge_stat_struct )
+	if( result == EOK && no_rock_ridge_stat_struct )
 	{
 		// Set defaults, in case there is no RR stuff.
 		memset( &( rec->attr.stat ), 0, 2 * sizeof( struct stat ) );
@@ -773,6 +860,7 @@ int ISO_HIDDEN InitNode( nspace * volume, vnode *rec, char *buf, int *bytesRead,
 		else
 			rec->attr.stat[FS_DATA_FORMAT].st_mode |= ( S_IFREG );
 	}
+
 	return result;
 }
 
