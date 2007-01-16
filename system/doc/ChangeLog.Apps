@@ -1,3 +1,14 @@
+* January 16, 2007, Kristian Van Der Vliet *
+
+Added the following filetypes to AView:
+
+X Pixmap - image/x-xpixmap - .xpm
+Windows Bitmap Image - image/bmp - .bmp
+Tagged Image File Format (TIFF) - image/tiff - .tif, .tiff
+PiCture eXchange (PCX) - image/x-pcx - *.pcx
+Truevision Graphics Adapter image (TGA) - image/x-tga - .tga, .icb, .tpic, .vda, .vst
+X BitMap (XBM) - image/x-xbitmap - .xbm
+
 * January 12, 2007, Arno Klenke *
 
 New icons for most preferences applications
