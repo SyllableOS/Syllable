@@ -1,3 +1,9 @@
+* January 17, 2007, Flemming Sørensen *
+
+ColdFish, MediaPlayer, MediaConverter and Media Pref. will now tell the user
+if they can't contact the media server.
+ColdFish and MediaPlayer PNGs has been moved to the sub-folder "images/".
+
 * December 20, 2006, Kristian Van Der Vliet *
 
 Fixed the screen-mode list enumaration in the Vesa driver SetScreenMode(), and
