@@ -20,6 +20,8 @@
 
 #include "MediaConverter.h"
 #include <iostream>
+#include <gui/requesters.h>
+using namespace os;
 
 /* TODO:
  * - Stream selection
@@ -350,6 +352,9 @@ MCApp::MCApp( const char *pzMimeType, os::String zFileName, bool bLoad ):os::App
 	if ( !m_pcManager->IsValid() )
 	{
 		std::cout << "Media server is not running" << std::endl;
+		os::Alert* pcAlert = new os::Alert( "Error", "Could not connect to the media server.", Alert::ALERT_WARNING,0, "_Ok",NULL);
+		pcAlert->Go();
+		pcAlert->MakeFocus();
 		PostMessage( os::M_QUIT );
 		return;
 	}

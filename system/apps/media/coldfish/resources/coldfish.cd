@@ -40,6 +40,10 @@ MSG_ERRWND_CANTPLAY							ColdFish cannot play this file.
 MSG_ERRWND_CANTDELETE						The currently played track cannot be deleted.
 MSG_ERRWND_NOTPLAYLIST						Selected file is not a playlist.
 
+MSG_ALERTWND_NOMEDIASERVER_TITLE=1200		Error
+MSG_ALERTWND_NOMEDIASERVER_TEXT				Could not connect to the media server.
+MSG_ALERTWND_NOMEDIASERVER_OK				_Ok
+
 MSG_PLAYLIST_UNKNOWN=2000					Unknown
 MSG_PLAYLIST_DEFAULT						Default Playlist
 

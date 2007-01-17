@@ -20,6 +20,8 @@
 #include "MediaPlayer.h"
 #include <iostream>
 #include <cassert>
+#include <gui/requesters.h>
+using namespace os;
 
 /* TODO: 
  * - Reopen streams after track change.
@@ -368,6 +370,9 @@ MPApp::MPApp( const char *pzMimeType, os::String zFileName, bool bLoad ):os::App
 	if ( !m_pcManager->IsValid() )
 	{
 		std::cout << "Media server is not running" << std::endl;
+		os::Alert* pcAlert = new os::Alert( MSG_ALERTWND_NOMEDIASERVER_TITLE, MSG_ALERTWND_NOMEDIASERVER_TEXT, Alert::ALERT_WARNING,0, MSG_ALERTWND_NOMEDIASERVER_OK.c_str(),NULL);
+		pcAlert->Go();
+		pcAlert->MakeFocus();
 		PostMessage( os::M_QUIT );
 		return;
 	}

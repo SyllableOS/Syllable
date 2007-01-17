@@ -22,7 +22,11 @@
 #include <unistd.h>
 #include <iostream>
 #include <gui/desktop.h>
+#include <gui/requesters.h>
+#include "resources/Media.h"
 #include "main.h"
+
+using namespace os;
 
 int main( int argc, char *argv[] )
 {
@@ -45,6 +49,11 @@ PrefsMediaApp::PrefsMediaApp():os::Application( "application/x-vnd-MediaPreferen
 	if ( !m_pcManager->IsValid() )
 	{
 		std::cout << "Media server not running" << std::endl;
+
+		os::Alert* pcAlert = new os::Alert( MSG_ALERTWND_NOMEDIASERVER_TITLE, MSG_ALERTWND_NOMEDIASERVER_TEXT, Alert::ALERT_WARNING,0, MSG_ALERTWND_NOMEDIASERVER_OK.c_str(),NULL);
+		pcAlert->Go();
+		pcAlert->MakeFocus();
+
 		PostMessage( os::M_QUIT );
 		return;
 	}

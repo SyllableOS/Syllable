@@ -20,3 +20,7 @@ MSG_MAINWND_THISINPUTHASNOCONTROLS=300			Dette input har ingen indstillinger
 MSG_MAINWND_THISCODECHASNOCONTROLS				Dette codec har ingen indstillinger
 MSG_MAINWND_THISOUTPUTHASNOCONTROLS				Dette output har ingen indstillinger
 
+MSG_ALERTWND_NOMEDIASERVER_TITLE=1000			Fejl
+MSG_ALERTWND_NOMEDIASERVER_TEXT					Kunne ikke forbinde til media-serveren.
+MSG_ALERTWND_NOMEDIASERVER_OK					_Ok
+

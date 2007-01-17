@@ -21,7 +21,7 @@ $(OBJDIR):
 
 $(OBJDIR)/ColdFish: $(OBJS)
 	$(CXX) $(OBJS) -lsyllable -lmedia -o ColdFish
-	rescopy -r ColdFish *.png
+	rescopy -r ColdFish images/*.png
 	rescopy -a ColdFish resources/coldfish.catalog
 	for CATALOG in $(CATALOGS);do \
 		echo $$CATALOG; \

@@ -22,6 +22,7 @@
 #include <iostream>
 #include <fstream>
 #include <queue>
+using namespace os;
 
 /* CFListItem class */
 class CFListItem : public os::ListViewStringRow
@@ -380,8 +381,10 @@ void CFApp::Start( os::String zFileName, bool bLoad )
 	m_pcManager = os::MediaManager::Get();
 	if ( !m_pcManager->IsValid() )
 	{
-		if (DEBUG)
-			std::cout << "Media server is not running" << std::endl;
+		std::cout << "Media server is not running" << std::endl;
+		os::Alert* pcAlert = new os::Alert( MSG_ALERTWND_NOMEDIASERVER_TITLE, MSG_ALERTWND_NOMEDIASERVER_TEXT, Alert::ALERT_WARNING,0, MSG_ALERTWND_NOMEDIASERVER_OK.c_str(),NULL);
+		pcAlert->Go();
+		pcAlert->MakeFocus();
 		PostMessage( os::M_QUIT );
 		return;
 	}
