@@ -37,11 +37,11 @@ MSG_ABOUTWND_OK								OK
 MSG_ERRWND_TITLE=1100						ColdFish Erreur
 MSG_ERRWND_OK								OK
 MSG_ERRWND_CANTPLAY							ColdFish ne peut jouer ce fichier.
-MSG_ERRWND_CANTDELETE						La piste jou�e actuellement ne peut être effacé.
+MSG_ERRWND_CANTDELETE						La piste jouée actuellement ne peut être effacé.
 MSG_ERRWND_NOTPLAYLIST						Le fichier sélectionné n'est pas une liste de lecture.
 
 MSG_PLAYLIST_UNKNOWN=2000					Inconnu
-MSG_PLAYLIST_DEFAULT						Liste de lecture par d�faut
+MSG_PLAYLIST_DEFAULT						Liste de lecture par défault
 
 MSG_PLAYLISTWND_TITLE=2100					Sélectionner liste de lecture - ColdFish
 MSG_PLAYLISTWND_FILE						Fichier
