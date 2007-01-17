@@ -29,4 +29,10 @@ MSG_STATUSBAR_OF=2000						%i из %i
 MSG_MIMETYPE_IMAGE_PNG=10000				Изображение в формате PNG
 MSG_MIMETYPE_IMAGE_JPEG						Изображение в формате JPEG
 MSG_MIMETYPE_IMAGE_GIF						Изображение в формате GIF
+MSG_MIMETYPE_IMAGE_BMP						Изображение в формате BMP
+MSG_MIMETYPE_IMAGE_TIFF						Изображение в формате TIFF
+MSG_MIMETYPE_IMAGE_XBM						Изображение в формате XBM
+MSG_MIMETYPE_IMAGE_XPM						Изображение в формате XPM
+MSG_MIMETYPE_IMAGE_TGA						Изображение в формате TGA
+MSG_MIMETYPE_IMAGE_PCX						Изображение в формате PCX
 
