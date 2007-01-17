@@ -15,13 +15,13 @@ MSG_MAINWND_LIST_SIZE						Tamaño
 MSG_MAINWND_LIST_MB							%.2fMB
 
 MSG_MAINWND_BUTONS_QUIT=300					Salir
-MSG_MAINWND_BUTONS_PARTITION				Partición...
+MSG_MAINWND_BUTONS_PARTITION				ParticiÃ³n...
 
-MSG_PARTWND_TITLE=500						Configuración de particiones
+MSG_PARTWND_TITLE=500						ConfiguraciÃ³n de particiones
 
-MSG_PARTWND_DISKPARAM=600					Parámetros del disco:
-MSG_PARTWND_DISKPARAM_DISKSIZE				Tamaño del disco: %.2fMB
-MSG_PARTWND_DISKPARAM_EXTSIZE				Tamaño de partición extendida: %.2fMB
+MSG_PARTWND_DISKPARAM=600					ParÃ¡metros del disco:
+MSG_PARTWND_DISKPARAM_DISKSIZE				TamaÃ±o del disco: %.2fMB
+MSG_PARTWND_DISKPARAM_EXTSIZE				TamaÃ±o de particiÃ³n extendida: %.2fMB
 MSG_PARTWND_DISKPARAM_UNITSIZE				Unidades: %ld sectores de %ld bytes (%ld bytes)
 MSG_PARTWND_DISKPARAM_UNUSESSPACE			Espacio sin utilizar:
 
@@ -39,29 +39,30 @@ MSG_PARTWND_BUTTONS_SORT					Ordenar
 MSG_PARTWND_BUTTONS_ADD						Agregar
 
 MSG_ALERTWND_ERREXT_EXTENDED=1000			Error
-MSG_ALERTWND_ERREXT_EXTENDED_TEXT			Tabla de particiones extendidas inválida\nLa partición extendida contiene más\nde una partición extendida anidada\nEditar la tabla de particiones extendidas puede provocar\nla pérdida de una o más particiones lógicas.
+MSG_ALERTWND_ERREXT_EXTENDED_TEXT			Tabla de particiones extendidas invÃ¡lida\nLa particiÃ³n extendida contiene mÃ¡s\nde una particiÃ³n extendida anidada\nEditar la tabla de particiones extendidas puede provocar\nla pÃ©rdida de una o mÃ¡s particiones lÃ³gicas.
 MSG_ALERTWND_ERREXT_EXTENDED_OK				Ok
 
 MSG_ALERTWND_ERREXT_LOGICAL=2000			Error
-MSG_ALERTWND_ERREXT_LOGICAL_TEXT			Tabla de particiones extendidas inválida\nLa partición extendida contiene más\nde una partición lógica\nEditar la tabla de particiones extendidas puede provocar\nla pérdida de una o más particiones lógicas.
+MSG_ALERTWND_ERREXT_LOGICAL_TEXT			Tabla de particiones extendidas invÃ¡lida\nLa particiÃ³n extendida contiene mÃ¡s\nde una particiÃ³n lÃ³gica\nEditar la tabla de particiones extendidas puede provocar\nla pÃ©rdida de una o mÃ¡s particiones lÃ³gicas.
 MSG_ALERTWND_ERREXT_LOGICAL_OK				Ok
 
 MSG_ALERTWND_CHANGEDLAYOUT=3000				Aviso
-MSG_ALERTWND_CHANGEDLAYOUT_TEXT				Ha cambiado la configuración de una o más particiones.\nToda la información contenida en las particiones modificadas se perderá.\n¿En verdad desea reescribir la tabla de particiones?
+MSG_ALERTWND_CHANGEDLAYOUT_TEXT				Ha cambiado la configuraciÃ³n de una o mÃ¡s particiones.\nToda la informaciÃ³n contenida en las particiones modificadas se perderÃ¡.\nÂ¿En verdad desea reescribir la tabla de particiones?
 MSG_ALERTWND_CHANGEDLAYOUT_CANCEL			Cancelar
 MSG_ALERTWND_CHANGEDLAYOUT_OK				Confirmar
 
 MSG_ALERTWND_CHANGEDTYPE=4000				Aviso
-MSG_ALERTWND_CHANGEDTYPE_TEXT				Ha cambiado el tipo de una o más particiones.\nEsto no debería corromper la información contenida en ellas pero podría\nimpedir montar las particiones modificadas.\n¿En verdad desea reescribir la tabla de particiones?
+MSG_ALERTWND_CHANGEDTYPE_TEXT				Ha cambiado el tipo de una o mÃ¡s particiones.\nEsto no deberÃ­a corromper la informaciÃ³n contenida en ellas pero podrÃ­a\nimpedir montar las particiones modificadas.\nÂ¿En verdad desea reescribir la tabla de particiones?
 MSG_ALERTWND_CHANGEDTYPE_CANCEL				Cancelar
 MSG_ALERTWND_CHANGEDTYPE_OK					Continuar
 
 MSG_ALERTWND_CHANGEDSTATUS=5000				Aviso
-MSG_ALERTWND_CHANGEDSTATUS_TEXT				Ha cambiado el estado de una o más particiones.\nEsto no debería corromper la información contenida en ellas pero podría\nImpedir arrancar desde las particiones modificadas.\n¿En verdad desea reescribir la tabla de particiones?
+MSG_ALERTWND_CHANGEDSTATUS_TEXT				Ha cambiado el estado de una o mÃ¡s particiones.\nEsto no deberÃ­a corromper la informaciÃ³n contenida en ellas pero podrÃ­a\nimpedir arrancar desde las particiones modificadas.\nÂ¿En verdad desea reescribir la tabla de particiones?
 MSG_ALERTWND_CHANGEDSTATUS_CANCEL			Cancelar
 MSG_ALERTWND_CHANGEDSTATUS_OK				Confirmar
 
 MSG_ALERTWND_DELPART=6000					Aviso
-MSG_ALERTWND_DELPART_TEXT					Esta operación eliminará la partición seleccionada.\nToda la información contenida en esta partición se perderá.\n¿En verdad es esto lo que quiere hacer?
+MSG_ALERTWND_DELPART_TEXT					Esta operaciÃ³n eiminarÃ¡ la particiÃ³n seleccionada.\nToda la informaciÃ³n contenida en esta particiÃ³n se perderÃ¡.\nÂ¿En verdad es esto lo que quiere hacer?
 MSG_ALERTWND_DELPART_CANCEL					Cancelar
 MSG_ALERTWND_DELPART_OK						Confirmar
+

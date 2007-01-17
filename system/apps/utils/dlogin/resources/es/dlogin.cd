@@ -4,32 +4,32 @@
 // Translated by: Maximo Pech Jaramillo <makzpj@gmail.com>
 //
 
-MSG_MAINWND_TITLE=0						Usuario:
+MSG_MAINWND_TITLE=0							Usuario:
 
-MSG_MAINWND_PASSWORD=100				Contraseña:
-MSG_MAINWND_BUTTON_LOGIN				_Ingresar
-MSG_MAINWND_BUTTON_SHUTDOWN				_Apagar
+MSG_MAINWND_PASSWORD=100					Contraseña:
+MSG_MAINWND_BUTTON_LOGIN					_Ingresar
+MSG_MAINWND_BUTTON_SHUTDOWN					_Apagar
 
-MSG_SHUTDOWNWND_TITLE=200				¿Apagar or Reiniciar?
+MSG_SHUTDOWNWND_TITLE=200					Â¿Apagar or Reiniciar?
 MSG_SHUTDOWNWND_TEXT						Seleccione una opción:
 MSG_SHUTDOWNWND_BUTTON_CANCEL				_Cancelar
 MSG_SHUTDOWNWND_BUTTON_OK					_Aceptar
 MSG_SHUTDOWNWND_DROPDOWN_SHUTDOWN			Apagar
 MSG_SHUTDOWNWND_DROPDOWN_REBOOT				Reiniciar
 
-MSG_ALERT_NOTSELECTED_TITLE=1000		Por favor seleccione un ícono.
-MSG_ALERT_NOTSELECTED_TEXT					Debe seleccionar un ícono de usuario antes de ingresar al sistema.
+MSG_ALERT_NOTSELECTED_TITLE=1000			Por favor seleccione un Ã­cono.
+MSG_ALERT_NOTSELECTED_TEXT					Debe seleccionar un Ã­cono de usuario antes de ingresar al sistema.
 MSG_ALERT_NOTSELECTED_OK					Aceptar
 
-MSG_ALERT_WRONGPASS_TITLE=2000			Ingreso fallido
-MSG_ALERT_WRONGPASS_TEXT					Contraseña incorrecta.
+MSG_ALERT_WRONGPASS_TITLE=2000				Ingreso fallido
+MSG_ALERT_WRONGPASS_TEXT					ContraseÃ±a incorrecta.
 MSG_ALERT_WRONGPASS_OK						Ok
 
-MSG_ALERT_NOUSER_TITLE=3000				Ingreso fallido
-MSG_ALERT_NOUSER_TEXT						Por favor tenga esto en cuenta,\nno hay ningún usuario con ese nombre\n\nregistrado para usar\nesta máquina.
+MSG_ALERT_NOUSER_TITLE=3000					Ingreso fallido
+MSG_ALERT_NOUSER_TEXT						Por favor tenga esto en cuenta,\nno hay ningÃºn usuario con ese nombre\n\nregistrado para usar\nesta mÃ¡quina.
 MSG_ALERT_NOUSER_OK							Ok
 
-MSG_ALERT_CANTFINDUSERS_TITLE=4000		Imposible cargar los datos de los usuarios
+MSG_ALERT_CANTFINDUSERS_TITLE=4000			Imposible cargar los datos de los usuarios
 MSG_ALERT_CANTFINDUSERS_TEXT				No pude cargar los datos de los usuarios, por favor contacte al Grupo de Desarrollo de Syllable.
 MSG_ALERT_CANTFINDUSERS_OK					Ok
 
