@@ -15,10 +15,21 @@ MSG_MAINWND_MENU_FILE_OPEN					Открыть
 
 MSG_MAINWND_MENU_VIEW=300					Вид
 MSG_MAINWND_MENU_VIEW_FITTOIMAGE			Размер страницы
+MSG_MAINWND_MENU_VIEW_FITTOWINDOW			В размер окна
 MSG_MAINWND_MENU_VIEW_PREVIOUS				Предыдущая
 MSG_MAINWND_MENU_VIEW_NEXT					Следующая
 MSG_MAINWND_MENU_VIEW_FIRST					Первая
 MSG_MAINWND_MENU_VIEW_LAST					Последняя
+
+MSG_MAINWND_MENU_RESIZE=400					Размер
+MSG_MAINWND_MENU_RESIZE_10					10%
+MSG_MAINWND_MENU_RESIZE_25					25%
+MSG_MAINWND_MENU_RESIZE_50					50%
+MSG_MAINWND_MENU_RESIZE_75					75%
+MSG_MAINWND_MENU_RESIZE_100					100%
+MSG_MAINWND_MENU_RESIZE_150					150%
+MSG_MAINWND_MENU_RESIZE_200					200%
+MSG_MAINWND_MENU_RESIZE_400					400%
 
 MSG_ABOUTWND_TITLE=1000						О программе AView
 MSG_ABOUTWND_TEXT							AView\n\nПрограмма просмотра изображений для Syllable\nCopyright 2005 команда Syllable\n\nAView распространяется на условиях Универсальной Общественной Лицензии (GNU GPL). Для получения дополнительной информации, пожалуйста, посетите www.gnu.org.
