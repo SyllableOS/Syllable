@@ -1,7 +1,8 @@
 //
 // Preferences/Media String Catalog
 //
-// Translated by: Maximo Pech Jaramillo <makzpj@gmail.com>
+// Translated by: Maximo Pech Jaramillo
+// Translated by: Angel L Laguna
 //
 
 MSG_MAINWND_TITLE=0								Multimedia
@@ -19,4 +20,8 @@ MSG_MAINWND_BUTTON_DEFAULT						_Predeterminado
 MSG_MAINWND_THISINPUTHASNOCONTROLS=300			Este plugin de entrada no tiene controles
 MSG_MAINWND_THISCODECHASNOCONTROLS				Este codec no tiene controles
 MSG_MAINWND_THISOUTPUTHASNOCONTROLS				Este plugin de salida no tiene controles
+
+MSG_ALERTWND_NOMEDIASERVER_TITLE=1000			Error
+MSG_ALERTWND_NOMEDIASERVER_TEXT					No se ha podido conectar al servidor multimedia.
+MSG_ALERTWND_NOMEDIASERVER_OK					_Ok
 

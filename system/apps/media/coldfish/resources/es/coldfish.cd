@@ -1,7 +1,8 @@
 //
 // ColdFish string catalog
 //
-// Translated by: Maximo Pech Jaramillo <makzpj@gmail.com>
+// Translated by: Maximo Pech Jaramillo
+// Translated by: Angel L Laguna
 //
 
 MSG_MAINWND_TITLE=100						ColdFish
@@ -39,6 +40,10 @@ MSG_ERRWND_OK								OK
 MSG_ERRWND_CANTPLAY							ColdFish no puede reproducir este archivo.
 MSG_ERRWND_CANTDELETE						No se puede borrar la pista que se está reproduciendo.
 MSG_ERRWND_NOTPLAYLIST						El archivo seleccionado no es una lista de reproducción.
+
+MSG_ALERTWND_NOMEDIASERVER_TITLE=1200		Error
+MSG_ALERTWND_NOMEDIASERVER_TEXT				No se ha podido conectar al servidor multimedia.
+MSG_ALERTWND_NOMEDIASERVER_OK				_Ok
 
 MSG_PLAYLIST_UNKNOWN=2000					Desconocido
 MSG_PLAYLIST_DEFAULT						Lista de reproducción predeterminada
