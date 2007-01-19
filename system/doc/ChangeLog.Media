@@ -1,3 +1,7 @@
+* January 19 2007 Arno Klenke *
+
+- Updates to the high level api
+
 * January 10 2007 Arno Klenke *
 
 - Keep the aspect ratio of videos in the mediaplayer
@@ -194,6 +198,7 @@ Added multiple soundcard support to the media server
 * Nov 18 2003, Kristian Van Der Vliet *
 
 Created this ChangeLog for changes specific to the media framework.
+
 
 
 
