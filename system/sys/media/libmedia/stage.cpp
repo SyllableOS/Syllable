@@ -23,6 +23,8 @@
 
 using namespace os;
 
+#define RETURN_IF_NULL( x, y ) if( ( x ) == NULL ) return( y )
+
 MediaStage::MediaStage()
 {
 	m_nRefCount = 1;
@@ -283,9 +285,12 @@ void MediaStage::FreePacket( MediaPacket_s* psPacket )
 /** Delay.
  * \par Description:
  * Returns the delay of the stage.
+ * \param bNonSharedOnly - If the output has shared and non-shared buffers then
+ *					  true will return the buffer size of the non-shared buffer only.
+ *					  Otherwise the complete buffer size will be returned.
  * \author	Arno Klenke
  ******************************************************************************/
-uint64 MediaStage::GetDelay()
+uint64 MediaStage::GetDelay( bool bNonSharedOnly )
 {
 	return( 0 );
 }
@@ -293,9 +298,12 @@ uint64 MediaStage::GetDelay()
 /** Buffer size.
  * \par Description:
  * Returns the buffer size of the stage.
+ * \param bNonSharedOnly - If the output has shared and non-shared buffers then
+ *					  true will return the buffer size of the non-shared buffer only.
+ *					  Otherwise the complete buffer size will be returned.
  * \author	Arno Klenke
  ******************************************************************************/
-uint64 MediaStage::GetBufferSize()
+uint64 MediaStage::GetBufferSize( bool bNonSharedOnly )
 {
 	return( 0 );
 }
@@ -338,7 +346,7 @@ uint32 MediaInputStage::GetPhysicalType()
 
 String MediaInputStage::GetIdentifier()
 {
-	assert( m_pcInput );
+	RETURN_IF_NULL( m_pcInput, "None" );
 	return( m_pcInput->GetIdentifier() );
 }
 
@@ -349,7 +357,7 @@ String MediaInputStage::GetIdentifier()
  ******************************************************************************/
 bool MediaInputStage::IsStream()
 {
-	assert( m_pcInput );
+	RETURN_IF_NULL( m_pcInput, false );
 	return( m_pcInput->StreamBased() );
 }
 
@@ -360,7 +368,7 @@ bool MediaInputStage::IsStream()
  ******************************************************************************/
 uint32 MediaInputStage::GetTrackCount()
 {
-	assert( m_pcInput );
+	RETURN_IF_NULL( m_pcInput, 0 );
 	return( m_pcInput->GetTrackCount() );
 }
 
@@ -372,7 +380,7 @@ uint32 MediaInputStage::GetTrackCount()
  ******************************************************************************/
 uint32 MediaInputStage::SelectTrack( uint32 nTrack )
 {
-	assert( m_pcInput );
+	RETURN_IF_NULL( m_pcInput, 0 );
 	ClearCache();
 	return( m_pcInput->SelectTrack( nTrack ) );
 }
@@ -384,7 +392,7 @@ uint32 MediaInputStage::SelectTrack( uint32 nTrack )
  ******************************************************************************/
 uint64 MediaInputStage::GetLength()
 {
-	assert( m_pcInput );
+	RETURN_IF_NULL( m_pcInput, 0 );
 	return( m_pcInput->GetLength() );
 }
 
@@ -395,7 +403,7 @@ uint64 MediaInputStage::GetLength()
  ******************************************************************************/
 uint64 MediaInputStage::GetCurrentPosition()
 {
-	assert( m_pcInput );
+	RETURN_IF_NULL( m_pcInput, 0 );
 	return( m_pcInput->GetCurrentPosition() );
 }
 
@@ -408,19 +416,21 @@ uint64 MediaInputStage::GetCurrentPosition()
 
 uint64 MediaInputStage::Seek( uint64 nPosition )
 {
-	assert( m_pcInput );
+	RETURN_IF_NULL( m_pcInput, 0 );
 	ClearCache();
 	return( m_pcInput->Seek( nPosition ) );
 }
 
 uint32 MediaInputStage::GetOutputCount()
 {
-	assert( m_pcInput );
+	RETURN_IF_NULL( m_pcInput, 0 );
 	return( m_pcInput->GetStreamCount() );
 }
 MediaFormat_s MediaInputStage::GetOutputFormat( uint32 nOutput )
 {
-	assert( m_pcInput );
+	MediaFormat_s sDummy;
+	MEDIA_CLEAR_FORMAT( sDummy );
+	RETURN_IF_NULL( m_pcInput, sDummy );
 	return( m_pcInput->GetStreamFormat( nOutput ) );
 }
 
@@ -431,8 +441,7 @@ bool MediaInputStage::HasInternalBuffer()
 
 status_t MediaInputStage::GetPacket( uint32 nOutput, MediaPacket_s* psPacket )
 {
-	// FIXME
-	assert( m_pcInput );
+	RETURN_IF_NULL( m_pcInput, -ENODEV );
 	MediaPacket_s sPacket;
 	
 	/* Fill queue */
@@ -441,7 +450,11 @@ status_t MediaInputStage::GetPacket( uint32 nOutput, MediaPacket_s* psPacket )
 		if( m_pcInput->ReadPacket( &sPacket ) == 0 )
 		{
 			//printf( "Fill Read Packet at %i:%i:%i\n", (int)m_acPackets.size(), sPacket.nStream, (int)sPacket.nSize[0] );
-			m_acPackets.push_back( sPacket );
+			MediaStage* pcNext = NULL;
+			uint32 nNextInput = 0;
+			GetNextStage( sPacket.nStream, &pcNext, &nNextInput );
+			if( pcNext != NULL )
+				m_acPackets.push_back( sPacket );
 		}
 		else
 			break;
@@ -471,7 +484,11 @@ status_t MediaInputStage::GetPacket( uint32 nOutput, MediaPacket_s* psPacket )
 				*psPacket = sPacket;
 				return( 0 );
 			}
-			m_acPackets.push_back( sPacket );
+			MediaStage* pcNext = NULL;
+			uint32 nNextInput = 0;
+			GetNextStage( sPacket.nStream, &pcNext, &nNextInput );
+			if( pcNext != NULL )
+				m_acPackets.push_back( sPacket );
 		}
 		else
 			break;
@@ -482,13 +499,26 @@ status_t MediaInputStage::GetPacket( uint32 nOutput, MediaPacket_s* psPacket )
 
 void MediaInputStage::FreePacket( MediaPacket_s* psPacket )
 {
-	assert( m_pcInput );
+	if( m_pcInput == NULL )
+		return;
 	return( m_pcInput->FreePacket( psPacket ) );
 }
 	
+
+/** Assigns a media input object to the stage.
+ * \par Description:
+ * Assigns a media input object to the stage.
+ * \par Note:
+ * The reference counter of the object is increased.
+ * \param pcInput - The object.
+ * \author	Arno Klenke
+ ******************************************************************************/
 void MediaInputStage::SetInput( MediaInput* pcInput )
 {
+	if( m_pcInput )
+		m_pcInput->Release();
 	m_pcInput = pcInput;
+	m_pcInput->AddRef();
 }
 
 /** Creates a stage object for a file.
@@ -511,8 +541,7 @@ MediaInputStage* MediaInputStage::CreateStageForFile( String zFileName )
 		pcInput->Release();
 		return( NULL );
 	}
-	/* FIXME */
-
+	
 	pcInput->SelectTrack( 0 );
 	MediaInputStage* pcStage = new MediaInputStage();
 	pcStage->SetInput( pcInput );
@@ -562,10 +591,13 @@ uint32 MediaDecoderStage::GetInputFormatCount( uint32 nInput )
 
 MediaFormat_s MediaDecoderStage::GetInputFormat( uint32 nInput, uint32 nNum )
 {
-	// FIXME
-	MediaFormat_s sFormat;
-	MEDIA_CLEAR_FORMAT( sFormat );
-	return( sFormat );
+	if( m_pcCodec == NULL )
+	{
+		MediaFormat_s sFormat;
+		MEDIA_CLEAR_FORMAT( sFormat );
+		return( sFormat );
+	}
+	return( m_pcCodec->GetInternalFormat() );
 }
 
 uint32 MediaDecoderStage::GetOutputCount()
@@ -703,10 +735,20 @@ status_t MediaDecoderStage::GetPacket( uint32 nOutput, MediaPacket_s* psPacket )
 	return( 0 );
 }
 	
-
+/** Assigns a media codec object to the stage.
+ * \par Description:
+ * Assigns a media codec object to the stage.
+ * \par Note:
+ * The reference counter of the object is increased.
+ * \param pcCodec - The object.
+ * \author	Arno Klenke
+ ******************************************************************************/
 void MediaDecoderStage::SetCodec( MediaCodec* pcCodec )
 {
+	if( m_pcCodec )
+		m_pcCodec->Release();
 	m_pcCodec = pcCodec;
+	m_pcCodec->AddRef();
 }
 
 /** Creates a decoder stage object.
@@ -728,7 +770,7 @@ MediaOutputStage::MediaOutputStage()
 
 MediaOutputStage::~MediaOutputStage()
 {
-	if( m_pcOutput );
+	if( m_pcOutput )
 		m_pcOutput->Release();
 }
 
@@ -741,26 +783,27 @@ uint32 MediaOutputStage::GetPhysicalType()
 
 String MediaOutputStage::GetIdentifier()
 {
-	assert( m_pcOutput );
+	RETURN_IF_NULL( m_pcOutput, "None" );
 	return( m_pcOutput->GetIdentifier() );
 }
 
 uint32 MediaOutputStage::GetInputCount()
 {
-	assert( m_pcOutput );
+	RETURN_IF_NULL( m_pcOutput, 0 );
 	return( m_pcOutput->GetSupportedStreamCount() );
 }
 
 uint32 MediaOutputStage::GetInputFormatCount( uint32 nInput )
 {
-	assert( m_pcOutput );
+	RETURN_IF_NULL( m_pcOutput, 0 );
 	return( m_pcOutput->GetOutputFormatCount() );
 }
 
 MediaFormat_s MediaOutputStage::GetInputFormat( uint32 nInput, uint32 nNum )
 {
-	// FIXME
-	assert( m_pcOutput );
+	MediaFormat_s sDummy;
+	MEDIA_CLEAR_FORMAT( sDummy );
+	RETURN_IF_NULL( m_pcOutput, sDummy );
 	return( m_pcOutput->GetOutputFormat( nNum ) );
 }
 
@@ -807,27 +850,38 @@ status_t MediaOutputStage::GetPacket( uint32 nOutput, MediaPacket_s* psPacket )
 	return( 0 );
 }
 
-uint64 MediaOutputStage::GetDelay()
+uint64 MediaOutputStage::GetDelay( bool bS )
 {
-	assert( m_pcOutput );
-	return( m_pcOutput->GetDelay() );
+	RETURN_IF_NULL( m_pcOutput, 0 );
+	return( m_pcOutput->GetDelay( bS ) );
 }
 
 uint64 MediaOutputStage::GetBufferSize()
 {
-	assert( m_pcOutput );
+	RETURN_IF_NULL( m_pcOutput, 0 );
 	return( m_pcOutput->GetBufferSize() );
 }
 
 os::View* MediaOutputStage::GetView()
 {
-	assert( m_pcOutput );
+	RETURN_IF_NULL( m_pcOutput, NULL );
 	return( m_pcOutput->GetVideoView( 0 ) );
 }
-	
+
+/** Assigns a media output object to the stage.
+ * \par Description:
+ * Assigns a media output object to the stage.
+ * \par Note:
+ * The reference counter of the object is increased.
+ * \param pcOutput - The object.
+ * \author	Arno Klenke
+ ******************************************************************************/
 void MediaOutputStage::SetOutput( MediaOutput* pcOutput )
 {
+	if( m_pcOutput )
+		m_pcOutput->Release();
 	m_pcOutput = pcOutput;
+	m_pcOutput->AddRef();
 }
 
 /** Creates a output stage for the default audio output.
@@ -870,14 +924,31 @@ MediaOutputStage* MediaOutputStage::CreateDefaultVideoOutputStage()
 	return( pcStage );
 }
 
+class MediaSyncStage::Private
+{
+public:
+	bool		m_bAudio;
+	bool		m_bVideo;
+	bool		m_bAudioValid;
+	bool		m_bVideoValid;
+	MediaPacket_s m_sAudioPacket;
+	MediaPacket_s m_sDispatchAudioPacket;
+	uint32		m_nAudioPacketPos;
+	MediaPacket_s m_sVideoPacket;
+	MediaFormat_s m_sAudioFormat;
+	bigtime_t	m_nPlayTime;
+	bigtime_t	m_nStartTime;
+};
 
 MediaSyncStage::MediaSyncStage()
 {
+	m = new Private;
 }
 
 
 MediaSyncStage::~MediaSyncStage()
 {
+	delete( m );
 }
 
 uint32 MediaSyncStage::GetPhysicalType()
@@ -947,23 +1018,22 @@ MediaFormat_s MediaSyncStage::GetOutputFormat( uint32 nOutput )
 
 status_t MediaSyncStage::GetPacket( uint32 nOutput, MediaPacket_s* psPacket )
 {
+	//printf("MediaStage::GetPacket() %i %i %i\n", nOutput, m->m_bAudioValid, m->m_bVideoValid );
 	switch( nOutput )
 	{
 		case 0: // Audio data:
-			if( m_bAudio )
+			if( m->m_bAudio )
 			{
-				assert( m_bAudioValid );
-				*psPacket = m_sAudioPacket;			
-				m_bAudioValid = false;
+				assert( m->m_bAudioValid );
+				*psPacket = m->m_sAudioPacket;			
 				return( 0 );
 			}
 		break;
 		case 1: // Video data:
-			if( m_bVideo )
+			if( m->m_bVideo )
 			{
-				assert( m_bVideoValid );
-				*psPacket = m_sVideoPacket;			
-				m_bVideoValid = false;
+				assert( m->m_bVideoValid );
+				*psPacket = m->m_sVideoPacket;			
 				return( 0 );
 			}
 		break;
@@ -975,8 +1045,9 @@ status_t MediaSyncStage::GetPacket( uint32 nOutput, MediaPacket_s* psPacket )
 
 status_t MediaSyncStage::Initialize()
 {
-	m_bAudio = m_bVideo = m_bAudioValid = m_bVideoValid = false;
-	m_nPlayTime = 0;
+	m->m_bAudio = m->m_bVideo = m->m_bAudioValid = m->m_bVideoValid = false;
+	m->m_nPlayTime = m->m_nStartTime = 0;
+	
 	
 	/* Check connected stages */
 	uint32 nPrevOutput;
@@ -984,12 +1055,15 @@ status_t MediaSyncStage::Initialize()
 	GetPrevStage( 0, &pcStage, &nPrevOutput );
 	
 	if( pcStage != NULL )
-		m_bAudio = true;
+	{
+		m->m_bAudio = true;
+		m->m_sAudioFormat = pcStage->GetOutputFormat( nPrevOutput );
+	}
 	
 	GetPrevStage( 1, &pcStage, &nPrevOutput );
 	
 	if( pcStage != NULL )
-		m_bVideo = true;
+		m->m_bVideo = true;
 	
 	return( 0 );
 }
@@ -1014,7 +1088,7 @@ status_t MediaSyncStage::Run()
 	uint32 nAudNextInput;
 	MediaStage* pcAudNextStage = NULL;
 	
-	if( m_bVideo )
+	if( m->m_bVideo )
 	{
 		GetPrevStage( 1, &pcVidPrevStage, &nVidPrevOutput );
 		GetNextStage( 1, &pcVidNextStage, &nVidNextInput );
@@ -1023,7 +1097,7 @@ status_t MediaSyncStage::Run()
 	}
 	
 	
-	if( m_bAudio )
+	if( m->m_bAudio )
 	{
 		GetPrevStage( 0, &pcAudPrevStage, &nAudPrevOutput );
 		GetNextStage( 0, &pcAudNextStage, &nAudNextInput );
@@ -1033,18 +1107,18 @@ status_t MediaSyncStage::Run()
 	
 	
 	/* Read Video frame */
-	if( m_bVideo && !m_bVideoValid )
+	if( m->m_bVideo && !m->m_bVideoValid )
 	{
-		video_again:		
-		if( pcVidPrevStage->GetPacket( nVidPrevOutput, &m_sVideoPacket ) != 0 )
+		video_again:
+		if( pcVidPrevStage->GetPacket( nVidPrevOutput, &m->m_sVideoPacket ) != 0 )
 		{
 			printf( "Sync:: GetPacket() error!\n" );
 			return( -EIO );
 		}
 		
-		if ( m_sVideoPacket.nSize[0] > 0 )
+		if ( m->m_sVideoPacket.nSize[0] > 0 )
 		{
-			m_bVideoValid = true;
+			m->m_bVideoValid = true;
 		}
 		else
 			goto video_again;
@@ -1052,44 +1126,52 @@ status_t MediaSyncStage::Run()
 	}
 			
 	/* Show videoframe */
-	if( m_bVideo && m_bVideoValid )
+	if( m->m_bVideo && m->m_bVideoValid )
 	{
+		if( !m->m_bAudio )
+		{
+			if( m->m_nStartTime == 0 )
+				m->m_nStartTime = get_system_time();
+			m->m_nPlayTime = ( get_system_time() - m->m_nStartTime ) / 1000;
+		}
 		/* Calculate current time */
-		bigtime_t nCurrentTime = m_nPlayTime;
-		if( m_bAudio )
+		bigtime_t nCurrentTime = m->m_nPlayTime;
+		if( m->m_bAudio )
 		 	nCurrentTime -= pcAudNextStage->GetDelay();
-	 
+		
 		uint64 nVideoFrameLength = 1000 / (uint64)pcVidPrevStage->GetOutputFormat( nVidPrevOutput ).vFrameRate;
 			 
-		if( (uint64)nCurrentTime > m_sVideoPacket.nTimeStamp + nVideoFrameLength * 2 )
+		if( (uint64)nCurrentTime > m->m_sVideoPacket.nTimeStamp + nVideoFrameLength * 2 )
 		{
-			printf( "Dropping frame %i %i!\n", (int)m_sVideoPacket.nTimeStamp, (int)nCurrentTime );
-			pcVidPrevStage->FreePacket( &m_sVideoPacket );
-			m_bVideoValid = false;
+			printf( "Droping Frame %i %i!\n", (int)m->m_sVideoPacket.nTimeStamp, (int)nCurrentTime );
+			pcVidPrevStage->FreePacket( &m->m_sVideoPacket );
+			m->m_bVideoValid = false;
 		}
-		else if( !( (uint64)nCurrentTime < m_sVideoPacket.nTimeStamp ) )
+		else if( !( (uint64)nCurrentTime < m->m_sVideoPacket.nTimeStamp ) )
 		{
 			/* Write video frame */
-			//printf( "Writing video frame %i %i\n", (int)m_sVideoPacket.nTimeStamp, (int)nCurrentTime );
+			//printf( "Write video frame %i %i\n", (int)m->m_sVideoPacket.nTimeStamp, (int)nCurrentTime );
 			pcVidNextStage->GetPacket( nVidNextInput, NULL );
-			m_bVideoValid = false;						
+			pcVidPrevStage->FreePacket( &m->m_sVideoPacket );
+			m->m_bVideoValid = false;						
 		}
 	}
 	
 	
 	/* Read audio packet */
-	if( m_bAudio && !m_bAudioValid )
+	if( m->m_bAudio && !m->m_bAudioValid )
 	{
 audio_again:		
-		if( pcAudPrevStage->GetPacket( nAudPrevOutput, &m_sAudioPacket ) != 0 )
+		if( pcAudPrevStage->GetPacket( nAudPrevOutput, &m->m_sAudioPacket ) != 0 )
 		{
 			printf( "Sync:: GetPacket() error!\n" );
 			return( -EIO );
 		}
 		
-		if ( m_sAudioPacket.nSize[0] > 0 )
+		if ( m->m_sAudioPacket.nSize[0] > 0 )
 		{
-			m_bAudioValid = true;
+			m->m_bAudioValid = true;
+			m->m_nAudioPacketPos = 0;
 		}
 		else
 			goto audio_again;
@@ -1098,21 +1180,47 @@ audio_again:
 		
 	/* Write audio */
 	
-	uint64 nDelay = pcAudNextStage->GetDelay();
-	uint64 nBufferSize = pcAudNextStage->GetBufferSize();
-	if( m_bAudio && m_bAudioValid && ( nDelay < ( nBufferSize / 2 ) ) )
+	if( m->m_bAudio && m->m_bAudioValid )
 	{
-		pcAudNextStage->GetPacket( nAudNextInput, NULL );
-		MediaFormat_s sAudioFormat = pcAudPrevStage->GetOutputFormat( nAudPrevOutput );
-	
-		bigtime_t nAudioLength = (bigtime_t)m_sAudioPacket.nSize[0] * 1000;
-		nAudioLength /= bigtime_t( 2 * sAudioFormat.nChannels * sAudioFormat.nSampleRate );
-		
-		if( m_sAudioPacket.nTimeStamp != (uint64)( ~0 ) )
-			m_nPlayTime = m_sAudioPacket.nTimeStamp;
-						
-		m_bAudioValid = false;
-		m_nPlayTime += nAudioLength;
+		uint64 nAudioBufferSize = pcAudNextStage->GetBufferSize( true );
+		uint32 nFreeAudioBufSize = nAudioBufferSize - pcAudNextStage->GetDelay( true );
+				
+		/* We only write as much bytes as the free buffer size because we 
+		do not want to block when GetPacket() is called */
+		if( nAudioBufferSize <= 80 || ( nFreeAudioBufSize > 40 ) )
+		{
+			uint32 nFreeAudioBufBytes = (uint32)( nFreeAudioBufSize * bigtime_t( 2 * m->m_sAudioFormat.nChannels * m->m_sAudioFormat.nSampleRate ) / 1000 );
+			uint32 nWriteBytes = std::min( nFreeAudioBufBytes, m->m_sAudioPacket.nSize[0] - m->m_nAudioPacketPos );
+
+			bigtime_t nAudioLength = (bigtime_t)nWriteBytes * 1000;
+			nAudioLength /= bigtime_t( 2 * m->m_sAudioFormat.nChannels * m->m_sAudioFormat.nSampleRate );
+					
+			//printf( "%i %i %i %i %i %i %i\n", (int)m->m_sAudioOutFormat.nChannels, (int)nAudioBufferSize, (int)nFreeAudioBufSize, m->sAudioPacket.nSize[0], m->nAudioPacketPos, nWriteBytes, (int)nAudioLength );
+				
+			if( m->m_nAudioPacketPos == 0 )
+				if( m->m_sAudioPacket.nTimeStamp != ~0 ) {
+					m->m_nPlayTime = m->m_sAudioPacket.nTimeStamp;
+					//printf("Audio time stamp %i\n", (int)nLastAudio );
+				}
+				
+			m->m_nPlayTime += nAudioLength;
+				
+			m->m_sDispatchAudioPacket = m->m_sAudioPacket;
+			m->m_sDispatchAudioPacket.pBuffer[0] += m->m_nAudioPacketPos;
+			m->m_sDispatchAudioPacket.nSize[0] = nWriteBytes;
+					
+			m->m_nAudioPacketPos += nWriteBytes;
+			
+			pcAudNextStage->GetPacket( nAudNextInput, NULL );
+					
+			if( m->m_nAudioPacketPos == m->m_sAudioPacket.nSize[0] )
+			{
+				//printf( "Packet complete!\n" );
+				m->m_bAudioValid = false;
+				pcAudPrevStage->FreePacket( &m->m_sAudioPacket );
+			}
+					
+		}
 	}
 	return( 0 );	
 }

@@ -911,7 +911,7 @@ public:
 		
 		
 		/* Check if we have a double click */
-		if( !m->m_bMouseSelectedIcon && get_system_time() - m->m_nLastClick < 500000 && m->m_cIcons[nIcon]->m_bSelected && !( GetQualifiers() & os::QUAL_CTRL ) )
+		if( nButtons == 1 && !m->m_bMouseSelectedIcon && get_system_time() - m->m_nLastClick < 500000 && m->m_cIcons[nIcon]->m_bSelected && !( GetQualifiers() & os::QUAL_CTRL ) )
 		{
 			/* Invoke */
 			m->Lock();

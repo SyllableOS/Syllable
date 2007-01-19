@@ -123,7 +123,7 @@ status_t FFMpegOutput::Open( os::String zFileName )
     /* Set parameters */
 	AVFormatParameters sParams;
 	memset( &sParams, 0, sizeof( sParams ) );
-	sParams.image_format = NULL;
+//	sParams.image_format = NULL;
 	if( av_set_parameters( m_psContext, &sParams ) < 0 ) {
 		std::cout<<"Could not set parameters"<<std::endl;
 		return( -1 );

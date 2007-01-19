@@ -249,6 +249,7 @@ status_t ServerOutput::WritePacket( uint32 nIndex, os::MediaPacket_s* psPacket )
 	
 	uint8* pSource = psPacket->pBuffer[0];
 	uint32 nBytesLeft = psPacket->nSize[0];
+		
 	
 	while( nBytesLeft > 0 )
 	{
@@ -257,6 +258,7 @@ status_t ServerOutput::WritePacket( uint32 nIndex, os::MediaPacket_s* psPacket )
 		/* Calculate number of free samples in the ringbuffer */
 		int32 nRp = atomic_read( m_pnReadPointer );
 		int32 nWp = atomic_read( m_pnWritePointer );
+		
 		
 		uint32 nFreeBytes = 0;
 		if( nWp >= nRp )
@@ -337,7 +339,7 @@ uint64 ServerOutput::GetDelay( bool bNonSharedOnly )
 		nUsedBytes = m_nBufferSize - ( nRp - nWp );
 	uint32 nUsedSamples = nUsedBytes / m_sDstFormat.nChannels / 2;
 	int64 nDelay = nUsedSamples * 1000 / m_sDstFormat.nSampleRate + ( bNonSharedOnly ? 0 : atomic_read( m_pnHWDelay ) );
-//	std::cout<<"Delay "<<nUsedSamples<<" "<<atomic_read( m_pnHWDelay )<<" "<<nDelay<<std::endl;
+	//std::cout<<"Delay "<<nUsedSamples<<" "<<atomic_read( m_pnHWDelay )<<" "<<nDelay<<std::endl;
 	return( nDelay );
 }
 

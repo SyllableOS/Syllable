@@ -102,8 +102,8 @@ public:
 	virtual bool			HasInternalBuffer();
 	virtual status_t		GetPacket( uint32 nOutput, MediaPacket_s* psPacket );
 	virtual void			FreePacket( MediaPacket_s* psPacket );
-	virtual uint64			GetDelay();
-	virtual uint64			GetBufferSize();
+	virtual uint64			GetDelay( bool bNonSharedOnly = false );
+	virtual uint64			GetBufferSize( bool bNonSharedOnly = false );
 private:
 	int m_nRefCount;
 	MediaStage*	m_pcPrevStage[MEDIA_MAX_INPUT_OUTPUT];
@@ -197,7 +197,7 @@ public:
 	MediaFormat_s	GetInputFormat( uint32 nInput, uint32 nNum );
 	status_t		Initialize();
 	status_t		GetPacket( uint32 nOutput, MediaPacket_s* psPacket );
-	uint64			GetDelay();
+	uint64			GetDelay( bool bNonSharedOnly = false );
 	uint64			GetBufferSize();
 	
 	os::View*		GetView();
@@ -212,7 +212,9 @@ private:
 /** Media sync stage.
  * \ingroup media
  * \par Description:
- * This media stage object manages the packet flow.
+ * This media stage object manages the packet flow. It has two inputs and two outputs.
+ * The first one is for audio and the second one for video. The calls to GetOutputFormat()
+ * and GetIntputFormat() are always redirected to the previous/next stage.
  * \author	Arno Klenke
  *****************************************************************************/
 
@@ -237,13 +239,8 @@ public:
 
 	static MediaSyncStage* CreateStage();
 private:
-	bool		m_bAudio;
-	bool		m_bVideo;
-	bool		m_bAudioValid;
-	bool		m_bVideoValid;
-	MediaPacket_s m_sAudioPacket;
-	MediaPacket_s m_sVideoPacket;
-	bigtime_t	m_nPlayTime;
+	class Private;
+	Private* m;
 };
 
 }

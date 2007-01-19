@@ -194,7 +194,7 @@ status_t MediaOutput::WritePacket( uint32 nStream, MediaPacket_s* psPacket )
 /** Delay.
  * \par Description:
  * Returns the time it takes till the last queued packet has been played.
- * \param bUserOnly - If the output has shared and non-shared buffers then
+ * \param bNonSharedOnly - If the output has shared and non-shared buffers then
  *					  true will return the delay of the non-shared buffer only.
  *					  Otherwise the complete delay will be returned.
  * \author	Arno Klenke
@@ -207,7 +207,7 @@ uint64 MediaOutput::GetDelay( bool bNonSharedOnly )
 /** Returns the size of the buffer.
  * \par Description:
  * Returns the size of the output buffer in msecs.
- * \param bUserOnly - If the output has shared and non-shared buffers then
+ * \param bNonSharedOnly - If the output has shared and non-shared buffers then
  *					  true will return the buffer size of the non-shared buffer only.
  *					  Otherwise the complete buffer size will be returned.
  * \author	Arno Klenke

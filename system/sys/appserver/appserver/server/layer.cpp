@@ -974,7 +974,7 @@ void Layer::Invalidate( const IRect & cRect, bool bRecursive )
 		{
 			for( Layer * pcChild = m_pcBottomChild; NULL != pcChild; pcChild = pcChild->m_pcHigherSibling )
 			{
-				pcChild->Invalidate( cRect - pcChild->GetIFrame().LeftTop() + pcChild->m_cIScrollOffset, true );
+				pcChild->Invalidate( cRect - pcChild->GetIFrame().LeftTop(), true );
 			}
 		}
 	}
@@ -1282,7 +1282,7 @@ void Layer::RebuildRegion( bool bForce )
 			for( pcSibling = m_pcHigherSibling; NULL != pcSibling; pcSibling = pcSibling->m_pcHigherSibling )
 			{
 				/***	Remove siblings from region	***/
-				if( pcSibling->m_nHideCount == 0 )
+				if( pcSibling->m_nHideCount == 0 && ( pcSibling->m_nFlags & WID_TRANSPARENT ) == 0 )
 				{
 					if( pcSibling->m_cIFrame.DoIntersect( m_cIFrame ) )
 					{
