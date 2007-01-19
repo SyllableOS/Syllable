@@ -23,7 +23,7 @@ export EDITOR=aedit
 
 case $TERM in
 	xterm* | rxvt*)
-		PROMPT_COMMAND="echo -en \"\33]0;$(whoami)@$(hostname):\$PWD - Syllable Terminal\7\"";;
+		PROMPT_COMMAND="echo -ne \"\033]0;${USER}@${HOSTNAME}:\${PWD} - Syllable Terminal\007\"";;
 	*)
 		unset PROMPT_COMMAND;;
 esac
