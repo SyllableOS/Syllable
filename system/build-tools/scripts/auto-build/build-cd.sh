@@ -172,6 +172,7 @@ RUBY_PACKAGE=ruby-1.8.5.bin.1.zip
 # Default for the Installer scripts if a directory is not specified
 INSTALLER_DIR=installer
 DOCUMENTATION_DIR=documentation
+PPDS=ppds
 
 # function print_usage
 #
@@ -226,6 +227,7 @@ function exit_with_usage()
 # $3 - version number
 # $4 - (Optional) path to the Ruby binary package
 # $5 - (Optional) path to the installer script directory
+# $6 - (Optional) path to the CUPS PPDs
 
 function initialise()
 {
@@ -264,6 +266,17 @@ function initialise()
   if [ ! -e $INSTALLER_DIR ]
   then
     exit_with_usage 2 $INSTALLER_DIR
+  fi
+
+  # If the user specified a path to the CUPS PPDs, use it
+  if [ ! -z $6 ]
+  then
+    PPDS=$6
+  fi
+  printf "Using CUPS PPDs from %s\n" $PPDS
+  if [ ! -e $PPDS ]
+  then
+    exit_with_usage 2 $PPDS
   fi
 
   # We'll need space to work in
@@ -416,6 +429,7 @@ function copy_files()
 #
 # $1 - path to base-syllable file
 # $2 - path to Sylable-net directory
+# $3 - path to CUPS PPDs
 
 function copy_packages()
 {
@@ -426,6 +440,11 @@ function copy_packages()
   mkdir -p $CD_DIR/Packages/net
   printf "Copying Syllable-net files: %s\n" "$2"
   cp -a $2/* $CD_DIR/Packages/net/
+
+  # Copy printer PPDs
+  mkdir -p $CD_DIR/Packages/CUPS/PPD/
+  printf "Copying CUPS PPDs: %s\n" "$3"
+  cp -a $3/* $CD_DIR/Packages/CUPS/PPD/
 }
 
 # function copy_installer
@@ -475,20 +494,22 @@ function create_iso()
 # $3 - version number
 # $4 - (Optional) path to the Ruby binary package
 # $5 - (Optional) path to the installer script directory
+# $6 - (Optional) path to the CUPS PPDs
 
 _BASE=$1
 _NET=$2
 _VER=$3
 _RUBY=$4
 _INSTALLER=$5
+_PPDS=$6
 
-initialise $_BASE $_NET $_VER $_RUBY $_INSTALLER
+initialise $_BASE $_NET $_VER $_RUBY $_INSTALLER $_PPDS
 
 # Create the basic bootable system
 copy_files
 
 # Copy the installation files
-copy_packages $_BASE $_NET
+copy_packages $_BASE $_NET $PPDS
 copy_installer $_VER
 
 # Create the ISO

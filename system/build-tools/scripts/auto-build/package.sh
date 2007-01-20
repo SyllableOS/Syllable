@@ -27,6 +27,15 @@ fi
 cd $BUILD_DIR/system/stage/image
 cp -a atheos/usr/grub/lib/grub/i386-pc/* boot/grub/
 
+# XXXKV: Need to manually move the CUPS PPDs
+if [ -e $INSTALLER_DIR/ppds ]
+then
+  rm -rf $INSTALLER_DIR/ppds
+fi
+mkdir -p $INSTALLER_DIR/ppds
+mv atheos/usr/cups/share/cups/model/* $INSTALLER_DIR/ppds/
+mv $INSTALLER_DIR/ppds/models.list atheos/usr/cups/share/cups/model/
+
 # Finish the build and package it
 cd $BUILD_DIR/system
 image finish
