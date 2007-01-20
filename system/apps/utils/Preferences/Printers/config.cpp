@@ -364,7 +364,8 @@ status_t PrintersWindow::InstallPPD( String cPPD, String cName )
 	fprintf( stderr, "This printer requires PPD: %s\n", cPPD.c_str() );
 
 	/* Check if the file is already in cups/share/cups/model/ */
-	cFromPath = String( "/atheos/autolnk/share/cups/model/" ) + cPPD;
+	/*cFromPath = String( "/atheos/autolnk/share/cups/model/" ) + cPPD;*/
+	cFromPath = String( "/usr/cups/share/cups/model/" ) + cPPD;
 	cToPath = String( "/system/config/cups/ppd/" ) + cName + String( ".ppd" );
 
 	/* If required, copy the PPD from CD first */
