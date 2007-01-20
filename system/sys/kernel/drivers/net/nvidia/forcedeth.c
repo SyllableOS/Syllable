@@ -2703,7 +2703,6 @@ int nv_probe( int device_handle )
 			continue;
 		}
 
-		printk ( "forcedeth: Attempting to claim device %04x:%0xX\n", sInfo.nVendorID, sInfo.nDeviceID );		
 		if( claim_device( device_handle, sInfo.nHandle, "NVidia nForce Network Controller", DEVICE_NET ) != 0 )
 			continue;
 		
