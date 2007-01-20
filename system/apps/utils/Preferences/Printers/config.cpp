@@ -421,7 +421,8 @@ status_t PrintersWindow::GetPPD( String cPPD )
 	if( nError == EOK )
 	{
 		cFromPath += String( "/Packages/CUPS/PPD/" ) + cPPD;
-		cToPath = String( "/atheos/autolnk/share/cups/model/" ) + cPPD;
+		/*cToPath = String( "/atheos/autolnk/share/cups/model/" ) + cPPD;*/
+		cToPath = String( "/usr/cups/share/cups/model/" ) + cPPD;
 
 		nError = CopyPPD( cFromPath, cToPath );
 	}
