@@ -23,3 +23,7 @@ MSG_MAINWND_THISINPUTHASNOCONTROLS=300		Deze invoer heeft geen instellingen.
 MSG_MAINWND_THISCODECHASNOCONTROLS			Deze (de)koder heeft geen instellingen.
 MSG_MAINWND_THISOUTPUTHASNOCONTROLS			Deze uitvoer heeft geen instellingen.
 
+MSG_ALERTWND_NOMEDIASERVER_TITLE=1000		Foutmelding
+MSG_ALERTWND_NOMEDIASERVER_TEXT				Kan niet met media server verbinden.
+MSG_ALERTWND_NOMEDIASERVER_OK				_Ok
+

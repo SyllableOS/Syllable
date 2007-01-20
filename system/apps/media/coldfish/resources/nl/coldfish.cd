@@ -1,7 +1,7 @@
 //
 // ColdFish Vertalingen
 //
-// Vertaald door: Rik van Achterberg en Kaj de Vos
+// Vertaald door: Rik van Achterberg en Kaj de Vos en Ruud Kuin
 //
 
 MSG_MAINWND_TITLE=100								ColdFish
@@ -40,6 +40,10 @@ MSG_ERRWND_CANTPLAY									ColdFish kan dit bestand niet afspelen.
 MSG_ERRWND_CANTDELETE								Het nummer dat afgespeeld wordt kan niet verwijderd worden.
 MSG_ERRWND_NOTPLAYLIST								Het geselecteerde bestand is geen afspeellijst.
 
+MSG_ALERTWND_NOMEDIASERVER_TITLE=1200				Foutmelding
+MSG_ALERTWND_NOMEDIASERVER_TEXT						Kan niet met media server verbinden.
+MSG_ALERTWND_NOMEDIASERVER_OK						_Ok
+
 MSG_PLAYLIST_UNKNOWN=2000							Onbekend
 MSG_PLAYLIST_DEFAULT								Standaardafspeellijst
 
@@ -51,3 +55,4 @@ MSG_PLAYLISTWND_NOTE								Als je een niet bestaande\nafspeellijst probeert te 
 MSG_LCD_TRACK=3000									Nummer
 
 MSG_MIMETYPE_APPLICATION_XCOLDFISHPLAYLIST=10000	ColdFish-afspeellijst
+

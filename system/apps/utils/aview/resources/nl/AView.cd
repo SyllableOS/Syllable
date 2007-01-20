@@ -15,10 +15,21 @@ MSG_MAINWND_MENU_FILE_OPEN					Open
 
 MSG_MAINWND_MENU_VIEW=300					Toon
 MSG_MAINWND_MENU_VIEW_FITTOIMAGE			Aan beeld aanpassen
+MSG_MAINWND_MENU_VIEW_FITTOWINDOW			Grootte aan venster aanpassen
 MSG_MAINWND_MENU_VIEW_PREVIOUS				Vorige
 MSG_MAINWND_MENU_VIEW_NEXT					Volgende
 MSG_MAINWND_MENU_VIEW_FIRST					Eerste
 MSG_MAINWND_MENU_VIEW_LAST					Laatste
+
+MSG_MAINWND_MENU_RESIZE=400					Grootte
+MSG_MAINWND_MENU_RESIZE_10					10%
+MSG_MAINWND_MENU_RESIZE_25					25%
+MSG_MAINWND_MENU_RESIZE_50					50%
+MSG_MAINWND_MENU_RESIZE_75					75%
+MSG_MAINWND_MENU_RESIZE_100					100%
+MSG_MAINWND_MENU_RESIZE_150					150%
+MSG_MAINWND_MENU_RESIZE_200					200%
+MSG_MAINWND_MENU_RESIZE_400					400%
 
 MSG_ABOUTWND_TITLE=1000						Over AView
 MSG_ABOUTWND_TEXT							AView\n\nBeeldprogramma Syllable    \nCopyright 2005 Syllable Team\n\nAView is vrijgegeven onder de GNU General\nPublic Licentie. Please go to www.gnu.org\nmore information.\n\nNederlandse vertaling door Ruud kuin <rudi.kuin@gmail.com>.

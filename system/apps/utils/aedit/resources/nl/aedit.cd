@@ -1,6 +1,7 @@
 //
 // AEdit Vertalingen
-// Vertaald door Kaj de Vos en anderen
+//
+// Vertaald door Kaj de Vos en anderen en Ruud Kuin
 //
 
 MSG_APPWND_TITLE							AEdit
@@ -27,6 +28,15 @@ MSG_MENU_EDIT_PASTE							Plakken
 MSG_MENU_EDIT_SELECT_ALL					Alles selecteren
 MSG_MENU_EDIT_UNDO							Bewerking ongedaan maken
 MSG_MENU_EDIT_REDO							Bewerking opnieuw uitvoeren
+
+MSG_MENU_VIEW_VIEW=350						Bekijken
+MSG_MENU_VIEW_TOOLBAR						Gereedschapsbalk
+MSG_MENU_VIEW_STATUSBAR						Statusbalk
+MSG_MENU_VIEW_SETFONT						Font instellen...
+MSG_MENU_VIEW_TABS							Tabs
+MSG_MENU_VIEW_SHOW							Tonen
+MSG_MENU_VIEW_HIDE							Verbergen
+MSG_MENU_VIEW_AUTO							Automatisch
 
 MSG_MENU_FIND=400							Zoeken
 MSG_MENU_FIND_FIND							Zoeken...
@@ -67,6 +77,7 @@ MSG_FIND_CLOSE								_Sluiten
 MSG_GOTO_TITLE=1100							Ga naar regel
 MSG_GOTO_GOTO								_Ga naar regel
 MSG_GOTO_CLOSE								_Annuleren
+MSG_GOTO_LINE								Rij:
 
 MSG_REPLACE_TITLE=1200						Vervangen
 MSG_REPLACE_LBLFIND							Zoek
@@ -108,4 +119,6 @@ MSG_STATUSBAR_REPLACE_NOT_OK				Tekst is niet vervangen.
 
 MSG_BUFFER_UNTITLED=2100					Naamloos - %d
 MSG_BUFFER_CURSOR							Kolom: %d Regel: %d
+
+MSG_MIMETYPE_TEXT_PLAIN=10000				Platte tekst
 
