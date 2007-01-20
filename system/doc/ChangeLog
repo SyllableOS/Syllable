@@ -1,3 +1,11 @@
+* January 20, 2007, Kristian Van Der Vliet *
+
+Updated the nVidia NIC (forcedeth) driver to version 0.48 (Synced with the Linux
+driver). The driver adds support for newer chips including the CK804, MCP04, MCP51
+and MCP55, Gigabit speeds and bug fixes.
+
+Thanks to Stephan Wiebusch <stephanwib@googlemail.com> for testing and debugging.
+
 * January 19, 2007, Kristian Van Der Vliet *
 
 Fix the declaration of PROMPT_COMMAND on bash 3.2 (Bug #60)
