@@ -43,5 +43,12 @@ documentation
 ;	doc
 build-docs			INSTALL*.txt
 
-links				/atheos/autolnk/bin/smbspool lib/cups/backend/smb
+; CUPS is a system component and the configuration should be kept seperate from the binaries
+move-files
+	etc/cups	/atheos/sys/config/
+
+; However the executables still need to see the configuration data in etc/cups
+links
+	/atheos/autolnk/bin/smbspool lib/cups/backend/smb
+	/atheos/sys/config/cups etc/cups
 
