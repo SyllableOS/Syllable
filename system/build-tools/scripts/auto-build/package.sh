@@ -52,8 +52,12 @@ then
 fi
 bzip2 -k9 $ISO
 
+# Generate md5's
+MD5S=md5sums
+md5sum base-syllable.zip $ISO > $MD5S
+
 # Transfer the files
-FILES=`printf "base-syllable.zip $ISO.bz2\n"`
+FILES=`printf "base-syllable.zip $ISO.bz2 $MD5S\n"`
 if [ -n "$FTP_USER" ]
 then
   ftp -n $FTP_SERVER << END
