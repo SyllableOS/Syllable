@@ -21,6 +21,7 @@
 #include <util/string.h>
 #include <storage/file.h>
 #include <gui/exceptions.h>
+#include <fcntl.h>
 
 #include <cups/cups.h>
 
@@ -37,7 +38,7 @@ status_t PrintersWindow::ReadConfig( void )
 	char *pBuffer = NULL;
 	try
 	{
-		File cFile( PRINTERS_CONF );
+		File cFile( PRINTERS_CONF, O_RDONLY | O_CREAT );
 		off_t nSize = cFile.GetSize();
 
 		pBuffer = (char*)malloc( nSize );
