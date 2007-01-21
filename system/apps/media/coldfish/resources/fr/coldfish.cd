@@ -2,6 +2,7 @@
 // ColdFish string catalog
 //
 // Translated by: Christos KYRATZIS
+// Translated by: jon207
 //
 
 MSG_MAINWND_TITLE=100						ColdFish
@@ -39,6 +40,10 @@ MSG_ERRWND_OK								OK
 MSG_ERRWND_CANTPLAY							ColdFish ne peut jouer ce fichier.
 MSG_ERRWND_CANTDELETE						La piste jouée actuellement ne peut être effacé.
 MSG_ERRWND_NOTPLAYLIST						Le fichier sélectionné n'est pas une liste de lecture.
+
+MSG_ALERTWND_NOMEDIASERVER_TITLE=1200		Erreur
+MSG_ALERTWND_NOMEDIASERVER_TEXT				Impossible de se connecter au serveur multimédia.
+MSG_ALERTWND_NOMEDIASERVER_OK				_Ok
 
 MSG_PLAYLIST_UNKNOWN=2000					Inconnu
 MSG_PLAYLIST_DEFAULT						Liste de lecture par défault

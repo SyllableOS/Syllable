@@ -2,6 +2,7 @@
 // Media Player string catalog
 //
 // Translated by: Christos KYRATZIS
+// Translated by: jon207
 //
 
 MSG_MAINWND_TITLE=100						Media Player
@@ -32,7 +33,9 @@ MSG_INFOWND_AUDIO							Audio
 MSG_INFOWND_CHANNELS						canaux
 MSG_INFOWND_OK								OK
 
+MSG_ALERTWND_NOMEDIASERVER_TITLE=1300		Erreur
+MSG_ALERTWND_NOMEDIASERVER_TEXT				Impossible de se connecter au serveur multimédia.
+MSG_ALERTWND_NOMEDIASERVER_OK				_Ok
+
 MSG_TRACK_MENU_ITEM=2000					Piste
-
-
 

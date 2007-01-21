@@ -2,6 +2,7 @@
 // Preferences/Media String Catalog
 //
 // Translated by: Christos KYRATZIS
+// Translated by: jon207
 //
 
 MSG_MAINWND_TITLE=0								Multimédia
@@ -19,4 +20,8 @@ MSG_MAINWND_BUTTON_DEFAULT						_Defaut
 MSG_MAINWND_THISINPUTHASNOCONTROLS=300			Cette entrée ne dispose d'aucun élément
 MSG_MAINWND_THISCODECHASNOCONTROLS				Ce codec ne dispose d'aucun élément
 MSG_MAINWND_THISOUTPUTHASNOCONTROLS				Cette sortie ne dispose d'aucun élément
+
+MSG_ALERTWND_NOMEDIASERVER_TITLE=1000			Erreur
+MSG_ALERTWND_NOMEDIASERVER_TEXT					Impossible de se connecter au serveur multimédia.
+MSG_ALERTWND_NOMEDIASERVER_OK					_Ok
 

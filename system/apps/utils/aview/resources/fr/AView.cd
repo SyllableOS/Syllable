@@ -2,6 +2,7 @@
 // AView String Catalog
 //
 // Translated by: Christos KYRATZIS
+// Translated by: jon207
 //
 
 MSG_MAINWND_TITLE=0							AView
@@ -15,10 +16,21 @@ MSG_MAINWND_MENU_FILE_OPEN					Ouvrir
 
 MSG_MAINWND_MENU_VIEW=300					Vue
 MSG_MAINWND_MENU_VIEW_FITTOIMAGE			Adapter à l'image
+MSG_MAINWND_MENU_VIEW_FITTOWINDOW			Ajuster à la taille de la fenêtre
 MSG_MAINWND_MENU_VIEW_PREVIOUS				Précédent
 MSG_MAINWND_MENU_VIEW_NEXT					Suivant
 MSG_MAINWND_MENU_VIEW_FIRST					Premier
 MSG_MAINWND_MENU_VIEW_LAST					Dernier
+
+MSG_MAINWND_MENU_RESIZE=400					Taille
+MSG_MAINWND_MENU_RESIZE_10					10%
+MSG_MAINWND_MENU_RESIZE_25					25%
+MSG_MAINWND_MENU_RESIZE_50					50%
+MSG_MAINWND_MENU_RESIZE_75					75%
+MSG_MAINWND_MENU_RESIZE_100					100%
+MSG_MAINWND_MENU_RESIZE_150					150%
+MSG_MAINWND_MENU_RESIZE_200					200%
+MSG_MAINWND_MENU_RESIZE_400					400%
 
 MSG_ABOUTWND_TITLE=1000						À propos de AView
 MSG_ABOUTWND_TEXT							AView\n\nAfficheur d'images pour Syllable    \nCopyright 2005 Syllable Team\n\nAView est mis à disposition sous license GNU General\nPublic License. Veuillez vous rendre sur www.gnu.org\npour plus d'informations.\n

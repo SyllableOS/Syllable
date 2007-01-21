@@ -2,6 +2,7 @@
 // Dock String Catalog
 //
 // Translated by: Christos KYRATZIS
+// Translated by: jon207
 //
 
 MSG_MENU_CATEGORY_OTHER=1000			Autres
@@ -12,6 +13,7 @@ MSG_MENU_CATEGORY_OFFICE				Bureautique
 MSG_MENU_CATEGORY_DEVELOPMENT			Développement
 MSG_MENU_CATEGORY_GAMES					Jeux
 MSG_MENU_CATEGORY_EMULATORS				Émulateurs
+MSG_MENU_CATEGORY_SYSTEMTOOLS			Outils système
 
 MSG_MENU_ABOUT_MENU=2000				À propos...
 MSG_MENU_ABOUT_TITLE					À propos de Syllable
