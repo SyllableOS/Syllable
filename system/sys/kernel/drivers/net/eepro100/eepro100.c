@@ -407,6 +407,11 @@ struct pci_id_info {
 	  PCI_VENDOR_ID_INTEL, 0x1032,
 	  0 
 	},
+	// TM: Toshiba notebooks have a different pci_product_id
+	{ "Intel Pro/100 VE",
+	  PCI_VENDOR_ID_INTEL, 0x1092,
+	  0 
+	},
 	{ "Intel Pro/100 VM (LOM)",
 	  PCI_VENDOR_ID_INTEL, 0x1033,
 	  0 
