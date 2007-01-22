@@ -1,3 +1,8 @@
+* January 22, 2007, Kristian Van Der Vliet *
+
+Added an additional PCI ID for the Intel Pro/100 VE to the eepro100 driver.
+Patch from Turki Al-Marri <turki.almarri@gmail.com>
+
 * January 20, 2007, Kristian Van Der Vliet *
 
 Updated the nVidia NIC (forcedeth) driver to version 0.48 (Synced with the Linux
