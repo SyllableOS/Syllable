@@ -1,7 +1,7 @@
 #Makefile for desktop
 COPTS = -c -fexceptions -ffast-math
 
-CATALOGS = da de es fr hu nl sv
+CATALOGS = da de es fr hu nl ru sv
 
 APPBIN = /system/bin
 OBJS = main.o application.o desktop.o

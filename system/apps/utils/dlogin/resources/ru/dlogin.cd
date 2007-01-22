@@ -1,0 +1,35 @@
+//
+// DLogin String Catalog
+//
+// Translated by: Ilya Krol
+//
+
+MSG_MAINWND_TITLE=0							Логин:
+
+MSG_MAINWND_PASSWORD=100					Пароль:
+MSG_MAINWND_BUTTON_LOGIN					_Вход
+MSG_MAINWND_BUTTON_SHUTDOWN					_Выключить
+
+MSG_SHUTDOWNWND_TITLE=200					Выключить или Перезагрузить?
+MSG_SHUTDOWNWND_TEXT						Что Вы хотите сделать:
+MSG_SHUTDOWNWND_BUTTON_CANCEL				_Отмена
+MSG_SHUTDOWNWND_BUTTON_OK					_ОК
+MSG_SHUTDOWNWND_DROPDOWN_SHUTDOWN			Выключить
+MSG_SHUTDOWNWND_DROPDOWN_REBOOT				Перезагрузить
+
+MSG_ALERT_NOTSELECTED_TITLE=1000			Выьерите значок , пожалуйста.
+MSG_ALERT_NOTSELECTED_TEXT					Вы должны выбрать значок пользователя перед тем как загрузиться.
+MSG_ALERT_NOTSELECTED_OK					ОК
+
+MSG_ALERT_WRONGPASS_TITLE=2000				Вход не выполнен
+MSG_ALERT_WRONGPASS_TEXT					Неправильный пароль.
+MSG_ALERT_WRONGPASS_OK						Извините
+
+MSG_ALERT_NOUSER_TITLE=3000					Вход не выполнен
+MSG_ALERT_NOUSER_TEXT						Такой пользователь\nне зарегистрирован для \nиспользования этого компьютера.
+MSG_ALERT_NOUSER_OK							ОК
+
+MSG_ALERT_CANTFINDUSERS_TITLE=4000			Не удалось загрузить пользователей
+MSG_ALERT_CANTFINDUSERS_TEXT				Мне не удалось загрузить пользователей, пожалуйста свяжитесь с группой разработки Syllable.
+MSG_ALERT_CANTFINDUSERS_OK					О нет!!!
+

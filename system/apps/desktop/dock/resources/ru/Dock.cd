@@ -1,0 +1,38 @@
+//
+// Dock String Catalog
+//
+// Translated by: Ilya Krol
+//
+
+MSG_MENU_CATEGORY_OTHER=1000			Другое
+MSG_MENU_CATEGORY_PREFERENCES			Настройка
+MSG_MENU_CATEGORY_INTERNET				Интернет
+MSG_MENU_CATEGORY_MEDIA					Медиа
+MSG_MENU_CATEGORY_OFFICE				Офис
+MSG_MENU_CATEGORY_DEVELOPMENT			Разработка
+MSG_MENU_CATEGORY_GAMES					Игры
+MSG_MENU_CATEGORY_EMULATORS				Эмуляторы
+MSG_MENU_CATEGORY_SYSTEMTOOLS			Системные инструменты
+
+MSG_MENU_ABOUT_MENU=2000				О программе...
+MSG_MENU_ABOUT_TITLE					О Syllable
+MSG_MENU_ABOUT_BUILDDATE				Дата создания:
+MSG_MENU_ABOUT_TEXTONE					Обращайтесь к
+MSG_MENU_ABOUT_TEXTTWO					для получения обновлений и информации
+MSG_MENU_ABOUT_BUTTON_OK				ОК
+MSG_MENU_ABOUT_BUTTON_ADVANCED			Advanced...
+
+MSG_MENU_QUIT_MENU=3000					Выход...
+MSG_MENU_QUIT_TITLE						Выход
+MSG_MENU_QUIT_TEXT						Что Вы хотите сделать?
+MSG_MENU_QUIT_LOGOUT					Завершить сеанс
+MSG_MENU_QUIT_SHUTDOWN					Выключить
+MSG_MENU_QUIT_REBOOT					Перезагрузить
+MSG_MENU_QUIT_CANCEL					Отмена
+
+MSG_PLUGIN_ALERT_TITLE=4000				Dock
+MSG_PLUGIN_ALERT_TEXT					Пожалуйста, скопируйте плагины Dock в папку /system/extensions/dock\nперед тем как подключать их в Dock
+MSG_PLUGIN_ALERT_OK						ОК
+
+MSG_OPENAPP=5000						Открыть с помощью...
+

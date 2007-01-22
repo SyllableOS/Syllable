@@ -1,0 +1,14 @@
+//
+// FileBrowser String Catalog
+//
+// Translated by: Ilya Krol
+//
+
+MSG_MAINWND_TITLE=0				Файловый менеджер
+
+MSG_MENU_VIEW=100				Вид
+MSG_MENU_VIEW_ICONS				Значки
+MSG_MENU_VIEW_LIST				Список
+MSG_MENU_VIEW_DETAILS			Таблица
+MSG_MENU_VIEW_SAVE				Сохранить
+

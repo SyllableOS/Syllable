@@ -1,0 +1,15 @@
+//
+// Desktop String Catalog
+//
+// Translated by: Ilya Krol
+//
+
+MSG_DESKTOP_TITLE=0								Рабочий стол
+
+MSG_DESKTOP_SYMLINKS_APPLICATIONS=100			Приложения
+MSG_DESKTOP_SYMLINKS_DISKS						Диски
+MSG_DESKTOP_SYMLINKS_HOME						Домой
+MSG_DESKTOP_SYMLINKS_PREFERENCES				Настройки
+MSG_DESKTOP_SYMLINKS_TERMINAL					Терминал
+MSG_DESKTOP_SYMLINKS_TRASH						Корзина
+
