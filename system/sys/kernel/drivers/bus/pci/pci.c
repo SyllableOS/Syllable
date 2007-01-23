@@ -710,8 +710,8 @@ void pci_scan_bus( int nBusNum, int nBridgeFrom, int nBusDev )
 					{
 						claim_device( -1, psInfo->nHandle, "PCI->CardBus Bridge", DEVICE_SYSTEM );
 					}
-					else if ( psInfo->nClassBase == PCI_BRIDGE )
-						claim_device( -1, psInfo->nHandle, "PCI Bridge", DEVICE_SYSTEM );
+					/*else if ( psInfo->nClassBase == PCI_BRIDGE )
+						claim_device( -1, psInfo->nHandle, "PCI Bridge", DEVICE_SYSTEM );*/
 
 					/* Check AGP capabilities and put the device into the agp device list */
 					if( !g_bDisableAGP )
