@@ -1,5 +1,5 @@
 authors				Kaj de Vos
-status				testing
+status				broken
 warnings			Hardwired to install in the running system!
 
 licenses			GPL
@@ -22,3 +22,4 @@ configure
 documentation
 	README
 ;	Documentation
+
