@@ -3,7 +3,7 @@ ORCA [
 	Version:	0.2.2
 	Author:		"Kaj de Vos"
 	Rights: {
-		Copyright (c) 2006 Kaj de Vos
+		Copyright (c) 2006-2007 Kaj de Vos
 		License: LGPL
 	}
 	Purpose:	"Registers and unregisters binary packages by managing symbolic links in the system."
