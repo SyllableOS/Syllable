@@ -1,10 +1,10 @@
 ORCA [
 	Title:		"Package installation library"
-	Version:	0.2.1
+	Version:	0.2.2
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006 Kaj de Vos
-		License: GPL 2 or any later version
+		License: LGPL
 	}
 	Purpose:	"Registers and unregisters binary packages by managing symbolic links in the system."
 	Example:	"do %/atheos/autolnk/lib/REBOL/package.library"
@@ -53,7 +53,7 @@ action: func ["Returns the output of a shell command, or false if unsuccessful"
 	log/action command
 
 	either (status: call/wait/output command stdout: "") = 0 [
-;		FIXME: Orca call/output bug:
+;		FIXME: ORCA call/output bug:
 		log/output stdout
 		stdout
 	][
@@ -80,6 +80,7 @@ stage-proto: context [
 
 		either dir? source [
 			either exists? destination [
+;				TODO: detect a symlink:
 ;				if link? destination [log/warning join "directory " [destination " is a link"]]
 				yes
 			][
@@ -94,7 +95,7 @@ stage-proto: context [
 				either exists? destination [
 					log/warning join "conflict: replacing " [destination "!"]
 				][
-;					FIXME: Bug in Orca when path given:
+;					TODO: detect a symlink:
 ;					if file? destination [log/warning join "replacing broken link " destination]
 				]
 				action join "ln -sf " [source " " destination]
@@ -109,7 +110,7 @@ stage-proto: context [
 
 		either dir? index [
 			any [
-;				FIXME: Bug in Orca list comparison:
+;				FIXME: bug in ORCA list comparison:
 ;				(read index) <> []  ; Indexes directory not empty?
 				(length? read index) > 0  ; Indexes directory not empty?
 ;				action join "rmdir " index
@@ -117,9 +118,9 @@ stage-proto: context [
 				action join "rm -r " index
 			]
 		][
-;			FIXME: Orca join bug:
+;			FIXME: ORCA join bug:
 ;			change-dir join indexes [subdir]
-;			FIXME: Orca file? bug:
+;			TODO: detect a symlink:
 ;			either file? node [
 			either exists? index [
 				either file = "info/dir" [
