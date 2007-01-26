@@ -57,7 +57,7 @@ root first:
 
 Then you should remove the links to the package from Syllable.
 
-    pkgmanager -r /usr/<package>
+    package unregister <package>
 
 To delete the files belonging to the package, run:
 
