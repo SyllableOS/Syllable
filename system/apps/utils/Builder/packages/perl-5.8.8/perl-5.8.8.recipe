@@ -1,6 +1,7 @@
 authors
 	Kurt Skauen
 	Kaj de Vos
+	Kristian Van Der Vliet
 maintainers			Kaj de Vos
 status				testing
 notes				Doesn't build the documentation yet
@@ -27,11 +28,13 @@ configure-prefix	"-Dprefix="
 configure-options
 	-des
 	-Dmksymlinks
-	-Accflags="-march=i586 -pipe"
-	-Aoptimize="-O2"
+	-Accflags='-march=i586 -pipe'
+	-Aoptimize='-O2'
 ;	-Dinstallprefix=
 ;	-Dnoextensions=
-;	-Duseshrplib
+	-Duseshrplib
+	-Dccflags='-DPERL_EXTERNAL_GLOB'
+;	-Dlibpth=$PWD
 ;	-Uusemymalloc
 ;	-Dusethreads
 ;	-Duseperlio -Dusesfio
@@ -47,8 +50,9 @@ documentation
 	Changes
 build-docs			INSTALL
 links
-	perl5.8.8		bin/perl
-	bin/perl		/usr/bin/perl
+	perl5.8.8							bin/perl
+	5.8.8/i586-syllable/CORE/libperl.so	lib/
+	bin/perl							/usr/bin/perl
 ;	For OpenSSL:
-	bin/perl		/usr/local/bin/perl
+	bin/perl							/usr/local/bin/perl
 

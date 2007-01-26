@@ -6,12 +6,11 @@
 ignore_versioned_solibs='y'
 #libc=/system/libs/libc.so.2
 
-libpth='/system/libs /usr/glibc/lib /atheos/autolnk/lib'
-#usrinc='/include'
+libpth='/system/libs /usr/glibc/lib /atheos/autolnk/lib ./'
+#usrinc='/usr/glibc/include'
 
 #libs=' '
-#libswanted='nsl ndbm db dl m c crypt util'
-libswanted='nsl ndbm db m c crypt util'
+libswanted='nsl ndbm db dl m c crypt util'
 
 d_htonl='define'
 d_htons='define'
@@ -39,3 +38,4 @@ ld='gcc'
 cc='gcc'
 
 ldlibpthname=LIBRARY_PATH
+

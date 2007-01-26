@@ -1,0 +1,81 @@
+diff -ur perl-5.8.8_orig/Configure perl-5.8.8/Configure
+--- perl-5.8.8_orig/Configure	2006-01-08 14:51:03.000000000 +0000
++++ perl-5.8.8/Configure	2006-12-14 13:39:14.000000000 +0000
+@@ -3195,6 +3195,9 @@
+ 			*)	osvers="$3" ;;
+ 			esac
+ 			;;
++		syllable) osname=syllable
++			osvers="$3"
++			;;
+ 		titanos) osname=titanos
+ 			case "$3" in
+ 			1*) osvers=1 ;;
+@@ -7139,7 +7142,7 @@
+ : for archive libraries.  Thank you, Linux.
+ case "$nm_so_opt" in
+ '')	case "$myuname" in
+-	*linux*|gnu*)
++	*linux*|gnu*|syllable*)
+ 		if $nm --help | $grep 'dynamic' > /dev/null 2>&1; then
+ 			nm_so_opt='--dynamic'
+ 		fi
+@@ -7661,7 +7664,7 @@
+ 			      '') dflt="$dflt +vnocompatwarnings" ;;
+ 			      esac
+ 			      ;;	
+-			linux|irix*|gnu*)	dflt='-shared' ;;
++			linux|irix*|gnu*|syllable)	dflt='-shared' ;;
+ 			next)  dflt='none' ;;
+ 			solaris) dflt='-G' ;;
+ 			sunos) dflt='-assert nodefinitions' ;;
+@@ -7708,7 +7711,7 @@
+ EOM
+     case "$ccdlflags" in
+     '') case "$osname" in
+-	    linux|hpux|gnu*)	dflt='-Wl,-E' ;;
++	    linux|hpux|gnu*|syllable)	dflt='-Wl,-E' ;;
+ 	    next|sunos)	dflt='none' ;;
+ 	    *)		dflt='none' ;;
+ 	    esac ;;
+@@ -7805,7 +7808,7 @@
+ 			dflt=libperl.5.$so
+ 			# XXX How handle the --version stuff for MAB?
+ 			;;
+-		linux*|gnu*)  # ld won't link with a bare -lperl otherwise.
++		linux*|gnu*|syllable*)  # ld won't link with a bare -lperl otherwise.
+ 			dflt=libperl.$so
+ 			;;
+ 		cygwin*) # ld links against an importlib
+@@ -7892,7 +7895,7 @@
+ 	freebsd|netbsd|openbsd|interix)
+ 		xxx="-Wl,-R$shrpdir"
+ 		;;
+-	bsdos|linux|irix*|dec_osf|gnu*)
++	bsdos|linux|irix*|dec_osf|gnu*|syllable)
+ 		xxx="-Wl,-rpath,$shrpdir"
+ 		;;
+ 	next)
+diff -ur perl-5.8.8_orig/MANIFEST perl-5.8.8/MANIFEST
+--- perl-5.8.8_orig/MANIFEST	2006-01-31 23:27:53.000000000 +0000
++++ perl-5.8.8/MANIFEST	2006-12-14 14:59:26.000000000 +0000
+@@ -1356,6 +1356,7 @@
+ lib/ExtUtils/MM_OS2.pm		MakeMaker methods for OS/2
+ lib/ExtUtils/MM.pm		MakeMaker adaptor class
+ lib/ExtUtils/MM_QNX.pm		MakeMaker methods for QNX
++lib/ExtUtils/MM_Syllable.pm		MakeMaker methods for Syllable
+ lib/ExtUtils/MM_Unix.pm		MakeMaker methods for Unix
+ lib/ExtUtils/MM_UWIN.pm		MakeMaker methods for U/WIN
+ lib/ExtUtils/MM_VMS.pm		MakeMaker methods for VMS
+diff -ur perl-5.8.8_orig/lib/ExtUtils/MM.pm perl-5.8.8/lib/ExtUtils/MM.pm
+--- perl-5.8.8_orig/lib/ExtUtils/MM.pm	2005-10-21 12:00:03.000000000 +0000
++++ perl-5.8.8/lib/ExtUtils/MM.pm	2006-12-14 13:07:54.000000000 +0000
+@@ -63,6 +63,8 @@
+ $Is{QNX}    = $^O eq 'qnx';
+ $Is{AIX}    = $^O eq 'aix';
+ 
++$Is{Syllable}    = $^O eq 'syllable';
++
+ $Is{Unix}   = !grep { $_ } values %Is;
+ 
+ map { delete $Is{$_} unless $Is{$_} } keys %Is;
