@@ -38,15 +38,10 @@ $(OBJDIR)/battery: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/battery
 
 install: all
-	cp -f $(OBJDIR)/battery /system/drivers/dev/battery
+	cp -f $(OBJDIR)/battery $(IMAGE)/system/drivers/dev/battery
 
-dist: all
-	cp -f $(OBJDIR)/battery $(DIST_DIR)/atheos/sys/drivers/dev/battery
+dist: install
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/battery
-
-
-
-
 

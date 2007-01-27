@@ -30,12 +30,10 @@ $(OBJDIR)/radeon: $(OBJS)
 	$(CXX) -plugin -Xlinker -Bsymbolic -nodefaultlibs $(OBJS) -o $(OBJDIR)/radeon
 
 install: $(OBJDIR)/radeon radeon.cfg
-	cp -f $(OBJDIR)/radeon $(DEVBIN)/radeon
-	cp -f radeon.cfg $(CFGDIR)/radeon.cfg
+	cp -f $(OBJDIR)/radeon $(IMAGE)/$(DEVBIN)/radeon
+	cp -f radeon.cfg $(IMAGE)/$(CFGDIR)/radeon.cfg
 
-dist: $(OBJDIR)/radeon
-	cp -f $(OBJDIR)/radeon $(DIST_DIR)/atheos/sys/drivers/appserver/video/radeon
-	cp -f radeon.cfg $(DIST_DIR)/atheos/sys/config/drivers/appserver/video/radeon.cfg
+dist: install
 
 clean:
 	-rm $(OBJDIR)/*

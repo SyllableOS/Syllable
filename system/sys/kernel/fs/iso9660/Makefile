@@ -14,10 +14,10 @@ all: $(OBJS)
 deps:
 
 install: all
-	cp -f $(FS) /system/drivers/fs/$(FS)
+	cp -f $(FS) $(IMAGE)/system/drivers/fs/$(FS)
 
-dist: all
-	cp -f $(FS) $(DIST_DIR)/atheos/sys/drivers/fs/$(FS)
+dist: install
 
 clean:
 	rm -f $(FS) $(OBJS)
+

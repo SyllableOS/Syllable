@@ -38,12 +38,9 @@ $(OBJDIR)/trident: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/trident
 
 install: all
-	mkdir -p /system/drivers/dev/graphics
-	cp -f $(OBJDIR)/trident /system/drivers/dev/graphics
+	cp -f $(OBJDIR)/trident $(IMAGE)/system/drivers/dev/graphics/
 
-dist: all
-	mkdir -p $(DIST_DIR)/atheos/sys/drivers/dev/graphics
-	cp -f $(OBJDIR)/trident $(DIST_DIR)/atheos/sys/drivers/dev/graphics
+dist: install
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/trident

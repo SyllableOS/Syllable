@@ -31,10 +31,9 @@ $(OBJDIR)/ne2000: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/ne2000
 
 install: all
-	cp -f $(OBJDIR)/ne2000 /system/drivers/dev/net/eth/8390
+	cp -f $(OBJDIR)/ne2000 $(IMAGE)/system/drivers/dev/net/eth/8390
 
-dist: all
-	cp -f $(OBJDIR)/ne2000 $(DIST_DIR)/atheos/sys/drivers/dev/net/eth/8390
+dist: install
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/ne2000

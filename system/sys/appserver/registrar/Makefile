@@ -24,11 +24,9 @@ $(OBJDIR)/registrar: $(OBJS)
 deps:
 
 install:  $(OBJDIR)/registrar
-	
-	install -s registrar $(APPBIN)/registrar
+	install -s registrar $(IMAGE)/$(APPBIN)/registrar
 
-dist:  $(OBJDIR)/registrar
-	install -s registrar $(DIST_DIR)/atheos/sys/registrar
+dist: install
 
 deps: $(OBJDIR) $(DEPS)
 

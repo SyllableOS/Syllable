@@ -38,10 +38,9 @@ $(OBJDIR)/w8378x: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/w8378x
 
 install: all
-	cp -f $(OBJDIR)/w8378x /system/drivers/dev/misc/w8378x
+	cp -f $(OBJDIR)/w8378x $(IMAGE)/system/drivers/dev/misc/w8378x
 
-dist: all
-	cp -f $(OBJDIR)/w8378x $(DIST_DIR)/atheos/sys/drivers/dev/misc/w8378x
+dist: install
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/w8378x

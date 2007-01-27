@@ -35,10 +35,9 @@ $(OBJDIR)/sis900: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/sis900
 
 install: all
-	cp -f $(OBJDIR)/sis900 /system/drivers/dev/net/eth/sis900
+	cp -f $(OBJDIR)/sis900 $(IMAGE)/system/drivers/dev/net/eth/sis900
 
-dist: all
-	cp -f $(OBJDIR)/$(DRIVER) $(DIST_DIR)/atheos/sys/drivers/dev/net/eth/$(DRIVER)
+dist: install
 
 clean:
 	-rm -f $(OBJS)

@@ -38,12 +38,9 @@ $(OBJDIR)/tdfx: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/tdfx
 
 install: all
-	mkdir -p /system/drivers/dev/graphics
-	cp -f $(OBJDIR)/tdfx /system/drivers/dev/graphics
+	cp -f $(OBJDIR)/tdfx $(IMAGE)/system/drivers/dev/graphics/
 
-dist: all
-	mkdir -p $(DIST_DIR)/atheos/sys/drivers/dev/graphics
-	cp -f $(OBJDIR)/tdfx $(DIST_DIR)/atheos/sys/drivers/dev/graphics
+dist: install
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/tdfx

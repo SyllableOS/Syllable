@@ -32,10 +32,9 @@ $(OBJDIR)/Mulvane: $(OBJS)
 #	$(CXX) -plugin $(OBJS) -o $(OBJDIR)/Mulvane -lsyllable
 
 install: $(OBJDIR)/Mulvane
-	cp -f $(OBJDIR)/Mulvane $(DEVBIN)/Mulvane
+	cp -f $(OBJDIR)/Mulvane $(IMAGE)/$(DEVBIN)/Mulvane
 
-dist: $(OBJDIR)/Mulvane
-	cp -f $(OBJDIR)/Mulvane $(DIST_DIR)/atheos/sys/drivers/appserver/decorators/Mulvane
+dist: install
 
 clean:
 	-rm $(OBJS) $(OBJDIR)/Mulvane

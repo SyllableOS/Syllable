@@ -35,10 +35,9 @@ $(OBJDIR)/eepro100: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/eepro100
 
 install: all
-	cp -f $(OBJDIR)/eepro100 /system/drivers/dev/net/eth/eepro100
+	cp -f $(OBJDIR)/eepro100 $(IMAGE)/system/drivers/dev/net/eth/eepro100
 
-dist: all
-	cp -f $(OBJDIR)/$(DRIVER) $(DIST_DIR)/atheos/sys/drivers/dev/net/eth/$(DRIVER)
+dist: install
 
 clean:
 	-rm -f $(OBJS)

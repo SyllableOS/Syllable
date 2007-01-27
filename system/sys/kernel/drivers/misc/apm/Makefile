@@ -38,10 +38,9 @@ $(OBJDIR)/apm: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/apm
 
 install: all
-	cp -f $(OBJDIR)/apm /system/drivers/dev/apm
+	cp -f $(OBJDIR)/apm $(IMAGE)/system/drivers/dev/apm
 
-dist: all
-	cp -f $(OBJDIR)/apm $(DIST_DIR)/atheos/sys/drivers/dev/apm
+dist: install
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/apm

@@ -33,10 +33,9 @@ $(OBJDIR)/pcnet32: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/pcnet32
 
 install: all
-	cp -f $(OBJDIR)/pcnet32 /system/drivers/dev/net/eth/pcnet32
+	cp -f $(OBJDIR)/pcnet32 $(IMAGE)/system/drivers/dev/net/eth/pcnet32
 
-dist: all
-	cp -f $(OBJDIR)/$(DRIVER) $(DIST_DIR)/atheos/sys/drivers/dev/net/eth/$(DRIVER)
+dist: install
 
 clean:
 	-rm -f $(OBJS)

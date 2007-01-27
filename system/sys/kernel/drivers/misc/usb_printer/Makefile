@@ -38,12 +38,9 @@ $(OBJDIR)/usb_printer: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/usb_printer
 
 install: all
-	mkdir -p /system/drivers/dev/printer
-	cp -f $(OBJDIR)/usb_printer /system/drivers/dev/printer/usb_printer
+	cp -f $(OBJDIR)/usb_printer $(IMAGE)/system/drivers/dev/printer/usb_printer
 
-dist: all
-	mkdir -p $(DIST_DIR)/atheos/sys/drivers/dev/printer
-	cp -f $(OBJDIR)/usb_printer $(DIST_DIR)/atheos/sys/drivers/dev/printer/usb_printer
+dist: install
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/usb_printer

@@ -30,10 +30,9 @@ $(DRIVER): $(OBJS)
 deps:
 
 install: $(DRIVER)
-	cp -f $(DRIVER) $(DEVBIN)/mga
+	cp -f $(DRIVER) $(IMAGE)/$(DEVBIN)/mga
 
-dist: $(DRIVER)
-	cp -f $(DRIVER) $(DIST_DIR)/atheos/sys/drivers/appserver/video/
+dist: install
 
 clean:
 	-rm $(OBJS) $(DRIVER)

@@ -29,10 +29,9 @@ $(OBJDIR)/Win98: $(OBJS)
 	$(CXX) -plugin -Xlinker -Bsymbolic $(OBJS) -nodefaultlibs -o $(OBJDIR)/Win98
 
 install: $(OBJDIR)/Win98
-	cp -f $(OBJDIR)/Win98 $(DEVBIN)/Win98
+	cp -f $(OBJDIR)/Win98 $(IMAGE)/$(DEVBIN)/Win98
 
-dist: $(OBJDIR)/Win98
-	cp -f $(OBJDIR)/Win98 $(DIST_DIR)/atheos/sys/drivers/appserver/decorators/Win98
+dist: install
 
 clean:
 	-rm $(OBJS) $(OBJDIR)/Win98

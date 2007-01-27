@@ -29,10 +29,9 @@ $(OBJDIR)/tdfx: $(OBJS)
 deps:
 
 install: $(OBJDIR)/tdfx
-	cp -f $(OBJDIR)/tdfx $(DEVBIN)/tdfx
+	cp -f $(OBJDIR)/tdfx $(IMAGE)/$(DEVBIN)/tdfx
 
-dist: $(OBJDIR)/tdfx
-	cp -f $(OBJDIR)/tdfx $(DIST_DIR)/atheos/sys/drivers/appserver/video/tdfx
+dist: install
 
 clean:
 	-rm $(OBJS) $(OBJDIR)/tdfx

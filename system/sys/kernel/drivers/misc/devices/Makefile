@@ -38,10 +38,9 @@ $(OBJDIR)/devices: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/devices
 
 install: all
-	cp -f $(OBJDIR)/devices /system/drivers/dev/devices
+	cp -f $(OBJDIR)/devices $(IMAGE)/system/drivers/dev/devices
 
 dist: all
-	cp -f $(OBJDIR)/devices $(DIST_DIR)/atheos/sys/drivers/dev/devices
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/devices

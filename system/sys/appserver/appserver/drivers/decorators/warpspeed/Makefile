@@ -29,10 +29,9 @@ $(OBJDIR)/WarpSpeed: $(OBJS)
 deps:
 
 install: $(OBJDIR)/WarpSpeed
-	cp -f $(OBJDIR)/WarpSpeed $(DEVBIN)/WarpSpeed
+	cp -f $(OBJDIR)/WarpSpeed $(IMAGE)/$(DEVBIN)/WarpSpeed
 
-dist: $(OBJDIR)/WarpSpeed
-	cp -f $(OBJDIR)/WarpSpeed $(DIST_DIR)/atheos/sys/drivers/appserver/decorators/WarpSpeed
+dist: install
 
 clean:
 	-rm $(OBJS) $(OBJDIR)/WarpSpeed

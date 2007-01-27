@@ -29,10 +29,9 @@ $(OBJDIR)/Red: $(OBJS)
 	$(CXX) -plugin -Xlinker -Bsymbolic $(OBJS) -nodefaultlibs -o $(OBJDIR)/Red
 
 install: $(OBJDIR)/Red
-	cp -f $(OBJDIR)/Red $(DEVBIN)/Red
+	cp -f $(OBJDIR)/Red $(IMAGE)/$(DEVBIN)/Red
 
-dist: $(OBJDIR)/Red
-	cp -f $(OBJDIR)/Red $(DIST_DIR)/atheos/sys/drivers/appserver/decorators/Red
+dist: install
 
 clean:
 	-rm $(OBJS) $(OBJDIR)/Red

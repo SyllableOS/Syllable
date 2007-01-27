@@ -29,10 +29,9 @@ $(OBJDIR)/Amiga: $(OBJS)
 deps:
 
 install: $(OBJDIR)/Amiga
-	cp -f $(OBJDIR)/Amiga $(DEVBIN)/Amiga
+	cp -f $(OBJDIR)/Amiga $(IMAGE)/$(DEVBIN)/Amiga
 
-dist: $(OBJDIR)/Amiga
-	cp -f $(OBJDIR)/Amiga $(DIST_DIR)/atheos/sys/drivers/appserver/decorators/Amiga
+dist: install
 
 clean:
 	-rm $(OBJS) $(OBJDIR)/Amiga

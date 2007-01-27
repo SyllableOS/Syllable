@@ -38,12 +38,9 @@ $(OBJDIR)/vt82xx: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/vt82xx
 
 install: all
-	mkdir -p /system/drivers/dev/sound/
-	cp -f $(OBJDIR)/vt82xx /system/drivers/dev/sound/vt82xx
+	cp -f $(OBJDIR)/vt82xx $(IMAGE)/system/drivers/dev/sound/vt82xx
 
-
-dist: all
-	cp -f $(OBJDIR)/$(DRIVER) $(DIST_DIR)/atheos/sys/drivers/dev/sound/$(DRIVER)
+dist: install
 
 clean:
 	rm -f $(OBJS)

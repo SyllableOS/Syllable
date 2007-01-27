@@ -1,4 +1,3 @@
-
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2001 Kurt Skauen
@@ -560,7 +559,7 @@ void system_init( void )
 			}
 
 			printk( "Start init...\n" );
-			execve( "/boot/atheos/sys/bin/init", apzBootShellArgs, g_apzEnviron );
+			execve( "/boot/atheos/system/bin/init", apzBootShellArgs, g_apzEnviron );
 			printk( "Failed to load boot-shell\n" );
 		}
 		else
@@ -576,7 +575,7 @@ void system_init( void )
 				if ( nBytesRead <= 0 )
 				{
 					snooze( 1000000 );
-					printk( "...boot shell finished\n" );
+					printk( "... boot shell finished\n" );
 					put_fd( psFile );
 					do_exit( 0 );
 				}
@@ -750,7 +749,7 @@ int init_kernel( char *pRealMemBase, int nKernelSize )
 	sprintf( zVersion, "%d.%d.%d", ( int )( ( g_nKernelVersion >> 32 ) & 0xffff ), 
 				( int )( ( g_nKernelVersion >> 16 ) % 0xffff ), ( int )( g_nKernelVersion & 0xffff ) );
 
-	printk( "Syllable %s Build %s starting...\n", zVersion, g_pzBuildVersion );
+	printk( "Syllable %s build %s starting...\n", zVersion, g_pzBuildVersion );
 
 	nKernelSize = ( nKernelSize + PAGE_SIZE - 1 ) & PAGE_MASK;
 	
@@ -864,3 +863,4 @@ void init_kernel_mb( MultiBootHeader_s * psInfo )
 
 	init_kernel( ( char * )0x10000, nKernelSize );
 }
+

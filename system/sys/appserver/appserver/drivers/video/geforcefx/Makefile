@@ -29,10 +29,9 @@ $(OBJDIR)/geforcefx: $(OBJS)
 deps:
 
 install: $(OBJDIR)/geforcefx
-	cp -f $(OBJDIR)/geforcefx $(DEVBIN)/geforcefx
+	cp -f $(OBJDIR)/geforcefx $(IMAGE)/$(DEVBIN)/geforcefx
 
-dist: $(OBJDIR)/geforcefx
-	cp -f $(OBJDIR)/geforcefx $(DIST_DIR)/atheos/sys/drivers/appserver/video/geforcefx
+dist: install
 
 clean:
 	-rm $(OBJS) $(OBJDIR)/geforcefx

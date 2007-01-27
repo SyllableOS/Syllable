@@ -1,13 +1,10 @@
-CFLAGS   = -Wall -c -g -O2
-CPPFLAGS = $(CFLAGS)
+CFLAGS   = -c
+CXXFLAGS = $(CFLAGS)
 AOPTS   = -c
 
 LIBBIN = /usr/lib
 
 LIBNAME = libcpia.a
-
-CC	= gcc
-LL	= ld
 
 OBJS	= cpiacam.o iosystem.o iocapture.o iocpia.o iovp.o colorspace.o
 
@@ -24,10 +21,9 @@ $(OBJDIR)/$(LIBNAME): $(OBJS)
 	ar -cru $(OBJDIR)/$(LIBNAME) $(OBJS) 
 
 install: $(OBJDIR)/$(LIBNAME)
-	cp -f $(OBJDIR)/$(LIBNAME) $(LIBBIN)/$(LIBNAME)
+	cp -f $(OBJDIR)/$(LIBNAME) $(IMAGE)/$(LIBBIN)/$(LIBNAME)
 
-dist: $(OBJDIR)/$(LIBNAME)
-	cp -f $(OBJDIR)/$(LIBNAME) $(DIST_DIR)/atheos/sys/$(LIBBIN)/$(LIBNAME)
+dist: install
 
 deps: $(OBJDIR) $(DEPS)
 
@@ -35,3 +31,4 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*.d
 
 -include $(OBJDIR)/*.d
+

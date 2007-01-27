@@ -82,12 +82,9 @@ $(OBJDIR)/acpi: $(OBJS) Makefile
 	strip --strip-all $(OBJDIR)/acpi
 
 install: all
-	mkdir -p /system/drivers/dev/bus
-	cp -f $(OBJDIR)/acpi /system/drivers/dev/bus/acpi
+	cp -f $(OBJDIR)/acpi $(IMAGE)/system/drivers/dev/bus/acpi
 
 dist: all
-	mkdir -p $(DIST_DIR)/atheos/sys/drivers/dev/bus
-	cp -f $(OBJDIR)/acpi $(DIST_DIR)/atheos/sys/drivers/dev/bus/acpi
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/acpi

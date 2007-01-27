@@ -29,10 +29,9 @@ $(OBJDIR)/trident: $(OBJS)
 	$(CXX) -plugin -Xlinker -Bsymbolic -nodefaultlibs $(OBJS) -o $(OBJDIR)/trident
 
 install: $(OBJDIR)/trident
-	cp -f $(OBJDIR)/trident $(DEVBIN)/trident
+	cp -f $(OBJDIR)/trident $(IMAGE)/$(DEVBIN)/trident
 
-dist: $(OBJDIR)/trident
-	cp -f $(OBJDIR)/trident $(DIST_DIR)/atheos/sys/drivers/appserver/video/trident
+dist: install
 
 clean:
 	-rm $(OBJS) $(OBJDIR)/trident

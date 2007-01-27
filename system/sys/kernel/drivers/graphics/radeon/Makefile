@@ -38,12 +38,9 @@ $(OBJDIR)/radeon: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/radeon
 
 install: all
-	mkdir -p /system/drivers/dev/graphics
-	cp -f $(OBJDIR)/radeon /system/drivers/dev/graphics
+	cp -f $(OBJDIR)/radeon $(IMAGE)/system/drivers/dev/graphics/
 
-dist: all
-	mkdir -p $(DIST_DIR)/atheos/sys/drivers/dev/graphics
-	cp -f $(OBJDIR)/radeon $(DIST_DIR)/atheos/sys/drivers/dev/graphics
+dist: install
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/radeon

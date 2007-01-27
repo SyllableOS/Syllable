@@ -38,12 +38,9 @@ $(OBJDIR)/riva: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/riva
 
 install: all
-	mkdir -p /system/drivers/dev/graphics
-	cp -f $(OBJDIR)/riva /system/drivers/dev/graphics
+	cp -f $(OBJDIR)/riva $(IMAGE)/system/drivers/dev/graphics/
 
-dist: all
-	mkdir -p $(DIST_DIR)/atheos/sys/drivers/dev/graphics
-	cp -f $(OBJDIR)/riva $(DIST_DIR)/atheos/sys/drivers/dev/graphics
+dist: install
 
 clean:
 	-rm -f -R $(OBJS) $(OBJDIR)

@@ -44,10 +44,9 @@ $(OBJDIR)/ata: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/ata
 
 install: all
-	cp -f $(OBJDIR)/ata /system/drivers/dev/disk/ata
+	cp -f $(OBJDIR)/ata $(IMAGE)/system/drivers/dev/disk/ata
 
-dist: all
-	cp -f $(OBJDIR)/ata $(DIST_DIR)/atheos/sys/drivers/dev/disk/ata
+dist: install
 
 clean:
 	-rm -f $(OBJS)

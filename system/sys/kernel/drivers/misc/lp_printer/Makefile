@@ -38,14 +38,10 @@ $(OBJDIR)/lp: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/lp      
 
 install: all
-	-mkdir -p /system/drivers/dev/printer
-	cp -f $(OBJDIR)/lp /system/drivers/dev/printer/lp
+	cp -f $(OBJDIR)/lp $(IMAGE)/system/drivers/dev/printer/lp
 
-dist: all
-	-mkdir -p $(DIST_DIR)/atheos/sys/drivers/dev/printer
-	cp -f $(OBJDIR)/lp $(DIST_DIR)/atheos/sys/drivers/dev/printer/lp
+dist: install
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/lp      
-
 

@@ -31,10 +31,9 @@ $(OBJDIR)/via: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/via
 
 install: all
-	cp -f $(OBJDIR)/via /system/drivers/dev/net/eth/via
+	cp -f $(OBJDIR)/via $(IMAGE)/system/drivers/dev/net/eth/via
 
-dist: all
-	cp -f $(OBJDIR)/via $(DIST_DIR)/atheos/sys/drivers/dev/net/eth/via
+dist: install
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/via

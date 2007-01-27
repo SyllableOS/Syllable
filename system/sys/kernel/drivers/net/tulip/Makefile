@@ -33,10 +33,9 @@ $(OBJDIR)/tulip: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/$(DRIVER)
 
 install: all
-	cp -f $(OBJDIR)/tulip /system/drivers/dev/net/eth/tulip
+	cp -f $(OBJDIR)/tulip $(IMAGE)/system/drivers/dev/net/eth/tulip
 
-dist: all
-	cp -f $(OBJDIR)/$(DRIVER) $(DIST_DIR)/atheos/sys/drivers/dev/net/eth/$(DRIVER)
+dist: install
 
 clean:
 	-rm -f $(OBJS)

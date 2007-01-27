@@ -35,10 +35,9 @@ $(OBJDIR)/3c59x: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/3c59x
 
 install: all
-	cp -f $(OBJDIR)/3c59x /system/drivers/dev/net/eth/3c59x
+	cp -f $(OBJDIR)/3c59x $(IMAGE)/system/drivers/dev/net/eth/3c59x
 
-dist: all
-	cp -f $(OBJDIR)/$(DRIVER) $(DIST_DIR)/atheos/sys/drivers/dev/net/eth/$(DRIVER)
+dist: install
 
 clean:
 	-rm -f $(OBJS)

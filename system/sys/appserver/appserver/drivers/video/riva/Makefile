@@ -29,10 +29,9 @@ $(OBJDIR)/riva: $(OBJS)
 deps:
 
 install: $(OBJDIR)/riva
-	cp -f $(OBJDIR)/riva $(DEVBIN)/riva
+	cp -f $(OBJDIR)/riva $(IMAGE)/$(DEVBIN)/riva
 
-dist: $(OBJDIR)/riva
-	cp -f $(OBJDIR)/riva $(DIST_DIR)/atheos/sys/drivers/appserver/video/riva
+dist: install
 
 clean:
 	-rm $(OBJS) $(OBJDIR)/riva

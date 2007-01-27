@@ -33,14 +33,10 @@ $(OBJDIR)/vmware_io.o: vmware_io.cpp vmware.h
 deps:
 
 install: $(DRIVER)
-	cp -f $(DRIVER) /system/drivers/appserver/video/
+	cp -f $(DRIVER) $(IMAGE)/system/drivers/appserver/video/
 
-dist: $(DRIVER)
-	cp -f $(DRIVER) $(DIST_DIR)/atheos/sys/drivers/appserver/video/
+dist: install
 
 clean:
 	-rm $(OBJS) $(OBJDIR)/vmware
-
-install:
-	cp -f $(OBJDIR)/vmware /system/drivers/appserver/video/
 

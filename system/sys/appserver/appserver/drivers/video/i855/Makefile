@@ -29,10 +29,9 @@ $(OBJDIR)/i855: $(OBJS)
 deps:
 
 install: $(OBJDIR)/i855
-	cp -f $(OBJDIR)/i855 $(DEVBIN)/i855
+	cp -f $(OBJDIR)/i855 $(IMAGE)/$(DEVBIN)/i855
 
-dist: $(OBJDIR)/i855
-	cp -f $(OBJDIR)/i855 $(DIST_DIR)/atheos/sys/drivers/appserver/video/i855
+dist: install
 
 clean:
 	-rm $(OBJS) $(OBJDIR)/i855

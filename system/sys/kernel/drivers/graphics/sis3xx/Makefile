@@ -38,12 +38,9 @@ $(OBJDIR)/sis3xx: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/sis3xx
 
 install: all
-	mkdir -p /system/drivers/dev/graphics
-	cp -f $(OBJDIR)/sis3xx /system/drivers/dev/graphics
+	cp -f $(OBJDIR)/sis3xx $(IMAGE)/system/drivers/dev/graphics/
 
-dist: all
-	mkdir -p $(DIST_DIR)/atheos/sys/drivers/dev/graphics
-	cp -f $(OBJDIR)/sis3xx $(DIST_DIR)/atheos/sys/drivers/dev/graphics
+dist: install
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/sis3xx

@@ -1,4 +1,3 @@
-
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2001 Kurt Skauen
@@ -180,7 +179,7 @@ static int resize_hash_table( HashTable_s * psTable )
 
 	if ( psTable->ht_nSize & psTable->ht_nMask )
 	{
-		panic( "resize_hash_table() (vfs) Inconsistency between hashtable size %d and mask %d!\n", psTable->ht_nSize, psTable->ht_nMask );
+		panic( "resize_hash_table() (vfs): inconsistency between hashtable size %d and mask %d!\n", psTable->ht_nSize, psTable->ht_nMask );
 	}
 
 	nPrevSize = psTable->ht_nSize;
@@ -1117,7 +1116,7 @@ static void release_fs( FileSysDesc_s *psDesc )
 	/* Do not unload bootmodule fs drivers */
 	for ( i = 0; i < g_sSysBase.ex_nBootModuleCount; i++ )
 	{
-		strcpy( zPath, "/atheos/sys/drivers/fs/" );
+		strcpy( zPath, "/atheos/system/drivers/fs/" );
 		strcat( zPath, psDesc->fs_zName );
 		if ( !strcmp( zPath, g_sSysBase.ex_asBootModules[i].bm_pzModuleArgs ) )
 		{
@@ -1336,7 +1335,7 @@ static FileSysDesc_s *load_filesystem( const char *pzName, const char *pzDeviceP
 		zPath[nPathLen] = '/';
 		zPath[nPathLen + 1] = '\0';
 	}
-	strcat( zPath, "sys/drivers/fs/" );
+	strcat( zPath, "system/drivers/fs/" );
 
 	if ( pzName != NULL )
 	{
@@ -1635,7 +1634,7 @@ status_t sys_probe_fs( int nVersion, const char *pzDevicePath, fs_info * psInfo 
 		zPath[nPathLen] = '/';
 		zPath[nPathLen + 1] = '\0';
 	}
-	strcat( zPath, "sys/drivers/fs/" );
+	strcat( zPath, "system/drivers/fs/" );
 
 	LOCK( g_hFSListSema );
 	nError = probe_device_path( zPath, pzDevicePath, psInfo, &psDesc );
@@ -2218,3 +2217,4 @@ void init_vfs_module( void )
 
 	register_debug_cmd( "dump_ino_tab", "list inodes in used/free/hash tables", dump_tables );
 }
+

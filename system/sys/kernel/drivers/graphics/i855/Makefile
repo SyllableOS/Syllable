@@ -38,12 +38,9 @@ $(OBJDIR)/i855: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/i855
 
 install: all
-	mkdir -p /system/drivers/dev/graphics
-	cp -f $(OBJDIR)/i855 /system/drivers/dev/graphics
+	cp -f $(OBJDIR)/i855 $(IMAGE)/system/drivers/dev/graphics/
 
-dist: all
-	mkdir -p $(DIST_DIR)/atheos/sys/drivers/dev/graphics
-	cp -f $(OBJDIR)/i855 $(DIST_DIR)/atheos/sys/drivers/dev/graphics
+dist: install
 
 clean:
 	-rm -f -R $(OBJS) $(OBJDIR)

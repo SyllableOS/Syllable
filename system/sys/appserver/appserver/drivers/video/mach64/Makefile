@@ -29,10 +29,9 @@ $(OBJDIR)/mach64: $(OBJS)
 	$(CXX) -plugin -Xlinker -Bsymbolic -nodefaultlibs $(OBJS) -o $(OBJDIR)/mach64
 
 install: $(OBJDIR)/mach64
-	cp -f $(OBJDIR)/mach64 $(DEVBIN)/mach64
+	cp -f $(OBJDIR)/mach64 $(IMAGE)/$(DEVBIN)/mach64
 
-dist: $(OBJDIR)/mach64
-	cp -f $(OBJDIR)/mach64 $(DIST_DIR)/atheos/sys/drivers/appserver/video/mach64
+dist: install
 
 clean:
 	-rm $(OBJDIR)/*

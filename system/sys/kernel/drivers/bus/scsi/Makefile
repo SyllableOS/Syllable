@@ -40,12 +40,9 @@ $(OBJDIR)/scsi: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/scsi
 
 install: all
-	mkdir -p /system/drivers/dev/bus
-	cp -f $(OBJDIR)/scsi /system/drivers/dev/bus/scsi
+	cp -f $(OBJDIR)/scsi $(IMAGE)/system/drivers/dev/bus/scsi
 
-dist: all
-	mkdir -p $(DIST_DIR)/atheos/sys/drivers/dev/bus
-	cp -f $(OBJDIR)/scsi $(DIST_DIR)/atheos/sys/drivers/dev/bus/scsi
+dist: install
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/scsi

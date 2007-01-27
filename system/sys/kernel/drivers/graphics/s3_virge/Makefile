@@ -38,12 +38,9 @@ $(OBJDIR)/s3_virge: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/s3_virge
 
 install: all
-	mkdir -p /system/drivers/dev/graphics
-	cp -f $(OBJDIR)/s3_virge /system/drivers/dev/graphics
+	cp -f $(OBJDIR)/s3_virge $(IMAGE)/system/drivers/dev/graphics/
 
-dist: all
-	mkdir -p $(DIST_DIR)/atheos/sys/drivers/dev/graphics
-	cp -f $(OBJDIR)/s3_virge $(DIST_DIR)/atheos/sys/drivers/dev/graphics
+dist: install
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/s3_virge

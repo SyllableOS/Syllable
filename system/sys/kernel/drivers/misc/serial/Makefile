@@ -38,10 +38,9 @@ $(OBJDIR)/serial: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/serial
 
 install: all
-	cp -f $(OBJDIR)/serial /system/drivers/dev/misc/serial
+	cp -f $(OBJDIR)/serial $(IMAGE)/system/drivers/dev/misc/serial
 
-dist: all
-	cp -f $(OBJDIR)/serial $(DIST_DIR)/atheos/sys/drivers/dev/misc/serial
+dist: install
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/serial

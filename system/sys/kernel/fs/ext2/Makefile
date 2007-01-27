@@ -37,10 +37,9 @@ $(OBJDIR)/ext2: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/ext2
 
 install: all
-	cp -f $(OBJDIR)/ext2 /system/drivers/fs/ext2
+	cp -f $(OBJDIR)/ext2 $(IMAGE)/system/drivers/fs/ext2
 
-dist: all
-	cp -f $(OBJDIR)/$(FS) $(DIST_DIR)/atheos/sys/drivers/fs/$(FS)
+dist: install
 
 clean:
 	rm -f $(OBJS) $(OBJDIR)/ext2

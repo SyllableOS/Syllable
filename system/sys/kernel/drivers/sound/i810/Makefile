@@ -40,11 +40,9 @@ $(OBJDIR)/i810_audio: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/i810_audio
 
 install: all
-	cp -f $(OBJDIR)/$(DRIVER) /system/drivers/dev/sound/$(DRIVER)
+	cp -f $(OBJDIR)/$(DRIVER) $(IMAGE)/system/drivers/dev/sound/$(DRIVER)
 
-dist: all
-	mkdir -p $(DIST_DIR)/atheos/sys/drivers/dev/sound
-	cp -f $(OBJDIR)/$(DRIVER) $(DIST_DIR)/atheos/sys/drivers/dev/sound/$(DRIVER)
+dist: install
 
 clean:
 	-rm -f $(OBJS)

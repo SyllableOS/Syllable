@@ -38,10 +38,9 @@ $(OBJDIR)/ps2aux: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/ps2aux
 
 install: all
-	cp -f $(OBJDIR)/ps2aux /system/drivers/dev/misc/ps2aux
+	cp -f $(OBJDIR)/ps2aux $(IMAGE)/system/drivers/dev/misc/ps2aux
 
-dist: all
-	cp -f $(OBJDIR)/ps2aux $(DIST_DIR)/atheos/sys/drivers/dev/misc/ps2aux
+dist: install
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/ps2aux

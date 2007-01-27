@@ -29,10 +29,9 @@ $(OBJDIR)/ps2mouse: $(OBJS)
 deps:
 
 install: $(OBJDIR)/ps2mouse
-	cp -f $(OBJDIR)/ps2mouse $(DEVBIN)/ps2mouse
+	cp -f $(OBJDIR)/ps2mouse $(IMAGE)/$(DEVBIN)/ps2mouse
 
-dist: $(OBJDIR)/ps2mouse
-	cp -f $(OBJDIR)/ps2mouse $(DIST_DIR)/atheos/sys/drivers/appserver/input/ps2mouse
+dist: install
 
 clean:
 	-rm $(OBJS) $(OBJDIR)/ps2mouse

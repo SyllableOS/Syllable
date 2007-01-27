@@ -24,15 +24,14 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/nvidia: $(OBJS)
-	gcc -plugin $(OBJS) -o $(OBJDIR)/nvidia -lsyllable -lstdc++
+	$(CXX) -plugin $(OBJS) -o $(OBJDIR)/nvidia -lsyllable
 
 deps:
 
 install: $(OBJDIR)/nvidia
-	cp -f $(OBJDIR)/nvidia $(DEVBIN)/nvidia
+	cp -f $(OBJDIR)/nvidia $(IMAGE)/$(DEVBIN)/nvidia
 
-dist: $(OBJDIR)/nvidia
-	cp -f $(OBJDIR)/nvidia $(DIST_DIR)/atheos/sys/drivers/appserver/video/nvidia
+dist: install
 
 clean:
 	-rm $(OBJS) $(OBJDIR)/nvidia

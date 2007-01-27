@@ -38,10 +38,9 @@ $(OBJDIR)/random: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/random
 
 install: all
-	cp -f $(OBJDIR)/random /system/drivers/dev/random
+	cp -f $(OBJDIR)/random $(IMAGE)/system/drivers/dev/random
 
 dist: all
-	cp -f $(OBJDIR)/random $(DIST_DIR)/atheos/sys/drivers/dev/random
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/random

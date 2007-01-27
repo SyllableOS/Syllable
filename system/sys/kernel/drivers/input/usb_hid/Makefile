@@ -38,14 +38,10 @@ $(OBJDIR)/usb_hid: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/usb_hid
 
 install: all
-	mkdir -p /system/drivers/dev/input
-	cp -f $(OBJDIR)/usb_hid /system/drivers/dev/input/usb_hid
+	cp -f $(OBJDIR)/usb_hid $(IMAGE)/system/drivers/dev/input/usb_hid
 
-dist: all
-	mkdir -p $(DIST_DIR)/atheos/sys/drivers/dev/input
-	cp -f $(OBJDIR)/usb_hid $(DIST_DIR)/atheos/sys/drivers/dev/input/usb_hid
+dist: install
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/usb_hid
-
 

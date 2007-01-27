@@ -43,10 +43,9 @@ $(OBJDIR)/ramfs.o: ramfs.c
 deps:
 
 install: all
-	install -s $(OBJDIR)/$(FS) /system/drivers/fs/$(FS)
+	install -s $(OBJDIR)/$(FS) $(IMAGE)/system/drivers/fs/$(FS)
 
-dist: all
-	install -s $(OBJDIR)/$(FS) $(DIST_DIR)/atheos/sys/drivers/fs/$(FS)
+dist: install
 
 clean:
 	rm -f $(OBJS)

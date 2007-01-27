@@ -29,10 +29,9 @@ $(OBJDIR)/Photon: $(OBJS)
 	$(CXX) -plugin -Xlinker -Bsymbolic $(OBJS) -nodefaultlibs -o $(OBJDIR)/Photon
 
 install: $(OBJDIR)/Photon
-	cp -f $(OBJDIR)/Photon $(DEVBIN)/Photon
+	cp -f $(OBJDIR)/Photon $(IMAGE)/$(DEVBIN)/Photon
 
-dist: $(OBJDIR)/Photon
-	cp -f $(OBJDIR)/Photon $(DIST_DIR)/atheos/sys/drivers/appserver/decorators/Photon
+dist: install
 
 clean:
 	-rm $(OBJS) $(OBJDIR)/Photon

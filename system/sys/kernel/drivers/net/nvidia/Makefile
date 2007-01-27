@@ -35,10 +35,9 @@ $(OBJDIR)/forcedeth: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/forcedeth
 
 install: all
-	cp -f $(OBJDIR)/forcedeth /system/drivers/dev/net/eth/forcedeth
+	cp -f $(OBJDIR)/forcedeth $(IMAGE)/system/drivers/dev/net/eth/forcedeth
 
-dist: all
-	cp -f $(OBJDIR)/$(DRIVER) $(DIST_DIR)/atheos/sys/drivers/dev/net/eth/$(DRIVER)
+dist: install
 
 clean:
 	-rm -f $(OBJS)

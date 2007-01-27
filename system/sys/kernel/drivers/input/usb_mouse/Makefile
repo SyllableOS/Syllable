@@ -38,12 +38,9 @@ $(OBJDIR)/usb_mouse: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/usb_mouse
 
 install: all
-	mkdir -p /system/drivers/dev/input
-	cp -f $(OBJDIR)/usb_mouse /system/drivers/dev/input/usb_mouse
+	cp -f $(OBJDIR)/usb_mouse $(IMAGE)/system/drivers/dev/input/usb_mouse
 
-dist: all
-	mkdir -p $(DIST_DIR)/atheos/sys/drivers/dev/input
-	cp -f $(OBJDIR)/usb_mouse $(DIST_DIR)/atheos/sys/drivers/dev/input/usb_mouse
+dist: install
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/usb_mouse

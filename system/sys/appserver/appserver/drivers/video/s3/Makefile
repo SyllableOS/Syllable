@@ -29,10 +29,9 @@ $(OBJDIR)/s3_virge: $(OBJS)
 deps:
 
 install: $(OBJDIR)/s3_virge
-	cp -f $(OBJDIR)/s3_virge $(DEVBIN)/s3_virge
+	cp -f $(OBJDIR)/s3_virge $(IMAGE)/$(DEVBIN)/s3_virge
 
-dist: $(OBJDIR)/s3_virge
-	cp -f $(OBJDIR)/s3_virge $(DIST_DIR)/atheos/sys/drivers/appserver/video/s3_virge
+dist: install
 
 clean:
 	-rm $(OBJS) $(OBJDIR)/s3_virge

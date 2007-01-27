@@ -35,10 +35,9 @@ $(OBJDIR)/dp83815: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/dp83815
 
 install: all
-	cp -f $(OBJDIR)/$(DRIVER) /system/drivers/dev/net/eth/$(DRIVER)
+	cp -f $(OBJDIR)/$(DRIVER) $(IMAGE)/system/drivers/dev/net/eth/$(DRIVER)
 
-dist: all
-	cp -f $(OBJDIR)/$(DRIVER) $(DIST_DIR)/atheos/sys/drivers/dev/net/eth/$(DRIVER)
+dist: install
 
 clean:
 	-rm -f $(OBJS)

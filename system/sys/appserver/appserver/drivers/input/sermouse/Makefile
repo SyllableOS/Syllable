@@ -29,10 +29,9 @@ $(OBJDIR)/sermouse: $(OBJS)
 deps:
 
 install: $(OBJDIR)/sermouse
-	cp -f $(OBJDIR)/sermouse $(DEVBIN)/sermouse
+	cp -f $(OBJDIR)/sermouse $(IMAGE)/$(DEVBIN)/sermouse
 
-dist: $(OBJDIR)/sermouse
-	cp -f $(OBJDIR)/sermouse $(DIST_DIR)/atheos/sys/drivers/appserver/input/sermouse
+dist: install
 
 clean:
 	-rm $(OBJS) $(OBJDIR)/sermouse

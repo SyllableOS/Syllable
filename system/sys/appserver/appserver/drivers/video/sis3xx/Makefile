@@ -27,11 +27,10 @@ $(OBJDIR)/sis3xx: $(OBJS)
 	$(CXX) -plugin -Xlinker -Bsymbolic -nodefaultlibs $(OBJS) -o $(OBJDIR)/sis3xx
 
 install: $(OBJDIR)/sis3xx
-	cp -f $(OBJDIR)/sis3xx $(DEVBIN)/sis3xx
+	cp -f $(OBJDIR)/sis3xx $(IMAGE)/$(DEVBIN)/sis3xx
 
 
-dist: $(OBJDIR)/sis3xx
-	cp -f $(OBJDIR)/sis3xx $(DIST_DIR)/atheos/sys/drivers/appserver/video/sis3xx
+dist: install
 
 clean:
 	-rm $(OBJS) $(OBJDIR)/sis3xx

@@ -29,13 +29,10 @@ $(OBJDIR)/usbkeyboard: $(OBJS)
 deps:
 
 install: $(OBJDIR)/usbkeyboard
-	cp -f $(OBJDIR)/usbkeyboard $(DEVBIN)/usbkeyboard
+	cp -f $(OBJDIR)/usbkeyboard $(IMAGE)/$(DEVBIN)/usbkeyboard
 
-dist: $(OBJDIR)/usbkeyboard
-	cp -f $(OBJDIR)/usbkeyboard $(DIST_DIR)/atheos/sys/drivers/appserver/input/usbkeyboard
+dist: install
 
 clean:
 	-rm $(OBJS) $(OBJDIR)/usbkeyboard
-
-
 

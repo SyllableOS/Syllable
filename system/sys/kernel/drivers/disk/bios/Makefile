@@ -38,10 +38,9 @@ $(OBJDIR)/bios: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/bios
 
 install: all
-	cp -f $(OBJDIR)/bios /system/drivers/dev/disk/bios
+	cp -f $(OBJDIR)/bios $(IMAGE)/system/drivers/dev/disk/bios
 
-dist: all
-	cp -f $(OBJDIR)/bios $(DIST_DIR)/atheos/sys/drivers/dev/disk/bios
+dist: install
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/bios

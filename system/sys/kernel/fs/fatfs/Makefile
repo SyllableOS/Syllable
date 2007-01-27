@@ -46,10 +46,9 @@ $(OBJDIR)/fatfs: $(OBJS) Makefile
 deps:
 
 install: all
-	cp -f $(OBJDIR)/fatfs /system/drivers/fs/fatfs
+	cp -f $(OBJDIR)/fatfs $(IMAGE)/system/drivers/fs/fatfs
 
-dist: all
-	cp -f $(OBJDIR)/fatfs $(DIST_DIR)/atheos/sys/drivers/fs/fatfs
+dist: install
 
 clean:
 	rm -f $(OBJS) $(OBJDIR)/fatfs

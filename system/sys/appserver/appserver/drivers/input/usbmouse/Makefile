@@ -29,10 +29,9 @@ $(OBJDIR)/usbmouse: $(OBJS)
 deps:
 
 install: $(OBJDIR)/usbmouse
-	cp -f $(OBJDIR)/usbmouse $(DEVBIN)/usbmouse
+	cp -f $(OBJDIR)/usbmouse $(IMAGE)/$(DEVBIN)/usbmouse
 
-dist: $(OBJDIR)/usbmouse
-	cp -f $(OBJDIR)/usbmouse $(DIST_DIR)/atheos/sys/drivers/appserver/input/usbmouse
+dist: install
 
 clean:
 	-rm $(OBJS) $(OBJDIR)/usbmouse

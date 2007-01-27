@@ -38,13 +38,10 @@ $(OBJDIR)/ps2: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/ps2
 
 install: all
-	cp -f $(OBJDIR)/ps2 /system/drivers/dev/ps2
+	cp -f $(OBJDIR)/ps2 $(IMAGE)/system/drivers/dev/ps2
 
-dist: all
-	cp -f $(OBJDIR)/ps2 $(DIST_DIR)/atheos/sys/drivers/dev/ps2
+dist: install
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/ps2
-
-
 

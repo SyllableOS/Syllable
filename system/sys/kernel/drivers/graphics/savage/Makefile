@@ -37,12 +37,10 @@ $(OBJDIR)/savage: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/savage
 
 install: all
-	mkdir -p /system/drivers/dev/graphics
-	cp -f $(OBJDIR)/savage /system/drivers/dev/graphics
+	cp -f $(OBJDIR)/savage $(IMAGE)/system/drivers/dev/graphics/
 
-dist: all
-	mkdir -p $(DIST_DIR)/atheos/sys/drivers/dev/graphics
-	cp -f $(OBJDIR)/savage $(DIST_DIR)/atheos/sys/drivers/dev/graphics
+dist: install
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/savage
+

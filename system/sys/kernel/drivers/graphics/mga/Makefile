@@ -38,12 +38,9 @@ $(OBJDIR)/mga: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/mga
 
 install: all
-	mkdir -p /system/drivers/dev/graphics
-	cp -f $(OBJDIR)/mga /system/drivers/dev/graphics
+	cp -f $(OBJDIR)/mga $(IMAGE)/system/drivers/dev/graphics/
 
-dist: all
-	mkdir -p $(DIST_DIR)/atheos/sys/drivers/dev/graphics
-	cp -f $(OBJDIR)/mga $(DIST_DIR)/atheos/sys/drivers/dev/graphics
+dist: install
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/mga

@@ -29,10 +29,9 @@ $(OBJDIR)/Next: $(OBJS)
 deps:
 
 install: $(OBJDIR)/Next
-	cp -f $(OBJDIR)/Next $(DEVBIN)/Next
+	cp -f $(OBJDIR)/Next $(IMAGE)/$(DEVBIN)/Next
 
-dist: $(OBJDIR)/Next
-	cp -f $(OBJDIR)/Next $(DIST_DIR)/atheos/sys/drivers/appserver/decorators/Next
+dist: install
 
 clean:
 	-rm $(OBJS) $(OBJDIR)/Next

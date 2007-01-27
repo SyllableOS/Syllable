@@ -1,4 +1,4 @@
-CFLAGS   = -D__KERNEL__ -fno-PIC -c -O2 -Wall
+CFLAGS   = -D__KERNEL__ -fno-PIC -c
 AFLAGS   = -c
 
 C_INCLUDE_PATH=$(ATHEOS_INCLUDE_PATH)
@@ -18,7 +18,7 @@ $(OBJDIR)/%.o : %.c
 	$(CC) $(CFLAGS) $< -o $@
 
 $(OBJDIR)/%.o : %.cpp
-	$(CC) $(CFLAGS) $< -o $@
+	$(CXX) $(CFLAGS) $< -o $@
 
 $(OBJDIR)/%.o : %.s
 	$(CC) $(AFLAGS) -x assembler-with-cpp $< -o $@
@@ -35,13 +35,12 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/cpia: $(OBJS) Makefile
-	gcc -nostdlib $(OBJS) -lgcc -lkernel -o $(OBJDIR)/cpia
+	$(CC) -nostdlib $(OBJS) -lgcc -lkernel -o $(OBJDIR)/cpia
 
 install: all
-	cp -f $(OBJDIR)/cpia /system/drivers/dev/video/cpia
+	cp -f $(OBJDIR)/cpia $(IMAGE)/system/drivers/dev/video/cpia
 
-dist: all
-	cp -f $(OBJDIR)/cpia $(DIST_DIR)/atheos/sys/drivers/dev/video/cpia
+dist: install
 
 clean:
 	-rm $(OBJS)

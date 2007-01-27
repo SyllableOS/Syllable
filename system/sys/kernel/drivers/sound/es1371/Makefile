@@ -40,10 +40,9 @@ $(OBJDIR)/es1371: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/es1371
 
 install: all
-	cp -f $(OBJDIR)/es1371 /system/drivers/dev/audio/es1371
+	cp -f $(OBJDIR)/es1371 $(IMAGE)/system/drivers/dev/audio/es1371
 
-dist: all
-	cp -f $(OBJDIR)/$(DRIVER) $(DIST_DIR)/atheos/sys/drivers/dev/audio/$(DRIVER)
+dist: install
 
 clean:
 	-rm -f $(OBJS)

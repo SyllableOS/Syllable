@@ -60,23 +60,15 @@ catalogs/libsyllable.h: catalogs/libsyllable.cd
 deps: $(OBJDIR) catalogs $(DEPS)
 
 install: $(OBJDIR)/$(LIBNAME)
-	strip --strip-all $(OBJDIR)/$(LIBNAME)
-	install -s $(OBJDIR)/$(LIBNAME) $(LIBBIN)/$(LIBNAME)
-	ln -sf $(LIBNAME) $(LIBBIN)/libsyllable.so
-	cp catalogs/libsyllable.catalog /system/resources/catalogs/
+	install -s $(OBJDIR)/$(LIBNAME) $(IMAGE)/$(LIBBIN)/$(LIBNAME)
+	ln -sf $(LIBNAME) $(IMAGE)/$(LIBBIN)/libsyllable.so
+	cp catalogs/libsyllable.catalog $(IMAGE)/system/resources/catalogs/
 	for CATALOG in $(CATALOGS); do \
 		echo $$CATALOG; \
-		cp catalogs/$$CATALOG/libsyllable.catalog /system/resources/catalogs/$$CATALOG/; \
+		cp catalogs/$$CATALOG/libsyllable.catalog $(IMAGE)/system/resources/catalogs/$$CATALOG/; \
 	done
 
-dist: $(OBJDIR)/$(LIBNAME)
-	install -s $(OBJDIR)/$(LIBNAME) $(DIST_DIR)/atheos/sys/libs/$(LIBNAME)
-	ln -sf $(LIBNAME) $(DIST_DIR)/atheos/sys/libs/libsyllable.so
-	cp catalogs/libsyllable.catalog $(DIST_DIR)/atheos/sys/resources/catalogs/
-	for CATALOG in $(CATALOGS); do \
-		echo $$CATALOG; \
-		cp catalogs/$$CATALOG/libsyllable.catalog $(DIST_DIR)/atheos/sys/resources/catalogs/$$CATALOG/; \
-	done
+dist: install
 
 doc:
 	-rm -R docs/*

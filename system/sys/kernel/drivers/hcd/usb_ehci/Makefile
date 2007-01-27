@@ -38,12 +38,9 @@ $(OBJDIR)/usb_ehci: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/usb_ehci
 
 install: all
-	mkdir -p /system/drivers/dev/hcd
-	cp -f $(OBJDIR)/usb_ehci /system/drivers/dev/hcd/usb_ehci
+	cp -f $(OBJDIR)/usb_ehci $(IMAGE)/system/drivers/dev/hcd/usb_ehci
 
-dist: all
-	mkdir -p $(DIST_DIR)/atheos/sys/drivers/dev/hcd
-	cp -f $(OBJDIR)/usb_ehci $(DIST_DIR)/atheos/sys/drivers/dev/hcd/usb_ehci
+dist: install
 
 clean:
 	rm -f $(OBJS) $(OBJDIR)/usb_ehci

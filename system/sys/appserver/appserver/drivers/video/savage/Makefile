@@ -29,10 +29,10 @@ $(OBJDIR)/savage: $(OBJS)
 deps:
 
 install: $(OBJDIR)/savage
-	cp -f $(OBJDIR)/savage $(DEVBIN)/savage
+	cp -f $(OBJDIR)/savage $(IMAGE)/$(DEVBIN)/savage
 
-dist: $(OBJDIR)/savage
-	cp -f $(OBJDIR)/savage $(DIST_DIR)/atheos/sys/drivers/appserver/video/savage
+dist: install
 
 clean:
 	-rm $(OBJS) $(OBJDIR)/savage
+

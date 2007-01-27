@@ -17,8 +17,7 @@ clean:
 	@cd src/ && $(MAKE) clean
 
 install: all
-	cp -f $(DRIVER) /system/drivers/dev/audio/$(DRIVER)
+	cp -f $(DRIVER) $(IMAGE)/system/drivers/dev/audio/$(DRIVER)
 
-dist: all
-	cp -f $(DRIVER) $(DIST_DIR)/atheos/sys/drivers/dev/audio/$(DRIVER)
+dist: install
 

@@ -29,12 +29,10 @@ $(OBJDIR)/keyboard: $(OBJS)
 deps:
 
 install: $(OBJDIR)/keyboard
-	cp -f $(OBJDIR)/keyboard $(DEVBIN)/keyboard
+	cp -f $(OBJDIR)/keyboard $(IMAGE)/$(DEVBIN)/keyboard
 
-dist: $(OBJDIR)/keyboard
-	cp -f $(OBJDIR)/keyboard $(DIST_DIR)/atheos/sys/drivers/appserver/input/keyboard
+dist: install
 
 clean:
 	-rm $(OBJS) $(OBJDIR)/keyboard
-
 

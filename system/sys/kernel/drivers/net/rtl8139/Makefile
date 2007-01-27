@@ -31,10 +31,9 @@ $(OBJDIR)/rtl8139: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/rtl8139
 
 install: all
-	cp -f $(OBJDIR)/rtl8139 /system/drivers/dev/net/eth/rtl8139
+	cp -f $(OBJDIR)/rtl8139 $(IMAGE)/system/drivers/dev/net/eth/rtl8139
 
-dist: all
-	cp -f $(OBJDIR)/rtl8139 $(DIST_DIR)/atheos/sys/drivers/dev/net/eth/rtl8139
+dist: install
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/rtl8139

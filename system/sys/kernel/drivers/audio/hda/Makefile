@@ -38,24 +38,10 @@ $(OBJDIR)/hda: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/hda
 
 install: all
-	mkdir -p /system/drivers/dev/audio
-	cp -f $(OBJDIR)/hda /system/drivers/dev/audio
+	cp -f $(OBJDIR)/hda $(IMAGE)/system/drivers/dev/audio/
 
-dist: all
-	mkdir -p $(DIST_DIR)/atheos/sys/drivers/dev/audio
-	cp -f $(OBJDIR)/hda $(DIST_DIR)/atheos/sys/drivers/dev/audio
+dist: install
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/hda
-
-
-
-
-
-
-
-
-
-
-
 

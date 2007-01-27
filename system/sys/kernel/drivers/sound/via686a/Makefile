@@ -40,10 +40,9 @@ $(OBJDIR)/via686a: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/via686a
 
 install: all
-	cp -f $(OBJDIR)/$(DRIVER) /system/drivers/dev/audio/$(DRIVER)
+	cp -f $(OBJDIR)/$(DRIVER) $(IMAGE)/system/drivers/dev/audio/$(DRIVER)
 
-dist: all
-	cp -f $(OBJDIR)/$(DRIVER) $(DIST_DIR)/atheos/sys/drivers/dev/audio/$(DRIVER)
+dist: install
 
 clean:
 	-rm -f $(OBJS)

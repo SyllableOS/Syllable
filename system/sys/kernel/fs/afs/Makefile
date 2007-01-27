@@ -40,10 +40,9 @@ $(OBJDIR)/$(FS): $(OBJS) Makefile
 deps:
 
 install: all
-	cp -f $(OBJDIR)/$(FS) /system/drivers/fs/$(FS)
+	cp -f $(OBJDIR)/$(FS) $(IMAGE)/system/drivers/fs/$(FS)
 
-dist: all
-	cp -f $(OBJDIR)/$(FS) $(DIST_DIR)/atheos/sys/drivers/fs/$(FS)
+dist: install
 
 clean:
 	rm -f $(OBJS)

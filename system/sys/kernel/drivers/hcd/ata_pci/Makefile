@@ -39,10 +39,9 @@ $(OBJDIR)/ata_pci: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/ata_pci
 
 install: all
-	cp -f $(OBJDIR)/ata_pci /system/drivers/dev/hcd/ata_pci
+	cp -f $(OBJDIR)/ata_pci $(IMAGE)/system/drivers/dev/hcd/ata_pci
 
-dist: all
-	cp -f $(OBJDIR)/ata_pci $(DIST_DIR)/atheos/sys/drivers/dev/hcd/ata_pci
+dist: install
 
 clean:
 	-rm -f $(OBJS)

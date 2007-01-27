@@ -38,12 +38,9 @@ $(OBJDIR)/nvidia: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/nvidia
 
 install: all
-	mkdir -p /system/drivers/dev/graphics
-	cp -f $(OBJDIR)/nvidia /system/drivers/dev/graphics
+	cp -f $(OBJDIR)/nvidia $(IMAGE)/system/drivers/dev/graphics/
 
-dist: all
-	mkdir -p $(DIST_DIR)/atheos/sys/drivers/dev/graphics
-	cp -f $(OBJDIR)/nvidia $(DIST_DIR)/atheos/sys/drivers/dev/graphics
+dist: install
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/nvidia

@@ -38,12 +38,9 @@ $(OBJDIR)/vmware: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/vmware
 
 install: all
-	mkdir -p /system/drivers/dev/graphics
-	cp -f $(OBJDIR)/vmware /system/drivers/dev/graphics
+	cp -f $(OBJDIR)/vmware $(IMAGE)/system/drivers/dev/graphics/
 
-dist: all
-	mkdir -p $(DIST_DIR)/atheos/sys/drivers/dev/graphics
-	cp -f $(OBJDIR)/vmware $(DIST_DIR)/atheos/sys/drivers/dev/graphics
+dist: install
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/vmware

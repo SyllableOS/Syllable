@@ -29,10 +29,9 @@ $(OBJDIR)/Drow: $(OBJS)
 	$(CXX) -plugin -Xlinker -Bsymbolic $(OBJS) -nodefaultlibs -o $(OBJDIR)/Drow
 
 install: $(OBJDIR)/Drow
-	cp -f $(OBJDIR)/Drow $(DEVBIN)/Drow
+	cp -f $(OBJDIR)/Drow $(IMAGE)/$(DEVBIN)/Drow
 
-dist: $(OBJDIR)/Drow
-	cp -f $(OBJDIR)/Drow $(DIST_DIR)/atheos/sys/drivers/appserver/decorators/Drow
+dist: install
 
 clean:
 	-rm $(OBJS) $(OBJDIR)/Drow

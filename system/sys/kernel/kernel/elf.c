@@ -1,4 +1,3 @@
-
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2001 Kurt Skauen
@@ -73,7 +72,6 @@ static uint32 elf_sysv_sym_hash( const char *pzName )
 
 	while ( *pzName )
 	{
-		
 		h = ( h << 4 ) + ( *pzName++ );
 		if( ( g = ( h & 0xf0000000 ) ) )
 			h ^= g >> 24;
@@ -224,7 +222,7 @@ static int open_library_file( const char *pzName, const char *pzSearchPath, char
 			zSysLibPath[nPathLen + 1] = '\0';
 		}
 
-		strcat( zSysLibPath, "sys/libs/" );
+		strcat( zSysLibPath, "system/libs/" );
 		pzSearchPath = zSysLibPath;
 	}
 
@@ -1045,7 +1043,7 @@ static status_t memmap_instance( ElfImageInst_s *psInst, int nMode )
 
 	if ( strcmp( psImage->im_zName, "libkernel.so" ) == 0 )
 	{
-		printk( "Iiik sombody tried to memmap the kernel image!!!\n" );
+		printk( "Eeek sombody tried to memmap the kernel image!!!\n" );
 		return ( 0 );
 	}
 	strcpy( zTextName, "ro_" );
@@ -2591,7 +2589,7 @@ static void init_boot_modules( void )
 		{
 			continue;
 		}
-		strcpy( zFullPath, "/boot/atheos/sys" );
+		strcpy( zFullPath, "/boot/atheos/system" );
 		j = strlen( zFullPath );
 		while ( *pzPath != '\0' && isspace( *pzPath ) == false )
 		{
@@ -2659,3 +2657,4 @@ void init_elf_loader( void )
 	create_kernel_image();
 	init_boot_modules();
 }
+

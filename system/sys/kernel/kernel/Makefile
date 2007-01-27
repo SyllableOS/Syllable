@@ -68,19 +68,19 @@ $(OBJDIR)/smp_entry.bin: smp_entry.asm
 	nasm smp_entry.asm -o $(OBJDIR)/smp_entry.bin
 
 install: all
-	-mv /system/kernel.so /system/kernel.so.orig
-	-mv /system/drivers/net/if/eth_if /system/drivers/net/if/eth_if.orig
-	-mv /system/libs/libkernel.so /system/libs/libkernel.so.orig
+	-mv /system/kernel.so /system/kernel.so.original
+	-mv /system/drivers/net/if/eth_if /system/drivers/net/if/eth_if.original
+	-mv /system/libs/libkernel.so /system/libs/libkernel.so.original
 	cp -f $(OBJDIR)/kernel.so	/system/kernel.so
 	cp -f $(OBJDIR)/eth_if		/system/drivers/net/if/eth_if
 	$(CP) $(OBJDIR)/libkernel.so	/system/libs/libkernel.so
 	strip --strip-all /system/kernel.so
 
 dist: all
-	cp -f $(OBJDIR)/kernel.so	$(DIST_DIR)/atheos/sys/kernel.so
-	cp -f $(OBJDIR)/eth_if		$(DIST_DIR)/atheos/sys/drivers/net/if/eth_if
-	$(CP) $(OBJDIR)/libkernel.so	$(DIST_DIR)/atheos/sys/libs/libkernel.so
-	strip --strip-all $(DIST_DIR)/atheos/sys/kernel.so
+	cp -f $(OBJDIR)/kernel.so	$(IMAGE)/system/kernel.so
+	cp -f $(OBJDIR)/eth_if		$(IMAGE)/system/drivers/net/if/eth_if
+	$(CP) $(OBJDIR)/libkernel.so	$(IMAGE)/system/libs/libkernel.so
+	strip --strip-all $(IMAGE)/system/kernel.so
 
 #
 # dependencies for kernel
@@ -111,5 +111,4 @@ clean:
 	rm -f $(OBJS) $(DEPS) $(IF_OBJS) $(OBJDIR)/version.o $(OBJDIR)/kernel.so $(OBJDIR)/libkernel.so $(OBJDIR)/eth_if $(OBJDIR)/kernel.exports.c
 
 -include $(OBJDIR)/*.d
-
 

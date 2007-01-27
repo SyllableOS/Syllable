@@ -38,10 +38,9 @@ $(OBJDIR)/keybd: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/keybd
 
 install: all
-	cp -f $(OBJDIR)/keybd /system/drivers/dev/keybd
+	cp -f $(OBJDIR)/keybd $(IMAGE)/system/drivers/dev/keybd
 
-dist: all
-	cp -f $(OBJDIR)/keybd $(DIST_DIR)/atheos/sys/drivers/dev/keybd
+dist: install
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/keybd

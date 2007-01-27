@@ -29,10 +29,9 @@ $(OBJDIR)/Beish: $(OBJS)
 	$(CXX) -plugin -Xlinker -Bsymbolic $(OBJS) -nodefaultlibs -o $(OBJDIR)/Beish
 
 install: $(OBJDIR)/Beish
-	cp -f $(OBJDIR)/Beish $(DEVBIN)/Beish
+	cp -f $(OBJDIR)/Beish $(IMAGE)/$(DEVBIN)/Beish
 
-dist: $(OBJDIR)/Beish
-	cp -f $(OBJDIR)/Beish $(DIST_DIR)/atheos/sys/drivers/appserver/decorators/Beish
+dist: install
 
 clean:
 	-rm $(OBJS) $(OBJDIR)/Beish

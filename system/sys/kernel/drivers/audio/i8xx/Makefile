@@ -38,22 +38,10 @@ $(OBJDIR)/i8xx: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/i8xx
 
 install: all
-	mkdir -p /system/drivers/dev/audio
-	cp -f $(OBJDIR)/i8xx /system/drivers/dev/audio
+	cp -f $(OBJDIR)/i8xx $(IMAGE)/system/drivers/dev/audio/
 
-dist: all
-	mkdir -p $(DIST_DIR)/atheos/sys/drivers/dev/audio
-	cp -f $(OBJDIR)/i8xx $(DIST_DIR)/atheos/sys/drivers/dev/audio
+dist: install
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/i8xx
-
-
-
-
-
-
-
-
-
 

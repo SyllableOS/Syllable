@@ -37,10 +37,9 @@ $(OBJDIR)/mini_appserver: $(OBJS)
 	$(CXX) $(OBJS) -o $(OBJDIR)/appserver $(shell freetype-config --libs) $(LIBS) -lm
 
 install: $(OBJDIR)/appserver
-	cp -f $(OBJDIR)/appserver /system/appserver
+	cp -f $(OBJDIR)/appserver $(IMAGE)/system/appserver
 
-dist: $(OBJDIR)/appserver
-	cp -f $(OBJDIR)/appserver $(DIST_DIR)/atheos/sys/appserver
+dist: install
 
 deps:
 
@@ -48,5 +47,4 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*.d $(OBJDIR)/appserver
 
 -include $(OBJDIR)/*.d
-
 

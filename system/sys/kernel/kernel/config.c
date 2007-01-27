@@ -1,4 +1,3 @@
-
 /*
  *  The Syllable kernel
  *  Configuration file management
@@ -174,14 +173,14 @@ status_t read_kernel_config_entry( char *pzName, uint8 **pBuffer, size_t *pnSize
 void write_kernel_config( void )
 {
 
-	char zPath[255];	/* /atheos/sys/config/kernel.cfg */
+	char zPath[255];	/* /system/config/kernel.cfg */
 	
 	if( g_bDisableKernelConfig )
 		return;
 
 	/* Build path */
 	sys_get_system_path( zPath, 256 );
-	strcat( zPath, "sys/config/kernel.cfg" );
+	strcat( zPath, "system/config/kernel.cfg" );
 
 	/* Open file */
 	g_nConfigFd = open( zPath, O_WRONLY | O_CREAT | O_TRUNC );
@@ -231,7 +230,7 @@ void init_kernel_config( void )
 		{
 			continue;
 		}
-		strcpy( zFullPath, "/boot/atheos/sys" );
+		strcpy( zFullPath, "/boot/atheos/system" );
 		j = strlen( zFullPath );
 		while ( *pzPath != '\0' && isspace( *pzPath ) == false )
 		{
