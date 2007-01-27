@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.106
+# Version 0.6.107
 # Copyright (c) 2002-2007 Kaj de Vos
 # License: GPL 2 or any later version
 
@@ -872,7 +872,7 @@ def prepareModule target
 		ENV[var] = value
 	end
 
-	for var in ['CFLAGS', 'CXXFLAGS']
+	for var in ['CFLAGS', 'CXXFLAGS' 'IMAGE']
 		@log.extra var + ': ' + ((value = ENV[var]) ? value : '')
 	end
 end
@@ -1662,6 +1662,8 @@ else
 	ENV['DIST_DIR'] = @image
 end
 
+ENV['IMAGE'] = @systemRoot
+
 # Isolate build in staging area from the build host?
 @isolateStage = @crossCompile || @settings['isolate-stage']
 # Or run newly built binaries and libraries on the build host to bootstrap?
@@ -1674,7 +1676,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.6.106',
+	puts 'Syllable Build System 0.6.107',
 		'Copyright (c) 2002-2007 Kaj de Vos',
 		'License: GPL 2 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
@@ -1849,7 +1851,9 @@ else
 				when 'configure'	then configure	target
 				when 'make'			then make		target
 				when 'test'			then test		target
-				when 'install'		then install	target
+				when 'install'
+					ENV['IMAGE'] = '/'
+					install target
 				when 'stage'
 					build :staging, target if exists? @stage or prepare target
 				when 'image'
