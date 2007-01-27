@@ -1,0 +1,36 @@
+authors
+	Kristian Van Der Vliet
+	Kaj de Vos
+status				testing
+
+inherits			gnu
+
+headline			The GNU Portable Library Tool
+description
+	GNU libTool is a generic library support script. LibTool hides the complexity of using shared libraries behind a consistent, portable interface.
+licenses			GPL
+
+home				www.gnu.org/software/libtool/
+packages			libtool/libtool-1.5.22
+
+build-needs
+	automake
+	autoconf
+
+; KVDV: I can't think of a way to get mkinstalldirs into the build cleanly, so
+; for now they're in the "patches" directory and added that way, as a hack.
+patch
+	aclocal -I .
+	automake
+	autoconf
+	cd libltdl
+	aclocal -I ..
+	automake
+	autoconf
+
+build-dir			.
+
+no-strip
+
+documentation		README COPYING NEWS ChangeLog AUTHORS THANKS TODO
+
