@@ -14,14 +14,14 @@ ping: ping.o
 deps:
 
 install: $(EXE)
-	cp -f ifconfig /bin/ifconfig
-	cp -f route /bin/route
-	cp -f ping /bin/ping
+	cp -f ifconfig /system/bin/ifconfig
+	cp -f route /system/bin/route
+	cp -f ping /system/bin/ping
 
 dist: $(EXE)
-	cp -f ifconfig $(DIST_DIR)/atheos/sys/bin/ifconfig
-	cp -f route $(DIST_DIR)/atheos/sys/bin/route
-	cp -f ping $(DIST_DIR)/atheos/sys/bin/ping
+	cp -f ifconfig $(IMAGE)/system/bin/ifconfig
+	cp -f route $(IMAGE)/system/bin/route
+	cp -f ping $(IMAGE)/system/bin/ping
 
 clean:
 	-rm ifconfig.o route.o ping.o

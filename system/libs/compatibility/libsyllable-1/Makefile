@@ -2,7 +2,7 @@ name				:= LibSyllable-1
 package				:= $(name).zip
 system-libs-path	:= /system/libs
 install-path		:= $(system-libs-path)
-distro-path			:= $(DIST_DIR)/atheos/sys/libs
+distro-path			:= $(IMAGE)/system/libs
 
 .PHONY: all deps clean install dist
 

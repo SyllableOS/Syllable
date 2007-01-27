@@ -85,15 +85,15 @@ Desktop::Desktop() : os::Window( os::Rect(), "desktop", MSG_DESKTOP_TITLE, os::W
 		/* Create default links */
 		os::String zTemp = os::String( pzHome ) + ( "/Desktop/" );
 		#ifdef NEW_FILESYSTEM
-		create_desktop_icon( "/boot/applications", MSG_DESKTOP_SYMLINKS_APPLICATIONS, "/system/icons/applications.png" );
+		create_desktop_icon( "/applications", MSG_DESKTOP_SYMLINKS_APPLICATIONS, "/system/icons/applications.png" );
 		create_desktop_icon( "/", MSG_DESKTOP_SYMLINKS_DISKS, "" );
-		create_desktop_icon( "/boot/applications/preferences", MSG_DESKTOP_SYMLINKS_PREFERENCES, "/system/icons/settings.png" );
-		create_desktop_icon( "/boot/system/bin/aterm", MSG_DESKTOP_SYMLINKS_TERMINAL, "/system/icons/aterm.png" );
+		create_desktop_icon( "/applications/preferences", MSG_DESKTOP_SYMLINKS_PREFERENCES, "/system/icons/settings.png" );
+		create_desktop_icon( "/system/bin/aterm", MSG_DESKTOP_SYMLINKS_TERMINAL, "/system/icons/aterm.png" );
 		#else
-		create_desktop_icon( "/boot/atheos/Applications", MSG_DESKTOP_SYMLINKS_APPLICATIONS, "/system/icons/applications.png" );
+		create_desktop_icon( "/Applications", MSG_DESKTOP_SYMLINKS_APPLICATIONS, "/system/icons/applications.png" );
 		create_desktop_icon( "/", MSG_DESKTOP_SYMLINKS_DISKS, "" );
-		create_desktop_icon( "/boot/atheos/Applications/Preferences", MSG_DESKTOP_SYMLINKS_PREFERENCES, "/system/icons/settings.png" );
-		create_desktop_icon( "/boot/atheos/sys/bin/aterm", MSG_DESKTOP_SYMLINKS_TERMINAL, "/system/icons/aterm.png" );
+		create_desktop_icon( "/Applications/Preferences", MSG_DESKTOP_SYMLINKS_PREFERENCES, "/system/icons/settings.png" );
+		create_desktop_icon( "/system/bin/aterm", MSG_DESKTOP_SYMLINKS_TERMINAL, "/system/icons/aterm.png" );
 		#endif
 		create_desktop_icon( pzHome, MSG_DESKTOP_SYMLINKS_HOME, "/system/icons/home.png" );
 		create_desktop_icon( os::String( pzHome ) + "/Trash", MSG_DESKTOP_SYMLINKS_TRASH, "/system/icons/trash.png" );
@@ -333,3 +333,4 @@ void Desktop::LoadBackground()
 		
 	m_pcView->SetBackground( m_pcBackground );
 }
+

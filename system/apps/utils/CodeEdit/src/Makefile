@@ -19,10 +19,10 @@ clean:
 	@-rmdir ../objs
 
 dist: $(EXE)
-	cp -a $(EXE) $(DIST_DIR)/atheos/sys/bin/
+	cp -a $(EXE) $(IMAGE)/system/bin/
 
 install: $(EXE)
-	cp -a $(EXE) /bin/
+	cp -a $(EXE) /system/bin/
 
 astyle:
 	@echo Running astyle on all source files.

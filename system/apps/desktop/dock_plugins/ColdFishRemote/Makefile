@@ -34,12 +34,10 @@ catalogs:
 	done;
 
 install:  $(OBJDIR)/ColdFishRemote.so
-	mkdir -p $(APPBIN)
 	install -s $(OBJDIR)/ColdFishRemote.so $(APPBIN)/ColdFishRemote.so
 
 dist:  $(OBJDIR)/ColdFishRemote.so
-	mkdir -p $(DIST_DIR)/atheos/sys/extensions/dock
-	install -s $(OBJDIR)/ColdFishRemote.so $(DIST_DIR)/atheos/sys/extensions/dock/ColdFishRemote.so
+	install -s $(OBJDIR)/ColdFishRemote.so $(IMAGE)/$(APPBIN)/ColdFishRemote.so
 
 deps: $(OBJDIR)
 

@@ -56,10 +56,10 @@ $(OBJDIR)/dumpattrib: $(dumpattrib_OBJS)
 deps:
 
 install: all
-	cp -f $(EXES) /bin/
+	cp -f $(EXES) /system/bin/
 
 dist: all
-	cp -f $(EXES) $(DIST_DIR)/atheos/sys/bin/
+	cp -f $(EXES) $(IMAGE)/system/bin/
 
 clean:
 	-rm -Rv $(OBJDIR)

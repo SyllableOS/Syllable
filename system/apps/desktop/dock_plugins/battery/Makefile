@@ -1,4 +1,5 @@
-#Makefile for Battery.so
+# Makefile for Battery.so
+
 COPTS = -c -fexceptions -ffast-math -I../include
 
 APPBIN = /system/extensions/dock
@@ -38,16 +39,11 @@ clean:
 
 deps:
 
-dist: all
-	@echo Distribution...
-	@mkdir -p $(DIST_DIR)/atheos/sys/extensions/dock
-	@cp Battery.so $(DIST_DIR)/atheos/sys/extensions/dock/Battery.so
-
 install: all
 	@echo Installing...
-	@mkdir -p /system/extensions/dock
-	@cp Battery.so /system/extensions/dock/Battery.so
+	@cp Battery.so $(APPBIN)/Battery.so
 
-
-
+dist: all
+	@echo Distribution...
+	@cp Battery.so $(IMAGE)/$(APPBIN)/Battery.so
 

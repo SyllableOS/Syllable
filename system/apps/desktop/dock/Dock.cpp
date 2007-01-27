@@ -752,8 +752,7 @@ void DockWin::AddPlugin( os::String zPath )
 	/* Check if the plugin path is in "/system/extensions/dock" */
 	os::Path cPath( zPath.c_str() );
 	if( !( os::String( cPath.GetDir().GetPath() ) == "/system/extensions/dock" ||
-		   os::String( cPath.GetDir().GetPath() ) == "/boot/atheos/sys/extensions/dock" ||
-		   os::String( cPath.GetDir().GetPath() ) == "/boot/system/extensions/dock" ) )
+		   os::String( cPath.GetDir().GetPath() ) == "/boot/atheos/system/extensions/dock" ) )
 	{
 		os::Alert* pcAlert = new os::Alert( "Dock", MSG_PLUGIN_ALERT_TEXT,
 													os::Alert::ALERT_INFO,

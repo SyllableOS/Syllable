@@ -28,7 +28,7 @@ install: all
 	cp -f $(EXE) /system/bin/
 
 dist: all
-	install -s $(EXE) $(DIST_DIR)/atheos/sys/bin/$(EXE)
+	install -s $(EXE) $(IMAGE)/system/bin/$(EXE)
 
 clean:
 	-rm $(EXE)

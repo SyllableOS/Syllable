@@ -25,7 +25,7 @@ APIBrowserWindow :: APIBrowserWindow(Window* pcParent, const Rect& r ): Window( 
 	treeView = new TreeView(r,"TreeView", 0, CF_FOLLOW_ALL,WID_WILL_DRAW );
 	treeView->InsertColumn( "", (int)(COORD_MAX) );
 	treeView->SetHasColumnHeader( false );
-	PopulateTree( "/atheos/sys/include", 1 );
+	PopulateTree( "/system/include", 1 );
 	treeView->SetSelChangeMsg( new Message( MSG_FILE_SELECTED ) );
 	/* Code View */
 	pcEditor = new CodeView( r, "CodeView", "", CF_FOLLOW_ALL );
@@ -81,7 +81,7 @@ void APIBrowserWindow ::PopulateTree( const String path, const int indent )
 		
 		newpath = path;  newpath += "/";  newpath += filename;
 		fsNode.SetTo( newpath );
-		if( ! ( filename == "."  ||  filename == ".."  || filename == "ainc" || filename == "include" ) )
+		if( ! ( filename == "."  ||  filename == ".."  || filename == "include" ) )
 		{
 			node = new TreeViewStringNode();			
 			node->AppendString(filename);
@@ -326,9 +326,4 @@ void APIBrowserWindow::Find(const String &pcString, bool bDown, bool bCaseSensit
 	UpdateStatus("Search string not found!");
 	}
 }
-
-
-
-
-
 

@@ -263,7 +263,7 @@ void PrefsDockWin::UpdatePluginsList()
 	
 	try
 	{
-		pcDir = new os::Directory( "/boot/atheos/sys/extensions/dock" );
+		pcDir = new os::Directory( "/system/extensions/dock" );
 	} catch( ... )
 	{
 		return;
@@ -279,7 +279,7 @@ void PrefsDockWin::UpdatePluginsList()
 			continue;
 			
 		/* Construct path */
-		os::Path cFilePath( "/boot/atheos/sys/extensions/dock" );
+		os::Path cFilePath( "/system/extensions/dock" );
 		cFilePath.Append( zFile.c_str() );
 		
 		/* Validate entry */
@@ -486,28 +486,4 @@ int main( int argc, char *argv[] )
 	pcPrefsDockApp = new PrefsDockApp();
 	pcPrefsDockApp->Run();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

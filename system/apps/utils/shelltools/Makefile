@@ -13,7 +13,6 @@ $(OBJDIR)/%.o : %.cpp
 	@$(CXX) $(OPTS) $< -o $@
 
 
-
 OBJS := ./objs/alert.o
 
 
@@ -27,8 +26,8 @@ $(OBJDIR):
 	@mkdir objs
 	
 dist:
-	@echo Coping $(EXE) to $(DIST_DIR)/atheos/sys/bin
-	@cp -f ./objs/alert $(DIST_DIR)/atheos/sys/bin
+	@echo Coping $(EXE) to $(IMAGE)/system/bin/
+	@cp -f objs/alert $(IMAGE)/system/bin/
 
 clean:
 	@echo Removing all objects and executable.

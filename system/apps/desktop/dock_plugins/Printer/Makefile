@@ -1,4 +1,5 @@
-#Makefile for Printer.so
+# Makefile for Printer.so
+
 COPTS = -c -fexceptions -ffast-math
 
 APPBIN = /system/extensions/dock
@@ -38,13 +39,11 @@ clean:
 
 deps:
 
-dist: all
-	@echo Distribution...
-	@mkdir -p $(DIST_DIR)/atheos/sys/extensions/dock
-	@cp Printer.so $(DIST_DIR)/atheos/sys/extensions/dock/Printer.so
-
 install: all
 	@echo Installing...
-	@mkdir -p /system/extensions/dock
-	@cp Printer.so /system/extensions/dock/Printer.so
+	@cp Printer.so $(APPBIN)/Printer.so
+
+dist: all
+	@echo Distribution...
+	@cp Printer.so $(IMAGE)/$(APPBIN)/Printer.so
 

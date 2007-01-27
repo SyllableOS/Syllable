@@ -1,28 +1,27 @@
-COPTS	= -O3 -Wall -c
+COPTS	= -c
 
 OBJS	= main.o fontpanel.o screenpanel.o windowpanel.o keyboardpanel.o coloredit.o
 EXE	= guiprefs
 
-CC	= gcc
-LL	= g++
 LIBS	= -lm -lsyllable
 
 $(EXE) : $(OBJS)
-	$(LL) $(OBJS) $(LIBS) -o $@
+	$(CXX) $(OBJS) $(LIBS) -o $@
 
 deps:
 
 install: $(EXE)
-	cp -f $(EXE) /bin/$(EXE)
+	cp -f $(EXE) /system/bin/$(EXE)
 
 dist: $(EXE)
-	cp -f $(EXE) $(DIST_DIR)/atheos/sys/bin/$(EXE)
+	cp -f $(EXE) $(IMAGE)/system/bin/$(EXE)
 
 clean:
 	-rm $(OBJS)
 
 .cpp.o:
-	$(CC) $(COPTS) $< -o $@
+	$(CXX) $(COPTS) $< -o $@
 
 main.o : main.cpp
-	$(CC) $(COPTS) $< -o $@
+	$(CXX) $(COPTS) $< -o $@
+

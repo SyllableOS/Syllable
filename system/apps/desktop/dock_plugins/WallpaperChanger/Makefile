@@ -16,12 +16,10 @@ $(OBJDIR)/WallpaperChanger.so: $(OBJS)
 	rescopy -r $(OBJDIR)/WallpaperChanger.so images/*.png
 
 install:  $(OBJDIR)/WallpaperChanger.so
-	mkdir -p $(APPBIN)
 	install -s $(OBJDIR)/WallpaperChanger.so $(APPBIN)/WallpaperChanger.so
 
 dist:  $(OBJDIR)/WallpaperChanger.so
-	mkdir -p $(DIST_DIR)/atheos/sys/extensions/dock
-	install -s $(OBJDIR)/WallpaperChanger.so $(DIST_DIR)/atheos/sys/extensions/dock/WallpaperChanger.so
+	install -s $(OBJDIR)/WallpaperChanger.so $(IMAGE)/$(APPBIN)/WallpaperChanger.so
 
 deps: $(OBJDIR)
 

@@ -1,4 +1,4 @@
-DIST_TARGET_PATH := $(DIST_DIR)/atheos/sys/libs
+DIST_TARGET_PATH := $(IMAGE)/system/libs
 
 SYS_COMPAT_ARCHIVE := sys-compat.bin.tgz
 LIBC_COMPAT_ARCHIVE := libc-compat.bin.tgz

@@ -15,10 +15,10 @@ install: $(EXE)
 	ln -sf "/Applications/System Tools/Terminal" /system/bin/aterm
 
 dist: $(EXE)
-	-mkdir -p "$(DIST_DIR)/atheos/Applications/System Tools"
-	cp -f $(EXE) "$(DIST_DIR)/atheos/Applications/System Tools/Terminal"
-	addattrib "$(DIST_DIR)/atheos/Applications/System Tools/Terminal" "os::Category" "System Tools"
-	ln -sf "/Applications/System Tools/Terminal" $(DIST_DIR)/atheos/sys/bin/aterm
+	-mkdir -p "$(IMAGE)/Applications/System Tools"
+	cp -f $(EXE) "$(IMAGE)/Applications/System Tools/Terminal"
+	addattrib "$(IMAGE)/Applications/System Tools/Terminal" "os::Category" "System Tools"
+	ln -sf "/Applications/System Tools/Terminal" $(IMAGE)/system/bin/aterm
 
 clean:
 	-rm $(OBJS)

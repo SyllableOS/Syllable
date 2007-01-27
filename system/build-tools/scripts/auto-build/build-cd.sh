@@ -9,62 +9,62 @@ FILES=(	"/atheos/etc/profile, /atheos/etc/profile" 															\
 																											\
 		"/atheos/home/root/.profile, /atheos/home/root/.profile"											\
 																											\
-		"/atheos/sys/drivers/appserver/input/*, /atheos/sys/drivers/appserver/input/."						\
-		"/atheos/sys/drivers/appserver/video/*, /atheos/sys/drivers/appserver/video/."						\
-		"/atheos/sys/drivers/appserver/decorators/Photon, /atheos/sys/drivers/appserver/decorators/Photon"	\
+		"/atheos/system/drivers/appserver/input/*, /atheos/system/drivers/appserver/input/."						\
+		"/atheos/system/drivers/appserver/video/*, /atheos/system/drivers/appserver/video/."						\
+		"/atheos/system/drivers/appserver/decorators/Photon, /atheos/system/drivers/appserver/decorators/Photon"	\
 																											\
-		"/atheos/sys/drivers/dev/ps2, /atheos/sys/drivers/dev/ps2"											\
-		"/atheos/sys/drivers/dev/disk/bios, /atheos/sys/drivers/dev/disk/bios"								\
-		"/atheos/sys/drivers/dev/disk/usb, /atheos/sys/drivers/dev/disk/usb"								\
-		"/atheos/sys/drivers/dev/misc/serial, /atheos/sys/drivers/dev/misc/serial"							\
-		"/atheos/sys/drivers/dev/graphics/*, /atheos/sys/drivers/dev/graphics/."							\
+		"/atheos/system/drivers/dev/ps2, /atheos/system/drivers/dev/ps2"											\
+		"/atheos/system/drivers/dev/disk/bios, /atheos/system/drivers/dev/disk/bios"								\
+		"/atheos/system/drivers/dev/disk/usb, /atheos/system/drivers/dev/disk/usb"								\
+		"/atheos/system/drivers/dev/misc/serial, /atheos/system/drivers/dev/misc/serial"							\
+		"/atheos/system/drivers/dev/graphics/*, /atheos/system/drivers/dev/graphics/."							\
 																											\
-		"/atheos/sys/drivers/dev/bus/acpi, /atheos/sys/drivers/dev/bus/acpi"								\
-		"/atheos/sys/drivers/dev/bus/pci, /atheos/sys/drivers/dev/bus/pci"									\
-		"/atheos/sys/drivers/dev/bus/ata, /atheos/sys/drivers/dev/bus/ata"									\
-		"/atheos/sys/drivers/dev/bus/usb, /atheos/sys/drivers/dev/bus/usb"									\
-		"/atheos/sys/drivers/dev/bus/scsi, /atheos/sys/drivers/dev/bus/scsi"								\
+		"/atheos/system/drivers/dev/bus/acpi, /atheos/system/drivers/dev/bus/acpi"								\
+		"/atheos/system/drivers/dev/bus/pci, /atheos/system/drivers/dev/bus/pci"									\
+		"/atheos/system/drivers/dev/bus/ata, /atheos/system/drivers/dev/bus/ata"									\
+		"/atheos/system/drivers/dev/bus/usb, /atheos/system/drivers/dev/bus/usb"									\
+		"/atheos/system/drivers/dev/bus/scsi, /atheos/system/drivers/dev/bus/scsi"								\
 																											\
-		"/atheos/sys/drivers/dev/hcd/ata_pci, /atheos/sys/drivers/dev/hcd/ata_pci"							\
-		"/atheos/sys/drivers/dev/hcd/usb_ehci, /atheos/sys/drivers/dev/hcd/usb_ehci"						\
-		"/atheos/sys/drivers/dev/hcd/usb_uhci, /atheos/sys/drivers/dev/hcd/usb_uhci"						\
-		"/atheos/sys/drivers/dev/hcd/usb_ohci, /atheos/sys/drivers/dev/hcd/usb_ohci"						\
+		"/atheos/system/drivers/dev/hcd/ata_pci, /atheos/system/drivers/dev/hcd/ata_pci"							\
+		"/atheos/system/drivers/dev/hcd/usb_ehci, /atheos/system/drivers/dev/hcd/usb_ehci"						\
+		"/atheos/system/drivers/dev/hcd/usb_uhci, /atheos/system/drivers/dev/hcd/usb_uhci"						\
+		"/atheos/system/drivers/dev/hcd/usb_ohci, /atheos/system/drivers/dev/hcd/usb_ohci"						\
 																											\
-		"/atheos/sys/drivers/dev/input/usb_hid, /atheos/sys/drivers/dev/input/usb_hid"						\
+		"/atheos/system/drivers/dev/input/usb_hid, /atheos/system/drivers/dev/input/usb_hid"						\
 																											\
-		"/atheos/sys/drivers/fs/iso9660, /atheos/sys/drivers/fs/iso9660"									\
-		"/atheos/sys/drivers/fs/afs, /atheos/sys/drivers/fs/afs"											\
-		"/atheos/sys/drivers/fs/fatfs, /atheos/sys/drivers/fs/fatfs"										\
-		"/atheos/sys/drivers/fs/ext2, /atheos/sys/drivers/fs/ext2"											\
-		"/atheos/sys/drivers/fs/ntfs, /atheos/sys/drivers/fs/ntfs"											\
-		"/atheos/sys/drivers/fs/ramfs, /atheos/sys/drivers/fs/ramfs"										\
+		"/atheos/system/drivers/fs/iso9660, /atheos/system/drivers/fs/iso9660"									\
+		"/atheos/system/drivers/fs/afs, /atheos/system/drivers/fs/afs"											\
+		"/atheos/system/drivers/fs/fatfs, /atheos/system/drivers/fs/fatfs"										\
+		"/atheos/system/drivers/fs/ext2, /atheos/system/drivers/fs/ext2"											\
+		"/atheos/system/drivers/fs/ntfs, /atheos/system/drivers/fs/ntfs"											\
+		"/atheos/system/drivers/fs/ramfs, /atheos/system/drivers/fs/ramfs"										\
 																											\
-		"/atheos/sys/kernel.so, /atheos/sys/kernel.so"														\
+		"/atheos/system/kernel.so, /atheos/system/kernel.so"														\
 																											\
-		"/atheos/sys/libs/*, /atheos/sys/libs/."															\
+		"/atheos/system/libs/*, /atheos/system/libs/."															\
 																											\
-		"/atheos/sys/appserver, /atheos/sys/appserver"														\
+		"/atheos/system/appserver, /atheos/system/appserver"														\
 																											\
-		"/atheos/sys/config/appserver, /atheos/sys/config/appserver"										\
+		"/atheos/system/config/appserver, /atheos/system/config/appserver"										\
 																											\
-		"/atheos/sys/extensions/translators/pngtrans.so, /atheos/sys/extensions/translators/pngtrans.so"	\
+		"/atheos/system/extensions/translators/pngtrans.so, /atheos/system/extensions/translators/pngtrans.so"	\
 																											\
-		"/atheos/sys/fonts/DejaVuSans.ttf, /atheos/sys/fonts/DejaVuSans.ttf"								\
-		"/atheos/sys/fonts/DejaVuSansMono.ttf, /atheos/sys/fonts/DejaVuSansMono.ttf"						\
-		"/atheos/sys/fonts/DejaVuSansCondensed.ttf, /atheos/sys/fonts/DejaVuSansCondensed.ttf"				\
+		"/atheos/system/fonts/DejaVuSans.ttf, /atheos/system/fonts/DejaVuSans.ttf"								\
+		"/atheos/system/fonts/DejaVuSansMono.ttf, /atheos/system/fonts/DejaVuSansMono.ttf"						\
+		"/atheos/system/fonts/DejaVuSansCondensed.ttf, /atheos/system/fonts/DejaVuSansCondensed.ttf"				\
 																											\
-		"/atheos/sys/keymaps/American, /atheos/sys/keymaps/American"										\
+		"/atheos/system/keymaps/American, /atheos/system/keymaps/American"										\
 																											\
-		"/atheos/sys/bin/dbterm, /atheos/sys/bin/dbterm"													\
-		"/atheos/sys/bin/devstat, /atheos/sys/bin/devstat"													\
-		"/atheos/sys/bin/format, /atheos/sys/bin/format"													\
-		"/atheos/sys/bin/fsprobe, /atheos/sys/bin/fsprobe"													\
-		"/atheos/sys/bin/init, /atheos/sys/bin/init"														\
-		"/atheos/sys/bin/mount, /atheos/sys/bin/mount"														\
-		"/atheos/sys/bin/reboot, /atheos/sys/bin/reboot"													\
-		"/atheos/sys/bin/unmount, /atheos/sys/bin/unmount"													\
+		"/atheos/system/bin/dbterm, /atheos/system/bin/dbterm"													\
+		"/atheos/system/bin/devstat, /atheos/system/bin/devstat"													\
+		"/atheos/system/bin/format, /atheos/system/bin/format"													\
+		"/atheos/system/bin/fsprobe, /atheos/system/bin/fsprobe"													\
+		"/atheos/system/bin/init, /atheos/system/bin/init"														\
+		"/atheos/system/bin/mount, /atheos/system/bin/mount"														\
+		"/atheos/system/bin/reboot, /atheos/system/bin/reboot"													\
+		"/atheos/system/bin/unmount, /atheos/system/bin/unmount"													\
 																											\
-		"/atheos/Applications/AEdit/AEdit, /atheos/sys/bin/aedit"											\
+		"/atheos/Applications/AEdit/AEdit, /atheos/system/bin/aedit"											\
 																											\
 		"/atheos/usr/coreutils/bin/cat, /atheos/usr/local/bin/cat"											\
 		"/atheos/usr/coreutils/bin/cp, /atheos/usr/local/bin/cp"											\
@@ -113,16 +113,16 @@ declare -a LINKS
 
 # target, link
 LINKS=(	"/usr/local/bin/gzip, /atheos/usr/local/bin/gunzip"	\
-		"/usr/local/bin/bash, /atheos/sys/bin/bash"			\
-		"/usr/local/bin/bash, /atheos/sys/bin/sh"			\
-		"/usr/local/bin/pwd, /atheos/sys/bin/pwd"			\
+		"/usr/local/bin/bash, /atheos/system/bin/bash"			\
+		"/usr/local/bin/bash, /atheos/system/bin/sh"			\
+		"/usr/local/bin/pwd, /atheos/system/bin/pwd"			\
 		"/usr/ruby/bin/ruby, /atheos/usr/local/bin/ruby"	\
 )
 
 declare -a ENV
 
-ENV=(	"PATH=/usr/local/bin:/usr/grub/bin:/usr/grub/sbin:/boot/atheos/sys/bin"		\
-		"DLL_PATH=@bindir@/lib:./:/boot/atheos/sys/libs:/boot/atheos/sys"			\
+ENV=(	"PATH=/usr/local/bin:/usr/grub/bin:/usr/grub/sbin:/boot/atheos/system/bin"		\
+		"DLL_PATH=@bindir@/lib:./:/boot/atheos/system/libs:/boot/atheos/system"			\
 		"TEMP=/tmp"																	\
 		"SYSTEM=Syllable"															\
 		"COLORTERM=rxvt-16color"													\
@@ -140,26 +140,26 @@ GRUB=(	"color	cyan/blue white/blue"																		\
 		"timeout	10"																						\
 		""																									\
 		"title	Install Syllable"																			\
-		"kernel /atheos/sys/kernel.so rootfs=iso9660 root=@boot disable_config=true uspace_end=0xf7ffffff"	\
-		"module /atheos/sys/drivers/dev/bus/acpi"															\
-		"module /atheos/sys/drivers/dev/bus/pci"															\
-		"module /atheos/sys/drivers/dev/bus/ata"															\
-		"module /atheos/sys/drivers/dev/hcd/ata_pci"														\
-		"module /atheos/sys/drivers/fs/iso9660"																\
+		"kernel /atheos/system/kernel.so rootfs=iso9660 root=@boot disable_config=true uspace_end=0xf7ffffff"	\
+		"module /atheos/system/drivers/dev/bus/acpi"															\
+		"module /atheos/system/drivers/dev/bus/pci"															\
+		"module /atheos/system/drivers/dev/bus/ata"															\
+		"module /atheos/system/drivers/dev/hcd/ata_pci"														\
+		"module /atheos/system/drivers/fs/iso9660"																\
 		""																									\
 		"title	Install Syllable from a USB CD-ROM drive"													\
-		"kernel /atheos/sys/kernel.so rootfs=iso9660 root=@boot disable_config=true uspace_end=0xf7ffffff"	\
-		"module /atheos/sys/drivers/dev/bus/acpi"															\
-		"module /atheos/sys/drivers/dev/bus/pci"															\
-		"module /atheos/sys/drivers/dev/bus/ata"															\
-		"module /atheos/sys/drivers/dev/bus/usb"															\
-		"module /atheos/sys/drivers/dev/bus/scsi"															\
-		"module /atheos/sys/drivers/dev/hcd/ata_pci"														\
-		"module /atheos/sys/drivers/dev/hcd/usb_ohci"														\
-		"module /atheos/sys/drivers/dev/hcd/usb_uhci"														\
-		"module /atheos/sys/drivers/dev/hcd/usb_ehci"														\
-		"module /atheos/sys/drivers/dev/disk/usb"															\
-		"module /atheos/sys/drivers/fs/iso9660"																\
+		"kernel /atheos/system/kernel.so rootfs=iso9660 root=@boot disable_config=true uspace_end=0xf7ffffff"	\
+		"module /atheos/system/drivers/dev/bus/acpi"															\
+		"module /atheos/system/drivers/dev/bus/pci"															\
+		"module /atheos/system/drivers/dev/bus/ata"															\
+		"module /atheos/system/drivers/dev/bus/usb"															\
+		"module /atheos/system/drivers/dev/bus/scsi"															\
+		"module /atheos/system/drivers/dev/hcd/ata_pci"														\
+		"module /atheos/system/drivers/dev/hcd/usb_ohci"														\
+		"module /atheos/system/drivers/dev/hcd/usb_uhci"														\
+		"module /atheos/system/drivers/dev/hcd/usb_ehci"														\
+		"module /atheos/system/drivers/dev/disk/usb"															\
+		"module /atheos/system/drivers/fs/iso9660"																\
 )
 
 WORKING_DIR=files
@@ -307,7 +307,7 @@ function initialise()
 
 function generate_init_script()
 {
-  printf "#!/bin/sh\n\n" >> $CD_DIR/atheos/sys/init.sh
+  printf "#!/bin/sh\n\n" >> $CD_DIR/atheos/system/init.sh
 
   # Set environment variables
   COUNT=${#ENV[*]}
@@ -315,21 +315,21 @@ function generate_init_script()
 
   while [ "$INDEX" -lt "$COUNT" ]
   do
-    printf "export %s\n" "${ENV[$INDEX]}" >> $CD_DIR/atheos/sys/init.sh
+    printf "export %s\n" "${ENV[$INDEX]}" >> $CD_DIR/atheos/system/init.sh
     let "INDEX = $INDEX + 1"
   done
 
   # Create a writable /tmp for Grub
-  printf "\nmkdir /tmp" >> $CD_DIR/atheos/sys/init.sh
-  printf "\nmount -t ramfs /tmp\n" >> $CD_DIR/atheos/sys/init.sh
+  printf "\nmkdir /tmp" >> $CD_DIR/atheos/system/init.sh
+  printf "\nmount -t ramfs /tmp\n" >> $CD_DIR/atheos/system/init.sh
 
   # Start the installer
-  printf "\naterm /usr/ruby/bin/ruby /boot/Install/install.rb &\n" >> $CD_DIR/atheos/sys/init.sh
+  printf "\naterm /usr/ruby/bin/ruby /boot/Install/install.rb &\n" >> $CD_DIR/atheos/system/init.sh
 
   # Enable this to get an extra shell when testing
-  # printf "aterm &\n" >> $CD_DIR/atheos/sys/init.sh
+  # printf "aterm &\n" >> $CD_DIR/atheos/system/init.sh
 
-  chmod +x $CD_DIR/atheos/sys/init.sh
+  chmod +x $CD_DIR/atheos/system/init.sh
 }
 
 # function generate_grub_script
@@ -386,8 +386,8 @@ function copy_files()
 
   # XXXKV: This has to be hacked in right now because the script can't handle paths with spaces!
   printf "Copying System Tools\n"
-  cp -f "$BASE_DIR/atheos/Applications/System Tools/Disk Manager" "$CD_DIR/atheos/sys/bin/DiskManager"
-  cp -f "$BASE_DIR/atheos/Applications/System Tools/Terminal" "$CD_DIR/atheos/sys/bin/aterm"
+  cp -f "$BASE_DIR/atheos/Applications/System Tools/Disk Manager" "$CD_DIR/atheos/system/bin/DiskManager"
+  cp -f "$BASE_DIR/atheos/Applications/System Tools/Terminal" "$CD_DIR/atheos/system/bin/aterm"
 
   # Install Ruby (Must be done before links)
   unzip $RUBY_PACKAGE -d $CD_DIR/atheos/usr/

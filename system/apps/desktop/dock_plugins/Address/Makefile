@@ -16,12 +16,10 @@ $(OBJDIR)/Address.so: $(OBJS)
 	rescopy -r $(OBJDIR)/Address.so resources/*.png resources/*.html
 
 install:  $(OBJDIR)/Address.so
-	mkdir -p $(APPBIN)
 	install -s $(OBJDIR)/Address.so $(APPBIN)/Address.so
 
 dist:  $(OBJDIR)/Address.so
-	mkdir -p $(DIST_DIR)/atheos/sys/extensions/dock
-	install -s $(OBJDIR)/Address.so $(DIST_DIR)/atheos/sys/extensions/dock/Address.so
+	install -s $(OBJDIR)/Address.so $(IMAGE)/$(APPBIN)/Address.so
 
 deps: $(OBJDIR)
 
@@ -29,5 +27,4 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/Address.so
 
 -include $(OBJDIR)/*.d
-
 

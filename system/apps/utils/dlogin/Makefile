@@ -1,7 +1,8 @@
-#Makefile for dlogin
+# Makefile for dlogin
+
 COPTS = -c -fexceptions -ffast-math
 
-APPBIN = /bin/dlogin
+APPBIN = /system/bin
 OBJS = main.o application.o mainwindow.o loginview.o loginimageview.o commonfuncs.o shutdown.o
 
 CATALOGS = da de es hu nl ru sv
@@ -59,10 +60,11 @@ clean:
 
 deps:
 
-dist: all
-	@echo Distribution...
-	@cp dlogin $(DIST_DIR)/atheos/sys/bin/dlogin
-
 install: all
 	@echo Installing...
-	@cp dlogin /bin/dlogin
+	@cp dlogin $(APPBIN)/dlogin
+
+dist: all
+	@echo Distribution...
+	@cp dlogin $(IMAGE)/$(APPBIN)/dlogin
+

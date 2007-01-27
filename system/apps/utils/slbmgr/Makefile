@@ -27,9 +27,9 @@ catalogs:
 	done;
 
 dist: $(EXE)
-	-mkdir -p "$(DIST_DIR)/atheos/Applications/System Tools"
-	cp -f $(EXE) "$(DIST_DIR)/atheos/Applications/System Tools/System Information"
-	ln -sf "/Applications/System Tools/System Information" $(DIST_DIR)/atheos/sys/bin/SlbMgr
+	-mkdir -p "$(IMAGE)/Applications/System Tools"
+	cp -f $(EXE) "$(IMAGE)/Applications/System Tools/System Information"
+	ln -sf "/Applications/System Tools/System Information" $(IMAGE)/system/bin/SlbMgr
 
 clean:  
 	-rm -f $(OBJS)

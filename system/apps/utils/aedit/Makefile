@@ -71,9 +71,9 @@ install: all
 
 dist: all
 	strip --strip-all $(EXE)
-	mkdir -p $(DIST_DIR)/atheos/Applications/AEdit
-	install -s $(EXE) $(DIST_DIR)/atheos/Applications/AEdit/AEdit
-	ln -sf /Applications/AEdit/AEdit $(DIST_DIR)/atheos/sys/bin/$(EXE)
+	mkdir -p $(IMAGE)/Applications/AEdit
+	install -s $(EXE) $(IMAGE)/Applications/AEdit/AEdit
+	ln -sf /Applications/AEdit/AEdit $(IMAGE)/system/bin/$(EXE)
 
 clean: catalog-clean
 	-rm $(OBJS)

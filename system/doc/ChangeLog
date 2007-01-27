@@ -1,3 +1,10 @@
+* January 27 2007, Kaj de Vos *
+
+Moved /atheos/sys/ to /atheos/system/. It has been sticking out like a sore thumb
+for a long time. Now we can treat the system and an image area the same during
+building and installing. Builder now provides an $IMAGE environment variable that
+points to the chosen installation area, to replace $DIST_DIR.
+
 * January 22, 2007, Kristian Van Der Vliet *
 
 Added an additional PCI ID for the Intel Pro/100 VE to the eepro100 driver.
@@ -1287,3 +1294,4 @@ Added the following keymaps:
 * Jun 14 2002, Kristian Van Der Vliet *
 
 Implement get_tld(), set_tld() in process.c
+

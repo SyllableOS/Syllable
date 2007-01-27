@@ -30,10 +30,10 @@ $(OBJDIR)/catalogtool: $(catalogtool_OBJS)
 deps:
 
 install:
-	cp -f $(EXES) /bin/
+	cp -f $(EXES) /system/bin/
 
 dist:
-	cp -f $(EXES) $(DIST_DIR)/atheos/sys/bin/
+	cp -f $(EXES) $(IMAGE)/system/bin/
 
 clean:
 	-rm -Rv $(OBJDIR)

@@ -16,12 +16,10 @@ $(OBJDIR)/Switcher.so: $(OBJS)
 	rescopy -r $(OBJDIR)/Switcher.so images/*.png
 
 install:  $(OBJDIR)/Switcher.so
-	mkdir -p $(APPBIN)
 	install -s $(OBJDIR)/Switcher.so $(APPBIN)/Switcher.so
 
 dist:  $(OBJDIR)/Switcher.so
-	mkdir -p $(DIST_DIR)/atheos/sys/extensions/dock
-	install -s $(OBJDIR)/Switcher.so $(DIST_DIR)/atheos/sys/extensions/dock/Switcher.so
+	install -s $(OBJDIR)/Switcher.so $(IMAGE)/$(APPBIN)/Switcher.so
 
 deps: $(OBJDIR)
 

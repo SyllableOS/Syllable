@@ -29,12 +29,12 @@ fi;
 cp ../images/boot-floppy.img .
 mount -t fatfs boot-floppy.img disk
 
-cp ../$BASE/atheos/sys/kernel.so .
+cp ../$BASE/atheos/system/kernel.so .
 gzip kernel.so
 
-cp kernel.so.gz disk/atheos/sys/
-cp ../$BASE/atheos/sys/drivers/fs/ramfs disk/atheos/sys/drivers/fs/
-cp ../$BASE/atheos/sys/drivers/dev/disk/bios disk/atheos/sys/drivers/dev/disk/
+cp kernel.so.gz disk/atheos/system/
+cp ../$BASE/atheos/system/drivers/fs/ramfs disk/atheos/system/drivers/fs/
+cp ../$BASE/atheos/system/drivers/dev/disk/bios disk/atheos/system/drivers/dev/disk/
 
 unmount disk
 mv boot-floppy.img ../objs/syllable1.img
@@ -44,11 +44,11 @@ echo "Building CD boot image"
 cp ../images/boot-cd.img .
 mount -t fatfs boot-cd.img disk
 
-mv kernel.so.gz disk/atheos/sys/
-cp ../$BASE/atheos/sys/drivers/fs/iso9660 disk/atheos/sys/drivers/fs/
-cp ../$BASE/atheos/sys/drivers/dev/disk/ata disk/atheos/sys/drivers/dev/disk/
-cp ../$BASE/atheos/sys/drivers/bus/pci disk/atheos/sys/drivers/bus/
-touch disk/atheos/sys/config/kernel.cfg
+mv kernel.so.gz disk/atheos/system/
+cp ../$BASE/atheos/system/drivers/fs/iso9660 disk/atheos/system/drivers/fs/
+cp ../$BASE/atheos/system/drivers/dev/disk/ata disk/atheos/system/drivers/dev/disk/
+cp ../$BASE/atheos/system/drivers/bus/pci disk/atheos/system/drivers/bus/
+touch disk/atheos/system/config/kernel.cfg
 
 unmount disk
 mv boot-cd.img ../objs/boot.img

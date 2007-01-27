@@ -1,4 +1,4 @@
-CFLAGS := -Wall -c -O2
+CFLAGS := -c
 
 OBJDIR := objs
 
@@ -23,9 +23,9 @@ install: all
 	fi
 
 dist: all
-	cp -f $(OBJDIR)/$(LIB) $(DIST_DIR)/atheos/sys/libs/
-	if [ ! -e $(DIST_DIR)/atheos/sys/libs/libpthread.so ];then \
-		ln -s $(LIB) $(DIST_DIR)/atheos/sys/libs/libpthread.so; \
+	cp -f $(OBJDIR)/$(LIB) $(IMAGE)/system/libs/
+	if [ ! -e $(IMAGE)/system/libs/libpthread.so ];then \
+		ln -s $(LIB) $(IMAGE)/system/libs/libpthread.so; \
 	fi
 
 $(OBJDIR):

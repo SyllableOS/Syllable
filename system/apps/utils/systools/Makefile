@@ -65,12 +65,12 @@ $(OBJDIR)/strace: $(strace_OBJS)
 deps:
 
 install:
-	cp -f $(EXES) /bin/
-	chmod +x /bin/$(EXES)
+	cp -f $(EXES) /system/bin/
+	chmod +x /system/bin/$(EXES)
 
 dist:
-	cp -f $(EXES) $(DIST_DIR)/atheos/sys/bin/
-	chmod +x $(DIST_DIR)/atheos/sys/bin/mkhome
+	cp -f $(EXES) $(IMAGE)/system/bin/
+	chmod +x $(IMAGE)/system/bin/mkhome
 
 clean:
 	-rm -Rv $(OBJDIR)

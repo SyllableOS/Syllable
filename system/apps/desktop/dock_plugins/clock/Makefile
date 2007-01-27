@@ -1,4 +1,5 @@
-#Makefile for Clock.so
+# Makefile for Clock.so
+
 COPTS = -c -fexceptions -ffast-math
 
 APPBIN = /system/extensions/dock
@@ -40,13 +41,9 @@ deps:
 
 dist: all
 	@echo Distribution...
-	@mkdir -p $(DIST_DIR)/atheos/sys/extensions/dock
-	@cp Clock.so $(DIST_DIR)/atheos/sys/extensions/dock/Clock.so
+	@cp Clock.so $(DIST_DIR)/$(APPBIN)/Clock.so
 
 install: all
 	@echo Installing...
-	@mkdir -p /system/extensions/dock
-	@cp Clock.so /system/extensions/dock/Clock.so
-
-
+	@cp Clock.so $(APPBIN)/Clock.so
 

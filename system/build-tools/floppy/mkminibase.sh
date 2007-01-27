@@ -28,83 +28,83 @@ mkdir $ROOT
 
 mkdir $ROOT/disk1
 mkdir $ROOT/disk1/atheos
-mkdir $ROOT/disk1/atheos/sys
-mkdir $ROOT/disk1/atheos/sys/bin
-mkdir $ROOT/disk1/atheos/sys/fonts
+mkdir $ROOT/disk1/atheos/system
+mkdir $ROOT/disk1/atheos/system/bin
+mkdir $ROOT/disk1/atheos/system/fonts
 
 DISK=$ROOT/disk1
 
-cp -p $BASE/atheos/sys/bin/aedit $DISK/atheos/sys/bin/
-cp -p $BASE/atheos/sys/bin/aterm $DISK/atheos/sys/bin/
-cp -p $BASE/atheos/sys/bin/devstat $DISK/atheos/sys/bin/
-cp -p $BASE/atheos/sys/bin/format $DISK/atheos/sys/bin/
-cp -p $BASE/atheos/sys/bin/fsprobe $DISK/atheos/sys/bin/
-cp -p $BASE/atheos/sys/bin/init $DISK/atheos/sys/bin/
-cp -p $BASE/atheos/sys/bin/mount $DISK/atheos/sys/bin/
+cp -p $BASE/atheos/system/bin/aedit $DISK/atheos/system/bin/
+cp -p $BASE/atheos/system/bin/aterm $DISK/atheos/system/bin/
+cp -p $BASE/atheos/system/bin/devstat $DISK/atheos/system/bin/
+cp -p $BASE/atheos/system/bin/format $DISK/atheos/system/bin/
+cp -p $BASE/atheos/system/bin/fsprobe $DISK/atheos/system/bin/
+cp -p $BASE/atheos/system/bin/init $DISK/atheos/system/bin/
+cp -p $BASE/atheos/system/bin/mount $DISK/atheos/system/bin/
 
-cd $DISK/atheos/sys/bin
+cd $DISK/atheos/system/bin
 ln -s /usr/bin/bash bash
 ln -s /usr/bin/bash sh
 ln -s /usr/bin/pwd pwd
 cd ../../../../../
 
-cp -p $BASE/atheos/sys/appserver $DISK/atheos/sys/
-strip --strip-all $DISK/atheos/sys/appserver
+cp -p $BASE/atheos/system/appserver $DISK/atheos/system/
+strip --strip-all $DISK/atheos/system/appserver
 
-cp -p $BASE/atheos/sys/fonts/NimbusSanL-Regu.ttf $DISK/atheos/sys/fonts/
-cp -p $BASE/atheos/sys/fonts/SyllableConsole-Regu.ttf $DISK/atheos/sys/fonts/
+cp -p $BASE/atheos/system/fonts/NimbusSanL-Regu.ttf $DISK/atheos/system/fonts/
+cp -p $BASE/atheos/system/fonts/SyllableConsole-Regu.ttf $DISK/atheos/system/fonts/
 
 # Disk 2
 
 mkdir $ROOT/disk2
 mkdir $ROOT/disk2/atheos
-mkdir $ROOT/disk2/atheos/sys
-mkdir $ROOT/disk2/atheos/sys/bin
-mkdir $ROOT/disk2/atheos/sys/libs
-mkdir $ROOT/disk2/atheos/sys/keymaps
-mkdir $ROOT/disk2/atheos/sys/config
-mkdir $ROOT/disk2/atheos/sys/drivers
-mkdir $ROOT/disk2/atheos/sys/drivers/appserver
-mkdir $ROOT/disk2/atheos/sys/drivers/appserver/video
-mkdir $ROOT/disk2/atheos/sys/drivers/dev
-mkdir $ROOT/disk2/atheos/sys/drivers/dev/disk
-mkdir $ROOT/disk2/atheos/sys/drivers/dev/misc
+mkdir $ROOT/disk2/atheos/system
+mkdir $ROOT/disk2/atheos/system/bin
+mkdir $ROOT/disk2/atheos/system/libs
+mkdir $ROOT/disk2/atheos/system/keymaps
+mkdir $ROOT/disk2/atheos/system/config
+mkdir $ROOT/disk2/atheos/system/drivers
+mkdir $ROOT/disk2/atheos/system/drivers/appserver
+mkdir $ROOT/disk2/atheos/system/drivers/appserver/video
+mkdir $ROOT/disk2/atheos/system/drivers/dev
+mkdir $ROOT/disk2/atheos/system/drivers/dev/disk
+mkdir $ROOT/disk2/atheos/system/drivers/dev/misc
 mkdir $ROOT/disk2/atheos/etc
 mkdir $ROOT/disk2/atheos/home
 mkdir $ROOT/disk2/atheos/home/root
 
 DISK=$ROOT/disk2
 
-cp -p $BASE/atheos/sys/bin/DiskManager $DISK/atheos/sys/bin/
-strip --strip-all $DISK/atheos/sys/bin/DiskManager
+cp -p $BASE/atheos/system/bin/DiskManager $DISK/atheos/system/bin/
+strip --strip-all $DISK/atheos/system/bin/DiskManager
 
-cp -dpr $BASE/atheos/sys/libs/libc.so.1 $DISK/atheos/sys/libs/
-cp -dpr $BASE/atheos/sys/libs/libc-2.1.2.so $DISK/atheos/sys/libs/
-cp -dpr $BASE/atheos/sys/libs/libm.so.1 $DISK/atheos/sys/libs/
-cp -dpr $BASE/atheos/sys/libs/libm-2.1.2.so $DISK/atheos/sys/libs/
-cp -dpr $BASE/atheos/sys/libs/libgcc.so.1 $DISK/atheos/sys/libs/
-cp -dpr $BASE/atheos/sys/libs/libstdc++-2.so.3 $DISK/atheos/sys/libs/
-cp -dpr $BASE/atheos/sys/libs/libstdc++-3-2-2.10.0.so $DISK/atheos/sys/libs/
-cp -dpr $BASE/atheos/usr/zlib/lib/libz.so $DISK/atheos/sys/libs/
-cp -dpr $BASE/atheos/usr/zlib/lib/libz.so.1 $DISK/atheos/sys/libs/
-cp -dpr $BASE/atheos/usr/zlib/lib/libz.so.1.1.4 $DISK/atheos/sys/libs/
+cp -dpr $BASE/atheos/system/libs/libc.so.1 $DISK/atheos/system/libs/
+cp -dpr $BASE/atheos/system/libs/libc-2.1.2.so $DISK/atheos/system/libs/
+cp -dpr $BASE/atheos/system/libs/libm.so.1 $DISK/atheos/system/libs/
+cp -dpr $BASE/atheos/system/libs/libm-2.1.2.so $DISK/atheos/system/libs/
+cp -dpr $BASE/atheos/system/libs/libgcc.so.1 $DISK/atheos/system/libs/
+cp -dpr $BASE/atheos/system/libs/libstdc++-2.so.3 $DISK/atheos/system/libs/
+cp -dpr $BASE/atheos/system/libs/libstdc++-3-2-2.10.0.so $DISK/atheos/system/libs/
+cp -dpr $BASE/atheos/usr/zlib/lib/libz.so $DISK/atheos/system/libs/
+cp -dpr $BASE/atheos/usr/zlib/lib/libz.so.1 $DISK/atheos/system/libs/
+cp -dpr $BASE/atheos/usr/zlib/lib/libz.so.1.1.4 $DISK/atheos/system/libs/
 
-for l in $(ls $DISK/atheos/sys/libs/);do
-	strip --strip-all $DISK/atheos/sys/libs/$l;
+for l in $(ls $DISK/atheos/system/libs/);do
+	strip --strip-all $DISK/atheos/system/libs/$l;
 done;
 
-cp -p $BASE/atheos/sys/keymaps/American $DISK/atheos/sys/keymaps/
+cp -p $BASE/atheos/system/keymaps/American $DISK/atheos/system/keymaps/
 
-cp -p $BASE/atheos/sys/config/appserver $DISK/atheos/sys/config/
+cp -p $BASE/atheos/system/config/appserver $DISK/atheos/system/config/
 
-cp -p $BASE/atheos/sys/drivers/appserver/video/sis3xx $DISK/atheos/sys/drivers/appserver/video/
-cp -p $BASE/atheos/sys/drivers/appserver/video/trident $DISK/atheos/sys/drivers/appserver/video/
+cp -p $BASE/atheos/system/drivers/appserver/video/sis3xx $DISK/atheos/system/drivers/appserver/video/
+cp -p $BASE/atheos/system/drivers/appserver/video/trident $DISK/atheos/system/drivers/appserver/video/
 
-cp -p $BASE/atheos/sys/drivers/dev/keybd $DISK/atheos/sys/drivers/dev/
+cp -p $BASE/atheos/system/drivers/dev/keybd $DISK/atheos/system/drivers/dev/
 
-cp -p $BASE/atheos/sys/drivers/dev/disk/bios $DISK/atheos/sys/drivers/dev/disk/
+cp -p $BASE/atheos/system/drivers/dev/disk/bios $DISK/atheos/system/drivers/dev/disk/
 
-cp -p $BASE/atheos/sys/drivers/dev/misc/ps2aux $DISK/atheos/sys/drivers/dev/misc/
+cp -p $BASE/atheos/system/drivers/dev/misc/ps2aux $DISK/atheos/system/drivers/dev/misc/
 
 cp -p $BASE/atheos/etc/profile $DISK/atheos/etc/
 cp -p $BASE/atheos/etc/passwd $DISK/atheos/etc/
@@ -115,29 +115,29 @@ cp -p $BASE/atheos/home/root/.profile $DISK/atheos/home/root/
 
 mkdir $ROOT/disk3
 mkdir $ROOT/disk3/atheos
-mkdir $ROOT/disk3/atheos/sys
-mkdir $ROOT/disk3/atheos/sys/libs
-mkdir $ROOT/disk3/atheos/sys/drivers
-mkdir $ROOT/disk3/atheos/sys/drivers/appserver
-mkdir $ROOT/disk3/atheos/sys/drivers/appserver/input
-mkdir $ROOT/disk3/atheos/sys/drivers/appserver/video
-mkdir $ROOT/disk3/atheos/sys/drivers/fs
+mkdir $ROOT/disk3/atheos/system
+mkdir $ROOT/disk3/atheos/system/libs
+mkdir $ROOT/disk3/atheos/system/drivers
+mkdir $ROOT/disk3/atheos/system/drivers/appserver
+mkdir $ROOT/disk3/atheos/system/drivers/appserver/input
+mkdir $ROOT/disk3/atheos/system/drivers/appserver/video
+mkdir $ROOT/disk3/atheos/system/drivers/fs
 mkdir $ROOT/disk3/atheos/usr
 mkdir $ROOT/disk3/atheos/usr/bin
 
 DISK=$ROOT/disk3
 
-cp -dpr $BASE/atheos/sys/libs/libatheos.so.3 $DISK/atheos/sys/libs/
-strip --strip-all $DISK/atheos/sys/libs/libatheos.so.3
+cp -dpr $BASE/atheos/system/libs/libatheos.so.3 $DISK/atheos/system/libs/
+strip --strip-all $DISK/atheos/system/libs/libatheos.so.3
 
-cp -p $BASE/atheos/sys/drivers/appserver/input/* $DISK/atheos/sys/drivers/appserver/input/
+cp -p $BASE/atheos/system/drivers/appserver/input/* $DISK/atheos/system/drivers/appserver/input/
 
-cp -p $BASE/atheos/sys/drivers/appserver/video/mach64 $DISK/atheos/sys/drivers/appserver/video/
-cp -p $BASE/atheos/sys/drivers/appserver/video/nvidia $DISK/atheos/sys/drivers/appserver/video/
-cp -p $BASE/atheos/sys/drivers/appserver/video/s3_virge $DISK/atheos/sys/drivers/appserver/video/
+cp -p $BASE/atheos/system/drivers/appserver/video/mach64 $DISK/atheos/system/drivers/appserver/video/
+cp -p $BASE/atheos/system/drivers/appserver/video/nvidia $DISK/atheos/system/drivers/appserver/video/
+cp -p $BASE/atheos/system/drivers/appserver/video/s3_virge $DISK/atheos/system/drivers/appserver/video/
 
-cp -p $BASE/atheos/sys/drivers/fs/afs $DISK/atheos/sys/drivers/fs/
-cp -p $BASE/atheos/sys/drivers/fs/fatfs $DISK/atheos/sys/drivers/fs/
+cp -p $BASE/atheos/system/drivers/fs/afs $DISK/atheos/system/drivers/fs/
+cp -p $BASE/atheos/system/drivers/fs/fatfs $DISK/atheos/system/drivers/fs/
 
 cp -p $BASE/atheos/usr/bin/bash $DISKatheos/usr/bin/
 cp -p $BASE/atheos/usr/bin/cp $DISK/atheos/usr/bin/
@@ -158,7 +158,7 @@ cd ../../../../..
 
 echo "Copying init files"
 
-cp scripts/sys/floppy-init.sh $DISK/atheos/sys/init.sh
+cp scripts/system/floppy-init.sh $DISK/atheos/system/init.sh
 
 echo "Building ramdisk image 1"
 bin/makeramdisk $ROOT/disk1 bimage1

@@ -36,9 +36,9 @@ install: $(EXE)
 	-ln -sf /Applications/AView/$(EXE) /system/bin/aview
 
 dist: $(EXE)
-	-mkdir -p $(DIST_DIR)/atheos/Applications/AView
-	-cp -pf $(EXE) $(DIST_DIR)/atheos/Applications/AView/
-	-ln -sf /Applications/AView/$(EXE) $(DIST_DIR)/atheos/sys/bin/aview
+	-mkdir -p $(IMAGE)/Applications/AView
+	-cp -pf $(EXE) $(IMAGE)/Applications/AView/
+	-ln -sf /Applications/AView/$(EXE) $(IMAGE)/system/bin/aview
 
 clean: catalog-clean
 	-rm $(OBJS)

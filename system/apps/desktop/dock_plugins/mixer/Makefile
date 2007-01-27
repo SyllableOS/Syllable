@@ -1,4 +1,5 @@
-#Makefile for Mixer.so
+# Makefile for Mixer.so
+
 COPTS = -c -fexceptions -ffast-math
 
 APPBIN = /system/extensions/dock
@@ -38,14 +39,11 @@ clean:
 
 deps:
 
-dist: all
-	@echo Distribution...
-	@mkdir -p $(DIST_DIR)/atheos/sys/extensions/dock
-	@cp Mixer.so $(DIST_DIR)/atheos/sys/extensions/dock/Mixer.so
-
 install: all
 	@echo Installing...
-	@mkdir -p /system/extensions/dock
-	@cp Mixer.so /system/extensions/dock/Mixer.so
+	@cp Mixer.so $(APPBIN)/Mixer.so
 
+dist: all
+	@echo Distribution...
+	@cp Mixer.so $(IMAGE)/$(APPBIN)/Mixer.so
 

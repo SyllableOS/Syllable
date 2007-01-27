@@ -4,7 +4,7 @@
 # REMEMBER: Add the new directory to the Makefile in the parent
 # directory!
 
-DIST_TARGET_PATH := $(DIST_DIR)/atheos/sys/
+DIST_TARGET_PATH := $(IMAGE)/system/
 
 all:
 

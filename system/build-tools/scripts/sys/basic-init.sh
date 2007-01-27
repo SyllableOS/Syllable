@@ -7,8 +7,8 @@ usr_path=$3
 sys_path=/boot/atheos
 echo "sys_path:" $sys_path
 
-export PATH=/usr/bin:/boot/atheos/sys/bin/
-export DLL_PATH=@bindir@/lib:./:/boot/atheos/sys/libs:/boot/atheos/sys
+export PATH=/usr/bin:/boot/atheos/system/bin/
+export DLL_PATH=@bindir@/lib:./:/boot/atheos/system/libs:/boot/atheos/system
 export SYSTEM=AtheOS
 export CC=gcc
 export HOME=/home/root

@@ -1,4 +1,5 @@
-#Makefile for FileBrowser
+# Makefile for FileBrowser
+
 COPTS = -c -fexceptions -ffast-math
 
 APPBIN = /system/bin
@@ -59,13 +60,11 @@ clean:
 
 deps:
 
-dist: all
-	@echo Distribution...
-	@mkdir -p $(DIST_DIR)/atheos/sys/bin
-	@cp FileBrowser $(DIST_DIR)/atheos/sys/bin/FileBrowser
-
 install: all
 	@echo Installing...
-	@mkdir -p /system/bin
-	@cp FileBrowser /system/bin/FileBrowser
+	@cp FileBrowser $(APPBIN)/FileBrowser
+
+dist: all
+	@echo Distribution...
+	@cp FileBrowser $(IMAGE)/$(APPBIN)/FileBrowser
 

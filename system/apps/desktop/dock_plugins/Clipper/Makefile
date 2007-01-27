@@ -16,12 +16,10 @@ $(OBJDIR)/Clipper.so: $(OBJS)
 	rescopy -r $(OBJDIR)/Clipper.so images/*.png
 
 install:  $(OBJDIR)/Clipper.so
-	mkdir -p $(APPBIN)
 	install -s $(OBJDIR)/Clipper.so $(APPBIN)/Clipper.so
 
 dist:  $(OBJDIR)/Clipper.so
-	mkdir -p $(DIST_DIR)/atheos/sys/extensions/dock
-	install -s $(OBJDIR)/Clipper.so $(DIST_DIR)/atheos/sys/extensions/dock/Clipper.so
+	install -s $(OBJDIR)/Clipper.so $(IMAGE)/$(APPBIN)/Clipper.so
 
 deps: $(OBJDIR)
 

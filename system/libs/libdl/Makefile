@@ -1,4 +1,4 @@
-CFLAGS := -Wall -c -O2 -I.
+CFLAGS := -c -I.
 
 OBJDIR := objs
 
@@ -25,9 +25,9 @@ install:
 	cp -f dlfcn.h /system/include/
 
 dist:
-	cp -f $(OBJDIR)/$(LIB) $(DIST_DIR)/atheos/sys/libs/
-	ln -sf $(LIB) $(DIST_DIR)/atheos/sys/libs/libdl.so
-	cp -f dlfcn.h $(DIST_DIR)/atheos/sys/include/
+	cp -f $(OBJDIR)/$(LIB) $(IMAGE)/system/libs/
+	ln -sf $(LIB) $(IMAGE)/system/libs/libdl.so
+	cp -f dlfcn.h $(IMAGE)/system/include/
 
 $(OBJDIR):
 	-mkdir $(OBJDIR)

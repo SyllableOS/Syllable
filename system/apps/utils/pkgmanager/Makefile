@@ -18,10 +18,10 @@ $(OBJDIR)/$(EXE): $(OBJS) Makefile
 	$(CXX) $(OBJS) -o $(OBJDIR)/$(EXE) -lsyllable
 
 install: $(OBJDIR)/$(EXE)
-	cp -af $(OBJDIR)/$(EXE) /bin/$(EXE)
+	cp -af $(OBJDIR)/$(EXE) /system/bin/$(EXE)
 
 dist: $(OBJDIR)/$(EXE)
-	cp -af $(OBJDIR)/$(EXE) $(DIST_DIR)/atheos/sys/bin/$(EXE)
+	cp -af $(OBJDIR)/$(EXE) $(IMAGE)/system/bin/$(EXE)
 
 deps: $(OBJDIR) $(DEPS)
 

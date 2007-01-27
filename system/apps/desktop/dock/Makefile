@@ -1,4 +1,5 @@
-#Makefile for Dock
+# Makefile for Dock
+
 COPTS = -c -fexceptions -ffast-math
 
 APPBIN = /system/bin
@@ -63,11 +64,9 @@ deps:
 
 dist: all
 	@echo Distribution...
-	@mkdir -p $(DIST_DIR)/atheos/sys/bin
-	@cp Dock $(DIST_DIR)/atheos/sys/bin/Dock
+	@cp Dock $(IMAGE)/system/bin/Dock
 
 install: all
 	@echo Installing...
-	@mkdir -p /system/bin
 	@cp Dock /system/bin/Dock
 

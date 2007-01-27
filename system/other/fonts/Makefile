@@ -6,7 +6,7 @@
 
 # 140603 Added Vera fonts			- Kaj
 
-DIST_TARGET_PATH := $(DIST_DIR)/atheos/sys/fonts/
+DIST_TARGET_PATH := $(IMAGE)/system/fonts/
 
 all:
 

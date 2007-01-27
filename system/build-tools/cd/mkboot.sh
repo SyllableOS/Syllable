@@ -30,15 +30,15 @@ fi;
 cp ../../images/boot-cd.img .
 mount -t fatfs boot-cd.img disk
 
-cp ../$ROOT/atheos/sys/kernel.so .
+cp ../$ROOT/atheos/system/kernel.so .
 gzip kernel.so
-mv kernel.so.gz disk/atheos/sys/
+mv kernel.so.gz disk/atheos/system/
 
-cp ../$ROOT/atheos/sys/drivers/fs/iso9660 disk/atheos/sys/drivers/fs/
-cp ../$ROOT/atheos/sys/drivers/bus/pci disk/atheos/sys/drivers/bus/
-cp ../$ROOT/atheos/sys/drivers/bus/ata disk/atheos/sys/drivers/bus/
-cp ../$ROOT/atheos/sys/drivers/dev/hcd/ata_pci disk/atheos/sys/drivers/dev/hcd/
-touch disk/atheos/sys/config/kernel.cfg
+cp ../$ROOT/atheos/system/drivers/fs/iso9660 disk/atheos/system/drivers/fs/
+cp ../$ROOT/atheos/system/drivers/bus/pci disk/atheos/system/drivers/bus/
+cp ../$ROOT/atheos/system/drivers/bus/ata disk/atheos/system/drivers/bus/
+cp ../$ROOT/atheos/system/drivers/dev/hcd/ata_pci disk/atheos/system/drivers/dev/hcd/
+touch disk/atheos/system/config/kernel.cfg
 
 unmount disk
 mv boot-cd.img ../objs/boot.img

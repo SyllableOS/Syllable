@@ -1,6 +1,6 @@
 # Makefile for keymaps.
 
-DIST_TARGET_PATH := $(DIST_DIR)/atheos/sys/keymaps/
+DIST_TARGET_PATH := $(IMAGE)/system/keymaps/
 
 all:
 

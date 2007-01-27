@@ -1,4 +1,5 @@
-#Makefile for Meter.so
+# Makefile for Meter.so
+
 COPTS = -c -fexceptions -ffast-math
 
 APPBIN = /system/extensions/dock
@@ -38,17 +39,11 @@ clean:
 
 deps:
 
-dist: all
-	@echo Distribution...
-	@mkdir -p $(DIST_DIR)/atheos/sys/extensions/dock
-	@cp Meter.so $(DIST_DIR)/atheos/sys/extensions/dock/Meter.so
-
 install: all
 	@echo Installing...
-	@mkdir -p /system/extensions/dock
-	@cp Meter.so /system/extensions/dock/Meter.so
+	@cp Meter.so $(APPBIN)/dock/Meter.so
 
-
-
-
+dist: all
+	@echo Distribution...
+	@cp Meter.so $(IMAGE)/$(APPBIN)/Meter.so
 

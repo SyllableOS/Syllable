@@ -17,10 +17,10 @@ ftp:	ftp.o
 	$(CC) $(COPTS) $< -o $@
 
 install:
-	cp -f $(EXE) /bin/$(EXE)
+	cp -f $(EXE) /system/bin/$(EXE)
 
 dist:
-	cp -f $(EXE) $(DIST_DIR)/atheos/sys/bin/$(EXE)
+	cp -f $(EXE) $(IMAGE)/system/bin/$(EXE)
 
 deps:
 

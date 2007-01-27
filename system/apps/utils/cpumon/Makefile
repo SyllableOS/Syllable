@@ -25,11 +25,11 @@ catalogs:
 
 install: $(EXE)
 	strip --strip-all $(EXE)
-	cp -f $(EXE) /bin/$(EXE)
+	cp -f $(EXE) /system/bin/$(EXE)
 
 dist: $(EXE)
 	strip --strip-all $(EXE)
-	cp -f $(EXE) $(DIST_DIR)/atheos/sys/bin/$(EXE)
+	cp -f $(EXE) $(IMAGE)/system/bin/$(EXE)
 
 clean: catalog-clean
 	-rm $(OBJS)

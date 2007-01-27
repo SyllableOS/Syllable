@@ -1,4 +1,5 @@
-#Makefile for Eyes.so
+# Makefile for Eyes.so
+
 COPTS = -c -fexceptions -ffast-math
 
 APPBIN = /system/extensions/dock
@@ -36,14 +37,11 @@ clean:
 
 deps:
 
-dist: all
-	@echo Distribution...
-	@mkdir -p $(DIST_DIR)/atheos/sys/extensions/dock
-	@cp Eyes.so $(DIST_DIR)/atheos/sys/extensions/dock/Eyes.so
-
 install: all
 	@echo Installing...
-	@mkdir -p /system/extensions/dock
-	@cp Eyes.so /system/extensions/dock/Eyes.so
+	@cp Eyes.so $(APPBIN)/Eyes.so
 
+dist: all
+	@echo Distribution...
+	@cp Eyes.so $(IMAGE)/$(APPBIN)/Eyes.so
 

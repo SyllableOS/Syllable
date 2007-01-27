@@ -3,11 +3,11 @@
 	
 	title	Syllable
 	root	##GRUB ROOT DEVICE##
-	kernel	/atheos/sys/kernel.so root=##SYLLABLE ROOT DEVICE PATH##
-	module	/atheos/sys/config/kernel.cfg
-	module	/atheos/sys/drivers/dev/bus/acpi
-	module	/atheos/sys/drivers/dev/bus/pci
-	module	/atheos/sys/drivers/dev/bus/ata
-	module	/atheos/sys/drivers/dev/hcd/ata_pci
-	module	/atheos/sys/drivers/fs/afs
+	kernel	/atheos/system/kernel.so root=##SYLLABLE ROOT DEVICE PATH##
+	module	/atheos/system/config/kernel.cfg
+	module	/atheos/system/drivers/dev/bus/acpi
+	module	/atheos/system/drivers/dev/bus/pci
+	module	/atheos/system/drivers/dev/bus/ata
+	module	/atheos/system/drivers/dev/hcd/ata_pci
+	module	/atheos/system/drivers/fs/afs
 	

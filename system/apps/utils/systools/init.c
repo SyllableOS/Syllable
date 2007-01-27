@@ -7,7 +7,7 @@
 int main( int argc, char **argv )
 {
 	char *pzProgram;
-	char *pzAppserver = "/atheos/sys/appserver", *pzASName;
+	char *pzAppserver = "/system/appserver", *pzASName;
 	char *pzBootMode = "normal";
 	int c;
 
@@ -44,8 +44,8 @@ int main( int argc, char **argv )
 		pzASName = pzAppserver;
 	
 	symlink( "boot/atheos", "/atheos" );
-	symlink( "atheos/sys", "/system" );
-	symlink( "atheos/sys/bin", "/bin" );
+	symlink( "atheos/system", "/system" );
+	symlink( "system/bin", "/bin" );
 	symlink( "atheos/usr", "/usr" );
 	symlink( "atheos/etc", "/etc" );
 	symlink( "atheos/var", "/var" );
@@ -62,3 +62,4 @@ int main( int argc, char **argv )
 	
 	return( EXIT_FAILURE );
 }
+

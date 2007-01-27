@@ -14,13 +14,13 @@ the installation described above:
 
      title  Syllable
      root   (hd0,1)
-     kernel /atheos/sys/kernel.so root=/dev/disk/ata/hda/0
-     module /atheos/sys/config/kernel.cfg
-     module /atheos/sys/drivers/dev/bus/acpi
-     module /atheos/sys/drivers/dev/bus/pci
-     module /atheos/sys/drivers/dev/bus/ata
-     module /atheos/sys/drivers/dev/hcd/ata_pci
-     module /atheos/sys/drivers/fs/afs
+     kernel /atheos/system/kernel.so root=/dev/disk/ata/hda/0
+     module /atheos/system/config/kernel.cfg
+     module /atheos/system/drivers/dev/bus/acpi
+     module /atheos/system/drivers/dev/bus/pci
+     module /atheos/system/drivers/dev/bus/ata
+     module /atheos/system/drivers/dev/hcd/ata_pci
+     module /atheos/system/drivers/fs/afs
 
 This will tell GRUB to boot partition number 2 on the first drive
 through the "root (hd0,1)" command and where to find the kernel, the

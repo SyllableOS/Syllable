@@ -16,12 +16,10 @@ $(OBJDIR)/Camera.so: $(OBJS)
 	rescopy -r $(OBJDIR)/Camera.so images/*.png
 
 install:  $(OBJDIR)/Camera.so
-	mkdir -p $(APPBIN)
 	install -s $(OBJDIR)/Camera.so $(APPBIN)/Camera.so
 
 dist:  $(OBJDIR)/Camera.so
-	mkdir -p $(DIST_DIR)/atheos/sys/extensions/dock
-	install -s $(OBJDIR)/Camera.so $(DIST_DIR)/atheos/sys/extensions/dock/Camera.so
+	install -s $(OBJDIR)/Camera.so $(IMAGE)/$(APPBIN)/Camera.so
 
 deps: $(OBJDIR)
 
@@ -29,5 +27,4 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/Camera.so
 
 -include $(OBJDIR)/*.d
-
 

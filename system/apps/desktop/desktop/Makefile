@@ -1,4 +1,5 @@
-#Makefile for desktop
+# Makefile for desktop
+
 COPTS = -c -fexceptions -ffast-math
 
 CATALOGS = da de es fr hu nl ru sv
@@ -61,8 +62,9 @@ deps:
 
 dist: all
 	@echo Distribution...
-	@cp desktop $(DIST_DIR)/atheos/sys/bin/desktop
+	@cp desktop $(IMAGE)/system/bin/desktop
 
 install: all
 	@echo Installing...
 	@cp desktop /system/bin/desktop
+
