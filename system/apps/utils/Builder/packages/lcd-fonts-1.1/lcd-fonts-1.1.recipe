@@ -20,6 +20,7 @@ install-files
 ;	LCDWinTT/LCD2B___.TTF	LCD2-Bold.ttf
 ;	LCDWinTT/LCD2U___.TTF	LCD2-Ultra.ttf
 
-move-files			*.ttf /atheos/sys/fonts/
+move-files			*.ttf /atheos/system/fonts/
 
 documentation		README.TXT LICENSE.TXT
+

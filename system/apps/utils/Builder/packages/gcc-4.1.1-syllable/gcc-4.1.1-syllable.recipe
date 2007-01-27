@@ -28,11 +28,11 @@ patch
 ;	cd ..
 	cd ..
 	mkdir -p stage
-	cp -r atheos/sys/include			stage
-;	cp -r system/sys/include			stage
+	cp -r atheos/system/include			stage
+;	cp -r system/system/include			stage
 	cp -r atheos/usr/glibc/include/*	stage/include
 	mkdir -p stage/lib
-	cp atheos/sys/libs/*				stage/lib
+	cp atheos/system/libs/*				stage/lib
 ;	Static libraries:
 ;	cp -r atheos/usr/glibc/lib/*		stage/lib
 ;	cp -r gcc/lib/*						stage/lib
@@ -55,7 +55,7 @@ configure-options
 ;	--disable-nls
 
 make-env
-;	C_INCLUDE_PATH		$PWD/../atheos/sys/include:$PWD/../atheos/usr/glibc/include
+;	C_INCLUDE_PATH		$PWD/../atheos/system/include:$PWD/../atheos/usr/glibc/include
 	C_INCLUDE_PATH		$PWD/../stage/include
 ;	CPLUS_INCLUDE_PATH	$PWD/../stage/include
 ;	The cross-assembling toolchain:
@@ -67,3 +67,4 @@ make-targets
 install-targets			install-gcc
 ; The normal links are not relevant:
 links
+

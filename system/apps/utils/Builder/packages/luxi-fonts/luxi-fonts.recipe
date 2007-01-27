@@ -22,7 +22,7 @@ install-files
 	luximb.ttf		LuxiMono-Bold.ttf
 	luximbi.ttf		LuxiMono-BoldOblique.ttf
 
-move-files			*.ttf /atheos/sys/fonts/
+move-files			*.ttf /atheos/system/fonts/
 
 documentation
 	COPYING

@@ -31,12 +31,12 @@
      enable_shared="no";;
 @@ -554,6 +560,11 @@
  	  BLDLIBRARY='-L. -lpython$(VERSION)'
- 	  RUNSHARED=DLL_PATH=`pwd`:${DLL_PATH:-/atheos/sys/libs:/atheos/autolnk/lib}
+ 	  RUNSHARED=DLL_PATH=`pwd`:${DLL_PATH:-/system/libs:/atheos/autolnk/lib}
  	  ;;
 +    syllable*)
 +	  LDLIBRARY='libpython$(VERSION).so'
 +	  BLDLIBRARY='-L. -lpython$(VERSION)'
-+	  RUNSHARED=DLL_PATH=`pwd`:${DLL_PATH:-/atheos/sys/libs:/atheos/autolnk/lib}
++	  RUNSHARED=DLL_PATH=`pwd`:${DLL_PATH:-/system/libs:/atheos/autolnk/lib}
 +	  ;;
    esac
    # DG/UX requires some fancy ld contortions to produce a .so from an .a

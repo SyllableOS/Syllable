@@ -22,6 +22,7 @@ install-files
 	VeraMoBI.ttf	VeraMono-BoldItalic.ttf
 ;	local.conf		.
 
-move-files			*.ttf /atheos/sys/fonts/
+move-files			*.ttf /atheos/system/fonts/
 
 documentation		README.TXT RELEASENOTES.TXT COPYRIGHT.TXT
+

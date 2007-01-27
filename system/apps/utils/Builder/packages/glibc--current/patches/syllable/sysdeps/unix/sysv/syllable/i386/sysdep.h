@@ -25,7 +25,7 @@
 #include <bp-sym.h>
 #include <bp-asm.h>
 
-/* For Syllable we can use the system call table in the header file /ainc/atheos/syscall.h
+/* For Syllable we can use the system call table in the header file /system/include/atheos/syscall.h
    of the kernel.  But these symbols do not follow the SYS_* syntax so we have to redefine the
    `SYS_ify' macro here.  */
 #undef SYS_ify
