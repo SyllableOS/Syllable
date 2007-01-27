@@ -29,66 +29,66 @@ tree
 	atheos/autolnk/early-init
 	atheos/autolnk/init
 
-	atheos/sys
+	atheos/system
 
-	atheos/sys/config
-	atheos/sys/config/drivers
-	atheos/sys/config/drivers/appserver
-	atheos/sys/config/drivers/appserver/video
-	atheos/sys/config/drivers/dev
-	atheos/sys/config/appearance
-	atheos/sys/config/appearance/colour-schemes
+	atheos/system/config
+	atheos/system/config/drivers
+	atheos/system/config/drivers/appserver
+	atheos/system/config/drivers/appserver/video
+	atheos/system/config/drivers/dev
+	atheos/system/config/appearance
+	atheos/system/config/appearance/colour-schemes
 
-	atheos/sys/include
+	atheos/system/include
 
-	atheos/sys/bin
-	atheos/sys/libs
+	atheos/system/bin
+	atheos/system/libs
 
-	atheos/sys/fonts
-	atheos/sys/icons
-	atheos/sys/keymaps
-	atheos/sys/sounds
+	atheos/system/fonts
+	atheos/system/icons
+	atheos/system/keymaps
+	atheos/system/sounds
 
-	atheos/sys/resources
-	atheos/sys/resources/catalogs
-	atheos/sys/resources/catalogs/da
-	atheos/sys/resources/catalogs/de
-	atheos/sys/resources/catalogs/es
-	atheos/sys/resources/catalogs/fy
-	atheos/sys/resources/catalogs/hu
-	atheos/sys/resources/catalogs/nl
-	atheos/sys/resources/catalogs/pl
-	atheos/sys/resources/catalogs/pt-br
-	atheos/sys/resources/catalogs/ru
-	atheos/sys/resources/catalogs/sv
-	atheos/sys/resources/wallpapers
+	atheos/system/resources
+	atheos/system/resources/catalogs
+	atheos/system/resources/catalogs/da
+	atheos/system/resources/catalogs/de
+	atheos/system/resources/catalogs/es
+	atheos/system/resources/catalogs/fy
+	atheos/system/resources/catalogs/hu
+	atheos/system/resources/catalogs/nl
+	atheos/system/resources/catalogs/pl
+	atheos/system/resources/catalogs/pt-br
+	atheos/system/resources/catalogs/ru
+	atheos/system/resources/catalogs/sv
+	atheos/system/resources/wallpapers
 
-	atheos/sys/drivers
+	atheos/system/drivers
 
-	atheos/sys/drivers/dev
-	atheos/sys/drivers/dev/audio
-	atheos/sys/drivers/dev/bus
-	atheos/sys/drivers/dev/disk
-	atheos/sys/drivers/dev/hcd
-	atheos/sys/drivers/dev/misc
-	atheos/sys/drivers/dev/net
-	atheos/sys/drivers/dev/net/eth
-	atheos/sys/drivers/dev/graphics
+	atheos/system/drivers/dev
+	atheos/system/drivers/dev/audio
+	atheos/system/drivers/dev/bus
+	atheos/system/drivers/dev/disk
+	atheos/system/drivers/dev/hcd
+	atheos/system/drivers/dev/misc
+	atheos/system/drivers/dev/net
+	atheos/system/drivers/dev/net/eth
+	atheos/system/drivers/dev/graphics
 
-	atheos/sys/drivers/fs
+	atheos/system/drivers/fs
 
-	atheos/sys/drivers/net
-	atheos/sys/drivers/net/if
+	atheos/system/drivers/net
+	atheos/system/drivers/net/if
 
-	atheos/sys/drivers/appserver
-	atheos/sys/drivers/appserver/decorators
-	atheos/sys/drivers/appserver/input
-	atheos/sys/drivers/appserver/video
+	atheos/system/drivers/appserver
+	atheos/system/drivers/appserver/decorators
+	atheos/system/drivers/appserver/input
+	atheos/system/drivers/appserver/video
 
-	atheos/sys/extensions
-	atheos/sys/extensions/dock
-	atheos/sys/extensions/translators
-	atheos/sys/extensions/media
+	atheos/system/extensions
+	atheos/system/extensions/dock
+	atheos/system/extensions/translators
+	atheos/system/extensions/media
 
 	atheos/tmp
 
@@ -128,9 +128,9 @@ tree
 
 resources
 	boot/grub					menu.lst							text/plain
-	atheos/sys/config			kernel.cfg							text/plain
-	atheos/sys/config			net.cfg								text/plain
-	atheos/sys/config			appserver							text/plain
+	atheos/system/config		kernel.cfg							text/plain
+	atheos/system/config		net.cfg								text/plain
+	atheos/system/config		appserver							text/plain
 	atheos/home					Home-Directories
 	atheos/Documentation		documentation/Welcome.html			text/html
 	atheos/Documentation/images	documentation/images/Syllable.gif	image/gif
@@ -324,3 +324,4 @@ modules
 	apps/utils/man2html
 	apps/utils/nettools
 	apps/utils/systools
+

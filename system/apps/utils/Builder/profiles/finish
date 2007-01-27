@@ -5,8 +5,9 @@ resources
 ;	coreutils-6.4-su
 
 ;	Make GLibC suitable for running in an installed system:
-	atheos/sys/libs	libc.so
+	atheos/system/libs libc.so
 ;	Old libraries for compatibility with applications for older versions of Syllable:
-	atheos/sys/libs	GCC-libraries-3.4.3
+	atheos/system/libs GCC-libraries-3.4.3
 ;	May work better than the standard ones:
 	atheos/usr/share/terminfo/x binaries/xterm-atheos
+

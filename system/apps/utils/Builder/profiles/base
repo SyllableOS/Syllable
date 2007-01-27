@@ -2,15 +2,15 @@
 
 resources
 ;	addattrib can't handle wildcards:
-;	atheos/sys/fonts							fonts/URW/*.ttf				application/x-font-ttf
-;	atheos/sys/fonts							fonts/URW/Mandriva/*.ttf	application/x-font-ttf
+;	atheos/system/fonts							fonts/URW/*.ttf				application/x-font-ttf
+;	atheos/system/fonts							fonts/URW/Mandriva/*.ttf	application/x-font-ttf
 ;	atheos/home/.template/Documents/Pictures	wallpapers/*.png			image/png
 ;	atheos/home/.template/Documents/Pictures	wallpapers/*.jpg			image/jpeg
-	atheos/sys/fonts							fonts/URW/*.ttf
-	atheos/sys/fonts							fonts/URW/Mandriva/*.ttf
-	atheos/sys/resources/wallpapers				wallpapers/*.png
-	atheos/sys/resources/wallpapers				wallpapers/*.jpg
-	atheos/sys/resources/wallpapers				wallpapers/Ruud/*.jpg
+	atheos/system/fonts							fonts/URW/*.ttf
+	atheos/system/fonts							fonts/URW/Mandriva/*.ttf
+	atheos/system/resources/wallpapers			wallpapers/*.png
+	atheos/system/resources/wallpapers			wallpapers/*.jpg
+	atheos/system/resources/wallpapers			wallpapers/Ruud/*.jpg
 
 modules
 ;	other/fonts/bitstream-vera-1.10
@@ -90,3 +90,4 @@ modules
 ;	Still needs FreeType 2.1(.10):
 ;	apps/other/xpdf-3.00pl3-syllable
 ;	apps/other/xpdf-3.00pl3
+
