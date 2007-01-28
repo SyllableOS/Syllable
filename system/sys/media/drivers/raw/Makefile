@@ -23,11 +23,10 @@ $(OBJDIR)/raw.so: $(OBJS)
 
 deps:
 
-install:  $(OBJDIR)/raw.so
-	install -s $(OBJDIR)/raw.so $(DRIVERBIN)/raw.so
+install: $(OBJDIR)/raw.so
+	install -s $(OBJDIR)/raw.so $(IMAGE)/$(DRIVERBIN)/raw.so
 
-dist:  $(OBJDIR)/raw.so
-	install -s $(OBJDIR)/raw.so $(DIST_DIR)/atheos/sys/extensions/media/raw.so
+dist: install
 
 deps: $(OBJDIR) $(DEPS)
 

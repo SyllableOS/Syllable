@@ -22,11 +22,10 @@ $(OBJDIR)/ffmpeg.so: $(OBJS)
 
 deps: $(LIBS)
 
-install:  $(OBJDIR)/ffmpeg.so
-	install -s $(OBJDIR)/ffmpeg.so $(DRIVERBIN)/ffmpeg.so
+install: $(OBJDIR)/ffmpeg.so
+	install -s $(OBJDIR)/ffmpeg.so $(IMAGE)/$(DRIVERBIN)/ffmpeg.so
 
-dist:  $(OBJDIR)/ffmpeg.so
-	install -s $(OBJDIR)/ffmpeg.so $(DIST_DIR)/atheos/sys/extensions/media/ffmpeg.so
+dist: install
 
 deps: $(OBJDIR) $(DEPS)
 

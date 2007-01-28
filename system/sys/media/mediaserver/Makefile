@@ -23,11 +23,10 @@ $(OBJDIR)/mediaserver: $(OBJS)
 
 deps:
 
-install:  $(OBJDIR)/mediaserver
-	install -s mediaserver $(APPBIN)/mediaserver
+install: $(OBJDIR)/mediaserver
+	install -s mediaserver $(IMAGE)/$(APPBIN)/mediaserver
 
-dist:  $(OBJDIR)/mediaserver
-	install -s mediaserver $(DIST_DIR)/atheos/sys/mediaserver
+dist: install
 
 deps: $(OBJDIR) $(DEPS)
 

@@ -23,11 +23,10 @@ $(OBJDIR)/cdda.so: $(OBJS)
 
 deps:
 
-install:  $(OBJDIR)/cdda.so
-	install -s $(OBJDIR)/cdda.so $(DRIVERBIN)/cdda.so
+install: $(OBJDIR)/cdda.so
+	install -s $(OBJDIR)/cdda.so $(IMAGE)/$(DRIVERBIN)/cdda.so
 
-dist:  $(OBJDIR)/cdda.so
-	install -s $(OBJDIR)/cdda.so $(DIST_DIR)/atheos/sys/extensions/media/cdda.so
+dist: install
 
 deps: $(OBJDIR) $(DEPS)
 

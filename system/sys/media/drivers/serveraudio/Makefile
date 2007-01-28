@@ -23,11 +23,10 @@ $(OBJDIR)/serveraudio.so: $(OBJS)
 
 deps:
 
-install:  $(OBJDIR)/serveraudio.so
-	install -s $(OBJDIR)/serveraudio.so $(DRIVERBIN)/serveraudio.so
+install: $(OBJDIR)/serveraudio.so
+	install -s $(OBJDIR)/serveraudio.so $(IMAGE)/$(DRIVERBIN)/serveraudio.so
 
-dist:  $(OBJDIR)/serveraudio.so
-	install -s $(OBJDIR)/serveraudio.so $(DIST_DIR)/atheos/sys/extensions/media/serveraudio.so
+dist: install
 
 deps: $(OBJDIR) $(DEPS)
 

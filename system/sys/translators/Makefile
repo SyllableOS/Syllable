@@ -26,7 +26,7 @@ $(OBJDIR)/jpegtrans.so: $(JPGOBJS)
 	$(CXX) -shared $(JPGOBJS) -lsyllable -ljpeg -o $(OBJDIR)/jpegtrans.so
 
 $(OBJDIR)/pngtrans.so: $(PNGOBJS)
-	$(CXX) -shared $(PNGOBJS) -lsyllable -lpng -L/usr/zlib/lib -lz -o $(OBJDIR)/pngtrans.so
+	$(CXX) -shared $(PNGOBJS) -lsyllable -lpng -lz -o $(OBJDIR)/pngtrans.so
 
 $(OBJDIR)/giftrans.so: $(GIFOBJS)
 	$(CXX) -shared $(GIFOBJS) -lsyllable -lungif -o $(OBJDIR)/giftrans.so
@@ -38,10 +38,9 @@ $(OBJDIR)/winicontrans.so: $(WINICONOBJS)
 	$(CXX) -shared $(WINICONOBJS) -lsyllable -o $(OBJDIR)/winicontrans.so
 
 install: $(OBJDIR)/jpegtrans.so $(OBJDIR)/pngtrans.so $(OBJDIR)/giftrans.so $(OBJDIR)/icontrans.so $(OBJDIR)/winicontrans.so
-	install -s $(OBJDIR)/jpegtrans.so $(OBJDIR)/pngtrans.so $(OBJDIR)/giftrans.so $(OBJDIR)/icontrans.so $(OBJDIR)/winicontrans.so $(TRANSDIR)/
+	install -s $(OBJDIR)/jpegtrans.so $(OBJDIR)/pngtrans.so $(OBJDIR)/giftrans.so $(OBJDIR)/icontrans.so $(OBJDIR)/winicontrans.so $(IMAGE)/$(TRANSDIR)/
 
-dist: $(OBJDIR)/jpegtrans.so $(OBJDIR)/pngtrans.so $(OBJDIR)/giftrans.so $(OBJDIR)/icontrans.so $(OBJDIR)/winicontrans.so
-	install -s $(OBJDIR)/jpegtrans.so $(OBJDIR)/pngtrans.so $(OBJDIR)/giftrans.so $(OBJDIR)/icontrans.so $(OBJDIR)/winicontrans.so $(DIST_DIR)/atheos/sys/extensions/translators/
+dist: install
 
 deps: $(OBJDIR) $(DEPS)
 

@@ -23,11 +23,10 @@ $(OBJDIR)/cdrom.so: $(OBJS)
 
 deps:
 
-install:  $(OBJDIR)/cdrom.so
-	install -s $(OBJDIR)/cdrom.so $(DRIVERBIN)/cdrom.so
+install: $(OBJDIR)/cdrom.so
+	install -s $(OBJDIR)/cdrom.so $(IMAGE)/$(DRIVERBIN)/cdrom.so
 
-dist:  $(OBJDIR)/cdrom.so
-	install -s $(OBJDIR)/cdrom.so $(DIST_DIR)/atheos/sys/extensions/media/cdrom.so
+dist: install
 
 deps: $(OBJDIR) $(DEPS)
 

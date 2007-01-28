@@ -23,11 +23,10 @@ $(OBJDIR)/screen.so: $(OBJS)
 
 deps:
 
-install:  $(OBJDIR)/screen.so
-	install -s $(OBJDIR)/screen.so $(DRIVERBIN)/screen.so
+install: $(OBJDIR)/screen.so
+	install -s $(OBJDIR)/screen.so $(IMAGE)/$(DRIVERBIN)/screen.so
 
-dist:  $(OBJDIR)/screen.so
-	install -s $(OBJDIR)/screen.so $(DIST_DIR)/atheos/sys/extensions/media/screen.so
+dist: install
 
 deps: $(OBJDIR) $(DEPS)
 

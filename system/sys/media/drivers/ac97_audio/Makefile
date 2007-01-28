@@ -22,13 +22,11 @@ $(OBJDIR)/ac97_audio.so: $(OBJS)
 	
 deps:
 
-install:  $(OBJDIR)/ac97_audio.so
-	install -s $(OBJDIR)/ac97_audio.so $(DRIVERBIN)/ac97_audio.so
-	addattrib $(DRIVERBIN)/ac97_audio.so os::Category AudioDriver
+install: $(OBJDIR)/ac97_audio.so
+	install -s $(OBJDIR)/ac97_audio.so $(IMAGE)/$(DRIVERBIN)/ac97_audio.so
+	addattrib $(IMAGE)/$(DRIVERBIN)/ac97_audio.so os::Category AudioDriver
 
-dist:  $(OBJDIR)/ac97_audio.so
-	install -s $(OBJDIR)/ac97_audio.so $(DIST_DIR)/atheos/sys/extensions/media/ac97_audio.so
-	addattrib $(DIST_DIR)/atheos/sys/extensions/media/ac97_audio.so os::Category AudioDriver
+dist: install
 
 deps: $(OBJDIR) $(DEPS)
 
@@ -36,18 +34,4 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*
 
 -include $(OBJDIR)/*.d
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

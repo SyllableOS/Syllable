@@ -25,12 +25,10 @@ $(OBJDIR)/$(LIBNAME): $(OBJS)
 deps:
 
 install: $(OBJDIR)/$(LIBNAME)
-	install -s $(OBJDIR)/$(LIBNAME) $(LIBBIN)/$(LIBNAME)
-	ln -sf $(LIBNAME) $(LIBBIN)/libmedia.so
+	install -s $(OBJDIR)/$(LIBNAME) $(IMAGE)/$(LIBBIN)/$(LIBNAME)
+	ln -sf $(LIBNAME) $(IMAGE)/$(LIBBIN)/libmedia.so
 
-dist: $(OBJDIR)/$(LIBNAME)
-	install -s $(OBJDIR)/$(LIBNAME) $(DIST_DIR)/atheos/sys/libs/$(LIBNAME)
-	ln -sf $(LIBNAME) $(DIST_DIR)/atheos/sys/libs/libmedia.so
+dist: install
 
 doc:
 	-rm -R docs/*
@@ -47,3 +45,4 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*.d $(OBJDIR)/$(LIBNAME)
 
 -include $(OBJDIR)/*.d
+

@@ -22,13 +22,11 @@ $(OBJDIR)/hd_audio.so: $(OBJS)
 	
 deps:
 
-install:  $(OBJDIR)/hd_audio.so
-	install -s $(OBJDIR)/hd_audio.so $(DRIVERBIN)/hd_audio.so
-	addattrib $(DRIVERBIN)/hd_audio.so os::Category AudioDriver
+install: $(OBJDIR)/hd_audio.so
+	install -s $(OBJDIR)/hd_audio.so $(IMAGE)/$(DRIVERBIN)/hd_audio.so
+	addattrib $(IMAGE)/$(DRIVERBIN)/hd_audio.so os::Category AudioDriver
 
-dist:  $(OBJDIR)/hd_audio.so
-	install -s $(OBJDIR)/hd_audio.so $(DIST_DIR)/atheos/sys/extensions/media/hd_audio.so
-	addattrib $(DIST_DIR)/atheos/sys/extensions/media/hd_audio.so os::Category AudioDriver
+dist: install
 
 deps: $(OBJDIR) $(DEPS)
 
@@ -36,23 +34,4 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*
 
 -include $(OBJDIR)/*.d
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

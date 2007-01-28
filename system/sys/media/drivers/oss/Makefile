@@ -23,13 +23,11 @@ $(OBJDIR)/oss.so: $(OBJS)
 
 deps:
 
-install:  $(OBJDIR)/oss.so
-	install -s $(OBJDIR)/oss.so $(DRIVERBIN)/oss.so
-	addattrib $(DRIVERBIN)/oss.so os::Category AudioDriverCompat
+install: $(OBJDIR)/oss.so
+	install -s $(OBJDIR)/oss.so $(IMAGE)/$(DRIVERBIN)/oss.so
+	addattrib $(IMAGE)/$(DRIVERBIN)/oss.so os::Category AudioDriverCompat
 
-dist:  $(OBJDIR)/oss.so
-	install -s $(OBJDIR)/oss.so $(DIST_DIR)/atheos/sys/extensions/media/oss.so
-	addattrib $(DIST_DIR)/atheos/sys/extensions/media/oss.so os::Category AudioDriverCompat
+dist: install
 
 deps: $(OBJDIR) $(DEPS)
 

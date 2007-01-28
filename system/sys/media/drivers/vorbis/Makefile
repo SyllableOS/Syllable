@@ -23,11 +23,10 @@ $(OBJDIR)/vorbis.so: $(OBJS)
 
 deps:
 
-install:  $(OBJDIR)/vorbis.so
-	install -s $(OBJDIR)/vorbis.so $(DRIVERBIN)/vorbis.so
+install: $(OBJDIR)/vorbis.so
+	install -s $(OBJDIR)/vorbis.so $(IMAGE)/$(DRIVERBIN)/vorbis.so
 
-dist:  $(OBJDIR)/vorbis.so
-	install -s $(OBJDIR)/vorbis.so $(DIST_DIR)/atheos/sys/extensions/media/vorbis.so
+dist: install
 
 deps: $(OBJDIR) $(DEPS)
 
