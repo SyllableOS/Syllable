@@ -149,7 +149,7 @@ SavageDriver::SavageDriver( int nFd ) : m_cGELock( "savage_ge_lock" )
 	if( S3_SAVAGE3D_SERIES( psCard->eChip ) )
 	{
 		m_nRegisterAddr = ( psCard->sPCI.u.h0.nBase0 & PCI_ADDRESS_MEMORY_32_MASK ) + SAVAGE_NEWMMIO_REGBASE_S3;
-		m_nFramebufferAddr = ( psCard->sPCI.u.h0.nBase0 & PCI_ADDRESS_MEMORY_32_MASK );
+		m_nFramebufferAddr = ( psCard->sPCI.u.h0.nBase1 & PCI_ADDRESS_MEMORY_32_MASK );
 	}
 	else
 	{
