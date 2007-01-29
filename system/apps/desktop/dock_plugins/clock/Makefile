@@ -39,11 +39,9 @@ clean:
 
 deps:
 
-dist: all
-	@echo Distribution...
-	@cp Clock.so $(DIST_DIR)/$(APPBIN)/Clock.so
-
 install: all
 	@echo Installing...
-	@cp Clock.so $(APPBIN)/Clock.so
+	@cp Clock.so $(IMAGE)/$(APPBIN)/Clock.so
+
+dist: install
 
