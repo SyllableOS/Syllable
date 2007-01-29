@@ -82,15 +82,15 @@ struct savage_name
 
 static struct savage_name g_sSavageNames[] = 
 {
+	{ S3_UNKNOWN, "Unknown" },
 	{ S3_SAVAGE3D, "Savage3D" },
-	{ S3_SAVAGE4, "Savage4" },
-	{ S3_SAVAGE2000, "Savage2000" },
 	{ S3_SAVAGE_MX, "MobileSavage" },
+	{ S3_SAVAGE4, "Savage4" },
 	{ S3_PROSAVAGE, "ProSavage" },
 	{ S3_TWISTER, "Twister" },
 	{ S3_PROSAVAGEDDR, "ProSavageDDR" },
 	{ S3_SUPERSAVAGE, "SuperSavage" },
-	{ S3_UNKNOWN, "Unknown" }
+	{ S3_SAVAGE2000, "Savage2000" }
 };
 
 /* S3 Savage driver */
@@ -143,13 +143,13 @@ SavageDriver::SavageDriver( int nFd ) : m_cGELock( "savage_ge_lock" )
 		return;
 	}
 
-	dbprintf( "Found an S3 %s\n", g_sSavageNames[psCard->eChip-1].zName );
+	dbprintf( "Found an S3 %s\n", g_sSavageNames[psCard->eChip].zName );
 
 	/* Map MMIO registers */
 	if( S3_SAVAGE3D_SERIES( psCard->eChip ) )
 	{
 		m_nRegisterAddr = ( psCard->sPCI.u.h0.nBase0 & PCI_ADDRESS_MEMORY_32_MASK ) + SAVAGE_NEWMMIO_REGBASE_S3;
-		m_nFramebufferAddr = ( psCard->sPCI.u.h0.nBase1 & PCI_ADDRESS_MEMORY_32_MASK );
+		m_nFramebufferAddr = ( psCard->sPCI.u.h0.nBase0 & PCI_ADDRESS_MEMORY_32_MASK );
 	}
 	else
 	{
