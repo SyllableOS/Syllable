@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.107
+# Version 0.6.108
 # Copyright (c) 2002-2007 Kaj de Vos
 # License: GPL 2 or any later version
 
@@ -637,7 +637,7 @@ def installModule originalStaging, staging, directive, target
 										linkPath = File.join @systemRoot,
 											linkPath[0, 4] == '/usr' ?
 												'' :
-												'sys',  # A link into the core system
+												'system',  # A link into the core system
 											linkPath
 									end
 								else  # A link within the package
@@ -1676,7 +1676,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.6.107',
+	puts 'Syllable Build System 0.6.108',
 		'Copyright (c) 2002-2007 Kaj de Vos',
 		'License: GPL 2 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
