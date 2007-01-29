@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.108
+# Version 0.6.109
 # Copyright (c) 2002-2007 Kaj de Vos
 # License: GPL 2 or any later version
 
@@ -479,10 +479,14 @@ def installModule originalStaging, staging, directive, target
 				if exists? root and not
 					begin
 						if recipe['merge-install']
-							# TODO: unregister previous installation
-							true
+							@log.header 'Unregistering ' + name = installName(target)
+							action "package unregister #{name} " + @stage + (
+								staging == :imaging and @systemBuild ?
+								' ' + @indexesRoot :
+								''
+							)
 						elsif staging or not firstColumn(parseList(recipe['install-needs'])).include? name
-							@log.header 'Uninstalling ' + shortName(target)
+							@log.header 'Uninstalling ' + name
 							uninstallModule staging, target  # FIXME: double failure logging!
 						else
 							@log.error "Won't uninstall current version because package needs itself to install"
@@ -872,7 +876,7 @@ def prepareModule target
 		ENV[var] = value
 	end
 
-	for var in ['CFLAGS', 'CXXFLAGS' 'IMAGE']
+	for var in ['CFLAGS', 'CXXFLAGS', 'IMAGE']
 		@log.extra var + ': ' + ((value = ENV[var]) ? value : '')
 	end
 end
@@ -1676,7 +1680,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.6.108',
+	puts 'Syllable Build System 0.6.109',
 		'Copyright (c) 2002-2007 Kaj de Vos',
 		'License: GPL 2 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
