@@ -1,5 +1,5 @@
 authors				Kristian Van Der Vliet
-status				developing
+status				testing
 
 inherits			sourceforge
 
@@ -10,3 +10,4 @@ packages			splix/splix-0.0.2
 needs				cups
 
 documentation		README COPYING TODO ChangeLog AUTHORS
+

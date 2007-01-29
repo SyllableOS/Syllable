@@ -1,10 +1,11 @@
 authors				Kristian Van Der Vliet
-status				developing
+status				testing
 
 inherits			splix-0.0.2
 
-; splix is a CUPS driver so it makes sense to build splix into CUPS:
+; Splix is a CUPS driver so it makes sense to build splix into CUPS:
 merge-install
 
-; Don't overwrite CUPS documentation:
-;documentation
+; Don't overwrite CUPS/Gutenprint documentation:
+documentation
+
