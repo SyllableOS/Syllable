@@ -87,11 +87,23 @@ MediaServer::MediaServer()
 	/* Set defaults for controls window */
 	m_cControlsFrame = os::Rect( 50, 50, 500, 350 );
 	m_pcControls = NULL;
+	
+	/* We want to know if a process has quit */
+	m_pcProcessQuitEvent = new os::Event();
+	if( m_pcProcessQuitEvent->SetToRemote( "os/System/ProcessHasQuit", 0 ) != 0 )
+	{
+		printf( "Error: Failed to install process event handler\n" );
+		delete( m_pcProcessQuitEvent );
+		m_pcProcessQuitEvent = NULL;
+		return;
+	}
+	m_pcProcessQuitEvent->SetMonitorEnabled( true, this, MEDIA_SERVER_PROCESS_QUIT );
 }
 
 MediaServer::~MediaServer()
 {
 	/* Stop flush thread */
+	delete( m_pcProcessQuitEvent );
 	m_bRunThread = false;
 	wait_for_thread( m_hThread );
 	delete_semaphore( m_hLock );
@@ -559,6 +571,7 @@ void MediaServer::CreateAudioStream( Message* pcMessage )
 {
 	/* Look for a free stream */
 	int32 nHandle = -1;
+	int64 hProc = -1;
 	Message cReply( MEDIA_SERVER_OK );
 	
 	
@@ -583,6 +596,7 @@ void MediaServer::CreateAudioStream( Message* pcMessage )
 	
 	const char* pzName;
 	if( pcMessage->FindString( "name", &pzName ) != 0 ||
+		pcMessage->FindInt64( "process", &hProc ) != 0 ||
 		pcMessage->FindInt32( "channels", &m_sAudioStream[nHandle].nChannels ) != 0 ||
 		pcMessage->FindInt32( "sample_rate", &m_sAudioStream[nHandle].nSampleRate ) != 0 ) {
 		/* Message not complete */
@@ -603,6 +617,7 @@ void MediaServer::CreateAudioStream( Message* pcMessage )
 	
 	
 	/* Create area */
+	m_sAudioStream[nHandle].hProc = hProc;
 	m_sAudioStream[nHandle].nBufferSize = ( 32 * PAGE_SIZE );
 	m_sAudioStream[nHandle].nBufferSize -= m_sAudioStream[nHandle].nBufferSize % ( m_sCardFormat.nChannels * 2 );
 	printf( "Buffer size %i\n", m_sAudioStream[nHandle].nBufferSize );
@@ -783,6 +798,29 @@ void MediaServer::SetDefaultDsp( Message* pcMessage )
 		pcMessage->SendReply( &cReply );
 }
 
+void MediaServer::CheckProcess( proc_id hProc )
+{
+	if( m_nActiveStreamCount == 0 )
+		return;
+	lock_semaphore( m_hLock );
+	for( uint nHandle = 0; nHandle < MEDIA_MAX_AUDIO_STREAMS; nHandle++ )
+	{
+		if( m_sAudioStream[nHandle].bUsed && m_sAudioStream[nHandle].hProc == hProc )
+		{
+			std::cout<<"Delete Audio Stream "<<nHandle<<std::endl;
+			m_sAudioStream[nHandle].bUsed = false;
+			m_nActiveStreamCount--;
+			lock_semaphore( m_hActiveStreamCount );
+			if( m_nActiveStreamCount == 0 )
+				CloseSoundCard();
+				
+			if( m_pcControls )
+				m_pcControls->StreamChanged( nHandle ); 
+		}
+	}
+	unlock_semaphore( m_hLock );
+}
+
 void MediaServer::HandleMessage( Message* pcMessage )
 {
 	switch( pcMessage->GetCode() )
@@ -880,6 +918,14 @@ void MediaServer::HandleMessage( Message* pcMessage )
 				cReply.AddInt32( "volume", m_nMasterVolume );
 				pcMessage->SendReply( &cReply );
 			}
+		}
+		break;
+		case MEDIA_SERVER_PROCESS_QUIT:
+		{
+			int64 nProcess = 0;
+			if( pcMessage->FindInt64( "process", &nProcess ) != 0 )
+				break;
+			CheckProcess( nProcess );
 		}
 		break;
 		default:

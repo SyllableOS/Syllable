@@ -29,6 +29,7 @@
 #include <util/string.h>
 #include <util/settings.h>
 #include <util/resources.h>
+#include <util/event.h>
 #include <atheos/soundcard.h>
 #include <atheos/msgport.h>
 #include <atheos/threads.h>
@@ -59,6 +60,8 @@ namespace os
 #define MEDIA_MAX_STREAM_PACKETS 10
 #define MEDIA_MAX_DSPS 8
 
+#define MEDIA_SERVER_PROCESS_QUIT 10000
+
 struct MediaPlugin_s {
 	String zFileName;
 	int nID;
@@ -66,6 +69,7 @@ struct MediaPlugin_s {
 
 struct MediaAudioStream_s {
 	bool bUsed;
+	proc_id hProc;
 	char zName[255];
 	bool bActive;
 	int32 nChannels;
@@ -145,6 +149,7 @@ private:
 	void GetDspInfo( Message* pcMessage );
 	void GetDefaultDsp( Message* pcMessage );
 	void SetDefaultDsp( Message* pcMessage );
+	void CheckProcess( proc_id hProc );
 	
 	String 			m_zDefaultInput;
 	String 			m_zDefaultAudioOutput;
@@ -167,7 +172,7 @@ private:
 	
 	MediaControls*	m_pcControls;
 	Rect			m_cControlsFrame;
-
+	os::Event*		m_pcProcessQuitEvent;
 };
 	
 

@@ -177,6 +177,9 @@ AppServer::AppServer()
 	
 	g_pcEvents = new SrvEvents;
 	
+	m_pcProcessQuitEvent = g_pcEvents->RegisterEvent( "os/System/ProcessHasQuit", 0, 
+							"Called when a process has quit", -1, -1, -1 );
+	
 	printf( "Load default fonts\n" );
 
 	dbprintf( "Load default fonts\n" );
@@ -222,15 +225,21 @@ void AppServer::R_ClientDied( thread_id hClient )
 		send_msg( pcApp->GetReqPort(), M_QUIT, NULL, 0 );
 	}
 	
-	/* Tell the registrar that the application has died */
+	/* Tell the registrar that the application has died
+	   FIXME: Switch the registrar to the os::Event interface
+	*/
 	int nPort;
 	if( ( nPort = find_port( "l:registrar" ) ) < 0 )
 		return;
+		
 	
 	Messenger cRegistrarLink = Messenger( nPort );
 	Message cMsg( -1 );
 	cMsg.AddInt64( "process", hClient );
 	cRegistrarLink.SendMessage( &cMsg );
+	
+	/* Send this event to other applications */
+	g_pcEvents->PostEvent( m_pcProcessQuitEvent, &cMsg );
 }
 
 /** Send a keyboard event

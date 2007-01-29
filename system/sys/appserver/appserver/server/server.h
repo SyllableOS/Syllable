@@ -104,6 +104,7 @@ private:
     FontNode*		m_pcToolWindowTitleFont;
     
     int nWatchNode;
+    SrvEvent_s* m_pcProcessQuitEvent;
 };
 
 #endif	/*	INTERFACE_SERVER_HPP	*/

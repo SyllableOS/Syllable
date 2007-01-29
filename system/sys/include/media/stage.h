@@ -198,7 +198,7 @@ public:
 	status_t		Initialize();
 	status_t		GetPacket( uint32 nOutput, MediaPacket_s* psPacket );
 	uint64			GetDelay( bool bNonSharedOnly = false );
-	uint64			GetBufferSize();
+	uint64			GetBufferSize( bool bNonSharedOnly = false );
 	
 	os::View*		GetView();
 	

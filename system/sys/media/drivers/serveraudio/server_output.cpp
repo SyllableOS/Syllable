@@ -202,6 +202,7 @@ status_t ServerOutput::AddStream( os::String zName, os::MediaFormat_s sFormat )
 	os::Message cMsg( os::MEDIA_SERVER_CREATE_AUDIO_STREAM );
 	os::Message cReply;
 	
+	cMsg.AddInt64( "process", get_process_id( NULL ) );
 	cMsg.AddString( "name", zName );
 	cMsg.AddInt32( "channels", m_sSrcFormat.nChannels );
 	cMsg.AddInt32( "sample_rate", m_sSrcFormat.nSampleRate );

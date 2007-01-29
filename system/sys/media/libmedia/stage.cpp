@@ -545,6 +545,7 @@ MediaInputStage* MediaInputStage::CreateStageForFile( String zFileName )
 	pcInput->SelectTrack( 0 );
 	MediaInputStage* pcStage = new MediaInputStage();
 	pcStage->SetInput( pcInput );
+	pcInput->Release();
 	return( pcStage );
 }
 
@@ -856,10 +857,10 @@ uint64 MediaOutputStage::GetDelay( bool bS )
 	return( m_pcOutput->GetDelay( bS ) );
 }
 
-uint64 MediaOutputStage::GetBufferSize()
+uint64 MediaOutputStage::GetBufferSize( bool bS )
 {
 	RETURN_IF_NULL( m_pcOutput, 0 );
-	return( m_pcOutput->GetBufferSize() );
+	return( m_pcOutput->GetBufferSize( bS ) );
 }
 
 os::View* MediaOutputStage::GetView()
@@ -901,6 +902,7 @@ MediaOutputStage* MediaOutputStage::CreateDefaultAudioOutputStage()
 
 	MediaOutputStage* pcStage = new MediaOutputStage();
 	pcStage->SetOutput( pcOutput );
+	pcOutput->Release();
 	return( pcStage );
 }
 
@@ -921,6 +923,7 @@ MediaOutputStage* MediaOutputStage::CreateDefaultVideoOutputStage()
 
 	MediaOutputStage* pcStage = new MediaOutputStage();
 	pcStage->SetOutput( pcOutput );
+	pcOutput->Release();
 	return( pcStage );
 }
 
@@ -1184,7 +1187,7 @@ audio_again:
 	{
 		uint64 nAudioBufferSize = pcAudNextStage->GetBufferSize( true );
 		uint32 nFreeAudioBufSize = nAudioBufferSize - pcAudNextStage->GetDelay( true );
-				
+		
 		/* We only write as much bytes as the free buffer size because we 
 		do not want to block when GetPacket() is called */
 		if( nAudioBufferSize <= 80 || ( nFreeAudioBufSize > 40 ) )
@@ -1195,8 +1198,7 @@ audio_again:
 			bigtime_t nAudioLength = (bigtime_t)nWriteBytes * 1000;
 			nAudioLength /= bigtime_t( 2 * m->m_sAudioFormat.nChannels * m->m_sAudioFormat.nSampleRate );
 					
-			//printf( "%i %i %i %i %i %i %i\n", (int)m->m_sAudioOutFormat.nChannels, (int)nAudioBufferSize, (int)nFreeAudioBufSize, m->sAudioPacket.nSize[0], m->nAudioPacketPos, nWriteBytes, (int)nAudioLength );
-				
+			
 			if( m->m_nAudioPacketPos == 0 )
 				if( m->m_sAudioPacket.nTimeStamp != ~0 ) {
 					m->m_nPlayTime = m->m_sAudioPacket.nTimeStamp;
