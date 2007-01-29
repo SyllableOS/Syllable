@@ -1,3 +1,10 @@
+* January 29 2007 Arno Klenke *
+
+Fixed GetBufferSize() in the MediaStageObject class
+Fixed some reference counters in the high level api
+Short audio files should now play correctly in the media player
+The mediaserver now deletes audio streams if an application crashes
+
 * January 19 2007 Arno Klenke *
 
 - Updates to the high level api
@@ -198,6 +205,8 @@ Added multiple soundcard support to the media server
 * Nov 18 2003, Kristian Van Der Vliet *
 
 Created this ChangeLog for changes specific to the media framework.
+
+
 
 
 
