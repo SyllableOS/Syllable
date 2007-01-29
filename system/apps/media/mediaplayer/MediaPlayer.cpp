@@ -520,7 +520,7 @@ again:
 			}
 audio_again:			
 			/* Read audio packet */
-			if( m_bAudio && !bCheckError && !bAudioValid  )
+			if( m_bAudio && !bAudioValid )
 			{
 				for( uint i = 0; i < acPackets.size(); i++ )
 				{
@@ -546,7 +546,7 @@ audio_again:
 			
 			/* Write audio */
 
-			if( m_bAudio && !bCheckError && bAudioValid )
+			if( m_bAudio && bAudioValid )
 			{
 				uint64 nAudioBufferSize= m_pcAudioOutput->GetBufferSize( true );
 				uint32 nFreeAudioBufSize = nAudioBufferSize - m_pcAudioOutput->GetDelay( true );
