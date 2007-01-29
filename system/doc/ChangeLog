@@ -1,3 +1,9 @@
+* January 29, 2007, Kristian Van Der Vliet *
+
+Fixed a series bug with the Savage driver that affected Savage 4 and Savage 2000 series
+cards (and may have caused other us-seen bugs). The framebuffer and registers are now
+mapped correctly for the correct type of chipset.
+
 * January 27 2007, Kaj de Vos *
 
 Moved /atheos/sys/ to /atheos/system/. It has been sticking out like a sore thumb
