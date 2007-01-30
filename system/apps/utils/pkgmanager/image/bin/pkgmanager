@@ -2,13 +2,13 @@
 
 ORCA [
 	Title:		"Legacy package registration tool"
-	Version:	0.2.1
+	Version:	0.3.0
 	Author:		"Kaj de Vos"
 	Rights: {
-		Copyright (c) 2006 Kaj de Vos
+		Copyright (c) 2006,2007 Kaj de Vos
 		License: GPL 2 or any later version
 	}
-	Purpose:	"Registers and unregisters binary packages by managing symbolic links in the system."
+	Purpose:	"Registers and unregisters (binary) packages by managing symbolic links in the system."
 	Example:	"pkgmanager --add /usr/example"
 
 	Tabs:		4
@@ -46,16 +46,16 @@ either find ["version" "-v" "--version"] command [
 	print select header 'rights
 ][
 either find ["--add" "-a"] command [
-	package: package-proto/new package system-image
+	package: package-proto/new package none
 	unless package/register none
 		[quit/return 1]
 ][
 either find ["--remove" "-r"] command [
-	package: package-proto/new package system-image
+	package: package-proto/new package none
 	unless package/unregister none
 		[quit/return 1]
 ][
-	print "Unknown command"
+	print "Command unknown."
 	quit/return 1
 ]]]]
 

@@ -2,19 +2,19 @@
 
 ORCA [
 	Title:		"Package installation tool"
-	Version:	0.2.0
+	Version:	0.3.0
 	Author:		"Kaj de Vos"
 	Rights: {
-		Copyright (c) 2006 Kaj de Vos
+		Copyright (c) 2006,2007 Kaj de Vos
 		License: GPL 2 or any later version
 	}
-	Purpose:	"Registers and unregisters binary packages by managing symbolic links in the system."
+	Purpose:	"Registers and unregisters (binary) packages by managing pools of symbolic links."
 	Example:	"package register example"
 
 	Tabs:		4
 ]
 
-recycle/off  ; FIXME: Orca bug
+recycle/off  ; FIXME: ORCA bug
 
 
 do %/atheos/autolnk/lib/REBOL/package.library
@@ -24,38 +24,50 @@ header: system/script/header
 
 either any [
 	not args: system/script/args
-	(
-		command: args/1
-		if package: args/2 [package: join %/usr/ package]
-
-		find ["help" "-h" "--help" "-help" "-?" "?"] command
-	)
+	find ["help" "-h" "--help" "-help" "-?" "?"] command: args/1
 ][
-	print "Usage: package <command> [<package>]"
+	print "Usage: package <command> [<package> [<link pool> ...]]"
 	print "<command>:"
 	print "  help, -h,     Show this help information"
 	print "    --help, -help, -?, (?)"
-	print "  version, -v   Show version information"
+	print "  version       Show version information"
 	print "  register      Register a package"
 	print "  unregister    Unregister a package"
 	print "Example:"
 	print [" " select header 'example]
 ][
-either find ["version" "-v" "--version"] command [
+either command = "version" [
 	print [select header 'title select header 'version]
 	print select header 'rights
 ][
-either command = "register" [
-	package: package-proto/new package system-image
-	unless package/register none
-		[quit/return 1]
-][
-either command = "unregister" [
-	package: package-proto/new package system-image
-	unless package/unregister none
-		[quit/return 1]
-][
-	print "Unknown command"
-	quit/return 1
-]]]]
+	unless args/2 [
+		print "Please supply a package name."
+		quit/return 2
+	]
+	package: package-proto/new join %/usr/ args/2  none
+
+;	either (args: next next args) <> [] [
+	either (length? args: next next args) > 0 [
+		stages: []
+		foreach stage args [
+			append stages stage-proto/new stage
+		]
+	][
+		stages: none
+	]
+
+	switch/default command [
+		"register" [
+			unless package/register stages
+				[quit/return 10]
+		]
+		"unregister" [
+			unless package/unregister stages
+				[quit/return 20]
+		]
+	][
+		print "Command unknown."
+		quit/return 1
+	]
+]]
 
