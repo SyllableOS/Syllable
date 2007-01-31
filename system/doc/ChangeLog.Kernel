@@ -1,3 +1,14 @@
+* January 31, 2006, Arno Klenke *
+
+o Enable pci links when they are needed
+o ATA driver updates:
+	o Moved parts of the interrupt handling code from the busmanager into the controller driver.
+	  This avoids problems with level triggered interrupts
+	o A lot of small changes in the ATAPI code to support drives which are very strict about
+	  the order of the commands
+	o Enabled DMA transfers for (non ahci) nvidia sata controllers
+	o Updated reset code in the ata_pci controller driver
+
 * December 20, 2006, Kristian Van Der Vliet *
 
 Modified the iso9660 driver so that it always uses RockRidge if the disc uses both
@@ -1072,6 +1083,7 @@ required; they are implemented in user space as part of libc.
 
 Applied a fix to sys/kernel/kernel/vfs/vfs.c  The fcntl() F_GETLK command
 now works as expected.
+
 
 
 
