@@ -168,10 +168,18 @@ again:
 	psPort->sOps.select( psPort, 0 );
 	
 	/* Wait */
-	if( ata_io_wait( psPort, ATA_STATUS_BUSY, 0 ) != 0 ) {
-
+	if( ata_io_wait( psPort, ATA_STATUS_BUSY, 0 ) != 0 )
+	{
+		kerndbg( KERN_FATAL, "Error: Device still busy after selecting ATAPI drive\n" );
 		goto err;
 	}
+	
+	/* Write control register */
+	if( bDMA )
+		ATA_WRITE_REG( psPort, ATA_REG_CONTROL, ATA_CONTROL_DEFAULT )
+	else
+		ATA_WRITE_REG( psPort, ATA_REG_CONTROL, ATA_CONTROL_DEFAULT | ATA_CONTROL_INTDISABLE )
+		
 
 	/* Write atapi command registers */
 	ATA_WRITE_REG( psPort, ATA_REG_FEATURE, bDMA ? ATAPI_FEATURE_DMA : 0 )
@@ -180,12 +188,13 @@ again:
 	ATA_WRITE_REG( psPort, ATAPI_REG_COUNT_LOW, psCmd->nTransferLength & 0xff )
 	ATA_WRITE_REG( psPort, ATAPI_REG_COUNT_HIGH, ( psCmd->nTransferLength >> 8 ) & 0xff )
 
-	/* Write control register */
-	if( bDMA )
-		ATA_WRITE_REG( psPort, ATA_REG_CONTROL, ATA_CONTROL_DEFAULT )
-	else
-		ATA_WRITE_REG( psPort, ATA_REG_CONTROL, ATA_CONTROL_DEFAULT | ATA_CONTROL_INTDISABLE )
-		
+	/* Wait */
+	if( ata_io_wait( psPort, ATA_STATUS_BUSY, 0 ) != 0 )
+	{
+		kerndbg( KERN_FATAL, "Error: Device still busy after writing ATAPI command registers\n" );
+		goto err;
+	}
+	
 	/* Prepare DMA transfer */
 	if( bDMA )
 	{
@@ -210,10 +219,11 @@ dma_again:
 	/* Put command */
 	ATA_WRITE_REG( psPort, ATA_REG_COMMAND, ATAPI_CMD_PACKET )
 	ATA_READ_REG( psPort, ATA_REG_CONTROL, nControl )
-	
+	udelay( ATA_CMD_DELAY );
 	
 	/* Wait */
 	if( ata_io_wait( psPort, ATA_STATUS_BUSY, 0 ) != 0 ) {
+		kerndbg( KERN_FATAL, "Error: Device still busy after writing ATAPI command\n" );
 		goto err;
 	}
 		
@@ -223,10 +233,12 @@ dma_again:
 	{
 		ATA_READ_REG( psPort, ATA_REG_ERROR, psCmd->nError );
 		psCmd->sSense.sense_key = psCmd->nError >> 4;
+		kerndbg( KERN_FATAL, "Error: Device reported an error after writing ATAPI command\n" );	
 		goto err;
 	}
 	
 	if( ata_io_wait( psPort, ATA_STATUS_DRQ, ATA_STATUS_DRQ ) != 0 ){
+		kerndbg( KERN_FATAL, "Error: Device did not set DRQ after writing ATAPI command\n" );
 		goto err;
 	}
 	
@@ -246,6 +258,8 @@ dma_again:
 				ATA_WRITE_REG16( psPort, ATA_REG_DATA, *pCmd )
 				
 		kerndbg( KERN_DEBUG_LOW, "ATAPI command 0x%04x written. Length: %i\n", psCmd->nCmd[0], (int)psCmd->nTransferLength );
+		ATA_READ_REG( psPort, ATA_REG_CONTROL, nControl )
+		udelay( ATA_CMD_DELAY );
 
 		/* Transfer data */
 		if( psCmd->nTransferLength > 0 && nDirection != NO_DATA )
@@ -300,7 +314,7 @@ dma_again:
 				uint8 nLow, nHigh;
 				int nCurrent;
 
-				kerndbg( KERN_DEBUG_LOW, "ATA_STATUS_ERROR is high.\n");
+				kerndbg( KERN_FATAL, "Error: Device reported an error after sending ATAPI packet (status %x)\n", nStatus );
 
 				ATA_READ_REG( psPort, ATA_REG_ERROR, psCmd->nError );
 				psCmd->sSense.sense_key = psCmd->nError >> 4;
@@ -325,7 +339,10 @@ dma_again:
 
 					/* Wait for DRQ */
 					if( ata_io_wait_alt( psPort, ATA_STATUS_DRQ, ATA_STATUS_DRQ ) != 0 )
+					{
+						kerndbg( KERN_FATAL, "Error: Device did not set DRQ after sending ATAPI packet\n" );
 						goto err;
+					}
 
 					if( READ == nDirection )
 					{
@@ -363,32 +380,39 @@ dma_again:
 							nBytesLeft -= nCurrent;
 							if( nBytesLeft > 0 )
 							{
+								
+								
 								/* The length we pass to the device is only the *maximum*
 								   possible transfer; the device might want to send less.
 								   If we're expecting more data then we have to check if
 								   DRQ is asserted; if it isn't then the device has finished
 								   and we should stop.
+								   
+								   We first wait until the drive is idle
+								*/
+								nTime = get_system_time();
+								while( true )
+								{
+									if( get_system_time() - nTime > 20 * 1000 * 1000 )
+									{
+										kerndbg( KERN_WARNING, "ATAPI drive still busy (left %i status 0x%x transfer %i)", nBytesLeft, (uint)nStatus, (uint)nLen );
+										goto err;
+									}
+									
+									ATA_READ_REG( psPort, ATA_REG_STATUS, nStatus )
 
-								   Here's the fun part; some drives want to transfer large
-								   blocks in small chunks.  The drive asserts DRQ, sets the
-								   byte high/low registers to the size of the chunk and we
-								   transfer the data.  Then the drive sets DRQ low, even though
-								   the entire transfer is not yet finished; only one chunk of
-								   it!  So we arrive at this point; DRQ is low, and we think we
-								   have data left to transfer.  Have we finished transfering all
-								   of the data the drive is going to give us, or does the drive
-								   have more chunks of data?  The only way we can find out is
-								   to *wait* and see if the drive asserts DRQ again; if it does,
-								   there is more data, if it doesn't then we assume the drive is
-								   done and this was a short transfer. */
-
+									/* Wait for BUSY to clear */
+									if( !( nStatus & ATA_STATUS_BUSY ) )
+										break;
+								}
+								
 								nTime = get_system_time();
 								bTimedout = true;
 								while( get_system_time() - nTime < ATA_CMD_TIMEOUT )
 								{
 									ATA_READ_REG( psPort, ATA_REG_STATUS, nStatus )
 
-									if( nStatus & ATA_STATUS_DRQ )
+									if( ( nStatus & ATA_STATUS_DRQ ) )
 									{
 										bTimedout = false;
 										break;
@@ -397,7 +421,7 @@ dma_again:
 								}
 								if( bTimedout )
 								{
-									kerndbg( KERN_DEBUG, "Short transfer.  DRQ is low, nBytesLeft is %i\n", nBytesLeft );
+									kerndbg( KERN_WARNING, "DRQ is low, (left %i status 0x%x transfer %i)\n", nBytesLeft, (uint)nStatus, (uint)nLen );
 									break;
 								}
 							}
@@ -455,7 +479,7 @@ dma_again:
 				/* Wait for command completion; BUSY & DRQ low, DRDY high */
 				bool bTimedout = true;
 				nTime = get_system_time();
-				while( get_system_time() - nTime < ATA_CMD_TIMEOUT )
+				while( get_system_time() - nTime < ATA_CMD_TIMEOUT * 20 )
 				{
 					ATA_READ_REG( psPort, ATA_REG_STATUS, nStatus )
 					/* Wait for BUSY & DRQ to clear, DRDY or ERROR to be set */
@@ -467,7 +491,13 @@ dma_again:
 					}
 				}
 				if( bTimedout )
-					kerndbg( KERN_DEBUG, "Timedout waiting for the command to complete.\n");
+				{
+					uint8 nLow, nHigh;
+					ATA_READ_REG( psPort, ATAPI_REG_COUNT_LOW, nLow )
+					ATA_READ_REG( psPort, ATAPI_REG_COUNT_HIGH, nHigh )
+					kerndbg( KERN_WARNING, "ATAPI command failed to execute (status 0x%x high 0x%x low 0x%x transfer %i)\n", (uint)nStatus, (uint)nHigh, (uint)nLow, (uint)nLen );
+					goto err;
+				}
 			}
 
 			psCmd->nStatus = psCmd->nError = 0;
@@ -523,7 +553,6 @@ void ata_cmd_ata( ATA_cmd_s* psCmd )
 	
 	LOCK( psPort->hPortLock );
 	
-	
 again:
 	
 	psCmd->nStatus = -1;
@@ -545,10 +574,21 @@ again:
 	/* Wait */
 	if( ata_io_wait( psPort, ATA_STATUS_BUSY, 0 ) != 0 )
 		goto err;
+		
 	
 	/* Select port */
 	psPort->sOps.select( psPort, psCmd->nCmd[ATA_REG_DEVICE] );
 	
+	/* Extra wait for ATAPI devices */
+	if( psPort->nDevice == ATA_DEV_ATAPI && psCmd->nCmd[ATA_REG_COMMAND] == ATAPI_CMD_IDENTIFY )
+	{
+		snooze( 150000 );
+		if( ata_io_wait( psPort, ATA_STATUS_BUSY, 0 ) != 0 )
+		{
+			kerndbg( KERN_FATAL, "Error: ATAPI device does not clear busy flag after selecting!\n" );
+			goto err;
+		}
+	}
 	
 	/* Write control register */
 	if( bDMA )
@@ -573,10 +613,13 @@ again:
 	ATA_WRITE_REG( psPort, ATA_REG_LBA_MID, psCmd->nCmd[ATA_REG_LBA_MID] )
 	ATA_WRITE_REG( psPort, ATA_REG_LBA_HIGH, psCmd->nCmd[ATA_REG_LBA_HIGH] )
 	
+	
+	
 	/* Wait */
 	if( ata_io_wait( psPort, ATA_STATUS_BUSY, 0 ) != 0 )
 		goto err;
-	
+		
+
 	/* Select command */
 	if( bChangeCmd )
 	{
@@ -636,6 +679,7 @@ dma_again:
 		ATA_WRITE_REG( psPort, ATA_REG_COMMAND, nCommand )
 		
 		ATA_READ_REG( psPort, ATA_REG_CONTROL, nControl )
+		udelay( ATA_CMD_DELAY );
 		
 		/* Start transfer */
 		nReturn = psPort->sOps.start_dma( psPort );
@@ -654,12 +698,19 @@ dma_again:
 		goto end;
 		
 	} else {
+		
 		/* Put command */
 		ATA_WRITE_REG( psPort, ATA_REG_COMMAND, nCommand )
-		
 		ATA_READ_REG( psPort, ATA_REG_CONTROL, nControl )
 		udelay( ATA_CMD_DELAY );
 		
+		if( ata_io_wait( psPort, ATA_STATUS_BUSY, 0 ) != 0 )
+		{
+			kerndbg( KERN_FATAL, "Error: Device still busy after sending ATA command\n" );
+			goto err;
+		}
+		
+	
 		while( nLen > 0 && nRetry < 3 )
 		{
 			int nTransferred = -1;
@@ -674,10 +725,20 @@ dma_again:
 				continue;
 			}
 			
-			//printk( "%i bytes transferred\n", nTransferred );
-			
 			pBuffer += nTransferred;
 			nLen -= nTransferred;
+		}
+		
+		if( !bWrite )
+		{
+			uint8 nStatus;
+	
+			ATA_READ_REG( psPort, ATA_REG_ALTSTATUS, nStatus )
+			if( ata_io_wait( psPort, ATA_STATUS_BUSY, 0 ) != 0 )
+			{
+				printk( "Error: Device still busy after read request\n" );
+				goto err;
+			}
 		}
 		
 		if( nRetry >= 3 ) {

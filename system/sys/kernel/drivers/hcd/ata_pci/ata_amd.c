@@ -72,7 +72,19 @@ static struct AMD_bridge_s {
 	{ "nVIDIA nForce CK804", 0x10de, 0x0053, 0x50, AMD_UDMA_133 },
 	{ "nVIDIA nForce MCP04", 0x10de, 0x0035, 0x50, AMD_UDMA_133 },
 	{ "nVIDIA nForce MCP51", 0x10de, 0x0265, 0x50, AMD_UDMA_133 },
-	{ "nVIDIA nForce MCP55", 0x10de, 0x036e, 0x50, AMD_UDMA_133 }
+	{ "nVIDIA nForce MCP55", 0x10de, 0x036e, 0x50, AMD_UDMA_133 },
+	{ "nVIDIA nForce MCP61", 0x10de, 0x03ec, 0x50, AMD_UDMA_133 },
+	{ "nVIDIA nForce MCP65", 0x10de, 0x0448, 0x50, AMD_UDMA_133 },
+	{ "nVIDIA nForce CK804 SATA", 0x10de, 0x0054, 0x50, AMD_UDMA_133 | AMD_SATA },
+	{ "nVIDIA nForce CK804 SATA2", 0x10de, 0x0055, 0x50, AMD_UDMA_133 | AMD_SATA },
+	{ "nVIDIA nForce MCP04 SATA", 0x10de, 0x0036, 0x50, AMD_UDMA_133 | AMD_SATA },
+	{ "nVIDIA nForce MCP04 SATA2", 0x10de, 0x003e, 0x50, AMD_UDMA_133 | AMD_SATA },
+	{ "nVIDIA nForce MCP51 SATA", 0x10de, 0x0266, 0x50, AMD_UDMA_133 | AMD_SATA },
+	{ "nVIDIA nForce MCP55 SATA", 0x10de, 0x037e, 0x50, AMD_UDMA_133 | AMD_SATA },
+	{ "nVIDIA nForce MCP55 SATA", 0x10de, 0x037f, 0x50, AMD_UDMA_133 | AMD_SATA },
+	{ "nVIDIA nForce MCP61 SATA", 0x10de, 0x03e7, 0x50, AMD_UDMA_133 | AMD_SATA },
+	{ "nVIDIA nForce MCP61 SATA2", 0x10de, 0x03f6, 0x50, AMD_UDMA_133 | AMD_SATA },
+	{ "nVIDIA nForce MCP61 SATA3", 0x10de, 0x03f7, 0x50, AMD_UDMA_133 | AMD_SATA }
 };
 
 struct AMD_private_s
@@ -228,6 +240,8 @@ void init_amd_controller( PCI_Info_s sDevice, ATA_controller_s* psCtrl )
 		psCtrl->psPort[2] = NULL;
 		psCtrl->nPortsPerChannel = 1;
 		psCtrl->psPort[0]->nCable = psCtrl->psPort[1]->nCable = ATA_CABLE_SATA;
+		psCtrl->psPort[0]->nSupportedPortSpeed |= 0x7fff;
+		psCtrl->psPort[1]->nSupportedPortSpeed |= 0x7fff;
 		return;
 	}
 	

@@ -101,12 +101,11 @@ int ata_io_read( ATA_port_s* psPort, void *pBuffer, int nBytes )
 						ATA_READ_REG16( psPort, ATA_REG_DATA, *pData )
 
 				nTransfered += 512;	/* We don't include the ECC bytes as part of the transfer */
-
+				
 				/* Check to see if we have transfered all the data */
 				if( nBytes - nTransfered  == 0)
 					return( nBytes );
 
-				ATA_READ_REG( psPort, ATA_REG_STATUS, nStatus )
 				udelay( ATA_CMD_DELAY );
 				continue;
 			}
@@ -166,7 +165,6 @@ int ata_io_write( ATA_port_s* psPort, void *pBuffer, int nBytes )
 				if( nBytes - nTransfered  == 0)
 					return( nBytes );
 
-				ATA_READ_REG( psPort, ATA_REG_STATUS, nStatus )
 				udelay( ATA_CMD_DELAY );
 				continue;
 			}

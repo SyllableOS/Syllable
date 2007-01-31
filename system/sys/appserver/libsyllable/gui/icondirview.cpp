@@ -144,16 +144,18 @@ DirKeeper::DirKeeper( const Messenger & cTarget, const String& cPath ):Looper( "
 }
 
 status_t DirKeeper::GetNode( os::String zPath, os::FSNode* pcNode, bool* pbBrokenLink )
-{
-	*pbBrokenLink = false;
-	
+{	
 	if( pcNode->SetTo( *m_pcCurrentDir, zPath, O_RDONLY | O_NONBLOCK ) >= 0 )
+	{
+		*pbBrokenLink = false;
 		return( 0 );
-	
-	*pbBrokenLink = true;
+	}
 	
 	if( pcNode->SetTo( *m_pcCurrentDir, zPath, O_RDONLY | O_NONBLOCK | O_NOTRAVERSE ) >= 0 )
+	{
+		*pbBrokenLink = true;		
 		return( 0 );
+	}
 		
 	return( -EIO );
 }

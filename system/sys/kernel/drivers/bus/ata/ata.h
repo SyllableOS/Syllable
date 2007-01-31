@@ -288,6 +288,7 @@ struct ATA_port_t
 	uint8* pDataBuf; /* Data buffer (busmanager) */
 	sem_id hPortLock; /* Port lock (controller) */
 	sem_id hIRQWait; /* Interrupt wait (controller) */
+	bool bIRQError; /* Interrupt error (controller) */
 	uint8* pDMATable; /* DMA table buffer (controller) */
 	
 	ATA_cmd_buf_s* psCmdBuf; /* Command buffer */

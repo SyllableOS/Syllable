@@ -487,6 +487,9 @@ acpi_pci_link_get_irq (
 		return_VALUE(-1);
 	}
 	
+	if (acpi_pci_link_allocate(link))
+		return_VALUE(-1);
+	
 	if (edge_level) *edge_level = link->sIrq.nEdgeLevel;
 	if (active_high_low) *active_high_low = link->sIrq.nActiveHighLow;
 	
@@ -560,9 +563,7 @@ acpi_pci_link_add (
 		
 	kerndbg( KERN_DEBUG, "PCI: %s\n", zBuffer );
 
-	if (acpi_pci_link_allocate(link))
-		return_VALUE(-1);
-
+	
 end:
 	if (result)
 		kfree(link);

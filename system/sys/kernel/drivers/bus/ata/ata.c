@@ -379,6 +379,7 @@ status_t device_init( int nDeviceID )
 
 status_t device_uninit( int nDeviceID )
 {
+	return( -1 );
 }
 
 

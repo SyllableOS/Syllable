@@ -105,7 +105,19 @@ ATA_PCI_dev_s g_sDevices[] =
 	{ 0x10de, 0x0053, init_amd_controller },
 	{ 0x10de, 0x0035, init_amd_controller },
 	{ 0x10de, 0x0265, init_amd_controller },
-	{ 0x10de, 0x036e, init_amd_controller }
+	{ 0x10de, 0x036e, init_amd_controller },
+	{ 0x10de, 0x03ec, init_amd_controller },
+	{ 0x10de, 0x0448, init_amd_controller },	
+	{ 0x10de, 0x0054, init_amd_controller },	
+	{ 0x10de, 0x0055, init_amd_controller },
+	{ 0x10de, 0x0036, init_amd_controller },
+	{ 0x10de, 0x003e, init_amd_controller },	
+	{ 0x10de, 0x0266, init_amd_controller },
+	{ 0x10de, 0x037e, init_amd_controller },
+	{ 0x10de, 0x037f, init_amd_controller },
+	{ 0x10de, 0x03e7, init_amd_controller },
+	{ 0x10de, 0x03f6, init_amd_controller },
+	{ 0x10de, 0x03f7, init_amd_controller }
 };
 
 static bool g_bLegacyController = false;
@@ -146,27 +158,53 @@ int ata_pci_interrupt( int nIrq, void *pPort, SysCallRegs_s* psRegs )
 	ATA_port_s* psPort = pPort;
 	uint8 nStatus = 0;
 	uint8 nControl = 0;
+	uint8 nDevControl;
+	uint8 nDevStatus;
 	
 	ATA_READ_DMA_REG( psPort, ATA_REG_DMA_STATUS, nStatus )
+	
+	//printk( "Got ATA interrupt status %x\n", (uint)nStatus );
 	
 	if( !( nStatus & ATA_DMA_STATUS_IRQ ) )
 	{
 		/* Not our IRQ */
+		//printk( "Got shared interrupt\n" );
 		return( 0 );
 	}
+	
 
-	/* Let the busmanager handle the irq */
+	/* Stop transfer */
+	ATA_READ_DMA_REG( psPort, ATA_REG_DMA_CONTROL, nControl )
+	nControl &= ~ATA_DMA_CONTROL_START;
+	ATA_WRITE_DMA_REG( psPort, ATA_REG_DMA_CONTROL, nControl )
+	ATA_READ_REG( psPort, ATA_REG_CONTROL, nDevControl )
+	
+	/* Check control reg */
+	ATA_READ_REG( psPort, ATA_REG_CONTROL, nDevControl )
+	if( nDevControl & ATA_STATUS_BUSY )
+		kerndbg( KERN_WARNING, "Warning: Drive altstatus still busy after DMA transfer\n" );
+		
+	/* Check status reg. This clears the irq */
+	ATA_READ_REG( psPort, ATA_REG_STATUS, nDevStatus )
+	if( nDevStatus & ATA_STATUS_BUSY )
+		kerndbg( KERN_WARNING, "Warning: Drive status still busy after DMA transfer\n" );
+
+	/* Clear status */	
+	ATA_WRITE_DMA_REG( psPort, ATA_REG_DMA_STATUS, nStatus )
+	if( nStatus & ATA_DMA_STATUS_ERROR )
+	{
+		kerndbg( KERN_FATAL, "Error: ATA/ATAPI DMA transfer failed\n" );
+		psPort->bIRQError = true;
+	}
 	unlock_semaphore( psPort->hIRQWait );
 	
 	return( 0 );
 }
 
-status_t ata_pci_reset( ATA_port_s* psPort )
+static status_t ata_check_port( ATA_port_s* psPort )
 {
-	int nCount, nLbaLow, nControl;
-	
-	
 	/* Select drive */
+	uint8 nCount, nLbaLow, nControl;
 	ATA_WRITE_REG( psPort, ATA_REG_CONTROL, ATA_CONTROL_DEFAULT )
 	if( psPort->nPort == 0 )
 		ATA_WRITE_REG( psPort, ATA_REG_DEVICE, ATA_DEVICE_DEFAULT )
@@ -191,44 +229,93 @@ status_t ata_pci_reset( ATA_port_s* psPort )
 	if( !( ( nCount == 0x55 || nCount == 0x01 ) && nLbaLow == 0xaa ) )
 		return( -1 );
 
+	return( 0 );
+}
+
+status_t ata_pci_reset( ATA_port_s* psMaster, ATA_port_s* psSlave )
+{
+	bool bMaster = false;
+	bool bSlave = false;
+	uint8 nCount, nLbaLow, nControl, nStatus;
+	
+
+	if( ata_check_port( psMaster ) == 0 )
+		bMaster = true;
+	if( psSlave != NULL && ata_check_port( psSlave ) == 0 )
+		bSlave = true;
+	
+	/* Select master */
+	ATA_WRITE_REG( psMaster, ATA_REG_DEVICE, ATA_DEVICE_DEFAULT )
+	ATA_READ_REG( psMaster, ATA_REG_CONTROL, nControl )
+	udelay( ATA_CMD_DELAY );
+	
 	/* Bus reset */
-	ATA_WRITE_REG( psPort, ATA_REG_CONTROL, ATA_CONTROL_DEFAULT | ATA_CONTROL_RESET )
+	ATA_WRITE_REG( psMaster, ATA_REG_CONTROL, ATA_CONTROL_DEFAULT )
 	udelay( 10 );
-	ATA_WRITE_REG( psPort, ATA_REG_CONTROL, ATA_CONTROL_DEFAULT )
+	ATA_WRITE_REG( psMaster, ATA_REG_CONTROL, ATA_CONTROL_DEFAULT | ATA_CONTROL_RESET )
+	udelay( 10 );
+	ATA_WRITE_REG( psMaster, ATA_REG_CONTROL, ATA_CONTROL_DEFAULT )
 	udelay( 10 );
 	
-	if( ata_pci_wait( psPort, ATA_STATUS_BUSY, 0 ) < 0 )
+	snooze( 15000 );
+	
+	ATA_READ_REG( psMaster, ATA_REG_STATUS, nStatus )
+	if( nStatus == 0xff )
 	{
-		uint8 nStatus;
-		ATA_READ_REG( psPort, ATA_REG_STATUS, nStatus )
-		kerndbg( KERN_FATAL, "Timeout while resetting with status %x\n", nStatus );
-		kerndbg( KERN_INFO, "There might be a master but no slave device\n" );
+		psMaster->nDevice = ATA_DEV_UNKNOWN;
+		psSlave->nDevice = ATA_DEV_UNKNOWN;
+		return( 0 );
 	}
 	
-	/* Select again */
-	if( psPort->nPort == 0 )
-		ATA_WRITE_REG( psPort, ATA_REG_DEVICE, ATA_DEVICE_DEFAULT )
-	else
-		ATA_WRITE_REG( psPort, ATA_REG_DEVICE, ATA_DEVICE_DEFAULT | ATA_DEVICE_SLAVE )
-	ATA_READ_REG( psPort, ATA_REG_CONTROL, nControl )
-	udelay( ATA_CMD_DELAY );
-		
-	ATA_READ_REG( psPort, ATA_REG_COUNT, nCount )
-	ATA_READ_REG( psPort, ATA_REG_LBA_LOW, nLbaLow )
+	if( bMaster ) {
+		if( ata_pci_wait( psMaster, ATA_STATUS_BUSY, 0 ) < 0 )
+		{
+			ATA_READ_REG( psMaster, ATA_REG_STATUS, nStatus )
+			kerndbg( KERN_FATAL, "Timeout while resetting master with status %x\n", nStatus );
+		}
+	}
 	
-	if( psPort->nPort == 1 && !( nCount & 0x01 && nLbaLow & 0x01 ) )
-		return( -1 );
+	/* Check slave */
+	bigtime_t nTimeout = get_system_time() + ATA_CMD_TIMEOUT;
+	while( bSlave )
+	{
+		/* Select */
+		ATA_WRITE_REG( psSlave, ATA_REG_DEVICE, ATA_DEVICE_DEFAULT | ATA_DEVICE_SLAVE )
+		ATA_READ_REG( psSlave, ATA_REG_CONTROL, nControl )
+		udelay( ATA_CMD_DELAY );
+		ATA_READ_REG( psSlave, ATA_REG_COUNT, nCount )
+		ATA_READ_REG( psSlave, ATA_REG_LBA_LOW, nLbaLow )
+		
+		if( ( nCount == 0x01 && nLbaLow == 0x01 ) )
+			break;
+		if( get_system_time() > nTimeout )
+		{
+			printk( "Timeout while waiting for slave!\n" );
+			bSlave = false;
+			break;
+		}
+		snooze( 50000 );
+	}
+	
+	if( bSlave ) {
+		if( ata_pci_wait( psSlave, ATA_STATUS_BUSY, 0 ) < 0 )
+		{
+			ATA_READ_REG( psSlave, ATA_REG_STATUS, nStatus )
+			kerndbg( KERN_FATAL, "Timeout while resetting slave with status %x\n", nStatus );
+		}
+	}
+		
 
-	udelay( 50 );
-	
-	/* Select again */
-	if( psPort->nPort == 0 )
-		ATA_WRITE_REG( psPort, ATA_REG_DEVICE, ATA_DEVICE_DEFAULT )
-	else
-		ATA_WRITE_REG( psPort, ATA_REG_DEVICE, ATA_DEVICE_DEFAULT | ATA_DEVICE_SLAVE )
-	ATA_READ_REG( psPort, ATA_REG_CONTROL, nControl )
-	udelay( ATA_CMD_DELAY );
+	if( bMaster )
+		psMaster->nDevice = ATA_DEV_UNKNOWN;
+	if( bSlave )
+		psSlave->nDevice = ATA_DEV_UNKNOWN;
 		
+	return( 0 );
+}
+
+status_t ata_pci_reset_dummy( ATA_port_s* psPort )
+{
 	return( 0 );
 }
 
@@ -409,7 +496,7 @@ status_t ata_pci_add_controller( int nDeviceID, PCI_Info_s sDevice, init_ata_con
 		
 		psPort->hPortLock = hLock;
 		psPort->hIRQWait = hIRQWait;
-		psPort->sOps.reset = ata_pci_reset;
+		psPort->sOps.reset = ata_pci_reset_dummy;
 		psPort->bMMIO = bMMIO;
 		if( bDMAPossible && bMMIO && ( *((uint8*)nDmaRegBase + 2) & nDmaMask ) )
 			psPort->nSupportedPortSpeed = nDmaSpeedMask;
@@ -456,6 +543,16 @@ status_t ata_pci_add_controller( int nDeviceID, PCI_Info_s sDevice, init_ata_con
 	/* Chipset specific initialization */
 	if( psInit && bDMAPossible )
 		psInit( sDevice, psCtrl );
+		
+	/* Reset */
+	for( i = 0; i < psCtrl->nChannels; i++ )
+	{
+		ATA_port_s* psMaster = psCtrl->psPort[psCtrl->nPortsPerChannel*i];
+		if( psCtrl->nPortsPerChannel == 1 )
+			ata_pci_reset( psMaster, NULL );
+		else
+			ata_pci_reset( psMaster, psCtrl->psPort[psCtrl->nPortsPerChannel*i+1] );
+	}
 	
 	/* Put the controller into the list */
 	g_apsControllers[g_nControllers++] = psCtrl;
@@ -533,7 +630,7 @@ status_t ata_legacy_add_controller( int nDeviceID )
 		
 		psPort->hPortLock = hLock;
 		psPort->hIRQWait = hIRQWait;
-		psPort->sOps.reset = ata_pci_reset;
+		psPort->sOps.reset = ata_pci_reset_dummy;
 		psPort->bMMIO = false;
 		psPort->nSupportedPortSpeed = ( 1 << ATA_SPEED_PIO );
 		
@@ -553,6 +650,13 @@ status_t ata_legacy_add_controller( int nDeviceID )
 		psPort->nRegs[ATA_REG_CONTROL] = ( i & 2 ) ? nControl2 : nControl1;
 		psCtrl->psPort[i] = psPort;
 		
+	}
+	
+	/* Reset */
+	for( i = 0; i < psCtrl->nChannels; i++ )
+	{
+		ATA_port_s* psMaster = psCtrl->psPort[psCtrl->nPortsPerChannel*i];
+		ata_pci_reset( psMaster, psCtrl->psPort[psCtrl->nPortsPerChannel*i+1] );
 	}
 	
 	g_psBus->add_controller( psCtrl );

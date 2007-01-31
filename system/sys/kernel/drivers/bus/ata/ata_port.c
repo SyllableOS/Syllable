@@ -36,6 +36,9 @@ void ata_port_identify( ATA_port_s* psPort )
 	ATA_READ_REG( psPort, ATA_REG_STATUS, nStatus )
 	ATA_READ_REG( psPort, ATA_REG_ERROR, nError )
 	
+	if( nError == 0x81 && psPort->nPort == 0 && psPort->psCtrl->nPortsPerChannel > 1 )
+		psPort->psCtrl->psPort[psPort->nChannel*psPort->psCtrl->nPortsPerChannel + 1] = ATA_DEV_NONE;
+	
 	if( nError == 1 || ( psPort->nPort == 0 && nError == 0x81 ) )
 	{
 		if( ( ( nLbaMid == 0x00 && nLbaHigh == 0x00 ) ||
@@ -139,6 +142,7 @@ bool ata_port_dma_table( ATA_port_s* psPort, void *pBuffer, uint32 nTotal )
 
 			*pnTable++ = 0x8000;
 			*pnTable++ = nAddress + 0x8000;
+			nAddress += 0x8000;
 			nLen = 0x8000;
 		}
 
@@ -160,14 +164,18 @@ status_t ata_port_prepare_dma_read( ATA_port_s* psPort, uint8* pBuffer, uint32 n
 {
 	/* Prepare dma table */
 	uint8 nStatus;
+	uint8 nControl;
 	if( ata_port_dma_table( psPort, pBuffer, nLen ) == false )
 		return( -EIO );
 	
 	/* Write registers */
-	ATA_WRITE_DMA_REG32( psPort, ATA_REG_DMA_TABLE, (uint32)psPort->pDMATable )
-	ATA_WRITE_DMA_REG( psPort, ATA_REG_DMA_CONTROL, ATA_DMA_CONTROL_READ )
 	ATA_READ_DMA_REG( psPort, ATA_REG_DMA_STATUS, nStatus )
-	ATA_WRITE_DMA_REG( psPort, ATA_REG_DMA_STATUS, nStatus | ATA_DMA_STATUS_IRQ | ATA_DMA_STATUS_ERROR )
+	ATA_WRITE_DMA_REG( psPort, ATA_REG_DMA_STATUS, nStatus )
+	ATA_WRITE_DMA_REG32( psPort, ATA_REG_DMA_TABLE, (uint32)psPort->pDMATable )	
+	ATA_READ_DMA_REG( psPort, ATA_REG_DMA_CONTROL, nControl )
+	nControl &= ~( ATA_DMA_CONTROL_START );
+	nControl |= ATA_DMA_CONTROL_READ;
+	ATA_WRITE_DMA_REG( psPort, ATA_REG_DMA_CONTROL, nControl )
 	
 	return( 0 );
 }
@@ -177,14 +185,17 @@ status_t ata_port_prepare_dma_write( ATA_port_s* psPort, uint8* pBuffer, uint32 
 {
 	/* Prepare dma table */
 	uint8 nStatus;
+	uint8 nControl;
 	if( ata_port_dma_table( psPort, pBuffer, nLen ) == false )
 		return( -EIO );
 	
 	/* Write registers */
-	ATA_WRITE_DMA_REG32( psPort, ATA_REG_DMA_TABLE, (uint32)psPort->pDMATable )
-	ATA_WRITE_DMA_REG( psPort, ATA_REG_DMA_CONTROL, 0 )
 	ATA_READ_DMA_REG( psPort, ATA_REG_DMA_STATUS, nStatus )
-	ATA_WRITE_DMA_REG( psPort, ATA_REG_DMA_STATUS, nStatus | ATA_DMA_STATUS_IRQ | ATA_DMA_STATUS_ERROR )
+	ATA_WRITE_DMA_REG( psPort, ATA_REG_DMA_STATUS, nStatus )
+	ATA_WRITE_DMA_REG32( psPort, ATA_REG_DMA_TABLE, (uint32)psPort->pDMATable )		
+	ATA_READ_DMA_REG( psPort, ATA_REG_DMA_CONTROL, nControl )
+	nControl &= ~( ATA_DMA_CONTROL_START | ATA_DMA_CONTROL_READ );
+	ATA_WRITE_DMA_REG( psPort, ATA_REG_DMA_CONTROL, nControl )
 	
 	return( 0 );
 }
@@ -193,30 +204,54 @@ status_t ata_port_prepare_dma_write( ATA_port_s* psPort, uint8* pBuffer, uint32 
 status_t ata_port_start_dma( ATA_port_s* psPort )
 {
 	/* Start transfer */
-	uint8 nControl;
 	uint8 nStatus;
+	uint8 nControl;
+	uint8 nDevStatus;
 	
-	//printk( "Starting DMA!\n" );
+#if 0	
+	ATA_READ_DMA_REG( psPort, ATA_REG_DMA_CONTROL, nControl )
+	ATA_READ_DMA_REG( psPort, ATA_REG_DMA_STATUS, nStatus )
+	ATA_READ_REG( psPort, ATA_REG_CONTROL, nDevControl )
+#endif	
+//	printk( "Starting DMA DMA Control %x DMA status %x Dev %x!\n", (uint)nControl, (uint)nStatus, (uint)nDevControl );
 	
 	ATA_READ_DMA_REG( psPort, ATA_REG_DMA_CONTROL, nControl )
+	psPort->bIRQError = false;
 	reset_semaphore( psPort->hIRQWait, 0 );
 	ATA_WRITE_DMA_REG( psPort, ATA_REG_DMA_CONTROL, nControl | ATA_DMA_CONTROL_START )
 	
 	nStatus = 0;
-	lock_semaphore( psPort->hIRQWait, SEM_NOSIG, INFINITE_TIMEOUT );
+	if( lock_semaphore( psPort->hIRQWait, SEM_NOSIG, 5 * 1000 * 1000 ) == -ETIME )
+	{
+		ATA_READ_DMA_REG( psPort, ATA_REG_DMA_STATUS, nStatus )
+		ATA_READ_DMA_REG( psPort, ATA_REG_DMA_CONTROL, nControl )
+		ATA_READ_REG( psPort, ATA_REG_STATUS, nDevStatus )
+		/* Stop transfer */
+		ATA_WRITE_DMA_REG( psPort, ATA_REG_DMA_CONTROL, nControl & ~ATA_DMA_CONTROL_START )
+		kerndbg( KERN_FATAL, "Error: DMA transfer timeout Control 0x%x Status 0x%x Devstatus 0x%x!\n", (uint)nControl, (uint)nStatus, (uint)nDevStatus );
+		return( -1 );
+	}
 	
-	/* Stop transfer */
+	/* Check that the transfer was stopped */
 	ATA_READ_DMA_REG( psPort, ATA_REG_DMA_CONTROL, nControl )
-	ATA_WRITE_DMA_REG( psPort, ATA_REG_DMA_CONTROL, nControl & ~ATA_DMA_CONTROL_START )
+	if( nControl & ATA_DMA_CONTROL_START )
+	{
+		ATA_READ_DMA_REG( psPort, ATA_REG_DMA_STATUS, nStatus )
+		ATA_READ_REG( psPort, ATA_REG_STATUS, nDevStatus )
+		nControl &= ~ATA_DMA_CONTROL_START;
+		ATA_WRITE_DMA_REG( psPort, ATA_REG_DMA_CONTROL, nControl )
+		kerndbg( KERN_FATAL, "Error: DMA transfer was still pending! Control 0x%x Status 0x%x Devstatus 0x%x!\n", (uint)nControl, (uint)nStatus, (uint)nDevStatus );
+		return( -1 );
+	}
+
+#if 0	
+	nStatus = 0;
 	ATA_READ_DMA_REG( psPort, ATA_REG_DMA_STATUS, nStatus )
+	ATA_READ_REG( psPort, ATA_REG_CONTROL, nDevControl )
 	
-	ATA_WRITE_DMA_REG( psPort, ATA_REG_DMA_STATUS, nStatus | ATA_DMA_STATUS_IRQ | ATA_DMA_STATUS_ERROR )
-	
-	//printk( "Finished Control %i Status %i\n", nControl, nStatus );
-	
-	ATA_READ_REG( psPort, ATA_REG_CONTROL, nControl )
-	
-	return( ( nStatus & ( ATA_DMA_STATUS_ERROR | ATA_DMA_STATUS_IRQ ) ) == ATA_DMA_STATUS_IRQ ? 0 : -1 );
+	printk( "Finished DMA Control %x DMA Status %x Dev %x\n", (uint)nControl, (uint)nStatus, (uint)nDevControl );	
+#endif	
+	return( psPort->bIRQError ? -1 : 0 );
 }
 
 
