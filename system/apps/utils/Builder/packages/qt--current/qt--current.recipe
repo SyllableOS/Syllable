@@ -9,7 +9,7 @@ licenses			GPL
 home				www.konqueror.org/embedded/
 packages
 ;	abrowse-a3a-src
-	ABrowse.zip
+	ABrowse
 locations
 ;	http://www.liqwyd.com/arno/
 	http://www.syllable-dev.org
