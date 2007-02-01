@@ -1,6 +1,6 @@
 ORCA [
 	Title:		"Package installation library"
-	Version:	0.3.0
+	Version:	0.3.1
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006,2007 Kaj de Vos
@@ -71,7 +71,7 @@ stage-proto: context [
 ;	type: none
 ;	root: %/
 ;	packages-root: %/usr/
-	indexes: %/atheos/autolnk/
+	indexes: %/atheos/autolnk
 	
 	new: func ["Returns a new stage object; of the running system by default."
 		stage' [file! string! none!]
@@ -84,7 +84,7 @@ stage-proto: context [
 	][
 ;		source: join packages-root [package "/" node]
 		source: join package ["/" node]
-		target: join indexes node
+		target: join indexes ["/" node]
 
 		either dir? source [
 			either exists? target [
@@ -114,7 +114,7 @@ stage-proto: context [
 	remove-node: func [subdir node
 		/local index file
 	][
-		index: join indexes [file: join subdir ["/" node]]
+		index: join indexes ["/"  file: join subdir ["/" node]]
 
 		either dir? index [
 			any [
@@ -127,7 +127,7 @@ stage-proto: context [
 			]
 		][
 ;			FIXME: ORCA join bug:
-;			change-dir join indexes [subdir]
+;			change-dir join indexes ["/" subdir]
 ;			TODO: detect a symlink:
 ;			either file? node [
 			either exists? index [
@@ -277,4 +277,3 @@ package-proto: context [
 		]
 	]
 ]
-
