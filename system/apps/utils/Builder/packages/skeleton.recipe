@@ -143,11 +143,11 @@ move-files
 delete-files		<Files to delete from the installation>
 ; General documentation to install:
 
-documentation		README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS
+documentation		[README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS]
 ; Documentation for building from source:
 ;build-docs			INSTALL
 ; Documentation for developers using the package:
-develop-docs		docs
+develop-docs		[docs]
 ; Internal documentation for developers of the package itself:
 ;internal-docs		docs
 ; Links to create
@@ -162,4 +162,3 @@ links
 
 ; Don't strip binaries:
 ;no-strip
-
