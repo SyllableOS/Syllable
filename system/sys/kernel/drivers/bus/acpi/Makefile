@@ -84,8 +84,7 @@ $(OBJDIR)/acpi: $(OBJS) Makefile
 install: all
 	cp -f $(OBJDIR)/acpi $(IMAGE)/system/drivers/dev/bus/acpi
 
-dist: all
+dist: install
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/acpi
-

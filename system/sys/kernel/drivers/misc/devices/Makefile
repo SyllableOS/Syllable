@@ -40,8 +40,7 @@ $(OBJDIR)/devices: $(OBJS) Makefile
 install: all
 	cp -f $(OBJDIR)/devices $(IMAGE)/system/drivers/dev/devices
 
-dist: all
+dist: install
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/devices
-

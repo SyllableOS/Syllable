@@ -40,8 +40,7 @@ $(OBJDIR)/random: $(OBJS) Makefile
 install: all
 	cp -f $(OBJDIR)/random $(IMAGE)/system/drivers/dev/random
 
-dist: all
+dist: install
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/random
-

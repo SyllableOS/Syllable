@@ -40,8 +40,7 @@ $(OBJDIR)/pci: $(OBJS) Makefile
 install: all
 	cp -f $(OBJDIR)/pci $(IMAGE)/system/drivers/dev/bus/pci
 
-dist: all
+dist: install
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/pci
-
