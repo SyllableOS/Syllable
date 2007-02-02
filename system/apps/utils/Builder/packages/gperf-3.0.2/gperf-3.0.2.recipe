@@ -1,0 +1,17 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			gnu
+
+headline			Perfect hash function generator
+description
+	GNU GPerf is a perfect hash function generator. For a given list of strings, it produces a hash function and hash table, in form of C or C++ code, for looking up a value depending on the input string. The hash function is perfect, which means that the hash table has no collisions, and the hash table lookup needs a single string comparison only.
+licenses			GPL
+
+home				www.gnu.org/software/gperf/
+packages			gperf/gperf-3.0.2
+
+documentation
+	README COPYING NEWS ChangeLog AUTHORS
+;	doc/*.html
+
