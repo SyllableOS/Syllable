@@ -1,4 +1,8 @@
-* January 31, 2006, Arno Klenke *
+* February 2, 2007, Arno Klenke *
+
+o Added a function to return the acpi id of one processor
+
+* January 31, 2007, Arno Klenke *
 
 o Enable pci links when they are needed
 o ATA driver updates:
@@ -1083,6 +1087,7 @@ required; they are implemented in user space as part of libc.
 
 Applied a fix to sys/kernel/kernel/vfs/vfs.c  The fcntl() F_GETLK command
 now works as expected.
+
 
 
 
