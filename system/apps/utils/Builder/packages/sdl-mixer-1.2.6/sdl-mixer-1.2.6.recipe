@@ -4,7 +4,6 @@ authors
 	Michael Saunders
 maintainers			Kaj de Vos
 status				testing
-notes				Doesn't build a shared library yet
 
 licenses			LGPL
 home				www.libsdl.org/projects/SDL_mixer/
@@ -15,7 +14,6 @@ packages
 locations			http://www.libsdl.org/projects/SDL_mixer/release/
 
 needs				sdl
-build-needs			automake
 build-recommends
 ;	smpeg
 ;	timidity
@@ -23,10 +21,10 @@ build-recommends
 	libvorbis
 
 patch-config
-_patch
-	aclocal
-	automake
+make-shared
 
+; For shared libraries:
+configure-env		LDFLAGS '-lm'
 configure-options
 ;	Bare LibMikMod:
 	--enable-music-mod

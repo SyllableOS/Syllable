@@ -18,6 +18,7 @@ packages
 	<Source package names, if different from the recipe name or the package is at a subpath relative to the download location.
 	Common package extensions (.tgz, .tar.gz, .tbz2, .tar.bz2, .zip) should be left off.>
 	[<Path>]<Package> [<Subdirectory to unpack into (for packages after the first that should be unpacked inside the first, or for a package that doesn't contain a master subdirectory)>]
+; Automatic downloading requires WGet:
 locations			<Download locations>
 ;archives			<Arch archives>
 
@@ -46,6 +47,9 @@ patch-config		[<Directories>]
 ; For packages produced with ancient AutoConf versions:
 patch-legacy-config
 patch				<Extra patching commands>
+; Makes a package that uses LibTool generate shared libraries:
+; Requires LibTool, AutoMake and AutoConf:
+make-shared
 
 ; Can't build outside the source directory:
 build-dir			<Subdirectory>
@@ -162,3 +166,4 @@ links
 
 ; Don't strip binaries:
 ;no-strip
+

@@ -13,7 +13,6 @@ packages			SDL_sound-1.0.1
 locations			http://icculus.org/SDL_sound/downloads/
 
 needs				sdl >= 1.2
-build-needs			automake
 build-recommends
 	libvorbis
 	smpeg >= 0.4.3
@@ -23,9 +22,7 @@ build-recommends
 	libspeex
 
 patch-config
-_patch
-	aclocal
-	automake
+;make-shared
 
 configure-options
 ;	--enable-static
