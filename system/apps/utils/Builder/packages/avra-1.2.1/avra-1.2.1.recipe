@@ -1,0 +1,30 @@
+authors				Kaj de Vos
+status				testing
+warnings
+	Has a nasty source package with loose files. Unpack this in your own avra-1.2.1 directory!
+
+inherits			sourceforge
+
+headline			Atmel AVR Assembler
+description
+	Assembler for the Atmel AVR microcontrollers for all platforms. Compatible with Atmel's own assembler.
+licenses			GPL
+
+home				avra.sourceforge.net
+packages			avra/avra-1.2.1-src
+
+build-needs
+	autoconf
+	automake
+
+patch
+	aclocal
+	autoconf
+	automake -a
+
+;make				automake-compile
+
+documentation		README COPYING NEWS ChangeLog AUTHORS TODO
+develop-docs		Example
+build-docs			INSTALL
+
