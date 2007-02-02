@@ -2,7 +2,7 @@
 
 ORCA [
 	Title:		"Package installation tool"
-	Version:	0.3.0
+	Version:	0.3.1
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006,2007 Kaj de Vos
@@ -44,25 +44,21 @@ either command = "version" [
 		print "Please supply a package name."
 		quit/return 2
 	]
-	package: package-proto/new join %/usr/ args/2  none
+	package: package-proto/new join %/usr/ args/2
 
-;	either (args: next next args) <> [] [
-	either (length? args: next next args) > 0 [
-		stages: []
-		foreach stage args [
-			append stages stage-proto/new stage
-		]
-	][
-		stages: none
+	stages: []
+	foreach stage next next args [
+		append stages stage-proto/new stage
 	]
 
 	switch/default command [
 		"register" [
-			unless package/register stages
+;			unless either stages = [] [package/register] [package/register/stages stages]
+			unless either (length? stages) = 0 [package/register] [package/register/stages stages]
 				[quit/return 10]
 		]
 		"unregister" [
-			unless package/unregister stages
+			unless either (length? stages) = 0 [package/unregister] [package/unregister/stages stages]
 				[quit/return 20]
 		]
 	][

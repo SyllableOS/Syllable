@@ -1,6 +1,6 @@
 ORCA [
 	Title:		"Package installation library"
-	Version:	0.3.1
+	Version:	0.3.2
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006,2007 Kaj de Vos
@@ -148,29 +148,29 @@ stage-proto: context [
 system-image: stage-proto/new none
 
 package-proto: context [
-	package: stage: none
+	package: this-stage: none
 
 	flat-dirs:	 [etc bin sbin info early-init init]
 	nested-dirs: [lib libexec include share man]
 
 	new: func ["Returns a new package object."
 		package' [file! string!]
-		stage' [object! none!]
+		/stage s' [object!]
 	][
 		make self [
 			package: to-file package'
-			stage: any [stage' system-image]
+			this-stage: either stage [s'] [system-image]
 		]
 	]
 
 	register: func ["Indexes the package into the staging areas."
-		stages [block! none!]
+		/stages targets [block!]
 		/local path
 	][
 		log/header join "Registering " package
 
 		either all [
-			do-subdirs :index-subdir any [stages reduce [stage]]
+			do-subdirs :index-subdir either stages [targets] [reduce [this-stage]]
 			any [
 				not exists? path: join package "/man"
 				(
@@ -187,13 +187,13 @@ package-proto: context [
 	]
 
 	unregister: func ["Unlinks the package from the staging areas."
-		stages [block! none!]
+		/stages targets [block!]
 		/local path
 	][
 		log/header join "Unregistering " package
 
 		either all [
-			do-subdirs :remove-subdir any [stages reduce [stage]]
+			do-subdirs :remove-subdir either stages [targets] [reduce [this-stage]]
 ;			either no [  ; FIXME: manmanager fails on deleting non-existing manuals
 			any [
 				not exists? path: join package "/man"
@@ -277,3 +277,4 @@ package-proto: context [
 		]
 	]
 ]
+
