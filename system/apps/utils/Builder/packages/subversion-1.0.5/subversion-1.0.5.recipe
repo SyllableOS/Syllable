@@ -1,10 +1,11 @@
 authors
 	Jan L. Hauffa
 	Kaj de Vos
-status				developing
+status				broken
 warnings
-	configure hangs on conftest. You need to kill conftest (twice) to let the build continue.
+	configure hangs on conftest. You need to kill conftest, twice, to let the build continue.
 	Shared memory support in the APR library is a hack: the implementation of anonymous shared memory is untested, implementation of named shared memory isn't possible due to limitations of the Syllable API.
+notes				Assertion failure on dynamic library loading
 
 headline			An advanced version control system
 description
@@ -32,7 +33,7 @@ patch-config
 	ac-helpers
 
 configure-options
-;	(Needs internal APR and APR-Util versions)
+;	Needs internal APR and APR-Util versions:
 ;	--with-apr=/usr/apr
 ;	--with-apr-util=/usr/apr-util
 	--with-berkeley-db=/usr/db
@@ -44,4 +45,8 @@ configure-options
 ;	--with-swig=
 ;	--with-jdk=
 ;	--with-editor=
-documentation		README INSTALL BUGS STATUS COPYING ChangeLog.CVS CHANGES COMMITTERS HACKING doc notes www
+documentation
+	README INSTALL BUGS COPYING ChangeLog.CVS CHANGES
+	doc notes www
+internal-docs		STATUS COMMITTERS HACKING
+
