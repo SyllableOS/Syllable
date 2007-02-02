@@ -85,6 +85,7 @@ const char *ksym_get_symbol( int nIndex, void **ppValue )
 static KernelSymbol_s g_asKernelSymbols[] = {
 	// General functions:
 	KSYMBOL( get_processor_id ),
+	KSYMBOL( get_processor_acpi_id ),
 	KSYMBOL( reboot ),
 	KSYMBOL( apm_poweroff ),
 	KSYMBOL( get_app_server_port ),

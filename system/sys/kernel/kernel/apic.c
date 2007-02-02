@@ -172,6 +172,7 @@ static int smp_read_acpi_rsdt( uint32 nRsdt )
 
 							g_asProcessorDescs[psP->amp_nApicId].pi_bIsPresent = true;
 							g_asProcessorDescs[psP->amp_nApicId].pi_nAPICVersion = 0x10;
+							g_asProcessorDescs[psP->amp_nApicId].pi_nAcpiId = psP->amp_nAcpiId;
 						}
 						break;
 					}

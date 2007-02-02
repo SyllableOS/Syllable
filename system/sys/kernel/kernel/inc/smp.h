@@ -30,6 +30,7 @@
 
 typedef struct
 {
+	int pi_nAcpiId;
 	char pi_anVendorID[16];
 	char pi_zName[255];
 	uint64 pi_nCoreSpeed;
@@ -76,6 +77,11 @@ typedef struct
 static inline volatile ProcessorInfo_s* get_processor( void )
 {
 	return( &g_asProcessorDescs[get_processor_id()] );
+}
+
+static inline int get_processor_acpi_id( int nProc )
+{
+	return( g_asProcessorDescs[nProc].pi_nAcpiId );
 }
 
 /* XXXKV */

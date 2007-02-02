@@ -45,10 +45,11 @@ public:
 	bool m_bIsRemote;
 	bool m_bMonitorEnabled;
 	
-	int m_nRemotePort;
+	port_id m_nRemotePort;
 	uint32 m_nRemoteHandler;
 	int m_nRemoteMsgCode;
-	int m_nRemoteProcess;
+	proc_id m_nRemoteProcess;
+	os::String m_zRemoteDescription;
 };
 
 
@@ -172,7 +173,7 @@ status_t Event::SetToRemote( String zID, int nIndex )
 		return( 0 );
 	}
 	
-	/* Ask the appserver for the call information */
+	/* Ask the appserver for the event information */
 	
 	os::Message cReply;
 	os::Message cMessage( EV_GET_INFO );
@@ -189,7 +190,6 @@ status_t Event::SetToRemote( String zID, int nIndex )
 	
 	int64 nTargetPort;
 	int64 nMessageCode;
-	int64 nID;
 	int64 nToken = -1;
 	String zDesc;
 	int64 nProcess;
@@ -205,6 +205,7 @@ status_t Event::SetToRemote( String zID, int nIndex )
 	m->m_nRemoteHandler = nToken;
 	m->m_nRemoteMsgCode = nMessageCode;
 	m->m_nRemoteProcess = nProcess;
+	m->m_zRemoteDescription = zDesc;
 	
 	//printf( "Event set to %i:%i:%i\n", nTargetPort, (int)nToken, nMessageCode );
 	
@@ -242,6 +243,72 @@ void Event::Unset()
 bool Event::IsRemote()
 {
 	return( m->m_bIsRemote );
+}
+
+
+/** Returns information about a remote event.
+ * \par Description:
+ * This method will return 0 if this event was successful. The provided variables
+ * will then contain information about the event.
+ * \return 0 if successful.
+ * \author	Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+status_t Event::GetRemoteInfo( proc_id* pnProcess, port_id* phPort, int* pnMessageCode, os::String* pzDesc )
+{
+	if( !IsRemote() )
+		return( -EINVAL );
+		
+	if( pnProcess )
+		*pnProcess = m->m_nRemoteProcess;
+	if( phPort )
+		*phPort = m->m_nRemotePort;
+	if( pnMessageCode )
+		*pnMessageCode = m->m_nRemoteMsgCode;
+	if( pzDesc )
+		*pzDesc = m->m_zRemoteDescription;
+	
+	return( 0 );
+}
+
+/** Returns a list of children.
+ * \par Description:
+ * This method will fill the provided list with the names of all children of an event node,
+ * e.g. callling this for an event string called class/Mail might result in the
+ * list containing entries like CreateNewMail.
+ * \par Note:
+ * You should call SetToRemote() if the index -1 before because not every event node might
+ * contain its own events.
+ * The provided list is not cleared by this method.
+ * \return 0 if successful.
+ * \author	Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+status_t Event::GetRemoteChildren( std::vector<os::String>* pacList )
+{
+	if( pacList == NULL )
+		return( -EINVAL );
+	
+	/* Ask the appserver for the children information */
+	
+	os::Message cReply;
+	os::Message cMessage( EV_GET_CHILDREN );
+	
+	cMessage.AddString( "id", m->m_zID );
+	
+	m->m_cServerLink.SendMessage( &cMessage, &cReply );
+	if( cReply.GetCode() != 0 ) 
+	{
+		return( -ENOENT );
+	}
+	
+	int nIndex = 0;
+	os::String zChild;
+	while( cReply.FindString( "child", &zChild, nIndex ) == 0 )
+	{
+		pacList->push_back( zChild );
+		nIndex++;
+	}
+	
+	return( 0 );
 }
 
 

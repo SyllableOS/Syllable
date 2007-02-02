@@ -844,6 +844,7 @@ void AppServer::Run( void )
 			case EV_ADD_MONITOR:
 			case EV_REMOVE_MONITOR:
 			case EV_CALL:
+			case EV_GET_CHILDREN:
 				{
 					try
 					{

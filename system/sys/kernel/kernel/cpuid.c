@@ -71,6 +71,7 @@ void init_cpuid( void )
 	for ( i = 0; i < MAX_CPU_COUNT; i++ )
 	{
 		memset( &g_asProcessorDescs[i], 0, sizeof( g_asProcessorDescs[i] ) );
+		g_asProcessorDescs[i].pi_nAcpiId = -1;
 		strcpy( g_asProcessorDescs[i].pi_zName, "Unknown" );
 		g_asProcessorDescs[i].pi_nFeatures = CPU_FEATURE_NONE;
 	}
@@ -84,6 +85,8 @@ void init_cpuid( void )
 	{
 		read_cpu_id( 0x00000001, nRegs2 );
 		nCPUid = ( CPUID_FAMILY << 4 ) | CPUID_MODEL;
+		
+			
 		if ( nRegs2[3] & ( 1 << 23 ) )
 			g_asProcessorDescs[g_nBootCPU].pi_nFeatures |= CPU_FEATURE_MMX;
 		if ( nRegs2[3] & ( 1 << 24 ) )

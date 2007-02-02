@@ -24,6 +24,7 @@
 #include <gui/guidefines.h>
 #include <util/message.h>
 #include <util/looper.h>
+#include <vector>
 
 namespace os
 {
@@ -151,6 +152,8 @@ public:
 	status_t		SetToRemote( String zID, int nIndex = 0 );
 	void			Unset();
 	bool			IsRemote();
+	status_t		GetRemoteInfo( proc_id* pnProcess, port_id* phPort, int* pnMessageCode, os::String* pzDesc );
+	status_t		GetRemoteChildren( std::vector<os::String>* pacList );
 	status_t		SetMonitorEnabled( bool bEnabled, Handler* pcTarget = NULL, int nMessageCode = -1 );
 	bool			IsMonitorEnabled();
 	status_t		PostEvent( Message* pcData, Handler* pcReplyHandler = NULL, int nReplyCode = M_REPLY );
