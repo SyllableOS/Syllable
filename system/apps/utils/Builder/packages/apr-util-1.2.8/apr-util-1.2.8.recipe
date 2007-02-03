@@ -1,0 +1,42 @@
+authors
+	Jan Hauffa
+	Kaj de Vos
+maintainers			Kaj de Vos
+status				testing
+
+name				Apache Portable Runtime Utilities
+headline			Portability library extension
+description
+	The mission of the Apache Portable Runtime (APR) project is to create and maintain software libraries that provide a predictable and consistent interface to underlying platform-specific implementations.
+licenses			Apache other
+
+home				apr.apache.org
+; Backup mirror:
+locations			http://www.apache.org/dist/apr/
+
+build-needs			apr
+build-recommends
+	expat
+	db
+	openldap
+	sqlite
+	mysql
+	postgresql
+
+; When using internal Expat:
+patch-config		xml/expat/conftools
+
+configure-options
+	--with-apr=/usr/apr
+	--with-expat=/usr/expat
+	--with-berkeley-db=/usr/db
+;	--with-dbm=db45
+;	--with-ldap=ldap
+;	Doesn't seem to work yet:
+	--with-ldap-include=/usr/openldap/include
+	--with-ldap-lib=/usr/openldap/lib
+
+documentation		CHANGES LICENSE NOTICE
+build-docs			INSTALL.MySQL
+develop-docs		renames_pending
+

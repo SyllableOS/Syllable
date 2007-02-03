@@ -1,0 +1,73 @@
+diff -ru apr-1.2.8-original/configure apr-1.2.8/configure
+--- apr-1.2.8-original/configure	2006-11-29 11:45:01.000000000 +0000
++++ apr-1.2.8/configure	2007-02-03 17:49:14.000000000 +0000
+@@ -29198,7 +29198,7 @@
+ fi
+ 
+ ac_rc=yes
+-for ac_spec in header:kernel/OS.h func:create_area; do
++for ac_spec in func:create_area; do
+     ac_type=`echo "$ac_spec" | sed -e 's/:.*$//'`
+     ac_item=`echo "$ac_spec" | sed -e 's/^.*://'`
+     case $ac_type in
+@@ -29437,7 +29437,7 @@
+ fi
+ 
+ ac_rc=yes
+-for ac_spec in header:kernel/OS.h func:create_area; do
++for ac_spec in func:create_area; do
+     ac_type=`echo "$ac_spec" | sed -e 's/:.*$//'`
+     ac_item=`echo "$ac_spec" | sed -e 's/^.*://'`
+     case $ac_type in
+diff -ru apr-1.2.8-original/shmem/beos/shm.c apr-1.2.8/shmem/beos/shm.c
+--- apr-1.2.8-original/shmem/beos/shm.c	2006-08-03 11:05:27.000000000 +0000
++++ apr-1.2.8/shmem/beos/shm.c	2007-02-03 18:01:41.000000000 +0000
+@@ -21,9 +21,17 @@
+ #include "apr_strings.h"
+ #include <stdio.h>
+ #include <stdlib.h>
+-#include <kernel/OS.h>
++
++#ifdef __SYLLABLE__
++  #include <atheos/areas.h>
++  #define B_PAGE_SIZE PAGE_SIZE
++#else
++  #include <kernel/OS.h>
++#endif
++
+ #include "apr_portable.h"
+ 
++
+ struct apr_shm_t {
+     apr_pool_t *pool;
+     void *memblock;
+@@ -42,6 +50,11 @@
+     area_id newid;
+     char *addr;
+     char shname[B_OS_NAME_LENGTH];
++
++#ifdef __SYLLABLE__
++    if (file != NULL)
++      return APR_ENOTIMPL;
++#endif
+     
+     (*m) = (apr_shm_t *)apr_pcalloc(p, sizeof(apr_shm_t));
+     /* we MUST allocate in pages, so calculate how big an area we need... */
+@@ -95,6 +108,9 @@
+                                          const char *filename,
+                                          apr_pool_t *pool)
+ {
++#ifdef __SYLLABLE__
++    return APR_ENOTIMPL;
++#else
+     area_info ai;
+     thread_info ti;
+     apr_shm_t *new_m;
+@@ -131,6 +147,7 @@
+     (*m) = new_m;
+     
+     return APR_SUCCESS;
++#endif
+ }
+ 
+ APR_DECLARE(apr_status_t) apr_shm_detach(apr_shm_t *m)
