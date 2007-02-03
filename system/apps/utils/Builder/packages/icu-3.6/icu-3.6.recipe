@@ -1,0 +1,27 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			sourceforge
+
+headline			International Components for Unicode
+description
+	ICU is a mature, widely used set of portable C/C++ and Java libraries for Unicode support, software internationalization and globalization (i18n/g11n).
+licenses			BSD
+
+home				icu.sourceforge.net
+;locations			ftp://ftp.software.ibm.com/software/globalization/icu/3.6/
+packages
+	icu/icu4c-3_6-src
+;	icu/icu4c-3_6-docs
+;	icu4c-3_6-src
+
+configure-cmd
+;	source/runConfigureICU
+	source/configure
+
+_configure-options
+	--enable-static
+	--disable-64bit-libs
+
+documentation		readme.html license.html
+
