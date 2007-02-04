@@ -1,0 +1,53 @@
+authors				Kaj de Vos
+status				broken
+notes				Problems with the network stack
+
+headline			The Number One HTTP Server On The Internet
+description
+	The Apache HTTP Server Project is an effort to develop and maintain an open-source HTTP server for modern operating systems including UNIX and Windows NT. The goal of this project is to provide a secure, efficient and extensible server that provides HTTP services in sync with the current HTTP standards.
+licenses			Apache-2 BSD
+
+home				httpd.apache.org
+packages			httpd-2.2.4
+; Backup mirror:
+locations			http://www.apache.org/dist/httpd/
+
+needs
+	apr >= 1.2.0
+	apr-util >= 1.2.0
+build-recommends
+	pkg-config
+recommends
+	pcre
+	openssl
+	expat
+	neon
+	openldap
+	db
+	sqlite
+	rsync
+
+configure-options
+;	--enable-threads
+	--disable-ipv6
+;	--enable-v4-mapped
+	--enable-modules=most
+;	--enable-mods-shared=most
+;	--enable-cgi
+	--enable-ssl
+;	--enable-speling
+;	--enable-dav
+;	--enable-dav-fs
+;	--enable-ldap
+	--enable-example
+	--with-z=/usr/zlib
+	--with-pcre=/usr/pcre
+;	--with-ssl=/usr/openssl
+
+documentation
+	README ABOUT_APACHE VERSIONING LICENSE NOTICE CHANGES ROADMAP
+;	README.platforms
+;	docs
+build-docs			INSTALL
+internal-docs		LAYOUT
+

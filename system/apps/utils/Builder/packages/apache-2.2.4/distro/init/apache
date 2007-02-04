@@ -1,0 +1,4 @@
+#! /bin/sh
+# Start Apache server
+apachectl start > /dev/null
+
