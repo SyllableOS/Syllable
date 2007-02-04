@@ -97,7 +97,7 @@ build log summary >> $SYSTEM_SUMMARY_LOG
 sync
 
 echo "Switching to GCC 4.1.1"
-build install $HOME/Packages/gcc-4.1.1.bin.1.zip 1>>$LOG 2>>$LOG
+build install $HOME/Packages/gcc-4.1.1.bin.2.zip 1>>$LOG 2>>$LOG
 sync
 
 # XXXKV: We have to build Xpdf with Freetype-2.1.10..
@@ -132,6 +132,7 @@ then
 quote user $FTP_USER
 quote pass $FTP_PASSWD
 prompt
+passive
 mdel *
 mput $FILES
 quit
