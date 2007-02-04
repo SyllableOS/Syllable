@@ -1,0 +1,44 @@
+authors				Kaj de Vos
+status				broken
+notes				Not happy with LibXML2 for some strange reason
+
+headline			PHP: Hypertext Preprocessor
+description
+	PHP is a widely-used general-purpose scripting language that is especially suited for Web development and can be embedded into HTML.
+licenses			
+
+home				www.php.net
+locations			http://www.php.net/distributions/
+
+build-needs
+	flex 2.5.4
+	bison
+needs
+	libxml2
+build-recommends
+	re2c >= 0.9.11
+recommends
+	ncurses
+	readline
+	gettext
+	pcre
+	openssl
+	kerberos
+	curl
+	openldap
+	db
+	sqlite
+	libjpeg
+	libpng
+	libtiff
+	libxpm
+	freetype
+
+configure-options
+	--disable-ipv6
+	--with-libxml-dir=/usr/libxml2
+
+documentation		README.* LICENSE INSTALL NEWS CREDITS TODO*
+develop-docs		UPGRADING
+internal-docs		EXTENSIONS CODING_STANDARDS
+
