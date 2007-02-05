@@ -1,0 +1,31 @@
+authors
+	Kristian Van Der Vliet
+	Kaj de Vos
+status				incomplete
+
+headline			Portable command-line CD/DVD recorder software
+description
+	CDRKit is a suite of programs for recording CDs and DVDs, blanking CD-RW media, creating ISO-9660 filesystem images, extracting audio CD data, and more.
+licenses			GPL-2
+
+home				cdrkit.org
+locations
+	http://cdrkit.org/releases/
+	http://debburn.alioth.debian.org
+
+build-needs			cmake >= 2.4.3
+needs				libcap
+recommends			libmagic
+
+install-prefix-var	PREFIX
+
+documentation
+	ABOUT COPYING FAQ FORK Changelog TODO
+;	doc
+build-docs			INSTALL
+
+_links
+	wodim			bin/cdrecord
+	genisoimage		bin/mkisofs
+	icedax			bin/cdda2wav
+
