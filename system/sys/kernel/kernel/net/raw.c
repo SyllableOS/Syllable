@@ -803,6 +803,7 @@ SocketOps_s g_sRawOperations = {
 	NULL,			// so_listen,
 	NULL,			// so_accept
 	raw_setsockopt,
+	NULL,			// so_getsockopt
 	raw_set_fflags,
 	NULL			// so_ioctl
 };

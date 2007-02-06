@@ -1232,129 +1232,187 @@ static int tcp_ioctl( Socket_s *psSocket, int nCmd, void *pBuffer, bool bFromKer
 static int tcp_setsockopt( bool bFromKernel, Socket_s *psSocket, int nProtocol, int nOptName, const void *pOptVal, int nOptLen )
 {
 	TCPCtrl_s *psTCPCtrl = psSocket->sk_psTCPCtrl;
-	int nError;
+	int nError = -EINVAL;
 
-	switch ( nProtocol )
+	switch( nProtocol )
 	{
-	case SOL_SOCKET:
-		switch ( nOptName )
+		case SOL_SOCKET:
 		{
-		case SO_DEBUG:
-//                  psSocket->sk_bDebug = (*((int*)pOptVal) != 0);
-			nError = 0;
-			break;
-		case SO_REUSEADDR:
-//                  psSocket->sk_bReuseAddr = (*((int*)pOptVal) != 0);
-			nError = 0;
-			break;
-//      case SO_TYPE:
-//        break;
-//      case SO_ERROR:
-//        break;
-		case SO_DONTROUTE:
-//        psSocket->sk_bDontRout = (*((int*)pOptVal) != 0);
-			nError = 0;
-			break;
-		case SO_BROADCAST:
-			nError = -EINVAL;
-			break;
-		case SO_SNDBUF:
-//                  printk( "do_setsockopt() dont know how to handle SO_SNDBUF\n" );
-			nError = 0;
-			break;
-		case SO_RCVBUF:
-//                  printk( "do_setsockopt() dont know how to handle SO_RCVBUF\n" );
-			nError = 0;
-			break;
-		case SO_KEEPALIVE:
+			int nValue = 0;
+
+			if( bFromKernel )
+				memcpy( &nValue, pOptVal, sizeof( int ) );
+			else
 			{
-				int nValue = 0;
-
-				if ( bFromKernel )
+				if( memcpy_from_user( &nValue, pOptVal, sizeof( int ) ) < 0 )
 				{
-					memcpy( &nValue, pOptVal, min( sizeof( int ), nOptLen ) );
+					nError = -EFAULT;
+					break;
 				}
-				else
-				{
-					if ( memcpy_from_user( &nValue, pOptVal, min( sizeof( int ), nOptLen ) ) < 0 )
-					{
-						nError = -EFAULT;
-						break;
-					}
-				}
-				nValue = !!nValue;
-
-				if ( nValue )
-				{
-					if ( psTCPCtrl->tcb_bSendKeepalive == false )
-					{
-						psTCPCtrl->tcb_bSendKeepalive = true;
-						if ( psTCPCtrl->tcb_nState == TCPS_ESTABLISHED )
-						{
-							tcp_create_event( psTCPCtrl, TCP_TE_KEEPALIVE, TCP_KEEPALIVE_TIME, true );
-						}
-					}
-				}
-				else
-				{
-					if ( psTCPCtrl->tcb_bSendKeepalive )
-					{
-						psTCPCtrl->tcb_bSendKeepalive = false;
-						tcp_delete_event( psTCPCtrl, TCP_TE_KEEPALIVE );
-						if ( psTCPCtrl->tcb_ostate == TCPO_KEEPALIVE )
-						{
-							tcp_set_output_state( psTCPCtrl, TCPO_IDLE );
-							psTCPCtrl->tcb_rexmtcount = 0;
-						}
-					}
-				}
-				nError = 0;
-				break;
 			}
-		case SO_OOBINLINE:
-//                  psSocket->sk_bOobInline = (*((int*)pOptVal) != 0);
-			nError = 0;
-			break;
-		case SO_NO_CHECK:
-			printk( "do_setsockopt() dont know how to handle SO_NO_CHECK\n" );
-			nError = 0;
-			break;
-		case SO_PRIORITY:
-			printk( "do_setsockopt() dont know how to handle SO_PRIORITY\n" );
-			nError = 0;
-			break;
-		case SO_LINGER:
-			nError = 0;
-			break;
-		case SO_BSDCOMPAT:
-			printk( "do_setsockopt() dont know how to handle SO_BSDCOMPAT\n" );
-			nError = -EINVAL;
-			break;
-		default:
-			nError = -EINVAL;
-			printk( "do_setsockopt() unknown command %d (SOL_SOCKET level)\n", nOptName );
-			break;
-		}
-		break;
-	case SOL_TCP:
-		{
-			switch ( nOptName )
+			nValue = !!nValue;
+
+			switch( nOptName )
 			{
-			case TCP_NODELAY:
-				nError = 0;
-				break;
-			default:
-				nError = -EINVAL;
-				break;
+				case SO_KEEPALIVE:
+				{
+					psSocket->sk_bKeep = (nValue ? true : false );
+
+					if( nValue )
+					{
+						if( psTCPCtrl->tcb_bSendKeepalive == false )
+						{
+							psTCPCtrl->tcb_bSendKeepalive = true;
+							if( psTCPCtrl->tcb_nState == TCPS_ESTABLISHED )
+								tcp_create_event( psTCPCtrl, TCP_TE_KEEPALIVE, TCP_KEEPALIVE_TIME, true );
+						}
+					}
+					else
+					{
+						if( psTCPCtrl->tcb_bSendKeepalive )
+						{
+							psTCPCtrl->tcb_bSendKeepalive = false;
+							tcp_delete_event( psTCPCtrl, TCP_TE_KEEPALIVE );
+							if( psTCPCtrl->tcb_ostate == TCPO_KEEPALIVE )
+							{
+								tcp_set_output_state( psTCPCtrl, TCPO_IDLE );
+								psTCPCtrl->tcb_rexmtcount = 0;
+							}
+						}
+					}
+					nError = 0;
+					break;
+				}
+
+				case SO_DONTROUTE:
+				{
+					psSocket->sk_bDontRoute = (nValue ? true : false );
+					nError = 0;
+					break;
+				}
+
+				case SO_SNDBUF:
+				case SO_RCVBUF:
+				{
+					/* XXXKV: Implement me */
+					nError = 0;
+					break;
+				}
+
+				default:
+				{
+					printk( "tcp_setsockopt: invalid option %d at at level SOL_SOCKET\n", nOptName );
+					nError = -EINVAL;
+					break;
+				}
+			}
+		}
+
+		case SOL_TCP:
+		{
+			switch( nOptName )
+			{
+				case TCP_NODELAY:
+				{
+					nError = 0;
+					break;
+				}
+
+				default:
+				{
+					printk( "tcp_setsockopt: invalid option %d at level SOL_TCP\n", nOptName );
+					nError = -EINVAL;
+					break;
+				}
 			}
 			break;
 		}
-	default:
-//      printk( "do_setsockopt() invalid level %d\n", nLevel );
-		nError = -EINVAL;
-		break;
 	}
-	return ( nError );
+
+	return nError;
+}
+
+static int tcp_getsockopt( bool bFromKernel, Socket_s *psSocket, int nProtocol, int nOptName, void *pOptVal, int nOptLen )
+{
+	TCPCtrl_s *psTCPCtrl = psSocket->sk_psTCPCtrl;
+	int nError = -EINVAL;
+
+	switch( nProtocol )
+	{
+		case SOL_SOCKET:
+		{
+			switch( nOptName )
+			{
+				case SO_SNDBUF:
+				{
+					int nValue = psTCPCtrl->tcb_nSndBufSize;
+					if( bFromKernel )
+						memcpy( pOptVal, &nValue, sizeof( int ) );
+					else
+						memcpy_to_user( pOptVal, &nValue, sizeof( int ) );
+
+					nError = 0;
+					break;
+				}
+
+				case SO_RCVBUF:
+				{
+					int nValue = psTCPCtrl->tcb_rbsize;
+					if( bFromKernel )
+						memcpy( pOptVal, &nValue, sizeof( int ) );
+					else
+						memcpy_to_user( pOptVal, &nValue, sizeof( int ) );
+
+					nError = 0;
+					break;
+				}
+
+				case SO_ERROR:
+				{
+					int nValue = psTCPCtrl->tcb_nError;
+					if( bFromKernel )
+						memcpy( pOptVal, &nValue, sizeof( int ) );
+					else
+						memcpy_to_user( pOptVal, &nValue, sizeof( int ) );
+
+					psTCPCtrl->tcb_nError = 0;
+					nError = 0;
+					break;
+				}
+
+				default:
+				{
+					kerndbg( KERN_DEBUG, "%s: invalid option %d for protocol SOL_SOCKET\n", __FUNCTION__, nOptName );
+					nError = -EINVAL;
+					break;
+				}
+			}
+			break;
+		}
+
+		case SOL_TCP:
+		{
+			switch( nOptName )
+			{
+				default:
+				{
+					kerndbg( KERN_DEBUG, "%s: invalid option %d for protocol SOL_TCP\n", __FUNCTION__, nOptName );
+					nError = -EINVAL;
+					break;
+				}
+			}
+			break;
+		}
+
+		default:
+		{
+			kerndbg( KERN_DEBUG, "%s: invalid protocol %d\n", __FUNCTION__, nProtocol );
+			nError = -EINVAL;
+			break;
+		}
+	}
+
+	return nError;
 }
 
 /*****************************************************************************
@@ -1379,6 +1437,7 @@ SocketOps_s g_sTCPOperations = {
 	tcp_listen,
 	tcp_accept,
 	tcp_setsockopt,
+	tcp_getsockopt,
 	tcp_set_fflags,
 	tcp_ioctl
 };

@@ -303,18 +303,178 @@ int sys_shutdown( int nFile, int nHow )
 	return ( do_shutdown( false, nFile, nHow ) );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
+static int sockopt_getintval( bool bKernel, const void *pOptVal )
+{
+	/* Get the option value */
+	int nValue = 0;
+
+	if( bKernel )
+		memcpy( &nValue, pOptVal, sizeof( int ) );
+	else
+	{
+		if( memcpy_from_user( &nValue, pOptVal, sizeof( int ) ) < 0 )
+			return -EFAULT;
+	}
+	return !!nValue;
+}
 
 int do_setsockopt( bool bKernel, int nFile, int nLevel, int nOptName, const void *pOptVal, int nOptLen )
 {
 	File_s *psFile;
 	Socket_s *psSocket;
-	int nError;
+	int nError = -EINVAL;
+
+	psFile = get_fd( bKernel, nFile );
+
+	if( psFile == NULL )
+	{
+		nError = -EBADF;
+		goto error1;
+	}
+
+	psSocket = get_socket( psFile );
+
+	if( psSocket == NULL )
+	{
+		nError = -ENOTSOCK;
+		goto error2;
+	}
+
+	switch( nLevel )
+	{
+		case SOL_SOCKET:
+		{
+			switch( nOptName )
+			{
+				case SO_DEBUG:
+				{
+					int nValue = sockopt_getintval( bKernel, pOptVal );
+					psSocket->sk_bDebug = (nValue ? true : false );
+					nError = 0;
+					break;
+				}
+
+				case SO_BROADCAST:
+				{
+					int nValue = sockopt_getintval( bKernel, pOptVal );
+					psSocket->sk_bBroadcast = (nValue ? true : false );
+					nError = 0;
+					break;
+				}
+
+				case SO_REUSEADDR:
+				{
+					int nValue = sockopt_getintval( bKernel, pOptVal );
+					psSocket->sk_bReuseAddr = (nValue ? true : false );
+					nError = 0;
+					break;
+				}
+
+				case SO_OOBINLINE:
+				{
+					int nValue = sockopt_getintval( bKernel, pOptVal );
+					psSocket->sk_bOobInline = (nValue ? true : false );
+					nError = 0;
+					break;
+				}
+
+				case SO_KEEPALIVE:
+				case SO_SNDBUF:
+				case SO_RCVBUF:
+				case SO_DONTROUTE:
+				{
+					if( psSocket->sk_psOps->setsockopt != NULL )
+						nError = psSocket->sk_psOps->setsockopt( bKernel, psSocket, nLevel, nOptName, pOptVal, nOptLen );
+					else
+						nError = -EINVAL;
+					break;
+				}
+
+				case SO_LINGER:
+				case SO_RCVLOWAT:
+				case SO_RCVTIMEO:
+				case SO_SNDLOWAT:
+				case SO_SNDTIMEO:
+					nError = -EINVAL;
+					break;
+
+				default:
+				{
+					kerndbg( KERN_DEBUG, "%s: invalid option %d for protocol SOL_SOCKET\n", __FUNCTION__, nOptName );
+					nError = -EINVAL;
+					break;
+				}
+			}
+		}
+
+		/* XXXKV: Should this be somewhere else? */
+		case SOL_IP:
+		{
+			switch( nOptName )
+			{
+				case IP_TOS:
+					nError = 0;
+					break;
+
+				default:
+				{
+					kerndbg( KERN_DEBUG, "%s: invalid option %d for protocol SOL_IP\n", __FUNCTION__, nOptName );
+					nError = -EINVAL;
+					break;
+				}
+			}
+			break;
+		}
+
+		/* Some other protocol, maybe the lower protocol understands it? */
+		default:
+		{
+			if( psSocket->sk_psOps->setsockopt != NULL )
+				nError = psSocket->sk_psOps->setsockopt( bKernel, psSocket, nLevel, nOptName, pOptVal, nOptLen );
+			else
+				nError = -EINVAL;
+			break;
+		}
+	}
+
+error2:
+	put_fd( psFile );
+error1:
+	return nError;
+}
+
+int sys_setsockopt( int nFile, int nLevel, int nOptName, const void *pOptVal, int nOptLen )
+{
+	return do_setsockopt( false, nFile, nLevel, nOptName, pOptVal, nOptLen );
+}
+
+int setsockopt( int nFile, int nLevel, int nOptName, const void *pOptVal, int nOptLen )
+{
+	return do_setsockopt( true, nFile, nLevel, nOptName, pOptVal, nOptLen );
+}
+
+static void sockopt_setintval( bool bKernel, void *pOptVal, int nValue )
+{
+	/* Set the option value */
+	if( bKernel )
+		memcpy( pOptVal, &nValue, sizeof( int ) );
+	else
+		memcpy_to_user( pOptVal, &nValue, sizeof( int ) );
+}
+
+static void sockopt_setboolval( bool bKernel, void *pOptVal, bool bValue )
+{
+	/* Set the boolean option value */
+	int nValue = bValue ? 1 : 0;
+
+	sockopt_setintval( bKernel, pOptVal, nValue );
+}
+
+int do_getsockopt( bool bKernel, int nFile, int nLevel, int nOptName, void *pOptVal, int nOptLen )
+{
+	File_s *psFile;
+	Socket_s *psSocket;
+	int nError = -EINVAL;
 
 	psFile = get_fd( bKernel, nFile );
 
@@ -332,80 +492,115 @@ int do_setsockopt( bool bKernel, int nFile, int nLevel, int nOptName, const void
 		goto error2;
 	}
 
-	if ( nLevel == SOL_IP )
+	switch( nLevel )
 	{
-		switch ( nOptName )
+		case SOL_SOCKET:
 		{
-		case IP_TOS:
-			nError = 0;
+			switch( nOptName )
+			{
+				case SO_DEBUG:
+				{
+					sockopt_setboolval( bKernel, pOptVal, psSocket->sk_bDebug );
+					nError = 0;
+					break;
+				}
+
+				case SO_BROADCAST:
+				{
+					sockopt_setboolval( bKernel, pOptVal, psSocket->sk_bBroadcast );
+					nError = 0;
+					break;
+				}
+
+				case SO_REUSEADDR:
+				{
+					sockopt_setboolval( bKernel, pOptVal, psSocket->sk_bReuseAddr );
+					nError = 0;
+					break;
+				}
+
+				case SO_KEEPALIVE:
+				{
+					sockopt_setboolval( bKernel, pOptVal, psSocket->sk_bKeep );
+					nError = 0;
+					break;
+				}
+
+				case SO_OOBINLINE:
+				{
+					sockopt_setboolval( bKernel, pOptVal, psSocket->sk_bOobInline );
+					nError = 0;
+					break;
+				}
+
+				case SO_ERROR:
+				case SO_SNDBUF:
+				case SO_RCVBUF:
+				{
+					if( psSocket->sk_psOps->getsockopt != NULL )
+						nError = psSocket->sk_psOps->getsockopt( bKernel, psSocket, nLevel, nOptName, pOptVal, nOptLen );
+					else
+						nError = -EINVAL;
+					break;
+				}
+
+				case SO_TYPE:
+				{
+					sockopt_setintval( bKernel, pOptVal, psSocket->sk_nType );
+					nError = 0;
+					break;
+				}
+
+				case SO_DONTROUTE:
+				{
+					sockopt_setboolval( bKernel, pOptVal, psSocket->sk_bDontRoute );
+					nError = 0;
+					break;
+				}
+
+				case SO_LINGER:
+				case SO_RCVLOWAT:
+				case SO_RCVTIMEO:
+				case SO_SNDLOWAT:
+				case SO_SNDTIMEO:
+					nError = -EINVAL;
+					break;
+
+				default:
+				{
+					kerndbg( KERN_DEBUG, "%s: invalid option %d for protocol SOL_SOCKET\n", __FUNCTION__, nOptName );
+					nError = -EINVAL;
+					break;
+				}
+			}
 			break;
+		}
+
+		/* Some other protocol, maybe the lower protocol understands it? */
 		default:
-			nError = -EINVAL;
+		{
+			if( psSocket->sk_psOps->getsockopt != NULL )
+				nError = psSocket->sk_psOps->getsockopt( bKernel, psSocket, nLevel, nOptName, pOptVal, nOptLen );
+			else
+				nError = -EINVAL;
 			break;
 		}
-		put_fd( psFile );
-		return ( nError );
 	}
-	else
-	{
-		if ( psSocket->sk_psOps->setsockopt != NULL )
-		{
-			nError = psSocket->sk_psOps->setsockopt( bKernel, psSocket, nLevel, nOptName, pOptVal, nOptLen );
-		}
-		else
-		{
-			nError = -EINVAL;
-		}
-		put_fd( psFile );
-		return ( nError );
-	}
-      error2:
+
+error2:
 	put_fd( psFile );
-      error1:
-	return ( nError );
+error1:
+	return nError;
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
-int sys_setsockopt( int nFile, int nLevel, int nOptName, const void *pOptVal, int nOptLen )
+int sys_getsockopt( int nFile, int nLevel, int nOptName, void *pOptVal, int nOptLen )
 {
-	return ( do_setsockopt( false, nFile, nLevel, nOptName, pOptVal, nOptLen ) );
+	return do_getsockopt( false, nFile, nLevel, nOptName, pOptVal, nOptLen );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
-int setsockopt( int nFile, int nLevel, int nOptName, const void *pOptVal, int nOptLen )
+int getsockopt( int nFile, int nLevel, int nOptName, void *pOptVal, int nOptLen )
 {
-	return ( do_setsockopt( true, nFile, nLevel, nOptName, pOptVal, nOptLen ) );
-}
-
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
-int sys_getsockopt( int nFile, int nLevel, int nOptName, const void *pOptVal, int nOptLen )
-{
-	kerndbg( KERN_DEBUG, "Error: getsockopt() not implemented\n" );
-	return ( -ENOSYS );
-}
-
-int getsockopt( int nFile, int nLevel, int nOptName, const void *pOptVal, int nOptLen )
-{
-	kerndbg( KERN_DEBUG, "Error: getsockopt() not implemented\n" );
-	return ( -ENOSYS );
+	return do_getsockopt( true, nFile, nLevel, nOptName, pOptVal, nOptLen );
 }
 
 /*****************************************************************************

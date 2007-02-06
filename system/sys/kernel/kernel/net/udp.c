@@ -940,23 +940,23 @@ static int udp_setsockopt( bool bKernel, Socket_s *psSocket, int nProtocol, int 
 	UDPEndPoint_s *psUDPCtrl = psSocket->sk_psUDPEndP;
 	int nError = -ENOSYS;
 
-	switch ( nOptName )
+	switch( nOptName )
 	{
-	case SO_REUSEADDR:
+		case SO_REUSEADDR:
 		{
 			nError = 0;
 			break;
 		}
 
-	case SO_BROADCAST:
+		case SO_BROADCAST:
 		{
 			nError = 0;
 			break;
 		}
 
-	case SO_BINDTODEVICE:
+		case SO_BINDTODEVICE:
 		{
-			if ( pOptVal == NULL || nOptLen > IFNAMSIZ )
+			if( pOptVal == NULL || nOptLen > IFNAMSIZ )
 			{
 				kerndbg( KERN_DEBUG, __FUNCTION__ "(): Invalid options for SO_BINDTODEVICE.\n" );
 
@@ -964,7 +964,7 @@ static int udp_setsockopt( bool bKernel, Socket_s *psSocket, int nProtocol, int 
 				break;
 			}
 
-			if ( bKernel )
+			if( bKernel )
 			{
 				strncpy( psUDPCtrl->ue_acBindToDevice, ( char * )pOptVal, nOptLen );
 			}
@@ -986,11 +986,11 @@ static int udp_setsockopt( bool bKernel, Socket_s *psSocket, int nProtocol, int 
 			nError = 0;
 			break;
 		}
-	default:
-		kerndbg( KERN_WARNING, "udp_setsockopt() got unknown option %i\n", nOptName );
+		default:
+			kerndbg( KERN_WARNING, "udp_setsockopt() got unknown option %i\n", nOptName );
 	}
 
-	return ( nError );
+	return nError;
 }
 
 static int udp_set_fflags( Socket_s *psSocket, uint32 nFlags )
@@ -1050,6 +1050,7 @@ SocketOps_s g_sUDPOperations = {
 	NULL,			// so_listen,
 	NULL,			// so_accept
 	udp_setsockopt,
+	NULL,				// so_getsockopt
 	udp_set_fflags,		// so_set_fflags
 	udp_ioctl			// so_ioctl
 };

@@ -212,8 +212,12 @@ struct msghdr {
 #define SO_PRIORITY	12
 #define SO_LINGER	13
 #define SO_BSDCOMPAT	14
-#define SO_BINDTODEVICE	25		/* From Linux */
 /* To add :#define SO_REUSEPORT 15 */
+#define SO_RCVLOWAT		18
+#define SO_SNDLOWAT		19
+#define SO_RCVTIMEO		20
+#define SO_SNDTIMEO		21
+#define SO_BINDTODEVICE	25
 
 /* Setsockoptions(2) level. Thanks to BSD these must match IPPROTO_xxx */
 #define SOL_IP		0
@@ -282,6 +286,9 @@ typedef int so_accept(Socket_s * psSocket, struct sockaddr *psAddr,
 typedef int so_setsockopt(bool bFromKernel, Socket_s * psSocket,
 			  int nProtocol, int nOptName, const void *pOptVal,
 			  int nOptLen);
+typedef int so_getsockopt(bool bFromKernel, Socket_s * psSocket,
+			  int nProtocol, int nOptName, void *pOptVal,
+			  int nOptLen);
 typedef int so_ioctl(Socket_s * psSocket, int nCmd, void *pBuffer,
 		     bool bFromKernel);
 
@@ -301,6 +308,7 @@ typedef struct {
     so_listen *listen;
     so_accept *accept;
     so_setsockopt *setsockopt;
+	so_getsockopt *getsockopt;
     so_set_fflags *set_fflags;
     so_ioctl *ioctl;
 } SocketOps_s;
@@ -310,10 +318,14 @@ struct _Socket {
     int sk_nFamily;
     int sk_nType;
     int sk_nProto;
-//  bool                 sk_bDebug;
-//  bool                 sk_bReuseAddr;
-//  bool                 sk_bOobInline; /* Receive out-of-band data in-band */
-//  bool                 sk_bKeep;      /* Send keep-alive messages */
+
+	/* Socket option flags */
+    bool sk_bDebug;
+    bool sk_bReuseAddr;
+    bool sk_bOobInline; /* Receive out-of-band data in-band */
+    bool sk_bDontRoute;
+    bool sk_bKeep;      /* Send keep-alive messages */
+    bool sk_bBroadcast;	/* Allow broadcast messages */
 
     ipaddr_t sk_anSrcAddr;
     ipaddr_t sk_anDstAddr;
@@ -366,10 +378,9 @@ int accept(int nFile, struct sockaddr *psAddr, int *pnSize);
 
 
 int closesocket(int nFile);
-int setsockopt(int nFile, int nProtocol, int nOptName, const void *pOptVal,
+int setsockopt(int nFile, int nLevel, int nOptName, const void *pOptVal,
 	       int nOptLen);
-int getsockopt(int nFile, int nLevel, int nOptName, const void *pOptVal,
-	       int nOptLen);
+int getsockopt(int nFile, int nLevel, int nOptName, void *pOptVal, int nOptLen);
 int shutdown(int nFile, int nHow);
 #endif
 
