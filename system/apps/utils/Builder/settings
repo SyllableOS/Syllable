@@ -4,11 +4,6 @@
 ;	AMD64
 
 environment
-;	BASh 3 prevents the export of these variables. If you need them, you may have to
-;	define them here:
-;	OSTYPE		linux-gnu
-;	MACHTYPE	i586-pc-linux-gnu
-
 ;	Default anonymous access to the Syllable CVS repository:
 	CVSROOT		:pserver:anonymous@syllable.cvs.sourceforge.net:/cvsroot/syllable
 ;	If you have write access:
