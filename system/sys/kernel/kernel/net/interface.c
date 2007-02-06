@@ -1,4 +1,3 @@
-
 /*
  *	Syllable Kernel
  *	net/interface.c
@@ -1320,7 +1319,7 @@ void load_interface_drivers( void )
 		zPath[nPathBase + 1] = '\0';
 	}
 
-	strcat( zPath, "sys/drivers/net/if" );
+	strcat( zPath, "system/drivers/net/if" );
 
 	iterate_directory( zPath, false, load_interface_driver, NULL );
 }
@@ -1334,3 +1333,4 @@ void init_net_interfaces( void )
 	g_hIfListMutex = CREATE_RWLOCK( "interface list mutex" );
 	g_hTryReleaseMutex = CREATE_MUTEX( "try release interface mutex" );
 }
+

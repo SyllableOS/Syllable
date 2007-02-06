@@ -1,4 +1,3 @@
-
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2001 Kurt Skauen
@@ -651,7 +650,7 @@ static void dfs_DeleteNode( FileNode_s *psNode )
 
 	if ( NULL == psParent )
 	{
-		printk( "iiik, sombody tried to delete '/dev' !!!\n" );
+		printk( "eeek, sombody tried to delete '/dev' !!!\n" );
 		return;
 	}
 
@@ -787,7 +786,7 @@ static int dfs_lookup( void *pVolume, void *pParent, const char *pzName, int nNa
 	      checked:
 		if ( bScan )
 		{
-			strcat( zPath, "sys/drivers/dev/" );
+			strcat( zPath, "system/drivers/dev/" );
 			get_node_path( psParentNode, zPath );
 			scan_driver_dir( psParentNode, zPath, strlen( zPath ) );
 		}
@@ -1160,7 +1159,7 @@ static int dfs_read_inode( void *pVolume, ino_t nInodeNum, void **ppNode )
 				zPath[nPathLen + 1] = '\0';
 			}
 			
-			strcat( zPath, "sys/drivers/dev/" );
+			strcat( zPath, "system/drivers/dev/" );
 			get_node_path( psNode, zPath );
 			/* Check if already loaded */
 			if ( psNode->fn_psDevice )
@@ -1599,7 +1598,7 @@ static int locate_parent_Node( const char *pzPath, bool bCreateDirs, const char 
 			}
 			if ( psTmp != NULL && S_ISDIR( psTmp->fn_nMode ) == false )
 			{
-				printk( "Error: create_device_node() node %s already exist\n", pzPath );
+				printk( "Error: create_device_node() node %s already exists\n", pzPath );
 				nError = -EEXIST;
 				goto error1;
 			}
@@ -1652,7 +1651,7 @@ static int link_device_node( const char *pzPath, FileNode_s *psNode )
 	{
 		if ( strlen( psTmp->fn_zName ) == nLen && strncmp( psTmp->fn_zName, pzName, nLen ) == 0 )
 		{
-			printk( "Error: create_device_node() node %s already exist\n", pzName );
+			printk( "Error: create_device_node() node %s already exists\n", pzName );
 			nError = -EEXIST;
 			goto error1;
 		}
@@ -1672,17 +1671,17 @@ static int link_device_node( const char *pzPath, FileNode_s *psNode )
 
 }
 
-/** Publish a device-node inside the /dev/ directory
+/** Publish a device node inside the /dev/ directory
  * \ingroup DriverAPI
  * \par Description:
  *	Device drivers can call this function to publish their device nodes
- *	inside the /dev/ directory. AtheOS have a very flexible and dynamic
+ *	inside the /dev/ directory. AtheOS has a very flexible and dynamic
  *	system for managing device nodes. A device driver can create, rename
  *	and delete nodes inside the /dev/ directory at any time.
  *	Normally a device driver will call create_device_node() during
  *	initialization and delete_device_node() when being deinitialized, but
  *	it can also create and delete nodes at other points if it for example
- *	controll some form of removable device that might be added or removed
+ *	controls some form of removable device that might be added or removed
  *	after the device driver has been loaded.
  *
  * \par Note:
@@ -1693,12 +1692,12 @@ static int link_device_node( const char *pzPath, FileNode_s *psNode )
  *
  * \param nDeviceHandle
  *  The device handle for your device. You can probably
- *  ask the busmanager to get it. If you do not have a handle then you can also
+ *  ask the bus manager to get it. If you do not have a handle then you can also
  *  pass -1.
  *
  * \param pzPath
  *	The path is relative to /dev/ and can specify directories in addition
- *	to the node-name. For example "disk/scsi/hda/raw" will create a device
+ *	to the node name. For example "disk/scsi/hda/raw" will create a device
  *	node name "raw" inside /dev/disk/scsi/hda/". The path should not have
  *	any leading or trailing slashes.
  *
@@ -1706,12 +1705,12 @@ static int link_device_node( const char *pzPath, FileNode_s *psNode )
  *	Pointer to a DeviceOperations_s structure containing a list of
  *	function pointers that will be called by the kernel on behalf
  *	of the user of the device. Functions like read(), write(), ioctl(),
- *	etc etc, will be mapped more or less directly into calls into the
+ *	etc. will be mapped more or less directly into calls into the
  *	device driver through these function pointers.
  *
  * \param pCookie
  *	This is just a void pointer that the kernel will be associating with
- *	the device-node and that will be passed back to the driver when
+ *	the device node and that will be passed back to the driver when
  *	calling functions in psOps. This can be used by the driver to associate
  *	some private data with the device node.
  *
@@ -1807,7 +1806,7 @@ static int unlink_device_node( FileNode_s *psNode )
  * \ingroup DriverAPI
  * \par Description:
  *	Delete a node previously created with create_device_node().
- *	The device node will be removed from /dev/ directory and
+ *	The device node will be removed from the /dev/ directory and
  *	the DeviceOperations_s structure and the cookie passed to
  *	create_device_node() can now be destroyed by the driver.
  * \param nHandle
@@ -1897,7 +1896,7 @@ int rename_device_node( int nHandle, const char *pzNewPath )
 		{
 			if ( strlen( psTmp->fn_zName ) == nNameLen && strncmp( psTmp->fn_zName, pzNewName, nNameLen ) == 0 )
 			{
-				printk( "Warning: rename_device_node() node %s already exist\n", pzNewPath );
+				printk( "Warning: rename_device_node() node %s already exists\n", pzNewPath );
 				nError = -EEXIST;
 				goto error;
 			}
@@ -1930,12 +1929,12 @@ int rename_device_node( int nHandle, const char *pzNewPath )
  *	partitions and logical partitions within the extended partition if
  *	one exists. The extended partition itself will not be returned.
  *
- *	The caller must provide the device-geometry and a callback that
+ *	The caller must provide the device geometry and a callback that
  *	will be called to read the primary partition table and any existing
- *	nested extended partition tabless.
+ *	nested extended partition tables.
  *
  *	The partition table is validated and the function will fail if
- *	it is found invalid. Checks performed includes overlaping partitions,
+ *	it is found invalid. Checks performed include overlapping partitions,
  *	partitions ending outside the disk and the primary table containing
  *	more than one extended partition.
  *
@@ -1943,16 +1942,16 @@ int rename_device_node( int nHandle, const char *pzNewPath )
  *	Primary partitions are numbered 0-3 based on their position inside
  *	the primary table. Logical partition are numbered from 4 and up.
  *	This might leave "holes" in the returned array of partitions.
- *	The returned count only indicate the highest used partition number
+ *	The returned count only indicates the highest used partition number
  *	and the caller must check each returned partition and filter out
- *	partitions where the type-field is '0'.
+ *	partitions where the type field is '0'.
  * \param psDiskGeom
  *	Pointer to a device_geometry structure describing the disk's geometry.
  * \param pasPartitions
  *	Pointer to an array of partition descriptors that will be filled in.
  * \param nMaxPartitions
  *	Number of entries allocated for pasPartitions. Maximum nMaxPartitions
- *	number of partitions will be returned. If the function return exactly
+ *	number of partitions will be returned. If the function returns exactly
  *	nMaxPartitions it might have overflowed and the call should be repeated
  *	with a larger buffer.
  * \param pCookie
@@ -1962,7 +1961,7 @@ int rename_device_node( int nHandle, const char *pzNewPath )
  *	Pointer to a function that will be called to read in partition tables.
  * 
  * \return
- *	A positive maximum partition-count on success or a negative error
+ *	A positive maximum partition count on success or a negative error
  *	code on failure.
  * \sa create_device_node(), delete_device_node()
  * \author	Kurt Skauen (kurt@atheos.cx)
@@ -2013,11 +2012,11 @@ int decode_disk_partitions( device_geometry *psDiskGeom, Partition_s * pasPartit
 		}
 		if ( nNumActive > 1 )
 		{
-			printk( "Warning: decode_disk_partitions() more than one active partitions\n" );
+			printk( "Warning: decode_disk_partitions() more than one active partition\n" );
 		}
 		if ( nNumExtended > 1 )
 		{
-			printk( "Error: decode_disk_partitions() more than one extended partitions\n" );
+			printk( "Error: decode_disk_partitions() more than one extended partition\n" );
 			nError = -EINVAL;
 			goto error;
 		}
@@ -2052,7 +2051,7 @@ int decode_disk_partitions( device_geometry *psDiskGeom, Partition_s * pasPartit
 
 		if ( pasPartitions[nCount].p_nStart + pasPartitions[nCount].p_nSize > nDiskSize )
 		{
-			printk( "Error: Partition %d extend outside the disk/extended partition\n", nCount );
+			printk( "Error: Partition %d extends outside the disk/extended partition\n", nCount );
 			nError = -EINVAL;
 			goto error;
 		}
@@ -2065,19 +2064,19 @@ int decode_disk_partitions( device_geometry *psDiskGeom, Partition_s * pasPartit
 			}
 			if ( pasPartitions[j].p_nStart + pasPartitions[j].p_nSize > pasPartitions[nCount].p_nStart && pasPartitions[j].p_nStart < pasPartitions[nCount].p_nStart + pasPartitions[nCount].p_nSize )
 			{
-				printk( "Error: decode_disk_partitions() partition %d overlap partition %d\n", j, nCount );
+				printk( "Error: decode_disk_partitions() partition %d overlaps partition %d\n", j, nCount );
 				nError = -EINVAL;
 				goto error;
 			}
 			if ( ( pasPartitions[nCount].p_nStatus & 0x80 ) != 0 && ( pasPartitions[j].p_nStatus & 0x80 ) != 0 )
 			{
-				printk( "Error: decode_disk_partitions() more than one active partitions\n" );
+				printk( "Error: decode_disk_partitions() more than one active partition\n" );
 				nError = -EINVAL;
 				goto error;
 			}
 			if ( pasPartitions[nCount].p_nType == 0x05 && pasPartitions[j].p_nType == 0x05 )
 			{
-				printk( "Error: decode_disk_partitions() more than one extended partitions\n" );
+				printk( "Error: decode_disk_partitions() more than one extended partition\n" );
 				nError = -EINVAL;
 				goto error;
 			}
@@ -2114,7 +2113,7 @@ int decode_disk_partitions( device_geometry *psDiskGeom, Partition_s * pasPartit
 	}
 }
 
-/** Save configuration of the devfs ( called by config.c )
+/** Save configuration of the devfs (called by config.c)
  * \author Arno Klenke (arno_klenke@yahoo.de)
  *****************************************************************************/
 void write_dev_fs_config( void )
