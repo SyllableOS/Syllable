@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.114
+# Version 0.6.115
 # Copyright (c) 2002-2007 Kaj de Vos
 # License: GPL 2 or any later version
 
@@ -1635,7 +1635,8 @@ end
 
 # Define settings
 
-@syllable = ENV['OSTYPE'] == 'syllable'
+# Of all the machine designations, only the $SYSTEM variable is exported on BASh 3:
+@syllable = ENV['SYSTEM'] == 'Syllable'
 
 # Project trees
 @lineage = (@lineage = @settings['lineage']) ?
@@ -1694,7 +1695,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.6.114',
+	puts 'Syllable Build System 0.6.115',
 		'Copyright (c) 2002-2007 Kaj de Vos',
 		'License: GPL 2 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
