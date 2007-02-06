@@ -224,35 +224,26 @@ void Desktop::LaunchFiles()
 		exit( 1 );
 	}
 	
-	/* Taken from Rick’s desktop */
-    std::vector<std::string> launch_files;
-    std::string zName;
-    std::string zPath;
-	os::String zTemp;
+    os::String zName;
+    os::String zPath;
     os::Directory* pcDir = new os::Directory();
 
     if(pcDir->SetTo("~/Settings/Desktop/Startup")==0)
     {
-        pcDir->GetPath(&zTemp);
-		zName = zTemp.str();
-        while (pcDir->GetNextEntry(&zTemp))
-			zName = zTemp.str();
-            if ( (zName.find( "..",0,1)==std::string::npos) && (zName.find( "Disabled",0)==std::string::npos))
+        pcDir->GetPath(&zPath);
+        while( pcDir->GetNextEntry( &zName ) ) {
+            if ( (zName != "..") && (zName != ".") && (zName.find( "Disabled", 0 )==std::string::npos) )
             {
-
-                launch_files.push_back(zName);
+		        pid_t nPid = fork();
+		        if ( nPid == 0 )
+		        {
+	        	    set_thread_priority( -1, 0 );
+	    	        execlp( (zPath + '/' + zName).c_str(), zName.c_str(), NULL );
+					printf( "desktop: failed to run startup program %s\n", zName.c_str() );
+        	    	exit( 1 );
+		        }
             }
-    }
-    for (uint32 n = 0; n < launch_files.size(); n++)
-    {
-        pid_t nPid = fork();
-        if ( nPid == 0 )
-        {
-            set_thread_priority( -1, 0 );
-            std::string sLaunch = launch_files[n];
-            execlp(launch_files[n].c_str(), sLaunch.c_str(), NULL );
-            exit( 1 );
-        }
+	    }
     }
     delete pcDir;
 }
