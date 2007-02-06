@@ -1,3 +1,9 @@
+* Febuary 6 2006, Kristian Van Der Vliet *
+
+Fixed launching of applications from ~/Settings/Desktop/Startup: only the name was
+being passed to execlp(), not the full path as needed. Patch from
+Anthony Morphett <awmorp@gmail.com>
+
 * November 10 2006, Kristian Van Der Vliet *
 
 Added a Print Queue dock plugin
