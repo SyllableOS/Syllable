@@ -1,3 +1,11 @@
+* February 6, 2007, Kristian Van Der Vliet *
+
+o Re-organised, cleaned up and improved setsockopt()
+	o A lot of option do nothing more than set a flag on the socket I.e. the behavour of the
+	  socket is not changed.
+o Implemented getsockopt()
+	o Mostly complete for socket-level options (SO_) but nothing lower is implemented.
+
 * February 2, 2007, Arno Klenke *
 
 o Added a function to return the acpi id of one processor
