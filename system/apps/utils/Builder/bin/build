@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.115
+# Version 0.6.116
 # Copyright (c) 2002-2007 Kaj de Vos
 # License: GPL 2 or any later version
 
@@ -343,7 +343,7 @@ def configureModule staging, target
 											' ' + p[1..-2] :  # FIXME: do some checking
 											' --prefix='
 										) + prefix(staging, target) +
-										(@crossCompile ? " --build=#{ENV['MACHTYPE']} --host=" + @target : '')
+										(@crossCompile ? " --build=#{@machtype} --host=" + @target : '')
 									) +
 									((options = recipe['configure-options']) ? ' ' + toString(options) : '')
 								)
@@ -1524,7 +1524,7 @@ attr_reader :failures
 		@summary	= File.new File.join(@@logsPath, 'summary'), 'w'
 		@failLog	= File.new File.join(@@logsPath, 'failures'), 'w'
 
-		@log << s = (@crossCompile ? 'Cross-b' : 'B') + "uilding in root directory #{Dir.getwd}\n"
+		@log << s = (@crossCompile ? 'Cross-b' : 'B') + "uilding in root directory #{Dir.getwd} on #{@machtype}\n"
 		@summary << s
 		@failLog << s
 	end
@@ -1635,8 +1635,11 @@ end
 
 # Define settings
 
-# Of all the machine designations, only the $SYSTEM variable is exported on BASh 3:
-@syllable = ENV['SYSTEM'] == 'Syllable'
+# BASh 3 only exports the $SYSTEM variable:
+@syllable = `uname`.chomp == 'syllable'
+@machtype = "#{`uname -m`.chomp}-#{
+		(hardware = `uname -i`.chomp) == 'unknown' and @syllable ? 'pc' : hardware
+	}-#{`uname -s`.chomp}"
 
 # Project trees
 @lineage = (@lineage = @settings['lineage']) ?
@@ -1695,7 +1698,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.6.115',
+	puts 'Syllable Build System 0.6.116',
 		'Copyright (c) 2002-2007 Kaj de Vos',
 		'License: GPL 2 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
