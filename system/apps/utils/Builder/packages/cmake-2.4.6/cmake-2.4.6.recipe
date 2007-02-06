@@ -13,10 +13,11 @@ locations
 
 ;build-needs			cmake
 
-;build-dir			.
+build-dir			.
 
 ;configure			cmake .
 ;configure-cmd		./bootstrap
+configure-options	--verbose
 
 documentation		Copyright.txt ChangeLog.manual ChangeLog.txt
 develop-docs

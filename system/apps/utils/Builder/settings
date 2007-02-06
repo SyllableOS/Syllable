@@ -4,8 +4,7 @@
 ;	AMD64
 
 environment
-;	For some strange reason, some Linuxes define $OSTYPE and $MACHTYPE, but don't
-;	export them to child processes. If you have the misfortune of running one of them,
+;	BASh 3 prevents the export of these variables. If you need them, you may have to
 ;	define them here:
 ;	OSTYPE		linux-gnu
 ;	MACHTYPE	i586-pc-linux-gnu
@@ -46,3 +45,4 @@ cvs-path		syllable/system
 
 ; Don't strip binaries:
 ;no-strip
+
