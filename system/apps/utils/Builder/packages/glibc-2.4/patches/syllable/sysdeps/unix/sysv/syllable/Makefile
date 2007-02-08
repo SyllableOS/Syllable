@@ -35,7 +35,7 @@ sysdep_headers += sys/mount.h
 sysdep_routines += pci
 
 # Misc system calls for no specific subsystem
-sysdep_routines += reboot libc_lock create_area
+sysdep_routines += reboot libc_lock create_area set_real_time
 
 # Some stubs
 sysdep_routines += fsync ftruncate

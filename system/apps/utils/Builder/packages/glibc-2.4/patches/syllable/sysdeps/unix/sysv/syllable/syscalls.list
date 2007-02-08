@@ -34,8 +34,6 @@ socket		-	socket		i:iii	__socket	socket
 
 get_system_path		EXTRA	get_system_path		i:bn	__get_system_path	get_system_path
 
-set_real_time		EXTRA	set_real_time		i:i	__set_real_time		set_real_time
-
 kill_proc		EXTRA	kill_proc		i:ii	__kill_proc		kill_proc
 realint			EXTRA	realint			i:ip	__realint		realint
 

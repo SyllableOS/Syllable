@@ -16,17 +16,15 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _SYS_SYSTIME_H
-#define _SYS_SYSTIME_H 1
+#include <errno.h>
+#include <sysdep.h>
+#include <unistd.h>
+#include <sys/systime.h>
+#include <sys/syscall.h>
 
-#include <atheos/time.h>
+int __set_real_time( bigtime_t time )
+{
+  return INLINE_SYSCALL(set_real_time, 2, (int)(time & 0xffffffff), (int)(time >> 32));
+}
+weak_alias (__set_real_time, set_real_time)
 
-__BEGIN_DECLS
-
-extern bigtime_t get_system_time( void ) __THROW;
-extern bigtime_t get_real_time( void ) __THROW;
-extern int set_real_time( bigtime_t time ) __THROW;
-
-__END_DECLS
-
-#endif	/* _SYS_SYSTIME_H */

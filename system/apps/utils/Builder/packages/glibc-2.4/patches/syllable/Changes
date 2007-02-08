@@ -1,5 +1,10 @@
 Glibc Syllable Changelog
 
+* Febuary 8th 2007 *
+
+	o getrusage.c: New file. Simple stub, only useful for RUSAGE_SELF.
+	o set_real_time.c: New file. The 64bit syscall argument is passed as two 32bit high/low parts. 
+
 * May 26th 2006 *
 
 	o Add-on configure & configure.in  are no longer required.
