@@ -36,6 +36,7 @@
 #include "keyboard.h"
 #include "inputnode.h"
 #include "windowdecorator.h"
+#include "winselect.h"
 #include "config.h"
 #include "clipboard.h"
 #include "event.h"
@@ -59,6 +60,7 @@ SrvWindow *SrvWindow::s_pcDragWindow = NULL;
 SrvSprite *SrvWindow::s_pcDragSprite = NULL;
 Message SrvWindow::s_cDragMessage( 0 );
 bool SrvWindow::s_bIsDragging = false;
+extern WinSelect *g_pcWinSelector;
 
 //----------------------------------------------------------------------------
 // NAME:
@@ -252,6 +254,10 @@ SrvWindow::~SrvWindow()
 	/* Unregister window event */
 	if( m_pcEvent != NULL )
 		g_pcEvents->UnregisterEvent( BuildEventIDString(), m_pcApp->GetOwner(), m_hMsgPort );
+	
+	/* Tell the window selector to remove this window from the list */
+	if( g_pcWinSelector != NULL )
+		g_pcWinSelector->RemoveWindow( this );
 	
 	if( this == s_pcLastMouseWindow )
 	{
@@ -967,7 +973,10 @@ void SrvWindow::R_Render( WR_Render_s * psPkt )
 		if( atomic_read( &m_nPendingPaintCounter ) == 0 )
 		{
 			g_pcTopView->UpdateIfNeeded();
+			if( g_pcWinSelector != NULL )
+				g_pcWinSelector->UpdateWindow( this );
 		}
+		
 		g_cLayerGate.Open();
 	}
 	
@@ -1820,6 +1829,8 @@ bool SrvWindow::DispatchMessage( const void *psMsg, int nCode )
 			{
 				g_cLayerGate.Close();
 				g_pcTopView->UpdateIfNeeded();
+				if( g_pcWinSelector != NULL )
+					g_pcWinSelector->UpdateWindow( this );
 				g_cLayerGate.Open();
 			}
 			break;

@@ -32,6 +32,9 @@ public:
     WinSelect();
     ~WinSelect();
 
+	void DrawWindowContent( SrvWindow* pcWindow );
+	void RemoveWindow( SrvWindow* pcWindow );
+	void UpdateWindow( SrvWindow* pcWindow );
     void UpdateWinList( bool bMoveToFront, bool bSetFocus );
     void Paint( const os::IRect& cUpdateRect, bool bUpdate );
     void Step( bool bForward );

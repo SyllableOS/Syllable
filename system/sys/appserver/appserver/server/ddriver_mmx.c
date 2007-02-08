@@ -55,6 +55,8 @@ static inline void mmx_revcpy( uint8 *pTo, uint8 *pFrom, int nLen )
 {
 	int i;
 
+	pFrom += nLen - 8;
+	pTo += nLen - 8;
 	for ( i = 0; i < nLen / 8; i++ )
 	{
 		__asm__ __volatile__( "movq (%0), %%mm0\n" "movq %%mm0, (%1)\n"::"r"( pFrom ), "r"( pTo ):"memory" );
@@ -62,9 +64,16 @@ static inline void mmx_revcpy( uint8 *pTo, uint8 *pFrom, int nLen )
 		pFrom -= 8;
 		pTo -= 8;
 	}
-
-	if ( nLen & 7 )
-		dbprintf( "Error: mmx_revcpy() called with non-aligned length\n" );
+	
+	if( nLen & 7 )
+	{
+		pFrom += 7;
+		pTo += 7;
+		for( i = 0; i < ( nLen & 7 ); i++ )
+		{
+			*pTo-- = *pFrom--;
+		}
+	}
 }
 
 

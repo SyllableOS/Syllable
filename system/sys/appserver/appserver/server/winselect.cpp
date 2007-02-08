@@ -135,6 +135,39 @@ WinSelect::~WinSelect()
 {
 	g_pcTopView->RemoveChild( this );
 }
+
+void WinSelect::RemoveWindow( SrvWindow* pcWindow )
+{
+	/* Remove it from the list */
+	for( uint i = 0; i < m_cWindows.size(); ++i )
+	{
+		if( m_cWindows[i] == pcWindow )
+		{
+			/* Change selection */
+			if( (int)i < m_nCurSelect )
+				m_nCurSelect--;
+			else if( m_nCurSelect == (int)i )
+				m_nCurSelect = 0;
+			
+			m_cWindows.erase( m_cWindows.begin() + i );
+			break;
+		}
+	}
+	if( m_pcOldFocusWindow == pcWindow )
+		m_pcOldFocusWindow = NULL;
+	
+	Invalidate();
+	/* We do not need to call UpdateRegions() here because the closed window will do it */
+}
+
+void WinSelect::UpdateWindow( SrvWindow* pcWindow )
+{
+	if( !( m_cWindows[m_nCurSelect] == pcWindow ) )
+		return;
+	DrawWindowContent( pcWindow );
+	g_pcTopView->RedrawLayer( this, this, false );
+}
+
 void WinSelect::UpdateWinList( bool bMoveToFront, bool bSetFocus )
 {
 	if( m_cWindows.size() == 0 )
@@ -186,6 +219,39 @@ void WinSelect::UpdateWinList( bool bMoveToFront, bool bSetFocus )
 		}
 	}
 }
+
+void WinSelect::DrawWindowContent( SrvWindow* pcWindow )
+{
+	/* Draw bitmap if the window has a backbuffer */
+	if( pcWindow->GetTopView()->m_pcBackbuffer != NULL )
+	{
+		SrvBitmap* pcBitmap = pcWindow->GetTopView()->m_pcBackbuffer;
+			
+		/* Preserve ratio */
+		Rect cWindowBounds = pcWindow->GetTopView()->GetBounds();
+		Rect cBitmapBounds( 0, 0, pcBitmap->m_nWidth - 1, pcBitmap->m_nHeight - 1 );
+		float vRatio = ( cWindowBounds.Width() + 1 ) / ( cWindowBounds.Height() + 1 );
+			
+		float vNewWidth = round( GetBounds().Width() - 10 );
+		float vNewHeight = round( vNewWidth / vRatio );
+		float vXPos = 5;
+		float vYPos = 5;
+			
+		if( vNewHeight > 200 )
+		{
+			/* Use the maximum height */
+			vNewHeight = 200;
+			vNewWidth = round( 200 * vRatio );
+			vXPos = round( ( GetBounds().Width() - 10 ) / 2 - vNewWidth / 2 ) + 5;
+		} else 
+		{
+			/* Use the maximum width */
+			vYPos = round( 100 - vNewHeight / 2 ) + 5;
+		}
+		DrawBitMap( pcBitmap, cBitmapBounds & cWindowBounds, Rect( vXPos, vYPos, vXPos + vNewWidth - 1, vYPos + vNewHeight ) );
+	}
+}
+
 void WinSelect::Paint( const IRect & cUpdateRect, bool bUpdate )
 {
 	if( bUpdate )
@@ -265,34 +331,7 @@ void WinSelect::Paint( const IRect & cUpdateRect, bool bUpdate )
 		
 		if( nItem == m_nCurSelect )
 		{
-			/* Draw bitmap if the window has a backbuffer */
-			if( pcWindow->GetTopView()->m_pcBackbuffer != NULL )
-			{
-				SrvBitmap* pcBitmap = pcWindow->GetTopView()->m_pcBackbuffer;
-				
-				/* Preserve ratio */
-				Rect cWindowBounds = pcWindow->GetTopView()->GetBounds();
-				Rect cBitmapBounds( 0, 0, pcBitmap->m_nWidth - 1, pcBitmap->m_nHeight - 1 );
-				float vRatio = ( cWindowBounds.Width() + 1 ) / ( cWindowBounds.Height() + 1 );
-				
-				float vNewWidth = round( cOBounds.Width() - 10 );
-				float vNewHeight = round( vNewWidth / vRatio );
-				float vXPos = 5;
-				float vYPos = 5;
-				
-				if( vNewHeight > 200 )
-				{
-					/* Use the maximum height */
-					vNewHeight = 200;
-					vNewWidth = round( 200 * vRatio );
-					vXPos = round( ( cOBounds.Width() - 10 ) / 2 - vNewWidth / 2 ) + 5;
-				} else 
-				{
-					/* Use the maximum width */
-					vYPos = round( 100 - vNewHeight / 2 ) + 5;
-				}
-				DrawBitMap( pcBitmap, cBitmapBounds & cWindowBounds, Rect( vXPos, vYPos, vXPos + vNewWidth - 1, vYPos + vNewHeight ) );
-			}
+			DrawWindowContent( pcWindow );
 		}
 	}
 	if( bUpdate )

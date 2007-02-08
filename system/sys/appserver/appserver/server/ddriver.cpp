@@ -678,6 +678,19 @@ static inline void Blit( uint8 *Src, uint8 *Dst, int SMod, int DMod, int W, int 
 
 	if( Rev )
 	{
+		if( g_bUseMMX )
+		{
+			Src -= W - 1;
+			Dst -= W - 1;
+			for( Y = 0; Y < H; Y++ )
+			{
+				mmx_revcpy( Dst, Src, W );
+				Dst -= W + DMod;
+				Src -= W + SMod;
+			}
+			return;
+		}
+
 		for( Y = 0; Y < H; Y++ )
 		{
 			for( X = 0; ( X < W ) && ( ( uint32 ( Src - 7 ) )&7 ); X++ )
@@ -689,22 +702,11 @@ static inline void Blit( uint8 *Src, uint8 *Dst, int SMod, int DMod, int W, int 
 			LDst = ( uint32 * )( ( ( uint32 )Dst ) - 7 );
 
 			
-			if( g_bUseMMX )
+			i = ( W - X ) / 4;
+			X += i * 4;
+			for( ; i; i-- )
 			{
-				i = ( W - X ) / 8;
-				X += i * 8;
-				mmx_revcpy( (uint8*)LDst, (uint8*)LSrc, i * 8 );
-				LSrc -= i * 2;
-				LDst -= i * 2;
-			}
-			else
-			{
-				i = ( W - X ) / 4;
-				X += i * 4;
-				for( ; i; i-- )
-				{
-					*LDst-- = *LSrc--;
-				}
+				*LDst-- = *LSrc--;
 			}
 
 			Src = ( uint8 * )( ( ( uint32 )LSrc ) + 7 );
@@ -721,6 +723,17 @@ static inline void Blit( uint8 *Src, uint8 *Dst, int SMod, int DMod, int W, int 
 	}
 	else
 	{
+		if( g_bUseMMX )
+		{
+			for( Y = 0; Y < H; Y++ )
+			{
+				mmx_memcpy( Dst, Src, W );
+				Dst += W + DMod;
+				Src += W + SMod;
+			}
+			return;
+		}
+		
 		for( Y = 0; Y < H; Y++ )
 		{
 			for( X = 0; ( X < W ) && ( ( ( uint32 )Src ) & 7 ); ++X )
@@ -731,23 +744,12 @@ static inline void Blit( uint8 *Src, uint8 *Dst, int SMod, int DMod, int W, int 
 			LSrc = ( uint32 * )Src;
 			LDst = ( uint32 * )Dst;
 			
-			if( g_bUseMMX )
-			{
-				i = ( W - X ) / 8;
-				X += i * 8;
-				mmx_memcpy( (uint8*)LDst, (uint8*)LSrc, i * 8 );
-				LSrc += i * 2;
-				LDst += i * 2;
-			}
-			else
-			{
-				i = ( W - X ) / 4;
-				X += i * 4;
+			i = ( W - X ) / 4;
+			X += i * 4;
 
-				for( ; i; i-- )
-				{
-					*LDst++ = *LSrc++;
-				}
+			for( ; i; i-- )
+			{
+				*LDst++ = *LSrc++;
 			}
 
 			Src = ( uint8 * )LSrc;

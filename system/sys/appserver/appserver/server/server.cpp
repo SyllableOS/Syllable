@@ -66,7 +66,7 @@ void ScreenShot();
 
 using namespace os;
 
-static WinSelect *g_pcWinSelector = NULL;
+WinSelect *g_pcWinSelector = NULL;
 
 AppServer *AppServer::s_pcInstance = NULL;
 
