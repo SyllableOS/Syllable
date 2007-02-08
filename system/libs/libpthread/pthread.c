@@ -40,6 +40,22 @@ void __attribute__((destructor)) __pt_uninit(void)
 	free_tld( cleanupKey );
 }
 
+struct __pt_entry_data
+{
+	void *(*start_routine)(void *);
+	void *arg;
+};
+
+static void *__pt_entry(void *arg)
+{
+	struct __pt_entry_data *entry_data = (struct __pt_entry_data *)arg;
+	void *result;
+
+	result = entry_data->start_routine(entry_data->arg);
+	free( entry_data );
+	pthread_exit( result );
+}
+
 int pthread_cancel(pthread_t thread)
 {
 	return -ENOSYS;
@@ -75,6 +91,7 @@ int pthread_create(pthread_t *thread, const pthread_attr_t *attr, void *(*start_
 {
 	thread_id kthread;
 	pthread_attr_t *thread_attr = NULL;
+	struct __pt_entry_data *entry_data = NULL;
 
 	if( start_routine == NULL )
 		return( EINVAL );
@@ -82,7 +99,7 @@ int pthread_create(pthread_t *thread, const pthread_attr_t *attr, void *(*start_
 	if( attr == NULL )
 	{	
 		thread_attr = malloc( sizeof( pthread_attr_t ) );
-		if( thread_attr == 0 )
+		if( thread_attr == NULL )
 			return( ENOMEM );
 
 		pthread_attr_init( thread_attr );		/* Use default values */
@@ -90,7 +107,13 @@ int pthread_create(pthread_t *thread, const pthread_attr_t *attr, void *(*start_
 	else
 		thread_attr = (pthread_attr_t*)attr;
 
-	kthread = spawn_thread( thread_attr->__name, start_routine, thread_attr->__schedpriority, thread_attr->__stacksize, arg);
+	entry_data = malloc( sizeof( entry_data ) );
+	if( entry_data == NULL )
+		return( ENOMEM );
+	entry_data->start_routine = start_routine;
+	entry_data->arg = arg;
+
+	kthread = spawn_thread( thread_attr->__name, __pt_entry, thread_attr->__schedpriority, thread_attr->__stacksize, entry_data);
 
 	if( attr == NULL )
 	{
@@ -124,10 +147,8 @@ int pthread_equal(pthread_t t1, pthread_t t2)
 void pthread_exit(void *value_ptr)
 {
 	__pt_cleanup *cleanup;
-	
-	/* value_ptr ignored for now */
-	exit_thread(0);
-	
+	int result = 0;
+
 	/* call all cleanup routines */
 	cleanup = (__pt_cleanup *) pthread_getspecific( cleanupKey );
 	while ( cleanup )
@@ -138,7 +159,9 @@ void pthread_exit(void *value_ptr)
 		free( cleanup );
 	}
 
-	return;
+	if( NULL != value_ptr )
+		result = (int)value_ptr;
+	exit_thread( result );
 }
 
 int pthread_getconcurrency(void)
@@ -156,11 +179,15 @@ void *pthread_getspecific(pthread_key_t key)
 	return( get_tld( key ) );
 }
 
-int pthread_join(pthread_t thread, void **foo)
+int pthread_join(pthread_t thread, void **value_ptr)
 {
-	wait_for_thread( thread );
-	return( 0 );
-	//return -ENOSYS;
+	int result;
+
+	result = wait_for_thread( thread );
+	if( NULL != value_ptr )
+		*value_ptr = (void*)result;
+
+	return 0;
 }
 
 int pthread_key_create(pthread_key_t *key, void (*destructor)(void *))

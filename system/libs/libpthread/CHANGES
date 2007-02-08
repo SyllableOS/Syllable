@@ -1,3 +1,11 @@
+* Febuary 8 2006, Kristian Van Der Vliet *
+
+Fix pthread_exit() and pthread_join()
+	o Pass value in value_ptr to exit_thread() in pthread_exit()
+	o Retrieve value from wait_for_thread() and set value_ptr in pthread_join()
+	o Use our own entry function for spawn_thread() in pthread_create() and call
+	  pthread_exit() with the return value when the thread entry function returns
+
 * May 25 2006, Kristian Van Der Vliet *
 
 Combined updates from Jan L. Hauffa and Arno Klenke
