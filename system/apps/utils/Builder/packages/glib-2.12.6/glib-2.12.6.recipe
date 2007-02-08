@@ -8,17 +8,18 @@ home
 locations			ftp://ftp.gtk.org/pub/glib/2.12/
 
 build-needs			pkg-config
-needs				gettext
+needs
+	Syllable >= 0.6.3
+	gettext
 
 patch-config
 
 configure-options
 ;	Doesn't work for some strange reason:
 ;	--disable-threads
-	--with-threads=none
-;	--with-threads=posix
+;	--with-threads=none
+	--with-threads=posix
 ;	--disable-debug
 
 documentation		README COPYING NEWS ChangeLog AUTHORS
 build-docs			INSTALL
-
