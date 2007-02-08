@@ -5,6 +5,7 @@ licenses			MIT
 home				curl.haxx.se
 locations			http://curl.haxx.se/download/
 
+needs				Syllable >= 0.6.3
 recommends
 	zlib
 	openssl | gnutls | yassl
@@ -27,4 +28,3 @@ test-targets		test
 documentation
 	README RELEASE-NOTES COPYING CHANGES
 	docs
-
