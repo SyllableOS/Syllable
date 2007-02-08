@@ -276,7 +276,7 @@ int do_exit( int nErrorCode )
 
 int sys_exit_thread( int nErrorCode )
 {
-	return ( do_exit( ( nErrorCode & 0xff ) << 8 ) );
+	return ( do_exit( nErrorCode ) );
 }
 
 /*****************************************************************************

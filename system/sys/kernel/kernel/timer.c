@@ -214,14 +214,16 @@ int sys_get_raw_idle_time( bigtime_t *pRes, int nProcessor )
 //****************************************************************************/
 /** Sets the system clock to a new time.  Does not set the RTC.
  * \ingroup Syscalls
- * \param nTime the new system time, in microseconds since 1970-01-01.
+ * \param nTimeLow the low 32 bits of the new system time, in microseconds since 1970-01-01.
+ * \param nTimeHigh the high 32 bits of the new system time
  * \return Always returns 0.
  * \attention Missing check for sufficient privileges to set the system clock.
  * \author Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
-int sys_set_real_time( bigtime_t nTime )
+int sys_set_real_time( uint32 nTimeLow, uint32 nTimeHigh )
 {
 	uint32 nFlags;
+	bigtime_t nTime = ((bigtime_t)nTimeHigh << 32 ) | nTimeLow;
 
 	nFlags = write_seqlock_disable( &g_sTimerSeqLock );
 	g_sSysBase.ex_nBootTime += nTime - g_sSysBase.ex_nRealTime;
