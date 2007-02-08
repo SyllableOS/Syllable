@@ -1,6 +1,14 @@
+* February 8, 2007, Kristian Van Der Vliet *
+
+Fix pthread_exit() and pthread_join() in libpthread
+	o Pass the value in value_ptr to exit_thread() in pthread_exit()
+	o Retrieve the value from wait_for_thread() and set value_ptr in pthread_join()
+	o Use our own entry function for spawn_thread() in pthread_create() and call
+	  pthread_exit() with the return value when the thread entry function returns
+
 * January 29, 2007, Kristian Van Der Vliet *
 
-Fixed a series bug with the Savage driver that affected Savage 4 and Savage 2000 series
+Fixed a serious bug with the Savage driver that affected Savage 4 and Savage 2000 series
 cards (and may have caused other us-seen bugs). The framebuffer and registers are now
 mapped correctly for the correct type of chipset.
 

@@ -1,3 +1,9 @@
+* February 8, 2007, Kristian Van Der Vliet *
+
+Split the 64bit argument to set_real_time() into two 32bit (High-low) arguments.
+Do not mangle return value passed to exit_thread()
+Cleaned up the definition of struct rusage and removed all those unused members.
+
 * February 6, 2007, Kristian Van Der Vliet *
 
 o Re-organised, cleaned up and improved setsockopt()
