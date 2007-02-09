@@ -288,29 +288,29 @@ void MonWindow::TimerTick( int nID )
     float	vCache   = float(sInfo.nBlockCacheSize);
     float	vDirty   = float(sInfo.nDirtyCacheSize);
     
-    if ( vFreeMem > 1000000.0f ) {
-	vFreeMem /= 1000000.0f;
+    if ( vFreeMem > 1024.0f * 1024.0f ) {
+	vFreeMem /= 1024.0f * 1024.0f;
 	pzPostfix = os::String( MSG_MAINWND_UNITS_MEGABYTE );
-    } else if ( vFreeMem > 1000.0f ) {
-	vFreeMem /= 1000.0f;
+    } else if ( vFreeMem > 1024.0f ) {
+	vFreeMem /= 1024.0f;
 	pzPostfix = os::String( MSG_MAINWND_UNITS_KILOBYTE );
     } else {
 	pzPostfix = os::String( MSG_MAINWND_UNITS_BYTE );
     }
-    if ( vCache > 1000000.0f ) {
-	vCache /= 1000000.0f;
+    if ( vCache > 1024.0f * 1024.0f ) {
+	vCache /= 1024.0f * 1024.0f;
 	pzCachePF = os::String( MSG_MAINWND_UNITS_MEGABYTE );
-    } else if ( vCache > 1000.0f ) {
-	vCache /= 1000.0f;
+    } else if ( vCache > 1024.0f ) {
+	vCache /= 1024.0f;
 	pzCachePF = os::String( MSG_MAINWND_UNITS_KILOBYTE );
     } else {
 	pzCachePF = os::String( MSG_MAINWND_UNITS_BYTE );
     }
-    if ( vDirty > 1000000.0f ) {
-	vDirty /= 1000000.0f;
+    if ( vDirty > 1024.0f * 1024.0f ) {
+	vDirty /= 1024.0f * 1024.0f;
 	pzDirtyPF = os::String( MSG_MAINWND_UNITS_MEGABYTE );
-    } else if ( vDirty > 1000.0f ) {
-	vDirty /= 1000.0f;
+    } else if ( vDirty > 1024.0f ) {
+	vDirty /= 1024.0f;
 	pzDirtyPF = os::String( MSG_MAINWND_UNITS_KILOBYTE );
     } else {
 	pzDirtyPF = os::String( MSG_MAINWND_UNITS_BYTE );
