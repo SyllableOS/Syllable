@@ -44,9 +44,10 @@ acpi_interrupt_flags acpi_sci_flags;
 extern void simple_pci_init();
 extern int acpi_init();
 extern int acpi_scan_init(void);
-extern int acpi_wakeup_device_init();;
+extern int acpi_wakeup_device_init();
 extern int acpi_ec_init(void);
 extern int acpi_thermal_init(void);
+extern int acpi_fan_init(void);
 extern int acpi_power_init(void);
 extern int acpi_button_init(void);
 extern int acpi_video_init(void);
@@ -155,6 +156,11 @@ void acpi_poweroff()
 	acpi_enter_sleep_state(ACPI_STATE_S5);
 }
 
+FADT_DESCRIPTOR* acpi_get_fadt()
+{
+	return( &acpi_fadt );
+}
+
 bool get_bool_arg( bool *pbValue, const char *pzName, const char *pzArg, int nArgLen )
 {
 	char zBuffer[256];
@@ -190,7 +196,8 @@ ACPI_bus_s sBus = {
 	acpi_bus_register_driver,
 	acpi_bus_unregister_driver,
 	acpi_install_notify_handler,
-	acpi_remove_notify_handler
+	acpi_remove_notify_handler,
+	acpi_get_fadt
 };
 
 void* acpi_bus_get_hooks( int nVersion )
@@ -202,7 +209,7 @@ void* acpi_bus_get_hooks( int nVersion )
 
 
 
-
+#include <atheos/udelay.h>
 
 /** 
  * \par Description: Initialize the pci busmanager.
@@ -246,6 +253,7 @@ status_t device_init( int nDeviceID )
 			return( -ENODEV );
 		acpi_print_power_states();
 		acpi_thermal_init();
+		acpi_fan_init();
 		acpi_power_init();		
 		acpi_ec_init();
 		acpi_button_init();

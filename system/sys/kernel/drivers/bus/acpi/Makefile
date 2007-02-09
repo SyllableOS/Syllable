@@ -36,7 +36,7 @@ UTILITIES := utilities/utalloc.o utilities/utcopy.o utilities/utdebug.o utilitie
 			utilities/uteval.o utilities/utglobal.o utilities/utinit.o utilities/utmath.o \
 			utilities/utmisc.o utilities/utmutex.o utilities/utobject.o utilities/utstate.o utilities/utxface.o utilities/utresrc.o
 
-OBJS := acpi.o bus.o button.o ec.o memset.o osl.o power.o scan.o simple_pci.o thermal.o utils.o wakeup.o video.o $(DISPATCHER) $(EVENTS) $(EXECUTER) $(HARDWARE) $(NAMESPACE) $(PARSER) $(RESOURCES) \
+OBJS := acpi.o bus.o button.o ec.o fan.o memset.o osl.o power.o scan.o simple_pci.o thermal.o utils.o wakeup.o video.o $(DISPATCHER) $(EVENTS) $(EXECUTER) $(HARDWARE) $(NAMESPACE) $(PARSER) $(RESOURCES) \
 				$(TABLES) $(UTILITIES)
 
 

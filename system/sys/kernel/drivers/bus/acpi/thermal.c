@@ -39,6 +39,7 @@
 #include <atheos/acpi.h>
 #include <posix/errno.h>
 #include <posix/unistd.h>
+#include <acpi/processor.h>
 #include <macros.h>
 
 #define ACPI_THERMAL_COMPONENT		0x04000000
@@ -246,8 +247,8 @@ acpi_thermal_set_cooling_mode (
 
 	tz->cooling_mode = mode;
 
-	ACPI_DEBUG_PRINT((ACPI_DB_INFO, "Cooling mode [%s]\n", 
-		mode?"passive":"active"));
+	printk( "ACPI: Cooling mode [%s]\n", 
+		mode?"passive":"active" );
 
 	return_VALUE(0);
 }
@@ -276,7 +277,7 @@ acpi_thermal_get_trip_points (
 	}
 	else {
 		tz->trips.critical.flags.valid = 1;
-		ACPI_DEBUG_PRINT((ACPI_DB_INFO, "Found critical threshold [%lu]\n", tz->trips.critical.temperature));
+		printk( "ACPI: Found critical threshold [%lu]\n", tz->trips.critical.temperature);
 	}
 
 	/* Critical Sleep (optional) */
@@ -288,7 +289,7 @@ acpi_thermal_get_trip_points (
 	}
 	else {
 		tz->trips.hot.flags.valid = 1;
-		ACPI_DEBUG_PRINT((ACPI_DB_INFO, "Found hot threshold [%lu]\n", tz->trips.hot.temperature));
+		printk( "ACPI: Found hot threshold [%lu]\n", tz->trips.hot.temperature);
 	}
 
 	/* Passive: Processors (optional) */
@@ -320,7 +321,7 @@ acpi_thermal_get_trip_points (
 		if (!tz->trips.passive.flags.valid)
 			ACPI_DEBUG_PRINT((ACPI_DB_WARN, "Invalid passive threshold\n"));
 		else
-			ACPI_DEBUG_PRINT((ACPI_DB_INFO, "Found passive threshold [%lu]\n", tz->trips.passive.temperature));
+			printk( "ACPI: Found passive threshold [%lu]\n", tz->trips.passive.temperature);
 	}
 
 	/* Active: Fans, etc. (optional) */
@@ -337,7 +338,7 @@ acpi_thermal_get_trip_points (
 		status = acpi_evaluate_reference(tz->handle, name, NULL, &tz->trips.active[i].devices);
 		if (ACPI_SUCCESS(status)) {
 			tz->trips.active[i].flags.valid = 1;
-			ACPI_DEBUG_PRINT((ACPI_DB_INFO, "Found active threshold [%d]:[%lu]\n", i, tz->trips.active[i].temperature));
+			printk( "ACPI: Found active threshold [%d]:[%lu]\n", i, tz->trips.active[i].temperature);
 		}
 		else
 			ACPI_DEBUG_PRINT((ACPI_DB_ERROR, "Invalid active threshold [%d]\n", i));
@@ -385,10 +386,7 @@ acpi_thermal_critical (
 	else if (tz->trips.critical.flags.enabled)
 		tz->trips.critical.flags.enabled = 0;
 
-	result = acpi_bus_get_device(tz->handle, &device);
-	if (result)
-		return_VALUE(result);
-
+	
 	printk("ACPI: Critical temperature reached (%ld C), shutting down.\n", KELVIN_TO_CELSIUS(tz->temperature));
 
 	reboot();
@@ -416,10 +414,6 @@ acpi_thermal_hot (
 	else if (tz->trips.hot.flags.enabled)
 		tz->trips.hot.flags.enabled = 0;
 
-	result = acpi_bus_get_device(tz->handle, &device);
-	if (result)
-		return_VALUE(result);
-
 
 	/* TBD: Call user-mode "sleep(S4)" function */
 
@@ -427,7 +421,7 @@ acpi_thermal_hot (
 }
 
 
-static int
+static void
 acpi_thermal_passive (
 	struct acpi_thermal	*tz)
 {
@@ -439,7 +433,7 @@ acpi_thermal_passive (
 	ACPI_FUNCTION_TRACE("acpi_thermal_passive");
 
 	if (!tz || !tz->trips.passive.flags.valid)
-		return_VALUE(-EINVAL);
+		return;
 
 	passive = &(tz->trips.passive);
 
@@ -459,19 +453,40 @@ acpi_thermal_passive (
 			tz->temperature, passive->temperature));
 		tz->trips.passive.flags.enabled = 1;
 		/* Heating up? */
-		#if 0
 		if (trend > 0)
-			for (i=0; i<passive->devices.count; i++)
+			for (i=0; i<passive->devices.count; i++) {
+				printk( "Error: acpi_processor_set_thermal_limit() not implemented!\n" );
+				#if 0
 				acpi_processor_set_thermal_limit(
 					passive->devices.handles[i], 
 					ACPI_PROCESSOR_LIMIT_INCREMENT);
+				#endif
+			}
 		/* Cooling off? */
-		else if (trend < 0)
-			for (i=0; i<passive->devices.count; i++)
+		else if (trend < 0) {
+			for (i=0; i<passive->devices.count; i++) {
+				printk( "Error: acpi_processor_set_thermal_limit() not implemented!\n" );
+				#if 0
 				acpi_processor_set_thermal_limit(
 					passive->devices.handles[i], 
 					ACPI_PROCESSOR_LIMIT_DECREMENT);
-		#endif
+				#endif
+			}
+			/*
+			 * Leave cooling mode, even if the temp might
+			 * higher than trip point This is because some
+			 * machines might have long thermal polling
+			 * frequencies (tsp) defined. We will fall back
+			 * into passive mode in next cycle (probably quicker)
+			 */
+			if (result) {
+				passive->flags.enabled = 0;
+				ACPI_DEBUG_PRINT((ACPI_DB_INFO,
+						  "Disabling passive cooling, still above threshold,"
+						  " but we are cooling down\n"));
+			}
+		}
+		return;
 	}
 
 	/*
@@ -481,25 +496,25 @@ acpi_thermal_passive (
 	 * and avoid thrashing around the passive trip point.  Note that we
 	 * assume symmetry.
 	 */
-	else if (tz->trips.passive.flags.enabled) {
-		#if 0
-		for (i=0; i<passive->devices.count; i++)
-			result = acpi_processor_set_thermal_limit(
-				passive->devices.handles[i], 
-				ACPI_PROCESSOR_LIMIT_DECREMENT);
-		if (result == 1) {
-			tz->trips.passive.flags.enabled = 0;
-			ACPI_DEBUG_PRINT((ACPI_DB_INFO, 
-				"Disabling passive cooling (zone is cool)\n"));
-		}
-		#endif
+	if (!passive->flags.enabled)
+		return;
+	for (i=0; i<passive->devices.count; i++) {
+		printk( "Error: acpi_processor_set_thermal_limit() not implemented!\n" );
+	#if 0
+		result = acpi_processor_set_thermal_limit(
+			passive->devices.handles[i], 
+			ACPI_PROCESSOR_LIMIT_DECREMENT);
+	#endif
 	}
-
-	return_VALUE(0);
+	if (result) {
+		passive->flags.enabled = 0;
+		ACPI_DEBUG_PRINT((ACPI_DB_INFO,
+				  "Disabling passive cooling (zone is cool)\n"));
+	}
 }
 
 
-static int
+static void
 acpi_thermal_active (
 	struct acpi_thermal	*tz)
 {
@@ -512,7 +527,7 @@ acpi_thermal_active (
 	ACPI_FUNCTION_TRACE("acpi_thermal_active");
 
 	if (!tz)
-		return_VALUE(-EINVAL);
+		return;
 
 	for (i=0; i<ACPI_THERMAL_MAX_ACTIVE; i++) {
 
@@ -528,12 +543,13 @@ acpi_thermal_active (
 		 */
 		if (tz->temperature >= active->temperature) {
 			if (active->temperature > maxtemp)
-				tz->state.active_index = i, maxtemp = active->temperature;
+				tz->state.active_index = i;
+			maxtemp = active->temperature;
 			if (!active->flags.enabled) {
 				for (j = 0; j < active->devices.count; j++) {
 					result = acpi_bus_set_power(active->devices.handles[j], ACPI_STATE_D0);
 					if (result) {
-						ACPI_DEBUG_PRINT((ACPI_DB_WARN, "Unable to turn cooling device [%p] 'on'\n", active->devices.handles[j]));
+						printk( "ACPI: Unable to turn cooling device [%p] 'on'\n", active->devices.handles[j]);
 						continue;
 					}
 					active->flags.enabled = 1;
@@ -551,7 +567,7 @@ acpi_thermal_active (
 			for (j = 0; j < active->devices.count; j++) {
 				result = acpi_bus_set_power(active->devices.handles[j], ACPI_STATE_D3);
 				if (result) {
-					ACPI_DEBUG_PRINT((ACPI_DB_WARN, "Unable to turn cooling device [%p] 'off'\n", active->devices.handles[j]));
+					printk( "ACPI: Unable to turn cooling device [%p] 'off'\n", active->devices.handles[j]);
 					continue;
 				}
 				active->flags.enabled = 0;
@@ -560,7 +576,6 @@ acpi_thermal_active (
 		}
 	}
 
-	return_VALUE(0);
 }
 
 
@@ -648,8 +663,7 @@ acpi_thermal_check (
 	if (tz->trips.passive.flags.enabled)
 		tz->state.passive = 1;
 	for (i=0; i<ACPI_THERMAL_MAX_ACTIVE; i++)
-		if (tz->trips.active[i].flags.enabled)
-			tz->state.active = 1;
+		tz->state.active |= tz->trips.active[i].flags.enabled;
 
 	/*
 	 * Calculate Sleep Time

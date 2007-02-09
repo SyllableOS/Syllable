@@ -751,7 +751,7 @@ void acpi_device_get_debug_info(struct acpi_device * device, acpi_handle handle,
 		break;
 	}
 
-	kerndbg(KERN_DEBUG, "ACPI: Found %s %s [%p]\n", type_string, name, handle);
+	kerndbg(KERN_DEBUG, "ACPI: Found %s %s [%p] %s %s\n", type_string, name, handle, device->pnp.bus_id, device->pnp.hardware_id);
 //#endif /*CONFIG_ACPI_DEBUG_OUTPUT*/
 }
 

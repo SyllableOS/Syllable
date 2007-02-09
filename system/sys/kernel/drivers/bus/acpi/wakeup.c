@@ -181,7 +181,7 @@ int acpi_wakeup_device_init(void)
 	}
 	spinunlock(&acpi_device_lock);
 	
-	kerndbg( KERN_DEBUG, "ACPI: Wakeup devices %s\n", zBuffer );
+	kerndbg( KERN_INFO, "ACPI: Wakeup devices %s\n", zBuffer );
 
 	return 0;
 }

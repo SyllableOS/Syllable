@@ -201,9 +201,18 @@ acpi_bus_set_power (
 		ACPI_DEBUG_PRINT((ACPI_DB_WARN, "Device is not power manageable\n"));
 		return_VALUE(-ENODEV);
 	}
-	if (state == device->power.state) {
-		ACPI_DEBUG_PRINT((ACPI_DB_INFO, "Device is already at D%d\n", state));
-		return_VALUE(0);
+	/*
+	 * Get device's current power state if it's unknown
+	 * This means device power state isn't initialized or previous setting failed
+	 */
+	if (!device->flags.force_power_state) {
+		if (device->power.state == ACPI_STATE_UNKNOWN)
+			acpi_bus_get_power(device->handle, &device->power.state);
+		if (state == device->power.state) {
+			ACPI_DEBUG_PRINT((ACPI_DB_INFO, "Device is already at D%d\n",
+					  state));
+			return 0;
+		}
 	}
 	if (!device->power.states[state].flags.valid) {
 		ACPI_DEBUG_PRINT((ACPI_DB_WARN, "Device does not support D%d\n", state));

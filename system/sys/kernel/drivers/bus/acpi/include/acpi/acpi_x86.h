@@ -40,6 +40,7 @@ typedef struct {
 } __attribute__ ((packed)) acpi_interrupt_flags;
 
 extern enum acpi_irq_model_id	acpi_irq_model;
+typedef uint32 cpumask_t;
 
 
 /*
@@ -143,11 +144,6 @@ __acpi_release_global_lock (unsigned int *lock)
         :"=r"(n_hi), "=r"(n_lo)     \
         :"0"(n_hi), "1"(n_lo))
 
-/*
- * Refer Intel ACPI _PDC support document for bit definitions
- */
-#define ACPI_PDC_EST_CAPABILITY_SMP 	0xa
-#define ACPI_PDC_EST_CAPABILITY_MSR	0x1
 
 
 #endif /*_X86_ACPI_H*/

@@ -370,6 +370,7 @@ typedef struct
 	int			( *unregister_driver )( struct acpi_driver *driver );
 	acpi_status ( *install_notify_handler )( acpi_handle device, u32 handler_type, acpi_notify_handler handler, void *context );
 	acpi_status ( *remove_notify_handler )( acpi_handle device, u32 handler_type, acpi_notify_handler handler );
+	FADT_DESCRIPTOR* ( *get_fadt )();
 } ACPI_bus_s;
 
 #endif

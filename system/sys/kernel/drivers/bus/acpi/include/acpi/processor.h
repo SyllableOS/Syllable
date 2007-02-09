@@ -1,10 +1,11 @@
 #ifndef __ACPI_PROCESSOR_H
 #define __ACPI_PROCESSOR_H
 
-#include <linux/kernel.h>
-#include <linux/config.h>
+#include <atheos/kernel.h>
 
-#include <asm/acpi.h>
+#define ACPI_PROCESSOR_LIMIT_NONE	0x00
+#define ACPI_PROCESSOR_LIMIT_INCREMENT	0x01
+#define ACPI_PROCESSOR_LIMIT_DECREMENT	0x02
 
 #define ACPI_PROCESSOR_BUSY_METRIC	10
 
@@ -17,6 +18,17 @@
 #define ACPI_PROCESSOR_MAX_DUTY_WIDTH	4
 
 #define ACPI_PDC_REVISION_ID		0x1
+
+#define ACPI_PSD_REV0_REVISION		0 /* Support for _PSD as in ACPI 3.0 */
+#define ACPI_PSD_REV0_ENTRIES		5
+
+/*
+ * Types of coordination defined in ACPI 3.0. Same macros can be used across
+ * P, C and T states
+ */
+#define DOMAIN_COORD_TYPE_SW_ALL	0xfc
+#define DOMAIN_COORD_TYPE_SW_ANY	0xfd
+#define DOMAIN_COORD_TYPE_HW_ALL	0xfe
 
 /* Power Management */
 
@@ -51,6 +63,7 @@ struct acpi_processor_cx {
 	u32 latency_ticks;
 	u32 power;
 	u32 usage;
+	u64 time;
 	struct acpi_processor_cx_policy promotion;
 	struct acpi_processor_cx_policy demotion;
 };
@@ -62,12 +75,18 @@ struct acpi_processor_power {
 	u32 bm_activity;
 	int count;
 	struct acpi_processor_cx states[ACPI_PROCESSOR_MAX_POWER];
-
-	/* the _PDC objects passed by the driver, if any */
-	struct acpi_object_list *pdc;
 };
 
 /* Performance Management */
+
+
+struct acpi_psd_package {
+	acpi_integer num_entries;
+	acpi_integer revision;
+	acpi_integer domain;
+	acpi_integer coord_type;
+	acpi_integer num_processors;
+} __attribute__ ((packed));
 
 struct acpi_pct_register {
 	u8 descriptor;
@@ -95,9 +114,9 @@ struct acpi_processor_performance {
 	struct acpi_pct_register status_register;
 	unsigned int state_count;
 	struct acpi_processor_px *states;
-
-	/* the _PDC objects passed by the driver, if any */
-	struct acpi_object_list *pdc;
+	struct acpi_psd_package domain_info;
+	cpumask_t shared_cpu_map;
+	unsigned int shared_type;
 };
 
 
@@ -153,6 +172,9 @@ struct acpi_processor {
 	struct acpi_processor_performance *performance;
 	struct acpi_processor_throttling throttling;
 	struct acpi_processor_limit limit;
+	
+	/* the _PDC objects for this processor, if any */
+	struct acpi_object_list *pdc;
 };
 
 struct acpi_processor_errata {
@@ -165,6 +187,8 @@ struct acpi_processor_errata {
 	} piix4;
 };
 
+#define NR_CPUS 32
+
 extern int acpi_processor_register_performance(struct acpi_processor_performance
 					       *performance, unsigned int cpu);
 extern void acpi_processor_unregister_performance(struct
@@ -172,29 +196,14 @@ extern void acpi_processor_unregister_performance(struct
 						  *performance,
 						  unsigned int cpu);
 
-/* note: this locks both the calling module and the processor module
-         if a _PPC object exists, rmmod is disallowed then */
-int acpi_processor_notify_smm(struct module *calling_module);
-
 /* for communication between multiple parts of the processor kernel module */
 extern struct acpi_processor *processors[NR_CPUS];
 extern struct acpi_processor_errata errata;
 
-int acpi_processor_set_pdc(struct acpi_processor *pr,
-			   struct acpi_object_list *pdc_in);
-
 #ifdef ARCH_HAS_POWER_PDC_INIT
-void acpi_processor_power_init_pdc(struct acpi_processor_power *pow,
-				   unsigned int cpu);
 void acpi_processor_power_init_bm_check(struct acpi_processor_flags *flags,
 					unsigned int cpu);
 #else
-static inline void acpi_processor_power_init_pdc(struct acpi_processor_power
-						 *pow, unsigned int cpu)
-{
-	pow->pdc = NULL;
-	return;
-}
 
 static inline void acpi_processor_power_init_bm_check(struct
 						      acpi_processor_flags
@@ -224,10 +233,8 @@ static inline int acpi_processor_ppc_has_changed(struct acpi_processor *pr)
 {
 	static unsigned int printout = 1;
 	if (printout) {
-		printk(KERN_WARNING
+		printk(
 		       "Warning: Processor Platform Limit event detected, but not handled.\n");
-		printk(KERN_WARNING
-		       "Consider compiling CPUfreq support into your kernel.\n");
 		printout = 0;
 	}
 	return 0;
@@ -237,10 +244,6 @@ static inline int acpi_processor_ppc_has_changed(struct acpi_processor *pr)
 /* in processor_throttling.c */
 int acpi_processor_get_throttling_info(struct acpi_processor *pr);
 int acpi_processor_set_throttling(struct acpi_processor *pr, int state);
-ssize_t acpi_processor_write_throttling(struct file *file,
-					const char __user * buffer,
-					size_t count, loff_t * data);
-extern struct file_operations acpi_processor_throttling_fops;
 
 /* in processor_idle.c */
 int acpi_processor_power_init(struct acpi_processor *pr,
@@ -251,10 +254,6 @@ int acpi_processor_power_exit(struct acpi_processor *pr,
 
 /* in processor_thermal.c */
 int acpi_processor_get_limit_info(struct acpi_processor *pr);
-ssize_t acpi_processor_write_limit(struct file *file,
-				   const char __user * buffer,
-				   size_t count, loff_t * data);
-extern struct file_operations acpi_processor_limit_fops;
 
 #ifdef CONFIG_CPU_FREQ
 void acpi_thermal_cpufreq_init(void);

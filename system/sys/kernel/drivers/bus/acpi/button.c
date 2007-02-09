@@ -29,6 +29,7 @@
 #include <atheos/list.h>
 #include <atheos/msgport.h>
 #include <atheos/acpi.h>
+#include <acpi/processor.h>
 #include <posix/errno.h>
 #include <macros.h>
 
@@ -114,7 +115,8 @@ acpi_button_notify (
 	if( button->type <= ACPI_BUTTON_TYPE_SLEEPF )
 		send_msg_x( get_app_server_port(), 20, g_nMsg, sizeof( g_nMsg ), INFINITE_TIMEOUT );
 
-	#if 0
+#if 0
+
 	suspend_devices();
 	#define wmb()	__asm__ __volatile__ ("": : :"memory")
 	ACPI_FLUSH_CPU_CACHE();
@@ -137,7 +139,8 @@ acpi_button_notify (
 	
 	//printk("Back!\n");
 	resume_devices();
-	#endif
+
+#endif	
 	if (!button || !button->device)
 		return_VOID;
 
