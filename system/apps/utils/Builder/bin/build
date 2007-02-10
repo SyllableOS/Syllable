@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.116
+# Version 0.6.117
 # Copyright (c) 2002-2007 Kaj de Vos
 # License: GPL 2 or any later version
 
@@ -343,7 +343,7 @@ def configureModule staging, target
 											' ' + p[1..-2] :  # FIXME: do some checking
 											' --prefix='
 										) + prefix(staging, target) +
-										(@crossCompile ? " --build=#{@machtype} --host=" + @target : '')
+										(@crossCompile ? " --build=#{@machType} --host=" + @target : '')
 									) +
 									((options = recipe['configure-options']) ? ' ' + toString(options) : '')
 								)
@@ -1517,14 +1517,14 @@ attr_reader :failures
 		IO.readlines File.join(@@logsPath, log)
 	end
 
-	def initialize
+	def initialize machType, crossCompile
 		@failures = []
 
 		@log		= File.new File.join(@@logsPath, 'stdout'), 'w'
 		@summary	= File.new File.join(@@logsPath, 'summary'), 'w'
 		@failLog	= File.new File.join(@@logsPath, 'failures'), 'w'
 
-		@log << s = (@crossCompile ? 'Cross-b' : 'B') + "uilding in root directory #{Dir.getwd} on #{@machtype}\n"
+		@log << s = (crossCompile ? 'Cross-b' : 'B') + "uilding in root directory #{Dir.getwd} on #{machType}\n"
 		@summary << s
 		@failLog << s
 	end
@@ -1637,7 +1637,7 @@ end
 
 # BASh 3 only exports the $SYSTEM variable:
 @syllable = `uname`.chomp == 'syllable'
-@machtype = "#{`uname -m`.chomp}-#{
+@machType = "#{`uname -m`.chomp}-#{
 		(hardware = `uname -i`.chomp) == 'unknown' and @syllable ? 'pc' : hardware
 	}-#{`uname -s`.chomp}"
 
@@ -1698,7 +1698,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.6.116',
+	puts 'Syllable Build System 0.6.117',
 		'Copyright (c) 2002-2007 Kaj de Vos',
 		'License: GPL 2 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
@@ -1750,7 +1750,7 @@ when 'modules' then puts Profile.new(arg2)['modules']
 when 'recipe'  then puts getRecipe(arg2).to_a
 when 'log'     then print Log[arg2 ? arg2 : 'stdout']
 else
-	@log = Log.new
+	@log = Log.new @machType, @crossCompile
 
 	if arg1 == 'scrub'
 		deleteCVSData
