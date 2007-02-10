@@ -1,0 +1,16 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			gnu
+
+licenses			GPL
+home				www.gnu.org/software/gzip/
+packages			gzip/gzip-1.3.9
+;locations			ftp://alpha.gnu.org/gnu/gzip/
+
+documentation
+	README COPYING NEWS ChangeLog AUTHORS THANKS TODO
+;	Text version of man:
+;	gzip.doc
+	algorithm.doc
+
