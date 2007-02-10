@@ -1,6 +1,6 @@
 ORCA [
 	Title:		"Package installation library"
-	Version:	0.4.0
+	Version:	0.4.1
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006,2007 Kaj de Vos
@@ -222,7 +222,7 @@ package-image: context [
 		either all [
 			do-subdirs :remove-subdir either stages [targets] [reduce [this-stage]]
 			any [
-				root <> %/usr/  ; Don't remove staged manuals from a host system
+				root <> system-stage/packages  ; Don't remove staged manuals from a host system
 				not exists? manuals: join path "/man"
 				(
 					log/header "Deleting manual pages"
