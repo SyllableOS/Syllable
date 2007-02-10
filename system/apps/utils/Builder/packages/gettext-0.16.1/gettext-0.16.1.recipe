@@ -1,0 +1,23 @@
+authors				Kaj de Vos
+status				incomplete
+warnings			Japanese locale doesn't work on the new GLibC 2.3.x for Syllable.
+notes				See file PACKAGING to split off a developer package
+
+inherits			gnu
+
+licenses			GPL
+home				www.gnu.org/software/gettext/
+packages			gettext/gettext-0.16.1
+
+;build-needs
+;	gawk ?
+;	expat ?
+
+;make-shared
+
+;configure-env		LINGUAS 'de fr nl'
+;configure-options	--with-included-gettext
+
+documentation		README COPYING NEWS ChangeLog AUTHORS THANKS
+build-docs			PACKAGING
+
