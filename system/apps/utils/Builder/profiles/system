@@ -222,7 +222,7 @@ modules
 
 	libs/libdl
 	libs/libpthread
-	libs/ncurses-5.5
+	libs/ncurses-5.6
 
 ;	Currently conflicts with GetText on GLibC 2.3.x:
 	apps/gnu/grep-2.5.1a
