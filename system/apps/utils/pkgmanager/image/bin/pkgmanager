@@ -2,7 +2,7 @@
 
 ORCA [
 	Title:		"Legacy package registration tool"
-	Version:	0.3.1
+	Version:	0.4.0
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006,2007 Kaj de Vos
@@ -14,7 +14,7 @@ ORCA [
 	Tabs:		4
 ]
 
-recycle/off  ; FIXME: Orca bug
+recycle/off  ; FIXME: ORCA bug
 
 
 do %/atheos/autolnk/lib/REBOL/package.library
@@ -31,7 +31,7 @@ either any [
 		find ["help" "-h" "--help" "-help" "-?" "?"] command
 	)
 ][
-	print "Usage: pkgmanager <command> [/usr/<package>]"
+	print "Usage: pkgmanager <command> [[<package path>]<package name>]"
 	print "<command>:"
 	print "  help, -h,     Show this help information"
 	print "    --help, -help, -?, (?)"
@@ -42,16 +42,16 @@ either any [
 	print [" " select header 'example]
 ][
 either find ["version" "-v" "--version"] command [
-	print [select header 'title select header 'version]
+	print [select header 'title  select header 'version]
 	print select header 'rights
 ][
 either find ["--add" "-a"] command [
-	package: package-proto/new package
+	package: package-image/new package
 	unless package/register
 		[quit/return 1]
 ][
 either find ["--remove" "-r"] command [
-	package: package-proto/new package
+	package: package-image/new package
 	unless package/unregister
 		[quit/return 1]
 ][

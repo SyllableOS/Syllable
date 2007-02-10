@@ -2,7 +2,7 @@
 
 ORCA [
 	Title:		"Package installation tool"
-	Version:	0.3.1
+	Version:	0.4.0
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006,2007 Kaj de Vos
@@ -26,7 +26,7 @@ either any [
 	not args: system/script/args
 	find ["help" "-h" "--help" "-help" "-?" "?"] command: args/1
 ][
-	print "Usage: package <command> [<package> [<link pool> ...]]"
+	print "Usage: package <command> [[<package path>]<package name> [<link pool> ...]]"
 	print "<command>:"
 	print "  help, -h,     Show this help information"
 	print "    --help, -help, -?, (?)"
@@ -37,18 +37,18 @@ either any [
 	print [" " select header 'example]
 ][
 either command = "version" [
-	print [select header 'title select header 'version]
+	print [select header 'title  select header 'version]
 	print select header 'rights
 ][
 	unless args/2 [
 		print "Please supply a package name."
 		quit/return 2
 	]
-	package: package-proto/new join %/usr/ args/2
+	package: package-image/new args/2
 
 	stages: []
 	foreach stage next next args [
-		append stages stage-proto/new stage
+		append stages stage-proto/new package/root stage
 	]
 
 	switch/default command [

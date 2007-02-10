@@ -1,6 +1,6 @@
 ORCA [
 	Title:		"Package installation library"
-	Version:	0.3.2
+	Version:	0.4.0
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006,2007 Kaj de Vos
@@ -68,28 +68,33 @@ build: context [
 ]
 
 stage-proto: context [
-;	type: none
-;	root: %/
-;	packages-root: %/usr/
+	image?: none
+	packages: %/usr/
 	indexes: %/atheos/autolnk
 	
-	new: func ["Returns a new stage object; of the running system by default."
-		stage' [file! string! none!]
+	new: func ["Returns a new stage object; by default of the running system."
+		packages' [file! string! none!]  ; "Trailing slash required."
+		indexes' [file! string! none!]
 	][
-		make self [indexes: to-file any [stage' indexes]]
+		make self [
+			indexes: to-file any [indexes' indexes]
+			image?: to-logic find indexes "/stage/image/"
+			packages: either image?
+				[packages]
+				[to-file any [packages' packages]]
+		]
 	]
 
 	index-node: func [package node
-		/local source target
+		/local source target index
 	][
-;		source: join packages-root [package "/" node]
-		source: join package ["/" node]
+		source: join package/root index: join package/name ["/" node]
 		target: join indexes ["/" node]
 
 		either dir? source [
 			either exists? target [
 ;				TODO: detect a symlink:
-;				if link? target [log/warning join "directory " [target " is a link"]]
+;				if symlink? target [log/warning join "directory " [target " is a link"]]
 				yes
 			][
 				if dir? target [log/warning join "replacing broken directory link " target]
@@ -106,16 +111,21 @@ stage-proto: context [
 ;					TODO: detect a symlink:
 ;					if file? target [log/warning join "replacing broken link " target]
 				]
-				action join "ln -sf " [source " " target]
+;				change-dir join indexes ["/" subdir]
+				action join "ln --symbolic --force " [
+					either image? [join packages index] [source]
+					" " target
+				]
 			]
 		]
 	]
 	
-	remove-node: func [subdir node
-		/local index file
+	remove-node: func [subdir file
+		/local node index
 	][
-		index: join indexes ["/"  file: join subdir ["/" node]]
+		index: join indexes ["/"  node: join subdir ["/" file]]
 
+;		TODO: detect a symlink:
 		either dir? index [
 			any [
 ;				FIXME: bug in ORCA list comparison:
@@ -123,19 +133,18 @@ stage-proto: context [
 				(length? read index) > 0  ; Indexes directory not empty?
 ;				action join "rmdir " index
 				; May be a symlink from old package manager:
-				action join "rm -r " index
+				action join "rm --recursive " index
 			]
 		][
-;			FIXME: ORCA join bug:
-;			change-dir join indexes ["/" subdir]
 ;			TODO: detect a symlink:
-;			either file? node [
-			either exists? index [
-				either file = "info/dir" [
+;			either file? file [
+			either image? or exists? index [
+				either node = "info/dir" [
 					log/warning "info/dir file left untouched"
 					yes
 				][
 					action join "rm " index
+					yes  ; Don't consider an error fatal for now
 				]
 			][
 				log/warning join "link " [index " did not exist"]
@@ -145,67 +154,86 @@ stage-proto: context [
 	]
 ]
 
-system-image: stage-proto/new none
+system-stage: stage-proto/new none none
 
-package-proto: context [
-	package: this-stage: none
+package-image: context [
+	name: root: path: this-stage: none
 
 	flat-dirs:	 [etc bin sbin info early-init init]
 	nested-dirs: [lib libexec include share man]
 
-	new: func ["Returns a new package object."
-		package' [file! string!]
-		/stage s' [object!]
+	new: func ["Returns a new package image object."
+		package' [string! file!]  ; "Name or full path."
+		/stage stage' [object!]  ; "Defaults to the host system."
+		/local where
 	][
-		make self [
-			package: to-file package'
-			this-stage: either stage [s'] [system-image]
+		unless stage [stage': system-stage]
+		; Drop any trailing slash:
+		if (last package') = #"/" [package': copy/part package' back tail package']
+
+		either where: find/last package': to-file package'  #"/" [  ; Package path given?
+			make self [
+;				FIXME: ORCA bug?: 'where is cleaned up if not copied:
+				name: to-string next where
+				root: copy/part package' next where
+				path: package'
+				this-stage: stage'
+			]
+		][
+			make self [
+				name: to-string package'
+				root: system-stage/packages
+				path: join root package'
+				this-stage: stage'
+			]
 		]
 	]
 
 	register: func ["Indexes the package into the staging areas."
 		/stages targets [block!]
-		/local path
+		/local manuals
 	][
-		log/header join "Registering " package
+		log/header join "Registering " path
 
 		either all [
 			do-subdirs :index-subdir either stages [targets] [reduce [this-stage]]
 			any [
-				not exists? path: join package "/man"
+				not exists? manuals: join path "/man"
 				(
 					log/header "Generating manual pages"
-					action join "manmanager -a " path
+;					FIXME: staged manuals are linked into the host system:
+					action join "manmanager -a " manuals
 				)
 			]
 		][
 			action "sync"
 		][
-			log/failure package
+			log/failure path
 			no
 		]
 	]
 
 	unregister: func ["Unlinks the package from the staging areas."
 		/stages targets [block!]
-		/local path
+		/local manuals
 	][
-		log/header join "Unregistering " package
+		log/header join "Unregistering " path
 
 		either all [
 			do-subdirs :remove-subdir either stages [targets] [reduce [this-stage]]
-;			either no [  ; FIXME: manmanager fails on deleting non-existing manuals
 			any [
-				not exists? path: join package "/man"
+				root <> %/usr/  ; Don't remove staged manuals from a host system
+				not exists? manuals: join path "/man"
 				(
 					log/header "Deleting manual pages"
-					action join "manmanager -r " path
+;					FIXME: manmanager fails on deleting non-existing manuals?
+					action join "manmanager -r " manuals
 				)
 			]
 		][
 			action "sync"
 		][
-			log/failure package
+			log/failure path
 			no
 		]
 	]
@@ -215,6 +243,7 @@ package-proto: context [
 		/local subdir
 	][
 		foreach subdir flat-dirs [
+;			FIXME: ORCA bug: errors don't propagate from 'task:
 			unless task stages subdir no
 				[return no]
 		]
@@ -222,14 +251,14 @@ package-proto: context [
 			unless task stages subdir yes
 				[return no]
 		]
+		yes
 	]
 	
 	index-subdir: func [stages subdir nesting?
 		/local dir entry node s
 	][
-;		either exists? dir: join stage/packages-root [package "/" subdir] [
 		any [
-			not exists? dir: join package ["/" subdir]
+			not exists? dir: join path ["/" subdir]
 			(
 				log/detail join "Processing subdirectory " subdir
 				change-dir dir
@@ -237,7 +266,7 @@ package-proto: context [
 				foreach entry read %. [
 					node: join subdir ["/" entry]
 					foreach s stages [
-						unless s/index-node package node
+						unless s/index-node self node
 							[return no]
 					]
 					if nesting? and dir? entry [
@@ -254,9 +283,8 @@ package-proto: context [
 	remove-subdir: func [stages subdir nesting?
 		/local dir entry s
 	][
-;		either exists? dir: join stage/packages-root [package "/" subdir] [
 		any [
-			not exists? dir: join package ["/" subdir]
+			not exists? dir: join path ["/" subdir]
 			(
 				log/detail join "Processing subdirectory " subdir
 				change-dir dir
