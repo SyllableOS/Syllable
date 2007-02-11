@@ -69,13 +69,13 @@ tree
 	atheos/system/drivers/dev/audio
 	atheos/system/drivers/dev/bus
 	atheos/system/drivers/dev/disk
+	atheos/system/drivers/dev/graphics
 	atheos/system/drivers/dev/hcd
 	atheos/system/drivers/dev/input
 	atheos/system/drivers/dev/misc
 	atheos/system/drivers/dev/net
 	atheos/system/drivers/dev/net/eth
 	atheos/system/drivers/dev/printer
-	atheos/system/drivers/dev/graphics
 
 	atheos/system/drivers/fs
 
@@ -326,4 +326,3 @@ modules
 	apps/utils/man2html
 	apps/utils/nettools
 	apps/utils/systools
-

@@ -13,7 +13,6 @@ resources
 	atheos/system/resources/wallpapers			wallpapers/Ruud/*.jpg
 
 modules
-;	other/fonts/bitstream-vera-1.10
 	other/fonts/luxi-fonts
 ;	For AClock:
 ;	The first one will produce two harmless unpacking errors:
@@ -90,4 +89,3 @@ modules
 ;	Still needs FreeType 2.1(.10):
 ;	apps/other/xpdf-3.00pl3-syllable
 ;	apps/other/xpdf-3.00pl3
-
