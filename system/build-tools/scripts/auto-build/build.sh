@@ -1,15 +1,15 @@
 #!/bin/bash
 
 LOG_DIR=$HOME/Logs
-LOG=$LOG_DIR/stdlog
+LOG=$LOG_DIR/std-out-err.log
 
-SYSTEM_LOG=$LOG_DIR/system_log
-SYSTEM_FAILURE_LOG=$LOG_DIR/system_failures
-SYSTEM_SUMMARY_LOG=$LOG_DIR/system_summary
+SYSTEM_LOG=$LOG_DIR/system.log
+SYSTEM_FAILURE_LOG=$LOG_DIR/system-failures.log
+SYSTEM_SUMMARY_LOG=$LOG_DIR/system-summary.log
 
-BASE_LOG=$LOG_DIR/base_log
-BASE_FAILURE_LOG=$LOG_DIR/base_failures
-BASE_SUMMARY_LOG=$LOG_DIR/base_summary
+BASE_LOG=$LOG_DIR/base.log
+BASE_FAILURE_LOG=$LOG_DIR/base-failures.log
+BASE_SUMMARY_LOG=$LOG_DIR/base-summary.log
 
 SOURCE_DIR=$HOME/Source/Anonymous
 BUILD_DIR=$HOME/Build
@@ -51,7 +51,7 @@ sync
 
 echo "Updating sources"
 cd $SOURCE_DIR/syllable
-cvs -z9 update -dP 1>>$LOG 2>>$LOG
+cvs -z9 -q update -dP 1>>$LOG 2>>$LOG
 sync
 
 # Copy them
@@ -79,7 +79,7 @@ sync
 
 # XXXKV: We have to build GCC 4.1.1 with GCC 3.4.3...
 echo "Switching to GCC 3.4.3"
-build install $HOME/Packages/gcc-3.4.3.bin.1.zip 1>>$LOG 2>>$LOG
+build install $HOME/Packages/gcc-3.4.3.bin.3.zip 1>>$LOG 2>>$LOG
 sync
 echo "Building GCC 4.1.1"
 image gcc-libraries 1>>$LOG 2>>$LOG
@@ -111,7 +111,7 @@ build log failures >> $SYSTEM_FAILURE_LOG
 build log summary >> $SYSTEM_SUMMARY_LOG
 sync
 echo "Switching to Freetype-2.2.1"
-build install $HOME/Packages/freetype-2.2.1.bin.1.zip 1>>$LOG 2>>$LOG
+build install $HOME/Packages/freetype-2.2.1.bin.2.zip 1>>$LOG 2>>$LOG
 sync
 
 # XXXKV: Now on with the show...
