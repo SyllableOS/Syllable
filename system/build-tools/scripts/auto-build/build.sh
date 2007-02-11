@@ -3,11 +3,11 @@
 LOG_DIR=$HOME/Logs
 LOG=$LOG_DIR/std-out-err.log
 
-SYSTEM_LOG=$LOG_DIR/system.log
+SYSTEM_LOG=$LOG_DIR/system-stdout.log
 SYSTEM_FAILURE_LOG=$LOG_DIR/system-failures.log
 SYSTEM_SUMMARY_LOG=$LOG_DIR/system-summary.log
 
-BASE_LOG=$LOG_DIR/base.log
+BASE_LOG=$LOG_DIR/base-stdout.log
 BASE_FAILURE_LOG=$LOG_DIR/base-failures.log
 BASE_SUMMARY_LOG=$LOG_DIR/base-summary.log
 
