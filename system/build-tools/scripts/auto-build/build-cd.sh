@@ -82,9 +82,11 @@ FILES=(	"/atheos/etc/profile, /atheos/etc/profile" 															\
 		"/atheos/usr/coreutils/bin/rm, /atheos/usr/local/bin/rm"											\
 		"/atheos/usr/coreutils/bin/rmdir, /atheos/usr/local/bin/rmdir"										\
 		"/atheos/usr/coreutils/bin/sleep, /atheos/usr/local/bin/sleep"										\
+		"/atheos/usr/coreutils/bin/sort, /atheos/usr/local/bin/sort"										\
 		"/atheos/usr/coreutils/bin/sync, /atheos/usr/local/bin/sync"										\
 		"/atheos/usr/coreutils/bin/whoami, /atheos/usr/local/bin/whoami"									\
 		"/atheos/usr/coreutils/bin/uname, /atheos/usr/local/bin/uname"										\
+		"/atheos/usr/coreutils/bin/uniq, /atheos/usr/local/bin/uniq"										\
 		"/atheos/usr/coreutils/bin/stty, /atheos/usr/local/bin/stty"										\
 																											\
 		"/atheos/usr/findutils/bin/find, /atheos/usr/local/bin/find"										\
@@ -516,4 +518,3 @@ copy_installer $_VER
 create_iso $_VER
 
 exit 0
-
