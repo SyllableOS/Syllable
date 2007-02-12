@@ -764,12 +764,16 @@ void Layer::ScrollBy( const Point & cOffset )
 	{
 		return;
 	}
-
-	UpdateRegions();
+	
+	RebuildRegion( m_pcBottomChild != NULL );
+	MoveChilds();
+	InvalidateNewAreas();
 	SrvWindow::HandleMouseTransaction();
 
 	if( NULL == m_pcBitmapFullReg || m_pcBitmap == NULL )
 	{
+		UpdateIfNeeded();
+		ClearDirtyRegFlags();
 		return;
 	}
 
@@ -819,6 +823,7 @@ void Layer::ScrollBy( const Point & cOffset )
 	{
 		Invalidate( cIBounds );
 		UpdateIfNeeded();
+		ClearDirtyRegFlags();
 		return;
 	}
 	IPoint cTopLeft( ConvertToBitmap( Point( 0, 0 ) ) );
@@ -863,6 +868,7 @@ void Layer::ScrollBy( const Point & cOffset )
 		Invalidate( pcDstClip->m_cBounds );
 	}
 	UpdateIfNeeded();
+	ClearDirtyRegFlags();
 }
 
 //----------------------------------------------------------------------------
