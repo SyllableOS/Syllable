@@ -378,18 +378,6 @@ int do_setsockopt( bool bKernel, int nFile, int nLevel, int nOptName, const void
 					break;
 				}
 
-				case SO_KEEPALIVE:
-				case SO_SNDBUF:
-				case SO_RCVBUF:
-				case SO_DONTROUTE:
-				{
-					if( psSocket->sk_psOps->setsockopt != NULL )
-						nError = psSocket->sk_psOps->setsockopt( bKernel, psSocket, nLevel, nOptName, pOptVal, nOptLen );
-					else
-						nError = -EINVAL;
-					break;
-				}
-
 				case SO_LINGER:
 				case SO_RCVLOWAT:
 				case SO_RCVTIMEO:
@@ -398,10 +386,16 @@ int do_setsockopt( bool bKernel, int nFile, int nLevel, int nOptName, const void
 					nError = -EINVAL;
 					break;
 
+				case SO_KEEPALIVE:
+				case SO_SNDBUF:
+				case SO_RCVBUF:
+				case SO_DONTROUTE:
 				default:
 				{
-					kerndbg( KERN_DEBUG, "%s: invalid option %d for protocol SOL_SOCKET\n", __FUNCTION__, nOptName );
-					nError = -EINVAL;
+					if( psSocket->sk_psOps->setsockopt != NULL )
+						nError = psSocket->sk_psOps->setsockopt( bKernel, psSocket, nLevel, nOptName, pOptVal, nOptLen );
+					else
+						nError = -EINVAL;
 					break;
 				}
 			}
@@ -418,8 +412,10 @@ int do_setsockopt( bool bKernel, int nFile, int nLevel, int nOptName, const void
 
 				default:
 				{
-					kerndbg( KERN_DEBUG, "%s: invalid option %d for protocol SOL_IP\n", __FUNCTION__, nOptName );
-					nError = -EINVAL;
+					if( psSocket->sk_psOps->setsockopt != NULL )
+						nError = psSocket->sk_psOps->setsockopt( bKernel, psSocket, nLevel, nOptName, pOptVal, nOptLen );
+					else
+						nError = -EINVAL;
 					break;
 				}
 			}
