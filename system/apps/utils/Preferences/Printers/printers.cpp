@@ -28,11 +28,13 @@
 #include <print_view.h>
 #include <config.h>
 
+#include "resources/Printers.h"
+
 #define PRINTERS_VERSION "1.0"
 
 using namespace os;
 
-PrintersWindow::PrintersWindow( const Rect &cFrame ) : Window( cFrame, "printers", "Printers" )
+PrintersWindow::PrintersWindow( const Rect &cFrame ) : Window( cFrame, "printers", MSG_MAINWND_TITLE )
 {
 	Rect cBounds = GetBounds();
 	Resources cRes( get_image_id() );
@@ -43,18 +45,18 @@ PrintersWindow::PrintersWindow( const Rect &cFrame ) : Window( cFrame, "printers
 
 	m_pcMenuBar = new Menu( cMenuFrame, "Queues", ITEMS_IN_ROW );
 
-	Menu *pcApplicationMenu = new Menu( Rect(), "Application", ITEMS_IN_COLUMN );
-	pcApplicationMenu->AddItem( "Save", new Message( M_WINDOW_SAVE ) );
-	pcApplicationMenu->AddItem( "Cancel", new Message( M_WINDOW_CANCEL ) );
+	Menu *pcApplicationMenu = new Menu( Rect(), MSG_MAINWND_MENU_APPLICATION, ITEMS_IN_COLUMN );
+	pcApplicationMenu->AddItem( MSG_MAINWND_MENU_APPLICATION_SAVE, new Message( M_WINDOW_SAVE ) );
+	pcApplicationMenu->AddItem( MSG_MAINWND_MENU_APPLICATION_CANCEL, new Message( M_WINDOW_CANCEL ) );
 	pcApplicationMenu->AddItem( new MenuSeparator() );
-	pcApplicationMenu->AddItem( "About", new Message( M_APP_ABOUT ) );
+	pcApplicationMenu->AddItem( MSG_MAINWND_MENU_APPLICATION_ABOUT, new Message( M_APP_ABOUT ) );
 	m_pcMenuBar->AddItem( pcApplicationMenu );
 
-	Menu *pcPrintersMenu = new Menu( Rect(), "Printer", ITEMS_IN_COLUMN );
-	pcPrintersMenu->AddItem( "Add printer", new Message( M_ADD_PRINTER ) );
-	pcPrintersMenu->AddItem( "Remove printer", new Message( M_REMOVE_PRINTER ) );
+	Menu *pcPrintersMenu = new Menu( Rect(), MSG_MAINWND_MENU_PRINTER, ITEMS_IN_COLUMN );
+	pcPrintersMenu->AddItem( MSG_MAINWND_MENU_PRINTER_ADD, new Message( M_ADD_PRINTER ) );
+	pcPrintersMenu->AddItem( MSG_MAINWND_MENU_PRINTER_REMOVE, new Message( M_REMOVE_PRINTER ) );
 	pcPrintersMenu->AddItem( new MenuSeparator() );
-	pcPrintersMenu->AddItem( "Set as default", new Message( M_DEFAULT_PRINTER ) );
+	pcPrintersMenu->AddItem( MSG_MAINWND_MENU_PRINTER_DEFAULT, new Message( M_DEFAULT_PRINTER ) );
 	m_pcMenuBar->AddItem( pcPrintersMenu );
 
 	m_vMenuHeight = m_pcMenuBar->GetPreferredSize( true ).y - 1.0f;
@@ -74,17 +76,17 @@ PrintersWindow::PrintersWindow( const Rect &cFrame ) : Window( cFrame, "printers
 
 	pcToolBarIcon = new BitmapImage();
 	pcToolBarIcon->Load( cRes.GetResourceStream( "add.png" ) );
-	m_pcToolBar->AddButton( "add", "Add printer", pcToolBarIcon, new Message( M_ADD_PRINTER ) );
+	m_pcToolBar->AddButton( "add", MSG_MAINWND_TOOLBAR_ADD, pcToolBarIcon, new Message( M_ADD_PRINTER ) );
 
 	pcToolBarIcon = new BitmapImage();
 	pcToolBarIcon->Load( cRes.GetResourceStream( "remove.png" ) );
-	m_pcToolBar->AddButton( "remove", "Remove printer", pcToolBarIcon, new Message( M_REMOVE_PRINTER ) );
+	m_pcToolBar->AddButton( "remove", MSG_MAINWND_TOOLBAR_REMOVE, pcToolBarIcon, new Message( M_REMOVE_PRINTER ) );
 
 	m_pcToolBar->AddSeparator( "" );
 
 	pcToolBarIcon = new BitmapImage();
 	pcToolBarIcon->Load( cRes.GetResourceStream( "default.png" ) );
-	m_pcToolBar->AddButton( "default", "Set as default", pcToolBarIcon, new Message( M_DEFAULT_PRINTER ) );
+	m_pcToolBar->AddButton( "default", MSG_MAINWND_TOOLBAR_DEFAULT, pcToolBarIcon, new Message( M_DEFAULT_PRINTER ) );
 
 	AddChild( m_pcToolBar );
 
@@ -118,9 +120,9 @@ PrintersWindow::PrintersWindow( const Rect &cFrame ) : Window( cFrame, "printers
 
 	HLayoutNode *pcButtons = new HLayoutNode( "printers_window_buttons" );
 	pcButtons->AddChild( new HLayoutSpacer( "printers_window_h_spacer" ) );
-	pcButtons->AddChild( new Button( Rect(), "printers_window_cancel", "Cancel", new Message( M_WINDOW_CANCEL ) ), 0.0f );
+	pcButtons->AddChild( new Button( Rect(), "printers_window_cancel", MSG_MAINWND_BUTTONS_CANCEL, new Message( M_WINDOW_CANCEL ) ), 0.0f );
 	pcButtons->AddChild( new HLayoutSpacer( "printers_window_h_spacer", 0.5f, 0.5f, pcButtons, 0.1f ) );
-	pcButtons->AddChild( new Button( Rect(), "printers_window_save", "Save", new Message( M_WINDOW_SAVE ) ), 0.0f );
+	pcButtons->AddChild( new Button( Rect(), "printers_window_save", MSG_MAINWND_BUTTONS_SAVE, new Message( M_WINDOW_SAVE ) ), 0.0f );
 
 	pcButtons->SameWidth( "printers_window_cancel", "printers_window_save", NULL );
 
@@ -159,17 +161,17 @@ void PrintersWindow::HandleMessage( Message *pcMessage )
 		{
 			String cAbout, cCUPS;
 
-			cAbout  = String( "Syllable Printer Manager " ) + String( PRINTERS_VERSION );
+			cAbout  = MSG_ABOUTWND_TEXT1 + String( " " ) + String( PRINTERS_VERSION );
 			cAbout += String( "\n\n" );
 
-			cCUPS.Format( "Using CUPS version %d.%d.%d\n", CUPS_VERSION_MAJOR, CUPS_VERSION_MINOR, CUPS_VERSION_PATCH );
+			cCUPS.Format( MSG_ABOUTWND_TEXT2.c_str(), CUPS_VERSION_MAJOR, CUPS_VERSION_MINOR, CUPS_VERSION_PATCH );
 			cAbout += cCUPS;
 
 			Resources cRes( get_image_id() );
 			BitmapImage *pcAboutIcon = new BitmapImage();
 			pcAboutIcon->Load( cRes.GetResourceStream( "icon48x48.png" ) );
 
-			Alert *pcAlert = new Alert( "Printers", cAbout, pcAboutIcon->LockBitmap(), 0x00, "Close", NULL );
+			Alert *pcAlert = new Alert( MSG_ABOUTWND_TITLE, cAbout, pcAboutIcon->LockBitmap(), 0x00, MSG_ABOUTWND_CLOSE.c_str(), NULL );
 			pcAlert->CenterInWindow( this );
 			pcAlert->Go( new Invoker( new Message( M_ALERT_DONE ) ) );
 
@@ -224,7 +226,7 @@ void PrintersWindow::HandleMessage( Message *pcMessage )
 				Message *pcAlertMessage = new Message( M_REMOVE_PRINTER_DIALOG );
 				pcAlertMessage->AddInt32( "index", m_pcTreeView->GetLastSelected() );
 
-				Alert *pcAlert = new Alert( "Remove Printer", "Are you sure you want to remove this printer?", Alert::ALERT_QUESTION, 0x00, "Yes", "No", NULL );
+				Alert *pcAlert = new Alert( MSG_ALRTWND_REMOVE_TITLE, MSG_ALRTWND_REMOVE_TEXT, Alert::ALERT_QUESTION, 0x00, MSG_ALRTWND_REMOVE_YES.c_str(), MSG_ALRTWND_REMOVE_NO.c_str(), NULL );
 				pcAlert->CenterInWindow( this );
 				pcAlert->Go( new Invoker( pcAlertMessage, this ) );
 			}
@@ -255,7 +257,7 @@ void PrintersWindow::HandleMessage( Message *pcMessage )
 			status_t nError = WriteConfig();
 			if( nError != EOK )
 			{
-				Alert *pcAlert = new Alert( "Printers", "CUPS configuration failed.  Your printers\nmay not have been correctly configured.", Alert::ALERT_WARNING, 0x00, "Close", NULL );
+				Alert *pcAlert = new Alert( MSG_ALRTWND_SAVE_TITLE, MSG_ALRTWND_SAVE_TEXT, Alert::ALERT_WARNING, 0x00, MSG_ALRTWND_SAVE_CLOSE.c_str(), NULL );
 				pcAlert->CenterInWindow( this );
 				pcAlert->Go( new Invoker( new Message( M_ALERT_DONE ) ) );
 
@@ -305,7 +307,7 @@ void PrintersWindow::AppendPrinter( CUPS_Printer *pcPrinter )
 
 	String cName = pcPrinter->cName;
 	if( cName == "" )
-		cName = DEFAULT_NAME;
+		cName = MSG_MAINWND_DEFAULT_PRINTER_NAME;
 	pcNode->AppendString( cName );
 
 	BitmapImage *pcIcon;
@@ -400,6 +402,8 @@ class PrintersApplication : public Application
 
 PrintersApplication::PrintersApplication() : Application( "application/x-VND.syllable-Printers" )
 {
+	SetCatalog("Printers.catalog");
+
 	m_pcWindow = new PrintersWindow( Rect( 100,100,700,600 ) );
 	m_pcWindow->Show();
 	m_pcWindow->MakeFocus();

@@ -36,8 +36,6 @@
 #include <config.h>
 #include <print_view.h>
 
-#define DEFAULT_NAME	"New_Printer"
-
 enum messages
 {
 	M_APP_ABOUT,

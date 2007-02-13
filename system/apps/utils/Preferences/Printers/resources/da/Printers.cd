@@ -1,0 +1,64 @@
+//
+// Preferences/Printers String Catalog
+//
+// Translated by: Flemming H. Sørensen
+//
+
+MSG_MAINWND_TITLE=0								Printere
+MSG_MAINWND_DEFAULT_PRINTER_NAME				Ny_Printer
+
+MSG_MAINWND_MENU_APPLICATION=100				Program
+MSG_MAINWND_MENU_APPLICATION_ABOUT				Om...
+MSG_MAINWND_MENU_APPLICATION_SAVE				Gem
+MSG_MAINWND_MENU_APPLICATION_CANCEL				Annuller
+
+MSG_MAINWND_MENU_PRINTER=120					Printer
+MSG_MAINWND_MENU_PRINTER_ADD					Tilføj printer
+MSG_MAINWND_MENU_PRINTER_REMOVE					Fjern printer
+MSG_MAINWND_MENU_PRINTER_DEFAULT				Brug som standard
+
+MSG_MAINWND_TOOLBAR_ADD=200						Tilføj printer
+MSG_MAINWND_TOOLBAR_REMOVE						Fjern printer
+MSG_MAINWND_TOOLBAR_DEFAULT						Brug som standard
+
+MSG_MAINWND_PRINTERTAB_MODEL=300				Model
+MSG_MAINWND_PRINTERTAB_UNKNOWN					Ukendt
+MSG_MAINWND_PRINTERTAB_SELECT					Vælg...
+MSG_MAINWND_PRINTERTAB_THEPRINTER				Printeren
+MSG_MAINWND_PRINTERTAB_ISA						er en
+MSG_MAINWND_PRINTERTAB_CONNECTEDTO				printer forbundet til
+
+MSG_MAINWND_BUTTONS_SAVE=400					Gem
+MSG_MAINWND_BUTTONS_CANCEL						Annuller
+
+MSG_SELECTWND_TITLE=800							Vælg en printer
+MSG_SELECTWND_BUTTON_SELECT						Vælg
+MSG_SELECTWND_BUTTON_CANCEL						Annuller
+
+MSG_PROTOCOL_USB=900							USB
+MSG_PROTOCOL_PARALLEL							Parallel
+MSG_PROTOCOL_SMB								Windows (SMB)
+MSG_PROTOCOL_LPD								UNIX (lpd)
+MSG_PROTOCOL_IPP								CUPS (IPP)
+MSG_PROTOCOL_UNKNOWN							Ukendt
+MSG_PROTOCOL_HPJETDIRECT						HP JetDirect
+
+MSG_ABOUTWND_TITLE=1000							Printere
+MSG_ABOUTWND_TEXT1								Syllable Printerstyring
+MSG_ABOUTWND_TEXT2								Bruger CUPS version %d.%d.%d\n
+MSG_ABOUTWND_CLOSE								_Luk
+
+MSG_ALRTWND_REMOVE_TITLE=1100					Fjern Printer
+MSG_ALRTWND_REMOVE_TEXT							Er du sikker på at du vil fjerne denne printer?
+MSG_ALRTWND_REMOVE_YES							Ja
+MSG_ALRTWND_REMOVE_NO							Nej
+
+MSG_ALRTWND_SAVE_TITLE=1200						Printere
+MSG_ALRTWND_SAVE_TEXT							Der opstod en fejl i CUPS konfigurationen.\nDin printer er muligvis ikke blevet korrekt konfigureret.
+MSG_ALRTWND_SAVE_CLOSE							_Luk
+
+MSG_ALRTWND_INSERTCD_TITLE=1300					Indsæt CD
+MSG_ALRTWND_INSERTCD_TEXT						Indsæt og Aktiver din Syllable installations CD.
+MSG_ALRTWND_INSERTCD_OK							Ok
+MSG_ALRTWND_INSERTCD_CANCEL						Annuller
+

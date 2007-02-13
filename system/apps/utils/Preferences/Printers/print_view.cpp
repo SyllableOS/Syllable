@@ -23,6 +23,8 @@
 #include <printers.h>
 #include <print_view.h>
 
+#include "resources/Printers.h"
+
 using namespace os;
 
 #include <iostream>
@@ -52,12 +54,12 @@ PrintConfigView::PrintConfigView( const Rect &cFrame, CUPS_Printer *pcPrinter, W
 
 	if( NULL == m_hPPD && m_pcPrinter->cName == "" )
 	{
-		m_pcPrinter->cName = DEFAULT_NAME;
+		m_pcPrinter->cName = MSG_MAINWND_DEFAULT_PRINTER_NAME;
 		if( m_pcPrinter->cInfo == "" )
 			m_pcPrinter->cInfo = m_pcPrinter->cName;
 	}
 
-	m_pcModelFrame = new FrameView( Rect(), "print_config_model_frame", "Model", CF_FOLLOW_LEFT | CF_FOLLOW_RIGHT );
+	m_pcModelFrame = new FrameView( Rect(), "print_config_model_frame", MSG_MAINWND_PRINTERTAB_MODEL, CF_FOLLOW_LEFT | CF_FOLLOW_RIGHT );
 
 	/* Full printer model name */
 	String cModel, cProtocol;
@@ -72,7 +74,7 @@ PrintConfigView::PrintConfigView( const Rect &cFrame, CUPS_Printer *pcPrinter, W
 			cModel = pcPrinter->cInfo;
 	}
 	else
-		cModel = "Unknown";
+		cModel = MSG_MAINWND_PRINTERTAB_UNKNOWN;
 
 	m_pcModel = new StringView( Rect(), "print_config_model", cModel );
 	m_pcModelFrame->AddChild( m_pcModel );
@@ -86,28 +88,28 @@ PrintConfigView::PrintConfigView( const Rect &cFrame, CUPS_Printer *pcPrinter, W
 	m_pcModel->SetFont( pcFont );
 	pcFont->Release();
 
-	m_pcChange = new Button( Rect(), "print_config_select", "Select...", new Message( M_CHANGE ), CF_FOLLOW_RIGHT );
+	m_pcChange = new Button( Rect(), "print_config_select", MSG_MAINWND_PRINTERTAB_SELECT, new Message( M_CHANGE ), CF_FOLLOW_RIGHT );
 	m_pcModelFrame->AddChild( m_pcChange );
 
 	AddChild( m_pcModelFrame );
 
-	m_pcLabel1 = new StringView( Rect(), "print_config_label1", "The printer" );
+	m_pcLabel1 = new StringView( Rect(), "print_config_label1", MSG_MAINWND_PRINTERTAB_THEPRINTER );
 	AddChild( m_pcLabel1 );
 
 	m_pcName = new TextView( Rect(), "print_config_name", m_pcPrinter->cName.c_str(), CF_FOLLOW_LEFT | CF_FOLLOW_RIGHT );
 	AddChild( m_pcName );
 
-	m_pcLabel2 = new StringView( Rect(), "print_config_label2", "is a" );
+	m_pcLabel2 = new StringView( Rect(), "print_config_label2", MSG_MAINWND_PRINTERTAB_ISA );
 	AddChild( m_pcLabel2 );
 
 	m_pcProtocol = new DropdownMenu( Rect(), "print_config_protocol" );
-	m_pcProtocol->AppendItem( "USB" );
-	m_pcProtocol->AppendItem( "Parallel" );
-	m_pcProtocol->AppendItem( "Windows (SMB)" );
-	m_pcProtocol->AppendItem( "UNIX (lpd)" );
-	m_pcProtocol->AppendItem( "CUPS (IPP)" );
-	m_pcProtocol->AppendItem( "HP JetDirect" );
-	m_pcProtocol->AppendItem( "Unknown" );
+	m_pcProtocol->AppendItem( MSG_PROTOCOL_USB );
+	m_pcProtocol->AppendItem( MSG_PROTOCOL_PARALLEL );
+	m_pcProtocol->AppendItem( MSG_PROTOCOL_SMB );
+	m_pcProtocol->AppendItem( MSG_PROTOCOL_LPD );
+	m_pcProtocol->AppendItem( MSG_PROTOCOL_IPP );
+	m_pcProtocol->AppendItem( MSG_PROTOCOL_HPJETDIRECT );
+	m_pcProtocol->AppendItem( MSG_PROTOCOL_UNKNOWN );
 
 	m_pcProtocol->SetSelectionMessage( new Message( M_PROTOCOL_CHANGED ) );
 
@@ -117,7 +119,7 @@ PrintConfigView::PrintConfigView( const Rect &cFrame, CUPS_Printer *pcPrinter, W
 	GetProtocol();
 	m_pcProtocol->SetSelection( (int)m_nProtocol );
 
-	m_pcLabel3 = new StringView( Rect(), "print_config_label3", "printer connected to" );
+	m_pcLabel3 = new StringView( Rect(), "print_config_label3", MSG_MAINWND_PRINTERTAB_CONNECTEDTO );
 	AddChild( m_pcLabel3 );
 
 	/* Location */
@@ -213,7 +215,7 @@ void PrintConfigView::HandleMessage( Message *pcMessage )
 					m_pcPrinter->cPPD = cPPD;
 
 					String cName = m_pcName->GetBuffer()[0];
-					if( cName == DEFAULT_NAME || cName == "" )
+					if( cName == MSG_MAINWND_DEFAULT_PRINTER_NAME || cName == "" )
 						GenerateName( cModel );
 
 					Layout();
@@ -244,7 +246,7 @@ CUPS_Printer * PrintConfigView::Save( void )
 {
 	String cName = m_pcName->GetBuffer()[0];
 	if( cName == "" )
-		cName = DEFAULT_NAME;
+		cName = MSG_MAINWND_DEFAULT_PRINTER_NAME;
 	m_pcPrinter->cName = cName;
 	m_pcPrinter->cInfo = cName;
 

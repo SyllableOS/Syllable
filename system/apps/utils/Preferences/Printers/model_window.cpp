@@ -25,9 +25,11 @@
 #include <printers.h>
 #include <model_window.h>
 
+#include "resources/Printers.h"
+
 using namespace os;
 
-ModelWindow::ModelWindow( const Rect &cFrame, Handler *pcParent ) : Window( cFrame, "ppds", "Select a printer" )
+ModelWindow::ModelWindow( const Rect &cFrame, Handler *pcParent ) : Window( cFrame, "ppds", MSG_SELECTWND_TITLE )
 {
 	m_pcParent = pcParent;
 
@@ -55,9 +57,9 @@ ModelWindow::ModelWindow( const Rect &cFrame, Handler *pcParent ) : Window( cFra
 
 	HLayoutNode *pcButtons = new HLayoutNode( "ppd_window_buttons" );
 	pcButtons->AddChild( new HLayoutSpacer( "ppd_window_h_spacer" ) );
-	pcButtons->AddChild( new Button( Rect(), "ppd_window_cancel", "Cancel", new Message( M_MODEL_WINDOW_CANCEL ) ), 0.0f );
+	pcButtons->AddChild( new Button( Rect(), "ppd_window_cancel", MSG_SELECTWND_BUTTON_CANCEL, new Message( M_MODEL_WINDOW_CANCEL ) ), 0.0f );
 	pcButtons->AddChild( new HLayoutSpacer( "ppd_window_h_spacer", 0.5f, 0.5f, pcButtons, 0.1f ) );
-	pcButtons->AddChild( new Button( Rect(), "ppd_window_save", "Select", new Message( M_MODEL_WINDOW_SELECT ) ), 0.0f );
+	pcButtons->AddChild( new Button( Rect(), "ppd_window_save", MSG_SELECTWND_BUTTON_SELECT, new Message( M_MODEL_WINDOW_SELECT ) ), 0.0f );
 
 	pcButtons->SameWidth( "ppd_window_cancel", "ppd_window_save", NULL );
 

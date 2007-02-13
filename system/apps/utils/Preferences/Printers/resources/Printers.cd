@@ -1,0 +1,64 @@
+//
+// Preferences/Printers String Catalog
+//
+// Translated by: Not Translated
+//
+
+MSG_MAINWND_TITLE=0								Printers
+MSG_MAINWND_DEFAULT_PRINTER_NAME				New_Printer
+
+MSG_MAINWND_MENU_APPLICATION=100				Application
+MSG_MAINWND_MENU_APPLICATION_ABOUT				About
+MSG_MAINWND_MENU_APPLICATION_SAVE				Save
+MSG_MAINWND_MENU_APPLICATION_CANCEL				Cancel
+
+MSG_MAINWND_MENU_PRINTER=120					Printer
+MSG_MAINWND_MENU_PRINTER_ADD					Add printer
+MSG_MAINWND_MENU_PRINTER_REMOVE					Remove printer
+MSG_MAINWND_MENU_PRINTER_DEFAULT				Set as default
+
+MSG_MAINWND_TOOLBAR_ADD=200						Add printer
+MSG_MAINWND_TOOLBAR_REMOVE						Remove printer
+MSG_MAINWND_TOOLBAR_DEFAULT						Set as default
+
+MSG_MAINWND_PRINTERTAB_MODEL=300				Model
+MSG_MAINWND_PRINTERTAB_UNKNOWN					Unknown
+MSG_MAINWND_PRINTERTAB_SELECT					Select...
+MSG_MAINWND_PRINTERTAB_THEPRINTER				The printer
+MSG_MAINWND_PRINTERTAB_ISA						is a
+MSG_MAINWND_PRINTERTAB_CONNECTEDTO				printer connected to
+
+MSG_MAINWND_BUTTONS_SAVE=400					Save
+MSG_MAINWND_BUTTONS_CANCEL						Cancel
+
+MSG_SELECTWND_TITLE=800							Select a printer
+MSG_SELECTWND_BUTTON_SELECT						Select
+MSG_SELECTWND_BUTTON_CANCEL						Cancel
+
+MSG_PROTOCOL_USB=900							USB
+MSG_PROTOCOL_PARALLEL							Parallel
+MSG_PROTOCOL_SMB								Windows (SMB)
+MSG_PROTOCOL_LPD								UNIX (lpd)
+MSG_PROTOCOL_IPP								CUPS (IPP)
+MSG_PROTOCOL_UNKNOWN							Unknown
+MSG_PROTOCOL_HPJETDIRECT						HP JetDirect
+
+MSG_ABOUTWND_TITLE=1000							Printers
+MSG_ABOUTWND_TEXT1								Syllable Printer Manager
+MSG_ABOUTWND_TEXT2								Using CUPS version %d.%d.%d\n
+MSG_ABOUTWND_CLOSE								_Close
+
+MSG_ALRTWND_REMOVE_TITLE=1100					Remove Printer
+MSG_ALRTWND_REMOVE_TEXT							Are you sure you want to remove this printer?
+MSG_ALRTWND_REMOVE_YES							Yes
+MSG_ALRTWND_REMOVE_NO							No
+
+MSG_ALRTWND_SAVE_TITLE=1200						Printers
+MSG_ALRTWND_SAVE_TEXT							CUPS configuration failed.  Your printers\nmay not have been correctly configured.
+MSG_ALRTWND_SAVE_CLOSE							_Close
+
+MSG_ALRTWND_INSERTCD_TITLE=1300					Insert CD
+MSG_ALRTWND_INSERTCD_TEXT						Please insert & mount your Syllable installation CD.
+MSG_ALRTWND_INSERTCD_OK							Ok
+MSG_ALRTWND_INSERTCD_CANCEL						Cancel
+

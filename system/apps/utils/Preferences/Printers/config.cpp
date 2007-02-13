@@ -28,6 +28,8 @@
 #include <printers.h>
 #include <config.h>
 
+#include "resources/Printers.h"
+
 using namespace os;
 
 /* Read and parse the CUPS printers.conf file (because we can't get some of this information any other way!) */
@@ -388,7 +390,7 @@ status_t PrintersWindow::GetPPD( String cPPD )
 
 	cFromPath = cToPath = "";
 
-	Alert *pcAlert = new Alert( "Insert CD", "Please insert & mount your Syllable installation CD.", Alert::ALERT_INFO, 0x00, "O.K", "Cancel", NULL );
+	Alert *pcAlert = new Alert( MSG_ALRTWND_INSERTCD_TITLE, MSG_ALRTWND_INSERTCD_TEXT, Alert::ALERT_INFO, 0x00, MSG_ALRTWND_INSERTCD_OK.c_str(), MSG_ALRTWND_INSERTCD_CANCEL.c_str(), NULL );
 	pcAlert->CenterInWindow( this );
 	nWhich = pcAlert->Go();
 
