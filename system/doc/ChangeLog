@@ -1,3 +1,7 @@
+* February 13, 2007, Flemming H. Sørensen *
+
+Localized the Printers preferences.
+
 * February 8, 2007, Kristian Van Der Vliet *
 
 Fix pthread_exit() and pthread_join() in libpthread
