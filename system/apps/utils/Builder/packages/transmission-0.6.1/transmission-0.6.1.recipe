@@ -1,6 +1,6 @@
 authors				Kaj de Vos
-status				broken
-notes				Bombs out on incomplete pthreads implementation in libtransmission/platform.h
+					Kristian Van Der Vliet
+status				testing
 
 licenses			MIT
 home				transmission.m0k.org

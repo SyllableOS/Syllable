@@ -1,13 +1,12 @@
-diff -ru transmission-0.6.1-original/configure transmission-0.6.1/configure
---- transmission-0.6.1-original/configure	2006-06-25 21:34:41.000000000 +0000
-+++ transmission-0.6.1/configure	2006-10-12 23:52:23.000000000 +0000
-@@ -278,6 +278,9 @@
+diff -ur Transmission-0.6.1_orig/configure Transmission-0.6.1/configure
+--- Transmission-0.6.1_orig/configure	2006-06-25 21:34:41.000000000 +0000
++++ Transmission-0.6.1/configure	2007-02-13 15:25:02.000000000 +0000
+@@ -274,7 +274,7 @@
      PTHREAD=yes
      ;;
  
-+  syllable)
-+    ;;
-+
-   *)
-     echo "Unsupported operating system"
-     exit 1 ;;
+-  FreeBSD|NetBSD|OpenBSD|Linux)
++  FreeBSD|NetBSD|OpenBSD|Linux|syllable)
+     PTHREAD=yes
+     ;;
+ 
