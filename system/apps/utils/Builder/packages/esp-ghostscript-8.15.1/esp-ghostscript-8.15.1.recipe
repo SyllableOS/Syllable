@@ -28,6 +28,10 @@ configure-options
 	--without-jbig2dec
 	--with-fontpath=/system/fonts
 
+install-vars
+;	datadir	$IMAGE/usr/esp-ghostscript/share/
+	gsdir	$IMAGE/usr/esp-ghostscript/share/ghostscript/
+
 install-tree
 	share
 	share/ghostscript
