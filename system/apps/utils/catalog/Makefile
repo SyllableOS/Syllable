@@ -2,6 +2,8 @@ CFLAGS	+= -c
 CXXFLAGS += -c
 OBJDIR = objs
 
+CATALOGS = da nl sv
+
 EXES	= $(OBJDIR)/catalogtool $(OBJDIR)/catcomp
 
 catalogtool_OBJS = catalogtool.o ccatalog.o
@@ -12,20 +14,31 @@ catcomp_OBJS	:= $(addprefix $(OBJDIR)/,$(catcomp_OBJS))
 
 include $(ATHEOS_SRC)/makefile.rules
 
-all:  $(OBJDIR) $(EXES)
+all: catalogs $(OBJDIR) $(EXES)
 
 $(OBJDIR):
 	-mkdir $(OBJDIR)
 
 $(OBJDIR)/catcomp: $(catcomp_OBJS)
 	$(CXX) $(catcomp_OBJS) -lsyllable -o $@
-	rescopy -r $(OBJDIR)/catcomp catcomp.catalog=resources/catcomp.catalog
-	rescopy -a $(OBJDIR)/catcomp da/catcomp.catalog=resources/da/catcomp.catalog
-	rescopy -a $(OBJDIR)/catcomp nl/catcomp.catalog=resources/nl/catcomp.catalog
-	rescopy -a $(OBJDIR)/catcomp sv/catcomp.catalog=resources/sv/catcomp.catalog
+	rescopy -r catcomp resources/catcomp.catalog
+	for CATALOG in $(CATALOGS);do \
+		echo $$CATALOG; \
+		rescopy -a catcomp $$CATALOG/catcomp.catalog=resources/$$CATALOG/catcomp.catalog; \
+	done;
 
 $(OBJDIR)/catalogtool: $(catalogtool_OBJS)
 	$(CXX) $(catalogtool_OBJS) -lsyllable -o $@
+
+catalogs:
+	cd resources; \
+	catcomp -c catcomp.cd; \
+	for CATALOG in $(CATALOGS);do \
+		echo $$CATALOG; \
+		cd $$CATALOG; \
+		catcomp -t catcomp.cd; \
+		cd ..; \
+	done;
 
 deps:
 
@@ -37,4 +50,8 @@ dist:
 
 clean:
 	-rm -Rv $(OBJDIR)
+	rm resources/catcomp.catalog resources/catcomp.h; \
+	for CATALOG in $(CATALOGS);do \
+		rm resources/$$CATALOG/catcomp.catalog; \
+	done;
 

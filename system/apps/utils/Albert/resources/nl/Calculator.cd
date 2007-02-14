@@ -1,7 +1,7 @@
 //
-// Albert String Catalog
+//	Calculator String Catalog
 //
-// Translated by: Ruud Kuin and Kaj de Vos
+//	Translated by: Ruud Kuin - Kaj de Vos
 //
 
 MSG_MAINWND_TITLE=0									Calculator
@@ -40,7 +40,7 @@ MSG_MAINWND_MENU_HELP=500							Help
 MSG_MAINWND_MENU_HELP_ABOUT							Over
 MSG_MAINWND_MENU_HELP_KEYBOARD						Toetsenbord
 
-MSG_PAPERROLL_TITLE=1000							Albert
+MSG_PAPERROLL_TITLE=1000							Calculator
 MSG_PAPERROLL_CMENU_COPY							Kopieer
 MSG_PAPERROLL_CMENU_CLEAR							Wissen
 MSG_PAPERROLL_CMENU_SAVE							Opslaan
@@ -65,3 +65,4 @@ MSG_KBDWND_TEXTASMD									Optellen, Aftrekken, Vermenigvuldigen en Delen
 MSG_KBDWND_TEXTENTER								ENTER - Som berekenen
 MSG_KBDWND_TEXTBACKSPACE							BACKSPACE - Backspace (verrassing!)
 MSG_KBDWND_CLOSE									Sluiten
+

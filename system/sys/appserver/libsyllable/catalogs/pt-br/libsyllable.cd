@@ -1,8 +1,7 @@
 //
-// LibSyllable string catalog
+//	LibSyllable String Catalog
 //
-// Translated by: Edgar Domingo de Albuquerque (contato@edgar.pro.br)
-// Brazilian Portuguese pt_BR @ 29-Jul-2006 Sorocaba/SP - Brasil
+//	Translated by: Edgar Domingo de Albuquerque
 //
 
 // FileRequester strings
@@ -75,3 +74,4 @@ MSG_MOUNT_ERROR_CLOSE									OK
 MSG_MOUNT_ERROR_CREATE_MOUNTPOINT						Não foi possível criar um ponto de montagem para o dispositivo %s
 MSG_MOUNT_ERROR_OTHER_ERROR								Não foi possível montar %s:\n%s
 MSG_MOUNT_ERROR_UNMOUNT									Não foi possível desmontar %s:\n%s
+

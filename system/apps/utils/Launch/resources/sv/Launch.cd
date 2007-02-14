@@ -1,16 +1,19 @@
 //
-// Launch String Catalog
+//	Launch String Catalog
+//
+//	Translated by: Henrik Isaksson
 //
 
-MSG_ERROR_LAUNCHING_ONE Känner inte igen filtypen för filen  ' 
-MSG_ERROR_LAUNCHING_TWO  ',\nVänligen kontakta Syllable Norden för hjälp...
+MSG_WINDOW_TITLE=0					Öppnar...
 
-MSG_BUTTON_LAUNCH _Kör
-MSG_BUTTON_BROWSE _Bläddra
-MSG_BUTTON_CANCEL _Avbryt
-MSG_ALERT_BUTTON _Ok
+MSG_STRING_LAUNCH=100				Öppna:
+MSG_STRING_DESC						Skriv en Hemsidesadress, ett Fil-, Mapp-, eller Programnamn här.
 
-MSG_STRING_LAUNCH Öppna:
-MSG_STRING_DESC Skriv en Hemsidesadress, ett Fil-, Mapp-, eller Programnamn här.
+MSG_ERROR_LAUNCHING_ONE=200			Känner inte igen filtypen för filen  ' 
+MSG_ERROR_LAUNCHING_TWO				',\nVänligen kontakta Syllable Norden för hjälp...
 
-MSG_WINDOW_TITLE Öppnar...
+MSG_BUTTON_LAUNCH=300				_Kör
+MSG_BUTTON_BROWSE					_Bläddra
+MSG_BUTTON_CANCEL					_Avbryt
+MSG_ALERT_BUTTON					_Ok
+

@@ -1,17 +1,19 @@
 //
-// Launch String Catalog
+//	Launch String Catalog
+//
+//	Translated by: Not Translated
 //
 
-MSG_ERROR_LAUNCHING_ONE		The file '
-MSG_ERROR_LAUNCHING_TWO		' doesn't have an associated file type to it.\nPlease check with the Syllable Development Team\nfor further instructions.
+MSG_WINDOW_TITLE=0					Launch
 
-MSG_BUTTON_LAUNCH			_Launch
-MSG_BUTTON_BROWSE			_Browse
-MSG_BUTTON_CANCEL			_Cancel
-MSG_ALERT_BUTTON			_OK
+MSG_STRING_LAUNCH=100				Launch:
+MSG_STRING_DESC						Enter a web site, file, directory, or application here.
 
-MSG_STRING_LAUNCH			Launch:
-MSG_STRING_DESC				Enter a web site, file, directory, or application here.
+MSG_ERROR_LAUNCHING_ONE=200			The file '
+MSG_ERROR_LAUNCHING_TWO				' doesn't have an associated file type to it.\nPlease check with the Syllable Development Team\nfor further instructions.
 
-MSG_WINDOW_TITLE			Launch
+MSG_BUTTON_LAUNCH=300				_Launch
+MSG_BUTTON_BROWSE					_Browse
+MSG_BUTTON_CANCEL					_Cancel
+MSG_ALERT_BUTTON					_OK
 

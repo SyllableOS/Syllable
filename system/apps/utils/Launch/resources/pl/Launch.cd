@@ -1,16 +1,19 @@
 //
-// Launch String Catalog
-// Polish translation by And3mD (updates - mail to and3md@interia.pl)
+//	Launch String Catalog
+//
+//	Translated by: And3mD
+//
 
-MSG_ERROR_LAUNCHING_ONE Plik  ' 
-MSG_ERROR_LAUNCHING_TWO  ' nie ma przypisanego typu,\n proszę zgłosić się do Syllable Development Team po dalsze instrukcje...
+MSG_WINDOW_TITLE=0					Uruchom...
 
-MSG_BUTTON_LAUNCH Uruchom
-MSG_BUTTON_BROWSE _Przeglądaj
-MSG_BUTTON_CANCEL Anuluj
-MSG_ALERT_BUTTON _Okay
+MSG_STRING_LAUNCH=100				Uruchom:
+MSG_STRING_DESC						Podaj adres WWW, nazwę pliku, katalogu lub aplikacji:
 
-MSG_STRING_LAUNCH Uruchom:
-MSG_STRING_DESC Podaj adres WWW, nazwę pliku, katalogu lub aplikacji:
+MSG_ERROR_LAUNCHING_ONE=200			Plik  ' 
+MSG_ERROR_LAUNCHING_TWO				' nie ma przypisanego typu,\n proszę zgłosić się do Syllable Development Team po dalsze instrukcje...
 
-MSG_WINDOW_TITLE Uruchom...
+MSG_BUTTON_LAUNCH=300				Uruchom
+MSG_BUTTON_BROWSE					_Przeglądaj
+MSG_BUTTON_CANCEL					Anuluj
+MSG_ALERT_BUTTON					_Okay
+

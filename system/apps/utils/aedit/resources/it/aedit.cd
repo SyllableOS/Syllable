@@ -1,71 +1,124 @@
-//
-// AEdit string catalog
-//
-
-MSG_APPWND_TITLE					AEdit
-MSG_APPWND_TITLE_NEW_FILE			Nuovo
-
-MSG_MENU_APPLICATION=100			Applicazione
-MSG_MENU_APPLICATION_QUIT			Esci
-MSG_MENU_APPLICATION_ABOUT			Informazioni su...
-
-MSG_MENU_FILE=200					File
-MSG_MENU_FILE_NEW					Nuovo
-MSG_MENU_FILE_OPEN					Apri
-MSG_MENU_FILE_SAVE					Salva
-MSG_MENU_FILE_SAVE_AS				Salva con nome...
-
-MSG_MENU_EDIT=300					Modifica
-MSG_MENU_EDIT_CUT					Taglia
-MSG_MENU_EDIT_COPY					Copia
-MSG_MENU_EDIT_PASTE					Incolla
-MSG_MENU_EDIT_SELECT_ALL			Seleziona tutto
-MSG_MENU_EDIT_UNDO					Annulla
-MSG_MENU_EDIT_REDO					Ripeti
-
-MSG_MENU_FIND=400					Trova
-MSG_MENU_FIND_FIND					Trova
-MSG_MENU_FIND_REPLACE				Sostituisci
-MSG_MENU_FIND_GOTO_LINE				Vai a...
-
-MSG_MENU_FONT=500					Carattere
-MSG_MENU_FONT_SIZE					Dimensione
-
-MSG_MENU_SETTINGS=600				Impostazioni
-MSG_MENU_SETTINGS_SAVE_ON_CLOSE		Salva impostazioni quando esci
-MSG_MENU_SETTINGS_SAVE_NOW			Salva impostazioni adesso
-MSG_MENU_SETTINGS_RESET				Configurazione originale
-
-MSG_MENU_HELP=700					Aiuto
-MSG_MENU_HELP_TABLE_OF_CONTENTS		Sommario e indice
-MSG_MENU_HELP_HOMEPAGE				AEdit Homepage
-
-MSG_ABOUT_TITLE=800					Informazioni su...
-MSG_ABOUT_TEXT						\n\nEditor di testo per Syllable\nCopyright 2000-2003 Kristian Van Der Vliet\n\nAEdit è distribuito in base alla licenza GNU General\nPublic License.  Prego leggere il file COPYING,\ndistribuito con AEdit, o visita http://www.gnu.org\nper maggiori informazioni.
-MSG_ABOUT_CLOSE						O.K
-
-MSG_ERROR_TITLE=900					AEdit
-MSG_ERROR_CANT_SAVE					Impossibile salvare il file
-MSG_ERROR_CLOSE						O.K
-
-MSG_FIND_TITLE=1000					Trova
-MSG_FIND_FIND_LABEL					Trova
-MSG_FIND_CASE_SENSITIVE				Maiuscole/minuscole
-MSG_FIND_FIND						_Trova
-MSG_FIND_FIND_NEXT					Trova _Prossimo
-MSG_FIND_CLOSE						_Annulla
-
-MSG_GOTO_TITLE=1100					Vai a
-MSG_GOTO_GOTO						Vai a
-MSG_GOTO_CLOSE						Annulla
-
-MSG_REPLACE_TITLE=1200				Sostituisci
-MSG_REPLACE_LBLFIND					Trova
-MSG_REPLACE_WITH					Sostituisci con
-MSG_REPLACE_CASE_SENSITIVE			_Maiuscole/minuscole
-MSG_REPLACE_FIND					_Trova
-MSG_REPLACE_FIND_NEXT				Trova _Prossimo
-MSG_REPLACE_REPLACE					_Sostituisci
-MSG_REPLACE_CLOSE					_Annulla
-
+//
+//	AEdit String Catalog
+//
+//	Translated by: Unkown
+//
+
+MSG_APPWND_TITLE=0							AEdit
+MSG_APPWND_TITLE_NEW_FILE					Nuovo
+
+MSG_MENU_APPLICATION=100					Applicazione
+MSG_MENU_APPLICATION_QUIT					Esci
+MSG_MENU_APPLICATION_ABOUT					Informazioni su...
+
+MSG_MENU_FILE=200							File
+MSG_MENU_FILE_NEW							Nuovo
+MSG_MENU_FILE_OPEN							Apri
+MSG_MENU_FILE_CLOSE							Close
+MSG_MENU_FILE_SAVE							Salva
+MSG_MENU_FILE_SAVE_AS						Salva con nome...
+MSG_MENU_FILE_SAVE_ALL						Save All
+MSG_MENU_FILE_NEXT_FILE						Next File
+MSG_MENU_FILE_PREVIOUS_FILE					Previous File
+
+MSG_MENU_EDIT=300							Modifica
+MSG_MENU_EDIT_CUT							Taglia
+MSG_MENU_EDIT_COPY							Copia
+MSG_MENU_EDIT_PASTE							Incolla
+MSG_MENU_EDIT_SELECT_ALL					Seleziona tutto
+MSG_MENU_EDIT_UNDO							Annulla
+MSG_MENU_EDIT_REDO							Ripeti
+
+MSG_MENU_VIEW_VIEW=350						View
+MSG_MENU_VIEW_TOOLBAR						Toolbar
+MSG_MENU_VIEW_STATUSBAR						Statusbar
+MSG_MENU_VIEW_SETFONT						Set font...
+MSG_MENU_VIEW_TABS							Tabs
+MSG_MENU_VIEW_SHOW							Show
+MSG_MENU_VIEW_HIDE							Hide
+MSG_MENU_VIEW_AUTO							Automatic
+
+MSG_MENU_FIND=400							Trova
+MSG_MENU_FIND_FIND							Trova
+MSG_MENU_FIND_REPLACE						Sostituisci
+MSG_MENU_FIND_GOTO_LINE						Vai a...
+
+MSG_MENU_FONT=500							Carattere
+MSG_MENU_FONT_SIZE							Dimensione
+
+MSG_MENU_SETTINGS=600						Impostazioni
+MSG_MENU_SETTINGS_SAVE_ON_CLOSE				Salva impostazioni quando esci
+MSG_MENU_SETTINGS_SAVE_NOW					Salva impostazioni adesso
+MSG_MENU_SETTINGS_RESET						Configurazione originale
+
+MSG_MENU_HELP=700							Aiuto
+MSG_MENU_HELP_TABLE_OF_CONTENTS				Sommario e indice
+MSG_MENU_HELP_HOMEPAGE						AEdit Homepage
+
+MSG_ABOUT_TITLE=800							Informazioni su...
+MSG_ABOUT_TEXT								\n\nEditor di testo per Syllable\nCopyright 2000-2003 Kristian Van Der Vliet\n\nAEdit è distribuito in base alla licenza GNU General\nPublic License.  Prego leggere il file COPYING,\ndistribuito con AEdit, o visita http://www.gnu.org\nper maggiori informazioni.
+MSG_ABOUT_CLOSE								O.K
+MSG_ABOUT_VERSION							version: 
+MSG_ABOUT_LINE_1 							A Text Editor for Syllable
+MSG_ABOUT_LINE_2							(c) 2006 The Syllable Team
+MSG_ABOUT_LINE_3							w w w . s y l l a b l e . o r g
+
+MSG_ERROR_TITLE=900							AEdit
+MSG_ERROR_CANT_SAVE							Impossibile salvare il file
+MSG_ERROR_CLOSE								O.K
+
+MSG_FIND_TITLE=1000							Trova
+MSG_FIND_FIND_LABEL							Trova
+MSG_FIND_CASE_SENSITIVE						Maiuscole/minuscole
+MSG_FIND_FIND								_Trova
+MSG_FIND_FIND_NEXT							Trova _Prossimo
+MSG_FIND_CLOSE								_Annulla
+
+MSG_GOTO_TITLE=1100							Vai a
+MSG_GOTO_GOTO								Vai a
+MSG_GOTO_CLOSE								Annulla
+MSG_GOTO_LINE								Row:
+
+MSG_REPLACE_TITLE=1200						Sostituisci
+MSG_REPLACE_LBLFIND							Trova
+MSG_REPLACE_WITH							Sostituisci con
+MSG_REPLACE_CASE_SENSITIVE					_Maiuscole/minuscole
+MSG_REPLACE_FIND							_Trova
+MSG_REPLACE_FIND_NEXT						Trova _Prossimo
+MSG_REPLACE_REPLACE							_Sostituisci
+MSG_REPLACE_CLOSE							_Annulla
+
+MSG_ALERT_CLOSE_FILE_TITLE=1500				Save file?
+MSG_ALERT_CLOSE_FILE_BODY					Do you want to save the file before closing it?
+MSG_ALERT_CLOSE_FILE_YES					Save
+MSG_ALERT_CLOSE_FILE_NO						Discard
+MSG_ALERT_CLOSE_FILE_CANCEL					Cancel
+MSG_ALERT_SAVE_FILE_TITLE					Error
+MSG_ALERT_SAVE_FILE_BODY					Unable to save file "%s".
+MSG_ALERT_SAVE_FILE_OK						OK
+MSG_ALERT_QUIT_TITLE						Really quit?
+MSG_ALERT_QUIT_BODY							You have unsaved files. Data will be lost if you quit.\nAre you sure you want to quit?
+MSG_ALERT_QUIT_YES							Quit
+MSG_ALERT_QUIT_NO							Cancel
+MSG_ALERT_FILE_OPEN_TITLE					Error
+MSG_ALERT_FILE_OPEN_OK						OK
+
+MSG_STATUSBAR_WELCOME=2000					Welcome to AEdit!
+MSG_STATUSBAR_CLOSED_FILE					File "%s" has been closed.
+MSG_STATUSBAR_SAVED_FILE					File "%s" has been saved.
+MSG_STATUSBAR_FILE_CLOSED_AND_SAVED			File "%s" has been closed and changes has been saved.
+MSG_STATUSBAR_FILE_CLOSED_AND_NOT_SAVED		File "%s" has been closed without saving changes.
+MSG_STATUSBAR_NEW_FILE_CREATED				New file "%s" has been created.
+MSG_STATUSBAR_FILE_LOADED_OK				File "%s" has been successfully opened.
+MSG_STATUSBAR_FILE_UNABLE_TO_OPEN			Unable to open file "%s".
+MSG_STATUSBAR_SEARCH_FOUND					Phrase "%s" was found.
+MSG_STATUSBAR_SEARCH_NOT_FOUND_1			Phrase \"%s\" was not found.
+MSG_STATUSBAR_SEARCH_NOT_FOUND_2			Phrase was not found.
+MSG_STATUSBAR_REPLACE_OK					Phrase "%s" has been replaced with "%s".
+MSG_STATUSBAR_REPLACE_NOT_OK				Phrase was not replaced.
+
+MSG_BUFFER_UNTITLED=2100					Untitled - %d
+MSG_BUFFER_CURSOR							Column: %d Row: %d
+
+MSG_MIMETYPE_TEXT_PLAIN=10000				Plain text files
 

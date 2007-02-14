@@ -1,10 +1,10 @@
 //
-// AEdit string catalog
+//	AEdit String Catalog
 //
-// Translated by: Not Translated
+//	Translated by: Not Translated
 //
 
-MSG_APPWND_TITLE							AEdit
+MSG_APPWND_TITLE=0							AEdit
 MSG_APPWND_TITLE_NEW_FILE					New Document
 
 MSG_MENU_APPLICATION=100					Application

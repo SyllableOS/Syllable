@@ -1,24 +1,24 @@
 //
-// CharMap String Catalog
+//	CharMap String Catalog
 //
-// Translated by: Ilya Krol
+//	Translated by: Ilya Krol
 //
 
-MSG_MAINWND_TITLE=0							CharMap
+MSG_MAINWND_TITLE=0								CharMap
 
-MSG_MAINWND_MENU_FILE=100					Файл
-MSG_MAINWND_MENU_FILE_CHOOSEFONT			Выбрать шрифт...
-MSG_MAINWND_MENU_FILE_EXIT					Выход
+MSG_MAINWND_MENU_FILE=100						Файл
+MSG_MAINWND_MENU_FILE_CHOOSEFONT				Выбрать шрифт...
+MSG_MAINWND_MENU_FILE_EXIT						Выход
 
-MSG_MAINWND_MENU_HELP=200					Помощь
-MSG_MAINWND_MENU_HELP_HELP					Помощь
-MSG_MAINWND_MENU_HELP_ABOUT					О программе
+MSG_MAINWND_MENU_HELP=200						Помощь
+MSG_MAINWND_MENU_HELP_HELP						Помощь
+MSG_MAINWND_MENU_HELP_ABOUT						О программе
 
-MSG_HELPWND_TITLE=1000						Таблица символов
-MSG_HELPWND_TEXT							Выберите символ,\nи он будет скопирован в буффер.
-MSG_HELPWND_OK								Ок
+MSG_HELPWND_TITLE=1000							Таблица символов
+MSG_HELPWND_TEXT								Выберите символ,\nи он будет скопирован в буффер.
+MSG_HELPWND_OK									Ок
 
-MSG_ABOUTWND_TITLE=2000						CharMap
-MSG_ABOUTWND_TEXT							CharMap V1.1\nПрограмма просмотра таблицы символов для Syllable.
-MSG_ABOUTWND_OK								Ок
+MSG_ABOUTWND_TITLE=2000							CharMap
+MSG_ABOUTWND_TEXT								CharMap V1.1\nПрограмма просмотра таблицы символов для Syllable.
+MSG_ABOUTWND_OK									Ок
 

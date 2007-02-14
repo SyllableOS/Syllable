@@ -1,17 +1,19 @@
 //
-// Launch Vertalingen
-// Nederlandse vertaling door: Rik van Achterberg en Kaj de Vos
+//	Launch String Catalog
+//
+//	Translated by: Rik van Achterberg - Kaj de Vos
 //
 
-MSG_ERROR_LAUNCHING_ONE		Het bestand '
-MSG_ERROR_LAUNCHING_TWO		' heeft geen bekende typeaanduiding.
+MSG_WINDOW_TITLE=0					Starten
 
-MSG_BUTTON_LAUNCH			_Starten
-MSG_BUTTON_BROWSE			_Bladeren
-MSG_BUTTON_CANCEL			_Annuleren
-MSG_ALERT_BUTTON			_OK
+MSG_STRING_LAUNCH=100				Starten:
+MSG_STRING_DESC						Geef een webadres, bestand, map of programma op.
 
-MSG_STRING_LAUNCH			Starten:
-MSG_STRING_DESC				Geef een webadres, bestand, map of programma op.
+MSG_ERROR_LAUNCHING_ONE=200			Het bestand '
+MSG_ERROR_LAUNCHING_TWO				' heeft geen bekende typeaanduiding.
 
-MSG_WINDOW_TITLE			Starten
+MSG_BUTTON_LAUNCH=300				_Starten
+MSG_BUTTON_BROWSE					_Bladeren
+MSG_BUTTON_CANCEL					_Annuleren
+MSG_ALERT_BUTTON					_OK
+

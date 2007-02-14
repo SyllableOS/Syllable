@@ -1,23 +1,22 @@
 //
-// Media Player string catalog
+//	MediaPlayer String Catalog
 //
-// Translated by: Flemming H. Sørensen (BurningShadow)
-// Korrekturlæsning og Rettelser: Jakob Wolffhechel
+//	Translated by: Flemming H. Sørensen (and Jakob Wolffhechel)
 //
 
-MSG_MAINWND_TITLE=100						Media Afspiller
+MSG_MAINWND_TITLE=0							Media Afspiller
 
-MSG_MAINWND_MENU_APPLICATION=200			Program
+MSG_MAINWND_MENU_APPLICATION=100			Program
 MSG_MAINWND_MENU_APPLICATION_ABOUT			Om...
 MSG_MAINWND_MENU_APPLICATION_QUIT			Afslut
 
-MSG_MAINWND_MENU_FILE=300					Filer
+MSG_MAINWND_MENU_FILE=200					Filer
 MSG_MAINWND_MENU_FILE_OPEN					Åbn...
 MSG_MAINWND_MENU_FILE_OPEN_INPUT			Åbn medietype...
 MSG_MAINWND_MENU_FILE_INFO					Info...
 MSG_MAINWND_MENU_FILE_FULLSCREEN			Fuld skærm
 
-MSG_MAINWND_MENU_TRACKS=400					Spor
+MSG_MAINWND_MENU_TRACKS=300					Spor
 
 MSG_ABOUTWND_TITLE=1000						Om Media Afspiller
 MSG_ABOUTWND_TEXT							\nEn video-afspiller\nCopyright 2003 Arno Klenke\n\nMedia Afspiller er udgivet under LGPL.

@@ -1,7 +1,7 @@
 //
-// Preferences/Screen String Catalog
+//	Preferences/Screen String Catalog
 //
-// Translated by: Daniel Eriksson
+//	Translated by: Daniel Eriksson
 //
 
 MSG_MAINWND_TITLE=0							Skärm
@@ -11,7 +11,6 @@ MSG_MAINWND_DISPLAY_APPLYTO					Verkställ till
 MSG_MAINWND_DISPLAY_RESOLUTION				Upplösning
 MSG_MAINWND_DISPLAY_COLORDEPTH				Färgdjup
 MSG_MAINWND_DISPLAY_REFRESHRATE				Uppdateringsfrekvens
-
 
 MSG_MAINWND_DROPDOWN_APPLY_THIS=200			Den här arbetsytan
 MSG_MAINWND_DROPDOWN_APPLY_ALL				Alla arbetsytor

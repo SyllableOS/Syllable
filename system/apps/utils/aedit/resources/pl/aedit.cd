@@ -1,96 +1,97 @@
 //
-// AEdit string catalog
-// Polish translation by And3mD (updates - mail to and3md@interia.pl)
+//	AEdit String Catalog
+//
+//	Translated by: And3mD
+//
 
-MSG_APPWND_TITLE					AEdit
-MSG_APPWND_TITLE_NEW_FILE			Nowy plik
+MSG_APPWND_TITLE=0							AEdit
+MSG_APPWND_TITLE_NEW_FILE					Nowy plik
 
-MSG_MENU_APPLICATION=100			Aplikacja
-MSG_MENU_APPLICATION_QUIT			Koniec
-MSG_MENU_APPLICATION_ABOUT			O programie...
+MSG_MENU_APPLICATION=100					Aplikacja
+MSG_MENU_APPLICATION_QUIT					Koniec
+MSG_MENU_APPLICATION_ABOUT					O programie...
 
-MSG_MENU_FILE=200					Plik
-MSG_MENU_FILE_NEW					Nowy
-MSG_MENU_FILE_OPEN					Otwórz...
-MSG_MENU_FILE_CLOSE					Zamknij
-MSG_MENU_FILE_SAVE					Zapisz
-MSG_MENU_FILE_SAVE_AS				Zapisz jako...
-MSG_MENU_FILE_SAVE_ALL				Zapisz wszystkie
-MSG_MENU_FILE_NEXT_FILE				Następny plik
-MSG_MENU_FILE_PREVIOUS_FILE			Poprzedni plik
+MSG_MENU_FILE=200							Plik
+MSG_MENU_FILE_NEW							Nowy
+MSG_MENU_FILE_OPEN							Otwórz...
+MSG_MENU_FILE_CLOSE							Zamknij
+MSG_MENU_FILE_SAVE							Zapisz
+MSG_MENU_FILE_SAVE_AS						Zapisz jako...
+MSG_MENU_FILE_SAVE_ALL						Zapisz wszystkie
+MSG_MENU_FILE_NEXT_FILE						Następny plik
+MSG_MENU_FILE_PREVIOUS_FILE					Poprzedni plik
 
-MSG_MENU_EDIT=300					Edycja
-MSG_MENU_EDIT_CUT					Wytnij
-MSG_MENU_EDIT_COPY					Kopiuj
-MSG_MENU_EDIT_PASTE					Wklej
-MSG_MENU_EDIT_SELECT_ALL			Zaznacz wszystko
-MSG_MENU_EDIT_UNDO					Cofnij
-MSG_MENU_EDIT_REDO					Redo
+MSG_MENU_EDIT=300							Edycja
+MSG_MENU_EDIT_CUT							Wytnij
+MSG_MENU_EDIT_COPY							Kopiuj
+MSG_MENU_EDIT_PASTE							Wklej
+MSG_MENU_EDIT_SELECT_ALL					Zaznacz wszystko
+MSG_MENU_EDIT_UNDO							Cofnij
+MSG_MENU_EDIT_REDO							Redo
 
-MSG_MENU_FIND=400					Znajdź
-MSG_MENU_FIND_FIND					Znajdź
-MSG_MENU_FIND_REPLACE				Zamień
-MSG_MENU_FIND_GOTO_LINE				Idź do linii...
+MSG_MENU_FIND=400							Znajdź
+MSG_MENU_FIND_FIND							Znajdź
+MSG_MENU_FIND_REPLACE						Zamień
+MSG_MENU_FIND_GOTO_LINE						Idź do linii...
 
-MSG_MENU_FONT=500					Font
-MSG_MENU_FONT_SIZE					Rozmiar
+MSG_MENU_FONT=500							Font
+MSG_MENU_FONT_SIZE							Rozmiar
 
-MSG_MENU_SETTINGS=600				Ustawienia
-MSG_MENU_SETTINGS_SAVE_ON_CLOSE		Zapisz ustawienia przy zamknięciu
-MSG_MENU_SETTINGS_SAVE_NOW			Zapisz ustawienia
-MSG_MENU_SETTINGS_RESET				Ustawienia domyślne
+MSG_MENU_SETTINGS=600						Ustawienia
+MSG_MENU_SETTINGS_SAVE_ON_CLOSE				Zapisz ustawienia przy zamknięciu
+MSG_MENU_SETTINGS_SAVE_NOW					Zapisz ustawienia
+MSG_MENU_SETTINGS_RESET						Ustawienia domyślne
 
-MSG_MENU_HELP=700					Pomoc
-MSG_MENU_HELP_TABLE_OF_CONTENTS		Table of Contents
-MSG_MENU_HELP_HOMEPAGE				Strona domowa AEdit 
+MSG_MENU_HELP=700							Pomoc
+MSG_MENU_HELP_TABLE_OF_CONTENTS				Table of Contents
+MSG_MENU_HELP_HOMEPAGE						Strona domowa AEdit 
 
-MSG_ABOUT_TITLE=800					O programie
-MSG_ABOUT_TEXT						\n\nEdytor tekstu dla Syllable\nCopyright 2000-2003 Kristian Van Der Vliet\n\nAEdit rozwijany jest na warunakach licencji GNU.  Więcej informacji zobacz plik COPYING,\ndołączony do AEdit, lub stronę http://www.gnu.org\n
-MSG_ABOUT_CLOSE						Zamknij
-MSG_ABOUT_VERSION					wersja: 
-MSG_ABOUT_LINE_1 					Edytor tekstu dla Syllable
-MSG_ABOUT_LINE_2					(C)2005 The Syllable team
-MSG_ABOUT_LINE_3					w w w . s y l l a b l e . o r g
+MSG_ABOUT_TITLE=800							O programie
+MSG_ABOUT_TEXT								\n\nEdytor tekstu dla Syllable\nCopyright 2000-2003 Kristian Van Der Vliet\n\nAEdit rozwijany jest na warunakach licencji GNU.  Więcej informacji zobacz plik COPYING,\ndołączony do AEdit, lub stronę http://www.gnu.org\n
+MSG_ABOUT_CLOSE								Zamknij
+MSG_ABOUT_VERSION							wersja: 
+MSG_ABOUT_LINE_1 							Edytor tekstu dla Syllable
+MSG_ABOUT_LINE_2							(C)2005 The Syllable team
+MSG_ABOUT_LINE_3							w w w . s y l l a b l e . o r g
 
-MSG_ERROR_TITLE=900					O AEdit
-MSG_ERROR_CANT_SAVE					Nie można zapisać pliku
-MSG_ERROR_CLOSE						O.K
+MSG_ERROR_TITLE=900							O AEdit
+MSG_ERROR_CANT_SAVE							Nie można zapisać pliku
+MSG_ERROR_CLOSE								O.K
 
-MSG_FIND_TITLE=1000					Znajdź
-MSG_FIND_FIND_LABEL					Znajdź
-MSG_FIND_CASE_SENSITIVE				Uwzględniaj wielkość liter
-MSG_FIND_FIND						Znajdź
-MSG_FIND_FIND_NEXT					Znajdź _następne
-MSG_FIND_CLOSE					    Zamknij
+MSG_FIND_TITLE=1000							Znajdź
+MSG_FIND_FIND_LABEL							Znajdź
+MSG_FIND_CASE_SENSITIVE						Uwzględniaj wielkość liter
+MSG_FIND_FIND								Znajdź
+MSG_FIND_FIND_NEXT							Znajdź _następne
+MSG_FIND_CLOSE							    Zamknij
 
-MSG_GOTO_TITLE=1100					Idź do linii
-MSG_GOTO_GOTO						Idź do linii
-MSG_GOTO_CLOSE						Zamknij
+MSG_GOTO_TITLE=1100							Idź do linii
+MSG_GOTO_GOTO								Idź do linii
+MSG_GOTO_CLOSE								Zamknij
 
-MSG_REPLACE_TITLE=1200				Zamień
-MSG_REPLACE_LBLFIND					Znajdź
-MSG_REPLACE_WITH					Zamień na 
-MSG_REPLACE_CASE_SENSITIVE			Uwzględniaj wielkość liter
-MSG_REPLACE_FIND					Znajdź
-MSG_REPLACE_FIND_NEXT				Znajdź _następne 
-MSG_REPLACE_REPLACE					Zamień
-MSG_REPLACE_CLOSE				    Zamknij
+MSG_REPLACE_TITLE=1200						Zamień
+MSG_REPLACE_LBLFIND							Znajdź
+MSG_REPLACE_WITH							Zamień na 
+MSG_REPLACE_CASE_SENSITIVE					Uwzględniaj wielkość liter
+MSG_REPLACE_FIND							Znajdź
+MSG_REPLACE_FIND_NEXT						Znajdź _następne 
+MSG_REPLACE_REPLACE							Zamień
+MSG_REPLACE_CLOSE				    		Zamknij
 
-MSG_ALERT_CLOSE_FILE_TITLE=1500		Zapisać plik?
-MSG_ALERT_CLOSE_FILE_BODY			Czy chcesz zapisać zmiany przed zamknięciem pliku?
-MSG_ALERT_CLOSE_FILE_YES			Tak
-MSG_ALERT_CLOSE_FILE_NO				Nie
-MSG_ALERT_CLOSE_FILE_CANCEL			Anuluj
-MSG_ALERT_SAVE_FILE_TITLE			Błąd
-MSG_ALERT_SAVE_FILE_BODY			Nie można zapisać pliku "%s".
-MSG_ALERT_SAVE_FILE_OK				OK
-MSG_ALERT_QUIT_TITLE				Czy napewno zamknąć?
-MSG_ALERT_QUIT_BODY					Nie wszystkie zmiany zostały zapisane, zamknięcie aplikacji spowoduje ich utrate. \nCzy napewno chcesz zamknąć AEdit?
-MSG_ALERT_QUIT_YES					Tak
-MSG_ALERT_QUIT_NO					Nie
-MSG_ALERT_FILE_OPEN_TITLE			Błąd
-MSG_ALERT_FILE_OPEN_OK				OK
-
+MSG_ALERT_CLOSE_FILE_TITLE=1500				Zapisać plik?
+MSG_ALERT_CLOSE_FILE_BODY					Czy chcesz zapisać zmiany przed zamknięciem pliku?
+MSG_ALERT_CLOSE_FILE_YES					Tak
+MSG_ALERT_CLOSE_FILE_NO						Nie
+MSG_ALERT_CLOSE_FILE_CANCEL					Anuluj
+MSG_ALERT_SAVE_FILE_TITLE					Błąd
+MSG_ALERT_SAVE_FILE_BODY					Nie można zapisać pliku "%s".
+MSG_ALERT_SAVE_FILE_OK						OK
+MSG_ALERT_QUIT_TITLE						Czy napewno zamknąć?
+MSG_ALERT_QUIT_BODY							Nie wszystkie zmiany zostały zapisane, zamknięcie aplikacji spowoduje ich utrate. \nCzy napewno chcesz zamknąć AEdit?
+MSG_ALERT_QUIT_YES							Tak
+MSG_ALERT_QUIT_NO							Nie
+MSG_ALERT_FILE_OPEN_TITLE					Błąd
+MSG_ALERT_FILE_OPEN_OK						OK
 
 MSG_STATUSBAR_WELCOME=2000					Witaj w AEdit!
 MSG_STATUSBAR_CLOSED_FILE					Plik "%s" został zamknięty.
@@ -108,3 +109,4 @@ MSG_STATUSBAR_REPLACE_NOT_OK				Fraza nie została zamieniona.
 
 MSG_BUFFER_UNTITLED=2100					Bez Nazwy-%d
 MSG_BUFFER_CURSOR							Kol: %d Wie: %d
+

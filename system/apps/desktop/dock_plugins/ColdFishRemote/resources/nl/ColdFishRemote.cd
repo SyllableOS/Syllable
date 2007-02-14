@@ -1,8 +1,10 @@
 //
-// ColdFishRemote Vertalingen
-// Nederlandse vertaling door Rik van Achterberg en Kaj de Vos
+//	ColdFishRemote String Catalog
+//
+//	Translated by: Rik van Achterberg - Kaj de Vos
 //
 
-MSG_MENU_ABOUT	Over ColdFishRemote...
-MSG_MENU_ADD 	Bestand toevoegen...
-MSG_UNKNOWN		Onbekend
+MSG_MENU_ABOUT=100			Over ColdFishRemote...
+MSG_MENU_ADD 				Bestand toevoegen...
+MSG_UNKNOWN					Onbekend
+

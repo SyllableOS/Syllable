@@ -1,7 +1,7 @@
 //
-// Preferences/FileTypes String Catalog
+//	Preferences/FileTypes String Catalog
 //
-// Translated by: Not Translated
+//	Translated by: Not Translated
 //
 
 MSG_MAINWND_TITLE=0							File Types
@@ -30,3 +30,4 @@ MSG_NEWTYPEWND_MIMETYPE						Mimetype
 MSG_NEWTYPEWND_OK							Ok
 
 MSG_MIMETYPE_TEXT_PLAIN=10000				Plain text
+

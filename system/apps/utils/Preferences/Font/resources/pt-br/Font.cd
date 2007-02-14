@@ -1,8 +1,7 @@
 //
-// Preferences/Font String Catalog
+//	Preferences/Font String Catalog
 //
-// Translated by: Edgar Domingo de Albuquerque (contato@edgar.pro.br)
-// Brazilian Portuguese pt_BR @ 29-Jul-2006 Sorocaba/SP - Brasil
+//	Translated by: Edgar Domingo de Albuquerque
 //
 
 MSG_MAINWND_TITLE=0								Fontes
@@ -20,3 +19,4 @@ MSG_MAINWND_EXAMPLE=200							Exemplo da Fonte Selecionada
 MSG_MAINWND_BUTTON_APPLY=300					_Aplicar
 MSG_MAINWND_BUTTON_REVERT						_Reverter
 MSG_MAINWND_BUTTON_DEFAULT						_Padrão
+

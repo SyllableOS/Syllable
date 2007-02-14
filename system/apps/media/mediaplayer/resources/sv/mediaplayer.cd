@@ -1,22 +1,22 @@
 //
-// Media Player string catalog
+//	MediaPlayer String Catalog
 //
-// Translated by: Daniel Eriksson
+//	Translated by: Henrik Isaksson - Daniel Eriksson
 //
 
-MSG_MAINWND_TITLE=100						Media Player
+MSG_MAINWND_TITLE=0							Media Player
 
-MSG_MAINWND_MENU_APPLICATION=200			Program
+MSG_MAINWND_MENU_APPLICATION=100			Program
 MSG_MAINWND_MENU_APPLICATION_ABOUT			Om...
 MSG_MAINWND_MENU_APPLICATION_QUIT			Avsluta
 
-MSG_MAINWND_MENU_FILE=300					Filer
+MSG_MAINWND_MENU_FILE=200					Filer
 MSG_MAINWND_MENU_FILE_OPEN					Öppna...
 MSG_MAINWND_MENU_FILE_OPEN_INPUT			Öppna mediatyp...
 MSG_MAINWND_MENU_FILE_INFO					Info...
 MSG_MAINWND_MENU_FILE_FULLSCREEN			Fullskärm
 
-MSG_MAINWND_MENU_TRACKS=400					Spår
+MSG_MAINWND_MENU_TRACKS=300					Spår
 
 MSG_ABOUTWND_TITLE=1000						Om Media Player
 MSG_ABOUTWND_TEXT							\nEn videospelare\nCopyright 2003 Arno Klenke\n\nMedia Player är utgivet under LGPL.

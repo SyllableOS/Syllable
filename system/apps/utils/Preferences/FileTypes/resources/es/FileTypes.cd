@@ -1,7 +1,7 @@
 //
-// Preferences/FileTypes String Catalog
+//	Preferences/FileTypes String Catalog
 //
-// Translated by: Maximo Pech Jaramillo <makzpj@gmail.com>
+//	Translated by: Maximo Pech Jaramillo
 //
 
 MSG_MAINWND_TITLE=0							Tipos de Archivo
@@ -30,3 +30,4 @@ MSG_NEWTYPEWND_MIMETYPE						Mimetype
 MSG_NEWTYPEWND_OK							Ok
 
 MSG_MIMETYPE_TEXT_PLAIN=10000				Texto Plano
+

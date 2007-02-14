@@ -1,7 +1,7 @@
 //
-// Preferences/Screen String Catalog
+//	Preferences/Screen String Catalog
 //
-// Translated by: Ruud Kuin
+//	Translated by: Ruud Kuin
 //
 
 MSG_MAINWND_TITLE=0							Beeldscherm
@@ -11,7 +11,6 @@ MSG_MAINWND_DISPLAY_APPLYTO					Toepassen op
 MSG_MAINWND_DISPLAY_RESOLUTION				Resolutie
 MSG_MAINWND_DISPLAY_COLORDEPTH				Kleurdiepte
 MSG_MAINWND_DISPLAY_REFRESHRATE				Frequentie verversen
-
 
 MSG_MAINWND_DROPDOWN_APPLY_THIS=200			Deze werkruimte
 MSG_MAINWND_DROPDOWN_APPLY_ALL				Alle werkruimtes

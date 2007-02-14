@@ -1,20 +1,21 @@
 //
-// BZoom String Catalog
+//	BZoom String Catalog
 //
-// Translated by: Christos KYRATZIS
+//	Translated by: Christos KYRATZIS
 //
 
-MSG_MAINWND_TITLE=100						BZoom
+MSG_MAINWND_TITLE=0							BZoom
 
-MSG_MAINWND_MENU_APP=200					Application
+MSG_MAINWND_MENU_APP=100					Application
 MSG_MAINWND_MENU_APP_EXIT					Quitter
 
-MSG_MAINWND_MENU_VIEW=300					Vue
+MSG_MAINWND_MENU_VIEW=200					Vue
 MSG_MAINWND_MENU_VIEW_MAGNIFICATION			Grossissement
 
-MSG_MAINWND_MENU_HELP=400					Aide
+MSG_MAINWND_MENU_HELP=300					Aide
 MSG_MAINWND_MENU_HELP_ABOUT					À propos
 
 MSG_ABOUTWND_TITLE=1000						À propos de BZoom
 MSG_ABOUTWND_TEXT							BZoom V1.0\n\nUn simple zoomer pour AtheOS.\nBasé sur AZoom par Chir.\nBZoom est mis à disposition sous license\nGNU GPL
 MSG_ABOUTWND_OK								Ok
+

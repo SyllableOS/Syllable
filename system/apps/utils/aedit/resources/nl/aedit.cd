@@ -1,10 +1,10 @@
 //
-// AEdit Vertalingen
+//	AEdit String Catalog
 //
-// Vertaald door Kaj de Vos en anderen en Ruud Kuin
+//	Translated by: Kaj de Vos - Ruud Kuin
 //
 
-MSG_APPWND_TITLE							AEdit
+MSG_APPWND_TITLE=0							AEdit
 MSG_APPWND_TITLE_NEW_FILE					Nieuw document
 
 MSG_MENU_APPLICATION=100					Toepassing
@@ -17,7 +17,7 @@ MSG_MENU_FILE_OPEN							Openen...
 MSG_MENU_FILE_CLOSE							Sluiten
 MSG_MENU_FILE_SAVE							Opslaan
 MSG_MENU_FILE_SAVE_AS						Opslaan als...
-MSG_MENU_FILE_SAVE_ALL						Alle opslaan
+MSG_MENU_FILE_SAVE_ALL						Alles opslaan
 MSG_MENU_FILE_NEXT_FILE						Volgend document
 MSG_MENU_FILE_PREVIOUS_FILE					Vorig document
 
@@ -53,10 +53,10 @@ MSG_MENU_SETTINGS_RESET						Instellingen herstellen
 
 MSG_MENU_HELP=700							Help
 MSG_MENU_HELP_TABLE_OF_CONTENTS				Handleiding...
-MSG_MENU_HELP_HOMEPAGE						AEdit-webpagina...
+MSG_MENU_HELP_HOMEPAGE						AEdit-webstek...
 
 MSG_ABOUT_TITLE=800							Over AEdit
-MSG_ABOUT_TEXT								\n\nEenvoudige tekstverwerker voor Syllable\nAuteursrecht 2000-2003 Kristian Van Der Vliet\n\nAEdit is gepubliceerd onder de GNU\nGeneral Public License. Gelieve\nhttp://www.gnu.org\nte raadplegen voor meer informatie.\n\nNederlandse vertaling door Kaj de Vos en anderen.
+MSG_ABOUT_TEXT								\n\nEenvoudige tekstverwerker voor Syllable\nAuteursrecht 2000-2003 Kristian Van Der Vliet\n\nAEdit is gepubliceerd onder de GNU\nGeneral Public License. Gelieve\nhttp://www.gnu.org\nte raadplegen voor meer informatie.\n\nNederlandse vertaling door Syllable NL.
 MSG_ABOUT_CLOSE								OK
 MSG_ABOUT_VERSION							Versie:
 MSG_ABOUT_LINE_1 							Een tekstverwerker voor Syllable

@@ -1,10 +1,10 @@
 //
-// ColdFishRemote String Catalog
+//	ColdFishRemote String Catalog
 //
-// Translated by: Maximo Pech Jaramillo <makzpj@gmail.com>
+//	Translated by: Maximo Pech Jaramillo
 //
 
-MSG_MENU_ABOUT	Acerca de
-MSG_MENU_ADD 	Agregar Archivo
-MSG_UNKNOWN		Desconocido
+MSG_MENU_ABOUT=100			Acerca de
+MSG_MENU_ADD 				Agregar Archivo
+MSG_UNKNOWN					Desconocido
 

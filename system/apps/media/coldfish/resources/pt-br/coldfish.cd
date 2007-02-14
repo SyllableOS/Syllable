@@ -1,8 +1,7 @@
 //
-// ColdFish string catalog
+//	ColdFish String Catalog
 //
-// Translated by: Edgar Domingo de Albuquerque (contato@edgar.pro.br)
-// Brazilian Portuguese pt_BR @ 29-Jul-2006 Sorocaba/SP - Brasil
+//	Translated by: Edgar Domingo de Albuquerque
 //
 
 MSG_MAINWND_TITLE=100						ColdFish
@@ -52,3 +51,4 @@ MSG_PLAYLISTWND_NOTE						Nota: se você tentar abrir uma lista de execução\nn
 MSG_LCD_TRACK=3000							Faixa
 
 MSG_MIMETYPE_APPLICATION_XCOLDFISHPLAYLIST=10000		ColdFish Lista de Execuçã?
+

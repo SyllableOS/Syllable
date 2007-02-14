@@ -1,7 +1,7 @@
 //
-// System Information String Catalog
+//	System Information String Catalog
 //
-// Translated by: Flemming H. Sørensen (BurningShadow)
+//	Translated by: Flemming H. Sørensen
 //
 
 MSG_MAINWND_TITLE=0							System Information
@@ -51,9 +51,9 @@ MSG_TAB_SYSINFO_ADD_ALLOCATEDINODES			Allocated INodes
 MSG_TAB_SYSINFO_ADD_LOADEDINODES			Loaded INodes
 MSG_TAB_SYSINFO_UPTIME_UPTIME				Oppetid: %3d dage, %2d timer, %2d min, %2d sek
 MSG_TAB_SYSINFO_BYTE						%.1f B
-MSG_TAB_SYSINFO_KILOBYTE					%.1f KB
-MSG_TAB_SYSINFO_MEGABYTE					%.1f MB
-MSG_TAB_SYSINFO_GIGABYTE					%.1f GB
+MSG_TAB_SYSINFO_KILOBYTE					%.1f Kb
+MSG_TAB_SYSINFO_MEGABYTE					%.1f Mb
+MSG_TAB_SYSINFO_GIGABYTE					%.1f Gb
 MSG_TAB_SYSINFO_MHZ							%lld MHz
 
 MSG_TAB_DRIVES=2000							Drev
@@ -101,6 +101,6 @@ MSG_TAB_PERFORMANCE_MEMTOTAL				Total
 MSG_TAB_PERFORMANCE_MEMFREE					Ledig
 MSG_TAB_PERFORMANCE_MEMCACHE				Cache
 MSG_TAB_PERFORMANCE_BYTE					B
-MSG_TAB_PERFORMANCE_KILOBYTE				KB
-MSG_TAB_PERFORMANCE_MEGABYTE				MB
+MSG_TAB_PERFORMANCE_KILOBYTE				Kb
+MSG_TAB_PERFORMANCE_MEGABYTE				Mb
 

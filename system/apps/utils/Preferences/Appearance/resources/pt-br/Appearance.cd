@@ -1,8 +1,7 @@
 //
-// Preferences/Appearance String Catalog
+//	Preferences/Appearance String Catalog
 //
-// Translated by: Edgar Domingo de Albuquerque (contato@edgar.pro.br)
-// Brazilian Portuguese pt_BR @ 29-Jul-2006 Sorocaba/SP - Brasil
+//	Translated by: Edgar Domingo de Albuquerque
 //
 
 MSG_MAINWND_TITLE=0								Aparência
@@ -52,3 +51,4 @@ MSG_ALERT_NOCLRSCMDIR_OK						Ok
 MSG_ALERT_CLRSCMERR_TITLE=3000					Erro
 MSG_ALERT_CLRSCMERR_TEXT						Não é possível carregar o arquivo de Esquema de Cores selecionado
 MSG_ALERT_CLRSCMERR_OK							Ok
+

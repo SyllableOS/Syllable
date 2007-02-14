@@ -1,17 +1,19 @@
 //
-// String catalog for Catalog Compiler
+//	CatalogCompiler String Catalog
+//
+//	Translated by: Henrik Isaksson
 //
 
-MSG_SYNTAX_ERROR		Syntaxfel på rad %d
-MSG_ID_NUMBER_MISSING	ID-nummer saknas.
-MSG_NO_TEXT_STRING		Ingen textsträng hittad.
-MSG_CANT_OPEN_FILE		Kan inte öppna filen %s!
+MSG_SYNTAX_ERROR=100				Syntaxfel på rad %d
+MSG_ID_NUMBER_MISSING				ID-nummer saknas.
+MSG_NO_TEXT_STRING					Ingen textsträng hittad.
+MSG_CANT_OPEN_FILE					Kan inte öppna filen %s!
 
-MSG_HELP_COMPILE=100	Kompilera katalog- och header-fil.
-MSG_HELP_TRANSLATE		Kompilera översatt katalog till binärt format.
-MSG_HELP_HELP			Visa detta hjälpmeddelande.
+MSG_HELP_COMPILE=200				Kompilera katalog- och header-fil.
+MSG_HELP_TRANSLATE					Kompilera översatt katalog till binärt format.
+MSG_HELP_HELP						Visa detta hjälpmeddelande.
 
-MSG_CREATING_CATALOG_FILE=200	Skapar catalog-fil:
-MSG_CREATING_HEADER_FILE		Skapar header-fil:
-MSG_DESCR						Verktyg som används för att skapa strängkatalogfiler vid översättning av mjukvara.
+MSG_CREATING_CATALOG_FILE=300		Skapar catalog-fil:
+MSG_CREATING_HEADER_FILE			Skapar header-fil:
+MSG_DESCR							Verktyg som används för att skapa strängkatalogfiler vid översättning av mjukvara.
 

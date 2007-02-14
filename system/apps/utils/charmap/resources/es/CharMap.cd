@@ -1,23 +1,24 @@
 //
-// CharMap String Catalog
+//	CharMap String Catalog
 //
-// Translated by: Maximo Pech Jaramillo <makzpj@gmail.com>
+//	Translated by: Maximo Pech Jaramillo
 //
 
 MSG_MAINWND_TITLE=0								Mapa de Caracteres
 
 MSG_MAINWND_MENU_FILE=100						Archivo
-MSG_MAINWND_MENU_FILE_CHOOSEFONT					Seleccionar Fuente...
-MSG_MAINWND_MENU_FILE_EXIT							Salir
+MSG_MAINWND_MENU_FILE_CHOOSEFONT				Seleccionar Fuente...
+MSG_MAINWND_MENU_FILE_EXIT						Salir
 
 MSG_MAINWND_MENU_HELP=200						Ayuda
-MSG_MAINWND_MENU_HELP_HELP							Ayuda
-MSG_MAINWND_MENU_HELP_ABOUT							Acerca de
+MSG_MAINWND_MENU_HELP_HELP						Ayuda
+MSG_MAINWND_MENU_HELP_ABOUT						Acerca de
 
 MSG_HELPWND_TITLE=1000							CharMap
-MSG_HELPWND_TEXT									Cuando hagas click en un caracter,\nse copiará al portapapeles.
-MSG_HELPWND_OK										Ok
+MSG_HELPWND_TEXT								Cuando hagas click en un caracter,\nse copiará al portapapeles.
+MSG_HELPWND_OK									Ok
 
 MSG_ABOUTWND_TITLE=2000							CharMap
-MSG_ABOUTWND_TEXT									CharMap V1.1\Visor de mapa de caracteres para Syllable.
-MSG_ABOUTWND_OK										Ok
+MSG_ABOUTWND_TEXT								CharMap V1.1\Visor de mapa de caracteres para Syllable.
+MSG_ABOUTWND_OK									Ok
+

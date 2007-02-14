@@ -1,20 +1,22 @@
 //
-// Preferences/Locale string catalog
+//	Preferences/Locale string catalog
 //
-// Translated by: Ilya Krol
+//	Translated by: Ilya Krol
 //
 
-STR_MAIN_TITLE=1000						Локализация
-STR_MAIN_APPLY							_Применить
-STR_MAIN_REVERT							_Обратить
-STR_MAIN_DEFAULT						_По умолчанию
+MSG_MAIN_TITLE=0						Локализация
 
-STR_MAIN_LANGUAGE_TAB=1100				Язык
-STR_MAIN_LANGUAGE_ACTIVATE				Активировать язык >
-STR_MAIN_LANGUAGE_DEACTIVATE			< Деактивировать язык
-STR_MAIN_LANGUAGE_AVAILABLE				Поддерживаемые языки
-STR_MAIN_LANGUAGE_USED					Активно используемые языки
+MSG_MAIN_LANGUAGE_TAB=100				Язык
+MSG_MAIN_LANGUAGE_ACTIVATE				Активировать язык    >
+MSG_MAIN_LANGUAGE_DEACTIVATE			<  Деактивировать язык
+MSG_MAIN_LANGUAGE_AVAILABLE				Поддерживаемые языки
+MSG_MAIN_LANGUAGE_USED					Активно используемые языки
 
-STR_MAIN_COUNTRY_TAB=1200				Страна
+MSG_MAIN_COUNTRY_TAB=200				Страна
 
-STR_ERROR_SAVE=2000						Ошибка при попытке сохранить настройки локализации.
+MSG_MAIN_APPLY=1000						_Применить
+MSG_MAIN_REVERT							_Обратить
+MSG_MAIN_DEFAULT						_По умолчанию
+
+MSG_ERROR_SAVE=1100						Ошибка при попытке сохранить настройки локализации.
+

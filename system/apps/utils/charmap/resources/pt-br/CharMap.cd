@@ -1,24 +1,24 @@
 //
-// CharMap String Catalog
+//	CharMap String Catalog
 //
-// Translated by: Edgar Domingo de Albuquerque (contato@edgar.pro.br)
-// Brazilian Portuguese pt_BR @ 29-Jul-2006 Sorocaba/SP - Brasil
+//	Translated by: Edgar Domingo de Albuquerque
 //
 
 MSG_MAINWND_TITLE=0								Mapa de Caracteres
 
 MSG_MAINWND_MENU_FILE=100						Arquivo
-MSG_MAINWND_MENU_FILE_CHOOSEFONT					Escolher Fonte...
-MSG_MAINWND_MENU_FILE_EXIT							Sair
+MSG_MAINWND_MENU_FILE_CHOOSEFONT				Escolher Fonte...
+MSG_MAINWND_MENU_FILE_EXIT						Sair
 
 MSG_MAINWND_MENU_HELP=200						Ajuda
-MSG_MAINWND_MENU_HELP_HELP							Ajuda
-MSG_MAINWND_MENU_HELP_ABOUT							Sobre
+MSG_MAINWND_MENU_HELP_HELP						Ajuda
+MSG_MAINWND_MENU_HELP_ABOUT						Sobre
 
 MSG_HELPWND_TITLE=1000							CharMap
-MSG_HELPWND_TEXT									Quando você clicar num caracter,\nele será copiado para a Área de Transferência.
-MSG_HELPWND_OK										Ok
+MSG_HELPWND_TEXT								Quando você clicar num caracter,\nele será copiado para a Área de Transferência.
+MSG_HELPWND_OK									Ok
 
 MSG_ABOUTWND_TITLE=2000							CharMap
-MSG_ABOUTWND_TEXT									CharMap V1.1\nVisualizador do Mapa de Caracteres do Syllable.
-MSG_ABOUTWND_OK										Ok
+MSG_ABOUTWND_TEXT								CharMap V1.1\nVisualizador do Mapa de Caracteres do Syllable.
+MSG_ABOUTWND_OK									Ok
+

@@ -1,5 +1,7 @@
 //
-// LibSyllable string catalog
+//	LibSyllable String Catalog
+//
+//	Translated by: Henrik Isaksson
 //
 
 // FileRequester strings
@@ -72,3 +74,4 @@ MSG_MOUNT_ERROR_CLOSE									Ok
 MSG_MOUNT_ERROR_CREATE_MOUNTPOINT						Kunde inte skapa mountpoint för enhet %s
 MSG_MOUNT_ERROR_OTHER_ERROR								Kunde inte ansluta %s:\n%s
 MSG_MOUNT_ERROR_UNMOUNT									Kunde inte stänga %s:\n%s
+

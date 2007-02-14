@@ -1,0 +1,27 @@
+//
+//	Preferences/Dock String Catalog
+//
+//	Translated by: Ilya Krol
+//
+
+MSG_MAINWND_TITLE=0								Док
+
+MSG_MAINWND_POSITION=100						Расположение
+MSG_MAINWND_POSITION_TOP						Сверху
+MSG_MAINWND_POSITION_BOTTOM						Снизу
+MSG_MAINWND_POSITION_LEFT						Слева
+MSG_MAINWND_POSITION_RIGHT						Справа
+
+MSG_MAINWND_PLUGINS=200							Плагины
+MSG_MAINWND_PLUGINS_PLUGIN						Плагин
+MSG_MAINWND_PLUGINS_ENABLED						Включён
+MSG_MAINWND_PLUGINS_TEXT						Примечание: Пожалуйста, скопируйте плагины в /system/extensions/dock/
+MSG_MAINWND_PLUGINS_BUTTON_ENABLE				Вкл.
+MSG_MAINWND_PLUGINS_BUTTON_DISABLE				Выкл.
+MSG_MAINWND_PLUGINS_STATE_ENABLED_YES			Да
+MSG_MAINWND_PLUGINS_STATE_ENABLED_NO			Нет
+
+MSG_MAINWND_BUTTON_APPLY=300					Применить
+MSG_MAINWND_BUTTON_UNDO							Отменить
+MSG_MAINWND_BUTTON_DEFAULT						По умолчанию
+

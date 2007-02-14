@@ -1,8 +1,7 @@
 //
-// Preferences/Media String Catalog
+//	Preferences/Media String Catalog
 //
-// Translated by: Edgar Domingo de Albuquerque (contato@edgar.pro.br)
-// Brazilian Portuguese pt_BR @ 29-Jul-2006 Sorocaba/SP - Brasil
+//	Translated by: Edgar Domingo de Albuquerque
 //
 
 MSG_MAINWND_TITLE=0								Mídia
@@ -20,3 +19,4 @@ MSG_MAINWND_BUTTON_DEFAULT						_Padrão
 MSG_MAINWND_THISINPUTHASNOCONTROLS=300			Esta entrada não possui controles
 MSG_MAINWND_THISCODECHASNOCONTROLS				Este codec não possui controles
 MSG_MAINWND_THISOUTPUTHASNOCONTROLS				Esta saída não possui controles
+

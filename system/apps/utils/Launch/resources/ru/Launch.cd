@@ -1,19 +1,19 @@
 //
-// Launch String Catalog
+//	Launch String Catalog
 //
-// Translated by: Ilya Krol
+//	Translated by: Ilya Krol
 //
 
-MSG_ERROR_LAUNCHING_ONE		Файл '
-MSG_ERROR_LAUNCHING_TWO		' не ассоциирован ни с каким типом файлов.\nПожалуйста, обратитесь к команде разработчиков Syllable \nза дальнейшими инструкциями.
+MSG_WINDOW_TITLE=0					Запуск
 
-MSG_BUTTON_LAUNCH			_Запустить
-MSG_BUTTON_BROWSE			_Просмотреть
-MSG_BUTTON_CANCEL			_Отменить
-MSG_ALERT_BUTTON			_OK
+MSG_STRING_LAUNCH=100				Запуск:
+MSG_STRING_DESC						Ведите имя веб-сайта, файла, папки или приложения.
 
-MSG_STRING_LAUNCH			Запуск:
-MSG_STRING_DESC				Ведите имя веб-сайта, файла, папки или приложения.
+MSG_ERROR_LAUNCHING_ONE=200			Файл '
+MSG_ERROR_LAUNCHING_TWO				' не ассоциирован ни с каким типом файлов.\nПожалуйста, обратитесь к команде разработчиков Syllable \nза дальнейшими инструкциями.
 
-MSG_WINDOW_TITLE			Запуск
+MSG_BUTTON_LAUNCH=300				_Запустить
+MSG_BUTTON_BROWSE					_Просмотреть
+MSG_BUTTON_CANCEL					_Отменить
+MSG_ALERT_BUTTON					_OK
 

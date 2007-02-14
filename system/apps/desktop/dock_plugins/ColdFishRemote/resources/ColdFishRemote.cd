@@ -1,8 +1,10 @@
 //
-// ColdFishRemote String Catalog
+//	ColdFishRemote String Catalog
+//
+//	Translated by: Not Translated
 //
 
-MSG_MENU_ABOUT	About
-MSG_MENU_ADD 	Add File
-MSG_UNKNOWN		Unknown
+MSG_MENU_ABOUT=100			About
+MSG_MENU_ADD				Add File
+MSG_UNKNOWN					Unknown
 

@@ -1,58 +1,58 @@
 //
-// ColdFish Vertalingen
+//	ColdFish String Catalog
 //
-// Vertaald door: Rik van Achterberg en Kaj de Vos en Ruud Kuin
+//	Translated by: Rik van Achterberg - Kaj de Vos - Ruud Kuin
 //
 
-MSG_MAINWND_TITLE=100								ColdFish
-MSG_MAINWND_PLAY									Afspelen
-MSG_MAINWND_STOP									Stoppen
-MSG_MAINWND_PAUSE									Pauze
-MSG_MAINWND_PLAYLIST								Afspeellijst
-MSG_MAINWND_FILE									Bestand
-MSG_MAINWND_TRACK									Nummer
-MSG_MAINWND_STREAM									Audiostroom
-MSG_MAINWND_LENGTH									Lengte
-MSG_MAINWND_PLAYING									Afspelen
+MSG_MAINWND_TITLE=100						ColdFish
+MSG_MAINWND_PLAY							Afspelen
+MSG_MAINWND_STOP							Stoppen
+MSG_MAINWND_PAUSE							Pauze
+MSG_MAINWND_PLAYLIST						Afspeellijst
+MSG_MAINWND_FILE							Bestand
+MSG_MAINWND_TRACK							Nummer
+MSG_MAINWND_STREAM							Audiostroom
+MSG_MAINWND_LENGTH							Lengte
+MSG_MAINWND_PLAYING							Afspelen
 
-MSG_MAINWND_MENU_APPLICATION=200					Toepassing
-MSG_MAINWND_MENU_APPLICATION_ABOUT					Over ColdFish...
-MSG_MAINWND_MENU_APPLICATION_QUIT					Afsluiten
+MSG_MAINWND_MENU_APPLICATION=200			Toepassing
+MSG_MAINWND_MENU_APPLICATION_ABOUT			Over ColdFish...
+MSG_MAINWND_MENU_APPLICATION_QUIT			Afsluiten
 
-MSG_MAINWND_MENU_PLAYLIST=300						Afspeellijst
-MSG_MAINWND_MENU_PLAYLIST_SELECT					Selecteren...
-MSG_MAINWND_MENU_PLAYLIST_INPUT						Audiobron openen...
+MSG_MAINWND_MENU_PLAYLIST=300				Afspeellijst
+MSG_MAINWND_MENU_PLAYLIST_SELECT			Selecteren...
+MSG_MAINWND_MENU_PLAYLIST_INPUT				Audiobron openen...
 
-MSG_MAINWND_MENU_FILE=400							Bestand
-MSG_MAINWND_MENU_FILE_ADD							Toevoegen...
-MSG_MAINWND_MENU_FILE_REMOVE						Verwijderen
+MSG_MAINWND_MENU_FILE=400					Bestand
+MSG_MAINWND_MENU_FILE_ADD					Toevoegen...
+MSG_MAINWND_MENU_FILE_REMOVE				Verwijderen
 
-MSG_MAINWND_MENU_VIEW=500							Beeld
-MSG_MAINWND_MENU_VIEW_PLAYLIST						Afspeellijst
+MSG_MAINWND_MENU_VIEW=500					Beeld
+MSG_MAINWND_MENU_VIEW_PLAYLIST				Afspeellijst
 
-MSG_ABOUTWND_TITLE=1000								Over ColdFish
-MSG_ABOUTWND_TEXT									\nEen muziekspeler\nCopyright 2003 Arno Klenke\nCopyright 2003 Kristian Van Der Vliet\nCopyright 2005 Rick Caudill\n\nColdFish wordt uitgegeven onder de LGPL-licentie.\n\nNederlandse vertaling door Rik van Achterberg en Kaj de Vos.
-MSG_ABOUTWND_OK										OK
+MSG_ABOUTWND_TITLE=1000						Over ColdFish
+MSG_ABOUTWND_TEXT							\nEen muziekspeler\nCopyright 2003 Arno Klenke\nCopyright 2003 Kristian Van Der Vliet\nCopyright 2005 Rick Caudill\n\nColdFish wordt uitgegeven onder de LGPL-licentie.\n\nNederlandse vertaling door Syllable NL.
+MSG_ABOUTWND_OK								OK
 
-MSG_ERRWND_TITLE=1100								ColdFish: fout
-MSG_ERRWND_OK										OK
-MSG_ERRWND_CANTPLAY									ColdFish kan dit bestand niet afspelen.
-MSG_ERRWND_CANTDELETE								Het nummer dat afgespeeld wordt kan niet verwijderd worden.
-MSG_ERRWND_NOTPLAYLIST								Het geselecteerde bestand is geen afspeellijst.
+MSG_ERRWND_TITLE=1100						ColdFish: fout
+MSG_ERRWND_OK								OK
+MSG_ERRWND_CANTPLAY							ColdFish kan dit bestand niet afspelen.
+MSG_ERRWND_CANTDELETE						Het nummer dat afgespeeld wordt kan niet verwijderd worden.
+MSG_ERRWND_NOTPLAYLIST						Het geselecteerde bestand is geen afspeellijst.
 
-MSG_ALERTWND_NOMEDIASERVER_TITLE=1200				Foutmelding
-MSG_ALERTWND_NOMEDIASERVER_TEXT						Kan niet met media server verbinden.
-MSG_ALERTWND_NOMEDIASERVER_OK						_Ok
+MSG_ALERTWND_NOMEDIASERVER_TITLE=1200		Foutmelding
+MSG_ALERTWND_NOMEDIASERVER_TEXT				Kan niet met mediaserver verbinden.
+MSG_ALERTWND_NOMEDIASERVER_OK				_Ok
 
-MSG_PLAYLIST_UNKNOWN=2000							Onbekend
-MSG_PLAYLIST_DEFAULT								Standaardafspeellijst
+MSG_PLAYLIST_UNKNOWN=2000					Onbekend
+MSG_PLAYLIST_DEFAULT						Standaardafspeellijst
 
-MSG_PLAYLISTWND_TITLE=2100							Afspeellijst selecteren - ColdFish
-MSG_PLAYLISTWND_FILE								Bestand:
-MSG_PLAYLISTWND_OPEN								Openen
-MSG_PLAYLISTWND_NOTE								Als je een niet bestaande\nafspeellijst probeert te openen,\nzal deze aangemaakt worden.
+MSG_PLAYLISTWND_TITLE=2100					Afspeellijst selecteren - ColdFish
+MSG_PLAYLISTWND_FILE						Bestand:
+MSG_PLAYLISTWND_OPEN						Openen
+MSG_PLAYLISTWND_NOTE						Als je een niet bestaande\nafspeellijst probeert te openen,\nzal deze aangemaakt worden.
 
-MSG_LCD_TRACK=3000									Nummer
+MSG_LCD_TRACK=3000							Nummer
 
-MSG_MIMETYPE_APPLICATION_XCOLDFISHPLAYLIST=10000	ColdFish-afspeellijst
+MSG_MIMETYPE_APPLICATION_XCOLDFISHPLAYLIST=10000		ColdFish-afspeellijst
 

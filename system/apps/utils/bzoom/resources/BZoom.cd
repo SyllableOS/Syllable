@@ -1,20 +1,21 @@
 //
-// BZoom String Catalog
+//	BZoom String Catalog
 //
-// Translated by: Not Translated
+//	Translated by: Not Translated
 //
 
-MSG_MAINWND_TITLE=100						BZoom
+MSG_MAINWND_TITLE=0							BZoom
 
-MSG_MAINWND_MENU_APP=200					App
-MSG_MAINWND_MENU_APP_EXIT						Exit
+MSG_MAINWND_MENU_APP=100					App
+MSG_MAINWND_MENU_APP_EXIT					Exit
 
-MSG_MAINWND_MENU_VIEW=300					View
-MSG_MAINWND_MENU_VIEW_MAGNIFICATION				Magnification
+MSG_MAINWND_MENU_VIEW=200					View
+MSG_MAINWND_MENU_VIEW_MAGNIFICATION			Magnification
 
-MSG_MAINWND_MENU_HELP=400					Help
-MSG_MAINWND_MENU_HELP_ABOUT						About
+MSG_MAINWND_MENU_HELP=300					Help
+MSG_MAINWND_MENU_HELP_ABOUT					About
 
 MSG_ABOUTWND_TITLE=1000						About BZoom
-MSG_ABOUTWND_TEXT								BZoom V1.0\n\nA simple pixel zoomer for AtheOS.\nBased on AZoom by Chir.\nBZoom is released under the\nGNU GPL
-MSG_ABOUTWND_OK									Ok
+MSG_ABOUTWND_TEXT							BZoom V1.0\n\nA simple pixel zoomer for AtheOS.\nBased on AZoom by Chir.\nBZoom is released under the\nGNU GPL
+MSG_ABOUTWND_OK								Ok
+

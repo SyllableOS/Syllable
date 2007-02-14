@@ -1,14 +1,14 @@
 //
-// Preferences/Desktop String Catalog
+//	Preferences/Desktop String Catalog
 //
-// Translated by: Ruud Kuin
+//	Translated by: Ruud Kuin
 //
 
 MSG_MAINWND_TITLE=0							Bureaublad
 
-MSG_MAINWND_BACKGGROUND=100					Achtergrond
-MSG_MAINWND_BACKGGROUND_IMAGE				Beeld
-MSG_MAINWND_BACKGGROUND_NONE				Geen
+MSG_MAINWND_BACKGROUND=100					Achtergrond
+MSG_MAINWND_BACKGROUND_IMAGE				Beeld
+MSG_MAINWND_BACKGROUND_NONE					Geen
 
 MSG_MAINWND_WINDOWS_TEXT=200				Vensters
 MSG_MAINWND_WINDOWS_TEXT_POPUP				Geselecteerd venster openen
@@ -18,3 +18,4 @@ MSG_MAINWND_WINDOWS_TEXT_SHADOWTEXT			Toon ikoontekst met schaduw
 MSG_MAINWND_BUTTON_APPLY=300				Toepassen
 MSG_MAINWND_BUTTON_UNDO						Herstel
 MSG_MAINWND_BUTTON_DEFAULT					Standaard
+

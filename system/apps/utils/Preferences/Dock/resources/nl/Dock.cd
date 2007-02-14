@@ -1,7 +1,7 @@
 //
-// Preferences/Dock String Catalog
+//	Preferences/Dock String Catalog
 //
-// Translated by: Ruud Kuin
+//	Translated by: Ruud Kuin
 //
 
 MSG_MAINWND_TITLE=0								Werkbalk
@@ -24,3 +24,4 @@ MSG_MAINWND_PLUGINS_STATE_ENABLED_NO			Nee
 MSG_MAINWND_BUTTON_APPLY=300					Toepassen
 MSG_MAINWND_BUTTON_UNDO							Herstel
 MSG_MAINWND_BUTTON_DEFAULT						Standaard
+

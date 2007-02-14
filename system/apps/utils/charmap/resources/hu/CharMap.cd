@@ -1,23 +1,24 @@
 //
-// CharMap String Catalog
+//	CharMap String Catalog
 //
-// Translated by: Dávid Horváth
+//	Translated by: Dávid Horváth
 //
 
 MSG_MAINWND_TITLE=0								Karaktertábla
 
 MSG_MAINWND_MENU_FILE=100						Fájl
-MSG_MAINWND_MENU_FILE_CHOOSEFONT					Betükészlet...
-MSG_MAINWND_MENU_FILE_EXIT							Kilépés
+MSG_MAINWND_MENU_FILE_CHOOSEFONT				Betükészlet...
+MSG_MAINWND_MENU_FILE_EXIT						Kilépés
 
 MSG_MAINWND_MENU_HELP=200						Súgó
-MSG_MAINWND_MENU_HELP_HELP							Segítség
-MSG_MAINWND_MENU_HELP_ABOUT							Névjegy
+MSG_MAINWND_MENU_HELP_HELP						Segítség
+MSG_MAINWND_MENU_HELP_ABOUT						Névjegy
 
 MSG_HELPWND_TITLE=1000							Karaktertábla
-MSG_HELPWND_TEXT									Kattints egy karakterre,\nmajd ezután mentsd el a vágólapra.
-MSG_HELPWND_OK										Ok
+MSG_HELPWND_TEXT								Kattints egy karakterre,\nmajd ezután mentsd el a vágólapra.
+MSG_HELPWND_OK									Ok
 
 MSG_ABOUTWND_TITLE=2000							Karaktertábla
-MSG_ABOUTWND_TEXT									CharMap V1.1\nKaraktertábla Syllable operációs rendszerre.
-MSG_ABOUTWND_OK										Ok
+MSG_ABOUTWND_TEXT								CharMap V1.1\nKaraktertábla Syllable operációs rendszerre.
+MSG_ABOUTWND_OK									Ok
+

@@ -1,25 +1,25 @@
 //
-// Xpdf string catalog
+//	Xpdf String Catalog
 //
-// Translated by: Maximo Pech Jaramillo <makzpj@gmail.com>
+//	Translated by: Maximo Pech Jaramillo
 //
 
-MSG_MAINWND_TITLE=100						Xpdf
+MSG_MAINWND_TITLE=0							Xpdf
 
-MSG_MAINWND_MENU_APPLICATION=200			Aplicación
+MSG_MAINWND_MENU_APPLICATION=100			Aplicación
 MSG_MAINWND_MENU_APPLICATION_ABOUT			Acerca de...
 MSG_MAINWND_MENU_APPLICATION_QUIT			Salir
 
-MSG_MAINWND_MENU_FILE=300					Archivo
+MSG_MAINWND_MENU_FILE=200					Archivo
 MSG_MAINWND_MENU_FILE_OPEN					Abrir...
 
-MSG_MAINWND_MENU_PAGE=400					Página
+MSG_MAINWND_MENU_PAGE=300					Página
 MSG_MAINWND_MENU_PAGE_PREV					Anterior
 MSG_MAINWND_MENU_PAGE_NEXT					Siguiente
 MSG_MAINWND_MENU_ZOOM_PAGE					Ajustar a página
 MSG_MAINWND_MENU_ZOOM_WIDTH					Ajustar al ancho
 
-MSG_MAINWND_MENU_EDIT=500					Editar
+MSG_MAINWND_MENU_EDIT=400					Editar
 MSG_MAINWND_MENU_EDIT_COPY					Copiar
 MSG_MAINWND_MENU_EDIT_FIND					Buscar
 
@@ -28,5 +28,5 @@ MSG_STATUS_PAGE_OF							de
 
 MSG_ERRWND_CANTOPEN=2000					Ocurrió un error al abrir el archivo
 
-MSG_MIMETYPE_TEXT_XPDF=10000					Documento PDF
+MSG_MIMETYPE_TEXT_XPDF=10000				Documento PDF
 

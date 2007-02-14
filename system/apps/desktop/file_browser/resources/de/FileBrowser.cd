@@ -1,14 +1,14 @@
 //
-// FileBrowser String Catalog
+//	FileBrowser String Catalog
 //
-// Translated by: nebu/Jan Niemeyer
+//	Translated by: nebu/Jan Niemeyer
 //
 
-MSG_MAINWND_TITLE=0			FileBrowser
+MSG_MAINWND_TITLE=0				FileBrowser
 
-MSG_MENU_VIEW=100			Ansicht
-MSG_MENU_VIEW_ICONS			Symbole
-MSG_MENU_VIEW_LIST			Liste
-MSG_MENU_VIEW_DETAILS		Details
-MSG_MENU_VIEW_SAVE			Speichern
+MSG_MENU_VIEW=100				Ansicht
+MSG_MENU_VIEW_ICONS				Symbole
+MSG_MENU_VIEW_LIST				Liste
+MSG_MENU_VIEW_DETAILS			Details
+MSG_MENU_VIEW_SAVE				Speichern
 

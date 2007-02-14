@@ -1,8 +1,7 @@
 //
-// DiskManager String Catalog
+//	DiskManager String Catalog
 //
-// Translated by: Flemming H. Sørensen (BurningShadow)
-// Korrekturlæsning og Rettelser: Jakob Wolffhechel
+//	Translated by: Flemming H. Sørensen (and Jakob Wolffhechel)
 //
 
 MSG_MAINWND_TITLE=0							Disk Manager
@@ -13,7 +12,7 @@ MSG_MAINWND_MENU_PROGRAM_EXIT				Afslut
 MSG_MAINWND_LIST_DEVICE=200					Drev
 MSG_MAINWND_LIST_PARTITIONS					Disk-afsnit
 MSG_MAINWND_LIST_SIZE						Størrelse
-MSG_MAINWND_LIST_MB							%.2fMB
+MSG_MAINWND_LIST_MB							%.2fMb
 
 MSG_MAINWND_BUTONS_QUIT=300					Afslut
 MSG_MAINWND_BUTONS_PARTITION				Inddel Drev
@@ -21,15 +20,15 @@ MSG_MAINWND_BUTONS_PARTITION				Inddel Drev
 MSG_PARTWND_TITLE=500						Drev-inddeling
 
 MSG_PARTWND_DISKPARAM=600					Drev-information:
-MSG_PARTWND_DISKPARAM_DISKSIZE				Drev-størrelse: %.2fMB
-MSG_PARTWND_DISKPARAM_EXTSIZE				Størrelse på udvidet disk-afsnit %.2fMB
+MSG_PARTWND_DISKPARAM_DISKSIZE				Drev-størrelse: %.2fMb
+MSG_PARTWND_DISKPARAM_EXTSIZE				Størrelse på udvidet disk-afsnit %.2fMb
 MSG_PARTWND_DISKPARAM_UNITSIZE				Enheds-størrelse: %ld sektor(er) á %ld byte (%ld byte)
 MSG_PARTWND_DISKPARAM_UNUSESSPACE			Ubrugt plads:
 
 MSG_PARTWND_PARTINFO_UNUSED=700				Ubrugt
 MSG_PARTWND_PARTINFO_UNKNOWN				*UKENDT*
-MSG_PARTWND_PARTINFO_PARTSIZEZERO			0.0MB
-MSG_PARTWND_PARTINFO_PARTSIZE				%.2fMB
+MSG_PARTWND_PARTINFO_PARTSIZEZERO			0.0Mb
+MSG_PARTWND_PARTINFO_PARTSIZE				%.2fMb
 
 MSG_PARTWND_BUTTONS_CANCEL=800				Annuller
 MSG_PARTWND_BUTTONS_OK						Ok

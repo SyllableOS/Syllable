@@ -1,23 +1,22 @@
 //
-// Media Player string catalog
+//	MediaPlayer String Catalog
 //
-// Translated by: Edgar Domingo de Albuquerque (contato@edgar.pro.br)
-// Brazilian Portuguese pt_BR @ 29-Jul-2006 Sorocaba/SP - Brasil
+//	Translated by: Edgar Domingo de Albuquerque
 //
 
-MSG_MAINWND_TITLE=100						Reprodutor de Mídia
+MSG_MAINWND_TITLE=0							Reprodutor de Mídia
 
-MSG_MAINWND_MENU_APPLICATION=200			Applicação
+MSG_MAINWND_MENU_APPLICATION=100			Applicação
 MSG_MAINWND_MENU_APPLICATION_ABOUT			Sobre...
 MSG_MAINWND_MENU_APPLICATION_QUIT			Sair
 
-MSG_MAINWND_MENU_FILE=300					Arquivo
+MSG_MAINWND_MENU_FILE=200					Arquivo
 MSG_MAINWND_MENU_FILE_OPEN					Abrir...
 MSG_MAINWND_MENU_FILE_OPEN_INPUT			Abrir Entrada...
 MSG_MAINWND_MENU_FILE_INFO					Info...
 MSG_MAINWND_MENU_FILE_FULLSCREEN			Tela Cheia
 
-MSG_MAINWND_MENU_TRACKS=400					Faixas
+MSG_MAINWND_MENU_TRACKS=300					Faixas
 
 MSG_ABOUTWND_TITLE=1000						Sobre o Reprodutor de Mídia
 MSG_ABOUTWND_TEXT							\nA Media Player\nCopyright 2003 Arno Klenke\n\nThe Syllable Media Player lançado sob LGPL.
@@ -34,3 +33,4 @@ MSG_INFOWND_CHANNELS						channels
 MSG_INFOWND_OK								OK
 
 MSG_TRACK_MENU_ITEM=2000					Faixa
+

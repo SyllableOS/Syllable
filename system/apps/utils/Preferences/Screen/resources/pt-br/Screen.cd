@@ -1,8 +1,7 @@
 //
-// Preferences/Screen String Catalog
+//	Preferences/Screen String Catalog
 //
-// Translated by: Edgar Domingo de Albuquerque (contato@edgar.pro.br)
-// Brazilian Portuguese pt_BR @ 29-Jul-2006 Sorocaba/SP - Brasil
+//	Translated by: Edgar Domingo de Albuquerque
 //
 
 MSG_MAINWND_TITLE=0							Tela
@@ -12,7 +11,6 @@ MSG_MAINWND_DISPLAY_APPLYTO					Aplicar ao
 MSG_MAINWND_DISPLAY_RESOLUTION				Resolução
 MSG_MAINWND_DISPLAY_COLORDEPTH				Profundidade de Cor
 MSG_MAINWND_DISPLAY_REFRESHRATE				Taxa de Refresh
-
 
 MSG_MAINWND_DROPDOWN_APPLY_THIS=200			Esta área de trabalho
 MSG_MAINWND_DROPDOWN_APPLY_ALL				Todas as áreas de trabalho
@@ -32,3 +30,4 @@ MSG_ALERTWND_CONFIRMRES=2000				Confirmar resolução
 MSG_ALERTWND_CONFIRMRES_TEXT				A nova resolução está funcionando perfeitamente?\n\nCaso não esteja, aguarde que altomaticamente ela\nretornará à resolução antiga.
 MSG_ALERTWND_CONFIRMRES_YES					Sim
 MSG_ALERTWND_CONFIRMRES_NO					Não
+

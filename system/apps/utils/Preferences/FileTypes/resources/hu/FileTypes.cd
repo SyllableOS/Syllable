@@ -1,7 +1,7 @@
 //
-// Preferences/FileTypes String Catalog
+//	Preferences/FileTypes String Catalog
 //
-// Translated by: Dávid Horváth
+//	Translated by: Dávid Horváth
 //
 
 MSG_MAINWND_TITLE=0							Fájltipusok
@@ -30,3 +30,4 @@ MSG_NEWTYPEWND_MIMETYPE						Jelölt tipus
 MSG_NEWTYPEWND_OK							Ok
 
 MSG_MIMETYPE_TEXT_PLAIN=10000				Egyszerü szöveg
+

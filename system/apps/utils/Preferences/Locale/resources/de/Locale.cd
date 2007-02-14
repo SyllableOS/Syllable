@@ -1,21 +1,22 @@
 //
-// Preferences/Locale string catalog
+//	Preferences/Locale string catalog
 //
-// Translated by: Uwe Olszewski
+//	Translated by: Uwe Olszewski
 //
 
-STR_MAIN_TITLE=1000						Lokalisierung
-STR_MAIN_APPLY							_Übernehmen
-STR_MAIN_REVERT							_Zurücksetzen
-STR_MAIN_DEFAULT						_Standard
+MSG_MAIN_TITLE=0						Lokalisierung
 
-STR_MAIN_LANGUAGE_TAB=1100				Sprache
-STR_MAIN_LANGUAGE_ACTIVATE				Aktiviere Sprache >
-STR_MAIN_LANGUAGE_DEACTIVATE			< Deaktiviere Sprache
-STR_MAIN_LANGUAGE_AVAILABLE				Ünterstützte Sprachen
-STR_MAIN_LANGUAGE_USED					Aktive Sprachen
+MSG_MAIN_LANGUAGE_TAB=100				Sprache
+MSG_MAIN_LANGUAGE_ACTIVATE				Aktiviere Sprache    >
+MSG_MAIN_LANGUAGE_DEACTIVATE			<  Deaktiviere Sprache
+MSG_MAIN_LANGUAGE_AVAILABLE				Ünterstützte Sprachen
+MSG_MAIN_LANGUAGE_USED					Aktive Sprachen
 
-STR_MAIN_COUNTRY_TAB=1200				Land
+MSG_MAIN_COUNTRY_TAB=200				Land
 
-STR_ERROR_SAVE=2000						Fehler beim speichern der Einstellungen.
+MSG_MAIN_APPLY=1000						_Übernehmen
+MSG_MAIN_REVERT							_Zurücksetzen
+MSG_MAIN_DEFAULT						_Standard
+
+MSG_ERROR_SAVE=1100						Fehler beim speichern der Einstellungen.
 

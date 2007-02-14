@@ -1,19 +1,19 @@
 //
-// Launch String Catalog
+//	Launch String Catalog
 //
-// Translated by: Edgar Domingo de Albuquerque (contato@edgar.pro.br)
-// Brazilian Portuguese pt_BR @ 29-Jul-2006 Sorocaba/SP - Brasil
+//	Translated by: Edgar Domingo de Albuquerque
 //
 
-MSG_ERROR_LAUNCHING_ONE		O Arquivo '
-MSG_ERROR_LAUNCHING_TWO		' está associado a algum tipo.\nPor favor, verifique com o time de desenvolvimento do Syllable\npor maiores instruções.
+MSG_WINDOW_TITLE=0					Executar
 
-MSG_BUTTON_LAUNCH			_Executar
-MSG_BUTTON_BROWSE			_Navegar
-MSG_BUTTON_CANCEL			_Cancelar
-MSG_ALERT_BUTTON			_OK
+MSG_STRING_LAUNCH=100				Executar:
+MSG_STRING_DESC						Digite um site da Web, arquivo, diretório ou aplicativo aqui.
 
-MSG_STRING_LAUNCH			Executar:
-MSG_STRING_DESC				Digite um site da Web, arquivo, diretório ou aplicativo aqui.
+MSG_ERROR_LAUNCHING_ONE=200			O Arquivo '
+MSG_ERROR_LAUNCHING_TWO				' está associado a algum tipo.\nPor favor, verifique com o time de desenvolvimento do Syllable\npor maiores instruções.
 
-MSG_WINDOW_TITLE			Executar
+MSG_BUTTON_LAUNCH=300				_Executar
+MSG_BUTTON_BROWSE					_Navegar
+MSG_BUTTON_CANCEL					_Cancelar
+MSG_ALERT_BUTTON					_OK
+

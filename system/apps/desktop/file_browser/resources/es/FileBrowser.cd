@@ -1,14 +1,14 @@
 //
-// FileBrowser String Catalog
+//	FileBrowser String Catalog
 //
-// Translated by: Maximo Pech Jaramillo <makzpj@gmail.com>
+//	Translated by: Maximo Pech Jaramillo
 //
 
-MSG_MAINWND_TITLE=0			Navegador de archivos
+MSG_MAINWND_TITLE=0				Navegador de archivos
 
-MSG_MENU_VIEW=100			Ver
-MSG_MENU_VIEW_ICONS			Íconos
-MSG_MENU_VIEW_LIST			Lista
-MSG_MENU_VIEW_DETAILS		Detalles
-MSG_MENU_VIEW_SAVE			Guardar
+MSG_MENU_VIEW=100				Ver
+MSG_MENU_VIEW_ICONS				Íconos
+MSG_MENU_VIEW_LIST				Lista
+MSG_MENU_VIEW_DETAILS			Detalles
+MSG_MENU_VIEW_SAVE				Guardar
 

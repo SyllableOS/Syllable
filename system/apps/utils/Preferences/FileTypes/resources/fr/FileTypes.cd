@@ -1,7 +1,7 @@
 //
-// Preferences/FileTypes String Catalog
+//	Preferences/FileTypes String Catalog
 //
-// Translated by: Christos KYRATZIS
+//	Translated by: Christos KYRATZIS
 //
 
 MSG_MAINWND_TITLE=0							Types de fichiers
@@ -30,3 +30,4 @@ MSG_NEWTYPEWND_MIMETYPE						Type MIME
 MSG_NEWTYPEWND_OK							Ok
 
 MSG_MIMETYPE_TEXT_PLAIN=10000				Texte plein
+

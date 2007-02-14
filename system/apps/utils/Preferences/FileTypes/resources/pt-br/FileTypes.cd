@@ -1,8 +1,7 @@
 //
-// Preferences/FileTypes String Catalog
+//	Preferences/FileTypes String Catalog
 //
-// Translated by: Edgar Domingo de Albuquerque (contato@edgar.pro.br)
-// Brazilian Portuguese pt_BR @ 29-Jul-2006 Sorocaba/SP - Brasil
+//	Translated by: Edgar Domingo de Albuquerque
 //
 
 MSG_MAINWND_TITLE=0							Tipos de Arquivos
@@ -31,3 +30,4 @@ MSG_NEWTYPEWND_MIMETYPE						Mimetype
 MSG_NEWTYPEWND_OK							Ok
 
 MSG_MIMETYPE_TEXT_PLAIN=10000				Texto simples
+

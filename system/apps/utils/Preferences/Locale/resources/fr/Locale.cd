@@ -1,20 +1,22 @@
 //
-// Locale string catalog
+//	Preferences/Locale string catalog
 //
-// Translated by: Christos KYRATZIS
+//	Translated by: Christos KYRATZIS
 //
 
-STR_MAIN_TITLE=1000						Paramètres locaux
-STR_MAIN_APPLY							_Appliquer
-STR_MAIN_REVERT							_Revenir au précédent
-STR_MAIN_DEFAULT						_Defaut
+MSG_MAIN_TITLE=0						Paramètres locaux
 
-STR_MAIN_LANGUAGE_TAB=1100				Langage
-STR_MAIN_LANGUAGE_ACTIVATE				Activer Langage >
-STR_MAIN_LANGUAGE_DEACTIVATE			< Deactivate Langage
-STR_MAIN_LANGUAGE_AVAILABLE				Langages supportés
-STR_MAIN_LANGUAGE_USED					Langages actifs
+MSG_MAIN_LANGUAGE_TAB=100				Langage
+MSG_MAIN_LANGUAGE_ACTIVATE				Activer Langage      >
+MSG_MAIN_LANGUAGE_DEACTIVATE			<   Deactivate Langage
+MSG_MAIN_LANGUAGE_AVAILABLE				Langages supportés
+MSG_MAIN_LANGUAGE_USED					Langages actifs
 
-STR_MAIN_COUNTRY_TAB=1200				Pays
+MSG_MAIN_COUNTRY_TAB=200				Pays
 
-STR_ERROR_SAVE=2000						Erreur lors de la tentative de sauvegarde des préférences locales.
+MSG_MAIN_APPLY=1000						_Appliquer
+MSG_MAIN_REVERT							_Revenir au précédent
+MSG_MAIN_DEFAULT						_Defaut
+
+MSG_ERROR_SAVE=1100						Erreur lors de la tentative de sauvegarde des préférences locales.
+

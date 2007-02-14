@@ -2,7 +2,7 @@ COPTS = -c
 OBJS = main.o mainwindow.o
 EXE = Media
 
-CATALOGS = da de es fr hu nl pt-br sv
+CATALOGS = da de es fr hu nl pt-br ru sv
 
 $(EXE): catalogs $(OBJS)
 	$(CXX) $(OBJS) -lsyllable -lmedia -o $(EXE)

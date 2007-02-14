@@ -1,9 +1,10 @@
 //
-// sIDE string catalog
+//	sIDE String Catalog
+//
+//	Translated by: Arno Klenke
 //
 
-MSG_PWND_TITLE=100						sIDE
-
+MSG_PWND_TITLE=0						sIDE
 
 MSG_PWND_MENU_APPLICATION=200			Anwendung
 MSG_PWND_MENU_APPLICATION_ABOUT			Info...
@@ -27,10 +28,10 @@ MSG_PWND_MENU_BUILD_MAKE				Erstellen
 MSG_PWND_MENU_BUILD_RUN					Ausführen
 MSG_PWND_MENU_BUILD_EXPORT_MAKEFILE		Makefile exportieren
 
-MSG_PWND_ABOUT_TITLE					Über sIDE
+MSG_PWND_ABOUT_TITLE=240				Über sIDE
 MSG_PWND_ABOUT							Die Syllable IDE\nVon Arno Klenke, 2001-2006\nDer \"Neues Project\" Dialog wurde von Rick Caudill erstellt\n\nsIDE is released under the Gnu Public Licencse (GPL)\nPlease see the file COPYING, distributed with sIDE, for\nmore information\n
 
-MSG_PWND_LIST_FILE						Datei
+MSG_PWND_LIST_FILE=250					Datei
 MSG_PWND_LIST_TYPE						Typ
 
 MSG_PWND_NO_GROUPS=260					Keine Gruppen vorhanden\n
@@ -87,10 +88,4 @@ MSG_ADDLIB_TITLE=900					Bibliothek hinzufügen
 MSG_ADDLIB_SELECT						Auswählen
 MSG_ADDLIB_CUSTOM						Andere
 MSG_ADDLIB_GROUP						Gruppe
-
-
-
-
-
-
 

@@ -1,0 +1,22 @@
+//
+//	Preferences/Font String Catalog
+//
+//	Translated by: Ilya Krol
+//
+
+MSG_MAINWND_TITLE=0								Шрифт
+
+MSG_MAINWND_FONTSELECTION=100					Выбор шрифта
+MSG_MAINWND_FONTSELECTION_NORMAL				Обычный
+MSG_MAINWND_FONTSELECTION_BOLD					Жирный
+MSG_MAINWND_FONTSELECTION_FIXED					Моноширинный (вроде ;))
+MSG_MAINWND_FONTSELECTION_WINDOW				Заголовки окон
+MSG_MAINWND_FONTSELECTION_TOOLWIN				Окно инструментов
+MSG_MAINWND_FONTSELECTION_TEXT					A_nti-Aliasing (Сглаживание краёв символов)
+
+MSG_MAINWND_EXAMPLE=200							Образец выбранного шрифта
+
+MSG_MAINWND_BUTTON_APPLY=300					_Применить
+MSG_MAINWND_BUTTON_REVERT						_Обратить
+MSG_MAINWND_BUTTON_DEFAULT						_По умолчанию
+

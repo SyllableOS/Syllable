@@ -1,24 +1,25 @@
 //
-// Xpdf string catalog
-// Polish translation by And3mD (updates - mail to and3md@interia.pl)
+//	Xpdf String Catalog
+//
+//	Translated by: And3mD
+//
 
-MSG_MAINWND_TITLE=100						Xpdf
+MSG_MAINWND_TITLE=0							Xpdf
 
-
-MSG_MAINWND_MENU_APPLICATION=200			Aplikacja
+MSG_MAINWND_MENU_APPLICATION=100			Aplikacja
 MSG_MAINWND_MENU_APPLICATION_ABOUT			O programie...
 MSG_MAINWND_MENU_APPLICATION_QUIT			Koniec
 
-MSG_MAINWND_MENU_FILE=300					Plik
+MSG_MAINWND_MENU_FILE=200					Plik
 MSG_MAINWND_MENU_FILE_OPEN					Otwórz...
 
-MSG_MAINWND_MENU_PAGE=400					Strona
+MSG_MAINWND_MENU_PAGE=300					Strona
 MSG_MAINWND_MENU_PAGE_PREV					Poprzednia
 MSG_MAINWND_MENU_PAGE_NEXT					Następna
 MSG_MAINWND_MENU_ZOOM_PAGE					Dopasuj stronę
 MSG_MAINWND_MENU_ZOOM_WIDTH					Dopasuj szerokość
 
-MSG_MAINWND_MENU_EDIT=500					Edycja
+MSG_MAINWND_MENU_EDIT=400					Edycja
 MSG_MAINWND_MENU_EDIT_COPY					Kopiuj
 MSG_MAINWND_MENU_EDIT_FIND					Znajdź
 

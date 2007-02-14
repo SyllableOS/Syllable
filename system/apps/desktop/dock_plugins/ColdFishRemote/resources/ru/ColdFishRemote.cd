@@ -1,10 +1,10 @@
 //
-// ColdFishRemote String Catalog
+//	ColdFishRemote String Catalog
 //
-// Translated by: Ilya Krol
+//	Translated by: Ilya Krol
 //
 
-MSG_MENU_ABOUT	О программе
-MSG_MENU_ADD 	Добавить файл
-MSG_UNKNOWN		Неизвестный
+MSG_MENU_ABOUT=100			О программе
+MSG_MENU_ADD 				Добавить файл
+MSG_UNKNOWN					Неизвестный
 

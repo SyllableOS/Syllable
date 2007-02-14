@@ -1,19 +1,22 @@
 //
-// Locale string catalog
-// Polish translation by And3mD (updates - mail to and3md@interia.pl)
+//	Preferences/Locale string catalog
+//
+//	Translated by: And3mD
+//
 
-STR_MAIN_TITLE=1000						Locale
-STR_MAIN_APPLY							Z_astosuj
-STR_MAIN_REVERT							Cofnij
-STR_MAIN_DEFAULT							_Domyślny
+MSG_MAIN_TITLE=0						Locale
 
-STR_MAIN_LANGUAGE_TAB=1100					Język
-STR_MAIN_LANGUAGE_ACTIVATE					Aktywuj język >
-STR_MAIN_LANGUAGE_DEACTIVATE				< Deaktywuj język 
-STR_MAIN_LANGUAGE_AVAILABLE					Obsługiwane języki
-STR_MAIN_LANGUAGE_USED						Aktywne języki
+MSG_MAIN_LANGUAGE_TAB=100				Język
+MSG_MAIN_LANGUAGE_ACTIVATE				Aktywuj język        >
+MSG_MAIN_LANGUAGE_DEACTIVATE			<      Deaktywuj język 
+MSG_MAIN_LANGUAGE_AVAILABLE				Obsługiwane języki
+MSG_MAIN_LANGUAGE_USED					Aktywne języki
 
-STR_MAIN_COUNTRY_TAB=1200					Kraj
+MSG_MAIN_COUNTRY_TAB=200				Kraj
 
-STR_ERROR_SAVE=2000						Podczas próby zapisu ustawień lokalnych wystąpił błąd.
+MSG_MAIN_APPLY=1000						Z_astosuj
+MSG_MAIN_REVERT							Cofnij
+MSG_MAIN_DEFAULT						_Domyślny
+
+MSG_ERROR_SAVE=1100						Podczas próby zapisu ustawień lokalnych wystąpił błąd.
 

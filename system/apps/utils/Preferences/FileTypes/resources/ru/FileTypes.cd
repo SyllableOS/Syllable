@@ -1,0 +1,33 @@
+//
+//	Preferences/FileTypes String Catalog
+//
+//	Translated by: Ilya Krol
+//
+
+MSG_MAINWND_TITLE=0							Типы файлов
+
+MSG_MAINWND_GENERAL=100						Основные свойства
+MSG_MAINWND_GENERAL_MIMETYPE				Тип файла:
+MSG_MAINWND_GENERAL_NAME					Имя:
+
+MSG_MAINWND_EXTENTIONS=200					Расширения
+MSG_MAINWND_EXTENTIONS_EXTENTIONS			Расширения
+MSG_MAINWND_EXTENTIONS_BUTTON_ADD			Добавить
+MSG_MAINWND_EXTENTIONS_BUTTON_REMOVE		Удалить
+
+MSG_MAINWND_HANDLERS=300					Открывающие программы
+MSG_MAINWND_HANDLERS_HANDLER				Программа по умолчанию
+MSG_MAINWND_HANDLERS_BUTTON_ADD				Добавить программу...
+MSG_MAINWND_HANDLERS_BUTTON_REMOVE			Удалить программу из списка
+
+MSG_MAINWND_NEWTYPE=400						Новый тип
+MSG_MAINWND_BUTTON_APPLY					Применить
+MSG_MAINWND_BUTTON_ADDTYPE					Добавить тип...
+MSG_MAINWND_BUTTON_REMOVETYPE				Удалить тип
+
+MSG_NEWTYPEWND_TITLE=1000					Новый тип файла
+MSG_NEWTYPEWND_MIMETYPE						Тип файла
+MSG_NEWTYPEWND_OK							ОК
+
+MSG_MIMETYPE_TEXT_PLAIN=10000				Неформатированный текст
+

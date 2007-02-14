@@ -1,18 +1,22 @@
 //
-// Locale string catalog
+//	Preferences/Locale string catalog
+//
+//	Translated by: Not Translated
 //
 
-STR_MAIN_TITLE=1000						Locale
-STR_MAIN_APPLY							_Apply
-STR_MAIN_REVERT							_Revert
-STR_MAIN_DEFAULT						_Default
+MSG_MAIN_TITLE=0						Locale
 
-STR_MAIN_LANGUAGE_TAB=1100				Language
-STR_MAIN_LANGUAGE_ACTIVATE				Activate Language >
-STR_MAIN_LANGUAGE_DEACTIVATE			< Deactivate Language
-STR_MAIN_LANGUAGE_AVAILABLE				Supported Languages
-STR_MAIN_LANGUAGE_USED					Active Languages
+MSG_MAIN_LANGUAGE_TAB=100				Language
+MSG_MAIN_LANGUAGE_ACTIVATE				Activate Language    >
+MSG_MAIN_LANGUAGE_DEACTIVATE			<  Deactivate Language
+MSG_MAIN_LANGUAGE_AVAILABLE				Supported Languages
+MSG_MAIN_LANGUAGE_USED					Active Languages
 
-STR_MAIN_COUNTRY_TAB=1200				Country
+MSG_MAIN_COUNTRY_TAB=200				Country
 
-STR_ERROR_SAVE=2000						Error while trying to save locale preferences.
+MSG_MAIN_APPLY=1000						_Apply
+MSG_MAIN_REVERT							_Revert
+MSG_MAIN_DEFAULT						_Default
+
+MSG_ERROR_SAVE=1100						Error while trying to save locale preferences.
+

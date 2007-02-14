@@ -1,10 +1,10 @@
 //
-// AEdit string catalog
+//	AEdit String Catalog
 //
-// Translated by: Ilya Krol
+//	Translated by: Ilya Krol
 //
 
-MSG_APPWND_TITLE							AEdit
+MSG_APPWND_TITLE=0							AEdit
 MSG_APPWND_TITLE_NEW_FILE					Новый документ
 
 MSG_MENU_APPLICATION=100					Приложение

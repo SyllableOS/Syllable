@@ -1,8 +1,7 @@
 //
-// Preferences/UsersAndGroups String Catalog
+//	Preferences/UsersAndGroups String Catalog
 //
-// Translated by: Edgar Domingo de Albuquerque (contato@edgar.pro.br)
-// Brazilian Portuguese pt_BR @ 29-Jul-2006 Sorocaba/SP - Brasil
+//	Translated by: Edgar Domingo de Albuquerque
 //
 
 MSG_MAINWND_TITLE=0							Usuários & Grupos
@@ -67,3 +66,4 @@ MSG_ALERTWND_GRPWRTERR_OK					Fechar
 MSG_ALERTWND_PASSDONTMATCH=20000			Senhas não conferem
 MSG_ALERTWND_PASSDONTMATCH_TEXT				As senhas que você digitou \nnão conferem. Por favor, verifique e tente novamente.
 MSG_ALERTWND_PASSDONTMATCH_OK				Ok
+

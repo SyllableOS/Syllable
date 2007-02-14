@@ -1,8 +1,7 @@
 //
-// Preferences/Network String Catalog
+//	Preferences/Network String Catalog
 //
-// Translated by: Edgar Domingo de Albuquerque (contato@edgar.pro.br)
-// Brazilian Portuguese pt_BR @ 29-Jul-2006 Sorocaba/SP - Brasil
+//	Translated by: Edgar Domingo de Albuquerque
 //
 
 MSG_MAINWND_TITLE=0								Rede
@@ -58,3 +57,4 @@ MSG_ALERTWND_SUBNET_OK							_Ok
 MSG_ALERTWND_GATEWAY=6000						Invalid - Rede
 MSG_ALERTWND_GATEWAY_TEXT						O valor digitado para o Roteador padrão é inválido
 MSG_ALERTWND_GATEWAY_OK							_Ok
+

@@ -1,8 +1,10 @@
 //
-// ColdFishRemote String Catalog
+//	ColdFishRemote String Catalog
+//
+//	Translated by: Henrik Isaksson
 //
 
-MSG_MENU_ABOUT			Om...
+MSG_MENU_ABOUT=100			Om...
 MSG_MENU_ADD				Lägg till
-MSG_UNKNOWN				Okänd
+MSG_UNKNOWN					Okänd
 

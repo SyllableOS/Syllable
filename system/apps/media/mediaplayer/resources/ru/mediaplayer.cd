@@ -1,22 +1,22 @@
 //
-// Media Player string catalog
+//	MediaPlayer String Catalog
 //
-// Translated by: Ilya Krol
+//	Translated by: Ilya Krol
 //
 
-MSG_MAINWND_TITLE=100						Медиа Проигрыватель
+MSG_MAINWND_TITLE=0							Медиа Проигрыватель
 
-MSG_MAINWND_MENU_APPLICATION=200			Приложение
+MSG_MAINWND_MENU_APPLICATION=100			Приложение
 MSG_MAINWND_MENU_APPLICATION_ABOUT			О программе...
 MSG_MAINWND_MENU_APPLICATION_QUIT			Выход
 
-MSG_MAINWND_MENU_FILE=300					Файл
+MSG_MAINWND_MENU_FILE=200					Файл
 MSG_MAINWND_MENU_FILE_OPEN					Открыть...
 MSG_MAINWND_MENU_FILE_OPEN_INPUT			Открыть ввод...
 MSG_MAINWND_MENU_FILE_INFO					Информация...
 MSG_MAINWND_MENU_FILE_FULLSCREEN			Полноэкранный режим
 
-MSG_MAINWND_MENU_TRACKS=400					Треки
+MSG_MAINWND_MENU_TRACKS=300					Треки
 
 MSG_ABOUTWND_TITLE=1000						О Медиа Проигрывателе
 MSG_ABOUTWND_TEXT							\nA Media Player\nCopyright 2003 Arno Klenke\n\nThe Syllable Медиа Проигрыватель распространяется на условиях лицензии  LGPL.

@@ -1,10 +1,10 @@
 //
-// ColdFishRemote String Catalog
+//	ColdFishRemote String Catalog
 //
-// Translated by: Dávid Horváth
+//	Translated by: Dávid Horváth
 //
 
-MSG_MENU_ABOUT	Névjegy
-MSG_MENU_ADD 	Fájl hozzáadása
-MSG_UNKNOWN		Ismeretlen
+MSG_MENU_ABOUT=100			Névjegy
+MSG_MENU_ADD 				Fájl hozzáadása
+MSG_UNKNOWN					Ismeretlen
 

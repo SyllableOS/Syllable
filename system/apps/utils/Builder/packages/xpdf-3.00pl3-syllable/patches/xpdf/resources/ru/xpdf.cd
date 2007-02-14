@@ -1,25 +1,25 @@
 //
-// Xpdf string catalog
+//	Xpdf String Catalog
 //
-// Translated by: Ilya Krol
+//	Translated by: Ilya Krol
 //
 
-MSG_MAINWND_TITLE=100						Xpdf
+MSG_MAINWND_TITLE=0							Xpdf
 
-MSG_MAINWND_MENU_APPLICATION=200			Приложение
+MSG_MAINWND_MENU_APPLICATION=100			Приложение
 MSG_MAINWND_MENU_APPLICATION_ABOUT			О программе...
 MSG_MAINWND_MENU_APPLICATION_QUIT			Выход
 
-MSG_MAINWND_MENU_FILE=300					Файл
+MSG_MAINWND_MENU_FILE=200					Файл
 MSG_MAINWND_MENU_FILE_OPEN					Открыть...
 
-MSG_MAINWND_MENU_PAGE=400					Страница
+MSG_MAINWND_MENU_PAGE=300					Страница
 MSG_MAINWND_MENU_PAGE_PREV					Предыдущая
 MSG_MAINWND_MENU_PAGE_NEXT					Следующая
 MSG_MAINWND_MENU_ZOOM_PAGE					Вся страница
 MSG_MAINWND_MENU_ZOOM_WIDTH					В ширину страницы
 
-MSG_MAINWND_MENU_EDIT=500					Редактировать
+MSG_MAINWND_MENU_EDIT=400					Редактировать
 MSG_MAINWND_MENU_EDIT_COPY					Копировать
 MSG_MAINWND_MENU_EDIT_FIND					Найти
 

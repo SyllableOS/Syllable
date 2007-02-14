@@ -1,7 +1,7 @@
 //
-// Preferences/Screen String Catalog
+//	Preferences/Screen String Catalog
 //
-// Translated by: Christos KYRATZIS
+//	Translated by: Christos KYRATZIS
 //
 
 MSG_MAINWND_TITLE=0							Écran
@@ -11,7 +11,6 @@ MSG_MAINWND_DISPLAY_APPLYTO					Appliquer à
 MSG_MAINWND_DISPLAY_RESOLUTION				Résolution
 MSG_MAINWND_DISPLAY_COLORDEPTH				Profondeur de couleur
 MSG_MAINWND_DISPLAY_REFRESHRATE				Taux de rafraichissement
-
 
 MSG_MAINWND_DROPDOWN_APPLY_THIS=200			Cet espace de travail
 MSG_MAINWND_DROPDOWN_APPLY_ALL				Tous les espaces de travail

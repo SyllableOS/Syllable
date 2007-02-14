@@ -1,10 +1,10 @@
 //
-// AEdit string catalog
+//	AEdit String Catalog
 //
-// Translated by: Maximo Pech Jaramillo <makzpj@gmail.com>
+//	Translated by: Maximo Pech Jaramillo
 //
 
-MSG_APPWND_TITLE							AEdit
+MSG_APPWND_TITLE=0							AEdit
 MSG_APPWND_TITLE_NEW_FILE				    Archivo Nuevo
 
 MSG_MENU_APPLICATION=100					Aplicación

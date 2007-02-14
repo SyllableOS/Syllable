@@ -1,10 +1,10 @@
 //
-// ColdFishRemote String Catalog
+//	ColdFishRemote String Catalog
 //
-// Translated by: Uwe Olszewski
+//	Translated by: Uwe Olszewski
 //
 
-MSG_MENU_ABOUT	Über
-MSG_MENU_ADD 	Datei hinzufügen
-MSG_UNKNOWN		Unbekannt
+MSG_MENU_ABOUT=100			Über
+MSG_MENU_ADD			 	Datei hinzufügen
+MSG_UNKNOWN					Unbekannt
 

@@ -1,10 +1,10 @@
 //
-// AEdit string catalog
+//	AEdit String Catalog
 //
-// Translated by: Flemming Sørensen (BurningShadow)
+//	Translated by: Flemming Sørensen
 //
 
-MSG_APPWND_TITLE							AEdit
+MSG_APPWND_TITLE=0							AEdit
 MSG_APPWND_TITLE_NEW_FILE					Ny fil
 
 MSG_MENU_APPLICATION=100					Program

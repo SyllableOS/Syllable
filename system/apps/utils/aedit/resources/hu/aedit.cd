@@ -1,10 +1,10 @@
 //
-// AEdit string catalog
+//	AEdit String Catalog
 //
-// Translated by: Dávid Horváth
+//	Translated by: Dávid Horváth
 //
 
-MSG_APPWND_TITLE							AEdit
+MSG_APPWND_TITLE=0							AEdit
 MSG_APPWND_TITLE_NEW_FILE					Új dokumentum
 
 MSG_MENU_APPLICATION=100					Program

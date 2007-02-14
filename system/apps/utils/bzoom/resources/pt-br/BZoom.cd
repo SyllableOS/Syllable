@@ -1,21 +1,21 @@
 //
-// BZoom String Catalog
+//	BZoom String Catalog
 //
-// Translated by: Edgar Domingo de Albuquerque (contato@edgar.pro.br)
-// Brazilian Portuguese pt_BR @ 29-Jul-2006 Sorocaba/SP - Brasil
+//	Translated by: Edgar Domingo de Albuquerque
 //
 
-MSG_MAINWND_TITLE=100						BZoom
+MSG_MAINWND_TITLE=0							BZoom
 
-MSG_MAINWND_MENU_APP=200					Aplicativo
-MSG_MAINWND_MENU_APP_EXIT						Sair
+MSG_MAINWND_MENU_APP=100					Aplicativo
+MSG_MAINWND_MENU_APP_EXIT					Sair
 
-MSG_MAINWND_MENU_VIEW=300					Visualizar
-MSG_MAINWND_MENU_VIEW_MAGNIFICATION				Ampliação
+MSG_MAINWND_MENU_VIEW=200					Visualizar
+MSG_MAINWND_MENU_VIEW_MAGNIFICATION			Ampliação
 
-MSG_MAINWND_MENU_HELP=400					Ajuda
-MSG_MAINWND_MENU_HELP_ABOUT						Sobre
+MSG_MAINWND_MENU_HELP=300					Ajuda
+MSG_MAINWND_MENU_HELP_ABOUT					Sobre
 
 MSG_ABOUTWND_TITLE=1000						Sobre BZoom
-MSG_ABOUTWND_TEXT								BZoom V1.0\n\nA ampliador de pixels para o AtheOS.\nBaseado no AZoom de Chir.\nBZoom sob \nGNU GPL
-MSG_ABOUTWND_OK									Ok
+MSG_ABOUTWND_TEXT							BZoom V1.0\n\nA ampliador de pixels para o AtheOS.\nBaseado no AZoom de Chir.\nBZoom sob \nGNU GPL
+MSG_ABOUTWND_OK								Ok
+

@@ -1,6 +1,8 @@
 //
-// LibSyllable string catalog
-// Polish translation by And3mD (updates - mail to and3md@interia.pl)
+//	LibSyllable String Catalog
+//
+//	Translated by: And3mD
+//
 
 // FileRequester strings
 MSG_FILEREQUESTER_LOAD_BUTTON=1000						Otwórz
@@ -72,3 +74,4 @@ MSG_MOUNT_ERROR_CLOSE									Ok
 MSG_MOUNT_ERROR_CREATE_MOUNTPOINT						Nie można zamontować (utowrzyć punktu montowania dla urządzenia %s )
 MSG_MOUNT_ERROR_OTHER_ERROR								Nie można zamontować %s:\n%s
 MSG_MOUNT_ERROR_UNMOUNT									Nie można odmontować %s:\n%s
+

@@ -1,22 +1,22 @@
 //
-// Media Player string catalog
+//	MediaPlayer String Catalog
 //
-// Translated by: Dávid Horváth
+//	Translated by: Dávid Horváth
 //
 
-MSG_MAINWND_TITLE=100						Médialejátszó
+MSG_MAINWND_TITLE=0							Médialejátszó
 
-MSG_MAINWND_MENU_APPLICATION=200			Program
+MSG_MAINWND_MENU_APPLICATION=100			Program
 MSG_MAINWND_MENU_APPLICATION_ABOUT			Névjegy
 MSG_MAINWND_MENU_APPLICATION_QUIT			Kilépés
 
-MSG_MAINWND_MENU_FILE=300					Fájl
+MSG_MAINWND_MENU_FILE=200					Fájl
 MSG_MAINWND_MENU_FILE_OPEN					Megnyitás
 MSG_MAINWND_MENU_FILE_OPEN_INPUT			Bemenet megnyitása
 MSG_MAINWND_MENU_FILE_INFO					Info...
 MSG_MAINWND_MENU_FILE_FULLSCREEN			Teljes képernyö
 
-MSG_MAINWND_MENU_TRACKS=400					Számok
+MSG_MAINWND_MENU_TRACKS=300					Számok
 
 MSG_ABOUTWND_TITLE=1000						A Médialejátszó névjegye
 MSG_ABOUTWND_TEXT							\nMedia Player\nCopyright 2003 Arno Klenke\n\nA Syllable Media Player-t az LGPL védi.

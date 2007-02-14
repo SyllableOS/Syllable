@@ -1,0 +1,33 @@
+//
+//	Preferences/Screen String Catalog
+//
+//	Translated by: Ilya Krol
+//
+
+MSG_MAINWND_TITLE=0							Экран
+
+MSG_MAINWND_DISPLAY=100						Дисплей
+MSG_MAINWND_DISPLAY_APPLYTO					Применить к
+MSG_MAINWND_DISPLAY_RESOLUTION				Разрешение
+MSG_MAINWND_DISPLAY_COLORDEPTH				Глубина цвета
+MSG_MAINWND_DISPLAY_REFRESHRATE				Частота развёртки
+
+MSG_MAINWND_DROPDOWN_APPLY_THIS=200			Текущая рабочая область
+MSG_MAINWND_DROPDOWN_APPLY_ALL				Все рабочие области
+MSG_MAINWND_DROPDOWN_COLOUR_BIT				Бит
+MSG_MAINWND_DROPDOWN_COLOUR_UNKNOWN			Неизвестно
+MSG_MAINWND_DROPDOWN_HERTZ					%i Гц
+
+MSG_MAINWND_BUTTON_APPLY=300				Применить
+MSG_MAINWND_BUTTON_CLOSE					Закрыть
+
+MSG_ALERTWND_CHANGERES=1000					Изменить разрешение
+MSG_ALERTWND_CHANGERES_TEXT					Вы готовы поменять разрешение Вашего экрана.\nЕсли Ваш монитор не поддерживает выбранный видеорежим,\nэкран станет чёрным. Если это произойдёт, пожалуйста, подождите 15\nсекунд, чтобы вернуться к предыдущему режиму.\n\nХотите продолжить?
+MSG_ALERTWND_CHANGERES_YES					Да
+MSG_ALERTWND_CHANGERES_NO					Нет
+
+MSG_ALERTWND_CONFIRMRES=2000				Подтвердить разрешение
+MSG_ALERTWND_CONFIRMRES_TEXT				Правильно ли работает новый видеорежим?\n\nЕсли нет, пожалуйста, подождите и Вы автоматически\nвернётесь к старому режиму.
+MSG_ALERTWND_CONFIRMRES_YES					Да
+MSG_ALERTWND_CONFIRMRES_NO					Нет
+

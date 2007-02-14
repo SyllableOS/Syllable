@@ -1,19 +1,19 @@
 //
-// Launch String Catalog
+//	Launch String Catalog
 //
-// Translated by: Uwe Olszewski
+//	Translated by: Uwe Olszewski
 //
 
-MSG_ERROR_LAUNCHING_ONE		Die Datei '
-MSG_ERROR_LAUNCHING_TWO		' hat ein unbekanntes Format.\nBitte wenden Sie sich an das Syllable Entwicklungs Team.
+MSG_WINDOW_TITLE=0					Ausführen
 
-MSG_BUTTON_LAUNCH			_Ausführen
-MSG_BUTTON_BROWSE			_Durchsuchen
-MSG_BUTTON_CANCEL			_Abbrechen
-MSG_ALERT_BUTTON			_OK
+MSG_STRING_LAUNCH=100				Ausführen:
+MSG_STRING_DESC						Geben Sie eine Internetseite, Datei, Ordner, oder Anwendung ein.
 
-MSG_STRING_LAUNCH			Ausführen:
-MSG_STRING_DESC				Geben Sie eine Internetseite, Datei, Ordner, oder Anwendung ein.
+MSG_ERROR_LAUNCHING_ONE=200			Die Datei '
+MSG_ERROR_LAUNCHING_TWO				' hat ein unbekanntes Format.\nBitte wenden Sie sich an das Syllable Entwicklungs Team.
 
-MSG_WINDOW_TITLE			Ausführen
+MSG_BUTTON_LAUNCH=300				_Ausführen
+MSG_BUTTON_BROWSE					_Durchsuchen
+MSG_BUTTON_CANCEL					_Abbrechen
+MSG_ALERT_BUTTON					_OK
 

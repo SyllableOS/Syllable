@@ -1,7 +1,7 @@
 //
-// Preferences/Screen String Catalog
+//	Preferences/Screen String Catalog
 //
-// Translated by: Dávid Horváth
+//	Translated by: Dávid Horváth
 //
 
 MSG_MAINWND_TITLE=0							Képernyö
@@ -11,7 +11,6 @@ MSG_MAINWND_DISPLAY_APPLYTO					Érvényesség
 MSG_MAINWND_DISPLAY_RESOLUTION				Felbontás
 MSG_MAINWND_DISPLAY_COLORDEPTH				Színmélység
 MSG_MAINWND_DISPLAY_REFRESHRATE				Frissítés
-
 
 MSG_MAINWND_DROPDOWN_APPLY_THIS=200			Ezen az asztalon
 MSG_MAINWND_DROPDOWN_APPLY_ALL				Minden asztalon

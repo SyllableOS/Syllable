@@ -1,7 +1,7 @@
 //
-// Preferences/Screen String Catalog
+//	Preferences/Screen String Catalog
 //
-// Translated by: nebu/Jan Niemeyer
+//	Translated by: nebu/Jan Niemeyer
 //
 
 MSG_MAINWND_TITLE=0							Bildschirm
@@ -11,7 +11,6 @@ MSG_MAINWND_DISPLAY_APPLYTO					Anwenden auf
 MSG_MAINWND_DISPLAY_RESOLUTION				Auflösung
 MSG_MAINWND_DISPLAY_COLORDEPTH				Farbtiefe
 MSG_MAINWND_DISPLAY_REFRESHRATE				Wiederholrate
-
 
 MSG_MAINWND_DROPDOWN_APPLY_THIS=200			diese Arbeitsfläche
 MSG_MAINWND_DROPDOWN_APPLY_ALL				alle Arbeitsflächen

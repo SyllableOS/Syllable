@@ -1,8 +1,7 @@
 //
-// Memory Monitor String Catalog
+//	Memory Monitor String Catalog
 //
-// Translated by: Edgar Domingo de Albuquerque (contato@edgar.pro.br)
-// Brazilian Portuguese pt_BR @ 29-Jul-2006 Sorocaba/SP - Brasil
+//	Translated by: Edgar Domingo de Albuquerque
 //
 
 MSG_MAINWND_TITLE=0						Uso da Memória
@@ -19,3 +18,4 @@ MSG_MAINWND_MENU_SPEED_MEDIUM			Média
 MSG_MAINWND_MENU_SPEED_HIGH				Alta
 MSG_MAINWND_MENU_SPEED_VERYHIGH			Muito Alta
 MSG_MAINWND_MENU_SPEED_FULLSPEED		Super Veloz
+

@@ -1,23 +1,22 @@
 //
-// Media Player string catalog
+//	MediaPlayer String Catalog
 //
-// Translated by: Maximo Pech Jaramillo
-// Translated by: Angel L Laguna
+//	Translated by: Maximo Pech Jaramillo - Angel L Laguna
 //
 
-MSG_MAINWND_TITLE=100						Reproductor Multimedia
+MSG_MAINWND_TITLE=0							Reproductor Multimedia
 
-MSG_MAINWND_MENU_APPLICATION=200			Aplicación
+MSG_MAINWND_MENU_APPLICATION=100			Aplicación
 MSG_MAINWND_MENU_APPLICATION_ABOUT			Acerca de...
 MSG_MAINWND_MENU_APPLICATION_QUIT			Salir
 
-MSG_MAINWND_MENU_FILE=300					Archivo
+MSG_MAINWND_MENU_FILE=200					Archivo
 MSG_MAINWND_MENU_FILE_OPEN					Abrir...
 MSG_MAINWND_MENU_FILE_OPEN_INPUT			Abrir archivo de Entrada...
 MSG_MAINWND_MENU_FILE_INFO					Información...
 MSG_MAINWND_MENU_FILE_FULLSCREEN			Pantalla Completa
 
-MSG_MAINWND_MENU_TRACKS=400					Pistas
+MSG_MAINWND_MENU_TRACKS=300					Pistas
 
 MSG_ABOUTWND_TITLE=1000						Acerca de Reproductor Multimedia
 MSG_ABOUTWND_TEXT							\nUn reproductor multimedia\nCopyright 2003 Arno Klenke\n\nEl reproductor multimedia de Syllable se distribuye bajo los términos de la licencia LGPL.

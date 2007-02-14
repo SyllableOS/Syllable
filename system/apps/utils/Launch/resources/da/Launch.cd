@@ -1,19 +1,19 @@
 //
-// Launch String Catalog
+//	Launch String Catalog
 //
-// Translated by: Flemming H. Sørensen (BurningShadow)
-// Korrekturlæsning og Rettelser: Jakob Wolffhechel
+//	Translated by: Flemming H. Sørensen (and Jakob Wolffhechel)
 //
 
-MSG_ERROR_LAUNCHING_ONE				Kan ikke genkende filtypen for filen  ' 
+MSG_WINDOW_TITLE=0					Kør...
+
+MSG_STRING_LAUNCH=100				Åbn:
+MSG_STRING_DESC						Skriv hjemmeside-adresse, fil-, mappe-, eller program-navn her.
+
+MSG_ERROR_LAUNCHING_ONE=200			Kan ikke genkende filtypen for filen  ' 
 MSG_ERROR_LAUNCHING_TWO				',\nKontakt venligst Syllable Norden for hjælp...
 
-MSG_BUTTON_LAUNCH					_Kør
+MSG_BUTTON_LAUNCH=300				_Kør
 MSG_BUTTON_BROWSE					_Gennemse
 MSG_BUTTON_CANCEL					_Annuller
 MSG_ALERT_BUTTON					_Ok
 
-MSG_STRING_LAUNCH					Åbn:
-MSG_STRING_DESC						Skriv hjemmeside-adresse, fil-, mappe-, eller program-navn her.
-
-MSG_WINDOW_TITLE					Åbner...

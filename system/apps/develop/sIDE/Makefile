@@ -4,6 +4,8 @@ COPTS   = -I$(TOP)/src  -c -Wall
 APPBIN = /Applications/sIDE
 OBJS = AddWindow.o AddLibrary.o ProjectPrefs.o GroupWindow.o ProjectWindow.o NewProject.o project.o main.o 
 
+CATALOGS = de
+
 OBJDIR	:= objs
 OBJS	:= $(addprefix $(OBJDIR)/,$(OBJS))
 
@@ -24,17 +26,26 @@ all :	objs sIDE
 objs:
 	mkdir objs
 
-translations:
-	catcomp -c resources/sIDE.cd
-	catcomp -t resources/de/sIDE.cd
-
-sIDE: translations $(OBJS)
+sIDE: catalogs $(OBJS)
 	g++ $(OBJS) -o sIDE -lsyllable
 	rescopy sIDE -r ./images/*.png
 	rescopy -a sIDE resources/sIDE.catalog
-	rescopy -a sIDE de/sIDE.catalog=resources/de/sIDE.catalog
+	for CATALOG in $(CATALOGS);do \
+		echo $$CATALOG; \
+		rescopy -a sIDE $$CATALOG/sIDE.catalog=resources/$$CATALOG/sIDE.catalog; \
+	done;
 	addattrib sIDE os::Category Development
 	build_templates.sh
+
+catalogs:
+	cd resources; \
+	catcomp -c sIDE.cd; \
+	for CATALOG in $(CATALOGS);do \
+		echo $$CATALOG; \
+		cd $$CATALOG; \
+		catcomp -t sIDE.cd; \
+		cd ..; \
+	done;
 
 install: sIDE
 	mkdir -p $(APPBIN)
@@ -51,53 +62,8 @@ dist: sIDE
 clean:
 	rm -f $(OBJDIR)/* sIDE
 	rm -f Templates/*.zip
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	rm resources/sIDE.catalog resources/sIDE.h; \
+	for CATALOG in $(CATALOGS);do \
+		rm resources/$$CATALOG/sIDE.catalog; \
+	done;
 

@@ -1,7 +1,7 @@
 //
-// Coldfish string catalog
+//	Coldfish String Catalog
 //
-// Translated by:
+//	Translated by: Arno Klenke
 //
 
 MSG_MAINWND_TITLE=100						Coldfish
@@ -26,7 +26,6 @@ MSG_MAINWND_MENU_PLAYLIST_INPUT				Eingang öffnen...
 MSG_MAINWND_MENU_FILE=400					Datei
 MSG_MAINWND_MENU_FILE_ADD					Hinzufügen...
 MSG_MAINWND_MENU_FILE_REMOVE				Entfernen
-
 
 MSG_MAINWND_MENU_VIEW=500					Anzeigen
 MSG_MAINWND_MENU_VIEW_PLAYLIST				Abspielliste

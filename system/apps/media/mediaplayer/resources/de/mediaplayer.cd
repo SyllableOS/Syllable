@@ -1,22 +1,22 @@
 //
-// Media Player string catalog
+//	MediaPlayer String Catalog
 //
-// Translated by:
+//	Translated by: Arno Klenke
 //
 
-MSG_MAINWND_TITLE=100						Media Player
+MSG_MAINWND_TITLE=0							Media Player
 
-MSG_MAINWND_MENU_APPLICATION=200			Anwendung
+MSG_MAINWND_MENU_APPLICATION=100			Anwendung
 MSG_MAINWND_MENU_APPLICATION_ABOUT			Info...
 MSG_MAINWND_MENU_APPLICATION_QUIT			Beenden
 
-MSG_MAINWND_MENU_FILE=300					Datei
+MSG_MAINWND_MENU_FILE=200					Datei
 MSG_MAINWND_MENU_FILE_OPEN					Öffnen...
 MSG_MAINWND_MENU_FILE_OPEN_INPUT			Eingang öffnen...
 MSG_MAINWND_MENU_FILE_INFO					Info...
 MSG_MAINWND_MENU_FILE_FULLSCREEN			Vollbild
 
-MSG_MAINWND_MENU_TRACKS=400					Titel
+MSG_MAINWND_MENU_TRACKS=300					Titel
 
 MSG_ABOUTWND_TITLE=1000						Info Media Player
 MSG_ABOUTWND_TEXT							\nEine Abspielsoftware für Musik und Videos\nCopyright 2003-2006 Arno Klenke\n\nDer Syllable Media Player ist unter der LGPL veröffentlicht.

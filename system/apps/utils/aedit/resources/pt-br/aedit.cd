@@ -1,11 +1,10 @@
 //
-// AEdit string catalog
+//	AEdit String Catalog
 //
-// Translated by: Edgar Domingo de Albuquerque (contato@edgar.pro.br)
-// Brazilian Portuguese pt_BR @ 29-Jul-2006 Sorocaba/SP - Brasil
+//	Translated by: Edgar Domingo de Albuquerque
 //
 
-MSG_APPWND_TITLE							AEdit
+MSG_APPWND_TITLE=0							AEdit
 MSG_APPWND_TITLE_NEW_FILE					Novo Documento
 
 MSG_MENU_APPLICATION=100					Aplicação
@@ -110,3 +109,4 @@ MSG_STATUSBAR_REPLACE_NOT_OK				Frase não foi substituída.
 
 MSG_BUFFER_UNTITLED=2100					Sem nome - %d
 MSG_BUFFER_CURSOR							Coluna: %d Linha: %d
+

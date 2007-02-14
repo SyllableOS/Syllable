@@ -1,36 +1,35 @@
 //
-// DLogin String Catalog
+//	DLogin String Catalog
 //
-// Translated by: Flemming H. Sørensen (BurningShadow)
-// Korrekturlæsning og Rettelser: Jakob Wolffhechel
+//	Translated by: Flemming H. Sørensen (and Jakob Wolffhechel)
 //
 
-MSG_MAINWND_TITLE=0						Log-ind:
+MSG_MAINWND_TITLE=0							Log-ind:
 
-MSG_MAINWND_PASSWORD=100				Kodeord:
-MSG_MAINWND_BUTTON_LOGIN				_Log-ind
-MSG_MAINWND_BUTTON_SHUTDOWN				_Luk ned
+MSG_MAINWND_PASSWORD=100					Kodeord:
+MSG_MAINWND_BUTTON_LOGIN					_Log-ind
+MSG_MAINWND_BUTTON_SHUTDOWN					_Luk ned
 
-MSG_SHUTDOWNWND_TITLE=200				Sluk eller Genstart?
+MSG_SHUTDOWNWND_TITLE=200					Sluk eller Genstart?
 MSG_SHUTDOWNWND_TEXT						Hvad ønsker du at gøre:
 MSG_SHUTDOWNWND_BUTTON_CANCEL				_Annuller
 MSG_SHUTDOWNWND_BUTTON_OK					_Ok
 MSG_SHUTDOWNWND_DROPDOWN_SHUTDOWN			Sluk
 MSG_SHUTDOWNWND_DROPDOWN_REBOOT				Genstart
 
-MSG_ALERT_NOTSELECTED_TITLE=1000		Vælg en bruger
+MSG_ALERT_NOTSELECTED_TITLE=1000			Vælg en bruger
 MSG_ALERT_NOTSELECTED_TEXT					Du skal vælge et bruger-ikon før du kan logge ind.
 MSG_ALERT_NOTSELECTED_OK					Ok
 
-MSG_ALERT_WRONGPASS_TITLE=2000			Fejl ved log-ind
+MSG_ALERT_WRONGPASS_TITLE=2000				Fejl ved log-ind
 MSG_ALERT_WRONGPASS_TEXT					Forkert kodeord
 MSG_ALERT_WRONGPASS_OK						Ok
 
-MSG_ALERT_NOUSER_TITLE=3000				Fejl ved log-ind
+MSG_ALERT_NOUSER_TITLE=3000					Fejl ved log-ind
 MSG_ALERT_NOUSER_TEXT						Denne bruger er ikke\nregistreret på denne computer.
 MSG_ALERT_NOUSER_OK							Ok
 
-MSG_ALERT_CANTFINDUSERS_TITLE=4000		Kunne ikke finde brugere
+MSG_ALERT_CANTFINDUSERS_TITLE=4000			Kunne ikke finde brugere
 MSG_ALERT_CANTFINDUSERS_TEXT				Kunne ikke finde informationer om brugere, kontakt venligst Syllable Development Group.\n\nhttp://www.syllable.org
 MSG_ALERT_CANTFINDUSERS_OK					Åh nej!!!
 

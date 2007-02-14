@@ -1,7 +1,7 @@
 //
-// Albert String Catalog
+//	Calculator String Catalog
 //
-// Translated by: Christos KYRATZIS
+//	Translated by: Christos KYRATZIS
 //
 
 MSG_MAINWND_TITLE=0									Calculator
@@ -40,7 +40,7 @@ MSG_MAINWND_MENU_HELP=500							Aide
 MSG_MAINWND_MENU_HELP_ABOUT							À propos
 MSG_MAINWND_MENU_HELP_KEYBOARD						Clavier
 
-MSG_PAPERROLL_TITLE=1000							Albert
+MSG_PAPERROLL_TITLE=1000							Calculator
 MSG_PAPERROLL_CMENU_COPY							Copier
 MSG_PAPERROLL_CMENU_CLEAR							Vider
 MSG_PAPERROLL_CMENU_SAVE							Sauvegarder

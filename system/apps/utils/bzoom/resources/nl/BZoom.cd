@@ -1,21 +1,21 @@
 //
-// BZoom String Catalog
+//	BZoom String Catalog
 //
-// Translated by: Ruud kuin
+//	Translated by: Ruud kuin
 //
 
-MSG_MAINWND_TITLE=100						BZoom
+MSG_MAINWND_TITLE=0							BZoom
 
-MSG_MAINWND_MENU_APP=200					Programma
+MSG_MAINWND_MENU_APP=100					Toepassing
 MSG_MAINWND_MENU_APP_EXIT					Verlaten
 
-MSG_MAINWND_MENU_VIEW=300					Toon
+MSG_MAINWND_MENU_VIEW=200					Toon
 MSG_MAINWND_MENU_VIEW_MAGNIFICATION			Vergroting
 
-MSG_MAINWND_MENU_HELP=400					Help
+MSG_MAINWND_MENU_HELP=300					Help
 MSG_MAINWND_MENU_HELP_ABOUT					Over
 
 MSG_ABOUTWND_TITLE=1000						Over BZoom
-MSG_ABOUTWND_TEXT							BZoom V1.0\n\nEen simpele pixel vergroter voor AtheOS.\nGebaseerd op AZoom door Chir.\nBZoom is vrijgegeven onder de\nGNU GPL\n\nNederlandse vertaling door Ruud kuin <rudi.kuin@gmail.com>.
+MSG_ABOUTWND_TEXT							BZoom V1.0\n\nEen simpele pixel vergroter voor AtheOS.\nGebaseerd op AZoom door Chir.\nBZoom is vrijgegeven onder de\nGNU GPL\n\nNederlandse vertaling door Syllable NL.
 MSG_ABOUTWND_OK								Ok
 

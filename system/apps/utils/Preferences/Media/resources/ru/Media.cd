@@ -1,0 +1,26 @@
+//
+//	Preferences/Media String Catalog
+//
+//	Translated by: Ilya Krol
+//
+
+MSG_MAINWND_TITLE=0								Медиа
+
+MSG_MAINWND_DEVICE=100							Устройство
+MSG_MAINWND_DEFAULT_INPUT						Вход по умолчанию
+MSG_MAINWND_DEFAULT_OUTPUT_AUDIO				Аудио выход по умолчанию
+MSG_MAINWND_DEFAULT_OUTPUT_VIDEO				Видео выход по умолчанию
+
+MSG_MAINWND_BUTTON_STREAMVOLUMES=200			_Уровни потока...
+MSG_MAINWND_BUTTON_APPLY						_Применить
+MSG_MAINWND_BUTTON_UNDO							_Отменить
+MSG_MAINWND_BUTTON_DEFAULT						_По умолчанию
+
+MSG_MAINWND_THISINPUTHASNOCONTROLS=300			Данный вход не имеет настроек
+MSG_MAINWND_THISCODECHASNOCONTROLS				Данный кодек не имеет настроек
+MSG_MAINWND_THISOUTPUTHASNOCONTROLS				Данный выход не имеет настроек
+
+MSG_ALERTWND_NOMEDIASERVER_TITLE=1000			Ошибка
+MSG_ALERTWND_NOMEDIASERVER_TEXT					Не удалось соединиться с медиасервером.
+MSG_ALERTWND_NOMEDIASERVER_OK					_ОК
+

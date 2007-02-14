@@ -1,0 +1,35 @@
+//
+//	Preferences/Login String Catalog
+//
+//	Translated by: Ilya Krol
+//
+
+MSG_MAINWND_TITLE=0						Учётная запись
+
+MSG_MAINWND_INFORMATION=100				Информация
+MSG_MAINWND_INFORMATION_WHO				Вы находитесь в системе в качестве пользователя %s
+MSG_MAINWND_INFORMATION_NOPERM			Ваш системный администратор не дал Вам разрешения\nна изменение Вашей учётной записи.
+
+MSG_MAINWND_LOGINICON=200				Значок учётной записи
+MSG_MAINWND_LOGINICON_TEXT				Когда я загружаю компьютер, использовать\nэтот значок для моей учётной записи.
+
+MSG_MAINWND_CHANGEPASS=300				Изменить пароль
+MSG_MAINWND_CHANGEPASS_CURRENTPASS		Текущий пароль
+MSG_MAINWND_CHANGEPASS_NEWPASS			Новый пароль
+MSG_MAINWND_CHANGEPASS_CONFIRMPASS		Подтвердить пароль
+
+MSG_MAINWND_BUTTON_OK=400				_ОК
+MSG_MAINWND_BUTTON_CANCEL				_Отмена
+
+MSG_ALERTWND_FILEERROR=1000				Ошибка записи файла
+MSG_ALERTWND_FILEERROR_TEXT				Не удалось записать новый файл в /etc/passwd.  Ваш пароль не был изменён.
+MSG_ALERTWND_FILEERROR_OK				Закрыть
+
+MSG_ALERTWND_NOMATCH=2000				Новый пароль
+MSG_ALERTWND_NOMATCH_TEXT				Пароль, который Вы ввели, не подходит.  Пожалуйста, введите пароль ещё раз.
+MSG_ALERTWND_NOMATCH_OK					Закрыть
+
+MSG_ALERTWND_INCORRECTPASS=3000			Неправильный пароль
+MSG_ALERTWND_INCORRECTPASS_TEXT			Вы ввели неправильный пароль.  Пожалуйста, проверьте и попробуйте ещё раз.
+MSG_ALERTWND_INCORRECTPASS_OK			ОК
+

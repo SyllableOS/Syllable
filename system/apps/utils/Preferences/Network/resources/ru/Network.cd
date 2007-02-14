@@ -1,0 +1,60 @@
+//
+//	Preferences/Network String Catalog
+//
+//	Translated by: Ilya Krol
+//
+
+MSG_MAINWND_TITLE=0								Сеть
+
+MSG_MAINWND_NAMES=100							Имена
+MSG_MAINWND_NAMES_HOST							Хост:
+MSG_MAINWND_NAMES_HOST_DEFAULT					По умолчанию
+MSG_MAINWND_NAMES_DOMAIN						Домен:
+MSG_MAINWND_NAMES_DOMAIN_DEFAULT				домен
+MSG_MAINWND_NAMES_DNS_PRIMARY					Первичный DNS:
+MSG_MAINWND_NAMES_DNS_SECONDARY					Вторичный DNS:
+
+MSG_MAINWND_NICINT=200							Сетевые интерфейсы
+MSG_MAINWND_NICINT_ENABLED						(Включён)
+MSG_MAINWND_NICINT_DISABLED						(Выключен)
+MSG_MAINWND_NICINT_BUTTON_MODIFY				_Изменить
+
+MSG_MAINWND_BUTTON_APPLY=300					_Применить
+MSG_MAINWND_BUTTON_REVERT						_Обратить
+
+MSG_MODIFYWND_TITLE=400							Изменение сети
+MSG_MODIFYWND_INTERFACE							Интерфейс:
+MSG_MODIFYWND_ENABLED							(Включён)
+MSG_MODIFYWND_DISABLED							(Выключен)
+MSG_MODIFYWND_USEDHCP							_Использовать DHCP
+MSG_MODIFYWND_BUTTON_ENABLE						_Вкл.
+MSG_MODIFYWND_BUTTON_DISABLE					_Выкл.
+MSG_MODIFYWND_SETTINGS							Настройки
+MSG_MODIFYWND_SETTINGS_IPADD					IP адрес:
+MSG_MODIFYWND_SETTINGS_SUBNET					Маска подсети:
+MSG_MODIFYWND_SETTINGS_GATEWAY					Адрес шлюза:
+
+MSG_CONFCHANGEDWND_TITLE=1000					Конфигурация сети изменена
+MSG_CONFCHANGEDWND_TEXT							Конфигурация сетевого интерфейса была изменена\nВойдите в систему в качестве пользователя root и используйте опцию "настройки" для конфигурирования сети.
+MSG_CONFCHANGEDWND_OK							_ОК
+
+MSG_ALERTWND_PRIDNS=2000						Сеть настроена неправильно
+MSG_ALERTWND_PRIDNS_TEXT						Значение, введённое в качестве первичного DNS, неверно
+MSG_ALERTWND_PRIDNS_OK							_ОК
+
+MSG_ALERTWND_SECDNS=3000						Сеть настроена неправильно
+MSG_ALERTWND_SECDNS_TEXT						Значение, введённое в качестве вторичного DNS, неверно
+MSG_ALERTWND_SECDNS_OK							_ОК
+
+MSG_ALERTWND_IPADD=4000							Сеть настроена неправильно
+MSG_ALERTWND_IPADD_TEXT							Значение, введённое в качестве IP адреса, неверно
+MSG_ALERTWND_IPADD_OK							_ОК
+
+MSG_ALERTWND_SUBNET=5000						Сеть настроена неправильно
+MSG_ALERTWND_SUBNET_TEXT						Значение, введённое в качестве маски подсети, неверно
+MSG_ALERTWND_SUBNET_OK							_ОК
+
+MSG_ALERTWND_GATEWAY=6000						Сеть настроена неправильно
+MSG_ALERTWND_GATEWAY_TEXT						Значение, введённое в качестве шлюза, неверно
+MSG_ALERTWND_GATEWAY_OK							_ОК
+

@@ -1,12 +1,12 @@
 //
-// FileBrowser String Catalog
+//	FileBrowser String Catalog
 //
-// Translated by: David Horvath
+//	Translated by: David Horvath
 //
 
-MSG_MAINWND_TITLE=0			Fájlkezelö
+MSG_MAINWND_TITLE=0				Fájlkezelö
 
-MSG_MENU_VIEW=100			Nézet
+MSG_MENU_VIEW=100				Nézet
 MSG_MENU_VIEW_ICONS				Ikonok
 MSG_MENU_VIEW_LIST				Lista
 MSG_MENU_VIEW_DETAILS			Részletek

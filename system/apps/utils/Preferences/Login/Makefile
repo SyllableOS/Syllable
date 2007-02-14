@@ -3,7 +3,7 @@ OBJS = main.o login_window.o
 EXE = Login
 TARGET_EXE = Login\ Details
 
-CATALOGS = da de es fr hu nl pt-br sv
+CATALOGS = da de es fr hu nl pt-br ru sv
 
 #Define TEST if you're testing the Preferences; doesn't overwrite system files
 #CXXFLAGS += -DTEST

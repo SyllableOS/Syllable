@@ -1,0 +1,69 @@
+//
+//	Preferences/UsersAndGroups String Catalog
+//
+//	Translated by: Ilya Krol
+//
+
+MSG_MAINWND_TITLE=0							Пользователи и группы
+
+MSG_MAINWND_BUTTON_OK=100					_ОК
+MSG_MAINWND_BUTTON_CANCEL					_Отмена
+
+MSG_MAINWND_TAB_USERS=200					Пользователи
+MSG_MAINWND_TAB_USERS_NAME					Имя
+MSG_MAINWND_TAB_USERS_LOGIN					Логин
+MSG_MAINWND_TAB_USERS_ID					ID
+MSG_MAINWND_TAB_USERS_GROUP					Группа
+MSG_MAINWND_TAB_USERS_HOME					Домашняя папка
+MSG_MAINWND_TAB_USERS_BUTTON_ADD			_Добавить пользователя...
+MSG_MAINWND_TAB_USERS_BUTTON_EDIT			_Редактировать...
+MSG_MAINWND_TAB_USERS_BUTTON_DEL			_Удалить пользователя
+MSG_MAINWND_TAB_USERS_BUTTON_PASS			_Назначить пароль...
+
+MSG_MAINWND_TAB_GROUPS=300					Группы
+MSG_MAINWND_TAB_GROUPS_NAME					Название
+MSG_MAINWND_TAB_GROUPS_ID					ID
+MSG_MAINWND_TAB_GROUPS_BUTTON_ADD			_Добавить группу...
+MSG_MAINWND_TAB_GROUPS_BUTTON_EDIT			_Редактировать...
+MSG_MAINWND_TAB_GROUPS_BUTTON_DEL			_Удалить группу
+
+MSG_NEWUSERWND_TITLE=1000					Новый пользователь
+MSG_NEWUSERWND_NAME							Имя:
+MSG_NEWUSERWND_LOGIN						Логин:
+MSG_NEWUSERWND_USERID						ID пользователя:
+MSG_NEWUSERWND_GROUPID						ID группы:
+MSG_NEWUSERWND_HOME							Домашняя папка:
+MSG_NEWUSERWND_SHELL						Оболочка:
+MSG_NEWUSERWND_DEFAULT_NAME					Новый пользователь
+MSG_NEWUSERWND_DEFAULT_LOGIN				без_имени
+MSG_NEWUSERWND_DEFAULT_HOME					/home/без_имени
+MSG_NEWUSERWND_BUTTON_OK					_ОК
+MSG_NEWUSERWND_BUTTON_CANCEL				_Отмена
+
+MSG_EDITUSERWND_TITLE=2000					Свойства
+
+MSG_NEWGROUPWND_TITLE=3000					Новая группа
+MSG_NEWGROUPWND_GROUPID						ID группы:
+MSG_NEWGROUPWND_NAME						Имя:
+MSG_NEWGROUPWND_DEFAULT_NAME				без_имени
+MSG_NEWGROUPWND_BUTTON_OK					_ОК
+MSG_NEWGROUPWND_BUTTON_CANCEL				_Отмена
+
+MSG_EDITGROUPWND_TITLE=4000					Свойства
+
+MSG_CHANGEPASS_TITLE=5000					Изменить пароль
+MSG_CHANGEPASS_TEXT							Изменение пароля
+MSG_CHANGEPASS_OLDPASS						Старый пароль:
+MSG_CHANGEPASS_NEWPASS						Новый пароль:
+MSG_CHANGEPASS_CONFIRMPASS					Подтвердить пароль:
+MSG_CHANGEPASS_BUTTON_OK					_ОК
+MSG_CHANGEPASS_BUTTON_CANCEL				_Отмена
+
+MSG_ALERTWND_GRPWRTERR=10000				Ошибка записи файла
+MSG_ALERTWND_GRPWRTERR_TEXT					Не удалось записать новый файл в /etc/group.  Группы не изменились.
+MSG_ALERTWND_GRPWRTERR_OK					Закрыть
+
+MSG_ALERTWND_PASSDONTMATCH=20000			Пароль не подходит
+MSG_ALERTWND_PASSDONTMATCH_TEXT				Новый пароль, который Вы ввели,\nне подходит. Пожалуйста, проверьте его\nи попробуйте ещё раз.
+MSG_ALERTWND_PASSDONTMATCH_OK				ОК
+
