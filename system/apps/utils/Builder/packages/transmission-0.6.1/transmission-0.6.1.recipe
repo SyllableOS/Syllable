@@ -1,5 +1,6 @@
-authors				Kaj de Vos
-					Kristian Van Der Vliet
+authors
+	Kaj de Vos
+	Kristian Van Der Vliet
 status				testing
 
 licenses			MIT
@@ -12,4 +13,3 @@ recommends			openssl
 build-dir			.
 
 documentation		README LICENSE NEWS AUTHORS
-
