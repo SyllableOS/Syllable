@@ -21,10 +21,10 @@ $(OBJDIR):
 
 $(OBJDIR)/catcomp: $(catcomp_OBJS)
 	$(CXX) $(catcomp_OBJS) -lsyllable -o $@
-	rescopy -r catcomp resources/catcomp.catalog
+	rescopy -r $(OBJDIR)/catcomp resources/catcomp.catalog
 	for CATALOG in $(CATALOGS);do \
 		echo $$CATALOG; \
-		rescopy -a catcomp $$CATALOG/catcomp.catalog=resources/$$CATALOG/catcomp.catalog; \
+		rescopy -a $(OBJDIR)/catcomp $$CATALOG/catcomp.catalog=resources/$$CATALOG/catcomp.catalog; \
 	done;
 
 $(OBJDIR)/catalogtool: $(catalogtool_OBJS)

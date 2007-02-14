@@ -13,7 +13,7 @@
 
 #include "ccatalog.h"
 
-#include "resources/catcomp.h"
+#include "catcomp.h"
 
 #include <iostream>
 
