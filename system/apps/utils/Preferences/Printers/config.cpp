@@ -366,7 +366,6 @@ status_t PrintersWindow::InstallPPD( String cPPD, String cName )
 	fprintf( stderr, "This printer requires PPD: %s\n", cPPD.c_str() );
 
 	/* Check if the file is already in cups/share/cups/model/ */
-	/*cFromPath = String( "/atheos/autolnk/share/cups/model/" ) + cPPD;*/
 	cFromPath = String( "/usr/cups/share/cups/model/" ) + cPPD;
 	cToPath = String( "/system/config/cups/ppd/" ) + cName + String( ".ppd" );
 
@@ -409,7 +408,9 @@ status_t PrintersWindow::GetPPD( String cPPD )
 			{
 				if( strncmp( psEnt->d_name, SYLLABLE_CD_PREFIX, strlen( SYLLABLE_CD_PREFIX ) ) == 0 )
 				{
-					cFromPath = psEnt->d_name;
+					/* XXXKV: stat node and check that it is a CD we're looking at */
+					cFromPath = String( "/" ) + String( psEnt->d_name );
+
 					closedir( hRoot );
 					nError = EOK;
 					break;
