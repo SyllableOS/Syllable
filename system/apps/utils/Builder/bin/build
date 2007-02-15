@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.119
+# Version 0.6.120
 # Copyright (c) 2002-2007 Kaj de Vos
 # License: GPL 2 or any later version
 
@@ -198,7 +198,7 @@ def patchModule target
 					@log.header 'Overlaying extra source files' + (ancestor ? ' from ancestor ' + kin : '')
 					break unless action "cp -a #{File.join dir, '*'} ." and
 						# FIXME: crude way to remove possible CVS dirs from patches
-						deleteCVSData
+						deleteCVSData ''
 				end
 			}
 		then
@@ -465,7 +465,7 @@ def installModule originalStaging, staging, directive, target
 					else
 						@log.header 'Installing image files'
 						action "mkdir " + root and
-							copyFiles 'image', root and
+							copyFiles 'image', root, '' and
 							registerModule staging, target, root
 					end
 				else
@@ -525,6 +525,8 @@ def installModule originalStaging, staging, directive, target
 					else
 						@log.header 'Doing the installation'
 
+						superAccess = recipe['super-install'] ? 'sudo ' : ''
+
 						Dir.chdir target
 						configured = exists?((cmd = recipe['configure-cmd']) ? toString(cmd) : 'configure')
 						if exists? dir = buildDir(target) then Dir.chdir dir end
@@ -534,7 +536,7 @@ def installModule originalStaging, staging, directive, target
 								toCommand cmdLine
 							else
 								((vars = recipe['install-env']) ? toVariables(vars) + ' ' : '') +
-								makeCommand(target) +
+								superAccess + makeCommand(target) +
 								(	staging != :imaging && configured ?
 										'' :
 										((p = recipe['system-prefix-var']) ?
@@ -562,7 +564,7 @@ def installModule originalStaging, staging, directive, target
 	
 								for line in parseList files
 									source, destination = toList line
-									break unless action "cp -a #{source} " + File.join(root, destination)
+									break unless action superAccess + "cp -a #{source} " + File.join(root, destination)
 								end
 							end
 						then
@@ -573,12 +575,12 @@ def installModule originalStaging, staging, directive, target
 							if exists? 'share/man' and not exists? 'man' and not
 								begin
 									@log.header 'Moving man directory to standard location'
-									action 'mv share/man .'
+									action superAccess + 'mv share/man .'
 								end && (
 									not empty? 'share' or
 									begin
 										@log.header 'Deleting empty share directory'
-										action 'rm --recursive --force share'
+										action superAccess + 'rm --recursive --force share'
 									end
 								)
 							then
@@ -586,12 +588,12 @@ def installModule originalStaging, staging, directive, target
 							elsif exists? 'share/info' and not exists? 'info' and not
 								begin
 									@log.header 'Moving info directory to standard location'
-									action 'mv share/info .'
+									action superAccess + 'mv share/info .'
 								end && (
 									not empty? 'share' or
 									begin
 										@log.header 'Deleting empty share directory'
-										action 'rm --recursive --force share'
+										action superAccess + 'rm --recursive --force share'
 									end
 								)
 							then
@@ -602,7 +604,7 @@ def installModule originalStaging, staging, directive, target
 
 									for line in parseList files
 										source, destination = toList line
-										break unless action "mv #{source} " + (
+										break unless action superAccess + "mv #{source} " + (
 											destination[0, 1] == '/' && staging == :imaging ?
 												File.join(@systemImage, destination) :
 												destination
@@ -614,7 +616,7 @@ def installModule originalStaging, staging, directive, target
 							elsif files = recipe['delete-files'] and not
 								begin
 									@log.header 'Deleting files from installation'
-									action 'rm --recursive --force ' + toString(files)
+									action superAccess + 'rm --recursive --force ' + toString(files)
 								end
 							then
 								false
@@ -624,7 +626,7 @@ def installModule originalStaging, staging, directive, target
 									@log.header 'Installing documentation'
 									Dir.chdir @workDir
 									Dir.chdir target
-									action "cp -a #{docs} " + root
+									action superAccess + "cp -a #{docs} " + root
 								end
 							end
 						end
@@ -632,7 +634,7 @@ def installModule originalStaging, staging, directive, target
 					if exists? filesPath = File.join(@portsPath, fullName(target), 'distro') and not
 						begin
 							@log.header 'Installing extra files'
-							copyFiles filesPath, root
+							copyFiles filesPath, root, superAccess
 						end
 					then
 						false
@@ -661,7 +663,7 @@ def installModule originalStaging, staging, directive, target
 									linkPath = File.join root, linkPath
 								end
 
-								break unless action "cd #{linkPath} && ln -sf #{original} " + linkFile
+								break unless action superAccess + "cd #{linkPath} && ln -sf #{original} " + linkFile
 							end
 						end
 					then
@@ -673,13 +675,13 @@ def installModule originalStaging, staging, directive, target
 							begin
 								@log.header 'Stripping executables'
 								#--strip-unneeded
-								action 'strip --strip-all' + dirs.collect {|dir| ' ' + File.join(dir, '*')}.join or
+								action superAccess + 'strip --strip-all' + dirs.collect {|dir| ' ' + File.join(dir, '*')}.join or
 									$? >> 8 == 1  # File type not recognized
 							end and
 							! exists?(dir = File.join(root, 'lib')) ||
 							begin
 								@log.header 'Stripping libraries'
-								action 'strip --strip-debug ' + File.join(dir, '*') or $? >> 8 == 1
+								action superAccess + 'strip --strip-debug ' + File.join(dir, '*') or $? >> 8 == 1
 							end
 						)
 					then
@@ -690,7 +692,7 @@ def installModule originalStaging, staging, directive, target
 							@log.header 'Moving shared libraries into system'
 
 							for libs in ['*.so', '*.so.*']
-								break unless action "mv #{File.join(root, 'lib', libs)} " +
+								break unless action superAccess + "mv #{File.join(root, 'lib', libs)} " +
 									File.join(originalStaging ? @systemRoot : '/',
 										'system/libs/'
 									)
@@ -1076,7 +1078,7 @@ def buildPack targets
 				begin
 					Dir.chdir name
 			
-					deleteCVSData and
+					deleteCVSData '' and
 					begin
 						Dir.chdir @workDir
 			
@@ -1153,7 +1155,7 @@ end
 
 # Helper functions
 
-def deleteCVSData
+def deleteCVSData superAccess  # TODO: implement super user execution
 	puts "\nWARNING! If this is a CVS repository, it will be clobbered!"
 
 	# Delete all CVS dirs
@@ -1212,12 +1214,12 @@ def dereference file
 		file
 end
 
-def copyFiles sourceDir, destinationDir
-	action "cp -a #{File.join sourceDir, '*'} " + destinationDir and
+def copyFiles sourceDir, destinationDir, superAccess
+	action superAccess + "cp -a #{File.join sourceDir, '*'} " + destinationDir and
 	begin
 		# FIXME: crude way to remove possible CVS dirs from files
 		Dir.chdir destinationDir
-		deleteCVSData
+		deleteCVSData superAccess
 	end
 end
 
@@ -1698,7 +1700,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.6.119',
+	puts 'Syllable Build System 0.6.120',
 		'Copyright (c) 2002-2007 Kaj de Vos',
 		'License: GPL 2 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
@@ -1753,7 +1755,7 @@ else
 	@log = Log.new @machType, @crossCompile
 
 	if arg1 == 'scrub'
-		deleteCVSData
+		deleteCVSData ''
 	elsif arg1 == 'update' and not arg2
 		@log.header 'Updating build system'
 

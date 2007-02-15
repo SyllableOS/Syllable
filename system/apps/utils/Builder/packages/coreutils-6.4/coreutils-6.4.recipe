@@ -5,7 +5,7 @@ authors
 	Kristian Van Der Vliet
 maintainers			Kaj de Vos
 status				testing
-warnings			Root access is needed to install su properly.
+warnings			Super user access is needed to install su properly.
 
 inherits			gnu
 
@@ -49,4 +49,3 @@ links
 	bin/sync		/bin
 	bin/true		/bin
 	bin/uname		/bin
-

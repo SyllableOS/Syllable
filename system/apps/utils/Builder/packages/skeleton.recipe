@@ -116,6 +116,9 @@ merge-install
 
 install-tree		<Extra subdirectories to create>
 
+; Execute the installation steps with sudo:
+super-install
+
 ; Installing:
 ; <install>
 ; [<install-env>] make [<install-prefix-var>=<(Stage) installation path>] [<install-vars>] <install-targets>
@@ -166,4 +169,3 @@ links
 
 ; Don't strip binaries:
 ;no-strip
-

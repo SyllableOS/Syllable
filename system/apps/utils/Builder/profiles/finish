@@ -10,4 +10,3 @@ resources
 	atheos/system/libs GCC-libraries-3.4.3
 ;	May work better than the standard ones:
 	atheos/usr/share/terminfo/x binaries/xterm-atheos
-
