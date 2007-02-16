@@ -79,6 +79,7 @@ public:
     Layer*		GetLowerSibling( void ) const	{ return( m_pcLowerSibling ); }
 
     Layer*		GetParent( void ) const		{ return( m_pcParent );	}
+    Layer*		GetNonTransparentParent( os::IRect& cFrame );
 
     virtual void UpdateIfNeeded();
 	SrvBitmap*	GetBitmap() const { return( m_pcBitmap ); }
@@ -179,7 +180,7 @@ private:
   
 
     void ClearDirtyRegFlags();
-    virtual void RebuildRegion( bool bForce );
+	virtual void RebuildRegion( bool bForce );
     virtual void MoveChilds();
     virtual void InvalidateNewAreas( void );
     void RebuildRedrawRegion( Layer* pcBackbufferedLayer, bool bClearRedrawFlagOnly = false );

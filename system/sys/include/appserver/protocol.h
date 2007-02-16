@@ -145,7 +145,7 @@ enum
 enum
 {
     DRC_PING,
-    _DRC_unused1,
+    DRC_SET_FLAGS,
     _DRC_unused3,
     DRC_LINE32,
     _DRC_unused4,
@@ -178,6 +178,11 @@ typedef	struct
     uint32 nSize;
     uint32 hViewToken;
 } GRndHeader_s;
+
+struct GRndSetFlags_s : GRndHeader_s
+{
+    uint32 nFlags;
+};
 
 struct GRndSetFrame_s : GRndHeader_s
 {

@@ -594,6 +594,18 @@ void View::BeginDrag( Message * pcData, const Point & cHotSpot, const Rect & cBo
 void View::SetFlags( uint32 nFlags )
 {
 	m->m_nFlags = nFlags;
+	Window *pcWindow = GetWindow();
+
+	if( pcWindow != NULL )
+	{
+		GRndSetFlags_s *psCmd = static_cast < GRndSetFlags_s * >( pcWindow->_AllocRenderCmd( DRC_SET_FLAGS, this, sizeof( GRndSetFlags_s ) ) );
+
+		if( psCmd != NULL )
+		{
+			psCmd->nFlags = m->m_nFlags;
+		}
+		pcWindow->_PutRenderCmd();
+	}
 }
 
 //----------------------------------------------------------------------------

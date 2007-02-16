@@ -461,6 +461,22 @@ void Layer::RemoveThis()
 	}
 }
 
+
+//----------------------------------------------------------------------------
+// NAME:
+// DESC:
+// NOTE:
+// SEE ALSO:
+//----------------------------------------------------------------------------
+
+Layer* Layer::GetNonTransparentParent( os::IRect& cFrame )
+{
+	if( !( m_nFlags & WID_TRANSPARENT ) || ( m_pcParent == NULL ) )
+		return( this );
+	cFrame += m_cIFrame.LeftTop();
+	return( m_pcParent->GetNonTransparentParent( cFrame ) );
+}
+
 //----------------------------------------------------------------------------
 // NAME:
 // DESC:
@@ -510,12 +526,28 @@ void Layer::UpdateIfNeeded()
 	{
 		if( m_pcActiveDamageReg == NULL )
 		{
+		/* If this is a transparent layer and one of the parent layers has a damage region
+		   we do not send the paint message here. Once the parent layer has finished drawing
+		   the code in swindow.cpp will call UpdateIfNeeded() again which will send our paint message. */
+			if( m_nFlags & os::WID_TRANSPARENT )
+			{
+				Layer* pcParent = m_pcParent;
+				while( pcParent != NULL )
+				{
+					if( pcParent->m_pcDamageReg != NULL )
+						goto next;
+					pcParent = pcParent->m_pcParent;
+					if( pcParent != NULL && !( pcParent->m_nFlags & os::WID_TRANSPARENT ) )
+						break;
+				}
+			}
 			m_pcActiveDamageReg = m_pcDamageReg;
 			m_pcDamageReg = NULL;
 			m_pcActiveDamageReg->Optimize();
 			Paint( static_cast < Rect > ( m_pcActiveDamageReg->GetBounds() ), true );
 		}
 	}
+next:	
 	
 	for( pcChild = m_pcBottomChild; NULL != pcChild; pcChild = pcChild->m_pcHigherSibling )
 	{
@@ -704,7 +736,7 @@ int SortCmp( const void *pNode1, const void *pNode2 )
 	ClipRect *pcClip2 = *( ( ClipRect ** ) pNode2 );
 
 
-	if( pcClip1->m_cBounds.left > pcClip2->m_cBounds.right && pcClip1->m_cBounds.right < pcClip2->m_cBounds.left )
+	if( pcClip1->m_cBounds.left > pcClip2->m_cBounds.right || pcClip1->m_cBounds.right < pcClip2->m_cBounds.left )
 	{
 		if( pcClip1->m_cMove.x < 0 )
 		{
@@ -773,6 +805,17 @@ void Layer::ScrollBy( const Point & cOffset )
 	if( NULL == m_pcBitmapFullReg || m_pcBitmap == NULL )
 	{
 		UpdateIfNeeded();
+		ClearDirtyRegFlags();
+		return;
+	}
+	
+	if( m_nFlags & os::WID_TRANSPARENT )
+	{
+		/* If we scroll a transparent layer we need to redraw everything */
+		os::IRect cBounds = GetIBounds();		
+		Layer* pcParent = GetNonTransparentParent( cBounds );
+		pcParent->Invalidate( cBounds, true );
+		pcParent->UpdateIfNeeded();
 		ClearDirtyRegFlags();
 		return;
 	}
@@ -1542,6 +1585,21 @@ void Layer::EndUpdate( void )
 		
 	if( m_pcDamageReg != NULL )
 	{
+		/* If this is a transparent layer and one of the parent layers has a damage region
+		   we do not send the paint message here. Once the parent layer has finished drawing
+		   the code in swindow.cpp will call UpdateIfNeeded() which will send our paint message. */
+		if( m_nFlags & os::WID_TRANSPARENT )
+		{
+			Layer* pcParent = m_pcParent;
+			while( pcParent != NULL )
+			{
+				if( pcParent->m_pcDamageReg != NULL )
+					return;
+				pcParent = pcParent->m_pcParent;
+				if( pcParent != NULL && !( pcParent->m_nFlags & os::WID_TRANSPARENT ) )
+					break;
+			}
+		}
 		m_pcActiveDamageReg = m_pcDamageReg;
 		m_pcDamageReg = NULL;
 		Paint( static_cast < Rect > ( m_pcActiveDamageReg->GetBounds() ), true );

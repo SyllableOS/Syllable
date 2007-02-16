@@ -599,7 +599,8 @@ void SrvWindow::R_Render( WR_Render_s * psPkt )
 			break;
 		}
 		
-		if( bViewsMoved && ( psHdr->nCmd != DRC_SET_FRAME || psHdr->nCmd != DRC_SHOW_VIEW || psHdr->nCmd != DRC_SET_DRAW_REGION || psHdr->nCmd != DRC_SET_SHAPE_REGION ) )
+		if( bViewsMoved && ( psHdr->nCmd != DRC_SET_FRAME || psHdr->nCmd != DRC_SHOW_VIEW || psHdr->nCmd != DRC_SET_DRAW_REGION || psHdr->nCmd != DRC_SET_SHAPE_REGION
+							|| psHdr->nCmd != DRC_SET_FLAGS ) )
 		{
 			bViewsMoved = false;
 
@@ -636,6 +637,24 @@ void SrvWindow::R_Render( WR_Render_s * psPkt )
 		case DRC_END_UPDATE:
 			pcView->EndUpdate();
 			break;
+		case DRC_SET_FLAGS:
+			{
+				GRndSetFlags_s *psMsg = static_cast < GRndSetFlags_s * >( psHdr );				
+				pcView->m_nFlags = psMsg->nFlags;
+				Layer *pcParent = pcView->GetParent();
+
+				if( pcParent != NULL )
+				{
+					if( pcView->GetLevel() < nLowest )
+					{
+						nLowest = pcParent->GetLevel();
+						pcLowestLayer = pcParent;
+					}
+					pcParent->SetDirtyRegFlags();
+				}
+				bViewsMoved = true;
+				break;
+			}
 		case DRC_LINE32:
 			{
 				GRndLine32_s *psMsg = ( GRndLine32_s * ) psHdr;
@@ -870,22 +889,63 @@ void SrvWindow::R_Render( WR_Render_s * psPkt )
 		case DRC_INVALIDATE_RECT:
 			{
 				IRect cRect( static_cast < GRndInvalidateRect_s * >( psHdr )->m_cRect );
+				cRect += pcView->m_cIScrollOffset;
 
-				pcView->Invalidate( cRect + pcView->m_cIScrollOffset, static_cast<GRndInvalidateRect_s*>(psHdr)->m_bRecurse );
-				if( pcView->GetLevel() < nLowest )
+				if( pcView->m_nFlags & WID_TRANSPARENT )
 				{
-					nLowest = pcView->GetLevel();
-					pcLowestLayer = pcView;
+					/* Update parent layers for transparent layers */					
+					Layer* pcNonTransparent = pcView->GetNonTransparentParent( cRect );
+					if( pcNonTransparent == NULL )
+					{
+						dbprintf( "Error: Layer::GetNonTransparentParent() returned NULL\n" );
+						break;
+					}
+					pcNonTransparent->Invalidate( cRect, true );
+					if( pcNonTransparent->GetLevel() < nLowest )
+					{
+						nLowest = pcNonTransparent->GetLevel();
+						pcLowestLayer = pcNonTransparent;
+					}
+				}
+				else
+				{
+					pcView->Invalidate( cRect, static_cast<GRndInvalidateRect_s*>(psHdr)->m_bRecurse );
+					if( pcView->GetLevel() < nLowest )
+					{
+						nLowest = pcView->GetLevel();
+						pcLowestLayer = pcView;
+					}
 				}
 				bViewsMoved = true;
 				break;
 			}
 		case DRC_INVALIDATE_VIEW:
-			pcView->Invalidate( static_cast < GRndInvalidateView_s * >( psHdr )->m_bRecurse );
-			if( pcView->GetLevel() < nLowest )
+			if( pcView->m_nFlags & WID_TRANSPARENT )
 			{
-				nLowest = pcView->GetLevel();
-				pcLowestLayer = pcView;
+				/* Update parent layers for transparent layers */
+				os::IRect cDummy;
+				Layer* pcNonTransparent = pcView->GetNonTransparentParent( cDummy );
+				if( pcNonTransparent == NULL )
+				{
+					dbprintf( "Error: Layer::GetNonTransparentParent() returned NULL\n" );
+					break;
+				}
+				pcNonTransparent->Invalidate( true );
+				if( pcNonTransparent->GetLevel() < nLowest )
+				{
+					nLowest = pcNonTransparent->GetLevel();
+					pcLowestLayer = pcNonTransparent;
+				}
+				
+			}
+			else
+			{
+				pcView->Invalidate( static_cast < GRndInvalidateView_s * >( psHdr )->m_bRecurse );
+				if( pcView->GetLevel() < nLowest )
+				{
+					nLowest = pcView->GetLevel();
+					pcLowestLayer = pcView;
+				}
 			}
 			bViewsMoved = true;
 			break;
