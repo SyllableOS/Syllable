@@ -54,9 +54,6 @@ make-shared
 ; Can't build outside the source directory:
 build-dir			<Subdirectory>
 
-; Makefile, if non-standard or in a non-standard location:
-makefile			Makefile
-
 ; Configuring:
 ; <configure>
 ; [<pre-configure>]
@@ -79,6 +76,9 @@ configure-options	--with-option
 
 ; Non-standard install prefix variable, for staging or when configure is not available:
 install-prefix-var	prefix
+
+; Makefile, if non-standard or in a non-standard location:
+make-file			Makefile
 
 ; Building:
 

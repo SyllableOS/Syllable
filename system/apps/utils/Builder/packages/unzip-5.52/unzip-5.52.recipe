@@ -16,7 +16,7 @@ packages
 ;	unred550
 ;locations			ftp://ftp.info-zip.org/pub/infozip/src/
 
-makefile			atheos/Makefile
+make-file			atheos/Makefile
 
 ; For unreducing:
 ;make-env			LOCAL_UNZIP '-DUSE_SMITH_CODE'
@@ -27,4 +27,3 @@ documentation
 ;	atheos/README
 	unzip.txt unzipsfx.txt zipinfo.txt zipgrep.txt funzip.txt
 develop-docs		proginfo
-

@@ -11,7 +11,6 @@ locations			http://sqlite.org
 
 test-needs			tcl
 
-;makefile			Makefile.linux-gcc
+;make-file			Makefile.linux-gcc
 
 documentation		README
-

@@ -9,7 +9,7 @@ patch				sed -i 's/ln \$/ln -s \$/' Makefile
 install-prefix-var	PREFIX
 
 ; For a shared library:
-;makefile			Makefile-libbz2_so
+;make-file			Makefile-libbz2_so
 
 documentation
 	README LICENSE CHANGES Y2K_INFO
@@ -24,4 +24,3 @@ links
 	bzgrep	bin/bzegrep
 	bzgrep	bin/bzfgrep
 	bzmore	bin/bzless
-

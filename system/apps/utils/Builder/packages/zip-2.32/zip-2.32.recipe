@@ -18,7 +18,7 @@ packages
 ;	zcrypt
 locations			ftp://ftp.info-zip.org/pub/infozip/src/
 
-makefile			atheos/Makefile
+make-file			atheos/Makefile
 
 install-tree		bin
 documentation
@@ -27,4 +27,3 @@ documentation
 ;	Currently applies only to BSD:
 ;	BUGS
 build-docs			INSTALL
-
