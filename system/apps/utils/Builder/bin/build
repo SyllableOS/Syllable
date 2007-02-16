@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.121
+# Version 0.6.122
 # Copyright (c) 2002-2007 Kaj de Vos
 # License: GPL 2 or any later version
 
@@ -1639,9 +1639,9 @@ end
 
 # BASh 3 only exports the $SYSTEM variable:
 @syllable = `uname`.chomp == 'syllable'
-@machType = "#{`uname -m`.chomp}-#{
-		(hardware = `uname -i`.chomp) == 'unknown' and @syllable ? 'pc' : hardware
-	}-#{`uname -s`.chomp}"
+@machType = `uname -m`.chomp + '-' +
+	((hardware = `uname -i`.chomp) == 'unknown' ? 'pc' : hardware) + '-' +
+	((kernel = `uname -s`.chomp) == 'Linux' ? 'linux-gnu' : kernel)
 
 # Project trees
 @lineage = (@lineage = @settings['lineage']) ?
@@ -1700,7 +1700,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.6.121',
+	puts 'Syllable Build System 0.6.122',
 		'Copyright (c) 2002-2007 Kaj de Vos',
 		'License: GPL 2 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
