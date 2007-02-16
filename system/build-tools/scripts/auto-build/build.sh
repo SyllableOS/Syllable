@@ -1,7 +1,18 @@
 #!/bin/bash
 
-LOG_DIR=$HOME/Logs
-LOG=$LOG_DIR/std-out-err.log
+if [ -z $LOG_DIR ]
+then
+  LOG_DIR=$HOME/Logs
+  LOG=$LOG_DIR/std-out-err.log
+fi
+if [ -z $SOURCE_DIR ]
+then
+  SOURCE_DIR=$HOME/Source/Anonymous
+fi
+if [ -z $BUILD_DIR ]
+then
+  BUILD_DIR=$HOME/Build
+fi
 
 SYSTEM_LOG=$LOG_DIR/system-stdout.log
 SYSTEM_FAILURE_LOG=$LOG_DIR/system-failures.log
@@ -10,9 +21,6 @@ SYSTEM_SUMMARY_LOG=$LOG_DIR/system-summary.log
 BASE_LOG=$LOG_DIR/base-stdout.log
 BASE_FAILURE_LOG=$LOG_DIR/base-failures.log
 BASE_SUMMARY_LOG=$LOG_DIR/base-summary.log
-
-SOURCE_DIR=$HOME/Source/Anonymous
-BUILD_DIR=$HOME/Build
 
 # If you want to automatically upload the build to
 # an FTP server, set the following environment variables
@@ -27,35 +35,12 @@ BUILD_DIR=$HOME/Build
 # happen!  Either use a dedicated user for builds, or remove
 # the "mdel *" command below.
 
-# Clean up from any previous attempt
-if [ ! -e $LOG_DIR ]
-then
-  mkdir $LOG_DIR
-else
-  rm $LOG_DIR/*
-fi
-touch $LOG
-if [ -e $BUILD_DIR/system ]
-then
-  rm -rf $BUILD_DIR/system
-fi
-sync
-
 # Mark the start
 printf "Build started at %s\n" "`date`" > $LOG
 
-# Make sure we have the latest of everything
+# Make sure we have the latest Builder
 echo "Updating Builder"
 build update 1>>$LOG 2>>$LOG
-sync
-
-echo "Updating sources"
-cd $SOURCE_DIR/syllable
-cvs -z9 -q update -dP 1>>$LOG 2>>$LOG
-sync
-
-# Copy them
-cp -a $SOURCE_DIR/syllable/system $BUILD_DIR
 sync
 
 # Build the 'system' profile

@@ -4,6 +4,7 @@ VERSION=0.6.3
 
 BUILD_DIR=$HOME/Build
 INSTALLER_DIR=$BUILD_DIR/Installer
+SCRIPTS_DIR=$HOME/bin
 
 # If you want to automatically upload the build to
 # an FTP server, set the following environment variables
@@ -33,8 +34,14 @@ then
   rm -rf $INSTALLER_DIR/ppds
 fi
 mkdir -p $INSTALLER_DIR/ppds
-mv atheos/usr/cups/share/cups/model/* $INSTALLER_DIR/ppds/
-mv $INSTALLER_DIR/ppds/models.list atheos/usr/cups/share/cups/model/
+cp -a atheos/usr/cups/share/cups/model/* $INSTALLER_DIR/ppds/
+for PPD in `find atheos/usr/cups/share/cups/model/ -name *.ppd*`
+do
+  rm $PPD
+done
+
+# Generate the printers model list
+exec $SCRIPTS_DIR/printers.sh $INSTALLER_DIR/ppds/ $BUILD_DIR/system/stage/image/atheos/usr/cups/share/cups/model/
 
 # Finish the build and package it
 cd $BUILD_DIR/system
