@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.122
+# Version 0.6.123
 # Copyright (c) 2002-2007 Kaj de Vos
 # License: GPL 2 or any later version
 
@@ -1477,7 +1477,7 @@ def configureCommand port
 end
 
 def makeCommand port
-	'make' + ((file = getRecipe(port)['makefile']) ? ' -f ' + file : '')
+	'make' + ((file = getRecipe(port)['make-file']) ? ' -f ' + file : '')
 end
 
 def sourcePackageAvailable? package
@@ -1700,7 +1700,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.6.122',
+	puts 'Syllable Build System 0.6.123',
 		'Copyright (c) 2002-2007 Kaj de Vos',
 		'License: GPL 2 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
