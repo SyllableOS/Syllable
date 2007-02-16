@@ -43,7 +43,7 @@ sync
 printf "Update finished at %s\n" "`date`"
 
 # Invoke the build script
-#exec $SCRIPTS_DIR/build.sh
+exec $SCRIPTS_DIR/build.sh
 
 exit $?
 
