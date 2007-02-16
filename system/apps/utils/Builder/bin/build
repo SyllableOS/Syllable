@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.120
+# Version 0.6.121
 # Copyright (c) 2002-2007 Kaj de Vos
 # License: GPL 2 or any later version
 
@@ -1700,7 +1700,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.6.120',
+	puts 'Syllable Build System 0.6.121',
 		'Copyright (c) 2002-2007 Kaj de Vos',
 		'License: GPL 2 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
@@ -1834,7 +1834,8 @@ else
 
 				ENV['ATHEOS_LIB_PATH'] = File.join @image, 'atheos/system/libs' if @systemBuild
 
-				if @bootstrap then ENV['DLL_PATH'] =
+				if @bootstrap
+					ENV[name = (@syllable ? 'DLL' : 'LD_LIBRARY') + '_PATH'] =
 						if @systemBuild
 							(File.join @image, 'atheos/system/libs') + ':' +
 							(File.join @image, 'atheos/system') + ':'
@@ -1843,30 +1844,25 @@ else
 						end +
 
 						(File.join @stage, 'lib') +
-						((var = ENV['DLL_PATH']) ? ':' + var : '')
+						((var = ENV[name]) ? ':' + var : '')
 
-					@log.extra 'DLL_PATH: ' + ENV['DLL_PATH']
+					@log.extra name + ': ' + ENV[name]
 				end
 
-				ENV[name = (@syllable ? '' : 'LD_') + 'LIBRARY_PATH'] =
-					if @systemBuild
-						(File.join @image, 'atheos/system/libs') + ':' +
-						(@syllable ? '' : File.join(@image, 'atheos/system') + ':')
-#						(File.join @image, 'atheos/usr/glibc/lib') + ':'
-					else
-						''
-					end +
+				if @syllable
+					ENV['LIBRARY_PATH'] =
+						(@systemBuild ? File.join(@image, 'atheos/system/libs') + ':' : '') +
+						File.join(@stage, 'lib') +
+						((var = ENV['LIBRARY_PATH']) && !@isolateStage ? ':' + var : '')
 
-					(libs = File.join @stage, 'lib') +
+					@log.extra 'LIBRARY_PATH: ' + ENV['LIBRARY_PATH']
+				else
+					ENV['LDFLAGS'] = ((var = ENV['LDFLAGS']) ? var : '') +
+						(@systemBuild ? ' -L' + File.join(@image, 'atheos/system/libs') : '') +
+						' -L' + File.join(@stage, 'lib')
 
-					((var = ENV[name]) && !@isolateStage ? ':' + var : '')
-
-				@log.extra name + ': ' + ENV[name]
-
-				# At least Ubuntu doesn't respond to $LD_LIBRARY_PATH. Sigh...
-				ENV['LDFLAGS'] = ((var = ENV['LDFLAGS']) ? var + ' ' : '') + '-L' + libs unless @syllable
-
-				@log.extra 'LDFLAGS: ' + ((var = ENV['LDFLAGS']) ? var : '')
+					@log.extra 'LDFLAGS: ' + ENV['LDFLAGS']
+				end
 
 				case arg1
 				when 'get'			then get		target
