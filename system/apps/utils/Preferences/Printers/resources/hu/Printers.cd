@@ -1,0 +1,64 @@
+//
+//	Preferences/Printers String Catalog
+//
+//	Translated by: Dávid Horváth
+//
+
+MSG_MAINWND_TITLE=0								Nyomtatók
+MSG_MAINWND_DEFAULT_PRINTER_NAME				Új nyomtató
+
+MSG_MAINWND_MENU_APPLICATION=100				Program
+MSG_MAINWND_MENU_APPLICATION_ABOUT				Névjegy
+MSG_MAINWND_MENU_APPLICATION_SAVE				Mentés
+MSG_MAINWND_MENU_APPLICATION_CANCEL				Mégsem
+
+MSG_MAINWND_MENU_PRINTER=120					Nyomtató
+MSG_MAINWND_MENU_PRINTER_ADD					Nyomtató hozzáadása
+MSG_MAINWND_MENU_PRINTER_REMOVE					Nyomtató eltávolítása
+MSG_MAINWND_MENU_PRINTER_DEFAULT				Beállítás alapértelmezettként
+
+MSG_MAINWND_TOOLBAR_ADD=200						Nyomtató hozzáadása
+MSG_MAINWND_TOOLBAR_REMOVE						Nyomtató eltávolítása
+MSG_MAINWND_TOOLBAR_DEFAULT						Beállítás alapértelmezettre
+
+MSG_MAINWND_PRINTERTAB_MODEL=300				Modell
+MSG_MAINWND_PRINTERTAB_UNKNOWN					Ismeretlen
+MSG_MAINWND_PRINTERTAB_SELECT					Kijelöl
+MSG_MAINWND_PRINTERTAB_THEPRINTER				The printer
+MSG_MAINWND_PRINTERTAB_ISA						is a
+MSG_MAINWND_PRINTERTAB_CONNECTEDTO				nyomtató csatlakoztatva
+
+MSG_MAINWND_BUTTONS_SAVE=400					Mentés
+MSG_MAINWND_BUTTONS_CANCEL						Mégsem
+
+MSG_SELECTWND_TITLE=800							Nyomtató kiválasztása
+MSG_SELECTWND_BUTTON_SELECT						Kijelöl
+MSG_SELECTWND_BUTTON_CANCEL						Mégsem
+
+MSG_PROTOCOL_USB=900							USB
+MSG_PROTOCOL_PARALLEL							Parallel
+MSG_PROTOCOL_SMB								Windows (SMB)
+MSG_PROTOCOL_LPD								UNIX (lpd)
+MSG_PROTOCOL_IPP								CUPS (IPP)
+MSG_PROTOCOL_UNKNOWN							Ismeretlen
+MSG_PROTOCOL_HPJETDIRECT						HP JetDirect
+
+MSG_ABOUTWND_TITLE=1000							Nyomtatók
+MSG_ABOUTWND_TEXT1								Syllable Nyomtatókezelő
+MSG_ABOUTWND_TEXT2								Használt CUPS verzió %d.%d.%d\n
+MSG_ABOUTWND_CLOSE								_Bezár
+
+MSG_ALRTWND_REMOVE_TITLE=1100					Nyomtató eltávolítása
+MSG_ALRTWND_REMOVE_TEXT							Biztosan eltávolítja a nyomtatót?
+MSG_ALRTWND_REMOVE_YES							Igen
+MSG_ALRTWND_REMOVE_NO							Nem
+
+MSG_ALRTWND_SAVE_TITLE=1200						Nyomtatók
+MSG_ALRTWND_SAVE_TEXT							CUPS konfiguráció érvénytelen.  A nyomtatók nincsenek rendesen beállítva.
+MSG_ALRTWND_SAVE_CLOSE							_Bezárás
+
+MSG_ALRTWND_INSERTCD_TITLE=1300					CD behelyezése
+MSG_ALRTWND_INSERTCD_TEXT						Kérem helyezze be és csatlakoztassa a  Syllable installációs CD-t.
+MSG_ALRTWND_INSERTCD_OK							Ok
+MSG_ALRTWND_INSERTCD_CANCEL						Mégsem
+

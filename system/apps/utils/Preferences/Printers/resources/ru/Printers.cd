@@ -1,0 +1,64 @@
+//
+//	Preferences/Printers String Catalog
+//
+//	Translated by: Ilya Krol
+//
+
+MSG_MAINWND_TITLE=0								Принтеры
+MSG_MAINWND_DEFAULT_PRINTER_NAME				Новый принтер
+
+MSG_MAINWND_MENU_APPLICATION=100				Приложение
+MSG_MAINWND_MENU_APPLICATION_ABOUT				О программе
+MSG_MAINWND_MENU_APPLICATION_SAVE				Сохранить
+MSG_MAINWND_MENU_APPLICATION_CANCEL				Отменить
+
+MSG_MAINWND_MENU_PRINTER=120					Принтер
+MSG_MAINWND_MENU_PRINTER_ADD					Добавить принтер
+MSG_MAINWND_MENU_PRINTER_REMOVE					Удалить принтер
+MSG_MAINWND_MENU_PRINTER_DEFAULT				Использовать по умолчанию
+
+MSG_MAINWND_TOOLBAR_ADD=200						Добавить принтер
+MSG_MAINWND_TOOLBAR_REMOVE						Удалить принтер
+MSG_MAINWND_TOOLBAR_DEFAULT						Использовать по умолчанию
+
+MSG_MAINWND_PRINTERTAB_MODEL=300				Модель
+MSG_MAINWND_PRINTERTAB_UNKNOWN					Неизвестна
+MSG_MAINWND_PRINTERTAB_SELECT					Выбрать...
+MSG_MAINWND_PRINTERTAB_THEPRINTER				Принтер
+MSG_MAINWND_PRINTERTAB_ISA						- это
+MSG_MAINWND_PRINTERTAB_CONNECTEDTO				принтер, подключённый к
+
+MSG_MAINWND_BUTTONS_SAVE=400					Сохранить
+MSG_MAINWND_BUTTONS_CANCEL						Отмена
+
+MSG_SELECTWND_TITLE=800							Выбор принтера
+MSG_SELECTWND_BUTTON_SELECT						Выбрать
+MSG_SELECTWND_BUTTON_CANCEL						Отменить
+
+MSG_PROTOCOL_USB=900							USB
+MSG_PROTOCOL_PARALLEL							Параллельный порт
+MSG_PROTOCOL_SMB								Windows (SMB)
+MSG_PROTOCOL_LPD								UNIX (lpd)
+MSG_PROTOCOL_IPP								CUPS (IPP)
+MSG_PROTOCOL_UNKNOWN							Неизвестно
+MSG_PROTOCOL_HPJETDIRECT						HP JetDirect
+
+MSG_ABOUTWND_TITLE=1000							Принтеры
+MSG_ABOUTWND_TEXT1								Менеджер принтеров Syllable
+MSG_ABOUTWND_TEXT2								Использ. CUPS версии %d.%d.%d\n
+MSG_ABOUTWND_CLOSE								_Закрыть
+
+MSG_ALRTWND_REMOVE_TITLE=1100					Удалить принтер
+MSG_ALRTWND_REMOVE_TEXT							Вы уверены, что хотите удалить данный принтер?
+MSG_ALRTWND_REMOVE_YES							Да
+MSG_ALRTWND_REMOVE_NO							Нет
+
+MSG_ALRTWND_SAVE_TITLE=1200						Принтеры
+MSG_ALRTWND_SAVE_TEXT							Настройка CUPS не удалась.  Ваши принтеры\nвозможно установлены неправильно.
+MSG_ALRTWND_SAVE_CLOSE							_Закрыть
+
+MSG_ALRTWND_INSERTCD_TITLE=1300					Вставить CD
+MSG_ALRTWND_INSERTCD_TEXT						Пожалуйста, вставьте и смонтируйте установочный диск Syllable.
+MSG_ALRTWND_INSERTCD_OK							ОК
+MSG_ALRTWND_INSERTCD_CANCEL						Отмена
+

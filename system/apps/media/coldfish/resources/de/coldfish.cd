@@ -1,7 +1,7 @@
 //
 //	Coldfish String Catalog
 //
-//	Translated by: Arno Klenke
+//	Translated by: Arno Klenke - nebu/Jan Niemeyer
 //
 
 MSG_MAINWND_TITLE=100						Coldfish
@@ -39,6 +39,10 @@ MSG_ERRWND_OK								Ok
 MSG_ERRWND_CANTPLAY							ColdFish kann diese Datei nicht abspielen.
 MSG_ERRWND_CANTDELETE						Das gerade gespielte Stück kann nicht entfernt werden.
 MSG_ERRWND_NOTPLAYLIST						Die ausgewählte Datei ist keine Abspielliste.
+
+MSG_ALERTWND_NOMEDIASERVER_TITLE=1200		Fehler
+MSG_ALERTWND_NOMEDIASERVER_TEXT				Konnte keine Verbindung zum Medienserver herstellen.
+MSG_ALERTWND_NOMEDIASERVER_OK				_Ok
 
 MSG_PLAYLIST_UNKNOWN=2000					Unbekannt
 MSG_PLAYLIST_DEFAULT						Standard-abspielliste

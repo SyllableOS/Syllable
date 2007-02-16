@@ -3,7 +3,7 @@ CXXFLAGS += -I. -Wall -c
 OBJDIR = objs
 OBJS = printers print_view config model_window
 
-CATALOGS = da
+CATALOGS = da hu ru
 
 EXE = Printers
 

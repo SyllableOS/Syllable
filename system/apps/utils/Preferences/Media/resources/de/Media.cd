@@ -20,3 +20,7 @@ MSG_MAINWND_THISINPUTHASNOCONTROLS=300			Dieser Eingang hat keine Einstellungsm�
 MSG_MAINWND_THISCODECHASNOCONTROLS				Dieser Codec hat keine Einstellungsmöglichkeiten.
 MSG_MAINWND_THISOUTPUTHASNOCONTROLS				Dieser Ausgang hat keine Einstellungsmöglichkeiten.
 
+MSG_ALERTWND_NOMEDIASERVER_TITLE=1000			Fehler
+MSG_ALERTWND_NOMEDIASERVER_TEXT					Konnte keine Verbindung zum Medienserver herstellen.
+MSG_ALERTWND_NOMEDIASERVER_OK					_Ok
+
