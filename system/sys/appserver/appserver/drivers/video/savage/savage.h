@@ -70,8 +70,8 @@
 #define INREG8(a)		*((vuint8*)(psCard->MapBase + a))
 
 /* Additional registers not provided by savage_regs.h */
-#define VGA_MISC_OUT_R			0x3c2
-#define VGA_MISC_OUT_W			0x3cc
+#define VGA_MISC_OUT_W			0x3c2
+#define VGA_MISC_OUT_R			0x3cc
 #define VGA_IN_STAT_1_OFFSET	0x0a
 
 typedef enum {
