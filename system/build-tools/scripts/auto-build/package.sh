@@ -41,7 +41,7 @@ do
 done
 
 # Generate the printers model list
-exec $SCRIPTS_DIR/printers.sh $INSTALLER_DIR/ppds/ $BUILD_DIR/system/stage/image/atheos/usr/cups/share/cups/model/
+$SCRIPTS_DIR/printers.sh $INSTALLER_DIR/ppds/ $BUILD_DIR/system/stage/image/atheos/usr/cups/share/cups/model/
 
 # Finish the build and package it
 cd $BUILD_DIR/system

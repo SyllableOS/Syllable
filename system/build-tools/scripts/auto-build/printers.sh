@@ -18,10 +18,6 @@ else
 fi
 FILE_UNSORTED=$FILE.unsorted
 
-echo $FILE
-echo $FILE_UNSORTED
-exit 0
-
 if [ -e $FILE_UNSORTED ]
 then
   rm $FILE_UNSORTED
