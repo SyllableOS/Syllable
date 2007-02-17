@@ -1,3 +1,9 @@
+* February 17, 2007, Kristian Van Der Vliet *
+
+The VGA_MISC_OUT_W and VGA_MISC_OUT_R registers were swapped in the Savage driver,
+leading to incorrect hardware configuration and flcikering displays in some cases.
+Patch from Tim ter Laak <timl@scintilla.utwente.nl>
+
 * February 13, 2007, Flemming H. Sørensen *
 
 Localized the Printers preferences.
