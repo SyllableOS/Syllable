@@ -1,0 +1,5 @@
+; Parts to complete a system build
+
+modules
+;	Needs to be installed as root:
+;	coreutils-6.4-su
