@@ -6,7 +6,13 @@
 
 MSG_MAINWND_TITLE=0								Клавиатура
 
-MSG_MAINWND_SETTINGS=100						Настройки
+MSG_MAINWND_KEYMAP=100							Клавиатура
+MSG_MAINWND_KEYBOARDLAYOUT						Раскладка клавиатуры
+MSG_MAINWND_KEYBOARDLAYOUT_SHOWALL				Show All
+MSG_MAINWND_TESTAREA							Проверочное поле (Сначала примените произведённые изменения)
+
+MSG_MAINWND_SETTINGS=200						Настройки
+MSG_MAINWND_SETTINGS_SETTINGS					Настройки
 MSG_MAINWND_SETTINGS_INITIALDELAY				Первоначальная задержка реакции
 MSG_MAINWND_SETTINGS_INITIALDELAY_SHORT			Короткая
 MSG_MAINWND_SETTINGS_INITIALDELAY_LONG			Длинная
@@ -15,9 +21,7 @@ MSG_MAINWND_SETTINGS_REPEATDELAY_FAST			Быстрая
 MSG_MAINWND_SETTINGS_REPEATDELAY_SLOW			Медленная
 MSG_MAINWND_SETTINGS_MILISECONDS				%.f мсек.
 
-MSG_MAINWND_TESTAREA=200						Проверочное поле (Сначала примените произведённые изменения)
-MSG_MAINWND_KEYBOARDLAYOUT						Раскладка клавиатуры
-MSG_MAINWND_BUTTON_APPLY						_Применить
+MSG_MAINWND_BUTTON_APPLY=300					_Применить
 MSG_MAINWND_BUTTON_UNDO							_Отменить
 MSG_MAINWND_BUTTON_DEFAULT						_По умолчанию
 

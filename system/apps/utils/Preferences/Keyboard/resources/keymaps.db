@@ -1,0 +1,205 @@
+#	Syllable keymaps names database for Keyboard preferences application.
+
+# "Filename" is the name of a keymap in /system/keymaps/ .
+# "Displayname" is the name that will be displayed in the Keyboard preferences application's menu.
+#  If no Displayname is defined in that column, the listed Filename will be defined as the
+#  Displayname.
+#  "Aliases" are additional names which the keymap will be represented by in the preferences
+# application menu. Separate with commas.
+#  * = the keymap is marked to display at the top of the Keyboard preferences application's menu.
+#  Do this for the layouts usually associated with the locale this keymaps.db is translated for.
+#
+#  Eg:
+#Fruit-keymap							Apple, Pear, Banana
+#  would represent the Fruit-keymap with these three items in the keymaps preference's list.
+#
+#  Translating keymap display names goes simply as follows: 
+#Fruit-keymap							Pomme, Poire, Banane
+
+# If the preferences application doesn't find a displayname defined for a keymap in the
+# selected language's keymaps names database, it will fallback to checking the keymap
+# file's metadata to see whether one has been defined there. This permits the distribution
+# of new keymaps which can display their names correctly and in multiple languages
+# without any system modification. If no displayname is found in metadata for the language
+# being used by the preferences application, it will fallback to displaying the
+# keymap's file's name.
+
+
+# Additional filenames should be added to the end of the list to ease translation co-ordination.
+
+# Filename									Displayname, Aliases							Code
+#
+Albanian-452								Albanian 452
+Albanian									Albanian
+American-international						United States International						en-us
+American									United States									en-us
+Anglo-Frisian-Futhorc						Fuþorc (Anglo–Frisian)							fy
+Arabic-101									Arabic 101–key
+Arabic-102-AZERTY							Arabic 102–key Azerty
+Arabic-102-IBM-238-Latin					Arabic 102–key IBM 238 Latin
+Arabic-102									Arabic 102–key
+Armenian-Eastern-Papazian					Armenian Eastern Papazian
+Armenian-Eastern-phonetic					Armenian Eastern Phonetic
+Armenian-Eastern-standard					Armenian Eastern Standard
+Armenian-Eastern-typewriter					Armenian Eastern Typewriter
+Armenian-Western-Papazian					Armenian Western Papazian
+Azeri-Cyrillic								Azeri Cyrillic
+Azeri-Latin									Azeri Latin
+Belarusian-Latin-US							Belarusian Latin (U.S.)
+Belarusian-Latin							Belarusian Latin
+Belarusian-phonetic							Belarusian Phonetic Cyrillic
+Belarusian									Belarusian Cyrillic
+Belgian-caps-lock							Belgian (caps lock)
+Belgian										Belgian
+Breton-CHWERTY								Breton C’hwerty
+British-168									United Kingdom 168								en,en-uk
+British-extended							United Kingdom Extended							en,en-uk
+British										United Kingdom									en,en-uk
+Bulgarian-241								Bulgarian 241
+Bulgarian-Latin-241-Windows-9x				Bulgarian 241 Latin (Windows 9x)
+Bulgarian-phonetic-RBEPTB					Bulgarian Phonetic Явертъ
+Bulgarian-phonetic-WWEPTB					Bulgarian Phonetic Шщертъ
+Bulgarian									Bulgarian
+Burmese										Burmese
+Canadian-French-legacy						Canadian French (legacy)
+Canadian-French								Canadian French
+Canadian-multilingual-standard				Candian Multilingual Standard
+Cherokee-Nation								Cherokee Nation
+Croatian									Croatian, Slovenian, Bosnian
+Czech-QWERTY								Czech Qwerty									cz
+Czech-programmers							Czech Programmers								cz
+Czech										Czech											cz
+DAS-Finnish-improved						Finnish DAS Improved							fi
+Danish										Danish											da,kl
+Devanagari-Inscript							Devanagari Inscript
+Dhivehi-phonetic							Dhivehi Phonetic
+Dhivehi-typewriter							Dhivehi Typewriter
+Dutch										Dutch											nl
+Dvorak-left-hand							United States Dvorak (for left hand)			en-us
+Dvorak-right-hand							United States Dvorak (for right hand)			en-us
+Dvorak										United States Dvorak							en-us
+Estonian-programmers						Estonian Programmers							ee
+Estonian									Estonian										ee
+Faroese										Faroese											fo
+French-caps-lock							French (caps lock)								fr
+French										French											fr
+Futhark										Fuþark
+Futhork-Long-Branch							Fuþark Long Branch
+Futhork-Short-Twig							Fuþark Short Twig
+Gaelic										Gaelic
+Georgian-phonetic-QWERTY-ecclesiastical		Georgian Phonetic Ecclesiastical (for Qwerty)
+Georgian-phonetic-QWERTY					Georgian Phonetic (for Qwerty)
+Georgian-phonetic-Russian-ecclesiastical	Georgian Phonetic Ecclesiastical (for Russian)
+Georgian-phonetic-Russian					Georgian Phonetic (for Russian)
+Georgian-typewriter-ecclesiastical			Georgian Typewriter Ecclesiastical
+Georgian-typewriter							Georgian Typewriter
+German-453									German 453 100–key								de
+German-IBM									German IBM										de
+German										German											de
+Gothic										Gothic
+Greek-220-Latin								Greek 220 Latin
+Greek-220									Greek 220
+Greek-319-Latin								Greek 319 Latin
+Greek-319									Greek 319
+Greek-Latin									Greek Latin
+Greek										Greek
+Hawaiian									Hawaiian, Tongan
+Hebrew-MS									Hebrew (Windows)
+Hebrew-phonetic								Hebrew Phonetic
+Hungarian-101								Hungarian 101–key								hu
+Hungarian									Hungarian										hu
+ISO-9995-3-Latin-unified					ISO 9995–3 Latin Unified
+Icelandic-101								Icelandic 101–key								is
+Icelandic									Icelandic										is
+Inuktitut-Nunavut							Inuktitut Nunavut
+Irish										Irish
+Italian-142-extended						Italian 142 Extended							it
+Italian-142									Italian 142										it
+Italian-QZERTY								Italian Qzerty									it
+Italian-extended							Italian Extended								it
+Italian										Italian											it
+Karelian									Karelian										fiu
+Kashubian									Kashubian
+Kazakh-Cyrillic								Kazakh Cyrillic
+Kyrgyz-Cyrillic								Kyrgyz Cyrillic
+Lao											Lao
+Latin-American								Latin American
+Latvian-QWERTY								Latvian Qwerty
+Latvian-ergonomic							Latvian Ūgjrmv (ergonomic)
+Lithuanian-Baltic-numeric					Lithuanian Baltic Numeric
+Lithuanian-IBM								Lithuanian IBM
+Lithuanian-LST-1205-92-AZERTY				Lithuanian LST 1205–92 Ąžerty
+Lithuanian-LST-1205-92-QWERTY				Lithuanian LST 1205–92 Qwerty
+Lithuanian-LST-1582-2000					Lithuanian LST 1582–2000 Standard
+Lithuanian-QWERTY-102						Lithuanian 102–key Qwerty
+Lithuanian-programmers						Lithuanian Programmers
+Macedonian-449								Macedonian 449
+Macedonian									Macedonian
+Macedonian-standard							Macedonian Standard
+Maltese-47									Maltese 47
+Maltese-48									Malese 48
+Maltese-programmers-101						Maltese Programmers 101–key
+Maltese-programmers-102						Maltese Programmers 102–key
+Maori										Maori
+Mongolian-Cyrillic							Mongolian Cyrillic
+Nordic-international						Nordic International							da,fi,fo,is,kl,nb,nn,se,sv
+Norwegian-Dvorak							Norwegian Dvorak								nb,nn
+Norwegian-with-Sami							Norwegian with Sami								nb,nn,se
+Norwegian									Norwegian										nb,nn
+Ogham										Ogham
+Persian-ISIRI-2901-1994						Persian ISIRI 2901:1994
+Persian-MS									Persian (Windows)
+Polish-214									Polish 214										pl
+Polish-numeric								Polish Numeric									pl
+Polish-semicolon							Polish (semicolon deadkey)						pl
+Polish-with-Kashubian						Polish with Kashubian							pl
+Polish										Polish											pl
+Portuguese-Brazilian-ABNT2-Dvorak			Portuguese Brazilian ABNT2 Dvorak				pt-br
+Portuguese-Brazilian-ABNT2					Portuguese Brazilian ABNT2						pt-br
+Portuguese									Portuguese										pt
+Romanian-1998								Romanian 1998 Qwertz							ro
+Romanian-2004								Romanian 2004 Qwerty							ro
+Romanian-446								Romanian 446									ro
+Romanian-programmers						Romanian Programmers							ro
+Russian-phonetic							Russian Phonetic								ru
+Russian-typewriter							Russian Typewriter								ru
+Russian										Russian											ru
+Sami-extended-Norway						Sami Extended Norway							se
+Sami-extended-Sweden-Finland				Sami Extended Sweden & Finland					se
+Serbian-Cyrillic-450						Serbian Cyrillic 450
+Serbian-Cyrillic							Serbian Cyrillic
+Serbian-Latin-450							Serbian Latin 450
+Serbian-Latin-Windows-9x					Serbian Latin (Windows 9x)
+Serbian-Latin								Serbian Latin
+Serbo-Croatian-programmers					Serbo-Croatian Programmers
+Slovak-QWERTY								Slovak Qwerty									sk
+Slovak										Slovak											sk
+Sorbian										Sorbian
+South-African								South African
+Spanish-variation							Spanish (variation)								es
+Spanish										Spanish											es
+Swedish-153A								Swedish 153A									sv
+Swedish-Dvorak								Swedish Svorak									sv
+Swedish-with-Sami							Swedish with Sami, Finnish with Sami			fi,se,sv
+Swedish										Swedish / Finnish								fi,se,sv
+Swiss-French								Swiss French
+Swiss-German								Swiss German									de-ch
+Syriac-phonetic								Syriac Phonetic
+Syriac										Syriac
+Tajik-Cyrillic-303							Tajik Cyrillic 303
+Tajik-Cyrillic								Tajik Cyrillic
+Tatar-Cyrillic								Tatar Cyrillic
+Thai-Kedmanee								Thai Kedmanee
+Thai-Pattachote								Thai Pattachote
+Tifinagh									Tifinagh
+Turkish-F									Turkish (type F)
+Turkish-Q									Turkish (type Q)
+Turkmen-Cyrillic							Turkmen Cyrillic
+Turkmen-Latin-alt-gr						Turkmen Latin (alt–gr)
+Turkmen-Latin-standard						Turkmen Latin Standard
+Ukrainian-phonetic							Ukrainian Phonetic
+Ukrainian									Ukrainian
+Uzbek-Cyrillic								Uzbek Cyrillic
+Vietnamese									Vietnamese
+#
+# Add new below this line #

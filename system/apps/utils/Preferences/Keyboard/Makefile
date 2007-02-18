@@ -1,5 +1,5 @@
 COPTS = -c
-OBJS = main.o mainwindow.o 
+OBJS = main.o application.o mainwindow.o
 EXE = Keyboard
 
 CATALOGS = da de es fr hu nl pt-br ru sv
@@ -7,7 +7,7 @@ CATALOGS = da de es fr hu nl pt-br ru sv
 $(EXE): catalogs $(OBJS)
 	$(CXX) $(OBJS) -lsyllable -o $(EXE)
 	strip --strip-all $(EXE)
-	rescopy $(EXE) -r *.png
+	rescopy $(EXE) -r resources/*.png
 	rescopy -a $(EXE) resources/$(EXE).catalog
 	for CATALOG in $(CATALOGS);do \
 		echo $$CATALOG; \
