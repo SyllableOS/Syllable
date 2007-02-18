@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.123
+# Version 0.6.124
 # Copyright (c) 2002-2007 Kaj de Vos
 # License: GPL 2 or any later version
 
@@ -694,7 +694,7 @@ def installModule originalStaging, staging, directive, target
 							for libs in ['*.so', '*.so.*']
 								break unless action superAccess + "mv #{File.join(root, 'lib', libs)} " +
 									File.join(originalStaging ? @systemRoot : '/',
-										'system/libs/'
+										'system/libraries/'
 									)
 							end
 						end
@@ -1656,7 +1656,7 @@ end
 
 @image = File.join(@stage = File.join(@workDir, 'stage'), 'image')
 
-@indexesRoot = File.join @image, 'atheos/autolnk'
+@indexesRoot = File.join @image, 'autolnk'
 
 unless @systemBuild = File.basename(@workDir) == 'system'
 	@crossCompile = false
@@ -1673,8 +1673,7 @@ else
 		ENV['LDFLAGS']  = "-b #{@target} " + (var = ENV['LDFLAGS']  ? var : '')
 	end
 
-	@systemImage = @image
-	@systemRoot = File.join @systemImage, 'atheos'
+	@systemRoot = @systemImage = @image
 
 #	@buildTools = File.join @workDir, 'build-tools'
 
@@ -1700,7 +1699,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.6.123',
+	puts 'Syllable Build System 0.6.124',
 		'Copyright (c) 2002-2007 Kaj de Vos',
 		'License: GPL 2 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
@@ -1787,10 +1786,10 @@ else
 
 				if @bootstrap then ENV['PATH'] =
 						if @systemBuild
-							(File.join @image, 'atheos/system/bin') + ':'
+							(File.join @image, 'system/bin') + ':'
 #							Executables may not be position-independent:
-#							(File.join @image, 'atheos/usr/glibc/sbin') + ':' +
-#							(File.join @image, 'atheos/usr/glibc/bin') + ':'
+#							(File.join @image, 'usr/glibc/sbin') + ':' +
+#							(File.join @image, 'usr/glibc/bin') + ':'
 						else
 							''
 						end +
@@ -1808,11 +1807,11 @@ else
 				headers =
 					if @systemBuild
 						# Syllable system headers
-						(File.join @image, 'atheos/system/include') + ':' +
+						(File.join @image, 'system/include') + ':' +
 						# Linux system and C library headers
-						(File.join @image, 'atheos/usr/include') + ':' +
+						(File.join @image, 'usr/include') + ':' +
 						# C library headers
-#						(File.join @image, 'atheos/usr/glibc/include') + ':' +
+#						(File.join @image, 'usr/glibc/include') + ':' +
 						(@syllable ? File.join(@workDir, 'sys/include') + ':' : '')
 					else
 						''
@@ -1832,13 +1831,13 @@ else
 
 				# Pick up libraries from the staging area
 
-				ENV['ATHEOS_LIB_PATH'] = File.join @image, 'atheos/system/libs' if @systemBuild
+				ENV['ATHEOS_LIB_PATH'] = File.join @image, 'system/libraries' if @systemBuild
 
 				if @bootstrap
 					ENV[name = (@syllable ? 'DLL' : 'LD_LIBRARY') + '_PATH'] =
 						if @systemBuild
-							(File.join @image, 'atheos/system/libs') + ':' +
-							(File.join @image, 'atheos/system') + ':'
+							(File.join @image, 'system/libraries') + ':' +
+							(File.join @image, 'system') + ':'
 						else
 							''
 						end +
@@ -1851,14 +1850,14 @@ else
 
 				if @syllable
 					ENV['LIBRARY_PATH'] =
-						(@systemBuild ? File.join(@image, 'atheos/system/libs') + ':' : '') +
+						(@systemBuild ? File.join(@image, 'system/libraries') + ':' : '') +
 						File.join(@stage, 'lib') +
 						((var = ENV['LIBRARY_PATH']) && !@isolateStage ? ':' + var : '')
 
 					@log.extra 'LIBRARY_PATH: ' + ENV['LIBRARY_PATH']
 				else
 					ENV['LDFLAGS'] = ((var = ENV['LDFLAGS']) ? var : '') +
-						(@systemBuild ? ' -L' + File.join(@image, 'atheos/system/libs') : '') +
+						(@systemBuild ? ' -L' + File.join(@image, 'system/libraries') : '') +
 						' -L' + File.join(@stage, 'lib')
 
 					@log.extra 'LDFLAGS: ' + ENV['LDFLAGS']
@@ -1897,3 +1896,4 @@ else
 	@log.close
 	exit @log.failures.length  # FIXME: only works when processing a profile
 end
+
