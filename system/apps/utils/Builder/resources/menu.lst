@@ -3,11 +3,11 @@
 
 	title	Syllable
 	root	(hd0,0)
-	kernel	/atheos/system/kernel.so root=/dev/disk/ata/hda/0
-	module	/atheos/system/config/kernel.cfg
-	module	/atheos/system/drivers/dev/bus/acpi
-	module	/atheos/system/drivers/dev/bus/pci
-	module	/atheos/system/drivers/dev/bus/ata
-	module	/atheos/system/drivers/dev/hcd/ata_pci
-	module	/atheos/system/drivers/fs/afs
+	kernel	/system/kernel.so root=/dev/disk/ata/hda/0
+	module	/system/config/kernel.cfg
+	module	/system/drivers/dev/bus/acpi
+	module	/system/drivers/dev/bus/pci
+	module	/system/drivers/dev/bus/ata
+	module	/system/drivers/dev/hcd/ata_pci
+	module	/system/drivers/fs/afs
 
