@@ -19,7 +19,7 @@ configure-options
 
 system-prefix-var	DESTDIR
 
-;move-files			share/terminfo /atheos/usr/share/
+;move-files			share/terminfo /usr/share/
 documentation
 	README INSTALL ANNOUNCE NEWS AUTHORS TO-DO
 	doc/html

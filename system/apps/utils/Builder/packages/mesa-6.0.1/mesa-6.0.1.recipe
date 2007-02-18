@@ -21,8 +21,8 @@ install-files
 	src/mesa/drivers/syllable/GLView.h	include/gui/
 documentation		docs
 _links
-	lib/libGL.so		/system/libs/
-	lib/libGLU.so		/system/libs/
-	lib/libOSMesa.so	/system/libs/
+	lib/libGL.so		/system/libraries/
+	lib/libGLU.so		/system/libraries/
+	lib/libOSMesa.so	/system/libraries/
 	include/GL			/system/include/
 

@@ -23,13 +23,11 @@ run-recommends		samba
 build-dir			.
 
 configure-options
+;	CUPS is a system component and the configuration should be kept separate from the binaries:
 	--sysconfdir=/system/config
 ;	--enable-ssl
 
 system-prefix-var	DSTROOT
-
-; CUPS is a system component and the configuration should be kept separate from the binaries:
-;move-files			etc/cups /atheos/system/config/
 
 delete-files
 	share/doc
@@ -48,8 +46,5 @@ documentation
 ;	doc
 build-docs			INSTALL*.txt
 
-links
-	/atheos/autolnk/bin/smbspool	lib/cups/backend/smb
-;	The executables still need to see the configuration data in etc/cups:
-;	/system/config/cups				etc/
+links /atheos/autolnk/bin/smbspool lib/cups/backend/smb
 

@@ -37,7 +37,7 @@ configure-options
 	--disable-libgutenprintui2
 
 ; Most users don't want all of the PPD files installed. Move them out of the way for later processing.
-;move-files			share/cups/model /atheos/tmp/
+;move-files			share/cups/model /tmp/
 
 _delete-files
 	sbin/cups-genppd.5.0

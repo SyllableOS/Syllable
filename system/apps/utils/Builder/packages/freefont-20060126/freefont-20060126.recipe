@@ -11,7 +11,7 @@ install-tree
 install				true
 install-files		*.ttf .
 
-move-files			*.ttf /atheos/system/fonts/
+move-files			*.ttf /system/fonts/
 
 documentation		README COPYING ChangeLog AUTHORS CREDITS
 build-docs			INSTALL

@@ -4,21 +4,21 @@ authors
 status					developing
 warnings
 ;	Works, on Linux, with the right (TM) library versions, without GLibC headers, for cross-compiling kernel-space, but not yet for user-land.
-	The Syllable base distribution package needs to be in Builder/sources, so the "atheos" directory will be unpacked into your working directory.
+	The Syllable base distribution package needs to be in Builder/sources, so it will be unpacked into your working directory.
 	To use the static GCC libraries from Syllable, the GCC binary package needs to be in Builder/sources.
 ;	The Syllable source tree "system" directory needs to be in your working directory.
 	Wants to write to the installation directory during configure! May need to run as super user.
 
 inherits				gcc-4.1.1
 
-headline				"Cross-compiler for Syllable"
+headline				Cross-compiler for Syllable
 packages
 	gcc/gcc-4.1.1/gcc-4.1.1
 ;	gcc/gcc-4.1.1/gcc-core-4.1.1
 ;	gcc/gcc-4.1.1/gcc-g++-4.1.1
 ;	Syllable binaries:
-	base-syllable-0.6.1
-;	gcc-4.1.1.bin.1
+	base-syllable-0.6.3
+;	gcc-4.1.1.bin.2
 
 ;build-needs				Syllable 0.6.1
 
@@ -28,19 +28,19 @@ patch
 ;	cd ..
 	cd ..
 	mkdir -p stage
-	cp -r atheos/system/include			stage
-;	cp -r system/system/include			stage
-	cp -r atheos/usr/glibc/include/*	stage/include
+	cp -r system/include		stage
+;	cp -r system/system/include	stage
+	cp -r usr/glibc/include/*	stage/include
 	mkdir -p stage/lib
-	cp atheos/system/libs/*				stage/lib
+	cp system/libraries/*		stage/lib
 ;	Static libraries:
-;	cp -r atheos/usr/glibc/lib/*		stage/lib
-;	cp -r gcc/lib/*						stage/lib
+;	cp -r usr/glibc/lib/*		stage/lib
+;	cp -r gcc/lib/*				stage/lib
 
 configure-options
 	--target=i586-pc-syllable
 ;	GLibC headers for Syllable:
-;	--with-headers=$PWD/../atheos/usr/glibc/include
+;	--with-headers=$PWD/../usr/glibc/include
 ;	--with-sysroot=$PWD/../stage
 	--enable-languages=c,c++
 	--with-arch=i586
@@ -55,7 +55,7 @@ configure-options
 ;	--disable-nls
 
 make-env
-;	C_INCLUDE_PATH		$PWD/../atheos/system/include:$PWD/../atheos/usr/glibc/include
+;	C_INCLUDE_PATH		$PWD/../system/include:$PWD/../usr/glibc/include
 	C_INCLUDE_PATH		$PWD/../stage/include
 ;	CPLUS_INCLUDE_PATH	$PWD/../stage/include
 ;	The cross-assembling toolchain:

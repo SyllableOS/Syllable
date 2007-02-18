@@ -6,9 +6,9 @@ status				testing
 
 inherits			xpdf-3.00pl3
 
-; Patched for GCC 4:
 build-needs			autoconf >= 2.57
 
+; Patched for GCC 4:
 patch				autoconf
 
 make-targets		xpdf
@@ -17,4 +17,5 @@ install-tree		bin
 install				true
 install-files		xpdf/Xpdf bin/
 
-move-files			bin/Xpdf /atheos/Applications/Xpdf/
+move-files			bin/Xpdf /Applications/Xpdf/
+

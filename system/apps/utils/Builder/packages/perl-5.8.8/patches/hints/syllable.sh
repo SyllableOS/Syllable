@@ -4,9 +4,9 @@
 
 #d_suidsafe='undef'
 ignore_versioned_solibs='y'
-#libc=/system/libs/libc.so.2
+#libc=/system/libraries/libc.so.2
 
-libpth='/system/libs /usr/glibc/lib /atheos/autolnk/lib ./'
+libpth='/system/libraries /usr/glibc/lib /atheos/autolnk/lib ./'
 #usrinc='/usr/glibc/include'
 
 #libs=' '
