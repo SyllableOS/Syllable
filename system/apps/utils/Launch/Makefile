@@ -1,4 +1,5 @@
-#Makefile for Launch
+# Makefile for Launch
+
 COPTS = -c -fexceptions -ffast-math
 
 APPBIN = /Applications/
@@ -63,11 +64,9 @@ catalog-clean:
 
 deps:
 
-dist: all
-	@echo Distribution...
-	@cp $(EXE) $(DIST_DIR)/atheos/Applications/
-
 install: all
 	@echo Installing...
-	@cp $(EXE) /Applications/
+	@cp $(EXE) $(IMAGE)/Applications/
+
+dist: install
 

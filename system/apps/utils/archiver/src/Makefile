@@ -20,12 +20,10 @@ deps:
 	@mkdir $(OBJDIR)
 	
 dist:
-	@echo Making $(DIST_DIR)/atheos/Applications/Archiver
-	@mkdir $(DIST_DIR)/atheos/Applications/Archiver
-	@echo Making $(DIST_DIR)/atheos/Applications/Archiver/bin
-	@mkdir $(DIST_DIR)/atheos/Applications/Archiver/bin
-	@echo Coping $(EXE) to $(DIST_DIR)/atheos/Applications/Archiver/
-	@cp -f $(EXE) $(DIST_DIR)/atheos/Applications/Archiver/
+	@echo Making $(IMAGE)/Applications/Archiver/bin
+	@mkdir -p $(IMAGE)/Applications/Archiver/bin
+	@echo Coping $(EXE) to $(IMAGE)/Applications/Archiver/
+	@cp -f $(EXE) $(IMAGE)/Applications/Archiver/
 
 clean:
 	@echo Removing all objects and executable.

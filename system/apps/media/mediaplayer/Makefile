@@ -42,12 +42,10 @@ catalogs:
 deps:
 
 install:  $(OBJDIR)/MediaPlayer
-	mkdir -p $(APPBIN)
-	cp MediaPlayer $(APPBIN)/MediaPlayer
+	mkdir -p $(IMAGE)/$(APPBIN)
+	cp MediaPlayer $(IMAGE)/$(APPBIN)
 
-dist:  $(OBJDIR)/MediaPlayer
-	mkdir -p $(DIST_DIR)/atheos/Applications/Media
-	cp MediaPlayer $(DIST_DIR)/atheos/Applications/Media/MediaPlayer
+dist: install
 
 deps: $(OBJDIR) $(DEPS)
 

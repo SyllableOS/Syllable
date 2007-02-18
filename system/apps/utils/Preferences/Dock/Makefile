@@ -1,9 +1,10 @@
-#Makefile for Dock
+# Makefile for Dock
+
 COPTS = -c
 
 CATALOGS = da de es fr hu nl pt-br ru sv
 
-APPBIN = /atheos/Applications/Preferences
+APPBIN = /Applications/Preferences
 OBJS = Prefs.o
 
 OBJDIR := objs
@@ -61,13 +62,9 @@ catalog-clean:
 
 deps:
 
-dist: all
-	@echo Distribution...
-	@mkdir -p $(DIST_DIR)/atheos/Applications/Preferences
-	@cp Dock $(DIST_DIR)/atheos/Applications/Preferences/Dock
-
 install: all
 	@echo Installing...
-	@mkdir -p /atheos/Applications/Preferences
-	@cp Dock /atheos/Applications/Preferences/Dock
+	@cp Dock $(IMAGE)/$(APPBIN)
+
+dist: install
 

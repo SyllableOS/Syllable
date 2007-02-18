@@ -43,14 +43,14 @@ int main( int argc, char **argv )
 	else
 		pzASName = pzAppserver;
 	
-	symlink( "boot/atheos", "/atheos" );
-	symlink( "atheos/system", "/system" );
+	symlink( "boot", "/atheos" );
+	symlink( "boot/system", "/system" );
 	symlink( "system/bin", "/bin" );
-	symlink( "atheos/usr", "/usr" );
-	symlink( "atheos/etc", "/etc" );
-	symlink( "atheos/var", "/var" );
-	symlink( "atheos/home", "/home" );
-	symlink( "atheos/tmp", "/tmp" );
+	symlink( "boot/usr", "/usr" );
+	symlink( "boot/etc", "/etc" );
+	symlink( "boot/home", "/home" );
+	symlink( "boot/var", "/var" );
+	symlink( "boot/tmp", "/tmp" );
 
 	if( fork() == 0 ) {
 		execl( pzAppserver, pzASName, NULL );

@@ -230,7 +230,7 @@ void init_kernel_config( void )
 		{
 			continue;
 		}
-		strcpy( zFullPath, "/boot/atheos/system" );
+		strcpy( zFullPath, "/boot/system" );
 		j = strlen( zFullPath );
 		while ( *pzPath != '\0' && isspace( *pzPath ) == false )
 		{

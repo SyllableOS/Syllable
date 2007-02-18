@@ -1,6 +1,6 @@
 #!/bin/sh
 
-manpath="/atheos/Documentation/man"
+manpath="/boot/Documentation/man"
 browser="/Applications/ABrowse/ABrowse"
 #browser="links -g"
 

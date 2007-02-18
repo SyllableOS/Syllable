@@ -1,3 +1,9 @@
+* February 18, 2007, Kaj de Vos *
+
+Removed the atheos subdirectory to simplify and flatten the filesystem hierarchy.
+Moved /system/libs/ to /system/libraries/.
+Note that you have to adapt your GrUB menu.lst file when upgrading.
+
 * February 18, 2007, Flemming H. Sørensen *
 
 New Keyboard pref.

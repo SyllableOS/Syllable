@@ -1098,7 +1098,7 @@ void MainWindow::HandleMessage( os::Message* pcMessage )
 			RegistrarManager* pcManager = RegistrarManager::Get();
 			if( pcManager )
 			{
-				pcManager->Launch( NULL, "/atheos/Documentation/gui/index.html" );
+				pcManager->Launch( NULL, "/boot/Documentation/gui/index.html" );
 				pcManager->Put();
 			}
 			#if 0
@@ -2065,54 +2065,4 @@ bool MainWindow::Find(const String &pcString, bool bDown, bool bCaseSensitive, b
 	return false;
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

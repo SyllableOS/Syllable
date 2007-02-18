@@ -24,7 +24,7 @@ catalogs:
 	done;
 
 dist: $(EXE)
-	install -s $(EXE) $(DIST_DIR)/atheos/Applications/Preferences/$(EXE)
+	install -s $(EXE) $(IMAGE)/Applications/Preferences/$(EXE)
 
 clean: catalog-clean
 	-rm $(OBJS)

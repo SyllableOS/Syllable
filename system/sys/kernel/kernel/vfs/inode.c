@@ -1116,7 +1116,7 @@ static void release_fs( FileSysDesc_s *psDesc )
 	/* Do not unload bootmodule fs drivers */
 	for ( i = 0; i < g_sSysBase.ex_nBootModuleCount; i++ )
 	{
-		strcpy( zPath, "/atheos/system/drivers/fs/" );
+		strcpy( zPath, "/system/drivers/fs/" );
 		strcat( zPath, psDesc->fs_zName );
 		if ( !strcmp( zPath, g_sSysBase.ex_asBootModules[i].bm_pzModuleArgs ) )
 		{

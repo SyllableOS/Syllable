@@ -24,12 +24,10 @@ $(OBJDIR)/MediaConverter: $(OBJS)
 deps:
 
 install:  $(OBJDIR)/MediaConverter
-	mkdir -p $(APPBIN)
-	cp MediaConverter $(APPBIN)/MediaConverter
+	mkdir -p $(IMAGE)/$(APPBIN)
+	cp MediaConverter $(IMAGE)/$(APPBIN)
 
-dist:  $(OBJDIR)/MediaConverter
-	mkdir -p $(DIST_DIR)/atheos/Applications/Media
-	cp MediaConverter $(DIST_DIR)/atheos/Applications/Media/MediaConverter
+dist: install
 
 deps: $(OBJDIR) $(DEPS)
 

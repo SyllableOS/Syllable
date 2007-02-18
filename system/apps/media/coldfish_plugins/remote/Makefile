@@ -23,12 +23,10 @@ $(OBJDIR)/Remote: $(OBJS)
 deps:
 
 install:  $(OBJDIR)/Remote
-	mkdir -p $(DRIVERBIN)
-	install -s $(OBJDIR)/Remote $(DRIVERBIN)
+	mkdir -p $(IMAGE)/$(DRIVERBIN)
+	install -s $(OBJDIR)/Remote $(IMAGE)/$(DRIVERBIN)
 
-dist:  $(OBJDIR)/Remote
-	mkdir -p $(DIST_DIR)/atheos$(DRIVERBIN)
-	install -s $(OBJDIR)/Remote $(DIST_DIR)/atheos$(DRIVERBIN)
+dist: install
 
 deps: $(OBJDIR) $(DEPS)
 

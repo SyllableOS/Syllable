@@ -289,9 +289,9 @@ INPUT                  = ./ \
                          vfs \
                          net \
                          inc \
-                         /ainc/atheos \
-                         /ainc/net \
-                         /ainc/posix
+                         /system/include/atheos \
+                         /system/include/net \
+                         /system/include/posix
 
 # If the value of the INPUT tag contains directories, you can use the 
 # FILE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp 
@@ -598,7 +598,7 @@ SEARCH_INCLUDES        = YES
 # contain include files that are not input files but should be processed by 
 # the preprocessor. 
 
-INCLUDE_PATH           = /ainc/
+INCLUDE_PATH           = /system/include/
 
 # You can use the INCLUDE_FILE_PATTERNS tag to specify one or more wildcard 
 # patterns (like *.h and *.hpp) to filter out the header-files in the 

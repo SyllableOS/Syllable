@@ -38,13 +38,11 @@ tar:
 	-rm Albert.tar.gz
 	tar -cpzvf Albert.tar.gz -C .. Albert
 
-dist: $(EXE)
-	mkdir -p $(DIST_DIR)/atheos/Applications/Calculator
-	mv Calculator $(DIST_DIR)/atheos/Applications/Calculator
-
 install: $(EXE)
-	mkdir -p /atheos/Applications/Calculator
-	mv Calculator /atheos/Applications/Calculator
+	mkdir -p $(IMAGE)/Applications/Calculator
+	mv Calculator $(IMAGE)/Applications/Calculator/
+
+dist: install
 
 deps:
 	

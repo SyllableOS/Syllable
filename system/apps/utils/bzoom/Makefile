@@ -24,9 +24,9 @@ catalogs:
 	done;
 
 dist: $(EXE)
-	mkdir $(DIST_DIR)/atheos/Applications/BZoom
-	cp -f $(EXE) $(DIST_DIR)/atheos/Applications/BZoom/$(EXE)
-	strip --strip-all $(DIST_DIR)/atheos/Applications/BZoom/$(EXE)
+	mkdir $(IMAGE)/Applications/BZoom
+	cp -f $(EXE) $(IMAGE)/Applications/BZoom/
+	strip --strip-all $(IMAGE)/Applications/BZoom/$(EXE)
 
 upgrade: $(EXE)
 	rfs $(EXE) /Applications/BZoom/$(EXE)

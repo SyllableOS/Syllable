@@ -42,12 +42,10 @@ catalogs:
 deps:
 
 install:  $(OBJDIR)/ColdFish
-	mkdir -p $(APPBIN)
-	cp ColdFish $(APPBIN)/ColdFish
+	mkdir -p $(IMAGE)/$(APPBIN)
+	cp ColdFish $(IMAGE)/$(APPBIN)
 
-dist:  $(OBJDIR)/ColdFish
-	mkdir -p $(DIST_DIR)/atheos/Applications/Media
-	cp ColdFish $(DIST_DIR)/atheos/Applications/Media/ColdFish
+dist: install
 
 deps: $(OBJDIR) $(DEPS)
 
@@ -61,3 +59,4 @@ catalog-clean:
 	done;
 
 -include $(OBJDIR)/*.d
+

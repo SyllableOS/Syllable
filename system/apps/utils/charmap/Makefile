@@ -48,10 +48,8 @@ catalog-clean:
 	done;
 
 install: $(EXE)
-	-mkdir $(INSTALLDIR)
-	cp $(EXE) $(INSTALLDIR)/$(EXE)
+	mkdir -p $(IMAGE)/$(INSTALLDIR)
+	cp $(EXE) $(IMAGE)/$(INSTALLDIR)
 
-dist: $(EXE)
-	-mkdir $(DIST_DIR)/atheos$(INSTALLDIR)
-	cp $(EXE) $(DIST_DIR)/atheos$(INSTALLDIR)/$(EXE)
+dist: install
 

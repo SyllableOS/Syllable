@@ -13,12 +13,12 @@
 # process you should edit these files instead.
 
 # Log local kernel output into /var/log/kernel
-dbterm 8 >>/var/log/kernel &
+dbterm 8 >> /var/log/kernel &
 
 # Add a few additional symlinks which simplify navigation around the
 # filesystem
-ln -s /atheos/Applications /Applications
-ln -s /home/root /root
+ln -s boot/Applications /Applications
+ln -s home/root /root
 
 # Configure basic environment.
 # BASh runs this, too, but do it earlier for the benefit of processes started
@@ -28,7 +28,7 @@ source /etc/profile
 # Silently empty the temporary directory
 if [ "$TEMP" != '' ]
 then
-	rm -r $TEMP/* >>/dev/null 2>&1 &
+	rm -r $TEMP/* > /dev/null 2>&1 &
 fi
 
 # Packages that require initalisation can include init and early-init directories,
@@ -58,13 +58,13 @@ then
 fi
 
 # Start the graphical login and servers
-/bin/dlogin </dev/null >>/var/log/desktop 2>&1 &
+/bin/dlogin < /dev/null >> /var/log/desktop 2>&1 &
 
 # No more environment variables can be defined for the user's environment
 # after DLogin has started
 
-/system/mediaserver >>/dev/null &
-/system/registrar >>/dev/null &
+/system/mediaserver > /dev/null &
+/system/registrar > /dev/null &
 
 # Check for network changes & configure the network if required
 /Applications/Preferences/Network --detect
@@ -90,3 +90,4 @@ done
 source /system/user-init.sh
 
 exit 0
+

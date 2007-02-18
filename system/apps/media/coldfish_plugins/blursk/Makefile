@@ -23,12 +23,10 @@ $(OBJDIR)/Blur: $(OBJS)
 deps:
 
 install:  $(OBJDIR)/Blur
-	mkdir -p $(DRIVERBIN)
-	install -s $(OBJDIR)/Blur $(DRIVERBIN)/Blur
+	mkdir -p $(IMAGE)/$(DRIVERBIN)
+	install -s $(OBJDIR)/Blur $(IMAGE)/$(DRIVERBIN)/Blur
 
-dist:  $(OBJDIR)/Blur
-	mkdir -p $(DIST_DIR)/atheos/Applications/Media/Plugins
-	install -s $(OBJDIR)/Blur $(DIST_DIR)/atheos/Applications/Media/Plugins
+dist: install
 
 deps: $(OBJDIR) $(DEPS)
 

@@ -546,15 +546,14 @@ String GetApplicationPath()
 	
 	close(nFD);
 	buffer[BUFFER_SIZE-1] = 0; /* ensure null-terminated */
-	strcpy(buffer,buffer+12);  /* remove /boot/atheos */ 
+	strcpy(buffer,buffer+5);  /* remove /boot */ 
 	cPath =  String(buffer);
 	
-	if (cPath.find("/boot/atheos",0) == 0)
+	if (cPath.find("/boot",0) == 0)
 		cPath = cPath + 12;
 	else if (cPath.find("/boot/syllable",0) == 0)
 		cPath = cPath + 13;
 		
 	return cPath;
 }	
-
 

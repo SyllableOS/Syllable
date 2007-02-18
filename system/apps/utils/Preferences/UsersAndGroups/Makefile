@@ -28,10 +28,10 @@ catalogs:
 		cd ..; \
 	done;
 
-install: dist
+install: $(EXE)
+	install -s $(EXE) $(IMAGE)/Applications/Preferences/$(TARGET_EXE)
 
-dist: $(EXE)
-	install -s $(EXE) $(DIST_DIR)/atheos/Applications/Preferences/$(TARGET_EXE)
+dist: install
 
 clean: catalog-clean
 	-rm $(OBJS)
@@ -45,3 +45,4 @@ catalog-clean:
 
 .cpp.o:
 	$(CXX) $(CXXFLAGS) $< -o $@
+

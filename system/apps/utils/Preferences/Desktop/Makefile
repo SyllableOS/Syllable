@@ -3,7 +3,7 @@ COPTS = -c
 
 CATALOGS = da de es fr hu nl pt-br ru sv
 
-APPBIN = /atheos/Applications/Preferences
+APPBIN = /Applications/Preferences
 OBJS = Prefs.o
 
 OBJDIR := objs
@@ -61,13 +61,9 @@ catalog-clean:
 
 deps:
 
-dist: all
-	@echo Distribution...
-	@mkdir -p $(DIST_DIR)/atheos/Applications/Preferences
-	@cp Desktop $(DIST_DIR)/atheos/Applications/Preferences/Desktop
-
 install: all
 	@echo Installing...
-	@mkdir -p /atheos/Applications/Preferences
-	@cp Desktop /atheos/Applications/Preferences/Desktop
+	@cp Desktop $(IMAGE)/$(APPBIN)
+
+dist: install
 
