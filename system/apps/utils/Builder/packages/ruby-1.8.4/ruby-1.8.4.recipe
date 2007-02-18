@@ -14,7 +14,9 @@ needs				Syllable >= 0.6.1
 ;	--enable-shared
 ;	--enable-pthread
 ;	--enable-install-doc
+
 test-targets		test
+
+install-prefix-var	DESTDIR
 documentation		README COPYING LEGAL GPL LGPL ChangeLog ToDo
 develop-docs		README.EXT sample
-
