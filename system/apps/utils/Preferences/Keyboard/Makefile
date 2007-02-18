@@ -8,6 +8,7 @@ $(EXE): catalogs $(OBJS)
 	$(CXX) $(OBJS) -lsyllable -o $(EXE)
 	strip --strip-all $(EXE)
 	rescopy $(EXE) -r resources/*.png
+	rescopy -a $(EXE) resources/keymaps.db
 	rescopy -a $(EXE) resources/$(EXE).catalog
 	for CATALOG in $(CATALOGS);do \
 		echo $$CATALOG; \
