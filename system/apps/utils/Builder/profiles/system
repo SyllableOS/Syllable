@@ -10,133 +10,131 @@ tree
 
 ;	Main directory structure
 
-	atheos
+	etc
 
-	atheos/etc
+	home home.png
 
-	atheos/home				home.png
+	autolnk
+	autolnk/bin
+	autolnk/etc
+	autolnk/include
+	autolnk/info
+	autolnk/lib
+	autolnk/libexec
+	autolnk/man
+	autolnk/sbin
+	autolnk/share
+	autolnk/early-init
+	autolnk/init
 
-	atheos/autolnk
-	atheos/autolnk/bin
-	atheos/autolnk/etc
-	atheos/autolnk/include
-	atheos/autolnk/info
-	atheos/autolnk/lib
-	atheos/autolnk/libexec
-	atheos/autolnk/man
-	atheos/autolnk/sbin
-	atheos/autolnk/share
-	atheos/autolnk/early-init
-	atheos/autolnk/init
+	system
 
-	atheos/system
+	system/config
+	system/config/drivers
+	system/config/drivers/appserver
+	system/config/drivers/appserver/video
+	system/config/drivers/dev
+	system/config/appearance
+	system/config/appearance/colour-schemes
 
-	atheos/system/config
-	atheos/system/config/drivers
-	atheos/system/config/drivers/appserver
-	atheos/system/config/drivers/appserver/video
-	atheos/system/config/drivers/dev
-	atheos/system/config/appearance
-	atheos/system/config/appearance/colour-schemes
+	system/include
 
-	atheos/system/include
+	system/bin
+	system/libraries
 
-	atheos/system/bin
-	atheos/system/libs
+	system/fonts
+	system/icons
+	system/keymaps
+	system/sounds
 
-	atheos/system/fonts
-	atheos/system/icons
-	atheos/system/keymaps
-	atheos/system/sounds
+	system/resources
+	system/resources/catalogs
+	system/resources/catalogs/da
+	system/resources/catalogs/de
+	system/resources/catalogs/es
+	system/resources/catalogs/fy
+	system/resources/catalogs/hu
+	system/resources/catalogs/nl
+	system/resources/catalogs/pl
+	system/resources/catalogs/pt-br
+	system/resources/catalogs/ru
+	system/resources/catalogs/sv
+	system/resources/wallpapers
 
-	atheos/system/resources
-	atheos/system/resources/catalogs
-	atheos/system/resources/catalogs/da
-	atheos/system/resources/catalogs/de
-	atheos/system/resources/catalogs/es
-	atheos/system/resources/catalogs/fy
-	atheos/system/resources/catalogs/hu
-	atheos/system/resources/catalogs/nl
-	atheos/system/resources/catalogs/pl
-	atheos/system/resources/catalogs/pt-br
-	atheos/system/resources/catalogs/ru
-	atheos/system/resources/catalogs/sv
-	atheos/system/resources/wallpapers
+	system/drivers
 
-	atheos/system/drivers
+	system/drivers/dev
+	system/drivers/dev/audio
+	system/drivers/dev/bus
+	system/drivers/dev/disk
+	system/drivers/dev/graphics
+	system/drivers/dev/hcd
+	system/drivers/dev/input
+	system/drivers/dev/misc
+	system/drivers/dev/net
+	system/drivers/dev/net/eth
+	system/drivers/dev/printer
 
-	atheos/system/drivers/dev
-	atheos/system/drivers/dev/audio
-	atheos/system/drivers/dev/bus
-	atheos/system/drivers/dev/disk
-	atheos/system/drivers/dev/graphics
-	atheos/system/drivers/dev/hcd
-	atheos/system/drivers/dev/input
-	atheos/system/drivers/dev/misc
-	atheos/system/drivers/dev/net
-	atheos/system/drivers/dev/net/eth
-	atheos/system/drivers/dev/printer
+	system/drivers/fs
 
-	atheos/system/drivers/fs
+	system/drivers/net
+	system/drivers/net/if
 
-	atheos/system/drivers/net
-	atheos/system/drivers/net/if
+	system/drivers/appserver
+	system/drivers/appserver/decorators
+	system/drivers/appserver/input
+	system/drivers/appserver/video
 
-	atheos/system/drivers/appserver
-	atheos/system/drivers/appserver/decorators
-	atheos/system/drivers/appserver/input
-	atheos/system/drivers/appserver/video
+	system/extensions
+	system/extensions/dock
+	system/extensions/translators
+	system/extensions/media
 
-	atheos/system/extensions
-	atheos/system/extensions/dock
-	atheos/system/extensions/translators
-	atheos/system/extensions/media
+	tmp
 
-	atheos/tmp
+	var
+	var/log
 
-	atheos/var
-	atheos/var/log
-
-	atheos/usr
+	usr
 ;	For env:
-	atheos/usr/bin
-;	atheos/usr/etc
+	usr/bin
+;	usr/etc
 ;	For NCurses:
-	atheos/usr/include
-;	atheos/usr/info
-;	atheos/usr/lib
-;	atheos/usr/man
-;	atheos/usr/sbin
+	usr/include
+;	usr/info
+;	usr/lib
+;	usr/man
+;	usr/sbin
 ;	(For terminfo:)
-	atheos/usr/share
+	usr/share
 ;	For manually compiled software:
-	atheos/usr/local
+	usr/local
 ;	For PERL:
-	atheos/usr/local/bin
-	atheos/usr/local/etc
-	atheos/usr/local/include
-	atheos/usr/local/info
-	atheos/usr/local/lib
-	atheos/usr/local/libexec
-	atheos/usr/local/man
-	atheos/usr/local/sbin
-	atheos/usr/local/share
+	usr/local/bin
+	usr/local/etc
+	usr/local/include
+	usr/local/info
+	usr/local/lib
+	usr/local/libexec
+	usr/local/man
+	usr/local/sbin
+	usr/local/share
 
-	atheos/Applications					applications.png
-	atheos/Applications/Preferences		settings.png
-	atheos/Applications/Xpdf
-	atheos/Documentation
-	atheos/Documentation/images
+	Applications				applications.png
+	Applications/Preferences	settings.png
+	Applications/Xpdf
+	Documentation
+	Documentation/images
 
 resources
-	boot/grub					menu.lst							text/plain
-	atheos/system/config		kernel.cfg							text/plain
-	atheos/system/config		net.cfg								text/plain
-	atheos/system/config		appserver							text/plain
-	atheos/home					Home-Directories
-	atheos/Documentation		documentation/Welcome.html			text/html
-	atheos/Documentation/images	documentation/images/Syllable.gif	image/gif
-	atheos/Documentation		documentation/Copyrights.html		text/html
+	boot/grub				menu.lst							text/plain
+	system/config			kernel.cfg							text/plain
+	system/config			net.cfg								text/plain
+	system/config			appserver							text/plain
+	home					Home-Directories
+	Documentation			documentation/Welcome.html			text/html
+	Documentation/images	documentation/images/Syllable.gif	image/gif
+	Documentation			documentation/Copyrights.html		text/html
 
 modules
 	other/config/default
@@ -327,3 +325,4 @@ modules
 	apps/utils/man2html
 	apps/utils/nettools
 	apps/utils/systools
+
