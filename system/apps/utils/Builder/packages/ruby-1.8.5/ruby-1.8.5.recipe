@@ -15,6 +15,6 @@ needs				Syllable >= 0.6.1
 
 test-targets		test
 
-install-prefix-var	DESTDIR
+system-prefix-var	DESTDIR
 documentation		README COPYING LEGAL GPL LGPL ChangeLog ToDo
 develop-docs		README.EXT sample
