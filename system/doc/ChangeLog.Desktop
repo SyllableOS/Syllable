@@ -1,3 +1,7 @@
+* February 18, 2007, Flemming H. Sørensen *
+
+Fixed Bug #38 (It didn't delete the old icons, when you changed the language).
+
 * Febuary 6 2006, Kristian Van Der Vliet *
 
 Fixed launching of applications from ~/Settings/Desktop/Startup: only the name was
