@@ -32,9 +32,9 @@
 DockMenu::DockMenu( os::Handler* pcHandler, os::Rect cFrame, const char* pzName, os::MenuLayout_e eLayout )
 	 	: os::Menu( cFrame, pzName, eLayout )
 {
-	ScanPath( 1, os::Path( "/boot/atheos/Applications" ) );
+	ScanPath( 1, os::Path( "/boot/Applications" ) );
 	/* Create a nodemonitor for this directory */
-	m_pcMonitor = new os::NodeMonitor( os::Path( "/boot/atheos/Applications" ), NWATCH_ALL, pcHandler );
+	m_pcMonitor = new os::NodeMonitor( os::Path( "/boot/Applications" ), NWATCH_ALL, pcHandler );
 }
 
 DockMenu::~DockMenu()
@@ -238,5 +238,4 @@ void DockMenu::ScanPath( int nLevel, os::Path cPath )
 	if( pcManager )
 		pcManager->Put();
 }
-
 

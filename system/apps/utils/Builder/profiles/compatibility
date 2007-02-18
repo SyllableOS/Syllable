@@ -1,7 +1,7 @@
 ; Old libraries for compatibility with applications for older versions of Syllable
 
 resources
-	atheos/system/libs GCC-libraries-3.4.3
+	system/libraries GCC-libraries-3.4.3
 
 modules
 	

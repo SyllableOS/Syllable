@@ -7,7 +7,7 @@ COPTS = -Wall -fPIC -g
 LL = g++
 EXE = testapp
 LIB = libcodeview.so
-INSTALLDIR = /system/libs/
+INSTALLDIR = /system/libraries/
 
 
 all: $(LIB)
@@ -44,7 +44,7 @@ install: all
 .PHONY : docs
 docs:
 	-mkdir -p docs
-	-doxytag -t docs/atheos.gui.tag /boot/atheos/Documentation/gui/
+	-doxytag -t docs/atheos.gui.tag /boot/Documentation/gui/
 	-doxygen doxygen.conf
 
 
@@ -74,5 +74,4 @@ objs/format_html.o:  format_html.cpp format_html.h format.h
 objs/format_java.o:  format_c.cpp format_c.h format_java.cpp \
 	format_java.h format.h
 objs/format_ruby: format_ruby.cpp format_ruby.h format.h
-
 

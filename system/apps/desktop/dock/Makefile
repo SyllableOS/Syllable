@@ -62,11 +62,9 @@ catalog-clean:
 
 deps:
 
-dist: all
-	@echo Distribution...
-	@cp Dock $(IMAGE)/system/bin/Dock
-
 install: all
 	@echo Installing...
-	@cp Dock /system/bin/Dock
+	@cp Dock $(IMAGE)/system/bin/Dock
+
+dist: install
 

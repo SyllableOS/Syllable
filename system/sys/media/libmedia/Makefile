@@ -2,7 +2,7 @@ CFLAGS   += -c -fexceptions -ffast-math
 CXXFLAGS += -c -fexceptions -ffast-math
 AOPTS    = -c
 
-LIBBIN = /system/libs
+LIBBIN = /system/libraries
 
 LIBNAME = libmedia.so.2
 
@@ -35,9 +35,9 @@ doc:
 	doxygen libmedia.dox
 
 install-doc:
-	-rm -R /atheos/Documentation/media/*
-	-mkdir -p /atheos/Documentation/media
-	cp -R docs/html/* /atheos/Documentation/media
+	-rm -R /Documentation/media/*
+	-mkdir -p /Documentation/media
+	cp -R docs/html/* /Documentation/media
 
 deps: $(OBJDIR) $(DEPS)
 

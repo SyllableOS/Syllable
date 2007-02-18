@@ -70,16 +70,16 @@ $(OBJDIR)/smp_entry.bin: smp_entry.asm
 install: all
 	-mv /system/kernel.so /system/kernel.so.original
 	-mv /system/drivers/net/if/eth_if /system/drivers/net/if/eth_if.original
-	-mv /system/libs/libkernel.so /system/libs/libkernel.so.original
+	-mv /system/libraries/libkernel.so /system/libraries/libkernel.so.original
 	cp -f $(OBJDIR)/kernel.so	/system/kernel.so
 	cp -f $(OBJDIR)/eth_if		/system/drivers/net/if/eth_if
-	$(CP) $(OBJDIR)/libkernel.so	/system/libs/libkernel.so
+	$(CP) $(OBJDIR)/libkernel.so	/system/libraries/libkernel.so
 	strip --strip-all /system/kernel.so
 
 dist: all
 	cp -f $(OBJDIR)/kernel.so	$(IMAGE)/system/kernel.so
 	cp -f $(OBJDIR)/eth_if		$(IMAGE)/system/drivers/net/if/eth_if
-	$(CP) $(OBJDIR)/libkernel.so	$(IMAGE)/system/libs/libkernel.so
+	$(CP) $(OBJDIR)/libkernel.so	$(IMAGE)/system/libraries/libkernel.so
 	strip --strip-all $(IMAGE)/system/kernel.so
 
 #
@@ -101,9 +101,9 @@ doc:
 	doxygen private.dox
 
 install-doc:
-	-rm -R /atheos/Documentation/kernel/*
-	-mkdir -p /atheos/Documentation/kernel
-	cp -R docs/* /atheos/Documentation/kernel/
+	-rm -R /Documentation/kernel/*
+	-mkdir -p /Documentation/kernel
+	cp -R docs/* /Documentation/kernel/
 
 deps: $(OBJDIR) $(DEPS)
 

@@ -4,7 +4,7 @@ AOPTS    = -c
 
 CATALOGS = da de es fr hu nl pl pt-br ru sv
 
-LIBBIN = /system/libs
+LIBBIN = /system/libraries
 
 LIBNAME = libsyllable.so.7
 

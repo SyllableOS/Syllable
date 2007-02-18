@@ -25,7 +25,7 @@ Before you attempt to compile libpthread, you should obtain the latest headers
 from the CVS repository.  The following headers must be updated if you are running
 Syllable 0.4.1 or older:
 
-ainc/
+/system/include/
 	pthread.h
 	atheos/pthreadtypes.h
 	atheos/pthreadsignal.h
@@ -37,7 +37,7 @@ libpthread with a simple
 
 	bash$ make all install
 
-This will install libpthread.so.0 in /system/libs, and create a symlink for
+This will install libpthread.so.0 in /system/libraries, and create a symlink for
 libpthread.so to libpthread.so.0
 
 Remember to use -lpthread when linking code which uses libpthread.  Portable code

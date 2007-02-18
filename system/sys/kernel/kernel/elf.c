@@ -222,7 +222,7 @@ static int open_library_file( const char *pzName, const char *pzSearchPath, char
 			zSysLibPath[nPathLen + 1] = '\0';
 		}
 
-		strcat( zSysLibPath, "system/libs/" );
+		strcat( zSysLibPath, "system/libraries/" );
 		pzSearchPath = zSysLibPath;
 	}
 
@@ -2589,7 +2589,7 @@ static void init_boot_modules( void )
 		{
 			continue;
 		}
-		strcpy( zFullPath, "/boot/atheos/system" );
+		strcpy( zFullPath, "/boot/system" );
 		j = strlen( zFullPath );
 		while ( *pzPath != '\0' && isspace( *pzPath ) == false )
 		{

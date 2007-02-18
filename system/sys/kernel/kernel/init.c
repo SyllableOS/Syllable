@@ -55,7 +55,7 @@ extern int _end;
 
 static MultiBootHeader_s g_sMultiBootHeader;
 static char *g_apzEnviron[256];	// Environment from init script
-char g_zSysPath[256] = "/boot/atheos/";
+char g_zSysPath[256] = "/boot/";
 static char g_zAppServerPath[256] = "/system/appserver", *g_pzAppserver = NULL;
 static char g_zBootMode[256] = "normal";
 static char g_zKernelParams[4096];
@@ -547,7 +547,7 @@ void system_init( void )
 				zSysLibPath[nPathLen] = '/';
 				zSysLibPath[nPathLen + 1] = '\0';
 			}
-			strcat( zSysLibPath, "system/libs/" );
+			strcat( zSysLibPath, "system/libraries/" );
 
 			for ( i = 0; i < 255; ++i )
 			{
@@ -558,8 +558,8 @@ void system_init( void )
 				}
 			}
 
-			printk( "Start init...\n" );
-			execve( "/boot/atheos/system/bin/init", apzBootShellArgs, g_apzEnviron );
+			printk( "Starting init...\n" );
+			execve( "/boot/system/bin/init", apzBootShellArgs, g_apzEnviron );
 			printk( "Failed to load boot-shell\n" );
 		}
 		else

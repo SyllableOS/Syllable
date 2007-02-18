@@ -2,10 +2,10 @@ export PWD
 
 # Run paths
 export PATH=/bin:/usr/local/sbin:/usr/local/bin:/atheos/autolnk/sbin:/atheos/autolnk/bin
-export DLL_PATH=@bindir@/lib:/system/libs:/system:/usr/local/lib:/atheos/autolnk/lib
+export DLL_PATH=@bindir@/lib:/system/libraries:/system:/usr/local/lib:/atheos/autolnk/lib
 
 # Paths for software compilation
-export LIBRARY_PATH=/usr/local/lib:/system/libs:/atheos/autolnk/lib
+export LIBRARY_PATH=/usr/local/lib:/system/libraries:/atheos/autolnk/lib
 export C_INCLUDE_PATH=/usr/local/include:/system/include:/atheos/autolnk/include
 export CPLUS_INCLUDE_PATH=$C_INCLUDE_PATH
 
@@ -32,3 +32,4 @@ alias ll='ls -l'
 alias dir='ls -l --color'
 alias more=less
 alias m=less
+

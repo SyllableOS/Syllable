@@ -26,7 +26,7 @@ fi
 
 # XXXKV: Need to manually copy the GRUB files
 cd $BUILD_DIR/system/stage/image
-cp -a atheos/usr/grub/lib/grub/i386-pc/* boot/grub/
+cp -a usr/grub/lib/grub/i386-pc/* boot/grub/
 
 # XXXKV: Need to manually move the CUPS PPDs
 if [ -e $INSTALLER_DIR/ppds ]
@@ -34,14 +34,14 @@ then
   rm -rf $INSTALLER_DIR/ppds
 fi
 mkdir -p $INSTALLER_DIR/ppds
-cp -a atheos/usr/cups/share/cups/model/* $INSTALLER_DIR/ppds/
-for PPD in `find atheos/usr/cups/share/cups/model/ -name *.ppd*`
+cp -a usr/cups/share/cups/model/* $INSTALLER_DIR/ppds/
+for PPD in `find usr/cups/share/cups/model/ -name *.ppd*`
 do
   rm $PPD
 done
 
 # Generate the printers model list
-$SCRIPTS_DIR/printers.sh $INSTALLER_DIR/ppds/ $BUILD_DIR/system/stage/image/atheos/usr/cups/share/cups/model/
+$SCRIPTS_DIR/printers.sh $INSTALLER_DIR/ppds/ $BUILD_DIR/system/stage/image/usr/cups/share/cups/model/
 
 # Finish the build and package it
 cd $BUILD_DIR/system

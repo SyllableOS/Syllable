@@ -342,7 +342,7 @@ void Address::DisplaySettings()
 
 void Address::DisplayHelp()
 {
-	ExecuteBrowser("/atheos/Documentation/address.html");
+	ExecuteBrowser("/boot/Documentation/address.html");
 }
 
 void Address::ExecuteBrowser(const String& cUrl)
@@ -403,7 +403,7 @@ void Address::ExportHelpFile()
 		delete pcHelpStream;
 		delete pcResourceFile;
 	
-		File* pcFileTwo = new File("/atheos/Documentation/address.html",O_CREAT | O_RDWR);
+		File* pcFileTwo = new File("/boot/Documentation/address.html",O_CREAT | O_RDWR);
 		pcFileTwo->Write(buffer,nSize);
 		pcFileTwo->WriteAttr("os::MimeType",O_TRUNC,ATTR_TYPE_STRING,"text/html",0,10);
 		delete pcFileTwo;

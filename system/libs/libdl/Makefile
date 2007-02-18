@@ -20,14 +20,11 @@ clean:
 	-rm $(OBJDIR)/$(LIB)
 
 install:
-	cp -f $(OBJDIR)/$(LIB) /system/libs/
-	ln -sf $(LIB) /system/libs/libdl.so
-	cp -f dlfcn.h /system/include/
-
-dist:
-	cp -f $(OBJDIR)/$(LIB) $(IMAGE)/system/libs/
-	ln -sf $(LIB) $(IMAGE)/system/libs/libdl.so
+	cp -f $(OBJDIR)/$(LIB) $(IMAGE)/system/libraries/
+	ln -sf $(LIB) $(IMAGE)/system/libraries/libdl.so
 	cp -f dlfcn.h $(IMAGE)/system/include/
+
+dist: install
 
 $(OBJDIR):
 	-mkdir $(OBJDIR)

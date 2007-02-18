@@ -138,7 +138,7 @@ loop {
 Packages.sort_by{|name, info| name}.each {|pkgname, info|
 	puts "Installing #{pkgname}"
 	pkg = sprintf(info[1], info[0])
-	system "unzip", "/boot/Packages/net/#{pkg}", "-d", "/inst/atheos/Applications/"
+	system "unzip", "/boot/Packages/net/#{pkg}", "-d", "/inst/Applications/"
 }
 
 # Sync disks
@@ -170,7 +170,7 @@ puts
 #puts 'again. At the GrUB boot menu, press "c" to go into the GrUB command line.'
 #puts 'Then carefully follow the remainder of the written Syllable installation'
 #puts 'instructions in the INSTALL.TXT file on this CD or at'
-#puts 'http://syllable.org/docs/0.6.2/install.txt'
+#puts 'http://syllable.org/docs/0.6.3/install.txt'
 #puts
 
 puts 'Press "m" to install GrUB automatically in the Master Boot Record of disk'

@@ -17,16 +17,10 @@ clean:
 	-rm $(OBJDIR)/$(LIB)
 
 install: all
-	cp -f $(OBJDIR)/$(LIB) /system/libs/
-	if [ ! -e /system/libs/libpthread.so ];then \
-		ln -s /system/libs/$(LIB) /system/libs/libpthread.so; \
-	fi
+	cp -f $(OBJDIR)/$(LIB) $(IMAGE)/system/libraries/
+	ln -s $(LIB) $(IMAGE)/system/libraries/libpthread.so
 
-dist: all
-	cp -f $(OBJDIR)/$(LIB) $(IMAGE)/system/libs/
-	if [ ! -e $(IMAGE)/system/libs/libpthread.so ];then \
-		ln -s $(LIB) $(IMAGE)/system/libs/libpthread.so; \
-	fi
+dist: install
 
 $(OBJDIR):
 	-mkdir $(OBJDIR)
