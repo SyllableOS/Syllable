@@ -24,6 +24,7 @@
 #include <gui/desktop.h>
 #include <iostream>
 #include <unistd.h>
+#include <util/application.h>
 #include <util/settings.h>
 #include <storage/directory.h>
 #include "desktop.h"
@@ -81,25 +82,65 @@ Desktop::Desktop() : os::Window( os::Rect(), "desktop", MSG_DESKTOP_TITLE, os::W
 		m_zBackground = pcSettings->GetString( "background_image", "None" );
 		m_bSingleClick = pcSettings->GetBool( "single_click", false );
 		m_bFontShadows =  pcSettings->GetBool( "desktop_font_shadow",true);
+
+		os::String cPath = os::String( pzHome ) + os::String( "/Desktop" );
+		os::FSNode cFileNode;
+		cFileNode.SetTo( cPath );
+		char zBuffer[PATH_MAX];
+		cFileNode.ReadAttr( "DesktopLink::Language", ATTR_TYPE_STRING, zBuffer, 0, PATH_MAX );
+/*		os::String cLocale = os::Application::GetInstance()->GetApplicationLocale()->GetName(); */
+		if( os::String(zBuffer) != MSG_DESKTOP_LINKLANGUAGE )
+		{
+			os::FSNode cFileNode;
+			cFileNode.SetTo( cPath );
+			char g_zLinks[][255] = { "Applications","Disks","Preferences","Terminal","Home","Trash" };
+			for( int i = 0 ; i < 6 ; i++ )
+			{
+				memset( zBuffer, 0, PATH_MAX );
+				cFileNode.ReadAttr( os::String( "DesktopLink::" ) + g_zLinks[i], ATTR_TYPE_STRING, zBuffer, 0, PATH_MAX );
+				unlink( (cPath + "/" + zBuffer).c_str() );
+			}
+			create_desktop_icon( "/Applications", MSG_DESKTOP_SYMLINKS_APPLICATIONS, "/system/icons/applications.png" );
+			create_desktop_icon( "/", MSG_DESKTOP_SYMLINKS_DISKS, "" );
+			create_desktop_icon( "/Applications/Preferences", MSG_DESKTOP_SYMLINKS_PREFERENCES, "/system/icons/settings.png" );
+			create_desktop_icon( "/system/bin/aterm", MSG_DESKTOP_SYMLINKS_TERMINAL, "/system/icons/aterm.png" );
+			create_desktop_icon( pzHome, MSG_DESKTOP_SYMLINKS_HOME, "/system/icons/home.png" );
+			create_desktop_icon( os::String( pzHome ) + "/Trash", MSG_DESKTOP_SYMLINKS_TRASH, "/system/icons/trash.png" );
+		}
 	} else {
+		os::String cPath = os::String( pzHome ) + os::String( "/Desktop" );
+		os::FSNode cFileNode;
+		cFileNode.SetTo( cPath );
+		char zBuffer[PATH_MAX];
+		char g_zLinks[][255] = { "Applications","Disks","Preferences","Terminal","Home","Trash" };
+		for( int i = 0 ; i < 6 ; i++ )
+		{
+			memset( zBuffer, 0, PATH_MAX );
+			cFileNode.ReadAttr( os::String( "DesktopLink::" ) + g_zLinks[i], ATTR_TYPE_STRING, zBuffer, 0, PATH_MAX );
+			unlink( (cPath + "/" + zBuffer).c_str() );
+		}
 		/* Create default links */
-		os::String zTemp = os::String( pzHome ) + ( "/Desktop/" );
-		#ifdef NEW_FILESYSTEM
-		create_desktop_icon( "/applications", MSG_DESKTOP_SYMLINKS_APPLICATIONS, "/system/icons/applications.png" );
-		create_desktop_icon( "/", MSG_DESKTOP_SYMLINKS_DISKS, "" );
-		create_desktop_icon( "/applications/preferences", MSG_DESKTOP_SYMLINKS_PREFERENCES, "/system/icons/settings.png" );
-		create_desktop_icon( "/system/bin/aterm", MSG_DESKTOP_SYMLINKS_TERMINAL, "/system/icons/aterm.png" );
-		#else
 		create_desktop_icon( "/Applications", MSG_DESKTOP_SYMLINKS_APPLICATIONS, "/system/icons/applications.png" );
 		create_desktop_icon( "/", MSG_DESKTOP_SYMLINKS_DISKS, "" );
 		create_desktop_icon( "/Applications/Preferences", MSG_DESKTOP_SYMLINKS_PREFERENCES, "/system/icons/settings.png" );
 		create_desktop_icon( "/system/bin/aterm", MSG_DESKTOP_SYMLINKS_TERMINAL, "/system/icons/aterm.png" );
-		#endif
 		create_desktop_icon( pzHome, MSG_DESKTOP_SYMLINKS_HOME, "/system/icons/home.png" );
 		create_desktop_icon( os::String( pzHome ) + "/Trash", MSG_DESKTOP_SYMLINKS_TRASH, "/system/icons/trash.png" );
 	}
 	delete( pcSettings );
-	
+
+/*	os::String cLocale = os::Application::GetInstance()->GetApplicationLocale()->GetName(); */
+	os::String cLocale = MSG_DESKTOP_LINKLANGUAGE;
+	int nFile = open( (os::String( pzHome ) + ( "/Desktop" )).c_str(), O_RDWR | O_NOTRAVERSE );
+	write_attr( nFile, "DesktopLink::Language", O_TRUNC, ATTR_TYPE_STRING, cLocale.c_str(), 0, strlen( cLocale.c_str() ) );
+	write_attr( nFile, "DesktopLink::Applications", O_TRUNC, ATTR_TYPE_STRING, MSG_DESKTOP_SYMLINKS_APPLICATIONS.c_str(), 0, strlen( MSG_DESKTOP_SYMLINKS_APPLICATIONS.c_str() ) );
+	write_attr( nFile, "DesktopLink::Disks", O_TRUNC, ATTR_TYPE_STRING, MSG_DESKTOP_SYMLINKS_DISKS.c_str(), 0, strlen( MSG_DESKTOP_SYMLINKS_DISKS.c_str() ) );
+	write_attr( nFile, "DesktopLink::Preferences", O_TRUNC, ATTR_TYPE_STRING, MSG_DESKTOP_SYMLINKS_PREFERENCES.c_str(), 0, strlen( MSG_DESKTOP_SYMLINKS_PREFERENCES.c_str() ) );
+	write_attr( nFile, "DesktopLink::Terminal", O_TRUNC, ATTR_TYPE_STRING, MSG_DESKTOP_SYMLINKS_TERMINAL.c_str(), 0, strlen( MSG_DESKTOP_SYMLINKS_TERMINAL.c_str() ) );
+	write_attr( nFile, "DesktopLink::Home", O_TRUNC, ATTR_TYPE_STRING, MSG_DESKTOP_SYMLINKS_HOME.c_str(), 0, strlen( MSG_DESKTOP_SYMLINKS_HOME.c_str() ) );
+	write_attr( nFile, "DesktopLink::Trash", O_TRUNC, ATTR_TYPE_STRING, MSG_DESKTOP_SYMLINKS_TRASH.c_str(), 0, strlen( MSG_DESKTOP_SYMLINKS_TRASH.c_str() ) );
+	close( nFile );
+
 	LoadBackground();
 	
 	AddChild( m_pcView );
