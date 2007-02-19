@@ -6,7 +6,7 @@ posix-apps-path	:= /usr
 executables-dir	:= bin
 register		:= package register
 #install-path	:= $(posix-apps-path)/$(name)
-install-path	:= $(IMAGE)/$(prefix)
+install-path	:= $(prefix)
 
 .PHONY: all deps clean install dist
 
@@ -28,4 +28,3 @@ $(install-path):
 	mkdir $(install-path)/$(executables-dir)
 
 dist: install
-
