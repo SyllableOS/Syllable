@@ -9,7 +9,7 @@ home				www.libsdl.org/projects/SDL_image/
 packages			SDL_image-1.2.4
 locations			http://www.libsdl.org/projects/SDL_image/release/
 
-needs				sdl
+needs				sdl >= 1.2.4
 build-recommends
 	libpng
 	libjpeg
@@ -17,6 +17,8 @@ build-recommends
 
 patch-config
 make-shared
+
+configure-env		LDFLAGS "$LDFLAGS -lm"
 
 ;configure-options
 ;	--enable-tif
