@@ -70,4 +70,4 @@ RMDEP=		:
 MKDEP=		@echo "	==> MAKING DEPENDENCIES \"$@\""; $(RMDEP); gcc -M
 MKDEP_OUT=
 
-RM=             /atheos/autolnk/bin/rm
+RM=             /usr/indexes/bin/rm

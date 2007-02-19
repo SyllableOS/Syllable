@@ -25,7 +25,7 @@ patch-config
 
 build-dir			.
 
-configure-env		CPPFLAGS '-I/atheos/autolnk/include/SDL'
+configure-env		CPPFLAGS '-I/usr/indexes/include/SDL'
 
 documentation
 	README COPYING ChangeLog AUTHORS TODO
@@ -33,4 +33,3 @@ documentation
 ;	NEWS
 ;	src/manual
 build-docs			README-SDL.txt
-

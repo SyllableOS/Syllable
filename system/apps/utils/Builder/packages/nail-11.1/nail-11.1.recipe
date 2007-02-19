@@ -18,12 +18,12 @@ install-prefix-var	PREFIX
 
 make-vars
 	SYSCONFDIR		/usr/nail/etc
-;	INCLUDES		-I/usr/local/ssl/include/openssl
+;	INCLUDES		-I/usr/openssl/include/openssl
 
 system-prefix-var	DESTDIR
 
 install-vars
 	SYSCONFDIR		/usr/nail/etc
-	UCBINSTALL		/atheos/autolnk/bin/install
+	UCBINSTALL		/usr/indexes/bin/install
 
 documentation		README I18N INSTALL COPYING ChangeLog TODO AUTHORS nail.1.html

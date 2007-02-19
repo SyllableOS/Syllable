@@ -33,7 +33,7 @@
 #define	_PATHS_H_
 
 /* Default search path. */
-#define	_PATH_DEFPATH	"/usr/bin:/bin:/atheos/autolnk/bin"
+#define	_PATH_DEFPATH	"/usr/bin:/bin:/usr/indexes/bin"
 /* All standard utilities path. */
 #define	_PATH_STDPATH \
 	"/usr/bin:/bin:/usr/sbin:/sbin"
@@ -63,7 +63,7 @@
 #define	_PATH_UNIX	"/system/kernel.so"
 #define	_PATH_UTMP	"/var/run/utmp"
 #define	_PATH_UTMP_DB	"/var/run/utmp.db"
-#define	_PATH_VI	"/atheos/autolnk/bin/vi"
+#define	_PATH_VI	"/usr/indexes/bin/vi"
 #define	_PATH_WTMP	"/var/log/wtmp"
 
 /* Provide trailing slash, since mostly used for building pathnames. */

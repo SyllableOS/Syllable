@@ -46,5 +46,4 @@ documentation
 ;	doc
 build-docs			INSTALL*.txt
 
-links /atheos/autolnk/bin/smbspool lib/cups/backend/smb
-
+links /usr/indexes/bin/smbspool lib/cups/backend/smb
