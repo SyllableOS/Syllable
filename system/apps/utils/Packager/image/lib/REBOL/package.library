@@ -1,13 +1,13 @@
 ORCA [
 	Title:		"Package installation library"
-	Version:	0.4.1
+	Version:	0.4.2
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006,2007 Kaj de Vos
 		License: LGPL
 	}
 	Purpose:	"Registers and unregisters (binary) packages by managing pools of symbolic links."
-	Example:	"do %/atheos/autolnk/lib/REBOL/package.library"
+	Example:	"do %/usr/indexes/lib/REBOL/package.library"
 
 	Tabs:		4
 ]
@@ -70,7 +70,7 @@ build: context [
 stage-proto: context [
 	image?: none
 	packages: %/usr/
-	indexes: %/atheos/autolnk
+	indexes: %/usr/indexes
 	
 	new: func ["Returns a new stage object; by default of the running system."
 		packages' [file! string! none!]  ; "Trailing slash required."
@@ -305,4 +305,3 @@ package-image: context [
 		]
 	]
 ]
-

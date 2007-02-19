@@ -27,7 +27,7 @@
 #include <gui/layoutview.h>
 #include <gui/button.h>
 
-/*#define MODELS_LIST	"/atheos/autolnk/share/cups/model/models.list"*/
+/*#define MODELS_LIST	"/usr/indexes/share/cups/model/models.list"*/
 #define MODELS_LIST	"/usr/cups/share/cups/model/models.list"
 
 enum model_window_messages

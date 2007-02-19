@@ -1,3 +1,7 @@
+* February 19, 2007, Kaj de Vos *
+
+Moved /atheos/autolnk/ to /usr/indexes/.
+
 * February 18, 2007, Kaj de Vos *
 
 Removed the atheos subdirectory to simplify and flatten the filesystem hierarchy.
@@ -1328,4 +1332,3 @@ Added the following keymaps:
 * Jun 14 2002, Kristian Van Der Vliet *
 
 Implement get_tld(), set_tld() in process.c
-

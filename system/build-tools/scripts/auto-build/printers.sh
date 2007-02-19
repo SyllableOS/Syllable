@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # The resulting (sorted) file goes in /usr/cups/share/cups/model/models.list
-# and must be symlinked from /atheos/autolnk/share/cups/model/models.list
+# and must be symlinked from /usr/indexes/share/cups/model/models.list
 
 if [ -z $1 ]
 then
@@ -49,4 +49,3 @@ rm $FILE_UNSORTED
 
 printf "\nFinished.  $COUNT drivers found.\n"
 exit 0
-

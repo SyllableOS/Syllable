@@ -36,14 +36,14 @@ fi
 # would call apachectl, OpenSSH would have init/sshd which would start
 # sshd etc.
 # The package manager will collect all of these scripts together in
-# /atheos/autolnk/early-init/ and /atheos/autolnk/init/; all we need to do is run
+# /usr/indexes/early-init/ and /usr/indexes/init/; all we need to do is run
 # each script in turn.
 
 # Early init scripts run before user login and can include environment variables.
 
-for pkg_init in `ls /atheos/autolnk/early-init/`
+for pkg_init in `ls /usr/indexes/early-init/`
 do
-	source /atheos/autolnk/early-init/$pkg_init
+	source /usr/indexes/early-init/$pkg_init
 done
 
 # Do early user initialisation
@@ -74,20 +74,19 @@ source /system/network-init.sh
 # inetd is a special case and is always started first if INetUtils is
 # installed.
 
-if [ -e /atheos/autolnk/libexec/inetd ]
+if [ -e /usr/indexes/libexec/inetd ]
 then
-	/atheos/autolnk/libexec/inetd &
+	/usr/indexes/libexec/inetd &
 fi
 
 # Run the late init scripts
 
-for pkg_init in `ls /atheos/autolnk/init/`
+for pkg_init in `ls /usr/indexes/init/`
 do
-	source /atheos/autolnk/init/$pkg_init
+	source /usr/indexes/init/$pkg_init
 done
 
 # Do user initialisation and exit
 source /system/user-init.sh
 
 exit 0
-
