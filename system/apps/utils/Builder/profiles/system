@@ -14,19 +14,6 @@ tree
 
 	home home.png
 
-	autolnk
-	autolnk/bin
-	autolnk/etc
-	autolnk/include
-	autolnk/info
-	autolnk/lib
-	autolnk/libexec
-	autolnk/man
-	autolnk/sbin
-	autolnk/share
-	autolnk/early-init
-	autolnk/init
-
 	system
 
 	system/config
@@ -96,6 +83,20 @@ tree
 	var/log
 
 	usr
+
+	usr/indexes
+	usr/indexes/bin
+	usr/indexes/etc
+	usr/indexes/include
+	usr/indexes/info
+	usr/indexes/lib
+	usr/indexes/libexec
+	usr/indexes/man
+	usr/indexes/sbin
+	usr/indexes/share
+	usr/indexes/early-init
+	usr/indexes/init
+
 ;	For env:
 	usr/bin
 ;	usr/etc
@@ -325,4 +326,3 @@ modules
 	apps/utils/man2html
 	apps/utils/nettools
 	apps/utils/systools
-
