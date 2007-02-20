@@ -1,3 +1,9 @@
+* February 20, 2007, Kristian Van Der Vliet *
+
+Add DesktopActivated and ScreenModeChanged methods to DockPlugin. Plugins are
+now notified of desktop or screenmode changes. Patch from
+Anthony Morphett <awmorp@gmail.com>
+
 * February 18, 2007, Flemming H. Sørensen *
 
 Fixed Bug #38 (It didn't delete the old icons, when you changed the language).
