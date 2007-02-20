@@ -8,7 +8,7 @@
 
 /* Main window */
 
-MainWindow::MainWindow() : os::Window( os::Rect( 0, 0, 500, 400 ), "main_wnd", MSG_MAINWND_TITLE )
+MainWindow::MainWindow() : os::Window( os::Rect( 0, 0, 500, 450 ), "main_wnd", MSG_MAINWND_TITLE )
 {
 	/* Create type manager */
 	try
@@ -179,7 +179,7 @@ MainWindow::MainWindow() : os::Window( os::Rect( 0, 0, 500, 400 ), "main_wnd", M
 	m_pcVType->AddChild( new os::VLayoutSpacer( "", 15.0f, 15.0f ) );
 	m_pcVType->AddChild( m_pcHButtons );
 	
-	m_pcHLayout->AddChild( m_pcTypeList );
+	m_pcHLayout->AddChild( m_pcTypeList, 2.000000 );
 	m_pcHLayout->AddChild( m_pcVType );
 	
 	//m_pcTypeFrame->SetRoot( m_pcVType );
