@@ -24,6 +24,7 @@
 #include <storage/file.h>
 #include <util/string.h>
 #include <util/resources.h>
+#include <util/settings.h>
 #include "DockMenu.h"
 #include <storage/registrar.h>
 #include <cassert>
@@ -75,7 +76,10 @@ void DockMenu::AddEntry( os::RegistrarManager* pcManager, os::String zCategory, 
 	os::Menu* pcAddMenu = this;
 	if( zCategory != "" )
 	{
+		os::String zCategoryIcon = zCategory;	// We need the unlocalized name, so we can get the right icon.
 		/* Localizable Category */
+		if( zCategory == "Preferences" )
+			zCategory = MSG_MENU_CATEGORY_PREFERENCES;
 		if( zCategory == "Other" )
 			zCategory = MSG_MENU_CATEGORY_OTHER;
 		if( zCategory == "Internet" )
@@ -99,22 +103,26 @@ void DockMenu::AddEntry( os::RegistrarManager* pcManager, os::String zCategory, 
 		{
 			if( pcCategoryIcon == NULL )
 			{
-				os::StreamableIO *pcStream;
 				try
 				{
-					pcStream = new os::File( "/system/icons/folder.png" );
+					os::String cCategoryIcon = os::String( "/system/icons/Dock/" ) + zCategoryIcon + os::String( ".png" );
+					os::StreamableIO* pcStream = new os::File( cCategoryIcon );
+					os::BitmapImage* pcImg = new os::BitmapImage();
+					pcImg->Load( pcStream );
+					pcImg->SetSize( os::Point( 24, 24 ) );
+					pcCategoryIcon = pcImg;
+					delete( pcStream );
 				} catch( ... )
 				{
 					os::File cSelf( open_image_file( get_image_id() ) );
 					os::Resources cCol( &cSelf );		
-					pcStream = cCol.GetResourceStream( "folder.png" );
+					os::ResStream* pcStream = cCol.GetResourceStream( "folder.png" );
+					os::BitmapImage* pcImg = new os::BitmapImage();
+					pcImg->Load( pcStream );
+					pcImg->SetSize( os::Point( 24, 24 ) );
+					pcCategoryIcon = pcImg;
+					delete( pcStream );
 				}
-
-				os::BitmapImage* pcImg = new os::BitmapImage();
-				pcImg->Load( pcStream );
-				pcImg->SetSize( os::Point( 24, 24 ) );
-				pcCategoryIcon = pcImg;
-				delete( pcStream );
 			}
 			os::Menu* pcMenu = new os::Menu( os::Rect(), zCategory, os::ITEMS_IN_COLUMN );
 			AddItem( new os::MenuItem( pcMenu, NULL, "", pcCategoryIcon ) );
@@ -125,8 +133,40 @@ void DockMenu::AddEntry( os::RegistrarManager* pcManager, os::String zCategory, 
 	}
 	/* Create the menu item */
 	os::Message *pcMsg = new os::Message( 10002 );
-	pcMsg->AddString( "file/path", cPath.GetPath() );		
-	pcAddMenu->AddItem( new os::MenuItem( cPath.GetLeaf(), pcMsg, "", pcItemIcon ) );
+	pcMsg->AddString( "file/path", cPath.GetPath() );
+	// First we want to know the users primary language
+	os::String cPrimaryLanguage;
+	try {
+		os::Settings* pcSettings = new os::Settings( new os::File( os::String( getenv( "HOME" ) ) + os::String( "/Settings/System/Locale" ) ) );
+		pcSettings->Load();
+		cPrimaryLanguage = pcSettings->GetString("LANG","",0);
+		delete( pcSettings );
+	} catch(...) { }
+	// Then we want the catalog name.
+	os::String cCatalogName;
+	try {
+		os::File cResFile( cPath.GetPath() );
+		os::Resources cRes( &cResFile );
+		cRes.DetachStream();
+		for( int i = 0 ; i < cRes.GetResourceCount() ; ++i )
+			if( strstr( cRes.GetResourceName( i ).c_str(), ".catalog" ) != 0 && strstr( cRes.GetResourceName( i ).c_str(), "/" ) == 0)
+				cCatalogName = cRes.GetResourceName( i );
+	} catch( ... ) { }
+	// And finally we load the catalog, if it exists.
+	os::String cApplicationName = cPath.GetLeaf();
+	try { 
+		os::File cAppFile( cPath.GetPath() );
+		os::Resources cRes( &cAppFile );
+		cRes.DetachStream();
+		os::ResStream* pcSrc = cRes.GetResourceStream( ( cPrimaryLanguage + "/" + cCatalogName ) );
+		if( pcSrc != NULL )
+			try {
+				os::Catalog c;
+				c.Load( pcSrc );
+				cApplicationName = c.GetString( 0, cPath.GetLeaf() );
+			} catch( ... ) { }
+	} catch( ... ) { }
+	pcAddMenu->AddItem( new os::MenuItem( cApplicationName, pcMsg, "", pcItemIcon ) );
 }
 
 void DockMenu::ScanPath( int nLevel, os::Path cPath )
@@ -193,9 +233,9 @@ void DockMenu::ScanPath( int nLevel, os::Path cPath )
 		}
 		
 		/* Set default category */
-		os::String zCategory = MSG_MENU_CATEGORY_OTHER;
+		os::String zCategory = "Other";
 		if( cPath.GetLeaf() == "Preferences" )
-			zCategory = MSG_MENU_CATEGORY_PREFERENCES;
+			zCategory = "Preferences";
 		
 		
 		/* Check if this is an executable and read the category attribute
@@ -232,7 +272,7 @@ void DockMenu::ScanPath( int nLevel, os::Path cPath )
 		
 		cFileNode.Unset();
 		
-		AddEntry( pcManager, zCategory, cFilePath, zCategory == MSG_MENU_CATEGORY_PREFERENCES, cPath/*cCurrentDir*/ );
+		AddEntry( pcManager, zCategory, cFilePath, zCategory == "Preferences", cPath/*cCurrentDir*/ );
 	}
 	
 	if( pcManager )
