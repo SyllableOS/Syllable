@@ -1,3 +1,9 @@
+* February 20, 2007, Flemming H. Sørensen *
+
+Fixed Dock-menu bug, that prevented Dock from starting if folder.png was missing.
+Added category icons.
+Dock will now use localized application names.
+
 * February 20, 2007, Kristian Van Der Vliet *
 
 Add DesktopActivated and ScreenModeChanged methods to DockPlugin. Plugins are
