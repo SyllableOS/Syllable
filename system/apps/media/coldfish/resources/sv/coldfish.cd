@@ -1,7 +1,7 @@
 //
 //	ColdFish String Catalog
 //
-//	Translated by: Henrik Isaksson
+//	Translated by: Henrik Isaksson - Jonas Jarvoll
 //
 
 MSG_MAINWND_TITLE=100						ColdFish
@@ -39,6 +39,10 @@ MSG_ERRWND_OK								Ok
 MSG_ERRWND_CANTPLAY							ColdFish kan inte spela denna fil.
 MSG_ERRWND_CANTDELETE						Det spår som håller på att spelas upp kan inte raderas.
 MSG_ERRWND_NOTPLAYLIST						Den valda filen är inte en spellista.
+
+MSG_ALERTWND_NOMEDIASERVER_TITLE=1200		Fel
+MSG_ALERTWND_NOMEDIASERVER_TEXT				Kan inte ansluta till media servern.
+MSG_ALERTWND_NOMEDIASERVER_OK				_Ok
 
 MSG_PLAYLIST_UNKNOWN=2000					Okänd
 MSG_PLAYLIST_DEFAULT						Standard spellista

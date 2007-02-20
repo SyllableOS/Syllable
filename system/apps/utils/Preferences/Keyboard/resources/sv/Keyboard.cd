@@ -1,14 +1,14 @@
 //
 //	Preferences/Keyboard String Catalog
 //
-//	Translated by: Daniel Eriksson
+//	Translated by: Daniel Eriksson - Jonas Jarvoll
 //
 
 MSG_MAINWND_TITLE=0								Tangentbord
 
 MSG_MAINWND_KEYMAP=100							Tangentbord
 MSG_MAINWND_KEYBOARDLAYOUT						Tangentbordsupplägg
-MSG_MAINWND_KEYBOARDLAYOUT_SHOWALL				Show All
+MSG_MAINWND_KEYBOARDLAYOUT_SHOWALL				Visa alla
 MSG_MAINWND_TESTAREA							Testområde (Verkställ ändringar först)
 
 MSG_MAINWND_SETTINGS=200						Inställningar

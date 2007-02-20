@@ -1,7 +1,7 @@
 //
 //	Dock String Catalog
 //
-//	Translated by: Daniel Eriksson
+//	Translated by: Daniel Eriksson - Jonas Jarvoll
 //
 
 MSG_MENU_CATEGORY_OTHER=1000			Andra
@@ -12,6 +12,7 @@ MSG_MENU_CATEGORY_OFFICE				Kontor
 MSG_MENU_CATEGORY_DEVELOPMENT			Utveckling
 MSG_MENU_CATEGORY_GAMES					Spel
 MSG_MENU_CATEGORY_EMULATORS				Emulatorer
+MSG_MENU_CATEGORY_SYSTEMTOOLS			System verktyg
 
 MSG_MENU_ABOUT_MENU=2000				Om...
 MSG_MENU_ABOUT_TITLE					Om Syllable

@@ -1,14 +1,14 @@
 //
 //	Preferences/Keyboard String Catalog
 //
-//	Translated by: Christos KYRATZIS
+//	Translated by: Christos KYRATZIS - Jonathan Lestrelin
 //
 
 MSG_MAINWND_TITLE=0								Clavier
 
 MSG_MAINWND_KEYMAP=100							Clavier
 MSG_MAINWND_KEYBOARDLAYOUT						Disposition du clavier
-MSG_MAINWND_KEYBOARDLAYOUT_SHOWALL				Show All
+MSG_MAINWND_KEYBOARDLAYOUT_SHOWALL				Afficher tous
 MSG_MAINWND_TESTAREA							Zone de Test (Appliquer d'abord les changements)
 
 MSG_MAINWND_SETTINGS=200						Paramètres

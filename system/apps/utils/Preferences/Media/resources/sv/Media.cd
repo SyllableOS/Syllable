@@ -1,7 +1,7 @@
 //
 //	Preferences/Media String Catalog
 //
-//	Translated by: Daniel Eriksson
+//	Translated by: Daniel Eriksson - Jonas Jarvoll
 //
 
 MSG_MAINWND_TITLE=0								Media
@@ -19,4 +19,8 @@ MSG_MAINWND_BUTTON_DEFAULT						_Standard
 MSG_MAINWND_THISINPUTHASNOCONTROLS=300			Inga kontroller för ingångsdata existerar
 MSG_MAINWND_THISCODECHASNOCONTROLS				Inga kontroller existerar för denna omkodare
 MSG_MAINWND_THISOUTPUTHASNOCONTROLS				Inga kontroller för utgångsdata existerar
+
+MSG_ALERTWND_NOMEDIASERVER_TITLE=1000			Fel
+MSG_ALERTWND_NOMEDIASERVER_TEXT					Kan inte ansluta till media servern.
+MSG_ALERTWND_NOMEDIASERVER_OK					_Ok
 

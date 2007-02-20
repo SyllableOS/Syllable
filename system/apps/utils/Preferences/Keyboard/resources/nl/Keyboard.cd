@@ -1,14 +1,14 @@
 //
 //	Preferences/Keyboard String Catalog
 //
-//	Translated by: Ruud Kuin
+//	Translated by: Ruud Kuin - Kaj de Vos
 //
 
 MSG_MAINWND_TITLE=0								Toetsenbord
 
 MSG_MAINWND_KEYMAP=100							Toetsenbord
 MSG_MAINWND_KEYBOARDLAYOUT						Toetsenbord indeling
-MSG_MAINWND_KEYBOARDLAYOUT_SHOWALL				Show All
+MSG_MAINWND_KEYBOARDLAYOUT_SHOWALL				Alle tonen
 MSG_MAINWND_TESTAREA							Test gebied (Eerst veranderingen toepassen)
 
 MSG_MAINWND_SETTINGS=200						Instellingen
