@@ -24,9 +24,11 @@
 #define __F_GUI_DOCKPLUGIN_H__
 
 #include <atheos/types.h>
+#include <atheos/filesystem.h>
 #include <gui/view.h>
 #include <util/message.h>
 #include <util/string.h>
+#include <util/looper.h>
 #include <storage/path.h>
 #include <unistd.h>
 
@@ -62,6 +64,10 @@ public:
 	virtual status_t		Initialize() = 0;
 	virtual void			Delete() = 0;
 	virtual String			GetIdentifier() = 0;
+	
+	/* Hooks to notify plugins of pertinent events */
+	virtual void ScreenModeChanged( const IPoint& cNewRes, color_space eColorSpace ) {};
+	virtual void DesktopActivated( int nDesktop, bool bActive ) {};
 		
 	image_id GetPluginId()
 	{

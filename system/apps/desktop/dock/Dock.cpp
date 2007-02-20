@@ -731,7 +731,9 @@ void DockWin::HandleMessage( os::Message* pcMessage )
 			break;
 		}
 		default:
+		{
 			os::Window::HandleMessage( pcMessage );
+		}
 	}
 }
 
@@ -1060,6 +1062,10 @@ void DockWin::ScreenModeChanged( const os::IPoint& cNewRes, os::color_space eSpa
 	delete( m_pcDesktop );
 	m_pcDesktop = new os::Desktop();
 	
+	/* Notify plugins */
+	for( int i = m_pcPlugins.size(); --i >= 0; ) {
+		m_pcPlugins[i]->ScreenModeChanged( cNewRes, eSpace );
+	}
 	
 	/* Resize ourself */
 	SetFrame( GetDockFrame() );
@@ -1085,6 +1091,11 @@ void DockWin::DesktopActivated( int nDesktop, bool bActive )
 	/* Update desktop parameters */
 	delete( m_pcDesktop );
 	m_pcDesktop = new os::Desktop();
+	
+	/* Notify plugins */
+	for( int i = m_pcPlugins.size(); --i >= 0; ) {
+		m_pcPlugins[i]->DesktopActivated( nDesktop, bActive );
+	}
 	
 	/* Resize ourself */
 	SetFrame( GetDockFrame() );

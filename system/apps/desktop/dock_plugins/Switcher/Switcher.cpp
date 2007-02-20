@@ -10,21 +10,13 @@
 #include <gui/desktop.h>
 #include <gui/menu.h>
 
+
 #include <cstdlib>
 #include <cstdio>
 
 #define PLUGIN_NAME "Switcher"
 
 using namespace os;
-
-/*really crappy itoa function*/
-/*have done an itoa function in vax assembly and think I am going to recreate this in x86 asm :)*/
-String itoa(int nInt)
-{
-	String cString;
-	cString.Format("%d",nInt);
-	return cString;
-}
 
 class Switcher : public View
 {
@@ -43,8 +35,10 @@ public:
     void 		SwitchDesktop(int);
     void 		Forward();
     void		Backward();
+	void		UpdateDesktop( int nDesktop );    
+
 private:
-	int m_nDesktopCount;
+	int m_nFirstVisibleDesktop;
 	int m_nDesktop;
 	os::BitmapImage* pcBackImage, *pcBackGreyImage;
 	os::BitmapImage* pcForwardImage, *pcForwardGreyImage;
@@ -52,10 +46,13 @@ private:
 	os::Path m_cPath;
 };
 
+	
 Switcher::Switcher(os::Path cPath, os::Looper* pcDock) : View(Rect(0,0,1,1),"switcher")
 {
-	m_nDesktopCount = 1;
-	m_nDesktop = 1;
+	os::Desktop cDesktop( os::Desktop::ACTIVE_DESKTOP );
+	m_nDesktop = cDesktop.GetDesktop();
+	m_nFirstVisibleDesktop = (m_nDesktop/4)*4;    /* "greatest multiple of 4 <= current desktop" */
+
 	m_cPath = cPath;
 	
 	m_pcContextMenu = new Menu(Rect(0,0,1,1),"context_menu",ITEMS_IN_COLUMN);
@@ -86,24 +83,24 @@ void Switcher::Paint(const Rect& cRect)
 	
 	SetDrawingMode(DM_BLEND);
 	
-	if (m_nDesktopCount == 1)
+	if (m_nFirstVisibleDesktop == 1)
 		pcBackGreyImage->Draw(os::Point(0,GetBounds().Height()/2-6),this);
 	else
 		pcBackImage->Draw(os::Point(0,GetBounds().Height()/2-6),this);
 	
-	if (m_nDesktopCount >= 29)
+	if (m_nFirstVisibleDesktop >= 29)
 		pcForwardGreyImage->Draw(os::Point(GetBounds().Width()-14,GetBounds().Height()/2-7),this);
 	else
 		pcForwardImage->Draw(os::Point(GetBounds().Width()-14,GetBounds().Height()/2-7),this);
 	
 	/*high light the current desktop*/	
-	if (m_nDesktop == m_nDesktopCount)
+	if (m_nDesktop == m_nFirstVisibleDesktop)
 		FillRect(Rect(14,0,32,12),Color32_s(250,0,0));
-	else if (m_nDesktop == m_nDesktopCount+1)
+	else if (m_nDesktop == m_nFirstVisibleDesktop+1)
 		FillRect(Rect(34,0,GetBounds().Width()-12,12),Color32_s(250,0,0));
-	else if (m_nDesktop == m_nDesktopCount+2)
+	else if (m_nDesktop == m_nFirstVisibleDesktop+2)
 		FillRect(Rect(14,13,32,GetBounds().Height()-1),Color32_s(250,0,0));
-	else if (m_nDesktop == m_nDesktopCount+3)
+	else if (m_nDesktop == m_nFirstVisibleDesktop+3)
 		FillRect(Rect(34,13,GetBounds().Width()-12,GetBounds().Height()-1),Color32_s(250,0,0));;
 	
 	SetFgColor(0,0,0,0xff);
@@ -118,10 +115,15 @@ void Switcher::Paint(const Rect& cRect)
 	SetFgColor(255,255,255);
 	GetFont()->SetSize(7.5);
 	
-	DrawText(Rect(14,0,32,14),itoa(m_nDesktopCount),DTF_CENTER);
-	DrawText(Rect(34,0,GetBounds().Width()-12,14),itoa(m_nDesktopCount+1),DTF_CENTER);
-	DrawText(Rect(13,15,33,GetBounds().Height()),itoa(m_nDesktopCount+2),DTF_CENTER);
-	DrawText(Rect(34,15,GetBounds().Width()-12,GetBounds().Height()),itoa(m_nDesktopCount+3),DTF_CENTER);
+	char zLabel[10];
+	snprintf( zLabel, sizeof(zLabel), "%i", m_nFirstVisibleDesktop+1 );  /* System counts desktops from 0, but user counts from 1 */
+	DrawText(Rect(14,0,32,14),zLabel,DTF_CENTER);
+	snprintf( zLabel, sizeof(zLabel), "%i", m_nFirstVisibleDesktop+2 );
+	DrawText(Rect(34,0,GetBounds().Width()-12,14),zLabel,DTF_CENTER);
+	snprintf( zLabel, sizeof(zLabel), "%i", m_nFirstVisibleDesktop+3 );
+	DrawText(Rect(13,15,33,GetBounds().Height()),zLabel,DTF_CENTER);
+	snprintf( zLabel, sizeof(zLabel), "%i", m_nFirstVisibleDesktop+4 );
+	DrawText(Rect(34,15,GetBounds().Width()-12,GetBounds().Height()),zLabel,DTF_CENTER);
 
 }
 
@@ -165,7 +167,6 @@ void Switcher::MouseDown( const Point& cPosition, uint32 nButtons )
 
 void Switcher::MouseUp( const Point& cPosition, uint32 nButtons, Message* pcData )
 {
-	
 	if (cPosition.x <= pcBackImage->GetSize().x)
 		Backward();
 	
@@ -173,25 +174,25 @@ void Switcher::MouseUp( const Point& cPosition, uint32 nButtons, Message* pcData
 		if(nButtons == 2)
 			m_pcContextMenu->Open(ConvertToScreen(cPosition));
 		else
-			SwitchDesktop(m_nDesktopCount);
+			SwitchDesktop(m_nFirstVisibleDesktop);
 	
 	else if (cPosition.x >=32 && cPosition.x <= 51 && cPosition.y < 13)
 		if (nButtons == 2)
 			m_pcContextMenu->Open(ConvertToScreen(cPosition));
 		else
-			SwitchDesktop(m_nDesktopCount+1);
+			SwitchDesktop(m_nFirstVisibleDesktop+1);
 	
 	else if (cPosition.x >= 14 && cPosition.x <=32  && cPosition.y >= 14)
 		if (nButtons == 2)
 			m_pcContextMenu->Open(ConvertToScreen(cPosition));
 		else
-			SwitchDesktop(m_nDesktopCount+2);
+			SwitchDesktop(m_nFirstVisibleDesktop+2);
 	
 	else if(cPosition.x >=32 && cPosition.x <= 51 && cPosition.y >=14)
 		if (nButtons == 2)
 			m_pcContextMenu->Open(ConvertToScreen(cPosition));
 		else
-			SwitchDesktop(m_nDesktopCount+3);
+			SwitchDesktop(m_nFirstVisibleDesktop+3);
 	
 	else if (cPosition.x >= 53 && cPosition.x < 61)
 		Forward();
@@ -201,16 +202,16 @@ void Switcher::MouseUp( const Point& cPosition, uint32 nButtons, Message* pcData
 void Switcher::SwitchDesktop(int nDesktop)
 {
 	m_nDesktop = nDesktop;
-	Desktop cDesktop(m_nDesktop-1);
+	Desktop cDesktop(m_nDesktop);
 	cDesktop.Activate();
 	Paint(GetBounds());
 }
 
 void Switcher::Forward()
 {
-	if (m_nDesktopCount < 29)
+	if (m_nFirstVisibleDesktop < 29)
 	{
-		m_nDesktopCount += 4;
+		m_nFirstVisibleDesktop += 4;
 		Paint(GetBounds());
 		GetParent()->Flush();
 		GetParent()->Sync();
@@ -220,9 +221,9 @@ void Switcher::Forward()
 
 void Switcher::Backward()
 {
-	if (m_nDesktopCount > 4)
+	if (m_nFirstVisibleDesktop > 4)
 	{
-		m_nDesktopCount -=4;
+		m_nFirstVisibleDesktop -=4;
 		Paint(GetBounds());
 		GetParent()->Flush();
 		GetParent()->Sync();
@@ -230,11 +231,30 @@ void Switcher::Backward()
 	}
 }
 
+void Switcher::UpdateDesktop( int nDesktop )
+{
+	if( nDesktop < 0 || nDesktop > 31 ) return;  /* Passed out-of-range desktop!? Just in case! */
+	
+	/* User has switched desktops; update the view */
+	m_nDesktop = nDesktop;
+	
+	if( !(m_nFirstVisibleDesktop <= m_nDesktop && m_nDesktop < m_nFirstVisibleDesktop + 4) ) {  /* If new desktop's button isn't currently displayed... */
+		/* Set m_nFirstVisibleDesktop to "the greatest multiple of 4 <= new desktop" */
+		m_nFirstVisibleDesktop = (((m_nDesktop)/4)*4);
+	}
+	Paint( GetBounds() );
+}
+
 
 class SwitcherPlugin : public DockPlugin
 {
 public:
-		SwitcherPlugin(){}
+		SwitcherPlugin() {};
+		
+		void DesktopActivated( int nDesktop, bool bActive )
+		{
+			if( bActive ) {m_pcView->UpdateDesktop( nDesktop ); }
+		}
 		
 		os::String GetIdentifier()
 		{
@@ -264,6 +284,9 @@ DockPlugin* init_dock_plugin()
 	return( new SwitcherPlugin());
 }
 }
+
+
+
 
 
 

@@ -41,7 +41,7 @@ deps:
 
 install: all
 	@echo Installing...
-	@cp Meter.so $(APPBIN)/dock/Meter.so
+	@cp Meter.so $(APPBIN)/Meter.so
 
 dist: all
 	@echo Distribution...
