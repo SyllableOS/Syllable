@@ -355,14 +355,13 @@ static int tcp_connect( Socket_s *psSocket, const struct sockaddr *psAddr, int n
 
 //  TcpActiveOpens++;
 	UNLOCK( psTCPCtrl->tcb_hMutex );
-	// FIXME: This should be moved to send/recv functions (i belive)
-	nError = lock_semaphore( psTCPCtrl->tcb_ocsem, 0, INFINITE_TIMEOUT );
-	if ( nError < 0 )
-	{
-		return ( nError );
-	}
-	return ( 0 );
-      error:
+
+	if(  psTCPCtrl->tcb_bNonBlock )
+		return -EINPROGRESS;
+	else
+		return lock_semaphore( psTCPCtrl->tcb_ocsem, 0, INFINITE_TIMEOUT );
+
+error:
 	UNLOCK( psTCPCtrl->tcb_hMutex );
 	return ( nError );
 }
@@ -726,6 +725,12 @@ static ssize_t tcp_recvmsg( Socket_s *psSocket, struct msghdr *psMsg, int nFlags
 		goto error;
 	}
 
+	if( psTCPCtrl->tcb_nState == TCPS_SYNSENT )
+	{
+		nError = -EAGAIN;
+		goto error;
+	}
+
 	if ( psTCPCtrl->tcb_nState == TCPS_CLOSED || psTCPCtrl->tcb_nState == TCPS_LISTEN )
 	{			// Is this enough???
 		nError = -ENOTCONN;
@@ -871,9 +876,15 @@ static ssize_t tcp_sendmsg( Socket_s *psSocket, const struct msghdr *psMsg, int 
 		goto error;
 	}
 
+	if( psTCPCtrl->tcb_nState == TCPS_SYNSENT )
+	{
+		nError = -EAGAIN;
+		goto error;
+	}
+
 	if ( psTCPCtrl->tcb_nState != TCPS_ESTABLISHED && psTCPCtrl->tcb_nState != TCPS_CLOSEWAIT )
 	{
-		nError = -EINVAL;
+		nError = -ENOTCONN;
 		goto error;
 	}
 	if ( atomic_read( &psTCPCtrl->tcb_flags ) & TCBF_SDONE )
@@ -1301,11 +1312,12 @@ static int tcp_setsockopt( bool bFromKernel, Socket_s *psSocket, int nProtocol, 
 
 				default:
 				{
-					printk( "tcp_setsockopt: invalid option %d at at level SOL_SOCKET\n", nOptName );
+					printk( "tcp_setsockopt: invalid option %d at level SOL_SOCKET\n", nOptName );
 					nError = -EINVAL;
 					break;
 				}
 			}
+			break;
 		}
 
 		case SOL_TCP:
@@ -1313,6 +1325,7 @@ static int tcp_setsockopt( bool bFromKernel, Socket_s *psSocket, int nProtocol, 
 			switch( nOptName )
 			{
 				case TCP_NODELAY:
+				case TCP_MAXSEG:
 				{
 					nError = 0;
 					break;

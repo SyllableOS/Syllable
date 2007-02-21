@@ -399,6 +399,7 @@ int do_setsockopt( bool bKernel, int nFile, int nLevel, int nOptName, const void
 					break;
 				}
 			}
+			break;
 		}
 
 		/* XXXKV: Should this be somewhere else? */
