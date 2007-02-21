@@ -1,3 +1,9 @@
+* February 21, 2007, Flemming H. Sørensen *
+
+The language-lists in the Locale preferences is now wide enough to show the full languagenames (Bug #109)
+Added updated Keymap->Language database to the Keymap preferences (Bug #108)
+Keymap preferences can now handle a larger number of language codes, per keymap (Bug #111)
+
 * February 19, 2007, Kaj de Vos *
 
 Moved /atheos/autolnk/ to /usr/indexes/.
