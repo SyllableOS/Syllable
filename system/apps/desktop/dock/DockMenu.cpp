@@ -96,7 +96,7 @@ void DockMenu::AddEntry( os::RegistrarManager* pcManager, os::String zCategory, 
 			zCategory = MSG_MENU_CATEGORY_EMULATORS;
 		if( zCategory == "System Tools" )
 			zCategory = MSG_MENU_CATEGORY_SYSTEMTOOLS;
-
+			
 		/* Create category if necessary */
 		os::MenuItem* pcSubMenuItem = FindMenuItem( zCategory );
 		if( !pcSubMenuItem )
@@ -160,11 +160,14 @@ void DockMenu::AddEntry( os::RegistrarManager* pcManager, os::String zCategory, 
 		cRes.DetachStream();
 		os::ResStream* pcSrc = cRes.GetResourceStream( ( cPrimaryLanguage + "/" + cCatalogName ) );
 		if( pcSrc != NULL )
+		{
 			try {
 				os::Catalog c;
 				c.Load( pcSrc );
 				cApplicationName = c.GetString( 0, cPath.GetLeaf() );
 			} catch( ... ) { }
+			delete( pcSrc );
+		}
 	} catch( ... ) { }
 	pcAddMenu->AddItem( new os::MenuItem( cApplicationName, pcMsg, "", pcItemIcon ) );
 }

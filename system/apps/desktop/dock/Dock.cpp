@@ -850,7 +850,10 @@ void DockWin::LoadSettings()
 	/* Create settings object */
 	os::Settings* pcSettings = new os::Settings();
 	if( pcSettings->Load() != 0 )
+	{
+		SetPosition( os::ALIGN_TOP );
 		return;
+	}
 		
 	/* Load position */
 	int32 nPosition = pcSettings->GetInt32( "position", os::ALIGN_TOP );
@@ -1027,7 +1030,7 @@ void DockWin::UpdateWindowArea()
 {
 	if( m_pcDesktop == NULL )
 		return;
-		
+	
 	os::Rect cFrame;
 	
 	if( m_eAlign == os::ALIGN_TOP )
