@@ -1,3 +1,9 @@
+* February 21, 2007, Kristian Van Der Vliet *
+
+Allow tcp_connect() to return immediatly with -INPROGRESS if the socket is non-blocking.
+tcp_sendmsg() and tcp_recvmsg() will return EAGAIN if the the SYN ACK has not yet been recieved.
+Fixed a handful of remaining issues with the new setsockopt()
+
 * February 8, 2007, Kristian Van Der Vliet *
 
 Split the 64bit argument to set_real_time() into two 32bit (High-low) arguments.
