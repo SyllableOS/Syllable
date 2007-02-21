@@ -7,8 +7,8 @@
 MSG_MAIN_TITLE=0						Локализация
 
 MSG_MAIN_LANGUAGE_TAB=100				Язык
-MSG_MAIN_LANGUAGE_ACTIVATE				Активировать язык    >
-MSG_MAIN_LANGUAGE_DEACTIVATE			<  Деактивировать язык
+MSG_MAIN_LANGUAGE_ACTIVATE				Активировать язык >
+MSG_MAIN_LANGUAGE_DEACTIVATE			< Деактивировать язык
 MSG_MAIN_LANGUAGE_AVAILABLE				Поддерживаемые языки
 MSG_MAIN_LANGUAGE_USED					Активно используемые языки
 

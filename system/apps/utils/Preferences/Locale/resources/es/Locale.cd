@@ -7,8 +7,8 @@
 MSG_MAIN_TITLE=0						Localización
 
 MSG_MAIN_LANGUAGE_TAB=100				Idioma
-MSG_MAIN_LANGUAGE_ACTIVATE				Idioma Activo        >
-MSG_MAIN_LANGUAGE_DEACTIVATE			<    Desactivar Idioma
+MSG_MAIN_LANGUAGE_ACTIVATE				Idioma Activo >
+MSG_MAIN_LANGUAGE_DEACTIVATE			< Desactivar Idioma
 MSG_MAIN_LANGUAGE_AVAILABLE				Idiomas Disponibles
 MSG_MAIN_LANGUAGE_USED				    Idiomas Activos
 

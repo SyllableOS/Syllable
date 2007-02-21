@@ -7,8 +7,8 @@
 MSG_MAIN_TITLE=0						Paramètres locaux
 
 MSG_MAIN_LANGUAGE_TAB=100				Langage
-MSG_MAIN_LANGUAGE_ACTIVATE				Activer Langage      >
-MSG_MAIN_LANGUAGE_DEACTIVATE			<   Deactivate Langage
+MSG_MAIN_LANGUAGE_ACTIVATE				Activer Langage >
+MSG_MAIN_LANGUAGE_DEACTIVATE			< Deactivate Langage
 MSG_MAIN_LANGUAGE_AVAILABLE				Langages supportés
 MSG_MAIN_LANGUAGE_USED					Langages actifs
 

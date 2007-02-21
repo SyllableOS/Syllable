@@ -22,15 +22,6 @@ int main( int argc, char *argv[] )
 {
 	PrefsLocaleApp *pcPrefsLocaleApp;
 
-/*	if( ( getuid() == 0 ) )
-	{
-		bRoot = true;
-	}
-	else
-	{
-		bRoot = false;
-	}*/
-
 	pcPrefsLocaleApp = new PrefsLocaleApp();
 	pcPrefsLocaleApp->Run();
 

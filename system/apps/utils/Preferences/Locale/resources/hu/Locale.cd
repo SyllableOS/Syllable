@@ -7,8 +7,8 @@
 MSG_MAIN_TITLE=0						Helyi beállítások
 
 MSG_MAIN_LANGUAGE_TAB=100				Nyelv
-MSG_MAIN_LANGUAGE_ACTIVATE				Nyelv aktiválása     >
-MSG_MAIN_LANGUAGE_DEACTIVATE			<   Nyelv deaktiválása
+MSG_MAIN_LANGUAGE_ACTIVATE				Nyelv aktiválása >
+MSG_MAIN_LANGUAGE_DEACTIVATE			< Nyelv deaktiválása
 MSG_MAIN_LANGUAGE_AVAILABLE				Támogatott nyelvek
 MSG_MAIN_LANGUAGE_USED					Aktivált nyelvek
 

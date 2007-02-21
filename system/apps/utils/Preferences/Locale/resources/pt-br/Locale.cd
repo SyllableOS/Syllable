@@ -7,8 +7,8 @@
 MSG_MAIN_TITLE=0						Localização
 
 MSG_MAIN_LANGUAGE_TAB=100				Idíomas
-MSG_MAIN_LANGUAGE_ACTIVATE				Ativar Idíoma        >
-MSG_MAIN_LANGUAGE_DEACTIVATE			<     Desativar Idioma
+MSG_MAIN_LANGUAGE_ACTIVATE				Ativar Idíoma >
+MSG_MAIN_LANGUAGE_DEACTIVATE			< Desativar Idioma
 MSG_MAIN_LANGUAGE_AVAILABLE				Idíomas Suportados
 MSG_MAIN_LANGUAGE_USED					Idíomas ativados
 

@@ -7,8 +7,8 @@
 MSG_MAIN_TITLE=0						Locale
 
 MSG_MAIN_LANGUAGE_TAB=100				Język
-MSG_MAIN_LANGUAGE_ACTIVATE				Aktywuj język        >
-MSG_MAIN_LANGUAGE_DEACTIVATE			<      Deaktywuj język 
+MSG_MAIN_LANGUAGE_ACTIVATE				Aktywuj język >
+MSG_MAIN_LANGUAGE_DEACTIVATE			< Deaktywuj język 
 MSG_MAIN_LANGUAGE_AVAILABLE				Obsługiwane języki
 MSG_MAIN_LANGUAGE_USED					Aktywne języki
 

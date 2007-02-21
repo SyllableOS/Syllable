@@ -7,8 +7,8 @@
 MSG_MAIN_TITLE=0						Språkval
 
 MSG_MAIN_LANGUAGE_TAB=100				Språk
-MSG_MAIN_LANGUAGE_ACTIVATE				Lägg till            >
-MSG_MAIN_LANGUAGE_DEACTIVATE			<        Ta bort språk
+MSG_MAIN_LANGUAGE_ACTIVATE				Lägg till >
+MSG_MAIN_LANGUAGE_DEACTIVATE			< Ta bort språk
 MSG_MAIN_LANGUAGE_AVAILABLE				Understödda språk
 MSG_MAIN_LANGUAGE_USED					Valda språk
 

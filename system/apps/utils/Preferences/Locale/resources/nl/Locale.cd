@@ -7,8 +7,8 @@
 MSG_MAIN_TITLE=0						Taalinstellingen
 
 MSG_MAIN_LANGUAGE_TAB=100				Taal
-MSG_MAIN_LANGUAGE_ACTIVATE				Taal activeren       >
-MSG_MAIN_LANGUAGE_DEACTIVATE			<    Taal uitschakelen
+MSG_MAIN_LANGUAGE_ACTIVATE				Taal activeren >
+MSG_MAIN_LANGUAGE_DEACTIVATE			< Taal uitschakelen
 MSG_MAIN_LANGUAGE_AVAILABLE				Ondersteunde talen
 MSG_MAIN_LANGUAGE_USED					Geactiveerde talen
 

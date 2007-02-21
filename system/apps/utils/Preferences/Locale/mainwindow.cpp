@@ -143,41 +143,6 @@ class LanguageInfo {
 	bool m_bValid;
 };
 
-/*struct LangSpec {
-	const char* pzName;
-	const char* pzISO;
-	const char* pzFlag;
-} g_saLanguages[] = {
-	{ "Česká", "cz", "cz.png" },
-	{ "Deutsch", "de", "de.png" },
-	{ "Deutsch/Schweiz", "de-ch", "de-ch.png" },
-	{ "Dansk", "da", "da.png" },
-	{ "Eesti", "ee", "ee.png" },
-	{ "English", "en", "en-uk.png" },
-	{ "English/British", "en-uk", "en-uk.png" },
-	{ "English/American", "en-us", "en-us.png" },
-	{ "English/Australian", "en-au", "en-au.png" },
-	{ "English/New Zealand", "en-nz", "en-nz.png" },
-	{ "Español", "es", "es.png" },
-	{ "Føroysku", "fo", "fo.png" },
-	{ "Français", "fr", "fr.png" },
-	{ "Frysk", "fy", "fy.png" },
-	{ "Íslenska", "is", "is.png" },
-	{ "Italiano", "it", "it.png" },
-	{ "日本語 (Japanese)", "ja", "ja.png" },
-	{ "Nederlands", "nl", "nl.png" },
-	{ "Norsk/Bokmål", "nb", "no.png" },
-	{ "Norsk/Nynorsk", "nn", "no.png" },
-	{ "Polski", "pl", "pl.png" },
-//	{ "Português", "pt", "pt.png" },
-	{ "Română", "ro", "ro.png" },
-//	{ "Русский (Russian)", "ru", "ru.png" },
-	{ "Suomi", "fi", "fi.png" },
-	{ "Slovenčina", "sk", "sk.png" },
-	{ "Svenska", "sv", "sv.png" },
-	{ NULL, NULL }	
-};*/
-
 void MainWindow::_LoadLanguages()
 {
 	int i, n, lp = 0;
@@ -213,21 +178,6 @@ void MainWindow::_LoadLanguages()
 			}
 		}
 	} while( n > 0 );
-	
-
-/*	for( i = 0; g_saLanguages[i].pzName; i++ ) {
-		TreeViewStringNode* lvr = new TreeViewStringNode();
-		lvr->AppendString( g_saLanguages[i].pzName );
-		lvr->AppendString( g_saLanguages[i].pzISO );
-		StreamableIO* pcResStream = l.GetResourceStream( g_saLanguages[i].pzFlag );
-		if( pcResStream ) {
-			Image* pcIcon = new BitmapImage( pcResStream );
-			pcIcon->SetSize( Point( 36, 24 ) );
-			lvr->SetIcon( pcIcon );
-			delete pcResStream;
-		}
-		m_pcAvailable->InsertRow( lvr );
-	}*/
 }
 
 MainWindow::MainWindow()
@@ -235,39 +185,6 @@ MainWindow::MainWindow()
 {
 	Rect cBounds = GetBounds();
 	LayoutView* pcLayoutView = new LayoutView( cBounds, "pcLayoutView", NULL, CF_FOLLOW_ALL );
-
-
-/*
-					HLayoutNode* pcRootLayout = new HLayoutNode( "pcListViews" );
-				pcRootLayout->SetBorders( Rect( 5, 5, 5, 5 ) );
-
-					{
-						VLayoutNode* pcAvail = new VLayoutNode( "pcAvail" );
-						StringView* pcAvailLabel = new StringView( cBounds, "pcAvailLabel", "Supported languages" );
-						pcAvail->AddChild( pcAvailLabel, 0.0f );
-						m_pcAvailable = new ListView( cBounds, "m_pcAvailable" );
-						m_pcAvailable->SetHasColumnHeader( false );
-						m_pcAvailable->InsertColumn( "", 1000 );
-						pcAvail->AddChild( m_pcAvailable );
-						pcRootLayout->AddChild( pcAvail );
-					}
-					pcRootLayout->AddChild( new HLayoutSpacer( "", 5.0f, 5.0f ) );
-					{
-						VLayoutNode* pcPref = new VLayoutNode( "pcPref" );
-						StringView* pcPrefLabel = new StringView( cBounds, "pcPrefLabel", "Active languages" );
-						pcPref->AddChild( pcPrefLabel, 0.0f );
-						m_pcPreferred = new ListView( cBounds, "m_pcPreferred" );
-						m_pcPreferred->SetHasColumnHeader( false );
-						m_pcPreferred->InsertColumn( "", 1000 );
-						pcPref->AddChild( m_pcPreferred );
-						pcRootLayout->AddChild( pcPref );
-					}
-
-*/
-
-
-
-
 
 
 	VLayoutNode*	pcRootLayout = new VLayoutNode( "pcRootLayout" );
@@ -310,9 +227,16 @@ MainWindow::MainWindow()
 				}			
 				pcLangRoot->AddChild( new VLayoutSpacer( "", 5.0f, 5.0f ) );
 				{
+					os::String cAvail = os::String( MSG_MAIN_LANGUAGE_ACTIVATE );
+					for( uint8 i = 0 ; i < 75 - strlen(cAvail.c_str()) ; i++ )
+						cAvail = cAvail + os::String(" ");
+					os::String cPref = os::String( MSG_MAIN_LANGUAGE_DEACTIVATE );
+					for( uint8 i = 0 ; i < 75 - strlen(cPref.c_str()) ; i++ )
+						cPref = cPref + os::String(" ");
+
 					HLayoutNode* pcAddRemLang = new HLayoutNode( "pcAddRemLang", 0.0f );
-					m_pcAddLang = new Button( cBounds, "m_pcAddLang", MSG_MAIN_LANGUAGE_ACTIVATE, new Message( M_MW_ADDLANG ) );
-					m_pcRemLang = new Button( cBounds, "m_pcRemLang", MSG_MAIN_LANGUAGE_DEACTIVATE, new Message( M_MW_REMLANG ) );
+					m_pcAddLang = new Button( cBounds, "m_pcAddLang", cAvail, new Message( M_MW_ADDLANG ) );
+					m_pcRemLang = new Button( cBounds, "m_pcRemLang", cPref, new Message( M_MW_REMLANG ) );
 					pcAddRemLang->AddChild( new HLayoutSpacer( "" ) );
 					pcAddRemLang->AddChild( m_pcAddLang );
 					pcAddRemLang->AddChild( new HLayoutSpacer( "" ) );
