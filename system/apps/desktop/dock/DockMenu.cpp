@@ -134,15 +134,7 @@ void DockMenu::AddEntry( os::RegistrarManager* pcManager, os::String zCategory, 
 	/* Create the menu item */
 	os::Message *pcMsg = new os::Message( 10002 );
 	pcMsg->AddString( "file/path", cPath.GetPath() );
-	// First we want to know the users primary language
-	os::String cPrimaryLanguage;
-	try {
-		os::Settings* pcSettings = new os::Settings( new os::File( os::String( getenv( "HOME" ) ) + os::String( "/Settings/System/Locale" ) ) );
-		pcSettings->Load();
-		cPrimaryLanguage = pcSettings->GetString("LANG","",0);
-		delete( pcSettings );
-	} catch(...) { }
-	// Then we want the catalog name.
+	// Get the catalog name.
 	os::String cCatalogName;
 	try {
 		os::File cResFile( cPath.GetPath() );
@@ -152,7 +144,7 @@ void DockMenu::AddEntry( os::RegistrarManager* pcManager, os::String zCategory, 
 			if( strstr( cRes.GetResourceName( i ).c_str(), ".catalog" ) != 0 && strstr( cRes.GetResourceName( i ).c_str(), "/" ) == 0)
 				cCatalogName = cRes.GetResourceName( i );
 	} catch( ... ) { }
-	// And finally we load the catalog, if it exists.
+	// And load the catalog, if it exists.
 	os::String cApplicationName = cPath.GetLeaf();
 	try { 
 		os::File cAppFile( cPath.GetPath() );
@@ -174,6 +166,13 @@ void DockMenu::AddEntry( os::RegistrarManager* pcManager, os::String zCategory, 
 
 void DockMenu::ScanPath( int nLevel, os::Path cPath )
 {
+	/* We would like to know the users primary language, so we can get the application-names */
+	try {
+		os::Settings* pcSettings = new os::Settings( new os::File( os::String( getenv( "HOME" ) ) + os::String( "/Settings/System/Locale" ) ) );
+		pcSettings->Load();
+		cPrimaryLanguage = pcSettings->GetString("LANG","",0);
+		delete( pcSettings );
+	} catch(...) { }
 
 	/* Check if the directory is valid */
 	os::FSNode* pcNode = NULL;

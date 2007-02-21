@@ -39,6 +39,7 @@ public:
 	void ScanPath( int nLevel, os::Path cPath );
 private:
 	os::NodeMonitor* m_pcMonitor;
+	os::String cPrimaryLanguage;
 };
 
 #endif
