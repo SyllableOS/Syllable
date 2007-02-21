@@ -28,6 +28,39 @@ using namespace os;
 #include <iostream>
 #include <sys/stat.h>
 
+
+class LanguageInfo {
+	public:
+	LanguageInfo( char *s )
+	{
+		char bfr[256], *b;
+		uint i, j;
+
+		for( j = 0; j < 3 && *s; j++ ) {
+			for( b = bfr, i = 0; i < sizeof( bfr ) && *s && *s != '\t'; i++ )
+				*b++ = *s++;
+			*b = 0;
+			for( ; *s == '\t' ; s++ );
+
+			m_cInfo[j] = bfr;
+		}
+
+		m_bValid = false;		
+		if( m_cInfo[0][0] != '#' && GetName() != "" && GetAlias() != "" && GetCode() != "" ) {
+			m_bValid = true;
+		}
+	}
+
+	bool IsValid() { return m_bValid; }
+	os::String& GetName()		{ return m_cInfo[0]; }
+	os::String& GetAlias()		{ return m_cInfo[1]; }
+	os::String& GetCode()		{ return m_cInfo[2]; }
+	private:
+	os::String m_cInfo[3];
+	bool m_bValid;
+};
+
+
 class MainWindow : public os::Window
 {
 public:
@@ -40,6 +73,7 @@ public:
 	void Default();
 	void HandleMessage( os::Message* );
 private:
+	void LoadDatabase();
 	bool OkToQuit();
 	#include "mainwindowLayout.h"
 	NodeMonitor* m_pcMonitor;
@@ -51,6 +85,7 @@ private:
 	int iDelay, iRepeat, iDelay2, iRepeat2;
 	int iOrigRow, iOrigRow2;
 	int iAmericanRow;
+	std::vector<LanguageInfo> m_cDatabase;
 };
 
 #endif

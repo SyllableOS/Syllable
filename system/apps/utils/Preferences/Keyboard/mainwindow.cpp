@@ -56,41 +56,11 @@ MainWindow::MainWindow() : os::Window( os::Rect( 0, 0, 350, 300 ), "main_wnd", M
 	m_pcInitialSlider->SetValue( (float)iDelay, true);
 	m_pcRepeatSlider->SetValue( (float)iRepeat, true);
 
+	LoadDatabase();
 	ShowData();
 	SetCurrent();
 }
 
-
-class LanguageInfo {
-	public:
-	LanguageInfo( char *s )
-	{
-		char bfr[256], *b;
-		uint i, j;
-
-		for( j = 0; j < 3 && *s; j++ ) {
-			for( b = bfr, i = 0; i < sizeof( bfr ) && *s && *s != '\t'; i++ )
-				*b++ = *s++;
-			*b = 0;
-			for( ; *s == '\t' ; s++ );
-
-			m_cInfo[j] = bfr;
-		}
-
-		m_bValid = false;		
-		if( m_cInfo[0][0] != '#' && GetName() != "" && GetAlias() != "" && GetCode() != "" ) {
-			m_bValid = true;
-		}
-	}
-
-	bool IsValid() { return m_bValid; }
-	os::String& GetName()		{ return m_cInfo[0]; }
-	os::String& GetAlias()		{ return m_cInfo[1]; }
-	os::String& GetCode()		{ return m_cInfo[2]; }
-	private:
-	os::String m_cInfo[3];
-	bool m_bValid;
-};
 
 
 void MainWindow::HandleMessage( os::Message* pcMessage )
@@ -131,6 +101,35 @@ void MainWindow::HandleMessage( os::Message* pcMessage )
 	}
 }
 
+void MainWindow::LoadDatabase()
+{
+	/* Load database */
+	os::File cSelf( open_image_file( get_image_id() ) );
+	os::Resources cCol( &cSelf );		
+	os::ResStream *pcDatabase = cCol.GetResourceStream( "keymaps.db" );
+	if( pcDatabase == NULL )
+		return;
+	uint n, lp = 0;
+	char chr, linebfr[ 512 ];
+	do {
+		n = pcDatabase->Read( &chr, sizeof( char ) );
+		if( n != 1 || chr == '\n' ) {
+			linebfr[ lp ] = 0;
+			lp = 0;
+			LanguageInfo li( linebfr );
+			if( li.IsValid() ) {
+				m_cDatabase.push_back( li );
+			}
+								
+		} else {
+			linebfr[ lp++ ] = chr;
+			if( lp > sizeof( linebfr ) - 1 ) {
+				lp = sizeof( linebfr ) - 1;
+			}
+		}
+	} while( n > 0 );
+	delete( pcDatabase );
+}
 
 void MainWindow::ShowData()
 {
@@ -163,7 +162,6 @@ void MainWindow::ShowData()
 	dirent *psEntry;
 
 	// Loop through directory and add each keymap to list
-	int i = 0;
 	while ( (psEntry = readdir( pDir )) != NULL) {
 
 		// If special directory (i.e. dot(.) and dotdot(..) then ignore
@@ -189,45 +187,32 @@ void MainWindow::ShowData()
 		bool bAdded = false;
 		bShowAll = m_pcKeyboardLayoutShowAll->GetValue();
 		os::String cTempKeymap;
-		uint n, lp = 0;
-		char chr, linebfr[ 512 ];
-		os::Locale l;
-		os::StreamableIO* pcDatabase = l.GetLocalizedResourceStream( "keymaps.db" );
-		do {
-			n = pcDatabase->Read( &chr, sizeof( char ) );
-			if( n != 1 || chr == '\n' ) {
-				linebfr[ lp ] = 0;
-				lp = 0;
-				LanguageInfo	li( linebfr );
-				if( li.IsValid() &&  bShowAll == false && strcmp( psEntry->d_name, li.GetName().c_str() ) == 0 ) {
-					char delims[] = ",";
-					char *result = NULL;
-					char zGetCode[32];
-					sprintf(zGetCode,"%s",li.GetCode().c_str());
-					result = strtok( zGetCode, delims );
-					while( result != NULL && bAdded == false ) {
-						if( cPrimaryLanguage == result ) {
-							os::ListViewStringRow* pcRow = new os::ListViewStringRow();
-							pcRow->AppendString( li.GetAlias() );
-							m_pcKeyboardLayoutList->InsertRow( pcRow );
-							bAdded = true;
-						}
-						result = strtok( NULL, delims );
+		
+		for( std::vector<LanguageInfo>::const_iterator i = m_cDatabase.begin(); i != m_cDatabase.end() && !bAdded; i++ )
+		{
+			LanguageInfo li = (*i);
+			if( li.IsValid() &&  bShowAll == false && strcmp( psEntry->d_name, li.GetName().c_str() ) == 0 ) {
+				char delims[] = ",";
+				char *result = NULL;
+				char zGetCode[32];
+				sprintf(zGetCode,"%s",li.GetCode().c_str());
+				result = strtok( zGetCode, delims );
+				while( result != NULL && bAdded == false ) {
+					if( cPrimaryLanguage == result ) {
+						os::ListViewStringRow* pcRow = new os::ListViewStringRow();
+						pcRow->AppendString( li.GetAlias() );
+						m_pcKeyboardLayoutList->InsertRow( pcRow, false );
+						bAdded = true;
 					}
-				} else if( bShowAll == true && strcmp( psEntry->d_name, li.GetName().c_str() ) == 0 && bAdded == false ) {
-					os::ListViewStringRow* pcRow = new os::ListViewStringRow();
-					pcRow->AppendString( li.GetAlias() );
-					m_pcKeyboardLayoutList->InsertRow( pcRow );
-					bAdded = true;
+					result = strtok( NULL, delims );
 				}
-			} else {
-				linebfr[ lp++ ] = chr;
-				if( lp > sizeof( linebfr ) - 1 ) {
-					lp = sizeof( linebfr ) - 1;
-				}
+			} else if( bShowAll == true && bAdded == false && strcmp( psEntry->d_name, li.GetName().c_str() ) == 0 ) {
+				os::ListViewStringRow* pcRow = new os::ListViewStringRow();
+				pcRow->AppendString( li.GetAlias() );
+				m_pcKeyboardLayoutList->InsertRow( pcRow, false );
+				bAdded = true;
 			}
-		} while( n > 0 );
-
+		}
 		// It wasn't on the list, but we don't give up. We check for an attribute than can help us
 		if( bAdded == false ) {
 			char delims[] = ",";
@@ -242,7 +227,7 @@ void MainWindow::ShowData()
 				if( bShowAll == true || cPrimaryLanguage == result ) {
 					os::ListViewStringRow* pcRow = new os::ListViewStringRow();
 					pcRow->AppendString( psEntry->d_name );
-					m_pcKeyboardLayoutList->InsertRow( pcRow );
+					m_pcKeyboardLayoutList->InsertRow( pcRow, false );
 					bAdded = true;
 				}
 				result = strtok( NULL, delims );
@@ -253,13 +238,14 @@ void MainWindow::ShowData()
 		if( bShowAll == true && bAdded == false ) {
 			os::ListViewStringRow* pcRow = new os::ListViewStringRow();
 			pcRow->AppendString( psEntry->d_name );
-			m_pcKeyboardLayoutList->InsertRow( pcRow );
+			m_pcKeyboardLayoutList->InsertRow( pcRow, false );
 			bAdded = true;
 		}
 
-		++i;
 	}
 	closedir( pDir );
+	m_pcKeyboardLayoutList->Invalidate( true );
+	m_pcKeyboardLayoutList->Flush();
 }
 
 
@@ -269,30 +255,20 @@ void MainWindow::SetCurrent()
 		// We know the alias, but we want the real name.
 		os::ListViewStringRow* pcRow = static_cast<os::ListViewStringRow*>( m_pcKeyboardLayoutList->GetRow( i ) );
 		os::String cKeymapName = pcRow->GetString(0);
-		uint n, lp = 0;
-		char chr, linebfr[512];
-		os::Locale l;
-		os::StreamableIO* pcDatabase = l.GetLocalizedResourceStream( "keymaps.db" );
-		do {
-			n = pcDatabase->Read( &chr, sizeof( char ) );
-			if( n != 1 || chr == '\n' ) {
-				linebfr[ lp ] = 0;
-				lp = 0;
-				LanguageInfo	li( linebfr );
-				if( li.IsValid() && pcRow->GetString(0) == li.GetAlias() ) {
-					cKeymapName = li.GetName();
-				}
-			} else {
-				linebfr[ lp++ ] = chr;
-				if( lp > sizeof( linebfr ) - 1 ) {
-					lp = sizeof( linebfr ) - 1;
-				}
+		for( std::vector<LanguageInfo>::const_iterator j = m_cDatabase.begin(); j != m_cDatabase.end(); j++ )
+		{
+			LanguageInfo li = (*j);
+			if( li.IsValid() && pcRow->GetString(0) == li.GetAlias() ) {
+				cKeymapName = li.GetName();
+				break;
 			}
-		} while( n > 0 );
+		}
 
 		// ...and set select the current keymap.
 		if( cKeymap == cKeymapName ) {
 			m_pcKeyboardLayoutList->Select( i );
+			iOrigRow = i;
+			break;
 		}
 	}
 }
@@ -303,31 +279,20 @@ void MainWindow::Apply()
 	// Apply the keymap. We know the alias, but we want the real name
 	os::ListViewStringRow *pcRow = static_cast<os::ListViewStringRow*>( m_pcKeyboardLayoutList->GetRow( m_pcKeyboardLayoutList->GetLastSelected() ) );
 	os::String cKeymapName = pcRow->GetString(0);
-	uint n, lp = 0;
-	char chr, linebfr[512];
-	os::Locale l;
-	os::StreamableIO* pcDatabase = l.GetLocalizedResourceStream( "keymaps.db" );
-	do {
-		n = pcDatabase->Read( &chr, sizeof( char ) );
-		if( n != 1 || chr == '\n' ) {
-			linebfr[ lp ] = 0;
-			lp = 0;
-			LanguageInfo	li( linebfr );
-			if( li.IsValid() && pcRow->GetString(0) == li.GetAlias() ) {
-				cKeymapName = li.GetName();
-			}
-		} else {
-			linebfr[ lp++ ] = chr;
-			if( lp > sizeof( linebfr ) - 1 ) {
-				lp = sizeof( linebfr ) - 1;
-			}
+	for( std::vector<LanguageInfo>::const_iterator i = m_cDatabase.begin(); i != m_cDatabase.end(); i++ )
+	{
+		LanguageInfo li = (*i);
+		if( li.IsValid() && pcRow->GetString(0) == li.GetAlias() ) {
+			cKeymapName = li.GetName();
+			break;
 		}
-	} while( n > 0 );
-
+	}
+	
 	// Apply delay and repeat
 	os::Application::GetInstance()->SetKeyboardTimings( int(m_pcInitialSlider->GetValue()), int(m_pcRepeatSlider->GetValue()) );
 
 	//Apply keymap
+	cKeymap = cKeymapName;
 	os::Application::GetInstance()->SetKeymap( cKeymapName.c_str() );
 
 	// Save settings for undo
