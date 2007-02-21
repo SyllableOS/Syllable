@@ -26,6 +26,7 @@ configure-options
 ;	CUPS is a system component and the configuration should be kept separate from the binaries:
 	--sysconfdir=/system/config
 ;	--enable-ssl
+	--without-rcdir
 
 system-prefix-var	DSTROOT
 
