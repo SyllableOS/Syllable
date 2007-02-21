@@ -78,13 +78,10 @@ private:
 	#include "mainwindowLayout.h"
 	NodeMonitor* m_pcMonitor;
 
+	os::String cPrimaryLanguage;
 	os::String cKeymap;
-	os::String cKeymapTemp;
-	os::String cKeymapGroup;
-	int iKeymapGroup;
 	int iDelay, iRepeat, iDelay2, iRepeat2;
 	int iOrigRow, iOrigRow2;
-	int iAmericanRow;
 	std::vector<LanguageInfo> m_cDatabase;
 };
 

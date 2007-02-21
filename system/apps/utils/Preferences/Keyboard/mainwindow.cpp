@@ -46,8 +46,20 @@ MainWindow::MainWindow() : os::Window( os::Rect( 0, 0, 350, 300 ), "main_wnd", M
 	m_pcKeyboardLayoutShowAll->SetTarget( this );
 	m_pcKeyboardLayoutList->InsertColumn( "", 1000 );
 
-	/* Set NodeMonitor */
+	// Set NodeMonitor
 	m_pcMonitor = new NodeMonitor( "/system/keymaps",NWATCH_ALL,this );
+
+	// We want to know the users primary language
+	try {
+		os::Settings* pcSettings = new os::Settings( new os::File( os::String( getenv( "HOME" ) ) + os::String( "/Settings/System/Locale" ) ) );
+		pcSettings->Load();
+		cPrimaryLanguage = pcSettings->GetString("LANG","",0);
+		delete( pcSettings );
+	} catch(...) { }
+	if( cPrimaryLanguage == "" ) {
+		m_pcKeyboardLayoutShowAll->SetValue( true );
+		m_pcKeyboardLayoutFrameLayout->RemoveChild( m_pcKeyboardLayoutShowAll );
+	}
 
 	// Get current delay and repeat settings and set slider values
 	os::Application::GetInstance()->GetKeyboardConfig( &cKeymap, &iDelay, &iRepeat );
@@ -133,26 +145,12 @@ void MainWindow::LoadDatabase()
 
 void MainWindow::ShowData()
 {
+	bool bShowAll = false;
+
 	// Open up keymaps directory and check it actually contains something
 	DIR *pDir = opendir("/system/keymaps");
 	if (pDir == NULL) {
 		return;
-	}
-
-	// We want to know the users primary language
-	bool bShowAll = false;
-	os::String cPrimaryLanguage;
-	os::String zPath = getenv( "HOME" );
-	zPath += os::String( "/Settings/System/Locale" );
-	try {
-		os::Settings* pcSettings = new os::Settings( new os::File( zPath ) );
-		pcSettings->Load();
-		cPrimaryLanguage = pcSettings->GetString("LANG","",0);
-		delete( pcSettings );
-	} catch(...) { }
-	if( cPrimaryLanguage == "" ) {
-		m_pcKeyboardLayoutShowAll->SetValue( true );
-		m_pcKeyboardLayoutFrameLayout->RemoveChild( m_pcKeyboardLayoutShowAll );
 	}
 
 	// Clear listview
@@ -169,7 +167,7 @@ void MainWindow::ShowData()
 			continue;
 		}
 
-		// Its a valid file, so open it
+		// If ft's a valid file, open it
 		FILE *hFile = fopen( (std::string("/system/keymaps/")+psEntry->d_name).c_str(), "r" );
 		if (hFile == NULL) {
 			continue;
@@ -194,7 +192,7 @@ void MainWindow::ShowData()
 			if( li.IsValid() &&  bShowAll == false && strcmp( psEntry->d_name, li.GetName().c_str() ) == 0 ) {
 				char delims[] = ",";
 				char *result = NULL;
-				char zGetCode[32];
+				char zGetCode[128];
 				sprintf(zGetCode,"%s",li.GetCode().c_str());
 				result = strtok( zGetCode, delims );
 				while( result != NULL && bAdded == false ) {
@@ -316,10 +314,9 @@ void MainWindow::Undo()
 
 void MainWindow::Default()
 {
-	// Set to defaults 300/40/American
+	// Set to defaults 300/40
 	m_pcInitialSlider->SetValue( (float)300.0f );
 	m_pcRepeatSlider->SetValue( (float)40.0f );
-	m_pcKeyboardLayoutList->Select(iAmericanRow);
 }
 
 
