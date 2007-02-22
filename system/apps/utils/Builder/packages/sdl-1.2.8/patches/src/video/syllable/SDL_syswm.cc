@@ -57,5 +57,46 @@ int SYL_GetWMInfo(_THIS, SDL_SysWMinfo *info)
     }
 }
 
+static inline os::color_space BitsPerPixelToColorSpace(int bpp)
+{
+	os::color_space colorspace;
+
+	colorspace = os::CS_RGB16;
+	switch (bpp) {
+	    case 8:
+		colorspace = os::CS_CMAP8;
+		break;
+   	    case 16:
+		colorspace = os::CS_RGB16;
+		break;
+	    case 32:
+		colorspace = os::CS_RGB32;
+		break;
+	    default:
+		break;
+	}
+	return(colorspace);
+}
+
+void SYL_SetIcon(_THIS, SDL_Surface *icon, Uint8 *mask)
+{
+	if( icon == NULL || icon->format == NULL || ( icon->format->BitsPerPixel != 16 && icon->format->BitsPerPixel != 32 ) )
+		return;
+	os::Bitmap* pcBitmap = new os::Bitmap( icon->w, icon->h, BitsPerPixelToColorSpace( icon->format->BitsPerPixel ) );
+	uint8* pPixels = pcBitmap->LockRaster();
+	for( int i = 0; i < icon->h; i++ )
+	{
+		uint8* pPtr = pPixels + i * pcBitmap->GetBytesPerRow();
+		memcpy( pPtr, (uint8*)icon->pixels + icon->pitch * i, icon->w * icon->format->BytesPerPixel );
+	}
+	pcBitmap->UnlockRaster();
+	SDL_Win->SetIcon( pcBitmap );
+	SDL_Win->Sync();
+	delete( pcBitmap );
+}
+
 }; /* Extern C */
+
+
+
 

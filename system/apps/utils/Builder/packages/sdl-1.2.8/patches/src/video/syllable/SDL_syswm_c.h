@@ -33,3 +33,7 @@ static char rcsid =
 extern void SYL_SetWMCaption(_THIS, const char *title, const char *icon);
 extern int SYL_IconifyWindow(_THIS);
 extern int SYL_GetWMInfo(_THIS, SDL_SysWMinfo *info);
+extern void SYL_SetIcon(_THIS, SDL_Surface *icon, Uint8 *mask);
+
+
+

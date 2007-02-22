@@ -144,7 +144,7 @@ static SDL_VideoDevice *SYL_CreateDevice(int devindex)
 #endif
 	/* Window manager functions */
 	device->SetCaption = SYL_SetWMCaption;
-	device->SetIcon = NULL;
+	device->SetIcon = SYL_SetIcon;
 	device->IconifyWindow = SYL_IconifyWindow;
 	device->GrabInput = NULL;
 	device->GetWMInfo = SYL_GetWMInfo;
