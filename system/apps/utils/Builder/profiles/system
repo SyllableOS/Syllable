@@ -140,7 +140,7 @@ resources
 modules
 	other/config/default
 	other/config/etc
-	other/fonts/dejavu-fonts-2.11
+	other/fonts/dejavu-fonts-2.15
 	other/icons
 	other/init
 	other/keymaps
