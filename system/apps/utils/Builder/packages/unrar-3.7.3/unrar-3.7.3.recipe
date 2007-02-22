@@ -1,0 +1,35 @@
+authors		Kristian Van Der Vliet
+status		testing
+licenses	freeware
+
+home		www.rarlabs.com
+headline	Extract data from RAR archives.
+description
+			UnRAR is an extract-only command line version of the WinRAR archive manager.
+			UnRAR is based on the official WinRAR source code from RARLabs and can extract
+			from all known RAR files, including RAR3 files.
+
+packages	unrarsrc-3.7.3
+locations	ftp.rarlabs.com/rar/
+
+; KV: skeleton.recipe says that the configure & install target override can
+; be "possibly empty", which I take to mean no configure command would be run,
+; but this doesn't appear to be possible (Bug?) Hence the use of "true" to
+; override these commands and keep Builder happy.
+
+configure	true
+
+makefile	makefile.unix
+
+install		true
+
+install-tree
+	bin
+
+install-files
+	unrar		bin/unrar
+
+documentation
+	readme.txt
+	license.txt
+

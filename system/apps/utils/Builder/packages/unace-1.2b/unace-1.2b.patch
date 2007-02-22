@@ -1,0 +1,12 @@
+diff -ur unace1.2b_orig/unix/makefile unace1.2b/unix/makefile
+--- unace1.2b_orig/unix/makefile	2002-08-23 23:17:20.000000000 +0000
++++ unace1.2b/unix/makefile	2007-02-22 12:47:52.000000000 +0000
+@@ -16,7 +16,7 @@
+ #CFLAGS = -Wall -O3 -s #-DNDEBUG
+ #CFLAGS = -g -Wall -DMDEBUG
+ #CFLAGS = -O3 -fno-strength-reduce -fomit-frame-pointer # These are for Linux
+-CFLAGS = -O -g -Wall -dLO_HI_BYTE_ORDER
++CFLAGS += -g -DLO_HI_BYTE_ORDER
+ CHALLOC = challoc.o
+ CHALLOC =
+ CHNEW = chnew.o challoc.o
