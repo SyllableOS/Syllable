@@ -19,7 +19,7 @@ locations	ftp.rarlabs.com/rar/
 
 configure	true
 
-makefile	makefile.unix
+make-file	makefile.unix
 
 install		true
 
