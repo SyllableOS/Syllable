@@ -59,7 +59,7 @@ build-dir			<Subdirectory>
 ; [<pre-configure>]
 ; [<configure-env>] <configure-cmd> ([<configure-prefix>] | [<configure-args>]) [<configure-options>]
 
-configure			[<Configuration commands override; possibly empty>]
+configure			<Configuration commands override>
 
 pre-configure		<Commands preceding configuration>
 ; Extra environment variables for configure:
@@ -169,4 +169,3 @@ links
 
 ; Don't strip binaries:
 ;no-strip
-
