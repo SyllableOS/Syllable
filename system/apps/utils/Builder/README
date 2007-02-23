@@ -1,7 +1,7 @@
 The Syllable Build System
 =========================
 
-21 September 2006
+23 February 2007
 
 Contents
 ========
@@ -75,7 +75,7 @@ If you unpacked or copied it somewhere else, do:
 
 Then run:
 
-    pkgmanager -a /usr/Builder
+    package register /usr/Builder
 
 This creates links in Syllable to enable it to find the build
 system's files.
@@ -101,7 +101,7 @@ Then you should remove the links to the build system from Syllable.
 You should even do this when you want to upgrade the build system,
 because the links may have changed for the new version.
 
-    pkgmanager -r /usr/Builder
+    package unregister /usr/Builder
 
 To delete the files belonging to the build system, run:
 
