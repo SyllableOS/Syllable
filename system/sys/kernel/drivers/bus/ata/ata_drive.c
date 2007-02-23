@@ -764,7 +764,7 @@ int ata_drive_partitions( ATA_device_s* psDev )
 
 	kerndbg( KERN_INFO, "Decode partition table for %s\n", psDev->zName );
 
-	nNumPartitions = ata_decode_disk_partitions( &sDiskGeom, asPartitions, 16, psDev, ata_drive_read_partition_data );
+	nNumPartitions = ata_decode_disk_partitions( &sDiskGeom, asPartitions, 32, psDev, ata_drive_read_partition_data );
 
 	if ( nNumPartitions < 0 )
 	{
