@@ -1,5 +1,9 @@
 Glibc Syllable Changelog
 
+* Febuary 23rd 2007 *
+
+	o readdir64.c: New file. Replaces stub for dirent/readdir64.c.
+
 * Febuary 8th 2007 *
 
 	o getrusage.c: New file. Simple stub, only useful for RUSAGE_SELF.
