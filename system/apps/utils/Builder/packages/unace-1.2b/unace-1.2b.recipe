@@ -1,35 +1,24 @@
-authors		Kristian Van Der Vliet
-status		testing
-licenses	GPL
+authors				Kristian Van Der Vliet
+status				testing
 
-home		www.winace.com
-headline	Extract data from ACE archives.
+licenses			GPL
+headline			Extracts data from ACE archives
 description
-			UnACE is an extract-only command line version of the WinACE archive manager.
-			This is an older, freely available version by the original author of ACE.
+	UnACE is an extract-only command line version of the WinACE archive manager. This is an older, freely available version by the original author of ACE.
 
-packages	unace_1.2b.orig
-locations	ftp.debian.org/debian/pool/main/u/unace/
+home				www.winace.com
+packages			unace_1.2b.orig
+locations			ftp://ftp.debian.org/debian/pool/main/u/unace/
 
-build-dir	unace1.2b
+patch				cp unix/* .
 
-configure
-	cp -pf unix/* .
+build-dir			unace1.2b
 
-; KV: skeleton.recipe says that the configure & install target override can
-; be "possibly empty", which I take to mean no configure command would be run,
-; but this doesn't appear to be possible (Bug?) Hence the use of "true" to
-; override these commands and keep Builder happy.
+;make-targets		dep all
 
-install		true
+install-tree		bin
+install				true
+install-files		unace bin/
 
-install-tree
-	bin
-
-install-files
-	unace		bin/unace
-
-documentation
-	readme
-	COPYING
-
+documentation		readme COPYING changes.log
+build-docs			unix/readme.txt
