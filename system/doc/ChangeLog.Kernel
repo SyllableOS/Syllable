@@ -1,3 +1,7 @@
+* February 23, 2007, Arno Klenke *
+
+Do not use the tsc timer in non smp mode
+
 * February 21, 2007, Kristian Van Der Vliet *
 
 Allow tcp_connect() to return immediatly with -INPROGRESS if the socket is non-blocking.
@@ -1107,6 +1111,7 @@ required; they are implemented in user space as part of libc.
 
 Applied a fix to sys/kernel/kernel/vfs/vfs.c  The fcntl() F_GETLK command
 now works as expected.
+
 
 
 
