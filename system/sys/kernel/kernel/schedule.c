@@ -1656,13 +1656,12 @@ void reset_thread_quantum( Thread_s *psThread )
  * \return Pointer to next thread to run
  * \sa Schedule
  ****************************************************************************/
-static Thread_s *select_thread( bool *bTimedOut )
+static Thread_s *select_thread( int64 nCurTime, bool *bTimedOut )
 {
 	int nThisProc = get_processor_id();
 	Thread_s *psPrev = CURRENT_THREAD;
 	Thread_s *psNext = psPrev;
 	Thread_s *psTopProc = swap_and_get_next_ready_thread();
-	int64 nCurTime = read_pentium_clock() / ( g_asProcessorDescs[nThisProc].pi_nCoreSpeed / 1000000 );
 	int nState;
 
 	if ( psPrev != NULL )
@@ -1781,7 +1780,10 @@ void DoSchedule( SysCallRegs_s* psRegs )
 	sched_lock();
 		
 	nThisProc = get_processor_id();
-	nCurTime = read_pentium_clock() / ( g_asProcessorDescs[nThisProc].pi_nCoreSpeed / 1000000 );
+	if( g_bAPICPresent )
+		nCurTime = read_pentium_clock() / ( g_asProcessorDescs[nThisProc].pi_nCoreSpeed / 1000000 );
+	else
+		nCurTime = get_system_time();
 	g_asProcessorDescs[nThisProc].pi_nCPUTime = nCurTime;
 
 
@@ -1817,7 +1819,7 @@ void DoSchedule( SysCallRegs_s* psRegs )
 
 	g_bNeedSchedule = false;
 
-	psNext = select_thread( &bTimedOut );
+	psNext = select_thread( nCurTime, &bTimedOut );
 
 	// Skip threads we don't like
 	for ( ; psNext != NULL; psNext = DLIST_NEXT(psNext, tr_psNext) )
