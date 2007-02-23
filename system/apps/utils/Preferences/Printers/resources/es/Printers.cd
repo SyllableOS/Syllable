@@ -1,0 +1,64 @@
+//
+//	Preferences/Printers String Catalog
+//
+//	Translated by: Angel Luis Laguna
+//
+
+MSG_MAINWND_TITLE=0								Impresoras
+MSG_MAINWND_DEFAULT_PRINTER_NAME				Nueva_Impresora
+
+MSG_MAINWND_MENU_APPLICATION=100				Aplicación
+MSG_MAINWND_MENU_APPLICATION_ABOUT				Acerca de
+MSG_MAINWND_MENU_APPLICATION_SAVE				Guardar
+MSG_MAINWND_MENU_APPLICATION_CANCEL				Cancelar
+
+MSG_MAINWND_MENU_PRINTER=120					Impresora
+MSG_MAINWND_MENU_PRINTER_ADD					Añadir impresora
+MSG_MAINWND_MENU_PRINTER_REMOVE					Eliminar impresora
+MSG_MAINWND_MENU_PRINTER_DEFAULT				Marcar por defecto
+
+MSG_MAINWND_TOOLBAR_ADD=200						Añadir impresora
+MSG_MAINWND_TOOLBAR_REMOVE						Eliminar impresora
+MSG_MAINWND_TOOLBAR_DEFAULT						Marcar por defecto
+
+MSG_MAINWND_PRINTERTAB_MODEL=300				Modelo
+MSG_MAINWND_PRINTERTAB_UNKNOWN					Desconocido
+MSG_MAINWND_PRINTERTAB_SELECT					Seleccionar...
+MSG_MAINWND_PRINTERTAB_THEPRINTER				La impresora
+MSG_MAINWND_PRINTERTAB_ISA						es una
+MSG_MAINWND_PRINTERTAB_CONNECTEDTO				impresora conectada a
+
+MSG_MAINWND_BUTTONS_SAVE=400					Guardar
+MSG_MAINWND_BUTTONS_CANCEL						Cancelar
+
+MSG_SELECTWND_TITLE=800							Seleccionar impresora
+MSG_SELECTWND_BUTTON_SELECT						Seleccionar
+MSG_SELECTWND_BUTTON_CANCEL						Cancelar
+
+MSG_PROTOCOL_USB=900							USB
+MSG_PROTOCOL_PARALLEL							Paralelo
+MSG_PROTOCOL_SMB								Windows (SMB)
+MSG_PROTOCOL_LPD								UNIX (lpd)
+MSG_PROTOCOL_IPP								CUPS (IPP)
+MSG_PROTOCOL_UNKNOWN							Desconocido
+MSG_PROTOCOL_HPJETDIRECT						HP JetDirect
+
+MSG_ABOUTWND_TITLE=1000							Impresoras
+MSG_ABOUTWND_TEXT1								Administrador Syllable de impresoras
+MSG_ABOUTWND_TEXT2								Utilizando CUPS versión %d.%d.%d\n
+MSG_ABOUTWND_CLOSE								_Cerrar
+
+MSG_ALRTWND_REMOVE_TITLE=1100					Eliminar impresoras
+MSG_ALRTWND_REMOVE_TEXT							¿Está seguro de que desea eliminar la impresora?
+MSG_ALRTWND_REMOVE_YES							Sí
+MSG_ALRTWND_REMOVE_NO							No
+
+MSG_ALRTWND_SAVE_TITLE=1200						Impresoras
+MSG_ALRTWND_SAVE_TEXT							Configuración CUPS errónea. Puede que no haya configurado correctamente las impresoras.
+MSG_ALRTWND_SAVE_CLOSE							_Cerrar
+
+MSG_ALRTWND_INSERTCD_TITLE=1300					Insertar CD
+MSG_ALRTWND_INSERTCD_TEXT						Por favor inserte el CD de instalación Syllable.
+MSG_ALRTWND_INSERTCD_OK							Aceptar
+MSG_ALRTWND_INSERTCD_CANCEL						Cancelar
+
