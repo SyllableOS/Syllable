@@ -54,7 +54,8 @@ class AEditWindow : public os::Window
 	friend class Buffer;
 
 	public:
-		AEditWindow( const os::Rect& cFrame );		
+		AEditWindow( const os::Rect& cFrame );
+		~AEditWindow();
 		virtual void HandleMessage( os::Message* pcMessage );
 		virtual bool OkToQuit(void);
 		virtual void FrameSized( const os::Point& cDelta );

@@ -114,19 +114,6 @@ ReplaceDialog :: ReplaceDialog() : Dialog()
 
 ReplaceDialog :: ~ReplaceDialog()
 {
-	delete pcLayoutView;
-	delete pcRoot;
-	delete pcTopPanel;
-	delete pcBottomPanel;
-	delete pcFirstButton;
-	delete pcNextButton;
-	delete pcReplaceButton;
-	delete pcCloseButton;
-	delete pcFindString;
-	delete pcFindTextView;
-	delete pcReplaceString;
-	delete pcReplaceTextView;
-	delete pcCaseCheckbox;
 }
 
 void ReplaceDialog :: FrameSized( const Point& cDelta )

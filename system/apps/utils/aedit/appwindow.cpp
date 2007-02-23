@@ -139,6 +139,13 @@ AEditWindow::AEditWindow(const Rect& cFrame) : Window(cFrame, "main_window", AED
 	MoveTo( cWinSize.left, cWinSize.top );
 }
 
+AEditWindow::~AEditWindow()
+{
+	delete( pcFindDialog );
+	delete( pcReplaceDialog );
+	delete( pcGotoDialog );
+}
+
 void AEditWindow :: FrameSized( const Point& cDelta )
 {
 	Window::FrameSized( cDelta );
@@ -420,11 +427,9 @@ void AEditWindow::HandleMessage(Message* pcMessage)
 		}
 
 		case M_MENU_VIEW_TOOLBAR:
-			pcToolBar->Show( pcViewToolbar->IsChecked() );
 			_Layout();
 			break;
 		case M_MENU_VIEW_STATUSBAR:
-			pcStatusBar->Show( pcViewStatusbar->IsChecked() );
 			_Layout();
 			break;
 		case M_MENU_VIEW_TABSHOW:
@@ -454,6 +459,7 @@ void AEditWindow::HandleMessage(Message* pcMessage)
 			if( pcFontRequester->IsVisible() )
 				pcFontRequester->Show( false );
 			pcFontRequester->Show();
+			pcFontRequester->MakeFocus();
 			break;
 		}
 		case M_FONT_REQUESTED:
@@ -963,7 +969,7 @@ void AEditWindow :: _Layout()
 		else
 			first1 = false;
 	}
-	else
+	else if( pcToolBar->IsVisible() )
 	{
 		pcToolBar->Hide();
 	}
@@ -985,7 +991,7 @@ void AEditWindow :: _Layout()
 		else
 			first2 = false;
 	}
-	else
+	else if( pcStatusBar->IsVisible() )
 	{
 		pcStatusBar->Hide();
 	}

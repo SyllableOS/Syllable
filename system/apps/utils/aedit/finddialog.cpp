@@ -92,16 +92,6 @@ FindDialog :: FindDialog() : Dialog()
 
 FindDialog :: ~FindDialog()
 {
-	delete pcLayoutView;
-	delete pcRoot;
-	delete pcTopPanel;
-	delete pcBottomPanel;
-	delete pcFirstButton;
-	delete pcNextButton;
-	delete pcCloseButton;
-	delete pcFindString;
-	delete pcFindTextView;
-	delete pcCaseCheckbox;
 }
 
 void FindDialog :: FrameSized( const Point& cDelta )

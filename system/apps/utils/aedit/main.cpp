@@ -69,6 +69,8 @@ AEditApp::AEditApp(int argc, char* argv[]) : Application("application/x-aedit")
 		regman->RegisterTypeExtension( "text/plain", "dos" );
 		regman->RegisterTypeExtension( "text/plain", "ini" );
 		regman->RegisterAsTypeHandler( "text/plain" );
+		
+		regman->Put();
 	}
 	catch(...)
 	{

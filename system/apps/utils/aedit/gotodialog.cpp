@@ -71,11 +71,6 @@ GotoDialog :: GotoDialog() : Dialog()
 
 GotoDialog :: ~GotoDialog()
 {
-	delete pcGotoButton;
-	delete pcLineNoTextView;
-	delete pcGotoString;
-	delete pcRoot;
-	delete pcLayoutView;
 }
 
 void GotoDialog :: FrameSized( const Point& cDelta )
