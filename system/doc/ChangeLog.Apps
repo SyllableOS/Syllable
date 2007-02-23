@@ -1,3 +1,7 @@
+* February 23, 2007, Arno Klenke *
+
+Fixed some bugs in aedit
+
 * February 21, 2007, Kristian Van Der Vliet *
 
 Added a simple implementation of 'df' It can display usage information for all mounted volumes
@@ -638,6 +642,7 @@ Network Preferences
 		* Added NetworkPreferences from Daryl Dudey(daryl.dudey@ntlworld.com).
 		* Added SlbMgr(AtheMgr renamed).
 		* Patches by Vanders for AEdit.
+
 
 
 
