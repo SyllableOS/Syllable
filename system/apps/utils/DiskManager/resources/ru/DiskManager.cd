@@ -1,0 +1,68 @@
+//
+//	DiskManager String Catalog
+//
+//	Translated by: Ilya Krol
+//
+
+MSG_MAINWND_TITLE=0							Дисковый менеджер
+
+MSG_MAINWND_MENU_PROGRAM=100				Приложение
+MSG_MAINWND_MENU_PROGRAM_EXIT				Выйти
+
+MSG_MAINWND_LIST_DEVICE=200					Устройство
+MSG_MAINWND_LIST_PARTITIONS					Разделы
+MSG_MAINWND_LIST_SIZE						Размер
+MSG_MAINWND_LIST_MB							%.2fМБ
+
+MSG_MAINWND_BUTONS_QUIT=300					Выйти
+MSG_MAINWND_BUTONS_PARTITION				Раздел...
+
+MSG_PARTWND_TITLE=500						Установка разделов
+
+MSG_PARTWND_DISKPARAM=600					Параметры диска:
+MSG_PARTWND_DISKPARAM_DISKSIZE				Размер диска: %.2fМБ
+MSG_PARTWND_DISKPARAM_EXTSIZE				Размер расширенного раздела: %.2fМБ
+MSG_PARTWND_DISKPARAM_UNITSIZE				Размер блока: %ld секторов по %ld байт (%ld байт)
+MSG_PARTWND_DISKPARAM_UNUSESSPACE			Свободное место:
+
+MSG_PARTWND_PARTINFO_UNUSED=700				неиспользуемое
+MSG_PARTWND_PARTINFO_UNKNOWN				*НЕИЗВЕСТНО*
+MSG_PARTWND_PARTINFO_PARTSIZEZERO			0.0МБ
+MSG_PARTWND_PARTINFO_PARTSIZE				%.2fМБ
+
+MSG_PARTWND_BUTTONS_CANCEL=800				Отмена
+MSG_PARTWND_BUTTONS_OK						ОК
+MSG_PARTWND_BUTTONS_DONE					Готово
+MSG_PARTWND_BUTTONS_CLEAR					Очистить
+MSG_PARTWND_BUTTONS_EDITEXT					Редактировать расширенный
+MSG_PARTWND_BUTTONS_SORT					Упорядочить
+MSG_PARTWND_BUTTONS_ADD						Добавить
+
+MSG_ALERTWND_ERREXT_EXTENDED=1000			Ошибка!
+MSG_ALERTWND_ERREXT_EXTENDED_TEXT			Неверная таблица расширенных разделов!\nРасширенный раздел содержит более\nодного расширенного раздела.\nИзменение таблицы разделов может вызвать\nпотерю одного или нескольких логических разделов.
+MSG_ALERTWND_ERREXT_EXTENDED_OK				ОК
+
+MSG_ALERTWND_ERREXT_LOGICAL=2000			Ошибка!
+MSG_ALERTWND_ERREXT_LOGICAL_TEXT			Неверная таблица расширенных разделов!\nРасширенный раздел содержит более\nодного логического раздела.\nИзменение таблицы разделов может вызвать\nпотерю одного или нескольких логических разделов.
+MSG_ALERTWND_ERREXT_LOGICAL_OK				ОК
+
+MSG_ALERTWND_CHANGEDLAYOUT=3000				Внимание!
+MSG_ALERTWND_CHANGEDLAYOUT_TEXT				Вы изменили один или несколько разделов.\nВся информация на этих разделах будет потеряна.\nВы уверены, что хотите переписать таблицу разделов?
+MSG_ALERTWND_CHANGEDLAYOUT_CANCEL			Отмена
+MSG_ALERTWND_CHANGEDLAYOUT_OK				ОК
+
+MSG_ALERTWND_CHANGEDTYPE=4000				Внимание!
+MSG_ALERTWND_CHANGEDTYPE_TEXT				Вы поменяли тип одного или нескольких разделов.\nЭто не должно повредить информацию на разделах, но может\nсделать невозможным повторное монтирование разделов.\nВы уверены что хотите переписать таблицу разделов?
+MSG_ALERTWND_CHANGEDTYPE_CANCEL				Отмена
+MSG_ALERTWND_CHANGEDTYPE_OK					ОК
+
+MSG_ALERTWND_CHANGEDSTATUS=5000				Внимание!
+MSG_ALERTWND_CHANGEDSTATUS_TEXT				Вы поменяли статус одного или нескольких разделов.Это не должно повредить информацию на этих разделах, но может\n\nзагрузку с них невозможной.\nВы уверены что хотите переписать таблицу разделов?
+MSG_ALERTWND_CHANGEDSTATUS_CANCEL			Отмена
+MSG_ALERTWND_CHANGEDSTATUS_OK				ОК
+
+MSG_ALERTWND_DELPART=6000					Внимание!
+MSG_ALERTWND_DELPART_TEXT					Эта операция удалит данный раздел.\nВся информация на данном разделе будет потеряна.\nВы уверены, что это то, что Вам нужно??
+MSG_ALERTWND_DELPART_CANCEL					Отмена
+MSG_ALERTWND_DELPART_OK						ОК
+
