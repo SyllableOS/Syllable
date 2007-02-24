@@ -63,6 +63,7 @@ FILES=(	"/etc/profile, /etc/profile" 															\
 		"/system/bin/mount, /system/bin/mount"														\
 		"/system/bin/reboot, /system/bin/reboot"													\
 		"/system/bin/unmount, /system/bin/unmount"													\
+		"/system/bin/df, /system/bin/df"													\
 																											\
 		"/Applications/AEdit/AEdit, /system/bin/aedit"											\
 																											\
