@@ -1,3 +1,7 @@
+* February 24, 2007, Flemming H. Sørensen *
+
+Localized PrintQueue.
+
 * February 21, 2007, Flemming H. Sørensen *
 
 The language-lists in the Locale preferences is now wide enough to show the full languagenames (Bug #109)
