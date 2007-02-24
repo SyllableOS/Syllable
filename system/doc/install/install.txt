@@ -44,7 +44,7 @@ The downloadable Syllable CD image is distributed as a Gziped "ISO" image.
 Before you can burn this image to a CD you must first ungzip it.  On Linux,
 Syllable or other Unix-like systems such as MacOS X you should do this:
 
-bash$ gzip -d 0.6.0-basic.iso.gz
+bash$ gzip -d syllable-0.6.3.iso.gz
 
 On Windows you can use WinZip to decompress the Gzip file.
 
@@ -69,7 +69,7 @@ The next step is to configure and install the bootloader.
 
 First you must tell GRUB where to find the kernel and the required
 disk/FS drivers to load before booting Syllable. This information is
-found in "/afs/boot/grub/menu.lst". If you have other OS's installed
+found in "/inst/boot/grub/menu.lst". If you have other OS's installed
 on the machine you must either configure GRUB as a boot-manager or
 install another boot-manager that can "chainload" GRUB from the AFS
 partition.
