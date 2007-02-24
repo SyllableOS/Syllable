@@ -180,7 +180,7 @@ puts $part + ','
 print 'or press any other key to skip this step: '
 
 if (resp = $stdin.getuc.downcase) == "m" or resp == "p"
-	unless system 'grub-install', ,'--no-floppy', '--recheck', '--root-directory=/inst', loader = resp == "m" ? disk : $part
+	unless system 'grub-install', '--no-floppy', '--recheck', '--root-directory=/inst', loader = resp == "m" ? disk : $part
 		puts
 		puts "ERROR: failed to install GrUB on #{loader}."
 		puts "Stopping."
