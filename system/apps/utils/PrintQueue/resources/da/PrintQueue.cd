@@ -1,0 +1,56 @@
+//
+//	PrintQueue String Catalog
+//
+//	Translated by: Flemming H. Sørensen
+//
+
+MSG_MAINWND_TITLE=0								Udskriftskø
+
+MSG_MAINWND_MENU_APPLICATION=100				Program
+MSG_MAINWND_MENU_APPLICATION_QUIT				Afslut
+MSG_MAINWND_MENU_APPLICATION_ABOUT				Om...
+
+MSG_MAINWND_MENU_VIEW=120						Vis
+MSG_MAINWND_MENU_VIEW_REFRESH					Opdater
+MSG_MAINWND_MENU_VIEW_COMPLETED					Vis afsluttede udskrifter
+
+MSG_MAINWND_MENU_JOB=130						Udskrifter
+MSG_MAINWND_MENU_JOB_CANCEL						Fjern udskriftsjob
+
+MSG_MAINWND_MENU_PRINTER=140					Printer
+MSG_MAINWND_MENU_PRINTER_PAUSE					Pause udskrivning
+MSG_MAINWND_MENU_PRINTER_RESUME					Genoptag udskrivning
+
+MSG_MAINWND_TOOLBAR_CALCEL=200					Fjern udskriftsjob
+MSG_MAINWND_TOOLBAR_PAUSE						Pause udskrivning
+MSG_MAINWND_TOOLBAR_RESUME						Genoptag udskrivning
+
+MSG_MAINWND_CONTEXTMENU_CANCEL=300				Fjern udskriftsjob
+MSG_MAINWND_CONTEXTMENU_PAUSE					Pause udskrivning
+MSG_MAINWND_CONTEXTMENU_RESUME					Genoptag udskrivning
+
+MSG_MAINWND_DOCLIST_ID=500						ID
+MSG_MAINWND_DOCLIST_NAME						Navn
+MSG_MAINWND_DOCLIST_STATUS						Status
+MSG_MAINWND_DOCLIST_OWNER						Ejer
+MSG_MAINWND_DOCLIST_SIZE						Størrelse
+MSG_MAINWND_DOCLIST_SUBMITTED					Tilføjet
+
+MSG_MAINWND_JOBSIZE_KB=600						%d Kb
+MSG_MAINWND_JOBSIZE_MB							%d Mb
+MSG_MAINWND_JOBSIZE_GB							%d Gb
+
+MSG_ABOUTWND_TITLE=1000							Udskriftskø
+MSG_ABOUTWND_TEXT1								Syllable Udskriftsstyring
+MSG_ABOUTWND_TEXT2								Bruger CUPS version %d.%d.%d\n
+MSG_ABOUTWND_CLOSE								_Luk
+
+MSG_ALERTWND_PAUSE_TITLE=1100					Udskriftskø - Fejl ved Pause
+MSG_ALERTWND_PAUSE_CLOSE						_Luk
+
+MSG_ALERTWND_RESUME_TITLE=1200					Udskriftskø - Fejl ved Genoptag
+MSG_ALERTWND_RESUME_CLOSE						_Luk
+
+MSG_ALERTWND_CANCEL_TITLE=1300					Udskriftskø - Fejl ved Fjern
+MSG_ALERTWND_CANCEL_CLOSE						_Luk
+

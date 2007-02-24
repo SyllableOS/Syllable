@@ -33,6 +33,7 @@
 #include <gui/checkmenu.h>
 #include <gui/requesters.h>
 #include <gui/toolbar.h>
+#include "resources/PrintQueue.h"
 
 #define QUEUE_VERSION "1.0"
 
@@ -102,7 +103,7 @@ class QueueWindow : public Window
 		TreeViewStringNode *m_pcCurrentPrinter;	/* Currently selected Printer */
 };
 
-QueueWindow::QueueWindow( const Rect &cFrame ) : Window( cFrame, "print_queue", "Print Queue" )
+QueueWindow::QueueWindow( const Rect &cFrame ) : Window( cFrame, "print_queue", MSG_MAINWND_TITLE )
 {
 	Rect cBounds = GetBounds();
 
@@ -111,33 +112,33 @@ QueueWindow::QueueWindow( const Rect &cFrame ) : Window( cFrame, "print_queue", 
 
 	m_pcMenuBar = new Menu( cMenuFrame, "Queues", ITEMS_IN_ROW );
 
-	Menu *pcApplicationMenu = new Menu( Rect(), "Application", ITEMS_IN_COLUMN );
-	pcApplicationMenu->AddItem( "Quit", new Message( M_APP_QUIT ) );
+	Menu *pcApplicationMenu = new Menu( Rect(), MSG_MAINWND_MENU_APPLICATION, ITEMS_IN_COLUMN );
+	pcApplicationMenu->AddItem( MSG_MAINWND_MENU_APPLICATION_QUIT, new Message( M_APP_QUIT ) );
 	pcApplicationMenu->AddItem( new MenuSeparator() );
-	pcApplicationMenu->AddItem( "About", new Message( M_APP_ABOUT ) );
+	pcApplicationMenu->AddItem( MSG_MAINWND_MENU_APPLICATION_ABOUT, new Message( M_APP_ABOUT ) );
 	m_pcMenuBar->AddItem( pcApplicationMenu );
 
-	Menu *pcViewMenu = new Menu( Rect(), "View", ITEMS_IN_COLUMN );
-	pcViewMenu->AddItem( "Refresh", new Message( M_VIEW_REFRESH ) );
+	Menu *pcViewMenu = new Menu( Rect(), MSG_MAINWND_MENU_VIEW, ITEMS_IN_COLUMN );
+	pcViewMenu->AddItem( MSG_MAINWND_MENU_VIEW_REFRESH, new Message( M_VIEW_REFRESH ) );
 	pcViewMenu->AddItem( new MenuSeparator() );
 
 	/* By default, only show active jobs */
 	m_nJobSelect = 0;
-	m_pcItemViewCompleted = new CheckMenu( "Show completed jobs", new Message( M_VIEW_COMPLETED ) );
+	m_pcItemViewCompleted = new CheckMenu( MSG_MAINWND_MENU_VIEW_COMPLETED, new Message( M_VIEW_COMPLETED ) );
 	pcViewMenu->AddItem( m_pcItemViewCompleted );
 
 	m_pcMenuBar->AddItem( pcViewMenu );
 
-	Menu *pcJobMenu = new Menu( Rect(), "Job", ITEMS_IN_COLUMN );
-	m_pcItemCancel = new MenuItem( "Cancel job", new Message( M_JOB_CANCEL ) );
+	Menu *pcJobMenu = new Menu( Rect(), MSG_MAINWND_MENU_JOB, ITEMS_IN_COLUMN );
+	m_pcItemCancel = new MenuItem( MSG_MAINWND_MENU_JOB_CANCEL, new Message( M_JOB_CANCEL ) );
 	pcJobMenu->AddItem( m_pcItemCancel );
 
 	m_pcMenuBar->AddItem( pcJobMenu );
 
-	Menu *pcPrinterMenu = new Menu( Rect(), "Printer", ITEMS_IN_COLUMN );
-	m_pcItemPause = new MenuItem( "Pause printing", new Message( M_PRINTER_PAUSE ) );
+	Menu *pcPrinterMenu = new Menu( Rect(), MSG_MAINWND_MENU_PRINTER, ITEMS_IN_COLUMN );
+	m_pcItemPause = new MenuItem( MSG_MAINWND_MENU_PRINTER_PAUSE, new Message( M_PRINTER_PAUSE ) );
 	pcPrinterMenu->AddItem( m_pcItemPause );
-	m_pcItemResume = new MenuItem( "Resume printing", new Message( M_PRINTER_RESUME ) );
+	m_pcItemResume = new MenuItem( MSG_MAINWND_MENU_PRINTER_RESUME, new Message( M_PRINTER_RESUME ) );
 	pcPrinterMenu->AddItem( m_pcItemResume );
 
 	m_pcMenuBar->AddItem( pcPrinterMenu );
@@ -162,17 +163,17 @@ QueueWindow::QueueWindow( const Rect &cFrame ) : Window( cFrame, "print_queue", 
 
 	pcToolBarIcon = new BitmapImage();
 	pcToolBarIcon->Load( cRes.GetResourceStream( "cancel.png" ) );
-	m_pcToolBar->AddButton( "cancel", "Cancel job", pcToolBarIcon, new Message( M_JOB_CANCEL ) );
+	m_pcToolBar->AddButton( "cancel", MSG_MAINWND_TOOLBAR_CALCEL, pcToolBarIcon, new Message( M_JOB_CANCEL ) );
 
 	m_pcToolBar->AddSeparator( "" );
 
 	pcToolBarIcon = new BitmapImage();
 	pcToolBarIcon->Load( cRes.GetResourceStream( "pause.png" ) );
-	m_pcToolBar->AddButton( "pause", "Pause printing", pcToolBarIcon, new Message( M_PRINTER_PAUSE ) );
+	m_pcToolBar->AddButton( "pause", MSG_MAINWND_TOOLBAR_PAUSE, pcToolBarIcon, new Message( M_PRINTER_PAUSE ) );
 
 	pcToolBarIcon = new BitmapImage();
 	pcToolBarIcon->Load( cRes.GetResourceStream( "resume.png" ) );
-	m_pcToolBar->AddButton( "resume", "Resume printing", pcToolBarIcon, new Message( M_PRINTER_RESUME ) );
+	m_pcToolBar->AddButton( "resume", MSG_MAINWND_TOOLBAR_RESUME, pcToolBarIcon, new Message( M_PRINTER_RESUME ) );
 
 	AddChild( m_pcToolBar );
 
@@ -184,12 +185,12 @@ QueueWindow::QueueWindow( const Rect &cFrame ) : Window( cFrame, "print_queue", 
 	m_pcPrinters->SetSelChangeMsg( new Message( M_SELECT_PRINTER ) );
 
 	m_pcJobs = new ListView( cBounds, "Documents", ListView::F_RENDER_BORDER | ListView::F_NO_AUTO_SORT, CF_FOLLOW_ALL );
-	m_pcJobs->InsertColumn( "ID", 25 );
-	m_pcJobs->InsertColumn( "Name", 145 );
-	m_pcJobs->InsertColumn( "Status", 90 );
-	m_pcJobs->InsertColumn( "Owner", 100 );
-	m_pcJobs->InsertColumn( "Size", 50 );
-	m_pcJobs->InsertColumn( "Submitted", 100 );
+	m_pcJobs->InsertColumn( MSG_MAINWND_DOCLIST_ID.c_str(), 25 );
+	m_pcJobs->InsertColumn( MSG_MAINWND_DOCLIST_NAME.c_str(), 145 );
+	m_pcJobs->InsertColumn( MSG_MAINWND_DOCLIST_STATUS.c_str(), 90 );
+	m_pcJobs->InsertColumn( MSG_MAINWND_DOCLIST_OWNER.c_str(), 100 );
+	m_pcJobs->InsertColumn( MSG_MAINWND_DOCLIST_SIZE.c_str(), 50 );
+	m_pcJobs->InsertColumn( MSG_MAINWND_DOCLIST_SUBMITTED.c_str(), 100 );
 	m_pcJobs->SetSelChangeMsg( new Message( M_SELECT_JOB ) );
 
 	m_pcSplitter = new Splitter( cBounds, "Queues", m_pcPrinters, m_pcJobs, HORIZONTAL, CF_FOLLOW_ALL );
@@ -199,7 +200,7 @@ QueueWindow::QueueWindow( const Rect &cFrame ) : Window( cFrame, "print_queue", 
 	/* A context menu for the Jobs ListView */
 	m_pcJobContextMenu = new Menu( Rect(), "Jobs", ITEMS_IN_COLUMN );
 
-	m_pcCtxItemCancel = new MenuItem( "Cancel job", new Message( M_JOB_CANCEL ) );
+	m_pcCtxItemCancel = new MenuItem( MSG_MAINWND_CONTEXTMENU_CANCEL, new Message( M_JOB_CANCEL ) );
 	m_pcJobContextMenu->AddItem( m_pcCtxItemCancel );
 	m_pcJobContextMenu->SetTargetForItems( this );
 
@@ -209,8 +210,8 @@ QueueWindow::QueueWindow( const Rect &cFrame ) : Window( cFrame, "print_queue", 
 	   attached here!  One of the two Items will be attached to the Menu in EnableDisablePrinterMenus() */
 	m_pcPrinterContextMenu = new Menu( Rect(), "Printer", ITEMS_IN_COLUMN );
 
-	m_pcCtxItemPause = new MenuItem( "Pause printing", new Message( M_PRINTER_PAUSE ) );
-	m_pcCtxItemResume = new MenuItem( "Resume printing", new Message( M_PRINTER_RESUME ) );
+	m_pcCtxItemPause = new MenuItem( MSG_MAINWND_CONTEXTMENU_PAUSE, new Message( M_PRINTER_PAUSE ) );
+	m_pcCtxItemResume = new MenuItem( MSG_MAINWND_CONTEXTMENU_RESUME, new Message( M_PRINTER_RESUME ) );
 
 	m_pcPrinters->SetContextMenu( m_pcPrinterContextMenu );
 
@@ -246,17 +247,17 @@ void QueueWindow::HandleMessage( Message *pcMessage )
 		{
 			String cAbout, cCUPS;
 
-			cAbout  = String( "Syllable Print Queue Manager " ) + String( QUEUE_VERSION );
+			cAbout  = MSG_ABOUTWND_TEXT1 + String( " " ) + String( QUEUE_VERSION );
 			cAbout += String( "\n\n" );
 
-			cCUPS.Format( "Using CUPS version %d.%d.%d\n", CUPS_VERSION_MAJOR, CUPS_VERSION_MINOR, CUPS_VERSION_PATCH );
+			cCUPS.Format( MSG_ABOUTWND_TEXT2.c_str(), CUPS_VERSION_MAJOR, CUPS_VERSION_MINOR, CUPS_VERSION_PATCH );
 			cAbout += cCUPS;
 
 			Resources cRes( get_image_id() );
 			BitmapImage *pcAboutIcon = new BitmapImage();
 			pcAboutIcon->Load( cRes.GetResourceStream( "icon48x48.png" ) );
 
-			Alert *pcAlert = new Alert( "Print Queue", cAbout, pcAboutIcon->LockBitmap(), 0x00, "Close", NULL );
+			Alert *pcAlert = new Alert( MSG_ABOUTWND_TITLE, cAbout, pcAboutIcon->LockBitmap(), 0x00, MSG_ABOUTWND_CLOSE.c_str(), NULL );
 			pcAlert->CenterInWindow( this );
 			pcAlert->Go( new Invoker( new Message( M_ALERT_DONE ) ) );
 
@@ -308,7 +309,7 @@ void QueueWindow::HandleMessage( Message *pcMessage )
 				/* Failed */
 				String cFailure = cupsLastErrorString();
 
-				Alert *pcAlert = new Alert( "Operation failed", cFailure, Alert::ALERT_WARNING, 0x00, "Close", NULL );
+				Alert *pcAlert = new Alert( MSG_ALERTWND_PAUSE_TITLE, cFailure, Alert::ALERT_WARNING, 0x00, MSG_ALERTWND_PAUSE_CLOSE.c_str(), NULL );
 				pcAlert->CenterInWindow( this );
 				pcAlert->Go( new Invoker( new Message( M_ALERT_DONE ) ) );
 			}
@@ -323,7 +324,7 @@ void QueueWindow::HandleMessage( Message *pcMessage )
 				/* Failed */
 				String cFailure = cupsLastErrorString();
 
-				Alert *pcAlert = new Alert( "Operation failed", cFailure, Alert::ALERT_WARNING, 0x00, "Close", NULL );
+				Alert *pcAlert = new Alert( MSG_ALERTWND_RESUME_TITLE, cFailure, Alert::ALERT_WARNING, 0x00, MSG_ALERTWND_RESUME_CLOSE.c_str(), NULL );
 				pcAlert->CenterInWindow( this );
 				pcAlert->Go( new Invoker( new Message( M_ALERT_DONE ) ) );
 			}
@@ -360,7 +361,7 @@ void QueueWindow::HandleMessage( Message *pcMessage )
 					/* Failed */
 					String cFailure = cupsLastErrorString();
 
-					Alert *pcAlert = new Alert( "Operation failed", cFailure, Alert::ALERT_WARNING, 0x00, "Close", NULL );
+					Alert *pcAlert = new Alert( MSG_ALERTWND_CANCEL_TITLE, cFailure, Alert::ALERT_WARNING, 0x00, MSG_ALERTWND_CANCEL_CLOSE.c_str(), NULL );
 					pcAlert->CenterInWindow( this );
 					pcAlert->Go( new Invoker( new Message( M_ALERT_DONE ) ) );
 				}
@@ -518,11 +519,11 @@ void QueueWindow::DisplayJobs( const char *zPrinter )
 		String cSize;
 		int nSize = psJobs[n].size;	/* Size in KB */
 		if( nSize <= 1048576 )
-			cSize.Format( "%d KB", nSize );
+			cSize.Format( MSG_MAINWND_JOBSIZE_KB.c_str(), nSize );
 		else if( nSize <= 1073741824 )
-			cSize.Format( "%d MB", nSize / 1024 );
+			cSize.Format( MSG_MAINWND_JOBSIZE_MB.c_str(), nSize / 1024 );
 		else
-			cSize.Format( "%d GB", nSize / 1048576 );
+			cSize.Format( MSG_MAINWND_JOBSIZE_GB.c_str(), nSize / 1048576 );
 		pcRow->AppendString( cSize );
 
 		/* Submitted */
@@ -664,6 +665,8 @@ class QueueApplication : public Application
 
 QueueApplication::QueueApplication() : Application( "application/x-VND.syllable-PrintQueue" )
 {
+	SetCatalog("PrintQueue.catalog");
+
 	m_pcWindow = new QueueWindow( Rect( 100,100,800,350 ) );
 	m_pcWindow->Show();
 	m_pcWindow->MakeFocus();
