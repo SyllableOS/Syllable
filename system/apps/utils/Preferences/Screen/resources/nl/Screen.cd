@@ -1,33 +1,33 @@
 //
 //	Preferences/Screen String Catalog
 //
-//	Translated by: Ruud Kuin
+//	Translated by: Ruud Kuin, Kaj de Vos
 //
 
 MSG_MAINWND_TITLE=0							Beeldscherm
 
-MSG_MAINWND_DISPLAY=100						Beeldscherm
+MSG_MAINWND_DISPLAY=100						Instellingen
 MSG_MAINWND_DISPLAY_APPLYTO					Toepassen op
 MSG_MAINWND_DISPLAY_RESOLUTION				Resolutie
 MSG_MAINWND_DISPLAY_COLORDEPTH				Kleurdiepte
-MSG_MAINWND_DISPLAY_REFRESHRATE				Frequentie verversen
+MSG_MAINWND_DISPLAY_REFRESHRATE				Verversingsfrequentie
 
 MSG_MAINWND_DROPDOWN_APPLY_THIS=200			Deze werkruimte
 MSG_MAINWND_DROPDOWN_APPLY_ALL				Alle werkruimtes
-MSG_MAINWND_DROPDOWN_COLOUR_BIT				Bit
+MSG_MAINWND_DROPDOWN_COLOUR_BIT				bit
 MSG_MAINWND_DROPDOWN_COLOUR_UNKNOWN			Onbekend
 MSG_MAINWND_DROPDOWN_HERTZ					%i Hz
 
 MSG_MAINWND_BUTTON_APPLY=300				Toepassen
-MSG_MAINWND_BUTTON_CLOSE					Sluit
+MSG_MAINWND_BUTTON_CLOSE					Sluiten
 
 MSG_ALERTWND_CHANGERES=1000					Resolutie aanpassen
-MSG_ALERTWND_CHANGERES_TEXT					U bent van plan de schermresolutie aan te passen.\nAls uw monitor de geselecteerde videomodus niet ondersteund\nkan het scherm zwart worden. als dit gebeurt even 15\nseconden wachten om automatisch in de oude modus terug te keren.\n\nWilt u doorgaan?
+MSG_ALERTWND_CHANGERES_TEXT					Je bent van plan de schermresolutie aan te passen.\nAls je monitor de geselecteerde videomodus niet ondersteunt\nkan het scherm zwart worden. Als dit gebeurt kun je vijftien seconden\nwachten om automatisch in de oude modus terug te keren.\n\nWil je doorgaan?
 MSG_ALERTWND_CHANGERES_YES					Ja
 MSG_ALERTWND_CHANGERES_NO					Nee
 
 MSG_ALERTWND_CONFIRMRES=2000				Resolutie bevestigen
-MSG_ALERTWND_CONFIRMRES_TEXT				Werkt de nieuwe videomodus naar behoren?\n\nZo niet wacht tot deze automatisch \nterugkeert naar de oude modus.
+MSG_ALERTWND_CONFIRMRES_TEXT				Werkt de nieuwe videomodus naar behoren?\n\nZo niet, wacht dan tot deze automatisch\nterugkeert naar de oude modus.
 MSG_ALERTWND_CONFIRMRES_YES					Ja
 MSG_ALERTWND_CONFIRMRES_NO					Nee
 

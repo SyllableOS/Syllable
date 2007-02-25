@@ -4,12 +4,12 @@
 //	Translated by: Ruud Kuin
 //
 
-MSG_MAINWND_TITLE=0						Datum & Tijd
+MSG_MAINWND_TITLE=0						Datum & tijd
 
 MSG_MAINWND_TIME=100					Tijd
 MSG_MAINWND_DATE						Datum
-MSG_MAINWND_TIMEDATE					Tijd & Datum
-MSG_MAINWND_TIMEZONE					Tijd Zone
+MSG_MAINWND_TIMEDATE					Tijd & datum
+MSG_MAINWND_TIMEZONE					Tijdzone
 MSG_MAINWND_BUTTON_APPLY				Toepassen
 
 MSG_DAYMONTH_MONTH_UNKNOWN=1000			Onbekend

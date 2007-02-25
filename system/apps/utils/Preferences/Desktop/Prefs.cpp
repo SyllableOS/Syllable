@@ -233,7 +233,7 @@ void PrefsDesktopWin::UpdateBackgroundList()
 	m_pcBackgroundList->InsertRow( pcRow );
 	
 	
-	/* Fill list with entries from /system/drivers/dock/ */
+	/* Fill list with entries from /system/resources/wallpapers/ */
 	os::Directory* pcDir = NULL;
 	os::Path cPath;
 	
@@ -272,7 +272,7 @@ void PrefsDesktopWin::UpdateBackgroundList()
 			continue;
 		}
 		
-		/* Look if this is a valid plugin */
+		/* Look if this is a valid background */
 		if( pcNode->IsFile()  )
 		{
 
@@ -341,7 +341,7 @@ void PrefsDesktopWin::HandleMessage( os::Message* pcMessage )
 		}
 		case DP_UNDO:
 		{
-			/* Revert to a previous copy of the enabled plugins */
+			/* Revert to a previous background */
 			m_zBackground = m_zSavedBackground;
 			UpdateBackgroundList();
 			m_pcPopupWindows->SetValue( m_bPopupWindowSave );
@@ -405,5 +405,4 @@ int main( int argc, char *argv[] )
 	pcPrefsDesktopApp = new PrefsDesktopApp();
 	pcPrefsDesktopApp->Run();
 }
-
 

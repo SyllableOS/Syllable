@@ -1,10 +1,10 @@
 //
 //	Preferences/Dock String Catalog
 //
-//	Translated by: Ruud Kuin
+//	Translated by: Ruud Kuin, Kaj de Vos
 //
 
-MSG_MAINWND_TITLE=0								Werkbalk
+MSG_MAINWND_TITLE=0								Dokpaneel
 
 MSG_MAINWND_POSITION=100						Positie
 MSG_MAINWND_POSITION_TOP						Boven
@@ -12,16 +12,16 @@ MSG_MAINWND_POSITION_BOTTOM						Onder
 MSG_MAINWND_POSITION_LEFT						Links
 MSG_MAINWND_POSITION_RIGHT						Rechts
 
-MSG_MAINWND_PLUGINS=200							Plugins
-MSG_MAINWND_PLUGINS_PLUGIN						Plugin
+MSG_MAINWND_PLUGINS=200							Plug-ins
+MSG_MAINWND_PLUGINS_PLUGIN						Plug-in
 MSG_MAINWND_PLUGINS_ENABLED						Actief
-MSG_MAINWND_PLUGINS_TEXT						Let op: Kopieer plugins naar /system/extensions/dock/
+MSG_MAINWND_PLUGINS_TEXT						Let op: plaats nieuwe plug-ins in /system/extensions/dock/
 MSG_MAINWND_PLUGINS_BUTTON_ENABLE				Activeren
 MSG_MAINWND_PLUGINS_BUTTON_DISABLE				Deactiveren
 MSG_MAINWND_PLUGINS_STATE_ENABLED_YES			Ja
 MSG_MAINWND_PLUGINS_STATE_ENABLED_NO			Nee
 
 MSG_MAINWND_BUTTON_APPLY=300					Toepassen
-MSG_MAINWND_BUTTON_UNDO							Herstel
+MSG_MAINWND_BUTTON_UNDO							Herstellen
 MSG_MAINWND_BUTTON_DEFAULT						Standaard
 

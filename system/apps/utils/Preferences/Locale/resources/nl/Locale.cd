@@ -9,13 +9,13 @@ MSG_MAIN_TITLE=0						Taalinstellingen
 MSG_MAIN_LANGUAGE_TAB=100				Taal
 MSG_MAIN_LANGUAGE_ACTIVATE				Taal activeren >
 MSG_MAIN_LANGUAGE_DEACTIVATE			< Taal uitschakelen
-MSG_MAIN_LANGUAGE_AVAILABLE				Ondersteunde talen
+MSG_MAIN_LANGUAGE_AVAILABLE				Inactieve talen
 MSG_MAIN_LANGUAGE_USED					Geactiveerde talen
 
-MSG_MAIN_COUNTRY_TAB=200				Land
+MSG_MAIN_COUNTRY_TAB=200				Regio
 
 MSG_MAIN_APPLY=1000						_Toepassen
-MSG_MAIN_REVERT							Te_rugdraaien
+MSG_MAIN_REVERT							_Herstellen
 MSG_MAIN_DEFAULT						_Standaard
 
 MSG_ERROR_SAVE=1100						Fout bij het opslaan van de instellingen.

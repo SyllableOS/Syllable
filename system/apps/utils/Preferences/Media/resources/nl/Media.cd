@@ -7,20 +7,20 @@
 MSG_MAINWND_TITLE=0								Multimedia
 
 MSG_MAINWND_DEVICE=100							Apparaat
-MSG_MAINWND_DEFAULT_INPUT						Standaardinvoer
-MSG_MAINWND_DEFAULT_OUTPUT_AUDIO				Standaardaudio-uitvoer
-MSG_MAINWND_DEFAULT_OUTPUT_VIDEO				Standaardvideo-uitvoer
+MSG_MAINWND_DEFAULT_INPUT						Standaard invoer
+MSG_MAINWND_DEFAULT_OUTPUT_AUDIO				Standaard audio-uitvoer
+MSG_MAINWND_DEFAULT_OUTPUT_VIDEO				Standaard video-uitvoer
 
 MSG_MAINWND_BUTTON_STREAMVOLUMES=200			_Volumeregelingen...
 MSG_MAINWND_BUTTON_APPLY						_Toepassen
-MSG_MAINWND_BUTTON_UNDO							Te_rugdraaien
+MSG_MAINWND_BUTTON_UNDO							_Herstellen
 MSG_MAINWND_BUTTON_DEFAULT						_Standaard
 
-MSG_MAINWND_THISINPUTHASNOCONTROLS=300			Deze invoer heeft geen instellingen.
+MSG_MAINWND_THISINPUTHASNOCONTROLS=300			Deze invoerbron heeft geen instellingen.
 MSG_MAINWND_THISCODECHASNOCONTROLS				Deze (de)koder heeft geen instellingen.
-MSG_MAINWND_THISOUTPUTHASNOCONTROLS				Deze uitvoer heeft geen instellingen.
+MSG_MAINWND_THISOUTPUTHASNOCONTROLS				Dit uitvoerkanaal heeft geen instellingen.
 
-MSG_ALERTWND_NOMEDIASERVER_TITLE=1000			Foutmelding
-MSG_ALERTWND_NOMEDIASERVER_TEXT					Kan niet met media server verbinden.
-MSG_ALERTWND_NOMEDIASERVER_OK					_Ok
+MSG_ALERTWND_NOMEDIASERVER_TITLE=1000			Verbindingsfout
+MSG_ALERTWND_NOMEDIASERVER_TEXT					Kan geen verbinding maken met de multimediaserver.
+MSG_ALERTWND_NOMEDIASERVER_OK					_OK
 

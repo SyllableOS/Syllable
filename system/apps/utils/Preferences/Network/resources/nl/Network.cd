@@ -1,60 +1,60 @@
 //
 //	Preferences/Network String Catalog
 //
-//	Translated by: Ruud Kuin
+//	Translated by: Ruud Kuin, Kaj de Vos
 //
 
 MSG_MAINWND_TITLE=0								Netwerk
 
-MSG_MAINWND_NAMES=100							Namen
-MSG_MAINWND_NAMES_HOST							Host:
-MSG_MAINWND_NAMES_HOST_DEFAULT					Standaard
-MSG_MAINWND_NAMES_DOMAIN						Domein:
-MSG_MAINWND_NAMES_DOMAIN_DEFAULT				domein
+MSG_MAINWND_NAMES=100							Algemeen
+MSG_MAINWND_NAMES_HOST							Computernaam:
+MSG_MAINWND_NAMES_HOST_DEFAULT					syllable
+MSG_MAINWND_NAMES_DOMAIN						Domeinnaam:
+MSG_MAINWND_NAMES_DOMAIN_DEFAULT				local
 MSG_MAINWND_NAMES_DNS_PRIMARY					Primaire DNS:
-MSG_MAINWND_NAMES_DNS_SECONDARY					Secondaire DNS:
+MSG_MAINWND_NAMES_DNS_SECONDARY					Secundaire DNS:
 
-MSG_MAINWND_NICINT=200							Netwerk Interfaces
-MSG_MAINWND_NICINT_ENABLED						(Actief)
-MSG_MAINWND_NICINT_DISABLED						(Inactief)
-MSG_MAINWND_NICINT_BUTTON_MODIFY				_Aanpassen
+MSG_MAINWND_NICINT=200							Netwerkadapters
+MSG_MAINWND_NICINT_ENABLED						(actief)
+MSG_MAINWND_NICINT_DISABLED						(inactief)
+MSG_MAINWND_NICINT_BUTTON_MODIFY				_Wijzigen
 
 MSG_MAINWND_BUTTON_APPLY=300					_Toepassen
 MSG_MAINWND_BUTTON_REVERT						_Herstellen
 
-MSG_MODIFYWND_TITLE=400							Aanpassen - Netwerk
-MSG_MODIFYWND_INTERFACE							Interface:
-MSG_MODIFYWND_ENABLED							(Actief)
-MSG_MODIFYWND_DISABLED							(Inactief)
+MSG_MODIFYWND_TITLE=400							Netwerkadapter instellen
+MSG_MODIFYWND_INTERFACE							Adapter:
+MSG_MODIFYWND_ENABLED							(actief)
+MSG_MODIFYWND_DISABLED							(inactief)
 MSG_MODIFYWND_USEDHCP							_Gebruik DHCP
 MSG_MODIFYWND_BUTTON_ENABLE						_Activeren
 MSG_MODIFYWND_BUTTON_DISABLE					_Deactiveren
 MSG_MODIFYWND_SETTINGS							Instellingen
-MSG_MODIFYWND_SETTINGS_IPADD					IP Adres:
-MSG_MODIFYWND_SETTINGS_SUBNET					Subnet Masker:
-MSG_MODIFYWND_SETTINGS_GATEWAY					Gateway Adres:
+MSG_MODIFYWND_SETTINGS_IPADD					IP-adres:
+MSG_MODIFYWND_SETTINGS_SUBNET					Subnetmasker:
+MSG_MODIFYWND_SETTINGS_GATEWAY					Gateway-adres:
 
-MSG_CONFCHANGEDWND_TITLE=1000					Configuratie Aangepast - Netwerk
-MSG_CONFCHANGEDWND_TEXT							De netwerk interface configuratie is veranderd\nAanmelden als root en netwerk voorkeuren gebruiken om te configureren.
-MSG_CONFCHANGEDWND_OK							_Ok
+MSG_CONFCHANGEDWND_TITLE=1000					Configuratie veranderd - Netwerk
+MSG_CONFCHANGEDWND_TEXT							De netwerkadapterconfiguratie is veranderd.\nMeld je aan als beheerder (root) en gebruik\nnetwerkvoorkeuren om te configureren.
+MSG_CONFCHANGEDWND_OK							_OK
 
-MSG_ALERTWND_PRIDNS=2000						Ongeldig - Netwerk
-MSG_ALERTWND_PRIDNS_TEXT						De ingevoerde waarde in Primaire DNS is ongeldig
-MSG_ALERTWND_PRIDNS_OK							_Ok
+MSG_ALERTWND_PRIDNS=2000						Ongeldig IP-nummer - Netwerk
+MSG_ALERTWND_PRIDNS_TEXT						Het ingevoerde IP-nummer voor de primaire DNS is ongeldig.
+MSG_ALERTWND_PRIDNS_OK							_OK
 
-MSG_ALERTWND_SECDNS=3000						Ongeldig - Netwerk
-MSG_ALERTWND_SECDNS_TEXT						De ingevoerde waarde in Secondaire DNS is ongeldig
-MSG_ALERTWND_SECDNS_OK							_Ok
+MSG_ALERTWND_SECDNS=3000						Ongeldig IP-nummer - Netwerk
+MSG_ALERTWND_SECDNS_TEXT						Het ingevoerde IP-nummer voor de secundaire DNS is ongeldig.
+MSG_ALERTWND_SECDNS_OK							_OK
 
-MSG_ALERTWND_IPADD=4000							Ongeldig - Netwerk
-MSG_ALERTWND_IPADD_TEXT							De ingevoerde waarde in IP Address is ongeldig
-MSG_ALERTWND_IPADD_OK							_Ok
+MSG_ALERTWND_IPADD=4000							Ongeldig IP-nummer - Netwerk
+MSG_ALERTWND_IPADD_TEXT							De ingevoerde waarde voor het IP-nummer is ongeldig.
+MSG_ALERTWND_IPADD_OK							_OK
 
-MSG_ALERTWND_SUBNET=5000						Ongeldig - Netwerk
-MSG_ALERTWND_SUBNET_TEXT						De ingevoerde waarde in Subnet Masker is ongeldig
-MSG_ALERTWND_SUBNET_OK							_Ok
+MSG_ALERTWND_SUBNET=5000						Ongeldig subnetmasker - Netwerk
+MSG_ALERTWND_SUBNET_TEXT						De ingevoerde waarde voor het subnetmasker is ongeldig.
+MSG_ALERTWND_SUBNET_OK							_OK
 
-MSG_ALERTWND_GATEWAY=6000						Ongeldig - Netwerk
-MSG_ALERTWND_GATEWAY_TEXT						De ingevoerde waarde in Gateway is ongeldig
-MSG_ALERTWND_GATEWAY_OK							_Ok
+MSG_ALERTWND_GATEWAY=6000						Ongeldig IP-nummer - Netwerk
+MSG_ALERTWND_GATEWAY_TEXT						Het ingevoerde IP-nummer voor het gateway-adres is ongeldig.
+MSG_ALERTWND_GATEWAY_OK							_OK
 
