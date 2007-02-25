@@ -83,12 +83,12 @@ void Switcher::Paint(const Rect& cRect)
 	
 	SetDrawingMode(DM_BLEND);
 	
-	if (m_nFirstVisibleDesktop == 1)
+	if (m_nFirstVisibleDesktop == 0)
 		pcBackGreyImage->Draw(os::Point(0,GetBounds().Height()/2-6),this);
 	else
 		pcBackImage->Draw(os::Point(0,GetBounds().Height()/2-6),this);
 	
-	if (m_nFirstVisibleDesktop >= 29)
+	if (m_nFirstVisibleDesktop >= 28)
 		pcForwardGreyImage->Draw(os::Point(GetBounds().Width()-14,GetBounds().Height()/2-7),this);
 	else
 		pcForwardImage->Draw(os::Point(GetBounds().Width()-14,GetBounds().Height()/2-7),this);
@@ -209,7 +209,7 @@ void Switcher::SwitchDesktop(int nDesktop)
 
 void Switcher::Forward()
 {
-	if (m_nFirstVisibleDesktop < 29)
+	if (m_nFirstVisibleDesktop < 28)
 	{
 		m_nFirstVisibleDesktop += 4;
 		Paint(GetBounds());
@@ -221,7 +221,7 @@ void Switcher::Forward()
 
 void Switcher::Backward()
 {
-	if (m_nFirstVisibleDesktop > 4)
+	if (m_nFirstVisibleDesktop > 3)
 	{
 		m_nFirstVisibleDesktop -=4;
 		Paint(GetBounds());
