@@ -3,7 +3,7 @@ CXXFLAGS += -I. -c
 OBJDIR = objs
 OBJS = printers print_view config model_window
 
-CATALOGS = da de es fr hu ru sv
+CATALOGS = da de es fr hu nl ru sv
 
 EXE = Printers
 
@@ -48,4 +48,3 @@ clean:
 $(OBJDIR)/%.o : %.cpp
 	@echo Compiling : $<
 	@$(CXX) $(CXXFLAGS) $< -o $@
-

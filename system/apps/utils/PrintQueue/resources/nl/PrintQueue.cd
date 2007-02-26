@@ -1,0 +1,55 @@
+//
+//	PrintQueue String Catalog
+//
+//	Translated by: Kaj de Vos
+//
+
+MSG_MAINWND_TITLE=0								Printerwachtrij
+
+MSG_MAINWND_MENU_APPLICATION=100				Toepassing
+MSG_MAINWND_MENU_APPLICATION_QUIT				Afsluiten
+MSG_MAINWND_MENU_APPLICATION_ABOUT				Over Printerwachtrij...
+
+MSG_MAINWND_MENU_VIEW=120						Beeld
+MSG_MAINWND_MENU_VIEW_REFRESH					Verversen
+MSG_MAINWND_MENU_VIEW_COMPLETED					Toon afgehandelde taken
+
+MSG_MAINWND_MENU_JOB=130						Taak
+MSG_MAINWND_MENU_JOB_CANCEL						Taak annuleren
+
+MSG_MAINWND_MENU_PRINTER=140					Printer
+MSG_MAINWND_MENU_PRINTER_PAUSE					Afdrukken pauzeren
+MSG_MAINWND_MENU_PRINTER_RESUME					Afdrukken voortzetten
+
+MSG_MAINWND_TOOLBAR_CALCEL=200					Annuleren
+MSG_MAINWND_TOOLBAR_PAUSE						Pauzeren
+MSG_MAINWND_TOOLBAR_RESUME						Voortzetten
+
+MSG_MAINWND_CONTEXTMENU_CANCEL=300				Taak annuleren
+MSG_MAINWND_CONTEXTMENU_PAUSE					Afdrukken pauzeren
+MSG_MAINWND_CONTEXTMENU_RESUME					Afdrukken voortzetten
+
+MSG_MAINWND_DOCLIST_ID=500						ID
+MSG_MAINWND_DOCLIST_NAME						Naam
+MSG_MAINWND_DOCLIST_STATUS						Status
+MSG_MAINWND_DOCLIST_OWNER						Opdrachtgever
+MSG_MAINWND_DOCLIST_SIZE						Grootte
+MSG_MAINWND_DOCLIST_SUBMITTED					Ingestuurd
+
+MSG_MAINWND_JOBSIZE_KB=600						%d KB
+MSG_MAINWND_JOBSIZE_MB							%d MB
+MSG_MAINWND_JOBSIZE_GB							%d GB
+
+MSG_ABOUTWND_TITLE=1000							Over Printerwachtrij
+MSG_ABOUTWND_TEXT1								Syllable Printerwachtrijbeheerder
+MSG_ABOUTWND_TEXT2								Gebruikt CUPS versie %d.%d.%d\n
+MSG_ABOUTWND_CLOSE								_OK
+
+MSG_ALERTWND_PAUSE_TITLE=1100					Pauzeren mislukt
+MSG_ALERTWND_PAUSE_CLOSE						_Sluiten
+
+MSG_ALERTWND_RESUME_TITLE=1200					Voortzetten mislukt
+MSG_ALERTWND_RESUME_CLOSE						_Sluiten
+
+MSG_ALERTWND_CANCEL_TITLE=1300					Annuleren mislukt
+MSG_ALERTWND_CANCEL_CLOSE						_Sluiten

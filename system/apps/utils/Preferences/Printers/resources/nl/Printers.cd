@@ -1,0 +1,63 @@
+//
+//	Preferences/Printers String Catalog
+//
+//	Translated by: Kaj de Vos
+//
+
+MSG_MAINWND_TITLE=0								Printerconfiguratie
+MSG_MAINWND_DEFAULT_PRINTER_NAME				Nieuwe-printer
+
+MSG_MAINWND_MENU_APPLICATION=100				Toepassing
+MSG_MAINWND_MENU_APPLICATION_ABOUT				Over Printerconfiguratie...
+MSG_MAINWND_MENU_APPLICATION_SAVE				Opslaan
+MSG_MAINWND_MENU_APPLICATION_CANCEL				Afsluiten
+
+MSG_MAINWND_MENU_PRINTER=120					Printer
+MSG_MAINWND_MENU_PRINTER_ADD					Nieuwe printer
+MSG_MAINWND_MENU_PRINTER_REMOVE					Printer verwijderen
+MSG_MAINWND_MENU_PRINTER_DEFAULT				Instellen als standaard
+
+MSG_MAINWND_TOOLBAR_ADD=200						Nieuw
+MSG_MAINWND_TOOLBAR_REMOVE						Verwijderen
+MSG_MAINWND_TOOLBAR_DEFAULT						Standaard
+
+MSG_MAINWND_PRINTERTAB_MODEL=300				Model
+MSG_MAINWND_PRINTERTAB_UNKNOWN					Onbekend
+MSG_MAINWND_PRINTERTAB_SELECT					Selecteren...
+MSG_MAINWND_PRINTERTAB_THEPRINTER				De printer
+MSG_MAINWND_PRINTERTAB_ISA						is een
+MSG_MAINWND_PRINTERTAB_CONNECTEDTO				printer aangesloten aan
+
+MSG_MAINWND_BUTTONS_SAVE=400					Opslaan
+MSG_MAINWND_BUTTONS_CANCEL						Annuleren
+
+MSG_SELECTWND_TITLE=800							Printer selecteren
+MSG_SELECTWND_BUTTON_SELECT						Selecteren
+MSG_SELECTWND_BUTTON_CANCEL						Annuleren
+
+MSG_PROTOCOL_USB=900							USB
+MSG_PROTOCOL_PARALLEL							Parallel
+MSG_PROTOCOL_SMB								Windows (SMB)
+MSG_PROTOCOL_LPD								UNIX (lpd)
+MSG_PROTOCOL_IPP								CUPS (IPP)
+MSG_PROTOCOL_UNKNOWN							Onbekend
+MSG_PROTOCOL_HPJETDIRECT						HP JetDirect
+
+MSG_ABOUTWND_TITLE=1000							Over Printerconfiguratie
+MSG_ABOUTWND_TEXT1								Syllable Printerbeheerder
+MSG_ABOUTWND_TEXT2								Gebruikt CUPS versie %d.%d.%d\n
+MSG_ABOUTWND_CLOSE								_OK
+
+MSG_ALRTWND_REMOVE_TITLE=1100					Printer verwijderen
+MSG_ALRTWND_REMOVE_TEXT							Weet je zeker dat je deze printer wilt verwijderen?
+MSG_ALRTWND_REMOVE_YES							Ja
+MSG_ALRTWND_REMOVE_NO							Nee
+
+MSG_ALRTWND_SAVE_TITLE=1200						Printerconfiguratie opslaan
+MSG_ALRTWND_SAVE_TEXT							CUPS-configuratie mislukt. De printers\nzijn waarschijnlijk niet correct ingesteld.
+MSG_ALRTWND_SAVE_CLOSE							_Sluiten
+
+MSG_ALRTWND_INSERTCD_TITLE=1300					CD inleggen
+MSG_ALRTWND_INSERTCD_TEXT						Leg alsjeblieft de Syllable installatie-CD in en koppel die aan\n(door met rechts the klikken in de map Media op het bureaublad).
+MSG_ALRTWND_INSERTCD_OK							OK
+MSG_ALRTWND_INSERTCD_CANCEL						Annuleren

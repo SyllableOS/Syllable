@@ -3,7 +3,7 @@ CXXFLAGS += -I. -c
 OBJDIR = objs
 EXE = print-queue
 
-CATALOGS = da de sv
+CATALOGS = da de nl sv
 
 OBJS := $(addprefix $(OBJDIR)/,$(addsuffix .o,$(EXE)))
 
@@ -33,10 +33,9 @@ catalogs:
 deps:
 
 install: all
-	install -s $(EXE) /system/bin/$(EXE)
-
-dist: all
 	install -s $(EXE) $(IMAGE)/system/bin/$(EXE)
+
+dist: install
 
 clean:
 	-rm $(OBJS)
@@ -49,4 +48,3 @@ clean:
 $(OBJDIR)/%.o : %.cpp
 	@echo Compiling : $<
 	@$(CXX) $(CXXFLAGS) $< -o $@
-
