@@ -304,6 +304,7 @@ void TopLayer::MoveChilds( void )
 					for( int i = 0; i < nCount; ++i )
 					{
 						apsClips[i] = cCopy.m_cRects.RemoveHead();
+						apsClips[i]->m_cMove = cChildMove;
 						__assertw( apsClips[i] != NULL );
 					}
 					qsort( apsClips, nCount, sizeof( ClipRect * ), SortCmp );
