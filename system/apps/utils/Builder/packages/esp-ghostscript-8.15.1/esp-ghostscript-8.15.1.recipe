@@ -23,15 +23,15 @@ build-dir			.
 ; The intention of these configure options is to produce the smallest gs binary possible.
 ; I can't seem to drop the PNG output driver though.
 configure-options
-	--datadir=$IMAGE/usr/esp-ghostscript/share/
+;	--datadir=$IMAGE/usr/esp-ghostscript/share/
 	--with-fontpath=/system/fonts
 	--with-drivers=PS,cups
 	--without-ijs
 	--without-jbig2dec
 
-_install-vars
-;	datadir	$IMAGE/usr/esp-ghostscript/share/
-	gsdir	$IMAGE/usr/esp-ghostscript/share/ghostscript/
+install-vars
+	datadir	$IMAGE/usr/esp-ghostscript/share/
+;	gsdir	$IMAGE/usr/esp-ghostscript/share/ghostscript/
 
 install-tree
 	share
