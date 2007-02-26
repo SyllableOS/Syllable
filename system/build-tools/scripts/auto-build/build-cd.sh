@@ -72,6 +72,7 @@ FILES=(	"/etc/profile, /etc/profile" 															\
 		"/usr/coreutils/bin/cut, /usr/local/bin/cut"											\
 		"/usr/coreutils/bin/dd, /usr/local/bin/dd"											\
 		"/usr/coreutils/bin/echo, /usr/local/bin/echo"										\
+		"/usr/coreutils/bin/expr, /usr/local/bin/expr"										\
 		"/usr/coreutils/bin/hostname, /usr/local/bin/hostname"								\
 		"/usr/coreutils/bin/ln, /usr/local/bin/ln"											\
 		"/usr/coreutils/bin/ls, /usr/local/bin/ls"											\
