@@ -13,16 +13,16 @@
 
 		1. WILL SYLLABLE RUN ON MY COMPUTER?
 
-Syllable is designed to run on modern Intel compatable PC's.  At a minimum,
-your machine must have at least a Pentium compatable processor and 32Mb of
-memory, but a faster processor and 128Mb of memory or more will allow
+Syllable is designed to run on modern Intel compatible PC's.  At a minimum,
+your machine must have at least a Pentium compatible processor and 40 MB of
+memory, but a faster processor and 128 MB of memory or more will allow
 Syllable to do more and run faster.
 
 Most common home computer motherboards, video cards and networks cards are
 supported.  Many common sound cards also work, and some USB devices are also
 supported.  For a comprehensive list of hardware which is known to work with
-Syllable, you should check the hardware compatability list at
-http://www.syllable-hardware.info/  If your particular hardware is not listed there,
+Syllable, you should check the hardware compatibility list at
+http://www.syllable-hardware.info  If your particular hardware is not listed there,
 it does not mean that your hardware will not work.  You can still try to
 install Syllable; the worst thing that will happen is that it simply will not
 run.
