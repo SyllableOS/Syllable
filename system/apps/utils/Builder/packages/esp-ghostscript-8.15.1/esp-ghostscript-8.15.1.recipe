@@ -29,17 +29,17 @@ configure-options
 	--without-ijs
 	--without-jbig2dec
 
-install-vars
-	datadir	$IMAGE/usr/esp-ghostscript/share/
-;	gsdir	$IMAGE/usr/esp-ghostscript/share/ghostscript/
-
 install-tree
 	share
 	share/ghostscript
 	share/ghostscript/8.15
 	share/ghostscript/8.15/Resource
 	share/ghostscript/8.15/Resource/Font
+install-vars
+	datadir	$IMAGE/usr/esp-ghostscript/share/
+;	gsdir	$IMAGE/usr/esp-ghostscript/share/ghostscript/
 ;install-targets		soinstall
+
 documentation
 	README LICENSE CHANGES
 ;	doc
