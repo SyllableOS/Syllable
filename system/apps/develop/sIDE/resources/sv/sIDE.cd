@@ -1,0 +1,91 @@
+//
+//	sIDE String Catalog
+//
+//	Translated by: Daniel Eriksson
+//
+
+MSG_PWND_TITLE=0						sIDE
+
+MSG_PWND_MENU_APPLICATION=200			Program
+MSG_PWND_MENU_APPLICATION_ABOUT			Om...
+MSG_PWND_MENU_APPLICATION_QUIT			Avsluta
+
+MSG_PWND_MENU_PROJECT=210				Projekt
+MSG_PWND_MENU_PROJECT_NEW				Ny...
+MSG_PWND_MENU_PROJECT_OPEN				Öppna...
+MSG_PWND_MENU_PROJECT_SAVE				Spara
+MSG_PWND_MENU_PROJECT_SAVEAS			Spara som...
+MSG_PWND_MENU_PROJECT_PREF				Inställningar...
+MSG_PWND_MENU_PROJECT_GROUPS			Grupper...
+MSG_PWND_MENU_PROJECT_NEW_FILE			Ny Fil...
+MSG_PWND_MENU_PROJECT_ADD_FILE			Lägg Till Fil...
+MSG_PWND_MENU_PROJECT_ADD_LIB			Lägg Till Bibliotek...
+MSG_PWND_MENU_PROJECT_REMOVE_FILE		Ta Bort Fil
+
+MSG_PWND_MENU_BUILD=230					Bygg
+MSG_PWND_MENU_BUILD_CLEAN				Rensa
+MSG_PWND_MENU_BUILD_MAKE				Skapa
+MSG_PWND_MENU_BUILD_RUN					Kör
+MSG_PWND_MENU_BUILD_EXPORT_MAKEFILE		Exportera Makefil
+
+MSG_PWND_ABOUT_TITLE=240				Om sIDE
+MSG_PWND_ABOUT							Syllable IDE\nSkrivet av Arno Klenke, 2001-2006\nDen nya projektdialogen skapad av Rick Caudill\n\nsIDE är släppt under Gnu Public Licencse (GPL)\nVänligen se filen COPYING, som följer med sIDE, för\nmer information\n
+
+MSG_PWND_LIST_FILE=250					Fil
+MSG_PWND_LIST_TYPE						Typ
+
+MSG_PWND_NO_GROUPS=260					Inga grupper finns!\n
+MSG_PWND_COULD_NOT_OPEN_PROJ			Kunde inte öppna projektfil.\n
+MSG_PWND_COULD_NOT_OPEN_FILE			Kunde inte öppna valda filer!\n
+MSG_PWND_COULD_NOT_SAVE_PROJ			Kunde inte spara projektet!\n
+MSG_PWND_NOT_IN_PROJ_DIR				Den valda filen är inte i en undermapp till projektet!\n
+
+MSG_TYPE_HEADER=300						Header
+MSG_TYPE_C								C fil
+MSG_TYPE_CPP							C++ fil
+MSG_TYPE_LIB							Bibliotek
+MSG_TYPE_OTHER							Annan
+MSG_TYPE_RES							Resurs
+MSG_TYPE_CATALOG						Katalog
+MSG_TYPE_IF								Gränssnitt
+MSG_TYPE_UNKNOWN						Okänd
+
+MSG_BUTTON_OK=400						Ok
+MSG_BUTTON_CANCEL						Avbryt
+MSG_BUTTON_UP							Upp
+MSG_BUTTON_DOWN							Ner
+MSG_BUTTON_ADD							Lägg Till
+MSG_BUTTON_REMOVE						Ta Bort
+
+MSG_ADDWND_TITLE=500					Lägg till/Skapa en fil
+MSG_ADDWND_NAME							Namn
+MSG_ADDWND_FILE							Fil att skapa/lägga till
+
+MSG_NEWWND_TITLE=600					Nytt projekt
+MSG_NEWWND_PROJECTS						Projekt
+MSG_NEWWND_NAME							Namn:
+MSG_NEWWMD_DIR							Katalog:
+MSG_NEWWND_ERR_TITLE					Fel
+MSG_NEWWND_ERR_EXTR						Kunde inte extrahera projektmallen!\n
+MSG_NEWWND_NO_LOC_NAME					Du har varken platsen eller namnet satt för det här projektet!\n
+MSG_NEWWND_NO_LOC						Du måste ange en plats för det här projektet!\n
+MSG_NEWWND_NO_NAME						Du måste ange ett namn för det här projektet!
+MSG_NEWWND_NO_DIR						Ej en katalog
+MSG_NEWWND_NO_DIR_1						Filen, 
+MSG_NEWWND_NO_DIR_2						, är inte en katalog\n
+
+MSG_PPREF_TITLE=700						Inställningar för projekt
+MSG_PPREF_TARGET						Mål
+MSG_PPREF_CATEGORY						Kategori
+MSG_PPREF_INSTALL_PATH					Installationsplats
+MSG_PPREF_CFLAGS						Flaggor för kompilator
+MSG_PPREF_LFLAGS						Flaggor för länkare
+
+MSG_GROUPS_TITLE=800					Hantera grupper
+MSG_GROUPS_LIST							Grupp
+
+MSG_ADDLIB_TITLE=900					Lägg till bibliotek
+MSG_ADDLIB_SELECT						Välj
+MSG_ADDLIB_CUSTOM						Valfri
+MSG_ADDLIB_GROUP						Grupp
+

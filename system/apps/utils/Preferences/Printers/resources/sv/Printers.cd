@@ -1,0 +1,64 @@
+//
+//	Preferences/Printers String Catalog
+//
+//	Translated by: Daniel Eriksson
+//
+
+MSG_MAINWND_TITLE=0								Skrivare
+MSG_MAINWND_DEFAULT_PRINTER_NAME				Ny_Skrivare
+
+MSG_MAINWND_MENU_APPLICATION=100				Program
+MSG_MAINWND_MENU_APPLICATION_ABOUT				Om
+MSG_MAINWND_MENU_APPLICATION_SAVE				Spara
+MSG_MAINWND_MENU_APPLICATION_CANCEL				Avbryt
+
+MSG_MAINWND_MENU_PRINTER=120					Skrivare
+MSG_MAINWND_MENU_PRINTER_ADD					Lägg till skrivare
+MSG_MAINWND_MENU_PRINTER_REMOVE					Ta bort skrivare
+MSG_MAINWND_MENU_PRINTER_DEFAULT				Sätt som standard
+
+MSG_MAINWND_TOOLBAR_ADD=200						Lägg till skrivare
+MSG_MAINWND_TOOLBAR_REMOVE						Ta bort skrivare
+MSG_MAINWND_TOOLBAR_DEFAULT						Sätt som standard
+
+MSG_MAINWND_PRINTERTAB_MODEL=300				Modell
+MSG_MAINWND_PRINTERTAB_UNKNOWN					Okänd
+MSG_MAINWND_PRINTERTAB_SELECT					Välj...
+MSG_MAINWND_PRINTERTAB_THEPRINTER				Skrivaren
+MSG_MAINWND_PRINTERTAB_ISA						är en
+MSG_MAINWND_PRINTERTAB_CONNECTEDTO				skrivare ansluten till
+
+MSG_MAINWND_BUTTONS_SAVE=400					Spara
+MSG_MAINWND_BUTTONS_CANCEL						Avbryt
+
+MSG_SELECTWND_TITLE=800							Välj skrivare
+MSG_SELECTWND_BUTTON_SELECT						Välj
+MSG_SELECTWND_BUTTON_CANCEL						Avbryt
+
+MSG_PROTOCOL_USB=900							USB
+MSG_PROTOCOL_PARALLEL							Parallel
+MSG_PROTOCOL_SMB								Windows (SMB)
+MSG_PROTOCOL_LPD								UNIX (lpd)
+MSG_PROTOCOL_IPP								CUPS (IPP)
+MSG_PROTOCOL_UNKNOWN							Okänd
+MSG_PROTOCOL_HPJETDIRECT						HP JetDirect
+
+MSG_ABOUTWND_TITLE=1000							Skrivare
+MSG_ABOUTWND_TEXT1								Syllable Skrivarhanterare
+MSG_ABOUTWND_TEXT2								Använder CUPS version %d.%d.%d\n
+MSG_ABOUTWND_CLOSE								_Stäng
+
+MSG_ALRTWND_REMOVE_TITLE=1100					Ta bort skrivare
+MSG_ALRTWND_REMOVE_TEXT							Är du säker på att du vill ta bort den här skrivaren?
+MSG_ALRTWND_REMOVE_YES							Ja
+MSG_ALRTWND_REMOVE_NO							Nej
+
+MSG_ALRTWND_SAVE_TITLE=1200						Skrivare
+MSG_ALRTWND_SAVE_TEXT							CUPS inställning misslyckades.  Din skrivare\nkanske inte är rätt inställd.
+MSG_ALRTWND_SAVE_CLOSE							_Stäng
+
+MSG_ALRTWND_INSERTCD_TITLE=1300					Sätt i CD
+MSG_ALRTWND_INSERTCD_TEXT						Sätt i och montera din Syllable installations CD.
+MSG_ALRTWND_INSERTCD_OK							Ok
+MSG_ALRTWND_INSERTCD_CANCEL						Avbryt
+

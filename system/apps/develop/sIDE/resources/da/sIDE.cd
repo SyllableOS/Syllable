@@ -1,0 +1,91 @@
+//
+//	sIDE String Catalog
+//
+//	Translated by: Flemming H. Sørensen
+//
+
+MSG_PWND_TITLE=0						sIDE
+
+MSG_PWND_MENU_APPLICATION=200			Program
+MSG_PWND_MENU_APPLICATION_ABOUT			Om...
+MSG_PWND_MENU_APPLICATION_QUIT			Afslut
+
+MSG_PWND_MENU_PROJECT=210				Projekt
+MSG_PWND_MENU_PROJECT_NEW				Ny...
+MSG_PWND_MENU_PROJECT_OPEN				Åbn...
+MSG_PWND_MENU_PROJECT_SAVE				Gem
+MSG_PWND_MENU_PROJECT_SAVEAS			Gem som...
+MSG_PWND_MENU_PROJECT_PREF				Indstillinger...
+MSG_PWND_MENU_PROJECT_GROUPS			Grupper...
+MSG_PWND_MENU_PROJECT_NEW_FILE			Ny Fil...
+MSG_PWND_MENU_PROJECT_ADD_FILE			Tilføj Fil...
+MSG_PWND_MENU_PROJECT_ADD_LIB			Tilføj Bibliotek...
+MSG_PWND_MENU_PROJECT_REMOVE_FILE		Fjern Fil
+
+MSG_PWND_MENU_BUILD=230					Build
+MSG_PWND_MENU_BUILD_CLEAN				Clean
+MSG_PWND_MENU_BUILD_MAKE				Make
+MSG_PWND_MENU_BUILD_RUN					Kør
+MSG_PWND_MENU_BUILD_EXPORT_MAKEFILE		Eksporter Makefile
+
+MSG_PWND_ABOUT_TITLE=240				Om sIDE
+MSG_PWND_ABOUT							Syllable IDE\nLavet af Arno Klenke, 2001-2006\nNyt Projekt dialogen er lavet af Rick Caudill\n\nsIDE er ungivet under Gnu Public Licencse (GPL)\nSe filen COPYING, der følger med sIDE, for\nflere informationer\n
+
+MSG_PWND_LIST_FILE=250					Fil
+MSG_PWND_LIST_TYPE						Type
+
+MSG_PWND_NO_GROUPS=260					Der er ingen grupper!\n
+MSG_PWND_COULD_NOT_OPEN_PROJ			Kunne ikke åbne projekt.\n
+MSG_PWND_COULD_NOT_OPEN_FILE			Kunne ikke åbne den valgte fil!\n
+MSG_PWND_COULD_NOT_SAVE_PROJ			Kunne ikke gemme projektet!\n
+MSG_PWND_NOT_IN_PROJ_DIR				Den valgte fil findes ikke i en undermappe til projektet!\n
+
+MSG_TYPE_HEADER=300						Header
+MSG_TYPE_C								C fil
+MSG_TYPE_CPP							C++ fil
+MSG_TYPE_LIB							Bibliotek
+MSG_TYPE_OTHER							Andre
+MSG_TYPE_RES							Ressourcer
+MSG_TYPE_CATALOG						Katalog
+MSG_TYPE_IF								Interface
+MSG_TYPE_UNKNOWN						Ukendt
+
+MSG_BUTTON_OK=400						Ok
+MSG_BUTTON_CANCEL						Annuller
+MSG_BUTTON_UP							Op
+MSG_BUTTON_DOWN							Ned
+MSG_BUTTON_ADD							Tilføj
+MSG_BUTTON_REMOVE						Fjern
+
+MSG_ADDWND_TITLE=500					Tilføj/Opret fil
+MSG_ADDWND_NAME							Navn
+MSG_ADDWND_FILE							Fil der skal tilføjes/oprettes
+
+MSG_NEWWND_TITLE=600					Nyt Projekt
+MSG_NEWWND_PROJECTS						Projekter
+MSG_NEWWND_NAME							Navn:
+MSG_NEWWMD_DIR							Mappe:
+MSG_NEWWND_ERR_TITLE					Fejl
+MSG_NEWWND_ERR_EXTR						Kunne ikke udpakke projekt-templaten!\n
+MSG_NEWWND_NO_LOC_NAME					Du har skal angive navn og destination for projektet!\n
+MSG_NEWWND_NO_LOC						Du skal angive hvor projektet skal gemmes!\n
+MSG_NEWWND_NO_NAME						Du skal give projektet et navn!
+MSG_NEWWND_NO_DIR						Er ikke en mappe.
+MSG_NEWWND_NO_DIR_1						Filen, 
+MSG_NEWWND_NO_DIR_2						, er ikke en mappe\n
+
+MSG_PPREF_TITLE=700						Projekt Indstillinger
+MSG_PPREF_TARGET						Destination
+MSG_PPREF_CATEGORY						Kategori
+MSG_PPREF_INSTALL_PATH					Installations-destination
+MSG_PPREF_CFLAGS						Compiler flags
+MSG_PPREF_LFLAGS						Linker flags
+
+MSG_GROUPS_TITLE=800					Håndter grupper
+MSG_GROUPS_LIST							Gruppe
+
+MSG_ADDLIB_TITLE=900					Tilføj Bibliotek
+MSG_ADDLIB_SELECT						Vælg
+MSG_ADDLIB_CUSTOM						Custom
+MSG_ADDLIB_GROUP						Gruppe
+

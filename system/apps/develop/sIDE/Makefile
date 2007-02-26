@@ -4,7 +4,7 @@ COPTS   = -I$(TOP)/src  -c -Wall
 APPBIN = /Applications/sIDE
 OBJS = AddWindow.o AddLibrary.o ProjectPrefs.o GroupWindow.o ProjectWindow.o NewProject.o project.o main.o 
 
-CATALOGS = de
+CATALOGS = da de sv
 
 OBJDIR	:= objs
 OBJS	:= $(addprefix $(OBJDIR)/,$(OBJS))
