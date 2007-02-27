@@ -31,18 +31,18 @@ MSG_MAINWND_MENU_VIEW=500					Beeld
 MSG_MAINWND_MENU_VIEW_PLAYLIST				Afspeellijst
 
 MSG_ABOUTWND_TITLE=1000						Over ColdFish
-MSG_ABOUTWND_TEXT							\nEen muziekspeler\nCopyright 2003 Arno Klenke\nCopyright 2003 Kristian Van Der Vliet\nCopyright 2005 Rick Caudill\n\nColdFish wordt uitgegeven onder de LGPL-licentie.\n\nNederlandse vertaling door Syllable NL.
-MSG_ABOUTWND_OK								OK
+MSG_ABOUTWND_TEXT							\nEen muziekspeler\nCopyright 2003 Arno Klenke\nCopyright 2003 Kristian Van Der Vliet\nCopyright 2005 Rick Caudill\n\nColdFish wordt uitgegeven onder de LGPL-licentie.\n\nNederlandse vertaling door Rik van Achterberg, Kaj de Vos en Ruud Kuin.
+MSG_ABOUTWND_OK								_OK
 
-MSG_ERRWND_TITLE=1100						ColdFish: fout
-MSG_ERRWND_OK								OK
+MSG_ERRWND_TITLE=1100						Fout - ColdFish
+MSG_ERRWND_OK								_OK
 MSG_ERRWND_CANTPLAY							ColdFish kan dit bestand niet afspelen.
 MSG_ERRWND_CANTDELETE						Het nummer dat afgespeeld wordt kan niet verwijderd worden.
 MSG_ERRWND_NOTPLAYLIST						Het geselecteerde bestand is geen afspeellijst.
 
-MSG_ALERTWND_NOMEDIASERVER_TITLE=1200		Foutmelding
-MSG_ALERTWND_NOMEDIASERVER_TEXT				Kan niet met mediaserver verbinden.
-MSG_ALERTWND_NOMEDIASERVER_OK				_Ok
+MSG_ALERTWND_NOMEDIASERVER_TITLE=1200		Geen multimediaserver
+MSG_ALERTWND_NOMEDIASERVER_TEXT				Kon geen verbinding maken met de multimediaserver.
+MSG_ALERTWND_NOMEDIASERVER_OK				_OK
 
 MSG_PLAYLIST_UNKNOWN=2000					Onbekend
 MSG_PLAYLIST_DEFAULT						Standaardafspeellijst

@@ -4,10 +4,10 @@
 //	Translated by: Rik van Achterberg - Kaj de Vos - Ruud Kuin
 //
 
-MSG_MAINWND_TITLE=0							Media Player
+MSG_MAINWND_TITLE=0							Mediaspeler
 
 MSG_MAINWND_MENU_APPLICATION=100			Toepassing
-MSG_MAINWND_MENU_APPLICATION_ABOUT			Over Media Player...
+MSG_MAINWND_MENU_APPLICATION_ABOUT			Over Mediaspeler...
 MSG_MAINWND_MENU_APPLICATION_QUIT			Afsluiten
 
 MSG_MAINWND_MENU_FILE=200					Bestand
@@ -18,23 +18,23 @@ MSG_MAINWND_MENU_FILE_FULLSCREEN			Volledig scherm
 
 MSG_MAINWND_MENU_TRACKS=300					Nummers
 
-MSG_ABOUTWND_TITLE=1000						Over Media Player
-MSG_ABOUTWND_TEXT							\nEen multimediaspeler\nCopyright 2003 Arno Klenke\n\nDe Syllable Media Player wordt uitgegeven onder de LGPL-licentie.\n\nNederlandse vertaling door:\nSyllable NL
-MSG_ABOUTWND_OK								OK
+MSG_ABOUTWND_TITLE=1000						Over Mediaspeler
+MSG_ABOUTWND_TEXT							\nEen multimediaspeler\nCopyright 2003 Arno Klenke\n\nDe Syllable Mediaspeler wordt uitgegeven onder de LGPL-licentie.\n\nNederlandse vertaling door:\nRik van Achterberg\nKaj de Vos\nRuud Kuin
+MSG_ABOUTWND_OK								_OK
 
-MSG_ERRWND_TITLE=1100						Fout
-MSG_ERRWND_OK								OK
+MSG_ERRWND_TITLE=1100						Fout - Mediaspeler
+MSG_ERRWND_OK								_OK
 MSG_ERRWND_CANTPLAY							Bestand kon niet worden afgespeeld.\nControleer alsjeblieft de multimedia-instellingen\nvan het systeem.
 
 MSG_INFOWND_TITLE=1200						Eigenschappen
 MSG_INFOWND_VIDEO							Video
 MSG_INFOWND_AUDIO							Audio
 MSG_INFOWND_CHANNELS						Kanalen
-MSG_INFOWND_OK								OK
+MSG_INFOWND_OK								_OK
 
-MSG_ALERTWND_NOMEDIASERVER_TITLE=1300		Foutmelding
-MSG_ALERTWND_NOMEDIASERVER_TEXT				Kan niet met mediaserver verbinden.
-MSG_ALERTWND_NOMEDIASERVER_OK				_Ok
+MSG_ALERTWND_NOMEDIASERVER_TITLE=1300		Geen multimediaserver
+MSG_ALERTWND_NOMEDIASERVER_TEXT				Kon geen verbinding maken met de multimediaserver.
+MSG_ALERTWND_NOMEDIASERVER_OK				_OK
 
 MSG_TRACK_MENU_ITEM=2000					Nummer
 
