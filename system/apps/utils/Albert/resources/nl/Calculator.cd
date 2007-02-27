@@ -6,7 +6,7 @@
 
 MSG_MAINWND_TITLE=0									Calculator
 
-MSG_MAINWND_MENU_FILE=100							Bestand
+MSG_MAINWND_MENU_FILE=100							Toepassing
 MSG_MAINWND_MENU_FILE_CLEARALL						Alles wissen
 MSG_MAINWND_MENU_FILE_EXIT							Afsluiten
 
@@ -34,35 +34,35 @@ MSG_MAINWND_MENU_CONSTANTS_PERMI					Diëlektrische constante van de vrije ruimt
 
 MSG_MAINWND_MENU_WINDOWS=400						Vensters
 MSG_MAINWND_MENU_WINDOWS_PAPERROLL					Papierrol
-MSG_MAINWND_MENU_WINDOWS_BASEN						Basis-Numeriek
+MSG_MAINWND_MENU_WINDOWS_BASEN						Talstelsels
 
 MSG_MAINWND_MENU_HELP=500							Help
-MSG_MAINWND_MENU_HELP_ABOUT							Over
-MSG_MAINWND_MENU_HELP_KEYBOARD						Toetsenbord
+MSG_MAINWND_MENU_HELP_ABOUT							Over Calculator...
+MSG_MAINWND_MENU_HELP_KEYBOARD						Toetsenbord...
 
-MSG_PAPERROLL_TITLE=1000							Calculator
-MSG_PAPERROLL_CMENU_COPY							Kopieer
+MSG_PAPERROLL_TITLE=1000							Papierrol - Calculator
+MSG_PAPERROLL_CMENU_COPY							Kopieëren
 MSG_PAPERROLL_CMENU_CLEAR							Wissen
 MSG_PAPERROLL_CMENU_SAVE							Opslaan
 
-MSG_BASENWND_TITLE=2000								Basis-Numeriek
+MSG_BASENWND_TITLE=2000								Talstelsels - Calculator
 MSG_BASENWND_BINARY									Binair
 MSG_BASENWND_OCTAL									Octaal
 MSG_BASENWND_DECIMAL								Decimaal
 MSG_BASENWND_HEXADECIMAL							Hexadecimaal
-MSG_BASENWND_BASE64									Basis-64
-MSG_BASENWND_ROMAN									Romaan
+MSG_BASENWND_BASE64									Base64
+MSG_BASENWND_ROMAN									Romeins
 
 MSG_ABOUTWND_TITLE=3000								Over Calculator
 MSG_ABOUTWND_TEXTONE								Calculator V0.5 2004-02-07 Copyright (C) 2002-2004 Henrik Isaksson.
 MSG_ABOUTWND_TEXTTWO								Calculator is gepubliceerd onder de GNU General Public Licentie.\n\nNederlandse vertaling door Ruud Kuin en Kaj de Vos.
 
-MSG_KBDWND_TITLE=4000								Toetscombinaties
-MSG_KBDWND_TEXTONE									Toetscombinaties
-MSG_KBDWND_TEXT09									Decimale cijfers 0 tot 9
-MSG_KBDWND_TEXTAF									Hexadecimale cijfers A tot F
-MSG_KBDWND_TEXTASMD									Optellen, Aftrekken, Vermenigvuldigen en Delen
-MSG_KBDWND_TEXTENTER								ENTER - Som berekenen
-MSG_KBDWND_TEXTBACKSPACE							BACKSPACE - Backspace (verrassing!)
-MSG_KBDWND_CLOSE									Sluiten
+MSG_KBDWND_TITLE=4000								Toetsenbordfuncties
+MSG_KBDWND_TEXTONE									Sneltoetsen:
+MSG_KBDWND_TEXT09									decimale cijfers 0 tot en met 9
+MSG_KBDWND_TEXTAF									hexadecimale cijfers A tot en met F
+MSG_KBDWND_TEXTASMD									optellen, aftrekken, vermenigvuldigen en delen
+MSG_KBDWND_TEXTENTER								ENTER - resultaat berekenen
+MSG_KBDWND_TEXTBACKSPACE							BACKSPACE - wissen
+MSG_KBDWND_CLOSE									_OK
 

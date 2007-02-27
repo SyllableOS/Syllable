@@ -50,7 +50,7 @@ MSG_BASENWND_BINARY									Binary
 MSG_BASENWND_OCTAL									Octal
 MSG_BASENWND_DECIMAL								Decimal
 MSG_BASENWND_HEXADECIMAL							Hexadecimal
-MSG_BASENWND_BASE64									Base-64
+MSG_BASENWND_BASE64									Base64
 MSG_BASENWND_ROMAN									Roman
 
 MSG_ABOUTWND_TITLE=3000								About Calculator
@@ -63,6 +63,6 @@ MSG_KBDWND_TEXT09									Decimal digits 0 through 9
 MSG_KBDWND_TEXTAF									Hexadecimal digits A through F
 MSG_KBDWND_TEXTASMD									Addition, Subtraction, Multiplication and Division
 MSG_KBDWND_TEXTENTER								ENTER - Calculate result
-MSG_KBDWND_TEXTBACKSPACE							BACKSPACE - Backspace (surpise!)
+MSG_KBDWND_TEXTBACKSPACE							BACKSPACE - Backspace (surprise!)
 MSG_KBDWND_CLOSE									Close
 
