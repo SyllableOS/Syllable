@@ -36,8 +36,8 @@ install-tree
 	share/ghostscript/8.15/Resource
 	share/ghostscript/8.15/Resource/Font
 install-vars
-	datadir	$IMAGE/usr/esp-ghostscript/share/
-;	gsdir	$IMAGE/usr/esp-ghostscript/share/ghostscript/
+;	datadir	$IMAGE/usr/esp-ghostscript/share/
+	gsdir	$IMAGE/usr/esp-ghostscript/share/ghostscript/
 ;install-targets		soinstall
 
 documentation
@@ -63,3 +63,4 @@ links
 	/system/fonts/NimbusSansL-RegularCondensed.ttf			share/ghostscript/8.15/Resource/Font/NimbusSanL-ReguCond
 	/system/fonts/NimbusSansL-RegularCondensedItalic.ttf	share/ghostscript/8.15/Resource/Font/NimbusSanL-ReguCondItal
 	/system/fonts/NimbusSansL-RegularItalic.ttf				share/ghostscript/8.15/Resource/Font/NimbusSanL-ReguItal
+
