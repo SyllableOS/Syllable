@@ -56,6 +56,10 @@ cd $INSTALLER_DIR/installer
 cvs update -dP
 sync
 
+cd $INSTALLER_DIR/documentation
+cvs update -dP
+sync
+
 # Build the CD
 cd $INSTALLER_DIR
 ./build-cd.sh "base-syllable.zip" "$BUILD_DIR/Net-Binaries" "$VERSION"
