@@ -98,6 +98,7 @@ FILES=(	"/etc/profile, /etc/profile" 															\
 		"/usr/unzip/bin/unzip, /usr/local/bin/unzip"											\
 		"/usr/ncurses/bin/clear, /usr/local/bin/clear"										\
 		"/usr/less/bin/less, /usr/local/bin/less"												\
+		"/usr/diffutils/bin/cmp, /usr/local/bin/cmp"												\
 																											\
 		"/usr/bash/bin/bash, /usr/local/bin/bash"												\
 		"/usr/grep/bin/grep, /usr/local/bin/grep"												\
@@ -520,3 +521,4 @@ copy_installer $_VER
 create_iso $_VER
 
 exit 0
+
