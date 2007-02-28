@@ -28,6 +28,8 @@ modules
 	apps/gnu/less-394
 	apps/gnu/tar-1.16.1
 	apps/other/zip-2.32
+;	For grub-install:
+	apps/gnu/diffutils-2.8.1
 
 ;	The Printer preferences and Print Queue require CUPS:
 	apps/other/cups-1.2.1
