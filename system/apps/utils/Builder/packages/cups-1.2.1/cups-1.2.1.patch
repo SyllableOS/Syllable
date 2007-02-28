@@ -1,6 +1,6 @@
 diff -ur cups-1.2.1_orig/backend/ieee1284.c cups-1.2.1/backend/ieee1284.c
 --- cups-1.2.1_orig/backend/ieee1284.c	2006-04-19 21:36:43.000000000 +0000
-+++ cups-1.2.1/backend/ieee1284.c	2006-06-21 15:19:50.000000000 +0000
++++ cups-1.2.1/backend/ieee1284.c	2007-02-28 20:34:16.000000000 +0000
 @@ -51,12 +51,16 @@
   */
  
@@ -53,7 +53,7 @@ diff -ur cups-1.2.1_orig/backend/ieee1284.c cups-1.2.1/backend/ieee1284.c
    did.mode = ECPP_CENTRONICS;
 diff -ur cups-1.2.1_orig/backend/parallel.c cups-1.2.1/backend/parallel.c
 --- cups-1.2.1_orig/backend/parallel.c	2006-04-10 02:51:12.000000000 +0000
-+++ cups-1.2.1/backend/parallel.c	2006-06-21 15:24:47.000000000 +0000
++++ cups-1.2.1/backend/parallel.c	2007-02-28 20:34:16.000000000 +0000
 @@ -110,9 +110,9 @@
  #if defined(HAVE_SIGACTION) && !defined(HAVE_SIGSET)
    struct sigaction action;		/* Actions for POSIX signals */
@@ -104,7 +104,7 @@ diff -ur cups-1.2.1_orig/backend/parallel.c cups-1.2.1/backend/parallel.c
  
 diff -ur cups-1.2.1_orig/backend/usb-unix.c cups-1.2.1/backend/usb-unix.c
 --- cups-1.2.1_orig/backend/usb-unix.c	2006-05-20 12:23:40.000000000 +0000
-+++ cups-1.2.1/backend/usb-unix.c	2006-06-21 15:23:55.000000000 +0000
++++ cups-1.2.1/backend/usb-unix.c	2007-02-28 20:36:25.000000000 +0000
 @@ -45,7 +45,6 @@
  
  int	open_device(const char *uri);
@@ -169,7 +169,7 @@ diff -ur cups-1.2.1_orig/backend/usb-unix.c cups-1.2.1/backend/usb-unix.c
  
    if (!strncmp(uri, "usb:/dev/", 9))
 -#ifdef __linux
-+#if defined(__linux) || defined(__SYLLABLE__)
++#if defined(__linux)
      return (-1); /* Do not allow direct devices anymore */
    else if (!strncmp(uri, "usb://", 6))
    {
@@ -185,18 +185,9 @@ diff -ur cups-1.2.1_orig/backend/usb-unix.c cups-1.2.1/backend/usb-unix.c
  
     /*
      * Then find the correct USB device...
-@@ -623,7 +626,7 @@
-   }
- #else
-     return (open(uri + 4, O_RDWR | O_EXCL));
--#endif /* __linux */
-+#endif /* __linux || __SYLLABLE__ */
-   else
-   {
-     errno = ENODEV;
 diff -ur cups-1.2.1_orig/backend/usb.c cups-1.2.1/backend/usb.c
 --- cups-1.2.1_orig/backend/usb.c	2006-04-06 20:03:32.000000000 +0000
-+++ cups-1.2.1/backend/usb.c	2006-06-21 15:19:50.000000000 +0000
++++ cups-1.2.1/backend/usb.c	2007-02-28 20:34:35.000000000 +0000
 @@ -72,7 +72,7 @@
  
  #ifdef __APPLE__
