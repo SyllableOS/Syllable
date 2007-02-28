@@ -15,6 +15,7 @@ build-needs
 	automake >= 1.7 < 1.10
 	autoconf >= 2.57
 build-recommends	texinfo >= 4.0
+run-needs			diffutils
 
 patch
 ;	autoreconf --force
@@ -30,3 +31,4 @@ make-env			CFLAGS ''
 documentation		README BUGS COPYING NEWS ChangeLog TODO AUTHORS THANKS
 build-docs			INSTALL netboot/README.netboot
 internal-docs		MAINTENANCE
+
