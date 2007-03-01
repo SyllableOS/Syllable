@@ -47,10 +47,4 @@ documentation
 ;	doc
 build-docs			INSTALL*.txt
 
-move-files
-	lib/libcups.so			/system/libraries/
-	lib/libcups.so.2		/system/libraries/
-	lib/libcupsimage.so		/system/libraries/
-	lib/libcupsimage.so.2	/system/libraries/
-
 links /usr/indexes/bin/smbspool lib/cups/backend/smb
