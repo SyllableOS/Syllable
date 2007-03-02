@@ -38,7 +38,7 @@ image and burn a CD yourself, or you can purchase a CD for $10.
 A purchased CD is the same as the downloadable disc image but also includes
 the latest available applications and full sourcecode for Syllable.  If
 you purchase a CD you will be helping to support.  See
-http://syllable.sourceforge.net/modules.php?name=buy for more information.
+http://syllable.org/get.php#premium for more information.
 
 The downloadable Syllable CD image is distributed as a Gziped "ISO" image.
 Before you can burn this image to a CD you must first ungzip it.  On Linux,
