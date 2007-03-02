@@ -37,7 +37,6 @@ FILES=(	"/etc/profile, /etc/profile" 															\
 		"/system/drivers/fs/fatfs, /system/drivers/fs/fatfs"										\
 		"/system/drivers/fs/ext2, /system/drivers/fs/ext2"											\
 		"/system/drivers/fs/ntfs, /system/drivers/fs/ntfs"											\
-		"/system/drivers/fs/ramfs, /system/drivers/fs/ramfs"										\
 																											\
 		"/system/kernel.so, /system/kernel.so"														\
 																											\
@@ -90,6 +89,7 @@ FILES=(	"/etc/profile, /etc/profile" 															\
 		"/usr/coreutils/bin/uname, /usr/local/bin/uname"										\
 		"/usr/coreutils/bin/uniq, /usr/local/bin/uniq"										\
 		"/usr/coreutils/bin/stty, /usr/local/bin/stty"										\
+		"/usr/coreutils/bin/chmod, /usr/local/bin/chmod"										\
 																											\
 		"/usr/findutils/bin/find, /usr/local/bin/find"										\
 		"/usr/gzip/bin/gzip, /usr/local/bin/gzip"												\
@@ -323,10 +323,6 @@ function generate_init_script()
     printf "export %s\n" "${ENV[$INDEX]}" >> $CD_DIR/system/init.sh
     let "INDEX = $INDEX + 1"
   done
-
-  # Create a writable /tmp for Grub
-  printf "\nmkdir /tmp" >> $CD_DIR/system/init.sh
-  printf "\nmount -t ramfs /tmp\n" >> $CD_DIR/system/init.sh
 
   # Start the installer
   printf "\naterm /usr/ruby/bin/ruby /boot/Install/install.rb &\n" >> $CD_DIR/system/init.sh
