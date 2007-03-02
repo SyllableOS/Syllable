@@ -10,10 +10,10 @@ MSG_STRING_LAUNCH=100				Starten:
 MSG_STRING_DESC						Geef een webadres, bestand, map of programma op.
 
 MSG_ERROR_LAUNCHING_ONE=200			Het bestand '
-MSG_ERROR_LAUNCHING_TWO				' heeft geen bekende typeaanduiding.
+MSG_ERROR_LAUNCHING_TWO				' heeft geen bekende type-aanduiding.
 
 MSG_BUTTON_LAUNCH=300				_Starten
-MSG_BUTTON_BROWSE					_Bladeren
+MSG_BUTTON_BROWSE					_Bladeren...
 MSG_BUTTON_CANCEL					_Annuleren
 MSG_ALERT_BUTTON					_OK
 

@@ -34,8 +34,7 @@ $(EXE): $(OBJS)
 	rescopy $(EXE) -r *.png
 
 install: objs $(EXE)
-	cp -f $(EXE) /system/bin/$(EXE)
+	cp -f $(EXE) $(IMAGE)/system/bin/
 
-dist: objs $(EXE)
-	cp -f $(EXE) $(IMAGE)/system/bin/$(EXE)
+dist: install
 

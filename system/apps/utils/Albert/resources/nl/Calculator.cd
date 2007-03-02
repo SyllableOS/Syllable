@@ -33,10 +33,10 @@ MSG_MAINWND_MENU_CONSTANTS_PERME					Doordringbaarheid van de vrije ruimte
 MSG_MAINWND_MENU_CONSTANTS_PERMI					Diëlektrische constante van de vrije ruimte
 
 MSG_MAINWND_MENU_WINDOWS=400						Vensters
-MSG_MAINWND_MENU_WINDOWS_PAPERROLL					Papierrol
-MSG_MAINWND_MENU_WINDOWS_BASEN						Talstelsels
+MSG_MAINWND_MENU_WINDOWS_PAPERROLL					Papierrol...
+MSG_MAINWND_MENU_WINDOWS_BASEN						Talstelsels...
 
-MSG_MAINWND_MENU_HELP=500							Help
+MSG_MAINWND_MENU_HELP=500							Hulp
 MSG_MAINWND_MENU_HELP_ABOUT							Over Calculator...
 MSG_MAINWND_MENU_HELP_KEYBOARD						Toetsenbord...
 
@@ -46,12 +46,12 @@ MSG_PAPERROLL_CMENU_CLEAR							Wissen
 MSG_PAPERROLL_CMENU_SAVE							Opslaan
 
 MSG_BASENWND_TITLE=2000								Talstelsels - Calculator
-MSG_BASENWND_BINARY									Binair
-MSG_BASENWND_OCTAL									Octaal
-MSG_BASENWND_DECIMAL								Decimaal
-MSG_BASENWND_HEXADECIMAL							Hexadecimaal
-MSG_BASENWND_BASE64									Base64
-MSG_BASENWND_ROMAN									Romeins
+MSG_BASENWND_BINARY									Binair:
+MSG_BASENWND_OCTAL									Octaal:
+MSG_BASENWND_DECIMAL								Decimaal:
+MSG_BASENWND_HEXADECIMAL							Hexadecimaal:
+MSG_BASENWND_BASE64									Base64:
+MSG_BASENWND_ROMAN									Romeins:
 
 MSG_ABOUTWND_TITLE=3000								Over Calculator
 MSG_ABOUTWND_TEXTONE								Calculator V0.5 2004-02-07 Copyright (C) 2002-2004 Henrik Isaksson.

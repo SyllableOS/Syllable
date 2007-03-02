@@ -17,7 +17,7 @@ MSG_MENU_FILE_OPEN							Openen...
 MSG_MENU_FILE_CLOSE							Sluiten
 MSG_MENU_FILE_SAVE							Opslaan
 MSG_MENU_FILE_SAVE_AS						Opslaan als...
-MSG_MENU_FILE_SAVE_ALL						Alles opslaan
+MSG_MENU_FILE_SAVE_ALL						Alle documenten opslaan
 MSG_MENU_FILE_NEXT_FILE						Volgend document
 MSG_MENU_FILE_PREVIOUS_FILE					Vorig document
 
@@ -29,10 +29,10 @@ MSG_MENU_EDIT_SELECT_ALL					Alles selecteren
 MSG_MENU_EDIT_UNDO							Bewerking ongedaan maken
 MSG_MENU_EDIT_REDO							Bewerking opnieuw uitvoeren
 
-MSG_MENU_VIEW_VIEW=350						Bekijken
-MSG_MENU_VIEW_TOOLBAR						Gereedschapsbalk
+MSG_MENU_VIEW_VIEW=350						Beeld
+MSG_MENU_VIEW_TOOLBAR						Knoppenbalk
 MSG_MENU_VIEW_STATUSBAR						Statusbalk
-MSG_MENU_VIEW_SETFONT						Font instellen...
+MSG_MENU_VIEW_SETFONT						Lettertype instellen...
 MSG_MENU_VIEW_TABS							Tabs
 MSG_MENU_VIEW_SHOW							Tonen
 MSG_MENU_VIEW_HIDE							Verbergen
@@ -51,12 +51,12 @@ MSG_MENU_SETTINGS_SAVE_ON_CLOSE				Instellingen opslaan bij afsluiten
 MSG_MENU_SETTINGS_SAVE_NOW					Instellingen nu opslaan
 MSG_MENU_SETTINGS_RESET						Instellingen herstellen
 
-MSG_MENU_HELP=700							Help
+MSG_MENU_HELP=700							Hulp
 MSG_MENU_HELP_TABLE_OF_CONTENTS				Handleiding...
 MSG_MENU_HELP_HOMEPAGE						AEdit-webstek...
 
 MSG_ABOUT_TITLE=800							Over AEdit
-MSG_ABOUT_TEXT								\n\nEenvoudige tekstverwerker voor Syllable\nAuteursrecht 2000-2003 Kristian Van Der Vliet\n\nAEdit is gepubliceerd onder de GNU\nGeneral Public License. Gelieve\nhttp://www.gnu.org\nte raadplegen voor meer informatie.\n\nNederlandse vertaling door Syllable NL.
+MSG_ABOUT_TEXT								\n\nEenvoudige tekstverwerker voor Syllable\nAuteursrecht 2000-2003 Kristian Van Der Vliet\n\nAEdit is gepubliceerd onder de\nGNU General Public License. Gelieve\nhttp://www.gnu.org\nte raadplegen voor meer informatie.\n\nNederlandse vertaling door Kaj de Vos, Ruud Kuin en anderen.
 MSG_ABOUT_CLOSE								OK
 MSG_ABOUT_VERSION							Versie:
 MSG_ABOUT_LINE_1 							Een tekstverwerker voor Syllable
@@ -68,7 +68,7 @@ MSG_ERROR_CANT_SAVE							Kon bestand niet opslaan.
 MSG_ERROR_CLOSE								OK
 
 MSG_FIND_TITLE=1000							Zoeken
-MSG_FIND_FIND_LABEL							Zoek
+MSG_FIND_FIND_LABEL							Zoeken naar:
 MSG_FIND_CASE_SENSITIVE						_Hoofdlettergevoelig zoeken
 MSG_FIND_FIND								_Zoek eerste
 MSG_FIND_FIND_NEXT							Zoek _volgende
@@ -77,11 +77,11 @@ MSG_FIND_CLOSE								_Sluiten
 MSG_GOTO_TITLE=1100							Ga naar regel
 MSG_GOTO_GOTO								_Ga naar regel
 MSG_GOTO_CLOSE								_Annuleren
-MSG_GOTO_LINE								Rij:
+MSG_GOTO_LINE								Regel:
 
-MSG_REPLACE_TITLE=1200						Vervangen
-MSG_REPLACE_LBLFIND							Zoek
-MSG_REPLACE_WITH							Vervangen door
+MSG_REPLACE_TITLE=1200						Tekst vervangen
+MSG_REPLACE_LBLFIND							Zoeken naar:
+MSG_REPLACE_WITH							Vervangen door:
 MSG_REPLACE_CASE_SENSITIVE					_Hoofdlettergevoelig zoeken
 MSG_REPLACE_FIND							_Zoek eerste
 MSG_REPLACE_FIND_NEXT						Zoek _volgende
