@@ -1,16 +1,16 @@
 //
 //	Preferences/Appearance String Catalog
 //
-//	Translated by: Ruud Kuin
+//	Translated by: Ruud Kuin - Kaj de Vos
 //
 
 MSG_MAINWND_TITLE=0								Vormgeving
 
 MSG_MAINWND_WINDEC_WINDOWSDECORATION=100		Vensterdecoratie
-MSG_MAINWND_WINDEC_DECOR						Decor
+MSG_MAINWND_WINDEC_DECOR						Decor:
 
 MSG_MAINWND_CLRSCM_COLOURSCHEME=200				Kleurschema
-MSG_MAINWND_CLRSCM_THEME						Schema
+MSG_MAINWND_CLRSCM_THEME						Schema:
 MSG_MAINWND_CLRSCM_RED							Rood
 MSG_MAINWND_CLRSCM_GREEN						Groen
 MSG_MAINWND_CLRSCM_BLUE							Blauw
@@ -49,6 +49,6 @@ MSG_ALERT_NOCLRSCMDIR_TEXT						Map /system/config/appearance/colour-schemes/ be
 MSG_ALERT_NOCLRSCMDIR_OK						OK
 
 MSG_ALERT_CLRSCMERR_TITLE=3000					Fout
-MSG_ALERT_CLRSCMERR_TEXT						Kan kleurschemabestand niet laden.
+MSG_ALERT_CLRSCMERR_TEXT						Kon kleurschemabestand niet laden.
 MSG_ALERT_CLRSCMERR_OK							OK
 

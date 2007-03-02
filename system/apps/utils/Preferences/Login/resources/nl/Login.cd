@@ -1,7 +1,7 @@
 //
 //	Preferences/Login String Catalog
 //
-//	Translated by: Ruud Kuin, Kaj de Vos
+//	Translated by: Ruud Kuin - Kaj de Vos
 //
 
 MSG_MAINWND_TITLE=0						Aanmelden
@@ -14,9 +14,9 @@ MSG_MAINWND_LOGINICON=200				Aanmeldingsikoon
 MSG_MAINWND_LOGINICON_TEXT				Klik op het ikoon om het plaatje te veranderen\nwaarmee deze gebruiker wordt aangeduid\nbij het aanmelden bij deze computer.
 
 MSG_MAINWND_CHANGEPASS=300				Wachtwoord wijzigen
-MSG_MAINWND_CHANGEPASS_CURRENTPASS		Huidig wachtwoord
-MSG_MAINWND_CHANGEPASS_NEWPASS			Nieuw wachtwoord
-MSG_MAINWND_CHANGEPASS_CONFIRMPASS		Bevestig wachtwoord
+MSG_MAINWND_CHANGEPASS_CURRENTPASS		Huidig wachtwoord:
+MSG_MAINWND_CHANGEPASS_NEWPASS			Nieuw wachtwoord:
+MSG_MAINWND_CHANGEPASS_CONFIRMPASS		Bevestig wachtwoord:
 
 MSG_MAINWND_BUTTON_OK=400				_OK
 MSG_MAINWND_BUTTON_CANCEL				_Annuleren

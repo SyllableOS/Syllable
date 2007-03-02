@@ -1,7 +1,7 @@
 //
 //	Preferences/UsersAndGroups String Catalog
 //
-//	Translated by: Ruud Kuin, Kaj de Vos
+//	Translated by: Ruud Kuin - Kaj de Vos
 //
 
 MSG_MAINWND_TITLE=0							Gebruikers & groepen
@@ -15,15 +15,15 @@ MSG_MAINWND_TAB_USERS_LOGIN					Naam
 MSG_MAINWND_TAB_USERS_ID					ID
 MSG_MAINWND_TAB_USERS_GROUP					Groep
 MSG_MAINWND_TAB_USERS_HOME					Privé-map
-MSG_MAINWND_TAB_USERS_BUTTON_ADD			_Nieuwe gebruiker...
+MSG_MAINWND_TAB_USERS_BUTTON_ADD			_Nieuw...
 MSG_MAINWND_TAB_USERS_BUTTON_EDIT			_Bewerken...
 MSG_MAINWND_TAB_USERS_BUTTON_DEL			_Wissen
-MSG_MAINWND_TAB_USERS_BUTTON_PASS			Wachtwoord _instellen...
+MSG_MAINWND_TAB_USERS_BUTTON_PASS			Wachtwoord...
 
 MSG_MAINWND_TAB_GROUPS=300					Groepen
 MSG_MAINWND_TAB_GROUPS_NAME					Naam
 MSG_MAINWND_TAB_GROUPS_ID					ID
-MSG_MAINWND_TAB_GROUPS_BUTTON_ADD			_Nieuwe groep...
+MSG_MAINWND_TAB_GROUPS_BUTTON_ADD			_Nieuw...
 MSG_MAINWND_TAB_GROUPS_BUTTON_EDIT			_Bewerken...
 MSG_MAINWND_TAB_GROUPS_BUTTON_DEL			_Wissen
 
@@ -60,7 +60,7 @@ MSG_CHANGEPASS_BUTTON_OK					_OK
 MSG_CHANGEPASS_BUTTON_CANCEL				_Annuleren
 
 MSG_ALERTWND_GRPWRTERR=10000				Bestandsfout
-MSG_ALERTWND_GRPWRTERR_TEXT					Nieuw bestand schrijven naar /etc/group mislukt. De groepen zijn niet aangepast.
+MSG_ALERTWND_GRPWRTERR_TEXT					Bestand schrijven naar /etc/group mislukt. De groepen zijn niet aangepast.
 MSG_ALERTWND_GRPWRTERR_OK					Sluiten
 
 MSG_ALERTWND_PASSDONTMATCH=20000			Wachtwoorden komen niet overeen.

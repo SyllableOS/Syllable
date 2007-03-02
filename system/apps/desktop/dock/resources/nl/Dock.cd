@@ -7,7 +7,7 @@
 MSG_MENU_CATEGORY_OTHER=1000			Overig
 MSG_MENU_CATEGORY_PREFERENCES			Voorkeuren
 MSG_MENU_CATEGORY_INTERNET				Internet
-MSG_MENU_CATEGORY_MEDIA					Multimedia
+MSG_MENU_CATEGORY_MEDIA					Audio en video
 MSG_MENU_CATEGORY_OFFICE				Kantoor
 MSG_MENU_CATEGORY_DEVELOPMENT			Ontwikkeling
 MSG_MENU_CATEGORY_GAMES					Spellen
@@ -15,7 +15,7 @@ MSG_MENU_CATEGORY_EMULATORS				Emulators
 MSG_MENU_CATEGORY_SYSTEMTOOLS			Systeemgereedschap
 
 MSG_MENU_ABOUT_MENU=2000				Over Syllable...
-MSG_MENU_ABOUT_TITLE					Informatie over Syllable
+MSG_MENU_ABOUT_TITLE					Over Syllable
 MSG_MENU_ABOUT_BUILDDATE				Bouwdatum:
 MSG_MENU_ABOUT_TEXTONE					Kijk op
 MSG_MENU_ABOUT_TEXTTWO					voor meer informatie.
@@ -31,7 +31,7 @@ MSG_MENU_QUIT_REBOOT					Herstarten
 MSG_MENU_QUIT_CANCEL					Annuleren
 
 MSG_PLUGIN_ALERT_TITLE=4000				Paneel
-MSG_PLUGIN_ALERT_TEXT					Kopieer paneelextensies naar /system/extensions/dock\n voor je ze aan het paneel probeert toe te voegen.
+MSG_PLUGIN_ALERT_TEXT					Plaats paneelextensies in /system/extensions/dock/\n voor je ze aan het paneel probeert toe te voegen.
 MSG_PLUGIN_ALERT_OK						OK
 
 MSG_OPENAPP=5000						Openen met...

@@ -1,7 +1,7 @@
 //
 //	Preferences/Dock String Catalog
 //
-//	Translated by: Ruud Kuin, Kaj de Vos
+//	Translated by: Ruud Kuin - Kaj de Vos
 //
 
 MSG_MAINWND_TITLE=0								Dokpaneel
@@ -15,7 +15,7 @@ MSG_MAINWND_POSITION_RIGHT						Rechts
 MSG_MAINWND_PLUGINS=200							Plug-ins
 MSG_MAINWND_PLUGINS_PLUGIN						Plug-in
 MSG_MAINWND_PLUGINS_ENABLED						Actief
-MSG_MAINWND_PLUGINS_TEXT						Let op: plaats nieuwe plug-ins in /system/extensions/dock/
+MSG_MAINWND_PLUGINS_TEXT						Let op: plaats nieuwe plug-ins in /system/extensions/dock/.
 MSG_MAINWND_PLUGINS_BUTTON_ENABLE				Activeren
 MSG_MAINWND_PLUGINS_BUTTON_DISABLE				Deactiveren
 MSG_MAINWND_PLUGINS_STATE_ENABLED_YES			Ja
