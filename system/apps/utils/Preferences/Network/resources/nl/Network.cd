@@ -26,7 +26,7 @@ MSG_MODIFYWND_TITLE=400							Netwerkadapter instellen
 MSG_MODIFYWND_INTERFACE							Adapter:
 MSG_MODIFYWND_ENABLED							(actief)
 MSG_MODIFYWND_DISABLED							(inactief)
-MSG_MODIFYWND_USEDHCP							_Automatisch instellen (DHCP)
+MSG_MODIFYWND_USEDHCP							Automatisch instellen via DHCP
 MSG_MODIFYWND_BUTTON_ENABLE						_Activeren
 MSG_MODIFYWND_BUTTON_DISABLE					_Deactiveren
 MSG_MODIFYWND_SETTINGS							Instellingen
@@ -57,4 +57,3 @@ MSG_ALERTWND_SUBNET_OK							_OK
 MSG_ALERTWND_GATEWAY=6000						Ongeldig IP-nummer - Netwerk
 MSG_ALERTWND_GATEWAY_TEXT						Het ingevoerde IP-nummer voor het gateway-adres is ongeldig.
 MSG_ALERTWND_GATEWAY_OK							_OK
-
