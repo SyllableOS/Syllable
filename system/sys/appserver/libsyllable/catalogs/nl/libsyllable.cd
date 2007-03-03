@@ -10,7 +10,7 @@ MSG_FILEREQUESTER_SAVE_BUTTON							Op_slaan
 MSG_FILEREQUESTER_CANCEL_BUTTON							_Annuleren
 MSG_FILEREQUESTER_FILE_NAME_LABEL						Bestandsnaam:
 MSG_FILEREQUESTER_BROWSE_LOCATION_LABEL					Zoeken in:
-MSG_FILEREQUESTER_FILE_ALREADY_EXISTS_TEXT				Het bestand '%s' bestaat al.\nWil je dit bestand overschrijven?\n
+MSG_FILEREQUESTER_FILE_ALREADY_EXISTS_TEXT				Het bestand '%s' bestaat al!\nWil je dit bestand overschrijven?\n
 MSG_FILEREQUESTER_FILE_ALREADY_EXISTS_TITLE				Waarschuwing:
 MSG_FILEREQUESTER_FILE_ALREADY_EXISTS_YES_BUTTON		Ja
 MSG_FILEREQUESTER_FILE_ALREADY_EXISTS_NO_BUTTON			Nee
@@ -18,20 +18,20 @@ MSG_FILEREQUESTER_FILE_ALREADY_EXISTS_NO_BUTTON			Nee
 // IconDirectoryView strings
 MSG_ICONDIRVIEW_WINDOW_OPEN_WITH=2000					Openen met...
 MSG_ICONDIRVIEW_NUMBER_OF_OBJECTS_SELECTED				%i bestanden
-MSG_ICONDIRVIEW_MENU_MOUNT									Aankoppelen...
+MSG_ICONDIRVIEW_MENU_MOUNT								Aankoppelen...
 MSG_ICONDIRVIEW_MENU_UNMOUNT							Afkoppelen...
 MSG_ICONDIRVIEW_MENU_NEW_DIRECTORY						Nieuwe map...
 MSG_ICONDIRVIEW_MENU_EMPTY_TRASH						Leeg
 MSG_ICONDIRVIEW_MENU_OPEN_WITH							Openen met...
 MSG_ICONDIRVIEW_MENU_INFO								Informatie...
 MSG_ICONDIRVIEW_MENU_RENAME								Hernoemen...
-MSG_ICONDIRVIEW_MENU_MOVE_TO_TRASH						Naar prullenbak verplaatsen
+MSG_ICONDIRVIEW_MENU_MOVE_TO_TRASH						In prullenbak gooien
 MSG_ICONDIRVIEW_MENU_DELETE								Verwijderen...
 MSG_ICONDIRVIEW_PERCENT_FREE							%i%% vrij
 MSG_ICONDIRVIEW_VOLUMENAME_UNKNOWN						Onbekend
 
 // File information window
-MSG_FILEINFO_WINDOW_TITLE=3000							Informatie
+MSG_FILEINFO_WINDOW_TITLE=3000							Eigenschappen
 MSG_FILEINFO_WINDOW_NAME_LABEL							Naam:
 MSG_FILEINFO_WINDOW_PATH_LABEL							Pad:
 MSG_FILEINFO_WINDOW_SIZE_LABEL							Grootte:
@@ -47,15 +47,15 @@ MSG_FILEINFO_FILETYPE_UNKNOWN							Onbekend
 MSG_RENAMEFILE_WINDOW_TITLE=4000						%s hernoemen
 MSG_RENAMEFILE_WINDOW_OK_BUTTON							OK
 MSG_RENAMEFILE_ERROR_TITLE								Hernoemen
-MSG_RENAMEFILE_ERROR_TEXT								%s kan niet hernoemd worden!
-MSG_RENAMEFILE_ERROR_CLOSE								OK
+MSG_RENAMEFILE_ERROR_TEXT								%s kon niet hernoemd worden.
+MSG_RENAMEFILE_ERROR_CLOSE								Sluiten
 
 // New directory window
 MSG_NEWDIR_WINDOW_TITLE=5000							Nieuwe map
 MSG_NEWDIR_WINDOW_OK_BUTTON								OK
 MSG_NEWDIR_ERROR_TITLE									Nieuwe map
-MSG_NEWDIR_ERROR_TEXT									De map %s kan niet aangemaakt worden!
-MSG_NEWDIR_ERROR_CLOSE									OK
+MSG_NEWDIR_ERROR_TEXT									De map %s kon niet aangemaakt worden.
+MSG_NEWDIR_ERROR_CLOSE									Sluiten
 
 // Mount window
 MSG_MOUNT_WINDOW_TITLE=6000								Aankoppelen
@@ -70,8 +70,7 @@ MSG_MOUNT_TYPE_CD_DVD									CD/DVD
 MSG_MOUNT_TYPE_FLOPPY									Diskette
 MSG_MOUNT_DEVICE_PARTITION								Partitie
 MSG_MOUNT_ERROR_TITLE									Aankoppelen
-MSG_MOUNT_ERROR_CLOSE									OK
+MSG_MOUNT_ERROR_CLOSE									Sluiten
 MSG_MOUNT_ERROR_CREATE_MOUNTPOINT						Kon geen aankoppelpunt maken voor apparaat %s
 MSG_MOUNT_ERROR_OTHER_ERROR								Kon %s niet aankoppelen:\n%s
 MSG_MOUNT_ERROR_UNMOUNT									Kon %s niet afkoppelen:\n%s
-
