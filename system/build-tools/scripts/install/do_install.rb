@@ -110,7 +110,7 @@ else
 end
 
 # ramfs doesn't support grub-install:
-File.symlink '/inst/tmp', '/'
+File.symlink '/inst/tmp', '/tmp'
 
 print "Autogenerating GRUB menu.lst ... "
 GrubGen::save(valid_partitions, $part, "/inst/boot/grub/menu.lst")
