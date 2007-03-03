@@ -3,7 +3,7 @@ CXXFLAGS += -I. -c
 OBJDIR = objs
 EXE = print-queue
 
-CATALOGS = da de nl sv
+CATALOGS = da de es nl sv
 
 OBJS := $(addprefix $(OBJDIR)/,$(addsuffix .o,$(EXE)))
 

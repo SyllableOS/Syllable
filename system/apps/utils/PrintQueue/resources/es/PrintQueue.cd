@@ -1,0 +1,56 @@
+//
+//	PrintQueue String Catalog
+//
+//	Translated by: Angel Luis Laguna
+//
+
+MSG_MAINWND_TITLE=0								Cola de impresión
+
+MSG_MAINWND_MENU_APPLICATION=100				Aplicación
+MSG_MAINWND_MENU_APPLICATION_QUIT				Quitar
+MSG_MAINWND_MENU_APPLICATION_ABOUT				Acerca de...
+
+MSG_MAINWND_MENU_VIEW=120						Ver
+MSG_MAINWND_MENU_VIEW_REFRESH					Actualizar
+MSG_MAINWND_MENU_VIEW_COMPLETED					Mostrar completados
+
+MSG_MAINWND_MENU_JOB=130						Tareas
+MSG_MAINWND_MENU_JOB_CANCEL						Cancelar tareas
+
+MSG_MAINWND_MENU_PRINTER=140					Impresora
+MSG_MAINWND_MENU_PRINTER_PAUSE					Pausar impresión
+MSG_MAINWND_MENU_PRINTER_RESUME					Detener impresión
+
+MSG_MAINWND_TOOLBAR_CALCEL=200					Cancelar tareas
+MSG_MAINWND_TOOLBAR_PAUSE						Pausar impresión
+MSG_MAINWND_TOOLBAR_RESUME						Detener impresión
+
+MSG_MAINWND_CONTEXTMENU_CANCEL=300				Cancelar tareas
+MSG_MAINWND_CONTEXTMENU_PAUSE					Pausar impresión
+MSG_MAINWND_CONTEXTMENU_RESUME					Detener impresión
+
+MSG_MAINWND_DOCLIST_ID=500						ID
+MSG_MAINWND_DOCLIST_NAME						Nombre
+MSG_MAINWND_DOCLIST_STATUS						Estado
+MSG_MAINWND_DOCLIST_OWNER						Propietario
+MSG_MAINWND_DOCLIST_SIZE						Tamaño
+MSG_MAINWND_DOCLIST_SUBMITTED					Enviado
+
+MSG_MAINWND_JOBSIZE_KB=600						%d KB
+MSG_MAINWND_JOBSIZE_MB							%d MB
+MSG_MAINWND_JOBSIZE_GB							%d GB
+
+MSG_ABOUTWND_TITLE=1000							Cola de impresión
+MSG_ABOUTWND_TEXT1								Administrador Syllable Cola de impresi�n
+MSG_ABOUTWND_TEXT2								Utilizando CUPS versión %d.%d.%d\n
+MSG_ABOUTWND_CLOSE								_Cerrar
+
+MSG_ALERTWND_PAUSE_TITLE=1100					Operación fallida
+MSG_ALERTWND_PAUSE_CLOSE						_Cerrar
+
+MSG_ALERTWND_RESUME_TITLE=1200					Operación fallida
+MSG_ALERTWND_RESUME_CLOSE						_Cerrar
+
+MSG_ALERTWND_CANCEL_TITLE=1300					Operación fallida
+MSG_ALERTWND_CANCEL_CLOSE						_Cerrar
+
