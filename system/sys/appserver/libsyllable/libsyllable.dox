@@ -464,10 +464,10 @@ INPUT                  = . \
                          gui \
                          storage \
                          translation \
-                         /ainc/util \
-                         /ainc/gui \
-                         /ainc/storage \
-                         /ainc/translation
+                         /system/include/util \
+                         /system/include/gui \
+                         /system/include/storage \
+                         /system/include/translation
 
 # If the value of the INPUT tag contains directories, you can use the 
 # FILE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp 
@@ -1008,7 +1008,7 @@ SEARCH_INCLUDES        = YES
 # contain include files that are not input files but should be processed by 
 # the preprocessor.
 
-INCLUDE_PATH           = /ainc/
+INCLUDE_PATH           = /system/include/
 
 # You can use the INCLUDE_FILE_PATTERNS tag to specify one or more wildcard 
 # patterns (like *.h and *.hpp) to filter out the header-files in the 
