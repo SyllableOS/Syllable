@@ -4,7 +4,7 @@
 //	Translated by: Ruud Kuin - Kaj de Vos
 //
 
-MSG_MAINWND_TITLE=0								Karakterkaart
+MSG_MAINWND_TITLE=0								Tekentabel
 
 MSG_MAINWND_MENU_FILE=100						Bestand
 MSG_MAINWND_MENU_FILE_CHOOSEFONT				Lettertype kiezen...
@@ -12,13 +12,12 @@ MSG_MAINWND_MENU_FILE_EXIT						Afsluiten
 
 MSG_MAINWND_MENU_HELP=200						Hulp
 MSG_MAINWND_MENU_HELP_HELP						Hulp
-MSG_MAINWND_MENU_HELP_ABOUT						Over Karakterkaart...
+MSG_MAINWND_MENU_HELP_ABOUT						Over Tekentabel...
 
-MSG_HELPWND_TITLE=1000							Hulp - Karakterkaart
+MSG_HELPWND_TITLE=1000							Hulp - Tekentabel
 MSG_HELPWND_TEXT								Wanneer u op een karakter klikt,\nwordt het naar het klembord gekopieerd.
 MSG_HELPWND_OK									OK
 
-MSG_ABOUTWND_TITLE=2000							Over Karakterkaart
-MSG_ABOUTWND_TEXT								Karakterkaart 1.1\nTekensetprogramma voor Syllable.\n\nNederlandse vertaling door Ruud Kuin en Kaj de Vos.
+MSG_ABOUTWND_TITLE=2000							Over Tekentabel
+MSG_ABOUTWND_TEXT								Tekentabel 1.1\nTekensetprogramma voor Syllable.\n\nNederlandse vertaling door Ruud Kuin en Kaj de Vos.
 MSG_ABOUTWND_OK									OK
-
