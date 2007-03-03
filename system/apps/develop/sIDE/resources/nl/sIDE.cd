@@ -1,0 +1,90 @@
+//
+//	sIDE String Catalog
+//
+//	Translated by: Bas de Lange - Kaj de Vos
+//
+
+MSG_PWND_TITLE=0						sIDE
+
+MSG_PWND_MENU_APPLICATION=200			Toepassing
+MSG_PWND_MENU_APPLICATION_ABOUT			Over sIDE...
+MSG_PWND_MENU_APPLICATION_QUIT			Afsluiten
+
+MSG_PWND_MENU_PROJECT=210				Projekt
+MSG_PWND_MENU_PROJECT_NEW				Nieuw...
+MSG_PWND_MENU_PROJECT_OPEN				Openen...
+MSG_PWND_MENU_PROJECT_SAVE				Opslaan
+MSG_PWND_MENU_PROJECT_SAVEAS			Opslaan als...
+MSG_PWND_MENU_PROJECT_PREF				Voorkeuren...
+MSG_PWND_MENU_PROJECT_GROUPS			Groepen...
+MSG_PWND_MENU_PROJECT_NEW_FILE			Nieuw bestand...
+MSG_PWND_MENU_PROJECT_ADD_FILE			Bestand toevoegen...
+MSG_PWND_MENU_PROJECT_ADD_LIB			Bibliotheek toevoegen...
+MSG_PWND_MENU_PROJECT_REMOVE_FILE		Bestand verwijderen
+
+MSG_PWND_MENU_BUILD=230					Bouwen
+MSG_PWND_MENU_BUILD_CLEAN				Schoonmaken (make clean)
+MSG_PWND_MENU_BUILD_MAKE				Bouwen (make)
+MSG_PWND_MENU_BUILD_RUN					Uitvoeren
+MSG_PWND_MENU_BUILD_EXPORT_MAKEFILE		Make-bestand exporteren
+
+MSG_PWND_ABOUT_TITLE=240				Over sIDE
+MSG_PWND_ABOUT							De Syllable-IDE\nGeschreven door Arno Klenke, 2001-2006\nDe nieuwe projektdialoog is gemaakt door Rick Caudill.\n\nsIDE wordt uitgegeven onder de GNU General Public License (GPL)\nZie het bestand COPYING, verspreid bij sIDE,\nvoor meer informatie.\n
+
+MSG_PWND_LIST_FILE=250					Bestand
+MSG_PWND_LIST_TYPE						Type
+
+MSG_PWND_NO_GROUPS=260					Geen groepen aanwezig.\n
+MSG_PWND_COULD_NOT_OPEN_PROJ			Kon het projektbestand niet openen.\n
+MSG_PWND_COULD_NOT_OPEN_FILE			Kon het geselecteerde bestand niet openen.\n
+MSG_PWND_COULD_NOT_SAVE_PROJ			Kon dit projekt niet opslaan.\n
+MSG_PWND_NOT_IN_PROJ_DIR				Het geselecteerde bestand zit niet in een submap van dit projekt.\n
+
+MSG_TYPE_HEADER=300						Headerbestand
+MSG_TYPE_C								C-bestand
+MSG_TYPE_CPP							C++-bestand
+MSG_TYPE_LIB							Bibliotheek
+MSG_TYPE_OTHER							Overig
+MSG_TYPE_RES							Toebehoren
+MSG_TYPE_CATALOG						Vertalingen
+MSG_TYPE_IF								Interface
+MSG_TYPE_UNKNOWN						Onbekend
+
+MSG_BUTTON_OK=400						OK
+MSG_BUTTON_CANCEL						Annuleren
+MSG_BUTTON_UP							Op
+MSG_BUTTON_DOWN							Neer
+MSG_BUTTON_ADD							Toevoegen
+MSG_BUTTON_REMOVE						Verwijderen
+
+MSG_ADDWND_TITLE=500					Bestand toevoegen/aanmaken
+MSG_ADDWND_NAME							Naam
+MSG_ADDWND_FILE							Nieuw bestand
+
+MSG_NEWWND_TITLE=600					Nieuw projekt
+MSG_NEWWND_PROJECTS						Projekten
+MSG_NEWWND_NAME							Naam:
+MSG_NEWWMD_DIR							Map:
+MSG_NEWWND_ERR_TITLE					Fout
+MSG_NEWWND_ERR_EXTR						Kon geen sjabloon voor projekt genereren.\n
+MSG_NEWWND_NO_LOC_NAME					Geen lokatie en geen naam aangegeven voor dit projekt.\n
+MSG_NEWWND_NO_LOC						Je moet nog een lokatie aangeven voor dit projekt.\n
+MSG_NEWWND_NO_NAME						Je moet nog een naam aangeven voor dit projekt.
+MSG_NEWWND_NO_DIR						Dit is geen map.
+MSG_NEWWND_NO_DIR_1						Het bestand 
+MSG_NEWWND_NO_DIR_2						 is geen map.\n
+
+MSG_PPREF_TITLE=700						Projektvoorkeuren
+MSG_PPREF_TARGET						Doel
+MSG_PPREF_CATEGORY						Categorie
+MSG_PPREF_INSTALL_PATH					Installatiepad
+MSG_PPREF_CFLAGS						Compilatievlaggen
+MSG_PPREF_LFLAGS						Linkvlaggen
+
+MSG_GROUPS_TITLE=800					Groepenbeheer
+MSG_GROUPS_LIST							Groepen
+
+MSG_ADDLIB_TITLE=900					Bibliotheek toevoegen
+MSG_ADDLIB_SELECT						Selecteren
+MSG_ADDLIB_CUSTOM						Aangepast
+MSG_ADDLIB_GROUP						Groep
