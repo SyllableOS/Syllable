@@ -197,9 +197,9 @@ document ("SOLVING PROBLEMS").
 
 You should read the Welcome text, which can be found in the following locations:
 
-	On line at http://www.syllable.org/docs/latest/welcome.txt
-	On the installation CD at Documentation/welcome.txt
-	In Syllable at /atheos/Documentation/welcome.txt
+	On line at http://www.syllable.org/docs/0.6.3/Welcome.html
+	On the installation CD at /boot/Documentation/Welcome.html
+	In Syllable at /boot/Documentation/Welcome.html
 
 The Welcome file contains information on Syllable websites, mailing lists,
 software and hardware and will help you to get started with Syllable.
