@@ -1,0 +1,22 @@
+; Full source code for Syllable; in addition to the system and base profiles
+
+modules
+;	Single files:
+;	makefile.rules
+;	recurse.rules
+
+	doc
+	build-tools/scripts/auto-build
+	build-tools/scripts/install
+
+; To be deleted from a full source configuration:
+;apps/gnu
+;apps/other
+; Except libdl and libpthread:
+;libs
+;libraries
+;other/fonts
+;other/scri?ts
+;sys/appserver/appserver/server/freetype*
+;sys/media/drivers/ffmpeg/ffmpeg
+
