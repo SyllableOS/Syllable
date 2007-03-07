@@ -304,8 +304,6 @@ modules
 	apps/other/orca--current
 
 	apps/utils/Packager
-;	Deprecated:
-	apps/utils/pkgmanager
 	apps/utils/Preferences/Appearance
 	apps/utils/Preferences/DateTime
 	apps/utils/Preferences/Desktop
