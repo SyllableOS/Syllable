@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.125
+# Version 0.6.126
 # Copyright (c) 2002-2007 Kaj de Vos
 # License: GPL 2 or any later version
 
@@ -492,12 +492,7 @@ def installModule originalStaging, staging, directive, target
 				if exists? root and not
 					begin
 						if recipe['merge-install']
-							@log.header 'Unregistering ' + name = installName(target)
-							action "package unregister #{name} " + @stage + (
-								staging == :imaging and @systemBuild ?
-								' ' + @indexesRoot :
-								''
-							)
+							unregisterModule staging, installName(target), root
 						elsif staging or not firstColumn(parseList(recipe['install-needs'])).include? name
 							@log.header 'Uninstalling ' + name
 							uninstallModule staging, target  # FIXME: double failure logging!
@@ -716,16 +711,29 @@ end
 def registerModule staging, target, root
 	@log.header 'Registering ' + target
 
-	if staging
-		registerPort staging, target and (  # @bootstrap or (
-			not exists? dir = File.join(root, 'init') or
-			for file in listFiles dir
-				# FIXME: break unless action 'source ' + file
-			end
-		)  # )
-	else
-		action 'pkgmanager --add ' + root
-	end
+	action 'package register ' + root + (staging ?
+		# Link node into the staging area
+		' ' + @stage + (staging == :imaging and @systemBuild ?
+			# Link node into the system image
+			' ' + @indexesRoot :
+			''
+		) :
+		''
+	) and
+	(  # @bootstrap or (
+		not exists? dir = File.join(root, 'init') or
+		for file in listFiles dir
+			# FIXME: break unless action 'source ' + file
+		end
+	)  # )
+end
+
+def unregisterModule staging, name, root
+	@log.header 'Unregistering ' + name
+	action 'package unregister ' + root + (staging ?
+		' ' + @stage + (staging == :imaging and @systemBuild ? ' ' + @indexesRoot : '') :
+		''
+	)
 end
 
 def uninstallModule staging, target
@@ -740,14 +748,8 @@ def uninstallModule staging, target
 			dir = installPath staging, target
 			name = shortName target
 
-			unless staging or  # FIXME: no unregistering when staging
-				begin
-					@log.header 'Unregistering ' + name
-					action 'pkgmanager --remove ' + dir
-				end
-			then
-				false
-			else
+			unregisterModule staging, name, dir and
+			begin
 				@log.header 'Deleting ' + name
 				action 'rm --recursive --force ' + dir
 			end
@@ -795,60 +797,6 @@ def buildPackage target
 		@log.failure target
 	else
 		action 'sync'
-	end
-end
-
-def registerPort staging, target  # Create symlinks for a ported package
-#	@log.header 'Registering ' + target
-
-	unless
-		for subdir in ['etc', 'bin', 'sbin', 'info', 'early-init', 'init']  # Flat directories
-			break unless linkSubdir staging, target, subdir, false
-		end and
-		for subdir in ['lib', 'libexec', 'include', 'share'] << 'man'  # Nested directories
-			break unless linkSubdir staging, target, subdir, true
-		end
-	then
-#		@log.failure target
-		false
-	else
-		action 'sync'
-	end
-end
-
-def linkSubdir staging, target, subdir, nesting
-	not exists? dir = File.join(installPath(staging, target), subdir) or
-	begin
-		@log.detail subdir
-		Dir.chdir dir
-
-		Dir[nesting ? '**/*' : '*'].each do |node|
-			break unless
-				linkNode subdir, node,  # Link node into the staging area
-					File.join(dir, node),
-					File.join(@stage, subdir, node) and
-				(staging != :imaging or ! @systemBuild or
-					linkNode subdir, node,  # Link node into the system image
-						File.join(installPath(false, target), subdir, node),
-						File.join(@indexesRoot, subdir, node)
-				)
-		end
-	end
-end
-
-def linkNode subdir, node, source, destination
-	if dir? node
-		dir? destination or action 'mkdir ' + destination
-	elsif symlink? destination
-		if subdir == 'info' and node == 'dir'
-			@log.warning 'info/dir file not registered due to pre-existing file'
-		else
-			@log.error "Conflict: link #{destination} already exists!"
-			# For practical purposes, don't consider this fatal
-		end
-		true
-	else
-		File.symlink source, destination
 	end
 end
 
@@ -1699,7 +1647,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.6.125',
+	puts 'Syllable Build System 0.6.126',
 		'Copyright (c) 2002-2007 Kaj de Vos',
 		'License: GPL 2 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
@@ -1728,9 +1676,6 @@ when 'help', '?', '-?', '-h', '-help', '--help'
 		'  test',
 		'  install       (Run as super user)',
 		'  uninstall     (Run as super user)',
-#		'  register      (Run as super user)',
-#		'  activate/elect   (Run as super user)',
-#		'  unregister    (Run as super user)',
 		'  stage         Build and install in the staging area',
 		'  image         Build and install in the image area',
 		'  package       Build distribution package',
@@ -1896,3 +1841,4 @@ else
 	@log.close
 	exit @log.failures.length  # FIXME: only works when processing a profile
 end
+
