@@ -1,3 +1,7 @@
+* March 8, 2007, Arno Klenke *
+
+The ps2 driver should only be opened one time
+
 * February 23, 2007, Kristian Van Der Vliet *
 
 Increased the maximum partition limit to 32 in the ATA driver.
@@ -1115,6 +1119,8 @@ required; they are implemented in user space as part of libc.
 
 Applied a fix to sys/kernel/kernel/vfs/vfs.c  The fcntl() F_GETLK command
 now works as expected.
+
+
 
 
 

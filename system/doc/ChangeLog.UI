@@ -1,3 +1,7 @@
+* March 8, 2007, Arno Klenke *
+
+Added a missing space in the copy/move operations alert
+
 * February 26, 2007, Arno Klenke *
 
 Fixed a rendering bug
@@ -1330,6 +1334,7 @@ disabled controls.  The following files have been patched:
 
 	The sub-menu arrow is now drawn corretly, and menus which have children
 	are now drawn slightly larger to allow for the arrow.
+
 
 
 
