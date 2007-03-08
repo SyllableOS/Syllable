@@ -1,3 +1,5 @@
+---- 0.6.3 Released -------------------------------------------------------------------
+
 * January 29 2007 Arno Klenke *
 
 Fixed GetBufferSize() in the MediaStageObject class
@@ -205,11 +207,4 @@ Added multiple soundcard support to the media server
 * Nov 18 2003, Kristian Van Der Vliet *
 
 Created this ChangeLog for changes specific to the media framework.
-
-
-
-
-
-
-
 

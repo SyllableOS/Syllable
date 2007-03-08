@@ -1,3 +1,5 @@
+---- 0.6.3 Released -------------------------------------------------------------------
+
 * February 20, 2007, Flemming H. Sørensen *
 
 Fixed Dock-menu bug, that prevented Dock from starting if folder.png was missing.
@@ -195,13 +197,7 @@ Cleaned up message texts in DLogin.
 		* Started merger with Launcher(It is getting there).
 		* Fixed a major bug that was causing the properties dialog to segfault.
 		* Moved code around.  It makes the code easier to read.
-		* Added error testing for scaling images.  If the image is not bigger than the 				screen resolution, the desktop will not scale the image.
+		* Added error testing for scaling images.  If the image is not bigger than the
+ 				screen resolution, the desktop will not scale the image.
 		* Fixed icon text color problems.
-
-
-
-
-
-
-
 
