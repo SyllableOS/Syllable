@@ -1,0 +1,28 @@
+authors				Kristian Van Der Vliet
+status				testing
+
+inherits			sourceforge
+
+headline			CORBA compiler and framework
+description			omniORB is an Object Request Broker (ORB) which implements specification 2.6 of the Common Object Request Broker Architecture (CORBA).
+licenses			GPL LGPL
+
+home				omniorb.sourceforge.net
+
+packages			omniorb/omniORB-4.1.0
+
+build-needs			python
+
+patch-config		bin/scripts
+
+build-dir			.
+
+; XXXKV: I'm sure there is a better way, but this is essentially what we want rather than
+; the .html files ending up in the package root. Except this doesn't work, of course.
+;install-files
+;	doc/omniidl.html	doc/omniidl.html
+;	doc/omnithread.html	doc/omnithread.html
+;	doc/utilities.html	doc/utilities.html
+
+documentation		COPYING COPYING.LIB CREDITS README.unix ReleaseNotes.txt
+

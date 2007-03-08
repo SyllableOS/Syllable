@@ -1,0 +1,106 @@
+diff -ur omniORB-4.1.0_orig/configure omniORB-4.1.0/configure
+--- omniORB-4.1.0_orig/configure	2006-11-02 14:00:00.000000000 +0000
++++ omniORB-4.1.0/configure	2007-03-06 17:17:54.000000000 +0000
+@@ -12612,6 +12612,7 @@
+   *-*-netbsd*)   plat_name="NetBSD";   plat_def="__netbsd__";   os_v="1";;
+   *-*-openbsd*)  plat_name="OpenBSD";  plat_def="__openbsd__";  os_v="3";;
+   *-*-sco*)      plat_name="OSR5";     plat_def="__osr5__";     os_v="5";;
++  *-*-syllable*)   plat_name="Syllable";    plat_def="__syllable__";    os_v="0";;
+ esac
+ 
+ PLATFORM_NAME=$plat_name
+diff -ur omniORB-4.1.0_orig/configure.ac omniORB-4.1.0/configure.ac
+--- omniORB-4.1.0_orig/configure.ac	2006-11-02 14:00:00.000000000 +0000
++++ omniORB-4.1.0/configure.ac	2007-03-06 17:17:57.000000000 +0000
+@@ -184,6 +184,7 @@
+   *-*-netbsd*)   plat_name="NetBSD";   plat_def="__netbsd__";   os_v="1";;
+   *-*-openbsd*)  plat_name="OpenBSD";  plat_def="__openbsd__";  os_v="3";;
+   *-*-sco*)      plat_name="OSR5";     plat_def="__osr5__";     os_v="5";;
++  *-*-syllable*)   plat_name="Syllable";    plat_def="__syllable__";    os_v="0";;
+ esac
+ 
+ AC_SUBST(PLATFORM_NAME, $plat_name)
+diff -ur omniORB-4.1.0_orig/include/omnithread.h omniORB-4.1.0/include/omnithread.h
+--- omniORB-4.1.0_orig/include/omnithread.h	2006-10-23 09:45:28.000000000 +0000
++++ omniORB-4.1.0/include/omnithread.h	2007-03-06 17:18:37.000000000 +0000
+@@ -174,6 +174,9 @@
+ #elif defined(__cygwin__)
+ #include <omnithread/posix.h>
+ 
++#elif defined(__syllable__)
++#include <omnithread/posix.h>
++
+ #else
+ #error "No implementation header file"
+ #endif
+diff -ur omniORB-4.1.0_orig/mk/beforeauto.mk.in omniORB-4.1.0/mk/beforeauto.mk.in
+--- omniORB-4.1.0_orig/mk/beforeauto.mk.in	2006-11-16 13:51:06.000000000 +0000
++++ omniORB-4.1.0/mk/beforeauto.mk.in	2007-03-06 17:18:58.000000000 +0000
+@@ -1096,6 +1096,13 @@
+ 
+ endif
+ 
++###################
++ifdef Syllable
++IMPORT_CPPFLAGS += -D__syllable__
++OMNITHREAD_POSIX_CPPFLAGS = -DNoNanoSleep -DPthreadDraftVersion=10
++OMNITHREAD_CPPFLAGS = -D_REENTRANT
++OMNITHREAD_LIB += -lpthread
++endif
+ 
+ ###########################################################################
+ #
+diff -ur omniORB-4.1.0_orig/src/lib/omnithread/posix.cc omniORB-4.1.0/src/lib/omnithread/posix.cc
+--- omniORB-4.1.0_orig/src/lib/omnithread/posix.cc	2005-07-08 17:04:57.000000000 +0000
++++ omniORB-4.1.0/src/lib/omnithread/posix.cc	2007-03-06 17:20:23.000000000 +0000
+@@ -78,7 +78,7 @@
+ #include <time.h>
+ #include <omnithread.h>
+ 
+-#if (defined(__GLIBC__) && __GLIBC__ >= 2) || defined(__SCO_VERSION__) || defined(__aix__) || defined (__cygwin__) || defined(__darwin__) || defined(__macos__)
++#if (defined(__GLIBC__) && __GLIBC__ >= 2) || defined(__SCO_VERSION__) || defined(__aix__) || defined (__cygwin__) || defined(__darwin__) || defined(__macos__) || defined(__syllable__)
+ // typedef of struct timeval and gettimeofday();
+ #include <sys/time.h>
+ #include <unistd.h>
+@@ -886,7 +886,7 @@
+ 
+ #else
+ 
+-#if defined(__linux__) || defined(__aix__) || defined(__SCO_VERSION__) || defined(__darwin__) || defined(__macos__)
++#if defined(__linux__) || defined(__aix__) || defined(__SCO_VERSION__) || defined(__darwin__) || defined(__macos__) || defined(__syllable__)
+ 
+     struct timeval tv;
+     gettimeofday(&tv, NULL); 
+diff -ur omniORB-4.1.0_orig/src/services/mklib/dir.mk omniORB-4.1.0/src/services/mklib/dir.mk
+--- omniORB-4.1.0_orig/src/services/mklib/dir.mk	2006-11-16 13:51:06.000000000 +0000
++++ omniORB-4.1.0/src/services/mklib/dir.mk	2007-03-06 17:20:52.000000000 +0000
+@@ -138,6 +138,15 @@
+ dynimps := -L. -lCOS4 $(OMNIORB_LIB)
+ endif
+ 
++# XXXKV: This doesn't work fully yet. libCOS4.so is libCOS4.so.1.0 and
++# can't be found with -lCOS4
++ifdef Syllable
++# Syllable thinks the skeleton stubs depend on omniDynamic, and that
++# COSDynamic depends on COS.
++imps := $(OMNIORB_LIB)
++dynimps := -Lshared -lCOS4 $(OMNIORB_LIB)
++endif
++
+ mkshared::
+ 	@(dir=shared; $(CreateDir))
+ 
+diff -ur omniORB-4.1.0_orig/src/tool/omniidl/cxx/dir.mk omniORB-4.1.0/src/tool/omniidl/cxx/dir.mk
+--- omniORB-4.1.0_orig/src/tool/omniidl/cxx/dir.mk	2006-10-29 15:09:51.000000000 +0000
++++ omniORB-4.1.0/src/tool/omniidl/cxx/dir.mk	2007-03-06 17:21:28.000000000 +0000
+@@ -116,6 +116,10 @@
+ 
+ else
+ #### ugly AIX section end, normal build command
++ifdef Syllable
++extralibs += -lpython
++endif
++
+ $(shlib): $(OBJS) $(PYOBJS)
+ 	@(namespec="$(namespec)"; extralibs="$(extralibs)"; $(MakeCXXSharedLibrary))
+ endif
