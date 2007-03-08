@@ -308,7 +308,7 @@ bool OperationCopyFile( const char *pzDst, const char *pzSrc, bool *pbReplaceFil
 			}
 			
 			std::stringstream cMsg;
-			cMsg << "The destination file: " << pzDst << "already exists\nWould you like to replace it?";
+			cMsg << "The destination file: " << pzDst << " already exists\nWould you like to replace it?";
 
 			Alert *pcAlert = new Alert( "Error:",
 				std::string( cMsg.str(), 0, cMsg.str().length(  ) ), Alert::ALERT_QUESTION, 0,

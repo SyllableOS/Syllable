@@ -299,7 +299,7 @@ status_t ps2_open( void* pNode, uint32 nFlags, void **pCookie )
   
     if ( atomic_inc_and_read( &psPort->nOpenCount ) > 0 ) {
     	atomic_dec( &psPort->nOpenCount );
-		return( 0 );
+		return( -EBUSY );
     }
 	ps2_flush();
 	
