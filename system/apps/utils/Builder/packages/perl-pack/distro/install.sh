@@ -28,7 +28,7 @@ do
 	if [ -e "/usr/$package" ]
 	then
 		echo "Uninstalling existing /usr/$package"
-		pkgmanager -r /usr/$package
+		package unregister $package
 		rm -r /usr/$package
 		sync
 	fi
@@ -47,7 +47,7 @@ for package in $packages
 do
 	echo ""
 	echo "Registering $package"
-	pkgmanager -a /usr/$package
+	package register $package
 	sync
 done
 

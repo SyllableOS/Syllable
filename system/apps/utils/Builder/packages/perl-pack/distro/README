@@ -1,14 +1,14 @@
 PERL Pack for Syllable
 ======================
 
-26-Jan-2007
+8-Mar-2007
 
 1 Introduction
 ==============
 
 This distribution contains binary packages of the PERL programming
 language and some packages that depend on it, for the Syllable operating
-system. All packages were built on Syllable 0.6.2 and optimized for a
+system. Most packages were built on Syllable 0.6.3 and optimized for a
 Pentium CPU. They may also run on earlier versions of Syllable, but this
 has not been tested.
 
@@ -32,13 +32,13 @@ Being the root user, go into the directory and run the install script:
     cd PERL-Pit
     ./install.sh
 
-The individual packages will be unpacked into /usr. Subsequently, the
+The individual packages will be unpacked into /usr/. Subsequently, the
 packages will be registered, creating links in Syllable to enable it
 to find the packages' files. If any of the package directories
-already existed under /usr, they will be unregistered and deleted
+already existed under /usr/, they will be unregistered and deleted
 first. Please note, though, that no version of any of the packages
 should be previously registered with a different directory name under
-/usr, because that would lead to conflicting package registrations.
+/usr/, because that would lead to conflicting package registrations.
 
 You should now be able to use the programs in the PERL pack.
 
