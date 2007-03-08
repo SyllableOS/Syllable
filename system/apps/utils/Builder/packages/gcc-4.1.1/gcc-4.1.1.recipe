@@ -10,6 +10,7 @@ warnings
 	Build breaks with GCC 4.1.1 itself installed.
 	GCC has a circular dependency on GLibC.
 ;	LibIberty is both in BinUtils and in GCC.
+notes				GMP with MPFR support is required to build fortran
 
 inherits			gnu
 
@@ -52,6 +53,8 @@ test-needs			dejagnu >= 1.4.1
 ;patch
 ;	cd gcc
 ;	autoconf
+; Doesn't work:
+;make-shared
 
 configure-options
 	--enable-languages=c,c++
