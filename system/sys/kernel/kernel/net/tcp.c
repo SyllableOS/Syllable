@@ -295,9 +295,22 @@ static int tcp_connect( Socket_s *psSocket, const struct sockaddr *psAddr, int n
 
 	if ( psTCPCtrl->tcb_nState != TCPS_CLOSED )
 	{
-		printk( "tcp_connect() invalid state %d\n", psTCPCtrl->tcb_nState );
-		nError = -EINVAL;
-		goto error;
+		if( psTCPCtrl->tcb_nState == TCPS_SYNSENT )
+		{
+			nError = -EALREADY;
+			goto error;
+		}
+		else if( psTCPCtrl->tcb_nState == TCPS_ESTABLISHED )
+		{
+			nError = -EISCONN;
+			goto error;
+		}
+		else
+		{
+			printk( "tcp_connect() invalid state %d\n", psTCPCtrl->tcb_nState );
+			nError = -EINVAL;
+			goto error;
+		}
 	}
 
 	nError = tcp_sync( psTCPCtrl );
