@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION=0.6.3
+VERSION=0.6.4
 
 BUILD_DIR=$HOME/Build
 INSTALLER_DIR=$BUILD_DIR/Installer
