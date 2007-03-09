@@ -30,7 +30,7 @@ modules
 	apps/other/zip-2.32
 ;	For grub-install:
 	apps/gnu/diffutils-2.8.1
-	apps/other/curl-7.16.0
+	apps/other/curl-7.16.1
 
 ;	The Printer preferences and Print Queue require CUPS:
 	system apps/other/cups-1.2.1
