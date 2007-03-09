@@ -22,7 +22,7 @@ modules
 	other/fonts/lcd-fonts-1.1
 	other/fonts/freefont-20060126
 
-	apps/gnu/findutils-4.2.29
+	apps/gnu/findutils-4.2.30
 	apps/gnu/gzip-1.3.9
 	apps/gnu/inetutils-1.5
 	apps/gnu/less-394
