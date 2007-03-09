@@ -1,0 +1,23 @@
+authors				Kristian Van Der Vliet
+status				testing
+
+inherits			sourceforge
+
+headline			CORBA compiler and framework
+description
+	OmniORB is an Object Request Broker (ORB) which implements specification 2.6 of the Common Object Request Broker Architecture (CORBA).
+licenses			GPL LGPL
+
+home				omniorb.sourceforge.net
+packages			omniorb/omniORB-4.1.0
+
+build-needs			python
+
+patch-config		bin/scripts
+
+build-dir			.
+
+;install-tree		documentation
+;move-files			*.html documentation/
+
+documentation		README.unix COPYING COPYING.LIB ReleaseNotes.txt CREDITS
