@@ -1,0 +1,45 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			gnu
+
+headline			GNU Troff typesetting package
+description
+	THE groff (GNU roff) software is a typesetting package which reads plain text mixed with formatting commands and produces formatted output.
+licenses			GPL-2+ FDL
+
+home				www.gnu.org/software/groff/
+packages			groff/groff-1.19.2
+
+_build-needs
+	bison >= 1.875b
+	texinfo >= 4.8
+recommends
+;	For PDF and HTML:
+	ghostscript
+;	For HTML:
+	psutils
+	netpbm
+	x11
+
+configure-env
+	PAGE 'A4'
+;	PAGE 'letter'
+
+;test				./test-groff -man -Tascii src/roff/groff/groff.n
+
+_make-targets
+	all
+;	For documentation:
+	groff.html
+	groff.pdf
+	groff.dvi
+
+install-tree
+documentation
+	README LICENSE COPYING FDL PROBLEMS BUG-REPORT NEWS ChangeLog TODO PROJECTS MORE.STUFF
+;	VERSION REVISION
+build-docs			INSTALL
+internal-docs		MANIFEST
+;links				tbl bin/nroff
+
