@@ -1,0 +1,16 @@
+authors
+	Kaj de Vos
+	Jan Hauffa
+status				testing
+
+inherits			gnu
+
+needs				Syllable >= 0.6.1
+
+licenses			GPL
+home				www.gnu.org/software/m4/
+packages			m4/m4-1.4.8
+
+documentation		README COPYING NEWS ChangeLog AUTHORS THANKS TODO
+develop-docs		examples
+

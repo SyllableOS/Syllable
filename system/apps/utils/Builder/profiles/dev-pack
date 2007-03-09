@@ -9,7 +9,7 @@ modules
 	programming/languages/gcc-4.1.1
 	programming/languages/nasm-0.98.39
 	programming/make-3.80
-	programming/m4-1.4.7
+	programming/m4-1.4.8
 	programming/libtool-1.5.22
 	programming/gdb-6.4
 	file/versioning/patch-2.5.4
