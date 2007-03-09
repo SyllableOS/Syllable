@@ -1,0 +1,22 @@
+authors
+	Kaj de Vos
+	Mike Saunders
+
+inherits			gnu
+
+headline			Pico-like text editor
+licenses			GPL
+home				www.nano-editor.org
+packages			nano/nano-2.0.3
+;locations			http://www.nano-editor.org/dist/v2.0/
+
+needs				s-lang
+
+configure-options
+	--enable-all
+	--with-slang
+
+documentation
+	README COPYING BUGS UPGRADE ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS
+;	doc
+
