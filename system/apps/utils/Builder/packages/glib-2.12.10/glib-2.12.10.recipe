@@ -1,5 +1,6 @@
 authors				Kaj de Vos
 status				testing
+notes				Doesn't support thread priorities yet
 
 home
 	savannah.gnu.org/projects/gnulib/
@@ -23,3 +24,4 @@ configure-options
 
 documentation		README COPYING NEWS ChangeLog AUTHORS
 build-docs			INSTALL
+
