@@ -30,38 +30,62 @@
 void ata_port_identify( ATA_port_s* psPort )
 {
 	uint8 nError, nStatus, nLbaHigh, nLbaMid;
-	/* Read registers */
-	ATA_READ_REG( psPort, ATA_REG_LBA_HIGH, nLbaHigh )
-	ATA_READ_REG( psPort, ATA_REG_LBA_MID, nLbaMid )
-	ATA_READ_REG( psPort, ATA_REG_STATUS, nStatus )
-	ATA_READ_REG( psPort, ATA_REG_ERROR, nError )
+	bool bMasterOnly = false;
+	int i;
+	ATA_controller_s* psCtrl = psPort->psCtrl;
 	
-	if( nError == 0x81 && psPort->nPort == 0 && psPort->psCtrl->nPortsPerChannel > 1 )
-		psPort->psCtrl->psPort[psPort->nChannel*psPort->psCtrl->nPortsPerChannel + 1] = ATA_DEV_NONE;
-	
-	if( nError == 1 || ( psPort->nPort == 0 && nError == 0x81 ) )
+	if( psPort->nPort > 0 )
+		return;
+
+	for( i = 0; i < psPort->psCtrl->nPortsPerChannel; i++ )
 	{
-		if( ( ( nLbaMid == 0x00 && nLbaHigh == 0x00 ) ||
-		( nLbaMid == 0xc3 && nLbaHigh == 0xc3 ) ) && nStatus != 0 )
+		ATA_port_s* psIPort = psCtrl->psPort[psPort->nChannel*psPort->psCtrl->nPortsPerChannel + i];
+		
+		if( i > 0 && bMasterOnly )
 		{
-			psPort->nDevice = ATA_DEV_ATA;
-			return;
-		} else 
+			psIPort->nDevice = ATA_DEV_NONE;
+			psIPort->nCable = ATA_CABLE_NONE;
+			continue;
+		}
+		
+		/* Select port. The first port was already selected by the calling function */
+		if( i > 0 )
+			psIPort->sOps.select( psIPort, 0 );
+		
+		/* Read registers */
+		ATA_READ_REG( psIPort, ATA_REG_LBA_HIGH, nLbaHigh )
+		ATA_READ_REG( psIPort, ATA_REG_LBA_MID, nLbaMid )
+		ATA_READ_REG( psIPort, ATA_REG_STATUS, nStatus )
+		ATA_READ_REG( psIPort, ATA_REG_ERROR, nError )
+		
+		kerndbg( KERN_DEBUG, "ATA ID: High 0%x Low 0%x Status 0%x Error 0%x\n", (uint)nLbaHigh, (uint)nLbaMid, (uint)nStatus, (uint)nError );
+	
+		if( nError == 0x81 && i == 0 )
+			bMasterOnly = true;
+	
+		if( nError == 1 || ( i == 0 && nError == 0x81 ) )
 		{
-			if( ( nLbaMid == 0x14 && nLbaHigh == 0xeb ) ||
-			( nLbaMid == 0x69 && nLbaHigh == 0x96 ) )
+			if( ( ( nLbaMid == 0x00 && nLbaHigh == 0x00 ) ||
+			( nLbaMid == 0xc3 && nLbaHigh == 0xc3 ) ) && nStatus != 0 )
 			{
-				psPort->nDevice = ATA_DEV_ATAPI;
-			} else {
-				psPort->nDevice = ATA_DEV_NONE;
-				psPort->nCable = ATA_CABLE_NONE;
-				return;
+				psIPort->nDevice = ATA_DEV_ATA;
+			} else 
+			{
+				if( ( nLbaMid == 0x14 && nLbaHigh == 0xeb ) ||
+				( nLbaMid == 0x69 && nLbaHigh == 0x96 ) )
+				{
+					psIPort->nDevice = ATA_DEV_ATAPI;
+				} else {
+					psIPort->nDevice = ATA_DEV_NONE;
+					psIPort->nCable = ATA_CABLE_NONE;
+				}
 			}
 		}
-	} else
-	{
-		psPort->nDevice = ATA_DEV_NONE;
-		psPort->nCable = ATA_CABLE_NONE;
+		else
+		{
+			psIPort->nDevice = ATA_DEV_NONE;
+			psIPort->nCable = ATA_CABLE_NONE;
+		}
 	}
 }
 

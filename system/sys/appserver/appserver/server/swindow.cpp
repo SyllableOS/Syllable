@@ -1636,6 +1636,11 @@ bool SrvWindow::DispatchMessage( Message * pcReq )
 			}
 			g_cLayerGate.Close();
 			MakeFocus( bFocus );
+			if( GetTopView()->GetParent() )
+			{
+				GetTopView()->GetParent()->UpdateRegions( false );
+				SrvWindow::HandleMouseTransaction();
+			}
 			g_cLayerGate.Open();
 			break;
 		}
