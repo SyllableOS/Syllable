@@ -130,9 +130,7 @@ MPWindow::MPWindow( const os::Rect & cFrame, const std::string & cName, const st
 	
 	/* Create file selector */
 	m_pcFileDialog = new os::FileRequester( os::FileRequester::LOAD_REQ, new os::Messenger( os::Application::GetInstance() ), "", os::FileRequester::NODE_FILE, false );
-	m_pcFileDialog->Lock();
 	m_pcFileDialog->Start();
-	m_pcFileDialog->Unlock();
 	
 	/* Set Icon */
 	os::Resources cCol( get_image_id() );
@@ -177,7 +175,8 @@ void MPWindow::HandleMessage( os::Message * pcMessage )
 		/* Open file selector */
 		os::Application::GetInstance()->PostMessage( MP_GUI_STOP, os::Application::GetInstance(  ) );
 		os::Application::GetInstance()->PostMessage( MP_GUI_OPEN, os::Application::GetInstance(  ) );
-		m_pcFileDialog->Show();
+		if( !m_pcFileDialog->IsVisible() )
+			m_pcFileDialog->Show();
 		m_pcFileDialog->MakeFocus( true );
 		break;
 	case MP_GUI_OPEN_INPUT:
@@ -1189,7 +1188,6 @@ void MPApp::HandleMessage( os::Message * pcMessage )
 
 bool MPApp::OkToQuit()
 {
-	std::cout << "Quit" << std::endl;
 	if ( m_pcManager->IsValid() )
 	{
 		Close();

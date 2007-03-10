@@ -92,7 +92,8 @@ void SelectWin::HandleMessage( os::Message* pcMessage )
 		}
 		break;
 		case CF_GUI_PLAYLIST_SELECTOR:
-			m_pcFileDialog->Show();
+			if( !m_pcFileDialog->IsVisible() )
+				m_pcFileDialog->Show();
 			m_pcFileDialog->MakeFocus( true );
 		break;
 		case os::M_LOAD_REQUESTED:

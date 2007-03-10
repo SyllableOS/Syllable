@@ -204,6 +204,7 @@ CFWindow::CFWindow( const os::Rect & cFrame, const os::String & cName, const os:
 
 CFWindow::~CFWindow()
 {
+	m_pcFileDialog->Close();
 }
 
 void CFWindow::HandleMessage( os::Message * pcMessage )
@@ -230,7 +231,8 @@ void CFWindow::HandleMessage( os::Message * pcMessage )
 		break;
 	case CF_GUI_ADD_FILE:
 		/* Open file selector */
-		m_pcFileDialog->Show();
+		if( !m_pcFileDialog->IsVisible() )
+			m_pcFileDialog->Show();
 		m_pcFileDialog->MakeFocus( true );
 		break;
 	case CF_GUI_REMOVE_FILE:
