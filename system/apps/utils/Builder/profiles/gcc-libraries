@@ -1,0 +1,9 @@
+; GCC libraries
+
+;	stage libraries/gettext-0.16.1
+;	stage libraries/flex-2.5.33
+;	stage libraries/bison-2.3
+;	stage libraries/binutils-2.17
+
+;	Currently doesn't build with GCC 4.1.1 itself installed:
+	libraries libraries/gcc-4.1.1

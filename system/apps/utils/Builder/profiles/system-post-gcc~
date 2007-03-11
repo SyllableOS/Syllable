@@ -1,0 +1,326 @@
+; Syllable core system
+
+; Root tree structure to build the distribution in
+
+tree
+;	Boot directory structure
+
+	boot
+	boot/grub
+
+;	Main directory structure
+
+	etc
+
+	home home.png
+
+	system
+
+	system/config
+	system/config/drivers
+	system/config/drivers/appserver
+	system/config/drivers/appserver/video
+	system/config/drivers/dev
+	system/config/appearance
+	system/config/appearance/colour-schemes
+
+	system/include
+
+	system/bin
+	system/libraries
+
+	system/fonts
+	system/icons
+	system/keymaps
+	system/sounds
+
+	system/resources
+	system/resources/catalogs
+	system/resources/catalogs/da
+	system/resources/catalogs/de
+	system/resources/catalogs/es
+	system/resources/catalogs/fy
+	system/resources/catalogs/hu
+	system/resources/catalogs/nl
+	system/resources/catalogs/pl
+	system/resources/catalogs/pt-br
+	system/resources/catalogs/ru
+	system/resources/catalogs/sv
+	system/resources/wallpapers
+
+	system/drivers
+
+	system/drivers/dev
+	system/drivers/dev/audio
+	system/drivers/dev/bus
+	system/drivers/dev/disk
+	system/drivers/dev/graphics
+	system/drivers/dev/hcd
+	system/drivers/dev/input
+	system/drivers/dev/misc
+	system/drivers/dev/net
+	system/drivers/dev/net/eth
+	system/drivers/dev/printer
+
+	system/drivers/fs
+
+	system/drivers/net
+	system/drivers/net/if
+
+	system/drivers/appserver
+	system/drivers/appserver/decorators
+	system/drivers/appserver/input
+	system/drivers/appserver/video
+
+	system/extensions
+	system/extensions/dock
+	system/extensions/translators
+	system/extensions/media
+
+	tmp
+
+	var
+	var/log
+
+	usr
+
+	usr/indexes
+	usr/indexes/bin
+	usr/indexes/etc
+	usr/indexes/include
+	usr/indexes/info
+	usr/indexes/lib
+	usr/indexes/libexec
+	usr/indexes/man
+	usr/indexes/sbin
+	usr/indexes/share
+	usr/indexes/early-init
+	usr/indexes/init
+
+;	For env:
+	usr/bin
+;	usr/etc
+;	For NCurses:
+	usr/include
+;	usr/info
+;	usr/lib
+;	usr/man
+;	usr/sbin
+;	(For terminfo:)
+	usr/share
+;	For manually compiled software:
+	usr/local
+;	For PERL:
+	usr/local/bin
+	usr/local/etc
+	usr/local/include
+	usr/local/info
+	usr/local/lib
+	usr/local/libexec
+	usr/local/man
+	usr/local/sbin
+	usr/local/share
+
+	Applications				applications.png
+	Applications/Preferences	settings.png
+	Applications/Xpdf
+	Documentation
+	Documentation/images
+
+resources
+	boot/grub				menu.lst							text/plain
+	system/config			kernel.cfg							text/plain
+	system/config			net.cfg								text/plain
+	system/config			appserver							text/plain
+	home					Home-Directories
+	Documentation			documentation/Welcome.html			text/html
+	Documentation/images	documentation/images/Syllable.gif	image/gif
+	Documentation			documentation/Copyrights.html		text/html
+
+modules
+	other/config/default
+	other/config/etc
+	other/fonts/dejavu-fonts-2.15
+	other/icons
+	other/init
+	other/keymaps
+	sys/include
+	sys/kernel/kernel
+	sys/kernel/drivers/bus/acpi
+	sys/kernel/drivers/bus/ata
+	sys/kernel/drivers/bus/pci
+	sys/kernel/drivers/bus/scsi
+	sys/kernel/drivers/bus/usb
+	sys/kernel/drivers/hcd/ata_pci
+	sys/kernel/drivers/hcd/usb_ehci
+	sys/kernel/drivers/hcd/usb_ohci
+	sys/kernel/drivers/hcd/usb_uhci
+	sys/kernel/drivers/ps2
+	sys/kernel/drivers/input/usb_hid
+	sys/kernel/drivers/disk/bios
+	sys/kernel/drivers/disk/usb
+	sys/kernel/drivers/graphics/geforcefx
+	sys/kernel/drivers/graphics/i855
+	sys/kernel/drivers/graphics/mach64
+	sys/kernel/drivers/graphics/mga
+	sys/kernel/drivers/graphics/radeon
+	sys/kernel/drivers/graphics/riva
+	sys/kernel/drivers/graphics/s3_virge
+	sys/kernel/drivers/graphics/savage
+	sys/kernel/drivers/graphics/sis3xx
+	sys/kernel/drivers/graphics/tdfx
+	sys/kernel/drivers/graphics/trident
+	sys/kernel/drivers/graphics/vmware
+	sys/kernel/drivers/misc/apm
+	sys/kernel/drivers/misc/battery
+	sys/kernel/drivers/misc/devices
+	sys/kernel/drivers/misc/random
+	sys/kernel/drivers/misc/serial
+	sys/kernel/drivers/misc/usb_printer
+	sys/kernel/drivers/misc/lp_printer
+	sys/kernel/drivers/misc/w8378x
+	sys/kernel/drivers/net/3c509
+	sys/kernel/drivers/net/3c59x
+	sys/kernel/drivers/net/dp83815
+	sys/kernel/drivers/net/eepro100
+	sys/kernel/drivers/net/ne2000
+	sys/kernel/drivers/net/nvidia
+	sys/kernel/drivers/net/pcnet32
+	sys/kernel/drivers/net/rtl8139
+	sys/kernel/drivers/net/rtl8169
+	sys/kernel/drivers/net/sis
+	sys/kernel/drivers/net/tg3
+	sys/kernel/drivers/net/tulip
+	sys/kernel/drivers/net/via
+	sys/kernel/drivers/audio/i8xx
+	sys/kernel/drivers/audio/vt82xx
+	sys/kernel/drivers/audio/hda
+	sys/kernel/drivers/sound/emu10k1
+	sys/kernel/drivers/sound/es1370
+	sys/kernel/drivers/sound/es1371
+;	sys/kernel/drivers/sound/i810
+	sys/kernel/drivers/sound/maestro
+	sys/kernel/drivers/sound/sbpro
+	sys/kernel/drivers/sound/trident
+	sys/kernel/drivers/sound/via686a
+;	sys/kernel/drivers/sound/vt82xx
+	sys/kernel/drivers/sound/ymfpci
+	sys/kernel/fs/afs
+	sys/kernel/fs/ext2
+	sys/kernel/fs/fatfs
+	sys/kernel/fs/iso9660
+	sys/kernel/fs/ramfs
+;	sys/kernel/fs/tmpfs
+	sys/kernel/fs/ntfs
+
+	system libs/glibc-2.4-image
+	system libs/zlib-1.2.3
+
+	libs/libdl
+	libs/libpthread
+	libs/ncurses-5.6
+
+;	GrUB can use Curses:
+;	Currently requires GCC 3:
+;	sys/boot/grub-0.97-syllable
+
+;	Currently conflicts with GetText on GLibC 2.3.x:
+	apps/gnu/grep-2.5.1a
+
+;	stage libraries/gettext-0.16.1
+;	stage libraries/flex-2.5.33
+;	stage libraries/bison-2.3
+;	stage libraries/binutils-2.17
+
+;	Currently doesn't build with GCC 4.1.1 itself installed:
+;	libraries libraries/gcc-4.1.1
+
+;	freetype-config needs to be in the path!
+;	Use the bootstrap settings directive, or install the same FreeType in the host system:
+	stage libraries/freetype-2.3.2
+
+	stage libraries/libjpeg-6b-static
+	stage libraries/libpng-1.2.14
+	stage libraries/libungif-4.1.4
+	stage libraries/libogg-1.1.3
+	stage libraries/libvorbis-1.1.2
+;	Conflicts with BASh 2.03:
+;	stage libraries/ffmpeg--current
+
+	sys/appserver/libsyllable
+	sys/appserver/appserver/server
+	sys/appserver/appserver/drivers/decorators/amiga
+	sys/appserver/appserver/drivers/decorators/beish
+	sys/appserver/appserver/drivers/decorators/drow
+	sys/appserver/appserver/drivers/decorators/mulvane
+	sys/appserver/appserver/drivers/decorators/next
+	sys/appserver/appserver/drivers/decorators/photon
+	sys/appserver/appserver/drivers/decorators/red
+;	Locks up and makes the system inaccessible:
+;	sys/appserver/appserver/drivers/decorators/warpspeed
+	sys/appserver/appserver/drivers/decorators/win98
+	sys/appserver/appserver/drivers/input/keyboard
+	sys/appserver/appserver/drivers/input/ps2mouse
+	sys/appserver/appserver/drivers/input/sermouse
+	sys/appserver/appserver/drivers/input/usbmouse
+	sys/appserver/appserver/drivers/input/usbkeyboard
+	sys/appserver/appserver/drivers/video/geforcefx
+	sys/appserver/appserver/drivers/video/i855
+	sys/appserver/appserver/drivers/video/mach64
+	sys/appserver/appserver/drivers/video/mga
+	sys/appserver/appserver/drivers/video/radeon
+	sys/appserver/appserver/drivers/video/riva
+	sys/appserver/appserver/drivers/video/s3
+	sys/appserver/appserver/drivers/video/savage
+	sys/appserver/appserver/drivers/video/sis3xx
+	sys/appserver/appserver/drivers/video/tdfx
+	sys/appserver/appserver/drivers/video/trident
+	sys/appserver/appserver/drivers/video/vmware
+	sys/appserver/registrar
+	sys/translators
+	sys/media/libmedia
+	sys/media/mediaserver
+	sys/media/drivers/ac97_audio
+	sys/media/drivers/cdda
+	sys/media/drivers/cdrom
+	sys/media/drivers/ffmpeg
+	sys/media/drivers/hd_audio
+	sys/media/drivers/oss
+	sys/media/drivers/raw
+	sys/media/drivers/screen
+	sys/media/drivers/serveraudio
+	sys/media/drivers/vorbis
+	apps/utils/dlogin
+	apps/desktop/desktop
+	apps/desktop/dock
+	apps/desktop/dock_plugins/mixer
+	apps/desktop/file_browser
+	apps/gnu/bash-3.2
+	apps/gnu/coreutils-6.4
+	apps/gnu/sed-4.1.5
+	apps/other/unzip-5.52
+
+	apps/gnu/bzip2-1.0.3
+	apps/other/orca--current
+
+	apps/utils/Packager
+	apps/utils/Preferences/Appearance
+	apps/utils/Preferences/DateTime
+	apps/utils/Preferences/Desktop
+	apps/utils/Preferences/Dock
+	apps/utils/Preferences/FileTypes
+	apps/utils/Preferences/Font
+	apps/utils/Preferences/Keyboard
+	apps/utils/Preferences/Locale
+	apps/utils/Preferences/Login
+	apps/utils/Preferences/Media
+	apps/utils/Preferences/Network
+	apps/utils/Preferences/Screen
+	apps/utils/Preferences/UsersAndGroups
+	apps/utils/aterm
+	apps/utils/debug
+	apps/utils/dhcpc
+	apps/utils/fsutils
+	apps/utils/man2html
+	apps/utils/nettools
+	apps/utils/systools

@@ -1,0 +1,106 @@
+; Syllable core system, before the GCC libraries
+
+resources
+	boot/grub				menu.lst							text/plain
+	system/config			kernel.cfg							text/plain
+	system/config			net.cfg								text/plain
+	system/config			appserver							text/plain
+	home					Home-Directories
+	Documentation			documentation/Welcome.html			text/html
+	Documentation/images	documentation/images/Syllable.gif	image/gif
+	Documentation			documentation/Copyrights.html		text/html
+
+modules
+	other/config/default
+	other/config/etc
+	other/fonts/dejavu-fonts-2.15
+	other/icons
+	other/init
+	other/keymaps
+	sys/include
+	sys/kernel/kernel
+	sys/kernel/drivers/bus/acpi
+	sys/kernel/drivers/bus/ata
+	sys/kernel/drivers/bus/pci
+	sys/kernel/drivers/bus/scsi
+	sys/kernel/drivers/bus/usb
+	sys/kernel/drivers/hcd/ata_pci
+	sys/kernel/drivers/hcd/usb_ehci
+	sys/kernel/drivers/hcd/usb_ohci
+	sys/kernel/drivers/hcd/usb_uhci
+	sys/kernel/drivers/ps2
+	sys/kernel/drivers/input/usb_hid
+	sys/kernel/drivers/disk/bios
+	sys/kernel/drivers/disk/usb
+	sys/kernel/drivers/graphics/geforcefx
+	sys/kernel/drivers/graphics/i855
+	sys/kernel/drivers/graphics/mach64
+	sys/kernel/drivers/graphics/mga
+	sys/kernel/drivers/graphics/radeon
+	sys/kernel/drivers/graphics/riva
+	sys/kernel/drivers/graphics/s3_virge
+	sys/kernel/drivers/graphics/savage
+	sys/kernel/drivers/graphics/sis3xx
+	sys/kernel/drivers/graphics/tdfx
+	sys/kernel/drivers/graphics/trident
+	sys/kernel/drivers/graphics/vmware
+	sys/kernel/drivers/misc/apm
+	sys/kernel/drivers/misc/battery
+	sys/kernel/drivers/misc/devices
+	sys/kernel/drivers/misc/random
+	sys/kernel/drivers/misc/serial
+	sys/kernel/drivers/misc/usb_printer
+	sys/kernel/drivers/misc/lp_printer
+	sys/kernel/drivers/misc/w8378x
+	sys/kernel/drivers/net/3c509
+	sys/kernel/drivers/net/3c59x
+	sys/kernel/drivers/net/dp83815
+	sys/kernel/drivers/net/eepro100
+	sys/kernel/drivers/net/ne2000
+	sys/kernel/drivers/net/nvidia
+	sys/kernel/drivers/net/pcnet32
+	sys/kernel/drivers/net/rtl8139
+	sys/kernel/drivers/net/rtl8169
+	sys/kernel/drivers/net/sis
+	sys/kernel/drivers/net/tg3
+	sys/kernel/drivers/net/tulip
+	sys/kernel/drivers/net/via
+	sys/kernel/drivers/audio/i8xx
+	sys/kernel/drivers/audio/vt82xx
+	sys/kernel/drivers/audio/hda
+	sys/kernel/drivers/sound/emu10k1
+	sys/kernel/drivers/sound/es1370
+	sys/kernel/drivers/sound/es1371
+;	sys/kernel/drivers/sound/i810
+	sys/kernel/drivers/sound/maestro
+	sys/kernel/drivers/sound/sbpro
+	sys/kernel/drivers/sound/trident
+	sys/kernel/drivers/sound/via686a
+;	sys/kernel/drivers/sound/vt82xx
+	sys/kernel/drivers/sound/ymfpci
+	sys/kernel/fs/afs
+	sys/kernel/fs/ext2
+	sys/kernel/fs/fatfs
+	sys/kernel/fs/iso9660
+	sys/kernel/fs/ramfs
+;	sys/kernel/fs/tmpfs
+	sys/kernel/fs/ntfs
+
+	system libs/glibc-2.4-image
+	system libs/zlib-1.2.3
+
+	libs/libdl
+	libs/libpthread
+	libs/ncurses-5.6
+
+;	GrUB can use Curses:
+;	Currently requires GCC 3:
+;	sys/boot/grub-0.97-syllable
+
+;	Currently conflicts with GetText on GLibC 2.3.x:
+	apps/gnu/grep-2.5.1a
+
+;	stage libraries/gettext-0.16.1
+;	stage libraries/flex-2.5.33
+;	stage libraries/bison-2.3
+;	stage libraries/binutils-2.17
