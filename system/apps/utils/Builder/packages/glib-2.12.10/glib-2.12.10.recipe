@@ -24,4 +24,5 @@ configure-options
 
 documentation		README COPYING NEWS ChangeLog AUTHORS
 build-docs			INSTALL
+internal-docs		HACKING MAINTAINERS
 
