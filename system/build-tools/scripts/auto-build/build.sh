@@ -95,8 +95,8 @@ build log >> $SYSTEM_LOG
 build log failures >> $SYSTEM_FAILURE_LOG
 build log summary >> $SYSTEM_SUMMARY_LOG
 sync
-echo "Switching to Freetype-2.2.1"
-build install $HOME/Packages/freetype-2.2.1.bin.2.zip 1>>$LOG 2>>$LOG
+echo "Switching to Freetype-2.3.2"
+build install $HOME/Packages/freetype-2.3.2.bin.1.zip 1>>$LOG 2>>$LOG
 sync
 
 # XXXKV: Now on with the show...

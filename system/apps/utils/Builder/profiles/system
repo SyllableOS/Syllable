@@ -237,7 +237,7 @@ modules
 
 ;	freetype-config needs to be in the path!
 ;	Use the bootstrap settings directive, or install the same FreeType in the host system:
-	stage libraries/freetype-2.2.1
+	stage libraries/freetype-2.3.2
 
 	stage libraries/libjpeg-6b-static
 	stage libraries/libpng-1.2.14
