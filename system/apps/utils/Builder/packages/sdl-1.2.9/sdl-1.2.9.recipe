@@ -1,7 +1,7 @@
 authors
 	Arno Klenke
 	Kaj de Vos
-status				testing
+status				broken
 
 licenses			LGPL-2 PD
 home				www.libsdl.org
@@ -27,3 +27,4 @@ build-docs			INSTALL
 develop-docs
 	docs/index.html docs/html
 	test
+
