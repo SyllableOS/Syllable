@@ -47,10 +47,16 @@ __getrusage (who, usage)
     if (get_thread_info( thread, &info ) == 0)
     {
       usage->ru_utime.tv_sec = info.ti_user_time / 100000;
-      usage->ru_utime.tv_usec = info.ti_user_time % usage->ru_utime.tv_sec;
+      if (usage->ru_utime.tv_sec > 0)
+        usage->ru_utime.tv_usec = info.ti_user_time % usage->ru_utime.tv_sec;
+      else
+        usage->ru_utime.tv_usec = 0;
 
       usage->ru_stime.tv_sec = info.ti_sys_time / 100000;
-      usage->ru_stime.tv_usec = info.ti_sys_time % usage->ru_stime.tv_sec;
+      if (usage->ru_stime.tv_sec > 0)
+        usage->ru_stime.tv_usec = info.ti_sys_time % usage->ru_stime.tv_sec;
+      else
+        usage->ru_stime.tv_usec = 0;
 
       error = 0;
     }
