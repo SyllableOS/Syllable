@@ -10,7 +10,7 @@ warnings
 	Build breaks with GCC 4.1.1 itself installed.
 	GCC has a circular dependency on GLibC.
 ;	LibIberty is both in BinUtils and in GCC.
-notes				GMP with MPFR support is required to build fortran
+notes				GMP with MPFR support is required to build Fortran
 
 inherits			gnu
 
@@ -110,4 +110,3 @@ links
 	libgcc.a		lib/gcc/i586-pc-syllable/4.1.1/libgcc_static.a
 ;	For some packages:
 ;	bin/cpp			lib/
-
