@@ -1,0 +1,56 @@
+//
+//	PrintQueue String Catalog
+//
+//	Translated by: Ilya Krol
+//
+
+MSG_MAINWND_TITLE=0								Очередь печати
+
+MSG_MAINWND_MENU_APPLICATION=100				Приложение
+MSG_MAINWND_MENU_APPLICATION_QUIT				Выйти
+MSG_MAINWND_MENU_APPLICATION_ABOUT				О программе...
+
+MSG_MAINWND_MENU_VIEW=120						Вид
+MSG_MAINWND_MENU_VIEW_REFRESH					Обновить
+MSG_MAINWND_MENU_VIEW_COMPLETED					Показать завершённые задачи
+
+MSG_MAINWND_MENU_JOB=130						Задание
+MSG_MAINWND_MENU_JOB_CANCEL						Отменить задачу
+
+MSG_MAINWND_MENU_PRINTER=140					Принтер
+MSG_MAINWND_MENU_PRINTER_PAUSE					Приостановить печать
+MSG_MAINWND_MENU_PRINTER_RESUME					Завершить печать
+
+MSG_MAINWND_TOOLBAR_CALCEL=200					Отменить задачу
+MSG_MAINWND_TOOLBAR_PAUSE						Приостановить печать
+MSG_MAINWND_TOOLBAR_RESUME						Прервать печать
+
+MSG_MAINWND_CONTEXTMENU_CANCEL=300				Отменить задачу
+MSG_MAINWND_CONTEXTMENU_PAUSE					Приостановить печать
+MSG_MAINWND_CONTEXTMENU_RESUME					Прервать печать
+
+MSG_MAINWND_DOCLIST_ID=500						Идентиф.
+MSG_MAINWND_DOCLIST_NAME						Имя
+MSG_MAINWND_DOCLIST_STATUS						Статус
+MSG_MAINWND_DOCLIST_OWNER						Владелец
+MSG_MAINWND_DOCLIST_SIZE						Размер
+MSG_MAINWND_DOCLIST_SUBMITTED					Передано
+
+MSG_MAINWND_JOBSIZE_KB=600						%d КБ
+MSG_MAINWND_JOBSIZE_MB							%d МБ
+MSG_MAINWND_JOBSIZE_GB							%d ГБ
+
+MSG_ABOUTWND_TITLE=1000							Очередь печати
+MSG_ABOUTWND_TEXT1								Управление очередью печати в Syllable 
+MSG_ABOUTWND_TEXT2								Используется CUPS версии %d.%d.%d\n
+MSG_ABOUTWND_CLOSE								_Закрыть
+
+MSG_ALERTWND_PAUSE_TITLE=1100					Действие не удалось
+MSG_ALERTWND_PAUSE_CLOSE						_Закрыть
+
+MSG_ALERTWND_RESUME_TITLE=1200					Действие не удалось
+MSG_ALERTWND_RESUME_CLOSE						_Закрыть
+
+MSG_ALERTWND_CANCEL_TITLE=1300					Действие не удалось
+MSG_ALERTWND_CANCEL_CLOSE						_Закрыть
+
