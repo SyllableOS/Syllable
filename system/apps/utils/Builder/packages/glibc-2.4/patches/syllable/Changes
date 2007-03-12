@@ -1,5 +1,9 @@
 Glibc Syllable Changelog
 
+* March 12th 2007 *
+
+	o getrusage.c: Fixed a possible division by 0.
+
 * Febuary 23rd 2007 *
 
 	o readdir64.c: New file. Replaces stub for dirent/readdir64.c.
