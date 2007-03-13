@@ -1149,6 +1149,10 @@ static int open_file( Inode_s **ppsParent, const char *pzName, int nNameLen, int
 			{
 				psFile->f_nType = FDT_SYMLINK;
 			}
+			else if ( S_ISFIFO( sStat.st_mode ) )
+			{
+				psFile->f_nType = FDT_FIFO;
+			}
 			else
 			{
 				psFile->f_nType = FDT_FILE;
@@ -1515,13 +1519,13 @@ static int create_pipe( bool bKernel, int *pnFiles )
 		return ( -ENOMEM );
 	}
 	LOCK_INODE_RO( psInode );
-	nRdFile = open_inode( bKernel, psInode, FDT_FILE, O_RDONLY );
+	nRdFile = open_inode( bKernel, psInode, FDT_FIFO, O_RDONLY );
 	if ( nRdFile < 0 )
 	{
 		nError = nRdFile;
 		goto error1;
 	}
-	nWrFile = open_inode( bKernel, psInode, FDT_FILE, O_WRONLY );
+	nWrFile = open_inode( bKernel, psInode, FDT_FIFO, O_WRONLY );
 	if ( nWrFile < 0 )
 	{
 		nError = nWrFile;
@@ -3758,6 +3762,9 @@ off_t do_lseek( bool bKernel, int nFile, off_t nOffset, int nMode )
 	{
 		return ( -EBADF );
 	}
+
+	if( psFile->f_nType == FDT_FIFO )
+		return -ESPIPE;
 
 	switch ( nMode )
 	{

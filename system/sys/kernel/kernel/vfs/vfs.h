@@ -167,7 +167,8 @@ enum
 	FDT_SYMLINK,
 	FDT_ATTR_DIR,
 	FDT_INDEX_DIR,
-	FDT_SOCKET
+	FDT_SOCKET,
+	FDT_FIFO
 };
 
 struct _File
