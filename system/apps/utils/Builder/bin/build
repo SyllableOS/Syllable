@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.128
+# Version 0.6.129
 # Copyright (c) 2002-2007 Kaj de Vos
 # License: GPL 2 or any later version
 
@@ -18,10 +18,14 @@ def prepare target
 		Dir.mkdir @stage
 	end
 
-	Dir.mkdir File.join(@stage, 'indexes')
+	Dir.mkdir File.join(@stage, 'bootstrap')
 
-	for dir in ['etc', 'bin', 'sbin', 'include', 'lib', 'libexec', 'man', 'info', 'share', 'early-init', 'init']
-		Dir.mkdir File.join(@stage, 'indexes', dir)
+	for indexes in ['indexes', 'bootstrap/indexes']
+		Dir.mkdir File.join(@stage, indexes)
+
+		for dir in ['etc', 'bin', 'sbin', 'include', 'lib', 'libexec', 'man', 'info', 'share', 'early-init', 'init']
+			Dir.mkdir File.join(@stage, indexes, dir)
+		end
 	end
 
 	Dir.mkdir @image
@@ -534,7 +538,7 @@ def installModule originalStaging, staging, directive, target
 							else
 								((vars = recipe['install-env']) ? toVariables(vars) + ' ' : '') +
 								superAccess + makeCommand(target) +
-								(	staging != :imaging && configured ?
+								(	staging != 'image' && configured ?
 										'' :
 										((p = recipe['system-prefix-var']) ?
 											" #{p}=" + @systemRoot :
@@ -602,7 +606,7 @@ def installModule originalStaging, staging, directive, target
 									for line in parseList files
 										source, destination = toList line
 										break unless action superAccess + "mv #{source} " + (
-											destination[0, 1] == '/' && staging == :imaging ?
+											destination[0, 1] == '/' && staging == 'image' ?
 												File.join(@systemImage, destination) :
 												destination
 										)
@@ -645,11 +649,11 @@ def installModule originalStaging, staging, directive, target
 								linkFile = File.basename destination
 
 								if linkPath[0, 1] == '/'  # A link into the system
-									next if staging == :staging
+									next if staging == 'stage'
 
 									original = File.join prefix(staging, target), original if original['/']
 
-									if staging == :imaging
+									if staging == 'image'
 										linkPath = File.join @systemRoot,
 											linkPath[0, 4] == '/usr' ?
 												'' :
@@ -683,7 +687,7 @@ def installModule originalStaging, staging, directive, target
 						)
 					then
 						false
-					elsif (originalStaging == :imaging and @systemBuild or not originalStaging) and
+					elsif (originalStaging == 'image' and @systemBuild or not originalStaging) and
 							['system', 'libraries'].include? directive and not
 						begin
 							@log.header 'Moving shared libraries into system'
@@ -714,12 +718,13 @@ def registerModule staging, target, root
 	@log.header 'Registering ' + target
 
 	action 'package register ' + root + (staging ?
-		# Link node into the staging area
-		' ' + File.join(@stage, 'indexes') + (staging == :imaging && @systemBuild ?
-			# Link node into the system image
-			' ' + @indexesRoot :
-			''
-		) :
+			# Link node into the staging area
+			' ' + File.join(@stage, staging == 'bootstrap' ? 'bootstrap/indexes' : 'indexes') +
+			(staging == 'image' && @systemBuild ?
+				# Link node into the system image
+				' ' + @indexesRoot :
+				''
+			) :
 		''
 	) and
 	(  # @bootstrap or (
@@ -733,7 +738,8 @@ end
 def unregisterModule staging, name, root
 	@log.header 'Unregistering ' + name
 	action 'package unregister ' + root + (staging ?
-		' ' + File.join(@stage, 'indexes') + (staging == :imaging && @systemBuild ? ' ' + @indexesRoot : '') :
+			' ' + File.join(@stage, staging == 'bootstrap' ? 'bootstrap/indexes' : 'indexes') +
+			(staging == 'image' && @systemBuild ? ' ' + @indexesRoot : '') :
 		''
 	)
 end
@@ -811,9 +817,11 @@ def buildModule staging, directive, target
 		cleanModule target
 		Dir.chdir @workDir
 
-		if configureModule(effectiveStaging = ['stage', 'libraries'].include?(directive) ?
-				:staging :
-				staging,
+		if configureModule(effectiveStaging = case directive
+			when 'libraries' then 'stage'
+			when 'system' then staging
+			else directive
+			end,
 			target
 		)
 			@log.header 'Making'
@@ -935,7 +943,12 @@ def configure targets
 		directive = false
 		directive, target = target.split if target[' ']
 
-		configureModule ['stage', 'libraries'].include?(directive) ? :staging : false, target
+		configureModule case directive
+			when 'libraries' then 'stage'
+			when 'system' then false
+			else directive
+			end,
+			target
 		Dir.chdir @workDir
 	end
 end
@@ -962,7 +975,12 @@ def make targets
 		directive, target = target.split if target[' ']
 
 		Dir.chdir target
-		makeModule ['stage', 'libraries'].include?(directive) ? :staging : false, target
+		makeModule case directive
+			when 'libraries' then 'stage'
+			when 'system' then false
+			else directive
+			end,
+			target
 		Dir.chdir @workDir
 	end
 end
@@ -1058,7 +1076,7 @@ end
 def build staging, targets
 	@log.header 'Building ' + targets.to_s
 
-	if staging == :imaging and @systemBuild and targets.profile and resources = targets.profile['resources']
+	if staging == 'image' and @systemBuild and targets.profile and resources = targets.profile['resources']
 		@log.header 'Installing resources'
 
 		Dir.chdir @image
@@ -1301,15 +1319,13 @@ def buildDir target
 	(dir = getRecipe(target)['build-dir']) ? dir : '../_' + fullName(target)
 end
 
-def prefix staging, port
-	File.join staging == :staging ? @stage : '/usr', installName(port)
-end
-
 def installRoot staging
 	case staging
-	when :staging
+	when 'stage'
 		@stage
-	when :imaging
+	when 'bootstrap'
+		File.join @stage, 'bootstrap'
+	when 'image'
 		@systemBuild ? File.join(@systemRoot, 'usr') : @image
 	else
 		'/usr'
@@ -1318,6 +1334,10 @@ end
 
 def installPath staging, port
 	File.join installRoot(staging), installName(port)
+end
+
+def prefix staging, port
+	File.join staging == 'image' ? '/usr' : installRoot(staging), installName(port)
 end
 
 def recipePath portPath
@@ -1649,7 +1669,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.6.128',
+	puts 'Syllable Build System 0.6.129',
 		'Copyright (c) 2002-2007 Kaj de Vos',
 		'License: GPL 2 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
@@ -1679,6 +1699,7 @@ when 'help', '?', '-?', '-h', '-help', '--help'
 		'  install       (Run as super user)',
 		'  uninstall     (Run as super user)',
 		'  stage         Build and install in the staging area',
+		'  bootstrap     Build and install in the bootstrap area',
 		'  image         Build and install in the image area',
 		'  package       Build distribution package',
 		'  pack          Build a compound package',
@@ -1731,23 +1752,29 @@ else
 
 				# Pick up executables from the staging area
 
-				if @bootstrap then ENV['PATH'] =
+				ENV['PATH'] =
+					if @bootstrap
 						if @systemBuild
-							(File.join @image, 'system/bin') + ':'
 #							Executables may not be position-independent:
+							(File.join @image, 'system/bin') + ':'
 #							(File.join @image, 'usr/glibc/sbin') + ':' +
 #							(File.join @image, 'usr/glibc/bin') + ':'
 						else
 							''
 						end +
 
-						(File.join @stage, 'indexes', 'sbin') +
-						':' + (File.join @stage, 'indexes', 'bin') +
+						(File.join @stage, 'indexes', 'sbin') + ':' +
+						(File.join @stage, 'indexes', 'bin') + ':'
+					else
+						''
+					end +
 
-						':' + ENV['PATH']
+					(File.join @stage, 'bootstrap/indexes', 'sbin') + ':' +
+					(File.join @stage, 'bootstrap/indexes', 'bin') + ':' +
 
-					@log.extra 'PATH: ' + ENV['PATH']
-				end
+					ENV['PATH']
+
+				@log.extra 'PATH: ' + ENV['PATH']
 
 				# Pick up headers from the staging area and system repository
 
@@ -1765,7 +1792,8 @@ else
 					end +
 
 					# Linked headers
-					(File.join @stage, 'indexes', 'include')
+					(File.join @stage, 'indexes', 'include') + ':' +
+					(File.join @stage, 'bootstrap/indexes', 'include')
 
 				ENV['ATHEOS_INCLUDE_PATH'] = File.join @workDir, 'sys/include' if @systemBuild
 				ENV['C_INCLUDE_PATH'] = headers +
@@ -1780,8 +1808,8 @@ else
 
 				ENV['ATHEOS_LIB_PATH'] = File.join @image, 'system/libraries' if @systemBuild
 
-				if @bootstrap
-					ENV[name = (@syllable ? 'DLL' : 'LD_LIBRARY') + '_PATH'] =
+				ENV[name = (@syllable ? 'DLL' : 'LD_LIBRARY') + '_PATH'] =
+					if @bootstrap
 						if @systemBuild
 							(File.join @image, 'system/libraries') + ':' +
 							(File.join @image, 'system') + ':'
@@ -1789,23 +1817,28 @@ else
 							''
 						end +
 
-						(File.join @stage, 'indexes', 'lib') +
-						((var = ENV[name]) ? ':' + var : '')
+						(File.join @stage, 'indexes', 'lib') + ':'
+					end +
 
-					@log.extra name + ': ' + ENV[name]
-				end
+					File.join(@stage, 'bootstrap/indexes', 'lib') +
+
+					((var = ENV[name]) ? ':' + var : '')
+
+				@log.extra name + ': ' + ENV[name]
 
 				if @syllable
 					ENV['LIBRARY_PATH'] =
 						(@systemBuild ? File.join(@image, 'system/libraries') + ':' : '') +
-						File.join(@stage, 'indexes', 'lib') +
+						File.join(@stage, 'indexes', 'lib') + ':' +
+						File.join(@stage, 'bootstrap/indexes', 'lib') +
 						((var = ENV['LIBRARY_PATH']) && !@isolateStage ? ':' + var : '')
 
 					@log.extra 'LIBRARY_PATH: ' + ENV['LIBRARY_PATH']
 				else
 					ENV['LDFLAGS'] = ((var = ENV['LDFLAGS']) ? var : '') +
 						(@systemBuild ? ' -L' + File.join(@image, 'system/libraries') : '') +
-						' -L' + File.join(@stage, 'indexes', 'lib')
+						' -L' + File.join(@stage, 'indexes', 'lib') +
+						' -L' + File.join(@stage, 'bootstrap/indexes', 'lib')
 
 					@log.extra 'LDFLAGS: ' + ENV['LDFLAGS']
 				end
@@ -1821,10 +1854,8 @@ else
 				when 'install'
 					ENV['IMAGE'] = '/'
 					install target
-				when 'stage'
-					build :staging, target if exists? @stage or prepare target
-				when 'image'
-					build :imaging, target if exists? @stage or prepare target
+				when 'stage', 'bootstrap', 'image'
+					build arg1, target if exists? @stage or prepare target
 				else
 					if arg2
 						@log.error 'Unrecognized command'
