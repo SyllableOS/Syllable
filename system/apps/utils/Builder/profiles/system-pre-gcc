@@ -11,6 +11,14 @@ resources
 	Documentation			documentation/Copyrights.html		text/html
 
 modules
+;	Toolchain for bootstrapping
+
+;	bootstrap apps/gnu/binutils-2.17
+;	bootstrap apps/gnu/gcc-4.1.2
+
+
+;	Syllable core system
+
 	other/config/default
 	other/config/etc
 	other/fonts/dejavu-fonts-2.15
@@ -91,11 +99,6 @@ modules
 
 	libs/libdl
 	libs/libpthread
-	libs/ncurses-5.6
-
-;	GrUB can use Curses:
-;	Currently requires GCC 3:
-;	sys/boot/grub-0.97-syllable
 
 ;	Currently conflicts with GetText on GLibC 2.3.x:
 	apps/gnu/grep-2.5.1a

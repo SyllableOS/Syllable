@@ -7,3 +7,5 @@
 
 ;	Currently doesn't build with GCC 4.1.1 itself installed:
 	libraries libraries/gcc-4.1.1
+;	For bootstrapping:
+;	system apps/gnu/gcc-4.1.1

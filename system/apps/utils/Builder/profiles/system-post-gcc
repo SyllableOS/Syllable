@@ -1,9 +1,14 @@
 ; Syllable core system, after the GCC libraries
 
 modules
-;	freetype-config needs to be in the path!
-;	Use the bootstrap settings directive, or install the same FreeType in the host system:
-	stage libraries/freetype-2.3.2
+	libs/ncurses-5.6
+
+;	GrUB can use Curses:
+;	Currently requires GCC 3:
+;	sys/boot/grub-0.97-syllable
+
+;	freetype-config needs to be in the path:
+	bootstrap libraries/freetype-2.3.2
 
 	stage libraries/libjpeg-6b-static
 	stage libraries/libpng-1.2.14

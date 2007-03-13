@@ -86,6 +86,7 @@ modules
 ;	sdl-config needs to be in the path, and will point to the running system!
 ;	Install the same SDL in the host system:
 	libs/sdl-1.2.8
+	bootstrap libs/sdl-1.2.8
 	libs/sdl-mixer-1.2.6
 	libs/sdl-net-1.2.6
 	libs/sdl-image-1.2.4
@@ -95,3 +96,12 @@ modules
 ;	Still needs FreeType 2.1(.10):
 ;	apps/other/xpdf-3.00pl3-syllable
 ;	apps/other/xpdf-3.00pl3
+
+
+;	Extra requirements for bootstrapping
+
+	apps/gnu/binutils-2.17
+	apps/gnu/make-3.80
+
+;	1.8.5 doesn't bootstrap:
+	apps/other/ruby-1.8.4
