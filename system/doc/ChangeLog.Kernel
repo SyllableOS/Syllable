@@ -1,3 +1,9 @@
+* March 13, 2007, Kristian Van Der Vliet *
+
+Fifos (pipes) are now specifically marked as such (FDT_FIFO) to allow certain operations to
+fail correctly.
+lseek() on a pipe will now cause ESPIPE. Fixes bug #164.
+
 * March 8, 2007, Kristian Van Der Vliet *
 
 Return the correct error condition from tcp_connect() if connect() is called more than once.
