@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.129
+# Version 0.6.130
 # Copyright (c) 2002-2007 Kaj de Vos
 # License: GPL 2 or any later version
 
@@ -818,9 +818,9 @@ def buildModule staging, directive, target
 		Dir.chdir @workDir
 
 		if configureModule(effectiveStaging = case directive
-			when 'libraries' then 'stage'
-			when 'system' then staging
-			else directive
+			when 'stage', 'libraries' then 'stage'
+			when 'bootstrap' then 'bootstrap'
+			else staging
 			end,
 			target
 		)
@@ -1669,7 +1669,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.6.129',
+	puts 'Syllable Build System 0.6.130',
 		'Copyright (c) 2002-2007 Kaj de Vos',
 		'License: GPL 2 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
@@ -1818,6 +1818,8 @@ else
 						end +
 
 						(File.join @stage, 'indexes', 'lib') + ':'
+					else
+						''
 					end +
 
 					File.join(@stage, 'bootstrap/indexes', 'lib') +
@@ -1874,3 +1876,4 @@ else
 	@log.close
 	exit @log.failures.length  # FIXME: only works when processing a profile
 end
+
