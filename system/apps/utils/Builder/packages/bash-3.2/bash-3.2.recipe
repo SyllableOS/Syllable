@@ -1,6 +1,6 @@
 authors				Kaj de Vos
-status				broken
-warnings			Prevents compiling some packages, specifically INetUtils.
+status				testing
+warnings			Breaks compiling some packages on older Syllable versions, specifically INetUtils.
 
 inherits			gnu
 
@@ -9,6 +9,7 @@ home				www.gnu.org/software/bash/
 packages			bash/bash-3.2
 ;locations			ftp://ftp.cwru.edu/pub/bash/
 
+needs				Syllable >= 0.6.4
 build-needs			bash
 
 patch-config		support
@@ -21,4 +22,3 @@ documentation
 links
 	bin/bash		/bin/bash
 	bin/bash		/bin/sh
-
