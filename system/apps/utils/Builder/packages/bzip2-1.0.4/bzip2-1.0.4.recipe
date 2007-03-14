@@ -1,10 +1,11 @@
 authors				Kaj de Vos
+status				testing
 
 licenses			BSD
 home				www.bzip.org
 locations			http://www.bzip.org/1.0.4/
 
-patch				sed -i 's/ln \$/ln -s \$/' Makefile
+build-needs			diffutils
 
 install-prefix-var	PREFIX
 
@@ -12,11 +13,13 @@ install-prefix-var	PREFIX
 ;make-file			Makefile-libbz2_so
 
 documentation
-	README LICENSE CHANGES Y2K_INFO
+	README LICENSE CHANGES
 ;	Text version of man:
 ;	bzip2.txt
 	manual.html
 ;	manual.xml manual.pdf manual.ps
+build-docs			README.COMPILATION.PROBLEMS
+internal-docs		README.XML.STUFF
 
 ; Replace links that are incorrect when installing in an image area:
 links
@@ -24,3 +27,4 @@ links
 	bzgrep	bin/bzegrep
 	bzgrep	bin/bzfgrep
 	bzmore	bin/bzless
+
