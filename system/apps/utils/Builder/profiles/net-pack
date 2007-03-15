@@ -3,11 +3,12 @@ title	Network Necessities
 name	NetworkNecessities
 
 modules
-;	network/openssl-0.9.7l
-	network/openssh-4.5p1
+;	network/openssl-0.9.7m
+	network/openssh-4.6p1
 	network/rsync-2.6.9
 ;	network/samba-3.0.20b
 	network/wget-1.9.1
+	network/bittorrent/transmission-0.6.1
 
 ;	All broken:
 ;	network/ftp/ncftp-3.2.0

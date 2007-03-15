@@ -1,0 +1,29 @@
+authors				Kaj de Vos
+status				testing
+warnings
+	The server reportedly only works with key-based authentication.
+	The privilege separation user sshd does not exist by default on Syllable.
+
+licenses			BSD MIT ISC other PD
+home				www.openssh.org
+locations			ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/
+
+build-needs
+	zlib >= 1.2.3
+	openssl >= 0.9.6
+build-recommends
+	pam
+	libedit
+
+configure-options
+;	--with-ssl-dir=/usr/openssl
+;	--with-zlib=/usr/zlib
+	--with-libs='-lcrypt'
+;	Doesn't work as advertized:
+;	--disable-libutil
+
+documentation
+	README* INSTALL WARNING.RNG RFC.nroff LICENCE ChangeLog TODO CREDITS
+;	README.platform
+internal-docs		OVERVIEW
+
