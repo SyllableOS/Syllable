@@ -1,0 +1,24 @@
+authors				Kaj de Vos
+status				developing
+
+licenses			GPL LGPL BSD Artistic other PD
+home				www.ruby-lang.org
+locations			ftp://ftp.ruby-lang.org/pub/ruby/
+
+needs				Syllable >= 0.6.1
+
+;configure-options
+;	--disable-ipv6
+;	--with-static-linked-ext
+;	--enable-shared
+;	--enable-pthread
+;	--enable-install-doc
+
+test-targets		test
+
+system-prefix-var	DESTDIR
+documentation
+	README COPYING LEGAL GPL LGPL NEWS ChangeLog ToDo
+;	doc
+develop-docs		README.EXT sample
+
