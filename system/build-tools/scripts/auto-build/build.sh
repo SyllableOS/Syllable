@@ -41,7 +41,6 @@ printf "Build started at %s\n" "`date`" > $LOG
 # Make sure we have the latest Builder
 echo "Updating Builder"
 build update 1>>$LOG 2>>$LOG
-sync
 
 # Build the 'system' profile
 
@@ -58,7 +57,6 @@ sync
 # XXXKV: We have to build GCC 4.1.1 with GCC 3.4.3...
 echo "Switching to GCC 3.4.3"
 build install $HOME/Packages/gcc-3.4.3.bin.3.zip 1>>$LOG 2>>$LOG
-sync
 
 # Grub also must be built with GCC 3.4.3
 echo "Building grub-0.97"
@@ -77,7 +75,6 @@ sync
 
 echo "Switching to GCC 4.1.1"
 build install $HOME/Packages/gcc-4.1.1.bin.2.zip 1>>$LOG 2>>$LOG
-sync
 
 # Build the rest of the 'system' profile
 echo "image system-post-gcc"
@@ -93,22 +90,6 @@ image base 1>>$LOG 2>>$LOG
 build log > $BASE_LOG
 build log failures > $BASE_FAILURE_LOG
 build log summary > $BASE_SUMMARY_LOG
-sync
-
-# XXXKV: We have to build Xpdf with Freetype-2.1.10..
-echo "Switching to Freetype-2.1.10"
-build install $HOME/Packages/freetype-2.1.10.bin.1.zip 1>>$LOG 2>>$LOG
-sync
-
-echo "Building Xpdf"
-image apps/other/xpdf-3.00pl3-syllable 1>>$LOG 2>>$LOG
-build log >> $BASE_LOG
-build log failures >> $BASE_FAILURE_LOG
-build log summary >> $BASE_SUMMARY_LOG
-sync
-
-echo "Switching to Freetype-2.3.2"
-build install $HOME/Packages/freetype-2.3.2.bin.1.zip 1>>$LOG 2>>$LOG
 sync
 
 # XXXKV: Now on with the show...
@@ -139,3 +120,4 @@ fi
 sync
 echo "Finished"
 exit 0
+
