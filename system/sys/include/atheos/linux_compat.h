@@ -48,6 +48,9 @@ typedef uint32		dma_addr_t;
 #define DECLARE_PCI_UNMAP_ADDR(VAR) \
 	dma_addr_t VAR;
 
+#define DECLARE_PCI_UNMAP_LEN(VAR) \
+	uint64 VAR;
+
 #define assert		kassertw
 
 #define ARRAY_SIZE(x) \
@@ -311,6 +314,13 @@ static inline int pci_enable_msi( PCI_Info_s *dev )
 	return 1;
 }
 
+/* Not possible until we can get the ACPI handle from a PCI device */
+static inline pci_set_power_state( PCI_Info_s *dev, int state )
+{
+	kerndbg( KERN_WARNING, "%s not implemented!\n", __FUNCTION__ );
+	return 1;
+}
+
 /* prefetch() may not be needed at all: check */
 #define prefetch(x);
 
@@ -357,6 +367,8 @@ static inline void* skb_put( PacketBuf_s* psBuffer, int nSize )
 	psBuffer->pb_nSize += nSize;
 	return( pOldEnd );
 }
+
+#define MAX_SKB_FRAGS	(65536/PAGE_SIZE + 2)
 
 #define MAX_ADDR_LEN IFHWADDRLEN
 
