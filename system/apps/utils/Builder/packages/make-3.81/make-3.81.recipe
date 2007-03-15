@@ -1,6 +1,5 @@
 authors				Kaj de Vos
-status				broken
-notes				Breaks GCC 3.4.3
+status				testing
 
 inherits			gnu
 
@@ -14,6 +13,7 @@ test-needs			perl
 ;test-targets
 ;	check-loadavg
 ;	check
+
 documentation		README COPYING ABOUT-NLS NEWS ChangeLog AUTHORS
 build-docs			README.customs
 

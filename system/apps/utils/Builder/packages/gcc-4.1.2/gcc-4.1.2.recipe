@@ -5,12 +5,12 @@ authors
 	Kristian Van Der Vliet
 	Jake Hamby
 maintainers			Kaj de Vos
-status				broken
+status				testing
 warnings
-	Build breaks with GCC 4.1.1 itself installed.
+	Build breaks with GCC 4.1.x itself installed.
 	GCC has a circular dependency on GLibC.
 ;	LibIberty is both in BinUtils and in GCC.
-notes				Build breaks with floating point exception
+notes				GMP with MPFR support is required to build Fortran
 
 inherits			gnu
 
@@ -28,17 +28,18 @@ packages
 ;locations			ftp://gcc.gnu.org/pub/gcc/releases/gcc-4.1.2/
 
 needs
-;	Due to new atomics definitions:
-	Syllable >= 0.5.5
 ;	For -O3 with -fpic:
 	binutils >= 2.13.1
 ;	Syllable switched to the new GLibC ABI:
 	glibc >= 2.3.3
 build-needs
+	Syllable >= 0.6.4
 ;	autoconf 2.57
-	make <> 3.81
 ;	Without make bootstrap:
 	gcc >= 2.95 < 4
+;	libtool
+;	For Fortran:
+;	gmp
 ;	For Ada:
 ;	gnat >= 3.13 | gcc >= 3.1
 	gawk
@@ -53,6 +54,8 @@ test-needs			dejagnu >= 1.4.1
 ;patch
 ;	cd gcc
 ;	autoconf
+; Doesn't work:
+;make-shared
 
 configure-options
 	--enable-languages=c,c++
@@ -97,7 +100,7 @@ install-env
 ;	DLL_PATH	"$DLL_PATH:../stage/gcc/lib:../stage/image/gcc/lib:../../stage/image/usr/gcc/lib:/usr/gcc/lib"
 
 ; Work around conflict with BinUtils:
-delete-files		lib/libiberty.a
+;delete-files		lib/libiberty.a
 
 documentation
 	README FAQ faq.html BUGS bugs.html COPYING COPYING.LIB NEWS ChangeLog MAINTAINERS
