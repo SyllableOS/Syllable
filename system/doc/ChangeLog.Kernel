@@ -1,3 +1,9 @@
+* March 15, 2007, Kristian Van Der Vliet *
+
+o Added a skge driver for SysKonnect/Marvell Yukon1 NICs, ported from the Linux 2.6 skge
+  driver. Tested at 100Mbps with a DLink DGE-530T.
+o Updated linux_compat.h with some additional macros and stubs used by the skge driver
+
 * March 13, 2007, Kristian Van Der Vliet *
 
 Fifos (pipes) are now specifically marked as such (FDT_FIFO) to allow certain operations to
