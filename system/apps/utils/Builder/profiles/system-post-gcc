@@ -3,10 +3,6 @@
 modules
 	libs/ncurses-5.6
 
-;	GrUB can use Curses:
-;	Currently requires GCC 3:
-;	sys/boot/grub-0.97-syllable
-
 ;	freetype-config needs to be in the path:
 	bootstrap libraries/freetype-2.3.2
 

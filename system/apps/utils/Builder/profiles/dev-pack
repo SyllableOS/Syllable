@@ -6,9 +6,9 @@ modules
 	programming/flex-2.5.33
 	programming/bison-2.3
 	programming/languages/binutils-2.17
-	programming/languages/gcc-4.1.1
+	programming/languages/gcc-4.1.2
 	programming/languages/nasm-0.98.39
-	programming/make-3.80
+	programming/make-3.81
 	programming/m4-1.4.8
 	programming/libtool-1.5.22
 	programming/gdb-6.4

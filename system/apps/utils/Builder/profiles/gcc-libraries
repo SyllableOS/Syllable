@@ -1,3 +1,6 @@
+;	Currently requires GCC 3:
+	sys/boot/grub-0.97-syllable
+
 ; GCC libraries
 
 ;	stage libraries/gettext-0.16.1
@@ -5,7 +8,7 @@
 ;	stage libraries/bison-2.3
 ;	stage libraries/binutils-2.17
 
-;	Currently doesn't build with GCC 4.1.1 itself installed:
-	libraries libraries/gcc-4.1.1
+;	Currently doesn't build with GCC 4.1.x itself installed:
+	libraries libraries/gcc-4.1.2
 ;	For bootstrapping:
-;	system apps/gnu/gcc-4.1.1
+;	system apps/gnu/gcc-4.1.2
