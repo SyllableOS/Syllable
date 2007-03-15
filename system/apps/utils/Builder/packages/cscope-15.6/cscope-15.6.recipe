@@ -1,0 +1,23 @@
+authors
+	Daniel Gryniewicz
+	Kaj de Vos
+maintainers			Kaj de Vos
+status				testing
+
+inherits			sourceforge
+
+licenses			BSD
+home				cscope.sourceforge.net
+packages			cscope/cscope-15.6
+
+needs				ncurses
+build-needs
+	flex
+	bison
+;	gawk
+build-recommends	pkg-config
+
+patch-config
+documentation		README COPYING NEWS ChangeLog AUTHORS TODO
+build-docs			INSTALL
+

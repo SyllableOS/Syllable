@@ -24,7 +24,7 @@ modules
 	apps/develop/sindent
 
 	programming/doxygen-1.5.1
-	programming/cscope-15.5
+	programming/cscope-15.6
 	programming/splint-3.1.1
 
 ;	Native apps:
