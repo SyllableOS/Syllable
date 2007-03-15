@@ -197,6 +197,7 @@ modules
 	sys/kernel/drivers/net/rtl8139
 	sys/kernel/drivers/net/rtl8169
 	sys/kernel/drivers/net/sis
+	sys/kernel/drivers/net/skge
 	sys/kernel/drivers/net/tg3
 	sys/kernel/drivers/net/tulip
 	sys/kernel/drivers/net/via
