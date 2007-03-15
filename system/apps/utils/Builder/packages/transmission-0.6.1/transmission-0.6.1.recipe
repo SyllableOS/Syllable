@@ -2,14 +2,21 @@ authors
 	Kaj de Vos
 	Kristian Van Der Vliet
 status				testing
+notes				Undefined reference to SHA1 with OpenSSL
 
 licenses			MIT
 home				transmission.m0k.org
 packages			Transmission-0.6.1
 locations			http://download.m0k.org/transmission/files/
 
-recommends			openssl
+needs				Syllable >= 0.6.3
+;recommends			openssl
 
 build-dir			.
 
+configure-options
+;	--verbose
+	--disable-openssl
+
 documentation		README LICENSE NEWS AUTHORS
+
