@@ -1,0 +1,37 @@
+authors
+	Stephan Wiebusch
+	Kaj de Vos
+status				incomplete
+notes				Executable is not in a bin subdirectory
+
+inherits			sourceforge
+
+headline			Graphical 2D tile-based MMORPG with true color and MP3 sound
+description
+	In the game you will meet many other people in our big, persistent virtual heroic fantasy world! Explore, fight, meet friends and enemies.
+licenses			GPL-2+
+
+home				www.daimonin.net
+packages			daimonin/daimonin_client-BETA3-0967
+
+needs
+	sdl
+	sdl-mixer
+	sdl-image
+
+patch-config		client/make/linux/make_utils/
+
+build-dir			client/make/linux/
+
+configure-cmd		client/make/linux/configure
+make-env			C_INCLUDE_PATH "$C_INCLUDE_PATH:/usr/indexes/include/SDL"
+
+documentation
+	client/README.txt client/README_LINUX.txt client/License
+;	Double:
+;	client/make/linux/README_LINUX.txt
+build-docs
+;	Conflicts with above:
+;	client/make/README.txt
+	client/make/linux/README
+
