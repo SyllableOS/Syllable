@@ -1,12 +1,13 @@
 authors				Kaj de Vos
-status				developing
+status				testing
 
 inherits			cups-1.2.1
 
 configure-options
 ;	Fool third-party packages that execute cups-config during a system image installation:
-	--datadir=$$IMAGE/usr/cups/share
+	--datadir=$IMAGE/usr/cups/share
 ;	CUPS is a system component and the configuration should be kept separate from the binaries:
-	--sysconfdir=/system/config
+	--sysconfdir=$IMAGE/system/config
 ;	--enable-ssl
 	--without-rcdir
+
