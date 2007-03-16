@@ -64,6 +64,7 @@ namespace os
 		{
 			if( m_pcMenu != NULL )
 			{
+				
 				RemoveChild( m_pcMenu );
 				m_pcMenu = NULL;
 			}
@@ -1785,8 +1786,8 @@ void Menu::TimerTick( int nID )
  **************************************************************************/
 void Menu::DetachedFromWindow()
 {
+	
 	AutoLocker __lock__( &m->m_pcRoot->m->m_cMutex );
-
 	_Close( true, false );
 	if( m->m_bIsRootMenu ) {
 		_SetOrClearShortcut( m->m_pcFirstItem, false );
@@ -1859,7 +1860,17 @@ void Menu::MouseDown( const Point & cPosition, uint32 nButtons )
 	{
 		if( m->m_bHasOpenChilds == false )
 		{
-			_Close( false, true );
+			Menu *pcParent = GetSuperMenu();
+			os::Point cParentPos;
+			if( pcParent != NULL )
+				cParentPos = pcParent->ConvertFromScreen( ConvertToScreen( cPosition ) );
+			
+			_Close( false, false );
+			
+			pcParent = GetSuperMenu();
+			if( pcParent != NULL )
+				pcParent->MouseDown( cParentPos, nButtons );
+
 			if( m->m_hTrackPort != -1 )
 			{
 				MenuItem *pcItem = NULL;
@@ -1902,7 +1913,7 @@ void Menu::MouseUp( const Point & cPosition, uint32 nButtons, Message * pcData )
 	{
 		if( m->m_bCloseOnMouseUp )
 		{
-			_Close( false, true );
+			_Close( true, true );
 			if( m->m_hTrackPort != -1 )
 			{
 				MenuItem *pcItem = NULL;
@@ -1926,7 +1937,7 @@ void Menu::MouseUp( const Point & cPosition, uint32 nButtons, Message * pcData )
 void Menu::MouseMove( const Point & cPosition, int nCode, uint32 nButtons, Message * pcData )
 {
 	AutoLocker __lock__( &m->m_pcRoot->m->m_cMutex );
-
+	
 	if( nButtons & 0x01 )
 	{
 		if( !m->m_bCloseOnMouseUp ) {
@@ -2311,7 +2322,7 @@ void Menu::_Close( bool bCloseChilds, bool bCloseParent )
 {
 	AutoLocker __lock__( &m->m_pcRoot->m->m_cMutex );
 	MenuItem *pcTmp;
-
+	
 	for( pcTmp = m->m_pcFirstItem; NULL != pcTmp; pcTmp = pcTmp->_GetNext() )
 	{
 		if( pcTmp->IsHighlighted() )
@@ -2330,7 +2341,7 @@ void Menu::_Close( bool bCloseChilds, bool bCloseParent )
 			}
 		}
 	}
-
+	
 	if( m->m_pcWindow != NULL )
 	{
 		MenuWindow *pcWnd = m->m_pcWindow;
@@ -2342,9 +2353,7 @@ void Menu::_Close( bool bCloseChilds, bool bCloseParent )
 
 		if( pcParent != NULL )
 		{
-			// NOTE: We activate the parents window even if was not
-			//       opened by the menu-system (GetWindow() vs m_pcWindow)
-			Window *pcWnd = pcParent->GetWindow();
+			Window *pcWnd = pcParent->m->m_pcWindow;
 			
 			if( pcWnd != NULL )
 			{
@@ -2354,10 +2363,17 @@ void Menu::_Close( bool bCloseChilds, bool bCloseParent )
 			pcParent->m->m_bIsTracking = true;
 		}
 	}
+	#if 0
+	/* This causes a freeze */
+	if( m->m_bIsRootMenu && GetWindow() != NULL )
+	{
+		MakeFocus( false );
+	}
+	#endif
+
 
 	if( m->m_cCloseMsgTarget.IsValid() )
 	{
-//		printf( "%d\n", m->m_cCloseMsg.GetCode() );
 		m->m_cCloseMsgTarget.SendMessage( &m->m_cCloseMsg );
 	}
 

@@ -1000,7 +1000,7 @@ Rect Window::GetBounds() const
 void Window::_HandleActivate( bool bIsActive, const Point & cMousePos )
 {
 	m->m_bIsActive = bIsActive;
-
+	
 	if( NULL == m->m_pcTopView )
 	{
 		dbprintf( "Error: Window::_HandleActivate() m->m_pcTopView == NULL\n" );
@@ -1210,7 +1210,7 @@ void Window::_MouseEvent( const Point & cNewPos, uint32 nButtons, Message * pcDa
 {
 	View *pcFocusChild;
 	View *pcMouseView;
-
+	
 	pcMouseView = FindView( m->m_pcTopView->ConvertFromScreen( m->m_cMousePos ) );
 	pcFocusChild = GetFocusChild();
 
@@ -1342,6 +1342,8 @@ void Window::DispatchMessage( Message * pcMsg, Handler * pcHandler )
 		case M_MOUSE_DOWN:
 			{
 				int32 nButton;
+				
+				pcMsg->FindPoint( "_scr_pos", &m->m_cMousePos );
 
 				if( pcMsg->FindInt32( "_button", &nButton ) == 0 )
 				{
@@ -1377,6 +1379,8 @@ void Window::DispatchMessage( Message * pcMsg, Handler * pcHandler )
 		case M_MOUSE_UP:
 			{
 				int32 nButton;
+				
+				pcMsg->FindPoint( "_scr_pos", &m->m_cMousePos );				
 
 				if( pcMsg->FindInt32( "_button", &nButton ) == 0 )
 				{
@@ -1421,7 +1425,7 @@ void Window::DispatchMessage( Message * pcMsg, Handler * pcHandler )
 					dbprintf( "Warning: Window::DispatchMessage() could not find '_transit' in M_MOUSE_MOVED message\n" );
 				}
 				bool bDoProcess = true;
-
+				
 				pcQueue->Lock();
 				Message *pcNextMsg = pcQueue->FindMessage( M_MOUSE_MOVED, 0 );
 
@@ -1651,37 +1655,6 @@ void Window::DispatchMessage( Message * pcMsg, Handler * pcHandler )
 				}
 				break;
 			}
-#if 0			
-		case M_MOVE_WINDOW:
-			{
-				Point cDeltaPos;
-				Point cDeltaSize;
-
-				if( pcMsg->FindPoint( "_delta_move", &cDeltaPos ) != 0 )
-				{
-					dbprintf( "Error: Could not find '_delta_move' in M_MOVE_WINDOW message\n" );
-					break;
-				}
-				if( pcMsg->FindPoint( "_delta_size", &cDeltaSize ) != 0 )
-				{
-					dbprintf( "Error: Could not find '_delta_size' in M_MOVE_WINDOW message\n" );
-					break;
-				}
-				Rect cFrame = GetFrame();
-
-				cFrame.right += cDeltaSize.x + cDeltaPos.x;
-				cFrame.bottom += cDeltaSize.y + cDeltaPos.y;
-				cFrame.left += cDeltaPos.x;
-				cFrame.top += cDeltaPos.y;
-				SetFrame( cFrame );
-				Flush();
-				if( send_msg( m->m_hLayerPort, WR_WND_MOVE_REPLY, NULL, 0 ) < 0 )
-				{
-					dbprintf( "Error: Window::DispatchMessage() failed to send WR_WND_MOVE_REPLY to server\n" );
-				}
-				break;
-			}
-#endif			
 		case M_WINDOW_ACTIVATED:
 			{
 				bool bIsActive;
@@ -1740,7 +1713,6 @@ void Window::DispatchMessage( Message * pcMsg, Handler * pcHandler )
 			}
 		default:
 			Looper::DispatchMessage( pcMsg, pcHandler );
-//      m->m_pcMouseChild = NULL;
 			break;
 		}
 	}

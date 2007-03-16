@@ -1191,7 +1191,11 @@ void SrvWindow::MouseUp( Message * pcEvent, bool bSendDragMsg )
 void SrvWindow::HandleMouseMoved( const Point & cMousePos, Message * pcEvent )
 {
 	SrvWindow *pcActiveWindow = get_active_window( false );
+	SrvWindow *pcActiveAppWindow = get_active_window( true );
 	SrvWindow *pcMouseWnd = NULL;
+	
+	if( pcActiveWindow == pcActiveAppWindow )
+		pcActiveAppWindow = NULL;
 
 	if( s_pcDragWindow != NULL )
 	{
@@ -1217,17 +1221,18 @@ void SrvWindow::HandleMouseMoved( const Point & cMousePos, Message * pcEvent )
 			// Give the window a chance to deliver a MOUSE_EXITED to it's views
 			s_pcLastMouseWindow->MouseMoved( pcEvent, MOUSE_EXITED );
 			if( s_pcLastMouseWindow == pcActiveWindow )
-			{
 				pcActiveWindow = NULL;
-			}
+			if( s_pcLastMouseWindow == pcActiveAppWindow )
+				pcActiveAppWindow = NULL;
+				
 		}
 		if( pcMouseWnd != NULL )
 		{
 			pcMouseWnd->MouseMoved( pcEvent, MOUSE_ENTERED );
 			if( pcMouseWnd == pcActiveWindow )
-			{
 				pcActiveWindow = NULL;
-			}
+			if( pcMouseWnd == pcActiveAppWindow )
+				pcActiveAppWindow = NULL;
 		}
 		s_pcLastMouseWindow = pcMouseWnd;
 	}
@@ -1237,26 +1242,27 @@ void SrvWindow::HandleMouseMoved( const Point & cMousePos, Message * pcEvent )
 		{
 			pcMouseWnd->MouseMoved( pcEvent, MOUSE_INSIDE );
 			if( pcMouseWnd == pcActiveWindow )
-			{
 				pcActiveWindow = NULL;
-			}
+			if( pcMouseWnd == pcActiveAppWindow )
+				pcActiveAppWindow = NULL;				
 		}
 	}
 	if( pcActiveWindow != NULL )
-	{
 		pcActiveWindow->MouseMoved( pcEvent, MOUSE_OUTSIDE );
-	}
+	if( pcActiveAppWindow != NULL )
+		pcActiveAppWindow->MouseMoved( pcEvent, MOUSE_OUTSIDE );
+
 }
 
 void SrvWindow::HandleMouseDown( const Point & cMousePos, int nButton, Message * pcEvent )
 {
-	SrvWindow *pcActiveWindow = get_active_window( false );
+	SrvWindow *pcActiveWindow = NULL;
 	SrvWindow *pcMouseWnd = NULL;
 
-	if( pcActiveWindow == NULL || ( pcActiveWindow->GetFlags() & WND_SYSTEM ) == 0 )
-	{
+
+	if( s_pcLastMouseWindow && ( s_pcLastMouseWindow->GetFlags() & WND_SYSTEM ) == 0 )
 		pcMouseWnd = s_pcLastMouseWindow;
-	}
+
 
 	if( pcMouseWnd != NULL )
 	{
@@ -1287,15 +1293,18 @@ void SrvWindow::HandleMouseDown( const Point & cMousePos, int nButton, Message *
 		}
 		pcMouseWnd->m_nLastHitTime = nCurTime;
 	}
-	else if( get_active_window( true ) != NULL )
-	{
-		get_active_window( true )->MakeFocus( false );
-	}
-
+	
+	
 	pcActiveWindow = get_active_window( false );
-	if( pcActiveWindow != NULL )
+
+	if( pcActiveWindow != NULL && pcMouseWnd != pcActiveWindow )
 	{
 		pcActiveWindow->MouseDown( pcEvent );
+	}
+	
+	if( pcMouseWnd != NULL )
+	{
+		pcMouseWnd->MouseDown( pcEvent );
 	}
 }
 
@@ -1314,21 +1323,28 @@ void SrvWindow::HandleMouseUp( const Point & cMousePos, int nButton, Message * p
 	}
 
 	SrvWindow *pcActiveWindow = get_active_window( false );
+	SrvWindow *pcActiveAppWindow = get_active_window( true );	
 	SrvWindow *pcMouseWnd = NULL;
 
-	if( pcActiveWindow == NULL || ( pcActiveWindow->GetFlags() & WND_SYSTEM ) == 0 )
+	if( s_pcLastMouseWindow && ( s_pcLastMouseWindow->GetFlags() & WND_SYSTEM ) == 0 )
 		pcMouseWnd = s_pcLastMouseWindow;
-	else
-		pcMouseWnd = get_active_window( true );
 
-	if( pcMouseWnd != NULL )
-	{
-		pcMouseWnd->MouseUp( pcEvent, true );
-	}
+	if( pcActiveWindow == pcActiveAppWindow )
+		pcActiveAppWindow = NULL;
+
 	if( pcActiveWindow != NULL && pcMouseWnd != pcActiveWindow )
 	{
 		pcActiveWindow->MouseUp( pcEvent, false );
 	}
+	if( pcActiveAppWindow != NULL && pcMouseWnd != pcActiveAppWindow )
+	{
+		pcActiveAppWindow->MouseUp( pcEvent, false );
+	}
+	if( pcMouseWnd != NULL )
+	{
+		pcMouseWnd->MouseUp( pcEvent, true );
+	}
+	
 	if( s_bIsDragging )
 	{
 		SrvSprite::Hide();
