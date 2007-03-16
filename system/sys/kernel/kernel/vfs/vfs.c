@@ -3764,7 +3764,10 @@ off_t do_lseek( bool bKernel, int nFile, off_t nOffset, int nMode )
 	}
 
 	if( psFile->f_nType == FDT_FIFO )
+	{
+		put_fd( psFile );
 		return -ESPIPE;
+	}
 
 	switch ( nMode )
 	{
