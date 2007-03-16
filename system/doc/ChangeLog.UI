@@ -1,3 +1,15 @@
+* March 16, 2007, Arno Klenke *
+
+Mouse event handling changes in the appserver
+
+o Mouse move and mouse up events are passed to the currently active window, the active system window
+  and the window under the mouse
+
+o Mouse down events are passed to the currently active window _or_ the active system window
+  and the window under the mouse
+
+Clicking on already opened submenus does not close the whole menu structure
+
 * March 8, 2007, Arno Klenke *
 
 Added a missing space in the copy/move operations alert
@@ -1336,4 +1348,5 @@ disabled controls.  The following files have been patched:
 
 	The sub-menu arrow is now drawn corretly, and menus which have children
 	are now drawn slightly larger to allow for the arrow.
+
 
