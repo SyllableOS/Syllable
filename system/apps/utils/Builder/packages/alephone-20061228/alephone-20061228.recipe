@@ -1,0 +1,16 @@
+authors				Kaj de Vos
+status				developing
+
+inherits			sourceforge
+
+headline			First person 3D shooting game
+description
+	Aleph One is an open-source descendent of Bungie's Marathon 2 first person 3D shooting game. Aleph One supports Marathon 2 and Marathon Infinity data files. A conversion of Marathon 1 called M1A1 and many third party scenarios and net maps are also available.
+licenses			GPL
+
+home				marathon.sourceforge.net
+packages			marathon/AlephOne-20061228
+
+needs				sdl
+
+documentation
