@@ -19,13 +19,11 @@ patch-config
 make-shared
 
 configure-env		LDFLAGS "$LDFLAGS -lm"
-
 ;configure-options
 ;	--enable-tif
 ;	--enable-xcf
 
 documentation		README COPYING CHANGES
-
 ; For some packages:
 links				SDL/SDL_image.h include/
 

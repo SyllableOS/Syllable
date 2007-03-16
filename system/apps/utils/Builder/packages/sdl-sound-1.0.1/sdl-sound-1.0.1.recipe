@@ -15,6 +15,7 @@ locations			http://icculus.org/SDL_sound/downloads/
 needs				sdl >= 1.2
 build-recommends
 	libvorbis
+;	For AlephOne:
 	smpeg >= 0.4.3
 	libflac
 	libmodplug

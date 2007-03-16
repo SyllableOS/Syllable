@@ -11,6 +11,23 @@ licenses			GPL
 home				marathon.sourceforge.net
 packages			marathon/AlephOne-20061228
 
-needs				sdl
+needs
+	sdl >= 1.2
+	sdl-image
+	sdl-net
+	boost
+recommends
+;	With smpeg:
+	sdl-sound
+	speex
+	lua
+
+configure-env		C_INCLUDE_PATH "$C_INCLUDE_PATH:/usr/indexes/include/SDL"
+;configure-options	--disable-opengl
 
 documentation
+	README COPYING ChangeLog AUTHORS
+;	COPYING.SDL
+	INSTALL.Unix
+;	docs
+
