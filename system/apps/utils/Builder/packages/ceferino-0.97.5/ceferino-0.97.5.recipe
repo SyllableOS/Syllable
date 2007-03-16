@@ -1,0 +1,20 @@
+authors
+	NecroRomancist
+	Kaj de Vos
+status				testing
+
+licenses			GPL-2
+home				www.losersjuegos.com.ar/juegos/ceferino/ceferino.php
+locations			http://www.losersjuegos.com.ar/juegos/ceferino/descargas/
+
+needs
+	sdl >= 1.2
+	sdl-image
+	sdl-mixer
+
+documentation
+	README COPYING ABOUT-NLS ChangeLog AUTHORS
+;	Currently empty:
+;	NEWS THANKS TODO
+build-docs			INSTALL
+
