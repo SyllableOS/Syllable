@@ -1,5 +1,5 @@
 authors				Kaj de Vos
-status				developing
+status				testing
 
 licenses			GPL LGPL BSD Artistic other PD
 home				www.ruby-lang.org
@@ -10,7 +10,9 @@ needs				Syllable >= 0.6.1
 ;configure-options
 ;	--disable-ipv6
 ;	--with-static-linked-ext
+; Can't find libdl:
 ;	--enable-shared
+; Can't find libpthread:
 ;	--enable-pthread
 ;	--enable-install-doc
 

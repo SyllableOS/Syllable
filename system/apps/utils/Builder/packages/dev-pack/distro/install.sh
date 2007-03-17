@@ -1,6 +1,6 @@
 #! /bin/sh
 
-packages='flex bison binutils gcc nasm make m4 gdb patch arch cvs ruby Builder indent sindent doxygen cscope splint'
+packages='flex bison binutils gcc nasm make m4 gdb patch arch cvs libtool ruby Builder indent sindent doxygen cscope splint'
 
 if [ "$USER" != "root" ]
 then
@@ -28,7 +28,7 @@ do
 	if [ -e "/usr/$package" ]
 	then
 		echo "Uninstalling existing /usr/$package"
-		pkgmanager -r /usr/$package
+		package unregister /usr/$package
 		rm -r /usr/$package
 		sync
 	fi
@@ -47,12 +47,12 @@ for package in $packages
 do
 	echo ""
 	echo "Registering $package"
-	pkgmanager -a /usr/$package
+	package register /usr/$package
 	sync
 done
 
 echo ""
 echo "Done."
-echo "To fully initialize BinUtils and GCC for compiling software, please reboot"
-echo "the computer."
+#echo "To fully initialize BinUtils and GCC for compiling software, please reboot"
+#echo "the computer."
 
