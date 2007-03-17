@@ -52,6 +52,11 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   pcDDMWorkspace->SetReadOnly(true);
   pcVLSettings->AddChild(pcHLWorkspace);
   pcVLSettings->AddChild( new os::VLayoutSpacer("", 5.0f));
+  
+  // Populate workspace dropdown
+  pcDDMWorkspace->AppendItem(MSG_MAINWND_DROPDOWN_APPLY_THIS);
+  pcDDMWorkspace->AppendItem(MSG_MAINWND_DROPDOWN_APPLY_ALL);
+  pcDDMWorkspace->SetSelection(0);
 
   // Resolution
   pcHLResolution = new os::HLayoutNode("HLResolution");
@@ -264,12 +269,6 @@ void MainWindow::ShowData()
 				pcDDMRefresh->SetSelection( pcDDMRefresh->GetItemCount() - 1, false );
 		}
 	}
-	
-	// Populate workspace dropdown
-	pcDDMWorkspace->Clear();
-	pcDDMWorkspace->AppendItem(MSG_MAINWND_DROPDOWN_APPLY_THIS);
-	pcDDMWorkspace->AppendItem(MSG_MAINWND_DROPDOWN_APPLY_ALL);
-	pcDDMWorkspace->SetSelection(0);
 	
 	delete( pzScratch );
 }
