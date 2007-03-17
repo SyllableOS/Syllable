@@ -1,3 +1,8 @@
+* March 17, 2007, Kristian Van Der Vliet *
+
+Change the Screen preferences behaviour so that the "Apply to" desktops Dropdown is not reset
+if the user makes changes elsewhere in the dialog. Patch from Athony Morphett <awmorp@gmail.com>
+
 ---- 0.6.3 Released -------------------------------------------------------------------
 
 * February 23, 2007, Arno Klenke *

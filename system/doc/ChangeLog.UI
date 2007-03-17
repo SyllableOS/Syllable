@@ -1,3 +1,8 @@
+* March 17, 2007, Kristian Van Der Vliet *
+
+Backspace now acts like Delete if text is selected in a TextView I.e. it deletes the selection. Fixes
+Bug #112. Patch from Athony Morphett <awmorp@gmail.com>
+
 * March 16, 2007, Arno Klenke *
 
 Mouse event handling changes in the appserver
