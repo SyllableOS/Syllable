@@ -1,14 +1,14 @@
 Network Necessities for Syllable
 ================================
 
-23-Nov-2006
+17-Mar-2007
 
 1 Introduction
 ==============
 
 This distribution contains binary packages of commonly needed network
-functionality for the Syllable operating system. All packages were built
-on Syllable 0.6.2 and optimized for a Pentium CPU. They may also run on
+functionality for the Syllable operating system. Most packages were built
+on Syllable 0.6.3 and optimized for a Pentium CPU. They may also run on
 earlier versions of Syllable, but this has not been tested.
 
 If you encounter problems or have any other interesting observations,
@@ -31,13 +31,13 @@ Being the root user, go into the directory and run the install script:
     cd NetworkNecessities
     ./install.sh
 
-The individual packages will be unpacked into /usr. Subsequently, the
+The individual packages will be unpacked into /usr/. Subsequently, the
 packages will be registered, creating links in Syllable to enable it
 to find the packages' files. If any of the package directories
-already existed under /usr, they will be unregistered and deleted
+already existed under /usr/, they will be unregistered and deleted
 first. Please note, though, that no version of any of the packages
 should be previously registered with a different directory name under
-/usr, because that would lead to conflicting package registrations.
+/usr/, because that would lead to conflicting package registrations.
 
 You should now be able to use the programs in the Network Necessities.
 

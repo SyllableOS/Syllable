@@ -1,6 +1,6 @@
 #! /bin/sh
 
-packages='openssh wget rsync'
+packages='openssh wget rsync transmission'
 
 if [ "$USER" != "root" ]
 then
@@ -28,7 +28,7 @@ do
 	if [ -e "/usr/$package" ]
 	then
 		echo "Uninstalling existing /usr/$package"
-		pkgmanager -r /usr/$package
+		package unregister /usr/$package
 		rm -r /usr/$package
 		sync
 	fi
@@ -47,11 +47,11 @@ for package in $packages
 do
 	echo ""
 	echo "Registering $package"
-	pkgmanager -a /usr/$package
+	package register /usr/$package
 	sync
 done
 
 echo ""
 echo "Done."
-echo "The SaMBa server will be started when rebooting the computer."
+#echo "The SaMBa server will be started when rebooting the computer."
 
