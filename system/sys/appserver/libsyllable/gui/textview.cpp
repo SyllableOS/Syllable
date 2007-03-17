@@ -2896,6 +2896,12 @@ bool TextEdit::HandleKeyDown( const char *pzString, const char *pzRawString, uin
 				Undo();
 				break;
 			}
+			if( m_bRegionActive )  /* if a region is selected, delete it (same as pressing delete) */
+			{
+				Delete();
+				m_vCsrGfxPos = -1.0f;
+				break;
+			}
 			if( m_cCsrPos.x == 0 && m_cCsrPos.y == 0 )
 			{
 				break;
@@ -3080,3 +3086,4 @@ void TextView::__TV_reserved4__()
 void TextView::__TV_reserved5__()
 {
 }
+
