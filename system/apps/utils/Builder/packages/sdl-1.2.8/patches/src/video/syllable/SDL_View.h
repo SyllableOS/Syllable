@@ -134,7 +134,7 @@ public:
 		if( nCode == os::MOUSE_ENTERED )
 		{
 			os::Application::GetInstance()->PushCursor( os::MPTR_MONO, CurrentCursor->bits, 
-				32, 32, os::IPoint( 32 / 2, 32 / 2 ) );
+				32, 32, os::IPoint( CurrentCursor->hotx, CurrentCursor->hoty ) );
 			cursor = true;
 		}
 		if( nCode == os::MOUSE_EXITED )
@@ -150,7 +150,7 @@ public:
 			int x, y;
 			if ( ! (SDL_GetAppState() & SDL_APPMOUSEFOCUS) ) {
 				SDL_PrivateAppActive(1, SDL_APPMOUSEFOCUS);
-				SDL_SetCursor(NULL);
+				//SDL_SetCursor(NULL);
 			}
 			GetXYOffset(x, y);
 			x = (int)cNewPos.x - x;
@@ -348,13 +348,13 @@ public:
 	}
 	void SetCursor( WMcursor *Cursor )
 	{
-		CurrentCursor = Cursor;
-		if( cursor )
+		if( cursor && ( CurrentCursor != Cursor ) )
 		{
 			os::Application::GetInstance()->PopCursor();
-			os::Application::GetInstance()->PushCursor( os::MPTR_MONO, CurrentCursor->bits, 
-				32, 32, os::IPoint( CurrentCursor->hotx, CurrentCursor->hoty ) );
+			os::Application::GetInstance()->PushCursor( os::MPTR_MONO, Cursor->bits, 
+				32, 32, os::IPoint( Cursor->hotx, Cursor->hoty ) );
 		}
+		CurrentCursor = Cursor;
 	}
 
 private:
