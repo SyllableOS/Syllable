@@ -33,6 +33,7 @@ bool g_bEnableLBA48bit = true;
 bool g_bEnablePIO32bit = true;
 bool g_bEnableDMA = true;
 bool g_bEnableDirect = false;
+bool g_bEnableProbeDebug = false;
 
 ATA_controller_s* g_psFirstController;
 static bool g_nIDTable[255];
@@ -357,6 +358,11 @@ status_t device_init( int nDeviceID )
 			if ( g_bEnableDirect )
 			{
 				printk( "Command queueing disabled\n" );
+			}
+		if ( get_bool_arg( &g_bEnableProbeDebug, "enable_ata_probe_debug=", argv[i], strlen( argv[i] ) ) )
+			if ( g_bEnableProbeDebug )
+			{
+				printk( "Probe debug output enabled\n" );
 			}
 	}
 	

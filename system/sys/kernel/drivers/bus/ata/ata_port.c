@@ -26,6 +26,8 @@
 #include "ata.h"
 #include "ata_private.h"
 
+extern bool g_bEnableProbeDebug;
+
 /* Identify one device */
 void ata_port_identify( ATA_port_s* psPort )
 {
@@ -58,7 +60,7 @@ void ata_port_identify( ATA_port_s* psPort )
 		ATA_READ_REG( psIPort, ATA_REG_STATUS, nStatus )
 		ATA_READ_REG( psIPort, ATA_REG_ERROR, nError )
 		
-		kerndbg( KERN_DEBUG, "ATA ID: High 0%x Low 0%x Status 0%x Error 0%x\n", (uint)nLbaHigh, (uint)nLbaMid, (uint)nStatus, (uint)nError );
+		kerndbg( g_bEnableProbeDebug ? KERN_INFO : KERN_DEBUG, "ATA: High 0%x Low 0%x Status 0%x Error 0%x\n", (uint)nLbaHigh, (uint)nLbaMid, (uint)nStatus, (uint)nError );
 	
 		if( nError == 0x81 && i == 0 )
 			bMasterOnly = true;

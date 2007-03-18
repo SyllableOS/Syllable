@@ -211,7 +211,7 @@ void ata_probe_port( ATA_port_s* psPort )
 	/* Reset port */
 	if( psPort->sOps.reset( psPort ) != 0 )
 	{
-		kerndbg( KERN_INFO, "No device connected on port %i:%i\n", psPort->nChannel, psPort->nPort );
+		kerndbg( KERN_INFO, "No device connected on port %i:%i (reset failed)\n", psPort->nChannel, psPort->nPort );
 		psPort->nDevice = ATA_DEV_NONE;
 		psPort->nCable = ATA_CABLE_NONE;
 		return;
@@ -219,7 +219,7 @@ void ata_probe_port( ATA_port_s* psPort )
 	
 	if( psPort->nDevice == ATA_DEV_NONE )
 	{
-		kerndbg( KERN_INFO, "No device connected on port %i:%i\n", psPort->nChannel, psPort->nPort );		
+		kerndbg( KERN_INFO, "No device connected on port %i:%i (not present)\n", psPort->nChannel, psPort->nPort );		
 		psPort->nCable = ATA_CABLE_NONE;
 		return;
 	}
@@ -237,7 +237,7 @@ void ata_probe_port( ATA_port_s* psPort )
 		kerndbg( KERN_INFO, "ATAPI device connected on %s cable\n", g_zCable[psPort->nCable] );
 	}
 	else {
-		kerndbg( KERN_INFO, "No device connected on port %i:%i\n", psPort->nChannel, psPort->nPort );
+		kerndbg( KERN_INFO, "No device connected on port %i:%i (no identification)\n", psPort->nChannel, psPort->nPort );
 		return;
 	}
 	
