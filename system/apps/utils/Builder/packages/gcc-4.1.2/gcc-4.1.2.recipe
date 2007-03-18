@@ -94,10 +94,10 @@ make-targets
 test-options		-k
 
 ;install-prefix-var	DESTDIR
-; Needs itself during installation:
+; Needs itself during installation (assumes no parent directory for the build):
 install-env
-	PATH		"$PATH:../stage/gcc/bin:../stage/image/gcc/bin:../../stage/image/usr/gcc/bin:/usr/gcc/bin"
-;	DLL_PATH	"$DLL_PATH:../stage/gcc/lib:../stage/image/gcc/lib:../../stage/image/usr/gcc/lib:/usr/gcc/lib"
+	PATH		"$PATH:../stage/gcc/bin:../stage/bootstrap/gcc/bin:../stage/image/gcc/bin:../../stage/image/usr/gcc/bin:/usr/gcc/bin"
+;	DLL_PATH	"$DLL_PATH:../stage/gcc/lib:../stage/bootstrap/gcc/lib:../stage/image/gcc/lib:../../stage/image/usr/gcc/lib:/usr/gcc/lib"
 
 ; Work around conflict with BinUtils:
 ;delete-files		lib/libiberty.a
