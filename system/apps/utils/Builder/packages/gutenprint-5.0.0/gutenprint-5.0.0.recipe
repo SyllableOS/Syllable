@@ -2,9 +2,7 @@ authors
 	Kristian Van Der Vliet
 	Kaj de Vos
 status				testing
-warnings
-	CUPS needs to be installed in the running system.
-;	The generated PPDs will be moved to /tmp/.
+;warnings			The generated PPDs will be moved to /tmp/.
 notes				Prior to version 5.0 Gutenprint was known as Gimp-Print
 
 inherits			sourceforge
@@ -22,7 +20,6 @@ needs
 build-dir			.
 
 configure-options
-;	--with-cups=/usr/cups
 	--enable-cups-ppds
 	--enable-cups-ppds-at-top-level
 ;	Note that we do eventually want to build the translated PPDs, just not yet:
