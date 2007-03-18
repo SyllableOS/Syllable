@@ -60,7 +60,6 @@ build install $HOME/Packages/gcc-3.4.3.bin.3.zip 1>>$LOG 2>>$LOG
 
 echo "Building GCC and GrUB"
 image gcc-libraries 1>>$LOG 2>>$LOG
-image grub 1>>$LOG 2>>$LOG
 build log >> $SYSTEM_LOG
 build log failures >> $SYSTEM_FAILURE_LOG
 build log summary >> $SYSTEM_SUMMARY_LOG
