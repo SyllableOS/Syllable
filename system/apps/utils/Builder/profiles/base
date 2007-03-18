@@ -102,8 +102,8 @@ modules
 
 ;	Extra requirements for bootstrapping
 
-	apps/gnu/binutils-2.17
-	apps/gnu/make-3.81
+;	apps/gnu/binutils-2.17
+;	apps/gnu/make-3.81
 
-;	1.8.5 doesn't bootstrap:
-	apps/other/ruby-1.8.4
+;	1.8.5+ doesn't bootstrap:
+;	apps/other/ruby-1.8.4
