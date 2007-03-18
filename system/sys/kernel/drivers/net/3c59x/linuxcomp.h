@@ -3,6 +3,9 @@
 
 #include <atheos/linux_compat.h>
 
+/* XXXKV: I have disabled this temporarily. I shall merge this into linux_compat.h. */
+#if 0
+
 #define  PCI_HEADER_TYPE_NORMAL 0
 #define  PCI_HEADER_TYPE_BRIDGE 1
 #define  PCI_HEADER_TYPE_CARDBUS 2
@@ -83,6 +86,8 @@ static int pci_set_power_state(PCI_bus_s* psBus, PCI_Info_s *dev, int *current_s
 
     return 0;
 }
+
+#endif
 
 #endif	/* _LINUXCOMP_H_ */
 
