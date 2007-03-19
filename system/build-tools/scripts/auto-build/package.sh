@@ -5,6 +5,7 @@ VERSION=0.6.4
 BUILD_DIR=$HOME/Build
 INSTALLER_DIR=$BUILD_DIR/Installer
 SCRIPTS_DIR=$HOME/bin
+LOG_DIR=$HOME/Logs
 
 # If you want to automatically upload the build to
 # an FTP server, set the following environment variables
@@ -13,6 +14,10 @@ SCRIPTS_DIR=$HOME/bin
 # FTP_SERVER
 # FTP_USER
 # FTP_PASSWD
+
+FINISH_LOG=$LOG_DIR/finish-stdout.log
+FINISH_FAILURE_LOG=$LOG_DIR/finish-failures.log
+FINISH_SUMMARY_LOG=$LOG_DIR/finish-summary.log
 
 # Clean up from any previous build
 if [ -e $INSTALLER_DIR/base-syllable.zip ]
@@ -46,6 +51,10 @@ $SCRIPTS_DIR/printers.sh $INSTALLER_DIR/ppds/ $BUILD_DIR/system/stage/image/usr/
 # Finish the build and package it
 cd $BUILD_DIR/system
 image finish
+build log > $FINISH_LOG
+build log failures > $FINISH_FAILURE_LOG
+build log summary > $FINISH_SUMMARY_LOG
+sync
 
 cd $BUILD_DIR/system/stage/image
 zip -yr9 $INSTALLER_DIR/base-syllable.zip *
@@ -77,7 +86,7 @@ MD5S=md5sums
 md5sum base-syllable.zip $ISO > $MD5S
 
 # Transfer the files
-FILES=`printf "base-syllable.zip $ISO.bz2 $MD5S\n"`
+FILES=`printf "$FINISH_LOG $FINISH_FAILURE_LOG $FINISH_SUMMARY_LOG base-syllable.zip $ISO.bz2 $MD5S\n"`
 if [ -n "$FTP_USER" ]
 then
   ftp -n $FTP_SERVER << END
