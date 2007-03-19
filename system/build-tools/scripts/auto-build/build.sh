@@ -36,43 +36,48 @@ BASE_SUMMARY_LOG=$LOG_DIR/base-summary.log
 # the "mdel *" command below.
 
 # Mark the start
-printf "Build started at %s\n" "`date`" > $LOG
+printf "\nBuild started at %s\n" "`date`" >> $LOG
 
 # Make sure we have the latest Builder
 echo "Updating Builder"
 build update 1>>$LOG 2>>$LOG
+build log 1>>$LOG 2>>$LOG
+sync
 
 # Build the 'system' profile
 
 cd $BUILD_DIR/system
 build prepare system 1>>$LOG 2>>$LOG
+build log >> $SYSTEM_LOG
+build log summary >> $SYSTEM_SUMMARY_LOG
+sync
 
-echo "image system-pre-gcc"
+echo "image system"
 image system-pre-gcc 1>>$LOG 2>>$LOG
 build log >> $SYSTEM_LOG
 build log failures >> $SYSTEM_FAILURE_LOG
 build log summary >> $SYSTEM_SUMMARY_LOG
 sync
 
-# XXXKV: We have to build GCC 4.1.x with GCC 3.4.3...
+# We have to build GrUB with GCC 3
+
 echo "Switching to GCC 3.4.3"
 build install $HOME/Packages/gcc-3.4.3.bin.3.zip 1>>$LOG 2>>$LOG
-
-echo "Building GCC and GrUB"
-image gcc-libraries 1>>$LOG 2>>$LOG
 build log >> $SYSTEM_LOG
-build log failures >> $SYSTEM_FAILURE_LOG
+build log summary >> $SYSTEM_SUMMARY_LOG
+sync
+
+echo "Building GrUB"
+image sys/boot/grub-0.97-syllable 1>>$LOG 2>>$LOG
+build log >> $SYSTEM_LOG
+# Doesn't work for a single module:
+#build log failures >> $SYSTEM_FAILURE_LOG
 build log summary >> $SYSTEM_SUMMARY_LOG
 sync
 
 echo "Switching to GCC 4.1.2"
 build install $HOME/Packages/gcc-4.1.2.bin.1.zip 1>>$LOG 2>>$LOG
-
-# Build the rest of the 'system' profile
-echo "image system-post-gcc"
-image system-post-gcc 1>>$LOG 2>>$LOG
 build log >> $SYSTEM_LOG
-build log failures >> $SYSTEM_FAILURE_LOG
 build log summary >> $SYSTEM_SUMMARY_LOG
 sync
 
