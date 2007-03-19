@@ -3,7 +3,7 @@ status				testing
 
 licenses			GPL LGPL BSD Artistic other PD
 home				www.ruby-lang.org
-locations			ftp://ftp.ruby-lang.org/pub/ruby/
+locations			ftp://ftp.ruby-lang.org/pub/ruby/1.8/
 
 needs				Syllable >= 0.6.1
 
@@ -23,4 +23,3 @@ documentation
 	README COPYING LEGAL GPL LGPL NEWS ChangeLog ToDo
 ;	doc
 develop-docs		README.EXT sample
-
