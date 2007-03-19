@@ -230,14 +230,16 @@ modules
 	libs/libpthread
 
 ;	Currently conflicts with GetText on GLibC 2.3.x:
-	apps/gnu/grep-2.5.1a
+;	apps/gnu/grep-2.5.1a
 
 ;	stage libraries/gettext-0.16.1
 ;	stage libraries/flex-2.5.33
 ;	stage libraries/bison-2.3
 ;	stage libraries/binutils-2.17
 
-	libraries libraries/gcc-4.1.2
+;	libraries libraries/gcc-4.1.2
+;	May have to be in the root of the working directory:
+	libraries gcc-4.1.2
 ;	For bootstrapping:
 ;	system apps/gnu/gcc-4.1.2
 
@@ -307,6 +309,7 @@ modules
 	apps/desktop/file_browser
 	apps/gnu/bash-3.2
 	apps/gnu/coreutils-6.4
+	apps/gnu/grep-2.5.1a
 	apps/gnu/sed-4.1.5
 	apps/other/unzip-5.52
 
