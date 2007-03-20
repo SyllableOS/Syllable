@@ -3,8 +3,6 @@ authors
 	Kaj de Vos
 maintainers			Kaj de Vos
 status				testing
-warnings
-	LibVorbis must be available in a stage subdirectory in the same parent directory as SDL-Sound.
 notes				Doesn't build a shared library yet
 
 licenses			LGPL
@@ -30,8 +28,7 @@ configure-options
 ;	--disable-shared
 ;	--with-sdl-prefix=
 ;	--disable-sdltest
-;	--with-vorbis-prefix=/usr/vorbis
-	--with-vorbis-prefix=$PWD/../stage
+	--with-vorbis-prefix=/usr/vorbis
 ;	--disable-vorbistest
 
 documentation

@@ -5,8 +5,7 @@ inherits			openssl-0.9.7m
 
 packages			openssl-0.9.7m
 
-; Will go with a hack for now:
 install-vars
-	OPENSSLDIR "$IMAGE/../openssl"
-	INSTALLTOP "$IMAGE/../openssl"
+	OPENSSLDIR "$STAGE/openssl"
+	INSTALLTOP "$STAGE/openssl"
 
