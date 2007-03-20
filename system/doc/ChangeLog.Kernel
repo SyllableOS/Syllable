@@ -1,3 +1,9 @@
+* March 20, 2007, Kristian Van Der Vliet *
+
+Added some missing Intel ICH5 & ICH6 SATA PCI IDs to the ATA driver. My ICH6 SATA controller
+now works fully in "Normal" mode (Instead of "Combination") on my Dell GX280. This might cause
+the drive to move I.e. hda->hde etc.
+
 * March 15, 2007, Kristian Van Der Vliet *
 
 o Added a skge driver for SysKonnect/Marvell Yukon1 NICs, ported from the Linux 2.6 skge
