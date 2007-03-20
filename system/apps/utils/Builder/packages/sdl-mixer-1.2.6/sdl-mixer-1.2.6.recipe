@@ -32,5 +32,5 @@ configure-options
 
 documentation		README COPYING CHANGES
 ; For some packages:
-links				SDL/SDL_mixer.h include/
+links				include/SDL/SDL_mixer.h include/
 

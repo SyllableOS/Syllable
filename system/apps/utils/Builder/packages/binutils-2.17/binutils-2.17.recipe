@@ -28,8 +28,8 @@ patch
 	cd ../gas
 	autoconf
 
-configure-options
-	--enable-shared
+;configure-options
+;	--enable-shared
 ;	--with-lib-path=
 
 ; No cross-compiling support:
@@ -55,3 +55,4 @@ links
 ;	/usr/indexes/bin/ranlib	/usr/bin/ranlib
 ;	For some packages:
 ;	include/libiberty.h		/usr/include/
+

@@ -25,5 +25,5 @@ configure-env		LDFLAGS "$LDFLAGS -lm"
 
 documentation		README COPYING CHANGES
 ; For some packages:
-links				SDL/SDL_image.h include/
+links				include/SDL/SDL_image.h include/
 
