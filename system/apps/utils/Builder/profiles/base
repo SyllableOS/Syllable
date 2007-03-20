@@ -22,6 +22,9 @@ modules
 	other/fonts/lcd-fonts-1.1
 	other/fonts/freefont-20060126
 
+;	For rescopy:
+	apps/gnu/binutils-2.17-objcopy
+;	Needs ranlib symlink in /usr/bin/!
 ;	For cURL:
 	stage apps/other/openssl--stage
 
@@ -79,11 +82,8 @@ modules
 	apps/utils/Launch
 	apps/utils/Man
 	apps/utils/memmon
-
 ;	Needs objcopy from BinUtils:
-	apps/gnu/binutils-2.17-objcopy
 	apps/utils/rescopy
-
 	apps/utils/shelltools
 	apps/utils/slbmgr
 
@@ -94,13 +94,12 @@ modules
 	libs/sdl-mixer-1.2.6
 	libs/sdl-net-1.2.6
 	libs/sdl-image-1.2.4
-;	Hardwired to the root of the working directory:
-	sdl-sound-1.0.1
+	libs/sdl-sound-1.0.1
 
 ;	Still needs FreeType 2.1:
 	bootstrap libraries/freetype-2.1.10
-	apps/other/xpdf-3.00pl3-syllable
-;	apps/other/xpdf-3.00pl3
+	apps/other/xpdf-3.00pl3-image-syllable
+;	apps/other/xpdf-3.00pl3-image
 
 
 ;	Extra requirements for bootstrapping
