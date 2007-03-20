@@ -9,7 +9,7 @@ status				testing
 warnings
 	Compile breaks on an illegal instruction crash with GCC 4.1.x itself installed when building in a subdirectory.
 	GCC has a circular dependency on GLibC.
-;	LibIberty is both in BinUtils and in GCC.
+	LibIberty is both in BinUtils and in GCC.
 notes				GMP with MPFR support is required to build Fortran
 
 inherits			gnu
@@ -96,10 +96,9 @@ make-targets
 test-options		-k
 
 ;install-prefix-var	DESTDIR
-; Needs itself during installation (assumes no parent directory for the build):
+; Needs itself during installation:
 install-env
-	PATH		"$PATH:../stage/gcc/bin:../stage/bootstrap/gcc/bin:../stage/image/gcc/bin:../../stage/image/usr/gcc/bin:/usr/gcc/bin"
-;	DLL_PATH	"$DLL_PATH:../stage/gcc/lib:../stage/bootstrap/gcc/lib:../stage/image/gcc/lib:../../stage/image/usr/gcc/lib:/usr/gcc/lib"
+	PATH		"$PATH:$STAGE/gcc/bin:$STAGE/bootstrap/gcc/bin:$IMAGE/gcc/bin:$IMAGE/usr/gcc/bin:/usr/gcc/bin"
 
 ; LFS prefers the one from BinUtils:
 ;delete-files		lib/libiberty.a
