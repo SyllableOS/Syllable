@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.132
+# Version 0.6.133
 # Copyright (c) 2002-2007 Kaj de Vos
 # License: GPL 2 or any later version
 
@@ -1656,6 +1656,7 @@ else
 	ENV['DIST_DIR'] = @image
 end
 
+ENV['STAGE'] = @stage
 ENV['IMAGE'] = @systemRoot
 
 # Isolate build in staging area from the build host?
@@ -1670,7 +1671,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.6.132',
+	puts 'Syllable Build System 0.6.133',
 		'Copyright (c) 2002-2007 Kaj de Vos',
 		'License: GPL 2 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
