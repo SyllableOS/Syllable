@@ -7,7 +7,7 @@ authors
 maintainers			Kaj de Vos
 status				testing
 warnings
-	Build breaks with GCC 4.1.x itself installed.
+	Compile breaks on an illegal instruction crash with GCC 4.1.x itself installed when building in a subdirectory.
 	GCC has a circular dependency on GLibC.
 ;	LibIberty is both in BinUtils and in GCC.
 notes				GMP with MPFR support is required to build Fortran
@@ -113,3 +113,4 @@ links
 	libgcc.a		lib/gcc/i586-pc-syllable/4.1.2/libgcc_static.a
 ;	For some packages:
 ;	bin/cpp			lib/
+

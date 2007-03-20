@@ -238,7 +238,7 @@ modules
 ;	stage libraries/binutils-2.17
 
 ;	libraries libraries/gcc-4.1.2
-;	May have to be in the root of the working directory:
+;	Needs to be in the root of the working directory:
 	libraries gcc-4.1.2
 ;	For bootstrapping:
 ;	system apps/gnu/gcc-4.1.2
