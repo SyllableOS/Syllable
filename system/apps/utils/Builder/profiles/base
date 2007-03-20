@@ -98,8 +98,8 @@ modules
 
 ;	Still needs FreeType 2.1:
 	bootstrap libraries/freetype-2.1.10
-	apps/other/xpdf-3.00pl3-image-syllable
-;	apps/other/xpdf-3.00pl3-image
+	apps/other/xpdf--image-syllable
+;	apps/other/xpdf--image
 
 
 ;	Extra requirements for bootstrapping

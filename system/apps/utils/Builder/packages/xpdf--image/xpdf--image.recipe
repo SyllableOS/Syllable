@@ -1,0 +1,11 @@
+authors				Kaj de Vos
+status				testing
+warnings			FreeType needs to be in the bootstrap stage.
+
+inherits			xpdf-3.00pl3
+
+configure-options
+	--with-freetype2-includes=$STAGE/bootstrap/freetype/include/freetype2
+;	--enable-multithreaded
+	--enable-a4-paper
+
