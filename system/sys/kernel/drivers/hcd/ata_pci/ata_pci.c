@@ -84,6 +84,11 @@ ATA_PCI_dev_s g_sDevices[] =
 	{ 0x8086, 0x2850, init_intel_controller },
 	/* Intel SATA */
 	{ 0x8086, 0x24d1, init_intel_sata_controller },	/* ICH5 SATA */
+	{ 0x8086, 0x24df, init_intel_sata_controller },	/* ICH5 SATA */
+	{ 0x8086, 0x25a3, init_intel_sata_controller },	/* ICH5 SATA */
+	{ 0x8086, 0x25b0, init_intel_sata_controller },
+	{ 0x8086, 0x2651, init_intel_sata_controller },	/* ICH6/ICH6W SATA */
+
 	/* SIS */
 	{ 0x1039, 0x5513, init_sis_controller },
 	/* AMD */

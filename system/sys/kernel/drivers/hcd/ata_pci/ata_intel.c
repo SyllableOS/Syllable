@@ -61,7 +61,11 @@ static struct Intel_ide_s {
 	{ "C-ICH", 0x245b, INTEL_UDMA_100 | INTEL_INIT | INTEL_80W },
 	{ "ICH4", 0x24ca, INTEL_UDMA_100 | INTEL_INIT | INTEL_80W },
 	{ "ICH5 SATA", 0x24d1, INTEL_UDMA_100 | INTEL_INIT | INTEL_80W },
+	{ "ICH5 SATA", 0x24df, INTEL_UDMA_100 | INTEL_INIT | INTEL_80W },
 	{ "ESB2", 0x25a2, INTEL_UDMA_100 | INTEL_INIT | INTEL_80W },
+	{ "ICH5 SATA", 0x25a3, INTEL_UDMA_100 | INTEL_INIT | INTEL_80W },
+	{ "ICH5 SATA", 0x25b0, INTEL_UDMA_100 | INTEL_INIT | INTEL_80W },
+	{ "ICH6 SATA", 0x2651, INTEL_UDMA_100 | INTEL_INIT | INTEL_80W },
 	{ "ICH6", 0x266f, INTEL_UDMA_100 | INTEL_INIT | INTEL_80W },
 	{ "ICH7", 0x27df, INTEL_UDMA_100 | INTEL_INIT | INTEL_80W },
 	{ "ICH7", 0x24c1, INTEL_UDMA_100 | INTEL_INIT | INTEL_80W },
@@ -350,7 +354,7 @@ void init_intel_sata_controller( PCI_Info_s sDevice, ATA_controller_s* psCtrl )
 		psPort->pPrivate = psPrivate;
 	}
 
-	kerndbg( KERN_INFO, "Intel ICH5 Serial ATA controller detected\n" );
+	kerndbg( KERN_INFO, "Intel Serial ATA controller detected\n" );
 
 	/* Initialize */
 	unsigned int nExtra = g_psPCIBus->read_pci_config( sDevice.nBus, sDevice.nDevice, sDevice.nFunction, 0x54, 4 );
