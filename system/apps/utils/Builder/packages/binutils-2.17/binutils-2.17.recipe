@@ -28,9 +28,15 @@ patch
 	cd ../gas
 	autoconf
 
-;configure-options	--enable-shared
+configure-options
+	--enable-shared
+;	--with-lib-path=
+
+; No cross-compiling support:
+;make-vars			tooldir '/usr/binutils'
 
 ;install-prefix-var	tooldir
+;install-vars		tooldir '/usr/binutils'
 
 documentation
 	README COPYING COPYING.LIB

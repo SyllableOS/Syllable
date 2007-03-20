@@ -48,6 +48,7 @@ build-recommends
 ;	diffutils
 ;	For documentation:
 	texinfo
+recommends			mktemp
 test-needs			dejagnu >= 1.4.1
 ;conflicts			binutils
 
@@ -91,6 +92,7 @@ make-targets
 ;test-env
 ;	TCL_LIBRARY		'/usr/tcl'
 ;	DEJAGNULIBS		'/usr/dejagnu'
+; Don't stop at errors:
 test-options		-k
 
 ;install-prefix-var	DESTDIR
@@ -99,7 +101,7 @@ install-env
 	PATH		"$PATH:../stage/gcc/bin:../stage/bootstrap/gcc/bin:../stage/image/gcc/bin:../../stage/image/usr/gcc/bin:/usr/gcc/bin"
 ;	DLL_PATH	"$DLL_PATH:../stage/gcc/lib:../stage/bootstrap/gcc/lib:../stage/image/gcc/lib:../../stage/image/usr/gcc/lib:/usr/gcc/lib"
 
-; Work around conflict with BinUtils:
+; LFS prefers the one from BinUtils:
 ;delete-files		lib/libiberty.a
 
 documentation
@@ -111,4 +113,3 @@ links
 	libgcc.a		lib/gcc/i586-pc-syllable/4.1.2/libgcc_static.a
 ;	For some packages:
 ;	bin/cpp			lib/
-
