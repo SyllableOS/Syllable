@@ -94,7 +94,7 @@ modules
 	libs/sdl-mixer-1.2.6
 	libs/sdl-net-1.2.6
 	libs/sdl-image-1.2.4
-	libs/sdl-sound-1.0.1
+	libs/sdl-sound--image
 
 ;	Still needs FreeType 2.1:
 	bootstrap libraries/freetype-2.1.10
