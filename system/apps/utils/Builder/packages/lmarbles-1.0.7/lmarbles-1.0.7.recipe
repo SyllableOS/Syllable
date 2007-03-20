@@ -1,11 +1,11 @@
 authors				Kaj de Vos
-status				broken
+status				incomplete
 warnings
 	The source package contains hard links. This fails on Syllable of course, but the source is installed, so you have to patch the source separately and continue the build:
 	build get lmarbles-1.0.7
 	build patch lmarbles-1.0.7
 	build lmarbles-1.0.7
-notes				May need older LibOGG and LibVorbis
+	Due to this, it misses links to images.
 
 inherits			sourceforge
 
@@ -18,6 +18,7 @@ home				lgames.sourceforge.net/index.php?project=LMarbles
 packages			lgames/lmarbles-1.0.7
 
 needs
+	Syllable >= 0.6.3
 	sdl
 	sdl-mixer
 
@@ -33,3 +34,4 @@ documentation
 ;	NEWS
 ;	src/manual
 build-docs			README-SDL.txt
+
