@@ -1,0 +1,8 @@
+title	TCL Trivia
+
+name	TCL-Trivia
+
+modules
+	programming/languages/tcl-8.4.9
+	shell/expect-5.42.1
+	testing/dejagnu-1.4.4
