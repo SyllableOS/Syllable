@@ -32,3 +32,5 @@ documentation		README BUGS COPYING NEWS ChangeLog TODO AUTHORS THANKS
 build-docs			INSTALL netboot/README.netboot
 internal-docs		MAINTENANCE
 
+; FHS:
+;links				/boot/grub/menu.lst /etc/grub/
