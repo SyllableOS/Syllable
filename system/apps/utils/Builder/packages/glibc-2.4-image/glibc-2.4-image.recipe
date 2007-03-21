@@ -1,10 +1,10 @@
 authors				Kaj de Vos
 status				testing
+notes
+	Make the GLibC linker script function in the system stage, to avoid compiling it twice
 
 inherits			glibc-2.4
 
-; This assumes that GLibC is built in a parent subdirectory, e.g. libs/glibc-2.4-image:
 post-install
-	echo 'OUTPUT_FORMAT(elf32-i386)' > ../../stage/image/usr/glibc/lib/libc.so
-	echo "GROUP ( $PWD/../../stage/image/system/libraries/libc.so.2 $PWD/../../stage/image/usr/glibc/lib/libc_nonshared.a )" >> ../../stage/image/usr/glibc/lib/libc.so
-
+	echo 'OUTPUT_FORMAT(elf32-i386)' > $IMAGE/usr/glibc/lib/libc.so
+	echo "GROUP ( $IMAGE/system/libraries/libc.so.2 $IMAGE/usr/glibc/lib/libc_nonshared.a )" >> $IMAGE/usr/glibc/lib/libc.so
