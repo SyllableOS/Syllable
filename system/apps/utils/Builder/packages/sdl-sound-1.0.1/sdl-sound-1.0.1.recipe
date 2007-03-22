@@ -28,10 +28,9 @@ configure-options
 ;	--disable-shared
 ;	--with-sdl-prefix=
 ;	--disable-sdltest
-	--with-vorbis-prefix=/usr/vorbis
+	--with-vorbis-prefix=/usr/libvorbis
 ;	--disable-vorbistest
 
 documentation
 	README COPYING CREDITS CHANGELOG TODO
 ;	docs
-
