@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.134
+# Version 0.6.135
 # Copyright (c) 2002-2007 Kaj de Vos
 # License: GPL 2 or any later version
 
@@ -1671,7 +1671,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.6.134',
+	puts 'Syllable Build System 0.6.135',
 		'Copyright (c) 2002-2007 Kaj de Vos',
 		'License: GPL 2 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
@@ -1830,15 +1830,15 @@ else
 
 				@log.extra name + ': ' + ENV[name]
 
-				if @syllable
-					ENV['LIBRARY_PATH'] =
-						(@systemBuild ? File.join(@image, 'system/libraries') + ':' : '') +
-						File.join(@stage, 'indexes', 'lib') + ':' +
-						File.join(@stage, 'bootstrap/indexes', 'lib') +
-						((var = ENV['LIBRARY_PATH']) && !@isolateStage ? ':' + var : '')
+				ENV['LIBRARY_PATH'] =
+					(@systemBuild ? File.join(@image, 'system/libraries') + ':' : '') +
+					File.join(@stage, 'indexes', 'lib') + ':' +
+					File.join(@stage, 'bootstrap/indexes', 'lib') +
+					((var = ENV['LIBRARY_PATH']) && !@isolateStage ? ':' + var : '')
 
-					@log.extra 'LIBRARY_PATH: ' + ENV['LIBRARY_PATH']
-				else
+				@log.extra 'LIBRARY_PATH: ' + ENV['LIBRARY_PATH']
+
+				unless @syllable
 					ENV['LDFLAGS'] = ((var = ENV['LDFLAGS']) ? var : '') +
 						(@systemBuild ? ' -L' + File.join(@image, 'system/libraries') : '') +
 						' -L' + File.join(@stage, 'indexes', 'lib') +
