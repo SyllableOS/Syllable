@@ -172,7 +172,7 @@ BASE_DIR=$WORKING_DIR/base
 CD_DIR=$WORKING_DIR/cdrom
 
 # Default for the Ruby package if one is not specified
-RUBY_PACKAGE=ruby-1.8.5.bin.1.zip
+RUBY_PACKAGE=ruby-1.8.6.bin.1.zip
 
 # Default for the Installer scripts if a directory is not specified
 INSTALLER_DIR=installer
