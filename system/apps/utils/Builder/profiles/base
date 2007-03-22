@@ -24,7 +24,7 @@ modules
 
 ;	For rescopy:
 	apps/gnu/binutils-2.17-objcopy
-;	Needs ranlib symlink in /usr/bin/!
+;	Needs ranlib and perl symlinks in /usr/bin/!
 ;	For cURL:
 	stage apps/other/openssl--stage
 
