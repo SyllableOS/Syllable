@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.133
+# Version 0.6.134
 # Copyright (c) 2002-2007 Kaj de Vos
 # License: GPL 2 or any later version
 
@@ -649,7 +649,7 @@ def installModule originalStaging, staging, directive, target
 								linkFile = File.basename destination
 
 								if linkPath[0, 1] == '/'  # A link into the system
-									next if staging == 'stage'
+									next unless staging == 'image' or not staging
 
 									original = File.join prefix(staging, target), original if original['/']
 
@@ -1671,7 +1671,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.6.133',
+	puts 'Syllable Build System 0.6.134',
 		'Copyright (c) 2002-2007 Kaj de Vos',
 		'License: GPL 2 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
@@ -1878,4 +1878,3 @@ else
 	@log.close
 	exit @log.failures.length  # FIXME: only works when processing a profile
 end
-
