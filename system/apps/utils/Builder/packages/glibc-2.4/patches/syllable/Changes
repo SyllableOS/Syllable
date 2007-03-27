@@ -1,5 +1,11 @@
 Glibc Syllable Changelog
 
+* March 27th 2007 *
+
+	o settimeofday.c: New file. A replacement of the standard unix/sysv implementation. This
+	  implementation allows high-resolution microsecond accuracy.
+	o adjtime.c: New file.
+
 * March 12th 2007 *
 
 	o getrusage.c: Fixed a possible division by 0.
