@@ -1,0 +1,21 @@
+authors				Kristian Van Der Vliet
+status				testing
+
+headline			MSNTP (Simple Network Time Protocol Utility) - Version 1.6
+
+licenses			GPL
+
+packages			ftp.openpkg.org/sources/DST/msntp/msntp-1.6
+
+build-dir			.
+
+configure			true
+make-vars			LIBS '-lm'
+
+install
+	mkdir -p /usr/msntp/bin
+	cp -pf msntp /usr/msntp/bin/
+	mkdir -p /usr/msntp/man/man1
+	cp -pf msntp.1 /usr/msntp/man/man1/
+
+documentation		README Copyright
