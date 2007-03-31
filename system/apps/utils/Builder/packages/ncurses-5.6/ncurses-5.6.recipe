@@ -29,8 +29,9 @@ links
 ;	For older packages:
 	ncurses/ncurses.h	include/
 	ncurses/curses.h	include/
+;	For ProcPS:
+	ncurses/term.h		include/
 ;	For INetUtils:
 	include/ncurses		/usr/include/
 ;	For LinuxTree:
 	bin/clear			/usr/bin/
-
