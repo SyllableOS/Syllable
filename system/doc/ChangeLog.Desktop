@@ -3,6 +3,7 @@
 Use an unlocked IconDirView in Filebrowser so backspace will change to parent dir.
 Set appropriate tab order in dlogin for keyboard navigation and a couple of other minor
 fixes for keyboard control  (so login should be possible even if mouse isn't working)
+Moved all of the individual copies of dockplugin.h to <appserver/dockplugin.h>
 Patches from Anthony Morphett <awmorp@gmail.com>
 
 ---- 0.6.3 Released -------------------------------------------------------------------
