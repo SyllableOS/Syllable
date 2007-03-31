@@ -29,7 +29,7 @@
 #include <media/manager.h>
 #include <media/server.h>
 
-#include "../../dock/dockplugin.h"
+#include <appserver/dockplugin.h>
 
 using namespace os;
 

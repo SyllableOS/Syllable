@@ -25,7 +25,7 @@
 #include <util/looper.h>
 #include <util/resources.h>
 
-#include "dockplugin.h"
+#include <appserver/dockplugin.h>
 
 using namespace os;
 

@@ -5,7 +5,7 @@
 #include <util/looper.h>
 #include <storage/file.h>
 
-#include "dockplugin.h"
+#include <appserver/dockplugin.h>
 #include "Settings.h"
 
 using namespace os;

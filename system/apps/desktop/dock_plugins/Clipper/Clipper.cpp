@@ -40,7 +40,7 @@
 
 #include <atheos/time.h>
 
-#include "dockplugin.h"
+#include <appserver/dockplugin.h>
                     
 #define PLUGIN_NAME       "Clipper"
 #define PLUGIN_VERSION    "0.1"

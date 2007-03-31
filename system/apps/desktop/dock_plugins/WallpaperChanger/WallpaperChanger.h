@@ -36,7 +36,7 @@
 #include <storage/streamableio.h>
 #include <iostream>
 
-#include "./dockplugin.h"
+#include <appserver/dockplugin.h>
 #include "WallpaperChangerSettings.h"
 #include "WallpaperChangerLooper.h"
 

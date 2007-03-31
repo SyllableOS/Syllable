@@ -38,7 +38,7 @@
 #include <storage/fsnode.h>
 #include <storage/file.h>
 #include <vector>
-#include "dockplugin.h"
+#include <appserver/dockplugin.h>
 
 struct DockPluginFile
 {

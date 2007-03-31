@@ -35,7 +35,7 @@
 #include <storage/streamableio.h>
 #include <iostream>
 
-#include "./dockplugin.h"
+#include <appserver/dockplugin.h>
                     
 #define PLUGIN_NAME       "Camera"
 #define PLUGIN_VERSION    "2.0"

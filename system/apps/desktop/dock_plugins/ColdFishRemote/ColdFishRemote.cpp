@@ -10,7 +10,7 @@
 #include <util/catalog.h>
 #include "resources/ColdFishRemote.h"
 
-#include "dockplugin.h"
+#include <appserver/dockplugin.h>
 #include "messages.h"
 
 enum

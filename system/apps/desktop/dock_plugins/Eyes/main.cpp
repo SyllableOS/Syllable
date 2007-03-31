@@ -21,7 +21,7 @@
 
 #include "eyewidget.h"
 #include "messages.h"
-#include "dockplugin.h"
+#include <appserver/dockplugin.h>
 
 using namespace os;
 

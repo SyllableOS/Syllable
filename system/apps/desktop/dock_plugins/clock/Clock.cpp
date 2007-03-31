@@ -43,7 +43,7 @@
 
 
 
-#include "dockplugin.h"                                                                                                                                              
+#include <appserver/dockplugin.h>
 #include "Settings.h"
 #include "messages.h"
                                                                                                                                                                                                         

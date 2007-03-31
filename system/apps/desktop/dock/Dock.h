@@ -34,7 +34,7 @@
 #include <util/locker.h>
 #include <util/event.h>
 #include <storage/nodemonitor.h>
-#include "dockplugin.h"
+#include <appserver/dockplugin.h>
 #include "DockMenu.h"
 #include <storage/registrar.h>
 

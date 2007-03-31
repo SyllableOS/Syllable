@@ -29,7 +29,7 @@
 #include <util/thread.h>
 #include <storage/file.h>
 
-#include "dockplugin.h"
+#include <appserver/dockplugin.h>
 
 using namespace os;
 

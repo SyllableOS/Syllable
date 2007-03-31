@@ -1,4 +1,4 @@
-#include "dockplugin.h"
+#include <appserver/dockplugin.h>
 #include <gui/view.h>
 #include <gui/image.h>
 #include <gui/point.h>

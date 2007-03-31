@@ -17,11 +17,9 @@
  *  Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
  *  MA 02111-1307, USA
  */
- 
- 
 
-#ifndef __F_GUI_DOCKPLUGIN_H__
-#define __F_GUI_DOCKPLUGIN_H__
+#ifndef __F_APPSERVER_DOCKPLUGIN_H__
+#define __F_APPSERVER_DOCKPLUGIN_H__
 
 #include <atheos/types.h>
 #include <atheos/filesystem.h>
@@ -139,16 +137,5 @@ typedef DockPlugin* init_dock_plugin();
 
 }
 
-#endif // __F_GUI_DOCKPLUGIN_H__
-
-
-
-
-
-
-
-
-
-
-
+#endif // __F_APPSERVER_DOCKPLUGIN_H__
 
