@@ -1,3 +1,22 @@
+* March 31, 2007, Kristian Van Der Vliet *
+
+libsyllable
+	o moved find-as-you-type from IconDirView to IconView; so it should work on all IconViews
+	o added horizontal autoscrolling when trying to drag an icon to the far left/right of the
+	  IconDirView, in list mode
+	o fixed SetTabOrder() and GetTabOrder() for IconView
+	o prevent user from dragging an icon out of the IconView (in icon mode)
+	o added keyboard navigation to IconView:
+		o arrow keys can be used to move to adjacent icons
+		o home/end can be used to move to top-left-most, bottom-right-most icons
+		o if no icon was previously active, down or right will select topleft-most icon; up or
+		  left will select bottom-right-most (like home/end)
+		o if shift key is held, next icon will be added to selection
+		o pageup/pagedown will scroll the window (if scrollbars are present)
+		o escape deselects all icons
+
+Patches from Anthony Morphett <awmorp@gmail.com>
+
 * March 17, 2007, Kristian Van Der Vliet *
 
 Backspace now acts like Delete if text is selected in a TextView I.e. it deletes the selection. Fixes
