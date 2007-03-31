@@ -24,6 +24,7 @@ public:
 	bool GetUserNameAndPass(String*,String*);
 	void ClearPassword();
 	void Focus();
+	void AttachedToWindow();
 	void FindUser(const String&);
 	void Reload()
 	{

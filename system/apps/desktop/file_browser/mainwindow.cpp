@@ -95,7 +95,7 @@ MainWindow::MainWindow( os::String zPath ) : os::Window( os::Rect( 0, 0, 300, 30
 	/* Create icon view */
 	m_pcView = new os::IconDirectoryView( os::Rect( 0, 41, GetBounds().Width(), GetBounds().Height() ), zPath, os::CF_FOLLOW_ALL );
 	m_pcView->SetDirChangeMsg( new os::Message( M_CHANGE_DIR ) );
-	m_pcView->SetDirectoryLocked( true );
+
 	os::BitmapImage* pcDirIcon = static_cast<os::BitmapImage*>(m_pcView->GetDirIcon());
 	pcDirIcon->SetSize( os::Point( 24, 24 ) );
 	SetIcon( pcDirIcon->LockBitmap() );
@@ -192,12 +192,6 @@ void MainWindow::HandleMessage( os::Message* pcMessage )
 			if( pcMessage->FindString( "file/path", &zPath.str() ) != 0 )
 				break;
 			
-				
-			/* We get two M_CHANGE_DIR messages. First when the new directory is opened and
-			then because of our SetPath() call. We ignore the second case here */
-			if( zPath == m_pcView->GetPath() )
-				break;
-			
 			m_pcView->SetPath( zPath );
 			m_pcView->Clear();
 			LoadWindow( true );
@@ -260,7 +254,7 @@ void MainWindow::HandleMessage( os::Message* pcMessage )
 		case M_VIEW_ICONS:
 		{
 			m_pcView->SetView( os::IconDirectoryView::VIEW_ICONS );
-			m_pcView->ReRead();
+			m_pcView->ReRead();  /* ReRead after view change to ensure that correct-sized icons are used */
 			break;
 		}
 		case M_VIEW_LIST:

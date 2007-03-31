@@ -4,6 +4,7 @@ LoginImageView::LoginImageView(const Rect& cRect) : View(cRect,"login_image_view
 {
 	pcImage = LoadImageFromResource("background.png");
 	ResizeBackground();
+	SetTabOrder( NO_TAB_ORDER );
 }
 
 void LoginImageView::ResizeBackground()

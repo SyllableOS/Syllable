@@ -97,6 +97,14 @@ private:
 class IconView::Private
 {
 public:
+	enum adj_direction  /* directions for SelectAdjacent */
+	{
+		ADJ_LEFT,
+		ADJ_RIGHT,
+		ADJ_UP,
+		ADJ_DOWN
+	};
+	
 	Private( os::IconView* pcControl )
 
 	{
@@ -113,6 +121,8 @@ public:
 		m_pcSelChangeMsg = NULL;
 		m_bScrollDown = false;
 		m_bScrollUp = false;
+		m_bScrollLeft = false;
+		m_bScrollRight = false;
 		m_bAdjusting = false;
 		m_pcBackground = NULL;
 		m_sTextColor = get_default_color(COL_ICON_TEXT);  //os::Color32_s( 0, 0, 0 );
@@ -126,6 +136,9 @@ public:
 		m_bMultiSelect = true;
 		m_bHScrollBarVisible = true;
 		m_bVScrollBarVisible = true;
+		m_nLastKeyDownTime = 0;
+		m_nLastActiveIcon = -1;
+
 	}
 	
 	void Lock()
@@ -225,6 +238,7 @@ public:
 		{
 			std::sort( m_cIcons.begin(), m_cIcons.end(), IconSort( m_pcControl ) );
 		}
+		m_nLastActiveIcon = -1;  /* TODO: update m_nLastActiveIcon (its index may have changed after sorting) */
 		Unlock();
 	}
 	
@@ -247,7 +261,6 @@ public:
 	/* Layout the icons */
 	void LayoutIcons()
 	{
-		
 		CalculateMaxIconSize();
 		
 		if( m_vIconWidth == 0 ) {
@@ -282,7 +295,7 @@ public:
 			else
 				vY += m_vIconHeight + 6;
 			nCurrent++;
-			if( nCurrent == m_nIconsPerRow && m_eType != VIEW_DETAILS )
+			if( (nCurrent % m_nIconsPerRow) == 0 && m_eType != VIEW_DETAILS )
 			{
 				if( m_eType == VIEW_ICONS ) {
 					vX = cViewFrame.left + 5;
@@ -291,15 +304,24 @@ public:
 					vX += m_vIconWidth + 6;
 					vY = cViewFrame.top + 5;
 				}
-				nCurrent = 0;
 			}
 			m_cIcons[i]->m_bLayouted = true;
 		}
 		Unlock();
 		
+		/* Ensure m_vLastXPos, m_vLastYPos store co-ord of far edge of rightmost, bottommost icon (used in SetIconPosition and for scrollbars) */
+		if( m_eType == VIEW_LIST ) {
+			m_vLastXPos = vX + ( ( (nCurrent % m_nIconsPerRow) == 0 ) ? 0 : m_vIconWidth );
+			m_vLastYPos = ( nCurrent >= m_nIconsPerRow ? m_cIcons[m_nIconsPerRow-1]->m_cPosition.y : vY) + m_vIconHeight;
+		} else if( m_eType == VIEW_DETAILS ) {
+			m_vLastXPos = cViewFrame.left + 5 + m_vIconWidth;
+			m_vLastYPos = vY + m_vIconHeight;
+		} else {   /* VIEW_ICONS or VIEW_ICONS_DESKTOP */
+			m_vLastYPos = vY + ( nCurrent % m_nIconsPerRow == 0 ? 0 : m_vIconHeight );
+			m_vLastXPos = ( nCurrent >= m_nIconsPerRow ? m_cIcons[m_nIconsPerRow-1]->m_cPosition.x : vX ) + m_vIconWidth;
+		}
+
 		/* Update scrollbar */
-		m_vLastXPos = vX + ( ( nCurrent == 0 ) ? 0 : m_vIconWidth );
-		m_vLastYPos = vY + ( ( ( nCurrent == 0 ) || m_eType == VIEW_DETAILS ) ? 0 : m_vIconHeight );
 		m_pcHScrollBar->SetMinMax( 0, m_vLastXPos - cViewFrame.Width() );
 		m_pcVScrollBar->SetMinMax( 0, m_vLastYPos - cViewFrame.Height() );
 		AdjustScrollBars();
@@ -388,6 +410,7 @@ public:
 				m_pcView->Invalidate( cIconFrame );
 			m_cIcons[i]->m_bSelected = false;
 		}
+		m_nLastActiveIcon = -1;
 		Unlock();
 	}
 	
@@ -395,6 +418,7 @@ public:
 	void Select( uint nIcon, bool bSelected )
 	{
 		Lock();
+		m_nLastActiveIcon = nIcon;
 		if( m_cIcons[nIcon]->m_bSelected == bSelected )
 		{
 			Unlock();
@@ -414,6 +438,8 @@ public:
 		if( !bKeepSelection )
 			DeselectAll();
 			
+		os::Point cUserEnd = cEnd;
+		
 		/* Swap positions if necessary */
 		if( cStart.x > cEnd.x ) {
 			float vTemp = cStart.x;
@@ -432,6 +458,8 @@ public:
 		Lock();
 		
 		/* Check positions */
+		float vBestDistanceSoFar;   /* for finding the selected icon closest to endpoint */
+		int nNearestIconSoFar = -1;
 		for( uint i = 0; i < m_cIcons.size(); i++ )
 		{
 			if( !m_cIcons[i]->m_bLayouted )
@@ -447,71 +475,130 @@ public:
 			if( cFrame.DoIntersect( cSelectFrame ) )
 			{
 				m_cIcons[i]->m_bSelected = !m_cIcons[i]->m_bSelected;
+				/* Find the selected icon closest to endpoint, to be saved as last active icon */
+				if( nNearestIconSoFar < 0 || ((cIconPos.x-cUserEnd.x)*(cIconPos.x-cUserEnd.x) + (cIconPos.y-cUserEnd.y)*(cIconPos.y-cUserEnd.y) < vBestDistanceSoFar) ) {
+					nNearestIconSoFar = i;
+					vBestDistanceSoFar = (cIconPos.x-cUserEnd.x)*(cIconPos.x-cUserEnd.x) + (cIconPos.y-cUserEnd.y)*(cIconPos.y-cUserEnd.y);
+				}
 			}
 		}
+		if( nNearestIconSoFar >= 0 ) m_nLastActiveIcon = nNearestIconSoFar;
 		Unlock();
 	}
 	
-	/* Select next or previous icon */
-	void SelectNextPrev( bool bNext )
+	/* Select adjacent icon */
+	/* if bAddToSelection, don't deselect all icons first */
+	void SelectAdjacent( adj_direction eDirection, bool bAddToSelection = false )
 	{
-		uint nSelected = 0;
-		bool bFoundSelected = false;
-		if( m_eType != VIEW_DETAILS )
-			return;
-			
+		int nSelectedIcon = -1;
+		
 		Lock();
 		if( m_cIcons.size() == 0 ) {
 			Unlock();
 			return;
 		}
-		for( uint i = 0; i < m_cIcons.size(); i++ )
-		{
-			/* Find the first selected icon */
-			if( m_cIcons[i]->m_bSelected )
-			{
-				nSelected = i;
-				bFoundSelected = true;
-				break;
-			}
-		}
-		if( !bFoundSelected )
-		{
-			nSelected = 0;
-		} else {
-			if( bNext ) {
-				if( nSelected == m_cIcons.size() - 1 )
-					nSelected = 0;
-				else
-					nSelected++;
-			} else {
-				if( nSelected == 0 )
-					nSelected = m_cIcons.size() - 1;
-				else
-					nSelected--;
-			}
-		}
-		DeselectAll();
-		Select( nSelected, true );
 		
-		/* Scroll to make the icon visible */
-		os::Rect cFrame = m_pcView->GetBounds();
-		os::Rect cIconFrame( m_cIcons[nSelected]->m_cPosition - os::Point( 3, 3 ), m_cIcons[nSelected]->m_cPosition +
-																os::Point( m_vIconWidth, m_vIconHeight ) + os::Point( 3, 3 ) );
-		if( !( cFrame.DoIntersect( os::Point( 0, cIconFrame.top ) ) && cFrame.DoIntersect( os::Point( 0, cIconFrame.bottom ) ) ) && !( m_bScrollDown || m_bScrollUp ) )
+		if( m_eType == VIEW_DETAILS )
 		{
-			float vScroll;
-			if( bNext )
-				vScroll = -( cIconFrame.top - m_pcView->GetBounds().Height() + cIconFrame.Height() );
-			else
-				vScroll = -( cIconFrame.top );
-			if( vScroll > 0 )
-				vScroll = 0;
-			if( vScroll < -( m_vLastYPos - cFrame.Height() ) )
-				vScroll = -( m_vLastYPos - cFrame.Height() );
-			m_pcView->ScrollTo( os::Point( 0, vScroll ) );
+			if( eDirection != ADJ_UP && eDirection != ADJ_DOWN ) { Unlock(); return; }  /* Can only move up or down in details view */
+			
+			if( m_nLastActiveIcon == -1 )
+			{
+				if( eDirection == ADJ_DOWN ) { nSelectedIcon = 0; }  /* If never selected an icon, and user pressed 'down', select the first icon */
+				if( eDirection == ADJ_UP ) { nSelectedIcon = m_cIcons.size()-1; }  /* If never selected an icon, and user pressed 'up', select the last in the list */
+			}
+			else {
+				if( eDirection == ADJ_DOWN && m_nLastActiveIcon < m_cIcons.size()-1 ) { nSelectedIcon = m_nLastActiveIcon + 1; }
+				if( eDirection == ADJ_UP && m_nLastActiveIcon > 0 ) { nSelectedIcon = m_nLastActiveIcon - 1; }
+			}
 		}
+		else
+		{    /* Choose sensible neighbour by spatial proximity */
+			int nBestIconSoFar = -1;
 
+			if( m_nLastActiveIcon == -1 )
+			{   /* there is no previous selected icon to go from, so choose the leftmost, rightmost etc as appropriate */
+				float vBestXSoFar, vBestYSoFar;
+
+				if( eDirection == ADJ_RIGHT )
+				{  /* select left-top-most */
+					for( int i = m_cIcons.size(); --i >= 0 ; )  /* search backwards to save calls to m_cIcons.size() */
+					{
+						if( nBestIconSoFar < 0 || m_cIcons[i]->m_cPosition.x < vBestXSoFar || (m_cIcons[i]->m_cPosition.x == vBestXSoFar && m_cIcons[i]->m_cPosition.y < vBestYSoFar) )
+						{
+							nBestIconSoFar = i; vBestXSoFar = m_cIcons[i]->m_cPosition.x; vBestYSoFar = m_cIcons[i]->m_cPosition.y;
+						}
+					}
+				}
+				if( eDirection == ADJ_LEFT )
+				{  /* select right-bottom-most */
+					for( int i = m_cIcons.size(); --i >= 0 ; )  /* search backwards to save calls to m_cIcons.size() */
+					{
+						if( nBestIconSoFar < 0 || m_cIcons[i]->m_cPosition.x > vBestXSoFar || (m_cIcons[i]->m_cPosition.x == vBestXSoFar && m_cIcons[i]->m_cPosition.y > vBestYSoFar) )
+						{
+							nBestIconSoFar = i; vBestXSoFar = m_cIcons[i]->m_cPosition.x; vBestYSoFar = m_cIcons[i]->m_cPosition.y;
+						}
+					}
+				}
+				if( eDirection == ADJ_DOWN )
+				{  /* select top-left-most */
+					for( int i = m_cIcons.size(); --i >= 0 ; )  /* search backwards to save calls to m_cIcons.size() */
+					{
+						if( nBestIconSoFar < 0 || m_cIcons[i]->m_cPosition.y < vBestYSoFar || (m_cIcons[i]->m_cPosition.y == vBestYSoFar && m_cIcons[i]->m_cPosition.x < vBestXSoFar) )
+						{
+							nBestIconSoFar = i; vBestXSoFar = m_cIcons[i]->m_cPosition.x; vBestYSoFar = m_cIcons[i]->m_cPosition.y;
+						}
+					}
+				}
+				if( eDirection == ADJ_UP )
+				{  /* select bottom-right-most */
+					for( int i = m_cIcons.size(); --i >= 0 ; )  /* search backwards to save calls to m_cIcons.size() */
+					{
+						if( nBestIconSoFar < 0 || m_cIcons[i]->m_cPosition.y > vBestYSoFar || (m_cIcons[i]->m_cPosition.y == vBestYSoFar && m_cIcons[i]->m_cPosition.x > vBestXSoFar) )
+						{
+							nBestIconSoFar = i; vBestXSoFar = m_cIcons[i]->m_cPosition.x; vBestYSoFar = m_cIcons[i]->m_cPosition.y;
+						}
+					}
+				}
+			}
+			else
+			{  /* search for the closest icon in the appropriate neighbouring region */
+				Point cSearchOrigin = m_cIcons[m_nLastActiveIcon]->m_cPosition;
+				Point cDelta;
+				float vDistance;
+				float vBestDistanceSoFar = -1;
+
+				for( int i = m_cIcons.size(); --i >= 0 ; )  /* search backwards to save calls to m_cIcons.size() */
+				{
+					cDelta = m_cIcons[i]->m_cPosition - cSearchOrigin;
+					/* Check if icon is in the correct region (boundaries y=+-2x or y=+-(1/2)x) seem to give good results) */
+					if( ( eDirection == ADJ_LEFT && cDelta.y <= -2*cDelta.x && cDelta.y >= 2*cDelta.x ) ||
+				    	( eDirection == ADJ_RIGHT && cDelta.y <= 2*cDelta.x && cDelta.y >= -2*cDelta.x ) ||
+					    ( eDirection == ADJ_DOWN && 2*cDelta.y >= -cDelta.x && 2*cDelta.y >= cDelta.x ) ||
+					    ( eDirection == ADJ_UP && 2*cDelta.y <= -cDelta.x && 2*cDelta.y <= cDelta.x ) )
+					{
+						/* ok, icon is in the correct region of the view - check if it is closest */
+						vDistance = (cDelta.x*cDelta.x) + (cDelta.y*cDelta.y);
+						if( vDistance > 0 && (vDistance < vBestDistanceSoFar || vBestDistanceSoFar < 0) )
+						{
+							nBestIconSoFar = i;
+							vBestDistanceSoFar = ((cDelta.x*cDelta.x) + (cDelta.y*cDelta.y));
+						}
+					}
+				}
+			}
+			
+			nSelectedIcon = nBestIconSoFar;
+		}
+		
+		if( nSelectedIcon == -1 ) { Unlock(); return; }  /* no adjacent icon found */ /*AWM*/
+		if( !m_bMultiSelect || !bAddToSelection ) { DeselectAll(); }
+		Select( nSelectedIcon, true );
+		m_nLastActiveIcon = nSelectedIcon;
+
+		/* Scroll to make the icon visible */
+		m_pcControl->ScrollToIcon( nSelectedIcon );
+		
 		Unlock();
 	}
 
@@ -528,25 +615,24 @@ public:
 			pcView->FillRect( cSelectFrame );
 			
 			/* Round edges */
-			pcView->DrawLine( os::Point( cSelectFrame.left + 2, cSelectFrame.top - 2 ), 
-								os::Point( cSelectFrame.right - 2, cSelectFrame.top - 2 ) );
 			pcView->DrawLine( os::Point( cSelectFrame.left, cSelectFrame.top - 1 ), 
 								os::Point( cSelectFrame.right, cSelectFrame.top - 1 ) );
-			
-			pcView->DrawLine( os::Point( cSelectFrame.left - 2, cSelectFrame.top + 2 ), 
-								os::Point( cSelectFrame.left - 2, cSelectFrame.bottom - 2 ) );
 			pcView->DrawLine( os::Point( cSelectFrame.left - 1, cSelectFrame.top ), 
 								os::Point( cSelectFrame.left - 1, cSelectFrame.bottom ) );
-								
-			pcView->DrawLine( os::Point( cSelectFrame.left + 2, cSelectFrame.bottom + 2 ), 
-								os::Point( cSelectFrame.right - 2, cSelectFrame.bottom + 2 ) );
 			pcView->DrawLine( os::Point( cSelectFrame.left, cSelectFrame.bottom + 1 ), 
 								os::Point( cSelectFrame.right, cSelectFrame.bottom + 1 ) );
-								
-			pcView->DrawLine( os::Point( cSelectFrame.right + 2, cSelectFrame.top + 2 ), 
-								os::Point( cSelectFrame.right + 2, cSelectFrame.bottom - 2 ) );
 			pcView->DrawLine( os::Point( cSelectFrame.right + 1, cSelectFrame.top ), 
 								os::Point( cSelectFrame.right + 1, cSelectFrame.bottom ) );
+
+
+			pcView->DrawLine( os::Point( cSelectFrame.left + 2, cSelectFrame.top - 2 ), 
+								os::Point( cSelectFrame.right - 2, cSelectFrame.top - 2 ) );
+			pcView->DrawLine( os::Point( cSelectFrame.left - 2, cSelectFrame.top + 2 ), 
+								os::Point( cSelectFrame.left - 2, cSelectFrame.bottom - 2 ) );
+			pcView->DrawLine( os::Point( cSelectFrame.left + 2, cSelectFrame.bottom + 2 ), 
+								os::Point( cSelectFrame.right - 2, cSelectFrame.bottom + 2 ) );
+			pcView->DrawLine( os::Point( cSelectFrame.right + 2, cSelectFrame.top + 2 ), 
+								os::Point( cSelectFrame.right + 2, cSelectFrame.bottom - 2 ) );
 		}
 		Unlock();
 	}
@@ -708,6 +794,7 @@ public:
 	os::Color32_s m_sTextShadowColor;	
 	os::Color32_s m_sSelectionColor;
 	
+	int m_nLastActiveIcon;   /* index of most recently selected icon, -1 if none */
 	float m_vIconWidth;
 	float m_vIconHeight;
 	float m_vStringWidth[10];
@@ -727,6 +814,8 @@ public:
 	bool m_bAdjusting;
 	bool m_bScrollDown;
 	bool m_bScrollUp;
+	bool m_bScrollLeft;
+	bool m_bScrollRight;
 	float m_vScrollBarWidth;
 	float m_vScrollBarHeight;
 	bool m_bSingleClick;
@@ -734,12 +823,15 @@ public:
 	bool m_bMultiSelect;
 	bool m_bVScrollBarVisible;
 	bool m_bHScrollBarVisible;
+	os::String m_cSearchString;    /* for find-as-you-type */
+	bigtime_t m_nLastKeyDownTime;
 };
 
 class IconView::MainView : public os::View
 {
 public:
-	MainView( os::Rect cFrame, IconView::Private* pcPrivate ) : os::View( cFrame, "filesystem_view", os::CF_FOLLOW_ALL, os::WID_WILL_DRAW )
+	
+	MainView( os::Rect cFrame, IconView::Private* pcPrivate ) : os::View( cFrame, "icon_view", os::CF_FOLLOW_ALL, os::WID_WILL_DRAW )
 	{
 		m = pcPrivate;
 	}
@@ -1028,7 +1120,7 @@ public:
 			m->m_pcControl->SelectionChanged();
 			
 			Invalidate();
-			Flush();		
+			Flush();
 		}
 		
 		/* Reset values */
@@ -1048,12 +1140,78 @@ public:
 		switch( pzString[0] )
 		{
 			case os::VK_UP_ARROW:
-				m->SelectNextPrev( false );
+				m->SelectAdjacent( IconView::Private::ADJ_UP, nQualifiers & QUAL_SHIFT );
 				Flush();
 			break;
 			case os::VK_DOWN_ARROW:
-				m->SelectNextPrev( true );
+				m->SelectAdjacent( IconView::Private::ADJ_DOWN, nQualifiers & QUAL_SHIFT );
 				Flush();
+			break;
+			case os::VK_LEFT_ARROW:
+				m->SelectAdjacent( IconView::Private::ADJ_LEFT, nQualifiers & QUAL_SHIFT );
+				Flush();
+			break;
+			case os::VK_RIGHT_ARROW:
+				m->SelectAdjacent( IconView::Private::ADJ_RIGHT, nQualifiers & QUAL_SHIFT );
+				Flush();
+			break;
+			case os::VK_HOME:
+				m->m_nLastActiveIcon = -1;
+				m->SelectAdjacent( IconView::Private::ADJ_DOWN, nQualifiers & QUAL_SHIFT );
+				/* This works because of how SelectAdjacent chooses an adjacent icon when m_nLastActiveIcon == -1 */
+				Flush();
+			break;
+			case os::VK_END:
+				m->m_nLastActiveIcon = -1;
+				m->SelectAdjacent( IconView::Private::ADJ_UP, nQualifiers & QUAL_SHIFT );
+				/* This works because of how SelectAdjacent chooses an adjacent icon when m_nLastActiveIcon == -1 */
+				Flush();
+			break;
+			case os::VK_ESCAPE:
+				/* Clear selection, cancel find-as-you-type */
+				m->m_nLastKeyDownTime = 0;
+				m->DeselectAll();
+				Flush();
+			break;
+			case os::VK_PAGE_DOWN:
+				if( m->m_eType == VIEW_ICONS || m->m_eType == VIEW_DETAILS )  /* vertical scrolling */
+				{
+					if( m->m_pcVScrollBar->GetValue().AsInt32() < ( m->m_vLastYPos - Height() ) )
+					{
+						/* Scroll down 2/3 of a screenfull */
+						float vScroll = GetScrollOffset().y - std::min( 2*Height()/3, m->m_vLastYPos - (Height() - GetScrollOffset().y) );  /* GetScrollOffset() is negative */
+						ScrollTo( os::Point( 0, vScroll ) );
+						Flush();
+					}
+				} else if( m->m_eType == VIEW_LIST )  /* horizontal scrolling */
+				{
+					if( m->m_pcHScrollBar->GetValue().AsInt32() < ( m->m_vLastXPos - Width() ) )
+					{
+						/* Scroll across 2/3 of a screenfull */
+						float vScroll = GetScrollOffset().x - std::min( 2*Width()/3, m->m_vLastXPos - (Width() - GetScrollOffset().x) );  /* GetScrollOffset() is negative */
+						ScrollTo( os::Point( vScroll, 0 ) );
+						Flush();
+					}
+				}
+			break;
+			case os::VK_PAGE_UP:
+				if( m->m_eType == VIEW_ICONS || m->m_eType == VIEW_DETAILS )  /* vertical scrolling */
+				{
+					if( m->m_pcVScrollBar->GetValue().AsInt32() > 0 )
+					{
+						float vScroll = GetScrollOffset().y + std::min( 2*Height()/3, m->m_pcVScrollBar->GetValue().AsFloat() );
+						ScrollTo( os::Point( 0, vScroll ) );
+						Flush();
+					}
+				} else if( m->m_eType == VIEW_LIST )
+				{
+					if( m->m_pcHScrollBar->GetValue().AsInt32() > 0 )
+					{
+						float vScroll = GetScrollOffset().x + std::min( 2*Width()/3, m->m_pcHScrollBar->GetValue().AsFloat() );
+						ScrollTo( os::Point( vScroll, 0 ) );
+						Flush();
+					}
+				}
 			break;
 			case os::VK_RETURN:
 			{
@@ -1073,6 +1231,36 @@ public:
 				m->Unlock();
 			}
 			break;
+			default:
+			{
+				char nChar = pzString[0];
+				if( isprint( nChar ) )
+				{
+					bigtime_t nTime = get_system_time();
+
+					if( nTime < m->m_nLastKeyDownTime + 1000000 )
+					{
+						m->m_cSearchString += nChar;
+					}
+					else
+					{
+						m->m_cSearchString = os::String( &nChar, 1 );
+					}
+					m->m_nLastKeyDownTime = nTime;
+					bool bFound = false;
+					for( uint i = 0; i < m->m_pcControl->GetIconCount(); ++i )
+					{
+						if( m->m_cSearchString.CompareNoCase( m->m_pcControl->GetIconString( i, 0 ).substr( 0, m->m_cSearchString.size() ) ) == 0 )
+						{
+							m->m_pcControl->SetIconSelected( i, true, true );  /* Select matching icon; deselect all others */
+							m->m_pcControl->ScrollToIcon( i );
+							bFound = true;
+							break;
+						}
+					}
+//					if( !bFound ) { /*TODO: beep or otherwise notify user */ }
+				}
+			}
 		}
 		os::View::KeyDown( pzString, pzRawString, nQualifiers );
 	}
@@ -1094,8 +1282,6 @@ public:
 		if( nID != 1 )
 			return;
 			
-		//return;
-			
 		if( m->m_bScrollDown )
 			if( m->m_pcVScrollBar->GetValue().AsInt32() < ( m->m_vLastYPos - GetBounds().Height() ) )
 			{
@@ -1116,8 +1302,28 @@ public:
 			}
 			else
 				m->m_bScrollUp = false;
+		if( m->m_bScrollLeft )
+			if( m->m_pcHScrollBar->GetValue().AsInt32() > 0 )
+			{
+				//std::cout<<"Scroll Left!"<<std::endl;
+				float vScroll = GetScrollOffset().x + std::min( 20.0f, m->m_pcHScrollBar->GetValue().AsFloat() );
+				ScrollTo( os::Point( vScroll, 0 ) );
+				Flush();
+			}
+			else
+				m->m_bScrollLeft = false;
+		if( m->m_bScrollRight )
+			if( m->m_pcHScrollBar->GetValue().AsInt32() < ( m->m_vLastXPos - GetBounds().Width() ) )
+			{
+				//std::cout<<"Scroll Right!"<<std::endl;
+				float vScroll = GetScrollOffset().x - std::min( 20.0f, m->m_vLastXPos - GetBounds().Width() );
+				ScrollTo( os::Point( vScroll, 0 ) );
+				Flush();
+			}
+			else
+				m->m_bScrollDown = false;
 	}
-
+	
 private:
 	IconView::Private* m;
 };
@@ -1594,13 +1800,7 @@ void IconView::SetIconSelected( uint nIcon, bool bSelected, bool bDeselectAll )
 	if( nIcon >= m->m_cIcons.size() )
 		return;
 	m->Lock();
-	if( bDeselectAll ) {
-		for( uint i = 0; i < m->m_cIcons.size(); i++ )
-			if( i != nIcon )
-			{
-				m->Select( i, false );
-			}
-	}
+	if( bDeselectAll ) { m->DeselectAll(); }
 	m->Select( nIcon, bSelected );
 	m->m_pcView->Flush();
 	m->Unlock();
@@ -1617,11 +1817,23 @@ void IconView::SetIconSelected( uint nIcon, bool bSelected, bool bDeselectAll )
  *****************************************************************************/
 void IconView::SetIconPosition( uint nIcon, os::Point cPosition )
 {
+	if( m->m_eType == VIEW_DETAILS || m->m_eType == VIEW_LIST ) return;  /* can't move icons in these views */
+	
 	m->Lock();
+	os::Point cPos = cPosition;
+
+	/* check that new position is inside the view frame */
+	float vMaxX = std::max( m->m_vLastXPos - m->m_vIconWidth, m->m_pcView->Width()- m->m_vIconWidth - 5 );
+	float vMaxY = std::max( m->m_vLastYPos - m->m_vIconHeight, m->m_pcView->Height()- m->m_vIconHeight - 5 );
+	if( cPos.x > vMaxX ) cPos.x = vMaxX;
+	if( cPos.x < 5 ) cPos.x = 5;
+	if( cPos.y > vMaxY ) cPos.y = vMaxY;
+	if( cPos.y < 5 ) cPos.y = 5;
+		
 	if( nIcon < m->m_cIcons.size() ) {
 		m->m_pcView->Invalidate( os::Rect( m->m_cIcons[nIcon]->m_cPosition - os::Point( 3, 3 ), m->m_cIcons[nIcon]->m_cPosition
 											+ GetIconSize() + os::Point( 3, 3 ) ) );
-		m->m_cIcons[nIcon]->m_cPosition = cPosition;
+		m->m_cIcons[nIcon]->m_cPosition = cPos;
 		m->m_pcView->Invalidate( os::Rect( m->m_cIcons[nIcon]->m_cPosition - os::Point( 3, 3 ), m->m_cIcons[nIcon]->m_cPosition
 											+ GetIconSize() + os::Point( 3, 3 ) ) );
 		m->m_pcView->Flush();											
@@ -1667,7 +1879,7 @@ void IconView::RenderIcon( os::String zName, os::Image* pcImage, os::View* pcVie
  *****************************************************************************/
 void IconView::Layout()
 {
-	//std::cout<<"Layout!"<<std::endl;
+//	std::cout<<"Layout!"<<std::endl;
 	m->SortIcons();
 	m->LayoutIcons();
 }
@@ -1690,7 +1902,7 @@ void IconView::StartScroll( scroll_direction eDirection )
 		if( !m->m_bScrollDown )
 		{
 			m->m_bScrollDown = true;
-			if( m->m_bScrollUp == false )
+			if( !(m->m_bScrollUp || m->m_bScrollLeft || m->m_bScrollRight) )
 			{
 				os::Looper *pcLooper = GetLooper();
 
@@ -1699,10 +1911,7 @@ void IconView::StartScroll( scroll_direction eDirection )
 					pcLooper->AddTimer( m->m_pcView, 1, 200000, false );
 				}
 			}
-			else
-			{
-				m->m_bScrollUp = false;
-			}
+			m->m_bScrollUp = false;
 		}
 	}
 	if( eDirection == SCROLL_UP )
@@ -1710,7 +1919,7 @@ void IconView::StartScroll( scroll_direction eDirection )
 		if( !m->m_bScrollUp )
 		{
 			m->m_bScrollUp = true;
-			if( m->m_bScrollDown == false )
+			if( !(m->m_bScrollDown || m->m_bScrollLeft || m->m_bScrollRight) )
 			{
 				os::Looper *pcLooper = GetLooper();
 
@@ -1719,10 +1928,41 @@ void IconView::StartScroll( scroll_direction eDirection )
 					pcLooper->AddTimer( m->m_pcView, 1, 200000, false );
 				}
 			}
-			else
+			m->m_bScrollDown = false;
+		}
+	}
+	if( eDirection == SCROLL_LEFT )
+	{
+		if( !m->m_bScrollLeft )
+		{
+			m->m_bScrollLeft = true;
+			if( !(m->m_bScrollDown || m->m_bScrollUp || m->m_bScrollRight) )
 			{
-				m->m_bScrollDown = false;
+				os::Looper *pcLooper = GetLooper();
+
+				if( pcLooper != NULL )
+				{
+					pcLooper->AddTimer( m->m_pcView, 1, 200000, false );
+				}
 			}
+			m->m_bScrollRight = false;
+		}
+	}
+	if( eDirection == SCROLL_RIGHT )
+	{
+		if( !m->m_bScrollRight )
+		{
+			m->m_bScrollRight = true;
+			if( !(m->m_bScrollDown || m->m_bScrollUp || m->m_bScrollLeft) )
+			{
+				os::Looper *pcLooper = GetLooper();
+
+				if( pcLooper != NULL )
+				{
+					pcLooper->AddTimer( m->m_pcView, 1, 200000, false );
+				}
+			}
+			m->m_bScrollLeft = false;
 		}
 	}
 }
@@ -1734,9 +1974,9 @@ void IconView::StartScroll( scroll_direction eDirection )
  *****************************************************************************/
 void IconView::StopScroll()
 {
-	if( m->m_bScrollDown || m->m_bScrollUp )
+	if( m->m_bScrollDown || m->m_bScrollUp || m->m_bScrollLeft || m->m_bScrollRight )
 	{
-		m->m_bScrollDown = m->m_bScrollUp = false;
+		m->m_bScrollDown = m->m_bScrollUp = m->m_bScrollLeft = m->m_bScrollRight = false;
 		os::Looper *pcLooper = GetLooper();
 
 		if( pcLooper != NULL )
@@ -1759,14 +1999,29 @@ void IconView::ScrollToIcon( uint nIcon )
 		os::Rect cFrame = m->m_pcView->GetBounds();
 		os::Rect cIconFrame( m->m_cIcons[nIcon]->m_cPosition - os::Point( 3, 3 ), m->m_cIcons[nIcon]->m_cPosition +
 																os::Point( m->m_vIconWidth, m->m_vIconHeight ) + os::Point( 3, 3 ) );
-		if( !( cFrame.DoIntersect( os::Point( 0, cIconFrame.top ) ) && cFrame.DoIntersect( os::Point( 0, cIconFrame.bottom ) ) ) && !( m->m_bScrollDown || m->m_bScrollUp ) )
+		if( m->m_eType == VIEW_ICONS || m->m_eType == VIEW_DETAILS ) /* vertical scrolling */
 		{
-			float vScroll = -( cIconFrame.top - m->m_pcView->GetBounds().Height() / 2 + cIconFrame.Height() / 2 );
-			if( vScroll > 0 )
-				vScroll = 0;
-			if( vScroll < -( m->m_vLastYPos - cFrame.Height() ) )
-				vScroll = -( m->m_vLastYPos - cFrame.Height() );
-			m->m_pcView->ScrollTo( os::Point( 0, vScroll ) );
+			if( !( cFrame.DoIntersect( os::Point( 0, cIconFrame.top ) ) && cFrame.DoIntersect( os::Point( 0, cIconFrame.bottom ) ) ) && !( m->m_bScrollDown || m->m_bScrollUp ) )
+			{
+				float vScroll = -( cIconFrame.top - m->m_pcView->GetBounds().Height() / 2 + cIconFrame.Height() / 2 );
+				if( vScroll > 0 )
+					vScroll = 0;
+				if( vScroll < -( m->m_vLastYPos - cFrame.Height() ) )
+					vScroll = -( m->m_vLastYPos - cFrame.Height() );
+				m->m_pcView->ScrollTo( os::Point( 0, vScroll ) );
+			}
+		}
+		else if( m->m_eType == VIEW_LIST )  /* horizontal scrolling */
+		{
+			if( !( cFrame.DoIntersect( os::Point( cIconFrame.left, 0 ) ) && cFrame.DoIntersect( os::Point( cIconFrame.right, 0 ) ) ) && !( m->m_bScrollRight || m->m_bScrollLeft ) )
+			{
+				float vScroll = -( cIconFrame.left - m->m_pcView->GetBounds().Width() / 2 + cIconFrame.Width() / 2 );
+				if( vScroll > 0 )
+					vScroll = 0;
+				if( vScroll < -( m->m_vLastXPos - cFrame.Width() ) )
+					vScroll = -( m->m_vLastXPos - cFrame.Width() );
+				m->m_pcView->ScrollTo( os::Point( vScroll, 0 ) );
+			}
 		}
 	}
 	m->Unlock();
@@ -1888,6 +2143,17 @@ void IconView::OpenContextMenu( os::Point cPosition, bool bMouseOverIcon )
 void IconView::MakeFocus( bool bFocus )
 {
 	m->m_pcView->MakeFocus( bFocus );
+}
+
+void IconView::SetTabOrder( int nOrder )
+{
+	m->m_pcView->SetTabOrder( nOrder );
+	View::SetTabOrder( NO_TAB_ORDER );
+}
+
+int IconView::GetTabOrder()
+{
+	return( m->m_pcView->GetTabOrder() );
 }
 
 void IconView::__ICV_reserved2__() {}

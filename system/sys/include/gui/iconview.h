@@ -61,7 +61,7 @@ class Image;
 class IconView : public os::Control
 {
 public:
-	enum scroll_direction { SCROLL_UP, SCROLL_DOWN };
+	enum scroll_direction { SCROLL_UP, SCROLL_DOWN, SCROLL_LEFT, SCROLL_RIGHT };
 	
 	/** The different view types.
 	 * \par Description:
@@ -134,6 +134,9 @@ public:
 	virtual os::Message* GetInvokeMsg();
 
 	virtual void MakeFocus( bool bFocus = true );
+	
+	virtual void SetTabOrder( int nOrder = NEXT_TAB_ORDER );
+	virtual int GetTabOrder();
 private:
 	virtual void __ICV_reserved2__();
 	virtual void __ICV_reserved3__();

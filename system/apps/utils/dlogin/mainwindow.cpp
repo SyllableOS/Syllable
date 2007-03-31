@@ -33,7 +33,6 @@ void MainWindow::Init()
 	AddChild(pcLoginView);
 	AddTimer( this, 12345, 1000000, false );  //update every second
 	
-	/*focus the login view*/
 	pcLoginView->Focus();
 }
 
@@ -110,7 +109,7 @@ void MainWindow::HandleMessage( os::Message * pcMessage )
         case M_SEL_CHANGED:
         {
 			/*a user has selected a different icon*/
-        	pcLoginView->Focus();
+//        	pcLoginView->Focus();
         	break;
         }
 	}

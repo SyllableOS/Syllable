@@ -601,8 +601,6 @@ public:
 	Message*	        m_pcDirChangeMsg;
 	Path	        	m_cPath;
 	os_priv::DirKeeper* m_pcDirKeeper;
-	os::String	        m_cSearchString;
-	bigtime_t	        m_nLastKeyDownTime;
 	bool				m_bLocked;
 	bool				m_bAutoLaunch;
 	os::Menu*			m_pcDirMenu;
@@ -613,7 +611,6 @@ public:
     os::RegistrarManager* m_pcManager;
     int					m_nJobsPending;
     os::Catalog*		m_pcCatalog;
-    
 };
 
 os::BitmapImage* IconDirectoryView::Private::GetDriveIcon( os::String zPath, fs_info* psInfo, bool bSmall ) const
@@ -713,7 +710,6 @@ IconDirectoryView::IconDirectoryView( const Rect & cFrame, const String& cPath, 
 	m->m_pcDirKeeper = NULL;
 	m->m_bLocked = false;
 	m->m_bAutoLaunch = true;
-	m->m_nLastKeyDownTime = 0;
 	m->m_pcDirMenu = m->m_pcFileMenu = m->m_pcDiskMenu = m->m_pcRootMenu = m->m_pcTrashMenu = NULL;
 	m->m_pcManager = NULL;
 	try
@@ -798,75 +794,46 @@ bool IconDirectoryView::JobsPending() const
 
 void IconDirectoryView::KeyDown( const char *pzString, const char *pzRawString, uint32 nQualifiers )
 {
-	char nChar = pzString[0];
-
-	if( isprint( nChar ) )
+	switch ( pzString[0] )
 	{
-		bigtime_t nTime = get_system_time();
-
-		if( nTime < m->m_nLastKeyDownTime + 1000000 )
-		{
-			m->m_cSearchString += nChar;
-		}
-		else
-		{
-			m->m_cSearchString = os::String( &nChar, 1 );
-		}
-		for( uint i = 0; i < GetIconCount(); ++i )
-		{
-			if( m->m_cSearchString.CompareNoCase( GetIconString( i, 0 ).substr( 0, m->m_cSearchString.size() ) ) == 0 )
-			{
-				SetIconSelected( i, true );
-				ScrollToIcon( i );
-				break;
-			}
-			
-		}
-		m->m_nLastKeyDownTime = nTime;
-	}
-	else
-	{
-		switch ( pzString[0] )
-		{
 		case VK_DELETE:
-			{
-				if( GetWindow() )
-					GetWindow()->PostMessage( M_DELETE, this );
-				break;
-			}
+		{
+			if( GetWindow() )
+				GetWindow()->PostMessage( M_DELETE, this );
+			break;
+		}
 		case VK_BACKSPACE:
 			if( m->m_bLocked )
-				return( IconView::KeyDown( pzString, pzRawString, nQualifiers ) );
+			return( IconView::KeyDown( pzString, pzRawString, nQualifiers ) );
 			m->m_cPath.Append( ".." );
 			ReRead();
 			DirChanged( m->m_cPath.GetPath() );
-			break;
+		break;
 		case VK_FUNCTION_KEY:
+		{
+			Looper *pcLooper = GetLooper();
+
+			assert( pcLooper != NULL );
+			Message *pcMsg = pcLooper->GetCurrentMessage();
+
+			assert( pcMsg != NULL );
+			int32 nKeyCode;
+
+			if( pcMsg->FindInt32( "_raw_key", &nKeyCode ) != 0 )
 			{
-				Looper *pcLooper = GetLooper();
-
-				assert( pcLooper != NULL );
-				Message *pcMsg = pcLooper->GetCurrentMessage();
-
-				assert( pcMsg != NULL );
-				int32 nKeyCode;
-
-				if( pcMsg->FindInt32( "_raw_key", &nKeyCode ) != 0 )
-				{
-					return;
-				}
-				switch ( nKeyCode )
-				{
-				case 6:	// F5
-					ReRead();
-					break;
-				}
+				return;
+			}
+			switch ( nKeyCode )
+			{
+			case 6:	// F5
+				ReRead();
 				break;
 			}
-		default:
-			IconView::KeyDown( pzString, pzRawString, nQualifiers );
 			break;
 		}
+		default:
+			IconView::KeyDown( pzString, pzRawString, nQualifiers );
+		break;
 	}
 }
 
@@ -1210,7 +1177,6 @@ void IconDirectoryView::DragSelection( os::Point cStartPoint )
 		delete( pcIcon );
 	
 	BeginDrag( &cData, cStartPoint - cIconPos, &cImage/*os::Rect( os::Point(), GetIconSize() )*/ );
-	SetIconSelected( 0, false );
 }
 
 
@@ -1981,17 +1947,35 @@ void IconDirectoryView::MouseMove( const Point & cNewPos, int nCode, uint32 nBut
 
 	Rect cBounds = GetBounds();
 
-	if( cNewPos.y < cBounds.top + 20.0f )
+	if( GetView() == VIEW_ICONS || GetView() == VIEW_DETAILS )
 	{
-		StartScroll( SCROLL_UP );
+		if( cNewPos.y < cBounds.top + 20.0f )
+		{
+			StartScroll( SCROLL_UP );
+		}
+		else if( cNewPos.y > cBounds.bottom - 20.0f )
+		{
+			StartScroll( SCROLL_DOWN );
+		}
+		else
+		{
+			StopScroll();
+		}
 	}
-	else if( cNewPos.y > cBounds.bottom - 20.0f )
+	else if( GetView() == VIEW_LIST )
 	{
-		StartScroll( SCROLL_DOWN );
-	}
-	else
-	{
-		StopScroll();
+		if( cNewPos.x < cBounds.left + 20.0f )
+		{
+			StartScroll( SCROLL_LEFT );
+		}
+		else if( cNewPos.x > cBounds.right - 20.0f )
+		{
+			StartScroll( SCROLL_RIGHT );
+		}
+		else
+		{
+			StopScroll();
+		}
 	}
 	
 	os::IconView::MouseMove( cNewPos, nCode, nButtons, pcData );
@@ -2021,7 +2005,6 @@ void IconDirectoryView::MouseMove( const Point & cNewPos, int nCode, uint32 nBut
 			break;
 		}
 	}
-	SetIconSelected( 0, false );
 }
 
 void IconDirectoryView::__IDV_reserved1__() {}
