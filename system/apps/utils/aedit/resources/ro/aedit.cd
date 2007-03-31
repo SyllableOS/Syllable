@@ -1,0 +1,124 @@
+//
+//	AEdit string catalog
+//
+//	Translated by: Radu Mos
+//
+
+MSG_APPWND_TITLE=0							AEdit
+MSG_APPWND_TITLE_NEW_FILE					Document Nou
+
+MSG_MENU_APPLICATION=100					Aplicaţie
+MSG_MENU_APPLICATION_QUIT					Ieşire
+MSG_MENU_APPLICATION_ABOUT					Despre AEdit...
+
+MSG_MENU_FILE=200							Fişier
+MSG_MENU_FILE_NEW							Nou
+MSG_MENU_FILE_OPEN							Deschide...
+MSG_MENU_FILE_CLOSE							Închide
+MSG_MENU_FILE_SAVE							Salvează
+MSG_MENU_FILE_SAVE_AS						Salvează ca...
+MSG_MENU_FILE_SAVE_ALL						Salvează tot
+MSG_MENU_FILE_NEXT_FILE						Fişierul Următor
+MSG_MENU_FILE_PREVIOUS_FILE					Fişierul Anterior
+
+MSG_MENU_EDIT=300							Editare
+MSG_MENU_EDIT_CUT							Taie
+MSG_MENU_EDIT_COPY							Copiază
+MSG_MENU_EDIT_PASTE							Lipeşte
+MSG_MENU_EDIT_SELECT_ALL					Selecează Tot
+MSG_MENU_EDIT_UNDO							Undo
+MSG_MENU_EDIT_REDO							Refă
+
+MSG_MENU_VIEW_VIEW=350						Aspect
+MSG_MENU_VIEW_TOOLBAR						Instrumente
+MSG_MENU_VIEW_STATUSBAR						Bară de Stare
+MSG_MENU_VIEW_SETFONT						Selectează font...
+MSG_MENU_VIEW_TABS							Tabulări
+MSG_MENU_VIEW_SHOW							Arată
+MSG_MENU_VIEW_HIDE							Ascunde
+MSG_MENU_VIEW_AUTO							Automatic
+
+MSG_MENU_FIND=400							Găseşte
+MSG_MENU_FIND_FIND							Găseşte...
+MSG_MENU_FIND_REPLACE						Înlocuieşte...
+MSG_MENU_FIND_GOTO_LINE						Du-te la Linia...
+
+MSG_MENU_FONT=500							Font
+MSG_MENU_FONT_SIZE							Mărime
+
+MSG_MENU_SETTINGS=600						Setări
+MSG_MENU_SETTINGS_SAVE_ON_CLOSE				Salvează Setări la Închidere
+MSG_MENU_SETTINGS_SAVE_NOW					Salvează Setări Acum
+MSG_MENU_SETTINGS_RESET						Resetează Setări
+
+MSG_MENU_HELP=700							Ajutor
+MSG_MENU_HELP_TABLE_OF_CONTENTS				Manual...
+MSG_MENU_HELP_HOMEPAGE						Pagina Web AEdit
+
+MSG_ABOUT_TITLE=800							Despre AEdit
+MSG_ABOUT_TEXT								\n\nEditor de Texte pt Syllable\nCopyright 2000-2003 Kristian Van Der Vliet\n\nAEdit este publicat sub licenţă  GNU General\nPublic License. Vă rugăm să consultaţi fişierul COPYING,\ndistribuit cu  AEdit, sau http://www.gnu.org\npentru mai multe informaţii.
+MSG_ABOUT_CLOSE								Închide
+MSG_ABOUT_VERSION							versiune: 
+MSG_ABOUT_LINE_1 							Un Editor de Text Pentru Syllable
+MSG_ABOUT_LINE_2							(c) 2006 The Syllable Team
+MSG_ABOUT_LINE_3							w w w . s y l l a b l e . o r g
+
+MSG_ERROR_TITLE=900							Salvează
+MSG_ERROR_CANT_SAVE							Fişierul NU se poate salva.
+MSG_ERROR_CLOSE								OK
+
+MSG_FIND_TITLE=1000							Găseşte
+MSG_FIND_FIND_LABEL							Găseşte
+MSG_FIND_CASE_SENSITIVE						Căutarea e Dependentă de Majuscule
+MSG_FIND_FIND								_Găseşte Primul
+MSG_FIND_FIND_NEXT							Găseşte_Următorul
+MSG_FIND_CLOSE					    		_Închide
+
+MSG_GOTO_TITLE=1100							Du-te la Linia
+MSG_GOTO_GOTO								_Du-te la Linia
+MSG_GOTO_CLOSE								_Anulează
+MSG_GOTO_LINE								Rând:
+
+MSG_REPLACE_TITLE=1200						Înlocuieşte
+MSG_REPLACE_LBLFIND							Caută
+MSG_REPLACE_WITH							şi înlocuieşte cu
+MSG_REPLACE_CASE_SENSITIVE					Căutarea e Dependentă de Majuscule
+MSG_REPLACE_FIND							_Găseşte Primul
+MSG_REPLACE_FIND_NEXT						Găseşte_Următorul
+MSG_REPLACE_REPLACE							_Înlocuieşte
+MSG_REPLACE_CLOSE				    		_Închide
+
+MSG_ALERT_CLOSE_FILE_TITLE=1500				Salvaţi fişierul?
+MSG_ALERT_CLOSE_FILE_BODY					Doriţi să salvaţi fişierul înainte de a-l închide?
+MSG_ALERT_CLOSE_FILE_YES					Salvează
+MSG_ALERT_CLOSE_FILE_NO						Eliberează
+MSG_ALERT_CLOSE_FILE_CANCEL					Anulează
+MSG_ALERT_SAVE_FILE_TITLE					Eroare
+MSG_ALERT_SAVE_FILE_BODY					Fişierul "%s" NU se Poate Salva.
+MSG_ALERT_SAVE_FILE_OK						OK
+MSG_ALERT_QUIT_TITLE						Sigur Ieşiţi?
+MSG_ALERT_QUIT_BODY							Aveţi fişiere nesalvate. Datele vor fi pierdute dacă ieşiţi.\nSigur doriţi să ieşiţi?
+MSG_ALERT_QUIT_YES							Ieşire
+MSG_ALERT_QUIT_NO							Anulare
+MSG_ALERT_FILE_OPEN_TITLE					Eroare
+MSG_ALERT_FILE_OPEN_OK						OK
+
+MSG_STATUSBAR_WELCOME=2000					Bine Aţi Venit la AEdit!
+MSG_STATUSBAR_CLOSED_FILE					Fişierul "%s" a fost închis.
+MSG_STATUSBAR_SAVED_FILE					Fişierul "%s" a fost salvat.
+MSG_STATUSBAR_FILE_CLOSED_AND_SAVED			Fişierul "%s" a fost închis iar modificările au fost salvate.
+MSG_STATUSBAR_FILE_CLOSED_AND_NOT_SAVED		Fişierul "%s" a fost închis fără a salva modificările.
+MSG_STATUSBAR_NEW_FILE_CREATED				Fişierul nou "%s" a fost creeat.
+MSG_STATUSBAR_FILE_LOADED_OK				Fişierul "%s" a fost deschis fără probleme.
+MSG_STATUSBAR_FILE_UNABLE_TO_OPEN			Fişierul "%s" NU se poate deschide.
+MSG_STATUSBAR_SEARCH_FOUND					Fraza "%s" a fost gasită.
+MSG_STATUSBAR_SEARCH_NOT_FOUND_1			Fraza \"%s\" nu a fost gasită.
+MSG_STATUSBAR_SEARCH_NOT_FOUND_2			Fraza nu a fost gasită.
+MSG_STATUSBAR_REPLACE_OK					Fraza "%s" a fost inlocuită cu "%s".
+MSG_STATUSBAR_REPLACE_NOT_OK				Fraza nu a fost inlocuită.
+
+MSG_BUFFER_UNTITLED=2100					Untitled - %d
+MSG_BUFFER_CURSOR							Coloana: %d Rând: %d
+
+MSG_MIMETYPE_TEXT_PLAIN=10000				Fişiere Plain Text
+

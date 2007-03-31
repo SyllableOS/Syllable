@@ -1,124 +1,124 @@
 //
-//	AEdit String Catalog
+//	AEdit string catalog
 //
-//	Translated by: Unknown
+//	Translated by: MilkaJinka
 //
 
 MSG_APPWND_TITLE=0							AEdit
-MSG_APPWND_TITLE_NEW_FILE					Nouveau Fichier
+MSG_APPWND_TITLE_NEW_FILE					Nouveau fichier
 
 MSG_MENU_APPLICATION=100					Application
 MSG_MENU_APPLICATION_QUIT					Quitter
-MSG_MENU_APPLICATION_ABOUT					Concernant
+MSG_MENU_APPLICATION_ABOUT					À propos d'AEdit...
 
 MSG_MENU_FILE=200							Fichier
 MSG_MENU_FILE_NEW							Nouveau
-MSG_MENU_FILE_OPEN							Open
-MSG_MENU_FILE_CLOSE							Close
-MSG_MENU_FILE_SAVE							Enregister
-MSG_MENU_FILE_SAVE_AS						Enregister sous...
-MSG_MENU_FILE_SAVE_ALL						Save All
-MSG_MENU_FILE_NEXT_FILE						Next File
-MSG_MENU_FILE_PREVIOUS_FILE					Previous File
+MSG_MENU_FILE_OPEN							Ouvrir...
+MSG_MENU_FILE_CLOSE							Fermer
+MSG_MENU_FILE_SAVE							Enregistrer
+MSG_MENU_FILE_SAVE_AS						Enregistrer sous...
+MSG_MENU_FILE_SAVE_ALL						Enregistrer tous
+MSG_MENU_FILE_NEXT_FILE						Fichier suivant
+MSG_MENU_FILE_PREVIOUS_FILE					Fichier précédent
 
-MSG_MENU_EDIT=300							Éditer
+MSG_MENU_EDIT=300							Modifier
 MSG_MENU_EDIT_CUT							Couper
 MSG_MENU_EDIT_COPY							Copier
 MSG_MENU_EDIT_PASTE							Coller
 MSG_MENU_EDIT_SELECT_ALL					Sélectionner tout
 MSG_MENU_EDIT_UNDO							Annuler
-MSG_MENU_EDIT_REDO							Restaurer
+MSG_MENU_EDIT_REDO							Refaire
 
-MSG_MENU_VIEW_VIEW=350						View
-MSG_MENU_VIEW_TOOLBAR						Toolbar
-MSG_MENU_VIEW_STATUSBAR						Statusbar
-MSG_MENU_VIEW_SETFONT						Set font...
-MSG_MENU_VIEW_TABS							Tabs
-MSG_MENU_VIEW_SHOW							Show
-MSG_MENU_VIEW_HIDE							Hide
-MSG_MENU_VIEW_AUTO							Automatic
+MSG_MENU_VIEW_VIEW=350						Affichage
+MSG_MENU_VIEW_TOOLBAR						Barre d'outils
+MSG_MENU_VIEW_STATUSBAR						Barre d'état
+MSG_MENU_VIEW_SETFONT						Définir la police...
+MSG_MENU_VIEW_TABS							Onglets
+MSG_MENU_VIEW_SHOW							Montrer
+MSG_MENU_VIEW_HIDE							Cacher
+MSG_MENU_VIEW_AUTO							Automatique
 
-MSG_MENU_FIND=400							Trouver
-MSG_MENU_FIND_FIND							Trouver
-MSG_MENU_FIND_REPLACE						Remplacer
-MSG_MENU_FIND_GOTO_LINE						Aller au ligne...
+MSG_MENU_FIND=400							Recherche
+MSG_MENU_FIND_FIND							Rechercher...
+MSG_MENU_FIND_REPLACE						Remplacer...
+MSG_MENU_FIND_GOTO_LINE						Aller à la ligne...
 
 MSG_MENU_FONT=500							Police
 MSG_MENU_FONT_SIZE							Taille
 
 MSG_MENU_SETTINGS=600						Paramètres
-MSG_MENU_SETTINGS_SAVE_ON_CLOSE				Enregister Paramètres en Quitter
-MSG_MENU_SETTINGS_SAVE_NOW					Enregister Paramètres Maintenant
-MSG_MENU_SETTINGS_RESET						Remettre Paramètres
+MSG_MENU_SETTINGS_SAVE_ON_CLOSE				Enregister les paramètres en quittant
+MSG_MENU_SETTINGS_SAVE_NOW					Enregistrer les paramètres
+MSG_MENU_SETTINGS_RESET						Restaurer les paramètres
 
 MSG_MENU_HELP=700							Aide
-MSG_MENU_HELP_TABLE_OF_CONTENTS				Table de Contenu
-MSG_MENU_HELP_HOMEPAGE						Page d'accueil d'AEdit
+MSG_MENU_HELP_TABLE_OF_CONTENTS				Manuel...
+MSG_MENU_HELP_HOMEPAGE						Page web d'AEdit
 
-MSG_ABOUT_TITLE=800							Concrenant
-MSG_ABOUT_TEXT								\n\nÉditeur de texte pour Syllable\nDroit d'auter 2000-2003 Kristian Van Der Vliet\n\nAEdit est laissé sur le GNU \n LeLu vous COPYING,\nlaissé avec AEdit, ou http://www.gnu.org\npour plus information.
-MSG_ABOUT_CLOSE								OK
+MSG_ABOUT_TITLE=800							À propos d'AEdit
+MSG_ABOUT_TEXT								\n\nÉditeur de texte pour Syllable\nCopyright 2000-2003 Kristian Van Der Vliet\n\nAEdit est disponible sous/nLicence Publique Génerale GNU (GNU/GPL)./nVeuillez consulter le fichier COPYING,\ndistribué avec AEdit, ou http://www.gnu.org\npour plus d'informations.
+MSG_ABOUT_CLOSE								Fermer
 MSG_ABOUT_VERSION							version: 
-MSG_ABOUT_LINE_1 							A Text Editor for Syllable
+MSG_ABOUT_LINE_1 							Un éditeur de texte pour Syllable
 MSG_ABOUT_LINE_2							(c) 2006 The Syllable Team
 MSG_ABOUT_LINE_3							w w w . s y l l a b l e . o r g
 
-MSG_ERROR_TITLE=900							AEdit
-MSG_ERROR_CANT_SAVE							Pas capable enregister fichier
+MSG_ERROR_TITLE=900							Enregistrer
+MSG_ERROR_CANT_SAVE							Impossible d'enregistrer le fichier.
 MSG_ERROR_CLOSE								OK
 
 MSG_FIND_TITLE=1000							Rechercher
 MSG_FIND_FIND_LABEL							Rechercher
-MSG_FIND_CASE_SENSITIVE						Rechercher Sensible du Cas 
-MSG_FIND_FIND								_Recherceher
-MSG_FIND_FIND_NEXT							Rechercher _Prochaine
-MSG_FIND_CLOSE								_Quitter
+MSG_FIND_CASE_SENSITIVE						Recherche sensible à la casse
+MSG_FIND_FIND								_Trouver
+MSG_FIND_FIND_NEXT							Trouver _suivant
+MSG_FIND_CLOSE					    		_Fermer
 
-MSG_GOTO_TITLE=1100							Aller au ligne
-MSG_GOTO_GOTO								Aller au ligne
-MSG_GOTO_CLOSE								Quitter
-MSG_GOTO_LINE								Row:
+MSG_GOTO_TITLE=1100							Aller à la ligne
+MSG_GOTO_GOTO								Aller à la _ligne
+MSG_GOTO_CLOSE								_Annuler
+MSG_GOTO_LINE								Cellule:
 
 MSG_REPLACE_TITLE=1200						Remplacer
 MSG_REPLACE_LBLFIND							Rechercher
-MSG_REPLACE_WITH							Remplacer avec
-MSG_REPLACE_CASE_SENSITIVE					 Rechercher _Sensible du Cas
-MSG_REPLACE_FIND							_Rechercher
-MSG_REPLACE_FIND_NEXT						Rechercher _Prochaine
+MSG_REPLACE_WITH							et remplacer par
+MSG_REPLACE_CASE_SENSITIVE					Recherche _sensible à la casse
+MSG_REPLACE_FIND							_Trouver
+MSG_REPLACE_FIND_NEXT						Trouver _suivant
 MSG_REPLACE_REPLACE							_Remplacer
-MSG_REPLACE_CLOSE							_Quitter
+MSG_REPLACE_CLOSE				    		_Fermer
 
-MSG_ALERT_CLOSE_FILE_TITLE=1500				Save file?
-MSG_ALERT_CLOSE_FILE_BODY					Do you want to save the file before closing it?
-MSG_ALERT_CLOSE_FILE_YES					Save
-MSG_ALERT_CLOSE_FILE_NO						Discard
-MSG_ALERT_CLOSE_FILE_CANCEL					Cancel
-MSG_ALERT_SAVE_FILE_TITLE					Error
-MSG_ALERT_SAVE_FILE_BODY					Unable to save file "%s".
+MSG_ALERT_CLOSE_FILE_TITLE=1500				Enregistrer le fichier ?
+MSG_ALERT_CLOSE_FILE_BODY					Voulez-vous enregistrer le fichier avant de le fermer ?
+MSG_ALERT_CLOSE_FILE_YES					Enregistrer
+MSG_ALERT_CLOSE_FILE_NO						Ne pas enregistrer
+MSG_ALERT_CLOSE_FILE_CANCEL					Annuler
+MSG_ALERT_SAVE_FILE_TITLE					Erreur
+MSG_ALERT_SAVE_FILE_BODY					Impossible d'enregistrer le fichier "%s".
 MSG_ALERT_SAVE_FILE_OK						OK
-MSG_ALERT_QUIT_TITLE						Really quit?
-MSG_ALERT_QUIT_BODY							You have unsaved files. Data will be lost if you quit.\nAre you sure you want to quit?
-MSG_ALERT_QUIT_YES							Quit
-MSG_ALERT_QUIT_NO							Cancel
-MSG_ALERT_FILE_OPEN_TITLE					Error
+MSG_ALERT_QUIT_TITLE						Voulez-vous vraiment quitter ?
+MSG_ALERT_QUIT_BODY							Certains fichiers n'ont pas été enregistrés. Les modifications seront perdues si vous quittez.\nVoulez-vous vraiment quitter ?
+MSG_ALERT_QUIT_YES							Quitter
+MSG_ALERT_QUIT_NO							Annuler
+MSG_ALERT_FILE_OPEN_TITLE					Erreur
 MSG_ALERT_FILE_OPEN_OK						OK
 
-MSG_STATUSBAR_WELCOME=2000					Welcome to AEdit!
-MSG_STATUSBAR_CLOSED_FILE					File "%s" has been closed.
-MSG_STATUSBAR_SAVED_FILE					File "%s" has been saved.
-MSG_STATUSBAR_FILE_CLOSED_AND_SAVED			File "%s" has been closed and changes has been saved.
-MSG_STATUSBAR_FILE_CLOSED_AND_NOT_SAVED		File "%s" has been closed without saving changes.
-MSG_STATUSBAR_NEW_FILE_CREATED				New file "%s" has been created.
-MSG_STATUSBAR_FILE_LOADED_OK				File "%s" has been successfully opened.
-MSG_STATUSBAR_FILE_UNABLE_TO_OPEN			Unable to open file "%s".
-MSG_STATUSBAR_SEARCH_FOUND					Phrase "%s" was found.
-MSG_STATUSBAR_SEARCH_NOT_FOUND_1			Phrase \"%s\" was not found.
-MSG_STATUSBAR_SEARCH_NOT_FOUND_2			Phrase was not found.
-MSG_STATUSBAR_REPLACE_OK					Phrase "%s" has been replaced with "%s".
-MSG_STATUSBAR_REPLACE_NOT_OK				Phrase was not replaced.
+MSG_STATUSBAR_WELCOME=2000					Bienvenue dans AEdit!
+MSG_STATUSBAR_CLOSED_FILE					"%s" a été fermé.
+MSG_STATUSBAR_SAVED_FILE					"%s" a été enregistré.
+MSG_STATUSBAR_FILE_CLOSED_AND_SAVED			"%s" a été fermé et les modifications ont été enregistrées.
+MSG_STATUSBAR_FILE_CLOSED_AND_NOT_SAVED		"%s" a été fermé sans enregistrer les modifications.
+MSG_STATUSBAR_NEW_FILE_CREATED				"%s" a été créé.
+MSG_STATUSBAR_FILE_LOADED_OK				"%s" a été ouvert avc succès.
+MSG_STATUSBAR_FILE_UNABLE_TO_OPEN			Impossible d'ouvrir le fichier "%s".
+MSG_STATUSBAR_SEARCH_FOUND					L'expression "%s" a été trouvée.
+MSG_STATUSBAR_SEARCH_NOT_FOUND_1			L'expression \"%s\" est introuvable.
+MSG_STATUSBAR_SEARCH_NOT_FOUND_2			L'expression est introuvable.
+MSG_STATUSBAR_REPLACE_OK					L'expression "%s" a été remplacée par "%s".
+MSG_STATUSBAR_REPLACE_NOT_OK				L'expression n'a pas été remplacée.
 
-MSG_BUFFER_UNTITLED=2100					Untitled - %d
-MSG_BUFFER_CURSOR							Column: %d Row: %d
+MSG_BUFFER_UNTITLED=2100					Sans titre - %d
+MSG_BUFFER_CURSOR							Colonne: %d Cellule: %d
 
-MSG_MIMETYPE_TEXT_PLAIN=10000				Plain text files
+MSG_MIMETYPE_TEXT_PLAIN=10000				Texte plein
 

@@ -2,7 +2,7 @@ COPTS = -Wno-deprecated -c
 
 OBJSDIR = objs/
 
-CATALOGS = da de es fr fy hu it nl pl pt-br ru sv
+CATALOGS = da de es fr fy hu it nl pl pt-br ro ru sv
 
 OBJS = $(OBJSDIR)main.o $(OBJSDIR)appwindow.o $(OBJSDIR)editview.o $(OBJSDIR)aboutdialog.o $(OBJSDIR)gotodialog.o $(OBJSDIR)finddialog.o $(OBJSDIR)replacedialog.o $(OBJSDIR)buffer.o $(OBJSDIR)mytabview.o $(OBJSDIR)tabview.o $(OBJSDIR)icons.o $(OBJSDIR)dialog.o
 EXE = aedit

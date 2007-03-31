@@ -1,0 +1,35 @@
+//
+//	DLogin String Catalog
+//
+//	Translated by: MilkaJinka
+//
+
+MSG_MAINWND_TITLE=0							Connexion :
+
+MSG_MAINWND_PASSWORD=100					Mot de passe :
+MSG_MAINWND_BUTTON_LOGIN					_S'identifier
+MSG_MAINWND_BUTTON_SHUTDOWN					_Arrêt
+
+MSG_SHUTDOWNWND_TITLE=200					Arrêter ou redémarrer ?
+MSG_SHUTDOWNWND_TEXT						Que souhaitez-vous faire :
+MSG_SHUTDOWNWND_BUTTON_CANCEL				_Annuler
+MSG_SHUTDOWNWND_BUTTON_OK					_OK
+MSG_SHUTDOWNWND_DROPDOWN_SHUTDOWN			_Arrêt
+MSG_SHUTDOWNWND_DROPDOWN_REBOOT				Redémarrer
+
+MSG_ALERT_NOTSELECTED_TITLE=1000			Veuillez sélectionner une icône.
+MSG_ALERT_NOTSELECTED_TEXT					Vous devez sélectionner une icône d'utilisateur avant de vous connecter.
+MSG_ALERT_NOTSELECTED_OK					OK
+
+MSG_ALERT_WRONGPASS_TITLE=2000				Échec de l'identification
+MSG_ALERT_WRONGPASS_TEXT					Mot de passe incorrect.
+MSG_ALERT_WRONGPASS_OK						Désolé
+
+MSG_ALERT_NOUSER_TITLE=3000					Échec de l'identification
+MSG_ALERT_NOUSER_TEXT						Veuillez noter/n/nqu'aucun utilisateur de la sorte/nn'est enregistré\nsur cet ordinateur.
+MSG_ALERT_NOUSER_OK							OK
+
+MSG_ALERT_CANTFINDUSERS_TITLE=4000			Impossible de charger les utilisateurs
+MSG_ALERT_CANTFINDUSERS_TEXT				Il m'est impossible de charger les utilisateurs, veuillez contacter le groupe de développement de Syllable.
+MSG_ALERT_CANTFINDUSERS_OK					Oh non !!!
+

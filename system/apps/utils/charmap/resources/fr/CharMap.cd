@@ -1,0 +1,24 @@
+//
+//	CharMap String Catalog
+//
+//	Translated by: MilkaJinka
+//
+
+MSG_MAINWND_TITLE=0								Table des caractères
+
+MSG_MAINWND_MENU_FILE=100						Fichier
+MSG_MAINWND_MENU_FILE_CHOOSEFONT				Choisissez une police...
+MSG_MAINWND_MENU_FILE_EXIT						Quitter
+
+MSG_MAINWND_MENU_HELP=200						Aide
+MSG_MAINWND_MENU_HELP_HELP						Aide
+MSG_MAINWND_MENU_HELP_ABOUT						À propos
+
+MSG_HELPWND_TITLE=1000							CharMap
+MSG_HELPWND_TEXT								Lorsque vous cliquez sur un caractère,\ncelui-ci est copié dans le presse-papier.
+MSG_HELPWND_OK									OK
+
+MSG_ABOUTWND_TITLE=2000							CharMap
+MSG_ABOUTWND_TEXT								CharMap V1.1\nVisionneuse de la table des caractères pour Syllable.
+MSG_ABOUTWND_OK									OK
+

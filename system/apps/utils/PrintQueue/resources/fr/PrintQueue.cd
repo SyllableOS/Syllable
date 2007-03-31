@@ -1,0 +1,56 @@
+//
+//	PrintQueue String Catalog
+//
+//	Translated by: MilkaJinka
+//
+
+MSG_MAINWND_TITLE=0								File d'impression
+
+MSG_MAINWND_MENU_APPLICATION=100				Application
+MSG_MAINWND_MENU_APPLICATION_QUIT				Quitter
+MSG_MAINWND_MENU_APPLICATION_ABOUT				À propos
+
+MSG_MAINWND_MENU_VIEW=120						Affichage
+MSG_MAINWND_MENU_VIEW_REFRESH					Rafraîchir
+MSG_MAINWND_MENU_VIEW_COMPLETED					Montrer les tâches complétées
+
+MSG_MAINWND_MENU_JOB=130						Tâche
+MSG_MAINWND_MENU_JOB_CANCEL						Annuler la tâche
+
+MSG_MAINWND_MENU_PRINTER=140					Imprimante
+MSG_MAINWND_MENU_PRINTER_PAUSE					Suspendre l'impression
+MSG_MAINWND_MENU_PRINTER_RESUME					Reprendre l'impression
+
+MSG_MAINWND_TOOLBAR_CALCEL=200					Annuler la tâche
+MSG_MAINWND_TOOLBAR_PAUSE						Suspendre l'impression
+MSG_MAINWND_TOOLBAR_RESUME						Reprendre l'impression
+
+MSG_MAINWND_CONTEXTMENU_CANCEL=300				Annuler la tâche
+MSG_MAINWND_CONTEXTMENU_PAUSE					Suspendre l'impression
+MSG_MAINWND_CONTEXTMENU_RESUME					Reprendre l'impression
+
+MSG_MAINWND_DOCLIST_ID=500						ID
+MSG_MAINWND_DOCLIST_NAME						Nom
+MSG_MAINWND_DOCLIST_STATUS						État
+MSG_MAINWND_DOCLIST_OWNER						Propriétaire
+MSG_MAINWND_DOCLIST_SIZE						Taille
+MSG_MAINWND_DOCLIST_SUBMITTED					Soumis le
+
+MSG_MAINWND_JOBSIZE_KB=600						%d Ko
+MSG_MAINWND_JOBSIZE_MB							%d Mo
+MSG_MAINWND_JOBSIZE_GB							%d Go
+
+MSG_ABOUTWND_TITLE=1000							File d'impression
+MSG_ABOUTWND_TEXT1								Gestionnaire de file d'impression de Syllable
+MSG_ABOUTWND_TEXT2								Utilise CUPS version %d.%d.%d\n
+MSG_ABOUTWND_CLOSE								_Fermer
+
+MSG_ALERTWND_PAUSE_TITLE=1100					Opération échouée
+MSG_ALERTWND_PAUSE_CLOSE						_Fermer
+
+MSG_ALERTWND_RESUME_TITLE=1200					Opération échouée
+MSG_ALERTWND_RESUME_CLOSE						_Fermer
+
+MSG_ALERTWND_CANCEL_TITLE=1300					Opération échouée
+MSG_ALERTWND_CANCEL_CLOSE						_Fermer
+

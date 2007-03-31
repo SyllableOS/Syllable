@@ -2,7 +2,7 @@ CFLAGS	+= -c
 CXXFLAGS += -c
 OBJDIR = objs
 
-CATALOGS = da nl sv
+CATALOGS = da fr nl sv
 
 EXES	= $(OBJDIR)/catalogtool $(OBJDIR)/catcomp
 
