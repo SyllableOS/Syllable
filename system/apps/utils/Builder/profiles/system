@@ -45,6 +45,7 @@ tree
 	system/resources/catalogs/nl
 	system/resources/catalogs/pl
 	system/resources/catalogs/pt-br
+	system/resources/catalogs/ro
 	system/resources/catalogs/ru
 	system/resources/catalogs/sv
 	system/resources/wallpapers
@@ -249,6 +250,15 @@ modules
 ;	Currently requires GCC 3:
 ;	sys/boot/grub-0.97-syllable
 
+	apps/gnu/bash-3.2
+	apps/gnu/coreutils-6.4
+	apps/gnu/grep-2.5.1a
+	apps/gnu/sed-4.1.5
+	apps/other/unzip-5.52
+
+	apps/gnu/bzip2-1.0.4
+	apps/other/orca--current
+
 ;	freetype-config needs to be in the path:
 	bootstrap libraries/freetype-2.3.2
 
@@ -307,14 +317,6 @@ modules
 	apps/desktop/dock
 	apps/desktop/dock_plugins/mixer
 	apps/desktop/file_browser
-	apps/gnu/bash-3.2
-	apps/gnu/coreutils-6.4
-	apps/gnu/grep-2.5.1a
-	apps/gnu/sed-4.1.5
-	apps/other/unzip-5.52
-
-	apps/gnu/bzip2-1.0.4
-	apps/other/orca--current
 
 	apps/utils/Packager
 	apps/utils/Preferences/Appearance
