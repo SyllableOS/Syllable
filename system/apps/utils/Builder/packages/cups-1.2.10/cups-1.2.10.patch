@@ -1,0 +1,132 @@
+diff -ur cups-1.2.10_orig/backend/ieee1284.c cups-1.2.10/backend/ieee1284.c
+--- cups-1.2.10_orig/backend/ieee1284.c	2006-08-23 03:03:49.000000000 +0000
++++ cups-1.2.10/backend/ieee1284.c	2007-03-29 16:26:54.000000000 +0000
+@@ -36,12 +36,16 @@
+ 
+ #include "backend-private.h"
+ 
+-#ifdef __linux
++#if defined(__linux) || defined(__SYLLABLE__)
+ #  include <sys/ioctl.h>
+-#  include <linux/lp.h>
++#  ifdef __linux
++#    include <linux/lp.h>
++#  else
++#    include <atheos/lp.h>
++#  endif
+ #  define IOCNR_GET_DEVICE_ID		1
+ #  define LPIOC_GET_DEVICE_ID(len)	_IOC(_IOC_READ, 'P', IOCNR_GET_DEVICE_ID, len)
+-#endif /* __linux */
++#endif /* __linux || __SYLLABLE__ */
+ 
+ #ifdef __sun
+ #  ifdef __sparc
+@@ -75,9 +79,9 @@
+ 	manufacturer[256],		/* Manufacturer string */
+ 	serial_number[1024];		/* Serial number string */
+   int	manulen;			/* Length of manufacturer string */
+-#ifdef __linux
++#if defined(__linux) || defined(__SYLLABLE__)
+   int	length;				/* Length of device ID info */
+-#endif /* __linux */
++#endif /* __linux || __SYLLABLE__ */
+ #if defined(__sun) && defined(ECPPIOC_GETDEVID)
+   struct ecpp_device_id did;		/* Device ID buffer */
+ #endif /* __sun && ECPPIOC_GETDEVID */
+@@ -111,7 +115,7 @@
+   * Get the device ID string...
+   */
+ 
+-#ifdef __linux
++#if defined(__linux) || defined(__SYLLABLE__)
+   if (!ioctl(fd, LPIOC_GET_DEVICE_ID(device_id_size), device_id))
+   {
+    /*
+@@ -147,7 +151,7 @@
+   else
+     printf("backendGetDeviceID: ioctl failed - %s\n", strerror(errno));
+ #  endif /* DEBUG */
+-#endif /* __linux */
++#endif /* __linux || __SYLLABLE__ */
+ 
+ #if defined(__sun) && defined(ECPPIOC_GETDEVID)
+   did.mode = ECPP_CENTRONICS;
+diff -ur cups-1.2.10_orig/backend/parallel.c cups-1.2.10/backend/parallel.c
+--- cups-1.2.10_orig/backend/parallel.c	2007-01-03 18:51:27.000000000 +0000
++++ cups-1.2.10/backend/parallel.c	2007-03-29 16:24:43.000000000 +0000
+@@ -316,7 +316,7 @@
+ 				/* Funky hex numbering used for some devices */
+ #endif /* __hpux || __sgi || __sun */
+ 
+-#ifdef __linux
++#if defined(__linux) || defined(__SYLLABLE__)
+   int	i;			/* Looping var */
+   int	fd;			/* File descriptor */
+   char	device[255],		/* Device filename */
+@@ -329,6 +329,8 @@
+     strcpy(basedevice, "/dev/parallel/");
+   else if (!access("/dev/printers/", 0))
+     strcpy(basedevice, "/dev/printers/");
++  else if(!access("/dev/printer/lp/", 0))
++    strcpy(basedevice, "/dev/printer/lp/");
+   else
+     strcpy(basedevice, "/dev/lp");
+ 
+diff -ur cups-1.2.10_orig/backend/usb-unix.c cups-1.2.10/backend/usb-unix.c
+--- cups-1.2.10_orig/backend/usb-unix.c	2007-02-20 13:41:07.000000000 +0000
++++ cups-1.2.10/backend/usb-unix.c	2007-03-29 16:34:26.000000000 +0000
+@@ -46,7 +46,6 @@
+ 
+ int	open_device(const char *uri, int *use_bc);
+ 
+-
+ /*
+  * 'print_device()' - Print a file to a USB device.
+  */
+@@ -236,6 +235,34 @@
+ 
+     close(fd);
+   }
++#elif defined(__SYLLABLE__)
++  int	i;				/* Looping var */
++  int	fd;				/* File descriptor */
++  char	device[255],			/* Device filename */
++	device_id[1024],		/* Device ID string */
++	device_uri[1024],		/* Device URI string */
++	make_model[1024];		/* Make and model */
++
++ /*
++  * Try to open each USB device...
++  */
++
++  for (i = 0; i < 8; i ++)
++  {
++    sprintf(device, "/dev/printer/usb/%d", i);
++
++    if ((fd = open(device, O_RDWR | O_EXCL)) >= 0)
++    {
++      if (!backendGetDeviceID(fd, device_id, sizeof(device_id),
++                              make_model, sizeof(make_model),
++			      "usb", device_uri, sizeof(device_uri)))
++	printf("direct %s \"%s\" \"%s USB #%d\" \"%s\"\n", device_uri,
++	       make_model, make_model, i + 1, device_id);
++
++      close(fd);
++    }
++  }
++
+ #elif defined(__sgi)
+ #elif defined(__sun) && defined(ECPPIOC_GETDEVID)
+   int	i;			/* Looping var */
+diff -ur cups-1.2.10_orig/backend/usb.c cups-1.2.10/backend/usb.c
+--- cups-1.2.10_orig/backend/usb.c	2006-05-26 19:51:59.000000000 +0000
++++ cups-1.2.10/backend/usb.c	2007-03-29 16:24:43.000000000 +0000
+@@ -72,7 +72,7 @@
+ 
+ #ifdef __APPLE__
+ #  include "usb-darwin.c"
+-#elif defined(__linux) || defined(__sun) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
++#elif defined(__linux) || defined(__sun) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__) || defined(__SYLLABLE__)
+ #  include "usb-unix.c"
+ #else
+ /*

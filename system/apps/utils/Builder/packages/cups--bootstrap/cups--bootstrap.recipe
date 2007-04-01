@@ -1,7 +1,7 @@
 authors				Kaj de Vos
 status				testing
 
-inherits			cups-1.2.1
+inherits			cups-1.2.10
 
 configure-options
 ;	Fool third-party packages that execute cups-config during a system image installation:
