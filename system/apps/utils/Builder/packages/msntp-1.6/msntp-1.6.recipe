@@ -1,21 +1,22 @@
-authors				Kristian Van Der Vliet
+authors
+	Kristian Van Der Vliet
+	Kaj de Vos
 status				testing
 
-headline			MSNTP (Simple Network Time Protocol Utility) - Version 1.6
+headline			Simple Network Time Protocol client/server
+description
+	MSNTP can be used as a SNTP client to query a NTP or SNTP server and either display the time or set the local system's time (given suitable privilege). It can be run as an interactive command, in a cron job or as a daemon. It can be run as a daemon to provide a SNTP server for other clients.
+licenses			other
 
-licenses			GPL
+home
+;	www.hpcf.cam.ac.uk/export/
+	packages.debian.org/unstable/net/msntp
+locations			ftp://ftp.openpkg.org/sources/DST/msntp/
 
-packages			ftp.openpkg.org/sources/DST/msntp/msntp-1.6
-
-build-dir			.
-
-configure			true
 make-vars			LIBS '-lm'
 
-install
-	mkdir -p /usr/msntp/bin
-	cp -pf msntp /usr/msntp/bin/
-	mkdir -p /usr/msntp/man/man1
-	cp -pf msntp.1 /usr/msntp/man/man1/
-
-documentation		README Copyright
+install-tree		bin man man/man1
+install-files
+	msntp			bin/
+	msntp.1			man/man1/
+documentation		README Copyright RFC2030.TXT
