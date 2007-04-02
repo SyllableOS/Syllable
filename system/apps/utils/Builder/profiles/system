@@ -134,6 +134,7 @@ resources
 	system/config			kernel.cfg							text/plain
 	system/config			net.cfg								text/plain
 	system/config			appserver							text/plain
+	etc						configuration/profile				text/plain
 	home					Home-Directories
 	Documentation			documentation/Welcome.html			text/html
 	Documentation/images	documentation/images/Syllable.gif	image/gif
