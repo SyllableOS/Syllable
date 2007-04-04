@@ -1,3 +1,12 @@
+* April 4, 2007, Arno Klenke *
+
+geforce driver:
+	o Added support for geforce 6100 igp
+	o Changed some parts of the vga programming code
+	o NV40 cards and newer do not support video overlays anymore
+
+Started to move the application list handling into the registrar
+
 ---- 0.6.3 Released -------------------------------------------------------------------
 
 * February 24, 2007, Flemming H. Sørensen *
@@ -1344,3 +1353,4 @@ Added the following keymaps:
 * Jun 14 2002, Kristian Van Der Vliet *
 
 Implement get_tld(), set_tld() in process.c
+

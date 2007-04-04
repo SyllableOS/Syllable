@@ -1,3 +1,7 @@
+* April 4, 2007, Arno Klenke *
+
+Added new pci ids to the hda driver
+
 * March 20, 2007, Kristian Van Der Vliet *
 
 Added some missing Intel ICH5 & ICH6 SATA PCI IDs to the ATA driver. My ICH6 SATA controller
@@ -1144,4 +1148,5 @@ required; they are implemented in user space as part of libc.
 
 Applied a fix to sys/kernel/kernel/vfs/vfs.c  The fcntl() F_GETLK command
 now works as expected.
+
 
