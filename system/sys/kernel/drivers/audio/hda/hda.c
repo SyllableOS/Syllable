@@ -53,14 +53,23 @@ struct audio_device g_sDevices[] = {
 	{0x8086, 0x27d8, "Intel", "HD-Audio (ICH7)"},
 	{0x8086, 0x269a, "Intel", "HD-Audio (ESB2)"},
 	{0x8086, 0x284b, "Intel", "HD-Audio (ICH8)"},
+	{0x8086, 0x293e, "Intel", "HD-Audio (ICH9)"},
+	{0x8086, 0x293f, "Intel", "HD-Audio (ICH9)"},
 	{0x1002, 0x437b, "ATI", "HD-Audio (SB450)"},
 	{0x1002, 0x4383, "ATI", "HD-Audio (SB600)"},
-	{0x1002, 0x793b, "ATI", "HD-Audio (SB600 HDMI)"},
+	{0x1002, 0x793b, "ATI", "HD-Audio (RS600 HDMI)"},
+	{0x1002, 0x7919, "ATI", "HD-Audio (RS690 HDMI)"},
 	{0x1106, 0x3288, "VIA", "HD-Audio"},
 	{0x1039, 0x7502, "SiS", "HD-Audio"},
 	{0x10b9, 0x5461, "ULI", "HD-Audio"},
-	{0x10de, 0x026c, "nVIDIA", "HD-Audio"},
-	{0x10de, 0x0371, "nVIDIA", "HD-Audio"}	
+	{0x10de, 0x026c, "nVIDIA", "HD-Audio (MCP51)"},
+	{0x10de, 0x0371, "nVIDIA", "HD-Audio (MCP55)"},
+	{0x10de, 0x03e4, "nVIDIA", "HD-Audio (MCP61)"},
+	{0x10de, 0x03f0, "nVIDIA", "HD-Audio (MCP61)"},
+	{0x10de, 0x044a, "nVIDIA", "HD-Audio (MCP65)"},
+	{0x10de, 0x044b, "nVIDIA", "HD-Audio (MCP65)"},
+	{0x10de, 0x055c, "nVIDIA", "HD-Audio (MCP67)"},
+	{0x10de, 0x055d, "nVIDIA", "HD-Audio (MCP67)"},	
 };
 
 
@@ -835,7 +844,7 @@ static status_t hda_init( int nDeviceID, PCI_Info_s sPCI, char* zName )
 		g_psBus->write_pci_config( psDriver->sPCI.nBus, psDriver->sPCI.nDevice, psDriver->sPCI.nFunction, HDA_PCIREG_TCSEL, 1, nVal );
 		
 		/* For ATI SB450 azalia HD audio, we need to enable snoop */
-		if( sPCI.nVendorID == 0x1002 && sPCI.nDeviceID != 0x793b )
+		if( sPCI.nVendorID == 0x1002 && ( sPCI.nDeviceID != 0x793b && sPCI.nDeviceID != 0x7919 ) )
 		{
 			uint8 nVal = g_psBus->read_pci_config( psDriver->sPCI.nBus, psDriver->sPCI.nDevice, psDriver->sPCI.nFunction, ATI_SB450_HDAUDIO_MISC_CNTR2_ADDR, 1 );
 			nVal &= 0xf8;
@@ -875,9 +884,9 @@ static status_t hda_init( int nDeviceID, PCI_Info_s sPCI, char* zName )
 	
 	/* Init streams */
 	if( sPCI.nVendorID == 0x10b9 )
-		hda_init_stream( psDriver, 0, "pcm", 0x120, 1 << 4, false, false );
-	else if( sPCI.nVendorID == 0x1002 && sPCI.nDeviceID == 0x793b )
-		hda_init_stream( psDriver, 0, "hdmi", 0x80, 1 << 4, false, false );
+		hda_init_stream( psDriver, 0, "pcm", 0x120, 1 << 5, false, false );
+	else if( sPCI.nVendorID == 0x1002 &&  ( sPCI.nDeviceID == 0x793b || sPCI.nDeviceID == 0x7919 ) )
+		hda_init_stream( psDriver, 0, "hdmi", 0x80, 1 << 0, false, false );
 	else 
 		hda_init_stream( psDriver, 0, "pcm", 0x100, 1 << 4, false, false );
 	

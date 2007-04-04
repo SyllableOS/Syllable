@@ -223,7 +223,8 @@ static const struct chip_info asChipInfos[] = {
 	{0x10DE0241, NV_ARCH_40, "GeForce 6150 LE" },
 	{0x10DE0242, NV_ARCH_40, "GeForce 6100" },
 	{0x10DE0244, NV_ARCH_40, "GeForce Go 6150" },
-	{0x10DE0247, NV_ARCH_40, "GeForce Go 6100" }
+	{0x10DE0247, NV_ARCH_40, "GeForce Go 6100" },
+	{0x10DE03D1, NV_ARCH_40, "GeForce 6100" }
 };
 
 using namespace os;
@@ -293,7 +294,7 @@ FX::FX( int nFd ):m_cGELock( "fx_ge_lock" ), m_hRegisterArea( -1 ), m_hFrameBuff
 		}
 	}
 	
-	if( !bFound && ( ChipsetID & 0xFFF0 ) == 0x00F0 )
+	if( !bFound && ( ( ChipsetID & 0xFFF0 ) == 0x00F0 || ( ChipsetID & 0xFFF0 ) == 0x02E0 ) )
 	{
 		dbprintf( "GeForceFX :: Detected PCI express card\n" );
 	} else if( !bFound )
@@ -379,9 +380,6 @@ FX::FX( int nFd ):m_cGELock( "fx_ge_lock" ), m_hRegisterArea( -1 ), m_hFrameBuff
 		}
 	}
 
-	CRTCout( 0x11, CRTCin( 0x11 ) | 0x80 );
-	NVLockUnlock( &m_sHW, 0 );
-
 	m_bVideoOverlayUsed = false;
 	m_bIsInitiated = true;
 	if( m_sHW.ScratchBufferStart > 1024 * 1024 * 8 )
@@ -458,6 +456,8 @@ int FX::SetScreenMode( os::screen_mode sMode )
 	vga_regs newmode;
 	FXRegPtr nvReg = &m_sHW.ModeReg;
 	memset( &newmode, 0, sizeof( struct vga_regs ) );
+	
+	NVLockUnlock( &m_sHW, 1);
 
 	float vHPeriodEst = ( ( ( 1.0 / sMode.m_vRefreshRate ) - ( 550.0 / 1000000.0 ) ) / ( ( float )sMode.m_nHeight + 1 ) * 1000000.0 );
 	float vVSyncPlusBp = rint( 550.0 / vHPeriodEst );
@@ -526,6 +526,7 @@ int FX::SetScreenMode( os::screen_mode sMode )
 	newmode.crtc[0x16] = Set8Bits( vertBlankEnd );
 	newmode.crtc[0x17] = 0xe3;
 	newmode.crtc[0x18] = 0xff;
+	newmode.crtc[0x28] = 0x40;
 
 	newmode.gra[0x05] = 0x40;
 	newmode.gra[0x06] = 0x05;
@@ -536,7 +537,7 @@ int FX::SetScreenMode( os::screen_mode sMode )
 	{
 		newmode.attr[i] = ( uint8 )i;
 	}
-	newmode.attr[0x10] = 0x01;
+	newmode.attr[0x10] = 0x41;
 	newmode.attr[0x11] = 0xff;
 	newmode.attr[0x12] = 0x0f;
 	newmode.attr[0x13] = 0x00;
@@ -545,8 +546,10 @@ int FX::SetScreenMode( os::screen_mode sMode )
 	if ( m_sHW.Television )
 		newmode.attr[0x11] = 0x00;
 
+	newmode.seq[0x00] = 0x03;
 	newmode.seq[0x01] = 0x01;
 	newmode.seq[0x02] = 0x0f;
+	newmode.seq[0x03] = 0x00;
 	newmode.seq[0x04] = 0x0e;
 
 	nvReg->bpp = nBpp * 8;
@@ -562,7 +565,7 @@ int FX::SetScreenMode( os::screen_mode sMode )
 
 	nvReg->interlace = 0xff;	/* interlace off */
 
-	newmode.misc_output = 0x2f;
+	newmode.misc_output = 0x2b;
 
 	m_sHW.CURSOR = ( U032 * )( m_sHW.FbStart + m_sHW.CursorStart );
 
@@ -584,6 +587,9 @@ int FX::SetScreenMode( os::screen_mode sMode )
 	nvReg->vpllB = nvReg->pllB;
 	nvReg->vpll2B = nvReg->pllB;
 	
+	VGA_WR08( &m_sHW.PCIO, 0x03D4, 0x1C );
+	nvReg->fifo = VGA_RD08( &m_sHW.PCIO, 0x03D5 ) & ~( 1<<5 );
+
 	
 	if ( m_sHW.CRTCnumber )
 	{
@@ -629,15 +635,15 @@ int FX::SetScreenMode( os::screen_mode sMode )
 	nvReg->displayV = sMode.m_nHeight;
 
 	NVLockUnlock( &m_sHW, 0 );
-	VGA_WR08( &m_sHW.PCIO, 0x03D4, 0x1C );
-	nvReg->fifo = VGA_RD08( &m_sHW.PCIO, 0x03D5 ) & ~( 1<<5 );
-
+	
 	if ( m_sHW.twoHeads )
 	{
 		VGA_WR08( &m_sHW.PCIO, 0x03D4, 0x44 );
 		VGA_WR08( &m_sHW.PCIO, 0x03D5, nvReg->crtcOwner );
 		NVLockUnlock( &m_sHW, 0 );
 	}
+	
+	VGAProtect( true );
 
 	/* Write registers */
 	NVLoadStateExt( &m_sHW, nvReg );
@@ -660,6 +666,8 @@ int FX::SetScreenMode( os::screen_mode sMode )
 
 	/* Init acceleration */
 	SetupAccel();
+	
+	VGAProtect( false );
 	
 	return 0;
 }
@@ -978,6 +986,9 @@ bool FX::BltBitmap( SrvBitmap * pcDstBitMap, SrvBitmap * pcSrcBitMap, IRect cSrc
 
 bool FX::CreateVideoOverlay( const os::IPoint & cSize, const os::IRect & cDst, os::color_space eFormat, os::Color32_s sColorKey, area_id *pBuffer )
 {
+	if( !( ( m_sHW.Architecture <= NV_ARCH_30 ) || 
+            ( ( m_sHW.Chipset & 0xfff0 ) == 0x0040 ) ) )
+		return( false );
 	if ( eFormat == CS_YUV422 && !m_bVideoOverlayUsed )
 	{
 		/* Calculate offset */
@@ -1056,7 +1067,9 @@ bool FX::CreateVideoOverlay( const os::IPoint & cSize, const os::IRect & cDst, o
 
 bool FX::RecreateVideoOverlay( const os::IPoint & cSize, const os::IRect & cDst, os::color_space eFormat, area_id *pBuffer )
 {
-
+	if( !( ( m_sHW.Architecture <= NV_ARCH_30 ) || 
+            ( ( m_sHW.Chipset & 0xfff0 ) == 0x0040 ) ) )
+		return( false );
 	if ( eFormat == CS_YUV422  )
 	{
 		delete_area( *pBuffer );
@@ -1144,10 +1157,15 @@ void FX::LoadVGAState( struct vga_regs *regs )
 	}
 
 	CRTCout( 17, regs->crtc[17] & ~0x80 );
-
-	for ( int i = 0; i < 25; i++ )
-	{
-		CRTCout( i, regs->crtc[i] );
+	
+	for ( int i = 0; i < NUM_CRT_REGS; i++) {
+		switch (i) {
+		case 0x19:
+		case 0x20 ... 0x40:
+			break;
+		default:
+			CRTCout( i, regs->crtc[i] );
+		}
 	}
 
 	for ( int i = 0; i < NUM_GRC_REGS; i++ )
@@ -1250,12 +1268,14 @@ void FX::SetupAccel()
 bool FX::IsConnected( int output )
 {
 	volatile U032 *PRAMDAC = m_sHW.PRAMDAC0;
-	CARD32 reg52C, reg608;
+	CARD32 reg52C, reg608, dac0_reg608;
 	bool present;
 
 	dbprintf( "GeForce FX :: Probing for analog device on output %s...\n", output ? "B" : "A" );
-	if ( output )
-		PRAMDAC += 0x800;
+	if ( output ) {
+        dac0_reg608 = PRAMDAC[0x0608/4];
+        PRAMDAC += 0x800;
+    }
 	reg52C = PRAMDAC[0x052C / 4];
 	reg608 = PRAMDAC[0x0608 / 4];
 	PRAMDAC[0x0608 / 4] = reg608 & ~0x00010000;
@@ -1271,7 +1291,9 @@ bool FX::IsConnected( int output )
 
 	else
 		dbprintf( "GeForce FX ::  ...can't find one\n" );
-	m_sHW.PRAMDAC0[0x0608 / 4] &= 0x0000EFFF;
+    if(output)
+        m_sHW.PRAMDAC0[0x0608/4] = dac0_reg608;
+
 	PRAMDAC[0x052C / 4] = reg52C;
 	PRAMDAC[0x0608 / 4] = reg608;
 	return present;
@@ -1611,6 +1633,15 @@ void FX::CommonSetup()
 	}
 
 	m_sHW.FPDither = false;
+	
+	m_sHW.LVDS = false;
+    if(m_sHW.FlatPanel && m_sHW.twoHeads) {
+        m_sHW.PRAMDAC0[0x08B0/4] = 0x00010004;
+        if(m_sHW.PRAMDAC0[0x08B4/4] & 1)
+           m_sHW.LVDS = true;
+        dbprintf( "GeForce FX :: Panel is %s\n", 
+                   m_sHW.LVDS ? "LVDS" : "TMDS");
+    }
 }
 
 

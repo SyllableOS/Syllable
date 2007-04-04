@@ -52,19 +52,43 @@ enum
 	REGISTRAR_GET_TYPE,
 	REGISTRAR_SET_DEFAULT_HANDLER,
 	REGISTRAR_GET_TYPE_AND_ICON,
-	REGISTRAR_REGISTER_CALL,
-	REGISTRAR_UNREGISTER_CALL,
-	REGISTRAR_QUERY_CALL,
-	REGISTRAR_INVOKE_CALL
+	REGISTRAR_UPDATE_APP_LIST,
+	REGISTRAR_GET_APP_LIST
 };
 
-struct RegistrarCall_s
+/** Class to access a filetype.
+ * \ingroup storage
+ * \par Description:
+ * The RegistrarFileType class provides a way to access the filetype structure returned
+ * by the GetType() method of the RegistrarManager class.
+ */
+class RegistrarFileType : public os::Message
 {
-	int64 m_nProcess;
-	String m_zID;
-	int m_nTargetPort;
-	int m_nMessageCode;
-	String m_zDescription;
+public:
+	os::String GetMimeType();
+	os::String GetIdentifier();
+	os::String GetIcon();	
+	os::String GetDefaultHandler();
+	int GetExtensionCount();
+	os::String GetExtension( int nIndex );
+	int GetHandlerCount();
+	os::String GetHandler( int nIndex );	
+};
+
+
+/** Class to access the application list.
+ * \ingroup storage
+ * \par Description:
+ * The RegistrarAppList class provides a way to access the application list returned
+ * by the GetAppList() method of the RegistrarManager class.
+ */
+class RegistrarAppList : public os::Message
+{
+public:
+	int GetCount();
+	os::String GetPath( int nIndex );
+	os::String GetName( int nIndex );
+	os::String GetCategory( int nIndex );
 };
 
 /** Class to access the registrar server.
@@ -127,18 +151,15 @@ public:
 	status_t ClearTypeHandlers( String zMimeType );
 
 	int32 GetTypeCount();
-	Message GetType( int32 nIndex );
+	RegistrarFileType GetType( int32 nIndex );
 	
 	status_t SetDefaultHandler( String zMimeType, Path zHandler );
 	
 	status_t GetTypeAndIcon( String zFile, Point cIconSize, String* zTypeName, Image** pcIcon, Message* pcMessage = NULL );
 	status_t Launch( Window* pcParentWindow, String zFile, bool bVerbose = false, String zTitle = "Select handler", bool bDefaultHandler = true );
 
-
-	status_t RegisterCall( String zID, String zDescription, os::Looper* pcTarget, int nMessageCode, bool bPersistent = false );
-	status_t UnregisterCall( String zID );
-	status_t QueryCall( String zID, int nIndex, RegistrarCall_s *psCallInfo );
-	status_t InvokeCall( RegistrarCall_s *sCallInfo, Message* pcData, Message* pcReply );
+	void UpdateAppList( bool bForce = false );
+	RegistrarAppList GetAppList();
 private:
 	
 	class Private;

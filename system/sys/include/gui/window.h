@@ -177,7 +177,7 @@ private:
     void*	_AllocRenderCmd( uint32 nCmd, const View* pcView, uint32 nSize );
     void	_PutRenderCmd();
     void	_HandleActivate( bool bIsActive, const Point& cMousePos );
-    void	_CallMouseMoved( View* pcView, uint32 nButtons, int nWndTransit, Message* pcData );
+    void	_CallMouseMoved( View* pcView, uint32 nButtons, int nWndTransit, Message* pcData, bool bUnderMouse );
     void	_MouseEvent( const Point& cNewPos, uint32 nButtons, Message* pcData, bool bReEntered );
 
     void	_SetMenuOpen( bool bOpen );

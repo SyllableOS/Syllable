@@ -42,6 +42,7 @@
 #include <util/application.h>
 #include <util/looper.h>
 #include <util/message.h>
+#include <util/event.h>
 #include <storage/registrar.h>
 #include <storage/directory.h>
 #include <storage/nodemonitor.h>
@@ -712,26 +713,25 @@ IconDirectoryView::IconDirectoryView( const Rect & cFrame, const String& cPath, 
 	m->m_bAutoLaunch = true;
 	m->m_pcDirMenu = m->m_pcFileMenu = m->m_pcDiskMenu = m->m_pcRootMenu = m->m_pcTrashMenu = NULL;
 	m->m_pcManager = NULL;
+	
 	try
 	{
 		m->m_pcManager = RegistrarManager::Get();
-		if( m->m_pcManager )
-		{
-			os::RegistrarCall_s sCall;
-			os::Message cReply;
-			os::Message cDummy;
-			bool bSingleClick = false;
-			/* Set default single-click state */
-			if( m->m_pcManager->QueryCall( "os/Desktop/GetSingleClickInterface", 0, &sCall ) == 0 ) {
-				if( m->m_pcManager->InvokeCall( &sCall, &cDummy, &cReply ) == 0 ) {
-					cReply.FindBool( "single_click", &bSingleClick );
-					SetSingleClick( bSingleClick );
-				}
-			}
-		}
-	} catch( ... )
+	} catch( ... ) {}
+	
+	/* Get default single-click state */
+	os::Event cEvent;
+	if( cEvent.SetToRemote( "os/Desktop/SetSingleClickInterface" ) == 0 )
 	{
+		os::Message cMsg;
+		if( cEvent.GetLastEventMessage( &cMsg ) == 0 )
+		{
+			bool bSingleClick = false;
+			cMsg.FindBool( "single_click", &bSingleClick );
+			SetSingleClick( bSingleClick );
+		}
 	}
+	
 	m->m_nJobsPending = 0;
 }
 
@@ -1361,6 +1361,8 @@ void IconDirectoryView::HandleMessage( Message * pcMessage )
 								pcSource = new MemFile( g_aFileImage, sizeof( g_aFileImage ) );
 							pcBitmap->Load( pcSource );
 							delete( pcSource );
+							if( pcBitmap->GetSize() != cRequestedSize )
+								pcBitmap->SetSize( cRequestedSize );
 							pcImage = pcBitmap;
 						}
 					}

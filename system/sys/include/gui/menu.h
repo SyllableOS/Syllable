@@ -63,6 +63,7 @@ public:
     virtual float		GetColumnWidth( int nColumn ) const;
     virtual int			GetNumColumns() const;
     const String&  		GetLabel() const;
+    void				SetLabel( const os::String& cTitle );
     
     virtual void  		Draw();
 
@@ -173,6 +174,7 @@ public:
 
 //	From Menu:
     String 				GetLabel() const;
+    void				SetLabel( const os::String& cLabel );
     MenuLayout_e 		GetLayout() const;
     
     bool				AddItem( const String& cLabel, Message* pcMessage, const String& cShortcut = "", Image* pcImage = NULL );

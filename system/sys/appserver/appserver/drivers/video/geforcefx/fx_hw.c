@@ -657,11 +657,17 @@ void NVCalcStateExt( NVPtr pNv, FX_HW_STATE * state, int bpp, int width, int hDi
 
 	switch ( pNv->Architecture )
 	{
+	 case NV_ARCH_40:
+            if(!pNv->FlatPanel)
+                state->control = pNv->PRAMDAC0[0x0580/4] & 0xeffffeff;
+            /* fallthrough */
 	case NV_ARCH_10:
 	case NV_ARCH_20:
 	case NV_ARCH_30:
 	default:
- 		if((pNv->Chipset & 0xfff0) == 0x0240) {
+ 		if(((pNv->Chipset & 0xfff0) == 0x0240) ||
+               ((pNv->Chipset & 0xfff0) == 0x03D0))
+            {
                 state->arbitration0 = 256; 
                 state->arbitration1 = 0x0480; 
             } else
@@ -730,7 +736,8 @@ void NVLoadStateExt( NVPtr pNv, FX_HW_STATE * state )
        if(((pNv->Chipset & 0xfff0) == 0x0090) ||
            ((pNv->Chipset & 0xfff0) == 0x01D0) ||
            ((pNv->Chipset & 0xfff0) == 0x0290) ||
-           ((pNv->Chipset & 0xfff0) == 0x0390))
+           ((pNv->Chipset & 0xfff0) == 0x0390) ||
+           ((pNv->Chipset & 0xfff0) == 0x03D0))
         {
            regions = 15;
         }
@@ -743,7 +750,7 @@ void NVLoadStateExt( NVPtr pNv, FX_HW_STATE * state )
 
 	if ( pNv->Architecture >= NV_ARCH_40 )
 	{
-		pNv->PRAMIN[0x0000] = 0x80000010;
+ pNv->PRAMIN[0x0000] = 0x80000010;
        pNv->PRAMIN[0x0001] = 0x00101202;
        pNv->PRAMIN[0x0002] = 0x80000011;
        pNv->PRAMIN[0x0003] = 0x00101204;
@@ -909,11 +916,12 @@ void NVLoadStateExt( NVPtr pNv, FX_HW_STATE * state )
 	{
 		if ( pNv->Architecture >= NV_ARCH_40 )
 		{
-			   pNv->PGRAPH[0x0084/4] = 0x401287c0;
+			 pNv->PGRAPH[0x0084/4] = 0x401287c0;
               pNv->PGRAPH[0x008C/4] = 0x60de8051;
               pNv->PGRAPH[0x0090/4] = 0x00008000;
               pNv->PGRAPH[0x0610/4] = 0x00be3c5f;
-
+              pNv->PGRAPH[0x0bc4/4] |= 0x00008000;
+              
               j = pNv->REGS[0x1540/4] & 0xff;
               if(j) {
                   for(i = 0; !(j & 1); j >>= 1, i++);
@@ -943,6 +951,7 @@ void NVLoadStateExt( NVPtr pNv, FX_HW_STATE * state )
               case 0x0160:
               case 0x01D0:
               case 0x0240:
+            	case 0x03D0:
                  pNv->PMC[0x1700/4] = pNv->PFB[0x020C/4];
                  pNv->PMC[0x1704/4] = 0;
                  pNv->PMC[0x1708/4] = 0;
@@ -1028,7 +1037,8 @@ void NVLoadStateExt( NVPtr pNv, FX_HW_STATE * state )
              if(((pNv->Chipset & 0xfff0) == 0x0090) ||
                  ((pNv->Chipset & 0xfff0) == 0x01D0) ||
                  ((pNv->Chipset & 0xfff0) == 0x0290) ||
-                 ((pNv->Chipset & 0xfff0) == 0x0390))
+                 ((pNv->Chipset & 0xfff0) == 0x0390) ||
+                 ((pNv->Chipset & 0xfff0) == 0x03D0))
               {
                  for(i = 0; i < 60; i++) {
                    pNv->PGRAPH[(0x0D00/4) + i] = pNv->PFB[(0x0600/4) + i];
@@ -1183,8 +1193,8 @@ void NVLoadStateExt( NVPtr pNv, FX_HW_STATE * state )
     VGA_WR08(pNv->PCIO, 0x03D5, state->pixel);
     VGA_WR08(pNv->PCIO, 0x03D4, 0x2D);
     VGA_WR08(pNv->PCIO, 0x03D5, state->horiz);
-//    VGA_WR08(pNv->PCIO, 0x03D4, 0x1C);
-//    VGA_WR08(pNv->PCIO, 0x03D5, state->fifo);
+    VGA_WR08(pNv->PCIO, 0x03D4, 0x1C);
+    VGA_WR08(pNv->PCIO, 0x03D5, state->fifo);
     VGA_WR08(pNv->PCIO, 0x03D4, 0x1B);
     VGA_WR08(pNv->PCIO, 0x03D5, state->arbitration0);
     VGA_WR08(pNv->PCIO, 0x03D4, 0x20);
@@ -1204,6 +1214,9 @@ void NVLoadStateExt( NVPtr pNv, FX_HW_STATE * state )
 
 	if ( !pNv->FlatPanel )
 	{
+		 if(pNv->Architecture >= NV_ARCH_40) {
+           pNv->PRAMDAC0[0x0580/4] = state->control;
+       }
 		pNv->PRAMDAC0[0x050C / 4] = state->pllsel;
 		pNv->PRAMDAC0[0x0508 / 4] = state->vpll;
 		if ( pNv->twoHeads )
@@ -1238,6 +1251,8 @@ void NVUnloadStateExt( NVPtr pNv, FX_HW_STATE * state )
 	state->pixel = VGA_RD08( pNv->PCIO, 0x03D5 );
 	VGA_WR08( pNv->PCIO, 0x03D4, 0x2D );
 	state->horiz = VGA_RD08( pNv->PCIO, 0x03D5 );
+	VGA_WR08(pNv->PCIO, 0x03D4, 0x1C);
+    state->fifo         = VGA_RD08(pNv->PCIO, 0x03D5);
 	VGA_WR08( pNv->PCIO, 0x03D4, 0x1B );
 	state->arbitration0 = VGA_RD08( pNv->PCIO, 0x03D5 );
 	VGA_WR08( pNv->PCIO, 0x03D4, 0x20 );
@@ -1267,7 +1282,9 @@ void NVUnloadStateExt( NVPtr pNv, FX_HW_STATE * state )
 	state->scale = pNv->PRAMDAC[0x0848 / 4];
 	state->config = pNv->PFB[0x0200 / 4];
 
-
+	if(pNv->Architecture >= NV_ARCH_40 && !pNv->FlatPanel) {
+        state->control  = pNv->PRAMDAC0[0x0580/4];
+    }
 
 	if ( pNv->twoHeads )
 	{

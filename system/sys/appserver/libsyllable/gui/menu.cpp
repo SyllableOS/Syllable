@@ -427,6 +427,18 @@ const String& MenuItem::GetLabel() const
 	return ( m->m_cLabel );
 }
 
+
+/** Sets the label of the MenuItem...
+ * \par Description:
+ *	Sets the label of the MenuItem.  
+ * \par cLabel - The label of the MenuItem as an os::String
+ * \author	Arno Klenke
+ *****************************************************************************/
+void MenuItem::SetLabel( const os::String& cLabel )
+{
+	m->m_cLabel = cLabel;
+}
+
 /** Returns the current location of this item...
  * \par Description:
  *	Returns the current location of this item.  It returns it as a os::Point
@@ -970,6 +982,19 @@ String Menu::GetLabel() const
 {
 	return ( m->m_cTitle );
 }
+
+/** Sets the label of the Menu...
+ * \par Description:
+ *	Sets the label that the Menu displays on the Appliction.  
+ * \par cLabel - The Label.
+ * \sa
+ * \author	Arno Klenke
+ *****************************************************************************/
+void Menu::SetLabel( const os::String& cTitle )
+{
+	m->m_cTitle = cTitle;
+}
+
 
 /** Gets the layout of the Menu...
  * \par Description:
@@ -2362,6 +2387,11 @@ void Menu::_Close( bool bCloseChilds, bool bCloseParent )
 			pcParent->m->m_bHasOpenChilds = false;
 			pcParent->m->m_bIsTracking = true;
 		}
+		
+		if( m->m_cCloseMsgTarget.IsValid() )
+		{
+			m->m_cCloseMsgTarget.SendMessage( &m->m_cCloseMsg );
+		}
 	}
 	#if 0
 	/* This causes a freeze */
@@ -2372,10 +2402,7 @@ void Menu::_Close( bool bCloseChilds, bool bCloseParent )
 	#endif
 
 
-	if( m->m_cCloseMsgTarget.IsValid() )
-	{
-		m->m_cCloseMsgTarget.SendMessage( &m->m_cCloseMsg );
-	}
+	
 
 	if( bCloseParent )
 	{

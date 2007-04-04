@@ -1156,7 +1156,7 @@ View *Window::FindView( const Point & cPos ) const
 	return ( pcView );
 }
 
-void Window::_CallMouseMoved( View * pcView, uint32 nButtons, int nWndTransit, Message * pcData )
+void Window::_CallMouseMoved( View * pcView, uint32 nButtons, int nWndTransit, Message * pcData, bool bUnderMouse )
 {
 	while( pcView != NULL && pcView->_GetMouseMoveRun() == m->m_nMouseMoveRun )
 	{
@@ -1169,7 +1169,7 @@ void Window::_CallMouseMoved( View * pcView, uint32 nButtons, int nWndTransit, M
 	Point cPos = pcView->ConvertFromScreen( m->m_cMousePos );
 	int nCode;
 
-	if( ( nWndTransit == MOUSE_ENTERED || nWndTransit == MOUSE_INSIDE ) && pcView->GetBounds().DoIntersect( cPos ) )
+	if( ( nWndTransit == MOUSE_ENTERED || nWndTransit == MOUSE_INSIDE ) && bUnderMouse )
 	{
 		if( pcView->_GetMouseMode() == MOUSE_OUTSIDE )
 		{
@@ -1218,17 +1218,17 @@ void Window::_MouseEvent( const Point & cNewPos, uint32 nButtons, Message * pcDa
 	{
 		if( m->m_pcLastMouseView != NULL )
 		{
-			_CallMouseMoved( m->m_pcLastMouseView, nButtons, m->m_nMouseTransition, pcData );
+			_CallMouseMoved( m->m_pcLastMouseView, nButtons, m->m_nMouseTransition, pcData, false );
 		}
 		m->m_pcLastMouseView = pcMouseView;
 	}
 	if( pcMouseView != NULL )
 	{
-		_CallMouseMoved( pcMouseView, nButtons, m->m_nMouseTransition, pcData );
+		_CallMouseMoved( pcMouseView, nButtons, m->m_nMouseTransition, pcData, true );
 	}
 	if( pcFocusChild != NULL )
 	{
-		_CallMouseMoved( pcFocusChild, nButtons, m->m_nMouseTransition, pcData );
+		_CallMouseMoved( pcFocusChild, nButtons, m->m_nMouseTransition, pcData, false );
 	}
 }
 

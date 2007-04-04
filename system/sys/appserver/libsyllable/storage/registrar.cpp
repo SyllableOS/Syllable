@@ -35,6 +35,159 @@
 
 using namespace os;
 
+/** Returns the mimetype.
+ * \par Description:
+ *  Returns the mimetype.
+ * \author	Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+os::String RegistrarFileType::GetMimeType()
+{
+	os::String cString;
+	FindString( "mimetype", &cString );
+	return( cString );
+}
+
+/** Returns the identifier.
+ * \par Description:
+ *  Returns the identifier.
+ * \author	Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+os::String RegistrarFileType::GetIdentifier()
+{
+	os::String cString;
+	FindString( "identifier", &cString );
+	return( cString );
+}
+
+/** Returns the icon path.
+ * \par Description:
+ *  Returns the icon path.
+ * \author	Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+os::String RegistrarFileType::GetIcon()
+{
+	os::String cString;
+	FindString( "icon", &cString );
+	return( cString );
+}
+
+/** Returns the default handler.
+ * \par Description:
+ *  Returns the default handler.
+ * \author	Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+os::String RegistrarFileType::GetDefaultHandler()
+{
+	os::String cString;
+	FindString( "default_handler", &cString );
+	return( cString );
+}
+
+/** Returns the extension count.
+ * \par Description:
+ *  Returns the extension count.
+ * \author	Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+int RegistrarFileType::GetExtensionCount()
+{
+	int nCount = 0;
+	FindInt32( "extension_count", &nCount );
+	return( nCount );
+}
+
+/** Returns an extension.
+ * \par Description:
+ *  Returns an extension.
+ * \par nIndex - Index.
+ * \author	Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+os::String RegistrarFileType::GetExtension( int nIndex )
+{
+	os::String cString;
+	FindString( "extension", &cString, nIndex );
+	return( cString );
+}
+
+/** Returns the handler count.
+ * \par Description:
+ *  Returns the handler count.
+ * \author	Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+int RegistrarFileType::GetHandlerCount()
+{
+	int nCount = 0;
+	FindInt32( "handler_count", &nCount );
+	return( nCount );
+}
+
+
+/** Returns a handler path.
+ * \par Description:
+ *  Returns a handler path.
+ * \par nIndex - Index.
+ * \author	Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+os::String RegistrarFileType::GetHandler( int nIndex )
+{
+	os::String cString;
+	FindString( "handler", &cString, nIndex );
+	return( cString );
+}
+
+
+/** Returns the application count.
+ * \par Description:
+ *  Returns the application count.
+ * \author	Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+int RegistrarAppList::GetCount()
+{
+	int nCount = 0;
+	FindInt32( "count", &nCount );
+	return( nCount );
+}
+
+
+/** Returns the name.
+ * \par Description:
+ *  Returns the name.
+ * \par nIndex - Index.
+ * \author	Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+os::String RegistrarAppList::GetName( int nIndex )
+{
+	os::String cString;
+	FindString( "name", &cString, nIndex );
+	return( cString );
+}
+
+/** Returns the path.
+ * \par Description:
+ *  Returns the path.
+ * \par nIndex - Index.
+ * \author	Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+os::String RegistrarAppList::GetPath( int nIndex )
+{
+	os::String cString;
+	FindString( "path", &cString, nIndex );
+	return( cString );
+}
+
+/** Returns the category.
+ * \par Description:
+ *  Returns the category.
+ * \par nIndex - Index.
+ * \author	Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+os::String RegistrarAppList::GetCategory( int nIndex )
+{
+	os::String cString;
+	FindString( "category", &cString, nIndex );
+	return( cString );
+}
+
+
 class RegistrarManager::Private
 {
 public:
@@ -517,17 +670,17 @@ int32 RegistrarManager::GetTypeCount()
 	return( nCount );
 }
 
-/** Returns a message that describes a specific type.
+/** Returns a RegistrarFileType object that describes a specific type.
  * \par Description:
- * Returns a message that describes a specific type.
+ * Returns a RegistrarFileType object that describes a specific type.
  * \param nIndex - Index of the type.
- * \return The message.
+ * \return The data.
  * \sa GetTypeAndIcon()
  * \author	Arno Klenke (arno_klenke@yahoo.de)
  *****************************************************************************/
-Message RegistrarManager::GetType( int32 nIndex )
+RegistrarFileType RegistrarManager::GetType( int32 nIndex )
 {
-	os::Message cReply;
+	RegistrarFileType cReply;
 	os::Message cMessage( REGISTRAR_GET_TYPE );
 	cMessage.AddInt64( "port", GetMsgPort() );
 	cMessage.AddString( "user", m->m_pzUser );
@@ -944,143 +1097,26 @@ status_t RegistrarManager::Launch( Window* pcParentWindow, String zFile, bool bV
 	return( 0 );
 }
 
-/** Registers a call.
- * \par Description:
- * THIS METHOD WILL BE REMOVED IN ONE OF THE FUTURE SYLLABLE RELEASES.
- * USE THE NEW OS::EVENT CLASS INSTEAD. 	
- * Registers a call that can be used for interprocess communication. All calls 
- * are identified using an id string that has the form class/function/subfunction.
- * An example: class/Mail/CreateNewMail.
- * \param zID - ID string.
- * \param zDescription - Description of the call.
- * \param pcTarget - Looper that will receive the calls.
- * \param nMessageCode - The code of the message that will be sent to the looper. 
- *                       The message can include additional data provided by the caller.
- * \param bPersistent - NOT IMPLEMENTED YET. Whether the call is persistent. If a call is made the 
- *                      application that has created the call will by started.
- * \return 0 if successful.
- * \author	Arno Klenke (arno_klenke@yahoo.de)
- *****************************************************************************/
-status_t RegistrarManager::RegisterCall( String zID, String zDescription, os::Looper* pcTarget, int nMessageCode, bool bPersistent )
+void RegistrarManager::UpdateAppList( bool bForce )
 {
-	os::Message cReply;
-	os::Message cMessage( EV_REGISTER );
+	os::Message cMessage( REGISTRAR_UPDATE_APP_LIST );
 	
-	cMessage.AddString( "id", zID );
-	cMessage.AddInt64( "process", get_process_id( NULL ) );
-	cMessage.AddString( "description", zDescription );
-	cMessage.AddInt64( "target", pcTarget->GetMsgPort() );
-	cMessage.AddInt64( "token", pcTarget->GetToken() );
-	cMessage.AddInt64( "message_code", nMessageCode );
-	
-	port_id hPort = os::Application::GetInstance()->GetServerPort();
-	Messenger cServerLink = Messenger( hPort );
-	
-	cServerLink.SendMessage( &cMessage );
-	
-	return( 0 );
-}
-
-
-
-/** Unregisters a call.
- * \par Description:
- * THIS METHOD WILL BE REMOVED IN ONE OF THE FUTURE SYLLABLE RELEASES.
- * USE THE NEW OS::EVENT CLASS INSTEAD.
- * Unregisters a previously registered call.
- * \param zID - ID string.
- * \return 0 if successful.
- * \author	Arno Klenke (arno_klenke@yahoo.de)
- *****************************************************************************/
-status_t RegistrarManager::UnregisterCall( String zID )
-{
-	os::Message cReply;
-	os::Message cMessage( EV_UNREGISTER );
-	
-	cMessage.AddString( "id", zID );
-	cMessage.AddInt64( "process", get_process_id( NULL ) );
-	
-	port_id hPort = os::Application::GetInstance()->GetServerPort();
-	Messenger cServerLink = Messenger( hPort );
-	
-	cServerLink.SendMessage( &cMessage );
-	
-	return( 0 );
-}
-
-
-/** Queries for a specific call.
- * \par Description:
- * THIS METHOD WILL BE REMOVED IN ONE OF THE FUTURE SYLLABLE RELEASES.
- * USE THE NEW OS::EVENT CLASS INSTEAD.
- * Queries for a specific call using its id and index. The index is necessary 
- * because there can multiple calls with the same id string.
- * \param zID - ID string.
- * \param nIndex - Index of the string.
- * \param psCallInfo - Returns the information about the call after the call.
- * \return 0 if successful.
- * \author	Arno Klenke (arno_klenke@yahoo.de)
- *****************************************************************************/
-status_t RegistrarManager::QueryCall( String zID, int nIndex, RegistrarCall_s *psCallInfo )
-{
-	os::Message cReply;
-	os::Message cMessage( EV_GET_INFO );
-	
-	port_id hPort = os::Application::GetInstance()->GetServerPort();
-	Messenger cServerLink = Messenger( hPort );
-	
-	cServerLink.SendMessage( &cMessage );
-	
-	cMessage.AddString( "id", zID );
-	cMessage.AddInt64( "index", nIndex );
-	
-	cServerLink.SendMessage( &cMessage, &cReply );
-	if( cReply.GetCode() != 0 ) 
-	{
-		return( -ENOENT );
+	if( m->m_bSync ) {
+		os::Message cReply;
+		m->m_cServerLink.SendMessage( &cMessage, &cReply );
 	}
-	
-	int64 nTargetPort;
-	int64 nMessageCode;
-	String zDesc;
-	
-	cReply.FindInt64( "target", &nTargetPort );
-	cReply.FindInt64( "message_code", &nMessageCode );
-	cReply.FindString( "description", &zDesc );
-	
-	psCallInfo->m_nProcess = -1;
-	psCallInfo->m_zID = zID;
-	psCallInfo->m_nTargetPort = nTargetPort;
-	psCallInfo->m_nMessageCode = nMessageCode;
-	psCallInfo->m_zDescription = zDesc;
-	
-	return( 0 );
+	else
+		m->m_cServerLink.SendMessage( &cMessage );
 }
 
-
-
-/** Invokes a call.
- * \par Description:
- * THIS METHOD WILL BE REMOVED IN ONE OF THE FUTURE SYLLABLE RELEASES.
- * USE THE NEW OS::EVENT CLASS INSTEAD.
- * Invokes a call using the information from QueryCall().
- * \param psCallInfo - Information about the call from QueryCall();
- * \param pcData - Data that will be submitted.
- * \param pcReply - Will contain the reply message after the call. Can be NULL.
- * \return 0 if successful.
- * \author	Arno Klenke (arno_klenke@yahoo.de)
- *****************************************************************************/
-status_t RegistrarManager::InvokeCall( RegistrarCall_s *psCallInfo, Message* pcData, Message* pcReply )
+RegistrarAppList RegistrarManager::GetAppList()
 {
-	os::Message cReply;
-	os::Message cMessage( *pcData );
-	os::Messenger cLink( psCallInfo->m_nTargetPort );
+	os::Message cMessage( REGISTRAR_GET_APP_LIST );
+	RegistrarAppList cReply;
 	
-	cMessage.SetCode( psCallInfo->m_nMessageCode );
-	
-	if( pcReply )
-		return( cLink.SendMessage( &cMessage, pcReply ) );
-	
-	return( cLink.SendMessage( &cMessage ) );
+	m->m_cServerLink.SendMessage( &cMessage, &cReply );
+	return( cReply );
 }
+
+
 

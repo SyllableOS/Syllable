@@ -19,21 +19,90 @@
  
 #include "registrar.h" 
 
-
 using namespace os;
+
+class ProgressView : public os::View
+{
+public:
+	ProgressView( os::Rect cFrame ) : View( cFrame, "progress_view" )
+	{
+		m_nProgress = 0;
+		SetEraseColor( os::get_default_color( os::COL_SHINE ) );
+	}
+	~ProgressView()
+	{
+	}
+	void Paint( const os::Rect& cUpdate )
+	{
+		float vX = m_nProgress - 6;
+			
+		SetFgColor( os::get_default_color( os::COL_SEL_WND_BORDER ) );
+			
+		os::Color32_s sDefaultColor = os::get_default_color( os::COL_SEL_WND_BORDER );
+		while( vX < GetBounds().Width() + 13 )
+		{
+			for( int i = -6; i < 7; i++ )
+			{
+				os::Color32_s sColor;
+				sColor.red = sDefaultColor.red + ( 255 - sDefaultColor.red ) * abs( i ) / 6;
+				sColor.blue = sDefaultColor.blue + ( 255 - sDefaultColor.blue ) * abs( i ) / 6;
+				sColor.green = sDefaultColor.green + ( 255 - sDefaultColor.green ) * abs( i ) / 6;
+				
+				SetFgColor( sColor );
+				FillRect( os::Rect( vX + i, 0, vX + i, GetBounds().Height() ) );
+			}
+			//EraseRect( os::Rect( vX + 5, 0, vX + 9, GetBounds().Height() ) );
+			vX += 13;
+		}
+	}
+	void AttachedToWindow()
+	{
+		GetWindow()->AddTimer( this, 0, 100000, false );
+	}
+	void DetachedFromWindow()
+	{
+		GetWindow()->RemoveTimer( this, 0 );
+	}
+	void TimerTick( int nID )
+	{
+		m_nProgress += 1;
+		m_nProgress %= 13;
+		Paint( GetBounds() );
+		Flush();
+	}
+private:
+	int m_nProgress;
+};
+
+class ProgressWindow : public os::Window
+{
+public:
+	ProgressWindow( os::String cMessage ) : os::Window( os::Rect( 0, 0, 200, 60 ), "window", "",os::WND_NO_BORDER )
+	{
+		os::StringView* pcStringView = new os::StringView( os::Rect( 10, 10, 190, 35 ), "string_view", cMessage, os::ALIGN_CENTER );
+		ProgressView* pcView = new ProgressView( os::Rect( 20, 40, 180, 50 ) );
+		AddChild( pcStringView );
+		AddChild( pcView );
+	}
+};
 
 Registrar::Registrar()
 			: Application( "registrar" )
 {
 	m_cUsers.clear();
-	m_cCalls.clear();
+	m_bAppListValid = false;
 	
 	/* Load the database of root */
 	LoadTypes( "root", GetMsgPort(), -1 );
+	
+	/* Create application list event */
+	m_pcAppListEvent = os::Event::Register( "os/Registrar/AppList", "Called when the application list has changed", this,
+											os::M_REPLY );
 }
 
 Registrar::~Registrar()
 {
+	delete( m_pcAppListEvent );
 }
 
 /* Save the database of one user */
@@ -1084,131 +1153,190 @@ end:
 	pcMessage->SendReply( &cReply );
 }
 
-/* Register a call */
-void Registrar::RegisterCall( Message* pcMessage )
+/* Returns the application list */
+void Registrar::GetAppList( Message* pcMessage )
 {
-	os::String zID;
-	os::String zDescription;
-	int64 nTargetPort;
-	int64 nMessageCode;
-	int64 nProcess;
-	RegistrarCall_s sCall;
+	UpdateAppList( false );
 	
-	/* Unpack message */
-	if( pcMessage->FindString( "id", &zID ) != 0 ) {
-		dbprintf( "Registrar::RegisterCall() called without id\n" );
-		return;
-	}
-	if( pcMessage->FindInt64( "process", &nProcess ) != 0 ) {
-		dbprintf( "Registrar::RegisterCall() called without process\n" );
-		return;
-	}
-	if( pcMessage->FindString( "description", &zDescription ) != 0 ) {
-		dbprintf( "Registrar::RegisterCall() called without description\n" );
-		return;
-	}
-	if( pcMessage->FindInt64( "target", &nTargetPort ) != 0 ) {
-		dbprintf( "Registrar::RegisterCall() called without targer port\n" );
-		return;
-	}
-	if( pcMessage->FindInt64( "message_code", &nMessageCode ) != 0 ) {
-		dbprintf( "Registrar::RegisterCall() called without message code\n" );
-		return;
+	os::Message cReply( REGISTRAR_OK );
+	cReply.AddInt32( "count", (int32)m_cApps.size() );
+	for( uint i = 0; i < m_cApps.size(); i++ )
+	{
+		cReply.AddString( "name", m_cApps[i].zName );
+		cReply.AddString( "path", m_cApps[i].zPath );
+		cReply.AddString( "category", m_cApps[i].zCategory );
 	}
 	
-	/* Create new call object */
-	sCall.m_nProcess = nProcess;
-	sCall.m_zID = zID;
-	sCall.m_nTargetPort = nTargetPort;
-	sCall.m_nMessageCode = nMessageCode;
-	sCall.m_zDescription = zDescription;
-	
-	m_cCalls.push_back( sCall );
-	
-	//dbprintf( "Call %s registered by %i:%i\n", zID.c_str(), (int)nProcess, (int)nTargetPort );
-	
-	if( pcMessage->IsSourceWaiting() )
-		pcMessage->SendReply( REGISTRAR_OK );
+	pcMessage->SendReply( &cReply );		
 }
 
-/* Unregister a call */
-void Registrar::UnregisterCall( Message* pcMessage )
+
+/* Scan one path for applications */
+void Registrar::ScanAppPath( int nLevel, os::Path cPath, os::String cPrimaryLanguage )
 {
-	os::String zID;
-	int64 nProcess;
 	
-	/* Unpack message */
-	if( pcMessage->FindString( "id", &zID ) != 0 ) {
-		dbprintf( "Registrar::UnregisterCall() called without id\n" );
-		return;
-	}
-	if( pcMessage->FindInt64( "process", &nProcess ) != 0 ) {
-		dbprintf( "Registrar::RegisterCall() called without process\n" );
-		return;
-	}
-	
-	/* Find call */
-	for( uint i = 0; i < m_cCalls.size(); i++ )
+	/* Check if the directory is valid */
+	os::Directory* pcDir = NULL;
+	try
 	{
-		if( m_cCalls[i].m_zID == zID && m_cCalls[i].m_nProcess == nProcess )
-		{
-			m_cCalls.erase( m_cCalls.begin() + i );
+		pcDir = new os::Directory( cPath.GetPath() );
+	} catch( ... ) {
+		return;
+	}
+	if( !pcDir->IsValid() )
+	{
+		delete( pcDir );
+		return;
+	}
+	
+	/* Add node monitor */
+	printf( "Adding node monitor to %s\n", cPath.GetPath().c_str() );
+	os::NodeMonitor* pcMonitor = new os::NodeMonitor( cPath, NWATCH_ALL, this );
+	m_cMonitors.push_back( pcMonitor );	
+	
+	/* Iterate through the directory */
+	os::String zFile;
+	
+	while( pcDir->GetNextEntry( &zFile ) == 1 )
+	{
+		if( zFile == os::String( "." ) ||
+			zFile == os::String( ".." ) )
+			continue;
+		os::Path cFilePath = cPath;
+		
+		/* We do not want any plugins */
+		if( os::String( zFile ).Lower() == "plugins" || os::String( zFile ).Lower() == "lib" )
+			continue;
 			
-			//dbprintf( "Call %s unregistered by %i\n", zID.c_str(), (int)nProcess );
-	
-			if( pcMessage->IsSourceWaiting() )
-				pcMessage->SendReply( REGISTRAR_OK );
-				
-			return;
+		
+		cFilePath.Append( zFile.c_str() );
+		
+		os::Image* pcItemIcon = NULL;
+		
+		/* Get icon */
+		os::FSNode cFileNode;
+		if( cFileNode.SetTo( cFilePath ) != 0 )
+		{
+			continue;
 		}
+		
+		if( cFileNode.IsDir() )
+		{
+			cFileNode.Unset();
+			if( nLevel < 5 )
+				ScanAppPath( nLevel + 1, cFilePath, cPrimaryLanguage );
+			continue;
+		}
+		
+		/* Set default category */
+		os::String zCategory = "Other";
+		if( cPath.GetLeaf() == "Preferences" )
+			zCategory = "Preferences";
+		
+		
+		/* Check if this is an executable and read the category attribute */
+		cFileNode.RewindAttrdir();
+		os::String zAttrib;
+
+		bool bExecAttribFound = false;
+		bool bCategoryAttribFound = false;
+		while( cFileNode.GetNextAttrName( &zAttrib ) == 1 )
+		{
+			if( zAttrib == "os::MimeType" || zAttrib == "os::Category" )
+			{
+				char zBuffer[PATH_MAX];
+				memset( zBuffer, 0, PATH_MAX );
+				if( cFileNode.ReadAttr( zAttrib, ATTR_TYPE_STRING, zBuffer, 0, PATH_MAX ) > 0 )
+				{
+					if( os::String( zBuffer ) == "application/x-executable" ) {
+						bExecAttribFound = true;
+					} else {
+						zCategory = zBuffer;
+						bCategoryAttribFound = true;
+					}
+				}
+			}
+		}
+
+		if( !bExecAttribFound && !(	cFileNode.GetMode() & ( S_IXUSR|S_IXGRP|S_IXOTH ) ) || zCategory == "Ignore" )
+		{
+			cFileNode.Unset();
+			continue;
+		}
+		
+		RegistrarApp cApp;
+		cApp.zPath = cFilePath;
+		cApp.zName = zFile;
+		cApp.zCategory = zCategory;
+		
+		/* Try to get application name from the catalog */
+		if( !cPrimaryLanguage.empty() )
+		{
+			try
+			{
+				os::File cResFile( cFilePath );
+				os::Resources cRes( &cResFile );
+				for( int i = 0 ; i < cRes.GetResourceCount() ; ++i )
+				{
+					os::String cCatalogName = cRes.GetResourceName( i );
+					if( strstr( cCatalogName.c_str(), ".catalog" ) != 0 && strstr( cCatalogName.c_str(), "/" ) == 0)
+					{
+						os::ResStream* pcSrc = cRes.GetResourceStream( ( cPrimaryLanguage + "/" + cCatalogName ) );
+						if( pcSrc != NULL )
+						{
+							os::Catalog c;
+							c.Load( pcSrc );
+							cApp.zName = c.GetString( 0, cPath.GetLeaf() );
+							delete( pcSrc );
+						}
+						break;
+					}
+				}
+			} catch( ... ) { }
+		}
+		
+		m_cApps.push_back( cApp );
+		
+		
+		printf( "Entry %s %s %s\n", cApp.zPath.c_str(), cApp.zName.c_str(), cApp.zCategory.c_str() );
 	}
 	
-	dbprintf( "Registrar::UnregisterCall(): Call %s by %i not present\n", zID.c_str(), (int)nProcess );
-	
-	
-	if( pcMessage->IsSourceWaiting() )
-		pcMessage->SendReply( REGISTRAR_ERROR );
 }
 
-/* Query a call */
-void Registrar::QueryCall( Message* pcMessage )
+
+/* Update the application list if necessary */
+void Registrar::UpdateAppList( bool bForce )
 {
-	os::String zID;
-	int64 nIndex;
-	int64 nCounter = 0;
-	Message cReply( REGISTRAR_OK );
-	
-	/* Unpack message */
-	if( pcMessage->FindString( "id", &zID ) != 0 ) {
-		dbprintf( "Registrar::QueryCall() called without id\n" );
+	if( m_bAppListValid && !bForce )
 		return;
-	}
-	if( pcMessage->FindInt64( "index", &nIndex ) != 0 ) {
-		dbprintf( "Registrar::QueryCall() called without index\n" );
-		return;
-	}
+		
+	assert( m_cMonitors.size() == 0 );
 	
-	/* Find call */
-	for( uint i = 0; i < m_cCalls.size(); i++ )
-	{
-		if( m_cCalls[i].m_zID == zID  )
-		{
-			if( nIndex == nCounter )
-			{
-				cReply.AddInt64( "target", m_cCalls[i].m_nTargetPort );
-				cReply.AddInt64( "message_code", m_cCalls[i].m_nMessageCode );
-				cReply.AddString( "description", m_cCalls[i].m_zDescription );
-				
-				pcMessage->SendReply( &cReply );
-				return;
-			}
-			nCounter++;
-		}
-	}
+	/* We would like to know the users primary language, so we can get the application-names */
+	os::String cPrimaryLanguage;
+	try {
+		os::Settings* pcSettings = new os::Settings( new os::File( os::String( getenv( "HOME" ) ) + os::String( "/Settings/System/Locale" ) ) );
+		pcSettings->Load();
+		cPrimaryLanguage = pcSettings->GetString("LANG","",0);
+		delete( pcSettings );
+	} catch(...) { }
+
 	
-	//dbprintf( "Registrar::QueryCall(): Call %s with index %i not present\n", zID.c_str(), (int)nIndex );
+	/* Create progress window */
+	ProgressWindow* pcWindow = new ProgressWindow( "Updating application database...\n" );
+	pcWindow->CenterInScreen();
+	pcWindow->Show();
+		
+	/* Clear list */
+	m_cApps.clear();
 	
-	pcMessage->SendReply( REGISTRAR_ERROR );
+	/* Scan */
+	ScanAppPath( 0, os::Path( "/boot/Applications" ), cPrimaryLanguage );
+	
+	pcWindow->PostMessage( os::M_QUIT );
+	
+	
+	m_bAppListValid = true;
 }
 
 /* Called when a process is killed. Check the database users and calls */
@@ -1242,18 +1370,6 @@ void Registrar::ProcessKilled( Message* pcMessage )
 		}
 	}
 	
-	/* Delete calls owned by the process */
-again:
-	
-	for( uint i = 0; i < m_cCalls.size(); i++ )
-	{
-		if( m_cCalls[i].m_nProcess == nProcess  )
-		{
-			dbprintf( "Process %i forgot to delete call %s\n", (int)nProcess, m_cCalls[i].m_zID.c_str() );
-			m_cCalls.erase( m_cCalls.begin() + i );
-			goto again; /* m_cCalls.size() has changed */
-		}
-	}
 }
 
 void Registrar::HandleMessage( Message* pcMessage )
@@ -1303,19 +1419,38 @@ void Registrar::HandleMessage( Message* pcMessage )
 			if( pcMessage->IsSourceWaiting() )
 				GetTypeAndIcon( pcMessage );
 		break;
-		case REGISTRAR_REGISTER_CALL:
-			RegisterCall( pcMessage );
-		break;
-		case REGISTRAR_UNREGISTER_CALL:
-			UnregisterCall( pcMessage );
-		break;
-		case REGISTRAR_QUERY_CALL:
+		case REGISTRAR_GET_APP_LIST:
 			if( pcMessage->IsSourceWaiting() )
-				QueryCall( pcMessage );
+				GetAppList( pcMessage );
+		break;
+		case REGISTRAR_UPDATE_APP_LIST:
+		{
+			bool bForce = false;
+			pcMessage->FindBool( "force", &bForce );
+			UpdateAppList( bForce );
+			if( pcMessage->IsSourceWaiting() )
+				pcMessage->SendReply( REGISTRAR_OK );
+		}
 		break;
 		case -1:
 			ProcessKilled( pcMessage );
 		break;
+		case os::M_NODE_MONITOR:
+		{
+			/* Delete monitors */
+			printf("Delete node monitors!\n");
+			m_bAppListValid = false;
+			for( uint i = 0; i < m_cMonitors.size(); ++i )
+			{
+				delete( m_cMonitors[i] );
+			}
+			m_cMonitors.clear();
+			/* Send event */
+			os::Message cDummy;
+			m_pcAppListEvent->PostEvent( &cDummy );
+	
+			break;
+		}
 		default:
 			Looper::HandleMessage( pcMessage );
 		break;

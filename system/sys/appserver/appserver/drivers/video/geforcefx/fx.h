@@ -188,7 +188,27 @@ private:
 		m_bPaletteEnabled = false;
 	}
 	
-	
+	void VGAProtect( bool bOn )
+	{
+		unsigned char tmp;
+		if( bOn ) {
+			/*
+			 * Turn off screen and disable sequencer.
+			 */
+			tmp = SEQin(0x01);
+
+			SEQout(0x00, 0x01);		/* Synchronous Reset */
+			SEQout(0x01, tmp | 0x20);	/* disable the display */
+		} else {
+			/*
+			 * Reenable sequencer, then turn on screen.
+			 */
+			tmp = SEQin(0x01);
+
+			SEQout( 0x01, tmp & ~0x20);	/* reenable display */
+			SEQout( 0x00, 0x03);		/* End Reset */
+		}
+	}
 	
 
 };

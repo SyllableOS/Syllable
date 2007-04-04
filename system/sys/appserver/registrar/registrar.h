@@ -22,6 +22,7 @@
  
 #include <gui/window.h>
 #include <gui/tabview.h>
+#include <gui/stringview.h>
 #include <util/application.h>
 #include <util/message.h>
 #include <util/messenger.h>
@@ -29,6 +30,7 @@
 #include <util/string.h>
 #include <util/settings.h>
 #include <util/resources.h>
+#include <util/event.h>
 #include <atheos/msgport.h>
 #include <atheos/threads.h>
 #include <atheos/image.h>
@@ -37,12 +39,14 @@
 #include <storage/directory.h>
 #include <storage/file.h>
 #include <storage/symlink.h>
+#include <storage/registrar.h>
+#include <storage/nodemonitor.h>
 #include <sys/ioctl.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <iostream>
 #include <vector>
-#include <storage/registrar.h>
+#include <cassert>
 
 namespace os
 {
@@ -68,6 +72,13 @@ struct RegistrarUser
 	os::String m_zUser;
 	std::vector<RegistrarClient> m_cClients;
 	std::vector<FileType> m_cTypes;
+};
+
+struct RegistrarApp
+{
+	os::String zPath;
+	os::String zName;
+	os::String zCategory;
 };
 
 class Registrar : public Application
@@ -100,13 +111,16 @@ private:
 	void SetDefaultHandler( Message* pcMessage );
 	os::String GetAttribute( os::FSNode* pcNode, os::String zAttribute );
 	void GetTypeAndIcon( Message* pcMessage );
-	void RegisterCall( Message* pcMessage );
-	void UnregisterCall( Message* pcMessage );
-	void QueryCall( Message* pcMessage );
+	void GetAppList( Message* pcMessage );
+	void ScanAppPath( int nLevel, os::Path cPath, os::String cPrimaryLanguage );
+	void UpdateAppList( bool bForce );
 	void ProcessKilled( Message* pcMessage );
 	
 	std::vector<RegistrarUser> m_cUsers;
-	std::vector<RegistrarCall_s> m_cCalls;
+	bool m_bAppListValid;
+	std::vector<os::NodeMonitor*> m_cMonitors;
+	std::vector<RegistrarApp> m_cApps;
+	os::Event* m_pcAppListEvent;
 };
 	
 

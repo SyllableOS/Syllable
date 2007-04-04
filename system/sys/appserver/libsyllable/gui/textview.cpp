@@ -140,9 +140,9 @@ namespace os
 		virtual void FontChanged( Font * pcNewFont );
 		virtual void FrameSized( const Point & cDelta );
 		virtual void Paint( const Rect & cUpdateRect );
-		bool HandleMouseMove( const Point & cNewPos, int nCode, uint32 nButtons, Message * pcData );
-		bool HandleMouseDown( const Point & cPosition, uint32 nButtons );
-		bool HandleMouseUp( const Point & cPosition, uint32 nButtons, Message * pcData );
+		void MouseMove( const Point & cNewPos, int nCode, uint32 nButtons, Message * pcData );
+		void MouseDown( const Point & cPosition, uint32 nButtons );
+		void MouseUp( const Point & cPosition, uint32 nButtons, Message * pcData );
 		bool HandleKeyDown( const char *pzString, const char *pzRawString, uint32 nQualifiers );
 		void UpdateBackBuffer();
 		void CommitEvents();
@@ -330,26 +330,26 @@ Variant TextView::GetValue() const
 
 void TextView::MouseMove( const Point & cNewPos, int nCode, uint32 nButtons, Message * pcData )
 {
-	if( m_pcEditor->HandleMouseMove( m_pcEditor->ConvertFromParent( cNewPos ), nCode, nButtons, pcData ) == false )
-	{
+	//if( m_pcEditor->HandleMouseMove( m_pcEditor->ConvertFromParent( cNewPos ), nCode, nButtons, pcData ) == false )
+	//{
 		View::MouseMove( cNewPos, nCode, nButtons, pcData );
-	}
+	//}
 }
 
 void TextView::MouseDown( const Point & cPosition, uint32 nButtons )
 {
-	if( m_pcEditor->HandleMouseDown( m_pcEditor->ConvertFromParent( cPosition ), nButtons ) == false )
-	{
+	//if( m_pcEditor->HandleMouseDown( m_pcEditor->ConvertFromParent( cPosition ), nButtons ) == false )
+	//{
 		View::MouseDown( cPosition, nButtons );
-	}
+	//}
 }
 
 void TextView::MouseUp( const Point & cPosition, uint32 nButtons, Message * pcData )
 {
-	if( m_pcEditor->HandleMouseUp( m_pcEditor->ConvertFromParent( cPosition ), nButtons, pcData ) == false )
-	{
+	//if( m_pcEditor->HandleMouseUp( m_pcEditor->ConvertFromParent( cPosition ), nButtons, pcData ) == false )
+	//{
 		View::MouseUp( cPosition, nButtons, pcData );
-	}
+	//}
 }
 
 void TextView::WheelMoved( const Point & cDelta )
@@ -2593,10 +2593,10 @@ void TextEdit::MoveWord( bool bDirection, bool bExpBlock )
 	if( cNewPos != m_cCsrPos ) { SetCursor( cNewPos, bExpBlock ); }
 }
 
-bool TextEdit::HandleMouseMove( const Point & cPosition, int nCode, uint32 nButtons, Message * pcData )
+void TextEdit::MouseMove( const Point & cPosition, int nCode, uint32 nButtons, Message * pcData )
 {
 	Rect	cBounds( GetBounds() );
-
+	
 	if( nCode == MOUSE_ENTERED )
 	{
 		if( !m_bIBeamActive ) {
@@ -2614,11 +2614,11 @@ bool TextEdit::HandleMouseMove( const Point & cPosition, int nCode, uint32 nButt
 
 	if( m_bEnabled == false || m_bMouseDownSeen == false )
 	{
-		return ( false );
+		return os::View::MouseMove( cPosition, nCode, nButtons,pcData );
 	}
 	if( ( nButtons & 0x01 ) == 0 )
 	{
-		return ( false );
+		return os::View::MouseMove( cPosition, nCode, nButtons,pcData );
 	}
 
 	if( nButtons & 0x0001 )
@@ -2639,14 +2639,13 @@ bool TextEdit::HandleMouseMove( const Point & cPosition, int nCode, uint32 nButt
 		SetCursor( cCharPos, true );
 	}
 	CommitEvents();
-	return ( true );
 }
 
-bool TextEdit::HandleMouseDown( const Point & cPosition, uint32 nButton )
+void TextEdit::MouseDown( const Point & cPosition, uint32 nButton )
 {
 	if( nButton != 1 || m_bEnabled == false )
 	{
-		return ( false );
+		return os::View::MouseDown( cPosition, nButton );
 	}
 	m_pcParent->MakeFocus( true );
 
@@ -2671,10 +2670,9 @@ bool TextEdit::HandleMouseDown( const Point & cPosition, uint32 nButton )
 	Flush();
 	CommitEvents();
 	m_bMouseDownSeen = true;
-	return ( true );
 }
 
-bool TextEdit::HandleMouseUp( const Point & cPosition, uint32 nButtons, Message * pcData )
+void TextEdit::MouseUp( const Point & cPosition, uint32 nButtons, Message * pcData )
 {
 	if( m_bRegionActive && m_cRegionStart == m_cRegionEnd )
 	{
@@ -2683,7 +2681,6 @@ bool TextEdit::HandleMouseUp( const Point & cPosition, uint32 nButtons, Message 
 	}
 	CommitEvents();
 	m_bMouseDownSeen = false;
-	return ( true );
 }
 
 
@@ -2696,7 +2693,7 @@ bool TextEdit::HandleKeyDown( const char *pzString, const char *pzRawString, uin
 	
 	if( m_bEnabled == false )
 	{
-		return ( false );
+		return false;
 	}
 
 	if( bCtrl && !bAlt && !bShift )
