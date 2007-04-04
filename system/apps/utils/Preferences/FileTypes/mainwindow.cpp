@@ -219,12 +219,12 @@ void MainWindow::UpdateList()
 	/* Populate the type list */
 	for( int32 i = 0; i < m_pcManager->GetTypeCount(); i++ )
 	{
-		os::Message cMsg = m_pcManager->GetType( i );
+		os::RegistrarFileType cType = m_pcManager->GetType( i );
 		os::String zIdentifier;
 		os::String zIcon;
 		
-		cMsg.FindString( "identifier", &zIdentifier );
-		cMsg.FindString( "icon", &zIcon );
+		zIdentifier = cType.GetIdentifier();
+		zIcon = cType.GetIcon();
 		
 		os::TreeViewStringNode* pcNode = new os::TreeViewStringNode();
 		pcNode->AppendString( zIdentifier );
@@ -303,43 +303,39 @@ void MainWindow::SelectType( int32 nIndex )
 	std::cout<<"Select "<<nIndex<<std::endl;
 	
 	/* Update type */
-	os::Message cMsg = m_pcManager->GetType( nIndex );
+	os::RegistrarFileType cType = m_pcManager->GetType( nIndex );
 	os::String zIdentifier;
 	os::String zMimeType;
 	os::String zHandler;
 	os::String zExtension;
 	os::String zDefaultHandler;
-	int32 nHandlerCount;
-	int32 nExtensionCount;
 	
-	cMsg.FindString( "mimetype", &zMimeType );
-	cMsg.FindString( "identifier", &zIdentifier );
+	zMimeType = cType.GetMimeType();
+	zIdentifier = cType.GetIdentifier();
 	m_pcMimeType->SetString( zMimeType );
 	m_pcIdentifier->Set( zIdentifier.c_str() );
 	
 	/* Load icon if possible */
-	cMsg.FindString( "icon", &m_zIcon );
+	m_zIcon = cType.GetIcon();
 	UpdateIcon( false );
 	
-	cMsg.FindInt32( "extension_count", &nExtensionCount );
 	m_pcExtensionList->Clear();
 	m_cExtensions.clear();
-	for( int32 i = 0; i < nExtensionCount; i++ )
+	for( int32 i = 0; i < cType.GetExtensionCount(); i++ )
 	{
-		cMsg.FindString( "extension", &zExtension, i );
+		zExtension = cType.GetExtension( i );
 		/* Add extension to the list */
 		os::TreeViewStringNode* pcNode = new os::TreeViewStringNode();
 		pcNode->AppendString( zExtension );
 		m_pcExtensionList->InsertNode( pcNode );
 		m_cExtensions.push_back( zExtension );
 	}
-	cMsg.FindString( "default_handler", &zDefaultHandler );
-	cMsg.FindInt32( "handler_count", &nHandlerCount );
+	zDefaultHandler = cType.GetDefaultHandler();
 	m_pcHandlerList->Clear();
 	m_cHandlers.clear();
-	for( int32 i = 0; i < nHandlerCount; i++ )
+	for( int32 i = 0; i < cType.GetHandlerCount(); i++ )
 	{
-		cMsg.FindString( "handler", &zHandler, i );
+		zHandler = cType.GetHandler( i );
 		/* Add handler to the list */
 		os::TreeViewStringNode* pcNode = new os::TreeViewStringNode();
 		pcNode->AppendString( zHandler );
