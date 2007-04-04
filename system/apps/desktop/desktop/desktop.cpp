@@ -168,10 +168,15 @@ Desktop::Desktop() : os::Window( os::Rect(), "desktop", MSG_DESKTOP_TITLE, os::W
 						os::Application::GetInstance(), M_SET_BACKGROUND );
 		m_pcRefreshEv = os::Event::Register( "os/Desktop/Refresh", "Refreshes the desktop",
 						os::Application::GetInstance(), M_REFRESH );
+		os::Message cMsg;
+		cMsg.AddBool( "single_click", m_bSingleClick );
+		m_pcSetSingleClickEv->PostEvent( &cMsg );
 						
 	} catch( ... )
 	{
 	}
+	
+	
 	
 	LaunchFiles();
 	
@@ -301,6 +306,9 @@ void Desktop::SetBackground( os::String zBackground )
 void Desktop::SetSingleClick( bool bSingleClick )
 {
 	m_bSingleClick = bSingleClick;
+	os::Message cMsg;
+	cMsg.AddBool( "single_click", bSingleClick );
+	m_pcSetSingleClickEv->PostEvent( &cMsg );
 	m_pcView->SetSingleClick( bSingleClick );
 	SaveSettings();
 }
