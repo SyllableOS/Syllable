@@ -82,6 +82,7 @@ ATA_PCI_dev_s g_sDevices[] =
 	{ 0x8086, 0x24c1, init_intel_controller },
 	{ 0x8086, 0x269e, init_intel_controller },
 	{ 0x8086, 0x2850, init_intel_controller },
+	
 	/* Intel SATA */
 	{ 0x8086, 0x24d1, init_intel_sata_controller },	/* ICH5 SATA */
 	{ 0x8086, 0x24df, init_intel_sata_controller },	/* ICH5 SATA */
@@ -356,7 +357,8 @@ status_t ata_pci_add_controller( int nDeviceID, PCI_Info_s sDevice, init_ata_con
 	}
 	
 	/* Check controller mode */
-	if( ( g_psPCIBus->read_pci_config( sDevice.nBus, sDevice.nDevice, sDevice.nFunction, 0x09, 1 ) & 0x05 ) == 0x0 )
+	if( ( ( g_psPCIBus->read_pci_config( sDevice.nBus, sDevice.nDevice, sDevice.nFunction, 0x09, 1 ) & 0x05 ) == 0x0 )
+		&& psInit != init_via_sata_controller )
 	{
 		kerndbg( KERN_INFO, "Controller in legacy mode\n" );
 		if( g_bLegacyController )
