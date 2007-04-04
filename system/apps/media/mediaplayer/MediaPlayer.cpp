@@ -444,7 +444,7 @@ void MPApp::PlayThread()
 		{
 			bool bCheckError = false;
 again:
-			if( acPackets.size() < 100 )
+			if( acPackets.size() < ( ( m_bAudio && m_bVideo ) ? 100 : 50 ) )
 			{
 				if( m_pcInput->ReadPacket( &sPacket ) == 0 )
 				{
@@ -492,7 +492,7 @@ again:
 				if( !m_bAudio )
 				{
 					if( nStartTime == 0 )
-						nStartTime = get_system_time();
+						nStartTime = get_system_time() - sVideoFrame.nTimeStamp * 1000;
 					nPlayTime = ( get_system_time() - nStartTime ) / 1000;
 				}
 				/* Calculate current time */
@@ -831,6 +831,7 @@ void MPApp::Open( os::String zFileName, os::String zInput )
 		{
 			m_bAudio = false;
 			m_pcAudioOutput->Close();
+			m_pcAudioOutput = NULL;
 		}
 		else
 		{
