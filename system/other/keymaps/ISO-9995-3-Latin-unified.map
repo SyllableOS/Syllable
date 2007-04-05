@@ -4,7 +4,7 @@
 
 # Duplicate deadkeys on AltGr as combining characters.
 
-Version    = 2
+Version    = 3
 
 #InitialLocks = CapsLock NumLock ScrollLock
 #InitialLocks = NumLock
@@ -325,6 +325,7 @@ DeadKey    n 0x32  0xc6af    = 0xe1bbae	# LATIN CAPITAL LETTER U WITH HORN AND T
 DeadKey    n 0x32  0xc6b0    = 0xe1bbaf	# LATIN SMALL LETTER U WITH HORN AND TILDE
 DeadKey    n 0x32  0xc482    = 0xe1bab4	# LATIN CAPITAL LETTER A WITH BREVE AND TILDE
 DeadKey    n 0x32  0xc483    = 0xe1bab5	# LATIN SMALL LETTER A WITH BREVE AND TILDE
+DeadKey    n 0x32  0xc2ac    = 0xe28981	#  U+2241	NOT TILDE
 DeadKey    n 0x32  '-'       = 0xe28982 # MINUS TILDE
 DeadKey    n 0x32  0xe28090  = 0xe28982 # MINUS TILDE
 DeadKey    n 0x32  '='       = 0xe28b8d # REVERSED TILDE EQUALS
@@ -718,7 +719,8 @@ DeadKey    os 0x55  'g'       = 0xc4a1
 DeadKey    os 0x55  'I'       = 0xc4b0
 DeadKey    os 0x55  0xc4b0    = 'I'
 DeadKey    os 0x55  'i'       = 0xc4b1	# LATIN SMALL LETTER DOTLESS I
-DeadKey    os 0x55  0xc4b1    = 'i' 
+DeadKey    os 0x55  0xc4b1    = 'i'
+DeadKey    os 0x55  'j'       = 0xc8b7	# LATIN SMALL LETTER DOTLESS J
 DeadKey    os 0x55  'Z'       = 0xc5bb
 DeadKey    os 0x55  'z'       = 0xc5bc
 DeadKey    os 0x55  'A'       = 0xc8a6

@@ -2,7 +2,7 @@
 
 # adapted from public domain resources
 
-Version    = 1
+Version    = 2
 
 #InitialLocks = CapsLock NumLock ScrollLock
 #InitialLocks = NumLock
@@ -170,5 +170,10 @@ DeadKey    n 0x1c  0xd093    = 0xd083   # CYRILLIC CAPITAL LETTER GJE
 DeadKey    n 0x1c  0xd09a    = 0xd08c   # CYRILLIC CAPITAL LETTER KJE
 DeadKey    n 0x1c  0xd0b3    = 0xd193   # CYRILLIC SMALL LETTER GJE
 DeadKey    n 0x1c  0xd0ba    = 0xd19c   # CYRILLIC SMALL LETTER KJE
+#
+DeadKey    n 0x1c  0xd0b8    = 0xd19d   # for Macedonian
+DeadKey    n 0x1c  0xd098    = 0xd08d
+DeadKey    n 0x1c  0xd0b5    = 0xd190
+DeadKey    n 0x1c  0xd095    = 0xd080
 DeadKey    n 0x1c  0x0       = ''' 
 
