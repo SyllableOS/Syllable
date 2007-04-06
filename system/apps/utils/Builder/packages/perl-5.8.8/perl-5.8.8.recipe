@@ -16,6 +16,7 @@ locations
 	ftp://ftp.funet.fi/pub/CPAN/src/5.0/
 	http://ftp.funet.fi/pub/CPAN/src/5.0/
 
+build-needs			gawk
 recommends			db
 
 ;configure
@@ -55,4 +56,3 @@ links
 	bin/perl							/usr/bin/perl
 ;	For OpenSSL:
 	bin/perl							/usr/local/bin/perl
-
