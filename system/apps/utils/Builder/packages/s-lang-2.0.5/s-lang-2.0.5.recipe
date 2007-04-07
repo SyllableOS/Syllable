@@ -17,7 +17,7 @@ build-recommends
 	libpng
 	readline
 
-no-build-dir
+build-dir			.
 
 test-targets		runtests
 _install-targets

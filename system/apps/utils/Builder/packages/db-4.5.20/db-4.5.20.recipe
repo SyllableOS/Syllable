@@ -14,13 +14,15 @@ packages			db-4.5.20.NC
 
 build-dir			build_unix
 
-;pre-configure		cp ../db-4.5.20/build_unix/* .
 configure-cmd		dist/configure
-configure-options	--enable-cxx
+configure-options
+	--enable-compat185
+	--enable-cxx
+
+;install-vars		docdir '/usr/share/doc/db-4.5.20'
 
 documentation		README LICENSE
 ; Optimize wasteful duplicates:
 links
 	libdb-4.5.a		lib/libdb.a
 	libdb_cxx-4.5.a	lib/libdb_cxx.a
-
