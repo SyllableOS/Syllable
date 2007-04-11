@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.139
+# Version 0.6.140
 # Copyright (c) 2002-2007 Kaj de Vos
 # License: GPL 2 or any later version
 
@@ -1671,7 +1671,7 @@ ENV['IMAGE'] = @systemRoot
 # Isolate build in staging area from the build host?
 @isolateStage = @crossCompile || @settings['isolate-stage']
 # Or run newly built binaries and libraries on the build host to bootstrap?
-@bootstrap = !@crossCompile && @settings['bootstrap']
+@bootstrap = !@crossCompile && @bootstrapLevel = @settings['bootstrap']
 
 
 # Main function
@@ -1680,7 +1680,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.6.139',
+	puts 'Syllable Build System 0.6.140',
 		'Copyright (c) 2002-2007 Kaj de Vos',
 		'License: GPL 2 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
@@ -1764,12 +1764,20 @@ else
 				# Pick up executables from the staging area
 
 				ENV['PATH'] =
-					if @bootstrap
+					if @bootstrap and @bootstrapLevel == 'full'
+						# Executables may not be position-independent or compatible with the build host:
+
 						if @systemBuild
-#							Executables may not be position-independent:
-							(File.join @image, 'system/bin') + ':'
-#							(File.join @image, 'usr/glibc/sbin') + ':' +
-#							(File.join @image, 'usr/glibc/bin') + ':'
+							(File.join @image, 'system/bin') + ':' +
+
+							unless @syllable
+								(File.join @image, 'sbin') + ':' +
+								(File.join @image, 'bin') + ':' +
+								(File.join @image, 'usr/sbin') + ':' +
+								(File.join @image, 'usr/bin') + ':'
+							else
+								''
+							end
 						else
 							''
 						end +
@@ -1821,6 +1829,7 @@ else
 
 				ENV[name = (@syllable ? 'DLL' : 'LD_LIBRARY') + '_PATH'] =
 					if @bootstrap
+						# Shared libraries may not be compatible with the build host:
 						if @systemBuild
 							(File.join @image, 'system/libraries') + ':' +
 							(File.join @image, 'system') + ':'
