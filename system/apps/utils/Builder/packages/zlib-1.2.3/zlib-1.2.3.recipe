@@ -12,6 +12,7 @@ locations
 
 build-dir			.
 
+configure-env		CFLAGS "$CFLAGS -fPIC"
 configure-options	--shared
 
 documentation		README ChangeLog FAQ algorithm.txt
