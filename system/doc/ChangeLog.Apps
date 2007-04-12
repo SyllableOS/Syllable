@@ -1,3 +1,8 @@
+* April 12, 2007, Kristian Van Der Vliet *
+
+ATerm generates the sequence "\M-[3~" instead of ^? when VK_DELETE is pressed, which makes
+forward-delete work correctly with the default Bash keybindings.
+
 * March 17, 2007, Kristian Van Der Vliet *
 
 Change the Screen preferences behaviour so that the "Apply to" desktops Dropdown is not reset
