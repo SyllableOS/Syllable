@@ -2834,7 +2834,7 @@ void TermView::KeyDown( const char *pzString, const char *pzRawString, uint32 nQ
 			write( g_nMasterPTY, "\x1b[6~", 4 );
 			break;
 		case VK_DELETE:
-			write( g_nMasterPTY, "\x7f", 1 );
+			write( g_nMasterPTY, "\x1b[3~", 4 );
 			break;
 		case VK_BACKSPACE:
 			write( g_nMasterPTY, "\x08", 1 );
