@@ -37,6 +37,7 @@ modules
 ;	For grub-install:
 	apps/gnu/diffutils-2.8.1
 	apps/other/curl-7.16.1
+	apps/other/msntp-1.6
 
 ;	Fool subsequent packages into adding files to CUPS in the image area:
 	bootstrap apps/other/cups--bootstrap
