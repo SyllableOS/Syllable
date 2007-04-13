@@ -1,3 +1,9 @@
+* April 13, 2007, Kristian Van Der Vliet *
+
+Moved the existing png, jpeg, gif and icon translators into their own directories
+Imported new bmp, pcx, tga, tiff, xbm and xpm translators from
+Jonas Jarvoll <jonas-jarvoll@syllable-norden.info>
+
 * April 5, 2007, Flemming H. Sørensen *
 
 Updated keymaps from Maritimus.
