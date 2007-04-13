@@ -1,3 +1,11 @@
+* April 13, 2007, Kristian Van Der Vliet *
+
+dhcpc
+	o Added support for multiple interfaces
+	o The client can automatically launch the NTP client
+	o dhcpc now runs as a deamon correctly
+	o Gave the code a general clean up and re-wrote most the client startup code
+
 * April 12, 2007, Kristian Van Der Vliet *
 
 ATerm generates the sequence "\M-[3~" instead of ^? when VK_DELETE is pressed, which makes
