@@ -4,4 +4,5 @@ inherits			zlib-1.2.3
 
 configure-options
 
+merge-install
 ;post-install		chmod -v 644 lib/libz.a
