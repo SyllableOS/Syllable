@@ -1,5 +1,5 @@
 // dhcpc : A DHCP client for Syllable
-// (C)opyright 2002-2003 Kristian Van Der Vliet
+// (C)opyright 2002-2003,2007 Kristian Van Der Vliet
 //
 // This is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by
@@ -18,6 +18,8 @@
 #ifndef __F_DHCP_STATE_H__
 #define __F_DHCP_STATE_H__
 
+#include <dhcp.h>
+
 enum state{
 	STATE_NONE,
 	STATE_INIT,
@@ -29,8 +31,8 @@ enum state{
 	STATE_SHUTDOWN
 };
 
-int change_state( int new_state );
-int get_state( void );
+int change_state( DHCPSessionInfo_s *info, int new_state );
+int get_state( DHCPSessionInfo_s *info );
 
 #endif		// __F_DHCP_STATE_H__
 

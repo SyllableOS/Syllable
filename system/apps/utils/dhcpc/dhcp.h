@@ -1,5 +1,5 @@
 // dhcpc : A DHCP client for Syllable
-// (C)opyright 2002-2003 Kristian Van Der Vliet
+// (C)opyright 2002-2003,2007 Kristian Van Der Vliet
 //
 // This is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <arpa/inet.h>
-#include <atheos/types.h>
 #include <atheos/semaphore.h>
 
 enum op{
@@ -37,46 +36,51 @@ enum op{
 };
 
 struct _DHCPSessionInfo{
-	uint32 ciaddr;
-	uint32 yiaddr;
-	uint32 siaddr;
-	uint32 giaddr;
-	uint8 chaddr[16];
-	uint8 sname[64];
+	uint32_t ciaddr;
+	uint32_t yiaddr;
+	uint32_t siaddr;
+	uint32_t giaddr;
+	uint8_t chaddr[16];
+	uint8_t sname[64];
 	int hw_type;
-	uint32 lease_time;
-	uint32 subnetmask;
+	uint32_t lease_time;
+	uint32_t subnetmask;
 
-	uint32* dns_servers;
+	uint32_t* dns_servers;
 	uint8 dns_server_count;
 
-	uint32* routers;
-	uint8 router_count;
+	uint32_t* routers;
+	uint8_t router_count;
 
-	uint32 last_xid;
-	uint32 last_secs;
-	uint8 attempts;
+	bool do_ntp;
 
-	uint32 t1_time;
-	uint8 t1_state;
-	uint32 t2_time;
-	uint8 t2_state;
-	uint32 t3_time;
-	uint8 t3_state;
+	uint32_t* ntp_servers;
+	uint8 ntp_server_count;
+
+	uint32_t last_xid;
+	uint32_t last_secs;
+	uint8_t attempts;
+
+	uint32_t t1_time;
+	uint8_t t1_state;
+	uint32_t t2_time;
+	uint8_t t2_state;
+	uint32_t t3_time;
+	uint8_t t3_state;
 
 	int current_state;
 	sem_id state_lock;
 	time_t boot_time;
 
-	uint32 timeout;
+	uint32_t timeout;
 
 	uint8* if_hwaddress;
-	char* if_name;
+	const char* if_name;
 
-	int in_socket_fd;
-	int out_socket_fd;
-	struct sockaddr_in out_sin;	// For outbound socket
-	struct sockaddr_in in_sin;	// For inbound socket
+	int socket_fd;
+
+	struct sockaddr_in out_sin;	// For outbound packets
+	struct sockaddr_in in_sin;	// For inbound packets
 
 	bool do_shutdown;
 };
@@ -100,10 +104,10 @@ enum timer_status{
 
 #define RESPONSE_TIMEOUT	 60	// Wait one minute for a reply
 
-void dhcp_start( void );
+void dhcp_start( DHCPSessionInfo_s *info );
 
-int dhcp_init( char* if_name );
-int dhcp_shutdown( void );
+int dhcp_init( const char* if_name, DHCPSessionInfo_s **session );
+int dhcp_shutdown( DHCPSessionInfo_s *info );
 
 #endif	/* __F_DHCP_DHCP_H__ */
 

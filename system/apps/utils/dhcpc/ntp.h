@@ -15,25 +15,12 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-#ifndef __F_DHCP_DEBUG_H__
-#define __F_DHCP_DEBUG_H__
+#ifndef __F_DHCP_NTP_H__
+#define __F_DHCP_NTP_H__
 
-enum err_levels{
-	INFO,
-	ERROR,
-	WARNING,
-	PANIC
-};
+#include <dhcp.h>
 
-#include <stdio.h>
+int start_ntpd( DHCPSessionInfo_s* info );
 
-extern FILE* logfile;
-
-#if defined(ENABLE_DEBUG) && defined(DEBUG_LEVEL)
-# define debug(level,func,format,arg...) if(level>=DEBUG_LEVEL){fprintf(logfile,"%s : ",func);fprintf(logfile,format, ## arg);fflush(logfile);}
-#else
-# define debug(level,func,format,arg...)
-#endif
-
-#endif		/*__F_DHCP_DEBUG_H__*/
+#endif		// __F_DHCP_NTP_H__
 

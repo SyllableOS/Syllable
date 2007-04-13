@@ -1,5 +1,5 @@
 // dhcpc : A DHCP client for Syllable
-// (C)opyright 2002-2003 Kristian Van Der Vliet
+// (C)opyright 2002-2003,2007 Kristian Van Der Vliet
 //
 // This is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by
@@ -15,15 +15,16 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-#include "packet.h"
-#include "debug.h"
-#include "dhcp.h"
+#include <packet.h>
+#include <debug.h>
+#include <dhcp.h>
 
 #include <malloc.h>
 #include <stdlib.h>
+#include <string.h>
 #include <posix/errno.h>
 
-DHCPPacket_s* build_packet( bool is_broadcast, uint32 client, uint32 server, uint32 gateway, uint8* hwaddress, clock_t boot_time )
+DHCPPacket_s* build_packet( bool is_broadcast, uint32_t client, uint32_t server, uint32_t gateway, uint8_t* hwaddress, clock_t boot_time )
 {
 	DHCPPacket_s* packet;
 
@@ -72,9 +73,9 @@ DHCPPacket_s* build_packet( bool is_broadcast, uint32 client, uint32 server, uin
 	return( packet );
 }
 
-uint32 getxid( void )
+uint32_t getxid( void )
 {
-	return( (uint32) rand() );
+	return( (uint32_t) rand() );
 }
 
 int setoptions( DHCPPacket_s* packet, DHCPOption_s *options )
@@ -210,9 +211,9 @@ int setoptions( DHCPPacket_s* packet, DHCPOption_s *options )
 	return( EOK );
 }
 
-DHCPOption_s* parseoptions( uint8* buffer, size_t len )
+DHCPOption_s* parseoptions( uint8_t* buffer, size_t len )
 {
-	uint8 offset;
+	uint8_t offset;
 	DHCPOption_s *option, *option_head;
 
 	// Parse the options buffer into a single linked list of DHCPOption_s structs

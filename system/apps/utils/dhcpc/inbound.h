@@ -1,5 +1,5 @@
 // dhcpc : A DHCP client for Syllable
-// (C)opyright 2002-2003 Kristian Van Der Vliet
+// (C)opyright 2002-2003,2007 Kristian Van Der Vliet
 //
 // This is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by
@@ -18,10 +18,11 @@
 #ifndef __F_DHCP_INBOUND_H__
 #define __F_DHCP_INBOUND_H__
 
-#include "packet.h"
+#include <dhcp.h>
+#include <packet.h>
 
-void process_dhcpoffer( DHCPPacket_s *in_packet, DHCPOption_s *options );
-void process_dhcpack( DHCPPacket_s *in_packet, DHCPOption_s *options );
-void process_dhcpnak( DHCPPacket_s *in_packet, DHCPOption_s *options );
+void process_dhcpoffer( DHCPSessionInfo_s *info, DHCPPacket_s *in_packet, DHCPOption_s *options );
+void process_dhcpack( DHCPSessionInfo_s *info, DHCPPacket_s *in_packet, DHCPOption_s *options );
+void process_dhcpnak( DHCPSessionInfo_s *info, DHCPPacket_s *in_packet, DHCPOption_s *options );
 
 #endif		// __F_DHCP_INBOUND_H__

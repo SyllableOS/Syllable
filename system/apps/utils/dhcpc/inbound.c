@@ -1,5 +1,5 @@
 // dhcpc : A DHCP client for Syllable
-// (C)opyright 2002-2003 Kristian Van Der Vliet
+// (C)opyright 2002-2003,2007 Kristian Van Der Vliet
 //
 // This is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by
@@ -15,15 +15,15 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-#include "inbound.h"
-#include "dhcp.h"
-#include "state.h"
-#include "interface.h"
-#include "debug.h"
+#include <inbound.h>
+#include <dhcp.h>
+#include <state.h>
+#include <interface.h>
+#include <debug.h>
 
-extern DHCPSessionInfo_s* info;	
+#include <string.h>
 
-void process_dhcpoffer( DHCPPacket_s *in_packet, DHCPOption_s *options )
+void process_dhcpoffer( DHCPSessionInfo_s *info, DHCPPacket_s *in_packet, DHCPOption_s *options )
 {
 	DHCPOption_s *option;
 	option = options;
@@ -207,6 +207,42 @@ void process_dhcpoffer( DHCPPacket_s *in_packet, DHCPOption_s *options )
 				break;
 			}
 
+			case OPTION_NTPSERVERS:
+			{
+				int servers;
+
+				servers = (option->length / 4);		// Must always be a multiple of 4
+				info->ntp_server_count = servers;
+
+				if( option->data != NULL )
+				{
+					int current_server;
+
+					info->ntp_servers = (uint32_t*)malloc(servers * sizeof(uint32_t*));
+					if( info->ntp_servers == NULL )
+					{
+						debug(PANIC,__FUNCTION__,"could not allocate space for NTP server entries\n");
+						break;
+					}
+
+					for( current_server=0; current_server < servers; current_server++)
+						memcpy(&info->ntp_servers[current_server],&option->data[current_server*4],4);
+
+					for( current_server=0; current_server < servers; current_server++)
+					{
+						char* ip;
+						ip = format_ip(info->ntp_servers[current_server]);
+						debug(INFO,__FUNCTION__,"got NTP server entry %s\n",ip);
+						free(ip);
+					}
+				}
+				else
+					debug(WARNING,__FUNCTION__,"NTP servers option data is NULL\n");
+
+				break;
+			}
+
+
 			default:	// This is an option that we do not support (Or do not care about)
 			{
 				debug(INFO,__FUNCTION__,"reply has an extra option id %.2i\n",option->type);
@@ -220,7 +256,7 @@ void process_dhcpoffer( DHCPPacket_s *in_packet, DHCPOption_s *options )
 	while( option != NULL );
 }
 
-void process_dhcpack( DHCPPacket_s *in_packet, DHCPOption_s *options )
+void process_dhcpack( DHCPSessionInfo_s *info, DHCPPacket_s *in_packet, DHCPOption_s *options )
 {
 	DHCPOption_s *option;
 	option = options;
@@ -357,7 +393,7 @@ void process_dhcpack( DHCPPacket_s *in_packet, DHCPOption_s *options )
 	while( option != NULL );
 }
 
-void process_dhcpnak( DHCPPacket_s *in_packet, DHCPOption_s *options )
+void process_dhcpnak( DHCPSessionInfo_s *info, DHCPPacket_s *in_packet, DHCPOption_s *options )
 {
 	DHCPOption_s *option;
 	option = options;

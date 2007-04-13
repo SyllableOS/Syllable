@@ -1,5 +1,5 @@
 // dhcpc : A DHCP client for Syllable
-// (C)opyright 2002-2003 Kristian Van Der Vliet
+// (C)opyright 2002-2003,2007 Kristian Van Der Vliet
 //
 // This is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by
@@ -18,15 +18,15 @@
 #ifndef __F_DHCP_INTERFACE_H__
 #define __F_DHCP_INTERFACE_H__
 
-#include <atheos/types.h>
+#include <dhcp.h>
 
-int get_mac_address( char* if_name );
-int bringup_interface( char* if_name );
-int setup_interface( void );
-int setup_route( int if_socket );
-int setup_resolver( void );
+int get_mac_address( DHCPSessionInfo_s *info );
+int bringup_interface( DHCPSessionInfo_s *info );
+int setup_interface( DHCPSessionInfo_s *info );
+int setup_route( DHCPSessionInfo_s *info, int if_socket );
+int setup_resolver( DHCPSessionInfo_s *info );
 
-char* format_ip(uint32 addr);
+char* format_ip(uint32_t addr);
 
 #endif		// __F_DHCP_INTERFACE_H__
 

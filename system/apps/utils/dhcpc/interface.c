@@ -1,5 +1,5 @@
 // dhcpc : A DHCP client for Syllable
-// (C)opyright 2002-2003 Kristian Van Der Vliet
+// (C)opyright 2002-2003,2007 Kristian Van Der Vliet
 //
 // This is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by
@@ -14,21 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-//
-// Changes
-//
-// 1.0.1 : Vanders -:- Fixed a braindead-ism in get_mac_address() and setup_interface()
-//
 
-#include "interface.h"
-#include "dhcp.h"
-#include "debug.h"
+#include <interface.h>
+#include <ntp.h>
+#include <dhcp.h>
+#include <debug.h>
 
 #include <unistd.h>
 #include <malloc.h>
 #include <errno.h>
 #include <string.h>
 #include <fcntl.h>
+#include <signal.h>
 #include <posix/errno.h>
 #include <sys/socket.h>
 #include <sys/ioctl.h>
@@ -38,12 +35,11 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 
-extern DHCPSessionInfo_s* info;
-
-int get_mac_address( char* if_name )
+int get_mac_address( DHCPSessionInfo_s *info )
 {
 	int if_socket;
 	struct ifreq sReq;
+	const char *if_name = info->if_name;
 
 	debug(INFO,__FUNCTION__,"looking up hardware address of interface %s\n",if_name);
 
@@ -87,10 +83,11 @@ int get_mac_address( char* if_name )
 	return( EOK );
 }
 
-int bringup_interface( char* if_name )
+int bringup_interface( DHCPSessionInfo_s *info )
 {
 	int if_socket;
 	struct ifreq sIFReq;
+	const char *if_name = info->if_name;
 
 	debug(INFO,__FUNCTION__,"checking interface %s\n",if_name);
 
@@ -132,7 +129,7 @@ int bringup_interface( char* if_name )
 	return( EOK );
 }
 
-int setup_interface( void )
+int setup_interface( DHCPSessionInfo_s *info )
 {
 	int if_socket;
 	struct ifreq sIFReq;
@@ -188,7 +185,7 @@ int setup_interface( void )
 	// Add gateway routes, if we have any
 	if( info->routers != NULL )
 	{
-		if( setup_route( if_socket ) != EOK )
+		if( setup_route( info, if_socket ) != EOK )
 			debug(PANIC,__FUNCTION__,"unable to configure gateway route\n");
 	}
 	else
@@ -197,17 +194,24 @@ int setup_interface( void )
 	// We're done with the socket stuff
 	close( if_socket );
 
-	// Do none-socket stuff
-	if( setup_resolver() != EOK )
+	// Do non-socket stuff
+	if( setup_resolver( info ) != EOK )
 	{
-		debug(PANIC,__FUNCTION__,"unable configure resolv.conf entries\n");
+		debug(PANIC,__FUNCTION__,"unable to configure resolv.conf entries\n");
 		return( EINVAL );
 	}
+
+	if( info->do_ntp == true )
+		if( start_ntpd( info ) != EOK )
+		{
+			/* This is not fatal */
+			debug(PANIC,__FUNCTION__,"unable to start NTP deamon\n");
+		}
 
 	return( EOK );
 }
 
-int setup_route( int if_socket )
+int setup_route( DHCPSessionInfo_s *info, int if_socket )
 {
 	struct rtentry route;
 
@@ -232,7 +236,7 @@ int setup_route( int if_socket )
 	}
 
 	debug( INFO, __FUNCTION__,
-		"adding route to if %s IP: %s Mask: %s, GW: %s\n", route.rt_dev,
+		"adding route to if %s IP: %s Mask: %s, GW: %s\n", info->if_name,
 		format_ip( ( ( ( struct sockaddr_in * )&route.rt_dst ) )->sin_addr.s_addr ),
 		format_ip( ( ( ( struct sockaddr_in * )&route.rt_genmask ) )->sin_addr.s_addr ),
 		format_ip( ( ( ( struct sockaddr_in * )&route.rt_gateway ) )->sin_addr.s_addr ) );
@@ -247,7 +251,7 @@ int setup_route( int if_socket )
 	return( EOK );
 }
 
-int setup_resolver( void )
+int setup_resolver( DHCPSessionInfo_s *info )
 {
 	int current_server;
 
@@ -285,9 +289,9 @@ int setup_resolver( void )
 	return( EOK );
 }
 
-char* format_ip(uint32 addr)
+char* format_ip(uint32_t addr)
 {
-	uint8 octets[4];
+	uint8_t octets[4];
 	char* buffer;
 
 	buffer = calloc(1,33);

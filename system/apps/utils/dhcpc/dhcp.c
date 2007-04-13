@@ -1,5 +1,5 @@
 // dhcpc : A DHCP client for Syllable
-// (C)opyright 2002-2003 Kristian Van Der Vliet
+// (C)opyright 2002-2003,2007 Kristian Van Der Vliet
 //
 // This is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by
@@ -15,12 +15,12 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-#include "dhcp.h"
-#include "packet.h"
-#include "interface.h"
-#include "state.h"
-#include "inbound.h"
-#include "debug.h"
+#include <dhcp.h>
+#include <packet.h>
+#include <interface.h>
+#include <state.h>
+#include <inbound.h>
+#include <debug.h>
 
 #include <time.h>
 #include <unistd.h>
@@ -39,19 +39,24 @@
 #include <netinet/in.h>
 #include <atheos/semaphore.h>
 
-static int setup_sockets( bool outbound_broadcast );
+static int setup_sockets( DHCPSessionInfo_s* info, bool outbound_broadcast );
 
-static void state_init( void );
-static void state_selecting( void );
-static void state_requesting( void );
-static void state_bound( void );
-static void state_renewing( void );
-static void state_rebinding( void );
+static void state_init( DHCPSessionInfo_s *info );
+static void state_selecting( DHCPSessionInfo_s *info );
+static void state_requesting( DHCPSessionInfo_s *info );
+static void state_bound( DHCPSessionInfo_s *info );
+static void state_renewing( DHCPSessionInfo_s *info );
+static void state_rebinding( DHCPSessionInfo_s *info );
 
-static void do_release( void );
+static void do_release( DHCPSessionInfo_s *info );
 static void sighandle( int signal );
 
-DHCPSessionInfo_s* info;		// This is global to the rest of the system
+#define MAX_SESSIONS 16
+static struct
+{
+	pid_t pid;
+	DHCPSessionInfo_s *session;
+} dhcp_sessions[MAX_SESSIONS] = { -1, NULL };
 
 static inline void waitrand( int max )
 {
@@ -66,25 +71,25 @@ static inline void waitrand( int max )
 	sleep(i);
 }
 
-void dhcp_start( void )
+void dhcp_start( DHCPSessionInfo_s *info )
 {
 	debug(INFO,__FUNCTION__,"starting DHCP client\n");
 
 	// Loop until the "shutdown" flag is true
 	while(info->do_shutdown==false)
 	{
-		switch( get_state() )
+		switch( get_state( info ) )
 		{
 			case STATE_NONE:
 			{
-				change_state( STATE_INIT );
+				change_state( info, STATE_INIT );
 				break;
 			}
 
 			case STATE_INIT:
 			{
 				if( info->attempts < 5 )
-					state_init();
+					state_init( info );
 				else
 				{
 					debug(PANIC,__FUNCTION__,"tried more than 5 times, giving up\n");
@@ -96,37 +101,37 @@ void dhcp_start( void )
 
 			case STATE_SELECTING:
 			{
-				state_selecting();
+				state_selecting( info );
 				break;
 			}
 
 			case STATE_REQUESTING:
 			{
-				state_requesting();
+				state_requesting( info );
 				break;
 			}
 
 			case STATE_BOUND:
 			{
-				state_bound();
+				state_bound( info );
 				break;
 			}
 
 			case STATE_RENEWING:
 			{
-				state_renewing();
+				state_renewing( info );
 				break;
 			}
 
 			case STATE_REBINDING:
 			{
-				state_rebinding();
+				state_rebinding( info );
 				break;
 			}
 
 			default:
 			{
-				debug(PANIC,__FUNCTION__,"unknown state 0x%.2x\n",get_state());
+				debug(PANIC,__FUNCTION__,"unknown state 0x%.2x\n",get_state( info ));
 				info->do_shutdown = true;
 				break;
 			}
@@ -135,15 +140,18 @@ void dhcp_start( void )
 
 	// Gracefully shut down, if we were at a state which requires us to
 	// release the IP address
-	if( get_state() == STATE_SHUTDOWN)
-		do_release();
+	if( get_state( info ) == STATE_SHUTDOWN)
+		do_release( info );
 
 	debug(INFO,__FUNCTION__,"shuting down state machine\n");
 }
 
-int dhcp_init( char* if_name )
+int dhcp_init( const char *if_name, DHCPSessionInfo_s **session )
 {
-	info = calloc(1,sizeof( DHCPSessionInfo_s ) );
+	struct sigaction sa;
+	int n;
+
+	DHCPSessionInfo_s *info = calloc( 1, sizeof( DHCPSessionInfo_s ) );
 	if( info == NULL )
 	{
 		debug(PANIC,__FUNCTION__,"unable to allocate session info\n");
@@ -167,21 +175,21 @@ int dhcp_init( char* if_name )
 	}
 
 	// Bring up the interface, if it isn't already up
-	if( bringup_interface( if_name ) != EOK )
+	if( bringup_interface( info ) != EOK )
 	{
-		debug(PANIC,__FUNCTION__,"could not bring up interface %s\n",if_name);
+		debug(PANIC,__FUNCTION__,"could not bring up interface %s\n",info->if_name);
 		return(EINVAL);
 	}
 
 	// Find the hardware address of the interface we are being started on
-	if( get_mac_address( if_name ) != EOK )
+	if( get_mac_address( info ) != EOK )
 	{
-		debug(PANIC,__FUNCTION__,"could not get hardware address for %s\n",if_name);
+		debug(PANIC,__FUNCTION__,"could not get hardware address for %s\n",info->if_name);
 		return(EINVAL);
 	}
 
 	// Create sockets which we can broadcast & recieve on
-	if( setup_sockets(true) != EOK )
+	if( setup_sockets( info, true ) != EOK )
 	{
 		debug(PANIC,__FUNCTION__,"unable to initialise sockets\n");
 		return(EINVAL);
@@ -192,17 +200,30 @@ int dhcp_init( char* if_name )
 	info->do_shutdown = false;
 
 	// Setup signal handlers
-	signal(SIGINT,SIG_IGN);		// Ignore interupt (^C)
-	signal(SIGTERM,sighandle);	// Trap SIGTERM so that we can gracefully release & shutdown
-	signal(SIGALRM,sighandle);	// Trap SIGALRM so that we can properly set the timer statuses
+	sa.sa_handler = sighandle;
+	sigemptyset( &sa.sa_mask );
+	sa.sa_flags = 0;
+
+	sigaction( SIGTERM, &sa, NULL );
+	sigaction( SIGALRM, &sa, NULL );
 
 	// Seed the RNG
 	srand(time(0));
 
+	for( n = 0; n < MAX_SESSIONS; n++ )
+		if( dhcp_sessions[n].pid < 0 )
+		{
+			debug( INFO, __FUNCTION__, "using dhcp_sessions[%d], pid = %d\n", n, getpid() );
+
+			dhcp_sessions[n].pid = getpid();
+			dhcp_sessions[n].session = info;
+		}
+
+	*session = info;
 	return( EOK );
 }
 
-static int setup_sockets( bool outbound_broadcast )
+static int setup_sockets( DHCPSessionInfo_s *info, bool outbound_broadcast )
 {
 	// Create & bind an outbound socket and an inbound socket
 	memset((char *)&info->out_sin, sizeof(info->out_sin),0);
@@ -219,9 +240,9 @@ static int setup_sockets( bool outbound_broadcast )
 	info->out_sin.sin_port = htons(REMOTE_PORT);	// 67
 
 	// Build & bind the inbound socket
-	info->in_socket_fd = info->out_socket_fd = socket( PF_INET,SOCK_DGRAM,IPPROTO_UDP );
+	info->socket_fd = socket( PF_INET,SOCK_DGRAM,IPPROTO_UDP );
 
-	if( info->in_socket_fd < 0 )
+	if( info->socket_fd < 0 )
 	{
 		debug(PANIC,__FUNCTION__,"could not create socket\n");
 		return(EINVAL);
@@ -232,7 +253,7 @@ static int setup_sockets( bool outbound_broadcast )
 	info->in_sin.sin_addr.s_addr = htonl(INADDR_ANY);
 	info->in_sin.sin_port = htons(LOCAL_PORT);		// 68
 
-	if (bind(info->in_socket_fd, (struct sockaddr *)&info->in_sin, sizeof(info->in_sin)) < 0)
+	if (bind(info->socket_fd, (struct sockaddr *)&info->in_sin, sizeof(info->in_sin)) < 0)
 	{
 		debug(PANIC,__FUNCTION__,"could not bind socket to port %i\n",LOCAL_PORT);
 		return(EINVAL);
@@ -240,27 +261,27 @@ static int setup_sockets( bool outbound_broadcast )
 
 	// Set SO_BINDTODEVICE option to bind to our interface
 	debug( INFO, __FUNCTION__, "forcing packets via interface %s\n", info->if_name );
-	if( setsockopt( info->out_socket_fd, SOL_SOCKET, SO_BINDTODEVICE, info->if_name, strlen( info->if_name ) + 1 ) < 0 )
+	if( setsockopt( info->socket_fd, SOL_SOCKET, SO_BINDTODEVICE, info->if_name, strlen( info->if_name ) + 1 ) < 0 )
 	{
 		debug( INFO, __FUNCTION__, "failed to force packets via interface %s\n", info->if_name);
-		close( info->out_socket_fd );
+		close( info->socket_fd );
 		return( EINVAL );
 	}
 
 	return(EOK);
 }
 
-int dhcp_shutdown( void )
+int dhcp_shutdown( DHCPSessionInfo_s *info )
 {
 	if( info->state_lock )
 		delete_semaphore( info->state_lock );
 
 	// Close the sockets
-	if( info->out_socket_fd > 0 )
-		close( info->out_socket_fd );
+	if( info->socket_fd > 0 )
+		close( info->socket_fd );
 
-	if( info->in_socket_fd > 0 )
-		close( info->in_socket_fd );
+	if( info->socket_fd > 0 )
+		close( info->socket_fd );
 
 	return( EOK );
 }
@@ -268,7 +289,7 @@ int dhcp_shutdown( void )
 // Each state of the DHCP client has a function to associated with it to perform
 // the required transactions.
 
-static void state_init( void )
+static void state_init( DHCPSessionInfo_s *info )
 {
 	DHCPPacket_s* packet;
 	DHCPOption_s *option, *options_head;
@@ -279,7 +300,7 @@ static void state_init( void )
 	// After the packet is sent we move onto STATE_SELECTING and let that deal
 	// with the details
 	
-	debug(INFO,__FUNCTION__,"lease time is now: %i", (unsigned int)info->lease_time);
+	debug(INFO,__FUNCTION__,"lease time is now: %d\n", (unsigned int)info->lease_time);
 	packet = build_packet( true, 0, 0, 0, info->if_hwaddress, info->boot_time);
 	if( packet == NULL )
 	{
@@ -346,13 +367,14 @@ static void state_init( void )
 				break;
 			}
 
-			case 3:	// Please give us a list of DNS servers & gateways
+			case 3:	// Please give us a list of DNS servers, gateways and any NTP servers
 			{
-				uint8 dns_val = OPTION_DNSSERVERS;
-				uint8 routers_val = OPTION_ROUTERS;
+				uint8_t dns_val = OPTION_DNSSERVERS;
+				uint8_t routers_val = OPTION_ROUTERS;
+				uint8_t ntp_val = OPTION_NTPSERVERS;
 
 				option->type = OPTION_PARLIST;
-				option->length = 2;
+				option->length = 3;
 				option->data = (uint8*)malloc(option->length);
 				if( option->data == NULL )
 				{
@@ -363,6 +385,7 @@ static void state_init( void )
 				}
 				memcpy(option->data,&dns_val,1);
 				memcpy((option->data + 1),&routers_val,1);
+				memcpy((option->data + 2),&ntp_val,2);
 
 				option->next = NULL;
 				break;
@@ -416,7 +439,7 @@ static void state_init( void )
 
 	// Broadcast the packet to all stations
 	sizeof_out_sin = (socklen_t)sizeof(info->out_sin);
-	error = sendto( info->out_socket_fd, packet, sizeof(DHCPPacket_s), 0, (struct sockaddr*)&info->out_sin, sizeof_out_sin);
+	error = sendto( info->socket_fd, packet, sizeof(DHCPPacket_s), 0, (struct sockaddr*)&info->out_sin, sizeof_out_sin);
 	if( error < 0 )
 	{
 		debug(PANIC,__FUNCTION__,"unable to broadcast DHCPDISCOVER packet\n");
@@ -431,10 +454,10 @@ static void state_init( void )
 	free( packet );
 
 	// Move to the next state and wait for a DHCPOFFER reply from any server
-	change_state(STATE_SELECTING);
+	change_state( info, STATE_SELECTING);
 }
 
-static void state_selecting( void )
+static void state_selecting( DHCPSessionInfo_s *info )
 {
 	DHCPPacket_s *in_packet;
 	DHCPOption_s *options, *current_option;
@@ -458,7 +481,7 @@ static void state_selecting( void )
 									// for a packet) for a maximum of 1 minute.  We give up after that.
 
 		buffer = malloc(sizeof(DHCPPacket_s));
-		buffer_length = recvfrom( info->in_socket_fd, (void*)buffer, sizeof(DHCPPacket_s), 0, (struct sockaddr*)&info->in_sin, &sizeof_in_sin);
+		buffer_length = recvfrom( info->socket_fd, (void*)buffer, sizeof(DHCPPacket_s), 0, (struct sockaddr*)&info->in_sin, &sizeof_in_sin);
 
 		alarm_time = alarm(0);
 		if( alarm_time == 0 )
@@ -466,7 +489,7 @@ static void state_selecting( void )
 			debug(PANIC,__FUNCTION__,"timeout after %i seconds waiting for response\n",RESPONSE_TIMEOUT);
 			free(buffer);
 			info->attempts += 1;
-			change_state(STATE_INIT);
+			change_state( info, STATE_INIT );
 			return;
 		}
 		else
@@ -544,7 +567,7 @@ static void state_selecting( void )
 		{
 			debug(INFO,__FUNCTION__,"got a valid DHCPOFFER with xid %X\n",(unsigned int)in_packet->xid);
 
-			process_dhcpoffer( in_packet, options );
+			process_dhcpoffer( info, in_packet, options );
 			valid = true;
 			break;
 		}
@@ -560,15 +583,15 @@ static void state_selecting( void )
 	{
 		debug(WARNING,__FUNCTION__,"packet was not a valid DHCPOFFER\n");
 		info->attempts += 1;
-		change_state(STATE_INIT);	// Try again
+		change_state( info, STATE_INIT );	// Try again
 	}
 	else		
-		change_state(STATE_REQUESTING);
+		change_state( info, STATE_REQUESTING );
     
 	free(in_packet);
 }
 
-static void state_requesting( void )
+static void state_requesting( DHCPSessionInfo_s *info )
 {
 	DHCPPacket_s *packet, *in_packet;
 	DHCPOption_s *option, *options_head, *in_options, *current_in_option;
@@ -740,7 +763,7 @@ static void state_requesting( void )
 
 	// Broadcast the packet
 	sizeof_out_sin = (socklen_t)sizeof(info->out_sin);
-	error = sendto( info->out_socket_fd, packet, sizeof(DHCPPacket_s), 0, (struct sockaddr*)&info->out_sin, sizeof_out_sin);
+	error = sendto( info->socket_fd, packet, sizeof(DHCPPacket_s), 0, (struct sockaddr*)&info->out_sin, sizeof_out_sin);
 	if( error < 0 )
 	{
 		debug(PANIC,__FUNCTION__,"unable to broadcast DHCPREQUEST packet\n");
@@ -762,7 +785,7 @@ static void state_requesting( void )
 		alarm(alarm_time);	// Just in case the server does not respond
 
 		buffer = malloc(sizeof(DHCPPacket_s));
-		buffer_length = recvfrom( info->in_socket_fd, (void*)buffer, sizeof(DHCPPacket_s), 0, (struct sockaddr*)&info->in_sin, &sizeof_in_sin);
+		buffer_length = recvfrom( info->socket_fd, (void*)buffer, sizeof(DHCPPacket_s), 0, (struct sockaddr*)&info->in_sin, &sizeof_in_sin);
 
 		alarm_time = alarm(0);
 		if( alarm_time == 0 )
@@ -770,7 +793,7 @@ static void state_requesting( void )
 			debug(PANIC,__FUNCTION__,"timeout after %i seconds waiting for response\n",(unsigned int)info->timeout);
 			free(buffer);
 			info->attempts += 1;
-			change_state(STATE_INIT);
+			change_state( info, STATE_INIT );
 			return;
 		}
 
@@ -808,7 +831,7 @@ static void state_requesting( void )
 			debug(PANIC,__FUNCTION__,"packet is NOT a BOOT_REPLY\n");
 			free(in_packet);
 			info->attempts += 1;
-			change_state(STATE_INIT);
+			change_state( info, STATE_INIT );
 			return;
 		}
 
@@ -820,7 +843,7 @@ static void state_requesting( void )
 			debug(PANIC,__FUNCTION__,"no options : this doesn't appear to be a valid reply\n");
 			free(in_packet);
 			info->attempts += 1;
-			change_state(STATE_INIT);
+			change_state( info, STATE_INIT );
 			return;
 		}
 
@@ -850,7 +873,7 @@ static void state_requesting( void )
 		{
 			debug(INFO,__FUNCTION__,"got a valid DHCPACK with xid %X\n",(unsigned int)in_packet->xid);
 
-			process_dhcpack( in_packet, in_options );
+			process_dhcpack( info, in_packet, in_options );
 			reply_type = DHCPACK;
 			break;
 		}
@@ -859,7 +882,7 @@ static void state_requesting( void )
 		    ( current_in_option->value == DHCPNAK ) )
 		{
 			debug(INFO,__FUNCTION__,"got a valid DHCPNAK with xid %X\n",(unsigned int)in_packet->xid);
-			process_dhcpnak( in_packet, in_options );
+			process_dhcpnak( info, in_packet, in_options );
 			reply_type = DHCPNAK;
 			break;
 		}
@@ -875,14 +898,14 @@ static void state_requesting( void )
 	{
 		case DHCPACK:
 		{
-			change_state(STATE_BOUND);
+			change_state( info, STATE_BOUND );
 			break;
 		}
 
 		case DHCPNAK:
 		{
 			info->attempts += 1;
-			change_state(STATE_INIT);
+			change_state( info, STATE_INIT );
 			break;
 		}
 
@@ -890,7 +913,7 @@ static void state_requesting( void )
 		{
 			debug(WARNING,__FUNCTION__,"packet was not a valid DHCPACK or DHCPNAK\n");
 			info->attempts += 1;
-			change_state(STATE_INIT);
+			change_state( info, STATE_INIT );
 			break;
 		}
 	}
@@ -898,7 +921,7 @@ static void state_requesting( void )
 	free(in_packet);
 }
 
-static void state_bound( void )
+static void state_bound( DHCPSessionInfo_s *info )
 {
 	char* ip;
 
@@ -922,24 +945,24 @@ static void state_bound( void )
 
 	// Configure the network interface with the values we have from the
 	// DHCP server (IP address, subnet mask)
-	if( setup_interface() != EOK )
+	if( setup_interface( info ) != EOK )
 	{
 		debug(PANIC,__FUNCTION__,"unable to configure interface %s\n",info->if_name);
 		info->do_shutdown=true;
 		return;
 	}
 
-	// Now the interface is configured, we can close the inbound and outbound sockets
-	if( info->out_socket_fd > 0 )
-		close( info->out_socket_fd );
-
-	if( info->in_socket_fd > 0 )
-		close( info->in_socket_fd );
+	// Now the interface is configured, we can close the socket
+	if( info->socket_fd > 0 )
+		close( info->socket_fd );
 
 	// Now we can sleep until either the timer t1 runs out, or a signal (SIGTERM) wakes us up
 	info->t3_state = TIMER_RUNNING;
 	info->t2_state = TIMER_RUNNING;
 	info->t1_state = TIMER_RUNNING;
+
+	// Tell the parent to continue
+	kill( getppid(), SIGUSR1 );
 
 	debug(INFO,__FUNCTION__,"sleeping on timer t1\n");
 	sleep(info->t1_time);
@@ -958,7 +981,7 @@ static void state_bound( void )
 			info->do_shutdown = true;
 		}
 
-		change_state(STATE_SHUTDOWN);
+		change_state( info, STATE_SHUTDOWN);
 		return;
 	}
 	else
@@ -969,10 +992,10 @@ static void state_bound( void )
 	free(ip);
 
 	// Move to STATE_RENEWING
-	change_state(STATE_RENEWING);
+	change_state( info, STATE_RENEWING);
 }
 
-static void state_renewing( void )
+static void state_renewing( DHCPSessionInfo_s *info )
 {
 	// Renew the lease on the IP address we already have.
 
@@ -987,7 +1010,7 @@ static void state_renewing( void )
 	in_options = NULL;
 
 	// Re-open the socket so that we can send a packet
-	if( setup_sockets(false) != EOK )
+	if( setup_sockets( info, false) != EOK )
 	{
 		debug(PANIC,__FUNCTION__,"unable to open sockets\n");
 		return;
@@ -1079,7 +1102,7 @@ static void state_renewing( void )
 	// response, then info->t2_state will be TIMER_INTERUPTED
 
 	sizeof_out_sin = (socklen_t)sizeof(info->out_sin);
-	error = sendto( info->out_socket_fd, packet, sizeof(DHCPPacket_s), 0, (struct sockaddr*)&info->out_sin, sizeof_out_sin);
+	error = sendto( info->socket_fd, packet, sizeof(DHCPPacket_s), 0, (struct sockaddr*)&info->out_sin, sizeof_out_sin);
 	if( error < 0 )
 	{
 		debug(PANIC,__FUNCTION__,"unable to send DHCPREQUEST packet\n");
@@ -1103,7 +1126,7 @@ static void state_renewing( void )
 	while( info->t2_state != TIMER_INTERUPTED )		// Keep getting data...
 	{
 		buffer = malloc(sizeof(DHCPPacket_s));
-		buffer_length = recvfrom( info->in_socket_fd, (void*)buffer, sizeof(DHCPPacket_s), 0, (struct sockaddr*)&info->in_sin, &sizeof_in_sin);
+		buffer_length = recvfrom( info->socket_fd, (void*)buffer, sizeof(DHCPPacket_s), 0, (struct sockaddr*)&info->in_sin, &sizeof_in_sin);
 
 		// Check to ensure that the alarm did not interupt us before we got a response
 		if( info->t2_state == TIMER_INTERUPTED)
@@ -1113,19 +1136,19 @@ static void state_renewing( void )
 			info->attempts += 1;
 
 			// Close the sockets & re-open them for broadcasts
-			if( info->in_socket_fd != 0)
-				close( info->in_socket_fd );
+			if( info->socket_fd != 0)
+				close( info->socket_fd );
 
-			if( info->out_socket_fd != 0)
-				close( info->out_socket_fd );
+			if( info->socket_fd != 0)
+				close( info->socket_fd );
 
-			if( setup_sockets(true) != EOK )
+			if( setup_sockets( info, true ) != EOK )
 			{
 				debug(PANIC,__FUNCTION__,"unable to open sockets\n");
 				return;
 			}
 
-			change_state(STATE_REBINDING);
+			change_state( info, STATE_REBINDING);
 			return;
 		}
 		else
@@ -1167,20 +1190,20 @@ static void state_renewing( void )
 			info->attempts += 1;
 
 			// Close the sockets & re-open them for broadcasts
-			if( info->in_socket_fd != 0)
-				close( info->in_socket_fd );
+			if( info->socket_fd != 0)
+				close( info->socket_fd );
 
-			if( info->out_socket_fd != 0)
-				close( info->out_socket_fd );
+			if( info->socket_fd != 0)
+				close( info->socket_fd );
 
-			if( setup_sockets(true) != EOK )
+			if( setup_sockets( info, true ) != EOK )
 			{
 				debug(PANIC,__FUNCTION__,"unable to open sockets\n");
 				return;
 			}
 
 			// Try to reinitialise from scratch
-			change_state(STATE_INIT);
+			change_state( info, STATE_INIT);
 			return;
 		}
 
@@ -1192,7 +1215,7 @@ static void state_renewing( void )
 			debug(PANIC,__FUNCTION__,"no options : this doesn't appear to be a valid reply\n");
 			free(in_packet);
 			info->attempts += 1;
-			change_state(STATE_INIT);
+			change_state( info, STATE_INIT);
 			return;
 		}
 
@@ -1222,7 +1245,7 @@ static void state_renewing( void )
 		{
 			debug(INFO,__FUNCTION__,"got a valid DHCPACK with xid %X\n",(unsigned int)in_packet->xid);
 
-			process_dhcpack( in_packet, in_options );
+			process_dhcpack( info, in_packet, in_options );
 			reply_type = DHCPACK;
 			break;
 		}
@@ -1231,7 +1254,7 @@ static void state_renewing( void )
 		    ( current_in_option->value == DHCPNAK ) )
 		{
 			debug(INFO,__FUNCTION__,"got a valid DHCPNAK with xid %X\n",(unsigned int)in_packet->xid);
-			process_dhcpnak( in_packet, in_options );
+			process_dhcpnak( info, in_packet, in_options );
 			reply_type = DHCPNAK;
 			break;
 		}
@@ -1248,20 +1271,20 @@ static void state_renewing( void )
 		case DHCPACK:
 		{
 			// Close the sockets & re-open them for broadcasts
-			if( info->in_socket_fd != 0)
-				close( info->in_socket_fd );
+			if( info->socket_fd != 0)
+				close( info->socket_fd );
 
-			if( info->out_socket_fd != 0)
-				close( info->out_socket_fd );
+			if( info->socket_fd != 0)
+				close( info->socket_fd );
 
-			if( setup_sockets(true) != EOK )
+			if( setup_sockets( info, true ) != EOK )
 			{
 				debug(PANIC,__FUNCTION__,"unable to open sockets\n");
 				return;
 			}
 
 			// We are now rebound to the same IP
-			change_state(STATE_BOUND);
+			change_state( info, STATE_BOUND);
 			break;
 		}
 
@@ -1276,19 +1299,19 @@ static void state_renewing( void )
 			info->attempts += 1;
 
 			// Close the sockets & re-open them for broadcasts
-			if( info->in_socket_fd != 0)
-				close( info->in_socket_fd );
+			if( info->socket_fd != 0)
+				close( info->socket_fd );
 
-			if( info->out_socket_fd != 0)
-				close( info->out_socket_fd );
+			if( info->socket_fd != 0)
+				close( info->socket_fd );
 
-			if( setup_sockets(true) != EOK )
+			if( setup_sockets( info, true) != EOK )
 			{
 				debug(PANIC,__FUNCTION__,"unable to open sockets\n");
 				return;
 			}
 
-			change_state(STATE_INIT);
+			change_state( info, STATE_INIT);
 			break;
 		}
 	}
@@ -1296,7 +1319,7 @@ static void state_renewing( void )
 	free(in_packet);
 }
 
-static void state_rebinding( void )
+static void state_rebinding( DHCPSessionInfo_s *info )
 {
 	// Attempt to renew our lease
 	DHCPPacket_s *packet, *in_packet;
@@ -1395,7 +1418,7 @@ static void state_rebinding( void )
 	// response, then info->t3_state will be TIMER_INTERUPTED
 
 	sizeof_out_sin = (socklen_t)sizeof(info->out_sin);
-	error = sendto( info->out_socket_fd, packet, sizeof(DHCPPacket_s), 0, (struct sockaddr*)&info->out_sin, sizeof_out_sin);
+	error = sendto( info->socket_fd, packet, sizeof(DHCPPacket_s), 0, (struct sockaddr*)&info->out_sin, sizeof_out_sin);
 	if( error < 0 )
 	{
 		debug(PANIC,__FUNCTION__,"unable to send DHCPREQUEST packet\n");
@@ -1419,7 +1442,7 @@ static void state_rebinding( void )
 	while( info->t3_state != TIMER_INTERUPTED )		// Keep getting data...
 	{
 		buffer = malloc(sizeof(DHCPPacket_s));
-		buffer_length = recvfrom( info->in_socket_fd, (void*)buffer, sizeof(DHCPPacket_s), 0, (struct sockaddr*)&info->in_sin, &sizeof_in_sin);
+		buffer_length = recvfrom( info->socket_fd, (void*)buffer, sizeof(DHCPPacket_s), 0, (struct sockaddr*)&info->in_sin, &sizeof_in_sin);
 
 		// Check to ensure that the alarm did not interupt us before we got a response
 		if( info->t3_state == TIMER_INTERUPTED)
@@ -1427,7 +1450,7 @@ static void state_rebinding( void )
 			debug(INFO,__FUNCTION__,"timer t3 expired before the server responded\n");
 			free( buffer );
 			info->attempts += 1;
-			change_state(STATE_INIT);
+			change_state( info, STATE_INIT );
 			return;
 		}
 		else
@@ -1469,20 +1492,20 @@ static void state_rebinding( void )
 			info->attempts += 1;
 
 			// Close the sockets & re-open them for broadcasts
-			if( info->in_socket_fd != 0)
-				close( info->in_socket_fd );
+			if( info->socket_fd != 0)
+				close( info->socket_fd );
 
-			if( info->out_socket_fd != 0)
-				close( info->out_socket_fd );
+			if( info->socket_fd != 0)
+				close( info->socket_fd );
 
-			if( setup_sockets(true) != EOK )
+			if( setup_sockets( info, true ) != EOK )
 			{
 				debug(PANIC,__FUNCTION__,"unable to open sockets\n");
 				return;
 			}
 
 			// Try to reinitialise from scratch
-			change_state(STATE_INIT);
+			change_state( info, STATE_INIT );
 			return;
 		}
 
@@ -1494,7 +1517,7 @@ static void state_rebinding( void )
 			debug(PANIC,__FUNCTION__,"no options : this doesn't appear to be a valid reply\n");
 			free(in_packet);
 			info->attempts += 1;
-			change_state(STATE_INIT);
+			change_state( info, STATE_INIT );
 			return;
 		}
 
@@ -1524,7 +1547,7 @@ static void state_rebinding( void )
 		{
 			debug(INFO,__FUNCTION__,"got a valid DHCPACK with xid %X\n",(unsigned int)in_packet->xid);
 
-			process_dhcpack( in_packet, in_options );
+			process_dhcpack( info, in_packet, in_options );
 			reply_type = DHCPACK;
 			break;
 		}
@@ -1533,7 +1556,7 @@ static void state_rebinding( void )
 		    ( current_in_option->value == DHCPNAK ) )
 		{
 			debug(INFO,__FUNCTION__,"got a valid DHCPNAK with xid %X\n",(unsigned int)in_packet->xid);
-			process_dhcpnak( in_packet, in_options );
+			process_dhcpnak( info, in_packet, in_options );
 			reply_type = DHCPNAK;
 			break;
 		}
@@ -1550,20 +1573,20 @@ static void state_rebinding( void )
 		case DHCPACK:
 		{
 			// Close the sockets & re-open them for broadcasts
-			if( info->in_socket_fd != 0)
-				close( info->in_socket_fd );
+			if( info->socket_fd != 0)
+				close( info->socket_fd );
 
-			if( info->out_socket_fd != 0)
-				close( info->out_socket_fd );
+			if( info->socket_fd != 0)
+				close( info->socket_fd );
 
-			if( setup_sockets(true) != EOK )
+			if( setup_sockets( info, true ) != EOK )
 			{
 				debug(PANIC,__FUNCTION__,"unable to open sockets\n");
 				return;
 			}
 
 			// We are now rebound to the same IP
-			change_state(STATE_BOUND);
+			change_state( info, STATE_BOUND );
 			break;
 		}
 
@@ -1578,20 +1601,20 @@ static void state_rebinding( void )
 			info->attempts += 1;
 
 			// Close the sockets & re-open them for broadcasts
-			if( info->in_socket_fd != 0)
-				close( info->in_socket_fd );
+			if( info->socket_fd != 0)
+				close( info->socket_fd );
 
-			if( info->out_socket_fd != 0)
-				close( info->out_socket_fd );
+			if( info->socket_fd != 0)
+				close( info->socket_fd );
 
-			if( setup_sockets(true) != EOK )
+			if( setup_sockets( info, true ) != EOK )
 			{
 				debug(PANIC,__FUNCTION__,"unable to open sockets\n");
 				return;
 			}
 
 			// Attempt to initialise from scratch
-			change_state(STATE_INIT);
+			change_state( info, STATE_INIT );
 			break;
 		}
 	}
@@ -1599,7 +1622,7 @@ static void state_rebinding( void )
 	free(in_packet);
 }
 
-static void do_release( void )
+static void do_release( DHCPSessionInfo_s *info )
 {
 	DHCPPacket_s *packet;
 	DHCPOption_s *option, *options_head;
@@ -1613,7 +1636,7 @@ static void do_release( void )
 	free(ip);
 
 	// Re-open sockets, sending only to the DHCP server
-	if( setup_sockets(false) != EOK )
+	if( setup_sockets( info, false ) != EOK )
 	{
 		debug(PANIC,__FUNCTION__,"unable to open sockets\n");
 		return;
@@ -1699,7 +1722,7 @@ static void do_release( void )
 
 	// Send the packet
 	sizeof_out_sin = (socklen_t)sizeof(info->out_sin);
-	error = sendto( info->out_socket_fd, packet, sizeof(DHCPPacket_s), 0, (struct sockaddr*)&info->out_sin, sizeof_out_sin);
+	error = sendto( info->socket_fd, packet, sizeof(DHCPPacket_s), 0, (struct sockaddr*)&info->out_sin, sizeof_out_sin);
 	if( error < 0 )
 	{
 		debug(PANIC,__FUNCTION__,"unable to send DHCPRELEASE packet\n");
@@ -1718,32 +1741,47 @@ static void do_release( void )
 
 static void sighandle( int signal )
 {
-	switch( signal )
+	pid_t pid = getpid();
+	DHCPSessionInfo_s *session = NULL;
+	int n;
+
+	debug( INFO, __FUNCTION__, "recieved signal %d for process #%d\n", signal, pid );
+
+	for( n = 0; n < MAX_SESSIONS; n++ )
+		if( dhcp_sessions[n].pid == pid )
+			session = dhcp_sessions[n].session;
+
+	if( session )
 	{
-		case SIGTERM:
+		switch( signal )
 		{
-			info->do_shutdown=true;
+			case SIGTERM:
+			{
+				session->do_shutdown=true;
 
-			if( info->t1_state == TIMER_RUNNING )
-				info->t1_state = TIMER_INTERUPTED;
+				if( session->t1_state == TIMER_RUNNING )
+					session->t1_state = TIMER_INTERUPTED;
 
-			break;
-		}
+				break;
+			}
 
-		case SIGALRM:
-		{
-			if( info->t2_state == TIMER_RUNNING )
-				info->t2_state = TIMER_INTERUPTED;
+			case SIGALRM:
+			{
+				if( session->t2_state == TIMER_RUNNING )
+					session->t2_state = TIMER_INTERUPTED;
 
-			if( info->t3_state == TIMER_RUNNING )
-				info->t3_state = TIMER_INTERUPTED;
+				if( session->t3_state == TIMER_RUNNING )
+					session->t3_state = TIMER_INTERUPTED;
 
-			if( ( info->t2_state != TIMER_RUNNING ) &&
-				( info->t2_state != TIMER_RUNNING ))
-					info->do_shutdown=true;
+				if( ( session->t2_state != TIMER_RUNNING ) &&
+					( session->t2_state != TIMER_RUNNING ))
+						session->do_shutdown=true;
 
-			break;
+				break;
+			}
 		}
 	}
+	else
+		debug( PANIC, __FUNCTION__, "recieved signal for unknown process #%d!\n", pid );
 }
 
