@@ -87,6 +87,7 @@ modules
 	apps/utils/rescopy
 	apps/utils/shelltools
 	apps/utils/slbmgr
+	apps/collab/Contact
 
 	libs/sdl-1.2.8
 ;	sdl-config needs to be in the path:
