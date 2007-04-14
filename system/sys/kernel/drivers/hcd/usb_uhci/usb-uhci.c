@@ -1790,6 +1790,19 @@ static void uhci_check_timeouts(uhci_t *s)
 	s->timeout_check=get_system_time();
 }
 
+
+int ports_active(struct uhci *uhci)
+{
+	unsigned int io_addr = uhci->io_addr;
+	int connection = 0;
+	int i;
+
+	for (i = 0; i < uhci->rh.numports; i++)
+		connection |= (inw(io_addr + USBPORTSC1 + i * 2) & 0x1);
+
+	return connection;
+}
+
 /*-------------------------------------------------------------------
  Virtual Root Hub
  -------------------------------------------------------------------*/
@@ -1896,6 +1909,8 @@ static int rh_send_irq (USB_packet_s *urb)
 /*-------------------------------------------------------------------------*/
 /* Virtual Root Hub INTs are polled by this timer every "intervall" ms */
 static int rh_init_int_timer (USB_packet_s *urb);
+void suspend_hc(uhci_t *uhci);
+void wakeup_hc(uhci_t *uhci);
 
 static void rh_int_timer_do (void* ptr)
 {
@@ -1913,6 +1928,12 @@ static void rh_int_timer_do (void* ptr)
 				urb->pComplete (urb);
 		}
 	}
+	
+	
+	/* enter global suspend if nothing connected */
+	if (uhci->running && !ports_active(uhci))
+		suspend_hc(uhci);
+	
 	rh_init_int_timer (urb);
 }
 
@@ -2732,7 +2753,7 @@ int uhci_interrupt(int irq, void *dev_id, SysCallRegs_s *regs )
 
 	dbg("interrupt\n");
 
-	if (status != 1) {
+	if (status & ~(USBSTS_USBINT | USBSTS_ERROR | USBSTS_RD)) {
 		// Avoid too much error messages at a time
 		if ((get_system_time() - s->last_error_time > ERROR_SUPPRESSION_TIME*1000)) {
 			dbg("interrupt, status %x, frame# %i\n", status, 
@@ -2747,6 +2768,10 @@ int uhci_interrupt(int irq, void *dev_id, SysCallRegs_s *regs )
 		}
 		//uhci_show_status (s);
 	}
+	
+	if (status & USBSTS_RD)
+		wakeup_hc(s);
+	
 	/*
 	 * traverse the list in *reverse* direction, because new entries
 	 * may be added at the end.
@@ -2809,6 +2834,39 @@ static void reset_hc (uhci_t *s)
 	outw (0, io_addr + USBCMD);
 	uhci_wait_ms (10);
 }
+
+
+void suspend_hc(uhci_t *uhci)
+{
+	unsigned int io_addr = uhci->io_addr;
+
+	//printk("%x: suspend_hc\n", io_addr);
+
+	outw(USBCMD_EGSM, io_addr + USBCMD);
+
+	uhci->running = 0;
+}
+
+void wakeup_hc(uhci_t *uhci)
+{
+	unsigned int io_addr = uhci->io_addr;
+	unsigned int status;
+
+	//printk("%x: wakeup_hc\n", io_addr);
+
+	outw(0, io_addr + USBCMD);
+	
+	/* wait for EOP to be sent */
+	status = inw(io_addr + USBCMD);
+	while (status & USBCMD_FGR)
+		status = inw(io_addr + USBCMD);
+
+	uhci->running = 1;
+
+	/* Run and mark it configured with a 64-byte max packet */
+	outw(USBCMD_RS | USBCMD_CF | USBCMD_MAXP, io_addr + USBCMD);
+}
+
 
 static void start_hc (uhci_t *s)
 {

@@ -371,6 +371,8 @@ typedef struct
 	acpi_status ( *install_notify_handler )( acpi_handle device, u32 handler_type, acpi_notify_handler handler, void *context );
 	acpi_status ( *remove_notify_handler )( acpi_handle device, u32 handler_type, acpi_notify_handler handler );
 	FADT_DESCRIPTOR* ( *get_fadt )();
+	acpi_status ( *set_register )( u32 register_id, u32 value, u32 flags );
+	acpi_status ( *get_register )( u32 register_id, u32 *return_value, u32 flags );
 } ACPI_bus_s;
 
 #endif

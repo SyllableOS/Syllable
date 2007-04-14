@@ -218,8 +218,10 @@ struct gfx_device g_sDevices[] = {
 	{0x10de, 0x0240, "nVidia", "GeForce 6150" },
 	{0x10de, 0x0241, "nVidia", "GeForce 6150 LE" },
 	{0x10de, 0x0242, "nVidia", "GeForce 6100" },
-	{0x10de, 0xE0244, "nVidia", "GeForce Go 6150" },
-	{0x10de, 0xE0247, "nVidia", "GeForce Go 6100" }
+	{0x10de, 0x0244, "nVidia", "GeForce Go 6150" },
+	{0x10de, 0x0247, "nVidia", "GeForce Go 6100" },
+	{0x10de, 0x0247, "nVidia", "GeForce Go 6100" },
+	{0x10de, 0x03d1, "nVidia", "GeForce 6100" }
 };
 
 /*****************************************************************************
@@ -370,7 +372,7 @@ status_t device_init( int nDeviceID )
 			/* Compare vendor and device id */
 			if ( sInfo.nVendorID == g_sDevices[nDeviceNum].nVendorID && 
 			( sInfo.nDeviceID == g_sDevices[nDeviceNum].nDeviceID )
-			|| ( ( sInfo.nDeviceID & 0xFFF0 ) == 0x00F0 ) )
+			|| ( ( sInfo.nDeviceID & 0xFFF0 ) == 0x00F0 ) || ( ( sInfo.nDeviceID & 0xFFF0 ) == 0x02E0 ) )
 			{
 				sprintf( zTemp, "%s %s", g_sDevices[nDeviceNum].zVendorName, g_sDevices[nDeviceNum].zDeviceName );
 				if ( claim_device( nDeviceID, sInfo.nHandle, zTemp, DEVICE_VIDEO ) != 0 )

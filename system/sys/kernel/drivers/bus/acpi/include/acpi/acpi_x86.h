@@ -62,7 +62,7 @@ typedef uint32 cpumask_t;
 #define BREAKPOINT3
 #define ACPI_DISABLE_IRQS() cli()
 #define ACPI_ENABLE_IRQS()  sti()
-#define ACPI_FLUSH_CPU_CACHE()
+#define ACPI_FLUSH_CPU_CACHE() __asm__ __volatile__ ("wbinvd": : :"memory")
 
 struct __xchg_dummy { unsigned long a[100]; };
 #define __xg(x) ((struct __xchg_dummy *)(x))

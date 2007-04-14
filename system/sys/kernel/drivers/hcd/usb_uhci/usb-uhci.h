@@ -218,7 +218,7 @@ typedef struct uhci {
 
 	int unlink_urb_done;
 	atomic_t avoid_bulk;
-	
+		
 	USB_bus_driver_s *bus;	// our bus
 
 	uint32* framelist;

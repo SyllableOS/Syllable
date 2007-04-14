@@ -88,6 +88,8 @@ struct MediaDSP_s {
 	os::MediaAddon* pcAddon;
 	int nOutputStream;
 	char zName[MAXNAMLEN];
+	std::vector<MediaFormat_s> asFormats;
+	uint32 ePhysType;
 };
 
 class MediaControls;
@@ -126,7 +128,7 @@ private:
 	void SaveSettings();
 	int LoadAudioPlugins();
 	
-	bool CheckFormat( int nChannels, int nSampleRate, int nRealChannels, int nRealSampleRate );
+	bool CheckFormat( MediaDSP_s* psDSP, int nChannels, int nSampleRate, int nRealChannels, int nRealSampleRate );
 	bool OpenSoundCard( int nDevice, int nChannels, int nSampleRate );
 	void CloseSoundCard();
 	
@@ -149,6 +151,7 @@ private:
 	void GetDspInfo( Message* pcMessage );
 	void GetDefaultDsp( Message* pcMessage );
 	void SetDefaultDsp( Message* pcMessage );
+	void GetDspFormats( Message* pcMessage );
 	void CheckProcess( proc_id hProc );
 	
 	String 			m_zDefaultInput;

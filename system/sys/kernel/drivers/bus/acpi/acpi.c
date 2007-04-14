@@ -197,7 +197,9 @@ ACPI_bus_s sBus = {
 	acpi_bus_unregister_driver,
 	acpi_install_notify_handler,
 	acpi_remove_notify_handler,
-	acpi_get_fadt
+	acpi_get_fadt,
+	acpi_set_register,
+	acpi_get_register
 };
 
 void* acpi_bus_get_hooks( int nVersion )

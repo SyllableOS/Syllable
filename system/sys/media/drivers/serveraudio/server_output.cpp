@@ -37,8 +37,8 @@ public:
 	~ServerOutput();
 	uint32			GetPhysicalType()
 	{
-		/* TODO: Get this from the mediaserver */
-		return( os::MEDIA_PHY_SOUNDCARD );
+		ReadFormats();
+		return( m_ePhysType );
 	}
 	os::String		GetIdentifier();
 	os::View*		GetConfigurationView();
@@ -50,6 +50,7 @@ public:
 	void			Clear();
 	void			Flush();
 	
+	void			ReadFormats();
 	uint32			GetOutputFormatCount();
 	os::MediaFormat_s	GetOutputFormat( uint32 nIndex );
 	uint32			GetSupportedStreamCount();
@@ -74,6 +75,8 @@ private:
 	atomic_t*			m_pnReadPointer;
 	atomic_t*			m_pnWritePointer;
 	uint8*				m_pData;
+	std::vector<os::MediaFormat_s> m_asFormats;
+	uint32				m_ePhysType;
 };
 
 
@@ -81,6 +84,16 @@ ServerOutput::ServerOutput( int nIndex )
 {
 	m_nIndex = nIndex;
 	m_hArea = -1;
+	m_nHandle = -1;
+	m_asFormats.clear();
+	/* Look for media manager port */	
+	port_id nPort;
+	m_hArea = -1;
+	if( ( nPort = find_port( "l:media_server" ) ) < 0 ) {
+		std::cout<<"Could not connect to media server!"<<std::endl;
+		return;
+	}
+	m_cMediaServerLink = os::Messenger( nPort );
 }
 
 ServerOutput::~ServerOutput()
@@ -117,15 +130,7 @@ bool ServerOutput::FileNameRequired()
 
 status_t ServerOutput::Open( os::String zFileName )
 {
-	/* Look for media manager port */	
-	port_id nPort;
-	m_hArea = -1;
 	os::Message cReply;
-	if( ( nPort = find_port( "l:media_server" ) ) < 0 ) {
-		std::cout<<"Could not connect to media server!"<<std::endl;
-		return( -1 );
-	}
-	m_cMediaServerLink = os::Messenger( nPort );
 	m_cMediaServerLink.SendMessage( os::MEDIA_SERVER_PING, &cReply );
 	if( cReply.GetCode() != os::MEDIA_SERVER_OK ) {
 		return( -1 );
@@ -169,19 +174,47 @@ void ServerOutput::Clear()
 	m_cMediaServerLink.SendMessage( &cMsg, &cReply );
 }
 
+void ServerOutput::ReadFormats()
+{
+	if( m_asFormats.size() > 0 )
+		return;
+		
+	os::Message cMsg( os::MEDIA_SERVER_GET_DSP_FORMATS );
+	os::Message cReply;
+	cMsg.AddInt32( "handle", m_nIndex );
+	m_cMediaServerLink.SendMessage( &cMsg, &cReply );
+	
+	cReply.FindInt32( "type", (int32*)&m_ePhysType );
+
+	
+	int nIndex = 0;
+	int32 nSampleRate = 0;
+	int32 nChannels = 0;
+	while( cReply.FindInt32( "samplerate", &nSampleRate, nIndex ) == 0 )
+	{
+		cReply.FindInt32( "channels", &nChannels, nIndex );
+		os::MediaFormat_s sFormat;
+		MEDIA_CLEAR_FORMAT( sFormat );
+		sFormat.zName = "Raw Audio";
+		sFormat.nType = os::MEDIA_TYPE_AUDIO;
+		sFormat.nSampleRate = nSampleRate;
+		sFormat.nChannels = nChannels;
+		m_asFormats.push_back( sFormat );
+		nIndex++;
+	}
+}
+
 uint32 ServerOutput::GetOutputFormatCount()
 {
-	return( 1 );
+	ReadFormats();
+	return( m_asFormats.size() );
 }
 
 os::MediaFormat_s ServerOutput::GetOutputFormat( uint32 nIndex )
 {
-	os::MediaFormat_s sFormat;
-	MEDIA_CLEAR_FORMAT( sFormat );
-	sFormat.zName = "Raw Audio";
-	sFormat.nType = os::MEDIA_TYPE_AUDIO;
+	ReadFormats();
 	
-	return( sFormat );
+	return( m_asFormats[nIndex] );
 }
 
 uint32 ServerOutput::GetSupportedStreamCount()

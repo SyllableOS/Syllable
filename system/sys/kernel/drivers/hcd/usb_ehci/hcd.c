@@ -1088,6 +1088,7 @@ static int hcd_unlink_urb (USB_packet_s *urb)
 			&& HCD_IS_RUNNING (hcd->state)
 			&& !retval) {
 		LOCK( splice.done );
+		delete_semaphore( splice.done );
 		//wait_for_completion (&splice.done);
 	} else if ((urb->nTransferFlags & USB_ASYNC_UNLINK) && retval == 0) {
 		return -EINPROGRESS;

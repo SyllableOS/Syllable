@@ -201,8 +201,18 @@ int MediaServer::LoadAudioPlugins()
 								m_sDsps[j].pcAddon = pcAddon;
 								m_sDsps[j].nOutputStream = i;
 								nDspCount++;
-								pcOutput->Release();
 								std::cout<<"Added "<<m_sDsps[j].zName<<" with handle #"<<i<<std::endl;
+								m_sDsps[j].ePhysType = pcOutput->GetPhysicalType();
+								/* Read formats */
+								for( int f = 0; f < pcOutput->GetOutputFormatCount(); f++ )
+								{
+									MediaFormat_s sFormat = pcOutput->GetOutputFormat( f );
+									m_sDsps[j].asFormats.push_back( sFormat );
+									std::cout<<"  "<<sFormat.nChannels<<" channels "<<sFormat.nSampleRate<<" Hz"<<std::endl;
+								}
+
+								pcOutput->Release();
+
 								break;
 							}
 						}
@@ -217,13 +227,13 @@ int MediaServer::LoadAudioPlugins()
 	return( nDspCount );
 }
 
-bool MediaServer::CheckFormat( int nChannels, int nSampleRate, int nRealChannels, int nRealSampleRate )
+bool MediaServer::CheckFormat( MediaDSP_s* psDSP, int nChannels, int nSampleRate, int nRealChannels, int nRealSampleRate )
 {
 	/* Try to set the provided format */
 	MediaFormat_s sFormat;
-	for( uint i = 0; i < m_pcCurrentOutput->GetOutputFormatCount(); i++ )
+	for( uint i = 0; i < psDSP->asFormats.size(); i++ )
 	{
-		sFormat = m_pcCurrentOutput->GetOutputFormat( i );
+		sFormat = psDSP->asFormats[i];
 		if( sFormat.zName == "Raw Audio" && ( nSampleRate == 0 || sFormat.nSampleRate == nSampleRate )
 			&& ( nChannels == 0 || sFormat.nChannels == nChannels ) && ( sFormat.nChannels >= 2 ||
 			sFormat.nChannels == 0 ) ) {
@@ -245,6 +255,7 @@ bool MediaServer::OpenSoundCard( int nDevice, int nChannels, int nSampleRate )
 	if( nDevice < 0 || nDevice > MEDIA_MAX_DSPS )
 		return( false );
 		
+	MediaDSP_s* psDSP = &m_sDsps[nDevice];
 	m_pcCurrentOutput = m_sDsps[nDevice].pcAddon->GetOutput( m_sDsps[nDevice].nOutputStream );
 	
 	if( m_pcCurrentOutput == NULL )
@@ -260,22 +271,22 @@ bool MediaServer::OpenSoundCard( int nDevice, int nChannels, int nSampleRate )
 		nChannels = 2;
 	
 	/* Try to set provided format */
-	if( !CheckFormat( nChannels, nSampleRate, nChannels, nSampleRate ) )
+	if( !CheckFormat( psDSP, nChannels, nSampleRate, nChannels, nSampleRate ) )
 	{
 		/* Try to set a format with the same number of channels */
-		if( !CheckFormat( nChannels, 0, nChannels, nSampleRate ) )
+		if( !CheckFormat( psDSP, nChannels, 0, nChannels, nSampleRate ) )
 		{
 			/* Try to set a format with the same samplerate */
-			if( !CheckFormat( 0, nSampleRate, nChannels, nSampleRate ) )
+			if( !CheckFormat( psDSP, 0, nSampleRate, nChannels, nSampleRate ) )
 			{
 				/* Try 44100 stereo */
-				if( !CheckFormat( 2, 44100, nChannels, nSampleRate ) )
+				if( !CheckFormat( psDSP, 2, 44100, nChannels, nSampleRate ) )
 				{
 					/* Try anything with two channels */
-					if( !CheckFormat( 2, 0, nChannels, nSampleRate ) )
+					if( !CheckFormat( psDSP, 2, 0, nChannels, nSampleRate ) )
 					{
 						/* Anything else */
-						if( !CheckFormat( 0, 0, nChannels, nSampleRate ) )
+						if( !CheckFormat( psDSP, 0, 0, nChannels, nSampleRate ) )
 						{
 							dbprintf( "Could not find a matching sound format\n" );
 							m_pcCurrentOutput->Release();
@@ -798,6 +809,30 @@ void MediaServer::SetDefaultDsp( Message* pcMessage )
 		pcMessage->SendReply( &cReply );
 }
 
+void MediaServer::GetDspFormats( Message* pcMessage )
+{
+	int32 nHandle;
+	Message cReply( MEDIA_SERVER_OK );
+	
+	if( pcMessage->FindInt32( "handle", &nHandle ) != 0 ) {
+		pcMessage->SendReply( MEDIA_SERVER_ERROR );
+		return;
+	}
+
+	if( nHandle < 0 || nHandle > MEDIA_MAX_DSPS ) {
+		pcMessage->SendReply( MEDIA_SERVER_ERROR );
+		return;
+	}
+	
+	cReply.AddInt32( "type", m_sDsps[nHandle].ePhysType );
+	for( uint i = 0; i < m_sDsps[nHandle].asFormats.size(); i++ )
+	{
+		cReply.AddInt32( "samplerate", m_sDsps[nHandle].asFormats[i].nSampleRate );
+		cReply.AddInt32( "channels", m_sDsps[nHandle].asFormats[i].nChannels );
+	}
+	pcMessage->SendReply( &cReply );
+}
+
 void MediaServer::CheckProcess( proc_id hProc )
 {
 	if( m_nActiveStreamCount == 0 )
@@ -895,6 +930,10 @@ void MediaServer::HandleMessage( Message* pcMessage )
 		break;
 		case MEDIA_SERVER_SET_DEFAULT_DSP:
 			SetDefaultDsp( pcMessage );
+		break;
+		case MEDIA_SERVER_GET_DSP_FORMATS:
+			if( pcMessage->IsSourceWaiting() )
+				GetDspFormats( pcMessage );
 		break;
 		case MEDIA_SERVER_SET_MASTER_VOLUME:
 		{
