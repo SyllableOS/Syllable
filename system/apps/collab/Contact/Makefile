@@ -1,45 +1,35 @@
 #Makefile for Contact
-COPTS = -Wall -c -fexceptions
+CXXFLAGS += -Wall -c -fexceptions
 
-APPBIN = /Applications/Contact
-OBJS = main.o application.o mainwindow.o
+EXE = Contact
 
 CATALOGS = da
 
-OBJDIR := objs
-OBJS	:= $(addprefix $(OBJDIR)/,$(OBJS))
+OBJDIR = objs
+OBJS = main.o application.o mainwindow.o
+OBJS := $(addprefix $(OBJDIR)/,$(OBJS))
 
 # Rules
-$(OBJDIR)/%.o : %.c
-	@echo Compiling : $<
-	@$(CC) $(COPTS) $< -o $@
-
 $(OBJDIR)/%.o : %.cpp
 	@echo Compiling : $<
-	@$(CC) $(COPTS) $< -o $@
+	@$(CXX) $(CXXFLAGS) $< -o $@
 
-$(OBJDIR)/%.o : %.s
-	@echo Assembling : $<
-	@$(CC) $(COPTS) -x assembler-with-cpp $< -o $@
+all : catalogs $(EXE)
 
-all : catalogs objs "Contact"
+$(OBJDIR):
+	@mkdir -p $(OBJDIR)
 
-$(OBJDIR)/mainwindow.o: mainwindowLayout.cpp
-
-objs:
-	@mkdir -p objs
-
-"Contact": $(OBJS)
+$(EXE): $(OBJDIR) $(OBJS)
 	@echo Linking...
-	@gcc $(OBJS) -o "Contact"  -lstdc++ -lsyllable
+	@$(CXX) $(OBJS) -lsyllable -o $(EXE)
 	@echo Adding resources...
-	@rescopy "Contact" -r images/*.png
-	@rescopy "Contact" -a resources/Contact.catalog
+	@rescopy $(EXE) -r images/*.png
+	@rescopy $(EXE) -a resources/Contact.catalog
 	for CATALOG in $(CATALOGS);do \
 		echo $$CATALOG; \
-		rescopy "Contact" -a $$CATALOG/Contact.catalog=resources/$$CATALOG/Contact.catalog; \
+		rescopy $(EXE) -a $$CATALOG/Contact.catalog=resources/$$CATALOG/Contact.catalog; \
 	done;
-	@addattrib "Contact" os::Category Office
+	@addattrib $(EXE) os::Category Office
 
 catalogs:
 	cd resources; \
@@ -54,7 +44,7 @@ catalogs:
 clean:
 	@echo Cleaning...
 	@rm -f $(OBJDIR)/*
-	@rm -f "Contact"
+	@rm -f $(EXE)
 	@rm resources/Contact.catalog resources/Contact.h; \
 	for CATALOG in $(CATALOGS);do \
 		rm resources/$$CATALOG/Contact.catalog; \
@@ -62,13 +52,10 @@ clean:
 
 deps:
 
-dist: all
-	@echo Distribution...
-	@mkdir -p $(DIST_DIR)/Applications/Contact
-	@cp "Contact" $(DIST_DIR)/Applications/Contact/"Contact"
+dist: install
 
 install: all
 	@echo Installing...
-	@mkdir -p /Applications/Contact
-	@cp "Contact" /Applications/Contact/"Contact"
+	@mkdir -p $(IMAGE)/Applications/Contact
+	@cp $(EXE) $(IMAGE)/Applications/Contact/$(EXE)
 
