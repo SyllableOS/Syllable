@@ -12,7 +12,7 @@ App::App( const os::String& cArgv ) : os::Application( "application/x-vnd.syllab
 		RegistrarManager *pcRegistrar = RegistrarManager::Get();
 
 		pcRegistrar->RegisterType( "application/x-contact", MSG_MIMETYPE_APPLICATION_X_CONTACT );
-		pcRegistrar->RegisterTypeIcon( "application/x-contact", Path( "/system/icons/addressbook.png" ) );
+		pcRegistrar->RegisterTypeIcon( "application/x-contact", Path( "/system/icons/filetypes/application_x_contact.png" ) );
 		pcRegistrar->RegisterAsTypeHandler( "application/x-contact" );
 
 		pcRegistrar->Put();

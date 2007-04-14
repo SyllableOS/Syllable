@@ -18,7 +18,7 @@ MainWindow::MainWindow( const os::String& cArgv ) : os::Window( os::Rect( 0, 0, 
 	zPath += os::String("/Contacts");
 	mkdir( zPath.c_str(), S_IRWXU | S_IRWXG | S_IRWXO );
 	int nFile = open( zPath.c_str(), O_RDWR | O_NOTRAVERSE );
-	write_attr( nFile, "os::Icon", O_TRUNC, ATTR_TYPE_STRING, "/system/icons/addressbook.png", 0, strlen( "/system/icons/addressbook.png" ) );
+	write_attr( nFile, "os::Icon", O_TRUNC, ATTR_TYPE_STRING, "/system/icons/filetypes/application_x_contact.png", 0, strlen( "/system/icons/filetypes/application_x_contact.png" ) );
   	close( nFile );
 
 	/* Stuff */
@@ -1159,7 +1159,7 @@ void MainWindow::SaveContact()
 
 	/* Write the mimetype and categories to the Contact-file */
 	int nFile = open( zPath.c_str(), O_RDWR | O_NOTRAVERSE );
-	write_attr( nFile, "os::MimeType", O_TRUNC, ATTR_TYPE_STRING, MSG_MIMETYPE_APPLICATION_X_CONTACT.c_str(), 0, strlen( MSG_MIMETYPE_APPLICATION_X_CONTACT.c_str() ) );
+	write_attr( nFile, "os::MimeType", O_TRUNC, ATTR_TYPE_STRING, "application/x-contact", 0, strlen( "application/x-contact" ) );
 	write_attr( nFile, "Contact::Category", O_TRUNC, ATTR_TYPE_STRING, cTempCategories.c_str(), 0, strlen( cTempCategories.c_str() ) );
   	close( nFile );
 
