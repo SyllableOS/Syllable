@@ -1,3 +1,7 @@
+* April 14 2007 Arno Klenke *
+
+Pass supported media formats from the media server to the server audio plugin
+
 ---- 0.6.3 Released -------------------------------------------------------------------
 
 * January 29 2007 Arno Klenke *
@@ -207,4 +211,5 @@ Added multiple soundcard support to the media server
 * Nov 18 2003, Kristian Van Der Vliet *
 
 Created this ChangeLog for changes specific to the media framework.
+
 
