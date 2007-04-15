@@ -19,5 +19,7 @@ clean:
 install:
 	install $(OBJDIR)/bmptrans.so $(IMAGE)/$(TRANSDIR)/
 
+dist: install
+
 -include $(OBJDIR)/*.d 
 

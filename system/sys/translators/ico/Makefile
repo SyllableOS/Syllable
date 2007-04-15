@@ -6,7 +6,7 @@ TRANSDIR = /system/extensions/translators
 
 #include $(ATHEOS_SRC)/makefile.rules
 
-all :	$(OBJDIR)/icontrans.so $(OBJDIR)/winicontrans.so
+all :	$(OBJDIR) $(OBJDIR)/icontrans.so $(OBJDIR)/winicontrans.so
 
 $(OBJDIR):
 	mkdir $(OBJDIR)
@@ -22,6 +22,8 @@ clean:
 
 install:
 	install $(OBJDIR)/icontrans.so $(OBJDIR)/winicontrans.so $(IMAGE)/$(TRANSDIR)/
+
+dist: install
 
 -include $(OBJDIR)/*.d 
 

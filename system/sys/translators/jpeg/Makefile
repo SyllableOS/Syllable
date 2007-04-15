@@ -19,5 +19,7 @@ clean:
 install:
 	install $(OBJDIR)/jpegtrans.so $(IMAGE)/$(TRANSDIR)/
 
+dist: install
+
 -include $(OBJDIR)/*.d 
 

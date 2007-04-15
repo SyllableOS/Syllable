@@ -19,5 +19,7 @@ clean:
 install:
 	install $(OBJDIR)/tgatrans.so $(IMAGE)/$(TRANSDIR)/
 
+dist: install
+
 -include $(OBJDIR)/*.d 
 
