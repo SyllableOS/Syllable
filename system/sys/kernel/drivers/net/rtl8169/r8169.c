@@ -1728,7 +1728,8 @@ static inline int rtl8169_try_rx_copy(PacketBuf_s **sk_buff, int pkt_size, struc
 				printk( "%x:%x:%x:%x:%x:%x:%x:%x\n", p[i], p[i+1], p[i+2], p[i+3], p[i+4], p[i+5], p[i+6], p[i+7] );
 			}
 #endif
-			memcpy(skb_put(skb, pkt_size), (void*)desc->addr, pkt_size);
+			skb_put(skb, pkt_size);
+			memcpy(skb->pb_pHead, sk_buff[0]->pb_pHead, pkt_size);
 
 			*sk_buff = skb;
 			rtl8169_mark_to_asic(desc, rx_buf_sz);
