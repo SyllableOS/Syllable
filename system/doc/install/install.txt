@@ -14,7 +14,7 @@
 		1. WILL SYLLABLE RUN ON MY COMPUTER?
 
 Syllable is designed to run on modern Intel compatible PC's.  At a minimum,
-your machine must have at least a Pentium compatible processor and 40 MB of
+your machine must have at least a Pentium compatible processor and 32 MB of
 memory, but a faster processor and 128 MB of memory or more will allow
 Syllable to do more and run faster.
 
