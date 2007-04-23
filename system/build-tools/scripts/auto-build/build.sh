@@ -53,7 +53,7 @@ build log summary >> $SYSTEM_SUMMARY_LOG
 sync
 
 echo "image system"
-image system-pre-gcc 1>>$LOG 2>>$LOG
+image system 1>>$LOG 2>>$LOG
 build log >> $SYSTEM_LOG
 build log failures >> $SYSTEM_FAILURE_LOG
 build log summary >> $SYSTEM_SUMMARY_LOG
