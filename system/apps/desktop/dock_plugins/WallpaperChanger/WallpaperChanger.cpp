@@ -1,6 +1,6 @@
 #include "WallpaperChanger.h"
 #include "messages.h"                                                                                                                                                                                                   
-#include <storage/registrar.h>
+#include <util/event.h>
 
 static os::Color32_s BlendColours( const os::Color32_s& sColour1, const os::Color32_s& sColour2, float vBlend )
 {
@@ -490,25 +490,17 @@ void DockWallpaperChanger::UpdateImage()
 	
 	try
 	{
-		os::RegistrarManager* pcManager = os::RegistrarManager::Get();
-		os::RegistrarCall_s sCall;
-		os::Message cReply;
-			
-		os::Message cBackgroundImage;
-		cBackgroundImage.AddString( "background_image", cCurrentImage );
-			
+		os::Event cEvent;
 
-		if( pcManager->QueryCall( "os/Desktop/SetBackgroundImage", 0, &sCall ) == 0 )
-			pcManager->InvokeCall( &sCall, &cBackgroundImage, NULL );
-				
-		pcManager->Put();
-	}
-	 
-	catch( ... ) 
+		if( cEvent.SetToRemote( "os/Desktop/SetBackgroundImage",0 ) == 0 )
+		{
+			os::Message cMsg;
+			cMsg.AddString( "background_image", cCurrentImage );
+			cEvent.PostEvent( &cMsg, this, 0 );
+		}
+	} catch( ... )
 	{
 	}
-	
-	
 }
 
 class WallpaperChangerPlugin : public DockPlugin
