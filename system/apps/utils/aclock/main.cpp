@@ -19,6 +19,7 @@
 
 #include "mywindow.h"
 #include "resources/aclock.h"
+#include <gui/imagebutton.h>
 
 // ---------------------------------------------------------------------------
 
@@ -79,6 +80,13 @@ MyWindow::MyWindow( const Rect& cFrame) : Window( cFrame, "main_window", MSG_MAI
     m_pcDisplay->showSeconds(bSec);
     m_pcDisplay->showDigital(bDigital);
     AddChild( m_pcDisplay );
+
+	// Set Icon
+	os::Resources cCol( get_image_id() );
+	os::ResStream *pcStream = cCol.GetResourceStream( "icon48x48.png" );
+	os::BitmapImage *pcIcon = new os::BitmapImage( pcStream );
+	SetIcon( pcIcon->LockBitmap() );
+	delete( pcIcon );
 }
 
 MyWindow::~MyWindow()

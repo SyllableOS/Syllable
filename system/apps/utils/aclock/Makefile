@@ -7,7 +7,8 @@ CATALOGS = da de en-gb es fr hu nl pt-br ru sv
 
 $(EXE) : catalogs $(OBJS)
 	$(CXX) $(OBJS) -lsyllable -lm -o $@
-	rescopy -r $(EXE) resources/$(EXE).catalog
+	rescopy -r $(EXE) icon48x48.png 
+	rescopy -a $(EXE) resources/$(EXE).catalog
 	for CATALOG in $(CATALOGS);do \
 		echo $$CATALOG; \
 		rescopy -a $(EXE) $$CATALOG/$(EXE).catalog=resources/$$CATALOG/$(EXE).catalog; \
