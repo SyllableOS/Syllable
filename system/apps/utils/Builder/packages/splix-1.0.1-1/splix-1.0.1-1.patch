@@ -1,0 +1,27 @@
+diff -ur splix-1.0.1-1_orig/ppd/Makefile splix-1.0.1-1/ppd/Makefile
+--- splix-1.0.1-1_orig/ppd/Makefile	2007-02-10 14:20:17.000000000 +0000
++++ splix-1.0.1-1/ppd/Makefile	2007-04-27 11:18:06.000000000 +0000
+@@ -19,7 +19,7 @@
+ LANGDRIVERS	:= $(foreach name, $(LANGUAGES), $(MASTERDRIVER)$(name))
+ LANGDRIVERSEXT	:= $(addsuffix .$(DRIVERSEXT), $(LANGDRIVERS))
+ 
+-all: $(DRIVER) $(LANGDRIVERSEXT)
++all: $(DRIVER)
+ 
+ $(DRIVER): $(SOURCE)
+ 	ppdc -d ./ $<
+@@ -37,12 +37,9 @@
+ 
+ .PHONY:
+ install:
+-	install -d -m 755 ${CUPSPPD}/samsung
++	install -d -m 755 ${CUPSPPD}/C
+ 	for filename in ${DRIVERS}; do \
+-		install -m 644 $$filename.${DRIVERSEXT} ${CUPSPPD}/samsung;\
+-		for lang in ${LANGUAGES}; do \
+-			install -m 644 $$filename$$lang.${DRIVERSEXT} ${CUPSPPD}/samsung;\
+-		done; \
++		install -m 644 $$filename.${DRIVERSEXT} ${CUPSPPD}/C;\
+ 	done \
+ 
+ .PHONY: clean distclean
