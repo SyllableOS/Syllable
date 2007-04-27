@@ -1,3 +1,9 @@
+* April 27, 2007, Flemming H. Sørensen *
+
+Added Russian translation to Contact.
+Added icon to aclock.
+Added screen-res 1280x800 to the sis300 video driver.
+
 * April 13, 2007, Kristian Van Der Vliet *
 
 Moved the existing png, jpeg, gif and icon translators into their own directories
