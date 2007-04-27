@@ -142,6 +142,7 @@ SiS3xx::SiS3xx( int nFd ) : m_cGELock("sis3xx_ge_lock")
 		m_cScreenModeList.push_back(os::screen_mode(640, 480, 640*bpp[i], colspace[i], rf[j]));
 		m_cScreenModeList.push_back(os::screen_mode(800, 600, 800*bpp[i], colspace[i], rf[j]));
 		m_cScreenModeList.push_back(os::screen_mode(1024, 768, 1024*bpp[i], colspace[i], rf[j]));
+		m_cScreenModeList.push_back(os::screen_mode(1280, 800, 1280*bpp[i], colspace[i], rf[j]));
 		m_cScreenModeList.push_back(os::screen_mode(1280, 1024, 1280*bpp[i], colspace[i], rf[j]));
 		m_cScreenModeList.push_back(os::screen_mode(1600, 1200, 1600*bpp[i], colspace[i], rf[j]));
 		}
