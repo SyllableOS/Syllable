@@ -1,0 +1,151 @@
+//
+//	Contact String Catalog
+//
+//	Translated by: Ilya Krol
+//
+
+MSG_MAINWND_TITLE=0											Контакт
+
+MSG_MAINWND_MENU_APPLICATION=100							Приложение
+MSG_MAINWND_MENU_APPLICATION_QUIT							Выйти
+MSG_MAINWND_MENU_APPLICATION_HELP							Помощь...
+MSG_MAINWND_MENU_APPLICATION_WEBSITE						Веб-сайт...
+MSG_MAINWND_MENU_APPLICATION_ABOUT							О программе...
+
+MSG_MAINWND_MENU_CONTACTS=120								Контакты
+MSG_MAINWND_MENU_CONTACTS_SAVE								Сохранить
+MSG_MAINWND_MENU_CONTACTS_NEWCONTACT						Новый контакт
+MSG_MAINWND_MENU_CONTACTS_DELCONTACT						Удалить контакт
+
+MSG_MAINWND_TOOLBAR_NEW=140									Новый
+MSG_MAINWND_TOOLBAR_DELETE									Удалить
+MSG_MAINWND_TOOLBAR_SAVE									Сохранить
+
+MSG_MAINWND_CONTACT_SEARCH=200								Поиск
+MSG_MAINWND_CONTACT_SEARCHCONTACT							Искать
+MSG_MAINWND_CONTACT_SHOWCONTACT								Показать контакт
+
+MSG_MAINWND_CONTACT_SEARCHTYPES_ALL=250						Все
+MSG_MAINWND_CONTACT_SEARCHTYPES_FIRSTNAME					Имя (первое имя)
+MSG_MAINWND_CONTACT_SEARCHTYPES_MIDDLENAME					Отчество (второе имя)
+MSG_MAINWND_CONTACT_SEARCHTYPES_LASTNAME					Фамилия
+MSG_MAINWND_CONTACT_SEARCHTYPES_NICKNAME					Прозвище
+MSG_MAINWND_CONTACT_SEARCHTYPES_COMPANY						Компания
+MSG_MAINWND_CONTACT_SEARCHTYPES_ADDRESS						Адрес
+MSG_MAINWND_CONTACT_SEARCHTYPES_ZIP							Почтовый код
+MSG_MAINWND_CONTACT_SEARCHTYPES_CITY						Город
+MSG_MAINWND_CONTACT_SEARCHTYPES_STATE						Штат
+MSG_MAINWND_CONTACT_SEARCHTYPES_COUNTRY						Страна
+MSG_MAINWND_CONTACT_SEARCHTYPES_PHONE						Телефон
+MSG_MAINWND_CONTACT_SEARCHTYPES_CELLPHONE					Мобильный телефон
+MSG_MAINWND_CONTACT_SEARCHTYPES_FAX							Факс
+MSG_MAINWND_CONTACT_SEARCHTYPES_PAGER						Пейджер
+MSG_MAINWND_CONTACT_SEARCHTYPES_EMAIL						Адрес эл. почты (e-mail)
+MSG_MAINWND_CONTACT_SEARCHTYPES_ICQ							ICQ
+MSG_MAINWND_CONTACT_SEARCHTYPES_MSN							MSN
+MSG_MAINWND_CONTACT_SEARCHTYPES_JABBER						Jabber
+MSG_MAINWND_CONTACT_SEARCHTYPES_YAHOO						Yahoo
+MSG_MAINWND_CONTACT_SEARCHTYPES_AOL							AOL
+MSG_MAINWND_CONTACT_SEARCHTYPES_SKYPE						Skype
+MSG_MAINWND_CONTACT_SEARCHTYPES_WEBSITE						Веб-сайт
+
+MSG_MAINWND_CATEGORY_NEWCATEGORY=300						Новая категория...
+MSG_MAINWND_CATEGORY_CHOOSECATEGORY							Выбрать категорию...
+MSG_MAINWND_CATEGORY_ALLCATEGORIES							Все категории
+MSG_MAINWND_CATEGORY_FAMILY									Семья
+MSG_MAINWND_CATEGORY_FRIENDS								Друзья
+MSG_MAINWND_CATEGORY_COLLEAGUES								Коллеги
+MSG_MAINWND_CATEGORY_WORK									Работа
+MSG_MAINWND_CATEGORY_MAILINGLISTS							Списки рассылки 
+
+MSG_MAINWND_GENDER_SELECT=400								Выбрать пол
+MSG_MAINWND_GENDER_MALE										Муж.
+MSG_MAINWND_GENDER_FEMALE									Жен.
+MSG_MAINWND_GENDER_DUOGENDER								Двупол. :))
+MSG_MAINWND_GENDER_UNKNOWN									Нет/Неизвестен
+
+MSG_MAINWND_NAME_TITLE=500									Имя
+MSG_MAINWND_NAME_FIRSTNAME									Имя (первое имя):
+MSG_MAINWND_NAME_MIDDLENAME									Отчество (второе имя):
+MSG_MAINWND_NAME_LASTNAME									Фамилия:
+MSG_MAINWND_NAME_NICKNAME									Прозвище:
+MSG_MAINWND_NAME_COMPANY									Компания:
+MSG_MAINWND_NAME_ADDRESS1									Адрес 1:
+MSG_MAINWND_NAME_ADDRESS2									Адрес 2:
+MSG_MAINWND_NAME_ADDRESS3									Адрес 3:
+MSG_MAINWND_NAME_COUNTRY									Страна:
+MSG_MAINWND_NAME_PRIMARYADDRESS								Первичный адрес
+MSG_MAINWND_NAME_SECONDARYADDRESS							Вторичный адрес
+
+MSG_MAINWND_NAME_ZCS_SELECT=550								Выбрать...
+MSG_MAINWND_NAME_ZCS_ZCS									Почт.код + Город + Штат
+MSG_MAINWND_NAME_ZCS_ZSC									Почт.код + Штат + Город
+MSG_MAINWND_NAME_ZCS_CZS									Город + Почт.код + Штат
+MSG_MAINWND_NAME_ZCS_CSZ									Город + Штат + Почт.код
+MSG_MAINWND_NAME_ZCS_SZC									Штат + Почт.код + Город
+MSG_MAINWND_NAME_ZCS_SCZ									Штат + Город + Почт.код
+
+MSG_MAINWND_INFO_TITLE=600									Инфо
+MSG_MAINWND_INFO_LIST_TYPE									Тип
+MSG_MAINWND_INFO_LIST_WHERE									Где
+MSG_MAINWND_INFO_LIST_DATA									Данные
+MSG_MAINWND_INFO_WHERE_HOME									Дом.
+MSG_MAINWND_INFO_WHERE_WORK									Раб.
+MSG_MAINWND_INFO_WHERE_OTHER								Др.
+MSG_MAINWND_INFO_DATA_DATA									Данные:
+
+MSG_MAINWND_INFO_TYPE_CHOOSETYPE=650						Выбрать тип:
+MSG_MAINWND_INFO_TYPE_NEWTYPE								Новый тип...
+MSG_MAINWND_INFO_TYPE_PHONE									Телефон
+MSG_MAINWND_INFO_TYPE_CELLPHONE								Мобильный телефон
+MSG_MAINWND_INFO_TYPE_FAX									Факс
+MSG_MAINWND_INFO_TYPE_PAGER									Пейджер
+MSG_MAINWND_INFO_TYPE_EMAIL									Адрес эл. почты (e-mail)
+MSG_MAINWND_INFO_TYPE_ICQ									ICQ
+MSG_MAINWND_INFO_TYPE_MSN									MSN
+MSG_MAINWND_INFO_TYPE_JABBER								Jabber
+MSG_MAINWND_INFO_TYPE_YAHOO									Yahoo
+MSG_MAINWND_INFO_TYPE_AOL									AOL
+MSG_MAINWND_INFO_TYPE_SKYPE									Skype
+MSG_MAINWND_INFO_TYPE_WEBSITE								Веб-сайт
+
+MSG_MAINWND_NOTES_TITLE=700									Заметки
+
+MSG_ABOUTALERT_TITLE=1000									О программе Контакт
+MSG_ABOUTALERT_VERSION										Версия:
+MSG_ABOUTALERT_AUTHOR										Автор:
+MSG_ABOUTALERT_DESC											Описание:
+MSG_ABOUTALERT_DESCTEXT										Адресная книга/менеджер контактов.
+MSG_ABOUTALERT_OK											_Ок
+
+MSG_DELCONTACTALERT_TITLE=1100								Контакт - Удалить контакт
+MSG_DELCONTACTALERT_TEXT									Вы уверены, что хотите удалить выбранный контакт?
+MSG_DELCONTACTALERT_YES										_Да
+MSG_DELCONTACTALERT_NO										_Нет
+
+MSG_SAVECONTACTALERT_TITLE=1200								Контакт - Сохранить контакт
+MSG_SAVECONTACTALERT_TEXT									Пожалуйста, выберите адресную систему (Почт.код+Город+Штат).
+MSG_SAVECONTACTALERT_OK										_Ок
+
+MSG_CLIPBOARDALERT_TITLE=1300								Контакт - Скопировано в буфер обмена
+MSG_CLIPBOARDALERT_TEXT										Контактная информация:\n%s\n...была скопирована в буфер обмена.
+MSG_CLIPBOARDALERT_OK										_Ок
+
+MSG_ADDINFOALERT_TITLE=1400									Контакт - Ошибка
+MSG_ADDINFOALERT_SELECTTYPE									Пожалуйста, выберите тип.
+MSG_ADDINFOALERT_WRITEDATA									Пожалуйста, введите данные.
+MSG_ADDINFOALERT_WHERE										Пожалуйста, укажите место (Дом., Раб., и т.п.)
+MSG_ADDINFOALERT_OK											_Ок
+
+MSG_CATEGORYALERT_TITLE=1500								Контакт - Ошибка
+MSG_CATEGORYALERT_TEXT										Пожалуйста, выберите категорию.
+MSG_CATEGORYALERT_OK										_Ок
+
+MSG_UNSAVEDALERT_TITLE=1600									Контакт - Несохранённые изменения
+MSG_UNSAVEDALERT_TEXT										Не все изменения сохранены.
+MSG_UNSAVEDALERT_SAVE										Сохранить
+MSG_UNSAVEDALERT_CONTINUE									Продолжить
+MSG_UNSAVEDALERT_CANCEL										Отменить
+
+MSG_MIMETYPE_APPLICATION_X_CONTACT=10000					Адресная книга
+
