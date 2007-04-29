@@ -29,7 +29,21 @@ class Settings::Private
 		if( pApp )
 		{
 			const char *pzAppSig = pApp->GetName().c_str(  );
-			const char *pzAppName = strrchr( pzAppSig, '-' ) + 1;
+ 			const char *pzAppName = strrchr( pzAppSig, '-' );
+ 
+ 			// First check for a '-'
+ 			if( pzAppName != NULL )
+ 				pzAppName++;
+ 
+ 			// If not found, check for '/'
+ 			else if( strrchr( pzAppSig, '/' ) != NULL )
+ 			{
+ 				pzAppName = strrchr( pzAppSig, '/' ) + 1;
+ 			}
+ 
+ 			// Simply use the name directly
+ 			else
+ 				pzAppName = pzAppSig
 
 			if( pzAppName && strlen( pzAppName ) > 1 )
 			{
