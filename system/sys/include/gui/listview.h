@@ -166,7 +166,8 @@ public:
 	   F_RENDER_BORDER = 0x0004,
 	   F_DONT_SCROLL = 0x0008,
 	   F_NO_HEADER = 0x0010,
-	   F_NO_COL_REMAP = 0x0020 };
+	   F_NO_COL_REMAP = 0x0020,
+	   F_NO_SORT = 0x0040 };
     enum { INV_HEIGHT = 0x01,
 	   INV_WIDTH  = 0x02,
 	   INV_VISUAL = 0x04 };

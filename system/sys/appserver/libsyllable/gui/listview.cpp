@@ -2493,7 +2493,7 @@ void ListViewHeader::MouseUp( const Point & cPosition, uint32 nButton, Message *
 	{
 		m_pcMainView->m_nSortColumn = m_pcMainView->m_cColMap[m_nDragColumn];
 
-		if( ( m_pcMainView->m_nModeFlags & ListView::F_NO_AUTO_SORT ) == 0 )
+		if( ( m_pcMainView->m_nModeFlags & ListView::F_NO_SORT ) == 0 )
 		{
 			m_pcParent->Sort();
 			Rect cBounds = m_pcMainView->GetBounds();
