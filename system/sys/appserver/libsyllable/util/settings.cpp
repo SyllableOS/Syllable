@@ -43,7 +43,7 @@ class Settings::Private
  
  			// Simply use the name directly
  			else
- 				pzAppName = pzAppSig
+ 				pzAppName = pzAppSig;
 
 			if( pzAppName && strlen( pzAppName ) > 1 )
 			{
