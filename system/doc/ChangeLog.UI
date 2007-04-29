@@ -1,3 +1,12 @@
+* April 29, 2007, Kristian Van Der Vliet *
+
+ListView
+	Add a seperate F_NO_SORT flag to ListView that allows columns to be sorted without having to
+	enable F_NO_AUTO_SORT.
+Settings
+	Don't crash of the application doesn't have a "-" in it's name. Patch from
+	Jonas Jarvoll <jonas-jarvoll@syllable-norden.info>
+
 * April 4, 2007, Arno Klenke *
 
 Added SetLabel() methods to the os::Menu and os::MenuItem class
