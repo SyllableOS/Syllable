@@ -4,19 +4,23 @@ authors
 	Kristian Van Der Vliet
 status				testing
 notes
-	Tested with FFMPEG SVN snapshot September 12, 2006.
+	Tested with FFMPEG SVN snapshot May 3, 2007.
 	Can't be build image'd.
 
 inherits			sourceforge
 
 licenses			LGPL GPL
 home				ffmpeg.org
-packages			syllable/ffmpeg-6239
+packages
+	syllable/ffmpeg-8879
+;	ffmpeg-export-snapshot
+;locations			http://ffmpeg.mplayerhq.hu
 archives			svn://svn.mplayerhq.hu/ffmpeg/trunk ffmpeg
 
 build-needs
 	bash <> 2.03
 	make >= 3.80
+;needs				liba52
 
 configure-options
 	--extra-cflags='-DPIC -fomit-frame-pointer'
@@ -24,24 +28,29 @@ configure-options
 ;	--enable-shared
 ;	--enable-pthreads
 	--disable-debug
+;	--disable-ffserver
+;	--disable-ffplay
 ;	--disable-mmx
 ;	IPv6 code used to fail (on GLibC 2.1.2?):
 ;	--disable-network
+;	--disable-ipv6
 	--disable-v4l
+;	--disable-v4l2
 	--disable-audio-oss
 ;	--disable-audio-beos
 	--disable-vhook
 	--disable-dv1394
 	--enable-gpl
-	--enable-a52
 	--enable-pp
+;	--enable-liba52
+;	--enable-libfaad
 ;	--enable-libogg
-;	--enable-vorbis
-;	--enable-theora
-;	--enable-mp3lame
+;	--disable-demuxer=OGG
+;	--enable-libvorbis
+;	--enable-libtheora
+;	--enable-libmp3lame
+;	--enable-x264
 ;	--enable-xvid
-;	--disable-ffserver
-;	--disable-ffplay
 
 install-files
 	../_ffmpeg--current/config.h				include/ffmpeg
