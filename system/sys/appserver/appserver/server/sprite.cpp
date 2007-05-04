@@ -170,11 +170,7 @@ void SrvSprite::Hide( const IRect & cFrame )
 void SrvSprite::Hide()
 {
 	s_cLock.Lock();
-	if( atomic_inc_and_read( &s_nHideCount ) != 0 )
-	{
-		s_cLock.Unlock();
-		return;
-	}
+	atomic_inc( &s_nHideCount );
 
 	for( int i = s_cInstances.size() - 1; i >= 0 ; --i )
 	{
@@ -184,6 +180,47 @@ void SrvSprite::Hide()
 		{
 			pcSprite->Erase();
 		}
+	}
+	s_cLock.Unlock();
+}
+
+
+//----------------------------------------------------------------------------
+// NAME:
+// DESC:
+// NOTE:
+// SEE ALSO:
+//----------------------------------------------------------------------------
+
+void SrvSprite::HideForCopy( const IRect & cFrame )
+{
+	/* If we do a blit operation and the target frame covers all our sprites,
+	   we do not have to erase them. We just need to set the visible flags to false. */
+	bool bHidePossible = true;
+
+	s_cLock.Lock();
+
+	for( int i = s_cInstances.size() - 1; i >= 0 ; --i )
+	{
+		SrvSprite *pcSprite = s_cInstances[i];
+
+		if( !cFrame.Includes( pcSprite->m_cBounds + pcSprite->m_cPosition - pcSprite->m_cHotSpot ) )
+		{
+			bHidePossible = false;
+			break;
+		}
+	}
+	if( !bHidePossible )
+	{
+		SrvSprite::Hide( cFrame );
+		s_cLock.Unlock();		
+		return;
+	}
+	atomic_inc( &s_nHideCount );	
+		
+	for( int i = s_cInstances.size() - 1; i >= 0; --i )
+	{
+		s_cInstances[i]->m_bVisible = false;
 	}
 	s_cLock.Unlock();
 }
@@ -231,6 +268,24 @@ bool SrvSprite::DoIntersect( const os::IRect& cRect )
 	s_cLock.Unlock();
 	return( false );
 }
+
+bool SrvSprite::CoveredByRect( const os::IRect& cRect )
+{
+	s_cLock.Lock();
+	for( uint i = 0; i < s_cInstances.size(); ++i )
+	{
+		SrvSprite *pcSprite = s_cInstances[i];
+
+		if( !cRect.Includes( pcSprite->m_cBounds + pcSprite->m_cPosition - pcSprite->m_cHotSpot ) )
+		{
+			s_cLock.Unlock();
+			return( false );
+		}
+	}
+	s_cLock.Unlock();
+	return( true );
+}
+
 
 //----------------------------------------------------------------------------
 // NAME:

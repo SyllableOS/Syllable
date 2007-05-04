@@ -86,6 +86,10 @@ static KernelSymbol_s g_asKernelSymbols[] = {
 	// General functions:
 	KSYMBOL( get_processor_id ),
 	KSYMBOL( get_processor_acpi_id ),
+	KSYMBOL( get_active_cpu_count ),
+	KSYMBOL( get_cpu_extended_info ),
+	KSYMBOL( update_cpu_speed ),
+	KSYMBOL( set_cpu_time_handler ),
 	KSYMBOL( reboot ),
 	KSYMBOL( apm_poweroff ),
 	KSYMBOL( get_app_server_port ),

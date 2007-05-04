@@ -1627,7 +1627,7 @@ IoContext_s *fs_alloc_ioctx( int nCount )
 	IoContext_s *psCtx;
 	const int nByteSize = sizeof( IoContext_s ) + 2 * BITSIZE( nCount ) / 8 + sizeof( File_s * ) * nCount;
 
-	psCtx = kmalloc( nByteSize, MEMF_KERNEL | MEMF_CLEAR | MEMF_OKTOFAILHACK );
+	psCtx = kmalloc( nByteSize, MEMF_KERNEL | MEMF_CLEAR | MEMF_OKTOFAIL );
 
 	if ( psCtx == NULL )
 	{

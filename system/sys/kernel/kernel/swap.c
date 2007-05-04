@@ -322,7 +322,7 @@ static int swap_out( pte_t * pPte, Page_s *psPage, uint32 nAddress )
 
 int swap_in( pte_t * pPte )
 {
-	uint32 nNewPage = get_free_pages( 1, MEMF_KERNEL );
+	uint32 nNewPage = get_free_pages( 1, MEMF_CLEAR );
 	Page_s *psPage = &g_psFirstPage[nNewPage >> PAGE_SHIFT];
 	int nOffset;
 	int nBlocksLeft;

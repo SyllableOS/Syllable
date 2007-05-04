@@ -215,7 +215,7 @@ static inline struct page_descriptor *get_kmalloc_pages( unsigned long priority,
 
 	for ( ;; )
 	{
-		nPtr = get_free_pages(  /* priority, */ ( 1 << order ), dma );
+		nPtr = get_free_pages(  /* priority, */ ( 1 << order ), dma | MEMF_CLEAR );
 		if ( ( priority & MEMF_NOBLOCK ) || nPtr != 0 )
 		{
 			if ( nPtr != 0 )
@@ -224,7 +224,7 @@ static inline struct page_descriptor *get_kmalloc_pages( unsigned long priority,
 			}
 			break;
 		}
-		if ( shrink_caches( ( 1 << order ) * PAGE_SIZE ) == 0 && ( priority & MEMF_OKTOFAILHACK ) )
+		if ( shrink_caches( ( 1 << order ) * PAGE_SIZE ) == 0 && ( priority & MEMF_OKTOFAIL ) )
 		{
 			break;
 		}

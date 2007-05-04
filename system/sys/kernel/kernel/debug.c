@@ -622,7 +622,7 @@ int register_debug_cmd( const char *pzName, const char *pzDesc, dbg_fnc *pFunc )
 {
 	DbgCmd_s *psCmd;
 
-	psCmd = kmalloc( sizeof( DbgCmd_s ), MEMF_KERNEL | MEMF_OKTOFAILHACK );
+	psCmd = kmalloc( sizeof( DbgCmd_s ), MEMF_KERNEL | MEMF_OKTOFAIL );
 
 	if ( NULL == psCmd )
 	{

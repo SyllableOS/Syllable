@@ -47,7 +47,7 @@ extern void free_pages( uint32 nPages, int nCount ); // This should probably be 
 static inline void* alloc_dma_mem(PCI_Info_s *pdev, size_t size, dma_addr_t *bus_addr)
 {
 
-	uint32 mem_addr = get_free_pages( PAGE_ALIGN(size) >> PAGE_SHIFT, 0 );
+	uint32 mem_addr = get_free_pages( PAGE_ALIGN(size) >> PAGE_SHIFT, MEMF_CLEAR );
 	*bus_addr=virt_to_bus((void*)mem_addr);
 
 	return (void*)mem_addr;

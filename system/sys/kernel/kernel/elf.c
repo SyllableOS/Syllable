@@ -87,8 +87,8 @@ static void create_kernel_image( void )
 	ElfImageInst_s *psInst;
 	int i;
 
-	psImage = kmalloc( sizeof( ElfImage_s ), MEMF_KERNEL | MEMF_CLEAR | MEMF_OKTOFAILHACK );
-	psInst = kmalloc( sizeof( ElfImageInst_s ), MEMF_KERNEL | MEMF_CLEAR | MEMF_OKTOFAILHACK );
+	psImage = kmalloc( sizeof( ElfImage_s ), MEMF_KERNEL | MEMF_CLEAR | MEMF_OKTOFAIL );
+	psInst = kmalloc( sizeof( ElfImageInst_s ), MEMF_KERNEL | MEMF_CLEAR | MEMF_OKTOFAIL );
 
 	if ( psImage == NULL || psInst == NULL )
 	{
@@ -100,7 +100,7 @@ static void create_kernel_image( void )
 	psInst->ii_nDataArea = -1;
 
 	psImage->im_nSymCount = ksym_get_symbol_count();
-	psImage->im_pasSymbols = kmalloc( psImage->im_nSymCount * sizeof( ElfSymbol_s ), MEMF_KERNEL | MEMF_CLEAR | MEMF_OKTOFAILHACK );
+	psImage->im_pasSymbols = kmalloc( psImage->im_nSymCount * sizeof( ElfSymbol_s ), MEMF_KERNEL | MEMF_CLEAR | MEMF_OKTOFAIL );
 
 	if ( psImage->im_pasSymbols == NULL )
 	{
@@ -314,7 +314,7 @@ static int parse_dynamic_section( ElfImage_s *psImage, Elf32_SectionHeader_s * p
 	Elf32_Dynamic_s *psDynTab;
 	int nError;
 
-	psDynTab = kmalloc( psSection->sh_nSize, MEMF_KERNEL | MEMF_OKTOFAILHACK );
+	psDynTab = kmalloc( psSection->sh_nSize, MEMF_KERNEL | MEMF_OKTOFAIL );
 	if ( psDynTab == NULL )
 	{
 		printk( "Error: parse_dynamic_section() no memory for dynamic section\n" );
@@ -374,7 +374,7 @@ static int parse_dynamic_section( ElfImage_s *psImage, Elf32_SectionHeader_s * p
 
 	if ( nDynRelSize + nDynPltRelSize > 0 )
 	{
-		psImage->im_pasRelocs = kmalloc( nDynRelSize + nDynPltRelSize, MEMF_KERNEL | MEMF_OKTOFAILHACK );
+		psImage->im_pasRelocs = kmalloc( nDynRelSize + nDynPltRelSize, MEMF_KERNEL | MEMF_OKTOFAIL );
 
 		if ( psImage->im_pasRelocs == NULL )
 		{
@@ -414,7 +414,7 @@ static int parse_dynamic_section( ElfImage_s *psImage, Elf32_SectionHeader_s * p
 		psImage->im_nRelocCount = ( nDynRelSize + nDynPltRelSize ) / sizeof( Elf32_Reloc_s );
 	}
 
-	psImage->im_apzSubImages = kmalloc( sizeof( char * ) * psImage->im_nSubImageCount, MEMF_KERNEL | MEMF_CLEAR | MEMF_OKTOFAILHACK );
+	psImage->im_apzSubImages = kmalloc( sizeof( char * ) * psImage->im_nSubImageCount, MEMF_KERNEL | MEMF_CLEAR | MEMF_OKTOFAIL );
 
 	if ( psImage->im_apzSubImages == NULL )
 	{
@@ -519,7 +519,7 @@ static int parse_section_headers( ElfImage_s *psImage )
 
 		psImage->im_nSymCount = psSection->sh_nSize / psSection->sh_nEntrySize;
 
-		psSymTab = kmalloc( psSection->sh_nSize, MEMF_KERNEL | MEMF_OKTOFAILHACK );
+		psSymTab = kmalloc( psSection->sh_nSize, MEMF_KERNEL | MEMF_OKTOFAIL );
 
 		if ( psSymTab == NULL )
 		{
@@ -527,7 +527,7 @@ static int parse_section_headers( ElfImage_s *psImage )
 			printk( "parse_section_headers() no memory for raw symbol table\n" );
 			goto error1;
 		}
-		psImage->im_pzStrings = kmalloc( psStrSection->sh_nSize, MEMF_KERNEL | MEMF_OKTOFAILHACK );
+		psImage->im_pzStrings = kmalloc( psStrSection->sh_nSize, MEMF_KERNEL | MEMF_OKTOFAIL );
 
 		if ( psImage->im_pzStrings == NULL )
 		{
@@ -555,7 +555,7 @@ static int parse_section_headers( ElfImage_s *psImage )
 			}
 			goto error3;
 		}
-		psImage->im_pasSymbols = kmalloc( psImage->im_nSymCount * sizeof( ElfSymbol_s ), MEMF_KERNEL | MEMF_OKTOFAILHACK );
+		psImage->im_pasSymbols = kmalloc( psImage->im_nSymCount * sizeof( ElfSymbol_s ), MEMF_KERNEL | MEMF_OKTOFAIL );
 
 		if ( psImage->im_pasSymbols == NULL )
 		{
@@ -602,7 +602,7 @@ static int parse_section_headers( ElfImage_s *psImage )
 		/* Load hash table */
 		Elf32_SectionHeader_s *psSection = &psImage->im_pasSections[nHashSec];
 
-		psImage->im_psHashTable = kmalloc( psSection->sh_nSize, MEMF_KERNEL | MEMF_OKTOFAILHACK );
+		psImage->im_psHashTable = kmalloc( psSection->sh_nSize, MEMF_KERNEL | MEMF_OKTOFAIL );
 	
 		if ( psImage->im_psHashTable == NULL )
 		{
@@ -917,7 +917,7 @@ static int load_image( const char *pzImageName, const char *pzPath, int nFile, B
 			}
 		}
 	}
-	psImage = kmalloc( sizeof( ElfImage_s ) + nPathLen + 1, MEMF_KERNEL | MEMF_CLEAR | MEMF_OKTOFAILHACK );
+	psImage = kmalloc( sizeof( ElfImage_s ) + nPathLen + 1, MEMF_KERNEL | MEMF_CLEAR | MEMF_OKTOFAIL );
 
 	if ( psImage == NULL )
 	{
@@ -965,7 +965,7 @@ static int load_image( const char *pzImageName, const char *pzPath, int nFile, B
 	psImage->im_nSectionCount = sElfHdr.e_nSecHdrCount;
 	psImage->im_nEntry = sElfHdr.e_nEntry;
 
-	psImage->im_pasSections = kmalloc( sizeof( Elf32_SectionHeader_s ) * psImage->im_nSectionCount, MEMF_KERNEL | MEMF_OKTOFAILHACK );
+	psImage->im_pasSections = kmalloc( sizeof( Elf32_SectionHeader_s ) * psImage->im_nSectionCount, MEMF_KERNEL | MEMF_OKTOFAIL );
 
 	if ( psImage->im_pasSections == NULL )
 	{
@@ -1625,7 +1625,7 @@ int load_image_inst( ImageContext_s * psCtx, const char *pzPath, BootModule_s * 
 		goto error1;
 	}
 
-	psInst = kmalloc( sizeof( ElfImageInst_s ), MEMF_KERNEL | MEMF_CLEAR | MEMF_OKTOFAILHACK );
+	psInst = kmalloc( sizeof( ElfImageInst_s ), MEMF_KERNEL | MEMF_CLEAR | MEMF_OKTOFAIL );
 
 	if ( psInst == NULL )
 	{
@@ -1637,7 +1637,7 @@ int load_image_inst( ImageContext_s * psCtx, const char *pzPath, BootModule_s * 
 	psInst->ii_nDataArea = -1;
 
 	atomic_set( &psInst->ii_nOpenCount, 1 );
-	psInst->ii_apsSubImages = kmalloc( psImage->im_nSubImageCount * sizeof( ElfImageInst_s * ), MEMF_KERNEL | MEMF_CLEAR | MEMF_OKTOFAILHACK );
+	psInst->ii_apsSubImages = kmalloc( psImage->im_nSubImageCount * sizeof( ElfImageInst_s * ), MEMF_KERNEL | MEMF_CLEAR | MEMF_OKTOFAIL );
 
 	if ( psInst->ii_apsSubImages == NULL )
 	{
@@ -1758,7 +1758,7 @@ ImageContext_s *create_image_ctx( void )
 {
 	ImageContext_s *psCtx;
 
-	psCtx = kmalloc( sizeof( ImageContext_s ), MEMF_KERNEL | MEMF_CLEAR | MEMF_OKTOFAILHACK );
+	psCtx = kmalloc( sizeof( ImageContext_s ), MEMF_KERNEL | MEMF_CLEAR | MEMF_OKTOFAIL );
 
 	if ( psCtx == NULL )
 	{
@@ -1886,7 +1886,7 @@ ImageContext_s *clone_image_context( ImageContext_s * psOrig, MemContext_s *psNe
 		{
 			ElfImageInst_s *psSrc = psOrig->ic_psInstances[i];
 			ElfImageInst_s *psDst;
-			psDst = kmalloc( sizeof( ElfImageInst_s ), MEMF_KERNEL | MEMF_OKTOFAILHACK );
+			psDst = kmalloc( sizeof( ElfImageInst_s ), MEMF_KERNEL | MEMF_OKTOFAIL );
 
 			if ( psDst == NULL )
 			{
@@ -1924,7 +1924,7 @@ ImageContext_s *clone_image_context( ImageContext_s * psOrig, MemContext_s *psNe
 				ElfImageInst_s *psDst = psNewCtx->ic_psInstances[i];
 				int j;
 
-				psDst->ii_apsSubImages = kmalloc( psDst->ii_psImage->im_nSubImageCount * sizeof( ElfImageInst_s * ), MEMF_KERNEL | MEMF_CLEAR | MEMF_OKTOFAILHACK );
+				psDst->ii_apsSubImages = kmalloc( psDst->ii_psImage->im_nSubImageCount * sizeof( ElfImageInst_s * ), MEMF_KERNEL | MEMF_CLEAR | MEMF_OKTOFAIL );
 				if ( psDst->ii_apsSubImages == NULL )
 				{
 					for ( j = 0; j < MAX_IMAGE_COUNT; ++j )

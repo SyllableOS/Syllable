@@ -71,7 +71,7 @@ static ArgCopy_s *copy_arg_list( char *const *argv, int *pnArgCnt, int *pnArgSiz
 {
 	int nArgSize = sizeof( char * );
 	int nArgCount = 0;
-	ArgCopy_s *psNode = kmalloc( sizeof( ArgCopy_s ), MEMF_KERNEL | MEMF_OKTOFAILHACK );
+	ArgCopy_s *psNode = kmalloc( sizeof( ArgCopy_s ), MEMF_KERNEL | MEMF_OKTOFAIL );
 	ArgCopy_s *psFirstNode = psNode;
 	int nError;
 	int i;
@@ -89,7 +89,7 @@ static ArgCopy_s *copy_arg_list( char *const *argv, int *pnArgCnt, int *pnArgSiz
 	{
 		if ( psNode->nCount == MAX_ARGS_PER_NODE )
 		{
-			psNode->psNext = kmalloc( sizeof( ArgCopy_s ), MEMF_KERNEL | MEMF_OKTOFAILHACK );
+			psNode->psNext = kmalloc( sizeof( ArgCopy_s ), MEMF_KERNEL | MEMF_OKTOFAIL );
 			if ( psNode->psNext == NULL )
 			{
 				free_arg_copy( psFirstNode );
@@ -128,7 +128,7 @@ static ArgCopy_s *copy_arg_list( char *const *argv, int *pnArgCnt, int *pnArgSiz
 	{
 		char *pzDst;
 
-		psNode->pBuffer = kmalloc( psNode->nBufSize, MEMF_KERNEL | MEMF_OKTOFAILHACK );
+		psNode->pBuffer = kmalloc( psNode->nBufSize, MEMF_KERNEL | MEMF_OKTOFAIL );
 		if ( psNode->pBuffer == NULL )
 		{
 			free_arg_copy( psFirstNode );

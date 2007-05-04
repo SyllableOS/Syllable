@@ -2475,20 +2475,19 @@ static int alloc_uhci( int nDeviceID, PCI_Info_s dev, unsigned int io_addr, unsi
 	/*  or broken setup */
 	reset_hc(uhci);
 	
-	
-	uhci->qh_remove_list_lock = INIT_SPIN_LOCK( "qh_remove_list_lock" );
+	spinlock_init( &uhci->qh_remove_list_lock, "qh_remove_list_lock" );
 	INIT_LIST_HEAD(&uhci->qh_remove_list);
 
-	uhci->urb_remove_list_lock = INIT_SPIN_LOCK( "urb_remove_list_lock" );
+	spinlock_init( &uhci->urb_remove_list_lock, "urb_remove_list_lock" );
 	INIT_LIST_HEAD(&uhci->urb_remove_list);
 
-	uhci->urb_list_lock = INIT_SPIN_LOCK( "urb_list_lock" );
+	spinlock_init( &uhci->urb_list_lock, "urb_list_lock" );
 	INIT_LIST_HEAD(&uhci->urb_list);
 
-	uhci->complete_list_lock = INIT_SPIN_LOCK( "complete_list_lock" );
+	spinlock_init( &uhci->complete_list_lock, "complete_list_lock" );
 	INIT_LIST_HEAD(&uhci->complete_list);
 
-	uhci->frame_list_lock = INIT_SPIN_LOCK( "frame_list_lock" );
+	spinlock_init( &uhci->frame_list_lock, "frame_list_lock" );
 	
 	uhci->fl_real = kmalloc( sizeof(*uhci->fl) + PAGE_SIZE, MEMF_KERNEL | MEMF_NOBLOCK );
 	uhci->fl = ( struct uhci_frame_list* )( ( (uint32)uhci->fl_real + PAGE_SIZE ) & PAGE_MASK );

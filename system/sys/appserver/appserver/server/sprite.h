@@ -47,8 +47,10 @@ public:
     static void ColorSpaceChanged();
     static void Hide( const os::IRect& cFrame );
     static void Hide();
+    static void HideForCopy( const os::IRect& cFrame );
     static void Unhide();
   	static bool DoIntersect( const os::IRect& cRect );
+  	static bool CoveredByRect( const os::IRect& cRect );
   
 private:
     static std::vector<SrvSprite*> s_cInstances;

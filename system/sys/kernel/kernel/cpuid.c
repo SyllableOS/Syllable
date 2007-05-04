@@ -81,9 +81,17 @@ void init_cpuid( void )
 	   ( Not a problem because all CPUs > 486 support it ) */
 	read_cpu_id( 0x00000000, nRegs );
 	sprintf( zVendor, "%.4s%.4s%.4s", ( char * )( nRegs + 1 ), ( char * )( nRegs + 3 ), ( char * )( nRegs + 2 ) );
+	strncpy( g_asProcessorDescs[g_nBootCPU].pi_anVendorID, zVendor, 16 );
+	
 	if ( nRegs[0] >= 0x00000001 )
 	{
 		read_cpu_id( 0x00000001, nRegs2 );
+		g_asProcessorDescs[g_nBootCPU].pi_nFamily = CPUID_FAMILY;
+		g_asProcessorDescs[g_nBootCPU].pi_nModel = CPUID_MODEL;		
+		if( CPUID_FAMILY == 0x0F )
+			g_asProcessorDescs[g_nBootCPU].pi_nFamily += ( nRegs2[0] >> 20 ) & 0xff;
+		if( CPUID_FAMILY >= 0x06 )
+			g_asProcessorDescs[g_nBootCPU].pi_nModel += ( ( nRegs2[0] >> 16 ) & 0x0f ) << 4;
 		nCPUid = ( CPUID_FAMILY << 4 ) | CPUID_MODEL;
 		
 			
@@ -127,7 +135,8 @@ void init_cpuid( void )
 	}
 	
 	
-	printk( "CPU: %s (0x%x)\n", g_asProcessorDescs[g_nBootCPU].pi_zName, nCPUid );
+	printk( "CPU: %s (family 0x%x model 0x%x)\n", g_asProcessorDescs[g_nBootCPU].pi_zName, g_asProcessorDescs[g_nBootCPU].pi_nFamily,
+												g_asProcessorDescs[g_nBootCPU].pi_nModel );
 	
 	if ( g_asProcessorDescs[g_nBootCPU].pi_nFeatures & CPU_FEATURE_MMX )
 		kerndbg( KERN_DEBUG, "MMX supported\n" );
@@ -187,6 +196,9 @@ void init_cpuid( void )
 		if ( i == g_nBootCPU )
 			continue;
 		strcpy( g_asProcessorDescs[i].pi_zName, g_asProcessorDescs[g_nBootCPU].pi_zName );
+		strncpy( g_asProcessorDescs[i].pi_anVendorID, g_asProcessorDescs[g_nBootCPU].pi_anVendorID, 16 );
+		g_asProcessorDescs[i].pi_nFamily = g_asProcessorDescs[g_nBootCPU].pi_nFamily;
+		g_asProcessorDescs[i].pi_nModel = g_asProcessorDescs[g_nBootCPU].pi_nModel;
 		g_asProcessorDescs[i].pi_nFeatures = g_asProcessorDescs[g_nBootCPU].pi_nFeatures;
 		g_asProcessorDescs[i].pi_bHaveFXSR = g_asProcessorDescs[g_nBootCPU].pi_bHaveFXSR;
 		g_asProcessorDescs[i].pi_bHaveXMM = g_asProcessorDescs[g_nBootCPU].pi_bHaveXMM;

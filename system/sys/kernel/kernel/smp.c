@@ -32,12 +32,15 @@
 #include <atheos/bitops.h>
 #include <atheos/udelay.h>
 #include <atheos/spinlock.h>
+#include <atheos/time.h>
 
 /* Kernel-global variables */
 ProcessorInfo_s g_asProcessorDescs[MAX_CPU_COUNT];
 int g_nBootCPU = 0;
 int g_nActiveCPUCount = 1;
 static int g_nLogicalCPU = 0;
+
+static bigtime_t ( *g_pCPUTimeHandler )( int ) = NULL;
 
 vuint32 g_nTLBInvalidateMask = 0;	/* CPUs that need to invalidate their TLB */
 vuint32 g_nMTRRInvalidateMask = 0;	/* CPUs that need to invalidate their MTRR descriptors */
@@ -50,6 +53,127 @@ int logical_to_physical_cpu_id( int nLogicalID )
 {
 	return g_anLogicToRealID[nLogicalID];
 }
+
+int get_active_cpu_count( void )
+{
+	return( g_nActiveCPUCount );
+}
+
+/**
+ * Get a copy of the Extended CPU Info record for a specified CPU. 
+ * NOTE: This function currently does *NO* locking, as there is no lock for g_asProcessorDescs.
+ *  If the processor's info is being updated during copying, the copy may be inconsistent
+ * \param nPhysicalCPUId - Physical ID for the CPU to get info for (as returned by get_processor_id() )
+ * \param psInfo - pointer to pre-allocated CPU_Extended_Info_s struct, destination of CPU record.
+ * \param nVersion - Version of the CPU_Extended_Info_s struct to use
+ * \ingroup CPU
+ * \author Tim ter Laak (timl [At] scintilla [DoT] utwente [DoT] nl)
+ */
+status_t get_cpu_extended_info(int nPhysicalCPUId, CPU_Extended_Info_s * _psInfo, int nVersion)
+{
+	if ( _psInfo == NULL )
+		return -EFAULT;
+	if ( nPhysicalCPUId >= MAX_CPU_COUNT )
+	{
+		return -ENODEV;
+	}
+	
+	/* lock g_asProcessorDescs here? */
+
+	switch ( nVersion )
+	{
+	case 1:
+		{
+			CPU_Extended_Info_v1_s * psInfo = (CPU_Extended_Info_v1_s *)_psInfo;
+			
+			psInfo->nAcpiId = g_asProcessorDescs[nPhysicalCPUId].pi_nAcpiId;
+			strncpy(psInfo->anVendorID, g_asProcessorDescs[nPhysicalCPUId].pi_anVendorID, sizeof(psInfo->anVendorID) );
+			strncpy(psInfo->zName, g_asProcessorDescs[nPhysicalCPUId].pi_zName, sizeof(psInfo->zName) );
+			psInfo->nCoreSpeed = g_asProcessorDescs[nPhysicalCPUId].pi_nCoreSpeed;
+			psInfo->nBusSpeed = g_asProcessorDescs[nPhysicalCPUId].pi_nBusSpeed;
+			psInfo->nDelayCount = g_asProcessorDescs[nPhysicalCPUId].pi_nDelayCount;
+			psInfo->nFamily = g_asProcessorDescs[nPhysicalCPUId].pi_nFamily;
+			psInfo->nModel = g_asProcessorDescs[nPhysicalCPUId].pi_nModel;
+			psInfo->nAPICVersion = g_asProcessorDescs[nPhysicalCPUId].pi_nAPICVersion;
+			psInfo->bIsPresent = g_asProcessorDescs[nPhysicalCPUId].pi_bIsPresent;
+			psInfo->bIsRunning = g_asProcessorDescs[nPhysicalCPUId].pi_bIsRunning;
+			psInfo->bHaveFXSR = g_asProcessorDescs[nPhysicalCPUId].pi_bHaveFXSR;
+			psInfo->bHaveXMM = g_asProcessorDescs[nPhysicalCPUId].pi_bHaveXMM;
+			psInfo->bHaveMTRR = g_asProcessorDescs[nPhysicalCPUId].pi_bHaveMTRR;
+			psInfo->nFeatures = g_asProcessorDescs[nPhysicalCPUId].pi_nFeatures;
+			break;
+		}
+	default:
+		{
+			printk( "Error: get_cpu_extended_info() invalid version %d\n", nVersion );
+			/* Unlock g_asProcessorDescs here? */
+			return ( -EINVAL );
+		}
+	}		
+			
+	/* Unlock g_asProcessorDescs here? */
+	return EOK;
+}
+
+
+/**
+ * Update (set) speed metrics for a specified CPU.
+ * NOTE: This function currently does *NO* locking, as there is no lock for g_asProcessorDescs.
+ * If another thread reads between updating the two fields, its data may be inconsistent for our speed
+ * data.
+ * \param nPhysicalCPUId - Physical ID for the CPU to get info for (as returned by get_processor_id() )
+ * \param nCoreSpeed - New CPU core speed in Hz
+ * \param nDelayCount - New pi_nDelayCount value, used for busy-looping delays
+ * \ingroup CPU
+ * \author Tim ter Laak (timl [At] scintilla [DoT] utwente [DoT] nl)
+ */
+void update_cpu_speed(int nPhysicalCPUId, uint64 nCoreSpeed, uint32 nDelayCount)
+{
+	if ( nPhysicalCPUId >= MAX_CPU_COUNT )
+		return;
+	
+	if ( g_asProcessorDescs[nPhysicalCPUId].pi_nDelayCount > nDelayCount )
+	{
+		/* scaling down, first update corespeed, then delaycount to mitigate issues
+			from missing locking (only conceivable consequence: delays too long) */
+		g_asProcessorDescs[nPhysicalCPUId].pi_nCoreSpeed = nCoreSpeed;
+		g_asProcessorDescs[nPhysicalCPUId].pi_nDelayCount = nDelayCount;
+	}
+	else
+	{
+		/* The other way around, but for the same reason */
+		g_asProcessorDescs[nPhysicalCPUId].pi_nDelayCount = nDelayCount;
+		g_asProcessorDescs[nPhysicalCPUId].pi_nCoreSpeed = nCoreSpeed;
+	}
+	return;
+}
+
+
+/**
+ * Overrides the cpu time handler.
+ * \param pHandler - Pointer to the handler function. The parameter is the processor id.
+ * \ingroup CPU
+ * \author Arno Klenke
+ */
+void set_cpu_time_handler( bigtime_t ( *pHandler )( int ) )
+{
+	g_pCPUTimeHandler = pHandler;
+}
+
+/**
+ * Returns the current cpu time. The functions calls the handler set by the set_cpu_time_handler()
+ * function or get_system_time();
+ * \param nProcessorID - The processor id.
+ * \ingroup CPU
+ * \author Arno Klenke
+ */
+inline bigtime_t get_cpu_time( int nProcessorID )
+{
+	if( g_pCPUTimeHandler != NULL )
+		return( g_pCPUTimeHandler( nProcessorID ) );
+	return( get_system_time() );
+}
+
 
 /* CPU calibration */
 static int read_pit_timer( void )
@@ -652,6 +776,12 @@ void idle_loop( void )
 	}
 }
 
+/**
+ * Overrides the idle handler.
+ * \param pHandler - Pointer to the handler function. The parameter is the processor id.
+ * \ingroup CPU
+ * \author Arno Klenke
+ */
 void set_idle_loop_handler( void ( *pHandler )( int ) )
 {
 	g_pIdleLoopHandler = pHandler;

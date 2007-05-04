@@ -84,7 +84,7 @@ static int do_watch_node( bool bKernel, int nNode, int nPort, uint32 nFlags, voi
 		return ( -EMFILE );
 	}
 
-	psMonitor = kmalloc( sizeof( NodeMonitor_s ), MEMF_KERNEL | MEMF_CLEAR | MEMF_OKTOFAILHACK );
+	psMonitor = kmalloc( sizeof( NodeMonitor_s ), MEMF_KERNEL | MEMF_CLEAR | MEMF_OKTOFAIL );
 	if ( psMonitor == NULL )
 	{
 		nError = -ENOMEM;
@@ -161,7 +161,7 @@ static NodeWatchEvent_s *create_full_path_event( NodeWatchEvent_s * psEvent, Ino
 	NodeWatchEvent_s *psFullPathEvent;
 	int nError;
 
-	psFullPathEvent = kmalloc( sizeof( NodeWatchEvent_s ) + PATH_MAX, MEMF_KERNEL | MEMF_CLEAR | MEMF_OKTOFAILHACK );
+	psFullPathEvent = kmalloc( sizeof( NodeWatchEvent_s ) + PATH_MAX, MEMF_KERNEL | MEMF_CLEAR | MEMF_OKTOFAIL );
 	if ( psFullPathEvent == NULL )
 	{
 		return ( NULL );

@@ -1600,9 +1600,6 @@ static int uhci_submit_urb (USB_packet_s *urb)
 	s = (uhci_t*) urb->psDevice->psBus->pHCPrivate;
 	dbg("submit_urb: %p type %d\n",urb,usb_pipetype(urb->nPipe));
 	
-	if (!s->running)
-		return -ENODEV;
-	
 	type = usb_pipetype (urb->nPipe);
 	
 	dbg( "Submitting urb to %i Hub: %i\n", usb_pipedevice (urb->nPipe), s->rh.devnum );
@@ -1610,6 +1607,9 @@ static int uhci_submit_urb (USB_packet_s *urb)
 	//if (usb_pipedevice (urb->nPipe) == s->rh.devnum)
 	if( urb->psDevice == s->bus->psRootHUB )
 		return rh_submit_urb (urb);	/* virtual root hub */
+
+	if (!s->running)
+		return -ENODEV;
 
 	// Sanity checks
 	if (usb_maxpacket (urb->psDevice, urb->nPipe, usb_pipeout (urb->nPipe)) <= 0) {		

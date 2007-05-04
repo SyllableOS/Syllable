@@ -649,7 +649,7 @@ void wake_up_sleepers( bigtime_t nCurTime )
  ****************************************************************************/
 ktimer_t create_timer( void )
 {
-	WaitQueue_s *psNode = kmalloc( sizeof( WaitQueue_s ), MEMF_KERNEL | MEMF_CLEAR | MEMF_OKTOFAILHACK );
+	WaitQueue_s *psNode = kmalloc( sizeof( WaitQueue_s ), MEMF_KERNEL | MEMF_CLEAR | MEMF_OKTOFAIL );
 
 	if ( psNode == NULL )
 	{
@@ -1780,10 +1780,7 @@ void DoSchedule( SysCallRegs_s* psRegs )
 	sched_lock();
 		
 	nThisProc = get_processor_id();
-	if( g_bAPICPresent )
-		nCurTime = read_pentium_clock() / ( g_asProcessorDescs[nThisProc].pi_nCoreSpeed / 1000000 );
-	else
-		nCurTime = get_system_time();
+	nCurTime = get_cpu_time( nThisProc );
 	g_asProcessorDescs[nThisProc].pi_nCPUTime = nCurTime;
 
 
@@ -1904,6 +1901,7 @@ void DoSchedule( SysCallRegs_s* psRegs )
 		
 		__asm__ __volatile__( "movl %%cr2,%0":"=r"( psPrev->tr_nCR2 ) );
 		psPrev->tr_pESP = (void*)psRegs;
+		psPrev->tr_nLastEIP = psRegs->eip;
 	}
 	g_asProcessorDescs[nThisProc].pi_psCurrentThread = psNext;
 

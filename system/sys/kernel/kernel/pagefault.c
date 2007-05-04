@@ -105,7 +105,7 @@ static uint32 find_clean_page( MemArea_s *psArea, pte_t * pDstPte, uintptr_t nAd
 				return ( 0 );
 			}
 
-			nNewPage = get_free_page( GFP_CLEAR );
+			nNewPage = get_free_page( 0 );
 			if ( nNewPage == 0 )
 			{
 				unlock_area( psSrcArea, LOCK_AREA_READ );
@@ -165,7 +165,7 @@ uint32 memmap_no_page( MemArea_s *psArea, uintptr_t nAddress, bool bWriteAccess 
 		return ( 0 );
 	}
 
-	nNewPage = get_free_page( GFP_CLEAR );
+	nNewPage = get_free_page( MEMF_CLEAR );
 
 	if ( nNewPage == 0 )
 	{
@@ -258,7 +258,7 @@ int handle_copy_on_write( MemArea_s *psArea, pte_t * pPte, uintptr_t nVirtualAdd
 	{
 		Page_s *psNewPage;
 
-		nNewPage = get_free_page( GFP_CLEAR );
+		nNewPage = get_free_page( MEMF_CLEAR );
 		psNewPage = &g_psFirstPage[nNewPage >> PAGE_SHIFT];
 
 		if ( nNewPage == 0 )
@@ -311,7 +311,7 @@ int handle_copy_on_write( MemArea_s *psArea, pte_t * pPte, uintptr_t nVirtualAdd
 //  unlock_pagelist();
 //  put_cpu_flags( nFlags );
 
-	nNewPage = get_free_page( GFP_CLEAR );
+	nNewPage = get_free_page( 0 );
 
 	if ( nNewPage == 0 )
 	{

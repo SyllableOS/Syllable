@@ -255,7 +255,7 @@ void usb_hub_irq( USB_packet_s* psPacket )
 {
 	USB_hub* psHub = ( USB_hub* )psPacket->pCompleteData;
 	unsigned long nFlags;
-
+	
 	if( psPacket->nStatus ) {
 		if( psPacket->nStatus == -ENOENT )
 			return;

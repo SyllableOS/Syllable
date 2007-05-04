@@ -304,7 +304,7 @@ int sys_exit( int nErrorCode )
 
 static Process_s *alloc_process( MemContext_s *psMemSeg )
 {
-	Process_s *psProc = kmalloc( sizeof( Process_s ), MEMF_CLEAR | MEMF_KERNEL | MEMF_LOCKED | MEMF_OKTOFAILHACK );
+	Process_s *psProc = kmalloc( sizeof( Process_s ), MEMF_CLEAR | MEMF_KERNEL | MEMF_LOCKED | MEMF_OKTOFAIL );
 
 	if ( psProc == NULL )
 	{

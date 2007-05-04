@@ -1748,7 +1748,7 @@ int create_device_node( int nDeviceID, int nDeviceHandle, const char *pzPath, co
 
 	LOCK( g_hMutex );
 
-	psTmp = kmalloc( sizeof( FileNode_s ), MEMF_KERNEL | MEMF_CLEAR | MEMF_OKTOFAILHACK );
+	psTmp = kmalloc( sizeof( FileNode_s ), MEMF_KERNEL | MEMF_CLEAR | MEMF_OKTOFAIL );
 	if ( psTmp == NULL )
 	{
 		printk( "Error: create_device_node() no memory for device node %s\n", pzPath );

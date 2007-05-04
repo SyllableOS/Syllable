@@ -293,7 +293,7 @@ bool i855_init_pagetable( struct gfx_node* psNode )
 
 	/* Allocate scratch page and put it in the unused pagetable entries */
 
-	psNode->nScratchPage = get_free_page( 0 );
+	psNode->nScratchPage = get_free_page( MEMF_CLEAR );
 	
 	printk( "i855: Allocated scratch page @ 0x%x\n", (uint)psNode->nScratchPage );
 	
@@ -323,17 +323,17 @@ bool i855_init_pagetable( struct gfx_node* psNode )
 	for( i = psNode->nGTTEntries; i < ( psNode->nGTTEntries + psNode->nAGPEntries - 10 ); i++)
 	{
 		if( psNode->bIs9xx ) {
-			OUTREG32( psNode->pGTTRegisters, i, (uint32)get_free_page( 0 ) | I855_PTE_VALID );
+			OUTREG32( psNode->pGTTRegisters, i, (uint32)get_free_page( MEMF_CLEAR ) | I855_PTE_VALID );
 			INREG32( psNode->pGTTRegisters, i );
 		} else {
-			OUTREG32( psNode->pGFXRegisters, I855_PTE_BASE + (i * 4), (uint32)get_free_page( 0 ) | I855_PTE_VALID );
+			OUTREG32( psNode->pGFXRegisters, I855_PTE_BASE + (i * 4), (uint32)get_free_page( MEMF_CLEAR ) | I855_PTE_VALID );
 			INREG32( psNode->pGFXRegisters, I855_PTE_BASE + (i * 4) );
 		}
 		
 	}
 
 	/* Allocate the last 10 pages of agp memory as linear memory */
-	if( ( nContMem = get_free_pages( 10, 0 ) ) == 0 )
+	if( ( nContMem = get_free_pages( 10, MEMF_CLEAR ) ) == 0 )
 	{
 		printk( "i855: Could not allocate 10 pages as linear memory!\n" );
 		return( false );

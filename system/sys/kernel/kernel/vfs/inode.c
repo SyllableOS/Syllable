@@ -1453,7 +1453,7 @@ int sys_get_mount_point( int nIndex, char *pzBuffer, int nBufLen )
 		}
 		return ( 0 );
 	}
-	pzPath = kmalloc( PATH_MAX, MEMF_KERNEL | MEMF_OKTOFAILHACK );
+	pzPath = kmalloc( PATH_MAX, MEMF_KERNEL | MEMF_OKTOFAIL );
 	if ( pzPath == NULL )
 	{
 		return ( -ENOMEM );

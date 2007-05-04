@@ -72,7 +72,7 @@ void MArray_Init( MultiArray_s * psArray )
 
 static void *ma_alloc_block( bool bNoBlock )
 {
-	uint32_t nFlags = MEMF_KERNEL | MEMF_OKTOFAILHACK;
+	uint32_t nFlags = MEMF_KERNEL | MEMF_OKTOFAIL;
 
 	if ( bNoBlock )
 	{

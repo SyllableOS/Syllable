@@ -34,8 +34,9 @@ extern "C" {
 //#define MEMF_USER	    0x00000004 ///< memory allocated for user-space
 //#define MEMF_BUFFER	    0x00000008 ///< memory for disk-cache buffers
 #define	MEMF_KERNEL	    0x00000010 ///< Kernel memory, must be supervisor
-#define MEMF_OKTOFAILHACK   0x00000020 ///< Ugly hack to let new fail-safe code
-				       ///< avoid block forever when out of mem
+#define MEMF_OKTOFAIL		0x00000020 ///< Do not block forever when running out of memory
+#define MEMF_OKTOFAILHACK   0x00000020 ///< For compatibility
+
 //#define MEMF_PRI_MASK	    0x000000ff
 #define	MEMF_NOBLOCK	    0x00000100 ///< make kmalloc fail rather than wait
 				       ///< for pages to be swapped out

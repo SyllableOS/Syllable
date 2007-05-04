@@ -482,7 +482,7 @@ out:
 
 Resource_s * __request_region(Resource_s * psParent, uint nStart, uint nSize, const char * pzName)
 {
-    Resource_s * psRes = kmalloc(sizeof(Resource_s),MEMF_KERNEL|MEMF_OKTOFAILHACK|MEMF_CLEAR);
+    Resource_s * psRes = kmalloc(sizeof(Resource_s),MEMF_KERNEL|MEMF_OKTOFAIL|MEMF_CLEAR);
     if(psRes)
     {
 	psRes->rc_pzName = pzName;

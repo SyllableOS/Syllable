@@ -83,7 +83,6 @@ extern sem_id g_hAreaTableSema;
 #define	PTE_ISDIRTY( pte )	(PTE_VALUE(pte) & PTE_DIRTY)
 
 static const size_t PTRS_PER_PTE = 1024;
-static const uint32_t GFP_CLEAR  = 0x0001;
 
 // Bit patterns for the p_nFlags member of Page_s
 static const uint32_t PF_BUSY	= 0x0001;

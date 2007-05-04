@@ -119,7 +119,7 @@ port_id sys_create_port( const char *const pzName, int nMaxCount )
 
 	lock_mutex( g_hPortListSema, true );
 
-	psPort = kmalloc( sizeof( MsgPort_s ), MEMF_CLEAR | MEMF_KERNEL | MEMF_LOCKED | MEMF_OKTOFAILHACK );
+	psPort = kmalloc( sizeof( MsgPort_s ), MEMF_CLEAR | MEMF_KERNEL | MEMF_LOCKED | MEMF_OKTOFAIL );
 
 	if ( psPort == NULL )
 	{
@@ -247,7 +247,7 @@ status_t send_msg_x( port_id hPort, uint32 nCode, const void *pBuffer, int nSize
 	MessageNode_s *psNode;
 	int nError;
 
-	psNode = kmalloc( sizeof( MessageNode_s ) + nSize, MEMF_KERNEL | MEMF_LOCKED | MEMF_OKTOFAILHACK );
+	psNode = kmalloc( sizeof( MessageNode_s ) + nSize, MEMF_KERNEL | MEMF_LOCKED | MEMF_OKTOFAIL );
 
 	if ( psNode == NULL )
 	{
@@ -593,7 +593,7 @@ status_t make_port_public( port_id hPort )
 		goto error;
 	}
 
-	psPubPort = kmalloc( sizeof( PublicPort_s ), MEMF_KERNEL | MEMF_LOCKED | MEMF_OKTOFAILHACK );
+	psPubPort = kmalloc( sizeof( PublicPort_s ), MEMF_KERNEL | MEMF_LOCKED | MEMF_OKTOFAIL );
 
 	if ( psPubPort == NULL )
 	{
@@ -733,7 +733,7 @@ port_id find_port( const char *pzPortname )
 	port_id hPort = -1;
 	char *pzName;
 
-	pzName = kmalloc( OS_NAME_LENGTH, MEMF_KERNEL | MEMF_LOCKED | MEMF_OKTOFAILHACK );
+	pzName = kmalloc( OS_NAME_LENGTH, MEMF_KERNEL | MEMF_LOCKED | MEMF_OKTOFAIL );
 
 	if ( pzName == NULL )
 	{

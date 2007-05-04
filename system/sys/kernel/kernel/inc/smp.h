@@ -97,7 +97,7 @@ void init_smp( bool bInitSMP, bool bScanACPI );
 void boot_ap_processors( void );
 void shutdown_ap_processors( void );
 void shutdown_processor( void );
-void set_idle_loop_handler( void ( *pHandler )( int ) );
+inline bigtime_t get_cpu_time( int );
 
 #endif	/* __F_SMP_H__ */
 

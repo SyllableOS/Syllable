@@ -277,7 +277,7 @@ acpi_thermal_get_trip_points (
 	}
 	else {
 		tz->trips.critical.flags.valid = 1;
-		printk( "ACPI: Found critical threshold [%lu]\n", tz->trips.critical.temperature);
+		printk( "ACPI: Found critical threshold [%lu]\n", KELVIN_TO_CELSIUS(tz->trips.critical.temperature));
 	}
 
 	/* Critical Sleep (optional) */
@@ -289,7 +289,7 @@ acpi_thermal_get_trip_points (
 	}
 	else {
 		tz->trips.hot.flags.valid = 1;
-		printk( "ACPI: Found hot threshold [%lu]\n", tz->trips.hot.temperature);
+		printk( "ACPI: Found hot threshold [%lu]\n", KELVIN_TO_CELSIUS(tz->trips.hot.temperature));
 	}
 
 	/* Passive: Processors (optional) */
@@ -321,7 +321,7 @@ acpi_thermal_get_trip_points (
 		if (!tz->trips.passive.flags.valid)
 			ACPI_DEBUG_PRINT((ACPI_DB_WARN, "Invalid passive threshold\n"));
 		else
-			printk( "ACPI: Found passive threshold [%lu]\n", tz->trips.passive.temperature);
+			printk( "ACPI: Found passive threshold [%lu]\n", KELVIN_TO_CELSIUS(tz->trips.passive.temperature));
 	}
 
 	/* Active: Fans, etc. (optional) */
@@ -338,7 +338,7 @@ acpi_thermal_get_trip_points (
 		status = acpi_evaluate_reference(tz->handle, name, NULL, &tz->trips.active[i].devices);
 		if (ACPI_SUCCESS(status)) {
 			tz->trips.active[i].flags.valid = 1;
-			printk( "ACPI: Found active threshold [%d]:[%lu]\n", i, tz->trips.active[i].temperature);
+			printk( "ACPI: Found active threshold [%d]:[%lu]\n", i, KELVIN_TO_CELSIUS(tz->trips.active[i].temperature));
 		}
 		else
 			ACPI_DEBUG_PRINT((ACPI_DB_ERROR, "Invalid active threshold [%d]\n", i));

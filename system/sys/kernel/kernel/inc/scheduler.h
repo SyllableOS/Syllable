@@ -170,6 +170,7 @@ struct _Thread
 	uint32 tr_nPTraceVMCloneBase;
 	area_id tr_hPTraceVMClone;
 	uint32 tr_nDebugReg[8];
+	uint32 tr_nLastEIP;
 
 	/* Block cache */
 	int tr_nNumLockedCacheBlocks;

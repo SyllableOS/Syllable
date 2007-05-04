@@ -474,14 +474,16 @@ void TopLayer::UpdateIfNeeded()
 						IRect cSrcRect = cDstRect - pcChild->GetIFrame().LeftTop();
 					
 						if( cSrcRect.IsValid() && cDstRect.IsValid() )
-						{						
-							if( bSpritesHidden == false )
+						{
+							if( bSpritesHidden == false && SrvSprite::CoveredByRect( cDstRect ) )
 							{
-								if( SrvSprite::DoIntersect( cDstRect ) )
-								{
-									SrvSprite::Hide();
-									bSpritesHidden = true;
-								}
+								SrvSprite::HideForCopy( cDstRect );
+								bSpritesHidden = true;
+							}							
+							if( bSpritesHidden == false && SrvSprite::DoIntersect( cDstRect ) )
+							{
+								SrvSprite::Hide();
+								bSpritesHidden = true;
 							}
 							m_pcBitmap->m_pcDriver->BltBitmap( m_pcBitmap, pcChild->m_pcBackbuffer, cSrcRect, cDstRect, DM_COPY, 0xff );
 						}

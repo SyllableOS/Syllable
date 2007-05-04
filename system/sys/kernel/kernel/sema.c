@@ -71,7 +71,7 @@ SemContext_s *create_semaphore_context( void )
 {
 	SemContext_s *psCtx;
 
-	psCtx = kmalloc( sizeof( SemContext_s ), MEMF_KERNEL | MEMF_CLEAR | MEMF_OKTOFAILHACK );
+	psCtx = kmalloc( sizeof( SemContext_s ), MEMF_KERNEL | MEMF_CLEAR | MEMF_OKTOFAIL );
 	if ( psCtx != NULL )
 	{
 		psCtx->sc_nLastID = 1;
@@ -140,7 +140,7 @@ SemContext_s *clone_semaphore_context( SemContext_s * psOrig, proc_id hNewOwner 
 	uint32 nFlg;
 	int nError;
 
-	psCtx = kmalloc( sizeof( SemContext_s ), MEMF_KERNEL | MEMF_CLEAR | MEMF_OKTOFAILHACK );
+	psCtx = kmalloc( sizeof( SemContext_s ), MEMF_KERNEL | MEMF_CLEAR | MEMF_OKTOFAIL );
 	if ( psCtx == NULL )
 	{
 		return ( NULL );
@@ -477,12 +477,12 @@ static sem_id do_create_semaphore( bool bKernel, const char *pzName, int nCount,
 	switch ( ( nFlags & SEM_STYLE_MASK ) )
 	{
 	case SEMSTYLE_COUNTING:
-		psSema = kmalloc( sizeof( Semaphore_s ), MEMF_KERNEL | MEMF_CLEAR | MEMF_OKTOFAILHACK );
+		psSema = kmalloc( sizeof( Semaphore_s ), MEMF_KERNEL | MEMF_CLEAR | MEMF_OKTOFAIL );
 		psSema->ss_hHolder = ( ( nFlags & SEM_RECURSIVE ) && nCount <= 0 ) ? CURRENT_THREAD->tr_hThreadID : -1;
 		psSema->ss_lNestCount = nCount;
 		break;
 	case SEMSTYLE_RWLOCK:
-		psSema = kmalloc( sizeof( RWLock_s ), MEMF_KERNEL | MEMF_CLEAR | MEMF_OKTOFAILHACK );
+		psSema = kmalloc( sizeof( RWLock_s ), MEMF_KERNEL | MEMF_CLEAR | MEMF_OKTOFAIL );
 		psSema->ss_hHolder = -1;
 		psSema->ss_lNestCount = 0;
 		break;
@@ -1199,6 +1199,7 @@ static status_t do_lock_semaphore_ex( bool bKernel, sem_id hSema, int nCount, ui
 			nError = -EINVAL;
 			break;
 		}
+	
 
 		if ( ( psSema->ss_nFlags & SEM_STYLE_MASK ) != SEMSTYLE_COUNTING )
 		{
@@ -1670,6 +1671,7 @@ static status_t do_unlock_semaphore_ex( bool bKernel, sem_id hSema, int nCount )
 
 		return ( -EINVAL );
 	}
+	
 
 	if ( ( psSema->ss_nFlags & SEM_STYLE_MASK ) != SEMSTYLE_COUNTING )
 	{
@@ -3656,7 +3658,7 @@ void dump_semaphore( Semaphore_s *psSema, bool bShort )
 		if ( bShort )
 			dbprintf( DBP_DEBUGGER, "  Style: counting  Count: %d  Flags: 0x%8.8X Owner: %d\n", psSema->ss_lNestCount, psSema->ss_nFlags, psSema->ss_hHolder );
 		else
-			dbprintf( DBP_DEBUGGER, "  Style: counting\n  Count: %d\n  Flags: 0x%8.8X\n  Owner: %d\n", psSema->ss_lNestCount, psSema->ss_nFlags, psSema->ss_hHolder );
+			dbprintf( DBP_DEBUGGER, "  Style: counting\n  Count: %d\n  Flags: 0x%8.8X\n  Owner: %d\n  Nest: %d\n", psSema->ss_lNestCount, psSema->ss_nFlags, psSema->ss_hHolder , psSema->ss_lNestCount);
 		break;
 
 	case SEMSTYLE_RWLOCK:

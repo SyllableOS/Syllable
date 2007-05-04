@@ -137,7 +137,7 @@ int request_irq( int nIrqNum, irq_top_handler *pTopHandler, irq_bottom_handler *
 		return ( -EINVAL );
 	}
 
-	psAction = kmalloc( sizeof( IrqAction_s ), MEMF_KERNEL | MEMF_CLEAR | MEMF_LOCKED | MEMF_OKTOFAILHACK );
+	psAction = kmalloc( sizeof( IrqAction_s ), MEMF_KERNEL | MEMF_CLEAR | MEMF_LOCKED | MEMF_OKTOFAIL );
 
 	if ( psAction == NULL )
 	{

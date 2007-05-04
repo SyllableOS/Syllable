@@ -471,7 +471,7 @@ static int alloc_area_page_tables( MemArea_s *psArea, uintptr_t nStart, uintptr_
 		if ( NULL == pDir )
 		{
 			/* Allocate new page table */
-			pDir = ( uint32_t * )get_free_page( GFP_CLEAR );
+			pDir = ( uint32_t * )get_free_page( MEMF_CLEAR );
 			if ( pDir == NULL )
 			{
 				printk( "Error: alloc_area_page_tables() out of memory\n" );
@@ -575,7 +575,7 @@ static status_t alloc_area_pages_contiguous( MemArea_s *psArea, uintptr_t nStart
 	status_t nError = 0;
 	uintptr_t nAddr;
 	size_t nPages = ( nEnd - nStart + 1 ) >> PAGE_SHIFT;
-	uintptr_t nPhysAddr = get_free_pages( nPages, GFP_CLEAR );
+	uintptr_t nPhysAddr = get_free_pages( nPages, MEMF_CLEAR );
 	
 	if( nPhysAddr == 0 )
 	{
@@ -1277,7 +1277,7 @@ MemContext_s *clone_mem_context( MemContext_s *psOrig )
 		goto error1;
 	}
 
-	psNewSeg->mc_pPageDir = ( pgd_t * ) get_free_page( GFP_CLEAR );
+	psNewSeg->mc_pPageDir = ( pgd_t * ) get_free_page( MEMF_CLEAR );
 
 	if ( psNewSeg->mc_pPageDir == NULL )
 	{
@@ -2440,7 +2440,7 @@ status_t strndup_from_user( const char *pzSrc, size_t nMaxLen, char **ppzDst )
 	{
 		return ( -ENAMETOOLONG );
 	}
-	pzDst = kmalloc( nLen + 1, MEMF_KERNEL | MEMF_OKTOFAILHACK );
+	pzDst = kmalloc( nLen + 1, MEMF_KERNEL | MEMF_OKTOFAIL );
 	if ( pzDst == NULL )
 	{
 		return ( -ENOMEM );
@@ -2914,14 +2914,14 @@ error:
  */
 void init_kernel_mem_context()
 {
-	g_psKernelSeg = ( MemContext_s * )get_free_page( GFP_CLEAR );
+	g_psKernelSeg = ( MemContext_s * )get_free_page( MEMF_CLEAR );
 
-	g_psKernelSeg->mc_pPageDir = ( pgd_t * ) get_free_page( GFP_CLEAR );
+	g_psKernelSeg->mc_pPageDir = ( pgd_t * ) get_free_page( MEMF_CLEAR );
 
 	for ( count_t i = 0; i < ( ( ( g_sSysBase.ex_nTotalPageCount * PAGE_SIZE ) + PGDIR_SIZE - 1 ) / PGDIR_SIZE ); ++i )
 	{
 		PGD_VALUE( g_psKernelSeg->mc_pPageDir[i] ) =
-			MK_PGDIR( ( uintptr_t )( get_free_page( GFP_CLEAR ) ) );
+			MK_PGDIR( ( uintptr_t )( get_free_page( MEMF_CLEAR ) ) );
 	}
 
 	for ( count_t i = 0; i < g_sSysBase.ex_nTotalPageCount; ++i )

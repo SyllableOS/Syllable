@@ -34,6 +34,34 @@ extern "C" {
 int get_processor_id(void);
 #endif
 
+enum { CPU_EXTENDED_INFO_VERSION = 1 };
+
+typedef struct
+{
+	int nAcpiId;
+	char anVendorID[16];
+	char zName[255];
+	uint64 nCoreSpeed;
+	uint64 nBusSpeed;
+	uint32 nDelayCount;
+	int nFamily;
+	int nModel;
+	int nAPICVersion;
+	bool bIsPresent;
+	bool bIsRunning;
+	bool bHaveFXSR; 		/* CPU has fast FPU save and restore */
+	bool bHaveXMM;		/* CPU has SSE extensions */
+	bool bHaveMTRR;		/* CPU has MTRRs */
+	uint32 nFeatures;
+} CPU_Extended_Info_v1_s;
+typedef CPU_Extended_Info_v1_s CPU_Extended_Info_s;	/*default to latest version */
+
+int get_active_cpu_count( void );
+status_t get_cpu_extended_info( int nPhysicalCPUId, CPU_Extended_Info_s * _psInfo, int nVersion );
+void update_cpu_speed(int nPhysicalCPUId, uint64 nCoreSpeed, uint32 nDelayCount );
+
+void set_idle_loop_handler( void ( *pHandler )( int ) );
+void set_cpu_time_handler( bigtime_t ( *pHandler )( int ) );
 
 #ifdef __cplusplus
 }

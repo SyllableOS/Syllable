@@ -1169,6 +1169,7 @@ void Layer::DrawBitMap( SrvBitmap * pcBitMap, Rect cSrcRect, Rect cDstRect )
 
 	IRect cISrcRect( cSrcRect );
 	IRect cIDstRect( cDstRect + m_cScrollOffset );
+	bool bScaledBlit = ( cISrcRect.Size() != cIDstRect.Size() );
 	
 	if( !pcBitMap->GetBounds().Includes( cISrcRect ) )
 	{
@@ -1180,7 +1181,10 @@ void Layer::DrawBitMap( SrvBitmap * pcBitMap, Rect cSrcRect, Rect cDstRect )
 
 	if( ( m_pcWindow == NULL || m_pcWindow->IsOffScreen() == false ) && m_pcBitmap == g_pcScreenBitmap )
 	{
-		SrvSprite::Hide( cIDstRect + cTopLeft );
+		if( m_nDrawingMode == DM_COPY )
+			SrvSprite::HideForCopy( cIDstRect + cTopLeft );		
+		else
+			SrvSprite::Hide( cIDstRect + cTopLeft );
 	}
 	
 
@@ -1192,7 +1196,7 @@ void Layer::DrawBitMap( SrvBitmap * pcBitMap, Rect cSrcRect, Rect cDstRect )
 		{
 			IRect cDst = cRect + cTopLeft;
 			IRect cSrc;
-			if( cISrcRect.Size() != cIDstRect.Size() )
+			if( bScaledBlit )
 			{
 				cSrc = cISrcRect;
 				cSrc.left += ( cRect.left - cIDstRect.left ) * ( cISrcRect.Width() + 1 ) / ( cIDstRect.Width() + 1 );

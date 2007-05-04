@@ -414,7 +414,7 @@ status_t sys_send_data( const thread_id hThread, const uint32 nCode, void *const
 	int nFlg;
 	int nError;
 
-	pBuffer = kmalloc( nSize, MEMF_KERNEL | MEMF_OKTOFAILHACK );
+	pBuffer = kmalloc( nSize, MEMF_KERNEL | MEMF_OKTOFAIL );
 	if ( pBuffer == NULL )
 	{
 		return ( -ENOMEM );
@@ -606,7 +606,7 @@ Thread_s *Thread_New( Process_s *psProc )
 {
 	Thread_s *psThread;
 
-	psThread = kmalloc( sizeof( Thread_s ), MEMF_CLEAR | MEMF_KERNEL | MEMF_LOCKED | MEMF_OKTOFAILHACK );
+	psThread = kmalloc( sizeof( Thread_s ), MEMF_CLEAR | MEMF_KERNEL | MEMF_LOCKED | MEMF_OKTOFAIL );
 
 	if ( psThread == NULL )
 	{
@@ -616,7 +616,7 @@ Thread_s *Thread_New( Process_s *psProc )
 
 	psThread->tc_lKStackSize = PAGE_SIZE * 5;
 
-	psThread->tc_plKStack = kmalloc( psThread->tc_lKStackSize, MEMF_KERNEL | MEMF_OKTOFAILHACK );
+	psThread->tc_plKStack = kmalloc( psThread->tc_lKStackSize, MEMF_KERNEL | MEMF_OKTOFAIL );
 
 	if ( psThread->tc_plKStack == NULL )
 	{
@@ -1106,6 +1106,7 @@ static void db_dump_thread( int argc, char **argv )
 
 //  SigAction_s  tr_apsSigHandlers[ NSIG ];
 	dbprintf( DBP_DEBUGGER, "SysTraceMask   = %d\n", psThread->tr_nSysTraceMask );
+	dbprintf( DBP_DEBUGGER, "EIP            = 0x%08x\n", psThread->tr_nLastEIP );
 //  dbprintf( DBP_DEBUGGER, "NewRetValMethod = %d\n", psThread->tr_bNewRetValMethode );
 
 }

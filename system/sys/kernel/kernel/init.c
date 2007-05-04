@@ -782,7 +782,7 @@ int init_kernel( char *pRealMemBase, int nKernelSize )
 	
 	init_kernel_mem_context();
 	
-	g_sSysBase.ex_pNullPage = ( char * )get_free_page( GFP_CLEAR );
+	g_sSysBase.ex_pNullPage = ( char * )get_free_page( MEMF_CLEAR );
 
 	kassertw( ( get_cpu_flags() & EFLG_IF ) == 0 );
 

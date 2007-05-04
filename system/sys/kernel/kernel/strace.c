@@ -463,7 +463,7 @@ int sys_strace_exclude( thread_id hThread, int nSyscall )
 	psThread = get_thread_by_handle( hThread );
 	if( NULL != psThread )
 	{
-		psExcNew = kmalloc( sizeof( SyscallExc_s ), MEMF_KERNEL | MEMF_CLEAR | MEMF_OKTOFAILHACK );
+		psExcNew = kmalloc( sizeof( SyscallExc_s ), MEMF_KERNEL | MEMF_CLEAR | MEMF_OKTOFAIL );
 		if( NULL == psExcNew )
 		{
 			nError = -ENOMEM;

@@ -226,7 +226,7 @@ uint32 get_free_pages( int nPageCount, int nFlags )
 	}
 	spinunlock_enable( &g_sPageListSpinLock, nEFlg );
 
-	if ( 0 != nPage )
+	if ( ( 0 != nPage ) && ( nFlags & MEMF_CLEAR ) )
 	{
 		memset( ( void * )nPage, 0, PAGE_SIZE * nPageCount );
 	}
