@@ -1,3 +1,11 @@
+* May 4, 2007, Arno Klenke *
+
+Added the cpu frequency scaling patch by Tim ter Laak
+Allow accesses to the usb uhci root hub if the controller is suspended
+Rename MEMF_OKTOFAILHACK to MEMF_OKTOFAIL
+Removed the (unused) GFP_CLEAR flag. get_free_page() now respects the MEMF_CLEAR flag.
+
+
 * April 14, 2007, Kristian Van Der Vliet *
 
 Synced the rtl8169 driver with Linux. Adds support for RTL8168b/8111b, RTL8101e and RTL8100e
@@ -1153,5 +1161,6 @@ required; they are implemented in user space as part of libc.
 
 Applied a fix to sys/kernel/kernel/vfs/vfs.c  The fcntl() F_GETLK command
 now works as expected.
+
 
 
