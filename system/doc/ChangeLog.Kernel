@@ -1,3 +1,12 @@
+* May 7, 2007, Arno Klenke *
+
+Update acpi code to version 20070126
+Add the set_thread_target_cpu() function
+Use the clone_page_pte() function more often
+Limit memory size to 1.5gb
+
+
+
 * May 4, 2007, Arno Klenke *
 
 Added the cpu frequency scaling patch by Tim ter Laak
@@ -1161,6 +1170,7 @@ required; they are implemented in user space as part of libc.
 
 Applied a fix to sys/kernel/kernel/vfs/vfs.c  The fcntl() F_GETLK command
 now works as expected.
+
 
 
 

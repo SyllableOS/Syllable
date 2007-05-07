@@ -1,3 +1,7 @@
+* May 7 2007 Arno Klenke *
+
+Updated the ffmpeg plugin to work with the latest ffmpeg version
+
 * April 14 2007 Arno Klenke *
 
 Pass supported media formats from the media server to the server audio plugin
@@ -211,5 +215,6 @@ Added multiple soundcard support to the media server
 * Nov 18 2003, Kristian Van Der Vliet *
 
 Created this ChangeLog for changes specific to the media framework.
+
 
 
