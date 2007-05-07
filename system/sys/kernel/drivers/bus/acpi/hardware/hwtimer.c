@@ -6,7 +6,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2006, R. Byron Moore
+ * Copyright (C) 2000 - 2007, R. Byron Moore
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -61,13 +61,13 @@ ACPI_MODULE_NAME("hwtimer")
  ******************************************************************************/
 acpi_status acpi_get_timer_resolution(u32 * resolution)
 {
-	ACPI_FUNCTION_TRACE("acpi_get_timer_resolution");
+	ACPI_FUNCTION_TRACE(acpi_get_timer_resolution);
 
 	if (!resolution) {
 		return_ACPI_STATUS(AE_BAD_PARAMETER);
 	}
 
-	if (0 == acpi_gbl_FADT->tmr_val_ext) {
+	if ((acpi_gbl_FADT.flags & ACPI_FADT_32BIT_TIMER) == 0) {
 		*resolution = 24;
 	} else {
 		*resolution = 32;
@@ -75,6 +75,8 @@ acpi_status acpi_get_timer_resolution(u32 * resolution)
 
 	return_ACPI_STATUS(AE_OK);
 }
+
+ACPI_EXPORT_SYMBOL(acpi_get_timer_resolution)
 
 /******************************************************************************
  *
@@ -92,18 +94,19 @@ acpi_status acpi_get_timer(u32 * ticks)
 {
 	acpi_status status;
 
-	ACPI_FUNCTION_TRACE("acpi_get_timer");
+	ACPI_FUNCTION_TRACE(acpi_get_timer);
 
 	if (!ticks) {
 		return_ACPI_STATUS(AE_BAD_PARAMETER);
 	}
 
-	status = acpi_hw_low_level_read(32, ticks, &acpi_gbl_FADT->xpm_tmr_blk);
+	status =
+	    acpi_hw_low_level_read(32, ticks, &acpi_gbl_FADT.xpm_timer_block);
 
 	return_ACPI_STATUS(status);
 }
 
-EXPORT_SYMBOL(acpi_get_timer);
+ACPI_EXPORT_SYMBOL(acpi_get_timer)
 
 /******************************************************************************
  *
@@ -141,7 +144,7 @@ acpi_get_timer_duration(u32 start_ticks, u32 end_ticks, u32 * time_elapsed)
 	u32 delta_ticks;
 	acpi_integer quotient;
 
-	ACPI_FUNCTION_TRACE("acpi_get_timer_duration");
+	ACPI_FUNCTION_TRACE(acpi_get_timer_duration);
 
 	if (!time_elapsed) {
 		return_ACPI_STATUS(AE_BAD_PARAMETER);
@@ -154,7 +157,8 @@ acpi_get_timer_duration(u32 start_ticks, u32 end_ticks, u32 * time_elapsed)
 	if (start_ticks < end_ticks) {
 		delta_ticks = end_ticks - start_ticks;
 	} else if (start_ticks > end_ticks) {
-		if (0 == acpi_gbl_FADT->tmr_val_ext) {
+		if ((acpi_gbl_FADT.flags & ACPI_FADT_32BIT_TIMER) == 0) {
+
 			/* 24-bit Timer */
 
 			delta_ticks =
@@ -183,5 +187,4 @@ acpi_get_timer_duration(u32 start_ticks, u32 end_ticks, u32 * time_elapsed)
 	return_ACPI_STATUS(status);
 }
 
-EXPORT_SYMBOL(acpi_get_timer_duration);
-
+ACPI_EXPORT_SYMBOL(acpi_get_timer_duration)

@@ -38,6 +38,9 @@
 
 int acpi_disabled = 0;
 int acpi_strict = 0;
+
+acpi_native_uint acpi_gbl_permanent_mmap = 1;
+
 enum acpi_irq_model_id		acpi_irq_model;
 acpi_interrupt_flags acpi_sci_flags;
 
@@ -51,6 +54,9 @@ extern int acpi_fan_init(void);
 extern int acpi_power_init(void);
 extern int acpi_button_init(void);
 extern int acpi_video_init(void);
+
+#define ACPI_MAX_TABLES		128
+static struct acpi_table_desc initial_tables[ACPI_MAX_TABLES];
 
 
 /*
@@ -126,6 +132,7 @@ void acpi_print_power_states()
 	int i;
 	char zBuffer[255];
 	memset( zBuffer, 0, 255 );
+	
 	for( i = 0; i < ACPI_S_STATE_COUNT; i++ ) {
 		u8 type_a, type_b;
 		acpi_status status;
@@ -135,10 +142,6 @@ void acpi_print_power_states()
 			char zTemp[20];
 			sprintf( zTemp, "S%d ", i );
 			strcat( zBuffer, zTemp );
-		}
-		if (i == ACPI_STATE_S4) {
-			if( acpi_gbl_FACS->S4bios_f )
-				strcat( zBuffer, "S4bios " );
 		}
 	}
 	kerndbg( KERN_INFO, "ACPI: %ssupported\n", zBuffer );
@@ -156,9 +159,9 @@ void acpi_poweroff()
 	acpi_enter_sleep_state(ACPI_STATE_S5);
 }
 
-FADT_DESCRIPTOR* acpi_get_fadt()
+struct acpi_table_fadt* acpi_get_fadt()
 {
-	return( &acpi_fadt );
+	return( &acpi_gbl_FADT );
 }
 
 bool get_bool_arg( bool *pbValue, const char *pzName, const char *pzArg, int nArgLen )
@@ -247,6 +250,7 @@ status_t device_init( int nDeviceID )
 	{
 		/* Initialize ACPI system */
 		simple_pci_init();
+		acpi_initialize_tables(initial_tables, ACPI_MAX_TABLES, 0);
 		if( acpi_boot_init() < 0 )
 			return( -ENODEV );
 		if( acpi_init() < 0 )

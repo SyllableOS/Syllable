@@ -99,6 +99,7 @@ acpi_bus_get_power_flags (
 	u32                     i = 0;
 
 	ACPI_FUNCTION_TRACE("acpi_bus_get_power_flags");
+	
 
 	/*
 	 * Power Management Flags
@@ -520,6 +521,7 @@ acpi_bus_get_flags (
 {
 	acpi_status		status = AE_OK;
 	acpi_handle		temp = NULL;
+	
 
 	ACPI_FUNCTION_TRACE("acpi_bus_get_flags");
 
@@ -566,6 +568,7 @@ acpi_bus_get_flags (
 		device->flags.wake_capable = 1;
 
 	/* TBD: Peformance management */
+	
 
 	return_VALUE(0);
 }
@@ -615,6 +618,7 @@ static void acpi_device_set_id(struct acpi_device * device, struct acpi_device *
 	char			*uid = NULL;
 	struct acpi_compatible_id_list *cid_list = NULL;
 	acpi_status		status;
+	
 
 	switch (type) {
 	case ACPI_BUS_TYPE_DEVICE:
@@ -661,7 +665,7 @@ static void acpi_device_set_id(struct acpi_device * device, struct acpi_device *
 	 * ----
 	 * Fix for the system root bus device -- the only root-level device.
 	 */
-	if ((parent == ACPI_ROOT_OBJECT) && (type == ACPI_BUS_TYPE_DEVICE)) {
+	if (((acpi_handle)parent == ACPI_ROOT_OBJECT) && (type == ACPI_BUS_TYPE_DEVICE)) {
 		hid = ACPI_BUS_HID;
 		strcpy(device->pnp.device_name, ACPI_BUS_DEVICE_NAME);
 		strcpy(device->pnp.device_class, ACPI_BUS_CLASS);
@@ -812,6 +816,7 @@ acpi_bus_add (
 {
 	int			result = 0;
 	struct acpi_device	*device = NULL;
+	
 
 	ACPI_FUNCTION_TRACE("acpi_bus_add");
 
@@ -852,6 +857,7 @@ acpi_bus_add (
 	 * power resources) so we need to be careful how we use it.
 	 */
 	switch (type) {
+	case ACPI_BUS_TYPE_PROCESSOR:		
 	case ACPI_BUS_TYPE_DEVICE:
 		result = acpi_bus_get_status(device);
 		if (ACPI_FAILURE(result) || !device->status.present) {
@@ -863,6 +869,7 @@ acpi_bus_add (
 		STRUCT_TO_INT(device->status) = 0x0F;
 		break;
 	}
+	
 
 	/*
 	 * Initialize Device
@@ -909,7 +916,6 @@ acpi_bus_add (
 	if ((result = acpi_device_set_context(device,type)))
 		goto end;
 
-	acpi_device_get_debug_info(device,handle,type);
 
 	acpi_device_register(device,parent);
 
@@ -924,6 +930,9 @@ acpi_bus_add (
 		if (device->parent && device->parent->ops.bind)
 			device->parent->ops.bind(device);
 	}
+
+	acpi_device_get_debug_info(device,handle,type);
+
 
 	/*
 	 * Locate & Attach Driver
@@ -988,6 +997,7 @@ int acpi_bus_scan (struct acpi_device	*start)
 				parent = parent->parent;
 			continue;
 		}
+		
 
 		status = acpi_get_type(chandle, &type);
 		if (ACPI_FAILURE(status))
@@ -1026,6 +1036,7 @@ int acpi_bus_scan (struct acpi_device	*start)
 		status = acpi_bus_add(&child, parent, chandle, type);
 		if (ACPI_FAILURE(status))
 			continue;
+			
 
 		/*
 		 * If the device is present, enabled, and functioning then
@@ -1110,32 +1121,30 @@ acpi_bus_trim(struct acpi_device	*start,
 	return err;
 }
 
-static int
-acpi_bus_scan_fixed (
-	struct acpi_device	*root)
-{
-	int			result = 0;
-	struct acpi_device	*device = NULL;
 
-	ACPI_FUNCTION_TRACE("acpi_bus_scan_fixed");
+static int acpi_bus_scan_fixed(struct acpi_device *root)
+{
+	int result = 0;
+	struct acpi_device *device = NULL;
 
 	if (!root)
-		return_VALUE(-ENODEV);
+		return -ENODEV;
 
 	/*
 	 * Enumerate all fixed-feature devices.
 	 */
-	if (acpi_fadt.pwr_button == 0)
+	if ((acpi_gbl_FADT.flags & ACPI_FADT_POWER_BUTTON) == 0) {
 		result = acpi_bus_add(&device, acpi_root, 
 			NULL, ACPI_BUS_TYPE_POWER_BUTTON);
+	}
 
-	if (acpi_fadt.sleep_button == 0)
+	if ((acpi_gbl_FADT.flags & ACPI_FADT_SLEEP_BUTTON) == 0) {
 		result = acpi_bus_add(&device, acpi_root, 
 			NULL, ACPI_BUS_TYPE_SLEEP_BUTTON);
+	}
 
-	return_VALUE(result);
+	return result;
 }
-
 
 int acpi_scan_init(void)
 {

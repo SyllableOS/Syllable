@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2006, R. Byron Moore
+ * Copyright (C) 2000 - 2007, R. Byron Moore
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -53,10 +53,14 @@
 #define ACPI_EXD_TABLE_SIZE(name)   (sizeof(name) / sizeof (struct acpi_exdump_info))
 
 /*
- * If possible, pack the following structure to byte alignment, since we
- * don't care about performance for debug output
+ * If possible, pack the following structures to byte alignment, since we
+ * don't care about performance for debug output. Two cases where we cannot
+ * pack the structures:
+ *
+ * 1) Hardware does not support misaligned memory transfers
+ * 2) Compiler does not support pointers within packed structures
  */
-#ifndef ACPI_MISALIGNMENT_NOT_SUPPORTED
+#if (!defined(ACPI_MISALIGNMENT_NOT_SUPPORTED) && !defined(ACPI_PACKED_POINTERS_NOT_SUPPORTED))
 #pragma pack(1)
 #endif
 
@@ -249,7 +253,8 @@ acpi_ex_release_mutex(union acpi_operand_object *obj_desc,
 
 void acpi_ex_release_all_mutexes(struct acpi_thread_state *thread);
 
-void acpi_ex_unlink_mutex(union acpi_operand_object *obj_desc);
+void acpi_ex_unlink_mutex(union acpi_operand_object *obj_desc,
+			  struct acpi_thread_state *thread);
 
 /*
  * exprep - ACPI AML execution - prep utilities
@@ -273,12 +278,6 @@ acpi_status acpi_ex_system_do_suspend(acpi_integer time);
 
 acpi_status acpi_ex_system_do_stall(u32 time);
 
-acpi_status
-acpi_ex_system_acquire_mutex(union acpi_operand_object *time,
-			     union acpi_operand_object *obj_desc);
-
-acpi_status acpi_ex_system_release_mutex(union acpi_operand_object *obj_desc);
-
 acpi_status acpi_ex_system_signal_event(union acpi_operand_object *obj_desc);
 
 acpi_status
@@ -287,7 +286,10 @@ acpi_ex_system_wait_event(union acpi_operand_object *time,
 
 acpi_status acpi_ex_system_reset_event(union acpi_operand_object *obj_desc);
 
-acpi_status acpi_ex_system_wait_semaphore(acpi_handle semaphore, u16 timeout);
+acpi_status
+acpi_ex_system_wait_semaphore(acpi_semaphore semaphore, u16 timeout);
+
+acpi_status acpi_ex_system_wait_mutex(acpi_mutex mutex, u16 timeout);
 
 /*
  * exoparg1 - ACPI AML execution, 1 operand

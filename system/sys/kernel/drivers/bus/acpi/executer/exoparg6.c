@@ -6,7 +6,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2006, R. Byron Moore
+ * Copyright (C) 2000 - 2007, R. Byron Moore
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -222,7 +222,7 @@ acpi_status acpi_ex_opcode_6A_0T_1R(struct acpi_walk_state * walk_state)
 	acpi_integer index;
 	union acpi_operand_object *this_element;
 
-	ACPI_FUNCTION_TRACE_STR("ex_opcode_6A_0T_1R",
+	ACPI_FUNCTION_TRACE_STR(ex_opcode_6A_0T_1R,
 				acpi_ps_get_opcode_name(walk_state->opcode));
 
 	switch (walk_state->opcode) {

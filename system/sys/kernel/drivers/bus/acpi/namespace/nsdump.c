@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2006, R. Byron Moore
+ * Copyright (C) 2000 - 2007, R. Byron Moore
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -76,7 +76,7 @@ void acpi_ns_print_pathname(u32 num_segments, char *pathname)
 {
 	acpi_native_uint i;
 
-	ACPI_FUNCTION_NAME("ns_print_pathname");
+	ACPI_FUNCTION_NAME(ns_print_pathname);
 
 	if (!(acpi_dbg_level & ACPI_LV_NAMES)
 	    || !(acpi_dbg_layer & ACPI_NAMESPACE)) {
@@ -124,7 +124,7 @@ void
 acpi_ns_dump_pathname(acpi_handle handle, char *msg, u32 level, u32 component)
 {
 
-	ACPI_FUNCTION_TRACE("ns_dump_pathname");
+	ACPI_FUNCTION_TRACE(ns_dump_pathname);
 
 	/* Do this only if the requested debug level and component are enabled */
 
@@ -169,7 +169,7 @@ acpi_ns_dump_one_object(acpi_handle obj_handle,
 	u32 dbg_level;
 	u32 i;
 
-	ACPI_FUNCTION_NAME("ns_dump_one_object");
+	ACPI_FUNCTION_NAME(ns_dump_one_object);
 
 	/* Is output enabled? */
 
@@ -205,6 +205,9 @@ acpi_ns_dump_one_object(acpi_handle obj_handle,
 		}
 
 		if (!acpi_ut_valid_acpi_name(this_node->name.integer)) {
+			this_node->name.integer =
+			    acpi_ut_repair_name(this_node->name.ascii);
+
 			ACPI_WARNING((AE_INFO, "Invalid ACPI Name %08X",
 				      this_node->name.integer));
 		}
@@ -223,6 +226,12 @@ acpi_ns_dump_one_object(acpi_handle obj_handle,
 	acpi_dbg_level = 0;
 	obj_desc = acpi_ns_get_attached_object(this_node);
 	acpi_dbg_level = dbg_level;
+
+	/* Temp nodes are those nodes created by a control method */
+
+	if (this_node->flags & ANOBJ_TEMPORARY) {
+		acpi_os_printf("(T) ");
+	}
 
 	switch (info->display_type & ACPI_DISPLAY_MASK) {
 	case ACPI_DISPLAY_SUMMARY:
@@ -622,7 +631,8 @@ acpi_ns_dump_objects(acpi_object_type type,
 	info.display_type = display_type;
 
 	(void)acpi_ns_walk_namespace(type, start_handle, max_depth,
-				     ACPI_NS_WALK_NO_UNLOCK,
+				     ACPI_NS_WALK_NO_UNLOCK |
+				     ACPI_NS_WALK_TEMP_NODES,
 				     acpi_ns_dump_one_object, (void *)&info,
 				     NULL);
 }
@@ -674,7 +684,7 @@ void acpi_ns_dump_tables(acpi_handle search_base, u32 max_depth)
 {
 	acpi_handle search_handle = search_base;
 
-	ACPI_FUNCTION_TRACE("ns_dump_tables");
+	ACPI_FUNCTION_TRACE(ns_dump_tables);
 
 	if (!acpi_gbl_root_node) {
 		/*

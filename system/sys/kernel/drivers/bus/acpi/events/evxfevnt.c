@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2006, R. Byron Moore
+ * Copyright (C) 2000 - 2007, R. Byron Moore
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -45,6 +45,7 @@
 #include <acpi/acpi.h>
 #include <acpi/acevents.h>
 #include <acpi/acnamesp.h>
+#include <acpi/actables.h>
 
 #define _COMPONENT          ACPI_EVENTS
 ACPI_MODULE_NAME("evxfevnt")
@@ -64,14 +65,15 @@ acpi_status acpi_enable(void)
 {
 	acpi_status status = AE_OK;
 
-	ACPI_FUNCTION_TRACE("acpi_enable");
+	ACPI_FUNCTION_TRACE(acpi_enable);
 
-	/* Make sure we have the FADT */
+	/* ACPI tables must be present */
 
-	if (!acpi_gbl_FADT) {
-		ACPI_WARNING((AE_INFO, "No FADT information present!"));
+	if (!acpi_tb_tables_loaded()) {
 		return_ACPI_STATUS(AE_NO_ACPI_TABLES);
 	}
+
+	/* Check current mode */
 
 	if (acpi_hw_get_mode() == ACPI_SYS_MODE_ACPI) {
 		ACPI_DEBUG_PRINT((ACPI_DB_INIT,
@@ -93,6 +95,8 @@ acpi_status acpi_enable(void)
 	return_ACPI_STATUS(status);
 }
 
+ACPI_EXPORT_SYMBOL(acpi_enable)
+
 /*******************************************************************************
  *
  * FUNCTION:    acpi_disable
@@ -109,12 +113,7 @@ acpi_status acpi_disable(void)
 {
 	acpi_status status = AE_OK;
 
-	ACPI_FUNCTION_TRACE("acpi_disable");
-
-	if (!acpi_gbl_FADT) {
-		ACPI_WARNING((AE_INFO, "No FADT information present!"));
-		return_ACPI_STATUS(AE_NO_ACPI_TABLES);
-	}
+	ACPI_FUNCTION_TRACE(acpi_disable);
 
 	if (acpi_hw_get_mode() == ACPI_SYS_MODE_LEGACY) {
 		ACPI_DEBUG_PRINT((ACPI_DB_INIT,
@@ -136,6 +135,8 @@ acpi_status acpi_disable(void)
 	return_ACPI_STATUS(status);
 }
 
+ACPI_EXPORT_SYMBOL(acpi_disable)
+
 /*******************************************************************************
  *
  * FUNCTION:    acpi_enable_event
@@ -154,7 +155,7 @@ acpi_status acpi_enable_event(u32 event, u32 flags)
 	acpi_status status = AE_OK;
 	u32 value;
 
-	ACPI_FUNCTION_TRACE("acpi_enable_event");
+	ACPI_FUNCTION_TRACE(acpi_enable_event);
 
 	/* Decode the Fixed Event */
 
@@ -168,7 +169,7 @@ acpi_status acpi_enable_event(u32 event, u32 flags)
 	 */
 	status =
 	    acpi_set_register(acpi_gbl_fixed_event_info[event].
-			      enable_register_id, 1, ACPI_MTX_LOCK);
+			      enable_register_id, 1);
 	if (ACPI_FAILURE(status)) {
 		return_ACPI_STATUS(status);
 	}
@@ -177,7 +178,7 @@ acpi_status acpi_enable_event(u32 event, u32 flags)
 
 	status =
 	    acpi_get_register(acpi_gbl_fixed_event_info[event].
-			      enable_register_id, &value, ACPI_MTX_LOCK);
+			      enable_register_id, &value);
 	if (ACPI_FAILURE(status)) {
 		return_ACPI_STATUS(status);
 	}
@@ -192,7 +193,7 @@ acpi_status acpi_enable_event(u32 event, u32 flags)
 	return_ACPI_STATUS(status);
 }
 
-EXPORT_SYMBOL(acpi_enable_event);
+ACPI_EXPORT_SYMBOL(acpi_enable_event)
 
 /*******************************************************************************
  *
@@ -213,7 +214,7 @@ acpi_status acpi_set_gpe_type(acpi_handle gpe_device, u32 gpe_number, u8 type)
 	acpi_status status = AE_OK;
 	struct acpi_gpe_event_info *gpe_event_info;
 
-	ACPI_FUNCTION_TRACE("acpi_set_gpe_type");
+	ACPI_FUNCTION_TRACE(acpi_set_gpe_type);
 
 	/* Ensure that we have a valid GPE number */
 
@@ -235,7 +236,7 @@ acpi_status acpi_set_gpe_type(acpi_handle gpe_device, u32 gpe_number, u8 type)
 	return_ACPI_STATUS(status);
 }
 
-EXPORT_SYMBOL(acpi_set_gpe_type);
+ACPI_EXPORT_SYMBOL(acpi_set_gpe_type)
 
 /*******************************************************************************
  *
@@ -257,7 +258,7 @@ acpi_status acpi_enable_gpe(acpi_handle gpe_device, u32 gpe_number, u32 flags)
 	acpi_status status = AE_OK;
 	struct acpi_gpe_event_info *gpe_event_info;
 
-	ACPI_FUNCTION_TRACE("acpi_enable_gpe");
+	ACPI_FUNCTION_TRACE(acpi_enable_gpe);
 
 	/* Use semaphore lock if not executing at interrupt level */
 
@@ -287,7 +288,7 @@ acpi_status acpi_enable_gpe(acpi_handle gpe_device, u32 gpe_number, u32 flags)
 	return_ACPI_STATUS(status);
 }
 
-EXPORT_SYMBOL(acpi_enable_gpe);
+ACPI_EXPORT_SYMBOL(acpi_enable_gpe)
 
 /*******************************************************************************
  *
@@ -309,7 +310,7 @@ acpi_status acpi_disable_gpe(acpi_handle gpe_device, u32 gpe_number, u32 flags)
 	acpi_status status = AE_OK;
 	struct acpi_gpe_event_info *gpe_event_info;
 
-	ACPI_FUNCTION_TRACE("acpi_disable_gpe");
+	ACPI_FUNCTION_TRACE(acpi_disable_gpe);
 
 	/* Use semaphore lock if not executing at interrupt level */
 
@@ -337,6 +338,8 @@ acpi_status acpi_disable_gpe(acpi_handle gpe_device, u32 gpe_number, u32 flags)
 	return_ACPI_STATUS(status);
 }
 
+ACPI_EXPORT_SYMBOL(acpi_disable_gpe)
+
 /*******************************************************************************
  *
  * FUNCTION:    acpi_disable_event
@@ -355,7 +358,7 @@ acpi_status acpi_disable_event(u32 event, u32 flags)
 	acpi_status status = AE_OK;
 	u32 value;
 
-	ACPI_FUNCTION_TRACE("acpi_disable_event");
+	ACPI_FUNCTION_TRACE(acpi_disable_event);
 
 	/* Decode the Fixed Event */
 
@@ -369,14 +372,14 @@ acpi_status acpi_disable_event(u32 event, u32 flags)
 	 */
 	status =
 	    acpi_set_register(acpi_gbl_fixed_event_info[event].
-			      enable_register_id, 0, ACPI_MTX_LOCK);
+			      enable_register_id, 0);
 	if (ACPI_FAILURE(status)) {
 		return_ACPI_STATUS(status);
 	}
 
 	status =
 	    acpi_get_register(acpi_gbl_fixed_event_info[event].
-			      enable_register_id, &value, ACPI_MTX_LOCK);
+			      enable_register_id, &value);
 	if (ACPI_FAILURE(status)) {
 		return_ACPI_STATUS(status);
 	}
@@ -391,7 +394,7 @@ acpi_status acpi_disable_event(u32 event, u32 flags)
 	return_ACPI_STATUS(status);
 }
 
-EXPORT_SYMBOL(acpi_disable_event);
+ACPI_EXPORT_SYMBOL(acpi_disable_event)
 
 /*******************************************************************************
  *
@@ -409,7 +412,7 @@ acpi_status acpi_clear_event(u32 event)
 {
 	acpi_status status = AE_OK;
 
-	ACPI_FUNCTION_TRACE("acpi_clear_event");
+	ACPI_FUNCTION_TRACE(acpi_clear_event);
 
 	/* Decode the Fixed Event */
 
@@ -423,12 +426,12 @@ acpi_status acpi_clear_event(u32 event)
 	 */
 	status =
 	    acpi_set_register(acpi_gbl_fixed_event_info[event].
-			      status_register_id, 1, ACPI_MTX_LOCK);
+			      status_register_id, 1);
 
 	return_ACPI_STATUS(status);
 }
 
-EXPORT_SYMBOL(acpi_clear_event);
+ACPI_EXPORT_SYMBOL(acpi_clear_event)
 
 /*******************************************************************************
  *
@@ -449,7 +452,7 @@ acpi_status acpi_clear_gpe(acpi_handle gpe_device, u32 gpe_number, u32 flags)
 	acpi_status status = AE_OK;
 	struct acpi_gpe_event_info *gpe_event_info;
 
-	ACPI_FUNCTION_TRACE("acpi_clear_gpe");
+	ACPI_FUNCTION_TRACE(acpi_clear_gpe);
 
 	/* Use semaphore lock if not executing at interrupt level */
 
@@ -477,6 +480,8 @@ acpi_status acpi_clear_gpe(acpi_handle gpe_device, u32 gpe_number, u32 flags)
 	return_ACPI_STATUS(status);
 }
 
+ACPI_EXPORT_SYMBOL(acpi_clear_gpe)
+
 #ifdef ACPI_FUTURE_USAGE
 /*******************************************************************************
  *
@@ -496,7 +501,7 @@ acpi_status acpi_get_event_status(u32 event, acpi_event_status * event_status)
 {
 	acpi_status status = AE_OK;
 
-	ACPI_FUNCTION_TRACE("acpi_get_event_status");
+	ACPI_FUNCTION_TRACE(acpi_get_event_status);
 
 	if (!event_status) {
 		return_ACPI_STATUS(AE_BAD_PARAMETER);
@@ -512,10 +517,12 @@ acpi_status acpi_get_event_status(u32 event, acpi_event_status * event_status)
 
 	status =
 	    acpi_get_register(acpi_gbl_fixed_event_info[event].
-			      status_register_id, event_status, ACPI_MTX_LOCK);
+			      status_register_id, event_status);
 
 	return_ACPI_STATUS(status);
 }
+
+ACPI_EXPORT_SYMBOL(acpi_get_event_status)
 
 /*******************************************************************************
  *
@@ -540,7 +547,7 @@ acpi_get_gpe_status(acpi_handle gpe_device,
 	acpi_status status = AE_OK;
 	struct acpi_gpe_event_info *gpe_event_info;
 
-	ACPI_FUNCTION_TRACE("acpi_get_gpe_status");
+	ACPI_FUNCTION_TRACE(acpi_get_gpe_status);
 
 	/* Use semaphore lock if not executing at interrupt level */
 
@@ -569,6 +576,8 @@ acpi_get_gpe_status(acpi_handle gpe_device,
 	}
 	return_ACPI_STATUS(status);
 }
+
+ACPI_EXPORT_SYMBOL(acpi_get_gpe_status)
 #endif				/*  ACPI_FUTURE_USAGE  */
 
 /*******************************************************************************
@@ -596,7 +605,7 @@ acpi_install_gpe_block(acpi_handle gpe_device,
 	struct acpi_namespace_node *node;
 	struct acpi_gpe_block_info *gpe_block;
 
-	ACPI_FUNCTION_TRACE("acpi_install_gpe_block");
+	ACPI_FUNCTION_TRACE(acpi_install_gpe_block);
 
 	if ((!gpe_device) || (!gpe_block_address) || (!register_count)) {
 		return_ACPI_STATUS(AE_BAD_PARAMETER);
@@ -664,7 +673,7 @@ acpi_install_gpe_block(acpi_handle gpe_device,
 	return_ACPI_STATUS(status);
 }
 
-EXPORT_SYMBOL(acpi_install_gpe_block);
+ACPI_EXPORT_SYMBOL(acpi_install_gpe_block)
 
 /*******************************************************************************
  *
@@ -684,7 +693,7 @@ acpi_status acpi_remove_gpe_block(acpi_handle gpe_device)
 	acpi_status status;
 	struct acpi_namespace_node *node;
 
-	ACPI_FUNCTION_TRACE("acpi_remove_gpe_block");
+	ACPI_FUNCTION_TRACE(acpi_remove_gpe_block);
 
 	if (!gpe_device) {
 		return_ACPI_STATUS(AE_BAD_PARAMETER);
@@ -720,5 +729,4 @@ acpi_status acpi_remove_gpe_block(acpi_handle gpe_device)
 	return_ACPI_STATUS(status);
 }
 
-EXPORT_SYMBOL(acpi_remove_gpe_block);
-
+ACPI_EXPORT_SYMBOL(acpi_remove_gpe_block)

@@ -121,12 +121,11 @@ __acpi_release_global_lock (unsigned int *lock)
 	} while (val != old);
 	return old & 0x1;
 }
+#define ACPI_ACQUIRE_GLOBAL_LOCK(facs, Acq) \
+	((Acq) = __acpi_acquire_global_lock(&facs->global_lock))
 
-#define ACPI_ACQUIRE_GLOBAL_LOCK(GLptr, Acq) \
-	((Acq) = __acpi_acquire_global_lock((unsigned int *) GLptr))
-
-#define ACPI_RELEASE_GLOBAL_LOCK(GLptr, Acq) \
-	((Acq) = __acpi_release_global_lock((unsigned int *) GLptr))
+#define ACPI_RELEASE_GLOBAL_LOCK(facs, Acq) \
+	((Acq) = __acpi_release_global_lock(&facs->global_lock))
 
 /*
  * Math helper asm macros

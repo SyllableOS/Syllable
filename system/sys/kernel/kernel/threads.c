@@ -637,7 +637,7 @@ Thread_s *Thread_New( Process_s *psProc )
 #endif
 
 	psThread->tr_nCurrentCPU = -1;
-	psThread->tr_nPrevCPU = -1;
+	psThread->tr_nTargetCPU = -1;
 	psThread->tr_hBlockSema = -1;
 	psThread->tr_hThreadID = -1;
 	psThread->tr_hDataSender = -1;
@@ -1098,7 +1098,7 @@ static void db_dump_thread( int argc, char **argv )
 
 	dbprintf( DBP_DEBUGGER, "BlockSema = %d\n", psThread->tr_hBlockSema );
 
-	dbprintf( DBP_DEBUGGER, "Previous CPU = %d\n", psThread->tr_nPrevCPU );
+	dbprintf( DBP_DEBUGGER, "Target CPU = %d\n", psThread->tr_nTargetCPU );
 	dbprintf( DBP_DEBUGGER, "Current CPU  = %d\n", psThread->tr_nCurrentCPU );
 	dbprintf( DBP_DEBUGGER, "V86 nest cnt = %d\n", atomic_read( &psThread->tr_nInV86 ) );
 	dbprintf( DBP_DEBUGGER, "SigPend      = %08lx%08lx\n", psThread->tr_sSigPend.__val[1], psThread->tr_sSigPend.__val[0] );

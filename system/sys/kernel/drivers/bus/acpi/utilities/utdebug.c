@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2006, R. Byron Moore
+ * Copyright (C) 2000 - 2007, R. Byron Moore
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -48,7 +48,7 @@
 ACPI_MODULE_NAME("utdebug")
 
 #ifdef ACPI_DEBUG_OUTPUT
-static u32 acpi_gbl_prev_thread_id = 0xFFFFFFFF;
+static acpi_thread_id acpi_gbl_prev_thread_id;
 static char *acpi_gbl_fn_entry_str = "----Entry";
 static char *acpi_gbl_fn_exit_str = "----Exit-";
 
@@ -161,7 +161,7 @@ acpi_ut_debug_print(u32 requested_debug_level,
 		    const char *function_name,
 		    char *module_name, u32 component_id, char *format, ...)
 {
-	u32 thread_id;
+	acpi_thread_id thread_id;
 	va_list args;
 
 	/*
@@ -180,8 +180,8 @@ acpi_ut_debug_print(u32 requested_debug_level,
 	if (thread_id != acpi_gbl_prev_thread_id) {
 		if (ACPI_LV_THREADS & acpi_dbg_level) {
 			acpi_os_printf
-			    ("\n**** Context Switch from TID %X to TID %X ****\n\n",
-			     acpi_gbl_prev_thread_id, thread_id);
+			    ("\n**** Context Switch from TID %lX to TID %lX ****\n\n",
+			     (unsigned long)acpi_gbl_prev_thread_id, (unsigned long)thread_id);
 		}
 
 		acpi_gbl_prev_thread_id = thread_id;
@@ -194,7 +194,7 @@ acpi_ut_debug_print(u32 requested_debug_level,
 	acpi_os_printf("%8s-%04ld ", module_name, line_number);
 
 	if (ACPI_LV_THREADS & acpi_dbg_level) {
-		acpi_os_printf("[%04lX] ", thread_id);
+		acpi_os_printf("[%04lX] ", (unsigned long)thread_id);
 	}
 
 	acpi_os_printf("[%02ld] %-22.22s: ",
@@ -205,7 +205,7 @@ acpi_ut_debug_print(u32 requested_debug_level,
 	acpi_os_vprintf(format, args);
 }
 
-EXPORT_SYMBOL(acpi_ut_debug_print);
+ACPI_EXPORT_SYMBOL(acpi_ut_debug_print)
 
 /*******************************************************************************
  *
@@ -243,7 +243,7 @@ acpi_ut_debug_print_raw(u32 requested_debug_level,
 	acpi_os_vprintf(format, args);
 }
 
-EXPORT_SYMBOL(acpi_ut_debug_print_raw);
+ACPI_EXPORT_SYMBOL(acpi_ut_debug_print_raw)
 
 /*******************************************************************************
  *
@@ -274,7 +274,7 @@ acpi_ut_trace(u32 line_number,
 			    component_id, "%s\n", acpi_gbl_fn_entry_str);
 }
 
-EXPORT_SYMBOL(acpi_ut_trace);
+ACPI_EXPORT_SYMBOL(acpi_ut_trace)
 
 /*******************************************************************************
  *
@@ -399,7 +399,7 @@ acpi_ut_exit(u32 line_number,
 	acpi_gbl_nesting_level--;
 }
 
-EXPORT_SYMBOL(acpi_ut_exit);
+ACPI_EXPORT_SYMBOL(acpi_ut_exit)
 
 /*******************************************************************************
  *
@@ -441,7 +441,7 @@ acpi_ut_status_exit(u32 line_number,
 	acpi_gbl_nesting_level--;
 }
 
-EXPORT_SYMBOL(acpi_ut_status_exit);
+ACPI_EXPORT_SYMBOL(acpi_ut_status_exit)
 
 /*******************************************************************************
  *
@@ -474,7 +474,7 @@ acpi_ut_value_exit(u32 line_number,
 	acpi_gbl_nesting_level--;
 }
 
-EXPORT_SYMBOL(acpi_ut_value_exit);
+ACPI_EXPORT_SYMBOL(acpi_ut_value_exit)
 
 /*******************************************************************************
  *
@@ -523,19 +523,12 @@ acpi_ut_ptr_exit(u32 line_number,
  *
  ******************************************************************************/
 
-void acpi_ut_dump_buffer(u8 * buffer, u32 count, u32 display, u32 component_id)
+void acpi_ut_dump_buffer2(u8 * buffer, u32 count, u32 display)
 {
 	acpi_native_uint i = 0;
 	acpi_native_uint j;
 	u32 temp32;
 	u8 buf_char;
-
-	/* Only dump the buffer if tracing is enabled */
-
-	if (!((ACPI_LV_TABLES & acpi_dbg_level) &&
-	      (component_id & acpi_dbg_layer))) {
-		return;
-	}
 
 	if ((count < 4) || (count & 0x01)) {
 		display = DB_BYTE_DISPLAY;
@@ -560,6 +553,7 @@ void acpi_ut_dump_buffer(u8 * buffer, u32 count, u32 display, u32 component_id)
 			}
 
 			switch (display) {
+			case DB_BYTE_DISPLAY:
 			default:	/* Default is BYTE display */
 
 				acpi_os_printf("%02X ", buffer[i + j]);
@@ -618,4 +612,30 @@ void acpi_ut_dump_buffer(u8 * buffer, u32 count, u32 display, u32 component_id)
 	return;
 }
 
+/*******************************************************************************
+ *
+ * FUNCTION:    acpi_ut_dump_buffer
+ *
+ * PARAMETERS:  Buffer              - Buffer to dump
+ *              Count               - Amount to dump, in bytes
+ *              Display             - BYTE, WORD, DWORD, or QWORD display
+ *              component_iD        - Caller's component ID
+ *
+ * RETURN:      None
+ *
+ * DESCRIPTION: Generic dump buffer in both hex and ascii.
+ *
+ ******************************************************************************/
 
+void acpi_ut_dump_buffer(u8 * buffer, u32 count, u32 display, u32 component_id)
+{
+
+	/* Only dump the buffer if tracing is enabled */
+
+	if (!((ACPI_LV_TABLES & acpi_dbg_level) &&
+	      (component_id & acpi_dbg_layer))) {
+		return;
+	}
+
+	acpi_ut_dump_buffer2(buffer, count, display);
+}

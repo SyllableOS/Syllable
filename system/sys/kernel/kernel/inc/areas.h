@@ -154,7 +154,7 @@ MemArea_s *get_area_from_handle( area_id hArea );
 MemArea_s *verify_area( const void *pAddr, uint32_t nSize, bool bWrite );
 int put_area( MemArea_s *psArea );
 
-int clone_page_pte( pte_t * pDst, pte_t * pSrc, bool bCow );
+inline int clone_page_pte( pte_t * pDst, pte_t * pSrc, bool bCow );
 void list_areas( MemContext_s *psSeg );
 
 

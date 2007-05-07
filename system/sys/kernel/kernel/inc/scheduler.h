@@ -158,7 +158,7 @@ struct _Thread
 
 	/* SMP stuff */
 	int tr_nCurrentCPU;
-	int tr_nPrevCPU;
+	int tr_nTargetCPU;
 	atomic_t tr_nInV86;
 
 	/* Debugging */

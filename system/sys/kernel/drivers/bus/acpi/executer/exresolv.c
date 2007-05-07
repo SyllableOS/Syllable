@@ -6,7 +6,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2006, R. Byron Moore
+ * Copyright (C) 2000 - 2007, R. Byron Moore
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -79,7 +79,7 @@ acpi_ex_resolve_to_value(union acpi_operand_object **stack_ptr,
 {
 	acpi_status status;
 
-	ACPI_FUNCTION_TRACE_PTR("ex_resolve_to_value", stack_ptr);
+	ACPI_FUNCTION_TRACE_PTR(ex_resolve_to_value, stack_ptr);
 
 	if (!stack_ptr || !*stack_ptr) {
 		ACPI_ERROR((AE_INFO, "Internal - null pointer"));
@@ -142,10 +142,10 @@ acpi_ex_resolve_object_to_value(union acpi_operand_object **stack_ptr,
 	acpi_status status = AE_OK;
 	union acpi_operand_object *stack_desc;
 	void *temp_node;
-	union acpi_operand_object *obj_desc;
+	union acpi_operand_object *obj_desc = NULL;
 	u16 opcode;
 
-	ACPI_FUNCTION_TRACE("ex_resolve_object_to_value");
+	ACPI_FUNCTION_TRACE(ex_resolve_object_to_value);
 
 	stack_desc = *stack_ptr;
 
@@ -192,7 +192,7 @@ acpi_ex_resolve_object_to_value(union acpi_operand_object **stack_ptr,
 			}
 
 			ACPI_DEBUG_PRINT((ACPI_DB_EXEC,
-					  "[Arg/Local %X] value_obj is %p\n",
+					  "[Arg/Local %X] ValueObj is %p\n",
 					  stack_desc->reference.offset,
 					  obj_desc));
 
@@ -244,7 +244,7 @@ acpi_ex_resolve_object_to_value(union acpi_operand_object **stack_ptr,
 				/* Invalid reference object */
 
 				ACPI_ERROR((AE_INFO,
-					    "Unknown target_type %X in Index/Reference obj %p",
+					    "Unknown TargetType %X in Index/Reference obj %p",
 					    stack_desc->reference.target_type,
 					    stack_desc));
 				status = AE_AML_INTERNAL;
@@ -263,10 +263,24 @@ acpi_ex_resolve_object_to_value(union acpi_operand_object **stack_ptr,
 
 		case AML_INT_NAMEPATH_OP:	/* Reference to a named object */
 
-			/* Get the object pointed to by the namespace node */
+			/* Dereference the name */
 
-			*stack_ptr = (stack_desc->reference.node)->object;
-			acpi_ut_add_reference(*stack_ptr);
+			if ((stack_desc->reference.node->type ==
+			     ACPI_TYPE_DEVICE)
+			    || (stack_desc->reference.node->type ==
+				ACPI_TYPE_THERMAL)) {
+
+				/* These node types do not have 'real' subobjects */
+
+				*stack_ptr = (void *)stack_desc->reference.node;
+			} else {
+				/* Get the object pointed to by the namespace node */
+
+				*stack_ptr =
+				    (stack_desc->reference.node)->object;
+				acpi_ut_add_reference(*stack_ptr);
+			}
+
 			acpi_ut_remove_reference(stack_desc);
 			break;
 
@@ -291,21 +305,23 @@ acpi_ex_resolve_object_to_value(union acpi_operand_object **stack_ptr,
 		status = acpi_ds_get_package_arguments(stack_desc);
 		break;
 
-		/* These cases may never happen here, but just in case.. */
-
 	case ACPI_TYPE_BUFFER_FIELD:
 	case ACPI_TYPE_LOCAL_REGION_FIELD:
 	case ACPI_TYPE_LOCAL_BANK_FIELD:
 	case ACPI_TYPE_LOCAL_INDEX_FIELD:
 
 		ACPI_DEBUG_PRINT((ACPI_DB_EXEC,
-				  "field_read source_desc=%p Type=%X\n",
+				  "FieldRead SourceDesc=%p Type=%X\n",
 				  stack_desc,
 				  ACPI_GET_OBJECT_TYPE(stack_desc)));
 
 		status =
 		    acpi_ex_read_data_from_field(walk_state, stack_desc,
 						 &obj_desc);
+
+		/* Remove a reference to the original operand, then override */
+
+		acpi_ut_remove_reference(*stack_ptr);
 		*stack_ptr = (void *)obj_desc;
 		break;
 
@@ -343,7 +359,7 @@ acpi_ex_resolve_multiple(struct acpi_walk_state *walk_state,
 	acpi_object_type type;
 	acpi_status status;
 
-	ACPI_FUNCTION_TRACE("acpi_ex_resolve_multiple");
+	ACPI_FUNCTION_TRACE(acpi_ex_resolve_multiple);
 
 	/* Operand can be either a namespace node or an operand descriptor */
 
@@ -388,10 +404,16 @@ acpi_ex_resolve_multiple(struct acpi_walk_state *walk_state,
 	while (ACPI_GET_OBJECT_TYPE(obj_desc) == ACPI_TYPE_LOCAL_REFERENCE) {
 		switch (obj_desc->reference.opcode) {
 		case AML_REF_OF_OP:
+		case AML_INT_NAMEPATH_OP:
 
 			/* Dereference the reference pointer */
 
-			node = obj_desc->reference.object;
+			if (obj_desc->reference.opcode == AML_REF_OF_OP) {
+				node = obj_desc->reference.object;
+			} else {	/* AML_INT_NAMEPATH_OP */
+
+				node = obj_desc->reference.node;
+			}
 
 			/* All "References" point to a NS node */
 
@@ -446,40 +468,6 @@ acpi_ex_resolve_multiple(struct acpi_walk_state *walk_state,
 			}
 			break;
 
-		case AML_INT_NAMEPATH_OP:
-
-			/* Dereference the reference pointer */
-
-			node = obj_desc->reference.node;
-
-			/* All "References" point to a NS node */
-
-			if (ACPI_GET_DESCRIPTOR_TYPE(node) !=
-			    ACPI_DESC_TYPE_NAMED) {
-				ACPI_ERROR((AE_INFO, "Not a NS node %p [%s]",
-					    node,
-					    acpi_ut_get_descriptor_name(node)));
-				return_ACPI_STATUS(AE_AML_INTERNAL);
-			}
-
-			/* Get the attached object */
-
-			obj_desc = acpi_ns_get_attached_object(node);
-			if (!obj_desc) {
-				/* No object, use the NS node type */
-
-				type = acpi_ns_get_type(node);
-				goto exit;
-			}
-
-			/* Check for circular references */
-
-			if (obj_desc == operand) {
-				return_ACPI_STATUS(AE_AML_CIRCULAR_REFERENCE);
-			}
-			break;
-
-
 		case AML_LOCAL_OP:
 		case AML_ARG_OP:
 
@@ -519,10 +507,9 @@ acpi_ex_resolve_multiple(struct acpi_walk_state *walk_state,
 			}
 			break;
 
-
 		case AML_DEBUG_OP:
 
-			/* The Debug Object is of type "debug_object" */
+			/* The Debug Object is of type "DebugObject" */
 
 			type = ACPI_TYPE_DEBUG_OBJECT;
 			goto exit;

@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2006, R. Byron Moore
+ * Copyright (C) 2000 - 2007, R. Byron Moore
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -80,7 +80,7 @@ acpi_ex_convert_to_integer(union acpi_operand_object *obj_desc,
 	u32 count;
 	acpi_status status;
 
-	ACPI_FUNCTION_TRACE_PTR("ex_convert_to_integer", obj_desc);
+	ACPI_FUNCTION_TRACE_PTR(ex_convert_to_integer, obj_desc);
 
 	switch (ACPI_GET_OBJECT_TYPE(obj_desc)) {
 	case ACPI_TYPE_INTEGER:
@@ -173,6 +173,9 @@ acpi_ex_convert_to_integer(union acpi_operand_object *obj_desc,
 		return_ACPI_STATUS(AE_NO_MEMORY);
 	}
 
+	ACPI_DEBUG_PRINT((ACPI_DB_EXEC, "Converted value: %8.8X%8.8X\n",
+			  ACPI_FORMAT_UINT64(result)));
+
 	/* Save the Result */
 
 	return_desc->integer.value = result;
@@ -202,7 +205,7 @@ acpi_ex_convert_to_buffer(union acpi_operand_object *obj_desc,
 	union acpi_operand_object *return_desc;
 	u8 *new_buf;
 
-	ACPI_FUNCTION_TRACE_PTR("ex_convert_to_buffer", obj_desc);
+	ACPI_FUNCTION_TRACE_PTR(ex_convert_to_buffer, obj_desc);
 
 	switch (ACPI_GET_OBJECT_TYPE(obj_desc)) {
 	case ACPI_TYPE_BUFFER:
@@ -404,7 +407,7 @@ acpi_ex_convert_to_string(union acpi_operand_object * obj_desc,
 	u16 base = 16;
 	u8 separator = ',';
 
-	ACPI_FUNCTION_TRACE_PTR("ex_convert_to_string", obj_desc);
+	ACPI_FUNCTION_TRACE_PTR(ex_convert_to_string, obj_desc);
 
 	switch (ACPI_GET_OBJECT_TYPE(obj_desc)) {
 	case ACPI_TYPE_STRING:
@@ -571,7 +574,7 @@ acpi_ex_convert_to_target_type(acpi_object_type destination_type,
 {
 	acpi_status status = AE_OK;
 
-	ACPI_FUNCTION_TRACE("ex_convert_to_target_type");
+	ACPI_FUNCTION_TRACE(ex_convert_to_target_type);
 
 	/* Default behavior */
 
@@ -663,7 +666,7 @@ acpi_ex_convert_to_target_type(acpi_object_type destination_type,
 
 	default:
 		ACPI_ERROR((AE_INFO,
-			    "Unknown Target type ID 0x%X aml_opcode %X dest_type %s",
+			    "Unknown Target type ID 0x%X AmlOpcode %X DestType %s",
 			    GET_CURRENT_ARG_TYPE(walk_state->op_info->
 						 runtime_args),
 			    walk_state->opcode,

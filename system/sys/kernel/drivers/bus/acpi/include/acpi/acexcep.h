@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2005, R. Byron Moore
+ * Copyright (C) 2000 - 2007, R. Byron Moore
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -166,8 +166,9 @@
 #define AE_AML_BAD_RESOURCE_VALUE       (acpi_status) (0x001F | AE_CODE_AML)
 #define AE_AML_CIRCULAR_REFERENCE       (acpi_status) (0x0020 | AE_CODE_AML)
 #define AE_AML_BAD_RESOURCE_LENGTH      (acpi_status) (0x0021 | AE_CODE_AML)
+#define AE_AML_ILLEGAL_ADDRESS          (acpi_status) (0x0022 | AE_CODE_AML)
 
-#define AE_CODE_AML_MAX                 0x0021
+#define AE_CODE_AML_MAX                 0x0022
 
 /*
  * Internal exceptions used for control
@@ -183,9 +184,10 @@
 #define AE_CTRL_BREAK                   (acpi_status) (0x0009 | AE_CODE_CONTROL)
 #define AE_CTRL_CONTINUE                (acpi_status) (0x000A | AE_CODE_CONTROL)
 #define AE_CTRL_SKIP                    (acpi_status) (0x000B | AE_CODE_CONTROL)
+#define AE_CTRL_PARSE_CONTINUE          (acpi_status) (0x000C | AE_CODE_CONTROL)
+#define AE_CTRL_PARSE_PENDING           (acpi_status) (0x000D | AE_CODE_CONTROL)
 
-#define AE_CODE_CTRL_MAX                0x000B
-
+#define AE_CODE_CTRL_MAX                0x000D
 
 #ifdef DEFINE_ACPI_GLOBALS
 
@@ -282,7 +284,8 @@ char const *acpi_gbl_exception_names_aml[] = {
 	"AE_AML_NO_RESOURCE_END_TAG",
 	"AE_AML_BAD_RESOURCE_VALUE",
 	"AE_AML_CIRCULAR_REFERENCE",
-	"AE_AML_BAD_RESOURCE_LENGTH"
+	"AE_AML_BAD_RESOURCE_LENGTH",
+	"AE_AML_ILLEGAL_ADDRESS"
 };
 
 char const *acpi_gbl_exception_names_ctrl[] = {
@@ -296,7 +299,9 @@ char const *acpi_gbl_exception_names_ctrl[] = {
 	"AE_CTRL_TRANSFER",
 	"AE_CTRL_BREAK",
 	"AE_CTRL_CONTINUE",
-	"AE_CTRL_SKIP"
+	"AE_CTRL_SKIP",
+	"AE_CTRL_PARSE_CONTINUE",
+	"AE_CTRL_PARSE_PENDING"
 };
 
 #endif				/* ACPI GLOBALS */

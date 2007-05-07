@@ -29,7 +29,6 @@
 #include <atheos/list.h>
 #include <atheos/msgport.h>
 #include <atheos/acpi.h>
-#include <acpi/processor.h>
 #include <posix/errno.h>
 #include <macros.h>
 

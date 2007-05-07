@@ -8,7 +8,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2006, R. Byron Moore
+ * Copyright (C) 2000 - 2007, R. Byron Moore
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -50,13 +50,16 @@
 #include "platform/acenv.h"
 #include "actypes.h"
 
+/* Types for acpi_os_execute */
 
-/* Priorities for acpi_os_queue_for_execution */
-
-#define OSD_PRIORITY_GPE            1
-#define OSD_PRIORITY_HIGH           2
-#define OSD_PRIORITY_MED            3
-#define OSD_PRIORITY_LO             4
+typedef enum {
+	OSL_GLOBAL_LOCK_HANDLER,
+	OSL_NOTIFY_HANDLER,
+	OSL_GPE_HANDLER,
+	OSL_DEBUGGER_THREAD,
+	OSL_EC_POLL_HANDLER,
+	OSL_EC_BURST_HANDLER
+} acpi_execute_type;
 
 #define ACPI_NO_UNIT_LIMIT          ((u32) -1)
 #define ACPI_MUTEX_SEM              1
@@ -83,7 +86,7 @@ acpi_status acpi_os_terminate(void);
 /*
  * ACPI Table interfaces
  */
-acpi_status acpi_os_get_root_pointer(u32 flags, struct acpi_pointer *address);
+acpi_physical_address acpi_os_get_root_pointer(void);
 
 acpi_status
 acpi_os_predefined_override(const struct acpi_predefined_names *init_val,
@@ -94,36 +97,54 @@ acpi_os_table_override(struct acpi_table_header *existing_table,
 		       struct acpi_table_header **new_table);
 
 /*
- * Synchronization primitives
+ * Spinlock primitives
+ */
+acpi_status acpi_os_create_lock(acpi_spinlock * out_handle);
+
+void acpi_os_delete_lock(acpi_spinlock handle);
+
+acpi_cpu_flags acpi_os_acquire_lock(acpi_spinlock handle);
+
+void acpi_os_release_lock(acpi_spinlock handle, acpi_cpu_flags flags);
+
+/*
+ * Semaphore primitives
  */
 acpi_status
 acpi_os_create_semaphore(u32 max_units,
-			 u32 initial_units, acpi_handle * out_handle);
+			 u32 initial_units, acpi_semaphore * out_handle);
 
-acpi_status acpi_os_delete_semaphore(acpi_handle handle);
+acpi_status acpi_os_delete_semaphore(acpi_semaphore handle);
 
-acpi_status acpi_os_wait_semaphore(acpi_handle handle, u32 units, u16 timeout);
+acpi_status
+acpi_os_wait_semaphore(acpi_semaphore handle, u32 units, u16 timeout);
 
-acpi_status acpi_os_signal_semaphore(acpi_handle handle, u32 units);
+acpi_status acpi_os_signal_semaphore(acpi_semaphore handle, u32 units);
 
-acpi_status acpi_os_create_lock(acpi_handle * out_handle);
+/*
+ * Mutex primitives
+ */
+acpi_status acpi_os_create_mutex(acpi_mutex * out_handle);
 
-void acpi_os_delete_lock(acpi_handle handle);
+void acpi_os_delete_mutex(acpi_mutex handle);
 
-acpi_cpu_flags acpi_os_acquire_lock(acpi_handle handle);
+acpi_status acpi_os_acquire_mutex(acpi_mutex handle, u16 timeout);
 
-void acpi_os_release_lock(acpi_handle handle, acpi_cpu_flags flags);
+void acpi_os_release_mutex(acpi_mutex handle);
+
+/* Temporary macros for Mutex* interfaces, map to existing semaphore xfaces */
+
+#define acpi_os_create_mutex(out_handle)    acpi_os_create_semaphore (1, 1, out_handle)
+#define acpi_os_delete_mutex(handle)        (void) acpi_os_delete_semaphore (handle)
+#define acpi_os_acquire_mutex(handle,time)  acpi_os_wait_semaphore (handle, 1, time)
+#define acpi_os_release_mutex(handle)       (void) acpi_os_signal_semaphore (handle, 1)
 
 /*
  * Memory allocation and mapping
  */
 void *acpi_os_allocate(acpi_size size);
 
-void acpi_os_free(void *memory);
-
-acpi_status
-acpi_os_map_memory(acpi_physical_address physical_address,
-		   acpi_size size, void __iomem ** logical_address);
+void __iomem *acpi_os_map_memory(acpi_physical_address where, acpi_native_uint length);
 
 void acpi_os_unmap_memory(void __iomem * logical_address, acpi_size size);
 
@@ -163,13 +184,11 @@ acpi_os_remove_interrupt_handler(u32 gsi, acpi_osd_handler service_routine);
 /*
  * Threads and Scheduling
  */
-u32 acpi_os_get_thread_id(void);
+acpi_thread_id acpi_os_get_thread_id(void);
 
 acpi_status
-acpi_os_queue_for_execution(u32 priority,
-			    acpi_osd_exec_callback function, void *context);
-
-void acpi_os_wait_events_complete(void *context);
+acpi_os_execute(acpi_execute_type type,
+		acpi_osd_exec_callback function, void *context);
 
 void acpi_os_wait_events_complete(void *context);
 
@@ -216,11 +235,11 @@ acpi_os_derive_pci_id(acpi_handle rhandle,
 /*
  * Miscellaneous
  */
-u8 acpi_os_readable(void *pointer, acpi_size length);
+acpi_status acpi_os_validate_interface(char *interface);
 
-#ifdef ACPI_FUTURE_USAGE
-u8 acpi_os_writable(void *pointer, acpi_size length);
-#endif
+acpi_status
+acpi_os_validate_address(u8 space_id,
+			 acpi_physical_address address, acpi_size length);
 
 u64 acpi_os_get_timer(void);
 
@@ -256,12 +275,5 @@ void *acpi_os_open_directory(char *pathname,
 char *acpi_os_get_next_filename(void *dir_handle);
 
 void acpi_os_close_directory(void *dir_handle);
-
-/*
- * Debug
- */
-void
-acpi_os_dbg_assert(void *failed_assertion,
-		   void *file_name, u32 line_number, char *message);
 
 #endif				/* __ACPIOSXF_H__ */

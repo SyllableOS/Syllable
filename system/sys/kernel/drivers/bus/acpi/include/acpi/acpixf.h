@@ -6,7 +6,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2006, R. Byron Moore
+ * Copyright (C) 2000 - 2007, R. Byron Moore
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -52,6 +52,10 @@
 /*
  * Global interfaces
  */
+acpi_status
+acpi_initialize_tables(struct acpi_table_desc *initial_storage,
+		       u32 initial_table_count, u8 allow_resize);
+
 acpi_status acpi_initialize_subsystem(void);
 
 acpi_status acpi_enable_subsystem(u32 flags);
@@ -93,29 +97,28 @@ void acpi_free(void *address);
 /*
  * ACPI table manipulation interfaces
  */
-acpi_status
-acpi_find_root_pointer(u32 flags, struct acpi_pointer *rsdp_address);
+acpi_status acpi_reallocate_root_table(void);
+
+acpi_status acpi_find_root_pointer(acpi_native_uint * rsdp_address);
 
 acpi_status acpi_load_tables(void);
 
-#ifdef ACPI_FUTURE_USAGE
 acpi_status acpi_load_table(struct acpi_table_header *table_ptr);
 
-acpi_status acpi_unload_table(acpi_table_type table_type);
+acpi_status acpi_unload_table_id(acpi_owner_id id);
 
 acpi_status
-acpi_get_table_header(acpi_table_type table_type,
-		      u32 instance, struct acpi_table_header *out_table_header);
-#endif				/*  ACPI_FUTURE_USAGE  */
+acpi_get_table_header(acpi_string signature,
+		      acpi_native_uint instance,
+		      struct acpi_table_header *out_table_header);
 
 acpi_status
-acpi_get_table(acpi_table_type table_type,
-	       u32 instance, struct acpi_buffer *ret_buffer);
+acpi_get_table(acpi_string signature,
+	       acpi_native_uint instance, struct acpi_table_header **out_table);
 
 acpi_status
-acpi_get_firmware_table(acpi_string signature,
-			u32 instance,
-			u32 flags, struct acpi_table_header **table_pointer);
+acpi_get_table_by_index(acpi_native_uint table_index,
+			struct acpi_table_header **out_table);
 
 /*
  * Namespace and name interfaces
@@ -180,6 +183,8 @@ acpi_get_next_object(acpi_object_type type,
 		     acpi_handle child, acpi_handle * out_handle);
 
 acpi_status acpi_get_type(acpi_handle object, acpi_object_type * out_type);
+
+acpi_status acpi_get_id(acpi_handle object, acpi_owner_id * out_type);
 
 acpi_status acpi_get_parent(acpi_handle object, acpi_handle * out_handle);
 
@@ -269,7 +274,7 @@ acpi_status acpi_remove_gpe_block(acpi_handle gpe_device);
  * Resource interfaces
  */
 typedef
-acpi_status(*ACPI_WALK_RESOURCE_CALLBACK) (struct acpi_resource * resource,
+acpi_status(*acpi_walk_resource_callback) (struct acpi_resource * resource,
 					   void *context);
 
 acpi_status
@@ -291,7 +296,7 @@ acpi_get_possible_resources(acpi_handle device_handle,
 acpi_status
 acpi_walk_resources(acpi_handle device_handle,
 		    char *name,
-		    ACPI_WALK_RESOURCE_CALLBACK user_function, void *context);
+		    acpi_walk_resource_callback user_function, void *context);
 
 acpi_status
 acpi_set_current_resources(acpi_handle device_handle,
@@ -308,9 +313,9 @@ acpi_resource_to_address64(struct acpi_resource *resource,
 /*
  * Hardware (ACPI device) interfaces
  */
-acpi_status acpi_get_register(u32 register_id, u32 * return_value, u32 flags);
+acpi_status acpi_get_register(u32 register_id, u32 * return_value);
 
-acpi_status acpi_set_register(u32 register_id, u32 value, u32 flags);
+acpi_status acpi_set_register(u32 register_id, u32 value);
 
 acpi_status
 acpi_set_firmware_waking_vector(acpi_physical_address physical_address);

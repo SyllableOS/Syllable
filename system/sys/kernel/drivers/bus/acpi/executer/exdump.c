@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2006, R. Byron Moore
+ * Copyright (C) 2000 - 2007, R. Byron Moore
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -60,7 +60,9 @@ static void acpi_ex_out_string(char *title, char *value);
 
 static void acpi_ex_out_pointer(char *title, void *value);
 
-static void acpi_ex_out_address(char *title, acpi_physical_address value);
+static void
+acpi_ex_dump_object(union acpi_operand_object *obj_desc,
+		    struct acpi_exdump_info *info);
 
 static void acpi_ex_dump_reference_obj(union acpi_operand_object *obj_desc);
 
@@ -89,10 +91,11 @@ static struct acpi_exdump_info acpi_ex_dump_string[4] = {
 	{ACPI_EXD_STRING, 0, NULL}
 };
 
-static struct acpi_exdump_info acpi_ex_dump_buffer[4] = {
+static struct acpi_exdump_info acpi_ex_dump_buffer[5] = {
 	{ACPI_EXD_INIT, ACPI_EXD_TABLE_SIZE(acpi_ex_dump_buffer), NULL},
 	{ACPI_EXD_UINT32, ACPI_EXD_OFFSET(buffer.length), "Length"},
 	{ACPI_EXD_POINTER, ACPI_EXD_OFFSET(buffer.pointer), "Pointer"},
+	{ACPI_EXD_POINTER, ACPI_EXD_OFFSET(buffer.node), "Parent Node"},
 	{ACPI_EXD_BUFFER, 0, NULL}
 };
 
@@ -115,14 +118,14 @@ static struct acpi_exdump_info acpi_ex_dump_device[4] = {
 
 static struct acpi_exdump_info acpi_ex_dump_event[2] = {
 	{ACPI_EXD_INIT, ACPI_EXD_TABLE_SIZE(acpi_ex_dump_event), NULL},
-	{ACPI_EXD_POINTER, ACPI_EXD_OFFSET(event.semaphore), "Semaphore"}
+	{ACPI_EXD_POINTER, ACPI_EXD_OFFSET(event.os_semaphore), "OsSemaphore"}
 };
 
 static struct acpi_exdump_info acpi_ex_dump_method[8] = {
 	{ACPI_EXD_INIT, ACPI_EXD_TABLE_SIZE(acpi_ex_dump_method), NULL},
-	{ACPI_EXD_UINT8, ACPI_EXD_OFFSET(method.param_count), "param_count"},
-	{ACPI_EXD_UINT8, ACPI_EXD_OFFSET(method.concurrency), "Concurrency"},
-	{ACPI_EXD_POINTER, ACPI_EXD_OFFSET(method.semaphore), "Semaphore"},
+	{ACPI_EXD_UINT8, ACPI_EXD_OFFSET(method.param_count), "ParamCount"},
+	{ACPI_EXD_UINT8, ACPI_EXD_OFFSET(method.sync_level), "Sync Level"},
+	{ACPI_EXD_POINTER, ACPI_EXD_OFFSET(method.mutex), "Mutex"},
 	{ACPI_EXD_UINT8, ACPI_EXD_OFFSET(method.owner_id), "Owner Id"},
 	{ACPI_EXD_UINT8, ACPI_EXD_OFFSET(method.thread_count), "Thread Count"},
 	{ACPI_EXD_UINT32, ACPI_EXD_OFFSET(method.aml_length), "Aml Length"},
@@ -132,10 +135,10 @@ static struct acpi_exdump_info acpi_ex_dump_method[8] = {
 static struct acpi_exdump_info acpi_ex_dump_mutex[5] = {
 	{ACPI_EXD_INIT, ACPI_EXD_TABLE_SIZE(acpi_ex_dump_mutex), NULL},
 	{ACPI_EXD_UINT8, ACPI_EXD_OFFSET(mutex.sync_level), "Sync Level"},
-	{ACPI_EXD_POINTER, ACPI_EXD_OFFSET(mutex.owner_thread), "Owner Thread"},
+	{ACPI_EXD_POINTER, ACPI_EXD_OFFSET(mutex.owner_thread_id), "Owner Thread"},
 	{ACPI_EXD_UINT16, ACPI_EXD_OFFSET(mutex.acquisition_depth),
 	 "Acquire Depth"},
-	{ACPI_EXD_POINTER, ACPI_EXD_OFFSET(mutex.semaphore), "Semaphore"}
+	{ACPI_EXD_POINTER, ACPI_EXD_OFFSET(mutex.os_mutex), "OsMutex"}
 };
 
 static struct acpi_exdump_info acpi_ex_dump_region[7] = {
@@ -162,8 +165,8 @@ static struct acpi_exdump_info acpi_ex_dump_power[5] = {
 
 static struct acpi_exdump_info acpi_ex_dump_processor[7] = {
 	{ACPI_EXD_INIT, ACPI_EXD_TABLE_SIZE(acpi_ex_dump_processor), NULL},
-	{ACPI_EXD_UINT32, ACPI_EXD_OFFSET(processor.proc_id), "Processor ID"},
-	{ACPI_EXD_UINT32, ACPI_EXD_OFFSET(processor.length), "Length"},
+	{ACPI_EXD_UINT8, ACPI_EXD_OFFSET(processor.proc_id), "Processor ID"},
+	{ACPI_EXD_UINT8, ACPI_EXD_OFFSET(processor.length), "Length"},
 	{ACPI_EXD_ADDRESS, ACPI_EXD_OFFSET(processor.address), "Address"},
 	{ACPI_EXD_POINTER, ACPI_EXD_OFFSET(processor.system_notify),
 	 "System Notify"},
@@ -264,12 +267,10 @@ static struct acpi_exdump_info acpi_ex_dump_field_common[7] = {
 	{ACPI_EXD_POINTER, ACPI_EXD_OFFSET(common_field.node), "Parent Node"}
 };
 
-static struct acpi_exdump_info acpi_ex_dump_node[6] = {
+static struct acpi_exdump_info acpi_ex_dump_node[5] = {
 	{ACPI_EXD_INIT, ACPI_EXD_TABLE_SIZE(acpi_ex_dump_node), NULL},
 	{ACPI_EXD_UINT8, ACPI_EXD_NSOFFSET(flags), "Flags"},
 	{ACPI_EXD_UINT8, ACPI_EXD_NSOFFSET(owner_id), "Owner Id"},
-	{ACPI_EXD_UINT16, ACPI_EXD_NSOFFSET(reference_count),
-	 "Reference Count"},
 	{ACPI_EXD_POINTER, ACPI_EXD_NSOFFSET(child), "Child List"},
 	{ACPI_EXD_POINTER, ACPI_EXD_NSOFFSET(peer), "Next Peer"}
 };
@@ -331,7 +332,7 @@ acpi_ex_dump_object(union acpi_operand_object *obj_desc,
 
 	if (!info) {
 		acpi_os_printf
-		    ("ex_dump_object: Display not implemented for object type %s\n",
+		    ("ExDumpObject: Display not implemented for object type %s\n",
 		     acpi_ut_get_object_type_name(obj_desc));
 		return;
 	}
@@ -378,16 +379,10 @@ acpi_ex_dump_object(union acpi_operand_object *obj_desc,
 			break;
 
 		case ACPI_EXD_POINTER:
+		case ACPI_EXD_ADDRESS:
 
 			acpi_ex_out_pointer(name,
 					    *ACPI_CAST_PTR(void *, target));
-			break;
-
-		case ACPI_EXD_ADDRESS:
-
-			acpi_ex_out_address(name,
-					    *ACPI_CAST_PTR
-					    (acpi_physical_address, target));
 			break;
 
 		case ACPI_EXD_STRING:
@@ -455,7 +450,7 @@ void acpi_ex_dump_operand(union acpi_operand_object *obj_desc, u32 depth)
 	u32 length;
 	u32 index;
 
-	ACPI_FUNCTION_NAME("ex_dump_operand")
+	ACPI_FUNCTION_NAME(ex_dump_operand)
 
 	    if (!
 		((ACPI_LV_EXEC & acpi_dbg_level)
@@ -523,7 +518,7 @@ void acpi_ex_dump_operand(union acpi_operand_object *obj_desc, u32 depth)
 
 		case AML_REF_OF_OP:
 
-			acpi_os_printf("Reference: (ref_of) %p\n",
+			acpi_os_printf("Reference: (RefOf) %p\n",
 				       obj_desc->reference.object);
 			break;
 
@@ -611,7 +606,7 @@ void acpi_ex_dump_operand(union acpi_operand_object *obj_desc, u32 depth)
 
 	case ACPI_TYPE_PACKAGE:
 
-		acpi_os_printf("Package [Len %X] element_array %p\n",
+		acpi_os_printf("Package [Len %X] ElementArray %p\n",
 			       obj_desc->package.count,
 			       obj_desc->package.elements);
 
@@ -663,13 +658,13 @@ void acpi_ex_dump_operand(union acpi_operand_object *obj_desc, u32 depth)
 
 	case ACPI_TYPE_LOCAL_BANK_FIELD:
 
-		acpi_os_printf("bank_field\n");
+		acpi_os_printf("BankField\n");
 		break;
 
 	case ACPI_TYPE_LOCAL_REGION_FIELD:
 
 		acpi_os_printf
-		    ("region_field: Bits=%X acc_width=%X Lock=%X Update=%X at byte=%X bit=%X of below:\n",
+		    ("RegionField: Bits=%X AccWidth=%X Lock=%X Update=%X at byte=%X bit=%X of below:\n",
 		     obj_desc->field.bit_length,
 		     obj_desc->field.access_byte_width,
 		     obj_desc->field.field_flags & AML_FIELD_LOCK_RULE_MASK,
@@ -682,12 +677,12 @@ void acpi_ex_dump_operand(union acpi_operand_object *obj_desc, u32 depth)
 
 	case ACPI_TYPE_LOCAL_INDEX_FIELD:
 
-		acpi_os_printf("index_field\n");
+		acpi_os_printf("IndexField\n");
 		break;
 
 	case ACPI_TYPE_BUFFER_FIELD:
 
-		acpi_os_printf("buffer_field: %X bits at byte %X bit %X of\n",
+		acpi_os_printf("BufferField: %X bits at byte %X bit %X of\n",
 			       obj_desc->buffer_field.bit_length,
 			       obj_desc->buffer_field.base_byte_offset,
 			       obj_desc->buffer_field.start_field_bit_offset);
@@ -778,7 +773,7 @@ acpi_ex_dump_operands(union acpi_operand_object **operands,
 {
 	acpi_native_uint i;
 
-	ACPI_FUNCTION_NAME("ex_dump_operands");
+	ACPI_FUNCTION_NAME(ex_dump_operands);
 
 	if (!ident) {
 		ident = "?";
@@ -829,16 +824,6 @@ static void acpi_ex_out_string(char *title, char *value)
 static void acpi_ex_out_pointer(char *title, void *value)
 {
 	acpi_os_printf("%20s : %p\n", title, value);
-}
-
-static void acpi_ex_out_address(char *title, acpi_physical_address value)
-{
-
-#if ACPI_MACHINE_WIDTH == 16
-	acpi_os_printf("%20s : %p\n", title, value);
-#else
-	acpi_os_printf("%20s : %8.8X%8.8X\n", title, ACPI_FORMAT_UINT64(value));
-#endif
 }
 
 /*******************************************************************************
@@ -902,7 +887,7 @@ static void acpi_ex_dump_reference_obj(union acpi_operand_object *obj_desc)
 			acpi_os_printf("Could not convert name to pathname\n");
 		} else {
 			acpi_os_printf("%s\n", (char *)ret_buf.pointer);
-			ACPI_MEM_FREE(ret_buf.pointer);
+			ACPI_FREE(ret_buf.pointer);
 		}
 	} else if (obj_desc->reference.object) {
 		acpi_os_printf("\nReferenced Object: %p\n",
@@ -1018,7 +1003,7 @@ acpi_ex_dump_package_obj(union acpi_operand_object *obj_desc,
 void
 acpi_ex_dump_object_descriptor(union acpi_operand_object *obj_desc, u32 flags)
 {
-	ACPI_FUNCTION_TRACE("ex_dump_object_descriptor");
+	ACPI_FUNCTION_TRACE(ex_dump_object_descriptor);
 
 	if (!obj_desc) {
 		return_VOID;
@@ -1046,7 +1031,7 @@ acpi_ex_dump_object_descriptor(union acpi_operand_object *obj_desc, u32 flags)
 
 	if (ACPI_GET_DESCRIPTOR_TYPE(obj_desc) != ACPI_DESC_TYPE_OPERAND) {
 		acpi_os_printf
-		    ("ex_dump_object_descriptor: %p is not an ACPI operand object: [%s]\n",
+		    ("ExDumpObjectDescriptor: %p is not an ACPI operand object: [%s]\n",
 		     obj_desc, acpi_ut_get_descriptor_name(obj_desc));
 		return_VOID;
 	}

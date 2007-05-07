@@ -71,10 +71,20 @@ static ArgCopy_s *copy_arg_list( char *const *argv, int *pnArgCnt, int *pnArgSiz
 {
 	int nArgSize = sizeof( char * );
 	int nArgCount = 0;
-	ArgCopy_s *psNode = kmalloc( sizeof( ArgCopy_s ), MEMF_KERNEL | MEMF_OKTOFAIL );
-	ArgCopy_s *psFirstNode = psNode;
+	ArgCopy_s *psNode;
+	ArgCopy_s *psFirstNode;
 	int nError;
 	int i;
+	
+	if( argv == NULL )
+	{
+		*pnArgCnt = 0;
+		*pnArgSize = 0;
+		return( NULL );
+	}
+	
+	psNode = kmalloc( sizeof( ArgCopy_s ), MEMF_KERNEL | MEMF_OKTOFAIL );
+	psFirstNode = psNode;
 
 	if ( psNode == NULL )
 	{
@@ -250,7 +260,7 @@ int sys_execve( const char *a_pzPath, char *const *argv, char *const *envv )
 #endif
 	psEnvCopy = copy_arg_list( envv, &nEnvCount, &nEnvSize );
 
-	if ( psEnvCopy == NULL )
+	if ( psEnvCopy == NULL && envv != NULL )
 	{
 		printk( "Error: execve() failed to clone environment %p\n", envv );
 		kfree( pzPath );

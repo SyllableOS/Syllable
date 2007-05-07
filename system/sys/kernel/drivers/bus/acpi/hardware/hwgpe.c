@@ -6,7 +6,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2006, R. Byron Moore
+ * Copyright (C) 2000 - 2007, R. Byron Moore
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -106,14 +106,20 @@ acpi_hw_write_gpe_enable_reg(struct acpi_gpe_event_info *gpe_event_info)
 acpi_status acpi_hw_clear_gpe(struct acpi_gpe_event_info * gpe_event_info)
 {
 	acpi_status status;
+	u8 register_bit;
 
 	ACPI_FUNCTION_ENTRY();
+
+	register_bit = (u8)
+	    (1 <<
+	     (gpe_event_info->gpe_number -
+	      gpe_event_info->register_info->base_gpe_number));
 
 	/*
 	 * Write a one to the appropriate bit in the status register to
 	 * clear this GPE.
 	 */
-	status = acpi_hw_low_level_write(8, gpe_event_info->register_bit,
+	status = acpi_hw_low_level_write(8, register_bit,
 					 &gpe_event_info->register_info->
 					 status_address);
 
@@ -157,7 +163,10 @@ acpi_hw_get_gpe_status(struct acpi_gpe_event_info * gpe_event_info,
 
 	/* Get the register bitmask for this GPE */
 
-	register_bit = gpe_event_info->register_bit;
+	register_bit = (u8)
+	    (1 <<
+	     (gpe_event_info->gpe_number -
+	      gpe_event_info->register_info->base_gpe_number));
 
 	/* GPE currently enabled? (enabled for runtime?) */
 
@@ -374,7 +383,7 @@ acpi_status acpi_hw_disable_all_gpes(void)
 {
 	acpi_status status;
 
-	ACPI_FUNCTION_TRACE("hw_disable_all_gpes");
+	ACPI_FUNCTION_TRACE(hw_disable_all_gpes);
 
 	status = acpi_ev_walk_gpe_list(acpi_hw_disable_gpe_block);
 	status = acpi_ev_walk_gpe_list(acpi_hw_clear_gpe_block);
@@ -397,7 +406,7 @@ acpi_status acpi_hw_enable_all_runtime_gpes(void)
 {
 	acpi_status status;
 
-	ACPI_FUNCTION_TRACE("hw_enable_all_runtime_gpes");
+	ACPI_FUNCTION_TRACE(hw_enable_all_runtime_gpes);
 
 	status = acpi_ev_walk_gpe_list(acpi_hw_enable_runtime_gpe_block);
 	return_ACPI_STATUS(status);
@@ -419,7 +428,7 @@ acpi_status acpi_hw_enable_all_wakeup_gpes(void)
 {
 	acpi_status status;
 
-	ACPI_FUNCTION_TRACE("hw_enable_all_wakeup_gpes");
+	ACPI_FUNCTION_TRACE(hw_enable_all_wakeup_gpes);
 
 	status = acpi_ev_walk_gpe_list(acpi_hw_enable_wakeup_gpe_block);
 	return_ACPI_STATUS(status);

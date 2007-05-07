@@ -64,7 +64,6 @@ struct acpi_handle_list {
 
 
 #define ACPI_BUS_FILE_ROOT	"acpi"
-extern FADT_DESCRIPTOR		acpi_fadt;
 
 enum acpi_bus_removal_type {
 	ACPI_BUS_REMOVAL_NORMAL	= 0,
@@ -363,16 +362,16 @@ typedef struct
 	acpi_status ( *get_handle )( acpi_handle parent, acpi_string pathname, acpi_handle *ret_handle );
 	int			( *get_device )( acpi_handle handle, struct acpi_device **device );
 	int			( *get_status )( struct acpi_device *device );
-	acpi_status ( *walk_resources )( acpi_handle device_handle, char *path,	ACPI_WALK_RESOURCE_CALLBACK user_function, void *context );
+	acpi_status ( *walk_resources )( acpi_handle device_handle, char *path,	acpi_walk_resource_callback user_function, void *context );
 	acpi_status ( *set_current_resources )(	acpi_handle device_handle, struct acpi_buffer *in_buffer );
 	acpi_status ( *get_irq_routing_table )(	acpi_handle bus_device_handle, struct acpi_buffer *ret_buffer );
 	int			( *register_driver )( struct acpi_driver *driver );
 	int			( *unregister_driver )( struct acpi_driver *driver );
 	acpi_status ( *install_notify_handler )( acpi_handle device, u32 handler_type, acpi_notify_handler handler, void *context );
 	acpi_status ( *remove_notify_handler )( acpi_handle device, u32 handler_type, acpi_notify_handler handler );
-	FADT_DESCRIPTOR* ( *get_fadt )();
-	acpi_status ( *set_register )( u32 register_id, u32 value, u32 flags );
-	acpi_status ( *get_register )( u32 register_id, u32 *return_value, u32 flags );
+	struct acpi_table_fadt* ( *get_fadt )();
+	acpi_status ( *set_register )( u32 register_id, u32 value );
+	acpi_status ( *get_register )( u32 register_id, u32 *return_value );
 } ACPI_bus_s;
 
 #endif

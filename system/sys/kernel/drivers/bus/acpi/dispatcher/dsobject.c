@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2006, R. Byron Moore
+ * Copyright (C) 2000 - 2007, R. Byron Moore
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -82,7 +82,7 @@ acpi_ds_build_internal_object(struct acpi_walk_state *walk_state,
 	union acpi_operand_object *obj_desc;
 	acpi_status status;
 
-	ACPI_FUNCTION_TRACE("ds_build_internal_object");
+	ACPI_FUNCTION_TRACE(ds_build_internal_object);
 
 	*obj_desc_ptr = NULL;
 	if (op->common.aml_opcode == AML_INT_NAMEPATH_OP) {
@@ -187,7 +187,7 @@ acpi_ds_build_internal_buffer_obj(struct acpi_walk_state *walk_state,
 	union acpi_parse_object *byte_list;
 	u32 byte_list_length = 0;
 
-	ACPI_FUNCTION_TRACE("ds_build_internal_buffer_obj");
+	ACPI_FUNCTION_TRACE(ds_build_internal_buffer_obj);
 
 	/*
 	 * If we are evaluating a Named buffer object "Name (xxxx, Buffer)".
@@ -244,7 +244,7 @@ acpi_ds_build_internal_buffer_obj(struct acpi_walk_state *walk_state,
 				  "Buffer defined with zero length in AML, creating\n"));
 	} else {
 		obj_desc->buffer.pointer =
-		    ACPI_MEM_CALLOCATE(obj_desc->buffer.length);
+		    ACPI_ALLOCATE_ZEROED(obj_desc->buffer.length);
 		if (!obj_desc->buffer.pointer) {
 			acpi_ut_delete_object_desc(obj_desc);
 			return_ACPI_STATUS(AE_NO_MEMORY);
@@ -259,7 +259,7 @@ acpi_ds_build_internal_buffer_obj(struct acpi_walk_state *walk_state,
 	}
 
 	obj_desc->buffer.flags |= AOPOBJ_DATA_VALID;
-	op->common.node = (struct acpi_namespace_node *)obj_desc;
+	op->common.node = ACPI_CAST_PTR(struct acpi_namespace_node, obj_desc);
 	return_ACPI_STATUS(AE_OK);
 }
 
@@ -269,7 +269,8 @@ acpi_ds_build_internal_buffer_obj(struct acpi_walk_state *walk_state,
  *
  * PARAMETERS:  walk_state      - Current walk state
  *              Op              - Parser object to be translated
- *              package_length  - Number of elements in the package
+ *              element_count   - Number of elements in the package - this is
+ *                                the num_elements argument to Package()
  *              obj_desc_ptr    - Where the ACPI internal object is returned
  *
  * RETURN:      Status
@@ -277,22 +278,33 @@ acpi_ds_build_internal_buffer_obj(struct acpi_walk_state *walk_state,
  * DESCRIPTION: Translate a parser Op package object to the equivalent
  *              namespace object
  *
+ * NOTE: The number of elements in the package will be always be the num_elements
+ * count, regardless of the number of elements in the package list. If
+ * num_elements is smaller, only that many package list elements are used.
+ * if num_elements is larger, the Package object is padded out with
+ * objects of type Uninitialized (as per ACPI spec.)
+ *
+ * Even though the ASL compilers do not allow num_elements to be smaller
+ * than the Package list length (for the fixed length package opcode), some
+ * BIOS code modifies the AML on the fly to adjust the num_elements, and
+ * this code compensates for that. This also provides compatibility with
+ * other AML interpreters.
+ *
  ******************************************************************************/
 
 acpi_status
 acpi_ds_build_internal_package_obj(struct acpi_walk_state *walk_state,
 				   union acpi_parse_object *op,
-				   u32 package_length,
+				   u32 element_count,
 				   union acpi_operand_object **obj_desc_ptr)
 {
 	union acpi_parse_object *arg;
 	union acpi_parse_object *parent;
 	union acpi_operand_object *obj_desc = NULL;
-	u32 package_list_length;
 	acpi_status status = AE_OK;
 	acpi_native_uint i;
 
-	ACPI_FUNCTION_TRACE("ds_build_internal_package_obj");
+	ACPI_FUNCTION_TRACE(ds_build_internal_package_obj);
 
 	/* Find the parent of a possibly nested package */
 
@@ -317,46 +329,34 @@ acpi_ds_build_internal_package_obj(struct acpi_walk_state *walk_state,
 		obj_desc->package.node = parent->common.node;
 	}
 
-	obj_desc->package.count = package_length;
-
-	/* Count the number of items in the package list */
-
-	arg = op->common.value.arg;
-	arg = arg->common.next;
-	for (package_list_length = 0; arg; package_list_length++) {
-		arg = arg->common.next;
-	}
-
 	/*
-	 * The package length (number of elements) will be the greater
-	 * of the specified length and the length of the initializer list
+	 * Allocate the element array (array of pointers to the individual
+	 * objects) based on the num_elements parameter. Add an extra pointer slot
+	 * so that the list is always null terminated.
 	 */
-	if (package_list_length > package_length) {
-		obj_desc->package.count = package_list_length;
-	}
-
-	/*
-	 * Allocate the pointer array (array of pointers to the
-	 * individual objects). Add an extra pointer slot so
-	 * that the list is always null terminated.
-	 */
-	obj_desc->package.elements = ACPI_MEM_CALLOCATE(((acpi_size) obj_desc->
-							 package.count +
-							 1) * sizeof(void *));
+	obj_desc->package.elements = ACPI_ALLOCATE_ZEROED(((acpi_size)
+							   element_count +
+							   1) * sizeof(void *));
 
 	if (!obj_desc->package.elements) {
 		acpi_ut_delete_object_desc(obj_desc);
 		return_ACPI_STATUS(AE_NO_MEMORY);
 	}
 
+	obj_desc->package.count = element_count;
+
 	/*
-	 * Initialize all elements of the package
+	 * Initialize the elements of the package, up to the num_elements count.
+	 * Package is automatically padded with uninitialized (NULL) elements
+	 * if num_elements is greater than the package list length. Likewise,
+	 * Package is truncated if num_elements is less than the list length.
 	 */
 	arg = op->common.value.arg;
 	arg = arg->common.next;
-	for (i = 0; arg; i++) {
+	for (i = 0; arg && (i < element_count); i++) {
 		if (arg->common.aml_opcode == AML_INT_RETURN_VALUE_OP) {
-			/* Object (package or buffer) is already built */
+
+			/* This package element is already built, just get it */
 
 			obj_desc->package.elements[i] =
 			    ACPI_CAST_PTR(union acpi_operand_object,
@@ -370,8 +370,14 @@ acpi_ds_build_internal_package_obj(struct acpi_walk_state *walk_state,
 		arg = arg->common.next;
 	}
 
+	if (!arg) {
+		ACPI_DEBUG_PRINT((ACPI_DB_INFO,
+				  "Package List length larger than NumElements count (%X), truncated\n",
+				  element_count));
+	}
+
 	obj_desc->package.flags |= AOPOBJ_DATA_VALID;
-	op->common.node = (struct acpi_namespace_node *)obj_desc;
+	op->common.node = ACPI_CAST_PTR(struct acpi_namespace_node, obj_desc);
 	return_ACPI_STATUS(status);
 }
 
@@ -397,7 +403,7 @@ acpi_ds_create_node(struct acpi_walk_state *walk_state,
 	acpi_status status;
 	union acpi_operand_object *obj_desc;
 
-	ACPI_FUNCTION_TRACE_PTR("ds_create_node", op);
+	ACPI_FUNCTION_TRACE_PTR(ds_create_node, op);
 
 	/*
 	 * Because of the execution pass through the non-control-method
@@ -465,7 +471,7 @@ acpi_ds_init_object_from_op(struct acpi_walk_state *walk_state,
 	union acpi_operand_object *obj_desc;
 	acpi_status status = AE_OK;
 
-	ACPI_FUNCTION_TRACE("ds_init_object_from_op");
+	ACPI_FUNCTION_TRACE(ds_init_object_from_op);
 
 	obj_desc = *ret_obj_desc;
 	op_info = acpi_ps_get_opcode_info(opcode);
@@ -483,8 +489,9 @@ acpi_ds_init_object_from_op(struct acpi_walk_state *walk_state,
 		/*
 		 * Defer evaluation of Buffer term_arg operand
 		 */
-		obj_desc->buffer.node = (struct acpi_namespace_node *)
-		    walk_state->operands[0];
+		obj_desc->buffer.node =
+		    ACPI_CAST_PTR(struct acpi_namespace_node,
+				  walk_state->operands[0]);
 		obj_desc->buffer.aml_start = op->named.data;
 		obj_desc->buffer.aml_length = op->named.length;
 		break;
@@ -495,8 +502,9 @@ acpi_ds_init_object_from_op(struct acpi_walk_state *walk_state,
 		/*
 		 * Defer evaluation of Package term_arg operand
 		 */
-		obj_desc->package.node = (struct acpi_namespace_node *)
-		    walk_state->operands[0];
+		obj_desc->package.node =
+		    ACPI_CAST_PTR(struct acpi_namespace_node,
+				  walk_state->operands[0]);
 		obj_desc->package.aml_start = op->named.data;
 		obj_desc->package.aml_length = op->named.length;
 		break;

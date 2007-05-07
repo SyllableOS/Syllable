@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2006, R. Byron Moore
+ * Copyright (C) 2000 - 2007, R. Byron Moore
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -140,7 +140,7 @@ acpi_ps_complete_this_op(struct acpi_walk_state * walk_state,
 	const struct acpi_opcode_info *parent_info;
 	union acpi_parse_object *replacement_op = NULL;
 
-	ACPI_FUNCTION_TRACE_PTR("ps_complete_this_op", op);
+	ACPI_FUNCTION_TRACE_PTR(ps_complete_this_op, op);
 
 	/* Check for null Op, can happen if AML code is corrupt */
 
@@ -332,7 +332,7 @@ acpi_ps_next_parse_state(struct acpi_walk_state *walk_state,
 	struct acpi_parse_state *parser_state = &walk_state->parser_state;
 	acpi_status status = AE_CTRL_PENDING;
 
-	ACPI_FUNCTION_TRACE_PTR("ps_next_parse_state", op);
+	ACPI_FUNCTION_TRACE_PTR(ps_next_parse_state, op);
 
 	switch (callback_status) {
 	case AE_CTRL_TERMINATE:
@@ -456,10 +456,10 @@ acpi_status acpi_ps_parse_aml(struct acpi_walk_state *walk_state)
 	struct acpi_thread_state *prev_walk_list = acpi_gbl_current_walk_list;
 	struct acpi_walk_state *previous_walk_state;
 
-	ACPI_FUNCTION_TRACE("ps_parse_aml");
+	ACPI_FUNCTION_TRACE(ps_parse_aml);
 
 	ACPI_DEBUG_PRINT((ACPI_DB_PARSE,
-			  "Entered with walk_state=%p Aml=%p size=%X\n",
+			  "Entered with WalkState=%p Aml=%p size=%X\n",
 			  walk_state, walk_state->parser_state.aml,
 			  walk_state->parser_state.aml_size));
 
@@ -467,10 +467,21 @@ acpi_status acpi_ps_parse_aml(struct acpi_walk_state *walk_state)
 
 	thread = acpi_ut_create_thread_state();
 	if (!thread) {
+		acpi_ds_delete_walk_state(walk_state);
 		return_ACPI_STATUS(AE_NO_MEMORY);
 	}
 
 	walk_state->thread = thread;
+
+	/*
+	 * If executing a method, the starting sync_level is this method's
+	 * sync_level
+	 */
+	if (walk_state->method_desc) {
+		walk_state->thread->current_sync_level =
+		    walk_state->method_desc->method.sync_level;
+	}
+
 	acpi_ds_push_walk_state(walk_state, thread);
 
 	/*
@@ -507,6 +518,10 @@ acpi_status acpi_ps_parse_aml(struct acpi_walk_state *walk_state)
 			status =
 			    acpi_ds_call_control_method(thread, walk_state,
 							NULL);
+			if (ACPI_FAILURE(status)) {
+				status =
+				    acpi_ds_method_error(status, walk_state);
+			}
 
 			/*
 			 * If the transfer to the new method method call worked, a new walk
@@ -526,7 +541,12 @@ acpi_status acpi_ps_parse_aml(struct acpi_walk_state *walk_state)
 			/* Check for possible multi-thread reentrancy problem */
 
 			if ((status == AE_ALREADY_EXISTS) &&
-			    (!walk_state->method_desc->method.semaphore)) {
+			    (!walk_state->method_desc->method.mutex)) {
+				ACPI_INFO((AE_INFO,
+					   "Marking method %4.4s as Serialized",
+					   walk_state->method_node->name.
+					   ascii));
+
 				/*
 				 * Method tried to create an object twice. The probable cause is
 				 * that the method cannot handle reentrancy.
@@ -538,7 +558,7 @@ acpi_status acpi_ps_parse_aml(struct acpi_walk_state *walk_state)
 				 */
 				walk_state->method_desc->method.method_flags |=
 				    AML_METHOD_SERIALIZED;
-				walk_state->method_desc->method.concurrency = 1;
+				walk_state->method_desc->method.sync_level = 0;
 			}
 		}
 
@@ -557,20 +577,9 @@ acpi_status acpi_ps_parse_aml(struct acpi_walk_state *walk_state)
 		 */
 		if (((walk_state->parse_flags & ACPI_PARSE_MODE_MASK) ==
 		     ACPI_PARSE_EXECUTE) || (ACPI_FAILURE(status))) {
-			if (walk_state->method_desc) {
-				/* Decrement the thread count on the method parse tree */
-
-				if (walk_state->method_desc->method.
-				    thread_count) {
-					walk_state->method_desc->method.
-					    thread_count--;
-				} else {
-					ACPI_ERROR((AE_INFO,
-						    "Invalid zero thread count in method"));
-				}
-			}
-
-			acpi_ds_terminate_control_method(walk_state);
+			acpi_ds_terminate_control_method(walk_state->
+							 method_desc,
+							 walk_state);
 		}
 
 		/* Delete this walk state and all linked control states */
@@ -580,7 +589,7 @@ acpi_status acpi_ps_parse_aml(struct acpi_walk_state *walk_state)
 		previous_walk_state = walk_state;
 
 		ACPI_DEBUG_PRINT((ACPI_DB_PARSE,
-				  "return_value=%p, implicit_value=%p State=%p\n",
+				  "ReturnValue=%p, ImplicitValue=%p State=%p\n",
 				  walk_state->return_desc,
 				  walk_state->implicit_return_obj, walk_state));
 

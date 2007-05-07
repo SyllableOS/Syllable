@@ -1167,7 +1167,7 @@ void delete_mem_context( MemContext_s *psCtx )
  * \return Always returns <code>0</code>.
  * \author Kurt Skauen (kurt@atheos.cx)
  */
-status_t clone_page_pte( pte_t * pDst, pte_t * pSrc, bool bCow )
+inline status_t clone_page_pte( pte_t * pDst, pte_t * pSrc, bool bCow )
 {
 	pte_t nPte;
 	int nPageNr;
@@ -1184,7 +1184,10 @@ status_t clone_page_pte( pte_t * pDst, pte_t * pSrc, bool bCow )
 
 	if ( PTE_ISPRESENT( nPte ) )
 	{
-		atomic_inc( &g_psFirstPage[nPageNr].p_nCount );
+		if( nPageNr < g_sSysBase.ex_nTotalPageCount )
+		{
+			atomic_inc( &g_psFirstPage[nPageNr].p_nCount );
+		}
 	}
 	else if ( PTE_PAGE( nPte ) != 0 )
 	{
@@ -1221,25 +1224,8 @@ static void do_clone_area( MemContext_s *psDstSeg, MemContext_s *psSrcSeg, MemAr
 
 
 		kassertw( PGD_PAGE( *pDstPgd ) != 0 );
-
-		if ( bCow )
-		{
-			PTE_VALUE( *pSrcPte ) &= ~PTE_WRITE;
-		}
-
-		*pDstPte = *pSrcPte;
-
-		if( PAGE_NR( PTE_PAGE( *pSrcPte ) ) < g_sSysBase.ex_nTotalPageCount )
-		{
-			if ( PTE_ISPRESENT( *pSrcPte ) )
-			{
-				atomic_inc( &g_psFirstPage[PAGE_NR( PTE_PAGE( *pSrcPte ) )].p_nCount );
-			}
-			else if ( PTE_PAGE( *pSrcPte ) != 0 )
-			{
-				dup_swap_page( PTE_PAGE( *pSrcPte ) );
-			}
-		}
+		
+		clone_page_pte( pDstPte, pSrcPte, bCow );
 	}
 }
 
@@ -1667,22 +1653,9 @@ area_id sys_clone_area( const char *pzName, void **ppAddress,
 		pte_t *pSrcPte = pte_offset( pSrcPgd, nSrcAddr );
 		pgd_t *pDstPgd = pgd_offset( psDstSeg, nDstAddr );
 		pte_t *pDstPte = pte_offset( pDstPgd, nDstAddr );
+		
+		clone_page_pte( pDstPte, pSrcPte, false );
 
-		*pDstPte = *pSrcPte;
-
-		if ( PTE_ISPRESENT( *pSrcPte ) )
-		{
-			count_t nPageNum = PAGE_NR( PTE_PAGE( *pSrcPte ) );
-
-			if ( nPageNum < g_sSysBase.ex_nTotalPageCount )
-			{
-				atomic_inc( &g_psFirstPage[nPageNum].p_nCount );
-			}
-		}
-		else if ( PTE_PAGE( *pSrcPte ) != 0 )
-		{
-			dup_swap_page( PTE_PAGE( *pSrcPte ) );
-		}
 	}
 	psSrcArea->a_nProtection |= AREA_SHARED;
 	psNewArea->a_nProtection |= AREA_SHARED;

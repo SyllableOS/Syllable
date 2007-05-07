@@ -144,7 +144,7 @@ status_t  sys_rename_thread( thread_id hThread, const char* pzNewName );
 
 status_t  suspend( void );
 status_t  wakeup_thread( thread_id hThread, bool bWakeupSuspended );
-
+status_t  set_thread_target_cpu( const thread_id hThread, const int nCpu );
 
 
 status_t sys_snooze( bigtime_t nTimeout );

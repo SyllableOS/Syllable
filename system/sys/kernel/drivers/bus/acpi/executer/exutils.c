@@ -6,7 +6,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2006, R. Byron Moore
+ * Copyright (C) 2000 - 2007, R. Byron Moore
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -88,9 +88,9 @@ acpi_status acpi_ex_enter_interpreter(void)
 {
 	acpi_status status;
 
-	ACPI_FUNCTION_TRACE("ex_enter_interpreter");
+	ACPI_FUNCTION_TRACE(ex_enter_interpreter);
 
-	status = acpi_ut_acquire_mutex(ACPI_MTX_EXECUTE);
+	status = acpi_ut_acquire_mutex(ACPI_MTX_INTERPRETER);
 	if (ACPI_FAILURE(status)) {
 		ACPI_ERROR((AE_INFO, "Could not acquire interpreter mutex"));
 	}
@@ -124,9 +124,9 @@ void acpi_ex_exit_interpreter(void)
 {
 	acpi_status status;
 
-	ACPI_FUNCTION_TRACE("ex_exit_interpreter");
+	ACPI_FUNCTION_TRACE(ex_exit_interpreter);
 
-	status = acpi_ut_release_mutex(ACPI_MTX_EXECUTE);
+	status = acpi_ut_release_mutex(ACPI_MTX_INTERPRETER);
 	if (ACPI_FAILURE(status)) {
 		ACPI_ERROR((AE_INFO, "Could not release interpreter mutex"));
 	}
@@ -192,7 +192,7 @@ u8 acpi_ex_acquire_global_lock(u32 field_flags)
 	u8 locked = FALSE;
 	acpi_status status;
 
-	ACPI_FUNCTION_TRACE("ex_acquire_global_lock");
+	ACPI_FUNCTION_TRACE(ex_acquire_global_lock);
 
 	/* Only attempt lock if the always_lock bit is set */
 
@@ -228,7 +228,7 @@ void acpi_ex_release_global_lock(u8 locked_by_me)
 {
 	acpi_status status;
 
-	ACPI_FUNCTION_TRACE("ex_release_global_lock");
+	ACPI_FUNCTION_TRACE(ex_release_global_lock);
 
 	/* Only attempt unlock if the caller locked it */
 
@@ -267,7 +267,7 @@ static u32 acpi_ex_digits_needed(acpi_integer value, u32 base)
 	u32 num_digits;
 	acpi_integer current_value;
 
-	ACPI_FUNCTION_TRACE("ex_digits_needed");
+	ACPI_FUNCTION_TRACE(ex_digits_needed);
 
 	/* acpi_integer is unsigned, so we don't worry about a '-' prefix */
 

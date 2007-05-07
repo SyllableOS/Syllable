@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2006, R. Byron Moore
+ * Copyright (C) 2000 - 2007, R. Byron Moore
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -45,13 +45,12 @@
 #include <acpi/acpi.h>
 #include <acpi/acnamesp.h>
 #include <acpi/acdispat.h>
+#include <acpi/actables.h>
 
 #define _COMPONENT          ACPI_NAMESPACE
 ACPI_MODULE_NAME("nsload")
 
 /* Local prototypes */
-static acpi_status acpi_ns_load_table_by_type(acpi_table_type table_type);
-
 #ifdef ACPI_FUTURE_IMPLEMENTATION
 acpi_status acpi_ns_unload_namespace(acpi_handle handle);
 
@@ -63,7 +62,7 @@ static acpi_status acpi_ns_delete_subtree(acpi_handle start_handle);
  *
  * FUNCTION:    acpi_ns_load_table
  *
- * PARAMETERS:  table_desc      - Descriptor for table to be loaded
+ * PARAMETERS:  table_index     - Index for table to be loaded
  *              Node            - Owning NS node
  *
  * RETURN:      Status
@@ -73,40 +72,12 @@ static acpi_status acpi_ns_delete_subtree(acpi_handle start_handle);
  ******************************************************************************/
 
 acpi_status
-acpi_ns_load_table(struct acpi_table_desc *table_desc,
+acpi_ns_load_table(acpi_native_uint table_index,
 		   struct acpi_namespace_node *node)
 {
 	acpi_status status;
 
-	ACPI_FUNCTION_TRACE("ns_load_table");
-
-	/* Check if table contains valid AML (must be DSDT, PSDT, SSDT, etc.) */
-
-	if (!
-	    (acpi_gbl_table_data[table_desc->type].
-	     flags & ACPI_TABLE_EXECUTABLE)) {
-		/* Just ignore this table */
-
-		return_ACPI_STATUS(AE_OK);
-	}
-
-	/* Check validity of the AML start and length */
-
-	if (!table_desc->aml_start) {
-		ACPI_ERROR((AE_INFO, "Null AML pointer"));
-		return_ACPI_STATUS(AE_BAD_PARAMETER);
-	}
-
-	ACPI_DEBUG_PRINT((ACPI_DB_INFO, "AML block at %p\n",
-			  table_desc->aml_start));
-
-	/* Ignore table if there is no AML contained within */
-
-	if (!table_desc->aml_length) {
-		ACPI_WARNING((AE_INFO, "Zero-length AML block in table [%4.4s]",
-			      table_desc->pointer->signature));
-		return_ACPI_STATUS(AE_OK);
-	}
+	ACPI_FUNCTION_TRACE(ns_load_table);
 
 	/*
 	 * Parse the table and load the namespace with all named
@@ -117,15 +88,34 @@ acpi_ns_load_table(struct acpi_table_desc *table_desc,
 	 * to another control method, we can't continue parsing
 	 * because we don't know how many arguments to parse next!
 	 */
-	ACPI_DEBUG_PRINT((ACPI_DB_INFO,
-			  "**** Loading table into namespace ****\n"));
-
 	status = acpi_ut_acquire_mutex(ACPI_MTX_NAMESPACE);
 	if (ACPI_FAILURE(status)) {
 		return_ACPI_STATUS(status);
 	}
 
-	status = acpi_ns_parse_table(table_desc, node->child);
+	/* If table already loaded into namespace, just return */
+
+	if (acpi_tb_is_table_loaded(table_index)) {
+		status = AE_ALREADY_EXISTS;
+		goto unlock;
+	}
+
+	ACPI_DEBUG_PRINT((ACPI_DB_INFO,
+			  "**** Loading table into namespace ****\n"));
+
+	status = acpi_tb_allocate_owner_id(table_index);
+	if (ACPI_FAILURE(status)) {
+		goto unlock;
+	}
+
+	status = acpi_ns_parse_table(table_index, node->child);
+	if (ACPI_SUCCESS(status)) {
+		acpi_tb_set_table_loaded_flag(table_index, TRUE);
+	} else {
+		acpi_tb_release_owner_id(table_index);
+	}
+
+      unlock:
 	(void)acpi_ut_release_mutex(ACPI_MTX_NAMESPACE);
 
 	if (ACPI_FAILURE(status)) {
@@ -141,7 +131,7 @@ acpi_ns_load_table(struct acpi_table_desc *table_desc,
 	ACPI_DEBUG_PRINT((ACPI_DB_INFO,
 			  "**** Begin Table Method Parsing and Object Initialization ****\n"));
 
-	status = acpi_ds_initialize_objects(table_desc, node);
+	status = acpi_ds_initialize_objects(table_index, node);
 
 	ACPI_DEBUG_PRINT((ACPI_DB_INFO,
 			  "**** Completed Table Method Parsing and Object Initialization ****\n"));
@@ -149,99 +139,7 @@ acpi_ns_load_table(struct acpi_table_desc *table_desc,
 	return_ACPI_STATUS(status);
 }
 
-/*******************************************************************************
- *
- * FUNCTION:    acpi_ns_load_table_by_type
- *
- * PARAMETERS:  table_type          - Id of the table type to load
- *
- * RETURN:      Status
- *
- * DESCRIPTION: Load an ACPI table or tables into the namespace.  All tables
- *              of the given type are loaded.  The mechanism allows this
- *              routine to be called repeatedly.
- *
- ******************************************************************************/
-
-static acpi_status acpi_ns_load_table_by_type(acpi_table_type table_type)
-{
-	u32 i;
-	acpi_status status;
-	struct acpi_table_desc *table_desc;
-
-	ACPI_FUNCTION_TRACE("ns_load_table_by_type");
-
-	status = acpi_ut_acquire_mutex(ACPI_MTX_TABLES);
-	if (ACPI_FAILURE(status)) {
-		return_ACPI_STATUS(status);
-	}
-
-	/*
-	 * Table types supported are:
-	 * DSDT (one), SSDT/PSDT (multiple)
-	 */
-	switch (table_type) {
-	case ACPI_TABLE_DSDT:
-
-		ACPI_DEBUG_PRINT((ACPI_DB_INFO, "Namespace load: DSDT\n"));
-
-		table_desc = acpi_gbl_table_lists[ACPI_TABLE_DSDT].next;
-
-		/* If table already loaded into namespace, just return */
-
-		if (table_desc->loaded_into_namespace) {
-			goto unlock_and_exit;
-		}
-
-		/* Now load the single DSDT */
-
-		status = acpi_ns_load_table(table_desc, acpi_gbl_root_node);
-		if (ACPI_SUCCESS(status)) {
-			table_desc->loaded_into_namespace = TRUE;
-		}
-		break;
-
-	case ACPI_TABLE_SSDT:
-	case ACPI_TABLE_PSDT:
-
-		ACPI_DEBUG_PRINT((ACPI_DB_INFO,
-				  "Namespace load: %d SSDT or PSDTs\n",
-				  acpi_gbl_table_lists[table_type].count));
-
-		/*
-		 * Traverse list of SSDT or PSDT tables
-		 */
-		table_desc = acpi_gbl_table_lists[table_type].next;
-		for (i = 0; i < acpi_gbl_table_lists[table_type].count; i++) {
-			/*
-			 * Only attempt to load table into namespace if it is not
-			 * already loaded!
-			 */
-			if (!table_desc->loaded_into_namespace) {
-				status =
-				    acpi_ns_load_table(table_desc,
-						       acpi_gbl_root_node);
-				if (ACPI_FAILURE(status)) {
-					break;
-				}
-
-				table_desc->loaded_into_namespace = TRUE;
-			}
-
-			table_desc = table_desc->next;
-		}
-		break;
-
-	default:
-		status = AE_SUPPORT;
-		break;
-	}
-
-      unlock_and_exit:
-	(void)acpi_ut_release_mutex(ACPI_MTX_TABLES);
-	return_ACPI_STATUS(status);
-}
-
+#ifdef ACPI_OBSOLETE_FUNCTIONS
 /*******************************************************************************
  *
  * FUNCTION:    acpi_load_namespace
@@ -259,7 +157,7 @@ acpi_status acpi_ns_load_namespace(void)
 {
 	acpi_status status;
 
-	ACPI_FUNCTION_TRACE("acpi_load_name_space");
+	ACPI_FUNCTION_TRACE(acpi_load_name_space);
 
 	/* There must be at least a DSDT installed */
 
@@ -272,15 +170,15 @@ acpi_status acpi_ns_load_namespace(void)
 	 * Load the namespace.  The DSDT is required,
 	 * but the SSDT and PSDT tables are optional.
 	 */
-	status = acpi_ns_load_table_by_type(ACPI_TABLE_DSDT);
+	status = acpi_ns_load_table_by_type(ACPI_TABLE_ID_DSDT);
 	if (ACPI_FAILURE(status)) {
 		return_ACPI_STATUS(status);
 	}
 
 	/* Ignore exceptions from these */
 
-	(void)acpi_ns_load_table_by_type(ACPI_TABLE_SSDT);
-	(void)acpi_ns_load_table_by_type(ACPI_TABLE_PSDT);
+	(void)acpi_ns_load_table_by_type(ACPI_TABLE_ID_SSDT);
+	(void)acpi_ns_load_table_by_type(ACPI_TABLE_ID_PSDT);
 
 	ACPI_DEBUG_PRINT_RAW((ACPI_DB_INIT,
 			      "ACPI Namespace successfully loaded at root %p\n",
@@ -288,6 +186,7 @@ acpi_status acpi_ns_load_namespace(void)
 
 	return_ACPI_STATUS(status);
 }
+#endif
 
 #ifdef ACPI_FUTURE_IMPLEMENTATION
 /*******************************************************************************
@@ -315,7 +214,7 @@ static acpi_status acpi_ns_delete_subtree(acpi_handle start_handle)
 	acpi_handle dummy;
 	u32 level;
 
-	ACPI_FUNCTION_TRACE("ns_delete_subtree");
+	ACPI_FUNCTION_TRACE(ns_delete_subtree);
 
 	parent_handle = start_handle;
 	child_handle = NULL;
@@ -393,7 +292,7 @@ acpi_status acpi_ns_unload_namespace(acpi_handle handle)
 {
 	acpi_status status;
 
-	ACPI_FUNCTION_TRACE("ns_unload_name_space");
+	ACPI_FUNCTION_TRACE(ns_unload_name_space);
 
 	/* Parameter validation */
 

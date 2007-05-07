@@ -44,1242 +44,376 @@ public:
 };
 
 
+#define REGISTER_MUXER(X,x) \
+          if(ENABLE_##X##_MUXER)   av_register_output_format(&x##_muxer)
+#define REGISTER_DEMUXER(X,x) \
+          if(ENABLE_##X##_DEMUXER) av_register_input_format(&x##_demuxer)
+#define REGISTER_MUXDEMUX(X,x)  REGISTER_MUXER(X,x); REGISTER_DEMUXER(X,x)
+#define REGISTER_PROTOCOL(X,x) \
+          if(ENABLE_##X##_PROTOCOL) register_protocol(&x##_protocol)
+
+
 void FFMpegAddon::RegisterFormats()
 {
 	/* Our own custom init function which avoids initialising formats and codecs we don't want E.g. Ogg */
     avcodec_init();
     RegisterCodecs();
-#ifdef CONFIG_FOURXM_DEMUXER
-    av_register_input_format(&fourxm_demuxer);
-#endif
-#ifdef CONFIG_ADTS_MUXER
-    av_register_output_format(&adts_muxer);
-#endif
-#ifdef CONFIG_AIFF_DEMUXER
-    av_register_input_format(&aiff_demuxer);
-#endif
-#ifdef CONFIG_AIFF_MUXER
-    av_register_output_format(&aiff_muxer);
-#endif
-#ifdef CONFIG_AMR_DEMUXER
-    av_register_input_format(&amr_demuxer);
-#endif
-#ifdef CONFIG_AMR_MUXER
-    av_register_output_format(&amr_muxer);
-#endif
-#ifdef CONFIG_ASF_DEMUXER
-    av_register_input_format(&asf_demuxer);
-#endif
-#ifdef CONFIG_ASF_MUXER
-    av_register_output_format(&asf_muxer);
-#endif
-#ifdef CONFIG_ASF_STREAM_MUXER
-    av_register_output_format(&asf_stream_muxer);
-#endif
-#ifdef CONFIG_AU_DEMUXER
-    av_register_input_format(&au_demuxer);
-#endif
-#ifdef CONFIG_AU_MUXER
-    av_register_output_format(&au_muxer);
-#endif
-#if defined(CONFIG_AUDIO_OSS) || defined(CONFIG_AUDIO_BEOS)
-#ifdef CONFIG_AUDIO_DEMUXER
-    av_register_input_format(&audio_demuxer);
-#endif
-#ifdef CONFIG_AUDIO_MUXER
-    av_register_output_format(&audio_muxer);
-#endif
-#endif /* CONFIG_AUDIO_OSS || CONFIG_AUDIO_BEOS */
-#ifdef CONFIG_AVI_DEMUXER
-    av_register_input_format(&avi_demuxer);
-#endif
-#ifdef CONFIG_AVI_MUXER
-    av_register_output_format(&avi_muxer);
-#endif
+    REGISTER_DEMUXER (AAC, aac);
+    REGISTER_MUXDEMUX(AC3, ac3);
+    REGISTER_MUXER   (ADTS, adts);
+    REGISTER_MUXDEMUX(AIFF, aiff);
+    REGISTER_MUXDEMUX(AMR, amr);
+    REGISTER_DEMUXER (APC, apc);
+    REGISTER_MUXDEMUX(ASF, asf);
+    REGISTER_MUXER   (ASF_STREAM, asf_stream);
+    REGISTER_MUXDEMUX(AU, au);
+    REGISTER_MUXDEMUX(AUDIO, audio);
+    REGISTER_MUXDEMUX(AVI, avi);
 #ifdef CONFIG_AVISYNTH
     av_register_input_format(&avisynth_demuxer);
 #endif
-#ifdef CONFIG_AVS_DEMUXER
-    av_register_input_format(&avs_demuxer);
-#endif
-#ifdef CONFIG_CRC_MUXER
-    av_register_output_format(&crc_muxer);
-#endif
-#ifdef CONFIG_FRAMECRC_MUXER
-    av_register_output_format(&framecrc_muxer);
-#endif
-#ifdef CONFIG_DAUD_DEMUXER
-    av_register_input_format(&daud_demuxer);
-#endif
-#ifdef CONFIG_DC1394
-#ifdef CONFIG_DC1394_DEMUXER
-    av_register_input_format(&dc1394_demuxer);
-#endif
-#endif /* CONFIG_DC1394 */
-#ifdef CONFIG_DV1394
-#ifdef CONFIG_DV1394_DEMUXER
-    av_register_input_format(&dv1394_demuxer);
-#endif
-#endif /* CONFIG_DV1394 */
-#ifdef CONFIG_DV_DEMUXER
-    av_register_input_format(&dv_demuxer);
-#endif
-#ifdef CONFIG_DV_MUXER
-    av_register_output_format(&dv_muxer);
-#endif
-#ifdef CONFIG_EA_DEMUXER
-    av_register_input_format(&ea_demuxer);
-#endif
-#ifdef CONFIG_FFM_DEMUXER
-    av_register_input_format(&ffm_demuxer);
-#endif
-#ifdef CONFIG_FFM_MUXER
-    av_register_output_format(&ffm_muxer);
-#endif
-#ifdef CONFIG_FLIC_DEMUXER
-    av_register_input_format(&flic_demuxer);
-#endif
-#ifdef CONFIG_FLV_DEMUXER
-    av_register_input_format(&flv_demuxer);
-#endif
-#ifdef CONFIG_FLV_MUXER
-    av_register_output_format(&flv_muxer);
-#endif
-#ifdef CONFIG_GIF_MUXER
-    av_register_output_format(&gif_muxer);
-#endif
-#ifdef CONFIG_GIF_DEMUXER
-    av_register_input_format(&gif_demuxer);
-#endif
-#ifdef CONFIG_GXF_DEMUXER
-    av_register_input_format(&gxf_demuxer);
-#endif
-#if defined(CONFIG_GXF_MUXER) && defined(CONFIG_GPL)
-    av_register_output_format(&gxf_muxer);
-#endif
-#ifdef CONFIG_IDCIN_DEMUXER
-    av_register_input_format(&idcin_demuxer);
-#endif
-#ifdef CONFIG_ROQ_DEMUXER
-    av_register_input_format(&roq_demuxer);
-#endif
-#ifdef CONFIG_IMAGE2_DEMUXER
-    av_register_input_format(&image2_demuxer);
-#endif
-#ifdef CONFIG_IMAGE2PIPE_DEMUXER
-    av_register_input_format(&image2pipe_demuxer);
-#endif
-#ifdef CONFIG_IMAGE2_MUXER
-    av_register_output_format(&image2_muxer);
-#endif
-#ifdef CONFIG_IMAGE2PIPE_MUXER
-    av_register_output_format(&image2pipe_muxer);
-#endif
-#ifdef CONFIG_IMAGE_DEMUXER
-    av_register_input_format(&image_demuxer);
-#endif
-#ifdef CONFIG_IMAGEPIPE_DEMUXER
-    av_register_input_format(&imagepipe_demuxer);
-#endif
-#ifdef CONFIG_IMAGE_MUXER
-    av_register_output_format(&image_muxer);
-#endif
-#ifdef CONFIG_IMAGEPIPE_MUXER
-    av_register_output_format(&imagepipe_muxer);
-#endif
-#ifdef CONFIG_IPMOVIE_DEMUXER
-    av_register_input_format(&ipmovie_demuxer);
-#endif
-#ifdef CONFIG_MATROSKA_DEMUXER
-    av_register_input_format(&matroska_demuxer);
-#endif
-#ifdef CONFIG_MM_DEMUXER
-    av_register_input_format(&mm_demuxer);
-#endif
-#ifdef CONFIG_MMF_DEMUXER
-    av_register_input_format(&mmf_demuxer);
-#endif
-#ifdef CONFIG_MMF_MUXER
-    av_register_output_format(&mmf_muxer);
-#endif
-#ifdef CONFIG_MOV_DEMUXER
-    av_register_input_format(&mov_demuxer);
-#endif
-#ifdef CONFIG_MOV_MUXER
-    av_register_output_format(&mov_muxer);
-#endif
-#ifdef CONFIG_TGP_MUXER
-    av_register_output_format(&tgp_muxer);
-#endif
-#ifdef CONFIG_MP4_MUXER
-    av_register_output_format(&mp4_muxer);
-#endif
-#ifdef CONFIG_PSP_MUXER
-    av_register_output_format(&psp_muxer);
-#endif
-#ifdef CONFIG_TG2_MUXER
-    av_register_output_format(&tg2_muxer);
-#endif
-#ifdef CONFIG_MP3_DEMUXER
-    av_register_input_format(&mp3_demuxer);
-#endif
-#ifdef CONFIG_MP2_MUXER
-    av_register_output_format(&mp2_muxer);
-#endif
-#ifdef CONFIG_MP3_MUXER
-    av_register_output_format(&mp3_muxer);
-#endif
-#ifdef CONFIG_MPEG1SYSTEM_MUXER
-    av_register_output_format(&mpeg1system_muxer);
-#endif
-#ifdef CONFIG_MPEG1VCD_MUXER
-    av_register_output_format(&mpeg1vcd_muxer);
-#endif
-#ifdef CONFIG_MPEG2VOB_MUXER
-    av_register_output_format(&mpeg2vob_muxer);
-#endif
-#ifdef CONFIG_MPEG2SVCD_MUXER
-    av_register_output_format(&mpeg2svcd_muxer);
-#endif
-#ifdef CONFIG_MPEG2DVD_MUXER
-    av_register_output_format(&mpeg2dvd_muxer);
-#endif
-#ifdef CONFIG_MPEGPS_DEMUXER
-    av_register_input_format(&mpegps_demuxer);
-#endif
-#ifdef CONFIG_MPEGTS_DEMUXER
-    av_register_input_format(&mpegts_demuxer);
-#endif
-#ifdef CONFIG_MPEGTS_MUXER
-    av_register_output_format(&mpegts_muxer);
-#endif
-#ifdef CONFIG_MPJPEG_MUXER
-    av_register_output_format(&mpjpeg_muxer);
-#endif
-#ifdef CONFIG_MXF_DEMUXER
-    av_register_input_format(&mxf_demuxer);
-#endif
-#ifdef CONFIG_NSV_DEMUXER
-    av_register_input_format(&nsv_demuxer);
-#endif
-#ifdef CONFIG_NUT_DEMUXER
-    av_register_input_format(&nut_demuxer);
-#endif
-#ifdef CONFIG_NUT_MUXER
-//    av_register_output_format(&nut_muxer);
-#endif
-#ifdef CONFIG_NUV_DEMUXER
-    av_register_input_format(&nuv_demuxer);
-#endif
-#ifdef CONFIG_STR_DEMUXER
-    av_register_input_format(&str_demuxer);
-#endif
-#ifdef CONFIG_SHORTEN_DEMUXER
-    av_register_input_format(&shorten_demuxer);
-#endif
-#ifdef CONFIG_FLAC_DEMUXER
-    av_register_input_format(&flac_demuxer);
-#endif
-#ifdef CONFIG_FLAC_MUXER
-    av_register_output_format(&flac_muxer);
-#endif
-#ifdef CONFIG_AC3_DEMUXER
-    av_register_input_format(&ac3_demuxer);
-#endif
-#ifdef CONFIG_AC3_MUXER
-    av_register_output_format(&ac3_muxer);
-#endif
-#ifdef CONFIG_DTS_DEMUXER
-    av_register_input_format(&dts_demuxer);
-#endif
-#ifdef CONFIG_AAC_DEMUXER
-    av_register_input_format(&aac_demuxer);
-#endif
-#ifdef CONFIG_H261_DEMUXER
-    av_register_input_format(&h261_demuxer);
-#endif
-#ifdef CONFIG_H261_MUXER
-    av_register_output_format(&h261_muxer);
-#endif
-#ifdef CONFIG_H263_DEMUXER
-    av_register_input_format(&h263_demuxer);
-#endif
-#ifdef CONFIG_H263_MUXER
-    av_register_output_format(&h263_muxer);
-#endif
-#ifdef CONFIG_M4V_DEMUXER
-    av_register_input_format(&m4v_demuxer);
-#endif
-#ifdef CONFIG_M4V_MUXER
-    av_register_output_format(&m4v_muxer);
-#endif
-#ifdef CONFIG_H264_DEMUXER
-    av_register_input_format(&h264_demuxer);
-#endif
-#ifdef CONFIG_H264_MUXER
-    av_register_output_format(&h264_muxer);
-#endif
-#ifdef CONFIG_MPEGVIDEO_DEMUXER
-    av_register_input_format(&mpegvideo_demuxer);
-#endif
-#ifdef CONFIG_MPEG1VIDEO_MUXER
-    av_register_output_format(&mpeg1video_muxer);
-#endif
-#ifdef CONFIG_MPEG2VIDEO_MUXER
-    av_register_output_format(&mpeg2video_muxer);
-#endif
-#ifdef CONFIG_MJPEG_DEMUXER
-    av_register_input_format(&mjpeg_demuxer);
-#endif
-#ifdef CONFIG_INGENIENT_DEMUXER
-    av_register_input_format(&ingenient_demuxer);
-#endif
-#ifdef CONFIG_MJPEG_MUXER
-    av_register_output_format(&mjpeg_muxer);
-#endif
-#ifdef CONFIG_PCM_S16LE_DEMUXER
-    av_register_input_format(&pcm_s16le_demuxer);
-#endif
-#ifdef CONFIG_PCM_S16LE_MUXER
-    av_register_output_format(&pcm_s16le_muxer);
-#endif
-#ifdef CONFIG_PCM_S16BE_DEMUXER
-    av_register_input_format(&pcm_s16be_demuxer);
-#endif
-#ifdef CONFIG_PCM_S16BE_MUXER
-    av_register_output_format(&pcm_s16be_muxer);
-#endif
-#ifdef CONFIG_PCM_U16LE_DEMUXER
-    av_register_input_format(&pcm_u16le_demuxer);
-#endif
-#ifdef CONFIG_PCM_U16LE_MUXER
-    av_register_output_format(&pcm_u16le_muxer);
-#endif
-#ifdef CONFIG_PCM_U16BE_DEMUXER
-    av_register_input_format(&pcm_u16be_demuxer);
-#endif
-#ifdef CONFIG_PCM_U16BE_MUXER
-    av_register_output_format(&pcm_u16be_muxer);
-#endif
-#ifdef CONFIG_PCM_S8_DEMUXER
-    av_register_input_format(&pcm_s8_demuxer);
-#endif
-#ifdef CONFIG_PCM_S8_MUXER
-    av_register_output_format(&pcm_s8_muxer);
-#endif
-#ifdef CONFIG_PCM_U8_DEMUXER
-    av_register_input_format(&pcm_u8_demuxer);
-#endif
-#ifdef CONFIG_PCM_U8_MUXER
-    av_register_output_format(&pcm_u8_muxer);
-#endif
-#ifdef CONFIG_PCM_MULAW_DEMUXER
-    av_register_input_format(&pcm_mulaw_demuxer);
-#endif
-#ifdef CONFIG_PCM_MULAW_MUXER
-    av_register_output_format(&pcm_mulaw_muxer);
-#endif
-#ifdef CONFIG_PCM_ALAW_DEMUXER
-    av_register_input_format(&pcm_alaw_demuxer);
-#endif
-#ifdef CONFIG_PCM_ALAW_MUXER
-    av_register_output_format(&pcm_alaw_muxer);
-#endif
-#ifdef CONFIG_RAWVIDEO_DEMUXER
-    av_register_input_format(&rawvideo_demuxer);
-#endif
-#ifdef CONFIG_RAWVIDEO_MUXER
-    av_register_output_format(&rawvideo_muxer);
-#endif
-#ifdef CONFIG_NULL_MUXER
-    av_register_output_format(&null_muxer);
-#endif
-#ifdef CONFIG_RM_DEMUXER
-    av_register_input_format(&rm_demuxer);
-#endif
-#ifdef CONFIG_RM_MUXER
-    av_register_output_format(&rm_muxer);
-#endif
-#ifdef CONFIG_NETWORK
-#ifdef CONFIG_RTP_MUXER
-    av_register_output_format(&rtp_muxer);
-#endif
-#ifdef CONFIG_RTSP_DEMUXER
-    av_register_input_format(&rtsp_demuxer);
-#endif
-#ifdef CONFIG_SDP_DEMUXER
-    av_register_input_format(&sdp_demuxer);
-#endif
-#ifdef CONFIG_REDIR_DEMUXER
-    av_register_input_format(&redir_demuxer);
-#endif
-#endif /* CONFIG_NETWORK */
-#ifdef CONFIG_SEGAFILM_DEMUXER
-    av_register_input_format(&segafilm_demuxer);
-#endif
-#ifdef CONFIG_VMD_DEMUXER
-    av_register_input_format(&vmd_demuxer);
-#endif
-#ifdef CONFIG_SMACKER_DEMUXER
-    av_register_input_format(&smacker_demuxer);
-#endif
-#ifdef CONFIG_SOL_DEMUXER
-    av_register_input_format(&sol_demuxer);
-#endif
-#ifdef CONFIG_SWF_DEMUXER
-    av_register_input_format(&swf_demuxer);
-#endif
-#ifdef CONFIG_SWF_MUXER
-    av_register_output_format(&swf_muxer);
-#endif
-#ifdef CONFIG_TTA_DEMUXER
-    av_register_input_format(&tta_demuxer);
-#endif
-#ifdef CONFIG_VIDEO4LINUX2
-#ifdef CONFIG_V4L2_DEMUXER
-    av_register_input_format(&v4l2_demuxer);
-#endif
-#endif /* CONFIG_VIDEO4LINUX2 */
-#if defined(CONFIG_VIDEO4LINUX) || defined(CONFIG_BKTR)
-#ifdef CONFIG_VIDEO_GRAB_DEVICE_DEMUXER
-    av_register_input_format(&video_grab_device_demuxer);
-#endif
-#endif /* CONFIG_VIDEO4LINUX || CONFIG_BKTR */
-#ifdef CONFIG_VOC_DEMUXER
-    av_register_input_format(&voc_demuxer);
-#endif
-#ifdef CONFIG_VOC_MUXER
-    av_register_output_format(&voc_muxer);
-#endif
-#ifdef CONFIG_WAV_DEMUXER
-    av_register_input_format(&wav_demuxer);
-#endif
-#ifdef CONFIG_WAV_MUXER
-    av_register_output_format(&wav_muxer);
-#endif
-#ifdef CONFIG_WC3_DEMUXER
-    av_register_input_format(&wc3_demuxer);
-#endif
-#ifdef CONFIG_WSAUD_DEMUXER
-    av_register_input_format(&wsaud_demuxer);
-#endif
-#ifdef CONFIG_WSVQA_DEMUXER
-    av_register_input_format(&wsvqa_demuxer);
-#endif
-#ifdef CONFIG_YUV4MPEGPIPE_MUXER
-    av_register_output_format(&yuv4mpegpipe_muxer);
-#endif
-#ifdef CONFIG_YUV4MPEGPIPE_DEMUXER
-    av_register_input_format(&yuv4mpegpipe_demuxer);
-#endif
+    REGISTER_DEMUXER (AVS, avs);
+    REGISTER_DEMUXER (BETHSOFTVID, bethsoftvid);
+    REGISTER_DEMUXER (C93, c93);
+    REGISTER_MUXER   (CRC, crc);
+    REGISTER_DEMUXER (DAUD, daud);
+    REGISTER_DEMUXER (DC1394, dc1394);
+    REGISTER_DEMUXER (DSICIN, dsicin);
+    REGISTER_DEMUXER (DTS, dts);
+    REGISTER_MUXDEMUX(DV, dv);
+    REGISTER_DEMUXER (DV1394, dv1394);
+    REGISTER_DEMUXER (DXA, dxa);
+    REGISTER_DEMUXER (EA, ea);
+    REGISTER_MUXDEMUX(FFM, ffm);
+    REGISTER_MUXDEMUX(FLAC, flac);
+    REGISTER_DEMUXER (FLIC, flic);
+    REGISTER_MUXDEMUX(FLV, flv);
+    REGISTER_DEMUXER (FOURXM, fourxm);
+    REGISTER_MUXER   (FRAMECRC, framecrc);
+    REGISTER_MUXDEMUX(GIF, gif);
+    REGISTER_DEMUXER (GXF, gxf);
+    REGISTER_MUXER   (GXF, gxf);
+    REGISTER_MUXDEMUX(H261, h261);
+    REGISTER_MUXDEMUX(H263, h263);
+    REGISTER_MUXDEMUX(H264, h264);
+    REGISTER_DEMUXER (IDCIN, idcin);
+    REGISTER_MUXDEMUX(IMAGE2, image2);
+    REGISTER_MUXDEMUX(IMAGE2PIPE, image2pipe);
+    REGISTER_DEMUXER (INGENIENT, ingenient);
+    REGISTER_DEMUXER (IPMOVIE, ipmovie);
+    if (!ENABLE_NUT_DEMUXER) REGISTER_DEMUXER (LIBNUT, libnut);
+    REGISTER_MUXER   (LIBNUT, libnut);
+    REGISTER_MUXDEMUX(M4V, m4v);
+    REGISTER_DEMUXER (MATROSKA, matroska);
+    REGISTER_MUXDEMUX(MJPEG, mjpeg);
+    REGISTER_DEMUXER (MM, mm);
+    REGISTER_MUXDEMUX(MMF, mmf);
+    REGISTER_MUXDEMUX(MOV, mov);
+    REGISTER_MUXER   (MP2, mp2);
+    REGISTER_MUXDEMUX(MP3, mp3);
+    REGISTER_MUXER   (MP4, mp4);
+    REGISTER_DEMUXER (MPC, mpc);
+    REGISTER_MUXER   (MPEG1SYSTEM, mpeg1system);
+    REGISTER_MUXER   (MPEG1VCD, mpeg1vcd);
+    REGISTER_MUXER   (MPEG1VIDEO, mpeg1video);
+    REGISTER_MUXER   (MPEG2DVD, mpeg2dvd);
+    REGISTER_MUXER   (MPEG2SVCD, mpeg2svcd);
+    REGISTER_MUXER   (MPEG2VIDEO, mpeg2video);
+    REGISTER_MUXER   (MPEG2VOB, mpeg2vob);
+    REGISTER_DEMUXER (MPEGPS, mpegps);
+    REGISTER_MUXDEMUX(MPEGTS, mpegts);
+    REGISTER_DEMUXER (MPEGVIDEO, mpegvideo);
+    REGISTER_MUXER   (MPJPEG, mpjpeg);
+    REGISTER_DEMUXER (MTV, mtv);
+    REGISTER_DEMUXER (MXF, mxf);
+    REGISTER_DEMUXER (NSV, nsv);
+    REGISTER_MUXER   (NULL, null);
+    REGISTER_DEMUXER (NUT, nut);
+    REGISTER_DEMUXER (NUV, nuv);
+    REGISTER_MUXDEMUX(PCM_ALAW,  pcm_alaw);
+    REGISTER_MUXDEMUX(PCM_MULAW, pcm_mulaw);
+    REGISTER_MUXDEMUX(PCM_S16BE, pcm_s16be);
+    REGISTER_MUXDEMUX(PCM_S16LE, pcm_s16le);
+    REGISTER_MUXDEMUX(PCM_S8,    pcm_s8);
+    REGISTER_MUXDEMUX(PCM_U16BE, pcm_u16be);
+    REGISTER_MUXDEMUX(PCM_U16LE, pcm_u16le);
+    REGISTER_MUXDEMUX(PCM_U8,    pcm_u8);
+    REGISTER_MUXER   (PSP, psp);
+    REGISTER_MUXDEMUX(RAWVIDEO, rawvideo);
+    REGISTER_MUXDEMUX(RM, rm);
+    REGISTER_DEMUXER (ROQ, roq);
+    REGISTER_DEMUXER (REDIR, redir);
+    REGISTER_MUXER   (RTP, rtp);
+    REGISTER_DEMUXER (RTSP, rtsp);
+    REGISTER_DEMUXER (SDP, sdp);
+    REGISTER_DEMUXER (SEGAFILM, segafilm);
+    REGISTER_DEMUXER (SHORTEN, shorten);
+    REGISTER_DEMUXER (SMACKER, smacker);
+    REGISTER_DEMUXER (SOL, sol);
+    REGISTER_DEMUXER (STR, str);
+    REGISTER_MUXDEMUX(SWF, swf);
+    REGISTER_MUXER   (TG2, tg2);
+    REGISTER_MUXER   (TGP, tgp);
+    REGISTER_DEMUXER (THP, thp);
+    REGISTER_DEMUXER (TIERTEXSEQ, tiertexseq);
+    REGISTER_DEMUXER (TTA, tta);
+    REGISTER_DEMUXER (V4L2, v4l2);
+    REGISTER_DEMUXER (VC1, vc1);
+    REGISTER_DEMUXER (VIDEO_GRAB_BKTR, video_grab_bktr);
+    REGISTER_DEMUXER (VIDEO_GRAB_V4L, video_grab_v4l);
+    REGISTER_DEMUXER (VMD, vmd);
+    REGISTER_MUXDEMUX(VOC, voc);
+    REGISTER_MUXDEMUX(WAV, wav);
+    REGISTER_DEMUXER (WC3, wc3);
+    REGISTER_DEMUXER (WSAUD, wsaud);
+    REGISTER_DEMUXER (WSVQA, wsvqa);
+    REGISTER_DEMUXER (WV, wv);
+    REGISTER_DEMUXER (X11_GRAB_DEVICE, x11_grab_device);
+    REGISTER_MUXDEMUX(YUV4MPEGPIPE, yuv4mpegpipe);
 
-    /* file protocols */
-    register_protocol(&file_protocol);
-    register_protocol(&pipe_protocol);
-#ifdef CONFIG_NETWORK
-    register_protocol(&udp_protocol);
-    register_protocol(&rtp_protocol);
-    register_protocol(&tcp_protocol);
-    register_protocol(&http_protocol);
-#endif
+    REGISTER_PROTOCOL(FILE, file);
+    REGISTER_PROTOCOL(HTTP, http);
+    REGISTER_PROTOCOL(PIPE, pipe);
+    REGISTER_PROTOCOL(RTP, rtp);
+    REGISTER_PROTOCOL(TCP, tcp);
+    REGISTER_PROTOCOL(UDP, udp);
 }
+
+#define REGISTER_ENCODER(X,x) \
+          if(ENABLE_##X##_ENCODER)  register_avcodec(&x##_encoder)
+#define REGISTER_DECODER(X,x) \
+          if(ENABLE_##X##_DECODER)  register_avcodec(&x##_decoder)
+#define REGISTER_ENCDEC(X,x)  REGISTER_ENCODER(X,x); REGISTER_DECODER(X,x)
+
+#define REGISTER_PARSER(X,x) \
+          if(ENABLE_##X##_PARSER)  av_register_codec_parser(&x##_parser)
+
 
 void FFMpegAddon::RegisterCodecs()
 {
-    /* encoders */
-#ifdef CONFIG_ENCODERS
-#ifdef CONFIG_AC3_ENCODER
-    register_avcodec(&ac3_encoder);
-#endif //CONFIG_AC3_ENCODER
-#ifdef CONFIG_MP2_ENCODER
-    register_avcodec(&mp2_encoder);
-#endif //CONFIG_MP2_ENCODER
-#ifdef CONFIG_MP3LAME
-#ifdef CONFIG_MP3LAME_ENCODER
-    register_avcodec(&mp3lame_encoder);
-#endif //CONFIG_MP3LAME_ENCODER
-#endif
-#ifdef CONFIG_FAAC
-#ifdef CONFIG_FAAC_ENCODER
-    register_avcodec(&faac_encoder);
-#endif //CONFIG_FAAC_ENCODER
-#endif
-#ifdef CONFIG_FLAC_ENCODER
-    register_avcodec(&flac_encoder);
-#endif
-#ifdef CONFIG_XVID
-#ifdef CONFIG_XVID_ENCODER
-    register_avcodec(&xvid_encoder);
-#endif //CONFIG_XVID_ENCODER
-#endif
-#ifdef CONFIG_MPEG1VIDEO_ENCODER
-    register_avcodec(&mpeg1video_encoder);
-#endif //CONFIG_MPEG1VIDEO_ENCODER
-#ifdef CONFIG_H264_ENCODER
-//    register_avcodec(&h264_encoder);
-#endif //CONFIG_H264_ENCODER
-#ifdef CONFIG_MPEG2VIDEO_ENCODER
-    register_avcodec(&mpeg2video_encoder);
-#endif //CONFIG_MPEG2VIDEO_ENCODER
-#ifdef CONFIG_H261_ENCODER
-    register_avcodec(&h261_encoder);
-#endif //CONFIG_H261_ENCODER
-#ifdef CONFIG_H263_ENCODER
-    register_avcodec(&h263_encoder);
-#endif //CONFIG_H263_ENCODER
-#ifdef CONFIG_H263P_ENCODER
-    register_avcodec(&h263p_encoder);
-#endif //CONFIG_H263P_ENCODER
-#ifdef CONFIG_FLV_ENCODER
-    register_avcodec(&flv_encoder);
-#endif //CONFIG_FLV_ENCODER
-#ifdef CONFIG_RV10_ENCODER
-    register_avcodec(&rv10_encoder);
-#endif //CONFIG_RV10_ENCODER
-#ifdef CONFIG_RV20_ENCODER
-    register_avcodec(&rv20_encoder);
-#endif //CONFIG_RV20_ENCODER
-#ifdef CONFIG_MPEG4_ENCODER
-    register_avcodec(&mpeg4_encoder);
-#endif //CONFIG_MPEG4_ENCODER
-#ifdef CONFIG_MSMPEG4V1_ENCODER
-    register_avcodec(&msmpeg4v1_encoder);
-#endif //CONFIG_MSMPEG4V1_ENCODER
-#ifdef CONFIG_MSMPEG4V2_ENCODER
-    register_avcodec(&msmpeg4v2_encoder);
-#endif //CONFIG_MSMPEG4V2_ENCODER
-#ifdef CONFIG_MSMPEG4V3_ENCODER
-    register_avcodec(&msmpeg4v3_encoder);
-#endif //CONFIG_MSMPEG4V3_ENCODER
-#ifdef CONFIG_WMV1_ENCODER
-    register_avcodec(&wmv1_encoder);
-#endif //CONFIG_WMV1_ENCODER
-#ifdef CONFIG_WMV2_ENCODER
-    register_avcodec(&wmv2_encoder);
-#endif //CONFIG_WMV2_ENCODER
-#ifdef CONFIG_SVQ1_ENCODER
-    register_avcodec(&svq1_encoder);
-#endif //CONFIG_SVQ1_ENCODER
-#ifdef CONFIG_MJPEG_ENCODER
-    register_avcodec(&mjpeg_encoder);
-#endif //CONFIG_MJPEG_ENCODER
-#ifdef CONFIG_LJPEG_ENCODER
-    register_avcodec(&ljpeg_encoder);
-#endif //CONFIG_LJPEG_ENCODER
-#ifdef CONFIG_JPEGLS_ENCODER
-    register_avcodec(&jpegls_encoder);
-#endif //CONFIG_JPEGLS_ENCODER
-#ifdef CONFIG_ZLIB
-#ifdef CONFIG_PNG_ENCODER
-    register_avcodec(&png_encoder);
-#endif //CONFIG_PNG_ENCODER
-#endif
-#ifdef CONFIG_PPM_ENCODER
-    register_avcodec(&ppm_encoder);
-#endif //CONFIG_PPM_ENCODER
-#ifdef CONFIG_PGM_ENCODER
-    register_avcodec(&pgm_encoder);
-#endif //CONFIG_PGM_ENCODER
-#ifdef CONFIG_PGMYUV_ENCODER
-    register_avcodec(&pgmyuv_encoder);
-#endif //CONFIG_PGMYUV_ENCODER
-#ifdef CONFIG_PBM_ENCODER
-    register_avcodec(&pbm_encoder);
-#endif //CONFIG_PBM_ENCODER
-#ifdef CONFIG_PAM_ENCODER
-    register_avcodec(&pam_encoder);
-#endif //CONFIG_PAM_ENCODER
-#ifdef CONFIG_HUFFYUV_ENCODER
-    register_avcodec(&huffyuv_encoder);
-#endif //CONFIG_HUFFYUV_ENCODER
-#ifdef CONFIG_FFVHUFF_ENCODER
-    register_avcodec(&ffvhuff_encoder);
-#endif //CONFIG_FFVHUFF_ENCODER
-#ifdef CONFIG_ASV1_ENCODER
-    register_avcodec(&asv1_encoder);
-#endif //CONFIG_ASV1_ENCODER
-#ifdef CONFIG_ASV2_ENCODER
-    register_avcodec(&asv2_encoder);
-#endif //CONFIG_ASV2_ENCODER
-#ifdef CONFIG_FFV1_ENCODER
-    register_avcodec(&ffv1_encoder);
-#endif //CONFIG_FFV1_ENCODER
-#ifdef CONFIG_SNOW_ENCODER
-    register_avcodec(&snow_encoder);
-#endif //CONFIG_SNOW_ENCODER
-#ifdef CONFIG_ZLIB_ENCODER
-    register_avcodec(&zlib_encoder);
-#endif //CONFIG_ZLIB_ENCODER
-#ifdef CONFIG_DVVIDEO_ENCODER
-    register_avcodec(&dvvideo_encoder);
-#endif //CONFIG_DVVIDEO_ENCODER
-#ifdef CONFIG_SONIC_ENCODER
-    register_avcodec(&sonic_encoder);
-#endif //CONFIG_SONIC_ENCODER
-#ifdef CONFIG_SONIC_LS_ENCODER
-    register_avcodec(&sonic_ls_encoder);
-#endif //CONFIG_SONIC_LS_ENCODER
-#ifdef CONFIG_X264
-#ifdef CONFIG_X264_ENCODER
-    register_avcodec(&x264_encoder);
-#endif //CONFIG_X264_ENCODER
-#endif
-#ifdef CONFIG_LIBGSM
-    register_avcodec(&libgsm_encoder);
-#endif //CONFIG_LIBGSM
-#ifdef CONFIG_RAWVIDEO_ENCODER
-    register_avcodec(&rawvideo_encoder);
-#endif //CONFIG_RAWVIDEO_ENCODER
-#endif /* CONFIG_ENCODERS */
+    /* video codecs */
+    REGISTER_DECODER(AASC, aasc);
+    REGISTER_ENCDEC (ASV1, asv1);
+    REGISTER_ENCDEC (ASV2, asv2);
+    REGISTER_DECODER(AVS, avs);
+    REGISTER_DECODER(BETHSOFTVID, bethsoftvid);
+    REGISTER_ENCDEC (BMP, bmp);
+    REGISTER_DECODER(C93, c93);
+    REGISTER_DECODER(CAVS, cavs);
+    REGISTER_DECODER(CINEPAK, cinepak);
+    REGISTER_DECODER(CLJR, cljr);
+    REGISTER_DECODER(CSCD, cscd);
+    REGISTER_DECODER(CYUV, cyuv);
+    REGISTER_DECODER(DNXHD, dnxhd);
+    REGISTER_DECODER(DSICINVIDEO, dsicinvideo);
+    REGISTER_ENCDEC (DVVIDEO, dvvideo);
+    REGISTER_DECODER(DXA, dxa);
+    REGISTER_DECODER(EIGHTBPS, eightbps);
+    REGISTER_ENCDEC (FFV1, ffv1);
+    REGISTER_ENCDEC (FFVHUFF, ffvhuff);
+    REGISTER_ENCDEC (FLASHSV, flashsv);
+    REGISTER_DECODER(FLIC, flic);
+    REGISTER_ENCDEC (FLV, flv);
+    REGISTER_DECODER(FOURXM, fourxm);
+    REGISTER_DECODER(FRAPS, fraps);
+    REGISTER_ENCDEC (GIF, gif);
+    REGISTER_ENCDEC (H261, h261);
+    REGISTER_ENCDEC (H263, h263);
+    REGISTER_DECODER(H263I, h263i);
+    REGISTER_ENCODER(H263P, h263p);
+    REGISTER_DECODER(H264, h264);
+    REGISTER_ENCDEC (HUFFYUV, huffyuv);
+    REGISTER_DECODER(IDCIN, idcin);
+    REGISTER_DECODER(INDEO2, indeo2);
+    REGISTER_DECODER(INDEO3, indeo3);
+    REGISTER_DECODER(INTERPLAY_VIDEO, interplay_video);
+    REGISTER_ENCODER(JPEGLS, jpegls);
+    REGISTER_DECODER(KMVC, kmvc);
+    REGISTER_ENCODER(LJPEG, ljpeg);
+    REGISTER_DECODER(LOCO, loco);
+    REGISTER_DECODER(MDEC, mdec);
+    REGISTER_ENCDEC (MJPEG, mjpeg);
+    REGISTER_DECODER(MJPEGB, mjpegb);
+    REGISTER_DECODER(MMVIDEO, mmvideo);
+    REGISTER_DECODER(MPEG_XVMC, mpeg_xvmc);
+    REGISTER_ENCDEC (MPEG1VIDEO, mpeg1video);
+    REGISTER_ENCDEC (MPEG2VIDEO, mpeg2video);
+    REGISTER_ENCDEC (MPEG4, mpeg4);
+    REGISTER_DECODER(MPEGVIDEO, mpegvideo);
+    REGISTER_ENCDEC (MSMPEG4V1, msmpeg4v1);
+    REGISTER_ENCDEC (MSMPEG4V2, msmpeg4v2);
+    REGISTER_ENCDEC (MSMPEG4V3, msmpeg4v3);
+    REGISTER_DECODER(MSRLE, msrle);
+    REGISTER_DECODER(MSVIDEO1, msvideo1);
+    REGISTER_DECODER(MSZH, mszh);
+    REGISTER_DECODER(NUV, nuv);
+    REGISTER_ENCODER(PAM, pam);
+    REGISTER_ENCODER(PBM, pbm);
+    REGISTER_ENCODER(PGM, pgm);
+    REGISTER_ENCODER(PGMYUV, pgmyuv);
+    REGISTER_ENCDEC (PNG, png);
+    REGISTER_ENCODER(PPM, ppm);
+    REGISTER_DECODER(PTX, ptx);
+    REGISTER_DECODER(QDRAW, qdraw);
+    REGISTER_DECODER(QPEG, qpeg);
+    REGISTER_DECODER(QTRLE, qtrle);
+    REGISTER_ENCDEC (RAWVIDEO, rawvideo);
+    REGISTER_DECODER(ROQ, roq);
+    REGISTER_DECODER(RPZA, rpza);
+    REGISTER_ENCDEC (RV10, rv10);
+    REGISTER_ENCDEC (RV20, rv20);
+    REGISTER_ENCDEC (SGI, sgi);
+    REGISTER_DECODER(SMACKER, smacker);
+    REGISTER_DECODER(SMC, smc);
+    REGISTER_ENCDEC (SNOW, snow);
+    REGISTER_DECODER(SP5X, sp5x);
+    REGISTER_ENCDEC (SVQ1, svq1);
+    REGISTER_DECODER(SVQ3, svq3);
+    REGISTER_ENCDEC (TARGA, targa);
+    REGISTER_DECODER(THEORA, theora);
+    REGISTER_DECODER(THP, thp);
+    REGISTER_DECODER(TIERTEXSEQVIDEO, tiertexseqvideo);
+    REGISTER_ENCDEC (TIFF, tiff);
+    REGISTER_DECODER(TRUEMOTION1, truemotion1);
+    REGISTER_DECODER(TRUEMOTION2, truemotion2);
+    REGISTER_DECODER(TSCC, tscc);
+    REGISTER_DECODER(ULTI, ulti);
+    REGISTER_DECODER(VC1, vc1);
+    REGISTER_DECODER(VCR1, vcr1);
+    REGISTER_DECODER(VMDVIDEO, vmdvideo);
+    REGISTER_DECODER(VMNC, vmnc);
+    REGISTER_DECODER(VP3, vp3);
+    REGISTER_DECODER(VP5, vp5);
+    REGISTER_DECODER(VP6, vp6);
+    REGISTER_DECODER(VP6F, vp6f);
+    REGISTER_DECODER(VQA, vqa);
+    REGISTER_ENCDEC (WMV1, wmv1);
+    REGISTER_ENCDEC (WMV2, wmv2);
+    REGISTER_DECODER(WMV3, wmv3);
+    REGISTER_DECODER(WNV1, wnv1);
+    REGISTER_ENCODER(X264, x264);
+    REGISTER_DECODER(XAN_WC3, xan_wc3);
+    REGISTER_DECODER(XL, xl);
+    REGISTER_ENCODER(XVID, xvid);
+    REGISTER_ENCDEC (ZLIB, zlib);
+    REGISTER_ENCDEC (ZMBV, zmbv);
 
-    /* decoders */
-#ifdef CONFIG_DECODERS
-#ifdef CONFIG_H263_DECODER
-    register_avcodec(&h263_decoder);
-#endif //CONFIG_H263_DECODER
-#ifdef CONFIG_H261_DECODER
-    register_avcodec(&h261_decoder);
-#endif //CONFIG_H261_DECODER
-#ifdef CONFIG_MPEG4_DECODER
-    register_avcodec(&mpeg4_decoder);
-#endif //CONFIG_MPEG4_DECODER
-#ifdef CONFIG_MSMPEG4V1_DECODER
-    register_avcodec(&msmpeg4v1_decoder);
-#endif //CONFIG_MSMPEG4V1_DECODER
-#ifdef CONFIG_MSMPEG4V2_DECODER
-    register_avcodec(&msmpeg4v2_decoder);
-#endif //CONFIG_MSMPEG4V2_DECODER
-#ifdef CONFIG_MSMPEG4V3_DECODER
-    register_avcodec(&msmpeg4v3_decoder);
-#endif //CONFIG_MSMPEG4V3_DECODER
-#ifdef CONFIG_WMV1_DECODER
-    register_avcodec(&wmv1_decoder);
-#endif //CONFIG_WMV1_DECODER
-#ifdef CONFIG_WMV2_DECODER
-    register_avcodec(&wmv2_decoder);
-#endif //CONFIG_WMV2_DECODER
-#ifdef CONFIG_VC1_DECODER
-    register_avcodec(&vc1_decoder);
-#endif //CONFIG_VC1_DECODER
-#ifdef CONFIG_WMV3_DECODER
-    register_avcodec(&wmv3_decoder);
-#endif //CONFIG_WMV3_DECODER
-#ifdef CONFIG_H263I_DECODER
-    register_avcodec(&h263i_decoder);
-#endif //CONFIG_H263I_DECODER
-#ifdef CONFIG_FLV_DECODER
-    register_avcodec(&flv_decoder);
-#endif //CONFIG_FLV_DECODER
-#ifdef CONFIG_RV10_DECODER
-    register_avcodec(&rv10_decoder);
-#endif //CONFIG_RV10_DECODER
-#ifdef CONFIG_RV20_DECODER
-    register_avcodec(&rv20_decoder);
-#endif //CONFIG_RV20_DECODER
-#ifdef CONFIG_SVQ1_DECODER
-    register_avcodec(&svq1_decoder);
-#endif //CONFIG_SVQ1_DECODER
-#ifdef CONFIG_SVQ3_DECODER
-    register_avcodec(&svq3_decoder);
-#endif //CONFIG_SVQ3_DECODER
-#ifdef CONFIG_WMAV1_DECODER
-    register_avcodec(&wmav1_decoder);
-#endif //CONFIG_WMAV1_DECODER
-#ifdef CONFIG_WMAV2_DECODER
-    register_avcodec(&wmav2_decoder);
-#endif //CONFIG_WMAV2_DECODER
-#ifdef CONFIG_INDEO2_DECODER
-    register_avcodec(&indeo2_decoder);
-#endif //CONFIG_INDEO2_DECODER
-#ifdef CONFIG_INDEO3_DECODER
-    register_avcodec(&indeo3_decoder);
-#endif //CONFIG_INDEO3_DECODER
-#ifdef CONFIG_TSCC_DECODER
-    register_avcodec(&tscc_decoder);
-#endif //CONFIG_TSCC_DECODER
-#ifdef CONFIG_CSCD_DECODER
-    register_avcodec(&cscd_decoder);
-#endif //CONFIG_CSCD_DECODER
-#ifdef CONFIG_NUV_DECODER
-    register_avcodec(&nuv_decoder);
-#endif //CONFIG_NUV_DECODER
-#ifdef CONFIG_ULTI_DECODER
-    register_avcodec(&ulti_decoder);
-#endif //CONFIG_ULTI_DECODER
-#ifdef CONFIG_QDRAW_DECODER
-    register_avcodec(&qdraw_decoder);
-#endif //CONFIG_QDRAW_DECODER
-#ifdef CONFIG_XL_DECODER
-    register_avcodec(&xl_decoder);
-#endif //CONFIG_XL_DECODER
-#ifdef CONFIG_QPEG_DECODER
-    register_avcodec(&qpeg_decoder);
-#endif //CONFIG_QPEG_DECODER
-#ifdef CONFIG_LOCO_DECODER
-    register_avcodec(&loco_decoder);
-#endif //CONFIG_LOCO_DECODER
-#ifdef CONFIG_KMVC_DECODER
-    register_avcodec(&kmvc_decoder);
-#endif //CONFIG_KMVC_DECODER
-#ifdef CONFIG_WNV1_DECODER
-    register_avcodec(&wnv1_decoder);
-#endif //CONFIG_WNV1_DECODER
-#ifdef CONFIG_AASC_DECODER
-    register_avcodec(&aasc_decoder);
-#endif //CONFIG_AASC_DECODER
-#ifdef CONFIG_FRAPS_DECODER
-    register_avcodec(&fraps_decoder);
-#endif //CONFIG_FRAPS_DECODER
-#if 0
-#ifdef CONFIG_FAAD
-#ifdef CONFIG_AAC_DECODER
-    register_avcodec(&aac_decoder);
-#endif //CONFIG_AAC_DECODER
-#ifdef CONFIG_MPEG4AAC_DECODER
-    register_avcodec(&mpeg4aac_decoder);
-#endif //CONFIG_MPEG4AAC_DECODER
-#endif
-#endif
-#ifdef CONFIG_MPEG1VIDEO_DECODER
-    register_avcodec(&mpeg1video_decoder);
-#endif //CONFIG_MPEG1VIDEO_DECODER
-#ifdef CONFIG_MPEG2VIDEO_DECODER
-    register_avcodec(&mpeg2video_decoder);
-#endif //CONFIG_MPEG2VIDEO_DECODER
-#ifdef CONFIG_MPEGVIDEO_DECODER
-    register_avcodec(&mpegvideo_decoder);
-#endif //CONFIG_MPEGVIDEO_DECODER
-#ifdef HAVE_XVMC
-#ifdef CONFIG_MPEG_XVMC_DECODER
-    register_avcodec(&mpeg_xvmc_decoder);
-#endif //CONFIG_MPEG_XVMC_DECODER
-#endif
-#ifdef CONFIG_DVVIDEO_DECODER
-    register_avcodec(&dvvideo_decoder);
-#endif //CONFIG_DVVIDEO_DECODER
-#ifdef CONFIG_MJPEG_DECODER
-    register_avcodec(&mjpeg_decoder);
-#endif //CONFIG_MJPEG_DECODER
-#ifdef CONFIG_MJPEGB_DECODER
-    register_avcodec(&mjpegb_decoder);
-#endif //CONFIG_MJPEGB_DECODER
-#ifdef CONFIG_SP5X_DECODER
-    register_avcodec(&sp5x_decoder);
-#endif //CONFIG_SP5X_DECODER
-#ifdef CONFIG_ZLIB
-#ifdef CONFIG_PNG_DECODER
-    register_avcodec(&png_decoder);
-#endif //CONFIG_PNG_DECODER
-#endif
-#ifdef CONFIG_MP2_DECODER
-    register_avcodec(&mp2_decoder);
-#endif //CONFIG_MP2_DECODER
-#ifdef CONFIG_MP3_DECODER
-    register_avcodec(&mp3_decoder);
-#endif //CONFIG_MP3_DECODER
-#ifdef CONFIG_MP3ADU_DECODER
-    register_avcodec(&mp3adu_decoder);
-#endif //CONFIG_MP3ADU_DECODER
-#ifdef CONFIG_MP3ON4_DECODER
-    register_avcodec(&mp3on4_decoder);
-#endif //CONFIG_MP3ON4_DECODER
-#ifdef CONFIG_MACE3_DECODER
-    register_avcodec(&mace3_decoder);
-#endif //CONFIG_MACE3_DECODER
-#ifdef CONFIG_MACE6_DECODER
-    register_avcodec(&mace6_decoder);
-#endif //CONFIG_MACE6_DECODER
-#ifdef CONFIG_HUFFYUV_DECODER
-    register_avcodec(&huffyuv_decoder);
-#endif //CONFIG_HUFFYUV_DECODER
-#ifdef CONFIG_FFVHUFF_DECODER
-    register_avcodec(&ffvhuff_decoder);
-#endif //CONFIG_FFVHUFF_DECODER
-#ifdef CONFIG_FFV1_DECODER
-    register_avcodec(&ffv1_decoder);
-#endif //CONFIG_FFV1_DECODER
-#ifdef CONFIG_SNOW_DECODER
-    register_avcodec(&snow_decoder);
-#endif //CONFIG_SNOW_DECODER
-#ifdef CONFIG_CYUV_DECODER
-    register_avcodec(&cyuv_decoder);
-#endif //CONFIG_CYUV_DECODER
-#ifdef CONFIG_H264_DECODER
-    register_avcodec(&h264_decoder);
-#endif //CONFIG_H264_DECODER
-#ifdef CONFIG_VP3_DECODER
-    register_avcodec(&vp3_decoder);
-#endif //CONFIG_VP3_DECODER
-#ifdef CONFIG_THEORA_DECODER
-    register_avcodec(&theora_decoder);
-#endif //CONFIG_THEORA_DECODER
-#ifdef CONFIG_VP5_DECODER
-    register_avcodec(&vp5_decoder);
-#endif //CONFIG_VP5_DECODER
-#ifdef CONFIG_VP6_DECODER
-    register_avcodec(&vp6_decoder);
-#endif //CONFIG_VP6_DECODER
-#ifdef CONFIG_VP6F_DECODER
-    register_avcodec(&vp6f_decoder);
-#endif //CONFIG_VP6F_DECODER
-#ifdef CONFIG_ASV1_DECODER
-    register_avcodec(&asv1_decoder);
-#endif //CONFIG_ASV1_DECODER
-#ifdef CONFIG_ASV2_DECODER
-    register_avcodec(&asv2_decoder);
-#endif //CONFIG_ASV2_DECODER
-#ifdef CONFIG_VCR1_DECODER
-    register_avcodec(&vcr1_decoder);
-#endif //CONFIG_VCR1_DECODER
-#ifdef CONFIG_CLJR_DECODER
-    register_avcodec(&cljr_decoder);
-#endif //CONFIG_CLJR_DECODER
-#ifdef CONFIG_FOURXM_DECODER
-    register_avcodec(&fourxm_decoder);
-#endif //CONFIG_FOURXM_DECODER
-#ifdef CONFIG_MDEC_DECODER
-    register_avcodec(&mdec_decoder);
-#endif //CONFIG_MDEC_DECODER
-#ifdef CONFIG_ROQ_DECODER
-    register_avcodec(&roq_decoder);
-#endif //CONFIG_ROQ_DECODER
-#ifdef CONFIG_INTERPLAY_VIDEO_DECODER
-    register_avcodec(&interplay_video_decoder);
-#endif //CONFIG_INTERPLAY_VIDEO_DECODER
-#ifdef CONFIG_XAN_WC3_DECODER
-    register_avcodec(&xan_wc3_decoder);
-#endif //CONFIG_XAN_WC3_DECODER
-#ifdef CONFIG_RPZA_DECODER
-    register_avcodec(&rpza_decoder);
-#endif //CONFIG_RPZA_DECODER
-#ifdef CONFIG_CINEPAK_DECODER
-    register_avcodec(&cinepak_decoder);
-#endif //CONFIG_CINEPAK_DECODER
-#ifdef CONFIG_MSRLE_DECODER
-    register_avcodec(&msrle_decoder);
-#endif //CONFIG_MSRLE_DECODER
-#ifdef CONFIG_MSVIDEO1_DECODER
-    register_avcodec(&msvideo1_decoder);
-#endif //CONFIG_MSVIDEO1_DECODER
-#ifdef CONFIG_VQA_DECODER
-    register_avcodec(&vqa_decoder);
-#endif //CONFIG_VQA_DECODER
-#ifdef CONFIG_IDCIN_DECODER
-    register_avcodec(&idcin_decoder);
-#endif //CONFIG_IDCIN_DECODER
-#ifdef CONFIG_EIGHTBPS_DECODER
-    register_avcodec(&eightbps_decoder);
-#endif //CONFIG_EIGHTBPS_DECODER
-#ifdef CONFIG_SMC_DECODER
-    register_avcodec(&smc_decoder);
-#endif //CONFIG_SMC_DECODER
-#ifdef CONFIG_FLIC_DECODER
-    register_avcodec(&flic_decoder);
-#endif //CONFIG_FLIC_DECODER
-#ifdef CONFIG_TRUEMOTION1_DECODER
-    register_avcodec(&truemotion1_decoder);
-#endif //CONFIG_TRUEMOTION1_DECODER
-#ifdef CONFIG_TRUEMOTION2_DECODER
-    register_avcodec(&truemotion2_decoder);
-#endif //CONFIG_TRUEMOTION2_DECODER
-#ifdef CONFIG_VMDVIDEO_DECODER
-    register_avcodec(&vmdvideo_decoder);
-#endif //CONFIG_VMDVIDEO_DECODER
-#ifdef CONFIG_VMDAUDIO_DECODER
-    register_avcodec(&vmdaudio_decoder);
-#endif //CONFIG_VMDAUDIO_DECODER
-#ifdef CONFIG_MSZH_DECODER
-    register_avcodec(&mszh_decoder);
-#endif //CONFIG_MSZH_DECODER
-#ifdef CONFIG_ZLIB_DECODER
-    register_avcodec(&zlib_decoder);
-#endif //CONFIG_ZLIB_DECODER
-#ifdef CONFIG_ZMBV_DECODER
-    register_avcodec(&zmbv_decoder);
-#endif //CONFIG_ZMBV_DECODER
-#ifdef CONFIG_SMACKER_DECODER
-    register_avcodec(&smacker_decoder);
-#endif //CONFIG_SMACKER_DECODER
-#ifdef CONFIG_SMACKAUD_DECODER
-    register_avcodec(&smackaud_decoder);
-#endif //CONFIG_SMACKAUD_DECODER
-#ifdef CONFIG_SONIC_DECODER
-    register_avcodec(&sonic_decoder);
-#endif //CONFIG_SONIC_DECODER
-#ifdef CONFIG_AC3
-#ifdef CONFIG_AC3_DECODER
-    register_avcodec(&ac3_decoder);
-#endif //CONFIG_AC3_DECODER
-#endif
-#ifdef CONFIG_DTS
-#ifdef CONFIG_DTS_DECODER
-    register_avcodec(&dts_decoder);
-#endif //CONFIG_DTS_DECODER
-#endif
-#ifdef CONFIG_RA_144_DECODER
-    register_avcodec(&ra_144_decoder);
-#endif //CONFIG_RA_144_DECODER
-#ifdef CONFIG_RA_288_DECODER
-    register_avcodec(&ra_288_decoder);
-#endif //CONFIG_RA_288_DECODER
-#ifdef CONFIG_ROQ_DPCM_DECODER
-    register_avcodec(&roq_dpcm_decoder);
-#endif //CONFIG_ROQ_DPCM_DECODER
-#ifdef CONFIG_INTERPLAY_DPCM_DECODER
-    register_avcodec(&interplay_dpcm_decoder);
-#endif //CONFIG_INTERPLAY_DPCM_DECODER
-#ifdef CONFIG_XAN_DPCM_DECODER
-    register_avcodec(&xan_dpcm_decoder);
-#endif //CONFIG_XAN_DPCM_DECODER
-#ifdef CONFIG_SOL_DPCM_DECODER
-    register_avcodec(&sol_dpcm_decoder);
-#endif //CONFIG_SOL_DPCM_DECODER
-#ifdef CONFIG_QTRLE_DECODER
-    register_avcodec(&qtrle_decoder);
-#endif //CONFIG_QTRLE_DECODER
-#ifdef CONFIG_FLAC_DECODER
-    register_avcodec(&flac_decoder);
-#endif //CONFIG_FLAC_DECODER
-#ifdef CONFIG_SHORTEN_DECODER
-    register_avcodec(&shorten_decoder);
-#endif //CONFIG_SHORTEN_DECODER
-#ifdef CONFIG_ALAC_DECODER
-    register_avcodec(&alac_decoder);
-#endif //CONFIG_ALAC_DECODER
-#ifdef CONFIG_WS_SND1_DECODER
-    register_avcodec(&ws_snd1_decoder);
-#endif //CONFIG_WS_SND1_DECODER
-#ifdef CONFIG_LIBGSM
-    register_avcodec(&libgsm_decoder);
-#endif //CONFIG_LIBGSM
-#ifdef CONFIG_QDM2_DECODER
-    register_avcodec(&qdm2_decoder);
-#endif //CONFIG_QDM2_DECODER
-#ifdef CONFIG_COOK_DECODER
-    register_avcodec(&cook_decoder);
-#endif //CONFIG_COOK_DECODER
-#ifdef CONFIG_TRUESPEECH_DECODER
-    register_avcodec(&truespeech_decoder);
-#endif //CONFIG_TRUESPEECH_DECODER
-#ifdef CONFIG_TTA_DECODER
-    register_avcodec(&tta_decoder);
-#endif //CONFIG_TTA_DECODER
-#ifdef CONFIG_AVS_DECODER
-    register_avcodec(&avs_decoder);
-#endif //CONFIG_AVS_DECODER
-#ifdef CONFIG_CAVS_DECODER
-    register_avcodec(&cavs_decoder);
-#endif //CONFIG_CAVS_DECODER
-#ifdef CONFIG_RAWVIDEO_DECODER
-    register_avcodec(&rawvideo_decoder);
-#endif //CONFIG_RAWVIDEO_DECODER
-#ifdef CONFIG_FLASHSV_DECODER
-    register_avcodec(&flashsv_decoder);
-#endif //CONFIG_FLASHSV_DECODER
-#ifdef CONFIG_VMNC_DECODER
-    register_avcodec(&vmnc_decoder);
-#endif //CONFIG_VMNC_DECODER
-#endif /* CONFIG_DECODERS */
-
-#if defined(CONFIG_AMR_NB) || defined(CONFIG_AMR_NB_FIXED)
-#ifdef CONFIG_AMR_NB_DECODER
-    register_avcodec(&amr_nb_decoder);
-#endif //CONFIG_AMR_NB_DECODER
-#ifdef CONFIG_ENCODERS
-#ifdef CONFIG_AMR_NB_ENCODER
-    register_avcodec(&amr_nb_encoder);
-#endif //CONFIG_AMR_NB_ENCODER
-#endif //CONFIG_ENCODERS
-#endif /* CONFIG_AMR_NB || CONFIG_AMR_NB_FIXED */
-
-#ifdef CONFIG_AMR_WB
-#ifdef CONFIG_AMR_WB_DECODER
-    register_avcodec(&amr_wb_decoder);
-#endif //CONFIG_AMR_WB_DECODER
-#ifdef CONFIG_ENCODERS
-#ifdef CONFIG_AMR_WB_ENCODER
-    register_avcodec(&amr_wb_encoder);
-#endif //CONFIG_AMR_WB_ENCODER
-#endif //CONFIG_ENCODERS
-#endif /* CONFIG_AMR_WB */
-
-#ifdef CONFIG_BMP_DECODER
-    register_avcodec(&bmp_decoder);
-#endif
-
-#if CONFIG_MMVIDEO_DECODER
-    register_avcodec(&mmvideo_decoder);
-#endif //CONFIG_MMVIDEO_DECODER
+    /* audio codecs */
+    REGISTER_DECODER(AAC, aac);
+    REGISTER_DECODER(MPEG4AAC, mpeg4aac);
+    REGISTER_ENCODER(AC3, ac3);
+    REGISTER_DECODER(ALAC, alac);
+    REGISTER_DECODER(ATRAC3, atrac3);
+    REGISTER_DECODER(COOK, cook);
+    REGISTER_DECODER(DCA, dca);
+    REGISTER_DECODER(DSICINAUDIO, dsicinaudio);
+    REGISTER_ENCODER(FAAC, faac);
+    REGISTER_ENCDEC (FLAC, flac);
+    REGISTER_DECODER(IMC, imc);
+    REGISTER_ENCDEC (LIBAMR_NB, libamr_nb);
+    REGISTER_ENCDEC (LIBAMR_WB, libamr_wb);
+    REGISTER_DECODER(LIBA52, liba52);
+    REGISTER_DECODER(LIBDTS, libdts);
+    REGISTER_ENCDEC (LIBGSM, libgsm);
+    REGISTER_ENCDEC (LIBGSM_MS, libgsm_ms);
+    REGISTER_ENCODER(LIBTHEORA, libtheora);
+    REGISTER_DECODER(MACE3, mace3);
+    REGISTER_DECODER(MACE6, mace6);
+    REGISTER_ENCDEC (MP2, mp2);
+    REGISTER_DECODER(MP3, mp3);
+    REGISTER_DECODER(MP3ADU, mp3adu);
+    REGISTER_ENCODER(MP3LAME, mp3lame);
+    REGISTER_DECODER(MP3ON4, mp3on4);
+    REGISTER_DECODER(MPC7, mpc7);
+    REGISTER_DECODER(QDM2, qdm2);
+    REGISTER_DECODER(RA_144, ra_144);
+    REGISTER_DECODER(RA_288, ra_288);
+    REGISTER_DECODER(SHORTEN, shorten);
+    REGISTER_DECODER(SMACKAUD, smackaud);
+    REGISTER_ENCDEC (SONIC, sonic);
+    REGISTER_ENCODER(SONIC_LS, sonic_ls);
+    REGISTER_DECODER(TRUESPEECH, truespeech);
+    REGISTER_DECODER(TTA, tta);
+    REGISTER_DECODER(VMDAUDIO, vmdaudio);
+    REGISTER_DECODER(WAVPACK, wavpack);
+    REGISTER_ENCDEC(WMAV1, wmav1);
+    REGISTER_ENCDEC(WMAV2, wmav2);
+    REGISTER_DECODER(WS_SND1, ws_snd1);
 
     /* pcm codecs */
-#ifdef CONFIG_PCM_S32LE_DECODER
-    register_avcodec(&pcm_s32le_decoder);
-#endif
-#ifdef CONFIG_PCM_S32LE_ENCODER
-    register_avcodec(&pcm_s32le_encoder);
-#endif
-#ifdef CONFIG_PCM_S32BE_DECODER
-    register_avcodec(&pcm_s32be_decoder);
-#endif
-#ifdef CONFIG_PCM_S32BE_ENCODER
-    register_avcodec(&pcm_s32be_encoder);
-#endif
-#ifdef CONFIG_PCM_U32LE_DECODER
-    register_avcodec(&pcm_u32le_decoder);
-#endif
-#ifdef CONFIG_PCM_U32LE_ENCODER
-    register_avcodec(&pcm_u32le_encoder);
-#endif
-#ifdef CONFIG_PCM_U32BE_DECODER
-    register_avcodec(&pcm_u32be_decoder);
-#endif
-#ifdef CONFIG_PCM_U32BE_ENCODER
-    register_avcodec(&pcm_u32be_encoder);
-#endif
-#ifdef CONFIG_PCM_S24LE_DECODER
-    register_avcodec(&pcm_s24le_decoder);
-#endif
-#ifdef CONFIG_PCM_S24LE_ENCODER
-    register_avcodec(&pcm_s24le_encoder);
-#endif
-#ifdef CONFIG_PCM_S24BE_DECODER
-    register_avcodec(&pcm_s24be_decoder);
-#endif
-#ifdef CONFIG_PCM_S24BE_ENCODER
-    register_avcodec(&pcm_s24be_encoder);
-#endif
-#ifdef CONFIG_PCM_U24LE_DECODER
-    register_avcodec(&pcm_u24le_decoder);
-#endif
-#ifdef CONFIG_PCM_U24LE_ENCODER
-    register_avcodec(&pcm_u24le_encoder);
-#endif
-#ifdef CONFIG_PCM_U24BE_DECODER
-    register_avcodec(&pcm_u24be_decoder);
-#endif
-#ifdef CONFIG_PCM_U24BE_ENCODER
-    register_avcodec(&pcm_u24be_encoder);
-#endif
-#ifdef CONFIG_PCM_S24DAUD_DECODER
-    register_avcodec(&pcm_s24daud_decoder);
-#endif
-#ifdef CONFIG_PCM_S24DAUD_ENCODER
-    register_avcodec(&pcm_s24daud_encoder);
-#endif
-#ifdef CONFIG_PCM_S16LE_DECODER
-    register_avcodec(&pcm_s16le_decoder);
-#endif
-#ifdef CONFIG_PCM_S16LE_ENCODER
-    register_avcodec(&pcm_s16le_encoder);
-#endif
-#ifdef CONFIG_PCM_S16BE_DECODER
-    register_avcodec(&pcm_s16be_decoder);
-#endif
-#ifdef CONFIG_PCM_S16BE_ENCODER
-    register_avcodec(&pcm_s16be_encoder);
-#endif
-#ifdef CONFIG_PCM_U16LE_DECODER
-    register_avcodec(&pcm_u16le_decoder);
-#endif
-#ifdef CONFIG_PCM_U16LE_ENCODER
-    register_avcodec(&pcm_u16le_encoder);
-#endif
-#ifdef CONFIG_PCM_U16BE_DECODER
-    register_avcodec(&pcm_u16be_decoder);
-#endif
-#ifdef CONFIG_PCM_U16BE_ENCODER
-    register_avcodec(&pcm_u16be_encoder);
-#endif
-#ifdef CONFIG_PCM_S8_DECODER
-    register_avcodec(&pcm_s8_decoder);
-#endif
-#ifdef CONFIG_PCM_S8_ENCODER
-    register_avcodec(&pcm_s8_encoder);
-#endif
-#ifdef CONFIG_PCM_U8_DECODER
-    register_avcodec(&pcm_u8_decoder);
-#endif
-#ifdef CONFIG_PCM_U8_ENCODER
-    register_avcodec(&pcm_u8_encoder);
-#endif
-#ifdef CONFIG_PCM_ALAW_DECODER
-    register_avcodec(&pcm_alaw_decoder);
-#endif
-#ifdef CONFIG_PCM_ALAW_ENCODER
-    register_avcodec(&pcm_alaw_encoder);
-#endif
-#ifdef CONFIG_PCM_MULAW_DECODER
-    register_avcodec(&pcm_mulaw_decoder);
-#endif
-#ifdef CONFIG_PCM_MULAW_ENCODER
-    register_avcodec(&pcm_mulaw_encoder);
-#endif
+    REGISTER_ENCDEC (PCM_ALAW, pcm_alaw);
+    REGISTER_ENCDEC (PCM_MULAW, pcm_mulaw);
+    REGISTER_ENCDEC (PCM_S8, pcm_s8);
+    REGISTER_ENCDEC (PCM_S16BE, pcm_s16be);
+    REGISTER_ENCDEC (PCM_S16LE, pcm_s16le);
+    REGISTER_ENCDEC (PCM_S24BE, pcm_s24be);
+    REGISTER_ENCDEC (PCM_S24DAUD, pcm_s24daud);
+    REGISTER_ENCDEC (PCM_S24LE, pcm_s24le);
+    REGISTER_ENCDEC (PCM_S32BE, pcm_s32be);
+    REGISTER_ENCDEC (PCM_S32LE, pcm_s32le);
+    REGISTER_ENCDEC (PCM_U8, pcm_u8);
+    REGISTER_ENCDEC (PCM_U16BE, pcm_u16be);
+    REGISTER_ENCDEC (PCM_U16LE, pcm_u16le);
+    REGISTER_ENCDEC (PCM_U24BE, pcm_u24be);
+    REGISTER_ENCDEC (PCM_U24LE, pcm_u24le);
+    REGISTER_ENCDEC (PCM_U32BE, pcm_u32be);
+    REGISTER_ENCDEC (PCM_U32LE, pcm_u32le);
 
-   /* adpcm codecs */
-#ifdef CONFIG_ADPCM_IMA_QT_DECODER
-    register_avcodec(&adpcm_ima_qt_decoder);
-#endif
-#ifdef CONFIG_ADPCM_IMA_QT_ENCODER
-    register_avcodec(&adpcm_ima_qt_encoder);
-#endif
-#ifdef CONFIG_ADPCM_IMA_WAV_DECODER
-    register_avcodec(&adpcm_ima_wav_decoder);
-#endif
-#ifdef CONFIG_ADPCM_IMA_WAV_ENCODER
-    register_avcodec(&adpcm_ima_wav_encoder);
-#endif
-#ifdef CONFIG_ADPCM_IMA_DK3_DECODER
-    register_avcodec(&adpcm_ima_dk3_decoder);
-#endif
-#ifdef CONFIG_ADPCM_IMA_DK3_ENCODER
-    register_avcodec(&adpcm_ima_dk3_encoder);
-#endif
-#ifdef CONFIG_ADPCM_IMA_DK4_DECODER
-    register_avcodec(&adpcm_ima_dk4_decoder);
-#endif
-#ifdef CONFIG_ADPCM_IMA_DK4_ENCODER
-    register_avcodec(&adpcm_ima_dk4_encoder);
-#endif
-#ifdef CONFIG_ADPCM_IMA_WS_DECODER
-    register_avcodec(&adpcm_ima_ws_decoder);
-#endif
-#ifdef CONFIG_ADPCM_IMA_WS_ENCODER
-    register_avcodec(&adpcm_ima_ws_encoder);
-#endif
-#ifdef CONFIG_ADPCM_IMA_SMJPEG_DECODER
-    register_avcodec(&adpcm_ima_smjpeg_decoder);
-#endif
-#ifdef CONFIG_ADPCM_IMA_SMJPEG_ENCODER
-    register_avcodec(&adpcm_ima_smjpeg_encoder);
-#endif
-#ifdef CONFIG_ADPCM_MS_DECODER
-    register_avcodec(&adpcm_ms_decoder);
-#endif
-#ifdef CONFIG_ADPCM_MS_ENCODER
-    register_avcodec(&adpcm_ms_encoder);
-#endif
-#ifdef CONFIG_ADPCM_4XM_DECODER
-    register_avcodec(&adpcm_4xm_decoder);
-#endif
-#ifdef CONFIG_ADPCM_4XM_ENCODER
-    register_avcodec(&adpcm_4xm_encoder);
-#endif
-#ifdef CONFIG_ADPCM_XA_DECODER
-    register_avcodec(&adpcm_xa_decoder);
-#endif
-#ifdef CONFIG_ADPCM_XA_ENCODER
-    register_avcodec(&adpcm_xa_encoder);
-#endif
-#ifdef CONFIG_ADPCM_ADX_DECODER
-    register_avcodec(&adpcm_adx_decoder);
-#endif
-#ifdef CONFIG_ADPCM_ADX_ENCODER
-    register_avcodec(&adpcm_adx_encoder);
-#endif
-#ifdef CONFIG_ADPCM_EA_DECODER
-    register_avcodec(&adpcm_ea_decoder);
-#endif
-#ifdef CONFIG_ADPCM_EA_ENCODER
-    register_avcodec(&adpcm_ea_encoder);
-#endif
-#ifdef CONFIG_ADPCM_G726_DECODER
-    register_avcodec(&adpcm_g726_decoder);
-#endif
-#ifdef CONFIG_ADPCM_G726_ENCODER
-    register_avcodec(&adpcm_g726_encoder);
-#endif
-#ifdef CONFIG_ADPCM_CT_DECODER
-    register_avcodec(&adpcm_ct_decoder);
-#endif
-#ifdef CONFIG_ADPCM_CT_ENCODER
-    register_avcodec(&adpcm_ct_encoder);
-#endif
-#ifdef CONFIG_ADPCM_SWF_DECODER
-    register_avcodec(&adpcm_swf_decoder);
-#endif
-#ifdef CONFIG_ADPCM_SWF_ENCODER
-    register_avcodec(&adpcm_swf_encoder);
-#endif
-#ifdef CONFIG_ADPCM_YAMAHA_DECODER
-    register_avcodec(&adpcm_yamaha_decoder);
-#endif
-#ifdef CONFIG_ADPCM_YAMAHA_ENCODER
-    register_avcodec(&adpcm_yamaha_encoder);
-#endif
-#ifdef CONFIG_ADPCM_SBPRO_4_DECODER
-    register_avcodec(&adpcm_sbpro_4_decoder);
-#endif
-#ifdef CONFIG_ADPCM_SBPRO_4_ENCODER
-    register_avcodec(&adpcm_sbpro_4_encoder);
-#endif
-#ifdef CONFIG_ADPCM_SBPRO_3_DECODER
-    register_avcodec(&adpcm_sbpro_3_decoder);
-#endif
-#ifdef CONFIG_ADPCM_SBPRO_3_ENCODER
-    register_avcodec(&adpcm_sbpro_3_encoder);
-#endif
-#ifdef CONFIG_ADPCM_SBPRO_2_DECODER
-    register_avcodec(&adpcm_sbpro_2_decoder);
-#endif
-#ifdef CONFIG_ADPCM_SBPRO_2_ENCODER
-    register_avcodec(&adpcm_sbpro_2_encoder);
-#endif
+    /* dpcm codecs */
+    REGISTER_DECODER(INTERPLAY_DPCM, interplay_dpcm);
+    REGISTER_DECODER(ROQ_DPCM, roq_dpcm);
+    REGISTER_DECODER(SOL_DPCM, sol_dpcm);
+    REGISTER_DECODER(XAN_DPCM, xan_dpcm);
+
+    /* adpcm codecs */
+    REGISTER_ENCDEC (ADPCM_4XM, adpcm_4xm);
+    REGISTER_ENCDEC (ADPCM_ADX, adpcm_adx);
+    REGISTER_ENCDEC (ADPCM_CT, adpcm_ct);
+    REGISTER_ENCDEC (ADPCM_EA, adpcm_ea);
+    REGISTER_ENCDEC (ADPCM_G726, adpcm_g726);
+    REGISTER_ENCDEC (ADPCM_IMA_DK3, adpcm_ima_dk3);
+    REGISTER_ENCDEC (ADPCM_IMA_DK4, adpcm_ima_dk4);
+    REGISTER_ENCDEC (ADPCM_IMA_QT, adpcm_ima_qt);
+    REGISTER_ENCDEC (ADPCM_IMA_SMJPEG, adpcm_ima_smjpeg);
+    REGISTER_ENCDEC (ADPCM_IMA_WAV, adpcm_ima_wav);
+    REGISTER_ENCDEC (ADPCM_IMA_WS, adpcm_ima_ws);
+    REGISTER_ENCDEC (ADPCM_MS, adpcm_ms);
+    REGISTER_ENCDEC (ADPCM_SBPRO_2, adpcm_sbpro_2);
+    REGISTER_ENCDEC (ADPCM_SBPRO_3, adpcm_sbpro_3);
+    REGISTER_ENCDEC (ADPCM_SBPRO_4, adpcm_sbpro_4);
+    REGISTER_ENCDEC (ADPCM_SWF, adpcm_swf);
+    REGISTER_DECODER(ADPCM_THP, adpcm_thp);
+    REGISTER_ENCDEC (ADPCM_XA, adpcm_xa);
+    REGISTER_ENCDEC (ADPCM_YAMAHA, adpcm_yamaha);
 
     /* subtitles */
-#ifdef CONFIG_DVDSUB_DECODER
-    register_avcodec(&dvdsub_decoder);
-#endif
-#ifdef CONFIG_DVDSUB_ENCODER
-    register_avcodec(&dvdsub_encoder);
-#endif
-
-#ifdef CONFIG_DVBSUB_DECODER
-    register_avcodec(&dvbsub_decoder);
-#endif
-#ifdef CONFIG_DVBSUB_ENCODER
-    register_avcodec(&dvbsub_encoder);
-#endif
+    REGISTER_ENCDEC (DVBSUB, dvbsub);
+    REGISTER_ENCDEC (DVDSUB, dvdsub);
 
     /* parsers */
-#ifdef CONFIG_MPEGVIDEO_PARSER
-    av_register_codec_parser(&mpegvideo_parser);
-#endif
-#ifdef CONFIG_MPEG4VIDEO_PARSER
-    av_register_codec_parser(&mpeg4video_parser);
-#endif
-#ifdef CONFIG_CAVSVIDEO_PARSER
-    av_register_codec_parser(&cavsvideo_parser);
-#endif
-#ifdef CONFIG_H261_PARSER
-    av_register_codec_parser(&h261_parser);
-#endif
-#ifdef CONFIG_H263_PARSER
-    av_register_codec_parser(&h263_parser);
-#endif
-#ifdef CONFIG_H264_PARSER
-    av_register_codec_parser(&h264_parser);
-#endif
-#ifdef CONFIG_MJPEG_PARSER
-    av_register_codec_parser(&mjpeg_parser);
-#endif
-#ifdef CONFIG_PNM_PARSER
-    av_register_codec_parser(&pnm_parser);
-#endif
-#ifdef CONFIG_MPEGAUDIO_PARSER
-    av_register_codec_parser(&mpegaudio_parser);
-#endif
-#ifdef CONFIG_AC3_PARSER
-    av_register_codec_parser(&ac3_parser);
-#endif
-#ifdef CONFIG_DVDSUB_PARSER
-    av_register_codec_parser(&dvdsub_parser);
-#endif
-#ifdef CONFIG_DVBSUB_PARSER
-    av_register_codec_parser(&dvbsub_parser);
-#endif
-#ifdef CONFIG_AAC_PARSER
-    av_register_codec_parser(&aac_parser);
-#endif
+    REGISTER_PARSER (AAC, aac);
+    REGISTER_PARSER (AC3, ac3);
+    REGISTER_PARSER (CAVSVIDEO, cavsvideo);
+    REGISTER_PARSER (DCA, dca);
+    REGISTER_PARSER (DVBSUB, dvbsub);
+    REGISTER_PARSER (DVDSUB, dvdsub);
+    REGISTER_PARSER (H261, h261);
+    REGISTER_PARSER (H263, h263);
+    REGISTER_PARSER (H264, h264);
+    REGISTER_PARSER (MJPEG, mjpeg);
+    REGISTER_PARSER (MPEG4VIDEO, mpeg4video);
+    REGISTER_PARSER (MPEGAUDIO, mpegaudio);
+    REGISTER_PARSER (MPEGVIDEO, mpegvideo);
+    REGISTER_PARSER (PNM, pnm);
+    REGISTER_PARSER (VC1, vc1);
+
+    av_register_bitstream_filter(&dump_extradata_bsf);
+    av_register_bitstream_filter(&remove_extradata_bsf);
+    av_register_bitstream_filter(&noise_bsf);
+    av_register_bitstream_filter(&mp3_header_compress_bsf);
+    av_register_bitstream_filter(&mp3_header_decompress_bsf);
+    av_register_bitstream_filter(&mjpega_dump_header_bsf);
+    av_register_bitstream_filter(&imx_dump_header_bsf);
 }
 
 

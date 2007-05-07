@@ -5,7 +5,7 @@
  ******************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2006, R. Byron Moore
+ * Copyright (C) 2000 - 2007, R. Byron Moore
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -49,11 +49,6 @@
 #define _COMPONENT          ACPI_NAMESPACE
 ACPI_MODULE_NAME("nsnames")
 
-/* Local prototypes */
-static void
-acpi_ns_build_external_path(struct acpi_namespace_node *node,
-			    acpi_size size, char *name_buffer);
-
 /*******************************************************************************
  *
  * FUNCTION:    acpi_ns_build_external_path
@@ -68,8 +63,7 @@ acpi_ns_build_external_path(struct acpi_namespace_node *node,
  * DESCRIPTION: Generate a full pathaname
  *
  ******************************************************************************/
-
-static void
+void
 acpi_ns_build_external_path(struct acpi_namespace_node *node,
 			    acpi_size size, char *name_buffer)
 {
@@ -140,7 +134,7 @@ char *acpi_ns_get_external_pathname(struct acpi_namespace_node *node)
 	char *name_buffer;
 	acpi_size size;
 
-	ACPI_FUNCTION_TRACE_PTR("ns_get_external_pathname", node);
+	ACPI_FUNCTION_TRACE_PTR(ns_get_external_pathname, node);
 
 	/* Calculate required buffer size based on depth below root */
 
@@ -148,7 +142,7 @@ char *acpi_ns_get_external_pathname(struct acpi_namespace_node *node)
 
 	/* Allocate a buffer to be returned to caller */
 
-	name_buffer = ACPI_MEM_CALLOCATE(size);
+	name_buffer = ACPI_ALLOCATE_ZEROED(size);
 	if (!name_buffer) {
 		ACPI_ERROR((AE_INFO, "Allocation failure"));
 		return_PTR(NULL);
@@ -222,7 +216,7 @@ acpi_ns_handle_to_pathname(acpi_handle target_handle,
 	struct acpi_namespace_node *node;
 	acpi_size required_size;
 
-	ACPI_FUNCTION_TRACE_PTR("ns_handle_to_pathname", target_handle);
+	ACPI_FUNCTION_TRACE_PTR(ns_handle_to_pathname, target_handle);
 
 	node = acpi_ns_map_handle_to_node(target_handle);
 	if (!node) {

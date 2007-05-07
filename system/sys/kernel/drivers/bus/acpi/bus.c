@@ -36,7 +36,6 @@ ACPI_MODULE_NAME		("acpi_bus")
 
 extern void acpi_pic_sci_set_trigger(unsigned int irq, u16 trigger);
 
-FADT_DESCRIPTOR			acpi_fadt;
 EXPORT_SYMBOL(acpi_fadt);
 
 struct acpi_device		*acpi_root;
@@ -93,7 +92,7 @@ acpi_bus_get_status (
 			return_VALUE(-ENODEV);
 		STRUCT_TO_INT(device->status) = (int) sta;
 	}
-
+	
 	/*
 	 * Otherwise we assume the status of our parent (unless we don't
 	 * have one, in which case status is implied).
@@ -205,14 +204,12 @@ acpi_bus_set_power (
 	 * Get device's current power state if it's unknown
 	 * This means device power state isn't initialized or previous setting failed
 	 */
-	if (!device->flags.force_power_state) {
-		if (device->power.state == ACPI_STATE_UNKNOWN)
-			acpi_bus_get_power(device->handle, &device->power.state);
-		if (state == device->power.state) {
-			ACPI_DEBUG_PRINT((ACPI_DB_INFO, "Device is already at D%d\n",
-					  state));
-			return 0;
-		}
+	if ((device->power.state == ACPI_STATE_UNKNOWN) || device->flags.force_power_state)
+		acpi_bus_get_power(device->handle, &device->power.state);
+	if ((state == device->power.state) && !device->flags.force_power_state) {
+		ACPI_DEBUG_PRINT((ACPI_DB_INFO, "Device is already at D%d\n",
+				  state));
+		return 0;
 	}
 	if (!device->power.states[state].flags.valid) {
 		ACPI_DEBUG_PRINT((ACPI_DB_WARN, "Device does not support D%d\n", state));
@@ -503,12 +500,19 @@ acpi_bus_init (void)
 {
 	int			result = 0;
 	acpi_status		status = AE_OK;
-	struct acpi_buffer	buffer = {sizeof(acpi_fadt), &acpi_fadt};
 	extern acpi_status	acpi_os_initialize1(void);
 	
 	/* enable workarounds, unless strict ACPI spec. compliance */
 	if (!acpi_strict)
 		acpi_gbl_enable_interpreter_slack = TRUE;
+		
+	status = acpi_reallocate_root_table();
+	if (ACPI_FAILURE(status)) {
+		printk(
+		       "ACPI: Unable to reallocate ACPI tables\n");
+		goto error0;
+	}
+		
 
 	status = acpi_initialize_subsystem();
 	if (ACPI_FAILURE(status)) {
@@ -522,15 +526,6 @@ acpi_bus_init (void)
 		goto error0;
 	}
 
-	/*
-	 * Get a separate copy of the FADT for use by other drivers.
-	 */
-	status = acpi_get_table(ACPI_TABLE_FADT, 1, &buffer);
-	if (ACPI_FAILURE(status)) {
-		printk("ACPI: Unable to get the FADT\n");
-		goto error0;
-	}
-
 	if (1/*!acpi_ioapic*/) {
 		extern acpi_interrupt_flags acpi_sci_flags;
 
@@ -539,7 +534,7 @@ acpi_bus_init (void)
 			acpi_sci_flags.trigger = 3;
 
 		/* Set PIC-mode SCI trigger type */
-		acpi_pic_sci_set_trigger(acpi_fadt.sci_int, acpi_sci_flags.trigger);
+		acpi_pic_sci_set_trigger(acpi_gbl_FADT.sci_interrupt, acpi_sci_flags.trigger);
 	}
 	
 #if 0

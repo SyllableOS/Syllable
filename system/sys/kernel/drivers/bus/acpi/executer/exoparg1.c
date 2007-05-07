@@ -6,7 +6,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2006, R. Byron Moore
+ * Copyright (C) 2000 - 2007, R. Byron Moore
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -91,7 +91,7 @@ acpi_status acpi_ex_opcode_0A_0T_1R(struct acpi_walk_state *walk_state)
 	acpi_status status = AE_OK;
 	union acpi_operand_object *return_desc = NULL;
 
-	ACPI_FUNCTION_TRACE_STR("ex_opcode_0A_0T_1R",
+	ACPI_FUNCTION_TRACE_STR(ex_opcode_0A_0T_1R,
 				acpi_ps_get_opcode_name(walk_state->opcode));
 
 	/* Examine the AML opcode */
@@ -106,9 +106,7 @@ acpi_status acpi_ex_opcode_0A_0T_1R(struct acpi_walk_state *walk_state)
 			status = AE_NO_MEMORY;
 			goto cleanup;
 		}
-#if ACPI_MACHINE_WIDTH != 16
 		return_desc->integer.value = acpi_os_get_timer();
-#endif
 		break;
 
 	default:		/*  Unknown opcode  */
@@ -152,7 +150,7 @@ acpi_status acpi_ex_opcode_1A_0T_0R(struct acpi_walk_state *walk_state)
 	union acpi_operand_object **operand = &walk_state->operands[0];
 	acpi_status status = AE_OK;
 
-	ACPI_FUNCTION_TRACE_STR("ex_opcode_1A_0T_0R",
+	ACPI_FUNCTION_TRACE_STR(ex_opcode_1A_0T_0R,
 				acpi_ps_get_opcode_name(walk_state->opcode));
 
 	/* Examine the AML opcode */
@@ -218,7 +216,7 @@ acpi_status acpi_ex_opcode_1A_1T_0R(struct acpi_walk_state *walk_state)
 	acpi_status status = AE_OK;
 	union acpi_operand_object **operand = &walk_state->operands[0];
 
-	ACPI_FUNCTION_TRACE_STR("ex_opcode_1A_1T_0R",
+	ACPI_FUNCTION_TRACE_STR(ex_opcode_1A_1T_0R,
 				acpi_ps_get_opcode_name(walk_state->opcode));
 
 	/* Examine the AML opcode */
@@ -266,7 +264,7 @@ acpi_status acpi_ex_opcode_1A_1T_1R(struct acpi_walk_state *walk_state)
 	acpi_integer power_of_ten;
 	acpi_integer digit;
 
-	ACPI_FUNCTION_TRACE_STR("ex_opcode_1A_1T_1R",
+	ACPI_FUNCTION_TRACE_STR(ex_opcode_1A_1T_1R,
 				acpi_ps_get_opcode_name(walk_state->opcode));
 
 	/* Examine the AML opcode */
@@ -324,8 +322,9 @@ acpi_status acpi_ex_opcode_1A_1T_1R(struct acpi_walk_state *walk_state)
 
 			/* Since the bit position is one-based, subtract from 33 (65) */
 
-			return_desc->integer.value = temp32 == 0 ? 0 :
-			    (ACPI_INTEGER_BIT_SIZE + 1) - temp32;
+			return_desc->integer.value =
+			    temp32 ==
+			    0 ? 0 : (ACPI_INTEGER_BIT_SIZE + 1) - temp32;
 			break;
 
 		case AML_FROM_BCD_OP:	/* from_bcd (BCDValue, Result) */
@@ -551,14 +550,16 @@ acpi_status acpi_ex_opcode_1A_1T_1R(struct acpi_walk_state *walk_state)
 
       cleanup:
 
-	if (!walk_state->result_obj) {
-		walk_state->result_obj = return_desc;
-	}
-
 	/* Delete return object on error */
 
 	if (ACPI_FAILURE(status)) {
 		acpi_ut_remove_reference(return_desc);
+	}
+
+	/* Save return object on success */
+
+	else if (!walk_state->result_obj) {
+		walk_state->result_obj = return_desc;
 	}
 
 	return_ACPI_STATUS(status);
@@ -585,7 +586,7 @@ acpi_status acpi_ex_opcode_1A_0T_1R(struct acpi_walk_state *walk_state)
 	u32 type;
 	acpi_integer value;
 
-	ACPI_FUNCTION_TRACE_STR("ex_opcode_1A_0T_1R",
+	ACPI_FUNCTION_TRACE_STR(ex_opcode_1A_0T_1R,
 				acpi_ps_get_opcode_name(walk_state->opcode));
 
 	/* Examine the AML opcode */
@@ -780,8 +781,25 @@ acpi_status acpi_ex_opcode_1A_0T_1R(struct acpi_walk_state *walk_state)
 
 		/* Check for a method local or argument, or standalone String */
 
-		if (ACPI_GET_DESCRIPTOR_TYPE(operand[0]) !=
+		if (ACPI_GET_DESCRIPTOR_TYPE(operand[0]) ==
 		    ACPI_DESC_TYPE_NAMED) {
+			temp_desc =
+			    acpi_ns_get_attached_object((struct
+							 acpi_namespace_node *)
+							operand[0]);
+			if (temp_desc
+			    &&
+			    ((ACPI_GET_OBJECT_TYPE(temp_desc) ==
+			      ACPI_TYPE_STRING)
+			     || (ACPI_GET_OBJECT_TYPE(temp_desc) ==
+				 ACPI_TYPE_LOCAL_REFERENCE))) {
+				operand[0] = temp_desc;
+				acpi_ut_add_reference(temp_desc);
+			} else {
+				status = AE_AML_OPERAND_TYPE;
+				goto cleanup;
+			}
+		} else {
 			switch (ACPI_GET_OBJECT_TYPE(operand[0])) {
 			case ACPI_TYPE_LOCAL_REFERENCE:
 				/*
@@ -829,28 +847,36 @@ acpi_status acpi_ex_opcode_1A_0T_1R(struct acpi_walk_state *walk_state)
 				}
 				break;
 
-
 			case ACPI_TYPE_STRING:
+				break;
 
+			default:
+				status = AE_AML_OPERAND_TYPE;
+				goto cleanup;
+			}
+		}
+
+		if (ACPI_GET_DESCRIPTOR_TYPE(operand[0]) !=
+		    ACPI_DESC_TYPE_NAMED) {
+			if (ACPI_GET_OBJECT_TYPE(operand[0]) ==
+			    ACPI_TYPE_STRING) {
 				/*
 				 * This is a deref_of (String). The string is a reference
 				 * to a named ACPI object.
 				 *
 				 * 1) Find the owning Node
-				 * 2) Dereference the node to an actual object.  Could be a
+				 * 2) Dereference the node to an actual object. Could be a
 				 *    Field, so we need to resolve the node to a value.
 				 */
 				status =
-				    acpi_ns_get_node_by_path(operand[0]->string.
-							     pointer,
-							     walk_state->
-							     scope_info->scope.
-							     node,
-							     ACPI_NS_SEARCH_PARENT,
-							     ACPI_CAST_INDIRECT_PTR
-							     (struct
-							      acpi_namespace_node,
-							      &return_desc));
+				    acpi_ns_get_node(walk_state->scope_info->
+						     scope.node,
+						     operand[0]->string.pointer,
+						     ACPI_NS_SEARCH_PARENT,
+						     ACPI_CAST_INDIRECT_PTR
+						     (struct
+						      acpi_namespace_node,
+						      &return_desc));
 				if (ACPI_FAILURE(status)) {
 					goto cleanup;
 				}
@@ -860,11 +886,6 @@ acpi_status acpi_ex_opcode_1A_0T_1R(struct acpi_walk_state *walk_state)
 				    (ACPI_CAST_INDIRECT_PTR
 				     (struct acpi_namespace_node, &return_desc),
 				     walk_state);
-				goto cleanup;
-
-			default:
-
-				status = AE_AML_OPERAND_TYPE;
 				goto cleanup;
 			}
 		}
@@ -947,7 +968,7 @@ acpi_status acpi_ex_opcode_1A_0T_1R(struct acpi_walk_state *walk_state)
 				default:
 
 					ACPI_ERROR((AE_INFO,
-						    "Unknown Index target_type %X in obj %p",
+						    "Unknown Index TargetType %X in obj %p",
 						    operand[0]->reference.
 						    target_type, operand[0]));
 					status = AE_AML_OPERAND_TYPE;
@@ -977,7 +998,7 @@ acpi_status acpi_ex_opcode_1A_0T_1R(struct acpi_walk_state *walk_state)
 
 			default:
 				ACPI_ERROR((AE_INFO,
-					    "Unknown opcode in ref(%p) - %X",
+					    "Unknown opcode in reference(%p) - %X",
 					    operand[0],
 					    operand[0]->reference.opcode));
 
@@ -1003,6 +1024,11 @@ acpi_status acpi_ex_opcode_1A_0T_1R(struct acpi_walk_state *walk_state)
 		acpi_ut_remove_reference(return_desc);
 	}
 
-	walk_state->result_obj = return_desc;
+	/* Save return object on success */
+
+	else {
+		walk_state->result_obj = return_desc;
+	}
+
 	return_ACPI_STATUS(status);
 }

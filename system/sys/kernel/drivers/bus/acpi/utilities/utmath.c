@@ -5,7 +5,7 @@
  ******************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2006, R. Byron Moore
+ * Copyright (C) 2000 - 2007, R. Byron Moore
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -78,7 +78,7 @@ acpi_ut_short_divide(acpi_integer dividend,
 	union uint64_overlay quotient;
 	u32 remainder32;
 
-	ACPI_FUNCTION_TRACE("ut_short_divide");
+	ACPI_FUNCTION_TRACE(ut_short_divide);
 
 	/* Always check for a zero divisor */
 
@@ -140,7 +140,7 @@ acpi_ut_divide(acpi_integer in_dividend,
 	union uint64_overlay partial2;
 	union uint64_overlay partial3;
 
-	ACPI_FUNCTION_TRACE("ut_divide");
+	ACPI_FUNCTION_TRACE(ut_divide);
 
 	/* Always check for a zero divisor */
 
@@ -263,7 +263,7 @@ acpi_ut_short_divide(acpi_integer in_dividend,
 		     acpi_integer * out_quotient, u32 * out_remainder)
 {
 
-	ACPI_FUNCTION_TRACE("ut_short_divide");
+	ACPI_FUNCTION_TRACE(ut_short_divide);
 
 	/* Always check for a zero divisor */
 
@@ -289,7 +289,7 @@ acpi_ut_divide(acpi_integer in_dividend,
 	       acpi_integer in_divisor,
 	       acpi_integer * out_quotient, acpi_integer * out_remainder)
 {
-	ACPI_FUNCTION_TRACE("ut_divide");
+	ACPI_FUNCTION_TRACE(ut_divide);
 
 	/* Always check for a zero divisor */
 

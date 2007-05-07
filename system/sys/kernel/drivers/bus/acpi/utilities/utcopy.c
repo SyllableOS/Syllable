@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2006, R. Byron Moore
+ * Copyright (C) 2000 - 2007, R. Byron Moore
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -110,7 +110,7 @@ acpi_ut_copy_isimple_to_esimple(union acpi_operand_object *internal_object,
 {
 	acpi_status status = AE_OK;
 
-	ACPI_FUNCTION_TRACE("ut_copy_isimple_to_esimple");
+	ACPI_FUNCTION_TRACE(ut_copy_isimple_to_esimple);
 
 	*buffer_space_used = 0;
 
@@ -329,7 +329,7 @@ acpi_ut_copy_ipackage_to_epackage(union acpi_operand_object *internal_object,
 	acpi_status status;
 	struct acpi_pkg_info info;
 
-	ACPI_FUNCTION_TRACE("ut_copy_ipackage_to_epackage");
+	ACPI_FUNCTION_TRACE(ut_copy_ipackage_to_epackage);
 
 	/*
 	 * First package at head of the buffer
@@ -387,7 +387,7 @@ acpi_ut_copy_iobject_to_eobject(union acpi_operand_object *internal_object,
 {
 	acpi_status status;
 
-	ACPI_FUNCTION_TRACE("ut_copy_iobject_to_eobject");
+	ACPI_FUNCTION_TRACE(ut_copy_iobject_to_eobject);
 
 	if (ACPI_GET_OBJECT_TYPE(internal_object) == ACPI_TYPE_PACKAGE) {
 		/*
@@ -446,7 +446,7 @@ acpi_ut_copy_esimple_to_isimple(union acpi_object *external_object,
 {
 	union acpi_operand_object *internal_object;
 
-	ACPI_FUNCTION_TRACE("ut_copy_esimple_to_isimple");
+	ACPI_FUNCTION_TRACE(ut_copy_esimple_to_isimple);
 
 	/*
 	 * Simple types supported are: String, Buffer, Integer
@@ -476,8 +476,8 @@ acpi_ut_copy_esimple_to_isimple(union acpi_object *external_object,
 	case ACPI_TYPE_STRING:
 
 		internal_object->string.pointer =
-		    ACPI_MEM_CALLOCATE((acpi_size) external_object->string.
-				       length + 1);
+		    ACPI_ALLOCATE_ZEROED((acpi_size) external_object->string.
+					 length + 1);
 		if (!internal_object->string.pointer) {
 			goto error_exit;
 		}
@@ -493,7 +493,7 @@ acpi_ut_copy_esimple_to_isimple(union acpi_object *external_object,
 	case ACPI_TYPE_BUFFER:
 
 		internal_object->buffer.pointer =
-		    ACPI_MEM_CALLOCATE(external_object->buffer.length);
+		    ACPI_ALLOCATE_ZEROED(external_object->buffer.length);
 		if (!internal_object->buffer.pointer) {
 			goto error_exit;
 		}
@@ -557,7 +557,7 @@ acpi_ut_copy_epackage_to_ipackage(union acpi_operand_object *internal_object,
 	union acpi_operand_object *this_internal_obj;
 	union acpi_object *this_external_obj;
 
-	ACPI_FUNCTION_TRACE("ut_copy_epackage_to_ipackage");
+	ACPI_FUNCTION_TRACE(ut_copy_epackage_to_ipackage);
 
 	/*
 	 * First package at head of the buffer
@@ -605,7 +605,7 @@ acpi_ut_copy_eobject_to_iobject(union acpi_object *external_object,
 {
 	acpi_status status;
 
-	ACPI_FUNCTION_TRACE("ut_copy_eobject_to_iobject");
+	ACPI_FUNCTION_TRACE(ut_copy_eobject_to_iobject);
 
 	if (external_object->type == ACPI_TYPE_PACKAGE) {
 		/*
@@ -681,7 +681,7 @@ acpi_ut_copy_simple_object(union acpi_operand_object *source_desc,
 		if ((source_desc->buffer.pointer) &&
 		    (source_desc->buffer.length)) {
 			dest_desc->buffer.pointer =
-			    ACPI_MEM_ALLOCATE(source_desc->buffer.length);
+			    ACPI_ALLOCATE(source_desc->buffer.length);
 			if (!dest_desc->buffer.pointer) {
 				return (AE_NO_MEMORY);
 			}
@@ -703,8 +703,8 @@ acpi_ut_copy_simple_object(union acpi_operand_object *source_desc,
 		 */
 		if (source_desc->string.pointer) {
 			dest_desc->string.pointer =
-			    ACPI_MEM_ALLOCATE((acpi_size) source_desc->string.
-					      length + 1);
+			    ACPI_ALLOCATE((acpi_size) source_desc->string.
+					  length + 1);
 			if (!dest_desc->string.pointer) {
 				return (AE_NO_MEMORY);
 			}
@@ -723,6 +723,15 @@ acpi_ut_copy_simple_object(union acpi_operand_object *source_desc,
 		 * to the object pointed to by the reference
 		 */
 		acpi_ut_add_reference(source_desc->reference.object);
+		break;
+
+	case ACPI_TYPE_REGION:
+		/*
+		 * We copied the Region Handler, so we now must add a reference
+		 */
+		if (dest_desc->region.handler) {
+			acpi_ut_add_reference(dest_desc->region.handler);
+		}
 		break;
 
 	default:
@@ -813,9 +822,7 @@ acpi_ut_copy_ielement_to_ielement(u8 object_type,
 		/*
 		 * Create the object array
 		 */
-		target_object->package.elements =
-		    ACPI_MEM_CALLOCATE(((acpi_size) source_object->package.
-					count + 1) * sizeof(void *));
+		target_object->package.elements = ACPI_ALLOCATE_ZEROED(((acpi_size) source_object->package.count + 1) * sizeof(void *));
 		if (!target_object->package.elements) {
 			status = AE_NO_MEMORY;
 			goto error_exit;
@@ -866,7 +873,7 @@ acpi_ut_copy_ipackage_to_ipackage(union acpi_operand_object *source_obj,
 {
 	acpi_status status = AE_OK;
 
-	ACPI_FUNCTION_TRACE("ut_copy_ipackage_to_ipackage");
+	ACPI_FUNCTION_TRACE(ut_copy_ipackage_to_ipackage);
 
 	dest_obj->common.type = ACPI_GET_OBJECT_TYPE(source_obj);
 	dest_obj->common.flags = source_obj->common.flags;
@@ -875,10 +882,10 @@ acpi_ut_copy_ipackage_to_ipackage(union acpi_operand_object *source_obj,
 	/*
 	 * Create the object array and walk the source package tree
 	 */
-	dest_obj->package.elements = ACPI_MEM_CALLOCATE(((acpi_size)
-							 source_obj->package.
-							 count +
-							 1) * sizeof(void *));
+	dest_obj->package.elements = ACPI_ALLOCATE_ZEROED(((acpi_size)
+							   source_obj->package.
+							   count +
+							   1) * sizeof(void *));
 	if (!dest_obj->package.elements) {
 		ACPI_ERROR((AE_INFO, "Package allocation failure"));
 		return_ACPI_STATUS(AE_NO_MEMORY);
@@ -921,7 +928,7 @@ acpi_ut_copy_iobject_to_iobject(union acpi_operand_object *source_desc,
 {
 	acpi_status status = AE_OK;
 
-	ACPI_FUNCTION_TRACE("ut_copy_iobject_to_iobject");
+	ACPI_FUNCTION_TRACE(ut_copy_iobject_to_iobject);
 
 	/* Create the top level object */
 

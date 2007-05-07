@@ -826,6 +826,13 @@ void init_kernel_mb( MultiBootHeader_s * psInfo )
 
 	g_sMultiBootHeader = *psInfo;
 	g_nMemSize = psInfo->mem_upper * 1024 + 1024 * 1024;
+	
+	/* HACK: Limit memory size to 1.5Gb */
+	if( g_nMemSize > 1024 * 1024 * 1500 )
+	{
+		g_nMemSize = 1024 * 1024 * 1500;
+		printk( "WARNING: Memory size limited to 1.5Gb\n" );
+	}
 
 	if ( psInfo->mbh_pzKernelParams != NULL )
 	{

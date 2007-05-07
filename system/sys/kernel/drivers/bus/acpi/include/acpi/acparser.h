@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2006, R. Byron Moore
+ * Copyright (C) 2000 - 2007, R. Byron Moore
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -45,10 +45,9 @@
 #ifndef __ACPARSER_H__
 #define __ACPARSER_H__
 
-
 #define OP_HAS_RETURN_VALUE             1
 
-/* variable # arguments */
+/* Variable number of arguments. This field must be 32 bits */
 
 #define ACPI_VAR_ARGS                   ACPI_UINT32_MAX
 
@@ -74,7 +73,7 @@
 /*
  * psxface - Parser external interfaces
  */
-acpi_status acpi_ps_execute_method(struct acpi_parameter_info *info);
+acpi_status acpi_ps_execute_method(struct acpi_evaluate_info *info);
 
 /*
  * psargs - Parse AML opcode arguments

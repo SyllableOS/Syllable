@@ -3,10 +3,6 @@
 
 #include <atheos/kernel.h>
 
-#define ACPI_PROCESSOR_LIMIT_NONE	0x00
-#define ACPI_PROCESSOR_LIMIT_INCREMENT	0x01
-#define ACPI_PROCESSOR_LIMIT_DECREMENT	0x02
-
 #define ACPI_PROCESSOR_BUSY_METRIC	10
 
 #define ACPI_PROCESSOR_MAX_POWER	8
@@ -29,6 +25,9 @@
 #define DOMAIN_COORD_TYPE_SW_ALL	0xfc
 #define DOMAIN_COORD_TYPE_SW_ANY	0xfd
 #define DOMAIN_COORD_TYPE_HW_ALL	0xfe
+
+#define ACPI_CSTATE_SYSTEMIO	(0)
+#define ACPI_CSTATE_FFH		(1)
 
 /* Power Management */
 
@@ -59,6 +58,8 @@ struct acpi_processor_cx {
 	u8 valid;
 	u8 type;
 	u32 address;
+	u8 space_id;
+	u8 index;
 	u32 latency;
 	u32 latency_ticks;
 	u32 power;
@@ -75,6 +76,7 @@ struct acpi_processor_power {
 	u32 bm_activity;
 	int count;
 	struct acpi_processor_cx states[ACPI_PROCESSOR_MAX_POWER];
+	int timer_broadcast_on_state;
 };
 
 /* Performance Management */
@@ -172,7 +174,7 @@ struct acpi_processor {
 	struct acpi_processor_performance *performance;
 	struct acpi_processor_throttling throttling;
 	struct acpi_processor_limit limit;
-	
+
 	/* the _PDC objects for this processor, if any */
 	struct acpi_object_list *pdc;
 };
@@ -189,6 +191,9 @@ struct acpi_processor_errata {
 
 #define NR_CPUS 32
 
+extern int acpi_processor_preregister_performance(
+		struct acpi_processor_performance **performance);
+
 extern int acpi_processor_register_performance(struct acpi_processor_performance
 					       *performance, unsigned int cpu);
 extern void acpi_processor_unregister_performance(struct
@@ -200,16 +205,30 @@ extern void acpi_processor_unregister_performance(struct
 extern struct acpi_processor *processors[NR_CPUS];
 extern struct acpi_processor_errata errata;
 
-#ifdef ARCH_HAS_POWER_PDC_INIT
+void arch_acpi_processor_init_pdc(struct acpi_processor *pr);
+
+#ifdef ARCH_HAS_POWER_INIT
 void acpi_processor_power_init_bm_check(struct acpi_processor_flags *flags,
 					unsigned int cpu);
+int acpi_processor_ffh_cstate_probe(unsigned int cpu,
+		struct acpi_processor_cx *cx, struct acpi_power_register *reg);
+void acpi_processor_ffh_cstate_enter(struct acpi_processor_cx *cstate);
 #else
-
 static inline void acpi_processor_power_init_bm_check(struct
 						      acpi_processor_flags
 						      *flags, unsigned int cpu)
 {
 	flags->bm_check = 1;
+	return;
+}
+static inline int acpi_processor_ffh_cstate_probe(unsigned int cpu,
+		struct acpi_processor_cx *cx, struct acpi_power_register *reg)
+{
+	return -1;
+}
+static inline void acpi_processor_ffh_cstate_enter(
+		struct acpi_processor_cx *cstate)
+{
 	return;
 }
 #endif
@@ -235,6 +254,8 @@ static inline int acpi_processor_ppc_has_changed(struct acpi_processor *pr)
 	if (printout) {
 		printk(
 		       "Warning: Processor Platform Limit event detected, but not handled.\n");
+		printk(
+		       "Consider compiling CPUfreq support into your kernel.\n");
 		printout = 0;
 	}
 	return 0;
@@ -244,6 +265,7 @@ static inline int acpi_processor_ppc_has_changed(struct acpi_processor *pr)
 /* in processor_throttling.c */
 int acpi_processor_get_throttling_info(struct acpi_processor *pr);
 int acpi_processor_set_throttling(struct acpi_processor *pr, int state);
+extern struct file_operations acpi_processor_throttling_fops;
 
 /* in processor_idle.c */
 int acpi_processor_power_init(struct acpi_processor *pr,
@@ -254,6 +276,7 @@ int acpi_processor_power_exit(struct acpi_processor *pr,
 
 /* in processor_thermal.c */
 int acpi_processor_get_limit_info(struct acpi_processor *pr);
+extern struct file_operations acpi_processor_limit_fops;
 
 #ifdef CONFIG_CPU_FREQ
 void acpi_thermal_cpufreq_init(void);

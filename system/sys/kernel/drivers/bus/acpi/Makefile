@@ -29,10 +29,9 @@ RESOURCES := resources/rsaddr.o resources/rscalc.o resources/rscreate.o resource
 			resources/rsio.o resources/rsirq.o resources/rslist.o resources/rsmemory.o \
 			resources/rsmisc.o resources/rsutils.o resources/rsxface.o resources/rsinfo.o
 
-TABLES := tables/tbconvrt.o tables/tbget.o tables/tbgetall.o tables/tbinstal.o tables/tbrsdt.o \
-			tables/tbutils.o tables/tbxface.o tables/tbxfroot.o
+TABLES := tables/tbfadt.o tables/tbfind.o tables/tbinstal.o tables/tbutils.o tables/tbxface.o tables/tbxfroot.o
 
-UTILITIES := utilities/utalloc.o utilities/utcopy.o utilities/utdebug.o utilities/utdelete.o \
+UTILITIES := utilities/utalloc.o utilities/utcache.o utilities/utcopy.o utilities/utdebug.o utilities/utdelete.o \
 			utilities/uteval.o utilities/utglobal.o utilities/utinit.o utilities/utmath.o \
 			utilities/utmisc.o utilities/utmutex.o utilities/utobject.o utilities/utstate.o utilities/utxface.o utilities/utresrc.o
 

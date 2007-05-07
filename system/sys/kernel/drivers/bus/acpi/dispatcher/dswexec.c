@@ -6,7 +6,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2006, R. Byron Moore
+ * Copyright (C) 2000 - 2007, R. Byron Moore
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -50,7 +50,6 @@
 #include <acpi/acinterp.h>
 #include <acpi/acnamesp.h>
 #include <acpi/acdebug.h>
-#include <acpi/acdisasm.h>
 
 #define _COMPONENT          ACPI_DISPATCHER
 ACPI_MODULE_NAME("dswexec")
@@ -94,7 +93,7 @@ acpi_ds_get_predicate_value(struct acpi_walk_state *walk_state,
 	union acpi_operand_object *obj_desc;
 	union acpi_operand_object *local_obj_desc = NULL;
 
-	ACPI_FUNCTION_TRACE_PTR("ds_get_predicate_value", walk_state);
+	ACPI_FUNCTION_TRACE_PTR(ds_get_predicate_value, walk_state);
 
 	walk_state->control_state->common.state = 0;
 
@@ -124,7 +123,7 @@ acpi_ds_get_predicate_value(struct acpi_walk_state *walk_state,
 
 	if (!obj_desc) {
 		ACPI_ERROR((AE_INFO,
-			    "No predicate obj_desc=%p State=%p",
+			    "No predicate ObjDesc=%p State=%p",
 			    obj_desc, walk_state));
 
 		return_ACPI_STATUS(AE_AML_NO_OPERAND);
@@ -141,7 +140,7 @@ acpi_ds_get_predicate_value(struct acpi_walk_state *walk_state,
 
 	if (ACPI_GET_OBJECT_TYPE(local_obj_desc) != ACPI_TYPE_INTEGER) {
 		ACPI_ERROR((AE_INFO,
-			    "Bad predicate (not an integer) obj_desc=%p State=%p Type=%X",
+			    "Bad predicate (not an integer) ObjDesc=%p State=%p Type=%X",
 			    obj_desc, walk_state,
 			    ACPI_GET_OBJECT_TYPE(obj_desc)));
 
@@ -215,13 +214,13 @@ acpi_ds_exec_begin_op(struct acpi_walk_state *walk_state,
 	acpi_status status = AE_OK;
 	u32 opcode_class;
 
-	ACPI_FUNCTION_TRACE_PTR("ds_exec_begin_op", walk_state);
+	ACPI_FUNCTION_TRACE_PTR(ds_exec_begin_op, walk_state);
 
 	op = walk_state->op;
 	if (!op) {
 		status = acpi_ds_load2_begin_op(walk_state, out_op);
 		if (ACPI_FAILURE(status)) {
-			return_ACPI_STATUS(status);
+			goto error_exit;
 		}
 
 		op = *out_op;
@@ -240,7 +239,7 @@ acpi_ds_exec_begin_op(struct acpi_walk_state *walk_state,
 
 			status = acpi_ds_scope_stack_pop(walk_state);
 			if (ACPI_FAILURE(status)) {
-				return_ACPI_STATUS(status);
+				goto error_exit;
 			}
 		}
 	}
@@ -290,7 +289,7 @@ acpi_ds_exec_begin_op(struct acpi_walk_state *walk_state,
 
 		status = acpi_ds_result_stack_push(walk_state);
 		if (ACPI_FAILURE(status)) {
-			return_ACPI_STATUS(status);
+			goto error_exit;
 		}
 
 		status = acpi_ds_exec_begin_control_op(walk_state, op);
@@ -298,7 +297,7 @@ acpi_ds_exec_begin_op(struct acpi_walk_state *walk_state,
 
 	case AML_CLASS_NAMED_OBJECT:
 
-		if (walk_state->walk_type == ACPI_WALK_METHOD) {
+		if (walk_state->walk_type & ACPI_WALK_METHOD) {
 			/*
 			 * Found a named object declaration during method execution;
 			 * we must enter this object into the namespace.  The created
@@ -313,15 +312,13 @@ acpi_ds_exec_begin_op(struct acpi_walk_state *walk_state,
 		}
 		break;
 
-
 	case AML_CLASS_EXECUTE:
 	case AML_CLASS_CREATE:
-
 		/*
-		 * Most operators with arguments.
+		 * Most operators with arguments (except create_xxx_field operators)
 		 * Start a new result/operand state
 		 */
-		if (walk_state->opcode != AML_CREATE_FIELD_OP) {
+		if (walk_state->op_info->object_type != ACPI_TYPE_BUFFER_FIELD) {
 			status = acpi_ds_result_stack_push(walk_state);
 		}
 		break;
@@ -332,6 +329,10 @@ acpi_ds_exec_begin_op(struct acpi_walk_state *walk_state,
 
 	/* Nothing to do here during method execution */
 
+	return_ACPI_STATUS(status);
+
+      error_exit:
+	status = acpi_ds_method_error(status, walk_state);
 	return_ACPI_STATUS(status);
 }
 
@@ -358,7 +359,7 @@ acpi_status acpi_ds_exec_end_op(struct acpi_walk_state *walk_state)
 	union acpi_parse_object *next_op;
 	union acpi_parse_object *first_arg;
 
-	ACPI_FUNCTION_TRACE_PTR("ds_exec_end_op", walk_state);
+	ACPI_FUNCTION_TRACE_PTR(ds_exec_end_op, walk_state);
 
 	op = walk_state->op;
 	op_type = walk_state->op_info->type;
@@ -427,7 +428,7 @@ acpi_status acpi_ds_exec_end_op(struct acpi_walk_state *walk_state)
 						   acpi_ps_get_opcode_name
 						   (walk_state->opcode),
 						   walk_state->num_operands,
-						   "after ex_resolve_operands");
+						   "after ExResolveOperands");
 			}
 		}
 
@@ -441,7 +442,7 @@ acpi_status acpi_ds_exec_end_op(struct acpi_walk_state *walk_state)
 			    acpi_gbl_op_type_dispatch[op_type] (walk_state);
 		} else {
 			/*
-			 * Treat constructs of the form "Store(local_x,local_x)" as noops when the
+			 * Treat constructs of the form "Store(LocalX,LocalX)" as noops when the
 			 * Local is uninitialized.
 			 */
 			if ((status == AE_AML_UNINITIALIZED_LOCAL) &&
@@ -574,7 +575,7 @@ acpi_status acpi_ds_exec_end_op(struct acpi_walk_state *walk_state)
 		case AML_TYPE_CREATE_FIELD:
 
 			ACPI_DEBUG_PRINT((ACPI_DB_EXEC,
-					  "Executing create_field Buffer/Index Op=%p\n",
+					  "Executing CreateField Buffer/Index Op=%p\n",
 					  op));
 
 			status = acpi_ds_load2_end_op(walk_state);
@@ -589,7 +590,7 @@ acpi_status acpi_ds_exec_end_op(struct acpi_walk_state *walk_state)
 		case AML_TYPE_CREATE_OBJECT:
 
 			ACPI_DEBUG_PRINT((ACPI_DB_EXEC,
-					  "Executing create_object (Buffer/Package) Op=%p\n",
+					  "Executing CreateObject (Buffer/Package) Op=%p\n",
 					  op));
 
 			switch (op->common.parent->common.aml_opcode) {
@@ -663,7 +664,7 @@ acpi_status acpi_ds_exec_end_op(struct acpi_walk_state *walk_state)
 
 			if (op->common.aml_opcode == AML_REGION_OP) {
 				ACPI_DEBUG_PRINT((ACPI_DB_EXEC,
-						  "Executing op_region Address/Length Op=%p\n",
+						  "Executing OpRegion Address/Length Op=%p\n",
 						  op));
 
 				status =

@@ -918,6 +918,61 @@ int sys_set_thread_priority( const thread_id hThread, const int nPriority )
 	return ( set_thread_priority( hThread, nPriority ) );
 }
 
+
+/** Set the target cpu of one thread
+ * \par Description:
+ * Set the target cpu of one thread. Call Schedule() to be sure that the
+ * thread is really running on the target cpu.
+ * \par Locks Required:
+ * None
+ * \par Locks Taken:
+ * Interrupts
+ * Scheduler lock
+ * \param hThread	ID of thread.  If -1, use current thread.
+ * \param nCpu		Processor
+ * \return 0 if sucessful.
+ * \sa
+ ****************************************************************************/
+status_t set_thread_target_cpu( const thread_id hThread, const int nCpu )
+{
+	Thread_s *psThread;
+	int nError = 0;
+	int nFlg = cli();
+	
+	sched_lock();
+
+	psThread = get_thread_by_handle( hThread );
+
+	if ( psThread == NULL ) {
+		nError = -EINVAL;
+		goto exit;
+	}
+	
+	if( nCpu == -1 ) {
+		psThread->tr_nTargetCPU = -1;
+		goto exit;
+	}
+	
+	if( nCpu < 0 || nCpu >= MAX_CPU_COUNT ) {
+		nError = -EINVAL;
+		goto exit;		
+	}
+	
+	if( g_asProcessorDescs[nCpu].pi_bIsRunning == false ) {
+		nError = -EINVAL;
+		goto exit;				
+	}
+	psThread->tr_nTargetCPU = nCpu;
+exit:
+	sched_unlock();
+	put_cpu_flags( nFlg );
+	Schedule();
+	return ( nError );
+}
+
+
+
+
 /** Suspend the current thread
  * \par Description:
  * Suspend the current thread.  If there's no pending signals, mark the thread as waiting, and
@@ -1656,9 +1711,8 @@ void reset_thread_quantum( Thread_s *psThread )
  * \return Pointer to next thread to run
  * \sa Schedule
  ****************************************************************************/
-static Thread_s *select_thread( int64 nCurTime, bool *bTimedOut )
+static Thread_s *select_thread( int nThisProc, int64 nCurTime, bool *bTimedOut )
 {
-	int nThisProc = get_processor_id();
 	Thread_s *psPrev = CURRENT_THREAD;
 	Thread_s *psNext = psPrev;
 	Thread_s *psTopProc = swap_and_get_next_ready_thread();
@@ -1816,7 +1870,7 @@ void DoSchedule( SysCallRegs_s* psRegs )
 
 	g_bNeedSchedule = false;
 
-	psNext = select_thread( nCurTime, &bTimedOut );
+	psNext = select_thread( nThisProc, nCurTime, &bTimedOut );
 
 	// Skip threads we don't like
 	for ( ; psNext != NULL; psNext = DLIST_NEXT(psNext, tr_psNext) )
@@ -1829,6 +1883,10 @@ void DoSchedule( SysCallRegs_s* psRegs )
 		{
 			continue;
 		}
+		if ( psNext->tr_nTargetCPU != -1 && psNext->tr_nTargetCPU != nThisProc )
+		{
+			continue;
+		}		
 		break;
 	}
 

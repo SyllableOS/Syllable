@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2006, R. Byron Moore
+ * Copyright (C) 2000 - 2007, R. Byron Moore
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -45,6 +45,7 @@
 #include <acpi/acpi.h>
 #include <acpi/acdispat.h>
 #include <acpi/acnamesp.h>
+#include <acpi/actables.h>
 
 #define _COMPONENT          ACPI_DISPATCHER
 ACPI_MODULE_NAME("dsinit")
@@ -91,7 +92,7 @@ acpi_ds_init_one_object(acpi_handle obj_handle,
 	 * We are only interested in NS nodes owned by the table that
 	 * was just loaded
 	 */
-	if (node->owner_id != info->table_desc->owner_id) {
+	if (node->owner_id != info->owner_id) {
 		return (AE_OK);
 	}
 
@@ -117,46 +118,6 @@ acpi_ds_init_one_object(acpi_handle obj_handle,
 
 	case ACPI_TYPE_METHOD:
 
-		/*
-		 * Set the execution data width (32 or 64) based upon the
-		 * revision number of the parent ACPI table.
-		 * TBD: This is really for possible future support of integer width
-		 * on a per-table basis. Currently, we just use a global for the width.
-		 */
-		if (info->table_desc->pointer->revision == 1) {
-			node->flags |= ANOBJ_DATA_WIDTH_32;
-		}
-#ifdef ACPI_INIT_PARSE_METHODS
-		/*
-		 * Note 11/2005: Removed this code to parse all methods during table
-		 * load because it causes problems if there are any errors during the
-		 * parse. Also, it seems like overkill and we probably don't want to
-		 * abort a table load because of an issue with a single method.
-		 */
-
-		/*
-		 * Print a dot for each method unless we are going to print
-		 * the entire pathname
-		 */
-		if (!(acpi_dbg_level & ACPI_LV_INIT_NAMES)) {
-			ACPI_DEBUG_PRINT_RAW((ACPI_DB_INIT, "."));
-		}
-
-		/*
-		 * Always parse methods to detect errors, we will delete
-		 * the parse tree below
-		 */
-		status = acpi_ds_parse_method(obj_handle);
-		if (ACPI_FAILURE(status)) {
-			ACPI_ERROR((AE_INFO,
-				    "Method %p [%4.4s] - parse failure, %s",
-				    obj_handle,
-				    acpi_ut_get_node_name(obj_handle),
-				    acpi_format_exception(status)));
-
-			/* This parse failed, but we will continue parsing more methods */
-		}
-#endif
 		info->method_count++;
 		break;
 
@@ -187,19 +148,26 @@ acpi_ds_init_one_object(acpi_handle obj_handle,
  *
  * RETURN:      Status
  *
- * DESCRIPTION: Walk the namespace starting at "start_node" and perform any
+ * DESCRIPTION: Walk the namespace starting at "StartNode" and perform any
  *              necessary initialization on the objects found therein
  *
  ******************************************************************************/
 
 acpi_status
-acpi_ds_initialize_objects(struct acpi_table_desc * table_desc,
+acpi_ds_initialize_objects(acpi_native_uint table_index,
 			   struct acpi_namespace_node * start_node)
 {
 	acpi_status status;
 	struct acpi_init_walk_info info;
+	struct acpi_table_header *table;
+	acpi_owner_id owner_id;
 
-	ACPI_FUNCTION_TRACE("ds_initialize_objects");
+	ACPI_FUNCTION_TRACE(ds_initialize_objects);
+
+	status = acpi_tb_get_owner_id(table_index, &owner_id);
+	if (ACPI_FAILURE(status)) {
+		return_ACPI_STATUS(status);
+	}
 
 	ACPI_DEBUG_PRINT((ACPI_DB_DISPATCH,
 			  "**** Starting initialization of namespace objects ****\n"));
@@ -209,20 +177,25 @@ acpi_ds_initialize_objects(struct acpi_table_desc * table_desc,
 	info.op_region_count = 0;
 	info.object_count = 0;
 	info.device_count = 0;
-	info.table_desc = table_desc;
+	info.table_index = table_index;
+	info.owner_id = owner_id;
 
 	/* Walk entire namespace from the supplied root */
 
 	status = acpi_walk_namespace(ACPI_TYPE_ANY, start_node, ACPI_UINT32_MAX,
 				     acpi_ds_init_one_object, &info, NULL);
 	if (ACPI_FAILURE(status)) {
-		ACPI_EXCEPTION((AE_INFO, status, "During walk_namespace"));
+		ACPI_EXCEPTION((AE_INFO, status, "During WalkNamespace"));
+	}
+
+	status = acpi_get_table_by_index(table_index, &table);
+	if (ACPI_FAILURE(status)) {
+		return_ACPI_STATUS(status);
 	}
 
 	ACPI_DEBUG_PRINT_RAW((ACPI_DB_INIT,
 			      "\nTable [%4.4s](id %4.4X) - %hd Objects with %hd Devices %hd Methods %hd Regions\n",
-			      table_desc->pointer->signature,
-			      table_desc->owner_id, info.object_count,
+			      table->signature, owner_id, info.object_count,
 			      info.device_count, info.method_count,
 			      info.op_region_count));
 

@@ -107,48 +107,46 @@ acpi_os_free(void *ptr)
 {
 	kfree(ptr);
 }
-
-
-acpi_status
-acpi_os_get_root_pointer(u32 flags, struct acpi_pointer *addr)
+acpi_physical_address acpi_os_get_root_pointer(void)
 {
-	if (ACPI_FAILURE(acpi_find_root_pointer(flags, addr))) {
-		printk("System description tables not found\n");
-		return AE_NOT_FOUND;
-	}
-
-	return AE_OK;
+	acpi_physical_address address;
+	if( acpi_find_root_pointer(&address) != AE_OK )
+		return( 0 );
+	return( address );
 }
 
-acpi_status
-acpi_os_map_memory(acpi_physical_address phys, acpi_size size, void __iomem **virt)
+
+void __iomem *
+acpi_os_map_memory(acpi_physical_address phys, acpi_size size)
 {
 	area_id area;
 	unsigned long base = (unsigned long)phys;
 	void *addr = NULL;
 	unsigned long length = size;
+	
+
+	if (!acpi_gbl_permanent_mmap)
+		return NULL;
 
 	area = create_area( "acpi_memory", &addr, PAGE_ALIGN( length ) + PAGE_SIZE, PAGE_ALIGN( length ) + PAGE_SIZE,
 												AREA_ANY_ADDRESS|AREA_KERNEL, AREA_FULL_LOCK );
 	if( area < 0 )
 	{
 		printk( "acpi_os_map_memory() could not create area with size 0x%x\n", (uint)size );
-		return AE_ERROR;
+		return NULL;
 	}
 	
 	if( remap_area( area, (void*)( base & PAGE_MASK ) ) < 0 )
 	{
 		printk( "acpi_os_map_memory() could not remap area to 0x%x\n", (uint)phys );
-		return AE_ERROR;
+		return NULL;
 	}
 	
 	//printk( "acpi_os_map_memory() remapped 0x%x to 0x%x size 0x%x\n", (uint)base, (uint)addr, (uint)length );
 
 	base = (unsigned long)addr + ( base - ( base & PAGE_MASK ) );
 
-	*virt = (void*)(base);
-
-	return AE_OK;
+	return (void*)base;
 }
 
 void
@@ -214,7 +212,7 @@ acpi_os_install_interrupt_handler(u32 gsi, acpi_osd_handler handler, void *conte
 {
 	unsigned int irq;
 
-	irq = acpi_fadt.sci_int;
+	irq = acpi_gbl_FADT.sci_interrupt;
 	acpi_irq_handler = handler;
 	acpi_irq_context = context;
 	if (( acpi_irq_irq = request_irq(irq, acpi_irq, NULL, SA_SHIRQ, "acpi", acpi_irq)) < 0) {
@@ -399,6 +397,7 @@ acpi_os_read_pci_configuration (struct acpi_pci_id *pci_id, u32 reg, void *value
 {
 	int size;
 	uint32 result;
+	
 
 	if (!value)
 		return AE_BAD_PARAMETER;
@@ -428,6 +427,7 @@ acpi_status
 acpi_os_write_pci_configuration (struct acpi_pci_id *pci_id, u32 reg, acpi_integer value, u32 width)
 {
 	int result, size;
+	
 
 	switch (width) {
 	case 8:
@@ -463,6 +463,7 @@ acpi_os_derive_pci_id_2 (
 	unsigned long		temp;
 	acpi_object_type	type;
 	u8			tu8;
+	
 
 	acpi_get_parent(chandle, &handle);
 	if (handle != rhandle) {
@@ -536,8 +537,25 @@ acpi_os_execute_deferred (
 	return 0;
 }
 
+
+/*******************************************************************************
+ *
+ * FUNCTION:    acpi_os_execute
+ *
+ * PARAMETERS:  Type               - Type of the callback
+ *              Function           - Function to be executed
+ *              Context            - Function parameters
+ *
+ * RETURN:      Status
+ *
+ * DESCRIPTION: Depending on type, either queues function for deferred execution or
+ *              immediately executes function on a separate thread.
+ *
+ ******************************************************************************/
+
+
 acpi_status
-acpi_os_queue_for_execution(
+acpi_os_execute(
 	u32			priority,
 	acpi_osd_exec_callback	function,
 	void			*context)
@@ -545,6 +563,7 @@ acpi_os_queue_for_execution(
 	acpi_status 		status = AE_OK;
 	struct acpi_os_dpc	*dpc;
 	thread_id id;
+	
 
 	ACPI_FUNCTION_TRACE ("os_queue_for_execution");
 
@@ -590,19 +609,12 @@ acpi_os_wait_events_complete(
  */
 acpi_status
 acpi_os_create_lock (
-	acpi_handle	*out_handle)
+	acpi_spinlock	*out_handle)
 {
-	SpinLock_s *lock_ptr;
 
-	ACPI_FUNCTION_TRACE ("os_create_lock");
+	*out_handle = kmalloc( sizeof( SpinLock_s ), MEMF_KERNEL );
+	spinlock_init(*out_handle, "acpi_lock");
 
-	lock_ptr = acpi_os_allocate(sizeof(SpinLock_s));
-
-	spinlock_init(lock_ptr, "acpi_lock");
-
-	ACPI_DEBUG_PRINT ((ACPI_DB_MUTEX, "Creating spinlock[%p].\n", lock_ptr));
-
-	*out_handle = lock_ptr;
 
 	return_ACPI_STATUS (AE_OK);
 }
@@ -613,14 +625,9 @@ acpi_os_create_lock (
  */
 void
 acpi_os_delete_lock (
-	acpi_handle	handle)
+	acpi_spinlock handle)
 {
-	ACPI_FUNCTION_TRACE ("os_create_lock");
-
-	ACPI_DEBUG_PRINT ((ACPI_DB_MUTEX, "Deleting spinlock[%p].\n", handle));
-
-	acpi_os_free(handle);
-
+	kfree( handle );
 	return_VOID;
 }
 
@@ -632,10 +639,10 @@ acpi_os_delete_lock (
  *   that indicates whether we are at interrupt level.
  */
 acpi_cpu_flags
-acpi_os_acquire_lock( acpi_handle handle )
+acpi_os_acquire_lock( acpi_spinlock lockp )
 {
 	unsigned long flags;
-	flags = spinlock( (SpinLock_s *)handle );
+	flags = spinlock( lockp );
 	return( flags );
 }
 
@@ -643,10 +650,9 @@ acpi_os_acquire_lock( acpi_handle handle )
 /*
  * Release a spinlock. See above.
  */
-void
-acpi_os_release_lock( acpi_handle handle, acpi_cpu_flags flags )
+void acpi_os_release_lock(acpi_spinlock lockp, acpi_cpu_flags flags)
 {
-	spinunlock_restore((SpinLock_s *)handle, flags);
+	spinunlock_restore(lockp, flags);
 }
 
 
@@ -720,9 +726,10 @@ acpi_os_wait_semaphore(
 	acpi_status		status = AE_OK;
 	sem_id	*sem = (sem_id*)handle;
 	int			ret = 0;
-
+	
 	ACPI_FUNCTION_TRACE ("os_wait_semaphore");
 
+//	printk( "lock %i %i\n", *sem, get_semaphore_count( *sem ) );
 	if (!sem || (units < 1))
 		return_ACPI_STATUS (AE_BAD_PARAMETER);
 
@@ -763,7 +770,7 @@ acpi_os_wait_semaphore(
 		default:
 		// TODO: A better timeout algorithm?
 		{
-			status = lock_semaphore( *sem, SEM_NOSIG, timeout * 1000 );
+			status = lock_semaphore( *sem, SEM_NOSIG, (bigtime_t)timeout * 1000 );
 	
 			if (ret != 0)
 				status = AE_TIME;
@@ -779,6 +786,9 @@ acpi_os_wait_semaphore(
 		ACPI_DEBUG_PRINT ((ACPI_DB_MUTEX, "Acquired semaphore[%p|%d|%d]\n", handle, units, timeout));
 	}
 
+//	printk("sem %i %i %i\n", *sem, timeout, status);
+
+
 	return_ACPI_STATUS (status);
 }
 
@@ -790,7 +800,9 @@ acpi_os_signal_semaphore(
     acpi_handle 	    handle,
     u32 		    units)
 {
+	
 	sem_id *sem = (sem_id *) handle;
+	
 
 	ACPI_FUNCTION_TRACE ("os_signal_semaphore");
 
@@ -849,9 +861,7 @@ acpi_os_writable(void *ptr, acpi_size len)
 u32
 acpi_os_get_thread_id (void)
 {
-	return( sys_get_thread_id( NULL ) );
-
-	return 0;
+	return( sys_get_thread_id( NULL ) + 1 );
 }
 
 acpi_status
@@ -904,7 +914,7 @@ acpi_os_name_setup(char *str)
 		
 }
 
-
+#ifndef ACPI_USE_LOCAL_CACHE
 
 /*******************************************************************************
  *
@@ -1003,6 +1013,78 @@ void *acpi_os_acquire_object(acpi_cache_t * cache)
 	void* obj = kmalloc( size, MEMF_KERNEL );
 	return( obj );	
 }
+
+#endif
+
+
+/******************************************************************************
+ *
+ * FUNCTION:    acpi_os_validate_interface
+ *
+ * PARAMETERS:  interface           - Requested interface to be validated
+ *
+ * RETURN:      AE_OK if interface is supported, AE_SUPPORT otherwise
+ *
+ * DESCRIPTION: Match an interface string to the interfaces supported by the
+ *              host. Strings originate from an AML call to the _OSI method.
+ *
+ *****************************************************************************/
+
+acpi_status
+acpi_os_validate_interface (char *interface)
+{
+
+    return AE_SUPPORT;
+}
+
+
+
+
+/******************************************************************************
+ *
+ * FUNCTION:    acpi_os_validate_address
+ *
+ * PARAMETERS:  space_id             - ACPI space ID
+ *              address             - Physical address
+ *              length              - Address length
+ *
+ * RETURN:      AE_OK if address/length is valid for the space_id. Otherwise,
+ *              should return AE_AML_ILLEGAL_ADDRESS.
+ *
+ * DESCRIPTION: Validate a system address via the host OS. Used to validate
+ *              the addresses accessed by AML operation regions.
+ *
+ *****************************************************************************/
+
+acpi_status
+acpi_os_validate_address (
+    u8                   space_id,
+    acpi_physical_address   address,
+    acpi_size               length)
+{
+
+    return AE_OK;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

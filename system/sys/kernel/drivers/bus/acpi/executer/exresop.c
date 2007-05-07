@@ -6,7 +6,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2006, R. Byron Moore
+ * Copyright (C) 2000 - 2007, R. Byron Moore
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -145,7 +145,7 @@ acpi_ex_resolve_operands(u16 opcode,
 	acpi_object_type type_needed;
 	u16 target_op = 0;
 
-	ACPI_FUNCTION_TRACE_U32("ex_resolve_operands", opcode);
+	ACPI_FUNCTION_TRACE_U32(ex_resolve_operands, opcode);
 
 	op_info = acpi_ps_get_opcode_info(opcode);
 	if (op_info->class == AML_CLASS_UNKNOWN) {
@@ -160,7 +160,7 @@ acpi_ex_resolve_operands(u16 opcode,
 	}
 
 	ACPI_DEBUG_PRINT((ACPI_DB_EXEC,
-			  "Opcode %X [%s] required_operand_types=%8.8X\n",
+			  "Opcode %X [%s] RequiredOperandTypes=%8.8X\n",
 			  opcode, op_info->name, arg_types));
 
 	/*
@@ -249,7 +249,7 @@ acpi_ex_resolve_operands(u16 opcode,
 
 					ACPI_DEBUG_ONLY_MEMBERS(ACPI_DEBUG_PRINT
 								((ACPI_DB_EXEC,
-								  "Operand is a Reference, ref_opcode [%s]\n",
+								  "Operand is a Reference, RefOpcode [%s]\n",
 								  (acpi_ps_get_opcode_info
 								   (obj_desc->
 								    reference.
@@ -615,22 +615,20 @@ acpi_ex_resolve_operands(u16 opcode,
 			}
 			goto next_operand;
 
-		case ARGI_REGION_OR_FIELD:
+		case ARGI_REGION_OR_BUFFER:	/* Used by Load() only */
 
-			/* Need an operand of type REGION or a FIELD in a region */
+			/* Need an operand of type REGION or a BUFFER (which could be a resolved region field) */
 
 			switch (ACPI_GET_OBJECT_TYPE(obj_desc)) {
+			case ACPI_TYPE_BUFFER:
 			case ACPI_TYPE_REGION:
-			case ACPI_TYPE_LOCAL_REGION_FIELD:
-			case ACPI_TYPE_LOCAL_BANK_FIELD:
-			case ACPI_TYPE_LOCAL_INDEX_FIELD:
 
 				/* Valid operand */
 				break;
 
 			default:
 				ACPI_ERROR((AE_INFO,
-					    "Needed [Region/region_field], found [%s] %p",
+					    "Needed [Region/Buffer], found [%s] %p",
 					    acpi_ut_get_object_type_name
 					    (obj_desc), obj_desc));
 

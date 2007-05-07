@@ -47,17 +47,22 @@
 
 #define ACPI_USE_SYSTEM_CLIBRARY
 #define ACPI_USE_DO_WHILE_0
+#define ACPI_USE_LOCAL_CACHE
+#define NOT_USED_BY_LINUX
 
 #include <atheos/kernel.h>
 #include <atheos/types.h>
 #include <atheos/ctype.h>
 #include <atheos/string.h>
+#include <atheos/spinlock.h>
 #include <acpi/acpi_x86.h>
 
 #define ACPI_MACHINE_WIDTH          32
 #define COMPILER_DEPENDENT_INT64    long long
 #define COMPILER_DEPENDENT_UINT64   unsigned long long
 #define ACPI_USE_NATIVE_DIVIDE
+
+typedef SpinLock_s* acpi_spinlock;
 
 /* Full namespace pathname length limit - arbitrary */
 

@@ -1181,10 +1181,7 @@ void Layer::DrawBitMap( SrvBitmap * pcBitMap, Rect cSrcRect, Rect cDstRect )
 
 	if( ( m_pcWindow == NULL || m_pcWindow->IsOffScreen() == false ) && m_pcBitmap == g_pcScreenBitmap )
 	{
-		if( m_nDrawingMode == DM_COPY )
-			SrvSprite::HideForCopy( cIDstRect + cTopLeft );		
-		else
-			SrvSprite::Hide( cIDstRect + cTopLeft );
+		SrvSprite::Hide( cIDstRect + cTopLeft );
 	}
 	
 

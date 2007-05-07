@@ -32,7 +32,7 @@
 #include <atheos/resource.h>
 #include <posix/errno.h>
 #include <macros.h>
-#include <acpi/processor.h>
+
 
 #define ACPI_FAN_COMPONENT		0x00200000
 #define ACPI_FAN_CLASS			"fan"

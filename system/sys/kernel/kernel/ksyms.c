@@ -142,9 +142,8 @@ static KernelSymbol_s g_asKernelSymbols[] = {
 	KSYMBOL( snooze ),
 	KSYMBOL( wakeup_thread ),
 	KSYMBOL( set_thread_priority ),
-//	KSYMBOL( load_fpu_state ),
-//	KSYMBOL( save_fpu_state ),
-		
+	KSYMBOL( set_thread_target_cpu ),
+			
 	// Scheduler functions:
 	KSYMBOL( Schedule ),
 //	KSYMBOL( __sched_lock ),

@@ -6,7 +6,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2006, R. Byron Moore
+ * Copyright (C) 2000 - 2007, R. Byron Moore
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -61,22 +61,24 @@ ACPI_MODULE_NAME("exsystem")
  *
  * DESCRIPTION: Implements a semaphore wait with a check to see if the
  *              semaphore is available immediately.  If it is not, the
- *              interpreter is released.
+ *              interpreter is released before waiting.
  *
  ******************************************************************************/
-acpi_status acpi_ex_system_wait_semaphore(acpi_handle semaphore, u16 timeout)
+acpi_status acpi_ex_system_wait_semaphore(acpi_semaphore semaphore, u16 timeout)
 {
 	acpi_status status;
 	acpi_status status2;
 
-	ACPI_FUNCTION_TRACE("ex_system_wait_semaphore");
+	ACPI_FUNCTION_TRACE(ex_system_wait_semaphore);
 
-	status = acpi_os_wait_semaphore(semaphore, 1, 0);
+	status = acpi_os_wait_semaphore(semaphore, 1, ACPI_DO_NOT_WAIT);
 	if (ACPI_SUCCESS(status)) {
 		return_ACPI_STATUS(status);
 	}
+	
 
 	if (status == AE_TIME) {
+
 		/* We must wait, so unlock the interpreter */
 
 		acpi_ex_exit_interpreter();
@@ -91,6 +93,60 @@ acpi_status acpi_ex_system_wait_semaphore(acpi_handle semaphore, u16 timeout)
 
 		status2 = acpi_ex_enter_interpreter();
 		if (ACPI_FAILURE(status2)) {
+
+			/* Report fatal error, could not acquire interpreter */
+
+			return_ACPI_STATUS(status2);
+		}
+	}
+
+	return_ACPI_STATUS(status);
+}
+
+/*******************************************************************************
+ *
+ * FUNCTION:    acpi_ex_system_wait_mutex
+ *
+ * PARAMETERS:  Mutex           - Mutex to wait on
+ *              Timeout         - Max time to wait
+ *
+ * RETURN:      Status
+ *
+ * DESCRIPTION: Implements a mutex wait with a check to see if the
+ *              mutex is available immediately.  If it is not, the
+ *              interpreter is released before waiting.
+ *
+ ******************************************************************************/
+
+acpi_status acpi_ex_system_wait_mutex(acpi_mutex mutex, u16 timeout)
+{
+	acpi_status status;
+	acpi_status status2;
+
+	ACPI_FUNCTION_TRACE(ex_system_wait_mutex);
+
+	status = acpi_os_acquire_mutex(mutex, ACPI_DO_NOT_WAIT);
+	if (ACPI_SUCCESS(status)) {
+		return_ACPI_STATUS(status);
+	}
+
+	if (status == AE_TIME) {
+
+		/* We must wait, so unlock the interpreter */
+
+		acpi_ex_exit_interpreter();
+
+		status = acpi_os_acquire_mutex(mutex, timeout);
+
+		ACPI_DEBUG_PRINT((ACPI_DB_EXEC,
+				  "*** Thread awake after blocking, %s\n",
+				  acpi_format_exception(status)));
+
+		/* Reacquire the interpreter */
+
+		status2 = acpi_ex_enter_interpreter();
+		if (ACPI_FAILURE(status2)) {
+
 			/* Report fatal error, could not acquire interpreter */
 
 			return_ACPI_STATUS(status2);
@@ -172,83 +228,6 @@ acpi_status acpi_ex_system_do_suspend(acpi_integer how_long)
 	return (status);
 }
 
-
-/*******************************************************************************
- *
- * FUNCTION:    acpi_ex_system_acquire_mutex
- *
- * PARAMETERS:  time_desc       - The 'time to delay' object descriptor
- *              obj_desc        - The object descriptor for this op
- *
- * RETURN:      Status
- *
- * DESCRIPTION: Provides an access point to perform synchronization operations
- *              within the AML.  This function will cause a lock to be generated
- *              for the Mutex pointed to by obj_desc.
- *
- ******************************************************************************/
-
-acpi_status
-acpi_ex_system_acquire_mutex(union acpi_operand_object * time_desc,
-			     union acpi_operand_object * obj_desc)
-{
-	acpi_status status = AE_OK;
-
-	ACPI_FUNCTION_TRACE_PTR("ex_system_acquire_mutex", obj_desc);
-
-	if (!obj_desc) {
-		return_ACPI_STATUS(AE_BAD_PARAMETER);
-	}
-
-	/* Support for the _GL_ Mutex object -- go get the global lock */
-
-	if (obj_desc->mutex.semaphore == acpi_gbl_global_lock_semaphore) {
-		status =
-		    acpi_ev_acquire_global_lock((u16) time_desc->integer.value);
-		return_ACPI_STATUS(status);
-	}
-
-	status = acpi_ex_system_wait_semaphore(obj_desc->mutex.semaphore,
-					       (u16) time_desc->integer.value);
-	return_ACPI_STATUS(status);
-}
-
-/*******************************************************************************
- *
- * FUNCTION:    acpi_ex_system_release_mutex
- *
- * PARAMETERS:  obj_desc        - The object descriptor for this op
- *
- * RETURN:      Status
- *
- * DESCRIPTION: Provides an access point to perform synchronization operations
- *              within the AML.  This operation is a request to release a
- *              previously acquired Mutex.  If the Mutex variable is set then
- *              it will be decremented.
- *
- ******************************************************************************/
-
-acpi_status acpi_ex_system_release_mutex(union acpi_operand_object *obj_desc)
-{
-	acpi_status status = AE_OK;
-
-	ACPI_FUNCTION_TRACE("ex_system_release_mutex");
-
-	if (!obj_desc) {
-		return_ACPI_STATUS(AE_BAD_PARAMETER);
-	}
-
-	/* Support for the _GL_ Mutex object -- release the global lock */
-
-	if (obj_desc->mutex.semaphore == acpi_gbl_global_lock_semaphore) {
-		status = acpi_ev_release_global_lock();
-		return_ACPI_STATUS(status);
-	}
-
-	status = acpi_os_signal_semaphore(obj_desc->mutex.semaphore, 1);
-	return_ACPI_STATUS(status);
-}
-
 /*******************************************************************************
  *
  * FUNCTION:    acpi_ex_system_signal_event
@@ -262,14 +241,15 @@ acpi_status acpi_ex_system_release_mutex(union acpi_operand_object *obj_desc)
  *
  ******************************************************************************/
 
-acpi_status acpi_ex_system_signal_event(union acpi_operand_object *obj_desc)
+acpi_status acpi_ex_system_signal_event(union acpi_operand_object * obj_desc)
 {
 	acpi_status status = AE_OK;
 
-	ACPI_FUNCTION_TRACE("ex_system_signal_event");
+	ACPI_FUNCTION_TRACE(ex_system_signal_event);
 
 	if (obj_desc) {
-		status = acpi_os_signal_semaphore(obj_desc->event.semaphore, 1);
+		status =
+		    acpi_os_signal_semaphore(obj_desc->event.os_semaphore, 1);
 	}
 
 	return_ACPI_STATUS(status);
@@ -296,11 +276,11 @@ acpi_ex_system_wait_event(union acpi_operand_object *time_desc,
 {
 	acpi_status status = AE_OK;
 
-	ACPI_FUNCTION_TRACE("ex_system_wait_event");
+	ACPI_FUNCTION_TRACE(ex_system_wait_event);
 
 	if (obj_desc) {
 		status =
-		    acpi_ex_system_wait_semaphore(obj_desc->event.semaphore,
+		    acpi_ex_system_wait_semaphore(obj_desc->event.os_semaphore,
 						  (u16) time_desc->integer.
 						  value);
 	}
@@ -323,7 +303,7 @@ acpi_ex_system_wait_event(union acpi_operand_object *time_desc,
 acpi_status acpi_ex_system_reset_event(union acpi_operand_object *obj_desc)
 {
 	acpi_status status = AE_OK;
-	void *temp_semaphore;
+	acpi_semaphore temp_semaphore;
 
 	ACPI_FUNCTION_ENTRY();
 
@@ -334,8 +314,8 @@ acpi_status acpi_ex_system_reset_event(union acpi_operand_object *obj_desc)
 	status =
 	    acpi_os_create_semaphore(ACPI_NO_UNIT_LIMIT, 0, &temp_semaphore);
 	if (ACPI_SUCCESS(status)) {
-		(void)acpi_os_delete_semaphore(obj_desc->event.semaphore);
-		obj_desc->event.semaphore = temp_semaphore;
+		(void)acpi_os_delete_semaphore(obj_desc->event.os_semaphore);
+		obj_desc->event.os_semaphore = temp_semaphore;
 	}
 
 	return (status);

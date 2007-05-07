@@ -6,7 +6,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2006, R. Byron Moore
+ * Copyright (C) 2000 - 2007, R. Byron Moore
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -74,7 +74,7 @@ acpi_install_address_space_handler(acpi_handle device,
 	struct acpi_namespace_node *node;
 	acpi_status status;
 
-	ACPI_FUNCTION_TRACE("acpi_install_address_space_handler");
+	ACPI_FUNCTION_TRACE(acpi_install_address_space_handler);
 
 	/* Parameter validation */
 
@@ -113,7 +113,7 @@ acpi_install_address_space_handler(acpi_handle device,
 	return_ACPI_STATUS(status);
 }
 
-EXPORT_SYMBOL(acpi_install_address_space_handler);
+ACPI_EXPORT_SYMBOL(acpi_install_address_space_handler)
 
 /*******************************************************************************
  *
@@ -141,7 +141,7 @@ acpi_remove_address_space_handler(acpi_handle device,
 	struct acpi_namespace_node *node;
 	acpi_status status;
 
-	ACPI_FUNCTION_TRACE("acpi_remove_address_space_handler");
+	ACPI_FUNCTION_TRACE(acpi_remove_address_space_handler);
 
 	/* Parameter validation */
 
@@ -157,7 +157,11 @@ acpi_remove_address_space_handler(acpi_handle device,
 	/* Convert and validate the device handle */
 
 	node = acpi_ns_map_handle_to_node(device);
-	if (!node) {
+	if (!node ||
+	    ((node->type != ACPI_TYPE_DEVICE) &&
+	     (node->type != ACPI_TYPE_PROCESSOR) &&
+	     (node->type != ACPI_TYPE_THERMAL) &&
+	     (node != acpi_gbl_root_node))) {
 		status = AE_BAD_PARAMETER;
 		goto unlock_and_exit;
 	}
@@ -178,6 +182,14 @@ acpi_remove_address_space_handler(acpi_handle device,
 		/* We have a handler, see if user requested this one */
 
 		if (handler_obj->address_space.space_id == space_id) {
+
+			/* Handler must be the same as the installed handler */
+
+			if (handler_obj->address_space.handler != handler) {
+				status = AE_BAD_PARAMETER;
+				goto unlock_and_exit;
+			}
+
 			/* Matched space_id, first dereference this in the Regions */
 
 			ACPI_DEBUG_PRINT((ACPI_DB_OPREGION,
@@ -228,7 +240,7 @@ acpi_remove_address_space_handler(acpi_handle device,
 	/* The handler does not exist */
 
 	ACPI_DEBUG_PRINT((ACPI_DB_OPREGION,
-			  "Unable to remove address handler %p for %s(%X), dev_node %p, obj %p\n",
+			  "Unable to remove address handler %p for %s(%X), DevNode %p, obj %p\n",
 			  handler, acpi_ut_get_region_name(space_id), space_id,
 			  node, obj_desc));
 
@@ -239,5 +251,4 @@ acpi_remove_address_space_handler(acpi_handle device,
 	return_ACPI_STATUS(status);
 }
 
-EXPORT_SYMBOL(acpi_remove_address_space_handler);
-
+ACPI_EXPORT_SYMBOL(acpi_remove_address_space_handler)

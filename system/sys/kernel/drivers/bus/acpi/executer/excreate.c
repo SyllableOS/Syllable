@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2006, R. Byron Moore
+ * Copyright (C) 2000 - 2007, R. Byron Moore
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -70,7 +70,7 @@ acpi_status acpi_ex_create_alias(struct acpi_walk_state *walk_state)
 	struct acpi_namespace_node *alias_node;
 	acpi_status status = AE_OK;
 
-	ACPI_FUNCTION_TRACE("ex_create_alias");
+	ACPI_FUNCTION_TRACE(ex_create_alias);
 
 	/* Get the source/alias operands (both namespace nodes) */
 
@@ -165,7 +165,7 @@ acpi_status acpi_ex_create_event(struct acpi_walk_state *walk_state)
 	acpi_status status;
 	union acpi_operand_object *obj_desc;
 
-	ACPI_FUNCTION_TRACE("ex_create_event");
+	ACPI_FUNCTION_TRACE(ex_create_event);
 
 	obj_desc = acpi_ut_create_internal_object(ACPI_TYPE_EVENT);
 	if (!obj_desc) {
@@ -178,7 +178,7 @@ acpi_status acpi_ex_create_event(struct acpi_walk_state *walk_state)
 	 * that the event is created in an unsignalled state
 	 */
 	status = acpi_os_create_semaphore(ACPI_NO_UNIT_LIMIT, 0,
-					  &obj_desc->event.semaphore);
+					  &obj_desc->event.os_semaphore);
 	if (ACPI_FAILURE(status)) {
 		goto cleanup;
 	}
@@ -217,7 +217,7 @@ acpi_status acpi_ex_create_mutex(struct acpi_walk_state *walk_state)
 	acpi_status status = AE_OK;
 	union acpi_operand_object *obj_desc;
 
-	ACPI_FUNCTION_TRACE_PTR("ex_create_mutex", ACPI_WALK_OPERANDS);
+	ACPI_FUNCTION_TRACE_PTR(ex_create_mutex, ACPI_WALK_OPERANDS);
 
 	/* Create the new mutex object */
 
@@ -227,12 +227,9 @@ acpi_status acpi_ex_create_mutex(struct acpi_walk_state *walk_state)
 		goto cleanup;
 	}
 
-	/*
-	 * Create the actual OS semaphore.
-	 * One unit max to make it a mutex, with one initial unit to allow
-	 * the mutex to be acquired.
-	 */
-	status = acpi_os_create_semaphore(1, 1, &obj_desc->mutex.semaphore);
+	/* Create the actual OS Mutex */
+
+	status = acpi_os_create_mutex(&obj_desc->mutex.os_mutex);
 	if (ACPI_FAILURE(status)) {
 		goto cleanup;
 	}
@@ -244,8 +241,9 @@ acpi_status acpi_ex_create_mutex(struct acpi_walk_state *walk_state)
 	obj_desc->mutex.node =
 	    (struct acpi_namespace_node *)walk_state->operands[0];
 
-	status = acpi_ns_attach_object(obj_desc->mutex.node,
-				       obj_desc, ACPI_TYPE_MUTEX);
+	status =
+	    acpi_ns_attach_object(obj_desc->mutex.node, obj_desc,
+				  ACPI_TYPE_MUTEX);
 
       cleanup:
 	/*
@@ -281,7 +279,7 @@ acpi_ex_create_region(u8 * aml_start,
 	struct acpi_namespace_node *node;
 	union acpi_operand_object *region_obj2;
 
-	ACPI_FUNCTION_TRACE("ex_create_region");
+	ACPI_FUNCTION_TRACE(ex_create_region);
 
 	/* Get the Namespace Node */
 
@@ -301,7 +299,7 @@ acpi_ex_create_region(u8 * aml_start,
 	 */
 	if ((region_space >= ACPI_NUM_PREDEFINED_REGIONS) &&
 	    (region_space < ACPI_USER_REGION_BEGIN)) {
-		ACPI_ERROR((AE_INFO, "Invalid address_space type %X",
+		ACPI_ERROR((AE_INFO, "Invalid AddressSpace type %X",
 			    region_space));
 		return_ACPI_STATUS(AE_AML_INVALID_SPACE_ID);
 	}
@@ -362,10 +360,11 @@ acpi_status acpi_ex_create_table_region(struct acpi_walk_state *walk_state)
 	union acpi_operand_object **operand = &walk_state->operands[0];
 	union acpi_operand_object *obj_desc;
 	struct acpi_namespace_node *node;
-	struct acpi_table_header *table;
 	union acpi_operand_object *region_obj2;
+	acpi_native_uint table_index;
+	struct acpi_table_header *table;
 
-	ACPI_FUNCTION_TRACE("ex_create_table_region");
+	ACPI_FUNCTION_TRACE(ex_create_table_region);
 
 	/* Get the Node from the object stack  */
 
@@ -383,7 +382,7 @@ acpi_status acpi_ex_create_table_region(struct acpi_walk_state *walk_state)
 
 	status = acpi_tb_find_table(operand[1]->string.pointer,
 				    operand[2]->string.pointer,
-				    operand[3]->string.pointer, &table);
+				    operand[3]->string.pointer, &table_index);
 	if (ACPI_FAILURE(status)) {
 		return_ACPI_STATUS(status);
 	}
@@ -397,6 +396,11 @@ acpi_status acpi_ex_create_table_region(struct acpi_walk_state *walk_state)
 
 	region_obj2 = obj_desc->common.next_object;
 	region_obj2->extra.region_context = NULL;
+
+	status = acpi_get_table_by_index(table_index, &table);
+	if (ACPI_FAILURE(status)) {
+		return_ACPI_STATUS(status);
+	}
 
 	/* Init the region from the operands */
 
@@ -453,7 +457,7 @@ acpi_status acpi_ex_create_processor(struct acpi_walk_state *walk_state)
 	union acpi_operand_object *obj_desc;
 	acpi_status status;
 
-	ACPI_FUNCTION_TRACE_PTR("ex_create_processor", walk_state);
+	ACPI_FUNCTION_TRACE_PTR(ex_create_processor, walk_state);
 
 	/* Create the processor object */
 
@@ -465,9 +469,9 @@ acpi_status acpi_ex_create_processor(struct acpi_walk_state *walk_state)
 	/* Initialize the processor object from the operands */
 
 	obj_desc->processor.proc_id = (u8) operand[1]->integer.value;
+	obj_desc->processor.length = (u8) operand[3]->integer.value;
 	obj_desc->processor.address =
 	    (acpi_io_address) operand[2]->integer.value;
-	obj_desc->processor.length = (u8) operand[3]->integer.value;
 
 	/* Install the processor object in the parent Node */
 
@@ -500,7 +504,7 @@ acpi_status acpi_ex_create_power_resource(struct acpi_walk_state *walk_state)
 	acpi_status status;
 	union acpi_operand_object *obj_desc;
 
-	ACPI_FUNCTION_TRACE_PTR("ex_create_power_resource", walk_state);
+	ACPI_FUNCTION_TRACE_PTR(ex_create_power_resource, walk_state);
 
 	/* Create the power resource object */
 
@@ -550,13 +554,14 @@ acpi_ex_create_method(u8 * aml_start,
 	acpi_status status;
 	u8 method_flags;
 
-	ACPI_FUNCTION_TRACE_PTR("ex_create_method", walk_state);
+	ACPI_FUNCTION_TRACE_PTR(ex_create_method, walk_state);
 
 	/* Create a new method object */
 
 	obj_desc = acpi_ut_create_internal_object(ACPI_TYPE_METHOD);
 	if (!obj_desc) {
-		return_ACPI_STATUS(AE_NO_MEMORY);
+		status = AE_NO_MEMORY;
+		goto exit;
 	}
 
 	/* Save the method's AML pointer and length  */
@@ -565,7 +570,7 @@ acpi_ex_create_method(u8 * aml_start,
 	obj_desc->method.aml_length = aml_length;
 
 	/*
-	 * Disassemble the method flags.  Split off the Arg Count
+	 * Disassemble the method flags. Split off the Arg Count
 	 * for efficiency
 	 */
 	method_flags = (u8) operand[1]->integer.value;
@@ -576,21 +581,19 @@ acpi_ex_create_method(u8 * aml_start,
 	    (u8) (method_flags & AML_METHOD_ARG_COUNT);
 
 	/*
-	 * Get the concurrency count.  If required, a semaphore will be
+	 * Get the sync_level. If method is serialized, a mutex will be
 	 * created for this method when it is parsed.
 	 */
 	if (acpi_gbl_all_methods_serialized) {
-		obj_desc->method.concurrency = 1;
+		obj_desc->method.sync_level = 0;
 		obj_desc->method.method_flags |= AML_METHOD_SERIALIZED;
 	} else if (method_flags & AML_METHOD_SERIALIZED) {
 		/*
-		 * ACPI 1.0: Concurrency = 1
-		 * ACPI 2.0: Concurrency = (sync_level (in method declaration) + 1)
+		 * ACPI 1.0: sync_level = 0
+		 * ACPI 2.0: sync_level = sync_level in method declaration
 		 */
-		obj_desc->method.concurrency = (u8)
-		    (((method_flags & AML_METHOD_SYNCH_LEVEL) >> 4) + 1);
-	} else {
-		obj_desc->method.concurrency = ACPI_INFINITE_CONCURRENCY;
+		obj_desc->method.sync_level = (u8)
+		    ((method_flags & AML_METHOD_SYNCH_LEVEL) >> 4);
 	}
 
 	/* Attach the new object to the method Node */
@@ -602,6 +605,7 @@ acpi_ex_create_method(u8 * aml_start,
 
 	acpi_ut_remove_reference(obj_desc);
 
+      exit:
 	/* Remove a reference to the operand */
 
 	acpi_ut_remove_reference(operand[1]);

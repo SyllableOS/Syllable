@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2006, R. Byron Moore
+ * Copyright (C) 2000 - 2007, R. Byron Moore
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -95,7 +95,7 @@ acpi_status acpi_ex_opcode_2A_0T_0R(struct acpi_walk_state *walk_state)
 	u32 value;
 	acpi_status status = AE_OK;
 
-	ACPI_FUNCTION_TRACE_STR("ex_opcode_2A_0T_0R",
+	ACPI_FUNCTION_TRACE_STR(ex_opcode_2A_0T_0R,
 				acpi_ps_get_opcode_name(walk_state->opcode));
 
 	/* Examine the opcode */
@@ -125,7 +125,7 @@ acpi_status acpi_ex_opcode_2A_0T_0R(struct acpi_walk_state *walk_state)
 #ifdef ACPI_GPE_NOTIFY_CHECK
 		/*
 		 * GPE method wake/notify check.  Here, we want to ensure that we
-		 * don't receive any "device_wake" Notifies from a GPE _Lxx or _Exx
+		 * don't receive any "DeviceWake" Notifies from a GPE _Lxx or _Exx
 		 * GPE method during system runtime.  If we do, the GPE is marked
 		 * as "wake-only" and disabled.
 		 *
@@ -189,7 +189,7 @@ acpi_status acpi_ex_opcode_2A_2T_1R(struct acpi_walk_state *walk_state)
 	union acpi_operand_object *return_desc2 = NULL;
 	acpi_status status;
 
-	ACPI_FUNCTION_TRACE_STR("ex_opcode_2A_2T_1R",
+	ACPI_FUNCTION_TRACE_STR(ex_opcode_2A_2T_1R,
 				acpi_ps_get_opcode_name(walk_state->opcode));
 
 	/* Execute the opcode */
@@ -285,7 +285,7 @@ acpi_status acpi_ex_opcode_2A_1T_1R(struct acpi_walk_state *walk_state)
 	acpi_status status = AE_OK;
 	acpi_size length;
 
-	ACPI_FUNCTION_TRACE_STR("ex_opcode_2A_1T_1R",
+	ACPI_FUNCTION_TRACE_STR(ex_opcode_2A_1T_1R,
 				acpi_ps_get_opcode_name(walk_state->opcode));
 
 	/* Execute the opcode */
@@ -387,53 +387,69 @@ acpi_status acpi_ex_opcode_2A_1T_1R(struct acpi_walk_state *walk_state)
 			goto cleanup;
 		}
 
+		/* Initialize the Index reference object */
+
 		index = operand[1]->integer.value;
+		return_desc->reference.offset = (u32) index;
+		return_desc->reference.opcode = AML_INDEX_OP;
 
-		/* At this point, the Source operand is a Package, Buffer, or String */
+		/*
+		 * At this point, the Source operand is a String, Buffer, or Package.
+		 * Verify that the index is within range.
+		 */
+		switch (ACPI_GET_OBJECT_TYPE(operand[0])) {
+		case ACPI_TYPE_STRING:
 
-		if (ACPI_GET_OBJECT_TYPE(operand[0]) == ACPI_TYPE_PACKAGE) {
-			/* Object to be indexed is a Package */
-
-			if (index >= operand[0]->package.count) {
-				ACPI_ERROR((AE_INFO,
-					    "Index value (%X%8.8X) beyond package end (%X)",
-					    ACPI_FORMAT_UINT64(index),
-					    operand[0]->package.count));
-				status = AE_AML_PACKAGE_LIMIT;
-				goto cleanup;
-			}
-
-			return_desc->reference.target_type = ACPI_TYPE_PACKAGE;
-			return_desc->reference.object = operand[0];
-			return_desc->reference.where =
-			    &operand[0]->package.elements[index];
-		} else {
-			/* Object to be indexed is a Buffer/String */
-
-			if (index >= operand[0]->buffer.length) {
-				ACPI_ERROR((AE_INFO,
-					    "Index value (%X%8.8X) beyond end of buffer (%X)",
-					    ACPI_FORMAT_UINT64(index),
-					    operand[0]->buffer.length));
-				status = AE_AML_BUFFER_LIMIT;
-				goto cleanup;
+			if (index >= operand[0]->string.length) {
+				status = AE_AML_STRING_LIMIT;
 			}
 
 			return_desc->reference.target_type =
 			    ACPI_TYPE_BUFFER_FIELD;
-			return_desc->reference.object = operand[0];
+			break;
+
+		case ACPI_TYPE_BUFFER:
+
+			if (index >= operand[0]->buffer.length) {
+				status = AE_AML_BUFFER_LIMIT;
+			}
+
+			return_desc->reference.target_type =
+			    ACPI_TYPE_BUFFER_FIELD;
+			break;
+
+		case ACPI_TYPE_PACKAGE:
+
+			if (index >= operand[0]->package.count) {
+				status = AE_AML_PACKAGE_LIMIT;
+			}
+
+			return_desc->reference.target_type = ACPI_TYPE_PACKAGE;
+			return_desc->reference.where =
+			    &operand[0]->package.elements[index];
+			break;
+
+		default:
+
+			status = AE_AML_INTERNAL;
+			goto cleanup;
+		}
+
+		/* Failure means that the Index was beyond the end of the object */
+
+		if (ACPI_FAILURE(status)) {
+			ACPI_EXCEPTION((AE_INFO, status,
+					"Index (%X%8.8X) is beyond end of object",
+					ACPI_FORMAT_UINT64(index)));
+			goto cleanup;
 		}
 
 		/*
-		 * Add a reference to the target package/buffer/string for the life
-		 * of the index.
+		 * Save the target object and add a reference to it for the life
+		 * of the index
 		 */
+		return_desc->reference.object = operand[0];
 		acpi_ut_add_reference(operand[0]);
-
-		/* Complete the Index reference object */
-
-		return_desc->reference.opcode = AML_INDEX_OP;
-		return_desc->reference.offset = (u32) index;
 
 		/* Store the reference to the Target */
 
@@ -499,7 +515,7 @@ acpi_status acpi_ex_opcode_2A_0T_1R(struct acpi_walk_state *walk_state)
 	acpi_status status = AE_OK;
 	u8 logical_result = FALSE;
 
-	ACPI_FUNCTION_TRACE_STR("ex_opcode_2A_0T_1R",
+	ACPI_FUNCTION_TRACE_STR(ex_opcode_2A_0T_1R,
 				acpi_ps_get_opcode_name(walk_state->opcode));
 
 	/* Create the internal return object */
