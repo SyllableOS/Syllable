@@ -344,7 +344,7 @@ void set_desktop_screenmode( int nDesktop, const screen_mode & sMode )
 	int nOldWidth = g_asDesktops[nDesktop].m_sScreenMode.m_nWidth, nOldHeight = g_asDesktops[nDesktop].m_sScreenMode.m_nHeight;
 
 	g_asDesktops[nDesktop].m_sScreenMode = sMode;
-
+	
 	if( nDesktop == g_nActiveDesktop )
 	{
 		setup_screenmode( nDesktop, true );
@@ -360,36 +360,36 @@ void set_desktop_screenmode( int nDesktop, const screen_mode & sMode )
 		{
 			Layer *pcTopWid = pcWindow->GetTopView();
 			Rect cFrame = pcWindow->GetFrame();
+			Rect cNewFrame = cFrame;
 			
+			/* If screen resolution has decreased, make sure no windows are offscreen */
 			if( g_asDesktops[nDesktop].m_sScreenMode.m_nWidth < nOldWidth || g_asDesktops[nDesktop].m_sScreenMode.m_nHeight < nOldHeight )
 			{
 				bool bMoved = false;
-				/* Check if bottom-right of window is offscreen */
-				if( cFrame.right > g_asDesktops[nDesktop].m_cMaxWindowFrame.right )
+				/* move a window only if too little (or none) of it is visible; don't resize any windows */
+				if( cFrame.left > g_asDesktops[nDesktop].m_cMaxWindowFrame.right - 32 )
 				{
-					cFrame.left = 5 + 12*(nMoveTally % 6) + g_asDesktops[nDesktop].m_cMaxWindowFrame.left;
-					/* if window size exceeds screen resolution, then resize it; else just move it to top-left of screen so it is visible */
-					cFrame.right = ( (pcWindow->m_asDTState[nDesktop].m_cFrame.Width() > g_asDesktops[nDesktop].m_cMaxWindowFrame.Width() && !(pcWindow->GetFlags() & WND_NOT_H_RESIZABLE)) ? g_asDesktops[nDesktop].m_cMaxWindowFrame.right - 56 + cFrame.left : pcWindow->m_asDTState[nDesktop].m_cFrame.Width() + cFrame.left );
+					cNewFrame.left = 5 + 12*(nMoveTally % 6) + g_asDesktops[nDesktop].m_cMaxWindowFrame.left;
+					cNewFrame.right = cNewFrame.left + cFrame.Width();
 					bMoved = true;
 				}
-				/* Check if bottom-right of window is offscreen */
-				if( cFrame.bottom > g_asDesktops[nDesktop].m_cMaxWindowFrame.bottom )
+				if( cFrame.top > g_asDesktops[nDesktop].m_cMaxWindowFrame.bottom - 32 )
 				{
-					cFrame.top = 50 + 12*(nMoveTally % 6) + g_asDesktops[nDesktop].m_cMaxWindowFrame.top;
-					/* if window size exceeds screen resolution, then resize it; else just move it to top-left of screen so it is visible */
-					cFrame.bottom = ( (pcWindow->m_asDTState[nDesktop].m_cFrame.Height() > g_asDesktops[nDesktop].m_cMaxWindowFrame.Height() && !(pcWindow->GetFlags() & WND_NOT_V_RESIZABLE)) ? g_asDesktops[nDesktop].m_cMaxWindowFrame.bottom - 111 + cFrame.top : pcWindow->m_asDTState[nDesktop].m_cFrame.Height() + cFrame.top );
+					cNewFrame.top = 50 + 12*(nMoveTally % 6) + g_asDesktops[nDesktop].m_cMaxWindowFrame.top;
+					cNewFrame.bottom = cNewFrame.top + cFrame.Width();
 					bMoved = true;
 				}
+
 				if( bMoved )
 				{
 					nMoveTally++;
 					if( pcWindow->GetWndBorder() )
 					{
-						cFrame = pcWindow->GetWndBorder()->AlignFrame( cFrame );
+						cFrame = pcWindow->GetWndBorder()->AlignFrame( cNewFrame );
 					}
-					pcWindow->m_asDTState[nDesktop].m_cFrame = cFrame;
+					pcWindow->m_asDTState[nDesktop].m_cFrame = cNewFrame;
 					
-					pcWindow->SetFrame( cFrame );
+					pcWindow->SetFrame( cNewFrame );
 					pcTopWid->Invalidate( true );  /* Window needs to be redrawn */
 					Messenger *pcTarget = pcWindow->GetAppTarget();
 
@@ -397,7 +397,7 @@ void set_desktop_screenmode( int nDesktop, const screen_mode & sMode )
 					{
 						Message cMsg( M_WINDOW_FRAME_CHANGED );
 
-						cMsg.AddRect( "_new_frame", cFrame );
+						cMsg.AddRect( "_new_frame", cNewFrame );
 						if( pcTarget->SendMessage( &cMsg ) < 0 )
 						{
 							dbprintf( "Error: set_desktop_screenmode() failed to send M_WINDOW_FRAME_CHANGED to %s\n", pcWindow->GetTitle() );
@@ -572,17 +572,17 @@ void remove_from_focusstack( SrvWindow * pcWindow )
 
 //----------------------------------------------------------------------------
 // NAME: set_desktop
-// DESC: Activates the specified desktop. nNum: number of desktop to activate; bNotifyActiveWnd: if false, do not activate any windows on new desktop - this is used when moving a window between desktops
+// DESC: Activates the specified desktop. nDesktop: number of desktop to activate; bNotifyActiveWnd: if false, do not activate any windows on new desktop - this is used when moving a window between desktops
 // NOTE:
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-void set_desktop( int nNum, bool bNotifyActiveWnd )
+void set_desktop( int nDesktop, bool bNotifyActiveWnd )
 {
 	Layer *pcLayer;
 	SrvWindow *pcPrev = NULL;
 
-	if( nNum == g_nActiveDesktop )
+	if( nDesktop == g_nActiveDesktop )
 	{
 		return;
 	}
@@ -637,62 +637,61 @@ void set_desktop( int nNum, bool bNotifyActiveWnd )
 	/* deactivate active window of old desktop */
 	if( bNotifyActiveWnd && g_asDesktops[g_nActiveDesktop].m_pcActiveWindow != NULL ) { g_asDesktops[g_nActiveDesktop].m_pcActiveWindow->WindowActivated( false ); }
 	
-	bool bScreenModeChanged = setup_screenmode( nNum, false );
+	bool bScreenModeChanged = setup_screenmode( nDesktop, false );
 	/* Has screen resolution decreased? */
-	bool bResolutionDecreased = ( (g_asDesktops[nNum].m_sScreenMode.m_nWidth < g_asDesktops[g_nActiveDesktop].m_sScreenMode.m_nWidth) || (g_asDesktops[nNum].m_sScreenMode.m_nHeight < g_asDesktops[g_nActiveDesktop].m_sScreenMode.m_nHeight) );
+	bool bResolutionDecreased = ( (g_asDesktops[nDesktop].m_sScreenMode.m_nWidth < g_asDesktops[g_nActiveDesktop].m_sScreenMode.m_nWidth) || (g_asDesktops[nDesktop].m_sScreenMode.m_nHeight < g_asDesktops[g_nActiveDesktop].m_sScreenMode.m_nHeight) );
 	
-	g_nActiveDesktop = nNum;
+	g_nActiveDesktop = nDesktop;
 
 	SrvWindow *pcWindow;
 
 	int nMoveTally = 0;
-	for( pcWindow = g_asDesktops[nNum].m_pcFirstWindow; pcWindow != NULL; pcWindow = pcWindow->m_asDTState[nNum].m_pcNextWindow )
+	for( pcWindow = g_asDesktops[nDesktop].m_pcFirstWindow; pcWindow != NULL; pcWindow = pcWindow->m_asDTState[nDesktop].m_pcNextWindow )
 	{
 		Layer *pcTopWid = pcWindow->GetTopView();
-		Rect cFrame = pcWindow->m_asDTState[nNum].m_cFrame;
+		Rect cFrame = pcWindow->m_asDTState[nDesktop].m_cFrame;
+		Rect cNewFrame = cFrame;
 
 		g_pcTopView->AddChild( pcTopWid, false );
 		/* Make sure all windows are unfocused */
 		if( pcWindow->GetDecorator() ) pcWindow->GetDecorator()->SetFocusState( false );  /* GetDecorator() could be NULL for bitmap windows? */
 
 		cViews.erase( pcTopWid );
-		
-		/* If changing to desktop with smaller resolution, make sure all windows are on-screen */
+
+		/* If changing to desktop with smaller resolution, make sure no windows are offscreen */
 		/* The following code is re-used in set_desktop_screenmode() */
 		if( bResolutionDecreased )
 		{
 			bool bMoved = false;
-			/* Check if bottom-right of window is offscreen */
-			if( cFrame.right > g_asDesktops[nNum].m_cMaxWindowFrame.right )
+            /* move window only if it is almost completely offscreen (left/top edge is within 32 pixels of screen edge). never resize */
+			if( cFrame.left > g_asDesktops[nDesktop].m_cMaxWindowFrame.right - 32 )
 			{
-				cFrame.left = 5 + 12*(nMoveTally % 6) + g_asDesktops[nNum].m_cMaxWindowFrame.left;
-				/* if window size exceeds screen resolution, then resize it; else just move it to top-left of screen so it is visible */
-				cFrame.right = ( (pcWindow->m_asDTState[nNum].m_cFrame.Width() > g_asDesktops[nNum].m_cMaxWindowFrame.Width() && !(pcWindow->GetFlags() & WND_NOT_H_RESIZABLE)) ? g_asDesktops[nNum].m_cMaxWindowFrame.right - 56 + cFrame.left : pcWindow->m_asDTState[nNum].m_cFrame.Width() + cFrame.left );
+				cNewFrame.left = 5 + 12*(nMoveTally % 6) + g_asDesktops[nDesktop].m_cMaxWindowFrame.left;
+				cNewFrame.right = cNewFrame.left + cFrame.Width();
 				bMoved = true;
 			}
-			/* Check if bottom-right of window is offscreen */
-			if( cFrame.bottom > g_asDesktops[nNum].m_cMaxWindowFrame.bottom )
+			if( cFrame.top > g_asDesktops[nDesktop].m_cMaxWindowFrame.bottom - 32 )
 			{
-				cFrame.top = 20 + 12*(nMoveTally % 6) + g_asDesktops[nNum].m_cMaxWindowFrame.top;
-				/* if window size exceeds screen resolution, then resize it; else just move it to top-left of screen so it is visible */
-				cFrame.bottom = ( (pcWindow->m_asDTState[nNum].m_cFrame.Height() > g_asDesktops[nNum].m_cMaxWindowFrame.Height() && !(pcWindow->GetFlags() & WND_NOT_V_RESIZABLE)) ? g_asDesktops[nNum].m_cMaxWindowFrame.bottom - 81 + cFrame.top : pcWindow->m_asDTState[nNum].m_cFrame.Height() + cFrame.top );
+				cNewFrame.top = 50 + 12*(nMoveTally % 6) + g_asDesktops[nDesktop].m_cMaxWindowFrame.top;
+				cNewFrame.bottom = cNewFrame.top + cFrame.Width();
 				bMoved = true;
 			}
+
 			if( bMoved )
 			{
 				if( pcWindow->GetWndBorder() )
 				{
-					cFrame = pcWindow->GetWndBorder()->AlignFrame( cFrame );
+					cNewFrame = pcWindow->GetWndBorder()->AlignFrame( cNewFrame );
 				}
-				pcWindow->m_asDTState[nNum].m_cFrame = cFrame;
-				nMoveTally++; 
+				pcWindow->m_asDTState[nDesktop].m_cFrame = cNewFrame;
+				nMoveTally++;
 			}
 		}
 		/* TODO: compensate for window borders when calculating new positions, using pcWindow->GetDecorator()->GetBorderSize() [see wndborder.cpp line 655] */
-		
-		if( pcWindow->GetFrame() != pcWindow->m_asDTState[nNum].m_cFrame )
+
+		if( pcWindow->GetFrame() != pcWindow->m_asDTState[nDesktop].m_cFrame )
 		{
-			pcWindow->SetFrame( pcWindow->m_asDTState[nNum].m_cFrame );
+			pcWindow->SetFrame( pcWindow->m_asDTState[nDesktop].m_cFrame );
 			pcTopWid->Invalidate( true );  /* Window needs to be redrawn */
 			Messenger *pcTarget = pcWindow->GetAppTarget();
 
@@ -700,21 +699,21 @@ void set_desktop( int nNum, bool bNotifyActiveWnd )
 			{
 				Message cMsg( M_WINDOW_FRAME_CHANGED );
 
-				cMsg.AddRect( "_new_frame", pcWindow->m_asDTState[nNum].m_cFrame );
+				cMsg.AddRect( "_new_frame", pcWindow->m_asDTState[nDesktop].m_cFrame );
 				if( pcTarget->SendMessage( &cMsg ) < 0 )
 				{
 					dbprintf( "Error: set_desktop() failed to send M_WINDOW_FRAME_CHANGED to %s\n", pcWindow->GetTitle() );
 				}
 			}
 		}
-		pcWindow->DesktopActivated( nNum, true, IPoint( g_pcScreenBitmap->m_nWidth, g_pcScreenBitmap->m_nHeight ), g_pcScreenBitmap->m_eColorSpc );
+		pcWindow->DesktopActivated( nDesktop, true, IPoint( g_pcScreenBitmap->m_nWidth, g_pcScreenBitmap->m_nHeight ), g_pcScreenBitmap->m_eColorSpc );
 		if( bScreenModeChanged )
 		{
 			pcWindow->ScreenModeChanged( IPoint( g_pcScreenBitmap->m_nWidth, g_pcScreenBitmap->m_nHeight ), g_pcScreenBitmap->m_eColorSpc );
 		}
 	}
 	/* Activate the new desktop's active window */
-	if( bNotifyActiveWnd && g_asDesktops[nNum].m_pcActiveWindow != NULL ) { g_asDesktops[nNum].m_pcActiveWindow->WindowActivated( true ); }
+	if( bNotifyActiveWnd && g_asDesktops[nDesktop].m_pcActiveWindow != NULL ) { g_asDesktops[nDesktop].m_pcActiveWindow->WindowActivated( true ); }
 	
 	if( bScreenModeChanged )
 	{
