@@ -356,8 +356,10 @@ void MainWindow::HandleMessage(os::Message* pcMessage)
   		pcConfirmAlert=new os::Alert(MSG_ALERTWND_CONFIRMRES, MSG_ALERTWND_CONFIRMRES_TEXT, os::Alert::ALERT_QUESTION, MSG_ALERTWND_CONFIRMRES_YES.c_str(), MSG_ALERTWND_CONFIRMRES_NO.c_str(), NULL);
 		// Set flags
 	    pcConfirmAlert->SetFlags(pcConfirmAlert->GetFlags() | os::WND_NO_CLOSE_BUT);
-        pcConfirmAlert->CenterInWindow(this);
+//        pcConfirmAlert->CenterInWindow(this);
+		pcConfirmAlert->CenterInScreen();
 	    pcConfirmAlert->Go(new os::Invoker(new os::Message(M_MW_CONFIRM_ALERT), this));
+	    pcConfirmAlert->MakeFocus();
    	    AddTimer(this, TimerId, TimerCount, false);
 		break;
       }
