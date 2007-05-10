@@ -1,3 +1,8 @@
+* May 10, 2007, Kristian Van Der Vliet *
+
+Removed the 3c59x drivers private linuxcomp.h header and merged the pci_set_power_state()
+function into linux_compat.h, with updates to the driver to fit the modified API.
+
 * May 7, 2007, Arno Klenke *
 
 Update acpi code to version 20070126
