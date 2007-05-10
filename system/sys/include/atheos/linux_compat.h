@@ -23,6 +23,7 @@
 #include <atheos/types.h>
 #include <atheos/kernel.h>
 #include <atheos/bitops.h>
+#include <posix/errno.h>
 #include <net/net.h>
 #include <macros.h>
 
@@ -314,11 +315,78 @@ static inline int pci_enable_msi( PCI_Info_s *dev )
 	return 1;
 }
 
-/* Not possible until we can get the ACPI handle from a PCI device */
+/**
+ * pci_set_power_state - Set the power state of a PCI device
+ * @dev: PCI device to be suspended
+ * @state: Power state we're entering
+ *
+ * Transition a device to a new power state, using the Power Management 
+ * Capabilities in the device's config space.
+ *
+ * It would be preferable to have this as a function of the PCI bus
+ * manager, but that won't be possible until we can get the ACPI handle
+ * from a PCI device.
+ *
+ * RETURN VALUE: 
+ * -EINVAL if trying to enter a lower state than we're already in.
+ * -EIO if device does not support PCI PM.
+ * 0 if we can successfully change the power state.
+ */
 static inline pci_set_power_state( PCI_Info_s *dev, int state )
 {
-	kerndbg( KERN_WARNING, "%s not implemented!\n", __FUNCTION__ );
-	return 1;
+	int pm;
+	int pmcsr;
+	int current_state;
+	PCI_bus_s *psBus = get_busmanager( PCI_BUS_NAME, PCI_BUS_VERSION );
+	if( psBus == NULL )
+		return -EIO;
+
+	/* bound the state we're entering */
+	if (state > 3)
+		state = 3;
+
+	current_state = psBus->read_pci_config( dev->nBus, dev->nDevice, dev->nFunction, pm + PCI_PM_CTRL, 2 );
+
+	/* Validate current state:
+	 * Can enter D0 from any state, but if we can only go deeper 
+	 * to sleep if we're already in a low power state
+	 */
+	if (state > 0 && current_state > state)
+		return -EINVAL;
+
+	/* find PCI PM capability in list */
+	pm = pci_find_capability(dev, PCI_CAP_ID_PM);
+
+	/* abort if the device doesn't support PM capabilities */
+	if (!pm)
+		return -EIO; 
+
+	/* check if this device supports the desired state */
+	if (state == 1 || state == 2) {
+		uint16 pmc;
+		pmc = psBus->read_pci_config( dev->nBus, dev->nDevice, dev->nFunction, pm + PCI_PM_PMC, 2 );
+		if (state == 1 && !(pmc & PCI_PM_CAP_D1))
+			return -EIO;
+		else if (state == 2 && !(pmc & PCI_PM_CAP_D2))
+			return -EIO;
+	}
+
+	/* If we're in D3, force entire word to 0.
+	 * This doesn't affect PME_Status, disables PME_En, and
+	 * sets PowerState to 0.
+	 */
+	if (current_state == 3)
+		pmcsr = 0;
+	else {
+		pmcsr = psBus->read_pci_config( dev->nBus, dev->nDevice, dev->nFunction, pm + PCI_PM_CTRL, 2);
+		pmcsr &= ~PCI_PM_CTRL_STATE_MASK;
+		pmcsr |= state;
+	}
+
+	/* enter specified state */
+	psBus->write_pci_config( dev->nBus, dev->nDevice, dev->nFunction, pm + PCI_PM_CTRL, 2, pmcsr );
+
+	return 0;
 }
 
 /* prefetch() may not be needed at all: check */
