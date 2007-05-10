@@ -1,0 +1,64 @@
+//
+//	Preferences/Printers String Catalog
+//
+//	Translated by: Hristo Benev
+//
+
+MSG_MAINWND_TITLE=0								Принтери
+MSG_MAINWND_DEFAULT_PRINTER_NAME				Нов принтер
+
+MSG_MAINWND_MENU_APPLICATION=100				Приложение
+MSG_MAINWND_MENU_APPLICATION_ABOUT				Относно
+MSG_MAINWND_MENU_APPLICATION_SAVE				Запиши
+MSG_MAINWND_MENU_APPLICATION_CANCEL				Отказ
+
+MSG_MAINWND_MENU_PRINTER=120					Принтер
+MSG_MAINWND_MENU_PRINTER_ADD					Добави принтер
+MSG_MAINWND_MENU_PRINTER_REMOVE					Махни принтер
+MSG_MAINWND_MENU_PRINTER_DEFAULT				Укажи по подразбиране
+
+MSG_MAINWND_TOOLBAR_ADD=200						Добави принтер
+MSG_MAINWND_TOOLBAR_REMOVE						Махни принтер
+MSG_MAINWND_TOOLBAR_DEFAULT						Укажи по подразбиране
+
+MSG_MAINWND_PRINTERTAB_MODEL=300				Модел
+MSG_MAINWND_PRINTERTAB_UNKNOWN					Неизвестен
+MSG_MAINWND_PRINTERTAB_SELECT					Избери...
+MSG_MAINWND_PRINTERTAB_THEPRINTER				Принтера
+MSG_MAINWND_PRINTERTAB_ISA						Е
+MSG_MAINWND_PRINTERTAB_CONNECTEDTO				принтер свързан към
+
+MSG_MAINWND_BUTTONS_SAVE=400					Запиши
+MSG_MAINWND_BUTTONS_CANCEL						Отказ
+
+MSG_SELECTWND_TITLE=800							Избери принтер
+MSG_SELECTWND_BUTTON_SELECT						Избор
+MSG_SELECTWND_BUTTON_CANCEL						Отказ
+
+MSG_PROTOCOL_USB=900							USB
+MSG_PROTOCOL_PARALLEL							Parallel
+MSG_PROTOCOL_SMB								Windows (SMB)
+MSG_PROTOCOL_LPD								UNIX (lpd)
+MSG_PROTOCOL_IPP								CUPS (IPP)
+MSG_PROTOCOL_UNKNOWN							Неизвестен
+MSG_PROTOCOL_HPJETDIRECT						HP JetDirect
+
+MSG_ABOUTWND_TITLE=1000							Принтери
+MSG_ABOUTWND_TEXT1								Syllable - мениджър притери
+MSG_ABOUTWND_TEXT2								Използва CUPS версия %d.%d.%d\n
+MSG_ABOUTWND_CLOSE								_Затвори
+
+MSG_ALRTWND_REMOVE_TITLE=1100					Махни принтера
+MSG_ALRTWND_REMOVE_TEXT							Наистина ли искате да махнете принтера?
+MSG_ALRTWND_REMOVE_YES							Да
+MSG_ALRTWND_REMOVE_NO							Не
+
+MSG_ALRTWND_SAVE_TITLE=1200						Принтери
+MSG_ALRTWND_SAVE_TEXT							конфигурирането на CUPS неуспешно.  Вашите принтери\nможе да бъдат некоректно конфигурирани.
+MSG_ALRTWND_SAVE_CLOSE							_Затвори
+
+MSG_ALRTWND_INSERTCD_TITLE=1300					Постави компакт диск
+MSG_ALRTWND_INSERTCD_TEXT						Моля поставете и монтирайте вашия Syllable инсталлационен диск.
+MSG_ALRTWND_INSERTCD_OK							Потвърди
+MSG_ALRTWND_INSERTCD_CANCEL						Отказ
+

@@ -1,0 +1,56 @@
+//
+//	PrintQueue String Catalog
+//
+//	Translated by: Hristo Benev
+//
+
+MSG_MAINWND_TITLE=0								Опашка за отпечатване
+
+MSG_MAINWND_MENU_APPLICATION=100				Приложение
+MSG_MAINWND_MENU_APPLICATION_QUIT				Изход
+MSG_MAINWND_MENU_APPLICATION_ABOUT				Относно...
+
+MSG_MAINWND_MENU_VIEW=120						Виж
+MSG_MAINWND_MENU_VIEW_REFRESH					Обнови
+MSG_MAINWND_MENU_VIEW_COMPLETED					Покажи отпечатаните задачи
+
+MSG_MAINWND_MENU_JOB=130						Задача
+MSG_MAINWND_MENU_JOB_CANCEL						Отказ от задача
+
+MSG_MAINWND_MENU_PRINTER=140					Принтер
+MSG_MAINWND_MENU_PRINTER_PAUSE					Пауза за печата
+MSG_MAINWND_MENU_PRINTER_RESUME					Възобнови печата
+
+MSG_MAINWND_TOOLBAR_CALCEL=200					Отказ от задача
+MSG_MAINWND_TOOLBAR_PAUSE						Пауза за печата
+MSG_MAINWND_TOOLBAR_RESUME						Възобнови печата
+
+MSG_MAINWND_CONTEXTMENU_CANCEL=300				Отказ от задача
+MSG_MAINWND_CONTEXTMENU_PAUSE					Пауза за печата
+MSG_MAINWND_CONTEXTMENU_RESUME					Възобнови печата
+
+MSG_MAINWND_DOCLIST_ID=500						Идентификатор
+MSG_MAINWND_DOCLIST_NAME						Име
+MSG_MAINWND_DOCLIST_STATUS						Статус
+MSG_MAINWND_DOCLIST_OWNER						Собственик
+MSG_MAINWND_DOCLIST_SIZE						Големина
+MSG_MAINWND_DOCLIST_SUBMITTED					Подадена
+
+MSG_MAINWND_JOBSIZE_KB=600						%d КБ
+MSG_MAINWND_JOBSIZE_MB							%d МБ
+MSG_MAINWND_JOBSIZE_GB							%d ГБ
+
+MSG_ABOUTWND_TITLE=1000							Опашка за отпечатване
+MSG_ABOUTWND_TEXT1								Syllable мениджур на опашката за печат
+MSG_ABOUTWND_TEXT2								Използва CUPS версия %d.%d.%d\n
+MSG_ABOUTWND_CLOSE								_Затвори
+
+MSG_ALERTWND_PAUSE_TITLE=1100					Операцията провалена
+MSG_ALERTWND_PAUSE_CLOSE						_Затвори
+
+MSG_ALERTWND_RESUME_TITLE=1200					Операцията провалена
+MSG_ALERTWND_RESUME_CLOSE						_Затвори
+
+MSG_ALERTWND_CANCEL_TITLE=1300					Операцията провалена
+MSG_ALERTWND_CANCEL_CLOSE						_Затвори
+
