@@ -224,6 +224,8 @@ static int vortex_debug = 0;
 #include <atheos/spinlock.h>
 #include <atheos/isa_io.h>
 #include <atheos/bitops.h>
+#define NO_DEBUG_STUBS 1
+#include <atheos/linux_compat.h>
 
 #include <net/net.h>
 
@@ -239,9 +241,6 @@ static int vortex_debug = 0;
 #define KERN_INFO "Info: "
 #define KERN_NOTICE "Note: "
 #define PFX DRV_NAME ": "
-
-#include "linuxcomp.h"
-
 
 #define TX_TIMEOUT      4000000LL  // 4 sec
 
@@ -1485,7 +1484,8 @@ static void vortex_up(struct device *dev)
     PCI_bus_s* psBus = get_busmanager( PCI_BUS_NAME, PCI_BUS_VERSION );
 
     if (vp->is_pci && vp->enable_wol)         /* AKPM: test not needed? */
-        pci_set_power_state(psBus, &vp->pci_dev, &vp->pci_power_state, 0);   /* Go active */
+        if( pci_set_power_state(&vp->pci_dev, 0) == 0 );   /* Go active */
+			vp->pci_power_state = 0;
 
     /* Before initializing select the active media port. */
     EL3WINDOW(3);
@@ -1670,7 +1670,8 @@ static int vortex_open(struct device *dev)
 	PCI_bus_s* psBus = get_busmanager( PCI_BUS_NAME, PCI_BUS_VERSION );
 
     if (vp->is_pci && vp->enable_wol)            /* AKPM: test not needed? */
-        pci_set_power_state(psBus, &vp->pci_dev, &vp->pci_power_state, 0);       /* Go active */
+        if( pci_set_power_state(&vp->pci_dev, 0) == 0 );       /* Go active */
+			vp->pci_power_state = 0;
 
     /* Use the now-standard shared IRQ implementation. */
     if (vp->full_bus_master_rx)
@@ -2986,7 +2987,6 @@ static void acpi_set_WOL(struct device *dev)
 {
     struct vortex_private *vp = (struct vortex_private *)dev->priv;
     long ioaddr = dev->base_addr;
-    PCI_bus_s* psBus = get_busmanager( PCI_BUS_NAME, PCI_BUS_VERSION );
 
     /* Power up on: 1==Downloaded Filter, 2==Magic Packets, 4==Link Status. */
     EL3WINDOW(7);
@@ -2996,7 +2996,8 @@ static void acpi_set_WOL(struct device *dev)
     outw(RxEnable, ioaddr + EL3_CMD);
 
     /* Change the power state to D3; RxEnable doesn't take effect. */
-    pci_set_power_state(psBus, &vp->pci_dev, &vp->pci_power_state, 0x8103);
+    if( pci_set_power_state(&vp->pci_dev, 0x8103) == 0 )
+		vp->pci_power_state = 0x8103;
 }
 
 
