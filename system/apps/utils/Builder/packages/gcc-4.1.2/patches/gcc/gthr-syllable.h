@@ -165,13 +165,43 @@ __gthread_mutex_unlock (__gthread_mutex_t *mutex)
 static inline int
 __gthread_recursive_mutex_lock (__gthread_recursive_mutex_t *mutex)
 {
-  return __gthread_mutex_lock (mutex);
+  if (__gthread_active_p ()) {
+    if ( atomic_inc_and_read( &mutex->count ) > 0 ) {
+      for (;;) {
+        int error = lock_semaphore( mutex->mutex );
+        if ( error >= 0 || errno != EINTR ) {
+          return error;
+        }
+      }
+    } else {
+      lock_semaphore_x( mutex->mutex, 0, 0, 0 );
+      return 0;
+    }
+  } else {
+    return 0;
+  }
 }
 
 static inline int
 __gthread_recursive_mutex_trylock (__gthread_recursive_mutex_t *mutex)
 {
-  return __gthread_mutex_trylock (mutex);
+  if (__gthread_active_p ()) {
+    if ( atomic_inc_and_read( &mutex->count ) > 0 ) {
+      int error;
+      atomic_add( &mutex->count, -1 );
+      error = lock_semaphore_x( mutex->mutex, 1, 0, 0 );
+	  if( error == -EWOULDBLOCK )
+	  {
+	      errno = EWOULDBLOCK;
+    	  return -1;
+      }
+      return 0;
+    } else {
+      return 0;
+    }
+  } else {
+    return 0;
+  }
 }
 
 static inline int
