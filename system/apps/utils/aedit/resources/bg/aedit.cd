@@ -1,0 +1,124 @@
+//
+//	AEdit String Catalog
+//
+//	Translated by: Hristo Benev
+//
+
+MSG_APPWND_TITLE							AEdit
+MSG_APPWND_TITLE_NEW_FILE					Нов документ
+
+MSG_MENU_APPLICATION=100					Приложение
+MSG_MENU_APPLICATION_QUIT					Изход
+MSG_MENU_APPLICATION_ABOUT					Относно AEdit...
+
+MSG_MENU_FILE=200							Файл
+MSG_MENU_FILE_NEW							Нов
+MSG_MENU_FILE_OPEN							Отвори...
+MSG_MENU_FILE_CLOSE							Затвори
+MSG_MENU_FILE_SAVE							Запиши
+MSG_MENU_FILE_SAVE_AS						Запиши като...
+MSG_MENU_FILE_SAVE_ALL						Запиши всички
+MSG_MENU_FILE_NEXT_FILE						Следващ файл
+MSG_MENU_FILE_PREVIOUS_FILE					Предишен файл
+
+MSG_MENU_EDIT=300							Редактиране
+MSG_MENU_EDIT_CUT							Отрежи
+MSG_MENU_EDIT_COPY							Копирай
+MSG_MENU_EDIT_PASTE							Залепи
+MSG_MENU_EDIT_SELECT_ALL					Селекционирай всичко
+MSG_MENU_EDIT_UNDO							Отмени промените
+MSG_MENU_EDIT_REDO							Приложи промените
+
+MSG_MENU_VIEW_VIEW=350						Изглед
+MSG_MENU_VIEW_TOOLBAR						Инструменти
+MSG_MENU_VIEW_STATUSBAR						Статус
+MSG_MENU_VIEW_SETFONT						Избери шрифт...
+MSG_MENU_VIEW_TABS							Показалец
+MSG_MENU_VIEW_SHOW							Покажи
+MSG_MENU_VIEW_HIDE							Скрий
+MSG_MENU_VIEW_AUTO							Автоматично
+
+MSG_MENU_FIND=400							Търси
+MSG_MENU_FIND_FIND							търди...
+MSG_MENU_FIND_REPLACE						Замени...
+MSG_MENU_FIND_GOTO_LINE						Отиди на линия...
+
+MSG_MENU_FONT=500							Шрифт
+MSG_MENU_FONT_SIZE							Големина
+
+MSG_MENU_SETTINGS=600						Настройки
+MSG_MENU_SETTINGS_SAVE_ON_CLOSE				Запиши настойките и затвори
+MSG_MENU_SETTINGS_SAVE_NOW					Запиши настройките сега
+MSG_MENU_SETTINGS_RESET						Въстанови настройките
+
+MSG_MENU_HELP=700							Помощ
+MSG_MENU_HELP_TABLE_OF_CONTENTS				Ръководство...
+MSG_MENU_HELP_HOMEPAGE						AEdit Уеб сайт
+
+MSG_ABOUT_TITLE=800							Относно AEdit
+MSG_ABOUT_TEXT								\n\nТекстов редактор за Syllable\nCopyright 2000-2003 Kristian Van Der Vliet\n\nAEdit е с GNU General\nPublic лиценз. Моля вижте файла COPYING,\nидващ с AEdit, или http://www.gnu.org\nза повече информация.
+MSG_ABOUT_CLOSE								Затвори
+MSG_ABOUT_VERSION							версия: 
+MSG_ABOUT_LINE_1 							Текстов редактор за Syllable
+MSG_ABOUT_LINE_2							(c) 2006 The Syllable Team
+MSG_ABOUT_LINE_3							w w w . s y l l a b l e . o r g
+
+MSG_ERROR_TITLE=900							Запиши
+MSG_ERROR_CANT_SAVE							Файла не може да бъде записан.
+MSG_ERROR_CLOSE								Потвърждение
+
+MSG_FIND_TITLE=1000							Търси
+MSG_FIND_FIND_LABEL							Търси
+MSG_FIND_CASE_SENSITIVE						Търсене различаващо главни и малки букви
+MSG_FIND_FIND								_Намери първото
+MSG_FIND_FIND_NEXT							Намери _Следващо
+MSG_FIND_CLOSE					    		_Затвори
+
+MSG_GOTO_TITLE=1100							Отиди на линия
+MSG_GOTO_GOTO								_Отиди на линия
+MSG_GOTO_CLOSE								_Отказ
+MSG_GOTO_LINE								Линия:
+
+MSG_REPLACE_TITLE=1200						Замени
+MSG_REPLACE_LBLFIND							Търси
+MSG_REPLACE_WITH							и замени с
+MSG_REPLACE_CASE_SENSITIVE					_Търсене различаващо главни и малки букви
+MSG_REPLACE_FIND							_Намери първото
+MSG_REPLACE_FIND_NEXT						Намери _Следващо
+MSG_REPLACE_REPLACE							З_амени
+MSG_REPLACE_CLOSE				    		_Затвори
+
+MSG_ALERT_CLOSE_FILE_TITLE=1500				Запис на фийл?
+MSG_ALERT_CLOSE_FILE_BODY					Желаете ли да запишете файла преди да го затворите?
+MSG_ALERT_CLOSE_FILE_YES					Запиши
+MSG_ALERT_CLOSE_FILE_NO						Не записвай
+MSG_ALERT_CLOSE_FILE_CANCEL					Отказ
+MSG_ALERT_SAVE_FILE_TITLE					Грешка
+MSG_ALERT_SAVE_FILE_BODY					Файла "%s" не може да бъде записан.
+MSG_ALERT_SAVE_FILE_OK						Потвърди
+MSG_ALERT_QUIT_TITLE						Да изляза ли от програмата?
+MSG_ALERT_QUIT_BODY							Имате незаписани файлове. Данните ще бъдат загубени ако излезете от програмата.\nСигурни ли сте?
+MSG_ALERT_QUIT_YES							Изход
+MSG_ALERT_QUIT_NO							Отказ
+MSG_ALERT_FILE_OPEN_TITLE					Грешка
+MSG_ALERT_FILE_OPEN_OK						Потвиди
+
+MSG_STATUSBAR_WELCOME=2000					Добре дошли е AEdit!
+MSG_STATUSBAR_CLOSED_FILE					Файла "%s" е затворен.
+MSG_STATUSBAR_SAVED_FILE					Файла "%s" е записан.
+MSG_STATUSBAR_FILE_CLOSED_AND_SAVED			Файла "%s" е затворен и промените записани.
+MSG_STATUSBAR_FILE_CLOSED_AND_NOT_SAVED		Файла "%s" е затворен и промените не бяха записани.
+MSG_STATUSBAR_NEW_FILE_CREATED				Нов файл "%s" в създаден.
+MSG_STATUSBAR_FILE_LOADED_OK				Файла "%s" е отворен.
+MSG_STATUSBAR_FILE_UNABLE_TO_OPEN			Файла "%s" не може да бъде отворен.
+MSG_STATUSBAR_SEARCH_FOUND					Фразата "%s" е намерена.
+MSG_STATUSBAR_SEARCH_NOT_FOUND_1			Фразата \"%s\" не беше намерена.
+MSG_STATUSBAR_SEARCH_NOT_FOUND_2			Фразата нв беше намерена.
+MSG_STATUSBAR_REPLACE_OK					Фразата "%s" беше заменена с "%s".
+MSG_STATUSBAR_REPLACE_NOT_OK				Фразата не беше заменена.
+
+MSG_BUFFER_UNTITLED=2100					Без име - %d
+MSG_BUFFER_CURSOR							Колона: %d Линия: %d
+
+MSG_MIMETYPE_TEXT_PLAIN=10000				Текстови файлове
+
