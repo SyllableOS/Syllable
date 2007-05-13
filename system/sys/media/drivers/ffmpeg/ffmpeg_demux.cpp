@@ -128,7 +128,7 @@ status_t FFMpegDemuxer::Open( os::String zFileName )
 			close( hFile );
 			m_bStream = false;
 		}
-		m_nLength = (int)m_psContext->duration / AV_TIME_BASE;
+		m_nLength = (int)( m_psContext->duration / AV_TIME_BASE );
 		
 		if( !m_bStream && m_psContext->start_time != AV_NOPTS_VALUE )
 			av_seek_frame( m_psContext, -1, m_psContext->start_time, 0 );
