@@ -23,8 +23,8 @@ MSG_MAINWND_BUTTON_CLOSE					Close
 
 MSG_ALERTWND_CHANGERES=1000					Display Settings Test
 MSG_ALERTWND_CHANGERES_TEXT					You are about to change your display settings.\n\nThe screen may become blank or garbled if the new settings prove incompatible with your\nmonitor or display devices. If so, please wait 15 seconds for the display to restore.
-MSG_ALERTWND_CHANGERES_YES					Yes
-MSG_ALERTWND_CHANGERES_NO					No
+MSG_ALERTWND_CHANGERES_YES					Proceed
+MSG_ALERTWND_CHANGERES_NO					Cancel
 
 MSG_ALERTWND_CONFIRMRES=2000				Confirmation
 MSG_ALERTWND_CONFIRMRES_TEXT				Are the new display settings working properly?\n\nIf not, please wait and the previous settings will be restored.
