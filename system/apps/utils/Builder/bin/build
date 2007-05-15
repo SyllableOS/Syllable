@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.142
+# Version 0.6.143
 # Copyright (c) 2002-2007 Kaj de Vos
 # License: GPL 2 or any later version
 
@@ -120,7 +120,7 @@ def unpackModule target
 	unless
 		unless exists? dir = File.dirname(target) or action 'mkdir --parents ' + dir
 			false
-		else  # We have a destination dir
+		else  # We have a destination parent directory
 			Dir.chdir File.dirname(target)  # if target['/']
 		
 			files = []
@@ -133,6 +133,10 @@ def unpackModule target
 					package, dir = package.split
 					base = File.join @sourcesPath, File.basename(package)
 					option = dir ? ' --directory=' + dir : ''
+
+					if dir and not exists? dir
+						break unless action 'mkdir --parents ' + dir
+					end
 		
 #					file = Dir[File.join(@sourcesPath, fullName target) + '.*'] [0]
 #					case File.basename file
@@ -1680,7 +1684,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.6.142',
+	puts 'Syllable Build System 0.6.143',
 		'Copyright (c) 2002-2007 Kaj de Vos',
 		'License: GPL 2 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
