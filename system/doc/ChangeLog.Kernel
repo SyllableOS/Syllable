@@ -1,5 +1,9 @@
 * May 15, 2007, Kristian Van Der Vliet *
 
+Added the PCI ID for the TGUI 9680 graphics card to the Trident graphics driver.
+
+* May 15, 2007, Kristian Van Der Vliet *
+
 Get the PCI access method from the BIOS and only fall back to register probing if no PCI BIOS
 is found. I've also removed the specific check for Virtual PC and reversed the register probing
 method so that method 1 is probed before method 2. This is based on the method used by NetBSD.
