@@ -63,6 +63,7 @@ struct gfx_device g_sDevices[] = {
 	{0x1023, 0x9525, "Trident", "Cyber 9525"},
 	{0x1023, 0x9540, "Trident", "Cyber 9540"},
 	{0x1023, 0x9660, "Trident", "TGUI/Providia 9660"},
+	{0x1023, 0x9680, "Trident", "TGUI/Providia 9680"},
 	{0x1023, 0x9750, "Trident", "Image 975"},
 	{0x1023, 0x9850, "Trident", "Image 985"},
 	{0x1023, 0x9880, "Trident", "Blade 3D"}
