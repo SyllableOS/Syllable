@@ -75,55 +75,83 @@ static void pci_inst_check( void )
 {
 	g_nPCIMethod = 0;
 	struct RMREGS rm;
+	int nMethod1 = 0, nMethod2 = 0;
 
-	/* Do simple register checks to find the way how to access the pci bus */
-
-	/* Check PCI method 2 */
-	outb( 0x0, 0x0cf8 );
-	outb( 0x0, 0x0cfa );
-	if ( inb( 0x0cf8 ) == 0x0 && inb( 0x0cfa ) == 0x0 )
-	{
-		g_nPCIMethod = PCI_METHOD_2;
-		kerndbg( KERN_DEBUG, "PCI: Using access method 2\n" );
-		return;
-	}
-
-	/* Check PCI method 1 */
-	outl( 0x80000000, 0x0cf8 );
-	if ( inl( 0x0cf8 ) == 0x80000000 )
-	{
-		outl( 0x0, 0x0cf8 );
-		if ( inl( 0x0cf8 ) == 0x0 )
-		{
-			g_nPCIMethod = PCI_METHOD_1;
-			kerndbg( KERN_DEBUG, "PCI: Using access method 1\n" );
-			return;
-		}
-	}
-
-	/* Check for Virtual PC PCI method 1 */
-	outl( 0x80000000, 0x0cf8 );
-	if ( inl( 0x0cf8 ) == 0x80000000 )
-	{
-		outl( 0x0, 0x0cf8 );
-		if ( inl( 0x0cf8 ) == 0x80000000 )
-		{
-			g_nPCIMethod = PCI_METHOD_1;
-			kerndbg( KERN_DEBUG, "PCI: Detected Virtual PC, using access method 1\n" );
-			return;
-		}
-	}
 	/* Check for PCI BIOS */
 	memset( &rm, 0, sizeof( rm ) );
 	rm.EAX = 0xb101;
 	realint( 0x1a, &rm );
-	
+
 	if ( ( rm.flags & 0x01 ) == 0 && ( rm.EAX & 0xff00 ) == 0 )
 	{
-		g_nPCIMethod = PCI_METHOD_BIOS;
+		g_nPCIMethod = PCI_METHOD_BIOS;	/* Override later if we find a suitable direct acccess method */
+
 		kerndbg( KERN_INFO, "PCI: PCIBIOS Version %ld.%ld detected\n", rm.EBX >> 8, rm.EBX & 0xff );
-		return;
+
+		nMethod1 = rm.EAX & 1;
+		nMethod2 = rm.EAX & (1 << 1);
+
+		kerndbg( KERN_INFO, "PCI: Access method 1 %s, access method 2 %s\n",
+			nMethod1 ? "supported" : "not supported",
+			nMethod2 ? "supported" : "not supported" );
 	}
+
+	if( nMethod1 )
+		g_nPCIMethod = PCI_METHOD_1;
+	else if( nMethod2 )
+		g_nPCIMethod = PCI_METHOD_2;
+	else
+	{
+		/* Do simple register checks to find how to access the PCI bus */
+
+		/* Check PCI method 1 */
+		outl( 0x80000000, 0x0cf8 );
+		if ( inl( 0x0cf8 ) == 0x80000000 )
+		{
+			outl( 0x0, 0x0cf8 );
+			if ( inl( 0x0cf8 ) == 0x0 )
+			{
+				g_nPCIMethod = PCI_METHOD_1;
+				goto done;
+			}
+		}
+
+		/* Check PCI method 2 */
+		outb( 0x0, 0x0cf8 );
+		outb( 0x0, 0x0cfa );
+		if ( inb( 0x0cf8 ) == 0x0 && inb( 0x0cfa ) == 0x0 )
+			g_nPCIMethod = PCI_METHOD_2;
+	}
+
+done:
+	switch( g_nPCIMethod )
+	{
+		case PCI_METHOD_1:
+		{
+			kerndbg( KERN_INFO, "PCI: Using access method 1\n" );
+			break;
+		}
+
+		case PCI_METHOD_2:
+		{
+			kerndbg( KERN_INFO, "PCI: Using access method 2\n" );
+			break;
+		}
+
+		case PCI_METHOD_BIOS:
+		{
+			kerndbg( KERN_INFO, "PCI: Using PCIBIOS access\n" );
+			break;
+		}
+
+		default:
+		{
+			kerndbg( KERN_INFO, "PCI: No PCI bus found\n" );
+			break;
+		}
+	}
+
+	return;
 }
 
 /** 
@@ -1023,7 +1051,6 @@ status_t device_init( int nDeviceID )
 	pci_inst_check();
 	if ( g_nPCIMethod == 0 )
 	{
-		kerndbg( KERN_INFO, "No PCI bus found\n" );
 		return ( -1 );
 	}
 	else
