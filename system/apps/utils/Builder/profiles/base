@@ -15,6 +15,7 @@ resources
 	system/resources/wallpapers			wallpapers/ZeroNet/*.jpg
 
 modules
+	other/fonts/liberation-fonts-2
 	other/fonts/luxi-fonts
 ;	For AClock:
 ;	The first one will produce two harmless unpacking errors:
