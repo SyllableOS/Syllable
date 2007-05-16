@@ -26,8 +26,8 @@ MSG_MENU_EDIT_CUT							Отрежи
 MSG_MENU_EDIT_COPY							Копирай
 MSG_MENU_EDIT_PASTE							Залепи
 MSG_MENU_EDIT_SELECT_ALL					Селекционирай всичко
-MSG_MENU_EDIT_UNDO							Отмени промените
-MSG_MENU_EDIT_REDO							Приложи промените
+MSG_MENU_EDIT_UNDO							Отмени
+MSG_MENU_EDIT_REDO							Възстанови
 
 MSG_MENU_VIEW_VIEW=350						Изглед
 MSG_MENU_VIEW_TOOLBAR						Инструменти

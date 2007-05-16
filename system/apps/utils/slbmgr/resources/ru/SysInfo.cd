@@ -1,0 +1,106 @@
+//
+//	System Information String Catalog
+//
+//	Translated by: Ilya Krol
+//
+
+MSG_MAINWND_TITLE=0							Системная информация
+
+MSG_MAINWND_MENU_APPLICATION=100			Приложение
+MSG_MAINWND_MENU_APPLICATION_ABOUT			О программе
+MSG_MAINWND_MENU_APPLICATION_QUIT			Выйти
+
+MSG_MAINWND_MENU_OPTIONS=200				Настройки
+MSG_MAINWND_MENU_OPTIONS_SAVEWINPOS			Сохранить положение окна
+MSG_MAINWND_MENU_OPTIONS_SPEED				Скорость
+MSG_MAINWND_MENU_OPTIONS_SPEED_LOW			Низкая
+MSG_MAINWND_MENU_OPTIONS_SPEED_MEDIUM		Средняя
+MSG_MAINWND_MENU_OPTIONS_SPEED_HIGH			Высокая
+MSG_MAINWND_MENU_OPTIONS_SPEED_PAUSE		Пауза
+
+MSG_ABOUTWND_TITLE=900						О программе Системная Информация вер.%s
+MSG_ABOUTWND_TEXT							Системная Информация вер.%s\n\nСистемная Информация для Syllable\nJohn Hall, 2001\n\nСистемная Информация распространяется на условиях универсальной общественной лицензии GNU (GPL)\n
+MSG_ABOUTWND_OK								_ОК
+
+MSG_TAB_SYSINFO=1000						Системная информация
+MSG_TAB_SYSINFO_VER_NAME					Название
+MSG_TAB_SYSINFO_VER_VERSION					Версия
+MSG_TAB_SYSINFO_VER_BUILDDATE				Дата сборки
+MSG_TAB_SYSINFO_VER_SYLLABLE				Syllable
+MSG_TAB_SYSINFO_VER_SLBMGR					Системная информация
+MSG_TAB_SYSINFO_CPU_CPU						ЦПУ
+MSG_TAB_SYSINFO_CPU_CORESPEED				Скорость ядра
+MSG_TAB_SYSINFO_CPU_BUSSPEED				Скорость шины
+MSG_TAB_SYSINFO_CPU_FEATURES				Особенности
+MSG_TAB_SYSINFO_MEM_MEMTYPE					Тип памяти
+MSG_TAB_SYSINFO_MEM_AMOUNT					Количество
+MSG_TAB_SYSINFO_MEM_MAXMEM					Макс. Память
+MSG_TAB_SYSINFO_MEM_FREEMEM					Своб. Память
+MSG_TAB_SYSINFO_MEM_KERNELMEM				Память ядра
+MSG_TAB_SYSINFO_MEM_BLOCKCACHE				Блоковый кэш
+MSG_TAB_SYSINFO_MEM_DIRTYCACHE				Dirty Cache
+MSG_TAB_SYSINFO_ADD_ADDINFO					Дополнительная информация
+MSG_TAB_SYSINFO_ADD_AMOUNT					Количество
+MSG_TAB_SYSINFO_ADD_PAGEFAULTS				Page Faults
+MSG_TAB_SYSINFO_ADD_USEDSEMAPHORES			Используемые семафоры
+MSG_TAB_SYSINFO_ADD_USEDPORTS				Используемые порты
+MSG_TAB_SYSINFO_ADD_USEDTHREADS				Используемые потоки
+MSG_TAB_SYSINFO_ADD_USEDPROCESSES			Используемые процессы
+MSG_TAB_SYSINFO_ADD_OPENFILECOUNT			Открыть счёт файлов
+MSG_TAB_SYSINFO_ADD_ALLOCATEDINODES			Распределённые индексы (INodes)
+MSG_TAB_SYSINFO_ADD_LOADEDINODES			Подгруженные индексы (INodes)
+MSG_TAB_SYSINFO_UPTIME_UPTIME				Работает в течение: %3d дней, %2d ч., %2d мин., %2d сек.
+MSG_TAB_SYSINFO_BYTE						%.1f Б
+MSG_TAB_SYSINFO_KILOBYTE					%.1f КБ
+MSG_TAB_SYSINFO_MEGABYTE					%.1f МБ
+MSG_TAB_SYSINFO_GIGABYTE					%.1f ГБ
+MSG_TAB_SYSINFO_MHZ                         %lld МГц.
+
+MSG_TAB_DRIVES=2000							Диски
+MSG_TAB_DRIVES_VOLUME						Диск
+MSG_TAB_DRIVES_TYPE							Тип
+MSG_TAB_DRIVES_SIZE							Размер
+MSG_TAB_DRIVES_USED							Использ.
+MSG_TAB_DRIVES_AVAIL						Доступн.
+MSG_TAB_DRIVES_PERFREE						Процентов своб.
+
+MSG_TAB_DEVICES=3000						Устройства
+MSG_TAB_DEVICES_DEVICE						Устройство
+MSG_TAB_DEVICES_BUTTON_REFRESH				_Обновить
+MSG_TAB_DEVICES_TREE_COMPUTER				Компьютер
+MSG_TAB_DEVICES_TREE_UNSUPPORTED			Неизвестные/Неподдерживаемые устр-ва
+MSG_TAB_DEVICES_TREE_SYSTEMDEVICES			Системные устройства
+MSG_TAB_DEVICES_TREE_CONTROLLERS			Контроллеры
+MSG_TAB_DEVICES_TREE_VIDEODEVICES			Видеоустройства
+MSG_TAB_DEVICES_TREE_AUDIODEVICES			Аудиоустройства
+MSG_TAB_DEVICES_TREE_NETWORDDEVICES			Сетевые устройства
+MSG_TAB_DEVICES_TREE_PORTS					Порты
+MSG_TAB_DEVICES_TREE_INPUTDEVICES			Устройства ввода
+MSG_TAB_DEVICES_TREE_DRIVES					Диски
+MSG_TAB_DEVICES_TREE_PROCESSORS				Процессоры
+
+MSG_TAB_PROCESSES=4000						Процессы
+MSG_TAB_PROCESSES_BUTTON_ENDPROCESS			_Завершить процесс
+MSG_TAB_PROCESSES_LIST_PROCESSNAME			Название процесса
+MSG_TAB_PROCESSES_LIST_THREADNAME			Название потока
+MSG_TAB_PROCESSES_LIST_STATE				Состояние
+MSG_TAB_PROCESSES_LIST_PID					ПИд
+MSG_TAB_PROCESSES_LIST_TID					ТИд
+MSG_TAB_PROCESSES_STATES_STOPPED			Остановлен
+MSG_TAB_PROCESSES_STATES_RUN				Запущен
+MSG_TAB_PROCESSES_STATES_READY				Готов
+MSG_TAB_PROCESSES_STATES_WAIT				Ожидание
+MSG_TAB_PROCESSES_STATES_SLEEP				Спящ.
+MSG_TAB_PROCESSES_STATES_ZOMBIE				Зомби
+MSG_TAB_PROCESSES_STATES_INVALID			Неправ. раб.
+
+MSG_TAB_PERFORMANCE=5000					Производительность
+MSG_TAB_PERFORMANCE_PROCESSORUSAGE			Использование процессора
+MSG_TAB_PERFORMANCE_MEMORYUSAGE				Использование памяти
+MSG_TAB_PERFORMANCE_MEMTOTAL				Всего
+MSG_TAB_PERFORMANCE_MEMFREE					Свободно
+MSG_TAB_PERFORMANCE_MEMCACHE				Кэш
+MSG_TAB_PERFORMANCE_BYTE					Б
+MSG_TAB_PERFORMANCE_KILOBYTE				КБ
+MSG_TAB_PERFORMANCE_MEGABYTE				МБ
+

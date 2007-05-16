@@ -1,6 +1,6 @@
 COPTS	= -c
 
-CATALOGS = da de es hu nl sv
+CATALOGS = da de es fr hu nl ru sv
 
 OBJS = main.o sysinfopanel.o drivespanel.o processpanel.o memview.o cpuview.o performancepanel.o devicespanel.o
 EXE	= "System Information"
