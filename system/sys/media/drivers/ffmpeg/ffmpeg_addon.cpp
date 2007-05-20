@@ -310,8 +310,8 @@ void FFMpegAddon::RegisterCodecs()
     REGISTER_ENCODER(FAAC, faac);
     REGISTER_ENCDEC (FLAC, flac);
     REGISTER_DECODER(IMC, imc);
-    REGISTER_ENCDEC (LIBAMR_NB, libamr_nb);
-    REGISTER_ENCDEC (LIBAMR_WB, libamr_wb);
+//    REGISTER_ENCDEC (LIBAMR_NB, libamr_nb);
+//    REGISTER_ENCDEC (LIBAMR_WB, libamr_wb);
     REGISTER_DECODER(LIBA52, liba52);
     REGISTER_DECODER(LIBDTS, libdts);
     REGISTER_ENCDEC (LIBGSM, libgsm);
@@ -425,4 +425,3 @@ extern "C"
 	}
 
 }
-
