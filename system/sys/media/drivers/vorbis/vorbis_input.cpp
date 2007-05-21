@@ -78,8 +78,7 @@ VorbisInput::VorbisInput()
 
 VorbisInput::~VorbisInput()
 {
-	if( m_psVorbis != NULL )
-		ov_clear( m_psVorbis );
+	Close();
 }
 
 os::View* VorbisInput::GetConfigurationView()
@@ -100,6 +99,7 @@ bool VorbisInput::FileNameRequired()
 
 status_t VorbisInput::Open( os::String zFileName )
 {
+	Close();
 	/* Test if we can open this file */
 	m_phFile = fopen( zFileName.c_str(), "r" );
 	if( m_phFile == NULL )
@@ -114,21 +114,9 @@ status_t VorbisInput::Open( os::String zFileName )
 	if( m_psVorbis == NULL )
 	{
 		fclose( m_phFile );
+		m_phFile = NULL;		
 		return( false );
 	}
-	
-		
-	int nError = ov_test( m_phFile, m_psVorbis, NULL, 0 );
-	if( nError < 0 ) {
-		ov_clear( m_psVorbis );
-		m_psVorbis = NULL;
-		fclose( m_phFile );
-		return( -1 );
-	}
-	
-	m_phFile = fopen( zFileName.c_str(), "r" );
-	if( m_phFile == NULL )
-		return( -1 );
 	
 	
 	/* If we can then open it! */
@@ -136,8 +124,9 @@ status_t VorbisInput::Open( os::String zFileName )
 	if( ov_open( m_phFile, m_psVorbis, NULL, 0 ) < 0 )
 	{
 		ov_clear( m_psVorbis );
+		free( m_psVorbis );		
 		m_psVorbis = NULL;
-		fclose( m_phFile );
+		m_phFile = NULL;
 		return( -1 );
 	}
 	
@@ -155,7 +144,9 @@ void VorbisInput::Close()
 	if( m_psVorbis != NULL )
 	{
 		ov_clear( m_psVorbis );
+		free( m_psVorbis );
 		m_psVorbis = NULL;
+		m_phFile = NULL;		
 	}
 }
 
