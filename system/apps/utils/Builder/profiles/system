@@ -157,7 +157,7 @@ modules
 
 	other/config/default
 	other/config/etc
-	other/fonts/dejavu-fonts-2.15
+	other/fonts/dejavu-fonts--current
 	other/icons
 	other/init
 	other/keymaps
