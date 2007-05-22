@@ -35,7 +35,7 @@
 #include <util/exceptions.h>
 #include <gui/exceptions.h>
 
-#include "resources/memmon.h"
+#include "resources/MemoryMonitor.h"
 
 using namespace os;
 
@@ -114,7 +114,7 @@ private:
 
 MyApp::MyApp( const char* pzName ) : Application( pzName )
 {
-  SetCatalog("memmon.catalog");
+  SetCatalog("MemoryMonitor.catalog");
 
   m_nDelay 	  = 1000000;
   m_pcWindow 	  = new MonWindow( Rect( 20, 20, 200, 100 ) );
@@ -202,7 +202,7 @@ MonWindow::MonWindow( const Rect& cFrame ) :
 	char	zPath[ 256 ];
 			
 	strcpy( zPath, pzHome );
-	strcat( zPath, "/Settings/sysmon.cfg" );
+	strcat( zPath, "/Settings/MemoryMonitor.cfg" );
 
 	hFile = fopen( zPath, "rb" );
 
@@ -251,7 +251,7 @@ bool MonWindow::OkToQuit( void )
     char	zPath[ 256 ];
 			
     strcpy( zPath, pzHome );
-    strcat( zPath, "/config/sysmon.cfg" );
+    strcat( zPath, "/Settings/MemoryMonitor.cfg" );
 
     hFile = fopen( zPath, "wb" );
 

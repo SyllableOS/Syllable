@@ -41,7 +41,7 @@
 #include "graphview.h"
 #include "w8378x_driver.h"
 
-#include "resources/cpumon.h"
+#include "resources/CPU-Monitor.h"
 
 using namespace os;
 
@@ -128,7 +128,7 @@ MonWindow::MonWindow( const Rect& cFrame ) :
 	    char zPath[ PATH_MAX ];
 			
 	    strcpy( zPath, pzHome );
-	    strcat( zPath, "/config/cpumon.cfg" );
+	    strcat( zPath, "/Settings/CPU-Monitor.cfg" );
 
 	    hFile = fopen( zPath, "r" );
 
@@ -209,7 +209,7 @@ bool MonWindow::OkToQuit( void )
 	char	zPath[ PATH_MAX ];
 			
 	strcpy( zPath, pzHome );
-	strcat( zPath, "/config/cpumon.cfg" );
+	strcat( zPath, "/Settings/CPU-Monitor.cfg" );
 
 	hFile = fopen( zPath, "r+" );
 
@@ -242,7 +242,7 @@ bool MonWindow::OkToQuit( void )
 
 MyApp::MyApp() : Application( "application/x-vnd.KHS.syllable-cpu-monitor" )
 {
-	SetCatalog("cpumon.catalog");
+	SetCatalog("CPU-Monitor.catalog");
     m_pcWindow = new MonWindow( Rect( 20, 20, 200, 100 ) );
 }
 
@@ -315,7 +315,7 @@ int main( int argc, char ** argv )
 	}
     }
     if ( g_nShowVersion ) {
-	printf( "Syllable CPU monitor V1.0\n" );
+	printf( "Syllable CPU Monitor 1.0\n" );
 	exit( 0 );
     }
     if ( g_nShowHelp ) {
@@ -326,6 +326,3 @@ int main( int argc, char ** argv )
     MyApp* pcApp = new MyApp;
     pcApp->Run();
 }
-
-
-

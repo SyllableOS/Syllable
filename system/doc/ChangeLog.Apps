@@ -1,3 +1,9 @@
+* May 22, 2007, Kaj de Vos *
+
+Renamed cpumon and memmon to CPU Monitor and Memory Monitor and moved them to
+/Applications/System Tools/. Cleaned them up a bit and moved their configuration
+files from ~/config/ to ~/Settings/.
+
 * May 9, 2007, Kristian Van Der Vliet *
 
 Center the Screen Preferences confirmation dialog in the screen. Patch from
@@ -671,4 +677,3 @@ Network Preferences
 		* Added NetworkPreferences from Daryl Dudey(daryl.dudey@ntlworld.com).
 		* Added SlbMgr(AtheMgr renamed).
 		* Patches by Vanders for AEdit.
-

@@ -1,44 +1,43 @@
 COPTS	= -c -I../../kernel/drivers/misc/w8378x/
 
 OBJS	= main.o graphview.o barview.o
-EXE	= cpumon
+EXE	= "CPU Monitor"
 
 CATALOGS = da de es fr hu nl pt-br ru sv
 
 $(EXE) : catalogs $(OBJS)
 	$(CXX) $(OBJS) -lsyllable -o $@
-	rescopy -r $(EXE) resources/$(EXE).catalog
+	rescopy -r $(EXE) resources/CPU-Monitor.catalog
 	for CATALOG in $(CATALOGS);do \
 		echo $$CATALOG; \
-		rescopy -a $(EXE) $$CATALOG/$(EXE).catalog=resources/$$CATALOG/$(EXE).catalog; \
+		rescopy -a $(EXE) $$CATALOG/CPU-Monitor.catalog=resources/$$CATALOG/CPU-Monitor.catalog; \
 	done;
+	addattrib $(EXE) os::Category "System Tools"
 
 catalogs:
 	cd resources; \
-	catcomp -c $(EXE).cd; \
+	catcomp -c CPU-Monitor.cd; \
 	for CATALOG in $(CATALOGS);do \
 		echo $$CATALOG; \
 		cd $$CATALOG; \
-		catcomp -t $(EXE).cd; \
+		catcomp -t CPU-Monitor.cd; \
 		cd ..; \
 	done;
 
 install: $(EXE)
 	strip --strip-all $(EXE)
-	cp -f $(EXE) /system/bin/$(EXE)
+	cp -f $(EXE) "$(IMAGE)/Applications/System Tools/$(EXE)"
 
-dist: $(EXE)
-	strip --strip-all $(EXE)
-	cp -f $(EXE) $(IMAGE)/system/bin/$(EXE)
+dist: install
 
 clean: catalog-clean
 	-rm $(OBJS)
 	-rm $(EXE)
 
 catalog-clean:
-	-rm resources/$(EXE).catalog resources/$(EXE).h; \
+	-rm resources/CPU-Monitor.catalog resources/CPU-Monitor.h; \
 	for CATALOG in $(CATALOGS);do \
-		rm resources/$$CATALOG/$(EXE).catalog; \
+		rm resources/$$CATALOG/CPU-Monitor.catalog; \
 	done;
 
 .cpp.o:
@@ -50,4 +49,3 @@ barview.o : barview.cpp barview.h
 	$(CXX) $(COPTS) $< -o $@
 graphview.o : graphview.cpp graphview.h
 	$(CXX) $(COPTS) $< -o $@
-

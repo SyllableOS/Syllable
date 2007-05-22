@@ -1,46 +1,45 @@
 COPTS	= -c
 
 OBJS	= main.o
-EXE	= memmon
+EXE	= "Memory Monitor"
 
 CATALOGS = da de es fr hu nl pt-br ru sv
 
 $(EXE) : catalogs $(OBJS)
 	$(CXX) $(OBJS) -lsyllable -o $@
-	rescopy -r $(EXE) resources/$(EXE).catalog
+	rescopy -r $(EXE) resources/MemoryMonitor.catalog
 	for CATALOG in $(CATALOGS);do \
 		echo $$CATALOG; \
-		rescopy -a $(EXE) $$CATALOG/$(EXE).catalog=resources/$$CATALOG/$(EXE).catalog; \
+		rescopy -a $(EXE) $$CATALOG/MemoryMonitor.catalog=resources/$$CATALOG/MemoryMonitor.catalog; \
 	done;
+	addattrib $(EXE) os::Category "System Tools"
 
 catalogs:
 	cd resources; \
-	catcomp -c $(EXE).cd; \
+	catcomp -c MemoryMonitor.cd; \
 	for CATALOG in $(CATALOGS);do \
 		echo $$CATALOG; \
 		cd $$CATALOG; \
-		catcomp -t $(EXE).cd; \
+		catcomp -t MemoryMonitor.cd; \
 		cd ..; \
 	done;
 
 deps:
 
 install: $(EXE)
-	cp -f $(EXE) /system/bin/$(EXE)
-	strip --strip-all /system/bin/$(EXE)
+	cp -f $(EXE) "$(IMAGE)/Applications/System Tools/$(EXE)"
+	strip --strip-all "$(IMAGE)/Applications/System Tools/$(EXE)"
 
-dist: $(EXE)
-	cp -f $(EXE) $(IMAGE)/system/bin/$(EXE)
-	strip --strip-all $(IMAGE)/system/bin/$(EXE)
+dist: install
 
 clean: catalog-clean
 	-rm $(OBJS)
 	-rm $(EXE)
 
 catalog-clean:
-	-rm resources/$(EXE).catalog resources/$(EXE).h; \
+	-rm resources/MemoryMonitor.catalog resources/MemoryMonitor.h; \
 	for CATALOG in $(CATALOGS);do \
-		rm resources/$$CATALOG/$(EXE).catalog; \
+		rm resources/$$CATALOG/MemoryMonitor.catalog; \
 	done;
 
 .cpp.o:
@@ -48,4 +47,3 @@ catalog-clean:
 
 main.o : main.cpp
 	$(CXX) $(COPTS) $< -o $@
-
