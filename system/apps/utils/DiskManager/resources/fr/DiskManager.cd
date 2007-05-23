@@ -1,0 +1,68 @@
+//
+//	DiskManager String Catalog
+//
+//	Translated by: MilkaJinka
+//
+
+MSG_MAINWND_TITLE=0							Gestionnaire de disques
+
+MSG_MAINWND_MENU_PROGRAM=100				Programme
+MSG_MAINWND_MENU_PROGRAM_EXIT				Quitter
+
+MSG_MAINWND_LIST_DEVICE=200					Périphérique
+MSG_MAINWND_LIST_PARTITIONS					Partitions
+MSG_MAINWND_LIST_SIZE						Taille
+MSG_MAINWND_LIST_MB							%.2fMo
+
+MSG_MAINWND_BUTONS_QUIT=300					Quitter
+MSG_MAINWND_BUTONS_PARTITION				Partition...
+
+MSG_PARTWND_TITLE=500						Configuration des partitions
+
+MSG_PARTWND_DISKPARAM=600					Paramétres du disque : 
+MSG_PARTWND_DISKPARAM_DISKSIZE				Taille du disque : %.2fMo
+MSG_PARTWND_DISKPARAM_EXTSIZE				Taille de la partition étendue : %.2fMo
+MSG_PARTWND_DISKPARAM_UNITSIZE				Taille de l'unité : %ld secteurs de %ld octets (%ld octets)
+MSG_PARTWND_DISKPARAM_UNUSESSPACE			Espace inutilisé : 
+
+MSG_PARTWND_PARTINFO_UNUSED=700				inutilisé
+MSG_PARTWND_PARTINFO_UNKNOWN				*INCONNU*
+MSG_PARTWND_PARTINFO_PARTSIZEZERO			0.0Mo
+MSG_PARTWND_PARTINFO_PARTSIZE				%.2fMo
+
+MSG_PARTWND_BUTTONS_CANCEL=800				Annuler
+MSG_PARTWND_BUTTONS_OK						OK
+MSG_PARTWND_BUTTONS_DONE					Effectué
+MSG_PARTWND_BUTTONS_CLEAR					Effacer
+MSG_PARTWND_BUTTONS_EDITEXT					Modifier part. étendue
+MSG_PARTWND_BUTTONS_SORT					Trier
+MSG_PARTWND_BUTTONS_ADD						Ajouter
+
+MSG_ALERTWND_ERREXT_EXTENDED=1000			Erreur !
+MSG_ALERTWND_ERREXT_EXTENDED_TEXT			Table des partitions étendue invalide !\nLa partition étendue contient elle-même\nplus d'une partition étendue\nModifier la table des partitions peut causer\nla perte d'une ou plusieurs partitions logiques.
+MSG_ALERTWND_ERREXT_EXTENDED_OK				OK
+
+MSG_ALERTWND_ERREXT_LOGICAL=2000			Erreur !
+MSG_ALERTWND_ERREXT_LOGICAL_TEXT			Table des partitions étendue invalide !\nLa partition étendue contient plus\nd'une partition logique\nModifier la table des partitions peut causer/nla perte d'une ou plusieurs partitions logiques.
+MSG_ALERTWND_ERREXT_LOGICAL_OK				OK
+
+MSG_ALERTWND_CHANGEDLAYOUT=3000				Erreur !
+MSG_ALERTWND_CHANGEDLAYOUT_TEXT				Vous avez changé la disposition d'une ou plusieurs partitions.\nToutes les données sur ces partitions seront perdues.\nÊtes-vous sûr(e) de vouloir modifier la table des partitions ?
+MSG_ALERTWND_CHANGEDLAYOUT_CANCEL			Annuler
+MSG_ALERTWND_CHANGEDLAYOUT_OK				OK
+
+MSG_ALERTWND_CHANGEDTYPE=4000				Erreur !
+MSG_ALERTWND_CHANGEDTYPE_TEXT				Vous avez changé le type d'une ou plusieurs partitions.\nCela ne devrait pas causer la perte de données sur ces partitions\nmais pourrait les rendre impossible à monter.\nÊtes-vous sûr(e) de vouloir modifier la table des partitions ?
+MSG_ALERTWND_CHANGEDTYPE_CANCEL				Annuler
+MSG_ALERTWND_CHANGEDTYPE_OK					OK
+
+MSG_ALERTWND_CHANGEDSTATUS=5000				Avertissement !
+MSG_ALERTWND_CHANGEDSTATUS_TEXT				Vous avez changé l'état d'une ou plusieurs partitions.\nCela ne devrait pas causer la perte de données sur ces partitions\nmais pourrait empêcher de démarrer sur ces partitions.\nÊtes-vous sûr(e) de vouloir modifier la table des partitions ?
+MSG_ALERTWND_CHANGEDSTATUS_CANCEL			Annuler
+MSG_ALERTWND_CHANGEDSTATUS_OK				OK
+
+MSG_ALERTWND_DELPART=6000					Avertissement !
+MSG_ALERTWND_DELPART_TEXT					Cette opération effacera la partition actuelle.\nToutes les données de celle-ci seront perdues.\nEst-ce vraiment ce que vous voulez faire ?
+MSG_ALERTWND_DELPART_CANCEL					Annuler
+MSG_ALERTWND_DELPART_OK						OK
+
