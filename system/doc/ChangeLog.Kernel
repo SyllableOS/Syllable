@@ -1,3 +1,10 @@
+* May 25, 2007, Arno Klenke *
+
+Added the disable_device_on_bus() and enable_devices_on_bus() functions. All drivers that currently
+use disable_device() should be changed to use disable_device_on_bus().
+
+Added the disable_gfx_drivers kernel parameter
+
 * May 15, 2007, Kristian Van Der Vliet *
 
 Added the PCI ID for the TGUI 9680 graphics card to the Trident graphics driver.
@@ -1182,6 +1189,7 @@ required; they are implemented in user space as part of libc.
 
 Applied a fix to sys/kernel/kernel/vfs/vfs.c  The fcntl() F_GETLK command
 now works as expected.
+
 
 
 
