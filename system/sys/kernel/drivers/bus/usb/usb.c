@@ -1776,6 +1776,9 @@ int usb_new_device( USB_device_s* psDevice )
 	if( psDevice->sDeviceDesc.nSerialNumber )
 		usb_show_string( psDevice, "SerialNumber", psDevice->sDeviceDesc.nSerialNumber );
 		
+	/* Enable all usb device drivers */
+	enable_devices_on_bus( USB_BUS_NAME );
+		
 	/* find drivers willing to handle this device */
 	usb_find_drivers_for_new_device( psDevice );
 	

@@ -241,6 +241,17 @@ static void dbg_list_connections( int argc, char **argv )
 		}
 
 		dbprintf( DBP_DEBUGGER, "%03d: %s:%d -> %s:%d %s, os=%d, e=%s\n", i++, zRIP, psTCPCtrl->tcb_rport, zLIP, psTCPCtrl->tcb_lport, tcp_state_str( psTCPCtrl->tcb_nState ), psTCPCtrl->tcb_ostate, zEvents );
+
+		SelectRequest_s* psReq;
+		for ( psReq = psTCPCtrl->tcb_psFirstReadSelReq; NULL != psReq; psReq = psReq->sr_psNext )
+		{
+			dbprintf( DBP_DEBUGGER, "\tRead select request %i\n", psReq->sr_nMode );
+		}
+		for ( psReq = psTCPCtrl->tcb_psFirstWriteSelReq; NULL != psReq; psReq = psReq->sr_psNext )
+		{
+			dbprintf( DBP_DEBUGGER, "\tWrite select request %i\n", psReq->sr_nMode );
+		}
+
 	}
 	UNLOCK( g_hConnListMutex );
 }

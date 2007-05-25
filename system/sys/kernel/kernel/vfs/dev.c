@@ -51,6 +51,8 @@ typedef status_t device_resume_t ( int nDeviceID, int nDeviceHandle, void* pPriv
 static int g_nDeviceID = BUILTIN_DEVICE_ID + 1;
 static sem_id g_hMutex;
 
+extern bool g_bDisableGFXDrivers;
+
 typedef struct _Device Device_s;
 struct _Device
 {
@@ -73,7 +75,8 @@ typedef struct _DisabledDevice DisabledDevice_s;
 struct _DisabledDevice
 {
 	DisabledDevice_s *dd_psNext;
-	char dd_zPath[512];
+	char dd_zPath[PATH_MAX];
+	char dd_zBus[MAX_BUSMANAGER_NAME_LENGTH];	
 };
 
 typedef struct
@@ -412,7 +415,7 @@ static int load_device( Device_s *psDevice )
 		if ( strcmp( psDevice->d_zPath, psDisabled->dd_zPath ) == 0 )
 		{
 			/* Do not load it */
-			printk( "Device %s is disabled\n", psDevice->d_zPath );
+			printk( "Device %s on bus %s is disabled\n", psDevice->d_zPath, psDisabled->dd_zBus );
 			return ( -1 );
 		}
 		psDisabled = psDisabled->dd_psNext;
@@ -549,6 +552,8 @@ static void scan_driver_dir( FileNode_s *psParentNode, char *pzPath, int nPathBa
 		{
 			continue;
 		}
+		if( strcmp( sDirEnt.d_name, "graphics" ) == 0 && g_bDisableGFXDrivers == true )
+			continue;
 		strcat( pzPath, sDirEnt.d_name );
 		nError = stat( pzPath, &sStat );
 		if ( nError < 0 )
@@ -1502,21 +1507,24 @@ static FSOperations_s g_sOperations = {
  * \ingroup DriverAPI
  * \par Description:
  *	Disables one device driver. The driver will be loaded again if 
- *  enable_device_on_bus() is called. Should be called by PCI device drivers if 
- *  no supported device could be found.
+ *  enable_devices_on_bus() is called. You need to be sure that the
+ *  busmanager enables the device driver again if new devices are
+ *  detected. This is true for PCI, USB and ACPI devices.
  *
  * \param nDeviceID
  *	Device id of the driver passed by device_init().
+ * \param pzBus
+ *  Busmanager name.
  * \return
- * \sa enable_all_devices()
+ * \sa enable_devices_on_bus, enable_all_devices()
  * \author	Arno Klenke (arno_klenke@yahoo.de)
  *****************************************************************************/
-void disable_device( int nDeviceID )
+void disable_device_on_bus( int nDeviceID, const char* pzBus )
 {
 	Device_s *psDevice;
 	DisabledDevice_s *psDisabled = g_psFirstDisabled;
 
-	if ( nDeviceID == BUILTIN_DEVICE_ID )
+	if ( nDeviceID == BUILTIN_DEVICE_ID || pzBus == NULL )
 		return;
 	psDevice = find_device_by_id( nDeviceID );
 
@@ -1533,11 +1541,66 @@ void disable_device( int nDeviceID )
 
 	/* Add */
 	psDisabled = kmalloc( sizeof( DisabledDevice_s ), MEMF_KERNEL | MEMF_CLEAR );
-	strcpy( psDisabled->dd_zPath, psDevice->d_zPath );
+	strncpy( psDisabled->dd_zPath, psDevice->d_zPath, PATH_MAX );
+	strncpy( psDisabled->dd_zBus, pzBus, MAX_BUSMANAGER_NAME_LENGTH );
 	psDisabled->dd_psNext = g_psFirstDisabled;
 	g_psFirstDisabled = psDisabled;
 
-	printk( "Disabling device %s\n", psDisabled->dd_zPath );
+	printk( "Disabling device %s on bus %s\n", psDisabled->dd_zPath, pzBus );
+}
+
+
+
+
+
+/** Disable one PCI device driver.
+ * \ingroup DriverAPI
+ * \par Description:
+ *	Disables one PCI device driver.
+ * WARNING: This function will be removed in the futurue.
+ *
+ * \param nDeviceID
+ *	Device id of the driver passed by device_init().
+ * \return
+ * \sa disable_device_on_bus()
+ * \author	Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+void disable_device( int nDeviceID )
+{
+	return( disable_device_on_bus( nDeviceID, "pci" ) );
+}
+
+/** Enable all device drivers for devices on a specific bus.
+ * \ingroup DriverAPI
+ * \par Description:
+ *	Enables all drivers which have been disabled 
+ *  by calling disable_device_on_bus() with the same bus name.
+ *
+ * \return
+ * \sa disable_device_on_bus()
+ * \author	Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+void enable_devices_on_bus( const char* pzBus )
+{
+	/* Delete list */
+	DisabledDevice_s **psDisabled = &g_psFirstDisabled;
+
+	while ( *psDisabled )
+	{
+		DisabledDevice_s *psDevice = *psDisabled;		
+		if( strncmp( psDevice->dd_zBus, pzBus, MAX_BUSMANAGER_NAME_LENGTH ) == 0 )
+		{
+			printk( "Reenabling device %s\n", psDevice->dd_zPath );
+			*psDisabled = psDevice->dd_psNext;
+			kfree( psDevice );
+		}
+		else
+		{
+			psDisabled = &psDevice->dd_psNext;
+		}
+	}
+
+	kerndbg( KERN_DEBUG, "Enabled devices on bus %s\n", pzBus );
 }
 
 
@@ -1545,10 +1608,10 @@ void disable_device( int nDeviceID )
  * \ingroup DriverAPI
  * \par Description:
  *	Enables all drivers which have been disabled 
- *  by calling disable_device().
+ *  by calling disable_device_on_bus().
  *
  * \return
- * \sa disable_device()
+ * \sa disable_device_on_bus()
  * \author	Arno Klenke (arno_klenke@yahoo.de)
  *****************************************************************************/
 void enable_all_devices( void )
@@ -2124,7 +2187,7 @@ void write_dev_fs_config( void )
 	/* Calculate size of disabled devices list */
 	while ( psDevice )
 	{
-		nSize += strlen( psDevice->dd_zPath ) + 1, psDevice = psDevice->dd_psNext;
+		nSize += strlen( psDevice->dd_zPath ) + strlen( psDevice->dd_zBus ) + 2, psDevice = psDevice->dd_psNext;
 	}
 	/* Write header */
 	write_kernel_config_entry_header( "<DISABLED_DEVICES>", nSize );
@@ -2137,6 +2200,8 @@ void write_dev_fs_config( void )
 		DisabledDevice_s *psPrev = psDevice;
 
 		write_kernel_config_entry_data( (uint8*)&psDevice->dd_zPath[0], strlen( psDevice->dd_zPath ) );
+		write_kernel_config_entry_data( ( uint8 * )pzBreak, 1 );
+		write_kernel_config_entry_data( (uint8*)&psDevice->dd_zBus[0], strlen( psDevice->dd_zBus ) );
 		write_kernel_config_entry_data( ( uint8 * )pzBreak, 1 );
 
 		psDevice = psDevice->dd_psNext;
@@ -2169,7 +2234,8 @@ void load_dev_fs_config( void )
 {
 	uint8 *pBuffer;
 	size_t nSize;
-	char zTemp[512];
+	char zTemp[2][PATH_MAX];
+	int nEntry = 0;
 	int nTempPtr = 0;
 	uint8 *pPtr;
 
@@ -2184,20 +2250,35 @@ void load_dev_fs_config( void )
 	{
 		if ( *pPtr == '\n' )
 		{
-			/* Add */
-			DisabledDevice_s *psDevice = kmalloc( sizeof( DisabledDevice_s ), MEMF_KERNEL | MEMF_CLEAR );
-
-			psDevice->dd_psNext = g_psFirstDisabled;
-			zTemp[nTempPtr] = 0;
-			strcpy( psDevice->dd_zPath, zTemp );
-			g_psFirstDisabled = psDevice;
+			zTemp[nEntry % 2][nTempPtr] = 0;
 			nTempPtr = 0;
+			if( ( nEntry % 2 ) == 1 )
+			{
+				nTempPtr = 0;				
+				/* Check entry */
+				if( zTemp[0][0] == '/' && zTemp[1][0] != '/' )
+				{
+					/* Add */
+					DisabledDevice_s *psDevice = kmalloc( sizeof( DisabledDevice_s ), MEMF_KERNEL | MEMF_CLEAR );
 
-			//printk( "Disabled device %s\n", g_psFirstDisabled->dd_zPath );
+					psDevice->dd_psNext = g_psFirstDisabled;
+					strncpy( psDevice->dd_zPath, zTemp[0], PATH_MAX );
+					strncpy( psDevice->dd_zBus, zTemp[1], MAX_BUSMANAGER_NAME_LENGTH );					
+					g_psFirstDisabled = psDevice;
+				}
+				else
+				{
+					printk( "List of disabled devices is corrupted\n" );
+					enable_all_devices();
+					kfree( pBuffer );
+					return;
+				}
+			}
+			nEntry++;
 		}
 		else
 		{
-			zTemp[nTempPtr++] = *pPtr;
+			zTemp[nEntry % 2][nTempPtr++] = *pPtr;
 		}
 		pPtr++;
 		nSize--;

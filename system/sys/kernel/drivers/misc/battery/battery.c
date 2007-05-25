@@ -530,8 +530,9 @@ status_t device_init( int nDeviceID )
     g_nDeviceID = nDeviceID;
     
 	nError = g_psBus->register_driver(&acpi_battery_driver);
-	if( nError < 0 ) {
-		return( nError );
+	if( nError <= 0 ) {
+		disable_device_on_bus( nDeviceID, ACPI_BUS_NAME );
+		return( -1 );
 	}
     
     return( 0 );

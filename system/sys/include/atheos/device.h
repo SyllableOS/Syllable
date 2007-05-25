@@ -87,6 +87,8 @@ status_t	register_busmanager( int nDeviceID, const char* pzName, busmanager_get_
 void*		get_busmanager( const char* pzName, int nVersion );
 void 		set_device_as_busmanager( int nDeviceID );
 void		disable_device( int nDeviceID );
+void		disable_device_on_bus( int nDeviceID, const char* pzBus );
+void		enable_devices_on_bus( const char* pzBus );
 void		enable_all_devices( void );
 status_t	suspend_devices( void );
 status_t	resume_devices( void );

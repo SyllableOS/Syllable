@@ -884,7 +884,7 @@ void pci_scan_all( void )
 	/* Now load configuration */
 	if ( read_kernel_config_entry( "<PCI>", &pBuffer, &nSize ) != 0 )
 	{
-		enable_all_devices();	/* Maybe configuration has changed */
+		enable_devices_on_bus( PCI_BUS_NAME );	/* Maybe configuration has changed */
 		return;
 	}
 
@@ -899,7 +899,7 @@ void pci_scan_all( void )
 			{
 				/* Something went wrong */
 				kerndbg( KERN_WARNING, "PCI: Configuration corrupted!\n" );
-				enable_all_devices();	/* Maybe configuration has changed */
+				enable_devices_on_bus( PCI_BUS_NAME );	/* Maybe configuration has changed */
 				return;
 			}
 			zTemp[nTempPtr] = 0;
@@ -915,7 +915,7 @@ void pci_scan_all( void )
 			{
 				/* Something went wrong */
 				kerndbg( KERN_WARNING, "PCI: Configuration corrupted!\n" );
-				enable_all_devices();	/* Maybe configuration has changed */
+				enable_devices_on_bus( PCI_BUS_NAME );	/* Maybe configuration has changed */
 				return;
 			}
 			zTemp[nTempPtr] = 0;
@@ -928,7 +928,7 @@ void pci_scan_all( void )
 			if ( nDevice >= g_nPCINumDevices )
 			{
 				kerndbg( KERN_WARNING, "PCI: Configuration change\n" );
-				enable_all_devices();
+				enable_devices_on_bus( PCI_BUS_NAME );
 				nSize = 0;
 				break;
 			}
@@ -937,7 +937,7 @@ void pci_scan_all( void )
 			if ( g_apsPCIDevice[nDevice]->nVendorID != nVendorID || g_apsPCIDevice[nDevice]->nDeviceID != nDeviceID )
 			{
 				kerndbg( KERN_INFO, "PCI: Configuration change\n" );
-				enable_all_devices();
+				enable_devices_on_bus( PCI_BUS_NAME );
 			}
 
 			nDevice++;
@@ -955,7 +955,7 @@ void pci_scan_all( void )
 	if ( nDevice < g_nPCINumDevices )
 	{
 		kerndbg( KERN_INFO,  "PCI: Configuration change\n" );
-		enable_all_devices();
+		enable_devices_on_bus( PCI_BUS_NAME );
 	}
 
 	/* Delete buffer */

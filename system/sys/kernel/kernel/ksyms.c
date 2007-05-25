@@ -504,6 +504,8 @@ static KernelSymbol_s g_asKernelSymbols[] = {
 	KSYMBOL( register_busmanager ),
 	KSYMBOL( get_busmanager ),
 	KSYMBOL( disable_device ),
+	KSYMBOL( disable_device_on_bus ),
+	KSYMBOL( enable_devices_on_bus ),
 	KSYMBOL( enable_all_devices ),
 	KSYMBOL( suspend_devices ),
 	KSYMBOL( resume_devices ),

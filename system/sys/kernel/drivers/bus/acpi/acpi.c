@@ -249,6 +249,7 @@ status_t device_init( int nDeviceID )
 	if( !bDisableACPI )
 	{
 		/* Initialize ACPI system */
+		enable_devices_on_bus( ACPI_BUS_NAME );
 		simple_pci_init();
 		acpi_initialize_tables(initial_tables, ACPI_MAX_TABLES, 0);
 		if( acpi_boot_init() < 0 )

@@ -282,12 +282,12 @@ When the computer wakes up again, the kernel calls the device_resume() function 
 parameters as the device_suspend() function. The driver has to wakeup the device and restore its state
 here.
 
-\section sec7 Reducing boottime by disabling PCI device drivers.
+\section sec7 Reducing boottime by disabling device drivers.
 
 To avoid unnecessary tries to load drivers, it is possible to disable device
-drivers. This feature is only available for pure PCI device drivers. If you did not
-find any supported hardware, you should call disable_device( nDeviceID ). This will
-disable the device driver until the PCI busmanager detects a hardware change.
+drivers. This feature can currently be used by PCI, ACPI and USB device drivers. If you did not
+find any supported hardware, you should call disable_device_on_bus( nDeviceID, "bus name" ). This will
+disable the device driver until the busmanager detects a hardware change.
 
 */
 

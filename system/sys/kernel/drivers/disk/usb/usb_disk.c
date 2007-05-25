@@ -436,6 +436,7 @@ status_t device_init( int nDeviceID )
 	if ( g_psBus->add_driver( g_pcDriver ) != 0 )
 	{
 		kfree( g_pcDriver );
+		disable_device_on_bus( nDeviceID, USB_BUS_NAME );
 		return ( -1 );
 	}
 

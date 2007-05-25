@@ -71,7 +71,7 @@ static uint32 g_nMemSize = 64 * 1024 * 1024;
 static bool g_bSwapEnabled = false;
 bool g_bDisableSMP = false;
 static bool g_bDisableACPI = false;
-
+bool g_bDisableGFXDrivers = false;
 bool g_bDisableKernelConfig = false;
 
 bool g_bRootFSMounted = false;
@@ -706,6 +706,8 @@ static void parse_kernel_params( char *pzParams )
 			printk( "  Kernel config is %s\n", ( ( g_bDisableKernelConfig ) ? "disabled" : "enabled" ) );
 		if( get_bool_arg( &g_bSwapEnabled, "enable_swap=", pzArg, nLen ) )
 			printk( "  Swapping is %s\n", ( ( g_bSwapEnabled ) ? "enabled" : "disabled" ) );
+		if( get_bool_arg( &g_bDisableGFXDrivers, "disable_gfx_drivers=", pzArg, nLen ) )
+			printk( "  Graphics drivers are %s\n", ( ( g_bDisableGFXDrivers ) ? "disabled" : "enabled" ) );
 					
 		if( get_num_arg( &g_sSysBase.sb_nFirstUserAddress, "uspace_start=", pzArg, nLen ) )
 			printk( "  UAS start:        %08x\n", g_sSysBase.sb_nFirstUserAddress );

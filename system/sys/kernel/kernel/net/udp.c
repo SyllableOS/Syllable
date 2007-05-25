@@ -363,6 +363,7 @@ static void udp_delete_port( UDPPort_s *psPort )
 static void udp_delete_endpoint( UDPEndPoint_s *psEndP )
 {
 	UDPPort_s *psPort = psEndP->ue_psPort;
+	SelectRequest_s *psReq;
 
 	LOCK( g_hUDPPortLock );
 
@@ -390,6 +391,11 @@ static void udp_delete_endpoint( UDPEndPoint_s *psEndP )
 		if ( psPort->up_psFirstEndPoint == NULL )
 		{
 			udp_delete_port( psPort );
+		}
+		for ( psReq = psEndP->ue_psFirstReadSelReq; psReq != NULL; psReq = psReq->sr_psNext )
+		{
+			psReq->sr_bReady = true;
+			UNLOCK( psReq->sr_hSema );
 		}
 	}
 	kfree( psEndP );
@@ -432,6 +438,15 @@ static int udp_bind( Socket_s *psSocket, const struct sockaddr *psAddr, int nAdd
 	ipaddr_t anNullAddr;
 	int nError;
 	int nPort;
+	
+	LOCK( g_hUDPPortLock );
+	
+	if( psUDPCtrl->ue_psPort != NULL )
+	{
+		printk( "udp_bind() - port already used\n" );
+		nError = -EINVAL;
+		goto error;
+	}
 
 	IP_MAKEADDR( anNullAddr, 0, 0, 0, 0 );
 
@@ -474,6 +489,7 @@ static int udp_bind( Socket_s *psSocket, const struct sockaddr *psAddr, int nAdd
 //  nError = udp_create_endpoint( ntohs( psInAddr->sin_port ), psInAddr->sin_addr, 0, anNullAddr, &psSocket->sk_psUDPEndP );
 	nError = udp_add_endpoint( psUDPCtrl );
       error:
+	UNLOCK( g_hUDPPortLock );      	
 	return ( nError );
 }
 
@@ -515,11 +531,14 @@ static int udp_connect( Socket_s *psSocket, const struct sockaddr *psAddr, int n
 	{
 		return ( -EAFNOSUPPORT );
 	}
+	
+	LOCK( g_hUDPPortLock );
 
 	if ( IP_SAMEADDR( psInAddr->sin_addr, anNullAddr ) )
 	{			// Break a previous connection (realy not sure if this is correct)
 		IP_COPYADDR( psUDPCtrl->ue_anRemoteAddr, psInAddr->sin_addr );
 		psUDPCtrl->ue_nRemotePort = 0;	// psAddrIn->sin_port;
+		UNLOCK( g_hUDPPortLock );
 		return ( 0 );
 	}
 
@@ -527,7 +546,8 @@ static int udp_connect( Socket_s *psSocket, const struct sockaddr *psAddr, int n
 	{
 		if ( udp_autobind( psSocket ) != 0 )
 		{
-			return ( -EAGAIN );
+			nError = -EAGAIN;
+			goto error;
 		}
 	}
 
@@ -553,9 +573,11 @@ static int udp_connect( Socket_s *psSocket, const struct sockaddr *psAddr, int n
 	IP_COPYADDR( psUDPCtrl->ue_anRemoteAddr, psInAddr->sin_addr );
 	psUDPCtrl->ue_nRemotePort = ntohs( psInAddr->sin_port );
 
+	UNLOCK( g_hUDPPortLock );
 	return ( 0 );
 
       error:
+    UNLOCK( g_hUDPPortLock );
 	return ( nError );
 }
 
