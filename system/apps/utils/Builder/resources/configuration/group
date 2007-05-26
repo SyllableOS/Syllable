@@ -1,4 +1,6 @@
 root:$1$$oCLuEVgI1iAqOA8pwkzAg1:0:root
-system:*:1:
-network:*:99:
+bin:*:1:
+system:*:2:
+network:*:3:
+nogroup:*:99:
 users:*:100:
