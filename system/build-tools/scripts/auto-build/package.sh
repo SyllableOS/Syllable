@@ -15,7 +15,7 @@ LOG_DIR=$HOME/Logs
 # FTP_USER
 # FTP_PASSWD
 
-FINISH_LOG=$LOG_DIR/finish-stdout.log
+FINISH_LOG=$LOG_DIR/finish-std-out-err.log
 FINISH_FAILURE_LOG=$LOG_DIR/finish-failures.log
 FINISH_SUMMARY_LOG=$LOG_DIR/finish-summary.log
 
@@ -50,8 +50,8 @@ $SCRIPTS_DIR/printers.sh $INSTALLER_DIR/ppds/ $BUILD_DIR/system/stage/image/usr/
 
 # Finish the build and package it
 cd $BUILD_DIR/system
-image finish
-build log > $FINISH_LOG
+image finish > $FINISH_LOG 2>&1
+#build log > $FINISH_LOG
 build log failures > $FINISH_FAILURE_LOG
 build log summary > $FINISH_SUMMARY_LOG
 sync
@@ -98,4 +98,3 @@ mput $FILES
 quit
 END
 fi
-

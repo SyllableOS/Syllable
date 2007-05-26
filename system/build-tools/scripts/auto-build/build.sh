@@ -40,20 +40,20 @@ printf "\nBuild started at %s\n" "`date`" >> $LOG
 
 # Make sure we have the latest Builder
 echo "Updating Builder"
-build update 1>>$LOG 2>>$LOG
-build log 1>>$LOG 2>>$LOG
+build update 1>>$LOG 2>&1
+build log 1>>$LOG 2>&1
 sync
 
 # Build the 'system' profile
 
 cd $BUILD_DIR/system
-build prepare system 1>>$LOG 2>>$LOG
+build prepare system 1>>$LOG 2>&1
 build log >> $SYSTEM_LOG
 build log summary >> $SYSTEM_SUMMARY_LOG
 sync
 
 echo "image system"
-image system 1>>$LOG 2>>$LOG
+image system 1>>$LOG 2>&1
 build log >> $SYSTEM_LOG
 build log failures >> $SYSTEM_FAILURE_LOG
 build log summary >> $SYSTEM_SUMMARY_LOG
@@ -62,13 +62,13 @@ sync
 # We have to build GrUB with GCC 3
 
 echo "Switching to GCC 3.4.3"
-build install $HOME/Packages/gcc-3.4.3.bin.3.zip 1>>$LOG 2>>$LOG
+build install $HOME/Packages/gcc-3.4.3.bin.3.zip 1>>$LOG 2>&1
 build log >> $SYSTEM_LOG
 build log summary >> $SYSTEM_SUMMARY_LOG
 sync
 
 echo "Building GrUB"
-image sys/boot/grub-0.97-syllable 1>>$LOG 2>>$LOG
+image sys/boot/grub-0.97-syllable 1>>$LOG 2>&1
 build log >> $SYSTEM_LOG
 # Doesn't work for a single module:
 #build log failures >> $SYSTEM_FAILURE_LOG
@@ -76,14 +76,14 @@ build log summary >> $SYSTEM_SUMMARY_LOG
 sync
 
 echo "Switching to GCC 4.1.2"
-build install $HOME/Packages/gcc-4.1.2.bin.1.zip 1>>$LOG 2>>$LOG
+build install $HOME/Packages/gcc-4.1.2.bin.1.zip 1>>$LOG 2>&1
 build log >> $SYSTEM_LOG
 build log summary >> $SYSTEM_SUMMARY_LOG
 sync
 
 # Build the 'base' profile
 echo "image base"
-image base 1>>$LOG 2>>$LOG
+image base 1>>$LOG 2>&1
 build log > $BASE_LOG
 build log failures > $BASE_FAILURE_LOG
 build log summary > $BASE_SUMMARY_LOG
@@ -91,11 +91,12 @@ sync
 
 # XXXKV: Now on with the show...
 cd stage/image
-build scrub 1>>$LOG 2>>$LOG
+build scrub 1>>$LOG 2>&1
 
 # Mark the end
 echo "Build complete"
 printf "Build finished at %s\n" "`date`" >> $LOG
+sync
 
 # Transfer the logs
 FILES=`ls -1 $LOG_DIR | tr '\n' ' '`
@@ -117,4 +118,3 @@ fi
 sync
 echo "Finished"
 exit 0
-
