@@ -66,19 +66,34 @@ struct RegistrarClient
 	port_id m_hPort;
 	int64 m_nProcess;
 };
-	
-struct RegistrarUser
-{
-	os::String m_zUser;
-	std::vector<RegistrarClient> m_cClients;
-	std::vector<FileType> m_cTypes;
-};
 
 struct RegistrarApp
 {
 	os::String zPath;
 	os::String zName;
 	os::String zCategory;
+};
+
+	
+struct RegistrarUser
+{
+	os::String m_zUser;
+	std::vector<RegistrarClient> m_cClients;
+	std::vector<FileType> m_cTypes;
+	std::vector<RegistrarApp> m_cApps;
+	bool m_bAppListValid;
+};
+
+class RegistrarMonitor : public os::NodeMonitor
+{
+public:
+	RegistrarMonitor( const os::String& cPath, uint32 nFlags, const os::Handler* pcHandler )
+	: os::NodeMonitor( cPath, nFlags, pcHandler )
+	{
+		m_cPath = cPath;
+	}
+	os::NodeMonitor* m_pcMonitor;
+	os::String m_cPath;
 };
 
 class Registrar : public Application
@@ -96,7 +111,8 @@ public:
 private:
 	void SaveDatabase( os::String zUser );
 	void LoadTypes( os::String zUser, port_id hPort, int64 nProcess );
-	FileType* GetType( os::String zUser, os::String zMimeType );
+	RegistrarUser* GetUser( const os::String& zUser );
+	FileType* GetType( const os::String& zUser, const os::String& zMimeType );
 	void Login( Message* pcMessage );
 	void Logout( Message* pcMessage );
 	void GetTypeCount( Message* pcMessage );
@@ -112,14 +128,12 @@ private:
 	os::String GetAttribute( os::FSNode* pcNode, os::String zAttribute );
 	void GetTypeAndIcon( Message* pcMessage );
 	void GetAppList( Message* pcMessage );
-	void ScanAppPath( int nLevel, os::Path cPath, os::String cPrimaryLanguage );
-	void UpdateAppList( bool bForce );
+	void ScanAppPath( RegistrarUser* psUser, int nLevel, os::Path cPath, os::String cPrimaryLanguage );
+	void UpdateAppList( RegistrarUser* psUser, bool bForce );
 	void ProcessKilled( Message* pcMessage );
 	
 	std::vector<RegistrarUser> m_cUsers;
-	bool m_bAppListValid;
-	std::vector<os::NodeMonitor*> m_cMonitors;
-	std::vector<RegistrarApp> m_cApps;
+	std::vector<RegistrarMonitor*> m_cMonitors;
 	os::Event* m_pcAppListEvent;
 };
 	

@@ -90,7 +90,6 @@ Registrar::Registrar()
 			: Application( "registrar" )
 {
 	m_cUsers.clear();
-	m_bAppListValid = false;
 	
 	/* Load the database of root */
 	LoadTypes( "root", GetMsgPort(), -1 );
@@ -176,6 +175,8 @@ void Registrar::LoadTypes( os::String zUser, port_id hPort, int64 nProcess )
 	
 	cUser.m_zUser = zUser;
 	cUser.m_cClients.clear();
+	cUser.m_bAppListValid = false;
+	cUser.m_cApps.clear();
 	
 	sClient.m_hPort = hPort;
 	sClient.m_nProcess = nProcess;
@@ -250,8 +251,21 @@ void Registrar::LoadTypes( os::String zUser, port_id hPort, int64 nProcess )
 	
 }
 
+RegistrarUser* Registrar::GetUser( const os::String& zUser )
+{
+	/* Search user */
+	for( uint i = 0; i < m_cUsers.size(); i++ )
+	{
+		if( m_cUsers[i].m_zUser == zUser )
+		{	
+			return( &m_cUsers[i] );
+		}
+	}
+	return( NULL );
+}
+
 /* Return a type identified with its user and mimetype */
-FileType* Registrar::GetType( os::String zUser, os::String zMimeType )
+FileType* Registrar::GetType( const os::String& zUser, const os::String& zMimeType )
 {
 	/* Search user */
 	for( uint i = 0; i < m_cUsers.size(); i++ )
@@ -1156,15 +1170,28 @@ end:
 /* Returns the application list */
 void Registrar::GetAppList( Message* pcMessage )
 {
-	UpdateAppList( false );
+	os::String zUser;
+	if( pcMessage->FindString( "user", &zUser ) != 0 )
+	{
+		dbprintf( "Registrar::GetAppList() called without user\n" );
+		pcMessage->SendReply( REGISTRAR_ERROR );		
+		return;
+	}
+	
+
+	RegistrarUser* psUser = GetUser( zUser );
+	if( psUser == NULL )
+		pcMessage->SendReply( REGISTRAR_ERROR );
+	
+	UpdateAppList( psUser, false );
 	
 	os::Message cReply( REGISTRAR_OK );
-	cReply.AddInt32( "count", (int32)m_cApps.size() );
-	for( uint i = 0; i < m_cApps.size(); i++ )
+	cReply.AddInt32( "count", (int32)psUser->m_cApps.size() );
+	for( uint i = 0; i < psUser->m_cApps.size(); i++ )
 	{
-		cReply.AddString( "name", m_cApps[i].zName );
-		cReply.AddString( "path", m_cApps[i].zPath );
-		cReply.AddString( "category", m_cApps[i].zCategory );
+		cReply.AddString( "name", psUser->m_cApps[i].zName );
+		cReply.AddString( "path", psUser->m_cApps[i].zPath );
+		cReply.AddString( "category", psUser->m_cApps[i].zCategory );
 	}
 	
 	pcMessage->SendReply( &cReply );		
@@ -1172,7 +1199,7 @@ void Registrar::GetAppList( Message* pcMessage )
 
 
 /* Scan one path for applications */
-void Registrar::ScanAppPath( int nLevel, os::Path cPath, os::String cPrimaryLanguage )
+void Registrar::ScanAppPath( RegistrarUser* psUser, int nLevel, os::Path cPath, os::String cPrimaryLanguage )
 {
 	
 	/* Check if the directory is valid */
@@ -1189,11 +1216,21 @@ void Registrar::ScanAppPath( int nLevel, os::Path cPath, os::String cPrimaryLang
 		return;
 	}
 	
-	/* Add node monitor */
-	printf( "Adding node monitor to %s\n", cPath.GetPath().c_str() );
-	os::NodeMonitor* pcMonitor = new os::NodeMonitor( cPath, NWATCH_ALL, this );
-	m_cMonitors.push_back( pcMonitor );	
-	
+	/* Add node monitor if necessary */
+	bool bFound = false;
+	for( uint i = 0; i < m_cMonitors.size(); i++ )
+	{
+		if( m_cMonitors[i]->m_cPath == cPath )
+		{
+			bFound = true;
+			break;
+		}
+	}
+	if( !bFound )
+	{
+		RegistrarMonitor* pcMonitor = new RegistrarMonitor( cPath, NWATCH_ALL, this );
+		m_cMonitors.push_back( pcMonitor );	
+	}
 	/* Iterate through the directory */
 	os::String zFile;
 	
@@ -1224,7 +1261,7 @@ void Registrar::ScanAppPath( int nLevel, os::Path cPath, os::String cPrimaryLang
 		{
 			cFileNode.Unset();
 			if( nLevel < 5 )
-				ScanAppPath( nLevel + 1, cFilePath, cPrimaryLanguage );
+				ScanAppPath( psUser, nLevel + 1, cFilePath, cPrimaryLanguage );
 			continue;
 		}
 		
@@ -1295,27 +1332,30 @@ void Registrar::ScanAppPath( int nLevel, os::Path cPath, os::String cPrimaryLang
 			} catch( ... ) { }
 		}
 		
-		m_cApps.push_back( cApp );
+		psUser->m_cApps.push_back( cApp );
 		
-		
-		printf( "Entry %s %s %s\n", cApp.zPath.c_str(), cApp.zName.c_str(), cApp.zCategory.c_str() );
-	}
-	
+	}	
 }
 
 
 /* Update the application list if necessary */
-void Registrar::UpdateAppList( bool bForce )
+void Registrar::UpdateAppList( RegistrarUser* psUser, bool bForce )
 {
-	if( m_bAppListValid && !bForce )
+	if( psUser->m_bAppListValid && !bForce )
 		return;
 		
-	assert( m_cMonitors.size() == 0 );
+	/* Delete monitors */
+	for( uint i = 0; i < m_cMonitors.size(); ++i )
+	{
+		delete( m_cMonitors[i] );
+	}
+	m_cMonitors.clear();
 	
+
 	/* We would like to know the users primary language, so we can get the application-names */
 	os::String cPrimaryLanguage;
 	try {
-		os::Settings* pcSettings = new os::Settings( new os::File( os::String( getenv( "HOME" ) ) + os::String( "/Settings/System/Locale" ) ) );
+		os::Settings* pcSettings = new os::Settings( new os::File( os::String( "/home/" ) + psUser->m_zUser + os::String( "/Settings/System/Locale" ) ) );
 		pcSettings->Load();
 		cPrimaryLanguage = pcSettings->GetString("LANG","",0);
 		delete( pcSettings );
@@ -1328,15 +1368,15 @@ void Registrar::UpdateAppList( bool bForce )
 	pcWindow->Show();
 		
 	/* Clear list */
-	m_cApps.clear();
+	psUser->m_cApps.clear();
 	
 	/* Scan */
-	ScanAppPath( 0, os::Path( "/boot/Applications" ), cPrimaryLanguage );
+	ScanAppPath( psUser, 0, os::Path( "/boot/Applications" ), cPrimaryLanguage );
 	
 	pcWindow->PostMessage( os::M_QUIT );
 	
 	
-	m_bAppListValid = true;
+	psUser->m_bAppListValid = true;
 }
 
 /* Called when a process is killed. Check the database users and calls */
@@ -1426,8 +1466,26 @@ void Registrar::HandleMessage( Message* pcMessage )
 		case REGISTRAR_UPDATE_APP_LIST:
 		{
 			bool bForce = false;
+			os::String zUser;
+			if( pcMessage->FindString( "user", &zUser ) != 0 )
+			{
+				dbprintf( "Registrar::UpdateAppList() called without user\n" );
+				if( pcMessage->IsSourceWaiting() )
+					pcMessage->SendReply( REGISTRAR_ERROR );
+				break;
+			}
+	
+			RegistrarUser* psUser = GetUser( zUser );
+			if( psUser == NULL ) {
+				if( pcMessage->IsSourceWaiting() )
+				{			
+					pcMessage->SendReply( REGISTRAR_ERROR );
+					break;
+				}
+			}
+
 			pcMessage->FindBool( "force", &bForce );
-			UpdateAppList( bForce );
+			UpdateAppList( psUser, bForce );
 			if( pcMessage->IsSourceWaiting() )
 				pcMessage->SendReply( REGISTRAR_OK );
 		}
@@ -1437,9 +1495,11 @@ void Registrar::HandleMessage( Message* pcMessage )
 		break;
 		case os::M_NODE_MONITOR:
 		{
-			/* Delete monitors */
-			printf("Delete node monitors!\n");
-			m_bAppListValid = false;
+			/* Delete monitors and invalidate the application lists */
+			for( uint i = 0; i < m_cUsers.size(); i++ )
+			{
+				m_cUsers[i].m_bAppListValid = false;
+			}
 			for( uint i = 0; i < m_cMonitors.size(); ++i )
 			{
 				delete( m_cMonitors[i] );

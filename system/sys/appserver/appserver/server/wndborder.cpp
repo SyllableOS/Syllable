@@ -185,7 +185,7 @@ static int Clamp( int nVal, int nDelta, int nMin, int nMax )
  * \author Kurt Skauen
  * \author Rick Caudill(modified and documented)
  *****************************************************************************/
-WndBorder::WndBorder( SrvWindow * pcWindow, Layer * pcParent, const char *pzName, bool bBackdrop ) :Layer( pcWindow, pcParent, pzName, Rect( 0, 0, 0, 0 ), 0, NULL ),m_cMinSize( 0, 0 ), m_cMaxSize( INT_MAX, INT_MAX ),m_cAlignSize( 1, 1 ), m_cAlignSizeOff( 0, 0 ),m_cAlignPos( 1, 1 ), m_cAlignPosOff( 0, 0 )
+WndBorder::WndBorder( SrvWindow * pcWindow, Layer * pcParent, const char *pzName, bool bBackdrop ) :Layer( pcWindow, pcParent, pzName, Rect( 0, 0, 0, 0 ), 0, NULL ), m_cAlignSize( 1, 1 ), m_cAlignSizeOff( 0, 0 ),m_cAlignPos( 1, 1 ), m_cAlignPosOff( 0, 0 ), m_cMinSize( 0, 0 ), m_cMaxSize( INT_MAX, INT_MAX )
 {
 	//set both of the hits to none
 	m_eHitItem = WindowDecorator::HIT_NONE;

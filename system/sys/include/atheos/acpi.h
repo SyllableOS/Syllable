@@ -377,6 +377,10 @@ typedef struct
 #endif
 
 /* Battery status */
+enum
+{
+	BATTERY_GET_STATUS
+};
 
 typedef struct
 {
@@ -384,6 +388,31 @@ typedef struct
 	int		bs_nPercentage;
 	bool	bs_bChargingOrFull;
 } BatteryStatus_s;
+
+/* CPU powermanagement */
+enum
+{
+	CPU_GET_CURRENT_PSTATE,
+	CPU_GET_PSTATE,
+	CPU_SET_PSTATE,
+	CPU_GET_ISTATE = 100
+};
+
+typedef struct
+{
+	int		cps_nCpuId;
+	int		cps_nIndex;
+	int		cps_nFrequency;
+	int		cps_nPower;
+} CPUPerformanceState_s;
+
+typedef struct
+{
+	int		cis_nCpuId;
+	int		cis_nIndex;
+	int		cis_nType;
+	uint32	cis_nUsage;
+} CPUIdleState_s;
 
 #ifdef __cplusplus
 }

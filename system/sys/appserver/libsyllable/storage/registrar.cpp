@@ -1097,10 +1097,17 @@ status_t RegistrarManager::Launch( Window* pcParentWindow, String zFile, bool bV
 	return( 0 );
 }
 
+/** Update the application list.
+ * \par Description:
+ * The registrar manages a list of installed applications in the /Applications
+ * folder. Using this method you can tell it to update this list.
+ * \param bForce - Force the registrar to update the list.
+ * \author	Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
 void RegistrarManager::UpdateAppList( bool bForce )
 {
 	os::Message cMessage( REGISTRAR_UPDATE_APP_LIST );
-	
+	cMessage.AddString( "user", m->m_pzUser );	
 	if( m->m_bSync ) {
 		os::Message cReply;
 		m->m_cServerLink.SendMessage( &cMessage, &cReply );
@@ -1109,9 +1116,17 @@ void RegistrarManager::UpdateAppList( bool bForce )
 		m->m_cServerLink.SendMessage( &cMessage );
 }
 
+/** Returns the application list.
+ * \par Description:
+ * Returns the list of applications in /Applications.
+ * \return The application list.
+ * \author	Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+
 RegistrarAppList RegistrarManager::GetAppList()
 {
 	os::Message cMessage( REGISTRAR_GET_APP_LIST );
+	cMessage.AddString( "user", m->m_pzUser );
 	RegistrarAppList cReply;
 	
 	m->m_cServerLink.SendMessage( &cMessage, &cReply );

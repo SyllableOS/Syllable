@@ -32,11 +32,7 @@
 #include "bitmap.h"
 #include "sprite.h"
 
-extern "C"
-{
-#include "ddriver_mmx.h"
-#include "ddriver_mmx.c"
-}
+
 
 #include <gui/bitmap.h>
 
@@ -46,6 +42,7 @@ using namespace os;
 #define RAS_OFFSET16( ptr, x, y, bpl ) ((uint16*)(((uint8*)(ptr)) + (x*2) + (y) * (bpl)))
 #define RAS_OFFSET32( ptr, x, y, bpl ) ((uint32*)(((uint8*)(ptr)) + (x*4) + (y) * (bpl)))
 
+#include "ddriver_mmx.cpp"
 
 Color32_s g_asDefaultPallette[] = {
 	Color32_s( 0x00, 0x00, 0x00, 0xff ),	// 0
@@ -545,8 +542,14 @@ void DisplayDriver::FillBlit16( uint16 *pDst, int nMod, int W, int H, uint16 nCo
 
 void DisplayDriver::FillBlit32( uint32 *pDst, int nMod, int W, int H, uint32 nColor )
 {
+	if( g_bUseMMX )
+	{
+		mmx_fill32( pDst, nMod, W, H, nColor );
+		emms();
+		return;
+	}
+	
 	int X, Y;
-
 	for( Y = 0; Y < H; ++Y )
 	{
 		for( X = 0; X < W; ++X )
@@ -583,23 +586,31 @@ void DisplayDriver::FillAlpha16( uint16 *pDst, int nMod, int W, int H, uint32 nC
 		pDst += nMod;
 	}
 }
-
 void DisplayDriver::FillAlpha32( uint32 *pDst, int nMod, int W, int H, uint32 nColor, uint32 nFlags )
 {
+	if( g_bUseMMX )
+	{
+		mmx_fill_alpha32( pDst, nMod, W, H, nColor, nFlags );
+		emms();
+		return;
+	}
+	
 	uint32 nAlpha = nColor >> 24;
-			
+	bool bNoAlphaChannel = nFlags & Bitmap::NO_ALPHA_CHANNEL;
 	for( int y = 0; y < H; ++y )
 	{
 		for( int x = 0; x < W; ++x )
 		{
-			uint32 nSrcColor = nColor;
-			
-			if( nAlpha > 0xf0 && ( nFlags & Bitmap::NO_ALPHA_CHANNEL ) )
-				*pDst = 0xff000000 | ( nSrcColor & 0x00ffffff );
-			else if( nAlpha == 0xff )
-				*pDst = ( *pDst & 0xff000000 ) | ( nSrcColor & 0x00ffffff );
-			else if( nAlpha != 0x00 )
+			if( nAlpha == 0xff )
 			{
+				if( bNoAlphaChannel )
+					*pDst = ( 0xff000000 ) | ( nColor & 0x00ffffff );
+				else
+					*pDst = ( *pDst & 0xff000000 ) | ( nColor & 0x00ffffff );
+			}
+			else
+			{
+				uint32 nSrcColor = nColor;			
 				uint32 nDstColor = *pDst;
 				uint32 nSrc1;
 				uint32 nDst1;
@@ -682,11 +693,13 @@ static inline void Blit( uint8 *Src, uint8 *Dst, int SMod, int DMod, int W, int 
 		{
 			Src -= W - 1;
 			Dst -= W - 1;
-			for( Y = 0; Y < H; Y++ )
+			DMod += W;
+			SMod += W;
+			for( Y = 0; Y < H; ++Y )
 			{
 				mmx_revcpy( Dst, Src, W );
-				Dst -= W + DMod;
-				Src -= W + SMod;
+				Dst -= DMod;
+				Src -= SMod;
 			}
 			return;
 		}
@@ -725,11 +738,13 @@ static inline void Blit( uint8 *Src, uint8 *Dst, int SMod, int DMod, int W, int 
 	{
 		if( g_bUseMMX )
 		{
-			for( Y = 0; Y < H; Y++ )
+			DMod += W;
+			SMod += W;
+			for( Y = 0; Y < H; ++Y )
 			{
 				mmx_memcpy( Dst, Src, W );
-				Dst += W + DMod;
-				Src += W + SMod;
+				Dst += DMod;
+				Src += SMod;
 			}
 			return;
 		}
@@ -829,7 +844,7 @@ static inline void BitBlit( SrvBitmap * sbm, SrvBitmap * dbm, int sx, int sy, in
 		}
 	}
 	if( g_bUseMMX )
-		mmx_end();
+		emms();
 }
 
 //----------------------------------------------------------------------------
@@ -875,7 +890,7 @@ static inline void blit_convert_copy( SrvBitmap * pcDst, SrvBitmap * pcSrc, cons
 						pDst = ( uint8 * )( ( ( uint8 * )pDst ) + nDstModulo );
 					}
 					if( g_bUseMMX )
-						mmx_end();
+						emms();
 					break;
 				}
 			case CS_RGB16:
@@ -918,7 +933,6 @@ static inline void blit_convert_copy( SrvBitmap * pcDst, SrvBitmap * pcSrc, cons
 	case CS_RGB16:
 		{
 			uint16 *pSrc = RAS_OFFSET16( pcSrc->m_pRaster, cSrcRect.left, cSrcRect.top, pcSrc->m_nBytesPerLine );
-			int nSrcModulo = pcSrc->m_nBytesPerLine - ( cSrcRect.Width() + 1 ) * 2;
 
 			switch ( ( int )pcDst->m_eColorSpc )
 			{
@@ -932,36 +946,49 @@ static inline void blit_convert_copy( SrvBitmap * pcDst, SrvBitmap * pcSrc, cons
 					}
 
 					uint16 *pDst = RAS_OFFSET16( pcDst->m_pRaster, cDstPos.x, cDstPos.y, pcDst->m_nBytesPerLine );
-					int nDstModulo = pcDst->m_nBytesPerLine - ( cSrcRect.Width() + 1 ) * 2;
+		
+					int nDstModulo = pcDst->m_nBytesPerLine / 2;
+					int nSrcModulo = pcSrc->m_nBytesPerLine / 2;			
+					int nWidth = 2 * ( cSrcRect.right - cSrcRect.left + 1 );
 
-					for( int y = cSrcRect.top; y <= cSrcRect.bottom; ++y )
-					{
-						if( g_bUseMMX )
-							mmx_memcpy( ( uint8 * )pDst, ( uint8 * )pSrc, 2 * ( cSrcRect.right - cSrcRect.left + 1 ) );
-						else
-							memcpy( ( uint8 * )pDst, ( uint8 * )pSrc, 2 * ( cSrcRect.right - cSrcRect.left + 1 ) );
-						pSrc += ( cSrcRect.right - cSrcRect.left + 1 );
-						pDst += ( cSrcRect.right - cSrcRect.left + 1 );
-						pSrc = ( uint16 * )( ( ( uint8 * )pSrc ) + nSrcModulo );
-						pDst = ( uint16 * )( ( ( uint8 * )pDst ) + nDstModulo );
-					}
 					if( g_bUseMMX )
-						mmx_end();
+					{
+						for( int y = cSrcRect.top; y <= cSrcRect.bottom; ++y )
+						{
+							mmx_memcpy( ( uint8 * )pDst, ( uint8 * )pSrc, nWidth );
+							pSrc += nSrcModulo;
+							pDst += nDstModulo;
+						
+						}
+						emms();
+					}				
+					else
+					{
+						for( int y = cSrcRect.top; y <= cSrcRect.bottom; ++y )
+						{
+							memcpy( ( uint8 * )pDst, ( uint8 * )pSrc, nWidth );
+							pSrc += nSrcModulo;
+							pDst += nDstModulo;
+						
+						}
+					}				
 					break;
 				}
 			case CS_RGB32:
 			case CS_RGBA32:
 				{
 					uint32 *pDst = RAS_OFFSET32( pcDst->m_pRaster, cDstPos.x, cDstPos.y, pcDst->m_nBytesPerLine );
-					int nDstModulo = pcDst->m_nBytesPerLine - ( cSrcRect.Width() + 1 ) * 4;
+					int nDstModulo = ( pcDst->m_nBytesPerLine - ( cSrcRect.Width() + 1 ) * 4 ) / 4;
+					int nSrcModulo = ( pcSrc->m_nBytesPerLine - ( cSrcRect.Width() + 1 ) * 2 ) / 2;
+					int nWidth = ( cSrcRect.right - cSrcRect.left + 1 );
 
 					for( int y = cSrcRect.top; y <= cSrcRect.bottom; ++y )
 					{
 						if( g_bUseMMX )
 						{
 							mmx_rgb16_to_rgb32( ( uint8 * )pSrc, ( uint8 * )pDst, cSrcRect.Width() + 1 );
-							pSrc += cSrcRect.Width() + 1;
-							pDst += cSrcRect.Width() + 1;
+							pSrc += nWidth;
+							pDst += nWidth;
 						}
 						else
 						{
@@ -970,11 +997,11 @@ static inline void blit_convert_copy( SrvBitmap * pcDst, SrvBitmap * pcSrc, cons
 								*pDst++ = COL_TO_RGB32( RGB16_TO_COL( *pSrc++ ) );
 							}
 						}
-						pSrc = ( uint16 * )( ( ( uint8 * )pSrc ) + nSrcModulo );
-						pDst = ( uint32 * )( ( ( uint8 * )pDst ) + nDstModulo );
+						pSrc += nSrcModulo;
+						pDst += nDstModulo;
 					}
 					if( g_bUseMMX )
-						mmx_end();
+						emms();
 					break;
 				}
 			}
@@ -984,22 +1011,23 @@ static inline void blit_convert_copy( SrvBitmap * pcDst, SrvBitmap * pcSrc, cons
 	case CS_RGBA32:
 		{
 			uint32 *pSrc = RAS_OFFSET32( pcSrc->m_pRaster, cSrcRect.left, cSrcRect.top, pcSrc->m_nBytesPerLine );
-			int nSrcModulo = pcSrc->m_nBytesPerLine - ( cSrcRect.Width() + 1 ) * 4;
 
 			switch ( ( int )pcDst->m_eColorSpc )
 			{
 			case CS_RGB16:
 				{
 					uint16 *pDst = RAS_OFFSET16( pcDst->m_pRaster, cDstPos.x, cDstPos.y, pcDst->m_nBytesPerLine );
-					int nDstModulo = pcDst->m_nBytesPerLine - ( cSrcRect.Width() + 1 ) * 2;
+					int nDstModulo = ( pcDst->m_nBytesPerLine - ( cSrcRect.Width() + 1 ) * 2 ) / 2;
+					int nSrcModulo = ( pcSrc->m_nBytesPerLine - ( cSrcRect.Width() + 1 ) * 4 ) / 4;					
+					int nWidth = ( cSrcRect.right - cSrcRect.left + 1 );
 
 					for( int y = cSrcRect.top; y <= cSrcRect.bottom; ++y )
 					{
 						if( g_bUseMMX )
 						{
-							mmx_rgb32_to_rgb16( ( uint8 * )pSrc, ( uint8 * )pDst, cSrcRect.Width() + 1 );
-							pSrc += cSrcRect.Width() + 1;
-							pDst += cSrcRect.Width() + 1;
+							mmx_rgb32_to_rgb16( ( uint8 * )pSrc, ( uint8 * )pDst, nWidth );
+							pSrc += nWidth;
+							pDst += nWidth;
 						}
 						else
 						{
@@ -1008,11 +1036,11 @@ static inline void blit_convert_copy( SrvBitmap * pcDst, SrvBitmap * pcSrc, cons
 								*pDst++ = COL_TO_RGB16( RGB32_TO_COL( *pSrc++ ) );
 							}
 						}
-						pSrc = ( uint32 * )( ( ( uint8 * )pSrc ) + nSrcModulo );
-						pDst = ( uint16 * )( ( ( uint8 * )pDst ) + nDstModulo );
+						pSrc += nSrcModulo;
+						pDst += nDstModulo;
 					}
 					if( g_bUseMMX )
-						mmx_end();
+						emms();
 					break;
 				}
 			case CS_RGB32:
@@ -1024,21 +1052,27 @@ static inline void blit_convert_copy( SrvBitmap * pcDst, SrvBitmap * pcSrc, cons
 						break;
 					}
 					uint32 *pDst = RAS_OFFSET32( pcDst->m_pRaster, cDstPos.x, cDstPos.y, pcDst->m_nBytesPerLine );
-					int nDstModulo = pcDst->m_nBytesPerLine - ( cSrcRect.Width() + 1 ) * 4;
+					int nDstModulo = pcDst->m_nBytesPerLine / 4;
+					int nSrcModulo = pcSrc->m_nBytesPerLine / 4;					
+					int nWidth = 4 * ( cSrcRect.right - cSrcRect.left + 1 );
 
-					for( int y = cSrcRect.top; y <= cSrcRect.bottom; ++y )
-					{
-						if( g_bUseMMX )
-							mmx_memcpy( ( uint8 * )pDst, ( uint8 * )pSrc, 4 * ( cSrcRect.right - cSrcRect.left + 1 ) );
-						else
-							memcpy( ( uint8 * )pDst, ( uint8 * )pSrc, 4 * ( cSrcRect.right - cSrcRect.left + 1 ) );
-						pSrc += ( cSrcRect.right - cSrcRect.left + 1 );
-						pDst += ( cSrcRect.right - cSrcRect.left + 1 );
-						pSrc = ( uint32 * )( ( ( uint8 * )pSrc ) + nSrcModulo );
-						pDst = ( uint32 * )( ( ( uint8 * )pDst ) + nDstModulo );
-					}
 					if( g_bUseMMX )
-						mmx_end();
+					{
+						for( int y = cSrcRect.top; y <= cSrcRect.bottom; ++y ) {
+							mmx_memcpy( ( uint8 * )pDst, ( uint8 * )pSrc, nWidth );							
+							pSrc += nSrcModulo;
+							pDst += nDstModulo;
+						}
+						emms();
+					}
+					else
+					{
+						for( int y = cSrcRect.top; y <= cSrcRect.bottom; ++y ) {
+							memcpy( ( uint8 * )pDst, ( uint8 * )pSrc, nWidth );
+							pSrc += nSrcModulo;
+							pDst += nDstModulo;
+						}					
+					}
 					break;
 				}
 			}
@@ -1221,6 +1255,7 @@ static inline void blit_convert_alpha( SrvBitmap * pcDst, SrvBitmap * pcSrc, con
 {
 	uint32 *pSrc = RAS_OFFSET32( pcSrc->m_pRaster, cSrcRect.left, cSrcRect.top, pcSrc->m_nBytesPerLine );
 	int nSrcModulo = pcSrc->m_nBytesPerLine - ( cSrcRect.Width() + 1 ) * 4;
+	bool bNoAlphaChannel = pcDst->m_nFlags & Bitmap::NO_ALPHA_CHANNEL;
 
 	switch ( ( int )pcDst->m_eColorSpc )
 	{
@@ -1266,40 +1301,50 @@ static inline void blit_convert_alpha( SrvBitmap * pcDst, SrvBitmap * pcSrc, con
 			uint32 *pDst = RAS_OFFSET32( pcDst->m_pRaster, cDstPos.x, cDstPos.y, pcDst->m_nBytesPerLine );
 			int nDstModulo = pcDst->m_nBytesPerLine - ( cSrcRect.Width() + 1 ) * 4;
 
-			nSrcModulo >>= 2;
-			nDstModulo >>= 2;
-			
-			for( int y = cSrcRect.top; y <= cSrcRect.bottom; ++y )
+			if( g_bUseMMX )
 			{
-				
-				for( int x = cSrcRect.left; x <= cSrcRect.right; ++x )
-				{
-					uint32 nSrcColor = *pSrc++;
-					uint32 nAlpha = nSrcColor >> 24;
-								
-					if( nAlpha > 0xf0 && ( pcDst->m_nFlags & Bitmap::NO_ALPHA_CHANNEL ) )
-						*pDst = 0xff000000 | ( nSrcColor & 0x00ffffff );
-					else if( nAlpha == 0xff )
-						*pDst = ( *pDst & 0xff000000 ) | ( nSrcColor & 0x00ffffff );
-					else if( nAlpha != 0x00 )
-					{
-						uint32 nDstColor = *pDst;
-						uint32 nSrc1;
-						uint32 nDst1;
-						uint32 nDstAlpha = nDstColor & 0xff000000;
+				mmx_blit_alpha32( pcDst, pcSrc, cSrcRect, cDstPos );
+				emms();
+				return;
+			}
+			else
+			{
+				nSrcModulo >>= 2;
+				nDstModulo >>= 2;
 
-						nSrc1 = nSrcColor & 0xff00ff;
-						nDst1 = nDstColor & 0xff00ff;
-						nDst1 = ( nDst1 + ( ( nSrc1 - nDst1 ) * nAlpha >> 8 ) ) & 0xff00ff;
-						nSrcColor &= 0xff00;
-						nDstColor &= 0xff00;
-						nDstColor = ( nDstColor + ( ( nSrcColor - nDstColor ) * nAlpha >> 8)) & 0xff00;
-						*pDst = nDst1 | nDstColor | nDstAlpha;
+				uint32 nSrcColor;
+
+				for( int y = cSrcRect.top; y <= cSrcRect.bottom; ++y )
+				{
+					for( int x = cSrcRect.left; x <= cSrcRect.right; ++x )
+					{
+						nSrcColor = *pSrc++;
+						uint32 nAlpha = nSrcColor >> 24;
+								
+						if( nAlpha == 0xff && bNoAlphaChannel )
+							*pDst = 0xff000000 | ( nSrcColor & 0x00ffffff );
+						else if( nAlpha == 0xff )
+							*pDst = ( *pDst & 0xff000000 ) | ( nSrcColor & 0x00ffffff );
+						else if( nAlpha != 0x00 )
+						{
+							uint32 nDstColor = *pDst;
+							uint32 nSrc1;
+							uint32 nDst1;
+							uint32 nDstAlpha = nDstColor & 0xff000000;
+
+							nSrc1 = nSrcColor & 0xff00ff;
+							nDst1 = nDstColor & 0xff00ff;
+							nDst1 = ( nDst1 + ( ( nSrc1 - nDst1 ) * nAlpha >> 8 ) ) & 0xff00ff;
+							nSrcColor &= 0xff00;
+							nDstColor &= 0xff00;
+							nDstColor = ( nDstColor + ( ( nSrcColor - nDstColor ) * nAlpha >> 8)) & 0xff00;
+							*pDst = nDst1 | nDstColor | nDstAlpha;
+						}
+						pDst++;
 					}
-					pDst++;
+					pSrc = pSrc + nSrcModulo;
+					pDst = pDst + nDstModulo;			
 				}
-				pSrc = pSrc + nSrcModulo;
-				pDst = pDst + nDstModulo;
 			}
 			break;
 		}
@@ -1606,10 +1651,10 @@ static inline void blit_convert_stretch_alpha( SrvBitmap * pcDst, SrvBitmap * pc
 				
 				for( int x = cDstRect.left; x <= cDstRect.right; ++x )
 				{
-					if( nAlpha > 0xf0 && ( pcDst->m_nFlags & Bitmap::NO_ALPHA_CHANNEL ) )
+					if( nAlpha == 0xff && ( pcDst->m_nFlags & Bitmap::NO_ALPHA_CHANNEL ) )
 						*pDst++ = 0xff000000 | ( nSrc & 0x00ffffff );
 					else if( nAlpha == 0xff )
-						*pDst++ = ( *pDst & 0xff000000 ) | ( nSrc & 0x00ffffff );
+						*pDst++ = ( ( *pDst ) & 0xff000000 ) | ( nSrc & 0x00ffffff );
 					else if( nAlpha != 0x00 )
 					{
 						uint32 nDstColor = *pDst;
@@ -1706,6 +1751,7 @@ void DisplayDriver::RenderGlyph( SrvBitmap * pcBitmap, Glyph * pcGlyph, const IP
 {
 	IRect cBounds = pcGlyph->m_cBounds + cPos;
 	IRect cRect = cBounds & cClipRect;
+	bool bNoAlphaChannel = pcBitmap->m_nFlags & Bitmap::NO_ALPHA_CHANNEL;
 	
 	if( cRect.IsValid() == false )
 	{
@@ -1769,18 +1815,28 @@ void DisplayDriver::RenderGlyph( SrvBitmap * pcBitmap, Glyph * pcGlyph, const IP
 		uint32 *pDst = ( uint32 * )pcBitmap->m_pRaster + cRect.left + cRect.top * pcBitmap->m_nBytesPerLine / 4;
 
 		uint32 nFgColor = COL_TO_RGB32( sFgColor );
+		
+		if( g_bUseMMX )
+		{
+			mmx_render_glyph_over32( pDst, pSrc, nWidth, nHeight, nFgColor, nDstModulo, nSrcModulo,
+									bNoAlphaChannel );
+			emms();
+			UnlockBitmap( pcBitmap, NULL, IRect(), cRect );
+			return;
+		}
+		
 
 		for( int y = 0; y < nHeight; ++y )
 		{
 			for( int x = 0; x < nWidth; ++x )
 			{
-				int nAlpha = *pSrc++;
+				uint32 nAlpha = *pSrc++;
 
 				if( nAlpha > 0 )
 				{
 					if( nAlpha == NUM_FONT_GRAYS - 1 )
 					{
-						if( pcBitmap->m_nFlags & Bitmap::NO_ALPHA_CHANNEL )
+						if( bNoAlphaChannel )
 							*pDst = 0xff000000 | ( nFgColor & 0x00ffffff );
 						else {
 							uint32 nDstAlpha = *pDst & 0xff000000;
