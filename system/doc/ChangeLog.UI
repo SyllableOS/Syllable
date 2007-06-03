@@ -1,3 +1,7 @@
+* June 3, 2007, Arno Klenke *
+
+Moved all appserver mmx code to ddriver_mmx.cpp
+
 * May 23, 2007, Rick Caudill *
 
 Added Documentation to wndborder.cpp and wndborder.h
@@ -1405,6 +1409,8 @@ disabled controls.  The following files have been patched:
 
 	The sub-menu arrow is now drawn corretly, and menus which have children
 	are now drawn slightly larger to allow for the arrow.
+
+
 
 
 
