@@ -38,7 +38,8 @@ enum
 	DOCK_ABOUT,
 	DOCK_ABOUT_ALERT,
 	DOCK_QUIT_ALERT,
-	DOCK_WINDOW_EV
+	DOCK_WINDOW_EV,
+	DOCK_APP_LIST_EV
 };
 
 
@@ -473,6 +474,11 @@ DockWin::DockWin() :
 	m_pcWindowEv = new os::Event();
 	m_pcWindowEv->SetToRemote( "os/Window/", -1 );
 	m_pcWindowEv->SetMonitorEnabled( true, this, DOCK_WINDOW_EV );
+	
+	/* Bind to application list event */
+	m_pcAppListEv = new os::Event();
+	m_pcAppListEv->SetToRemote( "os/Registrar/AppList", -1 );
+	m_pcAppListEv->SetMonitorEnabled( true, this, DOCK_APP_LIST_EV );
 }
 
 DockWin::~DockWin()
@@ -548,7 +554,7 @@ void DockWin::HandleMessage( os::Message* pcMessage )
 {
 	switch( pcMessage->GetCode() )
 	{
-		case os::M_NODE_MONITOR:
+		case DOCK_APP_LIST_EV:
 		{
 			m_pcView->InvalidateSyllableMenu();
 			break;

@@ -35,11 +35,8 @@ public:
 	DockMenu( os::Handler* pcHandler, os::Rect cFrame, const char* pzName, os::MenuLayout_e eLayout );
 	~DockMenu();
 	os::MenuItem* FindMenuItem( os::String zName );
-	void AddEntry( os::RegistrarManager* pcManager, os::String zCategory, os::Path cPath,  bool bUseDirIcon, os::Path cDir );
-	void ScanPath( int nLevel, os::Path cPath );
+	void AddEntry( os::RegistrarManager* pcManager, os::String zApplicationName, os::String zCategory, os::Path cPath,  bool bUseDirIcon, os::Path cDir );
 private:
-	os::NodeMonitor* m_pcMonitor;
-	os::String cPrimaryLanguage;
 };
 
 #endif

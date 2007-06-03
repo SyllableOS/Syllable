@@ -179,6 +179,7 @@ private:
 	os::Event* m_pcSetPluginsEv;
 	os::Event* m_pcGetPosEv;
 	os::Event* m_pcSetPosEv;
+	os::Event* m_pcAppListEv;
 };
 
 

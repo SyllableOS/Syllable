@@ -33,14 +33,34 @@
 DockMenu::DockMenu( os::Handler* pcHandler, os::Rect cFrame, const char* pzName, os::MenuLayout_e eLayout )
 	 	: os::Menu( cFrame, pzName, eLayout )
 {
-	ScanPath( 1, os::Path( "/boot/Applications" ) );
-	/* Create a nodemonitor for this directory */
-	m_pcMonitor = new os::NodeMonitor( os::Path( "/boot/Applications" ), NWATCH_ALL, pcHandler );
+	
+	
+	/* Get the registrar manager */
+	os::RegistrarManager* pcManager = NULL;
+	try
+	{
+		pcManager = os::RegistrarManager::Get();
+	} catch( ... )
+	{
+	}
+	
+	if( pcManager == NULL )
+		return;
+	
+	/* Get application list */
+	os::RegistrarAppList cList = pcManager->GetAppList();
+	
+	/* Add entries */
+	for( int i = 0; i < cList.GetCount(); i++ )
+		AddEntry( pcManager, cList.GetName( i ), cList.GetCategory( i ), cList.GetPath( i ), 
+			os::Path( cList.GetPath( i ) ).GetDir().GetLeaf() == "Preferences",
+			os::Path( cList.GetPath( i ) ).GetDir() );
+	
+	pcManager->Put();
 }
 
 DockMenu::~DockMenu()
 {
-	delete( m_pcMonitor );
 }
 
 /* The FindItem() method of the Menu class does not return submenus */
@@ -55,13 +75,13 @@ os::MenuItem* DockMenu::FindMenuItem( os::String zName )
 	return( NULL );
 }
 
-void DockMenu::AddEntry( os::RegistrarManager* pcManager, os::String zCategory, os::Path cPath, bool bUseDirIcon, os::Path cDir )
+void DockMenu::AddEntry( os::RegistrarManager* pcManager, os::String zApplicationName, os::String zCategory, os::Path cPath, bool bUseDirIcon, os::Path cDir )
 {
 	os::String zTemp;
 	os::Image* pcItemIcon = NULL;
 	os::Image* pcCategoryIcon = NULL;
 	
-	
+	//printf( "Add %s %i %s\n", zApplicationName.c_str(), bUseDirIcon, cDir.GetPath().c_str() );
 	/* Get the icons */
 	if( pcManager )
 	{
@@ -134,150 +154,14 @@ void DockMenu::AddEntry( os::RegistrarManager* pcManager, os::String zCategory, 
 	/* Create the menu item */
 	os::Message *pcMsg = new os::Message( 10002 );
 	pcMsg->AddString( "file/path", cPath.GetPath() );
-	// Get the catalog name.
-	os::String cCatalogName;
-	try {
-		os::File cResFile( cPath.GetPath() );
-		os::Resources cRes( &cResFile );
-		cRes.DetachStream();
-		for( int i = 0 ; i < cRes.GetResourceCount() ; ++i )
-			if( strstr( cRes.GetResourceName( i ).c_str(), ".catalog" ) != 0 && strstr( cRes.GetResourceName( i ).c_str(), "/" ) == 0)
-				cCatalogName = cRes.GetResourceName( i );
-	} catch( ... ) { }
-	// And load the catalog, if it exists.
-	os::String cApplicationName = cPath.GetLeaf();
-	try { 
-		os::File cAppFile( cPath.GetPath() );
-		os::Resources cRes( &cAppFile );
-		cRes.DetachStream();
-		os::ResStream* pcSrc = cRes.GetResourceStream( ( cPrimaryLanguage + "/" + cCatalogName ) );
-		if( pcSrc != NULL )
-		{
-			try {
-				os::Catalog c;
-				c.Load( pcSrc );
-				cApplicationName = c.GetString( 0, cPath.GetLeaf() );
-			} catch( ... ) { }
-			delete( pcSrc );
-		}
-	} catch( ... ) { }
-	pcAddMenu->AddItem( new os::MenuItem( cApplicationName, pcMsg, "", pcItemIcon ) );
+	
+	pcAddMenu->AddItem( new os::MenuItem( zApplicationName, pcMsg, "", pcItemIcon ) );
 }
 
-void DockMenu::ScanPath( int nLevel, os::Path cPath )
-{
-	/* We would like to know the users primary language, so we can get the application-names */
-	try {
-		os::Settings* pcSettings = new os::Settings( new os::File( os::String( getenv( "HOME" ) ) + os::String( "/Settings/System/Locale" ) ) );
-		pcSettings->Load();
-		cPrimaryLanguage = pcSettings->GetString("LANG","",0);
-		delete( pcSettings );
-	} catch(...) { }
 
-	/* Check if the directory is valid */
-	os::FSNode* pcNode = NULL;
-	try
-	{
-		pcNode = new os::FSNode( cPath.GetPath() );
-	} catch( ... ) {
-		return;
-	}
-	if( !pcNode->IsValid() )
-	{
-		delete( pcNode );
-		return;
-	}
-	delete( pcNode );
-	
-	/* Iterate through the directory */
-	os::Directory cDir( cPath.GetPath() );
-	cDir.Rewind();
-	os::String zFile;
-	
-	/* Get the registrar manager */
-	os::RegistrarManager* pcManager = NULL;
-	try
-	{
-		pcManager = os::RegistrarManager::Get();
-	} catch( ... )
-	{
-	}
-	
-	while( cDir.GetNextEntry( &zFile ) == 1 )
-	{
-		if( zFile == os::String( "." ) ||
-			zFile == os::String( ".." ) )
-			continue;
-		os::Path cFilePath = cPath;
-		
-		/* We do not want builder or any plugins */
-		if( zFile == "Builder" || zFile == "Plugins" )
-			continue;
-		
-		cFilePath.Append( zFile.c_str() );
-		
-		os::Image* pcItemIcon = NULL;
-		
-		/* Get icon */
-		os::FSNode cFileNode;
-		if( cFileNode.SetTo( cFilePath ) != 0 )
-		{
-			continue;
-		}
-		
-		if( cFileNode.IsDir() )
-		{
-			cFileNode.Unset();
-			/* Recursive scan (depth of scan is limited) */
-			if( nLevel < 5 )
-				ScanPath( nLevel + 1, cFilePath );
-			continue;
-		}
-		
-		/* Set default category */
-		os::String zCategory = "Other";
-		if( cPath.GetLeaf() == "Preferences" )
-			zCategory = "Preferences";
-		
-		
-		/* Check if this is an executable and read the category attribute
-		   Note: We do not use the registrar to speed things up */
-		cFileNode.RewindAttrdir();
-		os::String zAttrib;
 
-		bool bExecAttribFound = false;
-		bool bCategoryAttribFound = false;
-		while( cFileNode.GetNextAttrName( &zAttrib ) == 1 )
-		{
-			if( zAttrib == "os::MimeType" || zAttrib == "os::Category" )
-			{
-				char zBuffer[PATH_MAX];
-				memset( zBuffer, 0, PATH_MAX );
-				if( cFileNode.ReadAttr( zAttrib, ATTR_TYPE_STRING, zBuffer, 0, PATH_MAX ) > 0 )
-				{
-					if( os::String( zBuffer ) == "application/x-executable" ) {
-						bExecAttribFound = true;
-					} else {
-						zCategory = zBuffer;
-						bCategoryAttribFound = true;
-					}
-				}
-			}
-		}
 
-		if( !bExecAttribFound && !(	cFileNode.GetMode() & ( S_IXUSR|S_IXGRP|S_IXOTH ) ) || zCategory == "Ignore" )
-		{
-			cFileNode.Unset();
-			continue;
-		}
-		
-		
-		cFileNode.Unset();
-		
-		AddEntry( pcManager, zCategory, cFilePath, zCategory == "Preferences", cPath/*cCurrentDir*/ );
-	}
-	
-	if( pcManager )
-		pcManager->Put();
-}
+
+
+
 
