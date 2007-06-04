@@ -338,6 +338,8 @@ enum {
 	M_COLOR_REQUESTER_CANCELED,
 	M_COLOR_REQUESTED,
 	M_COLOR_REQUESTER_CHANGED,
+	
+	M_CLIPBOARD_CHANGED,
     
     /* Add new libsyllable message codes here. */
     
@@ -373,6 +375,7 @@ struct screen_mode
 #endif
 
 #endif	// __F_GUI_GUIDEFS_H__
+
 
 
 

@@ -21,10 +21,8 @@
 #ifndef __F_GUI_CLIPBOARD_H__
 #define __F_GUI_CLIPBOARD_H__
 
-#include <util/message.h>
-#include <util/locker.h>
 #include <util/string.h>
-
+#include <util/messenger.h>
 namespace os
 {
 #if 0
@@ -34,16 +32,71 @@ namespace os
 /** 
  * \ingroup util
  * \par Description:
+ *	A clipboard allows a user to save data that is "Cut" or "Copied" from an application.
+ *	A clipboard is very useful with TextViews and the such where users have massive amounts of data
+ *	that they want to manipulate.
  *
- * \sa
+ * \par Usage:
+ *	A clipboard can be very confusing to use so this little code can help you out a lot.
+ *
+ *	\par
+ *	If you wish to add a clip to the clipboard you can do:
+ *	\code
+ *			Clipboard cClipboard;
+ *
+ *			//we lock the clipboard and then we clear the data's contents
+ *			cClipboard.Lock();
+ *			cClipboard.Clear();
+ *			
+ *			//we get the clipboard message and then we add a string to it under "text/plain"
+ *			Message *pcData = cClipboard.GetData();
+ *			pcData->AddString( "text/plain", *pcBuffer );
+ *			
+ *			//we committ our changes and then we unlock the clipboard
+ *			cClipboard.Commit();
+ *			cClipboard.Unlock();
+ * \endcode
+ * \par
+ *	If you wish to get the clipboard contents, you can do:
+ * \code
+ *		const char *pzBuffer;
+ *		int nError;
+ *		Clipboard cClipboard;
+ *
+ *		//lock the clipboard and get the data from the clipboard
+ *		cClipboard.Lock();
+ *		Message *pcData = cClipboard.GetData();
+ *
+ *		//the data that is in the clipboard is plain text, so you find a string in the message that is "text/plain"
+ *		//nError will be 0 there isn't any strings in the message under the name "text/plain"
+ *		//The string "text/plain" will likely change to something a little more generic to allow more than just strings to be clipped. 
+ *		nError = pcData->FindString( "text/plain", &pzBuffer );
+ *
+ *		//add some error checking
+ *		if( nError == 0 )
+ *		{
+ *			//we found the data, so you can do whatever with the data
+ *		}
+ *
+ * \endcode
+ * \par
+ *	If you wish to monitor the activity of the clipboard you need to monitor its event:
+ * \code
+ *		m_pcMonitorEvent = new os::Event();
+ *		m_pcMonitorEvent->SetToRemote( "system/Clipboard/Receive", -1 );
+ *		m_pcMonitorEvent->SetMonitorEnabled( true, this ( your handler), MSG_CLIP_CHANGED (the code you will receive a message under) );
+ * \endcode
+ *
+ * \sa	os::TextView, os::Message, os::Event
  * \author	Kurt Skauen (kurt@atheos.cx)
+ * \author	Rick Caudill (rick@syllable.org)
  *****************************************************************************/
 
 class Clipboard
 {
 public:
-    Clipboard();
-    Clipboard( const String& cName );
+    Clipboard(const String& cName="");
+    
     ~Clipboard();
 
     bool	Lock();
@@ -53,16 +106,17 @@ public:
     void	Commit();
   
     Message* GetData();
-//  status_t SetData( Message* pcBuffer );
-  
+
 private:
-    Locker	m_cMutex;
-    String	m_cName;
-    port_id	m_hServerPort;
-    port_id	m_hReplyPort;
-    Message	m_cBuffer;
-    bool		m_bCleared;
+		void _PostEvent();
+		
+private:
+	class Private;
+	Private* m;
 };
 
 }
 #endif // __F_GUI_CLIPBOARD_H__
+
+
+
