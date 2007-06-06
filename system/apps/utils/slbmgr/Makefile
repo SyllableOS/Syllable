@@ -8,7 +8,7 @@ EXE	= "System Information"
 $(EXE) : catalogs $(OBJS)
 	$(CXX) $(OBJS) -lsyllable -o "System Information"
 	strip --strip-all $(EXE)
-	rescopy -r $(EXE) icons/*.png
+	rescopy -a $(EXE) icons/*.png
 	rescopy -a $(EXE) resources/SysInfo.catalog
 	for CATALOG in $(CATALOGS);do \
 		echo $$CATALOG; \
@@ -26,10 +26,12 @@ catalogs:
 		cd ..; \
 	done;
 
-dist: $(EXE)
-	-mkdir -p "$(IMAGE)/Applications/System Tools"
-	cp -f $(EXE) "$(IMAGE)/Applications/System Tools/System Information"
+install: $(EXE)
+	mkdir -p "$(IMAGE)/Applications/System Tools"
+	cp -f $(EXE) "$(IMAGE)/Applications/System Tools/System Information/"
 	ln -sf "/Applications/System Tools/System Information" $(IMAGE)/system/bin/SlbMgr
+
+dist: install
 
 clean:  
 	-rm -f $(OBJS)

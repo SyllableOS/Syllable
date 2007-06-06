@@ -6,8 +6,9 @@ EXE	= "Memory Monitor"
 CATALOGS = da de es fr hu nl pt-br ru sv
 
 $(EXE) : catalogs $(OBJS)
-	$(CXX) $(OBJS) -lsyllable -o $@
-	rescopy -r $(EXE) resources/MemoryMonitor.catalog
+	$(CXX) $(OBJS) -lsyllable -o "Memory Monitor"
+	strip --strip-all $(EXE)
+	rescopy -a $(EXE) resources/MemoryMonitor.catalog
 	for CATALOG in $(CATALOGS);do \
 		echo $$CATALOG; \
 		rescopy -a $(EXE) $$CATALOG/MemoryMonitor.catalog=resources/$$CATALOG/MemoryMonitor.catalog; \
@@ -27,8 +28,8 @@ catalogs:
 deps:
 
 install: $(EXE)
-	cp -f $(EXE) "$(IMAGE)/Applications/System Tools/$(EXE)"
-	strip --strip-all "$(IMAGE)/Applications/System Tools/$(EXE)"
+	mkdir -p "$(IMAGE)/Applications/System Tools"
+	cp -f $(EXE) "$(IMAGE)/Applications/System Tools/"
 
 dist: install
 
@@ -47,3 +48,4 @@ catalog-clean:
 
 main.o : main.cpp
 	$(CXX) $(COPTS) $< -o $@
+

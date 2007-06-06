@@ -6,8 +6,9 @@ EXE	= "CPU Monitor"
 CATALOGS = da de es fr hu nl pt-br ru sv
 
 $(EXE) : catalogs $(OBJS)
-	$(CXX) $(OBJS) -lsyllable -o $@
-	rescopy -r $(EXE) resources/CPU-Monitor.catalog
+	$(CXX) $(OBJS) -lsyllable -o "CPU Monitor"
+	strip --strip-all $(EXE)
+	rescopy -a $(EXE) resources/CPU-Monitor.catalog
 	for CATALOG in $(CATALOGS);do \
 		echo $$CATALOG; \
 		rescopy -a $(EXE) $$CATALOG/CPU-Monitor.catalog=resources/$$CATALOG/CPU-Monitor.catalog; \
@@ -25,8 +26,8 @@ catalogs:
 	done;
 
 install: $(EXE)
-	strip --strip-all $(EXE)
-	cp -f $(EXE) "$(IMAGE)/Applications/System Tools/$(EXE)"
+	mkdir -p "$(IMAGE)/Applications/System Tools"
+	cp -f $(EXE) "$(IMAGE)/Applications/System Tools/"
 
 dist: install
 
@@ -49,3 +50,4 @@ barview.o : barview.cpp barview.h
 	$(CXX) $(COPTS) $< -o $@
 graphview.o : graphview.cpp graphview.h
 	$(CXX) $(COPTS) $< -o $@
+
