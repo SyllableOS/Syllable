@@ -2,6 +2,7 @@
 ;lineage
 ;	.
 ;	AMD64
+;	Linux
 
 environment
 ;	Default anonymous access to the Syllable CVS repository:
@@ -33,7 +34,7 @@ cvs-path		syllable/system
 ; Isolate build in staging area from headers and libraries on the build host:
 ;isolate-stage
 ; Link (and run) newly built shared libraries on the build host to bootstrap:
-;bootstrap
+bootstrap
 ; Run newly built executables and shared libraries on the build host to bootstrap:
 ;bootstrap		full
 
