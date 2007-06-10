@@ -1,3 +1,15 @@
+* June 4, 2007, Rick Caudill *
+
+Added Documentation to os::Clipboard
+
+Added an event to os::Clipboard called "os/system/ClipMonitor" that will allow the clipboard 
+to be monitored for changes.
+
+affected files:
+	sys/include/util/clipboard.h
+	sys/include/gui/guidefines.h
+	sys/appserver/libsyllable/util/clipboard.cpp
+
 * June 3, 2007, Arno Klenke *
 
 Moved all appserver mmx code to ddriver_mmx.cpp
