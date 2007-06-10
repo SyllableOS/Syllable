@@ -571,13 +571,12 @@ again:
 		bDMA = true;
 	}
 	
+	/* Select port */
+	psPort->sOps.select( psPort, psCmd->nCmd[ATA_REG_DEVICE] );
+
 	/* Wait */
 	if( ata_io_wait( psPort, ATA_STATUS_BUSY, 0 ) != 0 )
 		goto err;
-		
-	
-	/* Select port */
-	psPort->sOps.select( psPort, psCmd->nCmd[ATA_REG_DEVICE] );
 	
 	/* Extra wait for ATAPI devices */
 	if( psPort->nDevice == ATA_DEV_ATAPI && psCmd->nCmd[ATA_REG_COMMAND] == ATAPI_CMD_IDENTIFY )
