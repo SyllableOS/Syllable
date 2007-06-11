@@ -13,12 +13,15 @@ build-recommends	pod2man
 
 build-dir			.
 
-configure-cmd		config
+configure-cmd
+	config
+;	Configure
 configure-args
 	--prefix=/usr
 	--openssldir=/usr/openssl
 configure-options
 	shared
+;	linux-elf
 	threads
 ;	-D_REENTRANT
 ;	386
@@ -31,4 +34,3 @@ test-targets
 ;documentation		README README.ENGINE FAQ PROBLEMS LICENSE NEWS doc
 ;develop-docs		INSTALL
 ;internal-docs		README.ASN1
-
