@@ -1,0 +1,8 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			nano-2.0.3
+
+needs
+
+configure-options	--enable-all
