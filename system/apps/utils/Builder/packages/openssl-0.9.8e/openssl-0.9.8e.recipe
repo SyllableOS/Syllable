@@ -1,0 +1,43 @@
+authors 			Kaj de Vos
+status				broken
+
+licenses			other
+home				www.openssl.org
+locations
+	ftp://ftp.openssl.org/source/
+	http://www.openssl.org/source/
+
+build-needs			perl >= 5
+build-recommends	pod2man
+recommends			kerberos5
+
+build-dir			.
+
+configure-cmd
+	config
+;	Configure
+; Doesn't work as advertized:
+_configure-args
+;	--prefix=/usr
+	--openssldir=/usr/openssl
+configure-options
+	threads
+;	-D_REENTRANT
+;	386
+;	shared
+;	linux-elf
+	zlib-dynamic
+
+test-targets
+	test
+;	report
+
+system-prefix-var	INSTALL_PREFIX
+install-vars
+	OPENSSLDIR '/usr/openssl'
+	INSTALLTOP '/usr/openssl'
+
+documentation		README README.ENGINE FAQ PROBLEMS LICENSE NEWS CHANGES doc
+develop-docs		INSTALL demos
+internal-docs		README.ASN1
+
