@@ -1191,12 +1191,8 @@ void SrvWindow::MouseUp( Message * pcEvent, bool bSendDragMsg )
 void SrvWindow::HandleMouseMoved( const Point & cMousePos, Message * pcEvent )
 {
 	SrvWindow *pcActiveWindow = get_active_window( false );
-	SrvWindow *pcActiveAppWindow = get_active_window( true );
 	SrvWindow *pcMouseWnd = NULL;
 	
-	if( pcActiveWindow == pcActiveAppWindow )
-		pcActiveAppWindow = NULL;
-
 	if( s_pcDragWindow != NULL )
 	{
 		s_pcDragWindow->m_pcWndBorder->MouseMoved( s_pcDragWindow->m_pcAppTarget, cMousePos - s_pcDragWindow->m_pcWndBorder->GetLeftTop(), MOUSE_INSIDE );
@@ -1221,18 +1217,13 @@ void SrvWindow::HandleMouseMoved( const Point & cMousePos, Message * pcEvent )
 			// Give the window a chance to deliver a MOUSE_EXITED to it's views
 			s_pcLastMouseWindow->MouseMoved( pcEvent, MOUSE_EXITED );
 			if( s_pcLastMouseWindow == pcActiveWindow )
-				pcActiveWindow = NULL;
-			if( s_pcLastMouseWindow == pcActiveAppWindow )
-				pcActiveAppWindow = NULL;
-				
+				pcActiveWindow = NULL;		
 		}
 		if( pcMouseWnd != NULL )
 		{
 			pcMouseWnd->MouseMoved( pcEvent, MOUSE_ENTERED );
 			if( pcMouseWnd == pcActiveWindow )
 				pcActiveWindow = NULL;
-			if( pcMouseWnd == pcActiveAppWindow )
-				pcActiveAppWindow = NULL;
 		}
 		s_pcLastMouseWindow = pcMouseWnd;
 	}
@@ -1243,15 +1234,10 @@ void SrvWindow::HandleMouseMoved( const Point & cMousePos, Message * pcEvent )
 			pcMouseWnd->MouseMoved( pcEvent, MOUSE_INSIDE );
 			if( pcMouseWnd == pcActiveWindow )
 				pcActiveWindow = NULL;
-			if( pcMouseWnd == pcActiveAppWindow )
-				pcActiveAppWindow = NULL;				
 		}
 	}
 	if( pcActiveWindow != NULL )
 		pcActiveWindow->MouseMoved( pcEvent, MOUSE_OUTSIDE );
-	if( pcActiveAppWindow != NULL )
-		pcActiveAppWindow->MouseMoved( pcEvent, MOUSE_OUTSIDE );
-
 }
 
 void SrvWindow::HandleMouseDown( const Point & cMousePos, int nButton, Message * pcEvent )
