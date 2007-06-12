@@ -1,6 +1,6 @@
 ## -*-makefile-*-
 ## Syllable-specific setup
-## Copyright (c) 1999-2006, International Business Machines Corporation and
+## Copyright (c) 1999-2007, International Business Machines Corporation and
 ## others. All Rights Reserved.
 
 ## Commands to generate dependency files
@@ -77,5 +77,4 @@ BIR_DEPS=
 # Use DLL_PATH instead of LD_LIBRARY_PATH
 LDLIBRARYPATH_ENVVAR= DLL_PATH
 
-## End Linux-specific setup
-
+## End Syllable-specific setup

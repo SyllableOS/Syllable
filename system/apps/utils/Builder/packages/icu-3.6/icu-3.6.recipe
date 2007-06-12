@@ -19,9 +19,10 @@ configure-cmd
 ;	source/runConfigureICU
 	source/configure
 
-_configure-options
+configure-options
+	--disable-threads
 	--enable-static
+;	--disable-shared
 	--disable-64bit-libs
 
 documentation		readme.html license.html
-
