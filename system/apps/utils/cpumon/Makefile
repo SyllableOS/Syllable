@@ -8,7 +8,7 @@ CATALOGS = da de es fr hu nl pt-br ru sv
 $(EXE) : catalogs $(OBJS)
 	$(CXX) $(OBJS) -lsyllable -o "CPU Monitor"
 	strip --strip-all $(EXE)
-	rescopy -a $(EXE) resources/CPU-Monitor.catalog
+	rescopy -r $(EXE) resources/CPU-Monitor.catalog
 	for CATALOG in $(CATALOGS);do \
 		echo $$CATALOG; \
 		rescopy -a $(EXE) $$CATALOG/CPU-Monitor.catalog=resources/$$CATALOG/CPU-Monitor.catalog; \
@@ -26,8 +26,8 @@ catalogs:
 	done;
 
 install: $(EXE)
-	mkdir -p "$(IMAGE)/Applications/System Tools"
-	cp -f $(EXE) "$(IMAGE)/Applications/System Tools/"
+	mkdir -p "$(IMAGE)/Applications/System Tools/System Information"
+	cp -f $(EXE) "$(IMAGE)/Applications/System Tools//System Information/"
 
 dist: install
 
