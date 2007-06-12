@@ -1,3 +1,7 @@
+* June 3, 2007, Arno Klenke *
+
+Change the dock to use the registrar application list
+
 * March 31, 2007, Kristian Van Der Vliet *
 
 Use an unlocked IconDirView in Filebrowser so backspace will change to parent dir.
@@ -208,4 +212,5 @@ Cleaned up message texts in DLogin.
 		* Added error testing for scaling images.  If the image is not bigger than the
  				screen resolution, the desktop will not scale the image.
 		* Fixed icon text color problems.
+
 
