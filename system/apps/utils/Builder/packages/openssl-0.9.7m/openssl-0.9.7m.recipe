@@ -17,11 +17,12 @@ configure-cmd		config
 ; Doesn't work as advertized:
 ;configure-args		--openssldir=/usr/openssl
 configure-options
-;	shared
-;	threads
-	zlib-dynamic
+	threads
 ;	-D_REENTRANT
 ;	386
+;	shared
+;	linux-elf
+	zlib-dynamic
 
 test-targets
 	test
@@ -35,4 +36,3 @@ install-vars
 documentation		README README.ENGINE FAQ PROBLEMS LICENSE NEWS CHANGES doc
 develop-docs		INSTALL demos
 internal-docs		README.ASN1
-
