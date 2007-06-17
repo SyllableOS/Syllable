@@ -3,8 +3,7 @@ title	Network Necessities
 name	NetworkNecessities
 
 modules
-;	network/openssl-0.9.7m
-;	network/openssl-0.9.8c
+;	network/openssl-0.9.8e
 	network/openssh-4.6p1
 	network/rsync-2.6.9
 ;	network/samba-3.0.20b
@@ -16,4 +15,3 @@ modules
 ;	network/im/centericq-4.21.0
 ;	network/irc/epic4-2.6
 ;	network/web/links-2.1pre14
-

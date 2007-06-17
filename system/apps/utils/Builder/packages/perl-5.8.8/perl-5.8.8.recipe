@@ -56,6 +56,7 @@ build-docs			INSTALL
 links
 	perl5.8.8							bin/perl
 	5.8.8/i586-syllable/CORE/libperl.so	lib/
+;	For OpenSSL and others:
 	bin/perl							/usr/bin/perl
-;	For OpenSSL:
+;	For OpenSSL?
 	bin/perl							/usr/local/bin/perl
