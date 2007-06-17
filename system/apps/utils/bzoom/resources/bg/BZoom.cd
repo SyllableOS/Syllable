@@ -1,0 +1,21 @@
+//
+//	BZoom String Catalog
+//
+//	Translated by: Hristo Benev
+//
+
+MSG_MAINWND_TITLE=0							BZoom
+
+MSG_MAINWND_MENU_APP=100					Приложение
+MSG_MAINWND_MENU_APP_EXIT					Изход
+
+MSG_MAINWND_MENU_VIEW=200					Изглед
+MSG_MAINWND_MENU_VIEW_MAGNIFICATION			Увеличение
+
+MSG_MAINWND_MENU_HELP=300					Помощ
+MSG_MAINWND_MENU_HELP_ABOUT					Относно
+
+MSG_ABOUTWND_TITLE=1000						Относно BZoom
+MSG_ABOUTWND_TEXT							BZoom V1.0\n\nе опростена лупа за пиксели за AtheOS.\nБазиран на AZoom от Chir.\nBZoom е под\nGNU GPL
+MSG_ABOUTWND_OK								Потвърди
+

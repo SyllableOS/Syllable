@@ -3,7 +3,7 @@ CXXFLAGS += -Wall -c -fexceptions
 
 EXE = Contact
 
-CATALOGS = bg da de fr nl ru sv
+CATALOGS = bg da de es fr nl ru sv
 
 OBJDIR = objs
 OBJS = main.o application.o mainwindow.o
