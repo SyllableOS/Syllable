@@ -1,3 +1,11 @@
+* Jun 17, 2007, Kristian Van Der Vliet *
+
+Added a TUN network driver, which was originally written by William Rose some
+time ago. The TUN driver can be used by user-space applications to act as
+network end-points. The driver is currently TUN only (I.e. no Ethernet
+headers, raw IP packets only): TAP mode (with fake Ethernet headers) is not
+supported.
+
 * May 25, 2007, Arno Klenke *
 
 Added the disable_device_on_bus() and enable_devices_on_bus() functions. All drivers that currently
