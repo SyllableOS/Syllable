@@ -112,4 +112,5 @@ links
 	libgcc.a		lib/gcc/i586-pc-syllable/4.1.2/libgcc_static.a
 ;	For some packages:
 ;	bin/cpp			lib/
-
+;	For WebKit:
+;	gcc				/usr/bin/
