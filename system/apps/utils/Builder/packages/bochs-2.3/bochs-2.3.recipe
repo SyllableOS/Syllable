@@ -1,0 +1,40 @@
+authors
+	Flemming Sørensen
+	Kaj de Vos
+	Kristian Van Der Vliet
+maintainers			Kaj de Vos
+status				testing
+
+inherits			sourceforge
+
+licenses			LGPL
+home				bochs/bochs.sf.net
+
+needs
+	sdl
+;	wxWidgets >= 2.3.3
+
+patch-config
+
+configure-options
+;	--enable-cpu-level=6
+;	--enable-sse=2
+;	--enable-sep
+	--enable-cpu-level=5
+	--enable-vme
+	--enable-mmx
+	--enable-icache
+	--enable-pci
+	--enable-fast-function-calls
+	--enable-all-optimizations
+	--enable-clgd54xx
+	--enable-vbe
+; Syllable TUN support is currently broken
+;	--enable-ne2000
+;	--enable-sb16=dummy
+	--with-sdl
+
+documentation
+	README README.rfb COPYING CHANGES TODO TESTFORM.txt
+;	PARAM_TREE.txt
+;	doc docs-html
