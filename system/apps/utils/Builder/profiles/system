@@ -209,6 +209,7 @@ modules
 	sys/kernel/drivers/net/skge
 	sys/kernel/drivers/net/tg3
 	sys/kernel/drivers/net/tulip
+	sys/kernel/drivers/net/tun
 	sys/kernel/drivers/net/via
 	sys/kernel/drivers/audio/i8xx
 	sys/kernel/drivers/audio/vt82xx
