@@ -17,6 +17,7 @@ needs
 patch-config
 
 configure-options
+	--with-sdl
 ;	--enable-cpu-level=6
 ;	--enable-sse=2
 ;	--enable-sep
@@ -29,10 +30,9 @@ configure-options
 	--enable-all-optimizations
 	--enable-clgd54xx
 	--enable-vbe
-; Syllable TUN support is currently broken
+;	Syllable TUN support is currently broken:
 ;	--enable-ne2000
 ;	--enable-sb16=dummy
-	--with-sdl
 
 documentation
 	README README.rfb COPYING CHANGES TODO TESTFORM.txt
