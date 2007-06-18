@@ -1,0 +1,29 @@
+authors
+	Kaj de Vos
+	Jamie Clarkson
+status				testing
+
+licenses			MIT
+home				xmlsoft.org
+locations
+	ftp://xmlsoft.org/libxml2/
+	http://xmlsoft.org/sources/
+
+;build-recommends	libiconv
+
+patch-config
+
+_configure-options
+;	--without-threads
+	--disable-ipv6
+
+test-targets		tests
+
+documentation
+	README Copyright NEWS ChangeLog TODO TODO_SCHEMAS AUTHORS
+;	Double:
+;	COPYING
+build-docs			INSTALL README.tests
+
+; For WebCore:
+links				libxml2/libxml include
