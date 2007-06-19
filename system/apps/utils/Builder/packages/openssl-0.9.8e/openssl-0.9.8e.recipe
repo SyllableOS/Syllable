@@ -18,19 +18,19 @@ recommends			kerberos5
 
 build-dir			.
 
-configure-cmd
-	config
-;	Configure
+configure			perl Configure linux-elf threads zlib-dynamic
+; Doesn't recognize Syllable:
+;configure-cmd		config
 ; Doesn't work as advertized:
 _configure-args
 ;	--prefix=/usr
 	--openssldir=/usr/openssl
 configure-options
+	linux-elf
 	threads
 ;	-D_REENTRANT
 ;	386
 ;	shared
-;	linux-elf
 	zlib-dynamic
 
 test-targets
