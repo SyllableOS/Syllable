@@ -57,6 +57,7 @@ modules
 	apps/desktop/dock_plugins/Address
 	apps/desktop/dock_plugins/Camera
 	apps/desktop/dock_plugins/ColdFishRemote
+	apps/desktop/dock_plugins/CpuSpeed
 	apps/desktop/dock_plugins/Meter
 	apps/desktop/dock_plugins/Switcher
 	apps/desktop/dock_plugins/WallpaperChanger
@@ -113,3 +114,4 @@ modules
 
 ;	1.8.5+ doesn't bootstrap:
 ;	apps/other/ruby-1.8.4
+

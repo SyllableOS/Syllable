@@ -168,6 +168,7 @@ modules
 	sys/kernel/drivers/bus/pci
 	sys/kernel/drivers/bus/scsi
 	sys/kernel/drivers/bus/usb
+	sys/kernel/drivers/cpu/acpi
 	sys/kernel/drivers/hcd/ata_pci
 	sys/kernel/drivers/hcd/usb_ehci
 	sys/kernel/drivers/hcd/usb_ohci
@@ -357,3 +358,4 @@ modules
 	apps/utils/man2html
 	apps/utils/nettools
 	apps/utils/systools
+
