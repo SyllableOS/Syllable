@@ -91,6 +91,21 @@ enum radeon_family {
 	CHIP_FAMILY_LAST,
 };
 
+#define IS_RV100_VARIANT(rinfo) (((rinfo)->family == CHIP_FAMILY_RV100)  || \
+				 ((rinfo)->family == CHIP_FAMILY_RV200)  || \
+				 ((rinfo)->family == CHIP_FAMILY_RS100)  || \
+				 ((rinfo)->family == CHIP_FAMILY_RS200)  || \
+				 ((rinfo)->family == CHIP_FAMILY_RV250)  || \
+				 ((rinfo)->family == CHIP_FAMILY_RV280)  || \
+				 ((rinfo)->family == CHIP_FAMILY_RS300))
+
+
+#define IS_R300_VARIANT(rinfo) (((rinfo)->family == CHIP_FAMILY_R300)  || \
+				((rinfo)->family == CHIP_FAMILY_RV350) || \
+				((rinfo)->family == CHIP_FAMILY_R350)  || \
+				((rinfo)->family == CHIP_FAMILY_RV380) || \
+				((rinfo)->family == CHIP_FAMILY_R420))
+
 /*
  * Chip flags
  */
@@ -100,6 +115,15 @@ enum radeon_chip_flags {
 	CHIP_IS_MOBILITY	= 0x00010000UL,
 	CHIP_IS_IGP		= 0x00020000UL,
 	CHIP_HAS_CRTC2	= 0x00040000UL,	
+};
+
+/*
+ * Errata workarounds
+ */
+enum radeon_errata {
+	CHIP_ERRATA_R300_CG		= 0x00000001,
+	CHIP_ERRATA_PLL_DUMMYREADS	= 0x00000002,
+	CHIP_ERRATA_PLL_DELAY		= 0x00000004,
 };
 
 /*
@@ -261,6 +285,7 @@ struct radeon_regs {
 	uint32		ppll_div_3;
 	uint32		ppll_ref_div;
 	uint32		vclk_ecp_cntl;
+	uint32		clk_cntl_index;	
 
 	/* Computed values for PLL2 */
 	uint32		dot_clock_freq_2;
@@ -354,6 +379,7 @@ struct radeon_info {
     int			chipset;
     uint8			family;
     uint8			rev;
+	unsigned int		errata;    
     unsigned long		video_ram;
 
     int			pitch, bpp, depth;
@@ -363,7 +389,6 @@ struct radeon_info {
     int			has_CRTC2;
     int			is_mobility;
     int			is_IGP;
-    int			R300_cg_workaround;
     int			reversed_DAC;
     int			reversed_TMDS;
     struct panel_info	panel_info;
@@ -392,7 +417,6 @@ struct radeon_info {
     /* Timer used for delayed LVDS operations */
     //ktimer_t	lvds_timer;
     uint32			pending_lvds_gen_cntl;
-    uint32			pending_pixclks_cntl;
 };
 
 // Video mode descriptor
@@ -525,9 +549,11 @@ private:
     inline uint32		pci_size(uint32 base, uint32 mask);
     uint32				get_pci_memory_size(int nFd, PCI_Info_s *pcPCIInfo, int nResource);
     uint32				get_pci_rom_memory_size(int nFd, PCI_Info_s *pcPCIInfo);
-    inline void 		R300_cg_workardound();
     inline uint32 	__INPLL(uint32 addr);
     inline uint32		INPLL(uint32 addr);
+    inline void		__OUTPLL(unsigned int index, uint32 val);
+    inline void		radeon_pll_errata_after_index();
+    inline void		radeon_pll_errata_after_data();    
     inline int round_div(int num, int den) { return (num + (den / 2)) / den; }
     inline uint32	 GetDstBpp(uint16 depth);
 };
@@ -548,30 +574,50 @@ private:
 #define OUTREG8(a, b)      *((vuint8 *)(rinfo.mmio_base + a)) = b
 #define INREG8(a)          *((vuint8 *)(rinfo.mmio_base + a))
 
-inline void ATIRadeon::R300_cg_workardound()
+
+inline void ATIRadeon::__OUTPLL(unsigned int index, uint32 val)
 {
-	uint32 save, tmp;
-	save = INREG(CLOCK_CNTL_INDEX);
-	tmp = save & ~(0x3f | PLL_WR_EN);
-	OUTREG(CLOCK_CNTL_INDEX, tmp);
-	tmp = INREG(CLOCK_CNTL_DATA);
-	OUTREG(CLOCK_CNTL_INDEX, save);
+
+	OUTREG8(CLOCK_CNTL_INDEX, (index & 0x0000003f) | 0x00000080);
+	radeon_pll_errata_after_index();
+	OUTREG(CLOCK_CNTL_DATA, val);
+	radeon_pll_errata_after_data();
 }
 
-#define __OUTPLL(addr,val)	\
-	do {	\
-		OUTREG8(CLOCK_CNTL_INDEX, (addr & 0x0000003f) | 0x00000080); \
-		OUTREG(CLOCK_CNTL_DATA, val); \
-} while(0)
+inline void ATIRadeon::radeon_pll_errata_after_index()
+{
+	if (!(rinfo.errata & CHIP_ERRATA_PLL_DUMMYREADS))
+		return;
+
+	(void)INREG(CLOCK_CNTL_DATA);
+	(void)INREG(CRTC_GEN_CNTL);
+}
+
+inline void ATIRadeon::radeon_pll_errata_after_data()
+{
+	if (rinfo.errata & CHIP_ERRATA_PLL_DELAY) {
+		/* we can't deal with posted writes here ... */
+		snooze( 5000 );
+	}
+	if (rinfo.errata & CHIP_ERRATA_R300_CG) {
+		uint32 save, tmp;
+		save = INREG(CLOCK_CNTL_INDEX);
+		tmp = save & ~(0x3f | PLL_WR_EN);
+		OUTREG(CLOCK_CNTL_INDEX, tmp);
+		tmp = INREG(CLOCK_CNTL_DATA);
+		OUTREG(CLOCK_CNTL_INDEX, save);
+	}
+}
+
 
 
 inline uint32 ATIRadeon::__INPLL(uint32 addr)
 {
 	uint32 data;
 	OUTREG8(CLOCK_CNTL_INDEX, addr & 0x0000003f);
+	radeon_pll_errata_after_index();	
 	data = (INREG(CLOCK_CNTL_DATA));
-	if (rinfo.R300_cg_workaround)
-		R300_cg_workardound();
+	radeon_pll_errata_after_data();
 	return data;
 }
 

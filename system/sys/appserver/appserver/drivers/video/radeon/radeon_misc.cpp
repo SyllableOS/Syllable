@@ -307,7 +307,6 @@ void ATIRadeon::PMDisableDynamicMode()
 			MCLK_CNTL_M6__FORCE_YCLKA |
 			MCLK_CNTL_M6__FORCE_YCLKB );
     	OUTPLL( pllMCLK_CNTL_M6, mclk_cntl);
-	return;
 }
 
 void ATIRadeon::PMEnableDynamicMode()
@@ -404,5 +403,6 @@ void ATIRadeon::PMEnableDynamicMode()
 			MCLK_MISC__IO_MCLK_DYN_ENABLE;	
 	
 	OUTPLL(pllMCLK_MISC, mclk_misc);
-	return;
 }
+
+

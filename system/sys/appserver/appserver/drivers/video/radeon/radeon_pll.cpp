@@ -171,6 +171,65 @@ int ATIRadeon::ProbePLLParams()
  */
 void ATIRadeon::GetPLLInfo()
 {
+	/* In the case nothing works, these are defaults; they are mostly
+	 * incomplete, however.  It does provide ppll_max and _min values
+	 * even for most other methods, however.
+	 */
+	switch (rinfo.chipset) {
+	case PCI_DEVICE_ID_ATI_RADEON_QW:
+	case PCI_DEVICE_ID_ATI_RADEON_QX:
+		rinfo.pll.ppll_max = 35000;
+		rinfo.pll.ppll_min = 12000;
+		rinfo.pll.mclk = 23000;
+		rinfo.pll.sclk = 23000;
+		rinfo.pll.ref_clk = 2700;
+		break;
+	case PCI_DEVICE_ID_ATI_RADEON_QL:
+	case PCI_DEVICE_ID_ATI_RADEON_QN:
+	case PCI_DEVICE_ID_ATI_RADEON_QO:
+	case PCI_DEVICE_ID_ATI_RADEON_Ql:
+	case PCI_DEVICE_ID_ATI_RADEON_BB:
+		rinfo.pll.ppll_max = 35000;
+		rinfo.pll.ppll_min = 12000;
+		rinfo.pll.mclk = 27500;
+		rinfo.pll.sclk = 27500;
+		rinfo.pll.ref_clk = 2700;
+		break;
+	case PCI_DEVICE_ID_ATI_RADEON_Id:
+	case PCI_DEVICE_ID_ATI_RADEON_Ie:
+	case PCI_DEVICE_ID_ATI_RADEON_If:
+	case PCI_DEVICE_ID_ATI_RADEON_Ig:
+		rinfo.pll.ppll_max = 35000;
+		rinfo.pll.ppll_min = 12000;
+		rinfo.pll.mclk = 25000;
+		rinfo.pll.sclk = 25000;
+		rinfo.pll.ref_clk = 2700;
+		break;
+	case PCI_DEVICE_ID_ATI_RADEON_ND:
+	case PCI_DEVICE_ID_ATI_RADEON_NE:
+	case PCI_DEVICE_ID_ATI_RADEON_NF:
+	case PCI_DEVICE_ID_ATI_RADEON_NG:
+		rinfo.pll.ppll_max = 40000;
+		rinfo.pll.ppll_min = 20000;
+		rinfo.pll.mclk = 27000;
+		rinfo.pll.sclk = 27000;
+		rinfo.pll.ref_clk = 2700;
+		break;
+	case PCI_DEVICE_ID_ATI_RADEON_QD:
+	case PCI_DEVICE_ID_ATI_RADEON_QE:
+	case PCI_DEVICE_ID_ATI_RADEON_QF:
+	case PCI_DEVICE_ID_ATI_RADEON_QG:
+	default:
+		rinfo.pll.ppll_max = 35000;
+		rinfo.pll.ppll_min = 12000;
+		rinfo.pll.mclk = 16600;
+		rinfo.pll.sclk = 16600;
+		rinfo.pll.ref_clk = 2700;
+		break;
+	}
+	rinfo.pll.ref_div = INPLL(PPLL_REF_DIV) & PPLL_REF_DIV_MASK;
+
+	
 	/*
 	 * Check out if we have an X86 which gave us some PLL informations
 	 * and if yes, retreive them
@@ -228,130 +287,6 @@ void ATIRadeon::GetPLLInfo()
 		goto found;
 	}
 
-	/*
-	 * Neither of the above worked, we have a few default values, though
-	 * that's mostly incomplete; filled it a bit more -MK
-	 */
-	switch (rinfo.chipset) {
-	case PCI_CHIP_RV200_QW:
-	case PCI_CHIP_RV200_QX:
-		rinfo.pll.ppll_max = 35000;
-		rinfo.pll.ppll_min = 12000;
-		rinfo.pll.mclk = 23000;
-		rinfo.pll.sclk = 23000;
-		rinfo.pll.ref_clk = 2700;
-		break;
-	case PCI_CHIP_R200_QL:
-	case PCI_CHIP_R200_QM:
-	case PCI_CHIP_R200_QN:
-	case PCI_CHIP_R200_QO:
-	case PCI_CHIP_R200_QJ:
-	case PCI_CHIP_R200_QI:
-	case PCI_CHIP_R200_BB:
-	case PCI_CHIP_R200_BC:
-		rinfo.pll.ppll_max = 35000;
-		rinfo.pll.ppll_min = 12000;
-		rinfo.pll.mclk = 27500;
-		rinfo.pll.sclk = 27500;
-		rinfo.pll.ref_clk = 2700;
-		break;
-	case PCI_CHIP_RV250_Id:
-	case PCI_CHIP_RV250_Ie:
-	case PCI_CHIP_RV250_If:
-	case PCI_CHIP_RV250_Ig:
-		rinfo.pll.ppll_max = 35000;
-		rinfo.pll.ppll_min = 12000;
-		rinfo.pll.mclk = 25000;
-		rinfo.pll.sclk = 25000;
-		rinfo.pll.ref_clk = 2700;
-		break;
-	case PCI_CHIP_RV280_5960:
-	case PCI_CHIP_RV280_5961:
-	case PCI_CHIP_RV280_5962:
-	case PCI_CHIP_RV280_5963:
-	case PCI_CHIP_RV280_5964:
-		rinfo.pll.ppll_max = 35000;
-		rinfo.pll.ppll_min = 12000;
-		rinfo.pll.mclk = 25000;
-		rinfo.pll.sclk = 20000;
-		rinfo.pll.ref_clk = 2700;
-		break;
-	case PCI_CHIP_R300_AD:
-	case PCI_CHIP_R300_AE:
-	case PCI_CHIP_R300_AF:
-	case PCI_CHIP_R300_AG:
-	case PCI_CHIP_R300_ND:
-	case PCI_CHIP_R300_NE:
-	case PCI_CHIP_R300_NF:
-	case PCI_CHIP_R300_NG:
-	case PCI_CHIP_R350_AH:
-	case PCI_CHIP_R350_AI:
-	case PCI_CHIP_R350_AJ:
-	case PCI_CHIP_R350_AK:
-	case PCI_CHIP_RV350_AP:
-	case PCI_CHIP_RV350_AQ:
-	case PCI_CHIP_RV350_AR:
-	case PCI_CHIP_RV350_AS:
-	case PCI_CHIP_RV350_AT:
-	case PCI_CHIP_RV350_AV:
-	case PCI_CHIP_R350_NH:
-	case PCI_CHIP_R350_NI:
-	case PCI_CHIP_R360_NJ:
-	case PCI_CHIP_R350_NK:
-		rinfo.pll.ppll_max = 40000;
-		rinfo.pll.ppll_min = 20000;
-		rinfo.pll.mclk = 27000;
-		rinfo.pll.sclk = 27000;
-		rinfo.pll.ref_clk = 2700;
-		break;
-
-	/* XXXKV: I don't know what the correct R420 & R423 values are; the max. values are probably higher.
-	   The R300/R350 values will work for now. */
-	case PCI_CHIP_R420_JH:
-	case PCI_CHIP_R420_JI:
-	case PCI_CHIP_R420_JJ:
-	case PCI_CHIP_R420_JK:
-	case PCI_CHIP_R420_JL:
-	case PCI_CHIP_R420_JM:
-	case PCI_CHIP_R420_JP:
-	case PCI_CHIP_R420_4A4F:
-		rinfo.pll.ppll_max = 40000;
-		rinfo.pll.ppll_min = 20000;
-		rinfo.pll.mclk = 27000;
-		rinfo.pll.sclk = 27000;
-		rinfo.pll.ref_clk = 2700;
-		break;
-
-	case PCI_CHIP_R423_UH:
-	case PCI_CHIP_R423_UI:
-	case PCI_CHIP_R423_UJ:
-	case PCI_CHIP_R423_UK:
-	case PCI_CHIP_R423_UQ:
-	case PCI_CHIP_R423_UR:
-	case PCI_CHIP_R423_UT:
-		rinfo.pll.ppll_max = 40000;
-		rinfo.pll.ppll_min = 20000;
-		rinfo.pll.mclk = 27000;
-		rinfo.pll.sclk = 27000;
-		rinfo.pll.ref_clk = 2700;
-		break;
-
-	case PCI_CHIP_RADEON_QD:
-	case PCI_CHIP_RADEON_QE:
-	case PCI_CHIP_RADEON_QF:
-	case PCI_CHIP_RADEON_QG:
-	case PCI_CHIP_RV100_QY:
-	case PCI_CHIP_RV100_QZ:
-	default:
-		rinfo.pll.ppll_max = 35000;
-		rinfo.pll.ppll_min = 12000;
-		rinfo.pll.mclk = 16600;
-		rinfo.pll.sclk = 16600;
-		rinfo.pll.ref_clk = 2700;
-		break;
-	}
-	rinfo.pll.ref_div = INPLL(PPLL_REF_DIV) & 0x3ff;
-
 	dbprintf("Radeon :: Used default PLL infos\n");
 
 found:
@@ -370,6 +305,7 @@ found:
 	       rinfo.pll.ref_div,
 	       rinfo.pll.mclk / 100, rinfo.pll.mclk % 100,
 	       rinfo.pll.sclk / 100, rinfo.pll.sclk % 100);
+	dbprintf("radeonfb: PLL min %d max %d\n", rinfo.pll.ppll_min, rinfo.pll.ppll_max);
 }
 
 /*
@@ -448,6 +384,18 @@ void ATIRadeon::CalcPLLRegs(struct radeon_regs *regs, unsigned long freq)
 		    pll_output_freq <= rinfo.pll.ppll_max)
 			break;
 	}
+	
+	/* If we fall through the bottom, try the "default value"
+	   given by the terminal post_div->bitvalue */
+	if ( !post_div->divider ) {
+		post_div = &post_divs[post_div->bitvalue];
+		pll_output_freq = post_div->divider * freq;
+	}
+	RTRACE("ref_div = %d, ref_clk = %d, output_freq = %d\n",
+	       rinfo.pll.ref_div, rinfo.pll.ref_clk,
+	       pll_output_freq);
+	
+
 
 	fb_div = round_div(rinfo.pll.ref_div*pll_output_freq,
 				  rinfo.pll.ref_clk);
@@ -485,12 +433,20 @@ void ATIRadeon::SaveState(struct radeon_regs *save)
 	save->lvds_pll_cntl = INREG(LVDS_PLL_CNTL);
 	save->tmds_crc = INREG(TMDS_CRC);	save->tmds_transmitter_cntl = INREG(TMDS_TRANSMITTER_CNTL);
 	save->vclk_ecp_cntl = INPLL(VCLK_ECP_CNTL);
+
+	/* PLL regs */
+	save->clk_cntl_index = INREG(CLOCK_CNTL_INDEX) & ~0x3f;
+	radeon_pll_errata_after_index();
+	save->ppll_div_3 = INPLL(PPLL_DIV_3);
+	save->ppll_ref_div = INPLL(PPLL_REF_DIV);	
 }
 
 
 void ATIRadeon::WritePLLRegs(struct radeon_regs *mode)
 {
 	int i;
+	
+	FifoWait(20);
 
 	/* Workaround from XFree */
 	if (rinfo.is_mobility) {
@@ -507,8 +463,13 @@ void ATIRadeon::WritePLLRegs(struct radeon_regs *mode)
 			 * an XFree86 driver bug which will switch it away in some cases
 			 * even when using UseFDev */
 			RTRACE("Radeon :: LVDS PLL workaround enabled\n");
-			OUTREGP(CLOCK_CNTL_INDEX, PPLL_DIV_SEL_MASK, ~PPLL_DIV_SEL_MASK);
-            		return;
+			OUTREGP(CLOCK_CNTL_INDEX,
+				mode->clk_cntl_index & PPLL_DIV_SEL_MASK,
+				~PPLL_DIV_SEL_MASK);
+			radeon_pll_errata_after_index();
+			radeon_pll_errata_after_data();
+
+       		return;
 		}
 	}
 
@@ -521,10 +482,16 @@ void ATIRadeon::WritePLLRegs(struct radeon_regs *mode)
 		~(PPLL_RESET | PPLL_ATOMIC_UPDATE_EN | PPLL_VGA_ATOMIC_UPDATE_EN));
 
 	/* Switch to PPLL div 3 */
-	OUTREGP(CLOCK_CNTL_INDEX, PPLL_DIV_SEL_MASK, ~PPLL_DIV_SEL_MASK);
+	OUTREGP(CLOCK_CNTL_INDEX,
+		mode->clk_cntl_index & PPLL_DIV_SEL_MASK,
+		~PPLL_DIV_SEL_MASK);
+	radeon_pll_errata_after_index();
+	radeon_pll_errata_after_data();
+	
 
 	/* Set PPLL ref. div */
 	if (rinfo.family == CHIP_FAMILY_R300 ||
+	    rinfo.family == CHIP_FAMILY_RS300 ||
 	    rinfo.family == CHIP_FAMILY_R350 ||
 	    rinfo.family == CHIP_FAMILY_RV350) {
 		if (mode->ppll_ref_div & R300_PPLL_REF_DIV_ACC_MASK) {
@@ -580,11 +547,11 @@ void ATIRadeon::WriteMode (struct radeon_regs *mode)
 {
 	int i;
 	int primary_mon = PRIMARY_MONITOR(rinfo);
-	bool bLCDPowerOn = false;
 
 	ScreenBlank(VESA_POWERDOWN);
 
-	for (i=0; i<9; i++)
+	FifoWait(31);
+	for (i=0; i<10; i++)
 		OUTREG(common_regs[i].reg, common_regs[i].val);
 
 	/* Apply surface registers */
@@ -620,47 +587,14 @@ void ATIRadeon::WriteMode (struct radeon_regs *mode)
 		OUTREG(FP_GEN_CNTL, mode->fp_gen_cntl);
 		OUTREG(TMDS_CRC, mode->tmds_crc);
 		OUTREG(TMDS_TRANSMITTER_CNTL, mode->tmds_transmitter_cntl);
-
-		if (primary_mon == MT_LCD || primary_mon == MT_DFP) {
-			unsigned int tmp = INREG(LVDS_GEN_CNTL);
-
-			/* HACK: The backlight control code may have modified init_state.lvds_gen_cntl,
-			 * so we update ourselves
-			 */
-			mode->lvds_gen_cntl &= ~LVDS_STATE_MASK;
-			mode->lvds_gen_cntl |= (rinfo.init_state.lvds_gen_cntl & LVDS_STATE_MASK);
-
-			if ((tmp & (LVDS_ON | LVDS_BLON)) ==
-			    (mode->lvds_gen_cntl & (LVDS_ON | LVDS_BLON))) {
-				OUTREG(LVDS_GEN_CNTL, mode->lvds_gen_cntl);
-			} else {
-				rinfo.pending_pixclks_cntl = INPLL(PIXCLKS_CNTL);
-				if (rinfo.is_mobility || rinfo.is_IGP)
-					OUTPLLP(PIXCLKS_CNTL, 0, ~PIXCLK_LVDS_ALWAYS_ONb);
-				if (!(tmp & (LVDS_ON | LVDS_BLON)))
-					OUTREG(LVDS_GEN_CNTL, mode->lvds_gen_cntl | LVDS_BLON);
-				rinfo.pending_lvds_gen_cntl = mode->lvds_gen_cntl;
-				bLCDPowerOn = true;
-			}
-		}
 	}
 
-	RTRACE("lvds_gen_cntl: %08x\n", (uint)INREG(LVDS_GEN_CNTL));
+	//RTRACE("lvds_gen_cntl: %08x\n", (uint)INREG(LVDS_GEN_CNTL));
 
 	ScreenBlank(VESA_NO_BLANKING);
 
+	FifoWait(2);
 	OUTPLL(VCLK_ECP_CNTL, mode->vclk_ecp_cntl);
-
-	/* Temporary solution for Syllable */
-	if(bLCDPowerOn) {
-		snooze(rinfo.panel_info.pwr_delay * 1000);
-
-		OUTREG(LVDS_GEN_CNTL, rinfo.pending_lvds_gen_cntl);
-		if (rinfo.pending_pixclks_cntl) {
-			OUTPLL(PIXCLKS_CNTL, rinfo.pending_pixclks_cntl);
-			rinfo.pending_pixclks_cntl = 0;
-		}
-	}
 	
 	return;
 }

@@ -83,7 +83,7 @@ namespace os
  *	If you wish to monitor the activity of the clipboard you need to monitor its event:
  * \code
  *		m_pcMonitorEvent = new os::Event();
- *		m_pcMonitorEvent->SetToRemote( "system/Clipboard/Receive", -1 );
+ *		m_pcMonitorEvent->SetToRemote( "os/System/ClipboardHasChanged", -1 );
  *		m_pcMonitorEvent->SetMonitorEnabled( true, this ( your handler), MSG_CLIP_CHANGED (the code you will receive a message under) );
  * \endcode
  *
@@ -107,9 +107,6 @@ public:
   
     Message* GetData();
 
-private:
-		void _PostEvent();
-		
 private:
 	class Private;
 	Private* m;

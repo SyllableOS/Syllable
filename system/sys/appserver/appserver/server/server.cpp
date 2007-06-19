@@ -179,6 +179,8 @@ AppServer::AppServer()
 	
 	m_pcProcessQuitEvent = g_pcEvents->RegisterEvent( "os/System/ProcessHasQuit", 0, 
 							"Called when a process has quit", -1, -1, -1 );
+	m_pcClipboardEvent = g_pcEvents->RegisterEvent( "os/System/ClipboardHasChanged", 0, 
+							"Called when the clipboard content has changed", -1, -1, -1 );
 	
 	printf( "Load default fonts\n" );
 
@@ -796,6 +798,8 @@ void AppServer::Run( void )
 					DR_SetClipboardData_s *psReq = ( DR_SetClipboardData_s * ) pBuffer;
 
 					SrvClipboard::SetData( psReq->m_zName, psReq->m_anBuffer, psReq->m_nTotalSize );
+					os::Message cMsg;
+					g_pcEvents->PostEvent( m_pcClipboardEvent, &cMsg );
 					break;
 				}
 			case DR_GET_CLIPBOARD_DATA:

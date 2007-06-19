@@ -30,7 +30,6 @@
 #include <util/locker.h>
 #include <util/string.h>
 #include <util/application.h>
-#include <util/event.h>
 
 using namespace os;
 
@@ -52,8 +51,6 @@ public:
 		m_hServerPort	=	get_app_server_port();
 		m_bCleared		=	false;
 		
-		m_pcEvent = os::Event::Register("os/system/ClipMonitor","This will allow you to receive events when the clipboard is modified",Application::GetInstance(),M_CLIPBOARD_CHANGED);
-		
 	}
 	
 public:
@@ -63,7 +60,6 @@ public:
     port_id			m_hReplyPort;
     Message			m_cBuffer;
     bool			m_bCleared;
-    os::Event*		m_pcEvent;
 };
 
 
@@ -90,7 +86,6 @@ Clipboard::Clipboard( const String& cName)
 Clipboard::~Clipboard()
 {
 	delete_port( m->m_hReplyPort );
-	delete m->m_pcEvent;
 	delete m;
 }
 
@@ -296,9 +291,6 @@ void Clipboard::Commit()
 			//error out if the message fails
 			dbprintf( "Error: Clipboard::Commit() failed to send DR_SET_CLIPBOARD_DATA to server!\n" );
 		}
-		
-		//post an event
-		_PostEvent();
 	}
 	else //if the size is > fragment size
 	{
@@ -331,21 +323,12 @@ void Clipboard::Commit()
 			nSize -= nCurSize;
 			nOffset += nCurSize;
 		}
-		
-		//only post the event after we know that we sent all of the commit
-		_PostEvent();
 		delete[]pBuffer;
 	}
 }
 
 
-/**internal*/
-void Clipboard::_PostEvent()
-{
-	//post an event so if we have anything monitoring for this event it will be notified.
-	os::Message cMsg;
-	m->m_pcEvent->PostEvent(&cMsg,os::Application::GetInstance(),-1);	
-}
+
 
 
 

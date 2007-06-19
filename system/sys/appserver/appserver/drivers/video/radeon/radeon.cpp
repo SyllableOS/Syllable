@@ -378,6 +378,7 @@ reg_val common_regs[] = {
 	{ I2C_CNTL_1, 0 },
 	{ GEN_INT_CNTL, 0 },
 	{ CAP0_TRIG_CNTL, 0 },
+	{ CAP1_TRIG_CNTL, 0 }
 };
 
 reg_val common_regs_m6[] = {
@@ -606,17 +607,28 @@ bool ATIRadeon::InitHardware( int nFd ) {
 	dbprintf("Radeon :: Using framebuffer at %x\n", (uint)(rinfo.fb_base_phys));
 
 	/*
-	 * Check for required workaround for PLL accesses
+	 * Check for errata
 	 */
-	rinfo.R300_cg_workaround = (rinfo.family == CHIP_FAMILY_R300 &&
-				     (INREG(CONFIG_CNTL) & CFG_ATI_REV_ID_MASK)
-				     == CFG_ATI_REV_A11);
-	if(rinfo.R300_cg_workaround)
-		RTRACE("Radeon :: R300 PLL workaround enabled.\n");
+	rinfo.errata = 0;
+	if (rinfo.family == CHIP_FAMILY_R300 &&
+	    (INREG(CONFIG_CNTL) & CFG_ATI_REV_ID_MASK)
+	    == CFG_ATI_REV_A11)
+		rinfo.errata |= CHIP_ERRATA_R300_CG;
+
+	if (rinfo.family == CHIP_FAMILY_RV200 ||
+	    rinfo.family == CHIP_FAMILY_RS200)
+		rinfo.errata |= CHIP_ERRATA_PLL_DUMMYREADS;
+
+	if (rinfo.family == CHIP_FAMILY_RV100 ||
+	    rinfo.family == CHIP_FAMILY_RS100 ||
+	    rinfo.family == CHIP_FAMILY_RS200)
+		rinfo.errata |= CHIP_ERRATA_PLL_DELAY;
+
 
 	if( !m_bCfgDisableBIOSUsage ) {
 		/*
-		 * Map the BIOS ROM if any and retrieve PLL parameters from BIOS
+		 * Map the BIOS ROM if any and retrieve PLL parameters from
+		 * the BIOS.
 		 */
 		MapROM(nFd, &m_cPCIInfo);
 
@@ -628,6 +640,7 @@ bool ATIRadeon::InitHardware( int nFd ) {
 		 */
 		if (rinfo.bios_seg == NULL)
 			FindMemVBios();
+			
 	}
 
 	/* Get informations about the board's PLL */
@@ -830,6 +843,7 @@ int ATIRadeon::SetScreenMode( screen_mode sMode )
 	int hsync_start, hsync_fudge, bytpp, hsync_wid, vsync_wid;
 	int primary_mon = PRIMARY_MONITOR(rinfo);
 	int depth = BitsPerPixel( sMode.m_eColorSpace );
+	int use_rmx = 0;	
 
 	/* We always want engine to be idle on a mode switch, even
 	 * if we won't actually change the mode
@@ -863,20 +877,21 @@ int ATIRadeon::SetScreenMode( screen_mode sMode )
 		vSyncStart = mode->Height + rinfo.panel_info.vOver_plus;
 		vSyncEnd = vSyncStart + rinfo.panel_info.vSync_width;
 
-		//h_sync_pol = !rinfo.panel_info.hAct_high;
-		//v_sync_pol = !rinfo.panel_info.vAct_high;
+		/* AK: This was enabled in the radeon framebuffer driver but disabled 
+		 in the syllable driver */
+		h_sync_pol = !rinfo.panel_info.hAct_high;
+		v_sync_pol = !rinfo.panel_info.vAct_high;
 
 		pixClock = 100000000 / rinfo.panel_info.clock;
 
 		/* Disabled because it causes problems on Mobility chips -MK */
-#if 0
+		/* AK: Enabled again */
 		if (rinfo.panel_info.use_bios_dividers) {
 			nopllcalc = 1;
 			newmode.ppll_div_3 = rinfo.panel_info.fbk_divider |
 				(rinfo.panel_info.post_divider << 16);
 			newmode.ppll_ref_div = rinfo.pll.ref_div;
 		}
-#endif
 	}
 	dotClock = 1000000000 / pixClock;
 	rinfo.dotClock = dotClock;
@@ -981,6 +996,10 @@ int ATIRadeon::SetScreenMode( screen_mode sMode )
 	RTRACE("pixclock = %lu\n", (unsigned long)pixClock);
 	RTRACE("freq = %lu\n", (unsigned long)freq);
 
+	/* We use PPLL_DIV_3 */
+	newmode.clk_cntl_index = 0x300;
+	
+
 	if(!nopllcalc)
 		CalcPLLRegs(&newmode, freq);
 
@@ -1008,6 +1027,7 @@ int ATIRadeon::SetScreenMode( screen_mode sMode )
 						     HORZ_AUTO_RATIO_INC)));
 			newmode.fp_horz_stretch |= (HORZ_STRETCH_BLEND |
 						    HORZ_STRETCH_ENABLE);
+			use_rmx = 1;
 		}
 		newmode.fp_horz_stretch &= ~HORZ_AUTO_RATIO;
 
@@ -1019,6 +1039,7 @@ int ATIRadeon::SetScreenMode( screen_mode sMode )
 						   (VERT_PANEL_SIZE | VERT_STRETCH_RESERVED)));
 			newmode.fp_vert_stretch |= (VERT_STRETCH_BLEND |
 						    VERT_STRETCH_ENABLE);
+			use_rmx = 1;
 		}
 		newmode.fp_vert_stretch &= ~VERT_AUTO_RATIO_EN;
 
@@ -1033,7 +1054,19 @@ int ATIRadeon::SetScreenMode( screen_mode sMode )
 					 FP_CRT_SYNC_ALT));
 
 		newmode.fp_gen_cntl |= (FP_CRTC_DONT_SHADOW_VPAR |
-					FP_CRTC_DONT_SHADOW_HEND);
+					FP_CRTC_DONT_SHADOW_HEND |
+					FP_PANEL_FORMAT);
+					
+		if (IS_R300_VARIANT(&rinfo) ||
+		    (rinfo.family == CHIP_FAMILY_R200)) {
+			newmode.fp_gen_cntl &= ~R200_FP_SOURCE_SEL_MASK;
+			if (use_rmx)
+				newmode.fp_gen_cntl |= R200_FP_SOURCE_SEL_RMX;
+			else
+				newmode.fp_gen_cntl |= R200_FP_SOURCE_SEL_CRTC1;
+		} else
+			newmode.fp_gen_cntl |= FP_SEL_CRTC1;
+
 
 		newmode.lvds_gen_cntl = rinfo.init_state.lvds_gen_cntl;
 		newmode.lvds_pll_cntl = rinfo.init_state.lvds_pll_cntl;
@@ -1046,12 +1079,9 @@ int ATIRadeon::SetScreenMode( screen_mode sMode )
 		} else {
 			/* DFP */
 			newmode.fp_gen_cntl |= (FP_FPON | FP_TMDS_EN);
-			newmode.tmds_transmitter_cntl = (TMDS_RAN_PAT_RST | TMDS_ICHCSEL) &
-							 ~(TMDS_PLLRST);
+			newmode.tmds_transmitter_cntl &= ~(TMDS_PLLRST);
 			/* TMDS_PLL_EN bit is reversed on RV (and mobility) chips */
-			if ((rinfo.family == CHIP_FAMILY_R300) ||
-			    (rinfo.family == CHIP_FAMILY_R350) ||
-			    (rinfo.family == CHIP_FAMILY_RV350) ||
+			if (IS_R300_VARIANT(&rinfo) ||
 			    (rinfo.family == CHIP_FAMILY_R200) || !rinfo.has_CRTC2)
 				newmode.tmds_transmitter_cntl &= ~TMDS_PLL_EN;
 			else

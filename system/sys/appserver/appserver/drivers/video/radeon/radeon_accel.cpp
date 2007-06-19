@@ -74,14 +74,16 @@ void ATIRadeon::EngineReset()
 	    rinfo.family == CHIP_FAMILY_R350 ||
 	    rinfo.family == CHIP_FAMILY_RV350) {
 
+		uint32 tmp;
+
 		OUTREG(RBBM_SOFT_RESET, (rbbm_soft_reset |
 					 SOFT_RESET_CP |
 					 SOFT_RESET_HI |
-					 SOFT_RESET_E2 |
-					 SOFT_RESET_AIC));
-		tmp2 = INREG(RBBM_SOFT_RESET);
+					 SOFT_RESET_E2));
+		INREG(RBBM_SOFT_RESET);
 		OUTREG(RBBM_SOFT_RESET, 0);
-		OUTREGP(RB2D_DSTCACHE_MODE, (1 << 17), ~0);
+		tmp = INREG(RB2D_DSTCACHE_MODE);
+		OUTREG(RB2D_DSTCACHE_MODE, tmp | (1 << 17)); /* FIXME */
 	} else {
 		OUTREG(RBBM_SOFT_RESET, rbbm_soft_reset |
 					SOFT_RESET_CP |
@@ -90,8 +92,7 @@ void ATIRadeon::EngineReset()
 					SOFT_RESET_RE |
 					SOFT_RESET_PP |
 					SOFT_RESET_E2 |
-					SOFT_RESET_RB |
-					SOFT_RESET_AIC);
+					SOFT_RESET_RB);
 		tmp2 = INREG(RBBM_SOFT_RESET);
 		OUTREG(RBBM_SOFT_RESET, rbbm_soft_reset & (uint32)
 					~(SOFT_RESET_CP |
@@ -100,8 +101,7 @@ void ATIRadeon::EngineReset()
 					  SOFT_RESET_RE |
 					  SOFT_RESET_PP |
 					  SOFT_RESET_E2 |
-					  SOFT_RESET_RB |
-					  SOFT_RESET_AIC));
+					  SOFT_RESET_RB));
 		tmp2 = INREG(RBBM_SOFT_RESET);
 	}
 
@@ -118,8 +118,6 @@ void ATIRadeon::EngineReset()
 
 	OUTREG(CLOCK_CNTL_INDEX, clock_cntl_index);
 	OUTPLL(MCLK_CNTL, mclk_cntl);
-	if (rinfo.R300_cg_workaround)
-		R300_cg_workardound();
 }
 
 void ATIRadeon::EngineInit ()

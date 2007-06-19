@@ -500,38 +500,55 @@ void ATIRadeon::CreateModeList()
 int ATIRadeon::ScreenBlank (int blank)
 {
 	uint32 val = INREG(CRTC_EXT_CNTL);
-	uint32 val2 = 0;
-
-	if (rinfo.mon1_type == MT_LCD)
-		val2 = INREG(LVDS_GEN_CNTL) & ~LVDS_DISPLAY_DIS;
+	int unblank = 0;
 	
-        /* reset it */
-        val &= ~(CRTC_DISPLAY_DIS | CRTC_HSYNC_DIS |
+	val &= ~(CRTC_DISPLAY_DIS | CRTC_HSYNC_DIS |
                  CRTC_VSYNC_DIS);
-
-        switch (blank) {
-                case VESA_NO_BLANKING:
-                        break;
-                case VESA_VSYNC_SUSPEND:
-                        val |= (CRTC_DISPLAY_DIS | CRTC_VSYNC_DIS);
-                        break;
-                case VESA_HSYNC_SUSPEND:
-                        val |= (CRTC_DISPLAY_DIS | CRTC_HSYNC_DIS);
-                        break;
-                case VESA_POWERDOWN:
-                        val |= (CRTC_DISPLAY_DIS | CRTC_VSYNC_DIS | 
-                                CRTC_HSYNC_DIS);
-			val2 |= (LVDS_DISPLAY_DIS);
-                        break;
-        }
-
-	switch (rinfo.mon1_type) {
-		case MT_LCD:
-			OUTREG(LVDS_GEN_CNTL, val2);
+	switch (blank) {
+		case VESA_NO_BLANKING:
+			unblank = 1;
 			break;
-		case MT_CRT:
-		default:
-		        OUTREG(CRTC_EXT_CNTL, val);
+		case VESA_VSYNC_SUSPEND:
+			val |= (CRTC_DISPLAY_DIS | CRTC_VSYNC_DIS);
+			break;
+		case VESA_HSYNC_SUSPEND:
+			val |= (CRTC_DISPLAY_DIS | CRTC_HSYNC_DIS);
+			break;
+		case VESA_POWERDOWN:
+			val |= (CRTC_DISPLAY_DIS | CRTC_VSYNC_DIS | 
+				CRTC_HSYNC_DIS);
+			break;
+	}
+	OUTREG(CRTC_EXT_CNTL, val);
+	
+	switch(rinfo.mon1_type)
+	{
+		case MT_DFP:
+			if (unblank)
+				OUTREGP(FP_GEN_CNTL, (FP_FPON | FP_TMDS_EN),
+					~(FP_FPON | FP_TMDS_EN));
+			break;
+		case MT_LCD:
+			val = INREG(LVDS_GEN_CNTL);
+			if (unblank) {
+				uint32 target_val = (val & ~LVDS_DISPLAY_DIS) | LVDS_BLON | LVDS_ON
+				| LVDS_EN | (rinfo.init_state.lvds_gen_cntl
+					     & (LVDS_DIGON | LVDS_BL_MOD_EN));
+				if ((val ^ target_val) == LVDS_DISPLAY_DIS)
+					OUTREG(LVDS_GEN_CNTL, target_val);
+				else if ((val ^ target_val) != 0) {
+					OUTREG(LVDS_GEN_CNTL, target_val
+				       & ~(LVDS_ON | LVDS_BL_MOD_EN));
+					rinfo.init_state.lvds_gen_cntl &= ~LVDS_STATE_MASK;
+					rinfo.init_state.lvds_gen_cntl |= target_val & LVDS_STATE_MASK;
+				
+					snooze(rinfo.panel_info.pwr_delay*1000);
+					OUTREG(LVDS_GEN_CNTL, target_val);
+				}
+			} else {
+				val |= LVDS_DISPLAY_DIS;
+				OUTREG(LVDS_GEN_CNTL, val);
+			}
 			break;
 	}
 

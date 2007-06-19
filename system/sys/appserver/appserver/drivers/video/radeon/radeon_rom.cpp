@@ -239,7 +239,7 @@ int ATIRadeon::FindMemVBios()
 			break;
 	}
 
-	dbprintf("Radeon :: Non-standard ROM location %x detected\n", (uint)segstart);
+	dbprintf("Radeon :: VBIOS at %x detected\n", (uint)segstart);
 
 	/* Locate the flat panel infos, do some sanity checking !!! */
 	rinfo.bios_seg = m_pROMBase;

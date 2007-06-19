@@ -105,6 +105,7 @@ private:
     
     int nWatchNode;
     SrvEvent_s* m_pcProcessQuitEvent;
+    SrvEvent_s* m_pcClipboardEvent;
 };
 
 #endif	/*	INTERFACE_SERVER_HPP	*/
