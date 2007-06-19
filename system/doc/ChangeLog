@@ -1,3 +1,8 @@
+* June 19, 2007, Arno Klenke *
+
+Added acpi cpu driver
+Fixed some modesetting bugs in the radeon driver
+
 * May 10, 2007, Flemming H. Sørensen *
 
 Added Bulgarian.
@@ -1380,4 +1385,5 @@ Added the following keymaps:
 * Jun 14 2002, Kristian Van Der Vliet *
 
 Implement get_tld(), set_tld() in process.c
+
 

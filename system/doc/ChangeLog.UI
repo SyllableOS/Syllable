@@ -1,3 +1,7 @@
+* June 19, 2007, Arno Klenke *
+
+Moved clipboard event into the appserver
+
 * June 4, 2007, Rick Caudill *
 
 Added Documentation to os::Clipboard
@@ -9,6 +13,10 @@ affected files:
 	sys/include/util/clipboard.h
 	sys/include/gui/guidefines.h
 	sys/appserver/libsyllable/util/clipboard.cpp
+
+* June 12, 2007, Arno Klenke *
+
+Fixed mouse move bug in the appserver
 
 * June 3, 2007, Arno Klenke *
 
@@ -1421,6 +1429,7 @@ disabled controls.  The following files have been patched:
 
 	The sub-menu arrow is now drawn corretly, and menus which have children
 	are now drawn slightly larger to allow for the arrow.
+
 
 
 
