@@ -13,9 +13,10 @@ locations
 
 patch-config
 
-_configure-options
-;	--without-threads
-	--disable-ipv6
+configure-options
+;	For WebCore. PThreads don't seem to be sufficient:
+	--without-threads
+;	--disable-ipv6
 
 test-targets		tests
 
