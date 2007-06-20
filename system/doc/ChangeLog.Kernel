@@ -1,3 +1,7 @@
+* Jun 20, 2007, Kristian Van Der Vliet *
+
+Fixed Intel SATA detection and configuration. Fixes Bug #244.
+
 * Jun 17, 2007, Kristian Van Der Vliet *
 
 Added a TUN network driver, which was originally written by William Rose some
