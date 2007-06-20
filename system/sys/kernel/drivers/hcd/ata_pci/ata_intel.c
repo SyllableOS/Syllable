@@ -37,11 +37,13 @@ extern PCI_bus_s* g_psPCIBus;
 #define INTEL_INIT 0x20
 #define INTEL_80W 0x40
 
-static struct Intel_ide_s {
+struct Intel_ide_s {
 	char* pzName;
 	uint16 nDeviceID;
 	uint16 nFlags;
-} g_sIntelIDE[] = {
+};
+
+static struct Intel_ide_s g_sIntelPATA[] = {
 	{ "PIIXa", 0x122e, 0 },
 	{ "PIIXb", 0x1230, 0 },
 	{ "MPIIX", 0x1234, 0 },
@@ -60,12 +62,7 @@ static struct Intel_ide_s {
 	{ "ICH5", 0x24db, INTEL_UDMA_100 | INTEL_INIT | INTEL_80W },
 	{ "C-ICH", 0x245b, INTEL_UDMA_100 | INTEL_INIT | INTEL_80W },
 	{ "ICH4", 0x24ca, INTEL_UDMA_100 | INTEL_INIT | INTEL_80W },
-	{ "ICH5 SATA", 0x24d1, INTEL_UDMA_100 | INTEL_INIT | INTEL_80W },
-	{ "ICH5 SATA", 0x24df, INTEL_UDMA_100 | INTEL_INIT | INTEL_80W },
 	{ "ESB2", 0x25a2, INTEL_UDMA_100 | INTEL_INIT | INTEL_80W },
-	{ "ICH5 SATA", 0x25a3, INTEL_UDMA_100 | INTEL_INIT | INTEL_80W },
-	{ "ICH5 SATA", 0x25b0, INTEL_UDMA_100 | INTEL_INIT | INTEL_80W },
-	{ "ICH6 SATA", 0x2651, INTEL_UDMA_100 | INTEL_INIT | INTEL_80W },
 	{ "ICH6", 0x266f, INTEL_UDMA_100 | INTEL_INIT | INTEL_80W },
 	{ "ICH7", 0x27df, INTEL_UDMA_100 | INTEL_INIT | INTEL_80W },
 	{ "ICH7", 0x24c1, INTEL_UDMA_100 | INTEL_INIT | INTEL_80W },
@@ -73,6 +70,13 @@ static struct Intel_ide_s {
 	{ "ICH8", 0x2850, INTEL_UDMA_100 | INTEL_INIT | INTEL_80W }
 };
 
+static struct Intel_ide_s g_sIntelSATA[] = {
+	{ "ICH5 SATA", 0x24d1, INTEL_UDMA_133 | INTEL_INIT },
+	{ "ICH5 SATA", 0x24df, INTEL_UDMA_133 | INTEL_INIT },
+	{ "ICH5 SATA", 0x25a3, INTEL_UDMA_133 | INTEL_INIT },
+	{ "ICH5 SATA", 0x25b0, INTEL_UDMA_133 | INTEL_INIT },
+	{ "ICH6 SATA", 0x2651, INTEL_UDMA_133 | INTEL_INIT }
+};
 
 struct Intel_private_s
 {
@@ -244,29 +248,21 @@ status_t intel_port_configure( ATA_port_s* psPort )
 
 void init_intel_controller( PCI_Info_s sDevice, ATA_controller_s* psCtrl )
 {
-	PCI_Info_s sIDEDev;
 	int i;
-	int j;
 	bool bFound = false;
 	struct Intel_ide_s* psIDE = NULL;
 	uint8 n54, n55;
 	int n80W = 0;
 	struct Intel_private_s* psPrivate = kmalloc( sizeof( struct Intel_private_s ), MEMF_KERNEL | MEMF_CLEAR );
 
-	/* Scan bus */
-	for( i = 0; g_psPCIBus->get_pci_info( &sIDEDev, i ) == 0; ++i )
-	{
-		for( j = 0; j < ( sizeof( g_sIntelIDE ) / sizeof( struct Intel_ide_s ) ); j++ )
+	/* Find controller */
+	for( i = 0; i < ( sizeof( g_sIntelPATA ) / sizeof( struct Intel_ide_s ) ); i++ )
+		if( sDevice.nDeviceID == g_sIntelPATA[i].nDeviceID )
 		{
-			if( sIDEDev.nVendorID == 0x8086 && sIDEDev.nDeviceID == g_sIntelIDE[j].nDeviceID )
-			{
-				psIDE = &g_sIntelIDE[j];
-				bFound = true;
-				break;
-			}
-			
+			psIDE = &g_sIntelPATA[i];
+			bFound = true;
+			break;
 		}
-	}
 	
 	if( !bFound )
 	{
@@ -334,6 +330,7 @@ void init_intel_controller( PCI_Info_s sDevice, ATA_controller_s* psCtrl )
 void init_intel_sata_controller( PCI_Info_s sDevice, ATA_controller_s* psCtrl )
 {
 	int i;
+	struct Intel_ide_s* psIDE = NULL;
 	struct Intel_private_s* psPrivate = kmalloc( sizeof( struct Intel_private_s ), MEMF_KERNEL | MEMF_CLEAR );
 
 	/* Only one port per channel (right?) */
@@ -343,22 +340,37 @@ void init_intel_sata_controller( PCI_Info_s sDevice, ATA_controller_s* psCtrl )
 	psCtrl->psPort[2] = NULL;
 	psCtrl->nPortsPerChannel = 1;
 
+	psPrivate->sDevice = sDevice;
+
 	for( i = 0; i < 2; i++ )
 	{
 		ATA_port_s *psPort = psCtrl->psPort[i];
 
 		psPort->nCable = ATA_CABLE_SATA;
 		psPort->nType = ATA_SATA;
-		psPort->nSupportedPortSpeed |= 0x3fff;	/* UDMA100 */
+		psPort->nSupportedPortSpeed |= 0x7fff;	/* UDMA133 */
 		psPort->sOps.configure = intel_port_configure;
 		psPort->pPrivate = psPrivate;
 	}
 
-	kerndbg( KERN_INFO, "Intel Serial ATA controller detected\n" );
+	/* Find controller */
+	for( i = 0; i < ( sizeof( g_sIntelSATA ) / sizeof( struct Intel_ide_s ) ); i++ )
+		if( sDevice.nDeviceID == g_sIntelSATA[i].nDeviceID )
+		{
+			psIDE = &g_sIntelSATA[i];
+			break;
+		}
+
+	kerndbg( KERN_INFO, "Intel %s controller detected\n", psIDE->pzName );
 
 	/* Initialize */
-	unsigned int nExtra = g_psPCIBus->read_pci_config( sDevice.nBus, sDevice.nDevice, sDevice.nFunction, 0x54, 4 );
-	g_psPCIBus->write_pci_config( sDevice.nBus, sDevice.nDevice, sDevice.nFunction, 0x54, 4, nExtra | 0x400 );
+	if( psIDE->nFlags & INTEL_INIT )
+	{
+		unsigned int nExtra = g_psPCIBus->read_pci_config( sDevice.nBus, sDevice.nDevice, sDevice.nFunction,
+										0x54, 4 );
+		g_psPCIBus->write_pci_config( sDevice.nBus, sDevice.nDevice, sDevice.nFunction,
+										0x54, 4, nExtra | 0x400 );
+	}
 
 	strcpy( psCtrl->zName, "Intel Serial ATA controller" );
 	claim_device( psCtrl->nDeviceID, sDevice.nHandle, "Intel Serial ATA controller", DEVICE_CONTROLLER );
