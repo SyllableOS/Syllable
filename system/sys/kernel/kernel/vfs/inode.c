@@ -1805,9 +1805,9 @@ static int do_mount( const char *pzDevName, const char *pzDirName, const char *p
 	release_fs( psDesc );
       error4:
 	delete_semaphore( psVol->v_hMutex );
+	UNLOCK( g_hInodeHashSem );
       error3:
 	kfree( psVol );
-	UNLOCK( g_hInodeHashSem );
       error2:
 	put_inode( psDir );
       error1:
