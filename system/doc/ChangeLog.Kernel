@@ -1,3 +1,7 @@
+* Jun 25, 2007, Kristian Van Der Vliet *
+
+Fix lock/unlock order of the g_hInodeHashSem mutex in do_mount(). Fixes bug #256.
+
 * Jun 20, 2007, Kristian Van Der Vliet *
 
 Fixed Intel SATA detection and configuration. Fixes Bug #244.
