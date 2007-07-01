@@ -1,0 +1,68 @@
+//
+//	Calculator String Catalog
+//
+//	Translated by: Hristo Benev
+//
+
+MSG_MAINWND_TITLE=0									Калкулатор
+
+MSG_MAINWND_MENU_FILE=100							Файл
+MSG_MAINWND_MENU_FILE_CLEARALL						Изчисти всичко
+MSG_MAINWND_MENU_FILE_EXIT							Изход
+
+MSG_MAINWND_MENU_BASE=200							База
+MSG_MAINWND_MENU_BASE_BINARY						Двоична (2)
+MSG_MAINWND_MENU_BASE_OCTAL							Осмична (8)
+MSG_MAINWND_MENU_BASE_DECIMAL						Десетична (10)
+MSG_MAINWND_MENU_BASE_HEXADECIMAL					Шестайсетична (16)
+
+MSG_MAINWND_MENU_CONSTANTS=300						Константи
+MSG_MAINWND_MENU_CONSTANTS_PI						Пи
+MSG_MAINWND_MENU_CONSTANTS_E						e
+MSG_MAINWND_MENU_CONSTANTS_C						Скоростта на светлината (c)
+MSG_MAINWND_MENU_CONSTANTS_ELECTRON					Заряд на електрон
+MSG_MAINWND_MENU_CONSTANTS_GRAV						Гравитационна константа (G)
+MSG_MAINWND_MENU_CONSTANTS_PLANCK					Константа на Планк (h)
+MSG_MAINWND_MENU_CONSTANTS_BOLTZMANN				Константа на Болцман
+MSG_MAINWND_MENU_CONSTANTS_AVOGADRO					Номера на авогардо
+MSG_MAINWND_MENU_CONSTANTS_GAS						Газова константа (R)
+MSG_MAINWND_MENU_CONSTANTS_MASSELECTRON				Тегло на елетрон
+MSG_MAINWND_MENU_CONSTANTS_MASSPROTON				Тегло на протон
+MSG_MAINWND_MENU_CONSTANTS_MASSNEUTRON				Тегло на неутрон
+MSG_MAINWND_MENU_CONSTANTS_PERME					Permeability of free space
+MSG_MAINWND_MENU_CONSTANTS_PERMI					Permittivity of free space
+
+MSG_MAINWND_MENU_WINDOWS=400						Прозорци
+MSG_MAINWND_MENU_WINDOWS_PAPERROLL					Хартиена лента
+MSG_MAINWND_MENU_WINDOWS_BASEN						База
+
+MSG_MAINWND_MENU_HELP=500							Помощ
+MSG_MAINWND_MENU_HELP_ABOUT							Относно
+MSG_MAINWND_MENU_HELP_KEYBOARD						Клавиатура
+
+MSG_PAPERROLL_TITLE=1000							Калкулатор
+MSG_PAPERROLL_CMENU_COPY							Копирай
+MSG_PAPERROLL_CMENU_CLEAR							Изчисти
+MSG_PAPERROLL_CMENU_SAVE							Запиши
+
+MSG_BASENWND_TITLE=2000								База
+MSG_BASENWND_BINARY									Двоична
+MSG_BASENWND_OCTAL									Осмична
+MSG_BASENWND_DECIMAL								Десетична
+MSG_BASENWND_HEXADECIMAL							Шеснаисетична
+MSG_BASENWND_BASE64									64-битова
+MSG_BASENWND_ROMAN									Римска
+
+MSG_ABOUTWND_TITLE=3000								Относно Калкулатор
+MSG_ABOUTWND_TEXTONE								Калкулатор V0.5 2004-02-07 Запазена марка (C) 2002-2004 Хенрик Исакссон.
+MSG_ABOUTWND_TEXTTWO								Калкулатор е с GNU General Public License.
+
+MSG_KBDWND_TITLE=4000								Комбинации от клавиши
+MSG_KBDWND_TEXTONE									Комбинации от клавиши
+MSG_KBDWND_TEXT09									Цифри от 0 до 9
+MSG_KBDWND_TEXTAF									Шеснайсетични цифри от A до F
+MSG_KBDWND_TEXTASMD									Събиране, Изваждане, Умножение и Деление
+MSG_KBDWND_TEXTENTER								ENTER - Изчисли
+MSG_KBDWND_TEXTBACKSPACE							BACKSPACE - Backspace (изненада!)
+MSG_KBDWND_CLOSE									Затвори
+

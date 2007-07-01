@@ -1,0 +1,24 @@
+//
+//	CharMap String Catalog
+//
+//	Translated by: Hristo Benev
+//
+
+MSG_MAINWND_TITLE=0								Преглед на символи
+
+MSG_MAINWND_MENU_FILE=100						Файл
+MSG_MAINWND_MENU_FILE_CHOOSEFONT				Избери шрифт...
+MSG_MAINWND_MENU_FILE_EXIT						Изход
+
+MSG_MAINWND_MENU_HELP=200						Помощ
+MSG_MAINWND_MENU_HELP_HELP						Помощ
+MSG_MAINWND_MENU_HELP_ABOUT						Относно
+
+MSG_HELPWND_TITLE=1000							Преглед на символи
+MSG_HELPWND_TEXT								Когато кликнете върху символ,\nто той ще бъде копиран в обменника.
+MSG_HELPWND_OK									Потвърди
+
+MSG_ABOUTWND_TITLE=2000							CharMap
+MSG_ABOUTWND_TEXT								CharMap V1.1\nПреглед на символи за Syllable.
+MSG_ABOUTWND_OK									Потвърди
+
