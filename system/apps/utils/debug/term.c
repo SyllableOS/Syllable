@@ -64,9 +64,11 @@ int main( int argc, char** argv )
     g_nOutPort = 0;
   }
   printf( "Connect to port %d\n", g_nInPort );
-  
-  hThread = spawn_thread( "read", read_thread, 0, 0, NULL );
-  resume_thread( hThread );
+  if( g_nInPort != g_nOutPort )
+  {  
+    hThread = spawn_thread( "read", read_thread, 0, 0, NULL );
+    resume_thread( hThread );
+  }
   for (;;)
   {
     char anBuffer[512];
