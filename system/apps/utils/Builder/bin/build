@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.144
+# Version 0.6.145
 # Copyright (c) 2002-2007 Kaj de Vos
 # License: GPL 2 or any later version
 
@@ -322,8 +322,7 @@ def configureModule staging, target
 				action toCommand(cmdLine)
 			else
 				unless exists? cmd = configureCommand(target)
-					# Nothing to be done here
-					true
+					true  # Nothing to be done here
 				else
 					unless exists? dir = buildDir(target) or
 						begin
@@ -393,7 +392,8 @@ def makeModule staging, target
 	return true if exists? 'image'
 
 	recipe = getRecipe target
-	configured = native?(target) || exists?(File.join(sourcePath(target), configureCommand(target)))
+	configured = native?(target) || recipe['configure'] ||
+		exists?(File.join(sourcePath(target), configureCommand(target)))
 	if exists? dir = buildDir(target) then Dir.chdir dir end
 
 	unless
@@ -1687,7 +1687,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.6.144',
+	puts 'Syllable Build System 0.6.145',
 		'Copyright (c) 2002-2007 Kaj de Vos',
 		'License: GPL 2 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
