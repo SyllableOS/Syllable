@@ -79,9 +79,9 @@ AboutWindow::AboutWindow(const Rect & r)
 	CURRENT_DESKTOP)
 {
 	os::Resources cRes(get_image_id());
-	os::ResStream* pcStream = cRes.GetResourceStream("albert.png");
+	os::ResStream* pcStream = cRes.GetResourceStream("Calculator.png");
 	if(pcStream == NULL)
-		throw(os::errno_exception("Can't find resource albert.png!"));
+		throw(os::errno_exception("Can't find resource Calculator.png!"));
 
 	m_pcImage = new BitmapImage( pcStream );
 	BitmapView* imv = new BitmapView( m_pcImage->GetBounds(), "bitmap", m_pcImage );
