@@ -534,7 +534,7 @@ def installModule originalStaging, staging, directive, target
 
 						Dir.chdir target
 						configured = recipe['configure'] ||
-							exists?(File.join(sourcePath(target), configureCommand target))
+							exists?(File.join(sourcePath(target), configureCommand(target)))
 						if exists? dir = buildDir(target) then Dir.chdir dir end
 
 						if not action(
