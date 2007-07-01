@@ -191,7 +191,6 @@ bool ATIRadeon::FillRect(SrvBitmap *pcBitmap, const IRect &cRect,
 		return false;
 
 	if( pcBitmap->m_bVideoMem == false || nMode != DM_COPY ) {
-		EngineIdle();
 		return( DisplayDriver::FillRect(pcBitmap, cRect, sColor, nMode) );
 	}
 
@@ -205,13 +204,11 @@ bool ATIRadeon::FillRect(SrvBitmap *pcBitmap, const IRect &cRect,
 			nColor = COL_TO_RGB32 (sColor);
 			break;
 		default:
-			EngineIdle();
 			return( DisplayDriver::FillRect(pcBitmap, cRect, sColor, nMode) );
 	}
 
 	if (rinfo.asleep)
 	{
-		EngineIdle();
 		return( DisplayDriver::FillRect(pcBitmap, cRect, sColor, nMode) );
 	}
 
@@ -245,13 +242,11 @@ bool ATIRadeon::BltBitmap(SrvBitmap *pcDstBitMap, SrvBitmap *pcSrcBitMap,
 
 	if( pcDstBitMap->m_bVideoMem == false ||
 		pcSrcBitMap->m_bVideoMem == false || rinfo.asleep || cSrcRect.Size() != cDstRect.Size() ) {
-		EngineIdle();
 		return( DisplayDriver::BltBitmap( pcDstBitMap, pcSrcBitMap,
                                          cSrcRect, cDstRect, nMode, nAlpha ) );
 	}
   
 	if (nMode != DM_COPY) {
-		EngineIdle();
 		return( DisplayDriver::BltBitmap( pcDstBitMap, pcSrcBitMap,
                                          cSrcRect, cDstRect, nMode, nAlpha ) );
 	}
@@ -308,7 +303,6 @@ bool ATIRadeon::DrawLine(SrvBitmap *psBitMap, const IRect &cClipRect,
 		return false;
 
 	if( psBitMap->m_bVideoMem == false || nMode != DM_COPY ) {
-		EngineIdle();
 		return( DisplayDriver::DrawLine(psBitMap, cClipRect, cPnt1, cPnt2, sColor, nMode) );
 	}
 
@@ -322,7 +316,6 @@ bool ATIRadeon::DrawLine(SrvBitmap *psBitMap, const IRect &cClipRect,
 	/* Currently, this driver implements only horizontal and vertical lines */
 	if(!(x1 == x2 || y1 == y2))
 	{
-		EngineIdle();
 		return( DisplayDriver::DrawLine(psBitMap, cClipRect, cPnt1, cPnt2, sColor, nMode) );
 	}
 
@@ -335,7 +328,6 @@ bool ATIRadeon::DrawLine(SrvBitmap *psBitMap, const IRect &cClipRect,
 			nColor = COL_TO_RGB32 (sColor);
 			break;
 		default:
-			EngineIdle();
 			return( DisplayDriver::DrawLine(psBitMap, cClipRect, cPnt1, cPnt2, sColor, nMode) );
 	}
 

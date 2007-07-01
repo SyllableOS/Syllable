@@ -116,7 +116,7 @@ static uint32 find_clean_page( MemArea_s *psArea, pte_t * pDstPte, uintptr_t nAd
 			register_swap_page( nNewPage );
 
 			set_pte_address( pDstPte, nNewPage );
-			PTE_VALUE( *pDstPte ) |= PTE_WRITE | PTE_DIRTY | PTE_PRESENT | PTE_USER;
+			PTE_VALUE( *pDstPte ) |= PTE_WRITE | PTE_ACCESSED | PTE_DIRTY | PTE_PRESENT | PTE_USER;
 
 			PTE_VALUE( *pSrcPte ) |= PTE_VALUE( sOrigPte ) & PTE_WRITE;
 		}
@@ -180,10 +180,9 @@ uint32 memmap_no_page( MemArea_s *psArea, uintptr_t nAddress, bool bWriteAccess 
 
 	register_swap_page( nNewPage );
 
-	// Should not be needed, but I'm not sure so...
 	if ( bWriteAccess )
 	{
-		PTE_VALUE( *pPte ) |= PTE_DIRTY;
+		PTE_VALUE( *pPte ) |= PTE_ACCESSED | PTE_DIRTY;
 	}
 
 	if ( nSize <= 0 )

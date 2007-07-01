@@ -783,10 +783,9 @@ void DropdownMenu::DropdownView::Paint( const Rect & cUpdateRect )
 			cItemFrame.bottom = cItemFrame.top + m_vGlyphHeight - 1;
 			cItemFrame.left += 2;
 			cItemFrame.right -= 2;
-			FillRect( cItemFrame );
+			FillRect( cItemFrame, os::Color32_s( 186, 199, 227 ) );
 
-			SetFgColor( 255, 255, 255 );
-			SetBgColor( 0, 0, 0 );
+			SetBgColor( os::Color32_s( 186, 199, 227 ) );
 		}
 		DrawString( m_pcParent->m_cStringList[i + m_nScrollPos].c_str() );
 		SetFgColor( 0, 0, 0 );

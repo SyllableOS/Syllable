@@ -797,6 +797,7 @@ int init_kernel( char *pRealMemBase, int nKernelSize )
 	g_sSysBase.ex_bSingleUserMode = false;
 
 	init_semaphores();
+	init_debugger_locks();	
 	init_resource_manager();	
 	init_memory_pools( pRealMemBase, &g_sMultiBootHeader );
 	init_msg_ports();

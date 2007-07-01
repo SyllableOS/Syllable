@@ -204,6 +204,7 @@ typedef struct
 	int lb_nCurSize;
 	int lb_nInPos;
 	int lb_nOutPos;
+	sem_id lb_hReadWait;
 	uint8 *lb_pBuffer;
 } LocalBuffer_s;
 
@@ -225,42 +226,44 @@ static uint8 g_anBuf14[1024];
 static uint8 g_anBuf15[1024];
 
 static LocalBuffer_s g_asBuffers[DB_PORT_COUNT] = {
-	{sizeof( g_anBuf00 ), 0, 0, 0, g_anBuf00}
+	{sizeof( g_anBuf00 ), 0, 0, 0, -1, g_anBuf00}
 	,
-	{sizeof( g_anBuf01 ), 0, 0, 0, g_anBuf01}
+	{sizeof( g_anBuf01 ), 0, 0, 0, -1, g_anBuf01}
 	,
-	{sizeof( g_anBuf02 ), 0, 0, 0, g_anBuf02}
+	{sizeof( g_anBuf02 ), 0, 0, 0, -1, g_anBuf02}
 	,
-	{sizeof( g_anBuf03 ), 0, 0, 0, g_anBuf03}
+	{sizeof( g_anBuf03 ), 0, 0, 0, -1, g_anBuf03}
 	,
-	{sizeof( g_anBuf04 ), 0, 0, 0, g_anBuf04}
+	{sizeof( g_anBuf04 ), 0, 0, 0, -1, g_anBuf04}
 	,
-	{sizeof( g_anBuf05 ), 0, 0, 0, g_anBuf05}
+	{sizeof( g_anBuf05 ), 0, 0, 0, -1, g_anBuf05}
 	,
-	{sizeof( g_anBuf06 ), 0, 0, 0, g_anBuf06}
+	{sizeof( g_anBuf06 ), 0, 0, 0, -1, g_anBuf06}
 	,
-	{sizeof( g_anBuf07 ), 0, 0, 0, g_anBuf07}
+	{sizeof( g_anBuf07 ), 0, 0, 0, -1, g_anBuf07}
 	,
-	{sizeof( g_anBuf08 ), 0, 0, 0, g_anBuf08}
+	{sizeof( g_anBuf08 ), 0, 0, 0, -1, g_anBuf08}
 	,
-	{sizeof( g_anBuf09 ), 0, 0, 0, g_anBuf09}
+	{sizeof( g_anBuf09 ), 0, 0, 0, -1, g_anBuf09}
 	,
-	{sizeof( g_anBuf10 ), 0, 0, 0, g_anBuf10}
+	{sizeof( g_anBuf10 ), 0, 0, 0, -1, g_anBuf10}
 	,
-	{sizeof( g_anBuf11 ), 0, 0, 0, g_anBuf11}
+	{sizeof( g_anBuf11 ), 0, 0, 0, -1, g_anBuf11}
 	,
-	{sizeof( g_anBuf12 ), 0, 0, 0, g_anBuf12}
+	{sizeof( g_anBuf12 ), 0, 0, 0, -1, g_anBuf12}
 	,
-	{sizeof( g_anBuf13 ), 0, 0, 0, g_anBuf13}
+	{sizeof( g_anBuf13 ), 0, 0, 0, -1, g_anBuf13}
 	,
-	{sizeof( g_anBuf14 ), 0, 0, 0, g_anBuf14}
+	{sizeof( g_anBuf14 ), 0, 0, 0, -1, g_anBuf14}
 	,
-	{sizeof( g_anBuf15 ), 0, 0, 0, g_anBuf15}
+	{sizeof( g_anBuf15 ), 0, 0, 0, -1, g_anBuf15}
 };
 
+static SpinLock_s g_sBufferLock;
 
 static void write_buffer( LocalBuffer_s * psBuffer, const void *pData, int nLen )
 {
+	spinlock( &g_sBufferLock );
 	if ( nLen > psBuffer->lb_nBufSize - psBuffer->lb_nCurSize )
 	{
 		nLen = psBuffer->lb_nBufSize - psBuffer->lb_nCurSize;
@@ -283,20 +286,27 @@ static void write_buffer( LocalBuffer_s * psBuffer, const void *pData, int nLen 
 		}
 		psBuffer->lb_nCurSize += nLen;
 	}
+	if( psBuffer->lb_hReadWait >= 0 )
+		wakeup_sem( psBuffer->lb_hReadWait, true );
+	spinunlock( &g_sBufferLock );	
 }
 
 static int read_buffer( LocalBuffer_s * psBuffer, void *pData, int nLen )
 {
-	if ( nLen > psBuffer->lb_nCurSize )
+	int nReadLen;
+again:
+	nReadLen = nLen;
+	spinlock( &g_sBufferLock );	
+	if ( nReadLen > psBuffer->lb_nCurSize )
 	{
-		nLen = psBuffer->lb_nCurSize;
+		nReadLen = psBuffer->lb_nCurSize;
 	}
-	if ( nLen > 0 )
+	if ( nReadLen > 0 )
 	{
-		if ( psBuffer->lb_nOutPos + nLen > psBuffer->lb_nBufSize )
+		if ( psBuffer->lb_nOutPos + nReadLen > psBuffer->lb_nBufSize )
 		{
 			int l1 = psBuffer->lb_nBufSize - psBuffer->lb_nOutPos;
-			int l2 = nLen - l1;
+			int l2 = nReadLen - l1;
 
 			memcpy( pData, psBuffer->lb_pBuffer + psBuffer->lb_nOutPos, l1 );
 			memcpy( ( ( uint8 * )pData ) + l1, psBuffer->lb_pBuffer, l2 );
@@ -304,12 +314,25 @@ static int read_buffer( LocalBuffer_s * psBuffer, void *pData, int nLen )
 		}
 		else
 		{
-			memcpy( pData, psBuffer->lb_pBuffer + psBuffer->lb_nOutPos, nLen );
-			psBuffer->lb_nOutPos += nLen;
+			memcpy( pData, psBuffer->lb_pBuffer + psBuffer->lb_nOutPos, nReadLen );
+			psBuffer->lb_nOutPos += nReadLen;
 		}
-		psBuffer->lb_nCurSize -= nLen;
+		psBuffer->lb_nCurSize -= nReadLen;
 	}
-	return ( nLen );
+	else
+	{
+		if( psBuffer->lb_hReadWait >= 0 )
+		{
+			uint32 nFlags = cli();
+			status_t nError;
+			if( ( nError = spinunlock_and_suspend( psBuffer->lb_hReadWait, &g_sBufferLock, 
+								nFlags, INFINITE_TIMEOUT ) ) < 0 )
+				return( nError );
+			goto again;
+		}
+	}
+	spinunlock( &g_sBufferLock );	
+	return ( nReadLen );
 }
 
 static void add_buffer( DBPacketHdr_s * psHdr )
@@ -839,7 +862,7 @@ static int debugger_thread( void *pData )
 			}
 			nTotSize += nSize;
 		}
-		snooze( 100000 );
+		snooze( 10000 );
 	}
 	return( 0 );
 }
@@ -954,6 +977,12 @@ static void dbg_speed( int argc, char **argv )
 	{
 		dbprintf( DBP_DEBUGGER, "Invalid argument count\n" );
 	}
+}
+
+void init_debugger_locks()
+{
+	for( int i = 0; i < DB_PORT_COUNT; i++ )
+		g_asBuffers[i].lb_hReadWait = create_semaphore( "debug_read_wait", 0, 0 );
 }
 
 void init_debugger( int nBaudRate, int nPort )

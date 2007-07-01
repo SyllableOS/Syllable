@@ -56,6 +56,7 @@ int  printk( const char* pzFmt, ... ) __attribute__ ((format (printf, 1, 2)));
 void panic( const char* pzFmt, ... ) __attribute__ ((format (printf, 1, 2)));
 void set_debug_port_params( int nBaudRate, int nPort, bool bPlainTextDebug );
 void init_debugger( int nBaudRate, int nSerialPort );
+void init_debugger_locks( void );
 int  register_debug_cmd( const char* pzName, const char* pzDesc, dbg_fnc* pFunc );
 
 void dbcon_write( const char* pData, int nSize );
