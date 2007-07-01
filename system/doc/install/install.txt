@@ -33,7 +33,7 @@ run.
 
 Syllable is normally installed from a bootable CD which is a simple
 and painless way to install Syllable.  You can either download a disc
-image and burn a CD yourself, or you can purchase a CD for $10.
+image and burn a CD yourself, or you can purchase a CD for $15.
 
 A purchased CD is the same as the downloadable disc image but also includes
 the latest available applications and full sourcecode for Syllable.  If
@@ -44,7 +44,7 @@ The downloadable Syllable CD image is distributed as a Gziped "ISO" image.
 Before you can burn this image to a CD you must first ungzip it.  On Linux,
 Syllable or other Unix-like systems such as MacOS X you should do this:
 
-bash$ gzip -d syllable-0.6.3.iso.gz
+bash$ gzip -d syllable-0.6.4.iso.gz
 
 On Windows you can use WinZip to decompress the Gzip file.
 
@@ -197,7 +197,7 @@ document ("SOLVING PROBLEMS").
 
 You should read the Welcome text, which can be found in the following locations:
 
-	On line at http://www.syllable.org/docs/0.6.3/Welcome.html
+	On line at http://www.syllable.org/docs/0.6.4/Welcome.html
 	On the installation CD at /boot/Documentation/Welcome.html
 	In Syllable at /boot/Documentation/Welcome.html
 
@@ -220,7 +220,7 @@ these will be useful in helping to solve your problem.  Make a note of your hard
 (Processor & motherboard type, total amount of memory, type of video card).
 
 You should then check the Frequently Asked Questions (FAQ) at
-http://www.syllable.org/faq.php  These provide answers to very
+http://www.syllable.org/docs/FAQs/  These provide answers to very
 common questions concerning Syllable.  There is also a community-maintained FAQ at
 http://www.syllable-wiki.tk/ which may also answer your questions.
 
