@@ -311,7 +311,7 @@ void InnerEdit::Paint(const os::Rect &r)
 
 
 		backView->Sync();
-		DrawBitmap( backBM, backBM->GetBounds(), os::Rect( -xOff, y, backBM->GetBounds().Width() - xOff, y + lineHeight ) );
+		DrawBitmap( backBM, backBM->GetBounds(), os::Rect( -xOff, y, backBM->GetBounds().Width() - xOff, y + lineHeight - 1 ) );
 		Sync();
 		nBufferIndex = _TranslateBufferIndex( ++nVisibleLine );
 		y += lineHeight;
