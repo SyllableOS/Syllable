@@ -28,7 +28,7 @@ modules
 ;	Needs ranlib and perl symlinks in /usr/bin/!
 ;	For cURL:
 	stage libraries/c-ares-1.3.2
-;	stage libraries/openssl--stage
+	stage libraries/openssl--stage
 
 	apps/gnu/findutils-4.2.30
 	apps/gnu/gzip-1.3.9
