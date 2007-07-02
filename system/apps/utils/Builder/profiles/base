@@ -10,9 +10,12 @@ resources
 	system/resources/wallpapers			wallpapers/*.png
 	system/resources/wallpapers			wallpapers/*.jpg
 	system/resources/wallpapers			wallpapers/Adrian/*.png
+	system/resources/wallpapers			wallpapers/Ruud/*.png
 	system/resources/wallpapers			wallpapers/Ruud/*.jpg
 	system/resources/wallpapers			wallpapers/YakkMeister/*.png
 	system/resources/wallpapers			wallpapers/ZeroNet/*.jpg
+	system/resources/wallpapers			wallpapers/LucasMurad/*.png
+	system/resources/wallpapers			wallpapers/LucasMurad/*.jpg
 
 modules
 	other/fonts/liberation-fonts-2
