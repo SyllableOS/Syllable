@@ -362,7 +362,7 @@ void Desktop::LoadBackground()
 	{
 		cFile.SetTo( open_image_file( get_image_id() ) );
 		os::Resources cCol( &cFile );		
-		os::ResStream *pcStream = cCol.GetResourceStream( "background.png" );
+		os::ResStream *pcStream = cCol.GetResourceStream( "background.jpg" );
 		m_pcBackground = new os::BitmapImage( pcStream );
 		delete( pcStream );
 	}
@@ -373,4 +373,3 @@ void Desktop::LoadBackground()
 		
 	m_pcView->SetBackground( m_pcBackground );
 }
-
