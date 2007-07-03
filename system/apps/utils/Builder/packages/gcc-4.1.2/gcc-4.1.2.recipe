@@ -50,6 +50,7 @@ build-recommends
 	texinfo
 recommends			mktemp
 test-needs			dejagnu >= 1.4.1
+install-needs		gcc
 ;conflicts			binutils
 
 ;patch

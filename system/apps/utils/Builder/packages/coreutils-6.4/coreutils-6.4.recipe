@@ -16,6 +16,7 @@ packages			coreutils/coreutils-6.4
 build-needs
 	coreutils
 	perl
+install-needs		coreutils
 
 documentation		README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS THANKS-to-translators
 links
