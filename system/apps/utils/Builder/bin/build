@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.147
+# Version 0.7.0
 # Copyright (c) 2002-2007 Kaj de Vos
 # License: GPL 2 or any later version
 
@@ -1662,8 +1662,8 @@ else
 
 #	@buildTools = File.join @workDir, 'build-tools'
 
-#	ENV['DIST_VER'] = '0.6.3+'
-#	ENV['DIST_NAME'] = 'base-syllable-0.6.3+.zip'
+#	ENV['DIST_VER'] = '0.6.4+'
+#	ENV['DIST_NAME'] = 'base-syllable-0.6.4+.zip'
 
 	ENV['ATHEOS_SRC'] = @workDir
 #	ENV['BUILD_TOOLS'] = File.join @workDir, 'build-tools'
@@ -1685,7 +1685,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.6.147',
+	puts 'Syllable Build System 0.7.0',
 		'Copyright (c) 2002-2007 Kaj de Vos',
 		'License: GPL 2 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
