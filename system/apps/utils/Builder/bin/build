@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.7.0
+# Version 0.7.1
 # Copyright (c) 2002-2007 Kaj de Vos
 # License: GPL 2 or any later version
 
@@ -776,12 +776,12 @@ end
 
 def buildPackage target
 	# FIXME: not correct for FLAGS override and cross-compiling:
-	file = "#{name = fullName target}-0.#{@kernel}.#{@machine}.resource"
+	file = "#{name = fullName target}-0#{@kernel == 'Syllable' ? '' : '.' + @kernel}.#{@machine}.resource"
 
 	unless
 		if exists? file and not action 'rm ' + file
 			# Zip would add to the existing package
-			@log.error "Couldn't remove existing package " + file
+			@log.error "Could not remove existing package " + file
 			false
 		else
 			Dir.chdir root = installRoot(false)
@@ -1054,18 +1054,19 @@ def buildPack targets
 					deleteCVSData '' and
 					begin
 						Dir.chdir @workDir
+						kernelPart = @kernel == 'Syllable' ? '' : '.' + @kernel
 			
 						for package in modules = targets.modules
 							# Try to find the latest release. FIXME: alphabetical ordering
 							break unless action "ln -s #{Dir[
 #									File.join(@distrosPath, fullName(package)) + '.bin.*.*z*'
-									File.join(@distrosPath, fullName(package)) + "-*.#{@kernel}.*.resource"
+									File.join(@distrosPath, fullName(package)) + "-*#{kernelPart}.*.resource"
 								].last
 							} " + name
 						end and
 						begin
 							# FIXME: not correct for FLAGS override and cross-compiling:
-							action "zip -rm #{name}-0.#{@kernel}.#{@machine}.zip " + name
+							action "zip -rm #{name}-0#{kernelPart}.#{@machine}.zip " + name
 						end
 					end
 				end
@@ -1685,7 +1686,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.7.0',
+	puts 'Syllable Build System 0.7.1',
 		'Copyright (c) 2002-2007 Kaj de Vos',
 		'License: GPL 2 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
