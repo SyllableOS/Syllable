@@ -1,3 +1,7 @@
+* July 6, 2007, Kristian Van Der Vliet *
+
+Improved the framebuffer size detection in the Radeon driver.
+
 * July 1, 2007, Flemming H. Sørensen *
 
 New Calculator "Syllable-family" logo.
