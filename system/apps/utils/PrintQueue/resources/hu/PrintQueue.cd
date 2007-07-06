@@ -1,0 +1,56 @@
+//
+//	PrintQueue String Catalog
+//
+//	Translated by: Horváth Dávid
+//
+
+MSG_MAINWND_TITLE=0								Nyomtatási feladatok
+
+MSG_MAINWND_MENU_APPLICATION=100				Program
+MSG_MAINWND_MENU_APPLICATION_QUIT				Kilépés
+MSG_MAINWND_MENU_APPLICATION_ABOUT				Névjegy...
+
+MSG_MAINWND_MENU_VIEW=120						Nézet
+MSG_MAINWND_MENU_VIEW_REFRESH					Frissítés
+MSG_MAINWND_MENU_VIEW_COMPLETED					Mutassa az összes feladatot
+
+MSG_MAINWND_MENU_JOB=130						Nyomtass!
+MSG_MAINWND_MENU_JOB_CANCEL						Mégse nyomtass!
+
+MSG_MAINWND_MENU_PRINTER=140					Nyomtató
+MSG_MAINWND_MENU_PRINTER_PAUSE					Nyomtatás megállítása
+MSG_MAINWND_MENU_PRINTER_RESUME					Nyomtatás újraindítása
+
+MSG_MAINWND_TOOLBAR_CALCEL=200					Mégse nyomtass!
+MSG_MAINWND_TOOLBAR_PAUSE						Nyomtatás megállítása
+MSG_MAINWND_TOOLBAR_RESUME						Nyomtatás újraindítása
+
+MSG_MAINWND_CONTEXTMENU_CANCEL=300				Mégse nyomtass!
+MSG_MAINWND_CONTEXTMENU_PAUSE					Nyomtatás megállítása
+MSG_MAINWND_CONTEXTMENU_RESUME					Nyomtatás újraindítása
+
+MSG_MAINWND_DOCLIST_ID=500						ID
+MSG_MAINWND_DOCLIST_NAME						Név
+MSG_MAINWND_DOCLIST_STATUS						Állapot
+MSG_MAINWND_DOCLIST_OWNER						Tulajdonos
+MSG_MAINWND_DOCLIST_SIZE						Méret
+MSG_MAINWND_DOCLIST_SUBMITTED					Engedélyezve
+
+MSG_MAINWND_JOBSIZE_KB=600						%d KB
+MSG_MAINWND_JOBSIZE_MB							%d MB
+MSG_MAINWND_JOBSIZE_GB							%d GB
+
+MSG_ABOUTWND_TITLE=1000							Nyomtatási feladatok
+MSG_ABOUTWND_TEXT1								Syllable nyomtatási feladatok
+MSG_ABOUTWND_TEXT2								Használt CUPS verzió %d.%d.%d\n
+MSG_ABOUTWND_CLOSE								_Bezárás
+
+MSG_ALERTWND_PAUSE_TITLE=1100					Feladat sikertelen
+MSG_ALERTWND_PAUSE_CLOSE						_Bezárás
+
+MSG_ALERTWND_RESUME_TITLE=1200					Feladat sikertelen
+MSG_ALERTWND_RESUME_CLOSE						_Bezárás
+
+MSG_ALERTWND_CANCEL_TITLE=1300					Feladat sikertelen
+MSG_ALERTWND_CANCEL_CLOSE						_Bezárás
+

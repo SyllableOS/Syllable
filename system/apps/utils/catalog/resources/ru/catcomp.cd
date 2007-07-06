@@ -1,0 +1,19 @@
+//
+//	CatalogCompiler String Catalog
+//
+//	Translated by: Ilya Krol
+//
+
+MSG_SYNTAX_ERROR=100				Синтаксическая ошибка в строке %d.
+MSG_ID_NUMBER_MISSING				Отсутствует номер идентификатора.
+MSG_NO_TEXT_STRING					Текстовая строка не найдена.
+MSG_CANT_OPEN_FILE					Не удаётся открыть файл %s!
+
+MSG_HELP_COMPILE=200				Компилировать каталог и заголовочный файл.
+MSG_HELP_TRANSLATE					Компилировать переведённый каталог в двоичный формат.
+MSG_HELP_HELP						Вывести данное собщение помощи.
+
+MSG_CREATING_CATALOG_FILE=300		Создаётся каталоговый файл:
+MSG_CREATING_HEADER_FILE			Создаётся заголовочный файл:
+MSG_DESCR							Используется для создания строковых каталогов при переводе программного обеспечения.
+

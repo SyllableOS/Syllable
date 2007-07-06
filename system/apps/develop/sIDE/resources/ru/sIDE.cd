@@ -1,0 +1,91 @@
+//
+//	sIDE String Catalog
+//
+//	Translated by: Ilya Krol
+//
+
+MSG_PWND_TITLE=0						sIDE
+
+MSG_PWND_MENU_APPLICATION=200			Приложение
+MSG_PWND_MENU_APPLICATION_ABOUT			О программе...
+MSG_PWND_MENU_APPLICATION_QUIT			Выход
+
+MSG_PWND_MENU_PROJECT=210				Проект
+MSG_PWND_MENU_PROJECT_NEW				Новый...
+MSG_PWND_MENU_PROJECT_OPEN				Открыть...
+MSG_PWND_MENU_PROJECT_SAVE				Сохранить
+MSG_PWND_MENU_PROJECT_SAVEAS			Сохранить как...
+MSG_PWND_MENU_PROJECT_PREF				Настройки...
+MSG_PWND_MENU_PROJECT_GROUPS			Группы...
+MSG_PWND_MENU_PROJECT_NEW_FILE			Новый файл...
+MSG_PWND_MENU_PROJECT_ADD_FILE			Добавить файл...
+MSG_PWND_MENU_PROJECT_ADD_LIB			Добавить библиотеку...
+MSG_PWND_MENU_PROJECT_REMOVE_FILE		Удалить файл
+
+MSG_PWND_MENU_BUILD=230					Собрать проект
+MSG_PWND_MENU_BUILD_CLEAN				Очистить
+MSG_PWND_MENU_BUILD_MAKE				Собрать
+MSG_PWND_MENU_BUILD_RUN					Запустить
+MSG_PWND_MENU_BUILD_EXPORT_MAKEFILE		Экспортировать мэйкфайл.
+
+MSG_PWND_ABOUT_TITLE=240				О sIDE
+MSG_PWND_ABOUT							The Syllable IDE\nНаписана Arno Klenke, 2001-2006\nНовый диалог проекта написан Rick Caudill\n\nsIDE распространяется под лицензией Gnu Public Licencse (GPL)\nПожалуйста, см. файл COPYING, распространяемый вместе с sIDE, для\nполучения дополнительной информации\n
+
+MSG_PWND_LIST_FILE=250					Файл
+MSG_PWND_LIST_TYPE						Тип
+
+MSG_PWND_NO_GROUPS=260					Нет групп в наличии!\n
+MSG_PWND_COULD_NOT_OPEN_PROJ			Не удалось открыть файл проекта.\n
+MSG_PWND_COULD_NOT_OPEN_FILE			Не удалось открыть выбранный файл!\n
+MSG_PWND_COULD_NOT_SAVE_PROJ			Не удалось сохранить данный проект!\n
+MSG_PWND_NOT_IN_PROJ_DIR				Выбранный файл находится вне субдиректории проекта!\n
+
+MSG_TYPE_HEADER=300						Заголовочный файл
+MSG_TYPE_C								C файл
+MSG_TYPE_CPP							C++ файл
+MSG_TYPE_LIB							Библиотека
+MSG_TYPE_OTHER							Другое
+MSG_TYPE_RES							Ресурс
+MSG_TYPE_CATALOG						Каталог
+MSG_TYPE_IF								Интерфейс
+MSG_TYPE_UNKNOWN						Неизвестн.
+
+MSG_BUTTON_OK=400						ОК
+MSG_BUTTON_CANCEL						Отмена
+MSG_BUTTON_UP							Вверх
+MSG_BUTTON_DOWN							Вниз
+MSG_BUTTON_ADD							Добавить
+MSG_BUTTON_REMOVE						Удалить
+
+MSG_ADDWND_TITLE=500					Добавить/Создать файл
+MSG_ADDWND_NAME							Имя
+MSG_ADDWND_FILE							Файл для создания/добавления
+
+MSG_NEWWND_TITLE=600					Новый проект
+MSG_NEWWND_PROJECTS						Проекты
+MSG_NEWWND_NAME							Имя:
+MSG_NEWWMD_DIR							Директория:
+MSG_NEWWND_ERR_TITLE					Ошибка
+MSG_NEWWND_ERR_EXTR						Не удалось извлечь шаблон проекта!\n
+MSG_NEWWND_NO_LOC_NAME					Для проекта не установлены ни имя, ни месторасположение!\n
+MSG_NEWWND_NO_LOC						Вам необходимо указать месторасположение для данного проекта!\n
+MSG_NEWWND_NO_NAME						Вам необходимо указать имя для данного проекта!
+MSG_NEWWND_NO_DIR						Не директория
+MSG_NEWWND_NO_DIR_1						Файл, 
+MSG_NEWWND_NO_DIR_2						, не является директорией\n
+
+MSG_PPREF_TITLE=700						Свойства проекта
+MSG_PPREF_TARGET						Платформа
+MSG_PPREF_CATEGORY						Категория
+MSG_PPREF_INSTALL_PATH					Установочный путь
+MSG_PPREF_CFLAGS						Флаги компилятора
+MSG_PPREF_LFLAGS						Флаги линковщика
+
+MSG_GROUPS_TITLE=800					Управление группами
+MSG_GROUPS_LIST							Группа
+
+MSG_ADDLIB_TITLE=900					Добавить библиотеку
+MSG_ADDLIB_SELECT						Выбрать
+MSG_ADDLIB_CUSTOM						Избирательно
+MSG_ADDLIB_GROUP						Группа
+

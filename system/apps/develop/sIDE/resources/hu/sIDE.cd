@@ -1,0 +1,91 @@
+//
+//	sIDE String Catalog
+//
+//	Translated by: Horváth Dávid
+//
+
+MSG_PWND_TITLE=0						sIDE
+
+MSG_PWND_MENU_APPLICATION=200			Program
+MSG_PWND_MENU_APPLICATION_ABOUT			Névjegy...
+MSG_PWND_MENU_APPLICATION_QUIT			Kilépés
+
+MSG_PWND_MENU_PROJECT=210				Projekt
+MSG_PWND_MENU_PROJECT_NEW				Új...
+MSG_PWND_MENU_PROJECT_OPEN				Megnyitás...
+MSG_PWND_MENU_PROJECT_SAVE				Mentés
+MSG_PWND_MENU_PROJECT_SAVEAS			Mentés másként...
+MSG_PWND_MENU_PROJECT_PREF				Tulajdonságok...
+MSG_PWND_MENU_PROJECT_GROUPS			Csoportok...
+MSG_PWND_MENU_PROJECT_NEW_FILE			Új fájl...
+MSG_PWND_MENU_PROJECT_ADD_FILE			Fájl hozzáadása...
+MSG_PWND_MENU_PROJECT_ADD_LIB			Könyvtár hozzáadása...
+MSG_PWND_MENU_PROJECT_REMOVE_FILE		Fájl eltávolítása
+
+MSG_PWND_MENU_BUILD=230					Fordítás
+MSG_PWND_MENU_BUILD_CLEAN				Törlés
+MSG_PWND_MENU_BUILD_MAKE				Fordítás
+MSG_PWND_MENU_BUILD_RUN					Futtatás
+MSG_PWND_MENU_BUILD_EXPORT_MAKEFILE		Makefile exportálása
+
+MSG_PWND_ABOUT_TITLE=240				Az sIDE névjegye
+MSG_PWND_ABOUT							Syllable IDE\nÍrta Arno Klenke, 2001-2006\nAz "új projekt" panelt Rick Caudill készítette\n\naz sIDE a Gnu Public Licencse (GPL) alatt jelenik meg.\nKérlek olvasd el a COPYING fájlt, amit az sIDE-hez kaptál.
+
+MSG_PWND_LIST_FILE=260					Fájl
+MSG_PWND_LIST_TYPE						Típus
+
+MSG_PWND_NO_GROUPS=260					Nincsenek csoportok!\n
+MSG_PWND_COULD_NOT_OPEN_PROJ			Nem tudtam megnyitni a projekt-fájlt.\n
+MSG_PWND_COULD_NOT_OPEN_FILE			Nem tudtam megnyitni a kiválasztott fájlt!\n
+MSG_PWND_COULD_NOT_SAVE_PROJ			Nem tudtam elmenteni a fájlt!\n
+MSG_PWND_NOT_IN_PROJ_DIR				A kiválasztott fájlt nincs a projekt mappáiban!\n
+
+MSG_TYPE_HEADER=300						Fejállomány
+MSG_TYPE_C								C fájl
+MSG_TYPE_CPP							C++ fájl
+MSG_TYPE_LIB							Könyvtár
+MSG_TYPE_OTHER							Egyéb
+MSG_TYPE_RES							Erőforrás
+MSG_TYPE_CATALOG						Katalógus
+MSG_TYPE_IF								Interfész
+MSG_TYPE_UNKNOWN						Ismeretlen
+
+MSG_BUTTON_OK=400						Ok
+MSG_BUTTON_CANCEL						Mégsem
+MSG_BUTTON_UP							Fel
+MSG_BUTTON_DOWN							Le
+MSG_BUTTON_ADD							Hozzáadás
+MSG_BUTTON_REMOVE						Eltávolítás
+
+MSG_ADDWND_TITLE=500					Fájl hozzáadása/készítése
+MSG_ADDWND_NAME							Név
+MSG_ADDWND_FILE							Fájl hozzáadása/készítése
+
+MSG_NEWWND_TITLE=600					Új projekt
+MSG_NEWWND_PROJECTS						Projektek
+MSG_NEWWND_NAME							Név:
+MSG_NEWWMD_DIR							Mappa:
+MSG_NEWWND_ERR_TITLE					Hiba
+MSG_NEWWND_ERR_EXTR						Nem tudtam kicsomagolni a sablon-projektet!\n
+MSG_NEWWND_NO_LOC_NAME					Nem lehet létrehozni a névbeállítás ebben a projektben!\n
+MSG_NEWWND_NO_LOC						Meg kell adni egy helyet a projektnek!\n
+MSG_NEWWND_NO_NAME						Meg kell adni egy nevet a projektnek!
+MSG_NEWWND_NO_DIR						Nincs meg egy mappa.
+MSG_NEWWND_NO_DIR_1						A fájl, 
+MSG_NEWWND_NO_DIR_2						, nincs a mappában\n
+
+MSG_PPREF_TITLE=700						Projekt tulajdonságai
+MSG_PPREF_TARGET						Cél
+MSG_PPREF_CATEGORY						Kategória
+MSG_PPREF_INSTALL_PATH					Telepítési útvonal
+MSG_PPREF_CFLAGS						Fordító jelzői
+MSG_PPREF_LFLAGS						Linker jelzői
+
+MSG_GROUPS_TITLE=800					Csoportok kezelése
+MSG_GROUPS_LIST							Csoport
+
+MSG_ADDLIB_TITLE=900					Könyvtár hozzáadása
+MSG_ADDLIB_SELECT						Kijelöl
+MSG_ADDLIB_CUSTOM						Egyéni
+MSG_ADDLIB_GROUP						Csoport
+

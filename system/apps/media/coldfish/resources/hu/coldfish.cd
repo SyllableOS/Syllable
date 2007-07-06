@@ -40,6 +40,10 @@ MSG_ERRWND_CANTPLAY							A ColdFish nem tudja lejátszani a kiválasztott fájl
 MSG_ERRWND_CANTDELETE						A lejátszás alatt lévö számot nem lehet törölni.
 MSG_ERRWND_NOTPLAYLIST						A kiválasztott fájl nem játéklista.
 
+MSG_ALERTWND_NOMEDIASERVER_TITLE=1200		Hiba
+MSG_ALERTWND_NOMEDIASERVER_TEXT				Nem lehet csatlakozni a média szerveréhez.
+MSG_ALERTWND_NOMEDIASERVER_OK				_Ok
+
 MSG_PLAYLIST_UNKNOWN=2000					Ismeretlen
 MSG_PLAYLIST_DEFAULT						Alapértelmezett játéklista
 
