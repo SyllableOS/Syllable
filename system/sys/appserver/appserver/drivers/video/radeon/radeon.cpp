@@ -482,34 +482,39 @@ bool ATIRadeon::InitHardware( int nFd ) {
 #endif
 
 	/* framebuffer size */
-	if(rinfo.family == CHIP_FAMILY_RS100 ||
-		rinfo.family == CHIP_FAMILY_RS200 ||
-		rinfo.family == CHIP_FAMILY_RS300)
+	if(rinfo.is_IGP)
 	{
-		uint32 tom = INREG(NB_TOM);
-		rinfo.video_ram = (((tom >> 16) - (tom & 0xffff) + 1) << 6) * 1024;
-
-		OUTREG(CONFIG_MEMSIZE, rinfo.video_ram);
-
-		OUTREG(GRPH2_BUFFER_CNTL, INREG(GRPH2_BUFFER_CNTL) & ~0x7f000000);
-
-		OUTREG(MC_FB_LOCATION, tom);
-		rinfo.fb_local_base = (tom & 0xffff) << 16;
-
-		/* XXXKV: Set regs DISPLAY_BASE, DISPLAY2_BASE & OVO_BASE? */
-	}
+		uint32 tom;
+		/* force MC_FB_LOCATION to NB_TOM */
+		tom = INREG( NB_TOM );
+		rinfo.fb_local_base = tom << 16;
+		rinfo.video_ram   = ((tom >> 16) - (tom & 0xffff) + 1) << 16;
+	} 
 	else
 	{
-		/* XXXKV: This seems to assume that the cards BIOS will have done the memory configuration for us.  This
-		   might not apply on all cards (E.g. IGP card).  If that's the case we need to do the equivilent of the
-		   X.org drivers SetFBLocation() */
-		rinfo.fb_local_base = INREG(MC_FB_LOCATION) << 16;
-
-		tmp = INREG(CONFIG_MEMSIZE);
-
-		/* mem size is bits [28:0], mask off the rest */
-		rinfo.video_ram = tmp & CONFIG_MEMSIZE_MASK;
+		if (rinfo.family >= CHIP_FAMILY_R300) {
+			rinfo.fb_local_base = 0;
+			rinfo.video_ram   = INREG( CONFIG_MEMSIZE );
+		} else {
+			rinfo.fb_local_base = INREG( CONFIG_APER_0_BASE ); 
+			rinfo.video_ram   = INREG( CONFIG_APER_SIZE );
+		}
 	}
+     
+	OUTREG( MC_FB_LOCATION, (rinfo.fb_local_base>>16) |
+				  ((rinfo.fb_local_base + rinfo.video_ram - 1) & 0xffff0000) ); 
+
+     OUTREG( DISPLAY_BASE_ADDR, rinfo.fb_local_base );
+     OUTREG( DISP_MERGE_CNTL, 0xffff0000 );
+     if (rinfo.has_CRTC2) {
+          OUTREG( CRTC2_DISPLAY_BASE_ADDR, rinfo.fb_local_base );
+          OUTREG( DISP2_MERGE_CNTL, 0xffff0000 );
+     }
+
+     OUTREG( FCP_CNTL, FCP0_SRC_GND );
+     OUTREG( CAP0_TRIG_CNTL, 0 );
+     OUTREG( VID_BUFFER_CONTROL, 0x00010001 );
+     OUTREG( DISP_TEST_DEBUG_CNTL, 0 );
 
 	/* ram type */
 	tmp = INREG(MEM_SDRAM_MODE_REG);

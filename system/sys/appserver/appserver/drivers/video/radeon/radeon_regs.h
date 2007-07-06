@@ -278,8 +278,9 @@
 #define OV0_GAMMA_40_7F                        0x0D4C  
 #define OV0_GAMMA_380_3BF                      0x0D50  
 #define OV0_GAMMA_3C0_3FF                      0x0D54  
-#define DISP_MERGE_CNTL                        0x0D60  
+#define DISP_MERGE_CNTL                        0x0D60
 #define DISP_OUTPUT_CNTL                       0x0D64  
+#define DISP2_MERGE_CNTL                       0x0D68
 #define DISP_LIN_TRANS_GRPH_A                  0x0D80  
 #define DISP_LIN_TRANS_GRPH_B                  0x0D84
 #define DISP_LIN_TRANS_GRPH_C                  0x0D88
@@ -398,7 +399,10 @@
 #define PAMAC1_DLY_CNTL                        0x0a98
 #define PAMAC2_DLY_CNTL                        0x0a9c
 #define FW_CNTL                                0x0118
+#define VID_BUFFER_CONTROL                     0x9000
 #define FCP_CNTL                               0x0910
+#define 	FCP0_SRC_GND						4
+
 #define VGA_DDA_ON_OFF                         0x02ec
 #define TV_MASTER_CNTL                         0x0800
 
