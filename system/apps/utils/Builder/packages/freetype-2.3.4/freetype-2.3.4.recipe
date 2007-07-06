@@ -10,9 +10,9 @@ locations			http://download.savannah.gnu.org/releases/freetype/
 
 ;build-recommends	python
 
-patch
+_patch
 ;	Enable patented TrueType font hinting (native bytecode interpreter):
-;	sed -i -r -e 's:.*(#.*BYTE.*) .*:\1:' include/freetype/config/ftoption.h
+	sed -i -r -e 's:.*(#.*BYTE.*) .*:\1:' include/freetype/config/ftoption.h
 ;	Enable patented LCD-optimized rendering (subpixel hinting):
 ;	sed -i -r -e 's:.*(#.*SUBPIX.*) .*:\1:' include/freetype/config/ftoption.h
 
