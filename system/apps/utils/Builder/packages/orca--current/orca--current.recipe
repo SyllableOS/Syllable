@@ -29,7 +29,7 @@ _patch
 
 ;build-dir			.
 
-; Proprietary REBOL needs to be in /usr/bin/ to run M2 configure
+; REBOL needs to be in /usr/bin/ to run M2 configure
 configure			cp Makefile.fixed Makefile
 
 install-tree		bin lib include
@@ -39,5 +39,3 @@ install-files
 	liborca0.a		lib
 	ovalue.h		include
 documentation		README LICENSE ChangeLog TODO
-links				orca bin/rebol
-
