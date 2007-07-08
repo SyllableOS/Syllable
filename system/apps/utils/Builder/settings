@@ -1,6 +1,7 @@
 ; Project trees:
-;lineage
-;	.
+lineage
+	.
+	Syllable
 ;	AMD64
 ;	Linux
 
