@@ -63,7 +63,7 @@ Desktop::Desktop() : os::Window( os::Rect(), "desktop", MSG_DESKTOP_TITLE, os::W
 	m_pcView->SetDirChangeMsg( new os::Message( M_CHANGE_DIR ) );
 	m_pcView->SetDirectoryLocked( true );
 	m_pcView->SetView( os::IconView::VIEW_ICONS_DESKTOP );
-	m_pcView->SetBackgroundColor( get_default_color( os::COL_MENU_BACKGROUND ) );
+	m_pcView->SetBackgroundColor( os::Color32_s( 97, 154, 203 ) );
 	m_pcView->SetTextColor( os::Color32_s( 255, 255, 255 ) );
 	m_pcView->SetTextShadowColor( os::Color32_s( 255, 255, 255 ) );
 	
@@ -338,14 +338,14 @@ void Desktop::SaveSettings()
 void Desktop::LoadBackground()
 {
 	/* Load/reload background image */
-	bool bLoadDefault = false;
+	bool bNone = false;
 
 	os::File cFile;
 	
 	try
 	{
 		if( m_zBackground == "None" )
-			bLoadDefault = true;
+			bNone = true;
 		else {
 			os::Path cPath = os::Path( "/system/resources/wallpapers/" );
 			cPath.Append( m_zBackground.c_str() );
@@ -354,22 +354,21 @@ void Desktop::LoadBackground()
 		}
 	} catch( ... )
 	{
-		bLoadDefault = true;
+		bNone = true;
 	}
 	
-	/* Load default background */
-	if( bLoadDefault )
+	
+	if( bNone )
 	{
-		cFile.SetTo( open_image_file( get_image_id() ) );
-		os::Resources cCol( &cFile );		
-		os::ResStream *pcStream = cCol.GetResourceStream( "background.jpg" );
-		m_pcBackground = new os::BitmapImage( pcStream );
-		delete( pcStream );
+		m_pcBackground = NULL;
 	}
-	
-	/* Scale bitmap */
-	os::Desktop cDesk;
-	m_pcBackground->SetSize( os::Point( cDesk.GetResolution() ) );
-		
+	else
+	{
+		/* Scale bitmap */
+		os::Desktop cDesk;
+		if( m_pcBackground->GetSize() != os::Point( cDesk.GetResolution() ) )
+			m_pcBackground->SetSize( os::Point( cDesk.GetResolution() ) );
+	}
 	m_pcView->SetBackground( m_pcBackground );
 }
+

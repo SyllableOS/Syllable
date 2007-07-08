@@ -32,7 +32,7 @@ desktop: $(OBJS)
 	@echo Linking...
 	@$(CXX) $(OBJS) -o desktop -lsyllable
 	@echo Adding resources...
-	@rescopy desktop -r icon48x48.png background.jpg
+	@rescopy desktop -r icon48x48.png
 	@rescopy -a desktop resources/desktop.catalog
 	for CATALOG in $(CATALOGS);do \
 		echo $$CATALOG; \
@@ -67,3 +67,4 @@ dist: all
 install: all
 	@echo Installing...
 	@cp desktop /system/bin/desktop
+
