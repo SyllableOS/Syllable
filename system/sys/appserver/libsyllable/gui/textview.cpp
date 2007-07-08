@@ -2681,6 +2681,8 @@ void TextEdit::MouseUp( const Point & cPosition, uint32 nButtons, Message * pcDa
 	}
 	CommitEvents();
 	m_bMouseDownSeen = false;
+	if( pcData != NULL )
+		return os::View::MouseUp( cPosition, nButtons, pcData );
 }
 
 
