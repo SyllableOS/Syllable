@@ -1,3 +1,8 @@
+* July 1, 2007, Arno Klenke *
+
+Always set PTE_ACCESSED when PTE_DIRTY is set
+debug_read() now blocks when there is no data available
+
 * Jun 25, 2007, Kristian Van Der Vliet *
 
 Fix lock/unlock order of the g_hInodeHashSem mutex in do_mount(). Fixes bug #256.
@@ -1205,6 +1210,7 @@ required; they are implemented in user space as part of libc.
 
 Applied a fix to sys/kernel/kernel/vfs/vfs.c  The fcntl() F_GETLK command
 now works as expected.
+
 
 
 

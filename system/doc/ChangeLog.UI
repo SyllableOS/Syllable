@@ -1,3 +1,7 @@
+* July 8, 2007, Arno Klenke *
+
+Fixed drag and drop operations on textviews
+
 * June 19, 2007, Arno Klenke *
 
 Moved clipboard event into the appserver
@@ -1429,6 +1433,7 @@ disabled controls.  The following files have been patched:
 
 	The sub-menu arrow is now drawn corretly, and menus which have children
 	are now drawn slightly larger to allow for the arrow.
+
 
 
 

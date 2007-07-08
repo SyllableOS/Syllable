@@ -1,3 +1,8 @@
+* July 8, 2007, Arno Klenke *
+
+Do not scale desktop wallpaper if not needed
+Removed default wallpaper
+
 * June 3, 2007, Arno Klenke *
 
 Change the dock to use the registrar application list
@@ -212,5 +217,7 @@ Cleaned up message texts in DLogin.
 		* Added error testing for scaling images.  If the image is not bigger than the
  				screen resolution, the desktop will not scale the image.
 		* Fixed icon text color problems.
+
+
 
 
