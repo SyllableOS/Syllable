@@ -4,7 +4,7 @@
 #include "resources/Contact.h"
 
 
-MainWindow::MainWindow( const os::String& cArgv ) : os::Window( os::Rect( 0, 0, 600, 500 ), "main_wnd", MSG_MAINWND_TITLE )
+MainWindow::MainWindow( const os::String& cArgv ) : os::Window( os::Rect( 0, 0, 700, 500 ), "main_wnd", MSG_MAINWND_TITLE )
 {
 	/* Set Icon */
 	os::Resources cCol( get_image_id() );
