@@ -30,11 +30,13 @@
 #include <atheos/kernel.h>
 
 #include <util/application.h>
+#include <util/resources.h>
 #include <util/message.h>
-#include <gui/window.h>
 #include <gui/view.h>
-#include <gui/stringview.h>
+#include <gui/window.h>
 #include <gui/tableview.h>
+#include <gui/stringview.h>
+#include <gui/imagebutton.h>
 
 #include "main.h"
 #include "barview.h"
@@ -118,6 +120,14 @@ void GetLoad( int nCPUCount, float* pavLoads )
 MonWindow::MonWindow( const Rect& cFrame ) :
     Window( cFrame, "syllable_cpu_mon", MSG_MAINWND_TITLE, 0 )
 {
+	// Set Icon
+	os::Resources cCol( get_image_id() );
+	os::ResStream *pcStream = cCol.GetResourceStream( "icon48x48.png" );
+	os::BitmapImage *pcIcon = new os::BitmapImage( pcStream );
+	SetIcon( pcIcon->LockBitmap() );
+	delete( pcIcon );
+
+
     if ( g_bWindowRectSet ) {
 	SetFrame( g_cWinRect );
     } else {

@@ -31,6 +31,7 @@
 #include <gui/menu.h>
 
 #include <util/application.h>
+#include <util/resources.h>
 #include <util/message.h>
 #include <util/exceptions.h>
 #include <gui/exceptions.h>
@@ -176,6 +177,14 @@ void MyApp::HandleMessage( Message* pcMsg )
 MonWindow::MonWindow( const Rect& cFrame ) :
     Window( cFrame, "sysmon_wnd", MSG_MAINWND_TITLE, 0 )
 {
+	// Set Icon
+	os::Resources cCol( get_image_id() );
+	os::ResStream *pcStream = cCol.GetResourceStream( "icon48x48.png" );
+	os::BitmapImage *pcIcon = new os::BitmapImage( pcStream );
+	SetIcon( pcIcon->LockBitmap() );
+	delete( pcIcon );
+
+
     Lock();
 
     Rect	  cWndBounds = GetBounds();

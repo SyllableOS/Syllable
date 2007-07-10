@@ -19,12 +19,20 @@
 
 #include "mywindow.h"
 #include <gui/requesters.h>
+#include <util/resources.h>
 #include "resources/BZoom.h"
 
 // ---------------------------------------------------------------------------
 
 MyWindow::MyWindow( const Rect& cFrame ) : Window( cFrame, "main_window", MSG_MAINWND_TITLE )
 {
+	// Set Icon
+	os::Resources cCol( get_image_id() );
+	os::ResStream *pcStream = cCol.GetResourceStream( "icon48x48.png" );
+	os::BitmapImage *pcIcon = new os::BitmapImage( pcStream );
+	SetIcon( pcIcon->LockBitmap() );
+	delete( pcIcon );
+
    // Create a menu bar.
    Rect cMenuBounds = GetBounds();
    cMenuBounds.bottom = MENU_OFFSET+3;

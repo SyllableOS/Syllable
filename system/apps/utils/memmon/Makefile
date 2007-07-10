@@ -8,7 +8,8 @@ CATALOGS = da de es fr hu nl pt-br ru sv
 $(EXE) : catalogs $(OBJS)
 	$(CXX) $(OBJS) -lsyllable -o "Memory Monitor"
 	strip --strip-all $(EXE)
-	rescopy -r $(EXE) resources/MemoryMonitor.catalog
+	rescopy -r $(EXE) *.png
+	rescopy -a $(EXE) resources/MemoryMonitor.catalog
 	for CATALOG in $(CATALOGS);do \
 		echo $$CATALOG; \
 		rescopy -a $(EXE) $$CATALOG/MemoryMonitor.catalog=resources/$$CATALOG/MemoryMonitor.catalog; \
