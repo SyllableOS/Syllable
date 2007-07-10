@@ -1,9 +1,10 @@
 ; Project trees:
 lineage
 	.
-	Syllable
 ;	AMD64
+	Syllable
 ;	Linux
+;	Linux-Syllable
 
 environment
 ;	Default anonymous access to the Syllable CVS repository:
