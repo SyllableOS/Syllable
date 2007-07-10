@@ -229,6 +229,7 @@ modules
 	sys/kernel/fs/ext2
 	sys/kernel/fs/fatfs
 	sys/kernel/fs/iso9660
+	sys/kernel/fs/ramdisk
 	sys/kernel/fs/ramfs
 ;	sys/kernel/fs/tmpfs
 	sys/kernel/fs/ntfs
@@ -358,4 +359,3 @@ modules
 	apps/utils/man2html
 	apps/utils/nettools
 	apps/utils/systools
-
