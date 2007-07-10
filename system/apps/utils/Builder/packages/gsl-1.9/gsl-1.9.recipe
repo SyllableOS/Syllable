@@ -1,0 +1,15 @@
+authors
+	Ciprian Nedisan
+	Kaj de Vos
+status				testing
+
+inherits			gnu
+
+licenses			GPL
+home				www.gnu.org/software/gsl/
+packages			gsl/gsl-1.9
+
+;configure-options	--disable-shared
+
+documentation		README COPYING BUGS NEWS ChangeLog AUTHORS THANKS TODO SUPPORT
+build-docs			INSTALL
