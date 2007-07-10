@@ -259,11 +259,8 @@ static LocalBuffer_s g_asBuffers[DB_PORT_COUNT] = {
 	{sizeof( g_anBuf15 ), 0, 0, 0, -1, g_anBuf15}
 };
 
-static SpinLock_s g_sBufferLock;
-
 static void write_buffer( LocalBuffer_s * psBuffer, const void *pData, int nLen )
 {
-	spinlock( &g_sBufferLock );
 	if ( nLen > psBuffer->lb_nBufSize - psBuffer->lb_nCurSize )
 	{
 		nLen = psBuffer->lb_nBufSize - psBuffer->lb_nCurSize;
@@ -288,15 +285,13 @@ static void write_buffer( LocalBuffer_s * psBuffer, const void *pData, int nLen 
 	}
 	if( psBuffer->lb_hReadWait >= 0 )
 		wakeup_sem( psBuffer->lb_hReadWait, true );
-	spinunlock( &g_sBufferLock );	
 }
 
-static int read_buffer( LocalBuffer_s * psBuffer, void *pData, int nLen )
+static int read_buffer( LocalBuffer_s * psBuffer, void *pData, int nLen, int* pnFlg )
 {
 	int nReadLen;
 again:
 	nReadLen = nLen;
-	spinlock( &g_sBufferLock );	
 	if ( nReadLen > psBuffer->lb_nCurSize )
 	{
 		nReadLen = psBuffer->lb_nCurSize;
@@ -323,15 +318,15 @@ again:
 	{
 		if( psBuffer->lb_hReadWait >= 0 )
 		{
-			uint32 nFlags = cli();
 			status_t nError;
-			if( ( nError = spinunlock_and_suspend( psBuffer->lb_hReadWait, &g_sBufferLock, 
-								nFlags, INFINITE_TIMEOUT ) ) < 0 )
+			nError = spinunlock_and_suspend( psBuffer->lb_hReadWait, &g_sDebugSpinLock, 
+								*pnFlg, INFINITE_TIMEOUT );
+			*pnFlg = spinlock_disable( &g_sDebugSpinLock );
+			if( nError < 0 )
 				return( nError );
 			goto again;
 		}
 	}
-	spinunlock( &g_sBufferLock );	
 	return ( nReadLen );
 }
 
@@ -475,7 +470,7 @@ int sys_debug_read( int nPort, char *pBuffer, int nSize )
 
 	nFlg = spinlock_disable( &g_sDebugSpinLock );
 
-	nBytesRead = read_buffer( &g_asBuffers[nPort], pBuffer, nSize );
+	nBytesRead = read_buffer( &g_asBuffers[nPort], pBuffer, nSize, &nFlg );
 	spinunlock_enable( &g_sDebugSpinLock, nFlg );
 	return ( nBytesRead );
 }
