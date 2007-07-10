@@ -1,4 +1,4 @@
-CFLAGS   = -kernel -fno-PIC -c -O3 -Wall
+CFLAGS   = -kernel -fno-PIC -c
 AFLAGS   = -c
 
 OBJS := ramdisk.o
@@ -14,7 +14,7 @@ $(OBJDIR)/%.o : %.c
 	$(CC) $(CFLAGS) $< -o $@
 
 $(OBJDIR)/%.o : %.cpp
-	$(CC) $(CFLAGS) $< -o $@
+	$(CXX) $(CFLAGS) $< -o $@
 
 $(OBJDIR)/%.o : %.s
 	$(CC) $(AFLAGS) -x assembler-with-cpp $< -o $@
@@ -30,15 +30,12 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/ramdisk: $(OBJS) Makefile
-	gcc -kernel $(OBJS) -o $(OBJDIR)/ramdisk
+	$(CC) -kernel $(OBJS) -o $(OBJDIR)/ramdisk
 
 install: all
-	cp -f $(OBJDIR)/ramdisk /system/drivers/fs/ramdisk
+	cp -f $(OBJDIR)/ramdisk $(IMAGE)/system/drivers/fs/ramdisk
 
-dist: all
-	cp -f $(OBJDIR)/ramdisk $(DIST_DIR)/system/drivers/fs/ramdisk
+dist: install
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/ramdisk
-
-
