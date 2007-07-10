@@ -13,9 +13,8 @@ build-needs
 ;	bison
 
 configure-options
-	--enable-languages=c,c++
+	--enable-languages=c,c++,treelang
 ;		,fortran
-;		,treelang
 ;		,objc
 ;		,java,ada
 	--with-arch=i486

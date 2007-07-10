@@ -36,10 +36,9 @@ build-needs
 ;make-shared
 
 configure-options
-	--enable-languages=c,c++
+	--enable-languages=c,c++,treelang
 ;		Fortran doesn't build with the new GLibC 2.3.x:
 ;		,fortran
-;		,treelang
 ;		Won't do --enable-shared:
 ;		,objc
 ;		,java,ada
