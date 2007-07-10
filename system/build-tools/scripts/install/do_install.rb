@@ -102,7 +102,7 @@ retval = system "unzip", "-K", "-d", "/inst/", "/boot/Packages/base/base-syllabl
 system "sync"
 
 if(retval)
-	print "The base package has been installed. Please press any key to continue."
+	print "The base package has been installed. Please press ENTER to continue."
 	$stdin.getuc
 else
 	puts "\nFailed to extract base package to #{$part}. Stopping."
@@ -118,8 +118,7 @@ puts "done.\n"
 
 loop {
 	puts "\n" + 'Press "l" to view the menu.lst file, "e" to edit it manually, "?" for an'
-	puts 'explanation of the menu.lst file, or any other key to continue with the'
-	print 'installation: '
+	print 'explanation of the menu.lst file, or ENTER to continue with the installation:'
 	resp = $stdin.getuc
 
 	case resp.downcase
@@ -180,7 +179,7 @@ puts 'Press "m" to install GrUB automatically in the Master Boot Record of disk'
 puts (disk = File.join(File.dirname($part), 'raw')) + ','
 puts 'press "p" to install GrUB automatically on partition'
 puts $part + ','
-print 'or press any other key to skip this step: '
+print 'or press ENTER to skip this step: '
 
 if (resp = $stdin.getuc.downcase) == "m" or resp == "p"
 	unless system 'grub-install', '--no-floppy', '--recheck', '--root-directory=/inst', loader = resp == "m" ? disk : $part
