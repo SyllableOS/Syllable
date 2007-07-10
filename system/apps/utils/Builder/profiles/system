@@ -177,6 +177,7 @@ modules
 	sys/kernel/drivers/input/usb_hid
 	sys/kernel/drivers/disk/bios
 	sys/kernel/drivers/disk/usb
+	sys/kernel/drivers/disk/ram
 	sys/kernel/drivers/graphics/geforcefx
 	sys/kernel/drivers/graphics/i855
 	sys/kernel/drivers/graphics/mach64
@@ -229,7 +230,6 @@ modules
 	sys/kernel/fs/ext2
 	sys/kernel/fs/fatfs
 	sys/kernel/fs/iso9660
-	sys/kernel/fs/ramdisk
 	sys/kernel/fs/ramfs
 ;	sys/kernel/fs/tmpfs
 	sys/kernel/fs/ntfs

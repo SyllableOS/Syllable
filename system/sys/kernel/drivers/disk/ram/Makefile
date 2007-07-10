@@ -33,7 +33,7 @@ $(OBJDIR)/ramdisk: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/ramdisk
 
 install: all
-	cp -f $(OBJDIR)/ramdisk $(IMAGE)/system/drivers/fs/ramdisk
+	cp -f $(OBJDIR)/ramdisk $(IMAGE)/system/drivers/dev/disk/ram
 
 dist: install
 
