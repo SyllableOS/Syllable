@@ -12,9 +12,8 @@ require "grub-gen.rb"
 # Remember to always update the version numbers below!
 
 Packages = {
-	"ABrowse"	=> ["0.5a", "abrowse-%s.bin.zip"],
+	"ABrowse"	=> ["1.0a", "abrowse-%s.bin.zip"],
 	"Whisper"	=> ["1.0a", "whisper-%s.bin.zip"],
-	"Chat"		=> ["0.2.0", "chat-%s.bin.zip"]
 }
 
 # Now on with the installation
