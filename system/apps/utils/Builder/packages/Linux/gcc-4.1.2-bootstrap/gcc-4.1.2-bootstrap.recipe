@@ -1,0 +1,18 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			gcc-4.1.2
+
+configure-options
+	--enable-languages=c,c++
+	--disable-nls
+	--with-arch=i486
+	--enable-shared
+	--enable-threads=posix
+	--enable-clocale=gnu
+	--enable-__cxa_atexit
+	--with-system-zlib
+	--disable-libstdcxx-pch
+;	--with-local-prefix=/usr/local
+;	--libexecdir=/usr/lib
+	i486-pc-linux-gnu

@@ -1,0 +1,18 @@
+authors				Kaj de Vos
+status				testing
+
+links
+;	Optimize wasteful duplicates:
+	../../bin/ar			i686-pc-linux-gnu/bin/ar
+	../../bin/as			i686-pc-linux-gnu/bin/as
+	../../bin/ld			i686-pc-linux-gnu/bin/ld
+	../../bin/nm			i686-pc-linux-gnu/bin/nm
+	../../bin/objdump		i686-pc-linux-gnu/bin/objdump
+	../../bin/ranlib		i686-pc-linux-gnu/bin/ranlib
+	../../bin/strip			i686-pc-linux-gnu/bin/strip
+;	Handled by the system build:
+;	For OpenSSL:
+;	bin/ranlib				/usr/bin/ranlib
+;	/usr/indexes/bin/ranlib	/usr/bin/ranlib
+;	For some packages:
+;	include/libiberty.h		/usr/include/

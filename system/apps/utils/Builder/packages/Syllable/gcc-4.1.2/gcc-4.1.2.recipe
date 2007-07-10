@@ -1,0 +1,68 @@
+authors
+	Kurt Skauen
+	Kaj de Vos
+	Arno Klenke
+	Kristian Van Der Vliet
+	Jake Hamby
+maintainers			Kaj de Vos
+status				testing
+warnings
+	Compile breaks on an illegal instruction crash with GCC 4.1.x itself installed when building in a subdirectory.
+	GCC has a circular dependency on GLibC.
+	LibIberty is both in BinUtils and in GCC.
+
+needs
+;	For -O3 with -fpic:
+	binutils >= 2.13.1
+;	Syllable switched to the new GLibC ABI:
+	glibc >= 2.3.3
+build-needs
+	Syllable >= 0.6.4
+;	autoconf 2.57
+;	Without make bootstrap:
+	gcc >= 2.95 < 4
+;	libtool
+;	For Fortran:
+;	gmp
+;	For Ada:
+;	gnat >= 3.13 | gcc >= 3.1
+	gawk
+;	bison
+
+;patch
+;	cd gcc
+;	autoconf
+; Doesn't work:
+;make-shared
+
+configure-options
+	--enable-languages=c,c++
+;		Fortran doesn't build with the new GLibC 2.3.x:
+;		,fortran
+;		,treelang
+;		Won't do --enable-shared:
+;		,objc
+;		,java,ada
+	--with-arch=i586
+	--enable-sjlj-exceptions
+	--enable-shared
+	--enable-threads
+	--with-system-zlib
+	--disable-libstdcxx-pch
+;	--with-local-prefix=/usr/local
+
+make-env
+	BOOT_CFLAGS		'-O'
+;	DLL_PATH		"$DLL_PATH:$PWD/gcc"
+
+; Needs itself during installation:
+install-env
+	PATH		"$PATH:$STAGE/gcc/bin:$STAGE/bootstrap/gcc/bin:$IMAGE/gcc/bin:$IMAGE/usr/gcc/bin:/usr/gcc/bin"
+
+links
+	gcc				bin/cc
+	libgcc.a		lib/gcc/i586-pc-syllable/4.1.2/libgcc_static.a
+;	For some packages:
+;	bin/cpp			lib/
+;	For WebKit:
+;	gcc				/usr/bin/

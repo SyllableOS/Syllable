@@ -1,0 +1,14 @@
+diff -ru gcc-4.1.2-original/ltconfig gcc-4.1.2/ltconfig
+--- gcc-4.1.2-original/ltconfig	2006-07-04 22:30:34.000000000 +0200
++++ gcc-4.1.2/ltconfig	2007-03-23 07:57:32.000000000 +0100
+@@ -1258,7 +1258,9 @@
+   library_names_spec='${libname}${release}.so$versuffix ${libname}${release}.so$major $libname.so'
+   soname_spec='${libname}${release}.so$major'
+   finish_cmds='PATH="\$PATH:/sbin" ldconfig -n $libdir'
+-  shlibpath_var=LD_LIBRARY_PATH
++  shlibpath_var=LIBRARY_PATH
++  sys_lib_dlsearch_path_spec=
++  sys_lib_search_path_spec=
+   shlibpath_overrides_runpath=no
+   # This implies no fast_install, which is unacceptable.
+   # Some rework will be needed to allow for fast_install
