@@ -1,0 +1,9 @@
+authors				Kaj de Vos
+status				testing
+
+;configure-options
+;	--disable-ipv6
+;	--with-static-linked-ext
+;	--enable-shared
+;	--enable-pthread
+;	--enable-install-doc

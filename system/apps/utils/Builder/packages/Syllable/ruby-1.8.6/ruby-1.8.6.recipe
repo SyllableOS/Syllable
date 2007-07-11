@@ -1,0 +1,13 @@
+authors				Kaj de Vos
+status				testing
+
+needs				Syllable >= 0.6.1
+
+;configure-options
+;	--disable-ipv6
+;	--with-static-linked-ext
+; Can't find libdl:
+;	--enable-shared
+; Can't find libpthread:
+;	--enable-pthread
+;	--enable-install-doc

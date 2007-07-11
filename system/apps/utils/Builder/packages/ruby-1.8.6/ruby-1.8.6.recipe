@@ -5,17 +5,6 @@ licenses			GPL LGPL BSD Artistic other PD
 home				www.ruby-lang.org
 locations			ftp://ftp.ruby-lang.org/pub/ruby/1.8/
 
-needs				Syllable >= 0.6.1
-
-;configure-options
-;	--disable-ipv6
-;	--with-static-linked-ext
-; Can't find libdl:
-;	--enable-shared
-; Can't find libpthread:
-;	--enable-pthread
-;	--enable-install-doc
-
 test-targets		test
 
 system-prefix-var	DESTDIR
