@@ -28,7 +28,7 @@ patch-config		xml/expat/conftools
 
 configure-options
 	--with-apr=/usr/apr
-	--with-expat=/usr/expat
+;	--with-expat=/usr/expat
 	--with-berkeley-db=/usr/db
 ;	--with-dbm=db45
 ;	--with-ldap=ldap
@@ -39,4 +39,3 @@ configure-options
 documentation		CHANGES LICENSE NOTICE
 build-docs			INSTALL.MySQL
 develop-docs		renames_pending
-

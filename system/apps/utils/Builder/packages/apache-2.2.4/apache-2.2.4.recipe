@@ -41,7 +41,7 @@ configure-options
 ;	--enable-ldap
 	--enable-example
 	--with-z=/usr/zlib
-	--with-pcre=/usr/pcre
+;	--with-pcre=/usr/pcre
 ;	--with-ssl=/usr/openssl
 
 documentation
@@ -50,4 +50,3 @@ documentation
 ;	docs
 build-docs			INSTALL
 internal-docs		LAYOUT
-
