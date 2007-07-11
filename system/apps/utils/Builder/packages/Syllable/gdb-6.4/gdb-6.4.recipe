@@ -1,0 +1,6 @@
+authors
+	Jan Hauffa
+	Kaj de Vos
+status				testing
+
+needs				Syllable >= 0.6.1
