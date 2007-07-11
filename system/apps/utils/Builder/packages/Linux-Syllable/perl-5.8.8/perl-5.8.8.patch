@@ -1,0 +1,36 @@
+diff -ru perl-5.8.8-original/hints/linux.sh perl-5.8.8/hints/linux.sh
+--- perl-5.8.8-original/hints/linux.sh	2005-11-18 02:18:45.000000000 +0100
++++ perl-5.8.8/hints/linux.sh	2007-04-08 14:39:25.000000000 +0200
+@@ -52,9 +52,9 @@
+ # We don't use __GLIBC__ and  __GLIBC_MINOR__ because they
+ # are insufficiently precise to distinguish things like
+ # libc-2.0.6 and libc-2.0.7.
+-if test -L /lib/libc.so.6; then
+-    libc=`ls -l /lib/libc.so.6 | awk '{print $NF}'`
+-    libc=/lib/$libc
++if test -L /usr/indexes/lib/libc.so.6; then
++    libc=`ls -l /usr/indexes/lib/libc.so.6 | awk '{print $NF}'`
++    libc=/usr/indexes/lib/$libc
+ fi
+ 
+ # Configure may fail to find lstat() since it's a static/inline
+@@ -270,8 +270,9 @@
+ # version of -lgdbm which is a bad idea. So if we have 'nm'
+ # make sure it can read the file
+ # NI-S 2003/08/07
+-if [ -r /usr/lib/libndbm.so  -a  -x /usr/bin/nm ] ; then
+-   if /usr/bin/nm /usr/lib/libndbm.so >/dev/null 2>&1 ; then
++if [ -r /usr/indexes/lib/libndbm.so  -a  -x /usr/indexes/bin/nm ] ; then
++   if /usr/indexes/bin/nm /usr/indexes/lib/libndbm.so >/dev/null 2>&1 ; 
++then
+     echo 'Your shared -lndbm seems to be a real library.'
+    else
+     echo 'Your shared -lndbm is not a real library.'
+@@ -330,3 +331,7 @@
+     libswanted="$*"
+     ;;
+ esac
++
++#usrinc='/usr/glibc/include'
++#ldlibpthname=LIBRARY_PATH
++libpth='/system/libraries /usr/indexes/lib ./'

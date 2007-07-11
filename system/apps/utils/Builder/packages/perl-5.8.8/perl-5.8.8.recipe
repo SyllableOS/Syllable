@@ -29,34 +29,9 @@ configure-cmd
 ;	configure.gnu
 	Configure
 configure-prefix	"-Dprefix="
-configure-options
-	-des
-	-Dmksymlinks
-	-Accflags='-march=i586 -pipe'
-	-Aoptimize='-O2'
-;	-Dinstallprefix=
-;	-Dnoextensions=
-	-Duseshrplib
-	-Dccflags='-DPERL_EXTERNAL_GLOB'
-;	-Dlibpth=$PWD
-;	-Uusemymalloc
-;	-Dusethreads
-;	-Duseperlio -Dusesfio
 
 test-targets
 	test
 ;	minitest
 
-documentation
-	README README.Y2K Artistic Copying AUTHORS
-;	README.linux
-;	May be too huge:
-	Changes
 build-docs			INSTALL
-links
-	perl5.8.8							bin/perl
-	5.8.8/i586-syllable/CORE/libperl.so	lib/
-;	For OpenSSL and others:
-	bin/perl							/usr/bin/perl
-;	For OpenSSL?
-	bin/perl							/usr/local/bin/perl
