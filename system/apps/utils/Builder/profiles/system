@@ -176,8 +176,9 @@ modules
 	sys/kernel/drivers/ps2
 	sys/kernel/drivers/input/usb_hid
 	sys/kernel/drivers/disk/bios
-	sys/kernel/drivers/disk/usb
+;	Used on the Live CD:
 	sys/kernel/drivers/disk/ram
+	sys/kernel/drivers/disk/usb
 	sys/kernel/drivers/graphics/geforcefx
 	sys/kernel/drivers/graphics/i855
 	sys/kernel/drivers/graphics/mach64
@@ -231,7 +232,8 @@ modules
 	sys/kernel/fs/fatfs
 	sys/kernel/fs/iso9660
 	sys/kernel/fs/ramfs
-;	sys/kernel/fs/tmpfs
+;	Not thread-safe:
+	sys/kernel/fs/tmpfs
 	sys/kernel/fs/ntfs
 
 	system libs/glibc-2.4-image
