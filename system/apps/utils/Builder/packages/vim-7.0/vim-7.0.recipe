@@ -1,7 +1,4 @@
-authors
-	Rodrigo Parra Novo
-	Kaj de Vos
-maintainers			Kaj de Vos
+authors				Kaj de Vos
 status				testing
 
 licenses			other
@@ -21,4 +18,3 @@ configure-options
 documentation		README.txt
 build-docs			src/INSTALL
 links				vim bin/vi
-
