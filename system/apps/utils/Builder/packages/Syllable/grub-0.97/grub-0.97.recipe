@@ -5,7 +5,4 @@ authors
 maintainers			Kaj de Vos
 status				testing
 
-inherits			grub-0.97
-
 build-dir			.
-
