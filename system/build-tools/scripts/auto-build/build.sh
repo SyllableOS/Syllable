@@ -68,7 +68,7 @@ build log summary >> $SYSTEM_SUMMARY_LOG
 sync
 
 echo "Building GrUB"
-image sys/boot/grub-0.97-syllable 1>>$LOG 2>&1
+image sys/boot/grub-0.97 1>>$LOG 2>&1
 build log >> $SYSTEM_LOG
 # Doesn't work for a single module:
 #build log failures >> $SYSTEM_FAILURE_LOG

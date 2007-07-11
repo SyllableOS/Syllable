@@ -260,7 +260,7 @@ modules
 
 ;	GrUB can use Curses:
 ;	Currently requires GCC 3:
-;	sys/boot/grub-0.97-syllable
+;	sys/boot/grub-0.97
 
 	apps/gnu/bash-3.2
 	apps/gnu/coreutils-6.4
