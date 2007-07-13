@@ -63,7 +63,7 @@ Desktop::Desktop() : os::Window( os::Rect(), "desktop", MSG_DESKTOP_TITLE, os::W
 	m_pcView->SetDirChangeMsg( new os::Message( M_CHANGE_DIR ) );
 	m_pcView->SetDirectoryLocked( true );
 	m_pcView->SetView( os::IconView::VIEW_ICONS_DESKTOP );
-	m_pcView->SetBackgroundColor( os::Color32_s( 97, 154, 203 ) );
+	m_pcView->SetBackgroundColor( os::Color32_s( 58, 110, 170 ) );
 	m_pcView->SetTextColor( os::Color32_s( 255, 255, 255 ) );
 	m_pcView->SetTextShadowColor( os::Color32_s( 255, 255, 255 ) );
 	
