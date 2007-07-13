@@ -1,7 +1,4 @@
-authors
-	Ruslan Nickolaev
-	Kaj de Vos
-maintainers			Kaj de Vos
+authors				Kaj de Vos
 status				testing
 
 inherits			sourceforge
@@ -15,8 +12,6 @@ packages
 ; For unreducing:
 ;	unred550
 ;locations			ftp://ftp.info-zip.org/pub/infozip/src/
-
-make-file			atheos/Makefile
 
 ; For unreducing:
 ;make-env			LOCAL_UNZIP '-DUSE_SMITH_CODE'

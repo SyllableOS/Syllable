@@ -1,0 +1,7 @@
+authors
+	Ruslan Nickolaev
+	Kaj de Vos
+maintainers			Kaj de Vos
+status				testing
+
+make-file			atheos/Makefile

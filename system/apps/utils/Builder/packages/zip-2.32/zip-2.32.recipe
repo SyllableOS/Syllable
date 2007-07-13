@@ -1,9 +1,5 @@
-authors
-	Ruslan Nickolaev
-	Kaj de Vos
-maintainers			Kaj de Vos
+authors				Kaj de Vos
 status				testing
-warnings			Bug fix rolled back due to breakage in Syllable port.
 
 ; Outdated:
 ;inherits			sourceforge
@@ -18,12 +14,5 @@ packages
 ;	zcrypt
 locations			ftp://ftp.info-zip.org/pub/infozip/src/
 
-make-file			atheos/Makefile
-
 install-tree		bin
-documentation
-	README README.CR USexport.msg WHERE MANUAL LICENSE WHATSNEW CHANGES TODO
-	atheos/README.Syllable
-;	Currently applies only to BSD:
-;	BUGS
 build-docs			INSTALL

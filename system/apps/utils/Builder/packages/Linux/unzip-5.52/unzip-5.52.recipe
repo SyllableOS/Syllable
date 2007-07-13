@@ -1,0 +1,7 @@
+authors				Kaj de Vos
+status				testing
+
+make-file			unix/Makefile
+make-targets
+	linux
+;	linux_shlib
