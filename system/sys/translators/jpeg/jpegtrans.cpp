@@ -137,6 +137,7 @@ private:
     bool	       m_bTopHeaderRead;
     bool	       m_bDone;
     uint8*	       m_pLineBuffer;
+    uint32*	       m_pConvertedBuffer;    
     enum {
         STATE_INIT,
         STATE_START_DECOMPRESS,
@@ -157,6 +158,7 @@ private:
 JPEGTrans::JPEGTrans()
 {
     m_pLineBuffer       = NULL;
+    m_pConvertedBuffer	= NULL;
     m_eState		= STATE_INIT;
     m_bTopHeaderValid   = false;
     m_bTopHeaderRead    = false;
@@ -176,26 +178,13 @@ JPEGTrans::JPEGTrans()
 JPEGTrans::~JPEGTrans()
 {
     delete[] m_pLineBuffer;
+    delete[] m_pConvertedBuffer;    
     jpeg_destroy_decompress(&m_sDecompressStruct);
 }
 
 void JPEGTrans::SetConfig( const Message& cConfig )
 {
 }
-
-/*    
-status_t JPEGTrans::Indentify( const std::string& cMimeType, Message* pcInfo )
-{
-    if ( length < 3 ) {
-	return( ERR_NOT_ENOUGH_DATA );
-    }
-
-    if( buffer[0] == 0377 && buffer[1] == 0330 && buffer[2] == 0377 ) {
-	return( ERR_OK );
-    }
-    return( ERR_UNKNOWN_FORMAT );
-}
-    */
 
 status_t JPEGTrans::AddData( const void* pData, size_t _nLen, bool bFinal )
 {
@@ -274,6 +263,8 @@ status_t JPEGTrans::AddData( const void* pData, size_t _nLen, bool bFinal )
 		m_bTopHeaderValid = true;
 		
 		m_pLineBuffer = new uint8[m_sDecompressStruct.output_width * m_sDecompressStruct.output_components];
+		if( m_sDecompressStruct.output_components == 3 )
+			m_pConvertedBuffer = new uint32[m_sDecompressStruct.output_width];
 		m_eState = STATE_DECOMPRESSING;
 	    } else {
 		if ( bFinal ) {
@@ -293,8 +284,6 @@ status_t JPEGTrans::AddData( const void* pData, size_t _nLen, bool bFinal )
 	    if( m_sJPGSource.m_bDecodingDone ) {
 		return( 0 );
 	    }
-//	    int oldoutput_scanline = m_sDecompressStruct.output_scanline;
-//	    int nOldSize = m_nValidBufferSize;
 	
 	    while( m_sDecompressStruct.output_scanline < m_sDecompressStruct.output_height ) {
 		if ( jpeg_read_scanlines(&m_sDecompressStruct, &m_pLineBuffer, 1) != 1 ) {
@@ -310,12 +299,10 @@ status_t JPEGTrans::AddData( const void* pData, size_t _nLen, bool bFinal )
 		    }
 		} else if ( m_sDecompressStruct.num_components == 3 ) {
 		    for ( uint x = 0 ; x < m_sDecompressStruct.output_width ; ++x ) {
-			for ( int i = 0 ; i < 3 ; ++i ) {
-			    m_cOutBuffer.Write( m_pLineBuffer + x*3+(2-i), 1 );
-			}
-			uint8 nAlpha = 0xff;
-			m_cOutBuffer.Write( &nAlpha, 1 );
+		    m_pConvertedBuffer[x] = m_pLineBuffer[x*3+2] | ( m_pLineBuffer[x*3+1] << 8 )
+		    | ( m_pLineBuffer[x*3] << 16 ) | 0xff000000;
 		    }
+			m_cOutBuffer.Write( (uint8*)m_pConvertedBuffer, 4 * m_sDecompressStruct.output_width );		    
 		} else {
 		    for ( uint x = 0 ; x < m_sDecompressStruct.output_width ; ++x ) {
 			for ( int i = 0 ; i < 4 ; ++i ) {
@@ -324,10 +311,7 @@ status_t JPEGTrans::AddData( const void* pData, size_t _nLen, bool bFinal )
 		    }
 		}
 	    }
-//	    int completed_scanlines = m_sDecompressStruct.output_scanline - oldoutput_scanline;
-//	    if ( completed_scanlines > 0 ) {
-//		Invoke( m_cOutBuffer.begin() + nOldSize, m_nValidBufferSize - nOldSize, false );
-//	    }
+
 	    if ( m_sDecompressStruct.output_scanline >= m_sDecompressStruct.output_height ) {
 		jpeg_finish_output(&m_sDecompressStruct);
 		m_sJPGSource.m_bFinalPass = jpeg_input_complete(&m_sDecompressStruct);
@@ -340,7 +324,6 @@ status_t JPEGTrans::AddData( const void* pData, size_t _nLen, bool bFinal )
 
 	    if ( m_eState == STATE_DO_OUTPUT_SCAN && m_sJPGSource.m_bDecodingDone ) {
 		jpeg_finish_decompress(&m_sDecompressStruct);
-//		jpeg_destroy_decompress(&m_sDecompressStruct);
 		m_sJPGSource.m_bEOF = true;
 		return 0;
 	    }
