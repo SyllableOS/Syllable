@@ -574,7 +574,7 @@ void DockWin::HandleMessage( os::Message* pcMessage )
 					if( fork() == 0 )
 					{
 						set_thread_priority( -1, 0 );
-						execlp( "/system/bin/SlbMgr", "/system/bin/SlbMgr", NULL );
+						execlp( "/Applications/System Tools/System Information/System Information", "/Applications/System Tools/System Information/System Information", NULL );
 					}
 				}
 			break;
