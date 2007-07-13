@@ -177,7 +177,7 @@ modules
 	sys/kernel/drivers/input/usb_hid
 	sys/kernel/drivers/disk/bios
 ;	Used on the Live CD:
-	sys/kernel/drivers/disk/ram
+;	sys/kernel/drivers/disk/ram
 	sys/kernel/drivers/disk/usb
 	sys/kernel/drivers/graphics/geforcefx
 	sys/kernel/drivers/graphics/i855
