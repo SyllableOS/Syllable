@@ -33,10 +33,9 @@ $(OBJDIR)/tmpfs: $(OBJS) Makefile
 	$(CC) -kernel $(OBJS) -o $(OBJDIR)/tmpfs
 
 install: all
-	cp -f $(OBJDIR)/ramdisk $(IMAGE)/system/drivers/fs/tmpfs
+	cp -f $(OBJDIR)/tmpfs $(IMAGE)/system/drivers/fs/tmpfs
 
 dist: install
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/tmpfs
-
