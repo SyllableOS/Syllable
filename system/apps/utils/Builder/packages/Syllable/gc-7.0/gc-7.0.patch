@@ -1,0 +1,70 @@
+diff -ru gc-7.0-original/configure.ac gc-7.0/configure.ac
+--- gc-7.0-original/configure.ac	2007-06-30 17:40:15.000000000 +0200
++++ gc-7.0/configure.ac	2007-07-14 16:23:29.000000000 +0200
+@@ -72,10 +72,18 @@
+ THREADDLLIBS=
+ need_atomic_ops_asm=false
+ ## Libraries needed to support dynamic loading and/or threads.
++AC_MSG_WARN("-$THREADS-");
+ case "$THREADS" in
+  no | none | single)
+     THREADS=none
+     ;;
++ syllable)
++	AC_MSG_WARN("syll!");
++    THREADS=posix
++    THREADDLLIBS=-lpthread
++	AC_DEFINE(GC_SYLLABLE_THREADS)
++	AC_DEFINE(_REENTRANT)
++    ;;
+  posix | pthreads)
+     THREADS=posix
+     THREADDLLIBS=-lpthread
+diff -ru gc-7.0-original/include/private/gcconfig.h gc-7.0/include/private/gcconfig.h
+--- gc-7.0-original/include/private/gcconfig.h	2007-06-29 02:00:09.000000000 +0200
++++ gc-7.0/include/private/gcconfig.h	2007-07-14 16:24:07.000000000 +0200
+@@ -460,6 +460,13 @@
+ #   define NONSTOP
+ #   define mach_type_known
+ # endif
++# if defined(__SYLLABLE__)
++#   if defined(__i386__)
++#     define I386
++#     define SYLLABLE
++#     define mach_type_known
++#   endif
++# endif
+ 
+ /* Feel free to add more clauses here */
+ 
+@@ -1297,6 +1304,20 @@
+ 	 should be looked into some more */
+ #      define NO_PTHREAD_TRYLOCK
+ #   endif /* DARWIN */
++#   ifdef SYLLABLE
++#     define OS_TYPE "SYLLABLE"
++#     include <atheos/threads.h>
++#     define STACKBOTTOM SyllableStackBottom()
++      extern int _etext[];
++#	  define DATASTART (_etext)
++	  extern int _end[];
++#	  define DATAEND (_end)
++      static ptr_t SyllableStackBottom(void) {
++		thread_info sInfo;
++		get_thread_info(get_thread_id(0L), &sInfo);
++		return (ptr_t)((unsigned int)sInfo.ti_stack + sInfo.ti_stack_size);
++      }
++#   endif /* SYLLABLE */
+ # endif
+ 
+ # ifdef NS32K
+@@ -2144,6 +2165,9 @@
+ #   define INCLUDE_LINUX_THREAD_DESCR
+ # endif
+ 
++# if defined(GC_SYLLABLE_THREADS) && !defined(SYLLABLE)
++	--> inconsistent configuration
++# endif
+ # if defined(GC_IRIX_THREADS) && !defined(IRIX5)
+ 	--> inconsistent configuration
+ # endif

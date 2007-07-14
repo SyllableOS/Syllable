@@ -1,0 +1,14 @@
+authors
+	Henrik Isaksson
+	Kaj de Vos
+maintainers			Henrik Isaksson
+status				testing
+
+licenses			other GPL+exception
+
+home				www.hpl.hp.com/personal/Hans_Boehm/gc/
+locations			http://www.hpl.hp.com/personal/Hans_Boehm/gc/gc_source/
+
+build-docs			doc/README.autoconf
+develop-docs		doc/README.cords doc/*.html
+internal-docs		doc/barrett_diagram

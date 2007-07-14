@@ -1,0 +1,18 @@
+authors
+	Henrik Isaksson
+	Kaj de Vos
+maintainers			Henrik Isaksson
+status				developing
+
+_configure-options
+	--enable-threads=posix
+	--enable-cplusplus
+
+_make-targets
+	all
+	cords
+	c++
+
+documentation
+	README.QUICK doc/README doc/README.environment doc/README.changes ChangeLog doc/README.contributors
+;	doc/README.*
