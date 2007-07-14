@@ -35,9 +35,9 @@ doc:
 	doxygen libmedia.dox
 
 install-doc:
-	-rm -R /Documentation/media/*
-	-mkdir -p /Documentation/media
-	cp -R docs/html/* /Documentation/media
+	-rm -R /atheos/Documentation/media/*
+	-mkdir -p /atheos/Documentation/media
+	cp -R docs/html/* /atheos/Documentation/media
 
 deps: $(OBJDIR) $(DEPS)
 
