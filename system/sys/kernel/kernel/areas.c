@@ -1210,22 +1210,42 @@ inline status_t clone_page_pte( pte_t * pDst, pte_t * pSrc, bool bCow )
 static void do_clone_area( MemContext_s *psDstSeg, MemContext_s *psSrcSeg, MemArea_s *psArea )
 {
 	uint32_t nSrcAddr;
-	bool bCow;
+	bool bCow, bCopy;
 
-	bCow = ( psArea->a_nProtection & ( AREA_SHARED | AREA_WRITE ) ) == AREA_WRITE;
+	bCow = ( psArea->a_nProtection & ( AREA_REMAPPED | AREA_SHARED | AREA_WRITE ) ) == AREA_WRITE;
+	bCopy = ( psArea->a_nLockMode & ( AREA_FULL_LOCK | AREA_CONTIGUOUS ) );
 
-
-	for ( nSrcAddr = psArea->a_nStart; ( nSrcAddr - 1 ) != psArea->a_nEnd; nSrcAddr += PAGE_SIZE )
+	if( bCopy )
 	{
-		pgd_t *pSrcPgd = pgd_offset( psSrcSeg, nSrcAddr );
-		pte_t *pSrcPte = pte_offset( pSrcPgd, nSrcAddr );
-		pgd_t *pDstPgd = pgd_offset( psDstSeg, nSrcAddr );
-		pte_t *pDstPte = pte_offset( pDstPgd, nSrcAddr );
+		/* Copy pages */
+		for ( nSrcAddr = psArea->a_nStart; ( nSrcAddr - 1 ) != psArea->a_nEnd; nSrcAddr += PAGE_SIZE )
+		{
+			pgd_t *pSrcPgd = pgd_offset( psSrcSeg, nSrcAddr );
+			pte_t *pSrcPte = pte_offset( pSrcPgd, nSrcAddr );
+			pgd_t *pDstPgd = pgd_offset( psDstSeg, nSrcAddr );
+			pte_t *pDstPte = pte_offset( pDstPgd, nSrcAddr );
 
+			kassertw( PGD_PAGE( *pDstPgd ) != 0 );
+			kassertw( PTE_ISPRESENT( *pDstPte ) );			
+			kassertw( PTE_ISPRESENT( *pSrcPte ) );
+						
+			memcpy( (void*)PTE_PAGE( *pDstPte ), (void*)PTE_PAGE( *pSrcPte ), PAGE_SIZE );
+		}
+	}
+	else
+	{
+		/* Clone pagetable entries */
+		for ( nSrcAddr = psArea->a_nStart; ( nSrcAddr - 1 ) != psArea->a_nEnd; nSrcAddr += PAGE_SIZE )
+		{
+			pgd_t *pSrcPgd = pgd_offset( psSrcSeg, nSrcAddr );
+			pte_t *pSrcPte = pte_offset( pSrcPgd, nSrcAddr );
+			pgd_t *pDstPgd = pgd_offset( psDstSeg, nSrcAddr );
+			pte_t *pDstPte = pte_offset( pDstPgd, nSrcAddr );
 
-		kassertw( PGD_PAGE( *pDstPgd ) != 0 );
+			kassertw( PGD_PAGE( *pDstPgd ) != 0 );
 		
-		clone_page_pte( pDstPte, pSrcPte, bCow );
+			clone_page_pte( pDstPte, pSrcPte, bCow );
+		}
 	}
 }
 
