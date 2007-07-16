@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.7.3
+# Version 0.7.4
 # Copyright (c) 2002-2007 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -210,7 +210,7 @@ def patchModule target
 					@log.header 'Overlaying extra source files' + (ancestor ? ' from ancestor ' + kin : '')
 					break unless action "cp -a #{File.join dir, '*'} ." and
 						# FIXME: crude way to remove possible CVS dirs from patches
-						deleteCVSData ''
+						deleteCruft ''
 				end
 			}
 		then
@@ -644,12 +644,7 @@ def installModule originalStaging, staging, directive, target
 
 							if exists? dir = File.join(recipePath(kin), 'distro')
 								@log.header 'Overlaying extra files' + (ancestor ? ' from ancestor ' + kin : '')
-								break unless copyFiles dir, root, superAccess and
-								begin
-									# FIXME: crude way to remove possible CVS dirs from patches
-									Dir.chdir root
-									deleteCVSData superAccess
-								end
+								break unless copyFiles dir, root, superAccess
 							end
 						}
 					then
@@ -1062,7 +1057,7 @@ def buildPack targets
 				begin
 					Dir.chdir name
 			
-					deleteCVSData '' and
+					deleteCruft '' and
 					begin
 						Dir.chdir @workDir
 						kernelPart = @kernel == 'Syllable' ? '' : '.' + @kernel
@@ -1140,7 +1135,7 @@ end
 
 # Helper functions
 
-def deleteCVSData superAccess  # TODO: implement super user execution
+def deleteCruft superAccess  # TODO: implement super user execution
 	puts "\nWARNING! If this is a CVS repository, it will be clobbered!"
 
 	# Delete all CVS dirs
@@ -1161,6 +1156,13 @@ def deleteCVSData superAccess  # TODO: implement super user execution
 	@log.header 'Cleaning out .cvsignore files'
 
 	Dir['**/.cvsignore'].each do |file|
+		@log.detail file
+		File.delete file
+	end
+
+	@log.header 'Cleaning out backup files'
+
+	Dir['**/*~'].each do |file|
 		@log.detail file
 		File.delete file
 	end
@@ -1204,7 +1206,7 @@ def copyFiles sourceDir, destinationDir, superAccess
 	begin
 		# FIXME: crude way to remove possible CVS dirs from files
 		Dir.chdir destinationDir
-		deleteCVSData superAccess
+		deleteCruft superAccess
 	end
 end
 
@@ -1697,7 +1699,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.7.3',
+	puts 'Syllable Build System 0.7.4',
 		'Copyright (c) 2002-2007 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
@@ -1750,7 +1752,7 @@ else
 	@log = Log.new @machType, @crossCompile
 
 	if arg1 == 'scrub'
-		deleteCVSData ''
+		deleteCruft ''
 	elsif arg1 == 'update' and not arg2
 		@log.header 'Updating build system'
 
