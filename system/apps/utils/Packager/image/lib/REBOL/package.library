@@ -1,6 +1,6 @@
 ORCA [
 	Title:		"Package installation library"
-	Version:	0.4.2
+	Version:	0.4.3
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006,2007 Kaj de Vos
@@ -264,15 +264,17 @@ package-image: context [
 				change-dir dir
 
 				foreach entry read %. [
-					node: join subdir ["/" entry]
-					foreach s stages [
-						unless s/index-node self node
-							[return no]
-					]
-					if nesting? and dir? entry [
-						unless index-subdir stages node yes
-							[return no]
-						change-dir dir
+					unless last entry = #"~" [  ; Skip backup files
+						node: join subdir ["/" entry]
+						foreach s stages [
+							unless s/index-node self node
+								[return no]
+						]
+						if nesting? and dir? entry [
+							unless index-subdir stages node yes
+								[return no]
+							change-dir dir
+						]
 					]
 				]
 				yes
@@ -290,15 +292,17 @@ package-image: context [
 				change-dir dir
 
 				foreach entry read %. [
-					if nesting? and dir? entry [
-						unless remove-subdir stages  join subdir ["/" entry]  yes
-							[return no]
+					unless last entry = #"~" [  ; Skip backup files
+						if nesting? and dir? entry [
+							unless remove-subdir stages  join subdir ["/" entry]  yes
+								[return no]
+						]
+						foreach s stages [
+							unless s/remove-node subdir entry
+								[return no]
+						]
+						change-dir dir
 					]
-					foreach s stages [
-						unless s/remove-node subdir entry
-							[return no]
-					]
-					change-dir dir
 				]
 				yes
 			)
