@@ -1,4 +1,5 @@
 ; Parts to complete a system build
+; Build the finish-su profile before this!
 
 resources
 ;	Make GLibC suitable for running in an installed system:
@@ -7,4 +8,3 @@ resources
 	system/libraries		GCC-libraries-3.4.3
 ;	May work better than the standard ones:
 	usr/share/terminfo/x	binaries/xterm-atheos
-

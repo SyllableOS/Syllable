@@ -1,5 +1,5 @@
 ; Parts to complete a system build
-; Run this as root before the finish profile
+; Build this as root before the finish profile
 
 modules
 	coreutils-6.4-su
