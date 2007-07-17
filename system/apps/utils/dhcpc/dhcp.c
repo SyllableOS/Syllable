@@ -143,7 +143,7 @@ void dhcp_start( DHCPSessionInfo_s *info )
 	if( get_state( info ) == STATE_SHUTDOWN)
 		do_release( info );
 
-	debug(INFO,__FUNCTION__,"shuting down state machine\n");
+	debug(INFO,__FUNCTION__,"shutting down state machine\n");
 }
 
 int dhcp_init( const char *if_name, DHCPSessionInfo_s **session )
@@ -188,7 +188,7 @@ int dhcp_init( const char *if_name, DHCPSessionInfo_s **session )
 		return(EINVAL);
 	}
 
-	// Create sockets which we can broadcast & recieve on
+	// Create sockets which we can broadcast & receive on
 	if( setup_sockets( info, true ) != EOK )
 	{
 		debug(PANIC,__FUNCTION__,"unable to initialise sockets\n");
@@ -462,7 +462,7 @@ static void state_selecting( DHCPSessionInfo_s *info )
 	DHCPPacket_s *in_packet;
 	DHCPOption_s *options, *current_option;
 	bool valid;
-	uint8* buffer;			// Packet recieve buffer
+	uint8* buffer;			// Packet receive buffer
 	size_t buffer_length;
 	socklen_t sizeof_in_sin;
 	int alarm_time;
@@ -497,7 +497,7 @@ static void state_selecting( DHCPSessionInfo_s *info )
 
 		if( (int)buffer_length <= 0 )	// Probably caught SIGTERM
 		{
-			debug(PANIC,__FUNCTION__,"did not recieve data while waiting for response\n");
+			debug(PANIC,__FUNCTION__,"did not receive data while waiting for response\n");
 			free(buffer);
 			return;
 		}
@@ -597,7 +597,7 @@ static void state_requesting( DHCPSessionInfo_s *info )
 	DHCPOption_s *option, *options_head, *in_options, *current_in_option;
 	int current_option, error, reply_type;
 	socklen_t sizeof_out_sin, sizeof_in_sin;
-	uint8* buffer;			// Packet recieve buffer
+	uint8* buffer;			// Packet receive buffer
 	size_t buffer_length;
 	int alarm_time;
 
@@ -799,7 +799,7 @@ static void state_requesting( DHCPSessionInfo_s *info )
 
 		if( (int)buffer_length <= 0 )	// Probably caught SIGTERM
 		{
-			debug(PANIC,__FUNCTION__,"did not recieve data while waiting for response\n");
+			debug(PANIC,__FUNCTION__,"did not receive data while waiting for response\n");
 			free(buffer);
 			return;
 		}
@@ -1003,7 +1003,7 @@ static void state_renewing( DHCPSessionInfo_s *info )
 	DHCPOption_s *option, *options_head, *in_options, *current_in_option;
 	int current_option, error, reply_type;
 	socklen_t sizeof_out_sin, sizeof_in_sin;
-	uint8* buffer;			// Packet recieve buffer
+	uint8* buffer;			// Packet receive buffer
 	size_t buffer_length;
 
 	in_packet = NULL;
@@ -1156,7 +1156,7 @@ static void state_renewing( DHCPSessionInfo_s *info )
 
 		if( (int)buffer_length <= 0 )	// Probably caught SIGTERM
 		{
-			debug(PANIC,__FUNCTION__,"did not recieve data while waiting for response\n");
+			debug(PANIC,__FUNCTION__,"did not receive data while waiting for response\n");
 			free(buffer);
 			return;
 		}
@@ -1326,7 +1326,7 @@ static void state_rebinding( DHCPSessionInfo_s *info )
 	DHCPOption_s *option, *options_head, *in_options, *current_in_option;
 	int current_option, error, reply_type;
 	socklen_t sizeof_out_sin, sizeof_in_sin;
-	uint8* buffer;			// Packet recieve buffer
+	uint8* buffer;			// Packet receive buffer
 	size_t buffer_length;
 
 	in_packet = NULL;
@@ -1458,7 +1458,7 @@ static void state_rebinding( DHCPSessionInfo_s *info )
 
 		if( (int)buffer_length <= 0 )	// Probably caught SIGTERM
 		{
-			debug(PANIC,__FUNCTION__,"did not recieve data while waiting for response\n");
+			debug(PANIC,__FUNCTION__,"did not receive data while waiting for response\n");
 			free(buffer);
 			return;
 		}
@@ -1745,7 +1745,7 @@ static void sighandle( int signal )
 	DHCPSessionInfo_s *session = NULL;
 	int n;
 
-	debug( INFO, __FUNCTION__, "recieved signal %d for process #%d\n", signal, pid );
+	debug( INFO, __FUNCTION__, "received signal %d for process #%d\n", signal, pid );
 
 	for( n = 0; n < MAX_SESSIONS; n++ )
 		if( dhcp_sessions[n].pid == pid )
@@ -1782,6 +1782,5 @@ static void sighandle( int signal )
 		}
 	}
 	else
-		debug( PANIC, __FUNCTION__, "recieved signal for unknown process #%d!\n", pid );
+		debug( PANIC, __FUNCTION__, "received signal for unknown process #%d!\n", pid );
 }
-
