@@ -1,3 +1,9 @@
+* July 18, 2007, Kristian Van Der Vliet *
+
+Added the dl2k network driver for D-Link DL2000 based gigabit ethernet cards,
+which was ported from the Linux 2.6.20 dl2k driver. Tested on a
+D-Link DGE-550T at 100 & 1000Mbps
+
 * July 15, 2007, Arno Klenke *
 
 Cloning memory contexts now works correctly with remapped areas
