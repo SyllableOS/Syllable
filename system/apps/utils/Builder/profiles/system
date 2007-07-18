@@ -202,6 +202,7 @@ modules
 	sys/kernel/drivers/net/3c509
 	sys/kernel/drivers/net/3c59x
 	sys/kernel/drivers/net/dp83815
+	sys/kernel/drivers/net/dl2k
 	sys/kernel/drivers/net/eepro100
 	sys/kernel/drivers/net/ne2000
 	sys/kernel/drivers/net/nvidia
