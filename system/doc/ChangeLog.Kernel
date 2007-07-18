@@ -3,6 +3,8 @@
 Cloning memory contexts now works correctly with remapped areas
 or areas with preallocated pages
 
+---- 0.6.4 Released -------------------------------------------------------------------
+
 * July 1, 2007, Arno Klenke *
 
 Always set PTE_ACCESSED when PTE_DIRTY is set
@@ -1215,10 +1217,3 @@ required; they are implemented in user space as part of libc.
 
 Applied a fix to sys/kernel/kernel/vfs/vfs.c  The fcntl() F_GETLK command
 now works as expected.
-
-
-
-
-
-
-
