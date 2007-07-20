@@ -6,6 +6,8 @@ licenses			GPL
 home				www.gnu.org/software/grep/
 packages			grep/grep-2.5.1a
 
+; But not for GRep in the base system:
+;build-recommends	pcre
 ; Currently conflicts with GetText on GLibC 2.3.x:
 build-conflicts		gettext
 
@@ -14,7 +16,9 @@ patch-config
 ; Seems to be necessary for internationalization:
 ;build-dir			.
 
-;configure-options	--without-included-gettext
+configure-options
+;	--without-included-gettext
+;	Prevent problems with starting the system:
+	--disable-perl-regexp
 
 documentation		README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS
-
