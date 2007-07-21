@@ -5,6 +5,8 @@ licenses			GPL LGPL BSD Artistic other PD
 home				www.ruby-lang.org
 locations			ftp://ftp.ruby-lang.org/pub/ruby/1.8/
 
+build-recommends	openssl
+
 test-targets		test
 
 system-prefix-var	DESTDIR
