@@ -1,6 +1,6 @@
 #! /bin/sh
 
-packages='openssh wget rsync transmission'
+packages='openssh wget rsync transmission ncftp links'
 
 if [ "$USER" != "root" ]
 then
@@ -36,7 +36,7 @@ done
 
 echo ""
 
-for package in `ls *.zip`
+for package in `ls *.resource`
 do
 	echo "Installing $package"
 	unzip $package -d /usr
@@ -54,4 +54,3 @@ done
 echo ""
 echo "Done."
 #echo "The SaMBa server will be started when rebooting the computer."
-

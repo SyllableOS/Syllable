@@ -1,6 +1,6 @@
 #! /bin/sh
 
-packages='flex bison binutils gcc nasm make m4 gdb patch cvs libtool ruby Builder doxygen cscope splint'
+packages='gawk gettext which'
 
 if [ "$USER" != "root" ]
 then
@@ -10,7 +10,8 @@ then
 	exit 1
 fi
 
-echo "This will install the packages contained in the developer pack."
+echo "This will install the packages contained in the Command-Line 
+Cornucopia."
 echo "Previously installed packages of the same name will be removed first."
 echo ""
 read -p "Do you want to continue (y/N)? " -e answer
@@ -53,5 +54,3 @@ done
 
 echo ""
 echo "Done."
-#echo "To fully initialize BinUtils and GCC for compiling software, please reboot"
-#echo "the computer."

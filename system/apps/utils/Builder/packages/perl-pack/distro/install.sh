@@ -36,7 +36,7 @@ done
 
 echo ""
 
-for package in `ls *.zip`
+for package in `ls *.resource`
 do
 	echo "Installing $package"
 	unzip $package -d /usr
@@ -53,4 +53,3 @@ done
 
 echo ""
 echo "Done"
-
