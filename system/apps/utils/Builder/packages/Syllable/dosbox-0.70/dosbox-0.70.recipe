@@ -1,0 +1,10 @@
+authors
+	Rui Caridade
+	Kaj de Vos
+status				testing
+
+_configure-env
+	-I/usr/sdl-net/include/SDL
+_configure-options
+;	--disable-dynamic-x86
+	--disable-opengl

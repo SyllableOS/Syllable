@@ -1,0 +1,45 @@
+diff -Nubwr dosbox-0.70/src/cpu/core_dyn_x86/risc_x86.h dosbox-0.70-new/src/cpu/core_dyn_x86/risc_x86.h
+--- dosbox-0.70/src/cpu/core_dyn_x86/risc_x86.h	2007-02-15 14:12:37.000000000 +0000
++++ dosbox-0.70-new/src/cpu/core_dyn_x86/risc_x86.h	2007-07-20 02:53:32.000000000 +0000
+@@ -110,7 +110,7 @@
+ 		pop		ebx
+ 		mov		[retval],eax
+ 	}
+-#elif defined (MACOSX)
++#elif defined (MACOSX) || defined __SYLLABLE__
+ 	register Bit32u tempflags=reg_flags & FMASK_TEST;
+ 	__asm__ volatile (
+ 		"pushl %%ebx						\n"
+diff -Nubwr dosbox-0.70/src/hardware/serialport/misc_util.cpp dosbox-0.70-new/src/hardware/serialport/misc_util.cpp
+--- dosbox-0.70/src/hardware/serialport/misc_util.cpp	2007-02-19 13:28:47.000000000 +0000
++++ dosbox-0.70-new/src/hardware/serialport/misc_util.cpp	2007-07-14 02:05:55.000000000 +0000
+@@ -6,7 +6,7 @@
+ // C++ SDLnet wrapper
+ 
+ // Socket inheritance
+-#if defined LINUX || defined OS2
++#if defined __GNUC__ || defined OS2 
+ #define CAPWORD (NETWRAPPER_TCP|NETWRAPPER_TCP_NATIVESOCKET)
+ #ifdef OS2
+ typedef int     socklen_t;
+@@ -29,7 +29,7 @@
+ #define SOCKET socklen_t
+ 
+ #else
+-#define CAPWORD NETWRAPPER_TCP
++#define CAPWORD (NETWRAPPER_TCP|NETWRAPPER_TCP_NATIVESOCKET)
+ #endif
+ 
+ #include "misc_util.h"
+diff -Nubwr dosbox-0.70/src/hardware/serialport/misc_util.h dosbox-0.70-new/src/hardware/serialport/misc_util.h
+--- dosbox-0.70/src/hardware/serialport/misc_util.h	2007-02-19 13:28:47.000000000 +0000
++++ dosbox-0.70-new/src/hardware/serialport/misc_util.h	2007-07-14 02:08:31.000000000 +0000
+@@ -6,7 +6,7 @@
+ #include "SDL_net.h"
+ #include "support.h"
+ 
+-#if defined LINUX || defined OS2
++#if defined LINUX || defined OS2 || defined __SYLLABLE__
+ #define NATIVESOCKETS
+ 
+ #elif defined WIN32 
