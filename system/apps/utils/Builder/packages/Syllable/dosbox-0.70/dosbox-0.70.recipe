@@ -1,10 +1,10 @@
 authors
 	Rui Caridade
 	Kaj de Vos
-status				testing
+status				broken
+notes				Hangs during compilation
 
-_configure-env
-	-I/usr/sdl-net/include/SDL
+;configure-env		CFLAGS '-I/usr/sdl-net/include/SDL'
 _configure-options
 ;	--disable-dynamic-x86
 	--disable-opengl
