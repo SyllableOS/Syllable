@@ -14,6 +14,7 @@
 	module	/system/drivers/dev/bus/ata
 	module	/system/drivers/dev/hcd/ata_pci
 	module	/system/drivers/fs/afs
+#	quiet
 
 	title			Windows example
 	rootnoverify	(hd0,0)
@@ -24,4 +25,5 @@
 	kernel			/usr/linux/kernel-2.6.21.1 root=/dev/hda2 ro splash quiet
 #	initrd			/usr/linux/initrd.img-2.6.21.1
 #	savedefault
+#	quiet
 #	boot
