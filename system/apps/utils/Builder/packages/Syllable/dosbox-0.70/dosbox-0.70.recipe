@@ -7,6 +7,7 @@ notes				Hangs during compilation
 configure-env
 ;	CPPFLAGS "$CPPFLAGS -I/usr/sdl-net/include/SDL"
 	CFLAGS "$CFLAGS -fomit-frame-pointer"
+	CXXFLAGS "$CXXFLAGS -fomit-frame-pointer"
 _configure-options
 ;	--disable-dynamic-x86
 	--disable-opengl
