@@ -10,9 +10,9 @@ locations
 	http://prdownloads.sourceforge.net
 ;	Downloads are probably counted:
 ;	http://prdownloads.sourceforge.net/PROJECT/FILE?use_mirror=heanet
+
 ;	Downloads are not counted according to SF:
-	http://heanet.dl.sourceforge.net/sourceforge/
-	http://surfnet.dl.sourceforge.net/sourceforge/
+	http://puzzle.dl.sourceforge.net/sourceforge/
 	http://citkit.dl.sourceforge.net/sourceforge/
 	http://easynews.dl.sourceforge.net/sourceforge/
 	http://jaist.dl.sourceforge.net/sourceforge/
@@ -23,9 +23,11 @@ locations
 	http://optusnet.dl.sourceforge.net/sourceforge/
 	http://ovh.dl.sourceforge.net/sourceforge/
 	http://peterhost.dl.sourceforge.net/sourceforge/
-	http://puzzle.dl.sourceforge.net/sourceforge/
 	http://switch.dl.sourceforge.net/sourceforge/
 	http://ufpr.dl.sourceforge.net/sourceforge/
 	http://unc.dl.sourceforge.net/sourceforge/
 	http://voxel.dl.sourceforge.net/sourceforge/
 
+;	These return a "helpful" HTML message when not found:
+	http://heanet.dl.sourceforge.net/sourceforge/
+	http://surfnet.dl.sourceforge.net/sourceforge/
