@@ -4,7 +4,9 @@ authors
 status				broken
 notes				Hangs during compilation
 
-;configure-env		CFLAGS '-I/usr/sdl-net/include/SDL'
+configure-env
+;	CPPFLAGS "$CPPFLAGS -I/usr/sdl-net/include/SDL"
+	CFLAGS "$CFLAGS -fomit-frame-pointer"
 _configure-options
 ;	--disable-dynamic-x86
 	--disable-opengl
