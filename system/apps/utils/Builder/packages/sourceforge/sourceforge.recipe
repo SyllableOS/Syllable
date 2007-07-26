@@ -1,23 +1,26 @@
 authors				Kaj de Vos
 notes
-	Taken from http://www.gentoo.org/cgi-bin/viewcvs.cgi/profiles/thirdpartymirrors?rev=1.124&content-type=text/vnd.viewcvs-markup on January 2, 2006.
-	Put mirrors near you at the top of the list.
+	Taken from http://www.gentoo.org/cgi-bin/viewcvs.cgi/profiles/thirdpartymirrors?rev=1.124&content-type=text/vnd.viewcvs-markup on January 2, 2006
+	Put mirrors near you at the top of the list (SF may do this automatically now)
 
 locations
+;	Main mirror system that selects a mirror and gives others when failed:
+	http://prdownloads.sourceforge.net
+
 ;	Seems to have been shut down for automatic downloading:
 ;	http://osdn.dl.sourceforge.net/sourceforge/
-
-	http://prdownloads.sourceforge.net
 ;	Downloads are probably counted:
 ;	http://prdownloads.sourceforge.net/PROJECT/FILE?use_mirror=heanet
 
 ;	Downloads are not counted according to SF:
+	http://heanet.dl.sourceforge.net/sourceforge/
+	http://kent.dl.sourceforge.net/sourceforge/
+	http://surfnet.dl.sourceforge.net/sourceforge/
 	http://puzzle.dl.sourceforge.net/sourceforge/
 	http://citkit.dl.sourceforge.net/sourceforge/
 	http://easynews.dl.sourceforge.net/sourceforge/
 	http://jaist.dl.sourceforge.net/sourceforge/
 	http://keihanna.dl.sourceforge.net/sourceforge/
-	http://kent.dl.sourceforge.net/sourceforge/
 	http://mesh.dl.sourceforge.net/sourceforge/
 	http://nchc.dl.sourceforge.net/sourceforge/
 	http://optusnet.dl.sourceforge.net/sourceforge/
@@ -27,7 +30,3 @@ locations
 	http://ufpr.dl.sourceforge.net/sourceforge/
 	http://unc.dl.sourceforge.net/sourceforge/
 	http://voxel.dl.sourceforge.net/sourceforge/
-
-;	These return a "helpful" HTML message when not found:
-	http://heanet.dl.sourceforge.net/sourceforge/
-	http://surfnet.dl.sourceforge.net/sourceforge/
