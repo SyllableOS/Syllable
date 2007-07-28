@@ -1,3 +1,9 @@
+* July 28, 2007, Kristian Van Der Vliet *
+
+Added support for userspace USB via. libusb. The USB bus manager will now
+export device nodes under /dev/usb/[bus #]/[device #] which are used by libusb
+to access the device.
+
 * July 18, 2007, Kaj de Vos *
 
 Set network to DHCP by default on eth0.
