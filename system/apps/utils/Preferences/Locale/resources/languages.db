@@ -5,8 +5,10 @@
 # Tabsize = 4
 #
 # Name				Continent		Country				Family						Code		Flag
+al-‘arabiyyah			?			?					?							ar		ar.png
 Български			EUROPE			Република България	INDO_EUROPEAN/SLAVONIC		bg			bg.png
 Čeština				EUROPE			Česká Republika		INDO_EUROPEAN/SLAVONIC		cz			cz.png
+中文 (Chinese)			ASIA				China			?						zh-cn		zh-cn.png
 Deutsch				EUROPE			Deutschland			INDO_EUROPEAN/GERMANIC		de			de.png
 Deutsch/Schweiz		EUROPE			Der Schweiz			INDO_EUROPEAN/GERMANIC		de-ch		de-ch.png
 Dansk				EUROPE			Danmark				INDO_EUROPEAN/GERMANIC		da			da.png
