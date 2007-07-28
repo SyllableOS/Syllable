@@ -1,11 +1,14 @@
 authors
 	Rui Caridade
 	Kaj de Vos
-status				broken
-notes				Hangs during compilation
+status				testing
+notes				Hangs during compilation on some machines
 
+; To find SDL_net:
+build-needs			Syllable > 0.6.4
+
+; We need an extra register:
 configure-env
-;	CPPFLAGS "$CPPFLAGS -I/usr/sdl-net/include/SDL"
 	CFLAGS "$CFLAGS -fomit-frame-pointer"
 	CXXFLAGS "$CXXFLAGS -fomit-frame-pointer"
 _configure-options
