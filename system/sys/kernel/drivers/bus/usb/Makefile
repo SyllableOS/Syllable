@@ -3,7 +3,7 @@ AFLAGS   = -c
 
 C_INCLUDE_PATH=$(ATHEOS_INCLUDE_PATH)
 
-OBJS := usb_hub.o usb.o
+OBJS := usb_hub.o usb.o libusb.o
 
 
 OBJDIR	:= objs

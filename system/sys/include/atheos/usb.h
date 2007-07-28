@@ -121,9 +121,20 @@ struct USB_bus_driver_t
 
 typedef struct USB_bus_driver_t USB_bus_driver_s;
 
-/* One USB device */
-
 struct USB_device_t;
+
+struct USB_libusb_node_t
+{
+	struct USB_device_t* psDevice;
+	int nInterfaceNum;
+	int hNode;
+	sem_id hLock;
+	sem_id hWait;
+};
+
+typedef struct USB_libusb_node_t USB_libusb_node_s;
+
+/* One USB device */
 
 struct USB_device_t
 {
@@ -158,6 +169,8 @@ struct USB_device_t
 	
 	
 	int				nHandle;
+
+	struct USB_libusb_node_t	*psUSBNode;
 };
 
 typedef struct USB_device_t USB_device_s;

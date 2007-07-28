@@ -46,6 +46,7 @@
 
 #define MAX_USB_DRIVERS 128
 
+int g_nDeviceID;
 bool g_bUSBBusMap[64]; /* bitmap of all buses */
 USB_bus_driver_s* g_psUSBBus[64];
 USB_driver_s* g_psFirstUSBDriver; /* Head of the list of all registered drivers */
@@ -339,7 +340,10 @@ status_t usb_find_interface_driver( USB_device_s* psDev, int nIFNum )
 	void* pPrivate;
 	
 	LOCK( psDev->hLock );
-	
+
+	/* Create libusb device node */
+	libusb_add( psDev, nIFNum );
+
 	psIF = psDev->psActConfig->psInterface + nIFNum;
 	
 	if( psIF->psDriver != NULL ) {
@@ -395,7 +399,7 @@ status_t usb_find_driver( USB_device_s* psDev )
 	
 	if( !psDev->psActConfig )
 		return( -1 );
-		
+
 	if( psDev->nDeviceNum > 0 )
 		for( i = 0; i < psDev->psActConfig->nNumInterfaces; i++ )
 			if( usb_find_interface_driver( psDev, i ) == 0 )
@@ -1147,7 +1151,10 @@ void usb_disconnect( USB_device_s** psDevice )
 	}
 	
 	unregister_device( psDev->nHandle );
-	
+
+	/* Remove libusb node */
+	libusb_remove( psDev );
+
 	/* Free all children */
 	for( i = 0; i < 16; i++ ) {
 		USB_device_s** psChild = psDev->psChildren + i;
@@ -1775,10 +1782,10 @@ int usb_new_device( USB_device_s* psDevice )
 		usb_show_string( psDevice, "Product", psDevice->sDeviceDesc.nProduct );
 	if( psDevice->sDeviceDesc.nSerialNumber )
 		usb_show_string( psDevice, "SerialNumber", psDevice->sDeviceDesc.nSerialNumber );
-		
+
 	/* Enable all usb device drivers */
 	enable_devices_on_bus( USB_BUS_NAME );
-		
+
 	/* find drivers willing to handle this device */
 	usb_find_drivers_for_new_device( psDevice );
 	
@@ -1889,8 +1896,9 @@ status_t device_init( int nDeviceID )
 	kerndbg( KERN_INFO, "USB: Busmanager initialized\n" );
 	
 	usb_hub_init();
-	
-	register_busmanager( nDeviceID, "usb", usb_bus_get_hooks );
+
+	g_nDeviceID = nDeviceID;
+	register_busmanager( g_nDeviceID, "usb", usb_bus_get_hooks );
 	
 	return( 0 );
 }
