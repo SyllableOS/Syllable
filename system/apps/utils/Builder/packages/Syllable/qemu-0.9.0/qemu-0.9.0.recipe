@@ -1,8 +1,8 @@
 authors
 	Rui Caridade
 	Kaj de Vos
-status				testing
-notes
+status				broken
+notes				Runs, but screen stays blank
 
 configure-options
 	--disable-linux-user
