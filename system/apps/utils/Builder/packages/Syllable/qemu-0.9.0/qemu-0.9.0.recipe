@@ -1,0 +1,12 @@
+authors
+	Rui Caridade
+	Kaj de Vos
+status				testing
+notes
+
+configure-options
+	--disable-linux-user
+	--disable-darwin-user
+	--disable-kqemu
+	--extra-cflags=-fno-pic
+	--target-list=i386-softmmu

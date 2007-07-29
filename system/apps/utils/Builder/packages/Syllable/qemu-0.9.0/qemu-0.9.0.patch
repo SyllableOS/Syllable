@@ -1,0 +1,127 @@
+diff -NErubwa qemu-0.9.0/audio/ossaudio.c qemu-0.9.0-syllable/audio/ossaudio.c
+--- qemu-0.9.0/audio/ossaudio.c	2007-07-27 00:19:08.000000000 +0000
++++ qemu-0.9.0-syllable/audio/ossaudio.c	2007-07-26 05:10:46.000000000 +0000
+@@ -24,7 +24,11 @@
+ #include <sys/mman.h>
+ #include <sys/types.h>
+ #include <sys/ioctl.h>
++#ifdef __SYLLABLE__
++#include <atheos/soundcard.h>
++#else
+ #include <sys/soundcard.h>
++#endif
+ #include "vl.h"
+ 
+ #define AUDIO_CAP "oss"
+diff -NErubwa qemu-0.9.0/configure qemu-0.9.0-syllable/configure
+--- qemu-0.9.0/configure	2007-07-27 00:19:08.000000000 +0000
++++ qemu-0.9.0-syllable/configure	2007-07-26 04:57:19.000000000 +0000
+@@ -557,9 +557,13 @@
+ fi
+ 
+ # Check if tools are available to build documentation.
++if test -z "which"
++then
+ if [ -x "`which texi2html`" ] && [ -x "`which pod2man`" ]; then
+   build_docs="yes"
+ fi
++else echo "'which' could not be found.Documentation won't be built"
++fi
+ 
+ if test "$mingw32" = "yes" ; then
+ if test -z "$prefix" ; then
+diff -NErubwa qemu-0.9.0/fpu/softfloat.h qemu-0.9.0-syllable/fpu/softfloat.h
+--- qemu-0.9.0/fpu/softfloat.h	2007-07-27 00:19:08.000000000 +0000
++++ qemu-0.9.0-syllable/fpu/softfloat.h	2007-07-26 04:59:31.000000000 +0000
+@@ -43,6 +43,7 @@
+ | implementations of C, `flag', `uint8', and `int8' should all be `typedef'ed
+ | to the same as `int'.
+ *----------------------------------------------------------------------------*/
++#ifndef __SYLLABLE__
+ typedef uint8_t flag;
+ typedef uint8_t uint8;
+ typedef int8_t int8;
+@@ -52,7 +53,7 @@
+ typedef signed int int32;
+ typedef uint64_t uint64;
+ typedef int64_t int64;
+-
++#endif
+ /*----------------------------------------------------------------------------
+ | Each of the following `typedef's defines a type that holds integers
+ | of _exactly_ the number of bits specified.  For instance, for most
+diff -NErubwa qemu-0.9.0/hw/pc.c qemu-0.9.0-syllable/hw/pc.c
+--- qemu-0.9.0/hw/pc.c	2007-07-27 00:19:08.000000000 +0000
++++ qemu-0.9.0-syllable/hw/pc.c	2007-07-26 05:12:48.000000000 +0000
+@@ -31,6 +31,11 @@
+ #define VGABIOS_CIRRUS_FILENAME "vgabios-cirrus.bin"
+ #define LINUX_BOOT_FILENAME "linux_boot.bin"
+ 
++// Due to the way the header files are organized in Syllable this is needed to avoid a warning
++#ifdef __SYLLABLE__
++#undef KERNEL_LOAD_ADDR
++#endif
++
+ #define KERNEL_LOAD_ADDR     0x00100000
+ #define INITRD_LOAD_ADDR     0x00600000
+ #define KERNEL_PARAMS_ADDR   0x00090000
+diff -NErubwa qemu-0.9.0/vl.c qemu-0.9.0-syllable/vl.c
+--- qemu-0.9.0/vl.c	2007-07-27 00:19:08.000000000 +0000
++++ qemu-0.9.0-syllable/vl.c	2007-07-26 05:08:44.000000000 +0000
+@@ -48,6 +48,10 @@
+ #include <libutil.h>
+ #endif
+ #else
++#ifdef __SYLLABLE__
++#include <net/if.h>
++#include <net/if_tun.h>
++#else
+ #ifndef __sun__
+ #include <linux/if.h>
+ #include <linux/if_tun.h>
+@@ -58,6 +62,7 @@
+ #endif
+ #endif
+ #endif
++#endif
+ 
+ #if defined(CONFIG_SLIRP)
+ #include "libslirp.h"
+@@ -3245,6 +3250,12 @@
+     fprintf(stderr, "warning: tap_open not yet implemented\n");
+     return -1;
+ }
++#elif defined(__SYLLABLE__)
++static int tap_open(char *ifname, int ifname_size)
++{
++    fprintf(stderr, "warning: tap_open not yet implemented\n");
++    return -1;
++}
+ #else
+ static int tap_open(char *ifname, int ifname_size)
+ {
+diff -NErubwa qemu-0.9.0/vl.h qemu-0.9.0-syllable/vl.h
+--- qemu-0.9.0/vl.h	2007-07-27 00:19:08.000000000 +0000
++++ qemu-0.9.0-syllable/vl.h	2007-07-25 01:56:29.000000000 +0000
+@@ -31,6 +31,9 @@
+ #include <string.h>
+ #include <inttypes.h>
+ #include <limits.h>
++#ifdef __SYLLABLE__
++#include <atheos/types.h>
++#endif
+ #include <time.h>
+ #include <ctype.h>
+ #include <errno.h>
+diff -NErubwa qemu-0.9.0/Makefile.target qemu-0.9.0-syllable/Makefile.target
+--- qemu-0.9.0/Makefile.target	2007-07-27 00:18:40.000000000 +0000
++++ qemu-0.9.0-syllable/Makefile.target	2007-07-24 19:58:42.000000000 +0000
+@@ -70,7 +70,7 @@
+ endif
+ 
+ # We require -O2 to avoid the stack setup prologue in EXIT_TB
+-OP_CFLAGS = -Wall -O2 -g -fno-strict-aliasing
++OP_CFLAGS = -Wall -O2 -g -fno-strict-aliasing -fno-pic
+ 
+ ifeq ($(ARCH),i386)
+ HELPER_CFLAGS+=-fomit-frame-pointer

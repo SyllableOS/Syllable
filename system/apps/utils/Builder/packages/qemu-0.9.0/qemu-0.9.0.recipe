@@ -1,0 +1,18 @@
+authors				Kaj de Vos
+status				testing
+
+headline			Emulator and virtualizer
+description
+	QEMU is a generic machine emulator and virtualizer. When used as a machine emulator, QEMU can run OSes and programs made for one machine on a different machine. By using dynamic translation, it achieves very good performances. When used as a virtualizer, QEMU achieves near native performances by executing the guest code directly on the host CPU. A host driver called the QEMU accelerator (also known as KQEMU) is needed in this case.
+licenses			GPL LGPL BSD
+
+home				fabrice.bellard.free.fr/qemu/
+locations			http://fabrice.bellard.free.fr/qemu/
+
+needs
+	gcc < 4
+	sdl
+
+documentation
+	README LICENSE COPYING COPYING.LIB Changelog TODO
+;	qemu-doc.html
