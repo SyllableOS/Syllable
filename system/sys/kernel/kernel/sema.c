@@ -94,12 +94,7 @@ static Semaphore_s *clone_semaphore( Semaphore_s *psSema, proc_id hNewOwner )
 		psClone = kmalloc( sizeof( Semaphore_s ), MEMF_KERNEL | MEMF_CLEAR | MEMF_NOBLOCK );
 		break;
 	case SEMSTYLE_RWLOCK:
-		psClone = kmalloc( sizeof( Semaphore_s ), MEMF_KERNEL | MEMF_CLEAR | MEMF_NOBLOCK );
-
-			/**
-			 * No need to clone extra fields for R-W lock, as we have to drop
-			 * details about holders and waiters anyway.
-			 */
+		psClone = kmalloc( sizeof( RWLock_s ), MEMF_KERNEL | MEMF_CLEAR | MEMF_NOBLOCK );
 		break;
 	default:
 		kerndbg( KERN_DEBUG, __FUNCTION__ "(): Asked to clone unknown semaphore style.\n" );
@@ -118,6 +113,8 @@ static Semaphore_s *clone_semaphore( Semaphore_s *psSema, proc_id hNewOwner )
 	/* No one holds cloned semaphore. */
 	psClone->ss_hHolder = -1;
 	psClone->ss_hOwner = hNewOwner;
+
+	/* Don't clone the extra fields for a R-W lock. */
 
 	/* Increment global semaphore count */
 	atomic_inc( &g_sSysBase.ex_nSemaphoreCount );
