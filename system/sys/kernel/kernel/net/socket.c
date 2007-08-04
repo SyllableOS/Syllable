@@ -1325,7 +1325,7 @@ static int sk_write( void *pVolume, void *pNode, void *pCookie, off_t nPos, cons
 	sMsg.msg_name = NULL;
 	sMsg.msg_namelen = 0;
 
-	if ( psSocket->sk_psOps->recvmsg != NULL )
+	if ( psSocket->sk_psOps->sendmsg != NULL )
 	{
 		nError = psSocket->sk_psOps->sendmsg( psSocket, &sMsg, 0 );
 	}
@@ -1347,7 +1347,7 @@ static int sk_writev( void *pVolume, void *pNode, void *pCookie, off_t nPos, con
 	sMsg.msg_name = NULL;
 	sMsg.msg_namelen = 0;
 
-	if ( psSocket->sk_psOps->recvmsg != NULL )
+	if ( psSocket->sk_psOps->sendmsg != NULL )
 	{
 		nError = psSocket->sk_psOps->sendmsg( psSocket, &sMsg, 0 );
 	}
