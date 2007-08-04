@@ -1,3 +1,10 @@
+* August 4, 2007, Kristian Van Der Vliet *
+
+o clone_semaphore() allocates the correct amount of space for a R/W lock
+  semaphore. Fixes bug #288
+o sk_write() & sk_writev() now check for the sendmsg() socket op instead of
+  recvmsg(). Fixes bug #290
+
 * July 18, 2007, Kristian Van Der Vliet *
 
 Added the dl2k network driver for D-Link DL2000 based gigabit ethernet cards,
