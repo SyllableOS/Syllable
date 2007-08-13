@@ -1,3 +1,7 @@
+* August 13, 2007, Arno Klenke *
+
+Corrected area flags in the audio drivers
+
 * July 28, 2007, Kristian Van Der Vliet *
 
 Added support for userspace USB via. libusb. The USB bus manager will now
@@ -1399,3 +1403,4 @@ Added the following keymaps:
 * Jun 14 2002, Kristian Van Der Vliet *
 
 Implement get_tld(), set_tld() in process.c
+
