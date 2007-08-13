@@ -318,7 +318,7 @@ static status_t hda_create_buffers( HDAAudioDriver_s* psDriver, HDAStream_s* psS
 	
 	/* Create sgd table */
 	uint8* pAddress = NULL;
-	psStream->hSgdArea = create_area( "ich_dma", (void**)&pAddress, PAGE_SIZE, PAGE_SIZE, AREA_ANY_ADDRESS | AREA_KERNEL, AREA_CONTIGUOUS );
+	psStream->hSgdArea = create_area( "hda_dma", (void**)&pAddress, PAGE_SIZE, PAGE_SIZE, AREA_FULL_ACCESS | AREA_KERNEL, AREA_CONTIGUOUS );
 	psStream->pasSgTable = (volatile struct hda_sgd_table*)pAddress;
 	memset( pAddress, 0, sizeof( struct hda_sgd_table ) * psStream->nFragNumber );
 	
@@ -330,7 +330,7 @@ static status_t hda_create_buffers( HDAAudioDriver_s* psDriver, HDAStream_s* psS
 	
 	/* Create audio buffer */
 	psStream->pBuffer = NULL;
-	psStream->hBufArea = create_area( "ich_buf", (void**)&psStream->pBuffer, PAGE_SIZE * psStream->nPageNumber, PAGE_SIZE * psStream->nPageNumber, AREA_ANY_ADDRESS | AREA_KERNEL, AREA_CONTIGUOUS );
+	psStream->hBufArea = create_area( "hda_buf", (void**)&psStream->pBuffer, PAGE_SIZE * psStream->nPageNumber, PAGE_SIZE * psStream->nPageNumber, AREA_FULL_ACCESS | AREA_KERNEL, AREA_CONTIGUOUS );
 	memset( psStream->pBuffer, 0,  PAGE_SIZE * psStream->nPageNumber );
 	uint32 nPhysAddr;
 	get_area_physical_address( psStream->hBufArea, &nPhysAddr );
@@ -647,7 +647,7 @@ static void hda_init_stream( HDAAudioDriver_s* psDriver, int nChannel, char* pzN
 	
 	/* Create node */
 	char zNodePath[PATH_MAX];
-	sprintf( zNodePath, "audio/ich_%i_%s", psDriver->sPCI.nHandle, pzName );
+	sprintf( zNodePath, "audio/hda_%i_%s", psDriver->sPCI.nHandle, pzName );
 
 	if( create_device_node( psDriver->nDeviceID,  psDriver->sPCI.nHandle, zNodePath, &g_sOperations, &psDriver->sStream[nChannel] ) < 0 )
 	{
@@ -874,7 +874,7 @@ static status_t hda_init( int nDeviceID, PCI_Info_s sPCI, char* zName )
 	hda_init_irq( psDriver );
 
 	/* Allocate and initialize command buffer */
-	psDriver->hCmdBufArea = create_area( "hda_cmd_buf", (void**)&psDriver->pCmdBufAddr, PAGE_SIZE, PAGE_SIZE, AREA_KERNEL | AREA_ANY_ADDRESS, AREA_CONTIGUOUS );
+	psDriver->hCmdBufArea = create_area( "hda_cmd_buf", (void**)&psDriver->pCmdBufAddr, PAGE_SIZE, PAGE_SIZE, AREA_KERNEL | AREA_FULL_ACCESS, AREA_CONTIGUOUS );
 	hda_init_cmd_buf( psDriver );
 	
 	/* Disable position buffer */
@@ -903,7 +903,7 @@ static status_t hda_init( int nDeviceID, PCI_Info_s sPCI, char* zName )
 	psDriver->nIRQHandle = request_irq( sPCI.u.h0.nInterruptLine, hda_interrupt, NULL, SA_SHIRQ, "hda_audio", psDriver );	
 	
 	/* Create lock */
-	psDriver->hLock = create_semaphore( "ich_lock", 1, SEM_RECURSIVE );
+	psDriver->hLock = create_semaphore( "hda_lock", 1, SEM_RECURSIVE );
 	
 	/* Initialize codec */
 	hda_initialize_codec( psDriver, 0 );

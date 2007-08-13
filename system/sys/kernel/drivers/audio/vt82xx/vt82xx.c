@@ -321,7 +321,7 @@ static status_t via_create_buffers( VIAAudioDriver_s* psDriver, VIAStream_s* psS
 	
 	/* Create sgd table */
 	uint8* pAddress = NULL;
-	psStream->hSgdArea = create_area( "via_dma", (void**)&pAddress, PAGE_SIZE, PAGE_SIZE, AREA_ANY_ADDRESS | AREA_KERNEL, AREA_CONTIGUOUS );
+	psStream->hSgdArea = create_area( "via_dma", (void**)&pAddress, PAGE_SIZE, PAGE_SIZE, AREA_FULL_ACCESS | AREA_KERNEL, AREA_CONTIGUOUS );
 	psStream->pasSgTable = (volatile struct via_sgd_table*)pAddress;
 	memset( pAddress, 0, sizeof( struct via_sgd_table ) * psStream->nFragNumber );
 	
@@ -333,7 +333,7 @@ static status_t via_create_buffers( VIAAudioDriver_s* psDriver, VIAStream_s* psS
 	
 	/* Create audio buffer */
 	psStream->pBuffer = NULL;
-	psStream->hBufArea = create_area( "via_buf", (void**)&psStream->pBuffer, PAGE_SIZE * psStream->nPageNumber, PAGE_SIZE * psStream->nPageNumber, AREA_ANY_ADDRESS | AREA_KERNEL, AREA_CONTIGUOUS );
+	psStream->hBufArea = create_area( "via_buf", (void**)&psStream->pBuffer, PAGE_SIZE * psStream->nPageNumber, PAGE_SIZE * psStream->nPageNumber, AREA_FULL_ACCESS | AREA_KERNEL, AREA_CONTIGUOUS );
 	memset( psStream->pBuffer, 0,  PAGE_SIZE * psStream->nPageNumber );
 	uint32 nPhysAddr;
 	get_area_physical_address( psStream->hBufArea, &nPhysAddr );
