@@ -1,0 +1,20 @@
+authors
+	Rui Caridade
+	Kaj de Vos
+status				testing
+notes
+	Hangs during compilation on some machines
+	Can't link SDL_sound
+
+; To find SDL_net:
+build-needs			Syllable > 0.6.4
+
+configure-env
+;	CPPFLAGS "$CPPFLAGS -I/usr/libvorbis/include"
+;	We need an extra register:
+	CFLAGS "$CFLAGS -fomit-frame-pointer"
+	CXXFLAGS "$CXXFLAGS -fomit-frame-pointer"
+;	LDFLAGS "$LDFLAGS -static"
+configure-options
+	--disable-dynamic-x86
+;	--disable-opengl

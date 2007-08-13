@@ -1,0 +1,27 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			sourceforge
+
+headline			PC and DOS emulator
+description
+	 DOSBox is a DOS-emulator that uses the SDL-library. DOSBox emulates an Intel x86 PC, complete with sound, graphics, mouse, modem, etc., necessary for running many old DOS games that simply cannot be run on modern PCs and operating systems. You can "re-live" the good old days with the help of DOSBox, it can run plenty of the old classics that don't run on your new computer!
+licenses			GPL
+
+home				dosbox.sourceforge.net
+packages			dosbox/dosbox-0.71
+
+needs				sdl >= 1.2
+recommends
+	ncurses
+	libpng
+	sdl-sound
+	sdl-net
+
+_configure-options
+	--enable-debug=heavy
+
+documentation
+	README COPYING NEWS ChangeLog AUTHORS THANKS
+;	docs
+build-docs			INSTALL
