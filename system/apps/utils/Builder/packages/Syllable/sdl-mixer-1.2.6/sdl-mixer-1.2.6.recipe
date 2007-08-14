@@ -1,8 +1,12 @@
 authors
 	Flemming Sørensen
 	Kaj de Vos
+	Michael Saunders
 maintainers			Kaj de Vos
 status				testing
 
 patch-config
 make-shared
+
+; For shared libraries:
+configure-env		LDFLAGS '-lm'

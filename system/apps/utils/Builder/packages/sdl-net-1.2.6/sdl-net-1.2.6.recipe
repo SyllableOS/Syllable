@@ -1,7 +1,4 @@
-authors
-	Flemming Sørensen
-	Kaj de Vos
-maintainers			Kaj de Vos
+authors				Kaj de Vos
 status				testing
 
 licenses			LGPL
@@ -11,10 +8,6 @@ locations			http://www.libsdl.org/projects/SDL_net/release/
 
 needs				sdl >= 1.2.4
 
-patch-config
-make-shared
-
 documentation		README COPYING CHANGES
 ; For some packages:
 links				include/SDL/SDL_net.h include/
-

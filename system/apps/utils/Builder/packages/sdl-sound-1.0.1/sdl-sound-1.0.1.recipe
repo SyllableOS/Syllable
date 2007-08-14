@@ -1,9 +1,5 @@
-authors
-	Flemming Sørensen
-	Kaj de Vos
-maintainers			Kaj de Vos
+authors				Kaj de Vos
 status				testing
-notes				Doesn't build a shared library yet
 
 licenses			LGPL
 home				icculus.org/SDL_sound/
@@ -19,9 +15,6 @@ build-recommends
 	libmodplug
 	libmikmod >= 3.1.5
 	libspeex
-
-patch-config
-;make-shared
 
 configure-options
 ;	--enable-static

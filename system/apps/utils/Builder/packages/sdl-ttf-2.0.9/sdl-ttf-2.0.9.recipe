@@ -1,7 +1,4 @@
-authors
-	Flemming Sørensen
-	Kaj de Vos
-maintainers			Kaj de Vos
+authors				Kaj de Vos
 status				testing
 
 headline			TrueType font library for SDL

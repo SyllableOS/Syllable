@@ -1,8 +1,4 @@
-authors
-	Flemming Sørensen
-	Kaj de Vos
-	Michael Saunders
-maintainers			Kaj de Vos
+authors				Kaj de Vos
 status				testing
 
 licenses			LGPL
@@ -10,7 +6,6 @@ home				www.libsdl.org/projects/SDL_mixer/
 packages
 	SDL_mixer-1.2.6
 ;	http://www.libsdl.org/projects/mixer/timidity/timidity.tar.gz /usr/local/lib/
-
 locations			http://www.libsdl.org/projects/SDL_mixer/release/
 
 needs				sdl
@@ -20,11 +15,6 @@ build-recommends
 ;	mikmod
 	libvorbis
 
-patch-config
-make-shared
-
-; For shared libraries:
-configure-env		LDFLAGS '-lm'
 configure-options
 ;	Bare LibMikMod:
 	--enable-music-mod
@@ -33,4 +23,3 @@ configure-options
 documentation		README COPYING CHANGES
 ; For some packages:
 links				include/SDL/SDL_mixer.h include/
-

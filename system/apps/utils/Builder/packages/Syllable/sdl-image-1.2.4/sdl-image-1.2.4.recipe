@@ -6,3 +6,5 @@ status				testing
 
 patch-config
 make-shared
+
+configure-env		LDFLAGS "$LDFLAGS -lm"

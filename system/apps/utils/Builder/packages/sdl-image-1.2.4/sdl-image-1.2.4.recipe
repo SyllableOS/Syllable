@@ -1,7 +1,4 @@
-authors
-	Flemming Sørensen
-	Kaj de Vos
-maintainers			Kaj de Vos
+authors				Kaj de Vos
 status				testing
 
 licenses			LGPL
@@ -15,10 +12,6 @@ build-recommends
 	libjpeg
 	libtiff
 
-patch-config
-make-shared
-
-configure-env		LDFLAGS "$LDFLAGS -lm"
 ;configure-options
 ;	--enable-tif
 ;	--enable-xcf
@@ -26,4 +19,3 @@ configure-env		LDFLAGS "$LDFLAGS -lm"
 documentation		README COPYING CHANGES
 ; For some packages:
 links				include/SDL/SDL_image.h include/
-
