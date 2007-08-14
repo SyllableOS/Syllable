@@ -1,0 +1,19 @@
+authors
+	Flemming Sørensen
+	Kaj de Vos
+maintainers			Kaj de Vos
+status				testing
+
+headline			TrueType font library for SDL
+description
+	This is a sample library which allows you to use TrueType fonts in your SDL applications. It comes with an example program "showfont" which displays an example string for a given TrueType font file.
+licenses			LGPL
+
+home				www.libsdl.org/projects/SDL_ttf/
+packages			SDL_ttf-2.0.9
+locations			http://www.libsdl.org/projects/SDL_ttf/release/
+
+needs				sdl >= 1.2.4
+build-needs			freetype 2 <> 2.1.3
+
+documentation		README COPYING CHANGES

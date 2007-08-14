@@ -1,0 +1,5 @@
+authors				Kaj de Vos
+status				testing
+
+patch-config
+make-shared
