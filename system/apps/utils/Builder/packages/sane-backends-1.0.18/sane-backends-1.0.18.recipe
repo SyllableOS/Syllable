@@ -1,0 +1,34 @@
+authors
+	Kristian Van Der Vliet
+	Kaj de Vos
+status				testing
+
+headline			SANE universal scanner interface
+description
+	SANE stands for "Scanner Access Now Easy" and is an application programming interface (API) that provides standardized access to any raster image scanner hardware (flatbed scanner, hand-held scanner, video- and still-cameras, frame-grabbers, etc.).
+licenses			GPL+exception
+
+home				www.sane-project.org
+locations
+	ftp://ftp.sane-project.org/pub/sane/sane-backends-1.0.18/
+;	ftp://ftp.sane-project.org/pub/sane/old-versions/sane-backends-1.0.18/
+	ftp://ftp2.sane-project.org/pub/sane/sane-backends-1.0.18/
+;	ftp://ftp2.sane-project.org/pub/sane/old-versions/sane-backends-1.0.18/
+;	Delivers bogus .tar.bz2 file:
+;	http://alioth.debian.org/frs/download.php/1669/
+
+recommends
+	libusb >= 0.1.8
+	libjpeg >= 6b
+	libieee1284 >= 0.1.5
+	libgphoto2 >= 2
+
+build-dir			.
+
+;configure-options
+;	--disable-shared
+;	--enable-locking
+
+documentation
+	README LICENSE COPYING PROBLEMS NEWS ChangeLog AUTHORS PROJECTS
+;	doc

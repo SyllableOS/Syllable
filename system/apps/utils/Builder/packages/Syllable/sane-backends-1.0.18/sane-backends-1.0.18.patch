@@ -1,0 +1,42 @@
+diff -ur sane-backends-1.0.18_orig/acinclude.m4 sane-backends-1.0.18/acinclude.m4
+--- sane-backends-1.0.18_orig/acinclude.m4	2006-05-26 20:38:37.000000000 +0100
++++ sane-backends-1.0.18/acinclude.m4	2007-07-24 14:36:19.000000000 +0100
+@@ -2253,6 +2253,16 @@
+   need_version=yes
+   ;;
+ 
++syllable*)
++  version_type=linux
++  need_lib_prefix=no
++  need_version=no
++  library_names_spec='${libname}${release}${shared_ext}$versuffix ${libname}${release}${shared_ext}$major $libname${shared_ext}'
++  soname_spec='${libname}${release}${shared_ext}$major'
++  shlibpath_var=LIBRARY_PATH
++  dynamic_linker='Syllable'
++  ;;
++
+ sysv4 | sysv4.2uw2* | sysv4.3* | sysv5*)
+   version_type=linux
+   library_names_spec='${libname}${release}${shared_ext}$versuffix ${libname}${release}${shared_ext}$major $libname${shared_ext}'
+@@ -2912,6 +2922,10 @@
+   lt_cv_deplibs_check_method=pass_all
+   ;;
+ 
++syllable*)
++  lt_cv_deplibs_check_method=pass_all
++  ;;
++
+ sysv4 | sysv4.2uw2* | sysv4.3* | sysv5*)
+   case $host_vendor in
+   motorola)
+@@ -6546,6 +6560,10 @@
+       runpath_var=LD_RUN_PATH
+       ;;
+ 
++  syllable*)
++    runpath_var='DLL_PATH'
++    ;;
++
+    sysv5OpenUNIX8* | sysv5UnixWare7* |  sysv5uw[[78]]* | unixware7*)
+       _LT_AC_TAGVAR(no_undefined_flag, $1)='${wl}-z ${wl}text'
+       if test "$GCC" = yes; then

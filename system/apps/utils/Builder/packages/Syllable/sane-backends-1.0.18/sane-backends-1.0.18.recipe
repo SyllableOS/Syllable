@@ -1,0 +1,11 @@
+authors				Kristian Van Der Vliet
+status				developing
+
+build-needs			autoconf
+
+; Manually patch in LibTool support:
+patch
+	cp /usr/libtool/share/libtool/ltmain.sh .
+	autoconf
+; The usual method of patching LibTool support does not work with SANE:
+;make-shared
