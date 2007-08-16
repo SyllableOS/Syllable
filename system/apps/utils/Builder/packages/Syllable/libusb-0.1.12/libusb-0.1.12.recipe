@@ -1,0 +1,5 @@
+authors				Kristian Van Der Vliet
+status				developing
+
+patch-config
+make-shared

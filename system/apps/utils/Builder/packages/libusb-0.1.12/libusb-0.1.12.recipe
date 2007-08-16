@@ -1,0 +1,22 @@
+authors
+	Kristian Van Der Vliet
+	Kaj de Vos
+status				testing
+
+inherits			sourceforge
+
+headline			User-space USB access library
+description
+	Library for use by user level applications to access USB devices regardless of OS.
+licenses			LGPL
+
+home				libusb.sourceforge.net
+packages			libusb/libusb-0.1.12
+;locations			ftp://ftp.libusb.sourceforge.net/pub/libusb/
+
+build-recommends	doxygen
+
+documentation
+	README COPYING LICENSE NEWS ChangeLog AUTHORS
+;	doc
+build-docs			INSTALL.libusb

@@ -1,0 +1,89 @@
+diff -ur libusb-0.1.12_orig/Makefile.am libusb-0.1.12/Makefile.am
+--- libusb-0.1.12_orig/Makefile.am	2006-03-04 02:52:46.000000000 +0000
++++ libusb-0.1.12/Makefile.am	2007-07-24 13:23:50.000000000 +0100
+@@ -36,10 +36,14 @@
+ PREBIND_FLAGS=-Wl,-seg1addr,0x01666000
+ PREBIND_FLAGSPP=-Wl,-seg1addr,0x01676000
+ else
++if SYLLABLE_API
++OS_SUPPORT = syllable.c
++else
+ OS_SUPPORT = 
+ endif
+ endif
+ endif
++endif
+ 
+ AM_CFLAGS += $(AM_CFLAGS_EXT)
+ 
+diff -ur libusb-0.1.12_orig/configure.in libusb-0.1.12/configure.in
+--- libusb-0.1.12_orig/configure.in	2006-03-04 02:53:04.000000000 +0000
++++ libusb-0.1.12/configure.in	2007-07-24 13:14:19.000000000 +0100
+@@ -11,6 +11,7 @@
+ #undef LINUX_API
+ #undef BSD_API
+ #undef DARWIN_API
++#undef SYLLABLE_API
+ 
+ #undef HAVE_OLD_DEV_USB_USB_H
+ 
+@@ -89,6 +90,7 @@
+ LINUX_API=0
+ DARWIN_API=0
+ BSD_API=0
++SYLLABLE_API=0
+ 
+ AC_MSG_CHECKING(for what USB OS support)
+ case $host in
+@@ -96,6 +98,7 @@
+     AC_DEFINE(LINUX_API, 1)
+     AC_DEFINE(BSD_API, 0)
+     AC_DEFINE(DARWIN_API, 0)
++    AC_DEFINE(SYLLABLE_API, 0)
+     LINUX_API=1
+     os_support=linux
+     AC_MSG_RESULT(Linux)
+@@ -105,6 +108,7 @@
+     AC_DEFINE(BSD_API, 1)
+     AC_DEFINE(LINUX_API, 0)
+     AC_DEFINE(DARWIN_API, 0)
++    AC_DEFINE(SYLLABLE_API, 0)
+     BSD_API=1
+     os_support=bsd
+     AC_MSG_RESULT(FreeBSD, OpenBSD and/or NetBSD)
+@@ -114,11 +118,22 @@
+     AC_DEFINE(DARWIN_API, 1) 
+     AC_DEFINE(LINUX_API, 0)
+     AC_DEFINE(BSD_API, 0)
++    AC_DEFINE(SYLLABLE_API, 0)
+     DARWIN_API=1
+     os_support=darwin
+     AC_MSG_RESULT(Darwin and/or MacOS 10)
+     OSLIBS="-Wl,-framework -Wl,IOKit -Wl,-framework -Wl,CoreFoundation -Wl,-prebind"
+     ;;
++  *-syllable*)
++    AC_DEFINE(SYLLABLE_API, 1)
++    AC_DEFINE(DARWIN_API, 0) 
++    AC_DEFINE(LINUX_API, 0)
++    AC_DEFINE(BSD_API, 0)
++    SYLLABLE_API=1
++    os_support=syllable
++    AC_MSG_RESULT(Syllable)
++    OSLIBS=""
++    ;;
+   *)
+     AC_MSG_RESULT(unknown operating system)
+     AC_MSG_ERROR(libusb does not support compiling for $host)
+@@ -128,10 +143,12 @@
+ AC_SUBST(DARWIN_API)
+ AC_SUBST(LINUX_API)
+ AC_SUBST(BSD_API)
++AC_SUBST(SYLLABLE_API)
+ 
+ AM_CONDITIONAL(LINUX_API, test "$os_support" = "linux")
+ AM_CONDITIONAL(BSD_API, test "$os_support" = "bsd")
+ AM_CONDITIONAL(DARWIN_API, test "$os_support" = "darwin")
++AM_CONDITIONAL(SYLLABLE_API, test "$os_support" = "syllable")
+ 
+ AC_SUBST(OSLIBS)
+ 
