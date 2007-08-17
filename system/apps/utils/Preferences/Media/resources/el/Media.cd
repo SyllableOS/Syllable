@@ -1,0 +1,26 @@
+//
+//	Preferences/Media String Catalog
+//
+//	Translated by: Ioannis Koniaris
+//
+
+MSG_MAINWND_TITLE=0							Μέσα
+
+MSG_MAINWND_DEVICE=100							Συσκευή
+MSG_MAINWND_DEFAULT_INPUT						Προεπιλεγμένη είσοδος
+MSG_MAINWND_DEFAULT_OUTPUT_AUDIO					Προεπιλεγμένη έξοδος ήχου
+MSG_MAINWND_DEFAULT_OUTPUT_VIDEO					Προεπιλεγμένη έξοδος βίντεο
+
+MSG_MAINWND_BUTTON_STREAMVOLUMES=200				_Κανάλια τόμων...
+MSG_MAINWND_BUTTON_APPLY						_Εφαρμογή
+MSG_MAINWND_BUTTON_UNDO						_Αναίρεση
+MSG_MAINWND_BUTTON_DEFAULT						_Προεπιλογή
+
+MSG_MAINWND_THISINPUTHASNOCONTROLS=300			Αυτή η είσοδος δεν έχει ελέγχους
+MSG_MAINWND_THISCODECHASNOCONTROLS				Αυτός ο κωδικοποιητής δεν έχει ελέγχους
+MSG_MAINWND_THISOUTPUTHASNOCONTROLS				Αυτή η έξοδος δεν έχει ελέγχους
+
+MSG_ALERTWND_NOMEDIASERVER_TITLE=1000			Σφάλμα
+MSG_ALERTWND_NOMEDIASERVER_TEXT					Αδυναμία σύνδεσης με το διακομιστή μέσων.
+MSG_ALERTWND_NOMEDIASERVER_OK					_ΟΚ
+

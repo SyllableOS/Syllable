@@ -1,0 +1,91 @@
+//
+//	sIDE String Catalog
+//
+//	Translated by: Ioannis Koniaris
+//
+
+MSG_PWND_TITLE=0						sIDE
+
+MSG_PWND_MENU_APPLICATION=200			Εφαρμογή
+MSG_PWND_MENU_APPLICATION_ABOUT			Σχετικά...
+MSG_PWND_MENU_APPLICATION_QUIT			Έξοδος
+
+MSG_PWND_MENU_PROJECT=210				Εργασία
+MSG_PWND_MENU_PROJECT_NEW				Νέα...
+MSG_PWND_MENU_PROJECT_OPEN				Άνοιγμα...
+MSG_PWND_MENU_PROJECT_SAVE				Αποθήκευση
+MSG_PWND_MENU_PROJECT_SAVEAS			Αποθήκευση Ως...
+MSG_PWND_MENU_PROJECT_PREF				Προτιμήσεις...
+MSG_PWND_MENU_PROJECT_GROUPS			Ομάδες...
+MSG_PWND_MENU_PROJECT_NEW_FILE			Νέο Αρχείο...
+MSG_PWND_MENU_PROJECT_ADD_FILE			Προσθήκη Αρχείου...
+MSG_PWND_MENU_PROJECT_ADD_LIB			Προσθήκη Βιβλιοθήκης...
+MSG_PWND_MENU_PROJECT_REMOVE_FILE		Αφαίρεση Αρχείου
+
+MSG_PWND_MENU_BUILD=230				Κατασκευή
+MSG_PWND_MENU_BUILD_CLEAN				Καθαρισμός
+MSG_PWND_MENU_BUILD_MAKE				Δημιουργία
+MSG_PWND_MENU_BUILD_RUN				Εκτέλεση
+MSG_PWND_MENU_BUILD_EXPORT_MAKEFILE		Εξαγωγή Makefile
+
+MSG_PWND_ABOUT_TITLE=240				Σχετικά με το sIDE
+MSG_PWND_ABOUT						Το IDE του Syllable\nΓράφτηκε από τον Arno Klenke, 2001-2006\nΤο παράθυρο διαλόγου νέας εργασίας δημιουργήθηκε από τον Rick Caudill\n\nΤο sIDE εκδίδεται υπό τους όρους της Gnu Public Licencse (GPL)\nΠαρακαλούμε δείτε το αρχείο COPYING, που διανέμεται με το sIDE, για\nπερισσότερες πληροφορίες\n
+
+MSG_PWND_LIST_FILE=250					Αρχείο
+MSG_PWND_LIST_TYPE						Τύπος
+
+MSG_PWND_NO_GROUPS=260					Δεν υπάρχουν παρούσες ομάδες!\n
+MSG_PWND_COULD_NOT_OPEN_PROJ			Αδυναμία ανοίγματος αρχείου εργασίας.\n
+MSG_PWND_COULD_NOT_OPEN_FILE			Αδυναμία ανοίγματος του επιλεγμένου αρχείου!\n
+MSG_PWND_COULD_NOT_SAVE_PROJ			Αδυναμία αποθήκευσης αυτής της εργασίας!\n
+MSG_PWND_NOT_IN_PROJ_DIR				Το επιλεγμένο αρχείο δεν είναι σε έναν υποκατάλογο της εργασίας!\n
+
+MSG_TYPE_HEADER=300					Επικεφαλίδα
+MSG_TYPE_C							Αρχείο C 
+MSG_TYPE_CPP							Αρχείο C++
+MSG_TYPE_LIB							Βιβλιοθήκη
+MSG_TYPE_OTHER						Άλλο
+MSG_TYPE_RES							Πόρος
+MSG_TYPE_CATALOG						Κατάλογος
+MSG_TYPE_IF							Διεπαφή
+MSG_TYPE_UNKNOWN						Άγνωστο
+
+MSG_BUTTON_OK=400						ΟΚ
+MSG_BUTTON_CANCEL						Άκυρο
+MSG_BUTTON_UP							Πάνω
+MSG_BUTTON_DOWN						Κάτω
+MSG_BUTTON_ADD						Προσθήκη
+MSG_BUTTON_REMOVE						Αφαίρεση
+
+MSG_ADDWND_TITLE=500					Προσθήκη/Δημιουργία ενός αρχείου
+MSG_ADDWND_NAME						Όνομα
+MSG_ADDWND_FILE						Αρχείο για δημιουργία/προσθήκη
+
+MSG_NEWWND_TITLE=600					Νέα Εργασία
+MSG_NEWWND_PROJECTS					Εργασίες
+MSG_NEWWND_NAME						Όνομα:
+MSG_NEWWMD_DIR						Κατάλογος:
+MSG_NEWWND_ERR_TITLE					Σφάλμα
+MSG_NEWWND_ERR_EXTR					Αδυναμία εξαγωγής προτύπου εργασίας!\n
+MSG_NEWWND_NO_LOC_NAME					Δεν έχετε θέσει ούτε την τοποθεσία ούτε το όνομα αυτής της Εργασίας!\n
+MSG_NEWWND_NO_LOC						Πρέπει να καθορίσετε μία τοποθεσία για αυτήν την Εργασία!\n
+MSG_NEWWND_NO_NAME						Πρέπει να καθορίσετε ένα όνομα για αυτήν την Εργασία!
+MSG_NEWWND_NO_DIR						Δεν είναι κατάλογος
+MSG_NEWWND_NO_DIR_1					Το αρχείο, 
+MSG_NEWWND_NO_DIR_2					, δεν είναι ένας κατάλογος\n
+
+MSG_PPREF_TITLE=700					Προτιμήσεις Εργασίας
+MSG_PPREF_TARGET						Προορισμός
+MSG_PPREF_CATEGORY						Κατηγορία
+MSG_PPREF_INSTALL_PATH					Διαδρομή εγκατάστασης
+MSG_PPREF_CFLAGS						Επιλογές μεταγλωττιστή
+MSG_PPREF_LFLAGS						Επιλογές συνδέτη
+
+MSG_GROUPS_TITLE=800					Διαχείριση ομάδων
+MSG_GROUPS_LIST						Ομάδα
+
+MSG_ADDLIB_TITLE=900					Προσθήκη βιβλιοθήκης
+MSG_ADDLIB_SELECT						Επιλογή
+MSG_ADDLIB_CUSTOM						Προσαρμοσμένο
+MSG_ADDLIB_GROUP						Ομάδα
+

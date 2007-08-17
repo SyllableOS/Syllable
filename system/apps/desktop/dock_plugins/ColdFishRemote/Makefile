@@ -6,7 +6,7 @@ VPATH = ./
 OBJDIR	:= objs
 OBJS = ColdFishRemote.o
 
-CATALOGS = da de es fr hu nl pl pt-br ru sv
+CATALOGS = da de el es fr hu nl pl pt-br ru sv
 
 all :	$(OBJDIR) catalogs $(OBJS) $(OBJDIR)/ColdFishRemote.so
 

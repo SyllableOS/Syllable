@@ -8,7 +8,7 @@ OBJS = Dock.o DockMenu.o
 OBJDIR := objs
 OBJS	:= $(addprefix $(OBJDIR)/,$(OBJS))
 
-CATALOGS = da de es fr hu nl ru sv
+CATALOGS = da de el es fr hu nl ru sv
 
 # Rules
 $(OBJDIR)/%.o : %.c

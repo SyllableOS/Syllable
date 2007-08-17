@@ -1,0 +1,27 @@
+//
+//	Preferences/Dock String Catalog
+//
+//	Translated by: Ioannis Koniaris
+//
+
+MSG_MAINWND_TITLE=0							Προσάρτηση
+
+MSG_MAINWND_POSITION=100						Θέση
+MSG_MAINWND_POSITION_TOP						Κορυφή
+MSG_MAINWND_POSITION_BOTTOM						Βάση
+MSG_MAINWND_POSITION_LEFT						Αριστερά
+MSG_MAINWND_POSITION_RIGHT						Δεξιά
+
+MSG_MAINWND_PLUGINS=200						Πρόσθετα
+MSG_MAINWND_PLUGINS_PLUGIN						Πρόσθετο
+MSG_MAINWND_PLUGINS_ENABLED						Ενεργοποιημένο
+MSG_MAINWND_PLUGINS_TEXT						Σημείωση: Παρακαλούμε αντιγράψτε τα πρόσθετα στο /system/extensions/dock/
+MSG_MAINWND_PLUGINS_BUTTON_ENABLE				Ενεργοποίηση
+MSG_MAINWND_PLUGINS_BUTTON_DISABLE				Απενεργοποίηση
+MSG_MAINWND_PLUGINS_STATE_ENABLED_YES			Ναι
+MSG_MAINWND_PLUGINS_STATE_ENABLED_NO				Όχι
+
+MSG_MAINWND_BUTTON_APPLY=300					Ενεργοποίηση
+MSG_MAINWND_BUTTON_UNDO						Αναίρεση
+MSG_MAINWND_BUTTON_DEFAULT						Προεπιλογή
+

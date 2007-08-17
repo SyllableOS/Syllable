@@ -1,7 +1,7 @@
 #Makefile for Desktop
 COPTS = -c
 
-CATALOGS = da de es fr hu nl pt-br ru sv
+CATALOGS = da de el es fr hu nl pt-br ru sv
 
 APPBIN = /Applications/Preferences
 OBJS = Prefs.o

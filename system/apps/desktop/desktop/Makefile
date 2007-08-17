@@ -2,7 +2,7 @@
 
 COPTS = -c -fexceptions -ffast-math
 
-CATALOGS = da de es fr hu nl ru sv
+CATALOGS = da de el es fr hu nl ru sv
 
 APPBIN = /system/bin
 OBJS = main.o application.o desktop.o

@@ -1,0 +1,38 @@
+//
+//	Dock String Catalog
+//
+//	Translated by: Ioannis Koniaris
+//
+
+MSG_MENU_CATEGORY_OTHER=1000			Άλλα
+MSG_MENU_CATEGORY_PREFERENCES			Προτιμήσεις
+MSG_MENU_CATEGORY_INTERNET				Διαδίκτυο
+MSG_MENU_CATEGORY_MEDIA				Μέσα
+MSG_MENU_CATEGORY_OFFICE				Γραφείο
+MSG_MENU_CATEGORY_DEVELOPMENT			Ανάπτυξη
+MSG_MENU_CATEGORY_GAMES				Παιχνίδια
+MSG_MENU_CATEGORY_EMULATORS				Προσομοιωτές
+MSG_MENU_CATEGORY_SYSTEMTOOLS			Εργαλεία Συστήματος
+
+MSG_MENU_ABOUT_MENU=2000				Σχετικά...
+MSG_MENU_ABOUT_TITLE					Σχετικά με το Syllable
+MSG_MENU_ABOUT_BUILDDATE				Ημερομηνία κατασκευής:
+MSG_MENU_ABOUT_TEXTONE					Δείτε στο
+MSG_MENU_ABOUT_TEXTTWO					για ανανεώσεις και πληροφορίες
+MSG_MENU_ABOUT_BUTTON_OK				ΟΚ
+MSG_MENU_ABOUT_BUTTON_ADVANCED			Για προχωρημένους...
+
+MSG_MENU_QUIT_MENU=3000				Έξοδος...
+MSG_MENU_QUIT_TITLE					Έξοδος
+MSG_MENU_QUIT_TEXT						Τι θέλετε να κάνετε;
+MSG_MENU_QUIT_LOGOUT					Αποσύνδεση
+MSG_MENU_QUIT_SHUTDOWN					Τερματισμός
+MSG_MENU_QUIT_REBOOT					Επανεκκίνηση
+MSG_MENU_QUIT_CANCEL					Άκυρο
+
+MSG_PLUGIN_ALERT_TITLE=4000				Προσάρτηση
+MSG_PLUGIN_ALERT_TEXT					Παρακαλούμε αντιγράψτε τα πρόσθετα της προσάρτησης στο /system/extensions/dock\nπριν προσπαθήσετε να τα προσθέσετε στην προσάρτηση
+MSG_PLUGIN_ALERT_OK					ΟΚ
+
+MSG_OPENAPP=5000						Άνοιγμα με...
+

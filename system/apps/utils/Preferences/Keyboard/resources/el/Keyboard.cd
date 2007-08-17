@@ -1,0 +1,27 @@
+//
+//	Preferences/Keyboard String Catalog
+//
+//	Translated by: Ioannis Koniaris
+//
+
+MSG_MAINWND_TITLE=0							Πληκτρολόγιο
+
+MSG_MAINWND_KEYMAP=100							Πληκτρολόγιο
+MSG_MAINWND_KEYBOARDLAYOUT						Διάταξη Πληκτρολογίου
+MSG_MAINWND_KEYBOARDLAYOUT_SHOWALL				Show All
+MSG_MAINWND_TESTAREA							Περιοχή Δοκιμής (Πρώτα εφαρμογή αλλαγών)
+
+MSG_MAINWND_SETTINGS=200						Ρυθμίσεις
+MSG_MAINWND_SETTINGS_SETTINGS					Ρυθμίσεις
+MSG_MAINWND_SETTINGS_INITIALDELAY				Αρχική Καθυστέρηση
+MSG_MAINWND_SETTINGS_INITIALDELAY_SHORT			Μικρή
+MSG_MAINWND_SETTINGS_INITIALDELAY_LONG			Μεγάλη
+MSG_MAINWND_SETTINGS_REPEATDELAY					Καθυστέρηση Επανάληψης
+MSG_MAINWND_SETTINGS_REPEATDELAY_FAST			Γρήγορη
+MSG_MAINWND_SETTINGS_REPEATDELAY_SLOW			Αργή
+MSG_MAINWND_SETTINGS_MILISECONDS					%.f msecs
+
+MSG_MAINWND_BUTTON_APPLY=300					_Εφαρμογή
+MSG_MAINWND_BUTTON_UNDO						_Αναίρεση
+MSG_MAINWND_BUTTON_DEFAULT						_Προεπιλογή
+

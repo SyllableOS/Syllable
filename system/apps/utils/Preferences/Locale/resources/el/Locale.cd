@@ -1,0 +1,22 @@
+//
+//	Preferences/Locale string catalog
+//
+//	Translated by: Ioannis Koniaris
+//
+
+MSG_MAIN_TITLE=0						Εντοπιότητα
+
+MSG_MAIN_LANGUAGE_TAB=100				Γλώσσα
+MSG_MAIN_LANGUAGE_ACTIVATE				Ενεργοποίηση Γλώσσας >
+MSG_MAIN_LANGUAGE_DEACTIVATE			< Απενεργοποίηση Γλώσσας
+MSG_MAIN_LANGUAGE_AVAILABLE				Υποστηριζόμενες Γλώσσες
+MSG_MAIN_LANGUAGE_USED					Ενεργές Γλώσσες
+
+MSG_MAIN_COUNTRY_TAB=200				Χώρα
+
+MSG_MAIN_APPLY=1000					_Εφαρμογή
+MSG_MAIN_REVERT						Ε_παναφορά
+MSG_MAIN_DEFAULT						_Προεπιλογή
+
+MSG_ERROR_SAVE=1100					Σφάλμα κατά την αποθήκευση προτιμήσεων εντοπιότητας
+

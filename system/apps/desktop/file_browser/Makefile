@@ -5,7 +5,7 @@ COPTS = -c -fexceptions -ffast-math
 APPBIN = /system/bin
 OBJS = main.o application.o mainwindow.o toolbar.o
 
-CATALOGS = da de es fr hu nl ru sv
+CATALOGS = da de el es fr hu nl ru sv
 
 OBJDIR := objs
 OBJS	:= $(addprefix $(OBJDIR)/,$(OBJS))

@@ -1,0 +1,35 @@
+//
+//	Preferences/Login String Catalog
+//
+//	Translated by: Ioannis Koniaris
+//
+
+MSG_MAINWND_TITLE=0					Σύνδεση
+
+MSG_MAINWND_INFORMATION=100				Πληροφορίες
+MSG_MAINWND_INFORMATION_WHO				Είσαστε συνδεδεμένος αυτήν τη στιγμή ως %s
+MSG_MAINWND_INFORMATION_NOPERM			Ο διαχειριστής του συστήματος δε σας έχει δώσει δικαιώματα\nγια να αλλάξετε τις λεπτομέρειες της σύνδεσης σας.
+
+MSG_MAINWND_LOGINICON=200				Εικονίδιο Σύνδεσης
+MSG_MAINWND_LOGINICON_TEXT				Όταν συνδέομαι σε αυτόν τον υπολογιστή, εμφάνισε\ntαυτό το εικονίδιο για τον λογαριασμό χρήστη μου.
+
+MSG_MAINWND_CHANGEPASS=300				Αλλαγή Κωδικού
+MSG_MAINWND_CHANGEPASS_CURRENTPASS		Τρέχων κωδικός
+MSG_MAINWND_CHANGEPASS_NEWPASS			Νέος κωδικός
+MSG_MAINWND_CHANGEPASS_CONFIRMPASS		Επιβεβαίωση κωδικού
+
+MSG_MAINWND_BUTTON_OK=400				_ΟΚ
+MSG_MAINWND_BUTTON_CANCEL				Ά_κυρο
+
+MSG_ALERTWND_FILEERROR=1000				Σφάλμα αρχείου
+MSG_ALERTWND_FILEERROR_TEXT				Αποτυχία εγγραφής νέου αρχείου στο /etc/passwd.  Ο κωδικός σας δεν άλλαξε.
+MSG_ALERTWND_FILEERROR_OK				Κλείσιμο
+
+MSG_ALERTWND_NOMATCH=2000				Νέος Κωδικός
+MSG_ALERTWND_NOMATCH_TEXT				Οι κωδικοί που εισάγατε δεν ταιριάζουν.  Παρακαλούμε επανεισάγετε τον κωδικό σας.
+MSG_ALERTWND_NOMATCH_OK				Κλείσιμο
+
+MSG_ALERTWND_INCORRECTPASS=3000			Εσφαλμένος Κωδικός
+MSG_ALERTWND_INCORRECTPASS_TEXT			Ο τρέχων κωδικός που έχετε εισάγει είναι εσφαλμένος.  Παρακαλούμε ελέξτε και επαναπροσπαθήστε.
+MSG_ALERTWND_INCORRECTPASS_OK			ΟΚ
+

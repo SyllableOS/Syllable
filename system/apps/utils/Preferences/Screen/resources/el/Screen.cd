@@ -1,0 +1,33 @@
+//
+//	Preferences/Screen String Catalog
+//
+//	Translated by: Ioannis Koniaris
+//
+
+MSG_MAINWND_TITLE=0						Οθόνη
+
+MSG_MAINWND_DISPLAY=100					Εμφάνιση
+MSG_MAINWND_DISPLAY_APPLYTO					Εφαρμογή σε
+MSG_MAINWND_DISPLAY_RESOLUTION				Ανάλυση
+MSG_MAINWND_DISPLAY_COLORDEPTH				Βάθος Χρώματος
+MSG_MAINWND_DISPLAY_REFRESHRATE				Ρυθμός Ανανέωσης
+
+MSG_MAINWND_DROPDOWN_APPLY_THIS=200			Αυτό το χώρο εργασίας
+MSG_MAINWND_DROPDOWN_APPLY_ALL				Όλους τους χώρους εργασίας
+MSG_MAINWND_DROPDOWN_COLOUR_BIT				Bit
+MSG_MAINWND_DROPDOWN_COLOUR_UNKNOWN			Άγνωστο
+MSG_MAINWND_DROPDOWN_HERTZ					%i Hz
+
+MSG_MAINWND_BUTTON_APPLY=300				Εφαρμογή
+MSG_MAINWND_BUTTON_CLOSE					Κλείσιμο
+
+MSG_ALERTWND_CHANGERES=1000					Αλλαγή ανάλυσης
+MSG_ALERTWND_CHANGERES_TEXT					Πρόκειτε να αλλάξετε την ανάλυσης της οθόνης σας.\nΑν η οθόνη σας δεν υποστηρίζει την επιλεγμένη λειτουργία προβολής\nη οθόνη μπορεί να μαυρίσει. Αν γίνει, παρακαλούμε περιμένετε 15\nδευτερόλεπτα για να επιστρέψετε στην παλαιά λειτουργία.\n\nΘέλετε να συνεχίσετε;
+MSG_ALERTWND_CHANGERES_YES					Ναι
+MSG_ALERTWND_CHANGERES_NO					Όχι
+
+MSG_ALERTWND_CONFIRMRES=2000				Επιβεβαίωση ανάλυσης
+MSG_ALERTWND_CONFIRMRES_TEXT				Λειτουργεί σωστά η νέα λειτουργία προβολής;\n\nΑν όχι παρακαλούμε περιμένετε και θα επιστρέψετε αυτόματα\nστην παλαιά λειτουργία.
+MSG_ALERTWND_CONFIRMRES_YES					Ναι
+MSG_ALERTWND_CONFIRMRES_NO					Όχι
+

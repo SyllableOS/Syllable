@@ -2,7 +2,7 @@ COPTS = -c
 OBJS = main.o mainwindow.o 
 EXE = Locale
 
-CATALOGS = da de es hu nl pl pt-br ru sv
+CATALOGS = da de el es hu nl pl pt-br ru sv
 
 $(EXE): catalogs $(OBJS)
 	$(CXX) $(OBJS) -lsyllable -o $(EXE)

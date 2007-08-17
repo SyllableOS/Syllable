@@ -1,0 +1,77 @@
+//
+//	LibSyllable string catalog
+//
+//	Translated by: Ioannis Koniaris
+//
+
+// FileRequester strings
+MSG_FILEREQUESTER_LOAD_BUTTON=1000						Ά_νοιγμα
+MSG_FILEREQUESTER_SAVE_BUTTON							_Αποθήκευση
+MSG_FILEREQUESTER_CANCEL_BUTTON							Ά_κυρο
+MSG_FILEREQUESTER_FILE_NAME_LABEL						Όνομα αρχείου:
+MSG_FILEREQUESTER_BROWSE_LOCATION_LABEL					Αναζήτηση σε:
+MSG_FILEREQUESTER_FILE_ALREADY_EXISTS_TEXT				Το αρχείο '%s' υπάρχει ήδη.\nΘέλετε να το αντικαταστήσετε;\n
+MSG_FILEREQUESTER_FILE_ALREADY_EXISTS_TITLE				Προειδοποίηση:
+MSG_FILEREQUESTER_FILE_ALREADY_EXISTS_YES_BUTTON			Ναι
+MSG_FILEREQUESTER_FILE_ALREADY_EXISTS_NO_BUTTON			Όχι
+
+// IconDirectoryView strings
+MSG_ICONDIRVIEW_WINDOW_OPEN_WITH=2000					Άνοιγμα με...
+MSG_ICONDIRVIEW_NUMBER_OF_OBJECTS_SELECTED				%i καταχωρήσεις
+MSG_ICONDIRVIEW_MENU_MOUNT								Προσάρτηση...
+MSG_ICONDIRVIEW_MENU_UNMOUNT							Αποπροσάρτηση...
+MSG_ICONDIRVIEW_MENU_NEW_DIRECTORY						Νέος Κατάλογος...
+MSG_ICONDIRVIEW_MENU_EMPTY_TRASH							Άδειασμα
+MSG_ICONDIRVIEW_MENU_OPEN_WITH							Άνοιγμα με...
+MSG_ICONDIRVIEW_MENU_INFO								Πληροφορίες...
+MSG_ICONDIRVIEW_MENU_RENAME								Μετονομασία...
+MSG_ICONDIRVIEW_MENU_MOVE_TO_TRASH						Μετακίνηση στον Κάδο
+MSG_ICONDIRVIEW_MENU_DELETE								Διαγραφή...
+MSG_ICONDIRVIEW_PERCENT_FREE							%i%% ελεύθερο
+MSG_ICONDIRVIEW_VOLUMENAME_UNKNOWN						Άγνωστο
+
+// File information window
+MSG_FILEINFO_WINDOW_TITLE=3000							Πληροφορίες
+MSG_FILEINFO_WINDOW_NAME_LABEL							Όνομα:
+MSG_FILEINFO_WINDOW_PATH_LABEL							Διαδρομή:
+MSG_FILEINFO_WINDOW_SIZE_LABEL							Μέγεθος:
+MSG_FILEINFO_WINDOW_MODIFIEDDATE_LABEL					Τροποποιήθηκε:
+MSG_FILEINFO_WINDOW_FILETYPE_LABEL						Τύπος:
+MSG_FILEINFO_WINDOW_FILETYPE_DROPDOWN_CURRENT_LABEL		Τρέχων:
+MSG_FILEINFO_WINDOW_FILETYPE_DROPDOWN_EXECUTABLE			Εκτελέσιμο
+MSG_FILEINFO_WINDOW_OK_BUTTON							ΟΚ
+MSG_FILEINFO_FILESIZE_ZERO								Κανένα
+MSG_FILEINFO_FILETYPE_UNKNOWN							Άγνωστο
+
+// Rename file window
+MSG_RENAMEFILE_WINDOW_TITLE=4000							Μετονομασία του %s
+MSG_RENAMEFILE_WINDOW_OK_BUTTON							ΟΚ
+MSG_RENAMEFILE_ERROR_TITLE								Μετονομασία
+MSG_RENAMEFILE_ERROR_TEXT								Το %s δεν μπόρεσε να μετονομαστεί!
+MSG_RENAMEFILE_ERROR_CLOSE								OK
+
+// New directory window
+MSG_NEWDIR_WINDOW_TITLE=5000							Νέος Κατάλογος
+MSG_NEWDIR_WINDOW_OK_BUTTON								ΟΚ
+MSG_NEWDIR_ERROR_TITLE									Νέος Κατάλογος
+MSG_NEWDIR_ERROR_TEXT									Ο κατάλογος %s δεν μπόρεσε να δημιουργηθεί!
+MSG_NEWDIR_ERROR_CLOSE									ΟΚ
+
+// Mount window
+MSG_MOUNT_WINDOW_TITLE=6000								Προσάρτηση
+MSG_MOUNT_WINDOW_NAME_COLUMN							Όνομα
+MSG_MOUNT_WINDOW_PATH_COLUMN							Διαδρομή
+MSG_MOUNT_WINDOW_MOUNT_BUTTON							Προσάρτηση
+MSG_MOUNT_SCANNING_PATH								Σάρωση του %s...
+MSG_MOUNT_SCANNING										Σάρωση...
+MSG_MOUNT_LOCAL_DISKS_LABEL								Τοπικά μέσα
+MSG_MOUNT_TYPE_HARDDISK								Σκληρός δίσκος
+MSG_MOUNT_TYPE_CD_DVD									CD/DVD
+MSG_MOUNT_TYPE_FLOPPY									Δισκέτα
+MSG_MOUNT_DEVICE_PARTITION								Κατάτμηση
+MSG_MOUNT_ERROR_TITLE									Προσάρτηση
+MSG_MOUNT_ERROR_CLOSE									ΟΚ
+MSG_MOUNT_ERROR_CREATE_MOUNTPOINT						Αδυναμία δημιουργίας σημείου προσάρτησης για τη συσκευή %s
+MSG_MOUNT_ERROR_OTHER_ERROR								Αδυναμία προσάρτησης του %s:\n%s
+MSG_MOUNT_ERROR_UNMOUNT								Αδυναμία αποπροσάρτησης του %s:\n%s
+

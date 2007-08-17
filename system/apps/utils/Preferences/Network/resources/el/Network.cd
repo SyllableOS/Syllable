@@ -1,0 +1,60 @@
+//
+//	Preferences/Network String Catalog
+//
+//	Translated by: Ioannis Koniaris
+//
+
+MSG_MAINWND_TITLE=0							Δίκτυο
+
+MSG_MAINWND_NAMES=100							Ονόματα
+MSG_MAINWND_NAMES_HOST							Όνομα υπολογιστή:
+MSG_MAINWND_NAMES_HOST_DEFAULT					προεπιλογή
+MSG_MAINWND_NAMES_DOMAIN						Τομέας:
+MSG_MAINWND_NAMES_DOMAIN_DEFAULT					τομέας
+MSG_MAINWND_NAMES_DNS_PRIMARY					Πρωτεύον DNS:
+MSG_MAINWND_NAMES_DNS_SECONDARY					Δευτερεύον DNS:
+
+MSG_MAINWND_NICINT=200							Διεπαφές Δικτύου
+MSG_MAINWND_NICINT_ENABLED						(Ενεργοποιημένο)
+MSG_MAINWND_NICINT_DISABLED						(Απενεργοποιημένο)
+MSG_MAINWND_NICINT_BUTTON_MODIFY					_Τροποποίηση
+
+MSG_MAINWND_BUTTON_APPLY=300					_Εφαρμογή
+MSG_MAINWND_BUTTON_REVERT						Ε_παναφορά
+
+MSG_MODIFYWND_TITLE=400						Τροποίηση - Δίκτυο
+MSG_MODIFYWND_INTERFACE						Διεπαφή:
+MSG_MODIFYWND_ENABLED							(Ενεργοποιημένο)
+MSG_MODIFYWND_DISABLED							(Απενεργοποιημένο)
+MSG_MODIFYWND_USEDHCP							_Χρήρη DHCP
+MSG_MODIFYWND_BUTTON_ENABLE						_Ενεργοποίηση
+MSG_MODIFYWND_BUTTON_DISABLE					_Απενεργοποίηση
+MSG_MODIFYWND_SETTINGS							Ρυθμίσεις
+MSG_MODIFYWND_SETTINGS_IPADD					Διεύθυνση IP:
+MSG_MODIFYWND_SETTINGS_SUBNET					Μάσκα Υποδικτύου:
+MSG_MODIFYWND_SETTINGS_GATEWAY					Διεύθυνση Πύλης:
+
+MSG_CONFCHANGEDWND_TITLE=1000					Οι Ρυθμίσεις Άλλαξαν - Δίκτυο
+MSG_CONFCHANGEDWND_TEXT						Οι ρυθμίσεις διεπαφής δικτύου έχουν αλλάξει\nΣυνδεθείτε ως root και χρησιμοποιήστε τις προτιμήσεις δικτύου για ρύθμιση.
+MSG_CONFCHANGEDWND_OK							_ΟΚ
+
+MSG_ALERTWND_PRIDNS=2000						Μη Έγκυρο - Δίκτυο
+MSG_ALERTWND_PRIDNS_TEXT						Η τιμή που εισάχθηκε στο Πρωτεύον DNS δεν είναι έγκυρη
+MSG_ALERTWND_PRIDNS_OK							_ΟΚ
+
+MSG_ALERTWND_SECDNS=3000						Μη Έγκυρο - Δίκτυο
+MSG_ALERTWND_SECDNS_TEXT						Η τιμή που εισάχθηκε στο Δευτερεύον DNS δεν είναι έγκυρη
+MSG_ALERTWND_SECDNS_OK							_ΟΚ
+
+MSG_ALERTWND_IPADD=4000						Μη Έγκυρο - Δίκτυο
+MSG_ALERTWND_IPADD_TEXT						Η τιμή που εισάχθηκε στη Διεύθυνση IP δεν είναι έγκυρη
+MSG_ALERTWND_IPADD_OK							_ΟΚ
+
+MSG_ALERTWND_SUBNET=5000						Μη Έγκυρο - Δίκτυο
+MSG_ALERTWND_SUBNET_TEXT						Η τιμή που εισάχθηκε στη Μάσκα Υποδικτύου δεν είναι έγκυρη
+MSG_ALERTWND_SUBNET_OK							_ΟΚ
+
+MSG_ALERTWND_GATEWAY=6000						Μη Έγκυρο - Δίκτυο
+MSG_ALERTWND_GATEWAY_TEXT						Η τιμή που εισάχθηκε στην Πύλη δεν είναι έγκυρη
+MSG_ALERTWND_GATEWAY_OK						_ΟΚ
+

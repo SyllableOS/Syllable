@@ -1,0 +1,56 @@
+//
+//	PrintQueue String Catalog
+//
+//	Translated by: Ioannis Koniaris
+//
+
+MSG_MAINWND_TITLE=0							Ουρά Εκτύπωσης
+
+MSG_MAINWND_MENU_APPLICATION=100					Εφαρμογή
+MSG_MAINWND_MENU_APPLICATION_QUIT				Έξοδος
+MSG_MAINWND_MENU_APPLICATION_ABOUT				Σχετικά...
+
+MSG_MAINWND_MENU_VIEW=120						Προβολή
+MSG_MAINWND_MENU_VIEW_REFRESH					Ανανέωση
+MSG_MAINWND_MENU_VIEW_COMPLETED					Προβολή ολοκληρωμένων εργασιών
+
+MSG_MAINWND_MENU_JOB=130						Εργασία
+MSG_MAINWND_MENU_JOB_CANCEL						Ακύρωση εργασίας
+
+MSG_MAINWND_MENU_PRINTER=140					Εκτυπωτής
+MSG_MAINWND_MENU_PRINTER_PAUSE					Παύση εκτύπωσης
+MSG_MAINWND_MENU_PRINTER_RESUME					Συνέχιση εκτύπωσης
+
+MSG_MAINWND_TOOLBAR_CALCEL=200					Ακύρωση εργασίας
+MSG_MAINWND_TOOLBAR_PAUSE						Παύση εκτύπωσης
+MSG_MAINWND_TOOLBAR_RESUME						Συνέχιση εκτύπωσης
+
+MSG_MAINWND_CONTEXTMENU_CANCEL=300				Ακύρωση εργασίας
+MSG_MAINWND_CONTEXTMENU_PAUSE					Παύση εκτύπωσης
+MSG_MAINWND_CONTEXTMENU_RESUME					Συνέχιση εκτύπωσης
+
+MSG_MAINWND_DOCLIST_ID=500						ID
+MSG_MAINWND_DOCLIST_NAME						Όνομα
+MSG_MAINWND_DOCLIST_STATUS						Κατάσταση
+MSG_MAINWND_DOCLIST_OWNER						Ιδιοκτήτης
+MSG_MAINWND_DOCLIST_SIZE						Μέγεθος
+MSG_MAINWND_DOCLIST_SUBMITTED					Υποβήθηκε
+
+MSG_MAINWND_JOBSIZE_KB=600						%d KB
+MSG_MAINWND_JOBSIZE_MB							%d MB
+MSG_MAINWND_JOBSIZE_GB							%d GB
+
+MSG_ABOUTWND_TITLE=1000						Ουρά Εκτύπωσης
+MSG_ABOUTWND_TEXT1								Διαχειριστής Ουράς Εκτύπωσης του Syllable
+MSG_ABOUTWND_TEXT2								Χρήση του CUPS έκδοση %d.%d.%d\n
+MSG_ABOUTWND_CLOSE								_Κλείσιμο
+
+MSG_ALERTWND_PAUSE_TITLE=1100					Η λειτουργία απέτυχε
+MSG_ALERTWND_PAUSE_CLOSE						_Κλείσιμο
+
+MSG_ALERTWND_RESUME_TITLE=1200					Η λειτουργία απέτυχε
+MSG_ALERTWND_RESUME_CLOSE						_Κλείσιμο
+
+MSG_ALERTWND_CANCEL_TITLE=1300					Η λειτουργία απέτυχε
+MSG_ALERTWND_CANCEL_CLOSE						_Κλείσιμο
+

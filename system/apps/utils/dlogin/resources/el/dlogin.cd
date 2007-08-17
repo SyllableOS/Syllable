@@ -1,0 +1,35 @@
+//
+//	DLogin String Catalog
+//
+//	Translated by: Ioannis Koniaris
+//
+
+MSG_MAINWND_TITLE=0						Σύνδεση:
+
+MSG_MAINWND_PASSWORD=100					Κωδικός:
+MSG_MAINWND_BUTTON_LOGIN					_Σύνδεση
+MSG_MAINWND_BUTTON_SHUTDOWN					_Τερματισμός
+
+MSG_SHUTDOWNWND_TITLE=200					Τερματισμός ή Επανεκκίνηση;
+MSG_SHUTDOWNWND_TEXT						Τι θέλετε να κάνετε:
+MSG_SHUTDOWNWND_BUTTON_CANCEL				Ά_κυρο
+MSG_SHUTDOWNWND_BUTTON_OK					_Εντάξει
+MSG_SHUTDOWNWND_DROPDOWN_SHUTDOWN			Τερματισμός
+MSG_SHUTDOWNWND_DROPDOWN_REBOOT				Επανεκκίνηση
+
+MSG_ALERT_NOTSELECTED_TITLE=1000				Παρακαλούμε, επιλέξτε ένα εικονίδιο.
+MSG_ALERT_NOTSELECTED_TEXT					Πρέπει να επιλέξετε ένα εικονίδιο χρήστη προτού να συνδεθείτε.
+MSG_ALERT_NOTSELECTED_OK					Εντάξει
+
+MSG_ALERT_WRONGPASS_TITLE=2000				Η σύνδεση απέτυχε
+MSG_ALERT_WRONGPASS_TEXT					Εσφαλμένος κωδικός.
+MSG_ALERT_WRONGPASS_OK						Συγνώμη
+
+MSG_ALERT_NOUSER_TITLE=3000					Η σύνδεση απέτυχε
+MSG_ALERT_NOUSER_TEXT						Παρακαλούμε ενημερωθείτε\n\nότι τέτοιος χρήστης δεν\nειναι καταχωρημένος για να\nχρησιμοποεί αυτόν τον υπολογιστή.
+MSG_ALERT_NOUSER_OK						ΟΚ
+
+MSG_ALERT_CANTFINDUSERS_TITLE=4000			Αδυναμία φόρτωσης χρηστών
+MSG_ALERT_CANTFINDUSERS_TEXT				Δεν είναι δυνατό το φόρτωμα χρηστών, παρακαλούμε επικοινωνήστε με την ομάδα ανάπτυξης του Syllable.
+MSG_ALERT_CANTFINDUSERS_OK					Ωχ όχι!!!
+

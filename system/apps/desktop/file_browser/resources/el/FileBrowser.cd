@@ -1,0 +1,14 @@
+//
+//	FileBrowser String Catalog
+//
+//	Translated by: Ioannis Koniaris
+//
+
+MSG_MAINWND_TITLE=0			Περιηγητής Αρχείων
+
+MSG_MENU_VIEW=100				Προβολή
+MSG_MENU_VIEW_ICONS			Εικονίδια
+MSG_MENU_VIEW_LIST				Λίστα
+MSG_MENU_VIEW_DETAILS			Λεπτομέρειες
+MSG_MENU_VIEW_SAVE				Αποθήκευση
+
