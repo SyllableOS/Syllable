@@ -4,8 +4,9 @@
 //	Translated by: Henrik Isaksson - Jonas Jarvoll
 //
 
-MSG_MAINWND_TITLE=100						ColdFish
-MSG_MAINWND_PLAY							Spela
+MSG_MAINWND_TITLE=0						ColdFish
+
+MSG_MAINWND_PLAY=100						Spela
 MSG_MAINWND_STOP							Stopp
 MSG_MAINWND_PAUSE							Paus
 MSG_MAINWND_PLAYLIST						Spellista

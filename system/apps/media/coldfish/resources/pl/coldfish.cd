@@ -4,8 +4,9 @@
 //	Translated by: Unknown
 //
 
-MSG_MAINWND_TITLE=100						Coldfish
-MSG_MAINWND_PLAY							Odtwarzaj
+MSG_MAINWND_TITLE=0						Coldfish
+
+MSG_MAINWND_PLAY=100						Odtwarzaj
 MSG_MAINWND_STOP							Stop
 MSG_MAINWND_PAUSE							Pauza
 MSG_MAINWND_PLAYLIST						Playlista

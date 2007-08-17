@@ -4,8 +4,9 @@
 //	Translated by: Maximo Pech Jaramillo - Angel L Laguna
 //
 
-MSG_MAINWND_TITLE=100						ColdFish
-MSG_MAINWND_PLAY							Reproducir
+MSG_MAINWND_TITLE=0						ColdFish
+
+MSG_MAINWND_PLAY=100						Reproducir
 MSG_MAINWND_STOP							Detener
 MSG_MAINWND_PAUSE							Pausa
 MSG_MAINWND_PLAYLIST						Lista de Reproducción

@@ -4,8 +4,9 @@
 //	Translated by: Dávid Horváth
 //
 
-MSG_MAINWND_TITLE=100						ColdFish
-MSG_MAINWND_PLAY							Lejátszás
+MSG_MAINWND_TITLE=0						ColdFish
+
+MSG_MAINWND_PLAY=100						Lejátszás
 MSG_MAINWND_STOP							Leállítás
 MSG_MAINWND_PAUSE							Szünet
 MSG_MAINWND_PLAYLIST						Játéklista

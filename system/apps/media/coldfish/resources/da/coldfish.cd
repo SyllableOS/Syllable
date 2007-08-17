@@ -4,8 +4,9 @@
 //	Translated by: Flemming H. Sørensen
 //
 
-MSG_MAINWND_TITLE=100						Coldfish
-MSG_MAINWND_PLAY							Afspil
+MSG_MAINWND_TITLE=0						Coldfish
+
+MSG_MAINWND_PLAY=100						Afspil
 MSG_MAINWND_STOP							Stop
 MSG_MAINWND_PAUSE							Pause
 MSG_MAINWND_PLAYLIST						Afspilningsliste

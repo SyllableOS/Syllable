@@ -4,8 +4,9 @@
 //	Translated by: Rik van Achterberg - Kaj de Vos - Ruud Kuin
 //
 
-MSG_MAINWND_TITLE=100						ColdFish
-MSG_MAINWND_PLAY							Afspelen
+MSG_MAINWND_TITLE=0						ColdFish
+
+MSG_MAINWND_PLAY=100						Afspelen
 MSG_MAINWND_STOP							Stoppen
 MSG_MAINWND_PAUSE							Pauze
 MSG_MAINWND_PLAYLIST						Afspeellijst

@@ -4,8 +4,9 @@
 //	Translated by: Not Translated
 //
 
-MSG_MAINWND_TITLE=100						ColdFish
-MSG_MAINWND_PLAY							Play
+MSG_MAINWND_TITLE=0						ColdFish
+
+MSG_MAINWND_PLAY=100						Play
 MSG_MAINWND_STOP							Stop
 MSG_MAINWND_PAUSE							Pause
 MSG_MAINWND_PLAYLIST						Playlist
