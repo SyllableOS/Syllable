@@ -1,3 +1,9 @@
+* August 17, 2007, Flemming H. Sørensen *
+
+Added Greek.
+Fixed a problem with the ColdFish locale-catalog.
+The Network Pref. now has 255.255.255.0 as default netmask.
+
 * August 14, 2007, Kaj de Vos *
 
 Included SDL_ttf, now that the new version builds with new FreeTypes.
