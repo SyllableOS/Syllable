@@ -1,0 +1,27 @@
+diff -Nuabwr zsnes_1_51/src/gblhdr.h zsnes_1_51_new/src/gblhdr.h
+--- zsnes_1_51/src/gblhdr.h	2006-12-27 10:47:05.000000000 +0000
++++ zsnes_1_51_new/src/gblhdr.h	2007-08-13 03:49:49.000000000 +0000
+@@ -121,6 +121,9 @@
+ #ifdef __UNIXSDL__
+ #ifdef linux
+ #include <asm/ioctls.h>
++#endif
++#ifdef __SYLLABLE__
++#include <posix/ioctls.h>
+ #else
+ #include <sys/filio.h>
+ #endif
+diff -Nuabwr zsnes_1_51/src/tools/depbuild.cpp zsnes_1_51_new/src/tools/depbuild.cpp
+--- zsnes_1_51/src/tools/depbuild.cpp	2006-12-27 11:04:05.000000000 +0000
++++ zsnes_1_51_new/src/tools/depbuild.cpp	2007-08-13 03:45:36.000000000 +0000
+@@ -29,6 +29,10 @@
+ #include "fileutil.h"
+ #include "strutil.h"
+ 
++#ifdef __SYLLABLE__
++#include <posix/unistd.h>
++#endif
++
+ string cc;
+ string nasm;
+ string cflags;

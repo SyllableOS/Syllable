@@ -1,0 +1,34 @@
+authors
+	Rui Caridade
+	Kaj de Vos
+status				testing
+
+inherits			sourceforge
+
+headline			Super Nintendo emulator
+description			ZSNES is a Super Nintendo emulator programmed by zsKnight and _Demo_.
+licenses			GPL
+
+home				www.zsnes.com
+packages			zsnes/zsnes151src
+
+needs
+	sdl >= 1.2
+	zlib >= 1.2.3
+	libpng
+recommends			ncurses
+build-needs			nasm >= 0.98.39
+
+architecture		i586
+
+configure-options
+	--enable-release
+;	Don't compile for host CPU:
+	--disable-cpucheck
+	force_arch=i586
+
+documentation
+	docs/readme.1st docs/license.txt docs/README.LINUX docs/support.txt docs/opengl.txt docs/authors.txt docs/thanks.txt docs/todo.txt
+	docs/readme.txt docs/readme.htm
+build-docs			docs/install.txt docs/README.SVN
+internal-docs		docs/srcinfo.txt docs/stdards.txt

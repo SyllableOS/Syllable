@@ -8,7 +8,7 @@ inherits			sourceforge
 headline			User-space USB access library
 description
 	Library for use by user level applications to access USB devices regardless of OS.
-licenses			LGPL
+licenses			LGPL BSD
 
 home				libusb.sourceforge.net
 packages			libusb/libusb-0.1.12
@@ -17,6 +17,6 @@ packages			libusb/libusb-0.1.12
 build-recommends	doxygen
 
 documentation
-	README COPYING LICENSE NEWS ChangeLog AUTHORS
+	README LICENSE COPYING NEWS ChangeLog AUTHORS
 ;	doc
 build-docs			INSTALL.libusb
