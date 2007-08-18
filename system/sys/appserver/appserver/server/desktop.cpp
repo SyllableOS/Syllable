@@ -37,6 +37,7 @@
 #include <unistd.h>
 
 #include "swindow.h"
+#include "sapplication.h"
 #include "wndborder.h"
 #include "layer.h"
 #include "server.h"
@@ -713,7 +714,17 @@ void set_desktop( int nDesktop, bool bNotifyActiveWnd )
 		}
 	}
 	/* Activate the new desktop's active window */
-	if( bNotifyActiveWnd && g_asDesktops[nDesktop].m_pcActiveWindow != NULL ) { g_asDesktops[nDesktop].m_pcActiveWindow->WindowActivated( true ); }
+	if( bNotifyActiveWnd ) {
+		if( g_asDesktops[nDesktop].m_pcActiveWindow != NULL ) {
+			g_asDesktops[nDesktop].m_pcActiveWindow->WindowActivated( true );
+		} else {  /* no previously active window; activate the desktop */
+			for( pcWindow = g_asDesktops[nDesktop].m_pcFirstWindow; pcWindow != NULL; pcWindow = pcWindow->m_asDTState[nDesktop].m_pcNextWindow )
+			{
+				if( pcWindow != NULL && pcWindow->GetApp() != NULL && pcWindow->GetApp()->GetName() == "application/syllable-Desktop" ) break;
+			}
+			if( pcWindow != NULL ) pcWindow->MakeFocus( true );
+		}
+	}
 	
 	if( bScreenModeChanged )
 	{
