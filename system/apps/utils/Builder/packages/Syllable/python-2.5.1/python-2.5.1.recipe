@@ -1,0 +1,17 @@
+authors
+	Octavian Cerna
+	Kaj de Vos
+	Jamie Clarkson
+	Jake Hamby
+maintainers			Kaj de Vos
+status				testing
+notes				See README for GLibC issues
+
+build-needs			autoconf >= 2.53
+
+patch				autoconf
+
+;configure-options
+;	--with-threads=syllable
+;	--with-libs=
+;	--disable-ipv6

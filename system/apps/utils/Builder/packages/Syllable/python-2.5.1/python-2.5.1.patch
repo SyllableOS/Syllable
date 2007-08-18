@@ -1,0 +1,296 @@
+diff -ru python-2.5.1-original/configure.in python-2.5.1/configure.in
+--- python-2.5.1-original/configure.in	2007-03-12 11:50:51.000000000 +0100
++++ python-2.5.1/configure.in	2007-08-18 18:00:21.000000000 +0200
+@@ -167,11 +167,13 @@
+ then
+ 	ac_sys_system=`uname -s`
+ 	if test "$ac_sys_system" = "AIX" -o "$ac_sys_system" = "Monterey64" \
+-	-o "$ac_sys_system" = "UnixWare" -o "$ac_sys_system" = "OpenUNIX"; then
++	-o "$ac_sys_system" = "UnixWare" -o "$ac_sys_system" = "OpenUNIX" \
++	-o "$ac_sys_system" = "syllable"; then
+ 		ac_sys_release=`uname -v`
+ 	else
+ 		ac_sys_release=`uname -r`
+ 	fi
++
+ 	ac_md_system=`echo $ac_sys_system |
+ 			   tr -d '[/ ]' | tr '[[A-Z]]' '[[a-z]]'`
+ 	ac_md_release=`echo $ac_sys_release |
+@@ -181,7 +183,7 @@
+ 	case $MACHDEP in
+ 	cygwin*) MACHDEP="cygwin";;
+ 	darwin*) MACHDEP="darwin";;
+-	atheos*) MACHDEP="atheos";;
++	syllable*) MACHDEP="syllable";;
+         irix646) MACHDEP="irix6";;
+ 	'')	MACHDEP="unknown";;
+ 	esac
+@@ -575,7 +577,7 @@
+ if test -z "$enable_shared"
+ then 
+   case $ac_sys_system in
+-  CYGWIN* | atheos*)
++  CYGWIN* | syllable*)
+     enable_shared="yes";;
+   *)
+     enable_shared="no";;
+@@ -664,10 +666,10 @@
+ 	  BLDLIBRARY='-rpath $(LIBDIR) -L. -lpython$(VERSION)'
+ 	  RUNSHARED=LD_LIBRARY_PATH=`pwd`:${LD_LIBRARY_PATH}
+ 	  ;;
+-    atheos*)
++    syllable*)
+ 	  LDLIBRARY='libpython$(VERSION).so'
+ 	  BLDLIBRARY='-L. -lpython$(VERSION)'
+-	  RUNSHARED=DLL_PATH=`pwd`:${DLL_PATH:-/atheos/sys/libs:/atheos/autolnk/lib}
++	  RUNSHARED=DLL_PATH=`pwd`:${DLL_PATH:-/system/libraries:/usr/indexes/lib}
+ 	  ;;
+   esac
+ else # shared is disabled
+@@ -710,7 +712,7 @@
+ 	case $ac_sys_system in
+ 		BeOS*) LN="ln -s";;
+ 		CYGWIN*) LN="ln -s";;
+-		atheos*) LN="ln -s";;
++		syllable*) LN="ln -s";;
+ 		*) LN=ln;;
+ 	esac
+ fi
+@@ -1154,6 +1156,12 @@
+   use_lfs=no
+ fi
+ 
++# Syllable glibc has a broken definition of readdir64() so we can't define
++# _FILE_OFFSET_BITS. Besides, we have large file support automatically.
++if test "$ac_sys_system" = "syllable"; then
++  use_lfs=no
++fi
++
+ if test "$use_lfs" = "yes"; then
+ # Two defines needed to enable largefile support on various platforms
+ # These may affect some typedefs
+@@ -1531,7 +1539,7 @@
+ 	SCO_SV*) LDSHARED='$(CC) -Wl,-G,-Bexport';;
+ 	Monterey*) LDSHARED="cc -G -dy -Bdynamic -Bexport -L/usr/lib/ia64l64";;
+ 	CYGWIN*) LDSHARED="gcc -shared -Wl,--enable-auto-image-base";;
+-	atheos*) LDSHARED="gcc -shared";;
++	syllable*) LDSHARED="gcc -shared";;
+ 	*)	LDSHARED="ld";;
+ 	esac
+ fi
+@@ -1571,7 +1579,7 @@
+ 		   *gcc*) CCSHARED="-shared";;
+ 		   *) CCSHARED="";;
+ 		   esac;;
+-	atheos*) CCSHARED="-fPIC";;
++	syllable*) CCSHARED="-fPIC";;
+ 	esac
+ fi
+ AC_MSG_RESULT($CCSHARED)
+@@ -1879,8 +1887,8 @@
+     posix_threads=yes
+     THREADOBJ="Python/thread.o"],[
+     AC_CHECK_HEADER(atheos/threads.h, [AC_DEFINE(WITH_THREAD)
+-    AC_DEFINE(ATHEOS_THREADS, 1,
+-    [Define this if you have AtheOS threads.])
++    AC_DEFINE(SYLLABLE_THREADS, 1,
++    [Define this if you have Syllable threads.])
+     THREADOBJ="Python/thread.o"],[
+     AC_CHECK_HEADER(kernel/OS.h, [AC_DEFINE(WITH_THREAD)
+     AC_DEFINE(BEOS_THREADS, 1,
+@@ -2226,7 +2234,7 @@
+ 	hp*|HP*) DYNLOADFILE="dynload_hpux.o";;
+ 	# Use dynload_next.c only on 10.2 and below, which don't have native dlopen()
+ 	Darwin/@<:@0156@:>@\..*) DYNLOADFILE="dynload_next.o";;
+-	atheos*) DYNLOADFILE="dynload_atheos.o";;
++	syllable*) DYNLOADFILE="dynload_syllable.o";;
+ 	*)
+ 	# use dynload_shlib.c and dlopen() if we have it; otherwise stub
+ 	# out any dynamic loading
+diff -ru python-2.5.1-original/Lib/distutils/command/build_ext.py python-2.5.1/Lib/distutils/command/build_ext.py
+--- python-2.5.1-original/Lib/distutils/command/build_ext.py	2007-03-13 11:19:35.000000000 +0100
++++ python-2.5.1/Lib/distutils/command/build_ext.py	2007-08-18 06:47:15.000000000 +0200
+@@ -183,9 +183,9 @@
+         if os.name == 'os2':
+             self.library_dirs.append(os.path.join(sys.exec_prefix, 'Config'))
+ 
+-        # for extensions under Cygwin and AtheOS Python's library directory must be
++        # for extensions under Cygwin and Syllable Python's library directory must be
+         # appended to library_dirs
+-        if sys.platform[:6] == 'cygwin' or sys.platform[:6] == 'atheos':
++        if sys.platform[:6] == 'cygwin' or sys.platform[:8] == 'syllable':
+             if sys.executable.startswith(os.path.join(sys.exec_prefix, "bin")):
+                 # building third party extensions
+                 self.library_dirs.append(os.path.join(sys.prefix, "lib",
+@@ -682,7 +682,7 @@
+             # don't extend ext.libraries, it may be shared with other
+             # extensions, it is a reference to the original list
+             return ext.libraries + [pythonlib]
+-        elif sys.platform[:6] == "atheos":
++        elif sys.platform[:8] == "syllable":
+             from distutils import sysconfig
+ 
+             template = "python%d.%d"
+Only in python-2.5.1-original/Lib: plat-atheos
+diff -ru python-2.5.1-original/Lib/test/regrtest.py python-2.5.1/Lib/test/regrtest.py
+--- python-2.5.1-original/Lib/test/regrtest.py	2007-03-08 20:58:46.000000000 +0100
++++ python-2.5.1/Lib/test/regrtest.py	2007-08-18 06:51:41.000000000 +0200
+@@ -1108,7 +1108,7 @@
+         test_zipfile
+         test_zlib
+         """,
+-    'atheos':
++    'syllable':
+         """
+         test_al
+         test_applesingle
+diff -ru python-2.5.1-original/Lib/test/test_fcntl.py python-2.5.1/Lib/test/test_fcntl.py
+--- python-2.5.1-original/Lib/test/test_fcntl.py	2006-09-05 04:54:42.000000000 +0200
++++ python-2.5.1/Lib/test/test_fcntl.py	2007-08-18 06:54:38.000000000 +0200
+@@ -17,7 +17,7 @@
+ else:
+     start_len = "qq"
+ 
+-if sys.platform.startswith('atheos'):
++if sys.platform.startswith('syllable'):
+     start_len = "qq"
+ 
+ if sys.platform in ('netbsd1', 'netbsd2', 'netbsd3',
+diff -ru python-2.5.1-original/Lib/test/test_file.py python-2.5.1/Lib/test/test_file.py
+--- python-2.5.1-original/Lib/test/test_file.py	2006-06-09 20:29:52.000000000 +0200
++++ python-2.5.1/Lib/test/test_file.py	2007-08-18 06:53:01.000000000 +0200
+@@ -95,7 +95,7 @@
+         methods = ['fileno', 'flush', 'isatty', 'next', 'read', 'readinto',
+                    'readline', 'readlines', 'seek', 'tell', 'truncate',
+                    'write', 'xreadlines', '__iter__']
+-        if sys.platform.startswith('atheos'):
++        if sys.platform.startswith('syllable'):
+             methods.remove('truncate')
+ 
+         # __exit__ should close the file
+diff -ru python-2.5.1-original/Lib/test/test_mhlib.py python-2.5.1/Lib/test/test_mhlib.py
+--- python-2.5.1-original/Lib/test/test_mhlib.py	2002-08-05 00:55:35.000000000 +0200
++++ python-2.5.1/Lib/test/test_mhlib.py	2007-08-18 06:53:30.000000000 +0200
+@@ -13,7 +13,7 @@
+ import mhlib
+ 
+ if (sys.platform.startswith("win") or sys.platform=="riscos" or
+-      sys.platform.startswith("atheos")):
++      sys.platform.startswith("syllable")):
+     # mhlib.updateline() renames a file to the name of a file that already
+     # exists.  That causes a reasonable OS <wink> to complain in test_sequence
+     # here, like the "OSError: [Errno 17] File exists" raised on Windows.
+diff -ru python-2.5.1-original/Lib/test/test_popen2.py python-2.5.1/Lib/test/test_popen2.py
+--- python-2.5.1-original/Lib/test/test_popen2.py	2006-06-29 06:10:08.000000000 +0200
++++ python-2.5.1/Lib/test/test_popen2.py	2007-08-18 06:57:38.000000000 +0200
+@@ -14,7 +14,7 @@
+ 
+ def main():
+     print "Test popen2 module:"
+-    if (sys.platform[:4] == 'beos' or sys.platform[:6] == 'atheos') \
++    if (sys.platform[:4] == 'beos' or sys.platform[:8] == 'syllable') \
+            and __name__ != '__main__':
+         #  Locks get messed up or something.  Generally we're supposed
+         #  to avoid mixing "posix" fork & exec with native threads, and
+diff -ru python-2.5.1-original/pyconfig.h.in python-2.5.1/pyconfig.h.in
+--- python-2.5.1-original/pyconfig.h.in	2006-10-27 09:06:59.000000000 +0200
++++ python-2.5.1/pyconfig.h.in	2007-08-18 06:16:37.000000000 +0200
+@@ -9,8 +9,8 @@
+    support for AIX C++ shared extension modules. */
+ #undef AIX_GENUINE_CPLUSPLUS
+ 
+-/* Define this if you have AtheOS threads. */
+-#undef ATHEOS_THREADS
++/* Define this if you have Syllable threads. */
++#undef SYLLABLE_THREADS
+ 
+ /* Define this if you have BeOS threads. */
+ #undef BEOS_THREADS
+Only in python-2.5.1-original/Python: dynload_atheos.c
+Only in python-2.5.1-original/Python: thread_atheos.h
+diff -ru python-2.5.1-original/Python/thread.c python-2.5.1/Python/thread.c
+--- python-2.5.1-original/Python/thread.c	2006-07-21 09:59:47.000000000 +0200
++++ python-2.5.1/Python/thread.c	2007-08-18 06:36:22.000000000 +0200
+@@ -145,8 +145,8 @@
+ #include "thread_plan9.h"
+ #endif
+ 
+-#ifdef ATHEOS_THREADS
+-#include "thread_atheos.h"
++#ifdef SYLLABLE_THREADS
++#include "thread_syllable.h"
+ #endif
+ 
+ /*
+diff -ru python-2.5.1-original/setup.py python-2.5.1/setup.py
+--- python-2.5.1-original/setup.py	2007-02-14 13:53:41.000000000 +0100
++++ python-2.5.1/setup.py	2007-08-18 06:34:45.000000000 +0200
+@@ -237,7 +237,7 @@
+ 
+     def get_platform(self):
+         # Get value of sys.platform
+-        for platform in ['cygwin', 'beos', 'darwin', 'atheos', 'osf1']:
++        for platform in ['cygwin', 'beos', 'darwin', 'syllable', 'osf1']:
+             if sys.platform.startswith(platform):
+                 return platform
+         return sys.platform
+@@ -306,11 +306,11 @@
+         platform = self.get_platform()
+         (srcdir,) = sysconfig.get_config_vars('srcdir')
+ 
+-        # Check for AtheOS which has libraries in non-standard locations
+-        if platform == 'atheos':
+-            lib_dirs += ['/system/libs', '/atheos/autolnk/lib']
++        # Check for Syllable which has libraries in non-standard locations
++        if platform == 'syllable':
++            lib_dirs += ['/system/libraries', '/usr/indexes/lib']
+             lib_dirs += os.getenv('LIBRARY_PATH', '').split(os.pathsep)
+-            inc_dirs += ['/system/include', '/atheos/autolnk/include']
++            inc_dirs += ['/system/include', '/usr/indexes/include']
+             inc_dirs += os.getenv('C_INCLUDE_PATH', '').split(os.pathsep)
+ 
+         # OSF/1 and Unixware have some stuff in /usr/ccs/lib (like -ldb)
+@@ -433,7 +433,7 @@
+         exts.append( Extension('cPickle', ['cPickle.c']) )
+ 
+         # Memory-mapped files (also works on Win32).
+-        if platform not in ['atheos', 'mac']:
++        if platform not in ['syllable', 'mac']:
+             exts.append( Extension('mmap', ['mmapmodule.c']) )
+ 
+         # Lance Ellinghaus's syslog module
+@@ -888,11 +888,11 @@
+             # Steen Lumholt's termios module
+             exts.append( Extension('termios', ['termios.c']) )
+             # Jeremy Hylton's rlimit interface
+-            if platform not in ['atheos']:
++            if platform not in ['syllable']:
+                 exts.append( Extension('resource', ['resource.c']) )
+ 
+             # Sun yellow pages. Some systems have the functions in libc.
+-            if platform not in ['cygwin', 'atheos']:
++            if platform not in ['cygwin', 'syllable']:
+                 if (self.compiler.find_library_file(lib_dirs, 'nsl')):
+                     libs = ['nsl']
+                 else:
+@@ -1029,7 +1029,7 @@
+         if sys.maxint == 0x7fffffff:
+             # This requires sizeof(int) == sizeof(long) == sizeof(char*)
+             dl_inc = find_file('dlfcn.h', [], inc_dirs)
+-            if (dl_inc is not None) and (platform not in ['atheos']):
++            if (dl_inc is not None) and (platform not in ['syllable']):
+                 exts.append( Extension('dl', ['dlmodule.c']) )
+ 
+         # Thomas Heller's _ctypes module
+diff -ru python-2.5.1-original/Tools/scripts/h2py.py python-2.5.1/Tools/scripts/h2py.py
+--- python-2.5.1-original/Tools/scripts/h2py.py	2004-08-09 19:27:55.000000000 +0200
++++ python-2.5.1/Tools/scripts/h2py.py	2007-08-18 06:37:22.000000000 +0200
+@@ -52,7 +52,7 @@
+         try:
+             if  sys.platform.find("beos") == 0:
+                 searchdirs=os.environ['BEINCLUDES'].split(';')
+-            elif sys.platform.startswith("atheos"):
++            elif sys.platform.startswith("syllable"):
+                 searchdirs=os.environ['C_INCLUDE_PATH'].split(':')
+             else:
+                 raise KeyError

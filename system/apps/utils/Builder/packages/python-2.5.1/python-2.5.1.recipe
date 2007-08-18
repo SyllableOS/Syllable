@@ -1,0 +1,25 @@
+authors				Kaj de Vos
+status				testing
+
+licenses			OSI
+home				www.python.org
+packages			Python-2.5.1
+locations			http://www.python.org/ftp/python/2.5.1/
+
+build-recommends
+	readline
+	openssl
+	expat
+	db
+
+test-targets		test
+
+;install-prefix-var	DESTDIR
+;install-targets		altinstall
+;delete-files		lib/python2.5/test
+
+documentation
+	README LICENSE Misc/NEWS Misc/HISTORY
+;	Misc Doc
+develop-docs		Demo
+;links				bin/python /usr/bin/python
