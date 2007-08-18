@@ -34,6 +34,7 @@ test-targets
 	test_7z
 	test_7zr
 
+install-tree		bin
 ;install				./install.sh
 install-files
 	bin/7za			bin/

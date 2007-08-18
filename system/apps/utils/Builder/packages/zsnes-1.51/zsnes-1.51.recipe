@@ -21,6 +21,7 @@ build-needs			nasm >= 0.98.39
 
 architecture		i586
 
+configure-cmd		src/configure
 configure-options
 	--enable-release
 ;	Don't compile for host CPU:
