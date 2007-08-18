@@ -1,0 +1,49 @@
+authors
+	John Aspras
+	Kaj de Vos
+maintainers			Kaj de Vos
+status				testing
+
+inherits			sourceforge
+
+headline			7-Zip file archiver
+description
+	p7zip is a quick port of 7z.exe and 7za.exe (command line version of 7zip) for Unix. 7-Zip is a file archiver with highest compression ratio.
+licenses			LGPL CPL other
+
+home
+;	www.7-zip.org
+	p7zip.sourceforge.net
+packages			p7zip/p7zip_4.51_src_all
+
+;install-prefix-var	DEST_HOME
+
+; For parallel build:
+;make-file			makefile.parallel_jobs
+;make-options		-j4
+make-targets
+	all3
+;;	all2
+;;	all
+;	7z
+;;	7zr
+;;	sfx
+
+test-targets
+	test
+	test_7z
+	test_7zr
+
+;install				./install.sh
+install-files
+	bin/7za			bin/
+	bin/7z			bin/
+	bin/Formats		bin/
+	bin/Codecs		bin/
+	bin/7zCon.sfx	bin/
+
+documentation
+	README DOCS/readme.txt DOCS/7zC.txt DOCS/License.txt DOCS/copying.txt DOCS/unRarLicense.txt DOCS/history.txt ChangeLog TODO
+	DOCS/MANUAL
+develop-docs			DOCS/lzma.txt
+internal-docs			DOCS/7zFormat.txt DOCS/Methods.txt

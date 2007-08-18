@@ -1,0 +1,4 @@
+authors				Kaj de Vos
+status				testing
+
+;patch				cp makefile.linux_x86_asm_gcc_4.X makefile.machine
