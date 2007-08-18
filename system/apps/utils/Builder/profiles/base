@@ -57,6 +57,16 @@ modules
 ;	For grub-install:
 	apps/gnu/diffutils-2.8.1
 
+	sys/appserver/appserver/drivers/decorators/amiga
+	sys/appserver/appserver/drivers/decorators/beish
+	sys/appserver/appserver/drivers/decorators/drow
+	sys/appserver/appserver/drivers/decorators/mulvane
+	sys/appserver/appserver/drivers/decorators/next
+	sys/appserver/appserver/drivers/decorators/red
+;	Locks up and makes the system inaccessible:
+;	sys/appserver/appserver/drivers/decorators/warpspeed
+	sys/appserver/appserver/drivers/decorators/win98
+	sys/appserver/appserver/drivers/decorators/Winter
 	apps/desktop/dock_plugins/battery
 	apps/desktop/dock_plugins/clock
 	apps/desktop/dock_plugins/Address
