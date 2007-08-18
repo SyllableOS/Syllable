@@ -493,27 +493,68 @@ public:
 		int nSelectedIcon = -1;
 		
 		Lock();
-		if( m_cIcons.size() == 0 ) {
+		int nIconCount = m_cIcons.size();
+		if( nIconCount == 0 ) {
 			Unlock();
 			return;
 		}
 		
-		if( m_eType == VIEW_DETAILS )
+		if( m_eType == VIEW_DETAILS )  /* Icons are arranged in vertical list; move up or down */
 		{
 			if( eDirection != ADJ_UP && eDirection != ADJ_DOWN ) { Unlock(); return; }  /* Can only move up or down in details view */
 			
 			if( m_nLastActiveIcon == -1 )
 			{
 				if( eDirection == ADJ_DOWN ) { nSelectedIcon = 0; }  /* If never selected an icon, and user pressed 'down', select the first icon */
-				if( eDirection == ADJ_UP ) { nSelectedIcon = m_cIcons.size()-1; }  /* If never selected an icon, and user pressed 'up', select the last in the list */
+				if( eDirection == ADJ_UP ) { nSelectedIcon = nIconCount - 1; }  /* If never selected an icon, and user pressed 'up', select the last in the list */
 			}
 			else {
-				if( eDirection == ADJ_DOWN && m_nLastActiveIcon < m_cIcons.size()-1 ) { nSelectedIcon = m_nLastActiveIcon + 1; }
+				if( eDirection == ADJ_DOWN && m_nLastActiveIcon < nIconCount - 1 ) { nSelectedIcon = m_nLastActiveIcon + 1; }
 				if( eDirection == ADJ_UP && m_nLastActiveIcon > 0 ) { nSelectedIcon = m_nLastActiveIcon - 1; }
 			}
 		}
+		else if( m_eType == VIEW_LIST )  /* Icons are arranged in columns */
+		{
+			if( m_nLastActiveIcon == -1 )
+			{
+				if( eDirection == ADJ_DOWN || eDirection == ADJ_RIGHT ) nSelectedIcon = 0;
+				if( eDirection == ADJ_UP || eDirection == ADJ_LEFT ) nSelectedIcon = nIconCount - 1;
+			}
+			else
+			{
+				if( eDirection == ADJ_DOWN )
+				{
+					nSelectedIcon = (m_nLastActiveIcon + 1) % nIconCount;
+				}
+				if( eDirection == ADJ_UP )
+				{
+					nSelectedIcon = (m_nLastActiveIcon - 1) % nIconCount;
+					if( nSelectedIcon < 0 ) nSelectedIcon += nIconCount;
+				}
+				if( eDirection == ADJ_RIGHT )
+				{
+					nSelectedIcon = (m_nLastActiveIcon + m_nIconsPerRow);
+					if( nSelectedIcon >= nIconCount )
+					{
+						nSelectedIcon = (m_nLastActiveIcon + 1) % std::min( m_nIconsPerRow, nIconCount );
+					}
+				}
+				if( eDirection == ADJ_LEFT )
+				{
+					nSelectedIcon = m_nLastActiveIcon - m_nIconsPerRow;
+					if( nSelectedIcon < 0 )
+					{
+						int nRow = (m_nLastActiveIcon - 1) % m_nIconsPerRow;
+						if( nRow < 0 ) nRow += std::min( m_nIconsPerRow, nIconCount );
+						int nLastCol = ((nIconCount - 1) / m_nIconsPerRow);
+						int nCol = ( nRow > (nIconCount-1) % m_nIconsPerRow ? nLastCol - 1 : nLastCol );
+						nSelectedIcon = m_nIconsPerRow*nCol + nRow;
+					}
+				}
+			}
+		}
 		else
-		{    /* Choose sensible neighbour by spatial proximity */
+		{    /* Icons may be anywhere; choose sensible neighbour by spatial proximity */
 			int nBestIconSoFar = -1;
 
 			if( m_nLastActiveIcon == -1 )
@@ -522,7 +563,7 @@ public:
 
 				if( eDirection == ADJ_RIGHT )
 				{  /* select left-top-most */
-					for( int i = m_cIcons.size(); --i >= 0 ; )  /* search backwards to save calls to m_cIcons.size() */
+					for( int i = 0; i < nIconCount ; i++)
 					{
 						if( nBestIconSoFar < 0 || m_cIcons[i]->m_cPosition.x < vBestXSoFar || (m_cIcons[i]->m_cPosition.x == vBestXSoFar && m_cIcons[i]->m_cPosition.y < vBestYSoFar) )
 						{
@@ -532,7 +573,7 @@ public:
 				}
 				if( eDirection == ADJ_LEFT )
 				{  /* select right-bottom-most */
-					for( int i = m_cIcons.size(); --i >= 0 ; )  /* search backwards to save calls to m_cIcons.size() */
+					for( int i = 0; i < nIconCount ; i++ )
 					{
 						if( nBestIconSoFar < 0 || m_cIcons[i]->m_cPosition.x > vBestXSoFar || (m_cIcons[i]->m_cPosition.x == vBestXSoFar && m_cIcons[i]->m_cPosition.y > vBestYSoFar) )
 						{
@@ -542,7 +583,7 @@ public:
 				}
 				if( eDirection == ADJ_DOWN )
 				{  /* select top-left-most */
-					for( int i = m_cIcons.size(); --i >= 0 ; )  /* search backwards to save calls to m_cIcons.size() */
+					for( int i = 0; i < nIconCount ; i++)
 					{
 						if( nBestIconSoFar < 0 || m_cIcons[i]->m_cPosition.y < vBestYSoFar || (m_cIcons[i]->m_cPosition.y == vBestYSoFar && m_cIcons[i]->m_cPosition.x < vBestXSoFar) )
 						{
@@ -552,7 +593,7 @@ public:
 				}
 				if( eDirection == ADJ_UP )
 				{  /* select bottom-right-most */
-					for( int i = m_cIcons.size(); --i >= 0 ; )  /* search backwards to save calls to m_cIcons.size() */
+					for( int i = 0; i < nIconCount ; i++)
 					{
 						if( nBestIconSoFar < 0 || m_cIcons[i]->m_cPosition.y > vBestYSoFar || (m_cIcons[i]->m_cPosition.y == vBestYSoFar && m_cIcons[i]->m_cPosition.x > vBestXSoFar) )
 						{
@@ -563,35 +604,61 @@ public:
 			}
 			else
 			{  /* search for the closest icon in the appropriate neighbouring region */
+			   /* If an icon isn't found in the neighbouring region, we will try to wrap around to the next row/column. */
+				bool bKeepSearching = false, bWrapped = false;
 				Point cSearchOrigin = m_cIcons[m_nLastActiveIcon]->m_cPosition;
-				Point cDelta;
-				float vDistance;
-				float vBestDistanceSoFar = -1;
-
-				for( int i = m_cIcons.size(); --i >= 0 ; )  /* search backwards to save calls to m_cIcons.size() */
+				do
 				{
-					cDelta = m_cIcons[i]->m_cPosition - cSearchOrigin;
-					/* Check if icon is in the correct region (boundaries y=+-2x or y=+-(1/2)x) seem to give good results) */
-					if( ( eDirection == ADJ_LEFT && cDelta.y <= -2*cDelta.x && cDelta.y >= 2*cDelta.x ) ||
-				    	( eDirection == ADJ_RIGHT && cDelta.y <= 2*cDelta.x && cDelta.y >= -2*cDelta.x ) ||
-					    ( eDirection == ADJ_DOWN && 2*cDelta.y >= -cDelta.x && 2*cDelta.y >= cDelta.x ) ||
-					    ( eDirection == ADJ_UP && 2*cDelta.y <= -cDelta.x && 2*cDelta.y <= cDelta.x ) )
+					Point cDelta;
+					float vDistance;
+					float vBestDistanceSoFar = -1;
+
+					bKeepSearching = false;
+
+					for( int i = 0; i < nIconCount ; i++)
 					{
-						/* ok, icon is in the correct region of the view - check if it is closest */
-						vDistance = (cDelta.x*cDelta.x) + (cDelta.y*cDelta.y);
-						if( vDistance > 0 && (vDistance < vBestDistanceSoFar || vBestDistanceSoFar < 0) )
+						cDelta = m_cIcons[i]->m_cPosition - cSearchOrigin;
+						/* Check if icon is in the correct region (boundaries y=+-2x or y=+-(1/2)x) seem to give good results) */
+						if( ( eDirection == ADJ_LEFT && cDelta.y <= -2*cDelta.x && cDelta.y >= 2*cDelta.x ) ||
+				    		( eDirection == ADJ_RIGHT && cDelta.y <= 2*cDelta.x && cDelta.y >= -2*cDelta.x ) ||
+					    	( eDirection == ADJ_DOWN && 2*cDelta.y >= -cDelta.x && 2*cDelta.y >= cDelta.x ) ||
+						    ( eDirection == ADJ_UP && 2*cDelta.y <= -cDelta.x && 2*cDelta.y <= cDelta.x ) )
 						{
-							nBestIconSoFar = i;
-							vBestDistanceSoFar = ((cDelta.x*cDelta.x) + (cDelta.y*cDelta.y));
+							/* ok, icon is in the correct region of the view - check if it is closest */
+							vDistance = (cDelta.x*cDelta.x) + (cDelta.y*cDelta.y);
+							if( vDistance > 0 && (vDistance < vBestDistanceSoFar || vBestDistanceSoFar < 0) )
+							{
+								nBestIconSoFar = i;
+								vBestDistanceSoFar = vDistance;
+							}
 						}
 					}
-				}
+					/* If we didn't find an icon on the first pass, try to wrap to the next row/column */
+					if( !bWrapped && nBestIconSoFar == -1 ) {
+						bWrapped = true;
+						bKeepSearching = true;
+						if( eDirection == ADJ_RIGHT ) {
+							cSearchOrigin.x = -m_vIconWidth; cSearchOrigin.y += m_vIconHeight;
+							if( cSearchOrigin.y > m_vLastYPos ) cSearchOrigin.y = -m_vIconHeight;
+						} else if( eDirection == ADJ_LEFT ) {
+							cSearchOrigin.x = m_vLastXPos + m_vIconWidth; cSearchOrigin.y -= m_vIconHeight;
+							if( cSearchOrigin.y < 0 ) cSearchOrigin.y = m_vLastYPos;
+						} else if( eDirection == ADJ_DOWN ) {
+							cSearchOrigin.x += m_vIconWidth; cSearchOrigin.y = -m_vIconHeight;
+							if( cSearchOrigin.x > m_vLastXPos ) cSearchOrigin.x = 0;
+						} else if( eDirection == ADJ_UP ) {
+							cSearchOrigin.x -= m_vIconWidth; cSearchOrigin.y = m_vLastYPos + m_vIconHeight;
+							if( cSearchOrigin.x < 0 ) cSearchOrigin.x = m_vLastXPos;
+						}
+					}
+				} while( bKeepSearching );
 			}
 			
 			nSelectedIcon = nBestIconSoFar;
 		}
 		
-		if( nSelectedIcon == -1 ) { Unlock(); return; }  /* no adjacent icon found */ /*AWM*/
+		if( nSelectedIcon < -1 || nSelectedIcon >= nIconCount ) { printf("IconView:SelectAdjacent: BUG: tried to select invalid icon!\n" ); nSelectedIcon = -1; }
+		if( nSelectedIcon == -1 ) { Unlock(); return; }  /* no adjacent icon found */
 		if( !m_bMultiSelect || !bAddToSelection ) { DeselectAll(); }
 		Select( nSelectedIcon, true );
 		m_nLastActiveIcon = nSelectedIcon;
@@ -1156,15 +1223,35 @@ public:
 				Flush();
 			break;
 			case os::VK_HOME:
-				m->m_nLastActiveIcon = -1;
-				m->SelectAdjacent( IconView::Private::ADJ_DOWN, nQualifiers & QUAL_SHIFT );
-				/* This works because of how SelectAdjacent chooses an adjacent icon when m_nLastActiveIcon == -1 */
+				if( m->m_eType == VIEW_DETAILS || m->m_eType == VIEW_LIST ) {
+					m->Lock();
+					if( !(nQualifiers & QUAL_SHIFT) ) m->DeselectAll();
+					if( m->m_pcControl->GetIconCount() > 0 ) {
+						m->Select( 0, true );
+						m->m_pcControl->ScrollToIcon( 0 );
+					}
+					m->Unlock();
+				} else { /* Icon view - go to top-left icon */
+					m->m_nLastActiveIcon = -1;
+					m->SelectAdjacent( IconView::Private::ADJ_DOWN, nQualifiers & QUAL_SHIFT );
+					/* This works because of how SelectAdjacent chooses an adjacent icon when m_nLastActiveIcon == -1 */
+				}
 				Flush();
 			break;
 			case os::VK_END:
-				m->m_nLastActiveIcon = -1;
-				m->SelectAdjacent( IconView::Private::ADJ_UP, nQualifiers & QUAL_SHIFT );
-				/* This works because of how SelectAdjacent chooses an adjacent icon when m_nLastActiveIcon == -1 */
+				if( m->m_eType == VIEW_DETAILS || m->m_eType == VIEW_LIST ) {
+					m->Lock();
+					if( !(nQualifiers & QUAL_SHIFT) ) m->DeselectAll();
+					if( m->m_pcControl->GetIconCount() > 0 ) {
+						m->Select( m->m_pcControl->GetIconCount() - 1, true );
+						m->m_pcControl->ScrollToIcon( m->m_pcControl->GetIconCount() - 1 );
+					}
+					m->Unlock();
+				} else { /* Icon view - go to bottom-right icon */
+					m->m_nLastActiveIcon = -1;
+					m->SelectAdjacent( IconView::Private::ADJ_UP, nQualifiers & QUAL_SHIFT );
+					/* This works because of how SelectAdjacent chooses an adjacent icon when m_nLastActiveIcon == -1 */
+				}
 				Flush();
 			break;
 			case os::VK_ESCAPE:
@@ -1234,31 +1321,50 @@ public:
 			default:
 			{
 				char nChar = pzString[0];
-				if( isprint( nChar ) )
+				if( isprint( nChar ) )  /* TODO: accept non-latin characters also */
 				{
+					m->Lock();
 					bigtime_t nTime = get_system_time();
+					bool bNewSearch = false;
 
-					if( nTime < m->m_nLastKeyDownTime + 1000000 )
+					/* If we haven't pressed a key for a while, or we have pressed the same key twice, start a new search from the next icon */
+					/* This allows one to move between all icons beginning with 'a' by holding the 'a' key. */
+					/* A side-effect is that a filename like 'aaaaa' can't be directly reached by typing its name, but this trade-off seems acceptable. */
+					if( (nTime >= m->m_nLastKeyDownTime + 1000000) || (m->m_cSearchString.Length() == 1 && nChar == m->m_cSearchString[0]) )
 					{
-						m->m_cSearchString += nChar;
+						m->m_cSearchString = os::String( &nChar, 1 );
+						bNewSearch = true;
 					}
 					else
 					{
-						m->m_cSearchString = os::String( &nChar, 1 );
+						m->m_cSearchString += nChar;
 					}
 					m->m_nLastKeyDownTime = nTime;
 					bool bFound = false;
-					for( uint i = 0; i < m->m_pcControl->GetIconCount(); ++i )
-					{
-						if( m->m_cSearchString.CompareNoCase( m->m_pcControl->GetIconString( i, 0 ).substr( 0, m->m_cSearchString.size() ) ) == 0 )
-						{
-							m->m_pcControl->SetIconSelected( i, true, true );  /* Select matching icon; deselect all others */
-							m->m_pcControl->ScrollToIcon( i );
-							bFound = true;
-							break;
+					/* Search logic: If starting a new search, start searching from the icon after the active icon.
+						If continuing a search, include the active icon in the search as that may be the icon the user is looking for.
+						If no icon is active, search from icon 0. */
+					uint nIconCount = m->m_pcControl->GetIconCount();
+					if( nIconCount > 0 ) {
+						uint nSearchOrigin;
+						if( m->m_nLastActiveIcon == -1 ) {
+							nSearchOrigin = 0;
+						} else {
+							nSearchOrigin = (m->m_nLastActiveIcon + (bNewSearch ? 1 : 0)) % nIconCount;
 						}
+						for( uint i = 0; i < nIconCount; i++ )
+						{
+							if( m->m_cSearchString.CompareNoCase( m->m_pcControl->GetIconString( (i+nSearchOrigin) % nIconCount, 0 ).substr( 0, m->m_cSearchString.size() ) ) == 0 )
+							{
+								m->m_pcControl->SetIconSelected( (i+nSearchOrigin) % nIconCount, true, true );  /* Select matching icon; deselect all others */
+								m->m_pcControl->ScrollToIcon( (i+nSearchOrigin) % nIconCount );
+								bFound = true;
+								break;
+							}
+						}
+//						if( !bFound ) { /*TODO: beep or otherwise notify user */ }
 					}
-//					if( !bFound ) { /*TODO: beep or otherwise notify user */ }
+					m->Unlock();
 				}
 			}
 		}
