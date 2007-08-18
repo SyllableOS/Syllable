@@ -1,3 +1,8 @@
+* August 18, 2007, Kristian Van Der Vliet *
+
+FileBrowser will now automatically remember the view settings and Window
+position. Patch from Anthony Morphett <awmorp@gmail.com>
+
 ---- 0.6.4 Released -------------------------------------------------------------------
 
 * July 8, 2007, Arno Klenke *
