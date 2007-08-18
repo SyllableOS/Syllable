@@ -34,14 +34,20 @@ test-targets
 	test_7z
 	test_7zr
 
-install-tree		bin
+install-tree
+	bin
+	lib
+	man
 ;install				./install.sh
 install-files
-	bin/7za			bin/
+	bin/7z.so		lib/
 	bin/7z			bin/
-	bin/Formats		bin/
+	bin/7za			bin/
+	bin/7zr			bin/
+;	bin/Formats		bin/
 	bin/Codecs		bin/
 	bin/7zCon.sfx	bin/
+	man1			man/
 
 documentation
 	README DOCS/readme.txt DOCS/7zC.txt DOCS/License.txt DOCS/copying.txt DOCS/unRarLicense.txt DOCS/history.txt ChangeLog TODO

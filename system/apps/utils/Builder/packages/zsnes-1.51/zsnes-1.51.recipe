@@ -19,14 +19,15 @@ needs
 recommends			ncurses
 build-needs			nasm >= 0.98.39
 
-architecture		i586
+cpu					i586
 
 configure-cmd		src/configure
+;configure-vars		force_arch 'i586'
 configure-options
 	--enable-release
 ;	Don't compile for host CPU:
 	--disable-cpucheck
-	force_arch=i586
+	force_arch='i586'
 
 documentation
 	docs/readme.1st docs/license.txt docs/README.LINUX docs/support.txt docs/opengl.txt docs/authors.txt docs/thanks.txt docs/todo.txt
