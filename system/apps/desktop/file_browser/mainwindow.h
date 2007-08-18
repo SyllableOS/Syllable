@@ -40,6 +40,8 @@ public:
 	void HandleMessage( os::Message* );
 	void LoadWindow( bool bStyleOnly );
 	void SaveWindow();
+	void LoadDefault();
+	void SaveDefault();
 private:
 	bool OkToQuit();
 	os::ImageButton* m_pcBackButton;

@@ -20,6 +20,7 @@
 
 
 #include <iostream>
+#include <util/settings.h>
 #include "mainwindow.h"
 #include "messages.h"
 #include "resources/FileBrowser.h"
@@ -33,7 +34,7 @@ void SetButtonImageFromResource( os::ImageButton* pcButton, os::String zResource
 	delete( pcStream );
 }
 
-MainWindow::MainWindow( os::String zPath ) : os::Window( os::Rect( 0, 0, 300, 300 ), "main_wnd", MSG_MAINWND_TITLE )
+MainWindow::MainWindow( os::String zPath ) : os::Window( os::Rect( 0, 0, 500, 400 ), "main_wnd", MSG_MAINWND_TITLE )
 {
 	
 	SetTitle( zPath );
@@ -78,6 +79,7 @@ MainWindow::MainWindow( os::String zPath ) : os::Window( os::Rect( 0, 0, 300, 30
 	pcPopupMenu->AddItem( MSG_MENU_VIEW_DETAILS, new os::Message( M_VIEW_DETAILS ) );
 	pcPopupMenu->AddItem( new os::MenuSeparator() );
 	pcPopupMenu->AddItem( MSG_MENU_VIEW_SAVE, new os::Message( M_SAVE_WINDOW ) );
+	pcPopupMenu->AddItem( MSG_MENU_VIEW_SAVE_DEFAULT, new os::Message( M_SAVE_DEFAULT ) );
 	pcPopupMenu->SetTargetForItems( this );
 	
 	
@@ -107,7 +109,10 @@ MainWindow::MainWindow( os::String zPath ) : os::Window( os::Rect( 0, 0, 300, 30
 	AddChild( m_pcView );
 	m_pcView->MakeFocus();	
 	
-	LoadWindow( false );
+	/* Load default folder style & window position; this will be overridden later by folder-specific settings, if any */
+	LoadDefault();
+
+	LoadWindow( false );  /* Load folder's saved style, window position */
 	m_pcView->ReRead();
 }
 
@@ -180,6 +185,38 @@ void MainWindow::SaveWindow()
 	} catch( ... )
 	{
 	}
+}
+
+void MainWindow::LoadDefault()
+{
+	os::Settings* pcSettings = new os::Settings();
+	pcSettings->Load();
+	int32 nStyle = pcSettings->GetInt32( "default_style", 0 );
+	if( nStyle > 2 || nStyle < 0 ) nStyle = 0;
+	m_pcView->SetView( (os::IconView::view_type)nStyle );
+	os::Rect cFrame = pcSettings->GetRect( "default_window_position", GetFrame() );
+	int32 nOffset = pcSettings->GetInt32( "last_offset", -1 );   /* An offset so that new windows don't cover previous windows */
+	nOffset = (nOffset + 1) % 5;
+	pcSettings->SetInt32( "last_offset", nOffset );   /* Increment the offset & save it */
+	pcSettings->Save();
+	cFrame.left += 20*nOffset;
+	cFrame.right += 20*nOffset;
+	cFrame.top += 20*nOffset;
+	cFrame.bottom += 20*nOffset;
+	SetFrame( cFrame );
+	delete pcSettings;
+}
+
+void MainWindow::SaveDefault()
+{
+	/* Save the window style & position to the settings file as the default */
+	os::Settings* pcSettings = new os::Settings();
+	pcSettings->Load();
+	pcSettings->SetInt32( "default_style", m_pcView->GetView() );
+	pcSettings->SetRect( "default_window_position", GetFrame() );
+	pcSettings->SetInt32( "next_offset", 0 );   /* An offset so that new windows don't cover previous windows */
+	pcSettings->Save();
+	delete pcSettings;
 }
 
 void MainWindow::HandleMessage( os::Message* pcMessage )
@@ -272,6 +309,11 @@ void MainWindow::HandleMessage( os::Message* pcMessage )
 		case M_SAVE_WINDOW:
 		{
 			SaveWindow();
+			break;
+		}
+		case M_SAVE_DEFAULT:
+		{
+			SaveDefault();
 			break;
 		}
 		case M_APP_QUIT:
