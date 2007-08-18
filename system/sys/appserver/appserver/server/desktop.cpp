@@ -376,7 +376,7 @@ void set_desktop_screenmode( int nDesktop, const screen_mode & sMode )
 				if( cFrame.top > g_asDesktops[nDesktop].m_cMaxWindowFrame.bottom - 32 )
 				{
 					cNewFrame.top = 50 + 12*(nMoveTally % 6) + g_asDesktops[nDesktop].m_cMaxWindowFrame.top;
-					cNewFrame.bottom = cNewFrame.top + cFrame.Width();
+					cNewFrame.bottom = cNewFrame.top + cFrame.Height();
 					bMoved = true;
 				}
 
@@ -673,7 +673,7 @@ void set_desktop( int nDesktop, bool bNotifyActiveWnd )
 			if( cFrame.top > g_asDesktops[nDesktop].m_cMaxWindowFrame.bottom - 32 )
 			{
 				cNewFrame.top = 50 + 12*(nMoveTally % 6) + g_asDesktops[nDesktop].m_cMaxWindowFrame.top;
-				cNewFrame.bottom = cNewFrame.top + cFrame.Width();
+				cNewFrame.bottom = cNewFrame.top + cFrame.Height();
 				bMoved = true;
 			}
 
