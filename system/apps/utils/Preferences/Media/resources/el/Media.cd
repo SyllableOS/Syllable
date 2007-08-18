@@ -11,7 +11,7 @@ MSG_MAINWND_DEFAULT_INPUT						Προεπιλεγμένη είσοδος
 MSG_MAINWND_DEFAULT_OUTPUT_AUDIO					Προεπιλεγμένη έξοδος ήχου
 MSG_MAINWND_DEFAULT_OUTPUT_VIDEO					Προεπιλεγμένη έξοδος βίντεο
 
-MSG_MAINWND_BUTTON_STREAMVOLUMES=200				_Κανάλια τόμων...
+MSG_MAINWND_BUTTON_STREAMVOLUMES=200				_Ένταση Καναλιών...
 MSG_MAINWND_BUTTON_APPLY						_Εφαρμογή
 MSG_MAINWND_BUTTON_UNDO						_Αναίρεση
 MSG_MAINWND_BUTTON_DEFAULT						_Προεπιλογή

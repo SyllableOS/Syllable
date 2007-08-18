@@ -7,7 +7,7 @@ OBJS = main.o application.o commonfuncs.o execute.o mainwindow.o
 
 EXE = Launch
 
-CATALOGS = da de es hu nl pl pt-br ru sv
+CATALOGS = da de el es hu nl pl pt-br ru sv
 
 OBJDIR := objs
 OBJS	:= $(addprefix $(OBJDIR)/,$(OBJS))

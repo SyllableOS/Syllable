@@ -207,7 +207,7 @@ diff -ru -x configure xpdf-3.00pl3/xpdf/Makefile.in xpdf-3.00pl3-syllable/xpdf/M
  srcdir = @srcdir@
  VPATH = @srcdir@
  
-+CATALOGS = da de es hu nl pl pt-br ru sv
++CATALOGS = da de el es hu nl pl pt-br ru sv
 +
  GOOSRCDIR = $(srcdir)/../goo
  GOOLIBDIR = ../goo

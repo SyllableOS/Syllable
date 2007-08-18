@@ -1,0 +1,21 @@
+//
+//	BZoom String Catalog
+//
+//	Translated by: Ioannis Koniaris
+//
+
+MSG_MAINWND_TITLE=0						BZoom
+
+MSG_MAINWND_MENU_APP=100					Εφαρμογή
+MSG_MAINWND_MENU_APP_EXIT					Έξοδος
+
+MSG_MAINWND_MENU_VIEW=200					Προβολή
+MSG_MAINWND_MENU_VIEW_MAGNIFICATION			Μεγέθυνση
+
+MSG_MAINWND_MENU_HELP=300					Βοήθεια
+MSG_MAINWND_MENU_HELP_ABOUT					Σχετικά
+
+MSG_ABOUTWND_TITLE=1000					Σχετικά με το BZoom
+MSG_ABOUTWND_TEXT							BZoom V1.0\n\nΈνας απλός μεγεθυντής εικονοστοιχείων για το AtheOS.\nΒασισμένο στο AZoom από τον Chir.\nΤο BZoom εκδίδεται υπό τους όρους της\nGNU GPL
+MSG_ABOUTWND_OK							ΟΚ
+

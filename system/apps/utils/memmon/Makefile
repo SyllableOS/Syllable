@@ -3,7 +3,7 @@ COPTS	= -c
 OBJS	= main.o
 EXE	= "Memory Monitor"
 
-CATALOGS = da de es fr hu nl pt-br ru sv
+CATALOGS = da de el es fr hu nl pt-br ru sv
 
 $(EXE) : catalogs $(OBJS)
 	$(CXX) $(OBJS) -lsyllable -o "Memory Monitor"

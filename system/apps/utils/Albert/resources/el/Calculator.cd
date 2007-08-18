@@ -1,0 +1,68 @@
+//
+//	Calculator String Catalog
+//
+//	Translated by: Ioannis Koniaris
+//
+
+MSG_MAINWND_TITLE=0								Αριθμομηχανή
+
+MSG_MAINWND_MENU_FILE=100							Αρχείο
+MSG_MAINWND_MENU_FILE_CLEARALL						Καθαρισμός Όλων
+MSG_MAINWND_MENU_FILE_EXIT							Έξοδος
+
+MSG_MAINWND_MENU_BASE=200							Βάση
+MSG_MAINWND_MENU_BASE_BINARY						Δυαδική (2)
+MSG_MAINWND_MENU_BASE_OCTAL							Οκταδική (8)
+MSG_MAINWND_MENU_BASE_DECIMAL						Δεκαδική (10)
+MSG_MAINWND_MENU_BASE_HEXADECIMAL					Δεκαεξαδική (16)
+
+MSG_MAINWND_MENU_CONSTANTS=300						Σταθερές
+MSG_MAINWND_MENU_CONSTANTS_PI						π
+MSG_MAINWND_MENU_CONSTANTS_E						e
+MSG_MAINWND_MENU_CONSTANTS_C						Ταχύτητα του φωτός (c)
+MSG_MAINWND_MENU_CONSTANTS_ELECTRON					Φορτίο ηλεκτρονίου
+MSG_MAINWND_MENU_CONSTANTS_GRAV						Βαρυτική σταθερά (G)
+MSG_MAINWND_MENU_CONSTANTS_PLANCK					Σταθερά του Planck (h)
+MSG_MAINWND_MENU_CONSTANTS_BOLTZMANN					Σταθερά του Boltzmann
+MSG_MAINWND_MENU_CONSTANTS_AVOGADRO					Αριθμός Avogadro
+MSG_MAINWND_MENU_CONSTANTS_GAS						Σταθερά αερίου (R)
+MSG_MAINWND_MENU_CONSTANTS_MASSELECTRON				Μάζα ηλεκτρονίου
+MSG_MAINWND_MENU_CONSTANTS_MASSPROTON				Μάζα πρωτονίου
+MSG_MAINWND_MENU_CONSTANTS_MASSNEUTRON				Μάζα νετρονίου
+MSG_MAINWND_MENU_CONSTANTS_PERME						Διαπερατότητα κενού
+MSG_MAINWND_MENU_CONSTANTS_PERMI						Επιτρεψιμότητα κενού
+
+MSG_MAINWND_MENU_WINDOWS=400						Παράθυρα
+MSG_MAINWND_MENU_WINDOWS_PAPERROLL					Ρολό Χαρτιού
+MSG_MAINWND_MENU_WINDOWS_BASEN						Βάση Ν
+
+MSG_MAINWND_MENU_HELP=500							Βοήθεια
+MSG_MAINWND_MENU_HELP_ABOUT							Σχετικά
+MSG_MAINWND_MENU_HELP_KEYBOARD						Πληκτρολόγιο
+
+MSG_PAPERROLL_TITLE=1000							Αριθμομηχανή
+MSG_PAPERROLL_CMENU_COPY							Αντιγραφή
+MSG_PAPERROLL_CMENU_CLEAR							Καθαρισμός
+MSG_PAPERROLL_CMENU_SAVE							Αποθήκευση
+
+MSG_BASENWND_TITLE=2000							Βάση Ν
+MSG_BASENWND_BINARY								Δυαδική
+MSG_BASENWND_OCTAL									Οκταδική
+MSG_BASENWND_DECIMAL								Δεκαδική
+MSG_BASENWND_HEXADECIMAL							Δεκαεξαδική
+MSG_BASENWND_BASE64								Βάση 64
+MSG_BASENWND_ROMAN									Ρωμαϊκή
+
+MSG_ABOUTWND_TITLE=3000							Σχετικά με την Αριθμομηχανή
+MSG_ABOUTWND_TEXTONE								Αριθμομηχανή V0.5 2004-02-07 Copyright (C) 2002-2004 Henrik Isaksson.
+MSG_ABOUTWND_TEXTTWO								Η Αριθμομηχανή εκδίδεται υπό τους όρους της GNU General Public License.
+
+MSG_KBDWND_TITLE=4000								Συντομεύσεις Πληκτρολογίου
+MSG_KBDWND_TEXTONE									Συντομεύσεις Πληκτρολογίου
+MSG_KBDWND_TEXT09									Δεκαδικά ψηφία από 0 ως 9
+MSG_KBDWND_TEXTAF									Δεκαεξαδικά ψηφία από A ως F
+MSG_KBDWND_TEXTASMD								Πρόσθεση, Αφαίρεση, Πολλαπλασιασμός και Διαίρεση
+MSG_KBDWND_TEXTENTER								ENTER - Υπολογισμός αποτελέσματος
+MSG_KBDWND_TEXTBACKSPACE							BACKSPACE - Backspace (έκπληξη!)
+MSG_KBDWND_CLOSE									Κλείσιμο
+

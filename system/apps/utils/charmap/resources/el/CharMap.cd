@@ -1,0 +1,24 @@
+//
+//	CharMap String Catalog
+//
+//	Translated by: Ioannis Koniaris
+//
+
+MSG_MAINWND_TITLE=0							Πίνακας χαρακτήρων
+
+MSG_MAINWND_MENU_FILE=100						Αρχείο
+MSG_MAINWND_MENU_FILE_CHOOSEFONT					Επιλογή Γραμματοσειράς...
+MSG_MAINWND_MENU_FILE_EXIT						Έξοδος
+
+MSG_MAINWND_MENU_HELP=200						Βοήθεια
+MSG_MAINWND_MENU_HELP_HELP						Βοήθεια
+MSG_MAINWND_MENU_HELP_ABOUT						Σχετικά
+
+MSG_HELPWND_TITLE=1000							CharMap
+MSG_HELPWND_TEXT								Όταν κάνετε κλικ σε ένα χαρακτήρα,\nθα αποθηκεύεται στο πρόχειρο.
+MSG_HELPWND_OK								ΟΚ
+
+MSG_ABOUTWND_TITLE=2000						CharMap
+MSG_ABOUTWND_TEXT								CharMap V1.1\nΠροβολέας πίνακα χαρακτήρων για το Syllable.
+MSG_ABOUTWND_OK								ΟΚ
+

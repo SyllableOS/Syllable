@@ -8,7 +8,7 @@ MSG_MAINWND_TITLE=0							Πληκτρολόγιο
 
 MSG_MAINWND_KEYMAP=100							Πληκτρολόγιο
 MSG_MAINWND_KEYBOARDLAYOUT						Διάταξη Πληκτρολογίου
-MSG_MAINWND_KEYBOARDLAYOUT_SHOWALL				Show All
+MSG_MAINWND_KEYBOARDLAYOUT_SHOWALL				Εμφάνιση Όλων
 MSG_MAINWND_TESTAREA							Περιοχή Δοκιμής (Πρώτα εφαρμογή αλλαγών)
 
 MSG_MAINWND_SETTINGS=200						Ρυθμίσεις
