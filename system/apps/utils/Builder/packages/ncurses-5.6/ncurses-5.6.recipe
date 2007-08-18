@@ -31,6 +31,8 @@ links
 	ncurses/curses.h	include/
 ;	For ProcPS:
 	ncurses/term.h		include/
+;	For Python:
+	ncurses/panel.h		include/
 ;	For INetUtils:
 	include/ncurses		/usr/include/
 ;	For LinuxTree:

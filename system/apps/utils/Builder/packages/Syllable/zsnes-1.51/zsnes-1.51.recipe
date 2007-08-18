@@ -1,0 +1,12 @@
+authors
+	Rui Caridade
+	Kaj de Vos
+status				testing
+
+configure-options
+;	Not fully ported yet:
+	--build=i586-pc-linux
+	--enable-release
+;	Don't compile for host CPU:
+	--disable-cpucheck
+	force_arch='i586'

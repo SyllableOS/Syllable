@@ -87,17 +87,49 @@ diff -ru python-2.5.1-original/configure.in python-2.5.1/configure.in
  	esac
  fi
  AC_MSG_RESULT($CCSHARED)
-@@ -1879,8 +1887,8 @@
+@@ -1789,7 +1797,13 @@
+     AC_DEFINE(_REENTRANT)
      posix_threads=yes
-     THREADOBJ="Python/thread.o"],[
-     AC_CHECK_HEADER(atheos/threads.h, [AC_DEFINE(WITH_THREAD)
--    AC_DEFINE(ATHEOS_THREADS, 1,
--    [Define this if you have AtheOS threads.])
+     THREADOBJ="Python/thread.o"    
+-elif test "$ac_cv_kpthread" = "yes"
++else
++    AC_CHECK_HEADER(atheos/threads.h, [
++    AC_DEFINE(WITH_THREAD)
 +    AC_DEFINE(SYLLABLE_THREADS, 1,
 +    [Define this if you have Syllable threads.])
++    THREADOBJ="Python/thread.o"],[
++if test "$ac_cv_kpthread" = "yes"
+ then
+     CC="$CC -Kpthread"
+     if test "$ac_cv_cxx_thread" = "yes"; then
+@@ -1878,10 +1892,6 @@
+     AC_CHECK_FUNC(pthread_detach, [AC_DEFINE(WITH_THREAD)
+     posix_threads=yes
      THREADOBJ="Python/thread.o"],[
+-    AC_CHECK_HEADER(atheos/threads.h, [AC_DEFINE(WITH_THREAD)
+-    AC_DEFINE(ATHEOS_THREADS, 1,
+-    [Define this if you have AtheOS threads.])
+-    THREADOBJ="Python/thread.o"],[
      AC_CHECK_HEADER(kernel/OS.h, [AC_DEFINE(WITH_THREAD)
      AC_DEFINE(BEOS_THREADS, 1,
+     [Define this if you have BeOS threads.])
+@@ -1903,7 +1913,7 @@
+     LIBS="$LIBS -lcma"
+     THREADOBJ="Python/thread.o"],[
+     USE_THREAD_MODULE="#"])
+-    ])])])])])])])])])])
++    ])])])])])])])])])
+ 
+     AC_CHECK_LIB(mpc, usconfig, [AC_DEFINE(WITH_THREAD)
+     LIBS="$LIBS -lmpc"
+@@ -1925,6 +1935,7 @@
+         OSF1) LDLAST=-threads;;
+         esac
+     fi
++fi])
+ fi
+ 
+ if test "$posix_threads" = "yes"; then
 @@ -2226,7 +2234,7 @@
  	hp*|HP*) DYNLOADFILE="dynload_hpux.o";;
  	# Use dynload_next.c only on 10.2 and below, which don't have native dlopen()
@@ -211,17 +243,32 @@ Only in python-2.5.1-original/Python: thread_atheos.h
 diff -ru python-2.5.1-original/Python/thread.c python-2.5.1/Python/thread.c
 --- python-2.5.1-original/Python/thread.c	2006-07-21 09:59:47.000000000 +0200
 +++ python-2.5.1/Python/thread.c	2007-08-18 06:36:22.000000000 +0200
-@@ -145,8 +145,8 @@
+@@ -117,9 +117,14 @@
+ #undef _POSIX_THREADS
+ #endif
+ 
++
++#ifdef SYLLABLE_THREADS
++#include "thread_syllable.h"
++#else
+ #ifdef _POSIX_THREADS
+ #include "thread_pthread.h"
+ #endif
++#endif
+ 
+ #ifdef C_THREADS
+ #include "thread_cthread.h"
+@@ -145,10 +150,6 @@
  #include "thread_plan9.h"
  #endif
  
 -#ifdef ATHEOS_THREADS
 -#include "thread_atheos.h"
-+#ifdef SYLLABLE_THREADS
-+#include "thread_syllable.h"
- #endif
- 
+-#endif
+-
  /*
+ #ifdef FOOBAR_THREADS
+ #include "thread_foobar.h"
 diff -ru python-2.5.1-original/setup.py python-2.5.1/setup.py
 --- python-2.5.1-original/setup.py	2007-02-14 13:53:41.000000000 +0100
 +++ python-2.5.1/setup.py	2007-08-18 06:34:45.000000000 +0200
