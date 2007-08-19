@@ -1,4 +1,8 @@
 authors				Kaj de Vos
 status				testing
 
-build-needs			automake
+build-needs
+	automake 1.8
+	autoconf
+;	Needed a Hermes fix:
+;	gcc < 4.1

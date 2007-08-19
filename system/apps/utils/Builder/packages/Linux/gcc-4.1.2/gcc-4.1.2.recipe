@@ -11,6 +11,8 @@ build-needs
 ;	gnat >= 3.13 | gcc >= 3.1
 	gawk
 ;	bison
+;	For documentation:
+	texinfo
 
 configure-options
 	--enable-languages=c,c++,treelang
