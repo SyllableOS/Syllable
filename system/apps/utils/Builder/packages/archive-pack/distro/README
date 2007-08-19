@@ -1,0 +1,104 @@
+Compression Cornucopia for Syllable
+===================================
+
+19-Aug-2007
+
+1 Introduction
+==============
+
+This distribution contains binary packages of diverse file compression
+utilities for the Syllable operating system. Most packages were built
+on Syllable 0.6.4 and optimized for a Pentium CPU. They may also run on
+earlier versions of Syllable, but this has not been tested.
+
+If you encounter problems or have any other interesting observations,
+I would be interested to hear about them (see contact information).
+
+2 How to install the Compression Cornucopia on Syllable
+=======================================================
+
+2.1 
+---
+
+You may have to become the root user to perform the following operations:
+
+    su -l
+
+Unpacking this distribution should have produced a directory with the
+contained packages, this README document, and an install script.
+Being the root user, go into the directory and run the install script:
+
+    cd CompressionCornucopia
+    ./install.sh
+
+The individual packages will be unpacked into /usr/. Subsequently, the
+packages will be registered, creating links in Syllable to enable it
+to find the packages' files. If any of the package directories
+already existed under /usr/, they will be unregistered and deleted
+first. Please note, though, that no version of any of the packages
+should be previously registered with a different directory name under
+/usr/, because that would lead to conflicting package registrations.
+
+You should now be able to use the programs in the Compression Cornucopia.
+
+2.2 Uninstalling and upgrading the Compression Cornucopia
+---------------------------------------------------------
+
+2.2.1 
+-----
+
+After installation, the Compression Cornucopia is effectively no longer
+one package, but the individual packages it contained. If you ever want
+to remove one or more of those packages, you should execute the
+following procedure for each package. Again, you may have to become
+root first:
+
+    su -l
+
+Then you should remove the links to the package from Syllable.
+
+    package unregister <package>
+
+To delete the files belonging to the package, run:
+
+    rm -r /usr/<package>
+
+2.2.2 Uninstalling individual packages with the Syllable build system
+---------------------------------------------------------------------
+
+If you have the Syllable build system installed, you can use it to do
+the previous steps for you. Also, if you install an individual package
+with the Syllable build system, it will check if the package was already
+installed and will remove the previous version automatically.
+
+If you just want to uninstall an individual package, do:
+
+    su -l
+    build uninstall <package>
+
+2.2.3 Upgrading the entire Compression Cornucopia
+-------------------------------------------------
+
+Upgrading to a new version of the Compression Cornucopia pack is easy,
+since the install script will remove the existing packages and replace
+them with the new ones.
+
+3 Known problems and limitations
+================================
+
+Please refer to the respective README and possibly README.Syllable
+documents that are included in each separate package.
+
+4 Contact information
+=====================
+
+This Compression Cornucopia pack was put together by Kaj de Vos. You can
+send me problem reports, fixes and the like at
+
+    archivepack@syllable.info
+
+This distribution can be found in the download section of the
+Syllable web site:
+
+    http://syllable.org
+
