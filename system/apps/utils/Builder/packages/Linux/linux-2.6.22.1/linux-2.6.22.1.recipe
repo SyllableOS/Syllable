@@ -18,6 +18,8 @@ _build-needs
 	qt
 install-needs		module-init-tools
 
+patch				sed -i '/scsi/d' include/Kbuild
+
 ; Headers should already be there:
 merge-install
 
