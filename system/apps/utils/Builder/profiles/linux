@@ -1,0 +1,499 @@
+; Syllable Linux core system
+
+; Root tree structure to build the distribution in
+
+tree
+;	Virtual file system mount points
+
+	dev
+;	Nodes:
+;	dev/console
+;	dev/null
+
+	proc
+	sys
+
+;	Boot directory structure
+
+	boot
+	boot/grub
+
+;	Main directory structure
+
+	etc
+;	FHS:
+;	etc/grub
+
+	home home.png
+
+	system
+
+	system/config
+	system/config/drivers
+	system/config/drivers/appserver
+	system/config/drivers/appserver/video
+;	system/config/drivers/dev
+	system/config/appearance
+	system/config/appearance/colour-schemes
+
+	system/include
+
+	system/bin
+	system/libraries
+
+	system/fonts
+	system/icons
+	system/keymaps
+	system/sounds
+
+	system/resources
+	system/resources/catalogs
+	system/resources/catalogs/da
+	system/resources/catalogs/de
+	system/resources/catalogs/en-gb
+	system/resources/catalogs/es
+	system/resources/catalogs/fr
+	system/resources/catalogs/fy
+	system/resources/catalogs/hu
+	system/resources/catalogs/nl
+	system/resources/catalogs/pl
+	system/resources/catalogs/pt-br
+	system/resources/catalogs/ro
+	system/resources/catalogs/ru
+	system/resources/catalogs/sv
+	system/resources/wallpapers
+
+	system/drivers
+
+;	system/drivers/dev
+;	system/drivers/dev/audio
+;	system/drivers/dev/bus
+;	system/drivers/dev/disk
+;	system/drivers/dev/graphics
+;	system/drivers/dev/hcd
+;	system/drivers/dev/input
+;	system/drivers/dev/misc
+;	system/drivers/dev/net
+;	system/drivers/dev/net/eth
+;	system/drivers/dev/printer
+
+;	system/drivers/fs
+
+;	system/drivers/net
+;	system/drivers/net/if
+
+	system/drivers/appserver
+	system/drivers/appserver/decorators
+	system/drivers/appserver/input
+	system/drivers/appserver/video
+
+	system/extensions
+	system/extensions/dock
+	system/extensions/translators
+	system/extensions/media
+
+	tmp
+
+	var
+	var/log
+
+	usr
+
+	usr/indexes
+	usr/indexes/bin
+	usr/indexes/etc
+	usr/indexes/include
+	usr/indexes/info
+	usr/indexes/lib
+	usr/indexes/libexec
+	usr/indexes/man
+	usr/indexes/sbin
+	usr/indexes/share
+	usr/indexes/early-init
+	usr/indexes/init
+
+;	For env:
+	usr/bin
+;	usr/etc
+;	For NCurses:
+	usr/include
+;	usr/info
+	usr/lib
+;	usr/man
+	usr/sbin
+;	(For terminfo:)
+	usr/share
+;	For manually compiled software:
+	usr/local
+;	For PERL:
+	usr/local/bin
+	usr/local/etc
+	usr/local/include
+	usr/local/info
+	usr/local/lib
+	usr/local/libexec
+	usr/local/man
+	usr/local/sbin
+	usr/local/share
+
+	Applications				applications.png
+	Applications/Preferences	settings.png
+	Applications/Xpdf
+	Documentation
+	Documentation/images
+
+;	LFS extras
+
+;	For SysVInit and others:
+	bin
+	etc/udev
+;	etc/opt
+	etc/sysconfig
+	etc/sysconfig/network-devices
+	etc/sysconfig/network-devices/ifconfig.eth0
+	mnt
+;	opt
+	media
+	media/floppy
+	media/cdrom1
+	media/data
+;	media/test
+;	For SysVInit and others:
+	sbin
+;	srv
+	var/lock
+	var/mail
+	var/run
+	var/spool
+;	var/tmp
+;	var/opt
+	var/cache
+;	var/lib
+;	var/lib/misc
+;	var/lib/locate
+;	var/local
+	lib
+	lib/firmware
+	lib/udev
+	lib/udev/devices
+	lib/udev/devices/pts
+	lib/udev/devices/shm
+;	Node:
+;	lib/udev/devices/null
+;	For SysVInit:
+	usr/share
+	usr/share/man
+	usr/share/man/man1
+	usr/share/man/man5
+	usr/share/man/man8
+
+resources
+	boot/grub									menu.lst
+	etc											linux/inittab
+	etc/sysconfig								linux/clock
+	etc											linux/fstab
+	etc											linux/syslog.conf
+	etc/sysconfig								linux/console
+	etc											configuration/passwd
+	etc											linux/group
+	etc											linux/inputrc
+	etc											linux/profile
+	etc											linux/hosts
+	etc											configuration/resolv.conf
+	etc/sysconfig								linux/network
+	etc/sysconfig/network-devices/ifconfig.eth0	linux/ipv4
+	system/config								net.cfg
+	system/config								appserver
+	home										Home-Directories
+	Documentation								documentation/Welcome.html
+	Documentation/images						documentation/images/Syllable.gif
+	Documentation								documentation/Copyrights.html
+	system/fonts								fonts/URW/*.ttf
+	system/fonts								fonts/URW/Mandriva/*.ttf
+	system/resources/wallpapers					wallpapers/*.png
+	system/resources/wallpapers					wallpapers/*.jpg
+	system/resources/wallpapers					wallpapers/Adrian/*.png
+	system/resources/wallpapers					wallpapers/Ruud/*.png
+	system/resources/wallpapers					wallpapers/Ruud/*.jpg
+	system/resources/wallpapers					wallpapers/YakkMeister/*.png
+	system/resources/wallpapers					wallpapers/ZeroNet/*.jpg
+	system/resources/wallpapers					wallpapers/LucasMurad/*.png
+	system/resources/wallpapers					wallpapers/LucasMurad/*.jpg
+
+modules
+;	Toolchain for bootstrapping
+
+;	bootstrap apps/gnu/binutils-2.17
+;	Uses headers and runtime linker from the host!
+;	bootstrap apps/gnu/gcc-4.1.2-bootstrap
+
+
+;	Syllable Linux core system
+
+	other/config/default
+;	Overwrites profile:
+	other/config/etc
+	other/fonts/dejavu-fonts--current
+	other/icons
+	other/init
+;	other/keymaps
+;	sys/include
+
+	linux/linux-2.6.21.1-headers
+	linux/linux-2.6.21.1
+
+;	For DirectFB:
+	linux/linux-fusion-3.2.3
+	linux/linux--cleanup
+
+	libs/glibc-2.4-linux-image
+	libs/zlib-1.2.3-static
+	libs/zlib-1.2.3
+
+;	stage libraries/gettext-0.16.1
+;	stage libraries/flex-2.5.33
+;	stage libraries/bison-2.3
+;	stage libraries/binutils-2.17
+
+;	libraries libraries/gcc-4.1.2
+;	For bootstrapping:
+	apps/gnu/gcc-4.1.2
+
+	libs/ncurses-5.6
+
+;	GrUB can use Curses:
+	sys/boot/grub-0.97
+
+	apps/gnu/coreutils-6.4-linux
+	apps/gnu/bash-3.2
+	apps/gnu/grep-2.5.1a
+	apps/gnu/sed-4.1.5
+	apps/other/unzip-5.52
+
+	apps/gnu/bzip2-1.0.4
+	apps/other/orca--current
+
+	linux/sysvinit-2.86
+	linux/bootscripts
+	bootstrap linux/udev--bootstrap
+	linux/udev-106
+;	Needs udevinfo:
+	linux/udev-config
+	linux/module-init-tools-3.2.2
+;	Incompatible with host libdl from different GLibC!
+	linux/e2fsprogs-1.39
+;	Uses headers from /usr/include/!
+	linux/util-linux-2.12r
+	linux/sysklogd-1.4.1
+	linux/shadow-4.0.18.1
+;	stage libraries/db-4.5.20
+	libraries/db-4.5.20
+	linux/iproute2-2.6.20-070313
+	linux/kbd-1.12
+	linux/reiserfsprogs-3.6.19
+
+;	freetype-config needs to be in the path:
+	bootstrap libraries/freetype-2.3.4
+
+	libraries/libjpeg-6b
+	libraries/libpng-1.2.14
+	libraries/libungif-4.1.4
+	libraries/libtiff-3.8.2
+	stage libraries/ffmpeg--current
+	libraries/libogg-1.1.3
+	libraries/libvorbis-1.1.2
+
+	linux/directfb-1.0.0
+
+;	sys/appserver/libsyllable
+;	sys/appserver/appserver/server
+;	sys/appserver/appserver/drivers/decorators/photon
+;	sys/appserver/appserver/drivers/input/keyboard
+;	sys/appserver/appserver/drivers/input/ps2mouse
+;	sys/appserver/appserver/drivers/input/sermouse
+;	sys/appserver/appserver/drivers/input/usbmouse
+;	sys/appserver/appserver/drivers/input/usbkeyboard
+;	sys/appserver/appserver/drivers/video/directfb
+;	sys/appserver/registrar
+;	sys/translators/bmp
+;	sys/translators/gif
+;	sys/translators/ico
+;	sys/translators/jpeg
+;	sys/translators/pcx
+;	sys/translators/png
+;	sys/translators/tga
+;	sys/translators/tiff
+;	sys/translators/xbm
+;	sys/translators/xpm
+;	sys/media/libmedia
+;	sys/media/mediaserver
+;	sys/media/drivers/ac97_audio
+;	sys/media/drivers/cdda
+;	sys/media/drivers/cdrom
+;	sys/media/drivers/ffmpeg
+;	sys/media/drivers/hd_audio
+;	sys/media/drivers/oss
+;	sys/media/drivers/raw
+;	sys/media/drivers/screen
+;	sys/media/drivers/serveraudio
+;	sys/media/drivers/vorbis
+;	apps/utils/dlogin
+;	apps/desktop/desktop
+;	apps/desktop/dock
+;	apps/desktop/dock_plugins/mixer
+;	apps/desktop/file_browser
+
+	apps/utils/Packager
+;	apps/utils/Preferences/Appearance
+;	apps/utils/Preferences/DateTime
+;	apps/utils/Preferences/Desktop
+;	apps/utils/Preferences/Dock
+;	apps/utils/Preferences/FileTypes
+;	apps/utils/Preferences/Font
+;	apps/utils/Preferences/Keyboard
+;	apps/utils/Preferences/Locale
+;	apps/utils/Preferences/Login
+;	apps/utils/Preferences/Media
+;	apps/utils/Preferences/Network
+;	apps/utils/Preferences/Screen
+;	apps/utils/Preferences/UsersAndGroups
+;	apps/utils/aterm
+;	apps/utils/debug
+;	apps/utils/dhcpc
+;	apps/utils/fsutils
+	apps/utils/man2html
+;	apps/utils/nettools
+;	apps/utils/systools
+
+
+;	Syllable Linux base distribution, in addition to core system
+
+	other/fonts/liberation-fonts-2
+	other/fonts/luxi-fonts
+;	For AClock:
+;	The first one will produce two harmless unpacking errors:
+	other/fonts/lcd-fonts-1.1
+	other/fonts/lcd-fonts-1.1
+	other/fonts/freefont-20060126
+
+	linux/procps-3.2.7
+	linux/sudo-1.6.8p12
+	linux/mktemp-1.5
+
+;	Needs ranlib symlink in /usr/bin/!
+;	For cURL:
+	stage libraries/openssl--stage
+
+	apps/other/libusb-0.1.12
+	apps/other/curl-7.16.2-linux
+	apps/other/msntp-1.6
+
+;	Fool subsequent packages into adding files to CUPS in the image area:
+	bootstrap apps/other/cups--bootstrap
+	apps/other/cups-1.2.1
+	apps/other/esp-ghostscript-8.15.1-linux
+	apps/other/cups-1-gutenprint-5.0.0
+	apps/other/cups-1-splix-1.0.1-1
+;	apps/utils/Preferences/Printers
+;	apps/utils/PrintQueue
+
+	apps/other/sane-backends-1.0.18
+
+;	For rescopy:
+	apps/gnu/binutils-2.17-objcopy
+	apps/gnu/findutils-4.2.30
+	apps/gnu/gzip-1.3.9
+	apps/gnu/inetutils-1.5
+	apps/gnu/less-394
+	apps/gnu/tar-1.16.1
+	apps/other/zip-2.32
+;	For grub-install:
+	apps/gnu/diffutils-2.8.1
+
+;	sys/appserver/appserver/drivers/decorators/amiga
+;	sys/appserver/appserver/drivers/decorators/beish
+;	sys/appserver/appserver/drivers/decorators/drow
+;	sys/appserver/appserver/drivers/decorators/mulvane
+;	sys/appserver/appserver/drivers/decorators/next
+;	sys/appserver/appserver/drivers/decorators/red
+;	Locks up and makes the system inaccessible:
+;	sys/appserver/appserver/drivers/decorators/warpspeed
+;	sys/appserver/appserver/drivers/decorators/win98
+;	sys/appserver/appserver/drivers/decorators/Winter
+;	apps/desktop/dock_plugins/battery
+;	apps/desktop/dock_plugins/clock
+;	apps/desktop/dock_plugins/Address
+;	apps/desktop/dock_plugins/Camera
+;	apps/desktop/dock_plugins/ColdFishRemote
+;	apps/desktop/dock_plugins/CpuSpeed
+;	apps/desktop/dock_plugins/Meter
+;	apps/desktop/dock_plugins/Switcher
+;	apps/desktop/dock_plugins/WallpaperChanger
+;	apps/desktop/dock_plugins/Eyes
+;	apps/desktop/dock_plugins/Clipper
+;	apps/desktop/dock_plugins/Printer
+;	apps/media/coldfish
+;	apps/media/coldfish_plugins/blursk
+;	apps/media/coldfish_plugins/remote
+;	apps/media/mediaconverter
+;	apps/media/mediaplayer
+;	apps/utils/mixer
+;	apps/utils/Albert
+;	apps/utils/aclock
+;	apps/utils/aedit
+;	Too broken to include:
+;;	apps/utils/archiver
+;	apps/utils/aview
+;	apps/utils/Builder
+;	apps/utils/bzoom
+;	apps/utils/catalog
+;	apps/utils/charmap
+;	apps/utils/cpumon
+;	apps/utils/crypt
+;	apps/utils/DiskManager
+;	apps/utils/keymapconv
+;	apps/utils/Launch
+	apps/utils/Man
+;	apps/utils/memmon
+;	Needs objcopy from BinUtils:
+;	apps/utils/rescopy
+;	apps/utils/shelltools
+;	apps/utils/slbmgr
+;	apps/collab/Contact
+
+	libs/sdl-1.2.8
+;	sdl-config needs to be in the path:
+	bootstrap libs/sdl-1.2.8
+
+	libs/sdl-mixer-1.2.6
+	libs/sdl-net-1.2.6
+	libs/sdl-image-1.2.4
+	libs/sdl-sound--image
+	libs/sdl-ttf-2.0.9
+
+
+;	Still needs FreeType 2.1:
+	bootstrap libraries/freetype-2.1.10
+
+;	apps/other/xpdf--image-syllable
+;	Needs GCC < 4:
+;	apps/other/xpdf--image
+
+
+;	Binaries
+
+	apps/other/rebol-core--current
+
+
+;	Extra requirements for bootstrapping
+
+;	apps/gnu/binutils-2.17
+;	apps/gnu/make-3.81
+;	apps/other/ruby-1.8.6
+;	apps/gnu/nano--curses
+
+
+;	Extra goodies
+
+;	Needs GCC 3:
+;	apps/other/qemu-0.9.0

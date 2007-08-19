@@ -1,0 +1,44 @@
+#!/bin/bash
+
+#ln -s /system/bin .
+
+# For OpenSSL and others:
+ln -s /usr/indexes/bin/perl usr/bin/perl
+# For OpenSSL?
+ln -s /usr/indexes/bin/perl usr/local/bin/perl
+# From BinUtils, for building OpenSSL:
+ln -s /usr/indexes/bin/ranlib usr/bin/
+
+#mkdir dev
+mknod -m 600 dev/console c 5 1
+mknod -m 666 dev/null c 1 3
+
+#mount -v --bind /dev dev
+
+#mount -vt devpts devpts dev/pts
+#mount -vt tmpfs shm dev/shm
+#mount -vt proc proc proc
+#mount -vt sysfs sysfs sys
+
+#chroot "$LFS" /tools/bin/env -i HOME=/root TERM="$TERM" PS1='\u:\w\$ ' PATH=/bin:/usr/bin:/sbin:/usr/sbin:/tools/bin /tools/bin/bash --login +h
+
+#install -dv -m 0750 root
+install -dv -m 1777 tmp var/tmp
+
+#touch etc/mtab
+
+touch var/run/utmp var/log/{btmp,lastlog,wtmp}
+chgrp -v utmp var/run/utmp var/log/lastlog
+chmod -v 664 var/run/utmp var/log/lastlog
+
+
+#passwd root
+
+
+#install -dv lib/{firmware,udev/devices/{pts,shm}}
+mknod -m0666 lib/udev/devices/null c 1 3
+ln -sv /proc/self/fd lib/udev/devices/fd
+ln -sv /proc/self/fd/0 lib/udev/devices/stdin
+ln -sv /proc/self/fd/1 lib/udev/devices/stdout
+ln -sv /proc/self/fd/2 lib/udev/devices/stderr
+ln -sv /proc/kcore lib/udev/devices/core

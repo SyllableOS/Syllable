@@ -1,0 +1,10 @@
+; Parts to complete a system build
+
+resources
+;	Make GLibC suitable for running in an installed system:
+	usr/glibc/lib			linux/libc.so
+	usr/glibc/lib			linux/libpthread.so
+;	Old libraries for compatibility with applications for older versions of Syllable:
+;	system/libraries		GCC-libraries-3.4.3
+;	May work better than the standard ones:
+;	usr/share/terminfo/x	binaries/xterm-atheos
