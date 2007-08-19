@@ -2,7 +2,7 @@ COPTS = -c
 OBJS = main.o mainwindow.o datepicker.o timepicker.o
 EXE = DateTime
 
-CATALOGS = da de es es fr hu nl pt-br ru sv
+CATALOGS = da de el es fr hu nl pt-br ru sv
 
 $(EXE): catalogs $(OBJS)
 	$(CXX) $(OBJS) -lsyllable -o $(EXE)
