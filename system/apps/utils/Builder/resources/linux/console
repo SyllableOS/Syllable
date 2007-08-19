@@ -1,0 +1,25 @@
+# UTF-8:
+#UNICODE="yes"
+
+# UK:
+#KEYMAP="uk"
+
+# German with Euro:
+#KEYMAP="de-latin1"
+#KEYMAP_CORRECTIONS="euro2"
+#FONT="lat0-16 -m 8859-15"
+
+# Russian UTF-8:
+#UNICODE="yes"
+#KEYMAP="ru_ms"
+#LEGACY_CHARSET="koi8-r"
+#FONT="LatArCyrHeb-16"
+
+# Polish:
+#KEYMAP="pl2"
+#FONT="lat2a-16 -m 8859-2"
+
+# Bulgarian UTF-8:
+#UNICODE="yes"
+#KEYMAP="bg_bds-utf8"
+#FONT="LatArCyrHeb-16"

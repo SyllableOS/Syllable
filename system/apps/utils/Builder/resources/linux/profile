@@ -1,0 +1,41 @@
+export PWD
+
+# Run paths
+export PATH=/system/bin:/sbin:/bin:/usr/local/sbin:/usr/local/bin:/usr/indexes/sbin:/usr/indexes/bin:/usr/sbin:/usr/bin
+#export DLL_PATH=@bindir@/lib:/system/libraries:/system:/usr/local/lib:/usr/indexes/lib
+export LD_LIBRARY_PATH=/lib:/system/libraries:/system:/usr/local/lib:/usr/indexes/lib:/usr/lib
+
+# Paths for software compilation
+export LIBRARY_PATH=/usr/local/lib:/usr/indexes/lib:/usr/lib:/lib
+export C_INCLUDE_PATH=/usr/local/include:/usr/indexes/include:/usr/include:/system/include
+export CPLUS_INCLUDE_PATH=$C_INCLUDE_PATH
+
+# Set this right, or havoc may be wreaked in /system/init.sh
+export TEMP=/tmp
+
+export SYSTEM=Linux
+#export TERM=rxvt-16color
+#export TERM=xterm
+#export COLORTERM=rxvt-16color
+#export COLORTERM=xterm-color
+export LS_COLORS='no=00:fi=00:di=01;34:ln=00;34:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:ex=00;31:*.c=34:*.cpp=34:*.h=34:*.hpp=34:*.tar=01;31:*.tgz=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.gz=01;31:*.bz2=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.avi=01;35:*.fli=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.flac=01;35:*.mp3=01;35:*.mpc=01;35:*.ogg=01;35:*.wav=01;35:'
+
+export PAGER=less
+export LESSCHARSET=latin1
+export EDITOR=aedit
+
+case $TERM in
+	xterm* | rxvt*)
+		PROMPT_COMMAND="echo -ne \"\033]0;${USER}@${HOSTNAME}:\${PWD} - Syllable Terminal\007\"";;
+	*)
+		unset PROMPT_COMMAND;;
+esac
+
+alias ll='ls -l'
+alias dir='ls -l --color'
+alias more=less
+alias m=less
+
+#export LANG=<ll>_<CC>.<charmap><@modifiers>
+#export LANG=en_GB.ISO-8859-1
+#export LANG=nl_NL.UTF-8@euro
