@@ -3,7 +3,7 @@ authors
 	Kaj de Vos
 status				testing
 notes
-	Hangs during compilation on some machines
+	Hangs during compilation on some machines with GCC 4
 	Can't link SDL_sound
 
 ; To find SDL_net:
