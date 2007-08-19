@@ -1,6 +1,6 @@
-title	Command-Line Cornucopia
+title	Shell Essentials
 
-name	CommandLineCornucopia
+name	Shell Essentials
 
 modules
 	programming/languages/gawk-3.1.5

@@ -1,0 +1,8 @@
+title	Compression Cornucopia
+
+name	CompressionCornucopia
+
+modules
+	file/compression/p7zip-4.51
+	file/compression/unace-1.2b
+	file/compression/unrar-3.7.3
