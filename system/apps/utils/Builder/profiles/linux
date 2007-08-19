@@ -495,5 +495,6 @@ modules
 
 ;	Extra goodies
 
+	apps/other/bochs-2.3
 ;	Needs GCC 3:
 ;	apps/other/qemu-0.9.0
