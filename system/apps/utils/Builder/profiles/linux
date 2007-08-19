@@ -239,8 +239,8 @@ modules
 ;	other/keymaps
 ;	sys/include
 
-	linux/linux-2.6.21.1-headers
-	linux/linux-2.6.21.1
+	linux/linux-2.6.22.1-headers
+	linux/linux-2.6.22.1
 
 ;	For DirectFB:
 	linux/linux-fusion-3.2.3
