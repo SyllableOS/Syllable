@@ -10,8 +10,7 @@ then
 	exit 1
 fi
 
-echo "This will install the packages contained in the Command-Line 
-Cornucopia."
+echo "This will install the packages contained in the Shell Essentials."
 echo "Previously installed packages of the same name will be removed first."
 echo ""
 read -p "Do you want to continue (y/N)? " -e answer

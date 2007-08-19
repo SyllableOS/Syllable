@@ -1,5 +1,5 @@
-Command-Line Cornucopia for Syllable Server
-===========================================
+Shell Essentials for Syllable Server
+====================================
 
 22-Jul-2007
 
@@ -12,8 +12,8 @@ functionality for the Syllable operating system.
 If you encounter problems or have any other interesting observations,
 I would be interested to hear about them (see contact information).
 
-2 How to install the Command-Line Cornucopia on Syllable
-========================================================
+2 How to install the Shell Essentials on Syllable
+=================================================
 
 2.1 
 ---
@@ -26,7 +26,7 @@ Unpacking this distribution should have produced a directory with the
 contained packages, this README document, and an install script.
 Being the root user, go into the directory and run the install script:
 
-    cd CommandLineCornucopia
+    cd ShellEssentials
     ./install.sh
 
 The individual packages will be unpacked into /usr/. Subsequently, the
@@ -37,16 +37,16 @@ first. Please note, though, that no version of any of the packages
 should be previously registered with a different directory name under
 /usr/, because that would lead to conflicting package registrations.
 
-You should now be able to use the programs in the Command-Line Cornucopia.
+You should now be able to use the programs in the Shell Essentials.
 
-2.2 Uninstalling and upgrading Command-Line Cornucopia
-------------------------------------------------------
+2.2 Uninstalling and upgrading Shell Essentials
+-----------------------------------------------
 
 2.2.1 
 -----
 
-After installation, Command-Line Cornucopia is effectively no longer
-one package, but the individual packages it contained. If you ever want
+After installation, Shell Essentials is effectively no longer one
+package, but the individual packages it contained. If you ever want
 to remove one or more of those packages, you should execute the
 following procedure for each package. Again, you may have to become
 root first:
@@ -74,12 +74,12 @@ If you just want to uninstall an individual package, do:
     su -l
     build uninstall <package>
 
-2.2.3 Upgrading the entire Command-Line Cornucopia
---------------------------------------------------
+2.2.3 Upgrading the entire Shell Essentials
+-------------------------------------------
 
-Upgrading to a new version of the Command-Line Cornucopia pack is easy,
-since the install script will remove the existing packages and replace
-them with the new ones.
+Upgrading to a new version of the Shell Essentials pack is easy, since
+the install script will remove the existing packages and replace them
+with the new ones.
 
 3 Known problems and limitations
 ================================
@@ -90,7 +90,7 @@ documents that are included in each separate package.
 4 Contact information
 =====================
 
-This Command-Line Cornucopia pack was put together by Kaj de Vos. You can
+This Shell Essentials pack was put together by Kaj de Vos. You can
 send me problem reports, fixes and the like at
 
     shellpack@syllable.info
