@@ -1,4 +1,4 @@
-COPTS   = -I../../../server -c
+COPTS   = -I../../../server $(shell freetype-config --cflags) -c
 
 DEVBIN = /system/drivers/appserver/decorators
 OBJS =	WinterDecorator.o
@@ -27,7 +27,6 @@ objs:
 
 $(OBJDIR)/Winter: $(OBJS)
 	$(CXX) -plugin -Xlinker -Bsymbolic $(OBJS) -nodefaultlibs -o $(OBJDIR)/Winter
-
 
 install: $(OBJDIR)/Winter
 	cp -f $(OBJDIR)/Winter $(IMAGE)/$(DEVBIN)/Winter
