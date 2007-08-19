@@ -1,0 +1,4 @@
+authors				Kaj de Vos
+status				testing
+
+build-needs			automake
