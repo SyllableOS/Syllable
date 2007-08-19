@@ -1,4 +1,13 @@
 authors				Kaj de Vos
 status				testing
+notes				Won't activate DirectFB support
+
+build-needs
+	automake
+	autoconf
+;	Needed a Hermes fix:
+;	gcc < 4.1
+;	For DirectFB:
+	pkg-config
 
 configure-options	--enable-video-directfb
