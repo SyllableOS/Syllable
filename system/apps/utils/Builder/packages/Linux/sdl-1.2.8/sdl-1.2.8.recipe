@@ -1,8 +1,8 @@
 authors				Kaj de Vos
 status				testing
 
-build-needs
-	automake 1.8
+; Process the Syllable patches:
+patch
+	aclocal
+	automake
 	autoconf
-;	Needed a Hermes fix:
-;	gcc < 4.1
