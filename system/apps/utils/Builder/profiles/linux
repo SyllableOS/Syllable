@@ -247,8 +247,9 @@ modules
 	linux/linux--cleanup
 
 	libs/glibc-2.4-linux-image
-	libs/zlib-1.2.3-static
 	libs/zlib-1.2.3
+;	Merges with the dynamic version:
+	libs/zlib-1.2.3-static
 
 ;	stage libraries/gettext-0.16.1
 ;	stage libraries/flex-2.5.33
