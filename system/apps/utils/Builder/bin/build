@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.7.9
+# Version 0.7.10
 # Copyright (c) 2002-2007 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -523,7 +523,7 @@ def installModule originalStaging, staging, directive, target
 				then
 					false
 				else
-					if dirs = recipe['install-tree']
+					if dirs = recipe['install-tree'] and not exists? root
 						@log.header 'Creating subdirectories'
 						@log.detail root
 						Dir.mkdir root
@@ -1710,7 +1710,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.7.9',
+	puts 'Syllable Build System 0.7.10',
 		'Copyright (c) 2002-2007 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
