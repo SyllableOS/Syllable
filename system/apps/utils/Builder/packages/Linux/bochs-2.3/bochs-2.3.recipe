@@ -1,0 +1,23 @@
+authors
+	Flemming Sørensen
+	Kaj de Vos
+	Kristian Van Der Vliet
+maintainers			Kaj de Vos
+status				testing
+
+configure-options
+	--with-sdl
+;	--enable-cpu-level=6
+;	--enable-sse=2
+;	--enable-sep
+	--enable-cpu-level=5
+	--enable-vme
+	--enable-mmx
+	--enable-icache
+	--enable-pci
+	--enable-fast-function-calls
+	--enable-all-optimizations
+	--enable-clgd54xx
+	--enable-vbe
+	--enable-ne2000
+	--enable-sb16=linux
