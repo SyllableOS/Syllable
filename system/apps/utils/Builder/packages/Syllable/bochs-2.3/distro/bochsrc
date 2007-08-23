@@ -1,0 +1,61 @@
+config_interface: textconfig
+display_library: sdl
+megs: 64
+# Max?
+#megs: 369
+#romimage: file="/usr/bochs/share/bochs/BIOS-bochs-latest", address=0x00000
+#vgaromimage: file="/usr/bochs/share/bochs/VGABIOS-lgpl-latest"
+romimage: file=$BXSHARE/BIOS-bochs-latest, address=0x00000
+vgaromimage: file=$BXSHARE/VGABIOS-lgpl-latest
+#boot: floppy
+floppy_bootsig_check: disabled=0
+# no floppya
+# Floppy example:
+#floppya: 1_44=a.img, status=inserted
+# no floppyb
+ata0: enabled=1, ioaddr1=0x1f0, ioaddr2=0x3f0, irq=14
+ata1: enabled=1, ioaddr1=0x170, ioaddr2=0x370, irq=15
+ata2: enabled=0
+ata3: enabled=0
+# CD example:
+#ata0-master: type=cdrom, mode=flat, path=$PWD/aros.iso
+#boot: cdrom
+# Hard disk examples:
+#ata0-master: type=disk, path=/path/to/linux-img/minibootable.img, cylinders=900, heads=15, spt=17
+# 100 MB:
+#ata0-master: type=disk, path="/path/to/haiku.image", cylinders=204800, heads=1, spt=1
+#boot: c
+parport1: enabled=1, file=""
+parport2: enabled=0
+com1: enabled=1, mode=null, dev=""
+com2: enabled=0
+com3: enabled=0
+com4: enabled=0
+usb1: enabled=0
+i440fxsupport: enabled=1
+vga_update_interval: 100000
+vga: extension=vbe
+cpu: count=1, ips=2000000, reset_on_triple_fault=1
+text_snapshot_check: enabled=0
+private_colormap: enabled=0
+clock: sync=none, time0=local
+# no cmosimage
+ne2k: enabled=0
+pnic: enabled=0
+sb16: enabled=0
+# no loader
+log: -
+#log: bochsout.txt
+logprefix: %t%e%d
+debugger_log: -
+panic: action=fatal
+error: action=report
+info: action=report
+debug: action=ignore
+pass: action=fatal
+keyboard_type: mf
+keyboard_serial_delay: 250
+keyboard_paste_delay: 100000
+keyboard_mapping: enabled=0, map=
+user_shortcut: keys=none
+mouse: enabled=0, type=ps2
