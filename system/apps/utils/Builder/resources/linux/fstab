@@ -4,7 +4,7 @@
 proc			/proc			proc		defaults												0		0
 sysfs			/sys			sysfs		defaults												0		0
 devpts			/dev/pts		devpts		gid=4,mode=620											0		0
-#shm			/dev/shm		tmpfs		defaults												0		0
+shm				/dev/shm		tmpfs		defaults												0		0
 /dev/hda1		/				reiserfs	notail													0		1
 #/dev/hda1		/				ext3		defaults												1		1
 #/dev/hda2		swap			swap		pri=1													0		0
