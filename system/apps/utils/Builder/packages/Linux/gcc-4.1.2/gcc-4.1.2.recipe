@@ -2,7 +2,6 @@ authors				Kaj de Vos
 status				testing
 
 build-needs
-;	autoconf 2.57
 ;	Without make bootstrap:
 	gcc >= 2.95
 ;	For Fortran:
