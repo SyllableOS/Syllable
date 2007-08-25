@@ -242,9 +242,13 @@ modules
 	linux/linux-2.6.22.1-headers
 	linux/linux-2.6.22.1
 
+;	Kernel modules
+
 ;	For DirectFB:
 	linux/linux-fusion-3.2.3
 	linux/linux--cleanup
+
+	linux/kqemu-1.3.0pre11
 
 	libs/glibc-2.4-linux-image
 	libs/zlib-1.2.3
@@ -492,10 +496,3 @@ modules
 ;	apps/gnu/make-3.81
 ;	apps/other/ruby-1.8.6
 ;	apps/gnu/nano--curses
-
-
-;	Extra goodies
-
-	apps/other/bochs-2.3
-;	Needs GCC 3:
-;	apps/other/qemu-0.9.0
