@@ -15,7 +15,10 @@ needs
 build-needs			linux--headers
 conflicts			xen
 
+build-dir			.
+
 ;super-install
+install-tree
 
 documentation		README LICENSE COPYING Changelog kqemu-doc.html
 develop-docs		kqemu-tech.html
