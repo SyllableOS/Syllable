@@ -12,6 +12,7 @@ locations			http://fabrice.bellard.free.fr/qemu/
 needs
 	gcc < 4
 	sdl
+build-recommends	texi2html
 
 documentation
 	README LICENSE COPYING COPYING.LIB Changelog TODO
