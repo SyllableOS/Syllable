@@ -1,0 +1,20 @@
+authors				Kaj de Vos
+status				testing
+warnings
+	Builds upon the running kernel!
+	Needs the kernel source in /lib/modules/<kernel>/source/ or /lib/modules/<kernel>/build/.
+	Installs its kernel header in /usr/include/linux/.
+	Overwrites /lib/modules and installs itself in /lib/modules/<kernel>/drivers/.
+
+home				www.directfb.org
+locations			http://www.directfb.org/downloads/Core/
+
+needs				linux
+build-needs			linux--headers
+
+system-prefix-var	DESTDIR
+install-tree
+;move-files			/lib/modules/<kernel>/drivers /usr/linux/lib/modules/<kernel>/
+;delete-files		/lib/modules
+
+documentation		README ChangeLog TODO
