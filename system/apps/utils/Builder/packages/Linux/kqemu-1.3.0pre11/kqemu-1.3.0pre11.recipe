@@ -1,5 +1,6 @@
 authors				Kaj de Vos
 status				testing
+warnings			Needs built kernel source.
 
 headline			QEMU Accelerator driver
 description
