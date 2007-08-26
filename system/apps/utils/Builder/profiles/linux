@@ -246,9 +246,8 @@ modules
 
 ;	For DirectFB:
 	linux/linux-fusion-3.2.3
-	linux/linux--cleanup
-
 	linux/kqemu-1.3.0pre11
+	linux/linux--cleanup
 
 	libs/glibc-2.4-linux-image
 	libs/zlib-1.2.3
