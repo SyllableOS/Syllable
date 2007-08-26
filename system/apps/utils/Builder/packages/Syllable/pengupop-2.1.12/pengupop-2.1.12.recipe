@@ -1,0 +1,4 @@
+authors				Kaj de Vos
+status				testing
+
+configure-env		LDFLAGS "$LDFLAGS -lm"

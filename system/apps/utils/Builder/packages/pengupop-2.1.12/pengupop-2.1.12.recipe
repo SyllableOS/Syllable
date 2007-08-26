@@ -12,10 +12,7 @@ locations			http://www.junoplay.com/files/
 
 needs				sdl >= 1.2
 
-configure-env		LDFLAGS "$LDFLAGS -lm"
-
 documentation
 	README COPYING ChangeLog AUTHORS
 ;	Currently empty:
 ;	NEWS
-
