@@ -494,4 +494,11 @@ modules
 ;	apps/gnu/binutils-2.17
 ;	apps/gnu/make-3.81
 ;	apps/other/ruby-1.8.6
-;	apps/gnu/nano--curses
+
+
+;	Extra goodies
+
+	apps/gnu/nano--curses
+	apps/other/pengupop-2.1.12
+;	Needs GCC 3:
+;	apps/other/qemu-0.9.0
