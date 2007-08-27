@@ -1,3 +1,11 @@
+* August 27, 2007, Arno Klenke *
+
+Use lock_semaphore()/unlock_semaphore() instead of sleep_on_sem()/wakeup_sem()
+in the usb busmanager and disk driver to avoid lockups.
+Fixed libusb code.
+
+Added a driver for the s3 deltachrome card. Only bios based modesetting is supported.
+
 * August 17, 2007, Flemming H. Sørensen *
 
 Added Greek.
@@ -1412,3 +1420,4 @@ Added the following keymaps:
 * Jun 14 2002, Kristian Van Der Vliet *
 
 Implement get_tld(), set_tld() in process.c
+
