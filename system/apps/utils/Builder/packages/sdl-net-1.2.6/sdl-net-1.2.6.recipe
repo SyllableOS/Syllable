@@ -10,4 +10,4 @@ needs				sdl >= 1.2.4
 
 documentation		README COPYING CHANGES
 ; For some packages:
-links				include/SDL/SDL_net.h include/
+links				SDL/SDL_net.h include/

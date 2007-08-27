@@ -18,4 +18,4 @@ build-recommends
 
 documentation		README COPYING CHANGES
 ; For some packages:
-links				include/SDL/SDL_image.h include/
+links				SDL/SDL_image.h include/
