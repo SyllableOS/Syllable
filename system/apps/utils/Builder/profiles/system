@@ -188,6 +188,7 @@ modules
 	sys/kernel/drivers/graphics/mga
 	sys/kernel/drivers/graphics/radeon
 	sys/kernel/drivers/graphics/riva
+	sys/kernel/drivers/graphics/s3_chrome
 	sys/kernel/drivers/graphics/s3_virge
 	sys/kernel/drivers/graphics/savage
 	sys/kernel/drivers/graphics/sis3xx
@@ -301,6 +302,7 @@ modules
 	sys/appserver/appserver/drivers/video/radeon
 	sys/appserver/appserver/drivers/video/riva
 	sys/appserver/appserver/drivers/video/s3
+	sys/appserver/appserver/drivers/video/s3_chrome
 	sys/appserver/appserver/drivers/video/savage
 	sys/appserver/appserver/drivers/video/sis3xx
 	sys/appserver/appserver/drivers/video/tdfx
