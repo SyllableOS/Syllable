@@ -291,6 +291,7 @@ DeviceOperations_s g_sOperations = {
 static USB_libusb_node_s * alloc_usb_node( USB_device_s* psDevice, unsigned int nIfnum )
 {
 	USB_libusb_node_s *psUSBNode;
+	char zNode[PATH_MAX+1];	
 
 	psUSBNode = kmalloc( sizeof(USB_libusb_node_s), MEMF_KERNEL|MEMF_NOBLOCK|MEMF_CLEAR );
 
@@ -306,39 +307,51 @@ static USB_libusb_node_s * alloc_usb_node( USB_device_s* psDevice, unsigned int 
 		psUSBNode->hLock = create_semaphore( "libusb_node_lock", 1, 0 );
 		psUSBNode->hWait = create_semaphore( "libusb_node_wait", 0, 0 );
 	}
+	
+	sprintf( zNode, "usb/%d/%d-%i", psDevice->psBus->nBusNum, psDevice->nDeviceNum, nIfnum );
+	psUSBNode->hNode = create_device_node( g_nDeviceID, -1, zNode, &g_sOperations, psUSBNode );	
 
 	return psUSBNode;
 }
 
 /* Create node for the device */
-void libusb_add( USB_device_s* psDevice, unsigned int nIfnum )
+void libusb_add( USB_device_s* psDevice )
 {
 	USB_interface_s *psInterface;
 	USB_desc_interface_s *psDescInterface;
 	USB_desc_endpoint_s *psDescEndpoint;
 	USB_libusb_node_s *psUSBNode;
-	char zNode[PATH_MAX+1];
 	int i, nEndpoint;
+	
+	for( i=0; i < psDevice->psActConfig->nNumInterfaces; i++ )
+	{
+		psInterface = psDevice->psActConfig->psInterface + i;
 
-	/* Create a device node */
-	psUSBNode = alloc_usb_node( psDevice, nIfnum );
-	if( NULL == psUSBNode )
-		return;
+		/* Create a device node */
+		psUSBNode = alloc_usb_node( psDevice, i );
+		if( NULL == psUSBNode )
+			return;
 
-	sprintf( zNode, "usb/%d/%d", psDevice->psBus->nBusNum, psDevice->nDeviceNum );
-	psUSBNode->hNode = create_device_node( g_nDeviceID, -1, zNode, &g_sOperations, psUSBNode );
-
-	psDevice->psUSBNode = psUSBNode;
+		psInterface->psUSBNode = psUSBNode;
+	}
 }
 
 /* Remove node for the device */
 void libusb_remove( USB_device_s* psDevice )
 {
-	delete_device_node( psDevice->psUSBNode->hNode );
-	delete_semaphore( psDevice->psUSBNode->hLock );
-	delete_semaphore( psDevice->psUSBNode->hWait );
-	kfree( psDevice->psUSBNode );
-
-	return;
+	int i;
+	for( i = 0; i < psDevice->psActConfig->nNumInterfaces; i++ )
+	{
+		USB_interface_s* psInterface = psDevice->psActConfig->psInterface + i;
+	
+		if( psInterface->psUSBNode == NULL )
+			continue;
+			
+		delete_device_node( psInterface->psUSBNode->hNode );
+		delete_semaphore( psInterface->psUSBNode->hLock );
+		delete_semaphore( psInterface->psUSBNode->hWait );
+		kfree( psInterface->psUSBNode );
+	}
 }
+
 

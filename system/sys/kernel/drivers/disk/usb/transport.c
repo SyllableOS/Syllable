@@ -340,7 +340,7 @@ int usb_stor_clear_halt( USB_device_s * dev, int pipe )
 static void usb_stor_blocking_completion( USB_packet_s * psPacket )
 {
 	psPacket->bDone = true;
-	wakeup_sem( psPacket->hWait, false );
+	UNLOCK( psPacket->hWait );
 }
 
 /* This is our function to emulate usb_control_msg() but give us enough
@@ -374,7 +374,7 @@ int usb_stor_control_msg( USB_disk_s * psDisk, unsigned int pipe, uint8 request,
 	psDisk->current_urb->nTransferFlags = USB_ASYNC_UNLINK;
 
 	psDisk->current_urb->bDone = false;
-	psDisk->current_urb->hWait = create_semaphore( "usb_block_packet", 0, 0 );
+	psDisk->current_urb->hWait = create_semaphore( "usb_disk_control_packet", 0, 0 );
 
 	/* submit the URB */
 	status = g_psBus->submit_packet( psDisk->current_urb );
@@ -388,7 +388,7 @@ int usb_stor_control_msg( USB_disk_s * psDisk, unsigned int pipe, uint8 request,
 
 	/* wait for the completion of the URB */
 	//UNLOCK(psDisk->current_urb_sem);
-	sleep_on_sem( psDisk->current_urb->hWait, INFINITE_TIMEOUT );
+	LOCK( psDisk->current_urb->hWait );
 	//LOCK(psDisk->current_urb_sem);
 
 	delete_semaphore( psDisk->current_urb->hWait );
@@ -421,7 +421,7 @@ int usb_stor_bulk_msg( USB_disk_s * psDisk, void *data, int pipe, unsigned int l
 	psDisk->current_urb->nTransferFlags = USB_ASYNC_UNLINK;
 
 	psDisk->current_urb->bDone = false;
-	psDisk->current_urb->hWait = create_semaphore( "usb_block_packet", 0, 0 );
+	psDisk->current_urb->hWait = create_semaphore( "usb_disk_bulk_packet", 0, 0 );
 
 	/* submit the URB */
 	status = g_psBus->submit_packet( psDisk->current_urb );
@@ -432,7 +432,7 @@ int usb_stor_bulk_msg( USB_disk_s * psDisk, void *data, int pipe, unsigned int l
 		return status;
 	}
 
-	sleep_on_sem( psDisk->current_urb->hWait, INFINITE_TIMEOUT );
+	LOCK( psDisk->current_urb->hWait );
 	//LOCK(psDisk->current_urb_sem);
 
 	delete_semaphore( psDisk->current_urb->hWait );

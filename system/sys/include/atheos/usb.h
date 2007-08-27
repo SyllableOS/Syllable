@@ -169,8 +169,6 @@ struct USB_device_t
 	
 	
 	int				nHandle;
-
-	struct USB_libusb_node_t	*psUSBNode;
 };
 
 typedef struct USB_device_t USB_device_s;

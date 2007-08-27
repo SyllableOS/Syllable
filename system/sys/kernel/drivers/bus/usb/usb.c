@@ -341,9 +341,6 @@ status_t usb_find_interface_driver( USB_device_s* psDev, int nIFNum )
 	
 	LOCK( psDev->hLock );
 
-	/* Create libusb device node */
-	libusb_add( psDev, nIFNum );
-
 	psIF = psDev->psActConfig->psInterface + nIFNum;
 	
 	if( psIF->psDriver != NULL ) {
@@ -700,7 +697,7 @@ void usb_blocked_complete( USB_packet_s* psPacket )
 {
 	psPacket->bDone = true;
 	wmb();
-	wakeup_sem( psPacket->hWait, false );
+	UNLOCK( psPacket->hWait );
 	
 }
 
@@ -725,7 +722,7 @@ int usb_submit_packet_blocked( USB_packet_s* psPacket, bigtime_t nTimeOut, int* 
 	kerndbg( KERN_DEBUG, "usb_submit_packet_blocked(): Waiting...\n" );
 	while( nTime > get_system_time() && !psPacket->bDone )
 	{
-		sleep_on_sem( psPacket->hWait, nTimeOut );
+		lock_semaphore( psPacket->hWait, 0, nTimeOut );
 		rmb();
 	}
 	kerndbg( KERN_DEBUG, "usb_submit_packet_blocked(): Done!\n" );
@@ -1788,6 +1785,11 @@ int usb_new_device( USB_device_s* psDevice )
 
 	/* find drivers willing to handle this device */
 	usb_find_drivers_for_new_device( psDevice );
+	
+	/* Create libusb device node */
+	libusb_add( psDevice );
+
+
 	
 	return( 0 );
 }

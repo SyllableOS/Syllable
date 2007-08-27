@@ -119,6 +119,8 @@ typedef struct
 	struct USB_driver_t* psDriver;
 	
 	void* pPrivate;
+	
+	struct USB_libusb_node_t* psUSBNode;
 } USB_interface_s;
 
 /* Config descriptor */
