@@ -1,6 +1,6 @@
 authors				Kaj de Vos
 status				testing
-notes				Won't activate DirectFB support
+notes				Seems to be for an older DirectFB
 
 build-needs
 	automake
@@ -10,4 +10,7 @@ build-needs
 ;	For DirectFB:
 	pkg-config
 
-configure-options	--enable-video-directfb
+configure-env		PKG_CONFIG_PATH "$PKG_CONFIG_PATH:/usr/directfb/lib/pkgconfig"
+_configure-options
+	--disable-video-fbcon
+	--enable-video-directfb
