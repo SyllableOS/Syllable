@@ -1,0 +1,16 @@
+authors				Kaj de Vos
+status				testing
+
+licenses			GPL
+
+home				www.infodrom.org/projects/sysklogd/
+locations			http://www.infodrom.org/projects/sysklogd/download/
+
+;super-install
+;system-prefix-var	prefix
+install-tree
+install				sudo make prefix=$IMAGE install
+
+documentation		README.1st README.linux ANNOUNCE COPYING NEWS CHANGES
+build-docs			INSTALL
+internal-docs		MANIFEST
