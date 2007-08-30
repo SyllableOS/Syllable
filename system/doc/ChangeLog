@@ -1,3 +1,7 @@
+* August 30, 2007, Kaj de Vos *
+
+Moved loose documentation files in ports to "documentation" subdirectories.
+
 * August 27, 2007, Arno Klenke *
 
 Use lock_semaphore()/unlock_semaphore() instead of sleep_on_sem()/wakeup_sem()
@@ -1420,4 +1424,3 @@ Added the following keymaps:
 * Jun 14 2002, Kristian Van Der Vliet *
 
 Implement get_tld(), set_tld() in process.c
-
