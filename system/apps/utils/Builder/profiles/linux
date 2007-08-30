@@ -280,7 +280,7 @@ modules
 	linux/sysvinit-2.86
 	linux/lfs-bootscripts-6.3
 	bootstrap linux/udev--bootstrap
-	linux/udev-106
+	linux/udev-113
 ;	Needs udevinfo:
 	linux/udev-config
 	linux/module-init-tools-3.2.2

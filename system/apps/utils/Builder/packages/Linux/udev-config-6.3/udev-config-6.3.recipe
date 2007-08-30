@@ -1,0 +1,23 @@
+authors				Kaj de Vos
+status				testing
+
+locations			http://www.linuxfromscratch.org/lfs/downloads/6.3/
+
+; Runs udevinfo during build:
+needs				udev
+
+; Because /etc/udev/ is already created as root:
+super-install
+system-prefix-var	DESTDIR
+install-tree
+install-targets
+	install
+	install-doc
+	install-extra-doc
+
+documentation
+	ChangeLog
+;	doc
+
+pre-register		cp etc/udev/rules.d/[0-9]* $IMAGE/etc/udev/rules.d/
+;move-files			etc/udev/rules.d/[0-9]* /etc/udev/rules.d/

@@ -1,0 +1,21 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			udev-113
+
+packages			udev-113
+
+; $prefix must be empty:
+make				make
+
+;super-install
+;system-prefix-var	DESTDIR
+install-tree		bin
+; $prefix must be empty:
+; Because /usr/sbin/ is already created as root:
+install
+	true
+;	sudo make DESTDIR=$STAGE/bootstrap EXTRAS='extras/ata_id extras/cdrom_id extras/edd_id extras/firmware extras/floppy extras/path_id extras/rule_generator extras/scsi_id extras/usb_id extras/volume_id' install
+
+; Install a build-time link for UDev-Config to another UDev build in the system image:
+links				$IMAGE/usr/bin/udevinfo bin/
