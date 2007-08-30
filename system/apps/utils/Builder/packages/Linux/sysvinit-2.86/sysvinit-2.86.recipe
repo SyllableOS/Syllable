@@ -1,0 +1,15 @@
+authors				Kaj de Vos
+status				testing
+
+licenses			GPL-2+
+
+locations			ftp://ftp.cistron.nl/pub/people/miquels/sysvinit/
+
+build-dir			src
+
+super-install
+system-prefix-var	ROOT
+install-tree
+documentation
+	README COPYRIGHT
+	doc
