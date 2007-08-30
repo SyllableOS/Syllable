@@ -1,0 +1,10 @@
+authors				Kaj de Vos
+status				testing
+warnings			The servers reportedly don't work.
+
+build-needs			Syllable >= 0.6.4 | bash 2.0.3
+
+configure-options
+;	Ping acts irregular, and Syllable has its own:
+	--disable-ping
+;	--disable-servers
