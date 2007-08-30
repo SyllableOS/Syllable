@@ -1,0 +1,32 @@
+authors				Kaj de Vos
+status				testing
+
+licenses			GPL
+
+home				www.kerneltools.org
+locations			http://www.kerneltools.org/pub/downloads/module-init-tools/
+
+build-needs			zlib--static
+
+; May be needed for tests:
+;build-dir			.
+
+configure-options
+;	--prefix=/
+;	Static:
+	--enable-zlib
+	--with-moddir=/usr/linux/lib/modules
+
+;system-prefix-var	DESTDIR
+; Force overwrite:
+install-vars		INSTALL install
+
+documentation
+	COPYING NEWS ChangeLog FAQ AUTHORS TODO
+;	doc
+build-docs			README
+internal-docs		CODING
+
+links
+	sbin/depmod		/sbin/
+	sbin/modprobe	/sbin/
