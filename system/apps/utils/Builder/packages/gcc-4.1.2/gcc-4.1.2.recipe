@@ -53,10 +53,10 @@ test-options		-k
 
 ;install-prefix-var	DESTDIR
 
-; LFS prefers the one from BinUtils:
-;delete-files		lib/libiberty.a
-
 documentation
 	README FAQ faq.html BUGS bugs.html COPYING COPYING.LIB NEWS ChangeLog MAINTAINERS
 	ABOUT-NLS gcc/ABOUT-GCC-NLS
 build-docs			INSTALL
+
+; LFS prefers the one from BinUtils:
+;delete-files		lib/libiberty.a

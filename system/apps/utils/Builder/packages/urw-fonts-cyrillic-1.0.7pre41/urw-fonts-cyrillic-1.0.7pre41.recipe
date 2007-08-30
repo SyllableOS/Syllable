@@ -12,7 +12,7 @@ make				true
 install-tree
 install				true
 install-files		*.?f? .
-move-files			*.?f? /system/fonts/
 
 documentation		README README.tweaks COPYING ChangeLog TODO
 
+move-files			*.?f? /system/fonts/

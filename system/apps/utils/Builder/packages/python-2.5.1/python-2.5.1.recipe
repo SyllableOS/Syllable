@@ -16,10 +16,12 @@ test-targets		test
 
 ;install-prefix-var	DESTDIR
 ;install-targets		altinstall
-;delete-files		lib/python2.5/test
 
 documentation
 	README LICENSE Misc/NEWS Misc/HISTORY
 ;	Misc Doc
 develop-docs		Demo
+
 ;links				bin/python /usr/bin/python
+
+;delete-files		lib/python2.5/test

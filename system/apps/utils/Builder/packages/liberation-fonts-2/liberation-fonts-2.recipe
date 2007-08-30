@@ -14,6 +14,7 @@ make				true
 install-tree
 install				true
 install-files		*.ttf .
-move-files			*.ttf /system/fonts/
 
 documentation		License.txt COPYING
+
+move-files			*.ttf /system/fonts/

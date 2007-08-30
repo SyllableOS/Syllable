@@ -19,7 +19,6 @@ configure-options
 
 system-prefix-var	DESTDIR
 
-;move-files			share/terminfo /usr/share/
 documentation
 	README INSTALL ANNOUNCE NEWS AUTHORS TO-DO
 	doc/html
@@ -37,3 +36,5 @@ links
 	include/ncurses		/usr/include/
 ;	For LinuxTree:
 	bin/clear			/usr/bin/
+
+;move-files			share/terminfo /usr/share/

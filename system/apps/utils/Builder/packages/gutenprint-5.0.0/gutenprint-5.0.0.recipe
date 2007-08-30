@@ -33,6 +33,11 @@ configure-options
 	--disable-libgutenprintui
 	--disable-libgutenprintui2
 
+documentation
+	README ABOUT-NLS COPYING NEWS ChangeLog AUTHORS
+;	doc
+;	samples
+
 ; Most users don't want all of the PPD files installed. Move them out of the way for later processing.
 ;move-files			share/cups/model /tmp/
 
@@ -40,9 +45,3 @@ _delete-files
 	sbin/cups-genppd.5.0
 	sbin/cups-genppdconfig.5.0
 	sbin/cups-genppdupdate.5.0
-
-documentation
-	README ABOUT-NLS COPYING NEWS ChangeLog AUTHORS
-;	doc
-;	samples
-

@@ -22,9 +22,8 @@ install-files
 	luximb.ttf		LuxiMono-Bold.ttf
 	luximbi.ttf		LuxiMono-BoldOblique.ttf
 
-move-files			*.ttf /system/fonts/
-
 documentation
 	COPYING
 ;	COPYRIGHT.BH
 
+move-files			*.ttf /system/fonts/

@@ -18,6 +18,6 @@ patch-config		bin/scripts
 build-dir			.
 
 ;install-tree		documentation
-;move-files			*.html documentation/
 
 documentation		README.unix COPYING COPYING.LIB ReleaseNotes.txt CREDITS
+;move-files			*.html documentation/

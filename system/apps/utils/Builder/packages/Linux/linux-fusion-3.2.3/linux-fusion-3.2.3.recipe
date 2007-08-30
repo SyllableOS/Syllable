@@ -14,7 +14,8 @@ build-needs			linux--headers
 
 system-prefix-var	DESTDIR
 install-tree
-;move-files			/lib/modules/<kernel>/drivers /usr/linux/lib/modules/<kernel>/
-;delete-files		/lib/modules
 
 documentation		README ChangeLog TODO
+
+;move-files			/lib/modules/<kernel>/drivers /usr/linux/lib/modules/<kernel>/
+;delete-files		/lib/modules

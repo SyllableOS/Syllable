@@ -44,15 +44,6 @@ install-files
 	System.map				System.map-2.6.22.1
 	.config					config-2.6.22.1
 ;	Documentation			.
-_move-files
-	kernel-2.6.22.1			/boot/
-	System.map-2.6.22.1		/boot/
-	config-2.6.22.1			/boot/
-;	Documentation/*			/usr/share/doc/linux-2.6.22.1/
-_delete-files
-;	Symlinks to the kernel source on the build host:
-	lib/modules/2.6.22.1-Syllable/build
-	lib/modules/2.6.22.1-Syllable/source
 
 documentation		Documentation
 
@@ -64,3 +55,13 @@ links
 ;	/usr/indexes/lib/modules	/lib/
 
 ;pre-register		mkinitrd /boot/initrd-2.6.22.1.img 2.6.22.1
+
+_move-files
+	kernel-2.6.22.1			/boot/
+	System.map-2.6.22.1		/boot/
+	config-2.6.22.1			/boot/
+;	Documentation/*			/usr/share/doc/linux-2.6.22.1/
+_delete-files
+;	Symlinks to the kernel source on the build host:
+	lib/modules/2.6.22.1-Syllable/build
+	lib/modules/2.6.22.1-Syllable/source
