@@ -1,0 +1,31 @@
+authors				Kaj de Vos
+status				testing
+
+; GPL-2 with limiting modification:
+licenses			other
+
+home				namesys.com
+locations
+	http://ftp.namesys.com/pub/reiserfsprogs/
+	ftp://ftp.namesys.com/pub/reiserfsprogs/
+
+; For libuuid:
+needs				e2fsprogs
+
+build-dir			.
+
+; To find e2fsprogs:
+configure-env		CPPFLAGS "$CPPFLAGS -I/usr/indexes/include"
+;configure-options	--sbindir=/sbin
+
+;super-install
+;system-prefix-var	DESTDIR
+
+documentation
+	README COPYING CREDITS
+;	Empty:
+;	NEWS AUTHORS
+
+links
+	reiserfsck sbin/fsck.reiserfs
+	mkreiserfs sbin/mkfs.reiserfs

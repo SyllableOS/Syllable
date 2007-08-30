@@ -1,0 +1,42 @@
+Submitted By: Hatzimanikas Agathoklis (a dot hatzim at gmail dot com)
+Date: 2006-10-20
+Initial Package Version: 3.6.19
+Origin: Fedora
+Upstream Status: Unknown
+Description: Fix a build problem with the new headers.
+
+diff -Naur reiserfsprogs-3.6.19.orig/include/reiserfs_fs.h reiserfsprogs-3.6.19/include/reiserfs_fs.h
+--- reiserfsprogs-3.6.19.orig/include/reiserfs_fs.h	2006-10-20 00:48:18.447463499 +0300
++++ reiserfsprogs-3.6.19/include/reiserfs_fs.h	2006-10-20 00:48:31.169529451 +0300
+@@ -38,15 +38,22 @@
+ # define extern_inline
+ #endif
+ 
+-#include <asm/unaligned.h>
++#define get_unaligned(ptr)                  \
++({                                             \
++	struct __attribute__((packed)) {        \
++	typeof(*(ptr)) __v;             \
++	}  *__p = (void *)(ptr);                \
++	__p->__v;                               \
++})
++
++#define put_unaligned(val, ptr)             \
++do {                                           \
++	struct __attribute__((packed)) {        \
++	typeof(*(ptr)) __v;             \
++	}  *__p = (void *)(ptr);                \
++	__p->__v = (val);                       \
++} while(0)
+ 
+-#ifndef get_unaligned
+-#if defined(__ppc__) || defined(ppc) || defined(__ppc) || \
+-    defined(__PPC) || defined(powerpc) || defined(__powerpc__)
+-#	define get_unaligned(ptr)	(*(ptr))
+-#	define put_unaligned(val,ptr)	((void)(*(ptr) = (val)))
+-#endif
+-#endif
+ 
+ #define get_leXX(xx,p,field)	(le##xx##_to_cpu ((p)->field))
+ #define set_leXX(xx,p,field,val) do { (p)->field = cpu_to_le##xx(val); } while (0)
+
