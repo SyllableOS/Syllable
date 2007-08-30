@@ -1,0 +1,47 @@
+authors				Kaj de Vos
+status				testing
+
+licenses			GPL
+
+home				linux-net.osdl.org/index.php/Iproute2
+; Sub-version date is considered a flavor:
+packages			iproute2-2.6.20-070313
+locations			http://developer.osdl.org/dev/iproute2/download/
+
+build-needs
+;	For headers:
+	linux
+	flex
+	bison
+; For arpd:
+needs				db 1.85
+
+build-dir			.
+
+;configure			true
+
+;make-env			CPPFLAGS "-I$IMAGE/include $CPPFLAGS"
+make-env
+;	CPPFLAGS "-I$IMAGE/usr/linux/include $CPPFLAGS"
+;	Private libs conflict with system libs, and so need to be first when bootstrap is set:
+	LDFLAGS "-L../lib $LDFLAGS"
+;make-vars
+;	FHS compatibility:
+;	SBINDIR '/sbin'
+;	Doesn't work:
+;	KERNEL_INCLUDE "$IMAGE/usr/linux/include"
+
+system-prefix-var	DESTDIR
+install-tree
+; FHS compatibility:
+;install-vars		SBINDIR '/sbin'
+
+documentation
+	README README.lnstat README.iproute2+tc README.decnet README.distribution COPYING ChangeLog
+;	Old:
+;	RELNOTES
+;	doc
+internal-docs		RELNOTES
+
+; FHS compatibility:
+;links				sbin/arpd /usr/sbin/
