@@ -1,0 +1,6 @@
+authors				Kaj de Vos
+status				testing
+
+configure-options
+	--enable-shared
+	--enable-static
