@@ -1,0 +1,27 @@
+authors				Kaj de Vos
+status				testing
+
+licenses			ISC BSD
+
+home
+	www.sudo.ws/sudo/
+;	www.courtesan.com/sudo/
+;	www.gratisoft.us/sudo/
+locations
+	http://www.sudo.ws/sudo/dist/
+	ftp://ftp.sudo.ws/pub/sudo/
+	http://www.courtesan.com/sudo/dist/
+	http://www.gratisoft.us/sudo/dist/
+
+configure-options
+;	--libexecdir=/usr/lib
+	--enable-noargs-shell
+	--with-ignore-dot
+	--with-all-insults
+	--enable-shell-sets-home
+
+;system-prefix-var	DESTDIR
+
+documentation		README README.LDAP TROUBLESHOOTING BUGS UPGRADE LICENSE CHANGES HISTORY TODO
+build-docs			INSTALL
+internal-docs		RUNSON PORTING
