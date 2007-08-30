@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.7.10
+# Version 0.7.11
 # Copyright (c) 2002-2007 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -587,6 +587,16 @@ def installModule originalStaging, staging, directive, target
 							end
 						then
 							false
+						elsif
+							(docs = "#{toString recipe['documentation']} #{toString recipe['develop-docs']}") != ' ' and not
+							begin
+								@log.header 'Installing documentation'
+								@log.detail dir = File.join(root, 'documentation')
+								Dir.mkdir dir
+								action superAccess + "cp -a #{docs} " + dir
+							end
+						then
+							false
 						else
 							Dir.chdir root
 
@@ -616,6 +626,72 @@ def installModule originalStaging, staging, directive, target
 								)
 							then
 								false
+							elsif not
+								(lineage = lineage target).each_with_index {|kin, i|
+									ancestor = i < lineage.size - 1
+
+									if exists? dir = File.join(recipePath(kin), 'distro')
+										@log.header 'Overlaying extra files' + (ancestor ? ' from ancestor ' + kin : '')
+										break unless copyFiles dir, root, superAccess
+									end
+								}
+							then
+								false
+							elsif links = recipe['links'] and links != '' and not
+								begin
+									@log.header 'Creating links'
+
+									for link in parseList links
+										original, destination = toList link
+										linkPath = File.dirname destination
+										linkFile = File.basename destination
+
+										if linkPath[0, 1] == '/'  # A link into the system
+											next unless staging == 'image' or not staging
+
+											original = File.join prefix(staging, target), original if original['/']
+
+											if staging == 'image'
+												linkPath = File.join @systemRoot,
+													@syllable && linkPath[0, 4] != '/usr' ?
+														'system' :  # A link into the core system
+														'',
+													linkPath
+											end
+										else  # A link within the package
+											linkPath = File.join root, linkPath
+										end
+
+										break unless action superAccess + "cd #{linkPath} && ln -sf #{original} " + linkFile
+									end
+								end
+							then
+								false
+							elsif not @settings['no-strip'] || recipe['no-strip'] || (
+									(dirs = ['bin', 'sbin', 'libexec'].collect {|dir|
+										exists?(dir = File.join(root, dir)) ? dir : nil
+									}.compact).empty? ||
+									begin
+										@log.header 'Stripping executables'
+										#--strip-unneeded
+										action superAccess + 'strip --strip-all' + dirs.collect {|dir| ' ' + File.join(dir, '*')}.join or
+											$? >> 8 == 1  # File type not recognized
+									end and
+									! exists?(dir = File.join(root, 'lib')) ||
+									begin
+										@log.header 'Stripping libraries'
+										action superAccess + 'strip --strip-debug ' + File.join(dir, '*') or $? >> 8 == 1
+									end
+								)
+							then
+								false
+							elsif cmdLine = recipe['pre-register'] and not
+								begin
+									@log.header 'Executing pre-registration commands'
+									action toCommand(cmdLine)
+								end
+							then
+								false
 							elsif files = recipe['move-files'] and not
 								begin
 									@log.header 'Moving files'
@@ -638,92 +714,24 @@ def installModule originalStaging, staging, directive, target
 								end
 							then
 								false
-							else
-								(docs = "#{toString recipe['documentation']} #{toString recipe['develop-docs']}") == ' ' or
+							elsif (originalStaging == 'image' and @systemBuild or not originalStaging) and
+									['system', 'libraries'].include? directive and not
 								begin
-									@log.header 'Installing documentation'
-									Dir.chdir @workDir
-									Dir.chdir target
-									action superAccess + "cp -a #{docs} " + root
-								end
-							end
-						end
-					end and
-					if not
-						(lineage = lineage target).each_with_index {|kin, i|
-							ancestor = i < lineage.size - 1
+									@log.header 'Moving shared libraries into system'
 
-							if exists? dir = File.join(recipePath(kin), 'distro')
-								@log.header 'Overlaying extra files' + (ancestor ? ' from ancestor ' + kin : '')
-								break unless copyFiles dir, root, superAccess
-							end
-						}
-					then
-						false
-					elsif links = recipe['links'] and links != '' and not
-						begin
-							@log.header 'Creating links'
-
-							for link in parseList links
-								original, destination = toList link
-								linkPath = File.dirname destination
-								linkFile = File.basename destination
-
-								if linkPath[0, 1] == '/'  # A link into the system
-									next unless staging == 'image' or not staging
-
-									original = File.join prefix(staging, target), original if original['/']
-
-									if staging == 'image'
-										linkPath = File.join @systemRoot,
-											@syllable && linkPath[0, 4] != '/usr' ?
-												'system' :  # A link into the core system
-												'',
-											linkPath
+									for libs in ['*.so', '*.so.*']
+										break unless action superAccess + "mv #{File.join(root, 'lib', libs)} " +
+											File.join(originalStaging ? @systemRoot : '/',
+												'system/libraries/'
+											)
 									end
-								else  # A link within the package
-									linkPath = File.join root, linkPath
 								end
-
-								break unless action superAccess + "cd #{linkPath} && ln -sf #{original} " + linkFile
+							then
+								false
+							else
+								registerModule staging, target, root
 							end
 						end
-					then
-						false
-					elsif not @settings['no-strip'] || recipe['no-strip'] || (
-							(dirs = ['bin', 'sbin', 'libexec'].collect {|dir|
-								exists?(dir = File.join(root, dir)) ? dir : nil
-							}.compact).empty? ||
-							begin
-								@log.header 'Stripping executables'
-								#--strip-unneeded
-								action superAccess + 'strip --strip-all' + dirs.collect {|dir| ' ' + File.join(dir, '*')}.join or
-									$? >> 8 == 1  # File type not recognized
-							end and
-							! exists?(dir = File.join(root, 'lib')) ||
-							begin
-								@log.header 'Stripping libraries'
-								action superAccess + 'strip --strip-debug ' + File.join(dir, '*') or $? >> 8 == 1
-							end
-						)
-					then
-						false
-					elsif (originalStaging == 'image' and @systemBuild or not originalStaging) and
-							['system', 'libraries'].include? directive and not
-						begin
-							@log.header 'Moving shared libraries into system'
-
-							for libs in ['*.so', '*.so.*']
-								break unless action superAccess + "mv #{File.join(root, 'lib', libs)} " +
-									File.join(originalStaging ? @systemRoot : '/',
-										'system/libraries/'
-									)
-							end
-						end
-					then
-						false
-					else
-						registerModule staging, target, root
 					end
 				end
 			end
@@ -1710,7 +1718,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.7.10',
+	puts 'Syllable Build System 0.7.11',
 		'Copyright (c) 2002-2007 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
