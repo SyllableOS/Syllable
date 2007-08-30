@@ -13,4 +13,4 @@ install-files
 	bin/7zCon.sfx	bin/
 	man1			man/
 
-post-install		chmod -x bin/7z.so
+pre-register		chmod -x bin/7z.so

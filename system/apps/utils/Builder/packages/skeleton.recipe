@@ -137,19 +137,13 @@ install-vars
 ; Non-standard install targets:
 install-targets		install
 
-post-install		<Commands after make install, before registration>
+post-install		<Commands after make install, in the build directory>
+
 ; Extra files to install from the source tree:
 install-files
 	<Original> <Destination>
 
-; Files to move within the installation
-; If the destination is an absolute path it will be relative to the root
-; of the system image.
-move-files
-	<Source> <Destination>
-delete-files		<Files to delete from the installation>
 ; General documentation to install:
-
 documentation		[README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS]
 ; Documentation for building from source:
 ;build-docs			INSTALL
@@ -157,11 +151,11 @@ documentation		[README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS]
 develop-docs		[docs]
 ; Internal documentation for developers of the package itself:
 ;internal-docs		docs
+
 ; Links to create
 ; The path of the original is relative to the path of the link in the case of
 ; a link that's internal to the package, and relative to the package root
 ; in the case of a link in the system.
-
 links
 	[<Original> <Link>]
 ;	<Links path>
@@ -169,3 +163,12 @@ links
 
 ; Don't strip binaries:
 ;no-strip
+
+pre-register		<Commands before registration, in the installation directory>
+
+; Files to move within the installation
+; If the destination is an absolute path it will be relative to the root
+; of the system image.
+move-files
+	<Source> <Destination>
+delete-files		<Files to delete from the installation>

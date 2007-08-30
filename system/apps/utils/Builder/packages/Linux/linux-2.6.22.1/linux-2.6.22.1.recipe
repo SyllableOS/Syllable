@@ -63,4 +63,4 @@ links
 	lib/modules					/lib/
 ;	/usr/indexes/lib/modules	/lib/
 
-;post-install		mkinitrd /boot/initrd-2.6.22.1.img 2.6.22.1
+;pre-register		mkinitrd /boot/initrd-2.6.22.1.img 2.6.22.1

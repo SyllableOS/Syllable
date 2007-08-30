@@ -5,6 +5,6 @@ notes
 
 inherits			glibc-2.4
 
-post-install
-	echo 'OUTPUT_FORMAT(elf32-i386)' > $IMAGE/usr/glibc/lib/libc.so
-	echo "GROUP ( $IMAGE/system/libraries/libc.so.2 $IMAGE/usr/glibc/lib/libc_nonshared.a )" >> $IMAGE/usr/glibc/lib/libc.so
+pre-register
+	echo 'OUTPUT_FORMAT(elf32-i386)' > lib/libc.so
+	echo "GROUP ( $IMAGE/system/libraries/libc.so.2 $IMAGE/usr/glibc/lib/libc_nonshared.a )" >> lib/libc.so
