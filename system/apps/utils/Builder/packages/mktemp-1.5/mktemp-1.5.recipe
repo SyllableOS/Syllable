@@ -1,0 +1,22 @@
+authors				Kaj de Vos
+status				testing
+
+licenses			BSD
+
+home				www.mktemp.org
+locations
+	ftp://ftp.mktemp.org/pub/mktemp/
+	http://www.mktemp.org/dist/
+
+configure-options
+	--with-libc
+;	--with-random=/dev/urandom
+
+install-targets
+	install
+	install-tempfile
+;	install-binaries
+;	install-man
+
+documentation		README LICENSE RELEASE_NOTES
+build-docs			INSTALL
