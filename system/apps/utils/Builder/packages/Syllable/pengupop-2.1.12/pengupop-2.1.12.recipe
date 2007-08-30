@@ -2,3 +2,5 @@ authors				Kaj de Vos
 status				testing
 
 configure-env		LDFLAGS "$LDFLAGS -lm"
+
+;move-files			bin/pengupop /Applications/Pengupop/
