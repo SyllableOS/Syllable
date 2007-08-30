@@ -1,0 +1,36 @@
+authors				Kaj de Vos
+status				testing
+
+locations			http://www.kernel.org/pub/linux/utils/util-linux/
+
+needs				ncurses
+recommends
+	e2fsprogs
+	pam
+_conflicts
+	glibc
+	procps
+
+build-dir			.
+
+; For static linking:
+;configure-env		LDFLAGS "$LDFLAGS -static"
+
+make-vars
+;	Also in GLibC:
+	HAVE_SLN 'yes'
+;	Also in ProcPS:
+	HAVE_KILL 'yes'
+
+super-install
+system-prefix-var	DESTDIR
+install-tree
+install-vars
+;	Also in GLibC:
+	HAVE_SLN 'yes'
+;	Also in ProcPS:
+	HAVE_KILL 'yes'
+
+documentation		README HISTORY MAINTAINER
+build-docs			INSTALL
+;links				agetty /sbin/getty
