@@ -4,6 +4,12 @@ authors
 maintainers			Henrik Isaksson
 status				developing
 
+build-needs			autoconf
+
+patch
+	autoconf
+;	autoconf -o configure configure.ac
+
 _configure-options
 	--enable-threads=posix
 	--enable-cplusplus
