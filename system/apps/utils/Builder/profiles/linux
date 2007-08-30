@@ -285,7 +285,7 @@ modules
 	linux/udev-config
 	linux/module-init-tools-3.2.2
 ;	Incompatible with host libdl from different GLibC!
-	linux/e2fsprogs-1.39
+	linux/e2fsprogs-1.40.2
 ;	Uses headers from /usr/include/!
 	linux/util-linux-2.12r
 	linux/sysklogd-1.4.1

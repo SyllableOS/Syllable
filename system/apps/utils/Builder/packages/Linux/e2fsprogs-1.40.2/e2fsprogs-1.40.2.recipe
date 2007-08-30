@@ -1,0 +1,32 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			sourceforge
+
+licenses			GPL BSD
+
+home				e2fsprogs.sourceforge.net
+packages			e2fsprogs/e2fsprogs-1.40.2
+
+;build-dir			build
+
+configure-options
+;	--with-root-prefix=''
+	--enable-elf-shlibs
+	--disable-evms
+
+install-targets
+	install
+;	Static libraries and headers:
+	install-libs
+
+documentation
+	README COPYING ABOUT-NLS RELEASE-NOTES ChangeLog
+;	doc
+build-docs			INSTALL
+internal-docs		SUBMITTING-PATCHES SHLIBS
+
+; Linked into mount, which is called before the loader path is set:
+links
+	lib/libblkid.so.1	/usr/glibc/lib/
+	lib/libuuid.so.1	/usr/glibc/lib/
