@@ -1,0 +1,35 @@
+authors				Kaj de Vos
+status				testing
+
+licenses			LGPL-2+
+
+home				www.directfb.org
+packages			DirectFB-1.0.1
+locations			http://www.directfb.org/downloads/Core/
+
+needs
+	linux >= 2.2
+	linux-fusion
+	zlib
+recommends
+	libsysfs
+	freetype >= 2.0.1
+	libjpeg
+	libpng
+	libgif
+;	sdl
+	libmpeg3
+
+;configure-options
+;	--enable-debug
+;	--enable-trace
+;	--enable-multi
+;	--enable-zlib
+;	--with-tests
+
+;system-prefix-var	DESTDIR
+
+documentation
+	README COPYING NEWS ChangeLog AUTHORS TODO
+;	docs
+build-docs			patches/README.*
