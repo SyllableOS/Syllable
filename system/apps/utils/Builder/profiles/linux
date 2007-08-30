@@ -278,7 +278,7 @@ modules
 	apps/other/orca--current
 
 	linux/sysvinit-2.86
-	linux/bootscripts
+	linux/lfs-bootscripts-6.3
 	bootstrap linux/udev--bootstrap
 	linux/udev-106
 ;	Needs udevinfo:
