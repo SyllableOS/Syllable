@@ -1,0 +1,37 @@
+authors				Kaj de Vos
+status				testing
+
+licenses			BSD | Artistic
+
+; Restricted:
+home				shadow.pld.org.pl
+locations
+;	Restricted:
+;	ftp://ftp.pld.org.pl/software/shadow/
+;	Archived:
+;	ftp://ftp.pld.org.pl/software/shadow/old/
+	http://cross-lfs.org/files/packages/sysroot-0.0.1/
+
+recommends
+	cracklib
+	skey
+conflicts
+;	su, groups:
+	coreutils
+;	Chinese and Korean:
+	man-db
+
+configure-options
+;	--libdir=/lib
+	--sysconfdir=/etc
+	--enable-shared
+	--without-selinux
+;	--with-libcrack
+
+system-prefix-var	DESTDIR
+
+documentation
+	README ABOUT-NLS COPYING NEWS ChangeLog TODO
+;	doc
+
+links				bin/login /bin/
