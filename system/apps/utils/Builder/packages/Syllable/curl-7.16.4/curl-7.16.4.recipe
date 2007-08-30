@@ -1,0 +1,27 @@
+authors				Kaj de Vos
+status				testing
+
+needs
+	Syllable >= 0.6.3
+	c-ares >= 1.3.2
+recommends
+	zlib
+	openssl | gnutls | yassl
+	openldap
+	kerberos4
+	heimdal
+	fbopenssl
+	libidn
+	libssh2
+
+make-shared
+
+configure-options
+	--with-random=/dev/random
+;	GLibC's DNS resolver is not threadsafe yet on Syllable:
+	--enable-ares
+;	C-ARes isn't IPv6 compatible yet:
+;	--disable-ipv6
+	--enable-ldap
+;	Doesn't seem to help:
+	--enable-manual

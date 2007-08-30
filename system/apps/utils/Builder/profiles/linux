@@ -389,7 +389,7 @@ modules
 	stage libraries/openssl--stage
 
 	apps/other/libusb-0.1.12
-	apps/other/curl-7.16.2-linux
+	apps/other/curl-7.16.4
 	apps/other/msntp-1.6
 
 ;	Fool subsequent packages into adding files to CUPS in the image area:
