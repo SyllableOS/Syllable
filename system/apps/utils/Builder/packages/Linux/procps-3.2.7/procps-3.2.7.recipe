@@ -1,0 +1,17 @@
+authors				Kaj de Vos
+status				testing
+warnings			Install messes with the permissions of /dev/null in the running system!
+
+licenses			GPL LGPL
+
+home				procps.sourceforge.net
+locations			http://procps.sourceforge.net
+
+needs				ncurses
+
+;super-install
+system-prefix-var	DESTDIR
+install-tree
+
+documentation		README README.top COPYING COPYING.LIB NEWS BUGS TODO AUTHORS
+internal-docs		CodingStyle
