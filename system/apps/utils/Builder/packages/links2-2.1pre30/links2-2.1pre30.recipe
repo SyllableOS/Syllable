@@ -1,0 +1,35 @@
+authors				Kaj de Vos
+status				testing
+
+headline			Text and graphics mode web browser
+description
+	Links is a web browser running in both graphics and text mode.
+licenses			GPL-2+
+
+home				links.twibright.com
+packages			links-2.1pre30
+locations			http://links.twibright.com/download/
+
+; For graphics mode:
+needs				libpng <> 1.2.18
+recommends
+	directfb
+	libjpeg
+	libtiff
+	openssl
+	zlib
+	bzip2
+
+build-dir			.
+
+configure-options
+	--enable-graphics
+;	--without-fb
+;	Removed!:
+	--enable-javascript
+;	--with-ssl
+
+documentation
+	README SITES KEYS BUGS COPYING NEWS ChangeLog BRAILLE_HOWTO TODO AUTHORS
+	doc
+build-docs			INSTALL
