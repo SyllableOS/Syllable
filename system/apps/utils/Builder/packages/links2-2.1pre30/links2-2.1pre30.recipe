@@ -13,14 +13,12 @@ locations			http://links.twibright.com/download/
 ; For graphics mode:
 needs				libpng <> 1.2.18
 recommends
-	directfb
+	directfb >= 0.9.17
 	libjpeg
 	libtiff
 	openssl
 	zlib
 	bzip2
-
-build-dir			.
 
 configure-options
 	--enable-graphics
