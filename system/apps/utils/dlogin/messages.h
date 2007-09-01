@@ -7,7 +7,7 @@ enum
 	M_SHUTDOWN,
 	M_BAD_PASS,
 	M_SEL_CHANGED,
-	M_CANCEL,
+	M_CANCEL
 };
 
 #endif

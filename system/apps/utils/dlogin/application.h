@@ -11,6 +11,11 @@ public:
 	App();
 	
 	void HandleMessage(Message*);
+	void Authorize(const char* pzLoginName, const char* pzPassword );
+	bool OkToQuit()
+	{
+		return false;
+	}	
 private:
 	MainWindow* m_pcMainWindow;
 };

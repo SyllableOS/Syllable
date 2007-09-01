@@ -117,8 +117,7 @@ void MainWindow::HandleMessage( os::Message * pcMessage )
 
 bool MainWindow::OkToQuit()
 {
-	Application::GetInstance()->PostMessage(M_QUIT );
-	return( true );
+	return( false );
 }
 
 void MainWindow::ClearPassword()
@@ -128,56 +127,14 @@ void MainWindow::ClearPassword()
 
 void MainWindow::Authorize(const char* pzLoginName, const char* pzPassword )
 {
-    for (;;)
-    {
-
-        if (pzLoginName != NULL)
-        {
-            struct passwd* psPass;
-
-            if ( pzLoginName != NULL )
-            {
-                psPass = getpwnam( pzLoginName );
-            }
-            else
-            {
-                psPass = getpwnam( pzLoginName );
-            }
-
-            if ( psPass != NULL )
-            {
-                const char* pzPassWd = crypt(  pzPassword, "$1$" );
-
-                if ( pzLoginName == NULL && pzPassWd == NULL )
-                {
-                    perror( "crypt()" );
-                    pzLoginName = NULL;
-                    continue;
-                }
-
-                if (strcmp( pzPassWd, psPass->pw_passwd ) == 0 )
-                {
-					/*passwords match, lets become this user*/
-                    if (BecomeUser(psPass,this));
-					break;
-                }
-                else
-                {
-					/*passwords don't match... flag error*/
-                    Alert* pcAlert = new Alert( MSG_ALERT_WRONGPASS_TITLE, MSG_ALERT_WRONGPASS_TEXT+"\n",Alert::ALERT_WARNING,0, MSG_ALERT_WRONGPASS_OK.c_str(), NULL );
-                    pcAlert->Go(new Invoker(new Message (M_BAD_PASS), this));
-                }
-                break;
-            }
-            else
-            {
-				/*no such user available*/
-                Alert* pcAlert = new Alert( MSG_ALERT_NOUSER_TITLE, MSG_ALERT_NOUSER_TEXT+"\n",Alert::ALERT_WARNING, 0, MSG_ALERT_NOUSER_OK.c_str(), NULL );
-                pcAlert->Go(new Invoker());
-            }
-            break;
-        }
-        pzLoginName = NULL;
-    }
+	os::Message cMsg( M_LOGIN );
+	cMsg.AddString( "login", pzLoginName );
+	cMsg.AddString( "password", pzPassword );
+	Application::GetInstance()->PostMessage( &cMsg, Application::GetInstance() );	
 }
+
+
+
+
+
 

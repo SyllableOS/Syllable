@@ -53,6 +53,7 @@ os::BitmapImage* LoadImageFromResource( const os::String &cName )
 		throw( os::errno_exception("") );
 	}
 	pcImage->Load( pcStream );
+	delete( pcStream );
 	return pcImage;
 }
 
@@ -127,7 +128,8 @@ BitmapImage* GetImageFromIcon(const String& cFile)
 	{
 		/*if the file is valid then we will return the user image*/
 		File* pcFile = new File(cIconFile,O_RDONLY);
-		pcReturnImage = new BitmapImage(pcFile);	
+		pcReturnImage = new BitmapImage(pcFile);
+		delete( pcFile );
 	}
 	
 	catch(...)
@@ -139,7 +141,7 @@ BitmapImage* GetImageFromIcon(const String& cFile)
 	return pcReturnImage;
 }
 
-int BecomeUser( struct passwd *psPwd, MainWindow* pcWindow )
+int BecomeUser( struct passwd *psPwd )
 {
 	int nStatus;
     pid_t nError = waitpid(-1, &nStatus, WNOHANG);
@@ -160,7 +162,7 @@ int BecomeUser( struct passwd *psPwd, MainWindow* pcWindow )
         setenv( "USER", psPwd->pw_name,true );
         setenv( "SHELL", psPwd->pw_shell,true );
         UpdateLoginConfig(psPwd->pw_name);
-		Application::GetInstance()->PopCursor();
+//		Application::GetInstance()->PopCursor();
         execl( "/bin/desktop", "desktop", NULL );
         break;
 
@@ -168,16 +170,12 @@ int BecomeUser( struct passwd *psPwd, MainWindow* pcWindow )
     default: /* parent process */
         int nDesktopPid, nExitStatus;
         nDesktopPid = nError;
-        pcWindow->Hide();
-        pcWindow->ClearPassword();
         nError = waitpid( nDesktopPid, &nExitStatus, 0 );
        
         
         if( nError < 0 || nError != nDesktopPid ) // Something went wrong ;-)
             break;
             
-        pcWindow->Show();
-        pcWindow->MakeFocus();
         return 0;
     }
     return -errno;

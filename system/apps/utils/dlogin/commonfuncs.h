@@ -40,7 +40,7 @@ String				GetSystemInfo();
 IPoint				GetResolution();
 void				UpdateLoginConfig(const String& cName);
 String				GetHighlightName();
-int 				BecomeUser(struct passwd *psPwd, MainWindow* pcWindow );
+int 				BecomeUser(struct passwd *psPwd );
 
 #endif  //_COMMON_FUNCS_H_
 

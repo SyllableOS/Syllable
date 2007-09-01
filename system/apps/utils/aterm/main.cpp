@@ -377,7 +377,6 @@ int main( int argc, char **argv )
 	MyApp *pcMyApp;
 
 	pcMyApp = new MyApp();
-	pcMyApp->Run();
 
 	/* load user's settings */
 	g_pcSettings = new TermSettings();
@@ -532,6 +531,8 @@ int main( int argc, char **argv )
 		signal( SIGCHLD, SIG_DFL );
 		signal( SIGTTIN, SIG_IGN );
 		signal( SIGTTOU, SIG_IGN );
+		
+		pcMyApp->Run();
 
 		OpenWindow();
 

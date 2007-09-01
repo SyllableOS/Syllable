@@ -7,6 +7,11 @@ LoginImageView::LoginImageView(const Rect& cRect) : View(cRect,"login_image_view
 	SetTabOrder( NO_TAB_ORDER );
 }
 
+LoginImageView::~LoginImageView()
+{
+	delete( pcImage );
+}
+
 void LoginImageView::ResizeBackground()
 {
 	os::Desktop cDesktop;

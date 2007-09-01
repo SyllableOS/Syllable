@@ -12,11 +12,11 @@ class LoginImageView : public View
 {
 public:
 	LoginImageView(const Rect&);
+	~LoginImageView();
 	
 	void Paint(const Rect&);
 	void ResizeBackground();
 private:
-	ImageView* pcImageView;
 	BitmapImage* pcImage;
 	
 };
