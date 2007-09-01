@@ -499,6 +499,7 @@ modules
 ;	Extra goodies
 
 	apps/gnu/nano--curses
+	apps/gnu/links2-2.1pre30
 	apps/other/pengupop-2.1.12
 ;	Needs GCC 3:
 ;	apps/other/qemu-0.9.0
