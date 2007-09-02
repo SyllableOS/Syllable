@@ -22,8 +22,8 @@
 
 	title			Linux example
 	root			(hd0,1)
-	kernel			/usr/linux/kernel-2.6.21.1 root=/dev/hda2 ro splash quiet
-#	initrd			/usr/linux/initrd.img-2.6.21.1
+	kernel			/usr/linux/kernel-2.6.22.1 root=/dev/hda2 ro splash quiet
+#	initrd			/usr/linux/initrd.img-2.6.22.1
 #	savedefault
 #	quiet
 #	boot
