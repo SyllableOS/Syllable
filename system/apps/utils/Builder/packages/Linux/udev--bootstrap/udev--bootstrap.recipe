@@ -17,5 +17,5 @@ install
 	true
 ;	sudo make DESTDIR=$STAGE/bootstrap EXTRAS='extras/ata_id extras/cdrom_id extras/edd_id extras/firmware extras/floppy extras/path_id extras/rule_generator extras/scsi_id extras/usb_id extras/volume_id' install
 
-; Install a build-time link for UDev-Config to another UDev build in the system image:
+; Make the UDev-Config build use the new UDev build in the system image:
 links				$IMAGE/usr/bin/udevinfo bin/

@@ -18,6 +18,3 @@ install-targets
 documentation
 	ChangeLog
 ;	doc
-
-pre-register		cp etc/udev/rules.d/[0-9]* $IMAGE/etc/udev/rules.d/
-;move-files			etc/udev/rules.d/[0-9]* /etc/udev/rules.d/

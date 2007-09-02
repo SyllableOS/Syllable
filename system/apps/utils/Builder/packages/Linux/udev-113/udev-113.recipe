@@ -12,7 +12,7 @@ locations			http://www.kernel.org/pub/linux/utils/kernel/hotplug/
 needs				linux >= 2.6.15
 
 make-vars
-	EXTRAS "`echo extras/*/`"
+	EXTRAS "`echo ../udev-113/extras/*/`"
 ;	EXTRAS 'extras/ata_id extras/cdrom_id extras/edd_id extras/firmware extras/floppy extras/path_id extras/rule_generator extras/scsi_id extras/usb_id extras/volume_id'
 ; $prefix must be empty:
 make				make
@@ -25,10 +25,14 @@ install-tree
 ; $prefix must be empty:
 ; Because /usr/sbin/ is already created as root:
 install
-	sudo make DESTDIR=$IMAGE EXTRAS="`echo extras/*/`" install
+	sudo make DESTDIR=$IMAGE EXTRAS="`echo ../udev-113/extras/*/`" install
 ;	sudo make DESTDIR=$IMAGE EXTRAS='extras/ata_id extras/cdrom_id extras/edd_id extras/firmware extras/floppy extras/path_id extras/rule_generator extras/scsi_id extras/usb_id extras/volume_id' install
 
-;post-install		install -m644 docs/writing_udev_rules/index.html /usr/udev/share/doc/udev-106/index.html
+_post-install
+	cp etc/udev/rules.d/[0-9]* $IMAGE/etc/udev/rules.d/
+	install -m644 docs/writing_udev_rules/index.html /usr/udev/share/doc/udev-106/index.html
+install-files		../udev-113/etc/udev/rules.d/[0-9]* $IMAGE/etc/udev/rules.d/
+
 documentation
 	README COPYING RELEASE-NOTES ChangeLog FAQ TODO
 	docs
