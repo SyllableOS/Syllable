@@ -23,6 +23,8 @@ tree
 	etc
 ;	FHS:
 ;	etc/grub
+;	LFS:
+	etc/profile.d
 
 	home home.png
 
@@ -208,6 +210,7 @@ resources
 	Documentation								documentation/Welcome.html
 	Documentation/images						documentation/images/Syllable.gif
 	Documentation								documentation/Copyrights.html
+	etc/profile.d								linux/glib2-locale.sh
 	system/fonts								fonts/URW/*.ttf
 	system/fonts								fonts/URW/Mandriva/*.ttf
 	system/resources/wallpapers					wallpapers/*.png
