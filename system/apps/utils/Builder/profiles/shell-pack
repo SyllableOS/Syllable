@@ -5,7 +5,7 @@ name	Shell Essentials
 modules
 	programming/languages/gawk-3.1.5
 	system/gettext-0.16.1
-;	system/libraries/s-lang-2.0.7
+;	system/libraries/s-lang-2.1.1
 ;	shell/man-1.5m2
 	productivity/publishing/texinfo-4.8a
 	shell/which-2.16

@@ -1,0 +1,10 @@
+authors				Kaj de Vos
+status				testing
+notes				Link problem with GLibC
+
+_install-targets
+	install
+;	Shared library and extra stuff:
+	elf
+	install-elf
+	install-links

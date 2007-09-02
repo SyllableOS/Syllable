@@ -1,0 +1,49 @@
+authors				Kaj de Vos
+status				testing
+
+headline			Text mode library and interpreter
+description
+	S-Lang is a multi-platform programmer's library designed to allow a developer to create robust multi-platform software. It provides facilities required by interactive applications such as display/screen management, keyboard input, keymaps, and so on. The most exciting feature of the library is the slang interpreter that may be easily embedded into a program to make it extensible. While the emphasis has always been on the embedded nature of the interpreter, it may also be used in a stand-alone fashion through the use of slsh, which is part of the S-Lang distribution.
+licenses			GPL
+
+home				www.s-lang.org
+locations
+	ftp://space.mit.edu/pub/davis/slang/v2.1/
+	ftp://ftp.fu-berlin.de/pub/unix/misc/slang/v2.1/
+	http://gd.tuwien.ac.at/editors/davis/slang/v2.1/
+	ftp://ftp.ntua.gr/pub/lang/slang/slang/v2.1/
+	ftp://ftp.plig.org/pub/slang/v2.1/
+packages			slang-2.1.1
+
+build-needs			gawk
+build-recommends
+	pcre
+	oniguruma
+	libpng
+	readline
+
+build-dir			.
+
+_configure-options
+	--sysconfdir=/etc
+;	Instead of internal version:
+	--with-readline=gnu
+
+test-targets
+	check
+	runtests
+
+;install-vars		install_doc_dir
+install-targets
+;	install
+	install-all
+;	Shared library and extra stuff:
+;	elf
+;	install-elf
+;	install-links
+
+documentation		README COPYING NEWS changes.txt
+develop-docs
+;	doc demo
+	examples
+build-docs			INSTALL.unx UPGRADE.txt
