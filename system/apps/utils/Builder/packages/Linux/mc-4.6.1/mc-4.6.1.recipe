@@ -1,0 +1,13 @@
+authors				Kaj de Vos
+status				testing
+
+configure-env
+	CPPFLAGS "$CPPFLAGS -DUTF8"
+	PKG_CONFIG_PATH "$PKG_CONFIG_PATH:/usr/glib/lib/pkgconfig"
+configure-options
+;	(Built-in) S-Lang will be used otherwise:
+;	--with-screen=ncurses
+	--enable-charset
+	--with-mcfs
+	--with-samba
+;	--with-openssl=

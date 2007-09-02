@@ -5,24 +5,36 @@ licenses			GPL
 home
 	www.ibiblio.org/mc/
 ;	www.gnu.org/software/mc/
-locations			http://www.ibiblio.org/pub/Linux/utils/file/managers/mc/
+locations
+	http://www.ibiblio.org/pub/Linux/utils/file/managers/mc/
+	ftp://ftp.uni-koeln.de/util/shell/
 
-needs				glib >= 1.2.6
-; 2.x? 1.4.9 has a link problem:
-build-recommends	s-lang
-
-configure-env		PKG_CONFIG_PATH '/usr/glib/lib/pkgconfig'
-configure-options
-	--without-subshell
-;	Built-in S-Lang will be used otherwise:
-;	--with-screen=ncurses
-	--with-mcfs
-;	--with-samba
-;	--with-openssl=
+needs
+	glib >= 1.2.6
+;	2.x? 1.4.9 has a link problem:
+	s-lang
+recommends
+	gpm
+	zip
+	unzip
+	samba
+	gnome-libs
 
 ;install-prefix-var	DESTDIR
+post-install
+	convert-mans ISO-8859-1	UTF-8 lib/mc.hint{,.es,.it,.nl}
+	convert-mans ISO-8859-2	UTF-8 lib/mc.hint{.cs,.hu,.pl}
+	convert-mans ISO-8859-5	UTF-8 lib/mc.hint.sr
+	convert-mans KOI8-R		UTF-8 lib/mc.hint.ru
+	convert-mans KOI8-U		UTF-8 lib/mc.hint.uk
+	convert-mans BIG5		UTF-8 lib/mc.hint.zh
+	convert-mans ISO-8859-1	UTF-8 doc/{es,it}/mc.hlp.*
+	convert-mans ISO-8859-2	UTF-8 doc/{hu,pl}/mc.hlp.*
+	convert-mans ISO-8859-5	UTF-8 doc/sr/mc.hlp.sr
+	convert-mans KOI8-R		UTF-8 doc/ru/mc.hlp.ru
 
 documentation		README COPYING ABOUT-NLS FAQ NEWS ChangeLog AUTHORS MAINTAINERS TODO
 build-docs			INSTALL.FAST INSTALL
 internal-docs		HACKING
 
+;pre-register		chmod 1755 lib/mc/cons.saver
