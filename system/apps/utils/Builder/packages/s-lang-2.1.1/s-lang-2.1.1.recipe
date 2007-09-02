@@ -16,7 +16,7 @@ locations
 	ftp://ftp.plig.org/pub/slang/v2.1/
 packages			slang-2.1.1
 
-needs			libtermcap
+needs				termcap
 build-needs			gawk
 build-recommends
 	pcre

@@ -1,0 +1,16 @@
+authors				Kaj de Vos
+status				testing
+warnings			Long entries in termcap database may overflow buffers of old programs!
+
+headline			GNU terminal capabilities library
+description
+	This is the GNU termcap library -- a library of C functions that enable programs to send control strings to terminals in a way independent of the terminal type. The GNU termcap library does not place an arbitrary limit on the size of termcap entries, unlike most other termcap libraries. However, the current version contains some entries that are more than 1023 bytes long, which is the largest value that is safe to use with the many historical applications that only allocate a 1024 byte termcap buffer (telnet, for example). Use of termcap is discouraged. Termcap is being phased out in favor of the terminfo-based ncurses library, which contains an emulation of the termcap library routines in addition to an excellent curses implementation.
+inherits			gnu
+
+licenses			GPL
+home				www.catb.org/~esr/terminfo/
+packages			termcap/termcap-1.3.1
+
+configure-options	--enable-install-termcap
+
+documentation		README COPYING NEWS ChangeLog
