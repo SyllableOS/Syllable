@@ -285,7 +285,7 @@ modules
 	bootstrap linux/udev--bootstrap
 	linux/udev-113
 ;	Needs udevinfo:
-	linux/udev-config
+	linux/udev-config-6.3
 	linux/module-init-tools-3.2.2
 ;	Incompatible with host libdl from different GLibC!
 	linux/e2fsprogs-1.40.2
