@@ -18,7 +18,7 @@ needs
 ;	2.x? 1.4.9 has a link problem:
 	s-lang
 recommends
-	gpm
+	gpm >= 0.18
 	zip
 	unzip
 	samba
