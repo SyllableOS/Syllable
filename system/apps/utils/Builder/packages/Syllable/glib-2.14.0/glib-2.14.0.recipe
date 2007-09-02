@@ -1,0 +1,16 @@
+authors				Kaj de Vos
+status				testing
+notes				Doesn't support thread priorities yet
+
+needs
+	Syllable >= 0.6.3
+	gettext
+
+;patch-config
+
+configure-options
+;	Doesn't work for some strange reason:
+;	--disable-threads
+;	--with-threads=none
+	--with-threads=posix
+;	--disable-debug

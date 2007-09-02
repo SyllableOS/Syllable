@@ -1,7 +1,11 @@
 authors				Kaj de Vos
 status				testing
 
+headline			Text mode file manager
+description
+	GNU Midnight Commander is a file manager for free operating systems. Being a text mode application, GNU Midnight Commander can be used locally or remotely, on the console or under a windowing system. By using full screen space of the terminals, it provides an intuitive user interface to the operating system, aiming to be a useful tool for users with any level of experience, from a newbie to a guru.
 licenses			GPL
+
 home
 	www.ibiblio.org/mc/
 ;	www.gnu.org/software/mc/
