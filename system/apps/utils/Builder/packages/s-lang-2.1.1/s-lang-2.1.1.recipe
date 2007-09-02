@@ -8,13 +8,15 @@ licenses			GPL
 
 home				www.s-lang.org
 locations
-	ftp://space.mit.edu/pub/davis/slang/v2.1/
+;	Consistently delivers half work, half packages:
+;	ftp://space.mit.edu/pub/davis/slang/v2.1/
 	ftp://ftp.fu-berlin.de/pub/unix/misc/slang/v2.1/
 	http://gd.tuwien.ac.at/editors/davis/slang/v2.1/
 	ftp://ftp.ntua.gr/pub/lang/slang/slang/v2.1/
 	ftp://ftp.plig.org/pub/slang/v2.1/
 packages			slang-2.1.1
 
+needs			libtermcap
 build-needs			gawk
 build-recommends
 	pcre
@@ -26,7 +28,7 @@ build-dir			.
 
 _configure-options
 	--sysconfdir=/etc
-;	Instead of internal version:
+;	Instead of internal solution:
 	--with-readline=gnu
 
 test-targets
