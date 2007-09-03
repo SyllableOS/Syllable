@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.7.12
+# Version 0.7.13
 # Copyright (c) 2002-2007 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -591,8 +591,12 @@ def installModule originalStaging, staging, directive, target
 							(docs = "#{toString recipe['documentation']} #{toString recipe['develop-docs']}") != ' ' and not
 							begin
 								@log.header 'Installing documentation'
-								@log.detail dir = File.join(root, 'documentation')
-								Dir.mkdir dir
+
+								unless exists? dir = File.join(root, 'documentation')
+									@log.detail dir
+									Dir.mkdir dir
+								end
+
 								Dir.chdir @workDir
 								Dir.chdir target
 								action superAccess + "cp -a #{docs} " + dir
@@ -1720,7 +1724,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.7.12',
+	puts 'Syllable Build System 0.7.13',
 		'Copyright (c) 2002-2007 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
