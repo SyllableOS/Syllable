@@ -1,1 +1,1 @@
-export TERMINFO=/usr/ncurses/share/terminfo
+export TERMINFO=/usr/share/terminfo

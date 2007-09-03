@@ -17,6 +17,8 @@ configure-options
 ;	--with-shared
 ;	--with-termlib
 	--enable-symlinks
+;	--datadir=/usr/share
+	--with-default-terminfo-dir=/usr/share/terminfo
 
 system-prefix-var	DESTDIR
 
