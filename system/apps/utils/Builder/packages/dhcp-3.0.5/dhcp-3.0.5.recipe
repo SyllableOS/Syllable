@@ -1,0 +1,15 @@
+authors				Kaj de Vos
+status				testing
+
+licenses			ISC
+
+home				www.isc.org/products/DHCP/
+locations
+;	ftp://ftp.isc.org/isc/dhcp/dhcp-3.0-history/
+	ftp://ftp.isc.org/isc/dhcp/
+;	Sends HTML instead of errors:
+;	http://gd.tuwien.ac.at/infosys/servers/isc/dhcp/dhcp-3.0-history/
+
+documentation
+	README LICENSE RELNOTES
+;	doc

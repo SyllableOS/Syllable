@@ -23,8 +23,6 @@ tree
 	etc
 ;	FHS:
 ;	etc/grub
-;	LFS:
-	etc/profile.d
 
 	home home.png
 
@@ -132,6 +130,7 @@ tree
 	bin
 	etc/udev
 ;	etc/opt
+	etc/profile.d
 	etc/sysconfig
 	etc/sysconfig/network-devices
 	etc/sysconfig/network-devices/ifconfig.eth0
@@ -146,6 +145,9 @@ tree
 	sbin
 ;	srv
 	var/lock
+;	Server:
+	var/state
+	var/state/dhcp
 	var/mail
 	var/run
 	var/spool
@@ -186,6 +188,11 @@ resources
 	etc											configuration/resolv.conf
 	etc/sysconfig								linux/network
 	etc/sysconfig/network-devices/ifconfig.eth0	linux/ipv4
+	etc/sysconfig/network-devices/ifconfig.eth0	linux/dhclient
+	etc											linux/dhclient.conf
+;	Server:
+	etc											linux/dhcpd.conf
+	var/state/dhcp								linux/dhcpd.leases
 	system/config								net.cfg
 	system/config								appserver
 	home										Home-Directories
@@ -377,6 +384,7 @@ modules
 
 	apps/other/libusb-0.1.12
 	apps/other/curl-7.16.4
+	apps/other/dhcp-3.0.5
 	apps/other/msntp-1.6
 
 ;	Fool subsequent packages into adding files to CUPS in the image area:

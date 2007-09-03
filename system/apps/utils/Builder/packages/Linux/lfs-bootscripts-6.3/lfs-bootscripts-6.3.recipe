@@ -9,4 +9,11 @@ make				true
 
 system-prefix-var	DESTDIR
 install-tree
+install-targets
+	all
+;	As root:
+	install-service-dhclient
+;	Server:
+	install-dhcp
+
 documentation		README LICENSE CHANGELOG

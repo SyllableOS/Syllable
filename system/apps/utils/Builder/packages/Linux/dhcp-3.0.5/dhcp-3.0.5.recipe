@@ -1,0 +1,10 @@
+authors				Kaj de Vos
+status				testing
+
+needs
+;	net-tools
+	iproute2
+
+_install-env
+	LIBDIR '/usr/lib'
+	INCDIR '/usr/include'
