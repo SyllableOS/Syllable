@@ -25,7 +25,8 @@ recommends
 	gnome-libs
 
 ;install-prefix-var	DESTDIR
-post-install
+; Where is convert-mans?
+_post-install
 	convert-mans ISO-8859-1	UTF-8 lib/mc.hint{,.es,.it,.nl}
 	convert-mans ISO-8859-2	UTF-8 lib/mc.hint{.cs,.hu,.pl}
 	convert-mans ISO-8859-5	UTF-8 lib/mc.hint.sr

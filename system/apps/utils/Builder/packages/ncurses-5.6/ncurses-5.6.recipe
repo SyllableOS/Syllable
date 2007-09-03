@@ -11,6 +11,7 @@ packages			ncurses/ncurses-5.6
 build-needs
 	gawk
 	diffutils
+conflicts		termcap
 
 configure-options
 ;	--with-shared

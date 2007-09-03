@@ -1,5 +1,7 @@
 authors				Kaj de Vos
 status				testing
+warnings
+	Expects terminfo in /usr/share/ no matter what.
 
 headline			Text mode library and interpreter
 description
@@ -16,8 +18,9 @@ locations
 	ftp://ftp.plig.org/pub/slang/v2.1/
 packages			slang-2.1.1
 
-needs				termcap
+;needs				termcap
 build-needs			gawk
+; Can't find any of them:
 build-recommends
 	pcre
 	oniguruma

@@ -1,10 +1,15 @@
 authors				Kaj de Vos
 status				testing
 
+build-dir		.
+
 configure-env
 	CPPFLAGS "$CPPFLAGS -DUTF8"
 	PKG_CONFIG_PATH "$PKG_CONFIG_PATH:/usr/glib/lib/pkgconfig"
 configure-options
+;	--with-glib-static
+;	--with-termcap
+;	--with-screen=mcslang
 ;	(Built-in) S-Lang will be used otherwise:
 ;	--with-screen=ncurses
 	--enable-charset
