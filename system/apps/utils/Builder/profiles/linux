@@ -189,10 +189,10 @@ resources
 	system/config								net.cfg
 	system/config								appserver
 	home										Home-Directories
+
 	Documentation								documentation/Welcome.html
 	Documentation/images						documentation/images/Syllable.gif
 	Documentation								documentation/Copyrights.html
-	etc/profile.d								linux/glib2-locale.sh
 	system/fonts								fonts/URW/*.ttf
 	system/fonts								fonts/URW/Mandriva/*.ttf
 	system/resources/wallpapers					wallpapers/*.png
@@ -204,6 +204,8 @@ resources
 	system/resources/wallpapers					wallpapers/ZeroNet/*.jpg
 	system/resources/wallpapers					wallpapers/LucasMurad/*.png
 	system/resources/wallpapers					wallpapers/LucasMurad/*.jpg
+
+	etc/profile.d								linux/glib2-locale.sh
 
 modules
 ;	Toolchain for bootstrapping

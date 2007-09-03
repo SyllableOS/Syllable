@@ -145,6 +145,7 @@ resources
 	etc						configuration/hostname				text/plain
 	etc						configuration/resolv.conf			text/plain
 	home					Home-Directories
+
 	Documentation			documentation/Welcome.html			text/html
 	Documentation/images	documentation/images/Syllable.gif	image/gif
 	Documentation			documentation/Copyrights.html		text/html
