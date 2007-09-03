@@ -18,7 +18,7 @@ locations
 	ftp://ftp.plig.org/pub/slang/v2.1/
 packages			slang-2.1.1
 
-;needs				termcap
+needs				ncurses | termcap
 build-needs			gawk
 ; Can't find any of them:
 build-recommends

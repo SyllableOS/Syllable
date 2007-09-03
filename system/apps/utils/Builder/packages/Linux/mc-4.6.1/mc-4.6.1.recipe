@@ -1,7 +1,7 @@
 authors				Kaj de Vos
 status				testing
 
-build-dir		.
+build-dir			.
 
 configure-env
 	CPPFLAGS "$CPPFLAGS -DUTF8"

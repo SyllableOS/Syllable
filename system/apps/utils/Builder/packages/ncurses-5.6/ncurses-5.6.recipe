@@ -11,14 +11,12 @@ packages			ncurses/ncurses-5.6
 build-needs
 	gawk
 	diffutils
-conflicts		termcap
+conflicts			termcap
 
 configure-options
 ;	--with-shared
 ;	--with-termlib
 	--enable-symlinks
-;	--datadir=/usr/share
-	--with-default-terminfo-dir=/usr/share/terminfo
 
 system-prefix-var	DESTDIR
 
@@ -39,5 +37,7 @@ links
 	include/ncurses		/usr/include/
 ;	For LinuxTree:
 	bin/clear			/usr/bin/
+;	For S-Lang:
+;	share/terminfo		/usr/share/
 
 ;move-files			share/terminfo /usr/share/
