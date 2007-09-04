@@ -150,6 +150,8 @@ tree
 	var/state/dhcp
 	var/mail
 	var/run
+;	For DHCP:
+;	var/db
 	var/spool
 ;	var/tmp
 ;	var/opt
