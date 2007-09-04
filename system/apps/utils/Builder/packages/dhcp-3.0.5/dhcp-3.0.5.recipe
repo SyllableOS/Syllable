@@ -10,6 +10,20 @@ locations
 ;	Sends HTML instead of errors:
 ;	http://gd.tuwien.ac.at/infosys/servers/isc/dhcp/dhcp-3.0-history/
 
+; Doesn't support --prefix=
+configure-args
+
+install-env
+	USERBINDIR		"$IMAGE/usr/dhcp/bin"
+	BINDIR			"$IMAGE/usr/dhcp/sbin"
+	CLIENTBINDIR	"$IMAGE/usr/dhcp/sbin"
+	INCDIR			"$IMAGE/usr/dhcp/include"
+	LIBDIR			"$IMAGE/usr/dhcp/lib"
+	ADMMANDIR		"$IMAGE/usr/dhcp/share/man/cat8"
+	FFMANDIR		"$IMAGE/usr/dhcp/share/man/cat5"
+	LIBMANDIR		"$IMAGE/usr/dhcp/share/man/cat3"
+	USRMANDIR		"$IMAGE/usr/dhcp/share/man/cat1"
+
 documentation
 	README LICENSE RELNOTES
 ;	doc
