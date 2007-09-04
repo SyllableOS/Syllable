@@ -1,3 +1,7 @@
+* September 1, 2007, Arno Klenke *
+
+Close login window while the user is logged in
+
 * August 18, 2007, Kristian Van Der Vliet *
 
 FileBrowser will now automatically remember the view settings and Window
@@ -224,3 +228,4 @@ Cleaned up message texts in DLogin.
 		* Added error testing for scaling images.  If the image is not bigger than the
  				screen resolution, the desktop will not scale the image.
 		* Fixed icon text color problems.
+

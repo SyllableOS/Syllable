@@ -1,3 +1,15 @@
+* September 4 2007 Arno Klenke *
+
+-Added a sample resolution value to the media format structure
+-The framerate is now a double value (required by ffmpeg)
+-Added methods for title, author, etc. to the MediaInput class
+-Added a ParsePacket() method to the MediaCodec class
+-MediaSyncStage::Run() now returns the time the application can sleep
+-The screen output plugin can now convert a video frame to yuv, scale it
+and write it to the framebuffer in one pass
+-ColdFish shows the title and author of files and saves them using attributes
+or in the playlist file
+
 ---- 0.6.4 Released -------------------------------------------------------------------
 
 * May 21 2007 Arno Klenke *
@@ -221,3 +233,4 @@ Added multiple soundcard support to the media server
 * Nov 18 2003, Kristian Van Der Vliet *
 
 Created this ChangeLog for changes specific to the media framework.
+
