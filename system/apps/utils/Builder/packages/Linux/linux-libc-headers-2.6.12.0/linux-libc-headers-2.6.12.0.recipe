@@ -1,0 +1,17 @@
+authors				Kaj de Vos
+
+licenses			GPL-2 other
+
+locations			http://ep09.pld-linux.org/~mmazur/linux-libc-headers/
+
+make				true
+
+install-tree		include
+install				true
+install-files
+	include/asm-i386	include/asm
+	include/linux		include/
+move-files
+	include/*		/usr/include/
+
+documentation		doc/*
