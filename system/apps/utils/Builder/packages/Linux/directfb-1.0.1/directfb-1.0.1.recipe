@@ -12,20 +12,29 @@ needs
 	linux-fusion
 	zlib
 recommends
+;	sdl
+	libvncserver
 	libsysfs
 	freetype >= 2.0.1
 	libjpeg
 	libpng
 	libgif
-;	sdl
 	libmpeg3
+	tslib
+build-recommends	pkg-config >= 0.9.0
 
-;configure-options
+configure-options
+;	We want SDL on DirectFB, not the other way around:
+	--disable-sdl
+;	Erroneously enables X11:
+	--disable-x11
 ;	--enable-debug
 ;	--enable-trace
 ;	--enable-multi
-;	--enable-zlib
+	--enable-zlib
+	--enable-unique
 ;	--with-tests
+;	--without-tools
 
 ;system-prefix-var	DESTDIR
 
