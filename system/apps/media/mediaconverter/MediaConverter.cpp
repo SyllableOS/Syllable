@@ -323,7 +323,7 @@ void MCWindow::HandleMessage( os::Message * pcMessage )
 		break;
 	case MC_STOP:
 		{
-			/* Encoding has been started ( sent by the Encode() method ) */
+			/* Encoding has been stoped ( sent by the Encode() method ) */
 			m_pcStartButton->SetLabel( "Start" );
 			m_bEncode = false;
 		}
@@ -534,8 +534,20 @@ void MCApp::Encode()
 
 		if ( m_pcInputVideo == NULL || m_pcOutputVideo == NULL || m_pcOutput->AddStream( m_zFile, m_pcOutputVideo->GetInternalFormat() ) < 0 )
 		{
+			if( m_pcInputVideo )
+			{
+				m_pcInputVideo->Close();
+				m_pcInputVideo->Release();
+			}
+			if( m_pcOutputVideo )
+			{
+				m_pcOutputVideo->Close();
+				m_pcOutputVideo->Release();
+			}
+
 			os::Alert * pcAlert = new os::Alert( "Error", "Could not find a matching video codec", os::Alert::ALERT_WARNING, 0, "Ok", NULL );
 			pcAlert->Go();
+			
 			PostMessage( MC_GUI_START );
 			while ( m_bEncode )
 			{
@@ -577,6 +589,17 @@ void MCApp::Encode()
 
 		if ( m_pcInputAudio == NULL || m_pcOutputAudio == NULL || m_pcOutput->AddStream( m_zFile, m_pcOutputAudio->GetInternalFormat() ) < 0 )
 		{
+			if( m_pcInputAudio )
+			{
+				m_pcInputAudio->Close();
+				m_pcInputAudio->Release();
+			}
+			if( m_pcOutputAudio )
+			{
+				m_pcOutputAudio->Close();
+				m_pcOutputAudio->Release();
+			}			
+			
 			os::Alert * pcAlert = new os::Alert( "Error", "Could not find a matching audio codec", os::Alert::ALERT_WARNING, 0, "Ok", NULL );
 			pcAlert->Go();
 			PostMessage( MC_GUI_START );

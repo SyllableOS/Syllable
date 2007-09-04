@@ -55,7 +55,7 @@ public:
 
 /* MPWindow class */
 
-MPWindow::MPWindow( const os::Rect & cFrame, const std::string & cName, const std::string & cTitle ):os::Window( cFrame, cName, cTitle, os::WND_SINGLEBUFFER )
+MPWindow::MPWindow( const os::Rect & cFrame, const std::string & cName, const std::string & cTitle ):os::Window( cFrame, cName, cTitle )
 {
 	m_nState = MP_STATE_STOPPED;
 	m_pcVideo = NULL;
@@ -226,6 +226,7 @@ void MPWindow::HandleMessage( os::Message * pcMessage )
 				cFrame.bottom -= vDeltaY;
 				nHeight -= (int32)vDeltaY;
 				
+				
 				SetFrame( cFrame );
 				
 				/* Create a black background view and add the video */
@@ -335,7 +336,7 @@ void MPWindow::FrameSized( const os::Point & cDelta )
 	int nYPos = ( (int)vHeight - nTargetHeight ) / 2;
 	
 	/* Set frame */
-	m_pcVideo->SetFrame( os::Rect( nXPos, nYPos, nXPos + nTargetWidth - 1, nYPos + nTargetHeight ) ); 
+	m_pcVideo->SetFrame( os::Rect( nXPos, nYPos, nXPos + nTargetWidth - 1, nYPos + nTargetHeight - 1 ) ); 
 	if ( m_nState != MP_STATE_PLAYING )
 		os::Application::GetInstance()->PostMessage( MP_UPDATE_VIDEO, os::Application::GetInstance(  ) );
 }
@@ -421,6 +422,7 @@ void MPApp::PlayThread()
 	bool bError = false;
 	bigtime_t nLastVideo = 0;
 	bigtime_t nLastAudio = 0;
+	bool bDropNextFrame = false;
 	std::vector<os::MediaPacket_s> acPackets;
 	
 	std::cout << "Play thread running" << std::endl;
@@ -470,11 +472,19 @@ again:
 					{
 						sPacket = acPackets[i];
 						//printf("Found video packet at position %i\n", i );
-						if ( m_pcVideoCodec->DecodePacket( &sPacket, &sVideoFrame ) == 0 )
+						if( bDropNextFrame )
 						{
-							if ( sVideoFrame.nSize[0] > 0 )
+							m_pcVideoCodec->ParsePacket( &sPacket, &sVideoFrame );
+							bDropNextFrame = false;
+						}
+						else
+						{
+							if ( m_pcVideoCodec->DecodePacket( &sPacket, &sVideoFrame ) == 0 )
 							{
-								bVideoValid = true;								
+								if ( sVideoFrame.nSize[0] > 0 )
+								{
+									bVideoValid = true;								
+								}
 							}
 						}
 						m_pcInput->FreePacket( &sPacket );
@@ -506,6 +516,7 @@ again:
 				{
 					printf( "Droping Frame %i %i!\n", (int)sVideoFrame.nTimeStamp, (int)nCurrentTime );
 					bVideoValid = false;
+					bDropNextFrame = true;
 				}
 				else if( !( nCurrentTime < sVideoFrame.nTimeStamp ) )
 				{
@@ -555,6 +566,7 @@ audio_again:
 				if( nAudioBufferSize <= 80 || ( nFreeAudioBufSize > 40 ) )
 				{
 					uint32 nFreeAudioBufBytes = (uint32)( nFreeAudioBufSize * bigtime_t( 2 * m_sAudioOutFormat.nChannels * m_sAudioOutFormat.nSampleRate ) / 1000 );
+					nFreeAudioBufBytes -= nFreeAudioBufBytes % ( 2 * m_sAudioOutFormat.nChannels );
 					uint32 nWriteBytes = std::min( nFreeAudioBufBytes, sAudioPacket.nSize[0] - nAudioPacketPos );
 
 					bigtime_t nAudioLength = (bigtime_t)nWriteBytes * 1000;
@@ -605,8 +617,9 @@ audio_again:
 					}
 			} 	
 		}
-		
-		snooze( 1000 );
+
+		if( ( !m_bVideo || bVideoValid ) && ( !m_bAudio || bAudioValid ) )		
+			snooze( 1000 );
 
 		if ( !m_bStream && get_system_time() > nTime + 1000000 )
 		{
@@ -711,7 +724,7 @@ void MPApp::Open( os::String zFileName, os::String zInput )
 	for ( i = 0; i < m_nTrackCount; i++ )
 	{
 		m_pcInput->SelectTrack( i );
-		std::cout << "Track " << i << " Length: " << m_pcInput->GetLength() << std::endl;
+		std::cout << "Track " << i << ": " << m_pcInput->GetAuthor().c_str() << " - " << m_pcInput->GetTitle().c_str() << " Length: " << m_pcInput->GetLength() << std::endl;
 		if ( m_bPacket )
 		{
 			for ( uint32 j = 0; j < m_pcInput->GetStreamCount(); j++ )
@@ -758,7 +771,7 @@ void MPApp::Open( os::String zFileName, os::String zInput )
 	/* Open output devices */
 	if ( m_bVideo )
 	{
-		os::String zParameters = "";
+		os::String zParameters = "-fb";
 
 		m_pcVideoOutput = m_pcManager->GetDefaultVideoOutput();
 		if ( m_pcVideoOutput == NULL || ( m_pcVideoOutput && m_pcVideoOutput->FileNameRequired() ) || ( m_pcVideoOutput && m_pcVideoOutput->Open( zParameters ) != 0 ) )

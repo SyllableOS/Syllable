@@ -147,7 +147,7 @@ public:
 	void 			SaveList();
 
 	void 			AddFile( os::String zFileName );
-	int 			OpenFile( os::String zFileName, uint32 nTrack, uint32 nStream );
+	int 			OpenFile( os::String zFileName, uint32 nTrack, uint32 nStream, os::String zFile );
 	void 			CloseCurrentFile();
 
 	void 			PlayThread();

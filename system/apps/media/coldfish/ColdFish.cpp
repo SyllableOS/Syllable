@@ -28,9 +28,29 @@ using namespace os;
 class CFListItem : public os::ListViewStringRow
 {
 public:
+		os::String BuildTitle()
+		{
+			if( zTitle == "" )
+			{
+				/* Use filename */
+				return( os::Path( zPath ).GetLeaf() );
+			}
+			/* Build title string */
+			os::String zRowTitle = zAuthor;
+								
+			if( !zRowTitle.empty() )
+				zRowTitle += " - ";
+					
+			zRowTitle += zTitle;
+			return( zRowTitle );
+		}
 		os::String zPath;
+		os::String zAuthor;
+		os::String zTitle;
+		os::String zAlbum;
 		int nTrack;
 		int nStream;
+		int64 nLength;
 };
 
 void SetCButtonImageFromResource( os::CImageButton* pcButton, os::String zResource )
@@ -195,7 +215,6 @@ CFWindow::CFWindow( const os::Rect & cFrame, const os::String & cName, const os:
 	os::Resources cCol( get_image_id() );
 	os::ResStream *pcStream = cCol.GetResourceStream( "icon48x48.png" );
 	os::BitmapImage *pcIcon = new os::BitmapImage( pcStream );
-	//pcIcon->SetSize( os::Point( 24, 24 ) );
 	SetIcon( pcIcon->LockBitmap() );
 	delete( pcIcon );
 	
@@ -762,7 +781,10 @@ bool CFApp::OpenList( os::String zFileName )
 	os::String zFile;
 	int nTrack = 0;
 	int nStream = 0;
-	
+	os::String zAuthor;
+	os::String zTitle;
+	os::String zAlbum;
+	int64 nLength = 0;	
 	
 	m_pcWin->Lock();
 	m_pcWin->SetTitle( "Loading... - ColdFish" );
@@ -782,60 +804,96 @@ bool CFApp::OpenList( os::String zFileName )
 			zFile = "";
 			nTrack = 0;
 			nStream = 0;
+			zAuthor = "Unknown";
+			zTitle = "Unknown";
+			zAlbum = "Unknown";
+			nLength = -1;
 			continue;
 		}
 		if ( !strcmp( zTemp, "<ENTRYEND>" ) )
 		{
 			uint32 nM, nS;
-			int64 nLength = 0;
+
 
 			bInEntry = false;
 			
-			/* Try to read the length attribute */
-			bool bReadLengthFromInput = true;
+	
+			/* Try to read the length and title from the attributes */				
 			try
 			{
 				os::FSNode cNode( zFile );
 				if( cNode.ReadAttr( "Media::Length", ATTR_TYPE_INT64, &nLength, 0, sizeof( int64 ) ) == sizeof( int64 ) )
 				{
-					bReadLengthFromInput = false;
-					secs_to_ms( nLength, &nM, &nS );
 				} 
+				char zTemp[PATH_MAX];
+				memset( zTemp, 0, PATH_MAX );
+				if( cNode.ReadAttr( "Media::Author", ATTR_TYPE_STRING, zTemp, 0, PATH_MAX ) >= 0 )
+				{
+					zAuthor = zTemp;
+				}
+				memset( zTemp, 0, PATH_MAX );				
+				if( cNode.ReadAttr( "Media::Title", ATTR_TYPE_STRING, zTemp, 0, PATH_MAX ) >= 0 )
+				{
+					zTitle = zTemp;
+				}
+				memset( zTemp, 0, PATH_MAX );				
+				if( cNode.ReadAttr( "Media::Album", ATTR_TYPE_STRING, zTemp, 0, PATH_MAX ) >= 0 )
+				{
+					zAlbum = zTemp;
+				}
 				cNode.Unset();
 			} catch(...)
 			{
-				bReadLengthFromInput = true;
 			}
-			
+
+
 			/* Read length from input if required */
-			if( bReadLengthFromInput )
+			if( zAuthor == "Unknown" || 
+				zTitle == "Unknown" || 
+				zAlbum == "Unknown" || 
+				nLength == -1 )
 			{
 				os::MediaInput * pcInput = m_pcManager->GetBestInput( zFile );
 				if ( pcInput == NULL )
 					continue;
+				pcInput->Open( zFile );
 				pcInput->SelectTrack( nTrack );
 				nLength = pcInput->GetLength();
-				secs_to_ms( pcInput->GetLength(), &nM, &nS );
+				zAuthor = pcInput->GetAuthor();
+				zTitle = pcInput->GetTitle();
+				zAlbum = pcInput->GetAlbum();
+				nLength = pcInput->GetLength();
 				try {
 					os::FSNode cNode( zFile );
 					cNode.WriteAttr( "Media::Length", O_TRUNC, ATTR_TYPE_INT64, &nLength, 0, sizeof( int64 ) );
+					cNode.WriteAttr( "Media::Author", O_TRUNC, ATTR_TYPE_STRING, zAuthor.c_str(), 0, zAuthor.Length() );
+					cNode.WriteAttr( "Media::Title", O_TRUNC, ATTR_TYPE_STRING, zTitle.c_str(), 0, zTitle.Length() );
+					cNode.WriteAttr( "Media::Album", O_TRUNC, ATTR_TYPE_STRING, zAlbum.c_str(), 0, zAlbum.Length() );					
 					cNode.Unset();
 				} catch( ... ) {
 				}
-				pcInput->Release();
+				pcInput->Release();				
 			}
 			
+			secs_to_ms( nLength, &nM, &nS );
+		
 			/* Add new row */
 			CFListItem * pcRow = new CFListItem();
-			pcRow->AppendString( os::Path( zFile ).GetLeaf() );
+
 			pcRow->zPath = zFile;
+			pcRow->zAuthor = zAuthor;
+			pcRow->zTitle = zTitle;
+			pcRow->zAlbum = zAlbum;
+			
+			pcRow->AppendString( pcRow->BuildTitle() );
+			
 			sprintf( zTemp, "%i", ( int )nTrack + 1 );
 			pcRow->AppendString( zTemp );
 			pcRow->nTrack = nTrack;
 			pcRow->nStream = nStream;
+			pcRow->nLength = nLength;
 			
-			
-			sprintf( zTemp, "%.2li:%.2li", nM, nS );
+			sprintf( zTemp, "%.2u:%.2u", nM, nS );
 			pcRow->AppendString( zTemp );
 			m_pcWin->Lock();
 			m_pcWin->GetPlaylist()->InsertRow( pcRow );
@@ -857,6 +915,14 @@ bool CFApp::OpenList( os::String zFileName )
 			nTrack = atoi( zTemp2 ) - 1;
 		else if ( !strcmp( zTemp, "<STREAM>" ) )
 			nStream = atoi( zTemp2 ) - 1;
+		else if ( !strcmp( zTemp, "<LENGTH>" ) )
+			nLength = atoi( zTemp2 );
+		else if ( !strcmp( zTemp, "<AUTHOR>" ) )
+			zAuthor = zTemp2;
+		else if ( !strcmp( zTemp, "<TITLE>" ) )
+			zTitle = zTemp2;
+		else if ( !strcmp( zTemp, "<ALBUM>" ) )
+			zAlbum = zTemp2;
 	}
 	m_pcWin->Lock();
 	m_pcWin->SetTitle( "ColdFish" );
@@ -915,6 +981,14 @@ void CFApp::SaveList()
 		hOut << "<STREAM>" << std::endl;
 		sprintf( zTemp, "%i", pcRow->nStream + 1 );
 		hOut << zTemp << std::endl;
+		hOut << "<LENGTH>" << std::endl;
+		hOut << pcRow->nLength << std::endl;
+		hOut << "<AUTHOR>" << std::endl;
+		hOut << pcRow->zAuthor.c_str() << std::endl;
+		hOut << "<TITLE>" << std::endl;
+		hOut << pcRow->zTitle.c_str() << std::endl;
+		hOut << "<ALBUM>" << std::endl;
+		hOut << pcRow->zAlbum.c_str() << std::endl;		
 		hOut << "<ENTRYEND>" << std::endl;
 	}
 	hOut << "<END>" << std::endl;
@@ -982,6 +1056,7 @@ void CFApp::OpenInput( os::String zFileName, os::String zInput )
 
 				/* Found something -> add it */
 				CFListItem * pcRow = new CFListItem();
+				
 				pcRow->AppendString( os::Path( zFileName ).GetLeaf() );
 				pcRow->zPath = zFileName;
 				sprintf( zTemp, "%i", ( int )i + 1 );
@@ -989,7 +1064,7 @@ void CFApp::OpenInput( os::String zFileName, os::String zInput )
 				pcRow->nTrack = i;
 				pcRow->nStream = j;
 				secs_to_ms( m_pcInput->GetLength(), &nM, &nS );
-				sprintf( zTemp, "%.2li:%.2li", nM, nS );
+				sprintf( zTemp, "%.2u:%.2u", nM, nS );
 				pcRow->AppendString( zTemp );
 				m_pcWin->Lock();
 				m_pcWin->GetPlaylist()->InsertRow( pcRow );
@@ -1057,14 +1132,21 @@ void CFApp::AddFile( os::String zFileName )
 
 				/* Found something -> add it */
 				CFListItem * pcRow = new CFListItem();
-				pcRow->AppendString( os::Path( zFileName ).GetLeaf() );
-				pcRow->zPath = zFileName;
+
+				pcRow->zPath = zFileName;				
+				pcRow->zAuthor = pcInput->GetAuthor();
+				pcRow->zTitle = pcInput->GetTitle();
+				pcRow->zAlbum = pcInput->GetAlbum();
+				pcRow->nLength = pcInput->GetLength();
+
+				pcRow->AppendString( pcRow->BuildTitle() );
+
 				sprintf( zTemp, "%i", ( int )i + 1 );
 				pcRow->AppendString( zTemp );
 				pcRow->nTrack = i;
 				pcRow->nStream = j;
 				secs_to_ms( pcInput->GetLength(), &nM, &nS );
-				sprintf( zTemp, "%.2li:%.2li", nM, nS );
+				sprintf( zTemp, "%.2u:%.2u", nM, nS );
 				pcRow->AppendString( zTemp );
 				m_pcWin->Lock();
 				m_pcWin->GetPlaylist()->InsertRow( pcRow );
@@ -1081,6 +1163,10 @@ void CFApp::AddFile( os::String zFileName )
 		os::FSNode cNode( zFileName );
 		uint64 nLength = pcInput->GetLength();
 		cNode.WriteAttr( "Media::Length", O_TRUNC, ATTR_TYPE_INT64, &nLength, 0, sizeof( int64 ) );
+		cNode.WriteAttr( "Media::Author", O_TRUNC, ATTR_TYPE_STRING, pcInput->GetAuthor().c_str(), 0, pcInput->GetAuthor().Length() );
+		cNode.WriteAttr( "Media::Title", O_TRUNC, ATTR_TYPE_STRING, pcInput->GetTitle().c_str(), 0, pcInput->GetTitle().Length() );
+		cNode.WriteAttr( "Media::Album", O_TRUNC, ATTR_TYPE_STRING, pcInput->GetAlbum().c_str(), 0, pcInput->GetAlbum().Length() );
+		
 		cNode.Unset();
 	} catch( ... ) {
 	}
@@ -1102,7 +1188,7 @@ void CFApp::AddFile( os::String zFileName )
 }
 
 /* Play one track of a file / device */
-int CFApp::OpenFile( os::String zFileName, uint32 nTrack, uint32 nStream )
+int CFApp::OpenFile( os::String zFileName, uint32 nTrack, uint32 nStream, os::String zTitle )
 {
 	/* Close */
 	CloseCurrentFile();
@@ -1214,8 +1300,9 @@ int CFApp::OpenFile( os::String zFileName, uint32 nTrack, uint32 nStream )
 	os::Path cPath = os::Path( zFileName.c_str() );
 
 	/* Set title */
+	
 	if ( m_pcInput->FileNameRequired() )
-		m_zAudioName = cPath.GetLeaf();
+		m_zAudioName = zTitle;
 	else
 		m_zAudioName = m_pcInput->GetIdentifier();
 	
@@ -1230,7 +1317,7 @@ int CFApp::OpenFile( os::String zFileName, uint32 nTrack, uint32 nStream )
 
 	/* Set LCD */
 
-	m_pcWin->GetLCD()->SetTrackName( cPath.GetLeaf(  ) );
+	m_pcWin->GetLCD()->SetTrackName( m_zAudioName );
 	m_pcWin->GetLCD()->SetTrackNumber( m_nAudioTrack + 1 );
 	m_pcWin->GetLCD()->UpdateTime( 0 );
 	m_pcWin->GetLCD()->SetValue( os::Variant( 0 ) );
@@ -1364,7 +1451,7 @@ void CFApp::HandleMessage( os::Message * pcMessage )
 
 			CFListItem * pcRow = ( CFListItem* ) m_pcWin->GetPlaylist()->GetRow( nSelected );
 
-			if ( OpenFile( pcRow->zPath, pcRow->nTrack, pcRow->nStream ) != 0 )
+			if ( OpenFile( pcRow->zPath, pcRow->nTrack, pcRow->nStream, pcRow->BuildTitle() ) != 0 )
 			{
 				std::cout << "Cannot play file!" << std::endl;
 				break;
