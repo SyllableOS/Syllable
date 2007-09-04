@@ -1,0 +1,20 @@
+authors				Kaj de Vos
+status				testing
+
+licenses			other
+
+locations			http://www.linuxfromscratch.org/blfs/downloads/svn/
+
+make				true
+
+system-prefix-var	DESTDIR
+install-tree
+install-targets
+;	As root:
+	install-service-dhclient
+;	Server:
+	install-dhcp
+
+documentation		README LICENSE CHANGELOG MAINTAINERS
+; Outdated?
+;build-docs			lfs-bootscripts.version

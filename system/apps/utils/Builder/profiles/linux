@@ -376,9 +376,10 @@ modules
 	other/fonts/lcd-fonts-1.1
 	other/fonts/freefont-20060126
 
+	linux/blfs-bootscripts-20070822
 	linux/procps-3.2.7
 	linux/sudo-1.6.8p12
-	linux/mktemp-1.5
+	apps/other/mktemp-1.5
 
 ;	Needs ranlib symlink in /usr/bin/!
 ;	For cURL:
