@@ -129,12 +129,18 @@ public:
 	bool			IsStream();
 	uint32			GetTrackCount();
 	uint32			SelectTrack( uint32 nTrack );
+	String			GetTitle();
+	String			GetAuthor();
+	String			GetAlbum();	
+	String			GetComment();	
+	
 	uint64			GetLength();
 	uint64			GetCurrentPosition();
 	uint64			Seek( uint64 nPosition );
 	uint32			GetOutputCount();
 	MediaFormat_s	GetOutputFormat( uint32 nOutput );
 	bool			HasInternalBuffer();
+	int				NextPacketStream();
 	status_t		GetPacket( uint32 nOutput, MediaPacket_s* psPacket );
 	void			FreePacket( MediaPacket_s* psPacket );
 	
@@ -203,8 +209,8 @@ public:
 	os::View*		GetView();
 	
 	void SetOutput( MediaOutput* pcOutput );
-	static MediaOutputStage* CreateDefaultAudioOutputStage();
-	static MediaOutputStage* CreateDefaultVideoOutputStage();
+	static MediaOutputStage* CreateDefaultAudioOutputStage( os::String zParameters );
+	static MediaOutputStage* CreateDefaultVideoOutputStage( os::String zParameters );
 private:
 	MediaOutput* m_pcOutput;
 };
@@ -235,7 +241,7 @@ public:
 	status_t		GetPacket( uint32 nOutput, MediaPacket_s* psPacket );
 	
 	status_t		Initialize();
-	status_t		Run();
+	int				Run();
 
 	static MediaSyncStage* CreateStage();
 private:

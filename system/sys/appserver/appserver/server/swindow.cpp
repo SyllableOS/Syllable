@@ -1926,20 +1926,34 @@ bool SrvWindow::DispatchMessage( const void *psMsg, int nCode )
 			send_msg( psReq->m_hReply, 0, &sReply, sizeof( sReply ) );
 			break;
 		}
-	#if 0
-	case WR_UPDATE_REGIONS:
-		g_cLayerGate.Close();
-		if( m_pcWndBorder != NULL )
+	case WR_LOCK_FB:
 		{
-			m_pcWndBorder->UpdateRegions();
+			const WR_LockFb_s *psReq = static_cast < const WR_LockFb_s * >( psMsg );
+			WR_LockFbReply_s sReply;
+			
+			g_cLayerGate.Lock();
+			
+			sReply.m_bSuccess = false;
+			
+			/* Check that the window is completely visible on the screen */
+			if( !IsMinimized() && m_pcWndBorder != NULL && 
+				m_pcWndBorder->m_nHideCount == 0 && g_pcTopView->m_pcTopChild == m_pcWndBorder && m_pcWndBorder->m_pcBitmap != NULL )
+			{
+				sReply.m_cFrame = GetFrame();
+				if( g_pcTopView->GetBounds().Includes( sReply.m_cFrame ) )
+				{
+					sReply.m_eColorSpc = g_pcTopView->m_pcBitmap->m_eColorSpc;
+					sReply.m_nBytesPerLine =  g_pcTopView->m_pcBitmap->m_nBytesPerLine;
+					sReply.m_bSuccess = true;
+					sReply.m_hSem = g_cLayerGate.GetSem();
+				}
+			}
+			if( !sReply.m_bSuccess )
+				g_cLayerGate.Unlock();
+	
+			send_msg( psReq->m_hReply, 0, &sReply, sizeof( sReply ) );			
+			break;
 		}
-		else
-		{
-			m_pcTopView->UpdateRegions();
-		}
-		g_cLayerGate.Open();
-		break;
-	#endif
 	case M_QUIT:
 		{
 			bDoLoop = false;

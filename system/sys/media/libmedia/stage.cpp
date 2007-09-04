@@ -385,6 +385,51 @@ uint32 MediaInputStage::SelectTrack( uint32 nTrack )
 	return( m_pcInput->SelectTrack( nTrack ) );
 }
 
+/** Author of the file.
+ * \par Description:
+ * Returns the author of the file or "".
+ * \author	Arno Klenke
+ ******************************************************************************/
+String MediaInputStage::GetAuthor()
+{
+	RETURN_IF_NULL( m_pcInput, "" );
+	return( m_pcInput->GetAuthor() );
+}
+
+/** Title of the file.
+ * \par Description:
+ * Returns the title of the file or "".
+ * \author	Arno Klenke
+ ******************************************************************************/
+String MediaInputStage::GetTitle()
+{
+	RETURN_IF_NULL( m_pcInput, "" );
+	return( m_pcInput->GetTitle() );
+}
+
+/** Album.
+ * \par Description:
+ * Returns the album the file belongs to or "".
+ * \author	Arno Klenke
+ ******************************************************************************/
+String MediaInputStage::GetAlbum()
+{
+	RETURN_IF_NULL( m_pcInput, "" );
+	return( m_pcInput->GetAlbum() );
+}
+
+/** Comment.
+ * \par Description:
+ * Returns a comment or "".
+ * \author	Arno Klenke
+ ******************************************************************************/
+String MediaInputStage::GetComment()
+{
+	RETURN_IF_NULL( m_pcInput, "" );
+	return( m_pcInput->GetComment() );
+}
+
+
 /** Length of the file.
  * \par Description:
  * Returns the length of the file in seconds.
@@ -437,6 +482,20 @@ MediaFormat_s MediaInputStage::GetOutputFormat( uint32 nOutput )
 bool MediaInputStage::HasInternalBuffer()
 {
 	return( false );
+}
+
+/** Stream of the next available packet.
+ * \par Description:
+ * Returns the stream of the next available packet or -1.
+ * \author	Arno Klenke
+ ******************************************************************************/
+ 
+int MediaInputStage::NextPacketStream()
+{
+	RETURN_IF_NULL( m_pcInput, -1 );
+	if( m_acPackets.size() == 0 )
+		return( -1 );
+	return( m_acPackets[0].nStream );
 }
 
 status_t MediaInputStage::GetPacket( uint32 nOutput, MediaPacket_s* psPacket )
@@ -890,14 +949,14 @@ void MediaOutputStage::SetOutput( MediaOutput* pcOutput )
  * Creates a output stage for the default audio output. 
  * \author	Arno Klenke
  ******************************************************************************/
-MediaOutputStage* MediaOutputStage::CreateDefaultAudioOutputStage()
+MediaOutputStage* MediaOutputStage::CreateDefaultAudioOutputStage( os::String zParameters )
 {
 	MediaManager* pcManager = MediaManager::Get();
 	if( pcManager == NULL )
 		return( NULL );
 	MediaOutput* pcOutput = pcManager->GetDefaultAudioOutput();
 	pcManager->Put();
-	if( pcOutput == NULL || pcOutput->Open( "" ) != 0 )
+	if( pcOutput == NULL || pcOutput->Open( zParameters ) != 0 )
 		return( NULL );
 
 	MediaOutputStage* pcStage = new MediaOutputStage();
@@ -911,14 +970,14 @@ MediaOutputStage* MediaOutputStage::CreateDefaultAudioOutputStage()
  * Creates a output stage for the default video output. 
  * \author	Arno Klenke
  ******************************************************************************/
-MediaOutputStage* MediaOutputStage::CreateDefaultVideoOutputStage()
+MediaOutputStage* MediaOutputStage::CreateDefaultVideoOutputStage( os::String zParameters )
 {
 	MediaManager* pcManager = MediaManager::Get();
 	if( pcManager == NULL )
 		return( NULL );
 	MediaOutput* pcOutput = pcManager->GetDefaultVideoOutput();
 	pcManager->Put();
-	if( pcOutput == NULL || pcOutput->Open( "" ) != 0 )
+	if( pcOutput == NULL || pcOutput->Open( zParameters ) != 0 )
 		return( NULL );
 
 	MediaOutputStage* pcStage = new MediaOutputStage();
@@ -1075,12 +1134,14 @@ status_t MediaSyncStage::Initialize()
  * \par Description:
  * This method will fetch the audio and/or video packets from the connected inputs
  * and codecs and pass them to the connected outputs at the right time. This method
- * should be called from a separate thread and might block.
+ * should be called from a separate thread and might block. It returns a value < 0
+ * if there was an error. Otherwise it returns a value in msecs that tells the application
+ * when it has to call this function again.
  * \author	Arno Klenke
  ******************************************************************************/
-status_t MediaSyncStage::Run()
+int MediaSyncStage::Run()
 {
-	
+	int nNextCallTime = 100000;
 	uint32 nVidPrevOutput;
 	MediaStage* pcVidPrevStage = NULL;
 	uint32 nVidNextInput;
@@ -1149,6 +1210,7 @@ status_t MediaSyncStage::Run()
 			printf( "Droping Frame %i %i!\n", (int)m->m_sVideoPacket.nTimeStamp, (int)nCurrentTime );
 			pcVidPrevStage->FreePacket( &m->m_sVideoPacket );
 			m->m_bVideoValid = false;
+			nNextCallTime = 0;
 		}
 		else if( !( (uint64)nCurrentTime < m->m_sVideoPacket.nTimeStamp ) )
 		{
@@ -1156,7 +1218,16 @@ status_t MediaSyncStage::Run()
 			//printf( "Write video frame %i %i\n", (int)m->m_sVideoPacket.nTimeStamp, (int)nCurrentTime );
 			pcVidNextStage->GetPacket( nVidNextInput, NULL );
 			pcVidPrevStage->FreePacket( &m->m_sVideoPacket );
-			m->m_bVideoValid = false;						
+			m->m_bVideoValid = false;
+			nNextCallTime = 0;
+		}
+		else
+		{
+			/* Calculate time when we want to write the frame */
+			int nRemainingTime = (int)( m->m_sVideoPacket.nTimeStamp - (uint64)nCurrentTime ) - 2;
+			if( nRemainingTime < 0 )
+				nRemainingTime = 0;
+			nNextCallTime = std::min( nNextCallTime, nRemainingTime );
 		}
 	}
 	
@@ -1193,11 +1264,13 @@ audio_again:
 		if( nAudioBufferSize <= 80 || ( nFreeAudioBufSize > 40 ) )
 		{
 			uint32 nFreeAudioBufBytes = (uint32)( nFreeAudioBufSize * bigtime_t( 2 * m->m_sAudioFormat.nChannels * m->m_sAudioFormat.nSampleRate ) / 1000 );
+			nFreeAudioBufBytes -= nFreeAudioBufBytes % ( 2 * m->m_sAudioFormat.nChannels );
 			uint32 nWriteBytes = std::min( nFreeAudioBufBytes, m->m_sAudioPacket.nSize[0] - m->m_nAudioPacketPos );
 
 			bigtime_t nAudioLength = (bigtime_t)nWriteBytes * 1000;
 			nAudioLength /= bigtime_t( 2 * m->m_sAudioFormat.nChannels * m->m_sAudioFormat.nSampleRate );
 					
+			nFreeAudioBufSize -= nAudioLength;
 			
 			if( m->m_nAudioPacketPos == 0 )
 				if( m->m_sAudioPacket.nTimeStamp != ~0 ) {
@@ -1223,8 +1296,15 @@ audio_again:
 			}
 					
 		}
+		
+		/* Calculate when we want to get called again */
+		int nRemainingTime = nAudioBufferSize > 200 ? ( 80 - nFreeAudioBufSize ) : ( 40 - nFreeAudioBufSize );
+		if( nRemainingTime < 0 )
+			nRemainingTime = 0;
+		nNextCallTime = std::min( nNextCallTime, nRemainingTime );
+		//printf( "%i %i %i %i\n", (int)nAudioBufferSize, (int)nFreeAudioBufSize, (int)nRemainingTime, (int)nNextCallTime );
 	}
-	return( 0 );	
+	return( nNextCallTime );	
 }
 
 /** Creates a sync statge.

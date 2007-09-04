@@ -40,7 +40,7 @@
 
 using namespace os;
 
-Gate g_cLayerGate( "layer_gate", false );
+LayerGate g_cLayerGate( "layer_gate" );
 
 
 //----------------------------------------------------------------------------

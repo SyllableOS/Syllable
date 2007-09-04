@@ -42,7 +42,7 @@ public:
 	}
 	os::View*		GetConfigurationView();
 	
-	 bool			FileNameRequired();
+	bool			FileNameRequired();
 	status_t 		Open( os::String zFileName );
 	void 			Close();
 	void			Clear();
@@ -52,6 +52,12 @@ public:
 	
 	uint32			GetTrackCount();
 	uint32			SelectTrack( uint32 nTrack );
+	
+
+	os::String		GetTitle();
+	os::String		GetAuthor();	
+	os::String		GetAlbum();	
+	os::String		GetComment();	
 	
 	status_t		ReadPacket( os::MediaPacket_s* psPacket );
 	void			FreePacket( os::MediaPacket_s* psPacket );
@@ -63,8 +69,6 @@ public:
 	uint32			GetStreamCount();
 	os::MediaFormat_s	GetStreamFormat( uint32 nIndex );
 private:
-	
-
 	AVFormatContext *m_psContext;
 	bool			m_bStream;
 	uint64			m_nCurrentPosition;
@@ -113,7 +117,7 @@ status_t FFMpegDemuxer::Open( os::String zFileName )
 		m_nBitRate = 0;
 		
 		
-		for( int i = 0; i < m_psContext->nb_streams; i++ ) 
+		for( uint i = 0; i < m_psContext->nb_streams; i++ ) 
 		{
 			m_nBitRate += m_psContext->streams[i]->codec->bit_rate;
 		}
@@ -135,7 +139,7 @@ status_t FFMpegDemuxer::Open( os::String zFileName )
 		
 		m_nCurrentPosition = 0;
 		
-		
+
 		return( 0 );
 	}
 	return( -1 );
@@ -144,6 +148,7 @@ status_t FFMpegDemuxer::Open( os::String zFileName )
 void FFMpegDemuxer::Close()
 {
 	if( m_psContext ) {
+		
 		av_close_input_file( m_psContext );
 		m_psContext = NULL;
 	}
@@ -175,6 +180,34 @@ uint32 FFMpegDemuxer::SelectTrack( uint32 nTrack )
 	return( 0 );
 }
 
+os::String FFMpegDemuxer::GetTitle()
+{
+	if( m_psContext == NULL )
+		return( "" );
+	return( m_psContext->title );
+}
+
+os::String FFMpegDemuxer::GetAuthor()
+{
+	if( m_psContext == NULL )
+		return( "" );
+	return( m_psContext->author );
+}
+
+os::String FFMpegDemuxer::GetAlbum()
+{
+	if( m_psContext == NULL )
+		return( "" );
+	return( m_psContext->album );
+}
+
+os::String FFMpegDemuxer::GetComment()
+{
+	if( m_psContext == NULL )
+		return( "" );
+	return( m_psContext->comment );
+}
+
 status_t FFMpegDemuxer::ReadPacket( os::MediaPacket_s* psPacket )
 {
 	AVPacket* psAVPacket = (AVPacket*)malloc( sizeof( AVPacket ) );
@@ -199,6 +232,7 @@ status_t FFMpegDemuxer::ReadPacket( os::MediaPacket_s* psPacket )
 	}
 	else if( m_psContext->start_time == AV_NOPTS_VALUE )
 	{
+		
 		m_nCurrentPosition = ( av_rescale_q( psAVPacket->dts, m_psContext->streams[psAVPacket->stream_index]->time_base, AV_TIME_BASE_Q ) ) / AV_TIME_BASE;
 		psPacket->nTimeStamp = ( av_rescale_q( psAVPacket->dts, m_psContext->streams[psAVPacket->stream_index]->time_base, AV_TIME_BASE_Q ) ) / 1000;
 	}

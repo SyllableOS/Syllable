@@ -18,11 +18,14 @@
  */
 
 #include <media/addon.h>
-#include <ffmpeg/config.h>
-#include <ffmpeg/avcodec.h>
-#include <ffmpeg/avformat.h>
-#include <ffmpeg/allformats.h>
-
+extern "C"
+{
+	#include <ffmpeg/config.h>
+	#include <ffmpeg/avcodec.h>
+	#include <ffmpeg/allcodecs.h>
+	#include <ffmpeg/avformat.h>
+	#include <ffmpeg/allformats.h>
+}
 
 extern os::MediaCodec* init_ffmpeg_codec();
 extern os::MediaInput* init_ffmpeg_input();
@@ -58,7 +61,7 @@ void FFMpegAddon::RegisterFormats()
 	/* Our own custom init function which avoids initialising formats and codecs we don't want E.g. Ogg */
     avcodec_init();
     RegisterCodecs();
-    REGISTER_DEMUXER (AAC, aac);
+   REGISTER_DEMUXER (AAC, aac);
     REGISTER_MUXDEMUX(AC3, ac3);
     REGISTER_MUXER   (ADTS, adts);
     REGISTER_MUXDEMUX(AIFF, aiff);
@@ -91,8 +94,7 @@ void FFMpegAddon::RegisterFormats()
     REGISTER_DEMUXER (FOURXM, fourxm);
     REGISTER_MUXER   (FRAMECRC, framecrc);
     REGISTER_MUXDEMUX(GIF, gif);
-    REGISTER_DEMUXER (GXF, gxf);
-    REGISTER_MUXER   (GXF, gxf);
+    REGISTER_MUXDEMUX(GXF, gxf);
     REGISTER_MUXDEMUX(H261, h261);
     REGISTER_MUXDEMUX(H263, h263);
     REGISTER_MUXDEMUX(H264, h264);
@@ -102,7 +104,7 @@ void FFMpegAddon::RegisterFormats()
     REGISTER_DEMUXER (INGENIENT, ingenient);
     REGISTER_DEMUXER (IPMOVIE, ipmovie);
     if (!ENABLE_NUT_DEMUXER) REGISTER_DEMUXER (LIBNUT, libnut);
-    REGISTER_MUXER   (LIBNUT, libnut);
+    if (!ENABLE_NUT_MUXER)   REGISTER_MUXER   (LIBNUT, libnut);
     REGISTER_MUXDEMUX(M4V, m4v);
     REGISTER_DEMUXER (MATROSKA, matroska);
     REGISTER_MUXDEMUX(MJPEG, mjpeg);
@@ -122,13 +124,14 @@ void FFMpegAddon::RegisterFormats()
     REGISTER_MUXER   (MPEG2VOB, mpeg2vob);
     REGISTER_DEMUXER (MPEGPS, mpegps);
     REGISTER_MUXDEMUX(MPEGTS, mpegts);
+    REGISTER_DEMUXER (MPEGTSRAW, mpegtsraw);
     REGISTER_DEMUXER (MPEGVIDEO, mpegvideo);
     REGISTER_MUXER   (MPJPEG, mpjpeg);
     REGISTER_DEMUXER (MTV, mtv);
     REGISTER_DEMUXER (MXF, mxf);
     REGISTER_DEMUXER (NSV, nsv);
     REGISTER_MUXER   (NULL, null);
-    REGISTER_DEMUXER (NUT, nut);
+    REGISTER_MUXDEMUX(NUT, nut);
     REGISTER_DEMUXER (NUV, nuv);
     REGISTER_MUXDEMUX(PCM_ALAW,  pcm_alaw);
     REGISTER_MUXDEMUX(PCM_MULAW, pcm_mulaw);
@@ -141,11 +144,14 @@ void FFMpegAddon::RegisterFormats()
     REGISTER_MUXER   (PSP, psp);
     REGISTER_MUXDEMUX(RAWVIDEO, rawvideo);
     REGISTER_MUXDEMUX(RM, rm);
-    REGISTER_DEMUXER (ROQ, roq);
+    REGISTER_MUXDEMUX(ROQ, roq);
     REGISTER_DEMUXER (REDIR, redir);
     REGISTER_MUXER   (RTP, rtp);
     REGISTER_DEMUXER (RTSP, rtsp);
     REGISTER_DEMUXER (SDP, sdp);
+#ifdef CONFIG_RTP_MUXER
+    av_register_rtp_dynamic_payload_handlers();
+#endif
     REGISTER_DEMUXER (SEGAFILM, segafilm);
     REGISTER_DEMUXER (SHORTEN, shorten);
     REGISTER_DEMUXER (SMACKER, smacker);
@@ -157,6 +163,7 @@ void FFMpegAddon::RegisterFormats()
     REGISTER_DEMUXER (THP, thp);
     REGISTER_DEMUXER (TIERTEXSEQ, tiertexseq);
     REGISTER_DEMUXER (TTA, tta);
+    REGISTER_DEMUXER (TXD, txd);
     REGISTER_DEMUXER (V4L2, v4l2);
     REGISTER_DEMUXER (VC1, vc1);
     REGISTER_DEMUXER (VIDEO_GRAB_BKTR, video_grab_bktr);
@@ -176,8 +183,7 @@ void FFMpegAddon::RegisterFormats()
     REGISTER_PROTOCOL(PIPE, pipe);
     REGISTER_PROTOCOL(RTP, rtp);
     REGISTER_PROTOCOL(TCP, tcp);
-    REGISTER_PROTOCOL(UDP, udp);
-}
+    REGISTER_PROTOCOL(UDP, udp);}
 
 #define REGISTER_ENCODER(X,x) \
           if(ENABLE_##X##_ENCODER)  register_avcodec(&x##_encoder)
@@ -187,6 +193,8 @@ void FFMpegAddon::RegisterFormats()
 
 #define REGISTER_PARSER(X,x) \
           if(ENABLE_##X##_PARSER)  av_register_codec_parser(&x##_parser)
+#define REGISTER_BSF(X,x) \
+          if(ENABLE_##X##_BSF)     av_register_bitstream_filter(&x##_bsf)
 
 
 void FFMpegAddon::RegisterCodecs()
@@ -227,8 +235,10 @@ void FFMpegAddon::RegisterCodecs()
     REGISTER_DECODER(INDEO2, indeo2);
     REGISTER_DECODER(INDEO3, indeo3);
     REGISTER_DECODER(INTERPLAY_VIDEO, interplay_video);
-    REGISTER_ENCODER(JPEGLS, jpegls);
+    REGISTER_ENCDEC (JPEGLS, jpegls);
     REGISTER_DECODER(KMVC, kmvc);
+    REGISTER_ENCODER(LIBX264, libx264);
+    REGISTER_ENCODER(LIBXVID, libxvid);
     REGISTER_ENCODER(LJPEG, ljpeg);
     REGISTER_DECODER(LOCO, loco);
     REGISTER_DECODER(MDEC, mdec);
@@ -256,9 +266,9 @@ void FFMpegAddon::RegisterCodecs()
     REGISTER_DECODER(PTX, ptx);
     REGISTER_DECODER(QDRAW, qdraw);
     REGISTER_DECODER(QPEG, qpeg);
-    REGISTER_DECODER(QTRLE, qtrle);
+    REGISTER_ENCDEC (QTRLE, qtrle);
     REGISTER_ENCDEC (RAWVIDEO, rawvideo);
-    REGISTER_DECODER(ROQ, roq);
+    REGISTER_ENCDEC (ROQ, roq);
     REGISTER_DECODER(RPZA, rpza);
     REGISTER_ENCDEC (RV10, rv10);
     REGISTER_ENCDEC (RV20, rv20);
@@ -277,6 +287,7 @@ void FFMpegAddon::RegisterCodecs()
     REGISTER_DECODER(TRUEMOTION1, truemotion1);
     REGISTER_DECODER(TRUEMOTION2, truemotion2);
     REGISTER_DECODER(TSCC, tscc);
+    REGISTER_DECODER(TXD, txd);
     REGISTER_DECODER(ULTI, ulti);
     REGISTER_DECODER(VC1, vc1);
     REGISTER_DECODER(VCR1, vcr1);
@@ -291,38 +302,36 @@ void FFMpegAddon::RegisterCodecs()
     REGISTER_ENCDEC (WMV2, wmv2);
     REGISTER_DECODER(WMV3, wmv3);
     REGISTER_DECODER(WNV1, wnv1);
-    REGISTER_ENCODER(X264, x264);
     REGISTER_DECODER(XAN_WC3, xan_wc3);
     REGISTER_DECODER(XL, xl);
-    REGISTER_ENCODER(XVID, xvid);
+    REGISTER_DECODER(XSUB, xsub);
     REGISTER_ENCDEC (ZLIB, zlib);
     REGISTER_ENCDEC (ZMBV, zmbv);
 
     /* audio codecs */
-    REGISTER_DECODER(AAC, aac);
     REGISTER_DECODER(MPEG4AAC, mpeg4aac);
-    REGISTER_ENCODER(AC3, ac3);
+    REGISTER_ENCDEC (AC3, ac3);
     REGISTER_DECODER(ALAC, alac);
     REGISTER_DECODER(ATRAC3, atrac3);
     REGISTER_DECODER(COOK, cook);
     REGISTER_DECODER(DCA, dca);
     REGISTER_DECODER(DSICINAUDIO, dsicinaudio);
-    REGISTER_ENCODER(FAAC, faac);
     REGISTER_ENCDEC (FLAC, flac);
     REGISTER_DECODER(IMC, imc);
-//    REGISTER_ENCDEC (LIBAMR_NB, libamr_nb);
-//    REGISTER_ENCDEC (LIBAMR_WB, libamr_wb);
+    REGISTER_ENCDEC (LIBAMR_NB, libamr_nb);
+    REGISTER_ENCDEC (LIBAMR_WB, libamr_wb);
     REGISTER_DECODER(LIBA52, liba52);
-    REGISTER_DECODER(LIBDTS, libdts);
+    REGISTER_ENCODER(LIBFAAC, libfaac);
+    REGISTER_DECODER(LIBFAAD, libfaad);
     REGISTER_ENCDEC (LIBGSM, libgsm);
     REGISTER_ENCDEC (LIBGSM_MS, libgsm_ms);
+    REGISTER_ENCODER(LIBMP3LAME, libmp3lame);
     REGISTER_ENCODER(LIBTHEORA, libtheora);
     REGISTER_DECODER(MACE3, mace3);
     REGISTER_DECODER(MACE6, mace6);
     REGISTER_ENCDEC (MP2, mp2);
     REGISTER_DECODER(MP3, mp3);
     REGISTER_DECODER(MP3ADU, mp3adu);
-    REGISTER_ENCODER(MP3LAME, mp3lame);
     REGISTER_DECODER(MP3ON4, mp3on4);
     REGISTER_DECODER(MPC7, mpc7);
     REGISTER_DECODER(QDM2, qdm2);
@@ -358,10 +367,11 @@ void FFMpegAddon::RegisterCodecs()
     REGISTER_ENCDEC (PCM_U24LE, pcm_u24le);
     REGISTER_ENCDEC (PCM_U32BE, pcm_u32be);
     REGISTER_ENCDEC (PCM_U32LE, pcm_u32le);
+    REGISTER_ENCDEC (PCM_ZORK , pcm_zork);
 
     /* dpcm codecs */
     REGISTER_DECODER(INTERPLAY_DPCM, interplay_dpcm);
-    REGISTER_DECODER(ROQ_DPCM, roq_dpcm);
+    REGISTER_ENCDEC (ROQ_DPCM, roq_dpcm);
     REGISTER_DECODER(SOL_DPCM, sol_dpcm);
     REGISTER_DECODER(XAN_DPCM, xan_dpcm);
 
@@ -407,15 +417,15 @@ void FFMpegAddon::RegisterCodecs()
     REGISTER_PARSER (PNM, pnm);
     REGISTER_PARSER (VC1, vc1);
 
-    av_register_bitstream_filter(&dump_extradata_bsf);
-    av_register_bitstream_filter(&remove_extradata_bsf);
-    av_register_bitstream_filter(&noise_bsf);
-    av_register_bitstream_filter(&mp3_header_compress_bsf);
-    av_register_bitstream_filter(&mp3_header_decompress_bsf);
-    av_register_bitstream_filter(&mjpega_dump_header_bsf);
-    av_register_bitstream_filter(&imx_dump_header_bsf);
+    /* bitstream filters */
+    REGISTER_BSF    (DUMP_EXTRADATA, dump_extradata);
+    REGISTER_BSF    (REMOVE_EXTRADATA, remove_extradata);
+    REGISTER_BSF    (NOISE, noise);
+    REGISTER_BSF    (MP3_HEADER_COMPRESS, mp3_header_compress);
+    REGISTER_BSF    (MP3_HEADER_DECOMPRESS, mp3_header_decompress);
+    REGISTER_BSF    (MJPEGA_DUMP_HEADER, mjpega_dump_header);
+    REGISTER_BSF    (IMX_DUMP_HEADER, imx_dump_header);
 }
-
 
 extern "C"
 {

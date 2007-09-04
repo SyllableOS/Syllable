@@ -31,6 +31,7 @@
 #include <appserver/protocol.h>
 #include <inttypes.h>
 #include <iostream>
+#include "mmx.h"
 extern "C" 
 {
 	#include "mplayercomp.h"
@@ -75,6 +76,8 @@ public:
 		{
 			m_pcBitmap = new os::Bitmap( cSrcSize.x, cSrcSize.y, eFormat );
 		}
+		SetEraseColor( os::Color32_s( 0, 0, 0 ) );
+		m_bBitmapCleared = false;
 	}
 	~VideoView()
 	{
@@ -147,7 +150,7 @@ public:
 		os::Messenger( pcApp->GetAppPort() ).SendMessage( &cReq, &cReply );
 
 		area_id hArea;
-		int nError;
+		int nError = 0;
 		void *pAddress = NULL;
 
 		cReply.FindInt( "error", &nError );
@@ -228,7 +231,7 @@ public:
 
 		os::Messenger( pcApp->GetAppPort() ).SendMessage( &cReq, &cReply );
 
-		int nError;
+		int nError = 0;
 		void *pAddress = NULL;
 		area_id hArea;
 
@@ -256,7 +259,8 @@ public:
 			/* Paint everything in the color key color */
 			SetFgColor( m_sOverlay.m_sColorKey );
 			FillRect( cUpdateRect );
-		} else
+		} 
+		else
 		{
 			DrawBitmap( m_pcBitmap, m_pcBitmap->GetBounds(), GetBounds() );
 		}
@@ -268,15 +272,32 @@ public:
 		else
 			return( m_pcBitmap->LockRaster() );
 	}
+	void SetBitmapCleared( const bool bCleared )
+	{
+		if( !m_bBitmapCleared && bCleared )
+		{
+			/* If we switch from drawing the video using DrawBitmap() to direct framebuffer
+			   access we clear the bitmap */
+			memset( m_pcBitmap->LockRaster(), 0, m_pcBitmap->GetBytesPerRow() * (int)( m_pcBitmap->GetBounds().Height() + 1 ) );
+			/* These calls are necessary to update the window backbuffer */
+			Invalidate();
+			Flush();
+		}
+		m_bBitmapCleared = bCleared;
+	}
 private:
 	bool m_bUseOverlay;
 	os::Bitmap* m_pcBitmap;
 	video_overlay 	m_sOverlay;
     os::Rect		m_cCurrentFrame;
+    bool			m_bBitmapCleared;
 };
 
 
 CpuCaps gCpuCaps;
+
+namespace os
+{
 
 class ScreenOutput : public os::MediaOutput
 {
@@ -318,8 +339,14 @@ private:
 	os::MediaFormat_s	m_sFormat;
 	sem_id			m_hLock;
 	bool			m_bUseMMX;
+	bool			m_bUseFB;
+	port_id			m_hReplyPort;
+	os::Desktop		m_cDesktop;
 };
 
+};
+
+using namespace os;
 
 ScreenOutput::ScreenOutput()
 {
@@ -327,6 +354,7 @@ ScreenOutput::ScreenOutput()
 	m_bUseOverlay = false;
 	m_pcView = NULL;
 	m_hLock = create_semaphore( "overlay_lock", 1, 0 );
+	m_hReplyPort = create_port( "screen_reply", DEFAULT_PORT_SIZE );
 	
 	/* Get system information and check if we have MMX support */
 	system_info sSysInfo;
@@ -341,6 +369,7 @@ ScreenOutput::~ScreenOutput()
 {
 	Close();
 	delete_semaphore( m_hLock );
+	delete_port( m_hReplyPort );
 }
 
 os::String ScreenOutput::GetIdentifier()
@@ -390,7 +419,7 @@ bool ScreenOutput::CheckVideoOverlay( os::color_space eSpace )
 	
 	os::Messenger( pcApp->GetAppPort() ).SendMessage( &cReq, &cReply );
     
-    int nError;
+    int nError = 0;
     area_id hArea;
 	cReply.FindInt( "error", &nError );
 	if( nError != 0 ) {
@@ -406,6 +435,10 @@ bool ScreenOutput::CheckVideoOverlay( os::color_space eSpace )
 
 status_t ScreenOutput::Open( os::String zFileName )
 {
+	/* Check for direct framebuffer access */
+	if( zFileName == "-fb" )
+		m_bUseFB = true;
+	
 	/* Clear frame buffer */
 	Close();
 	
@@ -458,8 +491,6 @@ void ScreenOutput::Close()
 {
 	
 	Clear();
-	/*if( m_pcView != NULL )
-		delete( m_pcView );*/
 	//cout<<"Video closed"<<endl;
 }
 
@@ -528,26 +559,304 @@ inline void ScreenOutput::mmx_memcpy( uint8 *pTo, uint8 *pFrom, int nLen )
 		memcpy( pTo, pFrom, nLen & 7 );
 }
 
+static uint64 __attribute__((aligned(8))) g_anMMX80W = 0x0080008000800080LL;
+static uint64 __attribute__((aligned(8))) g_anMMX10W = 0x1010101010101010LL;
+static uint64 __attribute__((aligned(8))) g_anMMX00FFW = 0x00ff00ff00ff00ffLL;
+static uint64 __attribute__((aligned(8))) g_anMMXYCoeff = 0x253f253f253f253fLL;
+static uint64 __attribute__((aligned(8))) g_anUGreen = 0xf37df37df37df37dLL;
+static uint64 __attribute__((aligned(8))) g_anVGreen = 0xe5fce5fce5fce5fcLL;
+static uint64 __attribute__((aligned(8))) g_anUBlue = 0x4093409340934093LL;
+static uint64 __attribute__((aligned(8))) g_anVRed = 0x3312331233123312LL;
+
+static void yv12torgb32_scaled( uint8* pDstPtr, uint8* pYPtr, uint8* pUPtr, uint8* pVPtr,
+							uint32 nSrcWidth, uint32 nSrcHeight, uint32 nDstWidth, uint32 nDstHeight,
+							uint32 nRGBStride, uint32 nYStride, uint32 nUVStride )
+{
+	
+	uint32 nXStep = ( nDstWidth << 16 ) / nSrcWidth;
+	uint32 nYStep = ( nDstHeight << 16 ) / nSrcHeight;
+	uint32 nCurrentY = 0;
+	uint32 nDstY = 0;
+	
+	for( uint32 y = 0; y < nSrcHeight; y++ )
+	{
+		nCurrentY += nYStep;
+
+		while( nCurrentY >= 0x10000 )
+		{
+		uint32* pDst = (uint32*)pDstPtr;		
+		uint8* pY = pYPtr + nYStride * y;
+		uint8* pU = pUPtr + nUVStride * ( y / 2 );
+		uint8* pV = pVPtr + nUVStride * ( y / 2 );
+		
+		uint32 nCurrentX = 0;
+		
+		
+		for( uint32 x = 0; x < nSrcWidth; x+= 8 )
+		{
+			/* Load data for 8 pixels */
+			movq_m2r( *pY, mm6 ); /* Y7 Y6 Y5 Y4 Y3 Y2 Y1 Y0 */
+			movd_m2r( *pU, mm0 ); /*  0  0  0  0 U3 U2 U1 U0 */
+			movd_m2r( *pV, mm1 ); /*  0  0  0  0 V3 V2 V1 V0 */
+			
+			pxor_r2r( mm4, mm4 ); /* 0 0 0 0 0 0 0 0 */
+			
+			/* Convert the chroma part */
+			punpcklbw_r2r( mm4, mm0 ); /* 0 U3 0 U2 0 U1 0 U0 */
+			punpcklbw_r2r( mm4, mm1 ); /* 0 V3 0 V2 0 V1 0 V0 */
+			
+			psubsw_m2r( g_anMMX80W, mm0 ); /* mm0 -= 128 */
+			psubsw_m2r( g_anMMX80W, mm1 ); /* mm1 -= 128 */
+			
+			psllw_i2r( 3, mm0 ); /* mm0 << 3 */
+			psllw_i2r( 3, mm1 ); /* mm1 << 3 */
+			
+			movq_r2r( mm0, mm2 ); /* mm0 -> mm2 */
+			movq_r2r( mm1, mm3 ); /* mm1 -> mm3 */
+			
+			pmulhw_m2r( g_anUGreen, mm2 );
+			pmulhw_m2r( g_anVGreen, mm3 );
+			
+			pmulhw_m2r( g_anUBlue, mm0 );
+			pmulhw_m2r( g_anVRed, mm1 );
+			
+			paddsw_r2r( mm3, mm2 );
+			
+			/* Convert the luma part */
+			psubusb_m2r( g_anMMX10W, mm6 ); /* mm6 -= 16 */
+			movq_r2r( mm6, mm7 ); /* mm6 -> mm7 */
+			pand_m2r( g_anMMX00FFW, mm6 ); /* 0 Y6 0 Y4 0 Y2 0 Y0 */
+			psrlw_i2r( 8, mm7 ); /* 0 Y7 0 Y5 0 Y3 0 Y1 */
+			
+			psllw_i2r( 3, mm6 ); /* mm6 << 3 */
+			psllw_i2r( 3, mm7 ); /* mm7 << 3 */
+			
+			pmulhw_m2r( g_anMMXYCoeff, mm6 );
+			pmulhw_m2r( g_anMMXYCoeff, mm7 );
+			
+			/* Create the final RGB values */
+			movq_r2r( mm0, mm3 ); /* mm0 -> mm3 */
+			movq_r2r( mm1, mm4 ); /* mm1 -> mm4 */
+			movq_r2r( mm2, mm5 ); /* mm2 -> mm5 */
+			
+			paddsw_r2r( mm6, mm0 ); /* Y + Blue */
+			paddsw_r2r( mm7, mm3 ); /* Y + Blue */
+
+			paddsw_r2r( mm6, mm1 ); /* Y + Red */
+			paddsw_r2r( mm7, mm4 ); /* Y + Red */
+			
+			paddsw_r2r( mm6, mm2 ); /* Y + Green */
+			paddsw_r2r( mm7, mm5 ); /* Y + Green */
+			
+			/* Pack RGB components to bytes */
+			packuswb_r2r( mm0, mm0 ); /* B6 B4 B2 B0 B6 B4 B2 B0 */
+			packuswb_r2r( mm1, mm1 ); /* R6 R4 R2 R0 R6 R4 R2 R0 */
+			packuswb_r2r( mm2, mm2 ); /* G6 G4 G2 G0 G6 G4 G2 G0 */
+			packuswb_r2r( mm3, mm3 ); /* B7 B5 B3 B1 B7 B5 B3 B1 */
+			packuswb_r2r( mm4, mm4 ); /* R7 R5 R3 R1 R7 R5 R3 R1 */
+			packuswb_r2r( mm5, mm5 ); /* G7 G5 G3 G1 G7 G5 G3 G1 */
+			
+			/* Interleave the RGB components */
+			punpcklbw_r2r( mm3, mm0 ); /* R7 R6 R5 R4 R3 R2 R1 R0 */
+			punpcklbw_r2r( mm4, mm1 ); /* B7 B6 B5 B4 B3 B2 B1 B0 */
+			punpcklbw_r2r( mm5, mm2 ); /* G7 G6 G5 G4 G3 G2 G1 G0 */
+			
+			
+			/* Build RGB values */
+			pxor_r2r( mm3, mm3 );
+			
+			movq_r2r( mm0, mm6 ); /* mm0 -> mm6 */
+			movq_r2r( mm1, mm7 ); /* mm1 -> mm7 */
+			movq_r2r( mm0, mm4 ); /* mm0 -> mm4 */
+			movq_r2r( mm1, mm5 ); /* mm1 -> mm5 */
+			
+			punpcklbw_r2r( mm2, mm6 );
+			punpcklbw_r2r( mm3, mm7 );
+			punpcklwd_r2r( mm7, mm6 );
+						
+			nCurrentX += nXStep;
+			while( nCurrentX >= 0x10000 )
+			{
+				movd_r2m( mm6, *pDst );
+				pDst++;
+				nCurrentX -= 0x10000;
+			}
+			
+			psrlq_i2r( 32, mm6 );
+			
+			nCurrentX += nXStep;
+			while( nCurrentX >= 0x10000 )
+			{
+				movd_r2m( mm6, *pDst );
+				pDst++;
+				nCurrentX -= 0x10000;
+			}
+
+			movq_r2r( mm0, mm6 );
+			punpcklbw_r2r( mm2, mm6 );
+			punpckhwd_r2r( mm7, mm6 );
+			
+			nCurrentX += nXStep;
+			while( nCurrentX >= 0x10000 )
+			{
+				movd_r2m( mm6, *pDst );
+				pDst++;
+				nCurrentX -= 0x10000;
+			}
+
+			psrlq_i2r( 32, mm6 );
+			
+			nCurrentX += nXStep;
+			while( nCurrentX >= 0x10000 )
+			{
+				movd_r2m( mm6, *pDst );
+				pDst++;
+				nCurrentX -= 0x10000;
+			}
+			
+			punpckhbw_r2r( mm2, mm4 );
+			punpckhbw_r2r( mm3, mm5 );
+			punpcklwd_r2r( mm5, mm4 );
+	
+			nCurrentX += nXStep;
+			while( nCurrentX >= 0x10000 )
+			{
+				movd_r2m( mm4, *pDst );
+				pDst++;
+				nCurrentX -= 0x10000;
+			}
+			
+			psrlq_i2r( 32, mm4 );
+			
+			nCurrentX += nXStep;
+			while( nCurrentX >= 0x10000 )
+			{
+				movd_r2m( mm4, *pDst );
+				pDst++;
+				nCurrentX -= 0x10000;
+			}
+	
+			movq_r2r( mm0, mm4 );
+			punpckhbw_r2r( mm2, mm4 );
+			punpckhwd_r2r( mm5, mm4 );
+
+			nCurrentX += nXStep;
+			while( nCurrentX >= 0x10000 )
+			{
+				movd_r2m( mm4, *pDst );
+				pDst++;
+				nCurrentX -= 0x10000;
+			}
+			
+			psrlq_i2r( 32, mm4 );
+			
+			nCurrentX += nXStep;
+			while( nCurrentX >= 0x10000 )
+			{
+				movd_r2m( mm4, *pDst );
+				pDst++;
+				nCurrentX -= 0x10000;
+			}
+
+			pY += 8;
+			pU += 4;
+			pV += 4;
+		}
+		nCurrentY -= 0x10000;
+		pDstPtr += nRGBStride;
+		nDstY++;
+		}
+	}
+	
+	while( nDstY < nDstHeight )
+	{
+		memset( pDstPtr, 0, nDstWidth * 4 );
+		nDstY++;
+	}
+	
+	emms();
+}
 
 status_t ScreenOutput::WritePacket( uint32 nIndex, os::MediaPacket_s* psNewFrame )
 {
-	/* Create a new media frame and queue it */
-	bigtime_t nTime = get_system_time();
+	/* Show video frame */
 	if( !m_bUseOverlay )
 	{
 		/* No overlay */
+		bigtime_t nTime = get_system_time();		
 		
-		yuv2rgb( m_pcView->GetRaster(), psNewFrame->pBuffer[0], psNewFrame->pBuffer[1], psNewFrame->pBuffer[2],
-			m_sFormat.nWidth, m_sFormat.nHeight, m_sFormat.nWidth * BitsPerPixel( m_eColorSpace ) / 8, psNewFrame->nSize[0],
-			psNewFrame->nSize[1] );
+		bool bUseView = true;
+		bool bUnlockFB = false;
+		os::WR_LockFbReply_s sReply;
 		
-		m_pcView->Paint( m_pcView->GetBounds() );
-		m_pcView->Sync();
+		if( m_bUseFB && m_pcView->GetWindow() != NULL )
+		{
+			/* Try to lock the framebuffer */
+			os::WR_LockFb_s sReq;
+
+			sReq.m_hReply = m_hReplyPort;
+			if( send_msg( m_pcView->GetWindow()->_GetAppserverPort(), os::WR_LOCK_FB, &sReq, sizeof( sReq ) ) == 0 )
+			{
+				if( get_msg( m_hReplyPort, NULL, &sReply, sizeof( sReply ) ) < 0 )
+				{
+					dbprintf( "Error: Appserver did not respond to WR_LOCK_FB request\n" );
+					bUseView = true;
+				}
+				else
+				{
+					if( sReply.m_bSuccess )
+					{
+						bUnlockFB = true;
+						if( sReply.m_eColorSpc == os::CS_RGB32 || sReply.m_eColorSpc == os::CS_RGBA32 )
+							bUseView = false;
+					}
+				}
+			}
+		}
 		
+		if( bUseView )
+		{
+			if( bUnlockFB )
+			{
+				/* Unlock the framebuffer. Without this call the system will lock up! */
+				unlock_semaphore( sReply.m_hSem );			
+			}					
+			/* Convert the YUV video frame to RGB and then draw it using the appserver */
+			yuv2rgb( m_pcView->GetRaster(), psNewFrame->pBuffer[0], psNewFrame->pBuffer[1], psNewFrame->pBuffer[2],
+				m_sFormat.nWidth, m_sFormat.nHeight, m_sFormat.nWidth * BitsPerPixel( m_eColorSpace ) / 8, psNewFrame->nSize[0],
+				psNewFrame->nSize[1] );
+			
+			m_pcView->SetBitmapCleared( false );
+			m_pcView->Paint( m_pcView->GetBounds() );
+			m_pcView->Sync();
+		}
+		else
+		{
+			/* Convert the YUV video frame to RGB, scale it and write it directly to the
+			   framebuffer */
+			os::Rect cViewFrame = m_pcView->ConvertToScreen( m_pcView->GetBounds() );			
+
+			cViewFrame &= sReply.m_cFrame;
+			
+			uint8* pFB = (uint8*)m_cDesktop.GetFrameBuffer();
+			pFB += sReply.m_nBytesPerLine * (int)cViewFrame.top;
+			pFB += 4 * (int)cViewFrame.left;
+			
+
+			yv12torgb32_scaled( pFB, psNewFrame->pBuffer[0], psNewFrame->pBuffer[1], psNewFrame->pBuffer[2],
+				m_sFormat.nWidth, m_sFormat.nHeight, (int)( cViewFrame.Width() + 1 ), (int)(cViewFrame.Height() + 1 ), sReply.m_nBytesPerLine, psNewFrame->nSize[0],
+				psNewFrame->nSize[1] );
+			m_pcView->SetBitmapCleared( true );				
+			if( bUnlockFB )
+			{
+				/* Unlock the framebuffer. Without this call the system will lock up! */
+				unlock_semaphore( sReply.m_hSem );			
+			}		
+		}
+		//printf( "%i\n", (int)( get_system_time() - nTime ) );
 	}
 	else if( m_eColorSpace == os::CS_YUV12 )
 	{
-		bigtime_t nTime = get_system_time();
 		/* YV12 overlay */
 		uint32 nDstPitch = ( ( m_sFormat.nWidth ) + 0x1ff ) & ~0x1ff;
 		for( int i = 0; i < m_sFormat.nHeight; i++ )

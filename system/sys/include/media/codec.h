@@ -66,6 +66,7 @@ public:
 	virtual void			DeleteVideoOutputPacket( MediaPacket_s* psOutput );
 	
 	virtual status_t 		DecodePacket( MediaPacket_s* psPacket, MediaPacket_s* psOutput );
+	virtual status_t		ParsePacket( MediaPacket_s* psPacket, os::MediaPacket_s * psOutput );
 	virtual status_t		EncodePacket( MediaPacket_s* psPacket, MediaPacket_s* psOutput );
 private:
 };

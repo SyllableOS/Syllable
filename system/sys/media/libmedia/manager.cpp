@@ -88,7 +88,11 @@ public:
 				-1, (void**)&pInit ) == 0 ) {
 					MediaAddon* pcAddon = pInit( "" );
 					if( pcAddon ) {
-						if( pcAddon->Initialize() != 0 )
+						if( pcAddon->GetAPIVersion() != MEDIA_ADDON_API_VERSION )
+						{
+							std::cout<<zFileName.c_str()<<" has wrong api version"<<std::endl;
+						}
+						else if( pcAddon->Initialize() != 0 )
 						{
 							std::cout<<pcAddon->GetIdentifier().c_str()<<" failed to initialize"<<std::endl;
 						} else {
@@ -141,7 +145,11 @@ public:
 				-1, (void**)&pInit ) == 0 ) {
 					MediaAddon* pcAddon = pInit( zDevFileName );
 					if( pcAddon ) {
-						if( pcAddon->Initialize() != 0 )
+						if( pcAddon->GetAPIVersion() != MEDIA_ADDON_API_VERSION )
+						{
+							std::cout<<zFileName.c_str()<<" has wrong api version"<<std::endl;
+						}
+						else if( pcAddon->Initialize() != 0 )
 						{
 							std::cout<<pcAddon->GetIdentifier().c_str()<<" failed to initialize"<<std::endl;
 						} else {

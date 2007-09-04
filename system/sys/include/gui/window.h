@@ -166,13 +166,13 @@ private:
     friend	class	View;
     friend	class	Bitmap;
     friend	class	MenuItem;
+	friend  class	ScreenOutput;
 
     Window& operator=( const Window& );
     Window( const Window& );
   
     Window( Bitmap* pcBitmap );
     void	_ViewDeleted( View* pcView );
-//    void	Init();
     void	_Cleanup();
     void*	_AllocRenderCmd( uint32 nCmd, const View* pcView, uint32 nSize );
     void	_PutRenderCmd();

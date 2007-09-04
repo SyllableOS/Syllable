@@ -18,6 +18,7 @@
  */
 
 #include <media/codec.h>
+#include <atheos/kernel.h>
 #include <iostream>
 
 #define FFMPEG_CACHE_SIZE 256 * 1024
@@ -54,11 +55,12 @@ public:
 	void DeleteVideoOutputPacket( os::MediaPacket_s * psOutput );
 
 	status_t DecodePacket( os::MediaPacket_s * psPacket, os::MediaPacket_s * psOutput );
+	status_t ParsePacket( os::MediaPacket_s * psPacket, os::MediaPacket_s * psOutput );
 	status_t EncodePacket( os::MediaPacket_s * psPacket, os::MediaPacket_s * psOutput );
 private:
 	uint32 Resample( uint16 *pDst, uint16 *pSrc, uint32 nLength );
 	bool m_bEncode;
-	AVStream m_sDecodeStream;
+	AVStream* m_sDecodeStream;
 	AVCodecContext *m_sDecodeContext;
 	AVStream m_sEncodeStream;
 	os::MediaFormat_s m_sInternalFormat;
@@ -66,12 +68,14 @@ private:
 	uint8 *m_pCache;
 	uint32 m_nCachePointer;
 	bool m_bEncodeResample;
+	int m_nThreads;
 };
 
 FFMpegCodec::FFMpegCodec()
 {
 	/* Create encoding cache */
 	m_pCache = ( uint8 * )malloc( FFMPEG_CACHE_SIZE );
+	m_nThreads = 1;
 	memset( m_pCache, 0, FFMPEG_CACHE_SIZE );
 }
 
@@ -95,7 +99,7 @@ status_t FFMpegCodec::Open( os::MediaFormat_s sFormat, os::MediaFormat_s sExtern
 {
 	CodecID id;
 	AVCodec *psCodec;
-
+	
 	if( bEncode )
 		psCodec = avcodec_find_encoder_by_name( sFormat.zName.c_str() );
 	else
@@ -151,9 +155,9 @@ status_t FFMpegCodec::Open( os::MediaFormat_s sFormat, os::MediaFormat_s sExtern
 
 	if( !m_bEncode )
 	{
-		m_sDecodeStream = *( ( AVStream * ) ( sFormat.pPrivate ) );
-		m_sDecodeContext = m_sDecodeStream.codec;
-
+		m_sDecodeStream = ( ( AVStream * ) ( sFormat.pPrivate ) );
+		m_sDecodeContext = m_sDecodeStream->codec;
+		
 		AVCodec *psCodec = avcodec_find_decoder( id );
 
 		if( id == CODEC_ID_MPEG1VIDEO )
@@ -163,6 +167,17 @@ status_t FFMpegCodec::Open( os::MediaFormat_s sFormat, os::MediaFormat_s sExtern
 			std::cout << "Error while opening codec " << sFormat.zName.c_str() << std::endl;
 			return ( -1 );
 		}
+		if( sFormat.nType == os::MEDIA_TYPE_VIDEO )
+		{
+			system_info sInfo;
+			get_system_info( &sInfo );
+			m_nThreads = std::min( sInfo.nCPUCount, m_sDecodeContext->height );
+			if( m_nThreads > 1 )
+			{
+				if( avcodec_thread_init( m_sDecodeContext, m_nThreads ) == 0 )
+					m_sDecodeContext->thread_count = m_nThreads;
+			}
+		}
 	}
 
 
@@ -171,10 +186,11 @@ status_t FFMpegCodec::Open( os::MediaFormat_s sFormat, os::MediaFormat_s sExtern
 	{
 		/* Prepare stream for the ffmpeg output */
 		memset( &m_sEncodeStream, 0, sizeof( m_sEncodeStream ) );
-		m_sEncodeStream.codec = avcodec_alloc_context();
+		m_sEncodeStream.codec = avcodec_alloc_context2( CODEC_TYPE_AUDIO );
 		m_sEncodeStream.start_time = AV_NOPTS_VALUE;
 		m_sEncodeStream.duration = AV_NOPTS_VALUE;
 		m_sEncodeStream.cur_dts = AV_NOPTS_VALUE;
+		m_sEncodeStream.first_dts = AV_NOPTS_VALUE;
 		av_set_pts_info( &m_sEncodeStream, 33, 1, 90000 );
 		m_sEncodeStream.last_IP_pts = AV_NOPTS_VALUE;
 		for( int i=0; i < MAX_REORDER_DELAY + 1; i++ )
@@ -233,10 +249,11 @@ status_t FFMpegCodec::Open( os::MediaFormat_s sFormat, os::MediaFormat_s sExtern
 	{
 		/* Prepare stream for the ffmpeg output */
 		memset( &m_sEncodeStream, 0, sizeof( m_sEncodeStream ) );
-		m_sEncodeStream.codec = avcodec_alloc_context();
+		m_sEncodeStream.codec = avcodec_alloc_context2( CODEC_TYPE_VIDEO );
 		m_sEncodeStream.start_time = AV_NOPTS_VALUE;
 		m_sEncodeStream.duration = AV_NOPTS_VALUE;
 		m_sEncodeStream.cur_dts = AV_NOPTS_VALUE;
+		m_sEncodeStream.first_dts = AV_NOPTS_VALUE;		
 		av_set_pts_info( &m_sEncodeStream, 33, 1, 90000 );
 		m_sEncodeStream.last_IP_pts = AV_NOPTS_VALUE;
 		for( int i=0; i < MAX_REORDER_DELAY + 1; i++ )
@@ -251,7 +268,6 @@ status_t FFMpegCodec::Open( os::MediaFormat_s sFormat, os::MediaFormat_s sExtern
 		else
 			sEnc->bit_rate = sFormat.nBitRate;
 
-		sEnc->bit_rate_tolerance = 4000 * 1000;
 
 		/* No variable framerates supported for now */
 #if 0
@@ -261,54 +277,24 @@ status_t FFMpegCodec::Open( os::MediaFormat_s sFormat, os::MediaFormat_s sExtern
 			return ( -1 );
 		}
 #endif
-		m_sEncodeStream.r_frame_rate.num = ( int )sExternal.vFrameRate;
-		m_sEncodeStream.r_frame_rate.den = 1;
-		sEnc->time_base.den = ( int )sExternal.vFrameRate;
-		sEnc->time_base.num = 1;
+        AVRational time_base = av_d2q(sExternal.vFrameRate, DEFAULT_FRAME_RATE_BASE);
+		sEnc->bit_rate_tolerance = 100000000;
+		//printf( "%f %i %i %i %i %f\n", sExternal.vFrameRate, sEnc->bit_rate, sEnc->bit_rate_tolerance, time_base.num, time_base.den, av_q2d( time_base ) );
+
+		sEnc->time_base.den = time_base.num;
+		sEnc->time_base.num = time_base.den;
 		sEnc->width = sExternal.nWidth;
 		sEnc->height = sExternal.nHeight;
 //              sEnc->aspect_ratio = sExternal.nWidth / sExternal.nHeight;
 		sEnc->pix_fmt = PIX_FMT_YUV420P;
-
-		sEnc->gop_size = 12;
-		sEnc->pre_me = 0;
-		sEnc->qmin = 2;
-		sEnc->qmax = 31;
-		sEnc->lmin = 2*FF_QP2LAMBDA;
-		sEnc->lmax = 31*FF_QP2LAMBDA;
-		sEnc->rc_qsquish = 0.0;
-		sEnc->mb_lmin = 2*FF_QP2LAMBDA;
-		sEnc->mb_lmax = 31*FF_QP2LAMBDA;
+		
+		
 		sEnc->max_qdiff = 3;
-		sEnc->qblur = 0.5;
-		sEnc->qcompress = 0.5;
-		sEnc->rc_eq = "tex^qComp";
-		sEnc->workaround_bugs = FF_BUG_AUTODETECT;
+		sEnc->rc_eq = "tex^qComp";		
 		sEnc->thread_count = 1;
-		sEnc->rc_override_count = 0;
-		sEnc->rc_max_rate = 0;
-		sEnc->rc_min_rate = 0;
-		sEnc->rc_buffer_size = 0;
-		sEnc->rc_buffer_aggressivity = 1.0;
-		sEnc->rc_initial_cplx = 0;
-		sEnc->i_quant_factor = -0.8;
-		sEnc->b_quant_factor = 1.25;
-		sEnc->i_quant_offset = 0.0;
-		sEnc->b_quant_offset = 1.25;
-		sEnc->intra_quant_bias = FF_DEFAULT_QUANT_BIAS;
-        sEnc->inter_quant_bias = FF_DEFAULT_QUANT_BIAS;
         sEnc->me_threshold= 0;
-        sEnc->mb_threshold= 0;
         sEnc->intra_dc_precision= 0;
         sEnc->strict_std_compliance = 0;
-        sEnc->error_rate = 0;
-        sEnc->scenechange_threshold= 0;
-        sEnc->me_range = 0;
-        sEnc->me_penalty_compensation= 256;
-        sEnc->frame_skip_threshold= 0;
-        sEnc->frame_skip_factor= 0;
-        sEnc->frame_skip_exp= 0;
-		sEnc->me_method = ME_EPZS;
 
 		/* Open encoder */
 		AVCodec *psEncCodec = avcodec_find_encoder( sEnc->codec_id );
@@ -339,9 +325,14 @@ status_t FFMpegCodec::Open( os::MediaFormat_s sFormat, os::MediaFormat_s sExtern
 void FFMpegCodec::Close()
 {
 	if( !m_bEncode )
+	{
+		if( m_nThreads > 1 )
+			avcodec_thread_free( m_sDecodeContext );
 		avcodec_close( m_sDecodeContext );
+	}
 	else
 		avcodec_close( m_sEncodeStream.codec );
+	
 }
 
 os::MediaFormat_s FFMpegCodec::GetInternalFormat()
@@ -368,7 +359,7 @@ os::MediaFormat_s FFMpegCodec::GetInternalFormat()
 		sFormat.eColorSpace = os::CS_YUV12;
 		sFormat.nSampleRate = sEnc->sample_rate;
 		sFormat.nChannels = sEnc->channels;
-		sFormat.vFrameRate = m_sEncodeStream.r_frame_rate.num;
+		sFormat.vFrameRate = ( double )m_sEncodeStream.r_frame_rate.num / ( double )m_sEncodeStream.r_frame_rate.den;
 		sFormat.nWidth = sEnc->width;
 		sFormat.nHeight = sEnc->height;
 	}
@@ -394,7 +385,7 @@ os::MediaFormat_s FFMpegCodec::GetExternalFormat()
 
 		sFormat.nSampleRate = m_sDecodeContext->sample_rate;
 		sFormat.nChannels = m_sDecodeContext->channels;
-		sFormat.vFrameRate = ( float )m_sDecodeStream.r_frame_rate.num / ( float )m_sDecodeStream.r_frame_rate.den;
+		sFormat.vFrameRate = ( double )m_sDecodeStream->r_frame_rate.num / ( double )m_sDecodeStream->r_frame_rate.den;
 		sFormat.nWidth = m_sDecodeContext->width;
 		sFormat.nHeight = m_sDecodeContext->height;
 	}
@@ -445,6 +436,15 @@ void FFMpegCodec::DeleteVideoOutputPacket( os::MediaPacket_s * psOutput )
 }
 
 
+status_t FFMpegCodec::ParsePacket( os::MediaPacket_s * psPacket, os::MediaPacket_s* psOutput )
+{
+	m_sDecodeContext->skip_frame = AVDISCARD_NONKEY;
+	status_t nError = DecodePacket( psPacket, psOutput );
+	m_sDecodeContext->skip_frame = AVDISCARD_DEFAULT;
+	return( nError );
+}
+
+
 status_t FFMpegCodec::DecodePacket( os::MediaPacket_s * psPacket, os::MediaPacket_s * psOutput )
 {
 	if( m_sInternalFormat.nType == os::MEDIA_TYPE_AUDIO )
@@ -452,14 +452,14 @@ status_t FFMpegCodec::DecodePacket( os::MediaPacket_s * psPacket, os::MediaPacke
 		int nSize = psPacket->nSize[0];
 		uint8 *pInput = psPacket->pBuffer[0];
 		uint8 *pOut = psOutput->pBuffer[0];
-		int nOutSize = 0;
+		int nOutSize = AVCODEC_MAX_AUDIO_FRAME_SIZE;
 
 		psOutput->nSize[0] = 0;
 
 		while( nSize > 0 )
 		{
 
-			int nLen = avcodec_decode_audio( m_sDecodeContext, ( short * )pOut, &nOutSize,
+			int nLen = avcodec_decode_audio2( m_sDecodeContext, ( short * )pOut, &nOutSize,
 				pInput, nSize );
 
 			if( nLen < 0 )
@@ -507,6 +507,7 @@ status_t FFMpegCodec::DecodePacket( os::MediaPacket_s * psPacket, os::MediaPacke
 		uint8 *pInput = psPacket->pBuffer[0];
 		int bDecoded;
 		AVFrame sFrame;
+		
 
 		psOutput->nSize[0] = 0;
 

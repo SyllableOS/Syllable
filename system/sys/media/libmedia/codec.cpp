@@ -179,6 +179,24 @@ status_t MediaCodec::DecodePacket( MediaPacket_s* psPacket, MediaPacket_s* psOut
 	return( -1 );
 }
 
+/** Parse media data.
+ * \par Description:
+ * Call this function if you want the codec to parse the media data but not
+ * to decode it. This can be useful if you want to decode video data but the
+ * computer is to slow to do it in realtime and you want to drop frames.
+ * \param psPacket - packet of media data.
+ * \par Note:
+ * If the codec does not implement this method then DecodePacket() will be called.
+ * \param psPacket - packet of media data.
+ * \param psOutput - Output packet which has been allocated with the Create - Video / Audio - OutputPacket()
+ *					method.
+ * \author	Arno Klenke
+ *****************************************************************************/
+status_t MediaCodec::ParsePacket( MediaPacket_s* psPacket, os::MediaPacket_s * psOutput )
+{
+	return( DecodePacket( psPacket, psOutput ) );
+}
+
 
 /** Encode media data.
  * \par Description:

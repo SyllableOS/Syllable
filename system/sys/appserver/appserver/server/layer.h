@@ -43,7 +43,26 @@ class SrvWindow;
 
 os::Color32_s GetDefaultColor( int nIndex );
 
-extern os::Gate g_cLayerGate;
+class LayerGate
+{
+public:
+	LayerGate( const char* pzName )
+	{
+		m_hSema = create_semaphore( pzName, 100000000, SEM_GLOBAL );
+	}
+	~LayerGate() { delete_semaphore( m_hSema ); }
+	int Lock() const       { return( lock_semaphore( m_hSema ) ); }
+	int Unlock() const     { return( unlock_semaphore( m_hSema ) ); }
+
+	int Close() const     { return( lock_semaphore_x( m_hSema, 100000000, 0, INFINITE_TIMEOUT ) ); }
+	int Open() const      { return( unlock_semaphore_x( m_hSema, 100000000, 0 ) ); }
+	sem_id GetSem() const { return( m_hSema ); }
+private:
+	sem_id m_hSema;
+};
+
+
+extern LayerGate g_cLayerGate;
 
 #define NUM_FONT_GRAYS 256
 

@@ -115,7 +115,7 @@ enum
     WR_SET_ALIGNMENT,
     WR_WND_MOVE_REPLY,
     WR_SET_TITLE,
-    WR_UPDATE_REGIONS,
+    _WR_unused_1,
     WR_GET_PEN_POSITION,
     WR_SET_FLAGS,
     WR_GET_MOUSE,
@@ -130,6 +130,7 @@ enum
     WR_ACTIVATE,
     WR_MINIMIZE,
     WR_PAINT_FINISHED,
+    WR_LOCK_FB,
     
     EV_REGISTER = 30000,
     EV_UNREGISTER,
@@ -573,6 +574,22 @@ struct WR_GetPenPositionReply_s
 {
     Point m_cPos;
 };
+
+struct WR_LockFb_s
+{
+	port_id m_hReply;
+};
+
+struct WR_LockFbReply_s
+{
+	bool m_bSuccess;
+	sem_id m_hSem;
+	Rect m_cFrame;
+	color_space m_eColorSpc;
+	int m_nBytesPerLine;
+};
+
+
 
 }
 #endif	//	DEVICES_DISPLAY_PACKETS_H

@@ -156,6 +156,45 @@ uint32 MediaInput::SelectTrack( uint32 nTrack )
 	return( 0 );
 }
 
+/** Title.
+ * \par Description:
+ * Returns the title or ""
+ * \author	Arno Klenke
+ *****************************************************************************/
+String MediaInput::GetTitle()
+{
+	return( "" );
+}
+
+/** Author.
+ * \par Description:
+ * Returns the author or ""
+ * \author	Arno Klenke
+ *****************************************************************************/
+String MediaInput::GetAuthor()
+{
+	return( "" );
+}
+
+/** Album.
+ * \par Description:
+ * Returns the album or ""
+ * \author	Arno Klenke
+ *****************************************************************************/
+String MediaInput::GetAlbum()
+{
+	return( "" );
+}
+
+/** Comment.
+ * \par Description:
+ * Returns a comment or ""
+ * \author	Arno Klenke
+ *****************************************************************************/
+String MediaInput::GetComment()
+{
+	return( "" );
+}
 
 /** Stream number.
  * \par Description:

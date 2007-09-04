@@ -172,7 +172,13 @@ int MediaServer::LoadAudioPlugins()
 			-1, (void**)&pInit ) == 0 ) {
 				MediaAddon* pcAddon = pInit( zDevFileName );
 				if( pcAddon ) {
-					if( pcAddon->Initialize() != 0 )
+					if( pcAddon->GetAPIVersion() != MEDIA_ADDON_API_VERSION )
+					{
+						std::cout<<zFileName.c_str()<<" has wrong api version"<<std::endl;
+						delete( pcAddon );
+						unload_library( nID );
+					}
+					else if( pcAddon->Initialize() != 0 )
 					{
 						std::cout<<pcAddon->GetIdentifier().c_str()<<" failed to initialize"<<std::endl;
 						delete( pcAddon );
@@ -356,6 +362,7 @@ void MediaServer::FlushThread()
 						nUsedBytes = m_sAudioStream[i].nBufferSize - ( nRp - nWp );
 					//printf( "Data to flush %i %i %i!\n", nUsedBytes, nRp, nWp );
 					assert( ( nUsedBytes % ( m_sCardFormat.nChannels * 2 ) ) == 0 );
+					
 					if( nSize == 0 && !bSizeSet )
 						nSize = nUsedBytes;
 					else

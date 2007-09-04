@@ -130,6 +130,11 @@ typedef struct {
 	int		nBitRate;
 	
 	/** \par Description: 
+	* Audio only : The resolution of one sample.
+	*****************************************************************************/	
+	int		nSampleResolution;
+	
+	/** \par Description: 
 	* Audio only : The sample rate of the stream.
 	*****************************************************************************/
 	int		nSampleRate;
@@ -146,7 +151,7 @@ typedef struct {
 	/** \par Description: 
 	* Video only : Framerate
 	*****************************************************************************/
-	float	vFrameRate;
+	double	vFrameRate;
 	
 	/** \par Description: 
 	* Video only : Width of the video picture.
@@ -172,6 +177,7 @@ s.zName = ""; \
 s.bVBR = false; \
 s.nBitRate = 0; \
 s.nSampleRate = 0; \
+s.nSampleResolution = 16; \
 s.nChannels = 0; \
 s.bVFR = false; \
 s.vFrameRate = 0; \

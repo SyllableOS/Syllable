@@ -35,6 +35,7 @@ namespace os
 }
 #endif // Fool Emacs auto-indent
 
+#define MEDIA_ADDON_API_VERSION 0x1
 
 /** Media Addon.
  * \ingroup media
@@ -52,6 +53,10 @@ class MediaAddon
 public:
 	MediaAddon() {};
 	virtual ~MediaAddon() {};
+	virtual uint32 GetAPIVersion()
+	{
+		return( MEDIA_ADDON_API_VERSION );
+	}
 	virtual status_t		Initialize() = 0;
 	virtual String 			GetIdentifier() = 0;
 	virtual uint32			GetCodecCount() { return( 0 ); }

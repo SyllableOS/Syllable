@@ -66,6 +66,11 @@ public:
 	virtual uint32			GetTrackCount();
 	virtual uint32			SelectTrack( uint32 nTrack );
 	
+	virtual String			GetTitle();
+	virtual String			GetAuthor();
+	virtual String			GetAlbum();	
+	virtual String			GetComment();	
+	
 	virtual uint32			GetStreamCount();
 	virtual MediaFormat_s	GetStreamFormat( uint32 nIndex );
 	virtual status_t		ReadPacket( MediaPacket_s* psPacket );
