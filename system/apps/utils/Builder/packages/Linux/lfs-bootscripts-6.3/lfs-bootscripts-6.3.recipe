@@ -1,7 +1,7 @@
 authors				Kaj de Vos
 status				testing
 
-licenses			other
+licenses			BSD
 
 locations			http://www.linuxfromscratch.org/lfs/downloads/6.3/
 
@@ -10,4 +10,4 @@ make				true
 system-prefix-var	DESTDIR
 install-tree
 
-documentation		README LICENSE CHANGELOG
+documentation		README LICENSE ChangeLog

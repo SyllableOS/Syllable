@@ -1,7 +1,7 @@
 authors				Kaj de Vos
 status				testing
 
-licenses			other
+licenses			BSD
 
 locations			http://www.linuxfromscratch.org/blfs/downloads/svn/
 
@@ -15,6 +15,6 @@ install-targets
 ;	Server:
 	install-dhcp
 
-documentation		README LICENSE CHANGELOG MAINTAINERS
+documentation		README LICENSE ChangeLog MAINTAINERS
 ; Outdated?
 ;build-docs			lfs-bootscripts.version
