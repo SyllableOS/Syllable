@@ -14,7 +14,8 @@ build-needs
 	texinfo
 
 configure-options
-	--enable-languages=c,c++,treelang
+	--enable-languages=c,c++
+;		,treelang
 ;		,fortran
 ;		,objc
 ;		,java,ada
