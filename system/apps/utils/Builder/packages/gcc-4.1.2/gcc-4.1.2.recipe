@@ -24,12 +24,12 @@ needs
 ;	For -O3 with -fpic:
 	binutils >= 2.13.1
 	glibc >= 2.3.3
+conflicts			binutils
+recommends			mktemp
 build-recommends
 ;	diffutils
 ;	For documentation:
 	texinfo
-conflicts			binutils
-recommends			mktemp
 test-needs			dejagnu >= 1.4.1
 install-needs		gcc
 
