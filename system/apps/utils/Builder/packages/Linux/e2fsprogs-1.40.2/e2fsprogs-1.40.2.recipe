@@ -15,13 +15,15 @@ configure-options
 	--enable-elf-shlibs
 	--disable-evms
 
+install-tree			etc
 install-targets
 	install
 ;	Static libraries and headers:
 	install-libs
 
 documentation
-	README COPYING ABOUT-NLS RELEASE-NOTES ChangeLog
+	README COPYING ABOUT-NLS RELEASE-NOTES
+;	ChangeLog
 ;	doc
 build-docs			INSTALL
 internal-docs		SUBMITTING-PATCHES SHLIBS
