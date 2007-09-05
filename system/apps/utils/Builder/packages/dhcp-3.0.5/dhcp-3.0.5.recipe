@@ -10,9 +10,14 @@ locations
 ;	Sends HTML instead of errors:
 ;	http://gd.tuwien.ac.at/infosys/servers/isc/dhcp/dhcp-3.0-history/
 
+build-needs			groff
+
+build-dir			.
+
 ; Doesn't support --prefix=
 configure-args
 
+install-tree
 install-env
 	USERBINDIR		"$IMAGE/usr/dhcp/bin"
 	BINDIR			"$IMAGE/usr/dhcp/sbin"
