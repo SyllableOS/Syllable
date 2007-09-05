@@ -10,7 +10,7 @@ build-needs
 ;	gnat >= 3.13 | gcc >= 3.1
 	gawk
 ;	bison
-;	For documentation:
+;	For documentation (only really needed for TreeLang?):
 	texinfo
 
 configure-options
