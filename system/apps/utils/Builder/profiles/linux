@@ -139,7 +139,6 @@ tree
 	media
 	media/floppy
 	media/cdrom1
-	media/home
 	media/data
 ;	media/test
 ;	For SysVInit and others:
