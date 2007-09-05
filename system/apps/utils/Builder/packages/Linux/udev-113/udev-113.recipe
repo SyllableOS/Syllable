@@ -25,10 +25,10 @@ install-tree
 ; /usr/sbin/ is already created as root:
 install				sudo make DESTDIR=$IMAGE EXTRAS="`echo ../udev-113/extras/*/`" install
 
-_post-install
-	cp etc/udev/rules.d/[0-9]* $IMAGE/etc/udev/rules.d/
-	install -m644 docs/writing_udev_rules/index.html /usr/udev/share/doc/udev-106/index.html
-install-files		../udev-113/etc/udev/rules.d/[0-9]* /etc/udev/rules.d/
+post-install
+	cp ../udev-113/etc/udev/rules.d/[0-9]* $IMAGE/etc/udev/rules.d/
+;	install -m644 docs/writing_udev_rules/index.html $IMAGE/usr/udev/share/doc/udev-106/index.html
+;install-files		../udev-113/etc/udev/rules.d/[0-9]* /etc/udev/rules.d/
 
 documentation
 	README COPYING RELEASE-NOTES ChangeLog FAQ TODO
