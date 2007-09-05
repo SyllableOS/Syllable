@@ -9,5 +9,4 @@ make				true
 
 system-prefix-var	DESTDIR
 install-tree
-
 documentation		README LICENSE ChangeLog

@@ -8,6 +8,7 @@ locations			http://www.linuxfromscratch.org/blfs/downloads/svn/
 make				true
 
 system-prefix-var	DESTDIR
+
 install-tree
 install-targets
 ;	As root:
