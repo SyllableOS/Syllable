@@ -4,17 +4,18 @@ authors
 	Kristian Van Der Vliet
 	Rick Caudill
 	Kaj de Vos
-maintainers			Arno Klenke
+maintainers			Kaj de Vos
 status				incomplete
 
 licenses			GPL
 home				www.konqueror.org/embedded/
 packages
-;	abrowse-a3a-src
-	ABrowse
+;	abrowse-wc-src
+;	ABrowse-0.4alpha3-Arno.source
+	ABrowse-0.4alpha3-Rick.source
 locations
 ;	http://www.liqwyd.com/arno/
-	http://www.syllable-dev.org
+	http://downloads.syllable.org.s3.amazonaws.com/sources/Syllable/ABrowse/
 
 build-needs
 	perl
