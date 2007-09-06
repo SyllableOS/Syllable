@@ -18,7 +18,7 @@ build-dir			.
 configure-args
 
 install-tree
-install-env
+install-vars
 	USERBINDIR		"$IMAGE/usr/dhcp/bin"
 	BINDIR			"$IMAGE/usr/dhcp/sbin"
 	CLIENTBINDIR	"$IMAGE/usr/dhcp/sbin"

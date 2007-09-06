@@ -4,3 +4,11 @@ status				testing
 needs
 ;	net-tools
 	iproute2
+
+; For boot scripts:
+links
+	sbin/dhclient		/sbin
+;	sbin/dhclient-script	/sbin
+;	Server:
+	sbin/dhcpd		/usr/sbin
+;	sbin/dhcrelay		/usr/sbin
