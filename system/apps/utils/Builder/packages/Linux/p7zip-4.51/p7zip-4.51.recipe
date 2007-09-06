@@ -4,6 +4,7 @@ status				testing
 ;patch				cp makefile.linux_x86_asm_gcc_4.X makefile.machine
 
 install-files
+;	Can't load plug-in, either in bin/ or lib/:
 	bin/7z.so		bin/
 	bin/7z			bin/
 	bin/7za			bin/
