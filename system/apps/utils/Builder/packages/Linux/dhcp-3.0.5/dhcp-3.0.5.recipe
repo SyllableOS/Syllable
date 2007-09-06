@@ -7,8 +7,8 @@ needs
 
 ; For boot scripts:
 links
-	sbin/dhclient		/sbin
+	sbin/dhclient			/sbin
 ;	sbin/dhclient-script	/sbin
 ;	Server:
-	sbin/dhcpd		/usr/sbin
-;	sbin/dhcrelay		/usr/sbin
+	sbin/dhcpd				/usr/sbin
+;	sbin/dhcrelay			/usr/sbin
