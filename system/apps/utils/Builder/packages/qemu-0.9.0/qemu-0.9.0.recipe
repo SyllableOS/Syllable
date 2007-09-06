@@ -14,6 +14,8 @@ needs
 	sdl
 build-recommends	texi2html
 
+system-prefix-var	DESTDIR
+
 documentation
 	README LICENSE COPYING COPYING.LIB Changelog TODO
 ;	qemu-doc.html
