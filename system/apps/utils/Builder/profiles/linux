@@ -409,6 +409,7 @@ modules
 	apps/gnu/less-394
 	apps/gnu/tar-1.16.1
 	apps/other/zip-2.32
+	apps/other/p7zip-4.51
 ;	For grub-install:
 	apps/gnu/diffutils-2.8.1
 
