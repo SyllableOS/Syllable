@@ -1,5 +1,6 @@
 authors				Kaj de Vos
 status				testing
+warnings			dhclient-script can't find sleep for some strange reason.
 
 needs
 ;	net-tools
@@ -8,7 +9,7 @@ needs
 ; For boot scripts:
 links
 	sbin/dhclient			/sbin
-;	sbin/dhclient-script	/sbin
+	sbin/dhclient-script	/sbin
 ;	Server:
 	sbin/dhcpd				/usr/sbin
 ;	sbin/dhcrelay			/usr/sbin
