@@ -11,8 +11,8 @@ install				true
 
 links
 ;	Repair damage from linux-fusion:
-	lib/modules					/lib/
-;	/usr/indexes/lib/modules	/lib/
+;	lib/modules					/lib/
+	../usr/linux/lib/modules	/lib/
 
 delete-files
 ;	Symlinks to the kernel source on the build host:

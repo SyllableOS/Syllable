@@ -17,5 +17,5 @@ install-tree
 
 documentation		README ChangeLog TODO
 
-;move-files			/lib/modules/<kernel>/drivers /usr/linux/lib/modules/<kernel>/
+move-files			/lib/modules/2.6.22.1-Syllable/drivers /usr/linux/lib/modules/2.6.22.1-Syllable/
 ;delete-files		/lib/modules
