@@ -190,7 +190,6 @@ resources
 	etc											configuration/resolv.conf
 	etc/sysconfig								linux/network
 	etc/sysconfig/network-devices/ifconfig.eth0	linux/ipv4
-	etc/sysconfig/network-devices/ifconfig.eth0	linux/dhclient
 	etc											linux/dhclient.conf
 ;	Server:
 	etc											linux/dhcpd.conf

@@ -1,5 +1,20 @@
-ONBOOT=yes
-SERVICE=ipv4-static
+ONBOOT="yes"
+
+
+SERVICE="dhclient"
+DHCP_START="-q"  # <add additional start parameters here>
+DHCP_STOP="-q -r"  # <add additional stop parameters here>
+
+# Set PRINTIP="yes" to have the script print
+# the DHCP assigned IP address
+PRINTIP="yes"
+
+# Set PRINTALL="yes" to print the DHCP assigned values for
+# IP, SM, DG, and 1st NS. This requires PRINTIP="yes".
+PRINTALL="yes"
+
+
+#SERVICE=ipv4-static
 IP=192.168.1.9
 GATEWAY=192.168.1.1
 PREFIX=24
