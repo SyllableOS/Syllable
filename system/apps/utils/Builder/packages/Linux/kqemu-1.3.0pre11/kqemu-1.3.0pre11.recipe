@@ -20,6 +20,7 @@ build-dir			.
 
 ;super-install
 install-tree
+install-vars			kernel_path "$IMAGE/usr/linux/lib/modules/linux-2.6.22.1-Syllable"
 
 documentation		README LICENSE COPYING Changelog kqemu-doc.html
 develop-docs		kqemu-tech.html
