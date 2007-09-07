@@ -153,13 +153,13 @@ develop-docs		[docs]
 ;internal-docs		docs
 
 ; Links to create
-; The path of the original is relative to the path of the link in the case of
-; a link that's internal to the package, and relative to the package root
-; in the case of a link in the system.
+; The destination link is relative to the package root unless it's an absolute path.
+; The path of the original is free-form if it is absolute or is marked as relative
+; by starting with one or two dots. Otherwise, it's relative to the path of the
+; destination link in the case of a link that's internal to the package, and
+; relative to the package root in the case of a link in the system.
 links
 	[<Original> <Link>]
-;	<Links path>
-;		<Originals>
 
 ; Don't strip binaries:
 ;no-strip
