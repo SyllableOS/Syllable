@@ -1,7 +1,7 @@
 //
 //	MediaPlayer String Catalog
 //
-//	Translated by: Unknown
+//	Translated by: Unknown - antesenamon
 //
 
 MSG_MAINWND_TITLE=0							Media Player
@@ -31,6 +31,10 @@ MSG_INFOWND_VIDEO							Video
 MSG_INFOWND_AUDIO							Audio
 MSG_INFOWND_CHANNELS						channels
 MSG_INFOWND_OK								OK
+
+MSG_ALERTWND_NOMEDIASERVER_TITLE=1300		Błąd
+MSG_ALERTWND_NOMEDIASERVER_TEXT				Nie można połączyć się z media serwer.
+MSG_ALERTWND_NOMEDIASERVER_OK				_OK
 
 MSG_TRACK_MENU_ITEM=2000					Ścieżka
 

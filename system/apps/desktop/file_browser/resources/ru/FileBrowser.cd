@@ -11,4 +11,5 @@ MSG_MENU_VIEW_ICONS				Значки
 MSG_MENU_VIEW_LIST				Список
 MSG_MENU_VIEW_DETAILS			Таблица
 MSG_MENU_VIEW_SAVE				Сохранить
+MSG_MENU_VIEW_SAVE_DEFAULT		Сохранить как настройку по умолчанию
 

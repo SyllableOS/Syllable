@@ -4,9 +4,9 @@
 //	Translated by: Ioannis Koniaris
 //
 
-MSG_MAINWND_TITLE=0						AView
+MSG_MAINWND_TITLE=0							AView
 
-MSG_MAINWND_MENU_APPLICATION=100				Εφαρμογή
+MSG_MAINWND_MENU_APPLICATION=100			Εφαρμογή
 MSG_MAINWND_MENU_APPLICATION_QUIT			Έξοδος
 MSG_MAINWND_MENU_APPLICATION_ABOUT			Σχετικά
 
@@ -14,7 +14,7 @@ MSG_MAINWND_MENU_FILE=200					Αρχείο
 MSG_MAINWND_MENU_FILE_OPEN					Άνοιγμα
 
 MSG_MAINWND_MENU_VIEW=300					Προβολή
-MSG_MAINWND_MENU_VIEW_FITTOIMAGE				Ταίρισμα στην εικόνα
+MSG_MAINWND_MENU_VIEW_FITTOIMAGE			Ταίρισμα στην εικόνα
 MSG_MAINWND_MENU_VIEW_FITTOWINDOW			Ταίριασμα στο παράθυρο
 MSG_MAINWND_MENU_VIEW_PREVIOUS				Προηγούμενο
 MSG_MAINWND_MENU_VIEW_NEXT					Επόμενο
@@ -31,17 +31,17 @@ MSG_MAINWND_MENU_RESIZE_150					150%
 MSG_MAINWND_MENU_RESIZE_200					200%
 MSG_MAINWND_MENU_RESIZE_400					400%
 
-MSG_ABOUTWND_TITLE=1000					Σχετικά με το AView
+MSG_ABOUTWND_TITLE=1000						Σχετικά με το AView
 MSG_ABOUTWND_TEXT							Προβολέας Εικόνων\n\nAView για το Syllable    \nCopyright 2005 Syllable Team\n\nΤο AView εκδίδεται υπό την άδεια GNU General\nPublic License. Παρακαλούμε πηγαίνετε στο www.gnu.org\nγια περισσότερες πληροφορίες.\n
-MSG_ABOUTWND_OK							ΟΚ
+MSG_ABOUTWND_OK								ΟΚ
 
 MSG_STATUSBAR_OF=2000						%i από %i
 
 MSG_MIMETYPE_IMAGE_PNG=10000				Εικόνα PNG
-MSG_MIMETYPE_IMAGE_JPEG					Εικόνα JPEG
+MSG_MIMETYPE_IMAGE_JPEG						Εικόνα JPEG
 MSG_MIMETYPE_IMAGE_GIF						Εικόνα GIF
 MSG_MIMETYPE_IMAGE_BMP						Εικόνα BMP
-MSG_MIMETYPE_IMAGE_TIFF					Εικόνα TIFF
+MSG_MIMETYPE_IMAGE_TIFF						Εικόνα TIFF
 MSG_MIMETYPE_IMAGE_XBM						Εικόνα XBM
 MSG_MIMETYPE_IMAGE_XPM						Εικόνα XPM
 MSG_MIMETYPE_IMAGE_TGA						Εικόνα TGA

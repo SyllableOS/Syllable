@@ -4,9 +4,9 @@
 //	Translated by: Ioannis Koniaris
 //
 
-MSG_MAINWND_TITLE=0							Ουρά Εκτύπωσης
+MSG_MAINWND_TITLE=0								Ουρά Εκτύπωσης
 
-MSG_MAINWND_MENU_APPLICATION=100					Εφαρμογή
+MSG_MAINWND_MENU_APPLICATION=100				Εφαρμογή
 MSG_MAINWND_MENU_APPLICATION_QUIT				Έξοδος
 MSG_MAINWND_MENU_APPLICATION_ABOUT				Σχετικά...
 
@@ -40,7 +40,7 @@ MSG_MAINWND_JOBSIZE_KB=600						%d KB
 MSG_MAINWND_JOBSIZE_MB							%d MB
 MSG_MAINWND_JOBSIZE_GB							%d GB
 
-MSG_ABOUTWND_TITLE=1000						Ουρά Εκτύπωσης
+MSG_ABOUTWND_TITLE=1000							Ουρά Εκτύπωσης
 MSG_ABOUTWND_TEXT1								Διαχειριστής Ουράς Εκτύπωσης του Syllable
 MSG_ABOUTWND_TEXT2								Χρήση του CUPS έκδοση %d.%d.%d\n
 MSG_ABOUTWND_CLOSE								_Κλείσιμο

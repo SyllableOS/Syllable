@@ -4,12 +4,12 @@
 //	Translated by: Ioannis Koniaris
 //
 
-MSG_DESKTOP_TITLE=0							Επιφάνεια Εργασίας
+MSG_DESKTOP_TITLE=0								Επιφάνεια Εργασίας
 
 MSG_DESKTOP_SYMLINKS_APPLICATIONS=100			Εφαρμογές
 MSG_DESKTOP_SYMLINKS_DISKS						Δίσκοι
 MSG_DESKTOP_SYMLINKS_HOME						Κατάλογος Χρήστη
-MSG_DESKTOP_SYMLINKS_PREFERENCES					Προτιμήσεις
+MSG_DESKTOP_SYMLINKS_PREFERENCES				Προτιμήσεις
 MSG_DESKTOP_SYMLINKS_TERMINAL					Τερματικό
 MSG_DESKTOP_SYMLINKS_TRASH						Κάδος Απορριμμάτων
 

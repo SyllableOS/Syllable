@@ -2,7 +2,7 @@ COPTS = -Wall -c
 OBJS = main.o mainwindow.o
 EXE = Appearance
 
-CATALOGS = da de el es fr hu nl pt-br ru sv
+CATALOGS = da de el es fr hu lt nl pt-br ru sv
 
 $(EXE): catalogs $(OBJS)
 	$(CXX) $(OBJS) -lsyllable -o $(EXE)

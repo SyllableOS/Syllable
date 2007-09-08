@@ -14,9 +14,9 @@ MSG_MAIN_LANGUAGE_USED					Ενεργές Γλώσσες
 
 MSG_MAIN_COUNTRY_TAB=200				Χώρα
 
-MSG_MAIN_APPLY=1000					_Εφαρμογή
-MSG_MAIN_REVERT						Ε_παναφορά
+MSG_MAIN_APPLY=1000						_Εφαρμογή
+MSG_MAIN_REVERT							Ε_παναφορά
 MSG_MAIN_DEFAULT						_Προεπιλογή
 
-MSG_ERROR_SAVE=1100					Σφάλμα κατά την αποθήκευση προτιμήσεων εντοπιότητας
+MSG_ERROR_SAVE=1100						Σφάλμα κατά την αποθήκευση προτιμήσεων εντοπιότητας
 

@@ -1,0 +1,21 @@
+//
+//	Preferences/Desktop String Catalog
+//
+//	Translated by: Evaldas
+//
+
+MSG_MAINWND_TITLE=0							Darbalaukis
+
+MSG_MAINWND_BACKGROUND=100					Fonas
+MSG_MAINWND_BACKGROUND_IMAGE				Paveikslėlis
+MSG_MAINWND_BACKGROUND_NONE					Joks
+
+MSG_MAINWND_WINDOWS_TEXT=200				Langai
+MSG_MAINWND_WINDOWS_TEXT_POPUP				Iškelti pasirinktą langą
+MSG_MAINWND_WINDOWS_TEXT_SINGLECLICK		Naudoti "vieno spragtelejimo" sąsają
+MSG_MAINWND_WINDOWS_TEXT_SHADOWTEXT			Šešėliuoti piktogramų tekstą
+
+MSG_MAINWND_BUTTON_APPLY=300				Taikyti
+MSG_MAINWND_BUTTON_UNDO						Atstatyti
+MSG_MAINWND_BUTTON_DEFAULT					Numatyta
+

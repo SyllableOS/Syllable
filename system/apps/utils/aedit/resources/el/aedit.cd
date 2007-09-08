@@ -14,26 +14,26 @@ MSG_MENU_APPLICATION_ABOUT					Σχετικά με το AEdit...
 MSG_MENU_FILE=200							Αρχείο
 MSG_MENU_FILE_NEW							Νέο
 MSG_MENU_FILE_OPEN							Άνοιγμα...
-MSG_MENU_FILE_CLOSE						Κλείσιμο
+MSG_MENU_FILE_CLOSE							Κλείσιμο
 MSG_MENU_FILE_SAVE							Αποθήκευση
 MSG_MENU_FILE_SAVE_AS						Αποθήκευση Ως...
 MSG_MENU_FILE_SAVE_ALL						Αποθήκευση Όλων
-MSG_MENU_FILE_NEXT_FILE					Επόμενο Αρχείο
+MSG_MENU_FILE_NEXT_FILE						Επόμενο Αρχείο
 MSG_MENU_FILE_PREVIOUS_FILE					Προηγούμενο Αρχείο
 
 MSG_MENU_EDIT=300							Επεξεργασία
 MSG_MENU_EDIT_CUT							Αποκοπή
 MSG_MENU_EDIT_COPY							Αντιγραφή
-MSG_MENU_EDIT_PASTE						Επικόλληση
+MSG_MENU_EDIT_PASTE							Επικόλληση
 MSG_MENU_EDIT_SELECT_ALL					Επιλογή Όλων
 MSG_MENU_EDIT_UNDO							Αναίρεση
 MSG_MENU_EDIT_REDO							Επαναφορά
 
 MSG_MENU_VIEW_VIEW=350						Προβολή
 MSG_MENU_VIEW_TOOLBAR						Γραμμή Εργαλείων
-MSG_MENU_VIEW_STATUSBAR					Γραμμή Κατάστασης
+MSG_MENU_VIEW_STATUSBAR						Γραμμή Κατάστασης
 MSG_MENU_VIEW_SETFONT						Ορισμός γραμματοσειράς...
-MSG_MENU_VIEW_TABS							Στηλοθέτες
+MSG_MENU_VIEW_TABS							Καρτέλες
 MSG_MENU_VIEW_SHOW							Εμφάνιση
 MSG_MENU_VIEW_HIDE							Απόκρυψη
 MSG_MENU_VIEW_AUTO							Αυτόματο
@@ -41,63 +41,63 @@ MSG_MENU_VIEW_AUTO							Αυτόματο
 MSG_MENU_FIND=400							Αναζήτηση
 MSG_MENU_FIND_FIND							Αναζήτηση...
 MSG_MENU_FIND_REPLACE						Αντικατάσταση...
-MSG_MENU_FIND_GOTO_LINE					Πήγαινε στη Γραμμή...
+MSG_MENU_FIND_GOTO_LINE						Πήγαινε στη Γραμμή...
 
 MSG_MENU_FONT=500							Γραμματοσειρά
 MSG_MENU_FONT_SIZE							Μέγεθος
 
 MSG_MENU_SETTINGS=600						Ρυθμίσεις
-MSG_MENU_SETTINGS_SAVE_ON_CLOSE				Αποθήκευση Ρυθμίσεων στο Κλείσιμο
+MSG_MENU_SETTINGS_SAVE_ON_CLOSE				Αποθήκευση Ρυθμίσεων Κατά Το Κλείσιμο
 MSG_MENU_SETTINGS_SAVE_NOW					Αποθήκευση Ρυθμίσεων Τώρα
-MSG_MENU_SETTINGS_RESET					Επαναφορά Ρυθμίσεων
+MSG_MENU_SETTINGS_RESET						Επαναφορά Ρυθμίσεων
 
 MSG_MENU_HELP=700							Βοήθεια
 MSG_MENU_HELP_TABLE_OF_CONTENTS				Εγχειρίδιο...
 MSG_MENU_HELP_HOMEPAGE						Ιστοσελίδα του AEdit
 
-MSG_ABOUT_TITLE=800						Σχετικά με το AEdit
-MSG_ABOUT_TEXT							\n\nΕπεξεργαστής Κειμένου για το Syllable\nCopyright 2000-2003 Kristian Van Der Vliet\n\nΤο AEdit εκδίδεται υπό την GNU General\nPublic License. Παρακαλούμε δείτε το αρχείο COPYING,\nπου διανέμεται με το AEdit, ή στο http://www.gnu.org\nγια περισσότερες πληροφορίες.
-MSG_ABOUT_CLOSE							Κλείσιμο
+MSG_ABOUT_TITLE=800							Σχετικά με το AEdit
+MSG_ABOUT_TEXT								\n\nΕπεξεργαστής Κειμένου για το Syllable\nCopyright 2000-2003 Kristian Van Der Vliet\n\nΤο AEdit εκδίδεται υπό την GNU General\nPublic License. Παρακαλούμε δείτε το αρχείο COPYING,\nπου διανέμεται με το AEdit, ή στο http://www.gnu.org\nγια περισσότερες πληροφορίες.
+MSG_ABOUT_CLOSE								Κλείσιμο
 MSG_ABOUT_VERSION							Έκδοση: 
-MSG_ABOUT_LINE_1 							Ένας Επεξεργαστής Κειμένου για το Syllable
+MSG_ABOUT_LINE_1 							Επεξεργαστής Κειμένου για το Syllable
 MSG_ABOUT_LINE_2							(c) 2006 The Syllable Team
 MSG_ABOUT_LINE_3							w w w . s y l l a b l e . o r g
 
-MSG_ERROR_TITLE=900						Αποθήκευση
-MSG_ERROR_CANT_SAVE						Αδυναμία αποθήκευσης αρχείου.
-MSG_ERROR_CLOSE							ΟΚ
+MSG_ERROR_TITLE=900							Αποθήκευση
+MSG_ERROR_CANT_SAVE							Αδυναμία αποθήκευσης αρχείου.
+MSG_ERROR_CLOSE								ΟΚ
 
-MSG_FIND_TITLE=1000						Αναζήτηση
-MSG_FIND_FIND_LABEL						Αναζήτηση
-MSG_FIND_CASE_SENSITIVE					Αναζήτηση με Διάκριση Πεζών/Κεφαλαίων
+MSG_FIND_TITLE=1000							Αναζήτηση
+MSG_FIND_FIND_LABEL							Αναζήτηση
+MSG_FIND_CASE_SENSITIVE						Αναζήτηση με Διάκριση Πεζών/Κεφαλαίων
 MSG_FIND_FIND								_Εύρεση Πρώτου
 MSG_FIND_FIND_NEXT							Εύρεση Ε_πομένου
 MSG_FIND_CLOSE					    		_Κλείσιμο
 
-MSG_GOTO_TITLE=1100						Πήγαινε στη Γραμμή
+MSG_GOTO_TITLE=1100							Πήγαινε στη Γραμμή
 MSG_GOTO_GOTO								_Πήγαινε στη Γραμμή
-MSG_GOTO_CLOSE							Ά_κυρο
+MSG_GOTO_CLOSE								Ά_κυρο
 MSG_GOTO_LINE								Σειρά:
 
 MSG_REPLACE_TITLE=1200						Αντικατάσταση
-MSG_REPLACE_LBLFIND						Αναζήτηση του
+MSG_REPLACE_LBLFIND							Αναζήτηση του
 MSG_REPLACE_WITH							και αντικατάσταση με
 MSG_REPLACE_CASE_SENSITIVE					Αναζήτηση με _Διάκριση Πεζών/Κεφαλαίων
 MSG_REPLACE_FIND							_Εύρεση Πρώτου
 MSG_REPLACE_FIND_NEXT						Εύρεση Ε_πομένου
-MSG_REPLACE_REPLACE						_Αντικατάσταση
-MSG_REPLACE_CLOSE					    		_Κλείσιμο
+MSG_REPLACE_REPLACE							_Αντικατάσταση
+MSG_REPLACE_CLOSE					   		_Κλείσιμο
 
 MSG_ALERT_CLOSE_FILE_TITLE=1500				Αποθήκευση αρχείου;
 MSG_ALERT_CLOSE_FILE_BODY					Θέλετε να αποθηκεύσετε το αρχείο πριν το κλείσετε;
 MSG_ALERT_CLOSE_FILE_YES					Αποθήκευση
-MSG_ALERT_CLOSE_FILE_NO					Απόρριψη
+MSG_ALERT_CLOSE_FILE_NO						Απόρριψη
 MSG_ALERT_CLOSE_FILE_CANCEL					Άκυρο
 MSG_ALERT_SAVE_FILE_TITLE					Σφάλμα
 MSG_ALERT_SAVE_FILE_BODY					Αδυναμία αποθήκευσης αρχείου "%s".
 MSG_ALERT_SAVE_FILE_OK						ΟΚ
 MSG_ALERT_QUIT_TITLE						Έξοδος σίγουρα;
-MSG_ALERT_QUIT_BODY						Έχετε μη αποθηκευμένα αρχεία. Αν φύγετε τα δεδομένα θα χαθούν.\nΘέλετε σίγουρα έξοδο;
+MSG_ALERT_QUIT_BODY							Έχετε μη αποθηκευμένα αρχεία. Αν φύγετε τα δεδομένα θα χαθούν.\nΘέλετε σίγουρα έξοδο;
 MSG_ALERT_QUIT_YES							Έξοδο
 MSG_ALERT_QUIT_NO							Άκυρο
 MSG_ALERT_FILE_OPEN_TITLE					Σφάλμα
@@ -112,8 +112,8 @@ MSG_STATUSBAR_NEW_FILE_CREATED				Το νέο αρχείο "%s" έχει δημ�
 MSG_STATUSBAR_FILE_LOADED_OK				Το αρχείο "%s" έχει ανοίξει επιτυχώς.
 MSG_STATUSBAR_FILE_UNABLE_TO_OPEN			Αδυναμία ανοίγματος του αρχείου "%s".
 MSG_STATUSBAR_SEARCH_FOUND					Η φράση "%s" βρέθηκε.
-MSG_STATUSBAR_SEARCH_NOT_FOUND_1				Η φράση \"%s\" δε βρέθηκε.
-MSG_STATUSBAR_SEARCH_NOT_FOUND_2				Η φράση δε βρέθηκε.
+MSG_STATUSBAR_SEARCH_NOT_FOUND_1			Η φράση \"%s\" δε βρέθηκε.
+MSG_STATUSBAR_SEARCH_NOT_FOUND_2			Η φράση δε βρέθηκε.
 MSG_STATUSBAR_REPLACE_OK					Η φράση "%s" έχει αντικατασταθεί με τη "%s".
 MSG_STATUSBAR_REPLACE_NOT_OK				Η φράση δεν αντικαταστάθηκε.
 

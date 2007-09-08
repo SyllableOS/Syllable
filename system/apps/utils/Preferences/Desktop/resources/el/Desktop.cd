@@ -4,7 +4,7 @@
 //	Translated by: Ioannis Koniaris
 //
 
-MSG_MAINWND_TITLE=0						Επιφάνεια Εργασίας
+MSG_MAINWND_TITLE=0							Επιφάνεια Εργασίας
 
 MSG_MAINWND_BACKGROUND=100					Φόντο
 MSG_MAINWND_BACKGROUND_IMAGE				Εικόνα
@@ -12,10 +12,10 @@ MSG_MAINWND_BACKGROUND_NONE					Κανένα
 
 MSG_MAINWND_WINDOWS_TEXT=200				Παράθυρα
 MSG_MAINWND_WINDOWS_TEXT_POPUP				Ανάδυση επιλεγμένου παραθύρου
-MSG_MAINWND_WINDOWS_TEXT_SINGLECLICK			Χρήση διεπαφής μονού-κλικ
+MSG_MAINWND_WINDOWS_TEXT_SINGLECLICK		Χρήση διεπαφής μονού-κλικ
 MSG_MAINWND_WINDOWS_TEXT_SHADOWTEXT			Εμφάνιση κειμένου εικονιδίων με σκιά
 
 MSG_MAINWND_BUTTON_APPLY=300				Εφαρμογή
-MSG_MAINWND_BUTTON_UNDO					Αναίρεση
+MSG_MAINWND_BUTTON_UNDO						Αναίρεση
 MSG_MAINWND_BUTTON_DEFAULT					Προεπιλογή
 

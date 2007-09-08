@@ -1,10 +1,10 @@
 //
 //	ColdFish String Catalog
 //
-//	Translated by: Unknown
+//	Translated by: Unknown - antesenamon
 //
 
-MSG_MAINWND_TITLE=0						Coldfish
+MSG_MAINWND_TITLE=0							Coldfish
 
 MSG_MAINWND_PLAY=100						Odtwarzaj
 MSG_MAINWND_STOP							Stop
@@ -41,6 +41,10 @@ MSG_ERRWND_CANTPLAY							ColdFish nie może otworzyć tego pliku.
 MSG_ERRWND_CANTDELETE						Nie można usunąć aktualnie odtwarzanego pliku.
 MSG_ERRWND_NOTPLAYLIST						Wybrany plik nie jest playlistą.
 
+MSG_ALERTWND_NOMEDIASERVER_TITLE=1200		Błąd
+MSG_ALERTWND_NOMEDIASERVER_TEXT				Nie można połączyć się z media serwer.
+MSG_ALERTWND_NOMEDIASERVER_OK				_OK
+
 MSG_PLAYLIST_UNKNOWN=2000					Nieznany
 MSG_PLAYLIST_DEFAULT						Default Playlist
 
@@ -51,5 +55,5 @@ MSG_PLAYLISTWND_NOTE						Uwaga: Jeżeli podasz nazwę nieistniejącego pliku zo
 
 MSG_LCD_TRACK=3000							ścieżka
 
-MSG_MIMETYPE_APPLICATION_XCOLDFISHPLAYLIST=10000		ColdFish Playlist
+MSG_MIMETYPE_APPLICATION_XCOLDFISHPLAYLIST=10000		ColdFish Playlista
 

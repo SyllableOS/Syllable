@@ -1,0 +1,27 @@
+//
+//	Preferences/Dock String Catalog
+//
+//	Translated by: Evaldas
+//
+
+MSG_MAINWND_TITLE=0								Dokas
+
+MSG_MAINWND_POSITION=100						Padėtis
+MSG_MAINWND_POSITION_TOP						Viršuje
+MSG_MAINWND_POSITION_BOTTOM						Apačioje
+MSG_MAINWND_POSITION_LEFT						Kairėje
+MSG_MAINWND_POSITION_RIGHT						dešinėje
+
+MSG_MAINWND_PLUGINS=200							Įjungti
+MSG_MAINWND_PLUGINS_PLUGIN						Įskiepas
+MSG_MAINWND_PLUGINS_ENABLED						Įgalinta
+MSG_MAINWND_PLUGINS_TEXT						Pastaba: Prašome nukopijuoti įskiepus į /system/extensions/dock/
+MSG_MAINWND_PLUGINS_BUTTON_ENABLE				Įjungti
+MSG_MAINWND_PLUGINS_BUTTON_DISABLE				Išjungti
+MSG_MAINWND_PLUGINS_STATE_ENABLED_YES			Taip
+MSG_MAINWND_PLUGINS_STATE_ENABLED_NO			Ne
+
+MSG_MAINWND_BUTTON_APPLY=300					Taikyti
+MSG_MAINWND_BUTTON_UNDO							atstatyti
+MSG_MAINWND_BUTTON_DEFAULT						Numatyta
+

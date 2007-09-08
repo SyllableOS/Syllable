@@ -1,0 +1,19 @@
+//
+//	CatalogCompiler String Catalog
+//
+//	Translated by: Angelo Conti
+//
+
+MSG_SYNTAX_ERROR=100				Erro de sintaxe na linha %d.
+MSG_ID_NUMBER_MISSING				O número de identificação está faltando.
+MSG_NO_TEXT_STRING					Não foi encontrado um texto tipo string.
+MSG_CANT_OPEN_FILE					Não foi possível abrir o arquivo %s!
+
+MSG_HELP_COMPILE=200				Compilar o catálago e o arquivo cabaçalho.
+MSG_HELP_TRANSLATE					Compilar o catálogo traduzido para o formato binário.
+MSG_HELP_HELP						Imprima esta mensagem da ajuda.
+
+MSG_CREATING_CATALOG_FILE=300		Criando o aquivo do catálogo:
+MSG_CREATING_HEADER_FILE			Criando o arquivo cabaçalho:
+MSG_DESCR							Ferramenta usada para criar strings de catálogos usada para traduzir/converter programas.
+

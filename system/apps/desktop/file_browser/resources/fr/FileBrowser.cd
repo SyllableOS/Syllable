@@ -1,7 +1,7 @@
 //
 //	FileBrowser String Catalog
 //
-//	Translated by: Christos KYRATZIS
+//	Translated by: Christos KYRATZIS - MilkaJinka
 //
 
 MSG_MAINWND_TITLE=0				FileBrowser
@@ -11,4 +11,5 @@ MSG_MENU_VIEW_ICONS				Icônes
 MSG_MENU_VIEW_LIST				Liste
 MSG_MENU_VIEW_DETAILS			Détails
 MSG_MENU_VIEW_SAVE				Enregistrer
+MSG_MENU_VIEW_SAVE_DEFAULT		Enregistrer comme valeur par défaut
 

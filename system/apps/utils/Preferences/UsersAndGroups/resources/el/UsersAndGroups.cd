@@ -4,20 +4,20 @@
 //	Translated by: Ioannis Koniaris
 //
 
-MSG_MAINWND_TITLE=0						Χρήστες & Ομάδες
+MSG_MAINWND_TITLE=0							Χρήστες & Ομάδες
 
 MSG_MAINWND_BUTTON_OK=100					_ΟΚ
 MSG_MAINWND_BUTTON_CANCEL					Ά_κυρο
 
 MSG_MAINWND_TAB_USERS=200					Χρήστες
 MSG_MAINWND_TAB_USERS_NAME					Όνομα
-MSG_MAINWND_TAB_USERS_LOGIN					Σύνδεση
+MSG_MAINWND_TAB_USERS_LOGIN					Όνομα Σύνδεσης
 MSG_MAINWND_TAB_USERS_ID					ID
 MSG_MAINWND_TAB_USERS_GROUP					Ομάδα
 MSG_MAINWND_TAB_USERS_HOME					Κατάλογος Χρήστη
-MSG_MAINWND_TAB_USERS_BUTTON_ADD				_Προσθήκη Χρήστη...
+MSG_MAINWND_TAB_USERS_BUTTON_ADD			_Προσθήκη Χρήστη...
 MSG_MAINWND_TAB_USERS_BUTTON_EDIT			_Επεξεργασία...
-MSG_MAINWND_TAB_USERS_BUTTON_DEL				_Διαγραφή Χρήστη
+MSG_MAINWND_TAB_USERS_BUTTON_DEL			_Διαγραφή Χρήστη
 MSG_MAINWND_TAB_USERS_BUTTON_PASS			Ο_ρισμός Κωδικού...
 
 MSG_MAINWND_TAB_GROUPS=300					Ομάδες
@@ -28,11 +28,11 @@ MSG_MAINWND_TAB_GROUPS_BUTTON_EDIT			_Επεξεργασία...
 MSG_MAINWND_TAB_GROUPS_BUTTON_DEL			_Διαγραφή Ομάδας
 
 MSG_NEWUSERWND_TITLE=1000					Νέος χρήστης
-MSG_NEWUSERWND_NAME						Όνομα:
-MSG_NEWUSERWND_LOGIN						Σύνδεση:
+MSG_NEWUSERWND_NAME							Όνομα:
+MSG_NEWUSERWND_LOGIN						Όνομα Σύνδεσης:
 MSG_NEWUSERWND_USERID						ID Χρήστη:
 MSG_NEWUSERWND_GROUPID						ID Ομάδας:
-MSG_NEWUSERWND_HOME						Κατάλογος Χρήστη:
+MSG_NEWUSERWND_HOME							Κατάλογος Χρήστη:
 MSG_NEWUSERWND_SHELL						Φλοιός:
 MSG_NEWUSERWND_DEFAULT_NAME					Νέος χρήστης
 MSG_NEWUSERWND_DEFAULT_LOGIN				new
@@ -43,7 +43,7 @@ MSG_NEWUSERWND_BUTTON_CANCEL				Ά_κυρο
 MSG_EDITUSERWND_TITLE=2000					Ιδιότητες για
 
 MSG_NEWGROUPWND_TITLE=3000					Νέα ομάδα
-MSG_NEWGROUPWND_GROUPID					ID Ομάδας:
+MSG_NEWGROUPWND_GROUPID						ID Ομάδας:
 MSG_NEWGROUPWND_NAME						Όνομα:
 MSG_NEWGROUPWND_DEFAULT_NAME				new
 MSG_NEWGROUPWND_BUTTON_OK					_ΟΚ
@@ -52,7 +52,7 @@ MSG_NEWGROUPWND_BUTTON_CANCEL				Ά_κυρο
 MSG_EDITGROUPWND_TITLE=4000					Ιδιότητες για
 
 MSG_CHANGEPASS_TITLE=5000					Αλλαγή Κωδικού
-MSG_CHANGEPASS_TEXT						Αλλαγή κωδικού για
+MSG_CHANGEPASS_TEXT							Αλλαγή κωδικού για
 MSG_CHANGEPASS_OLDPASS						Παλαιός Κωδικός:
 MSG_CHANGEPASS_NEWPASS						Νέος Κωδικός:
 MSG_CHANGEPASS_CONFIRMPASS					Επιβεβαίωση Κωδικού:
@@ -63,7 +63,7 @@ MSG_ALERTWND_GRPWRTERR=10000				Σφάλμα αρχείου
 MSG_ALERTWND_GRPWRTERR_TEXT					Αποτυχία εγγραφής νέου αρχείου στο /etc/group.  Οι ομάδες δεν έχουν αλλάξει.
 MSG_ALERTWND_GRPWRTERR_OK					Close
 
-MSG_ALERTWND_PASSDONTMATCH=20000				Οι Κωδικοί Δεν Ταιριάζουν
+MSG_ALERTWND_PASSDONTMATCH=20000			Οι Κωδικοί Δεν Ταιριάζουν
 MSG_ALERTWND_PASSDONTMATCH_TEXT				Οι κωδικοί που εισάγατε\nδεν ταιριάζουν. Παρακαλούμε ελέξτε\nκαι επαναπροσπαθήστε.
 MSG_ALERTWND_PASSDONTMATCH_OK				ΟΚ
 

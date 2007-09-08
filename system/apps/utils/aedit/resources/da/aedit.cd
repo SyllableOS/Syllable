@@ -90,18 +90,18 @@ MSG_REPLACE_CLOSE							_Afslut
 
 MSG_ALERT_CLOSE_FILE_TITLE=1500				Gem fil?
 MSG_ALERT_CLOSE_FILE_BODY					Vil du gemme filen før du lukker den?
-MSG_ALERT_CLOSE_FILE_YES					Ja
-MSG_ALERT_CLOSE_FILE_NO						Nej
-MSG_ALERT_CLOSE_FILE_CANCEL					Annuller
+MSG_ALERT_CLOSE_FILE_YES					_Ja
+MSG_ALERT_CLOSE_FILE_NO						_Nej
+MSG_ALERT_CLOSE_FILE_CANCEL					_Annuller
 MSG_ALERT_SAVE_FILE_TITLE					Fejl
 MSG_ALERT_SAVE_FILE_BODY					Kunne ikke gemme filen "%s".
-MSG_ALERT_SAVE_FILE_OK						OK
+MSG_ALERT_SAVE_FILE_OK						_Ok
 MSG_ALERT_QUIT_TITLE						Afslut?
 MSG_ALERT_QUIT_BODY							Du har filer der ikke er gemte. Du vil miste indholdet hvis du afslutter.\nEr du sikker på at du vil afslutte?
-MSG_ALERT_QUIT_YES							Ja
-MSG_ALERT_QUIT_NO							Nej
+MSG_ALERT_QUIT_YES							_Ja
+MSG_ALERT_QUIT_NO							_Nej
 MSG_ALERT_FILE_OPEN_TITLE					Fejl
-MSG_ALERT_FILE_OPEN_OK						OK
+MSG_ALERT_FILE_OPEN_OK						_OK
 
 MSG_STATUSBAR_WELCOME=2000					Velkommen til AEdit!
 MSG_STATUSBAR_CLOSED_FILE					Filen "%s" er blevet lukket.

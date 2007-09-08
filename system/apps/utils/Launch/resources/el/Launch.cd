@@ -7,12 +7,12 @@
 MSG_WINDOW_TITLE=0					Εκκίνηση
 
 MSG_STRING_LAUNCH=100				Εκκίνηση:
-MSG_STRING_DESC					Εισάγετε εδώ μία ιστοσελία, αρχείο, κατάλογο ή εφαρμογή.
+MSG_STRING_DESC						Εισάγετε εδώ μία ιστοσελία, αρχείο, κατάλογο ή εφαρμογή.
 
 MSG_ERROR_LAUNCHING_ONE=200			Το αρχείο '
-MSG_ERROR_LAUNCHING_TWO			' δεν έχει ένα συσχετιζόμενο τύπο αρχείου.\nΠαρακαλούμε επικοινωνήστε με την Ομάδα Ανάπτυξης του Syllable\nγια περισσότερες οδηγίες.
+MSG_ERROR_LAUNCHING_TWO				' δεν έχει ένα συσχετιζόμενο τύπο αρχείου.\nΠαρακαλούμε επικοινωνήστε με την Ομάδα Ανάπτυξης του Syllable\nγια περισσότερες οδηγίες.
 
-MSG_BUTTON_LAUNCH=300				_Εκκίνηση
+MSG_BUTTON_LAUNCH=300				_Εκκινητές
 MSG_BUTTON_BROWSE					_Εξερεύνηση
 MSG_BUTTON_CANCEL					Ά_κυρο
 MSG_ALERT_BUTTON					_ΟΚ

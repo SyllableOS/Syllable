@@ -4,15 +4,15 @@
 //	Translated by: Ioannis Koniaris
 //
 
-MSG_MAINWND_TITLE=0						Οθόνη
+MSG_MAINWND_TITLE=0							Οθόνη
 
-MSG_MAINWND_DISPLAY=100					Εμφάνιση
+MSG_MAINWND_DISPLAY=100						Εμφάνιση
 MSG_MAINWND_DISPLAY_APPLYTO					Εφαρμογή σε
 MSG_MAINWND_DISPLAY_RESOLUTION				Ανάλυση
 MSG_MAINWND_DISPLAY_COLORDEPTH				Βάθος Χρώματος
 MSG_MAINWND_DISPLAY_REFRESHRATE				Ρυθμός Ανανέωσης
 
-MSG_MAINWND_DROPDOWN_APPLY_THIS=200			Αυτό το χώρο εργασίας
+MSG_MAINWND_DROPDOWN_APPLY_THIS=200			Αυτόν το χώρο εργασίας
 MSG_MAINWND_DROPDOWN_APPLY_ALL				Όλους τους χώρους εργασίας
 MSG_MAINWND_DROPDOWN_COLOUR_BIT				Bit
 MSG_MAINWND_DROPDOWN_COLOUR_UNKNOWN			Άγνωστο

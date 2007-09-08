@@ -1,0 +1,91 @@
+//
+//	sIDE String Catalog
+//
+//	Translated by: Angelo Conti
+//
+
+MSG_PWND_TITLE=0						sIDE
+
+MSG_PWND_MENU_APPLICATION=200			Aplicação
+MSG_PWND_MENU_APPLICATION_ABOUT			Sobre...
+MSG_PWND_MENU_APPLICATION_QUIT			Sair
+
+MSG_PWND_MENU_PROJECT=210				Projeto
+MSG_PWND_MENU_PROJECT_NEW				Novo...
+MSG_PWND_MENU_PROJECT_OPEN				Abrir...
+MSG_PWND_MENU_PROJECT_SAVE				Salvar
+MSG_PWND_MENU_PROJECT_SAVEAS			Salvar como...
+MSG_PWND_MENU_PROJECT_PREF				Preferências...
+MSG_PWND_MENU_PROJECT_GROUPS			Grupos...
+MSG_PWND_MENU_PROJECT_NEW_FILE			Novo Arquivo...
+MSG_PWND_MENU_PROJECT_ADD_FILE			Adicionar Arquivo...
+MSG_PWND_MENU_PROJECT_ADD_LIB			Adicionar Arquivo
+MSG_PWND_MENU_PROJECT_REMOVE_FILE		Remove File
+
+MSG_PWND_MENU_BUILD=230					Build
+MSG_PWND_MENU_BUILD_CLEAN				Clean
+MSG_PWND_MENU_BUILD_MAKE				Make
+MSG_PWND_MENU_BUILD_RUN					Run
+MSG_PWND_MENU_BUILD_EXPORT_MAKEFILE		Export Makefile
+
+MSG_PWND_ABOUT_TITLE=240				About sIDE
+MSG_PWND_ABOUT							The Syllable IDE\nWritten by Arno Klenke, 2001-2006\nThe new project dialog was created by Rick Caudill\n\nsIDE is released under the Gnu Public Licencse (GPL)\nPlease see the file COPYING, distributed with sIDE, for\nmore information\n
+
+MSG_PWND_LIST_FILE=250					File
+MSG_PWND_LIST_TYPE						Type
+
+MSG_PWND_NO_GROUPS=260					No groups present!\n
+MSG_PWND_COULD_NOT_OPEN_PROJ			Could not open project file.\n
+MSG_PWND_COULD_NOT_OPEN_FILE			Could not open the selected file!\n
+MSG_PWND_COULD_NOT_SAVE_PROJ			Could not save this project!\n
+MSG_PWND_NOT_IN_PROJ_DIR				The selected file is not in a subdirectory of the project!\n
+
+MSG_TYPE_HEADER=300						Header
+MSG_TYPE_C								C file
+MSG_TYPE_CPP							C++ file
+MSG_TYPE_LIB							Biblioteca
+MSG_TYPE_OTHER							Outro
+MSG_TYPE_RES							Recurso
+MSG_TYPE_CATALOG						Catálogo
+MSG_TYPE_IF								Interface
+MSG_TYPE_UNKNOWN						Desconhecido
+
+MSG_BUTTON_OK=400						Ok
+MSG_BUTTON_CANCEL						Cancelar
+MSG_BUTTON_UP							Acima
+MSG_BUTTON_DOWN							Abaixo
+MSG_BUTTON_ADD							Adicionar
+MSG_BUTTON_REMOVE						Remover
+
+MSG_ADDWND_TITLE=500					Adicionar/Criar arquivo
+MSG_ADDWND_NAME							Nome
+MSG_ADDWND_FILE							Criar/Adicionar Arquivo
+
+MSG_NEWWND_TITLE=600					Novo Projeto
+MSG_NEWWND_PROJECTS						Projetos
+MSG_NEWWND_NAME							Nome:
+MSG_NEWWMD_DIR							Diretório:
+MSG_NEWWND_ERR_TITLE					Erro
+MSG_NEWWND_ERR_EXTR						Não foi possível extrair o molde do projeto!\n
+MSG_NEWWND_NO_LOC_NAME					Você não tem um local nem um nome ajustado para este projeto!\n
+MSG_NEWWND_NO_LOC						Você tem que especificar um local para este projeto!\n
+MSG_NEWWND_NO_NAME						Você tem que especificar um local para este projeto!
+MSG_NEWWND_NO_DIR						Não é um diretório
+MSG_NEWWND_NO_DIR_1						O Arquivo, 
+MSG_NEWWND_NO_DIR_2						, não é um diretório\n
+
+MSG_PPREF_TITLE=700						Preferência do Projeto
+MSG_PPREF_TARGET						Alvo
+MSG_PPREF_CATEGORY						Categoria
+MSG_PPREF_INSTALL_PATH					Instalar caminho
+MSG_PPREF_CFLAGS						Bandeiras do Compilador
+MSG_PPREF_LFLAGS						Interligador de Bandeiras
+
+MSG_GROUPS_TITLE=800					Controle de grupo
+MSG_GROUPS_LIST							Grupo
+
+MSG_ADDLIB_TITLE=900					Adicionar Biblioteca
+MSG_ADDLIB_SELECT						Selecionar
+MSG_ADDLIB_CUSTOM						Personalizar
+MSG_ADDLIB_GROUP						Grupo
+

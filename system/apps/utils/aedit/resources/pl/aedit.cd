@@ -1,7 +1,7 @@
 //
 //	AEdit String Catalog
 //
-//	Translated by: And3mD
+//	Translated by: And3mD - antesenamon
 //
 
 MSG_APPWND_TITLE=0							AEdit
@@ -28,6 +28,15 @@ MSG_MENU_EDIT_PASTE							Wklej
 MSG_MENU_EDIT_SELECT_ALL					Zaznacz wszystko
 MSG_MENU_EDIT_UNDO							Cofnij
 MSG_MENU_EDIT_REDO							Redo
+
+MSG_MENU_VIEW_VIEW=350						Widok
+MSG_MENU_VIEW_TOOLBAR						Pasek narzędzi
+MSG_MENU_VIEW_STATUSBAR						Pasek Stanu
+MSG_MENU_VIEW_SETFONT						Ustawienia Czcionki
+MSG_MENU_VIEW_TABS							Zakładki
+MSG_MENU_VIEW_SHOW							Pokaż
+MSG_MENU_VIEW_HIDE							Ukryj
+MSG_MENU_VIEW_AUTO							Automatycznie
 
 MSG_MENU_FIND=400							Znajdź
 MSG_MENU_FIND_FIND							Znajdź
@@ -68,6 +77,7 @@ MSG_FIND_CLOSE							    Zamknij
 MSG_GOTO_TITLE=1100							Idź do linii
 MSG_GOTO_GOTO								Idź do linii
 MSG_GOTO_CLOSE								Zamknij
+MSG_GOTO_LINE								Rząd:
 
 MSG_REPLACE_TITLE=1200						Zamień
 MSG_REPLACE_LBLFIND							Znajdź
@@ -109,4 +119,6 @@ MSG_STATUSBAR_REPLACE_NOT_OK				Fraza nie została zamieniona.
 
 MSG_BUFFER_UNTITLED=2100					Bez Nazwy-%d
 MSG_BUFFER_CURSOR							Kol: %d Wie: %d
+
+MSG_MIMETYPE_TEXT_PLAIN=10000				Pliki tekstowe
 

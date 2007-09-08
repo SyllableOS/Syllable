@@ -4,7 +4,7 @@
 //	Translated by: Ioannis Koniaris
 //
 
-MSG_MAINWND_TITLE=0							Πληκτρολόγιο
+MSG_MAINWND_TITLE=0								Πληκτρολόγιο
 
 MSG_MAINWND_KEYMAP=100							Πληκτρολόγιο
 MSG_MAINWND_KEYBOARDLAYOUT						Διάταξη Πληκτρολογίου
@@ -22,6 +22,6 @@ MSG_MAINWND_SETTINGS_REPEATDELAY_SLOW			Αργή
 MSG_MAINWND_SETTINGS_MILISECONDS					%.f msecs
 
 MSG_MAINWND_BUTTON_APPLY=300					_Εφαρμογή
-MSG_MAINWND_BUTTON_UNDO						_Αναίρεση
+MSG_MAINWND_BUTTON_UNDO							_Αναίρεση
 MSG_MAINWND_BUTTON_DEFAULT						_Προεπιλογή
 
