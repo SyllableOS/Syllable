@@ -6,7 +6,7 @@ diff -ru linux-2.6.21.1-original/Makefile linux-2.6.21.1/Makefile
  depmod_opts	:=
  else
 -depmod_opts	:= -b $(INSTALL_MOD_PATH) -r
-+depmod_opts	:= -r
++depmod_opts	:= -b $(IMAGE) -r
  endif
  PHONY += _modinst_post
  _modinst_post: _modinst_
