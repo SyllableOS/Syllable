@@ -1,6 +1,7 @@
 authors				Kaj de Vos
 status				testing
 warnings
+	Is specific to linux-2.6.22.1-Syllable kernel.
 	Builds upon the running kernel!
 	Needs the kernel source in /lib/modules/<kernel>/source/ or /lib/modules/<kernel>/build/.
 	Installs its kernel header in /usr/include/linux/.
