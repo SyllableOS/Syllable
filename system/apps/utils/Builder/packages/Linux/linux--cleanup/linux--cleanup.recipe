@@ -1,6 +1,8 @@
 authors				Kaj de Vos
 status				testing
 
+; Overwrites the built kernel source. We don't need it again, but at least
+; it prevents the huge source tree from being unregistered:
 packages			linux-2.6.22.1
 
 ; Kernel should already be there:
@@ -10,7 +12,7 @@ make				true
 install				true
 
 links
-;	Repair damage from linux-fusion:
+;	Repair damage from Linux-Fusion:
 ;	lib/modules					/lib/
 	../usr/linux/lib/modules	/lib/
 
@@ -18,3 +20,6 @@ delete-files
 ;	Symlinks to the kernel source on the build host:
 	lib/modules/2.6.22.1-Syllable/build
 	lib/modules/2.6.22.1-Syllable/source
+;	Source is not there any more because it's moved to linux--cleanup, so it did not get unregistered:
+	/usr/indexes/lib/modules/2.6.22.1-Syllable/build
+	/usr/indexes/lib/modules/2.6.22.1-Syllable/source
