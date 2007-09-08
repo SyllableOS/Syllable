@@ -530,9 +530,9 @@ status_t FFMpegCodec::DecodePacket( os::MediaPacket_s * psPacket, os::MediaPacke
 			{
 				//std::cout<<"NOT DECODED "<<psPacket->nTimeStamp<<std::endl;
 			}
-			if( nLen < 0 )
+			if( nLen <= 0 )
 			{
-				return ( -1 );
+				return ( nLen );
 			}
 
 			nSize -= nLen;
