@@ -18,4 +18,4 @@ install-tree
 documentation		README ChangeLog TODO
 
 move-files			/lib/modules/2.6.22.1-Syllable/drivers /usr/linux/lib/modules/2.6.22.1-Syllable/
-;delete-files		/lib/modules
+delete-files		/lib/modules
