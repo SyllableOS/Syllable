@@ -45,7 +45,7 @@ install-files
 	.config					config-2.6.22.1
 ;	Documentation			.
 
-documentation		Documentation
+documentation		Documentation/*
 
 links
 ;	include										/
