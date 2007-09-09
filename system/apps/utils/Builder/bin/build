@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.7.16
+# Version 0.7.17
 # Copyright (c) 2002-2007 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -710,7 +710,7 @@ def installModule originalStaging, staging, directive, target
 									for line in parseList files
 										source, destination = toList line
 										break unless action superAccess + 'mv ' + (
-											staging and staging != 'image' ?
+											staging && staging != 'image' ?
 												source + ' ' + destination :
 												(source[0, 1] == '/' ?
 													File.join(@systemImage, source) :
@@ -731,7 +731,7 @@ def installModule originalStaging, staging, directive, target
 
 									for file in toList files
 										break unless action superAccess + 'rm --recursive --force ' + (
-											staging and staging != 'image' or file[0, 1] != '/' ?
+											staging && staging != 'image' || file[0, 1] != '/' ?
 												file :
 												File.join(@systemImage, file)
 										)
@@ -1743,7 +1743,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.7.16',
+	puts 'Syllable Build System 0.7.17',
 		'Copyright (c) 2002-2007 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
