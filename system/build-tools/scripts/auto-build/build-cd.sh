@@ -188,7 +188,7 @@ PPDS=ppds
 
 function print_usage()
 {
-  echo "USAGE : build-cd [BASE FILE] [NET DIRECTORY] [VERSION] ([RUBY PACKAGE]) ([INSTALLER DIR])"
+  echo "USAGE : build-cd [BASE FILE] [NET DIRECTORY] [VERSION] ([PREMIUM FILES]) ([RUBY PACKAGE]) ([INSTALLER DIR])"
   exit 1
 }
 
@@ -230,9 +230,10 @@ function exit_with_usage()
 # $1 - path to base-syllable file
 # $2 - path to the Syllable-net directory
 # $3 - version number
-# $4 - (Optional) path to the Ruby binary package
-# $5 - (Optional) path to the installer script directory
-# $6 - (Optional) path to the CUPS PPDs
+# $4 - (Optional) path to the premium package directory
+# $5 - (Optional) path to the Ruby binary package
+# $6 - (Optional) path to the installer script directory
+# $7 - (Optional) path to the CUPS PPDs
 
 function initialise()
 {
@@ -251,10 +252,16 @@ function initialise()
     exit_with_usage 2 $2
   fi
 
-  # If the user specified a Ruby binary package, use it
+  # If the user wants to build a premium CD, confirm it
   if [ ! -z $4 ]
   then
-    RUBY_PACKAGE=$4
+    printf "Creating a premium CD with packages in %s\n" $4
+  fi
+
+  # If the user specified a Ruby binary package, use it
+  if [ ! -z $5 ]
+  then
+    RUBY_PACKAGE=$5
   fi
   printf "Using Ruby package %s\n" $RUBY_PACKAGE
   if [ ! -e $RUBY_PACKAGE ]
@@ -263,9 +270,9 @@ function initialise()
   fi
 
   # If the user specified a path to the installer scripts, use it
-  if [ ! -z $5 ]
+  if [ ! -z $6 ]
   then
-    INSTALLER_DIR=$5
+    INSTALLER_DIR=$6
   fi
   printf "Using Installer scripts from %s\n" $INSTALLER_DIR
   if [ ! -e $INSTALLER_DIR ]
@@ -274,7 +281,7 @@ function initialise()
   fi
 
   # If the user specified a path to the CUPS PPDs, use it
-  if [ ! -z $6 ]
+  if [ ! -z $7 ]
   then
     PPDS=$6
   fi
@@ -448,6 +455,36 @@ function copy_packages()
   cp -a $3/* $CD_DIR/Packages/CUPS/PPD/
 }
 
+# function copy_extra_packages
+#
+# Copy the additional "Premium" packages to the CD
+#
+# $1 - path to Packages directory
+
+function copy_extra_packages()
+{
+  if [ ! -e $1 ]
+  then
+    printf "Package directory %s does not exist!\n" "$1"
+    exit 1
+  fi
+
+  mkdir -p $CD_DIR/Packages/optional
+  printf "Copying optional files: %s\n" "$1/Binaries"
+  cp $1/Binaries/* $CD_DIR/Packages/optional/
+
+  printf "Copying upgrade files: %s\n" "$1/Upgrade"
+  cp $1/Upgrade/* $CD_DIR/Packages/base/
+
+  mkdir -p $CD_DIR/Documentation
+  printf "Copying documentation files: %s\n" "$1/Documentation"
+  cp $1/Documentation/* $CD_DIR/Documentation/
+
+  mkdir -p $CD_DIR/Source
+  printf "Copying source files: %s\n" "$1/Source"
+  cp $1/Source/* $CD_DIR/Source/
+}
+
 # function copy_installer
 #
 # Copy the installation scripts to the CD
@@ -493,24 +530,34 @@ function create_iso()
 # $1 - path to base-syllable file
 # $2 - path to the Syllable-net directory
 # $3 - version number
-# $4 - (Optional) path to the Ruby binary package
-# $5 - (Optional) path to the installer script directory
-# $6 - (Optional) path to the CUPS PPDs
+# $4 - (Optional) path to the premium package directory
+# $5 - (Optional) path to the Ruby binary package
+# $6 - (Optional) path to the installer script directory
+# $7 - (Optional) path to the CUPS PPDs
 
 _BASE=$1
 _NET=$2
 _VER=$3
-_RUBY=$4
-_INSTALLER=$5
-_PPDS=$6
+_PACKAGES=$4
+_RUBY=$5
+_INSTALLER=$6
+_PPDS=$7
 
-initialise $_BASE $_NET $_VER $_RUBY $_INSTALLER $_PPDS
+initialise $_BASE $_NET $_VER $_PACKAGES $_RUBY $_INSTALLER $_PPDS
 
 # Create the basic bootable system
 copy_files
 
 # Copy the installation files
 copy_packages $_BASE $_NET $PPDS
+
+# If this is a premium CD, copy the extra files
+if [ ! -z $_PACKAGES ]
+then
+  copy_extra_packages $_PACKAGES
+fi
+
+# Add the installer files
 copy_installer $_VER
 
 # Create the ISO
