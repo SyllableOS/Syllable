@@ -179,6 +179,9 @@ INSTALLER_DIR=installer
 DOCUMENTATION_DIR=documentation
 PPDS=ppds
 
+# The source packages need to be on the Premium CD
+BUILDER_SOURCE_DIR=/usr/Builder/sources
+
 # function print_usage
 #
 # Prints usage information.  This function will cause the script
@@ -481,8 +484,8 @@ function copy_extra_packages()
   cp $1/Documentation/* $CD_DIR/Documentation/
 
   mkdir -p $CD_DIR/Source
-  printf "Copying source files: %s\n" "$1/Source"
-  cp $1/Source/* $CD_DIR/Source/
+  printf "Copying source files: %s\n" "$BUILDER_SOURCE_DIR"
+  cp $BUILDER_SOURCE_DIR/*.* $CD_DIR/Source/
 }
 
 # function copy_installer
