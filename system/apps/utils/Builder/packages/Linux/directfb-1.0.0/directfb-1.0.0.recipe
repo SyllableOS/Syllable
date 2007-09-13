@@ -1,11 +1,10 @@
 authors				Kaj de Vos
-status				broken
-notes				Hangs Links2 during start-up
+status				testing
 
 licenses			LGPL-2+
 
 home				www.directfb.org
-packages			DirectFB-1.0.1
+packages			DirectFB-1.0.0
 locations			http://www.directfb.org/downloads/Core/
 
 needs
@@ -27,8 +26,7 @@ build-recommends	pkg-config >= 0.9.0
 configure-options
 ;	We want SDL on DirectFB, not the other way around:
 	--disable-sdl
-;	Erroneously enables X11:
-	--disable-x11
+;	--disable-x11
 ;	--enable-debug
 ;	--enable-trace
 ;	--enable-multi
