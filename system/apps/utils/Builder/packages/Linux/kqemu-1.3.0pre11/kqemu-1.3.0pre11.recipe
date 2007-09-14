@@ -1,8 +1,6 @@
 authors				Kaj de Vos
 status				testing
-warnings
-	Needs built kernel source.
-	Is specific to linux-2.6.22.1-Syllable kernel.
+warnings			Needs built kernel source.
 
 headline			QEMU Accelerator driver
 description
@@ -22,6 +20,7 @@ build-dir			.
 
 ;super-install
 install-tree
+post-install		depmod -a -b $IMAGE/
 
 documentation		README LICENSE COPYING Changelog kqemu-doc.html
 develop-docs		kqemu-tech.html
