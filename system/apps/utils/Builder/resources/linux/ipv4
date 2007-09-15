@@ -2,7 +2,7 @@ ONBOOT="yes"
 
 
 SERVICE="dhclient"
-DHCP_START="-q"  # <add additional start parameters here>
+DHCP_START="-q -nw"  # <add additional start parameters here>
 DHCP_STOP="-q -r"  # <add additional stop parameters here>
 
 # Set PRINTIP="yes" to have the script print
