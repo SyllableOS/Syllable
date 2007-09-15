@@ -2,12 +2,13 @@ ONBOOT="yes"
 
 
 SERVICE="dhclient"
+# Don't wait for DHCP:
 DHCP_START="-q -nw"  # <add additional start parameters here>
 DHCP_STOP="-q -r"  # <add additional stop parameters here>
 
 # Set PRINTIP="yes" to have the script print
 # the DHCP assigned IP address
-PRINTIP="yes"
+PRINTIP="no"
 
 # Set PRINTALL="yes" to print the DHCP assigned values for
 # IP, SM, DG, and 1st NS. This requires PRINTIP="yes".
