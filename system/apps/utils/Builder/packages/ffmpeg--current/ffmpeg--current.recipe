@@ -34,12 +34,10 @@ configure-options
 ;	IPv6 code used to fail (on GLibC 2.1.2?):
 ;	--disable-network
 ;	--disable-ipv6
-	--disable-v4l
 ;	--disable-v4l2
 	--disable-audio-oss
 ;	--disable-audio-beos
 	--disable-vhook
-	--disable-dv1394
 	--enable-gpl
 	--enable-pp
 ;	--enable-liba52
@@ -51,13 +49,15 @@ configure-options
 ;	--enable-libmp3lame
 ;	--enable-x264
 ;	--enable-xvid
+;	--enable-syllablethreads
 
 install-files
 	../_ffmpeg--current/config.h				include/ffmpeg
 	../ffmpeg--current/libavformat/allformats.h	include/ffmpeg
+	../ffmpeg--current/libavcodec/allcodecs.h	include/ffmpeg
 
 documentation
-	README COPYING Changelog CREDITS MAINTAINERS doc/TODO
+	README Changelog CREDITS MAINTAINERS doc/TODO
 ;	doc/*.txt
 build-docs			INSTALL
 internal-docs		doc/soc.txt	doc/optimization.txt
