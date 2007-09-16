@@ -80,7 +80,6 @@ void FFMpegAddon::RegisterFormats()
     REGISTER_DEMUXER (C93, c93);
     REGISTER_MUXER   (CRC, crc);
     REGISTER_DEMUXER (DAUD, daud);
-    REGISTER_DEMUXER (DC1394, dc1394);
     REGISTER_DEMUXER (DSICIN, dsicin);
     REGISTER_DEMUXER (DTS, dts);
     REGISTER_MUXDEMUX(DV, dv);
@@ -166,8 +165,6 @@ void FFMpegAddon::RegisterFormats()
     REGISTER_DEMUXER (TXD, txd);
     REGISTER_DEMUXER (V4L2, v4l2);
     REGISTER_DEMUXER (VC1, vc1);
-    REGISTER_DEMUXER (VIDEO_GRAB_BKTR, video_grab_bktr);
-    REGISTER_DEMUXER (VIDEO_GRAB_V4L, video_grab_v4l);
     REGISTER_DEMUXER (VMD, vmd);
     REGISTER_MUXDEMUX(VOC, voc);
     REGISTER_MUXDEMUX(WAV, wav);

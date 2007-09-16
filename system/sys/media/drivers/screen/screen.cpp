@@ -339,6 +339,7 @@ private:
 	os::MediaFormat_s	m_sFormat;
 	sem_id			m_hLock;
 	bool			m_bUseMMX;
+	bool			m_bUseMMX2;
 	bool			m_bUseFB;
 	port_id			m_hReplyPort;
 	os::Desktop		m_cDesktop;
@@ -358,11 +359,10 @@ ScreenOutput::ScreenOutput()
 	
 	/* Get system information and check if we have MMX support */
 	system_info sSysInfo;
+	get_system_info( &sSysInfo );
 
-	if( get_system_info( &sSysInfo ) == 0 && sSysInfo.nCPUType & CPU_FEATURE_MMX )
-		m_bUseMMX = true;
-	else
-		m_bUseMMX = false;
+	m_bUseMMX = sSysInfo.nCPUType & CPU_FEATURE_MMX;
+	m_bUseMMX2 = sSysInfo.nCPUType & CPU_FEATURE_MMX2;
 }
 
 ScreenOutput::~ScreenOutput()
@@ -446,7 +446,7 @@ status_t ScreenOutput::Open( os::String zFileName )
 	/* Intialize cpu structure for mplayer code */
 	memset( &gCpuCaps, 0, sizeof( CpuCaps ) );
 	gCpuCaps.hasMMX = 0;
-	gCpuCaps.hasMMX2 = 1;
+	gCpuCaps.hasMMX2 = m_bUseMMX2;
 	gCpuCaps.isX86 = 1;
 		
 	/* Check video overlay */
@@ -783,13 +783,13 @@ status_t ScreenOutput::WritePacket( uint32 nIndex, os::MediaPacket_s* psNewFrame
 	if( !m_bUseOverlay )
 	{
 		/* No overlay */
-		bigtime_t nTime = get_system_time();		
+		//bigtime_t nTime = get_system_time();		
 		
 		bool bUseView = true;
 		bool bUnlockFB = false;
 		os::WR_LockFbReply_s sReply;
 		
-		if( m_bUseFB && m_pcView->GetWindow() != NULL )
+		if( m_bUseMMX && m_bUseFB && m_pcView->GetWindow() != NULL )
 		{
 			/* Try to lock the framebuffer */
 			os::WR_LockFb_s sReq;
