@@ -29,7 +29,8 @@
 #include <gui/menu.h>
 #include <gui/image.h>
 #include <gui/popupmenu.h>
-
+#include <util/datetime.h>
+#include <util/event.h>
 #include <util/resources.h>
 #include <util/settings.h>
 #include <util/clipboard.h>
@@ -43,12 +44,14 @@
 #include <appserver/dockplugin.h>
                     
 #define PLUGIN_NAME       "Clipper"
-#define PLUGIN_VERSION    "0.1"
+#define PLUGIN_VERSION    "1.0"
 #define PLUGIN_DESC       "A Clipboard Manager Plugin for Dock"
 #define PLUGIN_AUTHOR     "Rick Caudill"
                                                                                                                                                                                                         
 using namespace os;
 using namespace std;                                                                                                                                                                                                     
+
+class ClipperSettingsWindow;
 
 /*message ids*/                                                                                                                                                                                                        
 enum
@@ -67,65 +70,28 @@ enum
 	M_CLICKER_ERROR_OK,
 };
 
+typedef std::pair<std::string,std::vector<std::string> >  ClipperData;
+
 
 /*looper*/
 class ClipperLooper : public os::Looper
 {
 public:
 	ClipperLooper(os::Looper*, os::View*);
-	virtual void TimerTick(int);
+	virtual void HandleMessage(os::Message*);
+public:
+	enum
+	{
+		CLIP_CHANGED = 0x1111f
+	};
+
+private:
+	os::String GetDateString(os::DateTime data);
 private:
 	os::Looper* pcParentLooper;
 	os::View* pcParentView;
-	os::String cString;
-};
+	os::Event* pcEvent;
 
-
-/*view window*/
-class ClipperWindow : public Window
-{
-public:
-	ClipperWindow(os::Looper*);
-	void ChangeText(const String& cText);
-	bool OkToQuit() 
-	{ 
-		pcParentLooper->PostMessage(new Message(M_CLIPPER_SEND),pcParentLooper);
-		return true;
-	}	
-private:
-	TextView* pcViewTextView;
-	os::Looper* pcParentLooper;
-};
-
-/*settings window*/
-class ClipperSettingsWindow : public Window
-{
-public:
-	ClipperSettingsWindow(View*, std::vector<os::String>,int32);
-	
-	void Layout();
-	bool OkToQuit();
-	void HandleMessage(Message*);
-	void UpdateClips(std::vector<os::String>);
-	void UpdateTreeView();
-	void SetTime();
-
-private:
-	std::vector<os::String> m_cCopiedTextVector;
-	int32 nTime;
-	
-	View* pcParentView;
-	String cWindowText;
-	
-	TreeView* pcTreeView;
-	TextView* pcTextView;
-	DropdownMenu* pcTimeDrop;
-	StringView* pcTimeString;
-	LayoutView* pcLayoutView;
-	FrameView* pcFrameView;
-	Button *pcOkButton, *pcCancelButton, *pcDelButton,*pcViewButton;
-	ClipperWindow* pcWindow;
-	
 };
 
 /*actual plugin*/
@@ -142,52 +108,160 @@ class DockClipper : public View
 		virtual void AttachedToWindow();
 		void InitializeMenu();
 		virtual void HandleMessage(Message* pcMessage);  
+	
+	public:
+		void RefreshMenu();	
+		os::Menu* GetMenu(ClipperData data);
+		
+	public:
+		vector<ClipperData>::const_iterator GetClipperDataBegin() const
+		{
+			return m_cCopiedTextVector.begin();
+		}
+		vector<ClipperData>::const_iterator GetClipperDataEnd() const
+		{
+			return m_cCopiedTextVector.end();
+		}
+		uint GetClipperDataSize()
+		{
+			return m_cCopiedTextVector.size();
+		}
+		
+		uint GetClipSize();
 		
 	private:
 		void UpdateItems(const String&);
 		void ClearContent();
 		bool IsInCopyVector(const os::String& cNewItem);
+		int  Contains(const os::String& cDate);
 		void LoadSettings();
 		void SaveSettings();
+		void Insert(const os::String& cDate, const os::String& cClip);
+
+
+	private:
+		vector<ClipperData> m_cCopiedTextVector;
+		
 		os::Path m_cPath;
 		os::Looper* m_pcDock;
 		
-		vector<String> m_cCopiedTextVector;
 		int m_nCount;
-		int32 nTime; 
-		bool bNotShown;
-
+	
 		ClipperSettingsWindow* pcWindow;
 		Menu* pcContextMenu;
+		Menu* pcExportMenu;
+		
 		BitmapImage* m_pcIcon;
 		os::File* pcFile;
 		os::ResStream *pcStream;
 		os::PopupMenu* pcPopup;
 		ClipperLooper* pcClipperLooper;
-		Alert* pcError;
-		os::String cPrevious;
+		
 };
 
-ClipperWindow::ClipperWindow(Looper* pcParent) : Window(Rect(0,0,200,200),"view_window","Viewing Clip...",WND_NO_DEPTH_BUT | WND_NOT_RESIZABLE | WND_NO_ZOOM_BUT)
+/*settings window*/
+class ClipperSettingsWindow : public Window
+{
+public:
+	ClipperSettingsWindow(DockClipper*);
+	
+	void Layout();
+	bool OkToQuit();
+	void HandleMessage(Message*);
+	void UpdateTreeView();
+	void SetTime();
+	int Contains(os::String date);
+private:
+
+	/*view window*/
+	class ClipperWindow : public Window
+	{
+	public:
+	ClipperWindow(os::Looper* pcParent) : Window(Rect(0,0,200,200),"view_window","Viewing Clip...",WND_NO_DEPTH_BUT | WND_NOT_RESIZABLE | WND_NO_ZOOM_BUT)
+	{
+		pcParentLooper = pcParent;
+		AddChild(pcViewTextView = new TextView(Rect(5,5,195,195),"text",""));
+		pcViewTextView->SetReadOnly(true);
+		pcViewTextView->SetMultiLine(true);
+	}
+	void ChangeText(const String& cText)
+	{
+		pcViewTextView->Set(cText.c_str());
+	}
+	
+	bool OkToQuit() 
+	{ 
+		pcParentLooper->PostMessage(new Message(M_CLIPPER_SEND),pcParentLooper);
+		return true;
+	}	
+	private:
+		TextView* pcViewTextView;
+		os::Looper* pcParentLooper;
+	};	
+
+
+private:
+
+	DockClipper* pcParentView;
+	String cWindowText;
+	
+	TreeView* pcTreeView;
+	TextView* pcTextView;
+
+	LayoutView* pcLayoutView;
+	FrameView* pcFrameView;
+	Button *pcOkButton, *pcViewButton;
+	ClipperWindow* pcWindow;
+	
+};
+
+
+
+
+ClipperLooper::ClipperLooper(Looper* pcParent, os::View* pcView) : Looper("ClipperLooper")
 {
 	pcParentLooper = pcParent;
-	
-	AddChild(pcViewTextView = new TextView(Rect(5,5,195,195),"text",""));
-	pcViewTextView->SetReadOnly(true);
-	pcViewTextView->SetMultiLine(true);
+	pcParentView = pcView;
+
+	pcEvent = new os::Event();
+	pcEvent->SetToRemote("os/System/ClipboardHasChanged");
+	pcEvent->SetMonitorEnabled(true,this,CLIP_CHANGED);
 }
 
-void ClipperWindow::ChangeText(const String& cText)
+void ClipperLooper::HandleMessage(os::Message* pcMessage)
 {
-	pcViewTextView->Set(cText.c_str());
+	switch (pcMessage->GetCode())
+	{
+		case CLIP_CHANGED:
+		{
+			Clipboard cClip;
+			cClip.Lock();
+			Message* pcMsg = cClip.GetData();
+			os::String cString;
+			
+			if (pcMsg->FindString("text/plain", &cString) == 0)
+			{
+				Message* pcTargetMessage = new Message(M_CLIPPER_SEND);
+				pcTargetMessage->AddString("clip",cString);
+				pcTargetMessage->AddString("date",GetDateString(os::DateTime::Now()));
+				pcParentLooper->PostMessage(pcTargetMessage,pcParentView);
+			}
+			cClip.Unlock();
+			break;
+		}
+	}
+}
+
+os::String ClipperLooper::GetDateString(os::DateTime data)
+{
+	os::String cReturn = os::String().Format("%d-%d-%d",data.GetYear(),data.GetMonth(),data.GetDay());
+	return cReturn;
 }
 
 
-ClipperSettingsWindow::ClipperSettingsWindow(View* pcParent,std::vector <os::String> cVector, int32 Time) : Window(Rect(0,0,380,304),"settings_window","Clipper Settings...",WND_NOT_RESIZABLE | WND_NO_ZOOM_BUT | WND_NO_DEPTH_BUT)
+ClipperSettingsWindow::ClipperSettingsWindow(DockClipper* pcParent) : Window(Rect(0,0,380,304),"settings_window","Viewing Clips...",WND_NOT_RESIZABLE | WND_NO_ZOOM_BUT | WND_NO_DEPTH_BUT)
 {
 	pcParentView = pcParent;
-	m_cCopiedTextVector = cVector;
-	nTime = Time;
 	pcWindow = NULL;
 	
 	Layout();
@@ -206,49 +280,15 @@ void ClipperSettingsWindow::Layout()
 	pcTreeView->SetSelChangeMsg(new Message(M_PREFS_CLICKED));
 	UpdateTreeView();
 	pcTreeViewLayout->SetWeight(120);	
-	
-	HLayoutNode* pcTreeViewButtonLayout = new HLayoutNode("treeview_button_layout");
-	pcTreeViewButtonLayout->AddChild(new HLayoutSpacer("",20));	
-	pcTreeViewButtonLayout->AddChild(pcViewButton=new Button(Rect(0,0,1,1),"BTView","_View",new Message(M_PREFS_VIEW)));
-   	pcTreeViewButtonLayout->AddChild(new os::HLayoutSpacer("",5.0f,5.0f)); 	
-  	pcTreeViewButtonLayout->AddChild(pcDelButton=new Button(Rect(0,0,1,1),"BTDelete","_Delete",new Message(M_PREFS_DELETE)));
-  	pcTreeViewButtonLayout->AddChild(new os::HLayoutSpacer("",5.0f,5.0f));
-	pcTreeViewButtonLayout->AddChild(new HLayoutSpacer("",20));  	
-	pcTreeViewButtonLayout->SameWidth("BTDelete","BTView",NULL);
-	
-	HLayoutNode* pcTimeLayout = new HLayoutNode("time_layout");
-	pcTimeLayout->AddChild(pcTimeString = new StringView(Rect(),"time_string","Check Every:"));
-	pcTimeLayout->AddChild(new HLayoutSpacer("",5,5));
-	pcTimeLayout->AddChild(pcTimeDrop = new DropdownMenu(Rect(),"time_drop"));
-	pcTimeDrop->SetMinPreferredSize(12);
-	pcTimeDrop->SetMaxPreferredSize(12);
-	pcTimeLayout->SameHeight("time_string","time_drop",NULL);
-	pcTimeDrop->AppendItem(" 1 second");
-	pcTimeDrop->AppendItem(" 3 seconds");
-	pcTimeDrop->AppendItem(" 5 seconds");
-	pcTimeDrop->AppendItem("10 seconds");
-	pcTimeDrop->AppendItem("20 seconds");
-	pcTimeDrop->AppendItem("30 seconds");
-	pcTimeDrop->AppendItem("45 seconds");
-	pcTimeDrop->AppendItem("60 seconds");
-	pcTimeDrop->SetReadOnly(true);	
-	pcTimeLayout->AddChild(new HLayoutSpacer("",5,5));
-	SetTime();
-  	
+	pcTreeView->SetInvokeMsg(new Message(M_PREFS_VIEW));
+
   	HLayoutNode* pcHLButton = new os::HLayoutNode("");
     pcHLButton->AddChild(new os::HLayoutSpacer("",5.0f,5.0f));	
-  	pcHLButton->AddChild(pcCancelButton=new Button(Rect(0,0,2,2),"BTDefault","_Cancel",new Message(M_PREFS_CANCEL)));
-   	pcHLButton->AddChild(new os::HLayoutSpacer("",5.0f,5.0f)); 	
   	pcHLButton->AddChild(pcOkButton=new Button(Rect(0,0,2,2),"BTApply","_Okay",new Message(M_PREFS_APPLY)));
   	pcHLButton->AddChild(new os::HLayoutSpacer("",5.0f,5.0f));
-  	pcHLButton->SameWidth("BTApply","BTDefault",NULL);
   	
   	pcRoot->AddChild(pcTreeViewLayout);
-  	pcRoot->AddChild(new VLayoutSpacer("",2,2));
-	pcRoot->AddChild(pcTreeViewButtonLayout); 	
   	pcRoot->AddChild(new VLayoutSpacer("",10,10));
-	pcRoot->AddChild(pcTimeLayout);
-  	pcRoot->AddChild(new VLayoutSpacer("",15,15));	
 	pcRoot->AddChild(pcHLButton);
   	pcRoot->AddChild(new VLayoutSpacer("",5,5));
 
@@ -257,36 +297,6 @@ void ClipperSettingsWindow::Layout()
 	AddChild(pcLayoutView);
 }
 
-void ClipperSettingsWindow::SetTime()
-{
-	switch (nTime)
-	{
-		case 1:
-			pcTimeDrop->SetSelection(0);
-			break;
-		case 3:
-			pcTimeDrop->SetSelection(1);
-			break;
-		case 5:
-			pcTimeDrop->SetSelection(2);
-			break;
-		case 10:
-			pcTimeDrop->SetSelection(3);
-			break;
-		case 20:
-			pcTimeDrop->SetSelection(4);
-			break;
-		case 30:
-			pcTimeDrop->SetSelection(5);
-			break;
-		case 45:
-			pcTimeDrop->SetSelection(6);
-			break;
-		case 60:
-			pcTimeDrop->SetSelection(7);
-			break;
-	}
-}
 
 void ClipperSettingsWindow::HandleMessage(Message* pcMessage)
 {
@@ -299,8 +309,8 @@ void ClipperSettingsWindow::HandleMessage(Message* pcMessage)
 			if (nSelected > -1)
 			{
 				TreeViewStringNode* pcNode = (TreeViewStringNode*)pcTreeView->GetRow(nSelected);
-				Variant cCookie = pcNode->GetCookie();
-							
+				
+				Variant cCookie = pcNode->GetCookie();			
 				cWindowText = pcNode->GetCookie().AsString();
 			}
 			break;
@@ -317,58 +327,10 @@ void ClipperSettingsWindow::HandleMessage(Message* pcMessage)
 		
 		case M_PREFS_APPLY:
 		{
-			if(pcWindow != NULL)
+			if (pcWindow != NULL)
 				pcWindow->Close();
-			pcWindow = NULL;
-			
-			Message* pcMsg = new Message(M_PREFS_APPLY);
-			
-			int32 nTime = pcTimeDrop->GetSelection();
-			
-			switch (nTime)
-			{
-				case 0:
-					nTime = 1;
-					break;
-					
-				case 1:
-					nTime = 3;
-					break;
-					
-				case 2:
-					nTime = 5;
-					break;
-					
-				case 3:
-					nTime = 10;
-					break;
-					
-				case 4:
-					nTime = 20;
-					break;
-					
-				case 5:
-					nTime = 30;
-					break;
-					
-				case 6:
-					nTime = 45;
-					break;
-					
-				case 7:
-					nTime = 60;
-					break;
-			}
-			pcMsg->AddInt32("time",nTime);
-			pcMsg->AddInt32("count",m_cCopiedTextVector.size());
-			
-			for (int i=0;i<m_cCopiedTextVector.size();i++)
-			{
-				String cClip;
-				cClip.Format("Clip %d",i);
-				pcMsg->AddString(cClip.c_str(),m_cCopiedTextVector[i]);
-			}
-			pcParentView->GetLooper()->PostMessage(pcMsg,pcParentView);
+			pcWindow = NULL;	
+			pcParentView->GetLooper()->PostMessage(new Message(M_PREFS_CANCEL),pcParentView);			
 			break;
 		}
 		
@@ -394,27 +356,6 @@ void ClipperSettingsWindow::HandleMessage(Message* pcMessage)
 			break;
 		}
 		
-		case M_PREFS_DELETE:
-		{
-			int nSelected = pcTreeView->GetLastSelected();
-			
-			if (nSelected >-1)
-			{
-				pcTreeView->RemoveRow(nSelected);
-			
-				std::vector<String> m_cClips;
-			
-				for (uint i=0; i<pcTreeView->GetRowCount(); i++)
-				{
-					TreeViewStringNode* pcNode = (TreeViewStringNode*)pcTreeView->GetRow(i);
-					m_cClips.push_back(pcNode->GetCookie().AsString());
-				}
-				m_cCopiedTextVector = m_cClips;
-				UpdateTreeView();
-			}
-			break;
-		}
-		
 		case M_CLIPPER_SEND:
 		{
 			pcWindow->Close();
@@ -430,61 +371,41 @@ bool ClipperSettingsWindow::OkToQuit()
 	return true;
 }
 
-void ClipperSettingsWindow::UpdateClips(std::vector<os::String> m_cClips)
-{
-	m_cCopiedTextVector = m_cClips;
-	UpdateTreeView();
-}
-
 void ClipperSettingsWindow::UpdateTreeView()
 {
 	pcTreeView->Clear();
+
+	vector<ClipperData>::const_iterator iter = pcParentView->GetClipperDataBegin();
+	uint size = pcParentView->GetClipperDataSize();
 	
-	for (uint i=0; i<m_cCopiedTextVector.size(); i++)
+	for (uint i=0; i<size; i++)
 	{
-		String cString;
-		cString.Format("%s %d","Clip", i+1);
-		TreeViewStringNode* pcNode = new TreeViewStringNode();
-		pcNode->AppendString(cString);
-		pcNode->SetCookie(Variant(m_cCopiedTextVector[i]));
-		pcTreeView->InsertNode(i,pcNode,false);	
+		
+			TreeViewStringNode* node = new TreeViewStringNode();
+			node->SetIndent(1);
+			node->AppendString(iter[i].first);
+			pcTreeView->InsertNode(node,true);
+			
+			
+			for (uint j=0; j<iter[i].second.size(); j++)
+			{
+				node = new TreeViewStringNode();
+				node->SetIndent(2);
+				node->AppendString(os::String().Format("Clip %d",j+1));
+				node->SetCookie(os::Variant(iter[i].second[j]));
+				pcTreeView->InsertNode(node,true);
+			}
 	}
 }
-
-ClipperLooper::ClipperLooper(Looper* pcParent, os::View* pcView) : Looper("ClipperLooper")
-{
-	pcParentLooper = pcParent;
-	pcParentView = pcView;
-}
-
-void ClipperLooper::TimerTick(int nID)
-{
-	Clipboard cClip;
-	cClip.Lock();
-	Message* pcMessage = cClip.GetData();
-	
-	if (pcMessage->FindString("text/plain", &cString) == 0)
-	{
-		Message* pcTargetMessage = new Message(M_CLIPPER_SEND);
-		pcTargetMessage->AddString("text",cString);
-		pcParentLooper->PostMessage(pcTargetMessage,pcParentView); //pcParentView);
-	}
-	cClip.Unlock();
-}
-
-
-
 
 //*************************************************************************************
 DockClipper::DockClipper( os::Path cPath, os::Looper* pcDock ) : View(Rect(0,0,0,0),"DockClipperView")
 {
-	LoadSettings();
-	
 	m_pcDock = pcDock;
 	m_cPath = cPath;	
-	bNotShown = false;
-	pcWindow = NULL;
 
+	pcContextMenu = NULL;
+	pcWindow = NULL;
 
 	/* Load default icons */
 	pcFile = new os::File( m_cPath );
@@ -494,7 +415,7 @@ DockClipper::DockClipper( os::Path cPath, os::Looper* pcDock ) : View(Rect(0,0,0
 	delete pcFile;
 	
 	InitializeMenu();
-	
+	LoadSettings();
 
 	
 	pcPopup = new PopupMenu(Rect(0,0,1,1),"clipper_popup","",pcContextMenu,m_pcIcon);
@@ -511,7 +432,6 @@ void DockClipper::AttachedToWindow()
 {
 	pcClipperLooper = new ClipperLooper(m_pcDock,this);
 	pcClipperLooper->Run();
-	pcClipperLooper->AddTimer(pcClipperLooper,123,nTime*1000000,false);
 		
 	pcContextMenu->SetTargetForItems(this);
 	View::AttachedToWindow();
@@ -521,6 +441,7 @@ String DockClipper::GetIdentifier()
 {
 	return( PLUGIN_NAME );
 }
+
 
 
 void DockClipper::LoadSettings()
@@ -534,23 +455,33 @@ void DockClipper::LoadSettings()
 		os::Settings* pcSettings = new os::Settings(new File(zPath));
 		pcSettings->Load();
 		
-		nTime = pcSettings->GetInt32("time",0);
 		m_nCount = pcSettings->GetInt32("count",0);
 
 			
 		for (int i = 0; i<m_nCount; i++)
-		{	
-			String cClip = pcSettings->GetString("clip","",i);
+		{
+			int contains = -1;
+				
+			os::String cClip;
+			os::String cDate;
 			
-			if (cClip != String(""))
-				m_cCopiedTextVector.push_back(cClip);
+			cClip = pcSettings->GetString("clip","",i);
+			cDate = pcSettings->GetString("date","",i);
+			
+			Insert(cDate,cClip);
+
 		}
+		
+		RefreshMenu();
 		delete( pcSettings );
 	}
 	catch(...)
 	{
 	}
 }
+
+
+
 
 void DockClipper::SaveSettings()
 {
@@ -564,13 +495,21 @@ void DockClipper::SaveSettings()
 		zPath += "/Settings";
 		os::File cFile( zPath, O_RDWR | O_CREAT );	
 		os::Settings* pcSettings = new os::Settings(new File(zPath));
-		pcSettings->SetInt32("time",nTime);
-		pcSettings->SetInt32("count",m_cCopiedTextVector.size());
+
+		pcSettings->AddInt32("count",GetClipSize());
 		
 		for (uint i=0; i<m_cCopiedTextVector.size(); i++)
 		{
-			pcSettings->SetString("clip",m_cCopiedTextVector[i],i);
+			vector<std::string>::const_iterator iter=m_cCopiedTextVector[i].second.begin();
+			
+			for (uint j=0; j<m_cCopiedTextVector[i].second.size(); j++)
+			{	
+				pcSettings->SetString("date",m_cCopiedTextVector[i].first,j);
+				pcSettings->SetString("clip",iter[j],j);
+			}
 		}
+		
+		
 		pcSettings->Save();
 		delete( pcSettings );
 	}
@@ -583,6 +522,7 @@ Point DockClipper::GetPreferredSize( bool bLargest ) const
 {
 	return os::Point(pcPopup->GetBounds().Width(), pcPopup->GetBounds().Height());
 }
+
 
 void DockClipper::HandleMessage(Message* pcMessage)
 {
@@ -601,37 +541,17 @@ void DockClipper::HandleMessage(Message* pcMessage)
 		
 		case M_CLIPPER_SEND:
 		{
-			String cString;
-			pcMessage->FindString("text",&cString);			
-			
-			if (m_nCount < 10)
-			{				
-				UpdateItems(cString);
-				SaveSettings();
-			}
-			else
+			os::String date;
+			os::String clip;
+			if (pcMessage->FindString("date",&date) == 0  && pcMessage->FindString("clip",&clip) == 0)
 			{
-				if (!IsInCopyVector(cString) && cString != cPrevious)
+				if(!IsInCopyVector(clip))
 				{
-					if (!bNotShown)
-					{
-						pcError = new Alert("Delete...","You have exceeded the maximum amount of clips, please delete some old clips for future use...",m_pcIcon->LockBitmap(),0,"OK",NULL);
-						m_pcIcon->UnlockBitmap();					
-						bNotShown = true;					
-						pcError->Go(new os::Invoker(new os::Message(M_CLICKER_ERROR_OK),this));
-						pcError->MakeFocus();
-					}
-					else
-						pcError->MakeFocus();
-					
+					Insert(date,clip);
+					RefreshMenu();
+					SaveSettings();
 				}
-				else if (bNotShown == true)
-				{
-					pcError->MakeFocus();
-				}
-				
 			}
-			cPrevious = cString;	
 			break;
 		}
 
@@ -660,14 +580,14 @@ void DockClipper::HandleMessage(Message* pcMessage)
 		{
 			if (pcWindow == NULL)
 			{
-				pcWindow = new ClipperSettingsWindow(this,m_cCopiedTextVector,nTime);
+				pcWindow = new ClipperSettingsWindow(this);
 				pcWindow->CenterInScreen();
 				pcWindow->Show();
 				pcWindow->MakeFocus();
 			}
 			else
 			{
-				pcWindow->UpdateClips(m_cCopiedTextVector);
+				//pcWindow->UpdateClips(m_cCopiedTextVector);
 				pcWindow->MakeFocus();
 			}
 			break;
@@ -682,136 +602,145 @@ void DockClipper::HandleMessage(Message* pcMessage)
 			}
 			break;
 		}
-		
-		case M_PREFS_APPLY:
-		{
-			if (pcWindow != NULL)
-			{
-				pcClipperLooper->RemoveTimer(pcClipperLooper,123);
-				m_cCopiedTextVector.clear();
-				int nCount;
-				ClearContent();
-				
-				pcMessage->FindInt32("time",&nTime);
-				pcMessage->FindInt32("count",&nCount);
-
-				for (int i=0; i<nCount; i++)
-				{
-					String cText;
-					String cString;
-					cString.Format("Clip %d",i);
-					
-					pcMessage->FindString(cString.c_str(),&cText);
-					UpdateItems(cText);
-				}
-			
-				SaveSettings();
-				pcClipperLooper->AddTimer(pcClipperLooper,123,nTime*1000000,false);				
-				pcWindow->Close();
-				pcWindow = NULL;
-			}
-			break;
-		}
-		
-		case M_CLICKER_ERROR_OK:
-		{
-			bNotShown = false;
-			break;
-		}	 	
 	}
 }
 
-void DockClipper::UpdateItems(const String& cNewItem)
-{
-	//test if item is in vector all ready.
-	if ( IsInCopyVector(cNewItem) )
-	{
-		return;
-	}
-
-
-	else if (m_nCount < 10)
-	{
-		String cClip;
-		cClip.Format("Clip %d",m_nCount+1);
-		Message* pcMessage = new Message(M_CLIPPER_COPY);
-		pcMessage->AddString("text",cNewItem);
-		pcContextMenu->RemoveItem(m_nCount);
-		os::MenuItem* pcItem = new MenuItem(cClip,pcMessage);
-		pcContextMenu->AddItem(pcItem,m_nCount);
-		m_nCount++;			
-		m_cCopiedTextVector.push_back(cNewItem);
-		pcContextMenu->SetTargetForItems(this);
-		if (pcWindow != NULL)
-			pcWindow->UpdateClips(m_cCopiedTextVector);
-	}
-	return;
-}
 
 void DockClipper::ClearContent()
 {
+	m_cCopiedTextVector.clear();	
+	RefreshMenu();	
+}
 
-	for (int i=0; i<10; i++)
-	{
-		pcContextMenu->RemoveItem(0);
-	}
+void DockClipper::RefreshMenu()
+{
+	std::sort(m_cCopiedTextVector.begin(),m_cCopiedTextVector.end());
 
-	for (int i=9;i>=0;i--)
-	{
-		String cString;
-		cString.Format("%s %d","Clip",i+1);
-
-		os::MenuItem* pcItem = new MenuItem(cString,NULL);
-		pcContextMenu->AddItem(pcItem,0);
-		pcItem->SetEnable(false);
-	}
-	bNotShown = true;
-	pcContextMenu->SetTargetForItems(this);
-	m_cCopiedTextVector.clear();
-	m_nCount = 0;
+	for (int i=pcContextMenu->GetItemCount(); i >0; i--)
+		pcContextMenu->RemoveItem(i-1);
+		
+	delete pcContextMenu;
+	pcContextMenu = NULL;
+	
+	InitializeMenu();
 }
 
 void DockClipper::InitializeMenu()
 {
-	pcContextMenu = new Menu(Rect(0,0,1,1),"menu",ITEMS_IN_COLUMN);
 	
-	for (int i=0; i<10; i++)
+	if (pcContextMenu == NULL)
+		pcContextMenu = new Menu(Rect(0,0,1,1),"menu",ITEMS_IN_COLUMN);
+	
+	
+	for (int i=0; i<m_cCopiedTextVector.size(); i++)
 	{
-		Message* pcMessage = NULL;
-		String cString;
-		bool bEnabled = false;
-		cString.Format("%s %d","Clip", i+1);
+		Menu* pcMenu = GetMenu(m_cCopiedTextVector[i]);
 		
-		if (i<m_cCopiedTextVector.size())
+		
+		for (uint j=0; j<m_cCopiedTextVector[i].second.size(); j++)
 		{
-				pcMessage = new Message(M_CLIPPER_COPY);
-				pcMessage->AddString("text",m_cCopiedTextVector[i]);
-				bEnabled = true;
-		}				
+			Message* pcMessage = new os::Message(M_CLIPPER_COPY);
+			pcMessage->AddString("text",m_cCopiedTextVector[i].second[j]);
 		
-		os::MenuItem* pcItem = new MenuItem(cString,NULL);
-		pcContextMenu->AddItem(pcItem);
-		pcItem->SetEnable(bEnabled);
+			os::String menuItemString = os::String().Format("Clip %d",pcMenu->GetItemCount()+1);
+		
+			os::MenuItem* pcItem = new MenuItem(menuItemString,pcMessage);
+			pcMenu->AddItem(pcItem);
+		}
 	}
 
 	pcContextMenu->AddItem(new os::MenuSeparator());
-	pcContextMenu->AddItem("Clear Content",new Message(M_CLIPPER_CLEAR));
-	pcContextMenu->AddItem("About",new Message(M_CLIPPER_ABOUT));
-	pcContextMenu->AddItem("Settings",new Message(M_CLIPPER_SETTINGS));
+
+	pcContextMenu->AddItem("View Clips",new Message(M_CLIPPER_SETTINGS));
+	pcContextMenu->AddItem("Clear Clips",new Message(M_CLIPPER_CLEAR));
+
+	pcContextMenu->AddItem(new os::MenuSeparator());
+	pcContextMenu->AddItem("About",new Message(M_CLIPPER_ABOUT));	
 	pcContextMenu->SetTargetForItems(this);
+}
+
+
+os::Menu* DockClipper::GetMenu(ClipperData data)
+{
+	os::String menuString = data.first;
+	os::Menu* pcMenu = NULL;
+	
+
+	for (int i=0; i<pcContextMenu->GetItemCount(); i++)
+	{
+		os::MenuItem* tempItem = pcContextMenu->GetItemAt(i);
+		if (tempItem->GetLabel() == menuString)
+		{
+			pcMenu = tempItem->GetSubMenu();
+		} 
+	}
+	
+	
+	if (pcMenu == NULL)
+	{
+		pcMenu = new os::Menu(os::Rect(0,0,1,1),data.first,ITEMS_IN_COLUMN);
+		pcContextMenu->AddItem(pcMenu);
+	}
+	return pcMenu;
 }
 
 bool DockClipper::IsInCopyVector(const os::String& cNewItem)
 {
 	for (uint i=0; i<m_cCopiedTextVector.size(); i++)
 	{
-		if (cNewItem == m_cCopiedTextVector[i])
+		for (int j=0; j<m_cCopiedTextVector[i].second.size(); j++)
 		{
-			return true;
+			if (cNewItem == m_cCopiedTextVector[i].second[j])
+			{
+				return true;
+			}
 		}
 	}
 	return false;
 }
+
+int DockClipper::Contains(const os::String& cDate)
+{
+	int contains = -1;
+	
+	for (int i=0; i<m_cCopiedTextVector.size(); i++)
+	{
+		if (cDate == m_cCopiedTextVector[i].first)
+		{
+			contains = i;
+			break;
+		}
+	}
+	return contains;
+}
+
+
+void DockClipper::Insert(const os::String& cDate, const os::String& cClip)
+{
+	int contains = -1;
+	if ( (contains = Contains(cDate)) == -1)
+	{
+		std::vector<std::string> list;
+		list.push_back(cClip);
+		m_cCopiedTextVector.push_back(make_pair(cDate,list));
+	}
+	else
+	{
+		m_cCopiedTextVector[contains].second.push_back(cClip);
+	}
+}
+
+uint DockClipper::GetClipSize()
+{
+	uint size=0;
+	
+	for (int i=0; i<m_cCopiedTextVector.size(); i++)
+	{
+		size += m_cCopiedTextVector[i].second.size();
+	}
+	return size;
+}
+
 
 class DockPluginClipper : public DockPlugin
 {
@@ -842,5 +771,47 @@ DockPlugin* init_dock_plugin()
 	return(new DockPluginClipper());
 }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
