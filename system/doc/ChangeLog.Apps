@@ -1,3 +1,28 @@
+* September 18, 2007, Rick Caudill *
+
+Changed how Clipper works.  Now Clipper waits for an event from the appserver telling
+it that there has been new data added to it.  Clipper also got an overhaul on how clips
+are managed.  Now clips are managed by date, so a user can know what they copied and when
+they copied it.  Dates are in YYYY-MM-DD format.  
+
+An example of the menu structure is:
+	2007-9-18
+		-> Clip 1
+		-> Clip 2
+		-> Clip 3
+		...
+		-> Clip n
+	2007-9-19
+		-> Clip 1
+	2007-9-20
+		-> Clip 1
+		-> Clip 2
+	....
+	2008-9-18
+		-> Clip 1
+		-> Clip 2
+	...
+
 ---- 0.6.4 Released -------------------------------------------------------------------
 
 * May 22, 2007, Kaj de Vos *
