@@ -474,14 +474,14 @@ function copy_extra_packages()
 
   mkdir -p $CD_DIR/Packages/optional
   printf "Copying optional files: %s\n" "$1/Binaries"
-  cp $1/Binaries/* $CD_DIR/Packages/optional/
+  cp -a $1/Binaries/* $CD_DIR/Packages/optional/
 
   printf "Copying upgrade files: %s\n" "$1/Upgrade"
-  cp $1/Upgrade/* $CD_DIR/Packages/base/
+  cp -a $1/Upgrade/* $CD_DIR/Packages/base/
 
   mkdir -p $CD_DIR/Documentation
   printf "Copying documentation files: %s\n" "$1/Documentation"
-  cp $1/Documentation/* $CD_DIR/Documentation/
+  cp -a $1/Documentation/* $CD_DIR/Documentation/
 
   mkdir -p $CD_DIR/Source
   printf "Copying source files: %s\n" "$BUILDER_SOURCE_DIR"
