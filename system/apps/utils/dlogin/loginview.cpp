@@ -26,12 +26,12 @@ void LoginView::Layout()
 {
 	VLayoutNode* pcRoot = new VLayoutNode("root");
 	
-	pcUserIconView = new os::IconView(Rect(1,2,GetBounds().Width()-1,82),"",CF_FOLLOW_ALL);
+	pcUserIconView = new os::IconView(Rect(1,2,2000,82),"",CF_FOLLOW_ALL);
 	pcUserIconView->SetSelChangeMsg(new Message(M_SEL_CHANGED));
 	PopulateIcons();
 	pcUserIconView->SetTabOrder( 1 );
 
-	FrameView* pcFrameView = new FrameView(Rect(0,0,GetBounds().Width(),84),"","");
+	FrameView* pcFrameView = new FrameView(Rect(0,0,2000,84),"","");
 	pcFrameView->AddChild(pcUserIconView);
 	AddChild(pcFrameView);
 	
@@ -72,6 +72,8 @@ void LoginView::Layout()
 	
 	pcLayoutView->SetRoot(pcRoot);
 	AddChild(pcLayoutView);
+	
+	ResizeTo(os::Point(pcLayoutView->GetPreferredSize(false).x,GetBounds().Height()));
 }
 
 void LoginView::PopulateIcons()
@@ -159,3 +161,5 @@ void LoginView::FindUser(const String& cName)
 		}
 	}
 }
+
+
