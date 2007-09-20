@@ -477,7 +477,7 @@ function copy_extra_packages()
   cp -a $1/Binaries/* $CD_DIR/Packages/optional/
 
   printf "Copying upgrade files: %s\n" "$1/Upgrade"
-  cp -a $1/Upgrade/* $CD_DIR/Packages/base/
+  cp -a $1/Install/* $CD_DIR/Packages/base/
 
   mkdir -p $CD_DIR/Documentation
   printf "Copying documentation files: %s\n" "$1/Documentation"
