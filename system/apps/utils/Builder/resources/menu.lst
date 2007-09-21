@@ -1,29 +1,35 @@
-	color	cyan/blue white/blue
-#	color	green/black light-green/black
+	color cyan/blue white/blue
+#	color green/black light-green/black
 
-	timeout	5
+	timeout	10
 
 #	default	0
 
-	title	Syllable
-	root	(hd0,0)
-	kernel	/system/kernel.so root=/dev/disk/ata/hda/0
-	module	/system/config/kernel.cfg
-	module	/system/drivers/dev/bus/acpi
-	module	/system/drivers/dev/bus/pci
-	module	/system/drivers/dev/bus/ata
-	module	/system/drivers/dev/hcd/ata_pci
-	module	/system/drivers/fs/afs
+	title			Syllable Desktop
+	root			(hd0,0)
+	kernel			/system/kernel.so root=/dev/disk/ata/hda/0
+	module			/system/config/kernel.cfg
+	module			/system/drivers/dev/bus/acpi
+	module			/system/drivers/dev/bus/pci
+	module			/system/drivers/dev/bus/ata
+	module			/system/drivers/dev/hcd/ata_pci
+	module			/system/drivers/fs/afs
 #	quiet
 
-	title			Windows example
+	title			Syllable Server
+	root			(hd0,0)
+	kernel			/usr/linux/kernel-2.6.22.1 root=/dev/hda1 ro
+#	800x600 x 256 colours, for example for QEmu:
+#	kernel			/usr/linux/kernel-2.6.22.1 root=/dev/hda1 ro vga=771
+
+	title			Windows example first partition
 	rootnoverify	(hd0,0)
 	chainloader		+1
 
-	title			Linux example
-	root			(hd0,1)
-	kernel			/usr/linux/kernel-2.6.22.1 root=/dev/hda2 ro splash quiet
-#	initrd			/usr/linux/initrd.img-2.6.22.1
+#	title			Linux example second partition
+#	root			(hd0,1)
+#	kernel			/boot/vmlinuz root=/dev/hda2 ro splash quiet
+#	initrd			/boot/initrd.img
 #	savedefault
 #	quiet
 #	boot
