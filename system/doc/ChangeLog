@@ -1,3 +1,8 @@
+* September 23, 2007, Kaj de Vos *
+
+Implemented PkgConfig support. The base PKG_CONFIG_PATH variable is set in /etc/profile
+and Builder extends it to its staging areas.
+
 * August 30, 2007, Kaj de Vos *
 
 Moved loose documentation files in ports to "documentation" subdirectories.
