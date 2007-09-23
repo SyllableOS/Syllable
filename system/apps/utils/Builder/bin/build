@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.7.18
+# Version 0.7.19
 # Copyright (c) 2002-2007 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -1743,7 +1743,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.7.18',
+	puts 'Syllable Build System 0.7.19',
 		'Copyright (c) 2002-2007 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
@@ -1929,6 +1929,17 @@ else
 
 					@log.extra 'LDFLAGS: ' + ENV['LDFLAGS']
 				end
+
+				# Pick up PkgConfig configuration info from the staging area
+
+				ENV['PKG_CONFIG_PATH'] =
+					(File.join @stage, 'indexes', 'lib/pkgconfig') + ':' +
+					(File.join @stage, 'bootstrap/indexes', 'lib/pkgconfig') +
+
+					((var = ENV['PKG_CONFIG_PATH']) && !@isolateStage ? ':' + var : '')
+
+				@log.extra 'PKG_CONFIG_PATH: ' + ENV['PKG_CONFIG_PATH']
+
 
 				case arg1
 				when 'get'			then get		target
