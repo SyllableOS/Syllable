@@ -8,6 +8,7 @@ export DLL_PATH=@bindir@/lib:/system/libraries:/system:/usr/local/lib:/usr/index
 export LIBRARY_PATH=/usr/local/lib:/system/libraries:/usr/indexes/lib
 export C_INCLUDE_PATH=/usr/local/include:/system/include:/usr/indexes/include
 export CPLUS_INCLUDE_PATH=$C_INCLUDE_PATH
+export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/usr/indexes/lib/pkgconfig
 
 # Set this right, or havoc may be wreaked in /system/init.sh
 export TEMP=/tmp
