@@ -10,12 +10,9 @@ status				incomplete
 licenses			GPL
 home				www.konqueror.org/embedded/
 packages
-;	abrowse-wc-src
 ;	ABrowse-0.4alpha3-Arno.source
 	ABrowse-0.4alpha3-Rick.source
-locations
-;	http://www.liqwyd.com/arno/
-	http://downloads.syllable.org.s3.amazonaws.com/sources/Syllable/ABrowse/
+locations			http://downloads.syllable.org/sources/applications/ABrowse/
 
 build-needs
 	perl
