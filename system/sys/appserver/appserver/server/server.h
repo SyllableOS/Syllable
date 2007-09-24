@@ -67,47 +67,61 @@ public:
     AppServer();
     ~AppServer();
 
-    static AppServer*	GetInstance();
-    os::WindowDecorator*  CreateWindowDecorator( Layer* pcView, uint32 nFlags );
+    static AppServer*		GetInstance();
+    os::WindowDecorator*	CreateWindowDecorator( Layer* pcView, uint32 nFlags );
   
-    void		Run( void );
-    static int32 CloseWindows( void* pData );
-    DisplayDriver*	GetDisplayDriver( int nIndex )	{ return( m_pcDispDriver ); }
+    void					Run( void );
+    static int32 			CloseWindows( void* pData );
+    DisplayDriver*			GetDisplayDriver( int nIndex )	{ return( m_pcDispDriver ); }
 
-    void 		SendKeyCode( int nKeyCode, int nQualifiers );
+    void					SendKeyCode( int nKeyCode, int nQualifiers );
 
-    FontNode*		GetWindowTitleFont() const { return( m_pcWindowTitleFont ); }
-    FontNode*		GetToolWindowTitleFont() const { return( m_pcToolWindowTitleFont ); }
+    FontNode*				GetWindowTitleFont() const { return( m_pcWindowTitleFont ); }
+    FontNode*				GetToolWindowTitleFont() const { return( m_pcToolWindowTitleFont ); }
     
-    void	R_ClientDied( thread_id hThread );
+   
+    void					R_ClientDied( thread_id hThread );
 
-    void	ResetEventTime();
-    bigtime_t	GetIdleTime() const { return( get_system_time() - m_nLastEvenTime ); }
-    int  LoadWindowDecorator( const std::string& cPath );
+    void					ResetEventTime();
+    bigtime_t				GetIdleTime() const { return( get_system_time() - m_nLastEvenTime ); }
     
-    port_id m_hWndReplyPort;
+    
+    int						LoadWindowDecorator( const std::string& cPath );
+
+/*why is this public*/
+public:
+    port_id 				m_hWndReplyPort;
+
 private:
-	void RescanFonts(void);
-	void SwitchDesktop(int nDesktop, bool bBringWindow = true );
-    int	LoadDecorator( const std::string& cPath, os::op_create_decorator** ppfCreate );
-
-    void	DispatchMessage( os::Message* pcReq );
+	void					RescanFonts(void);
+	void					SwitchDesktop(int nDesktop, bool bBringWindow = true );
+	
+    int						LoadDecorator( const std::string& cPath, os::op_create_decorator** ppfCreate );
+	void					DispatchMessage( os::Message* pcReq );
     
-    static AppServer*	 s_pcInstance;
-    port_id		 m_hRequestPort;
-    DisplayDriver*	 m_pcDispDriver;
-    bigtime_t		 m_nLastEvenTime;
-    int			 m_hCurrentDecorator;
-    os::op_create_decorator* m_pfDecoratorCreator;
+private:
+    static AppServer*			s_pcInstance;
 
-    FontNode*		m_pcWindowTitleFont;
-    FontNode*		m_pcToolWindowTitleFont;
+    DisplayDriver*				m_pcDispDriver;
+	os::op_create_decorator*	m_pfDecoratorCreator;
+
+	FontNode*					m_pcWindowTitleFont;
+	FontNode*					m_pcToolWindowTitleFont;
     
-    int nWatchNode;
-    SrvEvent_s* m_pcProcessQuitEvent;
-    SrvEvent_s* m_pcClipboardEvent;
+	int							m_hCurrentDecorator;
+	int 						nWatchNode;
+	bigtime_t					m_nLastEvenTime;
+	port_id		 				m_hRequestPort;
+    
+    
+    /*these are all the events that the appserver can handle*/
+    SrvEvent_s* 				m_pcProcessQuitEvent;
+    SrvEvent_s* 				m_pcClipboardEvent;
+    SrvEvent_s*					m_pcScreenshotEvent;
 };
 
 #endif	/*	INTERFACE_SERVER_HPP	*/
+
+
 
 

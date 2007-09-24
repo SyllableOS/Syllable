@@ -61,25 +61,31 @@
 #include "wndborder.h"
 #include "event.h"
 
-void ScreenShot();
-
-
 using namespace os;
 
-WinSelect *g_pcWinSelector = NULL;
+WinSelect*				g_pcWinSelector = NULL;
+AppServer*				AppServer::s_pcInstance = NULL;
 
-AppServer *AppServer::s_pcInstance = NULL;
+Array < Layer >*		g_pcLayers;
+Array < SrvBitmap >*	g_pcBitmaps;
 
-Array < Layer > *g_pcLayers;
-Array < SrvBitmap > *g_pcBitmaps;
+FontServer*				g_pcFontServer;
 
-FontServer *g_pcFontServer;
+SrvApplication*			g_pcFirstApp = NULL;
+TopLayer*				g_pcTopView = NULL;
+DisplayDriver*			g_pcDispDrv = NULL;
+SrvEvents* 				g_pcEvents = NULL;
 
-SrvApplication *g_pcFirstApp = NULL;
-TopLayer *g_pcTopView = NULL;
-DisplayDriver *g_pcDispDrv = NULL;
-SrvEvents* g_pcEvents = NULL;
 
+
+/** Loads the decorator
+ * \par 	Description:
+ *		This method loads a decorator based on the path and then places it into
+ *		the decorator passed to it.
+ * \param	cPath			- The path of the decorator
+ * \param	ppfCreate		- The decorator pointer 
+ * \author Kurt Skauen
+ *****************************************************************************/
 int AppServer::LoadDecorator( const std::string & cPath, op_create_decorator **ppfCreate )
 {
 	int nPlugin;
@@ -129,6 +135,13 @@ int AppServer::LoadDecorator( const std::string & cPath, op_create_decorator **p
 	return ( nPlugin );
 }
 
+/** Loads window decorator based on path
+ * \par 	Description:
+ *		This method is called by the appserver to load the window decorator
+ * \param	cPath - The path to the decorator
+ * \sa LoadDecorator
+ * \author Kurt Skauen
+ *****************************************************************************/
 int AppServer::LoadWindowDecorator( const std::string & cPath )
 {
 	op_create_decorator *pfCreate = NULL;
@@ -151,6 +164,13 @@ int AppServer::LoadWindowDecorator( const std::string & cPath )
 	}
 }
 
+/** Creates a window decorator
+ * \par 	Description:
+ *		This method is creates a window decorator with the passed view and flags
+ * \param	pcView	- the view the decorator is attached to.
+ * \param	nFlags	- the flags for the decorator
+ * \author Kurt Skauen
+ *****************************************************************************/
 WindowDecorator *AppServer::CreateWindowDecorator( Layer * pcView, uint32 nFlags )
 {
 	if( m_pfDecoratorCreator != NULL )
@@ -163,13 +183,11 @@ WindowDecorator *AppServer::CreateWindowDecorator( Layer * pcView, uint32 nFlags
 	}
 }
 
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
+/** Appserver constructor
+ * \par 	Description:
+ *		This method is the appserver constructor.  Here everything is initialized
+ * \author Kurt Skauen
+ *****************************************************************************/
 AppServer::AppServer()
 {
 	s_pcInstance = this;
@@ -181,11 +199,11 @@ AppServer::AppServer()
 							"Called when a process has quit", -1, -1, -1 );
 	m_pcClipboardEvent = g_pcEvents->RegisterEvent( "os/System/ClipboardHasChanged", 0, 
 							"Called when the clipboard content has changed", -1, -1, -1 );
-	
-	printf( "Load default fonts\n" );
+	m_pcScreenshotEvent = g_pcEvents->RegisterEvent( "os/System/PrintKeyWasHit",0,
+							"Called when the 'Print Screen' key has been hit",-1,-1,-1);
+
 
 	dbprintf( "Load default fonts\n" );
-
 	m_pcWindowTitleFont = new FontNode;
 	m_pcToolWindowTitleFont = new FontNode;
 
@@ -200,23 +218,33 @@ AppServer::AppServer()
 	m_hCurrentDecorator = LoadDecorator( AppserverConfig::GetInstance()->GetWindowDecoratorPath(  ).c_str(  ), &m_pfDecoratorCreator );
 }
 
+/** Returns *this* instance of the appserver
+ * \par 	Description:
+ *		This method will return this instance of the appserver.  Only one instance is allowed for each
+ *		bootup
+ * \author Kurt Skauen
+ *****************************************************************************/
 AppServer *AppServer::GetInstance()
 {
 	return ( s_pcInstance );
 }
 
+/**	Resets the event time to the current system time
+ * \par 	Description:
+ *		This method is the appserver constructor.  Here everything is initialized
+ * \author Kurt Skauen
+ *****************************************************************************/
 void AppServer::ResetEventTime()
 {
 	m_nLastEvenTime = get_system_time();
 }
 
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
+/**
+ * \par 	Description:
+ *		This method sends M_QUIT to the app that we want to quit(based on the thread id) 
+ *		and then it posts an event telling apps that it has been terminated
+ * \author Kurt Skauen and Arno Klenke
+ *****************************************************************************/
 void AppServer::R_ClientDied( thread_id hClient )
 {
 	SrvApplication *pcApp = SrvApplication::FindApp( hClient );
@@ -265,13 +293,14 @@ void AppServer::SendKeyCode( int nKeyCode, int nQual )
 			return;
 		}
 	}
-#ifndef __NO_SCREENSHOT_SUPPORT__
+
 	if( nKeyCode == 0x0e )
 	{			// Print-screen
-		ScreenShot();
+		os::Message cMsg;
+		g_pcEvents->PostEvent( m_pcScreenshotEvent, &cMsg );		
 		return;
 	}
-#endif
+
 	if( ( nQual & QUAL_LALT ) && nKeyCode == 0x28 )
 	{			// ALT-W
 		g_cLayerGate.Close();
@@ -395,6 +424,11 @@ void AppServer::SendKeyCode( int nKeyCode, int nQual )
 	}
 }
 
+/**
+ * \par 	Description:
+ *		A message dispatcher
+ * \author Kurt Skauen
+ *****************************************************************************/
 void AppServer::DispatchMessage( Message * pcReq )
 {
 	switch ( pcReq->GetCode() )
@@ -710,13 +744,11 @@ void AppServer::DispatchMessage( Message * pcReq )
 	}
 }
 
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
+/** Runs the appserver thread
+ * \par 	Description:
+ *		This method runs the appserver thread and waits for appserver messages to act on
+ * \author Kurt Skauen
+ *****************************************************************************/
 void AppServer::Run( void )
 {
 	enum
@@ -939,7 +971,14 @@ int32 AppServer::CloseWindows( void *pData )
 	return ( 0 );
 }
 
-/* SwitchDesktop: change to desktop nDesktop, bringing the active window along if necessary */
+/** Changes the desktop
+ * \par 	Description:
+ *		This method switches to the desktop passed to it and also will bring the active
+ *		window along if wanted.
+ * \param	nDesktop		- the desktop number to switch to.
+ * \param	bBringWindow	- should we bring the active window along 
+ * \author ???
+ *****************************************************************************/
 void AppServer::SwitchDesktop( int nDesktop, bool bBringWindow )
 {
 	if( nDesktop == get_active_desktop() ) return;
@@ -980,13 +1019,8 @@ void AppServer::SwitchDesktop( int nDesktop, bool bBringWindow )
 	g_cLayerGate.Open();
 }
 
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
+/** main
+ *****************************************************************************/
 int main( int argc, char **argv )
 {
 	dbprintf( "Appserver Alive %d\n", get_thread_id( NULL ) );
@@ -1043,6 +1077,7 @@ int main( int argc, char **argv )
 	dbprintf( "WARNING : layers.device failed to initiate itself!!!\n" );
 	return ( 0 );
 }
+
 
 
 
