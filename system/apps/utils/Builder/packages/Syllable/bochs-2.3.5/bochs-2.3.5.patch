@@ -1,0 +1,252 @@
+diff -ru bochs-2.3.5-original/config.cc bochs-2.3.5/config.cc
+--- bochs-2.3.5-original/config.cc	2007-04-08 15:02:50.000000000 +0000
++++ bochs-2.3.5/config.cc	2007-09-23 20:44:44.000000000 +0000
+@@ -1340,6 +1340,9 @@
+ #if HAVE_VDE
+     "vde",
+ #endif
++#if defined(ETH_SYLLABLE)
++    "syllable",
++#endif
+     "vnet",
+     NULL
+   };
+diff -ru bochs-2.3.5-original/config.h.in bochs-2.3.5/config.h.in
+--- bochs-2.3.5-original/config.h.in	2007-07-31 20:25:47.000000000 +0000
++++ bochs-2.3.5/config.h.in	2007-09-23 20:44:44.000000000 +0000
+@@ -941,6 +941,9 @@
+ #if defined(WIN32)
+ #define ETH_WIN32 1
+ #endif
++#if defined(__SYLLABLE__)
++#define ETH_SYLLABLE 1
++#endif
+ 
+ // this enables Ethertap packet mover; determined by configure script
+ #define HAVE_ETHERTAP 0
+diff -ru bochs-2.3.5-original/configure bochs-2.3.5/configure
+--- bochs-2.3.5-original/configure	2007-09-16 07:52:57.000000000 +0000
++++ bochs-2.3.5/configure	2007-09-23 20:44:44.000000000 +0000
+@@ -37355,12 +37355,14 @@
+     *-pc-windows* | *-pc-winnt* | *-pc-cygwin* | *-pc-mingw32*)
+     NETLOW_OBJS="$NETLOW_OBJS eth_win32.o"
+     ;;
++    *-syllable*)
++    NETLOW_OBJS="$NETLOW_OBJS eth_syllable.o"
++    ;;
+     *-macosx* | *-darwin*)
+     NETLOW_OBJS="$NETLOW_OBJS eth_tuntap.o"
+     cat >>confdefs.h <<\_ACEOF
+ #define HAVE_TUNTAP 1
+ _ACEOF
+-
+     ;;
+     *)
+     { echo "$as_me:$LINENO: checking for net/if.h" >&5
+diff -ru bochs-2.3.5-original/gui/sdl.cc bochs-2.3.5/gui/sdl.cc
+--- bochs-2.3.5-original/gui/sdl.cc	2006-10-15 16:23:09.000000000 +0000
++++ bochs-2.3.5/gui/sdl.cc	2007-09-23 20:44:44.000000000 +0000
+@@ -114,7 +114,7 @@
+ Bit8u old_mousebuttons=0, new_mousebuttons=0;
+ int old_mousex=0, new_mousex=0;
+ int old_mousey=0, new_mousey=0;
+-bx_bool just_warped = false;
++int just_warped = 0;
+ bitmaps *sdl_bitmaps[MAX_SDL_BITMAPS];
+ int n_sdl_bitmaps = 0;
+ int statusbar_height = 18;
+@@ -964,13 +964,14 @@
+ 	  //fprintf (stderr, "ignore mouse event because sdl_grab is off\n");
+ 	  break;
+ 	}
+-	if (just_warped 
+-	    && sdl_event.motion.x == half_res_x
+-	    && sdl_event.motion.y == half_res_y) {
++	if (just_warped) {
+ 	  // This event was generated as a side effect of the WarpMouse,
+ 	  // and it must be ignored.
++	  // XXXKV: On Syllable multiple events may be generated, so we
++	  // filter more than just the first one. Mouse handling is still
++	  // painful, but it is at least usable (Just).
+ 	  //fprintf (stderr, "ignore mouse event because it is a side effect of SDL_WarpMouse\n");
+-	  just_warped = false;
++	  just_warped--;
+ 	  break;
+ 	}
+ 	//fprintf (stderr, "processing relative mouse event\n");
+@@ -986,7 +987,7 @@
+ 	old_mousey = (int)(sdl_event.motion.y);
+ 	//fprintf (stderr, "warping mouse to center\n");
+ 	SDL_WarpMouse(half_res_x, half_res_y);
+-	just_warped = 1;
++	just_warped = 3;
+ 	break;
+ 
+       case SDL_MOUSEBUTTONDOWN:
+diff -ru bochs-2.3.5-original/iodev/cdrom.cc bochs-2.3.5/iodev/cdrom.cc
+--- bochs-2.3.5-original/iodev/cdrom.cc	2006-03-26 00:38:57.000000000 +0000
++++ bochs-2.3.5/iodev/cdrom.cc	2007-09-23 20:44:44.000000000 +0000
+@@ -239,6 +239,13 @@
+ 
+ // End READ_TOC_EX structure(s) and #defines
+ 
++#elif defined(__SYLLABLE__)
++#include <sys/types.h>
++#include <sys/stat.h>
++#include <sys/ioctl.h>
++#include <atheos/cdrom.h>
++#define BX_CD_FRAMESIZE CD_FRAMESIZE
++
+ #else // all others (Irix, Tru64)
+ #include <sys/types.h>
+ #include <sys/stat.h>
+@@ -755,6 +762,9 @@
+ #if __linux__
+     if (!using_file)
+       ioctl (fd, CDROMEJECT, NULL);
++#elif __SYLLABLE__
++    if (!using_file)
++      ioctl (fd, CD_EJECT, NULL);
+ #endif
+ 
+     close(fd);
+@@ -1156,6 +1166,76 @@
+   BX_INFO(( "Read TOC - Not Implemented" ));
+   return 0;
+ #endif
++#elif defined(__SYLLABLE__)
++  {
++  cdrom_toc_header_s tochdr;
++  if (ioctl(fd, CD_READ_TOC, &tochdr))
++    BX_PANIC(("cdrom: read_toc: CD_READ_TOC failed."));
++
++  if ((start_track > tochdr.first_track) && (start_track != 0xaa))
++    return 0;
++
++  buf[2] = tochdr.first_track;
++  buf[3] = tochdr.last_track;
++
++  if (start_track < tochdr.first_track)
++    start_track = tochdr.first_track;
++
++  int len = 4;
++  for (int i = start_track; i <= tochdr.last_track; i++) {
++    cdrom_toc_entry_s tocentry;
++    tocentry.track = i;
++    if (ioctl(fd, CD_READ_TOC_ENTRY, &tocentry))
++      BX_PANIC(("cdrom: read_toc: CD_READ_TOC_ENTRY failed."));
++    buf[len++] = 0; // Reserved
++    buf[len++] = (tocentry.adr << 4) | tocentry.control ; // ADR, control
++    buf[len++] = i; // Track number
++    buf[len++] = 0; // Reserved
++
++    // Start address
++    if (msf) {
++      buf[len++] = 0; // reserved
++      buf[len++] = tocentry.addr.msf.minute;
++      buf[len++] = tocentry.addr.msf.second;
++      buf[len++] = tocentry.addr.msf.frame;
++    } else {
++      buf[len++] = (((unsigned)tocentry.addr.lba) >> 24) & 0xff;
++      buf[len++] = (((unsigned)tocentry.addr.lba) >> 16) & 0xff;
++      buf[len++] = (((unsigned)tocentry.addr.lba) >> 8) & 0xff;
++      buf[len++] = (((unsigned)tocentry.addr.lba) >> 0) & 0xff;
++    }
++  }
++
++  // Lead out track
++  cdrom_toc_entry_s tocentry;
++  tocentry.track = CDROM_LEADOUT;
++  if (ioctl(fd, CD_READ_TOC_ENTRY, &tocentry))
++    BX_PANIC(("cdrom: read_toc: CD_READ_TOC_ENTRY lead-out failed."));
++  buf[len++] = 0; // Reserved
++  buf[len++] = (tocentry.adr << 4) | tocentry.control ; // ADR, control
++  buf[len++] = 0xaa; // Track number
++  buf[len++] = 0; // Reserved
++
++  // Start address
++  if (msf) {
++    buf[len++] = 0; // reserved
++    buf[len++] = tocentry.addr.msf.minute;
++    buf[len++] = tocentry.addr.msf.second;
++    buf[len++] = tocentry.addr.msf.frame;
++  } else {
++    buf[len++] = (((unsigned)tocentry.addr.lba) >> 24) & 0xff;
++    buf[len++] = (((unsigned)tocentry.addr.lba) >> 16) & 0xff;
++    buf[len++] = (((unsigned)tocentry.addr.lba) >> 8) & 0xff;
++    buf[len++] = (((unsigned)tocentry.addr.lba) >> 0) & 0xff;
++  }
++
++  buf[0] = ((len-2) >> 8) & 0xff;
++  buf[1] = (len-2) & 0xff;
++
++  *length = len;
++
++  return 1;
++  }
+ #else
+   BX_INFO(("read_toc: your OS is not supported yet."));
+   return 0; // OS not supported yet, return 0 always.
+@@ -1397,6 +1477,15 @@
+ 
+   return start_sector;
+   }
++#elif defined(__SYLLABLE__)
++  // Just get the sector count direct from the device
++  {
++    device_geometry geom;
++    if(ioctl(fd,IOCTL_GET_DEVICE_GEOMETRY,&geom))
++      BX_PANIC(("cdrom: GET_DEVICE_GEOMETRY failed"));
++
++    return(geom.sector_count);
++  }
+ #else
+   BX_ERROR(( "capacity: your OS is not supported yet." ));
+   return(0);
+diff -ru bochs-2.3.5-original/iodev/eth.cc bochs-2.3.5/iodev/eth.cc
+--- bochs-2.3.5-original/iodev/eth.cc	2005-12-10 18:37:35.000000000 +0000
++++ bochs-2.3.5/iodev/eth.cc	2007-09-23 20:44:44.000000000 +0000
+@@ -68,6 +68,9 @@
+ #ifdef ETH_WIN32
+ extern class bx_win32_locator_c bx_win32_match;
+ #endif
++#ifdef ETH_SYLLABLE
++extern class bx_syllable_locator_c bx_syllable_match;
++#endif
+ #if HAVE_ETHERTAP
+ extern class bx_tap_locator_c bx_tap_match;
+ #endif
+@@ -147,6 +150,12 @@
+       ptr = (eth_locator_c *) &bx_win32_match;
+   }
+ #endif
++#ifdef ETH_SYLLABLE
++  {
++    if(!strcmp(type, "syllable"))
++      ptr = (eth_locator_c *) &bx_syllable_match;
++  }
++#endif
+   {
+     if (!strcmp(type, "vnet"))    
+       ptr = (eth_locator_c *) &bx_vnet_match;
+@@ -158,7 +167,7 @@
+   return (NULL);
+ }
+ 
+-#if (HAVE_ETHERTAP==1) || (HAVE_TUNTAP==1) || (HAVE_VDE==1)
++#if (HAVE_ETHERTAP==1) || (HAVE_TUNTAP==1) || (HAVE_VDE==1) || (ETH_SYLLABLE==1)
+ 
+ extern "C" {
+ #include <sys/wait.h>
+diff -ru bochs-2.3.5-original/pc_system.cc bochs-2.3.5/pc_system.cc
+--- bochs-2.3.5-original/pc_system.cc	2006-09-17 20:37:27.000000000 +0000
++++ bochs-2.3.5/pc_system.cc	2007-09-23 20:44:44.000000000 +0000
+@@ -59,8 +59,6 @@
+ {
+   this->put("SYS");
+ 
+-  BX_ASSERT(numTimers == 0);
+-
+   // Timer[0] is the null timer.  It is initialized as a special
+   // case here.  It should never be turned off or modified, and its
+   // duration should always remain the same.

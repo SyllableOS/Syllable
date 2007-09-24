@@ -1,0 +1,20 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			sourceforge
+
+licenses			LGPL
+home				bochs.sf.net
+packages			bochs/bochs-2.3.5
+
+needs
+	sdl
+;	wxWidgets >= 2.3.3
+
+;configure-options	--with-wx
+
+documentation
+	README README.rfb COPYING CHANGES TODO TESTFORM.txt
+;	README-wxWindows
+;	doc docs-html
+internal-docs		README-plugins PARAM_TREE.txt
