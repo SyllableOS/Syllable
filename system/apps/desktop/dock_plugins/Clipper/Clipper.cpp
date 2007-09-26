@@ -91,7 +91,7 @@ private:
 	os::Looper* pcParentLooper;
 	os::View* pcParentView;
 	os::Event* pcEvent;
-
+	bool bFirst;
 };
 
 /*actual plugin*/
@@ -156,7 +156,6 @@ class DockClipper : public View
 		os::ResStream *pcStream;
 		os::PopupMenu* pcPopup;
 		ClipperLooper* pcClipperLooper;
-		
 };
 
 /*settings window*/
@@ -212,7 +211,7 @@ private:
 	FrameView* pcFrameView;
 	Button *pcOkButton, *pcViewButton;
 	ClipperWindow* pcWindow;
-	
+
 };
 
 
@@ -222,6 +221,8 @@ ClipperLooper::ClipperLooper(Looper* pcParent, os::View* pcView) : Looper("Clipp
 {
 	pcParentLooper = pcParent;
 	pcParentView = pcView;
+
+	bFirst = true;
 
 	pcEvent = new os::Event();
 	pcEvent->SetToRemote("os/System/ClipboardHasChanged");
@@ -234,19 +235,26 @@ void ClipperLooper::HandleMessage(os::Message* pcMessage)
 	{
 		case CLIP_CHANGED:
 		{
-			Clipboard cClip;
-			cClip.Lock();
-			Message* pcMsg = cClip.GetData();
-			os::String cString;
-			
-			if (pcMsg->FindString("text/plain", &cString) == 0)
+			if (bFirst)
 			{
-				Message* pcTargetMessage = new Message(M_CLIPPER_SEND);
-				pcTargetMessage->AddString("clip",cString);
-				pcTargetMessage->AddString("date",GetDateString(os::DateTime::Now()));
-				pcParentLooper->PostMessage(pcTargetMessage,pcParentView);
+				bFirst = false;
 			}
-			cClip.Unlock();
+			else
+			{
+				Clipboard cClip;
+				cClip.Lock();
+				Message* pcMsg = cClip.GetData();
+				os::String cString;
+			
+				if (pcMsg->FindString("text/plain", &cString) == 0)
+				{
+					Message* pcTargetMessage = new Message(M_CLIPPER_SEND);
+					pcTargetMessage->AddString("clip",cString);
+					pcTargetMessage->AddString("date",GetDateString(os::DateTime::Now()));
+					pcParentLooper->PostMessage(pcTargetMessage,pcParentView);
+				}
+				cClip.Unlock();
+			}
 			break;
 		}
 	}
@@ -608,7 +616,8 @@ void DockClipper::HandleMessage(Message* pcMessage)
 
 void DockClipper::ClearContent()
 {
-	m_cCopiedTextVector.clear();	
+	m_cCopiedTextVector.clear();
+	SaveSettings();
 	RefreshMenu();	
 }
 
