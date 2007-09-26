@@ -1,3 +1,8 @@
+* September 26, 2007, Arno Klenke *
+
+o Keep usb disk driver loaded
+o Fix dma transfers on the second ata/sata channel for pci controllers
+
 * August 4, 2007, Kristian Van Der Vliet *
 
 o clone_semaphore() allocates the correct amount of space for a R/W lock
@@ -1230,3 +1235,4 @@ required; they are implemented in user space as part of libc.
 
 Applied a fix to sys/kernel/kernel/vfs/vfs.c  The fcntl() F_GETLK command
 now works as expected.
+
