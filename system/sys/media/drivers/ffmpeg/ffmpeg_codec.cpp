@@ -158,6 +158,8 @@ status_t FFMpegCodec::Open( os::MediaFormat_s sFormat, os::MediaFormat_s sExtern
 		m_sDecodeStream = ( ( AVStream * ) ( sFormat.pPrivate ) );
 		m_sDecodeContext = m_sDecodeStream->codec;
 		
+		m_sDecodeContext->flags2 |= CODEC_FLAG2_FAST;
+		
 		AVCodec *psCodec = avcodec_find_decoder( id );
 
 		if( id == CODEC_ID_MPEG1VIDEO )

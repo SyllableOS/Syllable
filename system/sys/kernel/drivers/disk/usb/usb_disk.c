@@ -427,18 +427,13 @@ status_t device_init( int nDeviceID )
 	my_host_number = 0;
 
 	/* Register */
-	g_pcDriver = ( USB_driver_s * ) kmalloc( sizeof( USB_driver_s ), MEMF_KERNEL | MEMF_NOBLOCK );
+	g_pcDriver = ( USB_driver_s * ) kmalloc( sizeof( USB_driver_s ), MEMF_KERNEL | MEMF_OKTOFAIL );
 
 	strcpy( g_pcDriver->zName, "USB disk" );
 	g_pcDriver->AddDevice = usbdisk_add;
 	g_pcDriver->RemoveDevice = usbdisk_remove;
 
-	if ( g_psBus->add_driver( g_pcDriver ) != 0 )
-	{
-		kfree( g_pcDriver );
-		disable_device_on_bus( nDeviceID, USB_BUS_NAME );
-		return ( -1 );
-	}
+	g_psBus->add_driver_resistant( g_pcDriver );
 
 	printk( "USB disk driver loaded\n" );
 	return ( 0 );

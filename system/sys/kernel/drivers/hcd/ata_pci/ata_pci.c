@@ -540,10 +540,8 @@ status_t ata_pci_add_controller( int nDeviceID, PCI_Info_s sDevice, init_ata_con
 		if( request_irq( nIrq1, ata_pci_interrupt, NULL, SA_SHIRQ, "ata_pci_irq", psCtrl->psPort[0] ) < 0 ) {
 			kerndbg( KERN_FATAL, "Could not request interrupt %i\n", nIrq1 );
 		} 
-		else if( nIrq1 != nIrq2 ) {
-			if( request_irq( nIrq2, ata_pci_interrupt, NULL, SA_SHIRQ, "ata_pci_irq", psCtrl->psPort[2] ) < 0 ) {
-				kerndbg( KERN_FATAL, "Could not request interrupt %i\n", nIrq2 );
-			}
+		if( request_irq( nIrq2, ata_pci_interrupt, NULL, SA_SHIRQ, "ata_pci_irq", psCtrl->psPort[2] ) < 0 ) {
+			kerndbg( KERN_FATAL, "Could not request interrupt %i\n", nIrq2 );
 		}
 	}
 	
