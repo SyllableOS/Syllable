@@ -36,7 +36,9 @@
 #include <iostream>
 
 #include <appserver/dockplugin.h>
-                    
+#include <util/event.h>
+
+
 #define PLUGIN_NAME       "Camera"
 #define PLUGIN_VERSION    "2.0"
 #define PLUGIN_DESC       "A ScreenShot Plugin for Dock"
@@ -56,8 +58,10 @@ enum
 	M_PARENT_SEND_TO_PREFS,
 	M_INSTANT_SCREENSHOT,
 	M_DELAYED_SCREENSHOT,
+	M_PRINT_SCREEN,
 	M_CAMERA_ABOUT,
-	M_HELP
+	M_HELP,
+	CAMERA_ID = 0x0167
 };
 
 
@@ -185,47 +189,55 @@ class DockCamera : public View
 		~DockCamera();
 		
 		
-		Point GetPreferredSize( bool bLargest ) const;
+		Point			GetPreferredSize( bool bLargest ) const;	
+        virtual void	Paint( const Rect &cUpdateRect );
+		virtual void	AttachedToWindow();
+		virtual void	DetachedFromWindow();
+		virtual void	MouseMove( const os::Point& cNewPos, int nCode, uint32 nButtons, os::Message* pcData );
+		virtual void	MouseUp( const os::Point & cPosition, uint32 nButton, os::Message * pcData );
+		virtual void	MouseDown( const os::Point& cPosition, uint32 nButtons );
+		virtual void	HandleMessage(Message* pcMessage);    
+
+	private:
+		int 			ScanForScreenshotFiles();
+		void			LoadSettings();
+		void			SaveSettings();
+		void			DoDelayedScreenShot();
+		void			DoInstantScreenShot();
+		void			ShowPrefs(os::Path);
+		void			OnDoubleClick();			
+		void			RefreshIcons();
+
+	private:
+		BitmapImage*	m_pcIcon;
+		BitmapImage*	m_pcHoverIcon;
+		BitmapImage*	pcPaint;
+		Bitmap*			cm_pcBitmap;
+		os::File*		pcFile;
+		os::ResStream*	pcStream;		
+		std::string		cScreenShotPath;
 		
+		bool			m_bCanDrag;
+		bool			m_bDragging;
+		bool			m_bHover;
+		bool			bFirst;
 		
-        virtual void Paint( const Rect &cUpdateRect );
-		virtual void AttachedToWindow();
-		virtual void DetachedFromWindow();
-		virtual void MouseMove( const os::Point& cNewPos, int nCode, uint32 nButtons, os::Message* pcData );
-		virtual void MouseUp( const os::Point & cPosition, uint32 nButton, os::Message * pcData );
-		virtual void MouseDown( const os::Point& cPosition, uint32 nButtons );
-		virtual void HandleMessage(Message* pcMessage);    
-//	private:
-		Message* m_pcPassedToPrefsMessage;
-		Bitmap* cm_pcBitmap;
+		bigtime_t		m_nHitTime;
+		float			vDelayTime;
+		float			vInstant;
+		float			vClick;
+		float			vDelay;
+
+		os::DockPlugin*			m_pcPlugin;
+		os::Looper*				m_pcDock;
+		Menu*					pcContextMenu;
+		Message*				m_pcPassedToPrefsMessage;
+		os::Event*				m_pcPrintKeyEvent;
+		CameraPrefsWin*			pcPrefsWin;
+
+public:
+		CameraDelayedLooper*	pcCameraDelayedLooper;
 		
-		int ScanForScreenshotFiles();
-		void LoadSettings();
-		void SaveSettings();
-		void DoDelayedScreenShot();
-		void DoInstantScreenShot();
-		void ShowPrefs(os::Path);
-		void OnDoubleClick();
-		os::DockPlugin* m_pcPlugin;
-		os::Looper* m_pcDock;
-		bool m_bCanDrag;
-		bool m_bDragging;
-		Menu* pcContextMenu;
-		bigtime_t m_nHitTime;
-		bool m_bHover;
-		BitmapImage* m_pcIcon;
-		BitmapImage* m_pcHoverIcon;
-		os::File* pcFile;
-		os::ResStream *pcStream;
-		void RefreshIcons();
-		BitmapImage* pcPaint;
-		std::string cScreenShotPath;
-		float vDelayTime;
-		float vInstant;
-		float vClick;
-		float vDelay;
-		CameraPrefsWin* pcPrefsWin;
-		CameraDelayedLooper* pcCameraDelayedLooper;
 };
 
 
@@ -462,29 +474,36 @@ CameraDelayedLooper::CameraDelayedLooper() : Looper("DelayedLooper")
 
 void CameraDelayedLooper::TimerTick(int nID)
 {
-	DateTime pcTime = DateTime::Now();
-	BitmapImage* pcBitmapImage;
-	BitmapImage* pcSaveImage;
-	char cScreenShotPath[1024];
-	os::Desktop* m_Screen = new Desktop();
+	
+	if (nID == CAMERA_ID)
+	{
+		DateTime pcTime = DateTime::Now();
+		BitmapImage* pcBitmapImage;
+		BitmapImage* pcSaveImage;
+		os::String cScreenShotPath;
+		os::Desktop m_Screen;
 	
 	
-	pcSaveImage = new os::BitmapImage( Bitmap::SHARE_FRAMEBUFFER | Bitmap::ACCEPT_VIEWS );
-	pcSaveImage->SetColorSpace( CS_RGBA32 );
-	pcSaveImage->ResizeCanvas( os::Point( m_Screen->GetResolution() ) );
-	pcBitmapImage = new os::BitmapImage((uint8*)m_Screen->GetFrameBuffer(),m_Screen->GetResolution(),m_Screen->GetColorSpace());
-	pcBitmapImage->Draw( os::Point( 0, 0 ), pcSaveImage->GetView() );
-	pcSaveImage->Sync();
+		pcSaveImage = new os::BitmapImage( Bitmap::SHARE_FRAMEBUFFER | Bitmap::ACCEPT_VIEWS );
+		pcSaveImage->SetColorSpace( CS_RGBA32 );
+		pcSaveImage->ResizeCanvas( os::Point( m_Screen.GetResolution() ) );
+		
+		
+		pcBitmapImage = new os::BitmapImage((uint8*)m_Screen.GetFrameBuffer(),m_Screen.GetResolution(),m_Screen.GetColorSpace());
+		pcBitmapImage->Draw( os::Point( 0, 0 ), pcSaveImage->GetView() );
+		pcSaveImage->Sync();
 	
-	sprintf(cScreenShotPath,"%s/Pictures/Screenshot-%d-%d-%d-%d_%d_%d.png",getenv("HOME"),pcTime.GetYear(),pcTime.GetMonth(),pcTime.GetDay(),pcTime.GetHour(),pcTime.GetMin(),pcTime.GetSec());
+		cScreenShotPath = os::String().Format("%s/Pictures/Screenshot-%d-%d-%d-%d_%d_%d.png",getenv("HOME"),pcTime.GetYear(),pcTime.GetMonth(),pcTime.GetDay(),pcTime.GetHour(),pcTime.GetMin(),pcTime.GetSec());
 	
-	File vNewFile = os::File(cScreenShotPath,O_CREAT | O_TRUNC | O_WRONLY);
-	vNewFile.WriteAttr("os::MimeType", O_TRUNC, ATTR_TYPE_STRING,"image/png", 0,10 );
-	pcSaveImage->Save(&vNewFile,"image/png");
-	vNewFile.Flush();
-	delete( pcSaveImage );
-	delete pcBitmapImage;
-	RemoveTimer(this,nID);
+		File vNewFile = os::File(cScreenShotPath,O_CREAT | O_TRUNC | O_WRONLY);
+		vNewFile.WriteAttr("os::MimeType", O_TRUNC, ATTR_TYPE_STRING,"image/png", 0,10 );
+		pcSaveImage->Save(&vNewFile,"image/png");
+		vNewFile.Flush();
+		
+		delete( pcSaveImage );
+		delete pcBitmapImage;
+		RemoveTimer(this,nID);
+	}
 }
 
 
@@ -499,6 +518,7 @@ DockCamera::DockCamera( os::DockPlugin* pcPlugin, os::Looper* pcDock ) : View( o
 	pcPrefsWin = NULL;
 	cm_pcBitmap = 0;
 	m_nHitTime = 0;
+	bFirst = true;
 	
 	pcContextMenu = new Menu(Rect(0,0,10,10),"",ITEMS_IN_COLUMN);
 	pcContextMenu->AddItem("Preferences...",new Message(M_PREFS));
@@ -520,13 +540,13 @@ void DockCamera::OnDoubleClick()
 {
 	if ((int)vClick==0)
 	{
-		pcCameraDelayedLooper->AddTimer(pcCameraDelayedLooper,123,0);
+		pcCameraDelayedLooper->AddTimer(pcCameraDelayedLooper,CAMERA_ID,0);
 	}
 	
 	else
 	{
 		int nTime = (int)(vDelayTime)*1000000;
-		pcCameraDelayedLooper->AddTimer(pcCameraDelayedLooper,123,nTime);
+		pcCameraDelayedLooper->AddTimer(pcCameraDelayedLooper,CAMERA_ID,nTime);
 	}	
 	return;
 }
@@ -549,6 +569,10 @@ void DockCamera::AttachedToWindow()
 	LoadSettings();
 	
 	pcContextMenu->SetTargetForItems(this);
+	
+	m_pcPrintKeyEvent = new os::Event();
+	m_pcPrintKeyEvent->SetToRemote("os/System/PrintKeyWasHit",-1);
+	m_pcPrintKeyEvent->SetMonitorEnabled(true,this,M_PRINT_SCREEN);
 }
 
 void DockCamera::DetachedFromWindow()
@@ -557,6 +581,7 @@ void DockCamera::DetachedFromWindow()
 		
 	if (m_pcIcon) delete m_pcIcon;
 	if (pcPaint)delete pcPaint;
+	if (m_pcPrintKeyEvent) delete m_pcPrintKeyEvent;
 }
 
 
@@ -572,10 +597,10 @@ void DockCamera::LoadSettings()
 		os::Settings* pcSettings = new os::Settings(new File(zPath));
 		pcSettings->Load();
 
-		vDelayTime = pcSettings->GetFloat("delay",vDelayTime);
-		vInstant = pcSettings->GetFloat("key/instant",vInstant);
-		vDelay = pcSettings->GetFloat("key/delay",vDelay);
-		vClick = pcSettings->GetFloat("click",vClick);
+		vDelayTime = pcSettings->GetFloat("delay",0);
+		vInstant = pcSettings->GetFloat("key/instant",12);
+		vDelay = pcSettings->GetFloat("key/delay",8);
+		vClick = pcSettings->GetFloat("click",0);
 	
 		delete( pcSettings );
 	}
@@ -669,8 +694,8 @@ void DockCamera::HandleMessage(Message* pcMessage)
 		case M_PREFS:
 		{
 			ShowPrefs(m_pcPlugin->GetPath());
+			break;
 		}
-		break;
 		
 		case M_PREFS_SEND_TO_PARENT:
 		{
@@ -682,8 +707,22 @@ void DockCamera::HandleMessage(Message* pcMessage)
 			LoadSettings();
 			pcPrefsWin->Close();
 			pcPrefsWin = NULL;			
+		
+			break;
 		}
-		break;		
+		
+		case M_PRINT_SCREEN:
+		{
+			if (bFirst)
+			{
+				bFirst = false;
+			}
+			else
+			{	
+				pcCameraDelayedLooper->AddTimer(pcCameraDelayedLooper,CAMERA_ID,0);
+			}
+			break;
+		}		
 	}
 }
 void DockCamera::MouseMove( const os::Point& cNewPos, int nCode, uint32 nButtons, os::Message* pcData )
@@ -827,6 +866,11 @@ DockPlugin* init_dock_plugin( os::Path cPluginFile, os::Looper* pcDock )
 	return( new CameraPlugin() );
 }
 }
+
+
+
+
+
 
 
 
