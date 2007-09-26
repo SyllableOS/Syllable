@@ -1,3 +1,7 @@
+* September 26 2007, Rick Caudill *
+
+Added documentation to server.cpp and also added an event(os/System/PrintKeyWasHit) when 'Print Screen' key is hit
+
 * August 18, 2007, Kaj de Vos *
 
 Added Winter decorator, by John Aspras.

@@ -1,3 +1,10 @@
+* September 26, 2007, Rick Caudill *
+
+Camera now includes support for 'Print Screen' key
+
+I have also added a boolean value to Clipper so it will not invoke the event on startup of 
+the Dock(this is a quick hack).
+
 * September 18, 2007, Rick Caudill *
 
 Changed how Clipper works.  Now Clipper waits for an event from the appserver telling
