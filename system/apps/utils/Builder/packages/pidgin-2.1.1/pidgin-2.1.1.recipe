@@ -1,0 +1,50 @@
+authors
+	Kelly Wilson
+status				testing
+
+headline			Pidgin IM framework
+description			Pidgin is a cross platform IM framwork
+licenses			GPL
+
+home				www.pidgin.im
+inherits			sourceforge
+packages			pidgin/pidgin-2.1.1
+
+needs
+	ncurses
+	xml2
+
+build-needs
+	intltool
+
+recommends			openssl
+
+configure-env
+;	CFLAGS -g
+;	CXXFLAGS -g	
+	PKG_CONFIG_PATH '/usr/glib/lib/pkgconfig:/usr/libxml2/lib/pkgconfig:/usr/openssl/lib/pkgconfig'
+	LIBS -lncurses
+
+configure-options
+;	--with-gnu-ld
+	--disable-gtkui
+	--enable-consoleui
+;	--disable-plugins
+	--disable-screensaver
+	--disable-sm
+	--disable-gtkspell
+	--disable-gevolution
+	--disable-gstreamer
+	--disable-fortify
+	--disable-tcl
+	--with-ncurses-headers=/usr/ncurses/include/
+	--disable-nss
+	--with-glib-lib=/usr/glib/lib
+	--with-screen=ncurses
+	--disable-startup-notification
+	--disable-libtool-lock
+	--enable-debug
+;	--disable-perl
+
+documentation
+	README NEWS PLUGIN_HOWTO COPYRIGHT COPYING AUTHORS INSTALL
