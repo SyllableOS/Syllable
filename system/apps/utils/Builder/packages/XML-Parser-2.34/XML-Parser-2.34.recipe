@@ -1,0 +1,17 @@
+authors
+	Kristian Van Der Vliet
+status				testing
+
+headline			A perl module for parsing XML documents
+licenses			Artistic GPL
+
+home				http://search.cpan.org/~msergeant/XML-Parser/Parser.pm
+locations			http://search.cpan.org/CPAN/authors/id/M/MS/MSERGEANT/
+
+needs
+	perl
+	expat
+
+configure			perl Makefile.PL
+
+no-strip
