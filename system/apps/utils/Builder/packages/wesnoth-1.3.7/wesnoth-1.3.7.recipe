@@ -1,78 +1,74 @@
-authors				Flemming H. Sørensen
+authors
+	Flemming Sørensen
+	Kaj de Vos
 status				testing
 
 inherits			sourceforge
 
-headline			Turn-based strategy game with a fantasy theme. 
-description			Fight a desperate battle to reclaim the throne of Wesnoth, or take hand in any number of other adventures...
+headline			Turn-based strategy game with a fantasy theme
+description
+	Fight a desperate battle to reclaim the throne of Wesnoth, or take hand in any number of other adventures...
 licenses			GPL-2
 
-home				http://wesnoth.sf.net
+home				wesnoth.sf.net
 packages			wesnoth/wesnoth-1.3.7
 
-configure-options
-					--enable-editor
-;					--with-included-gettext
-					--disable-python
-					--with-preferences-dir=.wesnoth
+needs				sdl
 
-;documentation		README COPYING changelog MANUAL*
+configure-options
+;	--with-included-gettext
+	--with-preferences-dir=.wesnoth
+	--enable-editor
+	--disable-python
+
+documentation		README COPYING changelog MANUAL*
+
+pre-register
+;	Set os::Category and add an icon to "wesnoth":
+	rescopy -r bin/wesnoth								icon48x48.png=icons/wesnoth-icon.png
+	addattrib bin/wesnoth								os::MimeType application/x-executable
+	addattrib bin/wesnoth								os::Category Games
+;	Set os::Category and add an icon to "wesnoth_editor"
+;	wesnoth_editor-icon.png needs to be replaced, so we use wesnoth-icon.png instead. Wesnoth.org has been notified.
+	rescopy -r bin/wesnoth_editor						icon48x48.png=icons/wesnoth-icon.png
+	addattrib bin/wesnoth_editor						os::MimeType application/x-executable
+	addattrib bin/wesnoth_editor						os::Category Games
+;	Set os::MimeType on the documentation:
+	addattrib documentation/README						os::MimeType text/plain
+	addattrib documentation/COPYING						os::MimeType text/plain
+	addattrib documentation/changelog					os::MimeType text/plain
+	addattrib documentation/MANUAL						os::MimeType text/plain
+	addattrib documentation/MANUAL.brazilian			os::MimeType text/plain
+	addattrib documentation/MANUAL.catalan				os::MimeType text/plain
+	addattrib documentation/MANUAL.chinese_simplified	os::MimeType text/plain
+	addattrib documentation/MANUAL.czech				os::MimeType text/plain
+	addattrib documentation/MANUAL.danish				os::MimeType text/plain
+	addattrib documentation/MANUAL.french				os::MimeType text/plain
+	addattrib documentation/MANUAL.german				os::MimeType text/plain
+	addattrib documentation/MANUAL.hungarian			os::MimeType text/plain
+	addattrib documentation/MANUAL.indonesian			os::MimeType text/plain
+	addattrib documentation/MANUAL.italian				os::MimeType text/plain
+	addattrib documentation/MANUAL.japanese				os::MimeType text/plain
+	addattrib documentation/MANUAL.norwegian			os::MimeType text/plain
+	addattrib documentation/MANUAL.polish				os::MimeType text/plain
+	addattrib documentation/MANUAL.russian				os::MimeType text/plain
+	addattrib documentation/MANUAL.spanish				os::MimeType text/plain
+	addattrib documentation/MANUAL.swedish				os::MimeType text/plain
+	addattrib documentation/MANUAL.turkish				os::MimeType text/plain
+;	Set os::Category on a few folders:
+;	addattrib share/wesnoth/data						os::Category Ignore
+;	addattrib share/wesnoth/fonts						os::Category Ignore
+;	addattrib share/wesnoth/images						os::Category Ignore
+;	addattrib share/wesnoth/sounds						os::Category Ignore
+;	addattrib share/wesnoth/translations				os::Category Ignore
 
 move-files
-					bin/wesnoth Battle_for_Wesnoth_1.3.7
-					bin/wesnoth_editor Battle_for_Wesnoth_1.3.7_-_Editor
-					share/wesnoth/* ./
-;					MANUAL* Manual/
-;					/usr/wesnoth/* /Applications/Battle_for_Wesnoth_1.3.7/
+	bin/wesnoth Battle-for-Wesnoth
+	bin/wesnoth_editor Battle-for-Wesnoth-Editor
+	share/wesnoth/* .
+;	* /Applications/Battle-for-Wesnoth-1.3.7/
 
 delete-files
-					bin
-					man
-					share
-
-post-install
-; Copy the documentation
-					mkdir /usr/wesnoth/Manual
-					cp ../wesnoth-1.3.7/MANUAL* /usr/wesnoth/Manual/
-					cp ../wesnoth-1.3.7/README /usr/wesnoth/
-					cp ../wesnoth-1.3.7/COPYING /usr/wesnoth/
-					cp ../wesnoth-1.3.7/changelog /usr/wesnoth/
-; Set os::MimeType on the documentation
-					addattrib /usr/wesnoth/README os::MimeType text/plain
-					addattrib /usr/wesnoth/COPYING os::MimeType text/plain
-					addattrib /usr/wesnoth/changelog os::MimeType text/plain
-					addattrib /usr/wesnoth/Manual/MANUAL os::MimeType text/plain
-					addattrib /usr/wesnoth/Manual/MANUAL.brazilian os::MimeType text/plain
-					addattrib /usr/wesnoth/Manual/MANUAL.catalan os::MimeType text/plain
-					addattrib /usr/wesnoth/Manual/MANUAL.chinese_simplified os::MimeType text/plain
-					addattrib /usr/wesnoth/Manual/MANUAL.czech os::MimeType text/plain
-					addattrib /usr/wesnoth/Manual/MANUAL.danish os::MimeType text/plain
-					addattrib /usr/wesnoth/Manual/MANUAL.french os::MimeType text/plain
-					addattrib /usr/wesnoth/Manual/MANUAL.german os::MimeType text/plain
-					addattrib /usr/wesnoth/Manual/MANUAL.hungarian os::MimeType text/plain
-					addattrib /usr/wesnoth/Manual/MANUAL.indonesian os::MimeType text/plain
-					addattrib /usr/wesnoth/Manual/MANUAL.italian os::MimeType text/plain
-					addattrib /usr/wesnoth/Manual/MANUAL.japanese os::MimeType text/plain
-					addattrib /usr/wesnoth/Manual/MANUAL.norwegian os::MimeType text/plain
-					addattrib /usr/wesnoth/Manual/MANUAL.polish os::MimeType text/plain
-					addattrib /usr/wesnoth/Manual/MANUAL.russian os::MimeType text/plain
-					addattrib /usr/wesnoth/Manual/MANUAL.spanish os::MimeType text/plain
-					addattrib /usr/wesnoth/Manual/MANUAL.swedish os::MimeType text/plain
-					addattrib /usr/wesnoth/Manual/MANUAL.turkish os::MimeType text/plain
-; Set os::Category and add an icon to "wesnoth"
-					rescopy -r /usr/wesnoth/bin/wesnoth icon48x48.png=/usr/wesnoth/share/icons/wesnoth-icon.png
-					addattrib /usr/wesnoth/bin/wesnoth os::MimeType application/x-executable
-					addattrib /usr/wesnoth/bin/wesnoth os::Category Games
-; Set os::Category and add an icon to "wesnoth_editor"
-;					wesnoth_editor-icon.png needs to be replaced, so we use wesnoth-icon.png instead. Wesnoth.org has been notified.
-					rescopy -r /usr/wesnoth/bin/wesnoth_editor icon48x48.png=/usr/wesnoth/share/icons/wesnoth-icon.png
-					addattrib /usr/wesnoth/bin/wesnoth_editor os::MimeType application/x-executable
-					addattrib /usr/wesnoth/bin/wesnoth_editor os::Category Games
-; Set os::Category on a few folders
-					addattrib /usr/wesnoth/share/wesnoth/data os::Category Ignore
-					addattrib /usr/wesnoth/share/wesnoth/fonts os::Category Ignore
-					addattrib /usr/wesnoth/share/wesnoth/images os::Category Ignore
-					addattrib /usr/wesnoth/share/wesnoth/sounds os::Category Ignore
-					addattrib /usr/wesnoth/share/wesnoth/translations os::Category Ignore
-					addattrib /usr/wesnoth/Manual os::Category Ignore
-
+	bin
+	man
+	share

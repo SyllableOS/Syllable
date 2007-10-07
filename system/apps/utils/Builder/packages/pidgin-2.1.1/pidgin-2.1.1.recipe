@@ -1,50 +1,51 @@
-authors
-	Kelly Wilson
+authors				Kelly Wilson
 status				testing
+notes				On Syllable, only LibPurple builds
+
+inherits			sourceforge
 
 headline			Pidgin IM framework
-description			Pidgin is a cross platform IM framwork
+description			Pidgin is a cross platform IM framework
 licenses			GPL
 
 home				www.pidgin.im
-inherits			sourceforge
 packages			pidgin/pidgin-2.1.1
 
 needs
 	ncurses
-	xml2
-
-build-needs
-	intltool
-
-recommends			openssl
+	libxml2
+build-needs			intltool
+recommends
+	gtk >= 2
+	gstreamer >= 0.10
+	openssl
+	gtkspell
 
 configure-env
-;	CFLAGS -g
-;	CXXFLAGS -g	
-	PKG_CONFIG_PATH '/usr/glib/lib/pkgconfig:/usr/libxml2/lib/pkgconfig:/usr/openssl/lib/pkgconfig'
-	LIBS -lncurses
+	PKG_CONFIG_PATH "$PKG_CONFIG_PATH:/usr/glib/lib/pkgconfig:/usr/libxml2/lib/pkgconfig:/usr/openssl/lib/pkgconfig"
+	LIBS "$LIBS -lncurses"
 
 configure-options
-;	--with-gnu-ld
-	--disable-gtkui
+;	--enable-debug
+	--with-ncurses-headers=/usr/ncurses/include/
+;	--with-glib-lib=/usr/glib/lib
 	--enable-consoleui
+	--with-screen=ncurses
+	--disable-gtkui
+;	--disable-perl
+	--disable-tcl
 ;	--disable-plugins
+	--disable-libtool-lock
+	--disable-startup-notification
 	--disable-screensaver
 	--disable-sm
 	--disable-gtkspell
 	--disable-gevolution
 	--disable-gstreamer
 	--disable-fortify
-	--disable-tcl
-	--with-ncurses-headers=/usr/ncurses/include/
 	--disable-nss
-	--with-glib-lib=/usr/glib/lib
-	--with-screen=ncurses
-	--disable-startup-notification
-	--disable-libtool-lock
-	--enable-debug
-;	--disable-perl
 
-documentation
-	README NEWS PLUGIN_HOWTO COPYRIGHT COPYING AUTHORS INSTALL
+documentation		README COPYRIGHT COPYING NEWS ChangeLog AUTHORS
+build-docs			README.MTN
+develop-docs		ChangeLog.API
+internal-docs		PLUGIN_HOWTO

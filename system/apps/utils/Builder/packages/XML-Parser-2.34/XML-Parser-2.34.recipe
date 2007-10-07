@@ -1,11 +1,11 @@
-authors
-	Kristian Van Der Vliet
+authors				Kristian Van Der Vliet
 status				testing
 
-headline			A perl module for parsing XML documents
+headline			A PERL module for parsing XML documents
+description			A PERL binding for the Expat XML parser.
 licenses			Artistic GPL
 
-home				http://search.cpan.org/~msergeant/XML-Parser/Parser.pm
+home				search.cpan.org/~msergeant/XML-Parser/Parser.pm
 locations			http://search.cpan.org/CPAN/authors/id/M/MS/MSERGEANT/
 
 needs
@@ -14,4 +14,7 @@ needs
 
 configure			perl Makefile.PL
 
-no-strip
+;no-strip
+
+documentation		README Changes
+develop-docs		MANIFEST samples
