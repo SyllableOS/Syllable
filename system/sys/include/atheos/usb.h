@@ -130,6 +130,7 @@ struct USB_libusb_node_t
 	int hNode;
 	sem_id hLock;
 	sem_id hWait;
+	sem_id hOpen;
 };
 
 typedef struct USB_libusb_node_t USB_libusb_node_s;

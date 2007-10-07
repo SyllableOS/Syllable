@@ -51,12 +51,17 @@ extern int g_nDeviceID;
 status_t libusb_dev_open( void* pNode, uint32 nFlags, void **pCookie )
 {
 	USB_libusb_node_s *psUSBNode = (USB_libusb_node_s*)pNode;
+	if( TRY_LOCK( psUSBNode->hOpen ) != EOK )
+		return EAGAIN;
+
 	reset_semaphore( psUSBNode->hWait, 0 );
 	return EOK;
 }
 
 status_t libusb_dev_close( void* pNode, void* pCookie )
 {
+	USB_libusb_node_s *psUSBNode = (USB_libusb_node_s*)pNode;
+	UNLOCK( psUSBNode->hOpen );
 	return EOK;
 }
 
@@ -119,9 +124,10 @@ static status_t do_io_request( USB_libusb_node_s *psUSBNode, struct usb_io_reque
 	/* Submit the URB and wait for completion */
 	nError = usb_submit_packet( psPacket );
 	kerndbg( KERN_DEBUG, "do_io_request(): usb_submit_packet() returned %d\n", nError );
-
 	if( nError == EOK )
-		nError = lock_semaphore( psUSBNode->hWait, 0, psReq->nTimeout );
+		nError = lock_semaphore( psUSBNode->hWait, SEM_NOSIG, psReq->nTimeout );
+
+	kerndbg( KERN_DEBUG_LOW, "psUSBNode->hWait unlocked with nError=%d\n", nError );
 
 	if( ( nError == EOK) && ( ( nCmd == IOCNR_BULK_READ ) || ( nCmd == IOCNR_INT_READ ) ) )
 		memcpy_to_user( psReq->pData, pData, nSize );
@@ -264,7 +270,6 @@ status_t libusb_dev_ioctl( void* pNode, void* pCookie, uint32 nCommand, void* pA
 				nPipe = usb_sndctrlpipe( psUSBNode->psDevice, 0 );
 
 			nError = usb_clear_halt( psUSBNode->psDevice, nPipe );
-
 			break;
 		}
 
@@ -306,6 +311,7 @@ static USB_libusb_node_s * alloc_usb_node( USB_device_s* psDevice, unsigned int 
 
 		psUSBNode->hLock = create_semaphore( "libusb_node_lock", 1, 0 );
 		psUSBNode->hWait = create_semaphore( "libusb_node_wait", 0, 0 );
+		psUSBNode->hOpen = create_semaphore( "libusb_node_open", 1, 0 );
 	}
 	
 	sprintf( zNode, "usb/%d/%d-%i", psDevice->psBus->nBusNum, psDevice->nDeviceNum, nIfnum );
@@ -350,6 +356,7 @@ void libusb_remove( USB_device_s* psDevice )
 		delete_device_node( psInterface->psUSBNode->hNode );
 		delete_semaphore( psInterface->psUSBNode->hLock );
 		delete_semaphore( psInterface->psUSBNode->hWait );
+		delete_semaphore( psInterface->psUSBNode->hOpen );
 		kfree( psInterface->psUSBNode );
 	}
 }
