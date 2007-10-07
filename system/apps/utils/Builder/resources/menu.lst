@@ -19,8 +19,14 @@
 	title			Syllable Server
 	root			(hd0,0)
 	kernel			/usr/linux/kernel-2.6.22.1 root=/dev/hda1 ro
-#	800x600 x 256 colours, for example for QEmu:
-#	kernel			/usr/linux/kernel-2.6.22.1 root=/dev/hda1 ro vga=771
+
+	title			Syllable Server (QEmu, 800x600 x 256 colours)
+	root			(hd0,0)
+	kernel			/usr/linux/kernel-2.6.22.1 root=/dev/hda1 ro vga=771
+
+	title			Syllable Server (Bochs, no APIC)
+	root			(hd0,0)
+	kernel			/usr/linux/kernel-2.6.22.1 root=/dev/hda1 ro noapic
 
 	title			Windows example first partition
 	rootnoverify	(hd0,0)
