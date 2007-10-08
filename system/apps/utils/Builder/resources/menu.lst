@@ -24,6 +24,10 @@
 	root			(hd0,0)
 	kernel			/usr/linux/kernel-2.6.22.1 root=/dev/hda1 ro vga=771
 
+	title			Syllable Server (VirtualBox, 800x600 x 65536 colours)
+	root			(hd0,0)
+	kernel			/usr/linux/kernel-2.6.22.1 root=/dev/hda1 ro vga=789
+
 	title			Syllable Server (Bochs, no APIC)
 	root			(hd0,0)
 	kernel			/usr/linux/kernel-2.6.22.1 root=/dev/hda1 ro noapic
