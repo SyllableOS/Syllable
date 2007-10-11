@@ -20,11 +20,15 @@
 	root			(hd0,0)
 	kernel			/usr/linux/kernel-2.6.22.1 root=/dev/hda1 ro
 
+	title			Syllable Server (VESA, 1024x768 x 65536 colours)
+	root			(hd0,0)
+	kernel			/usr/linux/kernel-2.6.22.1 root=/dev/hda1 ro video=vesa:ywrap,mtrr vga=791
+
 	title			Syllable Server (QEmu, 800x600 x 256 colours)
 	root			(hd0,0)
 	kernel			/usr/linux/kernel-2.6.22.1 root=/dev/hda1 ro vga=771
 
-	title			Syllable Server (VirtualBox, 800x600 x 65536 colours)
+	title			Syllable Server (VirtualBox, 800x600 x 32-bits colour)
 	root			(hd0,0)
 	kernel			/usr/linux/kernel-2.6.22.1 root=/dev/hda1 ro vga=789
 
