@@ -1,8 +1,11 @@
 #!/bin/sh
 
 manpath="/boot/Documentation/man"
+# Server:
+#manpath="/atheos/Documentation/man"
 browser="/Applications/ABrowse/ABrowse"
 #browser="links -g"
+#browser="links"
 
 if [ "$1" = "" ]; then
 	echo "Usage: man [section] title"
@@ -21,6 +24,8 @@ file=`find $manpath -name "$cmd.$section.html" -print | head -n1`
 
 if [ "$file" != "" ]; then
 	$browser $file 2>&1 >/dev/null &
+#	Text mode:
+#	$browser $file &
 else
 	if [ "$2" = "" ]; then
 		echo "No manual entry for $cmd"
@@ -28,4 +33,3 @@ else
 		echo "No entry for $cmd in section $section of the manual"
 	fi
 fi
-
