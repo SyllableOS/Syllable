@@ -168,6 +168,7 @@ static int ext2_create_volume(const char * dev, ext2_vol ** _vol) {
 
 		} else {
 			printk("%s is not a ext2 partition\n", dev);
+			close(vol->fd);
 			free(vol->super);
 			free(vol);
 			return -EINVAL;
