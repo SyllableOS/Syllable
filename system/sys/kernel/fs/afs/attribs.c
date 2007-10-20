@@ -129,7 +129,7 @@ static int afs_load_attr_inode( AfsVolume_s * psVolume, AfsInode_s * psAttrDirIn
  * \param pData			Data to write
  * \param nPos			Offset into attribute to write data
  * \param nSize			Ammount to write
- * \return 0 on success, negative error code on failure
+ * \return number of octets written on success, negative error code on failure
  * \sa
  *****************************************************************************/
 static int afs_sd_create_attribute( char *pInode, int nBlockSize, int nType, const char *pzName, int nNameLen, const void *pData, int nPos, int nSize )
@@ -150,7 +150,7 @@ static int afs_sd_create_attribute( char *pInode, int nBlockSize, int nType, con
 //      printk( "Will fit\n" );
 				memcpy( SD_DATA( psEntry ) + nPos, pData, nSize );
 				psEntry->sd_nType = nType;
-				return( 0 );
+				return( nSize );
 			}
 			else
 			{
@@ -175,7 +175,7 @@ static int afs_sd_create_attribute( char *pInode, int nBlockSize, int nType, con
 				psEntry->sd_nDataSize = nPos + nSize;
 				memcpy( SD_DATA( psEntry ) + nPos, pData, nSize );
 				psEntry->sd_nType = nType;
-				return( 0 );
+				return( nSize );
 			}
 		}
 //    printk( "afs_sd_add_create_attribute() scan %s\n", SD_DATA( psEntry ) );
@@ -203,6 +203,7 @@ static int afs_sd_create_attribute( char *pInode, int nBlockSize, int nType, con
 				pInode[i] = 0;
 			}
 		}
+		return( nSize );
 
 	}
 	else
@@ -210,7 +211,6 @@ static int afs_sd_create_attribute( char *pInode, int nBlockSize, int nType, con
 //    printk( "afs_sd_add_create_attribute() inode is full %d\n", nTotSize );
 		return( -ENOSPC );
 	}
-	return( 0 );
 }
 
 /** Find a SmallData attribute
@@ -841,7 +841,7 @@ static int afs_write_big_attr( AfsVolume_s * psVolume, AfsInode_s * psAttrInode,
  * Write from the given buffer into the small attribute with the given name of the
  * given file, from the given buffer at the given starting position for the given
  * length.  Basically just a wrapper around afs_sd_create_attribute.
- * \par Note: This returns a different value than afs_write_big_attr
+ * \par Note:
  * \par Warning:
  * \param psVolume	AFS filesystem pointer
  * \param psInode	AFS Inode to write small attribute to
@@ -851,7 +851,7 @@ static int afs_write_big_attr( AfsVolume_s * psVolume, AfsInode_s * psAttrInode,
  * \param a_pBuffer	Buffer to write from
  * \param nPos		Position in attribute to write to
  * \param nLen		Number of octets to write
- * \return 0 on success, negative error code on failure
+ * \return number of octets written on success, negative error code on failure
  * \sa
  *****************************************************************************/
 static int afs_write_small_attr( AfsVolume_s * psVolume, AfsInode_s * psInode, const char *pzName, int nNameLen, int nType, const char *a_pBuffer, int nPos, size_t nLen )
