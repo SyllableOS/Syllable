@@ -1771,11 +1771,12 @@ static int link_device_node( const char *pzPath, FileNode_s *psNode )
  *	etc. will be mapped more or less directly into calls into the
  *	device driver through these function pointers.
  *
- * \param pCookie
+ * \param pNodeCookie
  *	This is just a void pointer that the kernel will be associating with
  *	the device node and that will be passed back to the driver when
- *	calling functions in psOps. This can be used by the driver to associate
- *	some private data with the device node.
+ *	calling functions in psOps (it will be passed to the psOps functions
+ *	as the pNode parameter). This can be used by the driver to associate some
+ *	private data with the device node.
  *
  * \return
  *	create_device_node() returns a handle that can later be used to rename
@@ -1787,7 +1788,7 @@ static int link_device_node( const char *pzPath, FileNode_s *psNode )
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-int create_device_node( int nDeviceID, int nDeviceHandle, const char *pzPath, const DeviceOperations_s * psOps, void *pCookie )
+int create_device_node( int nDeviceID, int nDeviceHandle, const char *pzPath, const DeviceOperations_s * psOps, void *pNodeCookie )
 {
 	Device_s *psDevice;
 	FileNode_s *psTmp;
@@ -1828,7 +1829,7 @@ int create_device_node( int nDeviceID, int nDeviceHandle, const char *pzPath, co
 
 	psTmp->fn_nDeviceHandle = nDeviceHandle;
 	psTmp->fn_psOps = psOps;
-	psTmp->fn_pDevNode = pCookie;
+	psTmp->fn_pDevNode = pNodeCookie;
 
 	if ( psDevice != NULL )
 	{
