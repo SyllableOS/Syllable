@@ -1,3 +1,18 @@
+* October 20, 2007, Kristian Van Der Vliet *
+
+Patches from Anthony Morphett:
+
+ o Fix a bug in ext2 driver where it forgets to close() the device after
+   probing for an ext2 and not finding one
+ o Changed the name of the create_device_node() parameter 'pCookie' to
+   'pNodeCookie' and added a comment to the documentation better explaining
+   what this parameter is used for.
+ o Fix a quirk in AFS where write_attr() sometimes returns 0 rather than the
+   number of bytes written. Specifically, if the written attribute is small
+   enough to fit in the 'small attribute area' inside the inode then the call
+   would return 0 even on success, otherwise it returns the number of bytes
+   written or an error code.
+
 * September 26, 2007, Arno Klenke *
 
 o Keep usb disk driver loaded
