@@ -1,0 +1,43 @@
+//
+// This catalog was exported from Catalog Editor
+//
+
+ID_SETTINGS_EDITOR_WINDOW=1000                    Settings Editor
+ID_LISTVIEW_NAME=1010                             Name
+ID_LISTVIEW_TYPE                                  Type
+ID_LISTVIEW_VALUE                                 Value
+ID_LISTVIEW_INDEX                                 Index
+ID_MENU_FILE=1020                                 File
+ID_MENU_FILE_NEW                                  New
+ID_MENU_FILE_OPEN                                 Open
+ID_MENU_FILE_SAVE                                 Save
+ID_MENU_FILE_SAVE_AS                              Save As...
+ID_MENU_FILE_EXIT                                 Exit
+ID_MENU_EDIT_ADD=1030                             Add
+ID_MENU_EDIT_ADD_STRING                           String
+ID_MENU_EDIT_ADD_INT8                             Int8
+ID_MENU_EDIT_ADD_INT16                            Int16
+ID_MENU_EDIT_ADD_INT32                            Int32
+ID_MENU_EDIT_ADD_INT64                            Int64
+ID_MENU_EDIT_ADD_FLOAT                            Float
+ID_MENU_EDIT_ADD_DOUBLE                           Double
+ID_MENU_EDIT_ADD_IRECT                            IRect
+ID_MENU_EDIT_ADD_IPOINT                           IPoint
+ID_MENU_EDIT_ADD_RECT                             Rect
+ID_MENU_EDIT_ADD_POINT                            Point
+ID_MENU_EDIT_ADD_COLOR32                          Color32
+ID_MENU_EDIT_ADD_RAW                              Raw
+ID_MENU_EDIT_ADD_VARIANT                          Variant
+ID_MENU_EDIT_ADD_MESSAGE                          Message
+ID_MENU_EDIT                                      Edit
+ID_MENU_EDIT_DELETE									 Delete
+ID_ADD_DIALOG_SENTENCE=1050                       Enter a name for the new %s object.
+ID_ADD_DIALOG_WINDOW_TITLE                        Enter a name for %s
+ID_BUTTON_SAVE=1060                               Save
+ID_BUTTON_CLOSE                                   Close
+ID_BUTTON_PLUS                                    +
+ID_BUTTON_MINUS										 -
+ID_ERROR_UNIQUE=1070    								 You have to use a unique name!\n\"%s\" Is already used by another variable!\n
+ID_ERROR_VARIABLE										 You have to name the variable!
+ID_ERROR_BUTTON										 OK
+ID_ERROR_TITLE										 Error
