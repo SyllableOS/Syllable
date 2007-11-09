@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.7.20
+# Version 0.7.21
 # Copyright (c) 2002-2007 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -1367,6 +1367,11 @@ def shortName port
 	/--|-\d|\.|$/.match(fullName(port)).pre_match
 end
 
+def version port
+	# Extract version
+	commonName(port)[shortName(port).length + 1 .. -1]
+end
+
 def installName port
 	port = fullName port
 	@includeVersion && ! @systemBuild ?
@@ -1743,7 +1748,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.7.20',
+	puts 'Syllable Build System 0.7.21',
 		'Copyright (c) 2002-2007 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
