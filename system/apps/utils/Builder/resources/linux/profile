@@ -6,8 +6,8 @@ export PATH=/usr/local/sbin:/usr/local/bin:/usr/indexes/sbin:/usr/indexes/bin:/u
 export LD_LIBRARY_PATH=/usr/local/lib:/usr/indexes/lib:/usr/lib:/lib:/system/indexes/lib:/system
 
 # Paths for software compilation
-export LIBRARY_PATH=/usr/local/lib:/usr/indexes/lib:/usr/lib:/lib:/system/indexes/lib
-export C_INCLUDE_PATH=/usr/local/include:/usr/indexes/include:/usr/include:/system/indexes/include:/system/include
+export LIBRARY_PATH=/usr/local/lib:/system/indexes/lib:/usr/indexes/lib:/usr/lib:/lib
+export C_INCLUDE_PATH=/usr/local/include:/system/indexes/include:/usr/indexes/include:/usr/include:/system/include
 export CPLUS_INCLUDE_PATH=$C_INCLUDE_PATH
 export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/usr/indexes/lib/pkgconfig:/usr/lib/pkgconfig:/system/indexes/lib/pkgconfig
 
