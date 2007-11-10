@@ -54,6 +54,19 @@ tree
 	system/resources/catalogs/zh-cn
 	system/resources/wallpapers
 
+	system/indexes
+	system/indexes/bin
+	system/indexes/etc
+	system/indexes/include
+	system/indexes/info
+	system/indexes/lib
+	system/indexes/libexec
+	system/indexes/man
+	system/indexes/sbin
+	system/indexes/share
+	system/indexes/early-init
+	system/indexes/init
+
 	system/drivers
 
 	system/drivers/dev

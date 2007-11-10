@@ -1,15 +1,15 @@
 export PWD
 
 # Run paths
-export PATH=/system/bin:/sbin:/bin:/usr/local/sbin:/usr/local/bin:/usr/indexes/sbin:/usr/indexes/bin:/usr/sbin:/usr/bin
-#export DLL_PATH=@bindir@/lib:/system/libraries:/system:/usr/local/lib:/usr/indexes/lib
-export LD_LIBRARY_PATH=/lib:/system/libraries:/system:/usr/local/lib:/usr/indexes/lib:/usr/lib
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/indexes/sbin:/usr/indexes/bin:/usr/sbin:/usr/bin:/sbin:/bin:/system/indexes/sbin:/system/indexes/bin:/system/bin
+#export DLL_PATH=@bindir@/lib:/usr/local/lib:/usr/indexes/lib:/system/indexes/lib:/system
+export LD_LIBRARY_PATH=/usr/local/lib:/usr/indexes/lib:/usr/lib:/lib:/system/indexes/lib:/system
 
 # Paths for software compilation
-export LIBRARY_PATH=/usr/local/lib:/usr/indexes/lib:/usr/lib:/lib
-export C_INCLUDE_PATH=/usr/local/include:/usr/indexes/include:/usr/include:/system/include
+export LIBRARY_PATH=/usr/local/lib:/usr/indexes/lib:/usr/lib:/lib:/system/indexes/lib
+export C_INCLUDE_PATH=/usr/local/include:/usr/indexes/include:/usr/include:/system/indexes/include:/system/include
 export CPLUS_INCLUDE_PATH=$C_INCLUDE_PATH
-export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/usr/indexes/lib/pkgconfig:/usr/lib/pkgconfig
+export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/usr/indexes/lib/pkgconfig:/usr/lib/pkgconfig:/system/indexes/lib/pkgconfig
 
 # Set this right, or havoc may be wreaked in /system/init.sh
 export TEMP=/tmp
