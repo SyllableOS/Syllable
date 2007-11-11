@@ -14,26 +14,15 @@ all: $(OBJDIR) $(OBJS)
 	strip --strip-all $(EXE)
 	rescopy -r $(EXE) images/*.png
 	rescopy $(EXE) -a resources/SettingsEditor.catalog
-#	for CATALOG in $(CATALOGS);do \
-#		echo $$CATALOG; \
-#		rescopy $(EXE) -a $$CATALOG/SettingsEditor.catalog=resources/$$CATALOG/SettingsEditor.catalog; \
-#	done;
+
 
 $(OBJDIR):
 	mkdir -p $(OBJDIR)
 
-#catalogs:
-#	cd resources; \
-#	catcomp -c SettingsEditor.cd; \
-#	for CATALOG in $(CATALOGS);do \
-#		echo $$CATALOG; \
-#		cd $$CATALOG; \
-#		catcomp -t SettingsEditor.cd; \
-#		cd ..; \
-#	done;
 
 install: all
-	install -s $(EXE) $(IMAGE)/Applications/Preferences/$(EXE)
+	mkdir $(IMAGE)/Applications/SettingsEditor/
+	install -s $(EXE) $(IMAGE)/Applications/SettingsEditor/$(EXE)
 
 dist: install
 
