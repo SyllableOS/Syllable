@@ -3,8 +3,8 @@
 
 resources
 ;	Make GLibC suitable for running in an installed system:
-	system/libraries		libc.so
+	system/resources/glibc/2.4/lib	libc.so
 ;	Old libraries for compatibility with applications for older versions of Syllable:
-	system/libraries		GCC-libraries-3.4.3
+	system/libraries				GCC-libraries-3.4.3
 ;	May work better than the standard ones:
-	usr/share/terminfo/x	binaries/xterm-atheos
+	usr/share/terminfo/x			binaries/xterm-atheos
