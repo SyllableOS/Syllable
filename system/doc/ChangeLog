@@ -1,3 +1,37 @@
+* November 12, 2007, Kaj de Vos *
+
+Introduced an extra symlinked package pool for system resources.
+
+I have thought many years about the desirability of versioned package installations.
+It seemed a powerful thing to be able to install multiple versions of a package.
+However, it would also complicate our package symlink system quite a bit, because
+multiple versions of the same file would be allowed and would have to be managed.
+And when it comes down to it, the only parts of a package that are properly versioned
+and can be used next to eachother are shared libraries. These are essential, because
+we are shipping compatibility versions of older libraries. For using complete packages
+in place of another version provided in the system, the method Builder uses by placing
+another package pool first in all the search paths has turned out to be convenient.
+As a matter of psychology, allowing multiple package versions in the main system could
+easily lead users to install too many versions, and developers to link programs to
+non-standard library versions that are not available on other people's configurations
+(as observed in other systems).
+
+This matter needed a solution now, because Linux is not as flexible with shared libraries
+as Syllable. The method we used to move the core C and C++ libraries to /system/libraries/
+breaks on Linux, because it does not allow moving the shared system libraries after
+compilation. At first I just left GLibC and GCC in /usr/, but this is undesirable because
+they are not protected there from a user overwriting them and leaving the system unusable.
+
+I have implemented the following solution. The default package pool in /usr/ is still
+available, unversioned. However, I have moved all packages with shared libraries that
+are part of the core system to an extra, versioned package pool in /system/resources/.
+The symlinks are in /system/indexes/. The new ORCA Packager was already able to handle
+multiple pools. It did not have to be extended, because multiple versions of the same
+file are still not allowed in the system pool. If multiple versions of a package are
+installled, only a subset consisting of their shared libraries is supported, for shipping
+older versions for backward compatibility. Library versions are now easy to manage,
+because they are in their own subdirectories.
+
 * September 23, 2007, Kaj de Vos *
 
 Implemented PkgConfig support. The base PKG_CONFIG_PATH variable is set in /etc/profile
