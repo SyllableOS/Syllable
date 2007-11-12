@@ -56,12 +56,14 @@ make-env
 
 ; Needs itself during installation:
 install-env
-	PATH		"$PATH:$STAGE/gcc/bin:$STAGE/bootstrap/gcc/bin:$IMAGE/gcc/bin:$IMAGE/usr/gcc/bin:/usr/gcc/bin"
+	PATH		"$PATH:$STAGE/gcc/bin:$STAGE/bootstrap/gcc/bin:$IMAGE/gcc/bin:$IMAGE/usr/gcc/bin:$IMAGE/system/resources/gcc/4.1.2/bin:/usr/gcc/bin"
 
 links
-	gcc				bin/cc
-	libgcc.a		lib/gcc/i586-pc-syllable/4.1.2/libgcc_static.a
+	gcc					bin/cc
+	libgcc.a			lib/gcc/i586-pc-syllable/4.1.2/libgcc_static.a
+;	Hook into the system:
+	lib/libgcc_s.so.3	/system/libraries
 ;	For some packages:
-;	bin/cpp			lib/
+;	bin/cpp				lib/
 ;	For WebKit:
-;	gcc				/usr/bin/
+;	gcc					/usr/bin/

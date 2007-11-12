@@ -1,6 +1,6 @@
 #!/bin/sh
 
-prefix=/usr/sdl
+prefix=/system/resources/sdl/1.2.8
 exec_prefix=${prefix}
 exec_prefix_set=no
 
@@ -39,7 +39,7 @@ while test $# -gt 0; do
       echo 1.2.8
       ;;
     --cflags)
-      echo -I/usr/indexes/include/SDL 
+      echo -I/system/indexes/include/SDL 
 
       # The portable way of including SDL is #include "SDL.h"
       #if test ${prefix}/include != /usr/include ; then

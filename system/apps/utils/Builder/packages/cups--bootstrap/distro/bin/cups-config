@@ -26,16 +26,16 @@
 VERSION="1.2.1"
 APIVERSION="1.2"
 
-prefix=$IMAGE/usr/cups
-exec_prefix=$IMAGE/usr/cups
-bindir=$IMAGE/usr/cups/bin
+prefix=$IMAGE/system/resources/cups/1.2.10
+exec_prefix=$IMAGE/system/resources/cups/1.2.10
+bindir=$IMAGE/system/resources/cups/1.2.10/bin
 includedir=${prefix}/include
-libdir=$IMAGE/usr/cups/lib
-imagelibdir=$IMAGE/usr/cups/lib
-datadir=$IMAGE/usr/cups/share
+libdir=$IMAGE/system/resources/cups/1.2.10/lib
+imagelibdir=$IMAGE/system/resources/cups/1.2.10/lib
+datadir=$IMAGE/system/resources/cups/1.2.10/share
 sysconfdir=$IMAGE/system/config
-cups_datadir=$IMAGE/usr/cups/share/cups
-cups_serverbin=$IMAGE/usr/cups/lib/cups
+cups_datadir=$IMAGE/system/resources/cups/1.2.10/share/cups
+cups_serverbin=$IMAGE/system/resources/cups/1.2.10/lib/cups
 cups_serverroot=$IMAGE/system/config/cups
 INSTALLSTATIC=
 
