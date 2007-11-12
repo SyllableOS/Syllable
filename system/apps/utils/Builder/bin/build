@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.7.22
+# Version 0.7.23
 # Copyright (c) 2002-2007 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -688,7 +688,7 @@ def installModule originalStaging, staging, directive, target
 										@log.header 'Stripping executables'
 										#--strip-unneeded
 										action superAccess + 'strip --strip-all' + dirs.collect {|dir| ' ' + File.join(dir, '*')}.join or
-											$? >> 8 == 1  # File type not recognized
+											$? >> 8 == 1  # File type not recognised
 									end and
 									! exists?(dir = File.join(root, 'lib')) ||
 									begin
@@ -1763,7 +1763,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.7.22',
+	puts 'Syllable Build System 0.7.23',
 		'Copyright (c) 2002-2007 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
@@ -1807,7 +1807,7 @@ when 'help', '?', '-?', '-h', '-help', '--help'
 		'  failures      Profile for last failures',
 		'<package>:      Distribution package (install command only)',
 		'<log>:          Log name',
-		'  summary       Summarized log',
+		'  summary       Summarised log',
 		'  failures      Log of failed modules'
 when 'modules' then puts Profile.new(arg2)['modules']
 when 'recipe'  then puts getRecipe(arg2).to_a
@@ -1851,16 +1851,16 @@ else
 						# Executables may not be position-independent or compatible with the build host:
 
 						if @systemBuild
-							(File.join @image, 'system/bin') + ':' +
-
 							unless @syllable
-								(File.join @image, 'sbin') + ':' +
-								(File.join @image, 'bin') + ':' +
 								(File.join @image, 'usr/sbin') + ':' +
-								(File.join @image, 'usr/bin') + ':'
+								(File.join @image, 'usr/bin') + ':' +
+								(File.join @image, 'sbin') + ':' +
+								(File.join @image, 'bin') + ':'
 							else
 								''
-							end
+							end +
+
+							(File.join @image, 'system/bin') + ':'
 						else
 							''
 						end +
@@ -1881,20 +1881,22 @@ else
 				# Pick up headers from the staging area and system repository
 
 				headers =
+					# Linked headers
+					(File.join @stage, 'indexes', 'include') + ':' +
+
 					if @systemBuild
-						# Syllable system headers
-						(File.join @image, 'system/include') + ':' +
+						# C library headers
+#						(File.join @image, 'system/resources/glibc/2.4/include') + ':' +
 						# Linux system and C library headers
 						(File.join @image, 'usr/include') + ':' +
-						# C library headers
-#						(File.join @image, 'usr/glibc/include') + ':' +
-						(@syllable ? File.join(@workDir, 'sys/include') + ':' : '')
+						# Syllable system headers
+						(File.join @image, 'system/include') + ':' +
+#						(@syllable ? File.join(@workDir, 'sys/include') + ':' : '')
+						(File.join @workDir, 'sys/include') + ':'
 					else
 						''
 					end +
 
-					# Linked headers
-					(File.join @stage, 'indexes', 'include') + ':' +
 					(File.join @stage, 'bootstrap/indexes', 'include')
 
 				ENV['ATHEOS_INCLUDE_PATH'] = File.join @workDir, 'sys/include' if @systemBuild
@@ -1908,19 +1910,20 @@ else
 
 				# Pick up libraries from the staging area
 
-				ENV['ATHEOS_LIB_PATH'] = File.join @image, 'system/indexes/lib' if @systemBuild
+				ENV['ATHEOS_LIB_PATH'] = File.join @image, 'system/libraries' if @systemBuild
 
 				ENV[name = (@syllable ? 'DLL' : 'LD_LIBRARY') + '_PATH'] =
 					if @bootstrap
 						# Shared libraries may not be compatible with the build host:
+
+						(File.join @stage, 'indexes', 'lib') + ':' +
+
 						if @systemBuild
-							(File.join @image, 'system/indexes/lib') + ':' +
+							(File.join @image, 'system/libraries') + ':' +
 							(File.join @image, 'system') + ':'
 						else
 							''
-						end +
-
-						(File.join @stage, 'indexes', 'lib') + ':'
+						end
 					else
 						''
 					end +
@@ -1931,10 +1934,10 @@ else
 
 				@log.extra name + ': ' + ENV[name]
 
+				# Some packages find some shared libraries through the GCC path:
 				ENV['LIBRARY_PATH'] =
-					# Some packages find some shared libraries through the GCC path:
-					(@systemBuild ? File.join(@image, 'system/indexes/lib') + ':' : '') +
 					File.join(@stage, 'indexes', 'lib') + ':' +
+					(@systemBuild ? File.join(@image, 'system/libraries') + ':' : '') +
 					File.join(@stage, 'bootstrap/indexes', 'lib') +
 					((var = ENV['LIBRARY_PATH']) && !@isolateStage ? ':' + var : '')
 
@@ -1943,8 +1946,8 @@ else
 				unless @syllable or @bootstrap
 					# Doesn't work for all ports, and trips up some:
 					ENV['LDFLAGS'] = ((var = ENV['LDFLAGS']) ? var : '') +
-						(@systemBuild ? ' -L' + File.join(@image, 'system/indexes/lib') : '') +
 						' -L' + File.join(@stage, 'indexes', 'lib') +
+						(@systemBuild ? ' -L' + File.join(@image, 'system/libraries') : '') +
 						' -L' + File.join(@stage, 'bootstrap/indexes', 'lib')
 
 					@log.extra 'LDFLAGS: ' + ENV['LDFLAGS']
@@ -1953,11 +1956,12 @@ else
 				# Pick up PkgConfig configuration info from the staging area
 
 				ENV['PKG_CONFIG_PATH'] =
+					# Linked configurations
+					(File.join @stage, 'indexes', 'lib/pkgconfig') + ':' +
+
 					# Linux sprawl:
 					(@systemBuild && ! @syllable ? (File.join @image, 'usr/lib/pkgconfig') + ':' : '') +
 
-					# Linked configurations
-					(File.join @stage, 'indexes', 'lib/pkgconfig') + ':' +
 					(File.join @stage, 'bootstrap/indexes', 'lib/pkgconfig') +
 
 					((var = ENV['PKG_CONFIG_PATH']) && !@isolateStage ? ':' + var : '')
@@ -1980,7 +1984,7 @@ else
 					build arg1, target if exists? @stage or prepare target
 				else
 					if arg2
-						@log.error 'Unrecognized command'
+						@log.error 'Unrecognised command'
 						exit 1
 					else
 						build false, target
