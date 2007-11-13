@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.7.23
+# Version 0.7.24
 # Copyright (c) 2002-2007 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -451,7 +451,7 @@ def testModule target
 	end
 end
 
-def installModule originalStaging, staging, directive, target
+def installModule staging, target
 	root = installPath staging, target
 	name = shortName target
 
@@ -554,7 +554,7 @@ def installModule originalStaging, staging, directive, target
 							else
 								((vars = recipe['install-env']) ? toVariables(vars) + ' ' : '') +
 								superAccess + makeCommand(target) +
-								(	staging != 'image' && configured ?
+								(	! ['image', 'system', 'libraries'].include?(staging) && configured ?
 										'' :
 										((p = recipe['system-prefix-var']) ?
 											" #{p}=" + @systemRoot :
@@ -741,8 +741,7 @@ def installModule originalStaging, staging, directive, target
 								end
 							then
 								false
-							elsif (originalStaging == 'image' and @systemBuild or not originalStaging) and
-									directive == 'libraries' and not
+							elsif staging == 'libraries' and @systemBuild and not
 								begin
 									@log.header 'Cleaning up system libraries'
 
@@ -888,14 +887,14 @@ def buildModule staging, directive, target
 		cleanModule target
 		Dir.chdir @workDir
 
-		if configureModule effectiveStaging = directive ? directive : staging, target
+		if configureModule staging = directive ? directive : staging, target
 			@log.header 'Making'
 
-			if makeModule(effectiveStaging, target) and effectiveStaging
+			if makeModule(staging, target) and staging
 				Dir.chdir @workDir
 
 				@log.header 'Installing in staging area'
-				installModule staging, effectiveStaging, directive, target
+				installModule staging, target
 			end
 		end
 	end
@@ -1058,7 +1057,7 @@ def install targets
 	for target in targets.modules
 		prepareModule target
 
-		installModule false, false, false, target
+		installModule false, target
 		Dir.chdir @workDir
 	end
 end
@@ -1352,14 +1351,14 @@ def firstColumn list  # Extract the first value of each line from a list of unsp
 end
 
 def fullName port
-	# Extract name including version and flavor, if necessary
+	# Extract name including version and flavour, if necessary
 	File.basename port[-1, 1] == '/' ? port.chop : port
 end
 
 def commonName port
-	# Extract name without flavor
-	name = /.+-(\d.*|)-|.+(-\d.*$|\.|$)/.match(fullName(port)).to_s
-	/(--|-|\.|)$/.match(name).pre_match
+	# Extract name without flavour
+	name = /.+-(\d(\d|\.)*\d\w*|)(-|\.|$)/.match(fullName(port)).to_s
+	/(--|-|\.|)$/.match(name).pre_match  # Clean up junk left at the end
 end
 
 def shortName port
@@ -1763,7 +1762,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.7.23',
+	puts 'Syllable Build System 0.7.24',
 		'Copyright (c) 2002-2007 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
