@@ -47,8 +47,10 @@ tree
 
 	system/resources
 	system/resources/catalogs
+	system/resources/catalogs/bg
 	system/resources/catalogs/da
 	system/resources/catalogs/de
+	system/resources/catalogs/el
 	system/resources/catalogs/en-gb
 	system/resources/catalogs/es
 	system/resources/catalogs/fr
@@ -60,7 +62,21 @@ tree
 	system/resources/catalogs/ro
 	system/resources/catalogs/ru
 	system/resources/catalogs/sv
+	system/resources/catalogs/zh-cn
 	system/resources/wallpapers
+
+	system/indexes
+	system/indexes/bin
+	system/indexes/etc
+	system/indexes/include
+	system/indexes/info
+	system/indexes/lib
+	system/indexes/libexec
+	system/indexes/man
+	system/indexes/sbin
+	system/indexes/share
+	system/indexes/early-init
+	system/indexes/init
 
 	system/drivers
 
