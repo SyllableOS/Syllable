@@ -8,9 +8,9 @@ diff -ru perl-5.8.8-original/hints/linux.sh perl-5.8.8/hints/linux.sh
 -if test -L /lib/libc.so.6; then
 -    libc=`ls -l /lib/libc.so.6 | awk '{print $NF}'`
 -    libc=/lib/$libc
-+if test -L /usr/indexes/lib/libc.so.6; then
-+    libc=`ls -l /usr/indexes/lib/libc.so.6 | awk '{print $NF}'`
-+    libc=/usr/indexes/lib/$libc
++if test -L /system/indexes/lib/libc.so.6; then
++    libc=`ls -l /system/indexes/lib/libc.so.6 | awk '{print $NF}'`
++    libc=/system/indexes/lib/$libc
  fi
  
  # Configure may fail to find lstat() since it's a static/inline
@@ -20,8 +20,8 @@ diff -ru perl-5.8.8-original/hints/linux.sh perl-5.8.8/hints/linux.sh
  # NI-S 2003/08/07
 -if [ -r /usr/lib/libndbm.so  -a  -x /usr/bin/nm ] ; then
 -   if /usr/bin/nm /usr/lib/libndbm.so >/dev/null 2>&1 ; then
-+if [ -r /usr/indexes/lib/libndbm.so  -a  -x /usr/indexes/bin/nm ] ; then
-+   if /usr/indexes/bin/nm /usr/indexes/lib/libndbm.so >/dev/null 2>&1 ; 
++if [ -r /system/indexes/lib/libndbm.so  -a  -x /usr/indexes/bin/nm ] ; then
++   if /usr/indexes/bin/nm /system/indexes/lib/libndbm.so >/dev/null 2>&1 ; 
 +then
      echo 'Your shared -lndbm seems to be a real library.'
     else
@@ -31,6 +31,6 @@ diff -ru perl-5.8.8-original/hints/linux.sh perl-5.8.8/hints/linux.sh
      ;;
  esac
 +
-+#usrinc='/usr/glibc/include'
++#usrinc='/system/resources/glibc/2.4/include'
 +#ldlibpthname=LIBRARY_PATH
-+libpth='/system/libraries /usr/indexes/lib ./'
++libpth='/system/indexes/lib /usr/indexes/lib ./'

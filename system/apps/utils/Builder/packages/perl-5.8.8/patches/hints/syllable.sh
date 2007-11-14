@@ -6,8 +6,8 @@
 ignore_versioned_solibs='y'
 #libc=/system/libraries/libc.so.2
 
-libpth='/system/libraries /usr/glibc/lib /usr/indexes/lib ./'
-#usrinc='/usr/glibc/include'
+libpth='/system/indexes/lib /usr/indexes/lib /system/libraries ./'
+#usrinc='/system/resources/glibc/2.4/include'
 
 #libs=' '
 libswanted='nsl ndbm db dl m c crypt util'
