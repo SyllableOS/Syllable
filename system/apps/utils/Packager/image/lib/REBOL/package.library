@@ -1,6 +1,6 @@
 ORCA [
 	Title:		"Package installation library"
-	Version:	0.4.4
+	Version:	0.4.5
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006,2007 Kaj de Vos
@@ -78,10 +78,12 @@ stage-proto: context [
 	][
 		make self [
 			indexes: to-file any [indexes' indexes]
-			image?: to-logic find indexes "/stage/image/"
-			packages: either image?
-				[packages]
-				[to-file any [packages' packages]]
+			packages: to-string any [packages' packages]
+			if image?: to-logic find indexes "/stage/image/"
+;				ORCA FIXME: FIND works in indexes but only in packages as string?
+;				ORCA TODO: implement find/tail:
+				[packages: at find packages "/stage/image/" 12]
+			packages: to-file packages
 		]
 	]
 
@@ -106,7 +108,7 @@ stage-proto: context [
 				yes
 			][
 				either exists? target [
-					log/warning join "conflict: replacing " [target "!"]
+					log/warning join "conflict: replacing " target
 				][
 ;					TODO: detect a symlink:
 ;					if file? target [log/warning join "replacing broken link " target]
@@ -154,7 +156,7 @@ stage-proto: context [
 	]
 ]
 
-system-stage: stage-proto/new none none
+resources-stage: stage-proto/new none none
 
 package-image: context [
 	name: root: path: this-stage: none
@@ -167,7 +169,7 @@ package-image: context [
 		/stage stage' [object!]  ; "Defaults to the host system."
 		/local where
 	][
-		unless stage [stage': system-stage]
+		unless stage [stage': resources-stage]
 		; Drop any trailing slash:
 		if (last package') = #"/" [package': copy/part package' back tail package']
 
@@ -182,7 +184,7 @@ package-image: context [
 		][
 			make self [
 				name: to-string package'
-				root: system-stage/packages
+				root: resources-stage/packages
 				path: join root package'
 				this-stage: stage'
 			]
@@ -222,7 +224,7 @@ package-image: context [
 		either all [
 			do-subdirs :remove-subdir either stages [targets] [reduce [this-stage]]
 			any [
-				root <> system-stage/packages  ; Don't remove staged manuals from a host system
+				root <> resources-stage/packages  ; Don't remove staged manuals from a host system
 				not exists? manuals: join path "/man"
 				(
 					log/header "Deleting manual pages"
