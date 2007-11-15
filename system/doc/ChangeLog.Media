@@ -1,3 +1,7 @@
+* November 16 2007 Kaj de Vos *
+
+Updated the FFMPEG port to a new Subversion checkout.
+
 * September 4 2007 Arno Klenke *
 
 -Added a sample resolution value to the media format structure
@@ -233,4 +237,3 @@ Added multiple soundcard support to the media server
 * Nov 18 2003, Kristian Van Der Vliet *
 
 Created this ChangeLog for changes specific to the media framework.
-
