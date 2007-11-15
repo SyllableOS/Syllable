@@ -4,18 +4,18 @@ authors
 	Kristian Van Der Vliet
 status				testing
 notes
-	Tested with FFMPEG SVN snapshot May 3, 2007.
+	Tested with FFMPEG SVN snapshot Nov 15, 2007.
 	Can't be build image'd.
-
-inherits			sourceforge
 
 licenses			LGPL GPL
 home				ffmpeg.org
 packages
-	syllable/ffmpeg-8879
+	FFMPEG-11041.source
 ;	ffmpeg-export-snapshot
-;locations			http://ffmpeg.mplayerhq.hu
-archives			svn://svn.mplayerhq.hu/ffmpeg/trunk ffmpeg
+locations
+	http://downloads.syllable.org/sources/other/FFMPEG/
+;	http://ffmpeg.mplayerhq.hu
+archives			svn://svn.mplayerhq.hu/ffmpeg/trunk FFMPEG
 
 build-needs
 	bash <> 2.03
@@ -57,7 +57,7 @@ install-files
 	../ffmpeg--current/libavcodec/allcodecs.h	include/ffmpeg
 
 documentation
-	README Changelog CREDITS MAINTAINERS doc/TODO
+	README COPYING.GPL COPYING.LGPL Changelog CREDITS MAINTAINERS doc/TODO
 ;	doc/*.txt
 build-docs			INSTALL
 internal-docs		doc/soc.txt	doc/optimization.txt
