@@ -38,9 +38,9 @@ modules
 ;	Fool subsequent packages into adding files to CUPS in the image area:
 	bootstrap apps/other/cups--bootstrap
 	system apps/other/cups-1.2.10
-	apps/other/esp-ghostscript-8.15.1
-	system apps/other/cups-1-gutenprint-5.0.0
-	system apps/other/cups-1-splix-1.0.1-1
+	apps/other/esp-ghostscript-8.60
+	system apps/other/cups-1.2.10-gutenprint-5.0.1
+	system apps/other/cups-1.2.10-splix-1.1.0
 	apps/utils/Preferences/Printers
 	apps/utils/PrintQueue
 
