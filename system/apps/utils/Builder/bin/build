@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.7.26
+# Version 0.7.27
 # Copyright (c) 2002-2007 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -1358,13 +1358,6 @@ def fullName port
 	File.basename port[-1, 1] == '/' ? port.chop : port
 end
 
-def commonName port
-	# Extract name without flavour
-	name = /.+(--|-\d+(\.\d+)*\w*(-|\.|$))/.match(p = fullName(port)).to_s
-	name = p if name == ''
-	/(--|-|\.|)$/.match(name).pre_match  # Clean up junk left at the end
-end
-
 def shortName port
 	# Extract name without version
 	/--|-\d|\.|$/.match(fullName(port)).pre_match
@@ -1372,7 +1365,15 @@ end
 
 def version port
 	# Extract version
-	commonName(port)[shortName(port).length + 1 .. -1]
+	/^\d+(\.\d+)*\w*/.match(
+		# Version + flavour:
+		/^(--|-|)/.match(fullName(port)[shortName(port).length .. -1]).post_match
+	).to_s
+end
+
+def commonName port
+	# Name without flavour
+	shortName(port) + ((version = version port) == '' ? '' : '-' + version)
 end
 
 def installName port
@@ -1766,7 +1767,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.7.26',
+	puts 'Syllable Build System 0.7.27',
 		'Copyright (c) 2002-2007 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
