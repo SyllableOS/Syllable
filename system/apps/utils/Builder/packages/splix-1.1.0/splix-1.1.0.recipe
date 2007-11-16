@@ -1,0 +1,12 @@
+authors				Kristian Van Der Vliet
+status				testing
+
+inherits			sourceforge
+
+licenses			GPL
+home				splix.sourceforge.net
+packages			splix/splix-1.1.0
+
+needs				cups
+
+documentation		README COPYING TODO ChangeLog AUTHORS

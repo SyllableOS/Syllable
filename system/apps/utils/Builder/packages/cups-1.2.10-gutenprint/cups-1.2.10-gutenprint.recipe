@@ -1,0 +1,12 @@
+authors
+	Kristian Van Der Vliet
+	Kaj de Vos
+status				testing
+
+inherits			gutenprint-5.0.1
+
+; CUPS & Gutenprint are so tightly intertwined it makes sense to build Gutenprint into CUPS:
+merge-install
+
+; Documentation currently doesn't conflict with CUPS:
+;documentation
