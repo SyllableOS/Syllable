@@ -412,8 +412,8 @@ modules
 	bootstrap apps/other/cups--bootstrap
 	system apps/other/cups-1.2.10
 	apps/other/ghostscript-8.60
-	system apps/other/cups-1.2.10-gutenprint-5.0.1
-	system apps/other/cups-1.2.10-splix-1.1.0
+	system apps/other/cups-1.2.10-gutenprint
+	system apps/other/cups-1.2.10-splix
 ;	apps/utils/Preferences/Printers
 ;	apps/utils/PrintQueue
 
