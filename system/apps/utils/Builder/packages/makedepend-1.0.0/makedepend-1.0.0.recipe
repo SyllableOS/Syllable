@@ -15,7 +15,4 @@ build-needs
 
 patch-config
 
-configure-env		PKG_CONFIG_PATH '/usr/xproto/lib/pkgconfig/'
-
 documentation		COPYING ChangeLog AUTHORS
-

@@ -3,9 +3,7 @@ status				testing
 
 build-dir			.
 
-configure-env
-	CPPFLAGS "$CPPFLAGS -DUTF8"
-	PKG_CONFIG_PATH "$PKG_CONFIG_PATH:/usr/glib/lib/pkgconfig"
+configure-env		CPPFLAGS "$CPPFLAGS -DUTF8"
 configure-options
 ;	--with-glib-static
 ;	--with-termcap

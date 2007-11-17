@@ -10,7 +10,6 @@ build-needs
 ;	For DirectFB:
 	pkg-config
 
-configure-env		PKG_CONFIG_PATH "$PKG_CONFIG_PATH:/usr/directfb/lib/pkgconfig"
 _configure-options
 	--disable-video-fbcon
 	--enable-video-directfb
