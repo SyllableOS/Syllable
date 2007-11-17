@@ -1,0 +1,9 @@
+authors				Kaj de Vos
+status				testing
+notes				Minimal version for in the system
+
+inherits			db-4.5.20
+
+configure-options
+
+links
