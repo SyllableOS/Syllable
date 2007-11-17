@@ -24,7 +24,6 @@ build-needs
 
 configure-options
 	--extra-cflags='-DPIC -fomit-frame-pointer'
-	--extra-libs='-ldl -lm'
 ;	--enable-shared
 ;	--enable-pthreads
 	--disable-debug
@@ -34,9 +33,6 @@ configure-options
 ;	IPv6 code used to fail (on GLibC 2.1.2?):
 ;	--disable-network
 ;	--disable-ipv6
-;	--disable-v4l2
-	--disable-audio-oss
-;	--disable-audio-beos
 	--disable-vhook
 	--enable-gpl
 	--enable-pp
@@ -47,14 +43,13 @@ configure-options
 ;	--enable-libvorbis
 ;	--enable-libtheora
 ;	--enable-libmp3lame
-;	--enable-x264
-;	--enable-xvid
-;	--enable-syllablethreads
+;	--enable-libx264
+;	--enable-libxvid
 
 install-files
 	../_ffmpeg--current/config.h				include/ffmpeg
-	../ffmpeg--current/libavformat/allformats.h	include/ffmpeg
-	../ffmpeg--current/libavcodec/allcodecs.h	include/ffmpeg
+;	../ffmpeg--current/libavformat/allformats.h	include/ffmpeg
+;	../ffmpeg--current/libavcodec/allcodecs.h	include/ffmpeg
 
 documentation
 	README COPYING.GPL COPYING.LGPL Changelog CREDITS MAINTAINERS doc/TODO

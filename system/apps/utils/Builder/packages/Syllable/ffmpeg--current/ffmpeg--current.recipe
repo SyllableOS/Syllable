@@ -1,0 +1,11 @@
+authors				Kaj de Vos
+status				testing
+
+configure-options
+	--extra-cflags='-DPIC -fomit-frame-pointer'
+	--extra-libs='-ldl -lm'
+;	--enable-syllablethreads
+	--disable-debug
+	--disable-vhook
+	--enable-gpl
+	--enable-pp
