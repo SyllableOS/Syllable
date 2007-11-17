@@ -413,6 +413,7 @@ modules
 	system apps/other/cups-1.2.10
 	apps/other/ghostscript-8.60
 	system apps/other/cups-1.2.10-gutenprint
+	stage libraries/jbig2dec-0.9
 	system apps/other/cups-1.2.10-splix
 ;	apps/utils/Preferences/Printers
 ;	apps/utils/PrintQueue

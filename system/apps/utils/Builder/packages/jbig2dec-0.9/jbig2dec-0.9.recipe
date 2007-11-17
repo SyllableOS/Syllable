@@ -1,0 +1,12 @@
+authors				Kaj de Vos
+status				testing
+
+headline			JBIG2 image decoder
+summary
+	jbig2dec is a decoder implementation of the JBIG2 image compression format. JBIG2 is designed for lossy or lossless encoding of 'bilevel' (1-bit monochrome) images at moderately high resolution, and in particular scanned paper documents. In this domain it is very efficient, offering compression ratios on the order of 100:1.
+licenses			GPL-2
+
+home				jbig2dec.sourceforge.net
+locations			http://ghostscript.com/~giles/jbig2/jbig2dec/
+
+documentation		README LICENSE COPYING CHANGES

@@ -7,6 +7,7 @@ licenses			GPL
 home				splix.sourceforge.net
 packages			splix/splix-1.1.0
 
+build-needs			jbig2dec
 needs				cups
 
 documentation		README COPYING TODO ChangeLog AUTHORS
