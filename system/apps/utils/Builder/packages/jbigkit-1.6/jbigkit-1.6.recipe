@@ -1,0 +1,35 @@
+authors				Kaj de Vos
+status				testing
+
+headline			JBIG image decoder
+summary
+	JBIG-KIT implements a highly effective data compression algorithm for bi-level high-resolution images such as fax pages or scanned documents.
+licenses			GPL-2
+
+home				www.cl.cam.ac.uk/~mgk25/jbigkit/
+locations			http://www.cl.cam.ac.uk/~mgk25/download/
+
+test-targets		test
+
+install-tree
+	include
+	lib
+	bin
+	man
+	man/man1
+	man/man5
+install				true
+install-file
+	libjbig/libjbig.a	lib/
+	libjbig/jbig.h		include/
+	pbmtools/jbgtopbm	bin/
+	pbmtools/pbmtojbg	bin/
+	pbmtools/jbgtopbm.1	man/man1/
+	pbmtools/pbmtojbg.1	man/man1/
+	pbmtools/pgm.5		man/man5/
+
+documentation
+	ANNOUNCE INSTALL COPYING CHANGES TODO
+	libjbig/jbig.doc
+	pbmtools/jbgtopbm.txt pbmtools/pbmtojbg.txt pbmtools/pbm.txt pbmtools/pgm.txt
+develop-docs		examples
