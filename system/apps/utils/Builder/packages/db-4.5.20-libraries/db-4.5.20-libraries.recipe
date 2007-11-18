@@ -4,6 +4,7 @@ notes				Minimal version for in the system
 
 inherits			db-4.5.20
 
-configure-options
+; For IPRoute ARPD:
+configure-options	--enable-compat185
 
 links
