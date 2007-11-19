@@ -1,0 +1,50 @@
+authors
+	Kristian Van Der Vliet
+	Kaj de Vos
+status				testing
+
+licenses			GPL+exception LGPL
+home				www.cups.org
+packages			cups-1.3.4-source
+locations
+;	http://www.cups.org/software.php?VERSION=1.3.4&FILE=cups/1.3.4/
+;	Braunschweig:
+	ftp://ftp.rz.tu-bs.de/pub/mirror/ftp.easysw.com/ftp/pub/cups/1.3.4/
+
+recommends
+	zlib	>= 1.1.3
+	libpng	>= 1.0.6
+	libjpeg	>= 6b
+	libtiff	>= 3.4
+	esp-ghostscript
+	openssl
+run-recommends		samba
+
+build-dir			.
+
+configure-options
+;	CUPS is a system component and the configuration should be kept separate from the binaries:
+	--sysconfdir=/system/config
+;	--enable-ssl
+	--without-rcdir
+
+system-prefix-var	DSTROOT
+
+documentation
+	README*.txt LICENSE.* CHANGES.txt CREDITS.txt
+;	doc
+build-docs			INSTALL*.txt
+
+links /usr/indexes/bin/smbspool lib/cups/backend/smb
+
+delete-files
+	share/doc
+;	share/cups/templates
+;	Epson & HP printers are served by GutenPrint, but we'll leave the Dymo label printer driver:
+	lib/cups/filter/rastertoepson
+	lib/cups/filter/rastertohp
+;	Same with the PPDs for those printers; we'll leave the Dymo & Zebra label printers:
+	share/cups/model/*jet*.ppd
+	share/cups/model/epson*.ppd
+	share/cups/model/okidat*.ppd
+	share/cups/model/st*.ppd

@@ -1,0 +1,156 @@
+diff -urN cups-1.3.4_orig/backend/ieee1284.c cups-1.3.4/backend/ieee1284.c
+--- cups-1.3.4_orig/backend/ieee1284.c	2007-10-10 23:50:07.000000000 +0100
++++ cups-1.3.4/backend/ieee1284.c	2007-11-19 13:48:15.000000000 +0000
+@@ -27,16 +27,20 @@
+ 
+ #include "backend-private.h"
+ 
+-#ifdef __linux
++#if defined(__linux) || defined(__SYLLABLE__)
+ #  include <sys/ioctl.h>
+-#  include <linux/lp.h>
++#  ifdef __linux
++#    include <linux/lp.h>
++#    include <linux/parport.h>
++#    include <linux/ppdev.h>
++#  else
++#    include <atheos/lp.h>
++#  endif
+ #  define IOCNR_GET_DEVICE_ID		1
+ #  define LPIOC_GET_DEVICE_ID(len)	_IOC(_IOC_READ, 'P', IOCNR_GET_DEVICE_ID, len)
+-#  include <linux/parport.h>
+-#  include <linux/ppdev.h>
+ #  include <unistd.h>
+ #  include <fcntl.h>
+-#endif /* __linux */
++#endif /* __linux || __SYLLABLE__ */
+ 
+ #ifdef __sun
+ #  ifdef __sparc
+@@ -70,10 +74,10 @@
+ 	manufacturer[256],		/* Manufacturer string */
+ 	serial_number[1024];		/* Serial number string */
+   int	manulen;			/* Length of manufacturer string */
+-#ifdef __linux
++#if defined(__linux) || defined(__SYLLABLE__)
+   int	length;				/* Length of device ID info */
+   int   got_id = 0;
+-#endif /* __linux */
++#endif /* __linux || __SYLLABLE__ */
+ #if defined(__sun) && defined(ECPPIOC_GETDEVID)
+   struct ecpp_device_id did;		/* Device ID buffer */
+ #endif /* __sun && ECPPIOC_GETDEVID */
+@@ -106,7 +110,7 @@
+ 
+     *device_id = '\0';
+ 
+-#ifdef __linux
++#if defined(__linux) || defined(__SYLLABLE__)
+   if (ioctl(fd, LPIOC_GET_DEVICE_ID(device_id_size), device_id))
+   {
+    /*
+@@ -136,6 +140,7 @@
+ 
+       if ((devparportfd = open(devparport, O_RDWR | O_NOCTTY)) != -1)
+       {
++#ifdef __linux
+        /*
+         * Claim the device...
+         */
+@@ -175,7 +180,7 @@
+ 
+ 	  ioctl(devparportfd, PPRELEASE);
+ 	}
+-
++#endif	/* __linux */
+         close(devparportfd);
+       }
+     }
+@@ -218,7 +223,7 @@
+     else
+       printf("backendGetDeviceID: ioctl failed - %s\n", strerror(errno));
+ #  endif /* DEBUG */
+-#endif /* __linux */
++#endif /* __linux || __SYLLABLE__ */
+ 
+ #if defined(__sun) && defined(ECPPIOC_GETDEVID)
+     did.mode = ECPP_CENTRONICS;
+diff -urN cups-1.3.4_orig/backend/parallel.c cups-1.3.4/backend/parallel.c
+--- cups-1.3.4_orig/backend/parallel.c	2007-10-10 23:50:07.000000000 +0100
++++ cups-1.3.4/backend/parallel.c	2007-11-19 13:28:54.000000000 +0000
+@@ -318,7 +318,7 @@
+ 				/* Funky hex numbering used for some devices */
+ #endif /* __hpux || __sgi || __sun */
+ 
+-#ifdef __linux
++#if defined(__linux) || defined(__SYLLABLE__)
+   int	i;			/* Looping var */
+   int	fd;			/* File descriptor */
+   char	device[255],		/* Device filename */
+@@ -332,6 +332,8 @@
+     strcpy(basedevice, "/dev/parallel/");
+   else if (!access("/dev/printers/", 0))
+     strcpy(basedevice, "/dev/printers/");
++  else if(!access("/dev/printer/lp/", 0))
++    strcpy(basedevice, "/dev/printer/lp/");
+   else
+     strcpy(basedevice, "/dev/lp");
+ 
+diff -urN cups-1.3.4_orig/backend/usb-unix.c cups-1.3.4/backend/usb-unix.c
+--- cups-1.3.4_orig/backend/usb-unix.c	2007-09-04 21:35:08.000000000 +0100
++++ cups-1.3.4/backend/usb-unix.c	2007-11-19 13:28:54.000000000 +0000
+@@ -39,7 +39,6 @@
+ static int	open_device(const char *uri, int *use_bc);
+ static void	side_cb(int print_fd, int device_fd, int use_bc);
+ 
+-
+ /*
+  * 'print_device()' - Print a file to a USB device.
+  */
+@@ -250,6 +249,34 @@
+ 
+     close(fd);
+   }
++#elif defined(__SYLLABLE__)
++  int	i;				/* Looping var */
++  int	fd;				/* File descriptor */
++  char	device[255],			/* Device filename */
++	device_id[1024],		/* Device ID string */
++	device_uri[1024],		/* Device URI string */
++	make_model[1024];		/* Make and model */
++
++ /*
++  * Try to open each USB device...
++  */
++
++  for (i = 0; i < 8; i ++)
++  {
++    sprintf(device, "/dev/printer/usb/%d", i);
++
++    if ((fd = open(device, O_RDWR | O_EXCL)) >= 0)
++    {
++      if (!backendGetDeviceID(fd, device_id, sizeof(device_id),
++                              make_model, sizeof(make_model),
++			      "usb", device_uri, sizeof(device_uri)))
++	printf("direct %s \"%s\" \"%s USB #%d\" \"%s\"\n", device_uri,
++	       make_model, make_model, i + 1, device_id);
++
++      close(fd);
++    }
++  }
++
+ #elif defined(__sgi)
+ #elif defined(__sun) && defined(ECPPIOC_GETDEVID)
+   int	i;			/* Looping var */
+diff -urN cups-1.3.4_orig/backend/usb.c cups-1.3.4/backend/usb.c
+--- cups-1.3.4_orig/backend/usb.c	2007-09-04 21:35:08.000000000 +0100
++++ cups-1.3.4/backend/usb.c	2007-11-19 13:28:54.000000000 +0000
+@@ -64,7 +64,7 @@
+ 
+ #ifdef __APPLE__
+ #  include "usb-darwin.c"
+-#elif defined(__linux) || defined(__sun) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
++#elif defined(__linux) || defined(__sun) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__) || defined(__SYLLABLE__)
+ #  include "usb-unix.c"
+ #else
+ /*
