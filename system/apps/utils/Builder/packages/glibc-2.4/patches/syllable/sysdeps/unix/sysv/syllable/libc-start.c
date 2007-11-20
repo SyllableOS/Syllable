@@ -51,8 +51,10 @@ static void check_standard_fds (void);
 int __libc_argc;
 char **__libc_argv;
 
+#ifdef SHARED
 /* This is usually part of the rtld but we'll hack it into existence here */
 int __libc_enable_secure;
+#endif
 
 int
 __libc_start_main (int (*main) (int, char **, char **), char** argv,
