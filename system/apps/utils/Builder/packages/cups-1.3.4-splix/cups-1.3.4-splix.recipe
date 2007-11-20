@@ -6,5 +6,5 @@ inherits			splix-1.1.0
 ; SpliX is a CUPS driver so it makes sense to build it into CUPS:
 merge-install
 
-; Don't overwrite CUPS/Gutenprint documentation:
-documentation
+; Documentation currently doesn't conflict with CUPS:
+;documentation
