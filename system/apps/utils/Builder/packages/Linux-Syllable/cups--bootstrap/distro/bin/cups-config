@@ -4,46 +4,38 @@
 # 
 #   CUPS configuration utility.
 #
+#   Copyright 2007 by Apple Inc.
 #   Copyright 2001-2006 by Easy Software Products, all rights reserved.
 #
 #   These coded instructions, statements, and computer programs are the
-#   property of Easy Software Products and are protected by Federal
-#   copyright law.  Distribution and use rights are outlined in the file
-#   "LICENSE.txt" which should have been included with this file.  If this
-#   file is missing or damaged please contact Easy Software Products
-#   at:
-#
-#       Attn: CUPS Licensing Information
-#       Easy Software Products
-#       44141 Airport View Drive, Suite 204
-#       Hollywood, Maryland 20636 USA
-#
-#       Voice: (301) 373-9600
-#       EMail: cups-info@cups.org
-#         WWW: http://www.cups.org
+#   property of Apple Inc. and are protected by Federal copyright
+#   law.  Distribution and use rights are outlined in the file "LICENSE.txt"
+#   which should have been included with this file.  If this file is
+#   file is missing or damaged, see the license at "http://www.cups.org/".
 #
 
-VERSION="1.2.1"
-APIVERSION="1.2"
+VERSION="1.3.4"
+APIVERSION="1.3"
 
-prefix=$IMAGE/system/resources/cups/1.2.10
-exec_prefix=$IMAGE/system/resources/cups/1.2.10
-bindir=$IMAGE/system/resources/cups/1.2.10/bin
+prefix=$IMAGE/system/resources/cups/1.3.4
+exec_prefix=$IMAGE/system/resources/cups/1.3.4
+bindir=$IMAGE/system/resources/cups/1.3.4/bin
 includedir=${prefix}/include
-libdir=$IMAGE/system/resources/cups/1.2.10/lib
-imagelibdir=$IMAGE/system/resources/cups/1.2.10/lib
-datadir=$IMAGE/system/resources/cups/1.2.10/share
+libdir=${exec_prefix}/lib
+imagelibdir=${exec_prefix}/lib
+datarootdir=$IMAGE/system/resources/cups/1.3.4/share
+datadir=$IMAGE/system/resources/cups/1.3.4/share
 sysconfdir=$IMAGE/system/config
-cups_datadir=$IMAGE/system/resources/cups/1.2.10/share/cups
-cups_serverbin=$IMAGE/system/resources/cups/1.2.10/lib/cups
+cups_datadir=$IMAGE/system/resources/cups/1.3.4/share/cups
+cups_serverbin=$IMAGE/system/resources/cups/1.3.4/lib/cups
 cups_serverroot=$IMAGE/system/config/cups
 INSTALLSTATIC=
 
 # flags for C++ compiler:
 CFLAGS=""
-LDFLAGS=""
-LIBS=" -lpthread -lcrypt "
-IMGLIBS=" -ljpeg -lpng -lm -lz"
+LDFLAGS="-Wl,-rpath,${exec_prefix}/lib"
+LIBS="  -lz -lpthread -lm -lcrypt "
+IMGLIBS="-ltiff -ljpeg -lpng"
 
 # Check for local invocation...
 selfdir=`dirname $0`
@@ -53,7 +45,7 @@ if test -f "$selfdir/cups/cups.h"; then
     LDFLAGS="-L$selfdir/cups -L$selfdir/filter $LDFLAGS"
     libdir="$selfdir/cups"
     imagelibdir="$selfdir/filter"
-    if test ! -e "$selfdir/cups/raster.h"; then
+    if test ! -f "$selfdir/cups/raster.h"; then
         ln -s ../filter/raster.h "$selfdir/cups"
     fi
 else
@@ -115,13 +107,13 @@ while test $# -gt 0; do
  	        if test $image = no; then
  	            echo -lcups $LIBS
  		else
- 	            echo -lcupsimage $IMGLIBS -lcups $LIBS
+ 	            echo -lcupsimage -lcups $IMGLIBS $LIBS
  		fi
 	    else
 	        if test $image = no; then
 	            echo $libdir/libcups.a $LIBS
 		else
-	            echo $imagelibdir/libcupsimage.a $IMGLIBS $libdir/libcups.a $LIBS
+	            echo $imagelibdir/libcupsimage.a $libdir/libcups.a $IMGLIBS $LIBS
 		fi
 	    fi
 	    ;;
