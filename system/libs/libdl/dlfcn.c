@@ -33,12 +33,13 @@ static inline int __dl_get_errno( void )
 
 void *dlopen(const char *file, int mode)
 {
-	int *dl, kernmode = 0;
+	int dl, kernmode = 0;
+	void *ret = NULL;
 
 	if( file == 0 )
 	{
 		__dl_set_errno( _DL_ENOGLOBAL );
-		return( NULL );
+		return( ret );
 	}
 
 	/* We can ignore the RTLD_LAZY and RTLD_NOW flags.  Syllable always does the
@@ -54,13 +55,13 @@ void *dlopen(const char *file, int mode)
 	if( mode & RTLD_LOCAL )
 		kernmode |= IM_LIBRARY_SPACE;
 
-	dl = (int*)malloc( sizeof( int ) );
-	if( dl != NULL )
-		*dl = load_library( file, kernmode );
+	dl = load_library( file, kernmode );
+	if( dl >= 0 )
+		ret = (void*)dl;
 	else
-		__dl_set_errno( _DL_ENOMEM );
+		__dl_set_errno( _DL_EBADHANDLE );
 
-	return( (void*)dl );
+	return( ret );
 }
 
 void *dlsym(void *handle, const char *name)
