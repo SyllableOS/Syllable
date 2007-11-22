@@ -8,6 +8,7 @@ modules
 ;	system/libraries/s-lang-2.1.1
 ;	shell/man-1.5m2
 	productivity/publishing/texinfo-4.8a
+	productivity/publishing/groff-1.19.2
 	shell/which-2.16
 	security/gnupg-1.4.5
 ;	file/cdrtools-2.01
