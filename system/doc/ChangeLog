@@ -1,3 +1,9 @@
+* November 22, 2007, Kristian Van Der Vliet *
+
+Fixed dlopen() so that it correctly returns NULL if the library could not be
+opened. I've also done a quick cleanup and removed an unnescary malloc() that
+was also a memory leak.
+
 * November 12, 2007, Kaj de Vos *
 
 Introduced an extra symlinked package pool for system resources.
