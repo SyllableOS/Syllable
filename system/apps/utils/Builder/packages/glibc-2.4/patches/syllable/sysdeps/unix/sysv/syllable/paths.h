@@ -33,7 +33,7 @@
 #define	_PATHS_H_
 
 /* Default search path. */
-#define	_PATH_DEFPATH	"/usr/bin:/bin:/usr/indexes/bin"
+#define	_PATH_DEFPATH	"/usr/indexes/bin:/usr/bin:/bin:/system/indexes/bin"
 /* All standard utilities path. */
 #define	_PATH_STDPATH \
 	"/usr/bin:/bin:/usr/sbin:/sbin"
