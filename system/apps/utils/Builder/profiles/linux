@@ -260,7 +260,7 @@ modules
 	linux/kqemu-1.3.0pre11
 	linux/linux--cleanup
 
-	system libs/glibc-2.4-linux-image
+	system libs/glibc--system
 	system libs/zlib-1.2.3
 ;	Merges with the dynamic version:
 	system libs/zlib-1.2.3-static
