@@ -1,0 +1,19 @@
+authors
+	Kristian Van Der Vliet
+	Kaj de Vos
+status				testing
+
+needs				Syllable >= 0.6.2
+
+;patch				autoconf
+
+configure-options
+	--enable-hacker-mode
+	--enable-add-ons=syllable
+;	--disable-profile
+;	--with-headers=/usr/include
+	--without-cvs
+;	Prevent linking against the host:
+;	--without-gd
+;	--with-cpu=
+;	--enable-bounded

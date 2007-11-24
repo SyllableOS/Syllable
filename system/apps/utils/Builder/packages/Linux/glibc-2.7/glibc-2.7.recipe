@@ -1,0 +1,33 @@
+authors				Kaj de Vos
+status				testing
+warnings
+	Needs super-user access to install correctly.
+	Will mess with /system/resources/glibc/2.7/etc/ld.so.conf and /var/backups/ in the running system!
+
+configure-options
+	--enable-kernel=2.6.0
+;	Kernel headers:
+;	--with-headers=/usr/include
+	--enable-add-ons
+	--disable-profile
+;	--with-binutils=/usr/bin
+;	--without-cvs
+;	Prevent linking against the host:
+;	--without-gd
+;	--without-selinux
+;	Path of pt_chown:
+;	--lib-exec-dir=/usr/lib/glibc
+;	--lib-exec-dir=/system/resources/glibc/2.7/lib/glibc
+
+;super-install
+
+links
+	lib/ld-linux.so.2 /lib/
+;	Currently doesn't link to the system but to /usr/glibc/:
+;	/system/indexes/lib/ld-linux.so.2 /lib/
+;	For GCC. Sigh:
+	include/limits.h /usr/include/
+;	For PERL. Double sigh:
+	include/errno.h /usr/include/
+;	For SysVInit:
+	lib/libcrypt.a /usr/lib/
