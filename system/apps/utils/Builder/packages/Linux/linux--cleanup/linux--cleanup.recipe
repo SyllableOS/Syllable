@@ -9,7 +9,7 @@ packages			linux-2.6.22.1
 merge-install
 
 make				true
-install				true
+install				sudo rm /lib/modules/2.6.22.1-Syllable/build
 
 links
 ;	Repair damage from Linux-Fusion:

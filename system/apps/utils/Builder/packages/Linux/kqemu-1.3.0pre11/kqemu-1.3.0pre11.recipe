@@ -1,6 +1,6 @@
 authors				Kaj de Vos
 status				testing
-warnings			Needs built kernel source.
+warnings			Needs built kernel source on the built host!
 
 headline			QEMU Accelerator driver
 description
