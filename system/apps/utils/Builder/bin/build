@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.7.29
+# Version 0.7.30
 # Copyright (c) 2002-2007 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -751,11 +751,9 @@ def installModule staging, target
 								begin
 									@log.header 'Cleaning up system libraries'
 
-									for libs in ['*.so', '*.so.*']
-#										break unless action superAccess + "mv #{File.join(root, 'lib', libs)} " +
-#											File.join(originalStaging ? @systemRoot : '/',
-#												'system/libraries/'
-#											)
+									for file in Dir['*']
+										break unless ['lib', 'documentation'].include?(file) or
+											action superAccess + 'rm --recursive --force ' + file
 									end
 								end
 							then
@@ -1770,7 +1768,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.7.29',
+	puts 'Syllable Build System 0.7.30',
 		'Copyright (c) 2002-2007 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
