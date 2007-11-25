@@ -281,14 +281,14 @@ modules
 ;	Currently requires GCC 3:
 ;	sys/boot/grub-0.97
 
-	apps/gnu/bash-3.2
-	apps/gnu/coreutils-6.4
+	system apps/gnu/bash-3.2
+	system apps/gnu/coreutils-6.4
 	apps/gnu/grep-2.5.1a
 	apps/gnu/sed-4.1.5
-	apps/other/unzip-5.52
+	system apps/other/unzip-5.52
 
 	apps/gnu/bzip2-1.0.4
-	apps/other/orca--current
+	system apps/other/orca--current
 
 ;	freetype-config needs to be in the path:
 	bootstrap libraries/freetype-2.3.4
@@ -351,7 +351,8 @@ modules
 	apps/desktop/dock_plugins/mixer
 	apps/desktop/file_browser
 
-	apps/utils/Packager
+	apps/utils/man2html
+	system apps/utils/Packager
 	apps/utils/Preferences/Appearance
 	apps/utils/Preferences/DateTime
 	apps/utils/Preferences/Desktop
@@ -369,6 +370,5 @@ modules
 	apps/utils/debug
 	apps/utils/dhcpc
 	apps/utils/fsutils
-	apps/utils/man2html
 	apps/utils/nettools
 	apps/utils/systools

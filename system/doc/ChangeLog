@@ -1,3 +1,10 @@
+* November 25, 2007, Kaj de Vos *
+
+Moved essential packages to the new system area, to protect them from regular software
+maintenance activities in /usr/. The idea is that regular user actions will not leave
+the system unbootable, and a protected system environment will keep allowing basic
+operation of the system to repair any damage.
+
 * November 22, 2007, Kristian Van Der Vliet *
 
 Fixed dlopen() so that it correctly returns NULL if the library could not be

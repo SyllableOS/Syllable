@@ -262,8 +262,6 @@ modules
 
 	system libs/glibc--system
 	system libs/zlib-1.2.3
-;	Merges with the dynamic version:
-	system libs/zlib-1.2.3-static
 
 ;	stage libraries/gettext-0.16.1
 ;	stage libraries/flex-2.5.33
@@ -279,26 +277,27 @@ modules
 ;	GrUB can use Curses:
 	sys/boot/grub-0.97
 
-	apps/gnu/coreutils-6.4-linux
-	apps/gnu/bash-3.2
+	system apps/gnu/coreutils-6.4-linux
+	system apps/gnu/bash-3.2
 	apps/gnu/grep-2.5.1a
 	apps/gnu/sed-4.1.5
-	apps/other/unzip-5.52
+	system apps/other/unzip-5.52
 
 	apps/gnu/bzip2-1.0.4
-	apps/other/orca--current
+	system apps/other/orca--current
 
-	linux/sysvinit-2.86
-	linux/lfs-bootscripts-6.3
+	system linux/sysvinit-2.86
+	system linux/lfs-bootscripts-6.3
 	bootstrap linux/udev--bootstrap
-	linux/udev-113
+	system linux/udev-113
 ;	Needs udevinfo:
-	linux/udev-config-6.3
-	linux/module-init-tools-3.2.2
+	system linux/udev-config-6.3
+	stage libs/zlib-1.2.3-static
+	system linux/module-init-tools-3.2.2
 ;	Incompatible with host libdl from different GLibC!
 	system linux/e2fsprogs-1.40.2
 ;	Uses headers from /usr/include/!
-	linux/util-linux-2.12r
+	system linux/util-linux-2.12r
 	linux/sysklogd-1.4.1
 	system linux/shadow-4.0.18.1
 ;	stage libraries/db-4.5.20
@@ -361,7 +360,8 @@ modules
 ;	apps/desktop/dock_plugins/mixer
 ;	apps/desktop/file_browser
 
-	apps/utils/Packager
+	apps/utils/man2html
+	system apps/utils/Packager
 ;	apps/utils/Preferences/Appearance
 ;	apps/utils/Preferences/DateTime
 ;	apps/utils/Preferences/Desktop
@@ -379,7 +379,6 @@ modules
 ;	apps/utils/debug
 ;	apps/utils/dhcpc
 ;	apps/utils/fsutils
-	apps/utils/man2html
 ;	apps/utils/nettools
 ;	apps/utils/systools
 
@@ -396,7 +395,7 @@ modules
 
 	linux/blfs-bootscripts-20070822
 	linux/procps-3.2.7
-	linux/sudo-1.6.8p12
+	apps/other/sudo-1.6.8p12
 	apps/other/mktemp-1.5
 
 ;	Needs ranlib symlink in /usr/bin/!
