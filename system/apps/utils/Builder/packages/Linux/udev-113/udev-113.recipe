@@ -27,7 +27,7 @@ install				sudo make DESTDIR=$IMAGE EXTRAS="`echo ../udev-113/extras/*/`" instal
 
 post-install
 	cp ../udev-113/etc/udev/rules.d/[0-9]* $IMAGE/etc/udev/rules.d/
-;	install -m644 docs/writing_udev_rules/index.html $IMAGE/usr/udev/share/doc/udev-113/index.html
+;	install -m644 docs/writing_udev_rules/index.html $IMAGE/system/resources/udev/113/share/doc/udev-113/index.html
 ;install-files		../udev-113/etc/udev/rules.d/[0-9]* /etc/udev/rules.d/
 
 documentation

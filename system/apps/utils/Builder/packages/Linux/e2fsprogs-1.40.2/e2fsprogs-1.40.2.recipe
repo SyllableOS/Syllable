@@ -15,7 +15,8 @@ configure-options
 	--enable-elf-shlibs
 	--disable-evms
 
-install-tree			etc
+system-prefix-var	DESTDIR
+install-tree		etc
 install-targets
 	install
 ;	Static libraries and headers:
