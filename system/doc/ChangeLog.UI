@@ -1,3 +1,7 @@
+* November 25, 2007, Kaj de Vos *
+
+Added Blue decorator by John Aspras, with modifications by Arno.
+
 * September 26 2007, Rick Caudill *
 
 Added documentation to server.cpp and also added an event(os/System/PrintKeyWasHit) when 'Print Screen' key is hit

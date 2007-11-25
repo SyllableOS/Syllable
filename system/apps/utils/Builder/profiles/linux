@@ -434,6 +434,7 @@ modules
 
 ;	sys/appserver/appserver/drivers/decorators/amiga
 ;	sys/appserver/appserver/drivers/decorators/beish
+;	sys/appserver/appserver/drivers/decorators/Blue
 ;	sys/appserver/appserver/drivers/decorators/drow
 ;	sys/appserver/appserver/drivers/decorators/mulvane
 ;	sys/appserver/appserver/drivers/decorators/next
