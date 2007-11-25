@@ -385,7 +385,7 @@ modules
 
 ;	Syllable Linux base distribution, in addition to core system
 
-	other/fonts/liberation-fonts-2
+	other/fonts/liberation-fonts-3
 	other/fonts/luxi-fonts
 ;	For AClock:
 ;	The first one will produce two harmless unpacking errors:
