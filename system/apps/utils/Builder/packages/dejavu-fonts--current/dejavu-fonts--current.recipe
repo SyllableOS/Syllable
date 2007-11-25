@@ -8,7 +8,7 @@ description
 licenses			other PD
 
 home				dejavu.sourceforge.net
-packages			dejavu/dejavu-ttf-2.17
+packages			dejavu/dejavu-ttf-2.21
 
 make				true
 
