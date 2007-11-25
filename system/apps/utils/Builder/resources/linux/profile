@@ -40,3 +40,18 @@ alias m=less
 #export LANG=<ll>_<CC>.<charmap><@modifiers>
 #export LANG=en_GB.ISO-8859-1
 #export LANG=nl_NL.UTF-8@euro
+
+# Early init scripts run before user login and can include environment variables.
+
+for pkg_init in `ls /system/indexes/early-init/`
+do
+	source /system/indexes/early-init/$pkg_init
+done
+
+for pkg_init in `ls /usr/indexes/early-init/`
+do
+	source /usr/indexes/early-init/$pkg_init
+done
+
+# Do early user initialisation
+source /system/user-early-init.sh

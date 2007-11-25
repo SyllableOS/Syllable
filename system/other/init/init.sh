@@ -31,24 +31,6 @@ then
 	rm -r $TEMP/* > /dev/null 2>&1 &
 fi
 
-# Packages that require initalisation can include init and early-init directories,
-# which should contain the init script(s). E.g. Apache would have init/apache which
-# would call apachectl, OpenSSH would have init/sshd which would start
-# sshd etc.
-# The package manager will collect all of these scripts together in
-# /usr/indexes/early-init/ and /usr/indexes/init/; all we need to do is run
-# each script in turn.
-
-# Early init scripts run before user login and can include environment variables.
-
-for pkg_init in `ls /usr/indexes/early-init/`
-do
-	source /usr/indexes/early-init/$pkg_init
-done
-
-# Do early user initialisation
-source /system/user-early-init.sh
-
 # If the graphical login isn't available, failsafe to a standalone server and
 # abort further initialisation
 if [ ! -e /bin/dlogin ]
@@ -79,7 +61,20 @@ then
 	/usr/indexes/libexec/inetd &
 fi
 
+# Packages that require initalisation can include init and early-init directories,
+# which should contain the init script(s). E.g. Apache would have init/apache which
+# would call apachectl, OpenSSH would have init/sshd which would start
+# sshd etc.
+# The package manager will collect all of these scripts together in
+# /usr/indexes/early-init/ and /usr/indexes/init/; all we need to do is run
+# each script in turn.
+
 # Run the late init scripts
+
+for pkg_init in `ls /system/indexes/init/`
+do
+	source /system/indexes/init/$pkg_init
+done
 
 for pkg_init in `ls /usr/indexes/init/`
 do

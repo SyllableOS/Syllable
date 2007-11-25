@@ -1,3 +1,7 @@
+* November 26, 2007, Kaj de Vos *
+
+Fixed execution of the early init scripts, and thereby initialisation of the terminal.
+
 * November 25, 2007, Kaj de Vos *
 
 Moved essential packages to the new system area, to protect them from regular software
