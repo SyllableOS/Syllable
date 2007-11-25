@@ -1,6 +1,10 @@
 authors				Kaj de Vos
 
+headline			Free UCS outline fonts
+description
+	This project aims to provide a set of free outline (PostScript Type0, TrueType, OpenType...) fonts covering the ISO 10646/Unicode UCS (Universal Character Set).
 licenses			GPL-2+
+
 home				www.nongnu.org/freefont/
 packages			freefont-ttf-20060126
 locations			http://download.savannah.gnu.org/releases/freefont/
