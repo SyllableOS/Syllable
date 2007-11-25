@@ -16,8 +16,11 @@ _build-needs
 	qt
 install-needs		module-init-tools
 
-; For stupid kernel modules:
-patch				sudo ln -sf $PWD /lib/modules/2.6.22.1-Syllable/build
+; For external kernel modules:
+patch
+	SOURCE=$PWD
+	cd /lib/modules/2.6.22.1-Syllable
+	sudo ln -sf $SOURCE build
 
 ; Headers should already be there:
 merge-install
@@ -60,3 +63,7 @@ _links
 ;pre-register		mkinitrd /boot/initrd-2.6.22.1.img 2.6.22.1
 
 ;move-files			Documentation/* /usr/share/doc/linux-2.6.22.1/
+delete-files
+;	Symlinks to the kernel source on the build host:
+	lib/modules/2.6.22.1-Syllable/build
+	lib/modules/2.6.22.1-Syllable/source

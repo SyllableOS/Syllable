@@ -11,15 +11,12 @@ merge-install
 make				true
 install				sudo rm /lib/modules/2.6.22.1-Syllable/build
 
-links
+_links
 ;	Repair damage from Linux-Fusion:
 ;	lib/modules					/lib/
 	../usr/linux/lib/modules	/lib/
 
-delete-files
-;	Symlinks to the kernel source on the build host:
-	lib/modules/2.6.22.1-Syllable/build
-	lib/modules/2.6.22.1-Syllable/source
+_delete-files
 ;	Source is not there any more because it's moved to linux--cleanup, so it did not get unregistered:
 	/usr/indexes/lib/modules/2.6.22.1-Syllable/build
 	/usr/indexes/lib/modules/2.6.22.1-Syllable/source
