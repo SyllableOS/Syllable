@@ -1,0 +1,25 @@
+authors				Kaj de Vos
+status				testing
+
+;inherits			sourceforge
+
+licenses			GPL other
+home				www.freetype.org
+;packages			freetype/freetype-2.3.5
+locations			http://download.savannah.gnu.org/releases/freetype/
+
+;build-recommends	python
+
+_patch
+;	Enable patented TrueType font hinting (native bytecode interpreter):
+	sed -i -r -e 's:.*(#.*BYTE.*) .*:\1:' include/freetype/config/ftoption.h
+;	Enable patented LCD-optimized rendering (subpixel hinting):
+;	sed -i -r -e 's:.*(#.*SUBPIX.*) .*:\1:' include/freetype/config/ftoption.h
+
+; Needs Python:
+;make-targets		refdoc
+
+documentation
+	README ChangeLog
+	docs
+internal-docs		README.CVS
