@@ -31,5 +31,5 @@ internal-docs		SUBMITTING-PATCHES SHLIBS
 
 ; Linked into mount, which is called before the loader path is set:
 links
-	lib/libblkid.so.1	/system/resources/glibc/2.4/lib/
-	lib/libuuid.so.1	/system/resources/glibc/2.4/lib/
+	lib/libblkid.so.1	/system/resources/glibc/2.7/lib/
+	lib/libuuid.so.1	/system/resources/glibc/2.7/lib/
