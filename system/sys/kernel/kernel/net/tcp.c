@@ -321,7 +321,6 @@ static int tcp_connect( Socket_s *psSocket, const struct sockaddr *psAddr, int n
 		goto error;
 	}
 
-//    psTCPCtrl->tcb_smss = 536;                        /* RFC 1122             */
 	psTCPCtrl->tcb_smss = 1460;	/* RFC 1122             */
 
 	psRoute = ip_find_route( psInAddr->sin_addr );
@@ -332,6 +331,9 @@ static int tcp_connect( Socket_s *psSocket, const struct sockaddr *psAddr, int n
 
 		format_ipaddress( zBuf, psInAddr->sin_addr );
 		printk( "tcp_connect() could not find route to %s\n", zBuf );
+
+		nError = -ENETUNREACH;
+
 		goto error;
 	}
 	IP_COPYADDR( psTCPCtrl->tcb_lip, psRoute->rt_psInterface->ni_anIpAddr );
