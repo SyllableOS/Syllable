@@ -1,5 +1,10 @@
 * November 26, 2007, Kristian Van Der Vliet *
 
+Set the correct access mode flags in the associated file descriptor for
+new sockets. The mask is now set to O_RDWR instead of 0_RDWR | 0777
+
+* November 26, 2007, Kristian Van Der Vliet *
+
 get_named_inode() will now return an error if the name is an empty string.
 This at least fixes on problem where access( "", F_OK ) would not return an
 error.
