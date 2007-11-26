@@ -583,6 +583,13 @@ int get_named_inode( Inode_s *psRoot, const char *pzName, Inode_s **ppsResInode,
 
 	*ppsResInode = NULL;
 
+	/* Check for an empty name */
+	if ( pzName[0] == '\0' )
+	{
+		nError = -ENOENT;
+		goto error1;
+	}
+
 	nError = lookup_parent_inode( psRoot, pzName, &pzName, &nLen, &psParent );
 
 	if ( 0 != nError )
