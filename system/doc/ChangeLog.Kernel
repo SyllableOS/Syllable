@@ -1,3 +1,9 @@
+* November 26, 2007, Kristian Van Der Vliet *
+
+get_named_inode() will now return an error if the name is an empty string.
+This at least fixes on problem where access( "", F_OK ) would not return an
+error.
+
 * October 20, 2007, Kristian Van Der Vliet *
 
 Patches from Anthony Morphett:
