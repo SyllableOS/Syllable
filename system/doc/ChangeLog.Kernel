@@ -1,5 +1,9 @@
 * November 26, 2007, Kristian Van Der Vliet *
 
+Implemented setsockopt() SO_SNDBUF & SO_RCVBUF for TCP sockets.
+
+* November 26, 2007, Kristian Van Der Vliet *
+
 Set the correct access mode flags in the associated file descriptor for
 new sockets. The mask is now set to O_RDWR instead of 0_RDWR | 0777
 
