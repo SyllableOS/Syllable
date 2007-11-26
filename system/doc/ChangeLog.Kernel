@@ -1,6 +1,8 @@
 * November 26, 2007, Kristian Van Der Vliet *
 
-Implemented setsockopt() SO_SNDBUF & SO_RCVBUF for TCP sockets.
+o Implemented setsockopt() SO_SNDBUF & SO_RCVBUF for TCP sockets.
+o Return ENETUNREACH from tcp_connect() if there is no route to the
+  requested host.
 
 * November 26, 2007, Kristian Van Der Vliet *
 
