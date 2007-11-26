@@ -1316,10 +1316,84 @@ static int tcp_setsockopt( bool bFromKernel, Socket_s *psSocket, int nProtocol, 
 				}
 
 				case SO_SNDBUF:
+				{
+					int nNewSize;
+
+					nError = 0;
+
+					if( bFromKernel )
+						memcpy( &nNewSize, pOptVal, sizeof( int ) );
+					else
+						memcpy_from_user( &nNewSize, pOptVal, sizeof( int ) );
+
+					LOCK( psTCPCtrl->tcb_hMutex );
+
+					if( psTCPCtrl->tcb_nSndBufSize != nNewSize )
+					{
+						/* Allocate a new buffer and copy the contents of the old buffer */
+						char *pOldBuf, *pNewBuf;
+
+						pNewBuf = kmalloc( nNewSize, MEMF_KERNEL | MEMF_CLEAR );
+						if( NULL == pNewBuf )
+						{
+							printk( "could not allocate %d bytes for socket buffer.\n", nNewSize );
+							nError = -ENOMEM;
+						}
+						else
+						{
+							memcpy( pNewBuf, psTCPCtrl->tcb_sndbuf, psTCPCtrl->tcb_nSndBufSize );
+
+							/* Swap the buffers */
+							pOldBuf = psTCPCtrl->tcb_sndbuf;
+							psTCPCtrl->tcb_sndbuf = pNewBuf;
+							psTCPCtrl->tcb_nSndBufSize = nNewSize;
+							kfree( pOldBuf );
+						}
+					}
+
+					UNLOCK( psTCPCtrl->tcb_hMutex );
+
+					break;
+				}
+
 				case SO_RCVBUF:
 				{
-					/* XXXKV: Implement me */
+					int nNewSize;
+
 					nError = 0;
+
+					if( bFromKernel )
+						memcpy( &nNewSize, pOptVal, sizeof( int ) );
+					else
+						memcpy_from_user( &nNewSize, pOptVal, sizeof( int ) );
+
+					LOCK( psTCPCtrl->tcb_hMutex );
+
+					if( psTCPCtrl->tcb_rbsize != nNewSize )
+					{
+						/* Allocate a new buffer and copy the contents of the old buffer */
+						char *pOldBuf, *pNewBuf;
+
+						pNewBuf = kmalloc( nNewSize, MEMF_KERNEL | MEMF_CLEAR );
+						if( NULL == pNewBuf )
+						{
+							printk( "could not allocate %d bytes for socket buffer.\n", nNewSize );
+							nError = -ENOMEM;
+						}
+						else
+						{
+							memcpy( pNewBuf, psTCPCtrl->tcb_rcvbuf, psTCPCtrl->tcb_rbsize );
+
+							/* Swap the buffers */
+							pOldBuf = psTCPCtrl->tcb_rcvbuf;
+							psTCPCtrl->tcb_rcvbuf = pNewBuf;
+							psTCPCtrl->tcb_rbsize = nNewSize;
+							kfree( pOldBuf );
+						}
+					}
+
+					UNLOCK( psTCPCtrl->tcb_hMutex );
+
 					break;
 				}
 
