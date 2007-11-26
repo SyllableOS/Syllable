@@ -160,7 +160,7 @@ int create_socket( bool bKernel, int nFamily, int nType, int nProtocol, bool bIn
 		kfree( psSocket );
 		return ( -ENOMEM );
 	}
-	psFile->f_nMode = O_RDWR | 0777;
+	psFile->f_nMode = O_RDWR;
 	nError = new_fd( bKernel, -1, 0, psFile, false );
 	if ( nError < 0 )
 	{
