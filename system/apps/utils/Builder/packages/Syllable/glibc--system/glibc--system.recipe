@@ -6,12 +6,12 @@ notes
 inherits			glibc-2.7
 
 links
-	lib/libc.so		/system/libraries
-	lib/libc.so.2	/system/libraries
-	lib/libc-2.7.so	/system/libraries
-	lib/libm.so		/system/libraries
-	lib/libm.so.2	/system/libraries
-	lib/libm-2.7.so	/system/libraries
+	lib/libc.so		/system/libraries/
+	lib/libc.so.2	/system/libraries/
+	lib/libc-2.7.so	/system/libraries/
+	lib/libm.so		/system/libraries/
+	lib/libm.so.2	/system/libraries/
+	lib/libm-2.7.so	/system/libraries/
 
 pre-register
 	echo 'OUTPUT_FORMAT(elf32-i386)' > lib/libc.so
