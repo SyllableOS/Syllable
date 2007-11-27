@@ -18,29 +18,29 @@
 
 	title			Syllable Server
 	root			(hd0,0)
-	kernel			/usr/linux/kernel-2.6.22.1 root=/dev/hda1 ro
+	kernel			/system/resources/linux/2.6.22.1/kernel root=/dev/hda1 ro
 
 	title			Syllable Server, VESA, 1024x768 x 65536 colours (VMware)
 	root			(hd0,0)
-	kernel			/usr/linux/kernel-2.6.22.1 root=/dev/hda1 ro video=vesa:ywrap,mtrr vga=791
+	kernel			/system/resources/linux/2.6.22.1/kernel root=/dev/hda1 ro video=vesa:ywrap,mtrr vga=791
 
 	title			Syllable Server, 800x600 x 256 colours (QEmu)
 	root			(hd0,0)
-	kernel			/usr/linux/kernel-2.6.22.1 root=/dev/hda1 ro vga=771
+	kernel			/system/resources/linux/2.6.22.1/kernel root=/dev/hda1 ro vga=771
 
 	title			Syllable Server, 800x600 x 32-bits colour (VirtualBox)
 	root			(hd0,0)
-	kernel			/usr/linux/kernel-2.6.22.1 root=/dev/hda1 ro vga=789
+	kernel			/system/resources/linux/2.6.22.1/kernel root=/dev/hda1 ro vga=789
 
 	title			Syllable Server, no APIC (Bochs)
 	root			(hd0,0)
-	kernel			/usr/linux/kernel-2.6.22.1 root=/dev/hda1 ro noapic
+	kernel			/system/resources/linux/2.6.22.1/kernel root=/dev/hda1 ro noapic
 
-	title			Windows example first partition
+	title			Windows example, first partition
 	rootnoverify	(hd0,0)
 	chainloader		+1
 
-#	title			Linux example second partition
+#	title			Linux example, second partition
 #	root			(hd0,1)
 #	kernel			/boot/vmlinuz root=/dev/hda2 ro splash quiet
 #	initrd			/boot/initrd.img
