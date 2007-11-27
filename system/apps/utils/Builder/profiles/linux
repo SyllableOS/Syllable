@@ -253,14 +253,14 @@ modules
 	linux/linux-2.6.22.1-headers
 ;	For bootstrapping:
 ;	bootstrap linux/module-init-tools--bootstrap
-	linux/linux-2.6.22.1
+	system linux/linux-2.6.22.1
 
 ;	Kernel modules
 
 ;	For DirectFB:
-	linux/linux-fusion-3.2.4
-	linux/kqemu-1.3.0pre11
-	linux/linux--cleanup
+	system linux/linux-fusion-3.2.4
+	system linux/kqemu-1.3.0pre11
+	system linux/linux--cleanup
 
 	system libs/glibc-2.7-system
 	system libs/zlib-1.2.3
