@@ -23,7 +23,7 @@ patch
 	sudo ln -sf $SOURCE build
 
 ; Headers should already be there:
-merge-install
+;merge-install
 
 ; depmod has a hard-coded path to the collected modules from different kernel versions,
 ; that it inserts into the installation path. To allow the kernel to install its modules
@@ -44,21 +44,24 @@ _make-targets
 ;	oldconfig
 	all
 
+install-tree
 install-targets		modules_install
 install-files
-	arch/i386/boot/bzImage	kernel-2.6.22.1
-	System.map				System.map-2.6.22.1
+	arch/i386/boot/bzImage	kernel
+	System.map				System.map
 	.config					config-2.6.22.1
 ;	Documentation			.
 
 documentation		Documentation/*
 
-_links
-;	include										/
+links
+;	include											/
 ;	For linux-fusion:
-;	include/linux								/usr/include/
-;	lib/modules									/lib/
-	../usr/linux/lib/modules/2.6.22.1-Syllable	/lib/
+;	include/linux									/usr/include/
+;	lib/modules										/lib/
+;	../system/indexes/lib/modules					/lib/
+;	Get external kernel modules to install themselves among this kernel's modules:
+	../system/resources/linux/2.6.22.1/lib/modules	/lib/
 
 ;pre-register		mkinitrd /boot/initrd-2.6.22.1.img 2.6.22.1
 

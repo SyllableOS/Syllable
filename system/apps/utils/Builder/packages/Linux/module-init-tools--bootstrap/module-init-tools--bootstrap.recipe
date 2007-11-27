@@ -5,5 +5,5 @@ inherits			module-init-tools-3.2.2
 
 packages			module-init-tools-3.2.2
 
-; Hack to prevent depmod from inserting /usr/linux/ into the path, because our kernel build will already do that:
+; Hack to prevent depmod from inserting /system/resources/linux/ into the path, because our kernel build will already do that:
 configure-options	--with-moddir=/lib/modules

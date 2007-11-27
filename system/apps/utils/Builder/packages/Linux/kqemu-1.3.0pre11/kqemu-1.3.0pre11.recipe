@@ -1,6 +1,8 @@
 authors				Kaj de Vos
 status				testing
-warnings			Needs built kernel source within the build host system!
+warnings
+	Patch is specific to linux-2.6.22.1 kernel.
+	Needs built kernel source within the build host system!
 
 headline			QEMU Accelerator driver
 description
