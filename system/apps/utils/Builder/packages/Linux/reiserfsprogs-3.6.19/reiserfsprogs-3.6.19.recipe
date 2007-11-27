@@ -19,7 +19,7 @@ configure-env		CPPFLAGS "$CPPFLAGS -I/usr/indexes/include"
 ;configure-options	--sbindir=/sbin
 
 ;super-install
-;system-prefix-var	DESTDIR
+system-prefix-var	DESTDIR
 
 documentation
 	README COPYING CREDITS

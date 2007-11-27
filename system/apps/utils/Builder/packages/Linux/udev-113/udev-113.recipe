@@ -18,7 +18,7 @@ make				make
 test-targets		test
 
 ;super-install
-;system-prefix-var	DESTDIR
+system-prefix-var	DESTDIR
 
 install-tree
 ; $prefix must be empty:

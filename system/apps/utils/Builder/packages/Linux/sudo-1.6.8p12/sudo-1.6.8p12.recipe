@@ -20,7 +20,7 @@ configure-options
 	--with-all-insults
 	--enable-shell-sets-home
 
-;system-prefix-var	DESTDIR
+system-prefix-var	DESTDIR
 
 documentation		README README.LDAP TROUBLESHOOTING BUGS UPGRADE LICENSE CHANGES HISTORY TODO
 build-docs			INSTALL

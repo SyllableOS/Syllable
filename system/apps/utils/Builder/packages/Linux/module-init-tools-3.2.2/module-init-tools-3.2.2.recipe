@@ -17,7 +17,7 @@ configure-options
 	--enable-zlib
 	--with-moddir=/usr/linux/lib/modules
 
-;system-prefix-var	DESTDIR
+system-prefix-var	DESTDIR
 ; Force overwrite:
 install-vars		INSTALL install
 

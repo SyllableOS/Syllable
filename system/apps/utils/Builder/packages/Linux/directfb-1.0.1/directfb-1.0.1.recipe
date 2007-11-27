@@ -37,7 +37,7 @@ configure-options
 ;	--with-tests
 ;	--without-tools
 
-;system-prefix-var	DESTDIR
+system-prefix-var	DESTDIR
 
 documentation
 	README COPYING NEWS ChangeLog AUTHORS TODO

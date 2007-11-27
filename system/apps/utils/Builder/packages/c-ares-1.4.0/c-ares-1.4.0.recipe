@@ -15,6 +15,6 @@ locations			http://daniel.haxx.se/projects/c-ares/
 
 ;configure-options	--enable-shared
 
-;system-prefix-var	DESTDIR
+system-prefix-var	DESTDIR
 
 documentation		README README.cares NEWS CHANGES AUTHORS
