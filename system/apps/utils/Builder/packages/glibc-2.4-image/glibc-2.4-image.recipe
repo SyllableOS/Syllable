@@ -6,12 +6,15 @@ notes
 inherits			glibc-2.4
 
 links
-	lib/libc.so		/system/libraries/
-	lib/libc.so.2	/system/libraries/
-	lib/libc-2.4.so	/system/libraries/
-	lib/libm.so		/system/libraries/
-	lib/libm.so.2	/system/libraries/
-	lib/libm-2.4.so	/system/libraries/
+	lib/libc.so			/system/libraries/
+	lib/libc.so.2		/system/libraries/
+	lib/libc-2.4.so		/system/libraries/
+	lib/libm.so			/system/libraries/
+	lib/libm.so.2		/system/libraries/
+	lib/libm-2.4.so		/system/libraries/
+;	For GhostScript:
+	include/sys/dir.h	/usr/include/sys
+	include/sys/time.h	/usr/include/sys
 
 pre-register
 	echo 'OUTPUT_FORMAT(elf32-i386)' > lib/libc.so

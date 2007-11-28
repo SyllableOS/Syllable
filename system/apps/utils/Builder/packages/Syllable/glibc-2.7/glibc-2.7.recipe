@@ -17,3 +17,8 @@ configure-options
 ;	--without-gd
 ;	--with-cpu=
 ;	--enable-bounded
+
+links
+;	For GhostScript:
+	include/sys/dir.h					/usr/include/sys
+	include/sys/time.h					/usr/include/sys
