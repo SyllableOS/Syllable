@@ -19,6 +19,7 @@ install-needs		module-init-tools
 ; For external kernel modules:
 patch
 	SOURCE=$PWD
+	sudo mkdir --parents /lib/modules/2.6.22.1-Syllable
 	cd /lib/modules/2.6.22.1-Syllable
 	sudo ln -sf $SOURCE build
 
