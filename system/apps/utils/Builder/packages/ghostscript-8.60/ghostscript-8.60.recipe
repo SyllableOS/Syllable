@@ -32,7 +32,6 @@ build-dir			.
 ; The intention of these configure options is to produce the smallest gs binary possible.
 ; I can't seem to drop the PNG output driver though.
 configure-options
-;	--datadir=$IMAGE/usr/ghostscript/share/
 	--with-fontpath=/system/fonts
 ;	cups is not an option any more:
 ;	--with-drivers=PS,cups
@@ -45,9 +44,6 @@ install-tree
 	share/ghostscript/8.60
 	share/ghostscript/8.60/Resource
 	share/ghostscript/8.60/Resource/Font
-install-vars
-;	datadir	$IMAGE/usr/ghostscript/share/
-	gsdir	$IMAGE/usr/ghostscript/share/ghostscript/
 ;install-targets		soinstall
 
 documentation
