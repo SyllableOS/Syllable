@@ -10,3 +10,12 @@ diff -ru linux-2.6.21.1-original/Makefile linux-2.6.21.1/Makefile
  endif
  PHONY += _modinst_post
  _modinst_post: _modinst_
+@@ -992,7 +992,7 @@
+ endif
+ PHONY += _modinst_post
+ _modinst_post: _modinst_
+-	if [ -r System.map -a -x $(DEPMOD) ]; then $(DEPMOD) -ae -F System.map $(depmod_opts) $(KERNELRELEASE); fi
++	if [ -r System.map -a -x $(DEPMOD) ]; then depmod -ae -F System.map $(depmod_opts) $(KERNELRELEASE); fi
+ 
+ else # CONFIG_MODULES
+ 
