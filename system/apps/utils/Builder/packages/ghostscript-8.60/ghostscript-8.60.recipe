@@ -34,7 +34,8 @@ build-dir			.
 configure-options
 ;	--datadir=$IMAGE/usr/ghostscript/share/
 	--with-fontpath=/system/fonts
-	--with-drivers=PS,cups
+;	cups is not an option any more:
+;	--with-drivers=PS,cups
 	--without-ijs
 	--without-jbig2dec
 
