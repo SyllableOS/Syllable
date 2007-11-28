@@ -46,11 +46,7 @@ install-tree
 	share/ghostscript/8.60/Resource/Font
 ;install-targets		soinstall
 
-documentation
-	README LICENSE COPYING CHANGES
-;	doc
-;	examples
-internal-docs		HACKING
+documentation		doc/README LICENSE doc/COPYING
 
 links
 	/system/fonts/NimbusMonoL-Bold.ttf						share/ghostscript/8.60/Resource/Font/NimbusMonL-Bold
