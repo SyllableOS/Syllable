@@ -15,7 +15,8 @@ configure-options
 ;	--prefix=/
 ;	Static:
 	--enable-zlib
-	--with-moddir=/system/indexes/lib/modules
+	--with-moddir=/lib/modules
+;	--with-moddir=/system/indexes/lib/modules
 
 system-prefix-var	DESTDIR
 ; Force overwrite:
