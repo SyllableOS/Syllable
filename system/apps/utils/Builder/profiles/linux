@@ -115,6 +115,8 @@ tree
 ;	usr/etc
 ;	For NCurses:
 	usr/include
+;	For GhostScript:
+	usr/include/sys
 ;	usr/info
 	usr/lib
 ;	usr/man
