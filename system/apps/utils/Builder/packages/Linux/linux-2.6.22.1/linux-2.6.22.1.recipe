@@ -16,12 +16,14 @@ _build-needs
 	qt
 install-needs		module-init-tools
 
-; For external kernel modules:
 patch
+;	For external kernel modules:
 	SOURCE=$PWD
 	sudo mkdir --parents /lib/modules/2.6.22.1-Syllable
 	cd /lib/modules/2.6.22.1-Syllable
 	sudo ln -sf $SOURCE build
+;	Make the kernel modules installation go right:
+	ln -sf ../system/resources/linux/2.6.22.1/lib/modules $IMAGE/lib/
 
 ; Headers should already be there:
 ;merge-install
@@ -55,7 +57,7 @@ install-files
 
 documentation		Documentation/*
 
-links
+_links
 ;	include											/
 ;	For linux-fusion:
 ;	include/linux									/usr/include/
