@@ -67,10 +67,10 @@ void *dlopen(const char *file, int mode)
 void *dlsym(void *handle, const char *name)
 {
 	int error = 0;
-	int *dl = (int*)handle;
+	int dl = (int)handle;
 	void* symbol;
 
-	if( dl == NULL )
+	if( dl == 0 )
 	{
 		__dl_set_errno( _DL_EBADHANDLE );
 		return( NULL );
@@ -82,13 +82,13 @@ void *dlsym(void *handle, const char *name)
 		return( NULL );
 	}
 
-	if( *dl == RTLD_NEXT )
+	if( dl == RTLD_NEXT )
 	{
 		__dl_set_errno( _DL_EBADHANDLE );
 		return( NULL );
 	}
 
-	error = get_symbol_address( *dl, name, -1, (void**) &symbol );
+	error = get_symbol_address( dl, name, -1, (void**) &symbol );
 	if( error < 0 )
 	{
 		__dl_set_errno( _DL_ENOSYM );
@@ -100,15 +100,15 @@ void *dlsym(void *handle, const char *name)
 
 int dlclose(void *handle)
 {
-	int *dl = (int*)handle;
+	int dl = (int)handle;
 
-	if( dl == NULL )
+	if( dl == 0 )
 	{
 		__dl_set_errno( _DL_EBADHANDLE );
 		return( EINVAL );
 	}
 
-	unload_library( *dl );
+	unload_library( dl );
 	free( handle );
 
 	return( 0 );
