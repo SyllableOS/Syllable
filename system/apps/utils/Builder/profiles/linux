@@ -254,7 +254,7 @@ modules
 
 	linux/linux-2.6.22.1-headers
 ;	For bootstrapping:
-;	bootstrap linux/module-init-tools--bootstrap
+	bootstrap linux/module-init-tools--bootstrap
 	system linux/linux-2.6.22.1
 
 ;	Kernel modules

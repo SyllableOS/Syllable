@@ -2,8 +2,8 @@
 
 resources
 ;	Make GLibC suitable for running in an installed system:
-	system/resources/glibc/2.4/lib	linux/libc.so
-	system/resources/glibc/2.4/lib	linux/libpthread.so
+	system/resources/glibc/2.7/lib	linux/libc.so
+	system/resources/glibc/2.7/lib	linux/libpthread.so
 ;	Old libraries for compatibility with applications for older versions of Syllable:
 ;	system/libraries				GCC-libraries-3.4.3
 ;	May work better than the standard ones:
