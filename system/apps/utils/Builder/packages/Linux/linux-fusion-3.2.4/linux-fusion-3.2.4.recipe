@@ -4,6 +4,7 @@ warnings
 	Is specific to linux-2.6.22.1-Syllable kernel.
 	Builds upon the running kernel!
 	Needs the kernel source in /lib/modules/<kernel>/build/.
+	Installation only works on a host system where depmod was compiled for the same kernel modules location.
 	Installs its kernel header in <stage>/usr/include/linux/.
 ;	Overwrites /lib/modules and installs itself in /lib/modules/<kernel>/drivers/.
 
