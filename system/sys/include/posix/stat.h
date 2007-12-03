@@ -127,6 +127,7 @@ extern "C" {
 #endif	/* __KERNEL__ */
 
 #include <posix/types.h>
+#include <posix/time.h>
 
 #define _STAT_VER_KERNEL 0
 struct stat {
@@ -140,16 +141,19 @@ struct stat {
     long long	 st_size;
     int		 st_blksize;
     long long	 st_blocks;
-    time_t  	 st_atime;
-    int		 __unused1;
-    time_t	st_mtime;
-    int		 __unused2;
-    time_t	st_ctime;
-    int		 __unused3;
+
+	/* Nanosecond resolution timestamps are stored in a format
+	   equivalent to 'struct timespec'. */
+	struct timespec st_atim;
+	struct timespec st_mtim;
+	struct timespec st_ctim;
+# define st_atime st_atim.tv_sec	/* Backward compatibility.  */
+# define st_mtime st_mtim.tv_sec
+# define st_ctime st_ctim.tv_sec
+
     int		 __unused4;
     int		 __unused5;
 };
-
 
 struct stat64 {
     int	 	 st_dev;
@@ -162,12 +166,16 @@ struct stat64 {
     long long	 st_size;
     int		 st_blksize;
     long long	 st_blocks;
-    time_t  	 st_atime;
-    int		 __unused1;
-    time_t	st_mtime;
-    int		 __unused2;
-    time_t	st_ctime;
-    int		 __unused3;
+
+	/* Nanosecond resolution timestamps are stored in a format
+	   equivalent to 'struct timespec'. */
+	struct timespec st_atim;
+	struct timespec st_mtim;
+	struct timespec st_ctim;
+# define st_atime st_atim.tv_sec	/* Backward compatibility.  */
+# define st_mtime st_mtim.tv_sec
+# define st_ctime st_ctim.tv_sec
+
     int		 __unused4;
     int		 __unused5;
 };

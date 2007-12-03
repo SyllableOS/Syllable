@@ -28,6 +28,23 @@ extern "C" {
 
 #define CLOCKS_PER_SEC	1000000
 
+#if !defined __timespec_defined
+/* POSIX.1b structure for a time value.  This is like a `struct timeval' but
+   has nanoseconds instead of microseconds.  */
+struct timespec
+{
+	time_t tv_sec;		/* Seconds.  */
+	long int tv_nsec;	/* Nanoseconds.  */
+};
+# define __timespec_defined
+#endif
+
+struct kernel_timeval
+{
+  time_t tv_sec;	/* Seconds.  */
+  time_t tv_usec;	/* Microseconds.  */
+};
+
 #ifdef __KERNEL__
 struct tm {
   int 	tm_sec;
@@ -42,14 +59,8 @@ struct tm {
   char* tm_zone;
   int 	tm_gmtoff;
 };
+
 #endif
-
-struct kernel_timeval
-{
-  time_t tv_sec;	/* Seconds.  */
-  time_t tv_usec;	/* Microseconds.  */
-};
-
 
 #ifdef __cplusplus
 }
