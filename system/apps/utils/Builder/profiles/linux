@@ -214,6 +214,8 @@ resources
 	var/state/dhcp								linux/dhcpd.leases
 	system/config								net.cfg
 	system/config								appserver
+	etc											linux/asound.state
+	etc/udev/rules.d							linux/40-alsa.rules
 	home										Home-Directories
 
 	Documentation								documentation/Welcome.html
@@ -410,8 +412,9 @@ modules
 ;	For cURL:
 	stage libraries/openssl--stage
 
-	system linux/alsa-library-1.0.15
 	system apps/other/libusb-0.1.12
+	system linux/alsa-library-1.0.15
+	linux/alsa-utils-1.0.15
 	system apps/other/curl-7.16.4
 	apps/other/dhcp-3.0.5
 	linux/wirelesstools-29
