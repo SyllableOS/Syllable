@@ -1,0 +1,30 @@
+authors				Kaj de Vos
+status				testing
+
+headline			Audio programming library
+description
+	The Advanced Linux Sound Architecture (ALSA) provides audio and MIDI functionality to the Linux operating system.
+licenses			LGPL
+
+home				alsa-project.org
+packages			alsa-lib-1.0.15
+locations
+	http://gd.tuwien.ac.at/opsys/linux/alsa/lib/
+	ftp://ftp.alsa-project.org/pub/lib/
+
+build-recommends	doxygen
+recommends			resmgr
+
+configure-options	--enable-static
+
+_make-targets
+	all
+	doc
+
+system-prefix-var	DESTDIR
+
+documentation
+	COPYING ChangeLog MEMORY-LEAK TODO
+;	doc
+build-docs			INSTALL
+develop-docs		NOTES
