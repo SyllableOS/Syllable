@@ -27,7 +27,6 @@ test-needs
 
 ;make-targets
 ;	all
-;	localedata/install-locales
 ;	For printed documentation:
 ;	dvi
 
@@ -37,6 +36,9 @@ test-options		-k
 _install-env
 	LANGUAGE	C
 	LC_ALL		C
+install-targets
+	install
+	localedata/install-locales
 
 documentation
 	README BUGS INSTALL COPYING.LIB COPYING LICENSES NEWS ChangeLog FAQ CONFORMANCE README.libm PROJECTS
