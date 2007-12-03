@@ -14,8 +14,10 @@ build-needs
 conflicts			termcap
 
 configure-options
-;	--with-shared
+	--with-shared
+	--without-debug
 ;	--with-termlib
+	--enable-widec
 	--enable-symlinks
 
 system-prefix-var	DESTDIR
@@ -27,6 +29,15 @@ develop-docs		doc/ncurses-intro.doc
 internal-docs		doc/hackguide.doc
 links
 ;	For older packages:
+	libncursesw.a		lib/libncurses.a
+	libncurses++w.a		lib/libncurses++.a
+	libcursesw.a		lib/libcurses.a
+	libformw.a			lib/libform.a
+	libpanelw.a			lib/libpanel.a
+	libmenuw.a			lib/libmenu.a
+;	libncurses.so		lib/libcurses.so
+	libncursesw.a		lib/libcursesw.a
+;	libncurses.a		lib/libcurses.a
 	ncurses/ncurses.h	include/
 	ncurses/curses.h	include/
 ;	For ProcPS:
@@ -41,3 +52,18 @@ links
 ;	share/terminfo		/usr/share/
 
 ;move-files			share/terminfo /usr/share/
+
+delete-files
+	lib/libncurses.so
+	lib/libcurses.so
+	lib/libform.so
+	lib/libpanel.so
+	lib/libmenu.so
+	lib/libcursesw.so
+pre-register
+	echo 'INPUT(-lncursesw)'	> lib/libncurses.so
+	echo 'INPUT(-lcursesw)'		> lib/libcurses.so
+	echo 'INPUT(-lformw)'		> lib/libform.so
+	echo 'INPUT(-lpanelw)'		> lib/libpanel.so
+	echo 'INPUT(-lmenuw)'		> lib/libmenu.so
+	echo 'INPUT(-lncursesw)'	> lib/libcursesw.so

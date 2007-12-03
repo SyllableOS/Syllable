@@ -2,8 +2,10 @@ authors				Kaj de Vos
 status				testing
 
 configure-options
-;	--with-shared
+	--with-shared
+	--without-debug
 ;	--with-termlib
+	--enable-widec
 	--enable-symlinks
 ;	--datadir=/usr/share
 	--with-default-terminfo-dir=/usr/share/terminfo
