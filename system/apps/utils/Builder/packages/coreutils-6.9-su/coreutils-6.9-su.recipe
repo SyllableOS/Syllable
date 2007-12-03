@@ -1,0 +1,15 @@
+authors				Kaj de Vos
+status				testing
+warnings			Needs super-user access.
+
+inherits			coreutils-6.9
+
+merge-install
+; No sudo yet:
+;super-install
+install-targets		install-root
+
+; Should already be installed:
+documentation
+links
+;	bin/su			/bin/
