@@ -1,0 +1,24 @@
+authors				Kaj de Vos
+status				testing
+
+headline			Audio configuration tools
+description
+	This package contains the command line utilities for the ALSA project.
+licenses			GPL
+
+home				alsa-project.org
+locations
+	http://gd.tuwien.ac.at/opsys/linux/alsa/utils/
+	ftp://ftp.alsa-project.org/pub/utils/
+
+needs
+	alsa-library
+	ncurses
+
+system-prefix-var	DESTDIR
+
+documentation		README COPYING ABOUT-NLS ChangeLog TODO
+build-docs			INSTALL
+
+; Incompatible with UDev:
+delete-files		bin/alsaconf

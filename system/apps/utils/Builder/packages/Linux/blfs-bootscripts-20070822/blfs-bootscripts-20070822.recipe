@@ -17,6 +17,8 @@ install-targets
 	install-dhcp
 ;	Firewall:
 	install-iptables
+;	Sound:
+	install-alsa
 
 documentation		README LICENSE ChangeLog MAINTAINERS
 ; Outdated?

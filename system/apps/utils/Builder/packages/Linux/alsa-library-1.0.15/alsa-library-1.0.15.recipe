@@ -1,7 +1,7 @@
 authors				Kaj de Vos
 status				testing
 
-headline			Audio programming library
+headline			Audio server and programming library
 description
 	The Advanced Linux Sound Architecture (ALSA) provides audio and MIDI functionality to the Linux operating system.
 licenses			LGPL
