@@ -1,6 +1,185 @@
-diff -ur bash-3.2_orig/builtins/printf.def bash-3.2/builtins/printf.def
---- bash-3.2_orig/builtins/printf.def	2006-09-18 12:48:42.000000000 +0000
-+++ bash-3.2/builtins/printf.def	2007-03-09 11:49:21.000000000 +0000
+Submitted By: Matt Burgess (matthew at linuxfromscratch dot org)
+Date: 2007-09-07
+Initial Package Version: 3.2
+Upstream Status: From Upstream
+Origin: http://ftp.gnu.org/gnu/bash/bash-3.2-patches/
+Description: A combined patch containing patches 001-025 from upstream.
+
+diff -Naur bash-3.2.orig/array.c bash-3.2/array.c
+--- bash-3.2.orig/array.c	2005-06-01 20:39:22.000000000 +0000
++++ bash-3.2/array.c	2007-09-08 18:50:38.000000000 +0000
+@@ -120,7 +120,6 @@
+ 	return(a1);
+ }
+ 
+-#ifdef INCLUDE_UNUSED
+ /*
+  * Make and return a new array composed of the elements in array A from
+  * S to E, inclusive.
+@@ -141,13 +140,12 @@
+ 	for (p = s, i = 0; p != e; p = element_forw(p), i++) {
+ 		n = array_create_element (element_index(p), element_value(p));
+ 		ADD_BEFORE(a->head, n);
+-		mi = element_index(ae);
++		mi = element_index(n);
+ 	}
+ 	a->num_elements = i;
+ 	a->max_index = mi;
+ 	return a;
+ }
+-#endif
+ 
+ /*
+  * Walk the array, calling FUNC once for each element, with the array
+@@ -300,6 +298,23 @@
+ 	return array;
+ }
+ 
++ARRAY	*
++array_quote_escapes(array)
++ARRAY	*array;
++{
++	ARRAY_ELEMENT	*a;
++	char	*t;
++
++	if (array == 0 || array_head(array) == 0 || array_empty(array))
++		return (ARRAY *)NULL;
++	for (a = element_forw(array->head); a != array->head; a = element_forw(a)) {
++		t = quote_escapes (a->value);
++		FREE(a->value);
++		a->value = t;
++	}
++	return array;
++}
++
+ /*
+  * Return a string whose elements are the members of array A beginning at
+  * index START and spanning NELEM members.  Null elements are counted.
+@@ -311,9 +326,10 @@
+ arrayind_t	start, nelem;
+ int	starsub, quoted;
+ {
++	ARRAY		*a2;
+ 	ARRAY_ELEMENT	*h, *p;
+ 	arrayind_t	i;
+-	char		*ifs, sep[2];
++	char		*ifs, sep[2], *t;
+ 
+ 	p = a ? array_head (a) : 0;
+ 	if (p == 0 || array_empty (a) || start > array_max_index(a))
+@@ -336,6 +352,13 @@
+ 	for (i = 0, h = p; p != a->head && i < nelem; i++, p = element_forw(p))
+ 		;
+ 
++	a2 = array_slice(a, h, p);
++
++	if (quoted & (Q_DOUBLE_QUOTES|Q_HERE_DOCUMENT))
++		array_quote(a2);
++	else
++		array_quote_escapes(a2);
++
+ 	if (starsub && (quoted & (Q_DOUBLE_QUOTES|Q_HERE_DOCUMENT))) {
+ 		ifs = getifs();
+ 		sep[0] = ifs ? *ifs : '\0';
+@@ -343,7 +366,10 @@
+ 		sep[0] = ' ';
+ 	sep[1] = '\0';
+ 
+-	return (array_to_string_internal (h, p, sep, quoted));
++	t = array_to_string (a2, sep, 0);
++	array_dispose(a2);
++
++	return t;
+ }
+ 
+ char *
+@@ -367,7 +393,9 @@
+ 	}
+ 
+ 	if (mflags & MATCH_QUOTED)
+-		array_quote (a2);
++		array_quote(a2);
++	else
++		array_quote_escapes(a2);
+ 	if (mflags & MATCH_STARSUB) {
+ 		ifs = getifs();
+ 		sifs[0] = ifs ? *ifs : '\0';
+diff -Naur bash-3.2.orig/array.h bash-3.2/array.h
+--- bash-3.2.orig/array.h	2003-06-01 19:50:30.000000000 +0000
++++ bash-3.2/array.h	2007-09-08 18:50:38.000000000 +0000
+@@ -55,6 +55,7 @@
+ extern ARRAY_ELEMENT *array_unshift_element __P((ARRAY *));
+ extern int	array_shift_element __P((ARRAY *, char *));
+ extern ARRAY	*array_quote __P((ARRAY *));
++extern ARRAY	*array_quote_escapes __P((ARRAY *));
+ 
+ extern char	*array_subrange __P((ARRAY *, arrayind_t, arrayind_t, int, int));
+ extern char	*array_patsub __P((ARRAY *, char *, char *, int));
+diff -Naur bash-3.2.orig/arrayfunc.c bash-3.2/arrayfunc.c
+--- bash-3.2.orig/arrayfunc.c	2006-07-27 13:37:59.000000000 +0000
++++ bash-3.2/arrayfunc.c	2007-09-08 18:50:45.000000000 +0000
+@@ -618,6 +618,8 @@
+   if (expok == 0)
+     {
+       last_command_exit_value = EXECUTION_FAILURE;
++
++      top_level_cleanup ();      
+       jump_to_top_level (DISCARD);
+     }
+   return val;
+diff -Naur bash-3.2.orig/builtins/common.c bash-3.2/builtins/common.c
+--- bash-3.2.orig/builtins/common.c	2006-07-27 13:39:51.000000000 +0000
++++ bash-3.2/builtins/common.c	2007-09-08 18:50:45.000000000 +0000
+@@ -1,4 +1,4 @@
+-/* Copyright (C) 1987-2005 Free Software Foundation, Inc.
++/* Copyright (C) 1987-2007 Free Software Foundation, Inc.
+ 
+    This file is part of GNU Bash, the Bourne Again SHell.
+ 
+@@ -131,6 +131,7 @@
+   if (list)
+     {
+       builtin_error (_("too many arguments"));
++      top_level_cleanup ();
+       jump_to_top_level (DISCARD);
+     }
+ }
+@@ -395,7 +396,10 @@
+ 	  if (fatal)
+ 	    throw_to_top_level ();
+ 	  else
+-	    jump_to_top_level (DISCARD);
++	    {
++	      top_level_cleanup ();
++	      jump_to_top_level (DISCARD);
++	    }
+ 	}
+       no_args (list->next);
+     }
+@@ -475,7 +479,11 @@
+ 
+   if (the_current_working_directory == 0)
+     {
++#if defined (GETCWD_BROKEN)
++      the_current_working_directory = getcwd (0, PATH_MAX);
++#else
+       the_current_working_directory = getcwd (0, 0);
++#endif
+       if (the_current_working_directory == 0)
+ 	{
+ 	  fprintf (stderr, _("%s: error retrieving current directory: %s: %s\n"),
+diff -Naur bash-3.2.orig/builtins/printf.def bash-3.2/builtins/printf.def
+--- bash-3.2.orig/builtins/printf.def	2006-09-18 12:48:42.000000000 +0000
++++ bash-3.2/builtins/printf.def	2007-09-08 18:50:36.000000000 +0000
+@@ -1,7 +1,7 @@
+ This file is printf.def, from which is created printf.c.
+ It implements the builtin "printf" in Bash.
+ 
+-Copyright (C) 1997-2005 Free Software Foundation, Inc.
++Copyright (C) 1997-2007 Free Software Foundation, Inc.
+ 
+ This file is part of GNU Bash, the Bourne Again SHell.
+ 
 @@ -49,6 +49,12 @@
  #  define INT_MIN		(-2147483647-1)
  #endif
@@ -14,7 +193,18 @@ diff -ur bash-3.2_orig/builtins/printf.def bash-3.2/builtins/printf.def
  #include <stdio.h>
  #include <chartypes.h>
  
-@@ -151,6 +157,10 @@
+@@ -64,6 +70,10 @@
+ #include "bashgetopt.h"
+ #include "common.h"
+ 
++#if defined (PRI_MACROS_BROKEN)
++#  undef PRIdMAX
++#endif
++
+ #if !defined (PRIdMAX)
+ #  if HAVE_LONG_LONG
+ #    define PRIdMAX	"lld"
+@@ -151,6 +161,10 @@
  #define SKIP1 "#'-+ 0"
  #define LENMODS "hjlLtz"
  
@@ -25,9 +215,177 @@ diff -ur bash-3.2_orig/builtins/printf.def bash-3.2/builtins/printf.def
  static void printf_erange __P((char *));
  static int printstr __P((char *, char *, int, int, int));
  static int tescape __P((char *, char *, int *));
-diff -ur bash-3.2_orig/execute_cmd.c bash-3.2/execute_cmd.c
---- bash-3.2_orig/execute_cmd.c	2006-08-26 04:23:17.000000000 +0000
-+++ bash-3.2/execute_cmd.c	2007-03-09 11:49:22.000000000 +0000
+diff -Naur bash-3.2.orig/builtins/read.def bash-3.2/builtins/read.def
+--- bash-3.2.orig/builtins/read.def	2006-09-19 12:45:48.000000000 +0000
++++ bash-3.2/builtins/read.def	2007-09-08 18:50:47.000000000 +0000
+@@ -127,14 +127,14 @@
+      WORD_LIST *list;
+ {
+   register char *varname;
+-  int size, i, nr, pass_next, saw_escape, eof, opt, retval, code;
+-  int input_is_tty, input_is_pipe, unbuffered_read;
++  int size, i, nr, pass_next, saw_escape, eof, opt, retval, code, print_ps2;
++  int input_is_tty, input_is_pipe, unbuffered_read, skip_ctlesc, skip_ctlnul;
+   int raw, edit, nchars, silent, have_timeout, fd;
+   unsigned int tmout;
+   intmax_t intval;
+   char c;
+   char *input_string, *orig_input_string, *ifs_chars, *prompt, *arrayname;
+-  char *e, *t, *t1;
++  char *e, *t, *t1, *ps2;
+   struct stat tsb;
+   SHELL_VAR *var;
+ #if defined (ARRAY_VARS)
+@@ -148,6 +148,7 @@
+   USE_VAR(size);
+   USE_VAR(i);
+   USE_VAR(pass_next);
++  USE_VAR(print_ps2);
+   USE_VAR(saw_escape);
+   USE_VAR(input_is_pipe);
+ /*  USE_VAR(raw); */
+@@ -163,6 +164,7 @@
+   USE_VAR(rlind);
+ #endif
+   USE_VAR(list);
++  USE_VAR(ps2);
+ 
+   i = 0;		/* Index into the string that we are reading. */
+   raw = edit = 0;	/* Not reading raw input by default. */
+@@ -386,7 +388,8 @@
+   setmode (0, O_TEXT);
+ #endif
+ 
+-  for (eof = retval = 0;;)
++  ps2 = 0;
++  for (print_ps2 = eof = retval = 0;;)
+     {
+ #if defined (READLINE)
+       if (edit)
+@@ -412,6 +415,15 @@
+ 	{
+ #endif
+ 
++      if (print_ps2)
++	{
++	  if (ps2 == 0)
++	    ps2 = get_string_value ("PS2");
++	  fprintf (stderr, "%s", ps2 ? ps2 : "");
++	  fflush (stderr);
++	  print_ps2 = 0;
++	}
++
+       if (unbuffered_read)
+ 	retval = zread (fd, &c, 1);
+       else
+@@ -440,7 +452,11 @@
+ 	{
+ 	  pass_next = 0;
+ 	  if (c == '\n')
+-	    i--;		/* back up over the CTLESC */
++	    {
++	      i--;		/* back up over the CTLESC */
++	      if (interactive && input_is_tty && raw == 0)
++		print_ps2 = 1;
++	    }
+ 	  else
+ 	    goto add_char;
+ 	  continue;
+diff -Naur bash-3.2.orig/config-bot.h bash-3.2/config-bot.h
+--- bash-3.2.orig/config-bot.h	2006-09-12 20:43:04.000000000 +0000
++++ bash-3.2/config-bot.h	2007-09-08 18:50:35.000000000 +0000
+@@ -1,7 +1,7 @@
+ /* config-bot.h */
+ /* modify settings or make new ones based on what autoconf tells us. */
+ 
+-/* Copyright (C) 1989-2002 Free Software Foundation, Inc.
++/* Copyright (C) 1989-2007 Free Software Foundation, Inc.
+ 
+    This file is part of GNU Bash, the Bourne Again SHell.
+ 
+@@ -70,9 +70,11 @@
+ #  define TERMIOS_MISSING
+ #endif
+ 
+-/* If we have a getcwd(3), but it calls popen(), #undef HAVE_GETCWD so
+-   the replacement in getcwd.c will be built. */
+-#if defined (HAVE_GETCWD) && defined (GETCWD_BROKEN)
++/* If we have a getcwd(3), but one that does not dynamically allocate memory,
++   #undef HAVE_GETCWD so the replacement in getcwd.c will be built.  We do
++   not do this on Solaris, because their implementation of loopback mounts
++   breaks the traditional file system assumptions that getcwd uses. */
++#if defined (HAVE_GETCWD) && defined (GETCWD_BROKEN) && !defined (SOLARIS)
+ #  undef HAVE_GETCWD
+ #endif
+ 
+diff -Naur bash-3.2.orig/config.h.in bash-3.2/config.h.in
+--- bash-3.2.orig/config.h.in	2006-09-12 20:00:54.000000000 +0000
++++ bash-3.2/config.h.in	2007-09-08 18:50:36.000000000 +0000
+@@ -1,6 +1,6 @@
+ /* config.h -- Configuration file for bash. */
+ 
+-/* Copyright (C) 1987-2006 Free Software Foundation, Inc.
++/* Copyright (C) 1987-2007 Free Software Foundation, Inc.
+ 
+    This file is part of GNU Bash, the Bourne Again SHell.
+ 
+@@ -413,6 +413,8 @@
+ 
+ #undef HAVE_DECL_STRTOLD
+ 
++#undef PRI_MACROS_BROKEN
++
+ #undef STRTOLD_BROKEN
+ 
+ /* Define if WCONTINUED is defined in system headers, but rejected by waitpid */
+@@ -1006,6 +1008,9 @@
+ /* Define if you have the `dcgettext' function. */
+ #undef HAVE_DCGETTEXT
+ 
++/* Define if you have the `localeconv' function. */
++#undef HAVE_LOCALECONV
++
+ /* Define if your system has a working `malloc' function. */
+ /* #undef HAVE_MALLOC */
+ 
+diff -Naur bash-3.2.orig/configure bash-3.2/configure
+--- bash-3.2.orig/configure	2006-09-26 15:06:01.000000000 +0000
++++ bash-3.2/configure	2007-09-08 18:50:35.000000000 +0000
+@@ -27316,7 +27316,8 @@
+ sco3.2v4*)	LOCAL_CFLAGS="-DMUST_UNBLOCK_CHLD -DPATH_MAX=1024" ;;
+ sco3.2*)	LOCAL_CFLAGS=-DMUST_UNBLOCK_CHLD ;;
+ sunos4*)	LOCAL_CFLAGS=-DSunOS4 ;;
+-solaris2.5*)	LOCAL_CFLAGS=-DSunOS5 ;;
++solaris2.5*)	LOCAL_CFLAGS="-DSunOS5 -DSOLARIS" ;;
++solaris2*)	LOCAL_CFLAGS=-DSOLARIS ;;
+ lynxos*)	LOCAL_CFLAGS=-DRECYCLES_PIDS ;;
+ linux*)		LOCAL_LDFLAGS=-rdynamic		 # allow dynamic loading
+ 		case "`uname -r`" in
+diff -Naur bash-3.2.orig/configure.in bash-3.2/configure.in
+--- bash-3.2.orig/configure.in	2006-09-26 15:05:45.000000000 +0000
++++ bash-3.2/configure.in	2007-09-08 18:50:35.000000000 +0000
+@@ -5,7 +5,7 @@
+ dnl
+ dnl Process this file with autoconf to produce a configure script.
+ 
+-# Copyright (C) 1987-2006 Free Software Foundation, Inc.
++# Copyright (C) 1987-2007 Free Software Foundation, Inc.
+ 
+ # This program is free software; you can redistribute it and/or modify
+ # it under the terms of the GNU General Public License as published by
+@@ -991,7 +991,8 @@
+ sco3.2v4*)	LOCAL_CFLAGS="-DMUST_UNBLOCK_CHLD -DPATH_MAX=1024" ;;
+ sco3.2*)	LOCAL_CFLAGS=-DMUST_UNBLOCK_CHLD ;;
+ sunos4*)	LOCAL_CFLAGS=-DSunOS4 ;;
+-solaris2.5*)	LOCAL_CFLAGS=-DSunOS5 ;;
++solaris2.5*)	LOCAL_CFLAGS="-DSunOS5 -DSOLARIS" ;;
++solaris2*)	LOCAL_CFLAGS=-DSOLARIS ;;
+ lynxos*)	LOCAL_CFLAGS=-DRECYCLES_PIDS ;;
+ linux*)		LOCAL_LDFLAGS=-rdynamic		 # allow dynamic loading
+ 		case "`uname -r`" in
+diff -Naur bash-3.2.orig/execute_cmd.c bash-3.2/execute_cmd.c
+--- bash-3.2.orig/execute_cmd.c	2006-08-26 04:23:17.000000000 +0000
++++ bash-3.2/execute_cmd.c	2007-09-08 18:50:39.000000000 +0000
 @@ -1,6 +1,6 @@
  /* execute_cmd.c -- Execute a COMMAND structure. */
  
@@ -45,9 +403,32 @@ diff -ur bash-3.2_orig/execute_cmd.c bash-3.2/execute_cmd.c
        if (arg2 == 0)
  	arg2 = nullstr;
  
-diff -ur bash-3.2_orig/findcmd.c bash-3.2/findcmd.c
---- bash-3.2_orig/findcmd.c	2005-08-17 20:49:54.000000000 +0000
-+++ bash-3.2/findcmd.c	2007-03-09 11:49:22.000000000 +0000
+@@ -3050,6 +3050,11 @@
+   if (command_line == 0)
+     command_line = savestring (the_printed_command_except_trap);
+ 
++#if defined (PROCESS_SUBSTITUTION)
++  if ((subshell_environment & SUBSHELL_COMSUB) && (simple_command->flags & CMD_NO_FORK) && fifos_pending() > 0)
++    simple_command->flags &= ~CMD_NO_FORK;
++#endif
++
+   execute_disk_command (words, simple_command->redirects, command_line,
+ 			pipe_in, pipe_out, async, fds_to_close,
+ 			simple_command->flags);
+diff -Naur bash-3.2.orig/expr.c bash-3.2/expr.c
+--- bash-3.2.orig/expr.c	2005-12-28 22:47:03.000000000 +0000
++++ bash-3.2/expr.c	2007-09-08 18:50:45.000000000 +0000
+@@ -929,6 +929,7 @@
+       if (interactive_shell)
+ 	{
+ 	  expr_unwind ();
++	  top_level_cleanup ();
+ 	  jump_to_top_level (DISCARD);
+ 	}
+       else
+diff -Naur bash-3.2.orig/findcmd.c bash-3.2/findcmd.c
+--- bash-3.2.orig/findcmd.c	2005-08-17 20:49:54.000000000 +0000
++++ bash-3.2/findcmd.c	2007-09-08 18:50:30.000000000 +0000
 @@ -308,7 +308,7 @@
    if (hashed_file && (posixly_correct || check_hashed_filenames))
      {
@@ -57,10 +438,53 @@ diff -ur bash-3.2_orig/findcmd.c bash-3.2/findcmd.c
  	{
  	  phash_remove (pathname);
  	  free (hashed_file);
-diff -ur bash-3.2_orig/jobs.c bash-3.2/jobs.c
---- bash-3.2_orig/jobs.c	2006-07-29 20:40:48.000000000 +0000
-+++ bash-3.2/jobs.c	2007-03-09 11:49:22.000000000 +0000
-@@ -984,8 +984,6 @@
+diff -Naur bash-3.2.orig/jobs.c bash-3.2/jobs.c
+--- bash-3.2.orig/jobs.c	2006-07-29 20:40:48.000000000 +0000
++++ bash-3.2/jobs.c	2007-09-08 18:50:42.000000000 +0000
+@@ -783,11 +783,13 @@
+   if (jobs[js.j_firstj] == 0)
+     {
+       old = js.j_firstj++;
++      if (old >= js.j_jobslots)
++	old = js.j_jobslots - 1;
+       while (js.j_firstj != old)
+ 	{
+ 	  if (js.j_firstj >= js.j_jobslots)
+ 	    js.j_firstj = 0;
+-	  if (jobs[js.j_firstj])
++	  if (jobs[js.j_firstj] || js.j_firstj == old)	/* needed if old == 0 */
+ 	    break;
+ 	  js.j_firstj++;
+ 	}
+@@ -797,11 +799,13 @@
+   if (jobs[js.j_lastj] == 0)
+     {
+       old = js.j_lastj--;
++      if (old < 0)
++	old = 0;
+       while (js.j_lastj != old)
+ 	{
+ 	  if (js.j_lastj < 0)
+ 	    js.j_lastj = js.j_jobslots - 1;
+-	  if (jobs[js.j_lastj])
++	  if (jobs[js.j_lastj] || js.j_lastj == old)	/* needed if old == js.j_jobslots */
+ 	    break;
+ 	  js.j_lastj--;
+ 	}
+@@ -963,7 +967,11 @@
+   reap_dead_jobs ();
+   realloc_jobs_list ();
+ 
+-  return (js.j_lastj);
++#ifdef DEBUG
++  itrace("compact_jobs_list: returning %d", (js.j_lastj || jobs[js.j_lastj]) ? js.j_lastj + 1 : 0);
++#endif
++
++  return ((js.j_lastj || jobs[js.j_lastj]) ? js.j_lastj + 1 : 0);
+ }
+ 
+ /* Delete the job at INDEX from the job list.  Must be called
+@@ -984,8 +992,6 @@
    temp = jobs[job_index];
    if (temp == 0)
      return;
@@ -69,7 +493,7 @@ diff -ur bash-3.2_orig/jobs.c bash-3.2/jobs.c
  
    if ((dflags & DEL_NOBGPID) == 0)
      {
-@@ -1028,6 +1026,9 @@
+@@ -1028,6 +1034,9 @@
      js.j_firstj = js.j_lastj = 0;
    else if (jobs[js.j_firstj] == 0 || jobs[js.j_lastj] == 0)
      reset_job_indices ();
@@ -79,10 +503,138 @@ diff -ur bash-3.2_orig/jobs.c bash-3.2/jobs.c
  }
  
  /* Must be called with SIGCHLD blocked. */
-diff -ur bash-3.2_orig/lib/readline/display.c bash-3.2/lib/readline/display.c
---- bash-3.2_orig/lib/readline/display.c	2006-09-14 18:20:12.000000000 +0000
-+++ bash-3.2/lib/readline/display.c	2007-03-09 11:49:22.000000000 +0000
-@@ -2380,6 +2380,8 @@
+diff -Naur bash-3.2.orig/lib/readline/complete.c bash-3.2/lib/readline/complete.c
+--- bash-3.2.orig/lib/readline/complete.c	2006-07-28 15:35:49.000000000 +0000
++++ bash-3.2/lib/readline/complete.c	2007-09-08 18:50:43.000000000 +0000
+@@ -428,7 +428,7 @@
+ 	return (1);
+       if (c == 'n' || c == 'N' || c == RUBOUT)
+ 	return (0);
+-      if (c == ABORT_CHAR)
++      if (c == ABORT_CHAR || c < 0)
+ 	_rl_abort_internal ();
+       if (for_pager && (c == NEWLINE || c == RETURN))
+ 	return (2);
+diff -Naur bash-3.2.orig/lib/readline/display.c bash-3.2/lib/readline/display.c
+--- bash-3.2.orig/lib/readline/display.c	2006-09-14 18:20:12.000000000 +0000
++++ bash-3.2/lib/readline/display.c	2007-09-08 18:50:49.000000000 +0000
+@@ -561,6 +561,17 @@
+       wrap_offset = prompt_invis_chars_first_line = 0;
+     }
+ 
++#if defined (HANDLE_MULTIBYTE)
++#define CHECK_INV_LBREAKS() \
++      do { \
++	if (newlines >= (inv_lbsize - 2)) \
++	  { \
++	    inv_lbsize *= 2; \
++	    inv_lbreaks = (int *)xrealloc (inv_lbreaks, inv_lbsize * sizeof (int)); \
++	    _rl_wrapped_line = (int *)xrealloc (_rl_wrapped_line, inv_lbsize * sizeof (int)); \
++	  } \
++      } while (0)
++#else
+ #define CHECK_INV_LBREAKS() \
+       do { \
+ 	if (newlines >= (inv_lbsize - 2)) \
+@@ -569,6 +580,7 @@
+ 	    inv_lbreaks = (int *)xrealloc (inv_lbreaks, inv_lbsize * sizeof (int)); \
+ 	  } \
+       } while (0)
++#endif /* HANDLE_MULTIBYTE */
+ 
+ #if defined (HANDLE_MULTIBYTE)	  
+ #define CHECK_LPOS() \
+@@ -1506,11 +1518,31 @@
+     {
+       /* Non-zero if we're increasing the number of lines. */
+       int gl = current_line >= _rl_vis_botlin && inv_botlin > _rl_vis_botlin;
++      /* If col_lendiff is > 0, implying that the new string takes up more
++	 screen real estate than the old, but lendiff is < 0, meaning that it
++	 takes fewer bytes, we need to just output the characters starting
++	 from the first difference.  These will overwrite what is on the
++	 display, so there's no reason to do a smart update.  This can really
++	 only happen in a multibyte environment. */
++      if (lendiff < 0)
++	{
++	  _rl_output_some_chars (nfd, temp);
++	  _rl_last_c_pos += _rl_col_width (nfd, 0, temp);
++	  /* If nfd begins before any invisible characters in the prompt,
++	     adjust _rl_last_c_pos to account for wrap_offset and set
++	     cpos_adjusted to let the caller know. */
++	  if (current_line == 0 && wrap_offset && ((nfd - new) <= prompt_last_invisible))
++	    {
++	      _rl_last_c_pos -= wrap_offset;
++	      cpos_adjusted = 1;
++	    }
++	  return;
++	}
+       /* Sometimes it is cheaper to print the characters rather than
+ 	 use the terminal's capabilities.  If we're growing the number
+ 	 of lines, make sure we actually cause the new line to wrap
+ 	 around on auto-wrapping terminals. */
+-      if (_rl_terminal_can_insert && ((2 * col_temp) >= col_lendiff || _rl_term_IC) && (!_rl_term_autowrap || !gl))
++      else if (_rl_terminal_can_insert && ((2 * col_temp) >= col_lendiff || _rl_term_IC) && (!_rl_term_autowrap || !gl))
+ 	{
+ 	  /* If lendiff > prompt_visible_length and _rl_last_c_pos == 0 and
+ 	     _rl_horizontal_scroll_mode == 1, inserting the characters with
+@@ -1586,8 +1618,22 @@
+ 	  temp = nls - nfd;
+ 	  if (temp > 0)
+ 	    {
++	      /* If nfd begins at the prompt, or before the invisible
++		 characters in the prompt, we need to adjust _rl_last_c_pos
++		 in a multibyte locale to account for the wrap offset and
++		 set cpos_adjusted accordingly. */
+ 	      _rl_output_some_chars (nfd, temp);
+-	      _rl_last_c_pos += _rl_col_width (nfd, 0, temp);;
++	      if (MB_CUR_MAX > 1 && rl_byte_oriented == 0)
++		{
++                  _rl_last_c_pos += _rl_col_width (nfd, 0, temp);
++                  if (current_line == 0 && wrap_offset &&  ((nfd - new) <= prompt_last_invisible))
++		    {
++		      _rl_last_c_pos -= wrap_offset;
++		      cpos_adjusted = 1;
++		    }
++		}
++              else
++                _rl_last_c_pos += temp;
+ 	    }
+ 	}
+       /* Otherwise, print over the existing material. */
+@@ -1595,8 +1641,20 @@
+ 	{
+ 	  if (temp > 0)
+ 	    {
++	      /* If nfd begins at the prompt, or before the invisible
++		 characters in the prompt, we need to adjust _rl_last_c_pos
++		 in a multibyte locale to account for the wrap offset and
++		 set cpos_adjusted accordingly. */
+ 	      _rl_output_some_chars (nfd, temp);
+ 	      _rl_last_c_pos += col_temp;		/* XXX */
++	      if (MB_CUR_MAX > 1 && rl_byte_oriented == 0)
++		{
++		  if (current_line == 0 && wrap_offset &&  ((nfd - new) <= prompt_last_invisible))
++		    {
++		      _rl_last_c_pos -= wrap_offset;
++		      cpos_adjusted = 1;
++		    }
++		}
+ 	    }
+ 	  lendiff = (oe - old) - (ne - new);
+ 	  if (MB_CUR_MAX > 1 && rl_byte_oriented == 0)
+@@ -1732,7 +1790,10 @@
+   if (MB_CUR_MAX > 1 && rl_byte_oriented == 0)
+     {
+       dpos = _rl_col_width (data, 0, new);
+-      if (dpos > prompt_last_invisible)		/* XXX - don't use woff here */
++      /* Use NEW when comparing against the last invisible character in the
++	 prompt string, since they're both buffer indices and DPOS is a
++	 desired display position. */
++      if (new > prompt_last_invisible)		/* XXX - don't use woff here */
+ 	{
+ 	  dpos -= woff;
+ 	  /* Since this will be assigned to _rl_last_c_pos at the end (more
+@@ -2380,6 +2441,8 @@
  
    if (end <= start)
      return 0;
@@ -91,9 +643,297 @@ diff -ur bash-3.2_orig/lib/readline/display.c bash-3.2/lib/readline/display.c
  
    memset (&ps, 0, sizeof (mbstate_t));
  
-diff -ur bash-3.2_orig/lib/sh/snprintf.c bash-3.2/lib/sh/snprintf.c
---- bash-3.2_orig/lib/sh/snprintf.c	2006-04-06 13:48:40.000000000 +0000
-+++ bash-3.2/lib/sh/snprintf.c	2007-03-09 11:49:22.000000000 +0000
+diff -Naur bash-3.2.orig/lib/readline/input.c bash-3.2/lib/readline/input.c
+--- bash-3.2.orig/lib/readline/input.c	2006-08-16 19:15:16.000000000 +0000
++++ bash-3.2/lib/readline/input.c	2007-09-08 18:50:50.000000000 +0000
+@@ -133,8 +133,11 @@
+     return (0);
+ 
+   *key = ibuffer[pop_index++];
+-
++#if 0
+   if (pop_index >= ibuffer_len)
++#else
++  if (pop_index > ibuffer_len)
++#endif
+     pop_index = 0;
+ 
+   return (1);
+@@ -250,7 +253,8 @@
+       while (chars_avail--)
+ 	{
+ 	  k = (*rl_getc_function) (rl_instream);
+-	  rl_stuff_char (k);
++	  if (rl_stuff_char (k) == 0)
++	    break;			/* some problem; no more room */
+ 	  if (k == NEWLINE || k == RETURN)
+ 	    break;
+ 	}
+@@ -373,7 +377,11 @@
+       RL_SETSTATE (RL_STATE_INPUTPENDING);
+     }
+   ibuffer[push_index++] = key;
++#if 0
+   if (push_index >= ibuffer_len)
++#else
++  if (push_index > ibuffer_len)
++#endif
+     push_index = 0;
+ 
+   return 1;
+@@ -513,20 +521,26 @@
+      char *mbchar;
+      int size;
+ {
+-  int mb_len = 0;
++  int mb_len, c;
+   size_t mbchar_bytes_length;
+   wchar_t wc;
+   mbstate_t ps, ps_back;
+ 
+   memset(&ps, 0, sizeof (mbstate_t));
+   memset(&ps_back, 0, sizeof (mbstate_t));
+-  
++
++  mb_len = 0;  
+   while (mb_len < size)
+     {
+       RL_SETSTATE(RL_STATE_MOREINPUT);
+-      mbchar[mb_len++] = rl_read_key ();
++      c = rl_read_key ();
+       RL_UNSETSTATE(RL_STATE_MOREINPUT);
+ 
++      if (c < 0)
++	break;
++
++      mbchar[mb_len++] = c;
++
+       mbchar_bytes_length = mbrtowc (&wc, mbchar, mb_len, &ps);
+       if (mbchar_bytes_length == (size_t)(-1))
+ 	break;		/* invalid byte sequence for the current locale */
+@@ -564,7 +578,7 @@
+ 
+   c = first;
+   memset (mb, 0, mlen);
+-  for (i = 0; i < mlen; i++)
++  for (i = 0; c >= 0 && i < mlen; i++)
+     {
+       mb[i] = (char)c;
+       memset (&ps, 0, sizeof (mbstate_t));
+diff -Naur bash-3.2.orig/lib/readline/isearch.c bash-3.2/lib/readline/isearch.c
+--- bash-3.2.orig/lib/readline/isearch.c	2005-12-26 22:18:53.000000000 +0000
++++ bash-3.2/lib/readline/isearch.c	2007-09-08 18:50:43.000000000 +0000
+@@ -327,8 +327,15 @@
+   rl_command_func_t *f;
+ 
+   f = (rl_command_func_t *)NULL;
+- 
+- /* Translate the keys we do something with to opcodes. */
++
++  if (c < 0)
++    {
++      cxt->sflags |= SF_FAILED;
++      cxt->history_pos = cxt->last_found_line;
++      return -1;
++    }
++
++  /* Translate the keys we do something with to opcodes. */
+   if (c >= 0 && _rl_keymap[c].type == ISFUNC)
+     {
+       f = _rl_keymap[c].function;
+diff -Naur bash-3.2.orig/lib/readline/misc.c bash-3.2/lib/readline/misc.c
+--- bash-3.2.orig/lib/readline/misc.c	2005-12-26 22:20:46.000000000 +0000
++++ bash-3.2/lib/readline/misc.c	2007-09-08 18:50:43.000000000 +0000
+@@ -146,6 +146,8 @@
+ 	  rl_restore_prompt ();
+ 	  rl_clear_message ();
+ 	  RL_UNSETSTATE(RL_STATE_NUMERICARG);
++	  if (key < 0)
++	    return -1;
+ 	  return (_rl_dispatch (key, _rl_keymap));
+ 	}
+     }
+diff -Naur bash-3.2.orig/lib/readline/readline.c bash-3.2/lib/readline/readline.c
+--- bash-3.2.orig/lib/readline/readline.c	2006-08-16 19:00:36.000000000 +0000
++++ bash-3.2/lib/readline/readline.c	2007-09-08 18:50:43.000000000 +0000
+@@ -645,6 +645,11 @@
+   if ((cxt->flags & KSEQ_DISPATCHED) == 0)
+     {
+       nkey = _rl_subseq_getchar (cxt->okey);
++      if (nkey < 0)
++	{
++	  _rl_abort_internal ();
++	  return -1;
++	}
+       r = _rl_dispatch_subseq (nkey, cxt->dmap, cxt->subseq_arg);
+       cxt->flags |= KSEQ_DISPATCHED;
+     }
+diff -Naur bash-3.2.orig/lib/readline/text.c bash-3.2/lib/readline/text.c
+--- bash-3.2.orig/lib/readline/text.c	2006-07-28 15:55:27.000000000 +0000
++++ bash-3.2/lib/readline/text.c	2007-09-08 18:50:43.000000000 +0000
+@@ -857,6 +857,9 @@
+   c = rl_read_key ();
+   RL_UNSETSTATE(RL_STATE_MOREINPUT);
+ 
++  if (c < 0)
++    return -1;
++
+ #if defined (HANDLE_SIGNALS)
+   if (RL_ISSTATE (RL_STATE_CALLBACK) == 0)
+     _rl_restore_tty_signals ();
+@@ -1520,6 +1523,9 @@
+ 
+   mb_len = _rl_read_mbchar (mbchar, MB_LEN_MAX);
+ 
++  if (mb_len <= 0)
++    return -1;
++
+   if (count < 0)
+     return (_rl_char_search_internal (-count, bdir, mbchar, mb_len));
+   else
+@@ -1536,6 +1542,9 @@
+   c = rl_read_key ();
+   RL_UNSETSTATE(RL_STATE_MOREINPUT);
+ 
++  if (c < 0)
++    return -1;
++
+   if (count < 0)
+     return (_rl_char_search_internal (-count, bdir, c));
+   else
+diff -Naur bash-3.2.orig/lib/readline/vi_mode.c bash-3.2/lib/readline/vi_mode.c
+--- bash-3.2.orig/lib/readline/vi_mode.c	2006-07-29 20:42:28.000000000 +0000
++++ bash-3.2/lib/readline/vi_mode.c	2007-09-08 18:50:43.000000000 +0000
+@@ -886,6 +886,13 @@
+   RL_SETSTATE(RL_STATE_MOREINPUT);
+   c = rl_read_key ();
+   RL_UNSETSTATE(RL_STATE_MOREINPUT);
++
++  if (c < 0)
++    {
++      *nextkey = 0;
++      return -1;
++    }
++
+   *nextkey = c;
+ 
+   if (!member (c, vi_motion))
+@@ -902,6 +909,11 @@
+ 	  RL_SETSTATE(RL_STATE_MOREINPUT);
+ 	  c = rl_read_key ();	/* real command */
+ 	  RL_UNSETSTATE(RL_STATE_MOREINPUT);
++	  if (c < 0)
++	    {
++	      *nextkey = 0;
++	      return -1;
++	    }
+ 	  *nextkey = c;
+ 	}
+       else if (key == c && (key == 'd' || key == 'y' || key == 'c'))
+@@ -1224,14 +1236,22 @@
+ _rl_vi_callback_char_search (data)
+      _rl_callback_generic_arg *data;
+ {
++  int c;
+ #if defined (HANDLE_MULTIBYTE)
+-  _rl_vi_last_search_mblen = _rl_read_mbchar (_rl_vi_last_search_mbchar, MB_LEN_MAX);
++  c = _rl_vi_last_search_mblen = _rl_read_mbchar (_rl_vi_last_search_mbchar, MB_LEN_MAX);
+ #else
+   RL_SETSTATE(RL_STATE_MOREINPUT);
+-  _rl_vi_last_search_char = rl_read_key ();
++  c = rl_read_key ();
+   RL_UNSETSTATE(RL_STATE_MOREINPUT);
+ #endif
+ 
++  if (c <= 0)
++    return -1;
++
++#if !defined (HANDLE_MULTIBYTE)
++  _rl_vi_last_search_char = c;
++#endif
++
+   _rl_callback_func = 0;
+   _rl_want_redisplay = 1;
+ 
+@@ -1247,6 +1267,7 @@
+ rl_vi_char_search (count, key)
+      int count, key;
+ {
++  int c;
+ #if defined (HANDLE_MULTIBYTE)
+   static char *target;
+   static int tlen;
+@@ -1293,11 +1314,17 @@
+       else
+ 	{
+ #if defined (HANDLE_MULTIBYTE)
+-	  _rl_vi_last_search_mblen = _rl_read_mbchar (_rl_vi_last_search_mbchar, MB_LEN_MAX);
++	  c = _rl_read_mbchar (_rl_vi_last_search_mbchar, MB_LEN_MAX);
++	  if (c <= 0)
++	    return -1;
++	  _rl_vi_last_search_mblen = c;
+ #else
+ 	  RL_SETSTATE(RL_STATE_MOREINPUT);
+-	  _rl_vi_last_search_char = rl_read_key ();
++	  c = rl_read_key ();
+ 	  RL_UNSETSTATE(RL_STATE_MOREINPUT);
++	  if (c < 0)
++	    return -1;
++	  _rl_vi_last_search_char = c;
+ #endif
+ 	}
+     }
+@@ -1467,6 +1494,9 @@
+   c = rl_read_key ();
+   RL_UNSETSTATE(RL_STATE_MOREINPUT);
+ 
++  if (c < 0)
++    return -1;
++
+ #if defined (HANDLE_MULTIBYTE)
+   if (MB_CUR_MAX > 1 && rl_byte_oriented == 0)
+     c = _rl_read_mbstring (c, mb, mlen);
+@@ -1485,6 +1515,9 @@
+ 
+   _rl_vi_last_replacement = c = _rl_vi_callback_getchar (mb, MB_LEN_MAX);
+ 
++  if (c < 0)
++    return -1;
++
+   _rl_callback_func = 0;
+   _rl_want_redisplay = 1;
+ 
+@@ -1516,6 +1549,9 @@
+   else
+     _rl_vi_last_replacement = c = _rl_vi_callback_getchar (mb, MB_LEN_MAX);
+ 
++  if (c < 0)
++    return -1;
++
+   return (_rl_vi_change_char (count, c, mb));
+ }
+ 
+@@ -1650,7 +1686,7 @@
+   ch = rl_read_key ();
+   RL_UNSETSTATE(RL_STATE_MOREINPUT);
+ 
+-  if (ch < 'a' || ch > 'z')
++  if (ch < 0 || ch < 'a' || ch > 'z')	/* make test against 0 explicit */
+     {
+       rl_ding ();
+       return -1;
+@@ -1702,7 +1738,7 @@
+       rl_point = rl_mark;
+       return 0;
+     }
+-  else if (ch < 'a' || ch > 'z')
++  else if (ch < 0 || ch < 'a' || ch > 'z')	/* make test against 0 explicit */
+     {
+       rl_ding ();
+       return -1;
+diff -Naur bash-3.2.orig/lib/sh/snprintf.c bash-3.2/lib/sh/snprintf.c
+--- bash-3.2.orig/lib/sh/snprintf.c	2006-04-06 13:48:40.000000000 +0000
++++ bash-3.2/lib/sh/snprintf.c	2007-09-08 18:50:31.000000000 +0000
 @@ -471,6 +471,8 @@
  	  10^x ~= r
   * log_10(200) = 2;
@@ -220,9 +1060,9 @@ diff -ur bash-3.2_orig/lib/sh/snprintf.c bash-3.2/lib/sh/snprintf.c
  		/*
  		 * for '%g|%G' ANSI: use f if exponent
  		 * is in the range or [-4,p] exclusively
-diff -ur bash-3.2_orig/parse.y bash-3.2/parse.y
---- bash-3.2_orig/parse.y	2006-09-19 20:37:21.000000000 +0000
-+++ bash-3.2/parse.y	2007-03-09 11:49:21.000000000 +0000
+diff -Naur bash-3.2.orig/parse.y bash-3.2/parse.y
+--- bash-3.2.orig/parse.y	2006-09-19 20:37:21.000000000 +0000
++++ bash-3.2/parse.y	2007-09-08 18:50:46.000000000 +0000
 @@ -1029,6 +1029,7 @@
  #define PST_CMDTOKEN	0x1000		/* command token OK - unused */
  #define PST_COMPASSIGN	0x2000		/* parsing x=(...) compound assignment */
@@ -280,6 +1120,15 @@ diff -ur bash-3.2_orig/parse.y bash-3.2/parse.y
        if (tok == WORD)
  	{
  	  tright = make_cond_node (COND_TERM, yylval.word, (COND_COM *)NULL, (COND_COM *)NULL);
+@@ -3367,7 +3376,7 @@
+       if (pass_next_character)
+ 	{
+ 	  pass_next_character = 0;
+-	  goto got_character;
++	  goto got_escaped_character;
+ 	}
+ 
+       cd = current_delimiter (dstack);
 @@ -3419,9 +3428,34 @@
  	  goto next_character;
  	}
@@ -316,20 +1165,38 @@ diff -ur bash-3.2_orig/parse.y bash-3.2/parse.y
  	{
  	  peek_char = shell_getc (1);
  	  if MBTEST(peek_char == '(')		/* ) */
-diff -ur bash-3.2_orig/patchlevel.h bash-3.2/patchlevel.h
---- bash-3.2_orig/patchlevel.h	2006-04-13 12:31:04.000000000 +0000
-+++ bash-3.2/patchlevel.h	2007-03-09 11:49:22.000000000 +0000
+@@ -3616,12 +3650,14 @@
+ 
+     got_character:
+ 
+-      all_digit_token &= DIGIT (character);
+-      dollar_present |= character == '$';
+-
+       if (character == CTLESC || character == CTLNUL)
+ 	token[token_index++] = CTLESC;
+ 
++    got_escaped_character:
++
++      all_digit_token &= DIGIT (character);
++      dollar_present |= character == '$';
++
+       token[token_index++] = character;
+ 
+       RESIZE_MALLOCED_BUFFER (token, token_index, 1, token_buffer_size,
+diff -Naur bash-3.2.orig/patchlevel.h bash-3.2/patchlevel.h
+--- bash-3.2.orig/patchlevel.h	2006-04-13 12:31:04.000000000 +0000
++++ bash-3.2/patchlevel.h	2007-09-08 18:50:50.000000000 +0000
 @@ -25,6 +25,6 @@
     regexp `^#define[ 	]*PATCHLEVEL', since that's what support/mkversion.sh
     looks for to find the patch level (for the sccs version string). */
  
 -#define PATCHLEVEL 0
-+#define PATCHLEVEL 10
++#define PATCHLEVEL 25
  
  #endif /* _PATCHLEVEL_H_ */
-diff -ur bash-3.2_orig/pathexp.c bash-3.2/pathexp.c
---- bash-3.2_orig/pathexp.c	2002-05-06 17:43:05.000000000 +0000
-+++ bash-3.2/pathexp.c	2007-03-09 11:49:22.000000000 +0000
+diff -Naur bash-3.2.orig/pathexp.c bash-3.2/pathexp.c
+--- bash-3.2.orig/pathexp.c	2002-05-06 17:43:05.000000000 +0000
++++ bash-3.2/pathexp.c	2007-09-08 18:50:33.000000000 +0000
 @@ -1,6 +1,6 @@
  /* pathexp.c -- The shell interface to the globbing library. */
  
@@ -381,9 +1248,9 @@ diff -ur bash-3.2_orig/pathexp.c bash-3.2/pathexp.c
  	  temp[j++] = '\\';
  	  i++;
  	  if (pathname[i] == '\0')
-diff -ur bash-3.2_orig/pathexp.h bash-3.2/pathexp.h
---- bash-3.2_orig/pathexp.h	2005-02-19 22:23:18.000000000 +0000
-+++ bash-3.2/pathexp.h	2007-03-09 11:49:22.000000000 +0000
+diff -Naur bash-3.2.orig/pathexp.h bash-3.2/pathexp.h
+--- bash-3.2.orig/pathexp.h	2005-02-19 22:23:18.000000000 +0000
++++ bash-3.2/pathexp.h	2007-09-08 18:50:33.000000000 +0000
 @@ -1,6 +1,6 @@
  /* pathexp.h -- The shell interface to the globbing library. */
  
@@ -400,9 +1267,9 @@ diff -ur bash-3.2_orig/pathexp.h bash-3.2/pathexp.h
  
  #if defined (EXTENDED_GLOB)
  /* Flags to OR with other flag args to strmatch() to enabled the extended
-diff -ur bash-3.2_orig/po/ru.po bash-3.2/po/ru.po
---- bash-3.2_orig/po/ru.po	2006-01-10 22:51:03.000000000 +0000
-+++ bash-3.2/po/ru.po	2007-03-09 11:49:21.000000000 +0000
+diff -Naur bash-3.2.orig/po/ru.po bash-3.2/po/ru.po
+--- bash-3.2.orig/po/ru.po	2006-01-10 22:51:03.000000000 +0000
++++ bash-3.2/po/ru.po	2007-09-08 18:50:25.000000000 +0000
 @@ -12,7 +12,7 @@
  "Last-Translator: Evgeniy Dushistov <dushistov@mail.ru>\n"
  "Language-Team: Russian <ru@li.org>\n"
@@ -412,9 +1279,49 @@ diff -ur bash-3.2_orig/po/ru.po bash-3.2/po/ru.po
  "Content-Transfer-Encoding: 8bit\n"
  "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
  
-diff -ur bash-3.2_orig/subst.c bash-3.2/subst.c
---- bash-3.2_orig/subst.c	2006-09-19 12:35:09.000000000 +0000
-+++ bash-3.2/subst.c	2007-03-09 11:49:22.000000000 +0000
+diff -Naur bash-3.2.orig/sig.c bash-3.2/sig.c
+--- bash-3.2.orig/sig.c	2006-01-25 19:57:59.000000000 +0000
++++ bash-3.2/sig.c	2007-09-08 18:50:45.000000000 +0000
+@@ -350,6 +350,25 @@
+ #undef XSIG
+ #undef XHANDLER
+ 
++/* Run some of the cleanups that should be performed when we run
++   jump_to_top_level from a builtin command context.  XXX - might want to
++   also call reset_parser here. */
++void
++top_level_cleanup ()
++{
++  /* Clean up string parser environment. */
++  while (parse_and_execute_level)
++    parse_and_execute_cleanup ();
++
++#if defined (PROCESS_SUBSTITUTION)
++  unlink_fifo_list ();
++#endif /* PROCESS_SUBSTITUTION */
++
++  run_unwind_protects ();
++  loop_level = continuing = breaking = 0;
++  return_catch_flag = 0;
++}
++
+ /* What to do when we've been interrupted, and it is safe to handle it. */
+ void
+ throw_to_top_level ()
+diff -Naur bash-3.2.orig/sig.h bash-3.2/sig.h
+--- bash-3.2.orig/sig.h	2006-01-25 19:50:27.000000000 +0000
++++ bash-3.2/sig.h	2007-09-08 18:50:45.000000000 +0000
+@@ -121,6 +121,7 @@
+ extern void initialize_signals __P((int));
+ extern void initialize_terminating_signals __P((void));
+ extern void reset_terminating_signals __P((void));
++extern void top_level_cleanup __P((void));
+ extern void throw_to_top_level __P((void));
+ extern void jump_to_top_level __P((int)) __attribute__((__noreturn__));
+ 
+diff -Naur bash-3.2.orig/subst.c bash-3.2/subst.c
+--- bash-3.2.orig/subst.c	2006-09-19 12:35:09.000000000 +0000
++++ bash-3.2/subst.c	2007-09-08 18:50:48.000000000 +0000
 @@ -4,7 +4,7 @@
  /* ``Have a little faith, there's magic in the night.  You ain't a
       beauty, but, hey, you're alright.'' */
@@ -424,7 +1331,30 @@ diff -ur bash-3.2_orig/subst.c bash-3.2/subst.c
  
     This file is part of GNU Bash, the Bourne Again SHell.
  
-@@ -2646,11 +2646,12 @@
+@@ -1278,7 +1278,7 @@
+     {
+       if (no_longjmp_on_fatal_error == 0)
+ 	{			/* { */
+-	  report_error ("bad substitution: no closing `%s' in %s", "}", string);
++	  report_error (_("bad substitution: no closing `%s' in %s"), "}", string);
+ 	  last_command_exit_value = EXECUTION_FAILURE;
+ 	  exp_jump_to_top_level (DISCARD);
+ 	}
+@@ -1887,7 +1887,13 @@
+   sep[1] = '\0';
+ #endif
+ 
++  /* XXX -- why call quote_list if ifs == 0?  we can get away without doing
++     it now that quote_escapes quotes spaces */
++#if 0
+   tlist = ((quoted & (Q_HERE_DOCUMENT|Q_DOUBLE_QUOTES)) || (ifs && *ifs == 0))
++#else
++  tlist = (quoted & (Q_HERE_DOCUMENT|Q_DOUBLE_QUOTES))
++#endif
+ 		? quote_list (list)
+ 		: list_quote_escapes (list);
+ 
+@@ -2646,11 +2652,12 @@
  
  /* This needs better error handling. */
  /* Expand W for use as an argument to a unary or binary operator in a
@@ -441,7 +1371,7 @@ diff -ur bash-3.2_orig/subst.c bash-3.2/subst.c
  char *
  cond_expand_word (w, special)
       WORD_DESC *w;
-@@ -2658,6 +2659,7 @@
+@@ -2658,6 +2665,7 @@
  {
    char *r, *p;
    WORD_LIST *l;
@@ -449,7 +1379,7 @@ diff -ur bash-3.2_orig/subst.c bash-3.2/subst.c
  
    if (w->word == 0 || w->word[0] == '\0')
      return ((char *)NULL);
-@@ -2672,8 +2674,11 @@
+@@ -2672,8 +2680,11 @@
  	}
        else
  	{
@@ -462,7 +1392,145 @@ diff -ur bash-3.2_orig/subst.c bash-3.2/subst.c
  	  free (p);
  	}
        dispose_words (l);
-@@ -5707,6 +5712,11 @@
+@@ -2916,7 +2927,12 @@
+ 
+ /* Quote escape characters in string s, but no other characters.  This is
+    used to protect CTLESC and CTLNUL in variable values from the rest of
+-   the word expansion process after the variable is expanded. */
++   the word expansion process after the variable is expanded.  If IFS is
++   null, we quote spaces as well, just in case we split on spaces later
++   (in the case of unquoted $@, we will eventually attempt to split the
++   entire word on spaces).  Corresponding code exists in dequote_escapes.
++   Even if we don't end up splitting on spaces, quoting spaces is not a
++   problem. */
+ char *
+ quote_escapes (string)
+      char *string;
+@@ -2924,17 +2940,19 @@
+   register char *s, *t;
+   size_t slen;
+   char *result, *send;
++  int quote_spaces;
+   DECLARE_MBSTATE; 
+ 
+   slen = strlen (string);
+   send = string + slen;
+ 
++  quote_spaces = (ifs_value && *ifs_value == 0);
+   t = result = (char *)xmalloc ((slen * 2) + 1);
+   s = string;
+ 
+   while (*s)
+     {
+-      if (*s == CTLESC || *s == CTLNUL)
++      if (*s == CTLESC || *s == CTLNUL || (quote_spaces && *s == ' '))
+ 	*t++ = CTLESC;
+       COPY_CHAR_P (t, s, send);
+     }
+@@ -2976,6 +2994,7 @@
+   register char *s, *t;
+   size_t slen;
+   char *result, *send;
++  int quote_spaces;
+   DECLARE_MBSTATE;
+ 
+   if (string == 0)
+@@ -2990,9 +3009,10 @@
+   if (strchr (string, CTLESC) == 0)
+     return (strcpy (result, s));
+ 
++  quote_spaces = (ifs_value && *ifs_value == 0);
+   while (*s)
+     {
+-      if (*s == CTLESC && (s[1] == CTLESC || s[1] == CTLNUL))
++      if (*s == CTLESC && (s[1] == CTLESC || s[1] == CTLNUL || (quote_spaces && s[1] == ' ')))
+ 	{
+ 	  s++;
+ 	  if (*s == '\0')
+@@ -3954,7 +3974,11 @@
+   if (patspec == RP_LONG_LEFT || patspec == RP_LONG_RIGHT)
+     patstr++;
+ 
+-  pattern = getpattern (patstr, quoted, 1);
++  /* Need to pass getpattern newly-allocated memory in case of expansion --
++     the expansion code will free the passed string on an error. */
++  temp1 = savestring (patstr);
++  pattern = getpattern (temp1, quoted, 1);
++  free (temp1);
+ 
+   temp1 = (char *)NULL;		/* shut up gcc */
+   switch (vtype)
+@@ -4123,6 +4147,12 @@
+     nfifo = 0;
+ }
+ 
++int
++fifos_pending ()
++{
++  return nfifo;
++}
++
+ static char *
+ make_named_pipe ()
+ {
+@@ -4172,6 +4202,12 @@
+   nfds++;
+ }
+ 
++int
++fifos_pending ()
++{
++  return 0;	/* used for cleanup; not needed with /dev/fd */
++}
++
+ void
+ unlink_fifo_list ()
+ {
+@@ -4456,7 +4492,15 @@
+       /* Add the character to ISTRING, possibly after resizing it. */
+       RESIZE_MALLOCED_BUFFER (istring, istring_index, 2, istring_size, DEFAULT_ARRAY_SIZE);
+ 
+-      if ((quoted & (Q_HERE_DOCUMENT|Q_DOUBLE_QUOTES)) || c == CTLESC || c == CTLNUL)
++      /* This is essentially quote_string inline */
++      if ((quoted & (Q_HERE_DOCUMENT|Q_DOUBLE_QUOTES)) /* || c == CTLESC || c == CTLNUL */)
++	istring[istring_index++] = CTLESC;
++      /* Escape CTLESC and CTLNUL in the output to protect those characters
++	 from the rest of the word expansions (word splitting and globbing.)
++	 This is essentially quote_escapes inline. */
++      else if (c == CTLESC)
++	istring[istring_index++] = CTLESC;
++      else if (c == CTLNUL || (c == ' ' && (ifs_value && *ifs_value == 0)))
+ 	istring[istring_index++] = CTLESC;
+ 
+       istring[istring_index++] = c;
+@@ -4665,6 +4709,9 @@
+ 
+       last_command_exit_value = rc;
+       rc = run_exit_trap ();
++#if defined (PROCESS_SUBSTITUTION)
++      unlink_fifo_list ();
++#endif
+       exit (rc);
+     }
+   else
+@@ -5546,12 +5593,16 @@
+ 	 so verify_substring_values just returns the numbers specified and we
+ 	 rely on array_subrange to understand how to deal with them). */
+       tt = array_subrange (array_cell (v), e1, e2, starsub, quoted);
++#if 0
++      /* array_subrange now calls array_quote_escapes as appropriate, so the
++	 caller no longer needs to. */
+       if ((quoted & (Q_DOUBLE_QUOTES|Q_HERE_DOCUMENT)) == 0)
+ 	{
+ 	  temp = tt ? quote_escapes (tt) : (char *)NULL;
+ 	  FREE (tt);
+ 	}
+       else
++#endif
+ 	temp = tt;
+       break;
+ #endif
+@@ -5707,6 +5758,11 @@
    vtype &= ~VT_STARSUB;
  
    mflags = 0;
@@ -474,7 +1542,7 @@ diff -ur bash-3.2_orig/subst.c bash-3.2/subst.c
  
    /* Malloc this because expand_string_if_necessary or one of the expansion
       functions in its call chain may free it on a substitution error. */
-@@ -5741,13 +5751,12 @@
+@@ -5741,13 +5797,12 @@
      }
  
    /* ksh93 doesn't allow the match specifier to be a part of the expanded
@@ -493,9 +1561,55 @@ diff -ur bash-3.2_orig/subst.c bash-3.2/subst.c
    else if (pat && pat[0] == '#')
      {
        mflags |= MATCH_BEG;
-diff -ur bash-3.2_orig/tests/new-exp.right bash-3.2/tests/new-exp.right
---- bash-3.2_orig/tests/new-exp.right	2006-08-10 16:00:00.000000000 +0000
-+++ bash-3.2/tests/new-exp.right	2007-03-09 11:49:21.000000000 +0000
+@@ -5798,12 +5853,16 @@
+ #if defined (ARRAY_VARS)
+     case VT_ARRAYVAR:
+       temp = array_patsub (array_cell (v), p, rep, mflags);
++#if 0
++      /* Don't need to do this anymore; array_patsub calls array_quote_escapes
++	 as appropriate before adding the space separators. */
+       if (temp && (mflags & MATCH_QUOTED) == 0)
+ 	{
+ 	  tt = quote_escapes (temp);
+ 	  free (temp);
+ 	  temp = tt;
+ 	}
++#endif
+       break;
+ #endif
+     }
+@@ -7607,6 +7666,8 @@
+   expand_no_split_dollar_star = 0;	/* XXX */
+   expanding_redir = 0;
+ 
++  top_level_cleanup ();			/* from sig.c */
++
+   jump_to_top_level (v);
+ }
+ 
+@@ -7824,7 +7885,7 @@
+ 	  else if (fail_glob_expansion != 0)
+ 	    {
+ 	      report_error (_("no match: %s"), tlist->word->word);
+-	      jump_to_top_level (DISCARD);
++	      exp_jump_to_top_level (DISCARD);
+ 	    }
+ 	  else if (allow_null_glob_expansion == 0)
+ 	    {
+diff -Naur bash-3.2.orig/subst.h bash-3.2/subst.h
+--- bash-3.2.orig/subst.h	2006-09-19 12:34:41.000000000 +0000
++++ bash-3.2/subst.h	2007-09-08 18:50:39.000000000 +0000
+@@ -222,6 +222,7 @@
+ extern char *command_substitute __P((char *, int));
+ extern char *pat_subst __P((char *, char *, char *, int));
+ 
++extern int fifos_pending __P((void));
+ extern void unlink_fifo_list __P((void));
+ 
+ extern WORD_LIST *list_string_with_quotes __P((char *));
+diff -Naur bash-3.2.orig/tests/new-exp.right bash-3.2/tests/new-exp.right
+--- bash-3.2.orig/tests/new-exp.right	2006-08-10 16:00:00.000000000 +0000
++++ bash-3.2/tests/new-exp.right	2007-09-08 18:50:27.000000000 +0000
 @@ -430,7 +430,7 @@
  Case06---1---A B C::---
  Case07---3---A:B:C---
@@ -505,3 +1619,26 @@ diff -ur bash-3.2_orig/tests/new-exp.right bash-3.2/tests/new-exp.right
  argv[1] = <a>
  argv[2] = <b>
  argv[3] = <c>
+diff -Naur bash-3.2.orig/variables.c bash-3.2/variables.c
+--- bash-3.2.orig/variables.c	2006-09-08 17:33:32.000000000 +0000
++++ bash-3.2/variables.c	2007-09-08 18:50:45.000000000 +0000
+@@ -1821,11 +1821,17 @@
+ 	  oval = value_cell (var);
+ 	  lval = evalexp (oval, &expok);	/* ksh93 seems to do this */
+ 	  if (expok == 0)
+-	    jump_to_top_level (DISCARD);
++	    {
++	      top_level_cleanup ();
++	      jump_to_top_level (DISCARD);
++	    }
+ 	}
+       rval = evalexp (value, &expok);
+       if (expok == 0)
+-	jump_to_top_level (DISCARD);
++	{
++	  top_level_cleanup ();
++	  jump_to_top_level (DISCARD);
++	}
+       if (flags & ASS_APPEND)
+ 	rval += lval;
+       retval = itos (rval);
