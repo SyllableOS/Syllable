@@ -3,7 +3,7 @@ authors
 	Kaj de Vos
 status				testing
 
-needs				Syllable >= 0.6.2
+needs				Syllable >= 0.6.5
 
 ;patch				autoconf
 
@@ -13,6 +13,8 @@ configure-options
 ;	--disable-profile
 ;	--with-headers=/usr/include
 	--without-cvs
+;	There is no TLS support on Syllable:
+	--without-__thread
 ;	Prevent linking against the host:
 ;	--without-gd
 ;	--with-cpu=
