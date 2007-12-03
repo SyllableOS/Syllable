@@ -50,10 +50,10 @@ modules
 ;	For rescopy:
 	apps/gnu/binutils-2.17-objcopy
 	apps/gnu/findutils-4.2.30
-	apps/gnu/gzip-1.3.9
+	apps/gnu/gzip-1.3.12
 	apps/gnu/inetutils-1.5
 	apps/gnu/less-394
-	apps/gnu/tar-1.16.1
+	apps/gnu/tar-1.19
 	apps/other/zip-2.32
 	apps/other/p7zip-4.51
 ;	For grub-install:

@@ -284,7 +284,7 @@ modules
 ;	sys/boot/grub-0.97
 
 	system apps/gnu/bash-3.2
-	system apps/gnu/coreutils-6.4
+	system apps/gnu/coreutils-6.9
 	apps/gnu/grep-2.5.1a
 	apps/gnu/sed-4.1.5
 	system apps/other/unzip-5.52
