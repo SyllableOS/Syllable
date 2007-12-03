@@ -17,6 +17,7 @@ modules
 	file/versioning/cvs-1.12.11
 	programming/languages/ruby-1.8.6
 	programming/Builder-0.6.132
+	programming/pkg-config-0.15.0
 	programming/indent-2.2.9
 
 ;	From Syllable CVS:
@@ -32,4 +33,3 @@ modules
 ;	apps/develop/Sourcery
 ;	apps/develop/sIDE
 ;	apps/develop/LayoutEditor
-
