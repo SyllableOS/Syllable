@@ -1,0 +1,546 @@
+diff -urN glibc-2.7_orig/Makerules glibc-2.7/Makerules
+--- glibc-2.7_orig/Makerules	2007-08-26 03:18:03.000000000 +0100
++++ glibc-2.7/Makerules	2007-11-22 15:37:15.000000000 +0000
+@@ -581,9 +581,15 @@
+ endif
+ endif
+ 
++ifneq (syllable,$(config-os))
+ build-module-helper-objlist = \
+ 	$(patsubst %_pic.a,$(whole-archive) %_pic.a $(no-whole-archive),\
+ 		   $(filter-out %.lds $(map-file) $(+preinit) $(+postinit),$^))
++else
++build-module-helper-objlist = \
++	$(patsubst %_pic.a,$(whole-archive) %_pic.a $(no-whole-archive),\
++		   $(filter-out %.lds $(map-file) $(+preinit) $(+postinit) %ld.so %ld.so.1,$^))
++endif
+ whole-archive := -Wl,--whole-archive
+ 
+ build-module-objlist = $(build-module-helper-objlist) $(LDLIBS-$(@F:%.so=%).so)
+@@ -611,6 +617,7 @@
+ $(common-objpfx)libc_pic.os: $(common-objpfx)libc_pic.a
+ 	$(LINK.o) -nostdlib -nostartfiles -r -o $@ \
+ 	$(LDFLAGS-c_pic.os) -Wl,-d -Wl,--whole-archive $^
++ifneq ($(config-os),syllable)
+ # Use our own special initializer and finalizer files for libc.so.
+ $(common-objpfx)libc.so: $(elfobjdir)/soinit.os \
+ 			 $(common-objpfx)libc_pic.os \
+@@ -618,6 +625,14 @@
+ 			 $(elfobjdir)/interp.os $(elfobjdir)/ld.so \
+ 			 $(common-objpfx)shlib.lds
+ 	$(build-shlib)
++else
++# No ld.so exists on Syllable
++$(common-objpfx)libc.so: $(elfobjdir)/soinit.os \
++			 $(common-objpfx)libc_pic.os \
++			 $(elfobjdir)/sofini.os \
++			 $(elfobjdir)/interp.os $(common-objpfx)shlib.lds
++	$(build-shlib)
++endif
+ ifeq ($(versioning),yes)
+ $(common-objpfx)libc.so: $(common-objpfx)libc.map
+ endif
+@@ -992,8 +1007,7 @@
+ 	 echo '   the static library, so try that secondarily.  */';\
+ 	 cat $<; \
+ 	 echo 'GROUP ( $(slibdir)/libc.so$(libc.so-version)' \
+-	      '$(libdir)/$(patsubst %,$(libtype.oS),$(libprefix)$(libc-name))'\
+-	      ' AS_NEEDED (' $(slibdir)/$(rtld-installed-name) ') )' \
++	      '$(libdir)/$(patsubst %,$(libtype.oS),$(libprefix)$(libc-name)) )'\
+ 	) > $@.new
+ 	mv -f $@.new $@
+ 
+diff -urN glibc-2.7_orig/bits/stdio-lock.h glibc-2.7/bits/stdio-lock.h
+--- glibc-2.7_orig/bits/stdio-lock.h	2003-08-29 20:56:11.000000000 +0100
++++ glibc-2.7/bits/stdio-lock.h	2007-11-22 16:39:58.000000000 +0000
+@@ -50,6 +50,8 @@
+   _IO_cleanup_region_start ((void (*) (void *)) _IO_funlockfile, (_fp));      \
+   _IO_flockfile (_fp)
+ 
++# define _IO_acquire_lock_clear_flags2(_fp) _IO_acquire_lock (_fp)
++
+ # define _IO_release_lock(_fp) \
+   _IO_funlockfile (_fp);						      \
+   _IO_cleanup_region_end (0)
+diff -urN glibc-2.7_orig/configure glibc-2.7/configure
+--- glibc-2.7_orig/configure	2007-10-18 12:22:23.000000000 +0100
++++ glibc-2.7/configure	2007-11-22 15:38:59.000000000 +0000
+@@ -2282,7 +2282,7 @@
+ # i586-linuxaout is mangled into i586-pc-linux-gnuaout
+ linux*ecoff* | linux*aout* | gnu*aout* | gnu*ecoff*)
+   ;;
+-gnu* | linux* | freebsd* | netbsd* | sysv4* | solaris2* | irix6*)
++gnu* | linux* | freebsd* | netbsd* | sysv4* | solaris2* | irix6* | syllable*)
+   # These systems (almost) always use the ELF format.
+   elf=yes
+   ;;
+@@ -2557,7 +2557,7 @@
+   base_os=unix/bsd/bsd4.4 ;;
+ osf* | sunos* | ultrix* | newsos* | dynix* | *bsd*)
+   base_os=unix/bsd ;;
+-sysv* | isc* | esix* | sco* | minix* | irix4* | linux*)
++sysv* | isc* | esix* | sco* | minix* | irix4* | linux* | syllable*)
+   base_os=unix/sysv ;;
+ irix6*)
+   base_os=unix/sysv/irix6/$os ;;
+@@ -5885,6 +5885,7 @@
+    { (exit 1); exit 1; }; }
+     fi
+   fi
++  fi
+ 
+   if test $libc_cv_visibility_attribute = yes; then
+     { echo "$as_me:$LINENO: checking for broken __attribute__((visibility()))" >&5
+@@ -5981,6 +5982,9 @@
+     fi
+   fi
+ 
++  if test $host_os = syllable; then
++    libc_cv_initfinit_array=no
++  else
+   { echo "$as_me:$LINENO: checking for .preinit_array/.init_array/.fini_array support" >&5
+ echo $ECHO_N "checking for .preinit_array/.init_array/.fini_array support... $ECHO_C" >&6; }
+ if test "${libc_cv_initfini_array+set}" = set; then
+diff -urN glibc-2.7_orig/configure.in glibc-2.7/configure.in
+--- glibc-2.7_orig/configure.in	2007-06-08 04:16:36.000000000 +0100
++++ glibc-2.7/configure.in	2007-11-22 15:37:15.000000000 +0000
+@@ -283,7 +283,7 @@
+ # i586-linuxaout is mangled into i586-pc-linux-gnuaout
+ linux*ecoff* | linux*aout* | gnu*aout* | gnu*ecoff*)
+   ;;
+-gnu* | linux* | freebsd* | netbsd* | sysv4* | solaris2* | irix6*)
++gnu* | linux* | freebsd* | netbsd* | sysv4* | solaris2* | irix6* | syllable*)
+   # These systems (almost) always use the ELF format.
+   elf=yes
+   ;;
+@@ -538,7 +538,7 @@
+   base_os=unix/bsd/bsd4.4 ;;
+ osf* | sunos* | ultrix* | newsos* | dynix* | *bsd*)
+   base_os=unix/bsd ;;
+-sysv* | isc* | esix* | sco* | minix* | irix4* | linux*)
++sysv* | isc* | esix* | sco* | minix* | irix4* | linux* | syllable*)
+   base_os=unix/sysv ;;
+ irix6*)
+   base_os=unix/sysv/irix6/$os ;;
+@@ -1347,6 +1347,9 @@
+     fi
+   fi
+ 
++  if test $host_os = syllable; then
++    libc_cv_initfinit_array=no
++  else
+   AC_CACHE_CHECK(for .preinit_array/.init_array/.fini_array support,
+ 		 libc_cv_initfini_array, [dnl
+   cat > conftest.c <<EOF
+@@ -1370,6 +1373,7 @@
+   if test $libc_cv_initfini_array != yes; then
+     AC_MSG_ERROR([Need linker with .init_array/.fini_array support.])
+   fi
++  fi
+ 
+   AC_CACHE_CHECK(for libunwind-support in compiler,
+ 		 libc_cv_cc_with_libunwind, [
+diff -urN glibc-2.7_orig/csu/Makefile glibc-2.7/csu/Makefile
+--- glibc-2.7_orig/csu/Makefile	2006-03-01 10:35:47.000000000 +0000
++++ glibc-2.7/csu/Makefile	2007-11-22 16:06:28.000000000 +0000
+@@ -26,13 +26,14 @@
+ 
+ subdir := csu
+ 
++include ../Makeconfig
++
+ routines = init-first libc-start $(libc-init) sysdep version check_fds \
+-	   libc-tls elf-init dso_handle
++	   elf-init dso_handle
+ aux	 = errno
+-elide-routines.os = libc-tls
+ static-only-routines = elf-init
+ csu-dummies = $(filter-out $(start-installed-name),crt1.o Mcrt1.o)
+-extra-objs = start.o gmon-start.o \
++extra-objs = gmon-start.o start.o \
+ 	     $(start-installed-name) g$(start-installed-name) $(csu-dummies) \
+ 	     S$(start-installed-name)
+ omit-deps = $(patsubst %.o,%,$(start-installed-name) g$(start-installed-name) \
+@@ -49,8 +50,6 @@
+ 
+ all: # Make this the default target; it will be defined in Rules.
+ 
+-include ../Makeconfig
+-
+ ifeq (yes,$(build-shared))
+ extra-objs += S$(start-installed-name)
+ install-lib += S$(start-installed-name)
+diff -urN glibc-2.7_orig/dirent/dirent.h glibc-2.7/dirent/dirent.h
+--- glibc-2.7_orig/dirent/dirent.h	2005-09-28 22:12:48.000000000 +0100
++++ glibc-2.7/dirent/dirent.h	2007-11-22 15:37:15.000000000 +0000
+@@ -203,6 +203,13 @@
+ 			struct dirent64 **__restrict __result)
+      __nonnull ((1, 2, 3));
+ # endif
++
++# if defined __FOPENDIR
++/* Open a directory stream from FD.
++   Return a DIR stream on the directory, or NULL if it could not be opened.
++*/
++extern DIR *fopendir( int __fd );
++# endif
+ #endif	/* POSIX or misc */
+ 
+ /* Rewind DIRP to the beginning of the directory.  */
+diff -urN glibc-2.7_orig/inet/inet_ntoa.c glibc-2.7/inet/inet_ntoa.c
+--- glibc-2.7_orig/inet/inet_ntoa.c	2006-04-09 06:50:08.000000000 +0100
++++ glibc-2.7/inet/inet_ntoa.c	2007-11-23 16:57:55.000000000 +0000
+@@ -21,10 +21,14 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <arpa/inet.h>
++#include <tls.h>
+ 
+ /* The interface of this function is completely stupid, it requires a
+    static buffer.  We relax this a bit in that we allow one buffer for
+    each thread.  */
++
++#if USE_TLS && HAVE___THREAD
++
+ static __thread char buffer[18];
+ 
+ 
+@@ -37,3 +41,83 @@
+ 
+   return buffer;
+ }
++
++#else
++#include <bits/libc-lock.h>
++
++/* The interface of this function is completely stupid, it requires a
++   static buffer.  We relax this a bit in that we allow at least one
++   buffer for each thread.  */
++
++/* This is the key for the thread specific memory.  */
++static __libc_key_t key;
++
++/* If nonzero the key allocation failed and we should better use a
++   static buffer than fail.  */
++static char local_buf[18];
++static char *static_buf;
++
++/* Destructor for the thread-specific data.  */
++static void init (void);
++static void free_key_mem (void *mem);
++
++
++char *
++inet_ntoa (struct in_addr in)
++{
++  __libc_once_define (static, once);
++  char *buffer;
++  unsigned char *bytes;
++
++  /* If we have not yet initialized the buffer do it now.  */
++  __libc_once (once, init);
++
++  if (static_buf != NULL)
++    buffer = static_buf;
++  else
++    {
++      /* We don't use the static buffer and so we have a key.  Use it
++	 to get the thread-specific buffer.  */
++      buffer = __libc_getspecific (key);
++      if (buffer == NULL)
++	{
++	  /* No buffer allocated so far.  */
++	  buffer = malloc (18);
++	  if (buffer == NULL)
++	    /* No more memory available.  We use the static buffer.  */
++	    buffer = local_buf;
++	  else
++	    __libc_setspecific (key, buffer);
++	}
++    }
++
++  bytes = (unsigned char *) &in;
++  __snprintf (buffer, 18, "%d.%d.%d.%d",
++	      bytes[0], bytes[1], bytes[2], bytes[3]);
++
++  return buffer;
++}
++
++
++/* Initialize buffer.  */
++static void
++init (void)
++{
++  if (__libc_key_create (&key, free_key_mem))
++    /* Creating the key failed.  This means something really went
++       wrong.  In any case use a static buffer which is better than
++       nothing.  */
++    static_buf = local_buf;
++}
++
++
++/* Free the thread specific data, this is done if a thread terminates.  */
++static void
++free_key_mem (void *mem)
++{
++  free (mem);
++  __libc_setspecific (key, NULL);
++}
++
++#endif
++
+diff -urN glibc-2.7_orig/intl/loadmsgcat.c glibc-2.7/intl/loadmsgcat.c
+--- glibc-2.7_orig/intl/loadmsgcat.c	2007-09-24 17:06:45.000000000 +0100
++++ glibc-2.7/intl/loadmsgcat.c	2007-11-22 15:37:15.000000000 +0000
+@@ -836,11 +836,11 @@
+       fd = -1;
+       use_mmap = 1;
+     }
+-#endif
+ 
+   /* If the data is not yet available (i.e. mmap'ed) we try to load
+      it manually.  */
+   if (data == MAP_FAILED)
++#endif
+     {
+       size_t to_read;
+       char *read_ptr;
+diff -urN glibc-2.7_orig/io/openat.c glibc-2.7/io/openat.c
+--- glibc-2.7_orig/io/openat.c	2007-05-25 00:53:52.000000000 +0100
++++ glibc-2.7/io/openat.c	2007-11-23 13:12:36.000000000 +0000
+@@ -79,7 +79,7 @@
+   if (oflag & O_CREAT)
+     __fortify_fail ("invalid openat call: O_CREAT without mode");
+ 
+-  return __openat (file, oflag);
++  return __openat (fd, file, oflag);
+ }
+ stub_warning (__openat_2)
+ 
+diff -urN glibc-2.7_orig/io/openat64.c glibc-2.7/io/openat64.c
+--- glibc-2.7_orig/io/openat64.c	2007-05-25 00:53:52.000000000 +0100
++++ glibc-2.7/io/openat64.c	2007-11-23 13:26:45.000000000 +0000
+@@ -79,7 +79,7 @@
+   if (oflag & O_CREAT)
+     __fortify_fail ("invalid openat64 call: O_CREAT without mode");
+ 
+-  return __openat64 (file, oflag);
++  return __openat64 (fd, file, oflag);
+ }
+ stub_warning (__openat_2)
+ 
+diff -urN glibc-2.7_orig/locale/global-locale.c glibc-2.7/locale/global-locale.c
+--- glibc-2.7_orig/locale/global-locale.c	2006-10-28 00:11:43.000000000 +0100
++++ glibc-2.7/locale/global-locale.c	2007-11-22 15:37:15.000000000 +0000
+@@ -67,9 +67,9 @@
+ __libc_tsd_define (, LOCALE)
+ /* This is a bad kludge presuming the variable name used by the macros.
+    Using typeof makes sure to barf if we do not match the macro definition.
+-   This ifndef is a further bad kludge for Hurd, where there is an explicit
+-   initialization.  */
+-# ifndef _HURD_THREADVAR_H
++   This ifndef is a further bad kludge for Hurd & Syllable, where there is
++   an explicit initialization.  */
++# if !defined( _HURD_THREADVAR_H ) && !defined( __SYLLABLE__ )
+ __typeof (__libc_tsd_LOCALE_data) __libc_tsd_LOCALE_data = &_nl_global_locale;
+ # endif
+ #endif
+diff -urN glibc-2.7_orig/malloc/Makefile glibc-2.7/malloc/Makefile
+--- glibc-2.7_orig/malloc/Makefile	2007-05-21 17:12:25.000000000 +0100
++++ glibc-2.7/malloc/Makefile	2007-11-22 15:37:15.000000000 +0000
+@@ -42,12 +42,16 @@
+ install-lib := libmcheck.a
+ non-lib.a := libmcheck.a
+ 
++include ../Makeconfig
++
++ifneq (syllable,$(config-os))
+ # Additional library.
+ extra-libs = libmemusage
+ extra-libs-others = $(extra-libs)
+ 
+ libmemusage-routines = memusage
+ libmemusage-inhibit-o = $(filter-out .os,$(object-suffixes))
++endif
+ 
+ # These should be removed by `make clean'.
+ extra-objs = mcheck-init.o libmcheck.a
+@@ -55,8 +59,6 @@
+ # Include the cleanup handler.
+ aux := set-freeres thread-freeres
+ 
+-include ../Makeconfig
+-
+ CPPFLAGS-memusagestat = -DNOT_IN_libc
+ 
+ # The Perl script to analyze the output of the mtrace functions.
+diff -urN glibc-2.7_orig/rt/Makefile glibc-2.7/rt/Makefile
+--- glibc-2.7_orig/rt/Makefile	2007-09-15 23:30:16.000000000 +0100
++++ glibc-2.7/rt/Makefile	2007-11-22 15:37:15.000000000 +0000
+@@ -69,7 +69,7 @@
+ # a statically-linked program that hasn't already loaded it.
+ $(objpfx)librt.so: $(common-objpfx)libc.so $(common-objpfx)libc_nonshared.a \
+ 		   $(shared-thread-library) \
+-		   $(if $(filter yes,$(elf)), $(elfobjdir)/ld.so)
++		   $(ifneq syllable,$(config-os)$(if $(filter yes,$(elf)), $(elfobjdir)/ld.so))
+ 
+ ifeq (yes,$(build-shared))
+ $(addprefix $(objpfx),$(tests)): $(objpfx)librt.so $(shared-thread-library)
+diff -urN glibc-2.7_orig/shlib-versions glibc-2.7/shlib-versions
+--- glibc-2.7_orig/shlib-versions	2006-03-06 01:25:35.000000000 +0000
++++ glibc-2.7/shlib-versions	2007-11-22 15:37:15.000000000 +0000
+@@ -31,6 +31,7 @@
+ x86_64-.*-linux.*       DEFAULT			GLIBC_2.2.5
+ powerpc64-.*-linux.*	DEFAULT			GLIBC_2.3
+ .*-.*-gnu-gnu.*		DEFAULT			GLIBC_2.2.6
++.*-.*-syllable.*	DEFAULT			GLIBC_2.3
+ 
+ # Configuration		WORDSIZE[32|64]		Alternate configuration
+ # -------------		----------		-----------------------
+@@ -53,6 +54,7 @@
+ sh.*-.*-linux.*		libm=6			GLIBC_2.2
+ .*-.*-linux.*		libm=6
+ .*-.*-gnu-gnu.*		libm=6
++.*-.*-syllable.*	libm=2
+ 
+ # We provide libc.so.6 for Linux kernel versions 2.0 and later.
+ alpha.*-.*-linux.*	libc=6.1
+@@ -60,6 +62,7 @@
+ sh.*-.*-linux.*		libc=6			GLIBC_2.2
+ sparc64.*-.*-linux.*	libc=6			GLIBC_2.2
+ .*-.*-linux.*		libc=6
++.*-.*-syllable.*	libc=2
+ 
+ # libmachuser.so.1 corresponds to mach/*.defs as of Utah's UK22 release.
+ .*-.*-gnu-gnu.*		libmachuser=1
+@@ -91,16 +94,25 @@
+ # So far the -lutil interface is the same on all platforms, except for the
+ # `struct utmp' format, which depends on libc.
+ alpha.*-.*-linux.*	libutil=1.1
++.*-.*-syllable.*	libutil=1.1
+ .*-.*-.*		libutil=1
+ 
+ # Version number 2 is used on other systems for the BIND 4.9.5 resolver
+ # interface.
+ alpha.*-.*-linux.*	libresolv=2.1
++.*-.*-syllable.*	libresolv=2.1
+ .*-.*-.*		libresolv=2
+ 
+ # Interface revision of nss_* modules.  This must match NSS_SHLIB_REVISION
+ # in nss/nsswitch.h, which determines the library names used for service
+ # names given in /etc/nsswitch.conf.
++.*-.*-syllable.*	libnss_files=2.1
++.*-.*-syllable.*	libnss_dns=2.1
++.*-.*-syllable.*	libnss_compat=2.1
++.*-.*-syllable.*	libnss_nis=2.1
++.*-.*-syllable.*	libnss_nisplus=2.1
++.*-.*-syllable.*	libnss_ldap=2.1
++.*-.*-syllable.*	libnss_hesiod=2.1
+ .*-.*-.*		libnss_files=2
+ .*-.*-.*		libnss_dns=2
+ .*-.*-.*		libnss_compat=2
+@@ -111,10 +123,12 @@
+ 
+ # Version for libnsl with YP and NIS+ functions.
+ alpha.*-.*-linux.*	libnsl=1.1
++.*-.*-syllable.*	libnsl=1.1
+ .*-.*-.*		libnsl=1
+ 
+ # This defines the shared library version numbers we will install.
+ alpha.*-.*-linux.*	libcrypt=1.1
++.*-.*-syllable.*	libcrypt=1.1
+ .*-.*-.*		libcrypt=1
+ 
+ # The gross patch for programs assuming broken locale implementations.
+@@ -122,6 +136,7 @@
+ ia64-.*-.*		libBrokenLocale=1	GLIBC_2.2
+ sh.*-.*-.*		libBrokenLocale=1	GLIBC_2.2
+ sparc64.*-.*-.*		libBrokenLocale=1	GLIBC_2.2
++.*-.*-syllable.*	libBrokenLocale=1.1
+ .*-.*-.*		libBrokenLocale=1
+ 
+ # The real-time library from POSIX.1b.
+@@ -129,3 +144,4 @@
+ 
+ # The asynchronous name lookup library.
+ .*-.*-.*		libanl=1
++
+diff -urN glibc-2.7_orig/string/strerror_l.c glibc-2.7/string/strerror_l.c
+--- glibc-2.7_orig/string/strerror_l.c	2007-03-17 17:09:07.000000000 +0000
++++ glibc-2.7/string/strerror_l.c	2007-11-23 15:33:25.000000000 +0000
+@@ -24,7 +24,7 @@
+ #include <sys/param.h>
+ 
+ 
+-static __thread char *last_value;
++static char *last_value;
+ 
+ 
+ static const char *
+diff -urN glibc-2.7_orig/sunrpc/Makefile glibc-2.7/sunrpc/Makefile
+--- glibc-2.7_orig/sunrpc/Makefile	2006-10-18 20:25:38.000000000 +0100
++++ glibc-2.7/sunrpc/Makefile	2007-11-22 15:37:15.000000000 +0000
+@@ -99,6 +99,7 @@
+ endif
+ 
+ ifeq (no,$(cross-compiling))
++ifneq (syllable,$(config-os))
+ # We can only build this library if we can run the rpcgen we build.
+ headers += $(rpcsvc:%.x=rpcsvc/%.h)
+ extra-libs := librpcsvc
+@@ -107,6 +108,7 @@
+ librpcsvc-inhibit-o = .os # Build no shared rpcsvc library.
+ omit-deps = $(librpcsvc-routines)
+ endif
++endif
+ 
+ CFLAGS-xbootparam_prot.c = -Wno-unused $(PIC-ccflag)
+ CFLAGS-xnlm_prot.c = -Wno-unused $(PIC-ccflag)
+diff -urN glibc-2.7_orig/sysdeps/posix/getaddrinfo.c glibc-2.7/sysdeps/posix/getaddrinfo.c
+--- glibc-2.7_orig/sysdeps/posix/getaddrinfo.c	2007-10-17 17:05:12.000000000 +0100
++++ glibc-2.7/sysdeps/posix/getaddrinfo.c	2007-11-23 11:38:13.000000000 +0000
+@@ -2064,7 +2064,7 @@
+ 	  __libc_lock_define_initialized (static, lock);
+ 
+ 	  __libc_lock_lock (lock);
+-	  if (old_once && gaiconf_reload_flag)
++	  if (__libc_once_read (old_once) && gaiconf_reload_flag)
+ 	    gaiconf_reload ();
+ 	  qsort (results, nresults, sizeof (results[0]), rfc3484_sort);
+ 	  __libc_lock_unlock (lock);
+diff -urN glibc-2.7_orig/timezone/Makefile glibc-2.7/timezone/Makefile
+--- glibc-2.7_orig/timezone/Makefile	2007-07-28 21:33:11.000000000 +0100
++++ glibc-2.7/timezone/Makefile	2007-11-22 15:37:15.000000000 +0000
+@@ -39,6 +39,8 @@
+ # northamerica.
+ distribute += $(tzfiles) leapseconds pacificnew simplebackw
+ 
++include ../Makeconfig	# Get objpfx & config-os defined so we can use it below.
++
+ generated := $(addprefix z.,$(tzfiles))
+ install-sbin := zic zdump
+ 
+@@ -46,8 +48,6 @@
+ 
+ all: # Make this the default target; it will be defined in Rules.
+ 
+-include ../Makeconfig	# Get objpfx defined so we can use it below.
+-
+ CPPFLAGS-zic = -DNOT_IN_libc
+ 
+ # z.* use this variable.
+@@ -70,12 +70,14 @@
+ 						     $(posixrules-file)))
+ 
+ ifeq ($(cross-compiling),no)
++ifneq (syllable,$(config-os))
+ # Don't try to install the zoneinfo files since we can't run zic.
+ install-others = $(addprefix $(inst_zonedir)/,$(zonenames) \
+ 					      $(zonenames:%=posix/%) \
+ 					      $(zonenames:%=right/%)) \
+ 		 $(installed-localtime-file) $(installed-posixrules-file)
+ endif
++endif
+ 
+ ifeq ($(have-ksh),yes)
+ install-others += $(inst_zonedir)/iso3166.tab $(inst_zonedir)/zone.tab

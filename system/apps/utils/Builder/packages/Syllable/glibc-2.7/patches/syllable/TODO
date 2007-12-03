@@ -1,0 +1,16 @@
+General improvements
+--------------------
+
+o Add a R/W lock implementation to bits/libc-lock.h
+o malloc/arena.c uses ptmalloc_lock_all, ptmalloc_unlock_all with the macro thread_atfork (Which
+  wraps __register_atfork)  At the moment we #define __register_atfork in libc-lock.h as an empty
+  macro.  This is the wrong place for the macro, and this also produces warning about
+  ptmalloc_lock_all & ptmalloc_unlock_all being defined but not used. See below.
+o Create a proper __register_atfork() implementation.  Keep three lists of functions; each function
+  in the "prepare" list is called just before INLINE_SYSCALL(fork), each function in the "child"
+  list is called after for the child & each function in the "parent" list is called for the parent.
+  Functions in the list are called from the tail of the list to the head E.g. in reverse order.
+  We'll also probably need an __unregister_atfork().
+o tld.c; free_tld() should be calling the destructor function before we free the destructor node.
+  Need to test the current functionality in Syllable first though.
+

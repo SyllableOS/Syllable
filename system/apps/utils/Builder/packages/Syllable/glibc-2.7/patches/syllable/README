@@ -1,0 +1,20 @@
+
+A note on Process IDs (PIDs) and Thread IDs (TIDs)
+==================================================
+
+For most POSIX functions we treat a PID as a TID.  This assumes that the
+caller is a generic POSIX application which does not use threads.  In most
+cases this is an acceptable assumption; most POSIX applications only have
+a single thread and there is no need to make a distinction between its
+TID and PID.  As an example the POSIX getpid() function mearly returns
+the callers TID by calling the Syllable syscall get_thread_id().  POSIX
+functions such as getpriority() may assume that the "who" argument is a
+TID,
+
+Attempting to mix these POSIX functions with native Syllable functions
+that do make a distinction, or POSIX functions and POSIX threads via.
+libpthread, may cause unexpected results.  If you attempt to do this,
+you must remember that POSIX functions which take or return PIDs are
+in reality using TIDs.
+
+

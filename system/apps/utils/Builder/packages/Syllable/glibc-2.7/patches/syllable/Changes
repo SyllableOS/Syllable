@@ -1,0 +1,129 @@
+Glibc Syllable Changelog
+
+* November 23rd 2007 *
+
+	o bits/time.h: Include <posix/time.h> for the definition of CLOCKS_PER_SEC, don't redefine
+	  it here.
+	o bits/libc-lock.h: Provide __libc_lock_read() to get the scaler value of the lock. Required
+	  for code that treats a __libc_once type as scaler I.e. sysdeps/posix/getaddrinfo.c
+	o open_attrdir.c, open_indexdir.c, fopendir.c: Update to reflect the changes to the data member
+	  in struct __dirstream
+	o i386/sysdep.h: Define the macros PTR_MANGLE & PTR_DEMANGLE
+	o i386/sysdep-cancel.h: New file. Define NO_CANCELLATION
+	o sched_cpualloc.c: New file. Empty to stop posix/sched_cpualloc.c being build, which appears
+	  to be Linux specific?
+
+* November 22nd 2007 *
+
+	o kernel-features.h: New file. Define some macros that are used elsewhere to select
+	  functionality.
+
+* March 27th 2007 *
+
+	o settimeofday.c: New file. A replacement of the standard unix/sysv implementation. This
+	  implementation allows high-resolution microsecond accuracy.
+	o adjtime.c: New file.
+
+* March 12th 2007 *
+
+	o getrusage.c: Fixed a possible division by 0.
+
+* Febuary 23rd 2007 *
+
+	o readdir64.c: New file. Replaces stub for dirent/readdir64.c.
+
+* Febuary 8th 2007 *
+
+	o getrusage.c: New file. Simple stub, only useful for RUSAGE_SELF.
+	o set_real_time.c: New file. The 64bit syscall argument is passed as two 32bit high/low parts. 
+
+* May 26th 2006 *
+
+	o Add-on configure & configure.in  are no longer required.
+
+* May 25th 2006 *
+
+	o Removed some non-Syllable syscalls from syscalls.list
+		o sysinfo
+		o swapon
+		o swapoff
+		o mknod
+
+* January 6th 2006 *
+
+	o pwrite.c: New file.  Simple wrapper around write_pos()
+	o pwrite64.c: Likewise.
+	o pread.c: New file.  Simple wrapper around read_pos()
+	o pread64.c: Likewise.
+	o syscalls.list/event(): New syscall.
+	o param.h: Define BSD names for some stuff in limits.h
+
+* January 5th 2006 *
+
+	o getrlimit.c/getrlimit(): Fix call to get_thread_info() for RLIMIT_STACK
+
+* January 4th 2006 *
+
+	o backtrace.c: New file.  A version of backtrace() that does not require DWARF2 support from libgcc.
+	  From Jan Hauffa.
+	o getdomain.c: New file.  The implementation is based on getdomainname.c by Joerg Schilling
+	o Makefile/$(objpfx)syscall-%.h $(objpfx)syscall-%.d: Use the add-on location of syscall.h
+
+* January 3rd 2006 *
+
+	o libc-start.c/__libc_start_main(): Don't pre-allocate TLDs.
+	o spawn_thread.c/__thread_start(): Likewise.
+	o bits/libc-tsd.h: Use the TLD range 512-1024 for Glibc TSD slots.
+	o termio.h: New file.
+
+* January 1st 2006 *
+
+	o tld.c/get_tld_addr(): Calculate the TLD addr without making a syscall.  We get the thread data address
+	  from TLD_BASE, which is provided by the kernel.
+
+* December 23rd 2005 *
+
+	o getrlimit.c: New file.  A stub using placeholder values (That are at least semi-sensible) until we
+	  have proper getrlimit/setrlimit syscalls.
+
+* December 21st 2005 *
+
+	o Cleaned up patches ready for Builder/mainline.  Don't patch elf/dl-support.c, sydeps/posix/pwrite64.c
+	  or malloc/arena.
+	o Merged Changes.2 & Changes.1 into one file (Changes.1)
+	o sysdeps/unix/sysv/syllable/TODO: Removed
+	o TODO: New file
+	o README: New file
+	o nice.c: New file.  Use generic UNIX version of nice()
+	o getpriority.c, setpriority.c: New files
+	o fsync.c: Implemented.  If fsync() fails, it performs a full sync() instead.
+
+* December 20th 2005 *
+
+	o Move Changes files to root of add-ons directory
+	o Sync to Glibc CVS
+	o ABI tag # changed from 4 to 5 to avoid conflict with kFreeBSD
+	o libc-start.c: Move check_one_fd() & check_standard_fds() to..
+	o check_fds.c: ..here.  New file.
+	o init-first.c: Use new location of enbl-secure.c
+	o glob64.c: Use new location of glob.c
+	o vfork.c: Use new location of generic vfork.c
+	o brk.c: Use new location of generic brk.c
+	o backtracesymc.c, backtracesymsfd.c: Use new location of generic backtracesyms.c & backtracesymsfd.c
+	o elf-init.c: New file.  Provide a sparse version that doesn't require init_array/fini_array support.
+	o Removed syslog.c & syslog.h from sysdeps/generic/; we can just override the ones in misc/
+
+* December 19th 2005 *
+
+	o Renamed Changes.2-3-3 to Changes.1 and started new Changes file
+	o Begin split of Syllable code into an add-on ports package by moving code from sysdeps/unix/sysv/syllable
+	  to syllable/sysdeps/unix/sysv/syllable
+	o Added Makeconfig, configure & configure.in to add-on root directory from Glibc ports CVS
+	o Added a dummy Makefile to add-on root directory with empty targets for subdir_lib, lib, other & install, and
+	  create empty stamp files.
+	o getdents64.c: Don't use an absolute path to include getdents.c
+	o i386/sigreturn.S: Have our own version instead of patching the generic version
+	o i386/syllable-start.S: Move to add-on sysdeps/i386/elf directory & rename to start.S, which neatly overides
+	  the standard ELF32 version.
+	o Makefile: Remove special rules for syllable-start.S
+
