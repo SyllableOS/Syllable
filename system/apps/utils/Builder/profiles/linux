@@ -262,10 +262,12 @@ modules
 ;	For DirectFB:
 	system linux/linux-fusion-3.2.4
 	system linux/kqemu-1.3.0pre11
-	system linux/linux--cleanup
 
 	system libs/glibc-2.7-system
 	system libs/zlib-1.2.3
+
+	linux/iptables-1.3.8
+	system linux/linux--cleanup
 
 ;	stage libraries/gettext-0.16.1
 ;	stage libraries/flex-2.5.33
