@@ -2,7 +2,7 @@
 
 ORCA [
 	Title:		"Package installation tool"
-	Version:	0.4.1
+	Version:	0.4.2
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006,2007 Kaj de Vos
@@ -17,7 +17,7 @@ ORCA [
 recycle/off  ; FIXME: ORCA bug
 
 
-do %/usr/indexes/lib/REBOL/package.library
+do %/system/indexes/lib/REBOL/package.library
 
 
 header: system/script/header
