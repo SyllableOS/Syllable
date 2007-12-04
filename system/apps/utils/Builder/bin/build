@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.7.31
+# Version 0.7.32
 # Copyright (c) 2002-2007 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -746,7 +746,7 @@ def installModule staging, target
 									@log.header 'Cleaning up system libraries'
 
 									for file in Dir['*']
-										break unless ['lib', 'documentation'].include?(file) or
+										break unless ['lib', 'include', 'documentation'].include?(file) or
 											action superAccess + 'rm --recursive --force ' + file
 									end
 								end
@@ -1762,7 +1762,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.7.31',
+	puts 'Syllable Build System 0.7.32',
 		'Copyright (c) 2002-2007 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
@@ -1885,8 +1885,8 @@ else
 
 					if @systemBuild
 						# C library headers
-#						(File.join @image, 'system/resources/glibc/2.4/include') + ':' +
-						# Linux system and C library headers
+#						(File.join @image, 'system/resources/glibc/2.7/include') + ':' +
+						# Some Linux system and C library headers
 						(File.join @image, 'usr/include') + ':' +
 						# Syllable system headers
 						(File.join @image, 'system/include') + ':' +
