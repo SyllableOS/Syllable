@@ -9,3 +9,18 @@ configure-options
 	--enable-symlinks
 ;	--datadir=/usr/share
 	--with-default-terminfo-dir=/usr/share/terminfo
+
+delete-files
+	lib/libncurses.so
+	lib/libcurses.so
+	lib/libform.so
+	lib/libpanel.so
+	lib/libmenu.so
+	lib/libcursesw.so
+pre-register
+	echo 'INPUT(-lncursesw)'	> lib/libncurses.so
+	echo 'INPUT(-lcursesw)'		> lib/libcurses.so
+	echo 'INPUT(-lformw)'		> lib/libform.so
+	echo 'INPUT(-lpanelw)'		> lib/libpanel.so
+	echo 'INPUT(-lmenuw)'		> lib/libmenu.so
+	echo 'INPUT(-lncursesw)'	> lib/libcursesw.so

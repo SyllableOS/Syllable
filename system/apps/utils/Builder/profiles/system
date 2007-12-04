@@ -277,7 +277,7 @@ modules
 ;	For bootstrapping:
 ;	system apps/gnu/gcc-4.1.2
 
-	system libs/ncurses-5.6
+	libs/ncurses-5.6
 
 ;	GrUB can use Curses:
 ;	Currently requires GCC 3:
