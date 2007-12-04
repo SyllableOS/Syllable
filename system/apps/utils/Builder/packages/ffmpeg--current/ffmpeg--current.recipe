@@ -13,7 +13,7 @@ packages
 	FFMPEG-11041.source
 ;	ffmpeg-export-snapshot
 locations
-	http://downloads.syllable.org/sources/other/FFMPEG/
+	http://downloads.syllable.org/sources/resources/FFMPEG/
 ;	http://ffmpeg.mplayerhq.hu
 archives			svn://svn.mplayerhq.hu/ffmpeg/trunk FFMPEG
 

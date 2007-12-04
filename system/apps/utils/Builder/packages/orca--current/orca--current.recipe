@@ -1,8 +1,6 @@
 authors				Kaj de Vos
 status				testing
-notes				Tested with ORCA and M2 SVN snapshot November 16, 2006
-
-inherits			sourceforge
+notes				Tested with ORCA and M2 SVN snapshot December 4, 2007
 
 licenses
 	LGPL
@@ -12,25 +10,28 @@ home
 ;	urlan.sf.net
 	wsrebol.sf.net
 packages
-	syllable/orca-309
-;	syllable/m2-309 orca-309
+	ORCA-498.source
+;	M2-498.source orca-498
+locations			http://downloads.syllable.org/sources/resources/ORCA/
 archives
 	svn://svn.geekisp.com/orca/trunk/orca
 ;	M2:
 ;	svn://svn.geekisp.com/orca/trunk/m2
 
 build-needs
+;	m2
 ;	REBOL
 	bzip2
 
 _patch
-	mv m2/m2			configure
-	cp m2/m2_linux.r	m2_template.r
-
-;build-dir			.
+	mv m2-498/m2			configure
+	cp m2-498/m2_linux.r	m2_template.r
+;	Uncomment rebol and os_call in config.r, and possibly math3d and number_arrays
 
 ; REBOL needs to be in /usr/bin/ to run M2 configure
-configure			cp Makefile.fixed Makefile
+_configure
+	configure
+;	Fix ORCA_LFLAGS in Makefile
 
 install-tree		bin lib include
 install				true
