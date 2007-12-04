@@ -28,6 +28,8 @@ _patch
 	cp m2-498/m2_linux.r	m2_template.r
 ;	Uncomment rebol and os_call in config.r, and possibly math3d and number_arrays
 
+;build-dir			.
+
 ; REBOL needs to be in /usr/bin/ to run M2 configure
 _configure
 	configure
