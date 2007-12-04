@@ -147,6 +147,7 @@ tree
 ;	For SysVInit and others:
 	bin
 	etc/udev
+	etc/udev/rules.d
 ;	etc/opt
 	etc/profile.d
 	etc/sysconfig
