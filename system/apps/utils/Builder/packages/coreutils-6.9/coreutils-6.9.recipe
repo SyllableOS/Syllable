@@ -38,6 +38,8 @@ links
 	bin/echo		/bin/
 ;	For FindUtils:
 	bin/sort		/bin/
+;	For SUDo:
+	bin/mv			/bin/
 ;	For SysKLogD:
 	bin/install		/usr/bin/
 ;	For general compatibility:
@@ -50,7 +52,6 @@ links
 	bin/false		/bin/
 	bin/hostname	/bin/
 	bin/mkdir		/bin/
-	bin/mv			/bin/
 	bin/rmdir		/bin/
 	bin/su			/bin/
 	bin/sync		/bin/
