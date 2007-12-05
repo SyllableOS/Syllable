@@ -148,6 +148,9 @@ tree
 	Documentation
 	Documentation/images
 
+;	For compatibility:
+	bin
+
 resources
 	boot/grub				menu.lst							text/plain
 	system/config			kernel.cfg							text/plain
