@@ -45,7 +45,7 @@ int main( int argc, char **argv )
 	
 	symlink( "boot", "/atheos" );
 	symlink( "boot/system", "/system" );
-	symlink( "system/bin", "/bin" );
+	symlink( "boot/bin", "/bin" );
 	symlink( "boot/usr", "/usr" );
 	symlink( "boot/etc", "/etc" );
 	symlink( "boot/home", "/home" );
@@ -62,4 +62,3 @@ int main( int argc, char **argv )
 	
 	return( EXIT_FAILURE );
 }
-

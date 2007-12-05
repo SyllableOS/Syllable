@@ -18,7 +18,7 @@ dbterm 8 >> /var/log/kernel &
 # Add a few additional symlinks which simplify navigation around the
 # filesystem
 ln -s boot/Applications /Applications
-ln -s home/root /root
+#ln -s home/root /root
 
 # Configure basic environment.
 # BASh runs this, too, but do it earlier for the benefit of processes started
@@ -33,14 +33,14 @@ fi
 
 # If the graphical login isn't available, failsafe to a standalone server and
 # abort further initialisation
-if [ ! -e /bin/dlogin ]
+if [ ! -e /system/bin/dlogin ]
 then
 	aterm &
 	exit 1
 fi
 
 # Start the graphical login and servers
-/bin/dlogin < /dev/null >> /var/log/desktop 2>&1 &
+/system/bin/dlogin < /dev/null >> /var/log/desktop 2>&1 &
 
 # No more environment variables can be defined for the user's environment
 # after DLogin has started
