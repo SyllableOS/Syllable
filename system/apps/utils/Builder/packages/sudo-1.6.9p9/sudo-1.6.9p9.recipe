@@ -15,6 +15,7 @@ locations
 
 configure-options
 ;	--libexecdir=/usr/lib
+	--without-pam
 	--enable-noargs-shell
 	--with-ignore-dot
 	--with-all-insults
