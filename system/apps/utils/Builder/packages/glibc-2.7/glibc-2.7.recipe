@@ -25,6 +25,9 @@ test-needs
 	bash <> 2.03
 	perl >= 5
 
+; BASh is broken for this locale:
+patch				sed -i '/vi_VN.TCVN/d' localedata/SUPPORTED
+
 ;make-targets
 ;	all
 ;	For printed documentation:
