@@ -15,7 +15,7 @@ conflicts			termcap
 
 configure-options
 ;	--with-shared
-	--without-debug
+;	--without-debug
 ;	--with-termlib
 	--enable-widec
 	--enable-symlinks
