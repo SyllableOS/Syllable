@@ -15,6 +15,7 @@ export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/system/indexes/lib/pkgconfig:/u
 export TEMP=/tmp
 
 export SYSTEM=Linux
+export TERM=linux-basic
 #export TERM=rxvt-16color
 #export TERM=xterm
 #export COLORTERM=rxvt-16color
@@ -23,7 +24,7 @@ export LS_COLORS='no=00:fi=00:di=01;34:ln=00;34:pi=40;33:so=01;35:do=01;35:bd=40
 
 export PAGER=less
 export LESSCHARSET=latin1
-export EDITOR=aedit
+export EDITOR=mcedit
 
 case $TERM in
 	xterm* | rxvt*)
