@@ -1,5 +1,9 @@
 Glibc Syllable Changelog
 
+* December 6th 2007 *
+
+	o net/route.h: Removed. It conflicts with the system header.
+
 * March 27th 2007 *
 
 	o settimeofday.c: New file. A replacement of the standard unix/sysv implementation. This
