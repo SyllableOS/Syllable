@@ -96,7 +96,7 @@ endif
 # Sockets & networks
 ifeq ($(subdir),socket)
 sysdep_routines += sa_len
-sysdep_headers += net/ethernet.h net/if_arp.h net/route.h
+sysdep_headers += net/ethernet.h net/if_arp.h
 # endif $(subdir),socket
 endif
 
