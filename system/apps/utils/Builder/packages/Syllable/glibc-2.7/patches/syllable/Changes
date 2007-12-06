@@ -1,5 +1,9 @@
 Glibc Syllable Changelog
 
+* December 6th 2007 *
+
+	o net/route.h: Removed. It conflicts with the system header.
+
 * November 23rd 2007 *
 
 	o bits/time.h: Include <posix/time.h> for the definition of CLOCKS_PER_SEC, don't redefine
