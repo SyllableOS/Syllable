@@ -13,9 +13,9 @@ install				sudo rm /lib/modules/2.6.22.1-Syllable/build
 
 links
 ;	Repair damage from Linux-Fusion:
-;	lib/modules						/lib/
+;	lib/modules					/lib/
 ;	Give the system access to modules of all kernel versions:
-	../system/indexes/lib/modules	/lib/
+	/system/indexes/lib/modules	/lib/
 
 _delete-files
 ;	Source is not there any more because it's moved to linux--cleanup, so it did not get unregistered:
