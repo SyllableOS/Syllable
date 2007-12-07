@@ -276,7 +276,7 @@ modules
 
 ;	libraries libraries/gcc-4.1.2
 ;	Needs to be in the root of the working directory:
-	libraries gcc-4.1.2
+	libraries gcc-4.1.2-system
 ;	For bootstrapping:
 ;	system apps/gnu/gcc-4.1.2
 
