@@ -34,4 +34,6 @@ documentation
 	README ABOUT-NLS COPYING NEWS ChangeLog TODO
 ;	doc
 
-links				bin/login /bin/
+links
+	bin/login	/bin/
+;	bin/su		/bin/
