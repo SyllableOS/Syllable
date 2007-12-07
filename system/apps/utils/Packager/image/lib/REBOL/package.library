@@ -1,6 +1,6 @@
 ORCA [
 	Title:		"Package installation library"
-	Version:	0.4.6
+	Version:	0.4.7
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006,2007 Kaj de Vos
@@ -93,7 +93,7 @@ stage-proto: context [
 		source: join package/root index: join package/name ["/" node]
 		target: join indexes ["/" node]
 
-		either dir? source [
+		either all [exists? source  dir? source] [
 			either exists? target [
 ;				TODO: detect a symlink:
 ;				if symlink? target [log/warning join "directory " [target " is a link"]]
@@ -272,7 +272,7 @@ package-image: context [
 							unless s/index-node self node
 								[return no]
 						]
-						if nesting? and dir? entry [
+						if all [nesting?  exists? entry  dir? entry] [
 							unless index-subdir stages node yes
 								[return no]
 							change-dir dir
@@ -295,7 +295,7 @@ package-image: context [
 
 				foreach entry read %. [
 					unless (last entry) = #"~" [  ; Skip backup files
-						if nesting? and dir? entry [
+						if all [nesting?  exists? entry  dir? entry] [
 							unless remove-subdir stages  join subdir ["/" entry]  yes
 								[return no]
 						]
