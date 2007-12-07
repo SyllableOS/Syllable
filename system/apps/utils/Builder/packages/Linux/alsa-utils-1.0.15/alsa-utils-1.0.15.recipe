@@ -20,5 +20,8 @@ system-prefix-var	DESTDIR
 documentation		README COPYING ABOUT-NLS ChangeLog TODO
 build-docs			INSTALL
 
+; For LFS shutdown scripts:
+links				sbin/alsactl /usr/sbin/
+
 ; Incompatible with UDev:
 delete-files		bin/alsaconf
