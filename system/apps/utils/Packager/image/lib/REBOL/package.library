@@ -1,13 +1,13 @@
 ORCA [
 	Title:		"Package installation library"
-	Version:	0.4.5
+	Version:	0.4.6
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006,2007 Kaj de Vos
 		License: LGPL
 	}
 	Purpose:	"Registers and unregisters (binary) packages by managing pools of symbolic links."
-	Example:	"do %/usr/indexes/lib/REBOL/package.library"
+	Example:	"do %/system/indexes/lib/REBOL/package.library"
 
 	Tabs:		4
 ]
@@ -99,7 +99,7 @@ stage-proto: context [
 ;				if symlink? target [log/warning join "directory " [target " is a link"]]
 				yes
 			][
-				if dir? target [log/warning join "replacing broken directory link " target]
+;				if dir? target [log/warning join "replacing broken directory link " target]
 				action join "mkdir " target
 			]
 		][
@@ -128,7 +128,7 @@ stage-proto: context [
 		index: join indexes ["/"  node: join subdir ["/" file]]
 
 ;		TODO: detect a symlink:
-		either dir? index [
+		either all [exists? index  dir? index] [
 			any [
 ;				FIXME: bug in ORCA list comparison:
 ;				(read index) <> []  ; Indexes directory not empty?
