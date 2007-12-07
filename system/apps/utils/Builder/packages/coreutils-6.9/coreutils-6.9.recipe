@@ -38,6 +38,8 @@ links
 	bin/echo		/bin/
 ;	For FindUtils:
 	bin/sort		/bin/
+;	For DHCP early initalisation:
+	bin/sleep		/bin/
 ;	For SUDo:
 	bin/mv			/bin/
 ;	For SysKLogD:
@@ -53,7 +55,7 @@ links
 	bin/hostname	/bin/
 	bin/mkdir		/bin/
 	bin/rmdir		/bin/
-	bin/su			/bin/
+;	bin/su			/bin/
 	bin/sync		/bin/
 	bin/true		/bin/
 	bin/uname		/bin/

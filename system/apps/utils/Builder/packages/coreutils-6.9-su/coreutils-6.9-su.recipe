@@ -12,4 +12,4 @@ install-targets		install-root
 ; Should already be installed:
 documentation
 links
-;	bin/su			/bin/
+	bin/su			/bin/
