@@ -10,6 +10,32 @@ configure-options
 ;	--datadir=/usr/share
 	--with-default-terminfo-dir=/usr/share/terminfo
 
+links
+;	For older packages:
+	libncursesw.a			lib/libncurses.a
+	libncurses++w.a			lib/libncurses++.a
+	libcursesw.a			lib/libcurses.a
+	libformw.a				lib/libform.a
+	libpanelw.a				lib/libpanel.a
+	libmenuw.a				lib/libmenu.a
+;	libncurses.so			lib/libcurses.so
+	libncursesw.a			lib/libcursesw.a
+;	libncurses.a			lib/libcurses.a
+	ncurses/ncurses.h		include/
+	ncurses/curses.h		include/
+;	For ProcPS:
+	ncurses/term.h			include/
+;	For Python:
+	ncurses/panel.h			include/
+;	For INetUtils:
+	include/ncurses			/usr/include/
+;	For LinuxTree:
+	bin/clear				/usr/bin/
+;	For S-Lang:
+;	share/terminfo			/usr/share/
+;	Linked into BASh, which is called before the loader path is set:
+	lib/libncursesw.so.5	/system/resources/glibc/2.7/lib/
+
 pre-register
 	echo 'INPUT(-lncursesw)'	> lib/libncurses.so
 	echo 'INPUT(-lcursesw)'		> lib/libcurses.so
