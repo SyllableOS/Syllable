@@ -42,7 +42,7 @@ links
 	ncursesw/curses.h	include/
 	ncursesw/term.h		include/
 ;	For Python:
-	ncursesw/panel.h		include/
+	ncursesw/panel.h	include/
 ;	For INetUtils:
 	include/ncurses		/usr/include/
 ;	For LinuxTree:
