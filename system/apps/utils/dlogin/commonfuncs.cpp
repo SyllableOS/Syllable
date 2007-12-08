@@ -153,7 +153,7 @@ int BecomeUser( struct passwd *psPwd )
 
     case 0: /* child process */
 		/*we are now going to become this user*/
-		/*remember their is no security yet so this works fine*/
+		/*remember there is no security yet so this works fine*/
 		/*later down the line we are probably going to have some work to do*/
         setuid( psPwd->pw_uid );
         setgid( psPwd->pw_gid );
@@ -163,7 +163,7 @@ int BecomeUser( struct passwd *psPwd )
         setenv( "SHELL", psPwd->pw_shell,true );
         UpdateLoginConfig(psPwd->pw_name);
 //		Application::GetInstance()->PopCursor();
-        execl( "/bin/desktop", "desktop", NULL );
+        execl( "/system/bin/desktop", "desktop", NULL );
         break;
 
 
