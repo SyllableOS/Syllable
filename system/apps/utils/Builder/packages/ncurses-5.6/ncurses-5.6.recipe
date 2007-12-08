@@ -38,11 +38,11 @@ links
 ;	libncurses.so		lib/libcurses.so
 	libncursesw.a		lib/libcursesw.a
 ;	libncurses.a		lib/libcurses.a
-	ncurses/ncurses.h	include/
-	ncurses/curses.h	include/
-	ncurses/term.h		include/
+	ncursesw/ncurses.h	include/
+	ncursesw/curses.h	include/
+	ncursesw/term.h		include/
 ;	For Python:
-	ncurses/panel.h		include/
+	ncursesw/panel.h		include/
 ;	For INetUtils:
 	include/ncurses		/usr/include/
 ;	For LinuxTree:
