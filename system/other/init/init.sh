@@ -13,7 +13,7 @@
 # process you should edit these files instead.
 
 # Log local kernel output into /var/log/kernel
-dbterm 8 >> /var/log/kernel &
+/system/bin/dbterm 8 >> /var/log/kernel &
 
 # Add a few additional symlinks which simplify navigation around the
 # filesystem
