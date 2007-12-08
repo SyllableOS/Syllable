@@ -7,4 +7,6 @@ licenses			GPL
 home				www.gnu.org/software/inetutils/
 packages			inetutils/inetutils-1.5
 
+needs				ncurses
+
 documentation		README COPYING NEWS ChangeLog TODO AUTHORS THANKS
