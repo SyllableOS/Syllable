@@ -15,7 +15,8 @@ export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/system/indexes/lib/pkgconfig:/u
 export TEMP=/tmp
 
 export SYSTEM=Linux
-export TERM=linux-basic
+export TERMINFO=/usr/share/terminfo
+#export TERM=linux
 #export TERM=rxvt-16color
 #export TERM=xterm
 #export COLORTERM=rxvt-16color
