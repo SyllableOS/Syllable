@@ -1,3 +1,8 @@
+* December 9, 2007, Kristian Van Der Vliet *
+
+The system libraries are now split between two locations, so the initial
+DLL_PATH set before init is run must include /system/indexes/lib
+
 * November 26, 2007, Kristian Van Der Vliet *
 
 o Implemented setsockopt() SO_SNDBUF & SO_RCVBUF for TCP sockets.
