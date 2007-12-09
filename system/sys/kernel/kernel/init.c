@@ -547,7 +547,7 @@ void system_init( void )
 				zSysLibPath[nPathLen] = '/';
 				zSysLibPath[nPathLen + 1] = '\0';
 			}
-			strcat( zSysLibPath, "system/libraries/" );
+			strcat( zSysLibPath, "system/libraries/:/system/indexes/lib/" );
 
 			for ( i = 0; i < 255; ++i )
 			{
