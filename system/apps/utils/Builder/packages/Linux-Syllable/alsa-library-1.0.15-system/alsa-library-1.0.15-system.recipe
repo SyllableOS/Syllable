@@ -1,0 +1,7 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			alsa-library-1.0.15
+
+; For shutdown scripts:
+links				lib/libasound.so.2 /system/resources/glibc/2.7/lib/

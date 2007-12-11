@@ -310,7 +310,6 @@ modules
 	system linux/util-linux-2.12r
 	system linux/sysklogd-1.4.1
 	system linux/shadow-4.0.18.1
-;	stage libraries/db-4.5.20
 	libraries libraries/db-4.5.20-libraries
 	system linux/iproute2-2.6.20-070313
 	linux/kbd-1.12
@@ -415,7 +414,7 @@ modules
 	stage libraries/openssl--stage
 
 	system apps/other/libusb-0.1.12
-	system linux/alsa-library-1.0.15
+	system linux/alsa-library-1.0.15-system
 	linux/alsa-utils-1.0.15
 	system apps/other/curl-7.16.4
 	apps/other/dhcp-3.0.5
