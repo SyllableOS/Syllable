@@ -1,5 +1,6 @@
 authors				Kaj de Vos
 status				testing
+warnings			Is specific to linux-2.6.22.1-Syllable kernel.
 
 ; Overwrites the built kernel source. We don't need it again, but at least
 ; it prevents the huge source tree from being unregistered:
@@ -12,10 +13,12 @@ make				true
 install				sudo rm /lib/modules/2.6.22.1-Syllable/build
 
 links
-;	Repair damage from Linux-Fusion:
-;	lib/modules					/lib/
+;	(Repair damage from Linux-Fusion:)
+;	lib/modules										/lib/
+	/system/resources/linux/2.6.22.1/lib/modules	/lib/
 ;	Give the system access to modules of all kernel versions:
-	/system/indexes/lib/modules	/lib/
+;	This however leads depmod to create module files within the symlink pool:
+;	/system/indexes/lib/modules						/lib/
 
 _delete-files
 ;	Source is not there any more because it's moved to linux--cleanup, so it did not get unregistered:
