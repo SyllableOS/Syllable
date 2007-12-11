@@ -288,7 +288,8 @@ modules
 
 	system apps/gnu/coreutils-6.9
 	system apps/gnu/bash-3.2
-	apps/gnu/grep-2.5.1a
+;	For init scripts:
+	system apps/gnu/grep-2.5.1a
 	apps/gnu/sed-4.1.5
 	system apps/other/unzip-5.52
 
