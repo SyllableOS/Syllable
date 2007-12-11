@@ -1,7 +1,7 @@
 export PWD
 
 # Run paths
-export PATH=/usr/local/sbin:/usr/local/bin:/usr/indexes/sbin:/usr/indexes/bin:/system/indexes/sbin:/system/indexes/bin:/system/bin
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/indexes/sbin:/usr/indexes/bin:/bin:/system/indexes/sbin:/system/indexes/bin:/system/bin
 export DLL_PATH=@bindir@/lib:/usr/local/lib:/usr/indexes/lib:/system/indexes/lib:/system/libraries:/system
 
 # Paths for software compilation
