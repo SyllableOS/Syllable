@@ -82,7 +82,7 @@ stage-proto: context [
 			if image?: to-logic find indexes "/stage/image/"
 ;				ORCA FIXME: FIND works in indexes but only in packages as string?
 ;				ORCA TODO: implement find/tail:
-				[packages: at find packages "/stage/image/" 12]
+				[packages: at find packages "/stage/image/" 13]
 			packages: to-file packages
 		]
 	]
