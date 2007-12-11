@@ -1,0 +1,19 @@
+authors				Kaj de Vos
+status				testing
+
+licenses			GPL
+home				www.wormux.org
+packages			wormux-08beta3
+locations			http://download.gna.org/wormux/
+
+needs
+    sdl >= 1.2
+    sdl-mixer >= 1.2
+    sdl-image >= 1.2
+    sdl-net >= 1.2.6
+    sdl-ttf >= 2.0
+    sdl-gfx >= 1.0.13
+    libxml++ >= 2.6
+
+documentation
+    

@@ -1,0 +1,13 @@
+authors				Kaj de Vos
+status				testing
+
+licenses			LGPL-2+
+home				libxmlplusplus.sf.net
+packages			libxml++-2.20.0
+locations			http://ftp.gnome.org/pub/GNOME/sources/libxml++/2.20/
+
+needs
+    libxml2 >= 2.6.1
+    glibmm >= 2.4
+
+documentation
