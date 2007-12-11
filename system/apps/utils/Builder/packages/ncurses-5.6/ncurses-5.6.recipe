@@ -44,7 +44,7 @@ links
 ;	For Python:
 	ncursesw/panel.h	include/
 ;	For INetUtils:
-	include/ncurses		/usr/include/
+;	include/ncursesw	/usr/include/
 ;	For LinuxTree:
 	bin/clear			/usr/bin/
 ;	For S-Lang:
