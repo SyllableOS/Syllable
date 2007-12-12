@@ -1,3 +1,11 @@
+* December 12, 2007, Kristian Van Der Vliet *
+
+Some network stack improvements and bug fixes:
+
+o Ensure the advertised TCP MSS allows enough room for the IP & TCP headers
+o Set the "Don't Fragment" bit on "whole" IP packets
+o Increased the default TCP send and recieve buffer size to 32k
+
 * December 9, 2007, Kristian Van Der Vliet *
 
 The system libraries are now split between two locations, so the initial
