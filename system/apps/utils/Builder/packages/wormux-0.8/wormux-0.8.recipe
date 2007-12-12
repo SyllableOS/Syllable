@@ -1,19 +1,25 @@
 authors				Kaj de Vos
 status				testing
 
+headline			"Convivial mass murder" game
+description
+	Have the mascots of your favorite free software titles battle it out in the Wormux arena using dynamite, grenades, baseball bats and other bazookas... Exterminate your opponent in a 2D environment with toon-style scenery.
 licenses			GPL
+
 home				www.wormux.org
-packages			wormux-08beta3
+packages			wormux-0.8beta3
 locations			http://download.gna.org/wormux/
 
 needs
-    sdl >= 1.2
-    sdl-mixer >= 1.2
-    sdl-image >= 1.2
-    sdl-net >= 1.2.6
-    sdl-ttf >= 2.0
-    sdl-gfx >= 1.0.13
-    libxml++ >= 2.6
+	sdl >= 1.2
+	sdl-mixer >= 1.2
+	sdl-image >= 1.2
+	sdl-net >= 1.2.6
+	sdl-ttf >= 2.0
+	sdl-gfx >= 1.0.13
+	libxml++ >= 2.6
 
 documentation
-    
+	README COPYING ChangeLog AUTHORS TODO
+;	doc/license
+build-docs			INSTALL

@@ -1,7 +1,11 @@
 authors				Kaj de Vos
 status				testing
 
+headline			LibXML C++ wrapper
+description
+	Libxml++ is a C++ wrapper for the libxml XML parser library.
 licenses			LGPL-2+
+
 home				libxmlplusplus.sf.net
 packages			libxml++-2.20.0
 locations			http://ftp.gnome.org/pub/GNOME/sources/libxml++/2.20/
@@ -11,3 +15,7 @@ needs
     glibmm >= 2.4
 
 documentation
+	README COPYING NEWS ChangeLog AUTHORS
+;	docs
+build-docs			INSTALL
+;develop-docs		examples

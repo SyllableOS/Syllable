@@ -1,0 +1,21 @@
+authors				Kaj de Vos
+status				testing
+
+headline			GTK low-level core library
+description
+	Provides data structure handling for C, portability wrappers and interfaces for such runtime functionality as an event loop, threads, dynamic loading, and an object system.
+
+home				www.gtk.org
+locations
+	http://ftp.gnome.org/pub/gnome/sources/glib/2.14/
+	ftp://ftp.gtk.org/pub/glib/2.14/
+
+needs				gettext
+build-needs			pkg-config
+build-recommends	gtk-doc
+
+;configure-options	--enable-gtk-doc
+
+documentation		README COPYING NEWS ChangeLog AUTHORS
+build-docs			INSTALL
+internal-docs		HACKING MAINTAINERS

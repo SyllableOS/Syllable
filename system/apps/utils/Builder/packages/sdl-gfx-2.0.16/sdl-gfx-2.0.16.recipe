@@ -7,12 +7,12 @@ description
 licenses			LGPL
 
 home				www.ferzkopp.net/Software/SDL_gfx-2.0/
-packages			SDL_gfx-2.0.13
+packages			SDL_gfx-2.0.16
 locations			http://www.ferzkopp.net/Software/SDL_gfx-2.0/
 
 needs				sdl >= 1.2
 
-patch-config
+;patch-config
 ;patch				./autogen.sh
 
 ;configure-options

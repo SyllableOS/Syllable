@@ -1,6 +1,9 @@
 authors				Kaj de Vos
 status				testing
 
+headline			GLib C++ wrapper
+description
+	Gtkmm is the official C++ interface for the popular GUI library GTK+.
 licenses			LGPL-2+
 home				www.gtkmm.org
 packages			glibmm-2.14.2
@@ -11,3 +14,6 @@ needs
     libsigc++
 
 documentation
+	README COPYING NEWS CHANGES ChangeLog AUTHORS
+;	docs
+;develop-docs		examples

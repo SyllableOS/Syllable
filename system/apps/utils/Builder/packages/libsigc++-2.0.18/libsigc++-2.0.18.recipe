@@ -1,8 +1,11 @@
 authors				Kaj de Vos
 status				testing
 
+headline			Callback framework for C++
+description
+	Libsigc++ implements a typesafe callback system for standard C++. It allows you to define signals and to connect those signals to any callback function, either global or a member function, regardless of whether it is static or virtual.
 licenses			LGPL
 home				libsigc.sf.net
-locations			http://ftp.gnome.org/pub/GNOME/sources/libsig++/2.0/
+locations			http://ftp.gnome.org/pub/GNOME/sources/libsigc++/2.0/
 
-documentation
+documentation		README COPYING NEWS ChangeLog AUTHORS TODO
