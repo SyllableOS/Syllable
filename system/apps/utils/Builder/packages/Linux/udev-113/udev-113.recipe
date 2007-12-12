@@ -23,7 +23,9 @@ system-prefix-var	DESTDIR
 install-tree
 ; $prefix must be empty:
 ; /usr/sbin/ is already created as root:
-install				sudo make DESTDIR=$IMAGE EXTRAS="`echo ../udev-113/extras/*/`" install
+; Header search path is lost on sudo:
+;install				sudo make DESTDIR=$IMAGE EXTRAS="`echo ../udev-113/extras/*/`" install
+install				make DESTDIR=$IMAGE EXTRAS="`echo ../udev-113/extras/*/`" install
 
 post-install
 	cp ../udev-113/etc/udev/rules.d/[0-9]* $IMAGE/etc/udev/rules.d/
