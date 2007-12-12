@@ -179,11 +179,16 @@ static int eth_rx_thread( void *pData )
 static int ether_write( Route_s *psRoute, ipaddr_t pDstAddress, PacketBuf_s *psPkt )
 {
 	uint8 anBroadcastAddr[] = { 0xff, 0xff, 0xff, 0xff };
+	ipaddr_t pLocalNet, pDstNet;
 
 	if ( IP_SAMEADDR( anBroadcastAddr, pDstAddress ) )
 		return ( arp_send_packet( psRoute->rt_psInterface->ni_pInterface, psPkt, pDstAddress ) );
 
-	if ( psRoute->rt_nFlags & RTF_GATEWAY )
+	IP_COPYMASK( pLocalNet, psRoute->rt_psInterface->ni_anIpAddr, psRoute->rt_psInterface->ni_anSubNetMask );
+	IP_COPYMASK( pDstNet, pDstAddress, psRoute->rt_psInterface->ni_anSubNetMask );
+
+	/* If we have a gateway set and the destination is not on the local subnet, send the packet to the gateway */
+	if ( ( psRoute->rt_nFlags & RTF_GATEWAY ) && !IP_SAMEADDR( pLocalNet, pDstNet ) )
 	{
 		return ( arp_send_packet( psRoute->rt_psInterface->ni_pInterface, psPkt, psRoute->rt_anGatewayAddr ) );
 	}
