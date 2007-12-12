@@ -340,7 +340,8 @@ static int tcp_connect( Socket_s *psSocket, const struct sockaddr *psAddr, int n
 
 	if ( psRoute->rt_nMetric == 0 )
 	{
-		psTCPCtrl->tcb_smss = psRoute->rt_psInterface->ni_nMTU;
+		/* Allow 40 bytes for the IP and TCP headers (20 bytes each) */
+		psTCPCtrl->tcb_smss = psRoute->rt_psInterface->ni_nMTU - 40;
 	}
 
 	ip_release_route( psRoute );

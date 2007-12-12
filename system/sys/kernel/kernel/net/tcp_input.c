@@ -64,8 +64,8 @@ int g_nTcpEstabResets = 0;
 int g_nTcpCurrEstab = 0;
 int g_nTcpPassiveOpens = 0;
 
-#define TCPSBS (16384-16)
-#define TCPRBS (16384-16)
+#define TCPSBS (32768-16)
+#define TCPRBS (32768-16)
 
 #define LISTEN_HASH_SIZE	512
 #define ESTABLISHED_HASH_SIZE	4096

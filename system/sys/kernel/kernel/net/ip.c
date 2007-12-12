@@ -402,6 +402,8 @@ int ip_send_via( PacketBuf_s *psPkt, Route_s *psRoute )
 	}
 	else			// No need for fragmenting
 	{
+		psIpHdr->iph_nFragOffset |= htonw( IP_DONT_FRAGMENT );
+
 		psIpHdr->iph_nCheckSum = 0;
 		psIpHdr->iph_nCheckSum = ip_fast_csum( ( uint8 * )psIpHdr, psIpHdr->iph_nHdrSize );
 
