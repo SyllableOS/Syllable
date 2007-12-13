@@ -41,6 +41,10 @@ FILES=(	"/etc/profile, /etc/profile" 															\
 		"/system/kernel.so, /system/kernel.so"														\
 																											\
 		"/system/libraries/*, /system/libraries/."															\
+																									\
+		"/system/resources/gcc/4.1.2/lib/*.so*, /system/libraries/."											\
+		"/system/resources/glibc/2.4/lib/*.so*, /system/libraries/."											\
+		"/system/resources/zlib/1.2.3/lib/*.so*, /system/libraries/."											\
 																											\
 		"/system/appserver, /system/appserver"														\
 																											\
@@ -49,8 +53,8 @@ FILES=(	"/etc/profile, /etc/profile" 															\
 		"/system/extensions/translators/pngtrans.so, /system/extensions/translators/pngtrans.so"	\
 																											\
 		"/system/fonts/DejaVuSans.ttf, /system/fonts/DejaVuSans.ttf"								\
-		"/system/fonts/DejaVuSansMono.ttf, /system/fonts/DejaVuSansMono.ttf"						\
-		"/system/fonts/DejaVuSansCondensed.ttf, /system/fonts/DejaVuSansCondensed.ttf"				\
+		"/system/fonts/DejaVuMonoSans.ttf, /system/fonts/DejaVuMonoSans.ttf"						\
+		"/system/fonts/DejaVuCondensedSans.ttf, /system/fonts/DejaVuCondensedSans.ttf"				\
 																											\
 		"/system/keymaps/American, /system/keymaps/American"										\
 																											\
@@ -66,42 +70,42 @@ FILES=(	"/etc/profile, /etc/profile" 															\
 																											\
 		"/Applications/AEdit/AEdit, /system/bin/aedit"											\
 																											\
-		"/usr/coreutils/bin/cat, /usr/local/bin/cat"											\
-		"/usr/coreutils/bin/cp, /usr/local/bin/cp"											\
-		"/usr/coreutils/bin/cut, /usr/local/bin/cut"											\
-		"/usr/coreutils/bin/dd, /usr/local/bin/dd"											\
-		"/usr/coreutils/bin/echo, /usr/local/bin/echo"										\
-		"/usr/coreutils/bin/expr, /usr/local/bin/expr"										\
-		"/usr/coreutils/bin/hostname, /usr/local/bin/hostname"								\
-		"/usr/coreutils/bin/ln, /usr/local/bin/ln"											\
-		"/usr/coreutils/bin/ls, /usr/local/bin/ls"											\
-		"/usr/coreutils/bin/md5sum, /usr/local/bin/md5sum"									\
-		"/usr/coreutils/bin/mkdir, /usr/local/bin/mkdir"										\
-		"/usr/coreutils/bin/mv, /usr/local/bin/mv"											\
-		"/usr/coreutils/bin/printf, /usr/local/bin/printf"									\
-		"/usr/coreutils/bin/pwd, /usr/local/bin/pwd"											\
-		"/usr/coreutils/bin/rm, /usr/local/bin/rm"											\
-		"/usr/coreutils/bin/rmdir, /usr/local/bin/rmdir"										\
-		"/usr/coreutils/bin/sleep, /usr/local/bin/sleep"										\
-		"/usr/coreutils/bin/sort, /usr/local/bin/sort"										\
-		"/usr/coreutils/bin/sync, /usr/local/bin/sync"										\
-		"/usr/coreutils/bin/whoami, /usr/local/bin/whoami"									\
-		"/usr/coreutils/bin/uname, /usr/local/bin/uname"										\
-		"/usr/coreutils/bin/uniq, /usr/local/bin/uniq"										\
-		"/usr/coreutils/bin/stty, /usr/local/bin/stty"										\
-		"/usr/coreutils/bin/chmod, /usr/local/bin/chmod"										\
+		"/system/resources/coreutils/6.9/bin/cat, /usr/local/bin/cat"											\
+		"/system/resources/coreutils/6.9/bin/cp, /usr/local/bin/cp"											\
+		"/system/resources/coreutils/6.9/bin/cut, /usr/local/bin/cut"											\
+		"/system/resources/coreutils/6.9/bin/dd, /usr/local/bin/dd"											\
+		"/system/resources/coreutils/6.9/bin/echo, /usr/local/bin/echo"										\
+		"/system/resources/coreutils/6.9/bin/expr, /usr/local/bin/expr"										\
+		"/system/resources/coreutils/6.9/bin/hostname, /usr/local/bin/hostname"								\
+		"/system/resources/coreutils/6.9/bin/ln, /usr/local/bin/ln"											\
+		"/system/resources/coreutils/6.9/bin/ls, /usr/local/bin/ls"											\
+		"/system/resources/coreutils/6.9/bin/md5sum, /usr/local/bin/md5sum"									\
+		"/system/resources/coreutils/6.9/bin/mkdir, /usr/local/bin/mkdir"										\
+		"/system/resources/coreutils/6.9/bin/mv, /usr/local/bin/mv"											\
+		"/system/resources/coreutils/6.9/bin/printf, /usr/local/bin/printf"									\
+		"/system/resources/coreutils/6.9/bin/pwd, /usr/local/bin/pwd"											\
+		"/system/resources/coreutils/6.9/bin/rm, /usr/local/bin/rm"											\
+		"/system/resources/coreutils/6.9/bin/rmdir, /usr/local/bin/rmdir"										\
+		"/system/resources/coreutils/6.9/bin/sleep, /usr/local/bin/sleep"										\
+		"/system/resources/coreutils/6.9/bin/sort, /usr/local/bin/sort"										\
+		"/system/resources/coreutils/6.9/bin/sync, /usr/local/bin/sync"										\
+		"/system/resources/coreutils/6.9/bin/whoami, /usr/local/bin/whoami"									\
+		"/system/resources/coreutils/6.9/bin/uname, /usr/local/bin/uname"										\
+		"/system/resources/coreutils/6.9/bin/uniq, /usr/local/bin/uniq"										\
+		"/system/resources/coreutils/6.9/bin/stty, /usr/local/bin/stty"										\
+		"/system/resources/coreutils/6.9/bin/chmod, /usr/local/bin/chmod"										\
 																											\
 		"/usr/findutils/bin/find, /usr/local/bin/find"										\
 		"/usr/gzip/bin/gzip, /usr/local/bin/gzip"												\
 		"/usr/sed/bin/sed, /usr/local/bin/sed"												\
 		"/usr/tar/bin/tar, /usr/local/bin/tar"												\
-		"/usr/unzip/bin/unzip, /usr/local/bin/unzip"											\
 		"/usr/ncurses/bin/clear, /usr/local/bin/clear"										\
 		"/usr/less/bin/less, /usr/local/bin/less"												\
 		"/usr/diffutils/bin/cmp, /usr/local/bin/cmp"												\
-																											\
-		"/usr/bash/bin/bash, /usr/local/bin/bash"												\
 		"/usr/grep/bin/grep, /usr/local/bin/grep"												\
+																											\
+		"/system/resources/unzip/5.52/bin/unzip, /usr/local/bin/unzip"											\
+		"/system/resources/bash/3.2/bin/bash, /usr/local/bin/bash"												\
 																											\
 		"/usr/share/terminfo/r/rxvt-16color, /usr/share/terminfo/r/rxvt-16color"				\
 		"/usr/share/terminfo/x/xterm, /usr/share/terminfo/x/xterm"							\
@@ -389,7 +393,7 @@ function copy_files()
     fi
 
     # Do not quote $SOURCE; we want globing to work here
-    cp -a $SOURCE $DEST
+    cp -af $SOURCE $DEST
 
     let "INDEX = $INDEX + 1"
   done
