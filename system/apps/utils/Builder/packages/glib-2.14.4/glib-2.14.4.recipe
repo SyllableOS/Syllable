@@ -11,7 +11,7 @@ locations
 	ftp://ftp.gtk.org/pub/glib/2.14/
 
 needs				gettext
-build-needs			pkg-config
+build-needs			pkg-config >= 0.16
 build-recommends	gtk-doc
 
 ;configure-options	--enable-gtk-doc

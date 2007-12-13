@@ -15,7 +15,7 @@ locations
 
 ;build-recommends	libiconv
 
-;patch-config
+patch-config
 
 configure-options
 ;	For WebCore. PThreads don't seem to be sufficient:

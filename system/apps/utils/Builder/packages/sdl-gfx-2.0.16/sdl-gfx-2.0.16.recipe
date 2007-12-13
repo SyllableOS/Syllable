@@ -12,8 +12,9 @@ locations			http://www.ferzkopp.net/Software/SDL_gfx-2.0/
 
 needs				sdl >= 1.2
 
-;patch-config
+patch-config
 ;patch				./autogen.sh
+;make-shared
 
 ;configure-options
 ;	--disable-mmx
@@ -21,5 +22,7 @@ needs				sdl >= 1.2
 ;pre-make			./nodebug.sh
 documentation
 	README COPYING LICENSE ChangeLog AUTHORS
-;	INSTALL
+;	NEWS
 ;	Docs
+;build-docs			INSTALL
+
