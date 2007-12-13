@@ -9,10 +9,11 @@ licenses			GPL-2+
 home				pkgconfig.freedesktop.org
 locations			http://pkgconfig.freedesktop.org/releases/
 
-; Circular dependency, but 1.2.8 is built-in:
-;needs				glib
+needs
+	Syllable >= 0.6.4
+;	Circular dependency, but 1.2.8 is built-in:
+;	glib
 
 ;patch-config		glib-1.2.8
 
 documentation		README COPYING NEWS ChangeLog AUTHORS
-
