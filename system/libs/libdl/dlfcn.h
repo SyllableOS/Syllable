@@ -29,7 +29,6 @@ extern "C"{
 enum __dl_errors {
 	_DL_ENONE,
 	_DL_ENOGLOBAL,
-	_DL_ENOMEM,
 	_DL_EBADHANDLE,
 	_DL_EBADSYMBOL,
 	_DL_ENOSYM

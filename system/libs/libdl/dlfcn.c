@@ -109,7 +109,6 @@ int dlclose(void *handle)
 	}
 
 	unload_library( dl );
-	free( handle );
 
 	return( 0 );
 }
@@ -126,12 +125,6 @@ char *dlerror(void)
 		case _DL_ENOGLOBAL:
 		{
 			estr = "Global symbol lookups not supported";
-			break;
-		}
-
-		case _DL_ENOMEM:
-		{
-			estr = "Out of memory";
 			break;
 		}
 
