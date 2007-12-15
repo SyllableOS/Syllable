@@ -21,7 +21,7 @@ def scan
 	all_parts.select{|partition|
 		partition =~ %r{/\d+$}
 	}.sort.each {|partition|
-		if tmp = `/bin/fsprobe #{partition} 2> /dev/null`.split("\n").last
+		if tmp = `/system/bin/fsprobe #{partition} 2> /dev/null`.split("\n").last
 			# successfully identified
 			parts[partition] = tmp.split		# store partition info
 		else
