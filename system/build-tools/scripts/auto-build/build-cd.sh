@@ -126,6 +126,8 @@ LINKS=(	"/usr/local/bin/gzip, /usr/local/bin/gunzip"	\
 		"/usr/local/bin/bash, /system/bin/sh"			\
 		"/usr/local/bin/pwd, /system/bin/pwd"			\
 		"/usr/ruby/bin/ruby, /usr/local/bin/ruby"	\
+		"/bin/bash, /system/bin/bash"					\
+		"/bin/sh, /system/bin/bash"					\
 )
 
 declare -a ENV
