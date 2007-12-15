@@ -1,3 +1,8 @@
+* December 15, 2007, Kristian Van Der Vliet *
+
+o One more fix to libdl: don't try to free the handle in dlclose()
+o Remove the unneeded debug output from afs_truncate()
+
 * November 26, 2007, Kaj de Vos *
 
 Fixed execution of the early init scripts, and thereby initialisation of the terminal.
