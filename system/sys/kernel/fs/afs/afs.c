@@ -2985,7 +2985,6 @@ int afs_truncate( void *pVolume, void *pNode, off_t nLen )
 	off_t nOldSize, nPos, nBufSize;
 	void * pBuffer = NULL;
 
-	printk( "%s\n", __FUNCTION__ );
 	if( S_ISDIR( psInode->ai_nMode ) )
 	{
 		return ( -EISDIR );
@@ -3001,11 +3000,9 @@ int afs_truncate( void *pVolume, void *pNode, off_t nLen )
 	nOldSize = psInode->ai_sData.ds_nSize;
 	if (nLen == nOldSize)
 		return ( 0 );
-	printk( "%s oldsize %Ld newsize %Ld\n", __FUNCTION__, nOldSize, nLen );
 
 	if (nLen < nOldSize)
 	{
-		printk( "%s shrink \n", __FUNCTION__ );
 		// Shrink
 		nError = afs_begin_transaction( psVolume );
 		if( nError < 0 )
@@ -3031,7 +3028,6 @@ int afs_truncate( void *pVolume, void *pNode, off_t nLen )
 	}
 	else
 	{
-		printk( "%s expand \n", __FUNCTION__ );
 		// Expand
 		// Will need a buffer to write zeros.  Get it now so that we can handle failure
 		// gracefully
@@ -3049,7 +3045,6 @@ int afs_truncate( void *pVolume, void *pNode, off_t nLen )
 		nError = afs_expand_file( psVolume, psInode, NULL, &nPos, &nLen );
 		if( nLen > 0 )
 		{
-			printk( "%s afs_expand_file succeeded: %Ld \n", __FUNCTION__, nLen );
 			// Need to write zeros into expanded space.
 			nBufSize = psVolume->av_psSuperBlock->as_nBlockSize;
 			memset(pBuffer, 0, nBufSize);
