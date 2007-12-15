@@ -24,7 +24,7 @@ resp = $stdin.getuc
 
 if(resp == "\r" or resp.downcase == "y")
 	# run DiskManager
-	system "/bin/DiskManager"
+	system "/system/bin/DiskManager"
 end
 
 
@@ -78,7 +78,7 @@ loop {
 
 print "Formatting #{$part} as afs... "
 $stderr.flush
-retval = system "/bin/format", $part, "afs", "Syllable"
+retval = system "/system/bin/format", $part, "afs", "Syllable"
 if(retval)
 	# success
 	puts "done.\n\n"
@@ -95,7 +95,7 @@ read_to_user "installation.txt"
 puts "\nPlease wait...\n\n"
 
 Dir.mkdir "/inst"
-system "/bin/mount", "-t", "afs", $part, "/inst"
+system "/system/bin/mount", "-t", "afs", $part, "/inst"
 
 retval = system "unzip", "-K", "-d", "/inst/", "/boot/Packages/base/base-syllable.zip"
 system "sync"
@@ -125,7 +125,7 @@ loop {
 		read_to_user "/inst/boot/grub/menu.lst", true
 	
 	when "e"
-		system "/bin/aedit", "/inst/boot/grub/menu.lst"
+		system "/system/bin/aedit", "/inst/boot/grub/menu.lst"
 	
 	when "?"
 		read_to_user "configure.txt"
@@ -195,6 +195,6 @@ puts 'Please press "b" to reboot your computer.'
 print 'Press any other key to exit to the command line: '
 resp = $stdin.getuc
 
-system "/bin/reboot" if resp.downcase == "b"
+system "/system/bin/reboot" if resp.downcase == "b"
 
 exec "/bin/bash", "--login"
