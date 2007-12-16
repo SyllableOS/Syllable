@@ -1,7 +1,0 @@
-authors				Kaj de Vos
-status				testing
-warnings			LibVorbis must be available in the stage.
-
-inherits			sdl-sound-1.0.1
-
-configure-options	--with-vorbis-prefix=$STAGE/libvorbis

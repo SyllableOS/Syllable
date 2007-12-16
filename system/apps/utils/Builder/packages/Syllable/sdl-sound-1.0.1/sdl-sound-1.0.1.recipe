@@ -6,4 +6,4 @@ status				testing
 notes				Doesn't build a shared library yet
 
 patch-config
-;make-shared
+make-shared

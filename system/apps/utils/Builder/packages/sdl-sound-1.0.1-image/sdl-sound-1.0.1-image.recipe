@@ -1,7 +1,7 @@
-authors
-	Kristian Van Der Vliet
+authors				Kaj de Vos
 status				testing
-notes				This is a terrible hack
+warnings			LibVorbis must be available in the stage.
 
 inherits			sdl-sound-1.0.1
 
+configure-options	--with-vorbis-prefix=$STAGE/indexes
