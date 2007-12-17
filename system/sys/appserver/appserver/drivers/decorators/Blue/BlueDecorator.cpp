@@ -1,5 +1,5 @@
 /*
- *  "Blue" Window-Decorator
+ *  "Blue" Window-Decorator 1.0
  *  Copyright (C) 2007 John Aspras
  *
  *  This program is free software; you can redistribute it and/or
@@ -24,14 +24,9 @@
 using namespace os;
 
 #define WND_NO_MAX_RESTORE_BUT  WND_NO_ZOOM_BUT
-#define HIT_MAX_RESTORE 		HIT_ZOOM
-
 #define WND_NO_MINIM_BUT        WND_NO_DEPTH_BUT
 
-static SrvBitmap* g_pcDecor = NULL;
-static SrvBitmap* g_pcButtons = NULL;
-    
-
+#define HIT_MAX_RESTORE 		HIT_ZOOM
 
 BlueDecorator::BlueDecorator( Layer* pcLayer, uint32 nWndFlags )
 :	WindowDecorator( pcLayer, nWndFlags )
@@ -47,17 +42,23 @@ BlueDecorator::BlueDecorator( Layer* pcLayer, uint32 nWndFlags )
   
     CalculateBorderSizes();
 
-  
+   	static uint8 g_buttons[] = {
+   	#include "pixmaps/buttons.h"	
+   	};
+
+   	 
+   	static uint8 g_decor[] = {
+   	#include "pixmaps/decor/deco.h"	
+   	};
+   	   	 
+   	mb_Buttons = new SrvBitmap (300,18,CS_RGB32);
+	mb_decor   = new SrvBitmap (24,9,CS_RGB32); 
+	
+	LoadBitmap (mb_Buttons,g_buttons,Point (300,18));	
+	LoadBitmap (mb_decor,g_decor,Point (24,9));
 	
 }
 
-
-BlueDecorator::~BlueDecorator()
-{
-	g_pcButtons->Release();
-	g_pcDecor->Release();
-} 
-  
 void BlueDecorator::LoadBitmap (SrvBitmap* bmp,uint8* raw,Point size)
 {
 	int c=0;
@@ -76,6 +77,14 @@ void BlueDecorator::LoadBitmap (SrvBitmap* bmp,uint8* raw,Point size)
 }
 
 
+BlueDecorator::~BlueDecorator()
+{
+
+	  
+} 
+  
+
+
 void BlueDecorator::CalculateBorderSizes()
 {
 	if ( m_nFlags & WND_NO_BORDER )
@@ -90,15 +99,15 @@ void BlueDecorator::CalculateBorderSizes()
 		if ( (m_nFlags & (WND_NO_TITLE | WND_NO_CLOSE_BUT | WND_NO_ZOOM_BUT | WND_NO_DEPTH_BUT | WND_NOT_MOVEABLE)) ==
 		     (WND_NO_TITLE | WND_NO_CLOSE_BUT | WND_NO_ZOOM_BUT | WND_NO_DEPTH_BUT | WND_NOT_MOVEABLE) )
 		{
-		    m_vTopBorder = 8;
+		    m_vTopBorder = 5;
 		}
 		else
 		{
-			m_vTopBorder = 24;
+			m_vTopBorder = 25;
 		}
-		m_vLeftBorder   = 4;
-		m_vRightBorder  = 4;
-		m_vBottomBorder = 4;
+		m_vLeftBorder   = 5;
+		m_vRightBorder  = 5;
+		m_vBottomBorder = 5;
 	}
 }
 
@@ -192,11 +201,14 @@ WindowDecorator::hit_item BlueDecorator::HitTest( const Point& cPosition )
 	
 	if ( (m_nFlags & WND_NO_MINIM_BUT) == 0 )
 		if ( m_cMinimizeRect.DoIntersect( cPosition ) ) return( HIT_MINIMIZE );
+		
 	
+	if ( (m_nFlags & WND_NO_DEPTH_BUT) == 0 )		
+	if ( m_cDepthRect.DoIntersect( cPosition ) ) return( HIT_DEPTH );
 	 
 	if ( m_cDragRect.DoIntersect( cPosition ) )
 		return( HIT_DRAG );
-	
+		
 	return( HIT_NONE );
 }
 
@@ -249,29 +261,33 @@ void BlueDecorator::FrameSized( const Rect& cFrame )
 
 void BlueDecorator::Layout()
 {
-	m_cCloseRect.left   = m_cBounds.right-30;
+	m_cCloseRect.left   = m_cBounds.right-28;
 	m_cCloseRect.right  = m_cCloseRect.left+23;
-	m_cCloseRect.top    = 3;
+	m_cCloseRect.top    = 4;
 	m_cCloseRect.bottom = 20;
 
-	m_cMaxRestoreRect.left   = m_cBounds.right-55;// m_cBounds.right-76;
-	m_cMaxRestoreRect.right  = m_cMaxRestoreRect.left+23;//(m_cBounds.right-76)+21;
-	m_cMaxRestoreRect.top    = 3;
+	m_cMaxRestoreRect.left   = m_cBounds.right-55;
+	m_cMaxRestoreRect.right  = m_cMaxRestoreRect.left+23;
+	m_cMaxRestoreRect.top    = 4;
 	m_cMaxRestoreRect.bottom = 20;
 
-	m_cMinimizeRect.left   = m_cBounds.right-80;//m_cBounds.right-102;
+	m_cMinimizeRect.left   = m_cBounds.right-80;
 	m_cMinimizeRect.right  = m_cMinimizeRect.left+23;
-	m_cMinimizeRect.top    = 3;
+	m_cMinimizeRect.top    = 4;
 	m_cMinimizeRect.bottom = 20;
 
+    // Depth 
+    m_cDepthRect.left=4;
+    m_cDepthRect.right=m_cDepthRect.left+23;
+    m_cDepthRect.top=4;
+    m_cDepthRect.bottom=20;
+    
 	// DRAG RECT
 	m_cDragRect.left   = 0;
-	m_cDragRect.right   = m_cBounds.right-8;
-	m_cDragRect.right-=m_cMinimizeRect.Width();
-	m_cDragRect.right-=m_cMaxRestoreRect.Width();
-	m_cDragRect.right-=m_cCloseRect.Width();	
+	m_cDragRect.right   = m_cBounds.right;
     m_cDragRect.top    = 0;
     m_cDragRect.bottom = 23;
+    
     
 }
 
@@ -286,9 +302,21 @@ void BlueDecorator::SetButtonState( uint32 nButton, bool bPushed )
 			SetMaxRestoreState( bPushed );
 			break;
 		case HIT_MINIMIZE:
-			SetMinimizeButtonState( bPushed );			
+			SetMinimizeButtonState( bPushed );
+			break;			
+		case HIT_DEPTH:
+			SetDepthButtonState( bPushed );			
 			break;
 	}	
+}
+
+void BlueDecorator::SetDepthButtonState( bool bPushed )
+{
+	m_bDepthState = bPushed;
+	if ( (m_nFlags & WND_NO_DEPTH_BUT) == 0 )		
+	{
+		DrawDepth( m_cDepthRect, m_bHasFocus, m_bDepthState == 1 );
+	}
 }
 
 void BlueDecorator::SetCloseButtonState( bool bPushed )
@@ -331,7 +359,7 @@ void BlueDecorator::DrawDecor (void)
 	Layer* pcView = GetLayer();
 	
 	pcView->SetDrawingMode (DM_OVER);	
-	pcView->DrawBitMap (g_pcDecor,Rect (0,0,23,8),
+	pcView->DrawBitMap (mb_decor,Rect (0,0,23,8),
 						Rect (7,8,7+23,8+8));
 	pcView->SetDrawingMode (DM_COPY);
 
@@ -353,12 +381,12 @@ void BlueDecorator::DrawMinimize( const Rect& cRect, bool bActive, bool bRecesse
 	if ((m_nFlags & WND_NO_MINIM_BUT)==0)	
 	{		
 		if (bRecessed)
-		pcView->DrawBitMap (g_pcButtons,Rect (75,0,99,17),cRect);		
+		pcView->DrawBitMap (mb_Buttons,Rect (75,0,99,17),cRect);		
 		else if (bActive)
-			pcView->DrawBitMap (g_pcButtons,Rect (0,0,23,17),cRect);			
+			pcView->DrawBitMap (mb_Buttons,Rect (0,0,23,17),cRect);			
 		else
 			// inactive
-			pcView->DrawBitMap (g_pcButtons,Rect (150,0,174,17),cRect);			
+			pcView->DrawBitMap (mb_Buttons,Rect (150,0,174,17),cRect);			
 	}
 		
 	pcView->SetDrawingMode (DM_COPY);
@@ -384,12 +412,12 @@ void BlueDecorator::DrawMaxRestore(  const Rect& cRect, bool bActive, bool bRece
 	if ((m_nFlags & WND_NO_MAX_RESTORE_BUT)==0)
 	{	
 		if (bRecessed)
-		pcView->DrawBitMap (g_pcButtons,Rect (100,0,124,17),cRect);		
+		pcView->DrawBitMap (mb_Buttons,Rect (100,0,124,17),cRect);		
 		else if (bActive)
-			pcView->DrawBitMap (g_pcButtons,Rect (25,0,49,17),cRect);
+			pcView->DrawBitMap (mb_Buttons,Rect (25,0,49,17),cRect);
 		else
 			//inactive
-			pcView->DrawBitMap (g_pcButtons,Rect (175,0,199,17),cRect);
+			pcView->DrawBitMap (mb_Buttons,Rect (175,0,199,17),cRect);
 	}
 
 	pcView->SetDrawingMode (DM_COPY);
@@ -415,17 +443,46 @@ void BlueDecorator::DrawClose(  const Rect& cRect, bool bActive, bool bRecessed 
 	if ((m_nFlags & WND_NO_CLOSE_BUT)==0)	
 	{
 		if (bRecessed)
-			pcView->DrawBitMap (g_pcButtons,Rect (125,0,149,17),cRect);
+			pcView->DrawBitMap (mb_Buttons,Rect (125,0,149,17),cRect);
 		else if (bActive)
-			pcView->DrawBitMap (g_pcButtons,Rect (50,0,74,17),cRect);
+			pcView->DrawBitMap (mb_Buttons,Rect (50,0,74,17),cRect);
 		else
 			//inactive
-			pcView->DrawBitMap (g_pcButtons,Rect (200,0,223,17),cRect);
+			pcView->DrawBitMap (mb_Buttons,Rect (200,0,223,17),cRect);
 	}
 	
 	pcView->SetDrawingMode (DM_COPY);
 
 }
+
+//----------------------------------------------------------------------------
+// NAME:
+// DESC:
+// NOTE:
+// SEE ALSO:
+//----------------------------------------------------------------------------
+
+void BlueDecorator::DrawDepth( const Rect& cRect, bool bActive, bool bRecessed )
+{
+	Layer* pcView = GetLayer();
+
+	pcView->SetDrawingMode (DM_OVER);
+	
+	if ((m_nFlags & WND_NO_DEPTH_BUT)==0)	
+	{
+		if (bRecessed)
+			pcView->DrawBitMap (mb_Buttons,Rect (250,0,274,17),cRect);
+		else if (bActive)
+			pcView->DrawBitMap (mb_Buttons,Rect (225,0,249,17),cRect);
+		else
+			//inactive
+			pcView->DrawBitMap (mb_Buttons,Rect (275,0,299,17),cRect);
+	}
+	
+	pcView->SetDrawingMode (DM_COPY);
+		
+}
+
 
 
 //----------------------------------------------------------------------------
@@ -440,13 +497,33 @@ void BlueDecorator::FillBackGround(void )
 	Layer* pcView = GetLayer();
 	
 	Rect  cOBounds = pcView->GetBounds();	
+
+	Color32_s sFillColor =  m_bHasFocus ? Color32_s(62,101,172,255):Color32_s(191,191,191,255) ; 
+
+
+	Color32_s col_Light  = m_bHasFocus ? Color32_s (32,71,142,255):Color32_s(191,191,191,255) ;	
+	Color32_s col_Dark   = m_bHasFocus ? Color32_s (62,101,172,255):Color32_s(221,221,221,255);
 	
+	Point Left  = Point(cOBounds.left+1,  cOBounds.top+1);
+	Point Right = Point(cOBounds.right-1, cOBounds.top+1);
+
+	Color32_s col_Grad = col_Light;
+	Color32_s col_Step = Color32_s( (col_Light.red-col_Dark.red)/15, 
+									(col_Light.green-col_Dark.green)/15,
+									(col_Light.blue-col_Dark.blue)/15, 0 );
+
+	for (int i=0; i<25; i++)
+	{
+		pcView->SetFgColor( col_Grad );
+		pcView->DrawLine( Left, Right );
+		Left.y  += 1;
+		Right.y += 1;
+		col_Grad.red   -= col_Step.red;
+		col_Grad.green -= col_Step.green;
+		col_Grad.blue  -= col_Step.blue;
+	}
 	
-	Color32_s sFillColor =  m_bHasFocus ? Color32_s(62,101,172,255):Color32_s(211,211,211,255) ; 
-	
-	// top
-	pcView->FillRect( Rect( cOBounds.left,cOBounds.top, 
-	                        cOBounds.right ,cOBounds.top + m_vTopBorder ), sFillColor );
+		
 	// left                        
 	pcView->FillRect( Rect(cOBounds.left,cOBounds.top+m_vTopBorder,
 	                       cOBounds.left+m_vLeftBorder,cOBounds.bottom+m_vLeftBorder),sFillColor); 
@@ -493,7 +570,7 @@ void BlueDecorator::DrawFrameBorders (void)
 	Color32_s sDarkColor =  m_bHasFocus ? Color32_s(25,62,80,255):Color32_s(184,184,184,255) ; 
 	pcView->SetFgColor( sDarkColor );		
 	pcView->DrawLine (Point (cOBounds.left+1,cOBounds.bottom-1),Point (cOBounds.right-1,cOBounds.bottom-1)); 
-	pcView->DrawLine (Point (cOBounds.right-1,cOBounds.bottom-1),Point (cOBounds.right-1,cOBounds.top-1)); 
+	pcView->DrawLine (Point (cOBounds.right-1,cOBounds.bottom-1),Point (cOBounds.right-1,cOBounds.top+2)); 
 
 	// inside
 	pcView->SetFgColor( 29, 64, 98, 255 );
@@ -528,14 +605,18 @@ void BlueDecorator::DrawTitle ()
 		float tw=pcView->m_pcFont->GetInstance()->GetStringWidth (m_cTitle.c_str(),strlen(m_cTitle.c_str()));
 
 		Rect rc=m_cBounds;
-		rc.bottom=25;
-		rc.left=40;
+		rc.bottom=26;
+	
+		if ( (m_nFlags & WND_NO_DEPTH_BUT) == 0 )		
+			rc.left=35;
+		else
+			rc.left=7;
 		
 		
 		rc.right-=m_cCloseRect.Width();
 		rc.right-=m_cMinimizeRect.Width();
 		rc.right-=m_cMaxRestoreRect.Width();
-		rc.right-=24;
+		rc.right-=16;
 		
 		if (tw>(rc.Width()))
 		{	
@@ -580,11 +661,13 @@ void BlueDecorator::Render( const Rect& cUpdateRect )
 	DrawFrameBorders ();
 
 	// DECORATION*
-	DrawDecor ();
+//	DrawDecor ();
 	                        	
 	DrawClose( m_cCloseRect, m_bHasFocus, m_bCloseState == 1 );
 	DrawMaxRestore( m_cMaxRestoreRect, m_bHasFocus, m_bMxRstrState == 1 );
 	DrawMinimize( m_cMinimizeRect, m_bHasFocus, m_bMinimState == 1 );
+	DrawDepth( m_cDepthRect, m_bHasFocus, m_bMinimState == 1 );
+
 	DrawTitle ();
 	
 }
@@ -594,34 +677,16 @@ extern "C" int get_api_version()
     return( WNDDECORATOR_APIVERSION );
 }
 
-
-
-
 extern "C" WindowDecorator* create_decorator( Layer* pcLayer, uint32 nFlags )
 {
-	if( g_pcDecor == NULL )
-	{
-		static uint8 g_buttons[] = {
-		#include "pixmaps/buttons.h"	
-		};
-
-		static uint8 g_decor[] = {
-		#include "pixmaps/decor/deco.h"	
-		};
-   	   	 
-		g_pcButtons = new SrvBitmap (224,18,CS_RGB32);
-		g_pcDecor   = new SrvBitmap (24,9,CS_RGB32); 
-	
-		BlueDecorator::LoadBitmap (g_pcButtons,g_buttons,Point (224,18));	
-		BlueDecorator::LoadBitmap (g_pcDecor,g_decor,Point (24,9));
-	}
-	else
-	{
-		g_pcButtons->AddRef();
-		g_pcDecor->AddRef();
-	}
     return( new BlueDecorator( pcLayer, nFlags ) );
 }
+
+
+
+
+
+
 
 
 

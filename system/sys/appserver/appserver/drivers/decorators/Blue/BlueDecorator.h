@@ -1,6 +1,6 @@
 /*
- *  "Blue" Window-Decorator
- *  Copyright (C) 2007 John Aspras
+ *  "Blue" Window-Decorator 1.0
+ *  Copyright (C) 2007 John Aspras 
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -45,13 +45,13 @@ public:
 
     virtual void SetCloseButtonState( bool bPushed );
     virtual void SetMinimizeButtonState( bool bPushed );
-
     virtual void SetMaxRestoreState( bool bPushed );
+    virtual void SetDepthButtonState( bool bPushed );
+    
+
 
     virtual void SetButtonState( uint32 nButton, bool bPushed );
     virtual void Render( const Rect& cUpdateRect );
-    
-	static void LoadBitmap (SrvBitmap* bmp,uint8* raw,Point size);
 private:
     void CalculateBorderSizes();
     void Layout();
@@ -59,12 +59,18 @@ private:
     void DrawClose( const Rect& cRect, bool bActive, bool bRecessed );
     void DrawMaxRestore(  const Rect& cRect, bool bActive, bool bRecessed );
     void DrawMinimize( const Rect& cRect, bool bActive, bool bRecessed );
+    void DrawDepth( const Rect& cRect, bool bActive, bool bRecessed );
     
     void FillBackGround(void );
 	void DrawFrameBorders (void); 
 	void DrawTitle (void);
     
     void DrawDecor (void);
+    void LoadBitmap (SrvBitmap* bmp,uint8* raw,Point size);
+    
+	SrvBitmap* mb_decor;
+    SrvBitmap* mb_stretch;	
+	SrvBitmap* mb_Buttons;
     
     os::font_height m_sFontHeight;
     Rect	    	m_cBounds;
@@ -75,7 +81,9 @@ private:
     Rect   m_cMinimizeRect;
     Rect   m_cMaxRestoreRect; 
     Rect   m_cDragRect;
-  
+ 	
+ 	Rect   m_cDepthRect;
+ 
     float  m_vLeftBorder;
     float  m_vTopBorder;
     float  m_vRightBorder;
@@ -85,9 +93,13 @@ private:
     bool   m_bCloseState;
     bool   m_bMxRstrState;
     bool   m_bMinimState;
+    bool   m_bDepthState;
 };
 
 #endif // __F_BLUEDECORATOR_H__
+
+
+
 
 
 
