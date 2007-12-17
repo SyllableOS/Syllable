@@ -1,6 +1,6 @@
 authors				Kaj de Vos
 warnings
-	Hardwires PERL location. /usr/bin/perl and /usr/local/bin/perl should be removed before building a release.
+	Hardwires PERL location, so the primary PERL installation should be a standard one.
 
 inherits			gnu
 
@@ -13,6 +13,6 @@ packages			automake/automake-1.10
 build-needs			autoconf >= 2.54
 run-needs
 	perl
-;	m4
+	m4
 
 documentation		README COPYING NEWS ChangeLog TODO AUTHORS THANKS
