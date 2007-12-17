@@ -1,3 +1,8 @@
+* December 17, 2007, Kaj de Vos *
+
+Imported second version of the Blue decorator by John Aspras, and adapted Arno's leak fix to it.
+Adapted the fix more to also apply it to the Winter decorator.
+
 * November 25, 2007, Kaj de Vos *
 
 Added Blue decorator by John Aspras, with modifications by Arno.
