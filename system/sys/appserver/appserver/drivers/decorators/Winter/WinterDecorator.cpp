@@ -28,97 +28,43 @@ using namespace os;
 
 #define WND_NO_MINIM_BUT        WND_NO_DEPTH_BUT
 
+static SrvBitmap* g_pcDecor = NULL;
+
+static SrvBitmap* g_pcButtonMinim  = NULL;
+static SrvBitmap* g_pcButtonMxRstr = NULL;
+static SrvBitmap* g_pcButtonClose  = NULL;
+
+static SrvBitmap* g_pcButtonMinimPressed  = NULL;
+static SrvBitmap* g_pcButtonMxRstrPressed = NULL;
+static SrvBitmap* g_pcButtonClosePressed  = NULL;
+
+static SrvBitmap* g_pcButtonMinimInactive  = NULL;
+static SrvBitmap* g_pcButtonMxRstrInactive = NULL;
+static SrvBitmap* g_pcButtonCloseInactive  = NULL;
+
 
 WinterDecorator::WinterDecorator( Layer* pcLayer, uint32 nWndFlags )
 :	WindowDecorator( pcLayer, nWndFlags )
 {
     m_nFlags = nWndFlags;
 
-    m_bHasFocus   = false;
-    m_bCloseState = false;
-    m_bMxRstrState  = false; 
-    m_bMinimState = false;
+    m_bHasFocus    = false;
+    m_bCloseState  = false;
+    m_bMxRstrState = false; 
+    m_bMinimState  = false;
 
     m_sFontHeight = pcLayer->GetFontHeight();
   
     CalculateBorderSizes();
-   	
-   	 
-   	static uint8 g_buttonMenu[] = {
-   	#include "pixmaps/decor/deco.h"	
-   	};
-// NORMAL ******************************
-   	static uint8 g_buttonMinim[] = {
-   	#include "pixmaps/normal/buttonMin.h"	
-   	};
-   	
-   	static uint8 g_buttonMxRstr[] = {
-   	#include "pixmaps/normal/buttonRestore.h"	
-   	};	
-   	
-   	static uint8 g_buttonClose[] = {
-   	#include "pixmaps/normal/buttonClose.h"	
-   	};	
-   	
-// PRESSED ******************************   	
-   	static uint8 g_buttonMinimPressed[] = {
-   	#include "pixmaps/pressed/buttonMin.h"	
-   	};
-   	
-   	static uint8 g_buttonMxRstrPressed[] = {
-   	#include "pixmaps/pressed/buttonRestore.h"	
-   	};	
-   	
-   	static uint8 g_buttonClosePressed[] = {
-   	#include "pixmaps/pressed/buttonClose.h"
-   	};	
-   	
-// INACTIVE ******************************   	
-   	static uint8 g_buttonMinimInactive[] = {
-   	#include "pixmaps/inactive/buttonMin.h"	
-   	};
-   	
-   	static uint8 g_buttonMxRstrInactive[] = {
-   	#include "pixmaps/inactive/buttonRestore.h"	
-   	};	
-  
-   	static uint8 g_buttonCloseInactive[] = {
-   	#include "pixmaps/inactive/buttonClose.h"
-   	};	 	
-   	
-   	
-	mb_decor        = new SrvBitmap (24,9,CS_RGB32); 
-	
-	mb_buttonMxRstr = new SrvBitmap (26,22,CS_RGB32);
-	mb_buttonMinim  = new SrvBitmap (26,22,CS_RGB32);
-	mb_buttonClose  = new SrvBitmap (44,22,CS_RGB32);
-	
-	mb_buttonMxRstrPressed = new SrvBitmap (26,22,CS_RGB32);
-	mb_buttonMinimPressed  = new SrvBitmap (26,22,CS_RGB32);
-	mb_buttonClosePressed  = new SrvBitmap (44,22,CS_RGB32);
-	
-	mb_buttonMxRstrInactive = new SrvBitmap (26,22,CS_RGB32);
-	mb_buttonMinimInactive  = new SrvBitmap (26,22,CS_RGB32);
-	mb_buttonCloseInactive  = new SrvBitmap (44,22,CS_RGB32);
-	
-	
-	LoadBitmap (mb_decor,g_buttonMenu,Point (24,9));
-	
-	LoadBitmap (mb_buttonMinim,g_buttonMinim,Point (26,22));
-	LoadBitmap (mb_buttonMxRstr,g_buttonMxRstr,Point (26,22));
-	LoadBitmap (mb_buttonClose,g_buttonClose,Point (44,22));
-	
-	LoadBitmap (mb_buttonMinimPressed,g_buttonMinimPressed,Point (26,22));
-	LoadBitmap (mb_buttonMxRstrPressed,g_buttonMxRstrPressed,Point (26,22));
-	LoadBitmap (mb_buttonClosePressed,g_buttonClosePressed,Point (44,22));
-	
-	
-	LoadBitmap (mb_buttonMinimInactive,g_buttonMinimInactive,Point (26,22));
-	LoadBitmap (mb_buttonMxRstrInactive,g_buttonMxRstrInactive,Point (26,22));	
-	LoadBitmap (mb_buttonCloseInactive,g_buttonCloseInactive,Point (44,22));
-
-	
 }
+
+
+WinterDecorator::~WinterDecorator()
+{
+	g_pcButtons->Release();
+	g_pcDecor->Release();
+} 
+
 
 void WinterDecorator::LoadBitmap (SrvBitmap* bmp,uint8* raw,Point size)
 {
@@ -134,15 +80,7 @@ void WinterDecorator::LoadBitmap (SrvBitmap* bmp,uint8* raw,Point size)
 
 		c+=4;
 	}
-
 }
-
-
-WinterDecorator::~WinterDecorator()
-{
-
-	  
-} 
   
 
 void WinterDecorator::DrawDecor (void)
@@ -150,11 +88,9 @@ void WinterDecorator::DrawDecor (void)
 	Layer* pcView = GetLayer();
 	  
 	pcView->SetDrawingMode (DM_OVER);
-	pcView->DrawBitMap (mb_decor,Rect (0,0,23,8),
+	pcView->DrawBitMap (g_pcDecor, Rect (0,0,23,8),
 						Rect (7,8,7+23,8+8));
 	pcView->SetDrawingMode (DM_COPY);
-
-	
 }
 
 
@@ -306,7 +242,6 @@ void WinterDecorator::SetWindowFlags( uint32 nFlags )
 
 void WinterDecorator::FrameSized( const Rect& cFrame )
 {
-	
 	Layer* pcView = GetLayer();
 	Point cDelta( cFrame.Width() - m_cBounds.Width(), cFrame.Height() - m_cBounds.Height() );
 	m_cBounds = cFrame.Bounds();
@@ -326,7 +261,6 @@ void WinterDecorator::FrameSized( const Rect& cFrame )
 	}	
 
 	pcView->Invalidate( m_cBounds );
-
 }
 
 void WinterDecorator::Layout()
@@ -354,12 +288,11 @@ void WinterDecorator::Layout()
 	m_cDragRect.right-=m_cCloseRect.Width();	
     m_cDragRect.top    = 0;
     m_cDragRect.bottom = 23;
-    
 }
 
 void WinterDecorator::SetButtonState( uint32 nButton, bool bPushed )
 {
-		switch( nButton )
+	switch( nButton )
 	{
 		case HIT_CLOSE:
 			SetCloseButtonState( bPushed );
@@ -399,7 +332,6 @@ void WinterDecorator::SetMinimizeButtonState( bool bPushed )
 	{
 		DrawMinimize( m_cMinimizeRect, m_bHasFocus, m_bMinimState == 1 );
 	}
-	
 }
 
 //----------------------------------------------------------------------------
@@ -411,24 +343,22 @@ void WinterDecorator::SetMinimizeButtonState( bool bPushed )
 
 void WinterDecorator::DrawMinimize( const Rect& cRect, bool bActive, bool bRecessed )
 {
-	
 	Layer* pcView = GetLayer();
 
 	pcView->SetDrawingMode (DM_OVER);
 	if ((m_nFlags & WND_NO_MINIM_BUT)==0)	
 	{		
 		if (bRecessed)
-		pcView->DrawBitMap (mb_buttonMinimPressed,Rect (0,0,25,21),cRect);
+			pcView->DrawBitMap (g_pcButtonMinimPressed,Rect (0,0,25,21),cRect);
 		else if (bActive)
-		pcView->DrawBitMap (mb_buttonMinim,Rect (0,0,25,21),cRect);
+			pcView->DrawBitMap (g_pcButtonMinim,Rect (0,0,25,21),cRect);
 		else
-		pcView->DrawBitMap (mb_buttonMinimInactive,Rect (0,0,25,21),cRect);
+			pcView->DrawBitMap (g_pcButtonMinimInactive,Rect (0,0,25,21),cRect);
 	}
 	else
-		pcView->DrawBitMap (mb_buttonMinimInactive,Rect (0,0,25,21),cRect);
+		pcView->DrawBitMap (g_pcButtonMinimInactive,Rect (0,0,25,21),cRect);
 		
 	pcView->SetDrawingMode (DM_COPY);
-
 }
 
 
@@ -441,26 +371,23 @@ void WinterDecorator::DrawMinimize( const Rect& cRect, bool bActive, bool bReces
 
 void WinterDecorator::DrawMaxRestore(  const Rect& cRect, bool bActive, bool bRecessed )
 {
-
 	Layer* pcView = GetLayer();
 
 	pcView->SetDrawingMode (DM_OVER);
 
-
 	if ((m_nFlags & WND_NO_MAX_RESTORE_BUT)==0)
 	{	
 		if (bRecessed)
-		pcView->DrawBitMap (mb_buttonMxRstrPressed,Rect (0,0,25,21),cRect);
+			pcView->DrawBitMap (g_pcButtonMxRstrPressed,Rect (0,0,25,21),cRect);
 		else if (bActive)
-		pcView->DrawBitMap (mb_buttonMxRstr,Rect (0,0,25,21),cRect);
+			pcView->DrawBitMap (g_pcButtonMxRstr,Rect (0,0,25,21),cRect);
 		else
-		pcView->DrawBitMap (mb_buttonMxRstrInactive,Rect (0,0,25,21),cRect);
+			pcView->DrawBitMap (g_pcButtonMxRstrInactive,Rect (0,0,25,21),cRect);
 	}
 	else
-		pcView->DrawBitMap (mb_buttonMxRstrInactive,Rect (0,0,25,21),cRect);
+		pcView->DrawBitMap (g_pcButtonMxRstrInactive,Rect (0,0,25,21),cRect);
 	
 	pcView->SetDrawingMode (DM_COPY);
-	
 }
 
 
@@ -474,7 +401,6 @@ void WinterDecorator::DrawMaxRestore(  const Rect& cRect, bool bActive, bool bRe
 
 void WinterDecorator::DrawClose(  const Rect& cRect, bool bActive, bool bRecessed  )
 {
-	
 	Layer* pcView = GetLayer();
 
 	pcView->SetDrawingMode (DM_OVER);
@@ -482,17 +408,16 @@ void WinterDecorator::DrawClose(  const Rect& cRect, bool bActive, bool bRecesse
 	if ((m_nFlags & WND_NO_CLOSE_BUT)==0)	
 	{
 		if (bRecessed)
-		pcView->DrawBitMap (mb_buttonClosePressed,Rect (0,0,43,21),cRect);
+			pcView->DrawBitMap (g_pcButtonClosePressed,Rect (0,0,43,21),cRect);
 		else if (bActive)
-		pcView->DrawBitMap (mb_buttonClose,Rect (0,0,43,21),cRect);
+			pcView->DrawBitMap (g_pcButtonClose,Rect (0,0,43,21),cRect);
 		else
-		pcView->DrawBitMap (mb_buttonCloseInactive,Rect (0,0,43,21),cRect);
+			pcView->DrawBitMap (g_pcButtonCloseInactive,Rect (0,0,43,21),cRect);
 	}
 	else
-		pcView->DrawBitMap (mb_buttonCloseInactive,Rect (0,0,43,21),cRect);
+		pcView->DrawBitMap (g_pcButtonCloseInactive,Rect (0,0,43,21),cRect);
 		
 	pcView->SetDrawingMode (DM_COPY);
-
 }
 
 
@@ -526,8 +451,6 @@ void WinterDecorator::FillBackGround(void )
 	// bottom                       
 	pcView->FillRect( Rect(cOBounds.left,cOBounds.bottom-m_vBottomBorder,
 	                       cOBounds.right,cOBounds.bottom),sFillColor); 
-	                       
-	
 }
 
 
@@ -568,8 +491,6 @@ void WinterDecorator::DrawFrameBorders (void)
 	pcView->DrawLine (Point (cOBounds.right-(m_vRightBorder-1),cOBounds.bottom-(m_vBottomBorder-1))); 
 	pcView->DrawLine (Point (cOBounds.left+(m_vLeftBorder-1),  cOBounds.bottom-(m_vBottomBorder-1))); 
 	pcView->DrawLine (Point (cOBounds.left+(m_vLeftBorder-1),  cOBounds.top+(m_vTopBorder-1))); 
-	
-	
 }
 
 
@@ -582,7 +503,6 @@ void WinterDecorator::DrawFrameBorders (void)
 
 void WinterDecorator::DrawTitle ()
 {
-	
 	if ( (m_nFlags & WND_NO_TITLE) == 0 )
 	{
 		Layer* pcView = GetLayer();
@@ -617,12 +537,10 @@ void WinterDecorator::DrawTitle ()
 			tmpstr+="...";
 			
 			pcView->DrawText (rc,tmpstr.c_str(),-1,DTF_ALIGN_LEFT);
-			
 		}
 		else
 		{
 			pcView->DrawText (rc,m_cTitle.c_str(),-1,DTF_ALIGN_LEFT);
-
 		}
 
 		pcView->SetDrawingMode (DM_COPY);
@@ -641,7 +559,6 @@ void WinterDecorator::DrawTitle ()
 
 void WinterDecorator::Render( const Rect& cUpdateRect )
 {
-	
 	FillBackGround();
 	DrawFrameBorders ();
 
@@ -652,7 +569,6 @@ void WinterDecorator::Render( const Rect& cUpdateRect )
 	DrawMaxRestore( m_cMaxRestoreRect, m_bHasFocus, m_bMxRstrState == 1 );
 	DrawMinimize( m_cMinimizeRect, m_bHasFocus, m_bMinimState == 1 );
 	DrawTitle ();
-	
 }
 
 extern "C" int get_api_version()
@@ -662,5 +578,96 @@ extern "C" int get_api_version()
 
 extern "C" WindowDecorator* create_decorator( Layer* pcLayer, uint32 nFlags )
 {
+	if( g_pcDecor == NULL )
+	{
+		// NORMAL ******************************
+		static uint8 g_buttonMinim[] = {
+		#include "pixmaps/normal/buttonMin.h"
+		};
+
+		static uint8 g_buttonMxRstr[] = {
+		#include "pixmaps/normal/buttonRestore.h"
+		};
+
+		static uint8 g_buttonClose[] = {
+		#include "pixmaps/normal/buttonClose.h"
+	   	};
+
+		// PRESSED ******************************
+		static uint8 g_buttonMinimPressed[] = {
+		#include "pixmaps/pressed/buttonMin.h"
+		};
+
+		static uint8 g_buttonMxRstrPressed[] = {
+		#include "pixmaps/pressed/buttonRestore.h"
+		};
+
+		static uint8 g_buttonClosePressed[] = {
+		#include "pixmaps/pressed/buttonClose.h"
+		};
+
+		// INACTIVE ******************************
+		static uint8 g_buttonMinimInactive[] = {
+		#include "pixmaps/inactive/buttonMin.h"
+		};
+
+		static uint8 g_buttonMxRstrInactive[] = {
+		#include "pixmaps/inactive/buttonRestore.h"
+		};
+
+		static uint8 g_buttonCloseInactive[] = {
+		#include "pixmaps/inactive/buttonClose.h"
+		};
+
+
+		static uint8 g_decor[] = {
+		#include "pixmaps/decor/deco.h"	
+		};
+
+		g_pcButtonMinim  = new SrvBitmap (26,22,CS_RGB32);
+		g_pcButtonMxRstr = new SrvBitmap (26,22,CS_RGB32);
+		g_pcButtonClose  = new SrvBitmap (44,22,CS_RGB32);
+
+		g_pcButtonMinimPressed  = new SrvBitmap (26,22,CS_RGB32);
+		g_pcButtonMxRstrPressed = new SrvBitmap (26,22,CS_RGB32);
+		g_pcButtonClosePressed  = new SrvBitmap (44,22,CS_RGB32);
+
+		g_pcButtonMinimInactive  = new SrvBitmap (26,22,CS_RGB32);
+		g_pcButtonMxRstrInactive = new SrvBitmap (26,22,CS_RGB32);
+		g_pcButtonCloseInactive  = new SrvBitmap (44,22,CS_RGB32);
+
+		g_pcDecor = new SrvBitmap (24,9,CS_RGB32);
+
+		WinterDecorator::LoadBitmap (g_pcButtonMinim,g_buttonMinim,Point (26,22));
+		WinterDecorator::LoadBitmap (g_pcButtonMxRstr,g_buttonMxRstr,Point (26,22));
+		WinterDecorator::LoadBitmap (g_pcButtonClose,g_buttonClose,Point (44,22));
+
+		WinterDecorator::LoadBitmap (g_pcButtonMinimPressed,g_buttonMinimPressed,Point (26,22));
+		WinterDecorator::LoadBitmap (g_pcButtonMxRstrPressed,g_buttonMxRstrPressed,Point (26,22));
+		WinterDecorator::LoadBitmap (g_pcButtonClosePressed,g_buttonClosePressed,Point (44,22));
+
+		WinterDecorator::LoadBitmap (g_pcButtonMinimInactive,g_buttonMinimInactive,Point (26,22));
+		WinterDecorator::LoadBitmap (g_pcButtonMxRstrInactive,g_buttonMxRstrInactive,Point (26,22));
+		WinterDecorator::LoadBitmap (g_pcButtonCloseInactive,g_buttonCloseInactive,Point (44,22));
+
+		WinterDecorator::LoadBitmap (g_pcDecor,g_decor,Point (24,9));
+	}
+	else
+	{
+		g_pcButtonMinim->AddRef();
+		g_pcButtonMxRstr->AddRef();
+		g_pcButtonClose->AddRef();
+
+		g_pcButtonMinimPressed->AddRef();
+		g_pcButtonMxRstrPressed->AddRef();
+		g_pcButtonClosePressed->AddRef();
+
+		g_pcButtonMinimInactive->AddRef();
+		g_pcButtonMxRstrInactive->AddRef();
+		g_pcButtonCloseInactive->AddRef();
+
+		g_pcDecor->AddRef();
+	}
+
     return( new WinterDecorator( pcLayer, nFlags ) );
 }

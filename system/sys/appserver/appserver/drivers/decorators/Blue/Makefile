@@ -36,11 +36,3 @@ dist: install
 
 clean:
 	-rm $(OBJS) $(OBJDIR)/Blue
-
-
-
-
-
-
-
-

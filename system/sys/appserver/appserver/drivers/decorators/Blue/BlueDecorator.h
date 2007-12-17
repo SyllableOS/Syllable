@@ -32,7 +32,7 @@ class BlueDecorator : public os::WindowDecorator
 public:
     BlueDecorator( Layer* pcLayer, uint32 nWndFlags );
     virtual ~BlueDecorator();
-  
+
     virtual hit_item HitTest( const Point& cPosition );
     virtual void FrameSized( const Rect& cNewFrame );
     virtual Rect GetBorderSize();
@@ -47,11 +47,12 @@ public:
     virtual void SetMinimizeButtonState( bool bPushed );
     virtual void SetMaxRestoreState( bool bPushed );
     virtual void SetDepthButtonState( bool bPushed );
-    
-
 
     virtual void SetButtonState( uint32 nButton, bool bPushed );
     virtual void Render( const Rect& cUpdateRect );
+
+	static void LoadBitmap (SrvBitmap* bmp,uint8* raw,Point size);
+
 private:
     void CalculateBorderSizes();
     void Layout();
@@ -66,12 +67,7 @@ private:
 	void DrawTitle (void);
     
     void DrawDecor (void);
-    void LoadBitmap (SrvBitmap* bmp,uint8* raw,Point size);
-    
-	SrvBitmap* mb_decor;
-    SrvBitmap* mb_stretch;	
-	SrvBitmap* mb_Buttons;
-    
+
     os::font_height m_sFontHeight;
     Rect	    	m_cBounds;
     std::string	    m_cTitle;
@@ -97,30 +93,3 @@ private:
 };
 
 #endif // __F_BLUEDECORATOR_H__
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
