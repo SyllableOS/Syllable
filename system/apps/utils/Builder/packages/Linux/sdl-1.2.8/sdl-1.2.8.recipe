@@ -2,9 +2,3 @@ authors				Kaj de Vos
 status				testing
 
 recommends			alsa-library
-
-; Process the Syllable patches:
-patch
-	aclocal
-	automake
-	autoconf

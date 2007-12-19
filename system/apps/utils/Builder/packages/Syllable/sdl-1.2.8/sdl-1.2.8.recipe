@@ -2,7 +2,3 @@ authors				Kaj de Vos
 status				testing
 
 patch-config
-patch
-	aclocal
-	automake
-	autoconf

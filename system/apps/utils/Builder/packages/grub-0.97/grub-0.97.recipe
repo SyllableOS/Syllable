@@ -17,12 +17,12 @@ build-needs
 build-recommends	texinfo >= 4.0
 run-needs			diffutils
 
-patch
+patch				autoreconf
 ;	autoreconf --force
 ;	Makes it work on Linux, if our AutoMake is older than 1.8.2:
-	aclocal
-	automake
-	autoconf
+;	aclocal
+;	automake
+;	autoconf
 
 ; Problems are known with optimization:
 configure-env		CFLAGS ''

@@ -14,6 +14,12 @@ build-needs
 ;	Needed a Hermes fix:
 ;	gcc < 4.1
 
+; Process the Syllable patches:
+patch				autoreconf
+;	aclocal
+;	automake
+;	autoconf
+
 documentation
 	README README-SDL.txt BUGS COPYING WhatsNew CREDITS TODO
 	docs.html

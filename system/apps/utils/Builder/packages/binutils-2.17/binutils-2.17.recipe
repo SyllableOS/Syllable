@@ -22,11 +22,11 @@ conflicts
 	autoconf
 ;	gcc
 
-patch
-	cd ld
-	automake
-	cd ../gas
-	autoconf
+patch				autoreconf
+;	cd ld
+;	automake
+;	cd ../gas
+;	autoconf
 
 ;configure-options
 ;	--enable-shared
@@ -55,4 +55,3 @@ links
 ;	/usr/indexes/bin/ranlib	/usr/bin/ranlib
 ;	For some packages:
 ;	include/libiberty.h		/usr/include/
-
