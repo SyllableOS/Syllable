@@ -4,11 +4,13 @@ authors
 maintainers			Kaj de Vos
 status				testing
 
-inherits			sourceforge
+; Disappeared from the net:
+;inherits			sourceforge
 
 licenses			other
 home				sourceforge.net/projects/libungif/
-packages			libungif/libungif-4.1.4
+;packages			libungif/libungif-4.1.4
+locations			http://downloads.syllable.org/sources/resources/LibUnGIF/
 
 patch-config
 
@@ -16,4 +18,3 @@ documentation
 	README UNCOMPRESSED_GIF COPYING BUGS NEWS ChangeLog AUTHORS TODO
 ;	ONEWS
 internal-docs		DEVELOPERS
-
