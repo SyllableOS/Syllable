@@ -61,7 +61,18 @@ WinterDecorator::WinterDecorator( Layer* pcLayer, uint32 nWndFlags )
 
 WinterDecorator::~WinterDecorator()
 {
-	g_pcButtons->Release();
+	g_pcButtonMinim->Release();
+	g_pcButtonMxRstr->Release();
+	g_pcButtonClose->Release();
+
+	g_pcButtonMinimPressed->Release();
+	g_pcButtonMxRstrPressed->Release();
+	g_pcButtonClosePressed->Release();
+
+	g_pcButtonMinimInactive->Release();
+	g_pcButtonMxRstrInactive->Release();
+	g_pcButtonCloseInactive->Release();
+
 	g_pcDecor->Release();
 } 
 
