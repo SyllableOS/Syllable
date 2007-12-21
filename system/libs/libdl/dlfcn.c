@@ -146,6 +146,12 @@ char *dlerror(void)
 			break;
 		}
 
+		case _DL_ENONE:
+		{
+			estr = NULL;
+			break;
+		}
+
 		default:
 		{
 			estr = "Unknown error";
