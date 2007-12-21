@@ -1,7 +1,6 @@
 authors				Kelly Wilson
 					Kristian Van Der Vliet
-status				developing
-notes				On Syllable, only LibPurple builds
+status				testing
 inherits			sourceforge
 
 headline			Pidgin IM framework
@@ -27,6 +26,7 @@ build-dir	.
 pre-configure
 ;	cp /usr/libtool/share/libtool/ltmain.sh .
 	libtoolize --force
+	intltoolize --force
 	cp /usr/automake/share/automake-1.9/compile .
 	aclocal -I /usr/indexes/share/aclocal
 	autoheader -I /usr/indexes/share/aclocal
@@ -57,10 +57,6 @@ configure-options
 	--disable-gstreamer
 	--disable-fortify
 	--disable-nss
-
-make
-	make -C libpurple libpurple.la
-	make
 
 documentation		README COPYRIGHT COPYING NEWS ChangeLog AUTHORS
 build-docs			README.MTN
