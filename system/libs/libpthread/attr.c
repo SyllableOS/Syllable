@@ -132,7 +132,7 @@ int pthread_attr_setdetachstate(pthread_attr_t *attr, int state)
 	if( attr == NULL )
 		return( EINVAL );
 
-	if( ( state != PTHREAD_CREATE_JOINABLE ) || ( state != PTHREAD_CREATE_DETACHED ) )
+	if( ( state != PTHREAD_CREATE_JOINABLE ) && ( state != PTHREAD_CREATE_DETACHED ) )
 		return( EINVAL );
 
 	attr->__detachstate = state;
