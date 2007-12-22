@@ -22,7 +22,7 @@ conflicts
 	autoconf
 ;	gcc
 
-patch				autoreconf
+patch				autoreconf ld gas
 ;	cd ld
 ;	automake
 ;	cd ../gas
