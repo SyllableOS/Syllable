@@ -13,24 +13,13 @@ licenses			GPL
 home				www.gnu.org/software/libtool/
 packages			libtool/libtool-1.5.22
 
-build-needs
-	automake
-	autoconf
+build-needs			automake 1.9
 
-; KVDV: I can't think of a way to get mkinstalldirs into the build cleanly, so
-; for now they're in the "patches" directory and added that way, as a hack.
 patch
-	aclocal -I .
-	automake
-	autoconf
-	cd libltdl
-	aclocal -I ..
-	automake
-	autoconf
+	cp /usr/automake/share/automake-1.9/mkinstalldirs .
+	cp /usr/automake/share/automake-1.9/mkinstalldirs libltdl
+	autoreconf
 
 build-dir			.
 
-no-strip
-
 documentation		README COPYING NEWS ChangeLog AUTHORS THANKS TODO
-
