@@ -13,12 +13,7 @@ licenses			GPL
 home				www.gnu.org/software/libtool/
 packages			libtool/libtool-1.5.22
 
-build-needs			automake 1.9
-
-patch
-	cp /usr/automake/share/automake-1.9/mkinstalldirs .
-	cp /usr/automake/share/automake-1.9/mkinstalldirs libltdl
-	autoreconf
+patch				autoreconf
 
 build-dir			.
 

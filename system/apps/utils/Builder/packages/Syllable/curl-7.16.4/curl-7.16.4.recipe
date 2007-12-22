@@ -4,7 +4,6 @@ status				testing
 needs
 	Syllable >= 0.6.3
 	c-ares >= 1.3.2
-build-needs			automake 1.9
 recommends
 	zlib
 	openssl | gnutls | yassl
@@ -15,7 +14,6 @@ recommends
 	libidn
 	libssh2
 
-patch				cp /usr/automake/share/automake-1.9/compile .
 make-shared
 
 configure-options
