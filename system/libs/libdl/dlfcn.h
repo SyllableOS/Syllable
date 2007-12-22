@@ -31,7 +31,8 @@ enum __dl_errors {
 	_DL_ENOGLOBAL,
 	_DL_EBADHANDLE,
 	_DL_EBADSYMBOL,
-	_DL_ENOSYM
+	_DL_ENOSYM,
+	_DL_EBADLIBRARY
 };
 
 void *dlopen(const char *file, int mode);

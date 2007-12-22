@@ -59,7 +59,7 @@ void *dlopen(const char *file, int mode)
 	if( dl >= 0 )
 		ret = (void*)dl;
 	else
-		__dl_set_errno( _DL_EBADHANDLE );
+		__dl_set_errno( _DL_EBADLIBRARY );
 
 	return( ret );
 }
@@ -143,6 +143,12 @@ char *dlerror(void)
 		case _DL_ENOSYM:
 		{
 			estr = "Symbol not found";
+			break;
+		}
+
+		case _DL_EBADLIBRARY:
+		{
+			estr = "Failed to load library";
 			break;
 		}
 
