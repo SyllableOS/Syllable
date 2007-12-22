@@ -1,6 +1,7 @@
 authors				Kelly Wilson
 					Kristian Van Der Vliet
-status				testing
+status				broken
+notes				Finch exits early with an abort()
 inherits			sourceforge
 
 headline			Pidgin IM framework
@@ -35,7 +36,7 @@ pre-configure
 
 configure-env
 	PKG_CONFIG_PATH "$PKG_CONFIG_PATH:/usr/glib/lib/pkgconfig:/usr/libxml2/lib/pkgconfig:/usr/openssl/lib/pkgconfig"
-	LIBS "$LIBS -lncurses -lz"
+	LIBS "$LIBS -lncurses"
 
 configure-options
 ;	--enable-debug
@@ -57,6 +58,10 @@ configure-options
 	--disable-gstreamer
 	--disable-fortify
 	--disable-nss
+
+links
+	purple-2/liboscar.so.0.0.0	lib/liboscar.so.0
+	purple-2/libjabber.so.0.0.0 lib/libjabber.so.0
 
 documentation		README COPYRIGHT COPYING NEWS ChangeLog AUTHORS
 build-docs			README.MTN

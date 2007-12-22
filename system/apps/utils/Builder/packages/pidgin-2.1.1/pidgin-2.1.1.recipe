@@ -1,7 +1,6 @@
 authors				Kelly Wilson
+					Kristian Van Der Vliet
 status				testing
-notes				On Syllable, only LibPurple builds
-
 inherits			sourceforge
 
 headline			Pidgin IM framework
@@ -21,6 +20,19 @@ recommends
 	openssl
 	gtkspell
 
+build-dir	.
+
+;make-shared
+pre-configure
+;	cp /usr/libtool/share/libtool/ltmain.sh .
+	libtoolize --force
+	intltoolize --force
+	cp /usr/automake/share/automake-1.9/compile .
+	aclocal -I /usr/indexes/share/aclocal
+	autoheader -I /usr/indexes/share/aclocal
+	autoconf -I /usr/indexes/share/aclocal
+	automake
+
 configure-env
 	PKG_CONFIG_PATH "$PKG_CONFIG_PATH:/usr/glib/lib/pkgconfig:/usr/libxml2/lib/pkgconfig:/usr/openssl/lib/pkgconfig"
 	LIBS "$LIBS -lncurses"
@@ -35,6 +47,7 @@ configure-options
 ;	--disable-perl
 	--disable-tcl
 ;	--disable-plugins
+	--disable-perl
 	--disable-libtool-lock
 	--disable-startup-notification
 	--disable-screensaver
@@ -44,6 +57,10 @@ configure-options
 	--disable-gstreamer
 	--disable-fortify
 	--disable-nss
+
+links
+	purple-2/liboscar.so.0.0.0	lib/liboscar.so.0
+	purple-2/libjabber.so.0.0.0 lib/libjabber.so.0
 
 documentation		README COPYRIGHT COPYING NEWS ChangeLog AUTHORS
 build-docs			README.MTN
