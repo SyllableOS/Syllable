@@ -228,7 +228,7 @@ pthread_t pthread_self(void)
 
 int pthread_setcancelstate(int state, int *oldstate)
 {
-	if( ( state != PTHREAD_CANCEL_ENABLE ) || ( state != PTHREAD_CANCEL_DISABLE ) )
+	if( ( state != PTHREAD_CANCEL_ENABLE ) && ( state != PTHREAD_CANCEL_DISABLE ) )
 		return( EINVAL );
 
 	return( ENOSYS );
@@ -236,7 +236,7 @@ int pthread_setcancelstate(int state, int *oldstate)
 
 int pthread_setcanceltype(int type, int *oldtype)
 {
-	if( ( type != PTHREAD_CANCEL_DEFERRED ) || ( type != PTHREAD_CANCEL_ASYNCHRONOUS ) )
+	if( ( type != PTHREAD_CANCEL_DEFERRED ) && ( type != PTHREAD_CANCEL_ASYNCHRONOUS ) )
 		return( EINVAL );
 
 	return( ENOSYS );
