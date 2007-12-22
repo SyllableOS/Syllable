@@ -216,7 +216,7 @@ int pthread_cond_timedwait(pthread_cond_t *cond, pthread_mutex_t *mutex, const s
 		/* Wakeup up -> tell the timer to exit */
 		resume_thread( kthread );
 	} else
-		ret = -ETIMEDOUT;
+		ret = ETIMEDOUT;
 	
 	return( ret );
 }
