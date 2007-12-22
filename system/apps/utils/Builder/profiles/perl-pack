@@ -10,4 +10,5 @@ modules
 ;	For older packages:
 ;	programming/autoconf-2.13
 ;	programming/automake-1.4-p6
-
+	programming/intltool-0.36.2
+	programming/xml-parser-2.34
