@@ -1,7 +1,9 @@
-authors				Kelly Wilson
-					Kristian Van Der Vliet
+authors
+	Kelly Wilson
+	Kristian Van Der Vliet
 status				broken
 notes				Finch exits early with an abort()
+
 inherits			sourceforge
 
 headline			Pidgin IM framework
@@ -21,10 +23,7 @@ recommends
 	openssl
 	gtkspell
 
-build-dir	.
-
-;make-shared
-pre-configure
+patch
 ;	cp /usr/libtool/share/libtool/ltmain.sh .
 	libtoolize --force
 	intltoolize --force
@@ -33,6 +32,9 @@ pre-configure
 	autoheader -I /usr/indexes/share/aclocal
 	autoconf -I /usr/indexes/share/aclocal
 	automake
+;make-shared
+
+;build-dir			.
 
 configure-env
 	PKG_CONFIG_PATH "$PKG_CONFIG_PATH:/usr/glib/lib/pkgconfig:/usr/libxml2/lib/pkgconfig:/usr/openssl/lib/pkgconfig"
@@ -40,15 +42,14 @@ configure-env
 
 configure-options
 ;	--enable-debug
-	--with-ncurses-headers=/usr/ncurses/include/
 ;	--with-glib-lib=/usr/glib/lib
 	--enable-consoleui
 	--with-screen=ncurses
+	--with-ncurses-headers=/usr/ncurses/include/
 	--disable-gtkui
-;	--disable-perl
+	--disable-perl
 	--disable-tcl
 ;	--disable-plugins
-	--disable-perl
 	--disable-libtool-lock
 	--disable-startup-notification
 	--disable-screensaver
