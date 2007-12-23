@@ -16,6 +16,7 @@ resources
 	system/resources/wallpapers			wallpapers/ZeroNet/*.jpg
 	system/resources/wallpapers			wallpapers/LucasMurad/*.png
 	system/resources/wallpapers			wallpapers/LucasMurad/*.jpg
+	system/resources/wallpapers			wallpapers/LukasVeselovsky/*.png
 
 modules
 	other/fonts/liberation-fonts-0.2
