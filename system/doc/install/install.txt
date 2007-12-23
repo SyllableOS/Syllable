@@ -38,18 +38,18 @@ image and burn a CD yourself, or you can purchase a CD for $15.
 A purchased CD is the same as the downloadable disc image but also includes
 the latest available applications and full sourcecode for Syllable.  If
 you purchase a CD you will be helping to support.  See
-http://syllable.org/get.php#premium for more information.
+http://web.syllable.org/pages/get-Syllable.html#premium for more information.
 
 The downloadable Syllable CD image is distributed as a Gziped "ISO" image.
 Before you can burn this image to a CD you must first ungzip it.  On Linux,
 Syllable or other Unix-like systems such as MacOS X you should do this:
 
-bash$ gzip -d syllable-0.6.4.iso.gz
+bash$ gzip -d syllable-0.6.5.iso.gz
 
 On Windows you can use WinZip to decompress the Gzip file.
 
 Once you have decompressed the ISO disc image you must burn it to a CD
-using your preferred burning software E.g. cdrecord on Linux or Nero on
+using your preferred burning software e.g. cdrecord on Linux or Nero on
 Windows.  There are no special requirements for burning the Syllable CD
 image; it is a standard ISO9660 disc image which any disc burning software
 will be able to burn.
@@ -165,7 +165,7 @@ by manually loading the kernel and required modules from the GRUB
 shell. There is no need to run any tools to update block-lists or
 anything like that after installing new kernels.
 
-Read the GRUB documentation <http://www.gnu.org/software/grub/grub.html>
+Read the GRUB documentation [http://www.gnu.org/software/grub/grub.html]
 and use the "help" command in the GRUB shell for more information on the
 bootloader.
 
@@ -197,7 +197,7 @@ document ("SOLVING PROBLEMS").
 
 You should read the Welcome text, which can be found in the following locations:
 
-	On line at http://www.syllable.org/docs/0.6.4/Welcome.html
+	On-line at http://syllable.cvs.sourceforge.net/*checkout*/syllable/syllable/system/apps/utils/Builder/resources/documentation/Welcome.html
 	On the installation CD at /boot/Documentation/Welcome.html
 	In Syllable at /boot/Documentation/Welcome.html
 
@@ -220,15 +220,14 @@ these will be useful in helping to solve your problem.  Make a note of your hard
 (Processor & motherboard type, total amount of memory, type of video card).
 
 You should then check the Frequently Asked Questions (FAQ) at
-http://www.syllable.org/docs/FAQs/  These provide answers to very
-common questions concerning Syllable.  There is also a community-maintained FAQ at
-http://www.syllable-wiki.tk/ which may also answer your questions.
+http://web.syllable.org/documentation/FAQ.html  These provide answers to very
+common questions concerning Syllable.
 
-If you are sure it is a problem with Syllable check the Forums at
-http://www.syllable.org/forum.php  Someone may already have
+If you are sure it is a problem with Syllable check the forums at
+http://forum.syllable-norden.info  Someone may already have
 had the same problem as you and received a solution!
 
 Finally, if none of those help, ask on the Syllable Developer mailing list.  You must
 first subscribe to this list.  See
-http://www.syllable.org/mailing_lists.php for information on
+http://lists.sourceforge.net/lists/listinfo/syllable-developer for information on
 how to subscribe.
