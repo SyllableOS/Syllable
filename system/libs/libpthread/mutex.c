@@ -20,7 +20,8 @@
 #include <atheos/semaphore.h>
 #include <stdio.h>
 
-#include "inc/bits.h"
+#include <bits.h>
+#include <debug.h>
 
 int pthread_mutex_destroy(pthread_mutex_t *mutex)
 {
@@ -97,6 +98,8 @@ int pthread_mutex_init(pthread_mutex_t *mutex, const pthread_mutexattr_t *attr)
 
 int pthread_mutex_lock(pthread_mutex_t *mutex)
 {
+	__pt_assert( mutex != NULL );
+
 	if( mutex == NULL )
 		return( EINVAL );
 
@@ -120,6 +123,8 @@ int pthread_mutex_setprioceiling(pthread_mutex_t *mutex, int prioceiling, int *o
 
 int pthread_mutex_trylock(pthread_mutex_t *mutex)
 {
+	__pt_assert( mutex != NULL );
+
 	if( mutex == NULL )
 		return( EINVAL );
 
@@ -246,13 +251,4 @@ int pthread_mutexattr_settype(pthread_mutexattr_t *attr, int type)
 
 	return( 0 );
 }
-
-
-
-
-
-
-
-
-
 

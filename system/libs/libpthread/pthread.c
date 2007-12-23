@@ -25,8 +25,8 @@
 #include <atheos/threads.h>		/* Kernel threads interface         */
 #include <atheos/kernel.h>		/* Additional kernel & thread API's */
 
-#include "inc/bits.h"
-
+#include <bits.h>
+#include <debug.h>
 
 static pthread_key_t cleanupKey = 0;
 
@@ -58,12 +58,14 @@ static void *__pt_entry(void *arg)
 
 int pthread_cancel(pthread_t thread)
 {
-	return -ENOSYS;
+	return ENOSYS;
 }
 
 void pthread_cleanup_push(void (*routine)(void*), void *arg)
 {
 	__pt_cleanup *cleanup;
+
+	debug( "adding cleanup handler at %p(%p) for thread %d\n", routine, arg, pthread_self() );
 
 	cleanup = malloc( sizeof( __pt_cleanup ) );
 	cleanup->routine = routine;
@@ -80,6 +82,8 @@ void pthread_cleanup_pop(int execute)
 	cleanup = (__pt_cleanup *) pthread_getspecific( cleanupKey );
 	if ( cleanup )
 	{
+		debug( "running cleanup for thread %d\n", pthread_self() );
+
 		if ( execute && cleanup->routine )
 			(*cleanup->routine) (cleanup->arg);
 		pthread_setspecific( cleanupKey, (void *) cleanup->prev );
@@ -133,7 +137,7 @@ int pthread_create(pthread_t *thread, const pthread_attr_t *attr, void *(*start_
 
 int pthread_detach(pthread_t thread)
 {
-	return -ENOSYS;
+	return ENOSYS;
 }
 
 int pthread_equal(pthread_t t1, pthread_t t2)
@@ -148,6 +152,8 @@ void pthread_exit(void *value_ptr)
 {
 	__pt_cleanup *cleanup;
 	int result = 0;
+
+	debug( "thread %d, TLD_DESTRUCTOR_LIST=%p\n", pthread_self(), get_tld(TLD_DESTRUCTOR_LIST) );
 
 	/* call all cleanup routines */
 	cleanup = (__pt_cleanup *) pthread_getspecific( cleanupKey );
@@ -166,12 +172,12 @@ void pthread_exit(void *value_ptr)
 
 int pthread_getconcurrency(void)
 {
-	return -ENOSYS;
+	return ENOSYS;
 }
 
 int pthread_getschedparam(pthread_t thread, int *foo, struct sched_param *param)
 {
-	return -ENOSYS;
+	return ENOSYS;
 }
 
 void *pthread_getspecific(pthread_key_t key)
@@ -183,7 +189,10 @@ int pthread_join(pthread_t thread, void **value_ptr)
 {
 	int result;
 
+	debug( "thread %d joins on thread %d\n", pthread_self(), thread );
+
 	result = wait_for_thread( thread );
+	debug( "result was %d\n", result );
 	if( NULL != value_ptr )
 		*value_ptr = (void*)result;
 
@@ -193,6 +202,8 @@ int pthread_join(pthread_t thread, void **value_ptr)
 int pthread_key_create(pthread_key_t *key, void (*destructor)(void *))
 {
 	int tld = alloc_tld( destructor );
+
+	debug( "allocated new TLD %d with destructor at %p for thread %d\n", tld, destructor, pthread_self() );
 
 	if ( tld >= 0 )
 	{
@@ -205,6 +216,7 @@ int pthread_key_create(pthread_key_t *key, void (*destructor)(void *))
 
 int pthread_key_delete(pthread_key_t key)
 {
+	debug( "freeing TLD %d for thread %d\n", key, pthread_self() );
 	return( free_tld( key ) );
 }
 
@@ -244,12 +256,12 @@ int pthread_setcanceltype(int type, int *oldtype)
 
 int pthread_setconcurrency(int foo)
 {
-	return -ENOSYS;
+	return ENOSYS;
 }
 
 int pthread_setschedparam(pthread_t thread, int foo, const struct sched_param *param)
 {
-	return -ENOSYS;
+	return ENOSYS;
 }
 
 int pthread_setspecific(pthread_key_t key, const void *data)
@@ -265,12 +277,6 @@ void pthread_testcancel(void)
 
 int pthread_sigmask(int how, const sigset_t *set, sigset_t *oset)
 {
-	return	-ENOSYS;
+	return	ENOSYS;
 }
-
-
-
-
-
-
 
