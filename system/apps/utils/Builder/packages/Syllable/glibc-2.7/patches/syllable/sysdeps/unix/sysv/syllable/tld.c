@@ -24,7 +24,7 @@
 #include <atheos/tld.h>
 
 typedef struct tld_destructor_node tld_destructor_node;
-typedef void tld_destructor(void* data, int tld);
+typedef void tld_destructor(void* data);
 
 struct tld_destructor_node
 {
@@ -34,11 +34,10 @@ struct tld_destructor_node
 };
 
 static __libc_lock_t destructor_list_mutex = MUTEX_INITIALIZER;
-static tld_destructor_node* destructor_list_head = NULL;
 
 int alloc_tld(void* destructor)
 {
-  tld_destructor_node *node = NULL, *tail = NULL;
+  tld_destructor_node *node = NULL, *tail = NULL, *destructor_list_head;
   int tld;
 
   if(NULL != destructor)
@@ -71,6 +70,8 @@ int alloc_tld(void* destructor)
     node->destructor = destructor;
     node->next = NULL;
 
+    destructor_list_head = (tld_destructor_node*)get_tld( TLD_DESTRUCTOR_LIST );
+
     if(NULL != destructor_list_head)
     {
       tail = destructor_list_head;
@@ -79,17 +80,19 @@ int alloc_tld(void* destructor)
       tail->next = node;
     }
     else
-      destructor_list_head = node;
+      set_tld( TLD_DESTRUCTOR_LIST, node );
 
     __lock_unlock(&destructor_list_mutex);
   }
   return(tld);
 }
 
-/* KV: free_tld should be calling the destructor */
 int free_tld(int tld)
 {
   int error;
+  tld_destructor_node *destructor_list_head;
+
+  destructor_list_head = (tld_destructor_node*)get_tld( TLD_DESTRUCTOR_LIST );
 
   if(NULL != destructor_list_head)
   {
@@ -97,22 +100,37 @@ int free_tld(int tld)
     if(error >= 0)
     {
       tld_destructor_node *node, *prev = NULL;
+
       for(node = destructor_list_head;NULL != node;node = node->next)
       {
         if(tld == node->tld)
-	{
+        {
           if(NULL != prev)
-	  {
+          {
             prev->next = node->next;
-	  }
+          }
           else
-	    /* If prev is NULL then node must be the first item in the list E.g. list head */
+          {
+            /* If prev is NULL then node must be the first item in the list E.g. list head */
             destructor_list_head = node->next;
+            set_tld( TLD_DESTRUCTOR_LIST, destructor_list_head );
+          }
 
-	  free(node);
-	  break;
-	}
-	prev = node;
+          if( node->destructor )
+          {
+            void *last_value;
+
+            /* Call the destructor and pass it the last value of the TLD */
+            last_value = get_tld( tld );
+            set_tld( tld, NULL );
+
+            node->destructor( last_value );
+          }
+
+	      free(node);
+	      break;
+        }
+        prev = node;
       }
     }
     __lock_unlock(&destructor_list_mutex);

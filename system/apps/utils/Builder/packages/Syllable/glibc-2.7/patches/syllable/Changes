@@ -1,5 +1,11 @@
 Glibc Syllable Changelog
 
+* December 23rd 2007 *
+
+	o tld.c: Fix/implement TLD destructors. The destructor list is maintained correctly on a
+	  per-thread basis. If a destructor is registered for a given TLD it will now be called
+	  during free_tld() and passed the last value of the TLD.
+
 * December 6th 2007 *
 
 	o net/route.h: Removed. It conflicts with the system header.
