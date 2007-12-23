@@ -19,6 +19,7 @@
 #include <malloc.h>
 #include <sysdep.h>
 #include <unistd.h>
+#include <sys/tld.h>
 #include <sys/syscall.h>
 #include <bits/libc-lock.h>
 #include <atheos/tld.h>
@@ -138,6 +139,48 @@ int free_tld(int tld)
   error = INLINE_SYSCALL(free_tld, 1, tld);
   return(error);
 }
+
+int __free_all_tlds(void)
+{
+  int error;
+  tld_destructor_node *destructor_list_head;
+
+  destructor_list_head = (tld_destructor_node*)get_tld( TLD_DESTRUCTOR_LIST );
+
+  if(NULL != destructor_list_head)
+  {
+    while((error = __lock_lock(&destructor_list_mutex)) < 0 && error != EINTR);
+    if(error >= 0)
+    {
+      tld_destructor_node *node;
+      int tld;
+
+      for(node = destructor_list_head;NULL != node;node = node->next)
+      {
+        tld = node->tld;
+
+        if( node->destructor )
+        {
+          void *last_value;
+
+          /* Call the destructor and pass it the last value of the TLD */
+          last_value = get_tld( tld );
+          set_tld( tld, NULL );
+
+          node->destructor( last_value );
+        }
+
+        error = INLINE_SYSCALL(free_tld,1,tld);
+        free(node);
+      }
+    }
+
+    set_tld( TLD_DESTRUCTOR_LIST, NULL );
+    __lock_unlock(&destructor_list_mutex);
+  }
+  return(error);
+}
+libc_hidden_def (__free_all_tlds)
 
 void set_tld(int tld, const void* value)
 {

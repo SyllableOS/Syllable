@@ -92,7 +92,6 @@ get_thread_info		EXTRA	get_thread_info		i:ib	__get_thread_info	get_thread_info
 get_next_thread_info	EXTRA	get_next_thread_info	i:b	__get_next_thread_info	get_next_thread_info
 get_thread_proc		EXTRA	get_thread_proc		i:i	__get_thread_proc	get_thread_proc
 set_thread_priority	EXTRA	set_thread_priority	i:ii	__set_thread_priority	set_thread_priority
-exit_thread		EXTRA	exit_thread	i:i	__exit_thread	exit_thread
 
 #snooze			EXTRA	snooze			i:i	__snooze		snooze
 snooze			EXTRA	snooze			2	__snooze		snooze

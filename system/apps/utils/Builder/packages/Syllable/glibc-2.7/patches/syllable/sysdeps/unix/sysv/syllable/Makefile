@@ -20,7 +20,7 @@ sysdep_routines += unlock_semaphore get_semaphore_count get_semaphore_holder loc
 sysdep_routines += get_msg_x send_msg_x
 
 # Processes & threads
-sysdep_routines += tld get_thread_id get_process_id spawn_thread
+sysdep_routines += tld get_thread_id get_process_id spawn_thread exit_thread
 
 # ELF images & libraries
 sysdep_routines += image
