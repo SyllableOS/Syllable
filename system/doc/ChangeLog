@@ -1,3 +1,15 @@
+* December 23, 2007, Kristian Van Der Vliet *
+
+A bunch of updates to libdl & libpthread:
+
+o dlerror() returns NULL if no error has been set since the last call to dlerror()
+  This makes dlerror() POSIX compliant and fixes a bug loading dynamic objects in
+  Glib.
+o Fixed a few return values in some stub functions and pthread_cond_timedwait() now
+  returns ETIMEDOUT instead of -ETIMEDOUT.
+o Added debugging statements and asserts to libpthread, which can all be enabled or
+  disabled at build time.
+
 * December 15, 2007, Kristian Van Der Vliet *
 
 o One more fix to libdl: don't try to free the handle in dlclose()
