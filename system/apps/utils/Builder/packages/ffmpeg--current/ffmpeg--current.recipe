@@ -4,13 +4,13 @@ authors
 	Kristian Van Der Vliet
 status				testing
 notes
-	Tested with FFMPEG SVN snapshot Nov 15, 2007.
+	Tested with FFMPEG SVN snapshot Dec 23, 2007.
 	Can't be build image'd.
 
 licenses			LGPL GPL
 home				ffmpeg.org
 packages
-	FFMPEG-11041.source
+	FFMPEG-11308.source
 ;	ffmpeg-export-snapshot
 locations
 	http://downloads.syllable.org/sources/resources/FFMPEG/
