@@ -1,0 +1,38 @@
+Syllable Network Preferences
+
+(c) 2006 Andrew Kennan (akennan@westnet.com.au)
+
+1) Installation
+
+To build and install the application use:
+
+	make
+	make dist
+
+2) Config files
+
+The network preferences reads and modifies the following files:
+
+	/etc/resolv.conf		- Nameservers and search domains.
+	/etc/hostname			- System host name and domain.
+	/etc/hosts				- Host definitions and aliases.
+	/system/config/net.cfg	- Network interface configuration
+
+The configuration stored in /system/config/net.cfg is not compatible with the
+previous version of the network preferences application.
+
+3) Usage
+
+Like the previous version, the network preferences application has two modes
+of operation.
+
+By supplying a --detect command line argument it will check for changes to 
+the available network adapters. If a change is detected an alert will
+instruct the user to log in as root and ensure the settings are correct and
+the program will exit. If no changes are detected the program will exit.
+
+When not detecting changes the application will display its normal window
+allowing configuration of ethernet interfaces, host name and domain, known 
+hosts and DNS servers.
+
+If the user is not logged in as root, the UI will be read only.
