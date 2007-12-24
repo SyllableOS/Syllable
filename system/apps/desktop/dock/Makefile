@@ -32,7 +32,7 @@ Dock: $(OBJS)
 	@echo Linking...
 	@$(CXX) $(OBJS) -o Dock -lsyllable
 	@echo Adding resources...
-	@rescopy Dock -r logout.png syllable.png window.png folder.png
+	@rescopy Dock -r logout.png Syllable.png window.png folder.png
 	rescopy -a Dock resources/Dock.catalog
 	for CATALOG in $(CATALOGS);do \
 		echo $$CATALOG; \
@@ -67,4 +67,3 @@ install: all
 	@cp Dock $(IMAGE)/system/bin/Dock
 
 dist: install
-

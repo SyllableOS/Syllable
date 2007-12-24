@@ -425,7 +425,7 @@ DockWin::DockWin() :
 	if( !( m_pcDefaultWindowIcon->GetSize() == os::Point( 24, 24 ) ) )
 		m_pcDefaultWindowIcon->SetSize( os::Point( 24, 24 ) );
 	
-	pcStream = cCol.GetResourceStream( "syllable.png" );
+	pcStream = cCol.GetResourceStream( "Syllable.png" );
 	os::BitmapImage* pcLogo = new os::BitmapImage( pcStream );
 	delete( pcStream );
 	
@@ -435,7 +435,7 @@ DockWin::DockWin() :
 		m_pcLogoutIcon->SetSize( os::Point( 24, 24 ) );
 	delete( pcStream );
 	
-	pcStream = cCol.GetResourceStream( "syllable.png" );
+	pcStream = cCol.GetResourceStream( "Syllable.png" );
 	m_pcAboutIcon = new os::BitmapImage( pcStream );
 	if( !( m_pcAboutIcon->GetSize() == os::Point( 24, 24 ) ) )
 		m_pcAboutIcon->SetSize( os::Point( 24, 24 ) );
@@ -1251,4 +1251,3 @@ int main( int argc, char *argv[] )
 	pcApp->Run();
 	return ( 0 );
 }
-
