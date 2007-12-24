@@ -328,6 +328,7 @@ modules
 	system libraries/libpng-1.2.14
 	system libraries/libungif-4.1.4
 	system libraries/libtiff-3.8.2
+	stage libraries/faad-2.6.1
 	stage libraries/ffmpeg--current
 	system libraries/libogg-1.1.3
 	system libraries/libvorbis-1.1.2
