@@ -3,9 +3,7 @@ authors
 	Kaj de Vos
 	Kristian Van Der Vliet
 status				testing
-notes
-	Tested with FFMPEG SVN snapshot Dec 23, 2007.
-	Can't be build image'd.
+notes				Tested with FFMPEG SVN snapshot Dec 23, 2007
 
 licenses			LGPL GPL
 home				ffmpeg.org
@@ -23,7 +21,8 @@ build-needs
 ;needs				liba52
 
 configure-options
-	--extra-cflags='-DPIC -fomit-frame-pointer'
+	--extra-cflags='-fomit-frame-pointer'
+;	--extra-libs='-ldl -lm'
 ;	--enable-shared
 ;	--enable-pthreads
 	--disable-debug
@@ -46,6 +45,7 @@ configure-options
 ;	--enable-libx264
 ;	--enable-libxvid
 
+system-prefix-var	DESTDIR
 install-files
 	../_ffmpeg--current/config.h				include/ffmpeg
 ;	../ffmpeg--current/libavformat/allformats.h	include/ffmpeg

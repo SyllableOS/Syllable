@@ -1,11 +1,13 @@
 authors				Kaj de Vos
 status				testing
+notes				MMX bombs out in ASM code on register shortage
 
 configure-options
-	--extra-cflags='-DPIC -fomit-frame-pointer'
-	--extra-libs='-ldl -lm'
+	--extra-cflags='-fomit-frame-pointer'
+;	--extra-cflags='-DPIC -fomit-frame-pointer'
 ;	--enable-syllablethreads
 	--disable-debug
+	--disable-mmx
 	--disable-vhook
 	--enable-gpl
 	--enable-pp
