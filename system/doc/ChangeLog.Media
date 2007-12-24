@@ -1,3 +1,7 @@
+* December 24 2007 Kaj de Vos *
+
+Imported Arno's AAC codec and updated the makefile.
+
 * November 16 2007 Kaj de Vos *
 
 Updated the FFMPEG port to a new Subversion checkout.

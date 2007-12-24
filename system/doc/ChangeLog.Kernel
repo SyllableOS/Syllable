@@ -1,3 +1,8 @@
+* December 24 2007, Kaj de Vos *
+
+Imported an updated version of the AtheOS NFS driver and Arno's port of
+OpenBeFS, and updated the makefiles.
+
 * December 12, 2007, Kristian Van Der Vliet *
 
 Some network stack improvements and bug fixes:
@@ -1282,4 +1287,3 @@ required; they are implemented in user space as part of libc.
 
 Applied a fix to sys/kernel/kernel/vfs/vfs.c  The fcntl() F_GETLK command
 now works as expected.
-
