@@ -252,13 +252,15 @@ modules
 ;	sys/kernel/drivers/sound/vt82xx
 	sys/kernel/drivers/sound/ymfpci
 	sys/kernel/fs/afs
+	sys/kernel/fs/bfs
 	sys/kernel/fs/ext2
 	sys/kernel/fs/fatfs
 	sys/kernel/fs/iso9660
+	sys/kernel/fs/nfs
+	sys/kernel/fs/ntfs
 	sys/kernel/fs/ramfs
 ;	Not thread-safe:
 	sys/kernel/fs/tmpfs
-	sys/kernel/fs/ntfs
 
 	system libs/glibc-2.4-image
 	system libs/zlib-1.2.3
@@ -340,6 +342,7 @@ modules
 	sys/translators/xpm
 	sys/media/libmedia
 	sys/media/mediaserver
+	sys/media/drivers/aac
 	sys/media/drivers/ac97_audio
 	sys/media/drivers/cdda
 	sys/media/drivers/cdrom
@@ -368,7 +371,7 @@ modules
 	apps/utils/Preferences/Locale
 	apps/utils/Preferences/Login
 	apps/utils/Preferences/Media
-	apps/utils/Preferences/Network
+	apps/utils/Preferences/NetworkNG
 	apps/utils/Preferences/Screen
 	apps/utils/Preferences/UsersAndGroups
 	apps/utils/aterm

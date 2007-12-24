@@ -356,6 +356,7 @@ modules
 ;	sys/translators/xpm
 ;	sys/media/libmedia
 ;	sys/media/mediaserver
+;	sys/media/drivers/aac
 ;	sys/media/drivers/ac97_audio
 ;	sys/media/drivers/cdda
 ;	sys/media/drivers/cdrom
@@ -384,7 +385,7 @@ modules
 ;	apps/utils/Preferences/Locale
 ;	apps/utils/Preferences/Login
 ;	apps/utils/Preferences/Media
-;	apps/utils/Preferences/Network
+;	apps/utils/Preferences/NetworkNG
 ;	apps/utils/Preferences/Screen
 ;	apps/utils/Preferences/UsersAndGroups
 ;	apps/utils/aterm
@@ -492,6 +493,7 @@ modules
 ;	apps/utils/Launch
 	apps/utils/Man
 ;	apps/utils/memmon
+;	apps/utils/nfs
 ;	Needs objcopy from BinUtils:
 ;	apps/utils/rescopy
 ;	apps/utils/shelltools

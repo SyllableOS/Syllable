@@ -106,6 +106,7 @@ modules
 	apps/utils/Launch
 	apps/utils/Man
 	apps/utils/memmon
+	apps/utils/nfs
 ;	Needs objcopy from BinUtils:
 	apps/utils/rescopy
 	apps/utils/shelltools
