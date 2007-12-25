@@ -499,6 +499,7 @@ modules
 ;	apps/utils/rescopy
 ;	apps/utils/shelltools
 ;	apps/utils/slbmgr
+;	apps/develop/SettingsEditor
 ;	apps/collab/Contact
 
 	system libs/sdl-1.2.8
