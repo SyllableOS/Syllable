@@ -1,5 +1,9 @@
 Glibc Syllable Changelog
 
+* December 26th 2007 *
+
+	o tld.c: TLD destructors are now handled in a POSIX compliant manner.
+
 * December 23rd 2007 *
 
 	o tld.c: Fix/implement TLD destructors. The destructor list is maintained correctly on a

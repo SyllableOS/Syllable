@@ -16,14 +16,18 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _SYS_TLD_H
-#define _SYS_TLD_H 1
+#include <errno.h>
+#include <sysdep.h>
+#include <sys/tld.h>
+#include <sys/debug.h>
+#include <sys/syscall.h>
 
-#ifdef _LIBC
+#include <atheos/kernel.h>
 
-int __cleanup_all_tlds(void);
-libc_hidden_proto(__cleanup_all_tlds)
+int	__exit_thread( int code )
+{
+  __cleanup_all_tlds();
+  return INLINE_SYSCALL(exit_thread,1,code);
+}
+weak_alias(__exit_thread,exit_thread)
 
-#endif
-
-#endif
