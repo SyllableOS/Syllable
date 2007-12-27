@@ -58,6 +58,7 @@ static void *__pt_entry(void *arg)
 
 int pthread_cancel(pthread_t thread)
 {
+	debug( "not implemented\n" );
 	return ENOSYS;
 }
 
@@ -137,6 +138,7 @@ int pthread_create(pthread_t *thread, const pthread_attr_t *attr, void *(*start_
 
 int pthread_detach(pthread_t thread)
 {
+	debug( "not implemented\n" );
 	return ENOSYS;
 }
 
@@ -153,7 +155,7 @@ void pthread_exit(void *value_ptr)
 	__pt_cleanup *cleanup;
 	int result = 0;
 
-	debug( "thread %d, TLD_DESTRUCTOR_LIST=%p\n", pthread_self(), get_tld(TLD_DESTRUCTOR_LIST) );
+	debug( "thread %d\n", pthread_self() );
 
 	/* call all cleanup routines */
 	cleanup = (__pt_cleanup *) pthread_getspecific( cleanupKey );
@@ -272,11 +274,13 @@ int pthread_setspecific(pthread_key_t key, const void *data)
 
 void pthread_testcancel(void)
 {
+	debug( "not implemented\n" );
 	return;
 }
 
 int pthread_sigmask(int how, const sigset_t *set, sigset_t *oset)
 {
-	return	ENOSYS;
+	debug( "not implemented\n" );
+	return ENOSYS;
 }
 

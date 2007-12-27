@@ -157,9 +157,9 @@ int pthread_mutex_unlock(pthread_mutex_t *mutex)
 	int error;
 	if( (error = __pt_mutex_cannot_unlock(mutex)) )
 		return error;
-		
-	__pt_unlock_mutex( mutex->__mutex );
+
 	atomic_add( (atomic_t*)&mutex->__count, -1 );		/* This takes care of PTHREAD_MUTEX_RECURSIVE */
+	__pt_unlock_mutex( mutex->__mutex );
 
 	return 0;
 }		

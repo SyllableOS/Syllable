@@ -15,59 +15,72 @@
 #include <pthread.h>
 #include <posix/errno.h>
 
+#include <debug.h>
+
 int pthread_rwlock_destroy(pthread_rwlock_t *rwlock)
 {
-	return -ENOSYS;
+	debug( "not implemented\n" );
+	return ENOSYS;
 }
 
 int pthread_rwlock_init(pthread_rwlock_t *rwlock, const pthread_rwlockattr_t *attr)
 {
-	return -ENOSYS;
+	debug( "not implemented\n" );
+	return ENOSYS;
 }
 
 int pthread_rwlock_rdlock(pthread_rwlock_t *rwlock)
 {
-	return -ENOSYS;
+	debug( "not implemented\n" );
+	return ENOSYS;
 }
 
 int pthread_rwlock_tryrdlock(pthread_rwlock_t *rwlock)
 {
-	return -ENOSYS;
+	debug( "not implemented\n" );
+	return ENOSYS;
 }
 
 int pthread_rwlock_trywrlock(pthread_rwlock_t *rwlock)
 {
-	return -ENOSYS;
+	debug( "not implemented\n" );
+	return ENOSYS;
 }
 
 int pthread_rwlock_unlock(pthread_rwlock_t *rwlock)
 {
-	return -ENOSYS;
+	debug( "not implemented\n" );
+	return ENOSYS;
 }
 
 int pthread_rwlock_wrlock(pthread_rwlock_t *rwlock)
 {
-	return -ENOSYS;
+	debug( "not implemented\n" );
+	return ENOSYS;
 }
 
 int pthread_rwlockattr_destroy(pthread_rwlockattr_t *attr)
 {
-	return -ENOSYS;
+	debug( "not implemented\n" );
+	return ENOSYS;
 }
 
 int pthread_rwlockattr_getpshared(const pthread_rwlockattr_t *attr, int *shared)
 {
-	return -ENOSYS;
+	debug( "not implemented\n" );
+	return ENOSYS;
 }
 
 int pthread_rwlockattr_init(pthread_rwlockattr_t *attr)
 {
-	return -ENOSYS;
+	debug( "not implemented\n" );
+	return ENOSYS;
 }
 
 int pthread_rwlockattr_setpshared(pthread_rwlockattr_t *attr, int shared)
 {
-	return -ENOSYS;
+	debug( "not implemented\n" );
+	return ENOSYS;
 }
 
 
