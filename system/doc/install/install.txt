@@ -198,8 +198,7 @@ document ("SOLVING PROBLEMS").
 You should read the Welcome text, which can be found in the following locations:
 
 	On-line at http://syllable.cvs.sourceforge.net/*checkout*/syllable/syllable/system/apps/utils/Builder/resources/documentation/Welcome.html
-	On the installation CD at /boot/Documentation/Welcome.html
-	In Syllable at /boot/Documentation/Welcome.html
+	In Syllable at /boot/Documentation/Welcome.html, also linked from the desktop.
 
 The Welcome file contains information on Syllable websites, mailing lists,
 software and hardware and will help you to get started with Syllable.
