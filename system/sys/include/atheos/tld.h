@@ -33,7 +33,6 @@ extern "C" {
 #define TLD_ERRNO_ADDR	8
 #define TLD_ERRNO	12
 #define TLD_BASE	16
-#define TLD_DESTRUCTOR_LIST	20
 #define TLD_LIBC	512
 #define TLD_USER	1024
 
