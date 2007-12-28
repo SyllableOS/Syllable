@@ -9,6 +9,3 @@ configure-options
 ;	--enable-multithreaded
 	--enable-a4-paper
 
-pre-register
-	addattrib Xpdf				os::Category Office
-
