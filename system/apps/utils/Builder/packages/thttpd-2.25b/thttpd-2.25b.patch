@@ -1,0 +1,21 @@
+diff -urN thttpd-2.25b_orig/Makefile.in thttpd-2.25b/Makefile.in
+--- thttpd-2.25b_orig/Makefile.in	2005-06-29 17:52:54.000000000 +0000
++++ thttpd-2.25b/Makefile.in	2007-12-28 16:51:51.000000000 +0000
+@@ -39,7 +39,7 @@
+ # CONFIGURE: The group that the web directory belongs to.  This is so that
+ # the makeweb program can be installed set-group-id to that group, and make
+ # subdirectories.  If you're not going to use makeweb, ignore this.
+-WEBGROUP =	www
++WEBGROUP =	network
+ 
+ # CONFIGURE: Directory for CGI executables.
+ CGIBINDIR =	$(WEBDIR)/cgi-bin
+@@ -113,7 +113,7 @@
+ 	$(INSTALL) -m 555 -o bin -g bin thttpd $(DESTDIR)$(BINDIR)
+ 
+ install-man:
+-	-mkdir -p $(DESTDIR)$(MANDIR)/man8
++	-mkdir -p $(DESTDIR)$(MANDIR)/man1 $(DESTDIR)$(MANDIR)/man8
+ 	$(INSTALL) -m 444 -o bin -g bin thttpd.8 $(DESTDIR)$(MANDIR)/man8
+ 
+ installsubdirs:
