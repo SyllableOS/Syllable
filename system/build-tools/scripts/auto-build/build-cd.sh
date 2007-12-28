@@ -5,7 +5,7 @@ declare -a FILES
 # source, dest
 FILES=(	"/etc/profile, /etc/profile" 															\
 		"/etc/passwd, /etc/passwd"															\
-		"/etc/termcap, /etc/termcap"															\
+#		"/etc/termcap, /etc/termcap"															\
 																											\
 		"/home/root/.profile, /home/root/.profile"											\
 																											\
@@ -40,11 +40,14 @@ FILES=(	"/etc/profile, /etc/profile" 															\
 																											\
 		"/system/kernel.so, /system/kernel.so"														\
 																											\
-		"/system/libraries/*, /system/libraries/."															\
+		"/system/libraries/libkernel.so, /system/libraries/."										\
+		"/system/libraries/libsyllable.so*, /system/libraries/."									\
+		"/system/libraries/libdl.so*, /system/libraries/."											\
+		"/system/libraries/libpthread.so*, /system/libraries/."										\
 																									\
-		"/system/resources/gcc/4.1.2/lib/*.so*, /system/libraries/."											\
-		"/system/resources/glibc/2.4/lib/*.so*, /system/libraries/."											\
-		"/system/resources/zlib/1.2.3/lib/*.so*, /system/libraries/."											\
+		"/system/resources/gcc/4.1.2/lib/*.so*, /system/libraries/."								\
+		"/system/resources/glibc/2.4/lib/*.so*, /system/libraries/."								\
+		"/system/resources/zlib/1.2.3/lib/*.so*, /system/libraries/."								\
 																											\
 		"/system/appserver, /system/appserver"														\
 																											\
@@ -70,42 +73,42 @@ FILES=(	"/etc/profile, /etc/profile" 															\
 																											\
 		"/Applications/AEdit/AEdit, /system/bin/aedit"											\
 																											\
-		"/system/resources/coreutils/6.9/bin/cat, /usr/local/bin/cat"											\
-		"/system/resources/coreutils/6.9/bin/cp, /usr/local/bin/cp"											\
-		"/system/resources/coreutils/6.9/bin/cut, /usr/local/bin/cut"											\
-		"/system/resources/coreutils/6.9/bin/dd, /usr/local/bin/dd"											\
-		"/system/resources/coreutils/6.9/bin/echo, /usr/local/bin/echo"										\
-		"/system/resources/coreutils/6.9/bin/expr, /usr/local/bin/expr"										\
-		"/system/resources/coreutils/6.9/bin/hostname, /usr/local/bin/hostname"								\
-		"/system/resources/coreutils/6.9/bin/ln, /usr/local/bin/ln"											\
-		"/system/resources/coreutils/6.9/bin/ls, /usr/local/bin/ls"											\
-		"/system/resources/coreutils/6.9/bin/md5sum, /usr/local/bin/md5sum"									\
-		"/system/resources/coreutils/6.9/bin/mkdir, /usr/local/bin/mkdir"										\
-		"/system/resources/coreutils/6.9/bin/mv, /usr/local/bin/mv"											\
-		"/system/resources/coreutils/6.9/bin/printf, /usr/local/bin/printf"									\
-		"/system/resources/coreutils/6.9/bin/pwd, /usr/local/bin/pwd"											\
-		"/system/resources/coreutils/6.9/bin/rm, /usr/local/bin/rm"											\
-		"/system/resources/coreutils/6.9/bin/rmdir, /usr/local/bin/rmdir"										\
-		"/system/resources/coreutils/6.9/bin/sleep, /usr/local/bin/sleep"										\
-		"/system/resources/coreutils/6.9/bin/sort, /usr/local/bin/sort"										\
-		"/system/resources/coreutils/6.9/bin/sync, /usr/local/bin/sync"										\
-		"/system/resources/coreutils/6.9/bin/whoami, /usr/local/bin/whoami"									\
-		"/system/resources/coreutils/6.9/bin/uname, /usr/local/bin/uname"										\
-		"/system/resources/coreutils/6.9/bin/uniq, /usr/local/bin/uniq"										\
-		"/system/resources/coreutils/6.9/bin/stty, /usr/local/bin/stty"										\
-		"/system/resources/coreutils/6.9/bin/chmod, /usr/local/bin/chmod"										\
+		"/system/resources/coreutils/6.4/bin/cat, /bin/cat"											\
+		"/system/resources/coreutils/6.4/bin/cp, /bin/cp"											\
+		"/system/resources/coreutils/6.4/bin/cut, /bin/cut"											\
+		"/system/resources/coreutils/6.4/bin/dd, /bin/dd"											\
+		"/system/resources/coreutils/6.4/bin/echo, /bin/echo"										\
+		"/system/resources/coreutils/6.4/bin/expr, /bin/expr"										\
+		"/system/resources/coreutils/6.4/bin/hostname, /bin/hostname"								\
+		"/system/resources/coreutils/6.4/bin/ln, /bin/ln"											\
+		"/system/resources/coreutils/6.4/bin/ls, /bin/ls"											\
+		"/system/resources/coreutils/6.4/bin/md5sum, /bin/md5sum"									\
+		"/system/resources/coreutils/6.4/bin/mkdir, /bin/mkdir"										\
+		"/system/resources/coreutils/6.4/bin/mv, /bin/mv"											\
+		"/system/resources/coreutils/6.4/bin/printf, /bin/printf"									\
+		"/system/resources/coreutils/6.4/bin/pwd, /bin/pwd"											\
+		"/system/resources/coreutils/6.4/bin/rm, /bin/rm"											\
+		"/system/resources/coreutils/6.4/bin/rmdir, /bin/rmdir"										\
+		"/system/resources/coreutils/6.4/bin/sleep, /bin/sleep"										\
+		"/system/resources/coreutils/6.4/bin/sort, /bin/sort"										\
+		"/system/resources/coreutils/6.4/bin/sync, /bin/sync"										\
+		"/system/resources/coreutils/6.4/bin/whoami, /bin/whoami"									\
+		"/system/resources/coreutils/6.4/bin/uname, /bin/uname"										\
+		"/system/resources/coreutils/6.4/bin/uniq, /bin/uniq"										\
+		"/system/resources/coreutils/6.4/bin/stty, /bin/stty"										\
+		"/system/resources/coreutils/6.4/bin/chmod, /bin/chmod"										\
 																											\
-		"/usr/findutils/bin/find, /usr/local/bin/find"										\
-		"/usr/gzip/bin/gzip, /usr/local/bin/gzip"												\
-		"/usr/sed/bin/sed, /usr/local/bin/sed"												\
-		"/usr/tar/bin/tar, /usr/local/bin/tar"												\
-		"/usr/ncurses/bin/clear, /usr/local/bin/clear"										\
-		"/usr/less/bin/less, /usr/local/bin/less"												\
-		"/usr/diffutils/bin/cmp, /usr/local/bin/cmp"												\
-		"/usr/grep/bin/grep, /usr/local/bin/grep"												\
+		"/usr/findutils/bin/find, /bin/find"										\
+		"/usr/gzip/bin/gzip, /bin/gzip"												\
+		"/usr/sed/bin/sed, /bin/sed"												\
+		"/usr/tar/bin/tar, /bin/tar"												\
+		"/usr/ncurses/bin/clear, /bin/clear"										\
+		"/usr/less/bin/less, /bin/less"												\
+		"/usr/diffutils/bin/cmp, /bin/cmp"												\
+		"/usr/grep/bin/grep, /bin/grep"												\
 																											\
-		"/system/resources/unzip/5.52/bin/unzip, /usr/local/bin/unzip"											\
-		"/system/resources/bash/3.2/bin/bash, /usr/local/bin/bash"												\
+		"/system/resources/unzip/5.52/bin/unzip, /bin/unzip"											\
+		"/system/resources/bash/3.2/bin/bash, /bin/bash"												\
 																											\
 		"/usr/share/terminfo/r/rxvt-16color, /usr/share/terminfo/r/rxvt-16color"				\
 		"/usr/share/terminfo/x/xterm, /usr/share/terminfo/x/xterm"							\
@@ -121,18 +124,14 @@ FILES=(	"/etc/profile, /etc/profile" 															\
 declare -a LINKS
 
 # target, link
-LINKS=(	"/usr/local/bin/gzip, /usr/local/bin/gunzip"	\
-		"/usr/local/bin/bash, /system/bin/bash"			\
-		"/usr/local/bin/bash, /system/bin/sh"			\
-		"/usr/local/bin/pwd, /system/bin/pwd"			\
-		"/usr/ruby/bin/ruby, /usr/local/bin/ruby"	\
-		"/system/bin/bash, /bin/bash"					\
-		"/system/bin/bash, /bin/sh"					\
+LINKS=(	"/bin/gzip, /bin/gunzip"	\
+		"/bin/bash, /bin/sh"			\
+		"/usr/ruby/bin/ruby, /bin/ruby"	\
 )
 
 declare -a ENV
 
-ENV=(	"PATH=/usr/local/bin:/usr/grub/bin:/usr/grub/sbin:/boot/system/bin"		\
+ENV=(	"PATH=/usr/grub/bin:/usr/grub/sbin:/bin:/boot/system/bin"		\
 		"DLL_PATH=@bindir@/lib:./:/boot/system/libraries:/boot/system"			\
 		"TEMP=/tmp"																	\
 		"SYSTEM=Syllable"															\
@@ -573,4 +572,3 @@ copy_installer $_VER
 create_iso $_VER
 
 exit 0
-
