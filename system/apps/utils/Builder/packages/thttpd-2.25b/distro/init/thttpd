@@ -1,0 +1,3 @@
+#! /bin/sh
+thttpd >/dev/null
+

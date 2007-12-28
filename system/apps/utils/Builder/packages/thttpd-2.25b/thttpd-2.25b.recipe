@@ -1,0 +1,15 @@
+authors			Kristian Van Der Vliet
+status			testing
+
+headline		thttpd - tiny/turbo/throttling HTTP server
+description		thttpd is a simple, small, portable, fast, and secure HTTP server.
+licenses		MIT
+
+home			http://www.acme.com/software/thttpd/
+locations		http://www.acme.com/software/thttpd/
+
+patch-config
+build-dir		.
+
+documentation	README TODO
+
