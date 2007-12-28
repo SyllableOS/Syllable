@@ -75,18 +75,18 @@ cd $INSTALLER_DIR
 
 ISO="syllable-$VERSION-$(date +%Y%m%d).iso"
 
-if [ -e syllable*.iso.bz2 ]
+if [ -e syllable*.iso.7z ]
 then
-  rm syllable*.iso.bz2
+  rm syllable*.iso.7z
 fi
-bzip2 -k9 $ISO
+7z a $ISO.7z $ISO
 
 # Generate md5's
 MD5S=md5sums
-md5sum base-syllable.zip $ISO > $MD5S
+md5sum base-syllable.zip $ISO $ISO.7z > $MD5S
 
 # Transfer the files
-FILES=`printf "$FINISH_LOG $FINISH_FAILURE_LOG $FINISH_SUMMARY_LOG base-syllable.zip $ISO.bz2 $MD5S\n"`
+FILES=`printf "$FINISH_LOG $FINISH_FAILURE_LOG $FINISH_SUMMARY_LOG base-syllable.zip $ISO.7z $MD5S\n"`
 if [ -n "$FTP_USER" ]
 then
   ftp -n $FTP_SERVER << END
