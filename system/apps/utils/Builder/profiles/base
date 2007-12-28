@@ -113,6 +113,7 @@ modules
 	apps/utils/slbmgr
 	apps/develop/SettingsEditor
 	apps/collab/Contact
+	apps/utils/SimpleBurn
 
 	system libs/sdl-1.2.8
 ;	sdl-config needs to be in the path:
