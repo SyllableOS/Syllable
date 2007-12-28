@@ -1,7 +1,7 @@
 //
 //	FileBrowser String Catalog
 //
-//	Translated by: Maximo Pech Jaramillo
+//	Translated by: Maximo Pech Jaramillo - Angel L Laguna
 //
 
 MSG_MAINWND_TITLE=0				Navegador de archivos
@@ -11,4 +11,5 @@ MSG_MENU_VIEW_ICONS				Íconos
 MSG_MENU_VIEW_LIST				Lista
 MSG_MENU_VIEW_DETAILS			Detalles
 MSG_MENU_VIEW_SAVE				Guardar
+MSG_MENU_VIEW_SAVE_DEFAULT		Guardar como parámetros por defecto
 

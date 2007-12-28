@@ -1,7 +1,7 @@
 //
 //	Preferences/Media String Catalog
 //
-//	Translated by: Edgar Domingo de Albuquerque
+//	Translated by: Edgar Domingo de Albuquerque - Bruno
 //
 
 MSG_MAINWND_TITLE=0								Mídia
@@ -19,4 +19,8 @@ MSG_MAINWND_BUTTON_DEFAULT						_Padrão
 MSG_MAINWND_THISINPUTHASNOCONTROLS=300			Esta entrada não possui controles
 MSG_MAINWND_THISCODECHASNOCONTROLS				Este codec não possui controles
 MSG_MAINWND_THISOUTPUTHASNOCONTROLS				Esta saída não possui controles
+
+MSG_ALERTWND_NOMEDIASERVER_TITLE=1000			Erro
+MSG_ALERTWND_NOMEDIASERVER_TEXT					Não foi possível se conectar ao servidor de mídia.
+MSG_ALERTWND_NOMEDIASERVER_OK					_Ok
 

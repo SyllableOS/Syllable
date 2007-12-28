@@ -1,0 +1,68 @@
+//
+//	DiskManager String Catalog
+//
+//	Translated by: Antesenamon
+//
+
+MSG_MAINWND_TITLE=0							Zarządzanie Dyskami
+
+MSG_MAINWND_MENU_PROGRAM=100				Aplikacja
+MSG_MAINWND_MENU_PROGRAM_EXIT				Wyjdź
+
+MSG_MAINWND_LIST_DEVICE=200					Urządzenie
+MSG_MAINWND_LIST_PARTITIONS					Partycje
+MSG_MAINWND_LIST_SIZE						Rozmiar
+MSG_MAINWND_LIST_MB							%.2fMB
+
+MSG_MAINWND_BUTONS_QUIT=300					Wyjdź
+MSG_MAINWND_BUTONS_PARTITION				Partycja...
+
+MSG_PARTWND_TITLE=500						Ustawienia partycji
+
+MSG_PARTWND_DISKPARAM=600					Parametry dysku:
+MSG_PARTWND_DISKPARAM_DISKSIZE				Rozmiar dysku: %.2fMB
+MSG_PARTWND_DISKPARAM_EXTSIZE				Rozmiar partycji rozszerzonej: %.2fMB
+MSG_PARTWND_DISKPARAM_UNITSIZE				Rozmiar jednostki: %ld sektorów of %ld bajtów (%ld bajtów)
+MSG_PARTWND_DISKPARAM_UNUSESSPACE			Wolne miejsce:
+
+MSG_PARTWND_PARTINFO_UNUSED=700				Nie używane
+MSG_PARTWND_PARTINFO_UNKNOWN				*Nie znane*
+MSG_PARTWND_PARTINFO_PARTSIZEZERO			0.0MB
+MSG_PARTWND_PARTINFO_PARTSIZE				%.2fMB
+
+MSG_PARTWND_BUTTONS_CANCEL=800				Odwołaj
+MSG_PARTWND_BUTTONS_OK						Ok
+MSG_PARTWND_BUTTONS_DONE					Zrobione
+MSG_PARTWND_BUTTONS_CLEAR					Wyczyść
+MSG_PARTWND_BUTTONS_EDITEXT					Edycja Rozszerzona
+MSG_PARTWND_BUTTONS_SORT					Sortuj
+MSG_PARTWND_BUTTONS_ADD						Dodaj
+
+MSG_ALERTWND_ERREXT_EXTENDED=1000			Błąd!
+MSG_ALERTWND_ERREXT_EXTENDED_TEXT			Niewłaściwa tablica partycji rozszerzonej!\nPartycja rozszerzona zawiera więcej\nniż jedną zagnieżdżoną partycję rozszerzoną\nEdytowanie tablicy partycji może spowodować\nutratę jednego lub więcej dysków logicznych.
+MSG_ALERTWND_ERREXT_EXTENDED_OK				Ok
+
+MSG_ALERTWND_ERREXT_LOGICAL=2000			Błąd!
+MSG_ALERTWND_ERREXT_LOGICAL_TEXT			Niewłaściwa tablica partycji rozszerzonej!\nPartycja rozszerzona zawiera więcej\nniż jedną partycję logiczną\nEdytowanie tablicy partycji może spowodować\nutratę jednego lub wiecej dysków logicznych.
+MSG_ALERTWND_ERREXT_LOGICAL_OK				Ok
+
+MSG_ALERTWND_CHANGEDLAYOUT=3000				Ostrzeżenie!
+MSG_ALERTWND_CHANGEDLAYOUT_TEXT				Zmieniłeś położenie jednej lub więcej partycji na dysku.\nWszystkie dane na tej partycji zostaną usunięte.\nJesteś pewnien czy chcesz zapisać tablicę partycji w tej postaci?
+MSG_ALERTWND_CHANGEDLAYOUT_CANCEL			Odwołaj
+MSG_ALERTWND_CHANGEDLAYOUT_OK				Ok
+
+MSG_ALERTWND_CHANGEDTYPE=4000				Ostrzeżenie!
+MSG_ALERTWND_CHANGEDTYPE_TEXT				Zmieniłeś typ jednej lub więcej partycji.\nTo nie powinno uszkodzić danych zapisanych na tych partycjach ale\nmoże spowodować problemy z ponownym ich zamontowaniem.\nJesteś pewnien czy chcesz zapisać tablicę partycji w tej postaci?
+MSG_ALERTWND_CHANGEDTYPE_CANCEL				Odwołaj
+MSG_ALERTWND_CHANGEDTYPE_OK					Ok
+
+MSG_ALERTWND_CHANGEDSTATUS=5000				Ostrzeżenie!
+MSG_ALERTWND_CHANGEDSTATUS_TEXT				Zmieniłeś status jednej lub wielu partycjach.\nTo nie powinno uszkodzić danych zapisanych na tych partycjach ale\nmoże uczynić niemożliwym wykonanie ponownego rozruchu z tej partycji.\nJesteś pewnien czy chcesz zapisać tablicę partycji w tej postaci?
+MSG_ALERTWND_CHANGEDSTATUS_CANCEL			Odwołaj
+MSG_ALERTWND_CHANGEDSTATUS_OK				Ok
+
+MSG_ALERTWND_DELPART=6000					Ostrzeżenie!
+MSG_ALERTWND_DELPART_TEXT					Ta operacja usunie obecną partycję.\nWszystkie dane na tej partycji będą utracone.\nCzy napewne o to Ci chodziło?
+MSG_ALERTWND_DELPART_CANCEL					Odwołaj
+MSG_ALERTWND_DELPART_OK						Ok
+

@@ -1,7 +1,7 @@
 //
 //	Xpdf String Catalog
 //
-//	Translated by: Edgar Domingo de Albuquerque
+//	Translated by: Edgar Domingo de Albuquerque - Bruno
 //
 
 MSG_MAINWND_TITLE=0							Xpdf
@@ -27,4 +27,6 @@ MSG_STATUS_PAGE=1000						Página
 MSG_STATUS_PAGE_OF							de
 
 MSG_ERRWND_CANTOPEN=2000					não pode ser aberto
+
+MSG_MIMETYPE_TEXT_XPDF=10000				Documento PDF
 
