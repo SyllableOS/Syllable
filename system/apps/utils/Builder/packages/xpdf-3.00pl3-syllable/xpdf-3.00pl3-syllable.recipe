@@ -17,5 +17,8 @@ install-tree		bin
 install				true
 install-files		xpdf/Xpdf bin/
 
+pre-register
+	addattrib bin/Xpdf				os::Category Office
+
 move-files			bin/Xpdf /Applications/Xpdf/
 
