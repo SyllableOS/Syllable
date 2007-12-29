@@ -1,6 +1,9 @@
-title	Compression Cornucopia
+title				Archiving Accessories
 
-name	CompressionCornucopia
+name				ArchivingAccessories
+headline			Diverse compression tools
+description
+	A collection of packages with archiving utilities that installs easily in one go. The current pack consists of 7-Zip 4.51, UnRAR 3.7.3 and UnACE 1.2b.
 
 modules
 	file/compression/p7zip-4.51

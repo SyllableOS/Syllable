@@ -1,6 +1,9 @@
-title	Network Necessities
+title				Network Necessities
 
-name	NetworkNecessities
+name				NetworkNecessities
+headline			Common networking tools
+description
+	A collection of commonly needed packages for network functionality that installs easily in one go. The current pack consists of OpenSSH 4.6p1, RSync 2.6.9, WGet 1.9.1 and Transmission 0.6.1.
 
 modules
 ;	network/openssl-0.9.8e

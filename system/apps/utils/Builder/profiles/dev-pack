@@ -1,6 +1,9 @@
-title	Developer's Delight
+title				Developer's Delight
 
-name	DevelopersDelight
+name				DevelopersDelight
+headline			Common tools for software development
+description
+	Handy developer collection. A collection of the most needed packages for developing and porting software that installs easily in one go. The current pack consists of Make 3.81, NAsm 0.98.39, BinUtils 2.17, GCC 4.1.2, M4 1.4.8, GDB 6.4, FLex 2.5.33, Bison 2.3, Patch 2.5.4, Arch 1.3.5, CVS 1.12.11, LibTool 1.5.22, Ruby 1.8.6, Builder 0.6.132, Indent 2.2.9, SIndent 1.1, DoxyGen 1.5.1, CScope 15.6 and SPLint 3.1.1.
 
 modules
 	programming/flex-2.5.33
