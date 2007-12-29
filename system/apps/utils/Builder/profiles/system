@@ -165,7 +165,7 @@ resources
 	home					Home-Directories
 
 	Documentation			documentation/Welcome.html			text/html
-	Documentation/images	documentation/images/Syllable.gif	image/gif
+	Documentation/images	documentation/images/Syllable.png	image/png
 	Documentation			documentation/Copyrights.html		text/html
 
 modules

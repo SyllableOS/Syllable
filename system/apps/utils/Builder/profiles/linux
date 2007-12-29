@@ -220,7 +220,7 @@ resources
 	home										Home-Directories
 
 	Documentation								documentation/Welcome.html
-	Documentation/images						documentation/images/Syllable.gif
+	Documentation/images						documentation/images/Syllable.png
 	Documentation								documentation/Copyrights.html
 	system/fonts								fonts/URW/*.ttf
 	system/fonts								fonts/URW/Mandriva/*.ttf
