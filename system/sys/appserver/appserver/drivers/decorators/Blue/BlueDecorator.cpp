@@ -655,11 +655,9 @@ extern "C" WindowDecorator* create_decorator( Layer* pcLayer, uint32 nFlags )
 		BlueDecorator::LoadBitmap (g_pcButtons,g_buttons,Point (224,18));	
 		BlueDecorator::LoadBitmap (g_pcDecor,g_decor,Point (24,9));
 	}
-	else
-	{
-		g_pcButtons->AddRef();
-		g_pcDecor->AddRef();
-	}
+
+	g_pcButtons->AddRef();
+	g_pcDecor->AddRef();
 
     return( new BlueDecorator( pcLayer, nFlags ) );
 }
