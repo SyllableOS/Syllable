@@ -227,7 +227,7 @@ status_t FFMpegDemuxer::ReadPacket( os::MediaPacket_s* psPacket )
 	
 	if( psAVPacket->dts == AV_NOPTS_VALUE )
 	{
-		m_nCurrentPosition = m_psContext->pb.pos * 8 / m_nBitRate;
+		m_nCurrentPosition = m_psContext->pb->pos * 8 / m_nBitRate;
 		psPacket->nTimeStamp = ~0;
 	}
 	else if( m_psContext->start_time == AV_NOPTS_VALUE )

@@ -152,7 +152,7 @@ void FFMpegOutput::Close()
 		av_write_trailer( m_psContext );
 		std::cout<<"Trailer written"<<std::endl;
 	}
-	url_fclose( &m_psContext->pb );
+	url_fclose( m_psContext->pb );
 	av_free( m_psContext );
 }
 
