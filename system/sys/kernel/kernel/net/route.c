@@ -340,6 +340,13 @@ Route_s *ip_find_route( ipaddr_t pDstAddr )
 	psFound = NULL;
 	for ( psRoute = g_psClonedRoutes; psRoute != &g_sSentinel; psRoute = psRoute->rt_psNext )
 	{
+		/* XXXKV: This is a hack. I am unsure how the initial "NULL" route ever gets into the table,
+		   and it disappears after the interface is taken down and back up. This just avoids the
+		   problem from mucking up routing. */
+		ipaddr_t pNull = { 0x0, 0x0, 0x0, 0x0 };
+		if( IP_SAMEADDR( psRoute->rt_anNetAddr, pNull ) && IP_SAMEADDR( psRoute->rt_anNetMask, pNull ) )
+			continue;
+
 		if ( compare_net_address( pDstAddr, psRoute->rt_anNetAddr, psRoute->rt_anNetMask ) )
 		{
 			psFound = ip_acquire_route( psRoute );
