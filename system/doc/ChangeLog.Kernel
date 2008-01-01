@@ -1,3 +1,14 @@
+* January 1, 2008, Kristian Van Der Vliet *
+
+Added a workaround to ip_find_route() for a bug that causes odd routes to be
+selected I.e. routing to the gateway for 127.0.0.1. There is a route entry
+with an address and mask of 0.0.0.0 which will always be the first match for
+any address passed to ip_find_route(), regardless of if there is a more
+specific route later in the routing table. This first entry does not appear
+to be the default route entry. I don't know where it comes from exactly but
+the workaround will at least allow routing to other networks to work
+correctly.
+
 * December 24 2007, Kaj de Vos *
 
 Imported an updated version of the AtheOS NFS driver and Arno's port of
