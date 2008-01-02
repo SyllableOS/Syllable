@@ -14,4 +14,4 @@ links
 
 pre-register
 	echo 'OUTPUT_FORMAT(elf32-i386)' > lib/libc.so
-	echo "GROUP ( $IMAGE/system/resources/glibc/2.7/lib/libc.so.2 $IMAGE/system/resources/glibc/2.7/lib/libc_nonshared.a )" >> lib/libc.so
+	echo "GROUP ( $IMAGE/system/resources/glibc/2.7/lib/libc.so.2 $IMAGE/system/development/resources/glibc/2.7/lib/libc_nonshared.a )" >> lib/libc.so

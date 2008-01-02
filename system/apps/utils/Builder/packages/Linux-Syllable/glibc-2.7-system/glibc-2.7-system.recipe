@@ -7,8 +7,8 @@ inherits			glibc-2.7
 
 pre-register
 	echo 'OUTPUT_FORMAT(elf32-i386)' > lib/libc.so
-	echo "GROUP ( $IMAGE/system/resources/glibc/2.7/lib/libc.so.6 $IMAGE/system/resources/glibc/2.7/lib/libc_nonshared.a  AS_NEEDED ( $IMAGE/system/resources/glibc/2.7/lib/ld-linux.so.2 ) )" >> lib/libc.so
+	echo "GROUP ( $IMAGE/system/resources/glibc/2.7/lib/libc.so.6 $IMAGE/system/development/resources/glibc/2.7/lib/libc_nonshared.a  AS_NEEDED ( $IMAGE/system/resources/glibc/2.7/lib/ld-linux.so.2 ) )" >> lib/libc.so
 ;	sudo mv libc.so $IMAGE/system/resources/glibc/2.7/lib/
 
 	echo 'OUTPUT_FORMAT(elf32-i386)' > lib/libpthread.so
-	echo "GROUP ( $IMAGE/system/resources/glibc/2.7/lib/libpthread.so.0 $IMAGE/system/resources/glibc/2.7/lib/libpthread_nonshared.a )" >> lib/libpthread.so
+	echo "GROUP ( $IMAGE/system/resources/glibc/2.7/lib/libpthread.so.0 $IMAGE/system/development/resources/glibc/2.7/lib/libpthread_nonshared.a )" >> lib/libpthread.so
