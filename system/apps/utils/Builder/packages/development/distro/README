@@ -1,0 +1,72 @@
+Development files for Syllable
+==============================
+
+2-Jan-2008
+
+1 Introduction
+==============
+
+This package contains the extra files that are needed for compiling
+software on Syllable. They consist of the static libraries and
+accompanying header files for components that are part of the base
+system, and extra documentation for development. This distribution
+contains the development files for Syllable Desktop 0.6.5. They should
+not be installed on any other version of Syllable.
+
+If you encounter problems or have any other interesting observations,
+I would be interested to hear about them (see contact information).
+
+2 How to install the development files on Syllable
+==================================================
+
+2.1 
+---
+
+You may have to become the root user to perform the following operations:
+
+    su -l
+
+Unpacking this distribution should have produced a directory with the
+contained package, this README document, and an installation script.
+Being the root user, go into the directory and run the install script:
+
+    cd SyllableDesktop-0.6.5-development.zip
+    ./install.sh
+
+The contained files pack will be unpacked into /system/development/.
+Subsequently, the individual components will be registered, creating
+links in Syllable to enable it to find the components' files. If any of
+the component directories already existed under /system/development/,
+they will be unregistered and deleted first.
+
+To be able to compile software you should also install extra tools,
+in particular the Developer's Delight collection of packages.
+
+2.2 Uninstalling and upgrading the development files
+----------------------------------------------------
+
+After installation, the development files are effectively no longer one
+package, but are merged into the base system and registered with the
+components they belong to. Making any subsequent changes to them is not
+explicitly supported. You can do so manually, but it falls into the
+realm of system development and thus becomes your own responsibility
+to know what you are doing. Changing anything is usually not required,
+unless you are developing the Syllable base system itself.
+
+You can, however, run the installation procedure for the development
+files pack again to replace an existing installation, to undo any
+changes that may have been made.
+
+3 Contact information
+=====================
+
+This development files pack was put together by Kaj de Vos. You can send
+me problem reports, fixes and the like at
+
+    development@syllable.info
+
+This distribution can be found in the download section of the
+Syllable web site:
+
+    http://syllable.org
+
