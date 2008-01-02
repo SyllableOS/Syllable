@@ -5,10 +5,10 @@ export PATH=/usr/local/sbin:/usr/local/bin:/usr/indexes/sbin:/usr/indexes/bin:/b
 export DLL_PATH=@bindir@/lib:/usr/local/lib:/usr/indexes/lib:/system/indexes/lib:/system/libraries:/system
 
 # Paths for software compilation
-export LIBRARY_PATH=/usr/local/lib:/system/indexes/lib:/usr/indexes/lib:/system/libraries
-export C_INCLUDE_PATH=/usr/local/include:/system/indexes/include:/usr/indexes/include:/system/include
+export LIBRARY_PATH=/usr/local/lib:/usr/indexes/lib:/system/indexes/lib:/system/libraries
+export C_INCLUDE_PATH=/usr/local/include:/usr/indexes/include:/system/indexes/include:/system/development/headers
 export CPLUS_INCLUDE_PATH=$C_INCLUDE_PATH
-export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/system/indexes/lib/pkgconfig:/usr/indexes/lib/pkgconfig
+export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/usr/indexes/lib/pkgconfig:/system/indexes/lib/pkgconfig
 
 # Set this right, or havoc may be wreaked in /system/init.sh
 export TEMP=/tmp

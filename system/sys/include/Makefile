@@ -1,4 +1,4 @@
-DIST_TARGET_PATH := $(IMAGE)/system/include
+DIST_TARGET_PATH := $(IMAGE)/system/development/headers
 
 all:
 
@@ -16,4 +16,3 @@ install-doc:
 dist: install
 
 clean:
-
