@@ -26,7 +26,7 @@ patch
 	ln -sf ../system/resources/linux/2.6.22.1/lib/modules $IMAGE/lib/
 
 ; Headers should already be there:
-merge-install
+;merge-install
 
 ; depmod has a hard-coded path to the collected modules from different kernel versions,
 ; that it inserts into the installation path. To allow the kernel to install its modules
