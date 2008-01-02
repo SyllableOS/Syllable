@@ -293,7 +293,7 @@ diff -ru python-2.5.1-original/setup.py python-2.5.1/setup.py
 +            lib_dirs += ['/system/libraries', '/usr/indexes/lib']
              lib_dirs += os.getenv('LIBRARY_PATH', '').split(os.pathsep)
 -            inc_dirs += ['/system/include', '/atheos/autolnk/include']
-+            inc_dirs += ['/system/include', '/usr/indexes/include']
++            inc_dirs += ['/system/development/headers', '/usr/indexes/include']
              inc_dirs += os.getenv('C_INCLUDE_PATH', '').split(os.pathsep)
  
          # OSF/1 and Unixware have some stuff in /usr/ccs/lib (like -ldb)

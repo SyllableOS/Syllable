@@ -460,7 +460,7 @@ WARN_LOGFILE           =
 # with spaces.
 
 INPUT                  = ./ \
-                         /system/include/media
+                         /system/development/headers/media
 
 # If the value of the INPUT tag contains directories, you can use the 
 # FILE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp 
@@ -1001,7 +1001,7 @@ SEARCH_INCLUDES        = YES
 # contain include files that are not input files but should be processed by 
 # the preprocessor.
 
-INCLUDE_PATH           = /system/include/
+INCLUDE_PATH           = /system/development/headers/
 
 # You can use the INCLUDE_FILE_PATTERNS tag to specify one or more wildcard 
 # patterns (like *.h and *.hpp) to filter out the header-files in the 

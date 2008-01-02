@@ -24,5 +24,4 @@ _links
 	lib/libGL.so		/system/libraries/
 	lib/libGLU.so		/system/libraries/
 	lib/libOSMesa.so	/system/libraries/
-	include/GL			/system/include/
-
+	include/GL			/system/development/headers/

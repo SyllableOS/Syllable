@@ -22,10 +22,9 @@ clean:
 install:
 	cp -f $(OBJDIR)/$(LIB) $(IMAGE)/system/libraries/
 	ln -sf $(LIB) $(IMAGE)/system/libraries/libdl.so
-	cp -f dlfcn.h $(IMAGE)/system/include/
+	cp -f dlfcn.h $(IMAGE)/system/development/headers/
 
 dist: install
 
 $(OBJDIR):
 	-mkdir $(OBJDIR)
-
