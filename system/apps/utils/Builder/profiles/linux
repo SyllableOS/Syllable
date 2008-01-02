@@ -35,7 +35,9 @@ tree
 	system/config/appearance
 	system/config/appearance/colour-schemes
 
-	system/include
+	system/development
+	system/development/headers
+	system/development/resources
 
 	system/bin
 	system/libraries
