@@ -94,7 +94,8 @@ MD5S=md5sums
 md5sum base-syllable.zip $ISO $ISO.7z $DEV_ARCHIVE.7z > $MD5S
 
 # Transfer the files
-FILES=`printf "$FINISH_LOG $FINISH_FAILURE_LOG $FINISH_SUMMARY_LOG base-syllable.zip $ISO.7z $DEV_ARCHIVE.7z $MD5S\n"`
+FILES1=`printf "$FINISH_LOG $FINISH_FAILURE_LOG $FINISH_SUMMARY_LOG base-syllable.zip $ISO.7z\n"`
+FILES2=`printf "$DEV_ARCHIVE.7z $MD5S\n"`
 if [ -n "$FTP_USER" ]
 then
   ftp -n $FTP_SERVER << END
@@ -102,7 +103,8 @@ quote user $FTP_USER
 quote pass $FTP_PASSWD
 passive
 prompt
-mput $FILES
+mput $FILES1
+mput $FILES2
 quit
 END
 fi
