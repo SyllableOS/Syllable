@@ -1,3 +1,10 @@
+* January 2, 2008, Kaj de Vos *
+
+Moved files for software development (headers, static libraries and development
+documentation) into a new, separate area in /system/development/resources/.
+They have to be registered in /system/indexes/ separately after system installation.
+Moved the system headers to /system/development/headers/.
+
 * December 23, 2007, Kristian Van Der Vliet *
 
 A bunch of updates to libdl & libpthread:

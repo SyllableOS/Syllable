@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.7.33
-# Copyright (c) 2002-2007 Kaj de Vos
+# Version 0.7.34
+# Copyright (c) 2002-2008 Kaj de Vos
 # License: GPL 3 or any later version
 
 
@@ -753,6 +753,34 @@ def installModule staging, target
 								end
 							then
 								false
+							elsif staging == 'system' and @systemBuild and not
+								begin
+									@log.header 'Moving development files'
+
+									devRoot = File.join @systemRoot, '/system/development/resources', installName(target), version(target)
+									action 'mkdir --parents ' + devRoot and
+									(not exists? 'include' or
+										action superAccess + 'mv include ' + devRoot
+									) and
+									(not exists? 'lib' or
+										action 'mkdir --parents ' + (dir = File.join(devRoot, 'lib')) &&
+											action(superAccess + 'mv lib/*.a ' + dir)
+									) and
+									(not docs = recipe['develop-docs'] or
+										action 'mkdir --parents ' + (dir = File.join(devRoot, 'documentation')) &&
+										for file in docs
+											break unless action superAccess + "mv #{File.join 'documentation', file} " + dir
+										end
+									) and
+									begin
+										@log.header 'Registering development files'
+
+										# Link files into the staging area
+										action "package register #{devRoot} " + File.join(@stage, 'indexes')
+									end
+								end
+							then
+								false
 							else
 								registerModule staging, target, root
 							end
@@ -772,14 +800,14 @@ def registerModule staging, target, root
 	@log.header 'Registering ' + target
 
 	action 'package register ' + root + (staging ?
-		# Link node into the staging area
+		# Link module into the staging area
 		' ' + File.join(@stage, staging == 'bootstrap' ? 'bootstrap/indexes' : 'indexes') +
 		case staging
 		when 'system', 'libraries'
-			# Link node into the system image core
+			# Link module into the system image core
 			' ' + @systemIndexes
 		when 'image'
-			# Link node into the system image resources
+			# Link module into the system image resources
 			@systemBuild ? ' ' + @resourcesIndexes : ''
 		else
 			''
@@ -800,10 +828,10 @@ def unregisterModule staging, name, root
 		' ' + File.join(@stage, staging == 'bootstrap' ? 'bootstrap/indexes' : 'indexes') +
 		case staging
 		when 'system', 'libraries'
-			# Unlink node from the system image core
+			# Unlink module from the system image core
 			' ' + @systemIndexes
 		when 'image'
-			# Unlink node from the system image resources
+			# Unlink module from the system image resources
 			@systemBuild ? ' ' + @resourcesIndexes : ''
 		else
 			''
@@ -1740,11 +1768,7 @@ else
 
 #	@buildTools = File.join @workDir, 'build-tools'
 
-#	ENV['DIST_VER'] = '0.6.4+'
-#	ENV['DIST_NAME'] = 'base-syllable-0.6.4+.zip'
-
 	ENV['ATHEOS_SRC'] = @workDir
-#	ENV['BUILD_TOOLS'] = File.join @workDir, 'build-tools'
 	ENV['DIST_DIR'] = @image
 end
 
@@ -1763,8 +1787,8 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.7.33',
-		'Copyright (c) 2002-2007 Kaj de Vos',
+	puts 'Syllable Build System 0.7.34',
+		'Copyright (c) 2002-2008 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
 	puts 'Usage:',
@@ -1890,7 +1914,7 @@ else
 						# Some Linux system and C library headers
 						(File.join @image, 'usr/include') + ':' +
 						# Syllable system headers
-						(File.join @image, 'system/include') + ':' +
+						(File.join @image, 'system/development/headers') + ':' +
 #						(@syllable ? File.join(@workDir, 'sys/include') + ':' : '')
 						(File.join @workDir, 'sys/include') + ':'
 					else
