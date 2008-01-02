@@ -56,6 +56,14 @@ build log failures > $FINISH_FAILURE_LOG
 build log summary > $FINISH_SUMMARY_LOG
 sync
 
+# Package up and remove the development files
+DEV_ARCHIVE="syllable-$VERSION-$(date +%Y%m%d)-development"
+
+cd $BUILD_DIR/system/stage/image/system
+7z a $INSTALLER_DIR/$DEV_ARCHIVE.7z development
+rm -rf development
+
+# Package the installation files
 cd $BUILD_DIR/system/stage/image
 zip -yr9 $INSTALLER_DIR/base-syllable.zip *
 sync
@@ -83,10 +91,10 @@ fi
 
 # Generate md5's
 MD5S=md5sums
-md5sum base-syllable.zip $ISO $ISO.7z > $MD5S
+md5sum base-syllable.zip $ISO $ISO.7z $DEV_ARCHIVE.7z > $MD5S
 
 # Transfer the files
-FILES=`printf "$FINISH_LOG $FINISH_FAILURE_LOG $FINISH_SUMMARY_LOG base-syllable.zip $ISO.7z $MD5S\n"`
+FILES=`printf "$FINISH_LOG $FINISH_FAILURE_LOG $FINISH_SUMMARY_LOG base-syllable.zip $ISO.7z $DEV_ARCHIVE.7z $MD5S\n"`
 if [ -n "$FTP_USER" ]
 then
   ftp -n $FTP_SERVER << END
