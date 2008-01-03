@@ -60,7 +60,7 @@ sync
 DEV_ARCHIVE="syllable-$VERSION-$(date +%Y%m%d)-development"
 
 cd $BUILD_DIR/system/stage/image/system
-7z a $INSTALLER_DIR/$DEV_ARCHIVE.7z development
+zip -yr9 $INSTALLER_DIR/$DEV_ARCHIVE.zip development
 rm -rf development
 
 # Package the installation files
@@ -91,11 +91,11 @@ fi
 
 # Generate md5's
 MD5S=md5sums
-md5sum base-syllable.zip $ISO $ISO.7z $DEV_ARCHIVE.7z > $MD5S
+md5sum base-syllable.zip $ISO $ISO.7z $DEV_ARCHIVE.zip > $MD5S
 
 # Transfer the files
 FILES1=`printf "$FINISH_LOG $FINISH_FAILURE_LOG $FINISH_SUMMARY_LOG base-syllable.zip $ISO.7z\n"`
-FILES2=`printf "$DEV_ARCHIVE.7z $MD5S\n"`
+FILES2=`printf "$DEV_ARCHIVE.zip $MD5S\n"`
 if [ -n "$FTP_USER" ]
 then
   ftp -n $FTP_SERVER << END
