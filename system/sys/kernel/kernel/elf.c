@@ -222,7 +222,7 @@ static int open_library_file( const char *pzName, const char *pzSearchPath, char
 			zSysLibPath[nPathLen + 1] = '\0';
 		}
 
-		strcat( zSysLibPath, "system/libraries/" );
+		strcat( zSysLibPath, "system/libraries/:/system/indexes/lib/" );
 		pzSearchPath = zSysLibPath;
 	}
 
