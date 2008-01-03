@@ -37,7 +37,7 @@ modules
 	apps/other/msntp-1.6
 
 ;	Fool subsequent packages into adding files to CUPS in the image area:
-	bootstrap apps/other/cups-1.2.10--bootstrap
+	bootstrap apps/other/cups-1.2.10-bootstrap
 	system apps/other/cups-1.2.10
 	apps/other/ghostscript--image
 	system apps/other/cups-1.2.10-gutenprint
