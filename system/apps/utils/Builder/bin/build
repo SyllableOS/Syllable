@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.7.35
+# Version 0.7.36
 # Copyright (c) 2002-2008 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -759,9 +759,13 @@ def installModule staging, target
 
 									devRoot = File.join @systemRoot, '/system/development/resources', installName(target), version(target)
 									action 'mkdir --parents ' + devRoot and
-									(not exists? 'include' or
-										action superAccess + 'mv include ' + devRoot
-									) and
+
+									if exists? 'include'
+										action 'mkdir --parents ' + (dir = File.join(devRoot, 'include')) and
+											action superAccess + 'mv include/* ' + dir
+									else
+									    true
+									end and
 									if Dir['lib/*.a'] != []
 										action 'mkdir --parents ' + (dir = File.join(devRoot, 'lib')) and
 											action superAccess + 'mv lib/*.a ' + dir
@@ -770,8 +774,8 @@ def installModule staging, target
 									end and
 									if docs = recipe['develop-docs']
 										action 'mkdir --parents ' + (dir = File.join devRoot, 'documentation') and
-										for file in docs
-											break unless action superAccess + "mv #{File.join 'documentation', file} " + dir
+										for file in toList docs
+											break unless action superAccess + "mv #{File.join 'documentation', File.basename(file)} " + dir
 										end
 									else
 									    true
@@ -1791,7 +1795,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.7.35',
+	puts 'Syllable Build System 0.7.36',
 		'Copyright (c) 2002-2008 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
