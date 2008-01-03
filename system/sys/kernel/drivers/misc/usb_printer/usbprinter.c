@@ -40,7 +40,7 @@
 
 #include <posix/errno.h>
 
-#define USB_PRINTER_WRITE_TIMEOUT	(5000)			/* 5 seconds */
+#define USB_PRINTER_WRITE_TIMEOUT	(50000)			/* 5 seconds */
 
 #define USB_PRINTER_FIRST_PROTOCOL	1
 #define USB_PRINTER_LAST_PROTOCOL	3
