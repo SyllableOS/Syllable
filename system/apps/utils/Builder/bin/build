@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.7.37
+# Version 0.7.38
 # Copyright (c) 2002-2008 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -590,7 +590,7 @@ def installModule staging, target
 								@log.header 'Installing files'
 	
 								for line in parseList files
-									source, destination = toList line
+									source, destination = line.split
 									break unless action superAccess + "cp -a #{source} " + File.join(root, destination)
 								end
 							end
@@ -657,7 +657,7 @@ def installModule staging, target
 									@log.header 'Creating links'
 
 									for link in parseList links
-										original, destination = toList link
+										original, destination = link.split
 										linkPath = File.dirname destination
 										linkFile = File.basename destination
 
@@ -711,7 +711,7 @@ def installModule staging, target
 									@log.header 'Moving files'
 
 									for line in parseList files
-										source, destination = toList line
+										source, destination = line.split
 										break unless action superAccess + 'mv ' + (
 											staging && staging != 'image' ?
 												source + ' ' + destination :
@@ -895,7 +895,7 @@ def buildPackage target
 #				Doesn't work with Zip:
 #				(	(links = (links = parseList(getRecipe(name)['links'])) ?
 #						links.collect { |link|
-#							(destination = toList(link)[1])[0, 1] == '/' ?  # A link into the system
+#							(destination = link.split[1])[0, 1] == '/' ?  # A link into the system
 #								destination :
 #								nil
 #						}.compact :
@@ -1500,7 +1500,7 @@ def getTarget target
 		specs = if target['/']  # A single target directory
 			target[-1, 1] == '/' ? target.chop : target
 		elsif (p = Profile.new target).profile  # A profile
-			(l = toList((profile = p)['modules'])) ? l : []
+			(l = parseList((profile = p)['modules'])) ? l : []
 		else
 			target
 		end,
@@ -1797,7 +1797,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.7.37',
+	puts 'Syllable Build System 0.7.38',
 		'Copyright (c) 2002-2008 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
