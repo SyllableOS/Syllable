@@ -48,20 +48,3 @@ install-tree
 
 documentation		doc/README LICENSE doc/COPYING
 
-links
-	/system/fonts/NimbusMonoL-Bold.ttf						share/ghostscript/8.60/Resource/Font/NimbusMonL-Bold
-	/system/fonts/NimbusMonoL-BoldOblique.ttf				share/ghostscript/8.60/Resource/Font/NimbusMonL-BoldObli
-	/system/fonts/NimbusMonoL-Regular.ttf					share/ghostscript/8.60/Resource/Font/NimbusMonL-Regu
-	/system/fonts/NimbusMonoL-RegularOblique.ttf			share/ghostscript/8.60/Resource/Font/NimbusMonL-ReguObli
-	/system/fonts/NimbusRomanNo9L-Medium.ttf				share/ghostscript/8.60/Resource/Font/NimbusRomNo9L-Medi
-	/system/fonts/NimbusRomanNo9L-MediumItalic.ttf			share/ghostscript/8.60/Resource/Font/NimbusRomNo9L-MediItal
-	/system/fonts/NimbusRomanNo9L-Regular.ttf				share/ghostscript/8.60/Resource/Font/NimbusRomNo9L-Regu
-	/system/fonts/NimbusRomanNo9L-RegularItalic.ttf			share/ghostscript/8.60/Resource/Font/NimbusRomNo9L-ReguItal
-	/system/fonts/NimbusSansL-Bold.ttf						share/ghostscript/8.60/Resource/Font/NimbusSanL-Bold
-	/system/fonts/NimbusSansL-BoldCondensed.ttf				share/ghostscript/8.60/Resource/Font/NimbusSanL-BoldCond
-	/system/fonts/NimbusSansL-BoldCondensedItalic.ttf		share/ghostscript/8.60/Resource/Font/NimbusSanL-BoldCondItal
-	/system/fonts/NimbusSansL-BoldItalic.ttf				share/ghostscript/8.60/Resource/Font/NimbusSanL-BoldItal
-	/system/fonts/NimbusSansL-Regular.ttf					share/ghostscript/8.60/Resource/Font/NimbusSanL-Regu
-	/system/fonts/NimbusSansL-RegularCondensed.ttf			share/ghostscript/8.60/Resource/Font/NimbusSanL-ReguCond
-	/system/fonts/NimbusSansL-RegularCondensedItalic.ttf	share/ghostscript/8.60/Resource/Font/NimbusSanL-ReguCondItal
-	/system/fonts/NimbusSansL-RegularItalic.ttf				share/ghostscript/8.60/Resource/Font/NimbusSanL-ReguItal
