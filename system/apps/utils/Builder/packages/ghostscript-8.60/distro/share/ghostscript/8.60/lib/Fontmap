@@ -1,0 +1,4 @@
+%!
+% See Fontmap.GS for the syntax of real Fontmap files.
+%% Replace 1 (Fontmap.GS)
+(/usr/ghostscript/share/ghostscript/8.60/lib/Fontmap.GS) .runlibfile
