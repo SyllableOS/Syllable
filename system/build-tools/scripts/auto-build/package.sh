@@ -39,14 +39,14 @@ then
   rm -rf $INSTALLER_DIR/ppds
 fi
 mkdir -p $INSTALLER_DIR/ppds
-cp -a system/resources/cups/1.3.4/share/cups/model/* $INSTALLER_DIR/ppds/
-for PPD in `find system/resources/cups/1.3.4/share/cups/model/ -name *.ppd*`
+cp -a system/resources/cups/1.2.10/share/cups/model/* $INSTALLER_DIR/ppds/
+for PPD in `find system/resources/cups/1.2.10/share/cups/model/ -name *.ppd*`
 do
   rm $PPD
 done
 
 # Generate the printers model list
-$SCRIPTS_DIR/printers.sh $INSTALLER_DIR/ppds/ $BUILD_DIR/system/stage/image/system/resources/cups/1.3.4/share/cups/model/
+$SCRIPTS_DIR/printers.sh $INSTALLER_DIR/ppds/ $BUILD_DIR/system/stage/image/system/resources/cups/1.2.10/share/cups/model/
 
 # Finish the build and package it
 cd $BUILD_DIR/system
@@ -60,12 +60,14 @@ sync
 DEV_ARCHIVE="syllable-$VERSION-$(date +%Y%m%d)-development"
 
 cd $BUILD_DIR/system/stage/image/system
-zip -yr9 $INSTALLER_DIR/$DEV_ARCHIVE.zip development
+# Let external compression do its work
+zip -ry0 $INSTALLER_DIR/$DEV_ARCHIVE.zip development
 rm -rf development
 
 # Package the installation files
 cd $BUILD_DIR/system/stage/image
-zip -yr9 $INSTALLER_DIR/base-syllable.zip *
+# Let external compression do its work
+zip -ry0 $INSTALLER_DIR/base-syllable.zip *
 sync
 
 # XXXKV: Ensure we have the latest installer scripts
