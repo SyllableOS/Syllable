@@ -25,12 +25,19 @@ if [ -e "/system/development" ]
 then
 	for package in `ls /system/development/resources/`
 	do
-		for version in `ls /system/development/resources/$package/`
-		do
-			echo "Unregistering existing /system/development/resources/$package/$version"
-			package unregister /system/development/resources/$package/$version /system/indexes
+		if [ "$package" == "orca" ]
+		then
+			echo "Unregistering existing /system/development/resources/orca"
+			package unregister /system/development/resources/orca /system/indexes
 			sync
-		done
+		else
+			for version in `ls /system/development/resources/$package/`
+			do
+				echo "Unregistering existing /system/development/resources/$package/$version"
+				package unregister /system/development/resources/$package/$version /system/indexes
+				sync
+			done
+		fi
 	done
 
 	echo "Deleting existing development files"
@@ -46,13 +53,20 @@ sync
 
 for package in `ls /system/development/resources/`
 do
-	for version in `ls /system/development/resources/$package/`
-	do
-		echo ""
-		echo "Registering /system/development/resources/$package/$version"
-		package register /system/development/resources/$package/$version /system/indexes
+	if [ "$package" == "orca" ]
+	then
+		echo "Registering /system/development/resources/orca"
+		package register /system/development/resources/orca /system/indexes
 		sync
-	done
+	else
+		for version in `ls /system/development/resources/$package/`
+		do
+			echo ""
+			echo "Registering /system/development/resources/$package/$version"
+			package register /system/development/resources/$package/$version /system/indexes
+			sync
+		done
+	fi
 done
 
 echo ""
