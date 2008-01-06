@@ -1,7 +1,15 @@
 ; Full source code for Syllable; in addition to the system and base profiles
 
+; build download system
+; build log failures
+; build download base
+; build log failures
+
+
 modules
 ;	Single files:
+;	cvs -d :pserver:anonymous@syllable.cvs.sourceforge.net:/cvsroot/syllable co -d system syllable/system/makefile.rules
+
 ;	makefile.rules
 ;	recurse.rules
 
@@ -9,14 +17,15 @@ modules
 	build-tools/scripts/auto-build
 	build-tools/scripts/install
 
-; To be deleted from a full source configuration:
-;apps/gnu
-;apps/other
-; Except libdl and libpthread:
-;libs
-;libraries
-;other/fonts
-;other/scri?ts
-;sys/appserver/appserver/server/freetype*
-;sys/media/drivers/ffmpeg/ffmpeg
+; To be deleted:
+; sys/appserver/appserver/server/freetype*
+; sys/media/drivers/ffmpeg/ffmpeg
 
+; To be deleted from a full source tree:
+; apps/gnu
+; apps/other
+; Except libdl and libpthread:
+; libs
+; libraries
+; other/fonts
+; other/scri?ts
