@@ -3,7 +3,7 @@ status				testing
 
 headline			GLib C++ wrapper
 description
-	Gtkmm is the official C++ interface for the popular GUI library GTK+.
+	GLibMM is a part of GTKMM. GTKMM is the official C++ interface for the popular GUI library GTK+.
 licenses			LGPL-2.1
 home				www.gtkmm.org
 packages			glibmm-2.14.2
