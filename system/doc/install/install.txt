@@ -19,9 +19,9 @@ memory, but a faster processor and 128 MB of memory or more will allow
 Syllable to do more and run faster.
 
 Most common home computer motherboards, video cards and networks cards are
-supported.  Many common sound cards also work, and some USB devices are also
-supported.  For a comprehensive list of hardware which is known to work with
-Syllable, you should check the hardware compatibility list at
+supported.  Many common sound cards, printers and scanners also work, and some
+USB devices are also supported.  For a comprehensive list of hardware which is
+known to work with Syllable, you should check the hardware compatibility list at
 http://www.syllable-hardware.info  If your particular hardware is not listed there,
 it does not mean that your hardware will not work.  You can still try to
 install Syllable; the worst thing that will happen is that it simply will not
@@ -36,20 +36,24 @@ and painless way to install Syllable.  You can either download a disc
 image and burn a CD yourself, or you can purchase a CD for $15.
 
 A purchased CD is the same as the downloadable disc image but also includes
-the latest available applications and full sourcecode for Syllable.  If
-you purchase a CD you will be helping to support.  See
-http://web.syllable.org/pages/get-Syllable.html#premium for more information.
+the latest available applications and full source code for Syllable.  If
+you purchase a CD you will be helping to support the Syllable project.  See
+http://web.syllable.org/pages/get-Syllable.html#Premium-CD for more information.
 
-The downloadable Syllable CD image is distributed as a Gziped "ISO" image.
-Before you can burn this image to a CD you must first ungzip it.  On Linux,
-Syllable or other Unix-like systems such as MacOS X you should do this:
+The downloadable Syllable CD image is distributed as a 7-Ziped "ISO" image.
+Before you can burn this image to a CD you must first un-7zip it.  On Syllable,
+7-Zip is included. On Linux or other Unix-like systems such as MacOS X you should
+make sure that the portable version of 7-Zip is installed
+(http://p7zip.sourceforge.net)and type this:
 
-bash$ gzip -d syllable-0.6.5.iso.gz
+  7z x SyllableDesktop-0.6.5.i586.iso.7z
 
-On Windows you can use WinZip to decompress the Gzip file.
+On Windows you must use 7-Zip (http://www.7-zip.org) to decompress the 7zip file,
+or you can download and run the self-extracting archive instead:
+SyllableDesktop-0.6.5.i586.iso.exe
 
 Once you have decompressed the ISO disc image you must burn it to a CD
-using your preferred burning software e.g. cdrecord on Linux or Nero on
+using your preferred burning software, e.g. cdrecord on Linux or Nero on
 Windows.  There are no special requirements for burning the Syllable CD
 image; it is a standard ISO9660 disc image which any disc burning software
 will be able to burn.
@@ -137,7 +141,7 @@ OS to boot.
 In either case you must tell GRUB where to find the config file and
 the second-stage loader by setting a "root" partition:
 
-root (hd0,1)
+  root (hd0,1)
 
 If you did not install Syllable on the second partition on the first
 disk you must change the parameters accordingly.
@@ -146,11 +150,11 @@ Then you must install the boot-loader with the "setup" command.
 
 To install on a MBR of the first drive run:
 
-setup (hd0)
+  setup (hd0)
 
 To install it on the AFS partition only run:
 
-setup (hd0,1) (again change the parameters according to your setup)
+  setup (hd0,1) (again change the parameters according to your setup)
 
 Now it should be possible to boot Syllable off the native partition.
 
@@ -183,8 +187,8 @@ interface.  You will see a single window in the centre of the screen with two
 input fields and a "Login" button.
 
 Before you will be able to do anything you will have to log in using a
-user-name and a password. The base-installation comes with one predefined user,
-"root"  with the password "root".  This is the super-user and has unrestricted
+user name and a password. The base installation comes with one predefined user,
+"root"  with the password "root".  This is the super user and has unrestricted
 access to the system.
 
 If something went wrong or Syllable failed to boot, please read section 3.2 of this
