@@ -30,7 +30,7 @@ Unpacking this distribution should have produced a directory with the
 contained package, this README document, and an installation script.
 Being the root user, go into the directory and run the install script:
 
-    cd SyllableDesktop-0.6.5-development.zip
+    cd SyllableDesktop-0.6.5-development
     ./install.sh
 
 The contained files pack will be unpacked into /system/development/.
