@@ -2,4 +2,4 @@
 ; Build this as root before the finish profile
 
 modules
-	coreutils-6.4-su
+	system coreutils-6.4-su
