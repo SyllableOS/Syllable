@@ -264,7 +264,7 @@ modules
 ;	Not thread-safe:
 	sys/kernel/fs/tmpfs
 
-	system libs/glibc-2.4-image
+	system libs/glibc-2.7-system
 	system libs/zlib-1.2.3
 
 	libs/libdl
