@@ -207,7 +207,7 @@ Boston, MA 02111-1307, USA.  */
 #undef	LINK_SPEC
 #define LINK_SPEC "%{!static:--eh-frame-hdr}	-m	elf_i386_syllable	%{shared:-shared}\
 	%{!shared:     %{!ibcs:	%{!static: 	%{rdynamic:-export-dynamic}}\
-	%{static:-static}}}	%{!r:-shared}	%{!plugin:-Bsymbolic --no-undefined}\
+	%{static:-static}}}	%{!r:-shared}	%{!plugin: %{!shared:-Bsymbolic --no-undefined}}\
 	%{kernel:-shared}"
 
 /* A C statement (sans semicolon) to output to the stdio stream
