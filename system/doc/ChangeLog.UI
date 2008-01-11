@@ -1,3 +1,10 @@
+* January 11, 2008, Kristian Van Der Vliet *
+
+Patched the appserver to support mouse preferences. The user can now set mouse sensitivity and
+acceleration. Patches from Jonas Jarvoll <jonas-jarvoll@syllable-norden.info>
+
+---- 0.6.5 Released -------------------------------------------------------------------
+
 * December 17, 2007, Kaj de Vos *
 
 Imported second version of the Blue decorator by John Aspras, and adapted Arno's leak fix to it.
