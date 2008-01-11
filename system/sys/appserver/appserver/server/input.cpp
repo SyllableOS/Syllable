@@ -33,6 +33,7 @@
 #include "swindow.h"
 #include "keyboard.h"
 #include "bitmap.h"
+#include "config.h"
 
 #include <util/message.h>
 
@@ -44,6 +45,31 @@ uint32 InputNode::s_nMouseButtons = 0;
 atomic_t InputNode::s_nMouseMoveEventCount = ATOMIC_INIT(0);
 
 static thread_id g_hEventThread = -1;
+
+//----------------------------------------------------------------------------
+// NAME:
+// DESC:
+// NOTE:
+// SEE ALSO:
+//----------------------------------------------------------------------------
+
+void InputNode :: _CalculateMouseMovement( Point& cDeltaMove )
+{
+	cDeltaMove.x = cDeltaMove.x * AppserverConfig::GetInstance()->GetMouseSpeed();
+	cDeltaMove.y = cDeltaMove.y * AppserverConfig::GetInstance()->GetMouseSpeed();
+
+	double acceleration = 1;
+	acceleration = 1 + sqrt( cDeltaMove.x * cDeltaMove.x + cDeltaMove.y * cDeltaMove.y ) * AppserverConfig::GetInstance()->GetMouseAcceleration();
+	
+	if( cDeltaMove.x > 0 )
+		cDeltaMove.x = floor( cDeltaMove.x * acceleration );
+	else
+		cDeltaMove.x = ceil( cDeltaMove.x * acceleration );
+	if( cDeltaMove.y > 0 )
+		cDeltaMove.y = floor( cDeltaMove.y * acceleration );
+	else
+		cDeltaMove.y = ceil( cDeltaMove.y * acceleration );
+}
 
 //----------------------------------------------------------------------------
 // NAME:
@@ -130,6 +156,7 @@ void InputNode::EnqueueEvent( Message * pcEvent )
 
 			if( pcEvent->FindPoint( "delta_move", &cDeltaMove ) == 0 )
 			{
+				_CalculateMouseMovement( cDeltaMove );
 				s_cMousePos += cDeltaMove;
 			}
 			else

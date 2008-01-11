@@ -741,6 +741,36 @@ void AppServer::DispatchMessage( Message * pcReq )
 			pcReq->SendReply( &cReply );
 			break;
 		}
+	case DR_GET_MOUSE_CFG:
+		{
+			Message cReply;
+
+			cReply.AddFloat( "speed", AppserverConfig::GetInstance()->GetMouseSpeed() );
+			cReply.AddFloat( "acceleration", AppserverConfig::GetInstance()->GetMouseAcceleration() );
+			cReply.AddInt32( "doubleclick", AppserverConfig::GetInstance()->GetDoubleClickTime() );
+			pcReq->SendReply( &cReply );
+			break;
+		}
+	case DR_SET_MOUSE_CFG:
+		{
+			float nMouseSpeed = 0;
+			float nMouseAcceleration = 0;
+			int32 nMouseDoubleClick = 0 ;
+			if( pcReq->FindFloat( "speed", &nMouseSpeed ) == 0 )
+			{
+				AppserverConfig::GetInstance()->SetMouseSpeed( nMouseSpeed );
+			}
+			if( pcReq->FindFloat( "acceleration", &nMouseAcceleration ) == 0 )
+			{
+				AppserverConfig::GetInstance()->SetMouseAcceleration( nMouseAcceleration );
+			}
+			if( pcReq->FindInt( "doubleclick", &nMouseDoubleClick ) == 0 )
+			{
+				AppserverConfig::GetInstance()->SetDoubleClickTime( nMouseDoubleClick );
+			}
+
+			break;
+		}
 	}
 }
 
@@ -812,6 +842,8 @@ void AppServer::Run( void )
 			case DR_SET_DESKTOP_MAX_WINFRAME:
 			case DR_GET_DESKTOP_MAX_WINFRAME:
 			case DR_MINIMIZE_ALL:
+			case DR_GET_MOUSE_CFG:
+			case DR_SET_MOUSE_CFG:
 				{
 					try
 					{

@@ -50,6 +50,7 @@ public:
 protected:
     static void EnqueueEvent( os::Message* pcEvent );
 private:
+	static void _CalculateMouseMovement( os::Point& cDeltaMove );
     friend void InitInputSystem();
     static int32 EventLoopEntry( void* pData );
     static void EventLoop();

@@ -57,6 +57,11 @@ public:
     void	SetDoubleClickTime( bigtime_t nDelay );
     bigtime_t	GetDoubleClickTime() const;
 
+    void	SetMouseSpeed( float nSpeed );
+    float	GetMouseSpeed() const;
+
+    void	SetMouseAcceleration( float nAccel );
+    float	GetMouseAcceleration() const;
 
     void	SetPopoupSelectedWindows( bool bPopup );
     bool	GetPopoupSelectedWindows() const;
@@ -87,6 +92,8 @@ private:
     bigtime_t	m_nKeyDelay;
     bigtime_t	m_nKeyRepeat;
     bigtime_t	m_nDoubleClickDelay;
+	float		m_nMouseSpeed;
+	float		m_nMouseAcceleration;
     bool	m_bPopupSelectedWindows;	// Move window to front on "single-click"
     std::map<std::string,os::font_properties> m_cFontSettings;
 };

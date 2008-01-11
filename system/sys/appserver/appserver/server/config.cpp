@@ -41,6 +41,8 @@ AppserverConfig::AppserverConfig()
 	m_nKeyDelay = 300LL;
 	m_nKeyRepeat = 30LL;
 	m_nDoubleClickDelay = 500000LL;
+	m_nMouseSpeed = 1.5f;
+	m_nMouseAcceleration = 0.0f;
 	m_bPopupSelectedWindows = false;
 
 	AddFontConfig( DEFAULT_FONT_REGULAR, os::font_properties( "Nimbus Sans L", "Regular", FPF_SYSTEM | FPF_SMOOTHED, 8.0f ) );
@@ -97,6 +99,17 @@ void AppserverConfig::SetConfig( const Message * pcConfig )
 	{
 		SetKeyRepeat( nDelay );
 	}
+
+	float nMouse;
+	if( pcConfig->FindFloat( "mouse_speed", &nMouse ) == 0 )
+	{
+		SetMouseSpeed( nMouse );
+	}
+	if( pcConfig->FindFloat( "mouse_acceleration", &nMouse ) == 0 )
+	{
+		SetMouseAcceleration( nMouse );
+	}
+
 	Message cColorConfig;
 
 	if( pcConfig->FindMessage( "color_config", &cColorConfig ) == 0 )
@@ -133,6 +146,8 @@ void AppserverConfig::GetConfig( Message * pcConfig )
 	pcConfig->AddInt64( "doubleclick_delay", m_nDoubleClickDelay );
 	pcConfig->AddInt64( "key_delay", m_nKeyDelay );
 	pcConfig->AddInt64( "key_repeat", m_nKeyRepeat );
+	pcConfig->AddFloat( "mouse_speed", m_nMouseSpeed );
+	pcConfig->AddFloat( "mouse_acceleration", m_nMouseAcceleration );
 
 	Message cColorConfig;
 
@@ -265,6 +280,35 @@ bigtime_t AppserverConfig::GetKeyRepeat() const
 {
 	return ( m_nKeyRepeat );
 }
+
+void AppserverConfig::SetMouseSpeed( float nSpeed )
+{
+	if( nSpeed != m_nMouseSpeed )
+	{
+		m_nMouseSpeed = nSpeed;
+		m_bDirty = true;
+	}
+}
+
+float AppserverConfig::GetMouseSpeed() const
+{
+	return (m_nMouseSpeed);
+}
+
+void AppserverConfig::SetMouseAcceleration( float nAccel )
+{
+	if( nAccel != m_nMouseAcceleration )
+	{
+		m_nMouseAcceleration = nAccel;
+		m_bDirty = true;
+	}
+}
+
+float AppserverConfig::GetMouseAcceleration() const
+{
+	return (m_nMouseAcceleration);
+}
+
 
 void AppserverConfig::SetPopoupSelectedWindows( bool bPopup )
 {
@@ -592,6 +636,33 @@ int AppserverConfig::LoadConfig( FILE *hFile, bool bActivateConfig )
 				dbprintf( "Error: Syntax error in appserver config file at line %d\n", nLine );
 			}
 		}
+		if( match_name( "MouseSpeed", zLineBuf ) )
+		{
+			float nValue;
+
+			if( sscanf( zLineBuf, "MouseSpeed = %f\n", &nValue ) == 1 )
+			{
+				m_nMouseSpeed = nValue;
+			}
+			else
+			{
+				dbprintf( "Error: Syntax error in appserver config file at line %d\n", nLine );
+			}
+		}
+		if( match_name( "MouseAcceleration", zLineBuf ) )
+		{
+			float nValue;
+
+			if( sscanf( zLineBuf, "MouseAcceleration = %f\n", &nValue ) == 1 )
+			{
+				m_nMouseAcceleration = nValue;
+			}
+			else
+			{
+				dbprintf( "Error: Syntax error in appserver config file at line %d\n", nLine );
+			}
+		}
+
 		if( match_name( "Color", zLineBuf ) )
 		{
 			int i, r, g, b, a;
@@ -693,6 +764,8 @@ int AppserverConfig::SaveConfig()
 	fprintf( hFile, "DoubleClickDelay = %Ld\n", m_nDoubleClickDelay );
 	fprintf( hFile, "KeyDelay         = %Ld\n", m_nKeyDelay );
 	fprintf( hFile, "KeyRepeat        = %Ld\n", m_nKeyRepeat );
+	fprintf( hFile, "MouseSpeed        = %f\n", m_nMouseSpeed );
+	fprintf( hFile, "MouseAcceleration = %f\n", m_nMouseAcceleration );
 
 	fprintf( hFile, "\n" );
 

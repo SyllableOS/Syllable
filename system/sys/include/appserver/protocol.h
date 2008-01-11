@@ -65,6 +65,8 @@ enum
     DR_SET_DESKTOP_MAX_WINFRAME,
     DR_GET_DESKTOP_MAX_WINFRAME,
     DR_MINIMIZE_ALL,
+    DR_GET_MOUSE_CFG,
+    DR_SET_MOUSE_CFG,
 
     AR_OPEN_WINDOW = 10000,
     AR_CLOSE_WINDOW,
@@ -593,14 +595,4 @@ struct WR_LockFbReply_s
 
 }
 #endif	//	DEVICES_DISPLAY_PACKETS_H
-
-
-
-
-
-
-
-
-
-
 
