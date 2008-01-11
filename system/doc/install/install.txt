@@ -44,7 +44,7 @@ The downloadable Syllable CD image is distributed as a 7-Ziped "ISO" image.
 Before you can burn this image to a CD you must first un-7zip it.  On Syllable,
 7-Zip is included. On Linux or other Unix-like systems such as MacOS X you should
 make sure that the portable version of 7-Zip is installed
-(http://p7zip.sourceforge.net)and type this:
+(http://p7zip.sourceforge.net) and type this:
 
   7z x SyllableDesktop-0.6.5.i586.iso.7z
 
@@ -74,8 +74,8 @@ The next step is to configure and install the bootloader.
 First you must tell GRUB where to find the kernel and the required
 disk/FS drivers to load before booting Syllable. This information is
 found in "/inst/boot/grub/menu.lst". If you have other OS's installed
-on the machine you must either configure GRUB as a boot-manager or
-install another boot-manager that can "chainload" GRUB from the AFS
+on the machine you must either configure GRUB as a boot manager or
+install another boot manager that can "chainload" GRUB from the AFS
 partition.
 
 The menu.lst file should look something like this to boot Syllable from
@@ -94,17 +94,17 @@ the installation described above:
 This will tell GRUB to boot partition number 2 on the first drive
 through the "root (hd0,1)" command and where to find the kernel, the
 boot block-device driver and the boot-FS driver on that partition. The
-"root=/dev/disk/ata/hda/1" string after the kernel-path is a parameter
+"root=/dev/disk/ata/hda/1" string after the kernel path is a parameter
 that is passed to the kernel and tells what partition to mount as
 /boot/ before continue to boot. The kernel can also take a number of
 other parameters (listed below) that are given in the same manner after
 the "root" param.
 
 If you install Syllable on the second partition on the first drive the
-default config-file is OK. otherwise you must edit the "root (disk,partition)
+default config file is OK. otherwise you must edit the "root (disk,partition)
 line to fit your setup. If you want to boot other OS's with GRUB you
 must add them to the config file as well. For example to boot BeOS, or
-Windows, or most other OS's that have a bootblock you can use the
+Windows, or most other OS's that have a boot block you can use the
 "chainloader" command like this:
 
      title BeOS
@@ -133,9 +133,9 @@ and then hit "C" to enter the GRUB shell from which you can finish the
 install.
 
 Now you must decide whether you want to install GRUB in the MBR
-(Master Boot Record) of the first drive and use it as a boot-manager
+(Master Boot Record) of the first drive and use it as a boot manager
 (or if Syllable is the only OS on the machine) or if you want to install
-it on the AFS partition only and use another bootmanager select what
+it on the AFS partition only and use another boot manager select what
 OS to boot.
 
 In either case you must tell GRUB where to find the config file and
@@ -166,12 +166,12 @@ Now it should be possible to boot Syllable off the native partition.
 GRUB understands the AFS filesystem and can boot any kernel located on
 an AFS partition by changing the "kernel" line in the config file or
 by manually loading the kernel and required modules from the GRUB
-shell. There is no need to run any tools to update block-lists or
+shell. There is no need to run any tools to update block lists or
 anything like that after installing new kernels.
 
 Read the GRUB documentation [http://www.gnu.org/software/grub/grub.html]
 and use the "help" command in the GRUB shell for more information on the
-bootloader.
+boot loader.
 
 
 
@@ -183,8 +183,8 @@ for your hardware.  If a driver is found which supports some piece of hardware
 the driver will be loaded automatically.
 
 When all of the drivers are available Syllable will start the graphical user
-interface.  You will see a single window in the centre of the screen with two
-input fields and a "Login" button.
+interface.  You will see a single window in the centre of the screen with a list
+of user accounts, a password input field and a "Login" button.
 
 Before you will be able to do anything you will have to log in using a
 user name and a password. The base installation comes with one predefined user,
@@ -227,8 +227,8 @@ http://web.syllable.org/documentation/FAQ.html  These provide answers to very
 common questions concerning Syllable.
 
 If you are sure it is a problem with Syllable check the forums at
-http://forum.syllable-norden.info  Someone may already have
-had the same problem as you and received a solution!
+http://forum.syllable-norden.info  Someone may already have had the same problem as you
+and received a solution!
 
 Finally, if none of those help, ask on the Syllable Developer mailing list.  You must
 first subscribe to this list.  See
