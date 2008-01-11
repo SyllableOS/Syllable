@@ -37,9 +37,9 @@ fi
 
 if [ -e unzip ]
 then
-  ./unzip -d /boot/ upgrade.zip
+  ./unzip -K -d /boot/ upgrade.zip
 else
-  unzip -d /boot/ upgrade.zip
+  unzip -K -d /boot/ upgrade.zip
 fi
 sync
 
@@ -53,5 +53,3 @@ then
   echo "You must run the script \"post-upgrade.sh\" after"
   echo "you have rebooted to complete the upgrade"
 fi
-
-
