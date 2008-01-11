@@ -1,0 +1,14 @@
+//
+//	Mouse String Catalog
+//
+//	Translated by: Not Translated
+//
+
+ID_MSG_MOUSE_SPEED=0							Mouse speed
+ID_MSG_MOUSE_ACCELERATION						Mouse acceleration
+ID_MSG_DOUBLECLICK								Doubleclick
+ID_MSG_APPLY									Apply
+ID_MSG_UNDO										Undo
+ID_MSG_DEFAULT									Default
+ID_MSG_TITLE									Mouse preferences
+

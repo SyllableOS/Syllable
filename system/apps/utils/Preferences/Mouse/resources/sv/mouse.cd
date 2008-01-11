@@ -1,0 +1,14 @@
+//
+//	Mouse String Catalog
+//
+//	Translated by: Not Translated
+//
+
+ID_MSG_MOUSE_SPEED=0							Hastighet
+ID_MSG_MOUSE_ACCELERATION						Acceleration
+ID_MSG_DOUBLECLICK								Dubbelklick
+ID_MSG_APPLY									Verkställ
+ID_MSG_UNDO										Ångra
+ID_MSG_DEFAULT									Grundinställningar
+ID_MSG_TITLE									Musinställningar
+
