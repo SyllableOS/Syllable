@@ -52,12 +52,12 @@ int pthread_cond_broadcast(pthread_cond_t *cond)
 	{
 		/* The thread might not sleep yet */
 		thread_info sInfo;
-		while( get_thread_info( __current_thread->__thread_id, &sInfo ) == 0 )
+		while( get_thread_info( PT_TID(__current_thread->__thread_id), &sInfo ) == 0 )
 		{
 			if( sInfo.ti_state != TS_READY )
 				break;
 		}
-		resume_thread( __current_thread->__thread_id );
+		resume_thread( PT_TID(__current_thread->__thread_id) );
 		__next_thread = __current_thread->__next;
 
 		free( __current_thread );
@@ -164,13 +164,13 @@ int pthread_cond_signal(pthread_cond_t *cond)
 	
 	/* The thread might not sleep yet */
 	thread_info sInfo;
-	while( get_thread_info( __waiting_thread->__thread_id, &sInfo ) == 0 )
+	while( get_thread_info( PT_TID(__waiting_thread->__thread_id), &sInfo ) == 0 )
 	{
 		if( sInfo.ti_state != TS_READY )
 			break;
 	}
 	
-	resume_thread( __waiting_thread->__thread_id );
+	resume_thread( PT_TID(__waiting_thread->__thread_id) );
 
 	free( __waiting_thread );
 
@@ -206,7 +206,6 @@ int pthread_cond_timedwait(pthread_cond_t *cond, pthread_mutex_t *mutex, const s
 
 	/* Start the "timer" running */
 	resume_thread( kthread );
-	
 
 	/* Wait on the conditional.  Either pthread_signal(), pthread_broadcast() or the */
 	/* timer thread will wake us up, whichever comes first                           */
@@ -250,7 +249,7 @@ void __pt_timer_thread_entry( __pt_timer_args *arg )
 		do
 		{
 			__next_thread = __current_thread->__next;
-			if( __current_thread->__thread_id == arg->thread )
+			if( pthread_equal( __current_thread->__thread_id, arg->thread ) )
 			{
 				if( cond->__head == __current_thread )
 				{
@@ -280,12 +279,12 @@ void __pt_timer_thread_entry( __pt_timer_args *arg )
 	
 	/* The thread might not sleep yet */
 	thread_info sInfo;
-	while( get_thread_info( arg->thread, &sInfo ) == 0 )
+	while( get_thread_info( PT_TID(arg->thread), &sInfo ) == 0 )
 	{
 		if( sInfo.ti_state != TS_READY )
 			break;
 	}
-	resume_thread( arg->thread );
+	resume_thread( PT_TID(arg->thread) );
 
 	free( arg );
 
@@ -318,8 +317,7 @@ int __pt_do_cond_wait( pthread_cond_t *cond, pthread_mutex_t *mutex )
 	__waiting_thread->__thread_id = pthread_self();
 	
 	__pt_lock_mutex( cond->__lock );
-	
-	
+
 	if( cond->__head != NULL)
 	{
 		__waiting_thread->__next = NULL;
@@ -339,8 +337,7 @@ int __pt_do_cond_wait( pthread_cond_t *cond, pthread_mutex_t *mutex )
 
 	__pt_unlock_mutex( cond->__lock );	
 	pthread_mutex_unlock( mutex );
-	suspend_thread( __waiting_thread->__thread_id );
-	
+	suspend_thread( PT_TID(__waiting_thread->__thread_id) );
 
 	pthread_mutex_lock( mutex );
 
@@ -387,90 +384,4 @@ int pthread_condattr_setpshared(pthread_condattr_t *attr, int shared)
 
 	return( 0 );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

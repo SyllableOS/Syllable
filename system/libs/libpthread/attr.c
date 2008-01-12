@@ -124,6 +124,12 @@ int pthread_attr_init(pthread_attr_t *attr)
 		return( ENOMEM );
 	}
 
+	attr->cancellation.state = PTHREAD_CANCEL_ENABLE;
+	attr->cancellation.type = PTHREAD_CANCEL_DEFERRED;
+	attr->cancellation.cancelled = false;
+
+	attr->internal_malloc = false;
+
 	return( 0 );
 }
 
@@ -137,7 +143,7 @@ int pthread_attr_setdetachstate(pthread_attr_t *attr, int state)
 
 	attr->__detachstate = state;
 
-	return( 0 );
+	return 0;
 }
 
 int pthread_attr_setguardsize(pthread_attr_t *attr, size_t size)

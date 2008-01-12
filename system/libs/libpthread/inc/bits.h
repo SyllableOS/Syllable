@@ -44,6 +44,9 @@ typedef struct __pt_cleanup_s
 
 #define	__DEFAULT_STACK_SIZE	1024 * 128
 
+#define PT_TID(x)	(x)->id
+#define PT_ATTR(x)	(x)->attr
+
 #ifdef __cplusplus
 }
 #endif

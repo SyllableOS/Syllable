@@ -12,7 +12,7 @@ endif
 
 include makefile.rules
 
-VER := 1
+VER := 2
 LIB := libpthread.so.$(VER)
 
 all: $(OBJDIR) $(OBJS)
