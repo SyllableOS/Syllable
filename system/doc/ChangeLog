@@ -10,6 +10,10 @@ o The type for pthread_t has changed from a simple int to a more complex struct 
   joinable.
 o As a result of the above change and an additional change to pthread_attr_t the
   library version has been incremented.
+o Change setstackaddr() & setstacksize() to always return ENOSYS
+o Implement getstack() fully and a stub for setstack() that always returns ENOSYS
+o Define PTHREAD_STACK_MIN instead of the private __DEFAULT_STACK_SIZE
+o Implemented pthread_sigmask()
 o A handful of bug fixes and additional checks have been added to make libpthread more
   POSIX compliant.
 
