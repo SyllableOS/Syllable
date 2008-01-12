@@ -1,0 +1,31 @@
+authors
+	Kurt Skauen
+	Arno Klenke
+	Kristian Van Der Vliet
+	Rick Caudill
+	Kaj de Vos
+maintainers			Kaj de Vos
+status				incomplete
+
+licenses			LGPL
+
+home				www.konqueror.org/embedded/
+packages
+;	ABrowse-0.4alpha3-Arno.source
+	ABrowse-0.4alpha3-Rick.source
+locations			http://downloads.syllable.org/sources/applications/ABrowse/
+
+build-needs
+	perl
+	qt >= 3.1
+	pcre
+
+build-dir			konq-embed
+
+configure			true
+
+install-files		konq-embed/src/ABrowse bin/
+documentation
+	konq-embed/README konq-embed/COPYING konq-embed/ChangeLog konq-embed/AUTHORS konq-embed/TODO
+	src/docs
+internal-docs		konq-embed/HACKS

@@ -6,9 +6,9 @@ warnings
 	Installation will end with an error trying to access /usr/whisper, but it can be ignored.
 
 licenses			GPL
-home				www.liqwyd.com
-packages			whisper-alpha6.src
-locations			http://www.liqwyd.com/syllable/
+home				www.syllable.org
+packages			Whisper-0.8.source
+locations			http://downloads.syllable.org/sources/applications/Whisper/
 
 patch				mv libsmtp libpop3 whisper/
 
@@ -24,4 +24,3 @@ build-dir			whisper
 ;install-files		Whisper bin/
 
 ;documentation		whisper/Changes whisper/Libsyllable-Bugs
-
