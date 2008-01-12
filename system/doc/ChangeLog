@@ -1,3 +1,20 @@
+* January 12 2008, Kristian Van Der Vliet *
+
+A bunch of PThreads improvements:
+
+o Implemented thread cancellation. pthread_cancel() & pthread_testcancel() now work.
+o Defined SIGCANCEL using the (unused) signal # used for SIGWINCH
+o The type for pthread_t has changed from a simple int to a more complex struct pointer.
+  A pthread_t variable can now be used to access the associated pthread_attr_t. This is
+  used in E.g. pthread_join() where the target thread is checked to ensure it is
+  joinable.
+o As a result of the above change and an additional change to pthread_attr_t the
+  library version has been incremented.
+o A handful of bug fixes and additional checks have been added to make libpthread more
+  POSIX compliant.
+
+These changes have all been tested using the OpenPosix Test Suite.
+
 ---- 0.6.5 Released -------------------------------------------------------------------
 
 * January 2, 2008, Kaj de Vos *
