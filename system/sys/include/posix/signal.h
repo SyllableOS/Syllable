@@ -48,7 +48,8 @@ extern "C" {
 #define SIGXFSZ		25
 #define SIGVTALRM	26
 #define SIGPROF		27
-#define SIGWINCH	28
+#define SIGCANCEL	28
+#define SIGWINCH	SIGCANCEL
 #define SIGPOLL		SIGIO
 #define SIGIO		29
 #define SIGPWR		30

@@ -27,8 +27,13 @@ extern "C"{
 #include <atheos/semaphore.h>	/* Semaphores and mutexes */
 #include <sched.h>				/* struct sched_param */
 
-/* Thread. */
-typedef thread_id pthread_t;
+/* Keep track of the all the data regarding the threads cancellation status */
+struct __pthread_cancel_s
+{
+  int state;
+  int type;
+  bool cancelled;
+};
 
 /* Thread attribute object. */
 typedef struct __pthread_attr_s
@@ -40,7 +45,17 @@ typedef struct __pthread_attr_s
   char *__name;
   int __detachstate;
   struct sched_param *__sched_param;
+  struct __pthread_cancel_s cancellation;
+  bool internal_malloc;
 } pthread_attr_t;
+
+/* Thread. */
+struct __pthread_s
+{
+	thread_id id;
+	pthread_attr_t *attr;
+};
+typedef struct __pthread_s * pthread_t;
 
 /* Condition variable attribute object. */
 typedef struct
