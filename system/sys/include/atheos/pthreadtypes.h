@@ -45,8 +45,9 @@ typedef struct __pthread_attr_s
   char *__name;
   int __detachstate;
   struct sched_param *__sched_param;
-  struct __pthread_cancel_s cancellation;
+  struct __pthread_cancel_s *cancellation;
   bool internal_malloc;
+  bool destroyed;
 } pthread_attr_t;
 
 /* Thread. */

@@ -25,23 +25,30 @@ extern "C"{
 #include <sched.h>
 #include <time.h>
 
-/* The following definitions are required by the XSI/Open Group specification */
-/* although we currently do not guarantee that we support the entire API, nor */
-/* do we guarentee that the parts of the API that we do support are 100%      */
-/* compliant.                                                                 */
-
+/* The following definitions are required by the XSI/Open Group specification
+   although we currently do not guarantee that we support the entire API, nor
+   do we guarentee that the parts of the API that we do support are 100%
+   compliant. */
 #define	_POSIX_THREADS
-#define	_POSIX_THREAD_ATTR_STACKADDR
-#define	_POSIX_THREAD_ATTR_STACKSIZE
 #define	_POSIX_THREAD_PROCESS_SHARED
 
-/* We DO NOT support the following, and the associated functions will return  */
-/* ENOSYS when called.  Well behaved code should be checking for the presence */
-/* (Or lack thereof) of these defines!                                        */
-/*                                                                            */
-/* #define		_POSIX_THREAD_PRIORITY_SCHEDULING                               */
-/* #define		_POSIX_THREAD_PRIO_PROTECT                                      */
-/*                                                                            */
+/* The stack options are only half-implemented: the stack address and stack
+   size can be retrieved but neither of them may be changed. Because of
+   this we do not define the following options:
+
+   _POSIX_THREAD_ATTR_STACKADDR
+   _POSIX_THREAD_ATTR_STACKSIZE
+*/
+
+/* We DO NOT support the following, and the associated functions will return
+   ENOSYS when called.  Well behaved code should be checking for the presence 
+   (Or lack thereof) of these defines!
+
+   _POSIX_THREAD_PRIORITY_SCHEDULING
+   _POSIX_THREAD_PRIO_PROTECT
+*/
+
+#define PTHREAD_STACK_MIN	1024 * 128
 
 /* Attribute definitions */
 /* Cancellation */
@@ -58,7 +65,7 @@ enum
 	PTHREAD_CANCEL_ASYNCHRONOUS
 };
 
-#define	PTHREAD_CANCELED	((void *) -1)
+#define PTHREAD_CANCELED	((void *) -1)
 
 /* Scheduling */
 
@@ -135,6 +142,8 @@ int		pthread_attr_setschedpolicy(pthread_attr_t *, int);
 int		pthread_attr_setscope(pthread_attr_t *, int);
 int		pthread_attr_setstackaddr(pthread_attr_t *, void *);
 int		pthread_attr_setstacksize(pthread_attr_t *, size_t);
+int		pthread_attr_getstack(const pthread_attr_t *, void **, size_t *);
+int		pthread_attr_setstack(pthread_attr_t *, void *, size_t );
 
 int		pthread_cancel(pthread_t);
 void	pthread_cleanup_push(void (*)(void*), void *);
