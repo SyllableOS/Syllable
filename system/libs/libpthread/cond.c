@@ -199,7 +199,7 @@ int pthread_cond_timedwait(pthread_cond_t *cond, pthread_mutex_t *mutex, const s
 	arg->cond = cond;
 	arg->error = 0;
 
-	kthread = spawn_thread( "pthread_cond_timer", __pt_timer_thread_entry, NORMAL_PRIORITY, __DEFAULT_STACK_SIZE, arg);
+	kthread = spawn_thread( "pthread_cond_timer", __pt_timer_thread_entry, NORMAL_PRIORITY, PTHREAD_STACK_MIN, arg);
 
 	if( kthread < 0 )
 		return( kthread );

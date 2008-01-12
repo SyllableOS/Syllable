@@ -18,18 +18,29 @@
 #include <posix/errno.h>
 #include <atheos/threads.h>		/* Kernel threads interface */
 
-#include "inc/bits.h"
+#include <bits.h>
+#include <debug.h>
 
 int pthread_attr_destroy(pthread_attr_t *attr)
 {
-	if( attr == NULL )
+	if( attr == NULL || (attr && attr->destroyed == true ) )
 		return( EINVAL );
 
+	debug( "destroy attr at %p\n", attr );
+
+	attr->destroyed = true;
+
+	debug( "attr->__name=%p\n", attr->__name );
 	if( attr->__name != NULL )
 		free( attr->__name );
 
+	debug( "attr->__sched_param=%p\n", attr->__sched_param );
 	if( attr->__sched_param != NULL )
 		free( attr->__sched_param );
+
+	debug( "attr->cancellation=%p\n", attr->cancellation );
+	if( attr->cancellation != NULL )
+		free( attr->cancellation );
 
 	return( 0 );
 }
@@ -105,32 +116,49 @@ int pthread_attr_init(pthread_attr_t *attr)
 	if( attr == NULL )
 		return( EINVAL );
 
-	attr->__stacksize = __DEFAULT_STACK_SIZE;
+	debug( "initalise attr at %p\n", attr );
+
+	attr->__stacksize = PTHREAD_STACK_MIN;
 	attr->__stackaddr = NULL;						/* FIXME: Place holder */
 	attr->__guardsize = 0;							/* Not implemented */
 	attr->__schedpriority = NORMAL_PRIORITY;
+	attr->__detachstate = PTHREAD_CREATE_JOINABLE;
+	attr->__name = NULL;
+	attr->__sched_param = NULL;
+	attr->cancellation = NULL;
 
 	attr->__name = malloc( 8 );
-	if( attr->__name == 0 )
+	if( attr->__name == NULL )
 		return( ENOMEM );
+	debug( "attr->__name=%p\n", attr->__name );
+	attr->__name = strcpy( attr->__name, "pthread" );
 
-	attr->__name = strncpy( attr->__name, "pthread\0", 8 );
-
-	attr->__detachstate = PTHREAD_CREATE_JOINABLE;
 	attr->__sched_param = malloc( sizeof( struct sched_param ) );
-	if( attr->__sched_param == 0 )
+	if( attr->__sched_param == NULL )
 	{
 		pthread_attr_destroy( attr );
 		return( ENOMEM );
 	}
+	debug( "attr->__sched_param=%p\n", attr->__sched_param );
 
-	attr->cancellation.state = PTHREAD_CANCEL_ENABLE;
-	attr->cancellation.type = PTHREAD_CANCEL_DEFERRED;
-	attr->cancellation.cancelled = false;
+	attr->cancellation = malloc( sizeof( struct __pthread_cancel_s ) );
+	if( attr->cancellation == NULL )
+	{
+		pthread_attr_destroy( attr );
+		return( ENOMEM );
+	}
+	debug( "attr->cancellation=%p\n", attr->cancellation );
+
+	attr->cancellation->state = PTHREAD_CANCEL_ENABLE;
+	attr->cancellation->type = PTHREAD_CANCEL_DEFERRED;
+	attr->cancellation->cancelled = false;
 
 	attr->internal_malloc = false;
+	attr->destroyed = false;
 
-	return( 0 );
+	debug( "attr initialised\n" );
+
+	return 0;
 }
 
 int pthread_attr_setdetachstate(pthread_attr_t *attr, int state)
@@ -195,10 +223,7 @@ int pthread_attr_setstackaddr(pthread_attr_t *attr, void *addr)
 	if( addr < 0 )
 		return( EINVAL );
 
-	attr->__stackaddr = addr;	/* Note that we do nothing other than store the address, */
-									/* currently there is no way to change the stack address */
-
-	return( 0 );
+	return ENOSYS;
 }
 
 int pthread_attr_setstacksize(pthread_attr_t *attr, size_t size)
@@ -209,13 +234,22 @@ int pthread_attr_setstacksize(pthread_attr_t *attr, size_t size)
 	if( size < 0 )
 		return( EINVAL );
 
-	attr->__stacksize = size;	/* Note that we do nothing other than store the size, */
-									/* currently there is no way to change the stack size */
-									/* once the thread has been created                   */
-
-	return( 0 );
+	return ENOSYS;
 }
 
+int pthread_attr_getstack(const pthread_attr_t *attr, void **stackaddr, size_t *stacksize)
+{
+	if( attr == NULL || stackaddr == NULL || stacksize == NULL )
+		return EINVAL;
 
+	*stackaddr = attr->__stackaddr;
+	*stacksize = attr->__stacksize;
 
+	return 0;
+}
+
+int pthread_attr_setstack(pthread_attr_t *attr, void *stackaddr, size_t stacksize)
+{
+	return ENOSYS;
+}
 

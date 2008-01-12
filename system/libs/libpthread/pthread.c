@@ -61,10 +61,10 @@ static void __pt_handle_cancel( int signo )
 
 	if( attr != NULL )
 	{
-		if( attr->cancellation.state == PTHREAD_CANCEL_ENABLE )
-			attr->cancellation.cancelled = true;
+		if( attr->cancellation->state == PTHREAD_CANCEL_ENABLE )
+			attr->cancellation->cancelled = true;
 
-		if( attr->cancellation.type == PTHREAD_CANCEL_ASYNCHRONOUS )
+		if( attr->cancellation->type == PTHREAD_CANCEL_ASYNCHRONOUS )
 			pthread_exit( NULL );
 	}
 }
@@ -149,6 +149,9 @@ int pthread_create(pthread_t *thread, const pthread_attr_t *attr, void *(*start_
 	struct __pt_entry_data *entry_data = NULL;
 
 	if( thread == NULL || start_routine == NULL )
+		return EINVAL;
+
+	if( attr && attr->destroyed == true )
 		return EINVAL;
 
 	debug( "creating new thread\n" );
@@ -363,8 +366,8 @@ int pthread_setcancelstate(int state, int *oldstate)
 		return EINVAL;
 
 	if( oldstate != NULL )
-		*oldstate = attr->cancellation.state;
-	attr->cancellation.state = state;
+		*oldstate = attr->cancellation->state;
+	attr->cancellation->state = state;
 
 	return 0;
 }
@@ -378,8 +381,8 @@ int pthread_setcanceltype(int type, int *oldtype)
 		return EINVAL;
 
 	if( oldtype != NULL )
-		*oldtype = attr->cancellation.type;
-	attr->cancellation.type = type;
+		*oldtype = attr->cancellation->type;
+	attr->cancellation->type = type;
 
 	return 0;
 }
@@ -405,13 +408,12 @@ void pthread_testcancel(void)
 	pthread_t thread = pthread_getspecific( selfKey );
 	pthread_attr_t *attr = PT_ATTR(thread);
 
-	if( attr->cancellation.state == PTHREAD_CANCEL_ENABLE && attr->cancellation.cancelled )
+	if( attr->cancellation->state == PTHREAD_CANCEL_ENABLE && attr->cancellation->cancelled )
 		pthread_exit( NULL );
 }
 
 int pthread_sigmask(int how, const sigset_t *set, sigset_t *oset)
 {
-	debug( "not implemented\n" );
-	return ENOSYS;
+	return sigprocmask( how, set, oset );
 }
 
