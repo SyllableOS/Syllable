@@ -7,8 +7,8 @@ description
 licenses			GPL
 
 home
-	www.ibiblio.org/mc/
-;	www.gnu.org/software/mc/
+	www.gnu.org/software/mc/
+;	www.ibiblio.org/mc/
 locations
 	http://www.ibiblio.org/pub/Linux/utils/file/managers/mc/
 	ftp://ftp.uni-koeln.de/util/shell/
