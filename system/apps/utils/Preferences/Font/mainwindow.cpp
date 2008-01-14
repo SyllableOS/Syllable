@@ -134,7 +134,7 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   pcVLTypes->AddChild( pcHLWindow);
   pcVLTypes->AddChild( new os::VLayoutSpacer("", 5.0f, 5.0f) );
   pcVLTypes->AddChild( pcHLTWindow);
-  pcVLTypes->AddChild( new os::VLayoutSpacer("") );
+  pcVLTypes->AddChild( new os::VLayoutSpacer("", 5.0f, 5.0f) );
   if (bRoot)
 	  pcVLTypes->AddChild( pcHLTAntiAliasing );
   pcVLTypes->AddChild( new os::VLayoutSpacer("") );
@@ -410,24 +410,24 @@ void MainWindow::Revert()
 void MainWindow::Default()
 {
   // Set sane system defaults
-  cNorDefFam = "Nimbus Sans L";
-  cNorDefSty = "Regular";
-  cNorDefSiz = 8.0f;
+  cNorDefFam = "DejaVu Sans";
+  cNorDefSty = "Book";
+  cNorDefSiz = 8.5f;
 
-  cBldDefFam = "Nimbus Sans L";
+  cBldDefFam = "DejaVu Sans";
   cBldDefSty = "Bold";
   cBldDefSiz = 8.0f;
 
-  cFxdDefFam = "Syllable-Console";
-  cFxdDefSty = "Regular";
-  cFxdDefSiz = 8.0f;
+  cFxdDefFam = "DejaVu Sans Mono";
+  cFxdDefSty = "Book";
+  cFxdDefSiz = 8.5f;
 
-  cWndDefFam = "Nimbus Sans L";
-  cWndDefSty = "Regular";
+  cWndDefFam = "DejaVu Sans";
+  cWndDefSty = "Condensed";
   cWndDefSiz = 8.0f;
 
-  cTWdDefFam = "Nimbus Sans L";
-  cTWdDefSty = "Regular";
+  cTWdDefFam = "DejaVu Sans";
+  cTWdDefSty = "Condensed";
   cTWdDefSiz = 7.0f;
 
   // And redisplay drop downs
@@ -579,6 +579,7 @@ bool MainWindow::OkToQuit()
   os::Application::GetInstance()->PostMessage(os::M_QUIT);
   return true;
 }
+
 
 
 
