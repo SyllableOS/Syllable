@@ -538,7 +538,7 @@ modules
 ;	Extra goodies
 
 	apps/other/s-lang-2.1.1
-	apps/other/glib-2.14.0
+	apps/other/glib-2.14.4
 	apps/gnu/mc-4.6.1
 
 	apps/other/openssh-4.6p1
