@@ -1,3 +1,8 @@
+* January 15 2008, Kristian Van Der Vliet *
+
+Fixed the Network Preferences to better handle a hosts file which has tabs in.
+Patch from Andrew Kennan.
+
 * January 13 2008, Rick Caudill *
 
 Changed Font prefs to set the correct default fonts and also made the gui a little nicer by adding
