@@ -374,6 +374,7 @@ modules
 	apps/utils/Preferences/Locale
 	apps/utils/Preferences/Login
 	apps/utils/Preferences/Media
+	apps/utils/Preferences/Mouse
 	apps/utils/Preferences/NetworkNG
 	apps/utils/Preferences/Screen
 	apps/utils/Preferences/UsersAndGroups
