@@ -76,18 +76,17 @@ void Hosts::Load( void )
 			cLines.push_back( cSr.ReadLine() );
 		}
 
-		int nPos;
-
 		for( std::vector < String >::iterator i = cLines.begin(); i != cLines.end(  ); i++ )
 		{
 
 			if( ( *i ).Length() > 0 )
 			{
-				nPos = ( *i ).find( " " );
-				if( nPos != String::npos )
-				{
-					m_cEntries.push_back( HostEntry( ( *i ).substr( 0, nPos ), ( *i ).substr( nPos + 1 ) ) );
-				}
+				for( uint32 nPos = 0; nPos < ( *i ).Length(); nPos++ )
+					if( ( *i )[nPos] == ' ' || ( *i )[nPos] == '\t' )
+					{
+						m_cEntries.push_back( HostEntry( ( *i ).substr( 0, nPos ).Strip(), ( *i ).substr( nPos + 1 ).Strip() ) );
+						break;
+					}
 			}
 		}
 	}
@@ -104,9 +103,9 @@ void Hosts::Save( void )
 		for( HostEntryList_t::iterator i = m_cEntries.begin(); i != m_cEntries.end(  ); i++ )
 		{
 			cSw.Write( ( *i ).Address );
-
-			cSw.Write( ' ' );
+			cSw.Write( '\t' );
 			cSw.WriteLine( ( *i ).Aliases );
 		}
 	}
 }
+
