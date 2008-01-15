@@ -1,6 +1,6 @@
 #Makefile for Mouse
-COPTS = -c -fexceptions -Wall -o2
-LOPTS = -lsyllable
+CXXFLAGS += -c -fexceptions
+LIBS = -lsyllable
 
 CATALOGS = sv
 
@@ -9,18 +9,12 @@ OBJS = 	main.o appwindow.o
 OBJDIR := objs
 OBJS	:= $(addprefix $(OBJDIR)/,$(OBJS))
 
-# Rules
-$(OBJDIR)/%.o : %.c
-	@echo Compiling : $<
-	@$(CC) $(COPTS) $< -o $@
+EXE = Mouse
 
+# Rules
 $(OBJDIR)/%.o : %.cpp
 	@echo Compiling : $<
-	@$(CXX) $(COPTS) $< -o $@
-
-$(OBJDIR)/%.o : %.s
-	@echo Assembling : $<
-	@$(CC) $(COPTS) -x assembler-with-cpp $< -o $@
+	@$(CXX) $(CXXFLAGS) $< -o $@
 
 all : objs mouse
 
@@ -30,16 +24,23 @@ objs:
 
 mouse: $(OBJS)
 	@echo Linking...
-	@$(CXX) $(LOPTS)  $(OBJS) -o mouse
+	@$(CXX) $(LFLAGS) $(LIBS) $(OBJS) -o $(EXE)
+	@strip --strip-all $(EXE)
 	@echo Adding resources...
-	@rescopy -r mouse resources/mouse.catalog
-	@rescopy -a mouse images/*
+	@rescopy -r $(EXE) resources/mouse.catalog
+	@rescopy -a $(EXE) images/icon*.png
 	for CATALOG in $(CATALOGS);do \
 		echo $$CATALOG; \
-		rescopy -a mouse $$CATALOG/mouse.catalog=resources/$$CATALOG/mouse.catalog; \
+		rescopy -a $(EXE) $$CATALOG/mouse.catalog=resources/$$CATALOG/mouse.catalog; \
 	done;
 
 clean:
 	@echo Cleaning...
 	@rm -r $(OBJDIR)
-	@rm -f mouse
+	@rm -f $(EXE)
+
+install: $(EXE)
+	install -s $(EXE) $(IMAGE)/Applications/Preferences/$(EXE)
+
+dist: install
+
