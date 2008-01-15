@@ -39,3 +39,5 @@ ifndef subdir
 ports/%:
 	$(MAKE) $(PARALLELMFLAGS) -C $(@D) $(@F)
 endif
+
+run-program-prefix =

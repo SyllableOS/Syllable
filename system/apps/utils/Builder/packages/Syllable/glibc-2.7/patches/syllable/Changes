@@ -1,5 +1,10 @@
 Glibc Syllable Changelog
 
+* January 15th 2008 *
+
+	o Makeconfig: Over-ride the run-program-prefix variable so we don't try to invoke generated
+	  programs with our non-existent ld.so
+
 * December 26th 2007 *
 
 	o tld.c: TLD destructors are now handled in a POSIX compliant manner.
