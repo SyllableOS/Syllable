@@ -253,6 +253,10 @@ int pthread_getschedparam(pthread_t thread, int *foo, struct sched_param *param)
 
 void *pthread_getspecific(pthread_key_t key)
 {
+	/* get_tld() will perform additional validation */
+	if( key < TLD_USER )
+		return NULL;
+
 	return get_tld( key );
 }
 
@@ -399,6 +403,10 @@ int pthread_setschedparam(pthread_t thread, int foo, const struct sched_param *p
 
 int pthread_setspecific(pthread_key_t key, const void *data)
 {
+	/* set_tld() will perform additional validation */
+	if( key < TLD_USER )
+		return EINVAL;
+
 	set_tld( key, (void*)data );
 	return 0;
 }
