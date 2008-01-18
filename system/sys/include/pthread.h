@@ -21,6 +21,7 @@ extern "C"{
 #endif
 
 #include <atheos/types.h>
+#include <atheos/tld.h>
 
 #include <sched.h>
 #include <time.h>
@@ -49,6 +50,7 @@ extern "C"{
 */
 
 #define PTHREAD_STACK_MIN	1024 * 128
+#define PTHREAD_KEYS_MAX	TLD_SIZE
 
 /* Attribute definitions */
 /* Cancellation */
