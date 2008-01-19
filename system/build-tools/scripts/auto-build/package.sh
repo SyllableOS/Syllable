@@ -4,6 +4,7 @@ VERSION=0.6.6
 
 BUILD_DIR=$HOME/Build
 INSTALLER_DIR=$BUILD_DIR/Installer
+WORKING_COPY=$INSTALLER_DIR/stage/
 SCRIPTS_DIR=$HOME/bin
 LOG_DIR=$HOME/Logs
 
@@ -15,9 +16,7 @@ LOG_DIR=$HOME/Logs
 # FTP_USER
 # FTP_PASSWD
 
-FINISH_LOG=$LOG_DIR/finish-std-out-err.log
-FINISH_FAILURE_LOG=$LOG_DIR/finish-failures.log
-FINISH_SUMMARY_LOG=$LOG_DIR/finish-summary.log
+echo "Cleaning up old files"
 
 # Clean up from any previous build
 if [ -e $INSTALLER_DIR/base-syllable.zip ]
@@ -28,12 +27,22 @@ if [ -e $INSTALLER_DIR/files ]
 then
   rm -rf $INSTALLER_DIR/files
 fi
+if [ -e $WORKING_COPY ]
+then
+  rm -rf $WORKING_COPY
+fi
+mkdir -p $WORKING_COPY
 
-# XXXKV: Need to manually copy the GRUB files
-cd $BUILD_DIR/system/stage/image
+# Copy the build image to a working location
+echo "Creating a working copy"
+
+cp -a $BUILD_DIR/system/stage/image $WORKING_COPY
+
+# Copy the GRUB files
+cd $WORKING_COPY/image
 cp -a usr/grub/lib/grub/i386-pc/* boot/grub/
 
-# XXXKV: Need to manually move the CUPS PPDs
+# Move the CUPS PPDs
 if [ -e $INSTALLER_DIR/ppds ]
 then
   rm -rf $INSTALLER_DIR/ppds
@@ -46,26 +55,27 @@ do
 done
 
 # Generate the printers model list
-$SCRIPTS_DIR/printers.sh $INSTALLER_DIR/ppds/ $BUILD_DIR/system/stage/image/system/resources/cups/1.3.4/share/cups/model/
+$SCRIPTS_DIR/printers.sh $INSTALLER_DIR/ppds/ $WORKING_COPY/image/system/resources/cups/1.3.4/share/cups/model/
 
 # Finish the build and package it
-cd $BUILD_DIR/system
-image finish > $FINISH_LOG 2>&1
-#build log > $FINISH_LOG
-build log failures > $FINISH_FAILURE_LOG
-build log summary > $FINISH_SUMMARY_LOG
+cd $INSTALLER_DIR
+image finish
 sync
+
+echo "Packaging the development files"
 
 # Package up and remove the development files
 DEV_ARCHIVE="syllable-$VERSION-$(date +%Y%m%d)-development"
 
-cd $BUILD_DIR/system/stage/image/system
+cd $WORKING_COPY/image/system
 # Let external compression do its work
 zip -ry0 $INSTALLER_DIR/$DEV_ARCHIVE.zip development
 rm -rf development
 
+echo "Packaging the installation files"
+
 # Package the installation files
-cd $BUILD_DIR/system/stage/image
+cd $WORKING_COPY/image
 # Let external compression do its work
 zip -ry0 $INSTALLER_DIR/base-syllable.zip *
 sync
@@ -83,6 +93,8 @@ sync
 cd $INSTALLER_DIR
 ./build-cd.sh "base-syllable.zip" "$BUILD_DIR/Net-Binaries" "$VERSION"
 
+echo "Compressing the ISO"
+
 ISO="syllable-$VERSION-$(date +%Y%m%d).iso"
 
 if [ -e syllable*.iso.7z ]
@@ -95,9 +107,10 @@ fi
 MD5S=md5sums
 md5sum base-syllable.zip $ISO $ISO.7z $DEV_ARCHIVE.zip > $MD5S
 
+echo "Uploading"
+
 # Transfer the files
-FILES1=`printf "$FINISH_LOG $FINISH_FAILURE_LOG $FINISH_SUMMARY_LOG base-syllable.zip $ISO.7z\n"`
-FILES2=`printf "$DEV_ARCHIVE.zip $MD5S\n"`
+FILES=`printf "base-syllable.zip $ISO.7z $DEV_ARCHIVE.zip $MD5S\n"`
 if [ -n "$FTP_USER" ]
 then
   ftp -n $FTP_SERVER << END
@@ -105,8 +118,7 @@ quote user $FTP_USER
 quote pass $FTP_PASSWD
 passive
 prompt
-mput $FILES1
-mput $FILES2
+mput $FILES
 quit
 END
 fi
