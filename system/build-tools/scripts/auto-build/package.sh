@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION=0.6.5
+VERSION=0.6.6
 
 BUILD_DIR=$HOME/Build
 INSTALLER_DIR=$BUILD_DIR/Installer
@@ -39,14 +39,14 @@ then
   rm -rf $INSTALLER_DIR/ppds
 fi
 mkdir -p $INSTALLER_DIR/ppds
-cp -a system/resources/cups/1.2.10/share/cups/model/* $INSTALLER_DIR/ppds/
-for PPD in `find system/resources/cups/1.2.10/share/cups/model/ -name *.ppd*`
+cp -a system/resources/cups/1.3.4/share/cups/model/* $INSTALLER_DIR/ppds/
+for PPD in `find system/resources/cups/1.3.4/share/cups/model/ -name *.ppd*`
 do
   rm $PPD
 done
 
 # Generate the printers model list
-$SCRIPTS_DIR/printers.sh $INSTALLER_DIR/ppds/ $BUILD_DIR/system/stage/image/system/resources/cups/1.2.10/share/cups/model/
+$SCRIPTS_DIR/printers.sh $INSTALLER_DIR/ppds/ $BUILD_DIR/system/stage/image/system/resources/cups/1.3.4/share/cups/model/
 
 # Finish the build and package it
 cd $BUILD_DIR/system

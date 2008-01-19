@@ -46,7 +46,7 @@ FILES=(	"/etc/profile, /etc/profile" 															\
 		"/system/libraries/libpthread.so*, /system/libraries/."										\
 																									\
 		"/system/resources/gcc/4.1.2/lib/*.so*, /system/libraries/."								\
-		"/system/resources/glibc/2.4/lib/*.so*, /system/libraries/."								\
+		"/system/resources/glibc/2.7/lib/*.so*, /system/libraries/."								\
 		"/system/resources/zlib/1.2.3/lib/*.so*, /system/libraries/."								\
 																											\
 		"/system/appserver, /system/appserver"														\
