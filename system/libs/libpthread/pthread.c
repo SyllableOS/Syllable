@@ -213,10 +213,10 @@ int pthread_detach(pthread_t thread)
 
 int pthread_equal(pthread_t t1, pthread_t t2)
 {
-	if( PT_TID(t1) == PT_TID(t2) )
-		return 1;
+	if( t1 == NULL || t2 == NULL )
+		return 0;
 
-	return 0;
+	return ( PT_TID(t1) == PT_TID(t2) );
 }
 
 void pthread_exit(void *value_ptr)
