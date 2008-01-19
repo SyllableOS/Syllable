@@ -16,7 +16,7 @@ export TEMP=/tmp
 
 export SYSTEM=Linux
 export TERMINFO=/usr/share/terminfo
-#export TERM=linux
+export TERM=linux
 #export TERM=rxvt-16color
 #export TERM=xterm
 #export COLORTERM=rxvt-16color
@@ -45,14 +45,14 @@ alias m=less
 
 # Early init scripts run before user login and can include environment variables.
 
-for pkg_init in `ls /system/indexes/early-init/`
+for early_init in `ls /system/indexes/early-init/`
 do
-	source /system/indexes/early-init/$pkg_init
+	source /system/indexes/early-init/$early_init
 done
 
-for pkg_init in `ls /usr/indexes/early-init/`
+for early_init in `ls /usr/indexes/early-init/`
 do
-	source /usr/indexes/early-init/$pkg_init
+	source /usr/indexes/early-init/$early_init
 done
 
 # Do early user initialisation
