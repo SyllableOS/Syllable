@@ -83,32 +83,18 @@ int pthread_attr_getschedparam(const pthread_attr_t *attr, struct sched_param *p
 
 int pthread_attr_getschedpolicy(const pthread_attr_t *attr, int *sched)
 {
-	return( ENOSYS) ;		/* Not implemented */
+	if( attr == NULL || sched == NULL )
+		return EINVAL;
+
+	/* Always using SCHED_RR */
+	*sched = SCHED_RR;
+
+	return 0;	
 }
 
 int pthread_attr_getscope(const pthread_attr_t *attr, int *scope)
 {
 	return( ENOSYS );		/* Not implemented */
-}
-
-int pthread_attr_getstackaddr(const pthread_attr_t *attr, void **addr)
-{
-	if( attr == NULL )
-		return( EINVAL );
-
-	*addr = attr->__stackaddr;
-
-	return( 0 );
-}
-
-int pthread_attr_getstacksize(const pthread_attr_t *attr, size_t *size)
-{
-	if( attr == NULL )
-		return( EINVAL );
-
-	*size = attr->__stacksize;
-
-	return( 0 );
 }
 
 int pthread_attr_init(pthread_attr_t *attr)
@@ -215,41 +201,58 @@ int pthread_attr_setscope(pthread_attr_t *attr, int scope)
 	return( ENOSYS );		/* Not implemented */
 }
 
+int pthread_attr_getstackaddr(const pthread_attr_t *attr, void **addr)
+{
+	return pthread_attr_getstack( attr, addr, NULL );
+}
+
 int pthread_attr_setstackaddr(pthread_attr_t *attr, void *addr)
 {
-	if( attr == NULL )
-		return( EINVAL );
+	return pthread_attr_setstack( attr, addr, attr->__stacksize );
+}
 
-	if( addr < 0 )
-		return( EINVAL );
-
-	return ENOSYS;
+int pthread_attr_getstacksize(const pthread_attr_t *attr, size_t *size)
+{
+	return pthread_attr_getstack( attr, NULL, size );
 }
 
 int pthread_attr_setstacksize(pthread_attr_t *attr, size_t size)
 {
-	if( attr == NULL )
-		return( EINVAL );
-
-	if( size < 0 )
-		return( EINVAL );
-
-	return ENOSYS;
+	return pthread_attr_setstack( attr, attr->__stackaddr, size );
 }
 
 int pthread_attr_getstack(const pthread_attr_t *attr, void **stackaddr, size_t *stacksize)
 {
-	if( attr == NULL || stackaddr == NULL || stacksize == NULL )
+	thread_info info;
+	int ret;
+
+	if( attr == NULL )
 		return EINVAL;
 
-	*stackaddr = attr->__stackaddr;
-	*stacksize = attr->__stacksize;
+	ret = get_thread_info( get_thread_id(0), &info );
+	if( ret == EOK )
+	{
+		if( stackaddr != NULL )
+			*stackaddr = info.ti_stack;
+		if( stacksize != NULL )
+			*stacksize = info.ti_stack_size;
+	}
 
-	return 0;
+	return ret;
 }
 
 int pthread_attr_setstack(pthread_attr_t *attr, void *stackaddr, size_t stacksize)
 {
+	if( attr == NULL )
+		return EINVAL;
+
+	if( ( stackaddr == NULL ) || ( stacksize < PTHREAD_STACK_MIN ) )
+		return EINVAL;
+
+	/* XXXKV: Store the stack details but we can't adjust the stack on a running thread */
+	attr->__stackaddr = stackaddr;
+	attr->__stacksize = stacksize;
+
 	return ENOSYS;
 }
 
