@@ -1,28 +1,20 @@
-diff -ru gc-7.0-original/configure.ac gc-7.0/configure.ac
---- gc-7.0-original/configure.ac	2007-06-30 17:40:15.000000000 +0200
-+++ gc-7.0/configure.ac	2007-07-14 16:23:29.000000000 +0200
-@@ -72,10 +72,18 @@
- THREADDLLIBS=
- need_atomic_ops_asm=false
- ## Libraries needed to support dynamic loading and/or threads.
-+AC_MSG_WARN("-$THREADS-");
- case "$THREADS" in
-  no | none | single)
-     THREADS=none
-     ;;
-+ syllable)
-+	AC_MSG_WARN("syll!");
-+    THREADS=posix
-+    THREADDLLIBS=-lpthread
+diff -ur gc-7.0_orig/configure.ac gc-7.0/configure.ac
+--- gc-7.0_orig/configure.ac	2007-06-30 15:40:15.000000000 +0000
++++ gc-7.0/configure.ac	2008-01-21 19:57:27.000000000 +0000
+@@ -179,6 +179,10 @@
+ 	INCLUDES="$INCLUDES -pthread"
+ 	THREADDLLIBS="-lpthread -lrt"
+ 	;;
++     *-*-syllable*)
 +	AC_DEFINE(GC_SYLLABLE_THREADS)
 +	AC_DEFINE(_REENTRANT)
-+    ;;
-  posix | pthreads)
-     THREADS=posix
-     THREADDLLIBS=-lpthread
-diff -ru gc-7.0-original/include/private/gcconfig.h gc-7.0/include/private/gcconfig.h
---- gc-7.0-original/include/private/gcconfig.h	2007-06-29 02:00:09.000000000 +0200
-+++ gc-7.0/include/private/gcconfig.h	2007-07-14 16:24:07.000000000 +0200
++	;;
+       *)
+ 	AC_MSG_ERROR("Pthreads not supported by the GC on this platform.")
+ 	;;
+diff -ur gc-7.0_orig/include/private/gcconfig.h gc-7.0/include/private/gcconfig.h
+--- gc-7.0_orig/include/private/gcconfig.h	2007-06-29 00:00:09.000000000 +0000
++++ gc-7.0/include/private/gcconfig.h	2008-01-21 19:57:27.000000000 +0000
 @@ -460,6 +460,13 @@
  #   define NONSTOP
  #   define mach_type_known
@@ -37,28 +29,25 @@ diff -ru gc-7.0-original/include/private/gcconfig.h gc-7.0/include/private/gccon
  
  /* Feel free to add more clauses here */
  
-@@ -1297,6 +1304,20 @@
+@@ -1297,6 +1304,17 @@
  	 should be looked into some more */
  #      define NO_PTHREAD_TRYLOCK
  #   endif /* DARWIN */
 +#   ifdef SYLLABLE
 +#     define OS_TYPE "SYLLABLE"
-+#     include <atheos/threads.h>
-+#     define STACKBOTTOM SyllableStackBottom()
 +      extern int _etext[];
-+#	  define DATASTART (_etext)
-+	  extern int _end[];
-+#	  define DATAEND (_end)
-+      static ptr_t SyllableStackBottom(void) {
-+		thread_info sInfo;
-+		get_thread_info(get_thread_id(0L), &sInfo);
-+		return (ptr_t)((unsigned int)sInfo.ti_stack + sInfo.ti_stack_size);
-+      }
++#     define DATASTART (_etext)
++      extern int _end[];
++#     define DATAEND (_end)
++      extern ptr_t GC_SyllableStackBottom(void);
++#     define STACKBOTTOM GC_SyllableStackBottom()
++#     include <atheos/areas.h>
++#     define GETPAGESIZE() PAGE_SIZE
 +#   endif /* SYLLABLE */
  # endif
  
  # ifdef NS32K
-@@ -2144,6 +2165,9 @@
+@@ -2144,6 +2162,9 @@
  #   define INCLUDE_LINUX_THREAD_DESCR
  # endif
  
@@ -68,3 +57,20 @@ diff -ru gc-7.0-original/include/private/gcconfig.h gc-7.0/include/private/gccon
  # if defined(GC_IRIX_THREADS) && !defined(IRIX5)
  	--> inconsistent configuration
  # endif
+diff -ur gc-7.0_orig/os_dep.c gc-7.0/os_dep.c
+--- gc-7.0_orig/os_dep.c	2007-06-29 19:17:44.000000000 +0000
++++ gc-7.0/os_dep.c	2008-01-21 19:57:31.000000000 +0000
+@@ -4330,4 +4330,13 @@
+ 
+ #endif
+ 
++#if defined(SYLLABLE)
++#include <atheos/threads.h>
++ptr_t GC_SyllableStackBottom(void)
++{
++    thread_info info;
++    get_thread_info(get_thread_id(0L), &info);
++    return (ptr_t)((unsigned int)info.ti_stack + (info.ti_stack_size - 1));
++}
++#endif
+ 

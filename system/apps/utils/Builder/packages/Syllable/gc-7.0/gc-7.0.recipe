@@ -1,23 +1,21 @@
 authors
 	Henrik Isaksson
 	Kaj de Vos
-maintainers			Henrik Isaksson
-status				developing
+	Kristian Van Der Vliet
+maintainers
+	Henrik Isaksson
+	Kristian Van Der Vliet
+status				testing
 
 build-needs			autoconf
 
-patch
-	autoconf
-;	autoconf -o configure configure.ac
+; Doesn't seem to work fully
+make-shared
 
-_configure-options
+configure-options
 	--enable-threads=posix
 	--enable-cplusplus
-
-_make-targets
-	all
-	cords
-	c++
+	--enable-shared
 
 documentation
 	README.QUICK doc/README doc/README.environment doc/README.changes ChangeLog doc/README.contributors
