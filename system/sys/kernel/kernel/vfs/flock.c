@@ -109,6 +109,54 @@ static bool locks_conflict( FileLockRec_s *psNewLock, FileLockRec_s *psOldLock )
 	}
 }
 
+static bool maybe_replace_lock( FileLockRec_s *psNewLock, FileLockRec_s *psLock )
+{
+	bool bRet = false;
+
+	if( psNewLock->fl_nStart <= psLock->fl_nStart && psNewLock->fl_nEnd >= psLock->fl_nEnd )
+	{
+		/* Completely replace the existing lock */
+		psLock->fl_nStart = psNewLock->fl_nStart;
+		psLock->fl_nEnd = psNewLock->fl_nEnd;
+		psLock->fl_nMode = psNewLock->fl_nMode;
+
+		bRet = true;
+	}
+
+	return bRet;
+}
+
+static void adjust_lock( FileLockRec_s *psNewLock, FileLockRec_s *psOldLock )
+{
+	if( psNewLock->fl_nEnd >= psOldLock->fl_nStart )
+	{
+		psOldLock->fl_nStart = psNewLock->fl_nEnd + 1;
+	}
+	else if( psNewLock->fl_nStart <= psOldLock->fl_nEnd )
+	{
+		psOldLock->fl_nEnd = psNewLock->fl_nStart - 1;
+	}
+	psOldLock->fl_nMode = psNewLock->fl_nMode;
+}
+
+static void restart_waiters( Inode_s *psInode, FileLockRec_s *psNewLock )
+{
+	FileLockRec_s *psLock;
+
+	for ( psLock = psInode->i_psFirstLock; psLock != NULL; psLock = psLock->fl_psNextInInode )
+	{
+		if( locks_overlap( psLock, psNewLock ) )
+		{
+			/* Unlock the wait queue for the overlapping lock. This will cause the thread
+			   to wakeup and re-start the process of acquiring its lock. Note that because
+			   we currently hold g_hFileLockMutex, any threads we wake here wont restart
+			   until we're done and the new lock has been added. */
+
+			wakeup_sem( psLock->fl_hLockQueue, true );
+		}
+	}
+}
+
 static void add_lock_global( FileLockRec_s *psLock )
 {
 	psLock->fl_psNextGlobal = g_psFirstFileLock;
@@ -403,6 +451,7 @@ int lock_inode_record( Inode_s *psInode, off_t nStart, off_t nEnd, int nMode, bo
 	FileLockRec_s *psNewLock;
 	FileLockRec_s *psLock;
 	int nError = 0;
+	bool bDoAddLock = true;
 
 	psNewLock = create_file_lock( psInode, get_thread_id( NULL ), nMode );
 
@@ -426,6 +475,19 @@ int lock_inode_record( Inode_s *psInode, off_t nStart, off_t nEnd, int nMode, bo
 			nError = -EWOULDBLOCK;
 			break;
 		}
+		if( psNewLock->fl_hOwner == psLock->fl_hOwner )
+		{
+			if( maybe_replace_lock( psNewLock, psLock ) == true )
+				bDoAddLock = false;
+			else
+				adjust_lock( psNewLock, psLock );
+
+			/* The existing lock has changed, so other threads that may have been waiting on it
+			   may now be waiting on the wrong lock. */
+			restart_waiters( psInode, psNewLock );
+
+			break;
+		}
 		if ( detect_deadlock( psNewLock, psLock ) )
 		{
 			nError = -EDEADLK;
@@ -445,7 +507,7 @@ int lock_inode_record( Inode_s *psInode, off_t nStart, off_t nEnd, int nMode, bo
 		}
 		goto again;
 	}
-	if ( nError >= 0 )
+	if ( nError >= 0 && bDoAddLock )
 	{
 		nError = insert_lock( psInode, psNewLock, true );
 		if ( nError < 0 )
