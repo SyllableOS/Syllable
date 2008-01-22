@@ -38,7 +38,9 @@ install-tree
 	bin
 	lib
 	man
-;install				./install.sh
+install
+	true
+;	./install.sh
 install-files
 	bin/7z.so		lib/
 	bin/7z			bin/
