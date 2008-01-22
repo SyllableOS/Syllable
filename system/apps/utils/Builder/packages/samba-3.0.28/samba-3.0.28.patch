@@ -1,0 +1,56 @@
+diff -ur samba-3.0.28_orig/source/tdb/common/io.c samba-3.0.28/source/tdb/common/io.c
+--- samba-3.0.28_orig/source/tdb/common/io.c	2007-11-15 03:15:04.000000000 +0000
++++ samba-3.0.28/source/tdb/common/io.c	2008-01-21 21:36:39.000000000 +0000
+@@ -90,7 +90,7 @@
+ 	if (tdb->map_ptr) {
+ 		memcpy(off + (char *)tdb->map_ptr, buf, len);
+ 	} else {
+-		ssize_t written = pwrite(tdb->fd, buf, len, off);
++		ssize_t written = pwrite(tdb->fd, buf, len, (off_t)off);
+ 		if ((written != (ssize_t)len) && (written != -1)) {
+ 			/* try once more */
+ 			TDB_LOG((tdb, TDB_DEBUG_FATAL, "tdb_write: wrote only "
+@@ -99,7 +99,7 @@
+ 			errno = ENOSPC;
+ 			written = pwrite(tdb->fd, (void *)((char *)buf+written),
+ 					 len-written,
+-					 off+written);
++					 (off_t)off+written);
+ 		}
+ 		if (written == -1) {
+ 			/* Ensure ecode is set for log fn. */
+@@ -139,7 +139,7 @@
+ 	if (tdb->map_ptr) {
+ 		memcpy(buf, off + (char *)tdb->map_ptr, len);
+ 	} else {
+-		ssize_t ret = pread(tdb->fd, buf, len, off);
++		ssize_t ret = pread(tdb->fd, buf, len, (off_t)off);
+ 		if (ret != (ssize_t)len) {
+ 			/* Ensure ecode is set for log fn. */
+ 			tdb->ecode = TDB_ERR_IO;
+@@ -240,10 +240,10 @@
+ 
+ 	if (ftruncate(tdb->fd, size+addition) == -1) {
+ 		char b = 0;
+-		ssize_t written = pwrite(tdb->fd,  &b, 1, (size+addition) - 1);
++		ssize_t written = pwrite(tdb->fd,  &b, 1, (off_t)((size+addition) - 1));
+ 		if (written == 0) {
+ 			/* try once more, potentially revealing errno */
+-			written = pwrite(tdb->fd,  &b, 1, (size+addition) - 1);
++			written = pwrite(tdb->fd,  &b, 1, (off_t)((size+addition) - 1));
+ 		}
+ 		if (written == 0) {
+ 			/* again - give up, guessing errno */
+@@ -262,10 +262,10 @@
+ 	memset(buf, TDB_PAD_BYTE, sizeof(buf));
+ 	while (addition) {
+ 		size_t n = addition>sizeof(buf)?sizeof(buf):addition;
+-		ssize_t written = pwrite(tdb->fd, buf, n, size);
++		ssize_t written = pwrite(tdb->fd, buf, n, (off_t)size);
+ 		if (written == 0) {
+ 			/* prevent infinite loops: try _once_ more */
+-			written = pwrite(tdb->fd, buf, n, size);
++			written = pwrite(tdb->fd, buf, n, (off_t)size);
+ 		}
+ 		if (written == 0) {
+ 			/* give up, trying to provide a useful errno */
