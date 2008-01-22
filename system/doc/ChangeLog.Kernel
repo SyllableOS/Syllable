@@ -1,3 +1,10 @@
+* January 22, 2008, Kristian Van Der Vliet *
+
+Make fcntl() F_SETLK more standards compliant. A process can now call
+F_SETLK for a region which it already holds another lock on, and the existing
+lock will be replaced or adjusted to acomodate the new lock. This hasn't been
+heavily tested but it at least seems to be enough to get Samba 3.0.28 working.
+
 ---- 0.6.5 Released -------------------------------------------------------------------
 
 * January 3, 2008, Kristian Van Der Vliet *
