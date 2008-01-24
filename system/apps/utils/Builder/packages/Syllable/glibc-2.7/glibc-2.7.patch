@@ -1,6 +1,6 @@
-diff -urN glibc-2.7_orig/Makerules glibc-2.7/Makerules
---- glibc-2.7_orig/Makerules	2007-08-26 03:18:03.000000000 +0100
-+++ glibc-2.7/Makerules	2007-11-22 15:37:15.000000000 +0000
+diff -ur glibc-2.7_orig/Makerules glibc-2.7/Makerules
+--- glibc-2.7_orig/Makerules	2007-08-26 02:18:03.000000000 +0000
++++ glibc-2.7/Makerules	2008-01-24 15:53:25.000000000 +0000
 @@ -581,9 +581,15 @@
  endif
  endif
@@ -50,9 +50,9 @@ diff -urN glibc-2.7_orig/Makerules glibc-2.7/Makerules
  	) > $@.new
  	mv -f $@.new $@
  
-diff -urN glibc-2.7_orig/bits/stdio-lock.h glibc-2.7/bits/stdio-lock.h
---- glibc-2.7_orig/bits/stdio-lock.h	2003-08-29 20:56:11.000000000 +0100
-+++ glibc-2.7/bits/stdio-lock.h	2007-11-22 16:39:58.000000000 +0000
+diff -ur glibc-2.7_orig/bits/stdio-lock.h glibc-2.7/bits/stdio-lock.h
+--- glibc-2.7_orig/bits/stdio-lock.h	2003-08-29 19:56:11.000000000 +0000
++++ glibc-2.7/bits/stdio-lock.h	2008-01-24 15:53:25.000000000 +0000
 @@ -50,6 +50,8 @@
    _IO_cleanup_region_start ((void (*) (void *)) _IO_funlockfile, (_fp));      \
    _IO_flockfile (_fp)
@@ -62,87 +62,71 @@ diff -urN glibc-2.7_orig/bits/stdio-lock.h glibc-2.7/bits/stdio-lock.h
  # define _IO_release_lock(_fp) \
    _IO_funlockfile (_fp);						      \
    _IO_cleanup_region_end (0)
-diff -urN glibc-2.7_orig/configure glibc-2.7/configure
---- glibc-2.7_orig/configure	2007-10-18 12:22:23.000000000 +0100
-+++ glibc-2.7/configure	2007-11-22 15:38:59.000000000 +0000
-@@ -2282,7 +2282,7 @@
- # i586-linuxaout is mangled into i586-pc-linux-gnuaout
- linux*ecoff* | linux*aout* | gnu*aout* | gnu*ecoff*)
-   ;;
--gnu* | linux* | freebsd* | netbsd* | sysv4* | solaris2* | irix6*)
-+gnu* | linux* | freebsd* | netbsd* | sysv4* | solaris2* | irix6* | syllable*)
-   # These systems (almost) always use the ELF format.
-   elf=yes
-   ;;
-@@ -2557,7 +2557,7 @@
-   base_os=unix/bsd/bsd4.4 ;;
- osf* | sunos* | ultrix* | newsos* | dynix* | *bsd*)
-   base_os=unix/bsd ;;
+diff -ur glibc-2.7_orig/configure glibc-2.7/configure
+--- glibc-2.7_orig/configure	2007-10-18 11:22:23.000000000 +0000
++++ glibc-2.7/configure	2008-01-24 15:53:25.000000000 +0000
+@@ -2547,31 +2547,33 @@
+ sysdep_dir=$srcdir/sysdeps
+ { echo "$as_me:$LINENO: checking sysdep dirs" >&5
+ echo $ECHO_N "checking sysdep dirs... $ECHO_C" >&6; }
+-# Make sco3.2v4 become sco3.2.4 and sunos4.1.1_U1 become sunos4.1.1.U1.
+-os="`echo $os | sed 's/\([0-9A-Z]\)[v_]\([0-9A-Z]\)/\1.\2/g'`"
+-
+-case "$os" in
+-gnu*)
+-  base_os=mach/hurd ;;
+-netbsd* | 386bsd* | freebsd* | bsdi*)
+-  base_os=unix/bsd/bsd4.4 ;;
+-osf* | sunos* | ultrix* | newsos* | dynix* | *bsd*)
+-  base_os=unix/bsd ;;
 -sysv* | isc* | esix* | sco* | minix* | irix4* | linux*)
-+sysv* | isc* | esix* | sco* | minix* | irix4* | linux* | syllable*)
-   base_os=unix/sysv ;;
- irix6*)
-   base_os=unix/sysv/irix6/$os ;;
-@@ -5885,6 +5885,7 @@
-    { (exit 1); exit 1; }; }
-     fi
-   fi
-+  fi
+-  base_os=unix/sysv ;;
+-irix6*)
+-  base_os=unix/sysv/irix6/$os ;;
+-solaris[2-9]*)
+-  base_os=unix/sysv/sysv4 ;;
+-hpux*)
+-  base_os=unix/sysv/hpux/$os ;;
+-aix4.3*)
+-  base_os=unix/sysv/aix/aix4.3 ;;
+-none)
+-  base_os=standalone ;;
+-*)
+-  base_os='' ;;
+-esac
++if test x"$libc_config_ok" != xyes; then
++  # Make sco3.2v4 become sco3.2.4 and sunos4.1.1_U1 become sunos4.1.1.U1.
++  os="`echo $os | sed 's/\([0-9A-Z]\)[v_]\([0-9A-Z]\)/\1.\2/g'`"
++
++  case "$os" in
++  gnu*)
++    base_os=mach/hurd ;;
++  netbsd* | 386bsd* | freebsd* | bsdi*)
++    base_os=unix/bsd/bsd4.4 ;;
++  osf* | sunos* | ultrix* | newsos* | dynix* | *bsd*)
++    base_os=unix/bsd ;;
++  sysv* | isc* | esix* | sco* | minix* | irix4* | linux*)
++    base_os=unix/sysv ;;
++  irix6*)
++    base_os=unix/sysv/irix6/$os ;;
++  solaris[2-9]*)
++    base_os=unix/sysv/sysv4 ;;
++  hpux*)
++    base_os=unix/sysv/hpux/$os ;;
++  aix4.3*)
++    base_os=unix/sysv/aix/aix4.3 ;;
++  none)
++    base_os=standalone ;;
++  *)
++    base_os='' ;;
++  esac
++fi
  
-   if test $libc_cv_visibility_attribute = yes; then
-     { echo "$as_me:$LINENO: checking for broken __attribute__((visibility()))" >&5
-@@ -5981,6 +5982,9 @@
-     fi
-   fi
- 
-+  if test $host_os = syllable; then
-+    libc_cv_initfinit_array=no
-+  else
-   { echo "$as_me:$LINENO: checking for .preinit_array/.init_array/.fini_array support" >&5
- echo $ECHO_N "checking for .preinit_array/.init_array/.fini_array support... $ECHO_C" >&6; }
- if test "${libc_cv_initfini_array+set}" = set; then
-diff -urN glibc-2.7_orig/configure.in glibc-2.7/configure.in
---- glibc-2.7_orig/configure.in	2007-06-08 04:16:36.000000000 +0100
-+++ glibc-2.7/configure.in	2007-11-22 15:37:15.000000000 +0000
-@@ -283,7 +283,7 @@
- # i586-linuxaout is mangled into i586-pc-linux-gnuaout
- linux*ecoff* | linux*aout* | gnu*aout* | gnu*ecoff*)
-   ;;
--gnu* | linux* | freebsd* | netbsd* | sysv4* | solaris2* | irix6*)
-+gnu* | linux* | freebsd* | netbsd* | sysv4* | solaris2* | irix6* | syllable*)
-   # These systems (almost) always use the ELF format.
-   elf=yes
-   ;;
-@@ -538,7 +538,7 @@
-   base_os=unix/bsd/bsd4.4 ;;
- osf* | sunos* | ultrix* | newsos* | dynix* | *bsd*)
-   base_os=unix/bsd ;;
--sysv* | isc* | esix* | sco* | minix* | irix4* | linux*)
-+sysv* | isc* | esix* | sco* | minix* | irix4* | linux* | syllable*)
-   base_os=unix/sysv ;;
- irix6*)
-   base_os=unix/sysv/irix6/$os ;;
-@@ -1347,6 +1347,9 @@
-     fi
-   fi
- 
-+  if test $host_os = syllable; then
-+    libc_cv_initfinit_array=no
-+  else
-   AC_CACHE_CHECK(for .preinit_array/.init_array/.fini_array support,
- 		 libc_cv_initfini_array, [dnl
-   cat > conftest.c <<EOF
-@@ -1370,6 +1373,7 @@
-   if test $libc_cv_initfini_array != yes; then
-     AC_MSG_ERROR([Need linker with .init_array/.fini_array support.])
-   fi
-+  fi
- 
-   AC_CACHE_CHECK(for libunwind-support in compiler,
- 		 libc_cv_cc_with_libunwind, [
-diff -urN glibc-2.7_orig/csu/Makefile glibc-2.7/csu/Makefile
+ # For sunos4.1.1, try sunos4.1.1, then sunos4.1, then sunos4, then sunos.
+ tail=$os
+diff -ur glibc-2.7_orig/csu/Makefile glibc-2.7/csu/Makefile
 --- glibc-2.7_orig/csu/Makefile	2006-03-01 10:35:47.000000000 +0000
-+++ glibc-2.7/csu/Makefile	2007-11-22 16:06:28.000000000 +0000
++++ glibc-2.7/csu/Makefile	2008-01-24 15:53:25.000000000 +0000
 @@ -26,13 +26,14 @@
  
  subdir := csu
@@ -170,9 +154,9 @@ diff -urN glibc-2.7_orig/csu/Makefile glibc-2.7/csu/Makefile
  ifeq (yes,$(build-shared))
  extra-objs += S$(start-installed-name)
  install-lib += S$(start-installed-name)
-diff -urN glibc-2.7_orig/dirent/dirent.h glibc-2.7/dirent/dirent.h
---- glibc-2.7_orig/dirent/dirent.h	2005-09-28 22:12:48.000000000 +0100
-+++ glibc-2.7/dirent/dirent.h	2007-11-22 15:37:15.000000000 +0000
+diff -ur glibc-2.7_orig/dirent/dirent.h glibc-2.7/dirent/dirent.h
+--- glibc-2.7_orig/dirent/dirent.h	2005-09-28 21:12:48.000000000 +0000
++++ glibc-2.7/dirent/dirent.h	2008-01-24 15:53:25.000000000 +0000
 @@ -203,6 +203,13 @@
  			struct dirent64 **__restrict __result)
       __nonnull ((1, 2, 3));
@@ -187,9 +171,9 @@ diff -urN glibc-2.7_orig/dirent/dirent.h glibc-2.7/dirent/dirent.h
  #endif	/* POSIX or misc */
  
  /* Rewind DIRP to the beginning of the directory.  */
-diff -urN glibc-2.7_orig/inet/inet_ntoa.c glibc-2.7/inet/inet_ntoa.c
---- glibc-2.7_orig/inet/inet_ntoa.c	2006-04-09 06:50:08.000000000 +0100
-+++ glibc-2.7/inet/inet_ntoa.c	2007-11-23 16:57:55.000000000 +0000
+diff -ur glibc-2.7_orig/inet/inet_ntoa.c glibc-2.7/inet/inet_ntoa.c
+--- glibc-2.7_orig/inet/inet_ntoa.c	2006-04-09 05:50:08.000000000 +0000
++++ glibc-2.7/inet/inet_ntoa.c	2008-01-24 15:53:25.000000000 +0000
 @@ -21,10 +21,14 @@
  #include <stdio.h>
  #include <stdlib.h>
@@ -289,9 +273,9 @@ diff -urN glibc-2.7_orig/inet/inet_ntoa.c glibc-2.7/inet/inet_ntoa.c
 +
 +#endif
 +
-diff -urN glibc-2.7_orig/intl/loadmsgcat.c glibc-2.7/intl/loadmsgcat.c
---- glibc-2.7_orig/intl/loadmsgcat.c	2007-09-24 17:06:45.000000000 +0100
-+++ glibc-2.7/intl/loadmsgcat.c	2007-11-22 15:37:15.000000000 +0000
+diff -ur glibc-2.7_orig/intl/loadmsgcat.c glibc-2.7/intl/loadmsgcat.c
+--- glibc-2.7_orig/intl/loadmsgcat.c	2007-09-24 16:06:45.000000000 +0000
++++ glibc-2.7/intl/loadmsgcat.c	2008-01-24 15:53:25.000000000 +0000
 @@ -836,11 +836,11 @@
        fd = -1;
        use_mmap = 1;
@@ -305,9 +289,9 @@ diff -urN glibc-2.7_orig/intl/loadmsgcat.c glibc-2.7/intl/loadmsgcat.c
      {
        size_t to_read;
        char *read_ptr;
-diff -urN glibc-2.7_orig/io/openat.c glibc-2.7/io/openat.c
---- glibc-2.7_orig/io/openat.c	2007-05-25 00:53:52.000000000 +0100
-+++ glibc-2.7/io/openat.c	2007-11-23 13:12:36.000000000 +0000
+diff -ur glibc-2.7_orig/io/openat.c glibc-2.7/io/openat.c
+--- glibc-2.7_orig/io/openat.c	2007-05-24 23:53:52.000000000 +0000
++++ glibc-2.7/io/openat.c	2008-01-24 15:53:25.000000000 +0000
 @@ -79,7 +79,7 @@
    if (oflag & O_CREAT)
      __fortify_fail ("invalid openat call: O_CREAT without mode");
@@ -317,9 +301,9 @@ diff -urN glibc-2.7_orig/io/openat.c glibc-2.7/io/openat.c
  }
  stub_warning (__openat_2)
  
-diff -urN glibc-2.7_orig/io/openat64.c glibc-2.7/io/openat64.c
---- glibc-2.7_orig/io/openat64.c	2007-05-25 00:53:52.000000000 +0100
-+++ glibc-2.7/io/openat64.c	2007-11-23 13:26:45.000000000 +0000
+diff -ur glibc-2.7_orig/io/openat64.c glibc-2.7/io/openat64.c
+--- glibc-2.7_orig/io/openat64.c	2007-05-24 23:53:52.000000000 +0000
++++ glibc-2.7/io/openat64.c	2008-01-24 15:53:25.000000000 +0000
 @@ -79,7 +79,7 @@
    if (oflag & O_CREAT)
      __fortify_fail ("invalid openat64 call: O_CREAT without mode");
@@ -329,9 +313,9 @@ diff -urN glibc-2.7_orig/io/openat64.c glibc-2.7/io/openat64.c
  }
  stub_warning (__openat_2)
  
-diff -urN glibc-2.7_orig/locale/global-locale.c glibc-2.7/locale/global-locale.c
---- glibc-2.7_orig/locale/global-locale.c	2006-10-28 00:11:43.000000000 +0100
-+++ glibc-2.7/locale/global-locale.c	2007-11-22 15:37:15.000000000 +0000
+diff -ur glibc-2.7_orig/locale/global-locale.c glibc-2.7/locale/global-locale.c
+--- glibc-2.7_orig/locale/global-locale.c	2006-10-27 23:11:43.000000000 +0000
++++ glibc-2.7/locale/global-locale.c	2008-01-24 15:53:25.000000000 +0000
 @@ -67,9 +67,9 @@
  __libc_tsd_define (, LOCALE)
  /* This is a bad kludge presuming the variable name used by the macros.
@@ -345,9 +329,9 @@ diff -urN glibc-2.7_orig/locale/global-locale.c glibc-2.7/locale/global-locale.c
  __typeof (__libc_tsd_LOCALE_data) __libc_tsd_LOCALE_data = &_nl_global_locale;
  # endif
  #endif
-diff -urN glibc-2.7_orig/malloc/Makefile glibc-2.7/malloc/Makefile
---- glibc-2.7_orig/malloc/Makefile	2007-05-21 17:12:25.000000000 +0100
-+++ glibc-2.7/malloc/Makefile	2007-11-22 15:37:15.000000000 +0000
+diff -ur glibc-2.7_orig/malloc/Makefile glibc-2.7/malloc/Makefile
+--- glibc-2.7_orig/malloc/Makefile	2007-05-21 16:12:25.000000000 +0000
++++ glibc-2.7/malloc/Makefile	2008-01-24 15:53:25.000000000 +0000
 @@ -42,12 +42,16 @@
  install-lib := libmcheck.a
  non-lib.a := libmcheck.a
@@ -374,9 +358,9 @@ diff -urN glibc-2.7_orig/malloc/Makefile glibc-2.7/malloc/Makefile
  CPPFLAGS-memusagestat = -DNOT_IN_libc
  
  # The Perl script to analyze the output of the mtrace functions.
-diff -urN glibc-2.7_orig/rt/Makefile glibc-2.7/rt/Makefile
---- glibc-2.7_orig/rt/Makefile	2007-09-15 23:30:16.000000000 +0100
-+++ glibc-2.7/rt/Makefile	2007-11-22 15:37:15.000000000 +0000
+diff -ur glibc-2.7_orig/rt/Makefile glibc-2.7/rt/Makefile
+--- glibc-2.7_orig/rt/Makefile	2007-09-15 22:30:16.000000000 +0000
++++ glibc-2.7/rt/Makefile	2008-01-24 15:53:25.000000000 +0000
 @@ -69,7 +69,7 @@
  # a statically-linked program that hasn't already loaded it.
  $(objpfx)librt.so: $(common-objpfx)libc.so $(common-objpfx)libc_nonshared.a \
@@ -386,88 +370,9 @@ diff -urN glibc-2.7_orig/rt/Makefile glibc-2.7/rt/Makefile
  
  ifeq (yes,$(build-shared))
  $(addprefix $(objpfx),$(tests)): $(objpfx)librt.so $(shared-thread-library)
-diff -urN glibc-2.7_orig/shlib-versions glibc-2.7/shlib-versions
---- glibc-2.7_orig/shlib-versions	2006-03-06 01:25:35.000000000 +0000
-+++ glibc-2.7/shlib-versions	2007-11-22 15:37:15.000000000 +0000
-@@ -31,6 +31,7 @@
- x86_64-.*-linux.*       DEFAULT			GLIBC_2.2.5
- powerpc64-.*-linux.*	DEFAULT			GLIBC_2.3
- .*-.*-gnu-gnu.*		DEFAULT			GLIBC_2.2.6
-+.*-.*-syllable.*	DEFAULT			GLIBC_2.3
- 
- # Configuration		WORDSIZE[32|64]		Alternate configuration
- # -------------		----------		-----------------------
-@@ -53,6 +54,7 @@
- sh.*-.*-linux.*		libm=6			GLIBC_2.2
- .*-.*-linux.*		libm=6
- .*-.*-gnu-gnu.*		libm=6
-+.*-.*-syllable.*	libm=2
- 
- # We provide libc.so.6 for Linux kernel versions 2.0 and later.
- alpha.*-.*-linux.*	libc=6.1
-@@ -60,6 +62,7 @@
- sh.*-.*-linux.*		libc=6			GLIBC_2.2
- sparc64.*-.*-linux.*	libc=6			GLIBC_2.2
- .*-.*-linux.*		libc=6
-+.*-.*-syllable.*	libc=2
- 
- # libmachuser.so.1 corresponds to mach/*.defs as of Utah's UK22 release.
- .*-.*-gnu-gnu.*		libmachuser=1
-@@ -91,16 +94,25 @@
- # So far the -lutil interface is the same on all platforms, except for the
- # `struct utmp' format, which depends on libc.
- alpha.*-.*-linux.*	libutil=1.1
-+.*-.*-syllable.*	libutil=1.1
- .*-.*-.*		libutil=1
- 
- # Version number 2 is used on other systems for the BIND 4.9.5 resolver
- # interface.
- alpha.*-.*-linux.*	libresolv=2.1
-+.*-.*-syllable.*	libresolv=2.1
- .*-.*-.*		libresolv=2
- 
- # Interface revision of nss_* modules.  This must match NSS_SHLIB_REVISION
- # in nss/nsswitch.h, which determines the library names used for service
- # names given in /etc/nsswitch.conf.
-+.*-.*-syllable.*	libnss_files=2.1
-+.*-.*-syllable.*	libnss_dns=2.1
-+.*-.*-syllable.*	libnss_compat=2.1
-+.*-.*-syllable.*	libnss_nis=2.1
-+.*-.*-syllable.*	libnss_nisplus=2.1
-+.*-.*-syllable.*	libnss_ldap=2.1
-+.*-.*-syllable.*	libnss_hesiod=2.1
- .*-.*-.*		libnss_files=2
- .*-.*-.*		libnss_dns=2
- .*-.*-.*		libnss_compat=2
-@@ -111,10 +123,12 @@
- 
- # Version for libnsl with YP and NIS+ functions.
- alpha.*-.*-linux.*	libnsl=1.1
-+.*-.*-syllable.*	libnsl=1.1
- .*-.*-.*		libnsl=1
- 
- # This defines the shared library version numbers we will install.
- alpha.*-.*-linux.*	libcrypt=1.1
-+.*-.*-syllable.*	libcrypt=1.1
- .*-.*-.*		libcrypt=1
- 
- # The gross patch for programs assuming broken locale implementations.
-@@ -122,6 +136,7 @@
- ia64-.*-.*		libBrokenLocale=1	GLIBC_2.2
- sh.*-.*-.*		libBrokenLocale=1	GLIBC_2.2
- sparc64.*-.*-.*		libBrokenLocale=1	GLIBC_2.2
-+.*-.*-syllable.*	libBrokenLocale=1.1
- .*-.*-.*		libBrokenLocale=1
- 
- # The real-time library from POSIX.1b.
-@@ -129,3 +144,4 @@
- 
- # The asynchronous name lookup library.
- .*-.*-.*		libanl=1
-+
-diff -urN glibc-2.7_orig/string/strerror_l.c glibc-2.7/string/strerror_l.c
+diff -ur glibc-2.7_orig/string/strerror_l.c glibc-2.7/string/strerror_l.c
 --- glibc-2.7_orig/string/strerror_l.c	2007-03-17 17:09:07.000000000 +0000
-+++ glibc-2.7/string/strerror_l.c	2007-11-23 15:33:25.000000000 +0000
++++ glibc-2.7/string/strerror_l.c	2008-01-24 15:53:25.000000000 +0000
 @@ -24,7 +24,7 @@
  #include <sys/param.h>
  
@@ -477,9 +382,9 @@ diff -urN glibc-2.7_orig/string/strerror_l.c glibc-2.7/string/strerror_l.c
  
  
  static const char *
-diff -urN glibc-2.7_orig/sunrpc/Makefile glibc-2.7/sunrpc/Makefile
---- glibc-2.7_orig/sunrpc/Makefile	2006-10-18 20:25:38.000000000 +0100
-+++ glibc-2.7/sunrpc/Makefile	2007-11-22 15:37:15.000000000 +0000
+diff -ur glibc-2.7_orig/sunrpc/Makefile glibc-2.7/sunrpc/Makefile
+--- glibc-2.7_orig/sunrpc/Makefile	2006-10-18 19:25:38.000000000 +0000
++++ glibc-2.7/sunrpc/Makefile	2008-01-24 15:53:25.000000000 +0000
 @@ -99,6 +99,7 @@
  endif
  
@@ -496,9 +401,9 @@ diff -urN glibc-2.7_orig/sunrpc/Makefile glibc-2.7/sunrpc/Makefile
  
  CFLAGS-xbootparam_prot.c = -Wno-unused $(PIC-ccflag)
  CFLAGS-xnlm_prot.c = -Wno-unused $(PIC-ccflag)
-diff -urN glibc-2.7_orig/sysdeps/posix/getaddrinfo.c glibc-2.7/sysdeps/posix/getaddrinfo.c
---- glibc-2.7_orig/sysdeps/posix/getaddrinfo.c	2007-10-17 17:05:12.000000000 +0100
-+++ glibc-2.7/sysdeps/posix/getaddrinfo.c	2007-11-23 11:38:13.000000000 +0000
+diff -ur glibc-2.7_orig/sysdeps/posix/getaddrinfo.c glibc-2.7/sysdeps/posix/getaddrinfo.c
+--- glibc-2.7_orig/sysdeps/posix/getaddrinfo.c	2007-10-17 16:05:12.000000000 +0000
++++ glibc-2.7/sysdeps/posix/getaddrinfo.c	2008-01-24 15:53:25.000000000 +0000
 @@ -2064,7 +2064,7 @@
  	  __libc_lock_define_initialized (static, lock);
  
@@ -508,39 +413,31 @@ diff -urN glibc-2.7_orig/sysdeps/posix/getaddrinfo.c glibc-2.7/sysdeps/posix/get
  	    gaiconf_reload ();
  	  qsort (results, nresults, sizeof (results[0]), rfc3484_sort);
  	  __libc_lock_unlock (lock);
-diff -urN glibc-2.7_orig/timezone/Makefile glibc-2.7/timezone/Makefile
---- glibc-2.7_orig/timezone/Makefile	2007-07-28 21:33:11.000000000 +0100
-+++ glibc-2.7/timezone/Makefile	2007-11-22 15:37:15.000000000 +0000
-@@ -39,6 +39,8 @@
- # northamerica.
- distribute += $(tzfiles) leapseconds pacificnew simplebackw
+diff -ur glibc-2.7_orig/timezone/zic.c glibc-2.7/timezone/zic.c
+--- glibc-2.7_orig/timezone/zic.c	2007-10-05 21:57:53.000000000 +0000
++++ glibc-2.7/timezone/zic.c	2008-01-24 15:53:35.000000000 +0000
+@@ -101,7 +101,7 @@
  
-+include ../Makeconfig	# Get objpfx & config-os defined so we can use it below.
-+
- generated := $(addprefix z.,$(tzfiles))
- install-sbin := zic zdump
+ extern int	getopt P((int argc, char * const argv[],
+ 			const char * options));
+-extern int	link P((const char * fromname, const char * toname));
++extern int	symlink P((const char * fromname, const char * toname));
+ extern char *	optarg;
+ extern int	optind;
  
-@@ -46,8 +48,6 @@
+@@ -655,13 +655,13 @@
+ 	*/
+ 	if (!itsdir(toname))
+ 		(void) remove(toname);
+-	if (link(fromname, toname) != 0) {
++	if (symlink(fromname, toname) != 0) {
+ 		int	result;
  
- all: # Make this the default target; it will be defined in Rules.
+ 		if (mkdirs(toname) != 0)
+ 			exit(EXIT_FAILURE);
  
--include ../Makeconfig	# Get objpfx defined so we can use it below.
--
- CPPFLAGS-zic = -DNOT_IN_libc
- 
- # z.* use this variable.
-@@ -70,12 +70,14 @@
- 						     $(posixrules-file)))
- 
- ifeq ($(cross-compiling),no)
-+ifneq (syllable,$(config-os))
- # Don't try to install the zoneinfo files since we can't run zic.
- install-others = $(addprefix $(inst_zonedir)/,$(zonenames) \
- 					      $(zonenames:%=posix/%) \
- 					      $(zonenames:%=right/%)) \
- 		 $(installed-localtime-file) $(installed-posixrules-file)
- endif
-+endif
- 
- ifeq ($(have-ksh),yes)
- install-others += $(inst_zonedir)/iso3166.tab $(inst_zonedir)/zone.tab
+-		result = link(fromname, toname);
++		result = symlink(fromname, toname);
+ #if HAVE_SYMLINK
+ 		if (result != 0 &&
+ 			access(fromname, F_OK) == 0 &&

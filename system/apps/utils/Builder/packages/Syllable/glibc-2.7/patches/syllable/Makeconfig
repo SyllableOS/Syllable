@@ -41,3 +41,5 @@ ports/%:
 endif
 
 run-program-prefix =
+built-program-cmd = $(built-program-file)
+

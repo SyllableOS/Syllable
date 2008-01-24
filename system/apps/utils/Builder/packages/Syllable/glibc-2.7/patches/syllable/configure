@@ -1,0 +1,14 @@
+# This is a shell script fragment sourced by the main configure script.
+# We're obliged to give here the canonical name that will be used to
+# as a subdirectory to search for in other add-ons' sysdeps trees.
+
+libc_add_on_canonical=syllable
+
+case "$host_os" in
+  syllable*)
+    elf=yes
+    base_os=unix/sysv
+    libc_config_ok=yes
+  ;;
+esac
+

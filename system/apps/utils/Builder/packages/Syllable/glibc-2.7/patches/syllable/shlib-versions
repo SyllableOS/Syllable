@@ -1,0 +1,77 @@
+# This file defines the shared library version numbers we will install.
+
+# The following lines list filename patterns matching canonical configurations,
+# and the associated versions to use for various libraries.  The entire
+# list is processed, with earlier entries taking precedence over later
+# entries.  So loose patterns at the end of the list can give defaults.
+
+# This file can use cpp-style conditionals starting with % instead of #
+# to test the symbols defined in config.h by configure.
+
+# In the optional third column, there can one or more symbol set names
+# listed, which must be in ascending version order reading left to right
+# and must appear in this same order in the Versions.def file.  Each listed
+# version subsumes all prior versions back to the previous listed version.
+#
+# An entry with DEFAULT in the second column gives a default third column
+# to apply on matching configurations when the matching entry for a particular
+# library has no third column.  The defaults must precede the entries they
+# apply to.
+#
+# An entry with WORDSIZE* in the second column gives an alternate
+# configuration tuple whose macros will be conditionally defined in
+# gnu/lib-names.h; @CPU@, @VENDOR@, @OS@ can be used in the third
+# column to compose the alternate tuple matched against the patterns here.
+
+# Configuration		DEFAULT			Earliest symbol set
+# -------------		---------------		------------------------------
+
+.*-.*-syllable.*	DEFAULT			GLIBC_2.3
+
+# Configuration		WORDSIZE[32|64]		Alternate configuration
+# -------------		----------		-----------------------
+x86_64-.*-.*		WORDSIZE32		i686-@VENDOR@-@OS@
+i.86-.*-.*		WORDSIZE64		x86_64-@VENDOR@-@OS@
+s390x-.*-.*		WORDSIZE32		s390-@VENDOR@-@OS@
+s390-.*-.*		WORDSIZE64		s390x-@VENDOR@-@OS@
+powerpc64-.*-.*		WORDSIZE32		powerpc-@VENDOR@-@OS@
+powerpc.*-.*-.*		WORDSIZE64		powerpc64-@VENDOR@-@OS@
+sparc64.*-.*-.*		WORDSIZE32		sparc-@VENDOR@-@OS@
+sparc.*-.*-.*		WORDSIZE64		sparc64-@VENDOR@-@OS@
+
+# Configuration		Library=version		Earliest symbol set (optional)
+# -------------		---------------		------------------------------
+
+# The interface to -lm depends mostly only on cpu, not on operating system.
+.*-.*-syllable.*	libm=2
+
+# We provide libc.so.6 for Linux kernel versions 2.0 and later.
+.*-.*-syllable.*	libc=2
+
+# The dynamic loader also requires different names.
+.*-.*-syllable.*	libutil=1.1
+
+# Version number 2 is used on other systems for the BIND 4.9.5 resolver
+# interface.
+.*-.*-syllable.*	libresolv=2.1
+
+# Interface revision of nss_* modules.  This must match NSS_SHLIB_REVISION
+# in nss/nsswitch.h, which determines the library names used for service
+# names given in /etc/nsswitch.conf.
+.*-.*-syllable.*	libnss_files=2.1
+.*-.*-syllable.*	libnss_dns=2.1
+.*-.*-syllable.*	libnss_compat=2.1
+.*-.*-syllable.*	libnss_nis=2.1
+.*-.*-syllable.*	libnss_nisplus=2.1
+.*-.*-syllable.*	libnss_ldap=2.1
+.*-.*-syllable.*	libnss_hesiod=2.1
+
+# Version for libnsl with YP and NIS+ functions.
+.*-.*-syllable.*	libnsl=1.1
+
+# This defines the shared library version numbers we will install.
+.*-.*-syllable.*	libcrypt=1.1
+
+# The gross patch for programs assuming broken locale implementations.
+.*-.*-syllable.*	libBrokenLocale=1.1
+

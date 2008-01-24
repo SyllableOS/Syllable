@@ -1,5 +1,15 @@
 Glibc Syllable Changelog
 
+* January 24th 2008 *
+
+	o Makeconfig: Over-ride built-program-cmd
+	o configure: Un-merged the *-*-syllable* handling patches to..
+	o syllable/configure: Here. New file.
+	o shlib-versions: Un-merged the *-*-syllable* definitions to..
+	o syllable/shlib-versions: Here. New file.
+	o timezone/zic.c: Use symlink() instead of link()
+	o timezone/Makefile: Removed the old patches. We now process and install the zoneinfo data.
+
 * January 15th 2008 *
 
 	o Makeconfig: Over-ride the run-program-prefix variable so we don't try to invoke generated
