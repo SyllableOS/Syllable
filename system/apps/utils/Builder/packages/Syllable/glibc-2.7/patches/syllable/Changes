@@ -1,5 +1,10 @@
 Glibc Syllable Changelog
 
+* January 27th 2008 *
+
+	o aio_cancel.c, aio_read64.c, aio_read.c, aio_write64.c, aio_write.c: New files. Emulate
+	  basic async IO using pread() & pwrite()
+
 * January 24th 2008 *
 
 	o Makeconfig: Over-ride built-program-cmd
