@@ -20,6 +20,7 @@
 
 #include <posix/errno.h>
 #include <posix/wait.h>
+#include <posix/time.h>
 
 #include <atheos/types.h>
 #include <atheos/sigcontext.h>
@@ -39,10 +40,8 @@
 
 static const unsigned long _BLOCKABLE = ~( (1L << (SIGKILL - 1)) | (1L << (SIGSTOP - 1)) );
 
-
+/* alarm() */
 typedef struct _AlarmNode AlarmNode_s;
-
-
 struct _AlarmNode
 {
 	AlarmNode_s *psNext;
@@ -54,8 +53,24 @@ struct _AlarmNode
 static AlarmNode_s *g_psFirstAlarmNode = NULL;
 static AlarmNode_s *g_psFirstFreeAlarmNode = NULL;
 
-//static spinlock_t g_nAlarmListSpinLock = 0;
 SPIN_LOCK( g_sAlarmListSpinLock, "alarm_list_slock" );
+
+/* POSIX timers */
+typedef struct _TimerNode TimerNode_s;
+struct _TimerNode
+{
+	TimerNode_s *psNext;
+	TimerNode_s *psPrev;
+	uint64 nTimeOut;
+	thread_id hThread;
+	int nWhich;
+	struct kernel_itimerval sValue;
+};
+
+static TimerNode_s *g_psFirstTimerNode = NULL;
+
+SPIN_LOCK( g_sTimerListSpinLock, "timer_list_slock" );
+
 
 extern int save_i387( struct _fpstate *buf );
 extern void restore_i387( struct _fpstate *buf );
@@ -725,6 +740,237 @@ unsigned int sys_alarm( const unsigned int nSeconds )
 		return ( 0 );
 	}
 	return ( -ENOMEM );
+}
+
+static status_t remove_timer( int nWhich, TimerNode_s **ppsOld )
+{
+	TimerNode_s *psNode = NULL;
+	TimerNode_s **ppsTmp;
+	int nOldFlags;
+	thread_id hThread = sys_get_thread_id( NULL );
+	status_t nError = EOK;
+
+	nOldFlags = spinlock_disable( &g_sTimerListSpinLock );
+
+	for( ppsTmp = &g_psFirstTimerNode; *ppsTmp != NULL; ppsTmp = &( *ppsTmp )->psNext )
+	{
+		if( ( *ppsTmp )->hThread == hThread && ( *ppsTmp )->nWhich == nWhich )
+		{
+			psNode = *ppsTmp;
+
+			if( psNode->psNext != NULL )
+				psNode->psNext->psPrev = psNode->psPrev;
+			if( g_psFirstTimerNode == psNode )
+				g_psFirstTimerNode = NULL;
+
+			break;
+		}
+	}
+
+	*ppsOld = psNode;
+	if( NULL == psNode )
+		nError = ESRCH;
+
+	spinunlock_enable( &g_sTimerListSpinLock, nOldFlags );
+	return nError;
+}
+
+static status_t insert_timer( int nWhich, struct kernel_itimerval *psValue )
+{
+	TimerNode_s *psNode = NULL;
+	TimerNode_s *psTmp;
+	int nOldFlags;
+	thread_id hThread = sys_get_thread_id( NULL );
+	status_t nError = EOK;
+
+	nOldFlags = spinlock_disable( &g_sTimerListSpinLock );
+
+	psNode = kmalloc( sizeof( TimerNode_s ), MEMF_KERNEL | MEMF_OKTOFAIL );
+	if( NULL == psNode )
+	{
+		nError = ENOMEM;
+	}
+	else
+	{
+		bigtime_t nTimeOut;
+
+		memcpy( &psNode->sValue, psValue, sizeof( struct kernel_itimerval ) );
+
+		nTimeOut = get_system_time();
+		nTimeOut += (psNode->sValue.it_value.tv_sec * 1000000);
+		nTimeOut += psNode->sValue.it_value.tv_usec;
+
+		psNode->nTimeOut = nTimeOut;
+		psNode->hThread = hThread;
+		psNode->nWhich = nWhich;
+
+		nOldFlags = spinlock_disable( &g_sTimerListSpinLock );
+
+		/* Is this the first timer in the list? */
+		if ( g_psFirstTimerNode == NULL || psNode->nTimeOut <= g_psFirstTimerNode->nTimeOut )
+		{
+			psNode->psPrev = NULL;
+			psNode->psNext = g_psFirstTimerNode;
+			if ( NULL != g_psFirstTimerNode )
+			{
+				g_psFirstTimerNode->psPrev = psNode;
+			}
+			g_psFirstTimerNode = psNode;
+			goto done;
+		}
+
+		/* No. Find the correct position and insert the new timer */
+		for( psTmp = g_psFirstTimerNode;; psTmp = psTmp->psNext )
+		{
+			if( psNode->nTimeOut < psTmp->nTimeOut )
+			{
+				psNode->psPrev = psTmp->psPrev;
+				psNode->psNext = psTmp;
+
+				if( psTmp->psPrev != NULL )
+					psTmp->psPrev->psNext = psNode;
+				psTmp->psPrev = psNode;
+				goto done;
+			}
+			if( psTmp->psNext == NULL )
+				break;
+		}
+
+		/* Add to end of list */
+		psNode->psNext = NULL;
+		psNode->psPrev = psTmp;
+		psTmp->psNext = psNode;
+	}
+
+done:
+	spinunlock_enable( &g_sTimerListSpinLock, nOldFlags );
+	return nError;
+}
+
+void send_timer_signals( bigtime_t nCurTime )
+{
+	TimerNode_s *psNode;
+	int nOldFlags;
+	int i = 0;
+
+	nOldFlags = spinlock_disable( &g_sTimerListSpinLock );
+
+	for( psNode = g_psFirstTimerNode; psNode != NULL; psNode = psNode->psNext )
+	{
+		Thread_s *psThread;
+		int nSignal = 0;
+
+		if( psNode->nWhich == ITIMER_REAL && psNode->nTimeOut < nCurTime )
+		{
+			nSignal = SIGALRM;
+		}
+		else
+		{
+			psThread = get_thread_by_handle( psNode->hThread );
+			if( NULL == psThread )
+				continue;
+
+			if( psNode->nTimeOut < psThread->tr_nCPUTime )
+			{
+				if( psNode->nWhich == ITIMER_VIRTUAL )
+					nSignal = SIGVTALRM;
+				else if( psNode->nWhich == ITIMER_PROF )
+					nSignal = SIGTRAP;
+			}
+		}
+		if( nSignal == 0 )
+			continue;
+
+		sys_kill( psNode->hThread, nSignal );
+
+		if( psNode->sValue.it_interval.tv_sec > 0 || psNode->sValue.it_interval.tv_usec > 0 )
+		{
+			/* Re-schedule the timer */
+			bigtime_t nTimeOut;
+
+			psNode->sValue.it_value.tv_sec += psNode->sValue.it_interval.tv_sec;
+			psNode->sValue.it_value.tv_usec += psNode->sValue.it_interval.tv_usec;
+
+			nTimeOut = nCurTime;
+			nTimeOut += (psNode->sValue.it_value.tv_sec * 1000000);
+			nTimeOut += psNode->sValue.it_value.tv_usec;
+
+			psNode->nTimeOut = nTimeOut;
+		}
+		else
+		{
+			/* Remove the timer */
+			if( psNode->psNext != NULL )
+				psNode->psNext->psPrev = psNode->psPrev;
+
+			if( g_psFirstTimerNode == psNode )
+				g_psFirstTimerNode = NULL;
+
+			kfree( psNode );
+		}
+
+		if( i++ > 10000 )
+		{
+			printk( "send_timer_signals() looped 10000 times, give up\n" );
+			break;
+		}
+	}
+
+	spinunlock_enable( &g_sTimerListSpinLock, nOldFlags );
+}
+
+int sys_setitimer( int nWhich, struct kernel_itimerval *psNew, struct kernel_itimerval *psOld )
+{
+	int nError = 0;
+
+	if( nWhich > ITIMER_PROF )
+		nError = -EINVAL;
+	else
+	{
+		TimerNode_s *psOldNode;
+		struct kernel_itimerval sValue;
+
+		if( remove_timer( nWhich, &psOldNode ) == EOK )
+		{
+			if( NULL != psOld )
+				memcpy_to_user( psOld, &psOldNode->sValue, sizeof( struct kernel_itimerval ) );
+			kfree( psOldNode );
+		}
+
+		memcpy_from_user( &sValue, psNew, sizeof( sValue ) );
+		if( sValue.it_value.tv_sec > 0 || sValue.it_value.tv_usec > 0 )
+			nError = insert_timer( nWhich, &sValue );
+	}
+
+	return nError;
+}
+
+int sys_getitimer( int nWhich, struct kernel_itimerval *psValue )
+{
+	TimerNode_s *psNode;
+	thread_id hThread = sys_get_thread_id( NULL );
+	int nOldFlags;
+	int nError = 0;
+
+	if( nWhich > ITIMER_PROF || psValue == NULL )
+		nError = -EINVAL;
+	else
+	{
+		nOldFlags = spinlock_disable( &g_sTimerListSpinLock );
+
+		for( psNode = g_psFirstTimerNode; psNode != NULL; psNode = psNode->psNext )
+		{
+			if( psNode->hThread == hThread && psNode->nWhich == nWhich )
+			{
+				memcpy_to_user( psValue, &psNode->sValue, sizeof( struct kernel_itimerval ) );
+				break;
+			}
+		}
+
+		spinunlock_enable( &g_sTimerListSpinLock, nOldFlags );
+	}
+
+	return nError;
 }
 
 /*****************************************************************************

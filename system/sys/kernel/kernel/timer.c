@@ -287,8 +287,9 @@ void TimerInterrupt( SysCallRegs_s* psRegs )
 	g_sSysBase.ex_nRealTime += ( uint64 )( 1000000 / INT_FREQ );
 	nCurTime = g_sSysBase.ex_nRealTime - g_sSysBase.ex_nBootTime;
 	write_sequnlock( &g_sTimerSeqLock );
-		
+
 	send_alarm_signals( nCurTime );
+	send_timer_signals( nCurTime );
 	wake_up_sleepers( nCurTime );
 	if( g_bAPICPresent == false )
 	{

@@ -807,8 +807,11 @@ SysCallTable:
 .long	_C_SYM( sys_get_tld_addr )
 
 .long	_C_SYM( sys_get_msg_size ) 
-.long	_C_SYM( sys_do_schedule ) /* 218 */
+.long	_C_SYM( sys_do_schedule )
 
+.long	_sys_nosys	/* _C_SYM( sys_event ) */
 
+.long	_C_SYM( sys_setitimer )
+.long	_C_SYM( sys_getitimer )	/* 221 */
 
 
