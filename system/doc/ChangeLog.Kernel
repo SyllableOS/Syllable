@@ -1,3 +1,11 @@
+* January 27, 2008, Kristian Van Der Vliet *
+
+Implemented POSIX timers with setitimer() & getitimer(). These timers are
+maintained in a seperate list from the SIGALRM alarms but in a similiar
+manner I.e. there is one list for all threads, and all of the available timers
+are checked to see if they expire every timer interrupt. ITIMER_REAL timers
+appear to work. ITIMER_VIRTUAL & ITIMER_PROF timers have not been tested.
+
 * January 22, 2008, Kristian Van Der Vliet *
 
 Make fcntl() F_SETLK more standards compliant. A process can now call
