@@ -256,7 +256,10 @@
 #define __NR_do_schedule		218
 #define __NR_event				219
 
-#define	__NR_SysCallCount		220
+#define __NR_setitimer			220
+#define __NR_getitimer			221
+
+#define	__NR_SysCallCount		222
 #define	__NR_DeprecatedSysCallCount	11	/* Obsolete syscalls */
 
 /* The TRUE number of ACTIVE syscalls E.g. __NR_SysCallCount minus the number of

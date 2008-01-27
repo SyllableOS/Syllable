@@ -148,7 +148,8 @@ typedef struct sigaltstack
 int	get_signal_mode( int nSigNum );
 
 int	is_signal_pending( void );
-void	send_alarm_signals( bigtime_t nCurTime );
+void send_alarm_signals( bigtime_t nCurTime );
+void send_timer_signals( bigtime_t nCurTime );
 
 int	raise(int _sig);
 
