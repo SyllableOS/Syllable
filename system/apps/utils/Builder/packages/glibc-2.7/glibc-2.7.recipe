@@ -36,6 +36,7 @@ patch				sed -i '/vi_VN.TCVN/d' localedata/SUPPORTED
 ; Non-interactive:
 test-options		-k
 
+system-prefix-var	install_root
 _install-env
 	LANGUAGE	C
 	LC_ALL		C
