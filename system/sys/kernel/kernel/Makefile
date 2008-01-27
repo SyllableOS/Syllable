@@ -59,7 +59,7 @@ $(OBJDIR)/kernel.exports.c: ksyms.c
 	sed -e 's/^[[:space:]]\+KSYMBOL( *\([^ )]*\) *).*$$/void \1() {}/' \
 	> $(OBJDIR)/kernel.exports.c
 
-smp.c:	$(OBJDIR)/smp_entry.hex
+smp.c:	$(OBJDIR) $(OBJDIR)/smp_entry.hex
 
 $(OBJDIR)/smp_entry.hex: $(OBJDIR)/smp_entry.bin $(OBJDIR)/bintohex
 	$(OBJDIR)/bintohex $(OBJDIR)/smp_entry.bin $(OBJDIR)/smp_entry.hex
