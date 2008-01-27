@@ -546,4 +546,4 @@ modules
 	apps/other/pengupop-2.1.12
 
 ;	Needs GCC 3:
-;	apps/other/qemu-0.9.0
+;	apps/other/qemu-0.9.1

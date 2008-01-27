@@ -1,0 +1,13 @@
+authors
+	Rui Caridade
+	Kaj de Vos
+status				broken
+notes				Runs, but screen stays blank
+
+configure-options
+;	--disable-system
+	--disable-linux-user
+	--disable-darwin-user
+	--disable-kqemu
+	--extra-cflags=-fno-pic
+	--target-list=i386-softmmu
