@@ -888,12 +888,9 @@ void send_timer_signals( bigtime_t nCurTime )
 			/* Re-schedule the timer */
 			bigtime_t nTimeOut;
 
-			psNode->sValue.it_value.tv_sec += psNode->sValue.it_interval.tv_sec;
-			psNode->sValue.it_value.tv_usec += psNode->sValue.it_interval.tv_usec;
-
 			nTimeOut = nCurTime;
-			nTimeOut += (psNode->sValue.it_value.tv_sec * 1000000);
-			nTimeOut += psNode->sValue.it_value.tv_usec;
+			nTimeOut += (psNode->sValue.it_interval.tv_sec * 1000000);
+			nTimeOut += psNode->sValue.it_interval.tv_usec;
 
 			psNode->nTimeOut = nTimeOut;
 		}

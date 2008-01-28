@@ -375,7 +375,13 @@ static int tcp_connect( Socket_s *psSocket, const struct sockaddr *psAddr, int n
 	if(  psTCPCtrl->tcb_bNonBlock )
 		return -EINPROGRESS;
 	else
-		return lock_semaphore( psTCPCtrl->tcb_ocsem, 0, INFINITE_TIMEOUT );
+	{
+		nError = lock_semaphore( psTCPCtrl->tcb_ocsem, 0, INFINITE_TIMEOUT );
+		/* Not fatal */
+		if( nError == -EINTR )
+			nError = EOK;
+		return nError;
+	}
 
 error:
 	UNLOCK( psTCPCtrl->tcb_hMutex );
