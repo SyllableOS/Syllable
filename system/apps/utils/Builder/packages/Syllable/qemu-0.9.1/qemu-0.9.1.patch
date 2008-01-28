@@ -1,6 +1,18 @@
-diff -ru qemu-0.9.1-original/audio/ossaudio.c qemu-0.9.1/audio/ossaudio.c
---- qemu-0.9.1-original/audio/ossaudio.c	2008-01-06 20:38:41.000000000 +0100
-+++ qemu-0.9.1/audio/ossaudio.c	2008-01-27 18:16:38.000000000 +0100
+diff -ur qemu-0.9.1_orig/Makefile.target qemu-0.9.1/Makefile.target
+--- qemu-0.9.1_orig/Makefile.target	2008-01-06 19:38:41.000000000 +0000
++++ qemu-0.9.1/Makefile.target	2008-01-28 17:08:56.000000000 +0000
+@@ -97,7 +97,7 @@
+ endif
+ 
+ # We require -O2 to avoid the stack setup prologue in EXIT_TB
+-OP_CFLAGS := -Wall -O2 -g -fno-strict-aliasing
++OP_CFLAGS := -Wall -O2 -g -fno-strict-aliasing -fno-pic
+ 
+ # cc-option
+ # Usage: OP_CFLAGS+=$(call cc-option, -falign-functions=0, -malign-functions=0)
+diff -ur qemu-0.9.1_orig/audio/ossaudio.c qemu-0.9.1/audio/ossaudio.c
+--- qemu-0.9.1_orig/audio/ossaudio.c	2008-01-06 19:38:41.000000000 +0000
++++ qemu-0.9.1/audio/ossaudio.c	2008-01-28 17:08:56.000000000 +0000
 @@ -25,11 +25,15 @@
  #include <sys/mman.h>
  #include <sys/types.h>
@@ -19,9 +31,9 @@ diff -ru qemu-0.9.1-original/audio/ossaudio.c qemu-0.9.1/audio/ossaudio.c
  #include "qemu-common.h"
  #include "audio.h"
  
-diff -ru qemu-0.9.1-original/fpu/softfloat.h qemu-0.9.1/fpu/softfloat.h
---- qemu-0.9.1-original/fpu/softfloat.h	2008-01-06 20:38:42.000000000 +0100
-+++ qemu-0.9.1/fpu/softfloat.h	2008-01-27 18:16:38.000000000 +0100
+diff -ur qemu-0.9.1_orig/fpu/softfloat.h qemu-0.9.1/fpu/softfloat.h
+--- qemu-0.9.1_orig/fpu/softfloat.h	2008-01-06 19:38:42.000000000 +0000
++++ qemu-0.9.1/fpu/softfloat.h	2008-01-28 17:08:56.000000000 +0000
 @@ -47,6 +47,7 @@
  | implementations of C, `flag', `uint8', and `int8' should all be `typedef'ed
  | to the same as `int'.
@@ -39,50 +51,76 @@ diff -ru qemu-0.9.1-original/fpu/softfloat.h qemu-0.9.1/fpu/softfloat.h
  /*----------------------------------------------------------------------------
  | Each of the following `typedef's defines a type that holds integers
  | of _exactly_ the number of bits specified.  For instance, for most
-diff -ru qemu-0.9.1-original/Makefile.target qemu-0.9.1/Makefile.target
---- qemu-0.9.1-original/Makefile.target	2008-01-06 20:38:41.000000000 +0100
-+++ qemu-0.9.1/Makefile.target	2008-01-27 18:16:38.000000000 +0100
-@@ -97,7 +97,7 @@
- endif
- 
- # We require -O2 to avoid the stack setup prologue in EXIT_TB
--OP_CFLAGS := -Wall -O2 -g -fno-strict-aliasing
-+OP_CFLAGS := -Wall -O2 -g -fno-strict-aliasing -fno-pic
- 
- # cc-option
- # Usage: OP_CFLAGS+=$(call cc-option, -falign-functions=0, -malign-functions=0)
-diff -ru qemu-0.9.1-original/vl.c qemu-0.9.1/vl.c
---- qemu-0.9.1-original/vl.c	2008-01-06 20:38:42.000000000 +0100
-+++ qemu-0.9.1/vl.c	2008-01-27 18:16:38.000000000 +0100
-@@ -67,6 +67,10 @@
+diff -ur qemu-0.9.1_orig/vl.c qemu-0.9.1/vl.c
+--- qemu-0.9.1_orig/vl.c	2008-01-06 19:38:42.000000000 +0000
++++ qemu-0.9.1/vl.c	2008-01-28 17:10:35.000000000 +0000
+@@ -67,7 +67,9 @@
  #elif defined (__GLIBC__) && defined (__FreeBSD_kernel__)
  #include <freebsd/stdlib.h>
  #else
-+#ifdef __SYLLABLE__
-+#include <net/if.h>
-+#include <net/if_tun.h>
-+#else
- #ifndef __sun__
+-#ifndef __sun__
++
++
++#if !defined(__sun__) && !defined(__SYLLABLE__)
  #include <linux/if.h>
  #include <linux/if_tun.h>
-@@ -101,6 +105,7 @@
- #include <winsock2.h>
- int inet_aton(const char *cp, struct in_addr *ia);
- #endif
-+#endif
+ #include <pty.h>
+@@ -81,6 +83,11 @@
  
- #if defined(CONFIG_SLIRP)
- #include "libslirp.h"
-@@ -4070,6 +4075,12 @@
+ #include <linux/ppdev.h>
+ #include <linux/parport.h>
++
++#elif defined(__SYLLABLE__)
++#include <net/if.h>
++#include <net/if_tun.h>
++
+ #else
+ #include <sys/stat.h>
+ #include <sys/ethernet.h>
+@@ -4070,6 +4077,46 @@
      fcntl(fd, F_SETFL, O_NONBLOCK);
      return fd;
  }
++
 +#elif defined(__SYLLABLE__)
++#if 0
 +static int tap_open(char *ifname, int ifname_size)
 +{
-+    fprintf(stderr, "warning: tap_open not yet implemented\n");
-+    return -1;
++	int fd, err;
++
++	fd = open("/dev/net/tun", O_RDWR | O_NONBLOCK);
++    if (fd < 0) {
++        fprintf(stderr, "warning: could not open /dev/net/tun: no virtual network emulation\n");
++        return -1;
++    }
++
++	err = ioctl(fd,TUN_IOC_CREATE_IF,ifname);
++	if( err == 0 )
++	{
++        unsigned long flags;
++
++        err = ioctl(fd,TUN_IOC_GIFFLAGS,&flags);
++        if( err == 0 )
++        {
++          flags |= IFF_TAP;
++          err = ioctl(fd,TUN_IOC_SIFFLAGS,&flags);
++        }
++	}
++
++	if (err < 0) {
++		fprintf(stderr, "warning: could not configure /dev/net/tun: no virtual network emulation\n" );
++		close (fd);
++		return -1;
++	}
++
++	return fd;
 +}
++#else
++static int tap_open(char *ifname, int ifname_size)
++{
++	return -1;
++}
++#endif
  #else
  static int tap_open(char *ifname, int ifname_size)
  {
