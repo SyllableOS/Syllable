@@ -1,3 +1,10 @@
+* January 28, 2008, Kristian Van Der Vliet *
+
+A few smaller fixes to get Qemu working:
+
+ o Fixed POSIX timer rescheduling
+ o Don't return -EINTR from tcp_connect()
+
 * January 27, 2008, Kristian Van Der Vliet *
 
 Implemented POSIX timers with setitimer() & getitimer(). These timers are
