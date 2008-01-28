@@ -12,7 +12,9 @@ locations			http://fabrice.bellard.free.fr/qemu/
 needs
 	gcc < 4
 	sdl
-build-recommends	texi2html
+build-recommends
+	pkg-config
+	texi2html
 
 system-prefix-var	DESTDIR
 
