@@ -3,6 +3,8 @@
 VERSION=0.6.6
 
 BUILD_DIR=$HOME/Build
+LOG_DIR=$HOME/Logs
+LOG=$LOG_DIR/std-out-err.log
 INSTALLER_DIR=$BUILD_DIR/Installer
 WORKING_COPY=$INSTALLER_DIR/stage/
 SCRIPTS_DIR=$HOME/bin
@@ -59,7 +61,7 @@ $SCRIPTS_DIR/printers.sh $INSTALLER_DIR/ppds/ $WORKING_COPY/image/system/resourc
 
 # Finish the build and package it
 cd $INSTALLER_DIR
-image finish
+image finish 1>>$LOG 2>&1
 sync
 
 echo "Packaging the development files"
