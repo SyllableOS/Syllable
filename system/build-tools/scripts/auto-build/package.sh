@@ -5,8 +5,10 @@ VERSION=0.6.6
 BUILD_DIR=$HOME/Build
 LOG_DIR=$HOME/Logs
 LOG=$LOG_DIR/std-out-err.log
+FINISH_FAILURES=$LOG_DIR/finish-failures.log
+FINISH_SUMMERY=$LOG_DIR/finish-summery.log
 INSTALLER_DIR=$BUILD_DIR/Installer
-WORKING_COPY=$INSTALLER_DIR/stage/
+WORKING_COPY=$INSTALLER_DIR/system/stage/
 SCRIPTS_DIR=$HOME/bin
 LOG_DIR=$HOME/Logs
 
@@ -62,7 +64,8 @@ $SCRIPTS_DIR/printers.sh $INSTALLER_DIR/ppds/ $WORKING_COPY/image/system/resourc
 # Finish the build and package it
 cd $INSTALLER_DIR
 image finish 1>>$LOG 2>&1
-sync
+build log failures > $FINISH_FAILURES
+build log summery > $FINISH_SUMMERY
 
 echo "Packaging the development files"
 
@@ -112,7 +115,8 @@ md5sum base-syllable.zip $ISO $ISO.7z $DEV_ARCHIVE.zip > $MD5S
 echo "Uploading"
 
 # Transfer the files
-FILES=`printf "base-syllable.zip $ISO.7z $DEV_ARCHIVE.zip $MD5S\n"`
+FILES1=`printf "$FINISH_FAILURES $FINISH_SUMMERY\n"`
+FILES2=`printf "base-syllable.zip $ISO.7z $DEV_ARCHIVE.zip $MD5S\n"`
 if [ -n "$FTP_USER" ]
 then
   ftp -n $FTP_SERVER << END
@@ -120,7 +124,8 @@ quote user $FTP_USER
 quote pass $FTP_PASSWD
 passive
 prompt
-mput $FILES
+mput $FILES1
+mput $FILES2
 quit
 END
 fi
