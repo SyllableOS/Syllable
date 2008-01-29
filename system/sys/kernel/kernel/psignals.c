@@ -758,7 +758,7 @@ static status_t remove_timer( int nWhich, TimerNode_s **ppsOld )
 			if( psNode->psNext != NULL )
 				psNode->psNext->psPrev = psNode->psPrev;
 			if( psNode->psPrev != NULL )
-				psNode->psPrev->psNext = NULL;
+				psNode->psPrev->psNext = psNode->psNext;
 			if( g_psFirstTimerNode == psNode )
 				g_psFirstTimerNode = NULL;
 
@@ -881,7 +881,7 @@ void send_timer_signals( bigtime_t nCurTime )
 			if( psNode->psNext != NULL )
 				psNode->psNext->psPrev = psNode->psPrev;
 			if( psNode->psPrev != NULL )
-				psNode->psPrev->psNext = NULL;
+				psNode->psPrev->psNext = psNode->psNext;
 			if( g_psFirstTimerNode == psNode )
 				g_psFirstTimerNode = NULL;
 
