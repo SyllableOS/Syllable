@@ -745,21 +745,20 @@ unsigned int sys_alarm( const unsigned int nSeconds )
 static status_t remove_timer( int nWhich, TimerNode_s **ppsOld )
 {
 	TimerNode_s *psNode = NULL;
-	TimerNode_s **ppsTmp;
 	int nOldFlags;
 	thread_id hThread = sys_get_thread_id( NULL );
 	status_t nError = EOK;
 
 	nOldFlags = spinlock_disable( &g_sTimerListSpinLock );
 
-	for( ppsTmp = &g_psFirstTimerNode; *ppsTmp != NULL; ppsTmp = &( *ppsTmp )->psNext )
+	for( psNode = g_psFirstTimerNode; psNode != NULL; psNode = psNode->psNext )
 	{
-		if( ( *ppsTmp )->hThread == hThread && ( *ppsTmp )->nWhich == nWhich )
+		if( psNode->hThread == hThread && psNode->nWhich == nWhich )
 		{
-			psNode = *ppsTmp;
-
 			if( psNode->psNext != NULL )
 				psNode->psNext->psPrev = psNode->psPrev;
+			if( psNode->psPrev != NULL )
+				psNode->psPrev->psNext = NULL;
 			if( g_psFirstTimerNode == psNode )
 				g_psFirstTimerNode = NULL;
 
@@ -778,12 +777,9 @@ static status_t remove_timer( int nWhich, TimerNode_s **ppsOld )
 static status_t insert_timer( int nWhich, struct kernel_itimerval *psValue )
 {
 	TimerNode_s *psNode = NULL;
-	TimerNode_s *psTmp;
 	int nOldFlags;
 	thread_id hThread = sys_get_thread_id( NULL );
 	status_t nError = EOK;
-
-	nOldFlags = spinlock_disable( &g_sTimerListSpinLock );
 
 	psNode = kmalloc( sizeof( TimerNode_s ), MEMF_KERNEL | MEMF_OKTOFAIL );
 	if( NULL == psNode )
@@ -793,6 +789,9 @@ static status_t insert_timer( int nWhich, struct kernel_itimerval *psValue )
 	else
 	{
 		bigtime_t nTimeOut;
+
+		psNode->psPrev = NULL;
+		psNode->psNext = NULL;
 
 		memcpy( &psNode->sValue, psValue, sizeof( struct kernel_itimerval ) );
 
@@ -807,43 +806,25 @@ static status_t insert_timer( int nWhich, struct kernel_itimerval *psValue )
 		nOldFlags = spinlock_disable( &g_sTimerListSpinLock );
 
 		/* Is this the first timer in the list? */
-		if ( g_psFirstTimerNode == NULL || psNode->nTimeOut <= g_psFirstTimerNode->nTimeOut )
+		if ( g_psFirstTimerNode == NULL )
 		{
-			psNode->psPrev = NULL;
-			psNode->psNext = g_psFirstTimerNode;
-			if ( NULL != g_psFirstTimerNode )
-			{
-				g_psFirstTimerNode->psPrev = psNode;
-			}
 			g_psFirstTimerNode = psNode;
-			goto done;
 		}
-
-		/* No. Find the correct position and insert the new timer */
-		for( psTmp = g_psFirstTimerNode;; psTmp = psTmp->psNext )
+		else
 		{
-			if( psNode->nTimeOut < psTmp->nTimeOut )
-			{
-				psNode->psPrev = psTmp->psPrev;
-				psNode->psNext = psTmp;
+			TimerNode_s *psTmp;
 
-				if( psTmp->psPrev != NULL )
-					psTmp->psPrev->psNext = psNode;
-				psTmp->psPrev = psNode;
-				goto done;
-			}
-			if( psTmp->psNext == NULL )
-				break;
+			/* No. Append the timer at the end of the list */
+			psTmp = g_psFirstTimerNode;
+			while( psTmp->psNext != NULL )
+				psTmp = psTmp->psNext;
+
+			psNode->psPrev = psTmp;
+			psTmp->psNext = psNode;
 		}
 
-		/* Add to end of list */
-		psNode->psNext = NULL;
-		psNode->psPrev = psTmp;
-		psTmp->psNext = psNode;
+		spinunlock_enable( &g_sTimerListSpinLock, nOldFlags );
 	}
-
-done:
-	spinunlock_enable( &g_sTimerListSpinLock, nOldFlags );
 	return nError;
 }
 
@@ -899,7 +880,8 @@ void send_timer_signals( bigtime_t nCurTime )
 			/* Remove the timer */
 			if( psNode->psNext != NULL )
 				psNode->psNext->psPrev = psNode->psPrev;
-
+			if( psNode->psPrev != NULL )
+				psNode->psPrev->psNext = NULL;
 			if( g_psFirstTimerNode == psNode )
 				g_psFirstTimerNode = NULL;
 
