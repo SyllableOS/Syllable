@@ -1,3 +1,8 @@
+* February 2, 2008, Kristian Van Der Vliet *
+
+Re-wrote sys_alarm() to use the POSIX ITIMER_REAL timer instead of it's own
+list. The send_signal_alarms() function has been completely removed.
+
 * January 28, 2008, Kristian Van Der Vliet *
 
 A few smaller fixes to get Qemu working:
