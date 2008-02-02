@@ -154,7 +154,6 @@ static KernelSymbol_s g_asKernelSymbols[] = {
 	// Signal functions:
 	KSYMBOL( is_signal_pending ),
 	KSYMBOL( get_signal_mode ),
-	KSYMBOL( send_alarm_signals ),
 	KSYMBOL( sys_sigaction ),
 	
 	// Image functions:

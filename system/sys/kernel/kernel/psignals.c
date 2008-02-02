@@ -40,21 +40,6 @@
 
 static const unsigned long _BLOCKABLE = ~( (1L << (SIGKILL - 1)) | (1L << (SIGSTOP - 1)) );
 
-/* alarm() */
-typedef struct _AlarmNode AlarmNode_s;
-struct _AlarmNode
-{
-	AlarmNode_s *psNext;
-	AlarmNode_s *psPrev;
-	uint64 nTimeOut;
-	thread_id hThread;
-};
-
-static AlarmNode_s *g_psFirstAlarmNode = NULL;
-static AlarmNode_s *g_psFirstFreeAlarmNode = NULL;
-
-SPIN_LOCK( g_sAlarmListSpinLock, "alarm_list_slock" );
-
 /* POSIX timers */
 typedef struct _TimerNode TimerNode_s;
 struct _TimerNode
@@ -576,172 +561,6 @@ int handle_signals( int dummy )
 	return ( 0 );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
-void send_alarm_signals( bigtime_t nCurTime )
-{
-	int nOldFlags;
-	int i = 0;
-
-	nOldFlags = spinlock_disable( &g_sAlarmListSpinLock );
-	while ( g_psFirstAlarmNode != NULL && g_psFirstAlarmNode->nTimeOut <= nCurTime )
-	{
-		AlarmNode_s *psNode = g_psFirstAlarmNode;
-
-		g_psFirstAlarmNode = psNode->psNext;
-
-		if ( g_psFirstAlarmNode != NULL )
-		{
-			g_psFirstAlarmNode->psPrev = NULL;
-		}
-		psNode->psNext = g_psFirstFreeAlarmNode;
-		g_psFirstFreeAlarmNode = psNode;
-
-		sys_kill( psNode->hThread, SIGALRM );
-
-		if ( i++ > 10000 )
-		{
-			printk( "send_alarm_signals() looped 10000 times, give up\n" );
-			break;
-		}
-	}
-
-	spinunlock_enable( &g_sAlarmListSpinLock, nOldFlags );
-}
-
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
-unsigned int sys_alarm( const unsigned int nSeconds )
-{
-	AlarmNode_s *psNode = NULL;
-	AlarmNode_s **ppsTmp;
-	AlarmNode_s *psTmp;
-	thread_id hThread = sys_get_thread_id( NULL );
-	int nOldFlags;
-	int nPrevTime = 0;
-	bigtime_t nCurTime = get_system_time();
-
-	nOldFlags = spinlock_disable( &g_sAlarmListSpinLock );
-
-	for ( ppsTmp = &g_psFirstAlarmNode; *ppsTmp != NULL; ppsTmp = &( *ppsTmp )->psNext )
-	{
-		if ( ( *ppsTmp )->hThread == hThread )
-		{
-			psNode = *ppsTmp;
-
-			if ( psNode->psNext != NULL )
-			{
-				psNode->psNext->psPrev = psNode->psPrev;
-			}
-			*ppsTmp = psNode->psNext;
-
-			nPrevTime = ( psNode->nTimeOut - nCurTime ) / 1000000;
-			if ( nPrevTime < 0 )
-			{
-				nPrevTime = 0;
-			}
-			break;
-		}
-	}
-
-	if ( nSeconds == 0 )
-	{
-		if ( psNode != NULL )
-		{
-			psNode->psNext = g_psFirstFreeAlarmNode;
-			g_psFirstFreeAlarmNode = psNode;
-		}
-	}
-	else
-	{
-		if ( psNode == NULL && g_psFirstFreeAlarmNode != NULL )
-		{
-			psNode = g_psFirstFreeAlarmNode;
-			g_psFirstFreeAlarmNode = psNode->psNext;
-		}
-	}
-	spinunlock_enable( &g_sAlarmListSpinLock, nOldFlags );
-
-	if ( nSeconds == 0 )
-	{
-		return ( nPrevTime );
-	}
-
-	if ( NULL == psNode )
-	{
-		psNode = kmalloc( sizeof( AlarmNode_s ), MEMF_KERNEL | MEMF_CLEAR | MEMF_LOCKED );
-	}
-
-	if ( NULL != psNode )
-	{
-		psNode->nTimeOut = nCurTime + ( ( uint64 )nSeconds ) * 1000000;
-		psNode->hThread = sys_get_thread_id( NULL );
-
-
-		nOldFlags = spinlock_disable( &g_sAlarmListSpinLock );
-
-		if ( g_psFirstAlarmNode == NULL || psNode->nTimeOut <= g_psFirstAlarmNode->nTimeOut )
-		{
-			psNode->psPrev = NULL;
-			psNode->psNext = g_psFirstAlarmNode;
-			if ( NULL != g_psFirstAlarmNode )
-			{
-				g_psFirstAlarmNode->psPrev = psNode;
-			}
-			g_psFirstAlarmNode = psNode;
-			goto done;
-		}
-
-		for ( psTmp = g_psFirstAlarmNode;; psTmp = psTmp->psNext )
-		{
-			if ( psNode->nTimeOut < psTmp->nTimeOut )
-			{
-				psNode->psPrev = psTmp->psPrev;
-				psNode->psNext = psTmp;
-
-				if ( psTmp->psPrev != NULL )
-				{
-					psTmp->psPrev->psNext = psNode;
-				}
-				psTmp->psPrev = psNode;
-				goto done;
-			}
-			if ( psTmp->psNext == NULL )
-			{
-				break;
-			}
-		}
-
-	  /*** Add to end of list ***/
-		psNode->psNext = NULL;
-		psNode->psPrev = psTmp;
-		psTmp->psNext = psNode;
-	      done:
-
-
-
-/*
-    
-  psNode->psNext     = g_psFirstAlarmNode;
-  g_psFirstAlarmNode = psNode;
-  */
-		spinunlock_enable( &g_sAlarmListSpinLock, nOldFlags );
-
-		return ( 0 );
-	}
-	return ( -ENOMEM );
-}
-
 static status_t remove_timer( int nWhich, TimerNode_s **ppsOld )
 {
 	TimerNode_s *psNode = NULL;
@@ -950,6 +769,35 @@ int sys_getitimer( int nWhich, struct kernel_itimerval *psValue )
 	}
 
 	return nError;
+}
+
+unsigned int sys_alarm( const unsigned int nSeconds )
+{
+	TimerNode_s *psOldNode;
+	unsigned int nElapsed = 0;
+
+	if( remove_timer( ITIMER_REAL, &psOldNode ) == EOK )
+	{
+		bigtime_t nRemaining;
+
+		nRemaining = psOldNode->nTimeOut - get_system_time();
+		nElapsed = (int)( nRemaining / 1000000 );
+
+		kfree( psOldNode );
+	}
+
+	if( nSeconds > 0 )
+	{
+		struct kernel_itimerval sValue;
+		int nError;
+
+		sValue.it_value.tv_sec = nSeconds;
+		nError = insert_timer( ITIMER_REAL, &sValue );
+		if( nError != EOK )
+			kerndbg( KERN_WARNING, "sys_alarm(): insert_timer() failed (%d).\n", nError );
+	}
+
+	return nElapsed;
 }
 
 /*****************************************************************************

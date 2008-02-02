@@ -262,7 +262,7 @@ static void init_timer2( void )
 
 //****************************************************************************/
 /** This is the timer interrupt handler, called INT_FREQ times per second.  It
- *  updates the system time and calls functions send_alarm_signals() and
+ *  updates the system time and calls functions send_timer_signals() and
  *  wake_up_sleepers().  If there is no APIC present, Schedule() is also
  *  called here; otherwise, Schedule() is called for each CPU via
  *  do_smp_preempt(), which is triggered by the APIC timer.
@@ -288,7 +288,6 @@ void TimerInterrupt( SysCallRegs_s* psRegs )
 	nCurTime = g_sSysBase.ex_nRealTime - g_sSysBase.ex_nBootTime;
 	write_sequnlock( &g_sTimerSeqLock );
 
-	send_alarm_signals( nCurTime );
 	send_timer_signals( nCurTime );
 	wake_up_sleepers( nCurTime );
 	if( g_bAPICPresent == false )
