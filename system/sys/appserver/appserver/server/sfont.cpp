@@ -320,8 +320,8 @@ Glyph *SFontInstance::GetGlyph( int nIndex )
 
 	if( m_cInstanceProperties.m_nFlags & FPF_BOLD )
 	{
-		//FT_GlyphSlot_Embolden( glyph );
-		//dbprintf( "Embolden\n" );
+		FT_GlyphSlot_Embolden( glyph );
+		dbprintf( "Embolden\n" );
 	}
 
 
@@ -1445,4 +1445,6 @@ SFont *FontServer::OpenFont( const std::string & cFamily, const std::string & cS
 	}
 	return ( pcFont );
 }
+
+
 

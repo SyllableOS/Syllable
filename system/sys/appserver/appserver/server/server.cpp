@@ -42,6 +42,7 @@
 #include <util/messenger.h>
 #include <appserver/protocol.h>
 #include <atheos/filesystem.h>
+#include <util/shortcutkey.h>
 
 #include "ddriver.h"
 #include "server.h"
@@ -195,13 +196,9 @@ AppServer::AppServer()
 	
 	g_pcEvents = new SrvEvents;
 	
-	m_pcProcessQuitEvent = g_pcEvents->RegisterEvent( "os/System/ProcessHasQuit", 0, 
-							"Called when a process has quit", -1, -1, -1 );
-	m_pcClipboardEvent = g_pcEvents->RegisterEvent( "os/System/ClipboardHasChanged", 0, 
-							"Called when the clipboard content has changed", -1, -1, -1 );
-	m_pcScreenshotEvent = g_pcEvents->RegisterEvent( "os/System/PrintKeyWasHit",0,
-							"Called when the 'Print Screen' key has been hit",-1,-1,-1);
-
+	m_pcProcessQuitEvent = g_pcEvents->RegisterEvent( "os/System/ProcessHasQuit", 0, "Called when a process has quit", -1, -1, -1 );
+	m_pcClipboardEvent = g_pcEvents->RegisterEvent( "os/System/ClipboardHasChanged", 0, "Called when the clipboard content has changed", -1, -1, -1 );
+	m_pcScreenshotEvent = g_pcEvents->RegisterEvent( "os/System/PrintKeyWasHit",0,"Called when the 'Print Screen' key has been hit",-1,-1,-1);
 
 	dbprintf( "Load default fonts\n" );
 	m_pcWindowTitleFont = new FontNode;
@@ -285,6 +282,23 @@ void AppServer::R_ClientDied( thread_id hClient )
 void AppServer::SendKeyCode( int nKeyCode, int nQual )
 {
 	ResetEventTime();
+	
+	os::ShortcutKey key(nKeyCode,nQual);
+	
+	
+	for (uint i=0; i<cKeyEvents.size(); i++)
+	{
+		if (key == cKeyEvents[i].cKey)
+		{
+			os::Message cMsg;
+			g_pcEvents->PostEvent(cKeyEvents[i].pcEvent, &cMsg );
+			return;
+		}
+	}
+	
+	
+	/*these are the standard key shortcuts*/
+	/*these can be overwritten by registering the same shortcut through another program*/
 	if( 0x34 == nKeyCode )	// DEL
 	{
 		if( ( nQual & QUAL_ALT ) && ( nQual & QUAL_CTRL ) )
@@ -293,7 +307,7 @@ void AppServer::SendKeyCode( int nKeyCode, int nQual )
 			return;
 		}
 	}
-
+	
 	if( nKeyCode == 0x0e )
 	{			// Print-screen
 		os::Message cMsg;
@@ -771,6 +785,42 @@ void AppServer::DispatchMessage( Message * pcReq )
 
 			break;
 		}
+		
+	case DR_REGISTER_KEY_EVNT:
+		{
+			KeyEvent_s cKeyEvent;
+			
+			
+
+			pcReq->FindString( "event", &cKeyEvent.cEventName );
+			pcReq->FindObject( "key", cKeyEvent.cKey);
+			pcReq->FindString( "app", &cKeyEvent.cApplication);		
+			cKeyEvent.pcEvent = g_pcEvents->RegisterEvent(cKeyEvent.cEventName,0,cKeyEvent.cEventName,-1,-1,-1);
+		
+			cKeyEvents.push_back(cKeyEvent);
+			break;
+		}
+		
+	case DR_UNREGISTER_KEY_EVNT:
+		{
+			os::ShortcutKey cKey;
+			os::String cApp;
+			
+			pcReq->FindObject("key",cKey);
+			pcReq->FindString("app",&cApp);
+			
+			for (int i=0; i<cKeyEvents.size(); i++)
+			{
+				if ( (cKeyEvents[i].cApplication == cApp)  && (cKey == cKeyEvents[i].cKey) )
+				{
+					g_pcEvents->UnregisterEvent(cKeyEvents[i].cEventName,0,-1);
+					cKeyEvents[i].pcEvent = NULL;
+					cKeyEvents.erase(cKeyEvents.begin()+i);
+					break;
+				}
+			}
+			break;
+		}
 	}
 }
 
@@ -844,6 +894,8 @@ void AppServer::Run( void )
 			case DR_MINIMIZE_ALL:
 			case DR_GET_MOUSE_CFG:
 			case DR_SET_MOUSE_CFG:
+			case DR_REGISTER_KEY_EVNT:				
+			case DR_UNREGISTER_KEY_EVNT:				
 				{
 					try
 					{
@@ -1109,6 +1161,34 @@ int main( int argc, char **argv )
 	dbprintf( "WARNING : layers.device failed to initiate itself!!!\n" );
 	return ( 0 );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -33,6 +33,7 @@
 #include "ddriver.h"
 #include "windowdecorator.h"
 #include "toplayer.h"
+#include "keyevent.h"
 
 typedef	struct TextFont	TextFont_s;
 
@@ -49,6 +50,7 @@ namespace os
 {
 	class Locker;
 	class Message;
+	class ShortcutKey;
 };
 
 extern ::TopLayer* g_pcTopView;
@@ -114,6 +116,8 @@ private:
 	port_id		 				m_hRequestPort;
     
     
+    std::vector<KeyEvent_s> cKeyEvents;
+    
     /*these are all the events that the appserver can handle*/
     SrvEvent_s* 				m_pcProcessQuitEvent;
     SrvEvent_s* 				m_pcClipboardEvent;
@@ -121,6 +125,11 @@ private:
 };
 
 #endif	/*	INTERFACE_SERVER_HPP	*/
+
+
+
+
+
 
 
 
