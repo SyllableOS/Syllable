@@ -44,6 +44,7 @@ class Application::Private
 	port_id m_hSrvAppPort;
 	port_id m_hReplyPort;
 	std::vector < Window * >m_cWindows;
+	std::vector <os::KeyboardEvent> m_cKeyEvents;
 	Locale m_cLocale;
 	Catalog* m_pcCatalog;
 };
@@ -122,6 +123,18 @@ Application::~Application()
 		Lock();
 	}
 
+
+	for (uint i=0; i<m->m_cKeyEvents.size(); i++)
+	{
+			Message cReq(DR_UNREGISTER_KEY_EVNT);
+			cReq.AddString("app",GetName());
+			cReq.AddObject("key",m->m_cKeyEvents[i].GetShortcutKey());
+			Messenger( m->m_hServerPort ).SendMessage( &cReq );
+			snooze( 10000 );
+	}
+	
+	m->m_cKeyEvents.clear();
+		
 	// If all windows aren't gone in 10 secs, we'll simply let the AppServer take care of them
 	
 	if( send_msg( m->m_hSrvAppPort, M_QUIT, NULL, 0 ) < 0 )
@@ -1015,6 +1028,41 @@ status_t Application::SetKeyboardTimings( int nDelay, int nRepeat )
 	return ( 0 );
 }
 
+void Application::RegisterKeyEvent(const os::KeyboardEvent& event)
+{
+	Message cReq(DR_REGISTER_KEY_EVNT);
+	
+	cReq.AddString("event",event.GetEventName());
+	cReq.AddObject("key",event.GetShortcutKey());
+	cReq.AddString("app",GetName());
+	
+	Messenger( m->m_hServerPort ).SendMessage( &cReq );
+	
+	
+	//store the key for deletion
+	m->m_cKeyEvents.push_back(event);
+}
+
+void Application::UnregisterKeyEvent(const os::String& event)
+{
+	for (int i=0; i<m->m_cKeyEvents.size(); i++)
+	{
+		if (event == m->m_cKeyEvents[i].GetEventName())
+		{
+			Message cReq(DR_UNREGISTER_KEY_EVNT);
+			cReq.AddString("app",GetName());
+			cReq.AddObject("key",m->m_cKeyEvents[i].GetShortcutKey());
+			Messenger( m->m_hServerPort ).SendMessage( &cReq );
+			return;
+		}
+	}
+}
+
+int Application::GetCurrentKeyShortcuts(std::vector<os::KeyboardEvent> *pcTable)
+{
+	
+}
+
 void Application::HandleMessage( Message * pcMessage )
 {
 	switch ( pcMessage->GetCode() )
@@ -1135,4 +1183,16 @@ void Application::__reserved9__()
 void Application::__reserved10__()
 {
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
