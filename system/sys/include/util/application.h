@@ -27,6 +27,7 @@
 #include <util/string.h>
 #include <util/locale.h>
 #include <util/catalog.h>
+#include <gui/keyevent.h>
 
 #include <vector>
 
@@ -114,6 +115,10 @@ public:
 	Locale* GetApplicationLocale() const;
 	void SetApplicationLocale( const Locale& pcLocale );
 
+
+	void RegisterKeyEvent(const os::KeyboardEvent&);
+	void UnregisterKeyEvent(const os::String& cEvent);
+	int GetCurrentKeyShortcuts(std::vector<os::KeyboardEvent> *pcTable);
 private:
     friend class Window;
     friend class Desktop;
@@ -166,3 +171,9 @@ private:
 }
 
 #endif	// __F_UTIL_APPLICATION_H__
+
+
+
+
+
+
