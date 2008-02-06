@@ -1,0 +1,13 @@
+authors				Kaj de Vos
+status				testing
+
+build-needs
+;	automake
+;	autoconf
+;	For DirectFB:
+	pkg-config
+
+_configure-options
+	--disable-video-fbcon
+	--enable-video-directfb
+

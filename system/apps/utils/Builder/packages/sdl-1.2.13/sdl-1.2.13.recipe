@@ -1,0 +1,26 @@
+authors
+	Arno Klenke
+	Kaj de Vos
+status				testing
+
+licenses			LGPL-2 PD
+home				www.libsdl.org
+packages			SDL-1.2.13
+locations			http://www.libsdl.org/release/
+
+_build-needs
+	automake < 1.10
+	autoconf
+
+; Process the Syllable patches:
+;patch				autoreconf
+
+documentation
+	README README-SDL.txt BUGS COPYING WhatsNew CREDITS TODO
+	docs.html
+build-docs			INSTALL README.SVN
+develop-docs
+	docs/index.html docs/html
+	test
+internal-docs		README.Porting
+
