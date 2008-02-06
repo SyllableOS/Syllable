@@ -155,7 +155,7 @@ tree
 	etc/sysconfig
 	etc/sysconfig/network-devices
 	etc/sysconfig/network-devices/ifconfig.eth0
-	mnt
+;	mnt
 ;	opt
 	media
 	media/floppy
@@ -504,9 +504,9 @@ modules
 ;	apps/develop/SettingsEditor
 ;	apps/collab/Contact
 
-	system libs/sdl-1.2.8
+	system libs/sdl-1.2.13
 ;	sdl-config needs to be in the path:
-	bootstrap libs/sdl-1.2.8
+	bootstrap libs/sdl-1.2.13
 
 	system libs/sdl-mixer-1.2.6
 	system libs/sdl-net-1.2.6
