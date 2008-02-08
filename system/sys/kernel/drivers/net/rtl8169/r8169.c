@@ -82,9 +82,6 @@ VERSION 2.2LK	<2005/01/25>
 
 #define DMA_32BIT_MASK	0x00000000ffffffffUL
 
-/* XXXKV: I have no idea what this frags thing is all about.. */
-#define MAX_SKB_FRAGS	0
-
 /* XXXKV: Taken from ethtool.h: should be someplace else */
 #define SPEED_10		10
 #define SPEED_100		100
@@ -1138,9 +1135,13 @@ static int rtl8169_init_one(PCI_Info_s *pdev, struct net_device *dev)
 		dev->dev_addr[i] = RTL_R8(MAC0 + i);
 	memcpy(dev->perm_addr, dev->dev_addr, dev->addr_len);
 
+	tp->pci_dev = kmalloc( sizeof( PCI_Info_s ), MEMF_KERNEL|MEMF_OKTOFAIL );
+	if( NULL == tp->pci_dev )
+		return ENOMEM;
+	memcpy( tp->pci_dev, pdev, sizeof( pdev ) );
+
 	dev->irq = pdev->u.h0.nInterruptLine;
 	tp->intr_mask = 0xffff;
-	tp->pci_dev = pdev;
 	tp->mmio_addr = ioaddr;
 
 	spinlock_init(&tp->lock, "r8169_lock");
@@ -1525,7 +1526,7 @@ static void rtl8169_tx_clear(struct rtl8169_private *tp)
 		unsigned int len = tx_skb->len;
 
 		if (len) {
-			struct sk_buff *skb = tx_skb->skb;
+			PacketBuf_s *skb = tx_skb->skb;
 
 			rtl8169_unmap_tx_skb(tp->pci_dev, tx_skb,
 					     tp->TxDescArray + entry);
@@ -1618,7 +1619,7 @@ out:
 
 err_stop:
 	netif_stop_queue(dev);
-	ret = 1;
+	return 1;
 }
 
 static void rtl8169_pcierr_interrupt(struct net_device *dev)
@@ -2086,7 +2087,6 @@ static int r8169_probe( int nDeviceID )
 				if ((dev->priv = kmalloc(sizeof(struct rtl8169_private), MEMF_KERNEL)) == NULL)
 					continue;
 				tp = dev->priv;
-				tp->pci_dev = &sInfo;
 
 				int cfg = rtl8169_pci_tbl[chip_idx].driver_data;
 				tp->region = rtl_cfg_info[cfg].region;
