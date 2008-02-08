@@ -791,6 +791,8 @@ unsigned int sys_alarm( const unsigned int nSeconds )
 		struct kernel_itimerval sValue;
 		int nError;
 
+		memset( &sValue, 0, sizeof( sValue ) );
+
 		sValue.it_value.tv_sec = nSeconds;
 		nError = insert_timer( ITIMER_REAL, &sValue );
 		if( nError != EOK )
