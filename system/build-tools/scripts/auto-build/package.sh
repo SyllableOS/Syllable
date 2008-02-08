@@ -70,7 +70,7 @@ build log summery > $FINISH_SUMMERY
 echo "Packaging the development files"
 
 # Package up and remove the development files
-DEV_ARCHIVE="syllable-$VERSION-$(date +%Y%m%d)-development"
+DEV_ARCHIVE="Syllable-$VERSION-$(date +%Y%m%d)-development"
 
 cd $WORKING_COPY/image/system
 # Let external compression do its work
@@ -129,3 +129,4 @@ mput $FILES2
 quit
 END
 fi
+
