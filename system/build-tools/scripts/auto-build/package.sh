@@ -100,11 +100,11 @@ cd $INSTALLER_DIR
 
 echo "Compressing the ISO"
 
-ISO="syllable-$VERSION-$(date +%Y%m%d).iso"
+ISO="Syllable-$VERSION-$(date +%Y%m%d).iso"
 
-if [ -e syllable*.iso.7z ]
+if [ -e Syllable*.iso.7z ]
 then
-  rm syllable*.iso.7z
+  rm Syllable*.iso.7z
 fi
 7z a $ISO.7z $ISO
 
@@ -129,4 +129,3 @@ mput $FILES2
 quit
 END
 fi
-
