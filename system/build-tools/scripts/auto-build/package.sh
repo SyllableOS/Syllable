@@ -70,7 +70,7 @@ build log summery > $FINISH_SUMMERY
 echo "Packaging the development files"
 
 # Package up and remove the development files
-DEV_ARCHIVE="Syllable-$VERSION-$(date +%Y%m%d)-development"
+DEV_ARCHIVE="SyllableDesktop-$VERSION-$(date +%Y%m%d)-development"
 
 cd $WORKING_COPY/image/system
 # Let external compression do its work
@@ -100,7 +100,7 @@ cd $INSTALLER_DIR
 
 echo "Compressing the ISO"
 
-ISO="Syllable-$VERSION-$(date +%Y%m%d).iso"
+ISO="SyllableDesktop-$VERSION-$(date +%Y%m%d).i586.iso"
 
 if [ -e Syllable*.iso.7z ]
 then
