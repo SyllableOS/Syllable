@@ -1,4 +1,4 @@
 authors				Kaj de Vos
 status				testing
 
-recommends			alsa-library
+recommends			alsa-library >= 0.9.0

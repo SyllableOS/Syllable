@@ -1,13 +1,15 @@
 authors				Kaj de Vos
 status				testing
 
-build-needs
-;	automake
-;	autoconf
-;	For DirectFB:
-	pkg-config
+recommends
+	alsa-library >= 0.9.0
+	directfb >= 0.9.15 < 1
+_build-needs
+	automake
+	autoconf
+; For DirectFB:
+build-recommends		pkg-config
 
-_configure-options
-	--disable-video-fbcon
-	--enable-video-directfb
-
+configure-options
+;	--disable-video-fbcon
+	--disable-video-directfb
