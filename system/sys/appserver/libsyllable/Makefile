@@ -6,7 +6,7 @@ CATALOGS = da de es fr hu nl pl pt-br ru sv
 
 LIBBIN = /system/libraries
 
-LIBNAME = libsyllable.so.8
+LIBNAME = libsyllable.so.7
 
 VPATH = ./ gui storage util translation gui/colorselector gui/fontrequester
 

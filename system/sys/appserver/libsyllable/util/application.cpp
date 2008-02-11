@@ -1053,6 +1053,9 @@ void Application::UnregisterKeyEvent(const os::String& event)
 			cReq.AddString("app",GetName());
 			cReq.AddObject("key",m->m_cKeyEvents[i].GetShortcutKey());
 			Messenger( m->m_hServerPort ).SendMessage( &cReq );
+			
+			//remove it from our storage
+			m->m_cKeyEvents.erase(m->m_cKeyEvents.begin()+i);
 			return;
 		}
 	}
@@ -1060,7 +1063,37 @@ void Application::UnregisterKeyEvent(const os::String& event)
 
 int Application::GetCurrentKeyShortcuts(std::vector<os::KeyboardEvent> *pcTable)
 {
+	Message cReq( DR_REGISTERED_KEY_EVNTS );
+	Message cReply;
+	int32 count;
 	
+	Messenger( m->m_hServerPort ).SendMessage( &cReq, &cReply );
+	
+	if (cReply.FindInt32("count",&count) == 0)
+	{
+		for (int i=0; i<count; i++)
+		{
+			os::String event;
+			os::String cApp;
+			os::ShortcutKey key;
+			os::KeyboardEvent cKeyEvent;
+			
+			cReply.FindString("event",&event,i);
+			cReply.FindObject("key",key,i);
+			cReply.FindString("app",&cApp,i);
+			
+			cKeyEvent.SetEventName(event);
+			cKeyEvent.SetShortcutKey(key);
+			cKeyEvent.SetApplicationName(cApp); 
+			
+			pcTable->push_back(cKeyEvent);
+		}
+	}
+	else
+	{
+		return (-1);
+	}
+	return (0);
 }
 
 void Application::HandleMessage( Message * pcMessage )
@@ -1183,6 +1216,11 @@ void Application::__reserved9__()
 void Application::__reserved10__()
 {
 }
+
+
+
+
+
 
 
 
