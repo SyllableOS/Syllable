@@ -1,3 +1,8 @@
+* Febuary 10 2008, Rick Caudill *
+
+Added KeyboardEventView to the development apps.  This app will allow a developer/user to
+know what global keyshortcuts are utilized all ready.
+  
 * January 15 2008, Kristian Van Der Vliet *
 
 Fixed the Network Preferences to better handle a hosts file which has tabs in.

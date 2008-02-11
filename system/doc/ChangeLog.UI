@@ -1,3 +1,8 @@
+* Feburay 10, 2008, Rick Caudill *
+
+Added a way of adding global shortcuts by registering shortcuts and corresponding events to the appserver.
+To utilize all you have to do is look at Application::RegisterKeyEvent/Application::UnregisterKeyEvent/ApplicationGetCurrentKeyShortcuts
+
 * January 11, 2008, Kristian Van Der Vliet *
 
 Patched the appserver to support mouse preferences. The user can now set mouse sensitivity and
