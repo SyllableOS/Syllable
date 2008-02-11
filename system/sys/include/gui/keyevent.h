@@ -13,7 +13,7 @@ public:
 	KeyboardEvent()
 	{
 		m_cKey = os::ShortcutKey();
-		m_cEventName = "";
+		m_cEventName = m_cApp = "";
 	}
 	
 	KeyboardEvent(const os::ShortcutKey& cKey,const os::String& cEvent)
@@ -42,13 +42,29 @@ public:
 		return m_cKey;
 	}
 	
+	os::String GetApplicationName() const
+	{
+		return m_cApp;
+	}
+	
+protected:
+	void SetApplicationName(const os::String& cApp)
+	{
+		m_cApp = cApp;
+	}
 private:
 	os::ShortcutKey m_cKey;
 	os::String m_cEventName;
+	os::String m_cApp;
+	
+	friend class Application;
 };
 }
 
 #endif
+
+
+
 
 
 
