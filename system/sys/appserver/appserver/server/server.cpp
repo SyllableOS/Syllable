@@ -809,7 +809,7 @@ void AppServer::DispatchMessage( Message * pcReq )
 			pcReq->FindObject("key",cKey);
 			pcReq->FindString("app",&cApp);
 			
-			for (int i=0; i<cKeyEvents.size(); i++)
+			for (uint i=0; i<cKeyEvents.size(); i++)
 			{
 				if ( (cKeyEvents[i].cApplication == cApp)  && (cKey == cKeyEvents[i].cKey) )
 				{
@@ -819,6 +819,22 @@ void AppServer::DispatchMessage( Message * pcReq )
 					break;
 				}
 			}
+			break;
+		}
+		
+	case DR_REGISTERED_KEY_EVNTS:
+		{
+			os::Message cReply;
+			cReply.AddInt32("count",cKeyEvents.size());
+			
+			for (uint i=0; i<cKeyEvents.size(); i++)
+			{
+				cReply.AddString("event",cKeyEvents[i].cEventName);
+				cReply.AddObject("key",cKeyEvents[i].cKey);
+				cReply.AddString("app",cKeyEvents[i].cApplication);
+			}
+			
+			pcReq->SendReply(&cReply);
 			break;
 		}
 	}
@@ -895,7 +911,8 @@ void AppServer::Run( void )
 			case DR_GET_MOUSE_CFG:
 			case DR_SET_MOUSE_CFG:
 			case DR_REGISTER_KEY_EVNT:				
-			case DR_UNREGISTER_KEY_EVNT:				
+			case DR_UNREGISTER_KEY_EVNT:
+			case DR_REGISTERED_KEY_EVNTS:			
 				{
 					try
 					{
@@ -1161,6 +1178,10 @@ int main( int argc, char **argv )
 	dbprintf( "WARNING : layers.device failed to initiate itself!!!\n" );
 	return ( 0 );
 }
+
+
+
+
 
 
 
