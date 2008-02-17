@@ -6,9 +6,10 @@ inherits			gcc-4.1.2
 links
 	gcc													bin/cc
 	libgcc.a											lib/gcc/i586-pc-syllable/4.1.2/libgcc_static.a
-;	Hook into the system:
+;	For init:
 	/boot/system/resources/gcc/4.1.2/lib/libgcc_s.so.3	/system/libraries
 ;	For some packages:
 ;	bin/cpp												lib/
 ;	For WebKit:
 	gcc													/usr/bin/
+
