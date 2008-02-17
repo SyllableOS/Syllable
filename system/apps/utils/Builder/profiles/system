@@ -268,6 +268,7 @@ modules
 	system libs/zlib-1.2.3
 
 	libs/libdl
+	libs/libpthread-1
 	libs/libpthread
 
 ;	Currently conflicts with GetText on GLibC 2.3.x:

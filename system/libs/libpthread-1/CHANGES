@@ -1,0 +1,40 @@
+* January 17 2008, Kaj de Vos *
+
+Copied source from Syllable 0.6.5 and made some system headers internal to create
+a compatibility version for libpthread.so.1
+
+* Febuary 8 2006, Kristian Van Der Vliet *
+
+Fix pthread_exit() and pthread_join()
+	o Pass value in value_ptr to exit_thread() in pthread_exit()
+	o Retrieve value from wait_for_thread() and set value_ptr in pthread_join()
+	o Use our own entry function for spawn_thread() in pthread_create() and call
+	  pthread_exit() with the return value when the thread entry function returns
+
+* May 25 2006, Kristian Van Der Vliet *
+
+Combined updates from Jan L. Hauffa and Arno Klenke
+
+	* Improved conditionals handling
+	* Mutex handling is more compliant
+	* pthread_cleanup_push(), pthread_cleanup_pop() implemented & the cleanup
+	  handlers are called from pthread_exit()
+	* Basic pthread_join() implementation
+
+* Oct 05 2002, Kristian Van Der Vliet *
+ 
+Initial checkin.  The following is complete :
+
+	* Thread creation and deletion
+	* Thread attributes
+	* Mutexes
+	* Conditional variables, including pthread_cond_timedwait()
+	* Misc. parts such as pthread_self(), pthread_equal() etc.
+
+The following is still to be done :
+
+	* Thread joins
+	* Cancellation
+	* Cleanup handlers via. pthread_cleanup_push() and pthread_cleanup_pop()
+	* X/Open R/W locks
+	* Misc. parts such as pthread_sigmask(), pthread_detach() etc.
