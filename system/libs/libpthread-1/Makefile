@@ -24,7 +24,7 @@ clean:
 
 install: all
 	cp -f $(OBJDIR)/$(LIB) $(IMAGE)/system/libraries/
-	ln -sf $(LIB) $(IMAGE)/system/libraries/libpthread.so
+#	ln -sf $(LIB) $(IMAGE)/system/libraries/libpthread.so
 
 dist: install
 
