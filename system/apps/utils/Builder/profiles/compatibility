@@ -2,8 +2,7 @@
 
 resources
 	system/libraries GCC-libraries-3.4.3
-	system/libraries binaries/LibSyllable-7
+;	system/libraries binaries/LibSyllable-7
 
 modules
 	libs/libpthread-1
-
