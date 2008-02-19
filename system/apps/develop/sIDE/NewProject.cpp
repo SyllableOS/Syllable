@@ -160,7 +160,7 @@ void NewProjectDialog::HandleMessage(Message* pcMessage)
 						case 0:
 						{
 							set_thread_priority( -1, 0 );
-							execlp( "/usr/unzip/bin/unzip", "/usr/unzip/bin/unzip", cTemplatePath.GetPath().c_str(), "-d", path, NULL );
+							execlp( "/system/indexes/bin/unzip", "/system/indexes/bin/unzip", cTemplatePath.GetPath().c_str(), "-d", path, NULL );
 							exit( 0 );
 							break;
 						}
@@ -261,6 +261,7 @@ void NewProjectDialog::HandleMessage(Message* pcMessage)
 		}	
 	}
 }
+
 
 
 
