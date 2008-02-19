@@ -1,3 +1,7 @@
+* Febuary 18 2008, Rick Caudill *
+
+Fixed sIDE New Project creation bug.  Check sIDE revision for more info.
+
 * Febuary 10 2008, Rick Caudill *
 
 Added KeyboardEventView to the development apps.  This app will allow a developer/user to
