@@ -1,24 +1,25 @@
 authors				Kaj de Vos
 status				testing
 
-headline				Amazon S3 command and synchronisation tools
+headline			Amazon S3 command and synchronisation tools
 description
 	S3Cmd is a Ruby program that wraps S3 operations into a simple command-line tool. It is inspired by things like rsh3ll, #sh3ll, etc., but shares no code from them.
 	S3Sync is a Ruby program that easily transfers directories between a local directory and an S3 bucket:prefix. It behaves somewhat, but not precisely, like the RSync program.
 	In general, s3sync and s3cmd complement each other. s3sync is useful to perform serious synchronization operations, and s3cmd allows you to do simple things such as bucket management, listing, transferring single files, and the like.
-licenses				other
+licenses			other
 
 home				s3sync.net
-locations				http://s3.amazonaws.com/ServEdge_pub/s3sync/
+locations			http://s3.amazonaws.com/ServEdge_pub/s3sync/
 
 ; With OpenSSL:
 run-needs			ruby >= 1.8.4
+run-recommends		mime-support
 
 make				true
 
-install-tree			bin
+install-tree		bin
 install				true
 ; TODO: modify to put support scripts in lib/:
-install-files			*.rb bin/
+install-files		*.rb bin/
 
 documentation		README* *.example
