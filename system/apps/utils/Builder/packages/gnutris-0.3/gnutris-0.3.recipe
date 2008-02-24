@@ -1,0 +1,20 @@
+authors				Kaj de Vos
+status				developing
+
+inherits			sourceforge
+
+headline			3D Tetris game
+description
+	3D remake of the classic Tetris game.
+licenses			GPL
+
+needs
+	sdl
+	sdl-image
+	sdl-ttf
+	gettext
+
+home				fcgames.sourceforge.net
+packages			fcgames/Gnutris-0.3
+
+documentation		README ABOUT-NLS COPYING NEWS ChangeLog AUTHORS THANKS TODO
