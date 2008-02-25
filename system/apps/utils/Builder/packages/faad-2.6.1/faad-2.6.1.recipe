@@ -22,5 +22,5 @@ system-prefix-var	DESTDIR
 
 documentation
 	README COPYING NEWS ChangeLog AUTHORS TODO
-;	docs
+	docs/*.pdf
 build-docs			README.linux
