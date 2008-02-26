@@ -1,7 +1,7 @@
 COPTS	= -c
 
 OBJS	= server.o
-EXE	= nfs
+EXE	= network-fs-server
 
 $(EXE) : $(OBJS)
 	$(CC) $(OBJS) -o $@
@@ -10,7 +10,7 @@ clean:
 	-rm $(OBJS)
 
 install: $(EXE)
-	cp -f $(EXE) $(IMAGE)/system/bin/$(EXE)
+	cp -f $(EXE) $(IMAGE)/system/bin/
 
 dist: install
 

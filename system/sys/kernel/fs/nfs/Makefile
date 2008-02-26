@@ -3,7 +3,7 @@ AFLAGS   = -c
 
 C_INCLUDE_PATH=$(ATHEOS_INCLUDE_PATH)
 
-FS		:= nfs
+FS		:= network-fs
 OBJS	:= nfs.o gcc34_memcpy.o
 
 OBJDIR	:= objs
@@ -28,18 +28,18 @@ $(OBJDIR)/%.o : %.S
 
 
 
-all :	objs $(OBJDIR)/nfs
+all :	objs $(OBJDIR)/$(FS)
 
 objs:
-	mkdir objs
+	mkdir $(OBJDIR)
 
-$(OBJDIR)/nfs: $(OBJS) Makefile
-	$(CC) -kernel $(OBJS) -o $(OBJDIR)/nfs
+$(OBJDIR)/$(FS): $(OBJS) Makefile
+	$(CC) -kernel $(OBJS) -o $(OBJDIR)/$(FS)
 
 install: all
-	cp -f $(OBJDIR)/nfs $(IMAGE)/system/drivers/fs/nfs
+	cp -f $(OBJDIR)/$(FS) $(IMAGE)/system/drivers/fs/
 
 dist: install
 
 clean:
-	rm -f $(OBJS) $(OBJDIR)/nfs
+	rm -f $(OBJS) $(OBJDIR)/$(FS)
