@@ -1,0 +1,34 @@
+authors				Kaj de Vos
+status				developing
+
+headline			Full-featured web server written in REBOL
+description
+	Cheyenne is a full-featured Apache-class web server implementation using 100% native REBOL. The project started just as a simple rewrite of the UniServe's HTTPd service to make it more flexible and ended as creating Cheyenne. Cheyenne is built on top of the UniServe async network framework, so it inherits the gains of asynchronous I/O and mono-process lightweight design.
+licenses			BSD
+
+home				softinnov.org/cheyenne.shtml
+packages			cheyenne-r0918
+locations			http://softinnov.org/tmp/
+
+run-needs
+	rebol
+	uniserve
+
+patch				sed -i 's/%..\/UniServe/%\/usr\/indexes\/lib\/REBOL\/UniServe/' Cheyenne/cheyenne.r
+make				true
+
+install-tree
+	lib
+	lib/REBOL
+	lib/REBOL/Cheyenne
+install				true
+install-files
+	Cheyenne/*.r		lib/REBOL/Cheyenne/
+	Cheyenne/*.cfg		lib/REBOL/Cheyenne/
+	Cheyenne/handlers	lib/REBOL/Cheyenne/
+	Cheyenne/internal	lib/REBOL/Cheyenne/
+	Cheyenne/misc		lib/REBOL/Cheyenne/
+	Cheyenne/mods		lib/REBOL/Cheyenne/
+	Cheyenne/www		lib/REBOL/Cheyenne/
+
+documentation		Cheyenne/changelog.txt Cheyenne/docs/*

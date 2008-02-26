@@ -1,5 +1,5 @@
 ; List of all resources released as binaries
-; Generated on 13-Feb-2008/0:27:46+1:00
+; Generated on 26-Feb-2008/0:45:57+1:00
 
 modules
 	p7zip-4.51
@@ -84,7 +84,7 @@ modules
 	pcre-7.0
 	pengupop-2.1.12
 	perl-5.8.8
-	pkg-config-0.15.0
+	pkg-config-0.22
 	procps-3.2.7
 	qemu-0.9.1
 	rebol-core-2.7.5

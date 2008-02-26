@@ -1,0 +1,27 @@
+authors				Kaj de Vos
+status				developing
+
+headline			Client/server network programming framework for REBOL
+description
+	UniServe is a client/server network programming framework for REBOL. It has been designed and built in order to offer a high performance network engine while providing a simple and consistent API for developers. If you want to implement a client or server or both (in the same application) in REBOL, UniServe will be a perfect fit and will save you days of hard work on low-level I/O routines. Additionnaly, UniServe is published with several useful services (HTTPd, Proxy, Task-Master,...) and client protocols (HTTP, POP3, DNS, ...) to help you build your product even faster.
+licenses			BSD
+
+home				softinnov.org/rebol/uniserve.shtml
+packages			cheyenne-r0918
+locations			http://softinnov.org/tmp/
+
+run-needs			rebol
+
+make				true
+
+install-tree
+	lib
+	lib/REBOL
+	lib/REBOL/UniServe
+install				true
+install-files
+	UniServe/*.r		lib/REBOL/UniServe/
+	UniServe/clients	lib/REBOL/UniServe/
+	UniServe/libs		lib/REBOL/UniServe/
+	UniServe/protocols	lib/REBOL/UniServe/
+	UniServe/services	lib/REBOL/UniServe/

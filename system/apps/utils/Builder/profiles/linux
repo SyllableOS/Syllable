@@ -548,5 +548,9 @@ modules
 ;	Needs GCC 3:
 ;	apps/other/qemu-0.9.1
 
+;	REBOL stack
+	apps/other/uniserve-0.9.28
+	apps/other/cheyenne-0.9.18
+
 ;	Amazon tools
 	apps/other/s3sync--current
