@@ -1,0 +1,23 @@
+authors				Kaj de Vos
+status				testing
+
+headline			Captcha library for REBOL
+description
+	This library offers a visual captcha generation system for REBOL web applications. Its goal is to protect web forms from spam produced by automated bots, using a test that is supposed to be only solvable by a human being.
+licenses			BSD
+
+home				softinnov.org/rebol/captcha.shtml
+packages			Captcha captcha--current
+locations			http://softinnov.org/dl/
+
+run-needs			rebol
+
+make				true
+
+install-tree
+	lib
+	lib/REBOL
+install				true
+install-files
+	*.r				lib/REBOL/
+	Fonts			lib/REBOL/

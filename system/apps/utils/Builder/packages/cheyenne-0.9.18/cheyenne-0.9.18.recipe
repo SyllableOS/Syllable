@@ -15,6 +15,7 @@ run-needs
 	uniserve
 
 patch				sed -i 's/%..\/UniServe/%\/usr\/indexes\/lib\/REBOL\/UniServe/' Cheyenne/cheyenne.r
+
 make				true
 
 install-tree

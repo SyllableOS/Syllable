@@ -1,0 +1,23 @@
+authors				Kaj de Vos
+status				testing
+
+headline			MySQL driver for REBOL
+description
+	This driver will allow you to connect to a MySQL database server, send queries and retrieve resulting recordsets. This driver is 100% written in REBOL and doesn't require any additional library (like libmysql). It works with all REBOL products and on all platforms supported by REBOL. You only need one file to make it work and its size is less than 30KB. It works by adding a new scheme (mysql://) that enables any REBOL product to talk to a MySQL server.
+licenses			other
+
+home				softinnov.org/rebol/mysql.shtml
+packages			mysql-120
+locations			http://softinnov.org/sc/getfile.rsp?id=sc-mysql&url=/dl/
+
+run-needs			rebol
+
+make				true
+
+install-tree
+	lib
+	lib/REBOL
+install				true
+install-files		*.r lib/REBOL/
+
+documentation		*.html

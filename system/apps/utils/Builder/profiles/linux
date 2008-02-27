@@ -551,6 +551,8 @@ modules
 ;	REBOL stack
 	apps/other/uniserve-0.9.28
 	apps/other/cheyenne-0.9.18
+	apps/other/captcha--current
+	apps/other/rebol-mysql-1.2.0
 
 ;	Amazon tools
 	apps/other/s3sync--current
