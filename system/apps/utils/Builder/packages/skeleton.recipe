@@ -125,8 +125,8 @@ super-install
 
 install				<Installation commands override>
 
-; Non-standard install prefix variable for staging, in addition to configure prefix:
-system-prefix-var	prefix
+; Install prefix variable for imaging, in addition to configure install prefix:
+system-prefix-var	DESTDIR
 
 ; Extra environment variables for make install:
 install-env
