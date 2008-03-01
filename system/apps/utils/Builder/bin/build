@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.7.40
+# Version 0.7.41
 # Copyright (c) 2002-2008 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -56,40 +56,57 @@ end
 
 def downloadModule target
 	unless
-		if locations = (recipe = getRecipe target)['locations']  # Get the source package(s)
-			@log.subheader 'Downloading source package(s)'
-			Dir.chdir File.join(@configPath, 'downloading')
+		if locations = (recipe = getRecipe target)['locations']
+			if files = recipe['files']
+				@log.subheader 'Downloading source file(s)'
 
-			for package in ((packages = recipe['packages']) ?
-				firstColumn(parseList(packages)) :
-				commonName(target)
-			)
-				unless sourcePackageAvailable? package
-					break if for location in toList locations
-						break unless for type in ['tar.bz2', 'tbz2', 'tar.gz', 'tgz', 'zip']
-							@log.subheader 'Trying ' + f = File.join(location, file = package + '.' + type)
-							file = File.basename file
+				(exists? target or action 'mkdir --parents ' + target) and
+				begin  # We have a destination dir
+					Dir.chdir target
 
-#							break if action "wget --passive-ftp --tries=5 '#{f}'"
-#							break if action "curl --progress-bar --show-error --verbose --remote-name --ftp-pasv --retry 5 --connect-timeout <seconds> '#{f}'"
+					for file in toList files
+						break if for location in toList locations
+							if action "curl --remote-name --progress-bar --ftp-pasv '#{File.join location, file}'"
+								break if exists? file
+							end
+						end
+					end
+				end
+			else
+				@log.subheader 'Downloading source package(s)'
+				Dir.chdir File.join(@configPath, 'downloading')
 
-							# Let mirror systems such as SourceForge provide a mirror but not try all of them
-							if headers = action("curl --head --progress-bar --ftp-pasv --location --max-redirs 2 '#{f}'")
-								unless result = (parseMap headers)['HTTP/1.1'] and
-									# Last header was "Not Found" or "Forbidden"
-									['404', '403'].include?((toKeyValue result).first)
-								then
-									# This may yield a different mirror, but the result should be the same
-									if action "curl --remote-name --progress-bar --ftp-pasv --location --max-redirs 2 '#{f}'"
-										break if exists? file
+				for package in ((packages = recipe['packages']) ?
+					firstColumn(parseList(packages)) :
+					commonName(target)
+				)
+					unless sourcePackageAvailable? package
+						break if for location in toList locations
+							break unless for type in ['tar.bz2', 'tbz2', 'tar.gz', 'tgz', 'zip']
+								@log.subheader 'Trying ' + f = File.join(location, file = package + '.' + type)
+								file = File.basename file
+
+#								break if action "wget --passive-ftp --tries=5 '#{f}'"
+#								break if action "curl --progress-bar --show-error --verbose --remote-name --ftp-pasv --retry 5 --connect-timeout <seconds> '#{f}'"
+
+								# Let mirror systems such as SourceForge provide a mirror but not try all of them
+								if headers = action("curl --head --progress-bar --ftp-pasv --location --max-redirs 2 '#{f}'")
+									unless result = (parseMap headers)['HTTP/1.1'] and
+										# Last header was "Not Found" or "Forbidden"
+										['404', '403'].include?((toKeyValue result).first)
+									then
+										# This may yield a different mirror, but the result should be the same
+										if action "curl --remote-name --progress-bar --ftp-pasv --location --max-redirs 2 '#{f}'"
+											break if exists? file
+										end
 									end
 								end
 							end
 						end
-					end
 
-					@log.subheader "Moving package #{file} to sources directory"
-					break unless action "mv #{file} " + @sourcesPath
+						@log.subheader "Moving package #{file} to sources directory"
+						break unless action "mv #{file} " + @sourcesPath
+					end
 				end
 			end
 		else  # Get it from a repository
@@ -1798,7 +1815,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.7.40',
+	puts 'Syllable Build System 0.7.41',
 		'Copyright (c) 2002-2008 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
