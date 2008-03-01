@@ -1,0 +1,28 @@
+authors				Kaj de Vos
+status				developing
+
+headline			Model-View-Controller based web framework written in REBOL
+description
+	QuarterMaster is a web framework based on the 'Model-View-Controller' application pattern. It is written in REBOL and is designed 1) to have as small a footprint as it can get away with, 2) to install without effort, 3) to leverage the highly expressive REBOL messaging language.
+;licenses			TBD
+
+home				www.ross-gill.com/QM/
+files				qm.r mod-qm.r introduction.html
+locations			http://www.ross-gill.com/QM/
+
+run-needs
+	rebol
+	cheyenne | apache
+
+patch				sed -i 's/path\/to\/rebol/usr\/bin\/env rebol/' qm.r
+
+make				true
+
+merge-install
+
+install				true
+install-files
+	qm.r			lib/REBOL/Cheyenne/www/
+	mod-qm.r		lib/REBOL/Cheyenne/mods/
+
+documentation		introduction.html
