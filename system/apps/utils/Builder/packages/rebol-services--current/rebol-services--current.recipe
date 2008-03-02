@@ -1,0 +1,31 @@
+authors				Kaj de Vos
+status				developing
+
+headline			Network services framework written in REBOL
+description
+	REBOL/Services implements network services - similar in concept to web services, but extremely lightweight by comparison. The design provides an easy way to send requests to REBOL-based services on the Internet. It is also possible to create gateways to other types of services.
+	REBOL/Services provides a simple, elegant way to share information between computer programs. They can be used to exchange information between clients and servers that are located thousands of miles apart or simply between applications running on your local computer.
+	REBOL/Services implements a concept called a service oriented architecture or SOA for short. The basic idea of an SOA is that you send a request message to another program (a "service") that attempts to fulfill the request and return the result.
+licenses			BSD
+
+home
+	rebol.com/docs/services/
+;	rebol.net/rs/
+files				server.r client.r tutorial.html
+locations
+	http://rebol.net/rs/
+	http://rebol.com/docs/services/
+
+run-needs			rebol
+
+make				true
+
+install-tree
+	lib/
+	lib/REBOL/
+install				true
+install-files
+	server.r		lib/REBOL/
+	client.r		lib/REBOL/
+
+documentation		tutorial.html

@@ -548,7 +548,8 @@ modules
 ;	Needs GCC 3:
 ;	apps/other/qemu-0.9.1
 
-;	REBOL stack
+;	REBOL stacks
+	apps/other/rebol-services--current
 	apps/other/uniserve-0.9.28
 	apps/other/cheyenne-0.9.18
 	apps/other/cheyenne--quartermaster-current
