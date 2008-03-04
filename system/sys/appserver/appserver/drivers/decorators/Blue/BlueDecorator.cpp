@@ -1,5 +1,5 @@
 /*
- *  "Blue" Window-Decorator 1.0
+ *  "Blue" Window-Decorator 1.1
  *  Copyright (C) 2007 John Aspras
  *
  *  This program is free software; you can redistribute it and/or
@@ -649,10 +649,10 @@ extern "C" WindowDecorator* create_decorator( Layer* pcLayer, uint32 nFlags )
 		#include "pixmaps/decor/deco.h"	
 		};
    	   	 
-		g_pcButtons = new SrvBitmap (224,18,CS_RGB32);
+		g_pcButtons = new SrvBitmap (300,18,CS_RGB32);
 		g_pcDecor   = new SrvBitmap (24,9,CS_RGB32); 
 	
-		BlueDecorator::LoadBitmap (g_pcButtons,g_buttons,Point (224,18));	
+		BlueDecorator::LoadBitmap (g_pcButtons,g_buttons,Point (300,18));
 		BlueDecorator::LoadBitmap (g_pcDecor,g_decor,Point (24,9));
 	}
 
@@ -661,3 +661,4 @@ extern "C" WindowDecorator* create_decorator( Layer* pcLayer, uint32 nFlags )
 
     return( new BlueDecorator( pcLayer, nFlags ) );
 }
+
