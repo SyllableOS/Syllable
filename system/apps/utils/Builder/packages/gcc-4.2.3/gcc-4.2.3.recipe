@@ -1,0 +1,66 @@
+authors				Kaj de Vos
+status				testing
+warnings
+	GCC has a circular dependency on GLibC.
+	LibIberty is both in BinUtils and in GCC.
+notes				GMP with MPFR support is required to build Fortran
+
+inherits			gnu
+
+headline			The GNU Compiler Collection
+description
+	The GNU Compiler Collection includes front ends for C, C++, Objective-C, Fortran, Java, and Ada, as well as libraries for these languages (libstdc++, libgcj,...).
+licenses			GPL LGPL GFDL
+
+home				gcc.gnu.org
+packages
+	gcc/gcc-4.2.3/gcc-4.2.3
+;	gcc/gcc-4.2.3/gcc-core-4.2.3
+;	gcc/gcc-4.2.3/gcc-g++-4.2.3
+;	gcc/gcc-4.2.3/gcc-objc-4.2.3
+;	gcc/gcc-4.2.3/gcc-java-4.2.3
+;	gcc/gcc-4.2.3/gcc-fortran-4.2.3
+;	gcc/gcc-4.2.3/gcc-ada-4.2.3
+;	gcc/gcc-4.2.3/gcc-testsuite-4.2.3
+
+needs
+;	For -O3 with -fpic:
+	binutils >= 2.13.1
+	glibc >= 2.3.3
+conflicts			binutils
+recommends			mktemp
+build-recommends
+;	diffutils
+;	For documentation:
+	texinfo
+test-needs			dejagnu >= 1.4.1
+install-needs		gcc
+
+make-vars
+	CFLAGS			'-O'
+	LIBCFLAGS		'-O2'
+	LIBCXXFLAGS		'-O2'
+;					GCC seems to set this automatically:
+;					' -fno-implicit-templates'
+make-targets
+;	Safest when compiling natively:
+	bootstrap
+;	For printed documentation:
+;	dvi
+
+;test-env
+;	TCL_LIBRARY		'/usr/tcl'
+;	DEJAGNULIBS		'/usr/dejagnu'
+; Don't stop at errors:
+test-options		-k
+
+system-prefix-var	DESTDIR
+
+documentation
+	README FAQ faq.html BUGS bugs.html COPYING gcc/COPYING.LIB NEWS ChangeLog MAINTAINERS
+	ABOUT-NLS gcc/ABOUT-GCC-NLS
+build-docs			INSTALL
+
+; LFS prefers the one from BinUtils:
+;delete-files		lib/libiberty.a
+

@@ -1,0 +1,150 @@
+diff -ru gcc-4.2.3-original/Makefile.in gcc-4.2.3/Makefile.in
+--- gcc-4.2.3-original/Makefile.in	2006-12-29 17:47:06.000000000 +0000
++++ gcc-4.2.3/Makefile.in	2008-03-08 15:47:56.000000000 +0000
+@@ -41741,7 +41741,8 @@
+ 	esac; \
+ 	$(HOST_EXPORTS) \
+ 	echo "$$msg"; \
+-	cd gcc && $(MAKE) $(GCC_FLAGS_TO_PASS) $$compare
++	cd gcc
++# && $(MAKE) $(GCC_FLAGS_TO_PASS) $$compare
+ 	@r=`${PWD_COMMAND}`; export r; \
+ 	s=`cd $(srcdir); ${PWD_COMMAND}` ; export s; \
+ 	echo "Building runtime libraries"; \
+diff -ru gcc-4.2.3-original/configure.in gcc-4.2.3/configure.in
+--- gcc-4.2.3-original/configure.in	2007-09-15 00:42:24.000000000 +0000
++++ gcc-4.2.3/configure.in	2008-03-08 15:47:56.000000000 +0000
+@@ -774,6 +774,9 @@
+     ;;
+   sparc-*-solaris* | sparc64-*-solaris* | sparcv9-*-solaris*)
+     ;;
++	*-*-syllable)
++    noconfigdirs="$noconfigdirs target-newlib"
++    ;;
+   v810-*-*)
+     noconfigdirs="$noconfigdirs bfd binutils gas gcc gdb ld target-libstdc++-v3 opcodes target-libgloss ${libgcj}"
+     ;;
+diff -ru gcc-4.2.3-original/gcc/config.gcc gcc-4.2.3/gcc/config.gcc
+--- gcc-4.2.3-original/gcc/config.gcc	2007-12-27 09:45:20.000000000 +0000
++++ gcc-4.2.3/gcc/config.gcc	2008-03-08 15:47:56.000000000 +0000
+@@ -1091,6 +1091,16 @@
+ 	tm_file="${tm_file} i386/unix.h i386/bsd.h i386/gas.h dbxcoff.h i386/i386-coff.h"
+ 	use_fixproto=yes
+ 	;;
++i[34567]86-*-syllable*)
++	xmake_file=x-syllable
++	xm_defines="HAVE_ATEXIT POSIX BSTRING"
++	tmake_file='t-slibgcc-syllable i386/t-syllable i386/t-crtstuff'
++	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h svr4.h i386/syllable.h"
++	extra_parts='crtbegin.o crtend.o crtbeginS.o crtendS.o'
++	gnu_ld=yes
++	float_format=i386
++	thread_file='syllable'
++	;;
+ i[34567]86-*-linux* | i[34567]86-*-kfreebsd*-gnu | i[34567]86-*-knetbsd*-gnu)
+ 			# Intel 80386's running GNU/*
+ 			# with ELF format using glibc 2
+diff -ru gcc-4.2.3-original/gcc/configure gcc-4.2.3/gcc/configure
+--- gcc-4.2.3-original/gcc/configure	2007-09-23 21:08:04.000000000 +0000
++++ gcc-4.2.3/gcc/configure	2008-03-08 15:47:56.000000000 +0000
+@@ -15821,13 +15821,13 @@
+   fi
+   rm -f conftest.* conftest[123].*
+ fi
+-if test x$gcc_cv_ld_ro_rw_mix = xread-write; then
++#if test x$gcc_cv_ld_ro_rw_mix = xread-write; then
+ 
+-cat >>confdefs.h <<\_ACEOF
+-#define HAVE_LD_RO_RW_SECTION_MIXING 1
+-_ACEOF
++#cat >>confdefs.h <<\_ACEOF
++##define HAVE_LD_RO_RW_SECTION_MIXING 1
++#_ACEOF
+ 
+-fi
++#fi
+ echo "$as_me:$LINENO: result: $gcc_cv_ld_ro_rw_mix" >&5
+ echo "${ECHO_T}$gcc_cv_ld_ro_rw_mix" >&6
+ 
+diff -ru gcc-4.2.3-original/gcc/gthr.h gcc-4.2.3/gcc/gthr.h
+--- gcc-4.2.3-original/gcc/gthr.h	2005-06-25 02:02:01.000000000 +0000
++++ gcc-4.2.3/gcc/gthr.h	2008-03-08 15:47:56.000000000 +0000
+@@ -103,6 +103,8 @@
+ #include "gthr-dce.h"
+ #elif _SOLARIS_THREADS
+ #include "gthr-solaris.h"
++#elif defined __SYLLABLE__
++#include "gthr-syllable.h"
+ 
+ /* Include GTHREAD_FILE if one is defined.  */
+ #elif defined(HAVE_GTHR_DEFAULT)
+diff -ru gcc-4.2.3-original/libstdc++-v3/configure gcc-4.2.3/libstdc++-v3/configure
+--- gcc-4.2.3-original/libstdc++-v3/configure	2007-06-28 23:02:05.000000000 +0000
++++ gcc-4.2.3/libstdc++-v3/configure	2008-03-08 15:47:57.000000000 +0000
+@@ -4200,6 +4200,10 @@
+   lt_cv_deplibs_check_method=pass_all
+   ;;
+ 
++syllable*)
++  lt_cv_deplibs_check_method=pass_all
++  ;;
++
+ bsdi4*)
+   lt_cv_deplibs_check_method='file_magic ELF [0-9][0-9]*-bit [ML]SB (shared object|dynamic lib)'
+   lt_cv_file_magic_cmd='/usr/bin/file -L'
+diff -ru gcc-4.2.3-original/libtool.m4 gcc-4.2.3/libtool.m4
+--- gcc-4.2.3-original/libtool.m4	2005-07-16 02:30:53.000000000 +0000
++++ gcc-4.2.3/libtool.m4	2008-03-08 15:47:57.000000000 +0000
+@@ -773,6 +773,10 @@
+   lt_cv_file_magic_test_file=/lib/libc.so
+   ;;
+ 
++syllable*)
++  lt_cv_deplibs_check_method=pass_all
++  ;;
++
+ [sysv5uw[78]* | sysv4*uw2*)]
+   lt_cv_deplibs_check_method=pass_all
+   ;;
+diff -ru gcc-4.2.3-original/ltconfig gcc-4.2.3/ltconfig
+--- gcc-4.2.3-original/ltconfig	2007-02-14 17:08:35.000000000 +0000
++++ gcc-4.2.3/ltconfig	2008-03-08 15:47:57.000000000 +0000
+@@ -1403,6 +1403,23 @@
+   shlibpath_var=LD_LIBRARY_PATH
+   ;;
+ 
++
++syllable*)
++  version_type=linux
++  need_lib_prefix=no
++  need_version=no
++  library_names_spec='${libname}${release}.so$versuffix ${libname}${release}.so$major $libname.so'
++  soname_spec='${libname}${release}.so$major'
++  shlibpath_var=LIBRARY_PATH
++  shlibpath_overrides_runpath=no
++  # This implies no fast_install, which is unacceptable.
++  # Some rework will be needed to allow for fast_install
++  # before this can be enabled.
++  hardcode_into_libs=yes
++  dynamic_linker='Syllable ld.so'
++  can_build_shared=yes
++  ;;
++
+ sysv4*MP*)
+   if test -d /usr/nec ;then
+     version_type=linux
+diff -ru gcc-4.2.3-original/ltmain.sh gcc-4.2.3/ltmain.sh
+--- gcc-4.2.3-original/ltmain.sh	2006-07-06 23:24:51.000000000 +0000
++++ gcc-4.2.3/ltmain.sh	2008-03-08 15:47:57.000000000 +0000
+@@ -2687,6 +2687,11 @@
+ 	  verstring="$verstring:${current}.0"
+ 	  ;;
+ 
++	syllable)
++	  major=.`expr $current - $age`
++	  versuffix="$major.$age.$revision"
++	  ;;
++
+ 	sunos)
+ 	  major=".$current"
+ 	  versuffix=".$current.$revision"
