@@ -5,7 +5,8 @@ notes
 	A path to the gnu subdirectory may have to be added to the mirror locations.
 
 locations
-	ftp://ftp.gnu.org/gnu/
+;	Seems to be locked down:
+;	ftp://ftp.gnu.org/gnu/
 	http://ftp.gnu.org/gnu/
 ; North Carolina
 	ftp://ftp.ibiblio.org/pub/mirrors/gnu/ftp/gnu/
