@@ -12,7 +12,6 @@ ps_OBJS       = ps.o
 ls_ports_OBJS = ls_ports.o
 ls_sema_OBJS  = ls_sema.o
 top_OBJS      = top.o
-reboot_OBJS   = reboot.o
 nice_OBJS     = nice.o
 semctl_OBJS   = semctl.o
 shutdown_OBJS = shutdown.o
@@ -49,14 +48,12 @@ $(OBJDIR)/ls_sema: $(ls_sema_OBJS)
 	$(CXX) $(ls_sema_OBJS) -lsyllable -o $@
 $(OBJDIR)/top: $(top_OBJS)
 	$(CC) $(top_OBJS) -o $@
-$(OBJDIR)/reboot: $(reboot_OBJS)
-	$(CC) $(reboot_OBJS) -o $@
 $(OBJDIR)/nice: $(nice_OBJS)
 	$(CC) $(nice_OBJS) -o $@
 $(OBJDIR)/semctl: $(semctl_OBJS)
 	$(CC) $(semctl_OBJS) -o $@
 $(OBJDIR)/shutdown: $(shutdown_OBJS)
-	$(CC) $(shutdown_OBJS) -o $@
+	$(CXX) $(shutdown_OBJS) -o $@
 $(OBJDIR)sysinfo: $(sysinfo_OBJS)
 	$(CC) $(sysinfo_OBJS) -o $@
 $(OBJDIR)/strace: $(strace_OBJS)
@@ -66,10 +63,12 @@ deps:
 
 install:
 	cp -f $(EXES) /system/bin/
+	ln -s /system/bin/shutdown /system/bin/reboot
 	chmod +x /system/bin/$(EXES)
 
 dist:
 	cp -f $(EXES) $(IMAGE)/system/bin/
+	ln -s $(IMAGE)/system/bin/shutdown /system/bin/reboot
 	chmod +x $(IMAGE)/system/bin/mkhome
 
 clean:
