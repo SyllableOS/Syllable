@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
 		register int hFd, hFdCopy;
 		struct attr_info sAttrInfo;
 
-		if ((hFd = open(argv[1], O_RDWR | O_NOTRAVERSE)) >= 0)
+		if ((hFd = open(argv[1], O_RDONLY | O_NOTRAVERSE)) >= 0)
 		{
 			if ((hFdCopy = open(argv[3], O_RDWR | O_CREAT | O_TRUNC | O_NOTRAVERSE)) >= 0)
 			{

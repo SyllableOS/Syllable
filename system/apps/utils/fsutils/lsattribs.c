@@ -17,7 +17,7 @@ int main( int argc, char** argv )
 		return( 1 );
 	}
 
-	nFile = open( argv[1], O_RDWR | O_NOTRAVERSE );
+	nFile = open( argv[1], O_RDONLY | O_NOTRAVERSE );
 
 	if ( nFile < 0 ) {
 		printf( "Failed to open %s: %s\n", argv[1], strerror( errno ) );
