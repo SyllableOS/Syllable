@@ -46,7 +46,6 @@ public:
 	{
 		Message cReq( DR_SET_MOUSE_CFG );
 
-printf( "%d\n", doubleclick );
 		cReq.AddFloat( "speed", speed );
 		cReq.AddFloat( "acceleration", accel );
 		cReq.AddInt32( "doubleclick", doubleclick );
@@ -69,7 +68,7 @@ printf( "%d\n", doubleclick );
 	{
 		SpeedSlider->SetValue( speed / 3.0f );
 		AccelSlider->SetValue( accel / 2.0f );
-		ClickSlider->SetValue( doubleclick / 100000 );
+		ClickSlider->SetValue( ((float)doubleclick) / 1000000 );
 	}
 
 	enum AppWindowMessage { MSG_APPLY, MSG_DEFAULT, MSG_UNDO };
@@ -171,7 +170,7 @@ void AppWindow :: HandleMessage( Message* pcMessage )
 		case _Private::MSG_APPLY:
 			m->_SetMouseConfig( m->SpeedSlider->GetValue().AsFloat() * 3.0f,  
 							 	m->AccelSlider->GetValue().AsFloat() * 2.0f,
-							 	(int32)(m->ClickSlider->GetValue().AsFloat() * 10000.0f));
+							 	(int32)(m->ClickSlider->GetValue().AsFloat() * 1000000.0f));
 			break;
 		case _Private::MSG_UNDO:
 			m->_SetSliders( m->MouseSpeed, m->MouseAcceleration, m->MouseDoubleclick );
