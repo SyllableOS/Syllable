@@ -1,3 +1,16 @@
+* March 9, 2008, Kristian Van Der Vliet *
+
+Some patches from Anthony Morphett
+
+o Make ctrl+click popup a window only when ctrl+clicking on the window frame.
+  Doubleclicking the window frame also pops it up. This only has effect when
+  the 'popup active window' pref is off.
+o Keyboard navigation of desktop icons is messed up after switching
+  workspaces. Actually, the keyboard nav state was forgotten whenever the
+  iconview was sorted; the patch fixes that. Also the patch removes a
+  completely redundant 'for' loop I came across which was significantly
+  slowing icon sorting.
+
 * Feburay 10, 2008, Rick Caudill *
 
 Added a way of adding global shortcuts by registering shortcuts and corresponding events to the appserver.

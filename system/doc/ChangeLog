@@ -1,3 +1,16 @@
+* March 9, 2008, Kristian Van Der Vliet *
+
+Some patches from Anthony Morphett
+
+o An improved shutdown tool to do a clean shutdown via the appserver. This is intended
+  to replace the current shutdown and reboot tools which don't give apps a chance to
+  quit cleanly.
+o In the mouse prefs app, the doubleclick speed values it was setting were off by a
+  factor of 100, so even the slowest speed was way to fast to be usable. Also the
+  doubleclick slider wasn't initially being set to the right value.
+o Make lsattribs and dumpattribs work with read-only filesystems. Currently they open
+  the file O_RDWR which fails on read-only filesystems; changed to O_RDONLY.
+
 * January 12 2008, Kristian Van Der Vliet *
 
 A bunch of PThreads improvements:
