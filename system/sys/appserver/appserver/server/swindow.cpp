@@ -1271,7 +1271,8 @@ void SrvWindow::HandleMouseDown( const Point & cMousePos, int nButton, Message *
 
 		AppserverConfig *pcConfig = AppserverConfig::GetInstance();
 
-		if( ( pcConfig->GetPopoupSelectedWindows() || ( nQualifiers & QUAL_CTRL ) ) || ( pcMouseWnd->m_pcTopView->GetFrame(  ).DoIntersect( cMousePos - pcMouseWnd->m_pcWndBorder->GetFrame(  ).LeftTop(  ) ) == false && pcMouseWnd->m_nLastHitTime + pcConfig->GetDoubleClickTime(  ) > nCurTime ) )
+		/* Popup the window, if the 'popup active window' pref is set, or on doubleclick or ctrl+click on the window frame */
+		if( pcConfig->GetPopoupSelectedWindows() || ( pcMouseWnd->m_pcTopView->GetFrame(  ).DoIntersect( cMousePos - pcMouseWnd->m_pcWndBorder->GetFrame(  ).LeftTop(  ) ) == false && ( (nQualifiers & QUAL_CTRL) || (pcMouseWnd->m_nLastHitTime + pcConfig->GetDoubleClickTime(  ) > nCurTime) ) ) )
 		{
 			pcMouseWnd->m_pcWndBorder->MoveToFront();
 			pcMouseWnd->m_pcWndBorder->GetParent()->UpdateRegions( false );
