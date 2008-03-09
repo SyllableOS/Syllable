@@ -234,11 +234,23 @@ public:
 			Unlock();
 			return;
 		}
-		for( uint i = 0; i < m_cIcons.size(); i++ )
-		{
-			std::sort( m_cIcons.begin(), m_cIcons.end(), IconSort( m_pcControl ) );
+		/* Save the old LastActiveIcon */
+		Icon* pcTmp = NULL;
+		if( m_nLastActiveIcon != -1 ) pcTmp = m_cIcons[m_nLastActiveIcon];
+
+		std::sort( m_cIcons.begin(), m_cIcons.end(), IconSort( m_pcControl ) );
+
+		/* Find the index of the active icon */
+		m_nLastActiveIcon = -1;
+		if( pcTmp != NULL ) {
+			for( uint i = 0; i < m_cIcons.size(); i++ )
+			{
+				if( m_cIcons[i] == pcTmp ) {
+					m_nLastActiveIcon = i;
+					break;
+				}
+			}
 		}
-		m_nLastActiveIcon = -1;  /* TODO: update m_nLastActiveIcon (its index may have changed after sorting) */
 		Unlock();
 	}
 	
