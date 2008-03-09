@@ -3,9 +3,8 @@ CXXFLAGS += -c
 OBJDIR = objs
 
 EXES = $(OBJDIR)/init $(OBJDIR)/ps $(OBJDIR)/ls_ports $(OBJDIR)/ls_sema	\
-	$(OBJDIR)/top $(OBJDIR)/reboot $(OBJDIR)/nice $(OBJDIR)/semctl	\
-	$(OBJDIR)/shutdown $(OBJDIR)/strace $(OBJDIR)/sysinfo \
-	mkhome kill_all
+	$(OBJDIR)/top $(OBJDIR)/nice $(OBJDIR)/semctl $(OBJDIR)/shutdown \
+	$(OBJDIR)/strace $(OBJDIR)/sysinfo mkhome kill_all
 
 init_OBJS     = init.o
 ps_OBJS       = ps.o
@@ -53,7 +52,7 @@ $(OBJDIR)/nice: $(nice_OBJS)
 $(OBJDIR)/semctl: $(semctl_OBJS)
 	$(CC) $(semctl_OBJS) -o $@
 $(OBJDIR)/shutdown: $(shutdown_OBJS)
-	$(CXX) $(shutdown_OBJS) -o $@
+	$(CXX) $(shutdown_OBJS) -lsyllable -o $@
 $(OBJDIR)sysinfo: $(sysinfo_OBJS)
 	$(CC) $(sysinfo_OBJS) -o $@
 $(OBJDIR)/strace: $(strace_OBJS)
@@ -68,7 +67,7 @@ install:
 
 dist:
 	cp -f $(EXES) $(IMAGE)/system/bin/
-	ln -s $(IMAGE)/system/bin/shutdown /system/bin/reboot
+	ln -s /system/bin/shutdown $(IMAGE)/system/bin/reboot
 	chmod +x $(IMAGE)/system/bin/mkhome
 
 clean:
