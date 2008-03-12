@@ -22,15 +22,15 @@ configure-options
 ;super-install
 
 links
-	lib/ld-linux.so.2					/lib/
+	/system/indexes/lib/ld-linux.so.2	/lib/
 ;	Currently doesn't link to the system but to /usr/glibc/:
 ;	/system/indexes/lib/ld-linux.so.2	/lib/
 ;	For GCC. Sigh:
-	include/limits.h					/usr/include/
+	/system/indexes/include/limits.h	/usr/include/
 ;	For PERL. Double sigh:
-	include/errno.h						/usr/include/
+	/system/indexes/include/errno.h		/usr/include/
 ;	For SysVInit:
-	lib/libcrypt.a						/usr/lib/
+	/system/indexes/lib/libcrypt.a		/usr/lib/
 ;	For GhostScript. Triple sigh:
-	include/sys/dir.h					/usr/include/sys
-	include/sys/time.h					/usr/include/sys
+	/system/indexes/include/sys/dir.h	/usr/include/sys
+	/system/indexes/include/sys/time.h	/usr/include/sys

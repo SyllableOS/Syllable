@@ -22,5 +22,5 @@ configure-options
 
 links
 ;	For GhostScript:
-	include/sys/dir.h					/usr/include/sys
-	include/sys/time.h					/usr/include/sys
+	/system/indexes/include/sys/dir.h	/usr/include/sys/
+	/system/indexes/include/sys/time.h	/usr/include/sys/
