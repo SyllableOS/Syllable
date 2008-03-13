@@ -32,5 +32,5 @@ links
 ;	For SysVInit:
 	/system/indexes/lib/libcrypt.a		/usr/lib/
 ;	For GhostScript. Triple sigh:
-	/system/indexes/include/sys/dir.h	/usr/include/sys
-	/system/indexes/include/sys/time.h	/usr/include/sys
+	/system/indexes/include/sys/dir.h	/usr/include/sys/
+	/system/indexes/include/sys/time.h	/usr/include/sys/

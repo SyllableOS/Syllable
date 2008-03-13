@@ -5,6 +5,7 @@ inherits			gcc-4.2.3
 
 configure-options
 	--enable-languages=c,c++
+	--disable-bootstrap
 	--disable-nls
 	--with-arch=i486
 	--enable-shared
@@ -16,4 +17,3 @@ configure-options
 ;	--with-local-prefix=/usr/local
 ;	--libexecdir=/usr/lib
 	i486-pc-linux-gnu
-

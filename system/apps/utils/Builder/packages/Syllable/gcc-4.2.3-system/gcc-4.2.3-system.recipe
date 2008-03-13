@@ -7,9 +7,8 @@ links
 	gcc													bin/cc
 	libgcc.a											lib/gcc/i586-pc-syllable/4.2.3/libgcc_static.a
 ;	For init:
-	/boot/system/resources/gcc/4.2.3/lib/libgcc_s.so.3	/system/libraries
+	/boot/system/resources/gcc/4.2.3/lib/libgcc_s.so.3	/system/libraries/
 ;	For some packages:
 ;	bin/cpp												lib/
 ;	For WebKit:
 	gcc													/usr/bin/
-

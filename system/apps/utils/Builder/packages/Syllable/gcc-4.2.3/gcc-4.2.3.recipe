@@ -29,14 +29,15 @@ build-needs
 	gawk
 ;	bison
 
-;patch
-;	cd gcc
-;	autoconf
+_patch
+	cd gcc
+	autoconf
 ; Doesn't work:
 ;make-shared
 
 configure-options
-	--enable-languages=c,c++,treelang
+	--enable-languages=c,c++
+;	,treelang
 ;		Fortran doesn't build with the new GLibC 2.3.x:
 ;		,fortran
 ;		Won't do --enable-shared:
@@ -65,4 +66,3 @@ links
 ;	bin/cpp			lib/
 ;	For WebKit:
 ;	gcc				/usr/bin/
-

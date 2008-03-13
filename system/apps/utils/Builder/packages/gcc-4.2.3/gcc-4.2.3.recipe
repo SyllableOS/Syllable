@@ -42,11 +42,9 @@ make-vars
 	LIBCXXFLAGS		'-O2'
 ;					GCC seems to set this automatically:
 ;					' -fno-implicit-templates'
-make-targets
-;	Safest when compiling natively:
-	bootstrap
-;	For printed documentation:
-;	dvi
+_make-targets
+	For printed documentation:
+	dvi
 
 ;test-env
 ;	TCL_LIBRARY		'/usr/tcl'
@@ -63,4 +61,3 @@ build-docs			INSTALL
 
 ; LFS prefers the one from BinUtils:
 ;delete-files		lib/libiberty.a
-
