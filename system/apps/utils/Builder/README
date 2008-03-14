@@ -62,7 +62,7 @@ software in a Zip package, you should have unpacked this file with
 or something equivalent. This package contains an anonymous CVS
 checkout, so you can update it over the Internet. This will ensure
 that you have the latest version, with the latest package definitions.
-It is also possoble to get the build system from the Syllable CVS
+It is also possible to get the build system from the Syllable CVS
 repository manually. The location of the build system in Syllable CVS is
 
     /syllable/system/apps/utils/Builder
