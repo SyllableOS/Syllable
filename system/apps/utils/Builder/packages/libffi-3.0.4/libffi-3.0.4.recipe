@@ -1,0 +1,20 @@
+authors
+	Kelly Wilson
+	Kaj de Vos
+maintainers			Kaj de Vos
+status				testing
+
+headline			A portable foreign function interface library
+description
+	The libffi library provides a portable, high level programming interface to various calling conventions. This allows a programmer to call any function specified by a call interface description at run-time.
+	FFI stands for Foreign Function Interface. A foreign function interface is the popular name for the interface that allows code written in one language to call code written in another language. The libffi library really only provides the lowest, machine dependent layer of a fully featured foreign function interface. A layer must exist above libffi that handles type conversions for values passed between the two languages.
+licenses			other
+
+home				sourceware.org/libffi/
+locations
+	ftp://sourceware.org/pub/libffi/
+	ftp://sources.redhat.com/pub/libffi/
+
+documentation
+	README LICENSE Changelog Changelog.libffi TODO
+;	Changelog.libgcj
