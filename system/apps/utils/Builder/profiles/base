@@ -128,6 +128,9 @@ modules
 	system libs/sdl-ttf-2.0.9
 
 
+;	ORCA/REBOL library
+	apps/other/tiny--current
+
 ;	Still needs FreeType 2.1:
 	bootstrap libraries/freetype-2.1.10
 
