@@ -1,0 +1,21 @@
+authors				Kaj de Vos
+status				testing
+
+headline			Text parsing and manipulation library written in REBOL
+description
+	TINY Is Not YAML. Parses and manipulates strings, text files and data objects in directory hierarchies.
+licenses			BSD
+
+home				syllable.org
+files				TINY.library
+locations			http://downloads.frisianfox.com.s3.amazonaws.com/resources/
+
+run-needs			rebol | orca
+
+make				true
+
+install-tree
+	lib
+	lib/REBOL
+install				true
+install-files		TINY.library lib/REBOL/
