@@ -1,6 +1,6 @@
 authors				Kaj de Vos
 status				testing
-notes				Tested with 2.7.5
+notes				Tested with 2.7.6
 
 headline			Relative Expression Based Object Language
 description
@@ -8,11 +8,12 @@ description
 	REBOL provides a lightweight platform for Internet applications. REBOL's power makes applications small so they are less expensive to create, distribute, maintain, and upgrade. In the size of a typical web page, you can fit an entire REBOL application.
 licenses			freeware
 
-home				www.rebol.com
+home
+	www.rebol.com
+;	www.rebol.net
 packages
-	sdk-2705042
 ;	Release:
-;	rebol-core-2602042
+	sdk-2706042
 ;	Ubuntu:
 ;	rebol2602042-ub510
 locations
@@ -29,6 +30,8 @@ make				true
 
 install-tree		bin
 install				true
-install-files		tools/rebol bin/
+install-files
+	tools/rebol		bin/
+;	tools/rebbase	bin/
 
-documentation		README.txt
+documentation		readme.txt changes.txt
