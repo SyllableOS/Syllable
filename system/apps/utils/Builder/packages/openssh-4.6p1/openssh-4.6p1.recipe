@@ -22,8 +22,9 @@ configure-options
 ;	Doesn't work as advertized:
 ;	--disable-libutil
 
+test-targets		tests
+
 documentation
 	README* INSTALL WARNING.RNG RFC.nroff LICENCE ChangeLog TODO CREDITS
 ;	README.platform
 internal-docs		OVERVIEW
-

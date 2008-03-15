@@ -1,0 +1,17 @@
+authors				Kaj de Vos
+status				testing
+
+configure-options
+	--sysconfdir=/etc/ssh
+;	--datadir=/usr/share/sshd
+	--with-privsep-path=/var/lib/sshd
+	--with-md5-passwords
+;	--with-pam
+;	--with-xauth=/usr/bin/xauth
+;	--with-ssl-dir=/usr/openssl
+;	--with-zlib=/usr/zlib
+;	--with-libs='-lcrypt'
+;	Doesn't work as advertised:
+;	--disable-libutil
+
+post-install		echo 'PermitRootLogin no' >> $IMAGE/etc/ssh/sshd_config

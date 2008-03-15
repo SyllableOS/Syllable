@@ -15,4 +15,5 @@ utmp:x:13:
 usb:x:14:
 cdrom:x:15:
 mail:x:34:
+sshd:x:50:
 nogroup:x:99:

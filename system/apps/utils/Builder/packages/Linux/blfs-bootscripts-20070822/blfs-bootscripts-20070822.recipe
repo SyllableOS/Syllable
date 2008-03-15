@@ -19,6 +19,8 @@ install-targets
 	install-iptables
 ;	Sound:
 	install-alsa
+;	OpenSSH server:
+	install-sshd
 
 documentation		README LICENSE ChangeLog MAINTAINERS
 ; Outdated?
