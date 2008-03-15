@@ -536,9 +536,6 @@ modules
 	apps/other/captcha--current
 	apps/other/rebol-mysql-1.2.0
 
-;	Amazon tools
-	apps/other/s3sync--current
-
 
 ;	Extra requirements for bootstrapping
 
@@ -546,6 +543,9 @@ modules
 ;	apps/gnu/make-3.81
 	apps/other/ruby-1.8.6
 
+
+;	Amazon tools
+	apps/other/s3sync--current
 
 ;	Extra goodies
 
