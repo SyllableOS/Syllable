@@ -34,7 +34,7 @@ build-recommends
 ;	For documentation:
 	texinfo
 test-needs			dejagnu >= 1.4.1
-install-needs		gcc
+;install-needs		gcc
 
 make-vars
 	CFLAGS			'-O'
@@ -53,6 +53,9 @@ _make-targets
 test-options		-k
 
 system-prefix-var	DESTDIR
+; Needs itself during installation:
+install-env
+	PATH			"$PATH:$STAGE/gcc/bin:$STAGE/bootstrap/gcc/bin:$IMAGE/gcc/bin:$IMAGE/usr/gcc/bin:$IMAGE/system/resources/gcc/4.2.3/bin:/usr/gcc/bin"
 
 documentation
 	README FAQ faq.html BUGS bugs.html COPYING gcc/COPYING.LIB NEWS ChangeLog MAINTAINERS
