@@ -25,6 +25,7 @@ build-needs
 	gcc 3
 	flex
 	perl
+	pcre
 	gperf
 
 make
