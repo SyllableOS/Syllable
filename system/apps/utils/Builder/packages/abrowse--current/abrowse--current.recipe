@@ -15,8 +15,9 @@ locations			http://downloads.syllable.org/sources/applications/ABrowse/
 needs
 	libpng
 	libjpeg
-	icu
+	pcre
 	libxml2
+	icu
 	curl
 	c-ares
 	openssl
@@ -25,7 +26,6 @@ build-needs
 	gcc 3
 	flex
 	perl
-	pcre
 	gperf
 
 make
