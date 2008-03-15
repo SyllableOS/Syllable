@@ -42,3 +42,8 @@ ln -sv /proc/self/fd/0 lib/udev/devices/stdin
 ln -sv /proc/self/fd/1 lib/udev/devices/stdout
 ln -sv /proc/self/fd/2 lib/udev/devices/stderr
 ln -sv /proc/kcore lib/udev/devices/core
+
+
+# For sshd:
+install -v -m700 -d var/lib/sshd
+chown -v root:sys var/lib/sshd
