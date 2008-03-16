@@ -1,5 +1,9 @@
 Glibc Syllable Changelog
 
+* March 16th 2008 *
+
+	o socketpair.c: New file. Taken from an older libiberty implementation.
+
 * January 27th 2008 *
 
 	o aio_cancel.c, aio_read64.c, aio_read.c, aio_write64.c, aio_write.c: New files. Emulate
