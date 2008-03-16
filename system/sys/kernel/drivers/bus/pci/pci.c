@@ -1,4 +1,3 @@
-
 /*
  *  The Syllable kernel
  *  PCI busmanager
@@ -687,7 +686,7 @@ void pci_scan_bus( int nBusNum, int nBridgeFrom, int nBusDev )
 					}
 					else
 					{
-						kerndbg( KERN_WARNING, "WARNING : To many PCI devices!\n" );
+						kerndbg( KERN_WARNING, "WARNING : Too many PCI devices!\n" );
 					}
 				}
 
@@ -1102,14 +1101,4 @@ status_t device_uninit( int nDeviceID )
 		kfree( g_apsPCIBus[i] );
 	}
 }
-
-
-
-
-
-
-
-
-
-
 

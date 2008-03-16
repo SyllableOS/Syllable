@@ -1,4 +1,3 @@
-
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2001 Kurt Skauen
@@ -597,7 +596,7 @@ static int tcp_out( void *pData )
 					printk( "Send keepalive %d to %d.%d.%d.%d:%d\n", psTCPCtrl->tcb_rexmtcount, psTCPCtrl->tcb_rip[0], psTCPCtrl->tcb_rip[1], psTCPCtrl->tcb_rip[2], psTCPCtrl->tcb_rip[3], psTCPCtrl->tcb_rport );
 					if ( ++psTCPCtrl->tcb_rexmtcount >= TCP_KEEPALIVE_PROBES )
 					{
-						printk( "To many unacked keepalive packets. Aborting connection to %d.%d.%d.%d:%d\n", psTCPCtrl->tcb_rip[0], psTCPCtrl->tcb_rip[1], psTCPCtrl->tcb_rip[2], psTCPCtrl->tcb_rip[3], psTCPCtrl->tcb_rport );
+						printk( "Too many unacked keepalive packets. Aborting connection to %d.%d.%d.%d:%d\n", psTCPCtrl->tcb_rip[0], psTCPCtrl->tcb_rip[1], psTCPCtrl->tcb_rip[2], psTCPCtrl->tcb_rip[3], psTCPCtrl->tcb_rport );
 						tcp_abort( psTCPCtrl, EPIPE );
 						continue;
 					}
