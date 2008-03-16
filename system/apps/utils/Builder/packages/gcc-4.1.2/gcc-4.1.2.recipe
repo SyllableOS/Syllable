@@ -31,7 +31,7 @@ build-recommends
 ;	For documentation:
 	texinfo
 test-needs			dejagnu >= 1.4.1
-install-needs		gcc
+;install-needs		gcc
 
 make-vars
 	CFLAGS			'-O'
@@ -51,7 +51,7 @@ make-targets
 ; Don't stop at errors:
 test-options		-k
 
-;install-prefix-var	DESTDIR
+install-prefix-var	DESTDIR
 
 documentation
 	README FAQ faq.html BUGS bugs.html COPYING COPYING.LIB NEWS ChangeLog MAINTAINERS
