@@ -5,11 +5,12 @@ authors
 	Kristian Van Der Vliet
 	Jake Hamby
 maintainers			Kaj de Vos
-status				developing
+status				broken
 warnings
 	Compile breaks on an illegal instruction crash with GCC 4.1.x itself installed when building in a subdirectory.
 	GCC has a circular dependency on GLibC.
 	LibIberty is both in BinUtils and in GCC.
+notes				Tries to use virtual memory
 
 needs
 ;	For -O3 with -fpic:
