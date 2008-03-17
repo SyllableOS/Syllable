@@ -2,6 +2,7 @@ authors
 	Ruwen "kwench"
 	Kaj de Vos
 maintainers			Kaj de Vos
-status				testing
+status				broken
+notes				undefined reference to `res_init'
 
 make-targets		generic
