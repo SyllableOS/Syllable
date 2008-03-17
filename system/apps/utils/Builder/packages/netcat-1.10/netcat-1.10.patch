@@ -1,0 +1,12 @@
+diff -ru netcat-1.10-original/netcat.c netcat-1.10/netcat.c
+--- netcat-1.10-original/netcat.c	1996-03-21 01:38:04.000000000 +0100
++++ netcat-1.10/netcat.c	2008-03-17 21:15:15.000000000 +0100
+@@ -31,7 +31,7 @@
+ /* conditional includes -- a very messy section which you may have to dink
+    for your own architecture [and please send diffs...]: */
+ /* #undef _POSIX_SOURCE		/* might need this for something? */
+-#define HAVE_BIND		/* ASSUMPTION -- seems to work everywhere! */
++//#define HAVE_BIND		/* ASSUMPTION -- seems to work everywhere! */ /* No it doesn't! */
+ #define HAVE_HELP		/* undefine if you dont want the help text */
+ /* #define ANAL			/* if you want case-sensitive DNS matching */
+ 
