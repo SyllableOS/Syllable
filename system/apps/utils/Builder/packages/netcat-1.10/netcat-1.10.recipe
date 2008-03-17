@@ -10,9 +10,6 @@ home				www.vulnwatch.org/netcat/
 packages			nc110 netcat-1.10
 locations			http://www.vulnwatch.org/netcat/
 
-; libresolv, disabled in current patch:
-recommends			bind
-
 install-tree		bin
 install				true
 install-files
