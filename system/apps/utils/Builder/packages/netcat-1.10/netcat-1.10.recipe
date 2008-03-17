@@ -8,6 +8,14 @@ licenses			other
 
 home				www.vulnwatch.org/netcat/
 packages			nc110 netcat-1.10
-locations			http://www.vulnwatch.org/netcat/
+locations
+	http://www.vulnwatch.org/netcat/
+	ftp://avian.org/src/hacks/
 
-documentation		README Changelog
+install-tree		bin
+install				true
+install-files
+	nc				bin/
+	scripts			.
+
+documentation		README netcat.blurb Changelog
