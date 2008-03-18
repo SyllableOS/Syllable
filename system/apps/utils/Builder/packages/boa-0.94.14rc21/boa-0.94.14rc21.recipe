@@ -17,6 +17,8 @@ run-needs			mime-support
 
 configure-options	--localstatedir=/var
 
+install-tree
+
 documentation
 	README COPYING CHANGES CREDITS
 ;	examples
