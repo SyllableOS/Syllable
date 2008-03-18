@@ -12,7 +12,6 @@ modules
 ;	network/samba-3.0.20b
 ;	network/wget-1.9.1
 	network/web/lynx-2.8.6.5
-	network/bittorrent/transmission-0.6.1
 
 ;	All broken:
 ;	network/ftp/ncftp-3.2.0
