@@ -32,7 +32,7 @@ configure-options
 documentation
 	README COPYHEADER COPYING ABOUT-NLS PROBLEMS CHANGES AUTHORS
 ;	COPYHEADER.asc COPYING.asc
-;	lynx_help
+	lynx_help
 ;	docs
 ;	samples scripts
 build-docs			INSTALLATION
