@@ -1,0 +1,23 @@
+authors				Kaj de Vos
+status				testing
+
+headline			MIME file types data
+description
+	MIME files 'mime.types' & 'mailcap' and support programs. Programs can add themselves as viewers/editors/composers/etc by using the provided "update-mime" program. In addition, the commands "see", "edit", "compose", and "print" will display, alter, create, and print respectively) any file using a program determined from the entries in the mime.types and mailcap files.
+licenses			PD
+
+home				packages.debian.org/sid/mime-support
+packages			mime-support_3.40-1.1
+locations			http://ftp.de.debian.org/debian/pool/main/m/mime-support/
+
+make				true
+
+install-tree		etc
+install				true
+install-files		mime.types etc/
+
+documentation
+	debian/README debian/changelog
+;	rfcs
+
+links				etc/mime.types /etc/

@@ -409,6 +409,8 @@ modules
 	other/fonts/lcd-fonts-1.1
 	other/fonts/freefont-20060126
 
+	other/data/mime-support-3.40.1.1
+
 	linux/blfs-bootscripts-20070822
 	linux/procps-3.2.7
 	apps/other/sudo-1.6.9p9
