@@ -18,7 +18,13 @@ run-needs			mime-support
 configure-options	--localstatedir=/var
 
 install-tree
+	bin
+	conf
+install-files
+	boa										bin/
+	boa_indexer								bin/
+	../boa-0.94.14rc21/examples/boa.conf	conf/
 
 documentation
 	README COPYING CHANGES CREDITS
-;	examples
+	examples
