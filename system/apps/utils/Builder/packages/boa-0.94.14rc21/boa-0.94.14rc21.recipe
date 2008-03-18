@@ -24,8 +24,8 @@ install-tree
 	bin
 	conf
 install-files
-	boa										bin/
-	boa_indexer								bin/
+	src/boa									bin/
+	src/boa_indexer							bin/
 	../boa-0.94.14rc21/examples/boa.conf	conf/
 
 documentation
