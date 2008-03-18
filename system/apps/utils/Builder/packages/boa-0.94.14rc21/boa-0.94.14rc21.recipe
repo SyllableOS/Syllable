@@ -15,6 +15,8 @@ locations			http://www.boa.org/
 
 run-needs			mime-support
 
+configure-options	--localstatedir=/var
+
 documentation
 	README COPYING CHANGES CREDITS
 ;	examples
