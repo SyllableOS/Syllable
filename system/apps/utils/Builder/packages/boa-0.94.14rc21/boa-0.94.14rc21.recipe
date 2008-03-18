@@ -1,0 +1,20 @@
+authors
+	Ruwen "kwench"
+	Kaj de Vos
+maintainers			Kaj de Vos
+status				testing
+
+headline			Fast, single-tasking web server
+description
+	Boa is a single-tasking HTTP server. That means that unlike traditional web servers, it does not fork for each incoming connection, nor does it fork many copies of itself to handle multiple connections. It internally multiplexes all of the ongoing HTTP connections, and forks only for CGI programs (which must be separate processes), automatic directory generation, and automatic file gunzipping. Preliminary tests show Boa is capable of handling several thousand hits per second on a 300 MHz Pentium and dozens of hits per second on a lowly 20 MHz 386/SX.
+	The primary design goals of Boa are speed and security. Security, in the sense of "can't be subverted by a malicious user," not "fine grained access control and encrypted communications". Boa is not intended as a feature-packed server.
+licenses			GPL
+
+home				www.boa.org
+locations			http://www.boa.org/
+
+run-needs			mime-support
+
+documentation
+	README COPYING CHANGES CREDITS
+;	examples
