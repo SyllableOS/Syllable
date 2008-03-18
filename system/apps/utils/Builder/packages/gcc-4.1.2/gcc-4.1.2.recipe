@@ -51,7 +51,7 @@ make-targets
 ; Don't stop at errors:
 test-options		-k
 
-install-prefix-var	DESTDIR
+system-prefix-var	DESTDIR
 
 documentation
 	README FAQ faq.html BUGS bugs.html COPYING COPYING.LIB NEWS ChangeLog MAINTAINERS
