@@ -15,6 +15,9 @@ locations			http://www.boa.org/
 
 run-needs			mime-support
 
+; Set default server root directory:
+patch				sed -i 's/\/etc\/boa/\/usr\/boa/' src/defines.h
+
 configure-options	--localstatedir=/var
 
 install-tree
