@@ -1,0 +1,49 @@
+ATail
+=====
+
+Copyright (C)2005 Henrik Isaksson <henrik@isaksson.tk>
+
+ATail is a graphic version of "tail -f", that is, it shows new logfile
+entries as they are being written.
+
+To see your kernel log in realtime, run:
+
+ATail /var/log/kernel
+
+To see available options, type:
+
+ATail --help
+
+Bugs:
+
+* The OptionParser class does not seem to accept, for instance
+  "ATail -d 2", to set the desktop number to 2, while "ATail --desktop=2"
+  works fine.
+
+Changes:
+
+2005-08-23  Recompiled for Syllable 0.5.7
+
+2004-07-20  Updated for Syllable 0.5.4 by Rick Caudill.
+
+            Localised, and translated to swedish. To translate it into
+            your language, simply load atail.catalog into CatFish and edit
+            the text strings.
+
+2002-04-29  Added CLI argument parsing and options for window position and
+            size, and on which desktop to open the window.
+
+            Changed the items in the popup menu to ImageItems, with icons.
+
+            Added an item to the popup menu: Save.
+
+2001-11-03  Linefeeds are now inserted when a line is longer then the
+            internal buffer (currently 256 bytes).
+            This is because the current version (0.3.7) of AtheOS writes
+            lots of funny "hello"-messages on one line, when I move or
+            resize a window... =)
+
+To do:
+
+Nothing...?
+

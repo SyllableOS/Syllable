@@ -1,0 +1,38 @@
+STR_OPTION_DESKTOP=1000		Desktop number (1 - 32), or 0 for all desktops
+STR_OPTION_FULLSCREEN		Fill the entire desktop
+STR_OPTION_HELP				Display this help screen and exit
+STR_OPTION_VERSION			Print version information and exit
+STR_OPTION_LEFT				Left position of window
+STR_OPTION_TOP				Top position of window
+STR_OPTION_WIDTH			Window width
+STR_OPTION_HEIGHT			Window height
+
+STR_USAGE=1100				Usage:   LogMonitor [options] file
+STR_EXAMPLE					Example: LogMonitor --desktop=2 --fullscreen /var/log/kernel
+
+STR_ERROR_DESKTOP_NUMBER=2000	Desktop number out of range or missing!
+STR_ERROR_WINDOW_HEIGHT			Window height out of range or missing
+STR_ERROR_WINDOW_WIDTH			Window width out of range or missing
+
+STR_ERROR_FILE_SIZE				LogMonitor Error: Could not get file size!
+STR_ERROR_SAVEFILE_TEXT			Unable to save file
+STR_ERROR_SAVEFILE_TITLE		Error - LogMonitor
+STR_ERROR_SAVEFILE_OKBUTTON		OK
+
+STR_ABOUT=3000	LogMonitor %s\n\nA monitoring program for log files.\nCopyright (C)2001-2004 Henrik Isaksson\nMaintained by the Syllable team.
+STR_ABOUT_WINTITLE	About LogMonitor
+STR_ABOUT_OKBUTTON	OK
+
+STR_POPUPMENU_COPY=4000	Copy
+STR_POPUPMENU_CLEAR	Clear
+STR_POPUPMENU_SAVE	Save
+STR_POPUPMENU_ABOUT	About
+STR_POPUPMENU_QUIT	Quit
+STR_POPUPMENU_OPEN	Open
+
+STR_POPUPMENU_COPY_SH=4100	CTRL+C
+STR_POPUPMENU_CLEAR_SH	CTRL+K
+STR_POPUPMENU_SAVE_SH	CTRL+S
+STR_POPUPMENU_ABOUT_SH	\t
+STR_POPUPMENU_QUIT_SH	CTRL+Q
+STR_POPUPMENU_OPEN_SH	CTRL+O
