@@ -1,9 +1,13 @@
+* March 22, 2008, Kaj de Vos *
+
+Updated old build settings in sIDE to conform to modern standards.
+
 * March 20, 2008, Rick Caudill *
 
-Imported LogMonitor(formally ATail) into developer apps.
+Imported LogMonitor (formerly ATail) into developer apps.
 Also fixed it to launch with /var/log/kernel as the default, so now
 when a user double clicks on the icon they can start seeing kernel
-log messages.  
+log messages.
 
 * Febuary 18 2008, Rick Caudill *
 
@@ -12,7 +16,7 @@ Fixed sIDE New Project creation bug.  Check sIDE revision for more info.
 * Febuary 10 2008, Rick Caudill *
 
 Added KeyboardEventView to the development apps.  This app will allow a developer/user to
-know what global keyshortcuts are utilized all ready.
+know what global keyshortcuts are utilized already.
   
 * January 15 2008, Kristian Van Der Vliet *
 
