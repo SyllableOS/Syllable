@@ -1,3 +1,10 @@
+* March 20, 2008, Rick Caudill *
+
+Imported LogMonitor(formally ATail) into developer apps.
+Also fixed it to launch with /var/log/kernel as the default, so now
+when a user double clicks on the icon they can start seeing kernel
+log messages.  
+
 * Febuary 18 2008, Rick Caudill *
 
 Fixed sIDE New Project creation bug.  Check sIDE revision for more info.
