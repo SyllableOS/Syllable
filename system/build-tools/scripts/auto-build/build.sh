@@ -76,7 +76,7 @@ build log summary >> $SYSTEM_SUMMARY_LOG
 sync
 
 echo "Switching to GCC 4.1.2"
-build install $HOME/Packages/gcc-4.1.2.bin.1.zip 1>>$LOG 2>&1
+build install $HOME/Packages/gcc-4.1.2-2.i586.resource 1>>$LOG 2>&1
 build log >> $SYSTEM_LOG
 build log summary >> $SYSTEM_SUMMARY_LOG
 sync
