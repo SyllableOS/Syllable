@@ -270,7 +270,7 @@ modules
 	system linux/kqemu-1.3.0pre11
 
 	system libs/glibc-2.7-system
-	system libs/zlib-1.2.3
+	system libs/zlib-1.2.3-system
 
 	linux/iptables-1.3.8
 	system linux/linux--cleanup

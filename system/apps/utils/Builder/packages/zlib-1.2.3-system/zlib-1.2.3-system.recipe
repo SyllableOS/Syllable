@@ -1,0 +1,8 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			zlib-1.2.3
+
+configure-options
+	--shared
+	--includedir=$IMAGE/system/development/resources/zlib/1.2.3/include

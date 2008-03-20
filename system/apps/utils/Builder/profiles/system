@@ -265,7 +265,7 @@ modules
 	sys/kernel/fs/tmpfs
 
 	system libs/glibc-2.7-system
-	system libs/zlib-1.2.3
+	system libs/zlib-1.2.3-system
 
 	libs/libdl
 	libs/libpthread
