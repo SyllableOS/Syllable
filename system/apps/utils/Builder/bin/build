@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.7.44
+# Version 0.7.45
 # Copyright (c) 2002-2008 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -382,13 +382,13 @@ def configureModule staging, target
 							else
 								action(((vars = recipe['configure-env']) ? toVariables(vars) + ' ' : '') +
 									cmd +
+									(@crossCompile ? " --build=#{@machType} --host=" + @target : '') +
 									((args = recipe['configure-args']) ?
 										' ' + toString(args) :
 										((p = recipe['configure-prefix']) ?
 											' ' + p[1..-2] :  # FIXME: do some checking
 											' --prefix='
-										) + prefix(staging, target) +
-										(@crossCompile ? " --build=#{@machType} --host=" + @target : '')
+										) + prefix(staging, target)
 									) +
 									(['system', 'libraries', 'compatibility'].include?(staging) && @systemBuild ?
 										' --includedir=' + File.join('/system/development/resources', installName(target), version(target), 'include') :
@@ -1831,7 +1831,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.7.44',
+	puts 'Syllable Build System 0.7.45',
 		'Copyright (c) 2002-2008 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
