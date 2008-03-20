@@ -14,7 +14,7 @@ $(OBJDIR)/%.o : %.c
 
 $(OBJDIR)/%.o : %.cpp
 	@echo Compiling : $<
-	@$(CC) $(COPTS) $< -o $@
+	@$(CXX) $(COPTS) $< -o $@
 
 $(OBJDIR)/%.o : %.s
 	@echo Assembling : $<
@@ -27,7 +27,7 @@ objs:
 
 Sourcery: $(OBJS)
 	@echo Linking...
-	@gcc $(OBJS) -o Sourcery  -lsyllable -lstdc++ -lm codeview.a
+	@$(CXX) $(OBJS) -o Sourcery -lsyllable -lm codeview.a
 	@echo Adding resources...
 	@rescopy Sourcery -r ./images/*.png ./images/mimetypes/*.png 
 	@addattrib Sourcery os::Category Development
@@ -39,14 +39,11 @@ clean:
 
 deps:
 
-dist: all
-	@echo Distribution...
-	@mkdir -p $(DIST_DIR)/Applications/sIDE
-	@cp Sourcery $(DIST_DIR)/Applications/sIDE/Sourcery
-
 install: all
 	@echo Installing...
-	@mkdir -p /Applications/sIDE
-	@cp Sourcery /Applications/sIDE/Sourcery
+	@echo Distribution...
+	@mkdir -p $(IMAGE)/Applications/sIDE
+	@cp Sourcery $(IMAGE)/Applications/sIDE/Sourcery
 
+dist: install
 

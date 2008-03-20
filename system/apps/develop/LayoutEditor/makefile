@@ -14,7 +14,7 @@ $(OBJDIR)/%.o : %.c
 
 $(OBJDIR)/%.o : %.cpp
 	@echo Compiling : $<
-	@$(CC) $(COPTS) $< -o $@
+	@$(CXX) $(COPTS) $< -o $@
 
 $(OBJDIR)/%.o : %.s
 	@echo Assembling : $<
@@ -29,7 +29,7 @@ objs:
 
 "LayoutEditor": $(OBJS)
 	@echo Linking...
-	@gcc $(OBJS) -o "LayoutEditor"  -lsyllable -lstdc++
+	@$(CXX) $(OBJS) -o "LayoutEditor" -lsyllable
 	@echo Adding resources...
 	@rescopy "LayoutEditor" -r images/breaker.png images/open.png images/save.png icon24x24.png icon48x48.png application_interface.png 
 	@addattrib "LayoutEditor" os::Category Development
@@ -41,13 +41,10 @@ clean:
 
 deps:
 
-dist: all
-	@echo Distribution...
-	@mkdir -p $(DIST_DIR)/Applications/sIDE
-	@cp "LayoutEditor" $(DIST_DIR)/Applications/sIDE/"LayoutEditor"
-
 install: all
 	@echo Installing...
-	@mkdir -p /Applications/sIDE
-	@cp "LayoutEditor" /Applications/sIDE/"LayoutEditor"
+	@mkdir -p $(IMAGE)/Applications/sIDE
+	@cp "LayoutEditor" $(IMAGE)/Applications/sIDE/"LayoutEditor"
+
+dist: install
 

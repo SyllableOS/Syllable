@@ -14,7 +14,7 @@ $(OBJDIR)/%.o : %.c
 
 $(OBJDIR)/%.o : %.cpp
 	@echo Compiling : $<
-	@$(CC) $(COPTS) $< -o $@
+	@$(CXX) $(COPTS) $< -o $@
 
 $(OBJDIR)/%.o : %.s
 	@echo Assembling : $<
@@ -30,7 +30,7 @@ objs:
 
 "KeyboardEventViewer": $(OBJS)
 	@echo Linking...
-	@gcc $(OBJS) -o "KeyboardEventViewer"  -lsyllable -lstdc++
+	@$(CXX) $(OBJS) -o "KeyboardEventViewer" -lsyllable
 	@echo Adding resources...
 	@rescopy "KeyboardEventViewer" -r icon48x48.png 
 	@addattrib "KeyboardEventViewer" os::Category Development
@@ -42,13 +42,10 @@ clean:
 
 deps:
 
-dist: all
-	@echo Distribution...
-	@mkdir -p $(DIST_DIR)/Applications/sIDE
-	@cp "KeyboardEventViewer" "$(DIST_DIR)/Applications/sIDE/KeyboardEventViewer"
-
 install: all
 	@echo Installing...
-	@mkdir -p /Applications/sIDE
-	@cp "KeyboardEventViewer" "/Applications/sIDE/KeyboardEventViewer"
+	@mkdir -p $(IMAGE)/Applications/sIDE
+	@cp "KeyboardEventViewer" "$(IMAGE)/Applications/sIDE/KeyboardEventViewer"
+
+dist: install
 
