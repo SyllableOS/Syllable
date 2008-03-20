@@ -1,33 +1,35 @@
-#Makefile for App
-COPTS = -Wall -c -O2 -fexceptions
+# Makefile for App
 
-APPBIN = /Applications/App
-OBJS = main.o application.o mainwindow.o
+COPTS	= -Wall -c -O2 -fexceptions
 
-OBJDIR := objs
+APPBIN	= /Applications/App
+OBJS	= main.o application.o mainwindow.o
+
+OBJDIR	:= objs
 OBJS	:= $(addprefix $(OBJDIR)/,$(OBJS))
 
 # Rules
+
 $(OBJDIR)/%.o : %.c
 	@echo Compiling : $<
 	@$(CC) $(COPTS) $< -o $@
 
 $(OBJDIR)/%.o : %.cpp
 	@echo Compiling : $<
-	@$(CC) $(COPTS) $< -o $@
+	@$(CXX) $(COPTS) $< -o $@
 
 $(OBJDIR)/%.o : %.s
 	@echo Assembling : $<
 	@$(CC) $(COPTS) -x assembler-with-cpp $< -o $@
 
-all : objs 'App'
+all: objs 'App'
 
 objs:
 	@mkdir -p objs
 
 'App': $(OBJS)
 	@echo Linking...
-	@gcc $(OBJS) -o 'App'  -lstdc++ -lsyllable
+	@$(CXX) $(OBJS) -o 'App' -lsyllable
 	@addattrib 'App' os::Category Other
 
 clean:
@@ -37,13 +39,9 @@ clean:
 
 deps:
 
-dist: all
-	@echo Distribution...
-	@mkdir -p $(DIST_DIR)/Applications/App
-	@cp 'App' $(DIST_DIR)/Applications/App/'App'
-
 install: all
-	@echo Installing...
-	@mkdir -p /Applications/App
-	@cp 'App' /Applications/App/'App'
+	@echo Installation...
+	@mkdir -p $(IMAGE)/Applications/App
+	@cp 'App' $(IMAGE)/Applications/App/'App'
 
+dist: install
