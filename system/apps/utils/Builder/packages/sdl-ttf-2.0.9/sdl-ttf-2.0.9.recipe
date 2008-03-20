@@ -10,7 +10,10 @@ home				www.libsdl.org/projects/SDL_ttf/
 packages			SDL_ttf-2.0.9
 locations			http://www.libsdl.org/projects/SDL_ttf/release/
 
-needs				sdl >= 1.2.4
-build-needs			freetype 2 <> 2.1.3
+needs
+	sdl >= 1.2.4
+	freetype 2 <> 2.1.3
+
+system-prefix-var	DESTDIR
 
 documentation		README COPYING CHANGES

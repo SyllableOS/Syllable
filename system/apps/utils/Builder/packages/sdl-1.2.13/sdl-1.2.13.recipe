@@ -1,6 +1,7 @@
 authors
 	Arno Klenke
 	Kaj de Vos
+maintainers			Kaj de Vos
 status				testing
 
 licenses			LGPL-2 PD
@@ -12,8 +13,9 @@ _build-needs
 	automake < 1.10
 	autoconf
 
-; Process the Syllable patches:
 ;patch				autoreconf
+
+system-prefix-var	DESTDIR
 
 documentation
 	README README-SDL.txt BUGS COPYING WhatsNew CREDITS TODO
@@ -23,4 +25,3 @@ develop-docs
 	docs/index.html docs/html
 	test
 internal-docs		README.Porting
-

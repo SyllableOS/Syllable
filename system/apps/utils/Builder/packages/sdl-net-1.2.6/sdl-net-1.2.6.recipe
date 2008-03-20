@@ -8,6 +8,8 @@ locations			http://www.libsdl.org/projects/SDL_net/release/
 
 needs				sdl >= 1.2.4
 
+system-prefix-var	DESTDIR
+
 documentation		README COPYING CHANGES
 ; For some packages:
 links				SDL/SDL_net.h include/

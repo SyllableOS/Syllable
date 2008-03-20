@@ -16,6 +16,8 @@ packages			libusb/libusb-0.1.12
 
 build-recommends	doxygen
 
+system-prefix-var	DESTDIR
+
 documentation
 	README LICENSE COPYING NEWS ChangeLog AUTHORS
 ;	doc

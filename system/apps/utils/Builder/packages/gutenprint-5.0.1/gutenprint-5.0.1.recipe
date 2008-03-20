@@ -33,6 +33,8 @@ configure-options
 	--disable-libgutenprintui
 	--disable-libgutenprintui2
 
+system-prefix-var	DESTDIR
+
 documentation
 	README ABOUT-NLS COPYING NEWS ChangeLog AUTHORS
 ;	doc

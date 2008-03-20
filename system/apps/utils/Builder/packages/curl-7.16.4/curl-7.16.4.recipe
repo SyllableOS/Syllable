@@ -11,6 +11,8 @@ locations			http://curl.haxx.se/download/
 
 test-targets		test
 
+system-prefix-var	DESTDIR
+
 documentation
 	README RELEASE-NOTES COPYING CHANGES
 	docs

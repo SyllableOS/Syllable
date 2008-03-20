@@ -7,7 +7,7 @@ packages			SDL_sound-1.0.1
 locations			http://icculus.org/SDL_sound/downloads/
 
 needs				sdl >= 1.2
-build-recommends
+recommends
 	libvorbis
 ;	For AlephOne:
 	smpeg >= 0.4.3
@@ -23,6 +23,8 @@ configure-options
 ;	--disable-sdltest
 	--with-vorbis-prefix=/usr/libvorbis
 ;	--disable-vorbistest
+
+system-prefix-var	DESTDIR
 
 documentation
 	README COPYING CREDITS CHANGELOG TODO

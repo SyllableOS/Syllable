@@ -1,6 +1,5 @@
 authors				Kaj de Vos
 status				testing
-warnings			Breaks compiling some packages on older Syllable versions, specifically INetUtils.
 
 inherits			gnu
 
@@ -19,6 +18,8 @@ configure-options
 ;	--with-installed-readline
 
 test-targets		tests
+
+system-prefix-var	DESTDIR
 
 documentation
 	README ABOUT-NLS POSIX RBASH COPYING NEWS CHANGES COMPAT NOTES Y2K AUTHORS

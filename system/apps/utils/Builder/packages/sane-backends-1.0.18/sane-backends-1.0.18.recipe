@@ -29,6 +29,8 @@ build-dir			.
 ;	--disable-shared
 ;	--enable-locking
 
+system-prefix-var	DESTDIR
+
 documentation
 	README LICENSE COPYING PROBLEMS NEWS ChangeLog AUTHORS PROJECTS
 ;	doc

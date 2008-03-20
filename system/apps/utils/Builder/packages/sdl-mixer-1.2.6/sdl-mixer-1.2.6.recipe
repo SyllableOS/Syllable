@@ -9,7 +9,7 @@ packages
 locations			http://www.libsdl.org/projects/SDL_mixer/release/
 
 needs				sdl
-build-recommends
+recommends
 ;	smpeg
 ;	timidity
 ;	mikmod
@@ -19,6 +19,8 @@ configure-options
 ;	Bare LibMikMod:
 	--enable-music-mod
 ;	--enable-music-native-midi-gpl
+
+system-prefix-var	DESTDIR
 
 documentation		README COPYING CHANGES
 ; For some packages:
