@@ -89,6 +89,11 @@ build log failures > $BASE_FAILURE_LOG
 build log summary > $BASE_SUMMARY_LOG
 sync
 
+# Add the compatability files
+echo "image compatibility"
+image compatibility 1>>$LOG 2>&1
+sync
+
 # XXXKV: Now on with the show...
 cd stage/image
 build scrub 1>>$LOG 2>&1
