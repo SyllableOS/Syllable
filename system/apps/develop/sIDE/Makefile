@@ -61,4 +61,3 @@ clean:
 	for CATALOG in $(CATALOGS);do \
 	rm resources/$$CATALOG/sIDE.catalog; \
 	done;
-

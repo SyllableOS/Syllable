@@ -10,6 +10,5 @@ zip "../$i.zip" *
 cd ..
 fi
 done
+rm CVS.zip
 cd ..
-
-

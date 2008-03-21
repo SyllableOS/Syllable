@@ -474,7 +474,7 @@ void project::ExportMakefile()
 	out<<std::endl;
 	out<<"$(OBJDIR)/%.o : %.cpp"<<std::endl;
 	out<<"	@echo Compiling : $<"<<std::endl;
-	out<<"	@$(CC) $(COPTS) $< -o $@"<<std::endl;
+	out<<"	@$(CXX) $(COPTS) $< -o $@"<<std::endl;
 	out<<std::endl;
 	out<<"$(OBJDIR)/%.o : %.s"<<std::endl;
 	out<<"	@echo Assembling : $<"<<std::endl;
