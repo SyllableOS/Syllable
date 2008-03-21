@@ -550,9 +550,9 @@ void project::ExportMakefile()
 	out<<"\""<<m_zTarget.c_str()<<"\": $(OBJS)"<<std::endl;
 	out<<"	@echo Linking..."<<std::endl;
 	if( bLib )
-		out<<"	@gcc -shared -Xlinker -soname=\""<<m_zTarget.c_str()<<"\" $(OBJS) -o \""<<m_zTarget.c_str()<<"\" "<<zLinkerFlags.c_str()<<std::endl;
+		out<<"	@$(CXX) -shared -Xlinker -soname=\""<<m_zTarget.c_str()<<"\" $(OBJS) -o \""<<m_zTarget.c_str()<<"\" "<<zLinkerFlags.c_str()<<std::endl;
 	else
-		out<<"	@gcc $(OBJS) -o \""<<m_zTarget.c_str()<<"\" "<<zLinkerFlags.c_str()<<std::endl;
+		out<<"	@$(CXX) $(OBJS) -o \""<<m_zTarget.c_str()<<"\" "<<zLinkerFlags.c_str()<<std::endl;
 	
 	/* Add resource entries */
 	os::String zResources = os::String( "	@rescopy \"" ) + m_zTarget + os::String( "\" -r " );
