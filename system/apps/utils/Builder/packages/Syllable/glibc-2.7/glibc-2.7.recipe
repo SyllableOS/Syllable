@@ -21,6 +21,9 @@ configure-options
 ;	--enable-bounded
 
 links
+;	For init:
+	/boot/system/resources/glibc/2.7/lib/libc.so.2	/system/libraries/
+;	/boot/system/resources/glibc/2.7/lib/libm.so.2	/system/libraries/
 ;	For GhostScript:
-	/system/indexes/include/sys/dir.h	/usr/include/sys/
-	/system/indexes/include/sys/time.h	/usr/include/sys/
+	/system/indexes/include/sys/dir.h				/usr/include/sys
+	/system/indexes/include/sys/time.h				/usr/include/sys

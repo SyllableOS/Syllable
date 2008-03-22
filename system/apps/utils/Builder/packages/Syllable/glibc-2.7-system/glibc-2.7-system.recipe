@@ -5,15 +5,6 @@ notes
 
 inherits			glibc-2.7
 
-links
-;	For init:
-	/boot/system/resources/glibc/2.7/lib/libc.so.2	/system/libraries/
-;	/boot/system/resources/glibc/2.7/lib/libm.so.2	/system/libraries/
-;	For GhostScript:
-	include/sys/dir.h								/usr/include/sys
-	include/sys/time.h								/usr/include/sys
-
 pre-register
 	echo 'OUTPUT_FORMAT(elf32-i386)' > lib/libc.so
 	echo "GROUP ( $IMAGE/system/resources/glibc/2.7/lib/libc.so.2 $IMAGE/system/development/resources/glibc/2.7/lib/libc_nonshared.a )" >> lib/libc.so
-
