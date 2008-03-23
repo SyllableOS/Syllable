@@ -1,4 +1,6 @@
-authors				Kristian Van Der Vliet
+authors
+	Kristian Van Der Vliet
+	Ruwen Boehm
 status				testing
 
 headline			A PERL module for parsing XML documents
@@ -12,9 +14,8 @@ needs
 	perl
 	expat
 
-configure			perl Makefile.PL
-
-;no-strip
+configure			perl Makefile.PL EXPATINCPATH=/usr/expat/include EXPATLIBPATH=/usr/expat/lib
 
 documentation		README Changes
 develop-docs		MANIFEST samples
+
