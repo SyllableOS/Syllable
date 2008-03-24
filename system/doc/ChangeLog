@@ -1,3 +1,8 @@
+* March 24, 2008, Kristian Van Der Vliet *
+
+Updated the GeForceFX driver with PCI IDs for newer cards. Untested. Patch from
+Alexandru Mizeranschi <lexu_85@yahoo.com>
+
 * March 9, 2008, Kristian Van Der Vliet *
 
 Some patches from Anthony Morphett
