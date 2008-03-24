@@ -1,0 +1,15 @@
+diff -ur transmission-1.0.6_orig/third-party/libnatpmp/getgateway.c transmission-1.0.6/third-party/libnatpmp/getgateway.c
+--- transmission-1.0.6_orig/third-party/libnatpmp/getgateway.c	2008-02-27 03:01:45.000000000 +0000
++++ transmission-1.0.6/third-party/libnatpmp/getgateway.c	2008-03-24 22:42:36.000000000 +0000
+@@ -115,3 +115,11 @@
+ 	return r;
+ }
+ #endif
++
++#if defined(__SYLLABLE__)
++int getdefaultgateway(in_addr_t * addr)
++{
++	/* Not implemented */
++	return 0;
++}
++#endif

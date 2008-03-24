@@ -1,0 +1,16 @@
+authors
+	Kaj de Vos
+	Kristian Van Der Vliet
+status				testing
+
+licenses			MIT
+home				transmission.m0k.org
+locations			http://download.m0k.org/transmission/files/
+
+needs				Syllable >= 0.6.3
+;recommends			openssl
+
+;make-shared
+
+documentation		README LICENSE NEWS AUTHORS
+
