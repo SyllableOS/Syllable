@@ -20,6 +20,7 @@
 #include <gui/menu.h>
 #include <gui/textview.h>
 #include <gui/listview.h>
+#include <gui/checkbox.h>
 #include <gui/button.h>
 #include <util/string.h>
 #include <util/message.h>
@@ -36,11 +37,11 @@ ProjectPrefs::ProjectPrefs( const os::Rect& cFrame, project* pcProject, os::Wind
 	m_pcView = new os::LayoutView( GetBounds(), "side_p_view" );
 	
 	os::VLayoutNode* pcVNode = new os::VLayoutNode( "side_p_v" );
+	pcVNode->SetBorders( os::Rect( 5, 5, 5, 5 ) );
 	pcVNode->AddChild( new os::VLayoutSpacer( "", 5.0f, 5.0f ) );
 	
 	/* Add target */
 	os::HLayoutNode* pcHNode = new os::HLayoutNode( "side_p_h" );
-	pcHNode->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f ) );
 	m_pcTargetLabel = new os::StringView( os::Rect(), "side_target_label", MSG_PPREF_TARGET );
 	pcHNode->AddChild( m_pcTargetLabel );
 	pcHNode->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f ) );
@@ -56,7 +57,6 @@ ProjectPrefs::ProjectPrefs( const os::Rect& cFrame, project* pcProject, os::Wind
 	
 	/* Add category */
 	pcHNode = new os::HLayoutNode( "side_p_h" );
-	pcHNode->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f ) );
 	m_pcCategoryLabel = new os::StringView( os::Rect(), "side_category_label", MSG_PPREF_CATEGORY );
 	pcHNode->AddChild( m_pcCategoryLabel );
 	pcHNode->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f ) );
@@ -72,7 +72,6 @@ ProjectPrefs::ProjectPrefs( const os::Rect& cFrame, project* pcProject, os::Wind
 	
 	/* Add install path */
 	pcHNode = new os::HLayoutNode( "side_p_h" );
-	pcHNode->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f ) );
 	m_pcInstallPathLabel = new os::StringView( os::Rect(), "side_install_path_label", MSG_PPREF_INSTALL_PATH );
 	pcHNode->AddChild( m_pcInstallPathLabel );
 	pcHNode->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f ) );
@@ -88,7 +87,6 @@ ProjectPrefs::ProjectPrefs( const os::Rect& cFrame, project* pcProject, os::Wind
 	
 	/* Add compiler flags */
 	pcHNode = new os::HLayoutNode( "side_p_h" );
-	pcHNode->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f ) );
 	m_pcCFlagsLabel = new os::StringView( os::Rect(), "side_cflags_label", MSG_PPREF_CFLAGS );
 	pcHNode->AddChild( m_pcCFlagsLabel );
 	pcHNode->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f ) );
@@ -104,7 +102,6 @@ ProjectPrefs::ProjectPrefs( const os::Rect& cFrame, project* pcProject, os::Wind
 	
 	/* Add linker flags */
 	pcHNode = new os::HLayoutNode( "side_p_h" );
-	pcHNode->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f ) );
 	m_pcLFlagsLabel = new os::StringView( os::Rect(), "side_lflags_label", MSG_PPREF_LFLAGS );
 	pcHNode->AddChild( m_pcLFlagsLabel );
 	pcHNode->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f ) );
@@ -117,6 +114,12 @@ ProjectPrefs::ProjectPrefs( const os::Rect& cFrame, project* pcProject, os::Wind
 	pcHNode->AddChild( m_pcLFlags );
 	pcHNode->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f ) );
 	pcVNode->AddChild( pcHNode );
+	
+	/* Add terminal flag */
+	m_pcTerminalFlag = new os::CheckBox( os::Rect(), "side_terminal_flag", MSG_PPREF_TERMINAL, NULL );
+	m_pcTerminalFlag->SetValue( pcProject->GetTerminalFlag() );
+	pcVNode->AddChild( new os::VLayoutSpacer( "", 3.0f, 3.0f ) );
+	pcVNode->AddChild( m_pcTerminalFlag );
 	
 	pcVNode->AddChild( new os::VLayoutSpacer( "" ) );
 	
@@ -168,6 +171,7 @@ void ProjectPrefs::HandleMessage( os::Message* pcMessage )
 			m_pcProject->SetCategory( m_pcCategory->GetBuffer()[0] );
 			m_pcProject->SetCFlags( m_pcCFlags->GetBuffer()[0] );
 			m_pcProject->SetLFlags( m_pcLFlags->GetBuffer()[0] );
+			m_pcProject->SetTerminalFlag( m_pcTerminalFlag->GetValue().AsBool() );
 			m_pcProject->SetInstallPath( m_pcInstallPath->GetBuffer()[0] );
 			m_pcProjectWindow->PostMessage( new os::Message( M_PROJECT_PREFS_CLOSED )
 													, m_pcProjectWindow );

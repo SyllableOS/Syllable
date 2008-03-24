@@ -228,8 +228,11 @@ void NewProjectDialog::HandleMessage(Message* pcMessage)
 		case M_OPEN:
 		{
 			pcFileRequester->Lock();
-			pcFileRequester->CenterInWindow(this);
-			pcFileRequester->Show();
+			if( !pcFileRequester->IsVisible() )
+			{
+				pcFileRequester->CenterInWindow(this);
+				pcFileRequester->Show();
+			}
 			pcFileRequester->MakeFocus();
 			pcFileRequester->Unlock();
 			break;

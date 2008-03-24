@@ -119,6 +119,7 @@ ProjectWindow::ProjectWindow( const os::Rect& cFrame, const std::string &cTitle 
 	m_pcMenuProject->AddItem( new os::MenuSeparator() );
 	m_pcMenuProject->AddItem( MSG_PWND_MENU_PROJECT_PREF, new os::Message( M_PROJECT_PREFS ) );
 	m_pcMenuProject->AddItem( MSG_PWND_MENU_PROJECT_GROUPS, new os::Message( M_PROJECT_GROUPS ) );
+	m_pcMenuProject->AddItem( MSG_PWND_MENU_PROJECT_OPEN_FOLDER, new os::Message( M_PROJECT_OPEN_FOLDER ) );
 	m_pcMenuProject->AddItem( MSG_PWND_MENU_PROJECT_NEW_FILE, new os::Message( M_PROJECT_FILE_NEW ) );
 	m_pcMenuProject->AddItem( MSG_PWND_MENU_PROJECT_ADD_FILE, new os::Message( M_PROJECT_FILE_ADD ) );
 	m_pcMenuProject->AddItem( MSG_PWND_MENU_PROJECT_ADD_LIB, new os::Message( M_PROJECT_FILE_ADD_LIBRARY ) );
@@ -329,7 +330,7 @@ void ProjectWindow::RefreshList()
 /* show an about window */
 int ShowAbout(void *data)
 {
-	os::Alert* pcAbout = new os::Alert(MSG_PWND_ABOUT_TITLE, os::String( "sIDE 0.4.5\n" ) + MSG_PWND_ABOUT, os::Alert::ALERT_INFO,
+	os::Alert* pcAbout = new os::Alert(MSG_PWND_ABOUT_TITLE, os::String( "sIDE 0.4.9\n" ) + MSG_PWND_ABOUT, os::Alert::ALERT_INFO,
 											0x00, MSG_BUTTON_OK.c_str(), NULL);
 	pcAbout->Go();
 	return( 0 );
@@ -383,8 +384,10 @@ void ProjectWindow::HandleMessage( os::Message* pcMessage )
 		break;
 		case M_PROJECT_OPEN:
 			m_pcLoadRequester->Lock();
-			m_pcLoadRequester->CenterInWindow(this);
-			m_pcLoadRequester->Show();
+			if( !m_pcLoadRequester->IsVisible() ) {
+				m_pcLoadRequester->CenterInWindow(this);
+				m_pcLoadRequester->Show();
+			}
 			m_pcLoadRequester->MakeFocus( true );
 			m_pcLoadRequester->Unlock();
 		break;
@@ -393,8 +396,10 @@ void ProjectWindow::HandleMessage( os::Message* pcMessage )
 		break;
 		case M_PROJECT_SAVE_AS:
 			m_pcSaveRequester->Lock();
-			m_pcSaveRequester->CenterInWindow(this);
-			m_pcSaveRequester->Show();
+			if( !m_pcSaveRequester->IsVisible() ) {
+				m_pcSaveRequester->CenterInWindow(this);
+				m_pcSaveRequester->Show();
+			}
 			m_pcSaveRequester->MakeFocus( true );
 			m_pcSaveRequester->Unlock();
 		break;
@@ -415,6 +420,23 @@ void ProjectWindow::HandleMessage( os::Message* pcMessage )
 				m_pcGrp->Show();
 			}
 			m_pcGrp->MakeFocus( true );
+		break;
+		case M_PROJECT_OPEN_FOLDER:
+		{
+			os::String zProject( PATH_MAX, 0 );
+			int nStringLength = 0;
+			int nFd = open( m_cProject.GetFilePath().GetDir().GetPath().c_str(), O_RDONLY );
+			if( ( nStringLength = get_directory_path( nFd, (char*)zProject.c_str(), PATH_MAX ) ) < 0 )
+				break;
+			zProject.Resize( nStringLength );
+			close( nFd );
+			if( fork() == 0 )
+			{
+				set_thread_priority( -1, 0 );
+				execlp( "/system/bin/FileBrowser", "/system/bin/FileBrowser", zProject.c_str(), (void*)NULL );
+				exit( 0 );
+			}
+		}
 		break;
 		case M_PROJECT_FILE_NEW:
 			if( m_cProject.GetGroupCount() < 1 )
@@ -451,8 +473,10 @@ void ProjectWindow::HandleMessage( os::Message* pcMessage )
 		break;
 		case M_PROJECT_FILE_ADD:
 			m_pcAddRequester->Lock();
-			m_pcAddRequester->CenterInWindow(this);
-			m_pcAddRequester->Show();
+			if( !m_pcAddRequester->IsVisible() ) {
+				m_pcAddRequester->CenterInWindow(this);
+				m_pcAddRequester->Show();
+			}
 			m_pcAddRequester->MakeFocus( true );
 			m_pcAddRequester->Unlock();
 		break;
@@ -629,7 +653,7 @@ void ProjectWindow::HandleMessage( os::Message* pcMessage )
 					
 			}
 			RefreshList();
-			SetTitle( MSG_PWND_TITLE + os::String( m_cProject.GetFilePath().GetLeaf() ) );
+			SetTitle( MSG_PWND_TITLE + ": " + os::String( m_cProject.GetFilePath().GetLeaf() ) );
 			break;
 		}
 		

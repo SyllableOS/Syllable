@@ -16,7 +16,12 @@
 <FileType>
 <FileName>mainwindow.h
 <FileType>
+<FileName>messages.h
+<FileType>
 <Group>Libraries
 <FileName>syllable
 <FileType>
 <Group>Resources
+<FileName>icon48x48.png
+<FileType>
+

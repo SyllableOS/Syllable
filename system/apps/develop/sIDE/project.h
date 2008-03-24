@@ -78,6 +78,9 @@ class project
 		os::String		GetLFlags() { return( m_zLinkerFlags ); }
 		void			SetLFlags( os::String zFlags ) { m_zLinkerFlags = zFlags; }
 		
+		bool			GetTerminalFlag() { return( m_bRunInTerminal ); }
+		void			SetTerminalFlag( bool bFlag ) { m_bRunInTerminal = bFlag; }
+		
 		uint			GetGroupCount();
 		os::String		GetGroupName( uint nNumber );
 		
@@ -108,6 +111,7 @@ class project
 		os::String		m_zTarget;	
 		os::String		m_zCategory;
 		os::String		m_zInstallPath;
+		bool			m_bRunInTerminal;
 		bool			m_bIsWorking;	
 };
 

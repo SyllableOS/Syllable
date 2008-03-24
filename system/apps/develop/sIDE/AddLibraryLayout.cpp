@@ -12,6 +12,7 @@ m_pcSelectBox->SetSelectionMessage( new os::Message( -1 ) );
 m_pcSelectBox->SetReadOnly( true );
 m_pcSelectBox->AppendItem( "libsyllable" );
 m_pcSelectBox->AppendItem( "libmedia" );
+m_pcSelectBox->AppendItem( "libSDL" );
 m_pcHSelect->AddChild( m_pcSelectBox, 1.000000 );
 m_pcHSelectLayoutSpacer2 = new os::HLayoutSpacer( "HSelectLayoutSpacer2", 0.000000, 100000.000000, NULL, 1.000000 );
 m_pcHSelect->AddChild( m_pcHSelectLayoutSpacer2 );
@@ -52,3 +53,4 @@ m_pcHButtonLayoutSpacer2 = new os::HLayoutSpacer( "HButtonLayoutSpacer2", 5.0000
 m_pcHButtons->AddChild( m_pcHButtonLayoutSpacer2 );
 m_pcCancel = new os::Button( os::Rect(), "Cancel", MSG_BUTTON_CANCEL, new os::Message( os::M_QUIT ) );
 m_pcHButtons->AddChild( m_pcCancel, 0.000000 );
+

@@ -20,6 +20,11 @@
 #include <gui/stringview.h>
 #include <gui/layoutview.h>
 
+namespace os
+{
+	class CheckBox;
+}
+
 class ProjectPrefs : public os::Window
 {
 	public:
@@ -39,7 +44,7 @@ class ProjectPrefs : public os::Window
 		os::TextView*		m_pcCFlags;
 		os::StringView*		m_pcLFlagsLabel;
 		os::TextView*		m_pcLFlags;
-		
+		os::CheckBox*		m_pcTerminalFlag;
 		
 		os::Button*			m_pcOk;
 		os::Button*			m_pcCancel;

@@ -48,7 +48,8 @@ void project::New( os::Path cFilePath )
 	m_zInstallPath = "/Applications/App";
 	m_zCategory = "Other";
 	
-	m_bIsWorking = false;	
+	m_bIsWorking = false;
+	m_bRunInTerminal = false;
 	
 	m_cGroups.clear();
 }
@@ -236,6 +237,8 @@ bool project::Load( os::Path cFilePath )
 			m_zCategory = zValue;			
 		else if( zTag == "InstallPath" )
 			m_zInstallPath = zValue;
+		else if( zTag == "RunInTerminal" )
+			m_bRunInTerminal = ( zValue == "true" ) ? true : false;
 		else if( zTag == "Group" ) {
 			AddGroup( zValue );
 			nGroup++;
@@ -287,6 +290,7 @@ bool project::Save( os::Path cFilePath )
 	WriteTag( &cFile, "Target", m_zTarget );
 	WriteTag( &cFile, "Category", m_zCategory );
 	WriteTag( &cFile, "InstallPath", m_zInstallPath );
+	WriteTag( &cFile, "RunInTerminal", m_bRunInTerminal ? "true" : "false" );
 
 	/* save the group/file names and types */
 	for( i = 0; i < GetGroupCount(); i++ )
@@ -396,14 +400,47 @@ void project::Compile()
 /* start the executable of the project */
 void project::Run()
 {
-	os::String cPath = os::String( m_cFilePath.GetDir().GetPath() ) + os::String( "/" ) + m_zTarget;
-	/* Run the programm */
+	/* Build app path */
+	os::String cAppPath = os::String( m_cFilePath.GetDir().GetPath() ) + os::String( "/" ) + m_zTarget;
+		
+	if( !m_bRunInTerminal )
+	{
+		/* Run the programm */
+		if( fork() == 0 )
+		{
+			set_thread_priority( -1, 0 );
+			execlp( cAppPath.c_str(), cAppPath.c_str(), (void*)NULL );
+			exit( 0 );
+		}
+		return;
+	}
+	
+	/* Run the program in the terminal */
+
+	os::String cScriptPath = os::String( m_cFilePath.GetDir().GetPath() ) + os::String( "/" ) + os::String( "build.sh" );
+	
+	
+	/* Open file */
+	std::ofstream out( cScriptPath.c_str() );
+	if( !out ) 
+		return;
+	
+	/* Write script */
+	out<<"#!/bin/sh"<<std::endl;
+	out<<"export PATH=$PATH:/usr/bin:/usr/indexes/bin"<<std::endl;
+	out<<"cd '"<<m_cFilePath.GetDir().GetPath().c_str()<<"'"<<std::endl;
+	out<<"\""<<cAppPath.c_str()<<"\""<<std::endl;
+	out.close();
+	
+	
+	/* Run shell script in an aterm window */
 	if( fork() == 0 )
 	{
 		set_thread_priority( -1, 0 );
-		execlp( cPath.c_str(), cPath.c_str(), (void*)NULL );
+		execlp( "/system/bin/aterm", "/system/bin/aterm", cScriptPath.c_str(), (void*)NULL );
 		exit( 0 );
 	}
+	
 }
 
 /* export a Makefile for the project */
@@ -613,15 +650,12 @@ void project::ExportMakefile()
 	out<<std::endl;
 	out<<"deps:"<<std::endl;
 	out<<std::endl;
-	out<<"dist: all"<<std::endl;
-	out<<"	@echo Distribution..."<<std::endl;
-	out<<"	@mkdir -p $(DIST_DIR)"<<m_zInstallPath.c_str()<<std::endl;
-	out<<"	@cp \""<<m_zTarget.c_str()<<"\" $(DIST_DIR)"<<m_zInstallPath.c_str()<<"/\""<<m_zTarget.c_str()<<"\""<<std::endl;
-	out<<std::endl;
 	out<<"install: all"<<std::endl;
 	out<<"	@echo Installing..."<<std::endl;
-	out<<"	@mkdir -p "<<m_zInstallPath.c_str()<<std::endl;
-	out<<"	@cp \""<<m_zTarget.c_str()<<"\" "<<m_zInstallPath.c_str()<<"/\""<<m_zTarget.c_str()<<"\""<<std::endl;
+	out<<"	@mkdir -p $(IMAGE)"<<m_zInstallPath.c_str()<<std::endl;
+	out<<"	@cp \""<<m_zTarget.c_str()<<"\" \"$(IMAGE)"<<m_zInstallPath.c_str()<<"/"<<m_zTarget.c_str()<<"\""<<std::endl;
+	out<<std::endl;
+	out<<"dist: install"<<std::endl;
 	out<<std::endl;
 	
 	out.close();
@@ -827,14 +861,7 @@ void project::OpenFile( uint nGroup, uint nNumber, os::Window *pcWindow )
 			execlp( "/Applications/sIDE/Sourcery",  "/Applications/sIDE/Sourcery", cPath.c_str(), (void*)NULL );
 			exit( 0 );
 		}
-	} else if( pcFile->m_nType == TYPE_CATALOG ) {
-		if( fork() == 0 )
-		{
-			set_thread_priority( -1, 0 );
-			execlp( "/Applications/sIDE/Sourcery",  "/Applications/sIDE/Sourcery", cPath.c_str(), (void*)NULL );
-			exit( 0 );
-		}
-	} else if( pcFile->m_nType == TYPE_RESOURCE ) {
+	} else if( pcFile->m_nType == TYPE_CATALOG || pcFile->m_nType == TYPE_RESOURCE || pcFile->m_nType == TYPE_OTHER ) {
 		/* Try to open it using the registrar */
 		os::RegistrarManager* pcManager = os::RegistrarManager::Get();
 		pcManager->Launch( NULL, cPath, true );
@@ -856,3 +883,4 @@ bool project::IsWorking()
 {
 	return( m_bIsWorking );
 }
+

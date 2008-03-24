@@ -1,15 +1,14 @@
 # Makefile for App
 
-COPTS	= -Wall -c -O2 -fexceptions
+COPTS = -Wall -c -O2 -fexceptions
 
-APPBIN	= /Applications/App
-OBJS	= main.o application.o mainwindow.o
+APPBIN = /Applications/App
+OBJS = main.o application.o mainwindow.o
 
 OBJDIR	:= objs
 OBJS	:= $(addprefix $(OBJDIR)/,$(OBJS))
 
 # Rules
-
 $(OBJDIR)/%.o : %.c
 	@echo Compiling : $<
 	@$(CC) $(COPTS) $< -o $@
@@ -22,9 +21,8 @@ $(OBJDIR)/%.o : %.s
 	@echo Assembling : $<
 	@$(CC) $(COPTS) -x assembler-with-cpp $< -o $@
 
-all: translations objs "App"
+all : translations objs "App"
 
-$(OBJDIR)/mainwindow.o: mainwindowLayout.cpp
 
 translations:
 
@@ -47,7 +45,7 @@ clean:
 deps:
 
 install: all
-	@echo Installation...
+	@echo Installing...
 	@mkdir -p $(IMAGE)/Applications/App
 	@cp "App" $(IMAGE)/Applications/App/"App"
 
