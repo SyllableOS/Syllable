@@ -199,6 +199,7 @@ static const struct chip_info asChipInfos[] = {
 	{0x10DE0099, NV_ARCH_40, "GeForce Go 7800 GTX" },
 	{0x10DE009D, NV_ARCH_40, "Quadro FX 4500" },
 
+	{0x10DE01D0, NV_ARCH_40, "GeForce 7350 LE" },
 	{0x10DE01D1, NV_ARCH_40, "GeForce 7300 LE" },
 	{0x10DE01D6, NV_ARCH_40, "GeForce Go 7200" },
 	{0x10DE01D7, NV_ARCH_40, "GeForce Go 7300" },
@@ -224,7 +225,51 @@ static const struct chip_info asChipInfos[] = {
 	{0x10DE0242, NV_ARCH_40, "GeForce 6100" },
 	{0x10DE0244, NV_ARCH_40, "GeForce Go 6150" },
 	{0x10DE0247, NV_ARCH_40, "GeForce Go 6100" },
-	{0x10DE03D1, NV_ARCH_40, "GeForce 6100" }
+	{0x10DE03D1, NV_ARCH_40, "GeForce 6100" },
+	
+	{ 0x10DE016A, NV_ARCH_40, "GeForce 7100 GS" },
+	{ 0x10DE01D3, NV_ARCH_40, "GeForce 7300 SE/7200 GS" },
+	
+	/*         8 series and other new cards          */
+	
+	{ 0x10DE0191, NV_ARCH_40, "GeForce 8800 GTX" },
+	{ 0x10DE0193, NV_ARCH_40, "GeForce 8800 GTS" },
+	{ 0x10DE0194, NV_ARCH_40, "GeForce 8800 Ultra" },
+	{ 0x10DE019D, NV_ARCH_40, "Quadro FX 5600" },
+	{ 0x10DE019E, NV_ARCH_40, "Quadro FX 4600" },
+	{ 0x10DE0400, NV_ARCH_40, "GeForce 8600 GTS" },
+	{ 0x10DE0402, NV_ARCH_40, "GeForce 8600 GT" },
+	{ 0x10DE0404, NV_ARCH_40, "GeForce 8400 GS" },
+	{ 0x10DE0407, NV_ARCH_40, "GeForce 8600M GT" },
+	{ 0x10DE0409, NV_ARCH_40, "GeForce 8700M GT" },
+	{ 0x10DE040A, NV_ARCH_40, "Quadro FX 370" },
+	{ 0x10DE040B, NV_ARCH_40, "Quadro NVS 320M" },
+	{ 0x10DE040C, NV_ARCH_40, "Quadro FX 570M" },
+	{ 0x10DE040D, NV_ARCH_40, "Quadro FX 1600M" },
+	{ 0x10DE040E, NV_ARCH_40, "Quadro FX 570" },
+	{ 0x10DE040F, NV_ARCH_40, "Quadro FX 1700" },
+	{ 0x10DE0421, NV_ARCH_40, "GeForce 8500 GT" },
+	{ 0x10DE0422, NV_ARCH_40, "GeForce 8400 GS" },
+	{ 0x10DE0423, NV_ARCH_40, "GeForce 8300 GS" },
+	{ 0x10DE0425, NV_ARCH_40, "GeForce 8600M GS" },
+	{ 0x10DE0426, NV_ARCH_40, "GeForce 8400M GT" },
+	{ 0x10DE0427, NV_ARCH_40, "GeForce 8400M GS" },
+	{ 0x10DE0428, NV_ARCH_40, "GeForce 8400M G" },
+	{ 0x10DE0429, NV_ARCH_40, "Quadro NVS 140M" },
+	{ 0x10DE042A, NV_ARCH_40, "Quadro NVS 130M" },
+	{ 0x10DE042B, NV_ARCH_40, "Quadro NVS 135M" },
+	{ 0x10DE042D, NV_ARCH_40, "Quadro FX 360M" },
+	{ 0x10DE042F, NV_ARCH_40, "Quadro NVS 290" },
+	{ 0x10DE042B, NV_ARCH_40, "Quadro NVS 135M" }, 
+	{ 0x10DE042D, NV_ARCH_40, "Quadro FX 360M" }, 
+	{ 0x10DE042F, NV_ARCH_40, "Quadro NVS 290" }, 
+	{ 0x10DE0602, NV_ARCH_40, "GeForce 8800 GT" }, 
+	{ 0x10DE0606, NV_ARCH_40, "GeForce 8800 GS" }, 
+	{ 0x10DE060D, NV_ARCH_40, "GeForce 8800 GS" }, 
+	{ 0x10DE0611, NV_ARCH_40, "GeForce 8800 GT" }, 
+	{ 0x10DE061A, NV_ARCH_40, "Quadro FX 3700" },  
+	{ 0x10DE06E4, NV_ARCH_40, "GeForce 8400 GS" }, 
+	{ 0x10DE0622, NV_ARCH_40, "GeForce 9600 GT" }
 };
 
 using namespace os;
