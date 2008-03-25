@@ -64,7 +64,7 @@ modules
 ;	For grub-install:
 	apps/gnu/diffutils-2.8.1
 	apps/other/netcat-1.10
-;	apps/other/transmission-0.6.1
+	apps/other/transmission-1.06
 	apps/other/cdrtools-2.01
 
 	sys/appserver/appserver/drivers/decorators/amiga
