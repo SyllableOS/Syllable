@@ -2,15 +2,15 @@
 
 VERSION=0.6.6
 
-BUILD_DIR=$HOME/Build
 LOG_DIR=$HOME/Logs
 LOG=$LOG_DIR/std-out-err.log
 FINISH_FAILURES=$LOG_DIR/finish-failures.log
 FINISH_SUMMARY=$LOG_DIR/finish-summary.log
+
+SCRIPTS_DIR=$HOME/bin
+BUILD_DIR=$HOME/Build
 INSTALLER_DIR=$BUILD_DIR/Installer
 WORKING_COPY=$INSTALLER_DIR/system/stage/
-SCRIPTS_DIR=$HOME/bin
-LOG_DIR=$HOME/Logs
 
 # If you want to automatically upload the build to
 # an FTP server, set the following environment variables
