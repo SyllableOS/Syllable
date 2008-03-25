@@ -646,6 +646,7 @@ void InnerEdit::KeyDown(const char* str, const char* rawstr, uint32 modifiers)
 			}
 			break;
 		case 'x':
+		case 'X':
 			if(ctrl && !alt && !shift){
 				if(readOnly)
 					break;
@@ -655,6 +656,7 @@ void InnerEdit::KeyDown(const char* str, const char* rawstr, uint32 modifiers)
 			}
 			break;
 		case 'c':
+		case 'C':
 			if(ctrl && !alt && !shift){
 				Copy();
 				ShowCursor();
@@ -662,6 +664,7 @@ void InnerEdit::KeyDown(const char* str, const char* rawstr, uint32 modifiers)
 			}
 			break;
 		case 'v':
+		case 'V':
 			if(ctrl && !alt && !shift){
 				if(readOnly)
 					break;
@@ -671,6 +674,7 @@ void InnerEdit::KeyDown(const char* str, const char* rawstr, uint32 modifiers)
 			}
 			break;
 		case 'y':
+		case 'Y':
 			if(ctrl && !alt && !shift){
 				if(readOnly)
 					break;
@@ -680,6 +684,7 @@ void InnerEdit::KeyDown(const char* str, const char* rawstr, uint32 modifiers)
 			}
 			break;
 		case 'z':
+		case 'Z':
 			if(ctrl && !alt && !shift){
 				if(readOnly)
 					break;
@@ -2001,9 +2006,3 @@ void InnerEdit::_AdjustFoldedSections( uint nStart, int nLen )
 //		}
 	}
 }
-
-
-
-
-
-
