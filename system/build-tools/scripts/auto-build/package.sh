@@ -6,7 +6,7 @@ BUILD_DIR=$HOME/Build
 LOG_DIR=$HOME/Logs
 LOG=$LOG_DIR/std-out-err.log
 FINISH_FAILURES=$LOG_DIR/finish-failures.log
-FINISH_SUMMERY=$LOG_DIR/finish-summery.log
+FINISH_SUMMARY=$LOG_DIR/finish-summary.log
 INSTALLER_DIR=$BUILD_DIR/Installer
 WORKING_COPY=$INSTALLER_DIR/system/stage/
 SCRIPTS_DIR=$HOME/bin
@@ -62,10 +62,10 @@ done
 $SCRIPTS_DIR/printers.sh $INSTALLER_DIR/ppds/ $WORKING_COPY/image/system/resources/cups/1.3.4/share/cups/model/
 
 # Finish the build and package it
-cd $INSTALLER_DIR
+cd $INSTALLER_DIR/system/
 image finish 1>>$LOG 2>&1
 build log failures > $FINISH_FAILURES
-build log summery > $FINISH_SUMMERY
+build log summary > $FINISH_SUMMARY
 
 echo "Packaging the development files"
 
@@ -115,7 +115,7 @@ md5sum base-syllable.zip $ISO $ISO.7z $DEV_ARCHIVE.zip > $MD5S
 echo "Uploading"
 
 # Transfer the files
-FILES1=`printf "$FINISH_FAILURES $FINISH_SUMMERY\n"`
+FILES1=`printf "$FINISH_FAILURES $FINISH_SUMMARY\n"`
 FILES2=`printf "base-syllable.zip $ISO.7z $DEV_ARCHIVE.zip $MD5S\n"`
 if [ -n "$FTP_USER" ]
 then
