@@ -6,7 +6,12 @@ maintainers			Kaj de Vos
 status				testing
 notes				Doesn't build the documentation yet
 
+title				Practical Extraction and Reporting Language
+headline			The 800 pound gorilla of scripting languages
+description
+	Perl is a stable, cross-platform programming language.
 licenses			Artistic GPL
+
 home				www.perl.org
 locations
 ;	CPAN selector:
