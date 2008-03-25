@@ -6,7 +6,7 @@ description
 	The PERL Pit collection of PERL packages. This pack contains PERL 5.8.8, AutoConf 2.61 and AutoMake 1.9.6. They are needed for building Syllable from source code and for some other packages and uses.
 
 modules
-	programming/languages/perl-5.8.8
+	programming/languages/perl-5.10.0
 	programming/autoconf-2.61
 ;	GrUB doesn't work with 1.10:
 	programming/automake-1.9.6

@@ -1,0 +1,81 @@
+diff -ru perl-5.10.0-original/Configure perl-5.10.0/Configure
+--- perl-5.10.0-original/Configure	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/Configure	2008-03-25 23:23:55.000000000 +0100
+@@ -3273,6 +3273,9 @@
+ 			*)	osvers="$3" ;;
+ 			esac
+ 			;;
++		syllable) osname=syllable
++			osvers="$3"
++			;;
+ 		titanos) osname=titanos
+ 			case "$3" in
+ 			1*) osvers=1 ;;
+@@ -7300,7 +7303,7 @@
+ : for archive libraries.  Thank you, Linux.
+ case "$nm_so_opt" in
+ '')	case "$myuname" in
+-	*linux*|gnu*)
++	*linux*|gnu*|syllable*)
+ 		if $nm --help | $grep 'dynamic' > /dev/null 2>&1; then
+ 			nm_so_opt='--dynamic'
+ 		fi
+@@ -7869,7 +7872,7 @@
+ 			      '') dflt="$dflt +vnocompatwarnings" ;;
+ 			      esac
+ 			      ;;
+-			linux|irix*|gnu*)  dflt="-shared $optimize" ;;
++			linux|irix*|gnu*|syllable)  dflt="-shared $optimize" ;;
+ 			next)  dflt='none' ;;
+ 			solaris) dflt='-G' ;;
+ 			sunos) dflt='-assert nodefinitions' ;;
+@@ -7916,7 +7919,7 @@
+ EOM
+     case "$ccdlflags" in
+     '') case "$osname" in
+-	    linux|hpux|gnu*)	dflt='-Wl,-E' ;;
++	    linux|hpux|gnu*|syllable)	dflt='-Wl,-E' ;;
+ 	    next|sunos)	dflt='none' ;;
+ 	    *)		dflt='none' ;;
+ 	    esac ;;
+@@ -8013,7 +8016,7 @@
+ 			dflt=libperl.5.$so
+ 			# XXX How handle the --version stuff for MAB?
+ 			;;
+-		linux*|gnu*)  # ld won't link with a bare -lperl otherwise.
++		linux*|gnu*|syllable*)  # ld won't link with a bare -lperl otherwise.
+ 			dflt=libperl.$so
+ 			;;
+ 		cygwin*) # ld links against an importlib
+@@ -8100,7 +8103,7 @@
+ 	freebsd|netbsd|openbsd|interix|dragonfly)
+ 		xxx="-Wl,-R$shrpdir"
+ 		;;
+-	bsdos|linux|irix*|dec_osf|gnu*)
++	bsdos|linux|irix*|dec_osf|gnu*|syllable)
+ 		xxx="-Wl,-rpath,$shrpdir"
+ 		;;
+ 	next)
+diff -ru perl-5.10.0-original/lib/ExtUtils/MM.pm perl-5.10.0/lib/ExtUtils/MM.pm
+--- perl-5.10.0-original/lib/ExtUtils/MM.pm	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/ExtUtils/MM.pm	2008-03-25 23:08:02.000000000 +0100
+@@ -70,6 +70,8 @@
+ $Is{QNX}    = $^O eq 'qnx';
+ $Is{AIX}    = $^O eq 'aix';
+ 
++$Is{Syllable}    = $^O eq 'syllable';
++
+ $Is{Unix}   = !grep { $_ } values %Is;
+ 
+ map { delete $Is{$_} unless $Is{$_} } keys %Is;
+diff -ru perl-5.10.0-original/MANIFEST perl-5.10.0/MANIFEST
+--- perl-5.10.0-original/MANIFEST	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/MANIFEST	2008-03-25 23:08:02.000000000 +0100
+@@ -1768,6 +1768,7 @@
+ lib/ExtUtils/MM_OS2.pm		MakeMaker methods for OS/2
+ lib/ExtUtils/MM.pm		MakeMaker adaptor class
+ lib/ExtUtils/MM_QNX.pm		MakeMaker methods for QNX
++lib/ExtUtils/MM_Syllable.pm		MakeMaker methods for Syllable
+ lib/ExtUtils/MM_Unix.pm		MakeMaker methods for Unix
+ lib/ExtUtils/MM_UWIN.pm		MakeMaker methods for U/WIN
+ lib/ExtUtils/MM_VMS.pm		MakeMaker methods for VMS

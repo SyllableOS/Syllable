@@ -1,0 +1,12 @@
+authors				Kaj de Vos
+status				testing
+
+configure-options
+	-des
+	-Dmksymlinks
+	-Accflags='-march=i486 -pipe'
+	-Aoptimize='-O2'
+	-Duseshrplib
+;	-Dman1dir=/usr/share/man/man1
+;	-Dman3dir=/usr/share/man/man3
+	-Dpager="/usr/indexes/bin/less -isR"

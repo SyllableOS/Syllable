@@ -1,0 +1,26 @@
+authors				Kaj de Vos
+status				testing
+
+build-dir			.
+
+configure-options
+	-des
+	-Dmksymlinks
+	-Accflags='-pipe'
+	-Aoptimize='-O2'
+	-Duseshrplib
+;	-Dman1dir=/usr/share/man/man1
+;	-Dman3dir=/usr/share/man/man3
+
+documentation
+	README README.Y2K Artistic Copying AUTHORS
+	README.linux
+;	May be too huge:
+	Changes
+links
+	perl5.10.0							bin/perl
+	5.10.0/i686-linux/CORE/libperl.so	lib/
+;	Handled by the system build:
+;	bin/perl							/usr/bin/perl
+;	For OpenSSL:
+;	bin/perl							/usr/local/bin/perl

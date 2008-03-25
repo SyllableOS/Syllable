@@ -1,0 +1,28 @@
+authors				Kaj de Vos
+status				testing
+
+configure-options
+	-des
+	-Dmksymlinks
+	-Accflags='-march=i586 -pipe'
+	-Aoptimize='-O2'
+;	-Dinstallprefix=
+;	-Dnoextensions=
+	-Duseshrplib
+	-Dccflags='-DPERL_EXTERNAL_GLOB'
+;	-Dlibpth=$PWD
+;	-Uusemymalloc
+;	-Dusethreads
+;	-Duseperlio -Dusesfio
+
+documentation
+	README README.Y2K Artistic Copying AUTHORS
+;	May be too huge:
+	Changes
+links
+	perl5.10.0								bin/perl
+	5.10.0/i586-syllable/CORE/libperl.so	lib/
+;	For OpenSSL and others:
+	bin/perl								/usr/bin/perl
+;	For OpenSSL?
+	bin/perl								/usr/local/bin/perl
