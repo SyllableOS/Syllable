@@ -2,9 +2,7 @@ VERSION_MAJOR = 2
 VERSION_MINOR = 0
 LOBJS = objs/inneredit.o objs/codeview.o objs/format_c.o objs/format_java.o objs/format_perl.o objs/format_html.o objs/format_ruby.o
 OBJS = objs/main.o
-CC = g++
-COPTS = -Wall -fPIC -g
-LL = g++
+COPTS = -Wall -fPIC
 EXE = testapp
 LIB = libcodeview.so
 INSTALLDIR = /system/libraries/
@@ -13,39 +11,37 @@ INSTALLDIR = /system/libraries/
 all: $(LIB)
 
 $(EXE): $(OBJS) $(LOBJS)
-	$(LL) $(OBJS) $(LOBJS) -lsyllable -o $(EXE)
+	$(CXX) $(OBJS) $(LOBJS) -lsyllable -o $(EXE)
 
 #$(EXE): $(OBJS) $(LIB)
-#	$(LL) $(OBJS) -lsyllable -L. -lcodeview -o $(EXE)
+#	$(CXX) $(OBJS) -lsyllable -L. -lcodeview -o $(EXE)
 
 
 $(LIB): $(LOBJS)
-	$(LL) $(LOBJS) -lsyllable -shared -g -Wl,-soname,$(LIB).$(VERSION_MAJOR) -o $(LIB)
+	$(CXX) $(LOBJS) -lsyllable -shared -g -Wl,-soname,$(LIB).$(VERSION_MAJOR) -o $(LIB)
 
 
 .PHONY : install
 install: all
-
-	-cp -f $(LIB) $(INSTALLDIR)$(LIB).$(VERSION_MAJOR).$(VERSION_MINOR)
-	-ln -fs $(INSTALLDIR)$(LIB).$(VERSION_MAJOR).$(VERSION_MINOR) \
+	cp -f $(LIB) $(INSTALLDIR)$(LIB).$(VERSION_MAJOR).$(VERSION_MINOR)
+	ln -fs $(INSTALLDIR)$(LIB).$(VERSION_MAJOR).$(VERSION_MINOR) \
 	       $(INSTALLDIR)$(LIB).$(VERSION_MAJOR)
-	-ln -fs $(INSTALLDIR)$(LIB).$(VERSION_MAJOR) \
+	ln -fs $(INSTALLDIR)$(LIB).$(VERSION_MAJOR) \
 	       $(INSTALLDIR)$(LIB)
-
-	-mkdir -p /ainc/codeview
-	-cp -f codeview.h /ainc/codeview/
-	-cp -f format.h /ainc/codeview/
-	-cp -f format_c.h /ainc/codeview/
-	-cp -f format_java.h /ainc/codeview/
-	-cp -f format_perl.h /ainc/codeview/
-	-cp -f format_html.h /ainc/codeview/
-	-cp -f format_ruby.h /ainc/codeview/
+	mkdir -p /system/development/headers/codeview
+	cp -f codeview.h /system/development/headers/codeview/
+	cp -f format.h /system/development/headers/codeview/
+	cp -f format_c.h /system/development/headers/codeview/
+	cp -f format_java.h /system/development/headers/codeview/
+	cp -f format_perl.h /system/development/headers/codeview/
+	cp -f format_html.h /system/development/headers/codeview/
+	cp -f format_ruby.h /system/development/headers/codeview/
 
 .PHONY : docs
 docs:
-	-mkdir -p docs
-	-doxytag -t docs/atheos.gui.tag /boot/Documentation/gui/
-	-doxygen doxygen.conf
+	mkdir -p docs
+	doxytag -t docs/atheos.gui.tag /boot/Documentation/gui/
+	doxygen doxygen.conf
 
 
 .PHONY : clean
@@ -59,7 +55,7 @@ clean:
 
 objs/%.o: %.cpp
 	@mkdir -p objs
-	$(CC) $< $(COPTS) -c -o $@
+	$(CXX) $< $(COPTS) -c -o $@
 
 objs:
 	mkdir objs

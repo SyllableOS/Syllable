@@ -28,7 +28,7 @@ objs:
 
 Sourcery: $(OBJS)
 	@echo Linking...
-	@$(CXX) $(OBJS) -o Sourcery -lsyllable -lm codeview.a
+	@$(CXX) $(OBJS) -o Sourcery -lsyllable -lm -lcodeview
 	@strip --strip-all Sourcery
 	@echo Adding resources...
 	@rescopy Sourcery -r ./images/*.png ./images/mimetypes/*.png 
