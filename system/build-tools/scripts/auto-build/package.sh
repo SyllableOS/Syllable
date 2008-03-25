@@ -115,7 +115,7 @@ md5sum base-syllable.zip $ISO $ISO.7z $DEV_ARCHIVE.zip > $MD5S
 echo "Uploading"
 
 # Transfer the files
-FILES1=`printf "$FINISH_FAILURES $FINISH_SUMMARY\n"`
+FILES1=`printf "$LOG $FINISH_FAILURES $FINISH_SUMMARY\n"`
 FILES2=`printf "base-syllable.zip $ISO.7z $DEV_ARCHIVE.zip $MD5S\n"`
 if [ -n "$FTP_USER" ]
 then
