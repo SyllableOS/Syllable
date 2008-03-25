@@ -33,8 +33,8 @@ App::App( os::String zFileName, bool bLoad ) : os::Application( "application/x-v
 	}
 }
 
-/* Static function to convert a string. Used to allow translated string */
-os::String ConvertString( os::String zString )
+/* Static function to convert a string to code. Used to allow translated string */
+os::String ConvertStringToCode( os::String zString )
 {
 	if( zString.substr( 0, 1 ) == "\\" )
 	{
@@ -42,6 +42,28 @@ os::String ConvertString( os::String zString )
 	}
 	return( os::String( "\"" ) + zString + "\"" );
 }
+
+
+/* Static function that can look up a string in the loaded catalog file */
+os::String GetString( os::String zString )
+{
+	if( zString.substr( 0, 1 ) == "\\" )
+	{
+		App* pcApp = static_cast<App*>( os::Application::GetInstance() );
+		return( pcApp->m_pcMainWindow->GetString( zString ) );
+	}
+	return( zString );
+}
+
+/* Returns the current catalog */
+os::CCatalog* GetCatalog()
+{
+	App* pcApp = static_cast<App*>( os::Application::GetInstance() );
+	return( pcApp->m_pcMainWindow->GetCatalog() );
+}
+
+
+
 
 
 

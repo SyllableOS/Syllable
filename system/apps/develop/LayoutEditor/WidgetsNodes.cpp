@@ -594,7 +594,7 @@ void FrameViewWidget::CreateCode( os::StreamableIO* pcFile, os::LayoutNode* pcNo
 	char zBuffer[8192];
 	sprintf( zBuffer, "m_pc%s = new os::FrameView( os::Rect(), \"%s\", %s );\n"
 					  "m_pc%s = new os::VLayoutNode( \"%s\" );\n",
-						pcNode->GetName().c_str(), pcNode->GetName().c_str(), ConvertString( pcFrameView->GetLabelString() ).c_str(), 
+						pcNode->GetName().c_str(), pcNode->GetName().c_str(), ConvertStringToCode( pcFrameView->GetLabelString() ).c_str(), 
 						pcFrameView->GetRoot()->GetName().c_str(), pcFrameView->GetRoot()->GetName().c_str() );	
 	pcFile->Write( zBuffer, strlen( zBuffer ) );
 	os::LayoutNode* pcVNode = pcFrameView->GetRoot();

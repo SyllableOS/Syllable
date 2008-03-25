@@ -10,11 +10,12 @@ class App : public os::Application
 {
 public:
 	App( os::String zFileName, bool bLoad );
+	MainWindow* m_pcMainWindow;	
 private:
-	MainWindow* m_pcMainWindow;
 };
 
 #endif
+
 
 
 

@@ -141,6 +141,7 @@ public:
 	{
 		m_cFile = "";
 		m_zMessageCode = "-1";
+		m_cRealLabel = cLabel;
 	}
 	~LEImageButton()
 	{
@@ -166,6 +167,7 @@ public:
 	}
 	os::String m_cFile;
 	os::String m_zMessageCode;
+	os::String m_cRealLabel;
 };
 
 /* ImageButton Widget */
@@ -242,7 +244,7 @@ std::vector<WidgetProperty> ImageButtonWidget::GetProperties( os::LayoutNode* pc
 	WidgetProperty cProperty0( 0, PT_FLOAT, "Weight", pcNode->GetWeight() );
 	cProperties.push_back( cProperty0 );
 	// Label
-	WidgetProperty cProperty1( 1, PT_STRING, "Label", pcView->GetLabel() );
+	WidgetProperty cProperty1( 1, PT_STRING_CATALOG, "Label", pcView->m_cRealLabel );
 	cProperties.push_back( cProperty1 );
 	// Message code
 	WidgetProperty cProperty2( 2, PT_STRING, "Message Code", pcView->m_zMessageCode );
@@ -271,7 +273,8 @@ void ImageButtonWidget::SetProperties( os::LayoutNode* pcNode, std::vector<Widge
 				pcNode->SetWeight( pcProp->GetValue().AsFloat() );
 			break;
 			case 1: // Label
-				pcView->SetLabel( pcProp->GetValue().AsString() );
+				pcView->m_cRealLabel = pcProp->GetValue().AsString();
+				pcView->SetLabel( GetString( pcView->m_cRealLabel ) );
 			break;
 			case 2: // Message Code
 				pcView->m_zMessageCode = pcProp->GetValue().AsString();
@@ -315,7 +318,7 @@ void ImageButtonWidget::CreateCode( os::StreamableIO* pcFile, os::LayoutNode* pc
 	{
 		sprintf( zBuffer, "m_pc%s = new os::ImageButton( os::Rect(), \"%s\", %s, new os::Message( %s ), NULL"
 		", %s, true, true, true );\n",
-						pcNode->GetName().c_str(), pcNode->GetName().c_str(), ConvertString( pcView->GetLabel() ).c_str(), 
+						pcNode->GetName().c_str(), pcNode->GetName().c_str(), ConvertStringToCode( pcView->m_cRealLabel ).c_str(), 
 						pcView->m_zMessageCode.c_str(), PositionToCode( pcView->GetTextPosition() ).c_str() );
 		pcFile->Write( zBuffer, strlen( zBuffer ) );
 	}
@@ -332,7 +335,7 @@ void ImageButtonWidget::CreateCode( os::StreamableIO* pcFile, os::LayoutNode* pc
 		pcFile->Write( zBuffer, strlen( zBuffer ) );		
 		sprintf( zBuffer, "m_pc%s = new os::ImageButton( os::Rect(), \"%s\", %s, new os::Message( %s ), new os::BitmapImage( pc%sStream )"
 		", %s, true, true, true );\n",
-						pcNode->GetName().c_str(), pcNode->GetName().c_str(), ConvertString( pcView->GetLabel() ).c_str(), 
+						pcNode->GetName().c_str(), pcNode->GetName().c_str(), ConvertStringToCode( pcView->m_cRealLabel ).c_str(), 
 						pcView->m_zMessageCode.c_str(), pcNode->GetName().c_str(), PositionToCode( pcView->GetTextPosition() ).c_str() );
 		pcFile->Write( zBuffer, strlen( zBuffer ) );
 		sprintf( zBuffer, "delete( pc%sStream );\n",

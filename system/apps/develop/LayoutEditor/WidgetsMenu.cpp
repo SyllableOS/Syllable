@@ -77,10 +77,10 @@ void MenuWidget::CreateCode( os::StreamableIO* pcFile, os::LayoutNode* pcNode )
 	{
 		sprintf( zBuffer, "os::Menu* pc%s%sMenu = new os::Menu( os::Rect(), \"%s\", os::ITEMS_IN_COLUMN );\n"
 							"m_pc%s->AddItem( pc%s%sMenu );\n",
-						pcNode->GetName().c_str(), pcView->GetItemAt( i )->GetLabel().c_str(),
-						pcView->GetItemAt( i )->GetLabel().c_str(),
+						pcNode->GetName().c_str(), ConvertStringToCode( pcView->GetItemAt( i )->GetLabel() ).c_str(),
+						ConvertStringToCode( pcView->GetItemAt( i )->GetLabel() ).c_str(),
 						pcNode->GetName().c_str(), pcNode->GetName().c_str(),
-						pcView->GetItemAt( i )->GetLabel().c_str() );
+						ConvertStringToCode( pcView->GetItemAt( i )->GetLabel() ).c_str() );
 		pcFile->Write( zBuffer, strlen( zBuffer ) );
 	}
 	CreateAddCode( pcFile, pcNode );

@@ -245,7 +245,7 @@ void SliderWidget::CreateCode( os::StreamableIO* pcFile, os::LayoutNode* pcNode 
 	pcFile->Write( zBuffer, strlen( zBuffer ) );
 	os::String cMinLabel, cMaxLabel;
 	pcView->GetLimitLabels( &cMinLabel, &cMaxLabel );
-	sprintf( zBuffer, "m_pc%s->SetLimitLabels( %s, %s );\n", pcNode->GetName().c_str(), ConvertString( cMinLabel ).c_str(), ConvertString( cMaxLabel ).c_str() );
+	sprintf( zBuffer, "m_pc%s->SetLimitLabels( %s, %s );\n", pcNode->GetName().c_str(), ConvertStringToCode( cMinLabel ).c_str(), ConvertStringToCode( cMaxLabel ).c_str() );
 	pcFile->Write( zBuffer, strlen( zBuffer ) );
 	sprintf( zBuffer, "m_pc%s->SetMinMax( %f, %f );\n", pcNode->GetName().c_str(), pcView->m_vMin, pcView->m_vMax );
 	pcFile->Write( zBuffer, strlen( zBuffer ) );

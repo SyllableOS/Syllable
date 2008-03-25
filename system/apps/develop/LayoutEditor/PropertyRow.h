@@ -34,6 +34,7 @@ class PropertyDropdownView: public os::DropdownMenu {
 	      uint32 nResizeMask = os::CF_FOLLOW_LEFT | os::CF_FOLLOW_TOP,
 	      uint32 nFlags = os::WID_WILL_DRAW | os::WID_FULL_UPDATE_ON_RESIZE );
 
+	void AttachedToWindow( void );
 	void Activated( bool bIsActive );
 	virtual void HandleMessage( os::Message* pcMsg );
 	

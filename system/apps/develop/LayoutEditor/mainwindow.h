@@ -11,6 +11,7 @@
 #include "AppWindow.h"
 #include "Widgets.h"
 #include "EditString.h"
+#include "ccatalog.h"
 
 class MainWindow : public os::Window
 {
@@ -24,6 +25,12 @@ public:
 	void CreateWidgetTreeLevel( int nLevel, os::LayoutNode* pcNode, os::LayoutNode* pcRealParent );
 	void CreateWidgetTree();
 	void CreatePropertyList( os::LayoutNode* pcNode );
+	void LoadCatalog();
+	os::String GetString( os::String& zString );
+	os::CCatalog* GetCatalog()
+	{
+		return( m_pcCatalog );
+	}
 	bool Save( os::File* pcFile, int nLevel, os::LayoutNode* pcParentNode );
 	void Save();
 	bool Load( os::File* pcFile, int *pnLevel, os::LayoutNode* pcParentNode );
@@ -51,6 +58,7 @@ private:
 	Widget* m_pcNewWidget;
 	os::FileRequester* m_pcLoadRequester;
 	os::FileRequester* m_pcSaveRequester;
+	os::CCatalog *m_pcCatalog;
 };
 
 #endif

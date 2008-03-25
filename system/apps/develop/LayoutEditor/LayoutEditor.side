@@ -1,9 +1,10 @@
 
-<CompilerFlags>-Wall -c -fexceptions
+<CompilerFlags>-Wall -c -fexceptions -O2
 <LinkerFlags>
 <Target>LayoutEditor
 <Category>Development
 <InstallPath>/Applications/sIDE
+<RunInTerminal>false
 <Group>Sources
 <FileName>AppWindow.cpp
 <FileType>
@@ -30,6 +31,8 @@
 <FileName>main.cpp
 <FileType>
 <FileName>mainwindow.cpp
+<FileType>
+<FileName>ccatalog.cpp
 <FileType>
 <Group>Headers
 <FileName>application.h
@@ -60,10 +63,10 @@
 <FileType>
 <FileName>WidgetsList.h
 <FileType>
+<FileName>ccatalog.h
+<FileType>
 <Group>Libraries
 <FileName>syllable
-<FileType>
-<FileName>stdc++
 <FileType>
 <Group>Resources
 <FileName>images/breaker.png
@@ -78,3 +81,4 @@
 <FileType>
 <FileName>application_interface.png
 <FileType>
+

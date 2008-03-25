@@ -1,10 +1,11 @@
-#Makefile for LayoutEditor
-COPTS = -Wall -c -fexceptions
+# Makefile for LayoutEditor
+
+COPTS = -Wall -c -fexceptions -O2
 
 APPBIN = /Applications/sIDE
-OBJS = AppWindow.o EditList.o EditString.o PropertyRow.o WidgetsControls.o WidgetsImage.o WidgetsList.o WidgetsMenu.o WidgetsNodes.o WidgetsUtils.o application.o main.o mainwindow.o
+OBJS = AppWindow.o EditList.o EditString.o PropertyRow.o WidgetsControls.o WidgetsImage.o WidgetsList.o WidgetsMenu.o WidgetsNodes.o WidgetsUtils.o application.o main.o mainwindow.o ccatalog.o
 
-OBJDIR := objs
+OBJDIR	:= objs
 OBJS	:= $(addprefix $(OBJDIR)/,$(OBJS))
 
 # Rules
@@ -22,6 +23,7 @@ $(OBJDIR)/%.o : %.s
 
 all : translations objs "LayoutEditor"
 
+
 translations:
 
 objs:
@@ -32,6 +34,7 @@ objs:
 	@$(CXX) $(OBJS) -o "LayoutEditor" -lsyllable
 	@echo Adding resources...
 	@rescopy "LayoutEditor" -r images/breaker.png images/open.png images/save.png icon24x24.png icon48x48.png application_interface.png 
+	strip --strip-all LayoutEditor
 	@addattrib "LayoutEditor" os::Category Development
 
 clean:

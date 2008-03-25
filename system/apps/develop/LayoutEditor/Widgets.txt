@@ -16,7 +16,7 @@
   class    os::ScrollBar ???
   class    os::Separator X
   class    os::Slider X
-  class    os::Spinner
+  class    os::Spinner X
   class    os::Splitter ????
   class    os::StatusBar ???
   class    os::StatusPanel ??

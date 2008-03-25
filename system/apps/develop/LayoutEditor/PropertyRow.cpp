@@ -1,5 +1,6 @@
 #include "PropertyRow.h"
 #include "messages.h"
+#include "ccatalog.h"
 #include <stdio.h>
 #include <util/message.h>
 #include <gui/window.h>
@@ -67,7 +68,8 @@ PropertyTreeNode::~PropertyTreeNode()
 
 void PropertyTreeNode::Paint( const Rect& cFrame, View* pcView, uint nColumn, bool bSelected, bool bHighlighted, bool bHasFocus )
 {
-	if( m_pcEditBox == NULL && m_bShowEditBox && m_nEditCol == nColumn ) {
+	if( ( m_pcEditBox == NULL && m_pcDropdownBox == NULL && m_pcEditListWin == NULL )
+		 && m_bShowEditBox && m_nEditCol == nColumn ) {
 		m_bShowEditBox = false;
 
 		Rect cRect;
@@ -81,6 +83,7 @@ void PropertyTreeNode::Paint( const Rect& cFrame, View* pcView, uint nColumn, bo
 		{
 			/* Create dropdown box */
 			m_pcDropdownBox = new PropertyDropdownView( cRect, "" );
+			m_pcDropdownBox->SetReadOnly( true );
 			m_pcDropdownBox->AppendItem( "false" );
 			m_pcDropdownBox->AppendItem( "true" );
 			m_pcDropdownBox->SetSelection( m_cProperty.GetValue().AsInt32() );
@@ -88,18 +91,56 @@ void PropertyTreeNode::Paint( const Rect& cFrame, View* pcView, uint nColumn, bo
 			pcView->AddChild( m_pcDropdownBox );
 			m_pcDropdownBox->MakeFocus( true );
 		} 
-		else if( m_cProperty.GetType() == PT_STRING_SELECT )
+		else if( m_cProperty.GetType() == PT_STRING_SELECT || m_cProperty.GetType() == PT_STRING_CATALOG )
 		{
 			/* Create dropdown box */
 			m_pcDropdownBox = new PropertyDropdownView( cRect, "" );
 			int nIndex = 0;
-			os::String zString;
-			while( m_cProperty.GetSelection( &zString, nIndex ) )
+			if( m_cProperty.GetType() == PT_STRING_SELECT )
 			{
-				m_pcDropdownBox->AppendItem( zString );
-				if( zString == m_cProperty.GetValue().AsString() )
-					m_pcDropdownBox->SetSelection( nIndex );
-				nIndex++;
+				os::String zString;
+				while( m_cProperty.GetSelection( &zString, nIndex ) )
+				{
+					m_pcDropdownBox->AppendItem( zString );
+					if( zString == m_cProperty.GetValue().AsString() )
+						m_pcDropdownBox->SetSelection( nIndex );
+					nIndex++;
+				}
+				m_pcDropdownBox->SetReadOnly( true );
+			}
+			else
+			{
+				/* Create dropdown box with strings from the catalog file */
+				os::CCatalog* pcCatalog = GetCatalog();
+				bool bFound = false;
+				bool bSearchString = false;
+				int nIndex = 0;
+				os::String cCurrent = m_cProperty.GetValue().AsString();
+				if( cCurrent.Length() > 2 && cCurrent.substr( 0, 2 ) == "\\\\" )
+				{
+					bSearchString = true;
+					cCurrent = cCurrent.substr( 2, cCurrent.Length() - 2 );
+				}
+
+				if( pcCatalog != NULL )
+				{
+					for( os::CCatalog::const_iterator i = pcCatalog->begin(); i != pcCatalog->end(); i++ )
+					{
+						if( (*i).second.Length() > 25 )					
+							m_pcDropdownBox->AppendItem( (*i).second.substr( 0, 25 ) + "... \\\\" + pcCatalog->GetMnemonic( (*i).first ) );
+						else
+							m_pcDropdownBox->AppendItem( (*i).second + " \\\\" + pcCatalog->GetMnemonic( (*i).first ) );
+						if( bSearchString ) {
+							if( cCurrent == pcCatalog->GetMnemonic( (*i).first ) ) {
+								m_pcDropdownBox->SetSelection( nIndex );
+								bFound = true;
+							}
+						}
+						nIndex++;
+					}
+				}
+				if( !bFound )
+					m_pcDropdownBox->SetCurrentString( m_cProperty.GetValue().AsString() );
 			}
 			
 			m_pcDropdownBox->m_cTreeNode = this;
@@ -193,8 +234,19 @@ void PropertyTreeNode::EditDone( int nEditOther )
 	}
 	
 	if( m_pcDropdownBox ) {
-		/* Copy value */		
-		if( m_cProperty.GetType() == PT_STRING_SELECT )
+		/* Set value */
+		if( m_cProperty.GetType() == PT_STRING_CATALOG )
+		{
+			/* Extract catalog string */
+			os::String cString = m_pcDropdownBox->GetCurrentString();
+			uint nPos;
+			if( ( nPos = cString.find( " \\\\" ) ) != std::string::npos )
+			{
+				cString = cString.substr( nPos + 1, cString.Length() - nPos - 1 );
+			}
+			m_cProperty.SetValue( cString );			
+		}
+		else if( m_cProperty.GetType() == PT_STRING_SELECT )
 		{
 			os::String cString = m_pcDropdownBox->GetCurrentString();
 			m_cProperty.SetValue( cString );
@@ -344,11 +396,23 @@ void PropertyEditView::HandleMessage( os::Message* pcMsg )
 PropertyDropdownView::PropertyDropdownView( const Rect& cFrame, const String& cTitle, uint32 nResizeMask, uint32 nFlags )
 :DropdownMenu( cFrame, cTitle,  nResizeMask, nFlags)
 {
+	
+}
+
+void PropertyDropdownView::AttachedToWindow()
+{
+	/* FIXME: This is a hack! */
+	os::TextView* pcView = static_cast<os::TextView*>( GetChildAt( 0 ) );
+	pcView->SetTarget( this );
+	
 }
 
 void PropertyDropdownView::Activated( bool bIsActive )
 {
 	if( bIsActive == false ) {
+		if( GetWindow()->GetFocusChild() != NULL )
+			if( GetWindow()->GetFocusChild()->GetParent() == this )
+				return;
 		m_cTreeNode->EditDone();
 	}
 }
@@ -361,9 +425,20 @@ void PropertyDropdownView::HandleMessage( os::Message* pcMsg )
 			delete( this );
 			return;
 		break;
+		case 3: // os::DropdownMenu::ID_STRING_CHANGED
+			int32 nEvents;
+			pcMsg->FindInt32( "events", &nEvents );
+			if( nEvents & ( os::TextView::EI_FOCUS_LOST | os::TextView::EI_ENTER_PRESSED ) )
+				m_cTreeNode->EditDone();
+		break;
 	}
 	os::DropdownMenu::HandleMessage( pcMsg );
 }
+
+
+
+
+
 
 
 

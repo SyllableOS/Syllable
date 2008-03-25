@@ -16,7 +16,8 @@ enum PropertyType
 	PT_FLOAT,
 	PT_BOOL,
 	PT_STRING_SELECT,
-	PT_STRING_LIST
+	PT_STRING_LIST,
+	PT_STRING_CATALOG
 };
 
 class WidgetProperty : public os::Message
@@ -117,8 +118,14 @@ public:
 	
 };
 
-os::String ConvertString( os::String zString );
+namespace os
+{
+	class CCatalog;
+}
 
+os::String ConvertStringToCode( os::String zString );
+os::String GetString( os::String zString );
+os::CCatalog* GetCatalog();
 
 #endif
 

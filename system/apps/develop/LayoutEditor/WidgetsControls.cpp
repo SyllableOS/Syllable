@@ -11,9 +11,20 @@
 
 /* StringView Widget */
 
+class LEStringView : public os::StringView
+{
+public:
+	LEStringView( os::Rect cFrame, const os::String& cName, const os::String& cLabel )
+			: os::StringView( cFrame, cName, cLabel )
+	{
+		m_cRealLabel = cLabel;
+	}
+	os::String m_cRealLabel;
+};
+
 const std::type_info* StringViewWidget::GetTypeID()
 {
-	return( &typeid( os::StringView ) );
+	return( &typeid( LEStringView ) );
 }
 
 const os::String StringViewWidget::GetName()
@@ -23,25 +34,25 @@ const os::String StringViewWidget::GetName()
 
 os::LayoutNode* StringViewWidget::CreateLayoutNode( os::String zName )
 {
-	os::StringView* pcView = new os::StringView( os::Rect(), zName, "Label" );
+	LEStringView* pcView = new LEStringView( os::Rect(), zName, "Label" );
 	return( new os::LayoutNode( zName, 1.0f, NULL, pcView ) );
 }
 
 std::vector<WidgetProperty> StringViewWidget::GetProperties( os::LayoutNode* pcNode )
 {
-	os::StringView* pcView = static_cast<os::StringView*>(pcNode->GetView());
+	LEStringView* pcView = static_cast<LEStringView*>(pcNode->GetView());
 	std::vector<WidgetProperty> cProperties;
 	// Weight
 	WidgetProperty cProperty0( 0, PT_FLOAT, "Weight", pcNode->GetWeight() );
 	cProperties.push_back( cProperty0 );
 	// Label
-	WidgetProperty cProperty1( 1, PT_STRING, "Label", pcView->GetString() );
+	WidgetProperty cProperty1( 1, PT_STRING_CATALOG, "Label", pcView->m_cRealLabel );
 	cProperties.push_back( cProperty1 );
 	return( cProperties );
 }
 void StringViewWidget::SetProperties( os::LayoutNode* pcNode, std::vector<WidgetProperty> cProperties )
 {
-	os::StringView* pcView = static_cast<os::StringView*>(pcNode->GetView());
+	LEStringView* pcView = static_cast<LEStringView*>(pcNode->GetView());
 	for( uint i = 0; i < cProperties.size(); i++ )
 	{
 		WidgetProperty* pcProp = &cProperties[i];
@@ -51,7 +62,8 @@ void StringViewWidget::SetProperties( os::LayoutNode* pcNode, std::vector<Widget
 				pcNode->SetWeight( pcProp->GetValue().AsFloat() );
 			break;
 			case 1: // Label
-				pcView->SetString( pcProp->GetValue().AsString() );
+				pcView->m_cRealLabel = pcProp->GetValue().AsString();
+				pcView->SetString( GetString( pcView->m_cRealLabel ) );
 			break;
 		}
 	}
@@ -59,10 +71,10 @@ void StringViewWidget::SetProperties( os::LayoutNode* pcNode, std::vector<Widget
 
 void StringViewWidget::CreateCode( os::StreamableIO* pcFile, os::LayoutNode* pcNode )
 {
-	os::StringView* pcView = static_cast<os::StringView*>(pcNode->GetView());
+	LEStringView* pcView = static_cast<LEStringView*>(pcNode->GetView());
 	char zBuffer[8192];
 	sprintf( zBuffer, "m_pc%s = new os::StringView( os::Rect(), \"%s\", %s );\n",
-						pcNode->GetName().c_str(), pcNode->GetName().c_str(), ConvertString( pcView->GetString() ).c_str() );
+						pcNode->GetName().c_str(), pcNode->GetName().c_str(), ConvertStringToCode( pcView->m_cRealLabel ).c_str() );
 	pcFile->Write( zBuffer, strlen( zBuffer ) );
 	CreateAddCode( pcFile, pcNode );
 }
@@ -77,7 +89,9 @@ public:
 				: os::Button( cFrame, cName, cLabel, pcMessage )
 	{
 		m_zMessageCode = "-1";
+		m_cRealLabel = cLabel;
 	}
+	os::String m_cRealLabel;
 	os::String m_zMessageCode;
 };
 
@@ -105,7 +119,7 @@ std::vector<WidgetProperty> ButtonWidget::GetProperties( os::LayoutNode* pcNode 
 	WidgetProperty cProperty0( 0, PT_FLOAT, "Weight", pcNode->GetWeight() );
 	cProperties.push_back( cProperty0 );
 	// Label
-	WidgetProperty cProperty1( 1, PT_STRING, "Label", pcButton->GetLabel() );
+	WidgetProperty cProperty1( 1, PT_STRING_CATALOG, "Label", pcButton->m_cRealLabel );
 	cProperties.push_back( cProperty1 );
 	// Message code
 	WidgetProperty cProperty2( 2, PT_STRING, "Message Code", pcButton->m_zMessageCode );
@@ -124,7 +138,8 @@ void ButtonWidget::SetProperties( os::LayoutNode* pcNode, std::vector<WidgetProp
 				pcNode->SetWeight( pcProp->GetValue().AsFloat() );
 			break;
 			case 1: // Label
-				pcButton->SetLabel( pcProp->GetValue().AsString() );
+				pcButton->m_cRealLabel = pcProp->GetValue().AsString();
+				pcButton->SetLabel( GetString( pcButton->m_cRealLabel ) );
 			break;
 			case 2: // Message Code
 				pcButton->m_zMessageCode = pcProp->GetValue().AsString();
@@ -138,7 +153,7 @@ void ButtonWidget::CreateCode( os::StreamableIO* pcFile, os::LayoutNode* pcNode 
 	LEButton* pcButton = static_cast<LEButton*>(pcNode->GetView());
 	char zBuffer[8192];
 	sprintf( zBuffer, "m_pc%s = new os::Button( os::Rect(), \"%s\", %s, new os::Message( %s ) );\n", pcNode->GetName().c_str(),
-			pcNode->GetName().c_str(), ConvertString( pcButton->GetLabel() ).c_str(), pcButton->m_zMessageCode.c_str() );
+			pcNode->GetName().c_str(), ConvertStringToCode( pcButton->m_cRealLabel ).c_str(), pcButton->m_zMessageCode.c_str() );
 	pcFile->Write( zBuffer, strlen( zBuffer ) );
 	CreateAddCode( pcFile, pcNode );
 }
@@ -151,9 +166,11 @@ public:
 	LECheckBox( os::Rect cFrame, const os::String& cName, const os::String& cLabel, os::Message* pcMessage )
 				: os::CheckBox( cFrame, cName, cLabel, pcMessage )
 	{
+		m_cRealLabel = cLabel;
 		m_zMessageCode = "-1";
 	}
 	os::String m_zMessageCode;
+	os::String m_cRealLabel;
 };
 
 const std::type_info* CheckBoxWidget::GetTypeID()
@@ -180,7 +197,7 @@ std::vector<WidgetProperty> CheckBoxWidget::GetProperties( os::LayoutNode* pcNod
 	WidgetProperty cProperty0( 0, PT_FLOAT, "Weight", pcNode->GetWeight() );
 	cProperties.push_back( cProperty0 );
 	// Label
-	WidgetProperty cProperty1( 1, PT_STRING, "Label", pcCheckBox->GetLabel() );
+	WidgetProperty cProperty1( 1, PT_STRING_CATALOG, "Label", pcCheckBox->m_cRealLabel );
 	cProperties.push_back( cProperty1 );
 	// Checked
 	WidgetProperty cProperty2( 2, PT_BOOL, "Checked", pcCheckBox->GetValue() );
@@ -202,7 +219,8 @@ void CheckBoxWidget::SetProperties( os::LayoutNode* pcNode, std::vector<WidgetPr
 				pcNode->SetWeight( pcProp->GetValue().AsFloat() );
 			break;
 			case 1: // Label
-				pcCheckBox->SetLabel( pcProp->GetValue().AsString() );
+				pcCheckBox->m_cRealLabel = pcProp->GetValue().AsString();
+				pcCheckBox->SetLabel( GetString( pcCheckBox->m_cRealLabel ) );
 			break;
 			case 2: // Checked
 				pcCheckBox->SetValue( pcProp->GetValue() );
@@ -220,7 +238,7 @@ void CheckBoxWidget::CreateCode( os::StreamableIO* pcFile, os::LayoutNode* pcNod
 	char zBuffer[8192];
 	sprintf( zBuffer, "m_pc%s = new os::CheckBox( os::Rect(), \"%s\", %s, new os::Message( %s ) );\n"
 						"m_pc%s->SetValue( %s );\n",
-						pcNode->GetName().c_str(), pcNode->GetName().c_str(), ConvertString( pcCheckBox->GetLabel() ).c_str(), 
+						pcNode->GetName().c_str(), pcNode->GetName().c_str(), ConvertStringToCode( pcCheckBox->m_cRealLabel ).c_str(), 
 						pcCheckBox->m_zMessageCode.c_str(), pcNode->GetName().c_str(), 
 						pcCheckBox->GetValue().AsBool() == true ? "true" : "false" );
 	pcFile->Write( zBuffer, strlen( zBuffer ) );
@@ -236,8 +254,10 @@ public:
 				: os::RadioButton( cFrame, cName, cLabel, pcMessage )
 	{
 		m_zMessageCode = "-1";
+		m_cRealLabel = cLabel;
 	}
 	os::String m_zMessageCode;
+	os::String m_cRealLabel;
 };
 
 const std::type_info* RadioButtonWidget::GetTypeID()
@@ -264,7 +284,7 @@ std::vector<WidgetProperty> RadioButtonWidget::GetProperties( os::LayoutNode* pc
 	WidgetProperty cProperty0( 0, PT_FLOAT, "Weight", pcNode->GetWeight() );
 	cProperties.push_back( cProperty0 );
 	// Label
-	WidgetProperty cProperty1( 1, PT_STRING, "Label", pcRadioButton->GetLabel() );
+	WidgetProperty cProperty1( 1, PT_STRING_CATALOG, "Label", pcRadioButton->m_cRealLabel );
 	cProperties.push_back( cProperty1 );
 	// Set
 	WidgetProperty cProperty2( 2, PT_BOOL, "Set", pcRadioButton->GetValue() );
@@ -286,7 +306,8 @@ void RadioButtonWidget::SetProperties( os::LayoutNode* pcNode, std::vector<Widge
 				pcNode->SetWeight( pcProp->GetValue().AsFloat() );
 			break;
 			case 1: // Label
-				pcRadioButton->SetLabel( pcProp->GetValue().AsString() );
+				pcRadioButton->m_cRealLabel = pcProp->GetValue().AsString();
+				pcRadioButton->SetLabel( GetString( pcRadioButton->m_cRealLabel ) );
 			break;
 			case 2: // Set
 				pcRadioButton->SetValue( pcProp->GetValue() );
@@ -303,7 +324,7 @@ void RadioButtonWidget::CreateCode( os::StreamableIO* pcFile, os::LayoutNode* pc
 	LERadioButton* pcRadioButton = static_cast<LERadioButton*>(pcNode->GetView());
 	char zBuffer[8192];
 	sprintf( zBuffer, "m_pc%s = new os::RadioButton( os::Rect(), \"%s\", %s, new os::Message( %s ) );\n",
-						pcNode->GetName().c_str(), pcNode->GetName().c_str(), ConvertString( pcRadioButton->GetLabel() ).c_str(), 
+						pcNode->GetName().c_str(), pcNode->GetName().c_str(), ConvertStringToCode( pcRadioButton->m_cRealLabel ).c_str(), 
 						pcRadioButton->m_zMessageCode.c_str() );
 	pcFile->Write( zBuffer, strlen( zBuffer ) );
 	if( pcRadioButton->GetValue().AsBool() )
@@ -426,7 +447,7 @@ void DropdownMenuWidget::CreateCode( os::StreamableIO* pcFile, os::LayoutNode* p
 	for( int i = 0; i < pcDropdownMenu->GetItemCount(); i++ )
 	{
 		sprintf( zBuffer, "m_pc%s->AppendItem( %s );\n",
-						pcNode->GetName().c_str(), ConvertString( pcDropdownMenu->GetItem( i ) ).c_str() );
+						pcNode->GetName().c_str(), ConvertStringToCode( pcDropdownMenu->GetItem( i ) ).c_str() );
 		pcFile->Write( zBuffer, strlen( zBuffer ) );
 	}
 	CreateAddCode( pcFile, pcNode );
@@ -511,7 +532,7 @@ void TextViewWidget::CreateCode( os::StreamableIO* pcFile, os::LayoutNode* pcNod
 	char zBuffer[8192];
 	sprintf( zBuffer, "m_pc%s = new os::TextView( os::Rect(), \"%s\", %s );\n",
 						pcNode->GetName().c_str(), pcNode->GetName().c_str(),
-						ConvertString( pcView->GetBuffer()[0] ).c_str() );
+						ConvertStringToCode( pcView->GetBuffer()[0] ).c_str() );
 	pcFile->Write( zBuffer, strlen( zBuffer ) );
 	if( pcView->GetMultiLine() ) {
 		sprintf( zBuffer, "m_pc%s->SetMultiLine( true );\n", pcNode->GetName().c_str() );

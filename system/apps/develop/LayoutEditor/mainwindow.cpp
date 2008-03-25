@@ -6,6 +6,7 @@
 #include <gui/splitter.h>
 #include <util/variant.h>
 #include <storage/path.h>
+#include <storage/directory.h>
 #include "mainwindow.h"
 #include "messages.h"
 #include "PropertyRow.h"
@@ -56,6 +57,7 @@ MainWindow::MainWindow() : os::Window( os::Rect( 0, 0, 300, 400 ), "main_wnd", "
 {
 	/* Set default */
 	m_zFileName = "Unknown.if";
+	m_pcCatalog = NULL;
 	
 	/* Set Icon */
 	os::Resources cCol( get_image_id() );
@@ -139,6 +141,9 @@ MainWindow::MainWindow() : os::Window( os::Rect( 0, 0, 300, 400 ), "main_wnd", "
 
 MainWindow::~MainWindow()
 {
+	/* Delete catalog */
+	delete( m_pcCatalog );
+	
 	/* Delete widgets */
 	DeleteWidgets();
 }
@@ -293,6 +298,7 @@ void MainWindow::CreatePropertyList( os::LayoutNode* pcNode )
 			case PT_BOOL:
 			case PT_STRING_SELECT:
 			case PT_STRING_LIST:
+			case PT_STRING_CATALOG:
 			{
 				PropertyTreeNode* pcRow = new PropertyTreeNode( pcNode, *pcProp );
 				pcRow->AppendString( pcProp->GetName() );
@@ -308,6 +314,79 @@ void MainWindow::CreatePropertyList( os::LayoutNode* pcNode )
 		}
 	}
 
+}
+
+void MainWindow::LoadCatalog()
+{
+	delete( m_pcCatalog );
+	m_pcCatalog = NULL;
+
+	/* Try to find the catalog in the resources directory */
+	os::Path cCatalogDirPath( m_zFileName );
+	cCatalogDirPath = cCatalogDirPath.GetDir();
+	cCatalogDirPath.Append( "resources/" );
+	try
+	{
+		os::Directory cDir( cCatalogDirPath );
+		os::String cEntry;
+		while( cDir.GetNextEntry( &cEntry ) == 1 )
+		{
+			/* TODO: Use the registrar to detect the catalogs once we have defined a mimetype for the catalogs */
+			if( cEntry.Length() < 4 )
+				continue;
+			os::String cExtension = cEntry.substr( cEntry.Length() - 3, 3 );
+			
+			if( cExtension != ".cd" )
+				continue;
+			
+			os::Path cCatalogPath( cCatalogDirPath );
+			cCatalogPath.Append( cEntry );
+			
+			/* Load the catalog */
+			try
+			{
+				printf( "Load catalog %s...\n", cCatalogPath.GetPath().c_str() );
+				os::CCatalog* pcCatalog = new os::CCatalog();
+				
+				if( pcCatalog->ParseCatalogDescription( cCatalogPath.GetPath().c_str() ) == false )
+				{
+					printf("Error!\n");
+					delete( pcCatalog );
+					continue;
+				}
+				printf( "Catalog %s loaded\n", cCatalogPath.GetPath().c_str() );
+				
+				for( os::CCatalog::const_iterator i = pcCatalog->begin(); i != pcCatalog->end(); i++ )
+					printf( "%i %s %s\n", (*i).first, pcCatalog->GetMnemonic( (*i).first ).c_str(), (*i).second.c_str() );
+				m_pcCatalog = pcCatalog;
+				return;
+			} catch( ... )
+			{
+				continue;
+			}
+		}
+	}
+	catch( ... )
+	{
+		return;
+	}
+}
+
+os::String MainWindow::GetString( os::String& zString )
+{
+	/* Returns a string from the catalog file */
+	if( m_pcCatalog == NULL )
+		return( zString );	
+	os::String zS = zString.substr( 2, zString.Length() - 2 );
+	for( os::CCatalog::const_iterator i = m_pcCatalog->begin(); i != m_pcCatalog->end(); i++ )
+	{
+		if( m_pcCatalog->GetMnemonic( (*i).first ) == zS )
+		{
+			printf( "Found: %i %s %s\n", (*i).first, m_pcCatalog->GetMnemonic( (*i).first ).c_str(), (*i).second.c_str() );
+			return( (*i).second );
+		}
+	}
+	return( zString );
 }
 
 bool MainWindow::Save( os::File* pcFile, int nLevel, os::LayoutNode* pcParentNode )
@@ -395,6 +474,9 @@ void MainWindow::Save()
 	
 	/* Create code */
 	CreateCode();
+	
+	/* Load catalog (we now know the filename) */
+	LoadCatalog();
 	
 	SetTitle( os::String("Layout Editor : ") + os::String( os::Path( m_zFileName ).GetLeaf() ) );
 }
@@ -519,6 +601,9 @@ void MainWindow::Load( os::String zFileName )
 	{
 		delete( apcWidgets[i] );
 	}
+	
+	/* Load catalog */
+	LoadCatalog();
 	
 	int nLoadLevel;
 	/* Read level */
@@ -874,8 +959,11 @@ void MainWindow::HandleMessage( os::Message* pcMessage )
 			if( m_zFileName == "Unknown.if" )
 			{
 				m_pcSaveRequester->Lock();
-				m_pcSaveRequester->CenterInWindow(this);
-				m_pcSaveRequester->Show();
+				if( !m_pcSaveRequester->IsVisible() )
+				{
+					m_pcSaveRequester->CenterInWindow(this);
+					m_pcSaveRequester->Show();
+				}
 				m_pcSaveRequester->MakeFocus( true );
 				m_pcSaveRequester->Unlock();
 				break;
@@ -885,14 +973,17 @@ void MainWindow::HandleMessage( os::Message* pcMessage )
 		break;
 		case M_LOAD:
 			m_pcLoadRequester->Lock();
-			m_pcLoadRequester->CenterInWindow(this);
-			m_pcLoadRequester->Show();
+			if( !m_pcLoadRequester->IsVisible() )
+			{
+				m_pcLoadRequester->CenterInWindow(this);
+				m_pcLoadRequester->Show();
+			}
 			m_pcLoadRequester->MakeFocus( true );
 			m_pcLoadRequester->Unlock();
 		break;
 		case M_APP_ABOUT:
 		{
-			os::Alert* pcAlert = new os::Alert("About Layout Editor", "Layout Editor 0.1.1\nEditor for the dynamic layout system\nWritten by Arno Klenke, 2006\n"
+			os::Alert* pcAlert = new os::Alert("About Layout Editor", "Layout Editor 0.1.2\nEditor for the dynamic layout system\nWritten by Arno Klenke, 2006-2007\n"
 														"\n\nLayout Editor is released under the Gnu Public Licencse (GPL)\nPlease see the file COPYING, distributed with Layout Editor, for\nmore information\n", os::Alert::ALERT_INFO,
 											0x00, "Ok", NULL);
 			pcAlert->CenterInWindow(this);
