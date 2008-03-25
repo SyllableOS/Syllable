@@ -94,7 +94,7 @@ String GetComment(const String& cFileType)
 	{
 		cReturn = "/* */";
 	}
-	else if (cFileType == ".cpp" || cFileType == ".hpp" || cFileType == ".cxx" || cFileType == ".h")
+	else if (cFileType == ".cpp" || cFileType == ".hpp" || cFileType == ".cxx" || cFileType == ".h"|| cFileType == ".cc")
 		cReturn = "//";
 
 	else if (cFileType == ".perl" || cFileType == ".pm" || cFileType == ".sh" || cFileType == ".rb" || cFileType == ".ruby")
@@ -122,7 +122,7 @@ tList GetFormats()
 	formatList[0].cFilter = "N/A";
 	formatList[0].cFormatName = "Null formatter";
 	formatList[1].cName = "C/C++";
-	formatList[1].cFilter = ".c;.h;.C;.cpp;.hpp;.cxx";
+	formatList[1].cFilter = ".c;.h;.C;.cpp;.hpp;.cxx;.cc";
 	formatList[1].pcFormat = new cv::Format_C();
 	formatList[1].cFormatName = "C formatter";
 	formatList[2].cName = "Java";
@@ -546,13 +546,13 @@ String GetApplicationPath()
 	
 	close(nFD);
 	buffer[BUFFER_SIZE-1] = 0; /* ensure null-terminated */
-	strcpy(buffer,buffer+5);  /* remove /boot */ 
+//	strcpy(buffer,buffer+5);  /* remove /boot */
 	cPath =  String(buffer);
 	
-	if (cPath.find("/boot",0) == 0)
-		cPath = cPath + 12;
-	else if (cPath.find("/boot/syllable",0) == 0)
-		cPath = cPath + 13;
+	if (cPath.find("/boot/syllable",0) == 0)
+		cPath = cPath + 14;
+	else if (cPath.find("/boot",0) == 0)
+		cPath = cPath + 5;
 		
 	return cPath;
 }	

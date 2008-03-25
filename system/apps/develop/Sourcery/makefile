@@ -1,10 +1,11 @@
-#Makefile for Sourcery
-COPTS = -Wall -c
+# Makefile for Sourcery
+
+COPTS = -O2 -Wall -c 
 
 APPBIN = /Applications/sIDE
 OBJS = main.o file.o settings.o splash.o application.o editor.o mainwindow.o aboutbox.o statusbar.o formatset.o commonfuncs.o link.o convertdialog.o fileproperties.o finddialog.o replacedialog.o userinserts.o gotodialog.o browser.o settingsdialog.o execute.o toolsdialog.o colorbutton.o
 
-OBJDIR := objs
+OBJDIR	:= objs
 OBJS	:= $(addprefix $(OBJDIR)/,$(OBJS))
 
 # Rules
@@ -28,6 +29,7 @@ objs:
 Sourcery: $(OBJS)
 	@echo Linking...
 	@$(CXX) $(OBJS) -o Sourcery -lsyllable -lm codeview.a
+	@strip --strip-all Sourcery
 	@echo Adding resources...
 	@rescopy Sourcery -r ./images/*.png ./images/mimetypes/*.png 
 	@addattrib Sourcery os::Category Development
@@ -41,7 +43,6 @@ deps:
 
 install: all
 	@echo Installing...
-	@echo Distribution...
 	@mkdir -p $(IMAGE)/Applications/sIDE
 	@cp Sourcery $(IMAGE)/Applications/sIDE/Sourcery
 

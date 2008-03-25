@@ -698,8 +698,11 @@ void MainWindow::HandleMessage( os::Message* pcMessage )
 			else
 			{
 				pcOpenRequester->Lock();
-				pcOpenRequester->CenterInWindow(this);
-				pcOpenRequester->Show();
+				if( !pcOpenRequester->IsVisible() )
+				{
+					pcOpenRequester->CenterInWindow(this);
+					pcOpenRequester->Show();
+				}
 				pcOpenRequester->MakeFocus();
 				pcOpenRequester->Unlock();
 			}
@@ -764,8 +767,11 @@ void MainWindow::HandleMessage( os::Message* pcMessage )
 			else
 			{
 				pcSaveRequester->Lock();
-				pcSaveRequester->CenterInWindow(this);
-				pcSaveRequester->Show();
+				if( !pcSaveRequester->IsVisible() )
+				{
+					pcSaveRequester->CenterInWindow(this);
+					pcSaveRequester->Show();
+				}
 				pcSaveRequester->MakeFocus();
 				pcSaveRequester->Unlock();
 			}
@@ -1434,12 +1440,12 @@ void MainWindow::DispatchMessage(os::Message* pcMessage, os::Handler* pcHandler)
 			}
 			else if (nRawKey == 4) // F3
 			{
-				PostMessage(new Message(M_FIND_AGAIN),this);
+				PostMessage(M_FIND_AGAIN,this);
 			}
 			
 			else if (nRawKey == 6) //F5
 			{
-				PostMessage(new Message(M_FIND_DOCUMENTATION),this);
+				PostMessage(M_FIND_DOCUMENTATION,this);
 			}
 		}
 	}	
@@ -1834,11 +1840,11 @@ void MainWindow::LaunchConvertor()
 void MainWindow::OpenCorrespondingFile()
 {
 	String cNewFile = sFile->GetFilesExtension() == ".cpp" ? RemoveExtension(sFile->GetFileName()) + ".h" : RemoveExtension(sFile->GetFileName()) + ".cpp";
-	File* pFile = new File(cNewFile);
+	File* pFile = new File();
 	
-	if (pFile->IsValid())
+	if (pFile->SetTo(cNewFile) == 0)
 	{
-		String cApplication = String(GetApplicationPath()) + String("/Sourcery");
+		String cApplication = String(GetApplicationPath());
 		Execute* pcExecute = new Execute(cApplication,cNewFile);				
 		if (pcExecute->IsValid())
 			pcExecute->Run();
