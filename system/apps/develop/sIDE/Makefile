@@ -27,6 +27,7 @@ objs:
 
 sIDE: catalogs $(OBJS)
 	$(CXX) $(OBJS) -o sIDE -lsyllable
+	strip --strip-all sIDE
 	rescopy sIDE -r ./images/*.png
 	rescopy -a sIDE resources/sIDE.catalog
 	for CATALOG in $(CATALOGS);do \
@@ -61,3 +62,4 @@ clean:
 	for CATALOG in $(CATALOGS);do \
 	rm resources/$$CATALOG/sIDE.catalog; \
 	done;
+
