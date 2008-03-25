@@ -1,3 +1,14 @@
+* March 25, 2008, Kaj de Vos *
+
+Merged Arno's versions of sIDE, LayoutEditor and Sourcery from the sIDE 0.4.7-2 package.
+Made some fixes and updates along the way.
+
+*** All developers are required to merge their work with the repository, or else! ***
+
+Fixed LibCodeView and Sourcery makefiles.
+
+Applied a fix to LibCodeView for keyboard shortcuts while Caps-Lock is on from "kasbah".
+
 * March 20, 2008, Kaj de Vos *
 
 Updated old build settings in sIDE to conform to modern standards.
