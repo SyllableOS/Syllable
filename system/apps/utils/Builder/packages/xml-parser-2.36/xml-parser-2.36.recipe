@@ -1,0 +1,33 @@
+authors
+	Kristian Van Der Vliet
+	Ruwen Boehm
+	Kaj de Vos
+status				testing
+
+title				XML::Parser
+headline			A PERL module for parsing XML documents
+description			A PERL binding for the Expat XML parser.
+licenses			Artistic GPL
+
+home				search.cpan.org/~msergeant/XML-Parser/Parser.pm
+packages			XML-Parser-2.36
+locations			http://search.cpan.org/CPAN/authors/id/M/MS/MSERGEANT/
+
+needs
+	perl >= 5.004
+	expat >= 1.95
+;	?:
+;	LWP 0
+
+configure-cmd		perl Makefile.PL
+configure-prefix	"PREFIX="
+configure-vars
+;	INSTALLDIRS		perl
+	EXPATINCPATH	/usr/expat/include
+	EXPATLIBPATH	/usr/expat/lib
+
+test-targets		test
+
+documentation		README Changes
+develop-docs		MANIFEST samples
+
