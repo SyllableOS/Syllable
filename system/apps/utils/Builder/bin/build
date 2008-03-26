@@ -286,6 +286,7 @@ def patchModule target
 						@log.header 'Enabling shared libraries'
 						action 'cp /usr/libtool/share/libtool/ltmain.sh .' and
 #							action 'aclocal -I /usr/indexes/share/aclocal' and
+#							action 'libtoolize --force' and
 #							action 'automake' and
 #							action 'autoconf'
 							action 'autoreconf'
