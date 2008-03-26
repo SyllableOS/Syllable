@@ -1,4 +1,3 @@
-
 /*	Authors:	Ville Kallioniemi, <ville.kallioniemi@abo.fi>	*/
 
 #include <posix/errno.h>
@@ -491,7 +490,6 @@ static ssize_t raw_sendmsg( Socket_s *a_psSocket, const struct msghdr *a_psMsg, 
 		if ( psRoute == NULL )
 		{
 			kerndbg( KERN_WARNING, "RAW_RECVMSG: raw_sendto()? Could not find route for address %s\n", zBuffer );
-			ip_release_route( psRoute );
 			return ( -ENETUNREACH );
 		}
 		kerndbg( KERN_DEBUG, "RAW_RECVMSG: raw_sendto()? Found a route for address %s\n", zBuffer );
@@ -819,3 +817,4 @@ int init_raw( void )
 	}
 	return ( -EOK );
 }
+
