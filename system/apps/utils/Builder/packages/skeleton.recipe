@@ -11,7 +11,7 @@ inherits			<Modules this recipe inherits from>
 name				<Display name of the package, if different from the file name>
 headline			<Brief description>
 description			<Full description>
-licenses			GPL LGPL GFDL GPL+exception BSD MIT ISC Apache Artistic Python MPL QPL OSI other PD freeware commercial
+licenses			GPL GPL-2 GPL-3 LGPL GFDL GPL+exception BSD MIT ISC Apache Artistic Python MPL QPL OSI other PD freeware commercial
 
 home				syllable.org
 files				<Source file names>
@@ -58,7 +58,7 @@ build-dir			<Subdirectory>
 ; Configuring:
 ; <configure>
 ; [<pre-configure>]
-; [<configure-env>] <configure-cmd> ([<configure-prefix>] | [<configure-args>]) [<configure-options>]
+; [<configure-env>] <configure-cmd> ([<configure-prefix>] | [<configure-args>]) [<configure-vars>] [<configure-options>]
 
 configure			<Configuration commands override>
 
@@ -66,12 +66,15 @@ pre-configure		<Commands preceding configuration>
 ; Extra environment variables for configure:
 configure-env
 	VAR 'value'
-; Configure command, if non-standard or in a non-standard location:
+; Configure command (sequence), if non-standard or in a non-standard location:
 configure-cmd		configure
-; Non-standard prefix option:
+; Non-standard prefix option (with optional trailing whitespace):
 configure-prefix	"--prefix="
 ; Arguments overriding prefix:
 configure-args		--prefix=/usr/foo
+; Extra variables for configure:
+configure-vars
+	VAR 'value'
 ; Extra configure options:
 configure-options	--with-option
 
@@ -173,3 +176,4 @@ pre-register		<Commands before registration, in the installation directory>
 move-files
 	<Source> <Destination>
 delete-files		<Files to delete from the installation>
+
