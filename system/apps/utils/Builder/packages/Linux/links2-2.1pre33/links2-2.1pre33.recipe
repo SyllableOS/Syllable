@@ -1,0 +1,21 @@
+authors				Kaj de Vos
+status				testing
+
+recommends
+	directfb >= 0.9.17
+	gpm
+	libjpeg
+	libtiff
+	openssl
+	zlib
+	bzip2
+
+configure-options
+	--enable-graphics
+;	--without-fb
+;	--without-directfb
+;	Removed!:
+;	--enable-javascript
+;	--with-ssl
+;	--with-libfl
+

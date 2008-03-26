@@ -1,0 +1,25 @@
+authors
+	Kaj de Vos
+	Ruwen Boehm
+status				broken
+notes
+	Can't connect to sites:
+		Resource temporarily unavailable
+	Graphics mode displays blank:
+		0:appserver::W:Links : blit_convert_copy() unknown src color space 3
+
+recommends
+	libjpeg
+	libtiff
+	openssl
+	zlib
+	bzip2
+
+configure-options
+	--enable-graphics
+;	Removed!:
+;	jsint.c does not compile:
+;	--enable-javascript
+;	--with-ssl
+;	--with-libfl
+
