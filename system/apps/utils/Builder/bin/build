@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.7.46
+# Version 0.7.47
 # Copyright (c) 2002-2008 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -394,6 +394,7 @@ def configureModule staging, target
 										' --includedir=' + File.join('/system/development/resources', installName(target), version(target), 'include') :
 										''
 									) +
+									((vars = recipe['configure-vars']) ? ' ' + toVariables(vars) : '') +
 									((options = recipe['configure-options']) ? ' ' + toString(options) : '')
 								)
 							end
@@ -432,7 +433,7 @@ def makeModule staging, target
 	return true if exists? 'image'
 
 	recipe = getRecipe target
-	configured = native?(target) || recipe['configure'] ||
+	configured = native?(target) || recipe['configure'] || recipe['configure-cmd'] ||
 		exists?(File.join(sourcePath(target), configureCommand(target)))
 	if exists? dir = buildDir(target) then Dir.chdir dir end
 
@@ -572,7 +573,7 @@ def installModule staging, target
 						superAccess = recipe['super-install'] ? 'sudo ' : ''
 
 						Dir.chdir target
-						configured = recipe['configure'] ||
+						configured = recipe['configure'] || recipe['configure-cmd'] ||
 							exists?(File.join(sourcePath(target), configureCommand(target)))
 						if exists? dir = buildDir(target) then Dir.chdir dir end
 
@@ -1831,7 +1832,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.7.46',
+	puts 'Syllable Build System 0.7.47',
 		'Copyright (c) 2002-2008 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
