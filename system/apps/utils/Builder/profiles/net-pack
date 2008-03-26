@@ -7,7 +7,7 @@ description
 
 modules
 ;	network/openssl-0.9.8e
-	network/openssh-4.6p1
+	network/openssh-4.7p1
 	network/rsync-2.6.9
 ;	network/samba-3.0.20b
 ;	network/wget-1.9.1

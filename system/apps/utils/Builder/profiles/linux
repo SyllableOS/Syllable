@@ -557,7 +557,7 @@ modules
 	apps/other/glib-2.14.4
 	apps/gnu/mc-4.6.1
 
-	apps/other/openssh-4.6p1
+	apps/other/openssh-4.7p1
 	apps/other/links2-2.1pre30
 	apps/other/pengupop-2.1.12
 

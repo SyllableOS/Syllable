@@ -1,0 +1,10 @@
+authors				Kaj de Vos
+status				testing
+
+configure-options
+;	--with-ssl-dir=/usr/openssl
+;	--with-zlib=/usr/zlib
+	--with-libs='-lcrypt'
+;	Doesn't work as advertized:
+;	--disable-libutil
+
