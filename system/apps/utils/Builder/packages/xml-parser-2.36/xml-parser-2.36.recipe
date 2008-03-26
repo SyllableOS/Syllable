@@ -28,6 +28,8 @@ configure-vars
 
 test-targets		test
 
+system-prefix-var	DESTDIR
+
 documentation		README Changes
 develop-docs		MANIFEST samples
 

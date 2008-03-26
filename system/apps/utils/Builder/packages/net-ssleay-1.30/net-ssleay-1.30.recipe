@@ -1,0 +1,31 @@
+authors
+	Ruwen Boehm
+	Kaj de Vos
+status				testing
+
+headline			A PERL module for SSL socket support
+description			A PERL binding to OpenSSL.
+licenses			other
+
+home				search.cpan.org/~flora/Net_SSLeay.pm/SSLeay.pm
+packages			Net_SSLeay.pm-1.30
+locations			http://search.cpan.org/CPAN/authors/id/F/FL/FLORA/
+
+needs
+	perl >= 5.003
+	openssl >= 0.9.6d
+;install-needs		perldoc
+
+configure-cmd		perl Makefile.PL /usr/openssl
+configure-prefix	"PREFIX="
+
+test-targets		test
+
+system-prefix-var	DESTDIR
+_post-install
+	perldoc Net::SSLeay
+	perldoc Net::SSLeay::Handle
+
+documentation		README Changes Credits
+develop-docs		MANIFEST examples
+
