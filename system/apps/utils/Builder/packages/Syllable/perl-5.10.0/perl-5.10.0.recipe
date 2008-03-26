@@ -1,5 +1,6 @@
 authors				Kaj de Vos
-status				testing
+status				broken
+notes				MAXPATHLEN undefined
 
 configure-options
 	-des
@@ -26,3 +27,4 @@ links
 	bin/perl								/usr/bin/perl
 ;	For OpenSSL?
 	bin/perl								/usr/local/bin/perl
+
