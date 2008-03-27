@@ -1,0 +1,48 @@
+authors				Kaj de Vos
+status				broken
+notes				Insists on using an X11 platform library
+
+title				Anti-Grain Geometry
+headline			A High Quality Rendering Engine for C++
+description
+	Anti-Grain Geometry (AGG) is an Open Source, free of charge graphic library, written in industrially standard C++. AGG doesn't depend on any graphic API or technology. Basically, you can think of AGG as of a rendering engine that produces pixel images in memory from some vectorial data.
+licenses			GPL-2+
+
+home				www.antigrain.com
+locations			http://www.antigrain.com/
+
+build-needs
+	libtool
+	autoconf
+	automake
+recommends
+	freetype
+	sdl
+	x11
+
+;patch-config
+patch
+;	sh ./autogen.sh
+	aclocal
+	autoheader
+	autoconf
+	libtoolize --force
+	automake --foreign --add-missing --ignore-deps
+
+;build-dir			.
+
+configure-options
+;	--enable-platform
+;	--disable-platform
+	--without-x
+;	--enable-gpc
+;	--enable-freetype
+;	--enable-examples
+
+;system-prefix-var	DESTDIR
+;install				true
+
+documentation		readme copying news ChangeLog authors
+build-docs			install
+;develop-docs		examples
+
