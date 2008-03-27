@@ -1,0 +1,51 @@
+authors
+	Kaj de Vos
+	Ruwen Boehm
+status				testing
+
+headline			PHP: Hypertext Preprocessor
+description
+	PHP is a widely-used general-purpose scripting language that is especially suited for Web development and can be embedded into HTML.
+licenses			other
+
+home				www.php.net
+locations			http://www.php.net/distributions/
+
+build-needs
+	flex 2.5.4
+	bison
+needs
+	libxml2
+build-recommends
+;	For PHP parsers:
+	re2c >= 0.12.0
+;	For SQLite parsers:
+;	lemon 1.0
+recommends
+	ncurses
+	readline
+	gettext
+	pcre
+	openssl
+	kerberos
+	curl
+	openldap
+	db
+	sqlite
+	libjpeg
+	libpng
+	libtiff
+	libxpm
+	libgd
+	freetype
+
+;make-shared
+
+configure-options
+	--disable-ipv6
+	--with-libxml-dir=/usr/libxml2
+
+documentation		README.* LICENSE INSTALL NEWS CREDITS TODO*
+develop-docs		UPGRADING
+internal-docs		EXTENSIONS CODING_STANDARDS
+
