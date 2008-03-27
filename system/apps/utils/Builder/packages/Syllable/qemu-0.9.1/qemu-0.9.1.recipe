@@ -2,13 +2,16 @@ authors
 	Rui Caridade
 	Kaj de Vos
 	Rick Caudill
-status				broken
-notes				Runs, but screen stays blank
+status				testing
+
+needs				Syllable >= 0.6.6
 
 configure-options
 ;	--disable-system
 	--disable-linux-user
 	--disable-darwin-user
 	--disable-kqemu
+;	Syllable compiles executables as shared libraries. Free up an extra CPU register:
 	--extra-cflags=-fno-pic
 	--target-list=i386-softmmu
+
