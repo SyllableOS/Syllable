@@ -11,7 +11,7 @@ inherits			<Modules this recipe inherits from>
 name				<Display name of the package, if different from the file name>
 headline			<Brief description>
 description			<Full description>
-licenses			GPL GPL-2 GPL-3 LGPL GFDL GPL+exception BSD MIT ISC Apache Artistic Python MPL QPL OSI other PD freeware commercial
+licenses			GPL GPL-2 GPL-3 GPL-3+ LGPL GFDL GPL+exception BSD MIT ISC Apache Artistic Python MPL QPL OSI other PD freeware commercial
 
 home				syllable.org
 files				<Source file names>
@@ -19,7 +19,7 @@ packages
 	<Source package names, if different from the recipe name or the package is at a subpath relative to the download location.
 	Common package extensions (.tgz, .tar.gz, .tbz2, .tar.bz2, .zip) should be left off.>
 	[<Path>]<Package> [<Subdirectory to unpack into (for packages after the first that should be unpacked inside the first, or for a package that doesn't contain a master subdirectory)>]
-; Automatic downloading requires WGet:
+; Automatic downloading requires cURL (included in Syllable):
 locations			<Download locations>
 ;archives			<Repositories>
 
@@ -176,4 +176,3 @@ pre-register		<Commands before registration, in the installation directory>
 move-files
 	<Source> <Destination>
 delete-files		<Files to delete from the installation>
-
