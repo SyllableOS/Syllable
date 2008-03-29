@@ -1,5 +1,7 @@
 authors				Kaj de Vos
 status				testing
+warnings
+	The server reportedly only works with key-based authentication.
 
 configure-options
 ;	--with-ssl-dir=/usr/openssl
@@ -7,4 +9,3 @@ configure-options
 	--with-libs='-lcrypt'
 ;	Doesn't work as advertized:
 ;	--disable-libutil
-

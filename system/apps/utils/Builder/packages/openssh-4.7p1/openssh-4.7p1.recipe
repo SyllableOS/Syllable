@@ -1,8 +1,5 @@
 authors				Kaj de Vos
 status				testing
-warnings
-	The server reportedly only works with key-based authentication.
-	The privilege separation user sshd does not exist by default on Syllable.
 
 licenses			BSD MIT ISC other PD
 home				www.openssh.org
