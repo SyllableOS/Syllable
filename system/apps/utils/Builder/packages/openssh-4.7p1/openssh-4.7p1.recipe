@@ -17,8 +17,9 @@ build-recommends
 
 test-targets		tests
 
+system-prefix-var	DESTDIR
+
 documentation
 	README* INSTALL WARNING.RNG RFC.nroff LICENCE ChangeLog TODO CREDITS
 ;	README.platform
 internal-docs		OVERVIEW
-
