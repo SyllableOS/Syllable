@@ -10,6 +10,7 @@ recommends
 	zlib
 	bzip2
 
+configure-env		CPPFLAGS "$CPPFLAGS -I/system/indexes/include/directfb"
 configure-options
 	--enable-graphics
 ;	--without-fb
@@ -18,4 +19,3 @@ configure-options
 ;	--enable-javascript
 ;	--with-ssl
 ;	--with-libfl
-

@@ -17,8 +17,9 @@ build-recommends	pkgconfig
 ; For Syllable graphics:
 build-dir			.
 
+system-prefix-var	DESTDIR
+
 documentation
 	README SITES KEYS BUGS COPYING NEWS ChangeLog BRAILLE_HOWTO TODO AUTHORS
 	doc
 build-docs			INSTALL
-
