@@ -41,11 +41,6 @@ recommends
 
 ;make-shared
 
-configure-options
-	--disable-ipv6
-	--with-libxml-dir=/usr/libxml2
-
 documentation		README.* LICENSE INSTALL NEWS CREDITS TODO*
 develop-docs		UPGRADING
 internal-docs		EXTENSIONS CODING_STANDARDS
-
