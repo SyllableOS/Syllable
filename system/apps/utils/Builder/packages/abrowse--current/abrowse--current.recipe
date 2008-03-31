@@ -44,8 +44,6 @@ _make
 	make
 
 install-tree
-install				true
-;install-files		ABrowse/ABrowse /Applications/ABrowse
 
 documentation
 	Changes WebCore/README WebCore/LICENSE-LGPL-2 WebCore/LICENSE-LGPL-2.1 WebCore/LICENSE-APPLE
