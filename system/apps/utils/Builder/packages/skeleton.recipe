@@ -1,3 +1,8 @@
+; Directives for build recipes.
+; Commented-out directives are not implemented yet.
+; Good style is to use the order of directives here (basically in order of execution).
+
+
 ; Recipe information:
 authors				<Recipe and patches authors, in historical order>
 maintainers			<Recipe maintainers, if not first author>
@@ -104,7 +109,7 @@ make-vars
 ; Extra make options:
 make-options		-option
 ; Non-standard make targets:
-;make-targets		all
+make-targets		all
 post-make			<Commands following make>
 
 ; Testing:
@@ -166,7 +171,7 @@ links
 	[<Original> <Link>]
 
 ; Don't strip binaries:
-;no-strip
+no-strip
 
 pre-register		<Commands before registration, in the installation directory>
 

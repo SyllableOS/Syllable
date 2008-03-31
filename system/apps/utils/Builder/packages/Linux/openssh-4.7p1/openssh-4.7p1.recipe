@@ -15,3 +15,6 @@ configure-options
 ;	--disable-libutil
 
 post-install		echo 'PermitRootLogin no' >> $IMAGE/etc/ssh/sshd_config
+
+; For LFS boot scripts:
+links				sbin/sshd /usr/sbin/

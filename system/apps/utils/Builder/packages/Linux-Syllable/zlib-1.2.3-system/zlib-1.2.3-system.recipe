@@ -1,0 +1,11 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			zlib-1.2.3
+
+configure-options
+	--shared
+	--includedir=$IMAGE/system/development/resources/zlib/1.2.3/include
+
+; For sshd:
+links				lib/libz.so.1 /system/resources/glibc/2.7/lib/
