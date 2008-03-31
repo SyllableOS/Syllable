@@ -4,12 +4,12 @@ authors
 	Kristian Van Der Vliet
 	Kaj de Vos
 maintainers			Kaj de Vos
-status				testing
+status				developing
 
 licenses			LGPL BSD
 
 home				webkit.org
-packages			ABrowse-0.7.source
+packages			ABrowse-0.7.1.source
 locations			http://downloads.syllable.org/sources/applications/ABrowse/
 
 needs
@@ -28,7 +28,7 @@ build-needs
 	perl
 	gperf
 
-make
+_make
 	cd JavaScriptCore
 	sh make-generated-sources.sh
 	make -f Makefile.syllable
@@ -43,7 +43,9 @@ make
 	cd ../ABrowse
 	make
 
+install-tree
 install				true
+;install-files		ABrowse/ABrowse /Applications/ABrowse
 
 documentation
 	Changes WebCore/README WebCore/LICENSE-LGPL-2 WebCore/LICENSE-LGPL-2.1 WebCore/LICENSE-APPLE
