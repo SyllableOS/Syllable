@@ -1,0 +1,71 @@
+authors
+	Ruwen Boehm
+	Kaj de Vos
+status				developing
+
+headline			Movie player and (re)encoder
+description
+	MPlayer/MEncoder is a multi-format video player/converter.
+	MPlayer can play most standard video formats out of the box and almost all others with the help of external codecs. MPlayer currently works best from the command line, but visual feedback for many functions is available from its onscreen status display (OSD), which is also used for displaying subtitles. MPlayer also has a GUI with skin support and several unofficial alternative graphical frontends are available.
+	MEncoder is a command line video encoder for advanced users. Unofficial graphical frontends exist but are
+not included.
+licenses			GPL other
+
+home				www.mplayerhq.hu
+packages			MPlayer-1.0rc2
+locations			http://www7.mplayerhq.hu/MPlayer/releases/
+
+recommends
+	sdl >= 1.1.7
+	directfb
+	gtk
+	alsa
+	oss
+	freetype
+	fontconfig
+	libjpeg
+	lippng
+	libgif
+	ffmpeg
+	libmad
+	libvorbis
+	speex
+	faad
+	faac
+	libdca
+	mp3lib
+	liba52
+	musepack
+	libamr
+	libmpeg2
+	libtheora
+	libdv
+	libdvdread
+	libdvdnav
+	libdvdcss
+	cdparanoia
+	cddb
+	unrarlib
+	fribidi
+
+;build-dir			.
+
+_configure-options
+	--codecsdir=/usr/local/lib/codecs
+	--enable-dynamic-plugins
+	--language=all
+	--enable-sdl
+	--enable-directfb
+	--enable-alsa
+;	GTK+:
+	--enable-gui
+	--enable-menu
+	--enable-libavcodec_a
+	--disable-fastmemcpy
+	--enable-runtime-cpudetection
+
+documentation
+	README Copyright LICENSE Changelog AUTHORS
+;	DOCS
+
+;links				/system/fonts/LCD2-Normal.ttf share/mplayer/subfont.ttf

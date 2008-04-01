@@ -1,0 +1,12 @@
+authors
+	Ruwen Boehm
+	Kaj de Vos
+status				developing
+notes
+	Patch contains two changed files from the vidix directory. I had to comment out disable_io_os() / enable_io_os(). I have no clue what might be broken now, but it compiles and works for some movies.
+
+;build-dir			.
+
+; Inline assembler does not work with PIC, so we need -fno-pic
+; However, this is not working under all conditions?
+configure-env		CFLAGS "$CFLAGS -fno-pic"

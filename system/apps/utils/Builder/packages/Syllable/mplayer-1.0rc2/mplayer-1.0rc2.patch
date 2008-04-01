@@ -1,0 +1,64 @@
+diff -ru mplayer-1.0rc2-original/vidix/pci.c mplayer-1.0rc2/vidix/pci.c
+--- mplayer-1.0rc2-original/vidix/pci.c	2007-10-07 21:49:27.000000000 +0200
++++ mplayer-1.0rc2/vidix/pci.c	2008-03-31 17:27:49.000000000 +0200
+@@ -532,9 +532,9 @@
+     pci_lst = pci_list;
+     *num_pci = 0;
+  
+-    ret = enable_os_io();
++/*    ret = enable_os_io();
+     if (ret != 0)
+-	return(ret);
++	return(ret); */
+ 
+     if((pcr._configtype = pci_config_type()) == 0xFFFF) return ENODEV;
+  
+@@ -691,7 +691,7 @@
+  
+ #endif /* !__alpha__ && !__powerpc__ */
+  
+-    disable_os_io();
++    /* disable_os_io(); */
+  
+     return 0 ;
+  
+@@ -716,11 +716,11 @@
+ 	return(ENOTSUP);
+     }
+     
+-    ret = enable_os_io();
++    /* ret = enable_os_io();
+     if (ret != 0)
+-	return(ret);
++	return(ret); */
+     ret = pci_config_read_long(bus, dev, func, cmd);
+-    disable_os_io();
++/*    disable_os_io(); */
+ 
+     *val = ret;
+     return(0);
+@@ -728,10 +728,10 @@
+ 
+ int enable_app_io( void )
+ {
+-  return enable_os_io();  
++  /* return enable_os_io();  */
+ }
+ 
+ int disable_app_io( void )
+ {
+-  return disable_os_io();
++  /* return disable_os_io(); */
+ }
+diff -ru mplayer-1.0rc2-original/vidix/sysdep/pci_x86.c mplayer-1.0rc2/vidix/sysdep/pci_x86.c
+--- mplayer-1.0rc2-original/vidix/sysdep/pci_x86.c	2007-10-07 21:49:27.000000000 +0200
++++ mplayer-1.0rc2/vidix/sysdep/pci_x86.c	2008-03-31 17:26:20.000000000 +0200
+@@ -28,7 +28,7 @@
+             /*printf("PCI says configuration type 1\n");*/
+ 	} else {
+             /*printf("No PCI !\n");*/
+-	    disable_os_io();
++	   /*  disable_os_io(); */
+ 	    /*exit(1);*/
+ 	    retval = 0xFFFF;
+ 	}
