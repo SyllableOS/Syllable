@@ -1,0 +1,47 @@
+authors
+	Norman Deppenbroek
+	Kaj de Vos
+status				testing
+warnings			Can't be stage'd.
+
+headline			Lisp reborn as a scripting language
+description
+	NewLISP is a scripting language for developing web applications and programs in general and in the domains of artificial intelligence (AI) and statistics.
+	NewLISP is a LISP-like scripting language for doing things you typically do with scripting languages: programming for the internet, system administration, text processing, gluing other programs together, etc. newLISP is a scripting LISP for people who are fascinated by LISP's beauty and power of expression, but who need it stripped down to easy-to-learn essentials. newLISP is small on resources like disk space and memory but has a deep, practical API.
+licenses			GPL-3 GFDL
+
+home				www.newlisp.org
+locations			http://newlisp.nfshost.com/downloads/
+
+recommends
+	ncurses
+	termcap
+	readline
+
+build-dir			.
+
+make-targets
+;	linux
+;	linux_utf8
+;	linux_readline
+;	linux_utf8_readline
+;	linux_lib
+	linux_lib_utf8
+
+test-targets		test
+
+system-prefix-var	DESTDIR
+install-tree
+	bin
+	man
+	man/man1
+install-vars
+	bindir			"$IMAGE/usr/newlisp/bin"
+	datadir			"$IMAGE/usr/newlisp"
+	mandir			"$IMAGE/usr/newlisp/man"
+
+documentation
+	README
+;	doc
+build-docs			doc/INSTALL
+develop-docs		examples
