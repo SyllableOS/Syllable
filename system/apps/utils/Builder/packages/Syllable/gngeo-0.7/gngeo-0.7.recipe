@@ -1,0 +1,13 @@
+authors
+	Rui Caridade
+	Kaj de Vos
+status				testing
+
+needs
+	sdl >= 1.2
+	sdl-image
+	zlib
+;	opengl
+;	NeoGeo BIOS
+
+configure-env		CFLAGS "$CFLAGS -DNO_OPENGL"

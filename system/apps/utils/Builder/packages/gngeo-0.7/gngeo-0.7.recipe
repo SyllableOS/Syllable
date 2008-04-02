@@ -1,0 +1,25 @@
+authors				Kaj de Vos
+status				testing
+
+headline			Neo Geo emulator
+description
+	GnGeo is a fast and powerful command line Neo Geo emulator for GNU/Linux, FreeBSD, and maybe some other Unices (BeOS port has been realised, too).
+licenses			GPL+exception
+
+home				gngeo.berlios.de
+locations
+	http://prdownload.berlios.de/gngeo/
+;	http://download.berlios.de/gngeo/
+;	http://download2.berlios.de/gngeo/
+
+needs
+	sdl >= 1.2
+	sdl-image
+	zlib
+	opengl
+;	NeoGeo BIOS
+build-recommends	nasm >= 0.98
+
+;configure-options	--disable-i386
+
+documentation		README COPYING FAQ NEWS ChangeLog AUTHORS TODO

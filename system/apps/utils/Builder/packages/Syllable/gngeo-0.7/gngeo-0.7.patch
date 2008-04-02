@@ -1,0 +1,31 @@
+diff -ru gngeo-0.7-original/src/blitter/opengl.c gngeo-0.7/src/blitter/opengl.c
+--- gngeo-0.7-original/src/blitter/opengl.c	2006-07-11 19:04:19.000000000 +0200
++++ gngeo-0.7/src/blitter/opengl.c	2008-04-02 20:50:22.000000000 +0200
+@@ -3,6 +3,7 @@
+ #endif
+ 
+ #ifndef GP2X
++#ifndef NO_OPENGL
+ 
+ #include "SDL.h"
+ #include "../emu.h"
+@@ -368,3 +369,4 @@
+ }
+ 
+ #endif
++#endif
+diff -ru gngeo-0.7-original/src/screen.c gngeo-0.7/src/screen.c
+--- gngeo-0.7-original/src/screen.c	2006-07-11 19:04:22.000000000 +0200
++++ gngeo-0.7/src/screen.c	2008-04-02 20:50:22.000000000 +0200
+@@ -28,9 +28,10 @@
+     {"soft","Software blitter",blitter_soft_init, NULL, blitter_soft_update, blitter_soft_fullscreen,
+      blitter_soft_close},
+ #ifndef GP2X
++#ifndef NO_OPENGL
+     {"opengl","Opengl blitter",blitter_opengl_init, blitter_opengl_resize, blitter_opengl_update,
+      blitter_opengl_fullscreen, blitter_opengl_close},
+-
++#endif
+     {"yuv","YUV blitter (YV12)",blitter_overlay_init, blitter_overlay_resize, blitter_overlay_update,
+      blitter_overlay_fullscreen, blitter_overlay_close},
+ #endif
