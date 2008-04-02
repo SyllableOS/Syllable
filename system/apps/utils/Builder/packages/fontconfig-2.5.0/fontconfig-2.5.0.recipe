@@ -1,0 +1,29 @@
+authors
+	Andrew Kennan
+	Kaj de Vos
+status				testing
+
+headline			Library for font customisation and configuration
+description
+	Fontconfig is a library designed to provide system-wide font configuration, customisation and application access.
+licenses			BSD
+
+home				fontconfig.org
+locations			http://fontconfig.org/release/
+
+needs
+	expat | libxml2
+	freetype
+
+configure-options
+;	--enable-libxml2
+;	--with-confdir=/etc/fonts
+	--with-default-fonts=/system/fonts
+;	--with-add-fonts=
+;	--with-cache-dir=/var/cache/fontconfig
+;	--disable-docs
+
+documentation
+	README COPYING NEWS ChangeLog AUTHORS
+;	doc
+build-docs			INSTALL
