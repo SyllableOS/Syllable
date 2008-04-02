@@ -1,0 +1,22 @@
+authors
+	Rui Caridade
+	Kaj de Vos
+status				testing
+
+headline			High-quality MPEG audio decoder
+description
+	MAD is a high-quality MPEG audio decoder. It currently supports MPEG-1 and the MPEG-2 extension to lower sampling frequencies, as well as the de facto MPEG 2.5 format. All three audio layers — Layer I, Layer II, and Layer III (i.e. MP3) — are fully implemented.
+	MAD does not yet support MPEG-2 multichannel audio (although it should be backward compatible with such streams) nor does it currently support AAC.
+licenses			GPL-2+
+
+home				www.underbit.com/products/mad/
+locations			ftp://ftp.mars.org/pub/mpeg/
+
+_configure-options
+	--disable-shared
+	--enable-speed
+	--enable-accuracy
+
+system-prefix-var	DESTDIR
+
+documentation		README COPYRIGHT COPYING CHANGES CREDITS TODO
