@@ -1,0 +1,32 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			sourceforge
+
+headline			Script Creation Utility for Manic Mansion Virtual Machine
+description
+	ScummVM is a program which allows you to run certain classic graphical point-and-click adventure games, provided you already have their data files. The clever part about this: ScummVM just replaces the executables shipped with the games, allowing you to play them on systems for which they were never designed!
+	Some of the adventures ScummVM supports include Adventure Soft's Simon the Sorcerer 1 and 2; Revolution's Beneath A Steel Sky, Broken Sword 1 and Broken Sword 2; Flight of the Amazon Queen; Wyrmkeep's Inherit the Earth; Coktel Vision's Gobliiins; Westwood Studios' The Legend of Kyrandia and games based on LucasArts' SCUMM (Script Creation Utility for Maniac Mansion) system such as Monkey Island, Day of the Tentacle, Sam and Max and more. You can find a thorough list with details on which games are supported and how well on the compatibility page [http://www.scummvm.org/compatibility.php]. ScummVM is continually improving, so check back often.
+licenses			GPL
+
+home				www.scummvm.org
+packages			scummvm/scummvm-0.11.1
+
+needs				sdl >= 1.2.2
+recommends
+	zlib
+	libmad
+	libvorbis
+	libvorbisfile
+	libflac
+	libmpeg2
+	libasound2
+	tremor
+	libfluidsynth
+build-recommends	nasm
+
+_configure-options
+	--disable-alsa
+	--enable-plugins
+
+documentation		README COPYRIGHT COPYING NEWS AUTHORS TODO
