@@ -1,0 +1,32 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			sourceforge
+
+name				FreePOPs
+headline			Allows access to the most varied resources through the POP3 protocol
+description
+	FreePOPs is an easily extensible program, which allows access to the most varied resources through the POP3 protocol. Mainly, it can be used to download mail from the most famous webmails, but it could also be used as an aggregator for RSS feeds and much more. This way it is possible to get all your messages in your favourite email client.
+	FreePOPs is a POP3 daemon plus a LUA interpreter and some extra libraries for HTTP and HTML parsing. Its main purpose is translating local POP3 requests to remote HTTP actions on the supported web-mails, but it is really more flexible. For example there is a plugin to read news from a website as if they were mails in a mailbox.
+licenses			GPL
+
+home				www.freepops.org
+packages			freepops/freepops-0.2.6
+
+needs
+	lua
+	readline
+	openssl
+	expat
+recommends
+	curl
+	fltk
+;	For documentation:
+	latex
+
+documentation
+	README README.modules COPYING ChangeLog AUTHORS TODO
+;	doc
+build-docs
+	INSTALL
+;	BUILD

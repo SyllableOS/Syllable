@@ -1,0 +1,66 @@
+diff -ru freepops-0.2.6-original/config.h freepops-0.2.6/config.h
+--- freepops-0.2.6-original/config.h	2007-10-22 23:43:46.000000000 +0200
++++ freepops-0.2.6/config.h	2008-04-03 17:14:41.000000000 +0200
+@@ -31,6 +31,17 @@
+ 	#define FREEPOPSLUA_PATH_UNOFFICIAL "lua_unofficial/"
+ #endif
+ 
++// Syllable
++#ifdef __SYLLABLE__
++	#define LOGFILE		"/var/log/freepops.log"
++	#define BINDADDRESS  	INADDR_LOOPBACK
++	#define DEFAULT_USERAGENT \
++		"Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.7.8)"\
++		" Gecko/20050518 Firefox/1.0.4"
++	#define FREEPOPSLUA_PATH_UPDATES "/var/lib/freepops/lua_updates/"
++	#define FREEPOPSLUA_PATH_UNOFFICIAL "/var/lib/freepops/lua_unofficial/"
++#endif
++
+ // beos
+ #ifdef BEOS
+ 	#define LOGFILE		"/var/log/freepops.log"
+diff -ru freepops-0.2.6-original/configure.sh freepops-0.2.6/configure.sh
+--- freepops-0.2.6-original/configure.sh	2007-10-27 23:22:43.000000000 +0200
++++ freepops-0.2.6/configure.sh	2008-04-03 17:14:41.000000000 +0200
+@@ -174,6 +174,16 @@
+ LUAFLAGS=" -DLUA_USE_LINUX "
+ }
+ 
++
++set_syllable() {
++set_default
++CFLAGS="-O2 -march=i586 -Wall -DHAVE_CONFIG_H -I$PWD -I/usr/openssl/include -I/usr/readline/include/ -I/usr/expat/include/"
++WHERE=/usr/freepops/
++LDFLAGS="-L/usr/readline/lib -L/usr/expat/lib -L/usr/openssl/lib"
++OS=Syllable
++LUAFLAGS=" -DLUA_USE_LINUX "
++}
++
+ set_beos() {
+ set_default
+ OS=BeOS
+@@ -337,6 +347,9 @@
+ 	osx-static)
+ 		set_osx_static
+ 	;;
++	syllable)
++		set_syllable
++	;;
+ 	beos)
+ 		set_beos
+ 	;;
+diff -ru freepops-0.2.6-original/Makefile freepops-0.2.6/Makefile
+--- freepops-0.2.6-original/Makefile	2007-10-27 22:20:31.000000000 +0200
++++ freepops-0.2.6/Makefile	2008-04-03 17:14:41.000000000 +0200
+@@ -106,9 +106,10 @@
+ 	$(H)if [ ! -z "$(FLTKUI)" ]; then \
+ 		cp doc/freepops-updater-fltk.1  $(PREFIX)share/man/man1/;\
+ 	fi
+-	$(H)cp doc/manual*.pdf  $(PREFIX)share/doc/freepops/ || true
+ 	$(H)cp doc/MANUAL.txt  $(PREFIX)share/doc/freepops/ || true
+ 	$(H)cp config.lua $(DESTDIR)etc/freepops/
++#	$(H)cp doc/manual*.pdf  $(PREFIX)share/doc/freepops/ || true
++
+ 
+ uninstall:
+ 	$(H)rm -f $(DESTDIR)etc/freepops/config.lua

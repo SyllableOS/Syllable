@@ -1,0 +1,6 @@
+authors				Kaj de Vos
+status				testing
+
+configure-cmd		./configure.sh linux
+
+;make-targets		linux
