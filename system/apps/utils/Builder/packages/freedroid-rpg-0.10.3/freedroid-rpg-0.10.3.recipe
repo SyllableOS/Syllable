@@ -1,0 +1,28 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			sourceforge
+
+name				FreeDroid RPG
+headline			Game inpired by Paradroid and Diablo
+description
+	 Freedroid exists in two flavors: - FreedroidClassic is a 2D arcade game similar to Paradroid - FreedroidRPG is an original isometric 3D role playing game inspired from Diablo and Fallout, taking place in the future, on Earth.
+	In this game, you control a robot, depicted by a small white ball with a few numbers within an interstellar spaceship consisting of several decks connected by elevators. The aim of the game is to destroy all enemy robots, depicted by small black balls with a few numbers, by either shooting them or seizing control over them by creating connections in a short subgame of electric circuits.
+licenses			GPL
+
+home				freedroid.sourceforge.net
+packages			freedroid/freedroidrpg-0.10.3
+
+needs
+	sdl
+	sdl-sound
+recommends
+	glsdl
+	gtk
+
+_configure-options
+	--disable-opengl
+	--disable-editors
+
+documentation		README COPYING NEWS ChangeLog AUTHORS
+build-docs			INSTALL
