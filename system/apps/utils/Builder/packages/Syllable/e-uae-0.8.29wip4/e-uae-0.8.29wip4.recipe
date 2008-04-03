@@ -1,0 +1,16 @@
+authors
+	Rui Caridade
+	Kaj de Vos
+status				testing
+
+patch-config
+
+configure-options
+	--with-sdl
+	--with-sdl-sound
+	--with-sdl-gfx
+;	--with-sdl-gl
+;	--with-curses
+;	--enable-bsdsock
+;	--enable-scsi-device
+	--with-libscg-prefix=/usr/cdrtools

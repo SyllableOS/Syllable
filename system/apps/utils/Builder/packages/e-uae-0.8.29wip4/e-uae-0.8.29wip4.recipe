@@ -1,0 +1,43 @@
+authors				Kaj de Vos
+status				testing
+warnings			Needs Amiga Kickstart ROM file.
+
+name				E-UAE
+headline			Experimental Ubiquitous Amiga emulator
+description
+	E-UAE is an Amiga emulator, a program that allows you to run software designed for Amiga computers on other platforms, such as Linux or Mac OS. It is based on UAE, the original Ubiquitous Amiga Emulator, and WinUAE, the Windows version of UAE. While it owes a huge debt to these two great projects, E-UAE diverges from both, aiming to improve performance and features on a variety of host platforms.
+licenses			GPL
+
+home				www.rcdrummond.net/uae/
+packages			e-uae-0.8.29-WIP4
+locations			http://www.rcdrummond.net/uae/e-uae-0.8.29-WIP4/
+
+needs
+	zlib
+	sdl >= 1.2
+	sdl-sound
+	sdl-gfx
+recommends
+	sdlgl
+	alsa
+	gtk
+	ipf
+	cdrtools > 2 <= 2.01.01a08
+
+; For SCSI emulation:
+;patch			./src/install_libscg
+
+_configure-options
+	--with-sdl
+	--with-sdl-sound
+	--with-alsa
+	--with-sdl-gfx
+	--with-sdl-gl
+	--with-curses
+	--enable-bsdsock
+	--enable-scsi-device
+	--with-libscg-prefix=/usr/cdrtools
+
+documentation
+	README COPYING CHANGES ChangeLog
+;	docs

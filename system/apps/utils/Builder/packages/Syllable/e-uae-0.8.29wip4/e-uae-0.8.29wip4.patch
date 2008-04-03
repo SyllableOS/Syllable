@@ -1,0 +1,72 @@
+diff -NEubwair e-uae-0.8.29-WIP4/src/bsdsocket-posix-new.c e-uae-0.8.29-WIP4_new/src/bsdsocket-posix-new.c
+--- e-uae-0.8.29-WIP4/src/bsdsocket-posix-new.c	2007-02-19 01:33:46.000000000 +0000
++++ e-uae-0.8.29-WIP4_new/src/bsdsocket-posix-new.c	2007-08-16 05:26:21.000000000 +0000
+@@ -49,6 +49,11 @@
+ #include <stddef.h>
+ #include <netdb.h>
+ 
++#ifdef __SYLLABLE__
++#include <atheos/socket.h>
++#define  SO_ACCEPTCONN 26
++#endif
++
+ #include <signal.h>
+ #include <arpa/inet.h>
+ 
+diff -NEubwair e-uae-0.8.29-WIP4/src/fsusage.c e-uae-0.8.29-WIP4_new/src/fsusage.c
+--- e-uae-0.8.29-WIP4/src/fsusage.c	2005-06-20 02:12:58.000000000 +0000
++++ e-uae-0.8.29-WIP4_new/src/fsusage.c	2007-08-16 05:47:09.000000000 +0000
+@@ -22,12 +22,19 @@
+ #include <devices/timer.h>
+ #endif
+ 
++#ifdef __SYLLABLE__
++#include <atheos/filesystem.h>
++#endif
+ 
+ #include <stdlib.h>
+ #include <sys/types.h>
+ 
+ #ifdef HAVE_SYS_STAT_H
++#ifndef __SYLLABLE__
+ #include <sys/stat.h>
++#else
++#include <posix/stat.h>
++#endif
+ #endif
+ 
+ #include "fsusage.h"
+@@ -233,6 +240,10 @@
+      const char *disk;
+      struct fs_usage *fsp;
+ {
++#ifdef __SYLLABLE__
++	fs_info fsd;
++	probe_fs( path, &fsd);
++#endif
+ #ifdef STAT_STATFS3_OSF1
+ # define CONVERT_BLOCKS(B) adjust_blocks ((B), fsd.f_fsize, 512)
+ 
+@@ -364,7 +375,7 @@
+ 
+ #endif /* STAT_STATVFS */
+ 
+-#if !defined(STAT_STATFS2_FS_DATA) && !defined(STAT_READ_FILSYS)
++#if !defined(STAT_STATFS2_FS_DATA) && !defined(STAT_READ_FILSYS) && !defined(__SYLLABLE__)
+ 				/* !Ultrix && !SVR2 */
+ 
+   fsp->fsu_blocks = CONVERT_BLOCKS (fsd.f_blocks);
+@@ -374,7 +385,13 @@
+   fsp->fsu_ffree = fsd.f_ffree;
+ 
+ #endif /* not STAT_STATFS2_FS_DATA && not STAT_READ_FILSYS */
+-
++#ifdef __SYLLABLE__
++  fsp->fsu_blocks = fsd.fi_total_blocks;
++  fsp->fsu_bfree =  fsd.fi_free_blocks;
++  fsp->fsu_bavail = fsd.fi_free_user_blocks;
++  fsp->fsu_files = fsd.fi_total_inodes;
++  fsp->fsu_ffree = fsd.fi_free_inodes;
++#endif
+   return 0;
+ }
