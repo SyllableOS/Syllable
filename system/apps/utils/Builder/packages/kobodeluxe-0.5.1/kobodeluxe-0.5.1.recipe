@@ -1,0 +1,24 @@
+authors				Kaj de Vos
+status				testing
+
+name				Kobo Deluxe
+headline			An enhanced port of the scrolling video game XKobo
+description
+	Kobo Deluxe is a 3'rd person scrolling 2D shooter with a simple and responsive control system - which you'll need to tackle the tons of enemy  ships  that shoot at you, chase you, circle around you shooting, or even launch other ships at you, while you're trying to  destroy the labyrinth shaped bases. There are 50 action packed levels with smoothly increasing difficulty,  and  different  combinations  of  enemies  that require different tactics to be dealt with successfully.
+	Kobo Deluxe is an enhanced version of Akira Higuchi's game XKobo for Un*x systems with X11. Kobo Deluxe adds sound, smoother animation, high resolution support, OpenGL acceleration (optional), an intuitive menu driven user interface, joystick support and other features. Recent versions also add a number of alternative skill levels with slightly modernized gameplay.
+licenses			LGPL GPL
+
+home				olofson.net/kobodl/
+packages			KoboDeluxe-0.5.1
+locations			http://olofson.net/kobodl/download/
+
+needs
+	sdl >= 1.2
+	sdl-image >= 1.2
+recommends			glsdl
+
+_configure-options
+	--disable-opengl
+	--enable-alsa
+
+documentation		README* COPYING COPYING.LIB ChangeLog TODO
