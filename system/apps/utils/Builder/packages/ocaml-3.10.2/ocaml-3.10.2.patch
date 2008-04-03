@@ -1,0 +1,7 @@
+260,261d259
+<   *,*-*-syllable)
+<     bytecccompopts="-fno-defer-pop $gcc_warnings";;
+589d586
+<   i[3456]86-*-syllable)		arch=i386; system=gnu;;
+663d659
+<   i386,*,syllable)  aspp='gcc'; asppflags='-c -DSYS_$(SYSTEM)';;

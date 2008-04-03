@@ -1,0 +1,50 @@
+authors
+	Kaj de Vos
+	Jamie Clarkson
+	Kelly Wilson
+status				testing
+notes
+	The patch for the configuration for the native code compiler is a bit of a hack, but it seems to work.
+	Man pages need to be preprocessed.
+
+name				Objective CAML
+headline			The programming language for discriminate hackers
+description
+	Caml is a general-purpose programming language, designed with program safety and reliability in mind. It is very expressive, yet easy to learn and use. Caml supports functional, imperative, and object-oriented programming styles. It has been developed and distributed by INRIA, France's national research institute for computer science, since 1985.
+	The Objective Caml system is the main implementation of the Caml language. It features a powerful module system and a full-fledged object-oriented layer. It comes with a native-code compiler that supports numerous architectures, for high performance; a bytecode compiler, for increased portability; and an interactive loop, for experimentation and rapid development.
+licenses			QPL LGPL other
+
+home				www.ocaml.org
+locations
+	http://caml.inria.fr/pub/distrib/ocaml-3.10/
+	ftp://ftp.inria.fr/INRIA/caml-light/ocaml-3.10/
+
+build-dir			.
+
+configure-prefix	"-prefix "
+;configure-options	-no-pthread
+
+make-targets
+;	Include native code compiler:
+	world.opt
+;		No native code compiler:
+;		world
+;	For testing the bytecode compiler:
+;;	bootstrap
+;		Native code compiler:
+;		opt
+;		For testing the native code compiler, and generating native versions of the compilers:
+;		opt.opt
+
+;install
+;;	umask 022
+;	make install
+;;	cd emacs
+;;	make EMACSDIR="" install
+
+documentation			README LICENSE Changes Upgrading
+build-docs				INSTALL
+
+; Mixed binaries!
+no-strip
+;strip-files			<Everything but ocamldebug and ocamlbrowser>
