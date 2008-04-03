@@ -1,0 +1,23 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			sourceforge
+
+name				Abe's Amazing Adventure
+headline			A scrolling, platform-jumping, key-collecting, ancient pyramid exploring game
+description
+	A scrolling, platform-jumping, key-collecting, ancient pyramid exploring game, vaguely in the style of similar games for the Commodore+4. The game is intended to show young people (I'm writing it for my son's birthday) all the cool games they missed.
+licenses			GPL
+
+home				abe.sourceforge.net
+packages			abe/abe-1.1
+
+needs				sdl
+
+patch				./autogen.sh
+
+_configure-options
+	--with-data-dir=
+	--enable-stencil-buffer
+
+documentation		README COPYING NEWS ChangeLog AUTHORS
