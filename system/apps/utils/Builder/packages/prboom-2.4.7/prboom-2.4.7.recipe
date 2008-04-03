@@ -1,0 +1,40 @@
+authors				Kaj de Vos
+status				testing
+warnings			Needs a Doom IWAD game data file.
+
+inherits			sourceforge
+
+name				PrBoom
+headline			Further development of Doom
+description
+	PrBoom is a version of the classic 3D shoot'em'up game Doom, originally written by id Software. PrBoom is the culmination of years of work by various people and projects on the Doom source code.
+licenses			GPL shareware
+
+home
+	prboom.sourceforge.net
+;	www.doomworld.com/files/shareware.shtml
+packages
+	prboom/prboom-2.4.7
+;	doom19s prboom-2.4.7
+_locations
+	http://prdownloads.sourceforge.net/prboom/
+;	For an IWAD data file:
+	ftp://3darchives.in-span.net/pub/idgames/idstuff/doom/
+;	http://www.idsoftware.com/
+
+needs
+	sdl >= 1.2
+	sdl-mixer
+	sdl-net
+recommends
+	sdlgl
+	timidity
+
+_configure-options
+	--with-waddir=
+	--disable-gl
+
+install-files		doom1.wad share/games/doom/
+
+documentation		README COPYING NEWS AUTHORS TODO
+build-docs			INSTALL
