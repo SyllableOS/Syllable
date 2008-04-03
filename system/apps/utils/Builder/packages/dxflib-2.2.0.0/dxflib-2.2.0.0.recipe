@@ -1,0 +1,13 @@
+authors				Kaj de Vos
+status				testing
+
+headline			C++ library for parsing DXFTM files
+description
+	DXFLib is an open source C++ library mainly for parsing DXFTM files. QCad, CAM Expert and vec2web all use dxflib to import DXF files. dxflib can also write DXF files, but you need to have good knowledge of the DXF format to produce valid output.
+licenses			GPL-2
+
+home				www.ribbonsoft.com/dxflib.html
+packages			dxflib-2.2.0.0-1.src
+locations			ftp://ribbonsoft.com/archives/dxflib/
+
+documentation		dxflib_commercial_license.txt

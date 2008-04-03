@@ -1,0 +1,14 @@
+authors				Kaj de Vos
+status				incomplete
+warnings			Has no Makefile. Source needs to be integrated directly into your project.
+
+headline			Function parser for C++
+description
+	Often people need to ask some mathematical expression from the user and then evaluate values for that expression. The simplest example is a program which draws the graphic of a user-defined function on screen. This library adds C-style function string parsing to the program. This means that you can evaluate the string "sqrt(1-x^2+y^2)" with given values of 'x' and 'y'.
+licenses			GPL
+
+home				warp.povusers.org/FunctionParser/
+packages			fparser281 fparser-2.81
+locations			http://warp.povusers.org/FunctionParser/
+
+documentation		fparser.txt

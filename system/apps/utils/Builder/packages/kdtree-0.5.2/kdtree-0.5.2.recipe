@@ -1,0 +1,18 @@
+authors				Kaj de Vos
+status				testing
+
+headline			A simple C library for working with KD-Trees
+description
+	KDTree is a simple, easy to use C library for working with kd-trees. Kd-trees are an extension of binary search trees to k-dimensional data. They facilitate very fast searching, and nearest-neighbor queries. This particular implementation is designed to be efficient and very easy to use. It is completely written in ANSI/ISO C, and thus completely cross-platform.
+licenses			BSD
+
+home				code.google.com/p/kdtree/
+; Doesn't seem to work with cURL:
+locations			http://kdtree.googlecode.com/files/
+
+install-prefix-var	PREFIX
+
+;configure-options	--disable-pthread
+
+documentation		doc/*
+develop-docs		examples
