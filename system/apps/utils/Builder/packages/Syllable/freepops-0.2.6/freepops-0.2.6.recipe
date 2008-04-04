@@ -3,6 +3,6 @@ authors
 	Kaj de Vos
 status				testing
 
-configure-cmd		./configure.sh syllable
+configure			./configure.sh syllable
 
 ;make-targets		syllable

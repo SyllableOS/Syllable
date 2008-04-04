@@ -24,6 +24,9 @@ recommends
 ;	For documentation:
 	latex
 
+install-prefix-var	WHERE
+system-prefix-var	DESTDIR
+
 documentation
 	README README.modules COPYING ChangeLog AUTHORS TODO
 ;	doc
