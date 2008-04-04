@@ -1,0 +1,36 @@
+authors
+	Kelly Wilson
+	Kaj de Vos
+status				testing
+
+name				Alien Blaster
+headline			2D space shooter game
+description			Your mission is simple: stop the invasion of the aliens and blast them!
+licenses			GPL
+
+home				www.schwardtnet.de/alienblaster/
+_packages
+	alienblaster-1.1.0
+;	Some replacement images:
+;	heavyFighter alienblaster-1.1.0
+locations
+	http://www.schwardtnet.de/alienblaster/archives/
+	http://www.informatik.uni-bremen.de/~schwardt/alienblaster/
+;	Some replacement images:
+;	http://www.tzi.de/~ah/downloads/
+
+needs
+	sdl
+	sdl-mixer
+
+install-tree		bin
+install-files
+	alienBlaster	bin/
+;	Some replacement images:
+	*.bmp			images/
+
+documentation
+;	Useless:
+;	README
+	LICENSE AUTHORS CHANGELOG
+build-docs			INSTALL
