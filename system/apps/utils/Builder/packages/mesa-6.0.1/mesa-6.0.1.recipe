@@ -3,9 +3,15 @@ authors
 	Kaj de Vos
 status				developing
 
+inherits			sourceforge
+
+headline			3D Graphics Library
+description
+	Mesa is an open-source implementation of the OpenGL specification - a system for rendering interactive 3D graphics. A variety of device drivers allows Mesa to be used in many different environments ranging from software emulation to complete hardware acceleration for modern GPUs.
 licenses			MIT LGPL other
+
 home				www.mesa3d.org
-packages			MesaLib-6.0.1
+packages			mesa3d/MesaLib-6.0.1
 
 build-dir			.
 
@@ -17,9 +23,11 @@ install-tree
 install				true
 install-files
 	lib									.
-	include								.
+	include/*							include/
 	src/mesa/drivers/syllable/GLView.h	include/gui/
-documentation		docs
+
+documentation		docs/*
+
 _links
 	lib/libGL.so		/system/libraries/
 	lib/libGLU.so		/system/libraries/
