@@ -1,0 +1,47 @@
+authors				Kaj de Vos
+status				broken
+warnings
+	MUTE has the worst build procedure and documentation ever.
+	Build proces is interactive and blind in Builder! Choose GNU/Linux X86 text UI by entering:
+		1
+
+		2
+	The libraries are built, but no executables.
+	There is no documentation, so you'll have to look on http://mute-net.sf.net
+
+inherits			sourceforge
+
+name				MUTE
+headline			Simple, Anonymous File Sharing
+description
+	MUTE File Sharing is a peer-to-peer network that provides easy search-and-download functionality while also protecting your privacy.
+	MUTE is a secure, anonymous, distributed communications framework. Node-to-node connections are encrypted, and messages are routed using an ant-inspired algorithm. The first MUTE-based app supports anonymous file sharing.
+licenses			GPL
+
+home				mute-net.sf.net
+packages
+	mute-net/MUTE_fileSharing-0.5.1_UnixSource
+;	Language files
+
+build-needs			gcc <> 3.4
+recommends			wxWidgets
+
+;configure-cmd		MUTE/configure
+
+make				./runToBuild
+;make				./runToBuild >>&2
+_make
+	./runToBuild << END
+	quote platform 1
+
+	quote build 2
+	END
+
+install-tree		bin include lib
+install				true
+install-files
+;	MUTE/crypto/libcrypto.a								lib/
+	MUTE/layers/messageRouting/libmuteMessageRouter.a	lib/
+	MUTE/otherApps/fileSharing/libmuteFileShare.a		lib/
+
+documentation		MUTE/otherApps/fileSharing/doc/fileSharingProtocol.txt
