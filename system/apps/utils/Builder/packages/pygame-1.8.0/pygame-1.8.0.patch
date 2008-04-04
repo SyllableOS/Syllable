@@ -1,0 +1,26 @@
+diff -ru pygame-1.8.0-original/config.py pygame-1.8.0/config.py
+--- pygame-1.8.0-original/config.py	2008-02-11 08:39:21.000000000 +0100
++++ pygame-1.8.0/config.py	2008-04-04 17:03:34.000000000 +0200
+@@ -118,6 +118,9 @@
+     elif sys.platform == 'darwin':
+         print_('Using Darwin configuration...\n')
+         import config_darwin as CFG
++    elif sys.platform == 'syllable':
++        print_('Using Syllable configuration....\n')
++        import config_syllable as CFG
+     else:
+         print_('Using UNIX configuration...\n')
+         import config_unix as CFG
+diff -ru pygame-1.8.0-original/src/display.c pygame-1.8.0/src/display.c
+--- pygame-1.8.0-original/src/display.c	2008-03-28 22:45:42.000000000 +0100
++++ pygame-1.8.0/src/display.c	2008-04-04 17:08:06.000000000 +0200
+@@ -320,7 +320,8 @@
+ #if (defined(unix) || defined(__unix__) ||              \
+      defined(_AIX) || defined(__OpenBSD__)) &&          \
+     (!defined(DISABLE_X11) && !defined(__CYGWIN32__) && \
+-     !defined(ENABLE_NANOX) && !defined(__QNXNTO__))
++     !defined(ENABLE_NANOX) && !defined(__QNXNTO__) && \
++     !defined(__SYLLABLE__))
+ 
+     tmp = PyInt_FromLong (info.info.x11.window);
+     PyDict_SetItemString (dict, "window", tmp);

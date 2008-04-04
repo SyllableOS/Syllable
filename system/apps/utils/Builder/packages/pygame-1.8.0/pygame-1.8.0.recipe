@@ -1,0 +1,33 @@
+authors
+	Kelly Wilson
+	Kaj de Vos
+status				testing
+warnings			Can't be stage'd.
+
+headline			Python game library
+description
+	Pygame is a set of Python modules designed for writing games. Pygame adds functionality on top of the excellent SDL library. This allows you to create fully featured games and multimedia programs in the Python language.
+licenses			LGPL-2.1 other
+
+home				www.pygame.org
+packages			pygame-1.8.0release
+locations			http://www.pygame.org/ftp/
+
+needs				python >= 2.2
+recommends
+	sdl
+	sdl-mixer >= 1.2
+	sdl-image >= 1.2
+	sdl-ttf >= 2.0
+	smpeg
+	python-numeric
+
+configure-cmd		./setup.py
+make				./setup.py build
+install				./setup.py install --prefix $IMAGE/usr/pygame
+
+documentation
+	readme.txt WHATSNEW PKG-INFO
+	docs/*
+;develop-docs		examples
+build-docs			install.html
