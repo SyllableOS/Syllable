@@ -1,0 +1,37 @@
+authors
+	Kelly Wilson
+	Kaj de Vos
+status				testing
+
+inherits			sourceforge
+
+headline			OCaml SDL interface
+description			OCamlSDL is an OCaml interface to the SDL (Simple DirectMedia Layer) library.
+licenses			LGPL other
+
+home				ocamlsdl.sourceforge.net
+packages			ocamlsdl/ocamlsdl-0.7.2
+;locations			http://www.ocaml-programming.de/godi-backup/
+
+needs
+	ocaml >= 3.08
+	sdl >= 1.2
+recommends
+	sdl-mixer >= 1.2
+	sdl-image >= 1.2
+	sdl-ttf >= 2
+	lablgl
+	findlib
+
+;build-dir			.
+
+_configure-args
+	--build='i586-pc-beos'
+	--with-sdl-prefix=/usr/sdl
+
+system-prefix-var	DESTDIR
+
+documentation
+	README COPYING NEWS AUTHORS
+;	README.macosx META doc
+build-docs			INSTALL
