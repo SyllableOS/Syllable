@@ -1,3 +1,9 @@
+* April 5, 2008, Kristian Van Der Vliet *
+
+posix/limits.h: Moved certain macro definitions to be outside the gaurd for
+__STRICT_ANSI__. This ensures macros like PATH_MAX are defined when -ansi
+is used.
+
 * February 2, 2008, Kristian Van Der Vliet *
 
 Re-wrote sys_alarm() to use the POSIX ITIMER_REAL timer instead of it's own
