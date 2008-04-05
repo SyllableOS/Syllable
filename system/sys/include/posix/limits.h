@@ -17,8 +17,6 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#if 1
-
 #ifndef __F_POSIX_LIMITS_H__
 #define __F_POSIX_LIMITS_H__
 
@@ -43,7 +41,9 @@ extern "C" {
 #define USHRT_MAX 65535
 
 #ifndef __STRICT_ANSI__
+
 #if 0
+
 #define _POSIX_ARG_MAX		131072	/* but only for exec's to other djgpp programs */
 #define _POSIX_CHILD_MAX	4096	/* really limited by memory */
 
@@ -79,17 +79,34 @@ extern "C" {
 #ifndef _POSIX_STREAM_MAX
 #define _POSIX_STREAM_MAX	256
 #endif
-/*
+
 #ifndef _POSIX_TZNAME_MAX
 #define _POSIX_TZNAME_MAX	5
 #endif
-*/
+
+#endif	/* 0 */
+  
+/* constants used in Solaris */
+#define LLONG_MIN       (-9223372036854775807LL-1LL)
+#define LLONG_MAX       9223372036854775807LL
+#define ULLONG_MAX      18446744073709551615ULL
+/* gnuc ones */
+#define LONG_LONG_MIN	LLONG_MIN
+#define LONG_LONG_MAX	LLONG_MAX
+#define ULONG_LONG_MAX	ULLONG_MAX
+
+#define MAXSYMLINKS	16
+
+#ifndef SSIZE_MAX
+#define SSIZE_MAX		2147483647
 #endif
   
-//#ifndef NGROUPS_MAX
+#endif /* !__STRICT_ANSI__ */
+
+#ifndef NGROUPS_MAX
 #define NGROUPS_MAX		32
-//#endif
-  
+#endif
+
 #ifndef ARG_MAX
 #define ARG_MAX			131072
 #endif
@@ -98,7 +115,9 @@ extern "C" {
 #define CHILD_MAX		4096
 #endif
 
+#ifndef OPEN_MAX
 #define OPEN_MAX		256
+#endif
 
 #ifndef LINK_MAX
 #define LINK_MAX		1
@@ -115,6 +134,7 @@ extern "C" {
 #ifndef NAME_MAX
 #define NAME_MAX		255
 #endif
+
 #ifndef PATH_MAX
 #define PATH_MAX		4096
 #endif
@@ -123,26 +143,8 @@ extern "C" {
 #define PIPE_BUF		4096
 #endif
 
-#ifndef SSIZE_MAX
-#define SSIZE_MAX		2147483647
-#endif
-  
-/* constants used in Solaris */
-#define LLONG_MIN       (-9223372036854775807LL-1LL)
-#define LLONG_MAX       9223372036854775807LL
-#define ULLONG_MAX      18446744073709551615ULL
-/* gnuc ones */
-#define LONG_LONG_MIN	LLONG_MIN
-#define LONG_LONG_MAX	LLONG_MAX
-#define ULONG_LONG_MAX	ULLONG_MAX
-
-#define MAXSYMLINKS	16
-  
-#endif /* !__STRICT_ANSI__ */
-
 #ifdef __cplusplus
 }
 #endif
 
 #endif /* !__F_POSIX_LIMITS_H__ */
-#endif
