@@ -5120,8 +5120,8 @@ int sys_select( int nMaxCnt, fd_set *psReadSet, fd_set *psWriteSet, fd_set *psEx
       error2:
 	for ( i = 0; i < nRealCnt; ++i )
 	{
-		kassertw( NULL != pasRequests[i].sr_pFile );
-		put_fd( ( File_s * )pasRequests[i].sr_pFile );
+		if( NULL != pasRequests[i].sr_pFile )
+			put_fd( ( File_s * )pasRequests[i].sr_pFile );
 	}
 
 	kfree( pasRequests );
