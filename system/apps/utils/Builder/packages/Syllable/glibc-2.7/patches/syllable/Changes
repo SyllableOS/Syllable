@@ -1,5 +1,10 @@
 Glibc Syllable Changelog
 
+* April 5th 2008 *
+
+	o get_system_info.c: Call get_system_info directly.
+	o xget_system_info.c: Removed.
+
 * March 16th 2008 *
 
 	o socketpair.c: New file. Taken from an older libiberty implementation.

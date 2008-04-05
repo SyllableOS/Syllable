@@ -16,11 +16,15 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
+#include <errno.h>
+#include <stddef.h>
+#include <sysdep.h>
+#include <sys/syscall.h>
 #include <sys/sysinfo.h>
 
 status_t __get_system_info( system_info* info )
 {
-    return( __xget_system_info( info, SYS_INFO_VERSION ) );
+    return( INLINE_SYSCALL(get_system_info, 2, info, SYS_INFO_VERSION ) );
 }
 
 weak_alias (__get_system_info, get_system_info)

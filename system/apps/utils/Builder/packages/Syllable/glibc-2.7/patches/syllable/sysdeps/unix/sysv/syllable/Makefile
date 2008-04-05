@@ -9,7 +9,7 @@ sysdep_routines += dbprintf syslog
 sysdep_headers += sys/debug.h
 
 # System information
-sysdep_routines += get_system_info xget_system_info get_fs_info
+sysdep_routines += get_system_info get_fs_info
 sysdep_routines += get_system_time get_real_time get_idle_time
 sysdep_headers += sys/systime.h
 

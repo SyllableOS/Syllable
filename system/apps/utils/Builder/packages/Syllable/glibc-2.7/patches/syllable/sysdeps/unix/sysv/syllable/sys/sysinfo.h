@@ -21,9 +21,6 @@
 
 #include <atheos/kernel.h>
 
-status_t __xget_system_info( system_info* info, int version );
-libc_hidden_proto(__xget_system_info)
-
 /* External functions */
 __BEGIN_DECLS
 
