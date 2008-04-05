@@ -1,0 +1,42 @@
+authors
+	Kristian Van Der Vliet
+	Jack Tonkin
+	Kaj de Vos
+	"Bean"
+maintainers			Kaj de Vos
+status				testing
+
+headline			GRand Unified Bootloader
+description
+	GNU GRUB is a Multiboot boot loader. Briefly, boot loader is the first software program that runs when a computer starts. It is responsible for loading and transferring control to the operating system kernel software (such as the Hurd or the Linux). The kernel, in turn, initialises the rest of the operating system (e.g. GNU).
+	GRUB 2 is derived from PUPA which was a research project to investigate the next generation of GRUB. GRUB 2 has been rewritten from scratch to clean up everything for modularity and portability.
+	Multiboot Specification is a protocol between a boot loader and an OS kernel. Because this specification is generic, you can use the protocol in your own boot loader and/or in your own OS freely.
+licenses			GPL-3
+
+home
+	www.gnu.org/software/grub/
+	www.gnu.org/software/grub/grub-2.en.html
+locations
+;	Locked down for Syllable?
+	ftp://alpha.gnu.org/gnu/grub/
+	http://alpha.gnu.org/gnu/grub/
+
+build-needs
+;	automake
+	autoconf >= 2.53
+;	ruby >= 1.6
+	binutils >= 2.9.1.0.23
+	bison
+	lzo >= 1.02
+
+patch				autoreconf
+
+; Problems are known with optimisation:
+configure-env		CFLAGS ''
+make-env			CFLAGS ''
+
+system-prefix-var	DESTDIR
+
+documentation		README COPYING NEWS ChangeLog TODO AUTHORS THANKS
+build-docs			INSTALL
+internal-docs		DISTLIST

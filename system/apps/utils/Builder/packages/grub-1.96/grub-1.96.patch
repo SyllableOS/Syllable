@@ -1,0 +1,90 @@
+diff -ru grub-1.96-original/conf/common.rmk grub-1.96/conf/common.rmk
+--- grub-1.96-original/conf/common.rmk	2008-02-03 14:11:29.000000000 +0100
++++ grub-1.96/conf/common.rmk	2008-04-05 21:53:59.000000000 +0200
+@@ -11,7 +11,7 @@
+ 	fs/affs.c fs/cpio.c fs/ext2.c fs/fat.c fs/hfs.c		\
+ 	fs/hfsplus.c fs/iso9660.c fs/jfs.c fs/minix.c		\
+ 	fs/ntfs.c fs/ntfscomp.c fs/reiserfs.c fs/sfs.c		\
+-	fs/ufs.c fs/xfs.c					\
++	fs/ufs.c fs/xfs.c fs/afs.c				\
+ 	\
+ 	partmap/pc.c partmap/apple.c partmap/gpt.c 		\
+ 	kern/fs.c kern/env.c fs/fshelp.c			\
+@@ -98,7 +98,7 @@
+ # Filing systems.
+ pkglib_MODULES += fshelp.mod fat.mod ufs.mod ext2.mod ntfs.mod		\
+ 	ntfscomp.mod minix.mod hfs.mod jfs.mod iso9660.mod xfs.mod	\
+-	affs.mod sfs.mod hfsplus.mod reiserfs.mod cpio.mod
++	affs.mod sfs.mod hfsplus.mod reiserfs.mod cpio.mod afs.mod
+ 
+ # For fshelp.mod.
+ fshelp_mod_SOURCES = fs/fshelp.c
+@@ -180,6 +180,11 @@
+ cpio_mod_CFLAGS = $(COMMON_CFLAGS)
+ cpio_mod_LDFLAGS = $(COMMON_LDFLAGS)
+ 
++# For afs.mod.
++afs_mod_SOURCES = fs/afs.c
++afs_mod_CFLAGS = $(COMMON_CFLAGS)
++afs_mod_LDFLAGS = $(COMMON_LDFLAGS)
++
+ # Partition maps.
+ pkglib_MODULES += amiga.mod apple.mod pc.mod sun.mod acorn.mod gpt.mod
+ 
+diff -ru grub-1.96-original/conf/i386-efi.rmk grub-1.96/conf/i386-efi.rmk
+--- grub-1.96-original/conf/i386-efi.rmk	2008-02-03 14:11:29.000000000 +0100
++++ grub-1.96/conf/i386-efi.rmk	2008-04-05 21:19:36.000000000 +0200
+@@ -44,7 +44,7 @@
+ 	fs/affs.c fs/cpio.c fs/ext2.c fs/fat.c fs/hfs.c			\
+ 	fs/hfsplus.c fs/iso9660.c fs/jfs.c fs/minix.c			\
+ 	fs/ntfs.c fs/ntfscomp.c fs/reiserfs.c fs/sfs.c			\
+-	fs/ufs.c fs/xfs.c						\
++	fs/ufs.c fs/xfs.c fs/afs.c					\
+ 	\
+ 	io/gzio.c							\
+ 	kern/device.c kern/disk.c kern/dl.c kern/elf.c kern/env.c	\
+diff -ru grub-1.96-original/conf/i386-linuxbios.rmk grub-1.96/conf/i386-linuxbios.rmk
+--- grub-1.96-original/conf/i386-linuxbios.rmk	2008-02-03 14:11:29.000000000 +0100
++++ grub-1.96/conf/i386-linuxbios.rmk	2008-04-05 21:19:36.000000000 +0200
+@@ -68,7 +68,7 @@
+ 	fs/affs.c fs/cpio.c fs/ext2.c fs/fat.c fs/hfs.c			\
+ 	fs/hfsplus.c fs/iso9660.c fs/jfs.c fs/minix.c			\
+ 	fs/ntfs.c fs/ntfscomp.c fs/reiserfs.c fs/sfs.c			\
+-	fs/ufs.c fs/xfs.c						\
++	fs/ufs.c fs/xfs.c fs/afs.c					\
+ 	\
+ 	fs/fshelp.c							\
+ 	io/gzio.c							\
+diff -ru grub-1.96-original/conf/i386-pc.rmk grub-1.96/conf/i386-pc.rmk
+--- grub-1.96-original/conf/i386-pc.rmk	2008-02-03 14:11:29.000000000 +0100
++++ grub-1.96/conf/i386-pc.rmk	2008-04-05 21:19:36.000000000 +0200
+@@ -88,7 +88,7 @@
+ 	fs/affs.c fs/cpio.c fs/ext2.c fs/fat.c fs/hfs.c		\
+ 	fs/hfsplus.c fs/iso9660.c fs/jfs.c fs/minix.c		\
+ 	fs/ntfs.c fs/ntfscomp.c fs/reiserfs.c fs/sfs.c		\
+-	fs/ufs.c fs/xfs.c					\
++	fs/ufs.c fs/xfs.c fs/afs.c				\
+ 	\
+ 	partmap/pc.c partmap/gpt.c				\
+ 	util/raid.c util/lvm.c grub_setup_init.c
+@@ -123,7 +123,7 @@
+ 	fs/affs.c fs/cpio.c fs/ext2.c fs/fat.c fs/hfs.c			\
+ 	fs/hfsplus.c fs/iso9660.c fs/jfs.c fs/minix.c			\
+ 	fs/ntfs.c fs/ntfscomp.c fs/reiserfs.c fs/sfs.c			\
+-	fs/ufs.c fs/xfs.c						\
++	fs/ufs.c fs/xfs.c fs/afs.c					\
+ 	\
+ 	util/console.c util/hostfs.c util/grub-emu.c util/misc.c	\
+ 	util/biosdisk.c util/getroot.c			\
+diff -ru grub-1.96-original/conf/powerpc-ieee1275.rmk grub-1.96/conf/powerpc-ieee1275.rmk
+--- grub-1.96-original/conf/powerpc-ieee1275.rmk	2008-02-03 14:11:29.000000000 +0100
++++ grub-1.96/conf/powerpc-ieee1275.rmk	2008-04-05 21:19:36.000000000 +0200
+@@ -55,7 +55,7 @@
+ 	fs/affs.c fs/cpio.c fs/ext2.c fs/fat.c fs/hfs.c		\
+ 	fs/hfsplus.c fs/iso9660.c fs/jfs.c fs/minix.c		\
+ 	fs/ntfs.c fs/ntfscomp.c fs/reiserfs.c fs/sfs.c		\
+-	fs/ufs.c fs/xfs.c					\
++	fs/ufs.c fs/xfs.c fs/afs.c				\
+ 	\
+ 	io/gzio.c							\
+ 	kern/device.c kern/disk.c kern/dl.c kern/elf.c kern/env.c	\
