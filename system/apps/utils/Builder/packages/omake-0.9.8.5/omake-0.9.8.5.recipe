@@ -1,0 +1,36 @@
+authors				Kaj de Vos
+status				testing
+
+headline			Software build system replacement for Make
+description
+	OMake is a modern replacement for Make.
+	OMake is a build system designed for scalability and portability. It uses a syntax similar to Make utilities you may have used, but it features many additional enhancements.
+licenses			GPL-2+exception MIT
+
+home				omake.metaprl.org
+packages			omake-0.9.8.5-3
+locations			http://omake.metaprl.org/downloads/
+
+build-needs
+	ocaml
+;	omake
+
+install-prefix-var	PREFIX
+
+make-targets
+;	Bootstrap phase only:
+;	bootstrap
+	all
+
+system-prefix-var	INSTALL_ROOT
+post-install
+	./omake-boot
+;	./omake-boot
+	./omake-boot install
+
+documentation
+	LICENSE LICENSE.OMake CHANGELOG.txt
+;	doc/html
+build-docs			INSTALL
+
+no-strip
