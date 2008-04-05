@@ -1,0 +1,27 @@
+authors				Kaj de Vos
+status				testing
+
+headline			Cross-platform Make
+description
+	CMake is a cross-platform, open-source make system. CMake is used to control the software compilation process using simple platform-independent and compiler-independent configuration files. CMake generates native makefiles and workspaces that can be used in the compiler environment of your choice. CMake is quite sophisticated: it is possible to support complex environments requiring system configuration, preprocessor generation, code generation, and template instantiation.
+licenses			BSD
+
+home				cmake.org
+locations
+	http://www.cmake.org/files/v2.4/
+	ftp://www.cmake.org/pub/cmake/
+
+;build-needs			cmake
+recommends			ncurses
+
+;build-dir			.
+
+;configure			cmake
+;configure			cmake .
+configure-cmd		./bootstrap
+;configure-options	--verbose
+
+documentation		Readme.txt Copyright.txt ChangeLog.manual ChangeLog.txt
+_develop-docs
+	Docs
+	Example
