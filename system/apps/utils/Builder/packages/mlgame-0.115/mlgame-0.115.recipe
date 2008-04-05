@@ -1,0 +1,37 @@
+authors
+	Kelly Wilson
+	Kaj de Vos
+status				testing
+
+inherits			sourceforge
+
+headline			OCaml game library
+description
+	MLGame is a library designed to help developers create 2D games by providing a high level interface for graphics, network, etc. It is everything that programmers want when they begin writing a game.
+	MLGame is a 2D game library for OCaml built on top of SDL (OCamlSDL). It features sprites, collision, video contexts, high level network, console, input bindings, widgets and video primitives.
+licenses			GPL
+
+home				mlgame.sourceforge.net
+packages			mlgame/MLG115
+
+needs
+	ocaml
+	ocamlsdl
+	sdl
+	sdl-image
+
+;build-dir			.
+
+_configure-options
+	--with-sdl-prefix=/system/indexes
+	--enable-gl-sdl
+
+make-targets
+	all
+	doc
+
+documentation
+	README
+	Docs/*
+;build-docs			Docs/INSTALL
+;develop-docs		Examples

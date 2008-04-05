@@ -7,7 +7,7 @@ inherits			sourceforge
 
 headline			OCaml SDL interface
 description			OCamlSDL is an OCaml interface to the SDL (Simple DirectMedia Layer) library.
-licenses			LGPL other
+licenses			LGPL
 
 home				ocamlsdl.sourceforge.net
 packages			ocamlsdl/ocamlsdl-0.7.2
@@ -25,9 +25,7 @@ recommends
 
 ;build-dir			.
 
-_configure-args
-	--build='i586-pc-beos'
-	--with-sdl-prefix=/usr/sdl
+;configure-options	--with-sdl-prefix=/system/indexes
 
 system-prefix-var	DESTDIR
 
