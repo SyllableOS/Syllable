@@ -1,0 +1,151 @@
+diff -ru boost-1.35.0-original/boost/config/select_platform_config.hpp boost-1.35.0/boost/config/select_platform_config.hpp
+--- boost-1.35.0-original/boost/config/select_platform_config.hpp	2005-11-04 13:57:44.000000000 +0100
++++ boost-1.35.0/boost/config/select_platform_config.hpp	2008-04-06 01:43:22.000000000 +0200
+@@ -13,7 +13,11 @@
+ // <header_name> in order to prevent macro expansion within the header
+ // name (for example "linux" is a macro on linux systems).
+ 
+-#if defined(linux) || defined(__linux) || defined(__linux__)
++#ifdef __SYLLABLE__
++// Syllable:
++#  define BOOST_PLATFORM_CONFIG "boost/config/platform/syllable.hpp"
++
++#elif defined(linux) || defined(__linux) || defined(__linux__)
+ // linux:
+ #  define BOOST_PLATFORM_CONFIG "boost/config/platform/linux.hpp"
+ 
+diff -ru boost-1.35.0-original/boost/config/suffix.hpp boost-1.35.0/boost/config/suffix.hpp
+--- boost-1.35.0-original/boost/config/suffix.hpp	2007-11-23 18:03:14.000000000 +0100
++++ boost-1.35.0/boost/config/suffix.hpp	2008-04-06 01:43:22.000000000 +0200
+@@ -554,7 +554,7 @@
+ #  endif
+ #  ifndef BOOST_PLATFORM
+ #     if defined(unix) || defined(__unix) || defined(_XOPEN_SOURCE) \
+-         || defined(_POSIX_SOURCE)
++         || defined(_POSIX_SOURCE) || defined(syllable)
+ #        define BOOST_PLATFORM "Generic Unix"
+ #     else
+ #        define BOOST_PLATFORM "Unknown"
+diff -ru boost-1.35.0-original/libs/regex/build/Jamfile.v2 boost-1.35.0/libs/regex/build/Jamfile.v2
+--- boost-1.35.0-original/libs/regex/build/Jamfile.v2	2007-11-25 19:38:02.000000000 +0100
++++ boost-1.35.0/libs/regex/build/Jamfile.v2	2008-04-06 01:43:22.000000000 +0200
+@@ -11,6 +11,7 @@
+ # ICU configuration:
+ #
+ local ICU_PATH = [ modules.peek : ICU_PATH ] ;
++local SYLLABLE_PTHREAD ;
+ rule check-icu-config ( )
+ {
+    local ICU_PATH = [ modules.peek : ICU_PATH ] ;
+@@ -212,6 +213,10 @@
+ #End of addition by Tommy Nordgren
+    }
+ }
++if [ modules.peek : OS ] = SYLLABLE
++{
++	SYLLABLE_PTHREAD = -lpthread ;
++}
+ 
+ SOURCES = 
+    c_regex_traits.cpp
+@@ -241,6 +246,7 @@
+ 	     <toolset>gcc-mw:<link>static
+ 	     <toolset>gcc-mingw:<link>static
+ 	     <toolset>gcc-cygwin:<link>static
++	     <toolset>gcc:<linkflags>$(SYLLABLE_PTHREAD)
+ 	     $(BOOST_REGEX_ICU_OPTS)
+     ;
+ 
+diff -ru boost-1.35.0-original/libs/thread/build/Jamfile.v2 boost-1.35.0/libs/thread/build/Jamfile.v2
+--- boost-1.35.0-original/libs/thread/build/Jamfile.v2	2007-12-21 12:51:05.000000000 +0100
++++ boost-1.35.0/libs/thread/build/Jamfile.v2	2008-04-06 01:56:16.000000000 +0200
+@@ -41,11 +41,18 @@
+     : requirements <threading>multi
+       <link>static:<define>BOOST_THREAD_BUILD_LIB=1
+       <link>shared:<define>BOOST_THREAD_BUILD_DLL=1
++      <toolset>gcc:<linkflags>$(SYLLABLE_PTHREAD)
+       -<tag>@$(BOOST_JAMROOT_MODULE)%$(BOOST_JAMROOT_MODULE).tag
+       <tag>@$(__name__).tag
+     : default-build <threading>multi
+     ;
+ 
++local SYLLABLE_PTHREAD ;
++if [ modules.peek : OS ] = SYLLABLE
++{
++    SYLLABLE_PTHREAD = -lpthread ;
++}
++
+ local rule default_threadapi ( )
+ {
+     local api = pthread ;
+diff -ru boost-1.35.0-original/tools/jam/src/build.jam boost-1.35.0/tools/jam/src/build.jam
+--- boost-1.35.0-original/tools/jam/src/build.jam	2007-12-01 21:17:52.000000000 +0100
++++ boost-1.35.0/tools/jam/src/build.jam	2008-04-06 01:43:22.000000000 +0200
+@@ -180,6 +180,13 @@
+     [ opt --debug : -g -O0 -fno-inline ]
+     -I$(--python-include) -I$(--extra-include) -Wno-long-long
+     : -L$(--python-lib[1]) -l$(--python-lib[2]) ;
++## Syllable GCC 2.x, 3.x, 4.x
++toolset syllable gcc : "-o " : -D
++    : -pedantic
++    [ opt --release : [ opt --symbols : -g : -s ] -O3 ]
++    [ opt --debug : -g -O0 -fno-inline ]
++    -I$(--python-include) -Wno-long-long
++    : -L$(--python-lib[1]) -l$(--python-lib[2]) -pthread ;
+ ## GCC 2.x, 3.x on CYGWIN but without cygwin1.dll
+ toolset gcc-nocygwin gcc : "-o " : -D
+     : -s -O3 -mno-cygwin
+diff -ru boost-1.35.0-original/tools/jam/src/Jambase boost-1.35.0/tools/jam/src/Jambase
+--- boost-1.35.0-original/tools/jam/src/Jambase	2007-08-13 17:35:16.000000000 +0200
++++ boost-1.35.0/tools/jam/src/Jambase	2008-04-06 01:43:22.000000000 +0200
+@@ -222,6 +222,7 @@
+ # 11/21/96 (peterk) - Support for BeOS
+ # 07/19/99 (sickel) - Support for Mac OS X Server (and maybe client)
+ # 02/18/00 (belmonte)- Support for Cygwin.
++# 11/08/07 (wilson) - Support for Syllable
+ 
+ # Special targets defined in this file:
+ #
+@@ -854,6 +855,18 @@
+     NOARSCAN    ?= true ;
+     STDHDRS     ?= /boot/develop/headers/posix ;
+ }
++else if [ modules.peek : OS ] = SYLLABLE
++{
++    BINDIR      ?= /bin ;
++    CC          ?= gcc ;
++    C++         ?= g++ ;
++    FORTRAN     ?= "" ;
++    LIBDIR      ?= /system/libraries ;
++    LINK        ?= gcc ;
++    LINKLIBS    ?= -lrt -lpthread ;
++    NOARSCAN    ?= true ;
++    STDHDRS     ?= /system/development/headers/posix ;
++}
+ else if $(UNIX)
+ {
+     switch $(OS)
+diff -ru boost-1.35.0-original/tools/jam/src/jam.h boost-1.35.0/tools/jam/src/jam.h
+--- boost-1.35.0-original/tools/jam/src/jam.h	2007-11-19 20:25:21.000000000 +0100
++++ boost-1.35.0/tools/jam/src/jam.h	2008-04-06 01:43:22.000000000 +0200
+@@ -33,6 +33,7 @@
+  * 02/18/00 (belmonte)- Support for Cygwin.
+  * 09/12/00 (seiwald) - OSSYMS split to OSMAJOR/OSMINOR/OSPLAT
+  * 12/29/00 (seiwald) - OSVER dropped.
++ * 11/08/07 (wilson)  - Support for Syllable
+  */
+ 
+ #ifndef JAM_H_VP_2003_08_01
+@@ -227,6 +228,12 @@
+ # define OSMINOR "OS=AMIGA"
+ # define OS_AMIGA
+ # endif
++# ifdef __SYLLABLE__
++# define unix
++# define OSMINOR "OS=SYLLABLE"
++# define OS_SYLLABLE
++# define NO_VFORK
++# endif
+ # ifdef __BEOS__
+ # define unix
+ # define OSMINOR "OS=BEOS"

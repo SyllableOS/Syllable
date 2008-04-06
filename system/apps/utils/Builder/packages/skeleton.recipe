@@ -53,12 +53,13 @@ patch-config		[<Directories>]
 ; For packages produced with ancient AutoConf versions:
 patch-legacy-config
 patch				<Extra patching commands>
-; Makes a package that uses LibTool generate shared libraries:
-; Requires LibTool, AutoMake and AutoConf:
+; Makes a package that uses LibTool generate shared libraries.
+; Requires LibTool, AutoMake and AutoConf.
 make-shared
 
-; Can't build outside the source directory:
-build-dir			<Subdirectory>
+; Absolute path or subdirectory relative to source to build in.
+; "." to build in the source directory.
+build-dir			<Directory>
 
 ; Configuring:
 ; <configure>

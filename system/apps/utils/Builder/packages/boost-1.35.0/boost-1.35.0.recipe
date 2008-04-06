@@ -1,0 +1,25 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			sourceforge
+
+headline			Peer-reviewed portable C++ libraries
+description
+	Boost provides free peer-reviewed portable C++ source libraries.
+	The emphasis is on libraries that work well with the C++ Standard Library. Boost libraries are intended to be widely useful, and usable across a broad spectrum of applications. The Boost license encourages both commercial and non-commercial use.
+	We aim to establish "existing practice" and provide reference implementations so that Boost libraries are suitable for eventual standardization. Ten Boost libraries are already included in the C++ Standards Committee's Library Technical Report (TR1) as a step toward becoming part of a future C++ Standard. More Boost libraries are proposed for the upcoming TR2.
+licenses			OS
+
+home				www.boost.org
+packages			boost/boost_1_35_0
+
+recommends
+	icu
+	python
+
+documentation
+	LICENSE_1_0.txt
+;	INSTALL
+	index.html boost.css rst.css boost.png
+;	wiki
+;	doc
