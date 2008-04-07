@@ -1,0 +1,6 @@
+authors
+	Ruwen Boehm
+	Kaj de Vos
+status				testing
+
+configure-env		LIBS '-lpthread'

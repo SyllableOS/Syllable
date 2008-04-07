@@ -1,0 +1,22 @@
+authors
+	Ruwen Boehm
+	Kaj de Vos
+status				testing
+
+headline			Image creation library
+description
+	GD is an open source code library for the dynamic creation of images by programmers. GD creates PNG, JPEG and GIF images, among other formats. It allows your code to quickly draw images complete with lines, arcs, text, multiple colors, cut and paste from other images, and flood fills. GD is commonly used to generate charts, graphics, thumbnails, and most anything else, on the fly. While not restricted to use on the web, the most common applications of GD involve web site development.
+	GD is written in C and various binding are available.
+licenses			other
+
+homepage			www.libgd.org
+locations			http://www.libgd.org/releases/
+
+recommends
+	zlib
+	libpng
+	libjpeg
+	freetype
+	xpm
+
+documentation		README* readme.jpn COPYING index.html NEWS
