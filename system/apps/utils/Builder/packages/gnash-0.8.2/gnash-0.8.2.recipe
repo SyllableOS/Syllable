@@ -1,0 +1,92 @@
+authors
+	Kelly Wilson
+	Kaj de Vos
+status				testing
+
+inherits			gnu
+
+headline			ShockWave Flash movie player
+description
+	Gnash is a GNU Flash movie player. Previously, it was only possible to play flash movies with proprietary software. While there are some other free flash players, none support anything beyond SWF v4. Gnash is based on GameSWF, and supports many SWF v7 features. It can be run as a graphical application, as a Web browser
+plugin, or as a library used by other programs. It is not yet complete; it does not correctly handle every .swf file.
+licenses			GPL-3
+
+home
+	www.gnu.org/software/gnash/
+;	www.getgnash.org
+;	www.gnashdev.org
+packages			gnash/0.8.2/gnash-0.8.2
+_locations
+	http://www.getgnash.org/packages/releases/
+	http://www.getgnash.org/packages/releases/0.8.2/sources/
+
+needs
+	gtkglext | fltk2 | sdl
+	opengl | agg | cairo
+	ffmpeg
+	zlib
+	boost
+	expat | libxml2
+	libjpeg
+build-needs			pkg-config
+test-needs
+	dejagnu
+	libming
+	mtasc
+	swfmill
+	swftools
+recommends
+	libpng
+	freetype
+	fontconfig
+	glext
+	hildon
+	x11
+	xft
+	gtk2
+	glib
+	atk
+	pango
+	ghelp
+	mesa3d
+	gstreamer >= 0.10
+	libmad
+	curl
+	gettext
+	kde
+	qt
+	qt-mt
+	qtopia
+	dbus
+	python
+	mysql
+
+configure-options
+;	--enable-sdk-install
+;	--enable-allstatic
+;	--with-extensions=
+;	--disable-plugins
+;	--with-plugindir=
+;	--enable-write
+	--enable-gui=sdl
+;	--enable-gui=gtk,kde
+;	--disable-menus
+;	--enable-renderer=opengl
+;	--enable-renderer=ogl,cairo
+	--enable-renderer=agg
+	--enable-media=ffmpeg
+;	--enable-media=gst
+;	--enable-media=mad
+;	--enable-expat
+;	For documentation:
+;	--enable-docbook
+
+_make-targets
+	all
+;	For documentation:
+	html
+	pdf
+
+documentation
+	README COPYING ABOUT-NLS NEWS ChangeLog AUTHORS TODO
+;	ChangeLog-*
