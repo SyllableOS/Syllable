@@ -1,0 +1,28 @@
+authors
+	Ruwen Boehm
+	Kaj de Vos
+status				testing
+notes				TODO: split into libcdio and libcdio-utils
+
+inherits			gnu
+
+headline			GNU Compact Disc Input and Control Library
+description
+	The Compact Disc Input and Control library (libcdio) contains a library for CD-ROM and CD image access. Applications wishing to be oblivious of the OS- and device-dependent properties of a CD-ROM or of the specific details of various CD-image formats may benefit from using this library.
+	Some support for on-disk CD-image types like CDRWIN's BIN/CUE format, cdrdao's TOC format, and Nero's NRG format is available. Therefore, applications that use this library also have the ability to read on-disk CD images as though they were CDs.
+	A library for working with ISO-9660 filesystems (libiso9660) is included. A generic interface for issuing MMC (multimedia commands) is also part of the libcdio library.
+	The cdparanoia library and cdparanoia command are included making this the only single-source cdparanoia that works on FreeBSD, cygwin, Solaris, BSDI as well as GNU/Linux.
+;	(Digital CD input/output library and front-ends like cd-paranoia not included.)
+licenses			GPL
+
+recommends
+	vcdimager
+	libcddb
+
+build-dir			.
+
+home				www.gnu.org/software/libcdio/
+packages			libcdio/libcdio-0.80
+
+documentation		README COPYING ABOUT-NLS NEWS ChangeLog AUTHORS THANKS TODO
+build-docs			README.libcdio
