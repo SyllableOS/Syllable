@@ -1,7 +1,8 @@
 authors
 	Rui Caridade
 	Kaj de Vos
-status				testing
+status				broken
+notes				Link failure
 
 needs
 	sdl >= 1.2
@@ -10,4 +11,11 @@ needs
 ;	opengl
 ;	NeoGeo BIOS
 
-configure-env		CFLAGS "$CFLAGS -DNO_OPENGL"
+patch-config
+
+;build-dir			.
+
+configure-env		CPPFLAGS "$CPPFLAGS -I/system/indexes/include/SDL"
+
+make-vars			CFLAGS '-DNO_OPENGL'
+
