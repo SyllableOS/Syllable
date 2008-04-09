@@ -1,0 +1,7 @@
+authors
+	Ruwen Boehm
+	Kaj de Vos
+status				testing
+warnings
+	You need to (temporarily) disable the declaration of count_t in /system/development/headers/atheos/types.h
+

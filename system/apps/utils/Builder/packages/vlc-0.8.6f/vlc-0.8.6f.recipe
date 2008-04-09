@@ -1,0 +1,94 @@
+authors
+	Ruwen Boehm
+	Kaj de Vos
+status				testing
+
+title				VideoLAN Client
+headline			Multimedia player and streaming server
+description
+	VLC media player is a highly portable multimedia player for various audio and video formats (MPEG-1, MPEG-2, MPEG-4, DivX, mp3, ogg, ...) as well as DVDs, VCDs, and various streaming protocols. It can also be used as a server to stream in unicast or multicast in IPv4 or IPv6 on a high-bandwidth network. It doesn't need any external codec or program to work.
+licenses			GPL
+
+home				www.videolan.org
+locations			http://download.videolan.org/pub/videolan/vlc/0.8.6f/
+
+recommends
+	zlib
+	sdl >= 1.1.7
+	sdl-image
+	libpng
+	libjpeg
+	libtiff
+	wxwidgets
+	qt >= 4
+	glib
+	hal
+	gecko
+	portaudio
+	freetype
+	gettext
+	gnupg
+	gnutls
+	expat
+	libxml2
+	ffmpeg
+	libmpeg2
+	libmad
+	lame
+	twolame
+	libfaad2
+	faac
+	libcddb
+	libcdio
+	libogg
+	libvorbis
+	tremor
+	libtheora
+	matroska
+	libflac
+	libspeex
+	liba52
+	x264
+;	libdv
+;	libxvidcore
+	libdca
+	libdvdread
+	libdvdnav
+	libdvdcss
+	libdvbpsi
+	libopenslp
+	fribidi
+	livemedia
+	dirac
+	libmpcdec
+	libebml
+	shout
+	livedotcom
+	vcdimager
+	opendaap
+	libid3tag
+	taglib
+	goom2k4
+	libcaca
+	libmodplug
+	libidl
+	clinkcc
+	avahi
+	upnp
+build-recommends
+	pkg-config
+	nasm
+	perl
+	libtool
+	libiconv
+	libunicows
+
+configure-options
+;	--disable-wxwidgets
+	--disable-skins2
+
+documentation
+	README COPYING ABOUT-NLS NEWS ChangeLog MAINTAINERS AUTHORS THANKS
+;	doc
+internal-docs		HACKING
+
