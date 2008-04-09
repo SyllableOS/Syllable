@@ -16,17 +16,20 @@ needs				sdl >= 1.2.2
 recommends
 	zlib
 	libmad
-	libvorbis
+	libvorbis | tremor
 	libvorbisfile
-	libflac
-	libmpeg2
+	libflac >= 1.0.1
+	libmpeg2 >= 0.3.2
 	libasound2
-	tremor
 	libfluidsynth
 build-recommends	nasm
+
+; For installation:
+build-dir			.
 
 _configure-options
 	--disable-alsa
 	--enable-plugins
 
 documentation		README COPYRIGHT COPYING NEWS AUTHORS TODO
+

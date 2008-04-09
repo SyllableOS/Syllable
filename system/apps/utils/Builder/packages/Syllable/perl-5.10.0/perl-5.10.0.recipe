@@ -1,6 +1,7 @@
 authors				Kaj de Vos
-status				broken
-notes				MAXPATHLEN undefined
+status				testing
+
+build-needs			Syllable >= 0.6.6
 
 configure-options
 	-des
