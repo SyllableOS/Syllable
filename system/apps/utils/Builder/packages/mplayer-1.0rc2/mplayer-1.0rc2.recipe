@@ -48,24 +48,29 @@ recommends
 	unrarlib
 	fribidi
 
-;build-dir			.
+build-dir			.
 
-_configure-options
-	--codecsdir=/usr/local/lib/codecs
-	--enable-dynamic-plugins
+configure-options
+;	--codecsdir=/usr/local/lib/codecs
+;	--enable-dynamic-plugins
 	--language=all
-	--enable-sdl
-	--enable-directfb
-	--enable-alsa
+;	--enable-sdl
+;	--enable-directfb
+;	--enable-alsa
 ;	GTK+:
-	--enable-gui
-	--enable-menu
-	--enable-libavcodec_a
-	--disable-fastmemcpy
-	--enable-runtime-cpudetection
+;	--enable-gui
+;	--enable-menu
+;	--enable-libavcodec_a
+;	--disable-fastmemcpy
+;	--enable-runtime-cpudetection
+	--disable-mp3lib
+	--disable-libmpeg2
+;	--disable-liba52
+;	--enable-decoder=
 
 documentation
 	README Copyright LICENSE Changelog AUTHORS
 ;	DOCS
 
-;links				/system/fonts/LCD2-Normal.ttf share/mplayer/subfont.ttf
+links				/system/fonts/LCD2-Normal.ttf share/mplayer/subfont.ttf
+

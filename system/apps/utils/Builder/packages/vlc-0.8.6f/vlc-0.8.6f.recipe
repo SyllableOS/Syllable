@@ -14,7 +14,7 @@ locations			http://download.videolan.org/pub/videolan/vlc/0.8.6f/
 
 recommends
 	zlib
-	sdl >= 1.1.7
+	sdl
 	sdl-image
 	libpng
 	libjpeg
@@ -84,8 +84,16 @@ build-recommends
 	libunicows
 
 configure-options
+	--enable-ncurses
 ;	--disable-wxwidgets
 	--disable-skins2
+;	--enable-directfb
+;	--disable-fb
+;	--enable-loader
+;	--disable-plugins
+;	--enable-mozilla
+;	--with-mad=/usr/libmad
+;	--with-mad-tree=/usr/libmad
 
 documentation
 	README COPYING ABOUT-NLS NEWS ChangeLog MAINTAINERS AUTHORS THANKS

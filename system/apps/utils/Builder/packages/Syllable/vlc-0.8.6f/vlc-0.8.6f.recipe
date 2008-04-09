@@ -4,4 +4,5 @@ authors
 status				testing
 warnings
 	You need to (temporarily) disable the declaration of count_t in /system/development/headers/atheos/types.h
+notes				Won't play MP3 even with LibMAD
 
