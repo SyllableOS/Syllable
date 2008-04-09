@@ -14,8 +14,17 @@ home				www.boost.org
 packages			boost/boost_1_35_0
 
 recommends
+;	Expat and ICU aren't recognised yet:
+	expat
 	icu
 	python
+
+build-dir			.
+
+configure-env
+	EXPAT_INCLUDE	'/usr/expat/include'
+	EXPAT_LIBPATH	'/usr/expat/lib'
+configure-options	--with-icu=/usr/icu
 
 documentation
 	LICENSE_1_0.txt
@@ -23,3 +32,4 @@ documentation
 	index.html boost.css rst.css boost.png
 ;	wiki
 ;	doc
+
