@@ -8,6 +8,7 @@ description			LibMPEG2 is a free library for decoding mpeg-2 and mpeg-1 video st
 licenses			GPL-2
 
 home				libmpeg2.sourceforge.net
+packages			mpeg2dec-0.4.1
 locations			http://libmpeg2.sourceforge.net/files/
 
 recommends			sdl >= 1.2
@@ -20,3 +21,4 @@ documentation		README COPYING NEWS ChangeLog AUTHORS TODO
 build-docs			INSTALL
 ;develop-docs		doc
 internal-docs		CodingStyle
+
