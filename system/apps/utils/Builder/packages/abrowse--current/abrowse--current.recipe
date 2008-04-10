@@ -9,7 +9,7 @@ status				developing
 licenses			LGPL BSD
 
 home				webkit.org
-packages			ABrowse-0.7.1.source
+packages			ABrowse-20080408.source
 locations			http://downloads.syllable.org/sources/applications/ABrowse/
 
 needs
