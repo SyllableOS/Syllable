@@ -15,16 +15,16 @@ home				mlgame.sourceforge.net
 packages			mlgame/MLG115
 
 needs
-	ocaml
 	ocamlsdl
 	sdl
 	sdl-image
+build-needs			ocaml
 
-;build-dir			.
+build-dir			.
 
 _configure-options
 	--with-sdl-prefix=/system/indexes
-	--enable-gl-sdl
+;	--enable-gl-sdl
 
 make-targets
 	all
@@ -35,3 +35,4 @@ documentation
 	Docs/*
 ;build-docs			Docs/INSTALL
 ;develop-docs		Examples
+

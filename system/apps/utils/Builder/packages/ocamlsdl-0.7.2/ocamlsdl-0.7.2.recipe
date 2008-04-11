@@ -14,8 +14,8 @@ packages			ocamlsdl/ocamlsdl-0.7.2
 ;locations			http://www.ocaml-programming.de/godi-backup/
 
 needs
-	ocaml >= 3.08
 	sdl >= 1.2
+build-needs			ocaml >= 3.08
 recommends
 	sdl-mixer >= 1.2
 	sdl-image >= 1.2
@@ -23,13 +23,17 @@ recommends
 	lablgl
 	findlib
 
-;build-dir			.
+build-dir			.
 
 ;configure-options	--with-sdl-prefix=/system/indexes
 
 system-prefix-var	DESTDIR
+install-vars
+	OCAMLLIBDIR		/usr/ocamlsdl/lib/ocaml
+	OCAMLSDLDIR		/usr/ocamlsdl/lib/ocaml/sdl
 
 documentation
 	README COPYING NEWS AUTHORS
 ;	README.macosx META doc
 build-docs			INSTALL
+

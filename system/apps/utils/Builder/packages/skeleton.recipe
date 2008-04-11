@@ -80,7 +80,7 @@ configure-prefix	"--prefix="
 configure-args		--prefix=/usr/foo
 ; Extra variables for configure:
 configure-vars
-	VAR 'value'
+	VAR value
 ; Extra configure options:
 configure-options	--with-option
 
@@ -106,7 +106,7 @@ make-env
 	VAR 'value'
 ; Extra variables for make:
 make-vars
-	VAR 'value'
+	VAR value
 ; Extra make options:
 make-options		-option
 ; Non-standard make targets:
@@ -143,7 +143,7 @@ install-env
 	VAR 'value'
 ; Extra variables for make install:
 install-vars
-	VAR 'value'
+	VAR value
 ; Non-standard install targets:
 install-targets		install
 
@@ -182,3 +182,4 @@ pre-register		<Commands before registration, in the installation directory>
 move-files
 	<Source> <Destination>
 delete-files		<Files to delete from the installation>
+
