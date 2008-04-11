@@ -102,7 +102,8 @@ static KernelSymbol_s g_asKernelSymbols[] = {
 	KSYMBOL( sys_GetTime ),
 	KSYMBOL( sys_SetTime ),
 	KSYMBOL( set_idle_loop_handler ),
-		
+	KSYMBOL( get_system_info ),
+	
 	// Process functions:
 	KSYMBOL( sys_get_process_id ),
 	KSYMBOL( sys_wait4 ),

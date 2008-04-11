@@ -96,8 +96,10 @@ port_id get_app_server_port( void )
  * SEE ALSO:
  ****************************************************************************/
 
-status_t sys_get_system_info( system_info * psInfo, int nVersion )
+status_t do_get_system_info( system_info * psInfo, int nVersion, bool bFromKernel )
 {
+	status_t nRet;
+
 	switch ( nVersion )
 	{
 	case 1:
@@ -132,7 +134,11 @@ status_t sys_get_system_info( system_info * psInfo, int nVersion )
 			}
 
 			sInfo.nKernelVersion = g_nKernelVersion;
-			return ( memcpy_to_user( psInfo, &sInfo, sizeof( sInfo ) ) );
+			if( bFromKernel )
+				nRet = memcpy( psInfo, &sInfo, sizeof( sInfo ) );
+			else
+				nRet = memcpy_to_user( psInfo, &sInfo, sizeof( sInfo ) );
+			return nRet;
 		}
 	case 2:
 		{
@@ -179,7 +185,11 @@ status_t sys_get_system_info( system_info * psInfo, int nVersion )
 			}
 
 			sInfo.nKernelVersion = g_nKernelVersion;
-			return ( memcpy_to_user( psInfo, &sInfo, sizeof( sInfo ) ) );
+			if( bFromKernel )
+				nRet = memcpy( psInfo, &sInfo, sizeof( sInfo ) );
+			else
+				nRet = memcpy_to_user( psInfo, &sInfo, sizeof( sInfo ) );
+			return nRet;
 		}
 	case 3:
 		{
@@ -228,13 +238,29 @@ status_t sys_get_system_info( system_info * psInfo, int nVersion )
 			}
 
 			sInfo.nKernelVersion = g_nKernelVersion;
-			return ( memcpy_to_user( psInfo, &sInfo, sizeof( sInfo ) ) );
+			if( bFromKernel )
+				nRet = memcpy( psInfo, &sInfo, sizeof( sInfo ) );
+			else
+				nRet = memcpy_to_user( psInfo, &sInfo, sizeof( sInfo ) );
+			return nRet;
 		}
 
 	default:
 		printk( "Error: sys_get_system_info() invalid version %d\n", nVersion );
 		return ( -EINVAL );
 	}
+
+
+}
+
+status_t sys_get_system_info( system_info * psInfo, int nVersion )
+{
+	return do_get_system_info( psInfo, nVersion, false );
+}
+
+status_t get_system_info( system_info * psInfo, int nVersion )
+{
+	return do_get_system_info( psInfo, nVersion, true );
 }
 
 /*****************************************************************************
