@@ -18,7 +18,7 @@ configure-options
 ;	-Duseperlio -Dusesfio
 
 documentation
-	README README.Y2K Artistic Copying AUTHORS
+	README Artistic Copying AUTHORS
 ;	May be too huge:
 	Changes
 links

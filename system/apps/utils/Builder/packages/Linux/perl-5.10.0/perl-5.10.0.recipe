@@ -13,7 +13,7 @@ configure-options
 ;	-Dman3dir=/usr/share/man/man3
 
 documentation
-	README README.Y2K Artistic Copying AUTHORS
+	README Artistic Copying AUTHORS
 	README.linux
 ;	May be too huge:
 	Changes
@@ -24,3 +24,4 @@ links
 ;	bin/perl							/usr/bin/perl
 ;	For OpenSSL:
 ;	bin/perl							/usr/local/bin/perl
+
