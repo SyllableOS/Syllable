@@ -13,13 +13,14 @@ home				www.pygame.org
 packages			pygame-1.8.0release
 locations			http://www.pygame.org/ftp/
 
-needs				python >= 2.2
+needs
+	python >= 2.2
+	smpeg
 recommends
 	sdl
 	sdl-mixer >= 1.2
 	sdl-image >= 1.2
 	sdl-ttf >= 2.0
-	smpeg
 	python-numeric
 
 configure-cmd		./setup.py
@@ -31,3 +32,4 @@ documentation
 	docs/*
 ;develop-docs		examples
 build-docs			install.html
+
