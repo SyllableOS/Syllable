@@ -7,8 +7,7 @@ headline			Movie player and (re)encoder
 description
 	MPlayer/MEncoder is a multi-format video player/converter.
 	MPlayer can play most standard video formats out of the box and almost all others with the help of external codecs. MPlayer currently works best from the command line, but visual feedback for many functions is available from its onscreen status display (OSD), which is also used for displaying subtitles. MPlayer also has a GUI with skin support and several unofficial alternative graphical frontends are available.
-	MEncoder is a command line video encoder for advanced users. Unofficial graphical frontends exist but are
-not included.
+	MEncoder is a command line video encoder for advanced users. Unofficial graphical frontends exist but are not included.
 licenses			GPL other
 
 home				www.mplayerhq.hu
