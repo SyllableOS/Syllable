@@ -24,6 +24,11 @@ recommends
 	glitz >= 0.4.4
 	xcb
 	xrender >= 0.6
+test-recommends
+;	For PDF:
+	poppler >= 0.4.1
+;	For SVG:
+	librsvg >= 2.15.0
 
 ;make-shared
 
@@ -40,3 +45,4 @@ documentation
 ;	doc
 build-docs			INSTALL
 internal-docs		CODING_STYLE PORTING_GUIDE RELEASING
+
