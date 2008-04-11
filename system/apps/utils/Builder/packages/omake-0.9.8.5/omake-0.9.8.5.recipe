@@ -14,6 +14,12 @@ locations			http://omake.metaprl.org/downloads/
 build-needs
 	ocaml
 ;	omake
+recommends
+;	Can't find NCurses yet:
+	ncurses
+	fam
+build-recommends
+	ocamlfind
 
 install-prefix-var	PREFIX
 
@@ -34,3 +40,4 @@ documentation
 build-docs			INSTALL
 
 no-strip
+
