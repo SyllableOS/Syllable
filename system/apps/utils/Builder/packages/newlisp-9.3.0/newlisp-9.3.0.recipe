@@ -22,11 +22,12 @@ build-dir			.
 
 make-targets
 ;	linux
-;	linux_utf8
+	linux_utf8
 ;	linux_readline
 ;	linux_utf8_readline
+;	Library only?
 ;	linux_lib
-	linux_lib_utf8
+;	linux_lib_utf8
 
 test-targets		test
 
@@ -45,3 +46,4 @@ documentation
 ;	doc
 build-docs			doc/INSTALL
 develop-docs		examples
+
