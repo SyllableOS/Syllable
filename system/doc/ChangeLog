@@ -1,3 +1,10 @@
+* April 11, 2008, Kaj de Vos *
+
+Gave priority to the resource packages installed in /usr/ over software installed in
+/usr/local/. This means that you can port software according to its standard instructions,
+and then later install an official package for it in /usr/ without having to painfully
+delete the scattered files under /usr/local/.
+
 * March 24, 2008, Kristian Van Der Vliet *
 
 Updated the GeForceFX driver with PCI IDs for newer cards. Untested. Patch from
