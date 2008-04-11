@@ -1,7 +1,28 @@
-260,261d259
-<   *,*-*-syllable)
-<     bytecccompopts="-fno-defer-pop $gcc_warnings";;
-589d586
-<   i[3456]86-*-syllable)		arch=i386; system=gnu;;
-663d659
-<   i386,*,syllable)  aspp='gcc'; asppflags='-c -DSYS_$(SYSTEM)';;
+diff -ru ocaml-3.10.2-original/configure ocaml-3.10.2/configure
+--- ocaml-3.10.2-original/configure	2008-01-04 14:26:38.000000000 +0100
++++ ocaml-3.10.2/configure	2008-04-03 10:55:04.000000000 +0200
+@@ -257,6 +257,8 @@
+     bytecccompopts="-fno-defer-pop $gcc_warnings"
+     # No -lm library
+     mathlib="";;
++  *,*-*-syllable)
++    bytecccompopts="-fno-defer-pop $gcc_warnings";;
+   gcc,alpha*-*-osf*)
+     bytecccompopts="-fno-defer-pop $gcc_warnings"
+     if cc="$bytecc" sh ./hasgot -mieee; then
+@@ -584,6 +586,7 @@
+   i[3456]86-*-cygwin*)          arch=i386; system=cygwin;;
+   i[3456]86-*-darwin*)          arch=i386; system=macosx;;
+   i[3456]86-*-gnu*)             arch=i386; system=gnu;;
++  i[3456]86-*-syllable)         arch=i386; system=gnu;;
+   mips-*-irix6*)                arch=mips; system=irix;;
+   hppa1.1-*-hpux*)              arch=hppa; system=hpux;;
+   hppa2.0*-*-hpux*)             arch=hppa; system=hpux;;
+@@ -657,6 +660,7 @@
+   alpha,*,gnu)      aspp='gcc'; asppflags='-c -DSYS_$(SYSTEM)';;
+   alpha,*,freebsd)  aspp='gcc'; asppflags='-c -DSYS_$(SYSTEM)';;
+   alpha,*,netbsd)   aspp='gcc'; asppflags='-c -DSYS_$(SYSTEM)';;
++  i386,*,syllable)  aspp='gcc'; asppflags='-c -DSYS_$(SYSTEM)';;
+   alpha,*,openbsd)  aspp='gcc'; asppflags='-c -DSYS_$(SYSTEM)';;
+   mips,*,irix)      aspp='as'; asflags='-n32 -O2'; asppflags="$asflags";;
+   sparc,*,bsd)      aspp='gcc'; asppflags='-c -DSYS_$(SYSTEM)';;
