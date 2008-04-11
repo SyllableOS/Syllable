@@ -11,6 +11,7 @@ modules
 	programming/languages/binutils-2.17
 	programming/languages/gcc-4.1.2
 	programming/languages/nasm-0.98.39
+	programming/omake-0.9.8.5
 	programming/make-3.81
 	programming/m4-1.4.8
 	programming/libtool-1.5.22
@@ -36,3 +37,4 @@ modules
 ;	apps/develop/Sourcery
 ;	apps/develop/sIDE
 ;	apps/develop/LayoutEditor
+
