@@ -4,9 +4,9 @@ authors
 status				testing
 
 licenses			LGPL
-home				www.liqwyd.com
-packages			whisper-alpha6.src
-locations			http://www.liqwyd.com/syllable/
+home				www.syllable.org
+packages			Whisper-0.8.source
+locations			http://downloads.syllable.org/sources/applications/Whisper/
 
 build-dir			libsmtp
 
