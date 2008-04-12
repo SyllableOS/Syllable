@@ -2,6 +2,7 @@ authors				Kaj de Vos
 status				testing
 notes				AutoTools configuration insists on using X11
 
+patch				cp Makefile.in.Linux.SDL Makefile.in.syllable
 _patch
 ;	sh ./autogen.sh
 	aclocal
