@@ -1,6 +1,5 @@
 authors				Kaj de Vos
-status				broken
-notes				Insists on using an X11 platform library
+status				testing
 
 title				Anti-Grain Geometry
 headline			A High Quality Rendering Engine for C++
@@ -20,18 +19,18 @@ recommends
 	sdl
 	x11
 
-;patch-config
-patch
+_patch
 ;	sh ./autogen.sh
 	aclocal
 	autoheader
-	autoconf
+;	Bombs out:
+;	autoconf
 	libtoolize --force
 	automake --foreign --add-missing --ignore-deps
 
 ;build-dir			.
 
-configure-options
+_configure-options
 ;	--enable-platform
 ;	--disable-platform
 	--without-x
@@ -39,10 +38,14 @@ configure-options
 ;	--enable-freetype
 ;	--enable-examples
 
-;system-prefix-var	DESTDIR
-;install				true
+install-tree
+	include
+	lib
+install				true
+install-files
+	include/*		include/
+	src/libagg.a	lib/
 
 documentation		readme copying news ChangeLog authors
 build-docs			install
 ;develop-docs		examples
-
