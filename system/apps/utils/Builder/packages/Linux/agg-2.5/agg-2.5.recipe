@@ -1,0 +1,14 @@
+authors				Kaj de Vos
+status				testing
+notes				AutoTools configuration broken
+
+_patch
+;	sh ./autogen.sh
+	aclocal
+	autoheader
+;	Bombs out:
+;	autoconf
+	libtoolize --force
+;	Installs missing files in home directory instead of build directory:
+	automake --foreign --add-missing --ignore-deps
+

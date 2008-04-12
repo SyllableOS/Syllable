@@ -1,0 +1,20 @@
+authors				Kaj de Vos
+status				testing
+notes				AutoTools configuration insists on using X11
+
+_patch
+;	sh ./autogen.sh
+	aclocal
+	autoheader
+	autoconf
+	libtoolize --force
+	automake --foreign --add-missing --ignore-deps
+
+_configure-options
+;	--enable-platform
+;	--disable-platform
+	--without-x
+;	--enable-gpc
+;	--enable-freetype
+;	--enable-examples
+
