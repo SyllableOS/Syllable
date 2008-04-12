@@ -1,0 +1,22 @@
+authors
+	Rui Caridade
+	Kaj de Vos
+status				testing
+
+headline			A free ATSC A/52 stream decoder
+description
+	Liba52 is a free library for decoding ATSC A/52 streams. The A/52 standard is used in a variety of applications, including digital television and DVD. It is also known as AC-3.
+licenses			GPL
+
+home				liba52.sourceforge.net
+packages			a52dec-0.7.4
+locations			http://liba52.sourceforge.net/files/
+
+_configure-options
+	--enable-shared
+	--disable-oss
+
+documentation
+	README COPYING NEWS HISTORY ChangeLog AUTHORS TODO
+;	doc/liba52.txt
+build-docs			INSTALL

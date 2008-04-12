@@ -1,0 +1,31 @@
+authors
+	Rui Caridade
+	Kaj de Vos
+status				testing
+
+inherits			sourceforge
+
+headline			Free Lossless Audio Codec
+description
+	FLAC stands for Free Lossless Audio Codec, an audio format similar to MP3, but lossless, meaning that audio is compressed in FLAC without any loss in quality. This is similar to how Zip works, except with FLAC you will get much better compression because it is designed specifically for audio, and you can play back compressed FLAC files in your favorite player (or your car or home stereo, see supported devices) just like you would an MP3 file.
+	FLAC stands out as the fastest and most widely supported lossless audio codec, and the only one that at once is non-proprietary, is unencumbered by patents, has an open-source reference implementation, has a well documented format and API, and has several other independent implementations.
+licenses			GPL LGPL BSD GFDL
+
+home				flac.sourceforge.net
+packages			flac/flac-1.2.1
+
+build-needs			gawk
+build-recommends	nasm >= 0.98.30
+recommends
+	libogg >= 1.1.2
+	xmms >= 0.9.5.1
+
+; Just for installation:
+build-dir			.
+
+;configure-options	--enable-sse
+
+documentation
+	README COPYING.* AUTHORS
+;	doc/html
+build-docs			INSTALL
