@@ -1,9 +1,11 @@
-; Directives for build recipes.
+; Directives for build recipes
+
 ; Commented-out directives are not implemented yet.
 ; Good style is to use the order of directives here (basically in order of execution).
 
 
-; Recipe information:
+; Recipe information
+
 authors				<Recipe and patches authors, in historical order>
 maintainers			<Recipe maintainers, if not first author>
 status				broken | unstable | deprecated | unmaintained | incomplete | developing | testing | contributed
@@ -12,7 +14,9 @@ notes				<Internal notes>
 
 inherits			<Modules this recipe inherits from>
 
-; Package information:
+
+; Module information
+
 name				<Display name of the package, if different from the file name>
 headline			<Brief description>
 description			<Full description>
@@ -28,7 +32,9 @@ packages
 locations			<Download locations>
 ;archives			<Repositories>
 
-; Dependencies (partly implemented):
+
+; Dependencies (partly implemented)
+
 needs
 	<Build-, install- and run-time dependencies>
 	<Package> [[> | >= | < | <= | <>] <Version>]
@@ -47,9 +53,12 @@ install-needs
 ;conflicts
 ;	<Not needed, and conflicts (as opposed to "needs <>")>
 
+
 ; Patching options
+; Work in the source directory.
+
 ; For replacing config.guess & config.sub with Syllable-aware versions:
-patch-config		[<Directories>]
+patch-config		[<Subdirectories>]
 ; For packages produced with ancient AutoConf versions:
 patch-legacy-config
 patch				<Extra patching commands>
@@ -57,12 +66,17 @@ patch				<Extra patching commands>
 ; Requires LibTool, AutoMake and AutoConf.
 make-shared
 
-; Absolute path or subdirectory relative to source to build in.
+
+; Subdirectory relative to source to build in.
 ; "." to build in the source directory.
 build-dir			<Directory>
 
-; Configuring:
+
+; Configuring
+; Works in the build directory.
+
 ; <configure>
+
 ; [<pre-configure>]
 ; [<configure-env>] <configure-cmd> ([<configure-prefix>] | [<configure-args>]) [<configure-vars>] [<configure-options>]
 
@@ -84,13 +98,16 @@ configure-vars
 ; Extra configure options:
 configure-options	--with-option
 
+
 ; Non-standard install prefix variable, for staging or when configure is not available:
 install-prefix-var	prefix
 
 ; Makefile, if non-standard or in a non-standard location:
 make-file			Makefile
 
-; Building:
+
+; Building
+; Works in the build directory.
 
 ; <make>
 
@@ -113,7 +130,10 @@ make-options		-option
 make-targets		all
 post-make			<Commands following make>
 
-; Testing:
+
+; Testing
+; Works in the build directory.
+
 ; make [<test-options>] <test-targets>
 
 ; Extra test options:
@@ -121,13 +141,17 @@ test-options		-k
 ; Non-standard test targets (default is check):
 test-targets		test
 
+
+; Installing
+; Works in the build directory.
+
+; Execute the installation steps with sudo:
+super-install
+
 ; Don't delete any previous installation:
 merge-install
 
 install-tree		<Extra subdirectories to create>
-
-; Execute the installation steps with sudo:
-super-install
 
 ; Installing:
 ; <install>
@@ -162,6 +186,8 @@ develop-docs		[docs]
 ; Internal documentation for developers of the package itself:
 ;internal-docs		docs
 
+; Remaining installation works in the installation directory.
+
 ; Links to create
 ; The destination link is relative to the package root unless it's an absolute path.
 ; The path of the original is free-form if it is absolute or is marked as relative
@@ -182,4 +208,3 @@ pre-register		<Commands before registration, in the installation directory>
 move-files
 	<Source> <Destination>
 delete-files		<Files to delete from the installation>
-
