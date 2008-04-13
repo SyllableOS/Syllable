@@ -1,0 +1,24 @@
+diff -ru gnash-0.8.2-original/configure gnash-0.8.2/configure
+--- gnash-0.8.2-original/configure	2008-03-04 19:59:39.000000000 +0000
++++ gnash-0.8.2/configure	2008-04-13 12:01:14.000000000 +0000
+@@ -40219,7 +40219,7 @@
+         ac_cv_path_libxml_incl=`$XML2_CONFIG --cflags`
+       fi
+       if test "x$XML2_LIBS" = "x" ; then
+-        ac_cv_path_libxml_lib=`$XML2_CONFIG --libs | sed -e 's:-L/usr/lib::'`
++        ac_cv_path_libxml_lib=`$XML2_CONFIG --libs`
+       fi
+     else
+       { echo "$as_me:$LINENO: result: no" >&5
+diff -ru gnash-0.8.2-original/macros/libXML.m4 gnash-0.8.2/macros/libXML.m4
+--- gnash-0.8.2-original/macros/libXML.m4	2007-11-24 16:47:11.000000000 +0000
++++ gnash-0.8.2/macros/libXML.m4	2008-04-13 12:00:45.000000000 +0000
+@@ -37,7 +37,7 @@
+         ac_cv_path_libxml_incl=`$XML2_CONFIG --cflags`
+       fi
+       if test "x$XML2_LIBS" = "x" ; then
+-        ac_cv_path_libxml_lib=`$XML2_CONFIG --libs | sed -e 's:-L/usr/lib::'`
++        ac_cv_path_libxml_lib=`$XML2_CONFIG --libs`
+       fi
+     else
+       AC_MSG_RESULT(no)

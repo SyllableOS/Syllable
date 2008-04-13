@@ -7,8 +7,7 @@ inherits			gnu
 
 headline			ShockWave Flash movie player
 description
-	Gnash is a GNU Flash movie player. Previously, it was only possible to play flash movies with proprietary software. While there are some other free flash players, none support anything beyond SWF v4. Gnash is based on GameSWF, and supports many SWF v7 features. It can be run as a graphical application, as a Web browser
-plugin, or as a library used by other programs. It is not yet complete; it does not correctly handle every .swf file.
+	Gnash is a GNU Flash movie player. Previously, it was only possible to play flash movies with proprietary software. While there are some other free flash players, none support anything beyond SWF v4. Gnash is based on GameSWF, and supports many SWF v7 features. It can be run as a graphical application, as a web browser plugin, or as a library used by other programs. It is not yet complete; it does not correctly handle every .swf file.
 licenses			GPL-3
 
 home
@@ -28,7 +27,7 @@ needs
 	boost
 	expat | libxml2
 	libjpeg
-build-needs			pkg-config
+build-needs			pkg-config >= 0.9.0
 test-needs
 	dejagnu
 	libming
@@ -36,6 +35,7 @@ test-needs
 	swfmill
 	swftools
 recommends
+	libintl
 	libpng
 	freetype
 	fontconfig
@@ -50,8 +50,13 @@ recommends
 	ghelp
 	mesa3d
 	gstreamer >= 0.10
+	libvorbis
 	libmad
+	libtheora
+	libdc1394
+	libgsm
 	curl
+	netcat
 	gettext
 	kde
 	qt
@@ -60,13 +65,24 @@ recommends
 	dbus
 	python
 	mysql
+	libdts
+build-recommends	doxygen
 
 configure-options
+;	--enable-cygnal
 ;	--enable-sdk-install
 ;	--enable-allstatic
 ;	--with-extensions=
 ;	--disable-plugins
 ;	--with-plugindir=
+;	--with-shm=posix
+;	--with-shm=sysv
+;	--disable-mit-shm
+	--with-boost-incl=/usr/boost/include
+	--with-boost-lib=/usr/boost/lib
+	--with-agg-incl=/usr/agg/include
+;	--with-agg-lib=/usr/agg/lib
+;	--with-libxml-lib=/usr/libxml2/lib
 ;	--enable-write
 	--enable-gui=sdl
 ;	--enable-gui=gtk,kde
@@ -90,3 +106,4 @@ _make-targets
 documentation
 	README COPYING ABOUT-NLS NEWS ChangeLog AUTHORS TODO
 ;	ChangeLog-*
+

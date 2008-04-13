@@ -1,0 +1,35 @@
+authors
+	Kelly Wilson
+	Kaj de Vos
+status				broken
+warnings			Needs libpthread.so in /usr/lib/.
+notes				Boost PThreads assertion failure on loading a movie
+
+configure-env		CXXFLAGS "$CXXFLAGS -DHAVE_SHMGET -DHAVE_SHMAT -DHAVE_SHMDT"
+configure-options
+;	--enable-cygnal
+;	--enable-sdk-install
+;	--enable-allstatic
+;	--with-extensions=
+;	--disable-plugins
+;	--with-plugindir=
+;	--disable-mit-shm
+	--with-boost-incl=/usr/boost/include
+	--with-boost-lib=/usr/boost/lib
+	--with-agg-incl=/usr/agg/include
+;	--with-agg-lib=/usr/agg/lib
+;	--with-libxml-lib=/usr/libxml2/lib
+;	--enable-write
+	--enable-gui=sdl
+;	--enable-gui=gtk,kde
+;	--disable-menus
+;	--enable-renderer=opengl
+;	--enable-renderer=ogl,cairo
+	--enable-renderer=agg
+	--enable-media=ffmpeg
+;	--enable-media=gst
+;	--enable-media=mad
+;	--enable-expat
+;	For documentation:
+;	--enable-docbook
+
