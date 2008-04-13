@@ -33,3 +33,10 @@ configure-options
 ;	For documentation:
 ;	--enable-docbook
 
+install-tree
+	bin
+	bin/lib
+install-files
+	/usr/libtool/lib/libltdl.so.3							bin/lib/
+	/usr/boost/lib/libboost_thread-gcc41-mt-1_35.so.1.35.0	bin/lib/
+
