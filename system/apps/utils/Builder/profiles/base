@@ -17,6 +17,9 @@ resources
 	system/resources/wallpapers			wallpapers/LucasMurad/*.png
 	system/resources/wallpapers			wallpapers/LucasMurad/*.jpg
 	system/resources/wallpapers			wallpapers/LukasVeselovsky/*.png
+;	Servers:
+	etc									configuration/vsftpd.conf
+	etc									configuration/rsyncd.conf
 
 modules
 	other/fonts/liberation-fonts-0.2

@@ -7,21 +7,34 @@ locations			http://www.linuxfromscratch.org/blfs/downloads/svn/
 
 make				true
 
+;super-install
 system-prefix-var	DESTDIR
 
 install-tree
 install-targets
-;	As root:
-	install-service-dhclient
-;	Server:
-	install-dhcp
-;	Firewall:
-	install-iptables
 ;	Sound:
 	install-alsa
+;	Firewall:
+	install-iptables
 ;	OpenSSH server:
 	install-sshd
+;	As root:
+	install-service-dhclient
+;	DHCP server:
+	install-dhcp
+;	BIND DNS server:
+	install-bind
+;	Apache web server:
+	install-apache
+;	SaMBa server:
+	install-samba
+	install-winbind
+;	VSFTPD FTP server:
+	install-vsftpd
+;	RSync server:
+	install-rsyncd
 
 documentation		README LICENSE ChangeLog MAINTAINERS
 ; Outdated?
 ;build-docs			lfs-bootscripts.version
+
