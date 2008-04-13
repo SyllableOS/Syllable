@@ -1,7 +1,8 @@
 authors
 	Jamie Clarkson
 	Kaj de Vos
-status				developing
+status				broken
+notes				Glut doesn't build
 
 inherits			sourceforge
 
@@ -12,8 +13,6 @@ licenses			MIT LGPL other
 
 home				www.mesa3d.org
 packages			mesa3d/MesaLib-6.0.1
-
-build-dir			.
 
 make-targets		syllable
 
@@ -33,3 +32,4 @@ _links
 	lib/libGLU.so		/system/libraries/
 	lib/libOSMesa.so	/system/libraries/
 	include/GL			/system/development/headers/
+
