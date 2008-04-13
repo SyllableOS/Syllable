@@ -2,6 +2,11 @@ root:$1$$oCLuEVgI1iAqOA8pwkzAg1:0:root
 bin:*:1:
 system:*:2:
 network:*:3:
+named:*:20:named
+apache:*:25:apache
+ftp:*:45:ftp
+vsftpd:*:47:vsftpd
+rsyncd:*:48:rsyncd
 sshd:*:50:sshd
 nogroup:*:99:
 users:*:100:
