@@ -16,6 +16,9 @@ install-targets
 	install-alsa
 ;	Firewall:
 	install-iptables
+;	Handled by CUPS package init script:
+;	CUPS server:
+;	install-cups
 ;	OpenSSH server:
 	install-sshd
 ;	As root:
@@ -37,4 +40,3 @@ install-targets
 documentation		README LICENSE ChangeLog MAINTAINERS
 ; Outdated?
 ;build-docs			lfs-bootscripts.version
-
