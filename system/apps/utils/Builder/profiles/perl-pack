@@ -1,9 +1,9 @@
-title				The PERL Pit
+title				The Perl Pit
 
-name				PERL-Pit
-headline			The PERL language and accessories
+name				PerlPit
+headline			The Perl language and accessories
 description
-	The PERL Pit collection of PERL packages. This pack contains PERL 5.8.8, AutoConf 2.61 and AutoMake 1.9.6. They are needed for building Syllable from source code and for some other packages and uses.
+	The Perl Pit collection of Perl packages. This pack contains Perl 5.8.8, AutoConf 2.61 and AutoMake 1.9.6. They are needed for building Syllable from source code and for some other packages and uses.
 
 modules
 	programming/languages/perl-5.10.0
@@ -14,4 +14,5 @@ modules
 ;	programming/autoconf-2.13
 ;	programming/automake-1.4-p6
 	programming/intltool-0.36.2
+	programming/net-ssleay-1.30
 	programming/xml-parser-2.34
