@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.7.47
+# Version 0.7.48
 # Copyright (c) 2002-2008 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -1602,8 +1602,10 @@ def configureCommand port
 			'configure'
 end
 
-def makeCommand port
-	'make' + ((file = getRecipe(port)['make-file']) ? ' -f ' + file : '')
+def makeCommand target
+	native? target ?
+		exists?('OMakeroot') ? 'omake' : 'make' :
+		'make' + ((file = getRecipe(target)['make-file']) ? ' -f ' + file : '')
 end
 
 def buildDir target
@@ -1833,7 +1835,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.7.47',
+	puts 'Syllable Build System 0.7.48',
 		'Copyright (c) 2002-2008 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
@@ -2070,4 +2072,3 @@ else
 	@log.close
 	exit @log.failures.length  # FIXME: only works when processing a profile
 end
-
