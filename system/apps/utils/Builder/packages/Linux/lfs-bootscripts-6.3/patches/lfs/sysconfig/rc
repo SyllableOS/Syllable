@@ -1,0 +1,55 @@
+########################################################################
+# Begin /etc/sysconfig/rc
+#
+# Description : rc script configuration
+#
+# Authors     : Kaj de Vos
+#
+# Version     : 0.1
+#
+# Notes       : Selected parts from /system/init.sh
+#
+########################################################################
+
+rc_base=/etc/rc.d
+rc_functions=${rc_base}/init.d/functions
+network_devices=/etc/sysconfig/network-devices
+
+
+# Silently empty the temporary directory
+if [ "$TEMP" != '' ]
+then
+	rm -r $TEMP/* > /dev/null 2>&1 &
+fi
+
+
+# inetd is a special case and is always started first if INetUtils is
+# installed.
+
+if [ -e /usr/indexes/libexec/inetd ]
+then
+	/usr/indexes/libexec/inetd &
+fi
+
+# Packages that require initalisation can include init and early-init directories,
+# which should contain the init script(s). E.g. Apache would have init/apache which
+# would call apachectl, OpenSSH would have init/sshd which would start
+# sshd etc.
+# The package manager will collect all of these scripts together in
+# /usr/indexes/early-init/ and /usr/indexes/init/; all we need to do is run
+# each script in turn.
+
+# Run the late init scripts
+
+for pkg_init in `ls /system/indexes/init/`
+do
+	source /system/indexes/init/$pkg_init
+done
+
+for pkg_init in `ls /usr/indexes/init/`
+do
+	source /usr/indexes/init/$pkg_init
+done
+
+# Do user initialisation and exit
+source /system/user-init.sh
