@@ -73,9 +73,9 @@ struct gfx_device g_sDevices[] = {
 	{0x8086, 0x258A, "Intel", "E7221G"},
 	{0x8086, 0x2592, "Intel", "i915GM"},
 	{0x8086, 0x2772, "Intel", "i945G"},
+	{0x8086, 0x2792, "Intel", "i945GME"},
 	{0x8086, 0x27A2, "Intel", "i945GM"}
 };
-
 
 #define flush_agp_cache() asm volatile("wbinvd":::"memory")
 

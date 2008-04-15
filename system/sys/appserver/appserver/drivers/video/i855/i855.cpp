@@ -180,6 +180,12 @@ i855::i855(  int nFd ) :
 			bSwapBases = true;
 			strcpy( zGPUName, "i945G" );
 		break;
+		case 0x2792:
+			m_bTwoPipes = true;
+			bTweakBios = true;
+			bSwapBases = true;
+			strcpy( zGPUName, "i945GME" );
+		break;
 		case 0x27A2:
 			m_bTwoPipes = true;
 			bTweakBios = true;
