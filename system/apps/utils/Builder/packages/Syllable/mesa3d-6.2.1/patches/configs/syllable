@@ -1,0 +1,43 @@
+# Configuration for Syllable
+# Written by Dee Sharpe
+# Updated by Kaj de Vos
+
+include $(TOP)/configs/default
+
+CONFIG_NAME = syllable
+
+# Compiler and flags
+CC = gcc
+CXX = g++
+MAKE = make
+
+DEFINES = -DGNU_ASSEMBLER -DUSE_X86_ASM -DUSE_MMX_ASM -DUSE_3DNOW_ASM \
+		  -DUSE_SSE_ASM -D_GNU_SOURCE -DSYLLABLE -DDEBUG
+
+INCLUDES = -I/usr/indexes/include -I/system/indexes/include \
+           -I/system/development/headers/gui -I/system/development/headers
+
+CFLAGS = -Wall -O3 -fPIC -Wno-multichar -ffast-math \
+		  $(DEFINES) $(INCLUDES)
+
+CXXFLAGS = $(CFLAGS) -Wno-ctor-dtor-privacy -fpermissive
+
+GLU_CFLAGS = 
+
+GLUT_CFLAGS = -fexceptions
+
+ASM_SOURCES = $(X86_SOURCES)
+
+INSTALL_PREFIX = /usr/mesa3d
+SRC_DIRS = mesa glu glut/syllable
+GLU_DIRS = sgi
+DRIVER_DIRS = syllable
+
+# Which subdirs under $(TOP)/progs/ to enter:
+#PROGRAM_DIRS = syllable demos osdemos redbook samples tests
+
+GL_LIB_DEPS = -lsyllable -lm
+OSMESA_LIB_DEPS = -L$(TOP)/lib -lGL -lsyllable
+GLU_LIB_DEPS = -L$(TOP)/lib -lGL -lsyllable  -lm
+GLUT_LIB_DEPS = -L$(TOP)/lib -lGL -lsyllable  -lm
+APP_LIB_DEPS = -lglut -lGL -lsyllable  -lm

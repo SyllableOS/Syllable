@@ -1,0 +1,101 @@
+diff -ru mesa3d-6.2.1-original/bin/mklib mesa3d-6.2.1/bin/mklib
+--- mesa3d-6.2.1-original/bin/mklib	2004-10-16 17:05:43.000000000 +0200
++++ mesa3d-6.2.1/bin/mklib	2005-08-16 14:24:24.000000000 +0200
+@@ -477,6 +477,19 @@
+ 	FINAL_LIBS=${LIBNAME}
+ 	;;
+ 
++    'syllable')
++        if [ $STATIC = 1 ] ; then
++            LIBNAME="lib${LIBNAME}.a"
++            echo "mklib: Making Syllable static library: " ${LIBNAME}
++            ar -cru "${LIBNAME}" ${OBJECTS}
++        else
++	    LIBNAME="lib${LIBNAME}.so"
++	    echo "mklib: Making Syllable shared library: " ${LIBNAME}
++	    gcc -shared -W1 -Xlinker "-soname=${LIBNAME}" -L/system/libraries -lsyllable ${DEPS} ${OBJECTS} -o "${LIBNAME}"
++	fi
++	FINAL_LIBS=${LIBNAME}
++	;;
++
+     'QNX')
+ 	LIBNAME="lib${LIBNAME}.a"
+ 	echo "mklib: Making QNX library: " ${LIBNAME}
+diff -ru mesa3d-6.2.1-original/Makefile mesa3d-6.2.1/Makefile
+--- mesa3d-6.2.1-original/Makefile	2004-12-05 19:25:19.000000000 +0100
++++ mesa3d-6.2.1/Makefile	2005-08-20 12:24:10.000000000 +0200
+@@ -49,6 +49,7 @@
+ aix-gcc \
+ aix-static \
+ beos \
++syllable \
+ darwin \
+ darwin-static \
+ freebsd \
+@@ -194,6 +195,9 @@
+ 	$(DIRECTORY)/src/mesa/tnl_dd/imm/NOTES.imm			\
+ 	$(DIRECTORY)/src/mesa/drivers/beos/*.cpp			\
+ 	$(DIRECTORY)/src/mesa/drivers/beos/Makefile			\
++	$(DIRECTORY)/src/mesa/drivers/syllable/*.cpp			\
++	$(DIRECTORY)/src/mesa/drivers/syllable/*.[ch]			\
++	$(DIRECTORY)/src/mesa/drivers/syllable/Makefile			\
+ 	$(DIRECTORY)/src/mesa/drivers/common/*.[ch]			\
+ 	$(DIRECTORY)/src/mesa/drivers/common/descrip.mms		\
+ 	$(DIRECTORY)/src/mesa/drivers/dos/*.[chS]			\
+@@ -278,6 +282,9 @@
+ 	$(DIRECTORY)/src/glut/beos/*.[ch]		\
+ 	$(DIRECTORY)/src/glut/beos/*.cpp		\
+ 	$(DIRECTORY)/src/glut/beos/Makefile		\
++	$(DIRECTORY)/src/glut/syllable/*.[ch]		\
++	$(DIRECTORY)/src/glut/syllable/*.cpp		\
++	$(DIRECTORY)/src/glut/syllable/Makefile		\
+ 	$(DIRECTORY)/src/glut/dos/*.[ch]		\
+ 	$(DIRECTORY)/src/glut/dos/Makefile.DJ		\
+ 	$(DIRECTORY)/src/glut/dos/PC_HW/*.[chS]		\
+@@ -285,6 +292,8 @@
+ 	$(DIRECTORY)/src/glut/ggi/Makefile		\
+ 	$(DIRECTORY)/progs/beos/*.cpp			\
+ 	$(DIRECTORY)/progs/beos/Makefile		\
++	$(DIRECTORY)/progs/syllable/*.cpp			\
++	$(DIRECTORY)/progs/syllable/Makefile		\
+ 	$(DIRECTORY)/progs/images/*.rgb			\
+ 	$(DIRECTORY)/progs/images/*.rgba		\
+ 	$(DIRECTORY)/progs/demos/Makefile*		\
+diff -ru mesa3d-6.2.1-original/src/glu/sgi/Makefile mesa3d-6.2.1/src/glu/sgi/Makefile
+--- mesa3d-6.2.1-original/src/glu/sgi/Makefile	2004-08-16 09:46:28.000000000 +0200
++++ mesa3d-6.2.1/src/glu/sgi/Makefile	2005-08-16 14:28:00.000000000 +0200
+@@ -127,6 +127,9 @@
+ 	@if [ "${CONFIG_NAME}" = "beos" ] ; then \
+ 		echo "$(GLU_LIB_NAME) not build under BeOS, but integrated into ${GL_LIB_NAME}." ; \
+ 		exit 0 ; \
++	elif [ "${CONFIG_NAME}" = "syllable" ] ; then \
++		echo "$(GLU_LIB_NAME) not built under Syllable, but integrated into ${GL_LIB_NAME}." ; \
++		exit 0 ; \
+ 	else \
+ 		$(MAKE) "${LIB_DIR}/${GLU_LIB_NAME}" ; \
+ 	fi
+diff -ru mesa3d-6.2.1-original/src/mesa/Makefile mesa3d-6.2.1/src/mesa/Makefile
+--- mesa3d-6.2.1-original/src/mesa/Makefile	2004-10-04 16:44:50.000000000 +0200
++++ mesa3d-6.2.1/src/mesa/Makefile	2005-08-09 13:56:15.000000000 +0200
+@@ -24,8 +24,10 @@
+ 		$(MAKE) linux-solo ; \
+ 	elif [ "${DRIVER_DIRS}" = "osmesa" ] ; then \
+ 		$(MAKE) osmesa-only ; \
+-	elif [ "$(DRIVER_DIRS)" = "beos" ]; then \
++	elif [ "${DRIVER_DIRS}" = "beos" ]; then \
+ 		$(MAKE) beos ; \
++	elif [ "${DRIVER_DIRS}" = "syllable" ]; then \
++		$(MAKE) syllable ; \
+ 	else \
+ 		$(MAKE) stand-alone ; \
+ 	fi
+@@ -34,6 +36,9 @@
+ beos: depend subdirs mesa.a
+ 	cd drivers/beos; $(MAKE)
+ 
++# Syllable driver target
++syllable: depend subdirs mesa.a
++	cd drivers/syllable; $(MAKE)
+ 
+ ######################################################################
+ # Linux solo DRI drivers
