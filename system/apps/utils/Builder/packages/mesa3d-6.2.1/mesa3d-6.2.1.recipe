@@ -14,7 +14,7 @@ home				www.mesa3d.org
 packages
 	mesa3d/MesaLib-6.2.1
 ;	mesa3d/MesaGlut-6.2.1
-;	mesa3d/MesaDemos-6.2.1
+	mesa3d/MesaDemos-6.2.1
 
 install-tree
 	include
