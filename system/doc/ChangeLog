@@ -1,3 +1,7 @@
+* April 15, 2008, Kristian Van Der Vliet *
+
+Detect the Intel i945GME chip with the i855 driver.
+
 * April 11, 2008, Kaj de Vos *
 
 Gave priority to the resource packages installed in /usr/ over software installed in
