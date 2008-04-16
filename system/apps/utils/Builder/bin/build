@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.7.50
+# Version 0.7.51
 # Copyright (c) 2002-2008 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -1613,7 +1613,7 @@ def configureCommand port
 end
 
 def makeCommand target
-	native? target ?
+	native?(target) ?
 		exists?('OMakeroot') ? 'omake' : 'make' :
 		'make' + ((file = getRecipe(target)['make-file']) ? ' -f ' + file : '')
 end
@@ -1845,7 +1845,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.7.50',
+	puts 'Syllable Build System 0.7.51',
 		'Copyright (c) 2002-2008 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
