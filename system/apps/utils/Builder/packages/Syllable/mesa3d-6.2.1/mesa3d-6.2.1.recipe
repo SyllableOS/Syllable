@@ -2,6 +2,8 @@ authors
 	Jamie Clarkson
 	Kaj de Vos
 	Dee Sharpe
-status				developing
+status				broken
+notes				Port incomplete
 
 make-targets		syllable
+
