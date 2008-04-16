@@ -1,0 +1,24 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			sourceforge
+
+headline			Library for ID3 tags
+description
+	Libid3tag is a library for reading and (eventually) writing ID3 tags, both ID3v1 and the various versions of ID3v2.
+licenses			GPL-2+
+
+home				www.underbit.com/products/mad/
+packages			mad/libid3tag-0.15.1b
+;locations			ftp://ftp.mars.org/pub/mpeg/
+
+needs				zlib >= 1.1.4
+
+configure-options
+;	--disable-shared
+	--disable-debugging
+
+system-prefix-var	DESTDIR
+
+documentation		README COPYRIGHT COPYING CHANGES CREDITS TODO
+
