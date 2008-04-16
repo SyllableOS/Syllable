@@ -16,6 +16,8 @@ packages
 ;	mesa3d/MesaGlut-6.2.1
 	mesa3d/MesaDemos-6.2.1
 
+build-needs			makedepend
+
 install-tree
 	include
 	include/gui
@@ -33,3 +35,4 @@ _links
 	lib/libGLU.so		/system/libraries/
 	lib/libOSMesa.so	/system/libraries/
 	include/GL			/system/development/headers/
+
