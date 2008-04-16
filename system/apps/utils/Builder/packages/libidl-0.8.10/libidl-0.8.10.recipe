@@ -1,0 +1,26 @@
+authors
+	Dee Sharpe
+	Kaj de Vos
+status				testing
+
+headline			CORBA IDL and Mozilla XPIDL compiling library
+description
+	LibIDL is a library for creating trees of CORBA Interface Definition Language (IDL) files, which is a specification for defining portable interfaces. LibIDL was initially written for ORBit (the ORB from the GNOME project, and the primary means of libIDL distribution). However, the functionality was designed to be as reusable and portable as possible.
+licenses			LGPL
+
+home				andrewtv.org/libIDL/
+packages			libIDL-0.8.10
+locations
+	ftp://ftp.gnome.org/pub/GNOME/sources/libIDL/0.8/
+	http://ftp.gnome.org/pub/GNOME/sources/libIDL/0.8/
+
+needs				glib
+build-recommends
+	pkg-config
+;	flex
+;	yacc
+
+;make-shared
+
+documentation		README COPYING BUGS NEWS ChangeLog AUTHORS MAINTAINERS
+internal-docs		HACKING
