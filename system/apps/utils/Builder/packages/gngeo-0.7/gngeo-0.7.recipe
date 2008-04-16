@@ -20,6 +20,8 @@ needs
 ;	NeoGeo BIOS
 build-recommends	nasm >= 0.98
 
+build-dir			.
+
 ;configure-options	--disable-i386
 
 documentation		README COPYING FAQ NEWS ChangeLog AUTHORS TODO
