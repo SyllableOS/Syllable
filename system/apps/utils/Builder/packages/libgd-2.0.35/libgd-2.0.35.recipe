@@ -10,6 +10,7 @@ description
 licenses			other
 
 homepage			www.libgd.org
+packages			gd-2.0.35
 locations			http://www.libgd.org/releases/
 
 recommends
@@ -20,3 +21,4 @@ recommends
 	xpm
 
 documentation		README* readme.jpn COPYING index.html NEWS
+
