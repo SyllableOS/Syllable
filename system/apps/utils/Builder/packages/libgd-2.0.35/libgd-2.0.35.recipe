@@ -18,7 +18,12 @@ recommends
 	libpng
 	libjpeg
 	freetype
+	fontconfig
 	xpm
+
+_configure-options
+	--disable-shared
+	--with-fontconfig=/usr/fontconfig
 
 documentation		README* readme.jpn COPYING index.html NEWS
 
