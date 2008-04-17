@@ -260,10 +260,10 @@ modules
 ;	other/keymaps
 ;	sys/include
 
-	system linux/linux-2.6.22.1-headers
-;	For bootstrapping:
-;	bootstrap linux/module-init-tools--bootstrap
-	system linux/linux-2.6.22.1
+	system linux/linux-2.6.25-headers
+;	For bootstrapping a different kernel version:
+	bootstrap linux/module-init-tools--bootstrap
+	system linux/linux-2.6.25
 
 ;	Kernel modules
 

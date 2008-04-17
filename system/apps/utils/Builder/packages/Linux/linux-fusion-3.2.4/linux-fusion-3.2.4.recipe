@@ -1,7 +1,7 @@
 authors				Kaj de Vos
 status				testing
 warnings
-	Is specific to linux-2.6.22.1-Syllable kernel.
+	Is specific to linux-2.6.25-Syllable kernel.
 	Builds upon the running kernel!
 	Needs the kernel source in /lib/modules/<kernel>/build/.
 	Installation only works on a host system where depmod was compiled for the same kernel modules location.
@@ -21,5 +21,5 @@ install-tree
 documentation		README ChangeLog TODO
 
 ; Not necessary due to the relative /lib/modules link:
-;move-files			/lib/modules/2.6.22.1-Syllable/drivers /system/resources/linux/2.6.22.1/lib/modules/2.6.22.1-Syllable/
+;move-files			/lib/modules/2.6.25-Syllable/drivers /system/resources/linux/2.6.25/lib/modules/2.6.25-Syllable/
 ;delete-files		/lib/modules

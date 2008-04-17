@@ -1,0 +1,75 @@
+authors				Kaj de Vos
+status				testing
+warnings
+	Installation only works on a host system where depmod was compiled for the same kernel modules location.
+
+inherits			linux-2.6.25-headers
+
+headline			The Linux Kernel
+description
+	Linux is a clone of the Unix kernel, written from scratch by Linus Torvalds with assistance from a loosely-knit team of hackers across the Net. It aims towards POSIX and Single UNIX Specification compliance. It has all the features you would expect in a modern fully-fledged Unix kernel, including true multitasking, virtual memory, shared libraries, demand loading, shared copy-on-write executables, proper memory management, and TCP/IP networking.
+
+_build-needs
+;	For make menuconfig:
+	ncurses
+;	For make xconfig:
+	qt
+install-needs		module-init-tools
+
+patch
+;	For external kernel modules:
+	SOURCE=$PWD
+	sudo mkdir --parents /lib/modules/2.6.25-Syllable
+	cd /lib/modules/2.6.25-Syllable
+	sudo ln -sf $SOURCE build
+;	Make the kernel modules installation go right:
+	ln -sf ../system/resources/linux/2.6.25/lib/modules $IMAGE/lib/
+
+; Headers should already be there:
+;merge-install
+
+; depmod has a hard-coded path to the collected modules from different kernel versions,
+; that it inserts into the installation path. To allow the kernel to install its modules
+; into its own directory, we patch the extra path away in the Linux Makefile.
+install-prefix-var	INSTALL_MOD_PATH
+
+pre-make
+	make mrproper
+	cp config-2.6.25 .config
+; $INSTALL_MOD_PATH must be empty:
+make				make -j3
+; CPUs + 1:
+make-options		-j3
+_make-targets
+;	menuconfig
+;	xconfig
+;	Updates configuration:
+;	oldconfig
+	all
+
+install-tree
+install-targets		modules_install
+install-files
+	arch/i386/boot/bzImage	kernel
+	System.map				System.map
+	.config					config-2.6.25
+;	Documentation			.
+
+documentation		Documentation/*
+
+_links
+;	include											/
+;	For linux-fusion:
+;	include/linux									/usr/include/
+;	lib/modules										/lib/
+;	../system/indexes/lib/modules					/lib/
+;	Get external kernel modules to install themselves among this kernel's modules:
+	../system/resources/linux/2.6.25/lib/modules	/lib/
+
+;pre-register		mkinitrd /boot/initrd-2.6.22.1.img 2.6.25
+
+;move-files			Documentation/* /usr/share/doc/linux-2.6.25/
+delete-files
+;	Symlinks to the kernel source on the build host:
+	lib/modules/2.6.25-Syllable/build
+	lib/modules/2.6.25-Syllable/source
