@@ -1,6 +1,7 @@
 authors				Kaj de Vos
 status				testing
 warnings
+	Modifies the kernel modules area in the running system!
 	Installation only works on a host system where depmod was compiled for the same kernel modules location.
 
 inherits			linux-2.6.25-headers
@@ -17,16 +18,13 @@ _build-needs
 install-needs		module-init-tools
 
 patch
-;	For external kernel modules:
+;	Make Linux build directory available from the host system for external kernel modules:
 	SOURCE=$PWD
 	sudo mkdir --parents /lib/modules/2.6.25-Syllable
 	cd /lib/modules/2.6.25-Syllable
 	sudo ln -sf $SOURCE build
-;	Make the kernel modules installation go right:
+;	Make the kernel modules installation go into the system image:
 	ln -sf ../system/resources/linux/2.6.25/lib/modules $IMAGE/lib/
-
-; Headers should already be there:
-;merge-install
 
 ; depmod has a hard-coded path to the collected modules from different kernel versions,
 ; that it inserts into the installation path. To allow the kernel to install its modules
@@ -38,7 +36,7 @@ pre-make
 	cp config-2.6.25 .config
 ; $INSTALL_MOD_PATH must be empty:
 make				make -j3
-; CPUs + 1:
+; For optimal build speed, number of CPUs + 1:
 make-options		-j3
 _make-targets
 ;	menuconfig

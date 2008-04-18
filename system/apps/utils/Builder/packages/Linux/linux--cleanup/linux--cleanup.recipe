@@ -1,6 +1,8 @@
 authors				Kaj de Vos
 status				testing
-warnings			Is specific to linux-2.6.25-Syllable kernel.
+warnings
+	Cleans up kernel modules area in the running system!
+	Is specific to linux-2.6.25-Syllable kernel!
 
 ; Overwrites the built kernel source. We don't need it again, but at least
 ; it prevents the huge source tree from being unregistered:
@@ -17,10 +19,10 @@ links
 ;	lib/modules									/lib/
 	/system/resources/linux/2.6.25/lib/modules	/lib/
 ;	Give the system access to modules of all kernel versions:
-;	This however leads depmod to create module files within the symlink pool:
+;	This, however, leads depmod to create module files within the symlink pool:
 ;	/system/indexes/lib/modules					/lib/
 
+; Source is not there any more because it's moved to linux--cleanup, so it did not get unregistered:
 _delete-files
-;	Source is not there any more because it's moved to linux--cleanup, so it did not get unregistered:
 	/system/indexes/lib/modules/2.6.25-Syllable/build
 	/system/indexes/lib/modules/2.6.25-Syllable/source

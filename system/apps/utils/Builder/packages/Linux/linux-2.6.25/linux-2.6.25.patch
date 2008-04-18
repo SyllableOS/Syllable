@@ -1,17 +1,14 @@
-diff -ru linux-2.6.22.1.original/Makefile linux-2.6.22.1/Makefile
---- linux-2.6.22.1.original/Makefile	2007-07-10 18:56:30.000000000 +0000
-+++ linux-2.6.22.1/Makefile	2007-11-29 02:09:47.000000000 +0000
-@@ -990,11 +990,11 @@
- ifeq "$(strip $(INSTALL_MOD_PATH))" ""
- depmod_opts	:=
- else
--depmod_opts	:= -b $(INSTALL_MOD_PATH) -r
-+depmod_opts	:= -b $(IMAGE) -r
- endif
- PHONY += _modinst_post
- _modinst_post: _modinst_
--	if [ -r System.map -a -x $(DEPMOD) ]; then $(DEPMOD) -ae -F System.map $(depmod_opts) $(KERNELRELEASE); fi
-+	if [ -r System.map -a -x $(DEPMOD) ]; then depmod -ae -F System.map $(depmod_opts) $(KERNELRELEASE); fi
- 
- else # CONFIG_MODULES
+diff -ru linux-2.6.25-original/Makefile linux-2.6.25/Makefile
+--- linux-2.6.25-original/Makefile	2008-04-17 02:49:44.000000000 +0000
++++ linux-2.6.25/Makefile	2008-04-17 14:39:57.000000000 +0000
+@@ -1543,8 +1543,8 @@
+ quiet_cmd_depmod = DEPMOD  $(KERNELRELEASE)
+       cmd_depmod = \
+ 	if [ -r System.map -a -x $(DEPMOD) ]; then                              \
+-		$(DEPMOD) -ae -F System.map                                     \
+-		$(if $(strip $(INSTALL_MOD_PATH)), -b $(INSTALL_MOD_PATH) -r)   \
++		depmod -ae -F System.map                                     \
++		$(if $(strip $(INSTALL_MOD_PATH)), -b $(IMAGE) -r)   \
+ 		$(KERNELRELEASE);                                               \
+ 	fi
  
