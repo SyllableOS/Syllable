@@ -1,0 +1,52 @@
+authors				Kaj de Vos
+status				testing
+
+name				Net:Iproute2
+headline			Modern network configuration replacement for ifconfig
+description
+	Iproute2 is a collection of utilities for controlling TCP / IP networking and traffic control in Linux.
+	Most network configuration manuals still refer to ifconfig and route as the primary network configuration tools, but ifconfig is known to behave inadequately in modern network environments. They should be deprecated, but most distros still include them. Most network configuration systems make use of ifconfig and thus provide a limited feature set. The /etc/net project aims to support most modern network technologies, as it doesn't use ifconfig and allows a system administrator to make use of all iproute2 features, including traffic control.
+	Iproute2 consists of several tools, of which the most important are ip and tc. ip controls IPv4 and IPv6 configuration and tc stands for traffic control. Both tools print detailed usage messages and are accompanied by a set of manpages.
+licenses			GPL
+
+home				linux-net.osdl.org/index.php/Iproute2
+locations			http://developer.osdl.org/dev/iproute2/download/
+
+needs				db 1.85
+build-needs
+;	For headers:
+	linux
+	flex
+	bison
+; For arpd:
+
+;build-dir			.
+
+;configure			true
+
+;make-env			CPPFLAGS "-I$IMAGE/include $CPPFLAGS"
+_make-env
+;	CPPFLAGS "-I$IMAGE/system/develoment/resources/linux/2.6.25/include $CPPFLAGS"
+;	Private libs conflict with system libs, and so need to be first when bootstrapping:
+	LDFLAGS "-L../lib $LDFLAGS"
+;make-vars
+;	FHS compatibility:
+;	SBINDIR '/sbin'
+;	Doesn't work:
+;	KERNEL_INCLUDE "$IMAGE/system/develoment/resources/linux/2.6.25/include"
+
+system-prefix-var	DESTDIR
+install-tree
+; FHS compatibility:
+;install-vars		SBINDIR '/sbin'
+
+documentation
+	README* COPYING ChangeLog
+;	doc
+;	examples
+;	Old:
+;	RELNOTES
+internal-docs		RELNOTES
+
+; FHS compatibility:
+;links				sbin/arpd /usr/sbin/
