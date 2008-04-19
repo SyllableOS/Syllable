@@ -7,12 +7,12 @@ description
 
 modules
 	programming/languages/perl-5.10.0
-	programming/autoconf-2.61
+	programming/autoconf-2.62
 ;	GrUB doesn't work with 1.10:
 	programming/automake-1.9.6
-;	For older packages:
+;	For old packages:
 ;	programming/autoconf-2.13
 ;	programming/automake-1.4-p6
-	programming/intltool-0.36.2
 	programming/net-ssleay-1.30
-	programming/xml-parser-2.34
+	programming/xml-parser-2.36
+	programming/intltool-0.37.1
