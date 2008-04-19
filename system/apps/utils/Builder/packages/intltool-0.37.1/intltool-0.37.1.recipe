@@ -1,0 +1,22 @@
+authors
+	Kristian Van Der Vliet
+	Kaj de Vos
+status				testing
+
+headline			Internationalisation tools
+description
+	Intltool is a set of tools to centralise translation of many different file formats using GNU gettext-compatible PO files.
+licenses			GPL
+
+home
+;	www.gnome.org
+	www.freedesktop.org/wiki/Software/intltool
+locations
+	ftp://ftp.gnome.org/pub/gnome/sources/intltool/0.37/
+	http://ftp.gnome.org/pub/gnome/sources/intltool/0.37/
+
+needs				xml-parser
+
+documentation
+	README COPYING NEWS ChangeLog AUTHORS TODO
+;	doc

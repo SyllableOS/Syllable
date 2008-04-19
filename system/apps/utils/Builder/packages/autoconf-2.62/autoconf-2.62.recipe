@@ -1,0 +1,22 @@
+authors				Kaj de Vos
+status				testing
+warnings			Hardwires Perl location, so the primary Perl installation should be a standard one.
+
+inherits			gnu
+
+headline			Generates build configure scripts
+description
+	Autoconf is an extensible package of M4 macros that produce shell scripts to automatically configure software source code packages. These scripts can adapt the packages to many kinds of UNIX-like systems without manual user intervention. Autoconf creates a configuration script for a package from a template file that lists the operating system features that the package can use, in the form of M4 macro calls.
+licenses			GPL-2++exception GPL-3+
+
+home				www.gnu.org/software/autoconf/
+packages			autoconf/autoconf-2.62
+
+needs
+	m4 >= 1.4
+	perl >= 5.005_03
+build-recommends	Syllable >= 0.6.1
+; Both BinUtils and AutoConf have info/standards.info:
+conflicts			binutils
+
+documentation		README BUGS COPYING COPYINGv3 NEWS ChangeLog TODO AUTHORS THANKS
