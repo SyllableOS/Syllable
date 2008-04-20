@@ -8,7 +8,7 @@ description
 modules
 	programming/languages/perl-5.10.0
 	programming/autoconf-2.62
-;	GrUB doesn't work with 1.10:
+;	GrUB doesn't work with 1.10+:
 	programming/automake-1.9.6
 ;	For old packages:
 ;	programming/autoconf-2.13
