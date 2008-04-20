@@ -6,3 +6,7 @@ authors
 maintainers			Kaj de Vos
 status				incomplete
 notes				SUS draft standard *at() functions not available on Desktop
+
+; Syllable Desktop has its own:
+delete-files		bin/nice
+
