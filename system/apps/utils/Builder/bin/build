@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.7.52
+# Version 0.7.53
 # Copyright (c) 2002-2008 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -1189,8 +1189,8 @@ def buildPack targets
 						for package in modules = targets.modules
 							# Try to find the latest release. FIXME: alphabetical ordering
 							break unless action "ln -s #{Dir[
-#									File.join(@distrosPath, fullName(package)) + "-*#{kernelPart}*.resource"
-									File.join(@distrosPath, fullName(package)) + "*#{kernelPart}*.*"
+									File.join(@distrosPath, fullName(package)) + "-*#{kernelPart}*.resource"
+#									File.join(@distrosPath, fullName(package)) + "*#{kernelPart}*.*"
 								].last
 							} " + name
 						end and
@@ -1846,7 +1846,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.7.52',
+	puts 'Syllable Build System 0.7.53',
 		'Copyright (c) 2002-2008 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
