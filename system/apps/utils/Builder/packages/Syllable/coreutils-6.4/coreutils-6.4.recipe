@@ -1,0 +1,6 @@
+authors				Kaj de Vos
+status				testing
+
+; Syllable Desktop has its own:
+delete-files		bin/nice
+
