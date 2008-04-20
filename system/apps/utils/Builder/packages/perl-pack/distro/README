@@ -1,21 +1,21 @@
-PERL Pack for Syllable
+Perl Pack for Syllable
 ======================
 
-22-Jul-2007
+20-Apr-2008
 
 1 Introduction
 ==============
 
-This distribution contains binary packages of the PERL programming
+This distribution contains binary packages of the Perl programming
 language and some packages that depend on it, for the Syllable operating
-system. Most packages were built on Syllable 0.6.3 and optimized for a
+system. Most packages were built on Syllable 0.6.5 and optimised for a
 Pentium CPU. They may also run on earlier versions of Syllable, but this
 has not been tested.
 
 If you encounter problems or have any other interesting observations,
 I would be interested to hear about them (see contact information).
 
-2 How to install the PERL Pack on Syllable
+2 How to install the Perl Pack on Syllable
 ==========================================
 
 2.1 
@@ -29,7 +29,7 @@ Unpacking this distribution should have produced a directory with the
 contained packages, this README document, and an install script.
 Being the root user, go into the directory and run the install script:
 
-    cd PERL-Pit
+    cd PerlPit
     ./install.sh
 
 The individual packages will be unpacked into /usr/. Subsequently, the
@@ -40,15 +40,15 @@ first. Please note, though, that no version of any of the packages
 should be previously registered with a different directory name under
 /usr/, because that would lead to conflicting package registrations.
 
-You should now be able to use the programs in the PERL pack.
+You should now be able to use the programs in the Perl pack.
 
-2.2 Uninstalling and upgrading the PERL Pack
+2.2 Uninstalling and upgrading the Perl Pack
 --------------------------------------------
 
 2.2.1 
 -----
 
-After installation, the PERL pack is effectively no longer one
+After installation, the Perl pack is effectively no longer one
 package, but the individual packages it contained. If you ever want
 to remove one or more of those packages, you should execute the
 following procedure for each package. Again, you may have to become
@@ -77,10 +77,10 @@ If you just want to uninstall an individual package, do:
     su -l
     build uninstall <package>
 
-2.2.3 Upgrading the entire PERL Pack
+2.2.3 Upgrading the entire Perl Pack
 ------------------------------------
 
-Upgrading to a new version of the PERL pack is easy, since the
+Upgrading to a new version of the Perl pack is easy, since the
 install script will remove the existing packages and replace them
 with the new ones.
 
@@ -93,7 +93,7 @@ documents that are included in each separate package.
 4 Contact information
 =====================
 
-This PERL Pit was put together by Kaj de Vos. You can send me
+This Perl Pit was put together by Kaj de Vos. You can send me
 problem reports, fixes and the like at
 
     perlpack@syllable.info

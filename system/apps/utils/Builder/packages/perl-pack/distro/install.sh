@@ -1,6 +1,6 @@
 #! /bin/sh
 
-packages='perl autoconf automake'
+packages='perl autoconf automake net-ssleay xml-parser intltool'
 
 if [ "$USER" != "root" ]
 then
@@ -10,7 +10,7 @@ then
 	exit 1
 fi
 
-echo "This will install the packages contained in The PERL Pit."
+echo "This will install the packages contained in The Perl Pit."
 echo "Previously installed packages of the same name will be removed first."
 echo ""
 read -p "Do you want to continue (y/N)? " -e answer
