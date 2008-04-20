@@ -5,8 +5,8 @@ authors
 status				testing
 
 title				XML::Parser
-headline			A PERL module for parsing XML documents
-description			A PERL binding for the Expat XML parser.
+headline			A Perl module for parsing XML documents
+description			A Perl binding for the Expat XML parser.
 licenses			Artistic GPL
 
 home				search.cpan.org/~msergeant/XML-Parser/Parser.pm
@@ -32,4 +32,3 @@ system-prefix-var	DESTDIR
 
 documentation		README Changes
 develop-docs		MANIFEST samples
-

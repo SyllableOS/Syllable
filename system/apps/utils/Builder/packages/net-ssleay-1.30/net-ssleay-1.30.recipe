@@ -3,8 +3,8 @@ authors
 	Kaj de Vos
 status				testing
 
-headline			A PERL module for SSL socket support
-description			A PERL binding to OpenSSL.
+headline			A Perl module for SSL socket support
+description			A Perl binding to OpenSSL.
 licenses			other
 
 home				search.cpan.org/~flora/Net_SSLeay.pm/SSLeay.pm
@@ -28,4 +28,3 @@ _post-install
 
 documentation		README Changes Credits
 develop-docs		MANIFEST examples
-
