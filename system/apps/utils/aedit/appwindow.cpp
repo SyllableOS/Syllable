@@ -836,7 +836,7 @@ void AEditWindow::Load(char* pzFileName)
 
 			fclose(hFile);
 
-			pnBuffer[nCount2-1]=0;  // This stops the string running off of the end and producing garbage.
+			pnBuffer[nCount2]=0;  // Should have been set by memset, but just in case
 
 			// File has been loaded. Lets open a new Buffer for this file
 

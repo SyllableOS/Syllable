@@ -69,11 +69,11 @@ void EditView::KeyDown(const char* pzString, const char* pzRawString, uint32 nQu
 // The main probem with the below solution is that the shortcut is defined in two places, this place but
 // also where you create the menuitem.
 
-	if((nQualifiers & QUAL_CTRL) && (nQualifiers & QUAL_SHIFT))
+	if((nQualifiers & QUAL_CTRL) && (nQualifiers & QUAL_SHIFT) && !(nQualifiers & QUAL_ALT) )
 	{
 		switch(*pzRawString)
 		{
-			case 9:	    // Prev tab (Shift+Ctrl+Tab)
+			case VK_TAB:	    // Prev tab (Shift+Ctrl+Tab)
 			{
 				if( !(nQualifiers & QUAL_REPEAT) ) GetWindow()->HandleMessage(new Message(M_MENU_FILE_PREV_TAB));
 				return;
@@ -84,80 +84,77 @@ void EditView::KeyDown(const char* pzString, const char* pzRawString, uint32 nQu
 
 		}	// End of switch() block
 	}
-	else if(nQualifiers & QUAL_CTRL)
+	else if((nQualifiers & QUAL_CTRL) && !(nQualifiers & QUAL_SHIFT) && !(nQualifiers & QUAL_ALT))
 	{
-		switch(*pzString)
+		switch(*pzRawString)
 		{
-			case 14:	// New (Ctrl+N)
+			case 'n':	// New (Ctrl+N)
 			{
 				if( !(nQualifiers & QUAL_REPEAT) ) GetWindow()->HandleMessage(new Message(M_MENU_FILE_NEW));
 				return;
 			}
 
-			case 15:	// Open (Ctrl+O)
+			case 'o':	// Open (Ctrl+O)
 			{
 				if( !(nQualifiers & QUAL_REPEAT) ) GetWindow()->HandleMessage(new Message(M_MENU_FILE_OPEN));
 				return;
 			}
 
-			case 19:	// Save (Ctrl+S)
+			case 's':	// Save (Ctrl+S)
 			{
 				if( !(nQualifiers & QUAL_REPEAT) ) GetWindow()->HandleMessage(new Message(M_MENU_FILE_SAVE));
 				return;
 			}
 
-			case 12:	// Save All (Ctrl+L)
+			case 'l':	// Save All (Ctrl+L)
 			{
 				if( !(nQualifiers & QUAL_REPEAT) ) GetWindow()->HandleMessage(new Message(M_MENU_FILE_SAVE_ALL));
 				return;
 			}
 
-			case 23:	// Close (Ctrl+W)
+			case 'w':	// Close (Ctrl+W)
 			{
 				if( !(nQualifiers & QUAL_REPEAT) ) GetWindow()->HandleMessage(new Message(M_MENU_FILE_CLOSE));
 				return;
 			}
 
-			case 6:	// Find (Ctrl+F)
+			case 'f':	// Find (Ctrl+F)
 			{
 				if( !(nQualifiers & QUAL_REPEAT) ) GetWindow()->HandleMessage(new Message(M_MENU_FIND_FIND));
 				return;
 			}
 
-			case 18:	// Replace (Ctrl+R)
+			case 'r':	// Replace (Ctrl+R)
 			{
 				if( !(nQualifiers & QUAL_REPEAT) ) GetWindow()->HandleMessage(new Message(M_MENU_FIND_REPLACE));
 				return;
 			}
 
-			case 7:	// Goto Line (Ctrl+G)
+			case 'g':	// Goto Line (Ctrl+G)
 			{
 				if( !(nQualifiers & QUAL_REPEAT) ) GetWindow()->HandleMessage(new Message(M_MENU_FIND_GOTO));
 				return;
 			}
 
-			case 17:	// Exit (Ctrl+Q)
+			case 'q':	// Exit (Ctrl+Q)
 			{
 				if( !(nQualifiers & QUAL_REPEAT) ) GetWindow()->HandleMessage(new Message(M_MENU_APP_QUIT));
 				return;
 			}
 
-			case 1:	// Select all (Ctrl+A)
+			case 'a':	// Select all (Ctrl+A)
 			{
 				if( !(nQualifiers & QUAL_REPEAT) ) GetWindow()->HandleMessage(new Message(M_MENU_EDIT_SELECT_ALL));
 				return;
 			}
-		}	// End of switch() block
-		switch( *pzRawString )           /* Non-alphanumeric keys seem to produce *pzString == 0, so check *pzRawString instead. (as of OS v0.6.2) */
-		{
-			case 44:	// Prev tab (Ctrl+,)
+			case ',':	// Prev tab (Ctrl+,)
 			{
 				if( !(nQualifiers & QUAL_REPEAT) ) GetWindow()->HandleMessage(new Message(M_MENU_FILE_PREV_TAB));
 				return;
 			}
 
-			case 9:	    // (Ctrl+Tab)
-			case 46:	// Next tab (Ctrl+.)
+			case VK_TAB:	    // (Ctrl+Tab)
+			case '.':	// Next tab (Ctrl+.)
 			{
 				if( !(nQualifiers & QUAL_REPEAT) ) GetWindow()->HandleMessage(new Message(M_MENU_FILE_NEXT_TAB));
 				return;

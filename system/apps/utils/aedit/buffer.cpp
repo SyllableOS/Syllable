@@ -205,7 +205,7 @@ void Buffer::MakeCurrent(void)
 	zWindowTitle+=GetNameOfBuffer();
 	pcTarget->SetTitle(zWindowTitle);
 
-	// Since we have changed the current buffer the find is no longer calid
+	// Since we have changed the current buffer the find is no longer valid
 	bHasFind=false;
 }
 
@@ -282,7 +282,12 @@ bool Buffer::SaveAs(const char* pFileName)
 		uint32 nLineCount = pcEditView->GetLineCount();
 		for( uint32 n = 0; n < nLineCount; n++ )
 		{
-			string cLine = pcEditView->GetLine( n ) + '\n';
+			string cLine;
+			if( n > 0 ) {
+				cLine = "\n" + pcEditView->GetLine( n );
+			} else {
+				cLine = pcEditView->GetLine( n );
+			}
 			cFile.Write( cLine.c_str(), cLine.length() );
 		}
 
