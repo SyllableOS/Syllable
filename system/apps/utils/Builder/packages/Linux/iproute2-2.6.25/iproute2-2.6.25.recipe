@@ -20,7 +20,7 @@ build-needs
 	bison
 ; For arpd:
 
-;build-dir			.
+build-dir			.
 
 ;configure			true
 
