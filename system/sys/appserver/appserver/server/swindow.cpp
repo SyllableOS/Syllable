@@ -1383,7 +1383,7 @@ void SrvWindow::HandleInputEvent( Message * pcEvent )
 	}
 	else if( pcEvent->GetCode() == M_WHEEL_MOVED )
 	{
-		if( s_pcLastMouseWindow != NULL && s_pcLastMouseWindow->m_pcAppTarget != NULL && ( s_pcLastMouseWindow->GetFlags() & WND_SYSTEM ) == 0 )
+		if( s_pcLastMouseWindow != NULL && s_pcLastMouseWindow->m_pcAppTarget != NULL )
 		{
 			Message cMsg( *pcEvent );
 
