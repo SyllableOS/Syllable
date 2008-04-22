@@ -1,4 +1,3 @@
-
 /*  libsyllable.so - the highlevel API library for Syllable
  *  Copyright (C) 1999 - 2001 Kurt Skauen
  *  Copyright (C) 2003 - 2004 The Syllable Team
@@ -1541,7 +1540,7 @@ void TextEdit::SetCursor( const IPoint & cPos, bool bSelect )
 
 	if( bSelect )
 	{
-		Select( ( m_bRegionActive ) ? m_cRegionStart : cOldPos, cPos );
+		Select( ( m_bRegionActive ) ? m_cRegionStart : cOldPos, IPoint( x, y ) );
 	}
 	else
 	{
@@ -2707,16 +2706,6 @@ bool TextEdit::HandleKeyDown( const char *pzString, const char *pzRawString, uin
 			GetRegion( &cBuffer );
 			return ( true );
 		}
-		else if( pzString[0] == VK_HOME )
-		{
-			SetCursor( IPoint( 0, 0 ), ( nQualifiers & QUAL_SHIFT ) != 0 );
-			return ( true );
-		}
-		else if( pzString[0] == VK_END )
-		{
-			SetCursor( IPoint( -1, -1 ), ( nQualifiers & QUAL_SHIFT ) != 0 );
-			return ( true );
-		}
 		else if( strlen( pzRawString ) == 1 )
 		{
 			switch ( tolower( pzRawString[0] ) )
@@ -2772,6 +2761,7 @@ bool TextEdit::HandleKeyDown( const char *pzString, const char *pzRawString, uin
 			}
 		}
 	}
+
 	if( !bCtrl && !bAlt && bShift )
 	{			// If SHIFT is held down
 		if( pzString[0] == VK_INSERT )
@@ -2881,12 +2871,22 @@ bool TextEdit::HandleKeyDown( const char *pzString, const char *pzRawString, uin
 		MoveVert( ( int )( ( GetBounds().Height(  ) + 1.0f ) / m_vGlyphHeight - 1 ), bShift );
 		break;
 	case VK_HOME:
+		if( bCtrl ) {
+			SetCursor( IPoint( 0, 0 ), bShift );
+			m_vCsrGfxPos = -1.0f;
+		} else {
 		MoveHoriz( -m_cCsrPos.x, bShift );
 		m_vCsrGfxPos = -1.0f;
+		}
 		break;
 	case VK_END:
+		if( bCtrl ) {
+			SetCursor( IPoint( -1, -1 ), bShift );
+			m_vCsrGfxPos = -1.0f;
+		} else {
 		MoveHoriz( m_cBuffer[m_cCsrPos.y].size() - m_cCsrPos.x, bShift );
 		m_vCsrGfxPos = -1.0f;
+		}
 		break;
 	case VK_BACKSPACE:
 		{

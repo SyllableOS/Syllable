@@ -738,6 +738,7 @@ void DropdownMenu::OpenMenu()
 
 		m_pcMenuWindow->AddChild( pcMenuView->m_pcScrollBar );
 	}
+	m_pcMenuWindow->SetDefaultWheelView( pcMenuView );
 	pcMenuView->MakeFocus();
 	m_pcMenuWindow->Show();
 	m_pcMenuWindow->MakeFocus();
@@ -916,11 +917,11 @@ void DropdownMenu::DropdownView::WheelMoved( const Point& cDelta )
 	char bfr[2];
 	bfr[1] = 0;
 	if( cDelta.y > 0 ) {
-		bfr[0] = VK_UP_ARROW;
-		KeyDown( bfr, "", 0 );
-	} else if( cDelta.y < 0 ) {
 		bfr[0] = VK_DOWN_ARROW;
-		KeyDown( bfr, "", 0 );
+		KeyDown( bfr, bfr, 0 );
+	} else if( cDelta.y < 0 ) {
+		bfr[0] = VK_UP_ARROW;
+		KeyDown( bfr, bfr, 0 );
 	}
 }
 
@@ -940,6 +941,10 @@ void DropdownMenu::DropdownView::KeyDown( const char *pzString, const char *pzRa
 					m_nCurSelection--;
 				}
 			}
+		} else if( m_nCurSelection == -1 && m_pcParent->m_cStringList.size() > 0 )  /* Nothing selected; select the first item */
+		{
+			m_nCurSelection = 0;
+			m_nScrollPos = 0;
 		}
 		break;
 	case VK_UP_ARROW:
@@ -951,6 +956,10 @@ void DropdownMenu::DropdownView::KeyDown( const char *pzString, const char *pzRa
 				m_nCurSelection = 1;
 				m_nScrollPos--;
 			}
+		} else if( m_nCurSelection == -1 && m_pcParent->m_cStringList.size() > 0 ) /* Nothing selected; select the first item */
+		{
+			m_nCurSelection = 0;
+			m_nScrollPos = 0;
 		}
 		break;
 

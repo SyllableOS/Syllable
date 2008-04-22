@@ -725,7 +725,7 @@ public:
 		
 		if( m_cIcons[nIcon]->m_bSelected )
 		{
-			pcView->SetBgColor( get_default_color( os::COL_SEL_MENU_BACKGROUND ) );
+			pcView->SetBgColor( m_sSelectionColor );
 		} else {
 			pcView->SetBgColor( m_sBackgroundColor );
 		}
