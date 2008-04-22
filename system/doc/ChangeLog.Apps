@@ -1,3 +1,12 @@
+* April 22, 2008, Kristian Van Der Vliet *
+
+Patches from Anthony Morphett
+
+o Fix bug http://forum.syllable-norden.info/viewtopic.php?t=926: AEdit doesn't
+  show the last character of file if it's not a newline. The patch also
+  changes the file saving behaviour so that it doesn't add \n to the end of
+  the last line of the file.
+
 * March 25, 2008, Kaj de Vos *
 
 Merged Arno's versions of sIDE, LayoutEditor and Sourcery from the sIDE 0.4.7-2 package.

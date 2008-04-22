@@ -1,3 +1,11 @@
+* April 22, 2008, Kristian Van Der Vliet *
+
+Patches from Anthony Morphett
+
+ o Make the mousewheel work properly in DropdownMenus
+ o Make ctrl+home, ctrl+end, shift+ctrl+home, shift+ctrl+end work properly in
+   AEdit and TextViews
+
 * April 15, 2008, Kristian Van Der Vliet *
 
 Detect the Intel i945GME chip with the i855 driver.

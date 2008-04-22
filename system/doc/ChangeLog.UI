@@ -1,3 +1,10 @@
+* April 22, 2008, Kristian Van Der Vliet *
+
+Patches from Anthony Morphett
+
+o Make addattrib -f work, ie "addattrib destfile destattrib -f sourcefile"
+  writes the contents of file sourcefile into destattrib of destfile
+
 * March 9, 2008, Kristian Van Der Vliet *
 
 Some patches from Anthony Morphett
