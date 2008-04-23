@@ -22,7 +22,7 @@ exec_prefix=$IMAGE/system/resources/cups/1.3.4
 bindir=$IMAGE/system/resources/cups/1.3.4/bin
 includedir=$IMAGE/system/development/resources/cups/1.3.4/include
 libdir=${exec_prefix}/lib
-imagelibdir=${exec_prefix}/lib
+staticlibdir=$IMAGE/system/development/resources/cups/1.3.4/lib
 datarootdir=$IMAGE/system/resources/cups/1.3.4/share
 datadir=$IMAGE/system/resources/cups/1.3.4/share
 sysconfdir=$IMAGE/system/config
@@ -113,7 +113,7 @@ while test $# -gt 0; do
 	        if test $image = no; then
 	            echo $libdir/libcups.a $LIBS
 		else
-	            echo $imagelibdir/libcupsimage.a $libdir/libcups.a $IMGLIBS $LIBS
+	            echo $staticlibdir/libcupsimage.a $staticlibdir/libcups.a $IMGLIBS $LIBS
 		fi
 	    fi
 	    ;;
