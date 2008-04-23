@@ -48,7 +48,7 @@ _make-targets
 install-tree
 install-targets		modules_install
 install-files
-	arch/i386/boot/bzImage	kernel
+	arch/x86/boot/bzImage	kernel
 	System.map				System.map
 	.config					config-2.6.25
 ;	Documentation			.
