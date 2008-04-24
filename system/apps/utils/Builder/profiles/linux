@@ -430,9 +430,9 @@ modules
 	linux/wirelesstools-29
 	apps/other/msntp-1.6
 
+	system apps/other/cups-1.3.4
 ;	Fool subsequent packages into adding files to CUPS in the image area:
 	bootstrap apps/other/cups--bootstrap
-	system apps/other/cups-1.3.4
 	apps/other/ghostscript--image
 	system apps/other/cups-1.3.4-gutenprint
 	stage libraries/jbigkit-1.6
