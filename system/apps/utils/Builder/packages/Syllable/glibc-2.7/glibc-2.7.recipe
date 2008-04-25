@@ -2,6 +2,7 @@ authors
 	Kristian Van Der Vliet
 	Kaj de Vos
 status				testing
+notes				Locales are not installed (in lib/locale/)
 
 needs				Syllable >= 0.6.5
 
