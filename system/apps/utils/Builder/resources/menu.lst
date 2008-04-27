@@ -24,6 +24,10 @@
 	root			(hd0,0)
 	kernel			/system/resources/linux/2.6.22.1/kernel root=/dev/hda1 ro video=vesa:ywrap,mtrr vga=791
 
+	title			Syllable Server, VESA, 1024x768 x 65536 colours (Virtual PC)
+	root			(hd0,0)
+	kernel			/system/resources/linux/2.6.22.1/kernel root=/dev/hda1 ro video=vesa vga=791
+
 	title			Syllable Server, 800x600 x 256 colours (QEmu)
 	root			(hd0,0)
 	kernel			/system/resources/linux/2.6.22.1/kernel root=/dev/hda1 ro vga=771
