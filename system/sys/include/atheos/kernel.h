@@ -211,7 +211,12 @@ void	flush_tlb_global( void );			     /* Invalidate page table on all processors
 
 int	realint( int num, struct RMREGS *rm );
 
+#ifdef __KERNEL__
+status_t get_system_info( system_info* psInfo, int nVersion );
+#else
 status_t get_system_info( system_info* psInfo );
+#endif
+
 int	 set_app_server_port( port_id hPort );
 port_id	 get_app_server_port( void );
 port_id	 sys_get_app_server_port( void );
