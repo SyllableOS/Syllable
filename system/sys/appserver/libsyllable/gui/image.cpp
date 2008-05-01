@@ -169,8 +169,13 @@ class BitmapImage::Private
 			Rect cBounds( m_pcBitmap->GetBounds() );
 			Bitmap* pcNew = new Bitmap( int(cBounds.Width() + 1), int(cBounds.Height() + 1), m_pcBitmap->GetColorSpace(), m_nBitmapFlags | nFlags );
 			if( pcNew ) {
-				m_nBitmapFlags |= nFlags;
+				/* Copy the raster data to new Bitmap. This is only possible if the old Bitmap was created with SHARE_FRAMEBUFFER flag. */
+				if( m_nBitmapFlags & Bitmap::SHARE_FRAMEBUFFER ) {
 				memcpy( pcNew->LockRaster(), m_pcBitmap->LockRaster(), m_pcBitmap->GetBytesPerRow() * int( cBounds.Height() + 1 ) );
+					pcNew->UnlockRaster();
+					m_pcBitmap->UnlockRaster();
+				}
+				m_nBitmapFlags |= nFlags;
 				delete m_pcBitmap;
 				m_pcBitmap = pcNew;
 			} else {
@@ -192,7 +197,12 @@ class BitmapImage::Private
 /**
  * Default constructor
  *  \param	nFlags Bitmap flags, see os::Bitmap.
- * \sa os::Bitmap
+ * \sa os::Bitmap, os::BitmapImage::IsValid()
+ * \note This constructor does not create the internal Bitmap object.
+ *       Thus BitmapImage::IsValid() will return false after this creator is used.
+ *       Note that the methods BitmapImage::Load(), BitmapImage::SetBitmapData(), BitmapImage::SetSize(),
+ *       BitmapImage::ResizeCanvas() (re)initialise the internal Bitmap object, so one of
+ *       these must be called before operations such as BitmapImage::Draw(), BitmapImage::GetSize() etc can be used.
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
 BitmapImage::BitmapImage( uint32 nFlags )
@@ -339,7 +349,8 @@ status_t BitmapImage::Load( StreamableIO * pcSource, const String & cType )
 
 					if( trans->Read( &BmHeader, sizeof( BmHeader ) ) != sizeof( BmHeader ) )
 						break;
-					m->SetBitmap( new Bitmap( BmHeader.bh_bounds.Width() + 1, BmHeader.bh_bounds.Height(  ) + 1, CS_RGB32 ) );
+					m->m_nBitmapFlags |= Bitmap::SHARE_FRAMEBUFFER;
+					m->SetBitmap( new Bitmap( BmHeader.bh_bounds.Width() + 1, BmHeader.bh_bounds.Height(  ) + 1, CS_RGB32, m->m_nBitmapFlags ) );
 					if( !m->m_pcBitmap )
 						break;
 				}
@@ -409,11 +420,18 @@ status_t BitmapImage::Load( StreamableIO * pcSource, const String & cType )
  *		File cFile( "picture.png" );
  *		myImage->Save( &cFile, "image/png" );
  * \endcode
+ * \note This method can only be used if the bitmap was created with the SHARE_FRAMEBUFFER flag.
  * \sa Load(), os::File, os::StreamableIO, os::MemFile
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
 status_t BitmapImage::Save( StreamableIO * pcDest, const String & cType )
 {
+	if( !(m->m_nBitmapFlags & Bitmap::SHARE_FRAMEBUFFER) ) {
+		dbprintf( "BitmapImage::Save() called without SHARE_FRAMEBUFFER flag!\n" );
+		return( -1 );
+	}
+
+
 	Translator *trans = NULL;
 	TranslatorFactory *factory = TranslatorFactory::GetDefaultFactory();
 
@@ -719,6 +737,8 @@ status_t BitmapImage::GrayFilter( void )
 	if( !m->m_pcBitmap )
 		return -2;
 
+	m->AssertBitmapFlags( Bitmap::SHARE_FRAMEBUFFER );
+
 	numbytes = m->m_pcBitmap->GetBytesPerRow() * ( int )( m->m_pcBitmap->GetBounds(  ).Height(  ) + 1 );
 
 	bytes = m->m_pcBitmap->LockRaster();
@@ -759,6 +779,8 @@ status_t BitmapImage::HighlightFilter( void )
 	if( !m->m_pcBitmap )
 		return -2;
 
+	m->AssertBitmapFlags( Bitmap::SHARE_FRAMEBUFFER );
+
 	numbytes = m->m_pcBitmap->GetBytesPerRow() * ( int )( m->m_pcBitmap->GetBounds(  ).Height(  ) + 1 );
 
 	bytes = m->m_pcBitmap->LockRaster();
@@ -788,6 +810,8 @@ status_t BitmapImage::ColorizeFilter( Color32_s cColor )
 
 	if( !m->m_pcBitmap )
 		return -2;
+
+	m->AssertBitmapFlags( Bitmap::SHARE_FRAMEBUFFER );
 
 	numbytes = m->m_pcBitmap->GetBytesPerRow() * ( int )( m->m_pcBitmap->GetBounds(  ).Height(  ) + 1 );
 
@@ -829,6 +853,8 @@ status_t BitmapImage::GlowFilter( Color32_s cInnerColor, Color32_s cOuterColor, 
 
 	if( !m->m_pcBitmap )
 		return -2;
+
+	m->AssertBitmapFlags( Bitmap::SHARE_FRAMEBUFFER );
 
 	uint8 *pSrc = m->m_pcBitmap->LockRaster();
 
@@ -946,9 +972,9 @@ status_t BitmapImage::GlowFilter( Color32_s cInnerColor, Color32_s cOuterColor, 
  *		myImage->UnlockBitmap();
  *	}
  * \endcode
- * \note	Don't forget to Unlock the Bitmap.
- * \retval	Pointer to the locked Bitmap.
- * \sa UnlockBitmap(), os::Bitmap
+ * \note	Don't forget to Unlock the Bitmap by calling UnlockBitmap().
+ * \retval	Pointer to the locked Bitmap. If the internal Bitmap is not valid, returns NULL (see IsValid()).
+ * \sa UnlockBitmap(), IsValid(), os::Bitmap
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
 Bitmap *BitmapImage::LockBitmap( void )
@@ -997,6 +1023,8 @@ status_t BitmapImage::AlphaToOverlay( uint32 cTransparentColor )
 		return -2;
 	}
 
+	m->AssertBitmapFlags( Bitmap::SHARE_FRAMEBUFFER );
+
 	numbytes = m->m_pcBitmap->GetBytesPerRow() * ( int )( m->m_pcBitmap->GetBounds(  ).Height(  ) + 1 );
 
 	data = ( uint32 * )m->m_pcBitmap->LockRaster();
@@ -1027,25 +1055,33 @@ status_t BitmapImage::AlphaToOverlay( uint32 cTransparentColor )
  *  \param	pData Pointer to an array of raw bitmap data.
  *  \param	cSize The size of the bitmap in pixels.
  *  \param	eColorSpace Color space, for instance CS_RGB32.
- *  \param	nFlags Bitmap flags, see os::Bitmap.
+ *  \param	nFlags Bitmap flags, see os::Bitmap. SHARE_FRAMEBUFFER is assumed.
  *
  *  \sa os::color_space, os::Bitmap
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
 void BitmapImage::SetBitmapData( const uint8 *pData, const IPoint & cSize, color_space eColorSpace, uint32 nFlags )
 {
-	Bitmap *bmap = new Bitmap( cSize.x, cSize.y, eColorSpace, nFlags );
+	m->m_nBitmapFlags = (nFlags | Bitmap::SHARE_FRAMEBUFFER);
+	Bitmap *bmap = new Bitmap( cSize.x, cSize.y, eColorSpace, m->m_nBitmapFlags );
 	uint8 *dest = bmap->LockRaster();
 
 	memcpy( dest, pData, ( int )( bmap->GetBytesPerRow() * cSize.y ) );
 	m->SetBitmap( bmap );
 }
 
+/** Copy the contents of another bitmap.
+ * \par		Description:
+ *		Copy the contents of another bitmap.
+ * \note The source bitmap must be created with SHARE_FRAMEBUFFER flag. If not, the assignment has no effect.
+ *  \sa os::Bitmap
+ *****************************************************************************/
 BitmapImage & BitmapImage::operator=( const BitmapImage & cSource )
 {
 	uint8 *source;
 
 	source = cSource.m->m_pcBitmap->LockRaster();
+	if( source == NULL ) return *this;    /* Source does not have SHARE_FRAMEBUFFER flag; can't access the raster data */
 	SetBitmapData( source, IPoint( ( int )cSource.GetSize().x, ( int )cSource.GetSize(  ).y ), cSource.GetColorSpace(  ), m->m_nBitmapFlags );
 	return *this;
 }
@@ -1174,6 +1210,9 @@ void Scale( Bitmap * srcbitmap, Bitmap * dstbitmap, bitmapscale_filtertype filte
 {
 	assert( dstbitmap != NULL );
 	assert( srcbitmap != NULL );
+
+	assert( srcbitmap->LockRaster() != NULL );  /* This can occur if the bitmap wasn't created with SHARE_FRAMEBUFFER flag */
+	assert( dstbitmap->LockRaster() != NULL );
 
 //      assert( dstbitmap->ColorSpace() == B_RGB32 );
 //      assert( srcbitmap->ColorSpace() == B_RGB32 );

@@ -57,6 +57,8 @@ class View;
  *	\b NO_ALPHA_CHANNEL flag disables the alpha channel for 32 bit
  *	bitmaps. This can improve performance if you render to this bitmap.
  *
+ * \note In most cases, the SHARE_FRAMEBUFFER flag should be used.
+ *
  * \sa View, Window
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
@@ -81,6 +83,18 @@ public:
     void		Sync( void );
     void		Flush( void );
 
+/**
+ * Get a pointer to the raw raster data.
+ * \par Description:
+ *    This method gets a void* pointer to the raw raster data.
+ *    The size of the raster data in bytes can be calculated by GetBytesPerLine()*(GetBounds().Height()+1).
+ *    Since the raster data is allocated by the appserver, this method is only valid if the bitmap
+ *    was created with the flag SHARE_FRAMEBUFFER.
+ * \note Remember to call UnlockRaster() when finished accessing the raster.
+ * \retval Returns a pointer to the raster data, or NULL if the bitmap was not created with the SHARE_FRAMEBUFFER flag.
+ * \sa UnlockRaster()
+ * \author Kurt Skauen (kurt@atheos.cx)
+ *****************************************************************************/
     uint8*	LockRaster( void ) { return( m_pRaster ); }
     void		UnlockRaster() {}
 

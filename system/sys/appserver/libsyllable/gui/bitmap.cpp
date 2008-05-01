@@ -121,7 +121,7 @@ Bitmap::Bitmap( int hHandle )
 		throw( GeneralFailure( "Tried to clone bitmap without SHARE_FRAMEBUFFER flags", -nError ) );
 	}
 	
-	printf("Remapped bitmap to %i\n", hNewHandle );
+//	printf("Remapped bitmap to %i\n", hNewHandle );
 }
 
 Bitmap::~Bitmap()
