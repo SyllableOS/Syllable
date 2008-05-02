@@ -50,10 +50,18 @@ recommends
 
 build-dir			.
 
+;configure-env		CPPFLAGS "$CPPFLAGS -I /usr/libdvdnav/include/dvdnav"
 configure-options
+;	--enable-static
 ;	--codecsdir=/usr/local/lib/codecs
 ;	--enable-dynamic-plugins
 	--language=all
+;	--disable-fastmemcpy
+;	Optimises for host CPU otherwise:
+	--enable-runtime-cpudetection
+;	Doesn't build:
+;	--with-extraincdir=/usr/libdvdnav/include/dvdnav
+;	--with-extraincdir=/usr/libdvdread/include/dvdread:/usr/libdvdnav/include/dvdnav
 ;	--enable-sdl
 ;	--enable-directfb
 ;	--enable-alsa
@@ -61,10 +69,19 @@ configure-options
 ;	--enable-gui
 ;	--enable-menu
 ;	--enable-libavcodec_a
-;	--disable-fastmemcpy
-;	--enable-runtime-cpudetection
-	--disable-mp3lib
-	--disable-libmpeg2
+;	--enable-cdparanoia
+;	Missing CDDA headers:
+;	--enable-cddb
+;	Can't find headers for external one:
+	--enable-dvdread-internal
+;	"DVD ioctls are unavailable on this system":
+	--disable-libdvdcss-internal
+;	--enable-dvdnav
+;	--with-dvdnav-config=/usr/libdvdnav/bin/dvdnav-config
+;	--disable-mp3lib
+;	Doesn't seem to find external one:
+;	--disable-libmpeg2
+;	Doesn't seem to find external one:
 ;	--disable-liba52
 ;	--enable-decoder=
 
@@ -73,3 +90,4 @@ documentation
 ;	DOCS
 
 links				/system/fonts/LCD2-Normal.ttf share/mplayer/subfont.ttf
+

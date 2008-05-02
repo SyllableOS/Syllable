@@ -5,6 +5,7 @@ status				testing
 notes
 	Patch contains two changed files from the vidix directory. I had to comment out disable_io_os() / enable_io_os(). I have no clue what might be broken now, but it compiles and works for some movies.
 	Won't play MP3 even with LibMAD.
+	LibDVDCSS doesn't work.
 
 ; Need to free up registers for inline assembler:
 ; For FFMPEG:
