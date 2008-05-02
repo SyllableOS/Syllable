@@ -1,0 +1,5 @@
+authors				Kaj de Vos
+status				broken
+notes
+	src/dvdread/bswap.h:92:2: error: #error "You need to add endian swap macros for you're system"
+

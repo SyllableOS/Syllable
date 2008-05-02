@@ -12,6 +12,9 @@ locations			http://www7.mplayerhq.hu/MPlayer/releases/dvdnav/
 
 needs				libdvdread
 
+; For installation:
+build-dir			.
+
 configure-cmd		configure2
 configure-options
 	--with-dvdread
@@ -27,3 +30,4 @@ documentation
 ;	doc
 ;develop-docs		examples
 internal-docs		DEVELOPMENT-POLICY.txt
+
