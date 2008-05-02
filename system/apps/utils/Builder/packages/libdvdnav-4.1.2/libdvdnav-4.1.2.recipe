@@ -10,14 +10,15 @@ home				www.mplayerhq.hu
 ; Germany:
 locations			http://www7.mplayerhq.hu/MPlayer/releases/dvdnav/
 
-needs				libdvdread
+;needs				libdvdread
+conflicts			libdvdread
 
 ; For installation:
 build-dir			.
 
 configure-cmd		configure2
 configure-options
-;	Builds and installs its own LibDVDRead otherwise:
+;	Builds and installs its own LibDVDRead anyway:
 	--with-dvdread=/usr/libdvdread
 ;	--disable-shared
 ;	--disable-debug
