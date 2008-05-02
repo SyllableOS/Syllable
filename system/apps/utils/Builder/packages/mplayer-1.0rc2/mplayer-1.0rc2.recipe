@@ -12,6 +12,7 @@ licenses			GPL other
 
 home				www.mplayerhq.hu
 packages			MPlayer-1.0rc2
+; Germany:
 locations			http://www7.mplayerhq.hu/MPlayer/releases/
 
 recommends
@@ -72,4 +73,3 @@ documentation
 ;	DOCS
 
 links				/system/fonts/LCD2-Normal.ttf share/mplayer/subfont.ttf
-

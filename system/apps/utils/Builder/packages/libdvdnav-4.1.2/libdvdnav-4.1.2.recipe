@@ -1,0 +1,29 @@
+authors				Kaj de Vos
+status				testing
+
+headline			DVD navigation library
+description
+	Libdvdnav is a library for developers of multimedia applications. It allows easy use of sophisticated DVD navigation features such as DVD menus, multiangle playback and even interactive DVD games. All this functionality is provided through a simple API which provides the DVD playback as a single logical stream of blocks, intermitted by special dvdnav events to report certain conditions. The main usage of libdvdnav is a loop regularly calling a function to get the next block, surrounded by additional calls to tell the library of user interaction. The whole DVD virtual machine and internal playback states are completely encapsulated.
+licenses			GPL
+
+home				www.mplayerhq.hu
+; Germany:
+locations			http://www7.mplayerhq.hu/MPlayer/releases/dvdnav/
+
+needs				libdvdread
+
+configure-cmd		configure2
+configure-options
+	--with-dvdread
+;	--with-dvdread=
+;	--disable-debug
+
+system-prefix-var	DESTDIR
+
+documentation
+	README COPYING ChangeLog AUTHORS TODO
+;	Unused:
+;	NEWS
+;	doc
+;develop-docs		examples
+internal-docs		DEVELOPMENT-POLICY.txt
