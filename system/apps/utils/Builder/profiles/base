@@ -103,7 +103,7 @@ modules
 	apps/utils/aclock
 	apps/utils/aedit
 ;	Too broken to include:
-;	apps/utils/archiver
+	apps/utils/archiver
 	apps/utils/aview
 	apps/utils/bzoom
 	apps/utils/catalog

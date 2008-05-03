@@ -1,5 +1,5 @@
 ; List of all resources released as binaries
-; Generated on 1-Mar-2008/11:18:27+1:00
+; Generated on 27-Apr-2008/16:48:55+2:00
 
 modules
 	p7zip-4.51
@@ -43,7 +43,6 @@ modules
 	gcc-3.4.3
 	gdb-6.4
 	gnupg-1.4.5
-	gnutris-0.3
 	gperf-3.0.2
 	grep-2.5.1a
 	grub-0.97
