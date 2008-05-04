@@ -1,0 +1,17 @@
+authors
+	Rick Caudill
+	Kaj de Vos
+status				testing
+
+headline			Audio meta-data library
+description
+	TagLib is a library for reading and editing the meta-data of several popular audio formats. Currently it supports both ID3v1 and ID3v2 for MP3 files, Ogg Vorbis comments and ID3 tags and Vorbis comments in FLAC, MPC, Speex, WavPack and TrueAudio files.
+licenses			LGPL MPL
+
+home				developer.kde.org/~wheeler/taglib.html
+locations			http://developer.kde.org/~wheeler/files/src/
+
+build-recommends	cmake
+
+documentation		COPYING.* AUTHORS
+;develop-docs		examples
