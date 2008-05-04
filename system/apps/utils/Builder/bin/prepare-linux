@@ -47,3 +47,13 @@ ln -sv /proc/kcore lib/udev/devices/core
 # For sshd:
 install -v -m700 -d var/lib/sshd
 chown -v root:sys var/lib/sshd
+
+# For LFS bootscripts:
+ln -s /usr/rsync/bin/rsync /usr/bin/
+ln -s /usr/bind/sbin/named /usr/sbin/
+ln -s /usr/apache/sbin/apachectl /usr/sbin/
+ln -s /usr/openssh/sbin/sshd /usr/sbin/
+ln -s /usr/vsftpd/sbin/vsftpd /usr/sbin/
+ln -s /usr/samba/sbin/nmbd /usr/sbin/
+ln -s /usr/samba/sbin/smbd /usr/sbin/
+ln -s /usr/samba/sbin/winbindd /usr/sbin/
