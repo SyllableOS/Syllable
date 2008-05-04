@@ -67,6 +67,7 @@ FILES=(	"/etc/profile, /etc/profile" 															\
 		"/system/bin/fsprobe, /system/bin/fsprobe"													\
 		"/system/bin/init, /system/bin/init"														\
 		"/system/bin/mount, /system/bin/mount"														\
+		"/system/bin/shutdown, /system/bin/shutdown"												\
 		"/system/bin/reboot, /system/bin/reboot"													\
 		"/system/bin/unmount, /system/bin/unmount"													\
 		"/system/bin/df, /system/bin/df"													\
