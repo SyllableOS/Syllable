@@ -111,7 +111,7 @@ while test $# -gt 0; do
  		fi
 	    else
 	        if test $image = no; then
-	            echo $libdir/libcups.a $LIBS
+	            echo $staticlibdir/libcups.a $LIBS
 		else
 	            echo $staticlibdir/libcupsimage.a $staticlibdir/libcups.a $IMGLIBS $LIBS
 		fi
