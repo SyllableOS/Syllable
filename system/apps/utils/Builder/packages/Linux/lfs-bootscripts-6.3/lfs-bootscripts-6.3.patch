@@ -1,12 +1,13 @@
 diff -ru lfs-bootscripts-6.3-original/lfs/init.d/functions lfs-bootscripts-6.3/lfs/init.d/functions
 --- lfs-bootscripts-6.3-original/lfs/init.d/functions	2007-04-25 01:16:37.000000000 +0200
 +++ lfs-bootscripts-6.3/lfs/init.d/functions	2007-09-03 17:57:22.000000000 +0200
-@@ -16,7 +16,7 @@
+@@ -16,7 +16,8 @@
  ## Environmental setup
  # Setup default values for environment
  umask 022
 -export PATH="/bin:/usr/bin:/sbin:/usr/sbin"
-+export PATH="/usr/indexes/sbin:/usr/indexes/bin:/usr/sbin:/usr/bin:/sbin:/bin:/system/indexes/sbin:/system/indexes/bin:/system/bin"
++export PATH=/usr/indexes/sbin:/usr/indexes/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/system/indexes/sbin:/system/indexes/bin:/system/bin
++export LD_LIBRARY_PATH=/usr/indexes/lib:/usr/local/lib:/usr/lib:/lib:/system/indexes/lib:/system/libraries
  
  # Signal sent to running processes to refresh their configuration
  RELOADSIG="HUP"
