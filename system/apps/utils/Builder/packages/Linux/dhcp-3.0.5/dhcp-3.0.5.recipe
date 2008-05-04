@@ -6,7 +6,7 @@ needs
 ;	net-tools
 	iproute2
 
-; For boot scripts:
+; For LFS boot scripts:
 links
 	sbin/dhclient			/sbin
 	sbin/dhclient-script	/sbin

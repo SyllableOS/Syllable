@@ -26,10 +26,10 @@ fi
 # inetd is a special case and is always started first if INetUtils is
 # installed.
 
-if [ -e /usr/indexes/libexec/inetd ]
-then
-	/usr/indexes/libexec/inetd &
-fi
+#if [ -e /usr/indexes/libexec/inetd ]
+#then
+#	/usr/indexes/libexec/inetd &
+#fi
 
 # Packages that require initalisation can include init and early-init directories,
 # which should contain the init script(s). E.g. Apache would have init/apache which
@@ -41,15 +41,15 @@ fi
 
 # Run the late init scripts
 
-for pkg_init in `ls /system/indexes/init/`
-do
-	source /system/indexes/init/$pkg_init
-done
+#for pkg_init in `ls /system/indexes/init/`
+#do
+#	source /system/indexes/init/$pkg_init
+#done
 
-for pkg_init in `ls /usr/indexes/init/`
-do
-	source /usr/indexes/init/$pkg_init
-done
+#for pkg_init in `ls /usr/indexes/init/`
+#do
+#	source /usr/indexes/init/$pkg_init
+#done
 
 # Do user initialisation and exit
-source /system/user-init.sh
+#source /system/user-init.sh

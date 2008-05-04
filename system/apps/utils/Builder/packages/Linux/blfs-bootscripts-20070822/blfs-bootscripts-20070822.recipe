@@ -18,7 +18,7 @@ install-targets
 	install-iptables
 ;	Handled by CUPS package init script:
 ;	CUPS server:
-;	install-cups
+	install-cups
 ;	OpenSSH server:
 	install-sshd
 ;	As root:
