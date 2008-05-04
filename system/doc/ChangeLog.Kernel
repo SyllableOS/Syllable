@@ -1,3 +1,9 @@
+* May 4, 2008, Kristian Van Der Vliet *
+
+Added a workaround to the rtl8169 driver for a GCC optimisation bug which
+creates a reference to memcpy() after the pre-processor has run, hence is
+undefined.
+
 * April 5, 2008, Kristian Van Der Vliet *
 
 posix/limits.h: Moved certain macro definitions to be outside the gaurd for
