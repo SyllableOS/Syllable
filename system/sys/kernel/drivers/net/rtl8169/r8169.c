@@ -565,6 +565,18 @@ static const unsigned int rtl8169_rx_config =
 #define PHY_Cap_100_Half_Or_Less PHY_Cap_100_Half | PHY_Cap_10_Full_Or_Less
 #define PHY_Cap_100_Full_Or_Less PHY_Cap_100_Full | PHY_Cap_100_Half_Or_Less
 
+/* XXXKV: This is a workaround for an optimisation bug in GCC, which optimises
+   a block of code to a memcpy() *after* the pre-processor has run, which creates
+   an undefined reference because normally memcpy() is a macro. Doing it this way
+   at least means the linker will be able to resolve the reference that GCC
+   helpfully creates for us. */
+
+#undef memcpy
+static void *memcpy(void *to, const void *from, size_t size)
+{
+	return __memcpy(to,from,size);
+}
+
 static void mdio_write(void *ioaddr, int RegAddr, int value)
 {
 	int i;
