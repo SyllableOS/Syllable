@@ -49,12 +49,13 @@ install -v -m700 -d var/lib/sshd
 chown -v root:sys var/lib/sshd
 
 # For LFS bootscripts:
-ln -s /usr/bind/sbin/named /usr/sbin/
-ln -s /usr/openssh/sbin/sshd /usr/sbin/
-ln -s /usr/apache/bin/apachectl /usr/sbin/
-ln -s /usr/apache/bin/httpd /usr/sbin/
-ln -s /usr/vsftpd/sbin/vsftpd /usr/sbin/
-ln -s /usr/rsync/bin/rsync /usr/bin/
-ln -s /usr/samba/sbin/nmbd /usr/sbin/
-ln -s /usr/samba/sbin/smbd /usr/sbin/
-ln -s /usr/samba/sbin/winbindd /usr/sbin/
+ln -s /system/resources/cups/1.3.4/sbin/cupsd usr/sbin/
+ln -s /usr/bind/sbin/named usr/sbin/
+#ln -s /usr/openssh/sbin/sshd usr/sbin/
+ln -s /usr/apache/bin/apachectl usr/sbin/
+ln -s /usr/apache/bin/httpd usr/sbin/
+ln -s /usr/vsftpd/sbin/vsftpd usr/sbin/
+ln -s /usr/rsync/bin/rsync usr/bin/
+ln -s /usr/samba/sbin/nmbd usr/sbin/
+ln -s /usr/samba/sbin/smbd usr/sbin/
+ln -s /usr/samba/sbin/winbindd usr/sbin/
