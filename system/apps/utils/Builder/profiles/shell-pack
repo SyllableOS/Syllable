@@ -4,14 +4,13 @@ name				ShellEssentials
 headline			Common tools for the command line
 
 modules
-	programming/languages/gawk-3.1.5
-	system/gettext-0.16.1
+	programming/languages/gawk-3.1.6
+	system/gettext-0.17
 ;	system/libraries/s-lang-2.1.1
 ;	shell/man-1.5m2
-	productivity/publishing/texinfo-4.8a
+	productivity/publishing/texinfo-4.12
 	productivity/publishing/groff-1.19.2
-	shell/which-2.16
-	security/gnupg-1.4.5
-;	file/cdrtools-2.01
+	shell/which-2.19
+	security/gnupg-1.4.9
 	file/file-4.07
 	file/mc-4.6.1
