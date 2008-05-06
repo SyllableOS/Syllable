@@ -1,0 +1,7 @@
+authors				Kaj de Vos
+status				testing
+warnings
+	The /dev/random device on Syllable is currently not a very good source of randomness for cryptographic purposes.
+	There is no secure memory on Syllable.
+	Please use GnuPG on Syllable with caution.
+

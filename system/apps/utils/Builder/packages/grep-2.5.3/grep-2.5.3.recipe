@@ -1,0 +1,27 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			gnu
+
+title				Global Replace
+headline			Line-oriented text matching and manipulation tool
+description
+	The grep command searches one or more input files for lines containing a match to a specified pattern. By default, grep prints the matching lines.
+licenses			GPL
+
+home				www.gnu.org/software/grep/
+packages			grep/grep-2.5.3
+
+; But not for GRep in the base system:
+;build-recommends	pcre
+
+; Seems to be necessary for internationalisation:
+build-dir			.
+
+configure-options
+;	--without-included-gettext
+;	Prevent problems with starting the system:
+	--disable-perl-regexp
+
+documentation		README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS
+

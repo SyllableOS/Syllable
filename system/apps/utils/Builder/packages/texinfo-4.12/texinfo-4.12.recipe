@@ -1,0 +1,23 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			gnu
+
+headline			The GNU project's documentation format processor
+description
+	Texinfo is the official documentation format of the GNU project.
+	Texinfo uses a single source file to produce output in a number of formats, both online and printed (dvi, html, info, pdf, xml, etc.). This means that instead of writing different documents for online information and another for a printed manual, you need write only one document. And when the work is revised, you need revise only that one document.
+licenses			GPL
+
+home				www.gnu.org/software/texinfo/
+packages			texinfo/texinfo-4.12
+
+install-vars
+	TEXMF /usr/texinfo/share/texmf
+;	TEXMF /usr/share/texmf
+install-targets		install install-tex
+
+documentation		README INTRODUCTION COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS
+build-docs			INSTALL
+internal-docs		README.dev
+

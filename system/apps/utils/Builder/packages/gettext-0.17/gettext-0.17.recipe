@@ -1,0 +1,35 @@
+authors				Kaj de Vos
+status				testing
+notes				See file PACKAGING to split off a developer package
+
+inherits			gnu
+
+headline			The GNU project's translation framework
+description
+	This package offers to programmers, translators, and even users, a well integrated set of tools and documentation. Specifically, the GNU `gettext' utilities are a set of tools that provides a framework to help other GNU packages produce multi-lingual messages. These tools include a set of conventions about how programs should be written to support message catalogs, a directory and file naming organization for the message catalogs themselves, a runtime library supporting the retrieval of translated messages, and a few stand-alone programs to massage in various ways the sets of translatable strings, or already translated strings.
+licenses			GPL
+
+home				www.gnu.org/software/gettext/
+packages			gettext/gettext-0.17
+
+recommends
+	ncurses
+	expat
+	libxml2
+	java
+	dotnet
+	glib2
+	libcroco
+	cvs
+; ?:
+;build-needs			gawk
+
+;make-shared
+
+;configure-env		LINGUAS 'de fr nl'
+;configure-options	--with-included-gettext
+
+documentation		README COPYING NEWS ChangeLog AUTHORS THANKS
+build-docs			DEPENDENCIES PACKAGING
+internal-docs		HACKING
+
