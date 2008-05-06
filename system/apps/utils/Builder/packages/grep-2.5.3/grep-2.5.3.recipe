@@ -23,5 +23,6 @@ configure-options
 ;	Prevent problems with starting the system:
 	--disable-perl-regexp
 
-documentation		README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS
+system-prefix-var	DESTDIR
 
+documentation		README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS

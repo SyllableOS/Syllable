@@ -11,7 +11,8 @@ install-needs		sed
 
 configure-options	--enable-html
 
+system-prefix-var	DESTDIR
+
 documentation		README COPYING COPYING.DOC ABOUT-NLS BUGS NEWS ChangeLog AUTHORS THANKS
 ; For FindUtils:
 links				bin/sed /bin
-
