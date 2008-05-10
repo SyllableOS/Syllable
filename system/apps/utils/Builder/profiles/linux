@@ -560,7 +560,7 @@ modules
 	apps/gnu/mc-4.6.1
 
 	apps/other/openssh-4.7p1
-	apps/other/rsync-2.6.9
+;	apps/other/rsync-2.6.9
 	apps/other/links2-2.1pre33
 	apps/other/pengupop-2.1.12
 
