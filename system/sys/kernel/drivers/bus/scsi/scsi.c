@@ -274,27 +274,6 @@ restart:
 	}
 }
 
-bool get_bool_arg( bool *pbValue, const char *pzName, const char *pzArg, int nArgLen )
-{
-	char zBuffer[256];
-
-	if( get_str_arg( zBuffer, pzName, pzArg, nArgLen ) == false )
-	{
-		return false;
-	}
-	if( stricmp( zBuffer, "false" ) == 0 )
-	{
-		*pbValue = false;
-		return true;
-	}
-	else if( stricmp( zBuffer, "true" ) == 0 )
-	{
-		*pbValue = true;
-		return true;
-	}
-	return false;
-}
-
 SCSI_bus_s sBus = {
 	scsi_get_command_size,
 	scsi_scan_host,

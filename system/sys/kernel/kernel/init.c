@@ -648,8 +648,6 @@ bool get_bool_arg( bool *pbValue, const char *pzName, const char *pzArg, int nAr
  * Called by init_kernel() (init.c).
  * \internal
  * \ingroup Init
- * \param nFirstUsablePage - The address of the first usable page. This parameter
- * is set to the end of the kernel image.
  * \author Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 static void parse_kernel_params( char *pzParams )

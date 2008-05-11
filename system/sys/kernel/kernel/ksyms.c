@@ -439,6 +439,7 @@ static KernelSymbol_s g_asKernelSymbols[] = {
 	KSYMBOL( get_kernel_arguments ),
 	KSYMBOL( get_str_arg ),
 	KSYMBOL( get_num_arg ),
+	KSYMBOL( get_bool_arg ),
 
 	// LIBC functions:
 	KSYMBOL( __const_udelay ),

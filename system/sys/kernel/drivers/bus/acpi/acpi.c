@@ -164,26 +164,6 @@ struct acpi_table_fadt* acpi_get_fadt()
 	return( &acpi_gbl_FADT );
 }
 
-bool get_bool_arg( bool *pbValue, const char *pzName, const char *pzArg, int nArgLen )
-{
-	char zBuffer[256];
-
-	if ( get_str_arg( zBuffer, pzName, pzArg, nArgLen ) == false )
-	{
-		return ( false );
-	}
-	if ( stricmp( zBuffer, "false" ) == 0 )
-	{
-		*pbValue = false;
-		return ( true );
-	}
-	else if ( stricmp( zBuffer, "true" ) == 0 )
-	{
-		*pbValue = true;
-		return ( true );
-	}
-	return ( false );
-}
 ACPI_bus_s sBus = {
 	acpi_poweroff,
 	acpi_evaluate_object,

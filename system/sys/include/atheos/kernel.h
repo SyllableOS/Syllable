@@ -296,7 +296,7 @@ int	setuid( uid_t uid );
 
 bool get_str_arg( char* pzValue, const char* pzName, const char* pzArg, int nArgLen );
 bool get_num_arg( uint32* pnValue, const char* pzName, const char* pzArg, int nArgLen );
-
+bool get_bool_arg( bool* pnValue, const char* pzName, const char* pzArg, int nArgLen );
 
 #endif /* __KERNEL__ */
 

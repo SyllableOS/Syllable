@@ -598,26 +598,6 @@ static status_t ps2_aux_init()
 	return( 0 );
 }
 
-bool get_bool_arg( bool *pbValue, const char *pzName, const char *pzArg, int nArgLen )
-{
-	char zBuffer[256];
-
-	if ( get_str_arg( zBuffer, pzName, pzArg, nArgLen ) == false )
-	{
-		return ( false );
-	}
-	if ( stricmp( zBuffer, "false" ) == 0 )
-	{
-		*pbValue = false;
-		return ( true );
-	}
-	else if ( stricmp( zBuffer, "true" ) == 0 )
-	{
-		*pbValue = true;
-		return ( true );
-	}
-	return ( false );
-}
 
 status_t device_suspend( int nDeviceID, int nDeviceHandle, void* pData )
 {

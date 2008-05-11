@@ -1798,23 +1798,6 @@ void usb_hub_init();
 
 
 
-bool get_bool_arg( bool* pbValue, const char* pzName, const char* pzArg, int nArgLen )
-{
-    char zBuffer[256];
-
-    if ( get_str_arg( zBuffer, pzName, pzArg, nArgLen ) == false ) {
-	return( false );
-    }
-    if ( stricmp( zBuffer, "false" ) == 0 ) {
-	*pbValue = false;
-	return( true );
-    } else if ( stricmp( zBuffer, "true" ) == 0 ) {
-	*pbValue = true;
-	return( true );
-    }
-    return( false );
-}
-
 USB_bus_s sBus = {
 	usb_register_driver,
 	usb_register_driver_force,
