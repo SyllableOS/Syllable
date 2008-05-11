@@ -1,8 +1,6 @@
 ; Parts to complete a system build
 
 resources
-	system linux/linux--cleanup
-
 ;	Make GLibC suitable for running in an installed system:
 	system/resources/glibc/2.7/lib	linux/libc.so
 	system/resources/glibc/2.7/lib	linux/libpthread.so
@@ -12,3 +10,6 @@ resources
 
 ;	May work better than the standard ones:
 ;	usr/share/terminfo/x			binaries/xterm-atheos
+
+modules
+	system linux/linux--cleanup
