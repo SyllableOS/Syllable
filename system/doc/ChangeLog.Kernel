@@ -1,3 +1,8 @@
+* May 11, 2008, Anthony Morphett *
+
+Export get_bool_arg() properly from the kernel and remove the duplicate
+get_bool_arg() code from drivers
+
 * May 4, 2008, Kristian Van Der Vliet *
 
 Added a workaround to the rtl8169 driver for a GCC optimisation bug which
