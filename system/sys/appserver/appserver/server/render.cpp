@@ -280,7 +280,7 @@ void Layer::DrawString( const char *pzString, int nLength )
 			}
 			break;
 		default:
-			dbprintf( "Layer::DrawString() unknown colorspace %d\n", pcBitmap->m_eColorSpc );
+			dbprintf( "Layer::DrawString() unknown colour space %d\n", pcBitmap->m_eColorSpc );
 			break;
 		}
 		m_bFontPalletteValid = true;
@@ -468,7 +468,7 @@ void Layer::DrawText( const Rect & cRect, const char *pzString, int nLength, uin
 
 			default:
 			{
-				dbprintf( "Layer::DrawString() unknown colorspace %d\n", pcBitmap->m_eColorSpc );
+				dbprintf( "Layer::DrawString() unknown colour space %d\n", pcBitmap->m_eColorSpc );
 				break;
 			}
 		}
@@ -1173,7 +1173,7 @@ void Layer::DrawBitMap( SrvBitmap * pcBitMap, Rect cSrcRect, Rect cDstRect )
 	
 	if( !pcBitMap->GetBounds().Includes( cISrcRect ) )
 	{
-		dbprintf( "Error: Tried to draw bitmap with source rectangle larger than the bitmap size\n" );
+		dbprintf( "Error: Tried to draw bitmap with source rectangle larger than the bitmap size.\n" );
 		dbprintf( "Source rectangle: %i %i %i %i Bitmap size: %ix%i\n", cISrcRect.left, cISrcRect.top,
 			cISrcRect.right, cISrcRect.bottom, pcBitMap->m_nWidth, pcBitMap->m_nHeight );
 		return;
@@ -1212,4 +1212,3 @@ void Layer::DrawBitMap( SrvBitmap * pcBitMap, Rect cSrcRect, Rect cDstRect )
 	}
 	PutRegion( pcReg );
 }
-

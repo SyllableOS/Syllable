@@ -249,8 +249,8 @@ static bool setup_screenmode( int nDesktop, bool bForce )
 		}
 		if( cModes.size() == 0 )
 		{
-			dbprintf( "Error: Display driver don't list any screenmodes. Check that your gfx-adapter supports Vesa2.0\n" );
-			dbprintf( "Terminate application server...\n" );
+			dbprintf( "Error: Display driver does not list any screen modes. Please check that your video adapter supports VESA 2.0\n" );
+			dbprintf( "Terminating application server...\n" );
 			exit( 1 );
 		}
 		std::sort( cModes.begin(), cModes.end(  ), ModeCmp(  ) );
@@ -263,7 +263,7 @@ static bool setup_screenmode( int nDesktop, bool bForce )
 				{
 					i--;
 				}
-				dbprintf( "Error: Failed to set screen mode %dx%d %dbpp on desktop %d. Revert to %dx%d %dbpp\n", g_asDesktops[nDesktop].m_sScreenMode.m_nWidth, g_asDesktops[nDesktop].m_sScreenMode.m_nHeight, BitsPerPixel( g_asDesktops[nDesktop].m_sScreenMode.m_eColorSpace ), nDesktop, cModes[i].m_nWidth, cModes[i].m_nHeight, BitsPerPixel( cModes[i].m_eColorSpace ) );
+				dbprintf( "Error: Failed to set screen mode %dx%d %dbpp on desktop %d. Reverting to %dx%d %dbpp\n", g_asDesktops[nDesktop].m_sScreenMode.m_nWidth, g_asDesktops[nDesktop].m_sScreenMode.m_nHeight, BitsPerPixel( g_asDesktops[nDesktop].m_sScreenMode.m_eColorSpace ), nDesktop, cModes[i].m_nWidth, cModes[i].m_nHeight, BitsPerPixel( cModes[i].m_eColorSpace ) );
 
 				g_asDesktops[nDesktop].m_sScreenMode.m_nWidth = cModes[i].m_nWidth;
 				g_asDesktops[nDesktop].m_sScreenMode.m_nHeight = cModes[i].m_nHeight;
@@ -282,7 +282,7 @@ static bool setup_screenmode( int nDesktop, bool bForce )
 				}
 				for( i = 0; i < cModes.size(); ++i )
 				{
-					dbprintf( "Error: Failed to set screen mode %dx%d %dbpp on desktop %d. Revert to %dx%d %dbpp\n", g_asDesktops[nDesktop].m_sScreenMode.m_nWidth, g_asDesktops[nDesktop].m_sScreenMode.m_nHeight, BitsPerPixel( g_asDesktops[nDesktop].m_sScreenMode.m_eColorSpace ), nDesktop, cModes[i].m_nWidth, cModes[i].m_nHeight, BitsPerPixel( cModes[i].m_eColorSpace ) );
+					dbprintf( "Error: Failed to set screen mode %dx%d %dbpp on desktop %d. Reverting to %dx%d %dbpp\n", g_asDesktops[nDesktop].m_sScreenMode.m_nWidth, g_asDesktops[nDesktop].m_sScreenMode.m_nHeight, BitsPerPixel( g_asDesktops[nDesktop].m_sScreenMode.m_eColorSpace ), nDesktop, cModes[i].m_nWidth, cModes[i].m_nHeight, BitsPerPixel( cModes[i].m_eColorSpace ) );
 
 					g_asDesktops[nDesktop].m_sScreenMode.m_nWidth = cModes[i].m_nWidth;
 					g_asDesktops[nDesktop].m_sScreenMode.m_nHeight = cModes[i].m_nHeight;
@@ -305,8 +305,8 @@ static bool setup_screenmode( int nDesktop, bool bForce )
 	}
 	if( bModeSet == false )
 	{
-		dbprintf( "Error: All screenmodes failed. Game over!\n" );
-		dbprintf( "Terminate application server...\n" );
+		dbprintf( "Error: All screen modes failed. Game over!\n" );
+		dbprintf( "Terminating application server...\n" );
 		exit( 1 );
 	}
 	
@@ -772,7 +772,7 @@ bool init_desktops()
 	g_pcScreenBitmap->m_bVideoMem = true;
 	g_pcScreenBitmap->m_nFlags = Bitmap::NO_ALPHA_CHANNEL;
 
-	dbprintf( "Initialize graphics driver...\n" );
+	dbprintf( "Initialise graphics driver...\n" );
 
 	/* Iterate through the graphics driver nodes in /dev/graphics */
 	DIR *pKernelDriverDir = NULL;
@@ -812,12 +812,12 @@ bool init_desktops()
 
 			if( ioctl( nFd, IOCTL_GET_APPSERVER_DRIVER, &zDriverPath[0] ) != 0 )
 			{
-				dbprintf( "Error: Failed to get the appserver driver for %s\n", zDevPath );
+				dbprintf( "Error: Failed to get the AppServer driver for %s\n", zDevPath );
 			}
 			strcat( zAppserverDriverPath, zDriverPath );
 
 
-			dbprintf( "Using appserver driver %s\n", zDriverPath );
+			dbprintf( "Using AppServer driver %s\n", zDriverPath );
 
 			/* Open the appserver driver */
 			int nLib = -1;
@@ -866,12 +866,12 @@ bool init_desktops()
 
 	if( g_pcDispDrv == NULL )
 	{
-		dbprintf( "Fall back to vesa20 driver\n" );
+		dbprintf( "Falling back to VESA 2.0 driver\n" );
 		g_pcDispDrv = new VesaDriver;
 		g_nFrameBufferArea = g_pcDispDrv->Open();
 		if( g_nFrameBufferArea < 0 )
 		{
-			dbprintf( "Failed to init vesa20 driver.\n" );
+			dbprintf( "Failed to initialise VESA 2.0 driver.\n" );
 		}
 	}
 
@@ -891,7 +891,3 @@ bool init_desktops()
 	g_pcDispDrv->MouseOn();
 	return ( 0 );
 }
-
-
-
-

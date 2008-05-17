@@ -708,7 +708,7 @@ bool DisplayDriver::DrawLine( SrvBitmap * psBitmap, const IRect & cClipRect, con
 			DrawLine32( psBitmap, cClipRect, cPnt1.x, cPnt1.y, cPnt2.x, cPnt2.y, COL_TO_RGB32( sColor ), DM_COPY );
 			break;
 		default:
-			dbprintf( "DisplayDriver::DrawLine() unknown color space %d\n", psBitmap->m_eColorSpc );
+			dbprintf( "DisplayDriver::DrawLine() unknown colour space %d\n", psBitmap->m_eColorSpc );
 		}
 		break;
 	case DM_INVERT:
@@ -722,7 +722,7 @@ bool DisplayDriver::DrawLine( SrvBitmap * psBitmap, const IRect & cClipRect, con
 			DrawLine32( psBitmap, cClipRect, cPnt1.x, cPnt1.y, cPnt2.x, cPnt2.y, COL_TO_RGB32( sColor ), DM_INVERT );
 			break;
 		default:
-			dbprintf( "DisplayDriver::DrawLine() unknown color space %d can't invert\n", psBitmap->m_eColorSpc );
+			dbprintf( "DisplayDriver::DrawLine() unknown colour space %d: can't invert\n", psBitmap->m_eColorSpc );
 		}
 		break;
 	case DM_BLEND:
@@ -736,16 +736,10 @@ bool DisplayDriver::DrawLine( SrvBitmap * psBitmap, const IRect & cClipRect, con
 			DrawLine32( psBitmap, cClipRect, cPnt1.x, cPnt1.y, cPnt2.x, cPnt2.y, COL_TO_RGB32( sColor ), DM_BLEND );
 			break;
 		default:
-			dbprintf( "DisplayDriver::DrawLine() unknown color space %d can't blend\n", psBitmap->m_eColorSpc );
+			dbprintf( "DisplayDriver::DrawLine() unknown colour space %d: can't blend\n", psBitmap->m_eColorSpc );
 		}
 		break;
 	}
 	
 	return ( true );
 }
-
-
-
-
-
-

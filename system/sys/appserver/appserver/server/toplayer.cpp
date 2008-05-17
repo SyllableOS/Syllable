@@ -107,7 +107,7 @@ void TopLayer::LayerFrameChanged( Layer* pcChild, IRect cFrame )
 		} else {
 			if( cFrame.IsValid() )
 			{
-				dbprintf("Error: Failed to allocate new backbuffer -> falling back to singlebuffer!\n" );
+				dbprintf("Error: Failed to allocate new backbuffer -> falling back to single buffer!\n" );
 				/* Fall back to singlebuffer */
 				pcChild->Invalidate( true );
 				if( pcChild->GetWindow() != NULL )
