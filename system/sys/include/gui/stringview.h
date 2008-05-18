@@ -42,9 +42,16 @@ class StringView : public View
 {
 public:
     StringView( Rect cFrame, const String& cName, const String& cString,
+		uint32 nAlign = DTF_DEFAULT,
+		uint32 nResizeMask = CF_FOLLOW_LEFT | CF_FOLLOW_TOP,
+		uint32 nFlags  = WID_WILL_DRAW | WID_FULL_UPDATE_ON_RESIZE );
+
+	/* Deprecated constructor using alignment eAlign instead of uint32 nAlign */
+	StringView( Rect cFrame, const String& cName, const String& cString,
 		alignment eAlign = ALIGN_LEFT,
 		uint32 nResizeMask = CF_FOLLOW_LEFT | CF_FOLLOW_TOP,
 		uint32 nFlags  = WID_WILL_DRAW | WID_FULL_UPDATE_ON_RESIZE );
+
     ~StringView();
 
     void	SetMinPreferredSize( int nWidthChars, int nHeightChars = 1 );
@@ -58,8 +65,8 @@ public:
     void	 SetString( const String& cString );
     const String& GetString( void ) const;
 
-    void	 SetAlignment( alignment eAlign );
-    alignment	 GetAlignment( void ) const;
+    void	 SetAlignment( uint32 nAlign );
+    uint32	 GetAlignment( void ) const;
 
     bool HasBorder() const;
     void SetRenderBorder( bool bRender );

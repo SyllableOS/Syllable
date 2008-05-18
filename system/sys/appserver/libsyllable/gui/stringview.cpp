@@ -39,23 +39,69 @@ class StringView::Private
 	String		m_cString;
 	IPoint		m_cMinSize;
 	IPoint		m_cMaxSize;
-    alignment	m_eAlign;
+    uint32		m_nAlign;
     bool		m_bHasBorder;
 };
 
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
+/** Create a new StringView.
+ * \par Description:
+ * 
+ * \param cFrame, cName, nResizeMask, nFlags
+ *	See os::View::View( const Rect &cFrame, const String &cTitle, uint32 nResizeMask, uint32 nFlags )
+ * \param cString
+ *  The text to be displayed in the StringView.
+ * \param nAlign
+ *  A bitmask of os::drawtext_flags specifying the alignment of the text within the view.
+ * \sa os::View::View( const Rect &cFrame, const String &cTitle, uint32 nResizeMask, uint32 nFlags ), os::drawtext_flags
+ *****************************************************************************/
 
+StringView::StringView( Rect cFrame, const String& cName, const String& cString, uint32 nAlign, uint32 nResizeMask, uint32 nFlags ):View( cFrame, cName, nResizeMask, nFlags )
+{
+	m = new Private;
+	m->m_nAlign = nAlign;
+	SetString( cString );
+	SetFgColor( 0, 0, 0 );
+}
+
+
+/** Create a new StringView (deprecated).
+ * \par Description:
+ *  See StringView( Rect cFrame, const String& cName, const String& cString, uint32 nAlign, uint32 nResizeMask, uint32 nFlags ).
+ *  This constructor accepts a single alignment value from os::alignment, rather than a bitmask from os::drawtext_flags.
+ *  Thus it does not provide as flexible alignment as the previous constructor; for instance, it is
+ *   impossible to specify both horizontal and vertical alignment with this constructor.
+ *   It is deprecated and provided only for compatibility
+ * \param eAlign
+ *  A value from os::alignment specifying the alignment.
+ * \note This constructor is deprecated and may be removed in future Syllable releases.
+ *  The previous constructor should be used instead.
+ * \sa os::StringView::StringView( const Rect &cFrame, const String &cTitle, const String& cString, uint32 nAlign, uint32 nResizeMask, uint32 nFlags ), os::alignment, os::drawtext_flags
+ *****************************************************************************/
 StringView::StringView( Rect cFrame, const String& cName, const String& cString, alignment eAlign, uint32 nResizeMask, uint32 nFlags ):View( cFrame, cName, nResizeMask, nFlags )
 {
 	m = new Private;
-	m->m_eAlign = eAlign;
 	SetString( cString );
 	SetFgColor( 0, 0, 0 );
+	switch( eAlign ) {
+		case ALIGN_LEFT:
+			m->m_nAlign = DTF_ALIGN_LEFT;
+			break;
+		case ALIGN_RIGHT:
+			m->m_nAlign = DTF_ALIGN_RIGHT;
+			break;
+		case ALIGN_TOP:
+			m->m_nAlign = DTF_ALIGN_TOP;
+			break;
+		case ALIGN_BOTTOM:
+			m->m_nAlign = DTF_ALIGN_BOTTOM;
+			break;
+		case ALIGN_CENTER:
+			m->m_nAlign = DTF_ALIGN_CENTER;
+			break;
+		default:
+			/* Unknown eAlign!! */
+			m->m_nAlign = DTF_DEFAULT;
+	}
 }
 
 //----------------------------------------------------------------------------
@@ -94,6 +140,18 @@ void StringView::SetString( const String& cString )
 const String& StringView::GetString( void ) const
 {
 	return ( m->m_cString );
+}
+
+uint32 StringView::GetAlignment() const
+{
+	return m->m_nAlign;
+}
+
+void StringView::SetAlignment( uint32 nAlign )
+{
+	m->m_nAlign = nAlign;
+	Invalidate();
+	Flush();
 }
 
 bool StringView::HasBorder() const
@@ -183,18 +241,7 @@ void StringView::Paint( const Rect & cUpdateRect )
 		FillRect( cBounds, GetBgColor() );
 	}
 
-	if( m->m_eAlign == ALIGN_LEFT )
-	{
-		DrawText( cBounds, m->m_cString );
-	}
-	else if( m->m_eAlign == ALIGN_RIGHT )
-	{
-		DrawText( cBounds, m->m_cString, DTF_ALIGN_RIGHT );
-	}
-	else
-	{
-		DrawText( cBounds, m->m_cString, DTF_CENTER );
-	}
+	DrawText( cBounds, m->m_cString, m->m_nAlign );
 }
 
 void StringView::__SV_reserved1__()
