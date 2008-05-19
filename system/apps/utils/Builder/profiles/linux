@@ -329,7 +329,7 @@ modules
 	system libraries/freetype-2.3.5
 
 	system libraries/libjpeg-6b
-	system libraries/libpng-1.2.14
+	system libraries/libpng-1.2.29
 	system libraries/libungif-4.1.4
 	system libraries/libtiff-3.8.2
 	stage libraries/faad-2.6.1

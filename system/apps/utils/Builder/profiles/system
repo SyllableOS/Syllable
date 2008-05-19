@@ -300,7 +300,7 @@ modules
 	bootstrap libraries/freetype-2.3.5
 
 	stage libraries/libjpeg-6b-static
-	stage libraries/libpng-1.2.14
+	stage libraries/libpng-1.2.29
 	stage libraries/libungif-4.1.4
 	stage libraries/libtiff-3.8.2
 	stage libraries/faad-2.6.1

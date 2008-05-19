@@ -1,0 +1,31 @@
+authors				Kaj de Vos
+status				testing
+notes				See contrib/gregbook/ to build examples
+
+inherits			sourceforge
+
+headline			An open, extensible image format with lossless compression
+description
+	This is an open source project to develop and maintain the reference library for use in applications that read, create, and manipulate PNG (Portable Network Graphics) raster image files.
+licenses			OS
+
+home
+	www.libpng.org
+;	www.libpng.org/pub/png/
+packages			libpng/libpng-1.2.29
+_locations
+	ftp://ftp.simplesystems.org/pub/png/src
+	ftp://ftp.simplesystems.org/pub/png/src/history/
+	ftp://ftp.simplesystems.org/pub/libpng/png/src/
+
+needs				zlib
+
+_test-targets
+	check
+	test
+
+documentation		README ANNOUNCE LICENSE KNOWNBUG CHANGES TODO Y2KINFO
+build-docs			INSTALL
+develop-docs
+	libpng-1.2.29.txt example.c
+	contrib/gregbook
