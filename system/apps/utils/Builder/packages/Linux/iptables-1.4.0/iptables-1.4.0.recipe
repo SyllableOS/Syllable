@@ -1,0 +1,39 @@
+authors				Kaj de Vos
+status				testing
+warnings			Is specific to the 2.6.25 kernel!
+
+headline			Firewall and NAT configuration tools
+description
+	IPTables is the userspace command line program used to configure the Linux 2.4.x and 2.6.x IPv4 packet filtering ruleset. It is targeted towards system administrators. Since Network Address Translation is also configured from the packet filter ruleset, iptables is used for this, too. The iptables package also includes ip6tables. ip6tables is used for configuring the IPv6 packet filter.
+licenses			GPL-2
+
+home				netfilter.org/projects/iptables/
+locations
+	http://www.netfilter.org/projects/iptables/files/
+	ftp://ftp.netfilter.org/pub/iptables/
+
+build-needs			linux--headers
+
+install-prefix-var	PREFIX
+
+make-env
+;	Needs raw kernel headers in some cases.
+;	Uses built kernel source on the host when not defined:
+	KERNEL_DIR		"$IMAGE/system/development/resources/linux/2.6.25"
+;	LIBDIR			'/lib'
+;	NO_SHARED_LIBS	'1'
+;	DO_MULTI		'1'
+
+system-prefix-var	DESTDIR
+_install-env
+	LIBDIR			'/lib'
+	BINDIR			'/sbin'
+	MANDIR			'/usr/share/man'
+install-targets
+	install
+;	install-devel
+install-files		iptables.xslt lib/iptables/
+
+documentation		COPYING INCOMPATIBILITIES
+build-docs			INSTALL
+internal-docs		COMMIT_NOTES
