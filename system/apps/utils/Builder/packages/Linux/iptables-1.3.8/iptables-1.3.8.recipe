@@ -21,15 +21,13 @@ install-prefix-var	PREFIX
 make-env
 ;	Needs raw kernel headers in some cases.
 ;	Uses built kernel source on the host when not defined:
-	KERNEL_DIR		"$IMAGE/system/resources/linux/2.6.25"
+	KERNEL_DIR		"$IMAGE/system/development/resources/linux/2.6.25"
 ;	LIBDIR			'/lib'
 ;	NO_SHARED_LIBS	'1'
 ;	DO_MULTI		'1'
 
 system-prefix-var	DESTDIR
 _install-env
-	KERNEL_DIR		"$IMAGE/system/resources/linux/2.6.25"
-	PREFIX			'/usr'
 	LIBDIR			'/lib'
 	BINDIR			'/sbin'
 	MANDIR			'/usr/share/man'
