@@ -1,7 +1,7 @@
 authors				Kaj de Vos
 status				testing
 
-headline			Linux Kernel Headers
+headline			Linux kernel headers
 description
 	The Linux kernel needs to expose an Application Programming Interface (API) for the system's C library (GLibC) to utilize. This is done by way of sanitizing various C header files that are shipped in the Linux kernel source tarball.
 licenses			GPL-2

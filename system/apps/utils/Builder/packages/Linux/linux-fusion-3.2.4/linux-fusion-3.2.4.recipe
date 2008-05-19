@@ -14,6 +14,9 @@ locations			http://www.directfb.org/downloads/Core/
 needs				linux
 build-needs			linux--headers
 
+;make-env			CPPFLAGS "$CPPFLAGS -I`pwd`/linux/include"
+;make-env			CFLAGS "-I/home/root/system/linux/linux-fusion-3.2.4/linux/include $CFLAGS"
+
 system-prefix-var	DESTDIR
 
 install-tree

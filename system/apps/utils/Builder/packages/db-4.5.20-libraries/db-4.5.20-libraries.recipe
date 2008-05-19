@@ -7,4 +7,4 @@ inherits			db-4.5.20
 ; For IPRoute ARPD:
 configure-options	--enable-compat185
 
-links
+links				libdb-4.5.a lib/libdb.a
