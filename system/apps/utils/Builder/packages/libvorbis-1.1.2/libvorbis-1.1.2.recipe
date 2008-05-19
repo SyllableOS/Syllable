@@ -8,6 +8,7 @@ build-needs			libogg
 
 ;configure-options	--enable-docs
 
+system-prefix-var	DESTDIR
+
 documentation		README COPYING todo.txt AUTHORS
 develop-docs		examples
-

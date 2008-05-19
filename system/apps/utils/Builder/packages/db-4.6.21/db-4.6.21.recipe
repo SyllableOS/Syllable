@@ -23,6 +23,8 @@ configure-options
 	--enable-compat185
 	--enable-cxx
 
+system-prefix-var	DESTDIR
+
 ;install-vars		docdir '/usr/share/doc/db-4.6.21'
 
 documentation		README LICENSE

@@ -24,6 +24,8 @@ _test-targets
 	check
 	test
 
+system-prefix-var	DESTDIR
+
 documentation		README ANNOUNCE LICENSE KNOWNBUG CHANGES TODO Y2KINFO
 build-docs			INSTALL
 develop-docs
