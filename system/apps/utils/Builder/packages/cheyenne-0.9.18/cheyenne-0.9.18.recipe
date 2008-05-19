@@ -6,7 +6,9 @@ description
 	Cheyenne is a full-featured Apache-class web server implementation using 100% native REBOL. The project started just as a simple rewrite of the UniServe's HTTPd service to make it more flexible and ended as creating Cheyenne. Cheyenne is built on top of the UniServe async network framework, so it inherits the gains of asynchronous I/O and mono-process lightweight design.
 licenses			BSD
 
-home				softinnov.org/cheyenne.shtml
+home
+	cheyenne-server.org
+;	softinnov.org/cheyenne.shtml
 packages			cheyenne-r0918
 locations			http://softinnov.org/tmp/
 
