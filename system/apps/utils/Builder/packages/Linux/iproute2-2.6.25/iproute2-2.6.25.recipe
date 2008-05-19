@@ -12,13 +12,13 @@ licenses			GPL
 home				linux-net.osdl.org/index.php/Iproute2
 locations			http://developer.osdl.org/dev/iproute2/download/
 
+; For arpd:
 needs				db 1.85
 build-needs
 ;	For headers:
 	linux
 	flex
 	bison
-; For arpd:
 
 build-dir			.
 
@@ -26,14 +26,14 @@ build-dir			.
 
 ;make-env			CPPFLAGS "-I$IMAGE/include $CPPFLAGS"
 _make-env
-;	CPPFLAGS "-I$IMAGE/system/develoment/resources/linux/2.6.25/include $CPPFLAGS"
+;	CPPFLAGS "-I$IMAGE/system/development/resources/linux/2.6.25/include $CPPFLAGS"
 ;	Private libs conflict with system libs, and so need to be first when bootstrapping:
 	LDFLAGS "-L../lib $LDFLAGS"
 ;make-vars
 ;	FHS compatibility:
 ;	SBINDIR '/sbin'
 ;	Doesn't work:
-;	KERNEL_INCLUDE "$IMAGE/system/develoment/resources/linux/2.6.25/include"
+;	KERNEL_INCLUDE "$IMAGE/system/development/resources/linux/2.6.25/include"
 
 system-prefix-var	DESTDIR
 install-tree
