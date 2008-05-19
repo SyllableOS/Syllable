@@ -315,7 +315,7 @@ modules
 	system linux/util-linux-2.12r
 	system linux/sysklogd-1.4.1
 	system linux/shadow-4.0.18.1
-	libraries libraries/db-4.5.20-libraries
+	libraries libraries/db-4.6.21-libraries
 	system linux/iproute2-2.6.25
 	linux/kbd-1.12
 	linux/reiserfsprogs-3.6.19

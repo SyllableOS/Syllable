@@ -1,0 +1,32 @@
+authors
+	Kaj de Vos
+	Jan Hauffa
+status				testing
+warnings			Oracle makes you download the source package manually.
+notes				This version uses the source package with no encryption
+
+name				Berkeley DB
+headline			Embeddable database library
+description
+	Oracle Berkeley DB is a family of open source, embeddable databases that allows developers to incorporate within their applications a fast, scalable, transactional database engine with industrial grade reliability and availability.
+licenses			OSI
+
+home				www.sleepycat.com
+packages			db-4.6.21.NC
+; Works only with the right file extension:
+;locations			http://download-east.oracle.com/berkeley-db/db-4.6.21.NC.tar.gz
+
+build-dir			build_unix
+
+configure-cmd		dist/configure
+configure-options
+	--enable-compat185
+	--enable-cxx
+
+;install-vars		docdir '/usr/share/doc/db-4.6.21'
+
+documentation		README LICENSE
+; Optimise wasteful duplicates:
+links
+	libdb-4.6.a		lib/libdb.a
+	libdb_cxx-4.6.a	lib/libdb_cxx.a

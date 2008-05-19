@@ -1,0 +1,11 @@
+authors				Kaj de Vos
+status				testing
+notes				Minimal version for in the system
+
+inherits			db-4.6.21
+
+; For IPRoute ARPD:
+configure-options	--enable-compat185
+
+; Optimise wasteful duplicates:
+links				libdb-4.6.a lib/libdb.a
