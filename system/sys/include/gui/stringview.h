@@ -48,7 +48,7 @@ public:
 
 	/* Deprecated constructor using alignment eAlign instead of uint32 nAlign */
 	StringView( Rect cFrame, const String& cName, const String& cString,
-		alignment eAlign = ALIGN_LEFT,
+		alignment eAlign,
 		uint32 nResizeMask = CF_FOLLOW_LEFT | CF_FOLLOW_TOP,
 		uint32 nFlags  = WID_WILL_DRAW | WID_FULL_UPDATE_ON_RESIZE );
 
