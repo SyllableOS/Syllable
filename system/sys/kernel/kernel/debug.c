@@ -35,6 +35,9 @@
 
 typedef struct _DbgCmd DbgCmd_s;
 
+int32 g_nPrintkMax = -1;    /*  printk limit, for printk_max parameter.  -1 = no limit */
+atomic_t g_nPrintkCount = ATOMIC_INIT(0);  /* printk counter (actually counts debug_write() calls) */
+
 static int g_nDebugBaudRate = 0;
 static int g_nDebugPort = 2;
 static uint16_t g_nPortBase = 0x2f8;
@@ -426,6 +429,9 @@ static int write_packet( int nPort, const char *pBuffer, int nSize )
 
 void debug_write( const char *pBuffer, int nSize )
 {
+	if( g_nPrintkMax >= 0 && atomic_read( &g_nPrintkCount ) >= g_nPrintkMax ) return;  /* printk limit reached */
+	atomic_inc( &g_nPrintkCount );
+	
 	int nFlg = spinlock_disable( &g_sDebugSpinLock );
 
 	dbcon_write( pBuffer, nSize );

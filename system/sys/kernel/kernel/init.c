@@ -135,6 +135,8 @@ extern uint32 v86Stack_seg;
 extern uint32 v86Stack_off;
 extern uint32 g_anKernelStackEnd[];
 
+extern int32 g_nPrintkMax; /* for printk_max parameter */
+
 // must be inlined in order to work correctly
 static inline int Fork( const char *pzName )
 {
@@ -711,6 +713,10 @@ static void parse_kernel_params( char *pzParams )
 			printk( "  UAS start:        %08x\n", g_sSysBase.sb_nFirstUserAddress );
 		if( get_num_arg( &g_sSysBase.sb_nLastUserAddress, "uspace_end=", pzArg, nLen ) )
 			printk( "  UAS end:          %08x\n", g_sSysBase.sb_nLastUserAddress );
+
+		if( get_num_arg( (uint32*)&g_nPrintkMax, "printk_max=", pzArg, nLen ) )
+			printk( "  Printk limit: %i\n", g_nPrintkMax );
+
 		if ( pzParams[i] == '\0' )
 		{
 			break;
