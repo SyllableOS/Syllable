@@ -1,3 +1,7 @@
+* May 29, 2008, Anthony Morphett *
+
+Added kernel parameter printk_max=n to limit boot messages
+
 * May 11, 2008, Anthony Morphett *
 
 Export get_bool_arg() properly from the kernel and remove the duplicate

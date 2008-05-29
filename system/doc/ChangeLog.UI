@@ -1,3 +1,7 @@
+* May 29, 2008, Anthony Morphett *
+
+Changed StringView to use os::drawtext_flags by default rather than os::alignment
+
 * May 18, 2008, Anthony Morphett *
 
 Changed StringView to use os::drawtext_flags flags for alignment, rather than os::alignment
