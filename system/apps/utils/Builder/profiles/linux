@@ -337,7 +337,7 @@ modules
 	system libraries/libogg-1.1.3
 	system libraries/libvorbis-1.1.2
 
-	system apps/other/directfb-1.0.1
+	system apps/other/directfb-1.0.0
 
 ;	sys/appserver/libsyllable
 ;	sys/appserver/appserver/server
