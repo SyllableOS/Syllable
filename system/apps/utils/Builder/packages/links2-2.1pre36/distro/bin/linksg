@@ -1,0 +1,2 @@
+#! /bin/sh
+links -g $1

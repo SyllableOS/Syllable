@@ -1,0 +1,51 @@
+diff -ru links2-2.1pre33-original/atheos.cpp links2-2.1pre33/atheos.cpp
+--- links2-2.1pre33-original/atheos.cpp	2004-10-22 19:11:31.000000000 +0000
++++ links2-2.1pre33/atheos.cpp	2008-03-26 20:29:58.000000000 +0000
+@@ -309,7 +309,7 @@
+ 	fcntl(rpipe, F_SETFL, O_NONBLOCK);
+ 	fcntl(wpipe, F_SETFL, O_NONBLOCK);
+ 	set_handlers(rpipe, ath_get_event, NULL, NULL, NULL);
+-	ath_app_thread_id = spawn_thread("links_app", ath_app_thread, 0, 0, NULL);
++	ath_app_thread_id = spawn_thread("links_app",(void*) ath_app_thread, 0, 0, NULL);
+ 	resume_thread(ath_app_thread_id);
+ 	if ((d = new Desktop)) {
+ 		ath_cs_desktop = d->GetColorSpace();
+@@ -408,7 +408,7 @@
+ {
+ 	LinksWindow *win = lv(dev)->win;
+ 	lock_dev(dev);
+-	win->SetTitle((string)(char *)title);
++	win->SetTitle((char *)title);
+ 	lv(dev)->d_flush();
+ 	unlock_dev(dev);
+ }
+diff -ru links2-2.1pre33-original/configure links2-2.1pre33/configure
+--- links2-2.1pre33-original/configure	2007-12-26 06:20:47.000000000 +0000
++++ links2-2.1pre33/configure	2008-03-26 20:33:47.000000000 +0000
+@@ -6507,14 +6507,14 @@
+   echo "$ac_t""no" 1>&6
+ fi
+ 
+-		echo $ac_n "checking for main in -latheos""... $ac_c" 1>&6
+-echo "configure:6504: checking for main in -latheos" >&5
++		echo $ac_n "checking for main in -lsyllable""... $ac_c" 1>&6
++echo "configure:6504: checking for main in -lsyllable" >&5
+ ac_lib_var=`echo atheos'_'main | sed 'y%./+-%__p_%'`
+ if eval "test \"`echo '$''{'ac_cv_lib_$ac_lib_var'+set}'`\" = set"; then
+   echo $ac_n "(cached) $ac_c" 1>&6
+ else
+   ac_save_LIBS="$LIBS"
+-LIBS="-latheos  $LIBS"
++LIBS="-lsyllable  $LIBS"
+ cat > conftest.$ac_ext <<EOF
+ #line 6512 "configure"
+ #include "confdefs.h"
+@@ -6544,7 +6544,7 @@
+ #define $ac_tr_lib 1
+ EOF
+ 
+-  LIBS="-latheos $LIBS"
++  LIBS="-lsyllable $LIBS"
+ 
+ else
+   echo "$ac_t""no" 1>&6
