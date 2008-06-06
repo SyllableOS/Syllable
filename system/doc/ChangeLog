@@ -1,6 +1,12 @@
+* June 6, 2008, Kristian Van Der Vliet *
+
+Added an AGP bus manager and Via AGP GART HCD driver. All of this is from Dee
+Sharpe <demetrioussharpe@netscape.net>
+
 * May 1, 2008, Anthony Morphett *
 
-Documentation updates and bugfixes for BitmapImage relating to Bitmap::SHARE_FRAMEBUFFER flag
+Documentation updates and bugfixes for BitmapImage relating to
+Bitmap::SHARE_FRAMEBUFFER flag
 
 * April 22, 2008, Kristian Van Der Vliet *
 
