@@ -1,9 +1,9 @@
-CFLAGS   += -Wstrict-prototypes -kernel -fno-PIC -c -fno-strict-aliasing -Wno-trigraphs -fno-common -D__ENABLE_DEBUG__ -I../acpi/include
+CFLAGS   += -kernel -fno-PIC -c -I. -D__ENABLE_DEBUG__
 AFLAGS   = -c
 
 C_INCLUDE_PATH=$(ATHEOS_INCLUDE_PATH)
 
-OBJS := pci.o pci_acpi_link.o pci_acpi_router.o pci_registers.o
+OBJS := agp.o
 
 
 OBJDIR	:= objs
@@ -29,18 +29,19 @@ $(OBJDIR)/%.o : %.S
 
 
 
-all :	objs $(OBJDIR)/pci
+all :	objs $(OBJDIR)/agp
 
 objs:
 	mkdir objs
 
-$(OBJDIR)/pci: $(OBJS) Makefile
-	$(CC) -kernel $(OBJS) -o $(OBJDIR)/pci
+$(OBJDIR)/agp: $(OBJS) Makefile
+	$(CC) -kernel $(OBJS) -o $(OBJDIR)/agp
 
 install: all
-	cp -f $(OBJDIR)/pci $(IMAGE)/system/drivers/dev/bus/pci
+	cp -f $(OBJDIR)/agp $(IMAGE)/system/drivers/dev/bus/agp
 
 dist: install
 
 clean:
-	-rm -f $(OBJS) $(OBJDIR)/pci
+	-rm -f $(OBJS) $(OBJDIR)/agp
+

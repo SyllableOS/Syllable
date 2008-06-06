@@ -46,10 +46,8 @@ enum
 extern uint32 g_nPCIMethod;
 extern int g_nPCINumBusses;
 extern int g_nPCINumDevices;
-extern int g_nAGPNumDevices;
 extern PCI_Bus_s *g_apsPCIBus[MAX_PCI_BUSSES];
 extern PCI_Entry_s *g_apsPCIDevice[MAX_PCI_DEVICES];
-extern PCI_Entry_s *g_apsAGPDevice[MAX_PCI_DEVICES];
 
 extern void init_acpi_pci_links( void );
 extern void init_acpi_pci_router( void );
@@ -59,6 +57,7 @@ extern uint32 read_pci_config( int nBusNum, int nDevNum, int nFncNum, int nOffse
 extern status_t write_pci_config( int nBusNum, int nDevNum, int nFncNum, int nOffset, int nSize, uint32 nValue );
 
 #endif
+
 
 
 

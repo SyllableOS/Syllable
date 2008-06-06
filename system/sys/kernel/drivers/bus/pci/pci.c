@@ -36,28 +36,15 @@
 
 #include "pci_internal.h"
 
-struct AGP_Speed_s
-{
-	const char* pzName;
-	uint32 nSpeed;
-} g_asAGPSpeeds[] = 
-{
-	{ "AGP 3.0 8x", PCI_AGP_STATUS_3_0 | PCI_AGP_STATUS_RATE2 | PCI_AGP_STATUS_SBA },
-	{ "AGP 3.0 4x", PCI_AGP_STATUS_3_0 | PCI_AGP_STATUS_RATE1 | PCI_AGP_STATUS_SBA },
-	{ "AGP 4x", PCI_AGP_STATUS_RATE4 },
-	{ "AGP 2x", PCI_AGP_STATUS_RATE2 },
-	{ "AGP 1x", PCI_AGP_STATUS_RATE1 }
-};
+extern int get_pci_device_type( PCI_Info_s* psInfo );
+extern status_t get_bar_info( PCI_Entry_s* psInfo, uintptr_t *pAddress, uintptr_t *pnSize, int nReg, int nType );
 
 uint32 g_nPCIMethod;
 int g_nPCINumBusses = 0;
 int g_nPCINumDevices = 0;
-int g_nAGPNumDevices = 0;
 PCI_Bus_s *g_apsPCIBus[MAX_PCI_BUSSES];
 PCI_Entry_s *g_apsPCIDevice[MAX_PCI_DEVICES];
-PCI_Entry_s *g_apsAGPDevice[MAX_PCI_DEVICES];
 SpinLock_s g_sPCILock = INIT_SPIN_LOCK( "pci_lock" );
-bool g_bDisableAGP = true;
 
 
 /** 
@@ -399,7 +386,7 @@ uint32 get_pci_memory_size( int nBusNum, int nDevNum, int nFncNum, int nResource
  * \author	Arno Klenke (arno_klenke@yahoo.de)
  *****************************************************************************/
 
-static int read_pci_header( PCI_Entry_s * psInfo, int nBusNum, int nDevNum, int nFncNum )
+int read_pci_header( PCI_Entry_s * psInfo, int nBusNum, int nDevNum, int nFncNum )
 {
 	int i;
 
@@ -586,38 +573,6 @@ uint8 get_pci_capability( int nBusNum, int nDevNum, int nFncNum, uint8 nCapID )
 	return( 0 );
 }
 
-
-/** 
- * \par Description: Returns some information about the agp status of one device.
- * \par Warning:
- * \param nBusNum - Number of the bus.
- * \param nDevNum - Number of the device.
- * \param nFncNum - Number of the function.
- * \param psAGPInfo - After a successful call this structure will be filled.
- * \return 0 if successful
- * \sa
- * \author	Arno Klenke (arno_klenke@yahoo.de)
- *****************************************************************************/
-status_t get_agp_info( int nBusNum, int nDevNum, int nFncNum, AGP_Info_s* psAGPInfo )
-{
-	int j;
-	
-	/* Find the device in the agp devices list */
-	for( j = 0; j < g_nAGPNumDevices; j++ )
-	{
-		if( g_apsAGPDevice[j]->nBus == nBusNum &&
-			g_apsAGPDevice[j]->nDevice == nDevNum &&
-			g_apsAGPDevice[j]->nFunction == nFncNum )
-		{
-			psAGPInfo->ai_nAGPStatus = read_pci_config( nBusNum, nDevNum, nFncNum, g_apsAGPDevice[j]->u.h0.nAGPStatus, 4 );
-			psAGPInfo->ai_nAGPMode = g_apsAGPDevice[j]->nAGPMode;
-			return( 0 );
-		}
-	}
-	
-	return( -ENODEV );
-}
-
 /** 
  * \par Description: Scans one bus for PCI devices.
  * \par Note: It is used recursive when PCI bridges are detected.
@@ -635,8 +590,7 @@ void pci_scan_bus( int nBusNum, int nBridgeFrom, int nBusDev )
 	int nDev, nFnc;
 	uint32 nVendorID;
 	uint8 nHeaderType = 0;
-	uint8 nAGPReg;
-
+	
 	/* Allocate Resources for the bus */
 	psBus = kmalloc( sizeof( PCI_Bus_s ), MEMF_KERNEL | MEMF_CLEAR );
 	g_apsPCIBus[nBusNum] = psBus;
@@ -696,9 +650,8 @@ void pci_scan_bus( int nBusNum, int nBridgeFrom, int nBusDev )
 				/* Look if the device is a bridge */
 				if ( nHeaderType & PCI_HEADER_BRIDGE )
 				{
-					psInfo->nHandle = register_device( "", PCI_BUS_NAME );
-					claim_device( -1, psInfo->nHandle, "PCI->PCI/AGP Bridge", DEVICE_SYSTEM );
-					/* Check if it is already configured */
+					char zTemp[255];
+
 					if( read_pci_config( nBusNum, nDev, nFnc, PCI_BUS_SECONDARY, 1 ) != 0xff &&
 						read_pci_config( nBusNum, nDev, nFnc, PCI_BUS_PRIMARY, 1 ) == nBusNum )
 					{
@@ -739,113 +692,11 @@ void pci_scan_bus( int nBusNum, int nBridgeFrom, int nBusDev )
 					}
 					/*else if ( psInfo->nClassBase == PCI_BRIDGE )
 						claim_device( -1, psInfo->nHandle, "PCI Bridge", DEVICE_SYSTEM );*/
-
-					/* Check AGP capabilities and put the device into the agp device list */
-					if( !g_bDisableAGP )
-					{
-						nAGPReg = get_pci_capability( psInfo->nBus, psInfo->nDevice, psInfo->nFunction, PCI_CAP_ID_AGP );
-						if( nAGPReg > 0 )
-						{
-							psInfo->u.h0.nAGPStatus = nAGPReg + PCI_AGP_STATUS;
-							psInfo->u.h0.nAGPCommand = nAGPReg + PCI_AGP_COMMAND;
-							g_apsAGPDevice[g_nAGPNumDevices++] = psInfo;
-						}
-					}
 				}
 			}
 		}
 	}
 	kerndbg( KERN_INFO, "PCI: Scan of bus finished\n" );
-}
-
-/** 
- * \par Description: Uses the list of agp devices (bridges+cards) to configure a 
- *                   matching AGP mode.
- * \par Warning:
- * \param
- * \return
- * \sa
- * \author	Arno Klenke (arno_klenke@yahoo.de)
- *****************************************************************************/
-static void configure_agp_devices( void )
-{
-	if( g_bDisableAGP )
-		return;
-	
-	if( g_nAGPNumDevices >= 2 ) /* One AGP bridge + one device */
-	{
-		int i = 0;
-		int j = 0;
-		bool bSupported = true;
-		uint32 nSpeed = 0;
-		bool bFastWrite = true;
-		uint32 nRQMask = 0xff000000;
-		uint32 nAGPCommand = 0;
-		
-		/* Calculate the highest speed supported by all devices */
-		for( i = 0; i < sizeof( g_asAGPSpeeds ) / sizeof( struct AGP_Speed_s ); i++ )
-		{
-			bSupported = true;
-			nSpeed = g_asAGPSpeeds[i].nSpeed;
-			for( j = 0; j < g_nAGPNumDevices; j++ )
-			{
-				uint32 nAGPStatus = read_pci_config( g_apsAGPDevice[j]->nBus, g_apsAGPDevice[j]->nDevice, g_apsAGPDevice[j]->nFunction,
-											g_apsAGPDevice[j]->u.h0.nAGPStatus, 4 );
-				if( ( nAGPStatus & nSpeed ) != nSpeed )
-				{
-					bSupported = false;
-					break;
-				}
-			}
-			if( bSupported )
-				break;
-		}
-		if( !bSupported )
-		{
-			kerndbg( KERN_WARNING, "PCI: Could not find a working AGP mode!\n" );
-			return;
-		}
-		/* Check for fastwrite and the rq mask */
-		for( j = 0; j < g_nAGPNumDevices; j++ )
-		{
-			uint32 nAGPStatus = read_pci_config( g_apsAGPDevice[j]->nBus, g_apsAGPDevice[j]->nDevice, g_apsAGPDevice[j]->nFunction,
-										g_apsAGPDevice[j]->u.h0.nAGPStatus, 4 );
-			if( !( nAGPStatus & PCI_AGP_STATUS_FW ) )
-				bFastWrite = false;
-			if( ( nAGPStatus & PCI_AGP_COMMAND_RQ_MASK ) < nRQMask )
-				nRQMask = ( nAGPStatus & PCI_AGP_COMMAND_RQ_MASK );
-		}
-		kerndbg( KERN_INFO, "PCI: Using %s mode (fastwrite is %s)\n", g_asAGPSpeeds[i].pzName, bFastWrite ? "enabled" : "disabled" );
-		
-		
-		/* Build command */
-		nAGPCommand = nRQMask | nSpeed | PCI_AGP_COMMAND_AGP;
-		if( bFastWrite )
-			nAGPCommand |= PCI_AGP_COMMAND_FW;
-			
-		/* Configure bridges */
-		for( j = 0; j < g_nAGPNumDevices; j++ )
-		{
-			if( g_apsAGPDevice[j]->nClassBase == PCI_BRIDGE )
-			{
-				g_apsAGPDevice[j]->nAGPMode = nAGPCommand;
-				write_pci_config( g_apsAGPDevice[j]->nBus, g_apsAGPDevice[j]->nDevice, g_apsAGPDevice[j]->nFunction,
-											g_apsAGPDevice[j]->u.h0.nAGPCommand, 4, nAGPCommand & ~PCI_AGP_COMMAND_RQ_MASK );
-				snooze( 10000 );
-			}
-		}
-		
-		/* Configure cards */
-		for( j = 0; j < g_nAGPNumDevices; j++ )
-		{
-			if( g_apsAGPDevice[j]->nClassBase == PCI_DISPLAY )
-			{
-				g_apsAGPDevice[j]->nAGPMode = nAGPCommand;
-				write_pci_config( g_apsAGPDevice[j]->nBus, g_apsAGPDevice[j]->nDevice, g_apsAGPDevice[j]->nFunction,
-											g_apsAGPDevice[j]->u.h0.nAGPCommand, 4, nAGPCommand );
-			}
-		}
-	}
 }
 
 /** 
@@ -874,11 +725,6 @@ void pci_scan_all( void )
 	/* Scan first bus */
 	pci_scan_bus( 0, -1, -1 );
 	kerndbg( KERN_INFO, "PCI: %i devices detected\n", g_nPCINumDevices );
-	kerndbg( KERN_INFO, "PCI: %i AGP devices detected\n", g_nAGPNumDevices );
-
-	/* Configure agp devices */
-	configure_agp_devices();
-	
 
 	/* Now load configuration */
 	if ( read_kernel_config_entry( "<PCI>", &pBuffer, &nSize ) != 0 )
@@ -961,8 +807,6 @@ void pci_scan_all( void )
 	kfree( pBuffer );
 }
 
-
-
 PCI_bus_s sBus = {
 	get_pci_info,
 	read_pci_config,
@@ -970,7 +814,9 @@ PCI_bus_s sBus = {
 	enable_pci_master,
 	set_pci_latency,
 	get_pci_capability,
-	get_agp_info
+	read_pci_header,
+	get_pci_device_type,
+	get_bar_info
 };
 
 void *pci_bus_get_hooks( int nVersion )
@@ -1017,11 +863,6 @@ status_t device_init( int nDeviceID )
 			if ( bDisableIRQRouting )
 			{
 				kerndbg( KERN_INFO, "PCI IRQ routing disabled\n" );
-			}
-		if ( get_bool_arg( &g_bDisableAGP, "disable_agp=", argv[i], strlen( argv[i] ) ) )
-			if ( g_bDisableAGP )
-			{
-				kerndbg( KERN_INFO, "AGP disabled\n" );
 			}
 	}
 
@@ -1080,4 +921,10 @@ status_t device_uninit( int nDeviceID )
 		kfree( g_apsPCIBus[i] );
 	}
 }
+
+
+
+
+
+
 
