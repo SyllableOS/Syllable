@@ -190,6 +190,7 @@ modules
 	sys/kernel/drivers/bus/acpi
 	sys/kernel/drivers/bus/ata
 	sys/kernel/drivers/bus/pci
+	sys/kernel/drivers/bus/agp
 	sys/kernel/drivers/bus/scsi
 	sys/kernel/drivers/bus/usb
 	sys/kernel/drivers/cpu/acpi
@@ -197,6 +198,7 @@ modules
 	sys/kernel/drivers/hcd/usb_ehci
 	sys/kernel/drivers/hcd/usb_ohci
 	sys/kernel/drivers/hcd/usb_uhci
+	sys/kernel/drivers/hcd/agp_gart/via
 	sys/kernel/drivers/ps2
 	sys/kernel/drivers/input/usb_hid
 	sys/kernel/drivers/disk/bios
