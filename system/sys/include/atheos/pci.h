@@ -110,12 +110,6 @@ typedef struct
   int		nHandle;
 } PCI_Info_s;
 
-typedef struct
-{
-	uint32 ai_nAGPStatus;
-	uint32 ai_nAGPMode;
-} AGP_Info_s;
-
 /* PCI bus */
 
 #define PCI_BUS_NAME "pci"
@@ -129,9 +123,10 @@ typedef struct
 									int nSize, uint32 nValue );
 	void (*enable_pci_master)( int nBusNum, int nDevNum, int nFncNum );
 	void (*set_pci_latency)( int nBusNum, int nDevNum, int nFncNum, uint8 nLatency );
-	uint8 (*get_pci_capability)( int nBusNum, int nDevNum, int nFncNum, uint8 nCapID );
-	
-	status_t (*get_agp_info)( int nBusNum, int nDevNum, int nFncNum, AGP_Info_s* psAGPInfo );
+	uint8 (*get_pci_capability)( int nBusNum, int nDevNum, int nFncNum, uint8 nCapID );	
+	int (*read_pci_header)( PCI_Entry_s * psInfo, int nBusNum, int nDevNum, int nFncNum );
+	int (*get_pci_device_type)( PCI_Info_s* psInfo );
+	status_t (*get_bar_info)( PCI_Entry_s* psInfo, uintptr_t *pAddress, uintptr_t *pnSize, int nReg, int nType );
 } PCI_bus_s;
 
 #define PCI_VENDOR_ID	0x00		/* (2 byte) vendor id */
@@ -173,90 +168,111 @@ typedef struct
 
 	/*** values for the class_base field in the common header ***/
 
-#define PCI_EARLY			0x00	/* built before class codes defined */
-#define PCI_MASS_STORAGE		0x01	/* mass storage_controller */
-#define PCI_NETWORK			0x02	/* network controller */
-#define PCI_DISPLAY			0x03	/* display controller */
-#define PCI_MULTIMEDIA			0x04	/* multimedia device */
-#define PCI_MEMORY			0x05	/* memory controller */
-#define PCI_BRIDGE			0x06	/* bridge controller */
+#define PCI_EARLY					0x00	/* built before class codes defined */
+#define PCI_MASS_STORAGE			0x01	/* mass storage_controller */
+#define PCI_NETWORK					0x02	/* network controller */
+#define PCI_DISPLAY					0x03	/* display controller */
+#define PCI_MULTIMEDIA				0x04	/* multimedia device */
+#define PCI_MEMORY					0x05	/* memory controller */
+#define PCI_BRIDGE					0x06	/* bridge controller */
 #define PCI_SIMPLE_COMMUNICATIONS	0x07	/* simple communications controller */
-#define PCI_BASE_PERIPHERAL		0x08	/* base system peripherals */
-#define PCI_INPUT			0x09	/* input devices */
-#define PCI_DOCKING_STATION		0x0a	/* docking stations */
-#define PCI_PROCESSOR			0x0b	/* processors */
-#define PCI_SERIAL_BUS			0x0c	/* serial_bus_controller */
+#define PCI_BASE_PERIPHERAL			0x08	/* base system peripherals */
+#define PCI_INPUT					0x09	/* input devices */
+#define PCI_DOCKING_STATION			0x0a	/* docking stations */
+#define PCI_PROCESSOR				0x0b	/* processors */
+#define PCI_SERIAL_BUS				0x0c	/* serial_bus_controller */
+#define PCI_WIRELESS				0x0d	/* wireless devices */
+#define PCI_I2O						0x0e	/* intelligent input/output controller */
+#define PCI_SATCOM					0x0f	/* satellite communications */
+#define PCI_CRYPTO					0x10	/* encryption/decryption devices */
+#define PCI_DASP					0x11	/* data acquisition and signal processing */
 
-#define PCI_UNDEFINED							0xFF	/* not in any defined class */
+#define PCI_UNDEFINED				0xFF	/* not in any defined class */
 
 
 	/* values for the class_sub field for class_base = 0x00 (built before
 	 * class codes were defined)
 	 */
 
-#define PCI_EARLY_NOT_VGA	0x00			/* all except vga */
-#define PCI_EARLY_VGA		0x01			/* vga devices */
+#define PCI_EARLY_NOT_VGA			0x00	/* all except vga */
+#define PCI_EARLY_VGA				0x01	/* vga devices */
 
 
 	/***values for the class_sub field for class_base = 0x01 (mass storage) ***/
 
-#define PCI_SCSI		0x00			/* SCSI controller */
-#define PCI_IDE			0x01			/* IDE controller */
-#define PCI_FLOPPY		0x02			/* floppy disk controller */
-#define PCI_IPI			0x03			/* IPI bus controller */
-#define PCI_RAID		0x03			/* RAID controller */
-#define PCI_MASS_STORAGE_OTHER	0x80			/* other mass storage controller */
+#define PCI_SCSI					0x00	/* SCSI controller */
+#define PCI_IDE						0x01	/* IDE controller */
+#define PCI_FLOPPY					0x02	/* floppy disk controller */
+#define PCI_IPI						0x03	/* IPI bus controller */
+#define PCI_RAID					0x04	/* RAID controller */
+#define PCI_ATA						0x05	/* ATA controller */
+#define PCI_SATA					0x06	/* SATA controller */
+#define PCI_SAS						0x07	/* SAS (serially attached storage) controller */
+#define PCI_MASS_STORAGE_OTHER		0x80	/* other mass storage controller */
 
 
 	/*** values for the class_sub field for class_base = 0x02 (network) ***/
 
-#define PCI_ETHERNET		0x00			/* Ethernet controller */
-#define PCI_TOKEN_RING		0x01			/* Token Ring controller */
-#define PCI_FDDI		0x02			/* FDDI controller */
-#define PCI_ATM			0x03			/* ATM controller */
-#define PCI_NETWORK_OTHER	0x80			/* other network controller */
+#define PCI_ETHERNET				0x00	/* Ethernet controller */
+#define PCI_TOKEN_RING				0x01	/* Token Ring controller */
+#define PCI_FDDI					0x02	/* FDDI controller */
+#define PCI_ATM						0x03	/* ATM controller */
+#define PCI_ISDN					0x04	/* ISDN controller */
+#define PCI_WORLDFIP				0x05	/* WorldFip controller */
+#define PCI_PCMIGMULTICOMP			0x06	/* PCMIG Multi Computing */
+#define PCI_NETWORK_OTHER			0x80	/* other network controller */
 
 
 	/*** values for the class_sub field for class_base = 0x03 (display) ***/
 	
-#define PCI_VGA			0x00			/* VGA controller */
-#define PCI_XGA			0x01			/* XGA controller */
-#define PCI_DISPLAY_OTHER	0x80			/* other display controller */
+#define PCI_VGA						0x00	/* VGA controller */
+#define PCI_XGA						0x01	/* XGA controller */
+#define PCI_3D						0x02	/* 3D controller */
+#define PCI_DISPLAY_OTHER			0x80	/* other display controller */
 
 
 /*** values for the class_sub field for class_base = 0x04 (multimedia device) ***/
 
-#define PCI_VIDEO		0x00			/* video */
-#define PCI_AUDIO		0x01			/* audio */
-#define PCI_MULTIMEDIA_OTHER	0x80			/* other multimedia device */
+#define PCI_VIDEO					0x00	/* video */
+#define PCI_AUDIO					0x01	/* audio */
+#define PCI_TELEPHONY				0x02	/* telephony */
+#define PCI_HDAUDIO					0x03	/* HD audio */
+#define PCI_MULTIMEDIA_OTHER		0x80	/* other multimedia device */
 
 
 	/*** values for the class_sub field for class_base = 0x05 (memory) ***/
 
-#define PCI_RAM			0x00			/* RAM */
-#define PCI_FLASH		0x01			/* flash */
-#define PCI_MEMORY_OTHER	0x80			/* other memory controller */
+#define PCI_RAM						0x00	/* RAM */
+#define PCI_FLASH					0x01	/* flash */
+#define PCI_MEMORY_OTHER			0x80	/* other memory controller */
 
 
 	/*** values for the class_sub field for class_base = 0x06 (bridge) ***/
 
-#define PCI_HOST		0x00			/* host bridge */
-#define PCI_ISA			0x01			/* ISA bridge */
-#define PCI_EISA		0x02			/* EISA bridge */
-#define PCI_MICROCHANNEL	0x03			/* MicroChannel bridge */
-#define PCI_PCI			0x04			/* PCI-to-PCI bridge */
-#define PCI_PCMCIA		0x05			/* PCMCIA bridge */
-#define PCI_NUBUS		0x06			/* NuBus bridge */
-#define PCI_CARDBUS		0x07			/* CardBus bridge */
-#define PCI_BRIDGE_OTHER	0x80			/* other bridge device */
+#define PCI_HOST					0x00	/* host bridge */
+#define PCI_ISA						0x01	/* ISA bridge */
+#define PCI_EISA					0x02	/* EISA bridge */
+#define PCI_MICROCHANNEL			0x03	/* MicroChannel bridge */
+#define PCI_PCI						0x04	/* PCI-to-PCI bridge */
+#define PCI_PCMCIA					0x05	/* PCMCIA bridge */
+#define PCI_NUBUS					0x06	/* NuBus bridge */
+#define PCI_CARDBUS					0x07	/* CardBus bridge */
+#define PCI_RACEWAY					0x08	/* RACEway bridge */
+#define PCI_STPCI					0x09	/* Semi-transparent PCI bridge */
+#define PCI_INFINIBAND				0x0a	/* InfiniBand bridge */
+#define PCI_BRIDGE_OTHER			0x80	/* other bridge device */
 
 
 	/* values for the class_sub field for class_base = 0x07 (simple
 	 *communications controllers)
 	 */
 
-#define PCI_SERIAL			0x00	/* serial port controller */
-#define PCI_PARALLEL			0x01	/* parallel port */
+#define PCI_SERIAL					0x00	/* serial port controller */
+#define PCI_PARALLEL				0x01	/* parallel port */
+#define PCI_MPSERIAL				0x02	/* multiport serial controller */
+#define PCI_MODEM					0x03	/* modem */
+#define PCI_GPIB					0x04	/* GPIB controller */
+#define PCI_SMARTCARD				0x05	/* smartcard */
 #define PCI_SIMPLE_COMMUNICATIONS_OTHER	0x80	/* other communications device */
 
 	/* 
@@ -265,9 +281,9 @@ typedef struct
 	 * class_sub	= 0x00 (serial port controller)
 	 */
 
-#define PCI_SERIAL_XT		0x00			/* XT-compatible serial controller */
-#define PCI_SERIAL_16450	0x01			/* 16450-compatible serial controller */
-#define PCI_SERIAL_16550	0x02			/* 16550-compatible serial controller */
+#define PCI_SERIAL_XT				0x00	/* XT-compatible serial controller */
+#define PCI_SERIAL_16450			0x01	/* 16450-compatible serial controller */
+#define PCI_SERIAL_16550			0x02	/* 16550-compatible serial controller */
 
 
 	/* values of the class_api field for
@@ -275,19 +291,21 @@ typedef struct
 	 * class_sub	= 0x01 (parallel port)
 	 */
 
-#define PCI_PARALLEL_SIMPLE		0x00	/* simple (output-only) parallel port */
+#define PCI_PARALLEL_SIMPLE			0x00	/* simple (output-only) parallel port */
 #define PCI_PARALLEL_BIDIRECTIONAL	0x01	/* bidirectional parallel port */
-#define PCI_PARALLEL_ECP		0x02	/* ECP 1.x compliant parallel port */
+#define PCI_PARALLEL_ECP			0x02	/* ECP 1.x compliant parallel port */
 
 
 	/* values for the class_sub field for class_base = 0x08 (generic
 	 * system peripherals)
 	 */
 
-#define PCI_PIC				0x00	/* periperal interrupt controller */
-#define PCI_DMA				0x01	/* dma controller */
-#define PCI_TIMER			0x02	/* timers */
-#define PCI_RTC				0x03	/* real time clock */
+#define PCI_PIC						0x00	/* periperal interrupt controller */
+#define PCI_DMA						0x01	/* dma controller */
+#define PCI_TIMER					0x02	/* timers */
+#define PCI_RTC						0x03	/* real time clock */
+#define PCI_PCIHOTPLUG				0x04	/* pci hotplug */
+#define PCI_SDHC					0x05	/* SD Host Controller */
 #define PCI_SYSTEM_PERIPHERAL_OTHER	0x80	/* other generic system peripheral */
 
 /* ---
@@ -296,9 +314,9 @@ typedef struct
 	 class_sub	= 0x00 (peripheral interrupt controller)
 	 --- */
 
-#define PCI_PIC_8259			0x00	/* generic 8259 */
-#define PCI_PIC_ISA			0x01	/* ISA pic */
-#define PCI_PIC_EISA			0x02	/* EISA pic */
+#define PCI_PIC_8259				0x00	/* generic 8259 */
+#define PCI_PIC_ISA					0x01	/* ISA pic */
+#define PCI_PIC_EISA				0x02	/* EISA pic */
 
 /* ---
 	 values of the class_api field for
@@ -306,18 +324,18 @@ typedef struct
 	 class_sub	= 0x01 (dma controller)
 	 --- */
 
-#define PCI_DMA_8237			0x00	/* generic 8237 */
-#define PCI_DMA_ISA			0x01	/* ISA dma */
-#define PCI_DMA_EISA			0x02	/* EISA dma */
+#define PCI_DMA_8237				0x00	/* generic 8237 */
+#define PCI_DMA_ISA					0x01	/* ISA dma */
+#define PCI_DMA_EISA				0x02	/* EISA dma */
 
 /*	values of the class_api field for
  *		class_base	= 0x08 (generic system peripherals)
  *		class_sub	= 0x02 (timer)
  */
 
-#define PCI_TIMER_8254	0x00	/* generic 8254 */
-#define PCI_TIMER_ISA	0x01	/* ISA timer */
-#define PCI_TIMER_EISA	0x02	/* EISA timers (2 timers) */
+#define PCI_TIMER_8254				0x00	/* generic 8254 */
+#define PCI_TIMER_ISA				0x01	/* ISA timer */
+#define PCI_TIMER_EISA				0x02	/* EISA timers (2 timers) */
 
 
 	/*
@@ -326,38 +344,86 @@ typedef struct
 	 *		class_sub		= 0x03 (real time clock
 	 */
 
-#define PCI_RTC_GENERIC	0x00	/* generic real time clock */
-#define PCI_RTC_ISA	0x01	/* ISA real time clock */
+#define PCI_RTC_GENERIC				0x00	/* generic real time clock */
+#define PCI_RTC_ISA					0x01	/* ISA real time clock */
 
 
 	/***	values for the class_sub field for class_base = 0x09 (input devices) ***/
 
-#define PCI_KEYBOARD	0x00	/* keyboard controller */
-#define PCI_PEN		0x01	/* pen */
-#define PCI_MOUSE	0x02	/* mouse controller */
-#define PCI_INPUT_OTHER	0x80	/* other input controller */
+#define PCI_KEYBOARD				0x00	/* keyboard controller */
+#define PCI_PEN						0x01	/* pen */
+#define PCI_MOUSE					0x02	/* mouse controller */
+#define PCI_SCANNER					0x03	/* image scanner */
+#define PCI_GAMEPORT				0x04	/* gameport */
+#define PCI_INPUT_OTHER				0x80	/* other input controller */
 
 
 	/***	values for the class_sub field for class_base = 0x0a (docking stations) ***/
 
-#define PCI_DOCKING_GENERIC		0x00	/* generic docking station */
+#define PCI_DOCKING_GENERIC			0x00	/* generic docking station */
+#define PCI_DOCKING_OTHER			0x80	/* other docking station */
 
 	/***	values for the class_sub field for class_base = 0x0b (processor) ***/
 
-#define PCI_386		0x00	/* 386 */
-#define PCI_486		0x01	/* 486 */
-#define PCI_PENTIUM	0x02	/* Pentium */
-#define PCI_ALPHA	0x10	/* Alpha */
-#define PCI_POWERPC	0x20	/* PowerPC */
-#define PCI_COPROCESSOR	0x40	/* co-processor */
+#define PCI_386						0x00	/* 386 */
+#define PCI_486						0x01	/* 486 */
+#define PCI_PENTIUM					0x02	/* Pentium */
+#define PCI_ALPHA					0x10	/* Alpha */
+#define PCI_POWERPC					0x20	/* PowerPC */
+#define PCI_MIPS					0x30	/* MIPS */
+#define PCI_COPROCESSOR				0x40	/* co-processor */
 
 	/***	values for the class_sub field for class_base = 0x0c (serial bus controller) ***/
 
-#define PCI_FIREWIRE	0x00	/* FireWire (IEEE 1394) */
-#define PCI_ACCESS	0x01	/* ACCESS bus */
-#define PCI_SSA		0x02	/* SSA */
-#define PCI_USB		0x03	/* Universal Serial Bus */
-#define PCI_FIBRE_CHANNEL		0x04	/* Fibre channel */
+#define PCI_FIREWIRE				0x00	/* FireWire (IEEE 1394) */
+#define PCI_ACCESS					0x01	/* ACCESS bus */
+#define PCI_SSA						0x02	/* SSA */
+#define PCI_USB						0x03	/* Universal Serial Bus */
+#define PCI_FIBRE_CHANNEL			0x04	/* Fibre channel */
+#define PCI_SMBUS					0x05	/* SMBus */
+#define PCI_INFINIBAND				0x06	/* InfiniBand */
+#define PCI_IPMI					0x07	/* IPMI */
+#define PCI_SERCOS					0x08	/* SERCOS */
+#define PCI_CANBUS					0x09	/* CANbus */
+
+	/***	values for the class_sub field for class_base = 0x0d (wireless) ***/
+
+#define PCI_WIRELESS_IRDA			0x00	/* IrDA */
+#define PCI_WIRELESS_CONSUMERIR		0x01	/* consumer IR */
+#define PCI_WIRELESS_RF				0x10	/* RF */
+#define PCI_WIRELESS_BLUETOOTH		0x11	/* bluetooth */
+#define PCI_WIRELESS_BROADBAND		0x12	/* broadband */
+#define PCI_WIRELESS_802_11A		0x20	/* wireless networking 802.11a (5 GHz) */
+#define PCI_WIRELESS_802_11B		0x21	/* wireless networking 802.11b (2.4 GHz) */
+#define PCI_WIRELESS_OTHER			0x80	/* other wireless device */
+
+	/***	values for the class_sub field for class_base = 0x0e (intelligent input/output) ***/
+
+#define PCI_I2O_STANDARD			0x00	/* standard I2O device */
+#define PCI_I2O_OTHER				0x80	/* other I2O device */
+
+	/***	values for the class_sub field for class_base = 0x0f (satellite) ***/
+
+#define PCI_SATCOM_GENERIC			0x00	/* generic satcom equipment */
+#define PCI_SATCOM_TV				0x01	/* sat tv */
+#define PCI_SATCOM_AUDIO			0x02	/* sat audio */
+#define PCI_SATCOM_VOICE			0x03	/* sat voice */
+#define PCI_SATCOM_DATA				0x04	/* sat data */
+#define PCI_SATCOM_OTHER			0x80	/* other satcom equipment */
+
+	/***    values for the class_sub field for class_base = 0x10 (encryption/decryption) ***/
+
+#define PCI_CRYPTO_NETCOMP			0x00	/* networking/computing */
+#define PCI_CRYPTO_ENTERTAINMENT	0x01	/* entertainment */
+#define PCI_CRYPTO_OTHER			0x80	/* other crypto devices */
+
+	/***    values for the class_sub field for class_base = 0x11 (data acquisition and signal processing) ***/
+
+#define PCI_DASP_DPIO				0x00	/* DPIO */
+#define PCI_DASP_TIMEFREQ			0x01	/* Time & Frequency */
+#define PCI_DASP_SYNC				0x10	/* Synchronization */
+#define PCI_DASP_MGMT				0x20	/* Management */
+#define PCI_DASP_OTHER				0x80	/* other dasp equipment */
 
 
 	/*** masks for command register bits ***/
@@ -372,6 +438,7 @@ typedef struct
 #define PCI_COMMAND_ADDRESS_STEP	0x080		/* 1/0 address stepping en/disabled */
 #define PCI_COMMAND_SERR		0x100		/* 1/0 SERR# en/disabled */
 #define PCI_COMMAND_FASTBACK		0x200		/* 1/0 fast back-to-back en/disabled */
+#define PCI_COMMAND_INTERRUPT	0x400		/* 1/0 interrupt dis/enable */
 
 /***	masks for status register bits ***/
 
@@ -422,6 +489,7 @@ typedef struct
 
 /***	masks for the capability id register ***/
 
+#define PCI_CAP_ID_RESERVED	0x00		/* Reserved */
 #define PCI_CAP_ID_PM		0x01		/* Power Management */
 #define PCI_CAP_ID_AGP		0x02		/* Accelerated Graphics Port */
 #define PCI_CAP_ID_VPD		0x03		/* Vital Product Data */
@@ -431,7 +499,10 @@ typedef struct
 #define PCI_CAP_ID_PCIX		0x07		/* PCI-X */
 #define PCI_CAP_ID_HT_IRQCONF	0x08	/* HyperTransport IRQ Configuration */
 #define PCI_CAP_ID_VNDR		0x09		/* Vendor specific capability */
+#define PCI_CAP_ID_DEBUG	0x0A		/* Debug port */
 #define PCI_CAP_ID_SHPC 	0x0C		/* PCI Standard Hot-Plug Controller */
+#define PCI_CAP_ID_AGP3		0x0E		/* AGP supports 8x */
+#define PCI_CAP_ID_SECURE	0x0F		/* FILL THIS OUT */
 #define PCI_CAP_ID_EXP 		0x10		/* PCI Express */
 #define PCI_CAP_ID_MSIX		0x11		/* MSI-X */
 
@@ -442,10 +513,20 @@ typedef struct
 #define PCI_AGP_STATUS		4	/* Status register */
 #define PCI_AGP_COMMAND		8	/* Control register */
 
+/***    agp aperture base register ***/
+
+#define PCI_AGP_APBASE			0x10		/* base address register */
+
 /***	masks for the agp status register ***/
 
 #define PCI_AGP_STATUS_RQ_MASK	0xff000000	/* Maximum number of requests - 1 */
+#define PCI_AGP_STATUS_ARQSZ_MASK	0xe000
+#define PCI_AGP_STATUS_CAL_MASK	0x1c00
+#define PCI_AGP_STATUS_ISOCH	0x10000
 #define PCI_AGP_STATUS_SBA		0x0200		/* Sideband addressing supported */
+#define PCI_AGP_STATUS_ITA_COH	0x0100
+#define PCI_AGP_STATUS_GART64	0x0080
+#define PCI_AGP_STATUS_HTRANS	0x0040
 #define PCI_AGP_STATUS_64BIT	0x0020		/* 64-bit addressing supported */
 #define PCI_AGP_STATUS_FW		0x0010		/* FW transfers supported */
 #define PCI_AGP_STATUS_3_0		0x0008		/* AGP 3.0 supported */
@@ -457,8 +538,11 @@ typedef struct
 /***	masks for the agp command register ***/
 
 #define PCI_AGP_COMMAND_RQ_MASK 0xff000000	/* Master: Maximum number of requests */
+#define PCI_AGP_COMMAND_ARQSZ_MASK	0xe000
+#define PCI_AGP_COMMAND_CAL_MASK	0x1c00
 #define PCI_AGP_COMMAND_SBA		0x0200		/* Sideband addressing enabled */
 #define PCI_AGP_COMMAND_AGP		0x0100		/* Allow processing of AGP transactions */
+#define PCI_AGP_COMMAND_GART64	0x0080
 #define PCI_AGP_COMMAND_64BIT	0x0020		/* Allow processing of 64-bit addresses */
 #define PCI_AGP_COMMAND_FW		0x0010		/* Force FW transfers */
 #define PCI_AGP_COMMAND_3_0		0x0008		/* Use AGP 3.0 */
@@ -518,8 +602,8 @@ typedef struct
 #define PCI_ADDRESS_TYPE_32_LOW		0x01	/* locate below 1 Meg */
 #define PCI_ADDRESS_TYPE_64		0x02	/* locate anywhere in 64 bit space */
 
-#define PCI_ADDRESS_MEMORY_32_MASK	0xFFFFFFF0	/* mask to get 32bit memory space base address */
-
+#define PCI_ADDRESS_MEMORY_32_MASK	0xFFFFFFF0				/* mask to get 32bit memory space base address */
+#define PCI_ADDRESS_MEMORY_64_MASK	0xFFFFFFFFFFFFFFF0ULL	/* mask to get 64bit memory space base address */
 
 /***	masks for flags in i/o space base address registers ***/
 
@@ -530,6 +614,33 @@ typedef struct
 
 #define PCI_ROM_ENABLE		0x00000001	/* 1 = expansion rom decode enabled */
 #define PCI_ROM_ADDRESS_MASK	0xFFFFF800	/* mask to get expansion rom addr */
+
+/***    updated macros for dealing with base address registers ***/
+
+#define PCI_BAR_START	PCI_BASE_REGISTERS	/* base address registers - start */
+#define PCI_BAR_END		PCI_CARDBUS_CIS		/* base address registers - end */
+#define PCI_BAR_ROM		0x30				/* base address registers - rom */
+
+#define PCI_BAR_TYPE(x)		((x) & PCI_BAR_TYPE_IO)
+#define PCI_BAR_TYPE_MEM	0x00000000
+#define PCI_BAR_TYPE_ROM	0x00000000
+#define PCI_BAR_TYPE_IO		0x00000001
+
+#define PCI_BAR_MEM_TYPE(x)			(((x) & PCI_ADDRESS_TYPE) >> 1)
+#define PCI_BAR_MEM_PREFETCHABLE(x)	(((x) & PCI_ADDRESS_PREFETCHABLE) != 0)
+
+#define PCI_BAR_MEM_ADDRESS(x)		((x) & PCI_ADDRESS_MEMORY_32_MASK)
+#define PCI_BAR_MEM_SIZE(x)			(PCI_BAR_MEM_ADDRESS(x) & -PCI_BAR_MEM_ADDRESS(x))
+
+#define PCI_BAR_MEM64_ADDRESS(x)	((x) & PCI_ADDRESS_MEMORY_64_MASK)
+#define PCI_BAR_MEM64_SIZE(x)		(PCI_BAR_MEM64_ADDRESS(x) & -PCI_BAR_MEM64_ADDRESS(x))
+
+#define PCI_BAR_IO_ADDRESS(x)		((x) & PCI_ADDRESS_IO_MASK)
+#define PCI_BAR_IO_SIZE(x)			(PCI_BAR_IO_ADDRESS(x) & -PCI_BAR_IO_ADDRESS(x))
+
+#define PCI_BAR_SIZE_TO_MASK(x)		(-(x))
+#define PCI_BAR_NUM(x)				(((unsigned)(x) - PCI_BAR_START) / 4)
+
 
 /* Message Signalled Interrupts */
 #define PCI_MSI_FLAGS			2		/* Various flags */
@@ -553,6 +664,8 @@ status_t write_pci_config( int nBusNum, int nDevNum, int nFncNum, int nOffset, i
 status_t raw_read_pci_config( int nBusNum, int nDevFnc, int nOffset, int nSize, uint32 *pnRes );
 status_t raw_write_pci_config( int nBusNum, int nDevFnc, int nOffset, int nSize, uint32 nValue );
 
+int read_pci_header( PCI_Entry_s * psInfo, int nBusNum, int nDevNum, int nFncNum );
+
 #endif
 
 #ifdef __cplusplus
@@ -560,3 +673,10 @@ status_t raw_write_pci_config( int nBusNum, int nDevFnc, int nOffset, int nSize,
 #endif
 
 #endif /* _ATHEOS_PCI_H_ */
+
+
+
+
+
+
+

@@ -34,7 +34,11 @@ extern "C" {
  * directly.
  ****************************************************************************/
 #define DLIST_HEAD(headtype, linktype)	\
-	struct headtype { struct linktype *list_head; }
+	struct headtype						\
+	{									\
+		struct linktype *list_head;		\
+		struct linktype **list_ptail;	\
+	}
 
 /** Initialize a list head
  * \par Description:
@@ -45,7 +49,12 @@ extern "C" {
  * \return none
  * \sa
  ****************************************************************************/
-#define DLIST_HEAD_INIT(head) ((head)->list_head = NULL)
+#define DLIST_HEAD_INIT(head)								\
+	do												\
+	{												\
+		(head)->list_head = NULL;					\
+		(head)->list_ptail = &(head)->list_head;	\
+	} while (0)
 
 /** Double list entry type
  * \par Description:
@@ -95,6 +104,18 @@ extern "C" {
  * \sa
  ****************************************************************************/
 #define DLIST_FIRST(head) (head)->list_head
+
+/** Get the last entry in a doubly linked list
+ * \par Description:
+ * Get the last entry in the given doubly liked list.
+ * \par Note:
+ * \par Warning:
+ * \param head		The head of the list
+ * \param head		The head of the list
+ * \return The first entry in the list
+ * \sa
+ ****************************************************************************/
+#define DLIST_LAST(head) (*(((typeof((head)))((head)->list_ptail))->list_ptail))
 
 /** Get the next entry in a doubly linked list
  * \par Description:
@@ -207,6 +228,26 @@ extern "C" {
 		(head)->list_head = (entry);							\
 	} while (0)
 
+/** Add an entry to the tail of a doubly linked list
+ * \par Description:
+ * Add the given entry to the tail of the given list
+ * \par Note:
+ * \par Warning:
+ * \param head	Head pointer
+ * \param entry	Entry to add
+ * \param field	Tne name of the entry field in the struct
+ * \return none
+ * \sa
+ ****************************************************************************/
+#define DLIST_ADDTAIL(head, entry, field)				\
+	do													\
+	{													\
+		(entry)->field.list_next = NULL;				\
+		(entry)->field.list_pprev = (head)->list_ptail;	\
+		*(head)->list_ptail = (entry);					\
+		(head)->list_ptail = &(entry)->field.list_next;	\
+	} while (0)
+
 /** Iterate over a list.  Not deletion safe
  * \par Description:
  * Iterate over a list.  This is not deletion safe
@@ -245,3 +286,4 @@ extern "C" {
 #endif
 
 #endif /* __F_SYLLABLE_DLIST_H__ */
+
