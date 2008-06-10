@@ -1,0 +1,11 @@
+authors
+	Kaj de Vos
+	Ruwen Boehm
+status				developing
+
+patch-config
+	config
+	libs/ncurses
+	utils/texinfo
+	utils/texi2html
+	texk

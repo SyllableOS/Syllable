@@ -1,0 +1,53 @@
+authors
+	Kaj de Vos
+	Ruwen Boehm
+status				developing
+
+headline			teTeX is a complete TeX typesetting distribution
+description
+	The TeX typesetting engine converts markup language to Postscript or PDF and allows powerful formatting options.
+	This distribution includes the classical plain and LaTeX macro packages as well as several more recent developments of TeX (and LaTeX).
+licenses			other
+
+home				tug.org/teTeX/
+packages
+	tetex-src-3.0
+	tetex-texmf-3.0		texmf
+;	tetex-texmfsrc-3.0	texmf
+;	texklib
+locations
+	ftp://cam.ctan.org/tex-archive/systems/unix/teTeX/current/distrib/
+	ftp://dante.ctan.org/tex-archive/systems/unix/teTeX/current/distrib/
+	ftp://tug.ctan.org/tex-archive/systems/unix/teTeX/current/distrib/
+
+build-needs
+	gawk
+	flex
+	bison
+;	ed
+;	perl
+;	tk
+recommends
+	ncurses
+	texinfo
+	ghostscript
+
+;build-dir			.
+
+configure-options
+;	--datadir=/usr/tetex/share/texmf
+;	--disable-multiplatform
+;	Letter & inch:
+;	--disable-a4
+	--with-system-zlib
+	--with-system-ncurses
+	--with-system-pnglib
+	--with-system-gd
+;	--without-texinfo
+
+install-files		texmf share/
+documentation
+	README LICENSE.src NEWS ChangeLog CREDITS
+	texmf/LICENSE.texmf
+;	texmf/ChangeLog texmf/doc
+build-docs			QuickInstall INSTALL PROBLEMS

@@ -1,0 +1,19 @@
+authors
+	Ruwen Boehm
+	Kaj de Vos
+status				testing
+notes				install-info doesn't work during install
+
+inherits			gnu
+
+headline			Simple line-based text editor with regular expressions
+description
+	ed is the standard text editor on the Unix operating system originally written by Ken Thompson and contains one of the first implementations of regular expressions.
+	GNU ed is a line-oriented text editor. It is used to create, display, modify and otherwise manipulate text files, both interactively and via shell scripts. A restricted version of ed, red, can only edit files in the current directory and cannot execute shell commands. Ed is the "standard" text editor in the sense that it is the original editor for Unix, and thus widely available. For most purposes, however, it is superseded by full-screen editors.
+licenses			GPL
+
+home				www.gnu.org/software/ed/
+packages			ed/ed-0.9
+
+documentation		README COPYING NEWS ChangeLog AUTHORS TODO
+build-docs			INSTALL
