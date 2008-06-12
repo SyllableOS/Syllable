@@ -4,8 +4,7 @@ status				testing
 inherits			sourceforge
 
 headline			MPEG-4 and MPEG-2 AAC decoder
-description
-	FAAD2 is an open source MPEG-4 and MPEG-2 AAC decoder.
+description			FAAD2 is an open source MPEG-4 and MPEG-2 AAC decoder.
 licenses			GPL-2
 
 home				www.audiocoding.com

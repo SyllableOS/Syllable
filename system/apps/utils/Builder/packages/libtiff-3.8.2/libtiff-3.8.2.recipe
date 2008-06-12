@@ -1,8 +1,12 @@
 authors				Kaj de Vos
 status				testing
 
+headline			TIFF programming library
+dewcription
+	This software provides support for the Tag Image File Format (TIFF), a widely used format for storing image data.
 ; BSD?
 licenses			other
+
 home
 	www.remotesensing.org/libtiff/
 ;	www.libtiff.org
@@ -16,4 +20,3 @@ build-recommends	diffutils
 
 documentation		README RELEASE-DATE VERSION COPYRIGHT ChangeLog TODO
 internal-docs		HOWTO-RELEASE
-

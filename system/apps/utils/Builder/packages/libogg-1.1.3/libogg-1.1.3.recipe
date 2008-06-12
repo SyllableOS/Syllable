@@ -1,6 +1,12 @@
 authors				Kaj de Vos
 
+headline			Ogg multimedia container format library
+description
+	Ogg is a multimedia container format, and the native file and stream format for the Xiph.org multimedia codecs. As with all Xiph.org technology it is an open format free for anyone to use.
+	As with most container formats it encapsulates raw compressed data and allows the interleaving of audio and video data inside a single convenient format. Other examples of container formats are Quicktime .mov, the MPEG program stream, and AVI.
+	Ogg is a stream oriented container, meaning it can be written and read in one pass, making it a natural fit for internet streaming and use in processing pipelines. This stream orientation is the major design difference over other file-based container formats.
 licenses			BSD
+
 home				www.xiph.org/ogg/
 locations			http://downloads.xiph.org/releases/ogg/
 

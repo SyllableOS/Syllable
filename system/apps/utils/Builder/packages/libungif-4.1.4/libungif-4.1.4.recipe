@@ -7,7 +7,9 @@ status				testing
 ; Disappeared from the net:
 ;inherits			sourceforge
 
+headline			GIF programming library
 licenses			other
+
 home				sourceforge.net/projects/libungif/
 ;packages			libungif/libungif-4.1.4
 locations			http://downloads.syllable.org/sources/resources/LibUnGIF/

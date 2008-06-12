@@ -1,0 +1,16 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			gnu
+
+headline			Tools for finding files
+description
+	The GNU Find Utilities are the basic directory searching utilities of the GNU operating system. These programs are typically used in conjunction with other programs to provide modular and powerful directory search and file locating capabilities to other commands.
+licenses			GPL
+
+home				www.gnu.org/software/findutils/
+packages			findutils/findutils-4.2.33
+
+documentation
+	README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS
+;	README-alpha

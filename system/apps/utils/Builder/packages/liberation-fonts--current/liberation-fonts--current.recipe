@@ -1,0 +1,18 @@
+authors				Kaj de Vos
+
+headline			Liberation fonts
+description			Sans, Serif and Mono replacement fonts for similar proprietary fonts.
+licenses			GPL-2+exception
+
+home				www.redhat.com/promo/fonts/
+locations			http://www.redhat.com/f/fonts/
+
+make				true
+
+install-tree
+install				true
+install-files		*.ttf .
+
+documentation		License.txt COPYING
+
+move-files			*.ttf /system/fonts/
