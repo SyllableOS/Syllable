@@ -8,13 +8,13 @@ description
 licenses			other PD
 
 home				dejavu.sourceforge.net
-packages			dejavu/dejavu-ttf-2.21
+packages			dejavu/dejavu-fonts-ttf-2.25
 
 make				true
 
 install-tree
 install				true
-install-files		*.ttf .
+install-files		ttf/*.ttf .
 
 documentation		README BUGS LICENSE NEWS AUTHORS status.txt langcover.txt unicover.txt
 
