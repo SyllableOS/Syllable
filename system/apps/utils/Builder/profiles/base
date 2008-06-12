@@ -22,7 +22,7 @@ resources
 	etc									configuration/rsyncd.conf
 
 modules
-	other/fonts/liberation-fonts-0.2
+	other/fonts/liberation-fonts--current
 	other/fonts/luxi-fonts
 ;	For AClock:
 ;	The first one will produce two harmless unpacking errors:
@@ -57,7 +57,7 @@ modules
 
 ;	For rescopy:
 	apps/gnu/binutils-2.17-objcopy
-	apps/gnu/findutils-4.2.30
+	apps/gnu/findutils-4.2.33
 	apps/gnu/gzip-1.3.12
 	apps/gnu/inetutils-1.5
 	apps/gnu/less-394
