@@ -299,7 +299,7 @@ modules
 	system apps/other/orca--current
 
 ;	freetype-config needs to be in the path:
-	bootstrap libraries/freetype-2.3.5
+	bootstrap libraries/freetype-2.3.6
 
 	stage libraries/libjpeg-6b-static
 	stage libraries/libpng-1.2.29
