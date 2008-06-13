@@ -1,9 +1,9 @@
 authors 			Kaj de Vos
 status				testing
 
-inherits			openssl-0.9.8e
+inherits			openssl-0.9.8h
 
-packages			openssl-0.9.8e
+packages			openssl-0.9.8h
 
 install-vars
 	OPENSSLDIR "$STAGE/openssl"

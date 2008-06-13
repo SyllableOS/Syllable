@@ -1,0 +1,22 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			gnu
+
+headline			Text mode text file viewer
+description
+	Less is a free, open-source file pager. It can be found on most versions of Linux, Unix and Mac OS, as well as on many other operating systems.
+	Less is a program similar to more, but which allows backward movement in the file as well as forward movement. Also, less does not have to read the entire input file before starting, so with large input files it starts up faster than text editors like vi. Less uses termcap (or terminfo on some systems), so it can run on a variety of terminals. There is even limited support for hardcopy terminals.
+licenses			GPL BSD
+
+home
+	www.greenwoodsoftware.com/less/
+;	http://www.gnu.org/software/less/
+packages			less/less-418
+;locations			http://www.greenwoodsoftware.com/less/
+
+;configure-options
+;	--with-secure
+;	--with-editor=
+
+documentation		README LICENSE COPYING NEWS

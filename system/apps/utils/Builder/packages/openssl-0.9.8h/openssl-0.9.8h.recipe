@@ -1,0 +1,47 @@
+authors 			Kaj de Vos
+status				testing
+notes				Needs ranlib and perl in /usr/bin/ during building
+
+licenses			other
+home				www.openssl.org
+locations
+	ftp://ftp.openssl.org/source/
+	http://www.openssl.org/source/
+
+build-needs
+;	Probably:
+	Syllable >= 0.6.4
+	gawk
+	perl >= 5
+build-recommends	pod2man
+recommends			kerberos5
+
+build-dir			.
+
+configure			perl Configure linux-elf threads zlib-dynamic
+; Doesn't recognize Syllable:
+;configure-cmd		config
+; Doesn't work as advertized:
+_configure-args
+;	--prefix=/usr
+	--openssldir=/usr/openssl
+configure-options
+	linux-elf
+	threads
+;	-D_REENTRANT
+;	386
+;	shared
+	zlib-dynamic
+
+test-targets
+	test
+;	report
+
+system-prefix-var	INSTALL_PREFIX
+install-vars
+	OPENSSLDIR '/usr/openssl'
+	INSTALLTOP '/usr/openssl'
+
+documentation		README README.ENGINE FAQ PROBLEMS LICENSE NEWS CHANGES doc
+develop-docs		INSTALL demos
+internal-docs		README.ASN1
