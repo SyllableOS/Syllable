@@ -1,13 +1,17 @@
 authors				Kaj de Vos
 status				testing
 
+headline			Revision control prototype
+description			Storage layer for version 2 of the Arch revision control system.
 licenses			GPL
-home				www.seyza.com
-packages			revc.0.0x2
-locations			http://www.seyza.com
 
-patch-config		build-tools/gnu
+; Gone:
+;home				www.seyza.com
+packages			revc.0.0x2
+locations			http://downloads.syllable.org/sources/resources/Arch/
+
 test-targets		test
+
 documentation
 	COPYING ChangeLog
 	web-pages/revc
