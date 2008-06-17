@@ -8,5 +8,10 @@ home				www.gnu.org/software/inetutils/
 packages			inetutils/inetutils-1.5
 
 needs				ncurses
+recommends
+	pam
+	tcp-wrapper
+	krb4
+	heimdal | kerberos
 
 documentation		README COPYING NEWS ChangeLog TODO AUTHORS THANKS
