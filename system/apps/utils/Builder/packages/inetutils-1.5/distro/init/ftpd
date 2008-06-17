@@ -1,3 +1,5 @@
-# Authenticated access:
+# Uncomment for authenticated FTP access to user accounts on this computer:
+# Warning: not suitable for high security requirements!
+
 #/usr/indexes/libexec/ftpd -D
 
