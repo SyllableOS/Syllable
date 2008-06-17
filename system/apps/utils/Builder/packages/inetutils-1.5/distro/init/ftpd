@@ -1,0 +1,3 @@
+# Authenticated access:
+#/usr/indexes/libexec/ftpd -D
+
