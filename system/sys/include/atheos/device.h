@@ -147,7 +147,7 @@ typedef int	 dop_readv( void* pNode, void* pCookie, off_t nPosition, const struc
 typedef int	 dop_writev( void* pNode, void* pCookie, off_t nPosition, const struct iovec* psVector, size_t nCount );
 typedef int	 dop_add_select_req( void* pNode, void* pCookie, SelectRequest_s* psRequest );
 typedef int	 dop_rem_select_req( void* pNode, void* pCookie, SelectRequest_s* psRequest );
-
+typedef status_t dop_mmap( void* pNode, void* pCookie, void** ppAddress, size_t nSize, flags_t nProtection, flags_t nLockMode);
 
 /** \struct DeviceOperations_s
  * \ingroup DriverAPI
@@ -176,6 +176,7 @@ typedef struct
     dop_writev*		writev;
     dop_add_select_req*	add_select_req;
     dop_rem_select_req*	rem_select_req;
+    dop_mmap*		mmap;
 } DeviceOperations_s;
 
 #define BUILTIN_DEVICE_ID 1	// Device ID for devices built in to the kernel.

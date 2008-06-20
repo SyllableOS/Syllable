@@ -49,6 +49,9 @@ extern "C" {
 #define PAGE_SIZE	(1UL << PAGE_SHIFT)
 #define PAGE_MASK	(~(PAGE_SIZE-1))
 
+/* Convert to/from addresses/pages */
+#define atop(x)		(x >> PAGE_SHIFT)
+#define ptoa(x)		(x << PAGE_SHIFT)
 
 /* to align the pointer to the (next) page boundary */
 #define PAGE_ALIGN(addr)	(((addr)+PAGE_SIZE-1)&PAGE_MASK)
@@ -81,6 +84,7 @@ typedef struct
 #define AREA_CONTIGUOUS	3
 
   // Protection
+#define	AREA_NONE		0x00000000
 #define	AREA_READ		0x00000001
 #define	AREA_WRITE		0x00000002
 #define	AREA_EXEC		0x00000004
