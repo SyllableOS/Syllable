@@ -1,11 +1,13 @@
 authors				Kaj de Vos
 status				testing
-warnings
-	The server reportedly only works with key-based authentication.
+warnings			The server reportedly only works with key-based authentication.
 
 configure-options
+;	--sysconfdir=/etc/ssh
+;	--datadir=/usr/share/sshd
+	--with-privsep-path=/var/lib/sshd
 ;	--with-ssl-dir=/usr/openssl
 ;	--with-zlib=/usr/zlib
 	--with-libs='-lcrypt'
-;	Doesn't work as advertized:
+;	Doesn't work as advertised:
 ;	--disable-libutil

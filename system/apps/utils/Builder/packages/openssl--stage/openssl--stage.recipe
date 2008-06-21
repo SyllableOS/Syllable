@@ -6,5 +6,6 @@ inherits			openssl-0.9.8h
 packages			openssl-0.9.8h
 
 install-vars
-	OPENSSLDIR "$STAGE/openssl"
-	INSTALLTOP "$STAGE/openssl"
+	OPENSSLDIR		"$IMAGE/etc/ssl"
+	INSTALLTOP		"$STAGE/openssl"
+	MANDIR			"$STAGE/openssl/man"

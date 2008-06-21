@@ -23,6 +23,7 @@ tree
 	etc
 ;	FHS:
 ;	etc/grub
+	etc/s3conf
 
 	home home.png
 
@@ -212,6 +213,7 @@ resources
 	etc/sysconfig								linux/network
 	etc/sysconfig/network-devices/ifconfig.eth0	linux/ipv4
 	etc											linux/dhclient.conf
+	etc/s3conf									configuration/s3config.yml
 ;	Server:
 	etc											linux/dhcpd.conf
 	var/state/dhcp								linux/dhcpd.leases
@@ -421,6 +423,7 @@ modules
 ;	Needs ranlib symlink in /usr/bin/!
 ;	For cURL:
 	stage libraries/openssl--stage
+	other/data/ca-certificates--current
 
 	system apps/other/libusb-0.1.12
 	system linux/alsa-library-1.0.15-system

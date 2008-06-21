@@ -1,20 +1,34 @@
 authors				Kaj de Vos
 status				testing
 
+headline			Secure Shell remote networking tools
+description
+	OpenSSH is a FREE version of the SSH connectivity tools that technical users of the Internet rely on. Users of telnet, rlogin, and ftp may not realise that their password is transmitted across the Internet unencrypted, but it is. OpenSSH encrypts all traffic (including passwords) to effectively eliminate eavesdropping, connection hijacking, and other attacks. Additionally, OpenSSH provides secure tunneling capabilities and several authentication methods, and supports all SSH protocol versions.
+	The OpenSSH suite replaces rlogin and telnet with the ssh program, rcp with scp, and ftp with sftp. Also included is sshd (the server side of the package), and the other utilities like ssh-add, ssh-agent, ssh-keysign, ssh-keyscan, ssh-keygen and sftp-server.
 licenses			BSD MIT ISC other PD
+
 home				www.openssh.org
 locations			ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/
 
-build-needs
+needs
 	zlib >= 1.2.3
 	openssl >= 0.9.6
-build-recommends
+recommends
 	pam
+	tcp-wrapper
+	kerberos5 | heimdal
+	net-tools
+	sysstat
 	libedit
+	opensc
+	libsectok
 
 test-targets		tests
 
+;super-install
 system-prefix-var	DESTDIR
+
+;post-install		echo 'PermitRootLogin no' >> $IMAGE/etc/ssh/sshd_config
 
 documentation
 	README* INSTALL WARNING.RNG RFC.nroff LICENCE ChangeLog TODO CREDITS

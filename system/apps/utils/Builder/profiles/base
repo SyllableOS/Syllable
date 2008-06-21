@@ -17,6 +17,7 @@ resources
 	system/resources/wallpapers			wallpapers/LucasMurad/*.png
 	system/resources/wallpapers			wallpapers/LucasMurad/*.jpg
 	system/resources/wallpapers			wallpapers/LukasVeselovsky/*.png
+	etc/s3conf							configuration/s3config.yml
 ;	Servers:
 	etc									configuration/vsftpd.conf
 	etc									configuration/rsyncd.conf
@@ -38,6 +39,7 @@ modules
 ;	For cURL:
 	stage libraries/c-ares-1.5.2
 	stage libraries/openssl--stage
+	other/data/ca-certificates--current
 
 	system apps/other/libusb-0.1.12
 	system apps/other/curl-7.18.2

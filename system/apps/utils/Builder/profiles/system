@@ -11,6 +11,7 @@ tree
 ;	Main directory structure
 
 	etc
+	etc/s3conf
 
 	home home.png
 

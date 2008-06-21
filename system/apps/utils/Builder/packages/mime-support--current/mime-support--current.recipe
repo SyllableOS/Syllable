@@ -7,7 +7,7 @@ description
 licenses			PD
 
 home				packages.debian.org/sid/mime-support
-packages			mime-support_3.43-1
+packages			mime-support_3.44-1
 locations			http://ftp.de.debian.org/debian/pool/main/m/mime-support/
 
 make				true
