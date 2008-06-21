@@ -57,7 +57,10 @@ enum device_type {
 	DEVICE_PORT,
 	DEVICE_INPUT,
 	DEVICE_DRIVE,
-	DEVICE_PROCESSOR
+	DEVICE_PROCESSOR,
+	DEVICE_STORAGE,
+	DEVICE_DOCK,
+	DEVICE_CRYPTO
 };
 
 /* General device information */
