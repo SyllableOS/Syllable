@@ -1,5 +1,6 @@
 authors 			Kaj de Vos
 status				testing
+warnings			Does not support stage'ing!
 notes				Needs ranlib and perl in /usr/bin/ during building
 
 headline			Secure Sockets Layer library
@@ -47,9 +48,9 @@ test-targets
 system-prefix-var	INSTALL_PREFIX
 
 install-vars
-;	OPENSSLDIR		'/etc/ssl'
-	INSTALLTOP		'/usr/openssl'
-	MANDIR			'/usr/openssl/man'
+;	OPENSSLDIR		"$IMAGE/etc/ssl"
+	INSTALLTOP		"$IMAGE/usr/openssl"
+	MANDIR			"$IMAGE/usr/openssl/man"
 
 documentation		README README.ENGINE FAQ PROBLEMS LICENSE NEWS CHANGES doc
 develop-docs		INSTALL demos
