@@ -35,4 +35,6 @@ documentation
 	debian/README.Debian debian/copyright debian/NEWS debian/changelog
 	cacert.org/README.asc brasil.gov.br/README
 
-links				etc/ssl/certs /etc/ssl/
+; certs directory already created by OpenSSL:
+;links				etc/ssl/certs /etc/ssl/
+move-files			etc/ssl/certs/*.crt /etc/ssl/certs/
