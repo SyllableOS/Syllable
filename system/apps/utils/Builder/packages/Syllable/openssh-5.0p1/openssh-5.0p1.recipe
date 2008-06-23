@@ -1,0 +1,14 @@
+authors				Kaj de Vos
+status				testing
+warnings			The server reportedly only works with key-based authentication.
+
+configure-options
+	--sysconfdir=/etc/ssh
+;	--datadir=/usr/share/sshd
+	--with-privsep-path=/var/lib/sshd
+;	--with-md5-passwords
+;	--with-ssl-dir=/usr/openssl
+;	--with-zlib=/usr/zlib
+;	--with-libs='-lcrypt'
+;	Doesn't work as advertised:
+;	--disable-libutil
