@@ -153,3 +153,8 @@ modules
 ;	apps/gnu/make-3.81
 ;	apps/other/ruby-1.8.6
 ;	apps/gnu/nano--curses
+
+
+;	Extra goodies
+
+	apps/other/openssh-5.0p1

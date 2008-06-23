@@ -536,6 +536,7 @@ modules
 
 	apps/other/rebol-core--current
 
+
 ;	REBOL stacks
 	apps/other/tiny--current
 	apps/other/rebol-services--current
@@ -556,13 +557,14 @@ modules
 ;	Amazon tools
 	apps/other/s3sync--current
 
+
 ;	Extra goodies
 
 	apps/other/s-lang-2.1.1
 	apps/other/glib-2.14.4
 	apps/gnu/mc-4.6.1
 
-	apps/other/openssh-4.7p1
+	apps/other/openssh-5.0p1
 ;	apps/other/rsync-2.6.9
 	apps/other/links2-2.1pre36
 	apps/other/pengupop-2.1.12
