@@ -46,11 +46,11 @@ Before you can burn this image to a CD you must first un-7zip it.  On Syllable,
 make sure that the portable version of 7-Zip is installed
 (http://p7zip.sourceforge.net) and type this:
 
-  7z x SyllableDesktop-0.6.5.i586.iso.7z
+  7z x SyllableDesktop-0.6.6.i586.iso.7z
 
 On Windows you must use 7-Zip (http://www.7-zip.org) to decompress the 7zip file,
 or you can download and run the self-extracting archive instead:
-SyllableDesktop-0.6.5.i586.iso.exe
+SyllableDesktop-0.6.6.i586.iso.exe
 
 Once you have decompressed the ISO disc image you must burn it to a CD
 using your preferred burning software, e.g. cdrecord on Linux or Nero on
@@ -146,7 +146,7 @@ the second-stage loader by setting a "root" partition:
 If you did not install Syllable on the second partition on the first
 disk you must change the parameters accordingly.
 
-Then you must install the boot-loader with the "setup" command.
+Then you must install the bootloader with the "setup" command.
 
 To install on a MBR of the first drive run:
 
@@ -171,7 +171,7 @@ anything like that after installing new kernels.
 
 Read the GRUB documentation [http://www.gnu.org/software/grub/grub.html]
 and use the "help" command in the GRUB shell for more information on the
-boot loader.
+bootloader.
 
 
 
