@@ -19,9 +19,8 @@ then
 fi
 
 
-# Start the OpenSSH server:
-
-/usr/indexes/sbin/sshd
+# Uncomment the following to start the OpenSSH server on Syllable Desktop:
+#/usr/indexes/sbin/sshd
 
 # Stop with:
 #killall sshd
