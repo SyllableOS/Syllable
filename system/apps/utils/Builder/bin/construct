@@ -1,0 +1,43 @@
+#! /usr/bin/env orca
+
+ORCA [
+	Title:		"Consonant build system"
+	Version:	0.0.0
+	Author:		"Kaj de Vos"
+	Rights: {
+		Copyright (c) 2008 Kaj de Vos
+		License: GPL 3 or any later version
+	}
+	Purpose:	"Builds the Syllable operating systems, their native applications and their ports."
+	Example:	"construct help"
+
+	Tabs:		4
+]
+
+recycle/off  ; FIXME: ORCA bug
+
+
+header: system/script/header
+
+either any [
+	not args: system/script/args
+	find ["help" "-h" "--help" "-help" "-?" "?"] command: args/1
+][
+	print "Usage: construct <command> [<module> | <profile>]"
+	print "<command>:"
+	print "  help, -h,     Show this help information"
+	print "    --help, -help, -?, (?)"
+	print "  version       Show version information"
+	print "Example:"
+	print [" " select header 'example]
+][
+either command = "version" [
+	print [select header 'title  select header 'version]
+	print select header 'rights
+][
+	switch/default command [
+	][
+		print "Command unknown."
+		quit/return 1
+	]
+]]
