@@ -1,3 +1,0 @@
-#! /bin/sh
-# Start the CUPS daemon
-cupsd >> /dev/null
