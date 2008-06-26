@@ -56,8 +56,8 @@ FILES=(	"/etc/profile, /etc/profile" 															\
 		"/system/extensions/translators/pngtrans.so, /system/extensions/translators/pngtrans.so"	\
 																											\
 		"/system/fonts/DejaVuSans.ttf, /system/fonts/DejaVuSans.ttf"								\
-		"/system/fonts/DejaVuMonoSans.ttf, /system/fonts/DejaVuMonoSans.ttf"						\
-		"/system/fonts/DejaVuCondensedSans.ttf, /system/fonts/DejaVuCondensedSans.ttf"				\
+		"/system/fonts/DejaVuSansMono.ttf, /system/fonts/DejaVuSansMono.ttf"						\
+		"/system/fonts/DejaVuSansCondensed.ttf, /system/fonts/DejaVuSansCondensed.ttf"				\
 																											\
 		"/system/keymaps/American, /system/keymaps/American"										\
 																											\
