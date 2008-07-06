@@ -45,7 +45,7 @@ recommends
 	tremor
 	libtheora
 	matroska
-	libflac
+	flac
 	libspeex
 	liba52
 	x264
@@ -99,4 +99,3 @@ documentation
 	README COPYING ABOUT-NLS NEWS ChangeLog MAINTAINERS AUTHORS THANKS
 ;	doc
 internal-docs		HACKING
-
