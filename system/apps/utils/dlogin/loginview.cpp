@@ -85,8 +85,9 @@ void LoginView::PopulateIcons()
   		int nIcon = 0;
   		while((psPwd = fgetpwent( fp )) != NULL ) 
   		{	
-  			//lets remove users that don't need to be there and then add them to the iconview
-  			if (strcmp(psPwd->pw_name,"www") !=0 && strcmp(psPwd->pw_name,"mail") !=0 && strcmp(psPwd->pw_name,"man") !=0 && strcmp(psPwd->pw_name,"bin") !=0 && strcmp(psPwd->pw_name,"ftp") !=0 && strcmp(psPwd->pw_name,"news") !=0 && strcmp(psPwd->pw_name,"nobody") !=0 )
+  			// Let's remove users that don't need to be there and then add them to the iconview
+  			// System users (eg "www", "mail") have uids between 1 and 99. Filter them out.
+			if( psPwd->pw_uid >= 100 || psPwd->pw_uid == 0 )
   			{
     			pcUserIconView->AddIcon(GetImageFromIcon(psPwd->pw_name),new IconData());
   				pcUserIconView->AddIconString(nIcon,psPwd->pw_name);
