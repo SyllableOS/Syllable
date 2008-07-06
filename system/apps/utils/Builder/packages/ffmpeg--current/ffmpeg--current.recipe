@@ -20,31 +20,6 @@ build-needs
 	make >= 3.80
 ;needs				liba52
 
-configure-options
-	--extra-cflags='-fomit-frame-pointer'
-;	--extra-libs='-ldl -lm'
-;	--enable-shared
-;	--enable-pthreads
-	--disable-debug
-;	--disable-ffserver
-;	--disable-ffplay
-;	--disable-mmx
-;	IPv6 code used to fail (on GLibC 2.1.2?):
-;	--disable-network
-;	--disable-ipv6
-	--disable-vhook
-	--enable-gpl
-	--enable-pp
-;	--enable-liba52
-;	--enable-libfaad
-;	--enable-libogg
-;	--disable-demuxer=OGG
-;	--enable-libvorbis
-;	--enable-libtheora
-;	--enable-libmp3lame
-;	--enable-libx264
-;	--enable-libxvid
-
 system-prefix-var	DESTDIR
 install-files
 	../_ffmpeg--current/config.h				include/ffmpeg
