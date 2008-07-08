@@ -1,3 +1,8 @@
+* July 8, 2008, Kristian Van Der Vliet *
+
+Added three new AGP GART HCD drivers for ALi, nVidia & SiS chipsets. All
+drivers are from Dee Sharpe.
+
 * June 6, 2008, Kristian Van Der Vliet *
 
 Added an AGP bus manager and Via AGP GART HCD driver. All of this is from Dee
