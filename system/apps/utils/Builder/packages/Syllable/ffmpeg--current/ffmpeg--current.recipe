@@ -10,7 +10,7 @@ configure-options
 	--extra-cflags='-fomit-frame-pointer'
 ;	--extra-cflags='-DPIC -fomit-frame-pointer'
 ;	--enable-syllablethreads
-	--enable-pthreads
+;	--enable-pthreads
 	--disable-debug
 ;	--disable-ffserver
 ;	--disable-ffplay
