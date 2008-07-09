@@ -9,4 +9,4 @@ configure-options
 	--enable-release
 ;	Don't compile for host CPU:
 	--disable-cpucheck
-	force_arch='i586'
+
