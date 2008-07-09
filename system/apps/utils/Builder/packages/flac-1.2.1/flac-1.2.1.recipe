@@ -25,6 +25,8 @@ build-dir			.
 
 ;configure-options	--enable-sse
 
+system-prefix-var	DESTDIR
+
 documentation
 	README COPYING.* AUTHORS
 ;	doc/html
