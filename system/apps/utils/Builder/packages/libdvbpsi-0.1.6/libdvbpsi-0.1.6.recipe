@@ -1,0 +1,22 @@
+authors				Rui Caridade
+status				testing
+
+headline			Simple library for MPEG TS and DVB PSI tables
+description
+	Libdvbpsi is a set of tools which allows to decode and generate all the Program Specific Information (PSI) present in a MPEG2 TS or a DVB stream.
+licenses			GPL
+
+home				www.videolan.org/developers/libdvbpsi.html
+packages			libdvbpsi5-0.1.6
+locations			http://download.videolan.org/pub/libdvbpsi/0.1.6/
+
+configure-options
+;	--enable-shared
+	--enable-release
+
+_make-targets
+	all
+	doc
+
+documentation		README COPYING NEWS ChangeLog AUTHORS
+build-docs			INSTALL

@@ -36,7 +36,7 @@ recommends
 	libmad
 	lame
 	twolame
-	libfaad2
+	faad 2
 	faac
 	libcddb
 	libcdio
