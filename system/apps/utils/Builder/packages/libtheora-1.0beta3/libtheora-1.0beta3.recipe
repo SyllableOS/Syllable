@@ -1,0 +1,28 @@
+authors				Kaj de Vos
+status				testing
+
+headline			Video compression library
+description
+	Theora is a free and open video compression format from the Xiph.org Foundation. Like all our multimedia technology it can be used to distribute film and video online and on disc without the licensing and royalty fees or vendor lock-in associated with other formats.
+	Theora scales from postage stamp to HD resolution, and is considered particularly competitive at low bitrates. It is in the same class as MPEG-4/DiVX, and like the Vorbis audio codec it has lots of room for improvement as encoder technology develops.
+licenses			BSD
+
+home				www.theora.org
+locations			http://downloads.xiph.org/releases/theora/
+
+needs				libogg >= 1.1
+recommends
+;	For example encoder:
+	libvorbis >= 1.0.1
+;	For example player:
+	sdl >= 1.2
+;	?:
+	oss
+build-recommends	doxygen
+
+system-prefix-var	DESTDIR
+
+documentation
+	README LICENSE COPYING CHANGES AUTHORS
+;	doc
+develop-docs		examples
