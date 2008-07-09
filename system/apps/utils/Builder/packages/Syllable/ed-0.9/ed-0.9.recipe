@@ -1,0 +1,6 @@
+authors
+	Ruwen Boehm
+	Kaj de Vos
+status				testing
+
+patch				sed -i 's/ ln \$/ ln -s \$/' Makefile.in
