@@ -17,7 +17,7 @@ configure-options
 ;	--enable-libogg
 ;	--disable-demuxer=OGG
 ;	--enable-libvorbis
-;	--enable-libtheora
+	--enable-libtheora
 ;	--enable-libmp3lame
 ;	--enable-libx264
 ;	--enable-libxvid

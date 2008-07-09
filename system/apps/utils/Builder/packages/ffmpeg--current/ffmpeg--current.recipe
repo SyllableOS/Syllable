@@ -18,7 +18,9 @@ archives			svn://svn.mplayerhq.hu/ffmpeg/trunk FFMPEG
 build-needs
 	bash <> 2.03
 	make >= 3.80
-;needs				liba52
+needs
+;	liba52
+	libtheora
 
 system-prefix-var	DESTDIR
 install-files
@@ -31,3 +33,4 @@ documentation
 ;	doc/*.txt
 build-docs			INSTALL
 internal-docs		doc/soc.txt	doc/optimization.txt
+
