@@ -1,0 +1,16 @@
+diff -ru x264--original/configure x264--current/configure
+--- x264--original/configure	2008-06-25 20:45:08.000000000 +0000
++++ x264--current/configure	2008-07-09 23:31:37.000000000 +0000
+@@ -234,6 +234,11 @@
+     LDFLAGS="$LDFLAGS -lm"
+     HAVE_GETOPT_LONG=0
+     ;;
++  syllable*)
++    SYS="SYLLABLE"
++    CFLAGS="$CFLAGS -DHAVE_MALLOC_H"
++    LDFLAGS="$LDFLAGS -lm"
++    ;;
+   *)
+     echo "Unknown system $host, edit the configure"
+     exit 1
+

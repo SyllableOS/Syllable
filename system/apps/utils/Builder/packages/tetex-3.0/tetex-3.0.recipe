@@ -24,7 +24,7 @@ build-needs
 	gawk
 	flex
 	bison
-;	ed
+	ed
 ;	perl
 ;	tk
 recommends
@@ -51,3 +51,4 @@ documentation
 	texmf/LICENSE.texmf
 ;	texmf/ChangeLog texmf/doc
 build-docs			QuickInstall INSTALL PROBLEMS
+

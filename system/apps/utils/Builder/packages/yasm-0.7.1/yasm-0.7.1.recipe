@@ -1,0 +1,23 @@
+authors
+	Rui Caridade
+	Kaj de Vos
+status				testing
+
+headline			Modular assembler
+description
+	Yasm is a complete rewrite of the NASM assembler under the "new" BSD License.
+	Yasm currently supports the x86 and AMD64 instruction sets, accepts NASM and GAS assembler syntaxes, outputs binary, ELF32, ELF64, 32 and 64-bit Mach-O, RDOFF2, COFF, Win32, and Win64 object formats, and generates source debugging information in STABS, DWARF 2, and CodeView? 8 formats.
+licenses			BSD Artistic GPL LGPL
+
+home				www.tortall.net/projects/yasm/
+locations			http://www.tortall.net/projects/yasm/releases/
+
+build-recommends	python
+
+patch-config		config
+
+documentation
+	ABOUT-NLS COPYING BSD.txt Artistic.txt GNU_GPL-2.0 GNU_LGPL-2.0 AUTHORS
+;	Currently empty:
+;	README NEWS ChangeLog
+

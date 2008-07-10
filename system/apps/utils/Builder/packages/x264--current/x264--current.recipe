@@ -1,0 +1,26 @@
+authors
+	Rui Caridade
+	Kaj de Vos
+status				testing
+
+headline			A free H264/AVC encoder
+description			X264 is a free library for encoding H264/AVC video streams.
+licenses			GPL
+
+home				www.videolan.org/developers/x264.html
+packages			x264-snapshot-20080625-2245
+locations			ftp://ftp.videolan.org/pub/videolan/x264/snapshots/
+
+build-needs			yasm
+
+build-dir			.
+
+_configure-options
+	--enable-shared
+	--enable-pic
+	--enable-pthread
+
+documentation
+	COPYING AUTHORS
+;	doc/*
+
