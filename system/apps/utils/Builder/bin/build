@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.7.53
+# Version 0.7.54
 # Copyright (c) 2002-2008 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -612,231 +612,237 @@ def installModule staging, target
 							end
 						)
 							false
-						elsif cmdLine = recipe['post-install'] and not
-							begin
-								@log.header 'Executing post-installation commands'
-								action toCommand(cmdLine)
-							end
-						then
-							false
-						elsif files = recipe['install-files'] and not
-							begin
-								@log.header 'Installing files'
-	
-								for line in parseList files
-									source, destination = line.split
-									break unless action superAccess + "cp -a #{source} " + File.join(root, destination)
-								end
-							end
-						then
-							false
-						elsif
-							(docs = "#{toString recipe['documentation']} #{toString recipe['develop-docs']}") != ' ' and not
-							begin
-								@log.header 'Installing documentation'
-
-								unless exists? dir = File.join(root, 'documentation')
-									@log.detail dir
-									Dir.mkdir dir
-								end
-
-								Dir.chdir @workDir
-								Dir.chdir target
-								action superAccess + "cp -a #{docs} " + dir
-							end
-						then
-							false
 						else
-							Dir.chdir root
+							# make install may change the working directory:
+							Dir.chdir @workDir
+							Dir.chdir target
 
-							if exists? 'share/man' and not exists? 'man' and not
+							if cmdLine = recipe['post-install'] and not
 								begin
-									@log.header 'Moving man directory to standard location'
-									action superAccess + 'mv share/man .'
-								end && (
-									not empty? 'share' or
-									begin
-										@log.header 'Deleting empty share directory'
-										action superAccess + 'rm --recursive --force share'
-									end
-								)
-							then
-								false
-							elsif exists? 'share/info' and not exists? 'info' and not
-								begin
-									@log.header 'Moving info directory to standard location'
-									action superAccess + 'mv share/info .'
-								end && (
-									not empty? 'share' or
-									begin
-										@log.header 'Deleting empty share directory'
-										action superAccess + 'rm --recursive --force share'
-									end
-								)
-							then
-								false
-							elsif not
-								(lineage = lineage target).each_with_index {|kin, i|
-									ancestor = i < lineage.size - 1
-
-									if exists? dir = File.join(recipePath(kin), 'distro')
-										@log.header 'Overlaying extra files' + (ancestor ? ' from ancestor ' + kin : '')
-										break unless copyFiles dir, root, superAccess
-									end
-								}
-							then
-								false
-							elsif links = recipe['links'] and links != '' and not
-								begin
-									@log.header 'Creating links'
-
-									for link in parseList links
-										original, destination = link.split
-										linkPath = File.dirname destination
-										linkFile = File.basename destination
-
-										if linkPath[0, 1] != '/'
-											# A link within the package
-											linkPath = File.join root, linkPath
-										else
-											# A link into the system
-
-											next unless ['image', 'system', 'libraries'].include?(staging) or not staging
-
-											original = File.join prefix(staging, target), original if
-												original['/'] and not ['/', '.'].include? original[0, 1]
-
-											linkPath = File.join @systemRoot, linkPath if staging
-										end
-
-										break unless action superAccess +
-											"cd #{linkPath} && ln -sf #{original} " + linkFile
-									end
-								end
-							then
-								false
-							elsif not @settings['no-strip'] || recipe['no-strip'] || (
-									(dirs = ['bin', 'sbin', 'libexec'].collect {|dir|
-										exists?(dir = File.join(root, dir)) ? dir : nil
-									}.compact).empty? ||
-									begin
-										@log.header 'Stripping executables'
-										#--strip-unneeded
-										action superAccess + 'strip --strip-all' + dirs.collect {|dir| ' ' + File.join(dir, '*')}.join or
-											$? >> 8 == 1  # File type not recognised
-									end and
-									! exists?(dir = File.join(root, 'lib')) ||
-									begin
-										@log.header 'Stripping libraries'
-										action superAccess + 'strip --strip-debug ' + File.join(dir, '*') or $? >> 8 == 1
-									end
-								)
-							then
-								false
-							elsif cmdLine = recipe['pre-register'] and not
-								begin
-									@log.header 'Executing pre-registration commands'
+									@log.header 'Executing post-installation commands'
 									action toCommand(cmdLine)
 								end
 							then
 								false
-							elsif files = recipe['move-files'] and not
+							elsif files = recipe['install-files'] and not
 								begin
-									@log.header 'Moving files'
-
+									@log.header 'Installing files'
+	
 									for line in parseList files
 										source, destination = line.split
-										break unless action superAccess + 'mv ' + (
-											staging && staging != 'image' ?
-												source + ' ' + destination :
-												(source[0, 1] == '/' ?
-													File.join(@systemImage, source) :
-													source
-												) + ' ' +
-												(destination[0, 1] == '/' ?
-													File.join(@systemImage, destination) :
-													destination
-												)
-										)
+										break unless action superAccess + "cp -a #{source} " + File.join(root, destination)
 									end
 								end
 							then
 								false
-							elsif files = recipe['delete-files'] and not
+							elsif
+								(docs = "#{toString recipe['documentation']} #{toString recipe['develop-docs']}") != ' ' and not
 								begin
-									@log.header 'Deleting files from installation'
+									@log.header 'Installing documentation'
 
-									for file in toList files
-										break unless action superAccess + 'rm --recursive --force ' + (
-											staging && staging != 'image' || file[0, 1] != '/' ?
-												file :
-												File.join(@systemImage, file)
-										)
+									unless exists? dir = File.join(root, 'documentation')
+										@log.detail dir
+										Dir.mkdir dir
 									end
-								end
-							then
-								false
-							elsif staging == 'libraries' and @systemBuild and not
-								begin
-									@log.header 'Cleaning up system libraries'
 
-									for file in Dir['*']
-										break unless ['lib', 'include', 'documentation'].include?(file) or
-											action superAccess + 'rm --recursive --force ' + file
-									end
-								end
-							then
-								false
-							elsif staging == 'compatibility' and @systemBuild and not
-								begin
-									@log.header 'Cleaning up compatibility libraries'
-
-									for file in Dir['*']
-										break unless ['lib', 'documentation'].include?(file) or
-											action superAccess + 'rm --recursive --force ' + file
-									end
-								end
-							then
-								false
-							elsif ['system', 'libraries', 'compatibility'].include?(staging) and @systemBuild and not
-								begin
-									@log.header 'Moving (remaining) development files'
-
-									devRoot = File.join @systemRoot, '/system/development/resources', installName(target), version(target)
-									action 'mkdir --parents ' + devRoot and
-
-									if Dir['include/*'] != []
-										action 'mkdir --parents ' + (dir = File.join(devRoot, 'include')) and
-											action superAccess + 'mv include/* ' + dir and
-											action superAccess + 'rmdir include'
-									else
-									    true
-									end and
-									if Dir['lib/*.a'] != []
-										action 'mkdir --parents ' + (dir = File.join(devRoot, 'lib')) and
-											action superAccess + 'mv lib/*.a ' + dir
-									else
-									    true
-									end and
-									if docs = recipe['develop-docs']
-										action 'mkdir --parents ' + (dir = File.join devRoot, 'documentation') and
-										for file in toList docs
-											break unless action superAccess + "mv #{File.join 'documentation', File.basename(file)} " + dir
-										end
-									else
-									    true
-									end and
-									begin
-										@log.header 'Registering development files'
-
-										# Link files into the staging area
-										action "package register #{devRoot} " + File.join(@stage, 'indexes')
-									end
+									Dir.chdir @workDir
+									Dir.chdir target
+									action superAccess + "cp -a #{docs} " + dir
 								end
 							then
 								false
 							else
-								registerModule staging, target, root
+								Dir.chdir root
+
+								if exists? 'share/man' and not exists? 'man' and not
+									begin
+										@log.header 'Moving man directory to standard location'
+										action superAccess + 'mv share/man .'
+									end && (
+										not empty? 'share' or
+										begin
+											@log.header 'Deleting empty share directory'
+											action superAccess + 'rm --recursive --force share'
+										end
+									)
+								then
+									false
+								elsif exists? 'share/info' and not exists? 'info' and not
+									begin
+										@log.header 'Moving info directory to standard location'
+										action superAccess + 'mv share/info .'
+									end && (
+										not empty? 'share' or
+										begin
+											@log.header 'Deleting empty share directory'
+											action superAccess + 'rm --recursive --force share'
+										end
+									)
+								then
+									false
+								elsif not
+									(lineage = lineage target).each_with_index {|kin, i|
+										ancestor = i < lineage.size - 1
+
+										if exists? dir = File.join(recipePath(kin), 'distro')
+											@log.header 'Overlaying extra files' + (ancestor ? ' from ancestor ' + kin : '')
+											break unless copyFiles dir, root, superAccess
+										end
+									}
+								then
+									false
+								elsif links = recipe['links'] and links != '' and not
+									begin
+										@log.header 'Creating links'
+
+										for link in parseList links
+											original, destination = link.split
+											linkPath = File.dirname destination
+											linkFile = File.basename destination
+
+											if linkPath[0, 1] != '/'
+												# A link within the package
+												linkPath = File.join root, linkPath
+											else
+												# A link into the system
+
+												next unless ['image', 'system', 'libraries'].include?(staging) or not staging
+
+												original = File.join prefix(staging, target), original if
+													original['/'] and not ['/', '.'].include? original[0, 1]
+
+												linkPath = File.join @systemRoot, linkPath if staging
+											end
+
+											break unless action superAccess +
+												"cd #{linkPath} && ln -sf #{original} " + linkFile
+										end
+									end
+								then
+									false
+								elsif not @settings['no-strip'] || recipe['no-strip'] || (
+										(dirs = ['bin', 'sbin', 'libexec'].collect {|dir|
+											exists?(dir = File.join(root, dir)) ? dir : nil
+										}.compact).empty? ||
+										begin
+											@log.header 'Stripping executables'
+											#--strip-unneeded
+											action superAccess + 'strip --strip-all' + dirs.collect {|dir| ' ' + File.join(dir, '*')}.join or
+												$? >> 8 == 1  # File type not recognised
+										end and
+										! exists?(dir = File.join(root, 'lib')) ||
+										begin
+											@log.header 'Stripping libraries'
+											action superAccess + 'strip --strip-debug ' + File.join(dir, '*') or $? >> 8 == 1
+										end
+									)
+								then
+									false
+								elsif cmdLine = recipe['pre-register'] and not
+									begin
+										@log.header 'Executing pre-registration commands'
+										action toCommand(cmdLine)
+									end
+								then
+									false
+								elsif files = recipe['move-files'] and not
+									begin
+										@log.header 'Moving files'
+
+										for line in parseList files
+											source, destination = line.split
+											break unless action superAccess + 'mv ' + (
+												staging && staging != 'image' ?
+													source + ' ' + destination :
+													(source[0, 1] == '/' ?
+														File.join(@systemImage, source) :
+														source
+													) + ' ' +
+													(destination[0, 1] == '/' ?
+														File.join(@systemImage, destination) :
+														destination
+													)
+											)
+										end
+									end
+								then
+									false
+								elsif files = recipe['delete-files'] and not
+									begin
+										@log.header 'Deleting files from installation'
+
+										for file in toList files
+											break unless action superAccess + 'rm --recursive --force ' + (
+												staging && staging != 'image' || file[0, 1] != '/' ?
+													file :
+													File.join(@systemImage, file)
+											)
+										end
+									end
+								then
+									false
+								elsif staging == 'libraries' and @systemBuild and not
+									begin
+										@log.header 'Cleaning up system libraries'
+
+										for file in Dir['*']
+											break unless ['lib', 'include', 'documentation'].include?(file) or
+												action superAccess + 'rm --recursive --force ' + file
+										end
+									end
+								then
+									false
+								elsif staging == 'compatibility' and @systemBuild and not
+									begin
+										@log.header 'Cleaning up compatibility libraries'
+
+										for file in Dir['*']
+											break unless ['lib', 'documentation'].include?(file) or
+												action superAccess + 'rm --recursive --force ' + file
+										end
+									end
+								then
+									false
+								elsif ['system', 'libraries', 'compatibility'].include?(staging) and @systemBuild and not
+									begin
+										@log.header 'Moving (remaining) development files'
+
+										devRoot = File.join @systemRoot, '/system/development/resources', installName(target), version(target)
+										action 'mkdir --parents ' + devRoot and
+
+										if Dir['include/*'] != []
+											action 'mkdir --parents ' + (dir = File.join(devRoot, 'include')) and
+												action superAccess + 'mv include/* ' + dir and
+												action superAccess + 'rmdir include'
+										else
+										    true
+										end and
+										if Dir['lib/*.a'] != []
+											action 'mkdir --parents ' + (dir = File.join(devRoot, 'lib')) and
+												action superAccess + 'mv lib/*.a ' + dir
+										else
+									    	true
+										end and
+										if docs = recipe['develop-docs']
+											action 'mkdir --parents ' + (dir = File.join devRoot, 'documentation') and
+											for file in toList docs
+												break unless action superAccess + "mv #{File.join 'documentation', File.basename(file)} " + dir
+											end
+										else
+										    true
+										end and
+										begin
+											@log.header 'Registering development files'
+
+											# Link files into the staging area
+											action "package register #{devRoot} " + File.join(@stage, 'indexes')
+										end
+									end
+								then
+									false
+								else
+									registerModule staging, target, root
+								end
 							end
 						end
 					end
@@ -1846,7 +1852,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.7.53',
+	puts 'Syllable Build System 0.7.54',
 		'Copyright (c) 2002-2008 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
