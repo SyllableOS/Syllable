@@ -31,9 +31,12 @@ recommends
 	ncurses
 	texinfo
 	ghostscript
+;conflicts			texinfo
 
 configure-options
 ;	--datadir=/usr/tetex/share/texmf
+;	Prevent conflict:
+	--without-texinfo
 ;	--disable-multiplatform
 ;	Letter & inch:
 ;	--disable-a4
@@ -41,7 +44,6 @@ configure-options
 	--with-system-ncurses
 	--with-system-pnglib
 	--with-system-gd
-;	--without-texinfo
 
 install-files		texmf share/
 documentation

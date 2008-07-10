@@ -1,0 +1,5 @@
+authors				Kaj de Vos
+status				testing
+
+move-files			bin/i486-pc-linux/* bin/
+

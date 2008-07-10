@@ -1,7 +1,7 @@
 authors
 	Kaj de Vos
 	Ruwen Boehm
-status				developing
+status				testing
 
 patch-config
 	config
@@ -9,3 +9,6 @@ patch-config
 	utils/texinfo
 	utils/texi2html
 	texk
+
+move-files			bin/i586-pc-syllable/* bin/
+
