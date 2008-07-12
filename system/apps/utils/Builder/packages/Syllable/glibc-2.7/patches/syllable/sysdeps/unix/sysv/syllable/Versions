@@ -32,7 +32,8 @@ libc {
     free_tld; freadlink; find_port; find_module_by_address; fopendir;
 
     # g
-    get_real_time; get_system_time; get_system_info; get_image_id; get_tld; get_tld_addr;
+    get_real_time; get_system_time; get_system_info_v; get_system_info;
+    get_image_id; get_tld; get_tld_addr;
     get_kernel_syms; get_system_path; get_vesa_mode_info; get_vesa_info; get_pci_info;
     get_mount_point_count; get_mount_point; get_directory_path; get_app_server_port;
     get_thread_info; get_next_thread_info; get_thread_proc; get_semaphore_info;

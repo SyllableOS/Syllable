@@ -22,9 +22,17 @@
 #include <sys/syscall.h>
 #include <sys/sysinfo.h>
 
+/* atheos/kernel.h defines a get_system_info macro wrapping get_system_info_v() with the current SYS_INFO_VERSION. */
+#undef get_system_info
+
+/* The get_system_info() function is deprecated because it does not properly handle the get_system_info syscall versioning.
+   It is included for compatibility with existing binaries, which assume SYS_INFO_VERSION == 3.
+   New apps should use get_system_info_v() or the get_system_info() macro.
+*/
 status_t __get_system_info( system_info* info )
 {
-    return( INLINE_SYSCALL(get_system_info, 2, info, SYS_INFO_VERSION ) );
+    dbprintf( "Deprecated get_system_info() [version 3] was used!\n" );
+    return( INLINE_SYSCALL(get_system_info, 2, info, 3 ) );  /* assuming SYS_INFO_VERSION == 3 */
 }
 
 weak_alias (__get_system_info, get_system_info)

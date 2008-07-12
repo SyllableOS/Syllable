@@ -1,6 +1,13 @@
 Glibc Syllable Changelog
 
-* April 5th 2008 *
+* July 12 2008, Anthony Morphett *
+
+	o get_system_info_v.c: New file, provides proper handling of get_system_info syscall versions.
+	o get_system_info.c: Assumes SYS_INFO_VERSION == 3 for compatibility with old binaries.
+	o sys/sysinfo.h: Added get_system_info_v(); added macro get_system_info() wrapping
+	  get_system_info_v() with the current SYS_INFO_VERSION.
+
+April 5th 2008 *
 
 	o get_system_info.c: Call get_system_info directly.
 	o xget_system_info.c: Removed.

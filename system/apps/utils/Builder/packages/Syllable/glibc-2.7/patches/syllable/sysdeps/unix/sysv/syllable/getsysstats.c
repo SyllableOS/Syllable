@@ -25,7 +25,7 @@ int
 __get_nprocs ()
 {
   system_info info;
-  if( get_system_info( &info ) < 0 )
+  if( get_system_info_v( &info, SYS_INFO_VERSION ) < 0 )
     return 1;
   return info.nCPUCount;
 }
@@ -37,7 +37,7 @@ long int
 __get_phys_pages ()
 {
   system_info info;
-  if( get_system_info( &info ) < 0 )
+  if( get_system_info_v( &info, SYS_INFO_VERSION ) < 0 )
     return -1;
   return info.nMaxPages;
 }
@@ -47,7 +47,7 @@ long int
 __get_avphys_pages ()
 {
   system_info info;
-  if( get_system_info( &info ) < 0 )
+  if( get_system_info_v( &info, SYS_INFO_VERSION ) < 0 )
     return -1;
   return info.nFreePages;
 }

@@ -52,7 +52,7 @@ int __uname( struct utsname *name )
 			return -1;
 	}
 
-	if ( get_system_info( &sysinfo ) < 0 )
+	if ( get_system_info_v( &sysinfo, SYS_INFO_VERSION ) < 0 )
 		return -1;
 
 	strcpy( name->sysname, sysinfo.zKernelSystem );

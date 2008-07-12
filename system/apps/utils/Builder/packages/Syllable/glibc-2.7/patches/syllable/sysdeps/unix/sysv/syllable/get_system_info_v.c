@@ -16,25 +16,15 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _SYS_SYSINFO_H
-#define _SYS_SYSINFO_H 1
+#include <errno.h>
+#include <stddef.h>
+#include <sysdep.h>
+#include <sys/syscall.h>
+#include <sys/sysinfo.h>
 
-#include <atheos/kernel.h>
+status_t __get_system_info_v( system_info* info, int nVersion )
+{
+    return( INLINE_SYSCALL(get_system_info, 2, info, nVersion ) );
+}
 
-/* External functions */
-__BEGIN_DECLS
-
-/* atheos/kernel.h defines a get_system_info macro wrapping get_system_info_v() with the current SYS_INFO_VERSION. */
-#undef get_system_info
-
-extern status_t get_system_info( system_info* info ) __THROW;
-
-extern status_t get_system_info_v( system_info* info, int nVersion ) __THROW;
-
-
-/* Now redefine the get_system_info macro */
-#define get_system_info( psInfo ) get_system_info_v( psInfo, SYS_INFO_VERSION )
-
-__END_DECLS
-
-#endif /* _SYS_SYSINFO_H */
+weak_alias (__get_system_info_v, get_system_info_v)
