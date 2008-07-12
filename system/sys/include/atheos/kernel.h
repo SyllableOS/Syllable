@@ -56,35 +56,16 @@ typedef struct
   bigtime_t	nActiveTime;
 } CPUInfo_s;
 
-enum { SYS_INFO_VERSION = 3 };
-
-typedef struct
-{
-    bigtime_t nBootTime;				/* time of boot (# usec since 1/1/70) */
-    int	      nCPUCount;
-    int	      nCPUType;
-    CPUInfo_s asCPUInfo[MAX_CPU_COUNT];
-    int       nMaxPages;				/* total # physical pages		*/
-    int       nFreePages;				/* Number of free physical pages	*/
-    int	      nCommitedPages;				/* Total number of allocated pages	*/
-    int       nPageFaults;				/* Number of page faults		*/
-    int       nUsedSemaphores;				/* Number of semaphores in use		*/
-    int       nUsedPorts;				/* Number of message ports in use	*/
-    int       nUsedThreads;			 	/* Number of living threads		*/
-    int       nUsedProcesses;			 	/* Number of living processes		*/
-
-    char      zKernelName[ OS_NAME_LENGTH ];	 	/* Name of kernel image		*/
-    char      zKernelBuildDate[ OS_NAME_LENGTH ];	/* Date of kernel built		*/
-    char      zKernelBuildTime[ OS_NAME_LENGTH ];	/* Time of kernel built		*/
-    int64     nKernelVersion;
-} system_info_v1;
+enum { SYS_INFO_VERSION = 4 };
 
 typedef struct
 {
     int64     nKernelVersion;
-    char      zKernelName[ OS_NAME_LENGTH ];	 	/* Name of kernel image		*/
-    char      zKernelBuildDate[ OS_NAME_LENGTH ];	/* Date of kernel built		*/
-    char      zKernelBuildTime[ OS_NAME_LENGTH ];	/* Time of kernel built		*/
+    char      zKernelName[ OS_NAME_LENGTH ];	 	/* Name of kernel image				*/
+    char      zKernelBuildDate[ OS_NAME_LENGTH ];	/* Date of kernel built				*/
+    char      zKernelBuildTime[ OS_NAME_LENGTH ];	/* Time of kernel built				*/
+    char      zKernelCpuArch[ OS_NAME_LENGTH ];		/* CPU this kernel is running on	*/
+    char      zKernelSystem[ OS_NAME_LENGTH ];		/* OS name (E.g. "Syllable")		*/
     bigtime_t nBootTime;				/* time of boot (# usec since 1/1/70) */
     int	      nCPUCount;
     int	      nCPUType;
@@ -109,8 +90,9 @@ typedef struct
     int	      nBlockCacheSize;
     int	      nDirtyCacheSize;
     int	      nLockedCacheBlocks;
-} system_info_v2;
+} system_info_v3;
 
+/* version 4 - added kernel boot parameters */
 typedef struct
 {
     int64     nKernelVersion;
@@ -119,6 +101,7 @@ typedef struct
     char      zKernelBuildTime[ OS_NAME_LENGTH ];	/* Time of kernel built				*/
     char      zKernelCpuArch[ OS_NAME_LENGTH ];		/* CPU this kernel is running on	*/
     char      zKernelSystem[ OS_NAME_LENGTH ];		/* OS name (E.g. "Syllable")		*/
+    char      zKernelBootParams[ 4096 ];			/* Boot parameters provided by bootloader */
     bigtime_t nBootTime;				/* time of boot (# usec since 1/1/70) */
     int	      nCPUCount;
     int	      nCPUType;
@@ -214,7 +197,16 @@ int	realint( int num, struct RMREGS *rm );
 #ifdef __KERNEL__
 status_t get_system_info( system_info* psInfo, int nVersion );
 #else
+/* Userspace get_system_info() is deprecated because it doesn't properly handle versioning.
+   get_system_info() is likely to cause segfaults on binaries compiled on recent Syllable versions.
+   Use get_system_info_v() instead, or the get_system_info() macro.
+*/
 status_t get_system_info( system_info* psInfo );
+
+status_t get_system_info_v( system_info* psInfo, int nVersion );
+
+/* This macro provides easy use of get_system_info_v with the latest version */
+#define get_system_info( psInfo ) get_system_info_v( psInfo, SYS_INFO_VERSION )
 #endif
 
 int	 set_app_server_port( port_id hPort );
