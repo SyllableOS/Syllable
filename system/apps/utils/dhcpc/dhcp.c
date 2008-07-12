@@ -280,9 +280,6 @@ int dhcp_shutdown( DHCPSessionInfo_s *info )
 	if( info->socket_fd > 0 )
 		close( info->socket_fd );
 
-	if( info->socket_fd > 0 )
-		close( info->socket_fd );
-
 	return( EOK );
 }
 
@@ -1774,7 +1771,7 @@ static void sighandle( int signal )
 					session->t3_state = TIMER_INTERUPTED;
 
 				if( ( session->t2_state != TIMER_RUNNING ) &&
-					( session->t2_state != TIMER_RUNNING ))
+					( session->t3_state != TIMER_RUNNING ))
 						session->do_shutdown=true;
 
 				break;
