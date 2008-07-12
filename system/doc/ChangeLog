@@ -1,3 +1,9 @@
+* July 12, 2008, Anthony Morphett *
+
+Updated sysinfo to use new get_system_info() version.
+Make 'strace --help' work.
+Corrections to dhcpc as pointed out by c0x.
+
 * July 8, 2008, Kristian Van Der Vliet *
 
 Added three new AGP GART HCD drivers for ALi, nVidia & SiS chipsets. All
