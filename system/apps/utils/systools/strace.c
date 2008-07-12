@@ -10,6 +10,7 @@
 #include <atheos/syscalltable.h>
 
 int parse_groups( char *zList );
+void show_help( char* pzArgv0, FILE* stream );
 
 #define NOP			0
 #define TRACE		1<<0
@@ -17,6 +18,26 @@ int parse_groups( char *zList );
 #define INCLUDE		1<<2
 #define EXCLUDE		1<<3
 #define RUN			1<<4
+
+struct group_info_s {
+	char* s_pzName;
+	uint32 s_nMask;
+	char* s_pzDescription;
+};
+
+struct group_info_s g_asGroups[] = {
+	{ "mm", SYSC_GROUP_MM, "All system calls related to memory management e.g. sbrk()" },
+	{ "proc", SYSC_GROUP_PROC, "Process related system calls e.g. fork()" },
+	{ "device", SYSC_GROUP_DEVICE, "Device related system calls" },
+	{ "net", SYSC_GROUP_NET, "Network related system calls e.g. recvmsg()" },
+	{ "signal", SYSC_GROUP_SIGNAL, "Process signal related system calls e.g. kill()" },
+	{ "ipc", SYSC_GROUP_IPC, "Interprocess Communication (IPC) related calls, e.g. create_msg_port()" },
+	{ "io", SYSC_GROUP_IO, "Input/Ouput related system calls e.g. read()" },
+	{ "debug", SYSC_GROUP_DEBUG, "Debugging system calls e.g. ptrace()" },
+	{ "misc", SYSC_GROUP_MISC, "System calls that do not fit in any of the above catagories" },
+	{ "all", SYSC_GROUP_ALL, "All of the above system call groups" },
+	{ NULL, 0, NULL }
+};
 
 int main( int argc, char* argv[] )
 {
@@ -32,9 +53,8 @@ int main( int argc, char* argv[] )
 
  	if( argc == 1 )
 	{
-		fprintf( stderr, "Usage : %s {-g|-e|-i|-o|-f} [-t thread_id] [-r ...]\n", argv[0] );
-		nError = EXIT_FAILURE;
-		goto error;
+		show_help( argv[0], stderr );
+		return( EXIT_FAILURE );
 	}
 
 	for( i = 1; i < argc; i++ )
@@ -100,6 +120,20 @@ int main( int argc, char* argv[] )
 
 					i = argc;	/* Do not process any further args, they belong to the child process */
 					break;	
+				}
+				
+				case '?':	/* Show help */
+				{
+					show_help( argv[0], stderr );
+					return( EXIT_FAILURE );
+				}
+				
+				case '-':	/* Show help - explicitly check for --help */
+				{
+					if( !strcmp( "--help", argv[i] ) ) {
+						show_help( argv[0], stderr );
+						return( EXIT_FAILURE );
+					}
 				}
 				
 				default:
@@ -230,52 +264,23 @@ int parse_groups( char *zList )
 {
 	int nMask = SYSC_GROUP_NONE;
 	char *zGroup;
+	struct group_info_s* psGroup = g_asGroups;
+	bool bFound;
 
 	zGroup = strtok( zList, "," );
 	do
 	{
-		if( !strcmp( zGroup, "mm" ) )
-		{
-			nMask |= SYSC_GROUP_MM;
+		psGroup = g_asGroups;
+		bFound = false;
+		while( psGroup->s_pzName != NULL ) {
+			if( !strcmp( zGroup, psGroup->s_pzName ) ) {
+				nMask |= psGroup->s_nMask;
+				bFound = true;
+				break;
+			}
+			psGroup++;
 		}
-		else if( !strcmp( zGroup, "proc" ) )
-		{
-			nMask |= SYSC_GROUP_PROC;
-		}
-		else if( !strcmp( zGroup, "device" ) )
-		{
-			nMask |= SYSC_GROUP_DEVICE;
-		}
-		else if( !strcmp( zGroup, "net" ) )
-		{
-			nMask |= SYSC_GROUP_NET;
-		}
-		else if( !strcmp( zGroup, "signal" ) )
-		{
-			nMask |= SYSC_GROUP_SIGNAL;
-		}
-		else if( !strcmp( zGroup, "ipc" ) )
-		{
-			nMask |= SYSC_GROUP_IPC;
-		}
-		else if( !strcmp( zGroup, "io" ) )
-		{
-			nMask |= SYSC_GROUP_IO;
-		}
-		else if( !strcmp( zGroup, "debug" ) )
-		{
-			nMask |= SYSC_GROUP_DEBUG;
-		}
-		else if( !strcmp( zGroup, "misc" ) )
-		{
-			nMask |= SYSC_GROUP_MISC;
-		}
-		else if( !strcmp( zGroup, "all" ) )
-		{
-			nMask |= SYSC_GROUP_ALL;
-		}
-		else
-		{
+		if( !bFound ) {
 			fprintf( stderr, "Invalid group \"%s\"\n", zGroup );
 		}
 	}
@@ -284,4 +289,21 @@ int parse_groups( char *zList )
 	return nMask;
 }
 
-
+void show_help( char* pzArgv0, FILE* stream )
+{
+	struct group_info_s* psGroup = g_asGroups;
+	
+	fprintf( stream, "Usage : %s {-g|-e|-i|-o|-f} [-t thread_id] [-r ...]\n\n", pzArgv0 );
+	fprintf( stream, "  -o: Switch tracing on.\n" );
+	fprintf( stream, "  -f: Switch tracing off.\n" );
+	fprintf( stream, "  -g: Select the syscall groups to include in the trace. The groups are:\n" );
+	while( psGroup->s_pzName != NULL ) {
+		fprintf( stream, "       %7s: %s\n", psGroup->s_pzName, psGroup->s_pzDescription );
+		psGroup++;
+	}
+	fprintf( stream, "      More than one group can be passed by separating them with a comma e.g. -g net,io will select all system calls in the net and io syscall groups.\n" );
+	fprintf( stream, "  -e: Exclude a given syscall from tracing. The syscall can be given by name, eg -e lock_semaphore will exclude all calls to lock_semaphore() from the trace.\n" );
+	fprintf( stream, "  -i: Include the given syscall. The opposite of -e\n" );
+	fprintf( stream, "  -t: The thread id (TID) to trace. You can use this to begin tracing an application that is already running.\n" );
+	fprintf( stream, "  -r: Run an application with the supplied tracing arguments. You must specify the full path to the application you wish to run.\n" );
+}

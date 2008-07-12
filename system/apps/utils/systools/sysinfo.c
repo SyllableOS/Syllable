@@ -82,6 +82,7 @@ loop:
 	    (int)((sSysInfo.nKernelVersion >> 16) & 0xffff),
 	    (int)(sSysInfo.nKernelVersion & 0xffff),
 	    sSysInfo.zKernelBuildDate, sSysInfo.zKernelBuildTime );
+	printf( "Boot parameters: %s\n", sSysInfo.zKernelBootParams );
     printf( "Physical memory: TOT: %.2f%s AVAIL: %.2f%s KERN: %d\x1b[K\n",
 	    vTotPhys, pzTotPhysPF, vFreeMem, pzPostfix, sSysInfo.nKernelMemSize );
     printf( "Disk cache     : TOT: %.2f%s DIRTY: %.2f%s\x1b[K\n", vCache, pzCachePF, vDirty, pzDirtyPF );
