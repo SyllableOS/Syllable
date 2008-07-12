@@ -300,7 +300,7 @@ status_t free_mtrr_desc( uint64 nBase )
 	if( !g_asProcessorDescs[g_nBootCPU].pi_bHaveMTRR )
 		return( -EINVAL );
 	
-	if( nBase & 0xff )
+	if( nBase & 0xfff )
 	{
 		printk( "Tried to free unaligned mtrr descriptor\n" );
 		return( -EINVAL );
