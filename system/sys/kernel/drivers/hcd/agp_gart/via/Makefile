@@ -36,8 +36,8 @@ $(OBJDIR)/%.o : %.S
 all :	objs $(GOBJDIR)/generic.o $(OBJDIR)/agp_via
 
 objs:
-	mkdir objs
-	mkdir $(GOBJDIR)
+	-mkdir objs
+	-mkdir $(GOBJDIR)
 
 $(GOBJDIR)/generic.o: $(GSRCDIR)/generic.c
 	$(CC) $(CFLAGS) $(GSRCDIR)/generic.c -o $(GOBJDIR)/generic.o
