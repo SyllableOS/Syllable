@@ -527,7 +527,7 @@ function copy_installer()
 function create_iso()
 {
   NAME="Syllable $1"
-  ISO="syllable-$1-$(date +%Y%m%d).iso"
+  ISO="SyllableDesktop-$1-$(date +%Y%m%d).i586.iso"
 
   # Do not mess with the cdrecord options unless you know exactly what you are doing.  Getting
   # the options wrong will mean the CD will be unbootable (And likely unreadable)
