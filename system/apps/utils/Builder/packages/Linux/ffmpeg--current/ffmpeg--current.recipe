@@ -10,6 +10,7 @@ configure-options
 ;	--disable-ffserver
 ;	--disable-ffplay
 ;	--disable-vhook
+;	--disable-audio-oss
 	--enable-gpl
 	--enable-pp
 ;	--enable-liba52

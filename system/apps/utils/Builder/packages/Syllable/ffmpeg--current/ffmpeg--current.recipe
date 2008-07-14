@@ -7,14 +7,16 @@ notes				MMX bombs out in ASM code on register shortage
 configure-options
 	--cpu=i586
 	--disable-mmx
-	--extra-cflags='-fomit-frame-pointer'
-;	--extra-cflags='-DPIC -fomit-frame-pointer'
+;	--extra-cflags='-fomit-frame-pointer'
+	--extra-cflags='-DPIC -fomit-frame-pointer'
+;	--extra-libs='-ldl -lm'
 ;	--enable-syllablethreads
-;	--enable-pthreads
+	--enable-pthreads
 	--disable-debug
 ;	--disable-ffserver
 ;	--disable-ffplay
 	--disable-vhook
+	--disable-audio-oss
 	--enable-gpl
 	--enable-pp
 ;	IPv6 code used to fail (on GLibC 2.1.2?):
@@ -29,4 +31,3 @@ configure-options
 ;	--enable-libmp3lame
 ;	--enable-libx264
 ;	--enable-libxvid
-
