@@ -294,7 +294,7 @@ bool TextView::Invoked( Message * pcMessage )
 		pcMessage->AddInt32( "events", m_pcEditor->m_nPendingEvents & m_pcEditor->m_nEventMask );
 
 		// "final" is just for backward compatibility. Will be removed some day.
-		pcMessage->AddBool( "final", ( m_pcEditor->m_nPendingEvents | ( EI_ENTER_PRESSED | EI_FOCUS_LOST ) ) != 0 );
+		pcMessage->AddBool( "final", ( m_pcEditor->m_nPendingEvents & ( EI_ENTER_PRESSED | EI_FOCUS_LOST ) ) != 0 );
 		m_pcEditor->m_nPendingEvents = 0;
 		return ( true );
 	}
