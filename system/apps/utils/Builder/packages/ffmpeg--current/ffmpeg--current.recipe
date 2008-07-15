@@ -15,12 +15,14 @@ locations
 ;	http://ffmpeg.mplayerhq.hu
 archives			svn://svn.mplayerhq.hu/ffmpeg/trunk FFMPEG
 
-build-needs
-	bash <> 2.03
-	make >= 3.80
 needs
 ;	liba52
 	libtheora
+build-needs
+	bash <> 2.03
+	make >= 3.80
+; Documentation build fails:
+build-conflicts		tetex
 
 system-prefix-var	DESTDIR
 install-files

@@ -10,7 +10,6 @@ configure-options
 ;	--disable-ffserver
 ;	--disable-ffplay
 ;	--disable-vhook
-;	--disable-audio-oss
 	--enable-gpl
 	--enable-pp
 ;	--enable-liba52
@@ -22,3 +21,4 @@ configure-options
 ;	--enable-libmp3lame
 ;	--enable-libx264
 ;	--enable-libxvid
+
