@@ -2089,7 +2089,7 @@ static int r8169_probe( int nDeviceID )
 				if( claim_device( nDeviceID, sInfo.nHandle, "Realtek 8169", DEVICE_NET ) < 0 )
 					continue;
 
-				dev = kmalloc( sizeof(*dev), MEMF_KERNEL | MEMF_CLEAR );
+				dev = kmalloc( sizeof(struct net_device), MEMF_KERNEL | MEMF_CLEAR );
 				if (!dev)
 					continue;
 				dev->name = "r8169";
