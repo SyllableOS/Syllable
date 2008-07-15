@@ -61,6 +61,7 @@ VERSION 2.2LK	<2005/01/25>
 #include <atheos/spinlock.h>
 #include <atheos/ctype.h>
 #include <atheos/device.h>
+#include <atheos/time.h>
 #include <atheos/bitops.h>
 
 #include <posix/unistd.h>
@@ -181,9 +182,11 @@ struct net_device
 /* Maximum events (Rx packets, etc.) to handle at each interrupt. */
 static int max_interrupt_work = 20;
 
+#if 0
 /* Maximum number of multicast addresses to filter (vs. Rx-all-multicast).
    The RTL chips use a 64 element hash table based on the Ethernet CRC. */
 static int multicast_filter_limit = 32;
+#endif
 
 /* MAC address length */
 #define MAC_ADDR_LEN	6
@@ -292,10 +295,6 @@ static struct pci_device_id rtl8169_pci_tbl[] = {
 };
 
 static int rx_copybreak = 200;
-static int use_dac;
-static struct {
-	uint32 msg_enable;
-} debug = { -1 };
 
 enum RTL8169_registers {
 	MAC0 = 0,		/* Ethernet hardware address. */
@@ -548,8 +547,11 @@ static void rtl8169_hw_start(struct net_device *dev);
 static int rtl8169_close(struct net_device *dev);
 static void rtl8169_set_rx_mode(struct net_device *dev);
 static int rtl8169_rx_interrupt(struct net_device *, struct rtl8169_private *, void *);
-static int rtl8169_change_mtu(struct net_device *dev, int new_mtu);
 static void rtl8169_down(struct net_device *dev);
+
+#if 0
+static int rtl8169_change_mtu(struct net_device *dev, int new_mtu);
+#endif
 
 static void rtl8169_phy_timer(unsigned long __opaque);
 
@@ -774,10 +776,12 @@ static inline uint32 rtl8169_tx_vlan_tag(struct rtl8169_private *tp, PacketBuf_s
 	return 0;
 }
 
+#if 0
 static int rtl8169_rx_vlan_skb(struct rtl8169_private *tp, struct RxDesc *desc, PacketBuf_s *skb)
 {
 	return -1;
 }
+#endif
 
 static void rtl8169_write_gmii_reg_bit(void *ioaddr, int reg, int bitnum, int bitval)
 {
@@ -1005,6 +1009,7 @@ static inline void rtl8169_request_timer(struct net_device *dev)
 	start_timer(tp->timer, (timer_callback *) &rtl8169_phy_timer, dev, (jiffies + RTL8169_PHY_TIMEOUT)*10, true );
 }
 
+#if 0
 static void rtl8169_release_board(PCI_Info_s *pdev, struct net_device *dev, void *ioaddr)
 {
 	struct rtl8169_private *tp = dev->priv;
@@ -1014,6 +1019,7 @@ static void rtl8169_release_board(PCI_Info_s *pdev, struct net_device *dev, void
 	kfree( tp );
 	kfree( dev );
 }
+#endif
 
 static int rtl8169_init_board(PCI_Info_s *pdev, struct net_device *dev, void **ioaddr_out)
 {
@@ -1102,10 +1108,6 @@ static int rtl8169_init_board(PCI_Info_s *pdev, struct net_device *dev, void **i
 	*ioaddr_out = ioaddr;
 out:
 	return rc;
-
-err_out:
-	*ioaddr_out = NULL;
-	goto out;
 }
 
 static int rtl8169_init_one(PCI_Info_s *pdev, struct net_device *dev)
@@ -1113,8 +1115,6 @@ static int rtl8169_init_one(PCI_Info_s *pdev, struct net_device *dev)
 	struct rtl8169_private *tp;
 	void *ioaddr = NULL;
 	static int board_idx = -1;
-	uint8 autoneg, duplex;
-	uint16 speed;
 	int i, rc;
 
 	assert(pdev != NULL);
@@ -1195,6 +1195,7 @@ static int rtl8169_init_one(PCI_Info_s *pdev, struct net_device *dev)
 	return 0;
 }
 
+#if 0
 static void rtl8169_remove_one(PCI_Info_s *pdev, struct net_device *dev)
 {
 	struct rtl8169_private *tp = dev->priv;
@@ -1204,6 +1205,7 @@ static void rtl8169_remove_one(PCI_Info_s *pdev, struct net_device *dev)
 
 	rtl8169_release_board(pdev, dev, tp->mmio_addr);
 }
+#endif
 
 static void rtl8169_set_rxbufsize(struct rtl8169_private *tp, struct net_device *dev)
 {
@@ -1215,8 +1217,7 @@ static void rtl8169_set_rxbufsize(struct rtl8169_private *tp, struct net_device 
 static int rtl8169_open(struct net_device *dev)
 {
 	struct rtl8169_private *tp = dev->priv;
-	PCI_Info_s *pdev = tp->pci_dev;
-	int retval;
+	int retval = EOK;
 
 	kerndbg( KERN_DEBUG, "rtl8169_open() for %s on IRQ %d\n", dev->name, dev->irq );
 
@@ -1232,8 +1233,6 @@ static int rtl8169_open(struct net_device *dev)
 	 * Rx and Tx desscriptors needs 256 bytes alignment.
 	 * pci_alloc_consistent provides more.
 	 */
-	uint8 diff;
-
 	tp->TxDesc = kmalloc( R8169_TX_RING_BYTES, MEMF_KERNEL );
 	tp->TxDescArray = ALIGN( tp->TxDesc, 255 );
 	tp->TxPhyAddr = (dma_addr_t)tp->TxDescArray;
@@ -1372,6 +1371,7 @@ static void rtl8169_hw_start(struct net_device *dev)
 	netif_start_queue(dev);
 }
 
+#if 0
 static int rtl8169_change_mtu(struct net_device *dev, int new_mtu)
 {
 	struct rtl8169_private *tp = dev->priv;
@@ -1400,6 +1400,7 @@ static int rtl8169_change_mtu(struct net_device *dev, int new_mtu)
 out:
 	return ret;
 }
+#endif
 
 static inline void rtl8169_make_unusable_by_asic(struct RxDesc *desc)
 {
@@ -1409,8 +1410,6 @@ static inline void rtl8169_make_unusable_by_asic(struct RxDesc *desc)
 
 static void rtl8169_free_rx_skb(struct rtl8169_private *tp, PacketBuf_s **sk_buff, struct RxDesc *desc)
 {
-	PCI_Info_s *pdev = tp->pci_dev;
-
 	free_pkt_buffer(*sk_buff);
 	*sk_buff = NULL;
 	rtl8169_make_unusable_by_asic(desc);
@@ -1626,7 +1625,6 @@ static int rtl8169_start_xmit(PacketBuf_s *skb, struct net_device *dev)
 			netif_wake_queue(dev);
 	}
 
-out:
 	return ret;
 
 err_stop:
@@ -1688,7 +1686,6 @@ static void rtl8169_tx_interrupt(struct net_device *dev, struct rtl8169_private 
 	while (tx_left > 0) {
 		unsigned int entry = dirty_tx % NUM_TX_DESC;
 		struct ring_info *tx_skb = tp->tx_skb + entry;
-		uint32 len = tx_skb->len;
 		uint32 status;
 
 		//rmb();
@@ -2073,7 +2070,7 @@ static int r8169_probe( int nDeviceID )
 	struct rtl8169_private *tp = NULL;
 	int cards_found = 0;
 
-    int i,j;
+    int i;
     PCI_Info_s sInfo;
    
     for ( i = 0 ; g_psBus->get_pci_info( &sInfo, i ) == 0 ; ++i )
@@ -2121,11 +2118,6 @@ static int r8169_probe( int nDeviceID )
 		disable_device( nDeviceID );
 
 	return cards_found ? 0 : -ENODEV;
-
-out:
-	kfree(dev);
-	kerndbg( KERN_DEBUG, "r8169: NIC initialization failed!\n");
-	return -EIO;
 }
 
 status_t device_init( int nDeviceID )
