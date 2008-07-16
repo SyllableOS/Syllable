@@ -1,0 +1,2 @@
+# Uncomment the following to start the Cheyenne web server:
+#rebol -s /usr/indexes/lib/REBOL/Cheyenne/cheyenne.r > /dev/null
