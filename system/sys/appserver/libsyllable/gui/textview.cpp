@@ -2443,9 +2443,22 @@ void TextEdit::Paint( const Rect & cUpdateRect )
 		else
 		{
 			Rect cRect = cUpdateRect;
+			float vHOffset;
+ 
+ 			cRect.top = 0.0f;
 
-			cRect.top = 0.0f;
-			RenderLine( m_pcBgView, 0, -cRect.left, 0.0f );
+			vHOffset = GetStringWidth( m_cBuffer[0].substr( 0, m_cCsrPos.x).c_str() );
+			vHOffset -= ( m_pcBgView->Width() + RIGHT_BORDER );
+
+			if( vHOffset < 0.0f )
+				vHOffset = 0.0f;
+			else
+			{
+				m_pcBgView->SetFgColor( m_sCurBgColor );
+				m_pcBgView->FillRect( m_pcBgView->GetBounds() );
+			}
+
+			RenderLine( m_pcBgView, 0, -vHOffset, 0.0f );
 			m_pcBgView->Sync();
 			DrawBitmap( m_pcBackBuffer, cRect.Bounds(), cRect );
 			Sync();
