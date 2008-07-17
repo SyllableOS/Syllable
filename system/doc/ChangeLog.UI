@@ -1,3 +1,24 @@
+* July 17, 2008. Kristian Van Der Vliet *
+
+Some TextView & DropdowMenu bug fixes:
+
+TextView
+	o Added a new event flag EI_WAS_EDITED which is created when
+	  EI_CONTENT_CHANGED is created and persists until EI_ENTER_PRESSED or
+	  EI_FOCUS_LOST is generated. This can be used by the client to track state
+	  changes in the TextView.
+	o When the TextView is in single-line mode the text will now follow the
+	  cursor when the text is wider than the width of the View. This still isn't
+	  perfect (the last character in the view is partly obscured) but it's
+	  better.
+
+DropdownMenu
+	o Use the "events" flags from the child TextView to decide how to generate
+	  the "final" flag. "final" will now only be set when EI_WAS_EDITED is set
+	  by the TextView, so simple de-focusing the TextView will not generate a
+	  spurious edit message to the client.
+	o Don't generate a notification from the child TextView in SetCurrentString()
+
 * May 29, 2008, Anthony Morphett *
 
 Changed StringView to use os::drawtext_flags by default rather than os::alignment
