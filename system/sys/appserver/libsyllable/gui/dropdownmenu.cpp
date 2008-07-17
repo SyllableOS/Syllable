@@ -326,7 +326,7 @@ const String & DropdownMenu::GetCurrentString() const
 
 void DropdownMenu::SetCurrentString( const String & cString )
 {
-	m_pcEditBox->Set( cString.c_str() );
+	m_pcEditBox->Set( cString.c_str(), false );
 }
 
 /** Set the message that will be sendt when the selection changes.
@@ -456,8 +456,12 @@ void DropdownMenu::HandleMessage( Message * pcMessage )
 			if( m_pcEditMsg != NULL )
 			{
 				bool bFinal = false;
+				int32 nEvents = 0;
 
-				pcMessage->FindBool( "final", &bFinal );
+				pcMessage->FindInt32( "events", &nEvents );
+				if( ( nEvents & TextView::EI_WAS_EDITED ) && ( nEvents & ( TextView::EI_ENTER_PRESSED | TextView::EI_FOCUS_LOST ) ) )
+					bFinal = true;
+
 				if( bFinal || m_bSendIntermediateMsg )
 				{
 					Message cMsg( *m_pcEditMsg );

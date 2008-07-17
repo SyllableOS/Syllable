@@ -56,7 +56,8 @@ public:
 	EI_CURSOR_MOVED		= 0x0010,
 	EI_SELECTION_CHANGED	= 0x0020,
 	EI_MAX_SIZE_REACHED	= 0x0040,
-	EI_MAX_SIZE_LEFT	= 0x0080
+	EI_MAX_SIZE_LEFT	= 0x0080,
+	EI_WAS_EDITED		= 0x0100
     };
 public:
     typedef std::vector<String> buffer_type;

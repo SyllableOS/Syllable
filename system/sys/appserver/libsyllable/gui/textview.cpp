@@ -294,8 +294,11 @@ bool TextView::Invoked( Message * pcMessage )
 		pcMessage->AddInt32( "events", m_pcEditor->m_nPendingEvents & m_pcEditor->m_nEventMask );
 
 		// "final" is just for backward compatibility. Will be removed some day.
-		pcMessage->AddBool( "final", ( m_pcEditor->m_nPendingEvents & ( EI_ENTER_PRESSED | EI_FOCUS_LOST ) ) != 0 );
-		m_pcEditor->m_nPendingEvents = 0;
+		bool bFinal = false;
+		if( m_pcEditor->m_nPendingEvents & ( EI_ENTER_PRESSED | EI_FOCUS_LOST ) )
+			bFinal = true;
+
+		pcMessage->AddBool( "final", bFinal );
 		return ( true );
 	}
 	else
@@ -1031,7 +1034,7 @@ TextEdit::TextEdit( TextView * pcParent, const Rect & cFrame, const String &cTit
 	m_nMaxUndoSize = 10000;
 	m_nUndoMemSize = 0;
 	m_bEnabled = true;
-	m_nEventMask = TextView::EI_CONTENT_CHANGED | TextView::EI_FOCUS_LOST | TextView::EI_ENTER_PRESSED;
+	m_nEventMask = TextView::EI_CONTENT_CHANGED | TextView::EI_FOCUS_LOST | TextView::EI_ENTER_PRESSED | TextView::EI_WAS_EDITED;
 	m_nPendingEvents = 0;
 	m_nMaxLength = -1;
 	m_nCurrentLength = 0;
@@ -3021,20 +3024,18 @@ void TextEdit::CommitEvents()
 	if( ( m_nPendingEvents & m_nEventMask ) != 0 /*&& m_pcParent->GetMessage() != NULL */  )
 	{
 		m_pcParent->Invoke();
-//      printf( "Commit: %s\n", get_flag_str( m_nPendingEvents ).c_str() );
-
-/*	
-	if ( m_pcParent->GetMessage() != NULL ) {
-	    Message cMsg( *m_pcParent->GetMessage() );
-	    cMsg.AddInt32( "events", m_nPendingEvents & m_nEventMask );
-
-	      // "final" is just for backward compatibility. Will be removed some day.
-	    cMsg.AddBool( "final", (m_nPendingEvents | (TextView::EI_ENTER_PRESSED | TextView::EI_FOCUS_LOST)) != 0 );
-	    m_pcParent->Invoke( &cMsg );
-	}*/
+		//printf( "Commit: %s\n", get_flag_str( m_nPendingEvents ).c_str() );
 	}
-	m_nPendingEvents = 0;
 
+	// If EI_CONTENT_CHANGED was set, ensure EI_WAS_EDITED also becomes set
+	uint32 nPreviousEvents = m_nPendingEvents;
+	m_nPendingEvents = 0;
+	if( nPreviousEvents & TextView::EI_CONTENT_CHANGED )
+		nPreviousEvents |= TextView::EI_WAS_EDITED;
+
+	// EI_WAS_EDITED will persist until either EI_ENTER_PRESSED or EI_FOCUS_LOST are also generated
+	if( ( nPreviousEvents & TextView::EI_WAS_EDITED ) && !( nPreviousEvents & ( TextView::EI_ENTER_PRESSED | TextView::EI_FOCUS_LOST ) ) )
+			m_nPendingEvents |= TextView::EI_WAS_EDITED;
 }
 
 
