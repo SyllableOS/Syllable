@@ -472,6 +472,14 @@ View *TabView::DeleteTab( uint nIndex )
 				pcNewView->MakeFocus( true );
 			}
 		}
+
+		Message *pcMsg = GetMessage();
+		if( pcMsg != NULL )
+		{
+			Message cMsg( *pcMsg );
+			cMsg.AddInt32( "selection", m->m_nSelectedTab );
+			Invoke( &cMsg );
+		}
 	}
 	m->m_pcTopView->Invalidate();
 	Invalidate();
