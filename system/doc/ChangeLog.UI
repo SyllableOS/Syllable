@@ -1,3 +1,7 @@
+* July 19, 2008. Kristian Van Der Vliet *
+
+Send a "selection changed" message from TabView when a tab is deleted.
+
 * July 17, 2008. Kristian Van Der Vliet *
 
 Some TextView & DropdowMenu bug fixes:
