@@ -17,7 +17,7 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 $(OBJDIR)/ffmpeg.so: $(OBJS)
-	$(CXX) -shared -Xlinker "-soname=ffmpeg.so" $(OBJS) -lm -lsyllable -lmedia -lavformat -Lffmpeg/libavcodec -Lffmpeg/libavformat -Lffmpeg/libavutil -lavcodec -lavutil -lz -lpthread -ltheora -o $(OBJDIR)/ffmpeg.so
+	$(CXX) -shared -Xlinker "-soname=ffmpeg.so" $(OBJS) -lsyllable -lmedia -lm -lz -lpthread -logg -ltheora -lavutil -lavformat -lavcodec -o $(OBJDIR)/ffmpeg.so
 
 
 deps: $(LIBS)
@@ -33,4 +33,3 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*
 
 -include $(OBJDIR)/*.d
-
