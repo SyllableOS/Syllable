@@ -12,7 +12,7 @@ require "grub-gen.rb"
 # Remember to always update the version numbers below!
 
 Packages = {
-	"ABrowse"	=> ["1.0a", "abrowse-%s.bin.zip"],
+	"Webster"	=> ["1.0a", "webster-%s.bin.zip"],
 	"Whisper"	=> ["1.0a", "whisper-%s.bin.zip"],
 }
 
