@@ -60,7 +60,8 @@ enum device_type {
 	DEVICE_PROCESSOR,
 	DEVICE_STORAGE,
 	DEVICE_DOCK,
-	DEVICE_CRYPTO
+	DEVICE_CRYPTO,
+	DEVICE_DASP
 };
 
 /* General device information */
