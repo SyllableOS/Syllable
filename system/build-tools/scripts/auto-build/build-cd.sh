@@ -15,20 +15,21 @@ FILES=(	"/etc/profile, /etc/profile" 															\
 																											\
 		"/system/drivers/dev/ps2, /system/drivers/dev/ps2"											\
 		"/system/drivers/dev/disk/bios, /system/drivers/dev/disk/bios"								\
-		"/system/drivers/dev/disk/usb, /system/drivers/dev/disk/usb"								\
 		"/system/drivers/dev/misc/serial, /system/drivers/dev/misc/serial"							\
 		"/system/drivers/dev/graphics/*, /system/drivers/dev/graphics/."							\
 																											\
-		"/system/drivers/dev/bus/acpi, /system/drivers/dev/bus/acpi"								\
-		"/system/drivers/dev/bus/pci, /system/drivers/dev/bus/pci"									\
-		"/system/drivers/dev/bus/ata, /system/drivers/dev/bus/ata"									\
-		"/system/drivers/dev/bus/usb, /system/drivers/dev/bus/usb"									\
-		"/system/drivers/dev/bus/scsi, /system/drivers/dev/bus/scsi"								\
+		"/system/drivers/dev/bus/acpi, /boot/drivers/dev/bus/acpi"								\
+		"/system/drivers/dev/bus/pci, /boot/drivers/dev/bus/pci"									\
+		"/system/drivers/dev/bus/ata, /boot/drivers/dev/bus/ata"									\
+		"/system/drivers/dev/bus/usb, /boot/drivers/dev/bus/usb"									\
+		"/system/drivers/dev/bus/scsi, /boot/drivers/dev/bus/scsi"								\
 																											\
-		"/system/drivers/dev/hcd/ata_pci, /system/drivers/dev/hcd/ata_pci"							\
-		"/system/drivers/dev/hcd/usb_ehci, /system/drivers/dev/hcd/usb_ehci"						\
-		"/system/drivers/dev/hcd/usb_uhci, /system/drivers/dev/hcd/usb_uhci"						\
-		"/system/drivers/dev/hcd/usb_ohci, /system/drivers/dev/hcd/usb_ohci"						\
+		"/system/drivers/dev/hcd/ata_pci, /boot/drivers/dev/hcd/ata_pci"							\
+		"/system/drivers/dev/hcd/usb_ehci, /boot/drivers/dev/hcd/usb_ehci"						\
+		"/system/drivers/dev/hcd/usb_uhci, /boot/drivers/dev/hcd/usb_uhci"						\
+		"/system/drivers/dev/hcd/usb_ohci, /boot/drivers/dev/hcd/usb_ohci"						\
+
+		"/system/drivers/dev/disk/usb, /boot/drivers/dev/disk/usb"								\
 																											\
 		"/system/drivers/dev/input/usb_hid, /system/drivers/dev/input/usb_hid"						\
 																											\
@@ -147,29 +148,29 @@ ENV=(	"PATH=/usr/grub/bin:/usr/grub/sbin:/bin:/boot/system/bin"		\
 
 declare -a GRUB
 
-GRUB=(	"color	cyan/blue white/blue"																		\
-		"timeout	10"																						\
-		""																									\
-		"title	Install Syllable"																			\
+GRUB=(	"color	cyan/blue white/blue"																	\
+		"timeout	10"																					\
+		""																								\
+		"title	Install Syllable"																		\
 		"kernel /system/kernel.so rootfs=iso9660 root=@boot disable_config=true uspace_end=0xf7ffffff"	\
-		"module /system/drivers/dev/bus/acpi"															\
-		"module /system/drivers/dev/bus/pci"															\
-		"module /system/drivers/dev/bus/ata"															\
-		"module /system/drivers/dev/hcd/ata_pci"														\
+		"module /boot/drivers/dev/bus/acpi path=/system/drivers/dev/bus/acpi"							\
+		"module /boot/drivers/dev/bus/pci path=/system/drivers/dev/bus/pci"								\
+		"module /boot/drivers/dev/bus/ata path=/system/drivers/dev/bus/ata"								\
+		"module /boot/drivers/dev/hcd/ata_pci path=/system/drivers/dev/hcd/ata_pci"						\
 		"module /system/drivers/fs/iso9660"																\
-		""																									\
-		"title	Install Syllable from a USB CD-ROM drive"													\
+		""																								\
+		"title	Install Syllable from a USB CD-ROM drive"												\
 		"kernel /system/kernel.so rootfs=iso9660 root=@boot disable_config=true uspace_end=0xf7ffffff"	\
-		"module /system/drivers/dev/bus/acpi"															\
-		"module /system/drivers/dev/bus/pci"															\
-		"module /system/drivers/dev/bus/ata"															\
-		"module /system/drivers/dev/bus/usb"															\
-		"module /system/drivers/dev/bus/scsi"															\
-		"module /system/drivers/dev/hcd/ata_pci"														\
-		"module /system/drivers/dev/hcd/usb_ohci"														\
-		"module /system/drivers/dev/hcd/usb_uhci"														\
-		"module /system/drivers/dev/hcd/usb_ehci"														\
-		"module /system/drivers/dev/disk/usb"															\
+		"module /boot/drivers/dev/bus/acpi path=/system/drivers/dev/bus/acpi"							\
+		"module /boot/drivers/dev/bus/pci path=/system/drivers/dev/bus/pci"								\
+		"module /boot/drivers/dev/bus/ata path=/system/drivers/dev/bus/ata"								\
+		"module /boot/drivers/dev/bus/usb path=/system/drivers/dev/bus/usb"								\
+		"module /boot/drivers/dev/bus/scsi path=/system/drivers/dev/bus/scsi"							\
+		"module /boot/drivers/dev/hcd/ata_pci path=/system/drivers/dev/hcd/ata_pci"						\
+		"module /boot/drivers/dev/hcd/usb_ohci path=/system/drivers/dev/hcd/usb_ohci"					\
+		"module /boot/drivers/dev/hcd/usb_uhci path=/system/drivers/dev/hcd/usb_uhci"					\
+		"module /boot/drivers/dev/hcd/usb_ehci path=/system/drivers/dev/hcd/usb_ehci"					\
+		"module /boot/drivers/dev/disk/usb path=/system/drivers/dev/disk/usb"							\
 		"module /system/drivers/fs/iso9660"																\
 )
 
