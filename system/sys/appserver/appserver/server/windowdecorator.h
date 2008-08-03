@@ -67,6 +67,7 @@ private:
 
 typedef int op_get_decorator_version();
 typedef WindowDecorator* op_create_decorator( Layer* pcView, uint32 nFlags );
+typedef int op_unload_decorator();
 
 }
 

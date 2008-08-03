@@ -61,26 +61,13 @@ WinterDecorator::WinterDecorator( Layer* pcLayer, uint32 nWndFlags )
 
 WinterDecorator::~WinterDecorator()
 {
-	g_pcButtonMinim->Release();
-	g_pcButtonMxRstr->Release();
-	g_pcButtonClose->Release();
-
-	g_pcButtonMinimPressed->Release();
-	g_pcButtonMxRstrPressed->Release();
-	g_pcButtonClosePressed->Release();
-
-	g_pcButtonMinimInactive->Release();
-	g_pcButtonMxRstrInactive->Release();
-	g_pcButtonCloseInactive->Release();
-
-	g_pcDecor->Release();
 } 
 
 
-void WinterDecorator::LoadBitmap (SrvBitmap* bmp,uint8* raw,Point size)
+void WinterDecorator::LoadBitmap (SrvBitmap* bmp,uint8* raw,IPoint size)
 {
 	int c=0;
-	float sz=size.x*size.y*3;
+	int sz=size.x*size.y*3;
 	for (int i=0; i<sz; i+=3)
 	{	
   		bmp->m_pRaster[c+0]=raw[i+2];
@@ -649,36 +636,42 @@ extern "C" WindowDecorator* create_decorator( Layer* pcLayer, uint32 nFlags )
 
 		g_pcDecor = new SrvBitmap (24,9,CS_RGB32);
 
-		WinterDecorator::LoadBitmap (g_pcButtonMinim,g_buttonMinim,Point (26,22));
-		WinterDecorator::LoadBitmap (g_pcButtonMxRstr,g_buttonMxRstr,Point (26,22));
-		WinterDecorator::LoadBitmap (g_pcButtonClose,g_buttonClose,Point (44,22));
+		WinterDecorator::LoadBitmap (g_pcButtonMinim,g_buttonMinim,IPoint (26,22));
+		WinterDecorator::LoadBitmap (g_pcButtonMxRstr,g_buttonMxRstr,IPoint (26,22));
+		WinterDecorator::LoadBitmap (g_pcButtonClose,g_buttonClose,IPoint (44,22));
 
-		WinterDecorator::LoadBitmap (g_pcButtonMinimPressed,g_buttonMinimPressed,Point (26,22));
-		WinterDecorator::LoadBitmap (g_pcButtonMxRstrPressed,g_buttonMxRstrPressed,Point (26,22));
-		WinterDecorator::LoadBitmap (g_pcButtonClosePressed,g_buttonClosePressed,Point (44,22));
+		WinterDecorator::LoadBitmap (g_pcButtonMinimPressed,g_buttonMinimPressed,IPoint (26,22));
+		WinterDecorator::LoadBitmap (g_pcButtonMxRstrPressed,g_buttonMxRstrPressed,IPoint (26,22));
+		WinterDecorator::LoadBitmap (g_pcButtonClosePressed,g_buttonClosePressed,IPoint (44,22));
 
-		WinterDecorator::LoadBitmap (g_pcButtonMinimInactive,g_buttonMinimInactive,Point (26,22));
-		WinterDecorator::LoadBitmap (g_pcButtonMxRstrInactive,g_buttonMxRstrInactive,Point (26,22));
-		WinterDecorator::LoadBitmap (g_pcButtonCloseInactive,g_buttonCloseInactive,Point (44,22));
+		WinterDecorator::LoadBitmap (g_pcButtonMinimInactive,g_buttonMinimInactive,IPoint (26,22));
+		WinterDecorator::LoadBitmap (g_pcButtonMxRstrInactive,g_buttonMxRstrInactive,IPoint (26,22));
+		WinterDecorator::LoadBitmap (g_pcButtonCloseInactive,g_buttonCloseInactive,IPoint (44,22));
 
-		WinterDecorator::LoadBitmap (g_pcDecor,g_decor,Point (24,9));
-	}
-	else
-	{
-		g_pcButtonMinim->AddRef();
-		g_pcButtonMxRstr->AddRef();
-		g_pcButtonClose->AddRef();
-
-		g_pcButtonMinimPressed->AddRef();
-		g_pcButtonMxRstrPressed->AddRef();
-		g_pcButtonClosePressed->AddRef();
-
-		g_pcButtonMinimInactive->AddRef();
-		g_pcButtonMxRstrInactive->AddRef();
-		g_pcButtonCloseInactive->AddRef();
-
-		g_pcDecor->AddRef();
+		WinterDecorator::LoadBitmap (g_pcDecor,g_decor,IPoint (24,9));
 	}
 
     return( new WinterDecorator( pcLayer, nFlags ) );
+}
+
+/****
+ Free the button image bitmaps when the decorator is being unloaded, via Release().
+****/
+extern "C" int unload_decorator()
+{
+	if( g_pcDecor ) g_pcDecor->Release();
+
+	if( g_pcButtonMinim ) g_pcButtonMinim->Release();
+	if( g_pcButtonMxRstr ) g_pcButtonMxRstr->Release();
+	if( g_pcButtonClose ) g_pcButtonClose->Release();
+
+	if( g_pcButtonMinimPressed ) g_pcButtonMinimPressed->Release();
+	if( g_pcButtonMxRstrPressed ) g_pcButtonMxRstrPressed->Release();
+	if( g_pcButtonClosePressed ) g_pcButtonClosePressed->Release();
+
+	if( g_pcButtonMinimInactive ) g_pcButtonMinimInactive->Release();
+	if( g_pcButtonMxRstrInactive ) g_pcButtonMxRstrInactive->Release();
+	if( g_pcButtonCloseInactive ) g_pcButtonCloseInactive->Release();
+	
+	return( 0 );
 }

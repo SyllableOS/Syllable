@@ -87,10 +87,11 @@ SrvEvents* 				g_pcEvents = NULL;
  * \param	ppfCreate		- The decorator pointer 
  * \author Kurt Skauen
  *****************************************************************************/
-int AppServer::LoadDecorator( const std::string & cPath, op_create_decorator **ppfCreate )
+int AppServer::LoadDecorator( const std::string & cPath, op_create_decorator **ppfCreate, op_unload_decorator** ppfUnload )
 {
 	int nPlugin;
 	op_create_decorator *pfCreate = NULL;
+	op_unload_decorator *pfUnload = NULL;
 	
 	nPlugin = load_library( cPath.c_str(), 0 );
 	if( nPlugin < 0 )
@@ -133,6 +134,12 @@ int AppServer::LoadDecorator( const std::string & cPath, op_create_decorator **p
 		return ( -1 );
 	}
 	*ppfCreate = pfCreate;
+	
+	nError = get_symbol_address( nPlugin, "unload_decorator", -1, ( void** )&pfUnload );
+	if( nError < 0 ) {
+		pfUnload = NULL;
+	}
+	*ppfUnload = pfUnload;
 	return ( nPlugin );
 }
 
@@ -146,9 +153,10 @@ int AppServer::LoadDecorator( const std::string & cPath, op_create_decorator **p
 int AppServer::LoadWindowDecorator( const std::string & cPath )
 {
 	op_create_decorator *pfCreate = NULL;
+	op_unload_decorator *pfUnload = NULL;
 	int nLib;
 
-	nLib = LoadDecorator( cPath, &pfCreate );
+	nLib = LoadDecorator( cPath, &pfCreate, &pfUnload );
 	if( nLib >= 0 )
 	{
 		m_pfDecoratorCreator = pfCreate;
@@ -156,7 +164,9 @@ int AppServer::LoadWindowDecorator( const std::string & cPath )
 
 		m_hCurrentDecorator = nLib;
 		SrvApplication::ReplaceDecorators();
+		if( m_pfDecoratorUnload != NULL ) m_pfDecoratorUnload();
 		unload_library( nOldPlugin );
+		m_pfDecoratorUnload = pfUnload;
 		return ( 0 );
 	}
 	else
@@ -193,6 +203,7 @@ AppServer::AppServer()
 {
 	s_pcInstance = this;
 	m_pfDecoratorCreator = NULL;
+	m_pfDecoratorUnload = NULL;
 	
 	g_pcEvents = new SrvEvents;
 	
@@ -212,7 +223,7 @@ AppServer::AppServer()
 	psProp = AppserverConfig::GetInstance()->GetFontConfig( DEFAULT_FONT_TOOL_WINDOW );
 	m_pcToolWindowTitleFont->SetProperties( *psProp );
 
-	m_hCurrentDecorator = LoadDecorator( AppserverConfig::GetInstance()->GetWindowDecoratorPath(  ).c_str(  ), &m_pfDecoratorCreator );
+	m_hCurrentDecorator = LoadDecorator( AppserverConfig::GetInstance()->GetWindowDecoratorPath(  ).c_str(  ), &m_pfDecoratorCreator, &m_pfDecoratorUnload );
 }
 
 /** Returns *this* instance of the appserver

@@ -55,7 +55,7 @@ public:
     virtual void SetButtonState( uint32 nButton, bool bPushed );
     virtual void Render( const Rect& cUpdateRect );
 
-	static void LoadBitmap (SrvBitmap* bmp,uint8* raw,Point size);
+	static void LoadBitmap (SrvBitmap* bmp,uint8* raw,IPoint size);
 
 private:
     void CalculateBorderSizes();

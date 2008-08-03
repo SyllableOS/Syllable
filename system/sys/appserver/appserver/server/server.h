@@ -98,7 +98,7 @@ private:
 	void					RescanFonts(void);
 	void					SwitchDesktop(int nDesktop, bool bBringWindow = true );
 	
-    int						LoadDecorator( const std::string& cPath, os::op_create_decorator** ppfCreate );
+    int						LoadDecorator( const std::string& cPath, os::op_create_decorator** ppfCreate, os::op_unload_decorator** ppfUnload );
 	void					DispatchMessage( os::Message* pcReq );
     
 private:
@@ -106,6 +106,7 @@ private:
 
     DisplayDriver*				m_pcDispDriver;
 	os::op_create_decorator*	m_pfDecoratorCreator;
+	os::op_unload_decorator*	m_pfDecoratorUnload;
 
 	FontNode*					m_pcWindowTitleFont;
 	FontNode*					m_pcToolWindowTitleFont;

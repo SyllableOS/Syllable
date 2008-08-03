@@ -50,15 +50,13 @@ BlueDecorator::BlueDecorator( Layer* pcLayer, uint32 nWndFlags )
 
 BlueDecorator::~BlueDecorator()
 {
-	g_pcButtons->Release();
-	g_pcDecor->Release();
 } 
 
 
-void BlueDecorator::LoadBitmap (SrvBitmap* bmp,uint8* raw,Point size)
+void BlueDecorator::LoadBitmap (SrvBitmap* bmp,uint8* raw,IPoint size)
 {
 	int c=0;
-	float sz=size.x*size.y*3;
+	int sz=size.x*size.y*3;
 	for (int i=0; i<sz; i+=3)
 	{	
   		bmp->m_pRaster[c+0]=raw[i+2];
@@ -652,13 +650,17 @@ extern "C" WindowDecorator* create_decorator( Layer* pcLayer, uint32 nFlags )
 		g_pcButtons = new SrvBitmap (300,18,CS_RGB32);
 		g_pcDecor   = new SrvBitmap (24,9,CS_RGB32); 
 	
-		BlueDecorator::LoadBitmap (g_pcButtons,g_buttons,Point (300,18));
-		BlueDecorator::LoadBitmap (g_pcDecor,g_decor,Point (24,9));
+		BlueDecorator::LoadBitmap (g_pcButtons,g_buttons,IPoint (300,18));
+		BlueDecorator::LoadBitmap (g_pcDecor,g_decor,IPoint (24,9));
 	}
 
-	g_pcButtons->AddRef();
-	g_pcDecor->AddRef();
-
     return( new BlueDecorator( pcLayer, nFlags ) );
+}
+
+extern "C" int unload_decorator()
+{
+	if( g_pcButtons != NULL ) g_pcButtons->Release();
+	if( g_pcDecor != NULL ) g_pcDecor->Release();
+	return( 0 );
 }
 

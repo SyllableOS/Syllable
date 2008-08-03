@@ -521,13 +521,18 @@ WarpSpeedDecorator::DrawTitle ()
   	pcView->SetFgColor (255, 255, 255, 0);
  	 pcView->SetBgColor (sFillColor);
   // Make sure title doesn't overflow into controls
-  	cFrame.right -= 5;
   	cFrame.left += 5;
-  	os::Region *cClipRegion = new os::Region(cFrame);
- 	 os::Region *cOldRegion = new os::Region(m_cBounds);
-  	pcView->SetDrawRegion(cClipRegion);
-  	pcView->DrawText (cFrame, m_cTitle.c_str (), -1, 0);
-  	pcView->SetDrawRegion(cOldRegion);
+  	cFrame.right -= 5;
+
+  	float vTextWidth = pcView->m_pcFont->GetInstance()->GetStringWidth (m_cTitle.c_str(),strlen(m_cTitle.c_str()));
+  	if( vTextWidth > cFrame.Width() ) {
+	  	std::string cText;
+  		int nLen = (int)floor( cFrame.Width() / ceil( vTextWidth / m_cTitle.length() ) );
+  		cText = m_cTitle.substr( 0, nLen ) + "...";
+  		pcView->DrawText (cFrame, cText.c_str (), -1, 0);
+  	} else {
+  		pcView->DrawText (cFrame, m_cTitle.c_str (), -1, 0);
+  	}
   }
 }
 

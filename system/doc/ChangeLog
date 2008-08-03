@@ -1,3 +1,8 @@
+* August 3, 2008, Anthony Morphett *
+
+Fixed Winter, Blue and Warpspeed decorators.
+Added unload_decorator() method to appserver decorator API.
+
 * July 12, 2008, Anthony Morphett *
 
 Updated sysinfo to use new get_system_info() version.
