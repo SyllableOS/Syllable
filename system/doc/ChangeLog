@@ -2,9 +2,20 @@
 
 OpenSSH has been included in the base distribution a few dev builds ago.
 NetCat was also added some time ago.
+
 Another addition is TINY, a REBOL/ORCA library factored out of Builder.
 It's not fully ready yet, but is already used in the content management system
 of the web sites for data access and parsing and templating.
+
+Some useful data has also been added:
+/etc/mime.types is a simple standard database for programs to determine the MIME types
+of files based on their name extensions.
+CA-Certificates is a collection of well-known security certificates published by
+Certification Authorities, used by many network programs for authentication.
+Configurations were added for a number of popular servers: INetUtils FTPD, VSFTPD,
+OpenSSH, BIND, RSync and Apache. These work on Server, but not all of them work on
+Desktop yet.
+Another configuration was added for S3Sync, a tool to synchronise files with Amazon S3.
 
 * August 3, 2008, Anthony Morphett *
 
