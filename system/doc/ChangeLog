@@ -1,3 +1,11 @@
+* August 4, 2008, Kaj de Vos *
+
+OpenSSH has been included in the base distribution a few dev builds ago.
+NetCat was also added some time ago.
+Another addition is TINY, a REBOL/ORCA library factored out of Builder.
+It's not fully ready yet, but is already used in the content management system
+of the web sites for data access and parsing and templating.
+
 * August 3, 2008, Anthony Morphett *
 
 Fixed Winter, Blue and Warpspeed decorators.
