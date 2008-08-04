@@ -17,6 +17,7 @@ resources
 	system/resources/wallpapers			wallpapers/LucasMurad/*.png
 	system/resources/wallpapers			wallpapers/LucasMurad/*.jpg
 	system/resources/wallpapers			wallpapers/LukasVeselovsky/*.png
+	system/resources/wallpapers			wallpapers/KenSaunders/*.jpg
 	etc/s3conf							configuration/s3config.yml
 ;	Servers:
 	etc									configuration/vsftpd.conf
