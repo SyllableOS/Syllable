@@ -183,7 +183,7 @@ void init_cpuid( void )
 	if ( g_asProcessorDescs[g_nBootCPU].pi_bHaveMTRR )
 	{
 		/* Check if we support write combining */
-		rdmsr( MSR_REG_MTRR_CAP, nRegs[0], nRegs[4] );
+		rdmsr( MSR_REG_MTRR_CAP, nRegs[0], nRegs[3] );
 		if( !( nRegs[0] & MSR_REG_MTRR_CAP_WRCOMP ) )
 		{
 			g_asProcessorDescs[g_nBootCPU].pi_bHaveMTRR = false;
