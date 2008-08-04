@@ -239,10 +239,10 @@ typedef struct nspace
 
 	off_t rootBlock;	// Block number of the start of the root directory entry
 
-	char volSetIDString[29];	// Name of multi-volume set where vol is member         byte191-318
+	char volSetIDString[129];	// Name of multi-volume set where vol is member         byte191-318
 	char pubIDString[129];	// Name of publisher                                                                    byte319-446
 	char dataPreparer[129];	// Name of data preparer                                                                byte447-574
-	char appIDString[129];	// Identifies data fomrat                                                               byte575-702
+	char appIDString[129];	// Identifies data format                                                               byte575-702
 	char copyright[38];	// Copyright string                                                                             byte703-739
 	char abstractFName[38];	// Name of file in root that has abstract                               byte740-776
 	char biblioFName[38];	// Name of file in root that has biblio                         byte777-813

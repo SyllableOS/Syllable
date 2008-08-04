@@ -460,19 +460,19 @@ int ISO_HIDDEN InitVolDesc( nspace * vol, char *buf )
 	buf += 128;
 	kerndbg( KERN_DEBUG_LOW, "InitVolDesc - volume application id string is %s\n", vol->appIDString );
 
-	vol->copyright[38] = '\0';
-	strncpy( vol->copyright, buf, 38 );
-	buf += 38;
+	vol->copyright[37] = '\0';
+	strncpy( vol->copyright, buf, 37 );
+	buf += 37;
 	kerndbg( KERN_DEBUG_LOW, "InitVolDesc - copyright is %s\n", vol->copyright );
 
-	vol->abstractFName[38] = '\0';
-	strncpy( vol->abstractFName, buf, 38 );
-	buf += 38;
+	vol->abstractFName[37] = '\0';
+	strncpy( vol->abstractFName, buf, 37 );
+	buf += 37;
 	kerndbg( KERN_DEBUG_LOW, "InitVolDesc - abstract file id string is %s\n", vol->abstractFName );
 
-	vol->biblioFName[38] = '\0';
-	strncpy( vol->biblioFName, buf, 38 );
-	buf += 38;
+	vol->biblioFName[37] = '\0';
+	strncpy( vol->biblioFName, buf, 37 );
+	buf += 37;
 	kerndbg( KERN_DEBUG_LOW, "InitVolDesc - bibliographic file identifier: %s\n", vol->biblioFName );
 
 	InitVolDate( &( vol->createDate ), buf );

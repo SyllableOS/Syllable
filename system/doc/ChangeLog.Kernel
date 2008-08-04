@@ -1,3 +1,7 @@
+* August 4, 2008, Anthony Morphett *
+
+Minor bugfixes to iso9660 driver and kernel/cpuid, thanks to c0x.
+
 * July 15 2008, Kristian Van Der Vliet *
 
 Small fix to the rtl8169 driver so it doesn't crash when it's loaded.
