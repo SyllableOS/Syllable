@@ -10,7 +10,7 @@ of the web sites for data access and parsing and templating.
 Some useful data has also been added:
 /etc/mime.types is a simple standard database for programs to determine the MIME types
 of files based on their name extensions.
-CA-Certificates is a collection of well-known security certificates published by
+/etc/ssl/certs is a collection of well-known security certificates published by
 Certification Authorities, used by many network programs for authentication.
 Configurations were added for a number of popular servers: INetUtils FTPD, VSFTPD,
 OpenSSH, BIND, RSync and Apache. These work on Server, but not all of them work on
