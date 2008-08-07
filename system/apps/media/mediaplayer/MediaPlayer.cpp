@@ -514,7 +514,7 @@ again:
 			 
 				if( nCurrentTime > sVideoFrame.nTimeStamp + nVideoFrameLength/* * 2*/ )
 				{
-					printf( "Droping Frame %i %i!\n", (int)sVideoFrame.nTimeStamp, (int)nCurrentTime );
+					printf( "Dropping Frame %i %i!\n", (int)sVideoFrame.nTimeStamp, (int)nCurrentTime );
 					bVideoValid = false;
 					bDropNextFrame = true;
 				}
@@ -1226,36 +1226,3 @@ int main( int argc, char *argv[] )
 	pcApp->Run();
 	return ( 0 );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

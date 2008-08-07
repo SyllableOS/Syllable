@@ -1207,7 +1207,7 @@ int MediaSyncStage::Run()
 			 
 		if( (uint64)nCurrentTime > m->m_sVideoPacket.nTimeStamp + nVideoFrameLength * 2 )
 		{
-			printf( "Droping Frame %i %i!\n", (int)m->m_sVideoPacket.nTimeStamp, (int)nCurrentTime );
+			printf( "Dropping Frame %i %i!\n", (int)m->m_sVideoPacket.nTimeStamp, (int)nCurrentTime );
 			pcVidPrevStage->FreePacket( &m->m_sVideoPacket );
 			m->m_bVideoValid = false;
 			nNextCallTime = 0;
