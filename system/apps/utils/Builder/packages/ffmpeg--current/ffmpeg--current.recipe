@@ -8,7 +8,8 @@ notes				Tested with FFMPEG SVN snapshot Dec 23, 2007
 licenses			LGPL GPL
 home				ffmpeg.org
 packages
-	FFMPEG-11308.source
+;	FFMPEG-11308.source
+	FFMPEG-27432.source
 ;	ffmpeg-export-snapshot
 locations
 	http://downloads.syllable.org/sources/resources/FFMPEG/
@@ -25,6 +26,9 @@ build-needs
 build-conflicts		tetex
 
 system-prefix-var	DESTDIR
+install-tree
+	include
+	include/ffmpeg
 install-files
 	../_ffmpeg--current/config.h				include/ffmpeg
 ;	../ffmpeg--current/libavformat/allformats.h	include/ffmpeg
