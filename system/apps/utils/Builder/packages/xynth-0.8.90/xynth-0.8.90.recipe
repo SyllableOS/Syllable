@@ -1,0 +1,29 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			sourceforge
+
+headline			Windowing system
+description
+	Xynth is a portable embedded windowing system, client/server interface between display hardware (mouse, keyboard, video displays) and the desktop environment that works on much hardware, including embedded devices (handhelds, set-top boxes, etc.).
+licenses			LGPL
+
+home				www.xynth.org
+packages			xynth/xynth-0.8.90
+
+needs
+	expat
+recommends
+	sdl
+
+;patch				cp Makefile.cfg.linux Makefile.cfg
+
+install-prefix-var
+	INSTALLDIR
+;	_INSTALLDIR
+
+make-targets
+	all
+	dist
+
+documentation		README COPYING INSTALL BUGS FAQ ChangeLog AUTHORS TODO
