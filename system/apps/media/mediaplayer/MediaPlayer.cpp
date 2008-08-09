@@ -514,7 +514,7 @@ again:
 			 
 				if( nCurrentTime > sVideoFrame.nTimeStamp + nVideoFrameLength/* * 2*/ )
 				{
-					printf( "Dropping Frame %i %i!\n", (int)sVideoFrame.nTimeStamp, (int)nCurrentTime );
+					printf( "Droping Frame %i %i!\n", (int)sVideoFrame.nTimeStamp, (int)nCurrentTime );
 					bVideoValid = false;
 					bDropNextFrame = true;
 				}
@@ -768,6 +768,8 @@ void MPApp::Open( os::String zFileName, os::String zInput )
 		}
 	}
 
+	std::cout << "Found video stream at #" << m_nVideoStream << ", audio stream at #" << m_nAudioStream << std::endl;
+
 	/* Open output devices */
 	if ( m_bVideo )
 	{
@@ -814,12 +816,16 @@ void MPApp::Open( os::String zFileName, os::String zInput )
 				{
 					m_pcVideoCodec->Release();
 					m_pcVideoCodec = NULL;
+
+					std::cout << "Failed to find video codec" << std::endl;
 				}
 		}
 		if ( m_pcVideoCodec == NULL || m_pcVideoOutput->AddStream( os::String( os::Path( zFileName.c_str() ).GetLeaf() ), m_pcVideoCodec->GetExternalFormat() ) != 0 )
 		{
 			m_bVideo = false;
 			m_pcVideoOutput->Close();
+
+			std::cout << "Failed to add video stream to video output" << std::endl;
 		}
 		else
 		{
@@ -1226,3 +1232,36 @@ int main( int argc, char *argv[] )
 	pcApp->Run();
 	return ( 0 );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
