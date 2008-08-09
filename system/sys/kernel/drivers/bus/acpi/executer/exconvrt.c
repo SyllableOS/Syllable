@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,7 +40,6 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGES.
  */
-
 
 #include <acpi/acpi.h>
 #include <acpi/acinterp.h>
@@ -131,7 +130,6 @@ acpi_ex_convert_to_integer(union acpi_operand_object *obj_desc,
 		}
 		break;
 
-
 	case ACPI_TYPE_BUFFER:
 
 		/* Check for zero-length buffer */
@@ -159,7 +157,6 @@ acpi_ex_convert_to_integer(union acpi_operand_object *obj_desc,
 			result |= (((acpi_integer) pointer[i]) << (i * 8));
 		}
 		break;
-
 
 	default:
 		/* No other types can get here */
@@ -325,6 +322,7 @@ acpi_ex_convert_to_ascii(acpi_integer integer,
 		remainder = 0;
 
 		for (i = decimal_length; i > 0; i--) {
+
 			/* Divide by nth factor of 10 */
 
 			digit = integer;
@@ -352,6 +350,7 @@ acpi_ex_convert_to_ascii(acpi_integer integer,
 
 		hex_length = (acpi_native_uint) ACPI_MUL_2(data_width);
 		for (i = 0, j = (hex_length - 1); i < hex_length; i++, j--) {
+
 			/* Get one hex digit, most significant digits first */
 
 			string[k] =
@@ -379,7 +378,6 @@ acpi_ex_convert_to_ascii(acpi_integer integer,
 	string[k] = 0;
 	return ((u32) k);
 }
-
 
 /*******************************************************************************
  *
@@ -514,9 +512,8 @@ acpi_ex_convert_to_string(union acpi_operand_object * obj_desc,
 		 * Create a new string object and string buffer
 		 * (-1 because of extra separator included in string_length from above)
 		 */
-		return_desc =
-		    acpi_ut_create_string_object((acpi_size)
-						 (string_length - 1));
+		return_desc = acpi_ut_create_string_object((acpi_size)
+							   (string_length - 1));
 		if (!return_desc) {
 			return_ACPI_STATUS(AE_NO_MEMORY);
 		}
@@ -612,7 +609,6 @@ acpi_ex_convert_to_target_type(acpi_object_type destination_type,
 		}
 		break;
 
-
 	case ARGI_TARGETREF:
 
 		switch (destination_type) {
@@ -656,7 +652,6 @@ acpi_ex_convert_to_target_type(acpi_object_type destination_type,
 			break;
 		}
 		break;
-
 
 	case ARGI_REFERENCE:
 		/*

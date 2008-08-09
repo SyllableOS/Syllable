@@ -6,7 +6,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -42,7 +42,6 @@
  * POSSIBILITY OF SUCH DAMAGES.
  */
 
-
 #include <acpi/acpi.h>
 #include <acpi/acparser.h>
 #include <acpi/amlcode.h>
@@ -50,6 +49,7 @@
 #include <acpi/acinterp.h>
 #include <acpi/acnamesp.h>
 #include <acpi/acevents.h>
+#include <acpi/actables.h>
 
 #define _COMPONENT          ACPI_DISPATCHER
 ACPI_MODULE_NAME("dsopcode")
@@ -220,6 +220,50 @@ acpi_ds_get_buffer_field_arguments(union acpi_operand_object *obj_desc)
 
 /*******************************************************************************
  *
+ * FUNCTION:    acpi_ds_get_bank_field_arguments
+ *
+ * PARAMETERS:  obj_desc        - A valid bank_field object
+ *
+ * RETURN:      Status.
+ *
+ * DESCRIPTION: Get bank_field bank_value. This implements the late
+ *              evaluation of these field attributes.
+ *
+ ******************************************************************************/
+
+acpi_status
+acpi_ds_get_bank_field_arguments(union acpi_operand_object *obj_desc)
+{
+	union acpi_operand_object *extra_desc;
+	struct acpi_namespace_node *node;
+	acpi_status status;
+
+	ACPI_FUNCTION_TRACE_PTR(ds_get_bank_field_arguments, obj_desc);
+
+	if (obj_desc->common.flags & AOPOBJ_DATA_VALID) {
+		return_ACPI_STATUS(AE_OK);
+	}
+
+	/* Get the AML pointer (method object) and bank_field node */
+
+	extra_desc = acpi_ns_get_secondary_object(obj_desc);
+	node = obj_desc->bank_field.node;
+
+	ACPI_DEBUG_EXEC(acpi_ut_display_init_pathname
+			(ACPI_TYPE_LOCAL_BANK_FIELD, node, NULL));
+	ACPI_DEBUG_PRINT((ACPI_DB_EXEC, "[%4.4s] BankField Arg Init\n",
+			  acpi_ut_get_node_name(node)));
+
+	/* Execute the AML code for the term_arg arguments */
+
+	status = acpi_ds_execute_arguments(node, acpi_ns_get_parent_node(node),
+					   extra_desc->extra.aml_length,
+					   extra_desc->extra.aml_start);
+	return_ACPI_STATUS(status);
+}
+
+/*******************************************************************************
+ *
  * FUNCTION:    acpi_ds_get_buffer_arguments
  *
  * PARAMETERS:  obj_desc        - A valid Buffer object
@@ -360,7 +404,9 @@ acpi_status acpi_ds_get_region_arguments(union acpi_operand_object *obj_desc)
 
 	status = acpi_os_validate_address(obj_desc->region.space_id,
 					  obj_desc->region.address,
-					  (acpi_size) obj_desc->region.length);
+					  (acpi_size) obj_desc->region.length,
+					  acpi_ut_get_node_name(node));
+
 	if (ACPI_FAILURE(status)) {
 		/*
 		 * Invalid address/length. We will emit an error message and mark
@@ -662,6 +708,7 @@ acpi_ds_eval_buffer_field_operands(struct acpi_walk_state *walk_state,
 	/* Initialize the Buffer Field */
 
 	if (op->common.aml_opcode == AML_CREATE_FIELD_OP) {
+
 		/* NOTE: Slightly different operands for this opcode */
 
 		status =
@@ -768,7 +815,109 @@ acpi_ds_eval_region_operands(struct acpi_walk_state *walk_state,
 
 	ACPI_DEBUG_PRINT((ACPI_DB_EXEC, "RgnObj %p Addr %8.8X%8.8X Len %X\n",
 			  obj_desc,
-			  ACPI_FORMAT_UINT64(obj_desc->region.address),
+			  ACPI_FORMAT_NATIVE_UINT(obj_desc->region.address),
+			  obj_desc->region.length));
+
+	/* Now the address and length are valid for this opregion */
+
+	obj_desc->region.flags |= AOPOBJ_DATA_VALID;
+
+	return_ACPI_STATUS(status);
+}
+
+/*******************************************************************************
+ *
+ * FUNCTION:    acpi_ds_eval_table_region_operands
+ *
+ * PARAMETERS:  walk_state      - Current walk
+ *              Op              - A valid region Op object
+ *
+ * RETURN:      Status
+ *
+ * DESCRIPTION: Get region address and length
+ *              Called from acpi_ds_exec_end_op during data_table_region parse tree walk
+ *
+ ******************************************************************************/
+
+acpi_status
+acpi_ds_eval_table_region_operands(struct acpi_walk_state *walk_state,
+				   union acpi_parse_object *op)
+{
+	acpi_status status;
+	union acpi_operand_object *obj_desc;
+	union acpi_operand_object **operand;
+	struct acpi_namespace_node *node;
+	union acpi_parse_object *next_op;
+	acpi_native_uint table_index;
+	struct acpi_table_header *table;
+
+	ACPI_FUNCTION_TRACE_PTR(ds_eval_table_region_operands, op);
+
+	/*
+	 * This is where we evaluate the signature_string and oem_iDString
+	 * and oem_table_iDString of the data_table_region declaration
+	 */
+	node = op->common.node;
+
+	/* next_op points to signature_string op */
+
+	next_op = op->common.value.arg;
+
+	/*
+	 * Evaluate/create the signature_string and oem_iDString
+	 * and oem_table_iDString operands
+	 */
+	status = acpi_ds_create_operands(walk_state, next_op);
+	if (ACPI_FAILURE(status)) {
+		return_ACPI_STATUS(status);
+	}
+
+	/*
+	 * Resolve the signature_string and oem_iDString
+	 * and oem_table_iDString operands
+	 */
+	status = acpi_ex_resolve_operands(op->common.aml_opcode,
+					  ACPI_WALK_OPERANDS, walk_state);
+	if (ACPI_FAILURE(status)) {
+		return_ACPI_STATUS(status);
+	}
+
+	ACPI_DUMP_OPERANDS(ACPI_WALK_OPERANDS, ACPI_IMODE_EXECUTE,
+			   acpi_ps_get_opcode_name(op->common.aml_opcode),
+			   1, "after AcpiExResolveOperands");
+
+	operand = &walk_state->operands[0];
+
+	/* Find the ACPI table */
+
+	status = acpi_tb_find_table(operand[0]->string.pointer,
+				    operand[1]->string.pointer,
+				    operand[2]->string.pointer, &table_index);
+	if (ACPI_FAILURE(status)) {
+		return_ACPI_STATUS(status);
+	}
+
+	acpi_ut_remove_reference(operand[0]);
+	acpi_ut_remove_reference(operand[1]);
+	acpi_ut_remove_reference(operand[2]);
+
+	status = acpi_get_table_by_index(table_index, &table);
+	if (ACPI_FAILURE(status)) {
+		return_ACPI_STATUS(status);
+	}
+
+	obj_desc = acpi_ns_get_attached_object(node);
+	if (!obj_desc) {
+		return_ACPI_STATUS(AE_NOT_EXIST);
+	}
+
+	obj_desc->region.address =
+	    (acpi_physical_address) ACPI_TO_INTEGER(table);
+	obj_desc->region.length = table->length;
+
+	ACPI_DEBUG_PRINT((ACPI_DB_EXEC, "RgnObj %p Addr %8.8X%8.8X Len %X\n",
+			  obj_desc,
+			  ACPI_FORMAT_NATIVE_UINT(obj_desc->region.address),
 			  obj_desc->region.length));
 
 	/* Now the address and length are valid for this opregion */
@@ -805,6 +954,12 @@ acpi_ds_eval_data_object_operands(struct acpi_walk_state *walk_state,
 	ACPI_FUNCTION_TRACE(ds_eval_data_object_operands);
 
 	/* The first operand (for all of these data objects) is the length */
+
+	/*
+	 * Set proper index into operand stack for acpi_ds_obj_stack_push
+	 * invoked inside acpi_ds_create_operand.
+	 */
+	walk_state->operand_index = walk_state->num_operands;
 
 	status = acpi_ds_create_operand(walk_state, op->common.value.arg, 1);
 	if (ACPI_FAILURE(status)) {
@@ -866,12 +1021,111 @@ acpi_ds_eval_data_object_operands(struct acpi_walk_state *walk_state,
 		    ((op->common.parent->common.aml_opcode != AML_PACKAGE_OP) &&
 		     (op->common.parent->common.aml_opcode !=
 		      AML_VAR_PACKAGE_OP)
-		     && (op->common.parent->common.aml_opcode !=
-			 AML_NAME_OP))) {
+		     && (op->common.parent->common.aml_opcode != AML_NAME_OP))) {
 			walk_state->result_obj = obj_desc;
 		}
 	}
 
+	return_ACPI_STATUS(status);
+}
+
+/*******************************************************************************
+ *
+ * FUNCTION:    acpi_ds_eval_bank_field_operands
+ *
+ * PARAMETERS:  walk_state      - Current walk
+ *              Op              - A valid bank_field Op object
+ *
+ * RETURN:      Status
+ *
+ * DESCRIPTION: Get bank_field bank_value
+ *              Called from acpi_ds_exec_end_op during bank_field parse tree walk
+ *
+ ******************************************************************************/
+
+acpi_status
+acpi_ds_eval_bank_field_operands(struct acpi_walk_state *walk_state,
+				 union acpi_parse_object *op)
+{
+	acpi_status status;
+	union acpi_operand_object *obj_desc;
+	union acpi_operand_object *operand_desc;
+	struct acpi_namespace_node *node;
+	union acpi_parse_object *next_op;
+	union acpi_parse_object *arg;
+
+	ACPI_FUNCTION_TRACE_PTR(ds_eval_bank_field_operands, op);
+
+	/*
+	 * This is where we evaluate the bank_value field of the
+	 * bank_field declaration
+	 */
+
+	/* next_op points to the op that holds the Region */
+
+	next_op = op->common.value.arg;
+
+	/* next_op points to the op that holds the Bank Register */
+
+	next_op = next_op->common.next;
+
+	/* next_op points to the op that holds the Bank Value */
+
+	next_op = next_op->common.next;
+
+	/*
+	 * Set proper index into operand stack for acpi_ds_obj_stack_push
+	 * invoked inside acpi_ds_create_operand.
+	 *
+	 * We use walk_state->Operands[0] to store the evaluated bank_value
+	 */
+	walk_state->operand_index = 0;
+
+	status = acpi_ds_create_operand(walk_state, next_op, 0);
+	if (ACPI_FAILURE(status)) {
+		return_ACPI_STATUS(status);
+	}
+
+	status = acpi_ex_resolve_to_value(&walk_state->operands[0], walk_state);
+	if (ACPI_FAILURE(status)) {
+		return_ACPI_STATUS(status);
+	}
+
+	ACPI_DUMP_OPERANDS(ACPI_WALK_OPERANDS, ACPI_IMODE_EXECUTE,
+			   acpi_ps_get_opcode_name(op->common.aml_opcode),
+			   1, "after AcpiExResolveOperands");
+
+	/*
+	 * Get the bank_value operand and save it
+	 * (at Top of stack)
+	 */
+	operand_desc = walk_state->operands[0];
+
+	/* Arg points to the start Bank Field */
+
+	arg = acpi_ps_get_arg(op, 4);
+	while (arg) {
+
+		/* Ignore OFFSET and ACCESSAS terms here */
+
+		if (arg->common.aml_opcode == AML_INT_NAMEDFIELD_OP) {
+			node = arg->common.node;
+
+			obj_desc = acpi_ns_get_attached_object(node);
+			if (!obj_desc) {
+				return_ACPI_STATUS(AE_NOT_EXIST);
+			}
+
+			obj_desc->bank_field.value =
+			    (u32) operand_desc->integer.value;
+		}
+
+		/* Move to next field in the list */
+
+		arg = arg->common.next;
+	}
+
+	acpi_ut_remove_reference(operand_desc);
 	return_ACPI_STATUS(status);
 }
 
@@ -953,7 +1207,6 @@ acpi_ds_exec_begin_control_op(struct acpi_walk_state *walk_state,
 	return (status);
 }
 
-
 /*******************************************************************************
  *
  * FUNCTION:    acpi_ds_exec_end_control_op
@@ -1007,6 +1260,7 @@ acpi_ds_exec_end_control_op(struct acpi_walk_state * walk_state,
 		ACPI_DEBUG_PRINT((ACPI_DB_DISPATCH, "[WHILE_OP] Op=%p\n", op));
 
 		if (walk_state->control_state->common.value) {
+
 			/* Predicate was true, go back and evaluate it again! */
 
 			status = AE_CTRL_PENDING;
@@ -1037,6 +1291,7 @@ acpi_ds_exec_end_control_op(struct acpi_walk_state * walk_state,
 		 * has been bubbled up the tree
 		 */
 		if (op->common.value.arg) {
+
 			/* Since we have a real Return(), delete any implicit return */
 
 			acpi_ds_clear_implicit_return(walk_state);
@@ -1068,8 +1323,8 @@ acpi_ds_exec_end_control_op(struct acpi_walk_state * walk_state,
 			 * is set to anything other than zero!
 			 */
 			walk_state->return_desc = walk_state->operands[0];
-		} else if ((walk_state->results) &&
-			   (walk_state->results->results.num_results > 0)) {
+		} else if (walk_state->result_count) {
+
 			/* Since we have a real Return(), delete any implicit return */
 
 			acpi_ds_clear_implicit_return(walk_state);
@@ -1126,12 +1381,10 @@ acpi_ds_exec_end_control_op(struct acpi_walk_state * walk_state,
 		status = AE_CTRL_TERMINATE;
 		break;
 
-
 	case AML_NOOP_OP:
 
 		/* Just do nothing! */
 		break;
-
 
 	case AML_BREAK_POINT_OP:
 
@@ -1190,4 +1443,3 @@ acpi_ds_exec_end_control_op(struct acpi_walk_state * walk_state,
 
 	return (status);
 }
-

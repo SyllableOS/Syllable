@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,7 +41,6 @@
  * POSSIBILITY OF SUCH DAMAGES.
  */
 
-
 #include <acpi/acpi.h>
 #include <acpi/acparser.h>
 
@@ -65,7 +64,6 @@ union acpi_parse_object *acpi_ps_get_parent_scope(struct acpi_parse_state
 
 	return (parser_state->scope->parse_scope.op);
 }
-
 
 /*******************************************************************************
  *
@@ -167,6 +165,7 @@ acpi_ps_push_scope(struct acpi_parse_state *parser_state,
 	acpi_ut_push_generic_state(&parser_state->scope, scope);
 
 	if (arg_count == ACPI_VAR_ARGS) {
+
 		/* Multiple arguments */
 
 		scope->parse_scope.arg_end = parser_state->pkg_end;
@@ -231,7 +230,6 @@ acpi_ps_pop_scope(struct acpi_parse_state *parser_state,
 	return_VOID;
 }
 
-
 /*******************************************************************************
  *
  * FUNCTION:    acpi_ps_cleanup_scope
@@ -264,4 +262,3 @@ void acpi_ps_cleanup_scope(struct acpi_parse_state *parser_state)
 
 	return_VOID;
 }
-

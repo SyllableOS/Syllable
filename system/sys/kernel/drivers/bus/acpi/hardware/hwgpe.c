@@ -6,7 +6,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -90,7 +90,6 @@ acpi_hw_write_gpe_enable_reg(struct acpi_gpe_event_info *gpe_event_info)
 	return (status);
 }
 
-
 /******************************************************************************
  *
  * FUNCTION:    acpi_hw_clear_gpe
@@ -125,7 +124,6 @@ acpi_status acpi_hw_clear_gpe(struct acpi_gpe_event_info * gpe_event_info)
 
 	return (status);
 }
-
 
 /******************************************************************************
  *
@@ -225,6 +223,7 @@ acpi_hw_disable_gpe_block(struct acpi_gpe_xrupt_info * gpe_xrupt_info,
 	/* Examine each GPE Register within the block */
 
 	for (i = 0; i < gpe_block->register_count; i++) {
+
 		/* Disable all GPEs in this register */
 
 		status = acpi_hw_low_level_write(8, 0x00,
@@ -237,7 +236,6 @@ acpi_hw_disable_gpe_block(struct acpi_gpe_xrupt_info * gpe_xrupt_info,
 
 	return (AE_OK);
 }
-
 
 /******************************************************************************
  *
@@ -262,6 +260,7 @@ acpi_hw_clear_gpe_block(struct acpi_gpe_xrupt_info * gpe_xrupt_info,
 	/* Examine each GPE Register within the block */
 
 	for (i = 0; i < gpe_block->register_count; i++) {
+
 		/* Clear status on all GPEs in this register */
 
 		status = acpi_hw_low_level_write(8, 0xFF,
@@ -274,7 +273,6 @@ acpi_hw_clear_gpe_block(struct acpi_gpe_xrupt_info * gpe_xrupt_info,
 
 	return (AE_OK);
 }
-
 
 /******************************************************************************
  *
@@ -322,7 +320,6 @@ acpi_hw_enable_runtime_gpe_block(struct acpi_gpe_xrupt_info * gpe_xrupt_info,
 	return (AE_OK);
 }
 
-
 /******************************************************************************
  *
  * FUNCTION:    acpi_hw_enable_wakeup_gpe_block
@@ -365,7 +362,6 @@ acpi_hw_enable_wakeup_gpe_block(struct acpi_gpe_xrupt_info *gpe_xrupt_info,
 
 	return (AE_OK);
 }
-
 
 /******************************************************************************
  *

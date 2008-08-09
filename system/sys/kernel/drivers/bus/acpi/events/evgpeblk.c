@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -119,7 +119,6 @@ u8 acpi_ev_valid_gpe_event(struct acpi_gpe_event_info *gpe_event_info)
 	return (FALSE);
 }
 
-
 /*******************************************************************************
  *
  * FUNCTION:    acpi_ev_walk_gpe_list
@@ -147,10 +146,12 @@ acpi_status acpi_ev_walk_gpe_list(acpi_gpe_callback gpe_walk_callback)
 
 	gpe_xrupt_info = acpi_gbl_gpe_xrupt_list_head;
 	while (gpe_xrupt_info) {
+
 		/* Walk all Gpe Blocks attached to this interrupt level */
 
 		gpe_block = gpe_xrupt_info->gpe_block_list_head;
 		while (gpe_block) {
+
 			/* One callback per GPE block */
 
 			status = gpe_walk_callback(gpe_xrupt_info, gpe_block);
@@ -196,6 +197,7 @@ acpi_ev_delete_gpe_handlers(struct acpi_gpe_xrupt_info *gpe_xrupt_info,
 	/* Examine each GPE Register within the block */
 
 	for (i = 0; i < gpe_block->register_count; i++) {
+
 		/* Now look at the individual GPEs in this byte register */
 
 		for (j = 0; j < ACPI_GPE_REGISTER_WIDTH; j++) {
@@ -373,6 +375,7 @@ acpi_ev_match_prw_and_gpe(acpi_handle obj_handle,
 	status = acpi_ut_evaluate_object(obj_handle, METHOD_NAME__PRW,
 					 ACPI_BTYPE_PACKAGE, &pkg_desc);
 	if (ACPI_FAILURE(status)) {
+
 		/* Ignore all errors from _PRW, we don't want to abort the subsystem */
 
 		return_ACPI_STATUS(AE_OK);
@@ -396,6 +399,7 @@ acpi_ev_match_prw_and_gpe(acpi_handle obj_handle,
 	obj_desc = pkg_desc->package.elements[0];
 
 	if (ACPI_GET_OBJECT_TYPE(obj_desc) == ACPI_TYPE_INTEGER) {
+
 		/* Use FADT-defined GPE device (from definition of _PRW) */
 
 		target_gpe_device = acpi_gbl_fadt_gpe_device;
@@ -404,6 +408,7 @@ acpi_ev_match_prw_and_gpe(acpi_handle obj_handle,
 
 		gpe_number = (u32) obj_desc->integer.value;
 	} else if (ACPI_GET_OBJECT_TYPE(obj_desc) == ACPI_TYPE_PACKAGE) {
+
 		/* Package contains a GPE reference and GPE number within a GPE block */
 
 		if ((obj_desc->package.count < 2) ||
@@ -445,6 +450,7 @@ acpi_ev_match_prw_and_gpe(acpi_handle obj_handle,
 
 		gpe_event_info->flags &=
 		    ~(ACPI_GPE_WAKE_ENABLED | ACPI_GPE_RUN_ENABLED);
+
 		status =
 		    acpi_ev_set_gpe_type(gpe_event_info, ACPI_GPE_TYPE_WAKE);
 		if (ACPI_FAILURE(status)) {
@@ -580,6 +586,10 @@ acpi_ev_delete_gpe_xrupt(struct acpi_gpe_xrupt_info *gpe_xrupt)
 	flags = acpi_os_acquire_lock(acpi_gbl_gpe_lock);
 	if (gpe_xrupt->previous) {
 		gpe_xrupt->previous->next = gpe_xrupt->next;
+	} else {
+		/* No previous, update list head */
+
+		acpi_gbl_gpe_xrupt_list_head = gpe_xrupt->next;
 	}
 
 	if (gpe_xrupt->next) {
@@ -680,6 +690,7 @@ acpi_status acpi_ev_delete_gpe_block(struct acpi_gpe_block_info *gpe_block)
 	status = acpi_hw_disable_gpe_block(gpe_block->xrupt_block, gpe_block);
 
 	if (!gpe_block->previous && !gpe_block->next) {
+
 		/* This is the last gpe_block on this interrupt */
 
 		status = acpi_ev_delete_gpe_xrupt(gpe_block->xrupt_block);
@@ -782,6 +793,7 @@ acpi_ev_create_gpe_info_blocks(struct acpi_gpe_block_info *gpe_block)
 	this_event = gpe_event_info;
 
 	for (i = 0; i < gpe_block->register_count; i++) {
+
 		/* Init the register_info for this GPE register (8 GPEs) */
 
 		this_register->base_gpe_number =
@@ -1016,6 +1028,7 @@ acpi_ev_initialize_gpe_block(struct acpi_namespace_node *gpe_device,
 
 	for (i = 0; i < gpe_block->register_count; i++) {
 		for (j = 0; j < 8; j++) {
+
 			/* Get the info block for this particular GPE */
 
 			gpe_event_info =
@@ -1024,8 +1037,7 @@ acpi_ev_initialize_gpe_block(struct acpi_namespace_node *gpe_device,
 
 			if (((gpe_event_info->flags & ACPI_GPE_DISPATCH_MASK) ==
 			     ACPI_GPE_DISPATCH_METHOD)
-			    && (gpe_event_info->
-				flags & ACPI_GPE_TYPE_RUNTIME)) {
+			    && (gpe_event_info->flags & ACPI_GPE_TYPE_RUNTIME)) {
 				gpe_enabled_count++;
 			}
 
@@ -1176,6 +1188,7 @@ acpi_status acpi_ev_gpe_initialize(void)
 	/* Exit if there are no GPE registers */
 
 	if ((register_count0 + register_count1) == 0) {
+
 		/* GPEs are not required by ACPI, this is OK */
 
 		ACPI_DEBUG_PRINT((ACPI_DB_INIT,

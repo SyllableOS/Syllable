@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,7 +40,6 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGES.
  */
-
 
 #include <acpi/acpi.h>
 #include <acpi/acevents.h>
@@ -165,6 +164,7 @@ acpi_status acpi_ev_initialize_op_regions(void)
 	 * Run the _REG methods for op_regions in each default address space
 	 */
 	for (i = 0; i < ACPI_NUM_DEFAULT_SPACES; i++) {
+
 		/* TBD: Make sure handler is the DEFAULT handler, otherwise
 		 * _REG will have already been run.
 		 */
@@ -291,7 +291,6 @@ acpi_ev_address_space_dispatch(union acpi_operand_object *region_obj,
 			       u32 bit_width, acpi_integer * value)
 {
 	acpi_status status;
-	acpi_status status2;
 	acpi_adr_space_handler handler;
 	acpi_adr_space_setup region_setup;
 	union acpi_operand_object *handler_desc;
@@ -329,6 +328,7 @@ acpi_ev_address_space_dispatch(union acpi_operand_object *region_obj,
 		 */
 		region_setup = handler_desc->address_space.setup;
 		if (!region_setup) {
+
 			/* No initialization routine, exit with error */
 
 			ACPI_ERROR((AE_INFO,
@@ -352,10 +352,7 @@ acpi_ev_address_space_dispatch(union acpi_operand_object *region_obj,
 
 		/* Re-enter the interpreter */
 
-		status2 = acpi_ex_enter_interpreter();
-		if (ACPI_FAILURE(status2)) {
-			return_ACPI_STATUS(status2);
-		}
+		acpi_ex_enter_interpreter();
 
 		/* Check for failure of the Region Setup */
 
@@ -397,7 +394,7 @@ acpi_ev_address_space_dispatch(union acpi_operand_object *region_obj,
 	ACPI_DEBUG_PRINT((ACPI_DB_OPREGION,
 			  "Handler %p (@%p) Address %8.8X%8.8X [%s]\n",
 			  &region_obj->region.handler->address_space, handler,
-			  ACPI_FORMAT_UINT64(address),
+			  ACPI_FORMAT_NATIVE_UINT(address),
 			  acpi_ut_get_region_name(region_obj->region.
 						  space_id)));
 
@@ -429,10 +426,7 @@ acpi_ev_address_space_dispatch(union acpi_operand_object *region_obj,
 		 * We just returned from a non-default handler, we must re-enter the
 		 * interpreter
 		 */
-		status2 = acpi_ex_enter_interpreter();
-		if (ACPI_FAILURE(status2)) {
-			return_ACPI_STATUS(status2);
-		}
+		acpi_ex_enter_interpreter();
 	}
 
 	return_ACPI_STATUS(status);
@@ -476,6 +470,7 @@ acpi_ev_detach_region(union acpi_operand_object *region_obj,
 
 	handler_obj = region_obj->region.handler;
 	if (!handler_obj) {
+
 		/* This region has no handler, all done */
 
 		return_VOID;
@@ -487,6 +482,7 @@ acpi_ev_detach_region(union acpi_operand_object *region_obj,
 	last_obj_ptr = &handler_obj->address_space.region_list;
 
 	while (obj_desc) {
+
 		/* Is this the correct Region? */
 
 		if (obj_desc == region_obj) {
@@ -580,7 +576,6 @@ acpi_ev_detach_region(union acpi_operand_object *region_obj,
 
 	return_VOID;
 }
-
 
 /*******************************************************************************
  *
@@ -686,6 +681,7 @@ acpi_ev_install_handler(acpi_handle obj_handle,
 
 	obj_desc = acpi_ns_get_attached_object(node);
 	if (!obj_desc) {
+
 		/* No object, just exit */
 
 		return (AE_OK);
@@ -694,10 +690,12 @@ acpi_ev_install_handler(acpi_handle obj_handle,
 	/* Devices are handled different than regions */
 
 	if (ACPI_GET_OBJECT_TYPE(obj_desc) == ACPI_TYPE_DEVICE) {
+
 		/* Check if this Device already has a handler for this address space */
 
 		next_handler_obj = obj_desc->device.handler;
 		while (next_handler_obj) {
+
 			/* Found a handler, is it for the same address space? */
 
 			if (next_handler_obj->address_space.space_id ==
@@ -756,7 +754,6 @@ acpi_ev_install_handler(acpi_handle obj_handle,
 	status = acpi_ev_attach_region(handler_obj, obj_desc, FALSE);
 	return (status);
 }
-
 
 /*******************************************************************************
  *
@@ -860,6 +857,7 @@ acpi_ev_install_space_handler(struct acpi_namespace_node * node,
 		/* Walk the handler list for this device */
 
 		while (handler_obj) {
+
 			/* Same space_id indicates a handler already installed */
 
 			if (handler_obj->address_space.space_id == space_id) {
@@ -1056,6 +1054,7 @@ acpi_ev_reg_run(acpi_handle obj_handle,
 
 	obj_desc = acpi_ns_get_attached_object(node);
 	if (!obj_desc) {
+
 		/* No object, just exit */
 
 		return (AE_OK);

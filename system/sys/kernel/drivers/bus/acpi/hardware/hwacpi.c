@@ -6,7 +6,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -58,7 +58,6 @@ ACPI_MODULE_NAME("hwacpi")
  * DESCRIPTION: Transitions the system into the requested mode.
  *
  ******************************************************************************/
-
 acpi_status acpi_hw_set_mode(u32 mode)
 {
 

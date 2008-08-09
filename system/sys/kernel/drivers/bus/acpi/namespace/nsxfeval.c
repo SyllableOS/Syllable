@@ -6,7 +6,7 @@
  ******************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -48,7 +48,6 @@
 
 #define _COMPONENT          ACPI_NAMESPACE
 ACPI_MODULE_NAME("nsxfeval")
-
 #ifdef ACPI_FUTURE_USAGE
 /*******************************************************************************
  *
@@ -73,8 +72,8 @@ ACPI_MODULE_NAME("nsxfeval")
 acpi_status
 acpi_evaluate_object_typed(acpi_handle handle,
 			   acpi_string pathname,
-			   struct acpi_object_list * external_params,
-			   struct acpi_buffer * return_buffer,
+			   struct acpi_object_list *external_params,
+			   struct acpi_buffer *return_buffer,
 			   acpi_object_type return_type)
 {
 	acpi_status status;
@@ -108,6 +107,7 @@ acpi_evaluate_object_typed(acpi_handle handle,
 	}
 
 	if (return_buffer->length == 0) {
+
 		/* Error because caller specifically asked for a return value */
 
 		ACPI_ERROR((AE_INFO, "No return value"));
@@ -142,7 +142,6 @@ acpi_evaluate_object_typed(acpi_handle handle,
 
 ACPI_EXPORT_SYMBOL(acpi_evaluate_object_typed)
 #endif				/*  ACPI_FUTURE_USAGE  */
-
 /*******************************************************************************
  *
  * FUNCTION:    acpi_evaluate_object
@@ -162,7 +161,6 @@ ACPI_EXPORT_SYMBOL(acpi_evaluate_object_typed)
  *              be valid (non-null)
  *
  ******************************************************************************/
-
 acpi_status
 acpi_evaluate_object(acpi_handle handle,
 		     acpi_string pathname,
@@ -170,7 +168,6 @@ acpi_evaluate_object(acpi_handle handle,
 		     struct acpi_buffer *return_buffer)
 {
 	acpi_status status;
-	acpi_status status2;
 	struct acpi_evaluate_info *info;
 	acpi_size buffer_space_needed;
 	u32 i;
@@ -329,14 +326,12 @@ acpi_evaluate_object(acpi_handle handle,
 		 * Delete the internal return object. NOTE: Interpreter must be
 		 * locked to avoid race condition.
 		 */
-		status2 = acpi_ex_enter_interpreter();
-		if (ACPI_SUCCESS(status2)) {
+		acpi_ex_enter_interpreter();
 
-			/* Remove one reference on the return object (should delete it) */
+		/* Remove one reference on the return object (should delete it) */
 
-			acpi_ut_remove_reference(info->return_object);
-			acpi_ex_exit_interpreter();
-		}
+		acpi_ut_remove_reference(info->return_object);
+		acpi_ex_exit_interpreter();
 	}
 
       cleanup:
@@ -385,7 +380,6 @@ ACPI_EXPORT_SYMBOL(acpi_evaluate_object)
  *              function, etc.
  *
  ******************************************************************************/
-
 acpi_status
 acpi_walk_namespace(acpi_object_type type,
 		    acpi_handle start_object,
@@ -437,7 +431,6 @@ ACPI_EXPORT_SYMBOL(acpi_walk_namespace)
  *              on that.
  *
  ******************************************************************************/
-
 static acpi_status
 acpi_ns_get_device_callback(acpi_handle obj_handle,
 			    u32 nesting_level,
@@ -447,9 +440,10 @@ acpi_ns_get_device_callback(acpi_handle obj_handle,
 	acpi_status status;
 	struct acpi_namespace_node *node;
 	u32 flags;
-	struct acpi_device_id hid;
+	struct acpica_device_id hid;
 	struct acpi_compatible_id_list *cid;
 	acpi_native_uint i;
+	int found;
 
 	status = acpi_ut_acquire_mutex(ACPI_MTX_NAMESPACE);
 	if (ACPI_FAILURE(status)) {
@@ -473,9 +467,13 @@ acpi_ns_get_device_callback(acpi_handle obj_handle,
 		return (AE_CTRL_DEPTH);
 	}
 
-	if (!(flags & ACPI_STA_DEVICE_PRESENT)) {
-		/* Don't examine children of the device if not present */
-
+	if (!(flags & ACPI_STA_DEVICE_PRESENT) &&
+	    !(flags & ACPI_STA_DEVICE_FUNCTIONING)) {
+		/*
+		 * Don't examine the children of the device only when the
+		 * device is neither present nor functional. See ACPI spec,
+		 * description of _STA for more information.
+		 */
 		return (AE_CTRL_DEPTH);
 	}
 
@@ -490,6 +488,7 @@ acpi_ns_get_device_callback(acpi_handle obj_handle,
 		}
 
 		if (ACPI_STRNCMP(hid.value, info->hid, sizeof(hid.value)) != 0) {
+
 			/* Get the list of Compatible IDs */
 
 			status = acpi_ut_execute_CID(node, &cid);
@@ -501,16 +500,19 @@ acpi_ns_get_device_callback(acpi_handle obj_handle,
 
 			/* Walk the CID list */
 
+			found = 0;
 			for (i = 0; i < cid->count; i++) {
 				if (ACPI_STRNCMP(cid->id[i].value, info->hid,
 						 sizeof(struct
-							acpi_compatible_id)) !=
+							acpi_compatible_id)) ==
 				    0) {
-					ACPI_FREE(cid);
-					return (AE_OK);
+					found = 1;
+					break;
 				}
 			}
 			ACPI_FREE(cid);
+			if (!found)
+				return (AE_OK);
 		}
 	}
 
@@ -518,7 +520,6 @@ acpi_ns_get_device_callback(acpi_handle obj_handle,
 				     return_value);
 	return (status);
 }
-
 
 /*******************************************************************************
  *
@@ -541,12 +542,12 @@ acpi_ns_get_device_callback(acpi_handle obj_handle,
  *              value is returned to the caller.
  *
  *              This is a wrapper for walk_namespace, but the callback performs
- *              additional filtering. Please see acpi_get_device_callback.
+ *              additional filtering. Please see acpi_ns_get_device_callback.
  *
  ******************************************************************************/
 
 acpi_status
-acpi_get_devices(char *HID,
+acpi_get_devices(const char *HID,
 		 acpi_walk_callback user_function,
 		 void *context, void **return_value)
 {
@@ -604,7 +605,6 @@ ACPI_EXPORT_SYMBOL(acpi_get_devices)
  * DESCRIPTION: Attach arbitrary data and handler to a namespace node.
  *
  ******************************************************************************/
-
 acpi_status
 acpi_attach_data(acpi_handle obj_handle,
 		 acpi_object_handler handler, void *data)
@@ -652,7 +652,6 @@ ACPI_EXPORT_SYMBOL(acpi_attach_data)
  * DESCRIPTION: Remove data that was previously attached to a node.
  *
  ******************************************************************************/
-
 acpi_status
 acpi_detach_data(acpi_handle obj_handle, acpi_object_handler handler)
 {
@@ -700,7 +699,6 @@ ACPI_EXPORT_SYMBOL(acpi_detach_data)
  * DESCRIPTION: Retrieve data that was previously attached to a namespace node.
  *
  ******************************************************************************/
-
 acpi_status
 acpi_get_data(acpi_handle obj_handle, acpi_object_handler handler, void **data)
 {

@@ -5,7 +5,7 @@
  ******************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,7 +40,6 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGES.
  */
-
 
 #include <acpi/acpi.h>
 #include <acpi/acparser.h>
@@ -203,6 +202,7 @@ acpi_ds_is_result_used(union acpi_parse_object * op,
 	 */
 	if ((!op->common.parent) ||
 	    (op->common.parent->common.aml_opcode == AML_SCOPE_OP)) {
+
 		/* No parent, the return value cannot possibly be used */
 
 		ACPI_DEBUG_PRINT((ACPI_DB_DISPATCH,
@@ -261,7 +261,6 @@ acpi_ds_is_result_used(union acpi_parse_object * op,
 
 		goto result_not_used;
 
-
 	case AML_CLASS_CREATE:
 
 		/*
@@ -279,7 +278,9 @@ acpi_ds_is_result_used(union acpi_parse_object * op,
 			AML_VAR_PACKAGE_OP)
 		    || (op->common.parent->common.aml_opcode == AML_BUFFER_OP)
 		    || (op->common.parent->common.aml_opcode ==
-			AML_INT_EVAL_SUBTREE_OP)) {
+			AML_INT_EVAL_SUBTREE_OP)
+		    || (op->common.parent->common.aml_opcode ==
+			AML_BANK_FIELD_OP)) {
 			/*
 			 * These opcodes allow term_arg(s) as operands and therefore
 			 * the operands can be method calls.  The result is used.
@@ -288,7 +289,6 @@ acpi_ds_is_result_used(union acpi_parse_object * op,
 		}
 
 		goto result_not_used;
-
 
 	default:
 
@@ -355,6 +355,7 @@ acpi_ds_delete_result_if_not_used(union acpi_parse_object *op,
 	}
 
 	if (!acpi_ds_is_result_used(op, walk_state)) {
+
 		/* Must pop the result stack (obj_desc should be equal to result_obj) */
 
 		status = acpi_ds_result_pop(&obj_desc, walk_state);
@@ -365,7 +366,6 @@ acpi_ds_delete_result_if_not_used(union acpi_parse_object *op,
 
 	return_VOID;
 }
-
 
 /*******************************************************************************
  *
@@ -439,7 +439,6 @@ void acpi_ds_clear_operands(struct acpi_walk_state *walk_state)
 }
 #endif
 
-
 /*******************************************************************************
  *
  * FUNCTION:    acpi_ds_create_operand
@@ -475,7 +474,8 @@ acpi_ds_create_operand(struct acpi_walk_state *walk_state,
 	/* A valid name must be looked up in the namespace */
 
 	if ((arg->common.aml_opcode == AML_INT_NAMEPATH_OP) &&
-	    (arg->common.value.string)) {
+	    (arg->common.value.string) &&
+	    !(arg->common.flags & ACPI_PARSEOP_IN_STACK)) {
 		ACPI_DEBUG_PRINT((ACPI_DB_DISPATCH, "Getting a name: Arg=%p\n",
 				  arg));
 
@@ -528,6 +528,7 @@ acpi_ds_create_operand(struct acpi_walk_state *walk_state,
 			    && (parent_op->common.aml_opcode != AML_REGION_OP)
 			    && (parent_op->common.aml_opcode !=
 				AML_INT_NAMEPATH_OP)) {
+
 				/* Enter name into namespace if not found */
 
 				interpreter_mode = ACPI_IMODE_LOAD_PASS2;
@@ -558,10 +559,9 @@ acpi_ds_create_operand(struct acpi_walk_state *walk_state,
 					 * indicate this to the interpreter, set the
 					 * object to the root
 					 */
-					obj_desc =
-					    ACPI_CAST_PTR(union
-							  acpi_operand_object,
-							  acpi_gbl_root_node);
+					obj_desc = ACPI_CAST_PTR(union
+								 acpi_operand_object,
+								 acpi_gbl_root_node);
 					status = AE_OK;
 				} else {
 					/*
@@ -598,7 +598,8 @@ acpi_ds_create_operand(struct acpi_walk_state *walk_state,
 	} else {
 		/* Check for null name case */
 
-		if (arg->common.aml_opcode == AML_INT_NAMEPATH_OP) {
+		if ((arg->common.aml_opcode == AML_INT_NAMEPATH_OP) &&
+		    !(arg->common.flags & ACPI_PARSEOP_IN_STACK)) {
 			/*
 			 * If the name is null, this means that this is an
 			 * optional result parameter that was not specified
@@ -620,7 +621,8 @@ acpi_ds_create_operand(struct acpi_walk_state *walk_state,
 			return_ACPI_STATUS(AE_NOT_IMPLEMENTED);
 		}
 
-		if (op_info->flags & AML_HAS_RETVAL) {
+		if ((op_info->flags & AML_HAS_RETVAL)
+		    || (arg->common.flags & ACPI_PARSEOP_IN_STACK)) {
 			ACPI_DEBUG_PRINT((ACPI_DB_DISPATCH,
 					  "Argument previously created, already stacked\n"));
 
@@ -633,9 +635,7 @@ acpi_ds_create_operand(struct acpi_walk_state *walk_state,
 			 * Use value that was already previously returned
 			 * by the evaluation of this argument
 			 */
-			status =
-			    acpi_ds_result_pop_from_bottom(&obj_desc,
-							   walk_state);
+			status = acpi_ds_result_pop(&obj_desc, walk_state);
 			if (ACPI_FAILURE(status)) {
 				/*
 				 * Only error is underflow, and this indicates
@@ -701,27 +701,52 @@ acpi_ds_create_operands(struct acpi_walk_state *walk_state,
 {
 	acpi_status status = AE_OK;
 	union acpi_parse_object *arg;
+	union acpi_parse_object *arguments[ACPI_OBJ_NUM_OPERANDS];
 	u32 arg_count = 0;
+	u32 index = walk_state->num_operands;
+	u32 i;
 
 	ACPI_FUNCTION_TRACE_PTR(ds_create_operands, first_arg);
 
-	/* For all arguments in the list... */
+	/* Get all arguments in the list */
 
 	arg = first_arg;
 	while (arg) {
-		status = acpi_ds_create_operand(walk_state, arg, arg_count);
-		if (ACPI_FAILURE(status)) {
-			goto cleanup;
+		if (index >= ACPI_OBJ_NUM_OPERANDS) {
+			return_ACPI_STATUS(AE_BAD_DATA);
 		}
 
-		ACPI_DEBUG_PRINT((ACPI_DB_DISPATCH,
-				  "Arg #%d (%p) done, Arg1=%p\n", arg_count,
-				  arg, first_arg));
+		arguments[index] = arg;
+		walk_state->operands[index] = NULL;
 
 		/* Move on to next argument, if any */
 
 		arg = arg->common.next;
 		arg_count++;
+		index++;
+	}
+
+	index--;
+
+	/* It is the appropriate order to get objects from the Result stack */
+
+	for (i = 0; i < arg_count; i++) {
+		arg = arguments[index];
+
+		/* Force the filling of the operand stack in inverse order */
+
+		walk_state->operand_index = (u8) index;
+
+		status = acpi_ds_create_operand(walk_state, arg, index);
+		if (ACPI_FAILURE(status)) {
+			goto cleanup;
+		}
+
+		index--;
+
+		ACPI_DEBUG_PRINT((ACPI_DB_DISPATCH,
+				  "Arg #%d (%p) done, Arg1=%p\n", index, arg,
+				  first_arg));
 	}
 
 	return_ACPI_STATUS(status);
@@ -732,9 +757,112 @@ acpi_ds_create_operands(struct acpi_walk_state *walk_state,
 	 * pop everything off of the operand stack and delete those
 	 * objects
 	 */
-	(void)acpi_ds_obj_stack_pop_and_delete(arg_count, walk_state);
+	acpi_ds_obj_stack_pop_and_delete(arg_count, walk_state);
 
-	ACPI_EXCEPTION((AE_INFO, status, "While creating Arg %d",
-			(arg_count + 1)));
+	ACPI_EXCEPTION((AE_INFO, status, "While creating Arg %d", index));
+	return_ACPI_STATUS(status);
+}
+
+/*****************************************************************************
+ *
+ * FUNCTION:    acpi_ds_evaluate_name_path
+ *
+ * PARAMETERS:  walk_state      - Current state of the parse tree walk,
+ *                                the opcode of current operation should be
+ *                                AML_INT_NAMEPATH_OP
+ *
+ * RETURN:      Status
+ *
+ * DESCRIPTION: Translate the -name_path- parse tree object to the equivalent
+ *              interpreter object, convert it to value, if needed, duplicate
+ *              it, if needed, and push it onto the current result stack.
+ *
+ ****************************************************************************/
+
+acpi_status acpi_ds_evaluate_name_path(struct acpi_walk_state *walk_state)
+{
+	acpi_status status = AE_OK;
+	union acpi_parse_object *op = walk_state->op;
+	union acpi_operand_object **operand = &walk_state->operands[0];
+	union acpi_operand_object *new_obj_desc;
+	u8 type;
+
+	ACPI_FUNCTION_TRACE_PTR(ds_evaluate_name_path, walk_state);
+
+	if (!op->common.parent) {
+
+		/* This happens after certain exception processing */
+
+		goto exit;
+	}
+
+	if ((op->common.parent->common.aml_opcode == AML_PACKAGE_OP) ||
+	    (op->common.parent->common.aml_opcode == AML_VAR_PACKAGE_OP) ||
+	    (op->common.parent->common.aml_opcode == AML_REF_OF_OP)) {
+
+		/* TBD: Should we specify this feature as a bit of op_info->Flags of these opcodes? */
+
+		goto exit;
+	}
+
+	status = acpi_ds_create_operand(walk_state, op, 0);
+	if (ACPI_FAILURE(status)) {
+		goto exit;
+	}
+
+	if (op->common.flags & ACPI_PARSEOP_TARGET) {
+		new_obj_desc = *operand;
+		goto push_result;
+	}
+
+	type = ACPI_GET_OBJECT_TYPE(*operand);
+
+	status = acpi_ex_resolve_to_value(operand, walk_state);
+	if (ACPI_FAILURE(status)) {
+		goto exit;
+	}
+
+	if (type == ACPI_TYPE_INTEGER) {
+
+		/* It was incremented by acpi_ex_resolve_to_value */
+
+		acpi_ut_remove_reference(*operand);
+
+		status =
+		    acpi_ut_copy_iobject_to_iobject(*operand, &new_obj_desc,
+						    walk_state);
+		if (ACPI_FAILURE(status)) {
+			goto exit;
+		}
+	} else {
+		/*
+		 * The object either was anew created or is
+		 * a Namespace node - don't decrement it.
+		 */
+		new_obj_desc = *operand;
+	}
+
+	/* Cleanup for name-path operand */
+
+	status = acpi_ds_obj_stack_pop(1, walk_state);
+	if (ACPI_FAILURE(status)) {
+		walk_state->result_obj = new_obj_desc;
+		goto exit;
+	}
+
+      push_result:
+
+	walk_state->result_obj = new_obj_desc;
+
+	status = acpi_ds_result_push(walk_state->result_obj, walk_state);
+	if (ACPI_SUCCESS(status)) {
+
+		/* Force to take it from stack */
+
+		op->common.flags |= ACPI_PARSEOP_IN_STACK;
+	}
+
+      exit:
+
 	return_ACPI_STATUS(status);
 }

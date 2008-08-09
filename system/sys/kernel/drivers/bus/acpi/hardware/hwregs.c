@@ -7,7 +7,7 @@
  ******************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -43,7 +43,6 @@
  * POSSIBILITY OF SUCH DAMAGES.
  */
 
-
 #include <acpi/acpi.h>
 #include <acpi/acnamesp.h>
 #include <acpi/acevents.h>
@@ -76,8 +75,7 @@ acpi_status acpi_hw_clear_acpi_status(void)
 
 	lock_flags = acpi_os_acquire_lock(acpi_gbl_hardware_lock);
 
-	status = acpi_hw_register_write(ACPI_MTX_DO_NOT_LOCK,
-					ACPI_REGISTER_PM1_STATUS,
+	status = acpi_hw_register_write(ACPI_REGISTER_PM1_STATUS,
 					ACPI_BITMASK_ALL_FIXED_STATUS);
 	if (ACPI_FAILURE(status)) {
 		goto unlock_and_exit;
@@ -233,7 +231,6 @@ ACPI_EXPORT_SYMBOL(acpi_get_sleep_type_data)
  * DESCRIPTION: Map register_id into a register bitmask.
  *
  ******************************************************************************/
-
 struct acpi_bit_register_info *acpi_hw_get_bit_register_info(u32 register_id)
 {
 	ACPI_FUNCTION_ENTRY();
@@ -246,7 +243,6 @@ struct acpi_bit_register_info *acpi_hw_get_bit_register_info(u32 register_id)
 
 	return (&acpi_gbl_bit_register_info[register_id]);
 }
-
 
 /*******************************************************************************
  *
@@ -262,7 +258,7 @@ struct acpi_bit_register_info *acpi_hw_get_bit_register_info(u32 register_id)
  *
  ******************************************************************************/
 
-acpi_status acpi_get_register(u32 register_id, u32 * return_value)
+acpi_status acpi_get_register_unlocked(u32 register_id, u32 * return_value)
 {
 	u32 register_value = 0;
 	struct acpi_bit_register_info *bit_reg_info;
@@ -279,8 +275,7 @@ acpi_status acpi_get_register(u32 register_id, u32 * return_value)
 
 	/* Read from the register */
 
-	status = acpi_hw_register_read(ACPI_MTX_LOCK,
-				       bit_reg_info->parent_register,
+	status = acpi_hw_register_read(bit_reg_info->parent_register,
 				       &register_value);
 
 	if (ACPI_SUCCESS(status)) {
@@ -299,6 +294,16 @@ acpi_status acpi_get_register(u32 register_id, u32 * return_value)
 	}
 
 	return_ACPI_STATUS(status);
+}
+
+acpi_status acpi_get_register(u32 register_id, u32 * return_value)
+{
+	acpi_status status;
+	acpi_cpu_flags flags;
+	flags = acpi_os_acquire_lock(acpi_gbl_hardware_lock);
+	status = acpi_get_register_unlocked(register_id, return_value);
+	acpi_os_release_lock(acpi_gbl_hardware_lock, flags);
+	return status;
 }
 
 ACPI_EXPORT_SYMBOL(acpi_get_register)
@@ -338,8 +343,7 @@ acpi_status acpi_set_register(u32 register_id, u32 value)
 
 	/* Always do a register read first so we can insert the new bits  */
 
-	status = acpi_hw_register_read(ACPI_MTX_DO_NOT_LOCK,
-				       bit_reg_info->parent_register,
+	status = acpi_hw_register_read(bit_reg_info->parent_register,
 				       &register_value);
 	if (ACPI_FAILURE(status)) {
 		goto unlock_and_exit;
@@ -366,8 +370,7 @@ acpi_status acpi_set_register(u32 register_id, u32 value)
 						   bit_reg_info->
 						   access_bit_mask);
 		if (value) {
-			status = acpi_hw_register_write(ACPI_MTX_DO_NOT_LOCK,
-							ACPI_REGISTER_PM1_STATUS,
+			status = acpi_hw_register_write(ACPI_REGISTER_PM1_STATUS,
 							(u16) value);
 			register_value = 0;
 		}
@@ -380,8 +383,7 @@ acpi_status acpi_set_register(u32 register_id, u32 value)
 					   bit_reg_info->access_bit_mask,
 					   value);
 
-		status = acpi_hw_register_write(ACPI_MTX_DO_NOT_LOCK,
-						ACPI_REGISTER_PM1_ENABLE,
+		status = acpi_hw_register_write(ACPI_REGISTER_PM1_ENABLE,
 						(u16) register_value);
 		break;
 
@@ -400,15 +402,13 @@ acpi_status acpi_set_register(u32 register_id, u32 value)
 					   bit_reg_info->access_bit_mask,
 					   value);
 
-		status = acpi_hw_register_write(ACPI_MTX_DO_NOT_LOCK,
-						ACPI_REGISTER_PM1_CONTROL,
+		status = acpi_hw_register_write(ACPI_REGISTER_PM1_CONTROL,
 						(u16) register_value);
 		break;
 
 	case ACPI_REGISTER_PM2_CONTROL:
 
-		status = acpi_hw_register_read(ACPI_MTX_DO_NOT_LOCK,
-					       ACPI_REGISTER_PM2_CONTROL,
+		status = acpi_hw_register_read(ACPI_REGISTER_PM2_CONTROL,
 					       &register_value);
 		if (ACPI_FAILURE(status)) {
 			goto unlock_and_exit;
@@ -433,8 +433,7 @@ acpi_status acpi_set_register(u32 register_id, u32 value)
 						     xpm2_control_block.
 						     address)));
 
-		status = acpi_hw_register_write(ACPI_MTX_DO_NOT_LOCK,
-						ACPI_REGISTER_PM2_CONTROL,
+		status = acpi_hw_register_write(ACPI_REGISTER_PM2_CONTROL,
 						(u8) (register_value));
 		break;
 
@@ -464,8 +463,7 @@ ACPI_EXPORT_SYMBOL(acpi_set_register)
  *
  * FUNCTION:    acpi_hw_register_read
  *
- * PARAMETERS:  use_lock            - Lock hardware? True/False
- *              register_id         - ACPI Register ID
+ * PARAMETERS:  register_id         - ACPI Register ID
  *              return_value        - Where the register value is returned
  *
  * RETURN:      Status and the value read.
@@ -474,18 +472,13 @@ ACPI_EXPORT_SYMBOL(acpi_set_register)
  *
  ******************************************************************************/
 acpi_status
-acpi_hw_register_read(u8 use_lock, u32 register_id, u32 * return_value)
+acpi_hw_register_read(u32 register_id, u32 * return_value)
 {
 	u32 value1 = 0;
 	u32 value2 = 0;
 	acpi_status status;
-	acpi_cpu_flags lock_flags = 0;
 
 	ACPI_FUNCTION_TRACE(hw_register_read);
-
-	if (ACPI_MTX_LOCK == use_lock) {
-		lock_flags = acpi_os_acquire_lock(acpi_gbl_hardware_lock);
-	}
 
 	switch (register_id) {
 	case ACPI_REGISTER_PM1_STATUS:	/* 16-bit access */
@@ -494,7 +487,7 @@ acpi_hw_register_read(u8 use_lock, u32 register_id, u32 * return_value)
 		    acpi_hw_low_level_read(16, &value1,
 					   &acpi_gbl_FADT.xpm1a_event_block);
 		if (ACPI_FAILURE(status)) {
-			goto unlock_and_exit;
+			goto exit;
 		}
 
 		/* PM1B is optional */
@@ -510,7 +503,7 @@ acpi_hw_register_read(u8 use_lock, u32 register_id, u32 * return_value)
 		status =
 		    acpi_hw_low_level_read(16, &value1, &acpi_gbl_xpm1a_enable);
 		if (ACPI_FAILURE(status)) {
-			goto unlock_and_exit;
+			goto exit;
 		}
 
 		/* PM1B is optional */
@@ -526,7 +519,7 @@ acpi_hw_register_read(u8 use_lock, u32 register_id, u32 * return_value)
 		    acpi_hw_low_level_read(16, &value1,
 					   &acpi_gbl_FADT.xpm1a_control_block);
 		if (ACPI_FAILURE(status)) {
-			goto unlock_and_exit;
+			goto exit;
 		}
 
 		status =
@@ -561,10 +554,7 @@ acpi_hw_register_read(u8 use_lock, u32 register_id, u32 * return_value)
 		break;
 	}
 
-      unlock_and_exit:
-	if (ACPI_MTX_LOCK == use_lock) {
-		acpi_os_release_lock(acpi_gbl_hardware_lock, lock_flags);
-	}
+      exit:
 
 	if (ACPI_SUCCESS(status)) {
 		*return_value = value1;
@@ -577,8 +567,7 @@ acpi_hw_register_read(u8 use_lock, u32 register_id, u32 * return_value)
  *
  * FUNCTION:    acpi_hw_register_write
  *
- * PARAMETERS:  use_lock            - Lock hardware? True/False
- *              register_id         - ACPI Register ID
+ * PARAMETERS:  register_id         - ACPI Register ID
  *              Value               - The value to write
  *
  * RETURN:      Status
@@ -600,28 +589,22 @@ acpi_hw_register_read(u8 use_lock, u32 register_id, u32 * return_value)
  *
  ******************************************************************************/
 
-acpi_status acpi_hw_register_write(u8 use_lock, u32 register_id, u32 value)
+acpi_status acpi_hw_register_write(u32 register_id, u32 value)
 {
 	acpi_status status;
-	acpi_cpu_flags lock_flags = 0;
 	u32 read_value;
 
 	ACPI_FUNCTION_TRACE(hw_register_write);
-
-	if (ACPI_MTX_LOCK == use_lock) {
-		lock_flags = acpi_os_acquire_lock(acpi_gbl_hardware_lock);
-	}
 
 	switch (register_id) {
 	case ACPI_REGISTER_PM1_STATUS:	/* 16-bit access */
 
 		/* Perform a read first to preserve certain bits (per ACPI spec) */
 
-		status = acpi_hw_register_read(ACPI_MTX_DO_NOT_LOCK,
-					       ACPI_REGISTER_PM1_STATUS,
+		status = acpi_hw_register_read(ACPI_REGISTER_PM1_STATUS,
 					       &read_value);
 		if (ACPI_FAILURE(status)) {
-			goto unlock_and_exit;
+			goto exit;
 		}
 
 		/* Insert the bits to be preserved */
@@ -635,7 +618,7 @@ acpi_status acpi_hw_register_write(u8 use_lock, u32 register_id, u32 value)
 		    acpi_hw_low_level_write(16, value,
 					    &acpi_gbl_FADT.xpm1a_event_block);
 		if (ACPI_FAILURE(status)) {
-			goto unlock_and_exit;
+			goto exit;
 		}
 
 		/* PM1B is optional */
@@ -650,7 +633,7 @@ acpi_status acpi_hw_register_write(u8 use_lock, u32 register_id, u32 value)
 		status =
 		    acpi_hw_low_level_write(16, value, &acpi_gbl_xpm1a_enable);
 		if (ACPI_FAILURE(status)) {
-			goto unlock_and_exit;
+			goto exit;
 		}
 
 		/* PM1B is optional */
@@ -664,11 +647,10 @@ acpi_status acpi_hw_register_write(u8 use_lock, u32 register_id, u32 value)
 		/*
 		 * Perform a read first to preserve certain bits (per ACPI spec)
 		 */
-		status = acpi_hw_register_read(ACPI_MTX_DO_NOT_LOCK,
-					       ACPI_REGISTER_PM1_CONTROL,
+		status = acpi_hw_register_read(ACPI_REGISTER_PM1_CONTROL,
 					       &read_value);
 		if (ACPI_FAILURE(status)) {
-			goto unlock_and_exit;
+			goto exit;
 		}
 
 		/* Insert the bits to be preserved */
@@ -682,7 +664,7 @@ acpi_status acpi_hw_register_write(u8 use_lock, u32 register_id, u32 value)
 		    acpi_hw_low_level_write(16, value,
 					    &acpi_gbl_FADT.xpm1a_control_block);
 		if (ACPI_FAILURE(status)) {
-			goto unlock_and_exit;
+			goto exit;
 		}
 
 		status =
@@ -731,11 +713,7 @@ acpi_status acpi_hw_register_write(u8 use_lock, u32 register_id, u32 value)
 		break;
 	}
 
-      unlock_and_exit:
-	if (ACPI_MTX_LOCK == use_lock) {
-		acpi_os_release_lock(acpi_gbl_hardware_lock, lock_flags);
-	}
-
+      exit:
 	return_ACPI_STATUS(status);
 }
 
@@ -809,7 +787,6 @@ acpi_hw_low_level_read(u32 width, u32 * value, struct acpi_generic_address *reg)
 	return (status);
 }
 
-
 /******************************************************************************
  *
  * FUNCTION:    acpi_hw_low_level_write
@@ -878,4 +855,3 @@ acpi_hw_low_level_write(u32 width, u32 value, struct acpi_generic_address * reg)
 
 	return (status);
 }
-

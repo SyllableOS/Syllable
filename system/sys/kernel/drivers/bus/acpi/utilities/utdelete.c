@@ -5,7 +5,7 @@
  ******************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,7 +40,6 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGES.
  */
-
 
 #include <acpi/acpi.h>
 #include <acpi/acinterp.h>
@@ -97,6 +96,7 @@ static void acpi_ut_delete_internal_obj(union acpi_operand_object *object)
 		/* Free the actual string buffer */
 
 		if (!(object->common.flags & AOPOBJ_STATIC_POINTER)) {
+
 			/* But only if it is NOT a pointer into an ACPI table */
 
 			obj_pointer = object->string.pointer;
@@ -112,6 +112,7 @@ static void acpi_ut_delete_internal_obj(union acpi_operand_object *object)
 		/* Free the actual buffer */
 
 		if (!(object->common.flags & AOPOBJ_STATIC_POINTER)) {
+
 			/* But only if it is NOT a pointer into an ACPI table */
 
 			obj_pointer = object->buffer.pointer;
@@ -133,7 +134,6 @@ static void acpi_ut_delete_internal_obj(union acpi_operand_object *object)
 
 		obj_pointer = object->package.elements;
 		break;
-
 
 	case ACPI_TYPE_DEVICE:
 
@@ -158,7 +158,7 @@ static void acpi_ut_delete_internal_obj(union acpi_operand_object *object)
 				  "***** Mutex %p, OS Mutex %p\n",
 				  object, object->mutex.os_mutex));
 
-		if (object->mutex.os_mutex == acpi_gbl_global_lock_mutex) {
+		if (object == acpi_gbl_global_lock_mutex) {
 
 			/* Global Lock has extra semaphore */
 
@@ -170,6 +170,7 @@ static void acpi_ut_delete_internal_obj(union acpi_operand_object *object)
 			acpi_os_delete_mutex(object->mutex.os_mutex);
 			acpi_gbl_global_lock_mutex = NULL;
 		} else {
+			acpi_ex_unlink_mutex(object);
 			acpi_os_delete_mutex(object->mutex.os_mutex);
 		}
 		break;
@@ -251,6 +252,16 @@ static void acpi_ut_delete_internal_obj(union acpi_operand_object *object)
 		}
 		break;
 
+	case ACPI_TYPE_LOCAL_BANK_FIELD:
+
+		ACPI_DEBUG_PRINT((ACPI_DB_ALLOCATIONS,
+				  "***** Bank Field %p\n", object));
+
+		second_desc = acpi_ns_get_secondary_object(object);
+		if (second_desc) {
+			acpi_ut_delete_object_desc(second_desc);
+		}
+		break;
 
 	default:
 		break;
@@ -272,7 +283,6 @@ static void acpi_ut_delete_internal_obj(union acpi_operand_object *object)
 	acpi_ut_delete_object_desc(object);
 	return_VOID;
 }
-
 
 /*******************************************************************************
  *
@@ -304,7 +314,6 @@ void acpi_ut_delete_internal_object_list(union acpi_operand_object **obj_list)
 	ACPI_FREE(obj_list);
 	return_VOID;
 }
-
 
 /*******************************************************************************
  *
@@ -374,7 +383,6 @@ acpi_ut_update_ref_count(union acpi_operand_object *object, u32 action)
 		if (new_count == 0) {
 			acpi_ut_delete_internal_obj(object);
 		}
-
 		break;
 
 	case REF_FORCE_DELETE:
@@ -527,10 +535,12 @@ acpi_ut_update_object_reference(union acpi_operand_object *object, u16 action)
 
 		case ACPI_TYPE_LOCAL_REFERENCE:
 			/*
-			 * The target of an Index (a package, string, or buffer) must track
-			 * changes to the ref count of the index.
+			 * The target of an Index (a package, string, or buffer) or a named
+			 * reference must track changes to the ref count of the index or
+			 * target object.
 			 */
-			if (object->reference.opcode == AML_INDEX_OP) {
+			if ((object->reference.opcode == AML_INDEX_OP) ||
+			    (object->reference.opcode == AML_INT_NAMEPATH_OP)) {
 				next_object = object->reference.object;
 			}
 			break;
@@ -603,7 +613,6 @@ void acpi_ut_add_reference(union acpi_operand_object *object)
 	(void)acpi_ut_update_object_reference(object, REF_INCREMENT);
 	return_VOID;
 }
-
 
 /*******************************************************************************
  *

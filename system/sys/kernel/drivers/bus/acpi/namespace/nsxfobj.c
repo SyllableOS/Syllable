@@ -6,7 +6,7 @@
  ******************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,7 +41,6 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGES.
  */
-
 
 #include <acpi/acpi.h>
 #include <acpi/acnamesp.h>
@@ -159,7 +158,6 @@ ACPI_EXPORT_SYMBOL(acpi_get_type)
  *              Handle.
  *
  ******************************************************************************/
-
 acpi_status acpi_get_parent(acpi_handle handle, acpi_handle * ret_handle)
 {
 	struct acpi_namespace_node *node;
@@ -224,7 +222,6 @@ ACPI_EXPORT_SYMBOL(acpi_get_parent)
  *              Scope is returned.
  *
  ******************************************************************************/
-
 acpi_status
 acpi_get_next_object(acpi_object_type type,
 		     acpi_handle parent,
@@ -249,6 +246,7 @@ acpi_get_next_object(acpi_object_type type,
 	/* If null handle, use the parent */
 
 	if (!child) {
+
 		/* Start search at the beginning of the specified scope */
 
 		parent_node = acpi_ns_map_handle_to_node(parent);

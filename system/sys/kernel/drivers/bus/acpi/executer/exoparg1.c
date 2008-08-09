@@ -6,7 +6,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -42,7 +42,6 @@
  * POSSIBILITY OF SUCH DAMAGES.
  */
 
-
 #include <acpi/acpi.h>
 #include <acpi/acparser.h>
 #include <acpi/acdispat.h>
@@ -74,7 +73,6 @@ ACPI_MODULE_NAME("exoparg1")
  * The AcpiExOpcode* functions are called via the Dispatcher component with
  * fully resolved operands.
 !*/
-
 /*******************************************************************************
  *
  * FUNCTION:    acpi_ex_opcode_0A_0T_1R
@@ -123,6 +121,7 @@ acpi_status acpi_ex_opcode_0A_0T_1R(struct acpi_walk_state *walk_state)
 
 	if ((ACPI_FAILURE(status)) || walk_state->result_obj) {
 		acpi_ut_remove_reference(return_desc);
+		walk_state->result_obj = NULL;
 	} else {
 		/* Save the return value */
 
@@ -343,6 +342,7 @@ acpi_status acpi_ex_opcode_1A_1T_1R(struct acpi_walk_state *walk_state)
 			for (i = 0;
 			     (i < acpi_gbl_integer_nybble_width) && (digit > 0);
 			     i++) {
+
 				/* Get the least significant 4-bit BCD digit */
 
 				temp32 = ((u32) digit) & 0xF;
@@ -441,7 +441,6 @@ acpi_status acpi_ex_opcode_1A_1T_1R(struct acpi_walk_state *walk_state)
 			return_desc->integer.value = ACPI_INTEGER_MAX;
 			goto cleanup;
 
-
 		default:
 			/* No other opcodes get here */
 			break;
@@ -489,6 +488,7 @@ acpi_status acpi_ex_opcode_1A_1T_1R(struct acpi_walk_state *walk_state)
 		status = acpi_ex_convert_to_string(operand[0], &return_desc,
 						   ACPI_EXPLICIT_CONVERT_DECIMAL);
 		if (return_desc == operand[0]) {
+
 			/* No conversion performed, add ref to handle return value */
 			acpi_ut_add_reference(return_desc);
 		}
@@ -499,6 +499,7 @@ acpi_status acpi_ex_opcode_1A_1T_1R(struct acpi_walk_state *walk_state)
 		status = acpi_ex_convert_to_string(operand[0], &return_desc,
 						   ACPI_EXPLICIT_CONVERT_HEX);
 		if (return_desc == operand[0]) {
+
 			/* No conversion performed, add ref to handle return value */
 			acpi_ut_add_reference(return_desc);
 		}
@@ -508,6 +509,7 @@ acpi_status acpi_ex_opcode_1A_1T_1R(struct acpi_walk_state *walk_state)
 
 		status = acpi_ex_convert_to_buffer(operand[0], &return_desc);
 		if (return_desc == operand[0]) {
+
 			/* No conversion performed, add ref to handle return value */
 			acpi_ut_add_reference(return_desc);
 		}
@@ -518,6 +520,7 @@ acpi_status acpi_ex_opcode_1A_1T_1R(struct acpi_walk_state *walk_state)
 		status = acpi_ex_convert_to_integer(operand[0], &return_desc,
 						    ACPI_ANY_BASE);
 		if (return_desc == operand[0]) {
+
 			/* No conversion performed, add ref to handle return value */
 			acpi_ut_add_reference(return_desc);
 		}
@@ -543,6 +546,7 @@ acpi_status acpi_ex_opcode_1A_1T_1R(struct acpi_walk_state *walk_state)
 	}
 
 	if (ACPI_SUCCESS(status)) {
+
 		/* Store the return value computed above into the target object */
 
 		status = acpi_ex_store(return_desc, operand[1], walk_state);
@@ -629,6 +633,7 @@ acpi_status acpi_ex_opcode_1A_0T_1R(struct acpi_walk_state *walk_state)
 		temp_desc = operand[0];
 		if (ACPI_GET_DESCRIPTOR_TYPE(temp_desc) ==
 		    ACPI_DESC_TYPE_OPERAND) {
+
 			/* Internal reference object - prevent deletion */
 
 			acpi_ut_add_reference(temp_desc);
@@ -693,6 +698,7 @@ acpi_status acpi_ex_opcode_1A_0T_1R(struct acpi_walk_state *walk_state)
 		if (ACPI_FAILURE(status)) {
 			goto cleanup;
 		}
+
 		/* Allocate a descriptor to hold the type. */
 
 		return_desc = acpi_ut_create_internal_object(ACPI_TYPE_INTEGER);
@@ -734,23 +740,35 @@ acpi_status acpi_ex_opcode_1A_0T_1R(struct acpi_walk_state *walk_state)
 			value = acpi_gbl_integer_byte_width;
 			break;
 
-		case ACPI_TYPE_BUFFER:
-			value = temp_desc->buffer.length;
-			break;
-
 		case ACPI_TYPE_STRING:
 			value = temp_desc->string.length;
 			break;
 
+		case ACPI_TYPE_BUFFER:
+
+			/* Buffer arguments may not be evaluated at this point */
+
+			status = acpi_ds_get_buffer_arguments(temp_desc);
+			value = temp_desc->buffer.length;
+			break;
+
 		case ACPI_TYPE_PACKAGE:
+
+			/* Package arguments may not be evaluated at this point */
+
+			status = acpi_ds_get_package_arguments(temp_desc);
 			value = temp_desc->package.count;
 			break;
 
 		default:
 			ACPI_ERROR((AE_INFO,
-				    "Operand is not Buf/Int/Str/Pkg - found type %s",
+				    "Operand must be Buffer/Integer/String/Package - found type %s",
 				    acpi_ut_get_type_name(type)));
 			status = AE_AML_OPERAND_TYPE;
+			goto cleanup;
+		}
+
+		if (ACPI_FAILURE(status)) {
 			goto cleanup;
 		}
 
@@ -962,7 +980,6 @@ acpi_status acpi_ex_opcode_1A_0T_1R(struct acpi_walk_state *walk_state)
 						acpi_ut_add_reference
 						    (return_desc);
 					}
-
 					break;
 
 				default:
@@ -976,14 +993,12 @@ acpi_status acpi_ex_opcode_1A_0T_1R(struct acpi_walk_state *walk_state)
 				}
 				break;
 
-
 			case AML_REF_OF_OP:
 
 				return_desc = operand[0]->reference.object;
 
 				if (ACPI_GET_DESCRIPTOR_TYPE(return_desc) ==
 				    ACPI_DESC_TYPE_NAMED) {
-
 					return_desc =
 					    acpi_ns_get_attached_object((struct
 									 acpi_namespace_node

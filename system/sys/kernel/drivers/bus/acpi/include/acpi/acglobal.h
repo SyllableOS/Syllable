@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -43,7 +43,6 @@
 
 #ifndef __ACGLOBAL_H__
 #define __ACGLOBAL_H__
-
 
 /*
  * Ensure that the globals are actually defined and initialized only once.
@@ -118,10 +117,6 @@ extern u32 acpi_dbg_layer;
 
 extern u32 acpi_gbl_nesting_level;
 
-/* Event counters */
-
-ACPI_EXTERN u32 acpi_gpe_count;
-
 /* Support for dynamic control method tracing mechanism */
 
 ACPI_EXTERN u32 acpi_gbl_original_dbg_level;
@@ -175,10 +170,14 @@ ACPI_EXTERN u8 acpi_gbl_integer_nybble_width;
 ACPI_EXTERN struct acpi_mutex_info acpi_gbl_mutex_info[ACPI_NUM_MUTEX];
 
 /*
- * Global lock semaphore works in conjunction with the actual HW global lock
+ * Global lock mutex is an actual AML mutex object
+ * Global lock semaphore works in conjunction with the HW global lock
  */
-ACPI_EXTERN acpi_mutex acpi_gbl_global_lock_mutex;
+ACPI_EXTERN union acpi_operand_object *acpi_gbl_global_lock_mutex;
 ACPI_EXTERN acpi_semaphore acpi_gbl_global_lock_semaphore;
+ACPI_EXTERN u16 acpi_gbl_global_lock_handle;
+ACPI_EXTERN u8 acpi_gbl_global_lock_acquired;
+ACPI_EXTERN u8 acpi_gbl_global_lock_present;
 
 /*
  * Spinlocks are used for interfaces that can be possibly called at
@@ -218,7 +217,15 @@ ACPI_EXTERN struct acpi_object_notify_handler acpi_gbl_device_notify;
 ACPI_EXTERN struct acpi_object_notify_handler acpi_gbl_system_notify;
 ACPI_EXTERN acpi_exception_handler acpi_gbl_exception_handler;
 ACPI_EXTERN acpi_init_handler acpi_gbl_init_handler;
+ACPI_EXTERN acpi_tbl_handler acpi_gbl_table_handler;
+ACPI_EXTERN void *acpi_gbl_table_handler_context;
 ACPI_EXTERN struct acpi_walk_state *acpi_gbl_breakpoint_walk;
+
+/* Owner ID support */
+
+ACPI_EXTERN u32 acpi_gbl_owner_id_mask[ACPI_NUM_OWNERID_MASKS];
+ACPI_EXTERN u8 acpi_gbl_last_owner_id_index;
+ACPI_EXTERN u8 acpi_gbl_next_owner_id_offset;
 
 /* Misc */
 
@@ -226,18 +233,16 @@ ACPI_EXTERN u32 acpi_gbl_original_mode;
 ACPI_EXTERN u32 acpi_gbl_rsdp_original_location;
 ACPI_EXTERN u32 acpi_gbl_ns_lookup_count;
 ACPI_EXTERN u32 acpi_gbl_ps_find_count;
-ACPI_EXTERN u32 acpi_gbl_owner_id_mask[ACPI_NUM_OWNERID_MASKS];
 ACPI_EXTERN u16 acpi_gbl_pm1_enable_register_save;
-ACPI_EXTERN u16 acpi_gbl_global_lock_handle;
-ACPI_EXTERN u8 acpi_gbl_last_owner_id_index;
-ACPI_EXTERN u8 acpi_gbl_next_owner_id_offset;
 ACPI_EXTERN u8 acpi_gbl_debugger_configuration;
-ACPI_EXTERN u8 acpi_gbl_global_lock_acquired;
 ACPI_EXTERN u8 acpi_gbl_step_to_next_call;
 ACPI_EXTERN u8 acpi_gbl_acpi_hardware_present;
-ACPI_EXTERN u8 acpi_gbl_global_lock_present;
 ACPI_EXTERN u8 acpi_gbl_events_initialized;
 ACPI_EXTERN u8 acpi_gbl_system_awake_and_running;
+
+#ifndef DEFINE_ACPI_GLOBALS
+
+/* Other miscellaneous */
 
 extern u8 acpi_gbl_shutdown;
 extern u32 acpi_gbl_startup_flags;
@@ -245,6 +250,8 @@ extern const char *acpi_gbl_sleep_state_names[ACPI_S_STATE_COUNT];
 extern const char *acpi_gbl_highest_dstate_names[4];
 extern const struct acpi_opcode_info acpi_gbl_aml_op_info[AML_NUM_OPCODES];
 extern const char *acpi_gbl_region_types[ACPI_NUM_PREDEFINED_REGIONS];
+
+#endif
 
 /* Exception codes */
 
@@ -260,8 +267,6 @@ extern char const *acpi_gbl_exception_names_ctrl[];
  *
  ****************************************************************************/
 
-#define NUM_NS_TYPES                    ACPI_TYPE_INVALID+1
-
 #if !defined (ACPI_NO_METHOD_EXECUTION) || defined (ACPI_CONSTANT_EVAL_ONLY)
 #define NUM_PREDEFINED_NAMES            10
 #else
@@ -272,7 +277,7 @@ ACPI_EXTERN struct acpi_namespace_node acpi_gbl_root_node_struct;
 ACPI_EXTERN struct acpi_namespace_node *acpi_gbl_root_node;
 ACPI_EXTERN struct acpi_namespace_node *acpi_gbl_fadt_gpe_device;
 
-extern const u8 acpi_gbl_ns_properties[NUM_NS_TYPES];
+extern const u8 acpi_gbl_ns_properties[ACPI_NUM_NS_TYPES];
 extern const struct acpi_predefined_names
     acpi_gbl_pre_defined_names[NUM_PREDEFINED_NAMES];
 
@@ -280,8 +285,8 @@ extern const struct acpi_predefined_names
 ACPI_EXTERN u32 acpi_gbl_current_node_count;
 ACPI_EXTERN u32 acpi_gbl_current_node_size;
 ACPI_EXTERN u32 acpi_gbl_max_concurrent_node_count;
-ACPI_EXTERN acpi_size acpi_gbl_entry_stack_pointer;
-ACPI_EXTERN acpi_size acpi_gbl_lowest_stack_pointer;
+ACPI_EXTERN acpi_size *acpi_gbl_entry_stack_pointer;
+ACPI_EXTERN acpi_size *acpi_gbl_lowest_stack_pointer;
 ACPI_EXTERN u32 acpi_gbl_deepest_nesting;
 #endif
 
@@ -320,7 +325,7 @@ ACPI_EXTERN struct acpi_fixed_event_handler
     acpi_gbl_fixed_event_handlers[ACPI_NUM_FIXED_EVENTS];
 ACPI_EXTERN struct acpi_gpe_xrupt_info *acpi_gbl_gpe_xrupt_list_head;
 ACPI_EXTERN struct acpi_gpe_block_info
-    *acpi_gbl_gpe_fadt_blocks[ACPI_MAX_GPE_BLOCKS];
+*acpi_gbl_gpe_fadt_blocks[ACPI_MAX_GPE_BLOCKS];
 
 /*****************************************************************************
  *
@@ -380,3 +385,4 @@ ACPI_EXTERN u32 acpi_gbl_size_of_acpi_objects;
 #endif				/* ACPI_DEBUGGER */
 
 #endif				/* __ACGLOBAL_H__ */
+

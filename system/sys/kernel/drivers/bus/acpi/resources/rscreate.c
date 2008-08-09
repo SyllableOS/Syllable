@@ -5,7 +5,7 @@
  ******************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,7 +40,6 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGES.
  */
-
 
 #include <acpi/acpi.h>
 #include <acpi/acresrc.h>
@@ -268,16 +267,18 @@ acpi_rs_create_pci_routing_table(union acpi_operand_object *package_object,
 		 * If BIOS erroneously reversed the _PRT source_name and source_index,
 		 * then reverse them back.
 		 */
-		if (ACPI_GET_OBJECT_TYPE (sub_object_list[3]) != ACPI_TYPE_INTEGER) {
+		if (ACPI_GET_OBJECT_TYPE(sub_object_list[3]) !=
+		    ACPI_TYPE_INTEGER) {
 			if (acpi_gbl_enable_interpreter_slack) {
 				source_name_index = 3;
 				source_index_index = 2;
 				printk("ACPI: Handling Garbled _PRT entry\n");
 			} else {
 				ACPI_ERROR((AE_INFO,
-					"(PRT[%X].source_index) Need Integer, found %s",
-					index,
-					acpi_ut_get_object_type_name(sub_object_list[3])));
+					    "(PRT[%X].source_index) Need Integer, found %s",
+					    index,
+					    acpi_ut_get_object_type_name
+					    (sub_object_list[3])));
 				return_ACPI_STATUS(AE_BAD_DATA);
 			}
 		}

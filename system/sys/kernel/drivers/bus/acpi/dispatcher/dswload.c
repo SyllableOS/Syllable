@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,7 +40,6 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGES.
  */
-
 
 #include <acpi/acpi.h>
 #include <acpi/acparser.h>
@@ -103,7 +102,6 @@ acpi_ds_init_callbacks(struct acpi_walk_state *walk_state, u32 pass_number)
 
 	return (AE_OK);
 }
-
 
 /*******************************************************************************
  *
@@ -243,9 +241,7 @@ acpi_ds_load1_begin_op(struct acpi_walk_state * walk_state,
 		}
 		break;
 
-
 	default:
-
 		/*
 		 * For all other named opcodes, we will enter the name into
 		 * the namespace.
@@ -263,6 +259,7 @@ acpi_ds_load1_begin_op(struct acpi_walk_state * walk_state,
 		 *       in the namespace.
 		 */
 		if (walk_state->deferred_node) {
+
 			/* This name is already in the namespace, get the node */
 
 			node = walk_state->deferred_node;
@@ -341,10 +338,10 @@ acpi_ds_load1_begin_op(struct acpi_walk_state * walk_state,
 		break;
 	}
 
-
 	/* Common exit */
 
 	if (!op) {
+
 		/* Create a new op */
 
 		op = acpi_ps_alloc_op(walk_state->opcode);
@@ -446,11 +443,21 @@ acpi_status acpi_ds_load1_end_op(struct acpi_walk_state *walk_state)
 			if (ACPI_FAILURE(status)) {
 				return_ACPI_STATUS(status);
 			}
+		} else if (op->common.aml_opcode == AML_DATA_REGION_OP) {
+			status =
+			    acpi_ex_create_region(op->named.data,
+						  op->named.length,
+						  REGION_DATA_TABLE,
+						  walk_state);
+			if (ACPI_FAILURE(status)) {
+				return_ACPI_STATUS(status);
+			}
 		}
 	}
 #endif
 
 	if (op->common.aml_opcode == AML_NAME_OP) {
+
 		/* For Name opcode, get the object type from the argument */
 
 		if (op->common.value.arg) {
@@ -503,6 +510,7 @@ acpi_status acpi_ds_load1_end_op(struct acpi_walk_state *walk_state)
 								  length,
 								  walk_state);
 				}
+
 				walk_state->operands[0] = NULL;
 				walk_state->num_operands = 0;
 
@@ -560,6 +568,7 @@ acpi_ds_load2_begin_op(struct acpi_walk_state *walk_state,
 		if ((walk_state->control_state) &&
 		    (walk_state->control_state->common.state ==
 		     ACPI_CONTROL_CONDITIONAL_EXECUTING)) {
+
 			/* We are executing a while loop outside of a method */
 
 			status = acpi_ds_exec_begin_op(walk_state, out_op);
@@ -574,7 +583,6 @@ acpi_ds_load2_begin_op(struct acpi_walk_state *walk_state,
 #ifdef ACPI_ENABLE_MODULE_LEVEL_CODE
 			if ((walk_state->op_info->class == AML_CLASS_EXECUTE) ||
 			    (walk_state->op_info->class == AML_CLASS_CONTROL)) {
-
 				ACPI_DEBUG_PRINT((ACPI_DB_DISPATCH,
 						  "Begin/EXEC: %s (fl %8.8X)\n",
 						  walk_state->op_info->name,
@@ -593,10 +601,12 @@ acpi_ds_load2_begin_op(struct acpi_walk_state *walk_state,
 		/* Get the name we are going to enter or lookup in the namespace */
 
 		if (walk_state->opcode == AML_INT_NAMEPATH_OP) {
+
 			/* For Namepath op, get the path string */
 
 			buffer_ptr = op->common.value.string;
 			if (!buffer_ptr) {
+
 				/* No name, just exit */
 
 				return_ACPI_STATUS(AE_OK);
@@ -631,7 +641,6 @@ acpi_ds_load2_begin_op(struct acpi_walk_state *walk_state,
 		break;
 
 	case AML_INT_NAMEPATH_OP:
-
 		/*
 		 * The name_path is an object reference to an existing object.
 		 * Don't enter the name into the namespace, but look it up
@@ -644,7 +653,6 @@ acpi_ds_load2_begin_op(struct acpi_walk_state *walk_state,
 		break;
 
 	case AML_SCOPE_OP:
-
 		/*
 		 * The Path is an object reference to an existing object.
 		 * Don't enter the name into the namespace, but look it up
@@ -666,6 +674,7 @@ acpi_ds_load2_begin_op(struct acpi_walk_state *walk_state,
 #endif
 			return_ACPI_STATUS(status);
 		}
+
 		/*
 		 * We must check to make sure that the target is
 		 * one of the opcodes that actually opens a scope
@@ -692,7 +701,6 @@ acpi_ds_load2_begin_op(struct acpi_walk_state *walk_state,
 			 *  Name (DEB, 0)
 			 *  Scope (DEB) { ... }
 			 */
-
 			ACPI_WARNING((AE_INFO,
 				      "Type override - [%4.4s] had invalid type (%s) for Scope operator, changed to (Scope)",
 				      buffer_ptr,
@@ -720,6 +728,7 @@ acpi_ds_load2_begin_op(struct acpi_walk_state *walk_state,
 		/* All other opcodes */
 
 		if (op && op->common.node) {
+
 			/* This op/node was previously entered into the namespace */
 
 			node = op->common.node;
@@ -731,8 +740,8 @@ acpi_ds_load2_begin_op(struct acpi_walk_state *walk_state,
 				if (ACPI_FAILURE(status)) {
 					return_ACPI_STATUS(status);
 				}
-
 			}
+
 			return_ACPI_STATUS(AE_OK);
 		}
 
@@ -745,6 +754,7 @@ acpi_ds_load2_begin_op(struct acpi_walk_state *walk_state,
 		 * Note: Name may already exist if we are executing a deferred opcode.
 		 */
 		if (walk_state->deferred_node) {
+
 			/* This name is already in the namespace, get the node */
 
 			node = walk_state->deferred_node;
@@ -766,6 +776,12 @@ acpi_ds_load2_begin_op(struct acpi_walk_state *walk_state,
 		    acpi_ns_lookup(walk_state->scope_info, buffer_ptr,
 				   object_type, ACPI_IMODE_LOAD_PASS2, flags,
 				   walk_state, &node);
+
+		if (ACPI_SUCCESS(status) && (flags & ACPI_NS_TEMPORARY)) {
+			ACPI_DEBUG_PRINT((ACPI_DB_DISPATCH,
+					  "***New Node [%4.4s] %p is temporary\n",
+					  acpi_ut_get_node_name(node), node));
+		}
 		break;
 	}
 
@@ -775,6 +791,7 @@ acpi_ds_load2_begin_op(struct acpi_walk_state *walk_state,
 	}
 
 	if (!op) {
+
 		/* Create a new op */
 
 		op = acpi_ps_alloc_op(walk_state->opcode);
@@ -795,7 +812,6 @@ acpi_ds_load2_begin_op(struct acpi_walk_state *walk_state,
 	 * can get it again quickly when this scope is closed
 	 */
 	op->common.node = node;
-
 	return_ACPI_STATUS(status);
 }
 
@@ -822,6 +838,7 @@ acpi_status acpi_ds_load2_end_op(struct acpi_walk_state *walk_state)
 	struct acpi_namespace_node *new_node;
 #ifndef ACPI_NO_METHOD_EXECUTION
 	u32 i;
+	u8 region_space;
 #endif
 
 	ACPI_FUNCTION_TRACE(ds_load2_end_op);
@@ -930,7 +947,6 @@ acpi_status acpi_ds_load2_end_op(struct acpi_walk_state *walk_state)
 #ifndef ACPI_NO_METHOD_EXECUTION
 
 	case AML_TYPE_CREATE_FIELD:
-
 		/*
 		 * Create the field object, but the field buffer and index must
 		 * be evaluated later during the execution phase
@@ -939,7 +955,6 @@ acpi_status acpi_ds_load2_end_op(struct acpi_walk_state *walk_state)
 		break;
 
 	case AML_TYPE_NAMED_FIELD:
-
 		/*
 		 * If we are executing a method, initialize the field
 		 */
@@ -1004,11 +1019,6 @@ acpi_status acpi_ds_load2_end_op(struct acpi_walk_state *walk_state)
 			status = acpi_ex_create_event(walk_state);
 			break;
 
-		case AML_DATA_REGION_OP:
-
-			status = acpi_ex_create_table_region(walk_state);
-			break;
-
 		case AML_ALIAS_OP:
 
 			status = acpi_ex_create_alias(walk_state);
@@ -1036,6 +1046,15 @@ acpi_status acpi_ds_load2_end_op(struct acpi_walk_state *walk_state)
 		switch (op->common.aml_opcode) {
 #ifndef ACPI_NO_METHOD_EXECUTION
 		case AML_REGION_OP:
+		case AML_DATA_REGION_OP:
+
+			if (op->common.aml_opcode == AML_REGION_OP) {
+				region_space = (acpi_adr_space_type)
+				    ((op->common.value.arg)->common.value.
+				     integer);
+			} else {
+				region_space = REGION_DATA_TABLE;
+			}
 
 			/*
 			 * If we are executing a method, initialize the region
@@ -1044,10 +1063,7 @@ acpi_status acpi_ds_load2_end_op(struct acpi_walk_state *walk_state)
 				status =
 				    acpi_ex_create_region(op->named.data,
 							  op->named.length,
-							  (acpi_adr_space_type)
-							  ((op->common.value.
-							    arg)->common.value.
-							   integer),
+							  region_space,
 							  walk_state);
 				if (ACPI_FAILURE(status)) {
 					return (status);
@@ -1059,6 +1075,7 @@ acpi_status acpi_ds_load2_end_op(struct acpi_walk_state *walk_state)
 			 * argument is the space_id. (We must save the address of the
 			 * AML of the address and length operands)
 			 */
+
 			/*
 			 * If we have a valid region, initialize it
 			 * Namespace is NOT locked at this point.
@@ -1130,7 +1147,6 @@ acpi_status acpi_ds_load2_end_op(struct acpi_walk_state *walk_state)
 		}
 		break;
 
-
 	case AML_CLASS_INTERNAL:
 
 		/* case AML_INT_NAMEPATH_OP: */
@@ -1153,7 +1169,6 @@ acpi_status acpi_ds_load2_end_op(struct acpi_walk_state *walk_state)
 				   ACPI_NS_DONT_OPEN_SCOPE, walk_state,
 				   &(new_node));
 		if (ACPI_SUCCESS(status)) {
-
 			/*
 			 * Make sure that what we found is indeed a method
 			 * We didn't search for a method on purpose, to see if the name
@@ -1172,7 +1187,6 @@ acpi_status acpi_ds_load2_end_op(struct acpi_walk_state *walk_state)
 			ACPI_ERROR_NAMESPACE(arg->common.value.string, status);
 		}
 		break;
-
 
 	default:
 		break;

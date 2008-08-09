@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,7 +41,6 @@
  * POSSIBILITY OF SUCH DAMAGES.
  */
 
-
 #include <acpi/acpi.h>
 #include <acpi/acparser.h>
 #include <acpi/amlcode.h>
@@ -69,11 +68,9 @@ union acpi_parse_object *acpi_ps_create_scope_op(void)
 		return (NULL);
 	}
 
-
 	scope_op->named.name = ACPI_ROOT_NAME;
 	return (scope_op);
 }
-
 
 /*******************************************************************************
  *
@@ -138,6 +135,7 @@ union acpi_parse_object *acpi_ps_alloc_op(u16 opcode)
 	/* Allocate the minimum required size object */
 
 	if (flags == ACPI_PARSEOP_GENERIC) {
+
 		/* The generic op (default) is by far the most common (16 to 1) */
 
 		op = acpi_os_acquire_object(acpi_gbl_ps_node_cache);
@@ -156,7 +154,6 @@ union acpi_parse_object *acpi_ps_alloc_op(u16 opcode)
 
 	return (op);
 }
-
 
 /*******************************************************************************
  *
@@ -195,7 +192,6 @@ void acpi_ps_free_op(union acpi_parse_object *op)
  *
  ******************************************************************************/
 
-
 /*
  * Is "c" a namestring lead character?
  */
@@ -204,7 +200,6 @@ u8 acpi_ps_is_leading_char(u32 c)
 	return ((u8) (c == '_' || (c >= 'A' && c <= 'Z')));
 }
 
-
 /*
  * Is "c" a namestring prefix character?
  */
@@ -212,7 +207,6 @@ u8 acpi_ps_is_prefix_char(u32 c)
 {
 	return ((u8) (c == '\\' || c == '^'));
 }
-
 
 /*
  * Get op's name (4-byte name segment) or 0 if unnamed
@@ -247,4 +241,3 @@ void acpi_ps_set_name(union acpi_parse_object *op, u32 name)
 
 	op->named.name = name;
 }
-

@@ -6,7 +6,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,7 +41,6 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGES.
  */
-
 
 #include <acpi/acpi.h>
 #include <acpi/acnamesp.h>
@@ -128,7 +127,6 @@ ACPI_EXPORT_SYMBOL(acpi_install_address_space_handler)
  * DESCRIPTION: Remove a previously installed handler.
  *
  ******************************************************************************/
-
 acpi_status
 acpi_remove_address_space_handler(acpi_handle device,
 				  acpi_adr_space_type space_id,
@@ -179,6 +177,7 @@ acpi_remove_address_space_handler(acpi_handle device,
 	handler_obj = obj_desc->device.handler;
 	last_obj_ptr = &obj_desc->device.handler;
 	while (handler_obj) {
+
 		/* We have a handler, see if user requested this one */
 
 		if (handler_obj->address_space.space_id == space_id) {

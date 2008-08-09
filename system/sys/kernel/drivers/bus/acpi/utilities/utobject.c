@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,7 +40,6 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGES.
  */
-
 
 #include <acpi/acpi.h>
 #include <acpi/acnamesp.h>
@@ -108,6 +107,7 @@ union acpi_operand_object *acpi_ut_create_internal_object_dbg(char *module_name,
 	switch (type) {
 	case ACPI_TYPE_REGION:
 	case ACPI_TYPE_BUFFER_FIELD:
+	case ACPI_TYPE_LOCAL_BANK_FIELD:
 
 		/* These types require a secondary object */
 
@@ -143,6 +143,48 @@ union acpi_operand_object *acpi_ut_create_internal_object_dbg(char *module_name,
 	/* Any per-type initialization should go here */
 
 	return_PTR(object);
+}
+
+/*******************************************************************************
+ *
+ * FUNCTION:    acpi_ut_create_package_object
+ *
+ * PARAMETERS:  Count               - Number of package elements
+ *
+ * RETURN:      Pointer to a new Package object, null on failure
+ *
+ * DESCRIPTION: Create a fully initialized package object
+ *
+ ******************************************************************************/
+
+union acpi_operand_object *acpi_ut_create_package_object(u32 count)
+{
+	union acpi_operand_object *package_desc;
+	union acpi_operand_object **package_elements;
+
+	ACPI_FUNCTION_TRACE_U32(ut_create_package_object, count);
+
+	/* Create a new Package object */
+
+	package_desc = acpi_ut_create_internal_object(ACPI_TYPE_PACKAGE);
+	if (!package_desc) {
+		return_PTR(NULL);
+	}
+
+	/*
+	 * Create the element array. Count+1 allows the array to be null
+	 * terminated.
+	 */
+	package_elements = ACPI_ALLOCATE_ZEROED((acpi_size)
+						(count + 1) * sizeof(void *));
+	if (!package_elements) {
+		acpi_ut_remove_reference(package_desc);
+		return_PTR(NULL);
+	}
+
+	package_desc->package.count = count;
+	package_desc->package.elements = package_elements;
+	return_PTR(package_desc);
 }
 
 /*******************************************************************************
@@ -290,7 +332,6 @@ u8 acpi_ut_valid_internal_object(void *object)
 	return (FALSE);
 }
 
-
 /*******************************************************************************
  *
  * FUNCTION:    acpi_ut_allocate_object_desc_dbg
@@ -322,6 +363,7 @@ void *acpi_ut_allocate_object_desc_dbg(char *module_name,
 	}
 
 	/* Mark the descriptor type */
+
 	memset(object, 0, sizeof(union acpi_operand_object));
 	ACPI_SET_DESCRIPTOR_TYPE(object, ACPI_DESC_TYPE_OPERAND);
 
@@ -391,7 +433,7 @@ acpi_ut_get_simple_object_size(union acpi_operand_object *internal_object,
 	 * element -- which is legal)
 	 */
 	if (!internal_object) {
-		*obj_length = 0;
+		*obj_length = sizeof(union acpi_object);
 		return_ACPI_STATUS(AE_OK);
 	}
 
@@ -400,6 +442,7 @@ acpi_ut_get_simple_object_size(union acpi_operand_object *internal_object,
 	length = sizeof(union acpi_object);
 
 	if (ACPI_GET_DESCRIPTOR_TYPE(internal_object) == ACPI_DESC_TYPE_NAMED) {
+
 		/* Object is a named object (reference), just return the length */
 
 		*obj_length = ACPI_ROUND_UP_TO_NATIVE_WORD(length);
@@ -418,22 +461,18 @@ acpi_ut_get_simple_object_size(union acpi_operand_object *internal_object,
 		length += (acpi_size) internal_object->string.length + 1;
 		break;
 
-
 	case ACPI_TYPE_BUFFER:
 
 		length += (acpi_size) internal_object->buffer.length;
 		break;
 
-
 	case ACPI_TYPE_INTEGER:
 	case ACPI_TYPE_PROCESSOR:
 	case ACPI_TYPE_POWER:
 
-		/*
-		 * No extra data for these types
-		 */
-		break;
+		/* No extra data for these types */
 
+		break;
 
 	case ACPI_TYPE_LOCAL_REFERENCE:
 
@@ -523,7 +562,6 @@ acpi_ut_get_element_length(u8 object_type,
 		info->length += object_space;
 		break;
 
-
 	case ACPI_COPY_TYPE_PACKAGE:
 
 		/* Package object - nothing much to do here, let the walk handle it */
@@ -531,7 +569,6 @@ acpi_ut_get_element_length(u8 object_type,
 		info->num_packages++;
 		state->pkg.this_target_obj = NULL;
 		break;
-
 
 	default:
 
@@ -542,7 +579,6 @@ acpi_ut_get_element_length(u8 object_type,
 
 	return (status);
 }
-
 
 /*******************************************************************************
  *
@@ -629,5 +665,3 @@ acpi_ut_get_object_size(union acpi_operand_object *internal_object,
 
 	return (status);
 }
-
-

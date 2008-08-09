@@ -5,7 +5,7 @@
  ******************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,13 +41,11 @@
  * POSSIBILITY OF SUCH DAMAGES.
  */
 
-
 #include <acpi/acpi.h>
 #include <acpi/acresrc.h>
 
 #define _COMPONENT          ACPI_RESOURCES
 ACPI_MODULE_NAME("rsdump")
-
 #if defined(ACPI_DEBUG_OUTPUT) || defined(ACPI_DEBUGGER)
 /* Local prototypes */
 static void acpi_rs_out_string(char *title, char *value);
@@ -89,8 +87,10 @@ acpi_rs_dump_descriptor(void *resource, struct acpi_rsdump_info *table);
  *
  ******************************************************************************/
 
-struct acpi_rsdump_info acpi_rs_dump_irq[6] = {
+struct acpi_rsdump_info acpi_rs_dump_irq[7] = {
 	{ACPI_RSD_TITLE, ACPI_RSD_TABLE_SIZE(acpi_rs_dump_irq), "IRQ", NULL},
+	{ACPI_RSD_UINT8, ACPI_RSD_OFFSET(irq.descriptor_length),
+	 "Descriptor Length", NULL},
 	{ACPI_RSD_1BITFLAG, ACPI_RSD_OFFSET(irq.triggering), "Triggering",
 	 acpi_gbl_he_decode},
 	{ACPI_RSD_1BITFLAG, ACPI_RSD_OFFSET(irq.polarity), "Polarity",
@@ -117,9 +117,11 @@ struct acpi_rsdump_info acpi_rs_dump_dma[6] = {
 	 NULL}
 };
 
-struct acpi_rsdump_info acpi_rs_dump_start_dpf[3] = {
+struct acpi_rsdump_info acpi_rs_dump_start_dpf[4] = {
 	{ACPI_RSD_TITLE, ACPI_RSD_TABLE_SIZE(acpi_rs_dump_start_dpf),
 	 "Start-Dependent-Functions", NULL},
+	{ACPI_RSD_UINT8, ACPI_RSD_OFFSET(start_dpf.descriptor_length),
+	 "Descriptor Length", NULL},
 	{ACPI_RSD_2BITFLAG, ACPI_RSD_OFFSET(start_dpf.compatibility_priority),
 	 "Compatibility Priority", acpi_gbl_config_decode},
 	{ACPI_RSD_2BITFLAG, ACPI_RSD_OFFSET(start_dpf.performance_robustness),
@@ -490,10 +492,9 @@ acpi_rs_dump_descriptor(void *resource, struct acpi_rsdump_info *table)
 			/*
 			 * Optional resource_source for Address resources
 			 */
-			acpi_rs_dump_resource_source(ACPI_CAST_PTR
-						     (struct
-						      acpi_resource_source,
-						      target));
+			acpi_rs_dump_resource_source(ACPI_CAST_PTR(struct
+								   acpi_resource_source,
+								   target));
 			break;
 
 		default:
@@ -767,4 +768,3 @@ static void acpi_rs_dump_dword_list(u8 length, u32 * data)
 }
 
 #endif
-

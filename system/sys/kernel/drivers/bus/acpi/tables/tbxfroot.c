@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,7 +40,6 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGES.
  */
-
 
 #include <acpi/acpi.h>
 #include <acpi/actables.h>
@@ -101,7 +100,7 @@ static acpi_status acpi_tb_validate_rsdp(struct acpi_table_rsdp *rsdp)
 
 /*******************************************************************************
  *
- * FUNCTION:    acpi_tb_find_rsdp
+ * FUNCTION:    acpi_find_root_pointer
  *
  * PARAMETERS:  table_address           - Where the table pointer is returned
  *
@@ -220,8 +219,6 @@ acpi_status acpi_find_root_pointer(acpi_native_uint * table_address)
 	return_ACPI_STATUS(AE_NOT_FOUND);
 }
 
-ACPI_EXPORT_SYMBOL(acpi_find_root_pointer)
-
 /*******************************************************************************
  *
  * FUNCTION:    acpi_tb_scan_memory_for_rsdp
@@ -234,7 +231,6 @@ ACPI_EXPORT_SYMBOL(acpi_find_root_pointer)
  * DESCRIPTION: Search a block of memory for the RSDP signature
  *
  ******************************************************************************/
-
 static u8 *acpi_tb_scan_memory_for_rsdp(u8 * start_address, u32 length)
 {
 	acpi_status status;
@@ -249,6 +245,7 @@ static u8 *acpi_tb_scan_memory_for_rsdp(u8 * start_address, u32 length)
 
 	for (mem_rover = start_address; mem_rover < end_address;
 	     mem_rover += ACPI_RSDP_SCAN_STEP) {
+
 		/* The RSDP signature and checksum must both be correct */
 
 		status =

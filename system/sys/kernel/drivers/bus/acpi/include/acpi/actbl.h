@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -276,6 +276,7 @@ enum acpi_prefered_pm_profiles {
 
 #define BAF_LEGACY_DEVICES              0x0001
 #define BAF_8042_KEYBOARD_CONTROLLER    0x0002
+#define BAF_MSI_NOT_SUPPORTED           0x0008
 
 #define FADT2_REVISION_ID               3
 #define FADT2_MINUS_REVISION_ID         2

@@ -5,7 +5,7 @@
  ******************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,7 +41,6 @@
  * POSSIBILITY OF SUCH DAMAGES.
  */
 
-
 #include <acpi/acpi.h>
 #include <acpi/acnamesp.h>
 
@@ -59,7 +58,6 @@ ACPI_MODULE_NAME("nsalloc")
  * DESCRIPTION: Create a namespace node
  *
  ******************************************************************************/
-
 struct acpi_namespace_node *acpi_ns_create_node(u32 name)
 {
 	struct acpi_namespace_node *node;
@@ -123,6 +121,7 @@ void acpi_ns_delete_node(struct acpi_namespace_node *node)
 	}
 
 	if (prev_node) {
+
 		/* Node is not first child, unlink it */
 
 		prev_node->peer = next_node->peer;
@@ -133,6 +132,7 @@ void acpi_ns_delete_node(struct acpi_namespace_node *node)
 		/* Node is first child (has no previous peer) */
 
 		if (next_node->flags & ANOBJ_END_OF_PEER_LIST) {
+
 			/* No peers at all */
 
 			parent_node->child = NULL;
@@ -227,7 +227,6 @@ void acpi_ns_install_node(struct acpi_walk_state *walk_state, struct acpi_namesp
 	return_VOID;
 }
 
-
 /*******************************************************************************
  *
  * FUNCTION:    acpi_ns_delete_children
@@ -264,6 +263,7 @@ void acpi_ns_delete_children(struct acpi_namespace_node *parent_node)
 	 * Deallocate all children at this level
 	 */
 	do {
+
 		/* Get the things we need */
 
 		next_node = child_node->peer;
@@ -300,14 +300,12 @@ void acpi_ns_delete_children(struct acpi_namespace_node *parent_node)
 
 	} while (!(flags & ANOBJ_END_OF_PEER_LIST));
 
-
 	/* Clear the parent's child pointer */
 
 	parent_node->child = NULL;
 
 	return_VOID;
 }
-
 
 /*******************************************************************************
  *
@@ -451,6 +449,7 @@ void acpi_ns_delete_namespace_by_owner(acpi_owner_id owner_id)
 
 		if (child_node) {
 			if (child_node->owner_id == owner_id) {
+
 				/* Found a matching child node - detach any attached object */
 
 				acpi_ns_detach_object(child_node);

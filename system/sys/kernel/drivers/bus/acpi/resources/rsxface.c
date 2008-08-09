@@ -5,7 +5,7 @@
  ******************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -217,7 +217,6 @@ acpi_get_current_resources(acpi_handle device_handle,
 }
 
 ACPI_EXPORT_SYMBOL(acpi_get_current_resources)
-
 #ifdef ACPI_FUTURE_USAGE
 /*******************************************************************************
  *
@@ -261,7 +260,6 @@ acpi_get_possible_resources(acpi_handle device_handle,
 
 ACPI_EXPORT_SYMBOL(acpi_get_possible_resources)
 #endif				/*  ACPI_FUTURE_USAGE  */
-
 /*******************************************************************************
  *
  * FUNCTION:    acpi_set_current_resources
@@ -279,7 +277,6 @@ ACPI_EXPORT_SYMBOL(acpi_get_possible_resources)
  *              the buffer pointed to by the in_buffer variable.
  *
  ******************************************************************************/
-
 acpi_status
 acpi_set_current_resources(acpi_handle device_handle,
 			   struct acpi_buffer *in_buffer)
@@ -324,7 +321,6 @@ ACPI_EXPORT_SYMBOL(acpi_set_current_resources)
  *              addresses.
  *
  ******************************************************************************/
-
 acpi_status
 acpi_resource_to_address64(struct acpi_resource *resource,
 			   struct acpi_resource_address64 *out)
@@ -386,7 +382,6 @@ ACPI_EXPORT_SYMBOL(acpi_resource_to_address64)
  *              UUID subtype. Returns a struct acpi_resource of type Vendor.
  *
  ******************************************************************************/
-
 acpi_status
 acpi_get_vendor_resource(acpi_handle device_handle,
 			 char *name,
@@ -431,7 +426,6 @@ ACPI_EXPORT_SYMBOL(acpi_get_vendor_resource)
  * DESCRIPTION: Match a vendor resource via the ACPI 3.0 UUID
  *
  ******************************************************************************/
-
 static acpi_status
 acpi_rs_match_vendor_resource(struct acpi_resource *resource, void *context)
 {
@@ -480,8 +474,6 @@ acpi_rs_match_vendor_resource(struct acpi_resource *resource, void *context)
 	return (AE_CTRL_TERMINATE);
 }
 
-ACPI_EXPORT_SYMBOL(acpi_rs_match_vendor_resource)
-
 /*******************************************************************************
  *
  * FUNCTION:    acpi_walk_resources
@@ -500,7 +492,6 @@ ACPI_EXPORT_SYMBOL(acpi_rs_match_vendor_resource)
  *              each resource in the list.
  *
  ******************************************************************************/
-
 acpi_status
 acpi_walk_resources(acpi_handle device_handle,
 		    char *name,

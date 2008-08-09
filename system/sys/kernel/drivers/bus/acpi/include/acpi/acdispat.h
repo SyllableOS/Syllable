@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,10 +41,8 @@
  * POSSIBILITY OF SUCH DAMAGES.
  */
 
-
 #ifndef _ACDISPAT_H_
 #define _ACDISPAT_H_
-
 
 #define NAMEOF_LOCAL_NTE    "__L0"
 #define NAMEOF_ARG_NTE      "__A0"
@@ -54,6 +52,9 @@
  */
 acpi_status
 acpi_ds_get_buffer_field_arguments(union acpi_operand_object *obj_desc);
+
+acpi_status
+acpi_ds_get_bank_field_arguments(union acpi_operand_object *obj_desc);
 
 acpi_status acpi_ds_get_region_arguments(union acpi_operand_object *rgn_desc);
 
@@ -70,9 +71,17 @@ acpi_ds_eval_region_operands(struct acpi_walk_state *walk_state,
 			     union acpi_parse_object *op);
 
 acpi_status
+acpi_ds_eval_table_region_operands(struct acpi_walk_state *walk_state,
+				   union acpi_parse_object *op);
+
+acpi_status
 acpi_ds_eval_data_object_operands(struct acpi_walk_state *walk_state,
 				  union acpi_parse_object *op,
 				  union acpi_operand_object *obj_desc);
+
+acpi_status
+acpi_ds_eval_bank_field_operands(struct acpi_walk_state *walk_state,
+				 union acpi_parse_object *op);
 
 acpi_status acpi_ds_initialize_region(acpi_handle obj_handle);
 
@@ -271,6 +280,8 @@ acpi_status acpi_ds_resolve_operands(struct acpi_walk_state *walk_state);
 
 void acpi_ds_clear_operands(struct acpi_walk_state *walk_state);
 
+acpi_status acpi_ds_evaluate_name_path(struct acpi_walk_state *walk_state);
+
 /*
  * dswscope - Scope Stack manipulation
  */
@@ -292,12 +303,9 @@ acpi_ds_obj_stack_push(void *object, struct acpi_walk_state *walk_state);
 acpi_status
 acpi_ds_obj_stack_pop(u32 pop_count, struct acpi_walk_state *walk_state);
 
-struct acpi_walk_state *acpi_ds_create_walk_state(acpi_owner_id owner_id,
-						  union acpi_parse_object
-						  *origin,
-						  union acpi_operand_object
-						  *mth_desc,
-						  struct acpi_thread_state
+struct acpi_walk_state *acpi_ds_create_walk_state(acpi_owner_id owner_id, union acpi_parse_object
+						  *origin, union acpi_operand_object
+						  *mth_desc, struct acpi_thread_state
 						  *thread);
 
 acpi_status
@@ -308,7 +316,7 @@ acpi_ds_init_aml_walk(struct acpi_walk_state *walk_state,
 		      u32 aml_length,
 		      struct acpi_evaluate_info *info, u8 pass_number);
 
-acpi_status
+void
 acpi_ds_obj_stack_pop_and_delete(u32 pop_count,
 				 struct acpi_walk_state *walk_state);
 
@@ -321,20 +329,10 @@ void
 acpi_ds_push_walk_state(struct acpi_walk_state *walk_state,
 			struct acpi_thread_state *thread);
 
-acpi_status acpi_ds_result_stack_pop(struct acpi_walk_state *walk_state);
-
-acpi_status acpi_ds_result_stack_push(struct acpi_walk_state *walk_state);
-
 acpi_status acpi_ds_result_stack_clear(struct acpi_walk_state *walk_state);
 
 struct acpi_walk_state *acpi_ds_get_current_walk_state(struct acpi_thread_state
 						       *thread);
-
-#ifdef ACPI_FUTURE_USAGE
-acpi_status
-acpi_ds_result_remove(union acpi_operand_object **object,
-		      u32 index, struct acpi_walk_state *walk_state);
-#endif
 
 acpi_status
 acpi_ds_result_pop(union acpi_operand_object **object,
@@ -343,9 +341,5 @@ acpi_ds_result_pop(union acpi_operand_object **object,
 acpi_status
 acpi_ds_result_push(union acpi_operand_object *object,
 		    struct acpi_walk_state *walk_state);
-
-acpi_status
-acpi_ds_result_pop_from_bottom(union acpi_operand_object **object,
-			       struct acpi_walk_state *walk_state);
 
 #endif				/* _ACDISPAT_H_ */

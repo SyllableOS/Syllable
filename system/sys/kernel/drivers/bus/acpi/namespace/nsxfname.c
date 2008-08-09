@@ -6,7 +6,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,7 +41,6 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGES.
  */
-
 
 #include <acpi/acpi.h>
 #include <acpi/acnamesp.h>
@@ -144,7 +143,6 @@ ACPI_EXPORT_SYMBOL(acpi_get_handle)
  *              complementary functions.
  *
  ******************************************************************************/
-
 acpi_status
 acpi_get_name(acpi_handle handle, u32 name_type, struct acpi_buffer * buffer)
 {
@@ -163,6 +161,7 @@ acpi_get_name(acpi_handle handle, u32 name_type, struct acpi_buffer * buffer)
 	}
 
 	if (name_type == ACPI_FULL_PATHNAME) {
+
 		/* Get the full pathname (From the namespace root) */
 
 		status = acpi_ns_handle_to_pathname(handle, buffer);
@@ -220,7 +219,6 @@ ACPI_EXPORT_SYMBOL(acpi_get_name)
  *              control methods (Such as in the case of a device.)
  *
  ******************************************************************************/
-
 acpi_status
 acpi_get_object_info(acpi_handle handle, struct acpi_buffer * buffer)
 {

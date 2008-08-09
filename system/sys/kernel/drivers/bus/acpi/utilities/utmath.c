@@ -5,7 +5,7 @@
  ******************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -51,7 +51,6 @@ ACPI_MODULE_NAME("utmath")
  * in order to support kernel environments where the double-precision math
  * library is not available.
  */
-
 #ifndef ACPI_USE_NATIVE_DIVIDE
 /*******************************************************************************
  *
@@ -242,7 +241,6 @@ acpi_ut_divide(acpi_integer in_dividend,
 }
 
 #else
-
 /*******************************************************************************
  *
  * FUNCTION:    acpi_ut_short_divide, acpi_ut_divide
@@ -278,7 +276,7 @@ acpi_ut_short_divide(acpi_integer in_dividend,
 		*out_quotient = in_dividend / divisor;
 	}
 	if (out_remainder) {
-		*out_remainder = (u32) in_dividend % divisor;
+		*out_remainder = (u32) (in_dividend % divisor);
 	}
 
 	return_ACPI_STATUS(AE_OK);
@@ -311,5 +309,3 @@ acpi_ut_divide(acpi_integer in_dividend,
 }
 
 #endif
-
-

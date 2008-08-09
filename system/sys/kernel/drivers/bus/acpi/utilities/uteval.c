@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,7 +41,6 @@
  * POSSIBILITY OF SUCH DAMAGES.
  */
 
-
 #include <acpi/acpi.h>
 #include <acpi/acnamesp.h>
 #include <acpi/acinterp.h>
@@ -60,20 +59,16 @@ acpi_ut_translate_one_cid(union acpi_operand_object *obj_desc,
 /*
  * Strings supported by the _OSI predefined (internal) method.
  */
-static const char *acpi_interfaces_supported[] = {
+static char *acpi_interfaces_supported[] = {
 	/* Operating System Vendor Strings */
 
-	"Linux",
-	"Windows 2000",
-	"Windows 2001",
-	"Windows 2001 SP0",
-	"Windows 2001 SP1",
-	"Windows 2001 SP2",
-	"Windows 2001 SP3",
-	"Windows 2001 SP4",
-	"Windows 2001.1",
-	"Windows 2001.1 SP1",	/* Added 03/2006 */
-	"Windows 2006",		/* Added 03/2006 */
+	"Windows 2000",		/* Windows 2000 */
+	"Windows 2001",		/* Windows XP */
+	"Windows 2001 SP1",	/* Windows XP SP1 */
+	"Windows 2001 SP2",	/* Windows XP SP2 */
+	"Windows 2001.1",	/* Windows Server 2003 */
+	"Windows 2001.1 SP1",	/* Windows Server 2003 SP1 - Added 03/2006 */
+	"Windows 2006",		/* Windows Vista - Added 03/2006 */
 
 	/* Feature Group Strings */
 
@@ -155,6 +150,31 @@ acpi_status acpi_ut_osi_implementation(struct acpi_walk_state *walk_state)
 
 	return_desc->integer.value = 0;
 	return_ACPI_STATUS(AE_CTRL_TERMINATE);
+}
+
+/*******************************************************************************
+ *
+ * FUNCTION:    acpi_osi_invalidate
+ *
+ * PARAMETERS:  interface_string
+ *
+ * RETURN:      Status
+ *
+ * DESCRIPTION: invalidate string in pre-defiend _OSI string list
+ *
+ ******************************************************************************/
+
+acpi_status acpi_osi_invalidate(char *interface)
+{
+	int i;
+
+	for (i = 0; i < ACPI_ARRAY_LENGTH(acpi_interfaces_supported); i++) {
+		if (!ACPI_STRCMP(interface, acpi_interfaces_supported[i])) {
+			*acpi_interfaces_supported[i] = '\0';
+			return AE_OK;
+		}
+	}
+	return AE_NOT_FOUND;
 }
 
 /*******************************************************************************
@@ -387,7 +407,7 @@ acpi_ut_copy_id_string(char *destination, char *source, acpi_size max_length)
 
 acpi_status
 acpi_ut_execute_HID(struct acpi_namespace_node *device_node,
-		    struct acpi_device_id *hid)
+		    struct acpica_device_id *hid)
 {
 	union acpi_operand_object *obj_desc;
 	acpi_status status;
@@ -402,6 +422,7 @@ acpi_ut_execute_HID(struct acpi_namespace_node *device_node,
 	}
 
 	if (ACPI_GET_OBJECT_TYPE(obj_desc) == ACPI_TYPE_INTEGER) {
+
 		/* Convert the Numeric HID to string */
 
 		acpi_ex_eisa_id_to_string((u32) obj_desc->integer.value,
@@ -467,7 +488,6 @@ acpi_ut_translate_one_cid(union acpi_operand_object *obj_desc,
 		return (AE_TYPE);
 	}
 }
-
 
 /*******************************************************************************
  *
@@ -539,6 +559,7 @@ acpi_ut_execute_CID(struct acpi_namespace_node * device_node,
 	/* The _CID object can be either a single CID or a package (list) of CIDs */
 
 	if (ACPI_GET_OBJECT_TYPE(obj_desc) == ACPI_TYPE_PACKAGE) {
+
 		/* Translate each package element */
 
 		for (i = 0; i < count; i++) {
@@ -588,7 +609,7 @@ acpi_ut_execute_CID(struct acpi_namespace_node * device_node,
 
 acpi_status
 acpi_ut_execute_UID(struct acpi_namespace_node *device_node,
-		    struct acpi_device_id *uid)
+		    struct acpica_device_id *uid)
 {
 	union acpi_operand_object *obj_desc;
 	acpi_status status;
@@ -603,6 +624,7 @@ acpi_ut_execute_UID(struct acpi_namespace_node *device_node,
 	}
 
 	if (ACPI_GET_OBJECT_TYPE(obj_desc) == ACPI_TYPE_INTEGER) {
+
 		/* Convert the Numeric UID to string */
 
 		acpi_ex_unsigned_integer_to_string(obj_desc->integer.value,

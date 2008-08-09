@@ -6,7 +6,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,7 +41,6 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGES.
  */
-
 
 #include <acpi/acpi.h>
 #include <acpi/acnamesp.h>
@@ -193,7 +192,6 @@ acpi_ns_print_node_pathname(struct acpi_namespace_node *node, char *message)
 	}
 }
 
-
 /*******************************************************************************
  *
  * FUNCTION:    acpi_ns_valid_root_prefix
@@ -212,7 +210,6 @@ u8 acpi_ns_valid_root_prefix(char prefix)
 	return ((u8) (prefix == '\\'));
 }
 
-
 /*******************************************************************************
  *
  * FUNCTION:    acpi_ns_valid_path_separator
@@ -230,7 +227,6 @@ static u8 acpi_ns_valid_path_separator(char sep)
 
 	return ((u8) (sep == '.'));
 }
-
 
 /*******************************************************************************
  *
@@ -350,7 +346,6 @@ void acpi_ns_get_internal_name_length(struct acpi_namestring_info *info)
 	info->next_external_char = next_external_char;
 }
 
-
 /*******************************************************************************
  *
  * FUNCTION:    acpi_ns_build_internal_name
@@ -420,6 +415,7 @@ acpi_status acpi_ns_build_internal_name(struct acpi_namestring_info *info)
 		for (i = 0; i < ACPI_NAME_SIZE; i++) {
 			if (acpi_ns_valid_path_separator(*external_name) ||
 			    (*external_name == 0)) {
+
 				/* Pad the segment with underscore(s) if segment is short */
 
 				result[i] = '_';
@@ -737,11 +733,9 @@ acpi_handle acpi_ns_convert_entry_to_handle(struct acpi_namespace_node *node)
 		return (ACPI_ROOT_OBJECT);
 	}
 
-
 	return ((acpi_handle) Node);
 ------------------------------------------------------*/
 }
-
 
 /*******************************************************************************
  *
@@ -778,7 +772,6 @@ void acpi_ns_terminate(void)
 	ACPI_DEBUG_PRINT((ACPI_DB_INFO, "Namespace freed\n"));
 	return_VOID;
 }
-
 
 /*******************************************************************************
  *
@@ -913,10 +906,8 @@ struct acpi_namespace_node *acpi_ns_get_parent_node(struct acpi_namespace_node
 		node = node->peer;
 	}
 
-
 	return (node->peer);
 }
-
 
 /*******************************************************************************
  *

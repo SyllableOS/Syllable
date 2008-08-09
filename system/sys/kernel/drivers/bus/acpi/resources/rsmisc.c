@@ -5,7 +5,7 @@
  ******************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,13 +41,11 @@
  * POSSIBILITY OF SUCH DAMAGES.
  */
 
-
 #include <acpi/acpi.h>
 #include <acpi/acresrc.h>
 
 #define _COMPONENT          ACPI_RESOURCES
 ACPI_MODULE_NAME("rsmisc")
-
 #define INIT_RESOURCE_TYPE(i)       i->resource_offset
 #define INIT_RESOURCE_LENGTH(i)     i->aml_offset
 #define INIT_TABLE_LENGTH(i)        i->value
@@ -430,8 +428,7 @@ acpi_rs_convert_resource_to_aml(struct acpi_resource *resource,
 			 * Optional resource_source (Index and String)
 			 */
 			aml_length =
-			    acpi_rs_set_resource_source(aml,
-							(acpi_rs_length)
+			    acpi_rs_set_resource_source(aml, (acpi_rs_length)
 							aml_length, source);
 			acpi_rs_set_resource_length(aml_length, aml);
 			break;
@@ -500,6 +497,17 @@ acpi_rs_convert_resource_to_aml(struct acpi_resource *resource,
 			}
 			break;
 
+		case ACPI_RSC_EXIT_EQ:
+			/*
+			 * Control - Exit conversion if equal
+			 */
+			if (*ACPI_ADD_PTR(u8, resource,
+					  COMPARE_TARGET(info)) ==
+			    COMPARE_VALUE(info)) {
+				goto exit;
+			}
+			break;
+
 		default:
 
 			ACPI_ERROR((AE_INFO, "Invalid conversion opcode"));
@@ -539,6 +547,7 @@ if (((aml->irq.flags & 0x09) == 0x00) || ((aml->irq.flags & 0x09) == 0x09)) {
 
 resource->data.extended_irq.interrupt_count = temp8;
 if (temp8 < 1) {
+
 	/* Must have at least one IRQ */
 
 	return_ACPI_STATUS(AE_AML_BAD_RESOURCE_LENGTH);

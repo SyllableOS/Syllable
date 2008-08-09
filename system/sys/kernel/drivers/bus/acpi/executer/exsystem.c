@@ -6,7 +6,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -42,10 +42,8 @@
  * POSSIBILITY OF SUCH DAMAGES.
  */
 
-
 #include <acpi/acpi.h>
 #include <acpi/acinterp.h>
-#include <acpi/acevents.h>
 
 #define _COMPONENT          ACPI_EXECUTER
 ACPI_MODULE_NAME("exsystem")
@@ -67,7 +65,6 @@ ACPI_MODULE_NAME("exsystem")
 acpi_status acpi_ex_system_wait_semaphore(acpi_semaphore semaphore, u16 timeout)
 {
 	acpi_status status;
-	acpi_status status2;
 
 	ACPI_FUNCTION_TRACE(ex_system_wait_semaphore);
 
@@ -75,13 +72,12 @@ acpi_status acpi_ex_system_wait_semaphore(acpi_semaphore semaphore, u16 timeout)
 	if (ACPI_SUCCESS(status)) {
 		return_ACPI_STATUS(status);
 	}
-	
 
 	if (status == AE_TIME) {
 
 		/* We must wait, so unlock the interpreter */
 
-		acpi_ex_exit_interpreter();
+		acpi_ex_relinquish_interpreter();
 
 		status = acpi_os_wait_semaphore(semaphore, 1, timeout);
 
@@ -91,13 +87,7 @@ acpi_status acpi_ex_system_wait_semaphore(acpi_semaphore semaphore, u16 timeout)
 
 		/* Reacquire the interpreter */
 
-		status2 = acpi_ex_enter_interpreter();
-		if (ACPI_FAILURE(status2)) {
-
-			/* Report fatal error, could not acquire interpreter */
-
-			return_ACPI_STATUS(status2);
-		}
+		acpi_ex_reacquire_interpreter();
 	}
 
 	return_ACPI_STATUS(status);
@@ -121,7 +111,6 @@ acpi_status acpi_ex_system_wait_semaphore(acpi_semaphore semaphore, u16 timeout)
 acpi_status acpi_ex_system_wait_mutex(acpi_mutex mutex, u16 timeout)
 {
 	acpi_status status;
-	acpi_status status2;
 
 	ACPI_FUNCTION_TRACE(ex_system_wait_mutex);
 
@@ -134,7 +123,7 @@ acpi_status acpi_ex_system_wait_mutex(acpi_mutex mutex, u16 timeout)
 
 		/* We must wait, so unlock the interpreter */
 
-		acpi_ex_exit_interpreter();
+		acpi_ex_relinquish_interpreter();
 
 		status = acpi_os_acquire_mutex(mutex, timeout);
 
@@ -144,13 +133,7 @@ acpi_status acpi_ex_system_wait_mutex(acpi_mutex mutex, u16 timeout)
 
 		/* Reacquire the interpreter */
 
-		status2 = acpi_ex_enter_interpreter();
-		if (ACPI_FAILURE(status2)) {
-
-			/* Report fatal error, could not acquire interpreter */
-
-			return_ACPI_STATUS(status2);
-		}
+		acpi_ex_reacquire_interpreter();
 	}
 
 	return_ACPI_STATUS(status);
@@ -196,7 +179,6 @@ acpi_status acpi_ex_system_do_stall(u32 how_long)
 	return (status);
 }
 
-
 /*******************************************************************************
  *
  * FUNCTION:    acpi_ex_system_do_suspend
@@ -212,20 +194,18 @@ acpi_status acpi_ex_system_do_stall(u32 how_long)
 
 acpi_status acpi_ex_system_do_suspend(acpi_integer how_long)
 {
-	acpi_status status;
-
 	ACPI_FUNCTION_ENTRY();
 
 	/* Since this thread will sleep, we must release the interpreter */
 
-	acpi_ex_exit_interpreter();
+	acpi_ex_relinquish_interpreter();
 
 	acpi_os_sleep(how_long);
 
 	/* And now we must get the interpreter again */
 
-	status = acpi_ex_enter_interpreter();
-	return (status);
+	acpi_ex_reacquire_interpreter();
+	return (AE_OK);
 }
 
 /*******************************************************************************
@@ -320,4 +300,3 @@ acpi_status acpi_ex_system_reset_event(union acpi_operand_object *obj_desc)
 
 	return (status);
 }
-

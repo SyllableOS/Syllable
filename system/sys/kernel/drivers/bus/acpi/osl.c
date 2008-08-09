@@ -393,7 +393,7 @@ uint32 simple_pci_read_config( int nBusNum, int nDevNum, int nFncNum, int nOffse
 status_t simple_pci_write_config( int nBusNum, int nDevNum, int nFncNum, int nOffset, int nSize, uint32 nValue );
 
 acpi_status
-acpi_os_read_pci_configuration (struct acpi_pci_id *pci_id, u32 reg, void *value, u32 width)
+acpi_os_read_pci_configuration (struct acpi_pci_id *pci_id, u32 reg, u32 *value, u32 width)
 {
 	int size;
 	uint32 result;
@@ -1060,11 +1060,12 @@ acpi_status
 acpi_os_validate_address (
     u8                   space_id,
     acpi_physical_address   address,
-    acpi_size               length)
+    acpi_size               length, char* name)
 {
 
     return AE_OK;
 }
+
 
 
 

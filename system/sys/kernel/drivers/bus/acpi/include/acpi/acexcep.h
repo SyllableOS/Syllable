@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -44,11 +44,9 @@
 #ifndef __ACEXCEP_H__
 #define __ACEXCEP_H__
 
-
 /*
  * Exceptions returned by external ACPI interfaces
  */
-
 #define AE_CODE_ENVIRONMENTAL           0x0000
 #define AE_CODE_PROGRAMMER              0x1000
 #define AE_CODE_ACPI_TABLES             0x2000
@@ -56,10 +54,8 @@
 #define AE_CODE_CONTROL                 0x4000
 #define AE_CODE_MASK                    0xF000
 
-
 #define ACPI_SUCCESS(a)                 (!(a))
 #define ACPI_FAILURE(a)                 (a)
-
 
 #define AE_OK                           (acpi_status) 0x0000
 
@@ -115,7 +111,6 @@
 
 #define AE_CODE_PGM_MAX                 0x0009
 
-
 /*
  * Acpi table exceptions
  */
@@ -127,7 +122,6 @@
 #define AE_INVALID_TABLE_LENGTH         (acpi_status) (0x0006 | AE_CODE_ACPI_TABLES)
 
 #define AE_CODE_TBL_MAX                 0x0006
-
 
 /*
  * AML exceptions.  These are caused by problems with

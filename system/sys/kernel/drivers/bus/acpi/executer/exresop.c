@@ -6,7 +6,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,7 +41,6 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGES.
  */
-
 
 #include <acpi/acpi.h>
 #include <acpi/amlcode.h>
@@ -78,6 +77,7 @@ acpi_ex_check_object_type(acpi_object_type type_needed,
 	ACPI_FUNCTION_ENTRY();
 
 	if (type_needed == ACPI_TYPE_ANY) {
+
 		/* All types OK, so we don't perform any typechecks */
 
 		return (AE_OK);
@@ -108,7 +108,6 @@ acpi_ex_check_object_type(acpi_object_type type_needed,
 	return (AE_OK);
 }
 
-
 /*******************************************************************************
  *
  * FUNCTION:    acpi_ex_resolve_operands
@@ -138,7 +137,6 @@ acpi_ex_resolve_operands(u16 opcode,
 	union acpi_operand_object *obj_desc;
 	acpi_status status = AE_OK;
 	u8 object_type;
-	void *temp_node;
 	u32 arg_types;
 	const struct acpi_opcode_info *op_info;
 	u32 this_arg_type;
@@ -226,6 +224,7 @@ acpi_ex_resolve_operands(u16 opcode,
 			}
 
 			if (object_type == (u8) ACPI_TYPE_LOCAL_REFERENCE) {
+
 				/* Decode the Reference */
 
 				op_info = acpi_ps_get_opcode_info(opcode);
@@ -239,7 +238,6 @@ acpi_ex_resolve_operands(u16 opcode,
 
 					/*lint -fallthrough */
 
-				case AML_NAME_OP:
 				case AML_INDEX_OP:
 				case AML_REF_OF_OP:
 				case AML_ARG_OP:
@@ -267,7 +265,6 @@ acpi_ex_resolve_operands(u16 opcode,
 				}
 			}
 			break;
-
 
 		default:
 
@@ -333,14 +330,6 @@ acpi_ex_resolve_operands(u16 opcode,
 			if (ACPI_FAILURE(status)) {
 				return_ACPI_STATUS(status);
 			}
-
-			if (obj_desc->reference.opcode == AML_NAME_OP) {
-				/* Convert a named reference to the actual named object */
-
-				temp_node = obj_desc->reference.object;
-				acpi_ut_remove_reference(obj_desc);
-				(*stack_ptr) = temp_node;
-			}
 			goto next_operand;
 
 		case ARGI_DATAREFOBJ:	/* Store operator only */
@@ -354,8 +343,7 @@ acpi_ex_resolve_operands(u16 opcode,
 			if ((opcode == AML_STORE_OP) &&
 			    (ACPI_GET_OBJECT_TYPE(*stack_ptr) ==
 			     ACPI_TYPE_LOCAL_REFERENCE)
-			    && ((*stack_ptr)->reference.opcode ==
-				AML_INDEX_OP)) {
+			    && ((*stack_ptr)->reference.opcode == AML_INDEX_OP)) {
 				goto next_operand;
 			}
 			break;
@@ -364,7 +352,6 @@ acpi_ex_resolve_operands(u16 opcode,
 			/* All cases covered above */
 			break;
 		}
-
 
 		/*
 		 * Resolve this object to a value
@@ -526,7 +513,6 @@ acpi_ex_resolve_operands(u16 opcode,
 			}
 			goto next_operand;
 
-
 		case ARGI_BUFFER_OR_STRING:
 
 			/* Need an operand of type STRING or BUFFER */
@@ -564,7 +550,6 @@ acpi_ex_resolve_operands(u16 opcode,
 			}
 			goto next_operand;
 
-
 		case ARGI_DATAOBJECT:
 			/*
 			 * ARGI_DATAOBJECT is only used by the size_of operator.
@@ -591,7 +576,6 @@ acpi_ex_resolve_operands(u16 opcode,
 				return_ACPI_STATUS(AE_AML_OPERAND_TYPE);
 			}
 			goto next_operand;
-
 
 		case ARGI_COMPLEXOBJ:
 
@@ -636,7 +620,6 @@ acpi_ex_resolve_operands(u16 opcode,
 			}
 			goto next_operand;
 
-
 		case ARGI_DATAREFOBJ:
 
 			/* Used by the Store() operator only */
@@ -668,6 +651,7 @@ acpi_ex_resolve_operands(u16 opcode,
 				}
 
 				if (target_op == AML_DEBUG_OP) {
+
 					/* Allow store of any object to the Debug object */
 
 					break;
@@ -681,7 +665,6 @@ acpi_ex_resolve_operands(u16 opcode,
 				return_ACPI_STATUS(AE_AML_OPERAND_TYPE);
 			}
 			goto next_operand;
-
 
 		default:
 

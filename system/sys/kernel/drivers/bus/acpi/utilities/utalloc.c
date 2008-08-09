@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -58,7 +58,6 @@ ACPI_MODULE_NAME("utalloc")
  * DESCRIPTION: Create all local caches
  *
  ******************************************************************************/
-
 acpi_status acpi_ut_create_caches(void)
 {
 	acpi_status status;
@@ -108,7 +107,6 @@ acpi_status acpi_ut_create_caches(void)
 	if (ACPI_FAILURE(status)) {
 		return (status);
 	}
-
 #ifdef ACPI_DBG_TRACK_ALLOCATIONS
 
 	/* Memory allocation lists */
@@ -149,7 +147,7 @@ acpi_status acpi_ut_delete_caches(void)
 
 	if (acpi_gbl_display_final_mem_stats) {
 		ACPI_STRCPY(buffer, "MEMORY");
-		acpi_db_display_statistics(buffer);
+		(void)acpi_db_display_statistics(buffer);
 	}
 #endif
 
@@ -224,7 +222,6 @@ acpi_status acpi_ut_validate_buffer(struct acpi_buffer * buffer)
 	return (AE_OK);
 }
 
-
 /*******************************************************************************
  *
  * FUNCTION:    acpi_ut_initialize_buffer
@@ -253,7 +250,6 @@ acpi_ut_initialize_buffer(struct acpi_buffer * buffer,
 		status = AE_BUFFER_OVERFLOW;
 		break;
 
-
 	case ACPI_ALLOCATE_BUFFER:
 
 		/* Allocate a new buffer */
@@ -277,7 +273,6 @@ acpi_ut_initialize_buffer(struct acpi_buffer * buffer,
 			return (AE_NO_MEMORY);
 		}
 		break;
-
 
 	default:
 

@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,7 +40,6 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGES.
  */
-
 
 #include <acpi/acpi.h>
 #include <acpi/acnamesp.h>
@@ -139,7 +138,6 @@ acpi_ns_dump_pathname(acpi_handle handle, char *msg, u32 level, u32 component)
 	return_VOID;
 }
 
-
 /*******************************************************************************
  *
  * FUNCTION:    acpi_ns_dump_one_object
@@ -193,6 +191,7 @@ acpi_ns_dump_one_object(acpi_handle obj_handle,
 	}
 
 	if (!(info->display_type & ACPI_DISPLAY_SHORT)) {
+
 		/* Indent the object according to the level */
 
 		acpi_os_printf("%2d%*s", (u32) level - 1, (int)level * 2, " ");
@@ -237,6 +236,7 @@ acpi_ns_dump_one_object(acpi_handle obj_handle,
 	case ACPI_DISPLAY_SUMMARY:
 
 		if (!obj_desc) {
+
 			/* No attached object, we are done */
 
 			acpi_os_printf("\n");
@@ -249,7 +249,9 @@ acpi_ns_dump_one_object(acpi_handle obj_handle,
 			acpi_os_printf("ID %X Len %.4X Addr %p\n",
 				       obj_desc->processor.proc_id,
 				       obj_desc->processor.length,
-				       (char *)obj_desc->processor.address);
+				       ACPI_CAST_PTR(void,
+						     obj_desc->processor.
+						     address));
 			break;
 
 		case ACPI_TYPE_DEVICE:
@@ -281,7 +283,6 @@ acpi_ns_dump_one_object(acpi_handle obj_handle,
 				acpi_os_printf("[Length not yet evaluated]\n");
 			}
 			break;
-
 
 		case ACPI_TYPE_BUFFER:
 
@@ -321,9 +322,8 @@ acpi_ns_dump_one_object(acpi_handle obj_handle,
 							       space_id));
 			if (obj_desc->region.flags & AOPOBJ_DATA_VALID) {
 				acpi_os_printf(" Addr %8.8X%8.8X Len %.4X\n",
-					       ACPI_FORMAT_UINT64(obj_desc->
-								  region.
-								  address),
+					       ACPI_FORMAT_NATIVE_UINT
+					       (obj_desc->region.address),
 					       obj_desc->region.length);
 			} else {
 				acpi_os_printf
@@ -431,6 +431,7 @@ acpi_ns_dump_one_object(acpi_handle obj_handle,
 
 		acpi_os_printf("O:%p", obj_desc);
 		if (!obj_desc) {
+
 			/* No attached object, we are done */
 
 			acpi_os_printf("\n");
@@ -594,9 +595,7 @@ acpi_ns_dump_one_object(acpi_handle obj_handle,
 	return (AE_OK);
 }
 
-
 #ifdef ACPI_FUTURE_USAGE
-
 /*******************************************************************************
  *
  * FUNCTION:    acpi_ns_dump_objects
@@ -697,6 +696,7 @@ void acpi_ns_dump_tables(acpi_handle search_base, u32 max_depth)
 	}
 
 	if (ACPI_NS_ALL == search_base) {
+
 		/* Entire namespace */
 
 		search_handle = acpi_gbl_root_node;

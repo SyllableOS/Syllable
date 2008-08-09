@@ -7,7 +7,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -188,13 +188,11 @@
 #define AML_LLESSEQUAL_OP           (u16) 0x9294
 #define AML_LNOTEQUAL_OP            (u16) 0x9293
 
-
 /*
  * Internal opcodes
  * Use only "Unknown" AML opcodes, don't attempt to use
  * any valid ACPI ASCII values (A-Z, 0-9, '-')
  */
-
 #define AML_INT_NAMEPATH_OP         (u16) 0x002d
 #define AML_INT_NAMEDFIELD_OP       (u16) 0x0030
 #define AML_INT_RESERVEDFIELD_OP    (u16) 0x0031
@@ -205,7 +203,6 @@
 #define AML_INT_RETURN_VALUE_OP     (u16) 0x0036
 #define AML_INT_EVAL_SUBTREE_OP     (u16) 0x0037
 
-
 #define ARG_NONE                    0x0
 
 /*
@@ -214,7 +211,6 @@
  * There can be up to 31 unique argument types
  * Zero is reserved as end-of-list indicator
  */
-
 #define ARGP_BYTEDATA               0x01
 #define ARGP_BYTELIST               0x02
 #define ARGP_CHARLIST               0x03
@@ -284,22 +280,18 @@
 
 #define ARGI_INVALID_OPCODE         0xFFFFFFFF
 
-
 /*
  * hash offsets
  */
 #define AML_EXTOP_HASH_OFFSET       22
 #define AML_LNOT_HASH_OFFSET        19
 
-
 /*
  * opcode groups and types
  */
-
 #define OPGRP_NAMED                 0x01
 #define OPGRP_FIELD                 0x02
 #define OPGRP_BYTELIST              0x04
-
 
 /*
  * Opcode information
@@ -337,7 +329,6 @@
 #define AML_FLAGS_EXEC_3A_0T_0R     AML_HAS_ARGS
 #define AML_FLAGS_EXEC_3A_1T_1R     AML_HAS_ARGS | AML_HAS_TARGET | AML_HAS_RETVAL
 #define AML_FLAGS_EXEC_6A_0T_1R     AML_HAS_ARGS |                  AML_HAS_RETVAL
-
 
 /*
  * The opcode Type is used in a dispatch table, do not change
@@ -429,7 +420,6 @@ typedef enum {
 } AML_MATCH_OPERATOR;
 
 #define MAX_MATCH_OPERATOR          5
-
 
 /*
  * field_flags

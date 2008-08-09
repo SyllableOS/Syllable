@@ -6,7 +6,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,7 +41,6 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGES.
  */
-
 
 #include <acpi/acpi.h>
 #include <acpi/acinterp.h>
@@ -201,7 +200,6 @@ acpi_ex_do_match(u32 match_op,
 	return logical_result;
 }
 
-
 /*******************************************************************************
  *
  * FUNCTION:    acpi_ex_opcode_6A_0T_1R
@@ -278,6 +276,7 @@ acpi_status acpi_ex_opcode_6A_0T_1R(struct acpi_walk_state * walk_state)
 		 * match was found.
 		 */
 		for (; index < operand[0]->package.count; index++) {
+
 			/* Get the current package element */
 
 			this_element = operand[0]->package.elements[index];
@@ -323,14 +322,18 @@ acpi_status acpi_ex_opcode_6A_0T_1R(struct acpi_walk_state * walk_state)
 		goto cleanup;
 	}
 
-	walk_state->result_obj = return_desc;
-
       cleanup:
 
 	/* Delete return object on error */
 
 	if (ACPI_FAILURE(status)) {
 		acpi_ut_remove_reference(return_desc);
+	}
+
+	/* Save return object on success */
+
+	else {
+		walk_state->result_obj = return_desc;
 	}
 
 	return_ACPI_STATUS(status);

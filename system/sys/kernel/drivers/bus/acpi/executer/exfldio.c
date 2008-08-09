@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,7 +40,6 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGES.
  */
-
 
 #include <acpi/acpi.h>
 #include <acpi/acinterp.h>
@@ -264,7 +263,8 @@ acpi_ex_access_region(union acpi_operand_object *obj_desc,
 			      rgn_desc->region.space_id,
 			      obj_desc->common_field.access_byte_width,
 			      obj_desc->common_field.base_byte_offset,
-			      field_datum_byte_offset, (void *)address));
+			      field_datum_byte_offset, ACPI_CAST_PTR(void,
+								     address)));
 
 	/* Invoke the appropriate address_space/op_region handler */
 
@@ -336,7 +336,6 @@ acpi_ex_register_overflow(union acpi_operand_object *obj_desc,
 
 	return (FALSE);
 }
-
 
 /*******************************************************************************
  *
@@ -460,7 +459,6 @@ acpi_ex_field_datum_io(union acpi_operand_object *obj_desc,
 
 		/*lint -fallthrough */
 
-
 	case ACPI_TYPE_LOCAL_REGION_FIELD:
 		/*
 		 * For simple region_fields, we just directly access the owning
@@ -504,6 +502,7 @@ acpi_ex_field_datum_io(union acpi_operand_object *obj_desc,
 				  value));
 
 		if (read_write == ACPI_READ) {
+
 			/* Read the datum from the data_register */
 
 			status =
@@ -581,6 +580,7 @@ acpi_ex_write_with_update_rule(union acpi_operand_object *obj_desc,
 	/* If the mask is all ones, we don't need to worry about the update rule */
 
 	if (mask != ACPI_INTEGER_MAX) {
+
 		/* Decode the update rule */
 
 		switch (obj_desc->common_field.
@@ -717,6 +717,7 @@ acpi_ex_extract_from_field(union acpi_operand_object *obj_desc,
 	/* Read the rest of the field */
 
 	for (i = 1; i < field_datum_count; i++) {
+
 		/* Get next input datum from the field */
 
 		field_offset += obj_desc->common_field.access_byte_width;
@@ -805,18 +806,39 @@ acpi_ex_insert_into_field(union acpi_operand_object *obj_desc,
 	u32 datum_count;
 	u32 field_datum_count;
 	u32 i;
+	u32 required_length;
+	void *new_buffer;
 
 	ACPI_FUNCTION_TRACE(ex_insert_into_field);
 
 	/* Validate input buffer */
 
-	if (buffer_length <
-	    ACPI_ROUND_BITS_UP_TO_BYTES(obj_desc->common_field.bit_length)) {
-		ACPI_ERROR((AE_INFO,
-			    "Field size %X (bits) is too large for buffer (%X)",
-			    obj_desc->common_field.bit_length, buffer_length));
+	new_buffer = NULL;
+	required_length =
+	    ACPI_ROUND_BITS_UP_TO_BYTES(obj_desc->common_field.bit_length);
+	/*
+	 * We must have a buffer that is at least as long as the field
+	 * we are writing to.  This is because individual fields are
+	 * indivisible and partial writes are not supported -- as per
+	 * the ACPI specification.
+	 */
+	if (buffer_length < required_length) {
 
-		return_ACPI_STATUS(AE_BUFFER_OVERFLOW);
+		/* We need to create a new buffer */
+
+		new_buffer = ACPI_ALLOCATE_ZEROED(required_length);
+		if (!new_buffer) {
+			return_ACPI_STATUS(AE_NO_MEMORY);
+		}
+
+		/*
+		 * Copy the original data to the new buffer, starting
+		 * at Byte zero.  All unused (upper) bytes of the
+		 * buffer will be 0.
+		 */
+		ACPI_MEMCPY((char *)new_buffer, (char *)buffer, buffer_length);
+		buffer = new_buffer;
+		buffer_length = required_length;
 	}
 
 	/*
@@ -858,6 +880,7 @@ acpi_ex_insert_into_field(union acpi_operand_object *obj_desc,
 	/* Write the entire field */
 
 	for (i = 1; i < field_datum_count; i++) {
+
 		/* Write merged datum to the target field */
 
 		merged_datum &= mask;
@@ -865,7 +888,7 @@ acpi_ex_insert_into_field(union acpi_operand_object *obj_desc,
 							merged_datum,
 							field_offset);
 		if (ACPI_FAILURE(status)) {
-			return_ACPI_STATUS(status);
+			goto exit;
 		}
 
 		field_offset += obj_desc->common_field.access_byte_width;
@@ -923,5 +946,11 @@ acpi_ex_insert_into_field(union acpi_operand_object *obj_desc,
 						mask, merged_datum,
 						field_offset);
 
+      exit:
+	/* Free temporary buffer if we used one */
+
+	if (new_buffer) {
+		ACPI_FREE(new_buffer);
+	}
 	return_ACPI_STATUS(status);
 }

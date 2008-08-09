@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2006, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -44,32 +44,16 @@
 #ifndef __ACENV_H__
 #define __ACENV_H__
 
-
 /*
  * Configuration for ACPI tools and utilities
  */
 
 #ifdef ACPI_LIBRARY
+/*
+ * Note: The non-debug version of the acpi_library does not contain any
+ * debug support, for minimimal size. The debug version uses ACPI_FULL_DEBUG
+ */
 #define ACPI_USE_LOCAL_CACHE
-#endif
-
-#ifdef ACPI_DUMP_APP
-#ifndef MSDOS
-#define ACPI_DEBUG_OUTPUT
-#endif
-#define ACPI_APPLICATION
-#define ACPI_DISASSEMBLER
-#define ACPI_NO_METHOD_EXECUTION
-#endif
-
-#ifdef ACPI_EXEC_APP
-#undef DEBUGGER_THREADING
-#define DEBUGGER_THREADING      DEBUGGER_SINGLE_THREADED
-#define ACPI_DEBUG_OUTPUT
-#define ACPI_APPLICATION
-#define ACPI_DEBUGGER
-#define ACPI_DISASSEMBLER
-#define ACPI_MUTEX_DEBUG
 #endif
 
 #ifdef ACPI_ASL_COMPILER
@@ -77,11 +61,40 @@
 #define ACPI_APPLICATION
 #define ACPI_DISASSEMBLER
 #define ACPI_CONSTANT_EVAL_ONLY
+#define ACPI_LARGE_NAMESPACE_NODE
+#define ACPI_DATA_TABLE_DISASSEMBLY
+#endif
+
+#ifdef ACPI_EXEC_APP
+#undef DEBUGGER_THREADING
+#define DEBUGGER_THREADING      DEBUGGER_SINGLE_THREADED
+#define ACPI_FULL_DEBUG
+#define ACPI_APPLICATION
+#define ACPI_DEBUGGER
+#define ACPI_MUTEX_DEBUG
+#define ACPI_DBG_TRACK_ALLOCATIONS
+#endif
+
+#ifdef ACPI_DASM_APP
+#ifndef MSDOS
+#define ACPI_DEBUG_OUTPUT
+#endif
+#define ACPI_APPLICATION
+#define ACPI_DISASSEMBLER
+#define ACPI_NO_METHOD_EXECUTION
+#define ACPI_LARGE_NAMESPACE_NODE
+#define ACPI_DATA_TABLE_DISASSEMBLY
 #endif
 
 #ifdef ACPI_APPLICATION
 #define ACPI_USE_SYSTEM_CLIBRARY
 #define ACPI_USE_LOCAL_CACHE
+#endif
+
+#ifdef ACPI_FULL_DEBUG
+#define ACPI_DEBUGGER
+#define ACPI_DEBUG_OUTPUT
+#define ACPI_DISASSEMBLER
 #endif
 
 /*
@@ -123,7 +136,7 @@
 
 /*! [Begin] no source code translation */
 
-#if defined(__linux__)
+#if defined(_LINUX) || defined(__linux__)
 #include "aclinux.h"
 
 #elif defined(__SYLLABLE__)
@@ -141,7 +154,7 @@
 #elif defined(MSDOS)		/* Must appear after WIN32 and WIN64 check */
 #include "acdos16.h"
 
-#elif defined(__FreeBSD__)
+#elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
 #include "acfreebsd.h"
 
 #elif defined(__NetBSD__)
@@ -167,19 +180,7 @@
 
 #endif
 
-/*
- * Memory allocation tracking.  Used only if
- * 1) This is the debug version
- * 2) This is NOT a 16-bit version of the code (not enough real-mode memory)
- */
-#ifdef ACPI_DEBUG_OUTPUT
-#if ACPI_MACHINE_WIDTH != 16
-#define ACPI_DBG_TRACK_ALLOCATIONS
-#endif
-#endif
-
 /*! [End] no source code translation !*/
-
 
 /*
  * Debugger threading model
@@ -214,7 +215,6 @@
  * Use the standard C library headers.
  * We want to keep these to a minimum.
  */
-
 #ifdef ACPI_USE_STANDARD_HEADERS
 /*
  * Use the standard headers from the standard locations
@@ -277,13 +277,12 @@ typedef char *va_list;
 /*
  * Storage alignment properties
  */
-#define  _AUPBND                (sizeof (acpi_native_uint) - 1)
-#define  _ADNBND                (sizeof (acpi_native_uint) - 1)
+#define  _AUPBND                (sizeof (acpi_native_int) - 1)
+#define  _ADNBND                (sizeof (acpi_native_int) - 1)
 
 /*
  * Variable argument list macro definitions
  */
-
 #define _bnd(X, bnd)            (((sizeof (X)) + (bnd)) & (~(bnd)))
 #define va_arg(ap, T)           (*(T *)(((ap) += (_bnd (T, _AUPBND))) - (_bnd (T,_ADNBND))))
 #define va_end(ap)              (void) 0
@@ -358,7 +357,6 @@ typedef char *va_list;
 #define BREAKPOINT3
 #endif
 
-
 /******************************************************************************
  *
  * Compiler-specific information is contained in the compiler-specific
@@ -366,4 +364,3 @@ typedef char *va_list;
  *
  *****************************************************************************/
 #endif				/* __ACENV_H__ */
-

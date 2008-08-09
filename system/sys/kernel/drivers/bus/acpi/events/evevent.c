@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -214,7 +214,6 @@ static acpi_status acpi_ev_fixed_event_initialize(void)
 	return (AE_OK);
 }
 
-
 /*******************************************************************************
  *
  * FUNCTION:    acpi_ev_fixed_event_detect
@@ -240,10 +239,8 @@ u32 acpi_ev_fixed_event_detect(void)
 	 * Read the fixed feature status and enable registers, as all the cases
 	 * depend on their values.  Ignore errors here.
 	 */
-	(void)acpi_hw_register_read(ACPI_MTX_DO_NOT_LOCK,
-				    ACPI_REGISTER_PM1_STATUS, &fixed_status);
-	(void)acpi_hw_register_read(ACPI_MTX_DO_NOT_LOCK,
-				    ACPI_REGISTER_PM1_ENABLE, &fixed_enable);
+	(void)acpi_hw_register_read(ACPI_REGISTER_PM1_STATUS, &fixed_status);
+	(void)acpi_hw_register_read(ACPI_REGISTER_PM1_ENABLE, &fixed_enable);
 
 	ACPI_DEBUG_PRINT((ACPI_DB_INTERRUPTS,
 			  "Fixed Event Block: Enable %08X Status %08X\n",
@@ -253,21 +250,22 @@ u32 acpi_ev_fixed_event_detect(void)
 	 * Check for all possible Fixed Events and dispatch those that are active
 	 */
 	for (i = 0; i < ACPI_NUM_FIXED_EVENTS; i++) {
+
 		/* Both the status and enable bits must be on for this event */
 
 		if ((fixed_status & acpi_gbl_fixed_event_info[i].
 		     status_bit_mask)
 		    && (fixed_enable & acpi_gbl_fixed_event_info[i].
 			enable_bit_mask)) {
-			/* Found an active (signalled) event */
 
+			/* Found an active (signalled) event */
+			//acpi_os_fixed_event_count(i);
 			int_status |= acpi_ev_fixed_event_dispatch((u32) i);
 		}
 	}
 
 	return (int_status);
 }
-
 
 /*******************************************************************************
  *
@@ -312,3 +310,4 @@ static u32 acpi_ev_fixed_event_dispatch(u32 event)
 	return ((acpi_gbl_fixed_event_handlers[event].
 		 handler) (acpi_gbl_fixed_event_handlers[event].context));
 }
+

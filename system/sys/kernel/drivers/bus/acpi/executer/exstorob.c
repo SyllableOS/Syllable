@@ -6,7 +6,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,7 +41,6 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGES.
  */
-
 
 #include <acpi/acpi.h>
 #include <acpi/acinterp.h>
@@ -92,6 +91,7 @@ acpi_ex_store_buffer_to_buffer(union acpi_operand_object *source_desc,
 	/* Copy source buffer to target buffer */
 
 	if (length <= target_desc->buffer.length) {
+
 		/* Clear existing buffer and copy in the new one */
 
 		ACPI_MEMSET(target_desc->buffer.pointer, 0,
@@ -114,6 +114,7 @@ acpi_ex_store_buffer_to_buffer(union acpi_operand_object *source_desc,
 		 * copy must not truncate the original buffer.
 		 */
 		if (original_src_type == ACPI_TYPE_STRING) {
+
 			/* Set the new length of the target */
 
 			target_desc->buffer.length = length;

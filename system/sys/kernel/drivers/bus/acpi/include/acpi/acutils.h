@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -115,6 +115,8 @@ void acpi_ut_init_globals(void);
 #if defined(ACPI_DEBUG_OUTPUT) || defined(ACPI_DEBUGGER)
 
 char *acpi_ut_get_mutex_name(u32 mutex_id);
+
+const char *acpi_ut_get_notify_name(u32 notify_value);
 
 #endif
 
@@ -354,7 +356,7 @@ acpi_ut_evaluate_numeric_object(char *object_name,
 
 acpi_status
 acpi_ut_execute_HID(struct acpi_namespace_node *device_node,
-		    struct acpi_device_id *hid);
+		    struct acpica_device_id *hid);
 
 acpi_status
 acpi_ut_execute_CID(struct acpi_namespace_node *device_node,
@@ -366,7 +368,7 @@ acpi_ut_execute_STA(struct acpi_namespace_node *device_node,
 
 acpi_status
 acpi_ut_execute_UID(struct acpi_namespace_node *device_node,
-		    struct acpi_device_id *uid);
+		    struct acpica_device_id *uid);
 
 acpi_status
 acpi_ut_execute_sxds(struct acpi_namespace_node *device_node, u8 * highest);
@@ -389,6 +391,8 @@ void *acpi_ut_allocate_object_desc_dbg(char *module_name,
 void acpi_ut_delete_object_desc(union acpi_operand_object *object);
 
 u8 acpi_ut_valid_internal_object(void *object);
+
+union acpi_operand_object *acpi_ut_create_package_object(u32 count);
 
 union acpi_operand_object *acpi_ut_create_buffer_object(acpi_size buffer_size);
 
@@ -498,7 +502,8 @@ acpi_ut_display_init_pathname(u8 type,
 acpi_status
 acpi_ut_walk_aml_resources(u8 * aml,
 			   acpi_size aml_length,
-			   acpi_walk_aml_callback user_function, void **context);
+			   acpi_walk_aml_callback user_function,
+			   void **context);
 
 acpi_status acpi_ut_validate_resource(void *aml, u8 * return_index);
 

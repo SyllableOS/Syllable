@@ -6,7 +6,7 @@
  ******************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,7 +41,6 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGES.
  */
-
 
 #include <acpi/acpi.h>
 #include <acpi/acnamesp.h>
@@ -91,6 +90,7 @@ acpi_ns_attach_object(struct acpi_namespace_node *node,
 	}
 
 	if (!object && (ACPI_TYPE_ANY != type)) {
+
 		/* Null object */
 
 		ACPI_ERROR((AE_INFO,
@@ -99,6 +99,7 @@ acpi_ns_attach_object(struct acpi_namespace_node *node,
 	}
 
 	if (ACPI_GET_DESCRIPTOR_TYPE(node) != ACPI_DESC_TYPE_NAMED) {
+
 		/* Not a name handle */
 
 		ACPI_ERROR((AE_INFO, "Invalid handle %p [%s]",
@@ -237,7 +238,6 @@ void acpi_ns_detach_object(struct acpi_namespace_node *node)
 	return_VOID;
 }
 
-
 /*******************************************************************************
  *
  * FUNCTION:    acpi_ns_get_attached_object
@@ -360,7 +360,6 @@ acpi_ns_attach_data(struct acpi_namespace_node *node,
 	return (AE_OK);
 }
 
-
 /*******************************************************************************
  *
  * FUNCTION:    acpi_ns_detach_data
@@ -405,7 +404,6 @@ acpi_ns_detach_data(struct acpi_namespace_node * node,
 	return (AE_NOT_FOUND);
 }
 
-
 /*******************************************************************************
  *
  * FUNCTION:    acpi_ns_get_attached_data
@@ -440,5 +438,3 @@ acpi_ns_get_attached_data(struct acpi_namespace_node * node,
 
 	return (AE_NOT_FOUND);
 }
-
-

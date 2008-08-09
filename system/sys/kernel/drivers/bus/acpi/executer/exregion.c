@@ -6,7 +6,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,7 +41,6 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGES.
  */
-
 
 #include <acpi/acpi.h>
 #include <acpi/acinterp.h>
@@ -136,6 +135,7 @@ acpi_ex_system_memory_space_handler(u32 function,
 		 * Delete the existing mapping and create a new one.
 		 */
 		if (mem_info->mapped_length) {
+
 			/* Valid mapping, delete it */
 
 			acpi_os_unmap_memory(mem_info->mapped_logical_address,
@@ -160,7 +160,7 @@ acpi_ex_system_memory_space_handler(u32 function,
 		if (!mem_info->mapped_logical_address) {
 			ACPI_ERROR((AE_INFO,
 				    "Could not map memory at %8.8X%8.8X, size %X",
-				    ACPI_FORMAT_UINT64(address),
+				    ACPI_FORMAT_NATIVE_UINT(address),
 				    (u32) window_size));
 			mem_info->mapped_length = 0;
 			return_ACPI_STATUS(AE_NO_MEMORY);
@@ -182,7 +182,8 @@ acpi_ex_system_memory_space_handler(u32 function,
 
 	ACPI_DEBUG_PRINT((ACPI_DB_INFO,
 			  "System-Memory (width %d) R/W %d Address=%8.8X%8.8X\n",
-			  bit_width, function, ACPI_FORMAT_UINT64(address)));
+			  bit_width, function,
+			  ACPI_FORMAT_NATIVE_UINT(address)));
 
 	/*
 	 * Perform the memory read or write
@@ -284,7 +285,8 @@ acpi_ex_system_io_space_handler(u32 function,
 
 	ACPI_DEBUG_PRINT((ACPI_DB_INFO,
 			  "System-IO (width %d) R/W %d Address=%8.8X%8.8X\n",
-			  bit_width, function, ACPI_FORMAT_UINT64(address)));
+			  bit_width, function,
+			  ACPI_FORMAT_NATIVE_UINT(address)));
 
 	/* Decode the function parameter */
 
@@ -338,6 +340,7 @@ acpi_ex_pci_config_space_handler(u32 function,
 	acpi_status status = AE_OK;
 	struct acpi_pci_id *pci_id;
 	u16 pci_register;
+	u32 value32;
 
 	ACPI_FUNCTION_TRACE(ex_pci_config_space_handler);
 
@@ -364,9 +367,9 @@ acpi_ex_pci_config_space_handler(u32 function,
 	switch (function) {
 	case ACPI_READ:
 
-		*value = 0;
 		status = acpi_os_read_pci_configuration(pci_id, pci_register,
-							value, bit_width);
+							&value32, bit_width);
+		*value = value32;
 		break;
 
 	case ACPI_WRITE:

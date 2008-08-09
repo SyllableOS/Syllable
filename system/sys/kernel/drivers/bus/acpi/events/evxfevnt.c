@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,7 +40,6 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGES.
  */
-
 
 #include <acpi/acpi.h>
 #include <acpi/acevents.h>
@@ -108,7 +107,6 @@ ACPI_EXPORT_SYMBOL(acpi_enable)
  * DESCRIPTION: Transfers the system into LEGACY (non-ACPI) mode.
  *
  ******************************************************************************/
-
 acpi_status acpi_disable(void)
 {
 	acpi_status status = AE_OK;
@@ -149,7 +147,6 @@ ACPI_EXPORT_SYMBOL(acpi_disable)
  * DESCRIPTION: Enable an ACPI event (fixed)
  *
  ******************************************************************************/
-
 acpi_status acpi_enable_event(u32 event, u32 flags)
 {
 	acpi_status status = AE_OK;
@@ -208,7 +205,6 @@ ACPI_EXPORT_SYMBOL(acpi_enable_event)
  * DESCRIPTION: Set the type of an individual GPE
  *
  ******************************************************************************/
-
 acpi_status acpi_set_gpe_type(acpi_handle gpe_device, u32 gpe_number, u8 type)
 {
 	acpi_status status = AE_OK;
@@ -252,7 +248,6 @@ ACPI_EXPORT_SYMBOL(acpi_set_gpe_type)
  * DESCRIPTION: Enable an ACPI event (general purpose)
  *
  ******************************************************************************/
-
 acpi_status acpi_enable_gpe(acpi_handle gpe_device, u32 gpe_number, u32 flags)
 {
 	acpi_status status = AE_OK;
@@ -304,7 +299,6 @@ ACPI_EXPORT_SYMBOL(acpi_enable_gpe)
  * DESCRIPTION: Disable an ACPI event (general purpose)
  *
  ******************************************************************************/
-
 acpi_status acpi_disable_gpe(acpi_handle gpe_device, u32 gpe_number, u32 flags)
 {
 	acpi_status status = AE_OK;
@@ -352,7 +346,6 @@ ACPI_EXPORT_SYMBOL(acpi_disable_gpe)
  * DESCRIPTION: Disable an ACPI event (fixed)
  *
  ******************************************************************************/
-
 acpi_status acpi_disable_event(u32 event, u32 flags)
 {
 	acpi_status status = AE_OK;
@@ -407,7 +400,6 @@ ACPI_EXPORT_SYMBOL(acpi_disable_event)
  * DESCRIPTION: Clear an ACPI event (fixed)
  *
  ******************************************************************************/
-
 acpi_status acpi_clear_event(u32 event)
 {
 	acpi_status status = AE_OK;
@@ -446,7 +438,6 @@ ACPI_EXPORT_SYMBOL(acpi_clear_event)
  * DESCRIPTION: Clear an ACPI event (general purpose)
  *
  ******************************************************************************/
-
 acpi_status acpi_clear_gpe(acpi_handle gpe_device, u32 gpe_number, u32 flags)
 {
 	acpi_status status = AE_OK;
@@ -481,7 +472,6 @@ acpi_status acpi_clear_gpe(acpi_handle gpe_device, u32 gpe_number, u32 flags)
 }
 
 ACPI_EXPORT_SYMBOL(acpi_clear_gpe)
-
 #ifdef ACPI_FUTURE_USAGE
 /*******************************************************************************
  *
@@ -496,7 +486,6 @@ ACPI_EXPORT_SYMBOL(acpi_clear_gpe)
  * DESCRIPTION: Obtains and returns the current status of the event
  *
  ******************************************************************************/
-
 acpi_status acpi_get_event_status(u32 event, acpi_event_status * event_status)
 {
 	acpi_status status = AE_OK;
@@ -539,7 +528,6 @@ ACPI_EXPORT_SYMBOL(acpi_get_event_status)
  * DESCRIPTION: Get status of an event (general purpose)
  *
  ******************************************************************************/
-
 acpi_status
 acpi_get_gpe_status(acpi_handle gpe_device,
 		    u32 gpe_number, u32 flags, acpi_event_status * event_status)
@@ -579,7 +567,6 @@ acpi_get_gpe_status(acpi_handle gpe_device,
 
 ACPI_EXPORT_SYMBOL(acpi_get_gpe_status)
 #endif				/*  ACPI_FUTURE_USAGE  */
-
 /*******************************************************************************
  *
  * FUNCTION:    acpi_install_gpe_block
@@ -594,7 +581,6 @@ ACPI_EXPORT_SYMBOL(acpi_get_gpe_status)
  * DESCRIPTION: Create and Install a block of GPE registers
  *
  ******************************************************************************/
-
 acpi_status
 acpi_install_gpe_block(acpi_handle gpe_device,
 		       struct acpi_generic_address *gpe_block_address,
@@ -644,6 +630,7 @@ acpi_install_gpe_block(acpi_handle gpe_device,
 
 	obj_desc = acpi_ns_get_attached_object(node);
 	if (!obj_desc) {
+
 		/* No object, create a new one */
 
 		obj_desc = acpi_ut_create_internal_object(ACPI_TYPE_DEVICE);
@@ -686,7 +673,6 @@ ACPI_EXPORT_SYMBOL(acpi_install_gpe_block)
  * DESCRIPTION: Remove a previously installed block of GPE registers
  *
  ******************************************************************************/
-
 acpi_status acpi_remove_gpe_block(acpi_handle gpe_device)
 {
 	union acpi_operand_object *obj_desc;

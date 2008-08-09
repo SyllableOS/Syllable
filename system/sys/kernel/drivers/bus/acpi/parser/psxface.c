@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,7 +40,6 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGES.
  */
-
 
 #include <acpi/acpi.h>
 #include <acpi/acparser.h>
@@ -337,9 +336,11 @@ acpi_ps_update_parameter_list(struct acpi_evaluate_info *info, u16 action)
 	acpi_native_uint i;
 
 	if ((info->parameter_type == ACPI_PARAM_ARGS) && (info->parameters)) {
+
 		/* Update reference count for each parameter */
 
 		for (i = 0; info->parameters[i]; i++) {
+
 			/* Ignore errors, just do them all */
 
 			(void)acpi_ut_update_object_reference(info->

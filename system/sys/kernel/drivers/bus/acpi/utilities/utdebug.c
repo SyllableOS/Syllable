@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,12 +41,10 @@
  * POSSIBILITY OF SUCH DAMAGES.
  */
 
-
 #include <acpi/acpi.h>
 
 #define _COMPONENT          ACPI_UTILITIES
 ACPI_MODULE_NAME("utdebug")
-
 #ifdef ACPI_DEBUG_OUTPUT
 static acpi_thread_id acpi_gbl_prev_thread_id;
 static char *acpi_gbl_fn_entry_str = "----Entry";
@@ -70,9 +68,9 @@ static const char *acpi_ut_trim_function_name(const char *function_name);
 
 void acpi_ut_init_stack_ptr_trace(void)
 {
-	u32 current_sp;
+	acpi_size current_sp;
 
-	acpi_gbl_entry_stack_pointer = ACPI_PTR_DIFF(&current_sp, NULL);
+	acpi_gbl_entry_stack_pointer = &current_sp;
 }
 
 /*******************************************************************************
@@ -91,10 +89,8 @@ void acpi_ut_track_stack_ptr(void)
 {
 	acpi_size current_sp;
 
-	current_sp = ACPI_PTR_DIFF(&current_sp, NULL);
-
-	if (current_sp < acpi_gbl_lowest_stack_pointer) {
-		acpi_gbl_lowest_stack_pointer = current_sp;
+	if (&current_sp < acpi_gbl_lowest_stack_pointer) {
+		acpi_gbl_lowest_stack_pointer = &current_sp;
 	}
 
 	if (acpi_gbl_nesting_level > acpi_gbl_deepest_nesting) {
@@ -111,7 +107,7 @@ void acpi_ut_track_stack_ptr(void)
  * RETURN:      Updated pointer to the function name
  *
  * DESCRIPTION: Remove the "Acpi" prefix from the function name, if present.
- *              This allows compiler macros such as __FUNCTION__ to be used
+ *              This allows compiler macros such as __func__ to be used
  *              with no change to the debug output.
  *
  ******************************************************************************/
@@ -122,12 +118,14 @@ static const char *acpi_ut_trim_function_name(const char *function_name)
 	/* All Function names are longer than 4 chars, check is safe */
 
 	if (*(ACPI_CAST_PTR(u32, function_name)) == ACPI_PREFIX_MIXED) {
+
 		/* This is the case where the original source has not been modified */
 
 		return (function_name + 4);
 	}
 
 	if (*(ACPI_CAST_PTR(u32, function_name)) == ACPI_PREFIX_LOWER) {
+
 		/* This is the case where the source has been 'linuxized' */
 
 		return (function_name + 5);
@@ -176,12 +174,12 @@ acpi_ut_debug_print(u32 requested_debug_level,
 	 * Thread tracking and context switch notification
 	 */
 	thread_id = acpi_os_get_thread_id();
-
 	if (thread_id != acpi_gbl_prev_thread_id) {
 		if (ACPI_LV_THREADS & acpi_dbg_level) {
 			acpi_os_printf
 			    ("\n**** Context Switch from TID %lX to TID %lX ****\n\n",
-			     (unsigned long)acpi_gbl_prev_thread_id, (unsigned long)thread_id);
+			     (unsigned long)acpi_gbl_prev_thread_id,
+			     (unsigned long)thread_id);
 		}
 
 		acpi_gbl_prev_thread_id = thread_id;
@@ -203,6 +201,7 @@ acpi_ut_debug_print(u32 requested_debug_level,
 
 	va_start(args, format);
 	acpi_os_vprintf(format, args);
+	va_end(args);
 }
 
 ACPI_EXPORT_SYMBOL(acpi_ut_debug_print)
@@ -225,7 +224,6 @@ ACPI_EXPORT_SYMBOL(acpi_ut_debug_print)
  *              debug_print so that the same macros can be used.
  *
  ******************************************************************************/
-
 void ACPI_INTERNAL_VAR_XFACE
 acpi_ut_debug_print_raw(u32 requested_debug_level,
 			u32 line_number,
@@ -241,6 +239,7 @@ acpi_ut_debug_print_raw(u32 requested_debug_level,
 
 	va_start(args, format);
 	acpi_os_vprintf(format, args);
+	va_end(args);
 }
 
 ACPI_EXPORT_SYMBOL(acpi_ut_debug_print_raw)
@@ -260,7 +259,6 @@ ACPI_EXPORT_SYMBOL(acpi_ut_debug_print_raw)
  *              set in debug_level
  *
  ******************************************************************************/
-
 void
 acpi_ut_trace(u32 line_number,
 	      const char *function_name, char *module_name, u32 component_id)
@@ -292,7 +290,6 @@ ACPI_EXPORT_SYMBOL(acpi_ut_trace)
  *              set in debug_level
  *
  ******************************************************************************/
-
 void
 acpi_ut_trace_ptr(u32 line_number,
 		  const char *function_name,
@@ -417,7 +414,6 @@ ACPI_EXPORT_SYMBOL(acpi_ut_exit)
  *              set in debug_level. Prints exit status also.
  *
  ******************************************************************************/
-
 void
 acpi_ut_status_exit(u32 line_number,
 		    const char *function_name,
@@ -459,7 +455,6 @@ ACPI_EXPORT_SYMBOL(acpi_ut_status_exit)
  *              set in debug_level. Prints exit value also.
  *
  ******************************************************************************/
-
 void
 acpi_ut_value_exit(u32 line_number,
 		   const char *function_name,
@@ -492,7 +487,6 @@ ACPI_EXPORT_SYMBOL(acpi_ut_value_exit)
  *              set in debug_level. Prints exit value also.
  *
  ******************************************************************************/
-
 void
 acpi_ut_ptr_exit(u32 line_number,
 		 const char *function_name,
@@ -530,6 +524,11 @@ void acpi_ut_dump_buffer2(u8 * buffer, u32 count, u32 display)
 	u32 temp32;
 	u8 buf_char;
 
+	if (!buffer) {
+		acpi_os_printf("Null Buffer Pointer in DumpBuffer!\n");
+		return;
+	}
+
 	if ((count < 4) || (count & 0x01)) {
 		display = DB_BYTE_DISPLAY;
 	}
@@ -537,6 +536,7 @@ void acpi_ut_dump_buffer2(u8 * buffer, u32 count, u32 display)
 	/* Nasty little dump buffer routine! */
 
 	while (i < count) {
+
 		/* Print current offset */
 
 		acpi_os_printf("%6.4X: ", (u32) i);
@@ -545,6 +545,7 @@ void acpi_ut_dump_buffer2(u8 * buffer, u32 count, u32 display)
 
 		for (j = 0; j < 16;) {
 			if (i + j >= count) {
+
 				/* Dump fill spaces */
 
 				acpi_os_printf("%*s", ((display * 2) + 1), " ");

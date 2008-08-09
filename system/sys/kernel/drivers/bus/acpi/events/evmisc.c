@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -49,22 +49,7 @@
 #define _COMPONENT          ACPI_EVENTS
 ACPI_MODULE_NAME("evmisc")
 
-/* Names for Notify() values, used for debug output */
-#ifdef ACPI_DEBUG_OUTPUT
-static const char *acpi_notify_value_names[] = {
-	"Bus Check",
-	"Device Check",
-	"Device Wake",
-	"Eject Request",
-	"Device Check Light",
-	"Frequency Mismatch",
-	"Bus Mode Mismatch",
-	"Power Fault"
-};
-#endif
-
 /* Pointer to FACS needed for the Global Lock */
-
 static struct acpi_table_facs *facs = NULL;
 
 /* Local prototypes */
@@ -94,7 +79,6 @@ u8 acpi_ev_is_notify_object(struct acpi_namespace_node *node)
 	switch (node->type) {
 	case ACPI_TYPE_DEVICE:
 	case ACPI_TYPE_PROCESSOR:
-	case ACPI_TYPE_POWER:
 	case ACPI_TYPE_THERMAL:
 		/*
 		 * These are the ONLY objects that can receive ACPI notifications
@@ -105,7 +89,6 @@ u8 acpi_ev_is_notify_object(struct acpi_namespace_node *node)
 		return (FALSE);
 	}
 }
-
 
 /*******************************************************************************
  *
@@ -140,29 +123,24 @@ acpi_ev_queue_notify_request(struct acpi_namespace_node * node,
 	 *   initiate soft-off or sleep operation?
 	 */
 	ACPI_DEBUG_PRINT((ACPI_DB_INFO,
-			  "Dispatching Notify(%X) on node %p\n", notify_value,
-			  node));
-
-	if (notify_value <= 7) {
-		ACPI_DEBUG_PRINT((ACPI_DB_INFO, "Notify value: %s\n",
-				  acpi_notify_value_names[notify_value]));
-	} else {
-		ACPI_DEBUG_PRINT((ACPI_DB_INFO,
-				  "Notify value: 0x%2.2X **Device Specific**\n",
-				  notify_value));
-	}
+			  "Dispatching Notify on [%4.4s] Node %p Value 0x%2.2X (%s)\n",
+			  acpi_ut_get_node_name(node), node, notify_value,
+			  acpi_ut_get_notify_name(notify_value)));
 
 	/* Get the notify object attached to the NS Node */
 
 	obj_desc = acpi_ns_get_attached_object(node);
 	if (obj_desc) {
+
 		/* We have the notify object, Get the right handler */
 
 		switch (node->type) {
+
+			/* Notify allowed only on these types */
+
 		case ACPI_TYPE_DEVICE:
 		case ACPI_TYPE_THERMAL:
 		case ACPI_TYPE_PROCESSOR:
-		case ACPI_TYPE_POWER:
 
 			if (notify_value <= ACPI_MAX_SYS_NOTIFY) {
 				handler_obj =
@@ -179,8 +157,13 @@ acpi_ev_queue_notify_request(struct acpi_namespace_node * node,
 		}
 	}
 
-	/* If there is any handler to run, schedule the dispatcher */
-
+	/*
+	 * If there is any handler to run, schedule the dispatcher.
+	 * Check for:
+	 * 1) Global system notify handler
+	 * 2) Global device notify handler
+	 * 3) Per-device notify handler
+	 */
 	if ((acpi_gbl_system_notify.handler
 	     && (notify_value <= ACPI_MAX_SYS_NOTIFY))
 	    || (acpi_gbl_device_notify.handler
@@ -190,37 +173,37 @@ acpi_ev_queue_notify_request(struct acpi_namespace_node * node,
 			return (AE_NO_MEMORY);
 		}
 
+		if (!handler_obj) {
+			ACPI_DEBUG_PRINT((ACPI_DB_INFO,
+					  "Executing system notify handler for Notify (%4.4s, %X) node %p\n",
+					  acpi_ut_get_node_name(node),
+					  notify_value, node));
+		}
+
 		notify_info->common.descriptor_type =
 		    ACPI_DESC_TYPE_STATE_NOTIFY;
 		notify_info->notify.node = node;
 		notify_info->notify.value = (u16) notify_value;
 		notify_info->notify.handler_obj = handler_obj;
 
-		acpi_ex_exit_interpreter();
-
-		acpi_ev_notify_dispatch(notify_info);
-
-		status = acpi_ex_enter_interpreter();
+		status =
+		    acpi_os_execute(OSL_NOTIFY_HANDLER, acpi_ev_notify_dispatch,
+				    notify_info);
 		if (ACPI_FAILURE(status)) {
-			return_ACPI_STATUS(status);
+			acpi_ut_delete_generic_state(notify_info);
 		}
-
-	}
-
-	if (!handler_obj) {
+	} else {
 		/*
-		 * There is no per-device notify handler for this device.
-		 * This may or may not be a problem.
+		 * There is no notify handler (per-device or system) for this device.
 		 */
 		ACPI_DEBUG_PRINT((ACPI_DB_INFO,
-				  "No notify handler for Notify(%4.4s, %X) node %p\n",
+				  "No notify handler for Notify (%4.4s, %X) node %p\n",
 				  acpi_ut_get_node_name(node), notify_value,
 				  node));
 	}
 
 	return (status);
 }
-
 
 /*******************************************************************************
  *
@@ -251,6 +234,7 @@ static void ACPI_SYSTEM_XFACE acpi_ev_notify_dispatch(void *context)
 	 * to the device.
 	 */
 	if (notify_info->notify.value <= ACPI_MAX_SYS_NOTIFY) {
+
 		/* Global system notification handler */
 
 		if (acpi_gbl_system_notify.handler) {
@@ -323,8 +307,9 @@ static u32 acpi_ev_global_lock_handler(void *context)
 		acpi_gbl_global_lock_acquired = TRUE;
 		/* Send a unit to the semaphore */
 
-		if (ACPI_FAILURE(acpi_os_signal_semaphore(
-			acpi_gbl_global_lock_semaphore, 1))) {
+		if (ACPI_FAILURE
+		    (acpi_os_signal_semaphore
+		     (acpi_gbl_global_lock_semaphore, 1))) {
 			ACPI_ERROR((AE_INFO,
 				    "Could not signal Global Lock semaphore"));
 		}
@@ -332,7 +317,6 @@ static u32 acpi_ev_global_lock_handler(void *context)
 
 	return (ACPI_INTERRUPT_HANDLED);
 }
-
 
 /*******************************************************************************
  *
@@ -352,9 +336,10 @@ acpi_status acpi_ev_init_global_lock_handler(void)
 
 	ACPI_FUNCTION_TRACE(ev_init_global_lock_handler);
 
-	status =
-	    acpi_get_table_by_index(ACPI_TABLE_INDEX_FACS,
-				    (struct acpi_table_header **)&facs);
+	status = acpi_get_table_by_index(ACPI_TABLE_INDEX_FACS,
+					 ACPI_CAST_INDIRECT_PTR(struct
+								acpi_table_header,
+								&facs));
 	if (ACPI_FAILURE(status)) {
 		return_ACPI_STATUS(status);
 	}
@@ -435,8 +420,6 @@ acpi_status acpi_ev_acquire_global_lock(u16 timeout)
 {
 	acpi_status status = AE_OK;
 	u8 acquired = FALSE;
-	
-	
 
 	ACPI_FUNCTION_TRACE(ev_acquire_global_lock);
 
@@ -444,17 +427,19 @@ acpi_status acpi_ev_acquire_global_lock(u16 timeout)
 	 * Only one thread can acquire the GL at a time, the global_lock_mutex
 	 * enforces this. This interface releases the interpreter if we must wait.
 	 */
-	status = acpi_ex_system_wait_mutex(acpi_gbl_global_lock_mutex, 0);
+	status = acpi_ex_system_wait_mutex(
+			acpi_gbl_global_lock_mutex->mutex.os_mutex, 0);
 	if (status == AE_TIME) {
 		if (acpi_ev_global_lock_thread_id == acpi_os_get_thread_id()) {
 			acpi_ev_global_lock_acquired++;
 			return AE_OK;
 		}
 	}
-	
 
 	if (ACPI_FAILURE(status)) {
-		status = acpi_ex_system_wait_mutex(acpi_gbl_global_lock_mutex, timeout);
+		status = acpi_ex_system_wait_mutex(
+				acpi_gbl_global_lock_mutex->mutex.os_mutex,
+				timeout);
 	}
 	if (ACPI_FAILURE(status)) {
 		return_ACPI_STATUS(status);
@@ -462,6 +447,19 @@ acpi_status acpi_ev_acquire_global_lock(u16 timeout)
 
 	acpi_ev_global_lock_thread_id = acpi_os_get_thread_id();
 	acpi_ev_global_lock_acquired++;
+
+	/*
+	 * Update the global lock handle and check for wraparound. The handle is
+	 * only used for the external global lock interfaces, but it is updated
+	 * here to properly handle the case where a single thread may acquire the
+	 * lock via both the AML and the acpi_acquire_global_lock interfaces. The
+	 * handle is therefore updated on the first acquire from a given thread
+	 * regardless of where the acquisition request originated.
+	 */
+	acpi_gbl_global_lock_handle++;
+	if (acpi_gbl_global_lock_handle == 0) {
+		acpi_gbl_global_lock_handle = 1;
+	}
 
 	/*
 	 * Make sure that a global lock actually exists. If not, just treat
@@ -518,10 +516,8 @@ acpi_status acpi_ev_release_global_lock(void)
 {
 	u8 pending = FALSE;
 	acpi_status status = AE_OK;
-	
 
 	ACPI_FUNCTION_TRACE(ev_release_global_lock);
-
 
 	/* Lock must be already acquired */
 
@@ -561,7 +557,7 @@ acpi_status acpi_ev_release_global_lock(void)
 	/* Release the local GL mutex */
 	acpi_ev_global_lock_thread_id = NULL;
 	acpi_ev_global_lock_acquired = 0;
-	acpi_os_release_mutex(acpi_gbl_global_lock_mutex);
+	acpi_os_release_mutex(acpi_gbl_global_lock_mutex->mutex.os_mutex);
 	return_ACPI_STATUS(status);
 }
 
@@ -633,4 +629,3 @@ void acpi_ev_terminate(void)
 	}
 	return_VOID;
 }
-

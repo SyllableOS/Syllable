@@ -6,7 +6,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,7 +41,6 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGES.
  */
-
 
 #include <acpi/acpi.h>
 #include <acpi/acinterp.h>
@@ -86,6 +85,7 @@ static char *acpi_ex_allocate_name_string(u32 prefix_count, u32 num_name_segs)
 	 * This may actually be somewhat longer than needed.
 	 */
 	if (prefix_count == ACPI_UINT32_MAX) {
+
 		/* Special case for root */
 
 		size_needed = 1 + (ACPI_NAME_SIZE * num_name_segs) + 2 + 1;
@@ -117,15 +117,16 @@ static char *acpi_ex_allocate_name_string(u32 prefix_count, u32 num_name_segs)
 		}
 	}
 
-
 	/* Set up Dual or Multi prefixes if needed */
 
 	if (num_name_segs > 2) {
+
 		/* Set up multi prefixes   */
 
 		*temp_ptr++ = AML_MULTI_NAME_PREFIX_OP;
 		*temp_ptr++ = (char)num_name_segs;
 	} else if (2 == num_name_segs) {
+
 		/* Set up dual prefixes */
 
 		*temp_ptr++ = AML_DUAL_NAME_PREFIX;
@@ -176,8 +177,7 @@ static acpi_status acpi_ex_name_segment(u8 ** in_aml_address, char *name_string)
 
 	ACPI_DEBUG_PRINT((ACPI_DB_LOAD, "Bytes from stream:\n"));
 
-	for (index = 0;
-	     (index < ACPI_NAME_SIZE)
+	for (index = 0; (index < ACPI_NAME_SIZE)
 	     && (acpi_ut_valid_acpi_char(*aml_address, 0)); index++) {
 		char_buf[index] = *aml_address++;
 		ACPI_DEBUG_PRINT((ACPI_DB_LOAD, "%c\n", char_buf[index]));
@@ -186,6 +186,7 @@ static acpi_status acpi_ex_name_segment(u8 ** in_aml_address, char *name_string)
 	/* Valid name segment  */
 
 	if (index == 4) {
+
 		/* Found 4 valid characters */
 
 		char_buf[4] = '\0';
@@ -256,6 +257,7 @@ acpi_ex_get_name_string(acpi_object_type data_type,
 	if (ACPI_TYPE_LOCAL_REGION_FIELD == data_type ||
 	    ACPI_TYPE_LOCAL_BANK_FIELD == data_type ||
 	    ACPI_TYPE_LOCAL_INDEX_FIELD == data_type) {
+
 		/* Disallow prefixes for types associated with field_unit names */
 
 		name_string = acpi_ex_allocate_name_string(0, 1);
@@ -286,7 +288,6 @@ acpi_ex_get_name_string(acpi_object_type data_type,
 			has_prefix = TRUE;
 			break;
 
-
 		case AML_PARENT_PREFIX:
 
 			/* Increment past possibly multiple parent prefixes */
@@ -304,14 +305,12 @@ acpi_ex_get_name_string(acpi_object_type data_type,
 			has_prefix = TRUE;
 			break;
 
-
 		default:
 
 			/* Not a prefix character */
 
 			break;
 		}
-
 
 		/* Examine first character of name for name segment prefix operator */
 
@@ -376,7 +375,6 @@ acpi_ex_get_name_string(acpi_object_type data_type,
 
 			break;
 
-
 		case 0:
 
 			/* null_name valid as of 8-12-98 ASL/AML Grammar Update */
@@ -398,7 +396,6 @@ acpi_ex_get_name_string(acpi_object_type data_type,
 
 			break;
 
-
 		default:
 
 			/* Name segment string */
@@ -417,6 +414,7 @@ acpi_ex_get_name_string(acpi_object_type data_type,
 	}
 
 	if (AE_CTRL_PENDING == status && has_prefix) {
+
 		/* Ran out of segments after processing a prefix */
 
 		ACPI_ERROR((AE_INFO, "Malformed Name at %p", name_string));

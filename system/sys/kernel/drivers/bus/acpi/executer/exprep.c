@@ -6,7 +6,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,7 +41,6 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGES.
  */
-
 
 #include <acpi/acpi.h>
 #include <acpi/acinterp.h>
@@ -243,7 +242,7 @@ acpi_ex_decode_field_access(union acpi_operand_object *obj_desc,
 					    obj_desc->common_field.bit_length,
 					    0xFFFFFFFF
 					    /* Temp until we pass region_length as parameter */
-					    );
+		    );
 		bit_length = byte_alignment * 8;
 #endif
 
@@ -413,6 +412,7 @@ acpi_ex_prep_common_field_object(union acpi_operand_object *obj_desc,
 acpi_status acpi_ex_prep_field_value(struct acpi_create_field_info *info)
 {
 	union acpi_operand_object *obj_desc;
+	union acpi_operand_object *second_desc = NULL;
 	u32 type;
 	acpi_status status;
 
@@ -495,6 +495,20 @@ acpi_status acpi_ex_prep_field_value(struct acpi_create_field_info *info)
 				  obj_desc->field.access_byte_width,
 				  obj_desc->bank_field.region_obj,
 				  obj_desc->bank_field.bank_obj));
+
+		/*
+		 * Remember location in AML stream of the field unit
+		 * opcode and operands -- since the bank_value
+		 * operands must be evaluated.
+		 */
+		second_desc = obj_desc->common.next_object;
+		second_desc->extra.aml_start =
+		    ((union acpi_parse_object *)(info->data_register_node))->
+		    named.data;
+		second_desc->extra.aml_length =
+		    ((union acpi_parse_object *)(info->data_register_node))->
+		    named.length;
+
 		break;
 
 	case ACPI_TYPE_LOCAL_INDEX_FIELD:

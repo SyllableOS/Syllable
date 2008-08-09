@@ -5,7 +5,7 @@
  ******************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,7 +40,6 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGES.
  */
-
 
 #include <acpi/acpi.h>
 #include <acpi/acresrc.h>
@@ -142,6 +141,7 @@ acpi_rs_convert_resources_to_aml(struct acpi_resource *resource,
 	/* Walk the resource descriptor list, convert each descriptor */
 
 	while (aml < end_aml) {
+
 		/* Validate the (internal) Resource Type */
 
 		if (resource->type > ACPI_RESOURCE_TYPE_MAX) {
@@ -153,10 +153,9 @@ acpi_rs_convert_resources_to_aml(struct acpi_resource *resource,
 
 		/* Perform the conversion */
 
-		status = acpi_rs_convert_resource_to_aml(resource,
-							 ACPI_CAST_PTR(union
-								       aml_resource,
-								       aml),
+		status = acpi_rs_convert_resource_to_aml(resource, ACPI_CAST_PTR(union
+										 aml_resource,
+										 aml),
 							 acpi_gbl_set_resource_dispatch
 							 [resource->type]);
 		if (ACPI_FAILURE(status)) {
@@ -178,6 +177,7 @@ acpi_rs_convert_resources_to_aml(struct acpi_resource *resource,
 		/* Check for end-of-list, normal exit */
 
 		if (resource->type == ACPI_RESOURCE_TYPE_END_TAG) {
+
 			/* An End Tag indicates the end of the input Resource Template */
 
 			return_ACPI_STATUS(AE_OK);

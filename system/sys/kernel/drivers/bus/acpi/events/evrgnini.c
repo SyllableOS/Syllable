@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,7 +41,6 @@
  * POSSIBILITY OF SUCH DAMAGES.
  */
 
-
 #include <acpi/acpi.h>
 #include <acpi/acevents.h>
 #include <acpi/acnamesp.h>
@@ -68,6 +67,7 @@ static u8 acpi_ev_is_pci_root_bridge(struct acpi_namespace_node *node);
  * DESCRIPTION: Setup a system_memory operation region
  *
  ******************************************************************************/
+
 acpi_status
 acpi_ev_system_memory_region_setup(acpi_handle handle,
 				   u32 function,
@@ -216,6 +216,7 @@ acpi_ev_pci_config_region_setup(acpi_handle handle,
 	 * handlers with that device.
 	 */
 	if (handler_obj->address_space.node == acpi_gbl_root_node) {
+
 		/* Start search from the parent object */
 
 		pci_root_node = parent_node;
@@ -227,7 +228,8 @@ acpi_ev_pci_config_region_setup(acpi_handle handle,
 
 				/* Install a handler for this PCI root bridge */
 
-				status = acpi_install_address_space_handler((acpi_handle) pci_root_node, ACPI_ADR_SPACE_PCI_CONFIG, ACPI_DEFAULT_HANDLER, NULL, NULL);
+				status =
+				    acpi_install_address_space_handler((acpi_handle) pci_root_node, ACPI_ADR_SPACE_PCI_CONFIG, ACPI_DEFAULT_HANDLER, NULL, NULL);
 				if (ACPI_FAILURE(status)) {
 					if (status == AE_SAME_HANDLER) {
 						/*
@@ -282,6 +284,7 @@ acpi_ev_pci_config_region_setup(acpi_handle handle,
 	}
 
 	if (!pci_device_node) {
+		ACPI_FREE(pci_id);
 		return_ACPI_STATUS(AE_AML_OPERAND_TYPE);
 	}
 
@@ -375,7 +378,7 @@ static u8 acpi_ev_match_pci_root_bridge(char *id)
 static u8 acpi_ev_is_pci_root_bridge(struct acpi_namespace_node *node)
 {
 	acpi_status status;
-	struct acpi_device_id hid;
+	struct acpica_device_id hid;
 	struct acpi_compatible_id_list *cid;
 	acpi_native_uint i;
 
@@ -580,11 +583,13 @@ acpi_ev_initialize_region(union acpi_operand_object *region_obj,
 	 * ie: acpi_gbl_root_node->parent_entry being set to NULL
 	 */
 	while (node) {
+
 		/* Check to see if a handler exists */
 
 		handler_obj = NULL;
 		obj_desc = acpi_ns_get_attached_object(node);
 		if (obj_desc) {
+
 			/* Can only be a handler if the object exists */
 
 			switch (node->type) {
@@ -609,10 +614,12 @@ acpi_ev_initialize_region(union acpi_operand_object *region_obj,
 			}
 
 			while (handler_obj) {
+
 				/* Is this handler of the correct type? */
 
 				if (handler_obj->address_space.space_id ==
 				    space_id) {
+
 					/* Found correct handler */
 
 					ACPI_DEBUG_PRINT((ACPI_DB_OPREGION,

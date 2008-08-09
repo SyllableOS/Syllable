@@ -6,7 +6,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,7 +41,6 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGES.
  */
-
 
 #include <acpi/acpi.h>
 #include <acpi/acinterp.h>
@@ -104,7 +103,6 @@ acpi_ex_get_object_reference(union acpi_operand_object *obj_desc,
 			return_ACPI_STATUS(AE_AML_INTERNAL);
 		}
 		break;
-
 
 	case ACPI_DESC_TYPE_NAMED:
 
@@ -477,7 +475,6 @@ acpi_ex_do_math_op(u16 opcode, acpi_integer integer0, acpi_integer integer1)
 	}
 }
 
-
 /*******************************************************************************
  *
  * FUNCTION:    acpi_ex_do_logical_numeric_op
@@ -666,6 +663,7 @@ acpi_ex_do_logical_op(u16 opcode,
 			/* Length and all bytes must be equal */
 
 			if ((length0 == length1) && (compare == 0)) {
+
 				/* Length and all bytes match ==> TRUE */
 
 				local_result = TRUE;

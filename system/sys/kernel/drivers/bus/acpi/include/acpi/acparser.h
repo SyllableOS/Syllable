@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,7 +41,6 @@
  * POSSIBILITY OF SUCH DAMAGES.
  */
 
-
 #ifndef __ACPARSER_H__
 #define __ACPARSER_H__
 
@@ -50,7 +49,6 @@
 /* Variable number of arguments. This field must be 32 bits */
 
 #define ACPI_VAR_ARGS                   ACPI_UINT32_MAX
-
 
 #define ACPI_PARSE_DELETE_TREE          0x0001
 #define ACPI_PARSE_NO_TREE_DELETE       0x0000
@@ -110,6 +108,8 @@ union acpi_parse_object *acpi_ps_get_parent(union acpi_parse_object *op);
 const struct acpi_opcode_info *acpi_ps_get_opcode_info(u16 opcode);
 
 char *acpi_ps_get_opcode_name(u16 opcode);
+
+u8 acpi_ps_get_argument_count(u32 op_type);
 
 /*
  * psparse - top level parsing routines

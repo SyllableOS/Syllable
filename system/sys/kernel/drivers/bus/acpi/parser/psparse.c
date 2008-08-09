@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,7 +40,6 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGES.
  */
-
 
 /*
  * Parse the AML and build an operation tree as most interpreters,
@@ -86,7 +85,6 @@ u32 acpi_ps_get_opcode_size(u32 opcode)
 	return (1);
 }
 
-
 /*******************************************************************************
  *
  * FUNCTION:    acpi_ps_peek_opcode
@@ -108,6 +106,7 @@ u16 acpi_ps_peek_opcode(struct acpi_parse_state * parser_state)
 	opcode = (u16) ACPI_GET8(aml);
 
 	if (opcode == AML_EXTENDED_OP_PREFIX) {
+
 		/* Extended opcode, get the second opcode byte */
 
 		aml++;
@@ -116,7 +115,6 @@ u16 acpi_ps_peek_opcode(struct acpi_parse_state * parser_state)
 
 	return (opcode);
 }
-
 
 /*******************************************************************************
  *
@@ -161,6 +159,7 @@ acpi_ps_complete_this_op(struct acpi_walk_state * walk_state,
 	if (op->common.parent) {
 		prev = op->common.parent->common.value.arg;
 		if (!prev) {
+
 			/* Nothing more to do */
 
 			goto cleanup;
@@ -206,6 +205,8 @@ acpi_ps_complete_this_op(struct acpi_walk_state * walk_state,
 			    || (op->common.parent->common.aml_opcode ==
 				AML_PACKAGE_OP)
 			    || (op->common.parent->common.aml_opcode ==
+				AML_BANK_FIELD_OP)
+			    || (op->common.parent->common.aml_opcode ==
 				AML_VAR_PACKAGE_OP)) {
 				replacement_op =
 				    acpi_ps_alloc_op(AML_INT_RETURN_VALUE_OP);
@@ -248,6 +249,7 @@ acpi_ps_complete_this_op(struct acpi_walk_state * walk_state,
 		/* We must unlink this op from the parent tree */
 
 		if (prev == op) {
+
 			/* This op is the first in the list */
 
 			if (replacement_op) {
@@ -268,6 +270,7 @@ acpi_ps_complete_this_op(struct acpi_walk_state * walk_state,
 
 		else
 			while (prev) {
+
 				/* Traverse all siblings in the parent's argument list */
 
 				next = prev->common.next;
@@ -336,7 +339,6 @@ acpi_ps_next_parse_state(struct acpi_walk_state *walk_state,
 
 	switch (callback_status) {
 	case AE_CTRL_TERMINATE:
-
 		/*
 		 * A control method was terminated via a RETURN statement.
 		 * The walk of this method is complete.
@@ -345,24 +347,17 @@ acpi_ps_next_parse_state(struct acpi_walk_state *walk_state,
 		status = AE_CTRL_TERMINATE;
 		break;
 
-
 	case AE_CTRL_BREAK:
 
 		parser_state->aml = walk_state->aml_last_while;
 		walk_state->control_state->common.value = FALSE;
-		status = acpi_ds_result_stack_pop(walk_state);
-		if (ACPI_SUCCESS(status)) {
-			status = AE_CTRL_BREAK;
-		}
+		status = AE_CTRL_BREAK;
 		break;
 
 	case AE_CTRL_CONTINUE:
 
 		parser_state->aml = walk_state->aml_last_while;
-		status = acpi_ds_result_stack_pop(walk_state);
-		if (ACPI_SUCCESS(status)) {
-			status = AE_CTRL_CONTINUE;
-		}
+		status = AE_CTRL_CONTINUE;
 		break;
 
 	case AE_CTRL_PENDING:
@@ -379,20 +374,15 @@ acpi_ps_next_parse_state(struct acpi_walk_state *walk_state,
 #endif
 
 	case AE_CTRL_TRUE:
-
 		/*
 		 * Predicate of an IF was true, and we are at the matching ELSE.
 		 * Just close out this package
 		 */
 		parser_state->aml = acpi_ps_get_next_package_end(parser_state);
-		status = acpi_ds_result_stack_pop(walk_state);
-		if (ACPI_SUCCESS(status)) {
-			status = AE_CTRL_PENDING;
-		}
+		status = AE_CTRL_PENDING;
 		break;
 
 	case AE_CTRL_FALSE:
-
 		/*
 		 * Either an IF/WHILE Predicate was false or we encountered a BREAK
 		 * opcode.  In both cases, we do not execute the rest of the
@@ -532,6 +522,7 @@ acpi_status acpi_ps_parse_aml(struct acpi_walk_state *walk_state)
 		} else if (status == AE_CTRL_TERMINATE) {
 			status = AE_OK;
 		} else if ((status != AE_OK) && (walk_state->method_desc)) {
+
 			/* Either the method parse or actual execution failed */
 
 			ACPI_ERROR_METHOD("Method parse/execution failed",
@@ -543,7 +534,7 @@ acpi_status acpi_ps_parse_aml(struct acpi_walk_state *walk_state)
 			if ((status == AE_ALREADY_EXISTS) &&
 			    (!walk_state->method_desc->method.mutex)) {
 				ACPI_INFO((AE_INFO,
-					   "Marking method %4.4s as Serialized",
+					   "Marking method %4.4s as Serialized because of AE_ALREADY_EXISTS error",
 					   walk_state->method_node->name.
 					   ascii));
 
@@ -585,7 +576,6 @@ acpi_status acpi_ps_parse_aml(struct acpi_walk_state *walk_state)
 		/* Delete this walk state and all linked control states */
 
 		acpi_ps_cleanup_scope(&walk_state->parser_state);
-
 		previous_walk_state = walk_state;
 
 		ACPI_DEBUG_PRINT((ACPI_DB_PARSE,
@@ -604,6 +594,30 @@ acpi_status acpi_ps_parse_aml(struct acpi_walk_state *walk_state)
 				 * The object is deleted
 				 */
 				if (!previous_walk_state->return_desc) {
+					/*
+					 * In slack mode execution, if there is no return value
+					 * we should implicitly return zero (0) as a default value.
+					 */
+					if (acpi_gbl_enable_interpreter_slack &&
+					    !previous_walk_state->
+					    implicit_return_obj) {
+						previous_walk_state->
+						    implicit_return_obj =
+						    acpi_ut_create_internal_object
+						    (ACPI_TYPE_INTEGER);
+						if (!previous_walk_state->
+						    implicit_return_obj) {
+							return_ACPI_STATUS
+							    (AE_NO_MEMORY);
+						}
+
+						previous_walk_state->
+						    implicit_return_obj->
+						    integer.value = 0;
+					}
+
+					/* Restart the calling control method */
+
 					status =
 					    acpi_ds_restart_control_method
 					    (walk_state,
@@ -650,12 +664,14 @@ acpi_status acpi_ps_parse_aml(struct acpi_walk_state *walk_state)
 			}
 		} else {
 			if (previous_walk_state->return_desc) {
+
 				/* Caller doesn't want it, must delete it */
 
 				acpi_ut_remove_reference(previous_walk_state->
 							 return_desc);
 			}
 			if (previous_walk_state->implicit_return_obj) {
+
 				/* Caller doesn't want it, must delete it */
 
 				acpi_ut_remove_reference(previous_walk_state->

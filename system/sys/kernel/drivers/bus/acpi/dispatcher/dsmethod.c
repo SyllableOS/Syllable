@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,9 +41,7 @@
  * POSSIBILITY OF SUCH DAMAGES.
  */
 
-
 #include <acpi/acpi.h>
-#include <acpi/acparser.h>
 #include <acpi/amlcode.h>
 #include <acpi/acdispat.h>
 #include <acpi/acinterp.h>
@@ -72,6 +70,7 @@ acpi_ds_create_method_mutex(union acpi_operand_object *method_desc);
  *              Note: Allows the exception handler to change the status code
  *
  ******************************************************************************/
+
 acpi_status
 acpi_ds_method_error(acpi_status status, struct acpi_walk_state *walk_state)
 {
@@ -86,6 +85,7 @@ acpi_ds_method_error(acpi_status status, struct acpi_walk_state *walk_state)
 	/* Invoke the global exception handler */
 
 	if (acpi_gbl_exception_handler) {
+
 		/* Exit the interpreter, allow handler to execute methods */
 
 		acpi_ex_exit_interpreter();
@@ -101,10 +101,11 @@ acpi_ds_method_error(acpi_status status, struct acpi_walk_state *walk_state)
 						    walk_state->opcode,
 						    walk_state->aml_offset,
 						    NULL);
-		(void)acpi_ex_enter_interpreter();
+		acpi_ex_enter_interpreter();
 	}
 #ifdef ACPI_DISASSEMBLER
 	if (ACPI_FAILURE(status)) {
+
 		/* Display method locals/args if disassembler is present */
 
 		acpi_dm_dump_method_info(status, walk_state, walk_state->op);
@@ -229,8 +230,10 @@ acpi_ds_begin_method_execution(struct acpi_namespace_node *method_node,
 		 * Obtain the method mutex if necessary. Do not acquire mutex for a
 		 * recursive call.
 		 */
-		if (acpi_os_get_thread_id() !=
-		    obj_desc->method.mutex->mutex.owner_thread_id) {
+		if (!walk_state ||
+		    !obj_desc->method.mutex->mutex.thread_id ||
+		    (walk_state->thread->thread_id !=
+		     obj_desc->method.mutex->mutex.thread_id)) {
 			/*
 			 * Acquire the method mutex. This releases the interpreter if we
 			 * block (and reacquires it before it returns)
@@ -244,14 +247,14 @@ acpi_ds_begin_method_execution(struct acpi_namespace_node *method_node,
 			}
 
 			/* Update the mutex and walk info and save the original sync_level */
-			obj_desc->method.mutex->mutex.owner_thread_id =
-				acpi_os_get_thread_id();
 
 			if (walk_state) {
 				obj_desc->method.mutex->mutex.
 				    original_sync_level =
 				    walk_state->thread->current_sync_level;
 
+				obj_desc->method.mutex->mutex.thread_id =
+				    walk_state->thread->thread_id;
 				walk_state->thread->current_sync_level =
 				    obj_desc->method.sync_level;
 			} else {
@@ -355,6 +358,7 @@ acpi_ds_call_control_method(struct acpi_thread_state *thread,
 		status = AE_NO_MEMORY;
 		goto cleanup;
 	}
+
 	/*
 	 * The resolved arguments were put on the previous walk state's operand
 	 * stack. Operands on the previous walk state stack always
@@ -467,6 +471,7 @@ acpi_ds_restart_control_method(struct acpi_walk_state *walk_state,
 		/* Are we actually going to use the return value? */
 
 		if (walk_state->return_used) {
+
 			/* Save the return value from the previous method */
 
 			status = acpi_ds_result_push(return_desc, walk_state);
@@ -529,8 +534,6 @@ void
 acpi_ds_terminate_control_method(union acpi_operand_object *method_desc,
 				 struct acpi_walk_state *walk_state)
 {
-	struct acpi_namespace_node *method_node;
-	acpi_status status;
 
 	ACPI_FUNCTION_TRACE_PTR(ds_terminate_control_method, walk_state);
 
@@ -545,34 +548,26 @@ acpi_ds_terminate_control_method(union acpi_operand_object *method_desc,
 		/* Delete all arguments and locals */
 
 		acpi_ds_method_data_delete_all(walk_state);
-	}
 
-	/*
-	 * If method is serialized, release the mutex and restore the
-	 * current sync level for this thread
-	 */
-	if (method_desc->method.mutex) {
-
-		/* Acquisition Depth handles recursive calls */
-
-		method_desc->method.mutex->mutex.acquisition_depth--;
-		if (!method_desc->method.mutex->mutex.acquisition_depth) {
-			walk_state->thread->current_sync_level =
-			    method_desc->method.mutex->mutex.
-			    original_sync_level;
-
-			acpi_os_release_mutex(method_desc->method.mutex->mutex.
-					      os_mutex);
-			method_desc->method.mutex->mutex.owner_thread_id = ACPI_MUTEX_NOT_ACQUIRED;
-		}
-	}
-
-	if (walk_state) {
 		/*
-		 * Delete any objects created by this method during execution.
-		 * The method Node is stored in the walk state
+		 * If method is serialized, release the mutex and restore the
+		 * current sync level for this thread
 		 */
-		method_node = walk_state->method_node;
+		if (method_desc->method.mutex) {
+
+			/* Acquisition Depth handles recursive calls */
+
+			method_desc->method.mutex->mutex.acquisition_depth--;
+			if (!method_desc->method.mutex->mutex.acquisition_depth) {
+				walk_state->thread->current_sync_level =
+				    method_desc->method.mutex->mutex.
+				    original_sync_level;
+
+				acpi_os_release_mutex(method_desc->method.
+						      mutex->mutex.os_mutex);
+				method_desc->method.mutex->mutex.thread_id = NULL;
+			}
+		}
 
 		/*
 		 * Delete any namespace objects created anywhere within
@@ -614,7 +609,7 @@ acpi_ds_terminate_control_method(union acpi_operand_object *method_desc,
 		 */
 		if ((method_desc->method.method_flags & AML_METHOD_SERIALIZED)
 		    && (!method_desc->method.mutex)) {
-			status = acpi_ds_create_method_mutex(method_desc);
+			(void)acpi_ds_create_method_mutex(method_desc);
 		}
 
 		/* No more threads, we can free the owner_id */

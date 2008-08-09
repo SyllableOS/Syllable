@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,9 +41,10 @@
  * POSSIBILITY OF SUCH DAMAGES.
  */
 
-
 #include <acpi/acpi.h>
 #include <acpi/amlcode.h>
+#include <acpi/acnamesp.h>
+
 
 #define _COMPONENT          ACPI_UTILITIES
 ACPI_MODULE_NAME("utcopy")
@@ -67,6 +68,10 @@ acpi_ut_copy_ipackage_to_epackage(union acpi_operand_object *internal_object,
 static acpi_status
 acpi_ut_copy_esimple_to_isimple(union acpi_object *user_obj,
 				union acpi_operand_object **return_obj);
+
+static acpi_status
+acpi_ut_copy_epackage_to_ipackage(union acpi_object *external_object,
+				  union acpi_operand_object **internal_object);
 
 static acpi_status
 acpi_ut_copy_simple_object(union acpi_operand_object *source_desc,
@@ -167,25 +172,23 @@ acpi_ut_copy_isimple_to_esimple(union acpi_operand_object *internal_object,
 		external_object->integer.value = internal_object->integer.value;
 		break;
 
-
 	case ACPI_TYPE_LOCAL_REFERENCE:
 
-		/*
-		 * This is an object reference.  Attempt to dereference it.
-		 */
+		/* This is an object reference. */
+
 		switch (internal_object->reference.opcode) {
 		case AML_INT_NAMEPATH_OP:
 
 			/* For namepath, return the object handle ("reference") */
 
 		default:
-			/*
-			 * Use the object type of "Any" to indicate a reference
-			 * to object containing a handle to an ACPI named object.
-			 */
-			external_object->type = ACPI_TYPE_ANY;
+
+			/* We are referring to the namespace node */
+
 			external_object->reference.handle =
 			    internal_object->reference.node;
+			external_object->reference.actual_type =
+			    acpi_ns_get_type(internal_object->reference.node);
 			break;
 		}
 		break;
@@ -213,6 +216,11 @@ acpi_ut_copy_isimple_to_esimple(union acpi_operand_object *internal_object,
 		/*
 		 * There is no corresponding external object type
 		 */
+		ACPI_ERROR((AE_INFO,
+			    "Unsupported object type, cannot convert to external object: %s",
+			    acpi_ut_get_type_name(ACPI_GET_OBJECT_TYPE
+						  (internal_object))));
+
 		return_ACPI_STATUS(AE_SUPPORT);
 	}
 
@@ -265,7 +273,6 @@ acpi_ut_copy_ielement_to_eelement(u8 object_type,
 		}
 		break;
 
-
 	case ACPI_COPY_TYPE_PACKAGE:
 
 		/*
@@ -300,7 +307,6 @@ acpi_ut_copy_ielement_to_eelement(u8 object_type,
 	info->length += object_space;
 	return (status);
 }
-
 
 /*******************************************************************************
  *
@@ -455,6 +461,7 @@ acpi_ut_copy_esimple_to_isimple(union acpi_object *external_object,
 	case ACPI_TYPE_STRING:
 	case ACPI_TYPE_BUFFER:
 	case ACPI_TYPE_INTEGER:
+	case ACPI_TYPE_LOCAL_REFERENCE:
 
 		internal_object = acpi_ut_create_internal_object((u8)
 								 external_object->
@@ -464,8 +471,17 @@ acpi_ut_copy_esimple_to_isimple(union acpi_object *external_object,
 		}
 		break;
 
+	case ACPI_TYPE_ANY:	/* This is the case for a NULL object */
+
+		*ret_internal_object = NULL;
+		return_ACPI_STATUS(AE_OK);
+
 	default:
 		/* All other types are not supported */
+
+		ACPI_ERROR((AE_INFO,
+			    "Unsupported object type, cannot convert to internal object: %s",
+			    acpi_ut_get_type_name(external_object->type)));
 
 		return_ACPI_STATUS(AE_SUPPORT);
 	}
@@ -489,7 +505,6 @@ acpi_ut_copy_esimple_to_isimple(union acpi_object *external_object,
 		internal_object->string.length = external_object->string.length;
 		break;
 
-
 	case ACPI_TYPE_BUFFER:
 
 		internal_object->buffer.pointer =
@@ -503,11 +518,24 @@ acpi_ut_copy_esimple_to_isimple(union acpi_object *external_object,
 			    external_object->buffer.length);
 
 		internal_object->buffer.length = external_object->buffer.length;
+
+		/* Mark buffer data valid */
+
+		internal_object->buffer.flags |= AOPOBJ_DATA_VALID;
 		break;
 
 	case ACPI_TYPE_INTEGER:
 
 		internal_object->integer.value = external_object->integer.value;
+		break;
+
+	case ACPI_TYPE_LOCAL_REFERENCE:
+
+		/* TBD: should validate incoming handle */
+
+		internal_object->reference.opcode = AML_INT_NAMEPATH_OP;
+		internal_object->reference.node =
+		    external_object->reference.handle;
 		break;
 
 	default:
@@ -523,77 +551,77 @@ acpi_ut_copy_esimple_to_isimple(union acpi_object *external_object,
 	return_ACPI_STATUS(AE_NO_MEMORY);
 }
 
-#ifdef ACPI_FUTURE_IMPLEMENTATION
-/* Code to convert packages that are parameters to control methods */
-
 /*******************************************************************************
  *
  * FUNCTION:    acpi_ut_copy_epackage_to_ipackage
  *
- * PARAMETERS:  *internal_object   - Pointer to the object we are returning
- *              *Buffer            - Where the object is returned
- *              *space_used        - Where the length of the object is returned
+ * PARAMETERS:  external_object     - The external object to be converted
+ *              internal_object     - Where the internal object is returned
  *
  * RETURN:      Status
  *
- * DESCRIPTION: This function is called to place a package object in a user
- *              buffer.  A package object by definition contains other objects.
- *
- *              The buffer is assumed to have sufficient space for the object.
- *              The caller must have verified the buffer length needed using the
- *              acpi_ut_get_object_size function before calling this function.
+ * DESCRIPTION: Copy an external package object to an internal package.
+ *              Handles nested packages.
  *
  ******************************************************************************/
 
 static acpi_status
-acpi_ut_copy_epackage_to_ipackage(union acpi_operand_object *internal_object,
-				  u8 * buffer, u32 * space_used)
+acpi_ut_copy_epackage_to_ipackage(union acpi_object *external_object,
+				  union acpi_operand_object **internal_object)
 {
-	u8 *free_space;
-	union acpi_object *external_object;
-	u32 length = 0;
-	u32 this_index;
-	u32 object_space = 0;
-	union acpi_operand_object *this_internal_obj;
-	union acpi_object *this_external_obj;
+	acpi_status status = AE_OK;
+	union acpi_operand_object *package_object;
+	union acpi_operand_object **package_elements;
+	acpi_native_uint i;
 
 	ACPI_FUNCTION_TRACE(ut_copy_epackage_to_ipackage);
 
-	/*
-	 * First package at head of the buffer
-	 */
-	external_object = (union acpi_object *)buffer;
+	/* Create the package object */
+
+	package_object =
+	    acpi_ut_create_package_object(external_object->package.count);
+	if (!package_object) {
+		return_ACPI_STATUS(AE_NO_MEMORY);
+	}
+
+	package_elements = package_object->package.elements;
 
 	/*
-	 * Free space begins right after the first package
+	 * Recursive implementation. Probably ok, since nested external packages
+	 * as parameters should be very rare.
 	 */
-	free_space = buffer + sizeof(union acpi_object);
+	for (i = 0; i < external_object->package.count; i++) {
+		status =
+		    acpi_ut_copy_eobject_to_iobject(&external_object->package.
+						    elements[i],
+						    &package_elements[i]);
+		if (ACPI_FAILURE(status)) {
 
-	external_object->type = ACPI_GET_OBJECT_TYPE(internal_object);
-	external_object->package.count = internal_object->package.count;
-	external_object->package.elements = (union acpi_object *)free_space;
+			/* Truncate package and delete it */
 
-	/*
-	 * Build an array of ACPI_OBJECTS in the buffer
-	 * and move the free space past it
-	 */
-	free_space +=
-	    external_object->package.count * sizeof(union acpi_object);
+			package_object->package.count = (u32) i;
+			package_elements[i] = NULL;
+			acpi_ut_remove_reference(package_object);
+			return_ACPI_STATUS(status);
+		}
+	}
 
-	/* Call walk_package */
+	/* Mark package data valid */
 
+	package_object->package.flags |= AOPOBJ_DATA_VALID;
+
+	*internal_object = package_object;
+	return_ACPI_STATUS(status);
 }
-
-#endif				/* Future implementation */
 
 /*******************************************************************************
  *
  * FUNCTION:    acpi_ut_copy_eobject_to_iobject
  *
- * PARAMETERS:  *internal_object   - The external object to be converted
- *              *buffer_ptr     - Where the internal object is returned
+ * PARAMETERS:  external_object     - The external object to be converted
+ *              internal_object     - Where the internal object is returned
  *
- * RETURN:      Status          - the status of the call
+ * RETURN:      Status              - the status of the call
  *
  * DESCRIPTION: Converts an external object to an internal object.
  *
@@ -608,16 +636,10 @@ acpi_ut_copy_eobject_to_iobject(union acpi_object *external_object,
 	ACPI_FUNCTION_TRACE(ut_copy_eobject_to_iobject);
 
 	if (external_object->type == ACPI_TYPE_PACKAGE) {
-		/*
-		 * Packages as external input to control methods are not supported,
-		 */
-		ACPI_ERROR((AE_INFO,
-			    "Packages as parameters not implemented!"));
-
-		return_ACPI_STATUS(AE_NOT_IMPLEMENTED);
-	}
-
-	else {
+		status =
+		    acpi_ut_copy_epackage_to_ipackage(external_object,
+						      internal_object);
+	} else {
 		/*
 		 * Build a simple object (no nested objects)
 		 */
@@ -695,7 +717,6 @@ acpi_ut_copy_simple_object(union acpi_operand_object *source_desc,
 		break;
 
 	case ACPI_TYPE_STRING:
-
 		/*
 		 * Allocate and copy the actual string if and only if:
 		 * 1) There is a valid string pointer
@@ -721,7 +742,15 @@ acpi_ut_copy_simple_object(union acpi_operand_object *source_desc,
 		/*
 		 * We copied the reference object, so we now must add a reference
 		 * to the object pointed to by the reference
+		 *
+		 * DDBHandle reference (from Load/load_table is a special reference,
+		 * it's Reference.Object is the table index, so does not need to
+		 * increase the reference count
 		 */
+		if (source_desc->reference.opcode == AML_LOAD_OP) {
+			break;
+		}
+
 		acpi_ut_add_reference(source_desc->reference.object);
 		break;
 
@@ -741,7 +770,6 @@ acpi_ut_copy_simple_object(union acpi_operand_object *source_desc,
 
 	return (AE_OK);
 }
-
 
 /*******************************************************************************
  *
@@ -803,7 +831,6 @@ acpi_ut_copy_ielement_to_ielement(u8 object_type,
 		}
 		break;
 
-
 	case ACPI_COPY_TYPE_PACKAGE:
 
 		/*
@@ -811,34 +838,21 @@ acpi_ut_copy_ielement_to_ielement(u8 object_type,
 		 * Create and build the package object
 		 */
 		target_object =
-		    acpi_ut_create_internal_object(ACPI_TYPE_PACKAGE);
+		    acpi_ut_create_package_object(source_object->package.count);
 		if (!target_object) {
 			return (AE_NO_MEMORY);
 		}
 
-		target_object->package.count = source_object->package.count;
 		target_object->common.flags = source_object->common.flags;
 
-		/*
-		 * Create the object array
-		 */
-		target_object->package.elements = ACPI_ALLOCATE_ZEROED(((acpi_size) source_object->package.count + 1) * sizeof(void *));
-		if (!target_object->package.elements) {
-			status = AE_NO_MEMORY;
-			goto error_exit;
-		}
+		/* Pass the new package object back to the package walk routine */
 
-		/*
-		 * Pass the new package object back to the package walk routine
-		 */
 		state->pkg.this_target_obj = target_object;
 
-		/*
-		 * Store the object pointer in the parent package object
-		 */
+		/* Store the object pointer in the parent package object */
+
 		*this_target_ptr = target_object;
 		break;
-
 
 	default:
 		return (AE_BAD_PARAMETER);
@@ -850,7 +864,6 @@ acpi_ut_copy_ielement_to_ielement(u8 object_type,
 	acpi_ut_remove_reference(target_object);
 	return (status);
 }
-
 
 /*******************************************************************************
  *
@@ -899,6 +912,7 @@ acpi_ut_copy_ipackage_to_ipackage(union acpi_operand_object *source_obj,
 					   acpi_ut_copy_ielement_to_ielement,
 					   walk_state);
 	if (ACPI_FAILURE(status)) {
+
 		/* On failure, delete the destination package object */
 
 		acpi_ut_remove_reference(dest_obj);

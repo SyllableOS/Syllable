@@ -6,7 +6,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -42,7 +42,6 @@
  * POSSIBILITY OF SUCH DAMAGES.
  */
 
-
 #include <acpi/acpi.h>
 #include <acpi/acnamesp.h>
 #include <acpi/actables.h>
@@ -52,6 +51,8 @@ ACPI_MODULE_NAME("tbxface")
 
 /* Local prototypes */
 static acpi_status acpi_tb_load_namespace(void);
+
+static int no_auto_ssdt;
 
 /*******************************************************************************
  *
@@ -202,6 +203,7 @@ acpi_status acpi_reallocate_root_table(void)
 
 	return_ACPI_STATUS(AE_OK);
 }
+
 /*******************************************************************************
  *
  * FUNCTION:    acpi_load_table
@@ -217,7 +219,6 @@ acpi_status acpi_reallocate_root_table(void)
  *              is determined that the table is invalid, the call will fail.
  *
  ******************************************************************************/
-
 acpi_status acpi_load_table(struct acpi_table_header *table_ptr)
 {
 	acpi_status status;
@@ -264,7 +265,7 @@ ACPI_EXPORT_SYMBOL(acpi_load_table)
 acpi_status
 acpi_get_table_header(char *signature,
 		      acpi_native_uint instance,
-		      struct acpi_table_header *out_table_header)
+		      struct acpi_table_header * out_table_header)
 {
 	acpi_native_uint i;
 	acpi_native_uint j;
@@ -323,7 +324,6 @@ acpi_get_table_header(char *signature,
 
 ACPI_EXPORT_SYMBOL(acpi_get_table_header)
 
-
 /******************************************************************************
  *
  * FUNCTION:    acpi_unload_table_id
@@ -348,11 +348,11 @@ acpi_status acpi_unload_table_id(acpi_owner_id id)
 			continue;
 		}
 		/*
-		* Delete all namespace objects owned by this table. Note that these
-		* objects can appear anywhere in the namespace by virtue of the AML
-		* "Scope" operator. Thus, we need to track ownership by an ID, not
-		* simply a position within the hierarchy
-		*/
+		 * Delete all namespace objects owned by this table. Note that these
+		 * objects can appear anywhere in the namespace by virtue of the AML
+		 * "Scope" operator. Thus, we need to track ownership by an ID, not
+		 * simply a position within the hierarchy
+		 */
 		acpi_tb_delete_namespace_by_owner(i);
 		status = acpi_tb_release_owner_id(i);
 		acpi_tb_set_table_loaded_flag(i, FALSE);
@@ -378,7 +378,7 @@ ACPI_EXPORT_SYMBOL(acpi_unload_table_id)
  *****************************************************************************/
 acpi_status
 acpi_get_table(char *signature,
-	       acpi_native_uint instance, struct acpi_table_header ** out_table)
+	       acpi_native_uint instance, struct acpi_table_header **out_table)
 {
 	acpi_native_uint i;
 	acpi_native_uint j;
@@ -538,6 +538,10 @@ static acpi_status acpi_tb_load_namespace(void)
 
 		ACPI_INFO((AE_INFO, "Table DSDT replaced by host OS"));
 		acpi_tb_print_table_header(0, table);
+
+		if (no_auto_ssdt == 0) {
+			printk( "ACPI: DSDT override uses original SSDTs unless \"acpi_no_auto_ssdt\"\n");
+		}
 	}
 
 	status =
@@ -576,6 +580,11 @@ static acpi_status acpi_tb_load_namespace(void)
 		    ||
 		    ACPI_FAILURE(acpi_tb_verify_table
 				 (&acpi_gbl_root_table_list.tables[i]))) {
+			continue;
+		}
+
+		if (no_auto_ssdt) {
+			printk( "ACPI: SSDT ignored due to \"acpi_no_auto_ssdt\"\n");
 			continue;
 		}
 
@@ -624,4 +633,93 @@ acpi_status acpi_load_tables(void)
 }
 
 ACPI_EXPORT_SYMBOL(acpi_load_tables)
+
+
+/*******************************************************************************
+ *
+ * FUNCTION:    acpi_install_table_handler
+ *
+ * PARAMETERS:  Handler         - Table event handler
+ *              Context         - Value passed to the handler on each event
+ *
+ * RETURN:      Status
+ *
+ * DESCRIPTION: Install table event handler
+ *
+ ******************************************************************************/
+acpi_status
+acpi_install_table_handler(acpi_tbl_handler handler, void *context)
+{
+	acpi_status status;
+
+	ACPI_FUNCTION_TRACE(acpi_install_table_handler);
+
+	if (!handler) {
+		return_ACPI_STATUS(AE_BAD_PARAMETER);
+	}
+
+	status = acpi_ut_acquire_mutex(ACPI_MTX_EVENTS);
+	if (ACPI_FAILURE(status)) {
+		return_ACPI_STATUS(status);
+	}
+
+	/* Don't allow more than one handler */
+
+	if (acpi_gbl_table_handler) {
+		status = AE_ALREADY_EXISTS;
+		goto cleanup;
+	}
+
+	/* Install the handler */
+
+	acpi_gbl_table_handler = handler;
+	acpi_gbl_table_handler_context = context;
+
+      cleanup:
+	(void)acpi_ut_release_mutex(ACPI_MTX_EVENTS);
+	return_ACPI_STATUS(status);
+}
+
+ACPI_EXPORT_SYMBOL(acpi_install_table_handler)
+
+/*******************************************************************************
+ *
+ * FUNCTION:    acpi_remove_table_handler
+ *
+ * PARAMETERS:  Handler         - Table event handler that was installed
+ *                                previously.
+ *
+ * RETURN:      Status
+ *
+ * DESCRIPTION: Remove table event handler
+ *
+ ******************************************************************************/
+acpi_status acpi_remove_table_handler(acpi_tbl_handler handler)
+{
+	acpi_status status;
+
+	ACPI_FUNCTION_TRACE(acpi_remove_table_handler);
+
+	status = acpi_ut_acquire_mutex(ACPI_MTX_EVENTS);
+	if (ACPI_FAILURE(status)) {
+		return_ACPI_STATUS(status);
+	}
+
+	/* Make sure that the installed handler is the same */
+
+	if (!handler || handler != acpi_gbl_table_handler) {
+		status = AE_BAD_PARAMETER;
+		goto cleanup;
+	}
+
+	/* Remove the handler */
+
+	acpi_gbl_table_handler = NULL;
+
+      cleanup:
+	(void)acpi_ut_release_mutex(ACPI_MTX_EVENTS);
+	return_ACPI_STATUS(status);
+}
+
+ACPI_EXPORT_SYMBOL(acpi_remove_table_handler)
 

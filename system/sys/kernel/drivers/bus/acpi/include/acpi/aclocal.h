@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -68,7 +68,6 @@ union acpi_parse_object;
  * Mutex typedefs and structs
  *
  ****************************************************************************/
-
 
 /*
  * Predefined handles for the mutex objects used within the subsystem
@@ -444,7 +443,6 @@ struct acpi_field_info {
  *
  ****************************************************************************/
 
-
 #define ACPI_CONTROL_NORMAL                  0xC0
 #define ACPI_CONTROL_CONDITIONAL_EXECUTING   0xC1
 #define ACPI_CONTROL_PREDICATE_EXECUTING     0xC2
@@ -524,9 +522,8 @@ struct acpi_thread_state {
  * AML arguments
  */
 struct acpi_result_values {
-	ACPI_STATE_COMMON u8 num_results;
-	u8 last_insert;
-	union acpi_operand_object *obj_desc[ACPI_OBJ_NUM_OPERANDS];
+	ACPI_STATE_COMMON
+	    union acpi_operand_object *obj_desc[ACPI_RESULTS_FRAME_OBJ_NUM];
 };
 
 typedef
@@ -606,6 +603,7 @@ union acpi_parse_value {
 	union acpi_parse_object         *next;          /* Next op */\
 	struct acpi_namespace_node      *node;          /* For use by interpreter */\
 	union acpi_parse_value          value;          /* Value or args associated with the opcode */\
+	u8                              arg_list_length; /* Number of elements in the arg list */\
 	ACPI_DISASM_ONLY_MEMBERS (\
 	u8                              disasm_flags;   /* Used during AML disassembly */\
 	u8                              disasm_opcode;  /* Subtype used for disassembly */\
@@ -632,7 +630,7 @@ ACPI_PARSE_COMMON};
  * and bytelists.
  */
 struct acpi_parse_obj_named {
-	ACPI_PARSE_COMMON u8 * path;
+	ACPI_PARSE_COMMON u8 *path;
 	u8 *data;		/* AML body or bytelist data */
 	u32 length;		/* AML length */
 	u32 name;		/* 4-byte name or zero if no name */
@@ -698,6 +696,8 @@ struct acpi_parse_state {
 #define ACPI_PARSEOP_NAMED              0x02
 #define ACPI_PARSEOP_DEFERRED           0x04
 #define ACPI_PARSEOP_BYTELIST           0x08
+#define ACPI_PARSEOP_IN_STACK           0x10
+#define ACPI_PARSEOP_TARGET             0x20
 #define ACPI_PARSEOP_IN_CACHE           0x80
 
 /* Parse object disasm_flags */
@@ -743,7 +743,6 @@ struct acpi_bit_register_info {
 #define ACPI_REGISTER_PROCESSOR_BLOCK           0x08
 #define ACPI_REGISTER_SMI_COMMAND_BLOCK         0x09
 
-
 /* Masks used to access the bit_registers */
 
 #define ACPI_BITMASK_TIMER_STATUS               0x0001
@@ -779,7 +778,6 @@ struct acpi_bit_register_info {
 
 #define ACPI_BITMASK_ARB_DISABLE                0x0001
 
-
 /* Raw bit position of each bit_register */
 
 #define ACPI_BITPOSITION_TIMER_STATUS           0x00
@@ -805,7 +803,6 @@ struct acpi_bit_register_info {
 #define ACPI_BITPOSITION_SLEEP_ENABLE           0x0D
 
 #define ACPI_BITPOSITION_ARB_DISABLE            0x00
-
 
 /*****************************************************************************
  *

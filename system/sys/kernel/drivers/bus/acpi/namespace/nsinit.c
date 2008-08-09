@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,7 +40,6 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGES.
  */
-
 
 #include <acpi/acpi.h>
 #include <acpi/acnamesp.h>
@@ -214,7 +213,7 @@ acpi_ns_init_one_object(acpi_handle obj_handle,
 			u32 level, void *context, void **return_value)
 {
 	acpi_object_type type;
-	acpi_status status;
+	acpi_status status = AE_OK;
 	struct acpi_init_walk_info *info =
 	    (struct acpi_init_walk_info *)context;
 	struct acpi_namespace_node *node =
@@ -244,6 +243,10 @@ acpi_ns_init_one_object(acpi_handle obj_handle,
 		info->field_count++;
 		break;
 
+	case ACPI_TYPE_LOCAL_BANK_FIELD:
+		info->field_count++;
+		break;
+
 	case ACPI_TYPE_BUFFER:
 		info->buffer_count++;
 		break;
@@ -268,10 +271,7 @@ acpi_ns_init_one_object(acpi_handle obj_handle,
 	/*
 	 * Must lock the interpreter before executing AML code
 	 */
-	status = acpi_ex_enter_interpreter();
-	if (ACPI_FAILURE(status)) {
-		return (status);
-	}
+	acpi_ex_enter_interpreter();
 
 	/*
 	 * Each of these types can contain executable AML code within the
@@ -288,6 +288,12 @@ acpi_ns_init_one_object(acpi_handle obj_handle,
 
 		info->field_init++;
 		status = acpi_ds_get_buffer_field_arguments(obj_desc);
+		break;
+
+	case ACPI_TYPE_LOCAL_BANK_FIELD:
+
+		info->field_init++;
+		status = acpi_ds_get_bank_field_arguments(obj_desc);
 		break;
 
 	case ACPI_TYPE_BUFFER:
@@ -584,5 +590,3 @@ acpi_ns_init_one_device(acpi_handle obj_handle,
 
 	return_ACPI_STATUS(status);
 }
-
-

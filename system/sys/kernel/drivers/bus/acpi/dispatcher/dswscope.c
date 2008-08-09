@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,7 +40,6 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGES.
  */
-
 
 #include <acpi/acpi.h>
 #include <acpi/acdispat.h>
@@ -80,7 +79,6 @@ void acpi_ds_scope_stack_clear(struct acpi_walk_state *walk_state)
 		acpi_ut_delete_generic_state(scope_info);
 	}
 }
-
 
 /****************************************************************************
  *

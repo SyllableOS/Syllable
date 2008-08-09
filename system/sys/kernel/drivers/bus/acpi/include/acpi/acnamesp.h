@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -43,7 +43,6 @@
 
 #ifndef __ACNAMESP_H__
 #define __ACNAMESP_H__
-
 
 /* To search the entire name space, pass this as search_base */
 
@@ -101,10 +100,8 @@ acpi_ns_walk_namespace(acpi_object_type type,
 		       acpi_walk_callback user_function,
 		       void *context, void **return_value);
 
-struct acpi_namespace_node *acpi_ns_get_next_node(acpi_object_type type,
-						  struct acpi_namespace_node
-						  *parent,
-						  struct acpi_namespace_node
+struct acpi_namespace_node *acpi_ns_get_next_node(acpi_object_type type, struct acpi_namespace_node
+						  *parent, struct acpi_namespace_node
 						  *child);
 
 /*
@@ -116,7 +113,8 @@ acpi_ns_parse_table(acpi_native_uint table_index,
 
 acpi_status
 acpi_ns_one_complete_parse(acpi_native_uint pass_number,
-			   acpi_native_uint table_index);
+			   acpi_native_uint table_index,
+			   struct acpi_namespace_node *start_node);
 
 /*
  * nsaccess - Top-level namespace access

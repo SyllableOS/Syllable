@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,7 +40,6 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGES.
  */
-
 
 #include <acpi/acpi.h>
 #include <acpi/acnamesp.h>
@@ -92,7 +91,6 @@ acpi_status acpi_install_exception_handler(acpi_exception_handler handler)
 
 ACPI_EXPORT_SYMBOL(acpi_install_exception_handler)
 #endif				/*  ACPI_FUTURE_USAGE  */
-
 /*******************************************************************************
  *
  * FUNCTION:    acpi_install_fixed_event_handler
@@ -108,7 +106,6 @@ ACPI_EXPORT_SYMBOL(acpi_install_exception_handler)
  *              event.
  *
  ******************************************************************************/
-
 acpi_status
 acpi_install_fixed_event_handler(u32 event,
 				 acpi_event_handler handler, void *context)
@@ -176,7 +173,6 @@ ACPI_EXPORT_SYMBOL(acpi_install_fixed_event_handler)
  * DESCRIPTION: Disables the event and unregisters the event handler.
  *
  ******************************************************************************/
-
 acpi_status
 acpi_remove_fixed_event_handler(u32 event, acpi_event_handler handler)
 {
@@ -236,7 +232,6 @@ ACPI_EXPORT_SYMBOL(acpi_remove_fixed_event_handler)
  * DESCRIPTION: Install a handler for notifies on an ACPI device
  *
  ******************************************************************************/
-
 acpi_status
 acpi_install_notify_handler(acpi_handle device,
 			    u32 handler_type,
@@ -276,6 +271,7 @@ acpi_install_notify_handler(acpi_handle device,
 	 * only one <external> global handler can be regsitered (per notify type).
 	 */
 	if (device == ACPI_ROOT_OBJECT) {
+
 		/* Make sure the handler is not already installed */
 
 		if (((handler_type & ACPI_SYSTEM_NOTIFY) &&
@@ -318,6 +314,7 @@ acpi_install_notify_handler(acpi_handle device,
 
 		obj_desc = acpi_ns_get_attached_object(node);
 		if (obj_desc) {
+
 			/* Object exists - make sure there's no handler */
 
 			if (((handler_type & ACPI_SYSTEM_NOTIFY) &&
@@ -371,6 +368,7 @@ acpi_install_notify_handler(acpi_handle device,
 		}
 
 		if (handler_type == ACPI_ALL_NOTIFY) {
+
 			/* Extra ref if installed in both */
 
 			acpi_ut_add_reference(notify_obj);
@@ -400,7 +398,6 @@ ACPI_EXPORT_SYMBOL(acpi_install_notify_handler)
  * DESCRIPTION: Remove a handler for notifies on an ACPI device
  *
  ******************************************************************************/
-
 acpi_status
 acpi_remove_notify_handler(acpi_handle device,
 			   u32 handler_type, acpi_notify_handler handler)
@@ -567,7 +564,6 @@ ACPI_EXPORT_SYMBOL(acpi_remove_notify_handler)
  * DESCRIPTION: Install a handler for a General Purpose Event.
  *
  ******************************************************************************/
-
 acpi_status
 acpi_install_gpe_handler(acpi_handle gpe_device,
 			 u32 gpe_number,
@@ -664,7 +660,6 @@ ACPI_EXPORT_SYMBOL(acpi_install_gpe_handler)
  * DESCRIPTION: Remove a handler for a General Purpose acpi_event.
  *
  ******************************************************************************/
-
 acpi_status
 acpi_remove_gpe_handler(acpi_handle gpe_device,
 			u32 gpe_number, acpi_event_handler address)
@@ -763,8 +758,13 @@ ACPI_EXPORT_SYMBOL(acpi_remove_gpe_handler)
  *
  * DESCRIPTION: Acquire the ACPI Global Lock
  *
+ * Note: Allows callers with the same thread ID to acquire the global lock
+ * multiple times. In other words, externally, the behavior of the global lock
+ * is identical to an AML mutex. On the first acquire, a new handle is
+ * returned. On any subsequent calls to acquire by the same thread, the same
+ * handle is returned.
+ *
  ******************************************************************************/
-
 acpi_status acpi_acquire_global_lock(u16 timeout, u32 * handle)
 {
 	acpi_status status;
@@ -773,19 +773,22 @@ acpi_status acpi_acquire_global_lock(u16 timeout, u32 * handle)
 		return (AE_BAD_PARAMETER);
 	}
 
-	status = acpi_ex_enter_interpreter();
-	if (ACPI_FAILURE(status)) {
-		return (status);
-	}
+	/* Must lock interpreter to prevent race conditions */
 
-	status = acpi_ev_acquire_global_lock(timeout);
-	acpi_ex_exit_interpreter();
+	acpi_ex_enter_interpreter();
+
+	status = acpi_ex_acquire_mutex_object(timeout,
+					      acpi_gbl_global_lock_mutex,
+					      acpi_os_get_thread_id());
 
 	if (ACPI_SUCCESS(status)) {
-		acpi_gbl_global_lock_handle++;
+
+		/* Return the global lock handle (updated in acpi_ev_acquire_global_lock) */
+
 		*handle = acpi_gbl_global_lock_handle;
 	}
 
+	acpi_ex_exit_interpreter();
 	return (status);
 }
 
@@ -802,16 +805,15 @@ ACPI_EXPORT_SYMBOL(acpi_acquire_global_lock)
  * DESCRIPTION: Release the ACPI Global Lock. The handle must be valid.
  *
  ******************************************************************************/
-
 acpi_status acpi_release_global_lock(u32 handle)
 {
 	acpi_status status;
 
-	if (handle != acpi_gbl_global_lock_handle) {
+	if (!handle || (handle != acpi_gbl_global_lock_handle)) {
 		return (AE_NOT_ACQUIRED);
 	}
 
-	status = acpi_ev_release_global_lock();
+	status = acpi_ex_release_mutex_object(acpi_gbl_global_lock_mutex);
 	return (status);
 }
 

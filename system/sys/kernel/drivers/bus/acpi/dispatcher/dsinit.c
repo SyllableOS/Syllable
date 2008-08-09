@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,7 +40,6 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGES.
  */
-
 
 #include <acpi/acpi.h>
 #include <acpi/acdispat.h>
@@ -126,7 +125,6 @@ acpi_ds_init_one_object(acpi_handle obj_handle,
 		info->device_count++;
 		break;
 
-
 	default:
 		break;
 	}
@@ -137,7 +135,6 @@ acpi_ds_init_one_object(acpi_handle obj_handle,
 	 */
 	return (AE_OK);
 }
-
 
 /*******************************************************************************
  *

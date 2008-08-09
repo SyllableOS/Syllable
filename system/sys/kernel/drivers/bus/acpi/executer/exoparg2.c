@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,7 +41,6 @@
  * POSSIBILITY OF SUCH DAMAGES.
  */
 
-
 #include <acpi/acpi.h>
 #include <acpi/acparser.h>
 #include <acpi/acinterp.h>
@@ -72,8 +71,6 @@ ACPI_MODULE_NAME("exoparg2")
  * The AcpiExOpcode* functions are called via the Dispatcher component with
  * fully resolved operands.
 !*/
-
-
 /*******************************************************************************
  *
  * FUNCTION:    acpi_ex_opcode_2A_0T_0R
@@ -121,7 +118,6 @@ acpi_status acpi_ex_opcode_2A_0T_0R(struct acpi_walk_state *walk_state)
 			status = AE_AML_OPERAND_TYPE;
 			break;
 		}
-
 #ifdef ACPI_GPE_NOTIFY_CHECK
 		/*
 		 * GPE method wake/notify check.  Here, we want to ensure that we
@@ -142,6 +138,7 @@ acpi_status acpi_ex_opcode_2A_0T_0R(struct acpi_walk_state *walk_state)
 			    acpi_ev_check_for_wake_only_gpe(walk_state->
 							    gpe_event_info);
 			if (ACPI_FAILURE(status)) {
+
 				/* AE_WAKE_ONLY_GPE only error, means ignore this notify */
 
 				return_ACPI_STATUS(AE_OK)
@@ -244,10 +241,6 @@ acpi_status acpi_ex_opcode_2A_2T_1R(struct acpi_walk_state *walk_state)
 		goto cleanup;
 	}
 
-	/* Return the remainder */
-
-	walk_state->result_obj = return_desc1;
-
       cleanup:
 	/*
 	 * Since the remainder is not returned indirectly, remove a reference to
@@ -256,9 +249,16 @@ acpi_status acpi_ex_opcode_2A_2T_1R(struct acpi_walk_state *walk_state)
 	acpi_ut_remove_reference(return_desc2);
 
 	if (ACPI_FAILURE(status)) {
+
 		/* Delete the return object */
 
 		acpi_ut_remove_reference(return_desc1);
+	}
+
+	/* Save return object (the remainder) on success */
+
+	else {
+		walk_state->result_obj = return_desc1;
 	}
 
 	return_ACPI_STATUS(status);
@@ -291,6 +291,7 @@ acpi_status acpi_ex_opcode_2A_1T_1R(struct acpi_walk_state *walk_state)
 	/* Execute the opcode */
 
 	if (walk_state->op_info->flags & AML_MATH) {
+
 		/* All simple math opcodes (add, etc.) */
 
 		return_desc = acpi_ut_create_internal_object(ACPI_TYPE_INTEGER);
@@ -491,6 +492,7 @@ acpi_status acpi_ex_opcode_2A_1T_1R(struct acpi_walk_state *walk_state)
 
 	if (ACPI_FAILURE(status)) {
 		acpi_ut_remove_reference(return_desc);
+		walk_state->result_obj = NULL;
 	}
 
 	return_ACPI_STATUS(status);
@@ -529,6 +531,7 @@ acpi_status acpi_ex_opcode_2A_0T_1R(struct acpi_walk_state *walk_state)
 	/* Execute the Opcode */
 
 	if (walk_state->op_info->flags & AML_LOGICAL_NUMERIC) {
+
 		/* logical_op (Operand0, Operand1) */
 
 		status = acpi_ex_do_logical_numeric_op(walk_state->opcode,
@@ -538,6 +541,7 @@ acpi_status acpi_ex_opcode_2A_0T_1R(struct acpi_walk_state *walk_state)
 						       value, &logical_result);
 		goto store_logical_result;
 	} else if (walk_state->op_info->flags & AML_LOGICAL) {
+
 		/* logical_op (Operand0, Operand1) */
 
 		status = acpi_ex_do_logical_op(walk_state->opcode, operand[0],
@@ -582,14 +586,18 @@ acpi_status acpi_ex_opcode_2A_0T_1R(struct acpi_walk_state *walk_state)
 		return_desc->integer.value = ACPI_INTEGER_MAX;
 	}
 
-	walk_state->result_obj = return_desc;
-
       cleanup:
 
 	/* Delete return object on error */
 
 	if (ACPI_FAILURE(status)) {
 		acpi_ut_remove_reference(return_desc);
+	}
+
+	/* Save return object on success */
+
+	else {
+		walk_state->result_obj = return_desc;
 	}
 
 	return_ACPI_STATUS(status);

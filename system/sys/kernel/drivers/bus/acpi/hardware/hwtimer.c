@@ -6,7 +6,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,7 +41,6 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGES.
  */
-
 
 #include <acpi/acpi.h>
 
@@ -89,7 +88,6 @@ ACPI_EXPORT_SYMBOL(acpi_get_timer_resolution)
  * DESCRIPTION: Obtains current value of ACPI PM Timer (in ticks).
  *
  ******************************************************************************/
-
 acpi_status acpi_get_timer(u32 * ticks)
 {
 	acpi_status status;
@@ -136,7 +134,6 @@ ACPI_EXPORT_SYMBOL(acpi_get_timer)
  *              2**32 Ticks / 3,600,000 Ticks/Sec = 1193 sec or 19.88 minutes
  *
  ******************************************************************************/
-
 acpi_status
 acpi_get_timer_duration(u32 start_ticks, u32 end_ticks, u32 * time_elapsed)
 {

@@ -5,7 +5,7 @@
  ******************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,7 +40,6 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGES.
  */
-
 
 #include <acpi/acpi.h>
 #include <acpi/acnamesp.h>
@@ -161,6 +160,7 @@ u8 acpi_ut_is_aml_table(struct acpi_table_header *table)
  *              when the method exits or the table is unloaded.
  *
  ******************************************************************************/
+
 acpi_status acpi_ut_allocate_owner_id(acpi_owner_id * owner_id)
 {
 	acpi_native_uint i;
@@ -198,6 +198,7 @@ acpi_status acpi_ut_allocate_owner_id(acpi_owner_id * owner_id)
 
 		for (k = acpi_gbl_next_owner_id_offset; k < 32; k++) {
 			if (acpi_gbl_owner_id_mask[j] == ACPI_UINT32_MAX) {
+
 				/* There are no free IDs in this mask */
 
 				break;
@@ -374,6 +375,7 @@ void acpi_ut_print_string(char *string, u8 max_length)
 
 	acpi_os_printf("\"");
 	for (i = 0; string[i] && (i < max_length); i++) {
+
 		/* Escape sequences */
 
 		switch (string[i]) {
@@ -434,7 +436,6 @@ void acpi_ut_print_string(char *string, u8 max_length)
 	}
 }
 
-
 /*******************************************************************************
  *
  * FUNCTION:    acpi_ut_dword_byte_swap
@@ -470,7 +471,6 @@ u32 acpi_ut_dword_byte_swap(u32 value)
 	return (out.value);
 }
 
-
 /*******************************************************************************
  *
  * FUNCTION:    acpi_ut_set_integer_width
@@ -504,7 +504,6 @@ void acpi_ut_set_integer_width(u8 revision)
 		acpi_gbl_integer_byte_width = 8;
 	}
 }
-
 
 #ifdef ACPI_DEBUG_OUTPUT
 /*******************************************************************************
@@ -764,6 +763,7 @@ acpi_ut_strtoul64(char *string, u32 base, acpi_integer * ret_integer)
 
 	while (*string) {
 		if (ACPI_IS_DIGIT(*string)) {
+
 			/* Convert ASCII 0-9 to Decimal value */
 
 			this_digit = ((u8) * string) - '0';
@@ -800,9 +800,8 @@ acpi_ut_strtoul64(char *string, u32 base, acpi_integer * ret_integer)
 
 		valid_digits++;
 
-		if (sign_of0x
-		    && ((valid_digits > 16)
-			|| ((valid_digits > 8) && mode32))) {
+		if (sign_of0x && ((valid_digits > 16)
+				  || ((valid_digits > 8) && mode32))) {
 			/*
 			 * This is to_integer operation case.
 			 * No any restrictions for string-to-integer conversion,
@@ -922,6 +921,7 @@ acpi_ut_walk_package_tree(union acpi_operand_object * source_object,
 	}
 
 	while (state) {
+
 		/* Get one element of the package */
 
 		this_index = state->pkg.index;
@@ -1024,6 +1024,7 @@ acpi_ut_walk_package_tree(union acpi_operand_object * source_object,
 void ACPI_INTERNAL_VAR_XFACE
 acpi_ut_error(char *module_name, u32 line_number, char *format, ...)
 {
+#if 0
 	va_list args;
 
 	acpi_os_printf("ACPI Error (%s-%04d): ", module_name, line_number);
@@ -1031,12 +1032,30 @@ acpi_ut_error(char *module_name, u32 line_number, char *format, ...)
 	va_start(args, format);
 	acpi_os_vprintf(format, args);
 	acpi_os_printf(" [%X]\n", ACPI_CA_VERSION);
+	va_end(args);
+#endif
+
+  va_list sArgs;
+  char acBuffer[ 512 ];
+  
+  va_start( sArgs, format );
+  vsprintf( acBuffer, format, sArgs );
+  va_end( sArgs );
+
+  printk(
+    "ACPI Error (%s-%04d): %s [%X]\n",
+    module_name,
+    line_number,
+    acBuffer,
+    ACPI_CA_VERSION
+  );
 }
 
 void ACPI_INTERNAL_VAR_XFACE
 acpi_ut_exception(char *module_name,
 		  u32 line_number, acpi_status status, char *format, ...)
 {
+#if 0
 	va_list args;
 
 	acpi_os_printf("ACPI Exception (%s-%04d): %s, ", module_name,
@@ -1045,12 +1064,32 @@ acpi_ut_exception(char *module_name,
 	va_start(args, format);
 	acpi_os_vprintf(format, args);
 	acpi_os_printf(" [%X]\n", ACPI_CA_VERSION);
+	va_end(args);
+#endif
+
+  va_list sArgs;
+  char acBuffer[ 512 ];
+
+  va_start( sArgs, format );
+  vsprintf( acBuffer, format, sArgs );
+  va_end( sArgs );
+
+  printk(
+    "ACPI Exception (%s-%04d): %s, %s [%X]\n",
+    module_name,
+    line_number,
+    acpi_format_exception(status),
+    acBuffer,
+    ACPI_CA_VERSION
+  );
 }
+
 EXPORT_SYMBOL(acpi_ut_exception);
 
 void ACPI_INTERNAL_VAR_XFACE
 acpi_ut_warning(char *module_name, u32 line_number, char *format, ...)
 {
+#if 0
 	va_list args;
 
 	acpi_os_printf("ACPI Warning (%s-%04d): ", module_name, line_number);
@@ -1058,11 +1097,29 @@ acpi_ut_warning(char *module_name, u32 line_number, char *format, ...)
 	va_start(args, format);
 	acpi_os_vprintf(format, args);
 	acpi_os_printf(" [%X]\n", ACPI_CA_VERSION);
+	va_end(args);
+#endif
+
+  va_list sArgs;
+  char acBuffer[ 512 ];
+
+  va_start( sArgs, format );
+  vsprintf( acBuffer, format, sArgs );
+  va_end( sArgs );
+
+  printk(
+    "ACPI Warning (%s-%04d): %s [%X]\n",
+    module_name,
+    line_number,
+    acBuffer,
+    ACPI_CA_VERSION
+  );
 }
 
 void ACPI_INTERNAL_VAR_XFACE
 acpi_ut_info(char *module_name, u32 line_number, char *format, ...)
 {
+#if 0
 	va_list args;
 
 	/*
@@ -1074,5 +1131,16 @@ acpi_ut_info(char *module_name, u32 line_number, char *format, ...)
 	va_start(args, format);
 	acpi_os_vprintf(format, args);
 	acpi_os_printf("\n");
+	va_end(args);
+#endif
+
+  va_list sArgs;
+  char acBuffer[ 512 ];
+
+  va_start( sArgs, format );
+  vsprintf( acBuffer, format, sArgs );
+  va_end( sArgs );
+
+  printk( "ACPI: %s\n", acBuffer );
 }
 

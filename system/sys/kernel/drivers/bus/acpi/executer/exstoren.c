@@ -7,7 +7,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -42,7 +42,6 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGES.
  */
-
 
 #include <acpi/acpi.h>
 #include <acpi/acinterp.h>
@@ -98,6 +97,7 @@ acpi_ex_resolve_object(union acpi_operand_object **source_desc_ptr,
 		 */
 		if (ACPI_GET_OBJECT_TYPE(source_desc) ==
 		    ACPI_TYPE_LOCAL_REFERENCE) {
+
 			/* Resolve a reference object first */
 
 			status =
@@ -122,6 +122,7 @@ acpi_ex_resolve_object(union acpi_operand_object **source_desc_ptr,
 		    !((ACPI_GET_OBJECT_TYPE(source_desc) ==
 		       ACPI_TYPE_LOCAL_REFERENCE)
 		      && (source_desc->reference.opcode == AML_LOAD_OP))) {
+
 			/* Conversion successful but still not a valid type */
 
 			ACPI_ERROR((AE_INFO,
@@ -131,7 +132,6 @@ acpi_ex_resolve_object(union acpi_operand_object **source_desc_ptr,
 			status = AE_AML_OPERAND_TYPE;
 		}
 		break;
-
 
 	case ACPI_TYPE_LOCAL_ALIAS:
 	case ACPI_TYPE_LOCAL_METHOD_ALIAS:
@@ -143,7 +143,6 @@ acpi_ex_resolve_object(union acpi_operand_object **source_desc_ptr,
 		ACPI_ERROR((AE_INFO, "Store into an unresolved Alias object"));
 		status = AE_AML_INTERNAL;
 		break;
-
 
 	case ACPI_TYPE_PACKAGE:
 	default:
@@ -292,6 +291,7 @@ acpi_ex_store_object_to_object(union acpi_operand_object *source_desc,
 	}
 
 	if (actual_src_desc != source_desc) {
+
 		/* Delete the intermediate (temporary) source object */
 
 		acpi_ut_remove_reference(actual_src_desc);

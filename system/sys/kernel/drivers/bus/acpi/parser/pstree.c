@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 /*
- * Copyright (C) 2000 - 2007, R. Byron Moore
+ * Copyright (C) 2000 - 2008, Intel Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,7 +40,6 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGES.
  */
-
 
 #include <acpi/acpi.h>
 #include <acpi/acparser.h>
@@ -78,6 +77,7 @@ union acpi_parse_object *acpi_ps_get_arg(union acpi_parse_object *op, u32 argn)
 
 	op_info = acpi_ps_get_opcode_info(op->common.aml_opcode);
 	if (op_info->class == AML_CLASS_UNKNOWN) {
+
 		/* Invalid opcode or ASCII character */
 
 		return (NULL);
@@ -86,6 +86,7 @@ union acpi_parse_object *acpi_ps_get_arg(union acpi_parse_object *op, u32 argn)
 	/* Check if this opcode requires argument sub-objects */
 
 	if (!(op_info->flags & AML_HAS_ARGS)) {
+
 		/* Has no linked argument objects */
 
 		return (NULL);
@@ -101,7 +102,6 @@ union acpi_parse_object *acpi_ps_get_arg(union acpi_parse_object *op, u32 argn)
 
 	return (arg);
 }
-
 
 /*******************************************************************************
  *
@@ -132,6 +132,7 @@ acpi_ps_append_arg(union acpi_parse_object *op, union acpi_parse_object *arg)
 
 	op_info = acpi_ps_get_opcode_info(op->common.aml_opcode);
 	if (op_info->class == AML_CLASS_UNKNOWN) {
+
 		/* Invalid opcode */
 
 		ACPI_ERROR((AE_INFO, "Invalid AML Opcode: 0x%2.2X",
@@ -142,15 +143,16 @@ acpi_ps_append_arg(union acpi_parse_object *op, union acpi_parse_object *arg)
 	/* Check if this opcode requires argument sub-objects */
 
 	if (!(op_info->flags & AML_HAS_ARGS)) {
+
 		/* Has no linked argument objects */
 
 		return;
 	}
 
-
 	/* Append the argument to the linked argument list */
 
 	if (op->common.value.arg) {
+
 		/* Append to existing argument list */
 
 		prev_arg = op->common.value.arg;
@@ -164,12 +166,13 @@ acpi_ps_append_arg(union acpi_parse_object *op, union acpi_parse_object *arg)
 		op->common.value.arg = arg;
 	}
 
-
 	/* Set the parent in this arg and any args linked after it */
 
 	while (arg) {
 		arg->common.parent = op;
 		arg = arg->common.next;
+
+		op->common.arg_list_length++;
 	}
 }
 
@@ -226,12 +229,14 @@ union acpi_parse_object *acpi_ps_get_depth_next(union acpi_parse_object *origin,
 		}
 
 		if (arg == origin) {
+
 			/* Reached parent of origin, end search */
 
 			return (NULL);
 		}
 
 		if (parent->common.next) {
+
 			/* Found sibling of parent */
 
 			return (parent->common.next);
@@ -303,5 +308,4 @@ union acpi_parse_object *acpi_ps_get_child(union acpi_parse_object *op)
 	return (child);
 }
 #endif
-
 #endif				/*  ACPI_FUTURE_USAGE  */
