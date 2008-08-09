@@ -1,3 +1,8 @@
+* August 9, 2008, Kristian Van Der Vliet *
+
+Synced the ACPI bus manager with Linux 2.6.26.2. Patch from
+Zoltan Kovacs <giszo@nyomi.hu>
+
 * August 4, 2008, Anthony Morphett *
 
 Minor bugfixes to iso9660 driver and kernel/cpuid, thanks to c0x.
