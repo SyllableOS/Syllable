@@ -152,7 +152,7 @@ GRUB=(	"color	cyan/blue white/blue"																	\
 		"timeout	10"																					\
 		""																								\
 		"title	Install Syllable"																		\
-		"kernel /system/kernel.so rootfs=iso9660 root=@boot disable_config=true uspace_end=0xf7ffffff"	\
+		"kernel /system/kernel.so rootfs=iso9660 root=@boot disable_config=true"						\
 		"module /boot/drivers/dev/bus/acpi path=/system/drivers/dev/bus/acpi"							\
 		"module /boot/drivers/dev/bus/pci path=/system/drivers/dev/bus/pci"								\
 		"module /boot/drivers/dev/bus/ata path=/system/drivers/dev/bus/ata"								\
@@ -160,7 +160,7 @@ GRUB=(	"color	cyan/blue white/blue"																	\
 		"module /system/drivers/fs/iso9660"																\
 		""																								\
 		"title	Install Syllable from a USB CD-ROM drive"												\
-		"kernel /system/kernel.so rootfs=iso9660 root=@boot disable_config=true uspace_end=0xf7ffffff"	\
+		"kernel /system/kernel.so rootfs=iso9660 root=@boot disable_config=true"						\
 		"module /boot/drivers/dev/bus/acpi path=/system/drivers/dev/bus/acpi"							\
 		"module /boot/drivers/dev/bus/pci path=/system/drivers/dev/bus/pci"								\
 		"module /boot/drivers/dev/bus/ata path=/system/drivers/dev/bus/ata"								\
@@ -171,6 +171,74 @@ GRUB=(	"color	cyan/blue white/blue"																	\
 		"module /boot/drivers/dev/hcd/usb_uhci path=/system/drivers/dev/hcd/usb_uhci"					\
 		"module /boot/drivers/dev/hcd/usb_ehci path=/system/drivers/dev/hcd/usb_ehci"					\
 		"module /boot/drivers/dev/disk/usb path=/system/drivers/dev/disk/usb"							\
+		"module /system/drivers/fs/iso9660"																\
+		""																								\
+		"title	Install Syllable (no SMP and HyperThreading / VirtualBox)"								\
+		"kernel /system/kernel.so rootfs=iso9660 root=@boot disable_config=true disable_smp=true"		\
+		"module /boot/drivers/dev/bus/acpi path=/system/drivers/dev/bus/acpi"							\
+		"module /boot/drivers/dev/bus/pci path=/system/drivers/dev/bus/pci"								\
+		"module /boot/drivers/dev/bus/ata path=/system/drivers/dev/bus/ata"								\
+		"module /boot/drivers/dev/hcd/ata_pci path=/system/drivers/dev/hcd/ata_pci"						\
+		"module /system/drivers/fs/iso9660"																\
+		""																								\
+		"title	Install Syllable (no ACPI)"																\
+		"kernel /system/kernel.so rootfs=iso9660 root=@boot disable_config=true disable_acpi=true"		\
+		"module /boot/drivers/dev/bus/pci path=/system/drivers/dev/bus/pci"								\
+		"module /boot/drivers/dev/bus/ata path=/system/drivers/dev/bus/ata"								\
+		"module /boot/drivers/dev/hcd/ata_pci path=/system/drivers/dev/hcd/ata_pci"						\
+		"module /system/drivers/fs/iso9660"																\
+		""																								\
+		"title	Install Syllable (VESA video)"															\
+		"kernel /system/kernel.so rootfs=iso9660 root=@boot disable_config=true disable_gfx_drivers=true"	\
+		"module /boot/drivers/dev/bus/acpi path=/system/drivers/dev/bus/acpi"							\
+		"module /boot/drivers/dev/bus/pci path=/system/drivers/dev/bus/pci"								\
+		"module /boot/drivers/dev/bus/ata path=/system/drivers/dev/bus/ata"								\
+		"module /boot/drivers/dev/hcd/ata_pci path=/system/drivers/dev/hcd/ata_pci"						\
+		"module /system/drivers/fs/iso9660"																\
+		""																								\
+		"title	Install Syllable (no disk DMA)"															\
+		"kernel /system/kernel.so rootfs=iso9660 root=@boot disable_config=true enable_ata_dma=false"	\
+		"module /boot/drivers/dev/bus/acpi path=/system/drivers/dev/bus/acpi"							\
+		"module /boot/drivers/dev/bus/pci path=/system/drivers/dev/bus/pci"								\
+		"module /boot/drivers/dev/bus/ata path=/system/drivers/dev/bus/ata"								\
+		"module /boot/drivers/dev/hcd/ata_pci path=/system/drivers/dev/hcd/ata_pci"						\
+		"module /system/drivers/fs/iso9660"																\
+		""																								\
+		"title	Install Syllable (no PCI IRQ routing"													\
+		"kernel /system/kernel.so rootfs=iso9660 root=@boot disable_config=true disable_pci_irq_routing=true"	\
+		"module /boot/drivers/dev/bus/acpi path=/system/drivers/dev/bus/acpi"							\
+		"module /boot/drivers/dev/bus/pci path=/system/drivers/dev/bus/pci"								\
+		"module /boot/drivers/dev/bus/ata path=/system/drivers/dev/bus/ata"								\
+		"module /boot/drivers/dev/hcd/ata_pci path=/system/drivers/dev/hcd/ata_pci"						\
+		"module /system/drivers/fs/iso9660"																\
+		""																								\
+		"title	Install Syllable (failsafe)"															\
+		"kernel /system/kernel.so rootfs=iso9660 root=@boot disable_config=true disable_acpi=true disable_smp=true enable_ata_dma=false disable_gfx_drivers=true"	\
+		"module /boot/drivers/dev/bus/pci path=/system/drivers/dev/bus/pci"								\
+		"module /boot/drivers/dev/bus/ata path=/system/drivers/dev/bus/ata"								\
+		"module /boot/drivers/dev/hcd/ata_pci path=/system/drivers/dev/hcd/ata_pci"						\
+		"module /system/drivers/fs/iso9660"																\
+		""																								\
+		"title	Install Syllable (no PCI)"																\
+		"kernel /system/kernel.so rootfs=iso9660 root=@boot disable_config=true disable_pci=true"		\
+		"module /boot/drivers/dev/bus/acpi path=/system/drivers/dev/bus/acpi"							\
+		"module /boot/drivers/dev/bus/ata path=/system/drivers/dev/bus/ata"								\
+		"module /system/drivers/fs/iso9660"																\
+		""																								\
+		"title	Install Syllable in VMware"																\
+		"kernel /system/kernel.so rootfs=iso9660 root=@boot disable_config=true uspace_end=0xf7ffffff"	\
+		"module /boot/drivers/dev/bus/acpi path=/system/drivers/dev/bus/acpi"							\
+		"module /boot/drivers/dev/bus/pci path=/system/drivers/dev/bus/pci"								\
+		"module /boot/drivers/dev/bus/ata path=/system/drivers/dev/bus/ata"								\
+		"module /boot/drivers/dev/hcd/ata_pci path=/system/drivers/dev/hcd/ata_pci"						\
+		"module /system/drivers/fs/iso9660"																\
+		""																								\
+		"title	Install Syllable in Virtual PC"															\
+		"kernel /system/kernel.so rootfs=iso9660 root=@boot disable_config=true disable_smp=true disable_pci_irq_routing=true"	\
+		"module /boot/drivers/dev/bus/acpi path=/system/drivers/dev/bus/acpi"							\
+		"module /boot/drivers/dev/bus/pci path=/system/drivers/dev/bus/pci"								\
+		"module /boot/drivers/dev/bus/ata path=/system/drivers/dev/bus/ata"								\
+		"module /boot/drivers/dev/hcd/ata_pci path=/system/drivers/dev/hcd/ata_pci"						\
 		"module /system/drivers/fs/iso9660"																\
 )
 
