@@ -157,18 +157,28 @@ status_t FFMpegCodec::Open( os::MediaFormat_s sFormat, os::MediaFormat_s sExtern
 	{
 		m_sDecodeStream = ( ( AVStream * ) ( sFormat.pPrivate ) );
 		m_sDecodeContext = m_sDecodeStream->codec;
-		
+
+		m_sDecodeContext->flags |= CODEC_FLAG_EMU_EDGE;
 		m_sDecodeContext->flags2 |= CODEC_FLAG2_FAST;
-		
+
+	    m_sDecodeContext->idct_algo= FF_IDCT_AUTO;
+
+	    m_sDecodeContext->skip_frame= AVDISCARD_DEFAULT;
+	    m_sDecodeContext->skip_idct= AVDISCARD_DEFAULT;
+	    m_sDecodeContext->skip_loop_filter= AVDISCARD_DEFAULT;
+
+		m_sDecodeContext->workaround_bugs = 1;
+		m_sDecodeContext->error_resilience = FF_ER_CAREFUL;
+		m_sDecodeContext->error_concealment = 3;
+
 		AVCodec *psCodec = avcodec_find_decoder( id );
 
-		if( id == CODEC_ID_MPEG1VIDEO )
-			m_sDecodeContext->flags |= CODEC_FLAG_TRUNCATED;
 		if( psCodec == NULL || avcodec_open( m_sDecodeContext, psCodec ) < 0 )
 		{
 			std::cout << "Error while opening codec " << sFormat.zName.c_str() << std::endl;
 			return ( -1 );
 		}
+
 		if( sFormat.nType == os::MEDIA_TYPE_VIDEO )
 		{
 			system_info sInfo;
@@ -346,9 +356,11 @@ os::MediaFormat_s FFMpegCodec::GetInternalFormat()
 			sFormat.eColorSpace = os::CS_YUV422;
 		else if( m_sDecodeContext->pix_fmt == PIX_FMT_YUV411P )
 			sFormat.eColorSpace = os::CS_YUV411;
-		else if( m_sDecodeContext->pix_fmt == PIX_FMT_YUV420P )
+		else if( m_sDecodeContext->pix_fmt == PIX_FMT_YUV420P ||
+				 m_sDecodeContext->pix_fmt == PIX_FMT_YUVJ420P )
 			sFormat.eColorSpace = os::CS_YUV12;
-		else if( m_sDecodeContext->pix_fmt == PIX_FMT_YUV422P )
+		else if( m_sDecodeContext->pix_fmt == PIX_FMT_YUV422P ||
+				 m_sDecodeContext->pix_fmt == PIX_FMT_YUVJ422P )
 			sFormat.eColorSpace = os::CS_YUV422;
 		else if( m_sDecodeContext->pix_fmt == PIX_FMT_RGB24 )
 			sFormat.eColorSpace = os::CS_RGB24;
@@ -378,9 +390,11 @@ os::MediaFormat_s FFMpegCodec::GetExternalFormat()
 			sFormat.eColorSpace = os::CS_YUV422;
 		else if( m_sDecodeContext->pix_fmt == PIX_FMT_YUV411P )
 			sFormat.eColorSpace = os::CS_YUV411;
-		else if( m_sDecodeContext->pix_fmt == PIX_FMT_YUV420P )
+		else if( m_sDecodeContext->pix_fmt == PIX_FMT_YUV420P ||
+				 m_sDecodeContext->pix_fmt == PIX_FMT_YUVJ420P )
 			sFormat.eColorSpace = os::CS_YUV12;
-		else if( m_sDecodeContext->pix_fmt == PIX_FMT_YUV422P )
+		else if( m_sDecodeContext->pix_fmt == PIX_FMT_YUV422P ||
+				m_sDecodeContext->pix_fmt == PIX_FMT_YUVJ422P )
 			sFormat.eColorSpace = os::CS_YUV422;
 		else if( m_sDecodeContext->pix_fmt == PIX_FMT_RGB24 )
 			sFormat.eColorSpace = os::CS_RGB24;
@@ -435,6 +449,10 @@ void FFMpegCodec::DeleteVideoOutputPacket( os::MediaPacket_s * psOutput )
 		return;
 	if( psOutput->pBuffer[0] != NULL )
 		free( psOutput->pBuffer[0] );
+
+	AVFrame *psFrame = (AVFrame*)psOutput->pPrivate;
+	if( psFrame );
+		av_free( psFrame );
 }
 
 
@@ -508,14 +526,13 @@ status_t FFMpegCodec::DecodePacket( os::MediaPacket_s * psPacket, os::MediaPacke
 		int nSize = psPacket->nSize[0];
 		uint8 *pInput = psPacket->pBuffer[0];
 		int bDecoded;
-		AVFrame sFrame;
-		
+		AVFrame *psFrame = avcodec_alloc_frame();
 
 		psOutput->nSize[0] = 0;
 
 		while( nSize > 0 )
 		{
-			int nLen = avcodec_decode_video( m_sDecodeContext, &sFrame, &bDecoded,
+			int nLen = avcodec_decode_video( m_sDecodeContext, psFrame, &bDecoded,
 				pInput, nSize );
 
 			if( bDecoded > 0 )
@@ -524,23 +541,28 @@ status_t FFMpegCodec::DecodePacket( os::MediaPacket_s * psPacket, os::MediaPacke
 				psOutput->nTimeStamp = psPacket->nTimeStamp;
 				for( int i = 0; i < 4; i++ )
 				{
-					psOutput->pBuffer[i] = sFrame.data[i];
-					psOutput->nSize[i] = sFrame.linesize[i];
+					psOutput->pBuffer[i] = psFrame->data[i];
+					psOutput->nSize[i] = psFrame->linesize[i];
+					psOutput->pPrivate = (void*)psFrame;
 				}
 			}
 			else
 			{
 				//std::cout<<"NOT DECODED "<<psPacket->nTimeStamp<<std::endl;
+				//nLen = avcodec_decode_video( m_sDecodeContext, psFrame, &bDecoded, pInput, nSize );
 			}
-			if( nLen <= 0 )
-			{
-				return ( nLen );
-			}
+
+			if( nLen > nSize )
+				nLen = nSize;
+
+			if( nLen < 0 )
+				break;
 
 			nSize -= nLen;
 			pInput += nLen;
 		}
 	}
+
 	return ( 0 );
 }
 
@@ -717,7 +739,7 @@ status_t FFMpegCodec::EncodePacket( os::MediaPacket_s * psPacket, os::MediaPacke
 			sFrame.data[i] = psPacket->pBuffer[i];
 			sFrame.linesize[i] = psPacket->nSize[i];
 		}
-		sFrame.quality = m_sEncodeStream.quality;
+		sFrame.quality = (int)m_sEncodeStream.quality;
 		AVCodecContext *sEnc = m_sEncodeStream.codec;
 
 		psOutput->nSize[0] = avcodec_encode_video( m_sEncodeStream.codec, psOutput->pBuffer[0], psPacket->nSize[0] * sEnc->height, &sFrame );

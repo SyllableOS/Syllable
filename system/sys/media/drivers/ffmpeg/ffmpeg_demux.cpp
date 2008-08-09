@@ -134,7 +134,7 @@ status_t FFMpegDemuxer::Open( os::String zFileName )
 		}
 		m_nLength = (int)( m_psContext->duration / AV_TIME_BASE );
 		
-		if( !m_bStream && m_psContext->start_time != AV_NOPTS_VALUE )
+		if( !m_bStream && m_psContext->start_time != (int)AV_NOPTS_VALUE )
 			av_seek_frame( m_psContext, -1, m_psContext->start_time, 0 );
 		
 		m_nCurrentPosition = 0;
@@ -218,19 +218,20 @@ status_t FFMpegDemuxer::ReadPacket( os::MediaPacket_s* psPacket )
 		free( psAVPacket );
 		return( -1 );
 	}
-		
+
 	psPacket->nStream = psAVPacket->stream_index;
-	psPacket->pBuffer[0] = (uint8*)malloc( psAVPacket->size );
+	psPacket->pBuffer[0] = (uint8*)malloc( psAVPacket->size + FF_INPUT_BUFFER_PADDING_SIZE );
 	memcpy( psPacket->pBuffer[0], psAVPacket->data, psAVPacket->size );
+	memset( psPacket->pBuffer[0] + psAVPacket->size, 0, FF_INPUT_BUFFER_PADDING_SIZE );
 	psPacket->nSize[0] = psAVPacket->size;
 	psPacket->pPrivate = ( void* )psAVPacket;
 	
-	if( psAVPacket->dts == AV_NOPTS_VALUE )
+	if( psAVPacket->dts == (int)AV_NOPTS_VALUE )
 	{
 		m_nCurrentPosition = m_psContext->pb->pos * 8 / m_nBitRate;
 		psPacket->nTimeStamp = ~0;
 	}
-	else if( m_psContext->start_time == AV_NOPTS_VALUE )
+	else if( m_psContext->start_time == (int)AV_NOPTS_VALUE )
 	{
 		
 		m_nCurrentPosition = ( av_rescale_q( psAVPacket->dts, m_psContext->streams[psAVPacket->stream_index]->time_base, AV_TIME_BASE_Q ) ) / AV_TIME_BASE;
@@ -246,9 +247,9 @@ status_t FFMpegDemuxer::ReadPacket( os::MediaPacket_s* psPacket )
 	}
 	
 	
-//	std::cout<<"Stream "<<psAVPacket->stream_index<<" Start "<<m_psContext->streams[psAVPacket->stream_index]->start_time<<" DTS "<<psAVPacket->dts<<" PTS "<<psAVPacket->pts<<" STAMP "<<
-//		psPacket->nTimeStamp<<std::endl;
-//	printf("Read packet %i\n", (int)m_nCurrentPosition );
+	//std::cout<<"Stream "<<psAVPacket->stream_index<<" Start "<<m_psContext->streams[psAVPacket->stream_index]->start_time<<" DTS "<<psAVPacket->dts<<" PTS "<<psAVPacket->pts<<" STAMP "<<
+	//	psPacket->nTimeStamp<<std::endl;
+	//printf("Read packet %i\n", (int)m_nCurrentPosition );
 		
 	return( 0 );
 }
@@ -274,7 +275,7 @@ uint64 FFMpegDemuxer::GetCurrentPosition()
 uint64 FFMpegDemuxer::Seek( uint64 nPosition )
 {
 	nPosition *= AV_TIME_BASE;
-	if( m_psContext->start_time != AV_NOPTS_VALUE )
+	if( m_psContext->start_time != (int)AV_NOPTS_VALUE )
 		nPosition += m_psContext->start_time;
 	av_seek_frame( m_psContext, -1, nPosition, 0 );
 	
@@ -308,8 +309,10 @@ os::MediaFormat_s FFMpegDemuxer::GetStreamFormat( uint32 nIndex )
 		} else {
 			std::cout<<"Warning Unknown Codec :"<<m_psContext->streams[nIndex]->codec->codec_id<<std::endl;
 			sFormat.zName = "Unknown";
+			sFormat.nType = os::MEDIA_TYPE_OTHER;
 		}
 	} else {
+		//std::cout<<"Codec ID "<<m_psContext->streams[nIndex]->codec->codec_id<<" for stream #"<<nIndex<<std::endl;
 		sFormat.zName = avcodec_find_decoder( m_psContext->streams[nIndex]->codec->codec_id )->name;
 	}
 
@@ -333,12 +336,17 @@ os::MediaFormat_s FFMpegDemuxer::GetStreamFormat( uint32 nIndex )
 			sFormat.eColorSpace = os::CS_YUV422;
 		else if( m_psContext->streams[nIndex]->codec->pix_fmt == PIX_FMT_YUV411P )
 			sFormat.eColorSpace = os::CS_YUV411;
-		else if( m_psContext->streams[nIndex]->codec->pix_fmt == PIX_FMT_YUV420P )
+		else if( m_psContext->streams[nIndex]->codec->pix_fmt == PIX_FMT_YUV420P ||
+				 m_psContext->streams[nIndex]->codec->pix_fmt == PIX_FMT_YUVJ420P )
 			sFormat.eColorSpace = os::CS_YUV420;
-		else if( m_psContext->streams[nIndex]->codec->pix_fmt == PIX_FMT_YUV422P )
+		else if( m_psContext->streams[nIndex]->codec->pix_fmt == PIX_FMT_YUV422P ||
+				 m_psContext->streams[nIndex]->codec->pix_fmt == PIX_FMT_YUVJ422P )
 			sFormat.eColorSpace = os::CS_YUV422;
 		else if( m_psContext->streams[nIndex]->codec->pix_fmt == PIX_FMT_RGB24 )
 			sFormat.eColorSpace = os::CS_RGB24;
+		else
+			std::cout << "Unsupported pixel format " << m_psContext->streams[nIndex]->codec->pix_fmt << std::endl;
+
 		//cout<<"Format "<<m_psContext->streams[nIndex]->codec.pix_fmt<<endl;
 			
 	}
