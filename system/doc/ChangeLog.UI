@@ -1,3 +1,14 @@
+* August 10, 2008, Rick Caudill *
+
+Added keymap class.  
+
+Added files are in:
+	sys/appserver/libsyllable/util/keymap.cpp
+	sys/include/util/keymap.h
+
+Modified files are:
+	sys/appserver/libsyllable/Makefile
+
 * July 19, 2008. Kristian Van Der Vliet *
 
 Send a "selection changed" message from TabView when a tab is deleted.
