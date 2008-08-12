@@ -28,7 +28,7 @@
 #include <util/message.h>
 #include <util/messenger.h>
 #include <appserver/protocol.h>
-
+#include <util/keymap.h>
 #include <algorithm>
 
 using namespace os;
@@ -1012,8 +1012,10 @@ void Application::GetKeyboardConfig( String * pcKeymapName, int *pnKeyDelay, int
 status_t Application::SetKeymap( const char *pzName )
 {
 	Message cReq( DR_SET_KEYBOARD_CFG );
-
-	cReq.AddString( "keymap", pzName );
+	
+	os::String cPath = os::Keymap::GetKeymapDirectory();
+	cPath += pzName;
+	cReq.AddString( "keymap", cPath );
 	Messenger( m->m_hServerPort ).SendMessage( &cReq );
 	return ( 0 );
 }
@@ -1216,6 +1218,8 @@ void Application::__reserved9__()
 void Application::__reserved10__()
 {
 }
+
+
 
 
 

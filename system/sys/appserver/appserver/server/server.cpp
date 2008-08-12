@@ -517,17 +517,7 @@ void AppServer::DispatchMessage( Message * pcReq )
 
 			cReply.AddInt32( "delay", AppserverConfig::GetInstance()->GetKeyDelay(  ) );
 			cReply.AddInt32( "repeat", AppserverConfig::GetInstance()->GetKeyRepeat(  ) );
-			const char *pzKeymap = strrchr( AppserverConfig::GetInstance()->GetKeymapPath(  ).c_str(  ), '/' );
-
-			if( pzKeymap == NULL )
-			{
-				pzKeymap = AppserverConfig::GetInstance()->GetKeymapPath(  ).c_str(  );
-			}
-			else
-			{
-				pzKeymap++;
-			}
-			cReply.AddString( "keymap", pzKeymap );
+			cReply.AddString( "keymap", AppserverConfig::GetInstance()->GetKeymapPath().c_str());
 			pcReq->SendReply( &cReply );
 			break;
 		}
@@ -549,10 +539,7 @@ void AppServer::DispatchMessage( Message * pcReq )
 
 			if( pcReq->FindString( "keymap", &pzKeyMap ) == 0 )
 			{
-				strcpy( zKeyMapPath, "/system/keymaps/" );
-				strncat( zKeyMapPath, pzKeyMap, 1000 );
-
-				AppserverConfig::GetInstance()->SetKeymapPath( zKeyMapPath );
+				AppserverConfig::GetInstance()->SetKeymapPath( pzKeyMap );
 			}
 			break;
 		}
@@ -1189,6 +1176,8 @@ int main( int argc, char **argv )
 	dbprintf( "WARNING : layers.device failed to initiate itself!!!\n" );
 	return ( 0 );
 }
+
+
 
 
 
