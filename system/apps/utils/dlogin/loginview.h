@@ -11,6 +11,7 @@
 #include <util/datetime.h>
 #include <gui/textview.h>
 #include <util/message.h>
+#include "keymap.h"
 
 using namespace os;
 
@@ -41,6 +42,13 @@ public:
 		pcUserIconView->Paint(pcUserIconView->GetBounds());
 		FindUser(cIcon);
 	}
+	
+	os::String GetKeymap()
+	{
+		return selector->GetKeymap();
+	}
+	
+	void HandleMessage(os::Message* pcMessage);	
 private:
 	void Layout();
 	
@@ -51,6 +59,8 @@ private:
 	StringView* pcPassString;
 	TextView* pcPassText;
 	
+	KeymapSelector* selector;
+	
 	Button* pcLoginButton;
 	Button* pcShutdownButton;
 	
@@ -60,6 +70,8 @@ private:
 };	
 
 #endif
+
+
 
 
 

@@ -1,13 +1,15 @@
 #include "loginview.h"
 #include "commonfuncs.h"
 #include "messages.h"
+#include "keymap.h"
 
 #include <stdio.h>
 #include <gui/requesters.h>
 #include <pwd.h>
 
 LoginView::LoginView(Rect cRect,Window* pcParent) : View(cRect,"login_view")
-{
+{	
+	pcParentWindow = pcParent;
 	Layout();
 	
 	String cName = GetHighlightName();
@@ -16,7 +18,7 @@ LoginView::LoginView(Rect cRect,Window* pcParent) : View(cRect,"login_view")
 		FindUser(cName);
 	}
 
-	pcParentWindow = pcParent;
+
 	pcParentWindow->SetFocusChild(pcPassText);
 	pcParentWindow->SetDefaultButton(pcLoginButton);
 	SetTabOrder( NO_TAB_ORDER );
@@ -42,7 +44,7 @@ void LoginView::Layout()
 	pcPassNode->AddChild(pcPassString = new StringView(Rect(),"pass_string","Password:"));
 	pcPassNode->AddChild(new HLayoutSpacer("",2,2));
 	pcPassNode->AddChild(pcPassText = new TextView(Rect(),"pass_text",""));
-	pcPassText->SetPasswordMode(true);
+	//pcPassText->SetPasswordMode(true);
 	pcPassText->SetMaxPreferredSize(28,1);
 	pcPassText->SetMinPreferredSize(28,1);
 	pcPassText->SetTabOrder( 2 );
@@ -54,10 +56,12 @@ void LoginView::Layout()
 	pcPassNode->ExtendMaxSize(pcPassNode->GetPreferredSize(false));
 	
 
-
+	HLayoutNode* pcKeymapNode = new HLayoutNode("keymap_node");
+	pcKeymapNode->AddChild(selector = new KeymapSelector(os::Messenger(pcParentWindow)));
+	
+	
 	HLayoutNode* pcOtherNode = new HLayoutNode("other_node");
-	pcOtherNode->SetHAlignment(ALIGN_RIGHT);
-	pcOtherNode->AddChild(new HLayoutSpacer("",2,2));	
+	pcOtherNode->SetHAlignment(ALIGN_RIGHT);	
 	pcOtherNode->AddChild(pcShutdownButton = new Button(Rect(),"shut_but","_Shutdown",new Message(M_SHUTDOWN)));
 	pcShutdownButton->SetTabOrder( 4 );
 	pcOtherNode->AddChild(new HLayoutSpacer("",150,150));
@@ -65,6 +69,9 @@ void LoginView::Layout()
 	UpdateTime();
 	
 	pcRoot->AddChild(pcPassNode);
+	pcRoot->AddChild(new os::VLayoutSpacer("",10,10));
+	pcRoot->AddChild(pcKeymapNode);
+	pcRoot->AddChild(new os::VLayoutSpacer("",10,10));
 	pcRoot->AddChild(pcOtherNode);
 	
 	pcRoot->SameHeight("shut_but","login_but",NULL);
@@ -162,5 +169,22 @@ void LoginView::FindUser(const String& cName)
 		}
 	}
 }
+
+void LoginView::HandleMessage(os::Message* pcMessage)
+{
+	switch (pcMessage->GetCode())
+	{
+		case KeymapSelector::M_SELECT:
+        {
+        	printf("changed\n");
+        	break;
+        }
+	}
+}
+
+
+
+
+
 
 

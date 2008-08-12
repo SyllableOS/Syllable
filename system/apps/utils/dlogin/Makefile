@@ -3,7 +3,7 @@
 COPTS = -c -fexceptions -ffast-math
 
 APPBIN = /system/bin
-OBJS = main.o application.o mainwindow.o loginview.o loginimageview.o commonfuncs.o shutdown.o
+OBJS = main.o application.o mainwindow.o loginview.o loginimageview.o commonfuncs.o shutdown.o keymap.o
 
 CATALOGS = da de el es fr hu nl ru sv
 

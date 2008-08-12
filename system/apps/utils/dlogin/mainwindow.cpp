@@ -2,6 +2,7 @@
 #include "messages.h"
 #include "commonfuncs.h"
 #include "shutdown.h"
+#include "keymap.h"
 
 #include <crypt.h>
 #include <gui/requesters.h>
@@ -112,6 +113,13 @@ void MainWindow::HandleMessage( os::Message * pcMessage )
 //        	pcLoginView->Focus();
         	break;
         }
+        
+		case KeymapSelector::M_SELECT:
+		{
+			printf("%s\n", pcLoginView->GetKeymap().c_str());
+			os::Application::GetInstance()->SetKeymap(pcLoginView->GetKeymap().c_str());
+			break;
+		}
 	}
 }
 
@@ -132,6 +140,10 @@ void MainWindow::Authorize(const char* pzLoginName, const char* pzPassword )
 	cMsg.AddString( "password", pzPassword );
 	Application::GetInstance()->PostMessage( &cMsg, Application::GetInstance() );	
 }
+
+
+
+
 
 
 
