@@ -1,3 +1,7 @@
+* August 11, 2008, Rick Caudill *
+
+Modified appserver/libsyllable to work correctly with new keymap code
+
 * August 10, 2008, Rick Caudill *
 
 Added keymap class.  

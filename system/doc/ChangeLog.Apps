@@ -1,3 +1,10 @@
+* August 11, 2008, Rick Caudill *
+
+Added a keymap selector to dlogin.  This should fix issues with foreign keymaps not working in dlogin
+Note: This will change the default keymap for the whole system.
+Note: I am not sure if this will work correctly with passwords.  We might have to change some of the dlogin
+code to use unicode.
+
 * April 22, 2008, Kristian Van Der Vliet *
 
 Patches from Anthony Morphett
