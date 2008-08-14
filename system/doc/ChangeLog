@@ -1,3 +1,12 @@
+* August 14, 2008, Kaj de Vos *
+
+Added a number of extra GrUB entries to the install CD for hardware testing, known
+emulator configurations and serial debugging.
+
+Used Anthony's sysinfo extension in the installer to find out the kernel parameters
+that the install CD was booted with and propagate any extra parameters into the
+GrUB menu of the installation.
+
 * August 4, 2008, Kaj de Vos *
 
 OpenSSH has been included in the base distribution a few dev builds ago.
