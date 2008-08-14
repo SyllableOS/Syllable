@@ -17,11 +17,20 @@ module GrubGen
 	end
 	
 	def gen(partitions, sylpart)
-		output	= Templates["syllable"].dup
+		parameters = `sysinfo`.split("\n")[1]
+		parameters.gsub! 'Boot parameters:', ''
+		parameters.gsub! '/system/kernel.so', ''
+		parameters.gsub! 'rootfs=iso9660', ''
+		parameters.gsub! 'root=@boot', ''
+		parameters.gsub! 'disable_config=true', ''
+		parameters.strip!
+		
+		output = Templates["syllable"].dup
 		
 		# replace placeholders with actual data
 		output.gsub!("##SYLLABLE ROOT DEVICE PATH##", sylpart)
 		output.gsub!("##GRUB ROOT DEVICE##", syl_to_grub(sylpart))
+		output.gsub!("##BOOT PARAMETERS##", parameters)
 				
 		# Add chainload for all partitions other than the Syllable installation partition
 		partitions.select {|k, v|
