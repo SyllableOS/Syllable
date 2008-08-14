@@ -27,13 +27,37 @@
         <br>
         <font face="Arial" Size=2>
         <p>
-        Thank you for installing Syllable, one of the most exciting Open Source Operating Systems today!  Syllable has been in constant development for many years, and offers a compact, fast, well designed and easy to use operating system.  Unlike many other open source operating systems Syllable has only one goal: to be the best open source operating system on your desktop computer. For server purposes we offer a related but separate product: Syllable Server (http://web.syllable.org/pages/about.html).
+        Thank you for installing Syllable, one of the most exciting Open Source Operating Systems today!  Syllable has been in constant development for many years, and offers a compact, fast, well designed and easy to use operating system.  Unlike many other open source operating systems Syllable Desktop has only one goal: to be the best open source operating system on your desktop computer. For server purposes we offer a related but separate product: Syllable Server (http://web.syllable.org/pages/about.html).
         <p>
         The software and files that are distributed with Syllable are released with different copyrights and licenses.  <a href="Copyrights.html">The Copyrights document</a> provides more information.
         <p>
         Syllable already offers Internet and multimedia capabilities and if you're interesting in developing software for Syllable there is a unique and exciting design waiting for you.
         <p>
         Whatever you want to do, this short document is here to help you with your new Syllable installation and offers some pointers to further information.
+        <p>
+        <font face="Arial" size=4><b><u>Configuring the network</u></b></font>
+        <p>
+        Syllable is configured to use Dynamic Host Configuration Protocol (DHCP) by default for finding a network connection. However, this is currently not reflected in the Network Preferences. Although after start-up you will get a dialog saying that the network configuration has changed and needs to be set, after closing this dialog the network will be found automatically by DHCP in most cases. To get rid of this message, or to set a static network configuration, go to Preferences/Network through the Syllable dock menu or by opening the Preferences window from the desktop, and configure the network explicitly. (If no network interfaces are shown in this window, Syllable didn't recognise any network chips in your computer.)
+        <p>
+        <font face="Arial" size=4><b><u>Configuring sound</u></b></font>
+        <p>
+        Sound is not enabled yet when you first start Syllable. To configure it, go to Preferences/Media through the Syllable dock menu or by opening the Preferences window from the desktop. First, you have to choose the default audio output from a drop-down list. (Options are shown together with the name of your audio chip. If the list is empty, Syllable didn't recognise any audio chips in your computer.) Normally, you would choose the Media Server option. However, this method is currently likely to interfere with video playback. For better video playback, set audio output directly to OSS. Click the Apply button to save the change.
+        <p>
+        Then click the Stream Volumes button to bring up the audio mixer window. The first tab panel is the mixer for hardware channels. You may have to increase the levels of Volume (line out) and PCM (software-generated audio) here to get a satisfactory volume level. The second panel is the software mixer where audio streams from separate applications are shown. Note that the master volume in the software mixer is limited by the Volume and PCM levels in the hardware mixer. Close the mixer and Media Preferences windows before starting any multimedia applications.
+        <p>
+        Please note that Syllable currently doesn't remember the volume level settings after a restart, so you may have to enter the mixer panel again. In the Dock Preferences you can enable a Mixer applet that will give you immediate access from the dock to the master volume of the software mixer.
+        <p>
+        <font face="Arial" size=4><b><u>Accessing storage media</u></b></font>
+        <p>
+        Syllable can access extra partitions you may have on your hard drive, or external media such as USB memory sticks and equivalent storage in MP3 players and some photo cameras. External media usually come in FAT (Windows) format (and usually have only one partition). Syllable can both read from and write to them. Disk partitions may also be formatted as BFS (BeOS), NTFS (Windows) or Ext2/Ext3 (Linux). Syllable can currently only read from NTFS and Ext2/3 formats.
+        <p>
+        Before you can access extra media, you need to mount it. You can do this by opening the Disks icon on the desktop. Then click with the right mouse button in the background of the Disks window. Select the Mount option from the pop-up menu to get a list of available partitions and choose one to mount. A mounted partition will appear as an extra icon in the Disks window, from where you can open it to browse its files. In the file system, the extra partition is mounted in the root of all files ("/"), under a subdirectory with the name of the partition (or "/no name/" if it doesn't have one).
+        <p>
+        Please note that mounted media needs to be unmounted again before you can safely remove external media such as a memory stick. You can do this by right-clicking on its icon in the Disks window and selecting the Unmount option from the menu that pops up. All storage media will be unmounted automatically when you shut down or restart Syllable.
+        <p>
+        <font face="Arial" size=4><b><u>Shutting down and restarting</u></b></font>
+        <p>
+        The system can be shut down or restarted by choosing the Quit option from the Syllable menu in the dock (normally in the top left). Any open applications will get the opportunity to shut down orderly, but sometimes an application can prevent the system from shutting down. If this happens, you can force the system to restart by pressing the Control, Alt and Delete keys simultaneously. This will force applications to close, but will still orderly shut down the system, such as safely unmounting all mounted storage media.
         <p>
         <font face="Arial" size=4><b><u>Software</u></b></font>
         <p>
@@ -45,12 +69,12 @@
         <p>
         <font face="Arial" size=3><b><u>Installing native software</u></b></font>
         <p>
-        Applications which have been written for Syllable can be installed anywhere you wish, although the usual location is in the /Applications directory.  Most applications come as a single archive, which can be unpacked wherever you wish to install the software.  Syllable uses the Zip archive format.  For example, if we wanted to install the ABrowse web browser:
+        Applications which have been written for Syllable can be installed anywhere you wish, although the usual location is in the /Applications directory.  Most applications come as a single archive, which can be unpacked wherever you wish to install the software.  Syllable uses the Zip archive format.  For example, if we wanted to install the Webster web browser:
         <p>
         <table width="99%" cellpadding=4 cellspacing=0 bgcolor="#ffffff" border=1 bordercolor="#cccccc">
           <tr>
             <td valign="top">
-              <tt>unzip ABrowse-0.6a.application -d /Applications</tt>
+              <tt>unzip Webster-alpha1.application -d /Applications</tt>
             </td>
           </tr>
         </table>
@@ -60,12 +84,12 @@
         <table width="99%" cellpadding=4 cellspacing=0 bgcolor="#ffffff" border=1 bordercolor="#cccccc">
           <tr>
             <td valign="top">
-              <tt>rm -r /Applications/ABrowse</tt>
+              <tt>rm -r /Applications/Webster</tt>
             </td>
           </tr>
          </table>
          <p>
-         Or delete the ABrowse folder from the graphical file browser.
+         Or delete the Webster folder from the graphical file browser.
          <p>
          <font face="Arial" size=3><b><u>Installing non-native software</u></b></font>
          <p>
@@ -125,7 +149,7 @@
          <p>
          <font face="Arial" size=3><b><u>Web forums</u></b></font>
          <p>
-         <a href="http://forum.syllable-norden.info/">http://forum.syllable-norden.info</a>
+         <a href="http://forum.syllable.org/">http://forum.syllable.org</a>
          <p>
          The website forums are lively and full of useful information and interesting discussion.  You can find both a quick answer or an in-depth discussion of your problem.
          <p>
