@@ -1,0 +1,37 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			sourceforge
+
+headline			Capabilities-based operating system framework
+description
+	Genode is a novel operating-system architecture that enables dynamic workload while retaining security and robustness. The fundamental difference of Genode compared to other OS architectures is its strict organizational structure, which allows the execution of sensitive applications with a trusted computing base of a few thousand lines of code beside high-complexity workload. With its organizational approach, the architecture facilitates a clean separation of policies and mechanisms, and enables the definition and application of system policies in a natural and distributed fashion. Genode's resource-management concept enables highly dynamic workload but still retains deterministic behaviour normally only found in statically configured systems.
+licenses			GPL-2
+
+home				genode.org
+packages			genode/genode-8.08
+
+needs				sdl
+build-needs
+	make >= 3.81
+	gcc >= 4
+
+build-dir			build
+
+configure
+;	ln -s ../genode-8.08/tool/builddir/build.mk Makefile
+	mkdir -p build
+	cd build
+	ln -sf ../tool/builddir/build.mk Makefile
+	mkdir -p etc
+	echo 'REPOSITORIES = ../base-linux ../base ../os ../demo' > etc/build.conf
+
+install-tree		bin
+install-files
+	core/core				bin/
+	../os/config/linux_demo	bin/config
+
+documentation		README LICENSE
+develop-docs
+	hello_tutorial
+	doc/*

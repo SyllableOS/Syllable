@@ -11,10 +11,8 @@ licenses			LGPL
 home				www.xynth.org
 packages			xynth/xynth-0.8.90
 
-needs
-	expat
-recommends
-	sdl
+needs				expat
+recommends			sdl
 
 ;patch				cp Makefile.cfg.linux Makefile.cfg
 
