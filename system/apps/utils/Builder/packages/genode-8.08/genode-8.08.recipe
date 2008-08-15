@@ -28,8 +28,27 @@ configure
 
 install-tree		bin
 install-files
-	core/core				bin/
-	../os/config/linux_demo	bin/config
+	../os/config/linux_demo				bin/config
+	core/core							bin/
+
+	init/init							bin/
+
+	drivers/timer/linux/timer			bin/
+	drivers/framebuffer/sdl/fb_sdl		bin/
+
+	server/nitlog/nitlog				bin/
+	server/liquid_framebuffer/liquid_fb	bin/
+	server/nitpicker/genode/nitpicker	bin/
+
+	lib/libz/test-libz					bin/
+	lib/libpng/test-libpng				bin/
+
+	app/launchpad/launchpad				bin/
+	app/scout/genode/scout				bin/
+
+	test/pci/testpci					bin/
+	test/bomb/bomb						bin/
+	test/nitpicker/testnit				bin/
 
 documentation		README LICENSE
 develop-docs
