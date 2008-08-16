@@ -221,7 +221,7 @@ Handler *Messenger::GetTarget( Looper ** ppcLooper ) const
 			pcHandler = pcLooper->_FindHandler( m_hHandlerID );
 		}
 	}
-	*ppcLooper = pcLooper;
+	if( ppcLooper != NULL ) { *ppcLooper = pcLooper; }
 	return ( pcHandler );
 }
 
