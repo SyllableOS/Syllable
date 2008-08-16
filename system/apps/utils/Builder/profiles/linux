@@ -285,7 +285,7 @@ modules
 ;	stage libraries/bison-2.3
 ;	stage libraries/binutils-2.17
 
-	libraries libraries/gcc-4.2.3
+	libraries libraries/gcc-4.2.3-system
 ;	For bootstrapping:
 ;	system apps/gnu/gcc-4.2.3
 
@@ -516,7 +516,7 @@ modules
 ;	apps/develop/SettingsEditor
 ;	apps/collab/Contact
 
-	system libs/sdl-1.2.13
+	system libs/sdl-1.2.13-system
 ;	sdl-config needs to be in the path:
 	bootstrap libs/sdl-1.2.13
 

@@ -1,0 +1,15 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			gcc-4.2.3
+
+links
+	gcc					bin/cc
+	libgcc.a			lib/gcc/i486-pc-linux-gnu/4.2.3/libgcc_static.a
+;	For some packages:
+;	bin/cpp				lib/
+;	For WebKit:
+	gcc					/usr/bin/
+;	For Genode:
+	lib/libgcc_s.so.1	/system/resources/glibc/2.7/lib/
+	lib/libstdc++.so.6	/system/resources/glibc/2.7/lib/

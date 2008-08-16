@@ -1,0 +1,7 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			sdl-1.2.13
+
+; For Genode:
+links				lib/libSDL-1.2.so.0 /system/resources/glibc/2.7/lib/

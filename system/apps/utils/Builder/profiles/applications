@@ -1,8 +1,7 @@
 ; List of all official applications released as binaries that are built from a Builder recipe
-; Generated on 27-Apr-2008/16:48:51+2:00
+; Generated on 13-Aug-2008/15:47:43+2:00
 
 modules
-	abrowse--current
 	pengupop-2.1.12
 	whisper--current
 	xpdf-3.00pl3
