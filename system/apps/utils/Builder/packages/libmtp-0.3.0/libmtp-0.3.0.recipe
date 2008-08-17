@@ -1,0 +1,18 @@
+authors				Rui Caridade
+status				contributed
+
+inherits			sourceforge
+
+description
+	libmtp is an implementation of Microsoft's Media Transfer Protocol (MTP) in the form of a library suitable primarily for POSIX compliant operating systems.
+licenses			GPL
+
+home				libmtp.sourceforge.net
+packages			libmtp/libmtp-0.3.0
+
+build-recommends
+	gawk
+	doxygen
+
+documentation		README Changelog TODO AUTHORS COPYING
+build-docs			INSTALL
