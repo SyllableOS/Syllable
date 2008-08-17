@@ -1,4 +1,6 @@
-authors				Rui Caridade
+authors
+	Rui Caridade
+	Kaj de Vos
 status				contributed
 
 inherits			sourceforge
@@ -10,6 +12,7 @@ licenses			GPL
 home				libmtp.sourceforge.net
 packages			libmtp/libmtp-0.3.0
 
+needs				libusb
 build-recommends
 	gawk
 	doxygen
