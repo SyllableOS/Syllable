@@ -30,6 +30,6 @@ build-docs			INSTALL
 internal-docs		SUBMITTING-PATCHES SHLIBS
 
 ; Linked into mount, which is called before the loader path is set:
-links
+_links
 	lib/libblkid.so.1	/system/resources/glibc/2.7/lib/
 	lib/libuuid.so.1	/system/resources/glibc/2.7/lib/

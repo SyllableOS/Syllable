@@ -34,7 +34,7 @@ links
 ;	For S-Lang:
 ;	share/terminfo			/usr/share/
 ;	Linked into BASh, which is called before the loader path is set:
-	lib/libncursesw.so.5	/system/resources/glibc/2.7/lib/
+;	lib/libncursesw.so.5	/system/resources/glibc/2.7/lib/
 
 pre-register
 	echo 'INPUT(-lncursesw)'	> lib/libncurses.so

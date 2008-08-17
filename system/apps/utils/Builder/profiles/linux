@@ -199,6 +199,7 @@ tree
 
 resources
 	boot/grub									menu.lst
+	etc											linux/ld.so.conf
 	etc											linux/inittab
 	etc/sysconfig								linux/clock
 	etc											linux/fstab
