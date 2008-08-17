@@ -1,6 +1,10 @@
 ; Parts to complete a system build
 
 resources
+	etc								linux/login.defs
+;	Overwrite version from Shadow:
+	etc/default						linux/useradd
+
 ;	Make GLibC suitable for running in an installed system:
 	system/resources/glibc/2.7/lib	linux/libc.so
 	system/resources/glibc/2.7/lib	linux/libpthread.so

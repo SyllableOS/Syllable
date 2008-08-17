@@ -149,6 +149,7 @@ tree
 
 ;	For SysVInit and others:
 	bin
+	etc/default
 	etc/udev
 	etc/udev/rules.d
 ;	etc/opt
