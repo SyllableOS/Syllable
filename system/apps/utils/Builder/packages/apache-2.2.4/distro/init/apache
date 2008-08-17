@@ -1,4 +1,3 @@
 #! /bin/sh
-# Start Apache server
+# Start the Apache web server:
 apachectl start > /dev/null
-
