@@ -9,6 +9,7 @@ configure-options
 ;	Kernel headers:
 ;	--with-headers=/usr/include
 	--enable-add-ons
+	--sysconfdir=/etc
 	--disable-profile
 ;	--with-binutils=/usr/bin
 ;	--without-cvs

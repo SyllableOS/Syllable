@@ -11,6 +11,7 @@ needs				Syllable >= 0.6.5
 configure-options
 	--enable-hacker-mode
 	--enable-add-ons=syllable
+	--sysconfdir=/etc
 ;	--disable-profile
 ;	--with-headers=/usr/include
 	--without-cvs
