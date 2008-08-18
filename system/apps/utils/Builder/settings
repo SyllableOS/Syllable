@@ -2,8 +2,8 @@
 lineage
 	.
 ;	AMD64
-;	Syllable
-	Linux
+	Syllable
+;	Linux
 ;	Linux-Syllable
 
 environment
@@ -16,19 +16,19 @@ environment
 
 native-env
 ;	Default compiler settings for native modules:
-	CFLAGS		-Wall -pipe -march=i486 -O2
-	CXXFLAGS	-Wall -pipe -march=i486 -O2
+	CFLAGS		-Wall -pipe -march=i586 -O2
+	CXXFLAGS	-Wall -pipe -march=i586 -O2
 
 ports-env
 ;	Default compiler settings for ports:
-	CFLAGS		-pipe -march=i486 -O2
-	CXXFLAGS	-pipe -march=i486 -O2
+	CFLAGS		-pipe -march=i586 -O2
+	CXXFLAGS	-pipe -march=i586 -O2
 
 ; Location in CVS we want, if not the CVS root:
 cvs-path		syllable/system
 
 ; Location of source packages, if not Builder/sources/:
-sources-path	/media/data/sources
+;sources-path	/data/sources
 
 ; For cross-compilation:
 ;target			i586-pc-syllable
