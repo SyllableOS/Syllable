@@ -1,0 +1,21 @@
+authors				Kaj de Vos
+
+inherits			grub-0.97
+
+links
+;	FHS:
+;	/boot/grub/menu.lst /etc/grub/
+	lib/grub/i386-pc/stage1				/boot/grub/
+	lib/grub/i386-pc/stage2				/boot/grub/
+	lib/grub/i386-pc/stage2_eltorito	/boot/grub/
+	lib/grub/i386-pc/iso9660_stage1_5	/boot/grub/
+	lib/grub/i386-pc/afs_stage1_5		/boot/grub/
+	lib/grub/i386-pc/reiserfs_stage1_5	/boot/grub/
+	lib/grub/i386-pc/fat_stage1_5		/boot/grub/
+	lib/grub/i386-pc/xfs_stage1_5		/boot/grub/
+	lib/grub/i386-pc/e2fs_stage1_5		/boot/grub/
+	lib/grub/i386-pc/ufs2_stage1_5		/boot/grub/
+	lib/grub/i386-pc/ffs_stage1_5		/boot/grub/
+	lib/grub/i386-pc/jfs_stage1_5		/boot/grub/
+	lib/grub/i386-pc/minix_stage1_5		/boot/grub/
+	lib/grub/i386-pc/vstafs_stage1_5	/boot/grub/

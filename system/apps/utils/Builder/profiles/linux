@@ -294,7 +294,7 @@ modules
 	system libs/ncurses-5.6
 
 ;	GrUB can use Curses:
-	sys/boot/grub-0.97
+	sys/boot/grub-0.97-system
 
 	system apps/gnu/coreutils-6.9
 	system apps/gnu/bash-3.2
