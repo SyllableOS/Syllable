@@ -14,7 +14,16 @@ run-needs
 	rebol
 	cheyenne | apache
 
-patch				sed -i 's/path\/to\/rebol/usr\/bin\/env rebol/' qm.r
+patch
+;	Shebang:
+;	sed -i 's/path\/to\/rebol/usr\/bin\/env rebol/' qm.r
+	sed -i 's/local\/bin\//bin\/env /'												qm.r
+;	UK time zone:
+	sed -i 's/-6:00/0:00/'															qm.r
+	sed -i 's/Path\/To\/app\/application/usr\/cheyenne\/lib\/REBOL\/QuarterMaster/'	qm.r
+	sed -i 's/Path\/To\/app\/space/usr\/cheyenne\/lib\/REBOL\/QuarterMaster/'		qm.r
+	sed -i 's/Path\/To\/app/usr\/cheyenne\/lib\/REBOL\/QuarterMaster/'				qm.r
+	sed -i 's/Path\/To\/HTTPd\/root/usr\/cheyenne\/lib\/REBOL\/Cheyenne\/www/'		qm.r
 
 make				true
 

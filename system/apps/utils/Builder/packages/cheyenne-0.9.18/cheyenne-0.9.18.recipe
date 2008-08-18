@@ -1,5 +1,5 @@
 authors				Kaj de Vos
-status				developing
+status				testing
 
 headline			Full-featured web server written in REBOL
 description
@@ -16,7 +16,11 @@ run-needs
 	rebol
 	uniserve
 
-patch				sed -i 's/%..\/UniServe/%\/usr\/indexes\/lib\/REBOL\/UniServe/' Cheyenne/cheyenne.r
+patch
+;	UniServe path:
+	sed -i 's/%..\/UniServe/%\/usr\/indexes\/lib\/REBOL\/UniServe/'						Cheyenne/cheyenne.r
+;	For REBOL 2.7.6:
+	sed -i 's/extension-class: context list/extension-class: context to-block list/'	Cheyenne/HTTPd.r
 
 make				true
 
