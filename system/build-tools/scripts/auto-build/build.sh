@@ -62,7 +62,7 @@ sync
 # We have to build GrUB with GCC 3
 
 echo "Switching to GCC 3.4.3"
-build install $HOME/Packages/gcc-3.4.3.bin.3.zip 1>>$LOG 2>&1
+build install $HOME/Packages/gcc-3.4.3-3.i586.resource 1>>$LOG 2>&1
 build log >> $SYSTEM_LOG
 build log summary >> $SYSTEM_SUMMARY_LOG
 sync
@@ -76,7 +76,7 @@ build log summary >> $SYSTEM_SUMMARY_LOG
 sync
 
 echo "Switching to GCC 4.1.2"
-build install $HOME/Packages/gcc-4.1.2-2.i586.resource 1>>$LOG 2>&1
+build install $HOME/Packages/gcc-4.1.2-3.i586.resource 1>>$LOG 2>&1
 build log >> $SYSTEM_LOG
 build log summary >> $SYSTEM_SUMMARY_LOG
 sync
