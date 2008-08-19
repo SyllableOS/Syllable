@@ -79,14 +79,14 @@ static status_t _next_dirent_(struct diri *iter, struct _dirent_info_ *oinfo,
 		DPRINTF(2, ("_next_dirent_: %x/%x/%x\n", iter->csi.cluster, iter->csi.sector, iter->current_index));
 		if (buffer[0] == 0) { // quit if at end of table
 			if (start_index != 0xffff) {
-				printk("lfn entry (%s) with no alias\n", filename);
+				printk("dosfs: lfn entry (%s) with no alias\n", filename);
 			}
 			return -ENOENT;
 		}
 	
 		if (buffer[0] == 0xe5) { // skip erased entries
 			if (start_index != 0xffff) {
-				printk("lfn entry (%s) with intervening erased entries\n", filename);
+				printk("dosfs: lfn entry (%s) with intervening erased entries\n", filename);
 				start_index = 0xffff;
 			}
 			DPRINTF(2, ("entry erased, skipping...\n"));
@@ -96,12 +96,12 @@ static status_t _next_dirent_(struct diri *iter, struct _dirent_info_ *oinfo,
 		if (buffer[0xb] == 0xf) { // long file name
 			if ((buffer[0xc] != 0) || 
 				(buffer[0x1a] != 0) || (buffer[0x1b] != 0)) {
-				printk("invalid long file name: reserved fields munged\n");
+				printk("dosfs: invalid long file name: reserved fields munged\n");
 				continue;
 			}
 			if (start_index == 0xffff) {
 				if ((buffer[0] & 0x40) == 0) {
-					printk("bad lfn start entry in directory\n");
+					printk("dosfs: bad lfn start entry in directory\n");
 					continue;
 				}
 				hash = buffer[0xd];
@@ -123,12 +123,12 @@ static status_t _next_dirent_(struct diri *iter, struct _dirent_info_ *oinfo,
 				continue;
 			} else {
 				if (buffer[0xd] != hash) {
-					printk("error in long file name: hash values don't match\n");
+					printk("dosfs: error in long file name: hash values don't match\n");
 					start_index = 0xffff;
 					continue;
 				}
 				if (buffer[0] != --lfn_count) {
-					printk("bad lfn entry in directory\n");
+					printk("dosfs: bad lfn entry in directory\n");
 					start_index = 0xffff;
 					continue;
 				}
@@ -136,7 +136,7 @@ static status_t _next_dirent_(struct diri *iter, struct _dirent_info_ *oinfo,
 				puni = uni + 2*13*(lfn_count - 1);
 				for (i=1;i<0x20;i+=2) {
 					if ((buffer[i] == 0xff) && (buffer[i+1] == 0xff)) {
-						printk("bad lfn entry in directory\n");
+						printk("dosfs: bad lfn entry in directory\n");
 						start_index = 0xffff;
 						break;
 					}
@@ -159,16 +159,16 @@ static status_t _next_dirent_(struct diri *iter, struct _dirent_info_ *oinfo,
 	// process long name
 	if (start_index != 0xffff) {
 		if (lfn_count != 1) {
-			printk("unfinished lfn in directory\n"); 
+			printk("dosfs: unfinished lfn in directory\n"); 
 			start_index = 0xffff;
 		} else {
 			if (unicode_to_utf8(uni, filename_len, (uint8*)filename, len)) {
 				// rewind to beginning of call
-				printk("error: long file name too long\n");
+				printk("dosfs: error: long file name too long\n");
 				diri_init(iter->csi.vol, iter->starting_cluster, start_index, iter);
 				return -ENAMETOOLONG;
 			} else if (hash_msdos_name((const char *)buffer) != hash) {
-				printk("error: long file name (%s) hash and short file name don't match\n", filename);
+				printk("dosfs: error: long file name (%s) hash and short file name don't match\n", filename);
 				start_index = 0xffff;
 			}
 		}
@@ -265,7 +265,7 @@ status_t check_dir_empty(nspace *vol, vnode *dir)
 	if (check_vnode_magic(dir, "check_dir_empty")) return -EINVAL;
 
 	if (diri_init(vol, dir->cluster, 0, &iter) == NULL) {
-		printk("check_dir_empty: error opening directory\n");
+		printk("dosfs: check_dir_empty: error opening directory\n");
 		return -EIO;
 	}
 
@@ -284,7 +284,7 @@ status_t check_dir_empty(nspace *vol, vnode *dir)
 			((i == 1) && strcmp(filename, "..")) ||
 			// weird case where ./.. are stored as long file names
 			((i < 2) && (iter.current_index != i+1))) {
-			printk("check_dir_empty: malformed directory\n");
+			printk("dosfs: check_dir_empty: malformed directory\n");
 			return -ENOTDIR;
 		}
 
@@ -357,7 +357,7 @@ status_t erase_dir_entry(nspace *vol, vnode *node)
 
 	// first pass: check if the entry is still valid
 	if (buffer == NULL) {
-		printk("erase_dir_entry: error reading directory\n");
+		printk("dosfs: erase_dir_entry: error reading directory\n");
 		return -ENOENT;
 	}
 
@@ -369,7 +369,7 @@ status_t erase_dir_entry(nspace *vol, vnode *node)
 	if ((info.sindex != node->sindex) ||
 		(info.eindex != node->eindex)) {
 		// any other attributes may be in a state of flux due to wstat calls
-		printk("erase_dir_entry: directory entry doesn't match\n");
+		printk("dosfs: erase_dir_entry: directory entry doesn't match\n");
 		return -EIO;
 	}
 
@@ -406,7 +406,7 @@ status_t compact_directory(nspace *vol, vnode *dir)
 		struct _dirent_info_ info;
 
 		if ( loops++ > 1000 ) {
-		    printk( "Infinit loop in _create_dir_entry_()\n" );
+		    printk( "dosfs: Infinite loop in _create_dir_entry_()\n" );
 		    break;
 		}
 		
@@ -432,7 +432,7 @@ status_t compact_directory(nspace *vol, vnode *dir)
 			}
 			break;
 		} else {
-			printk("compact_directory: unknown error from _next_dirent_ (%s)\n", strerror(error));
+			printk("dosfs: compact_directory: unknown error from _next_dirent_ (%s)\n", strerror(error));
 			break;
 		}
 	}
@@ -509,7 +509,7 @@ static status_t _create_dir_entry_(nspace *vol, vnode *dir, struct _entry_info_ 
 	}
 
 	if ((info->cluster != 0) && !IS_DATA_CLUSTER(info->cluster)) {
-		printk("_create_dir_entry_ for bad cluster (%x)\n", info->cluster);
+		printk("dosfs: _create_dir_entry_ for bad cluster (%x)\n", info->cluster);
 		return -EINVAL;
 	}
 
@@ -525,7 +525,7 @@ static status_t _create_dir_entry_(nspace *vol, vnode *dir, struct _entry_info_ 
 		struct _dirent_info_ info;
 
 		if ( loops++ > 1000 ) {
-		    printk( "Infinit loop in _create_dir_entry_()\n" );
+		    printk( "dosfs: Infinite loop in _create_dir_entry_()\n" );
 		    break;
 		}
 		error = _next_dirent_(&diri, &info, filename, 512);
@@ -539,7 +539,7 @@ static status_t _create_dir_entry_(nspace *vol, vnode *dir, struct _entry_info_ 
 			// hit end of directory marker
 			break;
 		} else {
-			printk("_create_dir_entry_: unknown error from _next_dirent_ (%s)\n", strerror(error));
+			printk("dosfs: _create_dir_entry_: unknown error from _next_dirent_ (%s)\n", strerror(error));
 			break;
 		}
 	}
@@ -915,7 +915,7 @@ int dosfs_access(void *_vol, void *_node, int mode)
 			printk("dosfs_access: can't write on read-only volume\n");
 			result = -EROFS;
 		} else if (node->mode & FAT_READ_ONLY) {
-			printk("can't open read-only file for writing\n");
+			printk("dosfs: can't open read-only file for writing\n");
 			result = -EPERM;
 		}
 	}

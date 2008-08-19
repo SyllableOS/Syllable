@@ -337,7 +337,7 @@ uint32 count_clusters(nspace *vol, int32 cluster)
 	if (cluster == END_FAT_ENTRY)
 		return count;
 
-	printk("cluster = %x\n", cluster);
+	printk("dosfs: count_clusters: cluster = %x\n", cluster);
 	ASSERT(0);
 
 	return 0;
@@ -372,7 +372,7 @@ status_t clear_fat_chain(nspace *vol, uint32 cluster)
 	DPRINTF(2, ("\n"));
 
 	if (cluster != END_FAT_ENTRY)
-		printk("clear_fat_chain: fat chain terminated improperly with %x\n", cluster);
+		printk("dosfs: clear_fat_chain: fat chain terminated improperly with %x\n", cluster);
 
 	return 0;
 }
@@ -492,7 +492,7 @@ status_t set_fat_chain_length(nspace *vol, vnode *node, uint32 clusters,
 
 void dump_fat_chain(nspace *vol, uint32 cluster)
 {
-	printk("fat chain: %x", cluster);
+	printk("dosfs: fat chain: %x", cluster);
 	while (IS_DATA_CLUSTER(cluster)) {
 		cluster = get_fat_entry(vol, cluster);
 		printk(" %x", cluster);

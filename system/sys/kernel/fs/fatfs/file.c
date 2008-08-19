@@ -67,7 +67,7 @@ status_t write_vnode_entry(nspace *vol, vnode *node)
 	// though we do the node->deleted check above
 
 	if ((node->cluster != 0) && !IS_DATA_CLUSTER(node->cluster)) {
-		printk("write_vnode_entry called on invalid cluster (%x)\n", node->cluster);
+		printk("dosfs: write_vnode_entry called on invalid cluster (%x)\n", node->cluster);
 		return -EINVAL;
 	}
 
@@ -191,7 +191,7 @@ int dosfs_wstat(void *_vol, void *_node, const struct stat *st, uint32 mask)
 	DPRINTF(0, ("dosfs_wstat (vnode id %Lx)\n", node->vnid));
 
 	if (vol->flags & FS_IS_READONLY) {
-		printk("can't wstat on read-only volume\n");
+		printk("dosfs: can't wstat on read-only volume\n");
 		UNLOCK_VOL(vol);
 		return -EROFS;
 	}
@@ -605,7 +605,7 @@ int dosfs_write(void *_vol, void *_node, void *_cookie, off_t pos,
 
 	buffer = csi_get_block(&iter);
 	if (buffer == NULL) {
-	    printk("error writing cluster %x, sector %x\n", iter.cluster, iter.sector);
+	    printk("dosfs: error writing cluster %x, sector %x\n", iter.cluster, iter.sector);
 	    result = -EIO;
 	    goto bi;
 	}
@@ -737,7 +737,7 @@ int dosfs_create(void *_vol, void *_dir, const char* pzName, int nNameLen, int o
 	}
 
 	if ((omode & O_RWMASK) == O_RDONLY) {
-		printk("invalid permissions used in creating file\n");
+		printk("dosfs: invalid permissions used in creating file\n");
 		UNLOCK_VOL(vol);
 		return -EPERM;
 	}
@@ -862,7 +862,7 @@ int dosfs_mkdir(void *_vol, void *_dir, const char* pzName, int nNameLen, int pe
     perms &= ~S_IFMT; perms |= S_IFDIR;
 
     if (vol->flags & FS_IS_READONLY) {
-	printk("mkdir called on read-only volume\n");
+	printk("dosfs: mkdir called on read-only volume\n");
 	UNLOCK_VOL(vol);
 	return -EROFS;
     }
@@ -996,7 +996,7 @@ int dosfs_rename( void *_vol, void *_odir, const char* pzOldName, int nOldNameLe
 	DPRINTF(0, ("dosfs_rename called: %Lx/%s->%Lx/%s\n", odir->vnid, oldname, ndir->vnid, newname));
 
 	if (vol->flags & FS_IS_READONLY) {
-		printk("rename called on read-only volume\n");
+		printk("dosfs: rename called on read-only volume\n");
 		result = -EROFS;
 		goto bi;
 	}
@@ -1015,7 +1015,7 @@ int dosfs_rename( void *_vol, void *_odir, const char* pzOldName, int nOldNameLe
 	// see if file already exists and erase it if it does
 	if ((result = findfile(vol, ndir, newname, NULL, &file2)) == B_OK) {
 		if (file2->fn_nMode & FAT_SUBDIR) {
-			printk("destination already occupied by a directory\n");
+			printk("dosfs: destination already occupied by a directory\n");
 			result = -EPERM;
 			goto bi2;
 		}
@@ -1069,12 +1069,12 @@ int dosfs_rename( void *_vol, void *_odir, const char* pzOldName, int nOldNameLe
 		struct diri diri;
 		uint8 *buffer;
 		if ((buffer = diri_init(vol, file->cluster, 1, &diri)) == NULL) {
-			printk("error opening directory :(\n");
+			printk("dosfs: error opening directory :(\n");
 			result = -EIO;
 			goto bi2;
 		}
 		if (memcmp(buffer, "..         ", 11)) {
-			printk("invalid directory :(\n");
+			printk("dosfs: invalid directory :(\n");
 			result = -EIO;
 			goto bi2;
 		}
@@ -1177,7 +1177,7 @@ static int do_unlink(void *_vol, void *_dir, const char *name, bool is_file)
 	DPRINTF(0, ("do_unlink %Lx/%s\n", dir->vnid, name));
 
 	if (vol->flags & FS_IS_READONLY) {
-		printk("do_unlink: read-only volume\n");
+		printk("dosfs: do_unlink: read-only volume\n");
 		result = -EROFS;
 		goto bi;
 	}

@@ -317,19 +317,19 @@ static status_t mount_fat_disk(const char *path, fs_id nsid,
       // initialize block cache
     err = setup_device_cache(vol->fd, vol->id, (dr9_off_t)vol->total_sectors);
     if ( err < 0) {
-	printk("error initializing block cache (%d)\n", err );
+	printk("dosfs: error initializing block cache (%d)\n", err );
 	goto error;
     }
     
       // as well as the vnode cache
     if (init_vcache(vol) != B_OK) {
-	printk("error initializing vnode cache\n");
+	printk("dosfs: error initializing vnode cache\n");
 	goto error1;
     }
 
       // and the dlist cache
     if (dlist_init(vol) != B_OK) {
-	printk("error initializing dlist cache\n");
+	printk("dosfs: error initializing dlist cache\n");
 	goto error2;
     }
 
@@ -337,7 +337,7 @@ static status_t mount_fat_disk(const char *path, fs_id nsid,
 	vol->free_clusters = 0;
     else {
 	if ((err = count_free_clusters(vol)) < 0) {
-	    printk("error counting free clusters (%s)\n", strerror(err));
+	    printk("dosfs: error counting free clusters (%s)\n", strerror(err));
 	    goto error3;
 	}
 	vol->free_clusters = err;

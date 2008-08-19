@@ -77,7 +77,7 @@ void dump_vcache(nspace *vol)
 {
 	int i;
 	struct vcache_entry *c;
-	printk("vnid cache size %x, cur vnid = %Lx\n"
+	printk("dosfs: vnid cache size %x, cur vnid = %Lx\n"
 			"vnid             loc\n", 
 			vol->vcache.cache_size, vol->vcache.cur_vnid);
 	for (i=0;i<vol->vcache.cache_size;i++)
@@ -100,12 +100,12 @@ status_t init_vcache(nspace *vol)
 #endif
 	vol->vcache.by_vnid = calloc(sizeof(struct vache_entry *), vol->vcache.cache_size);
 	if (vol->vcache.by_vnid == NULL) {
-		printk("init_vcache: out of core\n");
+		printk("dosfs: init_vcache: out of core\n");
 		return -ENOMEM;
 	}
 	vol->vcache.by_loc = calloc(sizeof(struct vache_entry *), vol->vcache.cache_size);
 	if (vol->vcache.by_loc == NULL) {
-		printk("init_vcache: out of core\n");
+		printk("dosfs: init_vcache: out of core\n");
 		free(vol->vcache.by_vnid);
 		vol->vcache.by_vnid = NULL;
 		return -ENOMEM;

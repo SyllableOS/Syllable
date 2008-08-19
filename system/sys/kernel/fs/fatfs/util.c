@@ -23,7 +23,7 @@ static int32 tzoffset = -1; /* in minutes */
 
 int _assert_(char *a, int b, char *c)
 {
-	printk("tripped assertion in %s/%d (%s)\n", a, b, c);
+	printk("dosfs: tripped assertion in %s/%d (%s)\n", a, b, c);
 	kernel_debugger("tripped assertion");
 	return 0;
 }
@@ -70,7 +70,7 @@ static void get_tzoffset()
 		return;
 
 	if (get_rtc_info(&info) < 0) {
-		printk("error getting rtc info\n");
+		printk("dosfs: error getting rtc info\n");
 	} else {
 		tzoffset = info.tz_minuteswest;
 	}

@@ -50,7 +50,7 @@ status_t dlist_init(nspace *vol)
 	vol->dlist.vnid_list = malloc(sizeof(ino_t) * vol->dlist.allocated);
 	if (vol->dlist.vnid_list == NULL) {
 		vol->dlist.allocated = 0;
-		printk("dlist_init: out of core\n");
+		printk("dosfs: dlist_init: out of core\n");
 		return -ENOMEM;
 	}
 
@@ -80,7 +80,7 @@ static status_t dlist_realloc(nspace *vol, uint32 allocate)
 
 	vnid_list = malloc(sizeof(ino_t) * allocate);
 	if (vnid_list == NULL) {
-		printk("dlist_realloc: out of core\n");
+		printk("dosfs: dlist_realloc: out of core\n");
 		return -ENOMEM;
 	}
 
