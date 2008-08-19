@@ -25,7 +25,7 @@ tree
 ;	etc/grub
 	etc/s3conf
 
-	home home.png
+	users home.png
 
 	system
 
@@ -206,7 +206,7 @@ resources
 	etc											linux/fstab
 	etc											linux/syslog.conf
 	etc/sysconfig								linux/console
-	etc											configuration/passwd
+	etc											linux/passwd
 	etc											linux/group
 	etc											linux/inputrc
 	etc											linux/profile
@@ -225,7 +225,7 @@ resources
 	system/config								appserver
 	etc											linux/asound.state
 	etc/udev/rules.d							linux/40-alsa.rules
-	home										Home-Directories
+	users										Home-Directories
 
 	Documentation								documentation/Welcome.html
 	Documentation/images						documentation/images/Syllable.png
