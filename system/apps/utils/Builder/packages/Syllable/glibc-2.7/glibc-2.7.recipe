@@ -9,7 +9,8 @@ needs				Syllable >= 0.6.5
 ;patch				autoconf
 
 configure-options
-	--with-cpu=i586
+;	i486, i586 not supported:
+	--with-cpu=i386
 	--enable-hacker-mode
 	--enable-add-ons=syllable
 	--sysconfdir=/etc
