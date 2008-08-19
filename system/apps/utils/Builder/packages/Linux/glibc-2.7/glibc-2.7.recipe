@@ -5,6 +5,7 @@ warnings
 	Will mess with /system/resources/glibc/2.7/etc/ld.so.conf and /var/backups/ in the running system!
 
 configure-options
+	--with-cpu=i486
 	--enable-kernel=2.6.0
 ;	Kernel headers:
 ;	--with-headers=/usr/include
