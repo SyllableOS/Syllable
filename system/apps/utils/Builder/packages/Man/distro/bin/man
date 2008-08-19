@@ -1,11 +1,19 @@
 #!/bin/sh
 
-manpath="/boot/Documentation/man"
-# Server:
-#manpath="/atheos/Documentation/man"
-browser="/Applications/ABrowse/ABrowse"
-#browser="links -g"
-#browser="links"
+if [ `uname` = "syllable" ]
+then
+	manpath="/boot/Documentation/man"
+	browser="/Applications/Webster/Webster"
+else
+	manpath="/atheos/Documentation/man"
+
+	if [ -e /system/resources/directfb ]
+	then
+		browser="links -g"
+	else
+		browser="links"
+	fi
+fi
 
 if [ "$1" = "" ]; then
 	echo "Usage: man [section] title"
