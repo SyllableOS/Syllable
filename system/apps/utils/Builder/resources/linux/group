@@ -22,3 +22,4 @@ vsftpd:x:47:vsftpd
 rsyncd:x:48:rsyncd
 sshd:x:50:sshd
 nogroup:x:99:
+users:x:100:

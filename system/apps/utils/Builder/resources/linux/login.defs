@@ -116,7 +116,7 @@ SU_NAME		su
 #   Directory where mailboxes reside, _or_ name of file, relative to the
 #   home directory.  If you _do_ define both, MAIL_DIR takes precedence.
 #
-MAIL_DIR	/var/spool/mail
+MAIL_DIR	/var/mail
 #MAIL_FILE	.mail
 
 #
@@ -316,4 +316,3 @@ ENVIRON_FILE	/etc/environment
 # This also enables userdel to remove user groups if no members exist.
 #
 USERGROUPS_ENAB yes
-
