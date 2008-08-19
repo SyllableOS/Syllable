@@ -2,7 +2,6 @@ authors
 	Kaj de Vos
 	Jake Hamby
 status				testing
-warnings			Super-user access is needed to install su properly.
 
 inherits			gnu
 

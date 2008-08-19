@@ -5,8 +5,8 @@ authors
 	Kristian Van Der Vliet
 maintainers			Kaj de Vos
 status				incomplete
+warnings			Super-user access is needed to install su properly.
 notes				SUS draft standard *at() functions not available on Desktop
 
 ; Syllable Desktop has its own:
 delete-files		bin/nice
-
