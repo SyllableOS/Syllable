@@ -35,13 +35,6 @@ case "${1}" in
 		done
 
 
-		# Silently empty the temporary directory
-		if [ "$TEMP" != '' ]
-		then
-			rm -r $TEMP/* > /dev/null 2>&1 &
-		fi
-
-
 		# inetd is a special case and is always started first if INetUtils is
 		# installed.
 
