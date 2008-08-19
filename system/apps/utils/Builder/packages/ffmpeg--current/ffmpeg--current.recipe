@@ -28,7 +28,9 @@ build-conflicts		tetex
 
 system-prefix-var	DESTDIR
 ; Older versions still create this:
-;install-tree		include/ffmpeg
+_install-tree
+	include
+	include/ffmpeg
 install-files
 	../_ffmpeg--current/config.h				include/ffmpeg
 ;	../ffmpeg--current/libavformat/allformats.h	include/ffmpeg

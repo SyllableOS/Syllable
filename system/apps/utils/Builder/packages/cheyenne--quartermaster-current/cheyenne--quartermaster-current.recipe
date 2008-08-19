@@ -1,5 +1,5 @@
 authors				Kaj de Vos
-status				developing
+status				testing
 
 headline			Model-View-Controller based web framework written in REBOL
 description
@@ -28,6 +28,14 @@ make				true
 
 merge-install
 
+; Required empty directories:
+install-tree
+;	lib
+;	lib/REBOL
+	lib/REBOL/QuarterMaster
+;	lib/REBOL/QuarterMaster/controllers
+	lib/REBOL/QuarterMaster/models
+	lib/REBOL/QuarterMaster/views
 install				true
 install-files
 	qm.r			lib/REBOL/Cheyenne/www/
