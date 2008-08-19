@@ -9,8 +9,8 @@ notes				Tested with FFMPEG SVN snapshot Dec 23, 2007
 licenses			LGPL GPL
 home				ffmpeg.org
 packages
-;	Doesn't work well on Syllable:
 	FFMPEG-11308.source
+;	Doesn't work well on Syllable:
 ;	FFMPEG-27432.source
 locations
 	http://downloads.syllable.org/sources/resources/FFMPEG/
@@ -27,7 +27,8 @@ build-needs
 build-conflicts		tetex
 
 system-prefix-var	DESTDIR
-install-tree		include/ffmpeg
+; Older versions still create this:
+;install-tree		include/ffmpeg
 install-files
 	../_ffmpeg--current/config.h				include/ffmpeg
 ;	../ffmpeg--current/libavformat/allformats.h	include/ffmpeg
