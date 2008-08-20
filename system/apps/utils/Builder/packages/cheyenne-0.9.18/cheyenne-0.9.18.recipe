@@ -18,9 +18,11 @@ run-needs
 
 patch
 ;	UniServe path:
-	sed -i 's/%..\/UniServe/%\/usr\/indexes\/lib\/REBOL\/UniServe/'						Cheyenne/cheyenne.r
+	sed -i 's/%..\/UniServe/%\/usr\/indexes\/lib\/REBOL\/UniServe/'										Cheyenne/cheyenne.r
 ;	For REBOL 2.7.6:
-	sed -i 's/extension-class: context list/extension-class: context to-block list/'	Cheyenne/HTTPd.r
+	sed -i 's/extension-class: context list/extension-class: context to-block list/'					Cheyenne/HTTPd.r
+;	For QuarterMaster:
+	sed -i 's/soc\/path-info:\sjoin\sdata\/in\/path\sdata\/in\/target/soc\/path-info: data\/in\/url/'	Cheyenne/handlers/CGI.r
 
 make				true
 
