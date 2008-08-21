@@ -35,7 +35,7 @@ pre-make
 	make mrproper
 	cp config-2.6.25 .config
 ; $INSTALL_MOD_PATH must be empty:
-make				make -j3
+make				make -j3 ARCH=i486
 ; For optimal build speed, number of CPUs + 1:
 make-options		-j3
 _make-targets
