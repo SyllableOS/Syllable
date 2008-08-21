@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#ln -s /system/bin .
+ln -s usr resources
 
 # For OpenSSL and others:
 ln -s /usr/indexes/bin/perl usr/bin/perl
