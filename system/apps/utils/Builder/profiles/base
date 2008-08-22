@@ -18,10 +18,10 @@ resources
 	system/resources/wallpapers			wallpapers/LucasMurad/*.jpg
 	system/resources/wallpapers			wallpapers/LukasVeselovsky/*.png
 	system/resources/wallpapers			wallpapers/KenSaunders/*.jpg
-	etc/s3conf							configuration/s3config.yml
+	etc/s3conf							configuration/s3config.yml	text/plain
 ;	Servers:
-	etc									configuration/vsftpd.conf
-	etc									configuration/rsyncd.conf
+	etc									configuration/vsftpd.conf	text/plain
+	etc									configuration/rsyncd.conf	text/plain
 
 modules
 	other/fonts/liberation-fonts--current
