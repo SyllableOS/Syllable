@@ -1,3 +1,10 @@
+* August 23, 2008, Kaj de Vos *
+
+Introduced a symlink /resources/ to /usr/. This will serve the migration in the
+coming time of resource packages to /resources/, which is a much clearer name and
+separates our packages from the legacy content of /usr/ (Unix System Resources).
+I chose the most fitting of those three words to describe our packages.
+
 * August 14, 2008, Kaj de Vos *
 
 Added a number of extra GrUB entries to the install CD for hardware testing, known
