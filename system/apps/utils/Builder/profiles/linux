@@ -487,6 +487,7 @@ modules
 	system linux/alsa-library-1.0.15
 	linux/alsa-utils-1.0.15
 	system apps/other/curl-7.18.2
+	system apps/other/openssh-5.0p1
 	apps/other/dhcp-3.0.5
 	linux/wirelesstools-29
 	apps/other/msntp-1.6
@@ -624,7 +625,6 @@ modules
 	apps/other/glib-2.14.4
 	apps/gnu/mc-4.6.1
 
-	apps/other/openssh-5.0p1
 ;	apps/other/rsync-2.6.9
 	apps/other/links2-2.1pre36
 	apps/other/pengupop-2.1.12
