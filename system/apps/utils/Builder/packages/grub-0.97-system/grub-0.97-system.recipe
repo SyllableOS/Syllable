@@ -1,4 +1,5 @@
 authors				Kaj de Vos
+notes				broken
 
 inherits			grub-0.97
 
@@ -9,6 +10,7 @@ links
 	lib/grub/i386-pc/stage2				/boot/grub/
 	lib/grub/i386-pc/stage2_eltorito	/boot/grub/
 	lib/grub/i386-pc/iso9660_stage1_5	/boot/grub/
+;	Doesn't work symlinked:
 	lib/grub/i386-pc/afs_stage1_5		/boot/grub/
 	lib/grub/i386-pc/reiserfs_stage1_5	/boot/grub/
 	lib/grub/i386-pc/fat_stage1_5		/boot/grub/

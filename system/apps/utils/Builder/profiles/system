@@ -303,7 +303,7 @@ modules
 
 ;	GrUB can use Curses:
 ;	Currently requires GCC 3:
-;	sys/boot/grub-0.97-system
+;	sys/boot/grub-0.97
 
 	system apps/gnu/bash-3.2
 	system apps/gnu/coreutils-6.4
