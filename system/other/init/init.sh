@@ -1,5 +1,5 @@
-#!/bin/sh
-#
+#! /bin/sh
+
 # This is the initialisation script for Syllable Desktop.
 # 
 # ************************************************************************** #
@@ -17,6 +17,7 @@
 
 # Add a few additional symlinks which simplify navigation around the
 # filesystem
+ln -s usr /resources
 ln -s boot/Applications /Applications
 #ln -s home/root /root
 
@@ -56,9 +57,9 @@ source /system/network-init.sh
 # inetd is a special case and is always started first if INetUtils is
 # installed.
 
-if [ -e /usr/indexes/libexec/inetd ]
+if [ -e /resources/indexes/libexec/inetd ]
 then
-	/usr/indexes/libexec/inetd &
+	/resources/indexes/libexec/inetd &
 fi
 
 # Packages that require initalisation can include early-init and init directories,
@@ -66,8 +67,8 @@ fi
 # would call apachectl, OpenSSH would have init/sshd which would start
 # sshd etc.
 # The package manager will collect all of these scripts together in
-# /usr/indexes/early-init/ and /usr/indexes/init/; all we need to do is run
-# each script in turn.
+# /resources/indexes/early-init/ and /resources/indexes/init/; all we need to do is
+# run each script in turn.
 
 # Run the late init scripts
 
@@ -76,9 +77,9 @@ do
 	source /system/indexes/init/$pkg_init
 done
 
-for pkg_init in `ls /usr/indexes/init/`
+for pkg_init in `ls /resources/indexes/init/`
 do
-	source /usr/indexes/init/$pkg_init
+	source /resources/indexes/init/$pkg_init
 done
 
 # Do user initialisation and exit
