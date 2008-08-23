@@ -100,14 +100,14 @@ FILES=(	"/etc/profile, /etc/profile" 															\
 		"/system/resources/coreutils/6.4/bin/stty, /bin/stty"										\
 		"/system/resources/coreutils/6.4/bin/chmod, /bin/chmod"										\
 																											\
-		"/usr/findutils/bin/find, /bin/find"										\
-		"/usr/gzip/bin/gzip, /bin/gzip"												\
-		"/usr/sed/bin/sed, /bin/sed"												\
-		"/usr/tar/bin/tar, /bin/tar"												\
-		"/usr/ncurses/bin/clear, /bin/clear"										\
-		"/usr/less/bin/less, /bin/less"												\
-		"/usr/diffutils/bin/cmp, /bin/cmp"												\
-		"/usr/grep/bin/grep, /bin/grep"												\
+		"/resources/findutils/bin/find, /bin/find"										\
+		"/resources/gzip/bin/gzip, /bin/gzip"												\
+		"/resources/sed/bin/sed, /bin/sed"												\
+		"/resources/tar/bin/tar, /bin/tar"												\
+		"/resources/ncurses/bin/clear, /bin/clear"										\
+		"/resources/less/bin/less, /bin/less"												\
+		"/resources/diffutils/bin/cmp, /bin/cmp"												\
+		"/resources/grep/bin/grep, /bin/grep"												\
 																											\
 		"/system/resources/unzip/5.52/bin/unzip, /bin/unzip"											\
 		"/system/resources/bash/3.2/bin/bash, /bin/bash"												\
@@ -115,12 +115,12 @@ FILES=(	"/etc/profile, /etc/profile" 															\
 		"/usr/share/terminfo/r/rxvt-16color, /usr/share/terminfo/r/rxvt-16color"				\
 		"/usr/share/terminfo/x/xterm, /usr/share/terminfo/x/xterm"							\
 																											\
-		"/usr/grub, /usr/grub"																\
+		"/resources/grub, /usr/grub"																\
 																											\
-		"/usr/grub/lib/grub/i386-pc/stage2_eltorito, /boot/grub/stage2_eltorito"											\
-		"/usr/grub/lib/grub/i386-pc/stage1, /boot/grub/stage1"																\
-		"/usr/grub/lib/grub/i386-pc/afs_stage1_5, /boot/grub/afs_stage1_5"													\
-		"/usr/grub/lib/grub/i386-pc/stage2, /boot/grub/stage2"																\
+		"/resources/grub/lib/grub/i386-pc/stage2_eltorito, /boot/grub/stage2_eltorito"											\
+		"/resources/grub/lib/grub/i386-pc/stage1, /boot/grub/stage1"																\
+		"/resources/grub/lib/grub/i386-pc/afs_stage1_5, /boot/grub/afs_stage1_5"													\
+		"/resources/grub/lib/grub/i386-pc/stage2, /boot/grub/stage2"																\
 )
 
 declare -a LINKS
@@ -204,7 +204,14 @@ GRUB=(	"color	cyan/blue white/blue"																	\
 		"module /boot/drivers/dev/hcd/ata_pci path=/system/drivers/dev/hcd/ata_pci"						\
 		"module /system/drivers/fs/iso9660"																\
 		""																								\
-		"title	Install Syllable (no PCI IRQ routing"													\
+		"title	Install Syllable (failsafe)"															\
+		"kernel /system/kernel.so rootfs=iso9660 root=@boot disable_config=true disable_acpi=true disable_smp=true enable_ata_dma=false disable_gfx_drivers=true"	\
+		"module /boot/drivers/dev/bus/pci path=/system/drivers/dev/bus/pci"								\
+		"module /boot/drivers/dev/bus/ata path=/system/drivers/dev/bus/ata"								\
+		"module /boot/drivers/dev/hcd/ata_pci path=/system/drivers/dev/hcd/ata_pci"						\
+		"module /system/drivers/fs/iso9660"																\
+		""																								\
+		"title	Install Syllable (no PCI IRQ routing)"													\
 		"kernel /system/kernel.so rootfs=iso9660 root=@boot disable_config=true disable_pci_irq_routing=true"	\
 		"module /boot/drivers/dev/bus/acpi path=/system/drivers/dev/bus/acpi"							\
 		"module /boot/drivers/dev/bus/pci path=/system/drivers/dev/bus/pci"								\
@@ -212,8 +219,9 @@ GRUB=(	"color	cyan/blue white/blue"																	\
 		"module /boot/drivers/dev/hcd/ata_pci path=/system/drivers/dev/hcd/ata_pci"						\
 		"module /system/drivers/fs/iso9660"																\
 		""																								\
-		"title	Install Syllable (failsafe)"															\
-		"kernel /system/kernel.so rootfs=iso9660 root=@boot disable_config=true disable_acpi=true disable_smp=true enable_ata_dma=false disable_gfx_drivers=true"	\
+		"title	Install Syllable (no USB)"																\
+		"kernel /system/kernel.so rootfs=iso9660 root=@boot disable_config=true disable_usb=true"		\
+		"module /boot/drivers/dev/bus/acpi path=/system/drivers/dev/bus/acpi"							\
 		"module /boot/drivers/dev/bus/pci path=/system/drivers/dev/bus/pci"								\
 		"module /boot/drivers/dev/bus/ata path=/system/drivers/dev/bus/ata"								\
 		"module /boot/drivers/dev/hcd/ata_pci path=/system/drivers/dev/hcd/ata_pci"						\
