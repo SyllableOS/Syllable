@@ -20,8 +20,8 @@ diff -ru perl-5.10.0-original/hints/linux.sh perl-5.10.0/hints/linux.sh
  # NI-S 2003/08/07
 -if [ -r /usr/lib/libndbm.so  -a  -x /usr/bin/nm ] ; then
 -   if /usr/bin/nm /usr/lib/libndbm.so >/dev/null 2>&1 ; then
-+if [ -r /system/indexes/lib/libndbm.so  -a  -x /usr/indexes/bin/nm ] ; then
-+   if /usr/indexes/bin/nm /system/indexes/lib/libndbm.so >/dev/null 2>&1 ; 
++if [ -r /system/indexes/lib/libndbm.so  -a  -x /resources/indexes/bin/nm ] ; then
++   if /resources/indexes/bin/nm /system/indexes/lib/libndbm.so >/dev/null 2>&1 ;
 +then
      echo 'Your shared -lndbm seems to be a real library.'
     else
@@ -33,4 +33,4 @@ diff -ru perl-5.10.0-original/hints/linux.sh perl-5.10.0/hints/linux.sh
 +
 +#usrinc='/system/indexes/include'
 +#ldlibpthname=LIBRARY_PATH
-+libpth='/usr/indexes/lib /system/indexes/lib ./'
++libpth='/resources/indexes/lib /system/indexes/lib ./'

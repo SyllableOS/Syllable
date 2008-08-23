@@ -6,8 +6,8 @@ diff -ru lfs-bootscripts-6.3-original/lfs/init.d/functions lfs-bootscripts-6.3/l
  # Setup default values for environment
  umask 022
 -export PATH="/bin:/usr/bin:/sbin:/usr/sbin"
-+export PATH=/usr/indexes/sbin:/usr/indexes/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/system/indexes/sbin:/system/indexes/bin:/system/bin
-+export LD_LIBRARY_PATH=/usr/indexes/lib:/usr/local/lib:/usr/lib:/lib:/system/indexes/lib:/system/libraries
++export PATH=/resources/indexes/sbin:/resources/indexes/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/system/indexes/sbin:/system/indexes/bin:/system/bin
++export LD_LIBRARY_PATH=/resources/indexes/lib:/usr/local/lib:/usr/lib:/lib:/system/indexes/lib:/system/libraries
  
  # Signal sent to running processes to refresh their configuration
  RELOADSIG="HUP"
