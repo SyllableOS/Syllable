@@ -12,9 +12,9 @@ locations			http://www.kernel.org/pub/linux/kernel/v2.6/
 install-prefix-var	INSTALL_HDR_PATH
 
 ; install-prefix-var doesn't work here:
-make				make ARCH=i486 mrproper headers_check
-make-vars			ARCH i486
+make				make ARCH=i386 mrproper headers_check
+make-vars			ARCH i386
 
 install-tree
-install-vars		ARCH i486
+install-vars		ARCH i386
 install-targets		headers_install
