@@ -5,5 +5,5 @@ resources
 ;	Make GLibC suitable for running in an installed system:
 	system/resources/glibc/2.7/lib	libc.so
 
-prepare
+finish
 	cp usr/grub/lib/grub/i386-pc/* boot/grub/

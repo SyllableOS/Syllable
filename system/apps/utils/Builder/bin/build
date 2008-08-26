@@ -1,7 +1,7 @@
-#!/usr/bin/env ruby
+#! /usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.7.58
+# Version 0.7.59
 # Copyright (c) 2002-2008 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -13,7 +13,7 @@ def prepare target
 
 	if exists? @stage
 		@log.header 'Deleting old staging area'
-		action 'rm --recursive --force ' + File.join(@stage, '*')
+		return false unless action 'rm --recursive --force ' + File.join(@stage, '*')
 	else
 		Dir.mkdir @stage
 	end
@@ -1266,6 +1266,16 @@ def build staging, targets
 
 		buildModule staging, directive, target
 	end
+
+	if @systemBuild and targets.profile and cmdLines = targets.profile['finish']
+		@log.header 'Executing finishing instructions'
+
+		Dir.chdir @image
+
+		unless action toCommands(cmdLines)
+			@log.failure targets.to_s
+		end
+	end
 end
 
 
@@ -1857,7 +1867,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.7.58',
+	puts 'Syllable Build System 0.7.59',
 		'Copyright (c) 2002-2008 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'

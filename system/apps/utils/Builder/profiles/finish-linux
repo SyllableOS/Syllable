@@ -17,8 +17,8 @@ resources
 ;	May work better than the standard ones:
 ;	usr/share/terminfo/x			binaries/xterm-atheos
 
-prepare
-	cp usr/grub/lib/grub/i386-pc/* boot/grub/
-
 modules
 	system linux/linux--cleanup
+
+finish
+	cp usr/grub/lib/grub/i386-pc/* boot/grub/
