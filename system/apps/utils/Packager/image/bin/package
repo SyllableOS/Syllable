@@ -6,7 +6,7 @@ ORCA [
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006,2007 Kaj de Vos
-		License: GPL 2 or any later version
+		License: GPL 3 or any later version
 	}
 	Purpose:	"Registers and unregisters (binary) packages by managing pools of symbolic links."
 	Example:	"package register example"
