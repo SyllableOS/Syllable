@@ -31,3 +31,5 @@ internal-docs		CODING
 links
 	sbin/depmod		/sbin/
 	sbin/modprobe	/sbin/
+;	For alsaconf:
+	sbin/modinfo	/sbin/
