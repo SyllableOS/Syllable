@@ -1,0 +1,21 @@
+authors				Kaj de Vos
+status				testing
+notes				Tested with REBOL 2.7.6
+
+inherits			rebol-core--current
+
+; For older REBOL/View:
+; libstdc++.so.5:
+;run-needs			gcc < 3.4
+
+install-files
+	tools/rebview		bin/
+	tools/rebface		bin/
+	tools/rebol			bin/rebcore
+	tools/rebbase		bin/
+;	Require license.key file:
+;	tools/rebcmdview	bin/
+;	tools/rebcmd		bin/
+;	tools/rebpro		bin/
+
+links				rebview bin/rebol
