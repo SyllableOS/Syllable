@@ -5,42 +5,42 @@
 
 #	default	0
 
-	title			Syllable Desktop
-	root			(hd0,0)
-	kernel			/system/kernel.so root=/dev/disk/ata/hda/0
-	module			/system/config/kernel.cfg
-	module			/system/drivers/dev/bus/acpi
-	module			/system/drivers/dev/bus/pci
-	module			/system/drivers/dev/bus/ata
-	module			/system/drivers/dev/hcd/ata_pci
-	module			/system/drivers/fs/afs
-#	quiet
+#	title			Syllable Desktop
+#	root			(hd0,0)
+#	kernel			/system/kernel.so root=/dev/disk/ata/hda/0
+#	module			/system/config/kernel.cfg
+#	module			/system/drivers/dev/bus/acpi
+#	module			/system/drivers/dev/bus/pci
+#	module			/system/drivers/dev/bus/ata
+#	module			/system/drivers/dev/hcd/ata_pci
+#	module			/system/drivers/fs/afs
+##	quiet
 
 	title			Syllable Server
 	root			(hd0,0)
-	kernel			/system/resources/linux/2.6.22.1/kernel root=/dev/hda1 ro
+	kernel			/system/resources/linux/2.6.25/kernel root=/dev/hda1 ro
 
 	title			Syllable Server, VESA, 1024x768 x 65536 colours (VMware, Virtual PC)
 	root			(hd0,0)
-	kernel			/system/resources/linux/2.6.22.1/kernel root=/dev/hda1 ro video=vesa:ywrap,mtrr vga=791
+	kernel			/system/resources/linux/2.6.25/kernel root=/dev/hda1 ro video=vesa:ywrap,mtrr vga=791
 
 #	title			Syllable Server, VESA, 1024x768 x 65536 colours (Virtual PC)
 #	root			(hd0,0)
-#	kernel			/system/resources/linux/2.6.22.1/kernel root=/dev/hda1 ro video=vesa vga=791
+#	kernel			/system/resources/linux/2.6.25/kernel root=/dev/hda1 ro video=vesa vga=791
 
 	title			Syllable Server, 800x600 x 256 colours (QEmu)
 	root			(hd0,0)
-	kernel			/system/resources/linux/2.6.22.1/kernel root=/dev/hda1 ro vga=771
+	kernel			/system/resources/linux/2.6.25/kernel root=/dev/hda1 ro vga=771
 
 	title			Syllable Server, 800x600 x 32-bits colour (VirtualBox)
 	root			(hd0,0)
-	kernel			/system/resources/linux/2.6.22.1/kernel root=/dev/hda1 ro vga=789
+	kernel			/system/resources/linux/2.6.25/kernel root=/dev/hda1 ro vga=789
 
 	title			Syllable Server, no APIC (Bochs)
 	root			(hd0,0)
-	kernel			/system/resources/linux/2.6.22.1/kernel root=/dev/hda1 ro noapic
+	kernel			/system/resources/linux/2.6.25/kernel root=/dev/hda1 ro noapic
 
-	title			Windows example, first partition
+	title			Windows or other chainloading example, first partition
 	rootnoverify	(hd0,0)
 	chainloader		+1
 
