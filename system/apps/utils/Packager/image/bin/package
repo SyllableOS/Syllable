@@ -2,10 +2,10 @@
 
 ORCA [
 	Title:		"Package installation tool"
-	Version:	0.4.2
+	Version:	0.4.3
 	Author:		"Kaj de Vos"
 	Rights: {
-		Copyright (c) 2006,2007 Kaj de Vos
+		Copyright (c) 2006-2008 Kaj de Vos
 		License: GPL 3 or any later version
 	}
 	Purpose:	"Registers and unregisters (binary) packages by managing pools of symbolic links."
@@ -36,33 +36,34 @@ either any [
 	print "Example:"
 	print [" " select header 'example]
 ][
-either command = "version" [
-	print [select header 'title  select header 'version]
-	print select header 'rights
-][
-	unless args/2 [
-		print "Please supply a package name."
-		quit/return 2
-	]
-	package: package-image/new args/2
-
-	stages: []
-	foreach stage next next args [
-		append stages stage-proto/new package/root stage
-	]
-
-	switch/default command [
-		"register" [
-;			unless either stages = [] [package/register] [package/register/stages stages]
-			unless either (length? stages) = 0 [package/register] [package/register/stages stages]
-				[quit/return 10]
-		]
-		"unregister" [
-			unless either (length? stages) = 0 [package/unregister] [package/unregister/stages stages]
-				[quit/return 20]
-		]
+	either command = "version" [
+		print [select header 'title  select header 'version]
+		print select header 'rights
 	][
-		print "Command unknown."
-		quit/return 1
+		unless args/2 [
+			print "Please supply a package name."
+			quit/return 2
+		]
+		package: package-image/new args/2
+
+		stages: []
+		foreach stage next next args [
+			append stages stage-proto/new package/root stage
+		]
+
+		switch/default command [
+			"register" [
+;				unless either stages = [] [package/register] [package/register/stages stages]
+				unless either (length? stages) = 0 [package/register] [package/register/stages stages]
+					[quit/return 10]
+			]
+			"unregister" [
+				unless either (length? stages) = 0 [package/unregister] [package/unregister/stages stages]
+					[quit/return 20]
+			]
+		][
+			print "Command unknown."
+			quit/return 1
+		]
 	]
-]]
+]

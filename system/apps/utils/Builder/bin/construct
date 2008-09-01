@@ -2,7 +2,7 @@
 
 ORCA [
 	Title:		"Consonant build system"
-	Version:	0.0.0
+	Version:	0.0.1
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2008 Kaj de Vos
@@ -31,13 +31,14 @@ either any [
 	print "Example:"
 	print [" " select header 'example]
 ][
-either command = "version" [
-	print [select header 'title  select header 'version]
-	print select header 'rights
-][
-	switch/default command [
+	either command = "version" [
+		print [select header 'title  select header 'version]
+		print select header 'rights
 	][
-		print "Command unknown."
-		quit/return 1
+		switch/default command [
+		][
+			print "Command unknown."
+			quit/return 1
+		]
 	]
-]]
+]
