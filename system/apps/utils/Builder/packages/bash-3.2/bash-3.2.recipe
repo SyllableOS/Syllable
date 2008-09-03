@@ -10,6 +10,7 @@ packages			bash/bash-3.2
 
 needs				Syllable >= 0.6.4
 build-needs			bash
+recommends			readline
 
 patch-config		support
 

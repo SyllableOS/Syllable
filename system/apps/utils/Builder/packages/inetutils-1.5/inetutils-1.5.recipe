@@ -9,6 +9,8 @@ packages			inetutils/inetutils-1.5
 
 needs				ncurses
 recommends
+;	For ftp:
+	readline
 	pam
 	tcp-wrapper
 	krb4
