@@ -15,7 +15,7 @@ patch-config		support
 
 configure-options
 	--without-bash-malloc
-;	--with-installed-readline
+	--with-installed-readline
 
 test-targets		tests
 
