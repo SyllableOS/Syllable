@@ -598,7 +598,7 @@ function copy_installer()
   rm $CD_DIR/Install/doc/welcome-template.txt
 
   # Put the install.txt file where the user can find it
-  cp -f $DOCUMENTATION_DIR/install.txt $CD_DIR/INSTALL.TXT
+  cp -f $BASE_DIR/Documentation/Install.txt $CD_DIR/INSTALL.TXT
 
   sync
 }
