@@ -1,0 +1,11 @@
+authors				Kaj de Vos
+
+files				README-SyllableServer.txt Changes.txt Syllable-logo.png Copyrights.html
+locations
+	http://web.syllable.org/Server/
+	http://web.syllable.org/documentation/
+
+documentation		README-SyllableServer.txt Changes.txt Syllable-logo.png Copyrights.html
+move-files
+	documentation/README-SyllableServer.txt	/Documentation/README-SyllableServer-0.3.txt
+	documentation/*							/Documentation/
