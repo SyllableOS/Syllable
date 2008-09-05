@@ -1,3 +1,12 @@
+* September 5, 2008, Kaj de Vos *
+
+The main documentation files are now pulled from the websites, so they are first
+processed by the content management system. The FAQ is now also included in
+/Documentation/, and the new translated documentation.
+
+Added ReadLine to the build at a tip from Anthony and made BASh use this external
+version. The added value is that INetUtils FTP now also uses it.
+
 * August 23, 2008, Kaj de Vos *
 
 Introduced a symlink /resources/ to /usr/. This will serve the migration in the
