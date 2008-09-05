@@ -7,4 +7,7 @@ resources
 
 finish
 	cp usr/grub/lib/grub/i386-pc/* boot/grub/
-	rm resources/documentation
+	rm -r resources/documentation
+	rm -r resources/documentation-DE
+	rm -r resources/documentation-NL
+	rm -r resources/documentation-SL

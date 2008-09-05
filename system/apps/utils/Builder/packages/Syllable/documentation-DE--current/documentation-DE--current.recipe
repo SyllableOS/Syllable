@@ -1,0 +1,12 @@
+authors				Kaj de Vos
+
+inherits			documentation--current
+
+files				Install.txt Welcome.html Copyrights.html FAQ.html
+locations			http://de.syllable.org/documentation/
+
+documentation		Install.txt Welcome.html FAQ.html
+move-files
+	documentation/Install.txt	/Documentation/Install-DE.txt
+	documentation/Welcome.html	/Documentation/Welcome-DE.html
+	documentation/FAQ.html		/Documentation/FAQ-DE.html

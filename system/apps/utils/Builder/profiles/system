@@ -189,6 +189,9 @@ modules
 ;	Syllable core system
 
 	documentation--current
+	documentation-DE--current
+	documentation-NL--current
+	documentation-SL--current
 	other/config/default
 	other/config/etc
 	other/fonts/dejavu-fonts--current

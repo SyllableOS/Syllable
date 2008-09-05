@@ -22,7 +22,7 @@ modules
 
 finish
 	cp usr/grub/lib/grub/i386-pc/* boot/grub/
-	rm resources/documentation
+	rm -r resources/documentation
 
 ;	Clean out Desktop stuff:
 	rm system/init.sh
