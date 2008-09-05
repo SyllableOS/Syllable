@@ -7,7 +7,7 @@ then
 else
 	manpath="/atheos/Documentation/man"
 
-	if [ -e /system/resources/directfb ]
+	if [ -e /system/resources/directfb -a "$USER" = "root" ]
 	then
 		browser="links -g"
 	else
