@@ -149,7 +149,7 @@ tree
 	Applications/Preferences	settings.png
 	Applications/Xpdf
 	Documentation
-	Documentation/images
+;	Documentation/images
 
 ;	For compatibility:
 	bin
@@ -179,10 +179,6 @@ resources
 	etc						configuration/resolv.conf			text/plain
 	home					Home-Directories
 
-	Documentation			documentation/Syllable-logo.png		image/png
-	Documentation			documentation/Welcome.html			text/html
-	Documentation			documentation/Copyrights.html		text/html
-
 modules
 ;	Toolchain for bootstrapping
 
@@ -192,6 +188,7 @@ modules
 
 ;	Syllable core system
 
+	documentation--current
 	other/config/default
 	other/config/etc
 	other/fonts/dejavu-fonts--current

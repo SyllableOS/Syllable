@@ -143,6 +143,7 @@ tree
 	Applications/Preferences	settings.png
 	Applications/Xpdf
 	Documentation
+;	Documentation/images
 
 ;	LFS extras
 
@@ -279,9 +280,6 @@ resources
 	etc/udev/rules.d							linux/40-alsa.rules
 	users										Home-Directories
 
-	Documentation								documentation/Syllable-logo.png
-	Documentation								documentation/Welcome.html
-	Documentation								documentation/Copyrights.html
 	system/fonts								fonts/URW/*.ttf
 	system/fonts								fonts/URW/Mandriva/*.ttf
 	system/resources/wallpapers					wallpapers/*.png
@@ -308,6 +306,7 @@ modules
 
 ;	Syllable Linux core system
 
+	documentation--current
 	other/config/default
 ;	Overwrites profile:
 	other/config/etc
