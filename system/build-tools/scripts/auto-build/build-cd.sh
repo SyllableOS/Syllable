@@ -597,8 +597,8 @@ function copy_installer()
   sed -e "s/VER/$1/g" $CD_DIR/Install/doc/welcome-template.txt > $CD_DIR/Install/doc/welcome.txt
   rm $CD_DIR/Install/doc/welcome-template.txt
 
-  # Put the install.txt file where the user can find it
-  cp -f $BASE_DIR/Documentation/Install.txt $CD_DIR/INSTALL.TXT
+  # Put the install.txt files where the user can find them
+  cp -f $BASE_DIR/Documentation/Install*.txt $CD_DIR/
 
   sync
 }
