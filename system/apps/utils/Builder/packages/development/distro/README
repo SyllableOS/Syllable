@@ -1,7 +1,7 @@
 Development files for Syllable
 ==============================
 
-7-Jan-2008
+7-Sep-2008
 
 1 Introduction
 ==============
@@ -10,7 +10,7 @@ This package contains the extra files that are needed for compiling
 software on Syllable. They consist of the static libraries and
 accompanying header files for components that are part of the base
 system, and extra documentation for development. This distribution
-contains the development files for Syllable Desktop 0.6.5. They should
+contains the development files for Syllable Server 0.3. They should
 not be installed on any other version of Syllable.
 
 If you encounter problems or have any other interesting observations,
@@ -30,7 +30,7 @@ Unpacking this distribution should have produced a directory with the
 contained package, this README document, and an installation script.
 Being the root user, go into the directory and run the install script:
 
-    cd SyllableDesktop-0.6.5-development
+    cd SyllableServer-0.3-development
     ./install.sh
 
 The contained files pack will be unpacked into /system/development/.
