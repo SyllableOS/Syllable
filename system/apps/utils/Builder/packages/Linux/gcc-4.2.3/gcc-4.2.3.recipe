@@ -10,8 +10,6 @@ build-needs
 ;	gnat >= 3.13 | gcc >= 3.1
 	gawk
 ;	bison
-;	For documentation (only really needed for TreeLang?):
-	texinfo
 
 configure-options
 	--enable-languages=c,c++
@@ -39,4 +37,3 @@ links
 ;	bin/cpp			lib/
 ;	For WebKit:
 ;	gcc				/usr/bin/
-
