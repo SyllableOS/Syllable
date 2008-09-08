@@ -21,7 +21,8 @@ modules
 	system linux/linux--cleanup
 
 finish
-	cp usr/grub/lib/grub/i386-pc/* boot/grub/
+	cp resources/grub/lib/grub/i386-pc/* boot/grub/
+
 	rm -r resources/documentation
 
 ;	Clean out Desktop stuff:

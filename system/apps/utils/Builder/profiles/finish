@@ -6,7 +6,8 @@ resources
 	system/resources/glibc/2.7/lib	libc.so
 
 finish
-	cp usr/grub/lib/grub/i386-pc/* boot/grub/
+	cp resources/grub/lib/grub/i386-pc/* boot/grub/
+
 	rm -r resources/documentation
 	rm -r resources/documentation-DE
 	rm -r resources/documentation-NL
