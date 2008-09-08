@@ -46,7 +46,7 @@ fi
 echo ""
 
 echo "Installing files"
-unzip Syllable*-development.*.zip -d /system
+unzip Syllable*-development*.zip -d /system
 sync
 
 for package in `ls /system/development/resources/`

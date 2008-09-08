@@ -5,6 +5,9 @@ licenses			BSD
 
 home				www.mktemp.org
 locations
+;	Sigh:
+	ftp://ftp.mktemp.org/pub/mktemp/OLD/
+	http://www.mktemp.org/dist/OLD/
 	ftp://ftp.mktemp.org/pub/mktemp/
 	http://www.mktemp.org/dist/
 
