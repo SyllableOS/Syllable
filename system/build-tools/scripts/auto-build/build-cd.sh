@@ -603,23 +603,6 @@ function copy_installer()
   sync
 }
 
-# function create_iso
-# 
-# Create an ISO CD image from the CD directory
-# 
-# $1 - version number
-
-function create_iso()
-{
-  NAME="Syllable $1"
-  ISO="SyllableDesktop-$1-$(date +%Y%m%d).i586.iso"
-
-  # Do not mess with the cdrecord options unless you know exactly what you are doing.  Getting
-  # the options wrong will mean the CD will be unbootable (And likely unreadable)
-  mkisofs -iso-level 3 --allow-leading-dots -R -V "$NAME" -b boot/grub/stage2_eltorito -no-emul-boot -boot-load-size 4 -boot-info-table -o "$ISO" "$CD_DIR"
-  sync
-}
-
 # Entry point
 # $1 - path to base-syllable file
 # $2 - path to the Syllable-net directory
@@ -655,6 +638,7 @@ fi
 copy_installer $_VER
 
 # Create the ISO
-create_iso $_VER
+#construct iso SyllableDesktop-$_VER-$(date +%Y%m%d).i586 "Syllable $_VER" "$CD_DIR"
+mkisofs -iso-level 3 --allow-leading-dots -R -V "Syllable $_VER" -b boot/grub/stage2_eltorito -no-emul-boot -boot-load-size 4 -boot-info-table -o SyllableDesktop-$_VER-$(date +%Y%m%d).i586.iso "$CD_DIR"
 
 exit 0

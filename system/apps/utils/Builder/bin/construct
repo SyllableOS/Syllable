@@ -2,10 +2,10 @@
 
 ORCA [
 	Title:		"Consonant build system"
-	Version:	0.0.1
+	Version:	0.0.2
 	Author:		"Kaj de Vos"
 	Rights: {
-		Copyright (c) 2008 Kaj de Vos
+		Copyright (c) 2006-2008 Kaj de Vos
 		License: GPL 3 or any later version
 	}
 	Purpose:	"Builds the Syllable operating systems, their native applications and their ports."
@@ -17,28 +17,151 @@ ORCA [
 recycle/off  ; FIXME: ORCA bug
 
 
+log: context [  ; Singleton logger object
+	open: func [] [
+	]
+	close: does [
+	]
+
+	header: func [header] [
+		prin newline
+		print header
+	]
+	detail: func [detail] [
+;		print detail
+	]
+	action: func [action] [
+		prin newline
+		print action
+		prin newline
+	]
+	output: func [output] [
+		print output
+	]
+	error: func [error] [
+		prin newline
+		print ["Error:" error]
+	]
+	warning: func [warning] [
+		prin newline
+		print ["Warning:" warning]
+	]
+	failure: func [module] [
+		prin newline
+		print ["Package" module "failed!"]
+	]
+]
+
+action: func ["Returns the output of a shell command, or false if unsuccessful."
+	command "Shell command."
+	/local status stdout
+][
+	log/action command
+
+	either (status: call/wait/output command stdout: "") = 0 [
+;		FIXME: ORCA call/output bug (on Syllable?):
+		log/output stdout
+		stdout
+	][
+		log/error status
+		log/output stdout
+		no
+	]
+]
+
+
 header: system/script/header
 
 either any [
 	not args: system/script/args
 	find ["help" "-h" "--help" "-help" "-?" "?"] command: args/1
 ][
-	print "Usage: construct <command> [<module> | <profile>]"
+	print "Usage: construct <command> [<parameters>]"
 	print "<command>:"
-	print "  help, -h,     Show this help information"
-	print "    --help, -help, -?, (?)"
-	print "  version       Show version information"
+	print "    help, -h, --help, -help, -?, (?)"
+	print "        Show this help information"
+	print "    version"
+	print "        Show version information"
+	print "    distro <system> <version> <architecture>"
+	print "        Package up a system distribution"
+;	print "    iso [<file base name> [<label> [<image directory>]]]"
+;	print "        Build an ISO CD image file for a system distribution"
 	print "Example:"
-	print [" " select header 'example]
+	print ["   " select header 'example]
 ][
 	either command = "version" [
 		print [select header 'title  select header 'version]
 		print select header 'rights
 	][
 		switch/default command [
+			"distro" [
+				unless all [
+					log/header "Packaging development files"
+
+					change-dir %stage/image/system
+
+					; Pack but don't compress
+					action join "zip -rqy0 ../../../" [
+						file: join args/2 ["-" args/3 "-development." args/4 ".zip"]
+						" development"
+					]
+					action "sync"
+
+					change-dir %../../..
+
+					; Compress
+					action join "7za a " [file ".7z " file]
+					action "sync"
+
+					change-dir %stage/image
+
+					log/header "Removing development files"
+					action "rm -r system/development/"
+
+					log/header "Packaging system"
+
+					; Pack
+;					action join "tar -cf ../../" [
+;						file: join args/2 ["-" args/3 "." args/4 ".tar"]
+					action join "zip -rqy0 ../../" [
+						file: join args/2 ["-" args/3 "." args/4 ".zip"]
+;						Wildcard doesn't work:
+						" ."
+					]
+
+					either (call/wait/output "uname" result: ""  result = "Linux^/") [
+						action "sync"
+
+						change-dir %../..
+
+						; Compress
+						action join "7za a " [file ".7z " file]
+					][
+						yes
+					]
+				][
+					log/error "Packaging not completed"
+					quit/return 10
+				]
+			]
+			"iso" [
+				log/header "Building ISO image"
+
+;				FIXME: ORCA call bug: command too long:
+				unless action join "mkisofs" [
+					" -iso-level 3 --allow-leading-dots -R -V '" args/3 "'"
+					" -b boot/grub/stage2_eltorito -no-emul-boot -boot-load-size 4 -boot-info-table"
+					" -o " args/2 ".iso"
+					" " any [args/4 %stage/image]
+				][
+					log/error "ISO image not created"
+					quit/return 20
+				]
+			]
 		][
 			print "Command unknown."
 			quit/return 1
 		]
+		action "sync"
 	]
 ]

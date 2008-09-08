@@ -44,7 +44,11 @@ then
 fi
 
 echo ""
+echo "Unpacking files"
+7za x Syllable*-development*.7z
+sync
 
+echo ""
 echo "Installing files"
 unzip Syllable*-development*.zip -d /system
 sync

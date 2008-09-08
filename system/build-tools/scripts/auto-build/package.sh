@@ -42,10 +42,6 @@ echo "Creating a working copy"
 
 cp -a $BUILD_DIR/system/stage/image $WORKING_COPY
 
-# Copy the GRUB files
-cd $WORKING_COPY/image
-cp -a usr/grub/lib/grub/i386-pc/* boot/grub/
-
 # Move the CUPS PPDs
 if [ -e $INSTALLER_DIR/ppds ]
 then
@@ -67,23 +63,13 @@ image finish 1>>$LOG 2>&1
 build log failures > $FINISH_FAILURES
 build log summary > $FINISH_SUMMARY
 
-echo "Packaging the development files"
-
 # Package up and remove the development files
 DEV_ARCHIVE="SyllableDesktop-$VERSION-$(date +%Y%m%d)-development.i586"
-
-cd $WORKING_COPY/image/system
-# Let external compression do its work
-zip -ry0 $INSTALLER_DIR/$DEV_ARCHIVE.zip development
-rm -rf development
-
-echo "Packaging the installation files"
-
-# Package the installation files
-cd $WORKING_COPY/image
-# Let external compression do its work
-zip -ry0 $INSTALLER_DIR/base-syllable.zip *
-sync
+construct distro SyllableDesktop $VERSION-$(date +%Y%m%d) i586
+mv SyllableDesktop-*-development.*.7z /usr/Builder/distributions/SyllableDesktop-$VERSION-development.i586.7z
+build pack development
+mv SyllableDesktop-*-development*.zip ../$DEV_ARCHIVE.zip
+mv SyllableDesktop-*.zip ../base-syllable.zip
 
 # XXXKV: Ensure we have the latest installer scripts
 cd $INSTALLER_DIR/installer
