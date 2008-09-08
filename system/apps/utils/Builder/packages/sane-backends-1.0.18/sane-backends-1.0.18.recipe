@@ -11,8 +11,8 @@ licenses			GPL+exception
 home				www.sane-project.org
 locations
 	ftp://ftp.sane-project.org/pub/sane/old-versions/sane-backends-1.0.18/
-	ftp://ftp.sane-project.org/pub/sane/sane-backends-1.0.18/
 	ftp://ftp2.sane-project.org/pub/sane/old-versions/sane-backends-1.0.18/
+	ftp://ftp.sane-project.org/pub/sane/sane-backends-1.0.18/
 	ftp://ftp2.sane-project.org/pub/sane/sane-backends-1.0.18/
 ;	Delivers bogus .tar.bz2 file:
 ;	http://alioth.debian.org/frs/download.php/1669/
