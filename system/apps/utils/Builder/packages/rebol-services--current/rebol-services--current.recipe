@@ -11,7 +11,11 @@ licenses			BSD
 home
 	rebol.com/docs/services/
 ;	rebol.net/rs/
-files				server.r client.r tutorial.html
+files
+	server.r client.r
+	examples.html
+;	demos/rpc.r demos/server/services/rpc.r
+	tutorial.html
 locations
 	http://rebol.net/rs/
 	http://rebol.com/docs/services/
@@ -28,4 +32,6 @@ install-files
 	server.r		lib/REBOL/
 	client.r		lib/REBOL/
 
-documentation		tutorial.html
+documentation
+	tutorial.html examples.html
+;	rpc.r
