@@ -287,7 +287,7 @@ CHFN_RESTRICT		rwh
 # access to these groups, even when not logged in on the console.
 # How to do it is left as an exercise for the reader...
 #
-CONSOLE_GROUPS		floppy:cdrom:audio:video
+CONSOLE_GROUPS		users:floppy:cdrom:audio:video
 
 #
 # Should login be allowed if we can't cd to the home directory?

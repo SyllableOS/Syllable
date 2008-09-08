@@ -20,7 +20,7 @@ shm				/dev/shm		tmpfs		defaults												0		0
 # Example optional separate home partition, ReiserFS3-formatted:
 #/dev/hda2		/users			reiserfs	notail													0		1
 # Example optional FAT partition for data exchange:
-#/dev/hda3		/media/data		vfat		defaults,utf8,umask=007,gid=46							0		1
+#/dev/hda3		/media/data		vfat		defaults,utf8,umask=007,gid=100							0		1
 #/dev/hda3		/media/data		vfat		user,noauto,quiet,showexec,iocharset=utf8,codepage=		0		1
 
 # Example optional CD drive:
