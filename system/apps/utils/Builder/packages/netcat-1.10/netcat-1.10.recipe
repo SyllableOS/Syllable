@@ -8,7 +8,10 @@ licenses			other
 
 home				www.vulnwatch.org/netcat/
 packages			nc110 netcat-1.10
-locations			http://www.vulnwatch.org/netcat/
+locations
+	ftp://ftp-stud.fht-esslingen.de/pub/Mirrors/gentoo/distfiles/
+	mir.zyrianes.net/gentoo/distfiles/
+	http://www.vulnwatch.org/netcat/
 
 install-tree		bin
 install				true
