@@ -10,7 +10,7 @@ home
 	fedorahosted.org/liberation-fonts
 ;	www.redhat.com/promo/fonts/
 packages			liberation-fonts-1.04
-locations			http://fedorahosted.org/releases/l/i/liberation-fonts/
+locations			https://fedorahosted.org/releases/l/i/liberation-fonts/
 
 make				true
 
