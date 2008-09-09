@@ -236,11 +236,10 @@ chown -R build:users /home/build
 echo "Automatic configuration is complete."
 echo
 echo "You must provide the network applications in Build/Net-Binaries and"
-echo "a copy of the Ruby 1.8.4 resource package in the Build/Installer"
+echo "a copy of the Ruby 1.8.6 resource package in the Build/Installer"
 echo "directory."
 echo
 echo "You may also wish to set the FTP_SERVER, FTP_USER and FTP_PASS"
 echo "environment variables in the build users profile"
 
 exit 0
-
