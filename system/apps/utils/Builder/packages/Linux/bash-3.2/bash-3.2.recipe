@@ -4,6 +4,6 @@ status				testing
 inherits			gnu
 
 configure-options
-	--host=i486-pc-linux-gnu
+	--build=i486-pc-linux-gnu
 	--without-bash-malloc
 	--with-installed-readline
