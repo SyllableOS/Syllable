@@ -2,7 +2,7 @@
 
 ORCA [
 	Title:		"Consonant build system"
-	Version:	0.0.2
+	Version:	0.0.3
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006-2008 Kaj de Vos
@@ -95,49 +95,57 @@ either any [
 	][
 		switch/default command [
 			"distro" [
+				call/wait/output "uname" result: ""
+				Linux?: result = "Linux^/"
+
 				unless all [
-					log/header "Packaging development files"
-
-					change-dir %stage/image/system
-
-					; Pack but don't compress
-					action join "zip -rqy0 ../../../" [
-						file: join args/2 ["-" args/3 "-development." args/4 ".zip"]
-						" development"
-					]
-					action "sync"
-
-					change-dir %../../..
-
-					; Compress
-					action join "7za a " [file ".7z " file]
-					action "sync"
-
 					change-dir %stage/image
 
-					log/header "Removing development files"
-					action "rm -r system/development/"
+					any [not exists? %system/development/
+						all [
+							log/header "Packaging development files"
+
+							change-dir %system
+
+							; Pack but don't compress
+							action join "zip -rqy0 ../../../" [
+								file: join args/2 ["-" args/3 "-development." args/4 ".zip"]
+								" development"
+							]
+							action "sync"
+
+							change-dir %../../..
+
+							; Compress
+							action join "7za a " [file ".7z " file]
+							action "sync"
+
+							change-dir %stage/image
+
+							log/header "Removing development files"
+							action "rm -r system/development/"
+						]
+					]
 
 					log/header "Packaging system"
 
 					; Pack
-;					action join "tar -cf ../../" [
-;						file: join args/2 ["-" args/3 "." args/4 ".tar"]
-					action join "zip -rqy0 ../../" [
-						file: join args/2 ["-" args/3 "." args/4 ".zip"]
+					action join either Linux?
+							[join "tar -cf ../../" file: join args/2 ["-" args/3 "." args/4 ".tar"]]
+							; Zip doesn't restore character devices:
+							[join "zip -rqy0 ../../" file: join args/2 ["-" args/3 "." args/4 ".zip"]]
 ;						Wildcard doesn't work:
 						" ."
-					]
 
-					either (call/wait/output "uname" result: ""  result = "Linux^/") [
-						action "sync"
+					any [not Linux?
+						all [
+							action "sync"
 
-						change-dir %../..
+							change-dir %../..
 
-						; Compress
-						action join "7za a " [file ".7z " file]
-					][
-						yes
+							; Compress
+							action join "7za a " [file ".7z " file]
+						]
 					]
 				][
 					log/error "Packaging not completed"
