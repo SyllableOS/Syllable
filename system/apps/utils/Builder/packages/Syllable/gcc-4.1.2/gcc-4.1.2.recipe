@@ -36,7 +36,9 @@ build-needs
 ;make-shared
 
 configure-options
-	--enable-languages=c,c++,treelang
+	--enable-languages=c,c++
+;		Couldn't find TexInfo handed on a silver platter:
+;		,treelang
 ;		Fortran doesn't build with the new GLibC 2.3.x:
 ;		,fortran
 ;		Won't do --enable-shared:
