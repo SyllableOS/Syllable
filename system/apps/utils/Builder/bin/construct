@@ -2,7 +2,7 @@
 
 ORCA [
 	Title:		"Consonant build system"
-	Version:	0.1.0
+	Version:	0.1.1
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006-2008 Kaj de Vos
@@ -110,7 +110,7 @@ either any [
 							; Pack but don't compress
 							action join "zip -rqy0 ../../../" [
 								file: join args/2 ["-" args/3 "-development."
-									either Linux? [".Linux"] []  args/4 ".zip"
+									either Linux? ["Linux."] []  args/4 ".zip"
 								]
 								" development"
 							]
