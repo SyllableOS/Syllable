@@ -25,7 +25,8 @@ FILES=(	"/etc/profile, /etc/profile" 															\
 		"/system/drivers/dev/bus/scsi, /boot/drivers/dev/bus/scsi"								\
 																											\
 		"/system/drivers/dev/hcd/ata_pci, /boot/drivers/dev/hcd/ata_pci"							\
-		"/system/drivers/dev/hcd/usb_ehci, /boot/drivers/dev/hcd/usb_ehci"						\
+# Reported to be buggy; better to fall back on USB 1, on EeePC for example:
+#		"/system/drivers/dev/hcd/usb_ehci, /boot/drivers/dev/hcd/usb_ehci"						\
 		"/system/drivers/dev/hcd/usb_uhci, /boot/drivers/dev/hcd/usb_uhci"						\
 		"/system/drivers/dev/hcd/usb_ohci, /boot/drivers/dev/hcd/usb_ohci"						\
 
