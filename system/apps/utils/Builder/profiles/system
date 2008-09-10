@@ -155,6 +155,8 @@ tree
 	bin
 
 prepare
+	ln -s usr resources
+
 ;	For OpenSSL and others:
 	ln -s /resources/indexes/bin/perl	usr/bin/perl
 ;	For OpenSSL?
