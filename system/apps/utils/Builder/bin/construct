@@ -2,7 +2,7 @@
 
 ORCA [
 	Title:		"Consonant build system"
-	Version:	0.1.2
+	Version:	0.1.3
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006-2008 Kaj de Vos
@@ -131,11 +131,13 @@ either any [
 
 					log/header "Packaging system"
 
+					name: join args/2 ["-" args/3]
+
 					; Pack
 					action join either Linux?
-							[join "tar -cf ../../" file: join args/2 ["-" args/3 "." args/4 ".tar"]]
+							[join "tar -cf ../../" file: join name ["." args/4 ".tar"]]
 							; Zip doesn't restore character devices:
-							[join "zip -rqy0 ../../" file: join args/2 ["-" args/3 "." args/4 ".zip"]]
+							[join "zip -rqy0 ../../" file: join name ["." args/4 ".zip"]]
 ;						Wildcard doesn't work:
 						" ."
 
@@ -146,7 +148,7 @@ either any [
 							change-dir %../..
 
 							; Compress
-							action join "7za a " [file ".7z " file]
+							action join "7za a " [file ".7z "  file  " README-" name ".txt"]
 						]
 					]
 				][
