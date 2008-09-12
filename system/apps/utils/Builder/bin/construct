@@ -2,7 +2,7 @@
 
 ORCA [
 	Title:		"Consonant build system"
-	Version:	0.1.3
+	Version:	0.1.4
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006-2008 Kaj de Vos
@@ -99,6 +99,8 @@ either any [
 				Linux?: result = "Linux^/"
 
 				unless all [
+					name: join args/2 ["-" args/3]
+
 					change-dir %stage/image
 
 					any [not exists? %system/development/
@@ -109,7 +111,7 @@ either any [
 
 							; Pack but don't compress
 							action join "zip -rqy0 ../../../" [
-								file: join args/2 ["-" args/3 "-development."
+								file: join name ["-development."
 									either Linux? ["Linux."] [""]  args/4 ".zip"
 								]
 								" development"
@@ -130,8 +132,6 @@ either any [
 					]
 
 					log/header "Packaging system"
-
-					name: join args/2 ["-" args/3]
 
 					; Pack
 					action join either Linux?
