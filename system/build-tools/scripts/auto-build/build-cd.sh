@@ -73,6 +73,7 @@ FILES=(	"/etc/profile, /etc/profile" 															\
 		"/system/bin/reboot, /system/bin/reboot"													\
 		"/system/bin/unmount, /system/bin/unmount"													\
 		"/system/bin/df, /system/bin/df"													\
+		"/system/bin/sysinfo, /system/bin/sysinfo"													\
 																											\
 		"/Applications/AEdit/AEdit, /system/bin/aedit"											\
 																											\
