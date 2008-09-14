@@ -44,6 +44,8 @@ int debug_write( int nPort, const char* pBuffer, int nSize );
 int debug_read( int nPort, char* pBuffer, int nSize );
 int  dbprintf( const char* pzFmt, ... ) __attribute__ ((format (printf, 1, 2)));
 
+#define CALLED()	dbprintf("CALLED %s\n", __PRETTY_FUNCTION__)
+
 #else /* __KERNEL__ */
 
 void trace_stack( uint32 nEIP, uint32* pStack );
@@ -79,8 +81,10 @@ enum debug_level{
 
 #ifdef __ENABLE_DEBUG__
 #define kerndbg(level,format,arg...) if(level>=DEBUG_LIMIT)printk(format, ## arg);
+#define CALLED()					 if(level>=DEBUG_LIMIT)printk("CALLED %s\n", __PRETTY_FUNCTION__)
 #else
 #define kerndbg(level,format,arg...)
+#define CALLED()
 #endif	/* __ENABLE_DEBUG__ */
 
 #endif /* __KERNEL__ */
@@ -91,3 +95,4 @@ enum debug_level{
 #endif
 
 #endif /* __F_KDEBUG_H__ */
+
