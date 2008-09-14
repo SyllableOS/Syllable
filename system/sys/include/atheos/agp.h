@@ -207,19 +207,31 @@ typedef struct
 
 typedef struct
 {
+	/* functions directly used by video drivers */
 	status_t	(*attach_bridge)(AGP_Bridge_s *);
 	status_t	(*remove_bridge)(void);
 	void		(*flush_cache)(void);
-	PCI_Entry_s	*(*find_display)(void);
 	AGP_Gatt_s	*(*alloc_gatt)(void);
 	void		(*free_gatt)(AGP_Gatt_s *);
 	status_t	(*map_aperture)(int);
+	PCI_Entry_s	*(*find_display)(void);
+	
+	/* functions directly usable by kenel video drivers & also callable from userspace via IOCTL */
+	AGP_Acquire_State_e (*get_state)(void);
+	void		(*get_info)(AGP_Info_s *psInfo);
+	int			(*acquire)(void);
+	int			(*release)(void);
+	int			(*enable)(uint32 nMode);
+	AGP_Memory_s *(*alloc_memory)(AGP_Allocate_s *psAlloc);
+	void		(*free_memory)(int nId);
+	int			(*bind_memory)(AGP_Bind_s *psBind);
+	int			(*unbind_memory)(AGP_Unbind_s *psUnbind);
 } AGP_bus_s;
 
+void memory_info(void *pHandle, AGP_Memory_Info_s *psMemInfo);
 
 #ifdef __cplusplus
 }
 #endif
 #endif /* _SYLLABLE_AGP_H_ */
-
 

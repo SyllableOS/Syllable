@@ -75,7 +75,8 @@ extern "C" {
 typedef enum
 {
 	AGP_ACQUIRE_FREE = 0,
-	AGP_ACQUIRE_USER
+	AGP_ACQUIRE_USER,
+	AGP_ACQUIRE_KERNEL
 } AGP_Acquire_State_e;
 
 typedef struct
@@ -94,13 +95,21 @@ typedef struct _AGP_Memory_s
 	uint32		nBound;			/* Is this memory bound? */
 	uint32		nOffset;		/* Offset within GATT */
 	uintptr_t	nVirtual;		/* Virtual address of memory */
-	uint32		nPhysical;		/* Physical address of memory */
+	uint32		nPhysical;		/* Physical address of memory (bogus hack for i810)*/
 	uint32		nAreaCount;		/* Number of areas contained in this memory block */
 	char		**apzNames;		/* Array of area names */
 	size_t		*panOffsets;	/* Array of offsets from beginning of nAddress */
 	size_t		*panSizes;		/* Array of sizes for each area */
 	area_id		*panAreas;		/* Array of area IDs for each area */
 } AGP_Memory_s;
+
+typedef struct
+{
+	uint32		nSize;			/* size in bytes */
+	uint32		nPhysical;		/* bogus hack for i810 */
+	uint32		nOffset;		/* page offset if bound */
+	uint32		nBound;			/* non-zero if bound */
+} AGP_Memory_Info_s;
 
 typedef struct
 {

@@ -63,8 +63,20 @@
 #include <posix/errno.h>
 #include <macros.h>
 
+
 void flush_cache(void);
+void get_info(AGP_Info_s *psInfo);
+int acquire(void);
+int release(void);
+int enable(uint32 nMode);
+AGP_Memory_s *alloc_memory(AGP_Allocate_s *psAlloc);
+void free_memory(int nId);
+int bind_memory(AGP_Bind_s *psBind);
+int unbind_memory(AGP_Unbind_s *psUnbind);
+
 static AGP_Memory_s *find_memory(AGP_Bridge_s *psBridge, int nId);
+static int acquire_helper(AGP_Acquire_State_e eState);
+static int release_helper(AGP_Acquire_State_e eState);
 
 PCI_bus_s *g_psBus;
 AGP_Bridge_s *g_psBridge;
@@ -161,38 +173,20 @@ status_t agp_ioctl(void *pNode, void *pCookie, uint32 nCommand, void *pArgs, boo
 				AGP_Info_s sInfo;
 				
 				memcpy_from_user(&sInfo, pArgs, sizeof(AGP_Info_s));
-				
-				sInfo.sVersion.nMajor = g_psBridge->sVersion.nMajor;
-				sInfo.sVersion.nMinor = g_psBridge->sVersion.nMinor;
-				sInfo.nVendor = g_psBridge->psDev->nVendorID;
-				sInfo.nDevice = g_psBridge->psDev->nDeviceID;
-				if(g_psBridge->nApBase)
-					sInfo.nMode = g_psBus->read_pci_config(g_psBridge->psDev->nBus, g_psBridge->psDev->nDevice, g_psBridge->psDev->nFunction,
-											g_psBridge->psDev->u.h0.nAGPStatus, 4);
-				else
-					sInfo.nMode = 0; /* i810 doesn't have real AGP */
-				sInfo.nApBase = g_psBridge->nApBase;
-				sInfo.nApSize = AGP_GET_APERTURE(g_psBridge) >> 20;
-				sInfo.nPgTotal = sInfo.nPgSystem = g_psBridge->nMaxMem >> AGP_PAGE_SHIFT;
-				sInfo.nPgUsed = g_psBridge->nAllocated >> AGP_PAGE_SHIFT;
-				
+				get_info(&sInfo);
 				memcpy_to_user(pArgs, &sInfo, sizeof(AGP_Info_s));
 			} break;
 		case AGPIOC_ACQUIRE:
 			{
 				kerndbg(KERN_DEBUG, "AGP: ioctl: AGPIOC_ACQUIRE\n");
 				
-				if(g_psBridge->eState != AGP_ACQUIRE_FREE)
-					nError = -EBUSY;
-				g_psBridge->eState = AGP_ACQUIRE_USER;
+				acquire_helper(AGP_ACQUIRE_USER);
 			} break;
 		case AGPIOC_RELEASE:
 			{
 				kerndbg(KERN_DEBUG, "AGP: ioctl: AGPIOC_RELEASE\n");
 				
-				if(g_psBridge->eState == AGP_ACQUIRE_FREE)
-					break;			
-				g_psBridge->eState = AGP_ACQUIRE_FREE;
+				release_helper(AGP_ACQUIRE_FREE);
 			} break;
 		case AGPIOC_SETUP:
 			{
@@ -201,7 +195,7 @@ status_t agp_ioctl(void *pNode, void *pCookie, uint32 nCommand, void *pArgs, boo
 				AGP_Setup_s sSetup;
 				
 				memcpy_from_user(&sSetup, pArgs, sizeof(AGP_Setup_s));
-				nError = AGP_ENABLE(g_psBridge, sSetup.nMode);
+				nError = enable(sSetup.nMode);
 			} break;
 		case AGPIOC_ALLOCATE:
 			{
@@ -212,7 +206,7 @@ status_t agp_ioctl(void *pNode, void *pCookie, uint32 nCommand, void *pArgs, boo
 		
 				memcpy_from_user(&sAlloc, pArgs, sizeof(AGP_Allocate_s));
 						
-				psMem = AGP_ALLOC_MEMORY(g_psBridge, sAlloc.nType, sAlloc.nPgCount << AGP_PAGE_SHIFT);
+				psMem = alloc_memory(&sAlloc);
 				if(psMem) {
 					sAlloc.nKey = psMem->nId;
 					sAlloc.nPhysical = psMem->nPhysical;
@@ -231,13 +225,7 @@ status_t agp_ioctl(void *pNode, void *pCookie, uint32 nCommand, void *pArgs, boo
 				
 				memcpy_from_user(&nId, pArgs, sizeof(int));
 				
-				AGP_Memory_s *psMem = find_memory(g_psBridge, nId);
-				if(psMem) {
-					AGP_FREE_MEMORY(g_psBridge, psMem);
-					break;
-				} else {
-					nError = -ENOENT;
-				}
+				free_memory(nId);
 			} break;
 		case AGPIOC_BIND:
 			{
@@ -247,10 +235,7 @@ status_t agp_ioctl(void *pNode, void *pCookie, uint32 nCommand, void *pArgs, boo
 				
 				memcpy_from_user(&sBind, pArgs, sizeof(AGP_Bind_s));
 				
-				AGP_Memory_s *psMem = find_memory(g_psBridge, sBind.nKey);			
-				if(!psMem)
-					nError = -ENOENT;
-				nError = AGP_BIND_MEMORY(g_psBridge, psMem, sBind.nPgStart << AGP_PAGE_SHIFT);
+				nError = bind_memory(&sBind);
 			} break;
 		case AGPIOC_UNBIND:
 			{
@@ -260,12 +245,7 @@ status_t agp_ioctl(void *pNode, void *pCookie, uint32 nCommand, void *pArgs, boo
 				
 				memcpy_from_user(&sUnbind, pArgs, sizeof(AGP_Unbind_s));
 				
-				AGP_Memory_s *psMem = find_memory(g_psBridge, sUnbind.nKey);
-				
-				if(!psMem)
-					nError = -ENOENT;
-				
-				nError = AGP_UNBIND_MEMORY(g_psBridge, psMem);
+				nError = unbind_memory(&sUnbind);
 			} break;
 		case AGPIOC_MMAP:
 			{
@@ -299,7 +279,7 @@ status_t agp_ioctl(void *pNode, void *pCookie, uint32 nCommand, void *pArgs, boo
 				nError = -ENOIOCTLCMD;
 			}
 	}
-	return(nError);	
+	return nError;	
 }
 
 DeviceOperations_s g_sOperations = {
@@ -309,6 +289,41 @@ DeviceOperations_s g_sOperations = {
 	NULL,
 	NULL
 };
+
+/* Helper functions for implementing user/kernel api */
+
+static int acquire_helper(AGP_Acquire_State_e eState)
+{
+	int nError;
+	
+	if(g_psBridge->eState != AGP_ACQUIRE_FREE)
+		nError = -EBUSY;
+	g_psBridge->eState = eState;
+
+	return 0;
+}
+
+static int release_helper(AGP_Acquire_State_e eState)
+{
+	if(g_psBridge->eState == AGP_ACQUIRE_FREE)
+		return 0;	
+	g_psBridge->eState = AGP_ACQUIRE_FREE;
+	
+	return 0;
+}
+
+static AGP_Memory_s *find_memory(AGP_Bridge_s *psBridge, int nId)
+{
+	AGP_Memory_s *psMem;
+
+	kerndbg(KERN_DEBUG, "AGP: searching for memory block %d\n", nId);
+	DLIST_FOR_EACH(&psBridge->sMemory, psMem, psLink) {
+		kerndbg(KERN_DEBUG, "AGP: considering memory block %d\n", psMem->nId);
+		if(psMem->nId == nId)
+			return psMem;
+	}
+	return 0;
+}
 
 status_t attach_bridge(AGP_Bridge_s *psBridge)
 {
@@ -341,6 +356,14 @@ status_t attach_bridge(AGP_Bridge_s *psBridge)
 			}
 		}
 	}
+	
+	kerndbg(KERN_DEBUG, "Allocating memory for system_info structure\n");
+	psSysInfo = kmalloc(sizeof(system_info), MEMF_KERNEL | MEMF_CLEAR | MEMF_NOBLOCK);
+	if(!psSysInfo) {
+		kerndbg(KERN_DEBUG, "Error: Out of memory\n");
+		return -ENOMEM;
+	}
+	
 	/*
 	 * Work out an upper bound for agp memory allocation. This
 	 * uses a heurisitc table from the Linux driver.
@@ -363,8 +386,8 @@ status_t attach_bridge(AGP_Bridge_s *psBridge)
 	
 	/* Create node path */
 	printk("Creating agpgart node\n");
-	if(g_nAGPHandle = create_device_node(psBridge->nDeviceID, psBridge->psDev->nHandle,
-	   "agpgart", &g_sOperations, psBridge->psNode) < 0) {
+	if((g_nAGPHandle = create_device_node(psBridge->nDeviceID, psBridge->psDev->nHandle,
+	   "agpgart", &g_sOperations, psBridge->psNode)) < 0) {
 		kerndbg(KERN_WARNING, "AGP: Failed to create device node agpgart\n");
 	}
 	
@@ -379,10 +402,15 @@ status_t remove_bridge(void)
 {
 	kerndbg(KERN_DEBUG, "AGP: remove_bridge: removing %s\n", g_psBridge->psNode->zName);
 	
-	delete_device_node(g_nAGPHandle);
-	flush_cache();
-	g_psBridge->nAttached--;
-	g_psBridge = NULL;
+	if(!g_psBridge) {
+		kerndbg(KERN_WARNING, "AGP: remove_bridge: cannot remove, no bridge attached\n");
+		return -EINVAL;
+	} else {
+		delete_device_node(g_nAGPHandle);
+		flush_cache();
+		g_psBridge->nAttached--;
+		g_psBridge = NULL;
+	}
 	
 	return 0;
 }
@@ -395,32 +423,13 @@ void flush_cache(void)
 	__asm __volatile("wbinvd");
 }
 
-PCI_Entry_s *find_display(void)
-{
-	kerndbg(KERN_DEBUG, "AGP: find_display: finding pci entry for AGP video card\n");
-	
-	PCI_Entry_s *psDev;
-	int nIndex;
-	
-	for(nIndex = 0; nIndex < g_nAGPNumDevices; nIndex++)
-	{
-		if(g_apsAGPDevice[nIndex]->nClassBase == PCI_DISPLAY && 
-		   g_apsAGPDevice[nIndex]->nClassSub == PCI_VGA)
-		{
-			psDev = g_apsAGPDevice[nIndex];
-			return psDev;
-		}
-	}
-	return NULL;
-}
-
 AGP_Gatt_s *alloc_gatt(void)
 {
 	uint32 nApSize = AGP_GET_APERTURE(g_psBridge);
 	uint32 nEntries = nApSize >> AGP_PAGE_SHIFT;
 	AGP_Gatt_s *psGatt;
 	
-	kerndbg(KERN_DEBUG, "AGP: allocating GATT for aperture of size %dM\n", nApSize /(1024*1024));
+	kerndbg(KERN_DEBUG, "AGP: allocating GATT for aperture of size %dMB\n", nApSize /(1024*1024));
 
 	if(nEntries == 0) {
 		kerndbg(KERN_WARNING, "AGP: bad aperture size\n");
@@ -490,27 +499,122 @@ status_t map_aperture(int nReg)
 	return 0;
 }
 
-static AGP_Memory_s *find_memory(AGP_Bridge_s *psBridge, int nId)
+PCI_Entry_s *find_display(void)
 {
-	AGP_Memory_s *psMem;
-
-	kerndbg(KERN_DEBUG, "AGP: searching for memory block %d\n", nId);
-	DLIST_FOR_EACH(&psBridge->sMemory, psMem, psLink) {
-		kerndbg(KERN_DEBUG, "AGP: considering memory block %d\n", psMem->nId);
-		if(psMem->nId == nId)
-			return psMem;
+	kerndbg(KERN_DEBUG, "AGP: find_display: finding pci entry for AGP video card\n");
+	
+	PCI_Entry_s *psDev;
+	int nIndex;
+	
+	for(nIndex = 0; nIndex < g_nAGPNumDevices; nIndex++)
+	{
+		if(g_apsAGPDevice[nIndex]->nClassBase == PCI_DISPLAY && 
+		   g_apsAGPDevice[nIndex]->nClassSub == PCI_VGA)
+		{
+			psDev = g_apsAGPDevice[nIndex];
+			return psDev;
+		}
 	}
-	return 0;
+	return NULL;
+}
+
+/* Implementation of the kernel api */
+
+AGP_Acquire_State_e get_state(void)
+{
+	return g_psBridge->eState;
+}
+
+void get_info(AGP_Info_s *psInfo)
+{
+	psInfo->sVersion.nMajor = g_psBridge->sVersion.nMajor;
+	psInfo->sVersion.nMinor = g_psBridge->sVersion.nMinor;
+	psInfo->nVendor = g_psBridge->psDev->nVendorID;
+	psInfo->nDevice = g_psBridge->psDev->nDeviceID;
+	if(g_psBridge->nApBase)
+		psInfo->nMode = g_psBus->read_pci_config(g_psBridge->psDev->nBus, g_psBridge->psDev->nDevice, g_psBridge->psDev->nFunction,
+								g_psBridge->psDev->u.h0.nAGPStatus, 4);
+	else
+		psInfo->nMode = 0; /* i810 doesn't have real AGP */
+	psInfo->nApBase = g_psBridge->nApBase;
+	psInfo->nApSize = AGP_GET_APERTURE(g_psBridge) >> 20;
+	psInfo->nPgTotal = psInfo->nPgSystem = g_psBridge->nMaxMem >> AGP_PAGE_SHIFT;
+	psInfo->nPgUsed = g_psBridge->nAllocated >> AGP_PAGE_SHIFT;
+}
+
+int acquire(void)
+{
+	return acquire_helper(AGP_ACQUIRE_KERNEL);
+}
+
+int release(void)
+{
+	return release_helper(AGP_ACQUIRE_KERNEL);
+}
+
+int enable(uint32 nMode)
+{
+	return AGP_ENABLE(g_psBridge, nMode);
+}
+
+AGP_Memory_s *alloc_memory(AGP_Allocate_s *psAlloc)
+{
+	return AGP_ALLOC_MEMORY(g_psBridge, psAlloc->nType, psAlloc->nPgCount << AGP_PAGE_SHIFT);
+}
+
+void free_memory(int nId)
+{
+	AGP_Memory_s *psMem = find_memory(g_psBridge, nId);
+	if(psMem)
+		AGP_FREE_MEMORY(g_psBridge, psMem);
+}
+
+int bind_memory(AGP_Bind_s *psBind)
+{
+	AGP_Memory_s *psMem = find_memory(g_psBridge, psBind->nKey);			
+	if(!psMem)
+		return -ENOENT;
+	
+	return AGP_BIND_MEMORY(g_psBridge, psMem, psBind->nPgStart << AGP_PAGE_SHIFT);
+}
+
+int unbind_memory(AGP_Unbind_s *psUnbind)
+{
+	AGP_Memory_s *psMem = find_memory(g_psBridge, psUnbind->nKey);
+	if(!psMem)
+		return -ENOENT;
+		
+	return AGP_UNBIND_MEMORY(g_psBridge, psMem);
+}
+
+void memory_info(void *pHandle, AGP_Memory_Info_s *psMemInfo)
+{
+	AGP_Memory_s *psMem = (AGP_Memory_s *)pHandle;
+
+	psMemInfo->nSize = psMem->nSize;
+	psMemInfo->nPhysical = psMem->nPhysical;
+	psMemInfo->nOffset = psMem->nOffset;
+	psMemInfo->nBound = psMem->nBound;
 }
 
 AGP_bus_s sBus = {
 	attach_bridge,
 	remove_bridge,
 	flush_cache,
-	find_display,
 	alloc_gatt,
 	free_gatt,
-	map_aperture
+	map_aperture,
+	find_display,
+	get_state,
+	get_info,
+	acquire,
+	release,
+	enable,
+	alloc_memory,
+	free_memory,
+	bind_memory,
+	unbind_memory,
+	memory_info
 };
 
 void *agp_bus_get_hooks(int nVersion)
@@ -551,29 +655,6 @@ status_t device_uninit(int nDeviceID)
 {
 	return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

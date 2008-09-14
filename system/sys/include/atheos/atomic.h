@@ -9,7 +9,7 @@ extern "C" {
 #endif
 
 struct __atomic_fool_gcc_struct { unsigned long a[100]; };
-#define __atomic_fool_gcc(x) (*(struct __atomic_fool_gcc_struct *)(x))
+#define __atomic_fool_gcc(x) (*(volatile struct __atomic_fool_gcc_struct *)(x))
 
 /*
  * Atomic operations that C can't guarantee us.  Useful for
@@ -250,10 +250,28 @@ static __inline__ int atomic_swap( volatile void *v, int i )
 	return i;
 }
 
+static __inline__ int atomic_cmp_and_set( volatile void *dst, int exp, int src )
+{
+	int res = exp;
+
+	__asm__ __volatile__ (
+	"	lock ;			"
+	"	cmpxchgl %1,%2 ;	"
+	"       setz	%%al ;		"
+	"	movzbl	%%al,%0 ;	"
+	"1:				"
+	"# atomic_cmpset_int"
+	: "+a" (res)							/* 0 (result) */
+	: "r" (src),							/* 1 */
+	  "m" (__atomic_fool_gcc(dst))			/* 2 */
+	: "memory");				 
+
+	return res;
+}
+
 #ifdef __cplusplus
 }
 #endif
 
 #endif /* __ATHEOS_ATOMIC_H__ */
-
 
