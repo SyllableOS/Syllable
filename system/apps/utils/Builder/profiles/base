@@ -24,6 +24,11 @@ resources
 	etc									configuration/rsyncd.conf	text/plain
 
 modules
+	documentation-DE--current
+	documentation-ES--current
+	documentation-NL--current
+	documentation-SL--current
+
 	other/fonts/liberation-fonts--current
 	other/fonts/luxi-fonts
 ;	For AClock:
