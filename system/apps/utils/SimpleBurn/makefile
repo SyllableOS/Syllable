@@ -14,7 +14,7 @@ $(OBJDIR)/%.o : %.c
 
 $(OBJDIR)/%.o : %.cpp
 	@echo Compiling : $<
-	@$(CC) $(COPTS) $< -o $@
+	@$(CXX) $(COPTS) $< -o $@
 
 $(OBJDIR)/%.o : %.s
 	@echo Assembling : $<
@@ -31,7 +31,7 @@ objs:
 
 "SimpleBurn": $(OBJS)
 	@echo Linking...
-	@gcc $(OBJS) -o "SimpleBurn"  -lstdc++ -lsyllable -lmedia
+	@$(CXX) $(OBJS) -o "SimpleBurn" -lsyllable -lmedia
 	@echo Adding resources...
 	@rescopy "SimpleBurn" -r images/add-audio.png images/add-video.png images/burn.png images/icon24x24.png images/icon48x48.png images/menu-audio.png images/menu-backup.png images/menu-data.png images/menu-video.png images/move-down.png images/move-up.png images/remove.png images/menu-burn.png images/logo.png 
 	@addattrib "SimpleBurn" os::Category Other
@@ -43,13 +43,9 @@ clean:
 
 deps:
 
-dist: all
-	@echo Distribution...
-	@mkdir -p $(DIST_DIR)/Applications/SimpleBurn
-	@cp "SimpleBurn" "$(DIST_DIR)/Applications/SimpleBurn/SimpleBurn"
-
 install: all
 	@echo Installing...
-	@mkdir -p /Applications/SimpleBurn
-	@cp "SimpleBurn" "/Applications/SimpleBurn/SimpleBurn"
+	@mkdir -p $(IMAGE)/Applications/SimpleBurn
+	@cp "SimpleBurn" "$(IMAGE)/Applications/SimpleBurn/SimpleBurn"
 
+dist: install
