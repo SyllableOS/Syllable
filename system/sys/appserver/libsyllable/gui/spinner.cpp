@@ -216,6 +216,7 @@ void Spinner::EnableStatusChanged( bool bIsEnabled )
 
 bool Spinner::Invoked( Message * pcMessage )
 {
+	Control::Invoked( pcMessage );
 	return ( true );
 }
 
