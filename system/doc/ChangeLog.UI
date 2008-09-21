@@ -1,3 +1,7 @@
+* September 21, 2008, Anthony Morphett *
+
+Bugfix: Make Spinner correctly send value in status changed message
+
 * August 11, 2008, Rick Caudill *
 
 Modified appserver/libsyllable to work correctly with new keymap code
