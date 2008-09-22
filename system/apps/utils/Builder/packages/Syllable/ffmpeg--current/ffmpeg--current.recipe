@@ -10,6 +10,7 @@ configure-options
 ;	--extra-cflags='-fomit-frame-pointer'
 	--extra-cflags='-DPIC -fomit-frame-pointer'
 ;	--extra-libs='-ldl -lm'
+;	--enable-shared
 ;	--enable-syllablethreads
 	--enable-pthreads
 	--disable-debug
@@ -18,10 +19,13 @@ configure-options
 	--disable-vhook
 	--enable-gpl
 	--enable-pp
+	--enable-swscale
+	--enable-postproc
 ;	IPv6 code used to fail (on GLibC 2.1.2?):
 ;	--disable-network
 ;	--disable-ipv6
 ;	--enable-liba52
+;	--enable-libfaac
 ;	--enable-libfaad
 ;	--enable-libogg
 ;	--disable-demuxer=OGG

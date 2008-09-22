@@ -12,7 +12,10 @@ configure-options
 ;	--disable-vhook
 	--enable-gpl
 	--enable-pp
+	--enable-swscale
+	--enable-postproc
 ;	--enable-liba52
+;	--enable-libfaac
 ;	--enable-libfaad
 ;	--enable-libogg
 ;	--disable-demuxer=OGG
