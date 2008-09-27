@@ -3,6 +3,7 @@ Glibc Syllable Changelog
 * September 27 2008 *
 
 	o clock_gettime.c, clock_getres.c: New files. Support CLOCK_MONOTONIC & CLOCK_REALTIME
+	o getmntent.c, setmntent.c: New files.
 
 * July 12 2008, Anthony Morphett *
 
