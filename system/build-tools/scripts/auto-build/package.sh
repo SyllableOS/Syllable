@@ -64,12 +64,14 @@ build log failures > $FINISH_FAILURES
 build log summary > $FINISH_SUMMARY
 
 # Package up and remove the development files
-DEV_ARCHIVE="SyllableDesktop-$VERSION-$(date +%Y%m%d)-development.i586"
-construct distro SyllableDesktop $VERSION-$(date +%Y%m%d) i586
-mv SyllableDesktop-*-development.*.7z /usr/Builder/distributions/SyllableDesktop-$VERSION-development.i586.7z
+FULL_VERSION="$VERSION-$(date +%Y%m%d)"
+NAME="SyllableDesktop-$FULL_VERSION"
+DEV_ARCHIVE="$NAME-development.i586"
+construct distro SyllableDesktop $FULL_VERSION i586
+mv $DEV_ARCHIVE.7z /usr/Builder/distributions/SyllableDesktop-$VERSION-development.i586.7z
 build pack development
-mv SyllableDesktop-*-development*.zip ../$DEV_ARCHIVE.zip
-mv SyllableDesktop-*.zip ../base-syllable.zip
+mv SyllableDesktop-$VERSION-development.i586.zip ../$DEV_ARCHIVE.zip
+mv $NAME.i586.zip ../base-syllable.zip
 
 # XXXKV: Ensure we have the latest installer scripts
 cd $INSTALLER_DIR/installer
