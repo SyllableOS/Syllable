@@ -1,5 +1,9 @@
 Glibc Syllable Changelog
 
+* September 27 2008 *
+
+	o clock_gettime.c, clock_getres.c: New files. Support CLOCK_MONOTONIC & CLOCK_REALTIME
+
 * July 12 2008, Anthony Morphett *
 
 	o get_system_info_v.c: New file, provides proper handling of get_system_info syscall versions.
@@ -7,7 +11,7 @@ Glibc Syllable Changelog
 	o sys/sysinfo.h: Added get_system_info_v(); added macro get_system_info() wrapping
 	  get_system_info_v() with the current SYS_INFO_VERSION.
 
-April 5th 2008 *
+* April 5th 2008 *
 
 	o get_system_info.c: Call get_system_info directly.
 	o xget_system_info.c: Removed.
