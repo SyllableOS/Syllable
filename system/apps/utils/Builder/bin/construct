@@ -2,7 +2,7 @@
 
 ORCA [
 	Title:		"Consonant build system"
-	Version:	0.1.4
+	Version:	0.1.5
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006-2008 Kaj de Vos
@@ -101,7 +101,10 @@ either any [
 				unless all [
 					name: join args/2 ["-" args/3]
 
-					change-dir %stage/image
+					any [change-dir %stage/image (
+						log/error "Staging area not found."
+						quit/return 11
+					)]
 
 					any [not exists? %system/development/
 						all [
@@ -152,10 +155,11 @@ either any [
 						]
 					]
 				][
-					log/error "Packaging not completed"
+					log/error "Packaging not completed."
 					quit/return 10
 				]
 			]
+
 			"iso" [
 				log/header "Building ISO image"
 
@@ -166,12 +170,12 @@ either any [
 					" -o " args/2 ".iso"
 					" " any [args/4 %stage/image]
 				][
-					log/error "ISO image not created"
+					log/error "ISO image not created."
 					quit/return 20
 				]
 			]
 		][
-			print "Command unknown."
+			log/error "Command unknown."
 			quit/return 1
 		]
 		action "sync"
