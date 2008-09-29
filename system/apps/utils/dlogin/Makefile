@@ -5,7 +5,7 @@ COPTS = -c -fexceptions -ffast-math
 APPBIN = /system/bin
 OBJS = main.o application.o mainwindow.o loginview.o loginimageview.o commonfuncs.o shutdown.o keymap.o
 
-CATALOGS = da de el es fr hu nl ru sv
+CATALOGS = da de el es fr hu nl ru sl sv
 
 OBJDIR	:= objs
 OBJS	:= $(addprefix $(OBJDIR)/,$(OBJS))
@@ -67,4 +67,3 @@ install: all
 dist: all
 	@echo Distribution...
 	@cp dlogin $(IMAGE)/$(APPBIN)/dlogin
-

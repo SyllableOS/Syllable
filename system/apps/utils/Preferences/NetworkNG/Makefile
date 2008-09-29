@@ -1,6 +1,8 @@
 CXXFLAGS += -c
 LIBS = -lsyllable
 
+CATALOGS = ru
+
 OBJS = main.o Hostname.o Nameserver.o Hosts.o App.o MainWin.o ListViewEditRow.o StringWriter.o StringReader.o Interface.o IFaceWin.o
 
 EXE = Network
@@ -12,6 +14,10 @@ all: strings $(OBJS)
 	strip --strip-all $(EXE)
 	rescopy $(EXE) -r resources/*.png
 	rescopy -a $(EXE) resources/$(EXE).catalog
+	for CATALOG in $(CATALOGS);do \
+		echo $$CATALOG; \
+		rescopy -a $(EXE) $$CATALOG/$(EXE).catalog=resources/$$CATALOG/$(EXE).catalog; \
+	done;
 
 clean:
 	rm $(OBJS) $(EXE)

@@ -1,0 +1,14 @@
+//
+//	Mouse String Catalog
+//
+//	Translated by: Dmitry
+//
+
+ID_MSG_MOUSE_SPEED=0							Скорость курсора
+ID_MSG_MOUSE_ACCELERATION						Ускорение
+ID_MSG_DOUBLECLICK								Двойной клик
+ID_MSG_APPLY									Применить
+ID_MSG_UNDO										Назад
+ID_MSG_DEFAULT									По умолчанию
+ID_MSG_TITLE									Настройки мышки
+

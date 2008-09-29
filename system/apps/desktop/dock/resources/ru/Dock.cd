@@ -16,11 +16,11 @@ MSG_MENU_CATEGORY_SYSTEMTOOLS			Системные инструменты
 
 MSG_MENU_ABOUT_MENU=2000				О программе...
 MSG_MENU_ABOUT_TITLE					О Syllable
-MSG_MENU_ABOUT_BUILDDATE				Дата создания:
+MSG_MENU_ABOUT_BUILDDATE				Дата сборки:
 MSG_MENU_ABOUT_TEXTONE					Обращайтесь к
 MSG_MENU_ABOUT_TEXTTWO					для получения обновлений и информации
 MSG_MENU_ABOUT_BUTTON_OK				ОК
-MSG_MENU_ABOUT_BUTTON_ADVANCED			Advanced...
+MSG_MENU_ABOUT_BUTTON_ADVANCED			Дополнительно...
 
 MSG_MENU_QUIT_MENU=3000					Выход...
 MSG_MENU_QUIT_TITLE						Выход

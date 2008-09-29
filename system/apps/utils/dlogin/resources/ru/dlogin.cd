@@ -17,7 +17,7 @@ MSG_SHUTDOWNWND_BUTTON_OK					_ОК
 MSG_SHUTDOWNWND_DROPDOWN_SHUTDOWN			Выключить
 MSG_SHUTDOWNWND_DROPDOWN_REBOOT				Перезагрузить
 
-MSG_ALERT_NOTSELECTED_TITLE=1000			Выьерите значок , пожалуйста.
+MSG_ALERT_NOTSELECTED_TITLE=1000			Выберите значок , пожалуйста.
 MSG_ALERT_NOTSELECTED_TEXT					Вы должны выбрать значок пользователя перед тем как загрузиться.
 MSG_ALERT_NOTSELECTED_OK					ОК
 

@@ -1,0 +1,56 @@
+// translated by Dmitry
+
+
+MSG_APP_DETECT_ALERT_TITLE=100	Конфигурация сети изменилась
+MSG_APP_DETECT_ALERT_MESSAGE	Конфигурация сетевого интерфейса изменилась\n\nВойдите под root и воспользуйтесь апплетом Network Preferences для настройки сети.
+MSG_APP_DETECT_ALERT_CLOSE		_Закрыть
+MSG_APP_DETECT_NO_CHANGE		Изменение в сетевом оборудовании не найдено.\n
+
+MSG_MAINWIN_TITLE=200			Network Preferences
+MSG_MAINWIN_IFACE_COL_NAME		Имя
+MSG_MAINWIN_IFACE_COL_ENABLED	Статус
+MSG_MAINWIN_IFACE_TITLE			_Интерфейс
+MSG_MAINWIN_IFACE_PROPERTIES	_Свойства
+MSG_MAINWIN_IFACE_DEFAULT_GW	Шлюз по умолчанию
+MSG_MAINWIN_GENERAL_HOSTNAME	Имя Компьтера
+MSG_MAINWIN_GENERAL_DOMAIN		Домен
+MSG_MAINWIN_GENERAL_TITLE		_Главное
+MSG_MAINWIN_DNS_NS_FRAME		Имена серверов
+MSG_MAINWIN_DNS_NS_COL			Имя сервера
+MSG_MAINWIN_DNS_NS_ADD			Добавить
+MSG_MAINWIN_DNS_NS_DELETE		Удалить
+MSG_MAINWIN_DNS_SD_FRAME		Поисковые домены
+MSG_MAINWIN_DNS_SD_COL			Поисковый домен
+MSG_MAINWIN_DNS_SD_ADD			Добавить
+MSG_MAINWIN_DNS_SD_DELETE		Удалить
+MSG_MAINWIN_DNS_TITLE			_DNS
+MSG_MAINWIN_HOSTS_COL_ADDRESS	Адреса
+MSG_MAINWIN_HOSTS_COL_ALIASES	Псевдоним
+MSG_MAINWIN_HOSTS_ADD			Добавить
+MSG_MAINWIN_HOSTS_DELETE		Удалить
+MSG_MAINWIN_HOSTS_TITLE			_Хост
+MSG_MAINWIN_APPLY				_Применить
+MSG_MAINWIN_REVERT				_Вернуть
+MSG_MAINWIN_CLOSE				_Закрыть
+MSG_MAINWIN_NEW_NAMESERVER		Новый сервер
+MSG_MAINWIN_NEW_SEARCH_DOMAIN	Новый домен поиска
+MSG_MAINWIN_NEW_HOST_ADDRESS	Новый Хост
+MSG_MAINWIN_NEW_HOST_ALIASES	Псевдонимы
+MSG_MAINWIN_IFACE_ENABLED_YES	Да
+MSG_MAINWIN_IFACE_ENABLED_NO	Нет
+
+MSG_IFWIN_TITLE=300				Интерфейс
+MSG_IFWIN_TYPE					Тип
+MSG_IFWIN_TYPE_STATIC			Статический
+MSG_IFWIN_TYPE_DHCP				DHCP
+MSG_IFWIN_ADDRESS				Адреса
+MSG_IFWIN_NETMASK				Маска
+MSG_IFWIN_GATEWAY				Шлюз
+MSG_IFWIN_ENABLED				Включено
+MSG_IFWIN_APPLY					_Применить
+MSG_IFWIN_CLOSE					_Закрыть
+MSG_IFWIN_ERR_IP_ADDRESS		Пожалуйста введите корректный IP.
+MSG_IFWIN_ERR_NETMASK			Пожалуйста введите корректную маску.
+MSG_IFWIN_ERR_GATEWAY			Пожалуйста введите корректный IP адресс шлюза.
+MSG_IFWIN_ERR_TITLE				Ошибка проверки
+MSG_IFWIN_ERR_CLOSE				_Закрыть

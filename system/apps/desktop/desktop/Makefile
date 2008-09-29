@@ -2,7 +2,7 @@
 
 COPTS = -c -fexceptions -ffast-math
 
-CATALOGS = da de el es fr hu nl ru sv
+CATALOGS = da de el es fr hu nl ru sl sv
 
 APPBIN = /system/bin
 OBJS = main.o application.o desktop.o
@@ -67,4 +67,3 @@ dist: all
 install: all
 	@echo Installing...
 	@cp desktop /system/bin/desktop
-

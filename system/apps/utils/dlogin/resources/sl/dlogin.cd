@@ -1,0 +1,35 @@
+//
+//	DLogin String Catalog
+//
+//	Translated by: Matic 'MicKY' Gradišer
+//
+
+MSG_MAINWND_TITLE=0							Prijava:
+
+MSG_MAINWND_PASSWORD=100					Geslo:
+MSG_MAINWND_BUTTON_LOGIN					_Prijava
+MSG_MAINWND_BUTTON_SHUTDOWN					_Zaustavitev
+
+MSG_SHUTDOWNWND_TITLE=200					Izklop ali ponovni zagon?
+MSG_SHUTDOWNWND_TEXT						Kaj želite narediti:
+MSG_SHUTDOWNWND_BUTTON_CANCEL				_Preklièi
+MSG_SHUTDOWNWND_BUTTON_OK					_V redu
+MSG_SHUTDOWNWND_DROPDOWN_SHUTDOWN			Izklop
+MSG_SHUTDOWNWND_DROPDOWN_REBOOT				Ponovni zagon
+
+MSG_ALERT_NOTSELECTED_TITLE=1000			Prosimo, izberite ikono.
+MSG_ALERT_NOTSELECTED_TEXT					Pred prijavo morete izbrati ikono uporabnika.
+MSG_ALERT_NOTSELECTED_OK					V redu
+
+MSG_ALERT_WRONGPASS_TITLE=2000				Prijava ni uspela
+MSG_ALERT_WRONGPASS_TEXT					Napaèno geslo.
+MSG_ALERT_WRONGPASS_OK						Oprostite
+
+MSG_ALERT_NOUSER_TITLE=3000					Prijava ni uspela
+MSG_ALERT_NOUSER_TEXT						Takšnega uporabnika,\n\nni v tem\nsistemu.
+MSG_ALERT_NOUSER_OK							V redu
+
+MSG_ALERT_CANTFINDUSERS_TITLE=4000			Ne morem naložiti seznama uporabnikov
+MSG_ALERT_CANTFINDUSERS_TEXT				Ne morem naložiti seznama uporabnikov. Prosimo, kontaktirajte Syllable skupino razvijalcev.
+MSG_ALERT_CANTFINDUSERS_OK					Oh, ne!!!
+

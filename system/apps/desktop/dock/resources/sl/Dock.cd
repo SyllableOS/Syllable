@@ -1,0 +1,38 @@
+//
+//	Dock String Catalog
+//
+//	Translated by: Matic 'MicKY' Gradišer
+//
+
+MSG_MENU_CATEGORY_OTHER=1000			Ostalo
+MSG_MENU_CATEGORY_PREFERENCES			Nastavitve
+MSG_MENU_CATEGORY_INTERNET				Internet
+MSG_MENU_CATEGORY_MEDIA					Media
+MSG_MENU_CATEGORY_OFFICE				Pisarna
+MSG_MENU_CATEGORY_DEVELOPMENT			Razvoj
+MSG_MENU_CATEGORY_GAMES					Igre
+MSG_MENU_CATEGORY_EMULATORS				Emulatorji
+MSG_MENU_CATEGORY_SYSTEMTOOLS			Sistemska orodja
+
+MSG_MENU_ABOUT_MENU=2000				O...
+MSG_MENU_ABOUT_TITLE					O Syllable
+MSG_MENU_ABOUT_BUILDDATE				Datum izdaje:
+MSG_MENU_ABOUT_TEXTONE					Glej
+MSG_MENU_ABOUT_TEXTTWO					za posodobitve in informacije
+MSG_MENU_ABOUT_BUTTON_OK				V redu
+MSG_MENU_ABOUT_BUTTON_ADVANCED			Napredno...
+
+MSG_MENU_QUIT_MENU=3000					Izhod...
+MSG_MENU_QUIT_TITLE						Izhod
+MSG_MENU_QUIT_TEXT						Kaj želite narediti?
+MSG_MENU_QUIT_LOGOUT					Odjava
+MSG_MENU_QUIT_SHUTDOWN					Izklop
+MSG_MENU_QUIT_REBOOT					Ponovni zagon
+MSG_MENU_QUIT_CANCEL					Preklièi
+
+MSG_PLUGIN_ALERT_TITLE=4000				Menu
+MSG_PLUGIN_ALERT_TEXT					Prosimo, prekopirajte menujske dodatke v /system/extensions/dock\npreden jih dodajate v menu
+MSG_PLUGIN_ALERT_OK						V redu
+
+MSG_OPENAPP=5000						Odpri z...
+

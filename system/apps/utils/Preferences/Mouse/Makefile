@@ -1,8 +1,9 @@
-#Makefile for Mouse
+# Makefile for Mouse Preference
+
 CXXFLAGS += -c -fexceptions
 LIBS = -lsyllable
 
-CATALOGS = sv
+CATALOGS = ru sv
 
 OBJS = 	main.o appwindow.o
 
@@ -43,4 +44,3 @@ install: $(EXE)
 	install -s $(EXE) $(IMAGE)/Applications/Preferences/$(EXE)
 
 dist: install
-
