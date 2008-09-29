@@ -179,7 +179,7 @@ resources
 	etc						configuration/hosts					text/plain
 	etc						configuration/hostname				text/plain
 	etc						configuration/resolv.conf			text/plain
-	home					Home-Directories
+	home					binaries/home-directories
 
 modules
 ;	Toolchain for bootstrapping
@@ -404,3 +404,4 @@ modules
 	apps/utils/fsutils
 	apps/utils/nettools
 	apps/utils/systools
+

@@ -278,7 +278,7 @@ resources
 	system/config								appserver
 	etc											linux/asound.state
 	etc/udev/rules.d							linux/40-alsa.rules
-	users										Home-Directories
+	users										binaries/home-directories
 
 	system/fonts								fonts/URW/*.ttf
 	system/fonts								fonts/URW/Mandriva/*.ttf
@@ -630,3 +630,4 @@ modules
 
 ;	Needs GCC 3:
 ;	apps/other/qemu-0.9.1
+

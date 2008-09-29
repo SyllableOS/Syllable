@@ -249,7 +249,7 @@ resources
 	etc											configuration/vsftpd.conf
 	etc											configuration/rsyncd.conf
 	system/config								net.cfg
-	users										Home-Directories
+	users										binaries/home-directories
 
 	etc/profile.d								linux/glib2-locale.sh
 
@@ -401,3 +401,4 @@ modules
 
 ;	Needs GCC 3:
 ;	apps/other/qemu-0.9.1
+
