@@ -10,11 +10,14 @@ licenses			GPL-2
 home				www.audiocoding.com
 packages			faac/faad2-2.6.1
 
+recommends			libmp4v2
+
 patch				autoreconf -vif
 
 configure-options
 	--disable-shared
-	--with-mp4v2
+;	--with-mpeg4ip
+;	--with-drm
 ;	--with-xmms
 
 system-prefix-var	DESTDIR

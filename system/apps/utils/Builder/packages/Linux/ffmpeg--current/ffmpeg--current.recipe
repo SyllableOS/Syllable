@@ -12,8 +12,7 @@ configure-options
 ;	--disable-vhook
 	--enable-gpl
 	--enable-pp
-	--enable-swscale
-	--enable-postproc
+	--enable-swscaler
 ;	--enable-liba52
 ;	--enable-libfaac
 ;	--enable-libfaad
@@ -24,4 +23,3 @@ configure-options
 ;	--enable-libmp3lame
 ;	--enable-libx264
 ;	--enable-libxvid
-
