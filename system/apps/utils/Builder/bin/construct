@@ -2,7 +2,7 @@
 
 ORCA [
 	Title:		"Consonant build system"
-	Version:	0.1.5
+	Version:	0.1.6
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006-2008 Kaj de Vos
@@ -93,6 +93,8 @@ either any [
 		print [select header 'title  select header 'version]
 		print select header 'rights
 	][
+		log/open
+
 		switch/default command [
 			"distro" [
 				call/wait/output "uname" result: ""
