@@ -42,26 +42,27 @@ echo "Creating a working copy"
 
 cp -a $BUILD_DIR/system/stage/image $WORKING_COPY
 
+# Finish the build and package it
+cd $INSTALLER_DIR/system/
+image finish 1>>$LOG 2>&1
+build log failures > $FINISH_FAILURES
+build log summary > $FINISH_SUMMARY
+
 # Move the CUPS PPDs
 if [ -e $INSTALLER_DIR/ppds ]
 then
   rm -rf $INSTALLER_DIR/ppds
 fi
 mkdir -p $INSTALLER_DIR/ppds
-cp -a system/resources/cups/1.3.4/share/cups/model/* $INSTALLER_DIR/ppds/
-for PPD in `find system/resources/cups/1.3.4/share/cups/model/ -name *.ppd*`
+
+cp -a $WORKING_COPY/image/system/resources/cups/1.3.4/share/cups/model/* $INSTALLER_DIR/ppds/
+for PPD in `find $WORKING_COPY/image/system/resources/cups/1.3.4/share/cups/model/ -name *.ppd*`
 do
   rm $PPD
 done
 
 # Generate the printers model list
 $SCRIPTS_DIR/printers.sh $INSTALLER_DIR/ppds/ $WORKING_COPY/image/system/resources/cups/1.3.4/share/cups/model/
-
-# Finish the build and package it
-cd $INSTALLER_DIR/system/
-image finish 1>>$LOG 2>&1
-build log failures > $FINISH_FAILURES
-build log summary > $FINISH_SUMMARY
 
 # Package up and remove the development files
 FULL_VERSION="$VERSION-$(date +%Y%m%d)"
