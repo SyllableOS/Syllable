@@ -67,11 +67,13 @@ build log summary > $FINISH_SUMMARY
 FULL_VERSION="$VERSION-$(date +%Y%m%d)"
 NAME="SyllableDesktop-$FULL_VERSION"
 DEV_ARCHIVE="$NAME-development.i586"
+
 construct distro SyllableDesktop $FULL_VERSION i586
-mv $DEV_ARCHIVE.7z /usr/Builder/distributions/SyllableDesktop-$VERSION-development.i586.7z
-build pack development
-mv SyllableDesktop-$VERSION-development.i586.zip ../$DEV_ARCHIVE.zip
 mv $NAME.i586.zip ../base-syllable.zip
+
+mv $DEV_ARCHIVE.zip.7z /usr/Builder/distributions/SyllableDesktop-$VERSION-development.i586.zip.7z
+build pack development
+mv SyllableDesktop-$VERSION-development-0.i586.zip ../$DEV_ARCHIVE.zip
 
 # XXXKV: Ensure we have the latest installer scripts
 cd $INSTALLER_DIR/installer
