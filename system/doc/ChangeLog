@@ -1,3 +1,8 @@
+* October 7, 2008, Kristian Van Der Vliet *
+
+Added os::Directory::SetPath(). Patch from
+Dee Sharpe <demetrioussharpe@netscape.net>
+
 * September 29, 2008, Kaj de Vos *
 
 Updated the default content for home directories: browser bookmarks, desktop links
