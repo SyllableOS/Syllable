@@ -236,20 +236,8 @@ status_t Directory::FDChanged( int nNewFD, const struct stat & sStat )
 	return ( 0 );
 }
 
-/*
-void Directory::Unset()
-{
-    if ( m->m_hDirIterator != NULL ) {
-	  // the closedir() will close the FD so we must make sure FSNode::Unset() don't attempt to do the same.
-	_SetFD( -1 ); 
-	closedir( m->m_hDirIterator );
-    }
-    FSNode::Unset();
-}
-*/
-
 /** Open a directory using a path.
- * \f status_t Directory::SetTo( const String& cPath, int nOpenMode = O_RDONLY )
+ * \f status_t Directory::SetPath( const String& cPath, int nOpenMode = O_RDONLY )
  * \par Description:
  *	Open the directory pointet to by \p cPath. The path must
  *	be valid and it must point to a directory.
@@ -262,9 +250,67 @@ void Directory::Unset()
  *	at the os::FSNode documentation for a more detailed
  *	description of open modes.
  *
- * \author	Kurt Skauen (kurt@atheos.cx)
+ * \author	Dee Sharpe (demetrioussharpe@netscape.net)
  *****************************************************************************/
+status_t Directory::SetPath( const String& cPath, int nOpenMode )
+{
+	status_t nError;
+	
+	if(nError = FSNode::SetTo(cPath, nOpenMode) > 0)
+		return ( nError );
+	
+	if( S_ISDIR( GetMode( false ) ) == false )
+	{
+		throw errno_exception( "Node is not a directory", ENOTDIR );
+	}
+	m->m_hDirIterator = fopendir( GetFileDescriptor() );
+	if( m->m_hDirIterator == NULL )
+	{
+		throw errno_exception( "Failed to create directory iterator" );
+	}
+	
+	return ( nError );
+}
 
+/** Open a directory using a path.
+ * \f status_t Directory::SetPath( const Path& cPath, int nOpenMode = O_RDONLY )
+ * \par Description:
+ *	Open the directory pointet to by \p cPath. The path must
+ *	be valid and it must point to a directory.
+ *
+ * \param cPath
+ *	The directory to open.
+ * \param nOpenMode
+ *	Flags describing how to open the directory. Only O_RDONLY,
+ *	O_WRONLY, and O_RDWR are relevant to directories. Take a look
+ *	at the os::FSNode documentation for a more detailed
+ *	description of open modes.
+ *
+ * \author	Dee Sharpe (demetrioussharpe@netscape.net)
+ *****************************************************************************/
+status_t Directory::SetPath( const Path& cPath, int nOpenMode )
+{
+	String *cNewPath = new String(cPath.GetPath());
+	status_t nError;
+	
+	if(nError = SetTo(cPath, nOpenMode) > 0)
+	{
+		delete cNewPath;
+		return ( nError );
+	}
+	if( S_ISDIR( GetMode( false ) ) == false )
+	{
+		throw errno_exception( "Node is not a directory", ENOTDIR );
+	}
+	m->m_hDirIterator = fopendir( GetFileDescriptor() );
+	if( m->m_hDirIterator == NULL )
+	{
+		throw errno_exception( "Failed to create directory iterator" );
+	}
+	
+	delete cNewPath;
+	return ( nError );
+}
 
 /** Get the absolute path of the directory
  * \par Description:
@@ -383,3 +429,4 @@ status_t Directory::CreateSymlink( const String & cName, const String & cDestina
 	}
 	return ( pcLink->SetTo( *this, cName, O_RDONLY ) );
 }
+

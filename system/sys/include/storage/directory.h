@@ -23,6 +23,7 @@
 
 #include <storage/fsnode.h>
 #include <storage/diriterator.h>
+#include <storage/path.h>
 
 namespace os {
 #if 0
@@ -72,6 +73,8 @@ public:
     status_t CreateSymlink( const String& cName, const String& cDestination, os::SymLink* pcLink );
     Window*  CreateDirectoryDialog( const Messenger & cMsgTarget, Message* pcCreateMsg, String cDefaultName );
     status_t GetPath( String* pcPath ) const;
+    status_t SetPath( const String& cPath, int nOpenMode = O_RDONLY );
+    status_t SetPath( const Path& cPath, int nOpenMode = O_RDONLY );
     
 private:
 	class Private;
@@ -82,3 +85,4 @@ private:
 } // end of namespace
 
 #endif // __F_STORAGE_DIRECTORY_H__
+
