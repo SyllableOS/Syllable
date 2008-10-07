@@ -1,2 +1,1 @@
-export PERL5LIB=/usr/indexes/lib/site_perl/5.10.0:/usr/indexes/lib/5.10.0
-
+export PERL5LIB=/resources/indexes/lib/site_perl/5.10.0:/resources/indexes/lib/5.10.0

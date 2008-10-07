@@ -6,7 +6,7 @@
 ignore_versioned_solibs='y'
 #libc=/system/indexes/lib/libc.so.2
 
-libpth='/usr/indexes/lib /system/indexes/lib /system/libraries ./'
+libpth='/resources/indexes/lib /system/indexes/lib /system/libraries ./'
 #usrinc='/system/indexes/include'
 
 #libs=' '
