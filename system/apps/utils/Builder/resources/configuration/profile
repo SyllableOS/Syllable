@@ -30,6 +30,7 @@ case $TERM in
 		unset PROMPT_COMMAND;;
 esac
 
+# Convenience commands:
 alias ll='ls -l'
 alias dir='ls -l --color'
 alias more=less
