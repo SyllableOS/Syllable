@@ -1,6 +1,6 @@
 #! /bin/sh
 
-packages='flex bison binutils gcc nasm make m4 gdb patch cvs libtool ruby Builder doxygen cscope splint'
+packages='flex bison binutils gcc nasm make m4 libtool gdb patch cvs Builder pkg-config doxygen cscope splint'
 
 if [ "$USER" != "root" ]
 then
@@ -53,5 +53,5 @@ done
 
 echo ""
 echo "Done."
-#echo "To fully initialize BinUtils and GCC for compiling software, please reboot"
+#echo "To fully initialise BinUtils and GCC for compiling software, please reboot"
 #echo "the computer."

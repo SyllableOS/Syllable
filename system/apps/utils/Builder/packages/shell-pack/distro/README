@@ -1,13 +1,13 @@
 Shell Essentials for Syllable Server
 ====================================
 
-22-Jul-2007
+8-Oct-2008
 
 1 Introduction
 ==============
 
 This distribution contains binary packages of commonly needed shell
-functionality for the Syllable operating system.
+functionality for the Syllable Server operating system.
 
 If you encounter problems or have any other interesting observations,
 I would be interested to hear about them (see contact information).
@@ -84,8 +84,8 @@ with the new ones.
 3 Known problems and limitations
 ================================
 
-Please refer to the respective README and possibly README.Syllable
-documents that are included in each separate package.
+Please refer to the respective README files and possibly other
+documentation that are included in each separate package.
 
 4 Contact information
 =====================

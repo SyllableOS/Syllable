@@ -1,6 +1,6 @@
 #! /bin/sh
 
-packages='openssh wget rsync transmission ncftp links'
+packages='rsync wget ncftp'
 
 if [ "$USER" != "root" ]
 then
