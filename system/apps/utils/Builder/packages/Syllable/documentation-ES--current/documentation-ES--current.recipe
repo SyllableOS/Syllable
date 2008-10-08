@@ -7,6 +7,6 @@ locations			http://ar.syllable.org/documentation/
 
 documentation		Welcome.html Copyrights.html FAQ.html
 move-files
-	documentation/Welcome.html		/Documentation/Welcome-ES.html
-	documentation/Copyrights.html	/Documentation/Copyrights-ES.html
-	documentation/FAQ.html			/Documentation/FAQ-ES.html
+	documentation/Welcome.html		/documentation/Welcome-ES.html
+	documentation/Copyrights.html	/documentation/Copyrights-ES.html
+	documentation/FAQ.html			/documentation/FAQ-ES.html

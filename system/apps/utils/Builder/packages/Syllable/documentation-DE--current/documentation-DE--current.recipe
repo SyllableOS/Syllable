@@ -7,6 +7,6 @@ locations			http://de.syllable.org/documentation/
 
 documentation		Install.txt Welcome.html FAQ.html
 move-files
-	documentation/Install.txt	/Documentation/Install-DE.txt
-	documentation/Welcome.html	/Documentation/Welcome-DE.html
-	documentation/FAQ.html		/Documentation/FAQ-DE.html
+	documentation/Install.txt	/documentation/Install-DE.txt
+	documentation/Welcome.html	/documentation/Welcome-DE.html
+	documentation/FAQ.html		/documentation/FAQ-DE.html

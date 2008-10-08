@@ -11,5 +11,5 @@ make				true
 install-tree
 install				true
 
-move-files			documentation/* /Documentation/
+move-files			documentation/* /documentation/
 delete-files		documentation

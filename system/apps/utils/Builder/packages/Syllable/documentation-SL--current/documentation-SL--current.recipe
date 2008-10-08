@@ -6,4 +6,4 @@ files				Install.txt Welcome.html Copyrights.html FAQ.html
 locations			http://sl.syllable.org/documentation/
 
 documentation		FAQ.html
-move-files			documentation/FAQ.html /Documentation/FAQ-SL.html
+move-files			documentation/FAQ.html /documentation/FAQ-SL.html

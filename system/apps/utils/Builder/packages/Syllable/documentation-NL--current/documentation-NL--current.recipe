@@ -6,4 +6,4 @@ files				Install.txt Welcome.html Copyrights.html FAQ.html
 locations			http://nl.syllable.org/documentation/
 
 documentation		Welcome.html
-move-files			documentation/Welcome.html /Documentation/Welcome-NL.html
+move-files			documentation/Welcome.html /documentation/Welcome-NL.html

@@ -7,5 +7,5 @@ locations
 
 documentation		README-SyllableServer.txt Changes.txt Syllable-logo.png Copyrights.html
 move-files
-	documentation/README-SyllableServer.txt	/Documentation/README-SyllableServer-0.3.txt
-	documentation/*							/Documentation/
+	documentation/README-SyllableServer.txt	/documentation/README-SyllableServer-0.3.txt
+	documentation/*							/documentation/
