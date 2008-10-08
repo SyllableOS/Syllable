@@ -118,8 +118,8 @@ tree
 
 	Applications				applications.png
 	Applications/Preferences	settings.png
-	Documentation
-;	Documentation/images
+	documentation
+;	documentation/images
 
 ;	LFS extras
 

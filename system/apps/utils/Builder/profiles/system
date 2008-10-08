@@ -148,8 +148,8 @@ tree
 	Applications				applications.png
 	Applications/Preferences	settings.png
 	Applications/Xpdf
-	Documentation
-;	Documentation/images
+	documentation
+;	documentation/images
 
 ;	For compatibility:
 	bin
