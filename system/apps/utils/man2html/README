@@ -1,9 +1,9 @@
 man2html and manmanager for Syllable
 
-Rather than use a seperate "man" command for reading the traditional Unix style man pages
+Rather than use a separate "man" command for reading the traditional Unix style man pages
 (Manuals), man2html and the manmanager script convert these pages to HTML and provide an
 automatic housekeeping of a main and individual manual section indexes.  You may then use
-a normal web browser (E.g ABrowse) to read the manual pages, with the benefit of clickable
+a normal web browser (e.g. Webster) to read the manual pages, with the benefit of clickable
 cross-references both internal and external to the manpages.
 
 The man2html application itself is taken from the Man 1.5l manual reader.  See the
@@ -12,8 +12,8 @@ copyright notice below for more information.
 The shell script which wraps man2html are originally written by Kristian Van Der Vliet, and
 are released under the GNU General Public Licence.
 
-The HTML manpages are placed in /atheos/Documentation/man  The URL is
-file:///atheos/Docuementation/man/index.html
+The HTML manpages are placed in /documentation/man  The URL is
+file:///documentation/man/index.html
 
 ----man-1.5l/README----
 
@@ -380,4 +380,3 @@ proprietary programs.  If your program is a subroutine library, you may
 consider it more useful to permit linking proprietary applications with the
 library.  If this is what you want to do, use the GNU Library General
 Public License instead of this License.
-

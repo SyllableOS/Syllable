@@ -19,6 +19,7 @@
 # filesystem
 ln -s usr /resources
 ln -s boot/Applications /Applications
+ln -s boot/documentation /documentation
 #ln -s home/root /root
 
 # Configure basic environment.

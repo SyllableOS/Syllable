@@ -18,7 +18,7 @@
 # Global variables.  These can be changed if you know what you're
 # doing.
 
-HTML_DIR=/atheos/Documentation/man
+HTML_DIR=/documentation/man
 VERSION=0.1
 
 # function print_usage
