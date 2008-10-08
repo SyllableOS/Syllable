@@ -1,3 +1,10 @@
+* October 8, 2008, Kaj de Vos *
+
+Standardised main documentation location, from /atheos/Documentation/ and
+/boot/Documentation/ on Desktop and /Documentation/ on Server, to /documentation/.
+This also gets rid of the last use of the /atheos/ symlink.
+Added a Documentation/ symlink in the desktop templates to /documentation/.
+
 * October 7, 2008, Kristian Van Der Vliet *
 
 Added os::Directory::SetPath(). Patch from
@@ -188,7 +195,7 @@ It seemed a powerful thing to be able to install multiple versions of a package.
 However, it would also complicate our package symlink system quite a bit, because
 multiple versions of the same file would be allowed and would have to be managed.
 And when it comes down to it, the only parts of a package that are properly versioned
-and can be used next to eachother are shared libraries. These are essential, because
+and can be used next to each other are shared libraries. These are essential, because
 we are shipping compatibility versions of older libraries. For using complete packages
 in place of another version provided in the system, the method Builder uses by placing
 another package pool first in all the search paths has turned out to be convenient.
