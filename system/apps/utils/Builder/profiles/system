@@ -166,7 +166,7 @@ prepare
 
 ;	For sshd:
 	install -m700 -d	var/lib/sshd
-;	chown root:sys		var/lib/sshd
+;	chown root:system	var/lib/sshd
 
 resources
 	boot/grub				menu.lst							text/plain
