@@ -3,7 +3,7 @@ title				Network Necessities
 name				NetworkNecessities
 headline			Common networking tools
 description
-	A collection of commonly needed packages for network functionality that installs easily in one go. The current pack consists of OpenSSH 4.6p1, RSync 2.6.9, WGet 1.9.1 and Transmission 0.6.1.
+	A collection of commonly needed packages for network functionality that installs easily in one go. The current pack consists of RSync 2.6.9, WGet 1.9.1, Lynx 2.8.6.5, Arch 1.3.5, Ruby 1.8.6 and S3Sync 1.2.6.
 
 modules
 ;	network/openssl-0.9.8e
@@ -15,7 +15,7 @@ modules
 
 	programming/languages/ruby-1.8.6
 ;	Amazon tools:
-	network/s3sync--current
+	network/s3sync-1.2.6
 
 ;	All broken:
 ;	network/ftp/ncftp-3.2.0
