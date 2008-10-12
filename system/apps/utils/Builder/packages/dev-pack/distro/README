@@ -1,7 +1,7 @@
-Developer Pack for Syllable
-===========================
+Developer Pack for Syllable Desktop
+===================================
 
-22-Jul-2007
+12-Oct-2008
 
 1 Introduction
 ==============
@@ -9,7 +9,7 @@ Developer Pack for Syllable
 This distribution is a collection of the most important binary
 packages a software developer would want for the Syllable operating
 system. Most packages were built on Syllable 0.6.3, and they were
-optimized for a Pentium CPU. They may also run on earlier versions of
+optimised for a Pentium CPU. They may also run on earlier versions of
 Syllable, but this has not been tested.
 
 For additional functionality, it is recommended to also install
@@ -112,8 +112,8 @@ you should solve the conflict.
 3 Known problems and limitations
 ================================
 
-Please refer to the respective README and possibly README.Syllable
-documents that are included in each separate package.
+Please refer to the respective README files and possibly other
+documentation that are included in each separate package.
 
 4 Contact information
 =====================

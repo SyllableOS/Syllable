@@ -1,6 +1,6 @@
 #! /bin/sh
 
-packages='rsync wget ncftp'
+packages='rsync wget lynx arch ruby s3sync'
 
 if [ "$USER" != "root" ]
 then

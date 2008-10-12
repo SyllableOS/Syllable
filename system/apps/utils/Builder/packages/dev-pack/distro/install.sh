@@ -1,6 +1,6 @@
 #! /bin/sh
 
-packages='flex bison binutils gcc nasm make m4 libtool gdb patch cvs Builder pkg-config doxygen cscope splint'
+packages='flex bison binutils gcc nasm omake make m4 libtool gdb patch cvs Builder pkg-config indent sindent doxygen cscope splint'
 
 if [ "$USER" != "root" ]
 then

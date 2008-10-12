@@ -1,6 +1,6 @@
 #! /bin/sh
 
-packages='gawk gettext texinfo groff which'
+packages='gawk gettext texinfo which gnupg mc'
 
 if [ "$USER" != "root" ]
 then

@@ -1,14 +1,14 @@
-Network Necessities for Syllable
-================================
+Network Necessities for Syllable Desktop
+========================================
 
-22-Jul-2007
+12-Oct-2008
 
 1 Introduction
 ==============
 
 This distribution contains binary packages of commonly needed network
 functionality for the Syllable operating system. Most packages were built
-on Syllable 0.6.3 and optimized for a Pentium CPU. They may also run on
+on Syllable 0.6.3 and optimised for a Pentium CPU. They may also run on
 earlier versions of Syllable, but this has not been tested.
 
 If you encounter problems or have any other interesting observations,
@@ -86,8 +86,8 @@ them with the new ones.
 3 Known problems and limitations
 ================================
 
-Please refer to the respective README and possibly README.Syllable
-documents that are included in each separate package.
+Please refer to the respective README files and possibly other
+documentation that are included in each separate package.
 
 4 Contact information
 =====================

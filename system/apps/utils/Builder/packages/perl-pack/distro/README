@@ -1,7 +1,7 @@
-Perl Pack for Syllable
-======================
+Perl Pack for Syllable Desktop
+==============================
 
-20-Apr-2008
+12-Oct-2008
 
 1 Introduction
 ==============
@@ -87,8 +87,8 @@ with the new ones.
 3 Known problems and limitations
 ================================
 
-Please refer to the respective README and possibly README.Syllable
-documents that are included in each separate package.
+Please refer to the respective README files and possibly other
+documentation that are included in each separate package.
 
 4 Contact information
 =====================
