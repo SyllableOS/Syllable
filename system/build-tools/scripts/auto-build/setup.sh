@@ -55,8 +55,10 @@ function create_directories()
 PACKS_URL=http://downloads.syllable.org/Syllable/i586/packs
 
 declare -a PACKS
-PACKS=(	"DevelopersDelight/DevelopersDelight-7.i586.zip"	\
-		"PerlPit/PerlPit-5.i586.7z"
+PACKS=(	"DevelopersDelight/DevelopersDelight-8.i586.zip"	\
+		"ShellEssentials/ShellEssentials-1.i586.zip"	\
+		"NetworkNecessities/NetworkNecessities-3.i586.zip"	\
+		"PerlPit/PerlPit-5.i586.zip"
 )
 
 function install_packs()
@@ -119,12 +121,8 @@ function install_packs()
 RESOURCES_URL=http://downloads.syllable.org/Syllable/i586/resources
 
 declare -a RESOURCES
-RESOURCES=(	"FLex/flex-2.5.33-3.i586.resource"					\
-			"GNU-AWK/gawk-3.1.6-1.i586.resource"				\
-			"TexInfo/texinfo-4.12-1.i586.resource"				\
-			"PkgConfig/pkg-config-0.22-1.i586.resource"			\
-			"GNU-CompilerCollection/gcc-3.4.3-3.i586.resource"	\
-			"GNU-CompilerCollection/gcc-4.1.2-3.i586.resource" )
+RESOURCES=(	"GNU-CompilerCollection/gcc-3.4.3-3.i586.resource"
+)
 
 function install_resources()
 {
