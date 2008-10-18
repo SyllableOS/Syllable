@@ -44,7 +44,7 @@ void LoginView::Layout()
 	pcPassNode->AddChild(pcPassString = new StringView(Rect(),"pass_string","Password:"));
 	pcPassNode->AddChild(new HLayoutSpacer("",2,2));
 	pcPassNode->AddChild(pcPassText = new TextView(Rect(),"pass_text",""));
-	//pcPassText->SetPasswordMode(true);
+	pcPassText->SetPasswordMode(true);
 	pcPassText->SetMaxPreferredSize(28,1);
 	pcPassText->SetMinPreferredSize(28,1);
 	pcPassText->SetTabOrder( 2 );

@@ -66,7 +66,7 @@ String GetSystemInfo()
 {
 	String cReturn="";
 	system_info sSysInfo;
-	//get_system_info(&sSysInfo);
+	get_system_info(&sSysInfo);
 	cReturn.Format("%d.%d.%d",( int )( ( sSysInfo.nKernelVersion >> 32 ) & 0xffff ), ( int )( ( sSysInfo.nKernelVersion >> 16 ) % 0xffff ), ( int )( sSysInfo.nKernelVersion & 0xffff));
 	
 	return cReturn;
