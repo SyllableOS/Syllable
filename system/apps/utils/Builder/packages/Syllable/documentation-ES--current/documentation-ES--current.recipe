@@ -2,11 +2,11 @@ authors				Kaj de Vos
 
 inherits			documentation--current
 
-files				Install.txt Welcome.html Copyrights.html FAQ.html
-locations			http://ar.syllable.org/documentation/
+locations			http://ar.syllable.org/
 
 documentation		Welcome.html Copyrights.html FAQ.html
 move-files
 	documentation/Welcome.html		/documentation/Welcome-ES.html
 	documentation/Copyrights.html	/documentation/Copyrights-ES.html
 	documentation/FAQ.html			/documentation/FAQ-ES.html
+

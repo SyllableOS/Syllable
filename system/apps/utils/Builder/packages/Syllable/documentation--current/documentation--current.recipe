@@ -1,6 +1,7 @@
 authors				Kaj de Vos
 
-files				Install.txt Syllable-logo.png Welcome.html Copyrights.html FAQ.html
-locations			http://web.syllable.org/documentation/
+files				Desktop/Install.txt Desktop/Syllable-logo.png Desktop/Welcome.html documentation/Copyrights.html documentation/FAQ.html
+locations			http://web.syllable.org/
 
 documentation		Install.txt Syllable-logo.png Welcome.html Copyrights.html FAQ.html
+

@@ -2,8 +2,8 @@ authors				Kaj de Vos
 
 inherits			documentation--current
 
-files				Install.txt Welcome.html Copyrights.html FAQ.html
-locations			http://nl.syllable.org/documentation/
+locations			http://nl.syllable.org/
 
 documentation		Welcome.html
 move-files			documentation/Welcome.html /documentation/Welcome-NL.html
+
