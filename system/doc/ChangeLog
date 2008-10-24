@@ -1,3 +1,8 @@
+* October 24, 2008, Kristian Van Der Vliet *
+
+Fixed a couple of stupid errors in libpthread where || (Boolean OR) had been
+transposed for && (Boolean AND) causing some simple sanity checks to fail.
+
 * October 8, 2008, Kaj de Vos *
 
 Standardised main documentation location, from /atheos/Documentation/ and
