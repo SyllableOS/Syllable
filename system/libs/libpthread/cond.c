@@ -377,7 +377,7 @@ int pthread_condattr_setpshared(pthread_condattr_t *attr, int shared)
 	if( attr == NULL )
 		return( EINVAL );
 
-	if( ( shared != PTHREAD_PROCESS_PRIVATE ) || ( shared != PTHREAD_PROCESS_SHARED ) )
+	if( ( shared != PTHREAD_PROCESS_PRIVATE ) && ( shared != PTHREAD_PROCESS_SHARED ) )
 		return( EINVAL );
 
 	attr->__pshared = shared;

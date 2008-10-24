@@ -228,7 +228,7 @@ int pthread_mutexattr_setpshared(pthread_mutexattr_t *attr, int pshared)
 	if( attr == NULL )
 		return( EINVAL );
 
-	if( ( pshared != PTHREAD_PROCESS_SHARED ) || ( pshared != PTHREAD_PROCESS_PRIVATE ) )
+	if( ( pshared != PTHREAD_PROCESS_SHARED ) && ( pshared != PTHREAD_PROCESS_PRIVATE ) )
 		return( EINVAL );
 
 	attr->__pshared = pshared;
@@ -241,9 +241,9 @@ int pthread_mutexattr_settype(pthread_mutexattr_t *attr, int type)
 	if( attr == NULL )
 		return( EINVAL );
 
-	if( ( type != PTHREAD_MUTEX_DEFAULT ) ||
-	    ( type != PTHREAD_MUTEX_ERRORCHECK ) ||
-	    ( type != PTHREAD_MUTEX_NORMAL ) ||
+	if( ( type != PTHREAD_MUTEX_DEFAULT ) &&
+	    ( type != PTHREAD_MUTEX_ERRORCHECK ) &&
+	    ( type != PTHREAD_MUTEX_NORMAL ) &&
 	    ( type != PTHREAD_MUTEX_RECURSIVE ) )
 			return( EINVAL );
 
