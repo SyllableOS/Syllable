@@ -22,7 +22,7 @@ MSG_ALERT_NOTSELECTED_TEXT					Вы должны выбрать значок п�
 MSG_ALERT_NOTSELECTED_OK					ОК
 
 MSG_ALERT_WRONGPASS_TITLE=2000				Вход не выполнен
-MSG_ALERT_WRONGPASS_TEXT					Неправильный пароль.
+MSG_ALERT_WRONGPASS_TEXT					Неправильный пароль
 MSG_ALERT_WRONGPASS_OK						Извините
 
 MSG_ALERT_NOUSER_TITLE=3000					Вход не выполнен
