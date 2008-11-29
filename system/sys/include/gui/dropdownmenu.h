@@ -95,47 +95,13 @@ public:
 	virtual void Activated( bool bIsActive );
 	virtual void SetTabOrder( int nOrder = NEXT_TAB_ORDER );
 	virtual void WheelMoved( const Point& cDelta );
+	virtual void FontChanged( Font* pcNewFont );
 
 private:
-    class DropdownView : public View
-    {
-    	public:
-			DropdownView( DropdownMenu* pcParent );
-		
-			virtual void	Paint( const Rect& cUpdateRect );
-			virtual void	MouseDown( const Point& cPosition, uint32 nButtons );
-			virtual void	MouseUp( const Point& cPosition, uint32 nButtons, Message* pcData );
-			virtual void	MouseMove( const Point& cPosition, int nCode, uint32 nButtons, Message* pcData );
-			virtual void	KeyDown( const char* pzString, const char* pzRawString, uint32 nQualifiers );
-			virtual void	AllAttached();
-			virtual void	Activated( bool bIsActive );
-			virtual void WheelMoved( const Point& cDelta );
-			
-		    virtual void	HandleMessage( Message* pcMessage );
-  
-	    private:
-			friend class DropdownMenu;
-			DropdownMenu* m_pcParent;
-			Point	      m_cContentSize;
-			font_height   m_sFontHeight;
-			float	      m_vGlyphHeight;
-			int	      m_nOldSelection;
-			int	      m_nCurSelection;
-		    int		m_nScrollPos;
-		    ScrollBar *m_pcScrollBar;
-		    Point m_cOldPosition;
-    };
+	class DropdownView;
     friend class DropdownView;
     
-    class DropdownTextView : public os::TextView
-    {
-    	public:
-    		DropdownTextView(DropdownMenu * pcParent, const Rect &cFrame, const char *pzTitle, const char *pzBuffer, uint32 nResizeMask=CF_FOLLOW_LEFT|CF_FOLLOW_TOP, uint32 nFlags=WID_WILL_DRAW|WID_FULL_UPDATE_ON_RESIZE);
-			~DropdownTextView() { };
-    		void KeyDown( const char* pzString, const char* pzRawString, uint32 nQualifiers );
-    	private:
-    		DropdownMenu *m_pcParent;
-    };
+	class DropdownTextView;
 	friend class DropdownTextView;
   
     enum { ID_MENU_CLOSED = 1, ID_SELECTION_CHANGED, ID_STRING_CHANGED };

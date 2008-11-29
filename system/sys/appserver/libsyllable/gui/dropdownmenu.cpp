@@ -47,6 +47,50 @@ static uint8 g_anArrow[] = {
 
 static Bitmap *g_pcArrows = NULL;
 
+class DropdownMenu::DropdownView : public View
+{
+public:
+	DropdownView( DropdownMenu* pcParent );
+
+	virtual void	Paint( const Rect& cUpdateRect );
+	virtual void	MouseDown( const Point& cPosition, uint32 nButtons );
+	virtual void	MouseUp( const Point& cPosition, uint32 nButtons, Message* pcData );
+	virtual void	MouseMove( const Point& cPosition, int nCode, uint32 nButtons, Message* pcData );
+	virtual void	KeyDown( const char* pzString, const char* pzRawString, uint32 nQualifiers );
+	virtual void	AllAttached();
+	virtual void	Activated( bool bIsActive );
+	virtual void	WheelMoved( const Point& cDelta );
+	virtual void	FontChanged( Font* pcNewFont );
+
+    virtual void	HandleMessage( Message* pcMessage );
+
+private:
+	void _Layout();
+	
+	friend class DropdownMenu;
+	DropdownMenu* m_pcParent;
+	Point	      m_cContentSize;
+	font_height   m_sFontHeight;
+	float	      m_vGlyphHeight;
+	int	      m_nOldSelection;
+	int	      m_nCurSelection;
+    int		m_nScrollPos;
+    ScrollBar *m_pcScrollBar;
+    Point m_cOldPosition;
+    
+    bool m_bIsAttached;
+};
+
+class DropdownMenu::DropdownTextView : public os::TextView
+{
+public:
+	DropdownTextView(DropdownMenu * pcParent, const Rect &cFrame, const char *pzTitle, const char *pzBuffer, uint32 nResizeMask=CF_FOLLOW_LEFT|CF_FOLLOW_TOP, uint32 nFlags=WID_WILL_DRAW|WID_FULL_UPDATE_ON_RESIZE);
+	~DropdownTextView() { };
+	void KeyDown( const char* pzString, const char* pzRawString, uint32 nQualifiers );
+private:
+	DropdownMenu *m_pcParent;
+};
+
 
 DropdownMenu::DropdownTextView::DropdownTextView( DropdownMenu * pcParent, const Rect & cFrame,
 	const char *pzTitle, const char *pzBuffer, uint32 nResizeMask, uint32 nFlags )
@@ -134,6 +178,9 @@ DropdownMenu::DropdownMenu( const Rect & cFrame, const String& cName, uint32 nRe
 
 DropdownMenu::~DropdownMenu()
 {
+	if( m_bMenuOpen && m_pcMenuWindow ) {
+		m_pcMenuWindow->PostMessage( M_QUIT );
+	}
 	delete m_pcEditMsg;
 	delete m_pcSelectionMsg;
 }
@@ -713,6 +760,19 @@ Point DropdownMenu::GetPreferredSize( bool bLargest ) const
 void DropdownMenu::AllAttached()
 {
 	m_pcEditBox->SetTarget( this );
+	m_pcEditBox->SetFont( GetFont() );
+}
+
+void DropdownMenu::FontChanged( Font* pcNewFont )
+{
+	m_pcEditBox->SetFont( pcNewFont );
+	if( m_bMenuOpen && m_pcMenuWindow ) {
+		/* TODO: pointer to the DropdownView should be stored, to avoid the overhead of FindView() */
+		View* pcView = m_pcMenuWindow->FindView( "drop_down_view" );
+		if( pcView ) {
+			pcView->SetFont( pcNewFont );
+		}	/* else: bug!? */
+	}
 }
 
 void DropdownMenu::OpenMenu()
@@ -758,6 +818,10 @@ DropdownMenu::DropdownView::DropdownView( DropdownMenu * pcParent ):View( Rect( 
 	m_nOldSelection = m_nCurSelection;
 
 	m_pcScrollBar = NULL;
+	
+	m_bIsAttached = false;
+	
+	SetFont( pcParent->GetFont() );
 
 	if( m_nCurSelection > MAX_DD_HEIGHT )
 	{
@@ -1089,9 +1153,18 @@ void DropdownMenu::DropdownView::KeyDown( const char *pzString, const char *pzRa
 
 void DropdownMenu::DropdownView::AllAttached()
 {
+	m_bIsAttached = true;
+	_Layout();
+}
+
+void DropdownMenu::DropdownView::_Layout()
+{
+	m_cContentSize.x = 0;	/* Recompute these when the font changes */
+	m_cContentSize.y = 0;
+	
 	Window *pcWindow = GetWindow();
 
-	GetFontHeight( &m_sFontHeight );
+	GetFont()->GetHeight( &m_sFontHeight );
 	m_vGlyphHeight = m_sFontHeight.descender + m_sFontHeight.ascender + m_sFontHeight.line_gap;
 
 	for( uint i = 0; i < m_pcParent->m_cStringList.size(); ++i )
@@ -1118,6 +1191,18 @@ void DropdownMenu::DropdownView::AllAttached()
 	cMenuRect.bottom = cMenuRect.top + m_cContentSize.y - 1;
 
 	pcWindow->SetFrame( m_pcParent->ConvertToScreen( cMenuRect ) );
+}
+
+void DropdownMenu::DropdownView::FontChanged( Font* pcNewFont )
+{
+	/* _Layout() is only valid after the view is attached. */
+	if( m_bIsAttached ) {	/* TODO: Use View::IsAttached() if/when it is implemented */
+		/* Call _Layout() to make the view recompute the sizes, etc. */
+		_Layout();
+
+		Invalidate();
+		Flush();
+	}
 }
 
 
