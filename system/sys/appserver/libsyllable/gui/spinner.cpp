@@ -172,6 +172,22 @@ void Spinner::AllAttached()
 {
 	View::AllAttached();
 	m->m_pcEditBox->SetTarget( this );
+	m->m_pcEditBox->SetFont( GetFont() );
+}
+
+void Spinner::FontChanged( Font* pcNewFont )
+{
+	m->m_pcEditBox->SetFont( pcNewFont );
+}
+
+void Spinner::SetTabOrder( int nOrder )
+{
+	m->m_pcEditBox->SetTabOrder( nOrder );
+}
+
+int Spinner::GetTabOrder()
+{
+	return( m->m_pcEditBox->GetTabOrder() );
 }
 
 void Spinner::HandleMessage( Message * pcMessage )
@@ -306,6 +322,50 @@ const String & Spinner::GetFormat() const
 }
 
 //----------------------------------------------------------------------------
+// NAME: Spinner::Decrement()
+// DESC: Decreases the current value by the step amount, down to the Spinner's minimum value.
+// NOTE: Equivalent to clicking the downarrow.
+// SEE ALSO: Spinner::Increment()
+//----------------------------------------------------------------------------
+
+void Spinner::Decrement()
+{
+	double vNewValue = GetValue().AsDouble(  ) - m->m_vStep;
+
+	if( vNewValue > m->m_vMaxValue )
+	{
+		vNewValue = m->m_vMaxValue;
+	}
+	if( vNewValue < m->m_vMinValue )
+	{
+		vNewValue = m->m_vMinValue;
+	}
+	SetValue( vNewValue );
+}
+
+//----------------------------------------------------------------------------
+// NAME: Spinner::Increment()
+// DESC: Increases the current value by the step amount, up to the Spinner's maximum value.
+// NOTE: Equivalent to clicking the uparrow.
+// SEE ALSO: Spinner::Decrement()
+//----------------------------------------------------------------------------
+
+void Spinner::Increment()
+{
+	double vNewValue = GetValue().AsDouble(  ) + m->m_vStep;
+
+	if( vNewValue > m->m_vMaxValue )
+	{
+		vNewValue = m->m_vMaxValue;
+	}
+	if( vNewValue < m->m_vMinValue )
+	{
+		vNewValue = m->m_vMinValue;
+	}
+	SetValue( vNewValue );
+}
+
+//----------------------------------------------------------------------------
 // NAME:
 // DESC:
 // NOTE:
@@ -426,26 +486,6 @@ void Spinner::KeyDown( const char *pzString, const char *pzRawString, uint32 nQu
 	}
 }
 
-void Spinner::KeyUp( const char *pzString, const char *pzRawString, uint32 nQualifiers )
-{
-	if( IsEnabled() == false )
-	{
-		View::KeyUp( pzString, pzRawString, nQualifiers );
-		return;
-	}
-	if( ( pzString[1] == '\0' && ( pzString[0] == VK_ENTER || pzString[0] == ' ' ) ) ||
-		( GetShortcut() == ShortcutKey( pzRawString, nQualifiers ) ) )
-	{
-		if( GetValue().AsBool(  ) == true )
-		{
-			SetValue( false );
-		}
-	}
-	else
-	{
-		Control::KeyDown( pzString, pzRawString, nQualifiers );
-	}
-}
 
 void Spinner::MouseMove( const Point & cNewPos, int nCode, uint32 nButtons, Message * pcData )
 {
@@ -552,33 +592,13 @@ void Spinner::MouseUp( const Point & cPosition, uint32 nButton, Message * pcData
 	{
 		if( m->m_bUpButtonPushed == false )
 		{
-			double vNewValue = GetValue().AsDouble(  ) - m->m_vStep;
-
-			if( vNewValue > m->m_vMaxValue )
-			{
-				vNewValue = m->m_vMaxValue;
-			}
-			if( vNewValue < m->m_vMinValue )
-			{
-				vNewValue = m->m_vMinValue;
-			}
-			SetValue( vNewValue );
+			Decrement();
 		}
 		else if( m->m_bDownButtonPushed == false )
 		{
-			double vNewValue = GetValue().AsDouble(  ) + m->m_vStep;
-
-			if( vNewValue > m->m_vMaxValue )
-			{
-				vNewValue = m->m_vMaxValue;
-			}
-			if( vNewValue < m->m_vMinValue )
-			{
-				vNewValue = m->m_vMinValue;
-			}
-			SetValue( vNewValue );
+			Increment();
 		}
-		SetMousePos( m->m_cHitPos );
+//		SetMousePos( m->m_cHitPos );
 		m->m_bUpButtonPushed = false;
 		m->m_bDownButtonPushed = false;
 		Invalidate();
@@ -608,7 +628,7 @@ String Spinner::FormatString( double vValue )
 {
 	char zString[1024];
 
-	sprintf( zString, m->m_cStrFormat.c_str(), vValue );
+	snprintf( zString, 1024, m->m_cStrFormat.c_str(), vValue );
 	return ( String( zString ) );
 }
 

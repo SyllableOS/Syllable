@@ -58,6 +58,8 @@ public:
     void	       SetMinMax( double vMin, double vMax ) { SetMinValue( vMin ); SetMaxValue( vMax ); }
     void	       SetStep( double vStep );
     void	       SetScale( double vScale );
+    void	       Increment();
+    void	       Decrement();
 
     void	       SetMinPreferredSize( int nWidthChars );
     void	       SetMaxPreferredSize( int nWidthChars );
@@ -78,6 +80,9 @@ public:
     virtual void  MouseUp( const Point& cPosition, uint32 nButtons, Message* pcData );
     virtual void  WheelMoved( const Point& cDelta );
     virtual void  AllAttached();
+    virtual void  FontChanged( Font* pcNewFont );
+    virtual void  SetTabOrder( int nOrder = NEXT_TAB_ORDER );
+    virtual int   GetTabOrder();
     virtual void  HandleMessage( Message* pcMessage );
   
     virtual void  Paint( const os::Rect& cUpdateRect );
@@ -85,7 +90,6 @@ public:
     virtual Point GetPreferredSize( bool bLargest ) const;
 	virtual void  Activated( bool bIsActive );
     virtual void  KeyDown( const char* pzString, const char* pzRawString, uint32 nQualifiers );
-    virtual void  KeyUp( const char* pzString, const char* pzRawString, uint32 nQualifiers );
 
 private:
     virtual void	__SP_reserved1__();
@@ -104,7 +108,8 @@ private:
     void UpdateEditBox();
 
     class Private;
-    Private *m;    
+    Private *m;   
+    
 };
 
 } // end of namespace os
