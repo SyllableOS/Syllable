@@ -40,26 +40,27 @@ struct ResourceDesc
 	off_t m_nFileOffset;
 	ssize_t m_nHeaderSize;
 	ssize_t m_nSize;
-	  String m_cName;
-	  String m_cType;
+	String m_cName;
+	String m_cType;
 };
 
 /** \internal */
 
 class Resources::Private
 {
-      public:
+	public:
+	~Private();
 	SeekableIO * m_pcStream;
 	off_t m_nResOffset;
 	off_t m_nTotalSize;
 	bool m_bReadOnly;
 	bool m_bDeleteStream;
-	std::vector < ResourceDesc > m_cResources;
+	std::vector < ResourceDesc* > m_apResources;
 };
 
 class ResStream::Private
 {
-      public:
+	public:
 	SeekableIO * m_pcStream;
 	off_t m_nImageOffset;
 	ssize_t m_nSize;
@@ -68,6 +69,15 @@ class ResStream::Private
 	off_t m_nCurOffset;
 	bool m_bReadOnly;
 };
+
+Resources::Private::~Private()
+{
+	/* Delete the ResourceDescs from m_apResources */
+	while( !m_apResources.empty() ) {
+		delete( m_apResources.back() );
+		m_apResources.pop_back();
+	}
+}
 
 ResStream::ResStream( SeekableIO * pcFile, off_t nOffset, const String & cName, const String & cType, ssize_t nSize, bool bReadOnly )
 {
@@ -364,6 +374,7 @@ Resources::Resources( SeekableIO * pcFile, off_t nResOffset, bool bCreate )
 void Resources::_Init( SeekableIO * pcFile, off_t nResOffset, bool bCreate )
 {
 	m = new Private;
+
 	m->m_pcStream = pcFile;
 	m->m_nResOffset = nResOffset;
 	m->m_bReadOnly = !bCreate;
@@ -530,11 +541,9 @@ status_t Resources::_LoadResourceList()
 			char *pzBfr = new char[ nNameLen + 1 ];
 			nError = m->m_pcStream->Read( pzBfr, nNameLen );
 			pzBfr[ nNameLen ] = 0;
-			sDesc.m_cName = pzBfr;
+			sDesc.m_cName = String( pzBfr, nNameLen );
 			delete []pzBfr;
 		}
-/*		sDesc.m_cName.resize( nNameLen );
-		nError = m->m_pcStream->Read( sDesc.m_cName.begin(), nNameLen );*/
 		sDesc.m_nHeaderSize += nNameLen + 1;
 		if( nError != nNameLen )
 		{
@@ -557,11 +566,9 @@ status_t Resources::_LoadResourceList()
 			char *pzBfr = new char[ nNameLen + 1 ];
 			nError = m->m_pcStream->Read( pzBfr, nNameLen );
 			pzBfr[ nNameLen ] = 0;
-			sDesc.m_cType = pzBfr;
+			sDesc.m_cType = String( pzBfr, nNameLen );
 			delete []pzBfr;
 		}
-/*		sDesc.m_cType.resize( nNameLen );
-		nError = m->m_pcStream->Read( sDesc.m_cType.begin(), nNameLen );*/
 		if( nError != nNameLen )
 		{
 			if( nError >= 0 )
@@ -571,7 +578,8 @@ status_t Resources::_LoadResourceList()
 			return ( -1 );
 		}
 		sDesc.m_nHeaderSize += nNameLen + 1;
-		m->m_cResources.push_back( sDesc );
+		ResourceDesc *psDesc = new ResourceDesc( sDesc );
+		m->m_apResources.push_back( psDesc );
 		m->m_nTotalSize += sDesc.m_nHeaderSize + sDesc.m_nSize;
 		m->m_pcStream->Seek( sDesc.m_nSize, SEEK_CUR );
 	}
@@ -595,7 +603,7 @@ status_t Resources::_LoadResourceList()
 
 int Resources::GetResourceCount() const
 {
-	return ( m->m_cResources.size() );
+	return ( m->m_apResources.size() );
 }
 
 /** Get the name of a specified resource.
@@ -610,9 +618,9 @@ int Resources::GetResourceCount() const
 
 String Resources::GetResourceName( uint nIndex ) const
 {
-	if( nIndex < m->m_cResources.size() )
+	if( nIndex < m->m_apResources.size() )
 	{
-		return ( m->m_cResources[nIndex].m_cName );
+		return ( m->m_apResources[nIndex]->m_cName );
 	}
 	else
 	{
@@ -633,9 +641,9 @@ String Resources::GetResourceName( uint nIndex ) const
 
 String Resources::GetResourceType( uint nIndex ) const
 {
-	if( nIndex < m->m_cResources.size() )
+	if( nIndex < m->m_apResources.size() )
 	{
-		return ( m->m_cResources[nIndex].m_cType );
+		return ( m->m_apResources[nIndex]->m_cType );
 	}
 	else
 	{
@@ -656,9 +664,9 @@ String Resources::GetResourceType( uint nIndex ) const
 
 ssize_t Resources::GetResourceSize( uint nIndex ) const
 {
-	if( nIndex < m->m_cResources.size() )
+	if( nIndex < m->m_apResources.size() )
 	{
-		return ( m->m_cResources[nIndex].m_nSize );
+		return ( m->m_apResources[nIndex]->m_nSize );
 	}
 	else
 	{
@@ -746,14 +754,14 @@ ssize_t Resources::ReadResource( const String & cResName, void *pBuffer, String 
 
 ResStream *Resources::GetResourceStream( const String & cName )
 {
-	for( uint i = 0; i < m->m_cResources.size(); ++i )
+	for( uint i = 0; i < m->m_apResources.size(); ++i )
 	{
-		if( cName == m->m_cResources[i].m_cName )
+		if( cName == m->m_apResources[i]->m_cName )
 		{
 			try
 			{
-				ResStream *pcStream = new ResStream( m->m_pcStream, m->m_cResources[i].m_nFileOffset + m->m_cResources[i].m_nHeaderSize,
-					cName, m->m_cResources[i].m_cType, m->m_cResources[i].m_nSize, true );
+				ResStream *pcStream = new ResStream( m->m_pcStream, m->m_apResources[i]->m_nFileOffset + m->m_apResources[i]->m_nHeaderSize,
+					cName, m->m_apResources[i]->m_cType, m->m_apResources[i]->m_nSize, true );
 
 				return ( pcStream );
 			}
@@ -795,11 +803,12 @@ ResStream *Resources::GetResourceStream( const String & cName )
 
 ResStream *Resources::GetResourceStream( uint nIndex )
 {
-	if( nIndex < m->m_cResources.size() )
+	if( nIndex < m->m_apResources.size() )
 	{
 		try
 		{
-			return ( new ResStream( m->m_pcStream, m->m_cResources[nIndex].m_nFileOffset + m->m_cResources[nIndex].m_nHeaderSize, m->m_cResources[nIndex].m_cName, m->m_cResources[nIndex].m_cType, m->m_cResources[nIndex].m_nSize, true ) );
+			return ( new ResStream( m->m_pcStream, m->m_apResources[nIndex]->m_nFileOffset + m->m_apResources[nIndex]->m_nHeaderSize,
+				m->m_apResources[nIndex]->m_cName, m->m_apResources[nIndex]->m_cType, m->m_apResources[nIndex]->m_nSize, true ) );
 		}
 		catch( std::bad_alloc & )
 		{
@@ -893,21 +902,24 @@ ResStream *Resources::CreateResource( const String & cName, const String & cType
 	{
 		return ( NULL );
 	}
+	ResStream* pcStream = NULL;
 	try
 	{
-		ResStream *pcStream = new ResStream( m->m_pcStream, sDesc.m_nFileOffset + sDesc.m_nHeaderSize,
+		pcStream = new ResStream( m->m_pcStream, sDesc.m_nFileOffset + sDesc.m_nHeaderSize,
 			cName, cType, nSize, false );
 
 		m->m_nTotalSize += nSize + sDesc.m_nHeaderSize;
-		m->m_cResources.push_back( sDesc );
+		ResourceDesc* psDesc = new ResourceDesc( sDesc );
+		m->m_apResources.push_back( psDesc );
 
 		m->m_pcStream->WritePos( m->m_nResOffset + sizeof( int ) * 2, &m->m_nTotalSize, sizeof( off_t ) );
-		int nValue = m->m_cResources.size();
+		int nValue = m->m_apResources.size();
 		m->m_pcStream->WritePos( m->m_nResOffset + sizeof( int ) * 2 + sizeof( off_t ), &nValue, sizeof( int ) );
 		return ( pcStream );
 	}
 	catch( ... )
 	{
+		if( pcStream != NULL ) delete( pcStream );	/* In case new ResStream succeeded but new ResourceDesc failed */
 		errno = ENOMEM;
 		return ( NULL );
 	}
