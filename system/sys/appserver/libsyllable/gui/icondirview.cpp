@@ -1897,7 +1897,7 @@ void IconDirectoryView::MouseUp( const Point & cPosition, uint32 nButtons, Messa
 			/* Create links */
 			for( uint i = 0; i < cSrcPaths.size(); i++ )
 			{
-				printf( "Create link %s to %s\n", cDstPaths[i].c_str(), cSrcPaths[i].c_str() );
+//				printf( "Create link %s to %s\n", cDstPaths[i].c_str(), cSrcPaths[i].c_str() );
 				symlink( cSrcPaths[i].c_str(), cDstPaths[i].c_str() );
 			}
 		} else if( os::Application::GetInstance()->GetQualifiers() & os::QUAL_CTRL )

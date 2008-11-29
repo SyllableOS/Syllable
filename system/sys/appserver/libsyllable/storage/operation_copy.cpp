@@ -430,7 +430,7 @@ bool OperationCopyFile( const char *pzDst, const char *pzSrc, bool *pbReplaceFil
 		pcProgress->SetFileName( Path( pzDst ).GetLeaf() );
 		pcProgress->Unlock();
 		
-		printf( "Copy link %s to %s\n", os::SymLink( pzSrc ).ReadLink().c_str(), pzDst );
+//		printf( "Copy link %s to %s\n", os::SymLink( pzSrc ).ReadLink().c_str(), pzDst );
 		symlink( os::SymLink( pzSrc ).ReadLink().c_str(), pzDst );
 		
 		cp_attribs( pzSrc, pzDst );

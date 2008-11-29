@@ -78,7 +78,7 @@ void GradientView::HandleMessage( Message *pcMsg )
 				Variant cVal;
 				if( pcMsg->FindVariant( "value", &cVal  ) == 0 )
 				{
-					printf( "g %s\n", cVal.AsString().c_str() );
+//					printf( "g %s\n", cVal.AsString().c_str() );
 					SetColors( cVal.AsColor32(), 0xFF000000 );
 				}
 			}
