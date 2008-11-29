@@ -49,7 +49,7 @@ public:
     Message*	NextMessage();
     bool	RemoveMessage( Message* pcMsg );	// NOTE : The message will be deleted if found!
     Message*	FindMessage( int nIndex ) const;
-    Message*	FindMessage( int nCode, int nIndex = 0 ) const;
+    Message*	FindMessage( int nCode, int nIndex ) const;
     int		GetMessageCount( void ) const;
     bool	IsEmpty( void ) const;
 
