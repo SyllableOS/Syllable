@@ -2460,7 +2460,7 @@ void TextEdit::Paint( const Rect & cUpdateRect )
 
 			RenderLine( m_pcBgView, 0, -vHOffset, 0.0f );
 			m_pcBgView->Sync();
-			DrawBitmap( m_pcBackBuffer, cRect.Bounds(), cRect );
+			DrawBitmap( m_pcBackBuffer, cRect, cRect );
 			Sync();
 		}
 	}
