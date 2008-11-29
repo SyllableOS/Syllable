@@ -1,3 +1,11 @@
+* November 29, 2008, Anthony Morphett *
+
+Modified os::Resources to internally use std::vector< ResourceDesc* >
+instead of std::vector< ResourceDesc >; this bypasses the strange rescopy crash.
+
+Removed the default parameter from MessageQueue::FindMessage() to remove
+the ambiguity.
+
 * October 24, 2008, Kristian Van Der Vliet *
 
 Fixed a couple of stupid errors in libpthread where || (Boolean OR) had been

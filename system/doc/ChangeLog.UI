@@ -1,3 +1,9 @@
+* November 29, 2008, Anthony Morphett *
+
+- Spinner, DropdownMenu, TextView bugfixes
+- Added Spinner::Increment(), Spinner::Decrement() methods
+- Removed unneeded desktop log messages
+
 * September 21, 2008, Anthony Morphett *
 
 Bugfix: Make Spinner correctly send value in status changed message
