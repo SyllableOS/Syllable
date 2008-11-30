@@ -1,5 +1,5 @@
 ; List of all resources released as binaries
-; Generated on 8-Oct-2008/2:36:16+2:00
+; Generated on 29-Nov-2008/5:45:06+1:00
 
 modules
 	p7zip-4.51
@@ -109,7 +109,6 @@ modules
 	ocaml-3.10.2
 	omake-0.9.8.5
 	openldap-2.3.27
-	openssh-4.6p1
 	openssl-0.9.8e
 	orca--current
 	patch-2.5.4
@@ -124,6 +123,7 @@ modules
 	rsync-2.6.9
 	ruby-1.8.6
 	rune--current
+	s3sync--current
 	samba-3.0.20b
 	sane-backends-1.0.18
 	scummvm-0.11.1
@@ -142,7 +142,6 @@ modules
 	tar-1.19
 	tetex-3.0
 	texinfo-4.12
-	transmission-0.6.1
 	unace-1.2b
 	unrar-3.7.3
 	unzip-5.52
