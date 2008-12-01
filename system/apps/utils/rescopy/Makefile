@@ -18,10 +18,9 @@ $(OBJDIR)/$(EXE): $(OBJS) Makefile
 	$(CXX) $(OBJS) -o $(OBJDIR)/$(EXE) -lsyllable
 
 install: $(OBJDIR)/$(EXE)
-	cp -af $(OBJDIR)/$(EXE) /system/bin/$(EXE)
-
-dist: $(OBJDIR)/$(EXE)
 	cp -af $(OBJDIR)/$(EXE) $(IMAGE)/system/bin/$(EXE)
+
+dist: install
 
 deps: $(OBJDIR) $(DEPS)
 
