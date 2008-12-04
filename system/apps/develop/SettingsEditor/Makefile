@@ -25,11 +25,11 @@ $(OBJDIR):
 
 catalogs:
 	cd resources; \
-	catcomp -c SettingsEditor.cd; \
+	catcomp -c SettingsEditor.catfish; \
 	for CATALOG in $(CATALOGS);do \
 		echo $$CATALOG; \
 		cd $$CATALOG; \
-		catcomp -t SettingsEditor.cd; \
+		catcomp -t SettingsEditor.catfish; \
 		cd ..; \
 	done;
 
