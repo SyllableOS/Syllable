@@ -680,7 +680,7 @@ void MainWindow::HandleMessage( os::Message* pcMessage )
 			if( fork() == 0 )
 			{
 				set_thread_priority( -1, 0 );
-				execlp( "/Applications/ABrowse/ABrowse","/Applications/ABrowse/ABrowse","http://www.syllable-software.info/index.php?id=SimpleBurn",NULL );
+				execlp( "/Applications/Webster/Webster","/Applications/Webster/Webster","http://www.syllable-software.info/index.php?id=SimpleBurn",NULL );
 				exit(0);
 			}
 			break;
@@ -2341,4 +2341,5 @@ bool MainWindow::OkToQuit()
 	os::Application::GetInstance()->PostMessage( os::M_QUIT );
 	return( true );
 }
+
 
