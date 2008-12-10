@@ -136,7 +136,8 @@ public:
 	virtual void MakeFocus( bool bFocus = true );
 	
 	virtual void SetTabOrder( int nOrder = NEXT_TAB_ORDER );
-	virtual int GetTabOrder();
+	virtual int GetTabOrder() const;
+	virtual int GetTabOrder();		/* NOTE: This should be removed in the next libsyllable version. */
 private:
 	virtual void __ICV_reserved2__();
 	virtual void __ICV_reserved3__();

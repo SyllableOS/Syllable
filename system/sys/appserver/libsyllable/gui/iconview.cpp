@@ -2269,6 +2269,12 @@ void IconView::SetTabOrder( int nOrder )
 	View::SetTabOrder( NO_TAB_ORDER );
 }
 
+int IconView::GetTabOrder() const
+{
+	return( m->m_pcView->GetTabOrder() );
+}
+
+/* NOTE: This should be removed in the next libsyllable version. The const version above is the correct one. */
 int IconView::GetTabOrder()
 {
 	return( m->m_pcView->GetTabOrder() );
@@ -2278,4 +2284,5 @@ void IconView::__ICV_reserved2__() {}
 void IconView::__ICV_reserved3__() {}
 void IconView::__ICV_reserved4__() {}
 void IconView::__ICV_reserved5__() {}
+
 

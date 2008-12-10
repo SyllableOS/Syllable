@@ -82,7 +82,7 @@ public:
     virtual void  AllAttached();
     virtual void  FontChanged( Font* pcNewFont );
     virtual void  SetTabOrder( int nOrder = NEXT_TAB_ORDER );
-    virtual int   GetTabOrder();
+    virtual int   GetTabOrder() const;
     virtual void  HandleMessage( Message* pcMessage );
   
     virtual void  Paint( const os::Rect& cUpdateRect );
@@ -90,6 +90,7 @@ public:
     virtual Point GetPreferredSize( bool bLargest ) const;
 	virtual void  Activated( bool bIsActive );
     virtual void  KeyDown( const char* pzString, const char* pzRawString, uint32 nQualifiers );
+	virtual void  KeyUp( const char* pzString, const char* pzRawString, uint32 nQualifiers );
 
 private:
     virtual void	__SP_reserved1__();

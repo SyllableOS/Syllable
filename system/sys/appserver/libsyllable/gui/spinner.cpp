@@ -185,7 +185,7 @@ void Spinner::SetTabOrder( int nOrder )
 	m->m_pcEditBox->SetTabOrder( nOrder );
 }
 
-int Spinner::GetTabOrder()
+int Spinner::GetTabOrder() const
 {
 	return( m->m_pcEditBox->GetTabOrder() );
 }
@@ -487,6 +487,14 @@ void Spinner::KeyDown( const char *pzString, const char *pzRawString, uint32 nQu
 }
 
 
+/* Although this method doesn't do anything, it needs to exist to preserve binary compatibility.
+   It may be removed in the next libsyllable version.
+*/
+void Spinner::KeyUp( const char* pzString, const char* pzRawString, uint32 nQualifiers )
+{
+	Control::KeyUp( pzString, pzRawString, nQualifiers );
+}
+
 void Spinner::MouseMove( const Point & cNewPos, int nCode, uint32 nButtons, Message * pcData )
 {
 	if( m->m_pcEditBox->IsEnabled() == false )
@@ -634,8 +642,7 @@ String Spinner::FormatString( double vValue )
 
 void Spinner::UpdateEditBox()
 {
-
-	m->m_pcEditBox->Set( FormatString( GetValue().AsDouble(  ) ).c_str(  ), false );
+	m->m_pcEditBox->Set( FormatString( GetValue().AsDouble() ).c_str(), false );
 }
 
 void Spinner::Activated( bool bIsActive )
@@ -724,3 +731,4 @@ void Spinner::__SP_reserved4__()
 void Spinner::__SP_reserved5__()
 {
 }
+
