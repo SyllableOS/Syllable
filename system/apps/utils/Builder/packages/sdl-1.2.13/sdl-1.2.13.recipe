@@ -15,10 +15,14 @@ build-needs
 	automake
 	autoconf
 ; For DirectFB:
-build-recommends	pkg-config
+build-recommends
+	autoconf <= 2.61
+	pkg-config
 recommends			directfb >= 0.9.15 < 1
 
-patch				autoreconf
+patch
+;	autoreconf
+	./autogen.sh
 
 system-prefix-var	DESTDIR
 
@@ -32,3 +36,4 @@ develop-docs
 	docs/index.html docs/html
 	test
 internal-docs		README.Porting
+
