@@ -19,10 +19,11 @@ install-prefix-var	PREFIX
 
 documentation
 	ABOUT COPYING FAQ FORK Changelog TODO
-;	doc
+	doc/*
 build-docs			INSTALL
 
-_links
+links
 	wodim			bin/cdrecord
 	genisoimage		bin/mkisofs
 	icedax			bin/cdda2wav
+
