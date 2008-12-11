@@ -1,0 +1,15 @@
+diff -ru cdrkit-1.1.9-original/libusal/scsihack.c cdrkit-1.1.9/libusal/scsihack.c
+--- cdrkit-1.1.9-original/libusal/scsihack.c	2007-04-10 17:01:46.000000000 +0200
++++ cdrkit-1.1.9/libusal/scsihack.c	2008-12-11 04:32:22.000000000 +0100
+@@ -259,6 +259,11 @@
+ #include "scsi-dos.c"
+ #endif
+ 
++#ifdef	__SYLLABLE__			/* We have a SCSI implementation for Syllable */
++#define	SCSI_IMPL
++#include "scsi-syllable.c"
++#endif
++
+ #ifdef	__NEW_ARCHITECTURE
+ #define	SCSI_IMPL		/* We have a SCSI implementation for XXX */
+ /*
