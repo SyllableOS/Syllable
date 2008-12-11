@@ -4,11 +4,6 @@ status				testing
 recommends
 	alsa-library >= 0.9.0
 	directfb >= 0.9.15 < 1
-_build-needs
-	automake
-	autoconf
-; For DirectFB:
-build-recommends		pkg-config
 
 configure-options
 ;	--disable-video-fbcon

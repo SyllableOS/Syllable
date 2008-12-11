@@ -1,6 +1,7 @@
 authors
 	Arno Klenke
 	Kaj de Vos
+	Rui Caridade
 maintainers			Kaj de Vos
 status				testing
 
@@ -9,13 +10,19 @@ home				www.libsdl.org
 packages			SDL-1.2.13
 locations			http://www.libsdl.org/release/
 
-_build-needs
-	automake < 1.10
+build-needs
+;	automake < 1.10
+	automake
 	autoconf
+; For DirectFB:
+build-recommends	pkg-config
+recommends			directfb >= 0.9.15 < 1
 
-;patch				autoreconf
+patch				autoreconf
 
 system-prefix-var	DESTDIR
+
+;configure-options	--disable-video-directfb
 
 documentation
 	README README-SDL.txt BUGS COPYING WhatsNew CREDITS TODO
