@@ -1,0 +1,36 @@
+authors				Kaj de Vos
+status				testing
+
+headline			SDL library to decode popular audio formats
+description
+	SDL_sound is a library that handles the decoding of several popular sound file formats, such as .WAV and .MP3. It is meant to make the programmer's sound playback tasks simpler. The programmer gives SDL_sound a filename, or feeds it data directly from one of many sources, and then reads the decoded waveform data back at her leisure. If resource constraints are a concern, SDL_sound can process sound data in programmer-specified blocks. Alternately, SDL_sound can decode a whole sound file and hand back a single pointer to the whole waveform. SDL_sound can also handle sample rate, audio format, and channel conversion on-the-fly and behind-the-scenes, if the programmer desires.
+licenses			LGPL
+
+home				icculus.org/SDL_sound/
+packages			SDL_sound-1.0.3
+locations			http://icculus.org/SDL_sound/downloads/
+
+needs				sdl >= 1.2
+recommends
+	libvorbis
+;	For AlephOne:
+	smpeg >= 0.4.3
+	libflac
+	libmodplug
+	libmikmod >= 3.1.5
+	libspeex
+
+configure-options
+;	--enable-static
+;	--disable-shared
+;	--with-sdl-prefix=
+;	--disable-sdltest
+	--with-vorbis-prefix=/resources/libvorbis
+;	--disable-vorbistest
+
+system-prefix-var	DESTDIR
+
+documentation
+	README COPYING CREDITS CHANGELOG TODO
+;	docs
+
