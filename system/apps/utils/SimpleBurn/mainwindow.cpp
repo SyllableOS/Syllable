@@ -680,7 +680,7 @@ void MainWindow::HandleMessage( os::Message* pcMessage )
 			if( fork() == 0 )
 			{
 				set_thread_priority( -1, 0 );
-				execlp( "/Applications/Webster/Webster","/Applications/Webster/Webster","http://www.syllable-software.info/index.php?id=SimpleBurn",NULL );
+				execlp( "/Applications/Webster/Webster","/Applications/Webster/Webster","http://www.syllable.org/",NULL );
 				exit(0);
 			}
 			break;
@@ -695,7 +695,7 @@ void MainWindow::HandleMessage( os::Message* pcMessage )
 		//----------------------------------------------------------------------------
 		case M_MENU_ABOUT:
 		{
-			os::String cText = String("Version:") + os::String(" 0.4\n\n") + String("Author:") + os::String(" Flemming H. Sørensen (BurningShadow)\n\n") + String("Desc:") + String(" A CD burning program.") + os::String("\n\n") + String("Licens: ") + String("GNU GPL v2.\n");
+			os::String cText = String("Version:") + os::String(" 0.4.1\n\n") + String("Author:") + os::String(" Flemming H. Sørensen (BurningShadow)\n\n") + String("Desc:") + String(" A CD burning program.") + os::String("\n\n") + String("Licens: ") + String("GNU GPL v2.\n");
 			os::Alert* pcAlert = new Alert( "About SimpleBurn", cText, m_pcIcon->LockBitmap(),0, "_Ok",NULL);
 			pcAlert->Go( new os::Invoker( 0 ) );
 			pcAlert->MakeFocus();
@@ -2341,5 +2341,3 @@ bool MainWindow::OkToQuit()
 	os::Application::GetInstance()->PostMessage( os::M_QUIT );
 	return( true );
 }
-
-
