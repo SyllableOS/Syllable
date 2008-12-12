@@ -7,7 +7,8 @@ description
 
 modules
 	programming/languages/perl-5.10.0
-	programming/autoconf-2.62
+;	Higher versions cause warnings on SDL 1.2.13:
+	programming/autoconf-2.61
 ;	GrUB doesn't work with 1.10+:
 	programming/automake-1.9.6
 ;	For old packages:
@@ -16,4 +17,3 @@ modules
 	programming/net-ssleay-1.30
 	programming/xml-parser-2.36
 	programming/intltool-0.37.1
-
