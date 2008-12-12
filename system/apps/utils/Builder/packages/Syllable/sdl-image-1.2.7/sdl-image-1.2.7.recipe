@@ -1,0 +1,10 @@
+authors
+	Flemming Sørensen
+	Kaj de Vos
+maintainers			Kaj de Vos
+status				testing
+
+make-shared
+
+;configure-env		LDFLAGS "$LDFLAGS -lm"
+
