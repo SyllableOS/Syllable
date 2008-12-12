@@ -1,3 +1,8 @@
+* December 12, 2008, Kaj de Vos *
+
+Corrected the DateTime preference applet for the new locations of GLibC and /etc/localtime.
+Report from Alexander "azlt".
+
 * August 11, 2008, Rick Caudill *
 
 Added a keymap selector to dlogin.  This should fix issues with foreign keymaps not working in dlogin

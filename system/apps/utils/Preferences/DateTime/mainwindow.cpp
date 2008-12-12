@@ -271,16 +271,16 @@ void CMainWindow::UpdateTimeZoneMap()
 void CMainWindow::Apply() 
 {
   // Delete current timezone, easier to do through system() than calls
-  system("rm /usr/glibc/etc/localtime");
+  system("rm /etc/localtime");
   
   int nTimeZone = m_pcDDMTimeZone->GetSelection();
   if( nTimeZone < 0 )
     	nTimeZone = 0;
 
   // Find out current file
-  std::string strFile = std::string("ln /usr/glibc/share/zoneinfo");
+  std::string strFile = std::string("ln /system/indexes/share/zoneinfo");
   strFile += *m_pcstrFile[nTimeZone];
-  strFile += std::string(" /usr/glibc/etc/localtime -s");
+  strFile += std::string(" /etc/localtime -s");
   system(strFile.c_str());
 }
 
