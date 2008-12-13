@@ -119,7 +119,7 @@ diff -ru sdl-1.2.13-original/configure.in sdl-1.2.13/configure.in
 +            have_timers=yes
 +        fi
 +        # The Syllable platform requires special libraries
-+        SYSTEM_LIBS="$SYSTEM_LIBS -lsyllable -lmedia"
++        SYSTEM_LIBS="$SYSTEM_LIBS -lsyllable -lmedia -lstdc++"
 +        ;;
      *-*-darwin* )
          # This could be either full "Mac OS X", or plain "Darwin" which is
