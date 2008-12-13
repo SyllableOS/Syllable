@@ -1,3 +1,8 @@
+* December 12, 2008, Kaj de Vos *
+
+Upgraded SDL to 1.2.13 from patches by Rui Caridade.
+Upgraded SDL-Image to 1.2.7, SDL-Net to 1.2.7 and SDL-Sound to 1.0.3.
+
 * November 29, 2008, Anthony Morphett *
 
 Modified os::Resources to internally use std::vector< ResourceDesc* >
