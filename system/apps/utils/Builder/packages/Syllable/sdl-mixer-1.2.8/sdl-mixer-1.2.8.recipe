@@ -3,7 +3,8 @@ authors
 	Kaj de Vos
 	Michael Saunders
 maintainers			Kaj de Vos
-status				testing
+status				broken
+notes				Reconfiguration breaks on missing AutoMake macro for SMPEG
 
 make-shared
 
