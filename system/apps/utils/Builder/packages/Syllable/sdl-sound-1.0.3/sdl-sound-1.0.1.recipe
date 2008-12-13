@@ -1,9 +1,0 @@
-authors
-	Flemming Sørensen
-	Kaj de Vos
-maintainers			Kaj de Vos
-status				testing
-notes				Doesn't build a shared library yet
-
-make-shared
-
