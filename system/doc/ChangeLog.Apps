@@ -1,3 +1,8 @@
+* December 14, 2008, Anthony Morphett *
+
+Bugfixes for dock plugin unloading.
+Updated apps to use Webster rather than ABrowse: Address dockplugin, SimpleBurn, Launch.
+
 * December 12, 2008, Kaj de Vos *
 
 Corrected the DateTime preference applet for the new locations of GLibC and /etc/localtime.
