@@ -134,7 +134,6 @@ void SettingsWindow::Layout()
 	pcDefaultDrop->AppendItem("Yahoo");
 	pcDefaultDrop->AppendItem("Thesaurus");
 	pcDefaultDrop->AppendItem("Dictionary");
-	pcDefaultDrop->AppendItem("Kamidake");
 	pcDefaultDrop->SetReadOnly(true);
 	
 	HLayoutNode* pcOtherButtonNode = new HLayoutNode("other_buttons");

@@ -736,6 +736,16 @@ void DockWin::HandleMessage( os::Message* pcMessage )
 			}
 			break;
 		}
+		case os::DOCK_SET_POSITION:
+		{
+			/* Called by another application to set the position of the dock */
+			int32 nPos;
+			if( pcMessage->FindInt32( "position", &nPos ) == 0 )
+			{
+				SetPosition( (os::alignment)nPos );
+			}
+			SaveSettings();
+		}
 		default:
 		{
 			os::Window::HandleMessage( pcMessage );
@@ -1163,8 +1173,10 @@ void DockApp::HandleMessage( os::Message* pcMessage )
 			if( !pcMessage->IsSourceWaiting() )
 				break;
 			os::Message cMsg( os::DOCK_GET_PLUGINS );
+			m_pcWindow->Lock();
 			for( uint i = 0; i < m_pcWindow->GetPlugins().size(); i++ )
 				cMsg.AddString( "plugin", m_pcWindow->GetPlugins()[i]->GetPath().GetPath() );
+			m_pcWindow->Unlock();
 			pcMessage->SendReply( &cMsg );
 			break;
 		}
@@ -1175,6 +1187,7 @@ void DockApp::HandleMessage( os::Message* pcMessage )
 			os::String zMessage;
 			int j;
 			bool bFound;
+			m_pcWindow->Lock();
 			/* Look what plugins have been removed */
 			for( uint i = 0; i < m_pcWindow->GetPlugins().size(); i++ )
 			{
@@ -1214,6 +1227,7 @@ void DockApp::HandleMessage( os::Message* pcMessage )
 				}
 				j++;
 			}
+			m_pcWindow->Unlock();
 			break;
 		}
 		case os::DOCK_GET_POSITION:
@@ -1229,14 +1243,7 @@ void DockApp::HandleMessage( os::Message* pcMessage )
 		}
 		case os::DOCK_SET_POSITION:
 		{
-			
-			/* Called by another application to set the position of the dock */
-			int32 nPos;
-			if( pcMessage->FindInt32( "position", &nPos ) == 0 )
-			{
-				m_pcWindow->SetPosition( (os::alignment)nPos );
-			}
-			m_pcWindow->SaveSettings();
+			m_pcWindow->PostMessage( pcMessage );
 			break;
 		}
 		default:

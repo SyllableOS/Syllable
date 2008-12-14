@@ -57,7 +57,6 @@ void Address::InitDefaultAddresses()
 	cSites.push_back(std::make_pair("y:","http://search.yahoo.com/search?fr=FP-pull-web-t&p="));
 	cSites.push_back(std::make_pair("th:","http://thesaurus.reference.com/search?q="));
 	cSites.push_back(std::make_pair("dic:","http://dictionary.reference.com/search?q="));
-	cSites.push_back(std::make_pair("kam:","http://kamidake.other-space.com/search.php?search_names="));
 }
 
 void Address::LoadAddresses()
@@ -85,7 +84,7 @@ void Address::LoadAddresses()
 	
 	catch (...)
 	{
-		printf("cannot load\n");
+		printf("Address dockplugin: cannot load addresses.\n");
 	}	
 }
 
@@ -118,7 +117,7 @@ void Address::LoadBuffer()
 	
 	catch (...)
 	{
-		printf("cannot load\n");
+		printf("Address dockplugin: cannot load buffer.\n");
 	}	
 }
 
@@ -352,21 +351,21 @@ void Address::ExecuteBrowser(const String& cUrl)
 	if (fork() == 0)
 	{
 		set_thread_priority( -1, 0 );
-		nError = execlp("/Applications/ABrowse/ABrowse","/Applications/ABrowse/ABrowse",cUrl.c_str(),NULL);	
+		nError = execlp("/Applications/Webster/Webster","/Applications/Webster/Webster",cUrl.c_str(),NULL);	
 	}	
 	
 	if (nError == -1)
 	{
 		if (errno == ENOENT)
 		{
-			Alert* pcAlert = new Alert("Address...","ABrowse does not exist, please install ABrowse first!!!",m_pcIcon->LockBitmap(),0,"_O.K",NULL);
+			Alert* pcAlert = new Alert("Address...","Could not find Webster browser!!!",m_pcIcon->LockBitmap(),0,"_O.K",NULL);
 			m_pcIcon->UnlockBitmap();
 			pcAlert->CenterInScreen();
 			pcAlert->Go(new Invoker());	
 		}
 		else
 		{
-			Alert* pcAlert = new Alert("Address...","Unforseen error with ABrowse, please install ABrowse again!!!!",m_pcIcon->LockBitmap(),0,"_O.K",NULL);
+			Alert* pcAlert = new Alert("Address...","Error launching Webster browser!!!!",m_pcIcon->LockBitmap(),0,"_O.K",NULL);
 			m_pcIcon->UnlockBitmap();
 			pcAlert->CenterInScreen();
 			pcAlert->Go(new Invoker());	
@@ -394,19 +393,23 @@ void Address::ExportHelpFile()
 	{
 		char buffer[8192];
 	
-		os::File* pcResourceFile = new os::File( m_pcPlugin->GetPath() );	
-		os::Resources cCol( pcResourceFile );
-		ResStream* pcHelpStream = cCol.GetResourceStream( "address.html" );
-	
-		ssize_t nSize = pcHelpStream->GetSize();
-		pcHelpStream->Read(buffer,nSize);
-		delete pcHelpStream;
-		delete pcResourceFile;
-	
-		File* pcFileTwo = new File("/boot/Documentation/address.html",O_CREAT | O_RDWR);
-		pcFileTwo->Write(buffer,nSize);
-		pcFileTwo->WriteAttr("os::MimeType",O_TRUNC,ATTR_TYPE_STRING,"text/html",0,10);
-		delete pcFileTwo;
+		try {
+			os::File* pcResourceFile = new os::File( m_pcPlugin->GetPath() );
+			os::Resources cCol( pcResourceFile );
+			ResStream* pcHelpStream = cCol.GetResourceStream( "address.html" );
+		
+			ssize_t nSize = pcHelpStream->GetSize();
+			pcHelpStream->Read(buffer,nSize);
+			delete pcHelpStream;
+			delete pcResourceFile;
+			
+			File* pcFileTwo = new File("/boot/Documentation/address.html",O_CREAT | O_RDWR);
+			pcFileTwo->Write(buffer,nSize);
+			pcFileTwo->WriteAttr("os::MimeType",O_TRUNC,ATTR_TYPE_STRING,"text/html",0,10);
+			delete pcFileTwo;
+		} catch( ... ) {
+			printf( "Address dockplugin: Could not export help file!\n" );
+		}
 	}
 }
 
