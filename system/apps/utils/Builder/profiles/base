@@ -7,6 +7,7 @@ resources
 ;	home/.template/Documents/Pictures	wallpapers/*.jpg			image/jpeg
 	system/fonts						fonts/URW/*.ttf
 	system/fonts						fonts/URW/Mandriva/*.ttf
+	system/icons/filetypes				icons/types/48x48/*.png
 	system/resources/wallpapers			wallpapers/*.png
 	system/resources/wallpapers			wallpapers/*.jpg
 	system/resources/wallpapers			wallpapers/Adrian/*.png

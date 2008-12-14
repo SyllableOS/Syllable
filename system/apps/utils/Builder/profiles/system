@@ -34,6 +34,7 @@ tree
 
 	system/fonts
 	system/icons
+	system/icons/filetypes
 	system/keymaps
 	system/sounds
 
