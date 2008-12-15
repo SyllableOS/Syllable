@@ -63,6 +63,9 @@ public:
     void	SetMouseAcceleration( float nAccel );
     float	GetMouseAcceleration() const;
 
+	void    SetMouseSwapButtons( bool bSwap );
+	bool    GetMouseSwapButtons() const;
+
     void	SetPopoupSelectedWindows( bool bPopup );
     bool	GetPopoupSelectedWindows() const;
 
@@ -86,7 +89,7 @@ public:
     
 private:
     static AppserverConfig* s_pcInstance;
-    bool	m_bDirty;
+    bool		m_bDirty;
     std::string	m_cWindowDecoratorPath;
     std::string	m_cKeymapPath;
     bigtime_t	m_nKeyDelay;
@@ -94,7 +97,8 @@ private:
     bigtime_t	m_nDoubleClickDelay;
 	float		m_nMouseSpeed;
 	float		m_nMouseAcceleration;
-    bool	m_bPopupSelectedWindows;	// Move window to front on "single-click"
+	bool		m_bMouseSwapButtons;
+    bool		m_bPopupSelectedWindows;	// Move window to front on "single-click"
     std::map<std::string,os::font_properties> m_cFontSettings;
 };
 

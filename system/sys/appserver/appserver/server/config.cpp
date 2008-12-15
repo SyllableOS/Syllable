@@ -43,6 +43,7 @@ AppserverConfig::AppserverConfig()
 	m_nDoubleClickDelay = 500000LL;
 	m_nMouseSpeed = 1.5f;
 	m_nMouseAcceleration = 0.0f;
+	m_bMouseSwapButtons = false;
 	m_bPopupSelectedWindows = false;
 
 	AddFontConfig( DEFAULT_FONT_REGULAR, os::font_properties( "Nimbus Sans L", "Regular", FPF_SYSTEM | FPF_SMOOTHED, 8.0f ) );
@@ -109,6 +110,12 @@ void AppserverConfig::SetConfig( const Message * pcConfig )
 	{
 		SetMouseAcceleration( nMouse );
 	}
+	
+	bool bSwapButtons;
+	if( pcConfig->FindBool( "mouse_swap_buttons", &bSwapButtons ) == 0 )
+	{
+		SetMouseSwapButtons( bSwapButtons );
+	}
 
 	Message cColorConfig;
 
@@ -148,6 +155,7 @@ void AppserverConfig::GetConfig( Message * pcConfig )
 	pcConfig->AddInt64( "key_repeat", m_nKeyRepeat );
 	pcConfig->AddFloat( "mouse_speed", m_nMouseSpeed );
 	pcConfig->AddFloat( "mouse_acceleration", m_nMouseAcceleration );
+	pcConfig->AddBool(  "mouse_swap_buttons", m_bMouseSwapButtons );
 
 	Message cColorConfig;
 
@@ -309,6 +317,19 @@ float AppserverConfig::GetMouseAcceleration() const
 	return (m_nMouseAcceleration);
 }
 
+void AppserverConfig::SetMouseSwapButtons( bool bSwap )
+{
+	if( bSwap != m_bMouseSwapButtons );
+	{
+		m_bMouseSwapButtons = bSwap;
+		m_bDirty = true;
+	}
+}
+
+bool AppserverConfig::GetMouseSwapButtons() const
+{
+	return (m_bMouseSwapButtons);
+}
 
 void AppserverConfig::SetPopoupSelectedWindows( bool bPopup )
 {
@@ -662,7 +683,20 @@ int AppserverConfig::LoadConfig( FILE *hFile, bool bActivateConfig )
 				dbprintf( "Error: Syntax error in appserver config file at line %d\n", nLine );
 			}
 		}
+		if( match_name( "MouseSwapButtons", zLineBuf ) )
+		{
+			char zValue[64];
 
+			if( sscanf( zLineBuf, "MouseSwapButtons = %63s\n", zValue ) == 1 )
+			{
+				m_bMouseSwapButtons = strcmp( zValue, "true" ) == 0;
+			}
+			else
+			{
+				dbprintf( "Error: Syntax error in appserver config file at line %d\n", nLine );
+			}
+
+		}
 		if( match_name( "Color", zLineBuf ) )
 		{
 			int i, r, g, b, a;
@@ -764,8 +798,9 @@ int AppserverConfig::SaveConfig()
 	fprintf( hFile, "DoubleClickDelay = %Ld\n", m_nDoubleClickDelay );
 	fprintf( hFile, "KeyDelay         = %Ld\n", m_nKeyDelay );
 	fprintf( hFile, "KeyRepeat        = %Ld\n", m_nKeyRepeat );
-	fprintf( hFile, "MouseSpeed        = %f\n", m_nMouseSpeed );
-	fprintf( hFile, "MouseAcceleration = %f\n", m_nMouseAcceleration );
+	fprintf( hFile, "MouseSpeed         = %f\n", m_nMouseSpeed );
+	fprintf( hFile, "MouseAcceleration  = %f\n", m_nMouseAcceleration );
+	fprintf( hFile, "MouseSwapButtons   = %s\n", ( m_bMouseSwapButtons ) ? "true" : "false" );
 
 	fprintf( hFile, "\n" );
 

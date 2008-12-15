@@ -141,12 +141,26 @@ void InputNode::EnqueueEvent( Message * pcEvent )
 	case M_MOUSE_DOWN:
 		if( pcEvent->FindInt32( "_button", &nButton ) == 0 )
 		{
+			if( AppserverConfig::GetInstance()->GetMouseSwapButtons() && (nButton == 1 || nButton == 2) )
+			{
+				/* Swap buttons 1 & 2 */
+				nButton = 3 - nButton;
+				pcEvent->RemoveName( "_button" );
+				pcEvent->AddInt32( "_button", nButton );
+			}
 			s_nMouseButtons |= 1 << ( nButton - 1 );
 		}
 		break;
 	case M_MOUSE_UP:
 		if( pcEvent->FindInt32( "_button", &nButton ) == 0 )
 		{
+			if( AppserverConfig::GetInstance()->GetMouseSwapButtons() && (nButton == 1 || nButton == 2) )
+			{
+				/* Swap buttons 1 & 2 */
+				nButton = 3 - nButton;
+				pcEvent->RemoveName( "_button" );
+				pcEvent->AddInt32( "_button", nButton );
+			}
 			s_nMouseButtons &= ~( 1 << ( nButton - 1 ) );
 		}
 		break;

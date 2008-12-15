@@ -524,7 +524,6 @@ void AppServer::DispatchMessage( Message * pcReq )
 	case DR_SET_KEYBOARD_CFG:
 		{
 			const char *pzKeyMap;
-			char zKeyMapPath[1024];
 			int32 nKeyDelay = 0;
 			int32 nKeyRepeat = 0;
 
@@ -760,6 +759,7 @@ void AppServer::DispatchMessage( Message * pcReq )
 			cReply.AddFloat( "speed", AppserverConfig::GetInstance()->GetMouseSpeed() );
 			cReply.AddFloat( "acceleration", AppserverConfig::GetInstance()->GetMouseAcceleration() );
 			cReply.AddInt32( "doubleclick", AppserverConfig::GetInstance()->GetDoubleClickTime() );
+			cReply.AddBool( "swapbuttons", AppserverConfig::GetInstance()->GetMouseSwapButtons() );
 			pcReq->SendReply( &cReply );
 			break;
 		}
@@ -768,6 +768,7 @@ void AppServer::DispatchMessage( Message * pcReq )
 			float nMouseSpeed = 0;
 			float nMouseAcceleration = 0;
 			int32 nMouseDoubleClick = 0 ;
+			bool bMouseSwapButtons = false;
 			if( pcReq->FindFloat( "speed", &nMouseSpeed ) == 0 )
 			{
 				AppserverConfig::GetInstance()->SetMouseSpeed( nMouseSpeed );
@@ -779,6 +780,10 @@ void AppServer::DispatchMessage( Message * pcReq )
 			if( pcReq->FindInt( "doubleclick", &nMouseDoubleClick ) == 0 )
 			{
 				AppserverConfig::GetInstance()->SetDoubleClickTime( nMouseDoubleClick );
+			}
+			if( pcReq->FindBool( "swapbuttons", &bMouseSwapButtons ) == 0 )
+			{
+				AppserverConfig::GetInstance()->SetMouseSwapButtons( bMouseSwapButtons );
 			}
 
 			break;
@@ -1176,42 +1181,5 @@ int main( int argc, char **argv )
 	dbprintf( "WARNING : layers.device failed to initiate itself!!!\n" );
 	return ( 0 );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
