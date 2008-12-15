@@ -23,7 +23,7 @@ objs:
 	@echo Creating subdirectories...
 	@mkdir -p objs
 
-mouse: $(OBJS)
+mouse: catalogs $(OBJS)
 	@echo Linking...
 	@$(CXX) $(LFLAGS) $(LIBS) $(OBJS) -o $(EXE)
 	@strip --strip-all $(EXE)
@@ -35,10 +35,27 @@ mouse: $(OBJS)
 		rescopy -a $(EXE) $$CATALOG/mouse.catalog=resources/$$CATALOG/mouse.catalog; \
 	done;
 
-clean:
+catalogs:
+	cd resources; \
+	catcomp -c mouse.cd; \
+	for CATALOG in $(CATALOGS);do \
+		echo $$CATALOG; \
+		cd $$CATALOG; \
+		catcomp -t mouse.cd; \
+		cd ..; \
+	done;
+
+clean: catalog-clean
 	@echo Cleaning...
 	@rm -r $(OBJDIR)
 	@rm -f $(EXE)
+
+catalog-clean:
+	-rm resources/mouse.catalog resources/mouse.h; \
+	for CATALOG in $(CATALOGS);do \
+		rm resources/$$CATALOG/mouse.catalog; \
+	done;
+
 
 install: $(EXE)
 	install -s $(EXE) $(IMAGE)/Applications/Preferences/$(EXE)
