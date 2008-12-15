@@ -23,7 +23,6 @@
 
 ClockView::ClockView( Rect cFrame, Color32_s sColor, bool bShowSeconds, bool bDigital  ) : LayoutView( cFrame, "my_view" )
 {
-
     Font* f = new Font(DEFAULT_FONT_BOLD);
     f->SetSize( 15 );
     SetFont( f );
@@ -55,12 +54,16 @@ void ClockView::FrameSized( const Point& cDelta )
 
 void ClockView::TimerTick( int nID )
 {   
-    long nCurSysTime = get_real_time() / 1000000;
+    // long nCurSysTime = get_real_time() / 1000000;
+	time_t sTime;
     int h, m, s;
     
-    h = (nCurSysTime/3600) % 12;
-    m = (nCurSysTime/60) % 60;
-    s = nCurSysTime % 60;
+    time( &sTime );
+	tm *psTime = localtime( &sTime );
+	
+	h = psTime->tm_hour; // (nCurSysTime/3600) % 12;
+    m = psTime->tm_min; // (nCurSysTime/60) % 60;
+    s = psTime->tm_sec; // nCurSysTime % 60;
    
     if( h != m_nHour  ||  m != m_nMin )  { m_nHour = h;  m_nMin = m;  m_nSec = s;  Invalidate(true);  Flush();  return; }
 
@@ -68,11 +71,11 @@ void ClockView::TimerTick( int nID )
     if( m_bShowSec  &&  m_nSec != s )
     {
         if( m_bShowDigital )
-	{
-	   Invalidate( true );  /* Flush(); */
-	}
+		{
+	   		Invalidate( true );  /* Flush(); */
+		}
         else
-	{
+		{
             float x0 = Width()/2, y0 = Height()/2;
             float R = std::min( Width(), Height() ) / 2 - 10;
             float r = R * 0.9;
@@ -91,7 +94,7 @@ void ClockView::TimerTick( int nID )
                 DrawLine( Point( x0 + r*sin(alpha) , y0 - r*cos(alpha) ) );
             }
             SetDrawingMode( DM_OVER );
-	}
+		}
         m_nSec = (int) s;
         Flush();
     }
@@ -144,51 +147,51 @@ void ClockView::draw( const Rect& cUpdateRect )
 
     if( ! m_bShowDigital )
     {
-    float x0 = Width()/2, y0 = Height() / 2;           // Center of circle.
-    float R = std::min( Width(), Height() ) / 2 - 10;  // Radius.
-    float r;
-    float alpha;
+    	float x0 = Width()/2, y0 = Height() / 2;           // Center of circle.
+    	float R = std::min( Width(), Height() ) / 2 - 10;  // Radius.
+    	float r;
+    	float alpha;
     
-    // --- Draw a nice circle ---
-    r = R;
-    SetFgColor( 160, 160, 160 );
-    for( alpha=0; alpha<2*M_PI; alpha += 2*M_PI/60 )
-    {
-        Point p( x0 + r*sin(alpha) , y0 - r*cos(alpha) );
-        MovePenTo( p );  DrawLine( p );             // Plot just one point.
-    }
-    SetFgColor( 255, 0, 0 );
-    for( alpha=0; alpha<2*M_PI; alpha += 2*M_PI/12 )
-    {
-        Point p( x0 + r*sin(alpha) , y0 - r*cos(alpha) );
-        MovePenTo( p );  DrawLine( p );             // Plot just one point.
-    }
+    	// --- Draw a nice circle ---
+    	r = R;
+    	SetFgColor( 160, 160, 160 );
+    	for( alpha=0; alpha<2*M_PI; alpha += 2*M_PI/60 )
+    	{
+        	Point p( x0 + r*sin(alpha) , y0 - r*cos(alpha) );
+        	MovePenTo( p );  DrawLine( p );             // Plot just one point.
+    	}
+    	SetFgColor( 255, 0, 0 );
+    	for( alpha=0; alpha<2*M_PI; alpha += 2*M_PI/12 )
+    	{
+        	Point p( x0 + r*sin(alpha) , y0 - r*cos(alpha) );
+        	MovePenTo( p );  DrawLine( p );             // Plot just one point.
+    	}
     
-    // --- Draw hours ---
-    r = R * 0.5;
-    alpha = 2*M_PI*((float)m_nHour/12.0);
-    SetFgColor( 0, 0, 255 );
-    MovePenTo( x0 , y0 );
-    DrawLine( Point( x0 + r*sin(alpha) , y0 - r*cos(alpha) ) );
+    	// --- Draw hours ---
+    	r = R * 0.5;
+    	alpha = 2*M_PI*((float)m_nHour/12.0);
+    	SetFgColor( 0, 0, 255 );
+    	MovePenTo( x0 , y0 );
+    	DrawLine( Point( x0 + r*sin(alpha) , y0 - r*cos(alpha) ) );
     
-    // --- Draw minutes ---
-    r = R * 0.7;
-    alpha = 2*M_PI*((float)m_nMin/60);
-    SetFgColor( 0, 0, 255 );
-    MovePenTo( x0 , y0 );
-    DrawLine(Point( x0 + r*sin(alpha) , y0 - r*cos(alpha) ) );
+    	// --- Draw minutes ---
+    	r = R * 0.7;
+    	alpha = 2*M_PI*((float)m_nMin/60);
+    	SetFgColor( 0, 0, 255 );
+    	MovePenTo( x0 , y0 );
+    	DrawLine(Point( x0 + r*sin(alpha) , y0 - r*cos(alpha) ) );
 
-    if( m_bShowSec )
-    {
-        // --- Draw seconds ---
-        r = R * 0.9;
-        alpha = 2*M_PI*((float)m_nSec/60);
-        SetDrawingMode( DM_INVERT );
-    //  SetFgColor( 255, 128, 0 );
-        MovePenTo( x0 , y0 );    
-        DrawLine( Point( x0 + r*sin(alpha) , y0 - r*cos(alpha) ) );
-        SetDrawingMode( DM_OVER );
-    }
+    	if( m_bShowSec )
+    	{
+        	// --- Draw seconds ---
+        	r = R * 0.9;
+        	alpha = 2*M_PI*((float)m_nSec/60);
+        	SetDrawingMode( DM_INVERT );
+    		//  SetFgColor( 255, 128, 0 );
+        	MovePenTo( x0 , y0 );    
+        	DrawLine( Point( x0 + r*sin(alpha) , y0 - r*cos(alpha) ) );
+        	SetDrawingMode( DM_OVER );
+    	}
     }
     else
     {
@@ -196,13 +199,13 @@ void ClockView::draw( const Rect& cUpdateRect )
         char s[80];
         
         if( m_bShowSec )
-	{
-	    sprintf( s, " %02d : %02d : %02d ", m_nHour, m_nMin, m_nSec );
-	}
+		{
+	    	sprintf( s, " %02d : %02d : %02d ", m_nHour, m_nMin, m_nSec );
+		}
         else
-	{
-	    sprintf( s, " %02d : %02d ", m_nHour, m_nMin );
-	}
+		{
+	    	sprintf( s, " %02d : %02d ", m_nHour, m_nMin );
+		}
 
         float l = GetStringWidth( s );
         struct font_height fh;
