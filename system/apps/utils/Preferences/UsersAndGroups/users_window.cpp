@@ -68,7 +68,7 @@ UsersWindow::UsersWindow( const os::Rect cFrame ) : Window( cFrame, "Users", MSG
 	m_pcLayoutView = new LayoutView( cButtonFrame, "users_window", NULL, CF_FOLLOW_LEFT | CF_FOLLOW_BOTTOM | CF_FOLLOW_RIGHT );
 
 	VLayoutNode *pcNode = new VLayoutNode( "users_window_root" );
-	pcNode->SetBorders( Rect( 5, 4, 5, 4 ) );
+	pcNode->SetBorders( Rect( 5, 4, 5, 3 ) );
 	pcNode->AddChild( new VLayoutSpacer( "users_window_v_spacer", 1.0f ) );
 
 	HLayoutNode *pcButtons = new HLayoutNode( "users_window_buttons", 0.0f );
