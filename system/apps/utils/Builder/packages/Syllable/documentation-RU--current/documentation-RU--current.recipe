@@ -1,0 +1,8 @@
+authors				Kaj de Vos
+
+inherits			documentation--current
+
+locations			http://ru.syllable.org/
+
+documentation		Welcome.html
+move-files			documentation/Welcome.html /documentation/Welcome-RU.html
