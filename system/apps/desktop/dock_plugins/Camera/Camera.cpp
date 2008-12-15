@@ -131,7 +131,7 @@ private:
 	DropdownMenu* m_pcKeySecondDrop;
 	DropdownMenu* m_pcInstantDrop;
 	DropdownMenu* m_pcDelayDrop;
-	DropdownMenu* m_pcDoubleClickDrop;
+	DropdownMenu* m_pcSingleClickDrop;
 	
 	ImageButton* pcFileReqButton;
 	TextView* 	pcDirectoryTextView;
@@ -146,8 +146,8 @@ private:
 	StringView* m_pcDirectoryString;
 	StringView* m_pcInstantString;
 	StringView* m_pcDelayString;
-	StringView* m_pcDoubleClickString;
-	
+	StringView* m_pcSingleClickString;
+
 	LayoutView* pcLRoot;
 	VLayoutNode* pcVLRoot;
 	
@@ -163,9 +163,9 @@ private:
 	FrameView*   pcFVKeyboard;
 
 
-	VLayoutNode* pcVLDoubleClick;
-	HLayoutNode* pcHLDoubleClickOne;
-	FrameView*   pcFVDoubleClick;
+	VLayoutNode* pcVLSingleClick;
+	HLayoutNode* pcHLSingleClickOne;
+	FrameView*   pcFVSingleClick;
 	
 	VLayoutNode* pcVLSaveTo;
 	HLayoutNode* pcHLSaveToOne;
@@ -205,7 +205,7 @@ class DockCamera : public View
 		void			DoDelayedScreenShot();
 		void			DoInstantScreenShot();
 		void			ShowPrefs(os::Path);
-		void			OnDoubleClick();			
+		void			OnSingleClick();			
 		void			RefreshIcons();
 
 	private:
@@ -302,21 +302,21 @@ CameraPrefsWin::CameraPrefsWin(os::Path cPath, Message* pcMessage, View* pcParen
 	pcFVKeyboard= new os::FrameView( cBounds, "FVKeyboard", "Keyboard Shortcuts...", os::CF_FOLLOW_ALL);
   	pcFVKeyboard->SetRoot(pcVLKeyboard);
   	
-  	pcHLDoubleClickOne = new HLayoutNode("HLDoubleClick");
-  	pcHLDoubleClickOne->AddChild(m_pcDoubleClickString=new StringView(cRect,"SVDoubleClick","Takes:"));
-  	pcHLDoubleClickOne->AddChild( new os::HLayoutSpacer("",4.0f,4.0f ));
-  	pcHLDoubleClickOne->AddChild(m_pcDoubleClickDrop=new DropdownMenu(cRect,"DDMDoubleClick"));
-  	m_pcDoubleClickDrop->SetReadOnly(true);
-  	m_pcDoubleClickDrop->SetMinPreferredSize(15);
-  	m_pcDoubleClickDrop->SetMaxPreferredSize(15);
-  	m_pcDoubleClickDrop->AppendItem("Instant Screenshot");
-  	m_pcDoubleClickDrop->AppendItem("Delayed Screenshot");
+	pcHLSingleClickOne = new HLayoutNode("HLSingleClick");
+  	pcHLSingleClickOne->AddChild(m_pcSingleClickString=new StringView(cRect,"SVSingleClick","Takes:"));
+  	pcHLSingleClickOne->AddChild( new os::HLayoutSpacer("",4.0f,4.0f ));
+  	pcHLSingleClickOne->AddChild(m_pcSingleClickDrop=new DropdownMenu(cRect,"DDMSingleClick"));
+  	m_pcSingleClickDrop->SetReadOnly(true);
+  	m_pcSingleClickDrop->SetMinPreferredSize(15);
+  	m_pcSingleClickDrop->SetMaxPreferredSize(15);
+  	m_pcSingleClickDrop->AppendItem("Instant Screenshot");
+  	m_pcSingleClickDrop->AppendItem("Delayed Screenshot");
   	  	
-	pcVLDoubleClick = new VLayoutNode("VLDoubleClick");
-  	pcVLDoubleClick->SetBorders(os::Rect(5,5,5,5));
-  	pcVLDoubleClick->AddChild(pcHLDoubleClickOne);
-  	pcFVDoubleClick = new FrameView(cBounds,"FVDoubleClick","Double clicking icon...",os::CF_FOLLOW_ALL);
-  	pcFVDoubleClick->SetRoot(pcVLDoubleClick);
+	pcVLSingleClick = new VLayoutNode("VLSingleClick");
+  	pcVLSingleClick->SetBorders(os::Rect(5,5,5,5));
+  	pcVLSingleClick->AddChild(pcHLSingleClickOne);
+  	pcFVSingleClick = new FrameView(cBounds,"FVSingleClick","Clicking icon...",os::CF_FOLLOW_ALL);
+  	pcFVSingleClick->SetRoot(pcVLSingleClick);
   	
   	pcHLButton = new os::HLayoutNode("");
   	pcHLButton->AddChild(pcApplyButton=new Button(cRect,"BTApply","Apply",new Message(M_PREFS_APPLY)));
@@ -332,9 +332,9 @@ CameraPrefsWin::CameraPrefsWin(os::Path cPath, Message* pcMessage, View* pcParen
 	pcVLRoot->AddChild(new os::VLayoutSpacer("",5.0f,5.0f));	
 	pcVLRoot->AddChild(pcFVKeyboard);
 	pcVLRoot->AddChild(new os::VLayoutSpacer("",5.0f,5.0f));
-	pcVLRoot->AddChild(pcFVDoubleClick);
+	pcVLRoot->AddChild(pcFVSingleClick);
 	pcVLRoot->AddChild(new os::VLayoutSpacer("",5.0f,5.0f));
-	pcVLRoot->SameWidth("FVDoubleClick","FVDelay","FVKeyBoard",NULL);
+	pcVLRoot->SameWidth("FVSingleClick","FVDelay","FVKeyBoard",NULL);
 	pcVLRoot->AddChild(pcVLButton);
 	pcLRoot->SetRoot(pcVLRoot);
 	AddChild(pcLRoot);
@@ -419,7 +419,7 @@ void CameraPrefsWin::LoadSettings()
 	m_pcKeySecondDrop->SetSelection((int)vDelayTime);
 	m_pcInstantDrop->SetSelection((int)vInstant);
 	m_pcDelayDrop->SetSelection((int)vDelay);
-	m_pcDoubleClickDrop->SetSelection((int)vClick);
+	m_pcSingleClickDrop->SetSelection((int)vClick);
 	PostMessage(M_PREFS_TICK,this);
 }
 	
@@ -428,13 +428,13 @@ void CameraPrefsWin::LoadDefaults()
 	vDelayTime = 0;
 	vInstant = 12;
 	vDelay = 8;
-	vClick=0;
+	vClick = 0;
 	
 	m_pcKeySecondDrop->SetSelection((int)vDelayTime);
 	m_pcInstantDrop->SetSelection((int)vInstant);
 	m_pcDelayDrop->SetSelection((int)vDelay);
-	m_pcDoubleClickDrop->SetSelection((int)vClick);
-	
+	m_pcSingleClickDrop->SetSelection((int)vClick);
+
 	PostMessage(M_PREFS_APPLY);
 }
 
@@ -446,8 +446,8 @@ void CameraPrefsWin::HandleMessage(Message* pcMessage)
 			{
 				int nKeyInstant = m_pcInstantDrop->GetSelection();
 				int nKeyDelay = m_pcDelayDrop->GetSelection();
-				int nClickPreform = m_pcDoubleClickDrop->GetSelection();
-				
+				int nClickPreform = m_pcSingleClickDrop->GetSelection();
+
 				pcPassToWindow = new Message(M_PREFS_SEND_TO_PARENT);
 				pcPassToWindow->AddFloat("delay",(float)m_pcKeySecondDrop->GetSelection()+1);
 				pcPassToWindow->AddFloat("key/instant",(float)nKeyInstant);
@@ -478,6 +478,7 @@ void CameraDelayedLooper::TimerTick(int nID)
 	if (nID == CAMERA_ID)
 	{
 		DateTime pcTime = DateTime::Now();
+		
 		BitmapImage* pcBitmapImage;
 		BitmapImage* pcSaveImage;
 		os::String cScreenShotPath;
@@ -494,7 +495,6 @@ void CameraDelayedLooper::TimerTick(int nID)
 		pcSaveImage->Sync();
 	
 		cScreenShotPath = os::String().Format("%s/Pictures/Screenshot-%d-%d-%d-%d_%d_%d.png",getenv("HOME"),pcTime.GetYear(),pcTime.GetMonth(),pcTime.GetDay(),pcTime.GetHour(),pcTime.GetMin(),pcTime.GetSec());
-	
 		File vNewFile = os::File(cScreenShotPath,O_CREAT | O_TRUNC | O_WRONLY);
 		vNewFile.WriteAttr("os::MimeType", O_TRUNC, ATTR_TYPE_STRING,"image/png", 0,10 );
 		pcSaveImage->Save(&vNewFile,"image/png");
@@ -536,7 +536,7 @@ DockCamera::~DockCamera( )
 	delete( pcContextMenu );
 }
 
-void DockCamera::OnDoubleClick()
+void DockCamera::OnSingleClick()
 {
 	if ((int)vClick==0)
 	{
@@ -793,16 +793,9 @@ void DockCamera::MouseDown( const os::Point& cPosition, uint32 nButtons )
 	MakeFocus( true );
 	if( nButtons == os::MOUSE_BUT_LEFT )
 	{
-		if ( m_nHitTime + 500000 >= get_system_time() )
-		{
-			OnDoubleClick();
-		}
-		else
-			m_bCanDrag = true;
-		m_nHitTime = get_system_time();
-	}
-		
-	if( nButtons == 2 ) {
+		OnSingleClick();
+		m_bCanDrag = true;
+	} else if( nButtons == 2 ) {
 		pcContextMenu->Open(ConvertToScreen(cPosition));
 	}
 	os::View::MouseDown( cPosition, nButtons );

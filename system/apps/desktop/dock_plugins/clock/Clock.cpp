@@ -131,7 +131,10 @@ class DockClock : public View
 		String m_zString;
 		DockClockUpdater* m_pcThread;
 		bigtime_t m_nClickTime;
-		
+
+		int32 m_cTZOffset;
+		int32 m_cDst;
+
 		Menu* pcContextMenu;
 };
 
@@ -383,17 +386,21 @@ void DockClock::UpdateFont()
 void DockClock::DisplayTime( void )
 {
 
-	if (m_bDisplayTime)
+	if ( m_bDisplayTime )
 	{
     	std::string zTimeStr = m_zTimeFormat;
-		long nCurSysTime = get_real_time( ) / 1000000;
-		struct tm *psTime = gmtime( &nCurSysTime );
+		// long nCurSysTime = get_real_time( ) / 1000000;
+		// struct tm *psTime = gmtime( &nCurSysTime );
+		time_t sTime;
+		time( &sTime );
+		tm *psTime = localtime( &sTime );
 	    const char *azTimeToken[] = { "%d", "%H", "%h", "%M", "%m", "%s", "%y" };
+
  		long anTimes[] = 
     	{ 
       		psTime->tm_mday,
       		psTime->tm_hour,
-      		(psTime->tm_hour > 12) ? psTime->tm_hour - 12 : psTime->tm_hour,
+			( psTime->tm_hour > 12 ) ? psTime->tm_hour - 12 : psTime->tm_hour,
       		psTime->tm_mon + 1,
       		psTime->tm_min,
       		psTime->tm_sec,
