@@ -631,6 +631,11 @@ void DropdownMenu::SetTabOrder( int nOrder )
 	View::SetTabOrder();
 }
 
+int DropdownMenu::GetTabOrder() const
+{
+	return( m_pcEditBox->GetTabOrder() );
+}
+
 void DropdownMenu::Activated( bool bIsActive )
 {
 	Invalidate();

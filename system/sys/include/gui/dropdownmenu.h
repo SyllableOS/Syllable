@@ -94,6 +94,7 @@ public:
     virtual void	AllAttached();
 	virtual void Activated( bool bIsActive );
 	virtual void SetTabOrder( int nOrder = NEXT_TAB_ORDER );
+	virtual int GetTabOrder() const;
 	virtual void WheelMoved( const Point& cDelta );
 	virtual void FontChanged( Font* pcNewFont );
 
