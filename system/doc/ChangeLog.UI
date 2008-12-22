@@ -1,3 +1,7 @@
+* December 22, 2008, Anthony Morphett *
+
+Added DropdownMenu::GetTabOrder() (mainly for future compatibility).
+
 * December 10, 2008, Anthony Morphett *
 
 Correct GetTabOrder() signature in Spinner, IconView; re-add Spinner::KeyUp for compatibility.
