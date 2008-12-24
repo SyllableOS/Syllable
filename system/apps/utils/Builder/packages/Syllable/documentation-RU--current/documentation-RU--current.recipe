@@ -4,5 +4,8 @@ inherits			documentation--current
 
 locations			http://ru.syllable.org/
 
-documentation		Welcome.html
-move-files			documentation/Welcome.html /documentation/Welcome-RU.html
+documentation		Install.txt Welcome.html FAQ.html
+move-files
+	documentation/Install.txt	/documentation/Install-RU.txt
+	documentation/Welcome.html	/documentation/Welcome-RU.html
+	documentation/FAQ.html		/documentation/FAQ-RU.html
