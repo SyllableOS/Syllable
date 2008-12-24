@@ -2,7 +2,8 @@ authors				Kaj de Vos
 status				testing
                                                                                                                                                                                                         
 headline			Text and graphics mode web browser
-description			Links is a web browser running in both graphics and text mode.
+description
+	Links is a web browser running in both graphics and text mode.
 licenses			GPL-2+
 
 home				links.twibright.com

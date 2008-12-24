@@ -4,7 +4,8 @@ authors
 status				testing
 
 headline			A Perl module for SSL socket support
-description			A Perl binding to OpenSSL.
+description
+	A Perl binding to OpenSSL.
 licenses			other
 
 home				search.cpan.org/~flora/Net_SSLeay.pm/SSLeay.pm

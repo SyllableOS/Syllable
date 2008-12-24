@@ -6,7 +6,8 @@ status				testing
 
 title				XML::Parser
 headline			A Perl module for parsing XML documents
-description			A Perl binding for the Expat XML parser.
+description
+	A Perl binding for the Expat XML parser.
 licenses			Artistic GPL
 
 home				search.cpan.org/~msergeant/XML-Parser/Parser.pm

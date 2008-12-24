@@ -6,7 +6,8 @@ status				testing
 inherits			sourceforge
 
 headline			Super Nintendo emulator
-description			ZSNES is a Super Nintendo emulator programmed by zsKnight and _Demo_.
+description
+	ZSNES is a Super Nintendo emulator programmed by zsKnight and _Demo_.
 licenses			GPL
 
 home				www.zsnes.com
@@ -32,4 +33,3 @@ documentation
 	docs/readme.txt docs/readme.htm
 build-docs			docs/install.txt docs/README.SVN
 internal-docs		docs/srcinfo.txt docs/stdards.txt
-

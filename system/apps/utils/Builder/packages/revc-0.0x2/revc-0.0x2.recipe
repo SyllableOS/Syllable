@@ -2,7 +2,8 @@ authors				Kaj de Vos
 status				testing
 
 headline			Revision control prototype
-description			Storage layer for version 2 of the Arch revision control system.
+description
+	Storage layer for version 2 of the Arch revision control system.
 licenses			GPL
 
 ; Gone:
