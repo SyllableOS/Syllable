@@ -1,0 +1,18 @@
+authors				Kaj de Vos
+status				testing
+
+;patch				cp makefile.linux_x86_asm_gcc_4.X makefile.machine
+
+install-files
+	bin/7z.so		lib/
+;	Can't load plug-in in lib/, but seems to be a caching problem:
+;	bin/7z.so		bin/
+	bin/7z			bin/
+	bin/7za			bin/
+	bin/7zr			bin/
+;	bin/Formats		bin/
+	bin/Codecs		bin/
+	bin/7zCon.sfx	bin/
+	man1			man/
+
+;pre-register		chmod -x bin/7z.so

@@ -349,7 +349,7 @@ modules
 	apps/gnu/less-418
 	apps/gnu/tar-1.20
 	apps/other/zip-2.32
-	apps/other/p7zip-4.58
+	apps/other/p7zip-4.61
 ;	For grub-install:
 	apps/gnu/diffutils-2.8.1
 	apps/other/netcat-1.10
@@ -401,4 +401,3 @@ modules
 
 ;	Needs GCC 3:
 ;	apps/other/qemu-0.9.1
-
