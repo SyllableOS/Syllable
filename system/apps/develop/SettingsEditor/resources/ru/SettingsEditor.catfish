@@ -1,43 +1,44 @@
 //
 // This catalog was exported from Catalog Editor
 // Translated by Dmitry
+// fixed by azlk :-)
 
-ID_SETTINGS_EDITOR_WINDOW=1000                    Settings Editor
-ID_LISTVIEW_NAME=1010                             Имя
-ID_LISTVIEW_TYPE                                  тип
-ID_LISTVIEW_VALUE                                 Значение
-ID_LISTVIEW_INDEX                                 Индекс
-ID_MENU_FILE=1020                                 Файл
-ID_MENU_FILE_NEW                                  Новый
-ID_MENU_FILE_OPEN                                 Открыть
-ID_MENU_FILE_SAVE                                 Сохранить
-ID_MENU_FILE_SAVE_AS                              Сохранить как...
-ID_MENU_FILE_EXIT                                 Выход
-ID_MENU_EDIT_ADD=1030                             Добавить
-ID_MENU_EDIT_ADD_STRING                           Строка
-ID_MENU_EDIT_ADD_INT8                             Int8
-ID_MENU_EDIT_ADD_INT16                            Int16
-ID_MENU_EDIT_ADD_INT32                            Int32
-ID_MENU_EDIT_ADD_INT64                            Int64
-ID_MENU_EDIT_ADD_FLOAT                            Float
-ID_MENU_EDIT_ADD_DOUBLE                           Double
-ID_MENU_EDIT_ADD_IRECT                            IRect
-ID_MENU_EDIT_ADD_IPOINT                           IPoint
-ID_MENU_EDIT_ADD_RECT                             Rect
-ID_MENU_EDIT_ADD_POINT                            Point
-ID_MENU_EDIT_ADD_COLOR32                          Color32
-ID_MENU_EDIT_ADD_RAW                              Raw
-ID_MENU_EDIT_ADD_VARIANT                          Variant
-ID_MENU_EDIT_ADD_MESSAGE                          Message
-ID_MENU_EDIT                                      Редактировать
-ID_MENU_EDIT_DELETE									 Удалить
-ID_ADD_DIALOG_SENTENCE=1050                       Введите имя для нового %s объекта.
-ID_ADD_DIALOG_WINDOW_TITLE                        Введите имя для %s
-ID_BUTTON_SAVE=1060                               Сохранить
-ID_BUTTON_CLOSE                                   Закрыть
-ID_BUTTON_PLUS                                    +
-ID_BUTTON_MINUS										 -
-ID_ERROR_UNIQUE=1070    								 Вы должны использовать уникальное имя!\n\"%s\" Это имя уже используется другой переменной!\n
-ID_ERROR_VARIABLE										 Вы должны дать имя переменной!
-ID_ERROR_BUTTON										 OK
-ID_ERROR_TITLE										 Ошибка
+ID_SETTINGS_EDITOR_WINDOW=1000		Р РµРґР°РєС‚РѕСЂ РЅР°СЃС‚СЂРѕРµРє
+ID_LISTVIEW_NAME=1010                     		РРјСЏ
+ID_LISTVIEW_TYPE                                 		РўРёРї
+ID_LISTVIEW_VALUE                               		Р—РЅР°С‡РµРЅРёРµ
+ID_LISTVIEW_INDEX										РРЅРґРµРєСЃ
+ID_MENU_FILE=1020										Р¤Р°Р№Р»
+ID_MENU_FILE_NEW										РќРѕРІС‹Р№
+ID_MENU_FILE_OPEN									РћС‚РєСЂС‹С‚СЊ
+ID_MENU_FILE_SAVE										РЎРѕС…СЂР°РЅРёС‚СЊ
+ID_MENU_FILE_SAVE_AS								РЎРѕС…СЂР°РЅРёС‚СЊ РєР°Рє...
+ID_MENU_FILE_EXIT										Р’С‹С…РѕРґ
+ID_MENU_EDIT_ADD=1030							Р”РѕР±Р°РІРёС‚СЊ
+ID_MENU_EDIT_ADD_STRING						РЎС‚СЂРѕРєР°
+ID_MENU_EDIT_ADD_INT8							Int8
+ID_MENU_EDIT_ADD_INT16							Int16
+ID_MENU_EDIT_ADD_INT32							Int32
+ID_MENU_EDIT_ADD_INT64							Int64
+ID_MENU_EDIT_ADD_FLOAT							Float
+ID_MENU_EDIT_ADD_DOUBLE						Double
+ID_MENU_EDIT_ADD_IRECT							IRect
+ID_MENU_EDIT_ADD_IPOINT						IPoint
+ID_MENU_EDIT_ADD_RECT							Rect
+ID_MENU_EDIT_ADD_POINT							Point
+ID_MENU_EDIT_ADD_COLOR32					Color32
+ID_MENU_EDIT_ADD_RAW							Raw
+ID_MENU_EDIT_ADD_VARIANT						Р’Р°СЂРёР°РЅС‚
+ID_MENU_EDIT_ADD_MESSAGE					РЎРѕРѕР±С‰РµРЅРёРµ
+ID_MENU_EDIT												Р РµРґР°РєС‚РёСЂРѕРІР°С‚СЊ
+ID_MENU_EDIT_DELETE								РЈРґР°Р»РёС‚СЊ
+ID_ADD_DIALOG_SENTENCE=1050				Р’РІРµРґРёС‚Рµ РёРјСЏ РґР»СЏ РЅРѕРІРѕРіРѕ %s РѕР±СЉРµРєС‚Р°
+ID_ADD_DIALOG_WINDOW_TITLE				Р’РІРµРґРёС‚Рµ РёРјСЏ РґР»СЏ %s
+ID_BUTTON_SAVE=1060								РЎРѕС…СЂР°РЅРёС‚СЊ
+ID_BUTTON_CLOSE										Р—Р°РєСЂС‹С‚СЊ
+ID_BUTTON_PLUS											+
+ID_BUTTON_MINUS										-
+ID_ERROR_UNIQUE=1070								Р’С‹ РґРѕР»Р¶РЅС‹ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ СѓРЅРёРєР°Р»СЊРЅРѕРµ РёРјСЏ!\n\"%s\" Р­С‚Рѕ РёРјСЏ СѓР¶Рµ РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РґСЂСѓРіРѕР№ РїРµСЂРµРјРµРЅРЅРѕР№!\n
+ID_ERROR_VARIABLE									Р’С‹ РґРѕР»Р¶РЅС‹ РґР°С‚СЊ РёРјСЏ РїРµСЂРµРјРµРЅРЅРѕР№!
+ID_ERROR_BUTTON										OK
+ID_ERROR_TITLE											РћС€РёР±РєР°

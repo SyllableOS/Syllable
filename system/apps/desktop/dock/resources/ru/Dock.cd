@@ -31,7 +31,7 @@ MSG_MENU_QUIT_REBOOT					Перезагрузить
 MSG_MENU_QUIT_CANCEL					Отмена
 
 MSG_PLUGIN_ALERT_TITLE=4000				Dock
-MSG_PLUGIN_ALERT_TEXT					Пожалуйста, скопируйте плагины Dock в папку /system/extensions/dock\nперед тем как подключать их в Dock
+MSG_PLUGIN_ALERT_TEXT					Пожалуйста, скопируйте плагины Dock в папку /system/extensions/dock\nперед тем как помещать их на Панель задач
 MSG_PLUGIN_ALERT_OK						ОК
 
 MSG_OPENAPP=5000						Открыть с помощью...

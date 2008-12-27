@@ -4,7 +4,7 @@
 //	Translated by: Ilya Krol
 //
 
-MSG_MAINWND_TITLE=0								Док
+MSG_MAINWND_TITLE=0								Панель задач
 
 MSG_MAINWND_POSITION=100						Расположение
 MSG_MAINWND_POSITION_TOP						Сверху

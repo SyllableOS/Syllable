@@ -16,6 +16,6 @@ MSG_MAINWND_MENU_HELP=300					Помощь
 MSG_MAINWND_MENU_HELP_ABOUT					О программе
 
 MSG_ABOUTWND_TITLE=1000						О программе BZoom
-MSG_ABOUTWND_TEXT							BZoom V1.0\n\nПростейший попиксельный увеличитель для AtheOS.\nОн основан на AZoom, написанной Chir.\nBZoom распространяется на условиях \nУниверсальной Общественной Лицензии (GNU GPL)
+MSG_ABOUTWND_TEXT							BZoom V1.0\n\nПростейший пиксельный увеличитель для AtheOS.\nОн основан на AZoom, написанной Chir.\nBZoom распространяется на условиях \nУниверсальной Общественной Лицензии (GNU GPL)
 MSG_ABOUTWND_OK								Ок
 

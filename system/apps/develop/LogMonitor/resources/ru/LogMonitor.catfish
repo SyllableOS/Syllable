@@ -1,0 +1,42 @@
+//
+// Translated by: azlk
+//
+
+STR_OPTION_DESKTOP=1000		Номер рабочего стола (1 - 32), или 0 для всех
+STR_OPTION_FULLSCREEN		Заполнить весь рабочиий стол
+STR_OPTION_HELP				Показать эту справку и выйти
+STR_OPTION_VERSION			Вывести информацию о версии и выйти
+STR_OPTION_LEFT				Окно слева
+STR_OPTION_TOP				Окно наверху
+STR_OPTION_WIDTH			Ширина окна
+STR_OPTION_HEIGHT			Высота окна
+
+STR_USAGE=1100				Использование:   LogMonitor [опции] файл
+STR_EXAMPLE					Пример: LogMonitor --desktop=2 --fullscreen /var/log/kernel
+
+STR_ERROR_DESKTOP_NUMBER=2000	Такого рабочего стола нет!
+STR_ERROR_WINDOW_HEIGHT			Высота окна отсутствует или неверная
+STR_ERROR_WINDOW_WIDTH			Ширина окна отсутствует или неверная
+
+STR_ERROR_FILE_SIZE				Ошибка LogMonitor: не удалось определить размер файла!
+STR_ERROR_SAVEFILE_TEXT			Не удалось сохранить файл
+STR_ERROR_SAVEFILE_TITLE		Ошибка - LogMonitor
+STR_ERROR_SAVEFILE_OKBUTTON		OK
+
+STR_ABOUT=3000	LogMonitor %s\n\nМонитор файлов отчета.\nCopyright (C)2001-2004 Henrik Isaksson\nПоддерживается командой Syllable.
+STR_ABOUT_WINTITLE	О программе LogMonitor
+STR_ABOUT_OKBUTTON	OK
+
+STR_POPUPMENU_COPY=4000	Копировать
+STR_POPUPMENU_CLEAR	Очистить
+STR_POPUPMENU_SAVE	Сохранить
+STR_POPUPMENU_ABOUT	О программе
+STR_POPUPMENU_QUIT	Выход
+STR_POPUPMENU_OPEN	Открыть
+
+STR_POPUPMENU_COPY_SH=4100	CTRL+C
+STR_POPUPMENU_CLEAR_SH	CTRL+K
+STR_POPUPMENU_SAVE_SH	CTRL+S
+STR_POPUPMENU_ABOUT_SH	\t
+STR_POPUPMENU_QUIT_SH	CTRL+Q
+STR_POPUPMENU_OPEN_SH	CTRL+O
