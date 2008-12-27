@@ -57,3 +57,6 @@ documentation
 	DOCS/MANUAL
 develop-docs			DOCS/lzma.txt
 internal-docs			DOCS/7zFormat.txt DOCS/Methods.txt
+
+links				../lib/7z.so bin/
+
