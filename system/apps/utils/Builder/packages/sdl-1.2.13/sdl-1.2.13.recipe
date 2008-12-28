@@ -18,9 +18,10 @@ build-needs
 ;	automake < 1.10
 	automake
 	autoconf
-; For DirectFB:
 build-recommends
+;	Warnings on newer versions:
 	autoconf <= 2.61
+;	For DirectFB:
 	pkg-config
 recommends			directfb >= 0.9.15 < 1
 
@@ -40,4 +41,3 @@ develop-docs
 	docs/index.html docs/html
 	test
 internal-docs		README.Porting
-
