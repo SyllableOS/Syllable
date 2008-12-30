@@ -1,3 +1,7 @@
+* December 30, 2008, Anthony Morphett *
+
+Off-by-one rendering bugfix in Memory Monitor.
+
 * December 22, 2008, Anthony Morphett *
 
 Fixed Mouse prefs catalogs after previous patch.
