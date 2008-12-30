@@ -463,6 +463,7 @@ void MultiMeter::AddValue( float vTotMem, float vCacheSize, float vDirtyCache )
       y3++;
       y2--;
   }
+  cBounds.right++;
   
   MovePenTo( cBounds.right, cBounds.bottom );
   SetFgColor( 0, 0, 0, 0 );
