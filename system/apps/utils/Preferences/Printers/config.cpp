@@ -401,9 +401,9 @@ status_t PrintersWindow::GetPPD( String cPPD )
 		nError = ENOENT;
 
 		hRoot = opendir( "/" );
-		while( hRoot )
+		psEnt = readdir( hRoot );
+		while( psEnt )
 		{
-			psEnt = readdir( hRoot );
 			if( psEnt != NULL && psEnt->d_name != NULL )
 			{
 				if( strncmp( psEnt->d_name, SYLLABLE_CD_PREFIX, strlen( SYLLABLE_CD_PREFIX ) ) == 0 )
@@ -416,6 +416,7 @@ status_t PrintersWindow::GetPPD( String cPPD )
 					break;
 				}	
 			}
+			psEnt = readdir( hRoot );
 		}
 	}
 	else

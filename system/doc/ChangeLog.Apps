@@ -1,6 +1,7 @@
 * December 30, 2008, Anthony Morphett *
 
 Off-by-one rendering bugfix in Memory Monitor.
+Infinite loop bugfix in Printers pref.
 
 * December 22, 2008, Anthony Morphett *
 
