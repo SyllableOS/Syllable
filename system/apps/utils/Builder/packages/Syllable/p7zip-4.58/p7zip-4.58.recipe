@@ -1,0 +1,19 @@
+authors
+	Kaj de Vos
+	Anthony Morphett
+status				testing
+
+install-files
+	bin/7z.so		lib/
+;	Doesn't work on Syllable 0.6.6:
+	bin/7z			bin/7zs
+	bin/7za			bin/
+	bin/7zr			bin/
+;	bin/Formats		bin/
+	bin/Codecs		bin/
+	bin/7zCon.sfx	bin/
+	man1			man/
+
+links
+	../lib/7z.so	bin/
+	7za				bin/7z
