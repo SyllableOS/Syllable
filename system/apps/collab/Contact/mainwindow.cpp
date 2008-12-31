@@ -72,7 +72,7 @@ void MainWindow::HandleMessage( os::Message* pcMessage )
 			if( fork() == 0 )
 			{
 				set_thread_priority( -1, 0 );
-				execlp( "/Applications/ABrowse/ABrowse","/Applications/ABrowse/ABrowse","http://www.syllable-software.info/index.php?id=Contact",NULL );
+				execlp( "/Applications/Webster/Webster","/Applications/Webster/Webster","http://www.syllable.org",NULL );
 				exit(0);
 			}
 
@@ -421,7 +421,7 @@ void MainWindow::HandleMessage( os::Message* pcMessage )
 				if( fork() == 0 )
 				{
 					set_thread_priority( -1, 0 );
-					execlp( "/Applications/ABrowse/ABrowse","/Applications/ABrowse/ABrowse",cTempData.c_str(),NULL );
+					execlp( "/Applications/Webster/Webster","/Applications/Webster/Webster",cTempData.c_str(),NULL );
 					exit(0);
 				}
 			}
