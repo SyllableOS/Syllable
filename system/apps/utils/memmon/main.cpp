@@ -35,6 +35,7 @@
 #include <util/message.h>
 #include <util/exceptions.h>
 #include <gui/exceptions.h>
+#include <util/settings.h>
 
 #include "resources/MemoryMonitor.h"
 
@@ -62,10 +63,12 @@ public:
     virtual void	Paint( const Rect& cUpdateRect );
     virtual void	MouseDown( const Point& cPosition, uint32 nButtons );
     virtual void	MouseUp( const Point& cPosition, uint32 nButtons, Message* pcData );
+    virtual void	AttachedToWindow();
 
     void	AddValue( float vTotMem, float vCacheSize, float vDirtyCache );
 private:
     Menu* m_pcPopupMenu;
+    Menu* m_pcSpeedMenu;
     float m_avTotUsedMem[ 1024 ];
     float m_avCacheSize[ 1024 ];
     float m_avDirtyCacheSize[ 1024 ];
@@ -77,20 +80,27 @@ private:
 class MonWindow : public Window
 {
 public:
-    MonWindow( const Rect& cFrame );
-    ~MonWindow();
+	MonWindow( const Rect& cFrame );
+	~MonWindow();
 
-      // From Window:
-    bool	OkToQuit();
+	  // From Window:
+	bool	OkToQuit();
 
-    virtual void TimerTick( int nID );
+	virtual void HandleMessage( Message* pcMessage );
+	virtual void TimerTick( int nID );
+
+	/* Get/set the refresh speed */
+	int GetRefreshSpeed() { return( m_nDelay ); }
+	void SetRefreshSpeed( int nPeriod );
   
 private:
-    LayoutView*	m_pcLayoutView;
-    VLayoutNode* m_pcVLayout;
-    StringView*	m_pcMemUsageStr;
-    MultiMeter*	m_pcMemUsage;
-    int		m_nUpdateCount;
+	LayoutView*	m_pcLayoutView;
+	VLayoutNode* m_pcVLayout;
+	StringView*	m_pcMemUsageStr;
+	MultiMeter*	m_pcMemUsage;
+	int		m_nUpdateCount;
+	bigtime_t  m_nDelay;
+	Settings* m_pcSettings;
 };
 
 class	MyApp : public Application
@@ -99,11 +109,8 @@ public:
   MyApp( const char* pzName );
   ~MyApp();
 
-    // From Handler:
-  virtual void	HandleMessage( Message* pcMsg );
 private:
   MonWindow* m_pcWindow;
-  bigtime_t  m_nDelay;
 };
 
 //----------------------------------------------------------------------------
@@ -117,7 +124,6 @@ MyApp::MyApp( const char* pzName ) : Application( pzName )
 {
   SetCatalog("MemoryMonitor.catalog");
 
-  m_nDelay 	  = 1000000;
   m_pcWindow 	  = new MonWindow( Rect( 20, 20, 200, 100 ) );
 
   m_pcWindow->Show();
@@ -133,39 +139,6 @@ MyApp::MyApp( const char* pzName ) : Application( pzName )
 MyApp::~MyApp()
 {
 }
-
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
-void MyApp::HandleMessage( Message* pcMsg )
-{
-    switch( pcMsg->GetCode() )
-    {
-	case ID_QUIT:
-	{
-      
-	    Message cMsg( M_QUIT );
-	    m_pcWindow->PostMessage( &cMsg );
-	    return;
-	}
-	case ID_SPEED_LOW:		m_nDelay = 10000000;	break;
-	case ID_SPEED_MEDIUM:		m_nDelay = 1000000;	break;
-	case ID_SPEED_HIGH:		m_nDelay = 100000;	break;
-	case ID_SPEED_VERY_HIGH:	m_nDelay = 10000;	break;
-	case ID_SPEED_FULL:		m_nDelay = 10;		break;
-	default:
-	    Application::HandleMessage( pcMsg );
-	    return;
-    }
-    m_pcWindow->Lock();
-    m_pcWindow->AddTimer( m_pcWindow, 0, m_nDelay, false );
-    m_pcWindow->Unlock();
-}
-
 
 //----------------------------------------------------------------------------
 // NAME:
@@ -203,32 +176,12 @@ MonWindow::MonWindow( const Rect& cFrame ) :
     AddChild( m_pcLayoutView );
     
     m_pcMemUsageStr->SetFgColor( 0, 0, 0 );
-    char*	pzHome = getenv( "HOME" );
-
-    if ( NULL != pzHome )
-    {
-	FILE*	hFile;
-	char	zPath[ 256 ];
-			
-	strcpy( zPath, pzHome );
-	strcat( zPath, "/Settings/MemoryMonitor.cfg" );
-
-	hFile = fopen( zPath, "rb" );
-
-	if ( NULL != hFile )
-	{
-	    Rect	cNewFrame;
-				
-	    fread( &cNewFrame, sizeof( cNewFrame ), 1, hFile );
-	    fclose( hFile );
-
-	    Lock();
-	    SetFrame( cNewFrame );
-	    Unlock();
-	}
-    }
+	
+	m_pcSettings = new Settings();
+	m_pcSettings->Load();
+	SetFrame( m_pcSettings->GetRect( "frame", Rect( 20,60,200,120 ) ) );
+	SetRefreshSpeed( m_pcSettings->GetInt32( "speed", 1000000 ) );
   
-    AddTimer( this, 0, 1000000, false );
     Unlock();
 }
 
@@ -241,7 +194,17 @@ MonWindow::MonWindow( const Rect& cFrame ) :
 
 MonWindow::~MonWindow()
 {
+  m_pcSettings->SetRect( "frame", GetFrame() );
+  m_pcSettings->SetInt32( "speed", GetRefreshSpeed() );
+  m_pcSettings->Save();
 }
+
+void MonWindow::SetRefreshSpeed( int nPeriod )
+{
+	m_nDelay = nPeriod;
+	AddTimer( this, 0, m_nDelay, false );
+}
+
 
 //----------------------------------------------------------------------------
 // NAME:
@@ -252,29 +215,37 @@ MonWindow::~MonWindow()
 
 bool MonWindow::OkToQuit( void )
 {
-  char*	pzHome = getenv( "HOME" );
-
-  if ( NULL != pzHome )
-  {
-    FILE*	hFile;
-    char	zPath[ 256 ];
-			
-    strcpy( zPath, pzHome );
-    strcat( zPath, "/Settings/MemoryMonitor.cfg" );
-
-    hFile = fopen( zPath, "wb" );
-
-    if ( NULL != hFile )
-    {
-      Rect cFrame = GetFrame();
-
-      fwrite( &cFrame, sizeof( cFrame ), 1, hFile );
-      fclose( hFile );
-    }
-  }
-    
   Application::GetInstance()->PostMessage( M_QUIT );
   return( true );
+}
+
+//----------------------------------------------------------------------------
+// NAME:
+// DESC:
+// NOTE:
+// SEE ALSO:
+//----------------------------------------------------------------------------
+
+void MonWindow::HandleMessage( Message* pcMsg )
+{
+    switch( pcMsg->GetCode() )
+    {
+	case ID_QUIT:
+	{
+      
+	    Message cMsg( M_QUIT );
+	    PostMessage( &cMsg );
+	    return;
+	}
+	case ID_SPEED_LOW:		SetRefreshSpeed( 10000000 );	break;
+	case ID_SPEED_MEDIUM:	SetRefreshSpeed( 1000000 );	break;
+	case ID_SPEED_HIGH:		SetRefreshSpeed( 100000 );	break;
+	case ID_SPEED_VERY_HIGH:	SetRefreshSpeed( 10000 );	break;
+	case ID_SPEED_FULL:		SetRefreshSpeed( 10 );		break;
+	default:
+	    Window::HandleMessage( pcMsg );
+	    return;
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -350,20 +321,17 @@ MultiMeter::MultiMeter(  const Rect& cFrame, const char* pzTitle, uint32 nResize
     : View( cFrame, pzTitle, nResizeMask, nFlags  )
 {
   m_pcPopupMenu     = new Menu( Rect( 0, 0, 10, 10 ), "popup", ITEMS_IN_COLUMN );
-  Menu* pcSpeedMenu = new Menu( Rect( 0, 0, 10, 10 ), MSG_MAINWND_MENU_SPEED, ITEMS_IN_COLUMN );
+  m_pcSpeedMenu = new Menu( Rect( 0, 0, 10, 10 ), MSG_MAINWND_MENU_SPEED, ITEMS_IN_COLUMN );
   
   m_pcPopupMenu->AddItem( new MenuItem( MSG_MAINWND_MENU_QUIT, new Message( M_QUIT ) ) );
-  m_pcPopupMenu->AddItem( pcSpeedMenu );
+  m_pcPopupMenu->AddItem( m_pcSpeedMenu );
   
-  pcSpeedMenu->AddItem( new MenuItem( MSG_MAINWND_MENU_SPEED_LOW,       new Message( ID_SPEED_LOW ) ) );
-  pcSpeedMenu->AddItem( new MenuItem( MSG_MAINWND_MENU_SPEED_MEDIUM,    new Message( ID_SPEED_MEDIUM ) ) );
-  pcSpeedMenu->AddItem( new MenuItem( MSG_MAINWND_MENU_SPEED_HIGH,      new Message( ID_SPEED_HIGH ) ) );
-  pcSpeedMenu->AddItem( new MenuItem( MSG_MAINWND_MENU_SPEED_VERYHIGH, new Message( ID_SPEED_VERY_HIGH ) ) );
-  pcSpeedMenu->AddItem( new MenuItem( MSG_MAINWND_MENU_SPEED_FULLSPEED, new Message( ID_SPEED_FULL ) ) );
+  m_pcSpeedMenu->AddItem( new MenuItem( MSG_MAINWND_MENU_SPEED_LOW,       new Message( ID_SPEED_LOW ) ) );
+  m_pcSpeedMenu->AddItem( new MenuItem( MSG_MAINWND_MENU_SPEED_MEDIUM,    new Message( ID_SPEED_MEDIUM ) ) );
+  m_pcSpeedMenu->AddItem( new MenuItem( MSG_MAINWND_MENU_SPEED_HIGH,      new Message( ID_SPEED_HIGH ) ) );
+  m_pcSpeedMenu->AddItem( new MenuItem( MSG_MAINWND_MENU_SPEED_VERYHIGH, new Message( ID_SPEED_VERY_HIGH ) ) );
+  m_pcSpeedMenu->AddItem( new MenuItem( MSG_MAINWND_MENU_SPEED_FULLSPEED, new Message( ID_SPEED_FULL ) ) );
 
-  m_pcPopupMenu->SetTargetForItems( Application::GetInstance() );
-  pcSpeedMenu->SetTargetForItems( Application::GetInstance() );
-  
   memset( m_avTotUsedMem, 0, sizeof( m_avTotUsedMem ) );
   memset( m_avCacheSize, 0, sizeof( m_avCacheSize ) );
   memset( m_avDirtyCacheSize, 0, sizeof( m_avDirtyCacheSize ) );
@@ -379,6 +347,13 @@ MultiMeter::MultiMeter(  const Rect& cFrame, const char* pzTitle, uint32 nResize
 MultiMeter::~MultiMeter()
 {
   delete m_pcPopupMenu;
+}
+
+
+void MultiMeter::AttachedToWindow()
+{
+	m_pcPopupMenu->SetTargetForItems( GetWindow() );
+	m_pcSpeedMenu->SetTargetForItems( GetWindow() );
 }
 
 //----------------------------------------------------------------------------
@@ -520,7 +495,7 @@ int main()
   Application* pcMyApp;
   
   try {
-	  pcMyApp = new MyApp( "application/x-vnd.KHS-atheos_memory_monitor" );
+	  pcMyApp = new MyApp( "application/x-vnd.KHS-MemoryMonitor" );
  
 	  pcMyApp->Run();
   } catch( errno_exception &e ) {
