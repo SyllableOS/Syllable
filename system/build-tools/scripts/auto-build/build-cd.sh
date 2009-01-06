@@ -25,8 +25,8 @@ FILES=(	"/etc/profile, /etc/profile" 															\
 		"/system/drivers/dev/bus/scsi, /boot/drivers/dev/bus/scsi"								\
 																											\
 		"/system/drivers/dev/hcd/ata_pci, /boot/drivers/dev/hcd/ata_pci"							\
-# Reported to be buggy; better to fall back on USB 1, on EeePC for example:
-#		"/system/drivers/dev/hcd/usb_ehci, /boot/drivers/dev/hcd/usb_ehci"						\
+#		Reported to be buggy; better to fall back on USB 1, on EeePC for example:
+		"/system/drivers/dev/hcd/usb_ehci, /boot/drivers/dev/hcd/usb_ehci"						\
 		"/system/drivers/dev/hcd/usb_uhci, /boot/drivers/dev/hcd/usb_uhci"						\
 		"/system/drivers/dev/hcd/usb_ohci, /boot/drivers/dev/hcd/usb_ohci"						\
 
@@ -171,7 +171,34 @@ GRUB=(	"color	cyan/blue white/blue"																	\
 		"module /boot/drivers/dev/hcd/ata_pci path=/system/drivers/dev/hcd/ata_pci"						\
 		"module /boot/drivers/dev/hcd/usb_ohci path=/system/drivers/dev/hcd/usb_ohci"					\
 		"module /boot/drivers/dev/hcd/usb_uhci path=/system/drivers/dev/hcd/usb_uhci"					\
-#		"module /boot/drivers/dev/hcd/usb_ehci path=/system/drivers/dev/hcd/usb_ehci"					\
+		"module /boot/drivers/dev/hcd/usb_ehci path=/system/drivers/dev/hcd/usb_ehci"					\
+		"module /boot/drivers/dev/disk/usb path=/system/drivers/dev/disk/usb"							\
+		"module /system/drivers/fs/iso9660"																\
+		""																								\
+		"title	Install Syllable from AFS-formatted USB memory"											\
+		"kernel /system/kernel.so root=@boot disable_config=true"										\
+		"module /boot/drivers/dev/bus/acpi path=/system/drivers/dev/bus/acpi"							\
+		"module /boot/drivers/dev/bus/pci path=/system/drivers/dev/bus/pci"								\
+		"module /boot/drivers/dev/bus/ata path=/system/drivers/dev/bus/ata"								\
+		"module /boot/drivers/dev/bus/usb path=/system/drivers/dev/bus/usb"								\
+		"module /boot/drivers/dev/bus/scsi path=/system/drivers/dev/bus/scsi"							\
+		"module /boot/drivers/dev/hcd/ata_pci path=/system/drivers/dev/hcd/ata_pci"						\
+		"module /boot/drivers/dev/hcd/usb_ohci path=/system/drivers/dev/hcd/usb_ohci"					\
+		"module /boot/drivers/dev/hcd/usb_uhci path=/system/drivers/dev/hcd/usb_uhci"					\
+		"module /boot/drivers/dev/hcd/usb_ehci path=/system/drivers/dev/hcd/usb_ehci"					\
+		"module /boot/drivers/dev/disk/usb path=/system/drivers/dev/disk/usb"							\
+		"module /system/drivers/fs/afs"																	\
+		""																								\
+		"title	Install Syllable from a USB CD-ROM drive (USB 1 only / EeePC)"							\
+		"kernel /system/kernel.so rootfs=iso9660 root=@boot disable_config=true"						\
+		"module /boot/drivers/dev/bus/acpi path=/system/drivers/dev/bus/acpi"							\
+		"module /boot/drivers/dev/bus/pci path=/system/drivers/dev/bus/pci"								\
+		"module /boot/drivers/dev/bus/ata path=/system/drivers/dev/bus/ata"								\
+		"module /boot/drivers/dev/bus/usb path=/system/drivers/dev/bus/usb"								\
+		"module /boot/drivers/dev/bus/scsi path=/system/drivers/dev/bus/scsi"							\
+		"module /boot/drivers/dev/hcd/ata_pci path=/system/drivers/dev/hcd/ata_pci"						\
+		"module /boot/drivers/dev/hcd/usb_ohci path=/system/drivers/dev/hcd/usb_ohci"					\
+		"module /boot/drivers/dev/hcd/usb_uhci path=/system/drivers/dev/hcd/usb_uhci"					\
 		"module /boot/drivers/dev/disk/usb path=/system/drivers/dev/disk/usb"							\
 		"module /system/drivers/fs/iso9660"																\
 		""																								\
