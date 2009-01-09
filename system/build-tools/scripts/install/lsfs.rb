@@ -16,7 +16,7 @@ def scan
 	
 	short_id = "a"
 	
-	all_parts = Dir["/dev/disk/ata/hd*/*"] + Dir["/dev/disk/bios/hd*/*"]
+	all_parts = Dir["/dev/disk/ata/hd*/*"] + Dir["/dev/disk/scsi/hd*/*"] + Dir["/dev/disk/bios/hd*/*"]
 	
 	all_parts.select{|partition|
 		partition =~ %r{/\d+$}

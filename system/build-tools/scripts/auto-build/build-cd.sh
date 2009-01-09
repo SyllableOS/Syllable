@@ -202,6 +202,22 @@ GRUB=(	"color	cyan/blue white/blue"																	\
 		"module /boot/drivers/dev/disk/usb path=/system/drivers/dev/disk/usb"							\
 		"module /system/drivers/fs/iso9660"																\
 		""																								\
+		"title	Install Syllable in VMware"																\
+		"kernel /system/kernel.so rootfs=iso9660 root=@boot disable_config=true uspace_end=0xf7ffffff"	\
+		"module /boot/drivers/dev/bus/acpi path=/system/drivers/dev/bus/acpi"							\
+		"module /boot/drivers/dev/bus/pci path=/system/drivers/dev/bus/pci"								\
+		"module /boot/drivers/dev/bus/ata path=/system/drivers/dev/bus/ata"								\
+		"module /boot/drivers/dev/hcd/ata_pci path=/system/drivers/dev/hcd/ata_pci"						\
+		"module /system/drivers/fs/iso9660"																\
+		""																								\
+		"title	Install Syllable in Virtual PC"															\
+		"kernel /system/kernel.so rootfs=iso9660 root=@boot disable_config=true disable_smp=true disable_pci_irq_routing=true"	\
+		"module /boot/drivers/dev/bus/acpi path=/system/drivers/dev/bus/acpi"							\
+		"module /boot/drivers/dev/bus/pci path=/system/drivers/dev/bus/pci"								\
+		"module /boot/drivers/dev/bus/ata path=/system/drivers/dev/bus/ata"								\
+		"module /boot/drivers/dev/hcd/ata_pci path=/system/drivers/dev/hcd/ata_pci"						\
+		"module /system/drivers/fs/iso9660"																\
+		""																								\
 		"title	Install Syllable (no SMP and HyperThreading / VirtualBox)"								\
 		"kernel /system/kernel.so rootfs=iso9660 root=@boot disable_config=true disable_smp=true"		\
 		"module /boot/drivers/dev/bus/acpi path=/system/drivers/dev/bus/acpi"							\
@@ -260,22 +276,6 @@ GRUB=(	"color	cyan/blue white/blue"																	\
 		"kernel /system/kernel.so rootfs=iso9660 root=@boot disable_config=true disable_pci=true"		\
 		"module /boot/drivers/dev/bus/acpi path=/system/drivers/dev/bus/acpi"							\
 		"module /boot/drivers/dev/bus/ata path=/system/drivers/dev/bus/ata"								\
-		"module /system/drivers/fs/iso9660"																\
-		""																								\
-		"title	Install Syllable in VMware"																\
-		"kernel /system/kernel.so rootfs=iso9660 root=@boot disable_config=true uspace_end=0xf7ffffff"	\
-		"module /boot/drivers/dev/bus/acpi path=/system/drivers/dev/bus/acpi"							\
-		"module /boot/drivers/dev/bus/pci path=/system/drivers/dev/bus/pci"								\
-		"module /boot/drivers/dev/bus/ata path=/system/drivers/dev/bus/ata"								\
-		"module /boot/drivers/dev/hcd/ata_pci path=/system/drivers/dev/hcd/ata_pci"						\
-		"module /system/drivers/fs/iso9660"																\
-		""																								\
-		"title	Install Syllable in Virtual PC"															\
-		"kernel /system/kernel.so rootfs=iso9660 root=@boot disable_config=true disable_smp=true disable_pci_irq_routing=true"	\
-		"module /boot/drivers/dev/bus/acpi path=/system/drivers/dev/bus/acpi"							\
-		"module /boot/drivers/dev/bus/pci path=/system/drivers/dev/bus/pci"								\
-		"module /boot/drivers/dev/bus/ata path=/system/drivers/dev/bus/ata"								\
-		"module /boot/drivers/dev/hcd/ata_pci path=/system/drivers/dev/hcd/ata_pci"						\
 		"module /system/drivers/fs/iso9660"																\
 		""																								\
 		"title	Debug Syllable"																			\
