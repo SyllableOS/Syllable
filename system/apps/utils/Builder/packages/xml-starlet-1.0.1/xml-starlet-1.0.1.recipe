@@ -14,18 +14,17 @@ packages			xmlstar/xmlstarlet-1.0.1
 
 ; Links statically:
 build-needs
-	libxml2
-	libxslt
-
-_configure-options
-	--with-libxml-src=
-	--with-libxslt-src=
-	--disable-ipv6
+	libxml2 >= 2.6.12
+	libxslt >= 1.1.9
 
 test-targets		tests
 
 documentation
 	README COPYING AUTHORS TODO
+;	Hardlink of COPYING:
+;	Copyright
 ;	Empty:
-	NEWS ChangeLog
-;	examples
+;	NEWS ChangeLog
+	doc
+	examples
+

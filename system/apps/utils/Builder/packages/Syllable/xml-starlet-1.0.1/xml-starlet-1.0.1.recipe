@@ -1,5 +1,13 @@
 authors				Kaj de Vos
 status				testing
+warnings
+	Source tarball contains hard link!
+	Move the source to the correct (package) name manually, run build patch, then continue building.
 
 patch-config
+
+configure-options
+	--with-libxml-prefix=/usr/libxml2
+	--with-libxslt-prefix=/usr/libxslt
+;	--disable-ipv6
 
