@@ -26,7 +26,7 @@ void AddressDrop::KeyUp(const char* pzString, const char* pzRawString,uint32 nKe
 
 void AddressDrop::KeyDown(const char* pzString,const char* pzRawString,uint32 nKeyCode)
 {
-	printf("this will never work!!!!!!\n");
+	printf("This will never work!\n");
 }
 
 Address::Address(os::DockPlugin* pcPlugin, os::Looper* pcDock) : os::View( os::Rect(), "address" )
@@ -84,7 +84,7 @@ void Address::LoadAddresses()
 	
 	catch (...)
 	{
-		printf("Address dockplugin: cannot load addresses.\n");
+		printf("Address dock plug-in: cannot load addresses.\n");
 	}	
 }
 
@@ -117,7 +117,7 @@ void Address::LoadBuffer()
 	
 	catch (...)
 	{
-		printf("Address dockplugin: cannot load buffer.\n");
+		printf("Address dock plug-in: cannot load buffer.\n");
 	}	
 }
 
@@ -320,7 +320,7 @@ void Address::DisplayAbout()
 	String cTitle = (String)"About " + (String)PLUGIN_NAME + (String)"...";
 	String cInfo = (String)"Version:  " +  (String)PLUGIN_VERSION + (String)"\n\nAuthor:   " + (String)PLUGIN_AUTHOR + (String)"\n\nDesc:      " + (String)PLUGIN_DESC;	
 	
-	Alert* pcAlert = new Alert(cTitle.c_str(),cInfo.c_str(),m_pcIcon->LockBitmap(),0,"_O.K",NULL);
+	Alert* pcAlert = new Alert(cTitle.c_str(),cInfo.c_str(),m_pcIcon->LockBitmap(),0,"_OK",NULL);
 	m_pcIcon->UnlockBitmap();
 	pcAlert->Go(new Invoker());
 	pcAlert->MakeFocus();
@@ -341,7 +341,7 @@ void Address::DisplaySettings()
 
 void Address::DisplayHelp()
 {
-	ExecuteBrowser("/boot/Documentation/address.html");
+	ExecuteBrowser("/documentation/address.html");
 }
 
 void Address::ExecuteBrowser(const String& cUrl)
@@ -358,14 +358,14 @@ void Address::ExecuteBrowser(const String& cUrl)
 	{
 		if (errno == ENOENT)
 		{
-			Alert* pcAlert = new Alert("Address...","Could not find Webster browser!!!",m_pcIcon->LockBitmap(),0,"_O.K",NULL);
+			Alert* pcAlert = new Alert("Address...","Could not find Webster browser.",m_pcIcon->LockBitmap(),0,"_OK",NULL);
 			m_pcIcon->UnlockBitmap();
 			pcAlert->CenterInScreen();
 			pcAlert->Go(new Invoker());	
 		}
 		else
 		{
-			Alert* pcAlert = new Alert("Address...","Error launching Webster browser!!!!",m_pcIcon->LockBitmap(),0,"_O.K",NULL);
+			Alert* pcAlert = new Alert("Address...","Error launching Webster browser.",m_pcIcon->LockBitmap(),0,"_OK",NULL);
 			m_pcIcon->UnlockBitmap();
 			pcAlert->CenterInScreen();
 			pcAlert->Go(new Invoker());	
@@ -403,12 +403,12 @@ void Address::ExportHelpFile()
 			delete pcHelpStream;
 			delete pcResourceFile;
 			
-			File* pcFileTwo = new File("/boot/Documentation/address.html",O_CREAT | O_RDWR);
+			File* pcFileTwo = new File("/documentation/address.html",O_CREAT | O_RDWR);
 			pcFileTwo->Write(buffer,nSize);
 			pcFileTwo->WriteAttr("os::MimeType",O_TRUNC,ATTR_TYPE_STRING,"text/html",0,10);
 			delete pcFileTwo;
 		} catch( ... ) {
-			printf( "Address dockplugin: Could not export help file!\n" );
+			printf( "Address dock plug-in: Could not export help file.\n" );
 		}
 	}
 }
