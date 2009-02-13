@@ -2,10 +2,10 @@
 
 if [ `uname` = "syllable" ]
 then
-	manpath="/boot/Documentation/man"
+	manpath="/documentation/man"
 	browser="/Applications/Webster/Webster"
 else
-	manpath="/atheos/Documentation/man"
+	manpath="/documentation/man"
 
 	if [ -e /system/resources/directfb -a "$USER" = "root" ]
 	then
