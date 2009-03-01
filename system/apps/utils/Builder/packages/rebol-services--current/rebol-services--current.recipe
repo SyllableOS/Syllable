@@ -11,13 +11,15 @@ licenses			BSD
 home
 	rebol.com/docs/services/
 ;	rebol.net/rs/
-files
-	server.r client.r
+_files
+;	server.r client.r
 	examples.html
-;	demos/rpc.r demos/server/services/rpc.r
+;;	demos/rpc.r demos/server/services/rpc.r
 	tutorial.html
+packages			rebol-services-100
 locations
-	http://rebol.net/rs/
+	http://www.rebol.com/downloads/
+;	http://rebol.net/rs/
 	http://rebol.com/docs/services/
 
 run-needs			rebol
@@ -28,10 +30,9 @@ install-tree
 	lib/
 	lib/REBOL/
 install				true
-install-files
-	server.r		lib/REBOL/
-	client.r		lib/REBOL/
+install-files		*.r lib/REBOL/
 
 documentation
-	tutorial.html examples.html
-;	rpc.r
+	readme.txt
+;	tutorial.html examples.html
+;;	rpc.r
