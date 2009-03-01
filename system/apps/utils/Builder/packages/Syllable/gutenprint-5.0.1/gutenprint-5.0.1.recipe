@@ -1,0 +1,6 @@
+authors
+	Kristian Van Der Vliet
+	Kaj de Vos
+status				testing
+
+system-prefix-var	DESTDIR

@@ -33,7 +33,7 @@ configure-options
 	--disable-libgutenprintui
 	--disable-libgutenprintui2
 
-; Double effect with tweaked cups-config (on Linux):
+; Double effect on Linux with tweaked cups-config:
 ;system-prefix-var	DESTDIR
 
 documentation
