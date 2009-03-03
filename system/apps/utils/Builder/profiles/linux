@@ -631,7 +631,7 @@ modules
 
 ;	Extra goodies
 
-	apps/other/genode-8.08
+	apps/other/genode-9.02
 
 	apps/other/s-lang-2.1.1
 	apps/other/glib-2.14.4
