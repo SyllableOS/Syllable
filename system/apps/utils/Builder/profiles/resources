@@ -1,5 +1,5 @@
 ; List of all resources released as binaries
-; Generated on 26-Dec-2008/11:04:41+1:00
+; Generated on 1-Mar-2009/1:17:35+1:00
 
 modules
 	p7zip-4.51
@@ -7,7 +7,7 @@ modules
 	apr-1.2.8
 	apr-util-1.2.8
 	arch-1.3.5
-	autoconf-2.62
+	autoconf-2.61
 	automake-1.9.6
 	automake-1.10.1
 	avra-1.2.1
@@ -151,6 +151,7 @@ modules
 	wget-1.9.1
 	which-2.19
 	xml-parser-2.36
+	xml-starlet-1.0.1
 	x264-20080625.2245
 	xproto-7.0.5
 	yasm-0.7.1

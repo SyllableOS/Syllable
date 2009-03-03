@@ -618,8 +618,8 @@ modules
 ;	REBOL stacks
 	apps/other/tiny--current
 	apps/other/rebol-services--current
-	apps/other/uniserve-0.9.28
-	apps/other/cheyenne-0.9.18
+	apps/other/uniserve-0.9.33
+	apps/other/cheyenne-0.9.19
 	apps/other/cheyenne--quartermaster-current
 	apps/other/captcha--current
 	apps/other/rebol-mysql-1.2.0
