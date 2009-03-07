@@ -1,0 +1,66 @@
+authors
+	Kelly Wilson
+	Kristian Van Der Vliet
+	Kaj de Vos
+	Rui Caridade
+status				testing
+
+inherits			sourceforge
+
+headline			Pidgin IM framework
+description			Pidgin is a cross platform IM framework
+licenses			GPL
+
+home				www.pidgin.im
+packages			pidgin/pidgin-2.5.5
+
+needs
+	ncurses
+	libxml2
+build-needs			intltool
+recommends
+	gtk >= 2
+	gstreamer >= 0.10
+	gnutls | nss
+	gtkspell
+
+;build-dir			.
+
+configure-env
+	PKG_CONFIG_PATH "$PKG_CONFIG_PATH:/resources/glib/lib/pkgconfig:/resources/libxml2/lib/pkgconfig:/resources/openssl/lib/pkgconfig"
+	LIBS "$LIBS -lncurses"
+
+configure-options
+;	--enable-debug
+;	--with-glib-lib=/resources/glib/lib
+	--enable-consoleui
+	--with-screen=ncurses
+	--with-ncurses-headers=/resources/ncurses/include/
+	--disable-gtkui
+	--disable-perl
+	--disable-tcl
+;	--disable-plugins
+	--with-static-prpls=all
+;	--enable-nss=static
+	--disable-nss
+	--disable-gnutls
+	--disable-libtool-lock
+	--disable-startup-notification
+	--disable-screensaver
+	--disable-sm
+	--disable-avahi
+	--disable-dbus
+	--disable-meanwhile
+	--disable-gtkspell
+	--disable-gevolution
+	--disable-gstreamer
+	--disable-fortify
+
+_links
+	purple-2/liboscar.so.0.0.0	lib/liboscar.so.0
+	purple-2/libjabber.so.0.0.0 lib/libjabber.so.0
+
+documentation		README COPYRIGHT COPYING NEWS ChangeLog AUTHORS
+build-docs			README.MTN
+develop-docs		ChangeLog.API
+internal-docs		PLUGIN_HOWTO

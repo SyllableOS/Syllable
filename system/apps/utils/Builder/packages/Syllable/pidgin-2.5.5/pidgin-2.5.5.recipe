@@ -1,0 +1,22 @@
+authors
+	Kristian Van Der Vliet
+	Kaj de Vos
+status				broken
+notes				Finch exits early with an abort()
+
+build-needs
+;	libtool
+;	autoconf
+;	automake 1.9
+	intltool
+
+;make-shared
+_patch
+;	cp /resources/libtool/share/libtool/ltmain.sh .
+	libtoolize --force
+	intltoolize --force
+	cp /resources/automake/share/automake-1.9/compile .
+	aclocal -I /resources/indexes/share/aclocal
+	autoheader -I /resources/indexes/share/aclocal
+	autoconf -I /resources/indexes/share/aclocal
+	automake
