@@ -63,14 +63,23 @@ MainWindow::MainWindow() : os::Window( os::Rect( 0, 0, 350, 300 ), "main_wnd", M
 
 	// Get current delay and repeat settings and set slider values
 	os::Application::GetInstance()->GetKeyboardConfig( &cKeymap, &iDelay, &iRepeat );
+	/* As of Syllable 0.6.6, GetKeyboardConfig() returns the full path to the keymap.
+	   We only want the name, so we strip off the path.
+	   This might change in future releases.
+	*/
+	size_t nSlash = cKeymap.str().find_last_of( '/' );
+	if( nSlash != std::string::npos ) cKeymap = cKeymap.str().substr( nSlash + 1 );
+
 	iDelay2 = iDelay;
 	iRepeat2 = iRepeat;
+	iOrigRow = iOrigRow2 = -1;
 	m_pcInitialSlider->SetValue( (float)iDelay, true);
 	m_pcRepeatSlider->SetValue( (float)iRepeat, true);
 
 	LoadDatabase();
 	ShowData();
 	SetCurrent();
+	iOrigRow2 = iOrigRow;
 }
 
 
@@ -145,7 +154,9 @@ void MainWindow::LoadDatabase()
 
 void MainWindow::ShowData()
 {
-	bool bShowAll = false;
+	bool bShowAll = m_pcKeyboardLayoutShowAll->GetValue();
+
+	/* TODO: Should use os::Keymap methods here whenever possible */
 
 	// Open up keymaps directory and check it actually contains something
 	DIR *pDir = opendir("/system/keymaps");
@@ -167,7 +178,7 @@ void MainWindow::ShowData()
 			continue;
 		}
 
-		// If ft's a valid file, open it
+		// If it's a valid file, open it
 		FILE *hFile = fopen( (std::string("/system/keymaps/")+psEntry->d_name).c_str(), "r" );
 		if (hFile == NULL) {
 			continue;
@@ -183,13 +194,22 @@ void MainWindow::ShowData()
 
 		// Its valid, add to the listview
 		bool bAdded = false;
-		bShowAll = m_pcKeyboardLayoutShowAll->GetValue();
 		os::String cTempKeymap;
 		
 		for( std::vector<LanguageInfo>::const_iterator i = m_cDatabase.begin(); i != m_cDatabase.end() && !bAdded; i++ )
 		{
 			LanguageInfo li = (*i);
 			if( li.IsValid() &&  bShowAll == false && strcmp( psEntry->d_name, li.GetName().c_str() ) == 0 ) {
+				/* If it is the active keymap, we should show it even if it doesn't match the active language */
+				if( strcmp( psEntry->d_name, cKeymap.c_str() ) == 0 ) {
+					os::ListViewStringRow* pcRow = new os::ListViewStringRow();
+					pcRow->AppendString( li.GetAlias() );
+					m_pcKeyboardLayoutList->InsertRow( pcRow, false );
+					bAdded = true;
+					break;
+				}
+				
+				/* Check if this keymap is relevant to the current language */
 				char delims[] = ",";
 				char *result = NULL;
 				char zGetCode[128];
@@ -204,7 +224,7 @@ void MainWindow::ShowData()
 					}
 					result = strtok( NULL, delims );
 				}
-			} else if( bShowAll == true && bAdded == false && strcmp( psEntry->d_name, li.GetName().c_str() ) == 0 ) {
+			} else if( bAdded == false && bShowAll == true && strcmp( psEntry->d_name, li.GetName().c_str() ) == 0 ) {
 				os::ListViewStringRow* pcRow = new os::ListViewStringRow();
 				pcRow->AppendString( li.GetAlias() );
 				m_pcKeyboardLayoutList->InsertRow( pcRow, false );
@@ -233,7 +253,7 @@ void MainWindow::ShowData()
 		}
 
 		// If we don't know the keymap, so we just add it with it's filename.
-		if( bShowAll == true && bAdded == false ) {
+		if( bAdded == false  && (bShowAll == true || strcmp( psEntry->d_name, cKeymap.c_str() ) == 0) ) {
 			os::ListViewStringRow* pcRow = new os::ListViewStringRow();
 			pcRow->AppendString( psEntry->d_name );
 			m_pcKeyboardLayoutList->InsertRow( pcRow, false );
@@ -274,24 +294,34 @@ void MainWindow::SetCurrent()
 
 void MainWindow::Apply()
 {
+	os::ListViewStringRow *pcRow;
+	os::String cKeymapName;
+	
 	// Apply the keymap. We know the alias, but we want the real name
-	os::ListViewStringRow *pcRow = static_cast<os::ListViewStringRow*>( m_pcKeyboardLayoutList->GetRow( m_pcKeyboardLayoutList->GetLastSelected() ) );
-	os::String cKeymapName = pcRow->GetString(0);
-	for( std::vector<LanguageInfo>::const_iterator i = m_cDatabase.begin(); i != m_cDatabase.end(); i++ )
+	int nLastSelected = m_pcKeyboardLayoutList->GetLastSelected();
+	if( nLastSelected != -1 )	/* -1 indicates no row is selected */
 	{
-		LanguageInfo li = (*i);
-		if( li.IsValid() && pcRow->GetString(0) == li.GetAlias() ) {
-			cKeymapName = li.GetName();
-			break;
+		pcRow = static_cast<os::ListViewStringRow*>( m_pcKeyboardLayoutList->GetRow( nLastSelected ) );
+		cKeymapName = pcRow->GetString(0);
+		for( std::vector<LanguageInfo>::const_iterator i = m_cDatabase.begin(); i != m_cDatabase.end(); i++ )
+		{
+			LanguageInfo li = (*i);
+			if( li.IsValid() && pcRow->GetString(0) == li.GetAlias() ) {
+				cKeymapName = li.GetName();
+				break;
+			}
 		}
 	}
 	
 	// Apply delay and repeat
 	os::Application::GetInstance()->SetKeyboardTimings( int(m_pcInitialSlider->GetValue()), int(m_pcRepeatSlider->GetValue()) );
 
-	//Apply keymap
-	cKeymap = cKeymapName;
-	os::Application::GetInstance()->SetKeymap( cKeymapName.c_str() );
+	if( nLastSelected != -1 )
+	{
+		//Apply keymap
+		cKeymap = cKeymapName;
+		os::Application::GetInstance()->SetKeymap( cKeymapName.c_str() );
+	}
 
 	// Save settings for undo
 	iDelay2 = iDelay;
@@ -308,7 +338,7 @@ void MainWindow::Undo()
 	// Revert to loaded settings
 	m_pcInitialSlider->SetValue( (float)iDelay2 );
 	m_pcRepeatSlider->SetValue( (float)iRepeat2 );
-	m_pcKeyboardLayoutList->Select(iOrigRow2);
+	if( iOrigRow2 >= 0 ) m_pcKeyboardLayoutList->Select(iOrigRow2);
 }
 
 

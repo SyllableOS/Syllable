@@ -1,3 +1,7 @@
+* March 15, 2009, Anthony Morphett *
+
+Fix potential crash and make sure the active keymap is always displayed in Keyboard prefs.
+
 * December 31, 2008, Anthony Morphett *
 
 Updated Contact to use Webster rather than ABrowse; changed web address to syllable.org.
