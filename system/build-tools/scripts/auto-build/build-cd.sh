@@ -280,6 +280,14 @@ GRUB=(	"color	cyan/blue white/blue"																	\
 		"module /boot/drivers/dev/hcd/ata_pci path=/system/drivers/dev/hcd/ata_pci"						\
 		"module /system/drivers/fs/iso9660"																\
 		""																								\
+		"title	Install Syllable (generic PCI ATA)"														\
+		"kernel /system/kernel.so rootfs=iso9660 root=@boot disable_config=true ata_pci_force_generic=true"	\
+		"module /boot/drivers/dev/bus/acpi path=/system/drivers/dev/bus/acpi"							\
+		"module /boot/drivers/dev/bus/pci path=/system/drivers/dev/bus/pci"								\
+		"module /boot/drivers/dev/bus/ata path=/system/drivers/dev/bus/ata"								\
+		"module /boot/drivers/dev/hcd/ata_pci path=/system/drivers/dev/hcd/ata_pci"						\
+		"module /system/drivers/fs/iso9660"																\
+		""																								\
 		"title	Install Syllable (no PCI)"																\
 		"kernel /system/kernel.so rootfs=iso9660 root=@boot disable_config=true disable_pci=true"		\
 		"module /boot/drivers/dev/bus/acpi path=/system/drivers/dev/bus/acpi"							\
