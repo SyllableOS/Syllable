@@ -1,0 +1,8 @@
+authors
+	Ruwen Boehm
+	Kaj de Vos
+	Rui Caridade
+status				incomplete
+notes				Syllable back-end needs to be implemented
+
+configure-options	--disable-joliet
