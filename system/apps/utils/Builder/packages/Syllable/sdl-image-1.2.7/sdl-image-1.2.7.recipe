@@ -6,3 +6,8 @@ status				testing
 
 make-shared
 
+links
+;	For some packages:
+	SDL/SDL_image.h			include/
+;	For compatibility (with version 1.2.4):
+	libSDL_image-1.2.so.0	lib/libSDL_image-1.2.so
