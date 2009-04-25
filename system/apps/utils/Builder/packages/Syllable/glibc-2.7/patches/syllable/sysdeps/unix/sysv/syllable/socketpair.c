@@ -33,7 +33,7 @@ int socketpair( int af, int type, int protocol, int fd[2] )
 
 	/* The following is only valid if type == SOCK_STREAM */
 	if( type != SOCK_STREAM ) {
-		set_errno( EAFNOSUPPORT );
+		__set_errno( EAFNOSUPPORT );
 		return -1;
 	}
 
