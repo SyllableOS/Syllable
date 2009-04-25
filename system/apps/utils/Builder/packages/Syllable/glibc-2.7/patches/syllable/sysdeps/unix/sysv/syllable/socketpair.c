@@ -47,7 +47,7 @@ int socketpair( int af, int type, int protocol, int fd[2] )
 
 	sin[0].sin_family = af;
 	sin[0].sin_port = 0;	/* Use any port number */
-	sin[0].sin_addr = inet_makeaddr( INADDR_ANY, 0 );
+	sin[0].sin_addr.s_addr = INADDR_ANY;
 
 	if( bind( listen_socket, (struct sockaddr *)&sin[0], sizeof( sin[0] ) ) < 0 ) {
 		close( listen_socket );
