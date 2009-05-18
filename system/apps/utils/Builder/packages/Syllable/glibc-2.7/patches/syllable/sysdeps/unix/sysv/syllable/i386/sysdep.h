@@ -149,7 +149,7 @@
 #endif	/* PIC */
 
 
-/* The orcalling convention for system calls on Syllable is
+/* The calling convention for system calls on Syllable is
    to use int $0x80.  */
 #define ENTER_KERNEL int $0x80
 
@@ -246,6 +246,13 @@
 #define _PUSHARGS_5	pushl %edi; _PUSHARGS_4
 #define _DOARGS_5(n)	movl n(%esp), %edi; _DOARGS_4 (n-4)
 #define _POPARGS_5	_POPARGS_4; popl %edi
+
+#define PUSHARGS_6	_PUSHARGS_6
+#define DOARGS_6	_DOARGS_6 (32)
+#define POPARGS_6	_POPARGS_6
+#define _PUSHARGS_6	pushl %edi; _PUSHARGS_5
+#define _DOARGS_6(n)	movl n(%esp), %edi; _DOARGS_5 (n-4)
+#define _POPARGS_6	_POPARGS_5; popl %edi
 
 #else	/* !__ASSEMBLER__ */
 
