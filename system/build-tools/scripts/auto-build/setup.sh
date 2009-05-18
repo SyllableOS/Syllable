@@ -58,7 +58,7 @@ declare -a PACKS
 PACKS=(	"DevelopersDelight/DevelopersDelight-8.i586.zip"	\
 		"ShellEssentials/ShellEssentials-1.i586.zip"	\
 		"NetworkNecessities/NetworkNecessities-3.i586.zip"	\
-		"PerlPit/PerlPit-5.i586.zip"
+		"PerlPit/PerlPit-6.i586.zip"
 )
 
 function install_packs()
