@@ -812,6 +812,8 @@ SysCallTable:
 .long	_sys_nosys	/* _C_SYM( sys_event ) */
 
 .long	_C_SYM( sys_setitimer )
-.long	_C_SYM( sys_getitimer )	/* 221 */
+.long	_C_SYM( sys_getitimer )
 
-
+.long	_C_SYM( sys_mmap )
+.long	_C_SYM( sys_munmap )
+.long	_C_SYM( sys_mprotect ) /* 224 */

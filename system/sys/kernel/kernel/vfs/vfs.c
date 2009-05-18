@@ -27,6 +27,7 @@
 #include <posix/time.h>
 #include <posix/limits.h>
 #include <posix/select.h>
+#include <posix/mman.h>
 
 #include <atheos/types.h>
 #include <atheos/kernel.h>
@@ -5169,6 +5170,23 @@ int sys_access( const char *a_pzPath, int nMode )
 	}
 }
 
+void* sys_mmap( void *pAddr, size_t nLen, int nProt, int nFlags, int nFile, off_t nOffset )
+{
+	printk( "sys_mmap() called\n" );
+	return( NULL );
+}
+
+int sys_munmap( void *pAddr, size_t nLen )
+{
+	printk( "sys_munmap() called\n" );
+	return( -ENOSYS );
+}
+
+int sys_mprotect( void *pAddr, size_t nLen, int nProt )
+{
+	printk( "sys_mprotect() called\n" );
+	return( -ENOSYS );
+}
 
 /*****************************************************************************
  * NAME:

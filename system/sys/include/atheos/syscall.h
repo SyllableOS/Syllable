@@ -259,7 +259,11 @@
 #define __NR_setitimer			220
 #define __NR_getitimer			221
 
-#define	__NR_SysCallCount		222
+#define __NR_mmap				222
+#define __NR_munmap				223
+#define __NR_mprotect			224
+
+#define	__NR_SysCallCount		225
 #define	__NR_DeprecatedSysCallCount	11	/* Obsolete syscalls */
 
 /* The TRUE number of ACTIVE syscalls E.g. __NR_SysCallCount minus the number of
