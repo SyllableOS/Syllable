@@ -1,5 +1,10 @@
 Glibc Syllable Changelog
 
+* May 19 2009 *
+
+	o mmap.c: New file.
+	o syscalls.list: Add munmap, mprotect
+
 * September 27 2008 *
 
 	o clock_gettime.c, clock_getres.c: New files. Support CLOCK_MONOTONIC & CLOCK_REALTIME
