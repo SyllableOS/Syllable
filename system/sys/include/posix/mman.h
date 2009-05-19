@@ -34,25 +34,33 @@ extern "C" {
 #define PROT_EXEC	0x4		/* Page can be executed.  */
 #define PROT_NONE	0x0		/* Page can not be accessed.  */
 
-/* Sharing types (must choose one and only one of these).  */
-#define MAP_SHARED	0x01		/* Share changes.  */
-#define MAP_PRIVATE	0x02		/* Changes are private.  */
 #if defined(__USE_MISC) || defined(__KERNEL__)
-# define MAP_TYPE	0x0f		/* Mask for type of mapping.  */
+# define PROT_TYPE	0x0f	/* Mask for protection flags.  */
+# define PROT_FLAGS(x)	(x & PROT_TYPE)
+#endif
+
+/* Sharing types (must choose one and only one of these).  */
+#define MAP_SHARED	0x01 << 4		/* Share changes.  */
+#define MAP_PRIVATE	0x02 << 4		/* Changes are private.  */
+#if defined(__USE_MISC) || defined(__KERNEL__)
+# define MAP_TYPE	0xf0			/* Mask for type of mapping.  */
+# define MAP_FLAGS(x)	(x & MAP_TYPE)
 #endif
 
 /* Other flags.  */
-#define MAP_FIXED	0x10		/* Interpret addr exactly.  */
+#define MAP_FIXED		0x04 << 4		/* Interpret addr exactly.  */
 #if defined(__USE_MISC) || defined(__KERNEL__)
-# define MAP_FILE	0
-# define MAP_ANONYMOUS	0x20		/* Don't use a file.  */
+# define MAP_FILE		0
+# define MAP_ANONYMOUS	0x08 << 4		/* Don't use a file.  */
 # define MAP_ANON	MAP_ANONYMOUS
 #endif
 
 #ifdef __KERNEL__
 #include <posix/types.h>
 
-void* sys_mmap( void *pAddr, size_t nLen, int nProt, int nFlags, int nFile, off_t nOffset  );
+#define MAP_FAILED	-1
+
+void* sys_mmap( void *pAddr, size_t nLen, int nFlags, int nFile, off_t nOffset );
 int sys_munmap( void *pAddr, size_t nLen );
 int sys_mprotect( void *pAddr, size_t nLen, int nProt );
 #endif
