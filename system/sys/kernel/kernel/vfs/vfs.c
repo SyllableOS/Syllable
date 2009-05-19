@@ -39,6 +39,7 @@
 
 #include "inc/scheduler.h"
 #include "inc/sysbase.h"
+#include "inc/areas.h"
 #include "vfs.h"
 
 static const int O_OPEN_CONTROL_FLAGS = (O_CREAT|O_EXCL|O_NOCTTY|O_TRUNC|O_DIRECTORY|O_NOTRAVERSE);
@@ -5170,21 +5171,147 @@ int sys_access( const char *a_pzPath, int nMode )
 	}
 }
 
-void* sys_mmap( void *pAddr, size_t nLen, int nProt, int nFlags, int nFile, off_t nOffset )
+void* sys_mmap( void *pStart, size_t nLen, int nFlags, int nFile, off_t nOffset )
 {
-	printk( "sys_mmap() called\n" );
-	return( NULL );
+	/* XXXKV: hArea is "lost" (we have to walk the list to find it again).
+	   Perhaps we should have a private list someplace? */
+
+	int nProtFlags, nMapFlags;
+	area_id	hArea;
+	void *pRet = (void*)MAP_FAILED;
+
+	/* Protection & Flags arguments are muxed together so squeeze us in under the 5 arg limit */
+	nProtFlags = PROT_FLAGS( nFlags );
+	nMapFlags = MAP_FLAGS( nFlags );
+
+	/* printk( "sys_mmap( %p, %d, 0x%02x, 0x%02x, %d, %d ) ENTER\n",
+			 pStart, nLen, nProtFlags, nMapFlags, nFile, (uint32)nOffset ); */
+
+	if( nMapFlags & MAP_FIXED )
+		nProtFlags &= AREA_EXACT_ADDRESS;	
+
+	if( nMapFlags & MAP_ANONYMOUS )
+	{
+		/* XXXKV: All MAP_ANONYMOUS maps are treated as MAP_PRIVATE I.e. no one else
+		   can see changes. However it is likely to be created with MAP_SHARED
+		   because MAP_PRIVATE may not be supported. Is there a difference between
+		   the two when used with MAP_ANONYMOUS? */
+
+		hArea = create_area( "mmap", &pStart, nLen, nLen, nProtFlags, AREA_NO_LOCK );
+		pRet = pStart;
+	}
+	else if( nMapFlags & MAP_PRIVATE )
+	{
+		printk( "%s: Eeek, somone asked for MAP_PRIVATE!\n", __FUNCTION__ );
+
+		/* XXXKV: Should be ENOTSUP but we don't have it(?!) */
+		pRet = (void*)-EINVAL;
+	}
+	else
+	{
+		File_s *psFile;
+		status_t nError;
+
+		psFile = get_fd( false, nFile );
+		if( NULL == psFile )
+		{
+			pRet = (void*)-EBADF;
+			goto error;
+		}
+
+		if( ( ( psFile->f_nMode & O_RDONLY ) && ( nProtFlags & PROT_WRITE ) ) ||
+			( ( psFile->f_nMode & O_WRONLY ) && ( nProtFlags & PROT_READ ) ) )
+		{
+			put_fd( psFile );
+			pRet = (void*)-EBADF;
+			goto error;
+		}
+
+		/* If it's not a normal file, pass it down for special handling */
+		if( ( psFile->f_nType != FDT_FILE ) && ( psFile->f_nType != FDT_SYMLINK ) )
+		{
+			put_fd( psFile );
+
+			/* XXXKV: Implement me */
+			printk( "%s: Can't mmap() things which are not FDT_FILE or FDT_SYMLINK yet (is %d).\n", __FUNCTION__, psFile->f_nType );
+			pRet = (void*)-EBADF;
+			goto error;
+		}
+
+		/* XXXKV: We could check if /dev/zero (DEVFS_DEVZERO) is being mapped and redirect to the MAP_ANONYMOUS route */
+
+		/* Create an area and attempt to map it to the file */
+		hArea = create_area( "mmap", &pStart, nLen, nLen, nProtFlags, AREA_NO_LOCK );
+		if( hArea < 0 )
+		{
+			put_fd( psFile );
+			pRet = (void*)MAP_FAILED;
+			goto error;
+		}
+
+		/* XXXKV: Hardwired for debugging... */
+		nOffset = 0;
+
+		nError = map_area_to_file( hArea, psFile, nProtFlags, nOffset, nLen );
+		if( nError == EOK )
+		{
+			printk( "%s: map_area_to_file() return EOK\n", __FUNCTION__ );
+			pRet = pStart;
+
+			/* map_area_to_file() holds the File until it is no longer needed.
+			   delete_area() will handle the cleanup & call to put_fd() */
+		}
+		else
+		{
+			printk( "%s: map_area_to_file() failed (%d)\n", __FUNCTION__, nError );
+			put_fd( psFile );
+			pRet = (void*)(0 - nError);
+		}
+	}
+
+error:
+	return( pRet );
 }
 
-int sys_munmap( void *pAddr, size_t nLen )
+int sys_munmap( void *pStart, size_t nLen )
 {
-	printk( "sys_munmap() called\n" );
-	return( -ENOSYS );
+	area_id hArea;
+	AreaInfo_s sInfo;
+	/*proc_id hProcess = CURRENT_PROC->tc_hProcID;*/
+	int nError = 0;
+
+	/* printk( "sys_munmap( %p, %d ) ENTER\n", pStart, nLen ); */
+
+	if( nLen < 1 )
+		return( -EINVAL );
+
+	/* Walk the areas list to find the area which matches the given address */
+	hArea = get_next_area( -1 );
+	while( hArea > -1 )
+	{
+		if( get_area_info( hArea, &sInfo ) == 0 )
+		{
+			/* XXXKV: Is checking nLen correct or can we unmap in sections?
+			   get_area_info() currently can't provide the process ID of the owning
+			   process, which would be useful. Until it does we can't check against it.
+			   Hope we're not deleting someone elses area...*/
+
+			if( sInfo.pAddress == pStart && sInfo.nSize == nLen )
+			{
+				nError = delete_area( hArea );
+				break;
+			}
+		}
+		hArea = get_next_area( hArea );
+	}
+
+	return nError;
 }
 
 int sys_mprotect( void *pAddr, size_t nLen, int nProt )
 {
-	printk( "sys_mprotect() called\n" );
+	printk( "sys_mprotect( %p, %d, 0x%2x ) ENTER\n", pAddr, nLen, nProt );
+
 	return( -ENOSYS );
 }
 
