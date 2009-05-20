@@ -147,3 +147,4 @@ event			EXTRA	event			i:iiipi	__event		event
 #mmap			-		mmap			b:aniiii 	__mmap			mmap
 mprotect		-		mprotect		i:aii		__mprotect		mprotect
 munmap			-		munmap			i:ai		__munmap		munmap
+msync			-		msync			i:aii		__msync			msync
