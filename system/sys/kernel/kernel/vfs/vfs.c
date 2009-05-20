@@ -5173,9 +5173,6 @@ int sys_access( const char *a_pzPath, int nMode )
 
 void* sys_mmap( void *pStart, size_t nLen, int nFlags, int nFile, off_t nOffset )
 {
-	/* XXXKV: hArea is "lost" (we have to walk the list to find it again).
-	   Perhaps we should have a private list someplace? */
-
 	int nProtFlags, nMapFlags;
 	area_id	hArea;
 	void *pRet = (void*)MAP_FAILED;
@@ -5184,8 +5181,12 @@ void* sys_mmap( void *pStart, size_t nLen, int nFlags, int nFile, off_t nOffset 
 	nProtFlags = PROT_FLAGS( nFlags );
 	nMapFlags = MAP_FLAGS( nFlags );
 
-	/* printk( "sys_mmap( %p, %d, 0x%02x, 0x%02x, %d, %d ) ENTER\n",
-			 pStart, nLen, nProtFlags, nMapFlags, nFile, (uint32)nOffset ); */
+	printk( "sys_mmap( %p, %d, 0x%02x, 0x%02x, %d, %d ) ENTER\n",
+			 pStart, nLen, nProtFlags, nMapFlags, nFile, (uint32)nOffset );
+
+	/* PROT_WRITE always implies PROT_READ */
+	if( nProtFlags & PROT_WRITE )
+		nProtFlags |= PROT_READ;
 
 	if( nMapFlags & MAP_FIXED )
 		nProtFlags &= AREA_EXACT_ADDRESS;	
@@ -5255,7 +5256,6 @@ void* sys_mmap( void *pStart, size_t nLen, int nFlags, int nFile, off_t nOffset 
 		nError = map_area_to_file( hArea, psFile, nProtFlags, nOffset, nLen );
 		if( nError == EOK )
 		{
-			printk( "%s: map_area_to_file() return EOK\n", __FUNCTION__ );
 			pRet = pStart;
 
 			/* map_area_to_file() holds the File until it is no longer needed.
@@ -5271,48 +5271,6 @@ void* sys_mmap( void *pStart, size_t nLen, int nFlags, int nFile, off_t nOffset 
 
 error:
 	return( pRet );
-}
-
-int sys_munmap( void *pStart, size_t nLen )
-{
-	area_id hArea;
-	AreaInfo_s sInfo;
-	/*proc_id hProcess = CURRENT_PROC->tc_hProcID;*/
-	int nError = 0;
-
-	/* printk( "sys_munmap( %p, %d ) ENTER\n", pStart, nLen ); */
-
-	if( nLen < 1 )
-		return( -EINVAL );
-
-	/* Walk the areas list to find the area which matches the given address */
-	hArea = get_next_area( -1 );
-	while( hArea > -1 )
-	{
-		if( get_area_info( hArea, &sInfo ) == 0 )
-		{
-			/* XXXKV: Is checking nLen correct or can we unmap in sections?
-			   get_area_info() currently can't provide the process ID of the owning
-			   process, which would be useful. Until it does we can't check against it.
-			   Hope we're not deleting someone elses area...*/
-
-			if( sInfo.pAddress == pStart && sInfo.nSize == nLen )
-			{
-				nError = delete_area( hArea );
-				break;
-			}
-		}
-		hArea = get_next_area( hArea );
-	}
-
-	return nError;
-}
-
-int sys_mprotect( void *pAddr, size_t nLen, int nProt )
-{
-	printk( "sys_mprotect( %p, %d, 0x%2x ) ENTER\n", pAddr, nLen, nProt );
-
-	return( -ENOSYS );
 }
 
 /*****************************************************************************

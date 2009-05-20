@@ -43,6 +43,7 @@
 
 #include <posix/errno.h>
 #include <posix/unistd.h>
+#include <posix/mman.h>
 #include <atheos/types.h>
 #include <atheos/kernel.h>
 #include <atheos/semaphore.h>
@@ -225,6 +226,46 @@ static int clear_pagedir( MemArea_s *psArea, pgd_t * pPgd, uintptr_t nAddress, s
 	flush_tlb_global();
 
 	return ( 0 );
+}
+
+/**
+ * Sets the PTE flags all page-table entries in <i>psArea</i>
+ * \internal
+ * \ingroup Areas
+ * \param psArea a pointer to the <code>MemArea_s</code> containing the
+ *     page-table entries to modify.
+ * \return Always returns <code>0</code>.
+ * \sa modify_area()
+ * \author Kristian Van Der Vliet (vanders@liqwyd.com)
+ */
+static status_t modify_area_pages( MemArea_s *psArea )
+{
+	MemContext_s *psSeg = psArea->a_psContext;
+	flags_t nFlags, nNewFlags;
+	uintptr_t nAddr;
+
+	for ( nAddr = psArea->a_nStart; nAddr < psArea->a_nEnd; nAddr += PAGE_SIZE )
+	{
+		pgd_t *pPgd = pgd_offset( psSeg, nAddr );
+		pte_t *pPte = pte_offset( pPgd, nAddr );
+
+		nFlags = nNewFlags = 0;
+
+		if ( PTE_ISPRESENT( *pPte ) && ( psArea->a_nProtection & AREA_READ ) )
+			nFlags |= PTE_PRESENT;
+
+		if ( PTE_ISWRITE( *pPte) && ( psArea->a_nProtection & AREA_WRITE ) )
+			nFlags |= PTE_WRITE;
+
+		nNewFlags = PTE_VALUE( *pPte );
+		nNewFlags &= ~( PTE_WRITE | PTE_PRESENT );
+		nNewFlags |= nFlags;
+
+		PTE_VALUE( *pPte ) = nNewFlags;
+	}
+	flush_tlb_global();
+
+	return 0;
 }
 
 /**
@@ -2897,6 +2938,123 @@ error:
 	return -EINVAL;	
 }
 
+/**
+ * Deletes the specified mapping.
+ * \internal
+ * \ingroup Areas
+ * \param nAddr start address of the area to unmap.
+ * \param nLen size of the area to unmap.
+ * \return <code>EINVAL</code> if the area handle is invalid,
+ *		<code>0</code> otherwise.
+ * \sa sys_munmap(), delete_area(), do_delete_area()
+ * \author Kristian Van Der Vliet (vanders@liqwyd.com)
+ */
+static status_t munmap( uint32 nAddr, size_t nLen )
+{
+	MemArea_s *psArea;
+	status_t nError = 0;
+
+again:
+	LOCK( g_hAreaTableSema );
+
+	psArea = get_area( CURRENT_PROC->tc_psMemSeg, nAddr );
+
+	/* XXXKV: nLen is currently ignored */
+
+	if ( psArea != NULL )
+	{
+		if ( psArea->a_psContext->mc_bBusy )
+		{
+			atomic_dec( &psArea->a_nRefCount );
+			UNLOCK( g_hAreaTableSema );
+			printk( "munmap(): wait for segment to become ready\n" );
+			snooze( 10000 );
+			goto again;
+		}
+
+		if ( atomic_sub_and_test( &psArea->a_nRefCount, 2 ) )
+		{
+			lock_area( psArea, LOCK_AREA_WRITE );
+			nError = do_delete_area( psArea->a_psContext, psArea );
+		}
+	}
+	UNLOCK( g_hAreaTableSema );
+	return ( nError );
+}
+
+int sys_munmap( void *pStart, size_t nLen )
+{
+	if( nLen < 1 )
+		return( -EINVAL );
+
+	return munmap( (uint32)pStart, nLen );
+}
+
+/**
+ * Changes the protection flags of the specified area.
+ * \internal
+ * \ingroup Areas
+ * \param nAddr start address of the area to modify.
+ * \param nLen size of the area to modify.
+ * \param nProt new protection flags for the area.
+ * \return <code>EINVAL</code> if the area handle is invalid,
+ *		<code>0</code> otherwise.
+ * \sa modify_area_pages()
+ * \author Kristian Van Der Vliet (vanders@liqwyd.com)
+ */
+static status_t mprotect( uint32 nAddr, size_t nLen, int nProt )
+{
+	MemArea_s *psArea;
+	status_t nError = 0;
+
+again:
+	LOCK( g_hAreaTableSema );
+
+	/* XXXKV: nLen is currently ignored */
+
+	psArea = get_area( CURRENT_PROC->tc_psMemSeg, nAddr );
+
+	if ( psArea != NULL )
+	{
+		if ( psArea->a_psContext->mc_bBusy )
+		{
+			atomic_dec( &psArea->a_nRefCount );
+			UNLOCK( g_hAreaTableSema );
+			printk( "mprotect(): wait for segment to become ready\n" );
+			snooze( 10000 );
+			goto again;
+		}
+
+		lock_area( psArea, LOCK_AREA_WRITE );
+
+		psArea->a_nProtection &= ~(AREA_READ|AREA_WRITE|AREA_EXEC);
+		psArea->a_nProtection |= nProt;
+		nError = modify_area_pages( psArea );
+
+		unlock_area( psArea, LOCK_AREA_WRITE );
+		put_area( psArea );
+	}
+	UNLOCK( g_hAreaTableSema );
+	return ( nError );
+}
+
+int sys_mprotect( void *pStart, size_t nLen, int nProt )
+{
+	if( nLen < 1 )
+		return( -EINVAL );
+
+	/* PROT_WRITE always implies PROT_READ */
+	if( nProt & PROT_WRITE )
+		nProt |= PROT_READ;
+
+	return mprotect( (uint32)pStart, nLen, nProt );
+}
+
+int sys_msync( void *pStart, size_t nLen, int nFlags )
+{
+	/* XXXKV: Implement me */
+	return -ENOSYS;
+}
 
 /**
  * Creates the memory context for the kernel. This context holds all kernel
