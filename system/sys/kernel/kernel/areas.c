@@ -2955,9 +2955,9 @@ static status_t munmap( uint32 nAddr, size_t nLen )
 	status_t nError = 0;
 
 again:
-	LOCK( g_hAreaTableSema );
-
 	psArea = get_area( CURRENT_PROC->tc_psMemSeg, nAddr );
+
+	LOCK( g_hAreaTableSema );
 
 	/* XXXKV: nLen is currently ignored */
 
@@ -3008,11 +3008,11 @@ static status_t mprotect( uint32 nAddr, size_t nLen, int nProt )
 	status_t nError = 0;
 
 again:
-	LOCK( g_hAreaTableSema );
-
 	/* XXXKV: nLen is currently ignored */
 
 	psArea = get_area( CURRENT_PROC->tc_psMemSeg, nAddr );
+
+	LOCK( g_hAreaTableSema );
 
 	if ( psArea != NULL )
 	{
@@ -3050,10 +3050,107 @@ int sys_mprotect( void *pStart, size_t nLen, int nProt )
 	return mprotect( (uint32)pStart, nLen, nProt );
 }
 
+/**
+ * Write dirty pages back to the file backing the area.
+ * \internal
+ * \ingroup Areas
+ * \param nAddr start address of the area to write.
+ * \param nLen size of the area to write.
+ * \return <code>EINVAL</code> if the area handle is invalid,
+ *		<code>0</code> otherwise.
+ * \author Kristian Van Der Vliet (vanders@liqwyd.com)
+ */
+status_t msync( uint32 nAddr, size_t nLen )
+{
+	MemArea_s *psArea;
+	MemContext_s *psSeg;
+	status_t nError = 0;
+
+again:
+	/* XXXKV: nLen is currently ignored */
+
+	psArea = get_area( CURRENT_PROC->tc_psMemSeg, nAddr );
+
+	LOCK( g_hAreaTableSema );
+
+	if ( psArea != NULL )
+	{
+		if ( psArea->a_psContext->mc_bBusy )
+		{
+			atomic_dec( &psArea->a_nRefCount );
+			UNLOCK( g_hAreaTableSema );
+			printk( "msync(): wait for segment to become ready\n" );
+			snooze( 10000 );
+			goto again;
+		}
+
+		if( NULL == psArea->a_psFile )
+		{
+			put_area( psArea );
+			goto error;
+		}
+
+		lock_area( psArea, LOCK_AREA_WRITE );
+
+		psSeg = psArea->a_psContext;
+
+		for ( nAddr = psArea->a_nStart; nAddr < psArea->a_nEnd; nAddr += PAGE_SIZE )
+		{
+			pgd_t *pPgd = pgd_offset( psSeg, nAddr );
+			pte_t *pPte = pte_offset( pPgd, nAddr );
+
+			if ( PTE_ISDIRTY( *pPte ) )
+			{
+				off_t nFileOffset;
+				size_t nSize, nBytes;
+
+				/* Write back to file at offset + page */
+				printk( "%s: dirty page at %p\n", __FUNCTION__, (void*)nAddr );
+
+				nFileOffset = ( ( off_t )nAddr ) - ( ( off_t )psArea->a_nStart ) + psArea->a_nFileOffset;
+				nSize = min( PAGE_SIZE, psArea->a_nFileLength - ( nFileOffset - psArea->a_nFileOffset ) );
+
+				printk( "%s: write %d bytes at pos %Lu\n", __FUNCTION__, nSize, (uint64)nFileOffset );
+
+				UNLOCK( g_hAreaTableSema );
+				nBytes = write_pos_p( psArea->a_psFile, nFileOffset, (void *)nAddr, nSize );
+				LOCK( g_hAreaTableSema );
+
+				printk( "%s: wrote %d bytes\n", __FUNCTION__, nBytes );
+				if( nBytes < nSize )
+				{
+					printk( "%s: Failed to write page! Wanted %d wrote %d\n", __FUNCTION__, nSize, nBytes );
+					break;
+				}
+
+				/* Clear the dirty flag */
+				PTE_VALUE( *pPte ) &= ~PTE_DIRTY;
+			}
+		}
+
+		unlock_area( psArea, LOCK_AREA_WRITE );
+		put_area( psArea );
+	}
+error:
+	UNLOCK( g_hAreaTableSema );
+	return ( nError );
+}
+
 int sys_msync( void *pStart, size_t nLen, int nFlags )
 {
-	/* XXXKV: Implement me */
-	return -ENOSYS;
+	int nError;
+
+	printk( "sys_msync( %p, %d, 0x%.2x )\n", pStart, nLen, nFlags );
+
+	if( nFlags & MS_ASYNC )
+	{
+		printk( "%s: MS_ASYNC not yet supported. Doing MS_SYNC.\n", __FUNCTION__ );
+		nError = msync( (uint32)pStart, nLen );
+	}
+	else
+		nError = msync( (uint32)pStart, nLen );
+
+	return nError;
 }
 
 /**
