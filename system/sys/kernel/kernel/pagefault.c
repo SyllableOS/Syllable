@@ -484,8 +484,8 @@ int load_area_page( MemArea_s *psArea, uintptr_t nAddress, bool bWriteAccess )
 	MemContext_s *psCtx = psArea->a_psContext;
 	pgd_t *pPgd;
 	pte_t *pPte;
-	int nError;
-
+	bool bKernelPg = psArea->a_nProtection & AREA_KERNEL;
+	int nError = -EINVAL;
 
 	pPgd = pgd_offset( psCtx, nAddress );
 	pPte = pte_offset( pPgd, nAddress );
@@ -496,11 +496,25 @@ int load_area_page( MemArea_s *psArea, uintptr_t nAddress, bool bWriteAccess )
 
 	if ( PTE_ISPRESENT( *pPte ) )
 	{
-		nError = handle_write_prot( psArea, pPte, nAddress );
+		/* Page present and someone tried to write to us */
+		if( ( psArea->a_nProtection & AREA_WRITE ) || bKernelPg )
+			nError = handle_write_prot( psArea, pPte, nAddress );
 	}
 	else
 	{
-		nError = handle_not_present( psArea, pPte, nAddress, bWriteAccess );
+		/* Not present */
+		if( bWriteAccess )
+		{
+			/* Someone tried to write to us */
+			if( ( psArea->a_nProtection & AREA_WRITE ) || bKernelPg )
+				nError = handle_not_present( psArea, pPte, nAddress, bWriteAccess );
+		}
+		else
+		{
+			/* Someone tried to read us */
+			if( ( psArea->a_nProtection & AREA_READ ) || bKernelPg )
+				nError = handle_not_present( psArea, pPte, nAddress, bWriteAccess );
+		}
 	}
 	unlock_area( psArea, LOCK_AREA_WRITE );
 	return ( nError );
