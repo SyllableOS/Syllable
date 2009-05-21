@@ -1,3 +1,28 @@
+* May 21, 2009, Kristian Van Der Vliet *
+
+flock.c/lock_inode_record(): Do not return EWOULDBLOCK if the caller is
+replacing a lock it already owns, which is obviously a non-blocking call.
+
+* May 20, 2009, Kristian Van Der Vliet *
+
+Implemented mmap(), mprotect(), msync() & munmap():
+ o Both anonymous & file-backed maps are supported by mmap().
+ o MAP_PRIVATE is unsupported.
+ o mmap() on anything other than "normal" files are not yet supported.
+ o MS_ASYNC (Async msync()) is not yet supported and the sync is performed
+   syncronously.
+
+areas.c/modify_area_pages(): Modify all PTEs for a given area with new
+PTE flags derived from the area protection flags.
+
+pagefault.c/load_area_page(): Fixed to check the area protection flags for
+the faulting page before it either creates a COW page or loading a new page
+from disc: attempts to write an area which has been created without the
+AREA_WRITE flag will now generate a SIGSEGV, attempts to read or write a page
+which has neither AREA_READ & AREA_WRITE flags will also generate a SIGSEGV.
+
+---- 0.6.6 Released -------------------------------------------------------------------
+
 * August 9, 2008, Kristian Van Der Vliet *
 
 Synced the ACPI bus manager with Linux 2.6.26.2. Patch from
