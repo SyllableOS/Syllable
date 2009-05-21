@@ -470,11 +470,6 @@ int lock_inode_record( Inode_s *psInode, off_t nStart, off_t nEnd, int nMode, bo
 		{
 			continue;
 		}
-		if ( bWait == false )
-		{
-			nError = -EWOULDBLOCK;
-			break;
-		}
 		if( psNewLock->fl_hOwner == psLock->fl_hOwner )
 		{
 			if( maybe_replace_lock( psNewLock, psLock ) == true )
@@ -486,6 +481,11 @@ int lock_inode_record( Inode_s *psInode, off_t nStart, off_t nEnd, int nMode, bo
 			   may now be waiting on the wrong lock. */
 			restart_waiters( psInode, psNewLock );
 
+			break;
+		}
+		if ( bWait == false )
+		{
+			nError = -EWOULDBLOCK;
 			break;
 		}
 		if ( detect_deadlock( psNewLock, psLock ) )
