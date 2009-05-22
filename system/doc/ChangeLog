@@ -1,3 +1,10 @@
+* May 22, 2009, Kristian Van Der Vliet *
+
+Fix /dev/random. It was throwing away 24bits of each call to rand()
+(rand() % 256) which seriously compromised the result to the caller.
+
+---- 0.6.6 Released -------------------------------------------------------------------
+
 * January 9, 2009, Kaj de Vos *
 
 Added experimental support for installing from and to USB memory devices
