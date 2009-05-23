@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION=0.6.6
+VERSION=0.6.7
 
 LOG_DIR=$HOME/Logs
 LOG=$LOG_DIR/std-out-err.log
