@@ -5181,7 +5181,7 @@ void* sys_mmap( void *pStart, size_t nLen, int nFlags, int nFile, off_t nOffset 
 	nProtFlags = PROT_FLAGS( nFlags );
 	nMapFlags = MAP_FLAGS( nFlags );
 
-	printk( "sys_mmap( %p, %d, 0x%02x, 0x%02x, %d, %d ) ENTER\n",
+	kerndbg( KERN_DEBUG_LOW, "sys_mmap( %p, %d, 0x%02x, 0x%02x, %d, %d ) ENTER\n",
 			 pStart, nLen, nProtFlags, nMapFlags, nFile, (uint32)nOffset );
 
 	/* PROT_WRITE always implies PROT_READ */
