@@ -15,10 +15,6 @@ locations
 	ftp://sourceware.org/pub/libffi/
 	ftp://sources.redhat.com/pub/libffi/
 
-; Works:
-;make-shared
-
 documentation
 	README LICENSE ChangeLog ChangeLog.libffi TODO
 ;	ChangeLog.libgcj
-
