@@ -9,7 +9,7 @@ VPATH =	./ lib vfs net nls
 CP	= cp -f
 
 LIBOBJS := ct_flags.o ct_upper.o ct_lower.o vsprintf.o string.o strstr.o qsort.o gcc34_memcpy.o strlcpy.o strlcat.o
-VFSOBJS := vfs.o inode.o nodemonitor.o attributes.o flock.o root.o dev.o fifo.o pty.o
+VFSOBJS := vfs.o inode.o nodemonitor.o attributes.o flock.o root.o dev.o fifo.o pty.o aio.o
 NETOBJS := core.o interface.o route.o ip.o udp.o tcp.o tcp_input.o tcp_output.o socket.o packets.o raw.o
 
 NLSOBJS := nls_conv.o nls_iso8859-1.o nls_iso8859-2.o nls_iso8859-3.o nls_ascii.o nls_utf16.o \
