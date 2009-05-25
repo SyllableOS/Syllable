@@ -1,5 +1,5 @@
 /* siginfo_t, sigevent and constants.  Syllable version.
-   Copyright (C) 1997-2002, 2003 Free Software Foundation, Inc.
+   Copyright (C) 1997, 1998, 2000, 2001 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -22,12 +22,10 @@
 # error "Never include this file directly.  Use <signal.h> instead"
 #endif
 
-#include <bits/wordsize.h>
-
 #if (!defined __have_sigval_t \
      && (defined _SIGNAL_H || defined __need_siginfo_t \
 	 || defined __need_sigevent_t))
-# define __have_sigval_t	1
+# define __have_sigval_t 1
 
 /* Type for data associated with a signal.  */
 typedef union sigval
@@ -41,95 +39,26 @@ typedef union sigval
      && (defined _SIGNAL_H || defined __need_siginfo_t))
 # define __have_siginfo_t	1
 
-# define __SI_MAX_SIZE     128
-# if __WORDSIZE == 64
-#  define __SI_PAD_SIZE     ((__SI_MAX_SIZE / sizeof (int)) - 4)
-# else
-#  define __SI_PAD_SIZE     ((__SI_MAX_SIZE / sizeof (int)) - 3)
-# endif
-
 typedef struct siginfo
   {
     int si_signo;		/* Signal number.  */
     int si_errno;		/* If non-zero, an errno value associated with
 				   this signal, as defined in <errno.h>.  */
     int si_code;		/* Signal code.  */
-
-    union
-      {
-	int _pad[__SI_PAD_SIZE];
-
-	 /* kill().  */
-	struct
-	  {
-	    __pid_t si_pid;	/* Sending process ID.  */
-	    __uid_t si_uid;	/* Real user ID of sending process.  */
-	  } _kill;
-
-	/* POSIX.1b timers.  */
-	struct
-	  {
-	    unsigned int _timer1;
-	    unsigned int _timer2;
-	  } _timer;
-
-	/* POSIX.1b signals.  */
-	struct
-	  {
-	    __pid_t si_pid;	/* Sending process ID.  */
-	    __uid_t si_uid;	/* Real user ID of sending process.  */
-	    sigval_t si_sigval;	/* Signal value.  */
-	  } _rt;
-
-	/* SIGCHLD.  */
-	struct
-	  {
-	    __pid_t si_pid;	/* Which child.  */
-	    __uid_t si_uid;	/* Real user ID of sending process.  */
-	    int si_status;	/* Exit value or signal.  */
-	    __clock_t si_utime;
-	    __clock_t si_stime;
-	  } _sigchld;
-
-	/* SIGILL, SIGFPE, SIGSEGV, SIGBUS.  */
-	struct
-	  {
-	    void *si_addr;	/* Faulting insn/memory ref.  */
-	  } _sigfault;
-
-	/* SIGPOLL.  */
-	struct
-	  {
-	    long int si_band;	/* Band event for SIGPOLL.  */
-	    int si_fd;
-	  } _sigpoll;
-      } _sifields;
+    __pid_t si_pid;		/* Sending process ID.  */
+    __uid_t si_uid;		/* Real user ID of sending process.  */
+    void *si_addr;		/* Address of faulting instruction.  */
+    int si_status;		/* Exit value or signal.  */
+    long int si_band;		/* Band event for SIGPOLL.  */
+    union sigval si_value;	/* Signal value.  */
   } siginfo_t;
-
-
-/* X/Open requires some more fields with fixed names.  */
-# define si_pid		_sifields._kill.si_pid
-# define si_uid		_sifields._kill.si_uid
-# define si_timerid	_sifields._timer.si_tid
-# define si_overrun	_sifields._timer.si_overrun
-# define si_status	_sifields._sigchld.si_status
-# define si_utime	_sifields._sigchld.si_utime
-# define si_stime	_sifields._sigchld.si_stime
-# define si_value	_sifields._rt.si_sigval
-# define si_int		_sifields._rt.si_sigval.sival_int
-# define si_ptr		_sifields._rt.si_sigval.sival_ptr
-# define si_addr	_sifields._sigfault.si_addr
-# define si_band	_sifields._sigpoll.si_band
-# define si_fd		_sifields._sigpoll.si_fd
 
 
 /* Values for `si_code'.  Positive values are reserved for kernel-generated
    signals.  */
 enum
 {
-  SI_SIGIO,			/* Sent by queued SIGIO. */
-# define SI_SIGIO	SI_SIGIO
-  SI_ASYNCIO,		/* Sent by AIO completion.  */
+  SI_ASYNCIO = -4,		/* Sent by AIO completion.  */
 # define SI_ASYNCIO	SI_ASYNCIO
   SI_MESGQ,			/* Sent by real time mesq state change.  */
 # define SI_MESGQ	SI_MESGQ
@@ -137,10 +66,8 @@ enum
 # define SI_TIMER	SI_TIMER
   SI_QUEUE,			/* Sent by sigqueue.  */
 # define SI_QUEUE	SI_QUEUE
-  SI_USER,			/* Sent by kill, sigsend, raise.  */
+  SI_USER			/* Sent by kill, sigsend, raise.  */
 # define SI_USER	SI_USER
-  SI_KERNEL = 0x80	/* Send by kernel.  */
-#define SI_KERNEL	SI_KERNEL
 };
 
 
@@ -257,49 +184,6 @@ enum
     && !defined __have_sigevent_t
 # define __have_sigevent_t	1
 
-/* Structure to transport application-defined values with signals.  */
-# define __SIGEV_MAX_SIZE	64
-# if __WORDSIZE == 64
-#  define __SIGEV_PAD_SIZE	((__SIGEV_MAX_SIZE / sizeof (int)) - 4)
-# else
-#  define __SIGEV_PAD_SIZE	((__SIGEV_MAX_SIZE / sizeof (int)) - 3)
-# endif
-
-typedef struct sigevent
-  {
-    sigval_t sigev_value;
-    int sigev_signo;
-    int sigev_notify;
-
-    union
-      {
-	int _pad[__SIGEV_PAD_SIZE];
-
-	struct
-	  {
-	    void (*_function) (sigval_t);	/* Function to start.  */
-	    void *_attribute;			/* Really pthread_attr_t.  */
-	  } _sigev_thread;
-      } _sigev_un;
-  } sigevent_t;
-
-/* POSIX names to access some of the members.  */
-# define sigev_notify_function   _sigev_un._sigev_thread._function
-# define sigev_notify_attributes _sigev_un._sigev_thread._attribute
-
-/* `sigev_notify' values.  */
-enum
-{
-  SIGEV_SIGNAL = 0,		/* Notify via signal.  */
-# define SIGEV_SIGNAL	SIGEV_SIGNAL
-  SIGEV_NONE,			/* Other notification: meaningless.  */
-# define SIGEV_NONE	SIGEV_NONE
-  SIGEV_THREAD,			/* Deliver via thread creation.  */
-# define SIGEV_THREAD	SIGEV_THREAD
-
-  SIGEV_THREAD_ID = 4		/* Send signal to specific thread.  */
-#define SIGEV_THREAD_ID	SIGEV_THREAD_ID
-};
+#include <posix/siginfo.h>
 
 #endif	/* have _SIGNAL_H.  */
-
