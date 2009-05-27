@@ -1,3 +1,10 @@
+* May 27, 2009, Anthony Morphett *
+
+Implemented autologin in the login app and Users&Groups prefs.
+Added filter to hide system users & groups in Users&Groups pref.
+Make login window remember more settings including per-user keymaps,
+and other cosmetic fixes for the login app.
+
 * May 22, 2009, Kristian Van Der Vliet *
 
 Fix /dev/random. It was throwing away 24bits of each call to rand()
