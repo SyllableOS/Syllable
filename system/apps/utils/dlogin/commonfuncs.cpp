@@ -79,44 +79,6 @@ IPoint GetResolution()
 	return cPoint;
 }
 
-void UpdateLoginConfig(const String& cName)
-{
-	try
-	{
-		/*try to add the attribute "highlight" to dlogin*/
-		File* pcFile = new File("/system/bin/dlogin",O_RDONLY);
-		pcFile->RemoveAttr("highlight");
-		if (pcFile->IsValid())
-		{
-			pcFile->WriteAttr("highlight",0, ATTR_TYPE_STRING,cName.c_str(),0,cName.size());
-		}
-		delete pcFile;
-	}
-	catch(...)
-	{
-	}
-}
-
-String GetHighlightName()
-{
-	try
-	{
-		char pzName[1024]="";
-
-		/*try loading the highlight attribute from dlogin, then delete the file and return it*/
-		File* pcFile = new File("/system/bin/dlogin",O_RDONLY);
-		pcFile->ReadAttr("highlight", ATTR_TYPE_STRING,pzName,0,sizeof(pzName));
-		delete pcFile;
-		return pzName;
-	}
-	catch (...)
-	{
-		/*we hit a snag somewhere, so lets return a null string*/
-		return ""; 
-	}
-}
-
-
 BitmapImage* GetImageFromIcon(const String& cFile)
 {
 	/*user image file name*/
@@ -131,6 +93,18 @@ BitmapImage* GetImageFromIcon(const String& cFile)
 		File* pcFile = new File(cIconFile,O_RDONLY);
 		pcReturnImage = new BitmapImage(pcFile);
 		delete( pcFile );
+		
+		/* Resize the image if it is too big */
+		Point cSize = pcReturnImage->GetSize();
+		if( cSize.x > 48 || cSize.y > 48 )
+		{
+			float vRatio = std::max( cSize.x / 48, cSize.y / 48 );	/* Must be nonzero since one of cSize.x, cSize.y is > 48 */
+			Point cNewSize;
+			cNewSize.x = cSize.x / vRatio;
+			cNewSize.y = cSize.y / vRatio;
+			
+			pcReturnImage->SetSize( cNewSize );
+		}
 	}
 	
 	catch(...)
@@ -162,7 +136,6 @@ int BecomeUser( struct passwd *psPwd )
         setenv( "HOME", psPwd->pw_dir,true );
         setenv( "USER", psPwd->pw_name,true );
         setenv( "SHELL", psPwd->pw_shell,true );
-        UpdateLoginConfig(psPwd->pw_name);
 //		Application::GetInstance()->PopCursor();
         execl( "/system/bin/desktop", "desktop", NULL );
         break;

@@ -20,6 +20,8 @@ public:
 	{
 		return m_pcMenu->GetCurrentString();
 	}
+	void SelectKeymap( const os::String& zKeymap );
+	
 public:
 	enum
 	{

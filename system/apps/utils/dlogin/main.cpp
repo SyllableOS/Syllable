@@ -2,7 +2,7 @@
 
 int main( int argc, char *argv[] )
 {
-	App *pcApp = new App();
+	App *pcApp = new App( argc, argv );
 
 	pcApp->Run();
 	return ( 0 );

@@ -12,9 +12,12 @@
 using namespace os;
 
 
-MainWindow::MainWindow(const Rect& cRect) : os::Window(cRect,"login_window", MSG_MAINWND_TITLE, WND_NO_BORDER | WND_BACKMOST, ALL_DESKTOPS )
+MainWindow::MainWindow( const Rect& cRect, AppSettings* pcAppSettings )
+	: os::Window(cRect,"login_window", MSG_MAINWND_TITLE, WND_NO_BORDER | WND_BACKMOST, ALL_DESKTOPS )
 {
-	/*do nothing in here, let init do all the work*/
+	/* Most of the work is done in Init() */
+	
+	pcSettings = pcAppSettings;
 }
 
 void MainWindow::Init()
@@ -27,7 +30,7 @@ void MainWindow::Init()
 	
 	/*init both the login view and the login imageview*/
 	pcLoginImageView = new LoginImageView(GetBounds());
-	pcLoginView = new LoginView(Rect(vWidth-200,vHeight-75,vWidth+200,vHeight+75),this);
+	pcLoginView = new LoginView(Rect(vWidth-200,vHeight-75,vWidth+200,vHeight+75),this, pcSettings);
 
 	/*add both to the window, then add a timer to update the time*/
 	AddChild(pcLoginImageView);
@@ -77,7 +80,7 @@ void MainWindow::HandleMessage( os::Message * pcMessage )
 			
 			if (pcLoginView->GetUserNameAndPass(&cUser,&cPass) == true) /*we can log in now*/
 			{
-				Authorize(cUser.c_str(),cPass.c_str());
+				Authorize( cUser, cPass, pcLoginView->GetKeymap() );
 			}
 			
 			else /*a user is not selected*/
@@ -111,12 +114,16 @@ void MainWindow::HandleMessage( os::Message * pcMessage )
         {
 			/*a user has selected a different icon*/
 //        	pcLoginView->Focus();
+			
+			/* Let the login view find the right keymap */
+			pcLoginView->HandleMessage( pcMessage );
+
         	break;
         }
         
 		case KeymapSelector::M_SELECT:
 		{
-			printf("%s\n", pcLoginView->GetKeymap().c_str());
+//			printf("%s\n", pcLoginView->GetKeymap().c_str());
 			os::Application::GetInstance()->SetKeymap(pcLoginView->GetKeymap().c_str());
 			break;
 		}
@@ -133,17 +140,15 @@ void MainWindow::ClearPassword()
 	pcLoginView->ClearPassword();
 }
 
-void MainWindow::Authorize(const char* pzLoginName, const char* pzPassword )
+void MainWindow::Authorize( const String& zLoginName, const String& zPassword, const String& zKeymap )
 {
+	/* We pass the keymap here because we only want to save the keymap with the user once they have authenticated themself. */
 	os::Message cMsg( M_LOGIN );
-	cMsg.AddString( "login", pzLoginName );
-	cMsg.AddString( "password", pzPassword );
-	Application::GetInstance()->PostMessage( &cMsg, Application::GetInstance() );	
+	cMsg.AddString( "login", zLoginName );
+	cMsg.AddString( "password", zPassword );
+	cMsg.AddString( "keymap", zKeymap );
+	Application::GetInstance()->PostMessage( &cMsg, Application::GetInstance() );
 }
-
-
-
-
 
 
 

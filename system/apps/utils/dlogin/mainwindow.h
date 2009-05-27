@@ -15,19 +15,20 @@
 
 #include "loginimageview.h"
 #include "loginview.h"
+#include "appsettings.h"
 
 using namespace os;
 
 class MainWindow : public os::Window
 {
 public:
-	MainWindow(const Rect&);
+	MainWindow(const Rect&, AppSettings* pcAppSettings);
 
 	void HandleMessage(os::Message*);
 	void TimerTick(int nID);
 	void Init();
 	void ClearPassword();
-	void Authorize(const char* pzLoginName, const char* pzPassword );
+	void Authorize( const String& zLoginName, const String& zPassword, const String& zKeymap );
 	void ScreenModeChanged( const os::IPoint& cRes, os::color_space eSpace );
 
 	void Refresh()
@@ -41,6 +42,8 @@ private:
 	LoginImageView* pcLoginImageView;
 	LoginView* pcLoginView;
 	NodeMonitor* pcMonitorFile;
+	
+	AppSettings* pcSettings;
 };
 #endif
 

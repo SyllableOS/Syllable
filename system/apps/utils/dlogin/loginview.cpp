@@ -3,16 +3,26 @@
 #include "messages.h"
 #include "keymap.h"
 
-#include <stdio.h>
 #include <gui/requesters.h>
+
+#include <stdio.h>
 #include <pwd.h>
 
-LoginView::LoginView(Rect cRect,Window* pcParent) : View(cRect,"login_view")
+
+class LoginIconData : public os::IconData
+{
+public:
+	os::String m_zDisplayName;
+	os::String m_zUserName;
+};
+
+LoginView::LoginView( Rect cRect, Window* pcParent, AppSettings* pcAppSettings ) : View(cRect,"login_view")
 {	
 	pcParentWindow = pcParent;
+	pcSettings = pcAppSettings;
 	Layout();
 	
-	String cName = GetHighlightName();
+	String cName = pcSettings->GetActiveUser();
 	if (cName != "")
 	{
 		FindUser(cName);
@@ -28,12 +38,13 @@ void LoginView::Layout()
 {
 	VLayoutNode* pcRoot = new VLayoutNode("root");
 	
-	pcUserIconView = new os::IconView(Rect(1,2,2000,82),"",CF_FOLLOW_ALL);
+	pcUserIconView = new os::IconView(Rect(1,2,GetBounds().Width()-2,82),"user_iconview",CF_FOLLOW_ALL);
+	pcUserIconView->SetTarget( this );
 	pcUserIconView->SetSelChangeMsg(new Message(M_SEL_CHANGED));
 	PopulateIcons();
 	pcUserIconView->SetTabOrder( 1 );
 
-	FrameView* pcFrameView = new FrameView(Rect(0,0,2000,84),"","");
+	FrameView* pcFrameView = new FrameView(Rect(0,1,GetBounds().Width()-1,84),"frame_view","", CF_FOLLOW_ALL);
 	pcFrameView->AddChild(pcUserIconView);
 	AddChild(pcFrameView);
 	
@@ -92,12 +103,16 @@ void LoginView::PopulateIcons()
   		int nIcon = 0;
   		while((psPwd = fgetpwent( fp )) != NULL ) 
   		{	
-  			// Let's remove users that don't need to be there and then add them to the iconview
+  			// Let's remove users that don't need to be there and then add the rest to the iconview
   			// System users (eg "www", "mail") have uids between 1 and 99. Filter them out.
 			if( psPwd->pw_uid >= 100 || psPwd->pw_uid == 0 )
   			{
-    			pcUserIconView->AddIcon(GetImageFromIcon(psPwd->pw_name),new IconData());
-  				pcUserIconView->AddIconString(nIcon,psPwd->pw_name);
+  				LoginIconData* pcData = new LoginIconData();
+  				pcData->m_zDisplayName = psPwd->pw_gecos;
+  				pcData->m_zUserName = psPwd->pw_name;
+  				
+    			pcUserIconView->AddIcon(GetImageFromIcon(psPwd->pw_name), pcData);
+  				pcUserIconView->AddIconString(nIcon,pcData->m_zDisplayName);
             	nIcon++;
             }	
   		}
@@ -119,7 +134,7 @@ void LoginView::UpdateTime()
 
 bool LoginView::GetUserNameAndPass(String* cName, String* cPass)
 {
-	String cIconName;
+	String cUserName;
 	int nIcon=-1;
 	bool bSelected=false;
 	
@@ -130,14 +145,15 @@ bool LoginView::GetUserNameAndPass(String* cName, String* cPass)
 		if (bSelected == true)
 		{
 			nIcon = i;
-			cIconName = pcUserIconView->GetIconString(nIcon,0);
+			LoginIconData* pcData = static_cast<LoginIconData*>( pcUserIconView->GetIconData( nIcon ) );
+			cUserName = pcData->m_zUserName;
 			break;
 		}
 	}
 	
 	if (nIcon != -1)
 	{ 
-		*cName = String(cIconName);
+		*cName = String(cUserName);
 		*cPass = String(pcPassText->GetBuffer()[0]);
 	}
 	
@@ -159,31 +175,71 @@ void LoginView::AttachedToWindow()
 	Focus();
 }
 
+void LoginView::Reload()
+{
+	String cIcon;
+	for (uint i=0; i<pcUserIconView->GetIconCount(); i++)
+	{
+		if (pcUserIconView->GetIconSelected(i))
+			cIcon = pcUserIconView->GetIconString(i,0);
+	}
+	pcUserIconView->Clear();
+	PopulateIcons();
+	pcUserIconView->Flush();
+	pcUserIconView->Sync();
+	pcUserIconView->Paint(pcUserIconView->GetBounds());
+	FindUser(cIcon);
+}
+
 void LoginView::FindUser(const String& cName)
 {
 	for (uint i=0; i< pcUserIconView->GetIconCount(); i++)
 	{
-		if (pcUserIconView->GetIconString(i,0) == cName)
+		LoginIconData* pcData = static_cast<LoginIconData*>( pcUserIconView->GetIconData( i ) );
+		if (pcData->m_zUserName == cName)
 		{
 			pcUserIconView->SetIconSelected(i,true);
+			pcUserIconView->ScrollToIcon( i );
+			SetKeymapForUser( cName );
 		}
 	}
+}
+
+void LoginView::SetKeymapForUser( const String& zName )
+{
+	String zKeymap = pcSettings->FindKeymapForUser( zName );
+
+	if( zKeymap != "" ) selector->SelectKeymap( zKeymap );
 }
 
 void LoginView::HandleMessage(os::Message* pcMessage)
 {
 	switch (pcMessage->GetCode())
 	{
-		case KeymapSelector::M_SELECT:
-        {
-        	printf("changed\n");
-        	break;
-        }
+		case M_SEL_CHANGED:
+		{
+			/* User has selected a different user; automatically select the right keymap for that user. */
+			int nCount = pcUserIconView->GetIconCount();
+			bool bFound = false;
+			for( int i = 0; i < nCount; i++ )
+			{
+				if( pcUserIconView->GetIconSelected( i ) )
+				{
+					LoginIconData* pcData;
+					pcData = static_cast<LoginIconData*>( pcUserIconView->GetIconData( i ) );
+					SetKeymapForUser( pcData->m_zUserName );
+
+					break;
+				}
+			}
+			break;
+		}
+		default:
+		{
+			View::HandleMessage( pcMessage );
+		}
 	}
 }
-
-
-
 
 
 

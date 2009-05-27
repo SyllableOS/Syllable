@@ -2,6 +2,7 @@
 
 #include <util/application.h>
 
+
 KeymapSelector::KeymapSelector(const os::Messenger& parent) : os::LayoutView(os::Rect(),"",NULL)
 {
 	m_cParent = parent;
@@ -50,8 +51,20 @@ os::Point KeymapSelector::GetPreferredSize(bool) const
 }
 
 
-
-
-
-
+void KeymapSelector::SelectKeymap( const os::String& zKeymap )
+{
+	int nCount = m_pcMenu->GetItemCount();
+	bool bFound = false;
+	
+	for( int i = 0; i < nCount; i++ )
+	{
+		if( m_pcMenu->GetItem( i ) == zKeymap )
+		{
+			m_pcMenu->SetSelection( i, true );	/* bNotify == true, so the DropdownMenu will notify the window and the keymap will be activated as usual */
+			bFound = true;
+			break;
+		}
+	}
+	/* Didn't find it - well, we'll just stick with the current keymap then. */
+}
 

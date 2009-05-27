@@ -30,7 +30,10 @@
 #include <gui/layoutview.h>
 #include <gui/view.h>
 #include <gui/listview.h>
+#include <gui/checkbox.h>
 #include <util/message.h>
+
+#include "autologin_view.h"
 
 #ifndef USERS_SYLLABLE__USERS_WINDOW_H_
 #define USERS_SYLLABLE__USERS_WINDOW_H_
@@ -44,7 +47,8 @@ enum users_messages
 	ID_USERS_POST_EDIT,
 	ID_USERS_DELETE,
 	ID_USERS_SET_PASSWD,
-	ID_USERS_NEW_PASSWORD
+	ID_USERS_NEW_PASSWORD,
+	ID_USERS_SHOWALL
 };
 
 class UsersView : public os::View
@@ -57,6 +61,9 @@ class UsersView : public os::View
 		virtual void HandleMessage( os::Message *pcMessage );
 
 		status_t SaveChanges( void );
+		
+		void PopulateList();
+		void FilterList();
 
 	private:
 		status_t Validate( const int32 nUid, const std::string cOld );
@@ -65,6 +72,7 @@ class UsersView : public os::View
 
 		os::LayoutView *m_pcLayoutView;
 		os::ListView *m_pcUsersList;
+		os::CheckBox* m_pcSystemUsersCheckbox;
 		os::Button *m_pcAdd, *m_pcEdit, *m_pcDelete, *m_pcPassword;
 
 		struct passwd *m_psSelected;
@@ -72,6 +80,8 @@ class UsersView : public os::View
 		std::vector<std::string>m_vNewHomes;
 
 		bool m_bModified;
+
+		std::vector< os::ListViewStringRow* > m_apcUsers;
 };
 
 enum groups_messages
@@ -81,7 +91,8 @@ enum groups_messages
 	ID_GROUPS_POST_ADD,
 	ID_GROUPS_EDIT,
 	ID_GROUPS_POST_EDIT,
-	ID_GROUPS_DELETE
+	ID_GROUPS_DELETE,
+	ID_GROUPS_SHOWALL
 };
 
 class GroupsView : public os::View
@@ -94,6 +105,9 @@ class GroupsView : public os::View
 		virtual void HandleMessage( os::Message *pcMessage );
 
 		status_t SaveChanges( void );
+		
+		void PopulateList();
+		void FilterList();
 
 	private:
 		void DisplayProperties( const std::string cTitle, const struct group *psGroup, os::Message *pcMessage );
@@ -101,11 +115,14 @@ class GroupsView : public os::View
 
 		os::LayoutView *m_pcLayoutView;
 		os::ListView *m_pcGroupsList;
+		os::CheckBox* m_pcSystemGroupsCheckbox;
 		os::Button *m_pcAdd, *m_pcEdit, *m_pcDelete;
 
 		struct group *m_psSelected;
 
 		bool m_bModified;
+		
+		std::vector< os::ListViewStringRow* > m_apcGroups;
 };
 
 enum window_messages
@@ -127,6 +144,7 @@ class UsersWindow : public os::Window
 		os::TabView *m_pcTabView;
 		UsersView *m_pcUsersView;
 		GroupsView *m_pcGroupsView;
+		AutoLoginView* m_pcAutoLoginView;
 		os::LayoutView *m_pcLayoutView;
 };
 

@@ -5,18 +5,37 @@
 
 #include "resources/dlogin.h"
 
-App::App():os::Application( "application/x-vnd.syllable-login_application" )
+using namespace os;
+
+
+App::App( int nArgc, char* apzArgv[] ) :os::Application( "application/x-vnd.syllable-login_application" )
 {
 	SetCatalog("dlogin.catalog");
 
 	mkdir("/system/icons/users",S_IRWXU | S_IRWXG | S_IRWXO);
-	SetPublic(true);
+//	SetPublic(true);
+	
+	m_pcSettings = new AppSettings();
+	
+	if( m_pcSettings->IsAutoLoginEnabled() )
+	{
+		AutoLogin( m_pcSettings->GetAutoLoginUser() );
+		/* If the login is successful, we will waitpid() on the user's desktop. */
+		/* Once the desktop has quit, we will resume from here and create the login window as usual. */
+		
+		/* Should this be done in App::Started() instead? So that the Application is fully initialised */
+	}
 
 	IPoint cPoint = GetResolution();
-	m_pcMainWindow = new MainWindow(Rect(0,0,cPoint.x,cPoint.y));
+	m_pcMainWindow = new MainWindow( Rect(0,0,cPoint.x,cPoint.y), m_pcSettings );
 	m_pcMainWindow->Init();
 	m_pcMainWindow->Show();
 	m_pcMainWindow->MakeFocus();
+}
+
+AppSettings* App::GetSettings()
+{
+	return( m_pcSettings );
 }
 
 void App::HandleMessage(Message* pcMessage)
@@ -27,9 +46,11 @@ void App::HandleMessage(Message* pcMessage)
 		{
 			os::String cLogin;
 			os::String cPassword;
+			os::String cKeymap = "";
 			pcMessage->FindString( "login", &cLogin );
 			pcMessage->FindString( "password", &cPassword );
-			Authorize( cLogin.c_str(), cPassword.c_str() );
+			pcMessage->FindString( "keymap", &cKeymap );
+			Authorize( cLogin, cPassword, cKeymap );
 			break;
 		}
 		default:
@@ -37,45 +58,47 @@ void App::HandleMessage(Message* pcMessage)
 	}
 }
 
-void App::Authorize(const char* pzLoginName, const char* pzPassword )
+void App::Authorize( const String& zUserName, const String& zPassword, const String& zKeymap )
 {
-    for (;;)
+	String zLoginName = zUserName;
+    for (;;)	/* AWM: What is this loop for? */
     {
 
-        if (pzLoginName != NULL)
+        if (zLoginName != "")
         {
             struct passwd* psPass;
 
-            if ( pzLoginName != NULL )
-            {
-                psPass = getpwnam( pzLoginName );
-            }
-            else
-            {
-                psPass = getpwnam( pzLoginName );
-            }
+            psPass = getpwnam( zLoginName.c_str() );
+
 
             if ( psPass != NULL )
             {
-				const char* pzPassWd = crypt(  pzPassword, "$1$" );
+				const char* pzPassWd = crypt(  zPassword.c_str(), "$1$" );
 
-                if ( pzLoginName == NULL && pzPassWd == NULL )
+                if ( zLoginName != "" && pzPassWd == NULL )
                 {
                     perror( "crypt()" );
-                    pzLoginName = NULL;
+                    zLoginName = "";
                     continue;
                 }
 
                 if (strcmp( pzPassWd, psPass->pw_passwd ) == 0 )
                 {
-					/*passwords match, lets become this user*/
+                	/* Password is correct */
+                	
+                	/* Save the user & keymap setting */
+                	m_pcSettings->SetKeymapForUser( zLoginName, zKeymap );
+                	m_pcSettings->SetActiveUser( zLoginName );
+                	m_pcSettings->Save();
+                	
+					/* Let's become this user */
 					Unlock();
 					m_pcMainWindow->Hide();
 					m_pcMainWindow->Terminate();
 					Lock();
 					BecomeUser(psPass);
 					IPoint cPoint = GetResolution();
-					m_pcMainWindow = new MainWindow(Rect(0,0,cPoint.x,cPoint.y));
+					m_pcMainWindow = new MainWindow( Rect(0,0,cPoint.x,cPoint.y), m_pcSettings );
 					m_pcMainWindow->Init();
 					m_pcMainWindow->Show();
 					m_pcMainWindow->MakeFocus();
@@ -97,20 +120,20 @@ void App::Authorize(const char* pzLoginName, const char* pzPassword )
             }
             break;
         }
-        pzLoginName = NULL;
+        zLoginName = "";
     }
 }
 
 
+void App::AutoLogin( const String& zUserName )
+{
+	struct passwd* psPass;
+	psPass = getpwnam( zUserName.c_str() );
 
-
-
-
-
-
-
-
-
+	if( psPass != NULL ) {
+		BecomeUser(psPass);
+	}
+}
 
 
 

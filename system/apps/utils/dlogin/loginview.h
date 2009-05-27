@@ -11,14 +11,17 @@
 #include <util/datetime.h>
 #include <gui/textview.h>
 #include <util/message.h>
+#include <util/settings.h>
+
 #include "keymap.h"
+#include "appsettings.h"
 
 using namespace os;
 
 class LoginView : public View
 {
 public:	
-	LoginView(Rect cRect, Window*);
+	LoginView(Rect cRect, Window*, AppSettings* pcAppSettings );
 	
 	void UpdateTime();
 	void PopulateIcons();
@@ -27,21 +30,8 @@ public:
 	void Focus();
 	void AttachedToWindow();
 	void FindUser(const String&);
-	void Reload()
-	{
-		String cIcon;
-		for (uint i=0; i<pcUserIconView->GetIconCount(); i++)
-		{
-			if (pcUserIconView->GetIconSelected(i))
-				cIcon = pcUserIconView->GetIconString(i,0);
-		}
-		pcUserIconView->Clear();
-		PopulateIcons();
-		pcUserIconView->Flush();
-		pcUserIconView->Sync();
-		pcUserIconView->Paint(pcUserIconView->GetBounds());
-		FindUser(cIcon);
-	}
+	void SetKeymapForUser( const String& );
+	void Reload();
 	
 	os::String GetKeymap()
 	{
@@ -67,6 +57,8 @@ private:
 	IconView* pcUserIconView;
 
 	Window* pcParentWindow;
+	
+	AppSettings* pcSettings;
 };	
 
 #endif

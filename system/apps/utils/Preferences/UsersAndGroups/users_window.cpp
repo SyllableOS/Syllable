@@ -36,6 +36,7 @@
 #include <changepwddlg.h>
 #include <user_propertiesdlg.h>
 #include <group_propertiesdlg.h>
+#include "autologin_view.h"
 #include "resources/UsersAndGroups.h"
 
 using namespace os;
@@ -58,6 +59,9 @@ UsersWindow::UsersWindow( const os::Rect cFrame ) : Window( cFrame, "Users", MSG
 
 	m_pcGroupsView = new GroupsView( cTabBounds );
 	m_pcTabView->AppendTab( MSG_MAINWND_TAB_GROUPS, m_pcGroupsView );
+	
+	m_pcAutoLoginView = new AutoLoginView( cTabBounds );
+	m_pcTabView->AppendTab( MSG_MAINWND_TAB_AUTOLOGIN, m_pcAutoLoginView );
 
 	AddChild( m_pcTabView );
 
@@ -117,6 +121,8 @@ void UsersWindow::HandleMessage( Message *pcMessage )
 			m_pcGroupsView->SaveChanges();
 			m_pcUsersView->SaveChanges();
 
+			m_pcAutoLoginView->SaveChanges();
+
 			/* Fall through */
 		}
 
@@ -140,6 +146,7 @@ bool UsersWindow::OkToQuit()
 UsersView::UsersView( const Rect cFrame ) : View( cFrame, "users_users_view" )
 {
 	m_bModified = false;
+	m_psSelected = NULL;
 
 	VLayoutNode *pcUsersRoot = new VLayoutNode( "users_root" );
 
@@ -153,6 +160,12 @@ UsersView::UsersView( const Rect cFrame ) : View( cFrame, "users_users_view" )
 
 	pcUsersRoot->AddChild( m_pcUsersList, 200.0f );
 	pcUsersRoot->AddChild( new VLayoutSpacer( "" ) );
+	
+	HLayoutNode* pcCheckboxNode = new HLayoutNode( "checkbox_layoutnode", 0.0f, pcUsersRoot );
+	m_pcSystemUsersCheckbox = new CheckBox( Rect(), "sys_users_checkbox", MSG_MAINWND_TAB_USERS_CHECKBOX_SHOWALL, new Message( ID_USERS_SHOWALL ) );
+	m_pcSystemUsersCheckbox->EnableStatusChanged( true );
+	pcCheckboxNode->AddChild( m_pcSystemUsersCheckbox, 1.0f );
+	pcUsersRoot->AddChild( pcCheckboxNode );
 
 	HLayoutNode *pcUsersButtons = new HLayoutNode( "users_buttons", 0.0f, pcUsersRoot );
 
@@ -175,6 +188,29 @@ UsersView::UsersView( const Rect cFrame ) : View( cFrame, "users_users_view" )
 
 	pcUsersRoot->AddChild( pcUsersButtons );
 
+	PopulateList();
+
+	/* Clean up the layout */
+	pcUsersRoot->SetBorders( Rect(0, 10, 0, 10) );
+	pcUsersRoot->SetBorders( Rect(2, 10, 2, 0), "add_button", "edit_button", "delete_button", "set_password_button", NULL );
+	pcUsersRoot->SameWidth( "add_button", "edit_button", "delete_button", "set_password_button", NULL );
+	pcUsersRoot->SetBorders( Rect( 10, 0, 10, 0 ), "users_list", "sys_users_checkbox", NULL );
+
+	m_pcLayoutView = new LayoutView( GetBounds(), "users" );
+	m_pcLayoutView->SetRoot( pcUsersRoot );
+	AddChild( m_pcLayoutView );
+}
+
+UsersView::~UsersView()
+{
+	RemoveChild( m_pcLayoutView );
+	delete( m_pcLayoutView );
+}
+
+void UsersView::PopulateList()
+{
+	bool bShowAll = m_pcSystemUsersCheckbox->GetValue().AsBool();
+	
 	/* Create an internal list of all passwd entries and add a row for each user */
 	struct passwd *psEntry;
 	while( ( psEntry = getpwent() ) != NULL )
@@ -220,31 +256,64 @@ UsersView::UsersView( const Rect cFrame ) : View( cFrame, "users_users_view" )
 		/* We can retrieve the data when we need it via. the cookie */
 		pcRow->SetCookie( Variant( (void*)psPwd ) );
 
+		/* Store the group in our cache */
+		m_apcUsers.push_back( pcRow );
+
 		/* Put the row in the list */
-		m_pcUsersList->InsertRow( pcRow );
+		if( bShowAll || psPwd->pw_uid == 0 || psPwd->pw_uid >= 100 )
+		{
+			m_pcUsersList->InsertRow( pcRow );
+		}
 	}
 	endpwent();
 
-	/* Clean up the layout */
-	pcUsersRoot->SetBorders( Rect(5, 10, 5, 0), "add_button", "edit_button", "delete_button", "set_password_button", NULL );
-	pcUsersRoot->SameWidth( "add_button", "edit_button", "delete_button", "set_password_button", NULL );
-	pcUsersRoot->SetBorders( Rect(10, 10, 10, 10) );
-
-	m_pcLayoutView = new LayoutView( GetBounds(), "users" );
-	m_pcLayoutView->SetRoot( pcUsersRoot );
-	AddChild( m_pcLayoutView );
 }
 
-UsersView::~UsersView()
+void UsersView::FilterList()
 {
-	RemoveChild( m_pcLayoutView );
-	delete( m_pcLayoutView );
+	bool bShowAll = m_pcSystemUsersCheckbox->GetValue().AsBool();
+	
+	m_pcUsersList->ClearSelection();
+	
+	/* Can't call ListView::Clear() here because that deletes all the ListViewRows. But we want to keep them in our cache. */
+	/* Remove them in reverse order for efficiency */
+	uint i;
+	while( (i = m_pcUsersList->GetRowCount()) > 0 ) m_pcUsersList->RemoveRow( i - 1, false );
+	
+	bool bReSelected = false;
+	/* Re-add the relevant rows */
+	for( uint i = 0; i < m_apcUsers.size(); i++ )
+	{
+		struct passwd* psPwd = (struct passwd*)(m_apcUsers[i]->GetCookie().AsPointer());
+		if( bShowAll || psPwd->pw_uid == 0 || psPwd->pw_uid >= 100 )
+		{
+			m_pcUsersList->InsertRow( m_apcUsers[i], false );
+			
+			/* Re-select the active row */
+			if( (struct passwd*)m_apcUsers[i]->GetCookie().AsPointer() == m_psSelected )
+			{
+				m_pcUsersList->Select( m_pcUsersList->GetRowCount()-1 );
+				bReSelected = true;
+			}
+		}
+	}
+	
+	if( !bReSelected )
+	{
+		m_psSelected = NULL;
+		m_pcEdit->SetEnable( false );
+		m_pcPassword->SetEnable( false );
+		m_pcDelete->SetEnable( false );
+	}
+	
+	m_pcUsersList->Invalidate( true );
 }
 
 void UsersView::AllAttached( void )
 {
 	View::AllAttached();
 	m_pcUsersList->SetTarget( this );
+	m_pcSystemUsersCheckbox->SetTarget( this );
 	m_pcAdd->SetTarget( this );
 	m_pcEdit->SetTarget( this );
 	m_pcDelete->SetTarget( this );
@@ -360,6 +429,7 @@ void UsersView::HandleMessage( Message *pcMessage )
 			pcRow->SetCookie( Variant( (void*)psPasswd ) );
 
 			/* Put the row in the list */
+			m_apcUsers.push_back( pcRow );
 			m_pcUsersList->InsertRow( pcRow );
 
 			/* Remember to create a home directory for this user */
@@ -456,7 +526,17 @@ void UsersView::HandleMessage( Message *pcMessage )
 			m_psSelected = (struct passwd *)m_pcUsersList->GetRow( nSelected )->GetCookie().AsPointer();
 
 			/* Delete the row */
-			delete( m_pcUsersList->RemoveRow( nSelected ) );
+			ListViewStringRow* pcRow = static_cast<ListViewStringRow*>( m_pcUsersList->RemoveRow( nSelected ) );
+			/* And from the cache */
+			for( std::vector<ListViewStringRow*>::iterator i = m_apcUsers.begin(); i != m_apcUsers.end(); i++ )
+			{
+				if( *i == pcRow )
+				{
+					m_apcUsers.erase(i);
+					break;
+				}
+			}
+			delete( pcRow );
 
 			/* Check for an entry in the "new homes" list and remove if required */
 			if( m_vNewHomes.size() > 0 )
@@ -523,6 +603,12 @@ void UsersView::HandleMessage( Message *pcMessage )
 
 			break;
 		}
+		
+		case ID_USERS_SHOWALL:
+		{
+			FilterList();
+			break;
+		}
 
 		default:
 			View::HandleMessage( pcMessage );
@@ -546,9 +632,9 @@ status_t UsersView::SaveChanges( void )
 
 	int nRow = 0;
 	struct passwd *psEntry;
-	for( int nRow = 0; nRow < m_pcUsersList->GetRowCount(); nRow++ )
+	for( int nRow = 0; nRow < m_apcUsers.size(); nRow++ )
 	{
-		psEntry = (struct passwd *)m_pcUsersList->GetRow( nRow )->GetCookie().AsPointer();
+		psEntry = (struct passwd *)m_apcUsers[ nRow ]->GetCookie().AsPointer();
 
 		if( putpwent( psEntry, psTemp ) < 0 )
 			return EIO;
@@ -577,9 +663,9 @@ status_t UsersView::SaveChanges( void )
 		vector<string>::iterator i;
 		for( i = m_vNewHomes.begin(); i != m_vNewHomes.end(); i++ )
 		{
-			for( int nRow = 0; nRow < m_pcUsersList->GetRowCount(); nRow++ )
+			for( int nRow = 0; nRow < m_apcUsers.size(); nRow++ )
 			{
-				psEntry = (struct passwd *)m_pcUsersList->GetRow( nRow )->GetCookie().AsPointer();
+				psEntry = (struct passwd *)m_apcUsers[ nRow ]->GetCookie().AsPointer();
 				if( psEntry->pw_name == (*i) )
 				{
 					char anSys[PATH_MAX];
@@ -631,6 +717,7 @@ status_t UsersView::UpdateList( const int nSelected )
 GroupsView::GroupsView( const Rect cFrame ) : View( cFrame, "users_groups_view" )
 {
 	m_bModified = false;
+	m_psSelected = NULL;
 
 	VLayoutNode *pcGroupsRoot = new VLayoutNode( "groups_root" );
 
@@ -641,6 +728,12 @@ GroupsView::GroupsView( const Rect cFrame ) : View( cFrame, "users_groups_view" 
 
 	pcGroupsRoot->AddChild( m_pcGroupsList, 200.0f );
 	pcGroupsRoot->AddChild( new VLayoutSpacer( "" ) );
+
+	HLayoutNode* pcCheckboxNode = new HLayoutNode( "groups_checkbox_layoutnode", 0.0f, pcGroupsRoot );
+	m_pcSystemGroupsCheckbox = new CheckBox( Rect(), "sys_groups_checkbox", MSG_MAINWND_TAB_GROUPS_CHECKBOX_SHOWALL, new Message( ID_GROUPS_SHOWALL ) );
+	m_pcSystemGroupsCheckbox->EnableStatusChanged( true );
+	pcCheckboxNode->AddChild( m_pcSystemGroupsCheckbox, 1.0f );
+	pcGroupsRoot->AddChild( pcCheckboxNode );
 
 	HLayoutNode *pcGroupsButtons = new HLayoutNode( "groups_buttons", 0.0f, pcGroupsRoot );
 
@@ -658,6 +751,28 @@ GroupsView::GroupsView( const Rect cFrame ) : View( cFrame, "users_groups_view" 
 	m_pcDelete->SetEnable( false );
 
 	pcGroupsRoot->AddChild( pcGroupsButtons );
+
+	PopulateList();
+
+	/* Clean up the layout */
+	pcGroupsRoot->SetBorders( Rect(5, 10, 5, 0), "add_button", "edit_button", "delete_button", NULL );
+	pcGroupsRoot->SameWidth( "add_button", "edit_button", "delete_button", NULL );
+	pcGroupsRoot->SetBorders( Rect(10, 10, 10, 10) );
+
+	m_pcLayoutView = new LayoutView( GetBounds(), "groups" );
+	m_pcLayoutView->SetRoot( pcGroupsRoot );
+	AddChild( m_pcLayoutView );
+}
+
+GroupsView::~GroupsView()
+{
+	RemoveChild( m_pcLayoutView );
+	delete( m_pcLayoutView );
+}
+
+void GroupsView::PopulateList()
+{
+	bool bShowAll = m_pcSystemGroupsCheckbox->GetValue().AsBool();
 
 	/* Create an internal list of all groups entries and add a row for each group */
 	struct group *psEntry;
@@ -698,31 +813,62 @@ GroupsView::GroupsView( const Rect cFrame ) : View( cFrame, "users_groups_view" 
 		/* We can retrieve the data when we need it via. the cookie */
 		pcRow->SetCookie( Variant( (void*)psGrp ) );
 
+		/* Store the group in our cache */
+		m_apcGroups.push_back( pcRow );
+
 		/* Put the row in the list */
-		m_pcGroupsList->InsertRow( pcRow );
+		if( bShowAll || psGrp->gr_gid == 0 || psGrp->gr_gid >= 100 )
+		{
+			m_pcGroupsList->InsertRow( pcRow );
+		}
 	}
 	endgrent();
-
-	/* Clean up the layout */
-	pcGroupsRoot->SetBorders( Rect(5, 10, 5, 0), "add_button", "edit_button", "delete_button", NULL );
-	pcGroupsRoot->SameWidth( "add_button", "edit_button", "delete_button", NULL );
-	pcGroupsRoot->SetBorders( Rect(10, 10, 10, 10) );
-
-	m_pcLayoutView = new LayoutView( GetBounds(), "groups" );
-	m_pcLayoutView->SetRoot( pcGroupsRoot );
-	AddChild( m_pcLayoutView );
 }
 
-GroupsView::~GroupsView()
+void GroupsView::FilterList()
 {
-	RemoveChild( m_pcLayoutView );
-	delete( m_pcLayoutView );
+	bool bShowAll = m_pcSystemGroupsCheckbox->GetValue().AsBool();
+	
+	m_pcGroupsList->ClearSelection();
+
+	/* Can't call ListView::Clear() here because that deletes all the ListViewRows. But we want to keep them in our cache. */
+	/* Remove them in reverse order for efficiency */
+	uint i;
+	while( (i = m_pcGroupsList->GetRowCount()) > 0 ) m_pcGroupsList->RemoveRow( i - 1, false );
+
+	bool bReSelected = false;
+	/* Re-add the relevant rows */
+	for( uint i = 0; i < m_apcGroups.size(); i++ )
+	{
+		struct group* psGrp = (struct group*)(m_apcGroups[i]->GetCookie().AsPointer());
+		if( bShowAll || psGrp->gr_gid == 0 || psGrp->gr_gid >= 100 )
+		{
+			m_pcGroupsList->InsertRow( m_apcGroups[i], false );
+
+			/* Re-select the active row */
+			if( (struct group*)m_apcGroups[i]->GetCookie().AsPointer() == m_psSelected )
+			{
+				m_pcGroupsList->Select( m_pcGroupsList->GetRowCount()-1 );
+				bReSelected = true;
+			}
+		}
+	}
+
+	if( !bReSelected )
+	{
+		m_psSelected = NULL;
+		m_pcEdit->SetEnable( false );
+		m_pcDelete->SetEnable( false );
+	}
+	
+	m_pcGroupsList->Invalidate( true );
 }
 
 void GroupsView::AllAttached( void )
 {
 	View::AllAttached();
 	m_pcGroupsList->SetTarget( this );
+	m_pcSystemGroupsCheckbox->SetTarget( this );
 	m_pcAdd->SetTarget( this );
 	m_pcEdit->SetTarget( this );
 	m_pcDelete->SetTarget( this );
@@ -806,6 +952,7 @@ void GroupsView::HandleMessage( Message *pcMessage )
 			pcRow->SetCookie( Variant( (void*)psGroup ) );
 
 			/* Put the row in the list */
+			m_apcGroups.push_back( pcRow );
 			m_pcGroupsList->InsertRow( pcRow );
 
 			m_bModified = true;
@@ -874,7 +1021,17 @@ void GroupsView::HandleMessage( Message *pcMessage )
 			m_psSelected = (struct group *)m_pcGroupsList->GetRow( nSelected )->GetCookie().AsPointer();
 
 			/* Delete the row */
-			delete( m_pcGroupsList->RemoveRow( nSelected ) );
+			ListViewStringRow* pcRow = static_cast<ListViewStringRow*>( m_pcGroupsList->RemoveRow( nSelected ) );
+			/* And from the cache */
+			for( std::vector<ListViewStringRow*>::iterator i = m_apcGroups.begin(); i != m_apcGroups.end(); i++ )
+			{
+				if( *i == pcRow )
+				{
+					m_apcGroups.erase(i);
+					break;
+				}
+			}
+			delete( pcRow );
 
 			/* Free the memory held by the group struct */
 			free( m_psSelected->gr_name );
@@ -890,6 +1047,12 @@ void GroupsView::HandleMessage( Message *pcMessage )
 
 			m_bModified = true;
 
+			break;
+		}
+		
+		case ID_GROUPS_SHOWALL:
+		{
+			FilterList();
 			break;
 		}
 
@@ -915,9 +1078,9 @@ status_t GroupsView::SaveChanges( void )
 
 	int nRow = 0;
 	struct group *psEntry;
-	for( int nRow = 0; nRow < m_pcGroupsList->GetRowCount(); nRow++ )
+	for( int nRow = 0; nRow < m_apcGroups.size(); nRow++ )
 	{
-		psEntry = (struct group *)m_pcGroupsList->GetRow( nRow )->GetCookie().AsPointer();
+		psEntry = (struct group *)m_apcGroups[ nRow ]->GetCookie().AsPointer();
 
 		if( putgrent( psEntry, psTemp ) < 0 )
 			return EIO;

@@ -1,5 +1,5 @@
 CXXFLAGS += -c -I.
-OBJS = main.o users_window.o user_propertiesdlg.o changepwddlg.o group_propertiesdlg.o
+OBJS = main.o users_window.o user_propertiesdlg.o changepwddlg.o group_propertiesdlg.o autologin_view.o
 EXE = Users
 TARGET_EXE = Users\ \&\ Groups
 
