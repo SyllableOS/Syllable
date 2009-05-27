@@ -1,3 +1,9 @@
+* May 27, 2009, Anthony Morphett *
+
+Added 'Show system users/groups' checkboxes to Users&Groups prefs; added gui for autologin.
+New settings location for login app settings and autologin config; make login app save more
+settings including per-user keymaps; cosmetic fixes for dlogin.
+
 * March 15, 2009, Anthony Morphett *
 
 Fix potential crash and make sure the active keymap is always displayed in Keyboard prefs.
