@@ -881,8 +881,6 @@ int sys_fsync( int nFile )
 	File_s *psFile;
 	int nError;
 
-	printk( "sys_fsync( %d ) stub called!\n", nFile );
-
 	psFile = get_fd( false, nFile );
 
 	if ( NULL == psFile )
@@ -925,8 +923,6 @@ int sys_truncate( const char *a_pzPath, uint32 nLenLow, uint32 nLenHigh )
 
 	off_t nLength = ((off_t)nLenHigh << 32 ) | nLenLow;
 
-	//printk( "sys_truncate( %s, %Ld ) stub called!\n", a_pzPath, nLength );
-
 	nError = strndup_from_user( a_pzPath, PATH_MAX, &pzPath );
 	if ( nError < 0 )
 	{
@@ -962,8 +958,6 @@ int sys_ftruncate( int nFile, uint32 nLenLow, uint32 nLenHigh )
 	int nError;
 
 	off_t nLength = ((off_t)nLenHigh << 32 ) | nLenLow;
-
-	//printk( "sys_ftruncate( %d, %Ld ) stub called!\n", nFile, nLength );
 
 	psFile = get_fd( false, nFile );
 
