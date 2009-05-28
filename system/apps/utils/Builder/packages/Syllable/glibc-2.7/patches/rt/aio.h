@@ -37,10 +37,6 @@ __BEGIN_DECLS
 
 #include <posix/aio.h>
 
-#ifdef __USE_LARGEFILE64
-# define aiocb64	aiocb
-#endif
-
 #ifdef __USE_GNU
 /* To customize the implementation one can use the following struct.
    This implementation follows the one in Irix.  */
