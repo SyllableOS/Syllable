@@ -1,3 +1,9 @@
+* May 28, 2009, Kristian Van Der Vliet *
+
+Implemented async I/O support:
+ o aio_read() & aio_write() are supported via. a generic interface (sys_aio_request())
+ o msync() MS_ASYNC is now supported via. the async I/O backend.
+
 * May 21, 2009, Kristian Van Der Vliet *
 
 flock.c/lock_inode_record(): Do not return EWOULDBLOCK if the caller is
