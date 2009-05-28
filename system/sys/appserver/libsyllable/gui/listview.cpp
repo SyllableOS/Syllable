@@ -2641,6 +2641,8 @@ ListView::ListView( const Rect & cFrame, const String& cTitle, uint32 nModeFlags
 
 	AddChild( m->m_pcHeaderView );
 	Layout();
+
+	View::SetTabOrder( NO_TAB_ORDER );	/* Only the child MainView should be navigable */
 }
 
 //----------------------------------------------------------------------------
@@ -3693,5 +3695,22 @@ void ListView::MouseMove( const Point & cNewPos, int nCode, uint32 nButtons, Mes
 void ListView::MouseUp( const Point & cPosition, uint32 nButton, Message * pcData )
 {
 	View::MouseUp(cPosition,nButton,pcData);
+}
+
+void ListView::Activated( bool bIsActive )
+{
+	if( bIsActive ) m->m_pcMainView->MakeFocus( true );
+}
+
+void ListView::SetTabOrder( int nOrder )
+{
+	/* We want the child to be tabbable, but not the parent */
+	m->m_pcMainView->SetTabOrder( nOrder );
+	View::SetTabOrder( NO_TAB_ORDER );
+}
+
+int ListView::GetTabOrder() const
+{
+	return( View::GetTabOrder() );
 }
 

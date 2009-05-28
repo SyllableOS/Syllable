@@ -306,12 +306,18 @@ int View::GetTabOrder() const
 
 void View::SetTabOrder( int nOrder )
 {
-	if( nOrder == NEXT_TAB_ORDER ) {
-		nOrder = s_nNextTabOrder++;
+	if( nOrder == NO_TAB_ORDER )
+	{
+		m->m_nTabOrder = NO_TAB_ORDER;
+		return;
+	}
+	if( nOrder == NEXT_TAB_ORDER )
+	{
+		nOrder = s_nNextTabOrder;
 	}
 
-	s_nNextTabOrder = nOrder + 1;
 	m->m_nTabOrder = nOrder;
+	s_nNextTabOrder = std::max( nOrder, s_nNextTabOrder ) + 1;
 }
 
 /** Set popup menu for a View.

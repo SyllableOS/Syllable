@@ -67,7 +67,7 @@ public:
     
     virtual void	SetCookie( Variant cCookie );
     virtual Variant	GetCookie( void );
-
+    
     void		SetIsSelectable( bool bSelectable );
     bool		IsSelectable() const;
     bool		IsSelected() const;
@@ -246,6 +246,10 @@ public:
 	virtual void		MouseDown(const Point&, uint32);
 	virtual void		MouseUp( const Point & cPosition, uint32 nButton, Message * pcData );
 	virtual void		MouseMove( const Point & cNewPos, int nCode, uint32 nButtons, Message * pcData );
+
+    virtual void		Activated( bool bIsActive );
+    virtual void		SetTabOrder( int nOrder = NEXT_TAB_ORDER );
+    virtual int			GetTabOrder() const;
 
       // STL iterator interface to the rows.
     const_iterator begin() const;

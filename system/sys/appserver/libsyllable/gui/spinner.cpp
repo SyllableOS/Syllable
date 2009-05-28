@@ -161,6 +161,8 @@ Spinner::Spinner( Rect cFrame, const String& cName, double vValue, Message * pcM
 		}
 	}
 	SetValue( vValue, false );
+	
+	View::SetTabOrder( NO_TAB_ORDER );
 }
 
 Spinner::~Spinner()
@@ -187,7 +189,7 @@ void Spinner::SetTabOrder( int nOrder )
 
 int Spinner::GetTabOrder() const
 {
-	return( m->m_pcEditBox->GetTabOrder() );
+	return( View::GetTabOrder() );
 }
 
 void Spinner::HandleMessage( Message * pcMessage )
@@ -647,6 +649,7 @@ void Spinner::UpdateEditBox()
 
 void Spinner::Activated( bool bIsActive )
 {
+	if( bIsActive ) m->m_pcEditBox->MakeFocus( true );
 	Invalidate();
 	Flush();
 }

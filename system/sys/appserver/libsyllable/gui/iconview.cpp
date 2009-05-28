@@ -2263,6 +2263,11 @@ void IconView::MakeFocus( bool bFocus )
 	m->m_pcView->MakeFocus( bFocus );
 }
 
+void IconView::Activated( bool bIsActive )
+{
+	if( bIsActive ) m->m_pcView->MakeFocus( true );
+}
+
 void IconView::SetTabOrder( int nOrder )
 {
 	m->m_pcView->SetTabOrder( nOrder );
@@ -2271,13 +2276,13 @@ void IconView::SetTabOrder( int nOrder )
 
 int IconView::GetTabOrder() const
 {
-	return( m->m_pcView->GetTabOrder() );
+	return( View::GetTabOrder() );
 }
 
 /* NOTE: This should be removed in the next libsyllable version. The const version above is the correct one. */
 int IconView::GetTabOrder()
 {
-	return( m->m_pcView->GetTabOrder() );
+	return( View::GetTabOrder() );
 }
 
 void IconView::__ICV_reserved2__() {}

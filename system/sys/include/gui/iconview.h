@@ -134,7 +134,8 @@ public:
 	virtual os::Message* GetInvokeMsg();
 
 	virtual void MakeFocus( bool bFocus = true );
-	
+	virtual void Activated( bool bIsActive );
+
 	virtual void SetTabOrder( int nOrder = NEXT_TAB_ORDER );
 	virtual int GetTabOrder() const;
 	virtual int GetTabOrder();		/* NOTE: This should be removed in the next libsyllable version. */

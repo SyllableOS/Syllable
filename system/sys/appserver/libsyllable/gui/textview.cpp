@@ -256,6 +256,7 @@ TextView::TextView( const Rect & cFrame, const String &cTitle, const char *pzTex
 	m_pcEditor = new TextEdit( this, cChildFrame, "edit_box", CF_FOLLOW_NONE );
 
 	AddChild( m_pcEditor );
+	View::SetTabOrder( NO_TAB_ORDER );	/* Only the child editor view should be navigable */
 
 	if( pzText != NULL )
 	{
@@ -279,7 +280,7 @@ void TextView::EnableStatusChanged( bool bIsEnabled )
 
 void TextView::Activated( bool bIsActive )
 {
-	m_pcEditor->Activated( bIsActive );
+	if( bIsActive ) m_pcEditor->MakeFocus(  true );
 }
 
 bool TextView::Invoked( Message * pcMessage )
@@ -380,7 +381,7 @@ void TextView::WheelMoved( const Point & cDelta )
  *	used by the text editor was to retrieve the editor and then set
  *	it's font manually. This is not neccessarry (and not possible) any
  *	longer. Setting the font on the os::TextView class itself will
- *	automatically be relected by the internal editor.
+ *	automatically be applied to the internal editor.
  *
  * \return
  *	A const pointer to the internal editor.
@@ -395,8 +396,8 @@ const View *TextView::GetEditor() const
 
 void TextView::SetTabOrder( int nOrder )
 {
-	View::SetTabOrder( nOrder );
-//    m_pcEditor->SetTabOrder( nOrder );
+	/* We want the editor view to be tabbable, but not the parent */
+    m_pcEditor->SetTabOrder( nOrder );
 }
 
 void TextView::FrameSized( const Point & cDelta )
