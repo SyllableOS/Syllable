@@ -1,5 +1,11 @@
 Glibc Syllable Changelog
 
+* May 28 2009 *
+
+	o rt/aio.h: Replace the standard header with the Syllable version.
+	o aio_read.c, aio_write.c: Use kernel async I/O instead of emulating them syncronously.
+	o callback.c: New file.
+
 * May 19 2009 *
 
 	o mmap.c: New file.

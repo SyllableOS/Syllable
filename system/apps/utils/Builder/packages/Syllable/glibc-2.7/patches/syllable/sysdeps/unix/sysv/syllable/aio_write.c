@@ -18,8 +18,9 @@
 
 #include <aio.h>
 #include <errno.h>
-#include <unistd.h>
-#include <signal.h>
+#include <sysdep.h>
+#include <sys/types.h>
+#include <sys/syscall.h>
 
 #ifdef BE_AIO64
 #define aiocb		aiocb64
@@ -29,39 +30,13 @@
 int
 aio_write (struct aiocb *aiocbp)
 {
-  int ret = 0;
-  ssize_t err;
-  struct sigevent *ev;
+  int err;
 
+  aiocbp->aio_lio_opcode = AIO_WRITE;
   aiocbp->__error_code = 0;
+  aiocbp->__return_value = 0;
 
-  err = pwrite( aiocbp->aio_fildes, aiocbp->aio_buf, aiocbp->aio_nbytes, aiocbp->aio_offset );
-  if( err >= 0 )
-    aiocbp->__return_value = err;
-  else
-  {
-    aiocbp->__error_code = errno;
-    ret = -1;
-  }
-
-  ev = &aiocbp->aio_sigevent;
-  switch( ev->sigev_notify )
-  {
-    case SIGEV_SIGNAL:
-    {
-      raise( ev->sigev_signo );
-      break;
-    }
-    case SIGEV_THREAD:
-    {
-      ev->sigev_notify_function( ev->sigev_value );
-      break;
-    }
-    case SIGEV_NONE:
-    default:
-      break;
-  }
-
-  return ret;
+  err = INLINE_SYSCALL(aio_request,1,aiocbp);
+  return err;
 }
 

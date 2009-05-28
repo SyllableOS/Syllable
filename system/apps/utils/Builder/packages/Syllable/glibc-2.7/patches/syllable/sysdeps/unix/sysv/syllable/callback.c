@@ -16,27 +16,20 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <aio.h>
 #include <errno.h>
 #include <sysdep.h>
 #include <sys/types.h>
 #include <sys/syscall.h>
 
-#ifdef BE_AIO64
-#define aiocb		aiocb64
-#define aio_read	aio_read64
-#endif
-
 int
-aio_read (struct aiocb *aiocbp)
+__attribute__((visibility("protected"))) __aio_callback( void )
 {
-  int err;
+  int error;
 
-  aiocbp->aio_lio_opcode = AIO_READ;
-  aiocbp->__error_code = 0;
-  aiocbp->__return_value = 0;
+  error = INLINE_SYSCALL(aio_worker, 0);
+  exit_thread(error);
 
-  err = INLINE_SYSCALL(aio_request,1,aiocbp);
-  return err;
+  /* exit_thread() should never return.  Log it. */
+  dbprintf("%s, %s: panic: exit_thread() returned!\n",__FILE__,__FUNCTION__);
+  return 1;
 }
-
