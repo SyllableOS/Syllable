@@ -115,6 +115,7 @@ public:
     void	 SliderEndChanged( float* pvEnd );
 
     virtual void AttachedToWindow();
+    virtual void Activated( bool bIsActive );
     virtual void HandleMessage( os::Message* pcMessage );
     
 private:
@@ -182,9 +183,11 @@ public:
     PartitionEdit( const os::Rect& cFrame, const std::string& cName, DiskInfo cDisk, PartitionList_t* pcPList, off_t nDiskSize, bool bIsExtended );
 
     virtual void AllAttached();
+    virtual void Activated( bool bIsActivated );
     virtual void HandleMessage( os::Message* pcMessage );
     virtual void MouseDown( const os::Point& cPosition, uint32 nButtons );
     virtual void KeyDown( const char* pzString, const char* pzRawString, uint32 nQualifiers );
+
 
     bool	IsExtended() const { return( m_bIsExtended ); }
     void	PartitionTypeChanged();

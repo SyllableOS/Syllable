@@ -240,6 +240,10 @@ DiskView::DiskView( const Rect& cFrame, const std::string& cName ) : LayoutView(
 
     pcRoot->AddChild( m_pcDiskList );
     pcRoot->AddChild( pcButtonFrame );
+    
+    m_pcPartitionButton->SetTabOrder( NEXT_TAB_ORDER );
+    m_pcQuitButton->SetTabOrder( NEXT_TAB_ORDER );
+    m_pcDiskList->SetTabOrder( NEXT_TAB_ORDER );
 
     std::vector<DiskInfo> cDiskInfoList;
     find_drives( &cDiskInfoList, "/dev/disk/" );
@@ -265,6 +269,11 @@ void DiskView::AllAttached()
 {
     m_pcDiskList->SetTarget( this );
     m_pcPartitionButton->SetTarget( this );
+}
+
+void DiskView::Activated( bool bIsActive )
+{
+	if( bIsActive ) m_pcDiskList->MakeFocus( true );
 }
 
 void DiskView::Paint( const Rect& cUpdateRect )
@@ -296,26 +305,5 @@ void DiskView::HandleMessage( Message* pcMessage )
 	    LayoutView::HandleMessage( pcMessage );
 	    break;
     }
-}
-
-
-void DiskView::MouseMove( const Point& cNewPos, int nCode, uint32 nButtons, Message* pcData )
-{
-}
-
-void DiskView::MouseDown( const Point& cPosition, uint32 nButtons )
-{
-}
-
-void DiskView::MouseUp( const Point& cPosition, uint32 nButtons, Message* pcData )
-{
-}
-
-void DiskView::KeyDown( const char* pzString, const char* pzRawString, uint32 nQualifiers )
-{
-}
-
-void DiskView::KeyUp( const char* pzString, const char* pzRawString, uint32 nQualifiers )
-{
 }
 

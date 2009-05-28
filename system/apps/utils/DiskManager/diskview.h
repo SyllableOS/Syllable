@@ -44,11 +44,7 @@ public:
   
     virtual void 	HandleMessage( os::Message* pcMessage );
     
-    virtual void	MouseMove( const os::Point& cNewPos, int nCode, uint32 nButtons, os::Message* pcData );
-    virtual void	MouseDown( const os::Point& cPosition, uint32 nButtons );
-    virtual void	MouseUp( const os::Point& cPosition, uint32 nButtons, os::Message* pcData );
-    virtual void	KeyDown( const char* pzString, const char* pzRawString, uint32 nQualifiers );
-    virtual void	KeyUp( const char* pzString, const char* pzRawString, uint32 nQualifiers );
+    virtual void	Activated( bool bIsActive );
     
 private:
     os::ListView*	   m_pcDiskList;
