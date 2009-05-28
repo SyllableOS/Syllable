@@ -1,3 +1,8 @@
+* May 29, 2009, Anthony Morphett *
+
+Keyboard navigation improvements for compound views such as os::Spinner.
+Made the disk partitioner fully keyboard navigable.
+
 * May 27, 2009, Anthony Morphett *
 
 Implemented autologin in the login app and Users&Groups prefs.

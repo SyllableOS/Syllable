@@ -1,3 +1,9 @@
+* May 29, 2009, Anthony Morphett *
+
+Keyboard navigation improvements for compound views such as os::Spinner, DropdownMenu
+
+---- 0.6.6 Released -------------------------------------------------------------------
+
 * December 22, 2008, Anthony Morphett *
 
 Added DropdownMenu::GetTabOrder() (mainly for future compatibility).
