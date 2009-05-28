@@ -817,4 +817,7 @@ SysCallTable:
 .long	_C_SYM( sys_mmap )
 .long	_C_SYM( sys_munmap )
 .long	_C_SYM( sys_mprotect )
-.long	_C_SYM( sys_msync )	/* 225 */
+.long	_C_SYM( sys_msync )
+
+.long	_C_SYM( sys_aio_worker )
+.long	_C_SYM( sys_aio_request )	/* 227 */

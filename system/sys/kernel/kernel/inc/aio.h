@@ -20,9 +20,52 @@
 #ifndef __F_AIO_H__
 #define __F_AIO_H__
 
-#include <posix/aio.h>
+#include "inc/typedefs.h"
+#include "inc/scheduler.h"
 
-int aio_insert_op( struct aiocb *pAiocb );
-int sys_aio_op( struct aiocb *pAiocb );
+#include <posix/aio.h>
+#include <macros.h>
+
+typedef enum _AIOCtxState
+{
+	AIO_RUN,
+	AIO_STOP,
+	AIO_DONE	
+} AIOCtxState_e;
+
+struct _AIOContext
+{
+	Process_s *ai_psProc;		/* Owning process */
+	thread_id ai_hWorker;		/* I/O worker */
+
+	AIOCtxState_e ai_nRun;
+
+	sem_id ai_hLock;			/* Mutex for ai_psFirst & ai_psLast */
+	sem_id ai_hWait;			/* Semaphore to indicate work in buffer */
+
+	struct kaiocb *ai_psHead;	/* First aiocb in the list */
+	struct kaiocb *ai_psTail;	/* Last aiocb in the list */
+};
+
+struct kaiocb
+{
+	struct aiocb sRequest;
+	struct aiocb *psOrig;		/* Original request */
+	thread_id hThread;			/* Requesting thread */
+
+	bool bKernel;				/* True if the request came from the kernel */
+	File_s *psFile;				/* File to use instead of aio_fildes for kernel requests */
+
+	struct kaiocb *psNext;
+};
+
+status_t aio_create_context( Process_s *psProc );
+status_t aio_insert_op( struct kaiocb *psKcb );
+
+status_t aio_stop( Process_s *psProc );
+status_t aio_write_pos_p( File_s *psFile, off_t nPos, const void *pBuffer, size_t nLength );
+
+int sys_aio_worker( void );
+int sys_aio_request( struct aiocb *psAiocb );
 
 #endif	/* __F_AIO_H__ */

@@ -57,6 +57,7 @@
 #include "inc/areas.h"
 #include "inc/bcache.h"
 #include "inc/swap.h"
+#include "inc/aio.h"
 
 /** A private shared MultiArray for managing areas. */
 MultiArray_s g_sAreas;
@@ -3056,11 +3057,12 @@ int sys_mprotect( void *pStart, size_t nLen, int nProt )
  * \ingroup Areas
  * \param nAddr start address of the area to write.
  * \param nLen size of the area to write.
+ * \param nFlags flags
  * \return <code>EINVAL</code> if the area handle is invalid,
  *		<code>0</code> otherwise.
  * \author Kristian Van Der Vliet (vanders@liqwyd.com)
  */
-status_t msync( uint32 nAddr, size_t nLen )
+status_t msync( uint32 nAddr, size_t nLen, int nFlags )
 {
 	MemArea_s *psArea;
 	MemContext_s *psSeg;
@@ -3105,22 +3107,32 @@ again:
 				size_t nSize, nBytes;
 
 				/* Write back to file at offset + page */
-				printk( "%s: dirty page at %p\n", __FUNCTION__, (void*)nAddr );
+				kerndbg( KERB_DEBUG, "%s: dirty page at %p\n", __FUNCTION__, (void*)nAddr );
 
 				nFileOffset = ( ( off_t )nAddr ) - ( ( off_t )psArea->a_nStart ) + psArea->a_nFileOffset;
 				nSize = min( PAGE_SIZE, psArea->a_nFileLength - ( nFileOffset - psArea->a_nFileOffset ) );
 
-				printk( "%s: write %d bytes at pos %Lu\n", __FUNCTION__, nSize, (uint64)nFileOffset );
-
 				UNLOCK( g_hAreaTableSema );
-				nBytes = write_pos_p( psArea->a_psFile, nFileOffset, (void *)nAddr, nSize );
-				LOCK( g_hAreaTableSema );
-
-				printk( "%s: wrote %d bytes\n", __FUNCTION__, nBytes );
-				if( nBytes < nSize )
+				if( nFlags & MS_ASYNC )
 				{
-					printk( "%s: Failed to write page! Wanted %d wrote %d\n", __FUNCTION__, nSize, nBytes );
-					break;
+					nError = aio_write_pos_p( psArea->a_psFile, nFileOffset, (void *)nAddr, nSize );
+					LOCK( g_hAreaTableSema );
+					if( nError != EOK )
+					{
+						printk( "%s: Failed to write page!\n", __FUNCTION__ );
+						break;
+					}
+				}
+				else
+				{
+					nBytes = write_pos_p( psArea->a_psFile, nFileOffset, (void *)nAddr, nSize );
+					LOCK( g_hAreaTableSema );
+
+					if( nBytes < nSize )
+					{
+						printk( "%s: Failed to write page! Wanted %d wrote %d\n", __FUNCTION__, nSize, nBytes );
+						break;
+					}
 				}
 
 				/* Clear the dirty flag */
@@ -3138,19 +3150,7 @@ error:
 
 int sys_msync( void *pStart, size_t nLen, int nFlags )
 {
-	int nError;
-
-	printk( "sys_msync( %p, %d, 0x%.2x )\n", pStart, nLen, nFlags );
-
-	if( nFlags & MS_ASYNC )
-	{
-		printk( "%s: MS_ASYNC not yet supported. Doing MS_SYNC.\n", __FUNCTION__ );
-		nError = msync( (uint32)pStart, nLen );
-	}
-	else
-		nError = msync( (uint32)pStart, nLen );
-
-	return nError;
+	return msync( (uint32)pStart, nLen, nFlags );
 }
 
 /**

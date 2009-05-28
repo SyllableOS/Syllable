@@ -218,6 +218,8 @@ struct _Process
 	uint32 pr_anTLDBitmap[TLD_SIZE / ( sizeof( int ) * 32 )];
 	bool pr_bUsedPriv;	/* The process has taken advantage of being root */
 	bool pr_bCanDump;
+
+	AIOContext_s *pr_psAioContext;
 };
 
 

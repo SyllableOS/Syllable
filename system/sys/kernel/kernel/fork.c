@@ -34,6 +34,7 @@
 #include "inc/areas.h"
 #include "inc/sysbase.h"
 #include "inc/smp.h"
+#include "inc/aio.h"
 
 extern MultiArray_s g_sProcessTable;
 extern MultiArray_s g_sThreadTable;	// Global thread table
@@ -289,6 +290,9 @@ int sys_exit_thread( int nErrorCode )
 int sys_exit( int nErrorCode )
 {
 	Process_s *psProc = CURRENT_PROC;
+
+	if( psProc->pr_psAioContext != NULL )
+		aio_stop( psProc );
 
 	sys_kill_proc( psProc->tc_hProcID, SIGKILL );
 

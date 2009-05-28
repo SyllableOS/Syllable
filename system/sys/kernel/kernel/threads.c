@@ -34,6 +34,7 @@
 #include "inc/sysbase.h"
 #include "inc/smp.h"
 #include "inc/array.h"
+#include "inc/aio.h"
 
 MultiArray_s g_sThreadTable;	// Global thread table
 
@@ -786,7 +787,7 @@ int sys_SetThreadExitCode( const thread_id hThread, const int nCode )
  * SEE ALSO:
  ****************************************************************************/
 
-thread_id sys_spawn_thread( const char *const pzName, void *const pfEntry, const int nPri, int nStackSize, void *const pData )
+thread_id do_spawn_thread( const char *const pzName, void *const pfEntry, const int nPri, int nStackSize, void *const pData, bool bKernel )
 {
 	Thread_s *psParentThread = CURRENT_THREAD;
 	Process_s *psParent = psParentThread->tr_psProcess;
@@ -819,11 +820,16 @@ thread_id sys_spawn_thread( const char *const pzName, void *const pfEntry, const
 		nError = -ENOMEM;
 		goto error1;
 	}
-	nError = strncpy_from_user( psNewThread->tr_zName, pzName, OS_NAME_LENGTH - 1 );
 	psNewThread->tr_zName[OS_NAME_LENGTH - 1] = '\0';
-	if ( nError < 0 )
+	if( bKernel )
+		strncpy( psNewThread->tr_zName, pzName, OS_NAME_LENGTH - 1 );
+	else
 	{
-		goto error2;
+		nError = strncpy_from_user( psNewThread->tr_zName, pzName, OS_NAME_LENGTH - 1 );
+		if ( nError < 0 )
+		{
+			goto error2;
+		}
 	}
 
 	psNewThread->tr_nSysTraceMask = psParentThread->tr_nSysTraceMask;
@@ -874,10 +880,15 @@ thread_id sys_spawn_thread( const char *const pzName, void *const pfEntry, const
 	pExitFunction[7] = 0xcd;
 	pExitFunction[8] = 0x80;
 
-	nError = memcpy_to_user( pnUserStack - 7, anStackInit, 5 * 4 );
-	if ( nError < 0 )
+	if( bKernel )
+		memcpy( pnUserStack - 7, anStackInit, 5 * 4 );
+	else
 	{
-		goto error2;
+		nError = memcpy_to_user( pnUserStack - 7, anStackInit, 5 * 4 );
+		if ( nError < 0 )
+		{
+			goto error2;
+		}
 	}
 	
 	/* Prepare kernel stack */
@@ -914,16 +925,36 @@ thread_id sys_spawn_thread( const char *const pzName, void *const pfEntry, const
 	}
 
 	pErrnoPtr = ( int * )( psNewThread->tr_pThreadData + TLD_ERRNO );
-	memcpy_to_user( psNewThread->tr_pThreadData + TLD_THID, &psNewThread->tr_hThreadID, sizeof( psNewThread->tr_hThreadID ) );
-	memcpy_to_user( psNewThread->tr_pThreadData + TLD_PRID, &psParent->tc_hProcID, sizeof( psParent->tc_hProcID ) );
-	memcpy_to_user( psNewThread->tr_pThreadData + TLD_ERRNO_ADDR, &pErrnoPtr, sizeof( pErrnoPtr ) );
-	memcpy_to_user( psNewThread->tr_pThreadData + TLD_BASE, &psNewThread->tr_pThreadData, sizeof( psNewThread->tr_pThreadData ) );
+	if( bKernel )
+	{
+		memcpy( psNewThread->tr_pThreadData + TLD_THID, &psNewThread->tr_hThreadID, sizeof( psNewThread->tr_hThreadID ) );
+		memcpy( psNewThread->tr_pThreadData + TLD_PRID, &psParent->tc_hProcID, sizeof( psParent->tc_hProcID ) );
+		memcpy( psNewThread->tr_pThreadData + TLD_ERRNO_ADDR, &pErrnoPtr, sizeof( pErrnoPtr ) );
+		memcpy( psNewThread->tr_pThreadData + TLD_BASE, &psNewThread->tr_pThreadData, sizeof( psNewThread->tr_pThreadData ) );
+	}
+	else
+	{
+		memcpy_to_user( psNewThread->tr_pThreadData + TLD_THID, &psNewThread->tr_hThreadID, sizeof( psNewThread->tr_hThreadID ) );
+		memcpy_to_user( psNewThread->tr_pThreadData + TLD_PRID, &psParent->tc_hProcID, sizeof( psParent->tc_hProcID ) );
+		memcpy_to_user( psNewThread->tr_pThreadData + TLD_ERRNO_ADDR, &pErrnoPtr, sizeof( pErrnoPtr ) );
+		memcpy_to_user( psNewThread->tr_pThreadData + TLD_BASE, &psNewThread->tr_pThreadData, sizeof( psNewThread->tr_pThreadData ) );
+	}
 
 	return ( hNewThread );
       error2:
 	Thread_Delete( psNewThread );
       error1:
 	return ( nError );
+}
+
+thread_id sys_spawn_thread( const char *const pzName, void *const pfEntry, const int nPri, int nStackSize, void *const pData )
+{
+	return do_spawn_thread( pzName, pfEntry, nPri, nStackSize, pData, false );
+}
+
+thread_id spawn_thread( const char *const pzName, void *const pfEntry, const int nPri, int nStackSize, void *const pData )
+{
+	return do_spawn_thread( pzName, pfEntry, nPri, nStackSize, pData, true );
 }
 
 thread_id old_spawn_thread( const char *const pzName, void *const pfEntry, const int nPri, void *const pData )

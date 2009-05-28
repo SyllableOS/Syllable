@@ -29,5 +29,6 @@ typedef struct _WaitQueue WaitQueue_s;
 typedef struct _Thread Thread_s;
 typedef struct _Process Process_s;
 typedef struct _Page Page_s;
+typedef struct _AIOContext AIOContext_s;
 
 #endif /* __TYPEDEFS_H__ */
