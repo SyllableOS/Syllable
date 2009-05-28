@@ -37,13 +37,34 @@ struct aiocb
   int aio_reqprio;				/* Request priority offset.  */
   volatile void *aio_buf;		/* Location of buffer.  */
   size_t aio_nbytes;			/* Length of transfer.  */
+#ifdef __KERNEL__
   off_t aio_offset;				/* File offset.  */
+#else
+  off64_t aio_offset;				/* File offset.  */
+#endif
   struct sigevent aio_sigevent;	/* Signal number and value.  */
 
   /* Internal members.  */
   int __error_code;
   ssize_t __return_value;
 };
+
+#ifdef __USE_LARGEFILE64
+struct aiocb64
+{
+  int aio_fildes;				/* File desriptor.  */
+  int aio_lio_opcode;			/* Operation to be performed.  */
+  int aio_reqprio;				/* Request priority offset.  */
+  volatile void *aio_buf;		/* Location of buffer.  */
+  size_t aio_nbytes;			/* Length of transfer.  */
+  off64_t aio_offset;			/* File offset.  */
+  struct sigevent aio_sigevent;	/* Signal number and value.  */
+
+  /* Internal members.  */
+  int __error_code;
+  ssize_t __return_value;
+};
+#endif
 
 /* Operation codes for `aio_lio_opcode'.  The opcodes are also used to
    indicate standard AIO functions (I.e. aio_read(), aio_write() */

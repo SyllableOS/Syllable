@@ -264,7 +264,10 @@
 #define __NR_mprotect			224
 #define __NR_msync				225
 
-#define	__NR_SysCallCount		226
+#define __NR_aio_worker			226
+#define __NR_aio_request		227
+
+#define	__NR_SysCallCount		228
 #define	__NR_DeprecatedSysCallCount	11	/* Obsolete syscalls */
 
 /* The TRUE number of ACTIVE syscalls E.g. __NR_SysCallCount minus the number of
