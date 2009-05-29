@@ -1,0 +1,55 @@
+# Configuration for Syllable
+
+include $(TOP)/configs/default
+
+CONFIG_NAME = syllable
+DEFINES = -DSYLLABLE
+
+MACHINE=$(shell uname -m)
+CPU = x86
+
+DEFINES += \
+		-DGNU_ASSEMBLER \
+		-DUSE_X86_ASM \
+		-DUSE_MMX_ASM \
+		-DUSE_3DNOW_ASM \
+		-DUSE_SSE_ASM
+
+ASM_SOURCES = $(X86_SOURCES)
+ASM_API = $(X86_API)
+
+CC = gcc
+CXX = g++
+LD = gcc
+	
+CFLAGS = \
+	-Wall -ffast-math -fPIC -pedantic \
+	$(DEFINES)
+
+CXXFLAGS = $(CFLAGS)
+
+LDFLAGS += -Xlinker
+
+ifdef DEBUG
+	CFLAGS   += -g -O0
+	LDFLAGS += -g
+	DEFINES += -DDEBUG
+else
+	CFLAGS   += -O3
+endif
+
+GLUT_CFLAGS = -fexceptions
+
+# Directories
+SRC_DIRS = mesa glu
+GLU_DIRS = sgi
+DRIVER_DIRS = syllable
+PROGRAM_DIRS = syllable
+
+# Library/program dependencies
+GL_LIB_DEPS = -lstdc++ -lsyllable -lm
+OSMESA_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB) -lstdc++ -lsyllable
+GLU_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB) -lstdc++ -lsyllable -lm
+GLUT_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB) --l$(GLU_LIB) -lstdc++ -lsyllable -lm
+APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB) -l$(GLUT_LIB) -lstdc++ -lsyllable -lm
+
