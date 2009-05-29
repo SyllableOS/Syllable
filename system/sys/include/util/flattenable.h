@@ -21,9 +21,9 @@
 #ifndef	__F_UTIL_FLATTENABLE_H__
 #define	__F_UTIL_FLATTENABLE_H__
 
-#include "typecodes.h"
 #include <sys/types.h>
 #include <atheos/types.h>
+#include <util/typecodes.h>
 
 namespace os
 {

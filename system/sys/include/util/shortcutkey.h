@@ -20,10 +20,9 @@
 #ifndef	__F_UTIL_SHORTCUTKEY_H__
 #define	__F_UTIL_SHORTCUTKEY_H__
 
-#include "flattenable.h"
-
 #include <gui/guidefines.h>
 #include <util/string.h>
+#include <util/flattenable.h>
 #include <atheos/types.h>
 
 namespace os {
