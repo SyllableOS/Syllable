@@ -308,7 +308,7 @@ status_t aio_insert_op( struct kaiocb *psOp )
 	LOCK( psCtx->ai_hLock );
 
 	/* Add to list */
-	psKcb->psNext = NULL;
+	psOp->psNext = NULL;
 	if( psCtx->ai_psHead == NULL )
 		psCtx->ai_psHead = psOp;
 	else
