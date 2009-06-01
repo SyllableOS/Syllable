@@ -70,4 +70,4 @@ RMDEP=		:
 MKDEP=		@echo "	==> MAKING DEPENDENCIES \"$@\""; $(RMDEP); gcc -M
 MKDEP_OUT=
 
-RM=             /usr/indexes/bin/rm
+RM=             /system/indexes/bin/rm

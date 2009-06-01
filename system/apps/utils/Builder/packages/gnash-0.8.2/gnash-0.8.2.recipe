@@ -78,11 +78,11 @@ configure-options
 ;	--with-shm=posix
 ;	--with-shm=sysv
 ;	--disable-mit-shm
-	--with-boost-incl=/usr/boost/include
-	--with-boost-lib=/usr/boost/lib
-	--with-agg-incl=/usr/agg/include
-;	--with-agg-lib=/usr/agg/lib
-;	--with-libxml-lib=/usr/libxml2/lib
+	--with-boost-incl=/resources/boost/include
+	--with-boost-lib=/resources/boost/lib
+	--with-agg-incl=/resources/agg/include
+;	--with-agg-lib=/resources/agg/lib
+;	--with-libxml-lib=/resources/libxml2/lib
 ;	--enable-write
 	--enable-gui=sdl
 ;	--enable-gui=gtk,kde
@@ -106,4 +106,3 @@ _make-targets
 documentation
 	README COPYING ABOUT-NLS NEWS ChangeLog AUTHORS TODO
 ;	ChangeLog-*
-

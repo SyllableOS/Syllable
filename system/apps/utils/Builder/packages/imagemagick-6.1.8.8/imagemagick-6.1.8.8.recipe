@@ -17,7 +17,7 @@ build-recommends
 	freetype
 	libxml
 recommends
-;	perl
+;	perl <> 5.0
 	libpng
 	libtiff
 	libjpeg
@@ -49,8 +49,7 @@ configure-options
 ;	--with-modules
 ;	--without-threads
 	--without-perl
-;	--with-perl-options=PREFIX=/usr/imagemagick/perl/
+;	--with-perl-options=PREFIX=/resources/imagemagick/perl/
 
 documentation		README.txt QuickStart.txt LICENSE NOTICE NEWS ChangeLog AUTHORS
 ; HTML docs in share/ImageMagick-6.1.8: index.html www
-

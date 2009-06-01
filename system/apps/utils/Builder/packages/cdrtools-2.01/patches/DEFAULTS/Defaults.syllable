@@ -17,7 +17,7 @@ DEFCCOM=	gcc
 ###########################################################################
 CWARNOPTS=
 
-DEFINCDIRS=	$(SRCROOT)/include /ainc
+DEFINCDIRS=	$(SRCROOT)/include /system/indexes/include
 LDPATH=		-L$(INS_BASE)/lib
 RUNPATH=	-R $(INS_BASE)/lib -R $(INS_BASE)/lib -R $(OLIBSDIR)
 
@@ -26,7 +26,7 @@ RUNPATH=	-R $(INS_BASE)/lib -R $(INS_BASE)/lib -R $(OLIBSDIR)
 # Installation config stuff
 #
 ###########################################################################
-INS_BASE=	/usr/cdrtools
+INS_BASE=	/resources/cdrtools
 INS_KBASE=	/
 #
 DEFUMASK=	002

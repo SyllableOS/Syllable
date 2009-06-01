@@ -40,9 +40,10 @@ configure-options
 ;	--enable-dav-fs
 ;	--enable-ldap
 	--enable-example
-	--with-z=/usr/zlib
-;	--with-pcre=/usr/pcre
-;	--with-ssl=/usr/openssl
+	--with-z=/system/indexes
+;	--with-z=/resources/zlib
+;	--with-pcre=/resources/pcre
+;	--with-ssl=/resources/openssl
 
 documentation
 	README ABOUT_APACHE VERSIONING LICENSE NOTICE CHANGES ROADMAP

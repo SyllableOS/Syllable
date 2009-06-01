@@ -11,8 +11,7 @@ needs
 patch-config
 configure-options
 	--with-tclinclude=../tcl-8.4.9/generic
-	--with-tcl=/usr/tcl/lib
+	--with-tcl=/resources/tcl/lib
 
 test-targets		test
 documentation		README FAQ HISTORY NEWS ChangeLog
-

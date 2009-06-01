@@ -47,15 +47,15 @@ _make-targets
 	dvi
 
 ;test-env
-;	TCL_LIBRARY		'/usr/tcl'
-;	DEJAGNULIBS		'/usr/dejagnu'
+;	TCL_LIBRARY		'/resources/tcl'
+;	DEJAGNULIBS		'/resources/dejagnu'
 ; Don't stop at errors:
 test-options		-k
 
 system-prefix-var	DESTDIR
 ; Needs itself during installation:
 install-env
-	PATH			"$PATH:$STAGE/gcc/bin:$STAGE/bootstrap/gcc/bin:$IMAGE/gcc/bin:$IMAGE/usr/gcc/bin:$IMAGE/system/resources/gcc/4.2.3/bin:/usr/gcc/bin"
+	PATH			"$PATH:$STAGE/gcc/bin:$STAGE/bootstrap/gcc/bin:$IMAGE/gcc/bin:$IMAGE/resources/gcc/bin:$IMAGE/system/resources/gcc/4.2.3/bin:/resources/gcc/bin"
 
 documentation
 	README FAQ faq.html BUGS bugs.html COPYING gcc/COPYING.LIB NEWS ChangeLog MAINTAINERS

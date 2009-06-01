@@ -20,11 +20,11 @@ recommends
 
 build-dir			.
 
-configure-options	--with-icu=/usr/icu
+configure-options	--with-icu=/resources/icu
 
 make-env
-	EXPAT_INCLUDE	'/usr/expat/include'
-	EXPAT_LIBPATH	'/usr/expat/lib'
+	EXPAT_INCLUDE	'/resources/expat/include'
+	EXPAT_LIBPATH	'/resources/expat/lib'
 
 documentation
 	LICENSE_1_0.txt
@@ -32,4 +32,3 @@ documentation
 	index.html boost.css rst.css boost.png
 ;	wiki
 ;	doc
-

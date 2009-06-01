@@ -23,7 +23,7 @@ build-dir			.
 ; The intention of these configure options is to produce the smallest gs binary possible.
 ; I can't seem to drop the PNG output driver though.
 configure-options
-;	--datadir=$IMAGE/usr/esp-ghostscript/share/
+;	--datadir=$IMAGE/resources/esp-ghostscript/share/
 	--with-fontpath=/system/fonts
 	--with-drivers=PS,cups
 	--without-ijs
@@ -36,8 +36,8 @@ install-tree
 	share/ghostscript/8.15/Resource
 	share/ghostscript/8.15/Resource/Font
 install-vars
-;	datadir	$IMAGE/usr/esp-ghostscript/share/
-	gsdir	$IMAGE/usr/esp-ghostscript/share/ghostscript/
+;	datadir	$IMAGE/resources/esp-ghostscript/share/
+	gsdir	$IMAGE/resources/esp-ghostscript/share/ghostscript/
 ;install-targets		soinstall
 
 documentation
@@ -63,4 +63,3 @@ links
 	/system/fonts/NimbusSansL-RegularCondensed.ttf			share/ghostscript/8.15/Resource/Font/NimbusSanL-ReguCond
 	/system/fonts/NimbusSansL-RegularCondensedItalic.ttf	share/ghostscript/8.15/Resource/Font/NimbusSanL-ReguCondItal
 	/system/fonts/NimbusSansL-RegularItalic.ttf				share/ghostscript/8.15/Resource/Font/NimbusSanL-ReguItal
-

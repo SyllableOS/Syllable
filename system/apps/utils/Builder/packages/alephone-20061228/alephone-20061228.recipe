@@ -22,7 +22,7 @@ recommends
 	speex
 	lua
 
-configure-env		C_INCLUDE_PATH "$C_INCLUDE_PATH:/usr/indexes/include/SDL"
+configure-env		C_INCLUDE_PATH "$C_INCLUDE_PATH:/system/indexes/include/SDL"
 ;configure-options	--disable-opengl
 
 documentation
@@ -30,4 +30,3 @@ documentation
 ;	COPYING.SDL
 	INSTALL.Unix
 ;	docs
-

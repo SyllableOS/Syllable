@@ -25,11 +25,11 @@ echo ""
 
 for package in $packages
 do
-	if [ -e "/usr/$package" ]
+	if [ -e "/resources/$package" ]
 	then
-		echo "Uninstalling existing /usr/$package"
+		echo "Uninstalling existing /resources/$package"
 		package unregister $package
-		rm -r /usr/$package
+		rm -r /resources/$package
 		sync
 	fi
 done
@@ -39,7 +39,7 @@ echo ""
 for package in `ls *.resource`
 do
 	echo "Installing $package"
-	unzip $package -d /usr
+	unzip $package -d /resources
 	sync
 done
 

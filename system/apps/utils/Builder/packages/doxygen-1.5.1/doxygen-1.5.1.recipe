@@ -22,10 +22,9 @@ build-dir			.
 configure-prefix	"--prefix "
 configure-options
 	-platform linux-g++
-;	--perl /usr/perl/bin/perl
+;	--perl /resources/perl/bin/perl
 
 documentation
 	README INSTALL LICENSE
 	doc/*.txt
 internal-docs		LANGUAGE.HOWTO
-

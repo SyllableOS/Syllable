@@ -27,14 +27,15 @@ build-recommends
 patch-config		xml/expat/conftools
 
 configure-options
-	--with-apr=/usr/apr
-;	--with-expat=/usr/expat
-	--with-berkeley-db=/usr/db
+	--with-apr=/resources/apr
+;	--with-expat=/resources/expat
+	--with-berkeley-db=/resources/db
+;	--with-berkeley-db=/system/indexes
 ;	--with-dbm=db45
 ;	--with-ldap=ldap
 ;	Doesn't seem to work yet:
-	--with-ldap-include=/usr/openldap/include
-	--with-ldap-lib=/usr/openldap/lib
+	--with-ldap-include=/resources/openldap/include
+	--with-ldap-lib=/resources/openldap/lib
 
 documentation		CHANGES LICENSE NOTICE
 build-docs			INSTALL.MySQL

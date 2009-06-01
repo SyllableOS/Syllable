@@ -24,7 +24,7 @@ patch-config		client/make/linux/make_utils/
 build-dir			client/make/linux/
 
 configure-cmd		client/make/linux/configure
-make-env			C_INCLUDE_PATH "$C_INCLUDE_PATH:/usr/indexes/include/SDL"
+make-env			C_INCLUDE_PATH "$C_INCLUDE_PATH:/system/indexes/include/SDL"
 
 documentation
 	client/README.txt client/README_LINUX.txt client/License
@@ -34,4 +34,3 @@ build-docs
 ;	Conflicts with above:
 ;	client/make/README.txt
 	client/make/linux/README
-

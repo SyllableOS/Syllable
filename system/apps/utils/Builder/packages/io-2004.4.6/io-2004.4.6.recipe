@@ -70,7 +70,7 @@ install-tree
 	IoDesktop
 install
 	for module in Blowfish CGI Curses Directory FFT Fnmatch Geometry Regex SGML SleepyCat Sockets SQLite Tree User
-	do cp -a IoServer/$module/_docs /usr/io/IoServer/$module
+	do cp -a IoServer/$module/_docs /resources/io/IoServer/$module
 	done
 install-files
 	IoVM/io							bin
@@ -85,4 +85,3 @@ install-files
 	IoServer/MD5/_docs				IoServer/md5
 	IoDesktop/_docs					IoDesktop
 documentation	_ReadMe.txt _BSDLicense.txt _ReleaseHistory.txt Docs.html _docs
-
