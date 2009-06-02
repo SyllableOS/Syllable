@@ -1,3 +1,7 @@
+* June 2, 2009, Anthony Morphett *
+
+Made the login app fully keyboard navigable; IconView key handling bugfix.
+
 * May 29, 2009, Anthony Morphett *
 
 Keyboard navigation improvements for compound views such as os::Spinner.
