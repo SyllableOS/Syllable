@@ -1378,9 +1378,13 @@ public:
 					}
 					m->Unlock();
 				}
+				else
+				{
+					/* Not an alphanumeric key, pass it upwards */
+					os::View::KeyDown( pzString, pzRawString, nQualifiers );
+				}
 			}
 		}
-		os::View::KeyDown( pzString, pzRawString, nQualifiers );
 	}
 	
 	void FrameSized( const os::Point& cDelta )
