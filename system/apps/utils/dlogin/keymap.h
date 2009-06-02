@@ -22,6 +22,9 @@ public:
 	}
 	void SelectKeymap( const os::String& zKeymap );
 	
+	void Activated( bool bIsActive );
+	void SetTabOrder( int nOrder = os::NEXT_TAB_ORDER );
+	
 public:
 	enum
 	{

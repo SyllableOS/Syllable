@@ -22,14 +22,6 @@ LoginView::LoginView( Rect cRect, Window* pcParent, AppSettings* pcAppSettings )
 	pcSettings = pcAppSettings;
 	Layout();
 	
-	String cName = pcSettings->GetActiveUser();
-	if (cName != "")
-	{
-		FindUser(cName);
-	}
-
-
-	pcParentWindow->SetFocusChild(pcPassText);
 	pcParentWindow->SetDefaultButton(pcLoginButton);
 	SetTabOrder( NO_TAB_ORDER );
 }
@@ -42,7 +34,7 @@ void LoginView::Layout()
 	pcUserIconView->SetTarget( this );
 	pcUserIconView->SetSelChangeMsg(new Message(M_SEL_CHANGED));
 	PopulateIcons();
-	pcUserIconView->SetTabOrder( 1 );
+	pcUserIconView->SetTabOrder( NEXT_TAB_ORDER );
 
 	FrameView* pcFrameView = new FrameView(Rect(0,1,GetBounds().Width()-1,84),"frame_view","", CF_FOLLOW_ALL);
 	pcFrameView->AddChild(pcUserIconView);
@@ -58,31 +50,33 @@ void LoginView::Layout()
 	pcPassText->SetPasswordMode(true);
 	pcPassText->SetMaxPreferredSize(28,1);
 	pcPassText->SetMinPreferredSize(28,1);
-	pcPassText->SetTabOrder( 2 );
+	pcPassText->SetTabOrder( NEXT_TAB_ORDER );
 	pcPassNode->AddChild(new HLayoutSpacer("",5,5));
 	pcPassNode->AddChild(pcLoginButton = new Button(Rect(),"login_but","_Login",new Message(M_LOGIN)));
-	pcLoginButton->SetTabOrder( 3 );
+	pcLoginButton->SetTabOrder( NEXT_TAB_ORDER );
 	pcPassNode->AddChild(new HLayoutSpacer("",2,2));
 	pcPassNode->SameHeight("login_but",NULL);
 	pcPassNode->ExtendMaxSize(pcPassNode->GetPreferredSize(false));
 	
 
 	HLayoutNode* pcKeymapNode = new HLayoutNode("keymap_node");
-	pcKeymapNode->AddChild(selector = new KeymapSelector(os::Messenger(pcParentWindow)));
+	pcKeymapSelector = new KeymapSelector( os::Messenger( pcParentWindow ) );
+	pcKeymapSelector->SetTabOrder( NEXT_TAB_ORDER );
+	pcKeymapNode->AddChild( pcKeymapSelector );
 	
 	
 	HLayoutNode* pcOtherNode = new HLayoutNode("other_node");
 	pcOtherNode->SetHAlignment(ALIGN_RIGHT);	
 	pcOtherNode->AddChild(pcShutdownButton = new Button(Rect(),"shut_but","_Shutdown",new Message(M_SHUTDOWN)));
-	pcShutdownButton->SetTabOrder( 4 );
+	pcShutdownButton->SetTabOrder( NEXT_TAB_ORDER );
 	pcOtherNode->AddChild(new HLayoutSpacer("",150,150));
 	pcOtherNode->AddChild(pcDateString = new StringView(Rect(),"","9 Aug 05, 10:00am"));
 	UpdateTime();
 	
 	pcRoot->AddChild(pcPassNode);
-	pcRoot->AddChild(new os::VLayoutSpacer("",10,10));
+//	pcRoot->AddChild(new os::VLayoutSpacer("",5,5));
 	pcRoot->AddChild(pcKeymapNode);
-	pcRoot->AddChild(new os::VLayoutSpacer("",10,10));
+//	pcRoot->AddChild(new os::VLayoutSpacer("",5,5));
 	pcRoot->AddChild(pcOtherNode);
 	
 	pcRoot->SameHeight("shut_but","login_but",NULL);
@@ -126,6 +120,22 @@ void LoginView::PopulateIcons()
   	}	
 }
 
+void LoginView::AllAttached()
+{
+	String cName = pcSettings->GetActiveUser();
+	if (cName != "")
+	{
+		FindUser(cName);
+		pcPassText->MakeFocus( true );
+	}
+	else
+	{
+		pcUserIconView->MakeFocus( true );
+	}
+	
+	printf( "login button height: %.0f    shutdown height: %.0f\n", pcLoginButton->GetBounds().Height(), pcShutdownButton->GetBounds().Height() );
+}
+
 void LoginView::UpdateTime()
 {
 	DateTime cDate = DateTime::Now();
@@ -165,14 +175,10 @@ void LoginView::ClearPassword()
 	pcPassText->Clear();
 }
 
-void LoginView::Focus()
+/* FocusPassword(): this is so we can automatically focus the password field when the user gets a password wrong */
+void LoginView::FocusPassword()
 {
 	pcPassText->MakeFocus( true );
-}
-
-void LoginView::AttachedToWindow()
-{
-	Focus();
 }
 
 void LoginView::Reload()
@@ -209,7 +215,7 @@ void LoginView::SetKeymapForUser( const String& zName )
 {
 	String zKeymap = pcSettings->FindKeymapForUser( zName );
 
-	if( zKeymap != "" ) selector->SelectKeymap( zKeymap );
+	if( zKeymap != "" ) pcKeymapSelector->SelectKeymap( zKeymap );
 }
 
 void LoginView::HandleMessage(os::Message* pcMessage)

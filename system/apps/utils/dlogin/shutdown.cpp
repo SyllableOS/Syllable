@@ -35,10 +35,16 @@ void ShutdownWindow::Layout()
 	AddDropItems();
 	pcShutDrop->SetReadOnly(true);
 	
+	pcShutDrop->SetTabOrder( NEXT_TAB_ORDER );
+	pcCancelButton->SetTabOrder( NEXT_TAB_ORDER );
+	pcOkButton->SetTabOrder( NEXT_TAB_ORDER );
+	
 	pcRoot->AddChild(new VLayoutSpacer("",5,5));
 	pcRoot->AddChild(pcButtonNode);
 	pcLayoutView->SetRoot(pcRoot);
 	AddChild(pcLayoutView);
+	
+	pcShutDrop->MakeFocus( true );
 }
 
 void ShutdownWindow::HandleMessage(Message* pcMessage)

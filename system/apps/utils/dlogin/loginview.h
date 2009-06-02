@@ -25,17 +25,17 @@ public:
 	
 	void UpdateTime();
 	void PopulateIcons();
+	void AllAttached();
 	bool GetUserNameAndPass(String*,String*);
 	void ClearPassword();
-	void Focus();
-	void AttachedToWindow();
 	void FindUser(const String&);
+	void FocusPassword();
 	void SetKeymapForUser( const String& );
 	void Reload();
 	
 	os::String GetKeymap()
 	{
-		return selector->GetKeymap();
+		return pcKeymapSelector->GetKeymap();
 	}
 	
 	void HandleMessage(os::Message* pcMessage);	
@@ -49,7 +49,7 @@ private:
 	StringView* pcPassString;
 	TextView* pcPassText;
 	
-	KeymapSelector* selector;
+	KeymapSelector* pcKeymapSelector;
 	
 	Button* pcLoginButton;
 	Button* pcShutdownButton;

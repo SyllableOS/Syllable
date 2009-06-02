@@ -20,7 +20,7 @@ void KeymapSelector::AttachedToWindow()
 void KeymapSelector::Layout()
 {
 	m_pcRoot = new os::HLayoutNode("keymap_root");
-	m_pcRoot->AddChild(m_pcString = new os::StringView(os::Rect(),"keyamp_string","Keymap:"));
+	m_pcRoot->AddChild(m_pcString = new os::StringView(os::Rect(),"keymap_string","Keymap:"));
 	m_pcRoot->AddChild(new os::HLayoutSpacer("",5,5));
 	
 	m_pcRoot->AddChild(m_pcMenu = new os::DropdownMenu(os::Rect(),""));
@@ -40,14 +40,24 @@ void KeymapSelector::Layout()
 	m_pcMenu->SetMaxPreferredSize(8);
 	m_pcMenu->SetReadOnly(true);
 
-
-
 	SetRoot(m_pcRoot);
+	
+	os::View::SetTabOrder( os::NO_TAB_ORDER );
 }
 
 os::Point KeymapSelector::GetPreferredSize(bool) const
 {
 	return m_pcRoot->GetPreferredSize(false);
+}
+
+void KeymapSelector::SetTabOrder( int nOrder )
+{
+	m_pcMenu->SetTabOrder( nOrder );
+}
+
+void KeymapSelector::Activated( bool bIsActive )
+{
+	if( bIsActive ) m_pcMenu->MakeFocus( true );
 }
 
 

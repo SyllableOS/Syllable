@@ -30,14 +30,13 @@ void MainWindow::Init()
 	
 	/*init both the login view and the login imageview*/
 	pcLoginImageView = new LoginImageView(GetBounds());
-	pcLoginView = new LoginView(Rect(vWidth-200,vHeight-75,vWidth+200,vHeight+75),this, pcSettings);
+	pcLoginView = new LoginView(Rect(vWidth-200,vHeight-80,vWidth+200,vHeight+80),this, pcSettings);
 
 	/*add both to the window, then add a timer to update the time*/
 	AddChild(pcLoginImageView);
 	AddChild(pcLoginView);
 	AddTimer( this, 12345, 1000000, false );  //update every second
 	
-	pcLoginView->Focus();
 }
 
 void MainWindow::ScreenModeChanged( const os::IPoint& cRes, os::color_space eSpace )
@@ -106,15 +105,13 @@ void MainWindow::HandleMessage( os::Message * pcMessage )
 		{
 			/*invalid password*/
         	pcLoginView->ClearPassword();
-        	pcLoginView->Focus();
+        	pcLoginView->FocusPassword();
         	break;
         }
         
         case M_SEL_CHANGED:
         {
-			/*a user has selected a different icon*/
-//        	pcLoginView->Focus();
-			
+			/* A user has selected a different icon */
 			/* Let the login view find the right keymap */
 			pcLoginView->HandleMessage( pcMessage );
 
