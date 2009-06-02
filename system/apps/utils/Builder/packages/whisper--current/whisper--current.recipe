@@ -3,7 +3,7 @@ authors
 	Kaj de Vos
 status				testing
 warnings
-	Installation will end with an error trying to access /usr/whisper, but it can be ignored.
+	Installation will end with an error trying to access /resources/whisper, but it can be ignored.
 
 licenses			GPL
 home				www.syllable.org

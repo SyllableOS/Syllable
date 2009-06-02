@@ -50,7 +50,7 @@ recommends
 
 build-dir			.
 
-;configure-env		CPPFLAGS "$CPPFLAGS -I /usr/libdvdnav/include/dvdnav"
+;configure-env		CPPFLAGS "$CPPFLAGS -I /resources/libdvdnav/include/dvdnav"
 configure-options
 ;	--enable-static
 ;	--codecsdir=/usr/local/lib/codecs
@@ -60,8 +60,8 @@ configure-options
 ;	Optimises for host CPU otherwise:
 	--enable-runtime-cpudetection
 ;	Doesn't build:
-;	--with-extraincdir=/usr/libdvdnav/include/dvdnav
-;	--with-extraincdir=/usr/libdvdread/include/dvdread:/usr/libdvdnav/include/dvdnav
+;	--with-extraincdir=/resources/libdvdnav/include/dvdnav
+;	--with-extraincdir=/resources/libdvdread/include/dvdread:/resources/libdvdnav/include/dvdnav
 ;	--enable-sdl
 ;	--enable-directfb
 ;	--enable-alsa
@@ -77,7 +77,7 @@ configure-options
 ;	"DVD ioctls are unavailable on this system":
 	--disable-libdvdcss-internal
 ;	--enable-dvdnav
-;	--with-dvdnav-config=/usr/libdvdnav/bin/dvdnav-config
+;	--with-dvdnav-config=/resources/libdvdnav/bin/dvdnav-config
 ;	--disable-mp3lib
 ;	Doesn't seem to find external one:
 ;	--disable-libmpeg2
@@ -90,4 +90,3 @@ documentation
 ;	DOCS
 
 links				/system/fonts/LCD2-Normal.ttf share/mplayer/subfont.ttf
-

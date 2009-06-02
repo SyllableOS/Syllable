@@ -43,7 +43,7 @@ diff -ru python-2.5.1-original/configure.in python-2.5.1/configure.in
  	  LDLIBRARY='libpython$(VERSION).so'
  	  BLDLIBRARY='-L. -lpython$(VERSION)'
 -	  RUNSHARED=DLL_PATH=`pwd`:${DLL_PATH:-/atheos/sys/libs:/atheos/autolnk/lib}
-+	  RUNSHARED=DLL_PATH=`pwd`:${DLL_PATH:-/system/libraries:/usr/indexes/lib}
++	  RUNSHARED=DLL_PATH=`pwd`:${DLL_PATH:-/system/libraries:/resources/indexes/lib}
  	  ;;
    esac
  else # shared is disabled
@@ -290,10 +290,10 @@ diff -ru python-2.5.1-original/setup.py python-2.5.1/setup.py
 -            lib_dirs += ['/system/libs', '/atheos/autolnk/lib']
 +        # Check for Syllable which has libraries in non-standard locations
 +        if platform == 'syllable':
-+            lib_dirs += ['/system/libraries', '/usr/indexes/lib']
++            lib_dirs += ['/system/libraries', '/resources/indexes/lib']
              lib_dirs += os.getenv('LIBRARY_PATH', '').split(os.pathsep)
 -            inc_dirs += ['/system/include', '/atheos/autolnk/include']
-+            inc_dirs += ['/system/development/headers', '/usr/indexes/include']
++            inc_dirs += ['/system/development/headers', '/resources/indexes/include']
              inc_dirs += os.getenv('C_INCLUDE_PATH', '').split(os.pathsep)
  
          # OSF/1 and Unixware have some stuff in /usr/ccs/lib (like -ldb)

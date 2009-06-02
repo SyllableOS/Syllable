@@ -91,7 +91,7 @@ configure-cmd		configure
 ; Non-standard prefix option (with optional trailing whitespace):
 configure-prefix	"--prefix="
 ; Arguments overriding prefix:
-configure-args		--prefix=/usr/foo
+configure-args		--prefix=/resources/foo
 ; Extra variables for configure:
 configure-vars
 	VAR value

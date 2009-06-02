@@ -23,7 +23,7 @@ build-dir			konq-embed/dropin/qt_syllable
 _configure
 	echo $PWD
 ;	cd ../../..
-	./configure --prefix=/usr/qt --enable-embedded
+	./configure --prefix=/resources/qt --enable-embedded
 ;	--with-gui=qpe
 configure-options
 	--enable-embedded

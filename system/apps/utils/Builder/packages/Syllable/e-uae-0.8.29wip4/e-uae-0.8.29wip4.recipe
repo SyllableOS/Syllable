@@ -13,4 +13,4 @@ configure-options
 ;	--with-curses
 ;	--enable-bsdsock
 ;	--enable-scsi-device
-	--with-libscg-prefix=/usr/cdrtools
+	--with-libscg-prefix=/resources/cdrtools

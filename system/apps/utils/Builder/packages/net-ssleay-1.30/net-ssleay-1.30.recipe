@@ -17,7 +17,7 @@ needs
 	openssl >= 0.9.6d
 ;install-needs		perldoc
 
-configure-cmd		perl Makefile.PL /usr/openssl
+configure-cmd		perl Makefile.PL /resources/openssl
 configure-prefix	"PREFIX="
 
 test-targets		test

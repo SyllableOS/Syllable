@@ -24,8 +24,8 @@ configure-cmd		perl Makefile.PL
 configure-prefix	"PREFIX="
 configure-vars
 ;	INSTALLDIRS		perl
-	EXPATINCPATH	/usr/expat/include
-	EXPATLIBPATH	/usr/expat/lib
+	EXPATINCPATH	/resources/expat/include
+	EXPATLIBPATH	/resources/expat/lib
 
 test-targets		test
 

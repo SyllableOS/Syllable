@@ -7,7 +7,6 @@ warnings
 patch-config
 
 configure-options
-	--with-libxml-prefix=/usr/libxml2
-	--with-libxslt-prefix=/usr/libxslt
+	--with-libxml-prefix=/resources/libxml2
+	--with-libxslt-prefix=/resources/libxslt
 ;	--disable-ipv6
-

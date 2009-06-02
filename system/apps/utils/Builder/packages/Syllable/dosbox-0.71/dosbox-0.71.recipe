@@ -10,7 +10,7 @@ notes
 build-needs			Syllable > 0.6.4
 
 configure-env
-;	CPPFLAGS "$CPPFLAGS -I/usr/libvorbis/include"
+;	CPPFLAGS "$CPPFLAGS -I/resources/libvorbis/include"
 ;	We need an extra register:
 	CFLAGS "$CFLAGS -fomit-frame-pointer"
 	CXXFLAGS "$CXXFLAGS -fomit-frame-pointer"

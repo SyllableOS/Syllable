@@ -29,11 +29,10 @@ build-dir			.
 
 system-prefix-var	DESTDIR
 install-vars
-	OCAMLLIBDIR		/usr/ocamlsdl/lib/ocaml
-	OCAMLSDLDIR		/usr/ocamlsdl/lib/ocaml/sdl
+	OCAMLLIBDIR		/resources/ocamlsdl/lib/ocaml
+	OCAMLSDLDIR		/resources/ocamlsdl/lib/ocaml/sdl
 
 documentation
 	README COPYING NEWS AUTHORS
 ;	README.macosx META doc
 build-docs			INSTALL
-

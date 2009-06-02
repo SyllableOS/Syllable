@@ -26,8 +26,8 @@ configure-options
 ;	--with-screen=slang
 	--disable-full-paths
 ;	--enable-ipv6
-;	--with-ssl=/usr/openssl
-;	--with-gnutls=/usr/gnutls
+;	--with-ssl=/resources/openssl
+;	--with-gnutls=/resources/gnutls
 
 documentation
 	README COPYHEADER COPYING ABOUT-NLS PROBLEMS CHANGES AUTHORS

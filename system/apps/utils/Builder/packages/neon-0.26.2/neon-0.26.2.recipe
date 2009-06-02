@@ -23,7 +23,7 @@ configure-options
 ;	--disable-debug
 ;	--with-expat
 	--with-ssl
-;	--with-libs=/usr/openssl
+;	--with-libs=/resources/openssl
 ;	For Windows?
 ;	--with-zlib
 documentation
@@ -31,4 +31,3 @@ documentation
 ;	Mostly double:
 ;	test/COPYING
 ;develop-docs		doc
-

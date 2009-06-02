@@ -15,11 +15,10 @@ packages			texinfo/texinfo-4.12
 ;conflicts			tetex
 
 install-vars
-	TEXMF /usr/texinfo/share/texmf
+	TEXMF /resources/texinfo/share/texmf
 ;	TEXMF /usr/share/texmf
 install-targets		install install-tex
 
 documentation		README INTRODUCTION COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS
 build-docs			INSTALL
 internal-docs		README.dev
-

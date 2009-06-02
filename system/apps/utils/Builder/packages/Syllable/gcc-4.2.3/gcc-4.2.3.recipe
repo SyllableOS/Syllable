@@ -59,7 +59,7 @@ make-env
 
 ; Needs itself during installation:
 _install-env
-	PATH		"$PATH:$STAGE/gcc/bin:$STAGE/bootstrap/gcc/bin:$IMAGE/gcc/bin:$IMAGE/usr/gcc/bin:$IMAGE/system/resources/gcc/4.2.3/bin:/usr/gcc/bin"
+	PATH		"$PATH:$STAGE/gcc/bin:$STAGE/bootstrap/gcc/bin:$IMAGE/gcc/bin:$IMAGE/resources/gcc/bin:$IMAGE/system/resources/gcc/4.2.3/bin:/resources/gcc/bin"
 
 links
 	gcc				bin/cc

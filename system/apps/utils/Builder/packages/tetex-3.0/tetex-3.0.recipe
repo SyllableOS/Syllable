@@ -34,7 +34,7 @@ recommends
 ;conflicts			texinfo
 
 configure-options
-;	--datadir=/usr/tetex/share/texmf
+;	--datadir=/resources/tetex/share/texmf
 ;	Prevent conflict:
 	--without-texinfo
 ;	--disable-multiplatform
@@ -51,4 +51,3 @@ documentation
 	texmf/LICENSE.texmf
 ;	texmf/ChangeLog texmf/doc
 build-docs			QuickInstall INSTALL PROBLEMS
-

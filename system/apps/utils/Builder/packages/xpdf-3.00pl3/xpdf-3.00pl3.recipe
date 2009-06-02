@@ -22,7 +22,8 @@ recommends
 build-dir			.
 
 configure-options
-	--with-freetype2-includes=/usr/freetype/include/freetype2
+	--with-freetype2-includes=/resources/freetype/include/freetype2
+;	--with-freetype2-includes=/system/indexes/include/freetype2
 ;	--enable-multithreaded
 	--enable-a4-paper
 
@@ -30,4 +31,3 @@ documentation
 	README COPYING ANNOUNCE CHANGES
 ;	doc
 build-docs			INSTALL
-

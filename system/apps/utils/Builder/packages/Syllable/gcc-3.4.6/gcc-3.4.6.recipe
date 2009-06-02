@@ -59,8 +59,8 @@ make-targets
 ;	dvi
 
 ;test-env
-;	TCL_LIBRARY		'/usr/tcl'
-;	DEJAGNULIBS		'/usr/dejagnu'
+;	TCL_LIBRARY		'/resources/tcl'
+;	DEJAGNULIBS		'/resources/dejagnu'
 
 links
 	gcc				bin/cc

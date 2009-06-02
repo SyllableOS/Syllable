@@ -3,7 +3,7 @@ status				testing
 
 configure-env
 	CPPFLAGS "$CPPFLAGS -DUTF8"
-	PKG_CONFIG_PATH "$PKG_CONFIG_PATH:/usr/glib/lib/pkgconfig"
+	PKG_CONFIG_PATH "$PKG_CONFIG_PATH:/resources/glib/lib/pkgconfig"
 configure-options
 	--without-subshell
 ;	(Built-in) S-Lang will be used otherwise:

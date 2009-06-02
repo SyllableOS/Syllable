@@ -23,7 +23,6 @@ recommends
 
 _configure-options
 	--disable-shared
-	--with-fontconfig=/usr/fontconfig
+	--with-fontconfig=/resources/fontconfig
 
 documentation		README* readme.jpn COPYING index.html NEWS
-

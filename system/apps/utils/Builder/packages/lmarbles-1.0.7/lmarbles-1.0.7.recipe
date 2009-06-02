@@ -26,7 +26,7 @@ patch-config
 
 build-dir			.
 
-configure-env		CPPFLAGS '-I/usr/indexes/include/SDL'
+configure-env		CPPFLAGS '-I/system/indexes/include/SDL'
 
 documentation
 	README COPYING ChangeLog AUTHORS TODO
@@ -34,4 +34,3 @@ documentation
 ;	NEWS
 ;	src/manual
 build-docs			README-SDL.txt
-

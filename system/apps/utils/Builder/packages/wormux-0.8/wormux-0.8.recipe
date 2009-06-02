@@ -24,10 +24,10 @@ needs
 ;build-dir			.
 
 _configure-env
-	CPPFLAGS "$CPPFLAGS -I/usr/sdl-gfx/include"
-	LDFLAGS "$LDFLAGS -L/usr/sdl-gfx/lib"
-	CFLAGS "$CFLAGS -I/usr/sdl-gfx/include -L/usr/sdl-gfx/lib"
-;configure-options	--with-sdl-gfx-prefix=/usr/sdl-gfx
+	CPPFLAGS "$CPPFLAGS -I/resources/sdl-gfx/include"
+	LDFLAGS "$LDFLAGS -L/resources/sdl-gfx/lib"
+	CFLAGS "$CFLAGS -I/resources/sdl-gfx/include -L/resources/sdl-gfx/lib"
+;configure-options	--with-sdl-gfx-prefix=/resources/sdl-gfx
 
 documentation
 	README COPYING ChangeLog AUTHORS TODO

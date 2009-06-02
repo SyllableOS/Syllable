@@ -10,7 +10,7 @@ build-recommends
 	perl
 	php
 patch-config		Tools/config
-configure-options	--with-tclconfig=/usr/tcl/lib
+configure-options	--with-tclconfig=/resources/tcl/lib
 ;make-targets		-k runtime
 ;test-targets		-k check
 ;install-targets		install-runtime

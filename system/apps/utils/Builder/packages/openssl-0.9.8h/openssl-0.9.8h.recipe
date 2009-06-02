@@ -29,8 +29,8 @@ configure			perl Configure linux-elf threads zlib-dynamic --openssldir=/etc/ssl
 ;configure-cmd		config
 ; Doesn't work as advertised:
 _configure-args
-;	--prefix=/usr
-	--openssldir=/usr/openssl
+;	--prefix=/resources
+	--openssldir=/resources/openssl
 configure-options
 	linux-elf
 	threads
@@ -49,8 +49,8 @@ system-prefix-var	INSTALL_PREFIX
 
 install-vars
 ;	OPENSSLDIR		"$IMAGE/etc/ssl"
-	INSTALLTOP		"$IMAGE/usr/openssl"
-	MANDIR			"$IMAGE/usr/openssl/man"
+	INSTALLTOP		"$IMAGE/resources/openssl"
+	MANDIR			"$IMAGE/resources/openssl/man"
 
 documentation		README README.ENGINE FAQ PROBLEMS LICENSE NEWS CHANGES doc
 develop-docs		INSTALL demos

@@ -14,11 +14,11 @@ configure-options
 ;	--disable-plugins
 ;	--with-plugindir=
 ;	--disable-mit-shm
-	--with-boost-incl=/usr/boost/include
-	--with-boost-lib=/usr/boost/lib
-	--with-agg-incl=/usr/agg/include
-;	--with-agg-lib=/usr/agg/lib
-;	--with-libxml-lib=/usr/libxml2/lib
+	--with-boost-incl=/resources/boost/include
+	--with-boost-lib=/resources/boost/lib
+	--with-agg-incl=/resources/agg/include
+;	--with-agg-lib=/resources/agg/lib
+;	--with-libxml-lib=/resources/libxml2/lib
 ;	--enable-write
 	--enable-gui=sdl
 ;	--enable-gui=gtk,kde
@@ -37,6 +37,5 @@ install-tree
 	bin
 	bin/lib
 install-files
-	/usr/libtool/lib/libltdl.so.3							bin/lib/
-	/usr/boost/lib/libboost_thread-gcc41-mt-1_35.so.1.35.0	bin/lib/
-
+	/resources/libtool/lib/libltdl.so.3								bin/lib/
+	/resources/boost/lib/libboost_thread-gcc41-mt-1_35.so.1.35.0	bin/lib/

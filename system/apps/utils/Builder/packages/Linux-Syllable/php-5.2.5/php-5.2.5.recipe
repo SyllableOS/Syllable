@@ -1,4 +1,4 @@
 authors				Kaj de Vos
 status				testing
 
-configure-options	--with-libxml-dir=/usr/libxml2
+configure-options	--with-libxml-dir=/resources/libxml2

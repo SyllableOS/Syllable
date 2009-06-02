@@ -3,4 +3,4 @@ status				testing
 
 configure-options
 	--disable-ipv6
-	--with-libxml-dir=/usr/libxml2
+	--with-libxml-dir=/resources/libxml2

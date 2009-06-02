@@ -25,11 +25,10 @@ recommends
 
 configure-cmd		./setup.py
 make				./setup.py build
-install				./setup.py install --prefix $IMAGE/usr/pygame
+install				./setup.py install --prefix $IMAGE/resources/pygame
 
 documentation
 	readme.txt WHATSNEW PKG-INFO
 	docs/*
 ;develop-docs		examples
 build-docs			install.html
-

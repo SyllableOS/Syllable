@@ -29,9 +29,9 @@ diff -ru freepops-0.2.6-original/configure.sh freepops-0.2.6/configure.sh
 +
 +set_syllable() {
 +set_default
-+CFLAGS="-O2 -march=i586 -Wall -DHAVE_CONFIG_H -I$PWD -I/usr/openssl/include -I/usr/readline/include/ -I/usr/expat/include/"
-+WHERE=/usr/freepops/
-+LDFLAGS="-L/usr/readline/lib -L/usr/expat/lib -L/usr/openssl/lib"
++CFLAGS="-O2 -march=i586 -Wall -DHAVE_CONFIG_H -I$PWD -I/resources/openssl/include -I/resources/readline/include/ -I/resources/expat/include/"
++WHERE=/resources/freepops/
++LDFLAGS="-L/resources/readline/lib -L/resources/expat/lib -L/resources/openssl/lib"
 +OS=Syllable
 +LUAFLAGS=" -DLUA_USE_LINUX "
 +}

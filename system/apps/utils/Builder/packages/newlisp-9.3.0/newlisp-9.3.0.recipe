@@ -37,13 +37,12 @@ install-tree
 	man
 	man/man1
 install-vars
-	bindir			"$IMAGE/usr/newlisp/bin"
-	datadir			"$IMAGE/usr/newlisp"
-	mandir			"$IMAGE/usr/newlisp/man"
+	bindir			"$IMAGE/resources/newlisp/bin"
+	datadir			"$IMAGE/resources/newlisp"
+	mandir			"$IMAGE/resources/newlisp/man"
 
 documentation
 	README
 ;	doc
 build-docs			doc/INSTALL
 develop-docs		examples
-

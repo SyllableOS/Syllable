@@ -46,11 +46,12 @@ _patch-config
 
 configure-options
 ;	Internal APR and APR-Util versions seem to be too old (0.9.5):
-	--with-apr=/usr/apr
-	--with-apr-util=/usr/apr-util
-;	--with-neon=/usr/neon
-;	--with-berkeley-db=/usr/db
-;	--with-expat=/usr/expat
+	--with-apr=/resources/apr
+	--with-apr-util=/resources/apr-util
+;	--with-neon=/resources/neon
+;	--with-berkeley-db=/resources/db
+;	--with-berkeley-db=/system/indexes
+;	--with-expat=/resources/expat
 ;	For Windows?
 ;	--with-zlib
 ;	--with-apache=
@@ -61,4 +62,3 @@ documentation
 	README INSTALL BUGS COPYING ChangeLog.CVS CHANGES
 	doc notes www
 internal-docs		STATUS COMMITTERS HACKING
-

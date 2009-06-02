@@ -92,8 +92,8 @@ configure-options
 ;	--enable-loader
 ;	--disable-plugins
 ;	--enable-mozilla
-;	--with-mad=/usr/libmad
-;	--with-mad-tree=/usr/libmad
+;	--with-mad=/resources/libmad
+;	--with-mad-tree=/resources/libmad
 
 documentation
 	README COPYING ABOUT-NLS NEWS ChangeLog MAINTAINERS AUTHORS THANKS

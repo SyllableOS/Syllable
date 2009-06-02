@@ -17,13 +17,13 @@ packages			nail/nail-11.1
 install-prefix-var	PREFIX
 
 make-vars
-	SYSCONFDIR		/usr/nail/etc
-;	INCLUDES		-I/usr/openssl/include/openssl
+	SYSCONFDIR		/resources/nail/etc
+;	INCLUDES		-I/resources/openssl/include/openssl
 
 system-prefix-var	DESTDIR
 
 install-vars
-	SYSCONFDIR		/usr/nail/etc
-	UCBINSTALL		/usr/indexes/bin/install
+	SYSCONFDIR		/resources/nail/etc
+	UCBINSTALL		/resources/indexes/bin/install
 
 documentation		README I18N INSTALL COPYING ChangeLog TODO AUTHORS nail.1.html

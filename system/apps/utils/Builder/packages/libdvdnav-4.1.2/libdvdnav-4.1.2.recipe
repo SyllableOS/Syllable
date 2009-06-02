@@ -19,7 +19,7 @@ build-dir			.
 configure-cmd		configure2
 configure-options
 ;	Builds and installs its own LibDVDRead anyway:
-	--with-dvdread=/usr/libdvdread
+	--with-dvdread=/resources/libdvdread
 ;	--disable-shared
 ;	--disable-debug
 
@@ -32,4 +32,3 @@ documentation
 ;	doc
 ;develop-docs		examples
 internal-docs		DEVELOPMENT-POLICY.txt
-

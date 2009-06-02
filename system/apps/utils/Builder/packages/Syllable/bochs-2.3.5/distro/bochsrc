@@ -3,8 +3,8 @@ display_library: sdl
 megs: 64
 # Max?
 #megs: 369
-#romimage: file="/usr/bochs/share/bochs/BIOS-bochs-latest", address=0x00000
-#vgaromimage: file="/usr/bochs/share/bochs/VGABIOS-lgpl-latest"
+#romimage: file="/resources/bochs/share/bochs/BIOS-bochs-latest", address=0x00000
+#vgaromimage: file="/resources/bochs/share/bochs/VGABIOS-lgpl-latest"
 romimage: file=$BXSHARE/BIOS-bochs-latest
 vgaromimage: file=$BXSHARE/VGABIOS-lgpl-latest
 #boot: floppy
