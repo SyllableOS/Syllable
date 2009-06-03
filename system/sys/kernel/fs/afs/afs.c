@@ -762,9 +762,21 @@ static int afs_mount( kdev_t nFsID, const char *pzDevPath, uint32 nFlags, const 
 	int nBlockSize;
 	int nDev;
 	int nError = 0;
+	int nFdFlags = 0;
 
 	printk( "Mount afs on '%s' flags %08lx\n", pzDevPath, ( unsigned int )nFlags );
-	nDev = open( pzDevPath, O_RDWR );
+
+	if( nFlags & MNTF_READONLY )
+		nFdFlags = O_RDONLY;
+	else
+		nFdFlags = O_RDWR;
+	if( nFlags & MNTF_DIRECT )
+	{
+		nFdFlags |= O_DIRECT;
+		printk( "Using direct (non-cached) accesses\n" );
+	}
+
+	nDev = open( pzDevPath, nFdFlags );
 	if( nDev < 0 )
 	{
 		printk( "Error: afs_mount() failed to open device %s\n", pzDevPath );
@@ -1421,7 +1433,7 @@ static int afs_symlink( void *pVolume, void *pParent, const char *pzName, int nN
 		nBlockCount = afs_get_inode_block_count( psInode );
 		if( nLen <= ( nBlockCount * nBlockSize ) )
 		{
-			nError = afs_do_write( psVolume, psInode, pzNewPath, 0, nLen );
+			nError = afs_do_write( psVolume, psInode, pzNewPath, 0, nLen, false );
 		}
 		else
 		{
@@ -1557,8 +1569,9 @@ static int afs_read_link( void *pVolume, void *pNode, char *pzBuffer, size_t nBu
 	{
 		return ( -EINVAL );
 	}
+
 	AFS_LOCK( psInode->ai_psVNode );
-	nError = afs_read_pos( pVolume, psInode, pzBuffer, 0, nBufSize );
+	nError = afs_read_pos( pVolume, psInode, pzBuffer, 0, nBufSize, false );
 	AFS_UNLOCK( psInode->ai_psVNode );
 	return ( nError );
 }
@@ -1582,14 +1595,19 @@ static int afs_read_link( void *pVolume, void *pNode, char *pzBuffer, size_t nBu
 static int afs_read( void *pVolume, void *pNode, void *pCookie, off_t nPos, void *pBuffer, size_t nLen )
 {
 	AfsInode_s * psInode = ( ( AfsVNode_s * )pNode )->vn_psInode;
+	AfsFileCookie_s * psCookie = pCookie;
+	bool bDirect = false;
 	int nError;
 
 	if( S_ISDIR( psInode->ai_nMode ) )
 	{
 		return ( -EISDIR );
 	}
+	if( psCookie && psCookie->fc_nOMode & O_DIRECT )
+		bDirect = true;
+
 	AFS_LOCK( psInode->ai_psVNode );
-	nError = afs_read_pos( pVolume, psInode, pBuffer, nPos, nLen );
+	nError = afs_read_pos( pVolume, psInode, pBuffer, nPos, nLen, bDirect );
 	AFS_UNLOCK( psInode->ai_psVNode );
 	return ( nError );
 }
@@ -1612,6 +1630,8 @@ static int afs_read( void *pVolume, void *pNode, void *pCookie, off_t nPos, void
 static int afs_readv( void *pVolume, void *pNode, void *pCookie, off_t nPos, const struct iovec *psVector, size_t nCount )
 {
 	AfsInode_s * psInode = ( ( AfsVNode_s * )pNode )->vn_psInode;
+	AfsFileCookie_s * psCookie = pCookie;
+	bool bDirect = false;
 	int nError = 0;
 	int nBytesRead = 0;
 	int i;
@@ -1620,6 +1640,9 @@ static int afs_readv( void *pVolume, void *pNode, void *pCookie, off_t nPos, con
 	{
 		return ( -EISDIR );
 	}
+	if( psCookie && psCookie->fc_nOMode & O_DIRECT )
+		bDirect = true;
+
 	AFS_LOCK( psInode->ai_psVNode );
 	for( i = 0; i < nCount; ++i )
 	{
@@ -1628,7 +1651,7 @@ static int afs_readv( void *pVolume, void *pNode, void *pCookie, off_t nPos, con
 			nError = -EINVAL;
 			break;
 		}
-		nError = afs_read_pos( pVolume, psInode, psVector[i].iov_base, nPos, psVector[i].iov_len );
+		nError = afs_read_pos( pVolume, psInode, psVector[i].iov_base, nPos, psVector[i].iov_len, bDirect );
 		if( nError < 0 )
 		{
 			break;
@@ -1689,13 +1712,13 @@ static int afs_expand_file( AfsVolume_s * psVolume, AfsInode_s * psInode, AfsFil
 		nOldBlockCount = afs_get_inode_block_count( psInode );
 		if( nNewBlockCount > nOldBlockCount )
 		{		// Check that nobody else expanded it while we unlocked it.
-			off_t nDeltaSize = nNewBlockCount - nOldBlockCount + 64LL;
+			off_t nDeltaSize = nNewBlockCount - nOldBlockCount + 64ULL;
 
 			nError = afs_expand_stream( psVolume, psInode, nDeltaSize );
 			if( nError >= 0 /*|| -EFBIG == nError || -ENOSPC == nError */  )
 			{
 				nNewBlockCount = afs_get_inode_block_count( psInode );
-				if( ( nNewBlockCount * nBlockSize ) < ( nPos + nLen ) )
+				if( ( nNewBlockCount * nBlockSize ) < ( nPos + nLen )+0ULL )
 				{
 					off_t nTmp = nLen;
 
@@ -1708,6 +1731,7 @@ static int afs_expand_file( AfsVolume_s * psVolume, AfsInode_s * psInode, AfsFil
 						nLen = 0;
 					}
 					printk( "Failed to expand file with %Ld bytes. Shrunk to %Ld\n", nTmp, nLen );
+					printk( "%d new, %d old, pos %Ld, len %Ld (%LLd)\n", nNewBlockCount, nOldBlockCount, nPos, nLen, (nPos + nLen)+0ULL );
 				}
 			}
 			else
@@ -1755,6 +1779,7 @@ static int afs_write( void *pVolume, void *pNode, void *pCookie, off_t nPos, con
 	AfsFileCookie_s * psCookie = pCookie;
 	int nError = 0;
 	off_t nAFSLen = nLen;
+	bool bDirect = false;
 
 	if( S_ISDIR( psInode->ai_nMode ) )
 	{
@@ -1770,9 +1795,12 @@ static int afs_write( void *pVolume, void *pNode, void *pCookie, off_t nPos, con
 	AFS_LOCK( psInode->ai_psVNode );
 
 	// Set the position to the end of the file if opened in append mode
-	if( psCookie != NULL && psCookie->fc_nOMode & O_APPEND )
+	if( psCookie != NULL )
 	{
-		nPos = psInode->ai_sData.ds_nSize;
+		if( psCookie->fc_nOMode & O_APPEND )
+			nPos = psInode->ai_sData.ds_nSize;
+		if( psCookie->fc_nOMode & O_DIRECT )
+			bDirect = true;
 	}
 
 	// Check if we must expand the file.
@@ -1780,7 +1808,7 @@ static int afs_write( void *pVolume, void *pNode, void *pCookie, off_t nPos, con
 	if( nAFSLen > 0 )
 	{
 		nLen = nAFSLen;
-		nError = afs_do_write( pVolume, psInode, pBuffer, nPos, nLen );
+		nError = afs_do_write( pVolume, psInode, pBuffer, nPos, nLen, bDirect );
 		if( nError >= 0 )
 		{
 			nError = nLen;
@@ -1815,6 +1843,7 @@ static int afs_writev( void *pVolume, void *pNode, void *pCookie, off_t nPos, co
 	int nBytesWritten = 0;
 	off_t nLen = 0;
 	int i;
+	bool bDirect = false;
 
 	if( S_ISDIR( psInode->ai_nMode ) )
 	{
@@ -1838,9 +1867,12 @@ static int afs_writev( void *pVolume, void *pNode, void *pCookie, off_t nPos, co
 	AFS_LOCK( psInode->ai_psVNode );
 
 		// Set the position to the end of the file if opened in append mode
-		if( psCookie != NULL && psCookie->fc_nOMode & O_APPEND )
+	if( psCookie != NULL )
 	{
-		nPos = psInode->ai_sData.ds_nSize;
+		if( psCookie->fc_nOMode & O_APPEND )
+			nPos = psInode->ai_sData.ds_nSize;
+		if( psCookie->fc_nOMode & O_DIRECT )
+			bDirect = true;
 	}
 
 		// Check if we must expand the file.
@@ -1849,7 +1881,7 @@ static int afs_writev( void *pVolume, void *pNode, void *pCookie, off_t nPos, co
 	{
 		size_t nCurLen = min( nLen, psVector[i].iov_len );
 
-		nError = afs_do_write( pVolume, psInode, psVector[i].iov_base, nPos, nCurLen );
+		nError = afs_do_write( pVolume, psInode, psVector[i].iov_base, nPos, nCurLen, bDirect );
 		if( nError < 0 )
 		{
 			break;
@@ -3041,6 +3073,7 @@ int afs_truncate( void *pVolume, void *pNode, off_t nLen )
 		AFS_LOCK( psInode->ai_psVNode );
 		// Set the position to the end of the file if opened in append mode
 		nPos = psInode->ai_sData.ds_nSize;
+		nLen = nLen - nPos;
 		// Expand file
 		nError = afs_expand_file( psVolume, psInode, NULL, &nPos, &nLen );
 		if( nLen > 0 )
@@ -3052,13 +3085,13 @@ int afs_truncate( void *pVolume, void *pNode, off_t nLen )
 			{
 				if (nLen >= nBufSize)
 				{
-					nError = afs_do_write( pVolume, psInode, pBuffer, nPos, nBufSize );
+					nError = afs_do_write( pVolume, psInode, pBuffer, nPos, nBufSize, false );
 					nPos += nBufSize;
 					nLen -= nBufSize;
 				}
 				else
 				{
-					nError = afs_do_write( pVolume, psInode, pBuffer, nPos, nLen );
+					nError = afs_do_write( pVolume, psInode, pBuffer, nPos, nLen, false );
 					nPos += nLen;
 					nLen -= nLen;
 				}

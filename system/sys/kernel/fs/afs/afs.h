@@ -357,8 +357,8 @@ status_t afs_revert_inode( AfsVolume_s * psVolume, AfsInode_s * psInode );
 int afs_release_inode( AfsVolume_s * psVolume, AfsInode_s * psInode );
 int afs_do_unlink( AfsVolume_s * psVolume, AfsInode_s * psParent, AfsInode_s * psInode, const char *pzName, int nNameLen );
 
-int afs_read_pos( AfsVolume_s * psVolume, AfsInode_s * psInode, void *pBuffer, off_t nPos, size_t nSize );
-int afs_do_write( AfsVolume_s * psVolume, AfsInode_s * psInode, const char *pBuffer, off_t nPos, size_t nSize );
+int afs_read_pos( AfsVolume_s * psVolume, AfsInode_s * psInode, void *pBuffer, off_t nPos, size_t nSize, bool bDirect );
+int afs_do_write( AfsVolume_s * psVolume, AfsInode_s * psInode, const char *pBuffer, off_t nPos, size_t nSize, bool bDirect );
 
 int afs_expand_stream( AfsVolume_s * psVolume, AfsInode_s * psInode, off_t nDeltaSize );
 int afs_truncate_stream( AfsVolume_s * psVolume, AfsInode_s * psInode );

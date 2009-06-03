@@ -823,7 +823,7 @@ static int afs_write_big_attr( AfsVolume_s * psVolume, AfsInode_s * psAttrInode,
 
 	if( nError >= 0 )
 	{
-		nError = afs_do_write( psVolume, psAttrInode, pBuffer, nPos, nLen );
+		nError = afs_do_write( psVolume, psAttrInode, pBuffer, nPos, nLen, false );
 		if( nError >= 0 )
 		{
 			nError = nLen;
@@ -1110,7 +1110,7 @@ int afs_read_attr( void *pVolume, void *pNode, const char *pzName, int nNameLen,
 	}
 	if( psAttrInode->ai_nIndexType == nType )
 	{
-		nError = afs_read_pos( pVolume, psAttrInode, pBuffer, nPos, nLen );
+		nError = afs_read_pos( pVolume, psAttrInode, pBuffer, nPos, nLen, false );
 	}
 	else
 	{

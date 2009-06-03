@@ -200,7 +200,7 @@ int bt_end_transaction( AfsVolume_s * psVolume, AfsInode_s * psInode, BTransacti
 		{
 			if( bOkToWrite )
 			{
-				nError = afs_do_write( psVolume, psInode,( char * )psTrans->bt_apsLockedNodes[i].be_psNode, psTrans->bt_apsLockedNodes[i].be_nValue, B_NODE_SIZE );
+				nError = afs_do_write( psVolume, psInode,( char * )psTrans->bt_apsLockedNodes[i].be_psNode, psTrans->bt_apsLockedNodes[i].be_nValue, B_NODE_SIZE, false );
 				if( nError < 0 )
 				{
 					printk( "Error: bt_end_transaction() failed to write tree node to disk\n" );
@@ -480,7 +480,7 @@ BNode_s *bt_load_node( AfsVolume_s * psVolume, AfsInode_s * psInode, BTransactio
 		panic( "bt_load_node() node lives outside the stream\n" );
 		goto error;
 	}
-	nError = afs_read_pos( psVolume, psInode, psNode, nNode, B_NODE_SIZE );
+	nError = afs_read_pos( psVolume, psInode, psNode, nNode, B_NODE_SIZE, false );
 	if( nError != B_NODE_SIZE )
 	{
 		printk( "Error: bt_load_node() failed to load node %d(flen=%d). Err = %d\n", ( int )nNode, ( int )psInode->ai_sData.ds_nSize, nError );

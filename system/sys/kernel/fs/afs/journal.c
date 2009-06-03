@@ -924,17 +924,24 @@ static int afs_wait_for_log_space( AfsVolume_s * psVolume, int nBlockCount )
 {
 	int nLoops = 0;
 
+	if( nBlockCount > psVolume->av_nJournalSize )
+	{
+		panic( "%d log blocks requested but only %d available for this volume!\n", nBlockCount, psVolume->av_nJournalSize );
+		return( -1 );
+	}
+
 	while( psVolume->av_nPendingLogBlocks + nBlockCount > psVolume->av_nJournalSize )
 	{
 		if( nLoops++ > 500 )
 		{
-			printk( "Wait for %d log blocks to be free(%d)\n", nBlockCount, psVolume->av_nPendingLogBlocks );
+			printk( "Wait for %d log blocks to be free (pending %d, max. %d)\n", nBlockCount, psVolume->av_nPendingLogBlocks, psVolume->av_nJournalSize );
+			snooze( 500000 );
 		}
 		if( psVolume->av_psLastTrans != NULL )
 		{
 			afs_force_flush_transaction( psVolume, psVolume->av_psLastTrans );
 		}
-//          flush_device_cache( psVolume->av_nDevice, true );
+		flush_device_cache( psVolume->av_nDevice, true );
 		if( psVolume->av_psLastTrans != NULL && psVolume->av_psLastTrans->at_bWrittenToLog && psVolume->av_psLastTrans->at_bWrittenToDisk == false )
 		{
 			afs_write_transaction_to_disk( psVolume, psVolume->av_psLastTrans );
@@ -1150,7 +1157,11 @@ static int afs_merge_transactions( AfsVolume_s * psVolume )
 		printk( "afs_merge_transactions() the transaction is already written to the log\n" );
 		return( -EINVAL );
 	}
-	afs_wait_for_log_space( psVolume, psVolume->av_nNewBlockCount + psVolume->av_nJournalSize / 128 );
+	if( afs_wait_for_log_space( psVolume, psVolume->av_nNewBlockCount + psVolume->av_nJournalSize / 128 ) )
+	{
+		printk( "afs_merge_transactions() the transaction is too large\n" );
+		return( -EINVAL );
+	}
 
 	// Here we merge the blocks touched during the current transaction with blocks
 	// from previous transactions.
