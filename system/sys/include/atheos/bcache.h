@@ -45,8 +45,13 @@ void  release_cache_block( dev_t nDev, off_t nBlockNum );
 
 status_t cached_read( dev_t nDev, off_t nBlockNum, void *pBuffer,
 		      count_t nBlockCount, size_t nBlockSize );
+status_t maybe_cached_read( dev_t nDev, off_t nBlockNum, void *pBuffer,
+		      count_t nBlockCount, size_t nBlockSize, bool bDirect );
+
 status_t cached_write( dev_t nDev, off_t nBlockNum, const void *pBuffer,
 		       count_t nBlockCount, size_t nBlockSize );
+status_t maybe_cached_write( dev_t nDev, off_t nBlockNum, const void *pBuffer,
+		       count_t nBlockCount, size_t nBlockSize, bool bDirect );
 
 status_t write_logged_blocks( dev_t nDev, off_t nBlockNum, const void* pBuffer, count_t nCount, size_t nBlockSize, cache_callback* pFunc, void* pArg );
 

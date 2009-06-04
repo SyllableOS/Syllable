@@ -44,8 +44,8 @@ typedef unsigned int kdev_t;
 
 
   /* Flags passed to mount() */
-#define MNTF_READONLY	0x0001
-#define MNTF_SLOW_DEVICE	0x0002
+#define MNTF_READONLY	0x01
+#define MNTF_DIRECT		0x02
 
   /* Flags returned in the fi_flags field of fs_info */
 #define	FS_IS_READONLY	 0x00000001	/* Set if mounted readonly or resides on a RO meadia */
