@@ -373,7 +373,7 @@ static int find_boot_dev( void )
 					kerndbg( KERN_INFO, "Checking for disk in %s\n", pzDiskPathBuf );
 
 					/* Try to mount the disk */
-					nError = sys_mount( pzDiskPathBuf, "/boot", g_zBootFS, MNTF_SLOW_DEVICE, g_zBootFSArgs );
+					nError = sys_mount( pzDiskPathBuf, "/boot", g_zBootFS, 0, g_zBootFSArgs );
 
 					if ( nError < 0 )
 					{

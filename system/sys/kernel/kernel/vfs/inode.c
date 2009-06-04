@@ -1771,21 +1771,7 @@ static int do_mount( const char *pzDevName, const char *pzDirName, const char *p
 		pzDevName = "";
 	}
 
-	if ( nFlags & MNTF_SLOW_DEVICE )
-	{
-		for ( nRetries = 0; nRetries < 5; nRetries++ )
-		{
-			nError = psDesc->fs_psOperations->mount( psVol->v_nDevNum, pzDevName, nFlags, pData, nArgLen, &psVol->v_pFSData, &psVol->v_nRootInode );
-
-			if ( nError >= 0 )
-				break;
-
-			udelay( 1000000 );
-			Schedule();
-		}
-	}
-	else
-		nError = psDesc->fs_psOperations->mount( psVol->v_nDevNum, pzDevName, nFlags, pData, nArgLen, &psVol->v_pFSData, &psVol->v_nRootInode );
+	nError = psDesc->fs_psOperations->mount( psVol->v_nDevNum, pzDevName, nFlags, pData, nArgLen, &psVol->v_pFSData, &psVol->v_nRootInode );
 
 	if ( nError < 0 )
 	{

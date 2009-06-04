@@ -1374,6 +1374,19 @@ status_t cached_read( dev_t nDev, off_t nBlockNum, void *pBuffer,
 	return ( nError );
 }
 
+status_t maybe_cached_read( dev_t nDev, off_t nBlockNum, void *pBuffer,
+		      count_t nBlockCount, size_t nBlockSize, bool bDirect )
+{
+	status_t nError;
+
+	if( bDirect )
+		nError = read_phys_blocks( nDev, nBlockNum, pBuffer, nBlockCount, nBlockSize );
+	else
+		nError = cached_read( nDev, nBlockNum, pBuffer, nBlockCount, nBlockSize );
+
+	return nError;
+}
+
 /*****************************************************************************
  * NAME:
  * DESC:
@@ -1428,6 +1441,19 @@ status_t cached_write( dev_t nDev, off_t nBlockNum, const void *pBuffer,
 	}
 	UNLOCK( g_sBlockCache.bc_hLock );
 	return ( nError );
+}
+
+status_t maybe_cached_write( dev_t nDev, off_t nBlockNum, const void *pBuffer,
+		       count_t nBlockCount, size_t nBlockSize, bool bDirect )
+{
+	status_t nError;
+
+	if( bDirect )
+		nError = write_phys_blocks( nDev, nBlockNum, pBuffer, nBlockCount, nBlockSize );
+	else
+		nError = cached_write( nDev, nBlockNum, pBuffer, nBlockCount, nBlockSize );
+
+	return nError;
 }
 
 static status_t do_flush_device_cache( dev_t nDevice, bool bOnlyLoggedBlocks, bool bFlushLocked )

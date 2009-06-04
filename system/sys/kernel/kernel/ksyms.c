@@ -342,6 +342,8 @@ static KernelSymbol_s g_asKernelSymbols[] = {
 	KSYMBOL( write_phys_blocks ),
 	KSYMBOL( cached_read ),
 	KSYMBOL( cached_write ),
+	KSYMBOL( maybe_cached_read ),
+	KSYMBOL( maybe_cached_write ),
 	KSYMBOL( flush_device_cache ),
 	KSYMBOL( flush_locked_device_cache ),
 	KSYMBOL( flush_cache_block ),

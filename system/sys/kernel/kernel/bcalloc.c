@@ -30,6 +30,10 @@
 
 extern BlockCache_s g_sBlockCache;
 
+#define LIMIT_BLOCK_CACHE
+#ifdef LIMIT_BLOCK_CACHE
+# define BC_MAX_SIZE	(1024 * 1024 * 128)
+#endif
 
 typedef struct _CacheHeap CacheHeap_s;
 struct _CacheHeap
@@ -91,11 +95,13 @@ static int expand_heap( CacheHeap_s *psHeap )
 	CacheBlock_s *psBlock;
 	int i;
 	int nError;
-	
-	if ( psHeap->ch_nSize + PAGE_SIZE * 32 > 1024 * 1024 * 128 )
+
+#ifdef LIMIT_BLOCK_CACHE
+	if ( ( psHeap->ch_nSize + PAGE_SIZE * 32 ) > BC_MAX_SIZE )
 	{
 		return( -ENOMEM );
 	}
+#endif
 
 	while ( psHeap->ch_bBusy )
 	{
@@ -120,7 +126,8 @@ static int expand_heap( CacheHeap_s *psHeap )
 	
 	if ( nError < 0 )
 	{
-		printk( "expand_heap() failed to resize area from %u to %u.4 bytes\n", psHeap->ch_nSize, nNewSize );
+		UNLOCK( g_sBlockCache.bc_hLock );
+		//printk( "expand_heap() failed to resize area from %u to %u bytes\n", psHeap->ch_nSize, nNewSize );
 		return ( -ENOMEM );
 	}
 	atomic_add( &g_sSysBase.ex_nBlockCacheSize, nNewSize - psHeap->ch_nSize );
@@ -158,17 +165,20 @@ static void init_heap( CacheHeap_s *psHeap )
 	uint32 nMaxBufSize = g_sSysBase.ex_nTotalPageCount * PAGE_SIZE;
 	int nCnt = 0;
 
-	if ( nMaxBufSize > 1024 * 1024 * 128 )
+#ifdef LIMIT_BLOCK_CACHE
+	if ( nMaxBufSize > BC_MAX_SIZE )
 	{
-		nMaxBufSize = 1024 * 1024 * 128;
+		nMaxBufSize = BC_MAX_SIZE;
 	}
-      retry:
+#endif
+
+retry:
 	psHeap->ch_nSize = 4096 * 10;
 	psHeap->ch_nUsedBlocks = 0;
 	
 	atomic_add( &g_sSysBase.ex_nBlockCacheSize, psHeap->ch_nSize );
 
-	psHeap->ch_hAreaID = create_area( "bcache_1024", &psHeap->ch_pAddress, psHeap->ch_nSize, nMaxBufSize, AREA_FULL_ACCESS | AREA_KERNEL, AREA_FULL_LOCK );
+	psHeap->ch_hAreaID = create_area( "block_cache", &psHeap->ch_pAddress, psHeap->ch_nSize, nMaxBufSize, AREA_FULL_ACCESS | AREA_KERNEL, AREA_FULL_LOCK );
 	if ( psHeap->ch_hAreaID < 0 )
 	{
 		if ( psHeap->ch_hAreaID == -ENOADDRSPC && nMaxBufSize > psHeap->ch_nSize * 2 )
@@ -215,7 +225,7 @@ int alloc_cache_blocks( CacheBlock_s **apsBlocks, int nCount, int nBlockSize, bo
 		init_heap( psHeap );
 	}
 
-      again:
+again:
 	nRealBlockSize = psHeap->ch_nBlockSize + sizeof( CacheBlock_s );
 	nMaxBlocks = psHeap->ch_nSize / nRealBlockSize;
 	nFreeBlocks = nMaxBlocks - psHeap->ch_nUsedBlocks;
@@ -477,13 +487,3 @@ ssize_t shrink_cache_heaps( int nIgnoredOrder )
 	//printk( "Freed %i bytes\n", nBytesFreed );
 	return ( ( nBytesFreed > 0 ) ? nBytesFreed : ( ( bBusy ) ? -EAGAIN : 0 ) );
 }
-
-
-
-
-
-
-
-
-
-
