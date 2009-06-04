@@ -1,0 +1,7 @@
+authors				Kristian Van Der Vliet
+
+inherits			sourceforge
+
+licenses			GPL
+home				posixtest.sourceforge.net
+packages			posixtest/posixtestsuite-1.5.2
