@@ -64,14 +64,23 @@ void AutoLoginView::PopulateMenu()
 {
 	/* Examine the user list and populate the menu with non-system users. */
 	/* TODO: It would be nice to update this list automatically if the user creates or deletes a user in the other tab. */
-	/* Also, it would be nice to use real names rather than usernames but the DropdownMenu rows don't provide a cookie so that's a bit of a pain */
+	m_nDefaultUser = -1;	/* We save the first non-root user as the default setting */
+	
 	struct passwd *psPwd;
 	while( ( psPwd = getpwent() ) != NULL )
 	{
 		/* Create a row to display users details */
 		if( psPwd->pw_uid == 0 || psPwd->pw_uid >= 100 )
 		{
-			m_pcUserList->AppendItem( psPwd->pw_name );
+			m_acUsers.push_back( psPwd->pw_name );
+			String zTmp;
+			zTmp.Format( "%s (%s)", psPwd->pw_gecos, psPwd->pw_name );
+			m_pcUserList->AppendItem( zTmp );
+			
+			if( psPwd->pw_uid >= 100 && m_nDefaultUser == -1 )
+			{
+				m_nDefaultUser = m_acUsers.size() - 1;
+			}
 		}
 	}
 	endpwent();
@@ -107,18 +116,41 @@ void AutoLoginView::LoadSettings()
 	
 	bool bIsAutoLoginEnabled = m_pcSettings->GetBool( "auto_login", false );
 	String zUser = m_pcSettings->GetString( "auto_login_user", "" );
+	bool bFound = false;
 	
 	if( bIsAutoLoginEnabled && zUser != "" )
 	{
 		m_pcCheckbox->SetValue( Variant( true ), false );
 		
-		m_pcUserList->SetCurrentString( zUser );
+		for( int i = 0; i < m_acUsers.size(); i++ )
+		{
+			if( m_acUsers[i] == zUser )
+			{
+				m_pcUserList->SetSelection( i, false );
+				bFound = true;
+				break;
+			}
+		}
 	}
 	else
 	{
 		m_pcCheckbox->SetValue( Variant( false ), false );
 		
-		m_pcUserList->SetCurrentString( zUser );
+		for( int i = 0; i < m_acUsers.size(); i++ )
+		{
+			if( m_acUsers[i] == zUser )
+			{
+				m_pcUserList->SetSelection( i, false );
+				bFound = true;
+				break;
+			}
+		}
+	}
+	
+	/* If we didn't find the user in the list, select the first non-root user */
+	if( !bFound && m_nDefaultUser != -1 )
+	{
+		m_pcUserList->SetSelection( m_nDefaultUser, false );
 	}
 	
 	if( getuid() != 0 )
@@ -141,7 +173,8 @@ status_t AutoLoginView::SaveChanges()
 	
 	
 	bool bIsAutoLoginEnabled = m_pcCheckbox->GetValue().AsBool();
-	String zUser = m_pcUserList->GetCurrentString();
+	int nIndex = m_pcUserList->GetSelection();
+	String zUser = ( nIndex >= 0 && nIndex < m_acUsers.size() ? m_acUsers[ nIndex ] : "" );
 	
 	if( bIsAutoLoginEnabled && zUser == "" )
 	{

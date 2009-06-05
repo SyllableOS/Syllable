@@ -7,6 +7,8 @@
 #include <util/settings.h>
 #include <storage/file.h>
 
+#include <vector>
+
 enum autologin_messages
 {
 	ID_AUTOLOGIN_ENABLE,
@@ -38,6 +40,9 @@ private:
 	os::File* m_pcFile;
 
 	bool m_bModified;
+	
+	std::vector< os::String > m_acUsers;
+	int m_nDefaultUser;
 };
 
 
