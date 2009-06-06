@@ -53,6 +53,7 @@ int	fcntl(int _fildes, int _cmd, ...);
 #define O_DIRECTORY	040000	/* Only open if it's a directory			*/
 #define O_NOTRAVERSE   0100000	/* Don't resolv symlinks but open the link itself	*/
 #define O_NOFOLLOW      O_NOTRAVERSE
+#define O_DIRECT	0200000
 
 #define F_DUPFD		0	/* dup						*/
 #define F_GETFD		1	/* get f_flags					*/
