@@ -77,7 +77,7 @@ DEV_ARCHIVE="$NAME-development.i586"
 construct distro SyllableDesktop $FULL_VERSION i586
 mv $NAME.i586.zip ../base-syllable.zip
 
-mv $DEV_ARCHIVE.zip.7z /usr/Builder/distributions/SyllableDesktop-$VERSION-development.i586.zip.7z
+mv $DEV_ARCHIVE.zip.7z /resources/Builder/distributions/SyllableDesktop-$VERSION-development.i586.zip.7z
 build pack development
 mv SyllableDesktop-$VERSION-development-0.i586.zip ../$DEV_ARCHIVE.zip
 

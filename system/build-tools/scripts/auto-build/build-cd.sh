@@ -117,7 +117,7 @@ FILES=(	"/etc/profile, /etc/profile" 															\
 		"/usr/share/terminfo/r/rxvt-16color, /usr/share/terminfo/r/rxvt-16color"				\
 		"/usr/share/terminfo/x/xterm, /usr/share/terminfo/x/xterm"							\
 																											\
-		"/resources/grub, /usr/grub"																\
+		"/resources/grub, /resources/grub"																\
 																											\
 		"/resources/grub/lib/grub/i386-pc/stage2_eltorito, /boot/grub/stage2_eltorito"											\
 		"/resources/grub/lib/grub/i386-pc/stage1, /boot/grub/stage1"																\
@@ -130,12 +130,12 @@ declare -a LINKS
 # target, link
 LINKS=(	"/bin/gzip, /bin/gunzip"	\
 		"/bin/bash, /bin/sh"			\
-		"/usr/ruby/bin/ruby, /bin/ruby"	\
+		"/resources/ruby/bin/ruby, /bin/ruby"	\
 )
 
 declare -a ENV
 
-ENV=(	"PATH=/usr/grub/bin:/usr/grub/sbin:/bin:/boot/system/bin"		\
+ENV=(	"PATH=/resources/grub/bin:/resources/grub/sbin:/bin:/boot/system/bin"		\
 		"DLL_PATH=@bindir@/lib:./:/boot/system/libraries:/boot/system"			\
 		"TEMP=/tmp"																	\
 		"SYSTEM=Syllable"															\
@@ -316,7 +316,7 @@ DOCUMENTATION_DIR=documentation
 PPDS=ppds
 
 # The source packages need to be on the Premium CD
-BUILDER_SOURCE_DIR=/usr/Builder/sources
+BUILDER_SOURCE_DIR=/resources/Builder/sources
 
 # function print_usage
 #
@@ -471,7 +471,7 @@ function generate_init_script()
   done
 
   # Start the installer
-  printf "\naterm /usr/ruby/bin/ruby /boot/Install/install.rb &\n" >> $CD_DIR/system/init.sh
+  printf "\naterm /resources/ruby/bin/ruby /boot/Install/install.rb &\n" >> $CD_DIR/system/init.sh
 
   # Enable this to get an extra shell when testing
   # printf "aterm &\n" >> $CD_DIR/system/init.sh
@@ -537,7 +537,7 @@ function copy_files()
   cp -f "$BASE_DIR/Applications/System Tools/Terminal" "$CD_DIR/system/bin/aterm"
 
   # Install Ruby (Must be done before links)
-  unzip $RUBY_PACKAGE -d $CD_DIR/usr/
+  unzip $RUBY_PACKAGE -d $CD_DIR/resources/
 
   # Create links
   COUNT=${#LINKS[*]}
