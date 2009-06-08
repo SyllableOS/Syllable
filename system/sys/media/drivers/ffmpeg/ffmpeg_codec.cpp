@@ -25,8 +25,8 @@
 
 extern "C"
 {
-#include <ffmpeg/avformat.h>
-#include <ffmpeg/avcodec.h>
+#include <libavformat/avformat.h>
+#include <libavcodec/avcodec.h>
 }
 
 class FFMpegCodec:public os::MediaCodec
@@ -168,7 +168,7 @@ status_t FFMpegCodec::Open( os::MediaFormat_s sFormat, os::MediaFormat_s sExtern
 	    m_sDecodeContext->skip_loop_filter= AVDISCARD_DEFAULT;
 
 		m_sDecodeContext->workaround_bugs = 1;
-		m_sDecodeContext->error_resilience = FF_ER_CAREFUL;
+		m_sDecodeContext->error_recognition = FF_ER_CAREFUL;
 		m_sDecodeContext->error_concealment = 3;
 
 		AVCodec *psCodec = avcodec_find_decoder( id );
@@ -289,7 +289,7 @@ status_t FFMpegCodec::Open( os::MediaFormat_s sFormat, os::MediaFormat_s sExtern
 			return ( -1 );
 		}
 #endif
-        AVRational time_base = av_d2q(sExternal.vFrameRate, DEFAULT_FRAME_RATE_BASE);
+        AVRational time_base = av_d2q(sExternal.vFrameRate, 255);
 		sEnc->bit_rate_tolerance = 100000000;
 		//printf( "%f %i %i %i %i %f\n", sExternal.vFrameRate, sEnc->bit_rate, sEnc->bit_rate_tolerance, time_base.num, time_base.den, av_q2d( time_base ) );
 

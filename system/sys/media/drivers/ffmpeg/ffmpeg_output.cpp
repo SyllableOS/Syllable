@@ -23,7 +23,7 @@
 #include <iostream>
 extern "C" 
 {
-	#include <ffmpeg/avformat.h>
+	#include <libavformat/avformat.h>
 }
 
 #define FFMPEG_MAX_STREAMS 4
@@ -192,12 +192,12 @@ void FFMpegOutput::Clear()
 uint32 FFMpegOutput::GetOutputFormatCount()
 {
 	uint32 nCount = 0;
-	AVCodec* psCodec = first_avcodec;
+	AVCodec* psCodec = av_codec_next( NULL );
 	while( psCodec )
 	{
 		if( psCodec->encode )
 			nCount++;
-		psCodec = psCodec->next;
+		psCodec = av_codec_next( psCodec );
 	}
 	return( nCount );
 }
@@ -208,7 +208,7 @@ os::MediaFormat_s FFMpegOutput::GetOutputFormat( uint32 nIndex )
 	MEDIA_CLEAR_FORMAT( sFormat );
 	
 	uint32 nCount = 0;
-	AVCodec* psCodec = first_avcodec;
+	AVCodec* psCodec = av_codec_next( NULL );
 	while( psCodec )
 	{
 		if( psCodec->encode )
@@ -225,7 +225,7 @@ os::MediaFormat_s FFMpegOutput::GetOutputFormat( uint32 nIndex )
 			}
 			nCount++;
 		}
-		psCodec = psCodec->next;
+		psCodec = av_codec_next( psCodec );
 	}
 	
 	return( sFormat );

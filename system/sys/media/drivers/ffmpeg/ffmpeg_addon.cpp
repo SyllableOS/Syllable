@@ -21,8 +21,8 @@
 extern "C"
 {
 	#include <ffmpeg/config.h>
-	#include <ffmpeg/avcodec.h>
-	#include <ffmpeg/avformat.h>
+	#include <libavcodec/avcodec.h>
+	#include <libavformat/avformat.h>
 }
 
 extern os::MediaCodec* init_ffmpeg_codec();
@@ -44,18 +44,19 @@ public:
 	os::MediaOutput*	GetOutput( uint32 nIndex ) { return( init_ffmpeg_output() ); }
 };
 
-
 #define REGISTER_MUXER(X,x) { \
-          extern AVOutputFormat x##_muxer; \
-          if(ENABLE_##X##_MUXER)   av_register_output_format(&x##_muxer); }
-#define REGISTER_DEMUXER(X,x) { \
-          extern AVInputFormat x##_demuxer; \
-          if(ENABLE_##X##_DEMUXER) av_register_input_format(&x##_demuxer); }
-#define REGISTER_MUXDEMUX(X,x)  REGISTER_MUXER(X,x); REGISTER_DEMUXER(X,x)
-#define REGISTER_PROTOCOL(X,x) { \
-          extern URLProtocol x##_protocol; \
-          if(ENABLE_##X##_PROTOCOL) register_protocol(&x##_protocol); }
+    extern AVOutputFormat x##_muxer; \
+    if(CONFIG_##X##_MUXER) av_register_output_format(&x##_muxer); }
 
+#define REGISTER_DEMUXER(X,x) { \
+    extern AVInputFormat x##_demuxer; \
+    if(CONFIG_##X##_DEMUXER) av_register_input_format(&x##_demuxer); }
+
+#define REGISTER_MUXDEMUX(X,x)  REGISTER_MUXER(X,x); REGISTER_DEMUXER(X,x)
+
+#define REGISTER_PROTOCOL(X,x) { \
+    extern URLProtocol x##_protocol; \
+    if(CONFIG_##X##_PROTOCOL) av_register_protocol(&x##_protocol); }
 
 void FFMpegAddon::RegisterFormats()
 {
@@ -96,7 +97,6 @@ void FFMpegAddon::RegisterFormats()
     REGISTER_MUXDEMUX (FLV, flv);
     REGISTER_DEMUXER  (FOURXM, fourxm);
     REGISTER_MUXER    (FRAMECRC, framecrc);
-    REGISTER_MUXDEMUX (GIF, gif);
     REGISTER_MUXDEMUX (GXF, gxf);
     REGISTER_MUXDEMUX (H261, h261);
     REGISTER_MUXDEMUX (H263, h263);
@@ -192,21 +192,20 @@ void FFMpegAddon::RegisterFormats()
     REGISTER_PROTOCOL (UDP, udp);
 }
 
-
 #define REGISTER_ENCODER(X,x) { \
           extern AVCodec x##_encoder; \
-          if(ENABLE_##X##_ENCODER)  register_avcodec(&x##_encoder); }
+          if(CONFIG_##X##_ENCODER)  avcodec_register(&x##_encoder); }
 #define REGISTER_DECODER(X,x) { \
           extern AVCodec x##_decoder; \
-          if(ENABLE_##X##_DECODER)  register_avcodec(&x##_decoder); }
+          if(CONFIG_##X##_DECODER)  avcodec_register(&x##_decoder); }
 #define REGISTER_ENCDEC(X,x)  REGISTER_ENCODER(X,x); REGISTER_DECODER(X,x)
 
 #define REGISTER_PARSER(X,x) { \
           extern AVCodecParser x##_parser; \
-          if(ENABLE_##X##_PARSER)  av_register_codec_parser(&x##_parser); }
+          if(CONFIG_##X##_PARSER)  av_register_codec_parser(&x##_parser); }
 #define REGISTER_BSF(X,x) { \
           extern AVBitStreamFilter x##_bsf; \
-          if(ENABLE_##X##_BSF)     av_register_bitstream_filter(&x##_bsf); }
+          if(CONFIG_##X##_BSF)     av_register_bitstream_filter(&x##_bsf); }
 
 void FFMpegAddon::RegisterCodecs()
 {
@@ -320,7 +319,6 @@ void FFMpegAddon::RegisterCodecs()
     REGISTER_ENCDEC  (ZMBV, zmbv);
 
     /* audio codecs */
-    REGISTER_DECODER (MPEG4AAC, mpeg4aac);
     REGISTER_ENCDEC  (AC3, ac3);
     REGISTER_DECODER (ALAC, alac);
     REGISTER_DECODER (APE, ape);
@@ -413,7 +411,6 @@ void FFMpegAddon::RegisterCodecs()
     REGISTER_ENCDEC  (DVDSUB, dvdsub);
 
     /* external libraries */
-    REGISTER_DECODER (LIBA52, liba52);
     REGISTER_ENCDEC  (LIBAMR_NB, libamr_nb);
     REGISTER_ENCDEC  (LIBAMR_WB, libamr_wb);
     REGISTER_ENCODER (LIBFAAC, libfaac);

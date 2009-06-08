@@ -25,7 +25,7 @@
 #include <vector>
 extern "C" 
 {
-	#include <ffmpeg/avformat.h>
+	#include <libavformat/avformat.h>
 }
 
 #define MAX_STREAM 8
@@ -302,8 +302,7 @@ os::MediaFormat_s FFMpegDemuxer::GetStreamFormat( uint32 nIndex )
 		
 	if( avcodec_find_decoder( m_psContext->streams[nIndex]->codec->codec_id ) == NULL )
 	{
-		if( m_psContext->streams[nIndex]->codec->codec_id == CODEC_ID_AAC ||
-			m_psContext->streams[nIndex]->codec->codec_id == CODEC_ID_MPEG4AAC ) {
+		if( m_psContext->streams[nIndex]->codec->codec_id == CODEC_ID_AAC ) {
 			/* Pass to aac plugin */
 			sFormat.zName = "aac";
 		} else {
