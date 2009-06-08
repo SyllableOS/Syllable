@@ -17,7 +17,7 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 $(OBJDIR)/ffmpeg.so: $(OBJS)
-	$(CXX) -shared -Xlinker "-soname=ffmpeg.so" $(OBJS) -lsyllable -lmedia -lm -lz -lpthread -lavformat -lavcodec -lavutil -ltheora -logg -o $(OBJDIR)/ffmpeg.so
+	$(CXX) -shared -Xlinker "-soname=ffmpeg.so" $(OBJS) -lsyllable -lmedia -lm -lz -lpthread -lavformat -lavcodec -lbz2 -lavutil -ltheora -logg -o $(OBJDIR)/ffmpeg.so
 
 
 deps: $(LIBS)
