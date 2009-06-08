@@ -22,13 +22,11 @@ build-conflicts		tetex
 
 system-prefix-var	DESTDIR
 ; Older versions still create this:
-_install-tree
+install-tree
 	include
 	include/ffmpeg
 install-files
-	../_ffmpeg-0.5.0/config.h				include/ffmpeg
-;	../ffmpeg-0.5.0/libavformat/allformats.h	include/ffmpeg
-;	../ffmpeg-0.5.0/libavcodec/allcodecs.h	include/ffmpeg
+	../_ffmpeg-0.5.0/config.h				include/ffmpeg/config.h
 
 documentation
 	README COPYING.GPL COPYING.LGPL Changelog CREDITS MAINTAINERS doc/TODO
