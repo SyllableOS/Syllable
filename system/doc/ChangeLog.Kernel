@@ -1,3 +1,12 @@
+* Junt 5, 2009, Kristian Van Der Vliet *
+
+Implemented O_DIRECT support in AFS
+ o Added maybe_cached_read() & maybe_cached_write() to the block cache.
+ o Added the MNTF_DIRECT flag, which tells the filesystem to open the device
+   (or file) with the O_DIRECT flag.
+
+Removed the old MNTF_SLOW_DEVICE flag.
+
 * May 28, 2009, Kristian Van Der Vliet *
 
 Implemented async I/O support:

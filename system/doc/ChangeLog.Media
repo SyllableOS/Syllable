@@ -1,3 +1,9 @@
+* June 8 2009 Kristian Van Der Vliet *
+
+Updated to FFmpeg 0.5.0
+
+---- 0.6.6 Released -------------------------------------------------------------------
+
 * August 9 2007 Kristian Van Der Vliet *
 
 Fixed a handful of bugs in the ffmpeg plugin, although a lot of files are
