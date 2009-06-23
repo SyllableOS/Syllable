@@ -47,6 +47,7 @@ int main( int argc, char **argv )
 	symlink( "boot/system", "/system" );
 	symlink( "boot/bin", "/bin" );
 	symlink( "boot/usr", "/usr" );
+	symlink( "boot/usr", "/resources" );
 	symlink( "boot/etc", "/etc" );
 	symlink( "boot/home", "/home" );
 	symlink( "boot/var", "/var" );
