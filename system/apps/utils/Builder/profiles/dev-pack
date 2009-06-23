@@ -16,7 +16,6 @@ modules
 	programming/m4-1.4.8
 	programming/libtool-1.5.22
 	programming/gdb-6.4
-	file/versioning/patch-2.5.4
 	file/versioning/cvs-1.12.11
 	programming/Builder-0.7.63
 	programming/pkg-config-0.22
