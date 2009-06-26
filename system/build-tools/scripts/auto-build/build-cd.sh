@@ -117,7 +117,7 @@ FILES=(	"/etc/profile, /etc/profile" 															\
 		"/usr/share/terminfo/r/rxvt-16color, /usr/share/terminfo/r/rxvt-16color"				\
 		"/usr/share/terminfo/x/xterm, /usr/share/terminfo/x/xterm"							\
 																											\
-		"/resources/grub, /resources/grub"																\
+		"/resources/grub, /usr/grub"																\
 																											\
 		"/resources/grub/lib/grub/i386-pc/stage2_eltorito, /boot/grub/stage2_eltorito"											\
 		"/resources/grub/lib/grub/i386-pc/stage1, /boot/grub/stage1"																\
@@ -130,7 +130,7 @@ declare -a LINKS
 # target, link
 LINKS=(	"/bin/gzip, /bin/gunzip"	\
 		"/bin/bash, /bin/sh"			\
-		"/resources/ruby/bin/ruby, /bin/ruby"	\
+		"/usr/ruby/bin/ruby, /bin/ruby"	\
 )
 
 declare -a ENV
@@ -471,7 +471,7 @@ function generate_init_script()
   done
 
   # Start the installer
-  printf "\naterm /resources/ruby/bin/ruby /boot/Install/install.rb &\n" >> $CD_DIR/system/init.sh
+  printf "\naterm /usr/ruby/bin/ruby /boot/Install/install.rb &\n" >> $CD_DIR/system/init.sh
 
   # Enable this to get an extra shell when testing
   # printf "aterm &\n" >> $CD_DIR/system/init.sh
@@ -537,7 +537,7 @@ function copy_files()
   cp -f "$BASE_DIR/Applications/System Tools/Terminal" "$CD_DIR/system/bin/aterm"
 
   # Install Ruby (Must be done before links)
-  unzip $RUBY_PACKAGE -d $CD_DIR/resources/
+  unzip $RUBY_PACKAGE -d $CD_DIR/usr/
 
   # Create links
   COUNT=${#LINKS[*]}
