@@ -393,7 +393,7 @@ modules
 	linux/reiserfsprogs-3.6.19
 
 ;	Used by boot scripts:
-	apps/gnu/findutils-4.2.33
+	apps/gnu/FindUtils-4.4.2
 
 ;	freetype-config needs to be in the path:
 	bootstrap bootstrap/freetype-2.3.6
