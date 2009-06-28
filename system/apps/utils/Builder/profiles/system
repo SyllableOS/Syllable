@@ -323,7 +323,7 @@ modules
 
 	system apps/gnu/BASh-4.0
 	system apps/gnu/coreutils-6.4
-	apps/gnu/grep-2.5.3
+	apps/gnu/GRep-2.5.4
 	apps/gnu/sed-4.1.5
 	system apps/other/unzip-5.52
 
