@@ -190,7 +190,7 @@ prepare
 	chgrp utmp var/run/utmp	var/log/lastlog
 	chmod 664 var/run/utmp	var/log/lastlog
 
-	ln -s usr resources
+	ln -s usr/ resources
 
 ;	For OpenSSL and others:
 	ln -s /resources/indexes/bin/perl	usr/bin/perl

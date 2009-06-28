@@ -1,7 +1,7 @@
 #! /usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.8.0
+# Version 0.8.1
 # Copyright (c) 2002-2009 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -29,7 +29,7 @@ def prepare target
 	end
 
 	Dir.mkdir @image
-	Dir.mkdir File.join(@image, 'resources')
+#	Dir.mkdir File.join(@image, 'resources')
 
 	if @systemBuild and target.profile
 		Dir.chdir @image
@@ -55,6 +55,8 @@ def prepare target
 		end
 
 		Dir.chdir @workDir
+	else
+		Dir.mkdir File.join(@image, 'resources')
 	end
 
 	action 'sync'
@@ -1883,7 +1885,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.8.0',
+	puts 'Syllable Build System 0.8.1',
 		'Copyright (c) 2002-2009 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
