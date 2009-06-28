@@ -346,7 +346,7 @@ modules
 ;	system apps/gnu/gcc-4.2.3
 
 	system libs/NCurses-5.7
-	system libs/readline-5.2
+	system libs/ReadLine-6.0
 
 ;	For rescopy:
 	apps/gnu/binutils-2.17-objcopy
