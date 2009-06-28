@@ -281,7 +281,7 @@ modules
 ;	For bootstrapping:
 ;	system apps/gnu/gcc-4.2.3
 
-	system libs/ncurses-5.6
+	system libs/NCurses-5.7
 	system libs/readline-5.2
 
 ;	GrUB can use Curses:
