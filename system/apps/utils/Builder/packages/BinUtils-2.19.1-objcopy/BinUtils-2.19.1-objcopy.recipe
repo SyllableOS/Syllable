@@ -1,0 +1,8 @@
+authors				Kaj de Vos
+
+inherits			binutils-2.19.1
+
+install-tree		bin
+install				true
+install-files		binutils/objcopy bin/
+links
