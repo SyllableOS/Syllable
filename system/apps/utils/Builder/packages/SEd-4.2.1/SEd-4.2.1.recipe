@@ -1,0 +1,25 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			gnu
+
+title				Streams Editor
+headline			Text stream processor
+description
+	Sed (streams editor) isn't really a true text editor or text processor. Instead, it is used to filter text, i.e., it takes text input and performs some operation (or set of operations) on it and outputs the modified text. Sed is typically used for extracting part of a file using pattern matching or substituting multiple occurrences of a string within a file.
+licenses			GPL GFDL
+
+home				www.gnu.org/software/sed/
+packages			sed/sed-4.2.1
+
+build-needs			texinfo
+install-needs		SEd
+
+configure-options	--enable-html
+
+system-prefix-var	DESTDIR
+
+documentation		README COPYING COPYING.DOC ABOUT-NLS BUGS NEWS ChangeLog AUTHORS THANKS
+build-docs			README.boot
+; For FindUtils:
+links				bin/sed /bin/

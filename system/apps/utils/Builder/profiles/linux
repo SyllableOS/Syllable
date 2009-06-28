@@ -367,7 +367,7 @@ modules
 	system apps/gnu/BASh-4.0
 ;	For init scripts:
 	system apps/gnu/GRep-2.5.4
-	apps/gnu/sed-4.1.5
+	apps/gnu/SEd-4.2.1
 	system apps/other/unzip-5.52
 
 	apps/gnu/bzip2-1.0.5
