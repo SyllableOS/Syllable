@@ -129,7 +129,7 @@ tree
 	usr/share
 ;	For manually compiled software:
 	usr/local
-;	For PERL:
+;	For Perl:
 	usr/local/bin
 	usr/local/etc
 	usr/local/include
@@ -313,7 +313,7 @@ modules
 	other/config/default
 ;	Overwrites profile:
 	other/config/etc
-	other/fonts/dejavu-fonts--current
+	other/fonts/DejaVu-Fonts--current
 	other/icons
 	other/init
 ;	other/keymaps

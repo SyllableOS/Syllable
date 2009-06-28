@@ -105,7 +105,7 @@ tree
 	usr/share
 ;	For manually compiled software:
 	usr/local
-;	For PERL:
+;	For Perl:
 	usr/local/bin
 	usr/local/etc
 	usr/local/include
