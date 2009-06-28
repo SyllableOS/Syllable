@@ -343,7 +343,7 @@ modules
 	apps/other/msntp-1.6
 
 ;	For rescopy:
-;	apps/gnu/binutils-2.17-objcopy
+;	apps/gnu/BinUtils-2.19.1-objcopy
 	apps/gnu/gzip-1.3.12
 	apps/gnu/inetutils-1.5
 	apps/gnu/less-418

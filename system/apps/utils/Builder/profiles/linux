@@ -302,7 +302,7 @@ resources
 modules
 ;	Toolchain for bootstrapping
 
-;	bootstrap apps/gnu/binutils-2.17
+;	bootstrap apps/gnu/BinUtils-2.19.1
 ;	Uses headers and runtime linker from the host!
 ;	bootstrap apps/gnu/gcc-4.2.3-bootstrap
 
@@ -339,7 +339,7 @@ modules
 ;	stage libraries/gettext-0.17
 ;	stage libraries/flex-2.5.33
 ;	stage libraries/bison-2.3
-;	stage libraries/binutils-2.17
+;	stage libraries/BinUtils-2.19.1
 
 	libraries libraries/gcc-4.2.3-system
 ;	For bootstrapping:
@@ -349,12 +349,12 @@ modules
 	system libs/ReadLine-6.0
 
 ;	For rescopy:
-	apps/gnu/binutils-2.17-objcopy
+	apps/gnu/BinUtils-2.19.1-objcopy
 
 
 ;	Extra requirements for bootstrapping
 
-;	apps/gnu/binutils-2.17
+;	apps/gnu/BinUtils-2.19.1
 ;	apps/gnu/make-3.81
 	apps/other/ruby-1.8.6
 ;	apps/gnu/nano--curses
