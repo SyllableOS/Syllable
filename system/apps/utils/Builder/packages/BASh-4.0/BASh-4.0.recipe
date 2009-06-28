@@ -1,0 +1,32 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			gnu
+
+headline			Command line interpreter
+description
+	Bash is the shell, or command language interpreter, that will appear in the GNU operating system. Bash is an sh-compatible shell that incorporates useful features from the Korn shell (ksh) and C shell (csh). It is intended to conform to the IEEE POSIX P1003.2/ISO 9945.2 Shell and Tools standard. It offers functional improvements over sh for both programming and interactive use. In addition, most sh scripts can be run by Bash without modification.
+licenses			GPL
+
+home				www.gnu.org/software/bash/
+packages			bash/bash-4.0
+;locations			ftp://ftp.cwru.edu/pub/bash/
+
+needs				Syllable >= 0.6.4
+build-needs			BASh
+recommends			ReadLine
+
+configure-options
+	--without-bash-malloc
+	--with-installed-readline
+
+test-targets		tests
+
+system-prefix-var	DESTDIR
+
+documentation
+	README ABOUT-NLS POSIX RBASH COPYING NEWS CHANGES COMPAT NOTES Y2K AUTHORS
+	doc/FAQ doc/INTRO examples
+links
+	bin/bash		/bin/bash
+	bin/bash		/bin/sh
