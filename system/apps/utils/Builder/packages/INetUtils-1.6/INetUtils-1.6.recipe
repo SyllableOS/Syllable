@@ -1,0 +1,24 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			gnu
+
+headline			A collection of common network programs
+description
+	Inetutils is a collection of common network programs. It includes: an ftp client and server, a telnet client and server, an rsh client and server, an rlogin client and server, a tftp client and server and much more. Most of them are improved versions of programs originally from BSD. Some others are original versions, written from scratch.
+licenses			GPL
+
+home				www.gnu.org/software/inetutils/
+packages			inetutils/inetutils-1.6
+
+needs				NCurses
+recommends
+;	For ftp:
+	ReadLine
+	pam
+	tcp-wrapper
+	krb4
+	heimdal | kerberos
+
+documentation		README COPYING NEWS ChangeLog TODO AUTHORS THANKS
+internal-docs		README-alpha

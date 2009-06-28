@@ -1,0 +1,20 @@
+authors				Kaj de Vos
+status				testing
+
+configure-options
+	--sysconfdir=/etc
+	--localstatedir=/var
+;	Syllable does its own logging:
+	--disable-logger
+	--disable-syslogd
+;	--disable-servers
+;	Syllable has its own:
+	--disable-ifconfig
+;	Ping acts irregular, and Syllable has its own:
+	--disable-ping
+;	Outdated:
+;	--disable-whois
+;	For TCP-Wrappers:
+;	--with-wrap
+;	For PAM:
+;	--with-pam

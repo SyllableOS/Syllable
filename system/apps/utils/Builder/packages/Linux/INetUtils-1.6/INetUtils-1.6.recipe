@@ -1,0 +1,22 @@
+authors				Kaj de Vos
+status				testing
+warnings			Super-user access is needed to install ping properly.
+
+configure-options
+	--sysconfdir=/etc
+	--localstatedir=/var
+;	We have other loggers:
+	--disable-logger
+	--disable-syslogd
+;	--disable-servers
+;	Better to use ip or Net-Tools:
+;	--disable-ifconfig
+;	--disable-ping
+;	Outdated:
+;	--disable-whois
+;	For TCP-Wrappers:
+;	--with-wrap
+;	For PAM:
+;	--with-pam
+
+super-install
