@@ -396,9 +396,9 @@ modules
 	apps/gnu/FindUtils-4.4.2
 
 ;	freetype-config needs to be in the path:
-	bootstrap bootstrap/freetype-2.3.6
+	bootstrap bootstrap/FreeType-2.3.9
 ;	For SDL-TTF:
-	system libraries/freetype-2.3.6
+	system libraries/FreeType-2.3.9
 
 	system libraries/libjpeg-6b
 	system libraries/libpng-1.2.29
