@@ -1,6 +1,6 @@
 authors				Kaj de Vos
 
-inherits			binutils-2.19.1
+inherits			BinUtils-2.19.1
 
 install-tree		bin
 install				true
