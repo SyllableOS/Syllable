@@ -1,0 +1,11 @@
+authors				Kaj de Vos
+status				testing
+
+configure-options
+	--enable-shared
+;	--with-curses
+;	--enable-multibyte
+
+;make-targets		everything shared
+
+;install-targets		install install-static install-shared
