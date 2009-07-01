@@ -102,17 +102,17 @@ FILES=(	"/etc/profile, /etc/profile" 															\
 		"/system/resources/coreutils/6.4/bin/stty, /bin/stty"										\
 		"/system/resources/coreutils/6.4/bin/chmod, /bin/chmod"										\
 																											\
-		"/resources/findutils/bin/find, /bin/find"										\
+		"/resources/FindUtils/bin/find, /bin/find"										\
 		"/resources/gzip/bin/gzip, /bin/gzip"												\
-		"/resources/sed/bin/sed, /bin/sed"												\
-		"/resources/tar/bin/tar, /bin/tar"												\
+		"/resources/SEd/bin/sed, /bin/sed"												\
+		"/resources/TAr/bin/tar, /bin/tar"												\
 		"/resources/ncurses/bin/clear, /bin/clear"										\
-		"/resources/less/bin/less, /bin/less"												\
+		"/resources/Less/bin/less, /bin/less"												\
 		"/resources/diffutils/bin/cmp, /bin/cmp"												\
-		"/resources/grep/bin/grep, /bin/grep"												\
+		"/resources/GRep/bin/grep, /bin/grep"												\
 																											\
 		"/system/resources/unzip/5.52/bin/unzip, /bin/unzip"											\
-		"/system/resources/bash/3.2/bin/bash, /bin/bash"												\
+		"/system/resources/BASh/4.0/bin/bash, /bin/bash"												\
 																											\
 		"/usr/share/terminfo/r/rxvt-16color, /usr/share/terminfo/r/rxvt-16color"				\
 		"/usr/share/terminfo/x/xterm, /usr/share/terminfo/x/xterm"							\
