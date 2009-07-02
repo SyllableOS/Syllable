@@ -25,6 +25,8 @@ configure-options
 ;	--with-termlib
 	--enable-widec
 	--enable-symlinks
+; Linking the C++ demo fails with undefined SjLj symbols which are in libgcc_s.so
+	--without-cxx-binding
 
 system-prefix-var	DESTDIR
 
