@@ -17,17 +17,6 @@ build-needs
 	diffutils
 conflicts			termcap
 
-configure-options
-;	--with-shared
-;	--without-debug
-;	--enable-reentrant
-;	--with-pthread
-;	--with-termlib
-	--enable-widec
-	--enable-symlinks
-; Linking the C++ demo fails with undefined SjLj symbols which are in libgcc_s.so
-	--without-cxx-binding
-
 system-prefix-var	DESTDIR
 
 documentation
@@ -35,27 +24,5 @@ documentation
 	doc/html
 develop-docs		doc/ncurses-intro.doc
 internal-docs		doc/hackguide.doc
-links
-;	For older packages:
-	libncursesw.a		lib/libncurses.a
-	libncurses++w.a		lib/libncurses++.a
-	libcursesw.a		lib/libcurses.a
-	libformw.a			lib/libform.a
-	libpanelw.a			lib/libpanel.a
-	libmenuw.a			lib/libmenu.a
-;	libncurses.so		lib/libcurses.so
-	libncursesw.a		lib/libcursesw.a
-;	libncurses.a		lib/libcurses.a
-	ncursesw/ncurses.h	include/
-	ncursesw/curses.h	include/
-	ncursesw/term.h		include/
-;	For Python:
-	ncursesw/panel.h	include/
-;	For INetUtils:
-;	include/ncursesw	/usr/include/
-;	For LinuxTree:
-	bin/clear			/usr/bin/
-;	For S-Lang:
-;	share/terminfo		/usr/share/
 
 ;move-files			share/terminfo /usr/share/
