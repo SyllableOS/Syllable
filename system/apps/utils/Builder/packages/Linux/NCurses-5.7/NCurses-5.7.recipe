@@ -4,6 +4,8 @@ status				testing
 configure-options
 	--with-shared
 ;	--without-debug
+;	--enable-reentrant
+;	--with-pthread
 ;	--with-termlib
 	--enable-widec
 	--enable-symlinks
@@ -35,11 +37,3 @@ links
 ;	share/terminfo			/usr/share/
 ;	Linked into BASh, which is called before the loader path is set:
 ;	lib/libncursesw.so.5	/system/resources/glibc/2.7/lib/
-
-pre-register
-	echo 'INPUT(-lncursesw)'	> lib/libncurses.so
-	echo 'INPUT(-lcursesw)'		> lib/libcurses.so
-	echo 'INPUT(-lformw)'		> lib/libform.so
-	echo 'INPUT(-lpanelw)'		> lib/libpanel.so
-	echo 'INPUT(-lmenuw)'		> lib/libmenu.so
-	echo 'INPUT(-lncursesw)'	> lib/libcursesw.so

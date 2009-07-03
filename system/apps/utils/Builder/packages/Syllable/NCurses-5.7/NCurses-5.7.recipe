@@ -2,7 +2,7 @@ authors				Kaj de Vos
 status				testing
 
 configure-options
-;	--with-shared
+	--with-shared
 ;	--without-debug
 ;	--enable-reentrant
 ;	--with-pthread

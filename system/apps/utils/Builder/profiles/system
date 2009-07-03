@@ -302,7 +302,7 @@ modules
 ;	For bootstrapping:
 ;	system apps/gnu/gcc-4.1.2-system
 
-	libs/NCurses-5.7
+	system libs/NCurses-5.7
 	system libs/ReadLine-6.0
 
 ;	For rescopy:
