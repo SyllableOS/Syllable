@@ -1,0 +1,22 @@
+authors
+	Jake Hamby
+	Kaj de Vos
+maintainers			Kaj de Vos
+status				testing
+
+inherits			sourceforge
+
+headline			GIF image programming library
+description
+	Giflib is a library for reading and writing gif images. It is API and ABI compatible with libungif which was in wide use while the LZW compression algorithm was patented.
+licenses			other
+
+home				giflib.sourceforge.net
+packages			giflib/giflib-4.1.6
+
+system-prefix-var	DESTDIR
+
+documentation
+	README UNCOMPRESSED_GIF COPYING BUGS NEWS ChangeLog AUTHORS TODO
+;	ONEWS
+internal-docs		DEVELOPERS

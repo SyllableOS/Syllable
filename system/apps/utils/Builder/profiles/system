@@ -336,7 +336,7 @@ modules
 ;	stage libraries/libjpeg-6b-static
 	stage libraries/LibJPEG-7
 	stage libraries/LibPNG-1.2.37
-	stage libraries/libungif-4.1.4
+	stage libraries/GIFLib-4.1.6
 	stage libraries/libtiff-3.8.2
 	stage libraries/flac-1.2.1
 	stage libraries/libogg-1.1.3

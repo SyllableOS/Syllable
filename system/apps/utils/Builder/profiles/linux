@@ -402,7 +402,7 @@ modules
 
 	system libraries/LibJPEG-7
 	system libraries/LibPNG-1.2.37
-	system libraries/libungif-4.1.4
+	system libraries/GIFLib-4.1.6
 	system libraries/libtiff-3.8.2
 	system libraries/flac-1.2.1
 	system libraries/libogg-1.1.3
