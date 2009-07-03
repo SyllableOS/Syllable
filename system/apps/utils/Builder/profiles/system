@@ -333,7 +333,8 @@ modules
 ;	freetype-config needs to be in the path:
 	bootstrap libraries/FreeType-2.3.9
 
-	stage libraries/libjpeg-6b-static
+;	stage libraries/libjpeg-6b-static
+	stage libraries/LibJPEG-7
 	stage libraries/libpng-1.2.29
 	stage libraries/libungif-4.1.4
 	stage libraries/libtiff-3.8.2

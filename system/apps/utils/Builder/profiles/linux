@@ -400,7 +400,7 @@ modules
 ;	For SDL-TTF:
 	system libraries/FreeType-2.3.9
 
-	system libraries/libjpeg-6b
+	system libraries/LibJPEG-7
 	system libraries/libpng-1.2.29
 	system libraries/libungif-4.1.4
 	system libraries/libtiff-3.8.2
