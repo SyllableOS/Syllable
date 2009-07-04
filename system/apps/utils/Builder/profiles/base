@@ -33,7 +33,7 @@ modules
 	documentation-SL--current
 
 	other/fonts/liberation-fonts--current
-	other/fonts/luxi-fonts
+	other/fonts/Luxi-fonts
 ;	For AClock:
 ;	The first one will produce two harmless unpacking errors:
 	other/fonts/lcd-fonts-1.1
