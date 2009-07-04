@@ -3,7 +3,7 @@ authors
 	Kaj de Vos
 status				testing
 
-inherits			gutenprint-5.0.1
+inherits			Gutenprint-5.2.3
 
 ; CUPS & Gutenprint are so tightly intertwined it makes sense to build Gutenprint into CUPS:
 merge-install

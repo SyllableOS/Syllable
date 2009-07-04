@@ -1,0 +1,57 @@
+authors
+	Kristian Van Der Vliet
+	Kaj de Vos
+status				testing
+;warnings			The generated PPDs will be moved to /tmp/.
+notes				Prior to version 5.0 Gutenprint was known as Gimp-Print
+
+inherits			sourceforge
+
+headline			Printer drivers collection
+description
+	High quality drivers for Canon, Epson, Lexmark, Sony, Olympus, and PCL printers for use with CUPS, Ghostscript, Foomatic, and GIMP.
+licenses			GPL
+
+home				gutenprint.sourceforge.net
+packages			gimp-print/gutenprint-5.2.3
+
+needs
+	zlib	>= 1.1.3
+	LibPNG	>= 1.0.6
+	LibJPEG	>= 6b
+	cups
+
+build-dir			.
+
+configure-options
+	--enable-cups-ppds
+	--enable-cups-ppds-at-top-level
+;	Note that we do eventually want to build the translated PPDs, just not yet:
+	--disable-translated-cups-ppds
+	--without-ghostscript
+	--without-foomatic
+	--without-gimp
+	--without-gimp2
+	--disable-samples
+	--disable-user-guide
+	--disable-libgutenprintui
+	--disable-libgutenprintui2
+
+; Double effect on Linux with tweaked cups-config:
+;system-prefix-var	DESTDIR
+
+documentation
+	README ABOUT-NLS COPYING NEWS AUTHORS
+;	Big:
+;	ChangeLog
+;	doc
+;	samples
+build-docs			README.package
+
+; Most users don't want all of the PPD files installed. Move them out of the way for later processing.
+;move-files			share/cups/model /tmp/
+
+_delete-files
+	sbin/cups-genppd.5.2
+	sbin/cups-genppdconfig.5.2
+	sbin/cups-genppdupdate.5.2
