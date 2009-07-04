@@ -409,7 +409,7 @@ modules
 	system libraries/LibVorbis-1.2.2
 	system libraries/LibTheora-1.0
 	stage libraries/FFMPEG-0.5
-	stage libraries/faad-2.6.1
+	stage libraries/FAAD-2.7
 
 	system apps/other/directfb-1.0.0
 

@@ -343,7 +343,7 @@ modules
 	stage libraries/LibVorbis-1.2.2
 	stage libraries/LibTheora-1.0
 	stage libraries/FFMPEG-0.5
-	stage libraries/faad-2.6.1
+	stage libraries/FAAD-2.7
 
 	sys/appserver/libsyllable
 

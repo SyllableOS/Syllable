@@ -1,0 +1,30 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			sourceforge
+
+headline			MPEG-4 and MPEG-2 AAC decoder
+description
+	FAAD2 is an open source MPEG-4 and MPEG-2 AAC decoder.
+licenses			GPL-2
+
+home				www.audiocoding.com
+packages			faac/faad2-2.7
+
+recommends			libmp4v2
+
+;patch				autoreconf -vif
+
+configure-options
+	--disable-shared
+;	--with-mp4v2
+;	--with-mpeg4ip
+;	--with-drm
+;	--with-xmms
+
+system-prefix-var	DESTDIR
+
+documentation
+	README COPYING NEWS ChangeLog AUTHORS TODO
+	docs/*.pdf
+build-docs			README.linux
