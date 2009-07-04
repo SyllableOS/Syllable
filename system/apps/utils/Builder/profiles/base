@@ -153,4 +153,4 @@ modules
 
 ;	Extra goodies
 
-	apps/other/openssh-4.7p1
+	apps/other/OpenSSH-5.2p1

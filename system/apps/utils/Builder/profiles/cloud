@@ -338,7 +338,7 @@ modules
 	other/data/CA-Certificates--current
 
 	system apps/other/curl-7.18.2
-	system apps/other/openssh-5.0p1
+	system apps/other/OpenSSH-5.2p1
 	apps/other/dhcp-3.0.5
 	apps/other/msntp-1.6
 
