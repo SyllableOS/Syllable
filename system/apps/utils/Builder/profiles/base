@@ -40,7 +40,7 @@ modules
 
 	other/data/MIME-Support--current
 
-	apps/other/mktemp-1.5
+	apps/other/MkTemp-1.6
 
 ;	Needs ranlib and perl symlinks in /usr/bin/!
 ;	For cURL:

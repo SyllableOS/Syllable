@@ -1,0 +1,32 @@
+authors				Kaj de Vos
+status				testing
+
+headline			Creates safe temporary files
+description
+	Mktemp is a small program to allow safe temporary file creation from shell scripts.
+licenses			ISC
+
+home				www.mktemp.org
+packages			mktemp-1.6
+locations
+;	Sigh:
+	ftp://ftp.mktemp.org/pub/mktemp/OLD/
+	http://www.mktemp.org/dist/OLD/
+	ftp://ftp.mktemp.org/pub/mktemp/
+	http://www.mktemp.org/dist/
+
+; ?:
+conflicts			coreutils
+
+configure-options
+	--with-libc
+;	--with-random=/dev/urandom
+
+_install-targets
+	install
+	install-tempfile
+;	install-binaries
+;	install-man
+
+documentation		README LICENSE RELEASE_NOTES
+build-docs			INSTALL

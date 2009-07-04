@@ -498,7 +498,7 @@ modules
 	linux/blfs-bootscripts-20070822
 	linux/procps-3.2.7
 	apps/other/sudo-1.6.9p9
-	apps/other/mktemp-1.5
+	apps/other/MkTemp-1.6
 
 ;	Needs ranlib symlink in /usr/bin/!
 ;	For cURL:
