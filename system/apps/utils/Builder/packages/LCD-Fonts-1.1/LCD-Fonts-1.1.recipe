@@ -1,0 +1,31 @@
+authors				Kaj de Vos
+
+headline			LCD Fonts
+description
+	LCD (and its variants) is an upper-case-only typeface.  The lower-case characters are identical to the upper-case characters, with the exception of the letters "J", "M", "W", and "Y".  To see the difference between the upper- and lower-case symbols, enter the alphabet in both upper- and lower-case in your word processor, and set the font to LCD. I recommend that you use either all upper-case or all lower-case characters with this font.
+licenses			other
+
+home				www.spinwardstars.com/scrfonts/
+;packages			lcdwintt LCD-Fonts-1.1
+locations
+;	Unpacking produces an error with unzip, although the source is unpacked alright:
+;	http://www.spinwardstars.com/scrfonts/zip/
+	http://downloads.syllable.org/sources/resources/LCD-Fonts/
+
+make				true
+
+install-tree
+install				true
+install-files
+;	LCDWinTT/LCD-N___.TTF	LCD-Normal.ttf
+;	LCDWinTT/LCD-L___.TTF	LCD-Light.ttf
+;	LCDWinTT/LCD-BOLD.TTF	LCD-Bold.ttf
+;	LCDWinTT/LCD-U___.TTF	LCD-Ultra.ttf
+	LCDWinTT/LCD2N___.TTF	LCD2-Normal.ttf
+;	LCDWinTT/LCD2L___.TTF	LCD2-Light.ttf
+;	LCDWinTT/LCD2B___.TTF	LCD2-Bold.ttf
+;	LCDWinTT/LCD2U___.TTF	LCD2-Ultra.ttf
+
+documentation		README.TXT LICENSE.TXT
+
+move-files			*.ttf /system/fonts/

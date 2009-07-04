@@ -35,9 +35,7 @@ modules
 	other/fonts/liberation-fonts--current
 	other/fonts/Luxi-fonts
 ;	For AClock:
-;	The first one will produce two harmless unpacking errors:
-	other/fonts/lcd-fonts-1.1
-	other/fonts/lcd-fonts-1.1
+	other/fonts/LCD-Fonts-1.1
 	other/fonts/freefont-20060126
 
 	other/data/mime-support--current
