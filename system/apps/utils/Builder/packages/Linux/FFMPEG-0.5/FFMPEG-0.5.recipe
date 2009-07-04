@@ -1,0 +1,24 @@
+authors				Kaj de Vos
+status				testing
+
+configure-options
+	--cpu=i486
+	--extra-cflags='-fomit-frame-pointer'
+;	--enable-shared
+	--enable-pthreads
+	--disable-debug
+;	--disable-ffserver
+;	--disable-ffplay
+;	--disable-vhook
+	--enable-gpl
+	--enable-postproc
+	--enable-swscaler
+;	--enable-libfaac
+;	--enable-libfaad
+;	--enable-libogg
+;	--disable-demuxer=OGG
+;	--enable-libvorbis
+;	--enable-libtheora
+;	--enable-libmp3lame
+;	--enable-libx264
+;	--enable-libxvid

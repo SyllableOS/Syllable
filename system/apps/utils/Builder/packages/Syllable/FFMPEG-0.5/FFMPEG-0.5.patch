@@ -1,0 +1,12 @@
+diff -ur ffmpeg-0.5.0_orig/configure ffmpeg-0.5.0/configure
+--- ffmpeg-0.5.0_orig/configure	2009-03-01 17:57:14.000000000 +0000
++++ ffmpeg-0.5.0/configure	2009-06-08 13:42:32.000000000 +0000
+@@ -1638,6 +1638,8 @@
+     interix)
+         disable vhook
+         ;;
++    syllable)
++        ;;
+ 
+     *)
+         die "Unknown OS '$target_os'."
