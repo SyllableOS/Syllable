@@ -51,7 +51,7 @@ modules
 	other/data/CA-Certificates--current
 
 	system apps/other/libusb-0.1.12
-	system apps/other/curl-7.18.2
+	system apps/other/cURL-7.19.5
 	apps/other/msntp-1.6
 
 	system apps/other/cups-1.3.4

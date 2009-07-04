@@ -508,7 +508,7 @@ modules
 	system apps/other/libusb-0.1.12
 	system linux/alsa-library-1.0.15
 	linux/alsa-utils-1.0.15
-	system apps/other/curl-7.18.2
+	system apps/other/cURL-7.19.5
 	system apps/other/OpenSSH-5.2p1
 	apps/other/dhcp-3.0.5
 	linux/wirelesstools-29
