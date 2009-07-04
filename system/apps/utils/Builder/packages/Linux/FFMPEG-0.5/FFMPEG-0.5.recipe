@@ -12,13 +12,13 @@ configure-options
 	--disable-vhook
 	--enable-gpl
 	--enable-postproc
-;	--enable-swscaler
+	--enable-swscale
 ;	--enable-libfaac
 ;	--enable-libfaad
 ;	--enable-libogg
 ;	--disable-demuxer=OGG
 ;	--enable-libvorbis
-;	--enable-libtheora
+	--enable-libtheora
 ;	--enable-libmp3lame
 ;	--enable-libx264
 ;	--enable-libxvid

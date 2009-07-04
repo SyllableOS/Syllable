@@ -15,7 +15,7 @@ packages			ffmpeg-0.5
 locations			http://ffmpeg.org/releases/
 ;archives			svn://svn.mplayerhq.hu/ffmpeg/trunk FFMPEG
 
-;needs				libtheora
+needs				LibTheora
 build-needs
 	bash <> 2.03
 	make >= 3.80
