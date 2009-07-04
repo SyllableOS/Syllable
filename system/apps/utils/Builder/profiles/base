@@ -36,7 +36,7 @@ modules
 	other/fonts/Luxi-fonts
 ;	For AClock:
 	other/fonts/LCD-Fonts-1.1
-	other/fonts/freefont-20060126
+	other/fonts/FreeFont--current
 
 	other/data/mime-support--current
 
