@@ -9,10 +9,10 @@ configure-options
 	--disable-debug
 ;	--disable-ffserver
 ;	--disable-ffplay
-;	--disable-vhook
+	--disable-vhook
 	--enable-gpl
 	--enable-postproc
-	--enable-swscaler
+;	--enable-swscaler
 ;	--enable-libfaac
 ;	--enable-libfaad
 ;	--enable-libogg

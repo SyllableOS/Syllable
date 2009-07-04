@@ -32,5 +32,6 @@ install-files		../_FFMPEG-0.5/config.h include/ffmpeg/
 documentation
 	README COPYING.GPL COPYING.LGPL Changelog CREDITS MAINTAINERS doc/TODO
 ;	doc/*.txt
+develop-docs		RELEASE
 build-docs			INSTALL
 internal-docs		doc/soc.txt	doc/optimization.txt
