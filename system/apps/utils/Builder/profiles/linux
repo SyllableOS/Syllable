@@ -406,7 +406,7 @@ modules
 	system libraries/libtiff-3.8.2
 	system libraries/LibOgg-1.1.4
 	system libraries/flac-1.2.1
-	system libraries/libvorbis-1.2.0
+	system libraries/LibVorbis-1.2.2
 	system libraries/libtheora-1.0beta3
 	stage libraries/ffmpeg-0.5.0
 	stage libraries/faad-2.6.1
