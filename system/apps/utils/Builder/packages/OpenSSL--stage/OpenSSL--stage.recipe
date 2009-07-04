@@ -1,0 +1,9 @@
+authors 			Kaj de Vos
+status				testing
+
+inherits			OpenSSL-0.9.8k
+
+install-vars
+	OPENSSLDIR		"$IMAGE/etc/ssl"
+	INSTALLTOP		"$STAGE/OpenSSL"
+	MANDIR			"$STAGE/OpenSSL/man"
