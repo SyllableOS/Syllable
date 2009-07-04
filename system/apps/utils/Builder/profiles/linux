@@ -493,7 +493,7 @@ modules
 	other/fonts/LCD-Fonts-1.1
 	other/fonts/FreeFont--current
 
-	other/data/mime-support--current
+	other/data/MIME-Support--current
 
 	linux/blfs-bootscripts-20070822
 	linux/procps-3.2.7

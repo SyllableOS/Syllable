@@ -325,7 +325,7 @@ modules
 
 ;	Syllable Linux base distribution, in addition to core system
 
-	other/data/mime-support--current
+	other/data/MIME-Support--current
 
 	linux/blfs-bootscripts-20070822
 	linux/procps-3.2.7
