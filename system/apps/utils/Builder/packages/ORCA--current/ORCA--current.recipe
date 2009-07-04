@@ -1,0 +1,50 @@
+authors				Kaj de Vos
+status				testing
+notes				Tested with ORCA and M2 SVN snapshot December 4, 2007
+
+headline			Open source REBOL Can be Achieved
+description
+	The Urlan Project is an exploration of language oriented programming using small run-time environments. There are currently two related sub-projects: Orca & Thune. These are interpreted, homoiconic languages, which are well suited for embedding domain specific languages.
+	Orca closely emulates the REBOL language. The interpreter is a C library so that C/C++ applications can use Orca as an embedded scripting system.
+licenses
+	LGPL
+;	M2:
+	MIT
+
+home
+	urlan.sf.net
+;	wsrebol.sf.net
+packages
+	ORCA-498.source
+;	M2-498.source ORCA--current
+locations			http://downloads.syllable.org/sources/resources/ORCA/
+archives
+	svn co http://urlan.svn.sourceforge.net/svnroot/urlan/trunk/orca
+;	M2:
+;	svn co http://urlan.svn.sourceforge.net/svnroot/urlan/trunk/m2
+
+build-needs
+;	m2
+;	REBOL
+	bzip2
+
+_patch
+	mv m2-498/m2			configure
+	cp m2-498/m2_linux.r	m2_template.r
+;	Uncomment os_call in config.r, and possibly math3d and number_arrays and rebol
+	rebol 					boot_str.r
+
+;build-dir			.
+
+; REBOL needs to be in /usr/bin/ to run M2 configure
+_configure
+	configure
+;	Fix ORCA_LFLAGS in Makefile
+
+install-tree		bin lib include
+install				true
+install-files
+	orca			bin
+	liborca0.a		lib
+	ovalue.h		include
+documentation		README LICENSE ChangeLog TODO

@@ -328,7 +328,7 @@ modules
 	system apps/other/unzip-5.52
 
 	apps/gnu/bzip2-1.0.5
-	system apps/other/orca--current
+	system apps/other/ORCA--current
 
 ;	freetype-config needs to be in the path:
 	bootstrap libraries/FreeType-2.3.9

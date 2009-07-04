@@ -371,7 +371,7 @@ modules
 	system apps/other/unzip-5.52
 
 	apps/gnu/bzip2-1.0.5
-	system apps/other/orca--current
+	system apps/other/ORCA--current
 
 	system linux/sysvinit-2.86
 	system linux/lfs-bootscripts-6.3
