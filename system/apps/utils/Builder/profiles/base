@@ -48,7 +48,7 @@ modules
 ;	Seems to cause extremely slow cURL:
 ;	stage libraries/c-ares-1.5.2
 	stage libraries/openssl--stage
-	other/data/ca-certificates--current
+	other/data/CA-Certificates--current
 
 	system apps/other/libusb-0.1.12
 	system apps/other/curl-7.18.2

@@ -335,7 +335,7 @@ modules
 ;	Needs ranlib symlink in /usr/bin/!
 ;	For cURL:
 	stage libraries/openssl--stage
-	other/data/ca-certificates--current
+	other/data/CA-Certificates--current
 
 	system apps/other/curl-7.18.2
 	system apps/other/openssh-5.0p1
