@@ -1,0 +1,60 @@
+authors
+	Kristian Van Der Vliet
+	Kaj de Vos
+status				testing
+
+inherits			sourceforge
+
+headline			PostScript and PDF tools and library
+description
+	Ghostscript is a package of software that provides:
+ 	- An interpreter for the PostScript (TM) language, with the ability to convert PostScript language files to many raster formats, view them on displays, and print them on printers that don't have PostScript language capability built in;
+ 	- An interpreter for Portable Document Format (PDF) files, with the same abilities;
+ 	- The ability to convert PostScript language files to PDF (with some limitations) and vice versa; and
+ 	- A set of C procedures (the Ghostscript library) that implement the graphics and filtering (data compression / decompression / conversion) capabilities that appear as primitive operations in the PostScript language and in PDF.
+licenses			GPL
+
+home
+	www.ghostscript.com
+;	GNU fork:
+;	www.gnu.org/software/ghostscript/
+packages
+	ghostscript/ghostscript-8.64
+;	ghostscript-8.64
+_locations
+	http://ghostscript.com/releases/
+	ftp://mirror.cs.wisc.edu/pub/mirrors/ghost/GPL/current/
+	http://mirror.cs.wisc.edu/pub/mirrors/ghost/GPL/current/
+
+needs
+	zlib >= 1.2.1
+	LibPNG
+	LibJPEG
+recommends
+	cups
+;	libtiff
+
+build-dir			.
+
+; The intention of these configure options is to produce the smallest gs binary possible.
+; I can't seem to drop the PNG output driver though.
+configure-options
+	--with-fontpath=/system/fonts
+;	cups is not an option any more:
+;	--with-drivers=PS,cups
+	--without-ijs
+	--without-jbig2dec
+
+install-tree
+	share
+	share/ghostscript
+	share/ghostscript/8.64
+	share/ghostscript/8.64/Resource
+	share/ghostscript/8.64/Resource/Font
+;install-targets		soinstall
+
+documentation
+	LICENSE
+;	doc/README doc/COPYING
+	doc/*
+;	examples
