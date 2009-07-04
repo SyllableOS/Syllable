@@ -22,6 +22,8 @@ configure-options
 	--with-libc
 ;	--with-random=/dev/urandom
 
+;super-install
+
 _install-targets
 	install
 	install-tempfile
