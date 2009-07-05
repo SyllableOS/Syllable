@@ -1,0 +1,24 @@
+authors
+	Kristian Van Der Vliet
+	Kaj de Vos
+status				testing
+
+inherits			sourceforge
+
+headline			SPL/QPDL (Samsung Printer Language) printer drivers
+description
+	SpliX is a set of CUPS printer drivers for SPL (Samsung Printer Language) printers. If you have such a printer, you need to use SpliX. This driver is usable by all printer devices which understand the QPDL (Quick Page Description Language) language. It covers several Samsung, Xerox, Dell and Ricoh printers like the ML-2250 which uses it as a native printer language.
+licenses			GPL
+
+home				splix.sourceforge.net
+packages			splix/splix-2.0.0
+
+; ?:
+build-needs
+;	libjbig
+	JBIG-Kit
+;	jbig2dec
+needs				cups
+
+documentation		README INSTALL COPYING ChangeLog AUTHORS THANKS TODO
+;build-docs			INSTALL

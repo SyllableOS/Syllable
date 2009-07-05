@@ -1,7 +1,7 @@
 authors				Kristian Van Der Vliet
 status				testing
 
-inherits			splix-1.1.0
+inherits			SPLix-2.0.0
 
 ; SpliX is a CUPS driver so it makes sense to build it into CUPS:
 merge-install
