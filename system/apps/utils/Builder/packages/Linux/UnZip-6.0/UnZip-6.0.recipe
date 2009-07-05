@@ -1,0 +1,11 @@
+authors				Kaj de Vos
+status				testing
+
+make-file			unix/Makefile
+make-targets
+	linux
+;	linux_shlib
+
+documentation
+	README WHERE LICENSE COPYING.OLD BUGS History.600 ToDo
+	*.txt

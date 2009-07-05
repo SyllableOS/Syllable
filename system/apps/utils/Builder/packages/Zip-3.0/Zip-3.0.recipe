@@ -16,3 +16,4 @@ packages
 
 install-tree		bin
 build-docs			INSTALL
+develop-docs		proginfo

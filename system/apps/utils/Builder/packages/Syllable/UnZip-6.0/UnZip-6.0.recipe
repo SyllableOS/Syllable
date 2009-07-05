@@ -1,0 +1,14 @@
+authors
+	Ruslan Nickolaev
+	Kaj de Vos
+maintainers			Kaj de Vos
+status				testing
+
+patch				mv atheos/README README.Syllable
+
+make-file			atheos/Makefile
+
+documentation
+	README WHERE LICENSE COPYING.OLD BUGS History.600 ToDo
+	README.Syllable
+	*.txt

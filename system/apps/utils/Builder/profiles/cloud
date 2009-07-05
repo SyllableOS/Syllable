@@ -292,7 +292,7 @@ modules
 ;	For init scripts:
 	system apps/gnu/GRep-2.5.4
 	apps/gnu/SEd-4.2.1
-	system apps/other/unzip-5.52
+	system apps/other/UnZip-6.0
 
 	apps/gnu/bzip2-1.0.5
 	system apps/other/ORCA--current

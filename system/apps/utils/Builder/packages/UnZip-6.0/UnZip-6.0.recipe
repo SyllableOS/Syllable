@@ -1,0 +1,27 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			sourceforge
+
+headline			Zip file unpacker
+description
+	UnZip is an extraction utility for archives compressed in .zip format (also called "zipfiles"). Although highly compatible both with PKWARE's PKZIP and PKUNZIP utilities for MS-DOS and with Info-ZIP's own Zip program, the primary objectives have been portability and non-MSDOS functionality.
+licenses			other
+
+home				www.info-zip.org/UnZip.html
+packages
+	infozip/unzip60
+; For unreducing:
+;	infozip/unred60
+
+; For unreducing:
+;make-env			LOCAL_UNZIP '-DUSE_SMITH_CODE'
+
+install-tree
+	bin
+	man
+	man/man1
+
+build-docs			INSTALL
+develop-docs		proginfo
+internal-docs		Contents
