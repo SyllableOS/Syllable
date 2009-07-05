@@ -1,5 +1,7 @@
 authors				Kaj de Vos
-status				testing
+status				developing
+
+make-shared
 
 configure-options
 	--with-shared
@@ -9,7 +11,7 @@ configure-options
 ;	--with-termlib
 	--enable-widec
 	--enable-symlinks
-; Linking the C++ demo fails with undefined SjLj symbols which are in libgcc_s.so:
+;	Linking the C++ demo fails with undefined SjLj symbols which are in libgcc_s.so:
 	--without-cxx-binding
 
 links
