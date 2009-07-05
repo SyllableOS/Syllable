@@ -75,7 +75,7 @@ modules
 	apps/other/7-Zip-9.04
 ;	For grub-install:
 	apps/gnu/diffutils-2.8.1
-	apps/other/netcat-1.10
+	apps/other/NetCat-1.10
 	apps/other/transmission-1.06
 	apps/other/cdrtools-2.01
 
