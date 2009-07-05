@@ -530,7 +530,7 @@ modules
 	apps/gnu/INetUtils-1.6
 	apps/gnu/Less-429
 	apps/gnu/TAr-1.22
-	apps/other/zip-2.32
+	apps/other/Zip-3.0
 	apps/other/p7zip-4.61
 ;	For grub-install:
 	apps/gnu/diffutils-2.8.1

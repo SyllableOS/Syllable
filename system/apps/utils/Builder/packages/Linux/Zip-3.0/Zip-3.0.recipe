@@ -1,0 +1,10 @@
+authors				Kaj de Vos
+status				testing
+
+make-file			unix/Makefile
+make-targets		generic_gcc
+
+documentation
+	README README.CR USexport.msg WHERE MANUAL LICENSE WHATSNEW CHANGES TODO
+;	Currently applies only to BSD:
+;	BUGS

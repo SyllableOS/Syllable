@@ -1,0 +1,16 @@
+authors
+	Ruslan Nickolaev
+	Kaj de Vos
+maintainers			Kaj de Vos
+status				testing
+;warnings			Bug fix rolled back due to breakage in Syllable port.
+
+patch				mv atheos/README README.Syllable
+
+make-file			atheos/Makefile
+
+documentation
+	README README.CR USexport.msg WHERE MANUAL LICENSE WHATSNEW CHANGES TODO
+	README.Syllable
+;	Currently applies only to BSD:
+;	BUGS
