@@ -524,7 +524,7 @@ modules
 ;	apps/utils/Preferences/Printers
 ;	apps/utils/PrintQueue
 
-	system apps/other/sane-backends-1.0.18
+	system apps/other/SANE-Backends-1.0.20
 
 	apps/gnu/gzip-1.3.12
 	apps/gnu/INetUtils-1.6
