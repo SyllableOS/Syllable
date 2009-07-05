@@ -349,7 +349,7 @@ modules
 	apps/gnu/Less-429
 	apps/gnu/TAr-1.22
 	apps/other/Zip-3.0
-	apps/other/p7zip-4.61
+	apps/other/7-Zip-9.04
 ;	For grub-install:
 	apps/gnu/diffutils-2.8.1
 	apps/other/netcat-1.10
