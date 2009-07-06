@@ -17,6 +17,6 @@ packages			giflib/giflib-4.1.6
 system-prefix-var	DESTDIR
 
 documentation
-	README UNCOMPRESSED_GIF COPYING BUGS NEWS ChangeLog AUTHORS TODO
+	README COPYING BUGS NEWS ChangeLog AUTHORS TODO
 ;	ONEWS
 internal-docs		DEVELOPERS
