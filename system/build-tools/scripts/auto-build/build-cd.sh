@@ -106,12 +106,12 @@ FILES=(	"/etc/profile, /etc/profile" 															\
 		"/resources/gzip/bin/gzip, /bin/gzip"												\
 		"/resources/SEd/bin/sed, /bin/sed"												\
 		"/resources/TAr/bin/tar, /bin/tar"												\
-		"/resources/ncurses/bin/clear, /bin/clear"										\
+		"/system/resources/NCurses/5.7/bin/clear, /bin/clear"										\
 		"/resources/Less/bin/less, /bin/less"												\
 		"/resources/diffutils/bin/cmp, /bin/cmp"												\
 		"/resources/GRep/bin/grep, /bin/grep"												\
 																											\
-		"/system/resources/unzip/5.52/bin/unzip, /bin/unzip"											\
+		"/system/resources/UnZip/6.0/bin/unzip, /bin/unzip"											\
 		"/system/resources/BASh/4.0/bin/bash, /bin/bash"												\
 																											\
 		"/usr/share/terminfo/r/rxvt-16color, /usr/share/terminfo/r/rxvt-16color"				\
