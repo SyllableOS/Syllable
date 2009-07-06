@@ -1,0 +1,154 @@
+diff -ur 7-Zip-9.04-original/CPP/7zip/Archive/7z/7zHeader.cpp 7-Zip-9.04/CPP/7zip/Archive/7z/7zHeader.cpp
+--- 7-Zip-9.04-original/CPP/7zip/Archive/7z/7zHeader.cpp	2008-08-14 09:11:27.000000000 +0000
++++ 7-Zip-9.04/CPP/7zip/Archive/7z/7zHeader.cpp	2009-07-06 03:41:42.000000000 +0000
+@@ -11,15 +11,20 @@
+ Byte kFinishSignature[kSignatureSize] = {'7' + 1, 'z', 0xBC, 0xAF, 0x27, 0x1C + 1};
+ #endif
+ 
++static bool bDone = false;
++
+ class SignatureInitializer
+ {
+ public:
+   SignatureInitializer()
+   {
+-    kSignature[0]--;
+-    #ifdef _7Z_VOL
+-    kFinishSignature[0]--;
+-    #endif
++    if( !bDone ) {
++      kSignature[0]--;
++      #ifdef _7Z_VOL
++      kFinishSignature[0]--;
++      #endif
++      bDone = true;
++    }
+   };
+ } g_SignatureInitializer;
+ 
+diff -ur 7-Zip-9.04-original/CPP/7zip/Archive/Cab/CabHeader.cpp 7-Zip-9.04/CPP/7zip/Archive/Cab/CabHeader.cpp
+--- 7-Zip-9.04-original/CPP/7zip/Archive/Cab/CabHeader.cpp	2008-08-14 09:11:24.000000000 +0000
++++ 7-Zip-9.04/CPP/7zip/Archive/Cab/CabHeader.cpp	2009-07-06 03:43:42.000000000 +0000
+@@ -10,6 +10,17 @@
+ 
+ Byte kMarker[kMarkerSize] = {'M' + 1, 'S', 'C', 'F', 0, 0, 0, 0 };
+ 
+-struct SignatureInitializer { SignatureInitializer() {  kMarker[0]--;  }; } g_SignatureInitializer;
++static bool bDone = false;
++
++struct SignatureInitializer
++{
++  SignatureInitializer()
++  {
++    if( !bDone ) {
++      kMarker[0]--;
++      bDone = true;
++    }
++  };
++} g_SignatureInitializer;
+ 
+ }}}
+diff -ur 7-Zip-9.04-original/CPP/7zip/Archive/Chm/ChmHeader.cpp 7-Zip-9.04/CPP/7zip/Archive/Chm/ChmHeader.cpp
+--- 7-Zip-9.04-original/CPP/7zip/Archive/Chm/ChmHeader.cpp	2008-08-14 09:11:27.000000000 +0000
++++ 7-Zip-9.04/CPP/7zip/Archive/Chm/ChmHeader.cpp	2009-07-06 03:44:57.000000000 +0000
+@@ -10,13 +10,19 @@
+ 
+ UInt32 kItsfSignature = 0x46535449 + 1;
+ UInt32 kItolSignature = 0x4C4F5449 + 1;
++
++static bool bDone = false;
++
+ static class CSignatureInitializer
+ {
+ public:
+   CSignatureInitializer()
+   {
+-    kItsfSignature--;
+-    kItolSignature--;
++    if( !bDone ) {
++      kItsfSignature--;
++      kItolSignature--;
++      bDone = true;
++    }
+   }
+ }g_SignatureInitializer;
+ 
+diff -ur 7-Zip-9.04-original/CPP/7zip/Archive/Nsis/NsisIn.cpp 7-Zip-9.04/CPP/7zip/Archive/Nsis/NsisIn.cpp
+--- 7-Zip-9.04-original/CPP/7zip/Archive/Nsis/NsisIn.cpp	2008-08-14 09:11:24.000000000 +0000
++++ 7-Zip-9.04/CPP/7zip/Archive/Nsis/NsisIn.cpp	2009-07-06 03:49:56.000000000 +0000
+@@ -24,7 +24,18 @@
+ Byte kSignature[kSignatureSize] = { 0xEF + 1, 0xBE, 0xAD, 0xDE,
+ 0x4E, 0x75, 0x6C, 0x6C, 0x73, 0x6F, 0x66, 0x74, 0x49, 0x6E, 0x73, 0x74};
+ 
+-struct CSignatureInit { CSignatureInit() { kSignature[0]--; } } g_SignatureInit;
++static bool bDone = false;
++
++struct CSignatureInit
++{
++  CSignatureInit()
++  {
++    if( !bDone ) {
++      kSignature[0]--;
++      bDone = true;
++    }
++  }
++} g_SignatureInit;
+ 
+ #ifdef NSIS_SCRIPT
+ static const char *kCrLf = "\x0D\x0A";
+diff -ur 7-Zip-9.04-original/CPP/7zip/Archive/Rar/RarHeader.cpp 7-Zip-9.04/CPP/7zip/Archive/Rar/RarHeader.cpp
+--- 7-Zip-9.04-original/CPP/7zip/Archive/Rar/RarHeader.cpp	2008-08-14 09:11:25.000000000 +0000
++++ 7-Zip-9.04/CPP/7zip/Archive/Rar/RarHeader.cpp	2009-07-06 03:48:10.000000000 +0000
+@@ -9,11 +9,18 @@
+ namespace NHeader{
+ 
+ Byte kMarker[kMarkerSize] = {0x52 + 1, 0x61, 0x72, 0x21, 0x1a, 0x07, 0x00};
++
++static bool bDone = false;
+   
+ class CMarkerInitializer
+ {
+ public:
+-  CMarkerInitializer() { kMarker[0]--; };
++  CMarkerInitializer() {
++    if( !bDone ) {
++      kMarker[0]--;
++      bDone = true;
++    }
++  };
+ };
+ 
+ static CMarkerInitializer markerInitializer;
+diff -ur 7-Zip-9.04-original/CPP/7zip/Archive/Zip/ZipHeader.cpp 7-Zip-9.04/CPP/7zip/Archive/Zip/ZipHeader.cpp
+--- 7-Zip-9.04-original/CPP/7zip/Archive/Zip/ZipHeader.cpp	2008-08-14 09:11:26.000000000 +0000
++++ 7-Zip-9.04/CPP/7zip/Archive/Zip/ZipHeader.cpp	2009-07-06 03:46:30.000000000 +0000
+@@ -15,18 +15,23 @@
+   UInt32 kEndOfCentralDir   = 0x06054B50 + 1;
+   UInt32 kZip64EndOfCentralDir   = 0x06064B50 + 1;
+   UInt32 kZip64EndOfCentralDirLocator   = 0x07064B50 + 1;
++
++  static bool bDone = false;
+   
+   class CMarkersInitializer
+   {
+   public:
+     CMarkersInitializer()
+     {
+-      kLocalFileHeader--;
+-      kDataDescriptor--;
+-      kCentralFileHeader--;
+-      kEndOfCentralDir--;
+-      kZip64EndOfCentralDir--;
+-      kZip64EndOfCentralDirLocator--;
++      if( !bDone ) {
++        kLocalFileHeader--;
++        kDataDescriptor--;
++        kCentralFileHeader--;
++        kEndOfCentralDir--;
++        kZip64EndOfCentralDir--;
++        kZip64EndOfCentralDirLocator--;
++        bDone = true;
++      }
+     }
+   };
+   static CMarkersInitializer g_MarkerInitializer;
