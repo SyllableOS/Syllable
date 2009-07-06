@@ -1,3 +1,10 @@
+* July 6, 2009, Kaj de Vos *
+
+Upgraded most resource packages in the base system.
+Started capitalising resource names for best clarity.
+
+Renamed root group to "administrators".
+
 * June 2, 2009, Anthony Morphett *
 
 Made the login app fully keyboard navigable; IconView key handling bugfix.
