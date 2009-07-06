@@ -26,7 +26,8 @@ install-files
 	cacert.org/*.crt	etc/ssl/certs/
 	debconf.org/*.crt	etc/ssl/certs/
 	gouv.fr/*.crt		etc/ssl/certs/
-	mozilla/*.crt		etc/ssl/certs/
+;	Hidden in a collection file now:
+;	mozilla/*.crt		etc/ssl/certs/
 	quovadis.bm/*.crt	etc/ssl/certs/
 	signet.pl/*.crt		etc/ssl/certs/
 	spi-inc.org/*.crt	etc/ssl/certs/
