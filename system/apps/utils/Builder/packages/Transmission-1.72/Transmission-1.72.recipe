@@ -18,10 +18,12 @@ locations
 
 needs				Syllable >= 0.6.3
 build-needs			pkg-config
-;recommends			OpenSSL
+recommends
+	OpenSSL
+	cURL
 
 ;make-shared
 
 system-prefix-var	DESTDIR
 
-documentation		README LICENSE COPYING NEWS ChangeLog AUTHORS
+documentation		README COPYING NEWS ChangeLog AUTHORS
