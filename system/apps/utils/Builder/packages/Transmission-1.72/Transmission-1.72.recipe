@@ -1,0 +1,27 @@
+authors
+	Kaj de Vos
+	Kristian Van Der Vliet
+status				testing
+
+headline			BitTorrent client
+description
+	Transmission is a fast, easy, and free multi-platform BitTorrent client with a focus on being lightweight yet feature-filled. On Syllable, currently only the text-mode version is available.
+licenses			MIT GPL-2+exception
+
+home
+	www.transmissionbt.com
+;	transmission.m0k.org
+packages			transmission-1.72
+locations
+	http://mirrors.m0k.org/transmission/files/
+	http://download.m0k.org/transmission/files/
+
+needs				Syllable >= 0.6.3
+build-needs			pkg-config
+;recommends			OpenSSL
+
+;make-shared
+
+system-prefix-var	DESTDIR
+
+documentation		README LICENSE COPYING NEWS ChangeLog AUTHORS
