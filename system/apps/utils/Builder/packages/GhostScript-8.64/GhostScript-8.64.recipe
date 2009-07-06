@@ -58,3 +58,5 @@ documentation
 ;	doc/README doc/COPYING
 	doc/*
 ;	examples
+; Huge:
+delete-files			documentation/History*.htm
