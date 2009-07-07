@@ -4,7 +4,7 @@ status				developing
 make-shared
 
 configure-options
-	--with-shared
+;	--with-shared
 ;	--without-debug
 ;	--enable-reentrant
 ;	--with-pthread
