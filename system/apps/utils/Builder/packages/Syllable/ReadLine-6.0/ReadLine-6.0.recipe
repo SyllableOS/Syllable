@@ -9,3 +9,8 @@ configure-options
 ;make-targets		everything shared
 
 ;install-targets		install install-static install-shared
+
+; Fix build bug:
+links
+	libreadline.so.6	lib/libreadline.so
+	libhistory.so.6		lib/libhistory.so
