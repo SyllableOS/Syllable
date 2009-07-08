@@ -1,7 +1,7 @@
 authors				Kaj de Vos
 status				developing
 
-make-shared
+;make-shared
 
 configure-options
 ;	--with-shared
