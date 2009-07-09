@@ -21,8 +21,8 @@ install-tree
 	man/man5
 install				true
 install-files
-	libjbig/libjbig.a	lib/
-	libjbig/jbig.h		include/
+	libjbig/libjbig*.a	lib/
+	libjbig/jbig*.h		include/
 	pbmtools/jbgtopbm	bin/
 	pbmtools/pbmtojbg	bin/
 	pbmtools/jbgtopbm.1	man/man1/
