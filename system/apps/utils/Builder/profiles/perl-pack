@@ -7,13 +7,14 @@ description
 
 modules
 	programming/languages/perl-5.10.0
-;	Higher versions cause warnings on SDL 1.2.13:
-	programming/autoconf-2.61
+;	BinUtils 2.19.1 insists on 2.59:
+;	Versions higher than 2.61 cause warnings on SDL 1.2.13:
+	programming/autoconf-2.59
 ;	GrUB doesn't work with 1.10+:
 	programming/automake-1.9.6
-;	For old packages:
+;	For ancient packages:
 ;	programming/autoconf-2.13
 ;	programming/automake-1.4-p6
 	programming/net-ssleay-1.30
 	programming/xml-parser-2.36
-	programming/intltool-0.37.1
+	programming/IntlTool-0.40.6
