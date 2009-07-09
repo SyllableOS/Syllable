@@ -22,6 +22,8 @@ locations
 recommends
 	libusb >= 0.1.8
 	LibJPEG >= 6b
+;	?:
+;	LibTIFF
 	libieee1284 >= 0.1.5
 	libgphoto2 >= 2
 
