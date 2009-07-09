@@ -17,7 +17,9 @@ locations
 	http://download.m0k.org/transmission/files/
 
 needs				Syllable >= 0.6.3
-build-needs			pkg-config
+build-needs
+	pkg-config
+	IntlTool >= 0.40
 recommends
 	OpenSSL
 	cURL
