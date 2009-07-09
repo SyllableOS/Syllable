@@ -1,0 +1,16 @@
+authors
+	Kristian Van Der Vliet
+	Kaj de Vos
+status				developing
+warnings
+	The source package contains hard links. This fails on Syllable of course, but the source is installed, so you have to patch the source separately and continue the build:
+	build get CDRTools-2.01.01a61
+	build patch CDRTools-2.01.01a61
+	build CDRTools-2.01.01a61
+
+documentation
+	ABOUT README COPYING CDDL.Schily.txt GPL-2.0.txt LGPL-2.1.txt AN-2.01.01a61 AN-2.01.01a58 AN-2.01 AN-2.0 Changelog
+	README.mkisofs
+;	cdrecord/README mkisofs/README cdda2wav/README
+	cdrecord/README.* mkisofs/README.*
+;	doc
