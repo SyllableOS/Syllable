@@ -1,0 +1,60 @@
+diff -urN Zip-3.0_orig/atheos/atheos.c Zip-3.0/atheos/atheos.c
+--- Zip-3.0_orig/atheos/atheos.c	2004-12-04 12:55:40.000000000 +0000
++++ Zip-3.0/atheos/atheos.c	2009-07-10 14:27:00.000000000 +0000
+@@ -11,6 +11,7 @@
+ */
+ 
+ #include "zip.h"
++#include <atheos/fs_attribs.h>
+ 
+ #ifndef UTIL    /* the companion #endif is a bit of ways down ... */
+ 
+@@ -24,9 +25,6 @@
+ #include <stdlib.h>
+ #include <string.h>
+ 
+-#include <atheos/fs_attribs.h>
+-
+-
+ #define PAD 0
+ #define PATH_END '/'
+ 
+@@ -274,7 +272,7 @@
+       t->atime = t->mtime = t->ctime = label_utim;
+     return label_time;
+   }
+-  if ((name = malloc(len + 1)) == NULL {
++  if ((name = malloc(len + 1)) == NULL ) {
+     ZIPERR(ZE_MEM, "filetime");
+   }
+   strcpy(name, f);
+@@ -823,6 +821,8 @@
+     return add_At_ef(z); /* last function; we can use return value directly */
+ }
+ 
++#endif /* !UTIL */
++
+ /* ---------------------------------------------------------------------- */
+ /* Set a file's MIME type.                                                */
+ void setfiletype(const char *file, const char *type)
+@@ -849,8 +849,6 @@
+     }
+ }
+ 
+-#endif /* !UTIL */
+-
+ /******************************/
+ /*  Function version_local()  */
+ /******************************/
+diff -urN Zip-3.0_orig/atheos/osdep.h Zip-3.0/atheos/osdep.h
+--- Zip-3.0_orig/atheos/osdep.h	2004-11-12 11:45:24.000000000 +0000
++++ Zip-3.0/atheos/osdep.h	2009-07-10 14:27:00.000000000 +0000
+@@ -23,7 +23,7 @@
+ #define EB_AT_FL_BADBITS    0xfe    /* bits currently undefined           */
+ 
+ #ifndef ZP_NEED_MEMCOMPR
+-  define ZP_NEED_MEMCOMPR
++  #define ZP_NEED_MEMCOMPR
+ #endif
+ 
+ #define deletedir(d) rmdir(d);

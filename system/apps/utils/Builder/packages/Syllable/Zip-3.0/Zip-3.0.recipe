@@ -10,7 +10,7 @@ patch				mv atheos/README README.Syllable
 make-file			atheos/Makefile
 
 documentation
-	README README.CR USexport.msg WHERE MANUAL LICENSE zip30.ann WHATSNEW CHANGES TODO
+	README README.CR USexport.msg WHERE LICENSE zip30.ann WHATSNEW CHANGES TODO
 	README.Syllable
 ;	Currently applies only to BSD:
 ;	BUGS
