@@ -11,7 +11,7 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 $(OBJDIR)/giftrans.so: $(OBJS)
-	$(CXX) $(CXXFLAGS) -shared $(OBJS) -lsyllable -lungif -o $(OBJDIR)/giftrans.so
+	$(CXX) $(CXXFLAGS) -shared $(OBJS) -lsyllable -lgif -o $(OBJDIR)/giftrans.so
 
 clean:
 	rm -f *.o $(OBJDIR)/*.d $(OBJDIR)/*.so
