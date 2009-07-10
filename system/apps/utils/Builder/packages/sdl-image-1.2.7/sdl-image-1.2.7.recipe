@@ -1,5 +1,6 @@
 authors				Kaj de Vos
 status				testing
+warnings			LibPNG and LibTIFF are not detected in a stage!
 
 headline			SDL picture file loading library
 description
@@ -12,8 +13,8 @@ locations			http://www.libsdl.org/projects/SDL_image/release/
 
 needs				sdl >= 1.2.10
 recommends
-	libpng
-	libjpeg
+	LibPNG
+	LibJPEG
 	libtiff
 
 ;configure-options
@@ -24,5 +25,4 @@ system-prefix-var	DESTDIR
 
 documentation		README COPYING CHANGES
 ; For some packages:
-links				SDL/SDL_image.h include/
-
+;links				SDL/SDL_image.h include/
