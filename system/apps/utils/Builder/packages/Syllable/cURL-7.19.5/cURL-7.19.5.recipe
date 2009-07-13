@@ -18,6 +18,8 @@ make-shared
 
 configure-options
 	--with-random=/dev/random
+	--with-ca-path=/etc/ssl/certs
+;	--with-ca-bundle=
 ;	GLibC's DNS resolver is not threadsafe yet on Syllable:
 	--enable-ares
 ;	C-ARes isn't IPv6 compatible yet:
