@@ -9,7 +9,7 @@ description
 licenses			GPL-2+ MPL-1.1 other
 
 home				packages.debian.org/sid/ca-certificates
-packages			ca-certificates_20090701
+packages			ca-certificates_20090709
 locations			http://ftp.de.debian.org/debian/pool/main/c/ca-certificates/
 
 install-prefix-var	CERTSDIR
