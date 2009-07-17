@@ -1,5 +1,6 @@
 authors				Kaj de Vos
 status				testing
+notes				Contains Debian specific machinery in debian/ and sbin/update-ca-certificates
 
 headline			Common CA certificates
 description
@@ -12,8 +13,8 @@ home				packages.debian.org/sid/ca-certificates
 packages			ca-certificates_20090709
 locations			http://ftp.de.debian.org/debian/pool/main/c/ca-certificates/
 
-install-prefix-var	CERTSDIR
-system-prefix-var	DESTDIR
+;install-prefix-var	CERTSDIR
+;system-prefix-var	DESTDIR
 
 install-tree
 	etc
@@ -28,7 +29,7 @@ install-files
 	gouv.fr/*.crt		etc/ssl/certs/
 ;	Hidden in a collection file now:
 ;	mozilla/*.crt		etc/ssl/certs/
-	quovadis.bm/*.crt	etc/ssl/certs/
+;	quovadis.bm/*.crt	etc/ssl/certs/
 	signet.pl/*.crt		etc/ssl/certs/
 	spi-inc.org/*.crt	etc/ssl/certs/
 	telesec.de/*.crt	etc/ssl/certs/
