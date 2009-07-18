@@ -503,7 +503,8 @@ modules
 ;	Needs ranlib symlink in /usr/bin/!
 ;	For cURL:
 	stage libraries/OpenSSL--stage
-	other/data/CA-Certificates--current
+;	other/data/CA-Certificates--current
+	other/data/CA-Bundle--current
 
 	system apps/other/libusb-0.1.12
 	system linux/alsa-library-1.0.15

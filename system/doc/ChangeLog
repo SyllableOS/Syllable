@@ -1,3 +1,8 @@
+* July 18, 2009, Kaj de Vos *
+
+Switched from Debian Certification Authority root certificates collection to LFS collection.
+CA-Certificates has too much Debian-specific machinery to get the certificates in the needed form.
+
 * July 6, 2009, Kaj de Vos *
 
 Upgraded most resource packages in the base system.

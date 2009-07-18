@@ -1,0 +1,32 @@
+authors				Kaj de Vos
+status				testing
+
+headline			Common CA certificates
+description
+	OpenSSL no longer includes any root certificates. This package adds root certificates as provided by mozilla.org.
+;licenses			other
+
+home				www.linuxfromscratch.org/blfs/view/svn/postlfs/openssl.html
+packages			BLFS-ca-bundle-20090409
+locations			http://anduin.linuxfromscratch.org/files/BLFS/
+
+install-tree
+	etc
+	etc/ssl
+	etc/ssl/certs
+install				true
+install-files		*.pem etc/ssl/certs/
+
+; certs directory already created by OpenSSL:
+;links				etc/ssl/certs /etc/ssl/
+
+pre-register
+	for pem in etc/ssl/certs/*.pem
+	do
+		cat $pem
+		echo ""
+	done > etc/ssl/ca-bundle.crt
+;	Ubuntu:
+;	done > etc/ssl/certs/ca-certificates.crt
+
+move-files			etc/ssl/certs/*.pem /etc/ssl/certs/
