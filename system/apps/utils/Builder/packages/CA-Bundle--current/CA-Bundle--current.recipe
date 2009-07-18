@@ -29,4 +29,6 @@ pre-register
 ;	Ubuntu:
 ;	done > etc/ssl/certs/ca-certificates.crt
 
-move-files			etc/ssl/certs/*.pem /etc/ssl/certs/
+move-files
+	etc/ssl/certs/*.pem		/etc/ssl/certs/
+	etc/ssl/ca-bundle.crt	/etc/ssl/
