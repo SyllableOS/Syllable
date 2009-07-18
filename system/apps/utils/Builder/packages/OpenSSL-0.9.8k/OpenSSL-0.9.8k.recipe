@@ -40,6 +40,8 @@ configure-options
 	shared
 	zlib-dynamic
 	--openssldir=/etc/ssl
+;	no-rc5
+;	no-idea
 
 test-targets
 	test
