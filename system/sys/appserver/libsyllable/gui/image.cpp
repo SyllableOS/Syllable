@@ -231,6 +231,9 @@ BitmapImage::BitmapImage( const BitmapImage & cSource, uint32 nFlags )
  *		stream of data. The Translator API is used to try to recognize
  *		the format and load it as bitmap data.
  *		If you need to explicitly specify the file format, use Load().
+ *		The StreamableIO is used only for loading the data. In particular,
+ *		the BitmapImage does not delete it, so the caller is responsible for
+ *		closing and deleting pcSource as necessary.
  *  \param	nFlags Bitmap flags, see os::Bitmap.
  *
  *  \sa Load(), os::Bitmap
@@ -296,6 +299,9 @@ bool BitmapImage::IsValid( void ) const
  *		a resource or any data source that can be represented as a
  *		stream of data. The Translator API is used to try to recognize
  *		the format and load it as bitmap data.
+ *		The StreamableIO is used only for loading the data. In particular,
+ *		the BitmapImage does not delete it, so the caller is responsible for
+ *		closing and deleting pcSource as necessary.
  * \param	cType Used to specify a specific file format, if the automatic
  *		recognition is not enough.
  * \par		Example:

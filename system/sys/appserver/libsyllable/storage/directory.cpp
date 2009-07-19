@@ -343,6 +343,33 @@ status_t Directory::GetPath( String * pcPath ) const
 	return ( 0 );
 }
 
+/** Read the next directory entry.
+ * \par Description:
+ *	Reads the next entry (file or subdirectory) from the directory, if any, and stores
+ *  the name in pcName.
+ *
+ *  This function can be used to iterate through the contents of a directory.
+ *  The current position in the iteration is stored, and this function retrieves
+ *  the name of the next entry in the iteration. Use Directory::Rewind() to reset thee
+ *  iteration to the start of the directory.
+ *
+ *  The special entries "." and ".." are included in the iteration, if present in the directory.
+ *
+ *  Internally, this method uses the POSIX readdir() function, so all of the caveats for readdir
+ *  apply to this method also. That includes unspecified behaviour if the directory contents are
+ *  changed between one call to GetNextEntry() and the next.
+ * 
+ * \note Note the non-obvious return values: a value of 1 indicates that an entry was successfully read,
+ *   0 indicates that the end of directory was reached.
+ *
+ * \param pcName
+ *	String in which to store the name of the next directory entry.
+ *
+ * \retval Returns 1 if a directory entry was successfully read and its name stored in pcName,
+ *   0 if the end of the directory has been reached, or a negative value in case of an error.
+ *
+ * \sa Directory::Rewind(), Directory::GetNextEntry( FileReference * ), readdir (POSIX function)
+ *****************************************************************************/
 status_t Directory::GetNextEntry( String * pcName )
 {
 	struct dirent *psEntry = readdir( m->m_hDirIterator );
@@ -358,6 +385,20 @@ status_t Directory::GetNextEntry( String * pcName )
 	}
 }
 
+/** \brief Read the next directory entry.
+ * \par Description:
+ *	Reads the next entry (file or subdirectory) from the directory, if any, and stores
+ *  a reference to it in pcRef.
+ *
+ * \param pcRef Pointer to a FileReference in which to store the directory entry.
+ *
+ *  See Directory::GetNextEntry( String* ) for more information.
+ *
+ * \retval Returns 1 if an entry was successfully read and stored in pcRef, 0 if the end
+ *  of the directory was reached, or a negative value in case of error.
+ *
+ * \sa Directory::GetNextEntry( String* ), Directory::Rewind(), readdir (POSIX function)
+ */ 
 status_t Directory::GetNextEntry( FileReference * pcRef )
 {
 	String cName;
