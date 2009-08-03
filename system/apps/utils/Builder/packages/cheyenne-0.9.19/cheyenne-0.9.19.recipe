@@ -1,5 +1,4 @@
 authors				Kaj de Vos
-status				testing
 
 headline			Full-featured web server written in REBOL
 description
@@ -9,6 +8,7 @@ licenses			BSD
 home				cheyenne-server.org
 packages			cheyenne-r0919
 locations			http://cheyenne-server.org/dl/
+;archives			svn checkout http://cheyenne-server.googlecode.com/svn/trunk/ cheyenne-server-read-only
 
 run-needs
 	rebol
