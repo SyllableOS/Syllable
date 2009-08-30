@@ -189,6 +189,19 @@ GRUB=(	"color	cyan/blue white/blue"																	\
 		"module /boot/drivers/dev/disk/usb path=/system/drivers/dev/disk/usb"							\
 		"module /system/drivers/fs/afs"																	\
 		""																								\
+		"title	Install Syllable from a USB CD-ROM drive (no ACPI / Aspire One)"						\
+		"kernel /system/kernel.so rootfs=iso9660 root=@boot disable_config=true disable_acpi=true"		\
+		"module /boot/drivers/dev/bus/pci path=/system/drivers/dev/bus/pci"								\
+		"module /boot/drivers/dev/bus/ata path=/system/drivers/dev/bus/ata"								\
+		"module /boot/drivers/dev/bus/usb path=/system/drivers/dev/bus/usb"								\
+		"module /boot/drivers/dev/bus/scsi path=/system/drivers/dev/bus/scsi"							\
+		"module /boot/drivers/dev/hcd/ata_pci path=/system/drivers/dev/hcd/ata_pci"						\
+		"module /boot/drivers/dev/hcd/usb_ohci path=/system/drivers/dev/hcd/usb_ohci"					\
+		"module /boot/drivers/dev/hcd/usb_uhci path=/system/drivers/dev/hcd/usb_uhci"					\
+		"module /boot/drivers/dev/hcd/usb_ehci path=/system/drivers/dev/hcd/usb_ehci"					\
+		"module /boot/drivers/dev/disk/usb path=/system/drivers/dev/disk/usb"							\
+		"module /system/drivers/fs/iso9660"																\
+		""																								\
 		"title	Install Syllable from a USB CD-ROM drive (USB 1 only / EeePC)"							\
 		"kernel /system/kernel.so rootfs=iso9660 root=@boot disable_config=true"						\
 		"module /boot/drivers/dev/bus/acpi path=/system/drivers/dev/bus/acpi"							\
