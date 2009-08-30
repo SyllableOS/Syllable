@@ -1,3 +1,8 @@
+* August 30, 2009, Kaj de Vos *
+
+Added boot option for the Acer Aspire One to the install CD, combining installation from USB and
+disabling ACPI; at a report from Ruud Kuin.
+
 * July 18, 2009, Kaj de Vos *
 
 Switched from Debian Certification Authority root certificates collection to LFS collection.
