@@ -1,0 +1,21 @@
+authors
+	Ruwen Boehm
+	Rui Caridade
+	Kaj de Vos
+maintainers			Kaj de Vos
+status				contributed
+
+headline			General purpose cryptographic library based on the code from GnuPG
+description
+	This is a general purpose cryptographic library based on the code from GnuPG. It provides functions for all cryptograhic building blocks: symmetric ciphers (AES, DES, Blowfish, CAST5, Twofish, Arcfour), hash algorithms (MD4, MD5, RIPE-MD160, SHA-1, TIGER-192), MACs (HMAC for all hash algorithms), public key algorithms (RSA, ElGamal, DSA), large integer functions, random numbers and a lot of supporting functions.
+licenses			LGPL GPL-3
+
+home				www.gnupg.org
+;home				directory.fsf.org/project/libgcrypt/
+packages			libgcrypt-1.4.4
+locations			ftp://ftp.gnupg.org/gcrypt/libgcrypt/
+
+needs				LibGPG-Error
+
+documentation		README COPYING COPYING.LIB NEWS ChangeLog AUTHORS THANKS TODO
+internal-docs		README.SVN
