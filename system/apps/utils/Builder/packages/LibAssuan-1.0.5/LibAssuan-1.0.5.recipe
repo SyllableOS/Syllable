@@ -1,0 +1,18 @@
+authors
+	Ruwen Boehm
+	Kaj de Vos
+maintainers			Kaj de Vos
+status				contributed
+notes				Not meant as a dynamic library yet
+
+headline			IPC library used by some GnuPG related software
+description
+	This is the IPC library used by GnuPG 2, GPGME and a few other packages.
+licenses			LGPL-2.1+ GPL-3+
+
+home				www.gnupg.org
+packages			libassuan-1.0.5
+locations			ftp://ftp.gnupg.org/gcrypt/libassuan/
+
+documentation		README COPYING COPYING.LIB NEWS ChangeLog AUTHORS THANKS TODO
+internal-docs		README.SVN

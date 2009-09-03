@@ -1,0 +1,45 @@
+authors
+	Kaj de Vos
+	Ruwen Boehm
+status				testing
+
+headline			OpenPGP security tools
+description
+	GnuPG is GNU's tool for secure communication and data storage. It can be used to encrypt data and to create digital signatures. It includes an advanced key management facility and is compliant with the proposed OpenPGP Internet standard as described in RFC2440 and the S/MIME standard as described by several RFCs.
+	GnuPG, also known as GPG, is a command line tool with features for easy integration with other applications. A wealth of frontend applications and libraries are available.
+licenses			GPL
+
+home				www.gnupg.org
+packages			gnupg-2.0.12
+locations			ftp://ftp.gnupg.org/gcrypt/gnupg/
+
+needs
+	PTh
+	LibGPG-Error
+	LibGCrypt
+	LibKSBA
+build-needs
+	LibAssuan
+;	GetText
+recommends
+;	BZip2
+	PinEntry
+
+;configure-options
+;	--enable-m-guard
+;	--enable-sha512
+;	--with-capabilities
+
+_make-targets
+	all
+;	Manual:
+	html
+	pdf
+
+links				gpg2 bin/gpg
+
+documentation
+	README COPYING COPYING.LIB ABOUT-NLS NEWS ChangeLog AUTHORS THANKS TODO PROJECTS
+	doc/FAQ doc/OpenPGP
+	doc/faq.html
+internal-docs		README.SVN doc/TRANSLATE doc/HACKING

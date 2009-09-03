@@ -1,0 +1,17 @@
+authors
+	Ruwen Boehm
+	Kaj de Vos
+maintainers			Kaj de Vos
+status				contributed
+
+name				GNU FriBidi
+headline			Library for the Unicode Bidirectional Algorithm
+description
+	An implementation of the -*http://www.unicode.org/reports/tr9/  Unicode Bidirectional Algorithm (bidi)*-. This release is based on the -*http://www.unicode.org/Public/5.0.0/  Unicode 5.0.0 character database*-.
+licenses			LGPL
+
+home				fribidi.org
+packages			fribidi-0.10.9
+locations			http://fribidi.org/download/
+
+documentation		README COPYING NEWS ChangeLog AUTHORS THANKS TODO
