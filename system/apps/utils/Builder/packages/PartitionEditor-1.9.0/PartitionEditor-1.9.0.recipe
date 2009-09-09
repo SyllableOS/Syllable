@@ -1,0 +1,28 @@
+authors
+	Ruwen Boehm
+	Kaj de Vos
+status				contributed
+
+inherits			gnu
+
+headline			GNU Partition Editor
+description
+	GNU Parted is an industrial-strength package for creating, destroying, resizing, checking and copying partitions, and the file systems on them. This is useful for creating space for new operating systems, reorganising disk usage, copying data on hard disks and disk imaging.
+	It contains a library, libparted, and a command-line frontend, parted, which also serves as a sample implementation and script backend.
+licenses			GPL-3
+
+home				www.gnu.org/software/parted/
+packages			parted/parted-1.9.0
+
+_post-make
+	cd doc
+;	TexInfo manual:
+	make
+	info -f parted.info
+;	HTML manual:
+	makeinfo --html parted.texi
+
+documentation
+	README COPYING ABOUT-NLS BUGS NEWS ChangeLog AUTHORS THANKS TODO
+	doc/FAT
+develop-docs		doc/API

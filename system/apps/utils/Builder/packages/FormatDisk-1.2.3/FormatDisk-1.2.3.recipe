@@ -1,0 +1,23 @@
+authors
+	Ruwen Boehm
+	Kaj de Vos
+status				contributed
+
+inherits			gnu
+
+headline			Partition editor and formatter replacements
+description
+	This is GNU fdisk, a GNU package attempting to replace partitioning programs not based on libparted.
+	GNU fdisk provides alternatives to the following programs:
+		util-linux fdisk (compatible clone lfdisk, extended clone gfdisk)
+		util-linux cfdisk
+	Note: the standard interface offered via the fdisk link is gfdisk.
+licenses			GPL-3
+
+home				www.gnu.org/software/fdisk/
+packages			fdisk/fdisk-1.2.3
+
+needs				PartitionEditor >= 1.7.0
+conflicts			Util-Linux
+
+documentation		README COPYING ABOUT-NLS NEWS ChangeLog AUTHORS THANKS TODO
