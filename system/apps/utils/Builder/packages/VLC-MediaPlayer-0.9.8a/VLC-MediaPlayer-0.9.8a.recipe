@@ -1,0 +1,107 @@
+authors
+	Ruwen Boehm
+	Kaj de Vos
+status				testing
+
+title				VLC media player
+headline			Multimedia player, converter and streaming server
+description
+	VLC media player is a highly portable multimedia player supporting most audio and video formats (H.264, Ogg, DivX, MKV, TS, MPEG-2, mp3, MPEG-4, aac, ...) from files, physical media (DVDs, VCD, Audio-CD), TV capture cards and many network streaming protocols.
+	It can also convert media files, transcode and act as a streaming server over unicast or multicast and IPv4 or IPv6. It doesn't need any external codec, program or codec pack to work.
+licenses			GPL
+
+home				www.videolan.org
+packages			vlc-0.9.8a
+locations			http://download.videolan.org/pub/videolan/vlc/0.9.8a/
+
+needs				LibGCrypt
+recommends
+	zlib
+	SDL
+	SDL-Image
+	LibPNG
+	LibJPEG
+	LibTIFF
+	wxwidgets
+	qt >= 4
+	glib
+	hal
+	gecko
+	portaudio
+	FreeType
+	gettext
+	GNU-PrivacyGuard
+	GNU-TLS
+	expat
+	libxml2
+	FFMPEG
+	libmpeg2
+	libmad
+	lame
+	twolame
+	FAAD 2
+	faac
+	libcddb
+	LibCDIO
+	LibOgg
+	LibVorbis
+	tremor
+	LibTheora
+	matroska
+	flac
+	libspeex
+	liba52
+	x264
+;	libdv
+;	libxvidcore
+	libdca
+	LibDVD-Read
+	LibDVD-Navigation
+	libdvdcss
+	libdvbpsi
+	libopenslp
+	FriBidi
+	livemedia
+	dirac
+	libmpcdec
+	libebml
+	shout
+	livedotcom
+	vcdimager
+	opendaap
+	libid3tag
+	taglib
+	goom2k4
+	libcaca
+	libmodplug
+	libidl
+	clinkcc
+	avahi
+	uPNP
+build-recommends
+	pkg-config
+	nasm
+	perl
+	libtool
+	LibIConversion
+	libunicows
+
+configure-options
+	--enable-ncurses
+;	Needed since jump from 0.8.6f to 0.9.8a:
+	--disable-a52
+	--disable-glx
+;	--disable-wxwidgets
+	--disable-skins2
+;	--enable-directfb
+;	--disable-fb
+;	--enable-loader
+;	--disable-plugins
+;	--enable-mozilla
+;	--with-mad=/resources/LibMAD
+;	--with-mad-tree=/resources/LibMAD
+
+documentation
+	README COPYING ABOUT-NLS NEWS ChangeLog MAINTAINERS AUTHORS THANKS
+;	doc
+internal-docs		HACKING

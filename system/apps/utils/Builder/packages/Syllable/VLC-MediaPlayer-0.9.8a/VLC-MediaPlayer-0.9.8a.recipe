@@ -1,0 +1,10 @@
+authors
+	Ruwen Boehm
+	Kaj de Vos
+status				testing
+warnings
+	You need to (temporarily!) disable the declaration of count_t in /system/development/headers/atheos/types.h
+notes
+	Won't play MP3 even with LibMAD, FLAC even with LibFLAC nor Theora even with LibTheora.
+	Won't play network streams even with LibDVB-PSI.
+
