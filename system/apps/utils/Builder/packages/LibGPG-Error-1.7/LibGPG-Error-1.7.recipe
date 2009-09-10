@@ -1,0 +1,17 @@
+authors
+	Ruwen Boehm
+	Rui Caridade
+	Kaj de Vos
+maintainers			Kaj de Vos
+status				contributed
+
+headline			Error handling library for GnuPG components
+description
+	This is a library that defines common error values for all GnuPG components. Among these are GPG, GPGSM, GPGME, GPG-Agent, libgcrypt, Libksba, DirMngr, Pinentry, SmartCard Daemon and more.
+licenses			LGPL-2.1+ GPL
+
+home				www.gnupg.org
+packages			libgpg-error-1.7
+locations			ftp://ftp.gnupg.org/gcrypt/libgpg-error/
+
+documentation		README COPYING COPYING.LIB ABOUT-NLS NEWS ChangeLog AUTHORS THANKS TODO
