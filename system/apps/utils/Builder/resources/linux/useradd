@@ -1,8 +1,9 @@
 # useradd defaults file
 GROUP=100
 HOME=/users
+SKEL=/users/.template
+DIR_MODE=0750
 INACTIVE=-1
 EXPIRE=
 SHELL=/bin/bash
-SKEL=/users/.template
 CREATE_MAIL_SPOOL=yes

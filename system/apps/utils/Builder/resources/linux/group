@@ -1,5 +1,5 @@
-administrators:x:0:System Administrators
-bin:x:1:
+administrators:x:0:root
+bin:x:1:bin
 sys:x:2:
 kmem:x:3:
 tty:x:4:
@@ -16,10 +16,10 @@ usb:x:14:
 cdrom:x:15:
 named:x:20:named
 apache:x:25:apache
-mail:x:34:
+mail:x:34:mail
 ftp:x:45:ftp
 vsftpd:x:47:vsftpd
 rsyncd:x:48:rsyncd
 sshd:x:50:sshd
-nogroup:x:99:
+nogroup:x:99:nobody
 users:x:100:
