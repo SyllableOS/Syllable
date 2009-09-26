@@ -1,12 +1,12 @@
-administrators:$1$$oCLuEVgI1iAqOA8pwkzAg1:0:System Administrators
-bin:*:1:
-system:*:2:
-network:*:3:
-named:*:20:named
-apache:*:25:apache
-ftp:*:45:ftp
-vsftpd:*:47:vsftpd
-rsyncd:*:48:rsyncd
-sshd:*:50:sshd
-nogroup:*:99:
-users:*:100:
+administrators:x:0:root
+bin:x:1:bin
+system:x:2:man
+network:x:3:www
+named:x:20:named
+apache:x:25:apache
+ftp:x:45:ftp
+vsftpd:x:47:vsftpd
+rsyncd:x:48:rsyncd
+sshd:x:50:sshd
+nogroup:x:99:nobody
+users:x:100:
