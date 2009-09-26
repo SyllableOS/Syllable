@@ -180,7 +180,7 @@ TTYPERM		0600
 #
 ERASECHAR	0177
 KILLCHAR	025
-UMASK		022
+UMASK		027
 #ULIMIT		2097152
 
 #
@@ -193,7 +193,7 @@ UMASK		022
 #
 PASS_MAX_DAYS	99999
 PASS_MIN_DAYS	0
-PASS_MIN_LEN	5
+PASS_MIN_LEN	8
 PASS_WARN_AGE	7
 
 #
@@ -276,7 +276,7 @@ CHFN_RESTRICT		rwh
 # Set to "no" if you need to copy encrypted passwords to other systems
 # which don't understand the new algorithm.  Default is "no".
 #
-#MD5_CRYPT_ENAB	no
+MD5_CRYPT_ENAB	yes
 
 #
 # List of groups to add to the user's supplementary group set
