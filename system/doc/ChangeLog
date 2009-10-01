@@ -1,3 +1,16 @@
+* October 1, 2009, Kaj de Vos *
+
+Re-enabled AGP drivers for testing.
+
+Work on the boot menu:
+- Added option without AGP.
+- Added USB drivers to most options, so they can be used with both ATAPI and USB CD drives.
+  Left a failsafe option without early loading of USB drivers.
+- Split off virtual machine options and failsafe options into separate submenus.
+- Added experimental eeepc=true kernel parameter to EeePC option, so the installer can act on it.
+- Added experimental option to boot from Ext2FS-formatted USB media.
+- Clarified descriptions of several options.
+
 * August 30, 2009, Kaj de Vos *
 
 Added boot option for the Acer Aspire One to the install CD, combining installation from USB and
