@@ -214,10 +214,10 @@ modules
 	sys/kernel/drivers/hcd/usb_ohci
 	sys/kernel/drivers/hcd/usb_uhci
 ;	Not reliable yet:
-;	sys/kernel/drivers/hcd/agp_gart/ali
-;	sys/kernel/drivers/hcd/agp_gart/nvidia
-;	sys/kernel/drivers/hcd/agp_gart/sis
-;	sys/kernel/drivers/hcd/agp_gart/via
+	sys/kernel/drivers/hcd/agp_gart/ali
+	sys/kernel/drivers/hcd/agp_gart/nvidia
+	sys/kernel/drivers/hcd/agp_gart/sis
+	sys/kernel/drivers/hcd/agp_gart/via
 	sys/kernel/drivers/ps2
 	sys/kernel/drivers/input/usb_hid
 	sys/kernel/drivers/disk/bios
