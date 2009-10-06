@@ -119,10 +119,11 @@ FILES=(	"/etc/profile, /etc/profile" 															\
 																											\
 		"/resources/grub, /usr/grub"																\
 																											\
-		"/resources/grub/lib/grub/i386-pc/stage2_eltorito, /boot/grub/stage2_eltorito"											\
-		"/resources/grub/lib/grub/i386-pc/stage1, /boot/grub/stage1"																\
-		"/resources/grub/lib/grub/i386-pc/afs_stage1_5, /boot/grub/afs_stage1_5"													\
-		"/resources/grub/lib/grub/i386-pc/stage2, /boot/grub/stage2"																\
+		"/resources/grub/lib/grub/i386-pc/stage1, /boot/grub/stage1"								\
+		"/resources/grub/lib/grub/i386-pc/afs_stage1_5, /boot/grub/afs_stage1_5"					\
+		"/resources/grub/lib/grub/i386-pc/e2fs_stage1_5, /boot/grub/e2fs_stage1_5"					\
+		"/resources/grub/lib/grub/i386-pc/stage2, /boot/grub/stage2"								\
+		"/resources/grub/lib/grub/i386-pc/stage2_eltorito, /boot/grub/stage2_eltorito"				\
 )
 
 declare -a LINKS
