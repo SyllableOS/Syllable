@@ -27,9 +27,9 @@ conflicts
 ;	gcc
 
 patch				autoreconf ld gas
-;	cd ld
-;	automake
-;	cd ../gas
+;	cd ld &&
+;	automake &&
+;	cd ../gas &&
 ;	autoconf
 
 ;configure-options

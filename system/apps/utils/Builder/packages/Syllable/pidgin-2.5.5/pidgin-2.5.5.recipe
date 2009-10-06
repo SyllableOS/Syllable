@@ -12,11 +12,11 @@ build-needs
 
 ;make-shared
 _patch
-;	cp /resources/libtool/share/libtool/ltmain.sh .
-	libtoolize --force
-	intltoolize --force
-	cp /resources/automake/share/automake-1.9/compile .
-	aclocal -I /resources/indexes/share/aclocal
-	autoheader -I /resources/indexes/share/aclocal
-	autoconf -I /resources/indexes/share/aclocal
+;	cp /resources/libtool/share/libtool/ltmain.sh . &&
+	libtoolize --force &&
+	intltoolize --force &&
+	cp /resources/automake/share/automake-1.9/compile . &&
+	aclocal -I /resources/indexes/share/aclocal &&
+	autoheader -I /resources/indexes/share/aclocal &&
+	autoconf -I /resources/indexes/share/aclocal &&
 	automake

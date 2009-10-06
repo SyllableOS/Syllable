@@ -31,7 +31,7 @@ build-needs
 ;	bison
 
 _patch
-	cd gcc
+	cd gcc &&
 	autoconf
 ; Doesn't work:
 ;make-shared

@@ -19,10 +19,10 @@ install-needs		module-init-tools
 
 patch
 ;	Make Linux build directory available from the host system for external kernel modules:
-	SOURCE=$PWD
-	sudo mkdir --parents /lib/modules/2.6.25-Syllable
-	cd /lib/modules/2.6.25-Syllable
-	sudo ln -sf $SOURCE build
+	SOURCE=$PWD &&
+	sudo mkdir --parents /lib/modules/2.6.25-Syllable &&
+	cd /lib/modules/2.6.25-Syllable &&
+	sudo ln -sf $SOURCE build &&
 ;	Make the kernel modules installation go into the system image:
 	ln -sf ../system/resources/linux/2.6.25/lib/modules $IMAGE/lib/
 

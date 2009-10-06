@@ -25,7 +25,7 @@ build-needs
 ;	bison
 
 ;patch
-;	cd gcc
+;	cd gcc &&
 ;	autoconf
 
 configure-options

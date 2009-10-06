@@ -49,7 +49,7 @@ test-needs			dejagnu >= 1.4.1
 conflicts			binutils
 
 ;patch
-;	cd gcc
+;	cd gcc &&
 ;	autoconf
 
 configure-options
@@ -94,4 +94,3 @@ documentation
 links
 	gcc				bin/cc
 	libgcc.a		lib/gcc/i586-pc-syllable/3.4.3/libgcc_static.a
-

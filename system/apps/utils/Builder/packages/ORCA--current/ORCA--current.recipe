@@ -29,8 +29,8 @@ build-needs
 	bzip2
 
 _patch
-	mv m2-498/m2			configure
-	cp m2-498/m2_linux.r	m2_template.r
+	mv m2-498/m2			configure &&
+	cp m2-498/m2_linux.r	m2_template.r &&
 ;	Uncomment os_call in config.r, and possibly math3d and number_arrays and rebol
 	rebol 					boot_str.r
 

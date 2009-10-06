@@ -22,8 +22,8 @@ build-needs
 	bzip2
 
 patch
-;	mv m2/m2			rune/configure
-;	cp m2/m2_linux.r	rune/m2_template.r
+;	mv m2/m2			rune/configure &&
+;	cp m2/m2_linux.r	rune/m2_template.r &&
 	mkdir rune/obj
 
 build-dir			rune
@@ -41,4 +41,3 @@ install-files
 documentation		doc/UserManual
 develop-docs		doc/thune.vim
 ;links				rune bin/rebol
-

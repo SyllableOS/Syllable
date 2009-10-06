@@ -5,10 +5,10 @@ notes				AutoTools configuration insists on using X11
 patch				cp Makefile.in.Linux.SDL Makefile.in.syllable
 _patch
 ;	sh ./autogen.sh
-	aclocal
-	autoheader
-	autoconf
-	libtoolize --force
+	aclocal &&
+	autoheader &&
+	autoconf &&
+	libtoolize --force &&
 	automake --foreign --add-missing --ignore-deps
 
 _configure-options
@@ -18,4 +18,3 @@ _configure-options
 ;	--enable-gpc
 ;	--enable-freetype
 ;	--enable-examples
-

@@ -18,8 +18,8 @@ build-needs
 	automake
 
 patch
-	aclocal
-	autoconf
+	aclocal &&
+	autoconf &&
 	automake -a
 
 ;make				automake-compile
@@ -27,4 +27,3 @@ patch
 documentation		README COPYING NEWS ChangeLog AUTHORS TODO
 develop-docs		Example
 build-docs			INSTALL
-
