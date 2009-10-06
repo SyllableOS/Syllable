@@ -728,9 +728,9 @@ function copy_extra_packages()
   printf "Copying upgrade files: %s\n" "$1/Upgrade"
   cp -a $1/Install/* $CD_DIR/Packages/base/
 
-  mkdir -p $CD_DIR/Documentation
+  mkdir -p $CD_DIR/documentation
   printf "Copying documentation files: %s\n" "$1/Documentation"
-  cp -a $1/Documentation/* $CD_DIR/Documentation/
+  cp -a $1/Documentation/* $CD_DIR/documentation/
 
   mkdir -p $CD_DIR/Source
   printf "Copying source files: %s\n" "$BUILDER_SOURCE_DIR"
@@ -756,7 +756,7 @@ function copy_installer()
   rm $CD_DIR/Install/doc/welcome-template.txt
 
   # Put the install.txt files where the user can find them
-  cp -f $BASE_DIR/Documentation/Install*.txt $CD_DIR/
+  cp -f $BASE_DIR/documentation/Install*.txt $CD_DIR/
 
   sync
 }
