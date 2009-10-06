@@ -50,6 +50,7 @@ FILES=(	"/etc/profile, /etc/profile" 															\
 		"/system/resources/gcc/4.1.2/lib/*.so*, /system/libraries/."								\
 		"/system/resources/glibc/2.7/lib/*.so*, /system/libraries/."								\
 		"/system/resources/zlib/1.2.3/lib/*.so*, /system/libraries/."								\
+		"/system/resources/ReadLine/6.0/lib/*.so*, /system/libraries/."								\
 																											\
 		"/system/appserver, /system/appserver"														\
 																											\
@@ -757,6 +758,8 @@ function copy_installer()
 
   # Put the install.txt files where the user can find them
   cp -f $BASE_DIR/documentation/Install*.txt $CD_DIR/
+  cp -f $BASE_DIR/documentation/Syllable-logo.png $CD_DIR/
+  cp -f $BASE_DIR/documentation/Copyrights*.html $CD_DIR/
 
   sync
 }
