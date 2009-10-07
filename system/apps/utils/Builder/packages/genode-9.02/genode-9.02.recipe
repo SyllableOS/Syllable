@@ -19,11 +19,11 @@ build-needs
 build-dir			build
 
 configure
-;	ln -s ../genode-9.02/tool/builddir/build.mk Makefile
-	mkdir -p build
-	cd build
-	ln -sf ../tool/builddir/build.mk Makefile
-	mkdir -p etc
+;	ln -s ../genode-9.02/tool/builddir/build.mk Makefile &&
+	mkdir -p build &&
+	cd build &&
+	ln -sf ../tool/builddir/build.mk Makefile &&
+	mkdir -p etc &&
 	echo 'REPOSITORIES = ../base-linux ../base ../os ../demo' > etc/build.conf
 
 install-tree		bin

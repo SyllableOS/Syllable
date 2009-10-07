@@ -30,7 +30,7 @@ recommends
 	groff
 
 ;configure
-;	rm -f config.sh Policy.sh;
+;	rm -f config.sh Policy.sh &&
 ;	sh Configure
 configure-cmd
 ;	configure.gnu
@@ -42,4 +42,3 @@ test-targets
 ;	minitest
 
 build-docs			INSTALL
-

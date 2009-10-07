@@ -30,14 +30,14 @@ patch-config
 build-dir			.
 
 _post-configure
-	cp IoDesktop/Image/base/png/scripts/makefile.gcc IoDesktop/Image/base/png/makefile
-	cd IoDesktop/Image/base/tiff
+	cp IoDesktop/Image/base/png/scripts/makefile.gcc IoDesktop/Image/base/png/makefile &&
+	cd IoDesktop/Image/base/tiff &&
 	./configure --noninteractive
 
 test
-	cd IoVM
+	cd IoVM &&
 	make test
-;	cd ../IoDesktop
+;	cd ../IoDesktop &&
 ;	make test
 test-targets		test
 

@@ -24,7 +24,7 @@ test-targets		test
 
 system-prefix-var	DESTDIR
 _post-install
-	perldoc Net::SSLeay
+	perldoc Net::SSLeay &&
 	perldoc Net::SSLeay::Handle
 
 documentation		README Changes Credits

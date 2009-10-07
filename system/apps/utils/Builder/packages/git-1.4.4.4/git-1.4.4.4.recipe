@@ -26,7 +26,7 @@ recommends
 
 ; make clean deletes configure:
 configure
-	autoconf
+	autoconf &&
 	WITH_OWN_SUBPROCESS_PY=YesPlease ../git-1.4.4.4/configure --prefix=/resources/git
 
 make-vars			WITH_OWN_SUBPROCESS_PY YesPlease

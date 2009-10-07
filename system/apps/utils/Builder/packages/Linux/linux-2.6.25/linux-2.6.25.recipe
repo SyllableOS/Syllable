@@ -32,7 +32,7 @@ patch
 install-prefix-var	INSTALL_MOD_PATH
 
 pre-make
-	make mrproper
+	make mrproper &&
 	cp config-2.6.25 .config
 ; $INSTALL_MOD_PATH must be empty:
 make				make -j3 ARCH=i386

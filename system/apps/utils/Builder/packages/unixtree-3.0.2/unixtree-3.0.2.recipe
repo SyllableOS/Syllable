@@ -11,10 +11,9 @@ packages			unixtree/xt-source-3.0.2
 needs				ncurses
 
 make
-	source ./build -r syllable
+	source ./build -r syllable &&
 	make all
 
 install-prefix-var	INS_DIR
 
 documentation		README COPYING CHANGES
-

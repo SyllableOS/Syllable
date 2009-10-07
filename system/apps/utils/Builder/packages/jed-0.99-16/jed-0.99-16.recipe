@@ -5,7 +5,6 @@ home				www.jedsoft.org/jed/
 
 build-dir			.
 _install
-	make install
+	make install &&
 	jed -batch -n -l preparse.sl
 documentation		README INSTALL INSTALL.unx changes.txt COPYRIGHT COPYING
-

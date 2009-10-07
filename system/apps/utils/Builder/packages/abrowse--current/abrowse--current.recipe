@@ -29,18 +29,18 @@ build-needs
 	gperf
 
 _make
-	cd JavaScriptCore
-	sh make-generated-sources.sh
-	make -f Makefile.syllable
-	cd ../WebCore
-	sh make-generated-sources.sh
-	cd DerivedSources/WebCore
-	mv DocTypeStrings.cpp DocTypeStrings.temp
-	echo '#include <string.h>' > string.temp
-	cat string.temp DocTypeStrings.temp > DocTypeStrings.cpp
-	cd ../..
-	make -f Makefile.syllable
-	cd ../ABrowse
+	cd JavaScriptCore &&
+	sh make-generated-sources.sh &&
+	make -f Makefile.syllable &&
+	cd ../WebCore &&
+	sh make-generated-sources.sh &&
+	cd DerivedSources/WebCore &&
+	mv DocTypeStrings.cpp DocTypeStrings.temp &&
+	echo '#include <string.h>' > string.temp &&
+	cat string.temp DocTypeStrings.temp > DocTypeStrings.cpp &&
+	cd ../.. &&
+	make -f Makefile.syllable &&
+	cd ../ABrowse &&
 	make
 
 install-tree

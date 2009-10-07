@@ -30,8 +30,8 @@ make-targets
 
 system-prefix-var	INSTALL_ROOT
 post-install
-	./omake-boot
-;	./omake-boot
+	./omake-boot &&
+;	./omake-boot &&
 	./omake-boot install
 
 documentation
@@ -40,4 +40,3 @@ documentation
 build-docs			INSTALL
 
 no-strip
-

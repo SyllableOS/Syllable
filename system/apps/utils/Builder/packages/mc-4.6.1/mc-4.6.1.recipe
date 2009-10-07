@@ -27,15 +27,15 @@ recommends
 ;install-prefix-var	DESTDIR
 ; Where is convert-mans?
 _post-install
-	convert-mans ISO-8859-1	UTF-8 lib/mc.hint{,.es,.it,.nl}
-	convert-mans ISO-8859-2	UTF-8 lib/mc.hint{.cs,.hu,.pl}
-	convert-mans ISO-8859-5	UTF-8 lib/mc.hint.sr
-	convert-mans KOI8-R		UTF-8 lib/mc.hint.ru
-	convert-mans KOI8-U		UTF-8 lib/mc.hint.uk
-	convert-mans BIG5		UTF-8 lib/mc.hint.zh
-	convert-mans ISO-8859-1	UTF-8 doc/{es,it}/mc.hlp.*
-	convert-mans ISO-8859-2	UTF-8 doc/{hu,pl}/mc.hlp.*
-	convert-mans ISO-8859-5	UTF-8 doc/sr/mc.hlp.sr
+	convert-mans ISO-8859-1	UTF-8 lib/mc.hint{,.es,.it,.nl}		&&
+	convert-mans ISO-8859-2	UTF-8 lib/mc.hint{.cs,.hu,.pl}		&&
+	convert-mans ISO-8859-5	UTF-8 lib/mc.hint.sr				&&
+	convert-mans KOI8-R		UTF-8 lib/mc.hint.ru				&&
+	convert-mans KOI8-U		UTF-8 lib/mc.hint.uk				&&
+	convert-mans BIG5		UTF-8 lib/mc.hint.zh				&&
+	convert-mans ISO-8859-1	UTF-8 doc/{es,it}/mc.hlp.*			&&
+	convert-mans ISO-8859-2	UTF-8 doc/{hu,pl}/mc.hlp.*			&&
+	convert-mans ISO-8859-5	UTF-8 doc/sr/mc.hlp.sr				&&
 	convert-mans KOI8-R		UTF-8 doc/ru/mc.hlp.ru
 
 documentation		README COPYING ABOUT-NLS FAQ NEWS ChangeLog AUTHORS MAINTAINERS TODO

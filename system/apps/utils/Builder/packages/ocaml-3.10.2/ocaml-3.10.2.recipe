@@ -37,9 +37,9 @@ make-targets
 ;		opt.opt
 
 ;install
-;;	umask 022
-;	make install
-;;	cd emacs
+;;	umask 022 &&
+;	make install &&
+;;	cd emacs &&
 ;;	make EMACSDIR="" install
 
 documentation			README LICENSE Changes Upgrading

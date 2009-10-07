@@ -21,10 +21,10 @@ build-needs
 build-dir			konq-embed/dropin/qt_syllable
 
 _configure
-	echo $PWD
-;	cd ../../..
+	echo $PWD &&
+;	cd ../../.. &&
 	./configure --prefix=/resources/qt --enable-embedded
-;	--with-gui=qpe
+;		--with-gui=qpe
 configure-options
 	--enable-embedded
 ;	--with-gui=qpe
