@@ -153,7 +153,6 @@ ENV=(	"PATH=/resources/grub/bin:/resources/grub/sbin:/bin:/boot/system/bin"		\
 declare -a GRUB
 
 GRUB=(	"color	cyan/blue white/blue"																	\
-		"timeout	10"																					\
 		""																								\
 		"title	Install Syllable"																		\
 		"kernel /system/kernel.so rootfs=iso9660 root=@boot disable_config=true"						\
@@ -224,10 +223,10 @@ GRUB=(	"color	cyan/blue white/blue"																	\
 		"module /system/drivers/fs/iso9660"																\
 		""																								\
 		"title	Install Syllable in a Virtual Machine (VMware, Virtual PC, VirtualBox)"					\
-		"menu	virtual.lst"																			\
+		"configfile /boot/grub/virtual.lst"																\
 		""																								\
 		"title	Install Syllable in safe modes (hardware troubleshooting)"								\
-		"menu	trouble.lst"																			\
+		"configfile /boot/grub/trouble.lst"																\
 		""																								\
 		"title	Kernel debug output on COM1 at 19200 bps"												\
 		"kernel /system/kernel.so rootfs=iso9660 root=@boot disable_config=true debug_port=1 debug_baudrate=19200 debug_plaintext=true"	\
@@ -242,6 +241,11 @@ GRUB=(	"color	cyan/blue white/blue"																	\
 		"module /boot/drivers/dev/hcd/usb_ehci path=/system/drivers/dev/hcd/usb_ehci"					\
 		"module /boot/drivers/dev/disk/usb path=/system/drivers/dev/disk/usb"							\
 		"module /system/drivers/fs/iso9660"																\
+		""																								\
+		"title	Start from hard disk"																	\
+		"rootnoverify (hd0,0)"																			\
+		"chainloader +1"																				\
+		"boot"																							\
 )
 
 declare -a VIRTUAL
@@ -268,6 +272,9 @@ VIRTUAL=("title	Install Syllable in VMware"																\
 		"module /boot/drivers/dev/bus/ata path=/system/drivers/dev/bus/ata"								\
 		"module /boot/drivers/dev/hcd/ata_pci path=/system/drivers/dev/hcd/ata_pci"						\
 		"module /system/drivers/fs/iso9660"																\
+		""																								\
+		"title	Go back to main menu"																	\
+		"configfile /boot/grub/menu.lst"																\
 )
 
 declare -a TROUBLE
@@ -341,7 +348,7 @@ TROUBLE=("title	Install Syllable (no SMP and HyperThreading)"											\
 		"module /boot/drivers/dev/disk/usb path=/system/drivers/dev/disk/usb"							\
 		"module /system/drivers/fs/iso9660"																\
 		""																								\
-		"title	Install Syllable (failsafe)"															\
+		"title	Install Syllable (failsafe / VESA video, no SMP/ACPI/DMA/AGP)"							\
 		"kernel /system/kernel.so rootfs=iso9660 root=@boot disable_config=true disable_acpi=true disable_smp=true enable_ata_dma=false disable_agp=true disable_gfx_drivers=true"	\
 		"module /boot/drivers/dev/bus/pci path=/system/drivers/dev/bus/pci"								\
 		"module /boot/drivers/dev/bus/ata path=/system/drivers/dev/bus/ata"								\
@@ -397,6 +404,9 @@ TROUBLE=("title	Install Syllable (no SMP and HyperThreading)"											\
 		"module /boot/drivers/dev/bus/acpi path=/system/drivers/dev/bus/acpi"							\
 		"module /boot/drivers/dev/bus/ata path=/system/drivers/dev/bus/ata"								\
 		"module /system/drivers/fs/iso9660"																\
+		""																								\
+		"title	Go back to main menu"																	\
+		"configfile /boot/grub/menu.lst"																\
 )
 
 WORKING_DIR=files
