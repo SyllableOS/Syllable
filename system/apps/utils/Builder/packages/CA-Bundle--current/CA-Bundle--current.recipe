@@ -25,7 +25,7 @@ install-files		*.pem etc/ssl/certs/
 pre-register
 	for pem in etc/ssl/certs/*.pem
 	do
-		cat $pem
+		cat $pem &&
 		echo ""
 	done > etc/ssl/ca-bundle.crt
 ;	Ubuntu:
