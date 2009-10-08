@@ -50,20 +50,75 @@ void MainWin::HandleMessage(Message *msg)
 {
 	switch(msg->GetCode()) {
 		case ID_NEW:
-			delete m_Message;
-			m_Message = new Settings(0);
-			_BuildList();
-			break;
-
-		case ID_OPEN:
 			{
-				String cSettingsDir = String( getenv("HOME") ) + String( "/Settings/" );
-				FileRequester *fr = new FileRequester(FileRequester::LOAD_REQ, new Messenger(this), cSettingsDir.c_str());
-				fr->Show();
-				fr->CenterInWindow(this);
-				fr->MakeFocus();
+				if( m_bHasBeenModified )
+				{
+					String tmpstr;
+					tmpstr.Format( ID_UNSAVED_DIALOG_SENTENCE.c_str(), m_sSettingsFile.c_str() );
+					Alert *a = new Alert( ID_UNSAVED_DIALOG_TITLE, tmpstr, Alert::ALERT_WARNING, ID_BUTTON_OK.c_str(), ID_BUTTON_CANCEL.c_str(), NULL );
+					a->Go( new Invoker( new Message( M_INVOKED_NEW_ALERT ), this ) );
+		
+				}
+				else
+				{
+					delete m_Message;
+					m_Message = new Settings( NULL );
+					_BuildList();
+					m_bHasBeenSaved = false;
+					m_bHasBeenModified = false;
+				}
 			}
 			break;
+		case M_INVOKED_NEW_ALERT:
+			{
+				int32 nSelection;
+				
+				if( msg->FindInt32( "which", &nSelection ) )
+				break;
+				
+				if( nSelection == 0 )
+				{
+					m_bHasBeenModified = false;
+					Message* pcTmp = new Message( ID_NEW );
+					HandleMessage( pcTmp );
+					delete( pcTmp );
+				}						
+			}		
+			break;
+		case ID_OPEN:
+			{
+				if (!m_bHasBeenModified)
+				{
+					String cSettingsDir = String(getenv("HOME")) + String ("/Settings/");
+					FileRequester *fr = new FileRequester(FileRequester::LOAD_REQ, new Messenger(this), cSettingsDir.c_str());
+					fr->Show();
+					fr->CenterInWindow(this);
+					fr->MakeFocus();
+				}
+				else
+				{
+					String tmpstr;
+					tmpstr.Format( ID_UNSAVED_DIALOG_SENTENCE.c_str(), m_sSettingsFile.c_str() );
+					Alert *a = new Alert( ID_UNSAVED_DIALOG_TITLE, tmpstr, Alert::ALERT_WARNING, ID_BUTTON_OK.c_str(), ID_BUTTON_CANCEL.c_str(), NULL );
+					a->Go( new Invoker( new Message( M_INVOKED_OPEN_ALERT ),this ) );
+				}
+			}
+			break;
+		case M_INVOKED_OPEN_ALERT:
+			{
+				int32 nSelection;
+				
+				msg->FindInt32("which", &nSelection);
+				
+				if( nSelection == 0 )
+				{
+					m_bHasBeenModified = false;
+					Message* pcTmp = new Message( ID_OPEN );
+					HandleMessage( pcTmp );
+					delete( pcTmp );
+				}
+			}
+			break;			
 		case M_LOAD_REQUESTED:
 			{
 				String tmpstring;
@@ -74,17 +129,56 @@ void MainWin::HandleMessage(Message *msg)
 					m_Message = new Settings( f );
 					((Settings *)m_Message)->Load();
 					_BuildList();
-				}				
+					
+					m_sSettingsFile = tmpstring;
+					m_bHasBeenSaved = true;
+					m_bHasBeenModified = false;
+				}
 			}
 			break;
-
 		case ID_SAVE:
-			if( m_Message ) m_Message->Save();
+			{
+				if (!m_bHasBeenSaved)
+				{
+					String tmpStr( getenv( "HOME" ) );
+					tmpStr += "/Settings/";
+					FileRequester *fr = new FileRequester(FileRequester::SAVE_REQ, new Messenger(this),tmpStr.c_str());
+					fr->Show();
+					fr->CenterInWindow(this);
+					fr->MakeFocus();
+				}
+				else
+				{
+					if (m_Message)
+					{
+#if 0
+						File f(m_sSettingsFile,O_CREAT|O_TRUNC);
+						
+						Settings_FileHeader fh;
+						fh.nMagic = SETTINGS_MAGIC;
+						fh.nVersion = SETTINGS_VERSION;
+						fh.nHeaderSize = sizeof( fh );
+						fh.nSize = m_Message->GetFlattenedSize();
+						f.Write( &fh, sizeof( fh ) );
+						uint8* bfr = new uint8[fh.nSize];
+						m_Message->Flatten( bfr, fh.nSize );
+						f.Write( bfr, fh.nSize );
+#else
+						File* pcFile = new File( m_sSettingsFile, O_CREAT|O_TRUNC );
+						m_Message->SetFile( pcFile );
+						m_Message->Save();
+#endif
+						m_bHasBeenModified = false;
+						m_bHasBeenSaved = true;
+					}
+				}
+			}
 			break;
-			
 		case ID_SAVE_AS:
 			{
-				FileRequester *fr = new FileRequester(FileRequester::SAVE_REQ, new Messenger(this), getenv("$HOME"));
+				os::String tmpStr( getenv("HOME") );
+				tmpStr += "/Settings/";
+				FileRequester *fr = new FileRequester( FileRequester::SAVE_REQ, new Messenger(this), tmpStr.c_str() );
 				fr->Show();
 				fr->CenterInWindow(this);
 				fr->MakeFocus();
@@ -95,6 +189,7 @@ void MainWin::HandleMessage(Message *msg)
 				String tmpstring;
 
 				if(msg->FindString("file/path", &tmpstring) == 0) {
+#if 0
 					File f( tmpstring, O_CREAT | O_TRUNC );
 
 					Settings_FileHeader fh;
@@ -107,15 +202,20 @@ void MainWin::HandleMessage(Message *msg)
 					m_Message->Flatten( bfr, fh.nSize );
 					f.Write( bfr, fh.nSize );
 					delete bfr;
+					
+					m_sSettingsFile = tmpstring;
+#else
+					m_sSettingsFile = tmpstring;
+					File* pcFile = new File( m_sSettingsFile, O_CREAT|O_TRUNC );
+					m_Message->SetFile( pcFile );
+					m_Message->Save();
+#endif
 
-/*					Settings *pcSaveSettings = new Settings( &f );
-					*pcSaveSettings = m_Message;
-					pcSaveSettings->Save();
-					delete pcSaveSettings;*/
+					m_bHasBeenSaved = true;	
+					m_bHasBeenModified = false;
 				}				
 			}
 			break;
-
 		case ID_EDIT_ITEM:
 			{
 				int sel = m_pcContents->GetFirstSelected();
@@ -138,22 +238,48 @@ void MainWin::HandleMessage(Message *msg)
 					if( ( lvr = _GetRowByID( s, &nIndex ) ) ) {
 						String cName = lvr->GetString(0);
 						m_pcContents->RemoveNode( nIndex );
-						_AddVariable( cName, -1, true );
+						_AddVariable( cName,nIndex, true );
+						m_bHasBeenModified = true;
 					}
 				}
 			}			
 			break;
 		case ID_QUIT:
-			if( m_bEmbedded && m_pcMessenger ) {
-				Message *m = new Message( ID_UNLOCK );
-				m->AddString( "id", m_cID );
-				m_pcMessenger->SendMessage( m );
-				Close();
-			} else {
-				Application::GetInstance()->PostMessage(M_QUIT);
+			{
+				if( m_bEmbedded && m_pcMessenger ) {
+					Message *m = new Message( ID_UNLOCK );
+					m->AddString( "id", m_cID );
+					m_pcMessenger->SendMessage( m );
+					Close();
+				}
+				else if (m_bHasBeenModified)
+				{
+					String tmpstr;
+					tmpstr.Format( ID_UNSAVED_DIALOG_SENTENCE.c_str(), m_sSettingsFile.c_str() );
+					Alert *a = new Alert( ID_UNSAVED_DIALOG_TITLE, tmpstr, Alert::ALERT_WARNING, ID_BUTTON_OK.c_str(), ID_BUTTON_CANCEL.c_str(), NULL );
+					a->Go( new Invoker( new Message( M_INVOKED_CLOSE_ALERT ), this ) );
+				}
+				else
+				{
+					Application::GetInstance()->PostMessage(M_QUIT);
+				}
 			}
 			break;
-
+		case M_INVOKED_CLOSE_ALERT:
+			{
+				int32 nSelection;
+				
+				msg->FindInt32("which", &nSelection);
+				
+				if( nSelection == 0 )
+				{
+					m_bHasBeenModified = false;
+					Message* pcTmp = new Message( ID_QUIT );
+					HandleMessage( pcTmp );
+					delete( pcTmp );
+				}
+			}
+			break;	
 		case ID_UNLOCK:
 			{
 				String id;
@@ -172,10 +298,12 @@ void MainWin::HandleMessage(Message *msg)
 					VariableTreeNode *lvr = (VariableTreeNode *)m_pcContents->GetRow(sel);
 					if( lvr->IsSelectable() ) {
 						lvr->RemoveFromMessage( m_Message );
-						do {
+					//	do {
+					//		printf ("remove node %d \n",sel);
 							m_pcContents->RemoveNode( sel, true );
-						} while( lvr->m_nIndex == -1 && (((VariableTreeNode *)m_pcContents->GetRow(sel))->GetIndent() > 1 ));
+				//		} while( lvr->m_nIndex == -1 && (((VariableTreeNode *)m_pcContents->GetRow(sel))->GetIndent() > 1 ));
 						delete lvr;
+						m_bHasBeenModified = true;
 					}
 				}
 			}
@@ -209,17 +337,23 @@ void MainWin::HandleMessage(Message *msg)
 				
 				nUnique = m_Message->GetNameInfo( pzName );
 
-				if( strcmp(pzName, "") && nUnique == -1 ) {
+				if( strcmp(pzName, "") && nUnique == -1 )
+				{
 					_AddToMessage( pzName, nType );
 					int sel = m_pcContents->GetFirstSelected();
 					m_pcContents->ClearSelection();
 					_AddVariable(pzName, sel, true);
-				} else if( nUnique == 0 ) {
+					m_bHasBeenModified=true;
+				} 
+				else if( nUnique == 0 )
+				{
 					Alert *a = new Alert( ID_ERROR_TITLE.c_str(),
 						String().Format(ID_ERROR_UNIQUE.c_str(),pzName),
 						Alert::ALERT_WARNING, ID_ERROR_BUTTON.c_str(), NULL );
 					a->Go( new Invoker(NULL) );
-				} else {
+				} 
+				else
+				{
 					Alert *a = new Alert( ID_ERROR_TITLE.c_str(),
 						ID_ERROR_VARIABLE.c_str(),
 						Alert::ALERT_WARNING, ID_ERROR_BUTTON.c_str(), NULL );
@@ -239,6 +373,9 @@ MainWin::MainWin( const Rect & r, Message* pcMsg, Looper *pcParent, const std::s
 	Rect bounds = GetBounds();
 	Rect menuframe;
 
+	
+	m_bHasBeenSaved = false;
+	
 	m_pcMessenger = NULL;
 	m_cID = cID;
 
@@ -334,6 +471,7 @@ void MainWin::_AddVariable(const String &name, int pos, bool bUpdate )
 	int nCount;
 	int i;
 
+//	printf ("_ADDVARIABLE CALLED \n");
 	m_Message->GetNameInfo(name.c_str(), &nType, &nCount);
 	VariableTreeNode *lvs = new VariableTreeNode;
 	
@@ -357,12 +495,18 @@ void MainWin::_AddVariable(const String &name, int pos, bool bUpdate )
 
 	lvs->SetIndent( 1 );
 	m_pcContents->InsertNode(lvs, bUpdate);
+	
+//	printf ("INSERT NODE %s\n",name.c_str());
+//	printf ("Count %d POS %d\n",nCount,pos);
+	
 
 	if(nCount > 1) {
 		char bfr[16];
 		for(i = 0; i < nCount; i++) {
+//			printf ("I=%d",i);
 			lvs = new VariableTreeNode;
 			lvs->m_cName = name;
+//			printf ("for loop %s\n",name.c_str());
 			lvs->m_nIndex = i;
 			lvs->SetIndent( 2 );
 			sprintf(bfr, "%s[%d]", name.c_str(), i);
@@ -370,8 +514,10 @@ void MainWin::_AddVariable(const String &name, int pos, bool bUpdate )
 			lvs->AppendString(cTypeStr);
 			lvs->AppendString(MsgDataToText(name, i, m_Message));
 			lvs->AppendString( _GetUniqueID() );
-			m_pcContents->InsertNode(lvs, bUpdate);
+			//m_pcContents->InsertNode(lvs, bUpdate);
+//			printf ("m_pcContents->InsertNode\n");
 		}
+		
 	}
 
 
@@ -531,20 +677,4 @@ void MainWin::_AddToMessage( const char *pzName, int32 nType )
 			break;
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

@@ -40,6 +40,10 @@ class MainWin: public Window {
 	bool		m_bEmbedded;
 	Messenger*	m_pcMessenger;
 	std::string	m_cID;
+	bool 		m_bHasBeenSaved;
+	bool		m_bHasBeenModified;
+	os::String	m_sSettingsFile;
+	
 };
 
 #endif

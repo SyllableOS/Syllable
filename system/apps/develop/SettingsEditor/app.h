@@ -25,7 +25,9 @@ enum IDs {
 	ID_SAVE_INDEX,
 	ID_REFRESH,
 	ID_UNLOCK,		// Unlock an item in the list (items are locked when edit win opens)
-	
+	M_INVOKED_OPEN_ALERT,
+	M_INVOKED_NEW_ALERT,
+	M_INVOKED_CLOSE_ALERT,
 	ID_LAST_ID
 };
 
