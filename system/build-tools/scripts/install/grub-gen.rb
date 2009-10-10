@@ -34,7 +34,7 @@ module GrubGen
 		output.gsub!("##GRUB USB DEVICE##", grubpart)
 		output.gsub!("##GRUB ROOT DEVICE##",
 			parameters['sata=true'] ? grubpart.gsub('hd2', 'hd0').gsub('hd3', 'hd1') :
-			parameters['eeepc=true'] ? grubpart.gsub('hd2', 'hd0') :
+			parameters['eeepc=true'] ? grubpart.gsub('hd1', 'hd0').gsub('hd2', 'hd0') :
 			grubpart
 		)
 		output.gsub!("##SYLLABLE ROOT DEVICE PATH##",
