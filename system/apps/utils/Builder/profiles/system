@@ -156,14 +156,14 @@ tree
 	bin
 
 prepare
-	ln -s usr/ resources
+	ln -s usr/ resources &&
 
 ;	For OpenSSL and others:
-	ln -s /resources/indexes/bin/perl	usr/bin/perl
+	ln -s /resources/indexes/bin/perl	usr/bin/perl &&
 ;	For OpenSSL?
-;	ln -s /resources/indexes/bin/perl	usr/local/bin/perl
+;	ln -s /resources/indexes/bin/perl	usr/local/bin/perl &&
 ;	From BinUtils, for building OpenSSL:
-	ln -s /resources/indexes/bin/ranlib	usr/bin/
+	ln -s /resources/indexes/bin/ranlib	usr/bin/ &&
 
 ;	For sshd:
 	install -m700 -d	var/lib/sshd

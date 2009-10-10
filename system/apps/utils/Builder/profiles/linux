@@ -199,57 +199,57 @@ tree
 	usr/share/man/man8
 
 prepare
-;	mkdir dev
-	mknod -m 600 dev/console c 5 1
-	mknod -m 666 dev/null c 1 3
+;	mkdir dev &&
+	mknod -m 600 dev/console c 5 1 &&
+	mknod -m 666 dev/null c 1 3 &&
 
-;	mount --bind /dev dev
+;	mount --bind /dev dev &&
 
-;	mount -t devpts	devpts	dev/pts
-;	mount -t tmpfs	shm		dev/shm
-;	mount -t proc	proc	proc
-;	mount -t sysfs	sysfs	sys
+;	mount -t devpts	devpts	dev/pts &&
+;	mount -t tmpfs	shm		dev/shm &&
+;	mount -t proc	proc	proc &&
+;	mount -t sysfs	sysfs	sys &&
 
-;	install -d -m 0750 root
-	install -d -m 1777 tmp var/tmp
+;	install -d -m 0750 root &&
+	install -d -m 1777 tmp var/tmp &&
 
-	touch var/run/utmp		var/log/{btmp,lastlog,wtmp}
-	chgrp utmp var/run/utmp	var/log/lastlog
-	chmod 664 var/run/utmp	var/log/lastlog
+	touch var/run/utmp		var/log/{btmp,lastlog,wtmp} &&
+	chgrp utmp var/run/utmp	var/log/lastlog &&
+	chmod 664 var/run/utmp	var/log/lastlog &&
 
-	ln -s usr/ resources
+	ln -s usr/ resources &&
 
 ;	For OpenSSL and others:
-	ln -s /resources/indexes/bin/perl	usr/bin/perl
+	ln -s /resources/indexes/bin/perl	usr/bin/perl &&
 ;	For OpenSSL?
-;	ln -s /resources/indexes/bin/perl	usr/local/bin/perl
+;	ln -s /resources/indexes/bin/perl	usr/local/bin/perl &&
 ;	From BinUtils, for building OpenSSL:
-	ln -s /resources/indexes/bin/ranlib	usr/bin/
+	ln -s /resources/indexes/bin/ranlib	usr/bin/ &&
 
-;	touch etc/mtab
+;	touch etc/mtab &&
 
-;	install -d				lib/{firmware,udev/devices/{pts,shm}}
-	mknod -m0666			lib/udev/devices/null c 1 3
-	ln -s /proc/self/fd		lib/udev/devices/fd
-	ln -s /proc/self/fd/0	lib/udev/devices/stdin
-	ln -s /proc/self/fd/1	lib/udev/devices/stdout
-	ln -s /proc/self/fd/2	lib/udev/devices/stderr
-	ln -s /proc/kcore		lib/udev/devices/core
+;	install -d				lib/{firmware,udev/devices/{pts,shm}} &&
+	mknod -m0666			lib/udev/devices/null c 1 3 &&
+	ln -s /proc/self/fd		lib/udev/devices/fd &&
+	ln -s /proc/self/fd/0	lib/udev/devices/stdin &&
+	ln -s /proc/self/fd/1	lib/udev/devices/stdout &&
+	ln -s /proc/self/fd/2	lib/udev/devices/stderr &&
+	ln -s /proc/kcore		lib/udev/devices/core &&
 
 ;	For sshd:
-	install -m700 -d	var/lib/sshd
-	chown root:sys		var/lib/sshd
+	install -m700 -d	var/lib/sshd &&
+	chown root:sys		var/lib/sshd &&
 
 ;	For LFS bootscripts:
-	ln -s /system/resources/cups/1.3.4/sbin/cupsd	usr/sbin/
-	ln -s /resources/bind/sbin/named				usr/sbin/
-;	ln -s /resources/openssh/sbin/sshd				usr/sbin/
-	ln -s /resources/apache/bin/apachectl			usr/sbin/
-	ln -s /resources/apache/bin/httpd				usr/sbin/
-	ln -s /resources/vsftpd/sbin/vsftpd				usr/sbin/
-	ln -s /resources/rsync/bin/rsync				usr/bin/
-	ln -s /resources/samba/sbin/nmbd				usr/sbin/
-	ln -s /resources/samba/sbin/smbd				usr/sbin/
+	ln -s /system/resources/cups/1.3.4/sbin/cupsd	usr/sbin/ &&
+	ln -s /resources/bind/sbin/named				usr/sbin/ &&
+;	ln -s /resources/openssh/sbin/sshd				usr/sbin/ &&
+	ln -s /resources/apache/bin/apachectl			usr/sbin/ &&
+	ln -s /resources/apache/bin/httpd				usr/sbin/ &&
+	ln -s /resources/vsftpd/sbin/vsftpd				usr/sbin/ &&
+	ln -s /resources/rsync/bin/rsync				usr/bin/ &&
+	ln -s /resources/samba/sbin/nmbd				usr/sbin/ &&
+	ln -s /resources/samba/sbin/smbd				usr/sbin/ &&
 	ln -s /resources/samba/sbin/winbindd			usr/sbin/
 
 resources
