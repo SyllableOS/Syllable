@@ -11,6 +11,15 @@
 	module	/system/drivers/dev/hcd/ata_pci
 	module	/system/drivers/fs/afs
 	
+	title	Start Syllable (automatic boot drive search)
+	kernel	/system/kernel.so root=##SYLLABLE ROOT DEVICE PATH## ##BOOT PARAMETERS##
+	module	/system/config/kernel.cfg
+	module	/system/drivers/dev/bus/acpi
+	module	/system/drivers/dev/bus/pci
+	module	/system/drivers/dev/bus/ata
+	module	/system/drivers/dev/hcd/ata_pci
+	module	/system/drivers/fs/afs
+	
 	title	Start Syllable from USB device
 	root	##GRUB USB DEVICE##
 	kernel	/system/kernel.so root=##SYLLABLE ROOT DEVICE PATH## ##BOOT PARAMETERS##
