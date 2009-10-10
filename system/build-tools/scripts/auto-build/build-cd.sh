@@ -168,7 +168,7 @@ GRUB=(	"color	cyan/blue white/blue"																	\
 		"module /boot/drivers/dev/disk/usb path=/system/drivers/dev/disk/usb"							\
 		"module /system/drivers/fs/iso9660"																\
 		""																								\
-		"title	Install Syllable from AFS-formatted USB memory"											\
+		"title	Install Syllable from AFS-formatted USB device"											\
 		"kernel /system/kernel.so root=@boot disable_config=true"										\
 		"module /boot/drivers/dev/bus/acpi path=/system/drivers/dev/bus/acpi"							\
 		"module /boot/drivers/dev/bus/pci path=/system/drivers/dev/bus/pci"								\
@@ -182,7 +182,7 @@ GRUB=(	"color	cyan/blue white/blue"																	\
 		"module /boot/drivers/dev/disk/usb path=/system/drivers/dev/disk/usb"							\
 		"module /system/drivers/fs/afs"																	\
 		""																								\
-		"title	Install Syllable from Ext2FS-formatted USB memory"										\
+		"title	Install Syllable from Ext2FS-formatted USB device"										\
 		"kernel /system/kernel.so rootfs=ext2 root=@boot disable_config=true"							\
 		"module /boot/drivers/dev/bus/acpi path=/system/drivers/dev/bus/acpi"							\
 		"module /boot/drivers/dev/bus/pci path=/system/drivers/dev/bus/pci"								\
@@ -222,6 +222,20 @@ GRUB=(	"color	cyan/blue white/blue"																	\
 		"module /boot/drivers/dev/disk/usb path=/system/drivers/dev/disk/usb"							\
 		"module /system/drivers/fs/iso9660"																\
 		""																								\
+		"title	Install Syllable (SATA: shift drive numbers down by two positions)"						\
+		"kernel /system/kernel.so rootfs=iso9660 root=@boot disable_config=true sata=true"				\
+		"module /boot/drivers/dev/bus/acpi path=/system/drivers/dev/bus/acpi"							\
+		"module /boot/drivers/dev/bus/pci path=/system/drivers/dev/bus/pci"								\
+		"module /boot/drivers/dev/bus/ata path=/system/drivers/dev/bus/ata"								\
+		"module /boot/drivers/dev/bus/usb path=/system/drivers/dev/bus/usb"								\
+		"module /boot/drivers/dev/bus/scsi path=/system/drivers/dev/bus/scsi"							\
+		"module /boot/drivers/dev/hcd/ata_pci path=/system/drivers/dev/hcd/ata_pci"						\
+		"module /boot/drivers/dev/hcd/usb_ohci path=/system/drivers/dev/hcd/usb_ohci"					\
+		"module /boot/drivers/dev/hcd/usb_uhci path=/system/drivers/dev/hcd/usb_uhci"					\
+		"module /boot/drivers/dev/hcd/usb_ehci path=/system/drivers/dev/hcd/usb_ehci"					\
+		"module /boot/drivers/dev/disk/usb path=/system/drivers/dev/disk/usb"							\
+		"module /system/drivers/fs/iso9660"																\
+		""																								\
 		"title	Install Syllable in a Virtual Machine (VMware, Virtual PC, VirtualBox)"					\
 		"configfile /boot/grub/virtual.lst"																\
 		""																								\
@@ -242,10 +256,9 @@ GRUB=(	"color	cyan/blue white/blue"																	\
 		"module /boot/drivers/dev/disk/usb path=/system/drivers/dev/disk/usb"							\
 		"module /system/drivers/fs/iso9660"																\
 		""																								\
-		"title	Start from hard disk"																	\
-		"rootnoverify (hd0,0)"																			\
+		"title	Start from main drive / hard disk"														\
+		"rootnoverify (hd0)"																			\
 		"chainloader +1"																				\
-		"boot"																							\
 )
 
 declare -a VIRTUAL

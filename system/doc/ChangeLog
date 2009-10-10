@@ -1,3 +1,9 @@
+* October 10, 2009, Kaj de Vos *
+
+Added extra boot menu option and boot parameter for SATA configurations that shift drive numbers.
+Extended installer to compensate for drive number swapping and shifting on EeePC and some
+SATA configurations.
+
 * October 1, 2009, Kaj de Vos *
 
 Re-enabled AGP drivers for testing.

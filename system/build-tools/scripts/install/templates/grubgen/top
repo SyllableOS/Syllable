@@ -12,7 +12,7 @@
 	module	/system/drivers/fs/afs
 	
 	title	Start Syllable from USB device
-	root	##GRUB ROOT DEVICE##
+	root	##GRUB USB DEVICE##
 	kernel	/system/kernel.so root=##SYLLABLE ROOT DEVICE PATH## ##BOOT PARAMETERS##
 	module	/system/config/kernel.cfg
 	module	/system/drivers/dev/bus/acpi
