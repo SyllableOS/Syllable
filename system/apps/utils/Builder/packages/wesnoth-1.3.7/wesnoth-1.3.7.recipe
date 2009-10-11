@@ -25,41 +25,41 @@ documentation		README COPYING changelog MANUAL*
 
 pre-register
 ;	Set os::Category and add an icon to "wesnoth":
-	rescopy -r bin/wesnoth								icon48x48.png=icons/wesnoth-icon.png
-	addattrib bin/wesnoth								os::MimeType application/x-executable
-	addattrib bin/wesnoth								os::Category Games
+	rescopy -r bin/wesnoth								icon48x48.png=icons/wesnoth-icon.png &&
+	addattrib bin/wesnoth								os::MimeType application/x-executable &&
+	addattrib bin/wesnoth								os::Category Games &&
 ;	Set os::Category and add an icon to "wesnoth_editor"
 ;	wesnoth_editor-icon.png needs to be replaced, so we use wesnoth-icon.png instead. Wesnoth.org has been notified.
-	rescopy -r bin/wesnoth_editor						icon48x48.png=icons/wesnoth-icon.png
-	addattrib bin/wesnoth_editor						os::MimeType application/x-executable
-	addattrib bin/wesnoth_editor						os::Category Games
+	rescopy -r bin/wesnoth_editor						icon48x48.png=icons/wesnoth-icon.png &&
+	addattrib bin/wesnoth_editor						os::MimeType application/x-executable &&
+	addattrib bin/wesnoth_editor						os::Category Games &&
 ;	Set os::MimeType on the documentation:
-	addattrib documentation/README						os::MimeType text/plain
-	addattrib documentation/COPYING						os::MimeType text/plain
-	addattrib documentation/changelog					os::MimeType text/plain
-	addattrib documentation/MANUAL						os::MimeType text/plain
-	addattrib documentation/MANUAL.brazilian			os::MimeType text/plain
-	addattrib documentation/MANUAL.catalan				os::MimeType text/plain
-	addattrib documentation/MANUAL.chinese_simplified	os::MimeType text/plain
-	addattrib documentation/MANUAL.czech				os::MimeType text/plain
-	addattrib documentation/MANUAL.danish				os::MimeType text/plain
-	addattrib documentation/MANUAL.french				os::MimeType text/plain
-	addattrib documentation/MANUAL.german				os::MimeType text/plain
-	addattrib documentation/MANUAL.hungarian			os::MimeType text/plain
-	addattrib documentation/MANUAL.indonesian			os::MimeType text/plain
-	addattrib documentation/MANUAL.italian				os::MimeType text/plain
-	addattrib documentation/MANUAL.japanese				os::MimeType text/plain
-	addattrib documentation/MANUAL.norwegian			os::MimeType text/plain
-	addattrib documentation/MANUAL.polish				os::MimeType text/plain
-	addattrib documentation/MANUAL.russian				os::MimeType text/plain
-	addattrib documentation/MANUAL.spanish				os::MimeType text/plain
-	addattrib documentation/MANUAL.swedish				os::MimeType text/plain
+	addattrib documentation/README						os::MimeType text/plain &&
+	addattrib documentation/COPYING						os::MimeType text/plain &&
+	addattrib documentation/changelog					os::MimeType text/plain &&
+	addattrib documentation/MANUAL						os::MimeType text/plain &&
+	addattrib documentation/MANUAL.brazilian			os::MimeType text/plain &&
+	addattrib documentation/MANUAL.catalan				os::MimeType text/plain &&
+	addattrib documentation/MANUAL.chinese_simplified	os::MimeType text/plain &&
+	addattrib documentation/MANUAL.czech				os::MimeType text/plain &&
+	addattrib documentation/MANUAL.danish				os::MimeType text/plain &&
+	addattrib documentation/MANUAL.french				os::MimeType text/plain &&
+	addattrib documentation/MANUAL.german				os::MimeType text/plain &&
+	addattrib documentation/MANUAL.hungarian			os::MimeType text/plain &&
+	addattrib documentation/MANUAL.indonesian			os::MimeType text/plain &&
+	addattrib documentation/MANUAL.italian				os::MimeType text/plain &&
+	addattrib documentation/MANUAL.japanese				os::MimeType text/plain &&
+	addattrib documentation/MANUAL.norwegian			os::MimeType text/plain &&
+	addattrib documentation/MANUAL.polish				os::MimeType text/plain &&
+	addattrib documentation/MANUAL.russian				os::MimeType text/plain &&
+	addattrib documentation/MANUAL.spanish				os::MimeType text/plain &&
+	addattrib documentation/MANUAL.swedish				os::MimeType text/plain &&
 	addattrib documentation/MANUAL.turkish				os::MimeType text/plain
 ;	Set os::Category on a few folders:
-;	addattrib share/wesnoth/data						os::Category Ignore
-;	addattrib share/wesnoth/fonts						os::Category Ignore
-;	addattrib share/wesnoth/images						os::Category Ignore
-;	addattrib share/wesnoth/sounds						os::Category Ignore
+;	addattrib share/wesnoth/data						os::Category Ignore &&
+;	addattrib share/wesnoth/fonts						os::Category Ignore &&
+;	addattrib share/wesnoth/images						os::Category Ignore &&
+;	addattrib share/wesnoth/sounds						os::Category Ignore &&
 ;	addattrib share/wesnoth/translations				os::Category Ignore
 
 move-files

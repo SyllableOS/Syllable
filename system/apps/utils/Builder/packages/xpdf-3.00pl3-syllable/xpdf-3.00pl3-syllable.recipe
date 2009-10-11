@@ -2,6 +2,7 @@ authors
 	Arno Klenke
 	Kaj de Vos
 	Flemming Sørensen
+maintainers			Kaj de Vos
 status				testing
 
 inherits			xpdf-3.00pl3
@@ -17,8 +18,6 @@ install-tree		bin
 install				true
 install-files		xpdf/Xpdf bin/
 
-pre-register
-	addattrib bin/Xpdf				os::Category Office
+pre-register		addattrib bin/Xpdf os::Category Office
 
 move-files			bin/Xpdf /Applications/Xpdf/
-
