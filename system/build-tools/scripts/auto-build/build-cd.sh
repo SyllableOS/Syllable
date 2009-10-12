@@ -292,7 +292,28 @@ VIRTUAL=("title	Install Syllable in VMware"																\
 
 declare -a TROUBLE
 
-TROUBLE=("title	Install Syllable (no SMP and HyperThreading)"											\
+TROUBLE=("title	Install Syllable (USB 1 only)"															\
+		"kernel /system/kernel.so rootfs=iso9660 root=@boot disable_config=true usb_2=false"			\
+		"module /boot/drivers/dev/bus/acpi path=/system/drivers/dev/bus/acpi"							\
+		"module /boot/drivers/dev/bus/pci path=/system/drivers/dev/bus/pci"								\
+		"module /boot/drivers/dev/bus/ata path=/system/drivers/dev/bus/ata"								\
+		"module /boot/drivers/dev/bus/usb path=/system/drivers/dev/bus/usb"								\
+		"module /boot/drivers/dev/bus/scsi path=/system/drivers/dev/bus/scsi"							\
+		"module /boot/drivers/dev/hcd/ata_pci path=/system/drivers/dev/hcd/ata_pci"						\
+		"module /boot/drivers/dev/hcd/usb_ohci path=/system/drivers/dev/hcd/usb_ohci"					\
+		"module /boot/drivers/dev/hcd/usb_uhci path=/system/drivers/dev/hcd/usb_uhci"					\
+		"module /boot/drivers/dev/disk/usb path=/system/drivers/dev/disk/usb"							\
+		"module /system/drivers/fs/iso9660"																\
+		""																								\
+		"title	Install Syllable (no USB CD drive)"														\
+		"kernel /system/kernel.so rootfs=iso9660 root=@boot disable_config=true"						\
+		"module /boot/drivers/dev/bus/acpi path=/system/drivers/dev/bus/acpi"							\
+		"module /boot/drivers/dev/bus/pci path=/system/drivers/dev/bus/pci"								\
+		"module /boot/drivers/dev/bus/ata path=/system/drivers/dev/bus/ata"								\
+		"module /boot/drivers/dev/hcd/ata_pci path=/system/drivers/dev/hcd/ata_pci"						\
+		"module /system/drivers/fs/iso9660"																\
+		""																								\
+		"title	Install Syllable (no SMP and HyperThreading)"											\
 		"kernel /system/kernel.so rootfs=iso9660 root=@boot disable_config=true disable_smp=true"		\
 		"module /boot/drivers/dev/bus/acpi path=/system/drivers/dev/bus/acpi"							\
 		"module /boot/drivers/dev/bus/pci path=/system/drivers/dev/bus/pci"								\
@@ -319,7 +340,7 @@ TROUBLE=("title	Install Syllable (no SMP and HyperThreading)"											\
 		"module /boot/drivers/dev/disk/usb path=/system/drivers/dev/disk/usb"							\
 		"module /system/drivers/fs/iso9660"																\
 		""																								\
-		"title	Install Syllable (no AGP)"															\
+		"title	Install Syllable (no AGP)"																\
 		"kernel /system/kernel.so rootfs=iso9660 root=@boot disable_config=true disable_agp=true"		\
 		"module /boot/drivers/dev/bus/acpi path=/system/drivers/dev/bus/acpi"							\
 		"module /boot/drivers/dev/bus/pci path=/system/drivers/dev/bus/pci"								\
@@ -361,8 +382,8 @@ TROUBLE=("title	Install Syllable (no SMP and HyperThreading)"											\
 		"module /boot/drivers/dev/disk/usb path=/system/drivers/dev/disk/usb"							\
 		"module /system/drivers/fs/iso9660"																\
 		""																								\
-		"title	Install Syllable (failsafe / VESA video, no SMP/ACPI/DMA/AGP)"							\
-		"kernel /system/kernel.so rootfs=iso9660 root=@boot disable_config=true disable_acpi=true disable_smp=true enable_ata_dma=false disable_agp=true disable_gfx_drivers=true"	\
+		"title	Install Syllable (failsafe / VESA video, no USB CD/SMP/ACPI/AGP/DMA)"					\
+		"kernel /system/kernel.so rootfs=iso9660 root=@boot disable_config=true disable_acpi=true disable_smp=true enable_ata_dma=false disable_agp=true disable_gfx_drivers=true usb_2=false"	\
 		"module /boot/drivers/dev/bus/pci path=/system/drivers/dev/bus/pci"								\
 		"module /boot/drivers/dev/bus/ata path=/system/drivers/dev/bus/ata"								\
 		"module /boot/drivers/dev/hcd/ata_pci path=/system/drivers/dev/hcd/ata_pci"						\
@@ -380,14 +401,6 @@ TROUBLE=("title	Install Syllable (no SMP and HyperThreading)"											\
 		"module /boot/drivers/dev/hcd/usb_uhci path=/system/drivers/dev/hcd/usb_uhci"					\
 		"module /boot/drivers/dev/hcd/usb_ehci path=/system/drivers/dev/hcd/usb_ehci"					\
 		"module /boot/drivers/dev/disk/usb path=/system/drivers/dev/disk/usb"							\
-		"module /system/drivers/fs/iso9660"																\
-		""																								\
-		"title	Install Syllable (no USB CD drive)"														\
-		"kernel /system/kernel.so rootfs=iso9660 root=@boot disable_config=true"						\
-		"module /boot/drivers/dev/bus/acpi path=/system/drivers/dev/bus/acpi"							\
-		"module /boot/drivers/dev/bus/pci path=/system/drivers/dev/bus/pci"								\
-		"module /boot/drivers/dev/bus/ata path=/system/drivers/dev/bus/ata"								\
-		"module /boot/drivers/dev/hcd/ata_pci path=/system/drivers/dev/hcd/ata_pci"						\
 		"module /system/drivers/fs/iso9660"																\
 		""																								\
 		"title	Install Syllable (no USB)"																\
