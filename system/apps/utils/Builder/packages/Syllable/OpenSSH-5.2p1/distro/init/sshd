@@ -18,6 +18,12 @@ then
 	chmod 600 /etc/ssh/ssh_host_rsa_key
 fi
 
-
+# -4: IPv4, don't use IPv6
+# -r: don't call socketpair()
+# -e: log to standard error output
+# -D: don't detach
+# -d: debug mode
+# -t: test mode
+# -T: extended test mode
 # Uncomment the following to start the OpenSSH server:
-#/resources/indexes/sbin/sshd
+#/resources/indexes/sbin/sshd -4 -r
