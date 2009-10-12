@@ -1,5 +1,9 @@
 * October 12, 2009, Kaj de Vos *
 
+Disabled nVidia AGP driver again until we have the fix patch.
+
+* October 12, 2009, Kaj de Vos *
+
 Added extra boot menu option to remove the buggy EHCI USB 2 driver. The installer also removes
 it for EeePC.
 
