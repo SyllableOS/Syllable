@@ -1,6 +1,6 @@
 * October 12, 2009, Kaj de Vos *
 
-Disabled nVidia AGP driver again until we have the fix patch.
+Disabled VIA AGP driver again until we have the fix patch.
 
 * October 12, 2009, Kaj de Vos *
 
