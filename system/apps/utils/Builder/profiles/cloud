@@ -333,9 +333,7 @@ modules
 	apps/other/MkTemp-1.6
 
 ;	Needs ranlib symlink in /usr/bin/!
-;	For cURL:
-	stage libraries/OpenSSL--stage
-;	other/data/CA-Certificates--current
+	system libraries/OpenSSL-0.9.8k-system
 	other/data/CA-Bundle--current
 
 	system apps/other/cURL-7.19.5

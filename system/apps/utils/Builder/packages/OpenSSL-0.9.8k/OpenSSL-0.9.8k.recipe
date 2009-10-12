@@ -51,7 +51,7 @@ test-targets
 system-prefix-var	INSTALL_PREFIX
 
 install-vars
-;	OPENSSLDIR		"$IMAGE/etc/ssl"
+	OPENSSLDIR		"$IMAGE/etc/ssl"
 	INSTALLTOP		"$IMAGE/resources/OpenSSL"
 	MANDIR			"$IMAGE/resources/OpenSSL/man"
 
