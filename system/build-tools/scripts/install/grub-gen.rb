@@ -25,6 +25,10 @@ module GrubGen
 		parameters.gsub! 'root=@boot', ''
 		parameters.gsub! 'disable_config=true', ''
 		parameters.strip!
+
+		if parameters['usb_2=false'] or parameters['eeepc=true']
+			system 'rm /inst/system/drivers/dev/hcd/usb_ehci'
+		end
 		
 		grubpart = syl_to_grub(sylpart)
 		

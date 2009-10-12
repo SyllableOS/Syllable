@@ -1,3 +1,8 @@
+* October 12, 2009, Kaj de Vos *
+
+Added extra boot menu option to remove the buggy EHCI USB 2 driver. The installer also removes
+it for EeePC.
+
 * October 10, 2009, Kaj de Vos *
 
 Added extra boot menu option and boot parameter for SATA configurations that shift drive numbers.
