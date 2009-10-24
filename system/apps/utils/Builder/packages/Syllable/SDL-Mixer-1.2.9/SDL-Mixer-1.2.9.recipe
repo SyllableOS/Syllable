@@ -1,0 +1,13 @@
+authors
+	Flemming Sørensen
+	Kaj de Vos
+maintainers			Kaj de Vos
+status				testing
+notes				Reconfiguration breaks on missing AutoMake macro for SMPEG
+
+build-needs			smpeg
+
+make-shared
+
+; For shared libraries:
+;configure-env		LDFLAGS '-lm'
