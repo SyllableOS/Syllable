@@ -1,0 +1,92 @@
+Submitted By:            Matt Burgess <matthew_at_linuxfromscratch_dot_org>
+Date:                    2009-06-25
+Initial Package Version: 6.0
+Upstream Status:         Already in upstream patch repo
+Origin:                  Upstream
+Description:             This patch contains upstream patch numbers 1 thru 3.
+
+diff -Naur readline-6.0.orig/display.c readline-6.0/display.c
+--- readline-6.0.orig/display.c	2009-01-04 19:32:32.000000000 +0000
++++ readline-6.0/display.c	2009-06-25 19:48:47.000000000 +0100
+@@ -512,6 +512,7 @@
+   /* Block keyboard interrupts because this function manipulates global
+      data structures. */
+   _rl_block_sigint ();  
++  RL_SETSTATE (RL_STATE_REDISPLAYING);
+ 
+   if (!rl_display_prompt)
+     rl_display_prompt = "";
+@@ -1236,6 +1237,7 @@
+       visible_wrap_offset = wrap_offset;
+   }
+ 
++  RL_UNSETSTATE (RL_STATE_REDISPLAYING);
+   _rl_release_sigint ();
+ }
+ 
+@@ -1772,7 +1774,7 @@
+ 	     space_to_eol will insert too many spaces.  XXX - maybe we should
+ 	     adjust col_lendiff based on the difference between _rl_last_c_pos
+ 	     and _rl_screenwidth */
+-	  if (col_lendiff && (_rl_last_c_pos < _rl_screenwidth))
++	  if (col_lendiff && ((MB_CUR_MAX == 1 || rl_byte_oriented) || (_rl_last_c_pos < _rl_screenwidth)))
+ #endif
+ 	    {	  
+ 	      if (_rl_term_autowrap && current_line < inv_botlin)
+@@ -1892,6 +1894,10 @@
+ 
+   woff = WRAP_OFFSET (_rl_last_v_pos, wrap_offset);
+   cpos = _rl_last_c_pos;
++
++  if (cpos == 0 && cpos == new)
++    return;
++
+ #if defined (HANDLE_MULTIBYTE)
+   /* If we have multibyte characters, NEW is indexed by the buffer point in
+      a multibyte string, but _rl_last_c_pos is the display position.  In
+@@ -1905,9 +1911,9 @@
+ 	 prompt string, since they're both buffer indices and DPOS is a
+ 	 desired display position. */
+       if ((new > prompt_last_invisible) ||		/* XXX - don't use woff here */
+-	  (prompt_physical_chars > _rl_screenwidth &&
++	  (prompt_physical_chars >= _rl_screenwidth &&
+ 	   _rl_last_v_pos == prompt_last_screen_line &&
+-	   wrap_offset >= woff &&
++	   wrap_offset >= woff && dpos >= woff &&
+ 	   new > (prompt_last_invisible-(_rl_screenwidth*_rl_last_v_pos)-wrap_offset)))
+ 	   /* XXX last comparison might need to be >= */
+ 	{
+diff -Naur readline-6.0.orig/patchlevel readline-6.0/patchlevel
+--- readline-6.0.orig/patchlevel	2008-11-18 16:01:14.000000000 +0000
++++ readline-6.0/patchlevel	2009-06-25 19:48:47.000000000 +0100
+@@ -1,3 +1,3 @@
+ # Do not edit -- exists only for use by patch
+ 
+-0
++3
+diff -Naur readline-6.0.orig/readline.h readline-6.0/readline.h
+--- readline-6.0.orig/readline.h	2009-01-04 19:32:33.000000000 +0000
++++ readline-6.0/readline.h	2009-06-25 19:48:47.000000000 +0100
+@@ -814,8 +814,9 @@
+ #define RL_STATE_VIMOTION	0x100000	/* reading vi motion arg */
+ #define RL_STATE_MULTIKEY	0x200000	/* reading multiple-key command */
+ #define RL_STATE_VICMDONCE	0x400000	/* entered vi command mode at least once */
++#define RL_STATE_REDISPLAYING	0x800000	/* updating terminal display */
+ 
+-#define RL_STATE_DONE		0x800000	/* done; accepted line */
++#define RL_STATE_DONE		0x1000000	/* done; accepted line */
+ 
+ #define RL_SETSTATE(x)		(rl_readline_state |= (x))
+ #define RL_UNSETSTATE(x)	(rl_readline_state &= ~(x))
+diff -Naur readline-6.0.orig/terminal.c readline-6.0/terminal.c
+--- readline-6.0.orig/terminal.c	2009-01-04 19:32:34.000000000 +0000
++++ readline-6.0/terminal.c	2009-06-25 19:48:47.000000000 +0100
+@@ -355,7 +355,7 @@
+       _rl_get_screen_size (fileno (rl_instream), 1);
+       if (CUSTOM_REDISPLAY_FUNC ())
+ 	rl_forced_update_display ();
+-      else
++      else if (RL_ISSTATE(RL_STATE_REDISPLAYING) == 0)
+ 	_rl_redisplay_after_sigwinch ();
+     }
+ }
