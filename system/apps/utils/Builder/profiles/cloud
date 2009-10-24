@@ -336,7 +336,7 @@ modules
 	system libraries/OpenSSL-0.9.8k-system
 	other/data/CA-Bundle--current
 
-	system apps/other/cURL-7.19.5
+	system apps/other/cURL-7.19.6
 	system apps/other/OpenSSH-5.2p1
 	apps/other/dhcp-3.0.5
 	apps/other/msntp-1.6

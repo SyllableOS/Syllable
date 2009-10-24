@@ -1,0 +1,21 @@
+authors				Kaj de Vos
+status				testing
+
+recommends
+	zlib
+	OpenSSL | gnutls | yassl
+	openldap
+	kerberos4
+	heimdal
+	fbopenssl
+;	c-ares
+	libidn
+	libssh2
+
+configure-options
+;	--with-random=/dev/random
+	--with-ca-path=/etc/ssl/certs
+;	--with-ca-bundle=/etc/ssl/ca-bundle.crt
+	--enable-ldap
+;	Doesn't seem to help:
+	--enable-manual
