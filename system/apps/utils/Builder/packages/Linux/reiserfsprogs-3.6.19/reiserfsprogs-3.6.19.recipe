@@ -15,7 +15,7 @@ needs				e2fsprogs
 build-dir			.
 
 ; To find e2fsprogs:
-configure-env		CPPFLAGS "$CPPFLAGS -I/usr/indexes/include"
+configure-env		CPPFLAGS "$CPPFLAGS -I/resources/indexes/include"
 ;configure-options	--sbindir=/sbin
 
 ;super-install
