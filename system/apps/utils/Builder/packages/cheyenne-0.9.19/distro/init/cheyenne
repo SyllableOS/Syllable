@@ -1,2 +1,3 @@
+# -vvvvv: maximum logging level
 # Uncomment the following to start the Cheyenne web server:
 #rebol -s /resources/indexes/lib/REBOL/Cheyenne/cheyenne.r &
