@@ -4,7 +4,7 @@ OBJDIR = objs
 
 EXES = $(OBJDIR)/init $(OBJDIR)/ps $(OBJDIR)/ls_ports $(OBJDIR)/ls_sema	\
 	$(OBJDIR)/top $(OBJDIR)/nice $(OBJDIR)/semctl $(OBJDIR)/shutdown \
-	$(OBJDIR)/strace $(OBJDIR)/sysinfo mkhome kill_all
+	$(OBJDIR)/strace $(OBJDIR)/sysinfo $(OBJDIR)/unbuffer mkhome kill_all
 
 init_OBJS     = init.o
 ps_OBJS       = ps.o
@@ -16,6 +16,7 @@ semctl_OBJS   = semctl.o
 shutdown_OBJS = shutdown.o
 strace_OBJS   = strace.o
 sysinfo_OBJS  = sysinfo.o
+unbuffer_OBJS = unbuffer.o
 
 init_OBJS	:= $(addprefix $(OBJDIR)/,$(init_OBJS))
 ps_OBJS		:= $(addprefix $(OBJDIR)/,$(ps_OBJS))
@@ -28,6 +29,7 @@ semctl_OBJS	:= $(addprefix $(OBJDIR)/,$(semctl_OBJS))
 shutdown_OBJS	:= $(addprefix $(OBJDIR)/,$(shutdown_OBJS))
 strace_OBJS	:= $(addprefix $(OBJDIR)/,$(strace_OBJS))
 sysinfo_OBJS	:= $(addprefix $(OBJDIR)/,$(sysinfo_OBJS))
+unbuffer_OBJS	:= $(addprefix $(OBJDIR)/,$(unbuffer_OBJS))
 
 include $(ATHEOS_SRC)/makefile.rules
 
@@ -57,6 +59,8 @@ $(OBJDIR)sysinfo: $(sysinfo_OBJS)
 	$(CC) $(sysinfo_OBJS) -o $@
 $(OBJDIR)/strace: $(strace_OBJS)
 	$(CC) $(strace_OBJS) -o $@
+$(OBJDIR)/unbuffer: $(unbuffer_OBJS)
+	$(CC) $(unbuffer_OBJS) -lutil -o $@
 
 deps:
 
