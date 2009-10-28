@@ -22,7 +22,7 @@ fi
 # -r: don't call socketpair()
 # -e: log to standard error output
 # -D: don't detach
-# -d: debug mode
+# -d[dd]: debug mode
 # -t: test mode
 # -T: extended test mode
 # Uncomment the following to start the OpenSSH server:
