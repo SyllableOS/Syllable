@@ -25,5 +25,6 @@ fi
 # -d[dd]: debug mode
 # -t: test mode
 # -T: extended test mode
-# Uncomment the following to start the OpenSSH server:
-#/resources/indexes/sbin/sshd -4 -r
+# Uncomment the following to start the OpenSSH server.
+# Please be aware that Syllable Desktop does not have the needed security to make this safe:
+#/resources/indexes/sbin/sshd -4 -r -o 'UsePrivilegeSeparation no'
