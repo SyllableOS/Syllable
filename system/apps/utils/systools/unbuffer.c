@@ -36,10 +36,11 @@ int main( int argc, char *argv[] )
 
 	/* Shift argv down to get the child invocation */
 	child_argc = argc - 1;
-	child_argv = malloc( child_argc );
+	child_argv = malloc( child_argc + 1 );	/* +1 for the terminating NULL */
 
 	for( n=0; n < child_argc; n++ )
 		child_argv[n] = argv[n+1];
+	child_argv[n] = '\0';	/* Terminate the array */
 
 	/* Create a PTY */
 	if( openpty( &mst_pty, &slv_pty, NULL, NULL, NULL ) < 0 )
