@@ -1,6 +1,6 @@
-administrators:x:0:root
-bin:x:1:bin
-sys:x:2:
+system:x:0:system
+administrators:x:1:administrator
+bin:x:2:bin
 kmem:x:3:
 tty:x:4:
 tape:x:5:

@@ -1,7 +1,8 @@
-administrators:x:0:root
-bin:x:1:bin
-system:x:2:man
-network:x:3:www
+system:x:0:root
+administrators:x:1:administrator
+bin:x:2:bin
+man:x:3:man
+network:x:4:www
 named:x:20:named
 apache:x:25:apache
 ftp:x:45:ftp
