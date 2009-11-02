@@ -1,6 +1,6 @@
 #!/bin/sh
 
-prefix=$IMAGE/system/resources/sdl/1.2.13
+prefix=/system/indexes
 exec_prefix=${prefix}
 exec_prefix_set=no
 libdir=${exec_prefix}/lib
@@ -42,14 +42,14 @@ while test $# -gt 0; do
       echo 1.2.13
       ;;
     --cflags)
-      echo -I/system/indexes/include/SDL -D_GNU_SOURCE=1 -D_REENTRANT
+      echo -I${exec_prefix}/include/SDL -D_GNU_SOURCE=1 -D_REENTRANT
       ;;
     --libs)
-      echo -L${exec_prefix}/lib -Wl,-rpath,${libdir} -lSDL  -lpthread
+      echo -L${libdir} -Wl,-rpath,${libdir} -lSDL  -lpthread
       ;;
     --static-libs)
 #    --libs|--static-libs)
-      echo -L${exec_prefix}/lib -Wl,-rpath,${libdir} -lSDL  -lpthread
+      echo -L${libdir}  -lSDL 
       ;;
     *)
       echo "${usage}" 1>&2

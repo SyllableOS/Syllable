@@ -132,7 +132,7 @@ modules
 
 	system libs/sdl-1.2.13
 ;	sdl-config needs to be in the path:
-	bootstrap libs/sdl-1.2.13
+	bootstrap libs/SDL--bootstrap
 
 	system libs/sdl-net-1.2.7
 ;	system libs/sdl-mixer-1.2.6

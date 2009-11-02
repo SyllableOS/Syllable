@@ -16,5 +16,4 @@ system-prefix-var	DESTDIR
 
 documentation		README COPYING CHANGES
 ; For some packages:
-links				SDL/SDL_net.h include/
-
+;links				SDL/SDL_net.h include/
