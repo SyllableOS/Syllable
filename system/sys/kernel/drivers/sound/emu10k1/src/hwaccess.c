@@ -30,7 +30,8 @@
  **********************************************************************
  */
 
-#include <atheos/isa_io.h>
+#include <kernel/isa_io.h>
+#include <stdarg.h>
 
 #include "hwaccess.h"
 #include "8010.h"

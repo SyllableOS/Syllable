@@ -9,7 +9,7 @@
 #include "Inode.h"
 #include "Debug.h"
 
-#include <atheos/time.h>
+#include <kernel/time.h>
 #include "kernel_cpp.h"
 
 

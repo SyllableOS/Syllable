@@ -1,6 +1,7 @@
 #include <posix/errno.h>
-#include <atheos/kernel.h>
-#include <atheos/device.h>
+#include <kernel/malloc.h>
+#include <kernel/string.h>
+#include <kernel/device.h>
 
 #include "ac97audio.h"
 

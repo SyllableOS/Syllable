@@ -20,29 +20,29 @@
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA	02111-1307	USA
  */
 
+#include <kernel/types.h>
+#include <kernel/kdebug.h>
+#include <kernel/socket.h>
+#include <kernel/semaphore.h>
+#include <kernel/kdebug.h>
+#include <kernel/image.h>
+#include <kernel/stdlib.h>
+#include <kernel/malloc.h>
+#include <kernel/if.h>
+#include <kernel/if_arp.h>
+#include <kernel/if_ether.h>
+#include <kernel/in.h>
+#include <kernel/ip.h>
+#include <kernel/net.h>
+#include <kernel/route.h>
+#include <kernel/tcp.h>
+#include <kernel/udp.h>
+#include <kernel/icmp.h>
 #include <posix/errno.h>
-
-#include <atheos/kernel.h>
-#include <atheos/kdebug.h>
-#include <atheos/socket.h>
-#include <atheos/semaphore.h>
-#include <atheos/image.h>
-
-#include <net/net.h>
-#include <net/ip.h>
-#include <net/in.h>
-#include <net/if.h>
-#include <net/udp.h>
-#include <net/tcp.h>
-#include <net/if_ether.h>
-#include <net/if_arp.h>
-#include <net/icmp.h>
 #include <net/sockios.h>
-#include <net/route.h>
-
 #include <macros.h>
 
-#include "inc/semaphore.h"
+#include <inc/semaphore.h>
 
 /* Selective debugging level overrides */
 #ifdef KERNEL_DEBUG_NET

@@ -17,14 +17,13 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef __F_ATHEOS_POSIX_UIO_H__
-#define __F_ATHEOS_POSIX_UIO_H__
+#ifndef __F_POSIX_UIO_H__
+#define __F_POSIX_UIO_H__
 
-#ifdef __KERNEL__
-#include <atheos/types.h>
 #include <posix/types.h>
-#else
-#include <sys/types.h>
+
+#ifdef __cplusplus
+extern "C" {
 #endif
 
 struct iovec
@@ -36,9 +35,8 @@ struct iovec
 #define UIO_FASTIOV	8
 #define UIO_MAXIOV	1024
 
-#ifdef __KERNEL__
-ssize_t	readv( int nFile, const struct iovec* psVector, int nCount );
-ssize_t	writev( int nFile, const struct iovec* psVector, int nCount );
+#ifdef __cplusplus
+}
 #endif
 
-#endif /* __F_ATHEOS_POSIX_UIO_H__ */
+#endif	/* __F_POSIX_UIO_H__ */

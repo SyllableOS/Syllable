@@ -1,4 +1,3 @@
-
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2001 Kurt Skauen
@@ -18,25 +17,25 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <kernel/types.h>
+#include <kernel/threads.h>
+#include <kernel/kdebug.h>
+#include <kernel/time.h>
+#include <kernel/strace.h>
+#include <kernel/spinlock.h>
+#include <kernel/pgroups.h>
+#include <kernel/stdlib.h>
+#include <kernel/malloc.h>
+#include <kernel/schedule.h>
+#include <syllable/syscall.h>
+#include <syllable/sigcontext.h>
 #include <posix/errno.h>
 #include <posix/wait.h>
-#include <posix/time.h>
-
-#include <atheos/types.h>
-#include <atheos/sigcontext.h>
-#include <atheos/kernel.h>
-#include <atheos/threads.h>
-#include <atheos/syscall.h>
-#include <atheos/spinlock.h>
-#include <atheos/kdebug.h>
-#include <atheos/time.h>
-#include <atheos/strace.h>
-
 #include <macros.h>
 
-#include "inc/scheduler.h"
-#include "inc/ptrace.h"
-#include "inc/sysbase.h"
+#include <inc/scheduler.h>
+#include <inc/ptrace.h>
+#include <inc/sysbase.h>
 
 static const unsigned long _BLOCKABLE = ~( (1L << (SIGKILL - 1)) | (1L << (SIGSTOP - 1)) );
 

@@ -22,12 +22,13 @@
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
 
-#include <atheos/list.h>
-#include <atheos/kernel.h>
-#include <atheos/spinlock.h>
-#include <atheos/types.h>
-#include <atheos/semaphore.h>
-#include <atheos/acpi.h>
+#include <kernel/list.h>
+#include <kernel/malloc.h>
+#include <kernel/spinlock.h>
+#include <kernel/types.h>
+#include <kernel/semaphore.h>
+#include <kernel/acpi.h>
+#include <kernel/kdebug.h>
 #include <posix/errno.h>
 
 

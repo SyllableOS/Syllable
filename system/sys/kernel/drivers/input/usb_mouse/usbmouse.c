@@ -25,12 +25,14 @@
 
 #include <posix/errno.h>
 
-#include <atheos/kernel.h>
-#include <atheos/device.h>
-#include <atheos/semaphore.h>
-#include <atheos/spinlock.h>
-#include <atheos/smp.h>
-#include <atheos/usb.h>
+#include <kernel/malloc.h>
+#include <kernel/string.h>
+#include <kernel/stdlib.h>
+#include <kernel/device.h>
+#include <kernel/semaphore.h>
+#include <kernel/spinlock.h>
+#include <kernel/smp.h>
+#include <kernel/usb.h>
 
 
 struct usb_mouse {

@@ -1,4 +1,3 @@
-
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2001 Kurt Skauen
@@ -21,21 +20,22 @@
 #ifndef	__F_SCHEDULER_H__
 #define	__F_SCHEDULER_H__
 
-#include <atheos/types.h>
-#include <atheos/tld.h>
-#include <atheos/filesystem.h>
-#include <atheos/strace.h>
-
+#include <kernel/types.h>
+#include <kernel/areas.h>
+#include <kernel/tld.h>
+#include <kernel/filesystem.h>
+#include <kernel/strace.h>
+#include <kernel/signal.h>
+#include <kernel/dlist.h>
+#include <kernel/syscall.h>
+#include <kernel/timer.h>
 #include <posix/param.h>
-#include <posix/signal.h>
-#include <atheos/types.h>
-#include <atheos/dlist.h>
 
-#include "typedefs.h"
-#include "semaphore.h"
-#include "intel.h"
-#include "mman.h"
-#include "msgport.h"
+#include <inc/typedefs.h>
+#include <inc/semaphore.h>
+#include <inc/intel.h>
+#include <inc/mman.h>
+#include <inc/msgport.h>
 
 #ifdef __cplusplus
 extern "C"

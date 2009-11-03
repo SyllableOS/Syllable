@@ -1,4 +1,3 @@
-
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2001 Kurt Skauen
@@ -18,22 +17,22 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <kernel/time.h>
+#include <kernel/spinlock.h>
+#include <kernel/resource.h>
+#include <kernel/schedule.h>
+#include <kernel/malloc.h>
+#include <kernel/kdebug.h>
 #include <posix/errno.h>
 #include <posix/wait.h>
-#include <posix/resource.h>
-
-#include <atheos/kernel.h>
-#include <atheos/spinlock.h>
-#include <atheos/time.h>
-
 #include <macros.h>
 
-#include "inc/scheduler.h"
-#include "inc/sysbase.h"
-#include "inc/global.h"
-#include "inc/smp.h"
-#include "inc/areas.h"
-#include "inc/ptrace.h"
+#include <inc/scheduler.h>
+#include <inc/sysbase.h>
+#include <inc/global.h>
+#include <inc/smp.h>
+#include <inc/areas.h>
+#include <inc/ptrace.h>
 
 static WaitQueue_s *g_psFirstSleeping = NULL;
 

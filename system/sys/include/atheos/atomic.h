@@ -1,30 +1,23 @@
-#ifndef __ATHEOS_ATOMIC_H__
-#define __ATHEOS_ATOMIC_H__
+#ifndef __F_SYLLABLE_ATOMIC_H__
+#define __F_SYLLABLE_ATOMIC_H__
 
 #ifdef __cplusplus
 extern "C" {
-#if 0
-} /*make emacs indention work */
 #endif
-#endif
-
-struct __atomic_fool_gcc_struct { unsigned long a[100]; };
-#define __atomic_fool_gcc(x) (*(volatile struct __atomic_fool_gcc_struct *)(x))
 
 /*
  * Atomic operations that C can't guarantee us.  Useful for
  * resource counting etc..
  */
 
-#if 1  // CONFIG_SMP
-#define LOCK_ "lock ; "
-#else
-#define LOCK_ ""
-#endif
+#include <syllable/types.h>
 
-#include <atheos/types.h>
+struct __atomic_fool_gcc_struct { unsigned long a[100]; };
+#define __atomic_fool_gcc(x) (*(volatile struct __atomic_fool_gcc_struct *)(x))
 
 #define ATOMIC_INIT(i)	{ (i) }
+
+#define LOCK_ "lock ; "	/* Syllable always has SMP enabled */
 
 /**
  * atomic_read - read atomic variable
@@ -273,5 +266,4 @@ static __inline__ int atomic_cmp_and_set( volatile void *dst, int exp, int src )
 }
 #endif
 
-#endif /* __ATHEOS_ATOMIC_H__ */
-
+#endif	/* __F_SYLLABLE_ATOMIC_H__ */

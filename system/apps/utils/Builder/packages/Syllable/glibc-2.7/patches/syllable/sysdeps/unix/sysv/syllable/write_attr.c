@@ -20,7 +20,7 @@
 #include <sysdep.h>
 #include <sys/syscall.h>
 
-#include <atheos/filesystem.h>
+#include <syllable/filesystem.h>
 
 ssize_t __write_attr( int fd, const char *name, int flags, int type, const void *buf, off_t pos, size_t len )
 {

@@ -4,9 +4,9 @@
 #include <errno.h>
 #include <getopt.h>
 #include <malloc.h>
+#include <stdbool.h>
 
 #include <netinet/in.h>
-#include <net/net.h>
 #include <net/route.h>
 #include <sys/ioctl.h>
 

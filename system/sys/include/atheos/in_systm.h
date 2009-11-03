@@ -22,9 +22,6 @@
 
 #ifdef __cplusplus
 extern "C" {
-#if 0  
-} /*make emacs indention work */
-#endif
 #endif
 
 /*

@@ -18,7 +18,7 @@
 
 #include <errno.h>
 #include <sys/resource.h>
-#include <atheos/threads.h>
+#include <syllable/threads.h>
 
 /* Return the highest priority of any process specified by WHICH and WHO
    (see <sys/resource.h>); if WHO is zero, the current process, process group,

@@ -1,4 +1,3 @@
-
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2000 Kurt Skauen
@@ -21,17 +20,10 @@
 #ifndef	_EXEC_MMAN_H_
 #define	_EXEC_MMAN_H_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-#if 0
-}				/* Make emacs auto-indent work. */
-#endif
+#include <kernel/types.h>
+#include <kernel/multiboot.h>
 
-//#include <atheos/swap.h>
-#include <atheos/multiboot.h>
-#include "typedefs.h"
+#include <inc/typedefs.h>
 
 typedef struct MemChunk MemChunk_s;
 
@@ -110,9 +102,5 @@ Page_s *get_page_desc( int nPageNum );
 int shrink_caches( int nBytesNeeded );
 
 void init_memory_pools( char* pRealMemBase, MultiBootHeader_s* psHeader );
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /*       _EXEC_MMAN_H_ */

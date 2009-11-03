@@ -14,10 +14,9 @@
 #include "Stack.h"
 
 #include "kernel_cpp.h"
-#include <atheos/types.h>
-
-#include <atheos/string.h>
-#include <atheos/stdlib.h>
+#include <kernel/types.h>
+#include <kernel/string.h>
+#include <kernel/stdlib.h>
 
 
 

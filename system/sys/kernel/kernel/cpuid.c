@@ -19,15 +19,17 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <atheos/types.h>
-#include <atheos/kernel.h>
-#include <atheos/udelay.h>
-#include <atheos/irq.h>
-#include <atheos/spinlock.h>
+#include <kernel/types.h>
+#include <kernel/irq.h>
+#include <kernel/spinlock.h>
+#include <kernel/udelay.h>
+#include <kernel/sysinfo.h>
+#include <kernel/stdlib.h>
+#include <kernel/kdebug.h>
 
-#include "inc/scheduler.h"
-#include "inc/sysbase.h"
-#include "inc/areas.h"
+#include <inc/scheduler.h>
+#include <inc/sysbase.h>
+#include <inc/areas.h>
 
 bool g_bHasFXSR = false;
 bool g_bHasXMM = false;

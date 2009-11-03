@@ -1,5 +1,5 @@
 
-#include <atheos/device.h>
+#include <kernel/device.h>
 #include "usb_disk.h"
 #include "transport.h"
 #include "protocol.h"

@@ -28,7 +28,8 @@
 
 #include "ata.h"
 #include "ata_timing.h"
-#include <atheos/pci.h> 
+#include <kernel/pci.h>
+
 extern PCI_bus_s* g_psPCIBus;
 
 #define VIA_IDE_ENABLE		0x40

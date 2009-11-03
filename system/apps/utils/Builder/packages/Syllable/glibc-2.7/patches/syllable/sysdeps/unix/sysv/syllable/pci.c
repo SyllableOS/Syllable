@@ -20,8 +20,8 @@
 #include <sysdep.h>
 #include <sys/syscall.h>
 
-#include <atheos/types.h>
-#include <atheos/pci.h>
+#include <syllable/types.h>
+#include <syllable/pci.h>
 
 uint32 __read_pci_config( int bus, int dev, int func, int offset, int size )
 {

@@ -30,10 +30,12 @@
  **********************************************************************
  */
 
-#include <atheos/kernel.h>
-#include <atheos/device.h>
-#include <atheos/isa_io.h>
-#include <atheos/areas.h>
+#include <kernel/malloc.h>
+#include <kernel/string.h>
+//#include <kernel/stdlib.h>
+#include <kernel/device.h>
+#include <kernel/isa_io.h>
+#include <kernel/areas.h>
 
 #include "hwaccess.h"
 #include "8010.h"

@@ -1,75 +1,26 @@
-#ifndef _ASM_IO_H
-#define _ASM_IO_H
-
 /*
- * This file contains the definitions for the x86 IO instructions
- * inb/inw/inl/outb/outw/outl and the "string versions" of the same
- * (insb/insw/insl/outsb/outsw/outsl). You can also use "pausing"
- * versions of the single-IO instructions (inb_p/inw_p/..).
+ *  The AtheOS kernel
+ *  Copyright (C) 1999 - 2000 Kurt Skauen
  *
- * This file is not meant to be obfuscating: it's just complicated
- * to (a) handle it all in a way that makes gcc able to optimize it
- * as well as possible and (b) trying to avoid writing the same thing
- * over and over again with slight variations and possibly making a
- * mistake somewhere.
+ *  This program is free software; you can redistribute it and/or
+ *  modify it under the terms of version 2 of the GNU Library
+ *  General Public License as published by the Free Software
+ *  Foundation.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-/*
- * Thanks to James van Artsdalen for a better timing-fix than
- * the two short jumps: using outb's to a nonexistent port seems
- * to guarantee better timings even on fast machines.
- *
- * On the other hand, I'd like to be sure of a non-existent port:
- * I feel a bit unsafe about using 0x80 (should be safe, though)
- *
- *		Linus
- */
+#ifndef __F_SYLLABLE_ISA_IO_H__
+#define __F_SYLLABLE_ISA_IO_H__
 
- /*
-  *  Bit simplified and optimized by Jan Hubicka
-  *  Support of BIGMEM added by Gerhard Wichert, Siemens AG, July 1999.
-  *
-  *  isa_memset_io, isa_memcpy_fromio, isa_memcpy_toio added,
-  *  isa_read[wl] and isa_write[wl] fixed
-  *  - Arnaldo Carvalho de Melo <acme@conectiva.com.br>
-  */
-
-#define IO_SPACE_LIMIT 0xffff
-
-#define XQUAD_PORTIO_BASE 0xfe400000
-#define XQUAD_PORTIO_QUAD 0x40000  /* 256k per quad. */
-
-#ifdef __KERNEL__
-
-/*
- * readX/writeX() are used to access memory mapped devices. On some
- * architectures the memory mapped IO stuff needs to be accessed
- * differently. On the x86 architecture, we just read/write the
- * memory location directly.
- */
-
-#define readb(addr) (*(volatile unsigned char *) (addr))
-#define readw(addr) (*(volatile unsigned short *) (addr))
-#define readl(addr) (*(volatile unsigned int *) (addr))
-#define readb_relaxed(addr) readb(addr)
-#define readw_relaxed(addr) readw(addr)
-#define readl_relaxed(addr) readl(addr)
-#define __raw_readb readb
-#define __raw_readw readw
-#define __raw_readl readl
-
-#define writeb(b,addr) (*(volatile unsigned char *) (addr) = (b))
-#define writew(b,addr) (*(volatile unsigned short *) (addr) = (b))
-#define writel(b,addr) (*(volatile unsigned int *) (addr) = (b))
-#define __raw_writeb writeb
-#define __raw_writew writew
-#define __raw_writel writel
-
-#define memset_io(a,b,c)	memset((void *)(a),(b),(c))
-#define memcpy_fromio(a,b,c)	__memcpy((a),(void *)(b),(c))
-#define memcpy_toio(a,b,c)	__memcpy((void *)(a),(b),(c))
-
-#endif /* __KERNEL__ */
+#include <syllable/types.h>
 
 #ifdef SLOW_IO_BY_JUMPING
 #define __SLOW_DOWN_IO "jmp 1f; 1: jmp 1f; 1:"
@@ -133,4 +84,12 @@ BUILDIO(b,b,char)
 BUILDIO(w,w,short)
 BUILDIO(l,,int)
 
-#endif
+/* These are for backwards compatability */
+static inline int	isa_readb( int nPort ) { return inb( nPort ); }
+static inline int   isa_readw( int nPort ) { return inw( nPort ); }
+static inline int   isa_readl( int nPort ) { return inl( nPort ); }
+static inline void  isa_writeb( int nPort, int nValue ) { outb( nValue, nPort ); }
+static inline void  isa_writew( int nPort, int nValue ) { outw( nValue, nPort ); }
+static inline void  isa_writel( int nPort, int nValue ) { outl( nValue, nPort ); }
+
+#endif	/* __F_SYLLABLE_ISA_IO_H__ */

@@ -21,14 +21,14 @@
  */
 
 #include <posix/errno.h>
-#include <atheos/device.h>
-#include <atheos/kernel.h>
-#include <atheos/isa_io.h>
-#include <atheos/types.h>
-#include <atheos/pci.h>
-#include <atheos/kernel.h>
-#include <atheos/spinlock.h>
-
+#include <kernel/device.h>
+#include <kernel/malloc.h>
+#include <kernel/isa_io.h>
+#include <kernel/types.h>
+#include <kernel/pci.h>
+#include <kernel/spinlock.h>
+#include <kernel/kdebug.h>
+#include <syllable/v86.h>
 
 #include <macros.h>
 

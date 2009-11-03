@@ -17,8 +17,8 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef _ATHEOS_SELECT_H_
-#define _ATHEOS_SELECT_H_
+#ifndef __F_POSIX_SELECT_H_
+#define __F_POSIX_SELECT_H_
 
 #include <atheos/types.h>
 #include <posix/types.h>
@@ -39,13 +39,10 @@ typedef struct fd_set {
 #define FD_ISSET(n, p)	((p)->fds_bits[(n) / 8] & (1 << ((n) & 7)))
 #define FD_ZERO(p)	memset ((void *)(p), 0, sizeof (*(p)))
 
-
-__SYSCALL( int, select( int nMaxCnt, fd_set *psReadSet, fd_set *psWriteSet, fd_set *psExceptSet, struct kernel_timeval *psTimeOut ) );
-
+int select( int nMaxCnt, fd_set *psReadSet, fd_set *psWriteSet, fd_set *psExceptSet, struct kernel_timeval *psTimeOut );
 
 #ifdef __cplusplus
 }
 #endif
 
-
-#endif	// _ATHEOS_SELECT_H_
+#endif	/* __F_POSIX_SELECT_H_ */

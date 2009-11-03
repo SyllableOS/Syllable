@@ -16,23 +16,26 @@
  *	notice is accompanying it.
  */
 
-#include <atheos/kernel.h>
-#include <atheos/kdebug.h>
-#include <atheos/types.h>
-#include <atheos/device.h>
-#include <atheos/pci.h>
-#include <atheos/spinlock.h>
-#include <atheos/udelay.h>
-#include <atheos/bitops.h>
-#include <atheos/seqlock.h>
+#include <kernel/malloc.h>
+#include <kernel/string.h>
+#include <kernel/stdlib.h>
+#include <kernel/kdebug.h>
+#include <kernel/types.h>
+#include <kernel/device.h>
+#include <kernel/pci.h>
+#include <kernel/spinlock.h>
+#include <kernel/udelay.h>
+#include <kernel/bitops.h>
+#include <kernel/seqlock.h>
+#include <kernel/isa_io.h>
+#include <kernel/net_device.h>
 #include <posix/errno.h>
-#include <posix/signal.h>
-#include <net/net_device.h>
+#include <kernel/signal.h>
 #include <net/mii.h>
 #include <net/sockios.h>
 
 #define NO_DEBUG_STUBS 1
-#include <atheos/linux_compat.h>
+#include <kernel/linux_compat.h>
 
 #include <tg3.h>
 

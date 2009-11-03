@@ -20,11 +20,11 @@
 #ifndef __F_AIO_H__
 #define __F_AIO_H__
 
-#include "inc/typedefs.h"
-#include "inc/scheduler.h"
-
-#include <posix/aio.h>
+#include <kernel/aio.h>
 #include <macros.h>
+
+#include <inc/typedefs.h>
+#include <inc/scheduler.h>
 
 typedef enum _AIOCtxState
 {

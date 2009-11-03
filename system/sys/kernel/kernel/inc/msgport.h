@@ -1,4 +1,3 @@
-
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2000 Kurt Skauen
@@ -29,9 +28,9 @@ extern "C"
 }				/* Make emacs auto-indent work. */
 #endif
 
-#include <atheos/types.h>
-#include "typedefs.h"
+#include <kernel/types.h>
 
+#include <inc/typedefs.h>
 
 typedef struct _MessageNode MessageNode_s;
 

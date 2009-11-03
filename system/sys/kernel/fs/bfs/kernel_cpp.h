@@ -8,7 +8,7 @@
 
 
 #include <new>
-#include <atheos/stdlib.h>
+#include <kernel/stdlib.h>
 
 #ifdef __KERNEL__
 
@@ -69,7 +69,7 @@ operator delete[](void *ptr) throw ()
 	free(ptr);
 }
 
-#endif	// #if _KERNEL_MODE
+#endif	// __KERNEL__
 
 #endif
 

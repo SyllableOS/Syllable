@@ -19,7 +19,7 @@
 #include <dlfcn.h>
 #include <ldsodefs.h>
 #include <errno.h>
-#include <atheos/types.h>
+#include <syllable/types.h>
 
 /* Do not emit a stub warning for either of these functions as they
    may be called tens, if not hundreds of times at startup. */

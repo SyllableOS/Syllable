@@ -5,8 +5,8 @@
  * Copyright (C) 1996, 1999, 2001 David S. Miller (davem@redhat.com)
  */
 
-#ifndef __SYLLABLE_MII_H__
-#define __SYLLABLE_MII_H__
+#ifndef __F_NET_MII_H__
+#define __F_NET_MII_H__
 
 /* Indicates what features are supported by the interface. */
 #define SUPPORTED_10baseT_Half		(1 << 0)
@@ -213,4 +213,4 @@
 #define LPA_1000FULL            0x0800  /* Link partner 1000BASE-T full duplex */
 #define LPA_1000HALF            0x0400  /* Link partner 1000BASE-T half duplex */
 
-#endif /* __SYLLABLE_MII_H__ */
+#endif /* __F_NET_MII_H__ */

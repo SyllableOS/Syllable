@@ -1,16 +1,16 @@
 #ifndef _USB_UHCI_H_
 #define _USB_UHCI_H_
 
-#include <atheos/types.h>
-#include <atheos/kernel.h>
-#include <atheos/usb.h>
-#include <atheos/timer.h>
-#include <atheos/time.h>
-#include <atheos/pci.h>
-#include <atheos/threads.h>
-#include <atheos/spinlock.h>
-#include <atheos/kdebug.h>
-#include <atheos/list.h>
+#include <kernel/types.h>
+#include <kernel/malloc.h>
+#include <kernel/usb.h>
+#include <kernel/timer.h>
+#include <kernel/time.h>
+#include <kernel/pci.h>
+#include <kernel/threads.h>
+#include <kernel/spinlock.h>
+#include <kernel/kdebug.h>
+#include <kernel/list.h>
 
 typedef uint32 __u32;
 typedef uint8 __u8;

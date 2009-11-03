@@ -6,18 +6,19 @@
 ** This file may be used under the terms of the OpenBeOS License.
 */
 
-
-#include <atheos/kernel.h>
+#include <kernel/malloc.h>
+//#include <kernel/string.h>
+//#include <kernel/stdlib.h>
 
 #ifdef DEBUG
-#	include <atheos/string.h>
+#	include <kernel/string.h>
 #endif
 
 #ifdef USER
 #	include <stdio.h>
 #	define __out printf
 #else
-#	include <atheos/kdebug.h>
+#	include <kernel/kdebug.h>
 #	define __out printk
 #endif
 

@@ -51,16 +51,17 @@
  * SUCH DAMAGE.
  */
 
-#include <atheos/types.h>
-#include <atheos/kernel.h>
-#include <atheos/device.h>
-#include <atheos/semaphore.h>
-#include <atheos/dlist.h>
-#include <atheos/pci.h>
-#include <atheos/agpgart.h>
-#include <atheos/agp.h>
-#include <atheos/string.h>
-#include <atheos/bootmodules.h>
+#include <kernel/types.h>
+#include <kernel/malloc.h>
+#include <kernel/stdlib.h>
+#include <kernel/device.h>
+#include <kernel/semaphore.h>
+#include <kernel/dlist.h>
+#include <kernel/pci.h>
+#include <kernel/agpgart.h>
+#include <kernel/agp.h>
+#include <kernel/string.h>
+#include <kernel/bootmodules.h>
 #include <posix/errno.h>
 #include <macros.h>
 

@@ -19,6 +19,7 @@
  
 #include "Prefs.h" 
 #include "resources/Dock.h"
+#include <syllable/time.h>
 
 enum {
 	DP_APPLY,

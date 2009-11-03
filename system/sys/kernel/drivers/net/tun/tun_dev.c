@@ -53,19 +53,20 @@
  *
  */
 
-#include <atheos/types.h>
-#include <atheos/kernel.h>
-#include <atheos/kdebug.h>
-#include <atheos/device.h>
-#include <atheos/semaphore.h>
+#include <kernel/malloc.h>
+#include <kernel/string.h>
+#include <kernel/stdlib.h>
+#include <kernel/types.h>
+#include <kernel/kdebug.h>
+#include <kernel/device.h>
+#include <kernel/semaphore.h>
+#include <kernel/net.h>
+#include <kernel/ip.h>
+#include <kernel/if_tun.h>
 
 #include <posix/errno.h>
 #include <posix/fcntl.h>
 #include <posix/ioctls.h>
-
-#include <net/net.h>
-#include <net/ip.h>
-#include <net/if_tun.h>
 
 #include <macros.h>
 

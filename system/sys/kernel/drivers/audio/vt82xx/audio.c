@@ -1,8 +1,8 @@
 #include <posix/errno.h>
-#include <atheos/kernel.h>
-#include <atheos/device.h>
-#include <atheos/string.h>
-#include <atheos/semaphore.h>
+#include <kernel/malloc.h>
+#include <kernel/string.h>
+#include <kernel/device.h>
+#include <kernel/semaphore.h>
 #include "audio.h"
 #include <macros.h>
 

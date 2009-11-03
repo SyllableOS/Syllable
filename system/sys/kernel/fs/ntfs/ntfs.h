@@ -22,22 +22,22 @@
 #ifndef __SYLLABLE__NTFS_H__
 #define __SYLLABLE__NTFS_H__
 
-#include <atheos/bitops.h>
-#include <atheos/kernel.h>
-#include <atheos/kdebug.h>
-#include <atheos/stdlib.h>
-#include <atheos/string.h>
-#include <atheos/device.h>
-#include <posix/stat.h>
+#include <kernel/bitops.h>
+#include <kernel/malloc.h>
+#include <kernel/kdebug.h>
+#include <kernel/stdlib.h>
+#include <kernel/string.h>
+#include <kernel/device.h>
+#include <kernel/stat.h>
 #include <posix/errno.h>
 #include <posix/ioctl.h>
 
-#include <atheos/time.h>
-#include <atheos/filesystem.h>
-#include <atheos/bcache.h>
+#include <kernel/time.h>
+#include <kernel/filesystem.h>
+#include <kernel/bcache.h>
 #include <macros.h>
 
-#include <atheos/nls.h>
+#include <kernel/nls.h>
 
 typedef struct _ntfs_inode ntfs_inode_s;
 

@@ -22,6 +22,8 @@
 #ifndef _MPC_H_
 #define _MPC_H_
 
+#include <kernel/types.h>
+
 static const uint32_t SMP_MAGIC_IDENT = (('_'<<24)|('P'<<16)|('M'<<8)|'_');
 #define MPC_SIGNATURE	"PCMP"
 

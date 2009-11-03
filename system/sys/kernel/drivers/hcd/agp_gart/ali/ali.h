@@ -38,7 +38,7 @@ extern "C" {
 }
 #endif
 
-#include <atheos/agpgart.h>
+#include <kernel/agpgart.h>
 
 /*
  * Config offsets for Ali AGP chipsets.

@@ -17,7 +17,7 @@
    02111-1307 USA.  */
 
 #include <unistd.h>
-#include <atheos/threads.h>
+#include <syllable/threads.h>
 
 /* Get the process ID of the calling process.  */
 int

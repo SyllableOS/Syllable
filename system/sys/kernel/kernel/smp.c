@@ -18,6 +18,18 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <kernel/kdebug.h>
+#include <kernel/bitops.h>
+#include <kernel/time.h>
+#include <kernel/spinlock.h>
+#include <kernel/irq.h>
+#include <kernel/udelay.h>
+#include <kernel/tlb.h>
+#include <kernel/stdlib.h>
+#include <kernel/schedule.h>
+#include <kernel/malloc.h>
+#include <posix/errno.h>
+
 #include <inc/smp.h>
 #include <inc/pit_timer.h>
 #include <inc/scheduler.h>
@@ -25,14 +37,6 @@
 #include <inc/mc146818.h>
 #include <inc/sysbase.h>
 #include <inc/areas.h>
-
-#include <atheos/kernel.h>
-#include <atheos/kdebug.h>
-#include <atheos/irq.h>
-#include <atheos/bitops.h>
-#include <atheos/udelay.h>
-#include <atheos/spinlock.h>
-#include <atheos/time.h>
 
 /* Kernel-global variables */
 ProcessorInfo_s g_asProcessorDescs[MAX_CPU_COUNT];

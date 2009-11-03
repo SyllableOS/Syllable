@@ -42,7 +42,7 @@
    Some implementations may not provide any enum at all and instead
    using string pasting in the macros.  */
 
-#include <atheos/tld.h>
+#include <syllable/tld.h>
 
 /* __LIBC_TSD_COUNT must always be the last item. */
 enum __libc_tsds

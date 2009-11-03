@@ -21,8 +21,6 @@
 #include <sysdep.h>
 #include <sys/syscall.h>
 
-#include <atheos/kernel.h>
-
 int __rewind_indexdir(DIR *dir)
 {
   if( NULL == dir )

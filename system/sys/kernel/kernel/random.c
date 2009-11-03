@@ -30,9 +30,9 @@
 	- default seed is taken from system_time().
 */
 
-#include <atheos/random.h>
-#include <atheos/types.h>
-#include <atheos/time.h>
+#include <kernel/types.h>
+#include <kernel/random.h>
+#include <kernel/time.h>
 
 /* 
    A C-program for MT19937, with initialization improved 2002/2/10.

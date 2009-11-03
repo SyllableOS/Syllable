@@ -34,7 +34,6 @@
 #include <atheos/pci.h>
 #include <atheos/kernel.h>
 #include <atheos/vesa_gfx.h>
-#include <atheos/udelay.h>
 #include <atheos/areas.h>
 
 #include "../../../server/bitmap.h"

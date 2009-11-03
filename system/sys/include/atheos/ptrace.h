@@ -18,11 +18,14 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef __F_SYLLABLE_PTRACE_H__
-#define __F_SYLLABLE_PTRACE_H__
+#ifndef __F_ATHEOS_PTRACE_H__
+#define __F_ATHEOS_PTRACE_H__
 
 #include <atheos/types.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define EBX			0
 #define ECX			1
@@ -73,8 +76,7 @@ typedef struct {
 } elf_fpxregset_t;
 
 
-// keep in sync with SysCallRegs_s in atheos/kernel.h !
-
+/* Keep this in sync with SysCallRegs_s in kernel/syscall.h ! */
 struct user_regs_struct {
 	long ebx, ecx, edx, esi, edi, ebp, eax;
 	unsigned short ds, __ds, es, __es;
@@ -90,12 +92,13 @@ typedef uint32 elf_greg_t;
 #define ELF_NGREG (sizeof(struct user_regs_struct) / sizeof(elf_greg_t))
 typedef elf_greg_t elf_gregset_t[ELF_NGREG];
 
-
 struct user {
 	struct user_regs_struct regs;
 	uint32 u_debugreg[8];
 };
 
-
+#ifdef __cplusplus
+}
 #endif
 
+#endif	/* __F_ATHEOS_PTRACE_H__ */

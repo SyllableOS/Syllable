@@ -87,13 +87,15 @@
  *********************************************************************/
 
 /* These are only included once per module */
-#include <atheos/kernel.h>
-#include <atheos/pci.h>
-#include <atheos/device.h>
-#include <atheos/irq.h>
-#include <atheos/bitops.h>
+#include <kernel/malloc.h>
+#include <kernel/string.h>
+//#include <kernel/stdlib.h>
+#include <kernel/pci.h>
+#include <kernel/device.h>
+#include <kernel/irq.h>
+#include <kernel/bitops.h>
 #include <posix/errno.h>
-#include <posix/signal.h>
+#include <kernel/signal.h>
 
 #include "hwaccess.h"
 #include "8010.h"

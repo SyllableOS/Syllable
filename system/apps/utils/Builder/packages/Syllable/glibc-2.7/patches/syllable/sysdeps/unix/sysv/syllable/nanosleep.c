@@ -19,7 +19,7 @@
 #include <errno.h>
 #include <time.h>
 
-#include <atheos/time.h>
+#include <syllable/time.h>
 
 /* Pause execution for a number of nanoseconds.  */
 int

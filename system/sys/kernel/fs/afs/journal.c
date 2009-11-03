@@ -18,17 +18,18 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <posix/unistd.h>
 #include <posix/errno.h>
 #include <macros.h>
 
-#include <atheos/string.h>
-#include <atheos/types.h>
-#include <atheos/kernel.h>
-#include <atheos/bcache.h>
-#include <atheos/time.h>
-#include <atheos/semaphore.h>
-#include <atheos/areas.h>
+#include <kernel/types.h>
+#include <kernel/malloc.h>
+#include <kernel/string.h>
+#include <kernel/bcache.h>
+#include <kernel/time.h>
+#include <kernel/semaphore.h>
+#include <kernel/areas.h>
+#include <kernel/unistd.h>
+#include <kernel/kdebug.h>
 
 #include "afs.h"
 

@@ -1,4 +1,3 @@
-
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2001 Kurt Skauen
@@ -18,21 +17,21 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <atheos/types.h>
-#include <atheos/kernel.h>
-#include <atheos/semaphore.h>
-#include <atheos/atomic.h>
-#include <atheos/filesystem.h>
-
+#include <kernel/types.h>
+#include <kernel/semaphore.h>
+#include <kernel/filesystem.h>
+#include <kernel/atomic.h>
+#include <kernel/fcntl.h>
+#include <kernel/signal.h>
+#include <kernel/stdlib.h>
+#include <kernel/malloc.h>
+#include <kernel/kdebug.h>
 #include <posix/errno.h>
 #include <posix/limits.h>
-#include <posix/fcntl.h>
 #include <posix/ioctls.h>
-#include <posix/signal.h>
-
 #include <macros.h>
 
-#include "vfs.h"
+#include <vfs/vfs.h>
 
 typedef struct
 {

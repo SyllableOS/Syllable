@@ -19,7 +19,7 @@
 #include <errno.h>
 #include <sys/resource.h>
 #include <sys/types.h>
-#include <atheos/threads.h>
+#include <syllable/threads.h>
 
 /* KV: This is a stub, until we add a proper getrusage syscall.
    The values returned from this version should at least keep

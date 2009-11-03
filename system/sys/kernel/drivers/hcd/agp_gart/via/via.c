@@ -51,12 +51,14 @@
  */
 
 #include <posix/errno.h>
-#include <atheos/kernel.h>
-#include <atheos/device.h>
-#include <atheos/semaphore.h>
-#include <atheos/pci.h>
-#include <atheos/agpgart.h>
-#include <atheos/agp.h>
+#include <kernel/malloc.h>
+#include <kernel/string.h>
+#include <kernel/stdlib.h>
+#include <kernel/device.h>
+#include <kernel/semaphore.h>
+#include <kernel/pci.h>
+#include <kernel/agpgart.h>
+#include <kernel/agp.h>
 #include <macros.h>
 #include "via.h"
 

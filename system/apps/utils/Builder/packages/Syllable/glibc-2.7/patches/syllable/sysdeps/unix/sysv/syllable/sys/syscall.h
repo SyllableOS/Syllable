@@ -20,7 +20,7 @@
 #define _SYSCALL_H	1
 
 /* Get kernel NR_ syscall macros from the kernel header */
-#include <atheos/syscall.h>
+#include <syllable/syscall.h>
 
 #ifndef _LIBC
 /* The Syllable kernel header file defines macros `__NR_<name>', but some

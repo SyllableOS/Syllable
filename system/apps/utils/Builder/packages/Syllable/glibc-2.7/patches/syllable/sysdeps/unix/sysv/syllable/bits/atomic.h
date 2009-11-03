@@ -18,7 +18,7 @@
    02111-1307 USA.  */
 
 #include <stdint.h>
-#include <atheos/atomic.h>
+#include <syllable/atomic.h>
 
 typedef int8_t atomic8_t;
 typedef uint8_t uatomic8_t;

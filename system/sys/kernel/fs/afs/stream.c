@@ -19,10 +19,13 @@
  */
 
 #include <posix/errno.h>
-#include <atheos/string.h>
-#include <atheos/types.h>
-#include <atheos/kernel.h>
-#include <atheos/bcache.h>
+
+#include <kernel/types.h>
+#include <kernel/malloc.h>
+#include <kernel/string.h>
+#include <kernel/bcache.h>
+#include <kernel/stat.h>
+
 #include <macros.h>
 
 #include "afs.h"

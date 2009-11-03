@@ -18,16 +18,17 @@
  */
 
 #include <posix/errno.h>
-#include <posix/stat.h>
 #include <posix/fcntl.h>
 #include <posix/dirent.h>
 
-#include <atheos/types.h>
-#include <atheos/time.h>
-#include <atheos/filesystem.h>
-#include <atheos/kernel.h>
-#include <atheos/semaphore.h>
-#include <atheos/bootmodules.h>
+#include <kernel/types.h>
+#include <kernel/time.h>
+#include <kernel/filesystem.h>
+#include <kernel/malloc.h>
+#include <kernel/string.h>
+#include <kernel/semaphore.h>
+#include <kernel/bootmodules.h>
+#include <kernel/stat.h>
 
 #include <macros.h>
 

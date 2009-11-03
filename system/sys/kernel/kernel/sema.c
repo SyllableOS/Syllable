@@ -1,4 +1,3 @@
-
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2001 Kurt Skauen
@@ -18,21 +17,21 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <kernel/types.h>
+#include <kernel/kdebug.h>
+#include <kernel/semaphore.h>
+#include <kernel/time.h>
+#include <kernel/spinlock.h>
+#include <kernel/stdlib.h>
+#include <kernel/schedule.h>
+#include <kernel/malloc.h>
 #include <posix/errno.h>
-
-#include <atheos/types.h>
-#include <atheos/kernel.h>
-#include <atheos/kdebug.h>
-#include <atheos/semaphore.h>
-#include <atheos/time.h>
-#include <atheos/spinlock.h>
-
 #include <macros.h>
 
-#include "inc/semaphore.h"
-#include "inc/scheduler.h"
-#include "inc/sysbase.h"
-#include "inc/smp.h"
+#include <inc/semaphore.h>
+#include <inc/scheduler.h>
+#include <inc/sysbase.h>
+#include <inc/smp.h>
 
 /* Selective debugging level overrides */
 #ifdef KERNEL_DEBUG_SEMA

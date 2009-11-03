@@ -21,6 +21,12 @@
 #ifndef _F_SYSCALLTABLE_H_
 #define _F_SYSCALLTABLE_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include <syllable/syscall.h>
+
 /* Syscall description table */
 
 static struct SysCall_info g_sSysCallTable[] = {
@@ -263,5 +269,9 @@ static struct SysCall_info g_sSysCallTable[] = {
  {__NR_call_v86,"call_v86", SYSC_GROUP_MISC, 1, SYSC_ARG_T_INT, SYSC_ARG_T_POINTER, SYSC_ARG_T_NONE, SYSC_ARG_T_NONE, SYSC_ARG_T_NONE, SYSC_ARG_T_NONE},
  {__NR_apm_poweroff,"apm_poweroff", SYSC_GROUP_MISC, 0, SYSC_ARG_T_INT, SYSC_ARG_T_NONE, SYSC_ARG_T_NONE, SYSC_ARG_T_NONE, SYSC_ARG_T_NONE, SYSC_ARG_T_NONE}
 };
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _F_SYSCALLTABLE_H_ */

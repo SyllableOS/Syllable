@@ -7,7 +7,7 @@
 */
 
 
-#include <atheos/kernel.h>
+#include <kernel/malloc.h>
 
 
 class BufferPool {

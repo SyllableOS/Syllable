@@ -19,7 +19,7 @@
 #include <errno.h>
 #include <sys/time.h>
 
-#include <atheos/time.h>
+#include <syllable/time.h>
 
 int __stime( const time_t *when )
 {

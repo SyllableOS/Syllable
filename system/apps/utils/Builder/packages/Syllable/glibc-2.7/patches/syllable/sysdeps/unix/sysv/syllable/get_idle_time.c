@@ -20,7 +20,7 @@
 #include <sysdep.h>
 #include <sys/syscall.h>
 
-#include <atheos/time.h>
+#include <syllable/time.h>
 
 bigtime_t __get_idle_time( int proc )
 {

@@ -18,18 +18,20 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <kernel/irq.h>
+#include <kernel/kdebug.h>
+#include <kernel/image.h>
+#include <kernel/stdlib.h>
+#include <kernel/schedule.h>
 #include <posix/errno.h>
-#include <atheos/kernel.h>
-#include <atheos/irq.h>
-
 #include <macros.h>
 
-#include "inc/scheduler.h"
-#include "inc/areas.h"
-#include "inc/sysbase.h"
-#include "inc/mman.h"
-#include "inc/smp.h"
-#include "inc/ptrace.h"
+#include <inc/scheduler.h>
+#include <inc/areas.h>
+#include <inc/sysbase.h>
+#include <inc/mman.h>
+#include <inc/smp.h>
+#include <inc/ptrace.h>
 
 
 /*****************************************************************************

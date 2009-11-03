@@ -7,9 +7,11 @@
 */
 
 
-#include <atheos/kernel.h>
-#include <atheos/filesystem.h>
-#include <atheos/bcache.h>
+#include <kernel/malloc.h>
+//#include <kernel/string.h>
+//#include <kernel/stdlib.h>
+#include <kernel/filesystem.h>
+#include <kernel/bcache.h>
 
 #include "bfs.h"
 #include "BlockAllocator.h"

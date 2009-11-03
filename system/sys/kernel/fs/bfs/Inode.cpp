@@ -12,7 +12,7 @@
 #include "Stream.h"
 #include "Index.h"
 
-#include <atheos/bcache.h>
+#include <kernel/bcache.h>
 #include "kernel_cpp.h"
 
 #include <atheos/string.h>

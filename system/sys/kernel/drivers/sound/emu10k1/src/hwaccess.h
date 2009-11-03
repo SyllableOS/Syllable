@@ -33,13 +33,15 @@
 #define _HWACCESS_H
 
 #include "emu_wrapper.h"
-#include <atheos/soundcard.h>
 #include "ac97_codec.h"
-#include <atheos/kernel.h>
-#include <atheos/pci.h>
-#include <atheos/isa_io.h>
-#include <atheos/semaphore.h>
-#include <atheos/spinlock.h>
+#include <kernel/malloc.h>
+//#include <kernel/string.h>
+//#include <kernel/stdlib.h>
+#include <kernel/pci.h>
+#include <kernel/isa_io.h>
+#include <kernel/semaphore.h>
+#include <kernel/spinlock.h>
+#include <syllable/soundcard.h>
 
 #include "emu_wrapper.h"
 #include "efxmgr.h"

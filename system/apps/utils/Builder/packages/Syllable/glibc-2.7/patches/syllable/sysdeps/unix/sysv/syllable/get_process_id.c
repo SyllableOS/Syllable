@@ -20,8 +20,8 @@
 #include <sysdep.h>
 #include <sys/syscall.h>
 
-#include <atheos/tld.h>
-#include <atheos/threads.h>
+#include <syllable/tld.h>
+#include <syllable/threads.h>
 
 proc_id __get_process_id( const char *name )
 {

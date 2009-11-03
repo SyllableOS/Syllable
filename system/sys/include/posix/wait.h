@@ -17,16 +17,14 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef __ATHEOS_WAIT_H_
-#define __ATHEOS_WAIT_H_
+#ifndef __F_POSIX_WAIT_H_
+#define __F_POSIX_WAIT_H_
 
-#include <posix/resource.h>
+#include <posix/types.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#include <posix/types.h>
 
 #define WEXITSTATUS(stat_val)	( (stat_val>>8) & 0x000ff )
 #define WIFEXITED(stat_val)	( ((stat_val) & 0xff) == 0)
@@ -48,4 +46,4 @@ pid_t wait4( pid_t pid, int* stat_loc, int options, struct rusage* rusage );
 }
 #endif
 
-#endif /* __ATHEOS_WAIT_H_ */
+#endif	/* __F_POSIX_WAIT_H_ */

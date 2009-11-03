@@ -51,28 +51,6 @@ struct kernel_itimerval
   struct kernel_timeval it_value;
 };
 
-#ifdef __KERNEL__
-
-#define ITIMER_REAL		0
-#define ITIMER_VIRTUAL	1
-#define ITIMER_PROF		2
-
-struct tm {
-  int 	tm_sec;
-  int 	tm_min;
-  int 	tm_hour;
-  int 	tm_mday;
-  int 	tm_mon;
-  int 	tm_year;
-  int 	tm_wday;
-  int 	tm_yday;
-  int 	tm_isdst;
-  char* tm_zone;
-  int 	tm_gmtoff;
-};
-
-#endif
-
 #ifdef __cplusplus
 }
 #endif

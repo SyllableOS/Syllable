@@ -20,8 +20,9 @@
 #ifndef __F_PTRACE_H__
 #define __F_PTRACE_H__
 
-#include "inc/scheduler.h"
+#include <kernel/types.h>
 
+#include <inc/scheduler.h>
 
 #define MAX_REQUEST			24
 

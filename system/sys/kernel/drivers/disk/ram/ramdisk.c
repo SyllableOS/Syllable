@@ -20,12 +20,14 @@
 #undef DEBUG_LIMIT
 #define DEBUG_LIMIT	KERN_DEBUG_LOW
 
-#include <atheos/kernel.h>
-#include <atheos/kdebug.h>
-#include <atheos/device.h>
-#include <atheos/areas.h>
-#include <atheos/semaphore.h>
-#include <errno.h>
+#include <kernel/malloc.h>
+#include <kernel/string.h>
+#include <kernel/stdlib.h>
+#include <kernel/kdebug.h>
+#include <kernel/device.h>
+#include <kernel/areas.h>
+#include <kernel/semaphore.h>
+#include <posix/errno.h>
 #include <macros.h>
 
 struct RamDisk_s{

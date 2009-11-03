@@ -3,7 +3,7 @@
  * available as (non-inlined) functions, so supply them here.
  */
 
-#include <atheos/types.h>
+#include <kernel/types.h>
 
 char * strcpy( char* dest, const char* src )
 {

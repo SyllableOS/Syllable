@@ -23,13 +23,12 @@
 #include <posix/fcntl.h>
 #include <posix/dirent.h>
 
-#include <atheos/types.h>
-#include <atheos/isa_io.h>
-
-#include <atheos/kernel.h>
-#include <atheos/device.h>
-#include <atheos/irq.h>
-#include <atheos/smp.h>
+#include <kernel/types.h>
+#include <kernel/isa_io.h>
+#include <kernel/malloc.h>
+#include <kernel/device.h>
+#include <kernel/irq.h>
+#include <kernel/smp.h>
 
 #include <macros.h>
 

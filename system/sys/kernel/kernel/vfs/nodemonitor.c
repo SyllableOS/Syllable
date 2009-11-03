@@ -1,4 +1,3 @@
-
 /*
  *  The AtheOS kernel
  *  Copyright (C) 2001 Kurt Skauen
@@ -19,29 +18,27 @@
  */
 
 
+#include <kernel/types.h>
+#include <kernel/msgport.h>
+#include <kernel/semaphore.h>
+#include <kernel/smp.h>
+#include <kernel/time.h>
+#include <kernel/dirent.h>
+#include <kernel/fcntl.h>
+#include <kernel/stdlib.h>
+#include <kernel/malloc.h>
+#include <kernel/kdebug.h>
 #include <posix/errno.h>
-#include <posix/fcntl.h>
 #include <posix/unistd.h>
-#include <posix/dirent.h>
 #include <posix/utime.h>
-#include <posix/time.h>
 #include <posix/limits.h>
-
-#include <atheos/types.h>
-#include <atheos/kernel.h>
-#include <atheos/smp.h>
-#include <atheos/msgport.h>
-#include <atheos/semaphore.h>
-
-#include <gui/guidefines.h>
-
 #include <macros.h>
 
-#include "inc/scheduler.h"
-#include "inc/sysbase.h"
-#include "vfs.h"
+#include <vfs/vfs.h>
+#include <inc/scheduler.h>
+#include <inc/sysbase.h>
 
-
+#include <syllable/messages.h> /* For M_NODE_MONITOR */
 
 static int g_nLastMonitorID = 1;
 static sem_id g_hNodeMonitorMutex;

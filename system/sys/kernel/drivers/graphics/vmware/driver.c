@@ -24,9 +24,11 @@
 
 #include <posix/errno.h>
 
-#include <atheos/kernel.h>
-#include <atheos/device.h>
-#include <atheos/pci.h>
+#include <kernel/malloc.h>
+#include <kernel/string.h>
+#include <kernel/stdlib.h>
+#include <kernel/device.h>
+#include <kernel/pci.h>
 #include <appserver/pci_graphics.h>
 
 #include "vmware_pci_ids.h"

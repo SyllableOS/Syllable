@@ -24,11 +24,6 @@
 extern "C" {
 #endif
 
-#ifdef __KERNEL__
-# include <atheos/types.h>
-# include <posix/siginfo.h>
-#endif
-
 /* Asynchronous I/O control block.  */
 struct aiocb
 {

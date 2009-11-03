@@ -23,7 +23,7 @@
 #include <string.h>
 #include <malloc.h>
 #include <sys/statfs.h>
-#include <atheos/filesystem.h>
+#include <syllable/filesystem.h>
 
 /* Return information about the filesystem on which FD resides.  */
 int

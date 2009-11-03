@@ -18,18 +18,19 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <kernel/types.h>
+#include <kernel/spinlock.h>
+#include <kernel/bcache.h>
+#include <kernel/tlb.h>
+#include <kernel/stdlib.h>
+#include <kernel/kdebug.h>
 #include <posix/errno.h>
-#include <atheos/types.h>
-#include <atheos/bcache.h>
-
-#include <atheos/kernel.h>
-#include <atheos/spinlock.h>
 #include <macros.h>
 
-#include "inc/sysbase.h"
-#include "inc/bcache.h"
-#include "inc/areas.h"
-#include "inc/swap.h"
+#include <inc/sysbase.h>
+#include <inc/bcache.h>
+#include <inc/areas.h>
+#include <inc/swap.h>
 
 Page_s *g_psFirstPage;
 Page_s *g_psFirstFreePage = NULL;

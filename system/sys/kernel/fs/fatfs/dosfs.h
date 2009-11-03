@@ -6,8 +6,8 @@
 #ifndef _DOSFS_H_
 #define _DOSFS_H_
 
-#include <atheos/semaphore.h>
-#include <atheos/bcache.h>
+#include <kernel/semaphore.h>
+#include <kernel/bcache.h>
 
 #define new_lock( id, name ) ( (((*(id))=create_semaphore( (name), 1, SEM_RECURSIVE )) < 0) ? -EINVAL : 0 )
 #define free_lock(lock) delete_semaphore( *(lock) )

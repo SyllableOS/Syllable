@@ -1,7 +1,7 @@
 #ifndef _AC97_CODEC_H_
 #define _AC97_CODEC_H_
 
-#include <atheos/list.h>
+#include <kernel/list.h>
 
 /* AC97 1.0 */
 #define  AC97_RESET               0x0000      //

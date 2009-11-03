@@ -105,29 +105,30 @@ static int csr0 = 0x00A00000 | 0x4800;
    10base2(!) packets trigger a full-duplex-request interrupt. */
 #define FULL_DUPLEX_MAGIC	0x6969
 
-#include <atheos/kernel.h>
-#include <atheos/schedule.h>
-#include <atheos/string.h>
-#include <atheos/timer.h>
-#include <atheos/time.h>
-#include <atheos/isa_io.h>
-#include <atheos/irq.h>
-#include <atheos/pci.h>
-#include <atheos/semaphore.h>
-#include <atheos/spinlock.h>
-#include <atheos/ctype.h>
-#include <atheos/device.h>
-#include <atheos/bitops.h>
+#include <kernel/malloc.h>
+#include <kernel/stdlib.h>
+#include <kernel/schedule.h>
+#include <kernel/string.h>
+#include <kernel/timer.h>
+#include <kernel/time.h>
+#include <kernel/isa_io.h>
+#include <kernel/irq.h>
+#include <kernel/pci.h>
+#include <kernel/semaphore.h>
+#include <kernel/spinlock.h>
+#include <kernel/ctype.h>
+#include <kernel/device.h>
+#include <kernel/bitops.h>
 #define NO_DEBUG_STUBS 1
-#include <atheos/linux_compat.h>
+#include <kernel/linux_compat.h>
+#include <kernel/signal.h>
+#include <kernel/net.h>
+#include <kernel/ip.h>
+#include <kernel/if_ether.h>
 
 #include <posix/unistd.h>
 #include <posix/errno.h>
-#include <posix/signal.h>
-#include <net/net.h>
-#include <net/ip.h>
 #include <net/sockios.h>
-#include <net/if_ether.h>
 
 #define KERN_ERR "Error: "
 #define KERN_DEBUG "Debug: "

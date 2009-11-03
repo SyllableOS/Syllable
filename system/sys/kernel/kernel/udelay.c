@@ -1,4 +1,3 @@
-
 /*
  *	Precise Delay Loops for i386
  *
@@ -13,12 +12,12 @@
  *	Modified to fit into the AtheOS kernel by Kurt Skauen 08 Jan 2000
  */
 
-#include <atheos/udelay.h>
-#include <atheos/smp.h>
+#include <kernel/types.h>
+#include <kernel/smp.h>
+#include <kernel/udelay.h>
 
-#include "inc/smp.h"
-#include "inc/pit_timer.h"
-
+#include <inc/smp.h>
+#include <inc/pit_timer.h>
 
 void __delay( unsigned long loops )
 {

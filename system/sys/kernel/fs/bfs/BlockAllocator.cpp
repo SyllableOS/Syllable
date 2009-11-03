@@ -14,7 +14,7 @@
 #include "bfs_control.h"
 
 #include "kernel_cpp.h"
-#include <atheos/stdlib.h>
+#include <kernel/stdlib.h>
 
 #ifdef USER
 #	define spawn_kernel_thread spawn_thread

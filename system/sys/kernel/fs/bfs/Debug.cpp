@@ -11,8 +11,10 @@
 #include "BPlusTree.h"
 #include "Inode.h"
 
-#include <atheos/kernel.h>
-#include <atheos/time.h>
+#include <kernel/malloc.h>
+//#include <kernel/string.h>
+//#include <kernel/stdlib.h>
+#include <kernel/time.h>
 
 #define Print __out
 

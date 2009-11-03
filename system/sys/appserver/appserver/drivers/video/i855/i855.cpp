@@ -40,7 +40,6 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <atheos/kernel.h>
 #include <atheos/isa_io.h>
 #include <atheos/vesa_gfx.h>
-#include <atheos/udelay.h>
 #include <atheos/time.h>
 #include <appserver/pci_graphics.h>
 

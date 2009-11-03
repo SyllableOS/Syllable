@@ -19,22 +19,24 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#include <atheos/kernel.h>
-#include <atheos/device.h>
-#include <atheos/kdebug.h>
-#include <atheos/image.h>
-#include <atheos/fs_attribs.h>
+
+#include <kernel/device.h>
+#include <kernel/kdebug.h>
+#include <kernel/image.h>
+#include <kernel/fs_attribs.h>
+#include <kernel/stdlib.h>
+#include <kernel/malloc.h>
+#include <posix/errno.h>
 #include <macros.h>
 
-
-#include "inc/scheduler.h"
-#include "inc/sysbase.h"
-#include "inc/global.h"
-#include "inc/areas.h"
-#include "inc/image.h"
-#include "inc/mman.h"
-#include "inc/ksyms.h"
-#include "inc/smp.h"
+#include <inc/scheduler.h>
+#include <inc/sysbase.h>
+#include <inc/global.h>
+#include <inc/areas.h>
+#include <inc/image.h>
+#include <inc/mman.h>
+#include <inc/ksyms.h>
+#include <inc/smp.h>
 
 
 /* Function definitions */

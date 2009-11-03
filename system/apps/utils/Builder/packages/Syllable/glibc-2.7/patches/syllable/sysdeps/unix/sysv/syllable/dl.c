@@ -22,7 +22,7 @@
 #include <ldsodefs.h>
 #include <malloc.h>
 
-#include <atheos/image.h>
+#include <syllable/image.h>
 
 static int
 internal_function

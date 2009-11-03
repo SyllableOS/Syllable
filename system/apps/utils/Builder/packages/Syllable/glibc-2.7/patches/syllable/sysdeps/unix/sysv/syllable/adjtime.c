@@ -20,7 +20,7 @@
 #include <time.h>
 #include <sys/time.h>
 
-#include <atheos/time.h>
+#include <syllable/time.h>
 
 #define MAX_SEC	1000000L
 #define MIN_SEC	-1000000L

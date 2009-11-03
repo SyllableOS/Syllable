@@ -41,50 +41,6 @@ extern "C" {
 #define USHRT_MAX 65535
 
 #ifndef __STRICT_ANSI__
-
-#if 0
-
-#define _POSIX_ARG_MAX		131072	/* but only for exec's to other djgpp programs */
-#define _POSIX_CHILD_MAX	4096	/* really limited by memory */
-
-#ifndef _POSIX_LINK_MAX
-#define _POSIX_LINK_MAX		1	
-#endif
-  
-#ifndef _POSIX_MAX_CANON
-#define _POSIX_MAX_CANON	126	
-#endif
-  
-#ifndef _POSIX_MAX_INPUT
-#define _POSIX_MAX_INPUT	126	
-#endif
-
-#ifndef _POSIX_NAME_MAX
-#define _POSIX_NAME_MAX		256
-#endif
-  
-#define _POSIX_NGROUPS_MAX	32
-
-#ifndef _POSIX_OPEN_MAX
-#define _POSIX_OPEN_MAX		256
-#endif
-
-#define _POSIX_PATH_MAX		255
-#define _POSIX_PIPE_BUF		512
-
-#ifndef _POSIX_SSIZE_MAX
-#define _POSIX_SSIZE_MAX	2147483647
-#endif
-  
-#ifndef _POSIX_STREAM_MAX
-#define _POSIX_STREAM_MAX	256
-#endif
-
-#ifndef _POSIX_TZNAME_MAX
-#define _POSIX_TZNAME_MAX	5
-#endif
-
-#endif	/* 0 */
   
 /* constants used in Solaris */
 #define LLONG_MIN       (-9223372036854775807LL-1LL)

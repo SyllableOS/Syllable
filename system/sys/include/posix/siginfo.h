@@ -17,24 +17,11 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef	_POSIX_SIGINFO_H_
-#define	_POSIX_SIGINFO_H_
-
-#include <posix/types.h>
+#ifndef	__F_POSIX_SIGINFO_H_
+#define	__F_POSIX_SIGINFO_H_
 
 #ifdef __cplusplus
 extern "C" {
-#endif
-
-#ifdef __KERNEL__
-
-/* Type for data associated with a signal.  */
-typedef union sigval
-  {
-    int sival_int;
-    void *sival_ptr;
-  } sigval_t;
-
 #endif
 
 /* Structure to transport application-defined values with signals.  */
@@ -65,4 +52,4 @@ enum
 }
 #endif
 
-#endif	/*	_POSIX_SIGINFO_H_ */
+#endif	/* __F_POSIX_SIGINFO_H_ */

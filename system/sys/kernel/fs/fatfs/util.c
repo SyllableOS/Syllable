@@ -5,12 +5,11 @@
 
 typedef long long dr9_off_t;
 
-#include <atheos/kernel.h>
-#include <atheos/ctype.h>
-#include <atheos/string.h>
-#include <atheos/time.h>
-
-#include <atheos/filesystem.h>
+#include <kernel/malloc.h>
+#include <kernel/string.h>
+#include <kernel/ctype.h>
+#include <kernel/time.h>
+#include <kernel/filesystem.h>
 //#include <rtc_info.h>
 
 #include "dosfs.h"

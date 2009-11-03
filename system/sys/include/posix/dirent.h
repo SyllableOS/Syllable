@@ -17,34 +17,28 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef _ATHEOS_DIRENT_H_
-#define _ATHEOS_DIRENT_H_
+#ifndef __F_POSIX_DIRENT_H_
+#define __F_POSIX_DIRENT_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #ifdef	NAME_MAX
-#define	MAXNAMLEN	NAME_MAX
+# define MAXNAMLEN	NAME_MAX
 #else
-#define	MAXNAMLEN	255
+# define MAXNAMLEN	255
 #endif
 
-struct kernel_dirent {
-  unsigned char d_namlen;
-  char d_name[MAXNAMLEN+1];
-  long long d_ino;
+struct kernel_dirent
+{
+	unsigned char d_namlen;
+	char d_name[MAXNAMLEN+1];
+	long long d_ino;
 };
-
-#ifdef __KERNEL__
-
-int getdents( int nFile, struct kernel_dirent *psDirEnt, int nCount );
-
-#endif /* __KERNEL__ */
 
 #ifdef __cplusplus
 }
 #endif
 
-
-#endif /*  _ATHEOS_DIRENT_H_ */
+#endif	/* __F_POSIX_DIRENT_H_ */

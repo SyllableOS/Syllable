@@ -1,0 +1,92 @@
+Understanding the system headers
+--------------------------------
+
+The system headers are organised into specific catagories depending on their
+content. There are a few rules which define what type of content belong in
+which headers. There are also a few additional rules which should be followed
+when writing a new header or changing an existing header.
+
+Note that the headers in their current state may violate some of these rules.
+There is still a lot of work to do to clean them up, and that work is on
+going.
+
+The categories and their purposes are as follows:
+
+	kernel/
+
+	Forward declarations, types and definitions that can be used by drivers I.e.
+	only those functions which are exported via. libkernel. Internal functions
+	should be placed in the kernel internal headers in the inc/ directory with
+	the kernel sources.
+
+	Kernel headers may include any headers from the syllable, posix and net
+	headers. Non-kernel headers should NEVER include kernel headers.
+
+	syllable/
+
+	Anything which is specific to Syllable and common to both the kernel and
+	userspace belongs in a header under the syllable directory. These are the
+	"lowest level" headers and may not include any other headers outside of the
+	syllable directory. The ONLY exception to this rule are the standard C
+	headers, but care must be taken where these may conflict with the kernel
+	definitions, which generally does NOT use the standard C headers. The headers
+	syllable/inttypes.h, syllable/types.h and kernel/types.h are a good example
+	of how to handle this type of situation.
+
+	atheos/
+
+	A synonym for syllable, for backwards compatability only.
+
+	posix/
+
+	Types, structs and function declerations which are defined by POSIX and
+	common to both the kernel & user-space. Headers here may include other
+	headers from the syllable or net headers.
+
+	net/
+
+	Network, BSD sockets & network interface structs, types and definitions that
+	are common to both the kernel and user-space. Headers here may include other
+	headers from the syllable or posix headers.
+
+	appserver, gui, media, storage, translation, util
+
+	Headers associated with libsyllable, libmedia etc.
+
+Note that some headers with the same names appear in multiple locations. This
+is done to allow "layering" the headers I.e. the kernel may include common
+definitions which appear in a header in the syllable directory, but we also
+wish to define some additional kernel-only structures. In that case we have
+a header in the kernel directory which defines the kernel-only structures,
+which then includes the header from the syllable directory which contains the
+shared code.
+
+There are a few basic rules to follow if you are creating a new header:
+
+	o Include guards follow the form __F_[DIRECTORY]_[FILENAME]_H__ I.e.
+
+		#ifndef __F_KERNEL_TYPES_H__
+		#define __F_KERNEL_TYPES_H__
+
+	o Headers outside of the kernel directory require "extern C" guards for C++
+	  I.e.
+
+		#ifdef __cpluscplus
+		extern "C" {
+		#endif
+
+	  kernel headers should never have these guards.
+
+	o Do not use the "Fool emacs indentation" hack that appears in some older
+	  headers.
+
+	o The header must have a valid Copyright notice and LGPL license text. Use
+	  the newer "Syllable" text rather than an older "AtheOS" one.
+
+	o Stick to the usual code style for headers: use tabs for indentation
+	  (particularly in struct definitions), do not split long forward
+	  declarations over multiple lines. You can however split large macros over
+	  multiple lines.
+
+	o Be generally careful of what you are placing where. Kernel-only
+	  definitions, structures and types should not "leak" into user-space.

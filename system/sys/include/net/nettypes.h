@@ -17,10 +17,14 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef __F_ATHEOS_NETTYPES_H__
-#define __F_ATHEOS_NETTYPES_H__
+#ifndef __F_NET_NETTYPES_H__
+#define __F_NET_NETTYPES_H__
 
-#include <atheos/types.h>
+#include <syllable/inttypes.h>
+
+/* This is pretty horible, but the network structures are all highly dependent
+   upon one another, so we basically have to declare every single type in
+   advance or the spaghetti monster will eat us. */
 
 typedef struct _Socket Socket_s;
 typedef struct _NetInterface NetInterface_s;
@@ -44,4 +48,5 @@ typedef struct _PacketBuf PacketBuf_s;
 #define IP_ADR_LEN	4
 typedef uint8 ipaddr_t[IP_ADR_LEN];
 typedef uint8* ipaddr_p;
-#endif				/* __F_ATHEOS_NETTYPES_H__ */
+
+#endif	/* __F_NET_NETTYPES_H__ */

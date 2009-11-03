@@ -1,4 +1,4 @@
-#include <atheos/string.h>
+#include <kernel/string.h>
 
 char * strstr(const char * cs,const char * ct)
 {

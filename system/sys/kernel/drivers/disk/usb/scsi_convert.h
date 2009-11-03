@@ -42,8 +42,8 @@
 #ifndef _SCSI_CONVERT_H_
 #define _SCSI_CONVERT_H_
 
-#include <atheos/types.h>
-#include <atheos/scsi.h>
+#include <kernel/types.h>
+#include <kernel/scsi.h>
 
 extern unsigned char usb_stor_sense_notready[18];
 extern int usb_stor_scsiSense10to6( SCSI_cmd_s * );

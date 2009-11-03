@@ -1,5 +1,3 @@
-#define PCI_VENDOR_ID_ESS			0x125D
-
 #define PCI_DEVICE_ID_ESS_ESS1968	0x1968		/* Maestro 2	*/
 #define PCI_DEVICE_ID_ESS_ESS1978   0x1978		/* Maestro 2E	*/
 

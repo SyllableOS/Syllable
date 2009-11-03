@@ -17,25 +17,24 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-
+#include <kernel/types.h>
+#include <kernel/time.h>
+#include <kernel/filesystem.h>
+#include <kernel/device.h>
+#include <kernel/semaphore.h>
+#include <kernel/config.h>
+#include <kernel/image.h>
+#include <kernel/stdlib.h>
+#include <kernel/malloc.h>
+#include <kernel/dirent.h>
+#include <kernel/fcntl.h>
+#include <kernel/stat.h>
+#include <kernel/kdebug.h>
 #include <posix/errno.h>
-#include <posix/stat.h>
-#include <posix/fcntl.h>
-#include <posix/dirent.h>
-
-#include <atheos/types.h>
-#include <atheos/time.h>
-#include <atheos/filesystem.h>
-#include <atheos/kernel.h>
-#include <atheos/device.h>
-#include <atheos/image.h>
-#include <atheos/semaphore.h>
-#include <atheos/config.h>
-
 #include <macros.h>
 
-#include "inc/global.h"
-#include "vfs.h"
+#include <vfs/vfs.h>
+#include <inc/global.h>
 
 typedef struct FileNode FileNode_s;
 typedef struct SuperInfo SuperInfo_s;

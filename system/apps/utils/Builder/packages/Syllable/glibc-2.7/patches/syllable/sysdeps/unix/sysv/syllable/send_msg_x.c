@@ -20,7 +20,7 @@
 #include <sysdep.h>
 #include <sys/syscall.h>
 
-#include <atheos/msgport.h>
+#include <syllable/msgport.h>
 
 status_t __send_msg_x(port_id port, uint32 code, const void *buf,
                       int size, bigtime_t timeout )

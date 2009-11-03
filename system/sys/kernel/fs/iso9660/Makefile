@@ -3,6 +3,8 @@ AFLAGS   = -c
 
 #CFLAGS += -I.. -I../../../include
 
+C_INCLUDE_PATH = $(ATHEOS_INCLUDE_PATH)
+
 OBJS := iso.o kernel_interface.o
 
 

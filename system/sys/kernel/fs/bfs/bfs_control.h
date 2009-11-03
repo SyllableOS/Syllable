@@ -7,7 +7,7 @@
 */
 
 
-#include <atheos/filesystem.h>
+#include <kernel/filesystem.h>
 
 
 /* ioctl to check the version of BFS used - parameter is a uint32 *

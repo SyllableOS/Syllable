@@ -1,4 +1,3 @@
-
 /* cputable.h - Maps CPUID to real CPU name.
  * Copyleft 2001 by Felix Buenemann <atmosfear at users dot sourceforge dot net>
  * This file comes under the GNU GPL, see www.fsf.org for more info!

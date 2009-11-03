@@ -17,23 +17,25 @@
 
 static const char *version = "pcnet32.c:v1.25kf 26.9.1999 tsbogend@alpha.franken.de\n";
 
-#include <atheos/kernel.h>
-#include <atheos/irq.h>
-#include <atheos/isa_io.h>
-#include <atheos/time.h>
-#include <atheos/pci.h>
-#include <atheos/semaphore.h>
-#include <atheos/spinlock.h>
-#include <atheos/ctype.h>
-#include <atheos/device.h>
-#include <atheos/bitops.h>
-#include <atheos/linux_compat.h>
+#include <kernel/malloc.h>
+#include <kernel/string.h>
+#include <kernel/stdlib.h>
+#include <kernel/irq.h>
+#include <kernel/isa_io.h>
+#include <kernel/time.h>
+#include <kernel/pci.h>
+#include <kernel/semaphore.h>
+#include <kernel/spinlock.h>
+#include <kernel/ctype.h>
+#include <kernel/device.h>
+#include <kernel/bitops.h>
+#include <kernel/linux_compat.h>
+#include <kernel/signal.h>
+#include <kernel/net.h>
+#include <kernel/ip.h>
 
 #include <posix/unistd.h>
 #include <posix/errno.h>
-#include <posix/signal.h>
-#include <net/net.h>
-#include <net/ip.h>
 #include <net/sockios.h>
 
 struct /*enet_statistics*/  net_device_stats

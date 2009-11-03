@@ -24,9 +24,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-#if 0
-}
-#endif
+
 #include <posix/time.h>
 
 /* Structure which says how much of each resource has been used.  */
@@ -71,22 +69,6 @@ struct rusage
 	   became runnable or the current process used up its time slice.  */
 	long int ru_nivcsw;
 };
-  
-#ifdef __KERNEL__
-
-#define RLIMIT_CPU		0	/* cpu time in milliseconds */
-#define RLIMIT_FSIZE	1	/* maximum file size */
-#define RLIMIT_DATA		2	/* data size */
-#define RLIMIT_STACK	3	/* stack size */
-#define RLIMIT_CORE		4	/* core file size */
-#define RLIMIT_RSS		5	/* resident set size */
-#define RLIMIT_MEMLOCK	6	/* locked-in-memory address space */
-#define RLIMIT_NPROC	7	/* number of processes */
-#define RLIMIT_NOFILE	8	/* number of open files */
-#define RLIMIT_AS		9	/* Address space limit (?) */
-#define RLIM_NLIMITS	10	/* number of resource limits */
-
-#endif	/* __KERNEL__ */
 
 #ifdef __cplusplus
 }

@@ -1,4 +1,3 @@
-
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2000 Kurt Skauen
@@ -21,13 +20,14 @@
 #ifndef __F_ELF_H__
 #define __F_ELF_H__
 
-#include <atheos/filesystem.h>
-#include <atheos/elf.h>
-#include <atheos/image.h>
-#include <atheos/bootmodules.h>
+#include <kernel/types.h>
+#include <kernel/elf.h>
+#include <kernel/filesystem.h>
+#include <kernel/bootmodules.h>
+#include <kernel/image.h>
 
-#include "typedefs.h"
-#include "../vfs/vfs.h"
+#include <inc/typedefs.h>
+#include <vfs/vfs.h>
 
 #ifdef __cplusplus
 extern "C"

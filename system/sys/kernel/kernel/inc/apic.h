@@ -21,7 +21,7 @@
 #ifndef __F_APIC_H__
 #define __F_APIC_H__
 
-#include <atheos/types.h>
+#include <kernel/types.h>
 
 /* APIC registers */
 #define APIC_DEFAULT_PHYS_BASE			0xfee00000

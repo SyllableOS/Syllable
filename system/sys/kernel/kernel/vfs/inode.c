@@ -17,19 +17,21 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <atheos/types.h>
-#include <atheos/kernel.h>
-#include <atheos/device.h>
-#include <atheos/semaphore.h>
-#include <atheos/image.h>
-#include <atheos/udelay.h>
+#include <kernel/types.h>
+#include <kernel/device.h>
+#include <kernel/semaphore.h>
+#include <kernel/image.h>
+#include <kernel/udelay.h>
+#include <kernel/time.h>
+#include <kernel/stdlib.h>
+#include <kernel/malloc.h>
+#include <kernel/kdebug.h>
 #include <posix/limits.h>
 #include <posix/errno.h>
-
 #include <macros.h>
 
-#include "inc/sysbase.h"
-#include "vfs.h"
+#include <vfs/vfs.h>
+#include <inc/sysbase.h>
 
 static FileSysDesc_s *load_filesystem( const char *pzName, const char *pzDevicePath );
 
@@ -1716,7 +1718,6 @@ static int do_mount( const char *pzDevName, const char *pzDirName, const char *p
 	Inode_s *psDir;
 	int nError;
 	int nArgLen = 123;	/* FIXME : This should be a parameter */
-	int nRetries;
 
 	nError = get_named_inode( NULL, pzDirName, &psDir, false, false );
 

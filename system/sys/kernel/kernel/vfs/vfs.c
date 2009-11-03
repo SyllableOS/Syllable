@@ -1,4 +1,3 @@
-
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2001 Kurt Skauen
@@ -18,29 +17,28 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-
+#include <kernel/types.h>
+#include <kernel/time.h>
+#include <kernel/semaphore.h>
+#include <kernel/kdebug.h>
+#include <kernel/areas.h>
+#include <kernel/smp.h>
+#include <kernel/dirent.h>
+#include <kernel/fcntl.h>
+#include <kernel/mman.h>
+#include <kernel/stdlib.h>
+#include <kernel/malloc.h>
 #include <posix/errno.h>
-#include <posix/fcntl.h>
 #include <posix/unistd.h>
-#include <posix/dirent.h>
 #include <posix/utime.h>
-#include <posix/time.h>
 #include <posix/limits.h>
 #include <posix/select.h>
-#include <posix/mman.h>
-
-#include <atheos/types.h>
-#include <atheos/kernel.h>
-#include <atheos/smp.h>
-#include <atheos/time.h>
-#include <atheos/semaphore.h>
-
 #include <macros.h>
 
-#include "inc/scheduler.h"
-#include "inc/sysbase.h"
-#include "inc/areas.h"
-#include "vfs.h"
+#include <vfs/vfs.h>
+#include <inc/scheduler.h>
+#include <inc/sysbase.h>
+#include <inc/areas.h>
 
 static const int O_OPEN_CONTROL_FLAGS = (O_CREAT|O_EXCL|O_NOCTTY|O_TRUNC|O_DIRECTORY|O_NOTRAVERSE);
 

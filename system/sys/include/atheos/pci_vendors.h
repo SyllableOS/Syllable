@@ -3,8 +3,8 @@
  *
  *	Please keep sorted.
  */
-#ifndef __F_PCI_VENDOR_H__
-#define __F_PCI_VENDOR_H__
+#ifndef __F_ATHEOS_PCI_VENDOR_H__
+#define __F_ATHEOS_PCI_VENDOR_H__
 
 /* Vendors and devices.  Sort key: vendor first, device next. */
 
@@ -2221,5 +2221,4 @@
 #define PCI_DEVICE_ID_RME_DIGI32_PRO	0x9897
 #define PCI_DEVICE_ID_RME_DIGI32_8	0x9898
 
-#endif /* __F_PCI_VENDOR_H__ */
-
+#endif /* __F_ATHEOS_PCI_VENDOR_H__ */

@@ -50,11 +50,12 @@
 #define ACPI_USE_LOCAL_CACHE
 #define NOT_USED_BY_LINUX
 
-#include <atheos/kernel.h>
-#include <atheos/types.h>
-#include <atheos/ctype.h>
-#include <atheos/string.h>
-#include <atheos/spinlock.h>
+#include <kernel/malloc.h>
+#include <kernel/stdlib.h>
+#include <kernel/types.h>
+#include <kernel/ctype.h>
+#include <kernel/string.h>
+#include <kernel/spinlock.h>
 #include <acpi/acpi_x86.h>
 
 #define ACPI_MACHINE_WIDTH          32

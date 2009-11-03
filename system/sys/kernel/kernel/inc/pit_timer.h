@@ -1,4 +1,3 @@
-
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2000 Kurt Skauen
@@ -18,8 +17,10 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef __F_ATHEOS_PIT_TIMER_H__
-#define __F_ATHEOS_PIT_TIMER_H__
+#ifndef __F_PIT_TIMER_H__
+#define __F_PIT_TIMER_H__
+
+#include <kernel/types.h>
 
 #define	PIT_TICKS_PER_SEC	1193182
 
@@ -31,4 +32,4 @@ static const uint32_t LATCH = ( ( PIT_TICKS_PER_SEC + INT_FREQ/2 ) / INT_FREQ );
 void start_timer_int( void );
 void get_cmos_time( void );
 
-#endif /* __F_ATHEOS_PIT_TIMER_H__ */
+#endif /* __F_PIT_TIMER_H__ */

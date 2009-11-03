@@ -17,10 +17,9 @@
    02111-1307 USA.  */
 
 #include <bits/libc-lock.h>
-#include <atheos/kernel.h>
-#include <atheos/atomic.h>
-#include <atheos/semaphore.h>
-#include <atheos/tld.h>
+#include <syllable/atomic.h>
+#include <syllable/semaphore.h>
+#include <syllable/tld.h>
 
 static void __create_libc_sem( __libc_lock_t* pnLock, const char* pzName, int nCount, int nFlags )
 {

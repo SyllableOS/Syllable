@@ -18,16 +18,17 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <atheos/types.h>
-#include <atheos/kernel.h>
-#include <atheos/smp.h>
-#include <atheos/kdebug.h>
-#include <atheos/atomic.h>
+#include <kernel/types.h>
+#include <kernel/smp.h>
+#include <kernel/kdebug.h>
+#include <kernel/atomic.h>
+#include <kernel/areas.h>
+#include <kernel/malloc.h>
 #include <posix/errno.h>
 
 #include <macros.h>
 
-#include "inc/array.h"
+#include <inc/array.h>
 
 static void *g_pMagic[256];
 static atomic_t g_nUsedMem = ATOMIC_INIT( 0 );

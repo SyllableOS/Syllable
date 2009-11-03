@@ -23,8 +23,8 @@
 #include <errno.h>
 #include <pthread.h>
 #include <sys/debug.h>
-#include <atheos/semaphore.h>
-#include <atheos/atomic.h>
+#include <syllable/semaphore.h>
+#include <syllable/atomic.h>
 
 /* KV: Testing for thread-m.h  This is temporary!*/
 #define __register_atfork(prepare, parent, child, __dso_handle) do{}while(0)

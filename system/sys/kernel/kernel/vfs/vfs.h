@@ -1,4 +1,3 @@
-
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2000 Kurt Skauen
@@ -21,33 +20,22 @@
 #ifndef	__F_VFS_H__
 #define	__F_VFS_H__
 
-#include <atheos/types.h>
-#include <atheos/atomic.h>
-#include <atheos/semaphore.h>
-#include <atheos/filesystem.h>
+#include <kernel/types.h>
+#include <kernel/semaphore.h>
+#include <kernel/filesystem.h>
+#include <kernel/atomic.h>
+#include <kernel/threads.h>
+#include <kernel/dirent.h>
+#include <kernel/fcntl.h>
+#include <kernel/stat.h>
+#include <kernel/uio.h>
 
-#include <posix/types.h>
-#include <posix/stat.h>
-#include <posix/dirent.h>
-#include <posix/fcntl.h>
-#include <posix/uio.h>
-
-#include "../inc/typedefs.h"
-
-#ifdef __cplusplus
-extern "C"
-{
-#if 0
-}				/*make emacs indention work */
-#endif
-#endif
-
+#include <inc/typedefs.h>
 
 typedef struct _Inode Inode_s;
 typedef struct _File File_s;
 typedef struct _FileLockRec FileLockRec_s;
 typedef struct _NodeMonitor NodeMonitor_s;
-
 
 extern sem_id g_hInodeHashSem;
 
@@ -287,9 +275,5 @@ void disassociate_ctty( bool bOnExit );
 void clear_ctty( void );
 void clone_ctty( IoContext_s * psDst, IoContext_s * psSrc );
 Inode_s *get_ctty( void );
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* __F_VFS_H__ */

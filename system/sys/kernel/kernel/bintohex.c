@@ -1,4 +1,3 @@
-
 /*
  *  bintohex - outputs a binary file as a comma-separated list of hex numbers
  *  Copyright (C) 1999  Kurt Skauen
@@ -20,7 +19,6 @@
 
 #include <stdio.h>
 #include <atheos/types.h>
-
 
 static const size_t BUFFER_SIZE = 1024;
 

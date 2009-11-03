@@ -1,4 +1,3 @@
-
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2000 Kurt Skauen
@@ -18,8 +17,8 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef __F_ATHEOS_GLOBAL_H__
-#define __F_ATHEOS_GLOBAL_H__
+#ifndef __F_GLOBAL_H__
+#define __F_GLOBAL_H__
 
 #ifdef __cplusplus
 extern "C"
@@ -37,4 +36,4 @@ extern bool g_bKernelInitialized;
 }
 #endif
 
-#endif /* __F_ATHEOS_GLOBAL_H__ */
+#endif /* __F_GLOBAL_H__ */

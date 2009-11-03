@@ -22,13 +22,15 @@
 #include <posix/fcntl.h>
 #include <posix/dirent.h>
 
-#include <atheos/kernel.h>
-#include <atheos/device.h>
-#include <atheos/timer.h>
-#include <atheos/semaphore.h>
-#include <atheos/isa_io.h>
-#include <atheos/bootmodules.h>
-
+#include <kernel/malloc.h>
+#include <kernel/string.h>
+#include <kernel/stdlib.h>
+#include <kernel/device.h>
+#include <kernel/timer.h>
+#include <kernel/semaphore.h>
+#include <kernel/isa_io.h>
+#include <kernel/bootmodules.h>
+#include <syllable/v86.h>
 
 #include <macros.h>
 

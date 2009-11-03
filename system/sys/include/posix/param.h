@@ -20,14 +20,18 @@
 #ifndef __F_POSIX_PARAM_H__
 #define __F_POSIX_PARAM_H__
 
-#define EXEC_PAGESIZE	4096	/* This should be the same as PAGE_SIZE */
+#ifdef PAGE_SIZE
+# define EXEC_PAGESIZE	PAGE_SIZE
+#else
+# define EXEC_PAGESIZE	4096	/* This should be the same as PAGE_SIZE */
+#endif
 
 #ifndef NGROUPS
-#define NGROUPS		32
+# define NGROUPS		32
 #endif
 
 #ifndef NOGROUP
-#define NOGROUP		(-1)
+# define NOGROUP		(-1)
 #endif
 
 #define MAXHOSTNAMELEN	64

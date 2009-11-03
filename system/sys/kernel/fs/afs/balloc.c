@@ -21,10 +21,10 @@
 #include <posix/errno.h>
 #include <macros.h>
 
-#include <atheos/types.h>
-#include <atheos/filesystem.h>
-#include <atheos/kernel.h>
-#include <atheos/bcache.h>
+#include <kernel/types.h>
+#include <kernel/filesystem.h>
+#include <kernel/malloc.h>
+#include <kernel/bcache.h>
 
 #include "afs.h"
 #include "btree.h"

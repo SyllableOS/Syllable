@@ -20,7 +20,7 @@
 #include <sysdep.h>
 #include <sys/syscall.h>
 
-#include <atheos/filesystem.h>
+#include <syllable/filesystem.h>
 
 int __xprobe_fs(int ver, const char *device, fs_info *buf)
 {

@@ -21,6 +21,7 @@
 #include <net/in.h>
 #include <time.h>
 #include <stdarg.h>
+#include <stdint.h>
 
 struct _DHCPPacket{
 	uint8_t op;

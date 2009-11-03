@@ -22,11 +22,13 @@
 #include <posix/errno.h>
 #include <macros.h>
 
-#include <atheos/types.h>
-#include <atheos/filesystem.h>
-#include <atheos/kernel.h>
-#include <atheos/bcache.h>
-#include <atheos/semaphore.h>
+#include <kernel/types.h>
+#include <kernel/filesystem.h>
+#include <kernel/malloc.h>
+#include <kernel/string.h>
+#include <kernel/bcache.h>
+#include <kernel/semaphore.h>
+#include <kernel/stat.h>
 
 #include "afs.h"
 

@@ -20,4 +20,4 @@
 # error "Never use <bits/sigcontext.h> directly; include <signal.h> instead."
 #endif
 
-#include <atheos/sigcontext.h>
+#include <syllable/sigcontext.h>

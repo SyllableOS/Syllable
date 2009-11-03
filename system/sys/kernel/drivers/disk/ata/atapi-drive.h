@@ -29,7 +29,7 @@
 #define __ATAPI_DRIVE_H_
 
 #include "ata.h"
-#include <atheos/cdrom.h>
+#include <syllable/cdrom.h>
 
 /* ATAPI devices store more data than ATA devices, so they have their own inode struct */
 typedef struct _AtapiInode AtapiInode_s;

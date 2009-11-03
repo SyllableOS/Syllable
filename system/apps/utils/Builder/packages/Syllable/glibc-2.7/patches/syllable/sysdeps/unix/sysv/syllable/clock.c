@@ -19,7 +19,7 @@
 #include <sys/times.h>
 #include <time.h>
 #include <errno.h>
-#include <atheos/threads.h>
+#include <syllable/threads.h>
 
 /* Return the time used by the program so far (user time + system time).  */
 clock_t

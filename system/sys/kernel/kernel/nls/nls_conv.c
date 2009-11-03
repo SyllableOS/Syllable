@@ -1,4 +1,5 @@
-#include"nls.h"
+#include <nls/nls.h>
+#include <kernel/stdlib.h>
 
 static NLSTable_s * g_apsCodePages[__NLS_CP_MAX] = {
     [ NLS_ASCII ] 	= &g_NLS_ASCII,

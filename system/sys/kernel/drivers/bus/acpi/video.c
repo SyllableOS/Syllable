@@ -23,13 +23,13 @@
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
 
-#include <atheos/kernel.h>
-#include <atheos/irq.h>
-#include <atheos/types.h>
-#include <atheos/list.h>
-#include <atheos/spinlock.h>
-#include <atheos/udelay.h>
-#include <atheos/acpi.h>
+#include <kernel/malloc.h>
+#include <kernel/irq.h>
+#include <kernel/types.h>
+#include <kernel/list.h>
+#include <kernel/spinlock.h>
+#include <kernel/udelay.h>
+#include <kernel/acpi.h>
 #include <posix/errno.h>
 #include <macros.h>
 

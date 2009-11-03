@@ -18,8 +18,9 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <atheos/types.h>
-#include <atheos/kernel.h>
+#include <kernel/types.h>
+#include <kernel/malloc.h>
+#include <kernel/string.h>
 #include <posix/errno.h>
 
 #include <macros.h>

@@ -25,12 +25,13 @@
 
 #include <posix/errno.h>
 
-#include <atheos/kernel.h>
-#include <atheos/device.h>
-#include <atheos/isa_io.h>
-#include <atheos/pci.h>
+#include <kernel/malloc.h>
+#include <kernel/string.h>
+#include <kernel/stdlib.h>
+#include <kernel/device.h>
+#include <kernel/pci.h>
+#include <kernel/isa_io.h>
 #include <appserver/pci_graphics.h>
-
 
 struct gfx_device
 {

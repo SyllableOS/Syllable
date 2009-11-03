@@ -18,7 +18,7 @@
 
 #include <errno.h>
 #include <sys/resource.h>
-#include <atheos/threads.h>
+#include <syllable/threads.h>
 
 /* Set the priority of all processes specified by WHICH and WHO
    to PRIO.  Returns 0 on success, -1 on errors.  */

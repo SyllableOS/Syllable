@@ -8,12 +8,14 @@
 
 
 
-#include <atheos/kernel.h>
-#include <atheos/filesystem.h>
-#include <atheos/fs_attribs.h>
+#include <kernel/malloc.h>
+//#include <kernel/string.h>
+//#include <kernel/stdlib.h>
+#include <kernel/filesystem.h>
+#include <kernel/fs_attribs.h>
+#include <kernel/unistd.h>
 #include <posix/stat.h>
 #include <posix/limits.h>
-#include <posix/unistd.h>
 #include <posix/errno.h>
 #include <posix/dirent.h>
 #include <macros.h>

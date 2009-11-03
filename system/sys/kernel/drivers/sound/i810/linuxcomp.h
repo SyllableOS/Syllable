@@ -1,7 +1,7 @@
 #ifndef _LINUXCOMP_H_
 #define _LINUXCOMP_H_
 
-#include <atheos/linux_compat.h>
+#include <kernel/linux_compat.h>
 
 /* Missing DSP ctrl values */
 #define DSP_CAP_BIND		0x00008000	/* channel binding to front/rear/cneter/lfe */

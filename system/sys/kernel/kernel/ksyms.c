@@ -19,41 +19,52 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <posix/ioctl.h>
-
-#include <atheos/kernel.h>
-#include <atheos/threads.h>
-#include <atheos/image.h>
-#include <atheos/semaphore.h>
-#include <atheos/pci.h>
-#include <atheos/bcache.h>
-#include <atheos/socket.h>
-#include <net/net.h>
-#include <atheos/time.h>
-#include <atheos/irq.h>
-#include <atheos/device.h>
-#include <atheos/udelay.h>
-#include <atheos/ctype.h>
-#include <atheos/dma.h>
-#include <atheos/spinlock.h>
-#include <atheos/timer.h>
-#include <atheos/msgport.h>
-#include <atheos/bootmodules.h>
-#include <atheos/tld.h>
-#include <atheos/random.h>
-#include <atheos/config.h>
-#include <atheos/nls.h>
-#include <atheos/resource.h>
-
-#include <posix/fcntl.h>
+#include <kernel/threads.h>
+#include <kernel/image.h>
+#include <kernel/semaphore.h>
+#include <kernel/pci.h>
+#include <kernel/socket.h>
+#include <kernel/time.h>
+#include <kernel/device.h>
+#include <kernel/tld.h>
+#include <kernel/msgport.h>
+#include <kernel/ctype.h>
+#include <kernel/dma.h>
+#include <kernel/bootmodules.h>
+#include <kernel/config.h>
+#include <kernel/irq.h>
+#include <kernel/spinlock.h>
+#include <kernel/timer.h>
+#include <kernel/random.h>
+#include <kernel/nls.h>
+#include <kernel/resources.h>
+#include <kernel/bcache.h>
+#include <kernel/areas.h>
+#include <kernel/udelay.h>
+#include <kernel/tlb.h>
+#include <kernel/sysinfo.h>
+#include <kernel/pgroups.h>
+#include <kernel/args.h>
+#include <kernel/stdlib.h>
+#include <kernel/malloc.h>
+#include <kernel/isa_io.h>
+#include <kernel/schedule.h>
+#include <kernel/fcntl.h>
+#include <kernel/ioctl.h>
+#include <kernel/if.h>
+#include <kernel/if_ether.h>
+#include <kernel/net.h>
+#include <kernel/kdebug.h>
+#include <syllable/v86.h>
+#include <syllable/power.h>
 #include <posix/unistd.h>
 #include <posix/signal.h>
 
-#include "inc/ksyms.h"
-#include "inc/mman.h"
-#include "inc/scheduler.h"
-#include "inc/array.h"
-#include "inc/swap.h"
+#include <inc/ksyms.h>
+#include <inc/mman.h>
+#include <inc/scheduler.h>
+#include <inc/array.h>
+#include <inc/swap.h>
 
 typedef struct
 {

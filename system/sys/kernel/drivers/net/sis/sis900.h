@@ -272,8 +272,7 @@ enum sis630_revision_id {
 #define TRUE            1
 #define FALSE           0
 
-/* PCI stuff, should be move to pic.h */
-#define PCI_DEVICE_ID_SI_900	0x900   
+/* PCI stuff, should be move to pci.h */
 #define PCI_DEVICE_ID_SI_7016	0x7016  
 #define SIS630_VENDOR_ID        0x1039
 #define SIS630_DEVICE_ID        0x0630

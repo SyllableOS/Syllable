@@ -1,4 +1,3 @@
-
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2000 Kurt Skauen
@@ -18,10 +17,10 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef __ATHEOS_ARRAY_H__
-#define __ATHEOS_ARRAY_H__
+#ifndef __F_ARRAY_H__
+#define __F_ARRAY_H__
 
-#include <atheos/types.h>
+#include <kernel/types.h>
 
 #ifdef __cplusplus
 extern "C"
@@ -51,4 +50,4 @@ int MArray_GetPrevIndex( MultiArray_s * psArray, int nIndex );
 }
 #endif
 
-#endif /* __ATHEOS_ARRAY_H__ */
+#endif	/* __F_ARRAY_H__ */

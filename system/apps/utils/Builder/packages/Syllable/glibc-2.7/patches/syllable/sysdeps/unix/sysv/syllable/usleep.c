@@ -18,7 +18,7 @@
 
 #include <unistd.h>
 
-#include <atheos/time.h>
+#include <syllable/time.h>
 
 /* Sleep USECONDS microseconds, or until a previously set timer goes off.  */
 int

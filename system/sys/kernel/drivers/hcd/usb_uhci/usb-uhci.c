@@ -21,14 +21,16 @@
  
 
 
-#include <atheos/udelay.h>
-#include <atheos/isa_io.h>
-#include <atheos/bitops.h>
+#include <kernel/udelay.h>
+#include <kernel/isa_io.h>
+#include <kernel/bitops.h>
+#include <kernel/signal.h>
+#include <kernel/string.h>
+#include <kernel/stdlib.h>
 #include <posix/errno.h>
 #include <posix/ioctls.h>
-#include <posix/fcntl.h>
+#include <kernel/fcntl.h>
 #include <posix/termios.h>
-#include <posix/signal.h>
 #include <macros.h>
 
 //#undef DEBUG_LIMIT

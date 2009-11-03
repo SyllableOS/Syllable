@@ -1,5 +1,5 @@
-#ifndef	_POSIX_ERRNO_H_
-#define	_POSIX_ERRNO_H_
+#ifndef	__F_POSIX_ERRNO_H_
+#define	__F_POSIX_ERRNO_H_
 
 /* Total number of errno's  *Always* update this if you add or remove anything! */
 #define __NUM_ERRNOS	134
@@ -144,5 +144,4 @@
 #define	EREMOTEIO	121	/* Remote I/O error */
 #define	EDQUOT		122	/* Quota exceeded */
 
-#endif	/*	_POSIX_ERRNO_H_ */
-
+#endif	/* __F_POSIX_ERRNO_H_ */

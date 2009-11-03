@@ -20,7 +20,7 @@
 #include <time.h>
 #include <sys/time.h>
 #include <sys/systime.h>
-#include <atheos/time.h>
+#include <syllable/time.h>
 
 /* Return the current time as a `time_t' and also put it in *T if T is
    not NULL.  Time is represented as seconds from Jan 1 00:00:00 1970.  */

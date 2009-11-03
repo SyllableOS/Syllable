@@ -41,23 +41,29 @@
  *     The PTE is marked not-present but the address is non-null.
  */
 
+#include <kernel/types.h>
+#include <kernel/semaphore.h>
+#include <kernel/spinlock.h>
+#include <kernel/kdebug.h>
+#include <kernel/areas.h>
+#include <kernel/mman.h>
+#include <kernel/tlb.h>
+#include <kernel/time.h>
+#include <kernel/stdlib.h>
+#include <kernel/malloc.h>
+#include <kernel/schedule.h>
 #include <posix/errno.h>
 #include <posix/unistd.h>
-#include <posix/mman.h>
-#include <atheos/types.h>
-#include <atheos/kernel.h>
-#include <atheos/semaphore.h>
-#include <atheos/spinlock.h>
 
 #include <macros.h>
 
-#include "inc/scheduler.h"
-#include "inc/sysbase.h"
-#include "inc/global.h"
-#include "inc/areas.h"
-#include "inc/bcache.h"
-#include "inc/swap.h"
-#include "inc/aio.h"
+#include <inc/scheduler.h>
+#include <inc/sysbase.h>
+#include <inc/global.h>
+#include <inc/areas.h>
+#include <inc/bcache.h>
+#include <inc/swap.h>
+#include <inc/aio.h>
 
 /** A private shared MultiArray for managing areas. */
 MultiArray_s g_sAreas;

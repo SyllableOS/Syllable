@@ -9,6 +9,8 @@
 #ifndef _T3_H
 #define _T3_H
 
+#include <kernel/timer.h>
+
 #define TG3_64BIT_REG_HIGH		0x00UL
 #define TG3_64BIT_REG_LOW		0x04UL
 

@@ -1,4 +1,3 @@
-
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2001 Kurt Skauen
@@ -18,10 +17,14 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-
+#include <kernel/types.h>
+#include <kernel/areas.h>
+#include <kernel/stdlib.h>
+#include <kernel/malloc.h>
+#include <kernel/kdebug.h>
+#include <syllable/v86.h>
+#include <syllable/vesa_gfx.h>
 #include <posix/errno.h>
-#include <atheos/kernel.h>
-#include <atheos/vesa_gfx.h>
 
 int sys_get_vesa_mode_info( VESA_Mode_Info_s * psVesaModeInfo, uint32 nModeNr )
 {

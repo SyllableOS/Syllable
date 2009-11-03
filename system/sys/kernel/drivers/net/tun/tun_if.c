@@ -17,20 +17,21 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <atheos/kernel.h>
-#include <atheos/kdebug.h>
-#include <atheos/semaphore.h>
+#include <kernel/malloc.h>
+#include <kernel/string.h>
+#include <kernel/kdebug.h>
+#include <kernel/semaphore.h>
+#include <kernel/net.h>
+#include <kernel/if.h>
+#include <kernel/if_ether.h>
+#include <kernel/if_tun.h>
+#include <kernel/route.h>
+#include <kernel/ip.h>
 
 #include <posix/ioctl.h>
 #include <posix/errno.h>
 
-#include <net/net.h>
-#include <net/if.h>
-#include <net/if_ether.h>
-#include <net/if_tun.h>
 #include <net/sockios.h>
-#include <net/route.h>
-#include <net/ip.h>
 
 #include <macros.h>
 

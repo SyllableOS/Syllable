@@ -1,6 +1,8 @@
 CFLAGS   += -kernel -ffreestanding -fno-PIC -fno-strict-aliasing -c -D__ENABLE_DEBUG__ -Iinclude
 AFLAGS   = -c
 
+C_INCLUDE_PATH	= $(ATHEOS_INCLUDE_PATH)
+
 DISPATCHER := dispatcher/dsfield.o dispatcher/dsinit.o dispatcher/dsmethod.o dispatcher/dsmthdat.o \
 			dispatcher/dsobject.o dispatcher/dsopcode.o dispatcher/dsutils.o dispatcher/dswexec.o \
 			dispatcher/dswload.o dispatcher/dswscope.o dispatcher/dswstate.o

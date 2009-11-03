@@ -5,14 +5,13 @@
 
 typedef long long dr9_off_t;
 
-#include <atheos/filesystem.h>
-#include <atheos/semaphore.h>
-#include <atheos/bcache.h>
-
-#include <atheos/string.h>
-#include <atheos/time.h>
-#include <atheos/kdebug.h>
-#include <atheos/kernel.h>
+#include <kernel/filesystem.h>
+#include <kernel/semaphore.h>
+#include <kernel/bcache.h>
+#include <kernel/time.h>
+#include <kernel/kdebug.h>
+#include <kernel/malloc.h>
+#include <kernel/string.h>
 
 #include <posix/errno.h>
 

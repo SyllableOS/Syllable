@@ -45,12 +45,14 @@
 #ifndef _USB_DISK_H_
 #define _USB_DISK_H_
 
-#include <atheos/types.h>
-#include <atheos/kernel.h>
-#include <atheos/usb.h>
-#include <atheos/semaphore.h>
-#include <atheos/threads.h>
-#include <atheos/scsi.h>
+#include <kernel/types.h>
+#include <kernel/malloc.h>
+#include <kernel/string.h>
+#include <kernel/stdlib.h>
+#include <kernel/usb.h>
+#include <kernel/semaphore.h>
+#include <kernel/threads.h>
+#include <kernel/scsi.h>
 
 struct USB_disk_t;
 

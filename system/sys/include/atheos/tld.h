@@ -20,33 +20,27 @@
 #ifndef	__F_ATHEOS_TLD_H__
 #define	__F_ATHEOS_TLD_H__
 
-#include <atheos/types.h>
-#include <atheos/areas.h>
+#include <syllable/types.h>
+#include <syllable/areas.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#define TLD_SIZE	(PAGE_SIZE * 4)
-#define TLD_THID	0
-#define TLD_PRID	4
+#define TLD_SIZE		(PAGE_SIZE * 4)
+#define TLD_THID		0
+#define TLD_PRID		4
 #define TLD_ERRNO_ADDR	8
-#define TLD_ERRNO	12
-#define TLD_BASE	16
-#define TLD_LIBC	512
-#define TLD_USER	1024
+#define TLD_ERRNO		12
+#define TLD_BASE		16
+#define TLD_LIBC		512
+#define TLD_USER		1024
 
-#ifdef __KERNEL__
-
-int alloc_tld( void );
-
-#else /* __KERNEL__ */
-
+#ifndef __KERNEL__
 int   alloc_tld( void* pDestructor );
-
 #endif /* __KERNEL__ */
 
-void * get_tld_addr( int nHandle );
+void* get_tld_addr( int nHandle );
 void  set_tld( int nHandle, const void* pValue );
 void* get_tld( int nHandle );
 int free_tld( int nHandle );
@@ -54,6 +48,5 @@ int free_tld( int nHandle );
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif /* __F_ATHEOS_TLD_H__ */

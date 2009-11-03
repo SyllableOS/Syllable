@@ -12,7 +12,9 @@
 
 #ifndef _MC146818RTC_H
 #define _MC146818RTC_H
-#include <atheos/isa_io.h>
+
+#include <kernel/types.h>
+#include <kernel/isa_io.h>
 
 #ifdef __cplusplus
 extern "C"

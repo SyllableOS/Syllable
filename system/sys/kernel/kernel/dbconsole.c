@@ -18,8 +18,9 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <atheos/kernel.h>
-#include <atheos/kdebug.h>
+#include <kernel/kdebug.h>
+#include <kernel/stdlib.h>
+#include <kernel/isa_io.h>
 
 static int g_nCsrX = 0;
 static int g_nCsrY = 0;

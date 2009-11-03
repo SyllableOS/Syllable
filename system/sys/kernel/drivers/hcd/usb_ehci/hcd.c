@@ -16,20 +16,21 @@
  * Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include <atheos/udelay.h>
-#include <atheos/isa_io.h>
-#include <atheos/pci.h>
-#include <atheos/usb.h>
-#include <atheos/kernel.h>
-#include <atheos/kdebug.h>
-#include <atheos/time.h>
-#include <atheos/bootmodules.h>
-#include <atheos/device.h>
+#include <kernel/udelay.h>
+#include <kernel/isa_io.h>
+#include <kernel/pci.h>
+#include <kernel/usb.h>
+#include <kernel/malloc.h>
+#include <kernel/string.h>
+#include <kernel/kdebug.h>
+#include <kernel/time.h>
+#include <kernel/bootmodules.h>
+#include <kernel/device.h>
+#include <kernel/signal.h>
 #include <posix/errno.h>
 #include <posix/ioctls.h>
 #include <posix/fcntl.h>
 #include <posix/termios.h>
-#include <posix/signal.h>
 #include <macros.h>
 
 #include "hcd.h"

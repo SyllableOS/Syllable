@@ -16,6 +16,8 @@
  * Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include <kernel/timer.h>
+
 typedef uint64 u64;
 typedef uint32 u32;
 typedef uint32 __u32;

@@ -1,4 +1,3 @@
-
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2000 Kurt Skauen
@@ -29,7 +28,8 @@ extern "C"
 #endif
 #endif
 
-#include <atheos/bcache.h>
+#include <kernel/types.h>
+#include <kernel/bcache.h>
 
 typedef struct _CacheBlock CacheBlock_s;
 

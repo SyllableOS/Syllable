@@ -1,4 +1,3 @@
-
 /*
  *  The Syllable kernel
  *  ACPI table definitions
@@ -100,6 +99,3 @@ typedef struct
 } __attribute__ ((packed)) AcpiMadtLapicOvr_s;
 
 #endif
-
-
-

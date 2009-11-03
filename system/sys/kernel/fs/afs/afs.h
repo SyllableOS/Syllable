@@ -21,7 +21,7 @@
  */
 
 #include <posix/dirent.h>
-#include <atheos/filesystem.h>
+#include <kernel/filesystem.h>
 
 #define AFS_PARANOIA
 

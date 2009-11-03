@@ -39,7 +39,7 @@
 #include "ata-io.h"
 #include "atapi-drive.h"
 
-#include <atheos/cdrom.h>
+#include <syllable/cdrom.h>
 
 extern int g_nDevices[MAX_DRIVES];
 extern ata_controllers_t g_nControllers[MAX_CONTROLLERS];

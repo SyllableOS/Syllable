@@ -29,22 +29,24 @@
 #endif
 
 #include <posix/errno.h>
-#include <posix/stat.h>
-#include <posix/fcntl.h>
-#include <posix/dirent.h>
+#include <kernel/stat.h>
+#include <kernel/fcntl.h>
+#include <kernel/dirent.h>
 
-#include <atheos/types.h>
-#include <atheos/kernel.h>
-#include <atheos/kdebug.h>
-#include <atheos/device.h>
-#include <atheos/timer.h>
-#include <atheos/semaphore.h>
-#include <atheos/irq.h>
-#include <atheos/isa_io.h>
-#include <atheos/bootmodules.h>
-#include <atheos/udelay.h>
-#include <atheos/pci.h>
-#include <atheos/cdrom.h>
+#include <kernel/types.h>
+#include <kernel/malloc.h>
+#include <kernel/string.h>
+#include <kernel/stdlib.h>
+#include <kernel/kdebug.h>
+#include <kernel/device.h>
+#include <kernel/timer.h>
+#include <kernel/semaphore.h>
+#include <kernel/irq.h>
+#include <kernel/isa_io.h>
+#include <kernel/bootmodules.h>
+#include <kernel/udelay.h>
+#include <kernel/pci.h>
+#include <syllable/cdrom.h>
 
 #include <macros.h>
 

@@ -1,4 +1,3 @@
-
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2001 Kurt Skauen
@@ -18,14 +17,11 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-
-#include <atheos/types.h>
-#include <atheos/time.h>
-
-
+#include <kernel/types.h>
+#include <kernel/time.h>
 #include <macros.h>
 
-#include "inc/sysbase.h"
+#include <inc/sysbase.h>
 
 #define	INT(a)	((double)((int)(a)))
 

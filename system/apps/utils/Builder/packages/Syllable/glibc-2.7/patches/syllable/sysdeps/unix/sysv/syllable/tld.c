@@ -22,7 +22,7 @@
 #include <sys/tld.h>
 #include <sys/syscall.h>
 #include <bits/libc-lock.h>
-#include <atheos/tld.h>
+#include <syllable/tld.h>
 
 typedef struct tld_destructor_node tld_destructor_node;
 typedef void tld_destructor(void* data);

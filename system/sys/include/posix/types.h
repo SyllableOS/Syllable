@@ -17,8 +17,12 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef __F_ATHEOS_POSIX_TYPES_H__
-#define __F_ATHEOS_POSIX_TYPES_H__
+#ifndef __F_POSIX_TYPES_H__
+#define __F_POSIX_TYPES_H__
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #if !defined __time_t_defined && !defined time_t
 typedef long int time_t;
@@ -68,27 +72,13 @@ typedef long long off_t;
 # define __off_t_defined
 #endif
 
-#ifdef __KERNEL__
-
-#ifndef nlink_t
-typedef int nlink_t;
-#define nlink_t nlink_t
+/* XXXKV: Not sure this should be here */
+#ifndef __SYSCALL
+# define __SYSCALL(r,p)	r p;
 #endif
 
-#ifndef ssize_t
-typedef int ssize_t;
-#define ssize_t ssize_t
+#ifdef __cplusplus
+}
 #endif
 
-#define MAXHOSTNAMELEN	64
-
-#endif /* __KERNEL__ */
-
-/// Declare both p() and kernel sys_p() prototypes.
-#ifdef __KERNEL__
-#define __SYSCALL(r,p)	r p;	r sys_ ## p;
-#else
-#define __SYSCALL(r,p)	r p;
-#endif
-
-#endif /* __F_ATHEOS_POSIX_TYPES_H__ */
+#endif /* __F_POSIX_TYPES_H__ */

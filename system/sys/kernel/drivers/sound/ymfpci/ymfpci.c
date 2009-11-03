@@ -30,18 +30,19 @@
  */
 #include <ymfpci.h>
 
-#include <atheos/kernel.h>
-#include <atheos/kdebug.h>
-#include <atheos/types.h>
-#include <atheos/device.h>
-#include <atheos/pci.h>
-#include <atheos/soundcard.h>
-#include <atheos/time.h>
-#include <atheos/udelay.h>
-#include <atheos/schedule.h>
+#include <kernel/malloc.h>
+#include <kernel/string.h>
+#include <kernel/kdebug.h>
+#include <kernel/types.h>
+#include <kernel/device.h>
+#include <kernel/pci.h>
+#include <kernel/time.h>
+#include <kernel/udelay.h>
+#include <kernel/schedule.h>
+#include <kernel/signal.h>
 #define NO_DEBUG_STUBS 1
-#include <atheos/linux_compat.h>
-#include <posix/signal.h>
+#include <kernel/linux_compat.h>
+#include <syllable/soundcard.h>
 #include <posix/errno.h>
 
 #include "ac97_codec.h"

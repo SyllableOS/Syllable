@@ -7,7 +7,7 @@
 #ifndef _8390_h
 #define _8390_h
 
-#include <net/if_ether.h>
+#include <kernel/if_ether.h>
 
 #define TX_2X_PAGES 12
 #define TX_1X_PAGES 6

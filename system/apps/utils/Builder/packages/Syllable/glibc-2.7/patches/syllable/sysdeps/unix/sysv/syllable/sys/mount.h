@@ -19,7 +19,7 @@
 #ifndef _SYS_MOUNT_H
 #define _SYS_MOUNT_H 1
 
-#include <atheos/types.h>
+#include <syllable/types.h>
 
 __BEGIN_DECLS
 

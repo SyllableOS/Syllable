@@ -1,6 +1,8 @@
 CFLAGS   = -kernel -fno-PIC -c
 AFLAGS   = -c
 
+C_INCLUDE_PATH = $(ATHEOS_INCLUDE_PATH)
+
 OBJS := ramdisk.o
 
 OBJDIR	:= objs

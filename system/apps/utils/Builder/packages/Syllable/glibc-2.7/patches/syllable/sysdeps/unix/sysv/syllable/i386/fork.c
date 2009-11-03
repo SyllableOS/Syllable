@@ -21,8 +21,8 @@
 #include <sys/types.h>
 #include <sys/syscall.h>
 #include <bits/libc-lock.h>
-#include <atheos/threads.h>
-#include <atheos/tld.h>
+#include <syllable/threads.h>
+#include <syllable/tld.h>
 
 int __fork( void )
 {

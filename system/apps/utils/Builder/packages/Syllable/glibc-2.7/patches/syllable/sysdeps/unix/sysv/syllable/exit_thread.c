@@ -22,7 +22,7 @@
 #include <sys/debug.h>
 #include <sys/syscall.h>
 
-#include <atheos/kernel.h>
+#include <syllable/threads.h>
 
 int	__exit_thread( int code )
 {

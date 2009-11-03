@@ -1,4 +1,3 @@
-
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2000 Kurt Skauen
@@ -18,17 +17,17 @@
  *  Foundation, Inc., 58 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef __ATHEOS_SYSTEMBASE_H__
-#define __ATHEOS_SYSTEMBASE_H__
+#ifndef __F_SYSTEMBASE_H__
+#define __F_SYSTEMBASE_H__
 
-#include <atheos/kernel.h>
-#include <atheos/filesystem.h>
-#include <atheos/bootmodules.h>
+#include <kernel/types.h>
+#include <kernel/filesystem.h>
+#include <kernel/bootmodules.h>
 
-#include "intel.h"
-#include "mman.h"
-#include "array.h"
-#include "scheduler.h"
+#include <inc/intel.h>
+#include <inc/mman.h>
+#include <inc/array.h>
+#include <inc/scheduler.h>
 
 #ifdef __cplusplus
 extern "C"
@@ -118,4 +117,4 @@ static const uint8_t DTAL_LDT = 0x04;		/* allocated in LDT     */
 }
 #endif
 
-#endif /* __ATHEOS_SYSTEMBASE_H__ */
+#endif /* __F_SYSTEMBASE_H__ */

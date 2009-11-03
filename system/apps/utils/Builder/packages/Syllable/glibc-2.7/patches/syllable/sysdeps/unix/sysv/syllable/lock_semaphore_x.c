@@ -20,8 +20,8 @@
 #include <sysdep.h>
 #include <sys/syscall.h>
 
-#include <atheos/semaphore.h>
-#include <atheos/time.h>
+#include <syllable/semaphore.h>
+#include <syllable/time.h>
 
 status_t __lock_semaphore_x (sem_id sema, int count, uint32 flags, bigtime_t timeout )
 {

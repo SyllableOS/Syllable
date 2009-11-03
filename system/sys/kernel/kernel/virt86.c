@@ -1,4 +1,3 @@
-
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2000 Kurt Skauen
@@ -18,20 +17,23 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-
+#include <kernel/types.h>
+#include <kernel/irq.h>
+#include <kernel/smp.h>
+#include <kernel/tlb.h>
+#include <kernel/syscall.h>
+#include <kernel/stdlib.h>
+#include <kernel/malloc.h>
+#include <kernel/schedule.h>
+#include <kernel/kdebug.h>
+#include <syllable/v86.h>
 #include <posix/errno.h>
-#include <atheos/types.h>
-#include <atheos/kernel.h>
-#include <atheos/syscall.h>
-#include <atheos/irq.h>
-#include <atheos/smp.h>
-
 #include <macros.h>
 
-#include "inc/scheduler.h"
-#include "inc/areas.h"
-#include "inc/intel.h"
-#include "inc/smp.h"
+#include <inc/scheduler.h>
+#include <inc/areas.h>
+#include <inc/intel.h>
+#include <inc/smp.h>
 
 static const uint16_t V86_STACK_SIZE = 0x4000;
 

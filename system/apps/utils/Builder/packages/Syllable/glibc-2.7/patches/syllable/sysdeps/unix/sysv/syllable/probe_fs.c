@@ -16,7 +16,7 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <atheos/filesystem.h>
+#include <syllable/filesystem.h>
 
 int __probe_fs(const char *device, fs_info *buf)
 {

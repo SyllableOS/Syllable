@@ -1,4 +1,3 @@
-
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2000 Kurt Skauen
@@ -18,24 +17,21 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-
+#include <kernel/types.h>
+#include <kernel/time.h>
+#include <kernel/semaphore.h>
+#include <kernel/smp.h>
+#include <kernel/stdlib.h>
+#include <kernel/dirent.h>
+#include <kernel/fcntl.h>
+#include <kernel/kdebug.h>
 #include <posix/errno.h>
-#include <posix/fcntl.h>
 #include <posix/unistd.h>
-#include <posix/dirent.h>
 #include <posix/utime.h>
-#include <posix/time.h>
-
-#include <atheos/types.h>
-#include <atheos/kernel.h>
-#include <atheos/smp.h>
-#include <atheos/time.h>
-#include <atheos/semaphore.h>
-
 #include <macros.h>
 
-#include "inc/sysbase.h"
-#include "vfs.h"
+#include <vfs/vfs.h>
+#include <inc/sysbase.h>
 
 /*****************************************************************************
  * NAME:

@@ -17,29 +17,30 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <kernel/types.h>
+#include <kernel/elf.h>
+#include <kernel/semaphore.h>
+#include <kernel/device.h>
+#include <kernel/smp.h>
+#include <kernel/args.h>
+#include <kernel/time.h>
+#include <kernel/ctype.h>
+#include <kernel/stdlib.h>
+#include <kernel/malloc.h>
+#include <kernel/kdebug.h>
 #include <posix/fcntl.h>
-
 #include <posix/errno.h>
 #include <posix/limits.h>
 #include <posix/unistd.h>
-
-#include <atheos/types.h>
-#include <atheos/kernel.h>
-#include <atheos/smp.h>
-#include <atheos/elf.h>
-#include <atheos/semaphore.h>
-#include <atheos/ctype.h>
-#include <atheos/device.h>
-
 #include <macros.h>
 
-#include "inc/scheduler.h"
-#include "inc/sysbase.h"
-#include "inc/global.h"
-#include "inc/areas.h"
-#include "inc/image.h"
-#include "inc/mman.h"
-#include "inc/ksyms.h"
+#include <inc/scheduler.h>
+#include <inc/sysbase.h>
+#include <inc/global.h>
+#include <inc/areas.h>
+#include <inc/image.h>
+#include <inc/mman.h>
+#include <inc/ksyms.h>
 
 static sem_id g_hImageList;
 static ImageContext_s *g_psKernelCtx;

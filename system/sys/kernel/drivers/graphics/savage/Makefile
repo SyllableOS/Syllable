@@ -1,6 +1,7 @@
 CFLAGS   = -kernel -fno-PIC -c -I.
 AFLAGS   = -c
 
+C_INCLUDE_PATH = $(ATHEOS_INCLUDE_PATH)
 
 OBJS := savage.o
 

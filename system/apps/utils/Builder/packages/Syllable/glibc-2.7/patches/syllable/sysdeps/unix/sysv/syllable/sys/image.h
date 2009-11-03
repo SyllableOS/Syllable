@@ -18,8 +18,8 @@
 
 #ifndef __SYS_IMAGE_H__
 
-#include <atheos/types.h>
-#include <atheos/image.h>
+#include <syllable/types.h>
+#include <syllable/image.h>
 
 void __init_main_image( void );
 libc_hidden_proto( __init_main_image )

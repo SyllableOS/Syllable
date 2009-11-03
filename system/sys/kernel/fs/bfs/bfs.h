@@ -10,7 +10,9 @@
 */
 
 
-#include <atheos/kernel.h>
+#include <kernel/malloc.h>
+//#include <kernel/string.h>
+//#include <kernel/stdlib.h>
 
 #include "bfs_endian.h"
 

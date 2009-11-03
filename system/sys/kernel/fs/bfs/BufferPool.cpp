@@ -9,7 +9,7 @@
 #include "Debug.h"
 
 #include "kernel_cpp.h"
-#include <atheos/semaphore.h>
+#include <kernel/semaphore.h>
 
 
 const uint32 kNumBuffers = 8;

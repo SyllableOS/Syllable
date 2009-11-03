@@ -10,19 +10,19 @@
 
 typedef long long dr9_off_t;
 
-#include <atheos/stdlib.h>
-#include <atheos/string.h>
-#include <atheos/kernel.h>
-#include <atheos/device.h>
+#include <kernel/malloc.h>
+#include <kernel/string.h>
+#include <kernel/stdlib.h>
+#include <kernel/device.h>
 
 #include <posix/stat.h>
 #include <posix/errno.h>
 #include <posix/ioctl.h>
 
-#include <atheos/time.h>
+#include <kernel/time.h>
 
-#include <atheos/filesystem.h>
-#include <atheos/bcache.h>
+#include <kernel/filesystem.h>
+#include <kernel/bcache.h>
 
 #include <macros.h>
 

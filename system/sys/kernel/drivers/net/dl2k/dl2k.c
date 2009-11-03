@@ -12,19 +12,20 @@
  * (at your option) any later version.
  *
  */
-
-#include <atheos/kernel.h>
-#include <atheos/kdebug.h>
-#include <atheos/types.h>
-#include <atheos/device.h>
-#include <atheos/pci.h>
-#include <atheos/udelay.h>
-#include <posix/signal.h>
+#include <kernel/malloc.h>
+#include <kernel/string.h>
+#include <kernel/stdlib.h>
+#include <kernel/kdebug.h>
+#include <kernel/types.h>
+#include <kernel/device.h>
+#include <kernel/pci.h>
+#include <kernel/udelay.h>
+#include <kernel/signal.h>
 #include <posix/errno.h>
 #include <net/sockios.h>
 
 #define NO_DEBUG_STUBS 1
-#include <atheos/linux_compat.h>
+#include <kernel/linux_compat.h>
 
 #include "dl2k.h"
 

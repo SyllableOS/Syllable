@@ -1,4 +1,3 @@
-
 /*
  *  The Syllable kernel
  *  PCI busmanager wrapper
@@ -21,14 +20,11 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <kernel/types.h>
+#include <kernel/device.h>
+#include <kernel/pci.h>
+#include <kernel/spinlock.h>
 #include <posix/errno.h>
-#include <atheos/kernel.h>
-#include <atheos/device.h>
-#include <atheos/types.h>
-#include <atheos/pci.h>
-#include <atheos/kernel.h>
-#include <atheos/spinlock.h>
-
 #include <macros.h>
 
 /** 

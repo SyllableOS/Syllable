@@ -27,10 +27,10 @@
 
 #include <ntfs.h>
 
-#include <atheos/bitops.h>
-#include <atheos/semaphore.h>
+#include <kernel/bitops.h>
+#include <kernel/semaphore.h>
+#include <kernel/unistd.h>
 #include <posix/fcntl.h>
-#include <posix/unistd.h>
 
 #define ITEM_SIZE	2040
 

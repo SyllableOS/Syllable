@@ -9,18 +9,19 @@
 #include "iso.h"
 
 // SYLLABLE
-#include <atheos/stdlib.h>
-#include <atheos/string.h>
-#include <atheos/kernel.h>
-#include <atheos/device.h>
+#include <kernel/malloc.h>
+#include <kernel/string.h>
+#include <kernel/stdlib.h>
+#include <kernel/device.h>
+#include <kernel/stat.h>
+#include <kernel/time.h>
+#include <kernel/filesystem.h>
+#include <kernel/bcache.h>
+#include <kernel/kdebug.h>
 
-#include <posix/stat.h>
 #include <posix/errno.h>
 #include <posix/ioctl.h>
 
-#include <atheos/time.h>
-#include <atheos/filesystem.h>
-#include <atheos/bcache.h>
 #include <macros.h>
 
 // Probe is called _only_ if you don't provide the fs type when you mount a volume,

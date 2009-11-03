@@ -1,4 +1,3 @@
-
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2001 Kurt Skauen
@@ -18,19 +17,19 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */  
 	
+#include <kernel/semaphore.h>
+#include <kernel/spinlock.h>
+#include <kernel/stdlib.h>
+#include <kernel/kdebug.h>
 #include <posix/errno.h>
-	
-#include <atheos/kernel.h>
-#include <atheos/spinlock.h>
-#include <atheos/semaphore.h>
-	
 #include <macros.h>
 	
-#include "inc/scheduler.h"
-#include "inc/sysbase.h"
-#include "inc/mman.h"
-#include "inc/array.h"
-	MultiArray_s g_sProcessTable;
+#include <inc/scheduler.h>
+#include <inc/sysbase.h>
+#include <inc/mman.h>
+#include <inc/array.h>
+
+MultiArray_s g_sProcessTable;
 
 
 /*****************************************************************************

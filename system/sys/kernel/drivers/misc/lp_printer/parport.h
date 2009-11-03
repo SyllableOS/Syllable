@@ -97,8 +97,8 @@ typedef enum {
 
 
 #include "pt_reg.h"
-#include <atheos/semaphore.h>
-#include <atheos/list.h>
+#include <kernel/semaphore.h>
+#include <kernel/list.h>
 
 
 /* Define this later. */

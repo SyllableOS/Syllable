@@ -29,8 +29,9 @@
  ********************************************************************** 
  */
 
-#include <atheos/atomic.h>
-#include <atheos/bitops.h>
+#include <kernel/atomic.h>
+#include <kernel/bitops.h>
+#include <kernel/string.h>
 #include "hwaccess.h"
 #include "efxmgr.h"
 

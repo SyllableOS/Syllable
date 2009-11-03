@@ -22,7 +22,7 @@
 #include <sysdep.h>
 #include <sys/syscall.h>
 
-#include <atheos/kernel.h>
+#include <syllable/fs_attribs.h>
 
 struct dirent* __read_indexdir( DIR *dir )
 {

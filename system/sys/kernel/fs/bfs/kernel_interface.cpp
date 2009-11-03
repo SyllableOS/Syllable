@@ -14,9 +14,9 @@
 #include "Query.h"
 #include "bfs_control.h"
 
-#include <atheos/string.h>
-#include <atheos/time.h>
-#include <atheos/device.h>
+#include <kernel/string.h>
+#include <kernel/time.h>
+#include <kernel/device.h>
 
 #define BFS_IO_SIZE	65536
 

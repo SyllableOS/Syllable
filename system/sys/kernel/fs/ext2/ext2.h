@@ -17,18 +17,18 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <atheos/stdlib.h>
-#include <atheos/string.h>
-#include <atheos/kernel.h>
-#include <atheos/device.h>
+#include <kernel/malloc.h>
+#include <kernel/string.h>
+#include <kernel/stdlib.h>
+#include <kernel/device.h>
+#include <kernel/time.h>
+#include <kernel/filesystem.h>
+#include <kernel/bcache.h>
 
 #include <posix/stat.h>
 #include <posix/errno.h>
 #include <posix/ioctl.h>
 
-#include <atheos/time.h>
-#include <atheos/filesystem.h>
-#include <atheos/bcache.h>
 #include <macros.h>
 
 #define alloc(a) kmalloc((a), MEMF_KERNEL | MEMF_OKTOFAILHACK)

@@ -18,13 +18,14 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <kernel/malloc.h>
+#include <kernel/string.h>
+#include <kernel/socket.h>
+#include <kernel/semaphore.h>
+#include <kernel/filesystem.h>
+#include <kernel/in.h>
+#include <kernel/net.h>
 #include <posix/errno.h>
-#include <atheos/kernel.h>
-#include <atheos/socket.h>
-#include <atheos/semaphore.h>
-#include <atheos/filesystem.h>
-#include <net/in.h>
-#include <net/net.h>
 #include <macros.h>
 
 #include "nfs.h"

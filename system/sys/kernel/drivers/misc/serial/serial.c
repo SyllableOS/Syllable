@@ -1,13 +1,13 @@
 #include <posix/errno.h>
 #include <posix/ioctls.h>
-#include <posix/fcntl.h>
 #include <posix/termios.h>
+#include <posix/fcntl.h>
 
-#include <atheos/kernel.h>
-#include <atheos/device.h>
-#include <atheos/semaphore.h>
-#include <atheos/spinlock.h>
-#include <atheos/irq.h>
+#include <kernel/string.h>
+#include <kernel/device.h>
+#include <kernel/semaphore.h>
+#include <kernel/spinlock.h>
+#include <kernel/irq.h>
 
 #include "serial_reg.h"
 

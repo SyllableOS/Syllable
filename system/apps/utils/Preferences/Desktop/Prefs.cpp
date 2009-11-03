@@ -24,6 +24,7 @@
 #include <util/event.h>
 #include <iostream>
 #include "resources/Desktop.h"
+#include <syllable/time.h>
 
 enum {
 	DP_APPLY,

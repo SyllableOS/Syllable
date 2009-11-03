@@ -20,7 +20,7 @@
 #include <stdlib.h>
 #include <sys/resource.h>
 #include <sys/types.h>
-#include <atheos/threads.h>
+#include <syllable/threads.h>
 
 /* KV: This is a stub, until we add a proper getrlimit/setrlimit pair
    of syscalls.  The values returned from this version should at least

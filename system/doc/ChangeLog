@@ -1,17 +1,48 @@
+* November 3, 2009, Kristian Van Der Vliet *
+
+A massive overhaul of the system headers. The intention is to stop kernel only
+types and structures "leaking" into user-space, where they can cause problems.
+The changes should not impact user-space code *except* in cases where the code
+is not implictly including headers it should be and relying on the side-effect
+of other system headers including them (I.e. using "snooze()" without
+including syllable/time.h) or using headers which they should not or do not
+use (I.e. kernel/udelay.h)
+
+Another important change has been to deprecate the "atheos/kernel.h" header,
+which was pretty much used as a dumping ground for "everything else". The
+contents of this header has been split into seperate headers, and a new
+header has been provided for compatability. atheos/kernel.h should not be used
+AT ALL for kernel or driver code.
+
+The changes have added a new "kernel" directory, which contains headers which
+are used by the kernel and device drivers, and the "syllable" symlink: this is
+currently a symbolic link to the "atheos" directory but the intention is to
+remove the "atheos" directory totally at some point in the future.
+
+From this point forward new code should include headers from the "syllable"
+directory rather than "atheos". Old code will be changed over time.
+
+There is still work to be done to cleanup the headers to ensure the license &
+copyright information is correct for all headers, move anything which is in
+the wrong place (a lot of stuff in the kernel/ headers is internal to the
+kernel so should be moved to the kernels own inc/ directory, for example).
+These changes can and will be made gradually over time.
+
 * October 12, 2009, Kaj de Vos *
 
 Disabled VIA AGP driver again until we have the fix patch.
 
 * October 12, 2009, Kaj de Vos *
 
-Added extra boot menu option to remove the buggy EHCI USB 2 driver. The installer also removes
-it for EeePC.
+Added extra boot menu option to remove the buggy EHCI USB 2 driver. The
+installer also removes it for EeePC.
 
 * October 10, 2009, Kaj de Vos *
 
-Added extra boot menu option and boot parameter for SATA configurations that shift drive numbers.
-Extended installer to compensate for drive number swapping and shifting on EeePC and some
-SATA configurations.
+Added extra boot menu option and boot parameter for SATA configurations that
+shift drive numbers.
+Extended installer to compensate for drive number swapping and shifting on
+EeePC and some SATA configurations.
 
 * October 1, 2009, Kaj de Vos *
 
@@ -19,22 +50,26 @@ Re-enabled AGP drivers for testing.
 
 Work on the boot menu:
 - Added option without AGP.
-- Added USB drivers to most options, so they can be used with both ATAPI and USB CD drives.
+- Added USB drivers to most options, so they can be used with both ATAPI and
+  USB CD drives.
   Left a failsafe option without early loading of USB drivers.
-- Split off virtual machine options and failsafe options into separate submenus.
-- Added experimental eeepc=true kernel parameter to EeePC option, so the installer can act on it.
+- Split off virtual machine options and failsafe options into separate
+  submenus.
+- Added experimental eeepc=true kernel parameter to EeePC option, so the
+  installer can act on it.
 - Added experimental option to boot from Ext2FS-formatted USB media.
 - Clarified descriptions of several options.
 
 * August 30, 2009, Kaj de Vos *
 
-Added boot option for the Acer Aspire One to the install CD, combining installation from USB and
-disabling ACPI; at a report from Ruud Kuin.
+Added boot option for the Acer Aspire One to the install CD, combining
+installation from USB and disabling ACPI; at a report from Ruud Kuin.
 
 * July 18, 2009, Kaj de Vos *
 
-Switched from Debian Certification Authority root certificates collection to LFS collection.
-CA-Certificates has too much Debian-specific machinery to get the certificates in the needed form.
+Switched from Debian Certification Authority root certificates collection to
+LFS collection. CA-Certificates has too much Debian-specific machinery to get
+the certificates in the needed form.
 
 * July 6, 2009, Kaj de Vos *
 

@@ -19,7 +19,7 @@
 #include <errno.h>
 #include <time.h>
 #include <sys/time.h>
-#include <atheos/time.h>
+#include <syllable/time.h>
 
 #ifndef HAVE_GNU_LD
 #define __daylight	daylight

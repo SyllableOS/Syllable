@@ -1,4 +1,3 @@
-
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2001 Kurt Skauen
@@ -18,16 +17,15 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <kernel/types.h>
+#include <kernel/irq.h>
+#include <kernel/smp.h>
+#include <kernel/kdebug.h>
 #include <posix/errno.h>
-#include <atheos/types.h>
-#include <atheos/kernel.h>
-#include <atheos/smp.h>
-#include <atheos/irq.h>
-
-#include "inc/scheduler.h"
-#include "inc/sysbase.h"
-
 #include <macros.h>
+
+#include <inc/scheduler.h>
+#include <inc/sysbase.h>
 
 bool is_root( bool bFromFS )
 {

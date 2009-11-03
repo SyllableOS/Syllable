@@ -22,7 +22,7 @@
 #include <sys/syscall.h>
 #include <sys/sysinfo.h>
 
-/* atheos/kernel.h defines a get_system_info macro wrapping get_system_info_v() with the current SYS_INFO_VERSION. */
+/* syllable/sysinfo.h defines a get_system_info macro wrapping get_system_info_v() with the current SYS_INFO_VERSION. */
 #undef get_system_info
 
 /* The get_system_info() function is deprecated because it does not properly handle the get_system_info syscall versioning.

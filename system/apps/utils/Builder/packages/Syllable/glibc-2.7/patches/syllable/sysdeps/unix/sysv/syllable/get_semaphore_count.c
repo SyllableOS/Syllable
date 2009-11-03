@@ -16,8 +16,8 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <atheos/semaphore.h>
-#include <atheos/threads.h>
+#include <syllable/semaphore.h>
+#include <syllable/threads.h>
 
 int __get_semaphore_count( sem_id sem )
 {

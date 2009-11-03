@@ -21,12 +21,11 @@
 #ifndef __F_SMP_H__
 #define __F_SMP_H__
 
-#include <atheos/kernel.h>
-#include <atheos/types.h>
+#include <kernel/types.h>
 
-#include "typedefs.h"
-#include "intel.h"
-#include "apic.h"
+#include <inc/typedefs.h>
+#include <inc/intel.h>
+#include <inc/apic.h>
 
 typedef struct
 {

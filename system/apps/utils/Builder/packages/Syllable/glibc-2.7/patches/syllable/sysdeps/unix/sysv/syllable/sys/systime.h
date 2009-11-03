@@ -19,7 +19,7 @@
 #ifndef _SYS_SYSTIME_H
 #define _SYS_SYSTIME_H 1
 
-#include <atheos/time.h>
+#include <syllable/time.h>
 
 __BEGIN_DECLS
 

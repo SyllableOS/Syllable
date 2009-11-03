@@ -14,7 +14,7 @@
 #include "Journal.h"
 #include "Chain.h"
 
-#include <atheos/string.h>
+#include <kernel/string.h>
 
 
 //****************** on-disk structures ********************

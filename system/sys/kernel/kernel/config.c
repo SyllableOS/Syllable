@@ -19,16 +19,21 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <atheos/types.h>
-#include <atheos/filesystem.h>
-#include <atheos/ctype.h>
-#include <atheos/config.h>
-#include <atheos/device.h>
+#include <kernel/types.h>
+#include <kernel/filesystem.h>
+#include <kernel/device.h>
+#include <kernel/config.h>
+#include <kernel/ctype.h>
+#include <kernel/args.h>
+#include <kernel/stdlib.h>
+#include <kernel/malloc.h>
+#include <kernel/fcntl.h>
+#include <kernel/kdebug.h>
 #include <posix/errno.h>
 #include <posix/unistd.h>
-#include <posix/fcntl.h>
 #include <macros.h>
-#include "inc/sysbase.h"
+
+#include <inc/sysbase.h>
 
 static uint8 *g_pConfigAddr = NULL;	/* pointer to the configfile bootmodule */
 static uint32 g_nConfigSize = 0;	/* Size of the configfile bootmodule */

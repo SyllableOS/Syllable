@@ -17,34 +17,33 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef	__F_V86_H__
-#define	__F_V86_H__
-
-#include <atheos/types.h>
+#ifndef	__F_SYLLABLE_V86_H__
+#define	__F_SYLLABLE_V86_H__
 
 #ifdef __cplusplus
 extern "C" {
-#if 0  
-} /*make emacs indention work */
 #endif
-#endif
+
+#include <syllable/inttypes.h>
 
 struct RMREGS
 {
-  uint32	EDI;
-  uint32	ESI;
-  uint32	EBP;
-  uint32	reserved_by_system;
-  uint32	EBX;
-  uint32	EDX;
-  uint32	ECX;
-  uint32	EAX;
-  uint16	flags;
-  uint16	ES,DS,FS,GS,IP,CS,SP,SS;
+	uint32	EDI;
+	uint32	ESI;
+	uint32	EBP;
+	uint32	reserved_by_system;
+	uint32	EBX;
+	uint32	EDX;
+	uint32	ECX;
+	uint32	EAX;
+	uint16	flags;
+	uint16	ES,DS,FS,GS,IP,CS,SP,SS;
 };
+
+int	realint( int num, struct RMREGS *rm );
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif	/* __F_V86_H__ */
+#endif /* __F_SYLLABLE_V86_H__ */

@@ -1,4 +1,4 @@
-#include <atheos/ctype.h>
+#include <kernel/ctype.h>
 
 unsigned char __ctype_toupper[] = {
 	0x00,

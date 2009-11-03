@@ -1,4 +1,4 @@
-#include <atheos/types.h>
+#include <kernel/types.h>
 
 void* memset( void* s, char c, size_t count )
 {

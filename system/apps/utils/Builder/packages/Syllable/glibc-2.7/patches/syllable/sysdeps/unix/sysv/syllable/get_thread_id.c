@@ -19,8 +19,8 @@
 #include <errno.h>
 #include <sysdep.h>
 #include <sys/syscall.h>
-#include <atheos/threads.h>
-#include <atheos/tld.h>
+#include <syllable/threads.h>
+#include <syllable/tld.h>
 
 thread_id __get_thread_id( const char *name )
 {

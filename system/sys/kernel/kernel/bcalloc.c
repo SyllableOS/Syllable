@@ -18,15 +18,17 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <atheos/kernel.h>
-#include <atheos/bcache.h>
-#include <atheos/semaphore.h>
+#include <kernel/semaphore.h>
+#include <kernel/bcache.h>
+#include <kernel/kdebug.h>
+#include <kernel/areas.h>
+#include <kernel/time.h>
+#include <kernel/stdlib.h>
 #include <posix/errno.h>
-
 #include <macros.h>
 
-#include "inc/sysbase.h"
-#include "inc/bcache.h"
+#include <inc/sysbase.h>
+#include <inc/bcache.h>
 
 extern BlockCache_s g_sBlockCache;
 

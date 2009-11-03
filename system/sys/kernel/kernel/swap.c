@@ -1,4 +1,3 @@
-
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2001 Kurt Skauen
@@ -18,27 +17,28 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <kernel/types.h>
+#include <kernel/time.h>
+#include <kernel/semaphore.h>
+#include <kernel/bcache.h>
+#include <kernel/areas.h>
+#include <kernel/tlb.h>
+#include <kernel/pgroups.h>
+#include <kernel/fcntl.h>
+#include <kernel/stat.h>
+#include <kernel/stdlib.h>
+#include <kernel/malloc.h>
+#include <kernel/kdebug.h>
 #include <posix/errno.h>
-#include <posix/fcntl.h>
 #include <posix/unistd.h>
-#include <posix/stat.h>
-
-#include <atheos/time.h>
-
-#include <atheos/types.h>
-
-#include <atheos/kernel.h>
-#include <atheos/bcache.h>
-#include <atheos/semaphore.h>
-
 #include <macros.h>
 
-#include "inc/scheduler.h"
-#include "inc/sysbase.h"
-#include "inc/mman.h"
-#include "inc/areas.h"
-#include "inc/swap.h"
-#include "vfs/vfs.h"
+#include <inc/scheduler.h>
+#include <inc/sysbase.h>
+#include <inc/mman.h>
+#include <inc/areas.h>
+#include <inc/swap.h>
+#include <vfs/vfs.h>
 
 #define	NUM_SWAP_PAGES	(1024 * 1024 * 64 / PAGE_SIZE)
 

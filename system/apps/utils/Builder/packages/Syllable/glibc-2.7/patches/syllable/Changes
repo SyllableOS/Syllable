@@ -1,5 +1,9 @@
 Glibc Syllable Changelog
 
+* October 24 2009 *
+
+Updated all of the sources to match the changes that have been made to the system headers.
+
 * May 28 2009 *
 
 	o rt/aio.h: Replace the standard header with the Syllable version.

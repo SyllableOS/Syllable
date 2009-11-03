@@ -6,9 +6,9 @@
 ** This file may be used under the terms of the OpenBeOS License.
 */
 
-
-#include <atheos/kernel.h>
-
+#include <kernel/malloc.h>
+//#include <kernel/string.h>
+//#include <kernel/stdlib.h>
 
 template<class T> class Stack {
 	public:

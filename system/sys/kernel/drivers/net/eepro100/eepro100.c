@@ -49,32 +49,37 @@
 		Ported the driver to Syllable/AtheOS
 */
 
-/* AtheOS includes */
-#include <atheos/kernel.h>
-#include <atheos/kdebug.h>
-#include <atheos/irq.h>
-#include <atheos/isa_io.h>
-#include <atheos/udelay.h>
-#include <atheos/time.h>
-#include <atheos/timer.h>
-#include <atheos/pci.h>
-#include <atheos/semaphore.h>
-#include <atheos/spinlock.h>
-#include <atheos/ctype.h>
-#include <atheos/device.h>
-#include <atheos/bitops.h>
-#include <atheos/linux_compat.h>
+#include <kernel/malloc.h>
+#include <kernel/string.h>
+#include <kernel/stdlib.h>
+#include <kernel/kdebug.h>
+#include <kernel/irq.h>
+#include <kernel/isa_io.h>
+#include <kernel/udelay.h>
+#include <kernel/time.h>
+#include <kernel/timer.h>
+#include <kernel/pci.h>
+#include <kernel/semaphore.h>
+#include <kernel/spinlock.h>
+#include <kernel/ctype.h>
+#include <kernel/device.h>
+#include <kernel/bitops.h>
+#include <kernel/linux_compat.h>
+#include <kernel/signal.h>
+#include <kernel/net.h>
+#include <kernel/ip.h>
 
 #include <posix/unistd.h>
 #include <posix/errno.h>
 #include <posix/ioctls.h>
 #include <posix/fcntl.h>
-#include <posix/signal.h>
-#include <net/net.h>
-#include <net/ip.h>
+
 #include <net/sockios.h>
 
-#define USE_IO 1 /* most important: No MMIO! This is really complicated in AtheOS!*/
+/* XXXKV: The original comment reads "most important: No MMIO! This is really complicated in AtheOS!"
+   but I'm not sure why Michael thought that was the case. This driver should really be updated to
+   use MMIO */
+#define USE_IO 1
 
 //static const char *version =
 //"eepro100.c:v1.09j-t 9/29/99 Donald Becker http://cesdis.gsfc.nasa.gov/linux/drivers/eepro100.html\n"

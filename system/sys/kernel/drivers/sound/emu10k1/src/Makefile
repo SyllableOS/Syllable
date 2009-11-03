@@ -5,6 +5,8 @@ EMU10K1_MOD := ../emu10k1
 CFLAGS += -Wstrict-prototypes -Wno-trigraphs -fno-strict-aliasing -fno-common -mpreferred-stack-boundary=2
 CFLAGS += -kernel -fno-PIC -ffreestanding
 
+C_INCLUDE_PATH = $(ATHEOS_INCLUDE_PATH)
+
 LFLAGS := -kernel
 
 MIXER := y

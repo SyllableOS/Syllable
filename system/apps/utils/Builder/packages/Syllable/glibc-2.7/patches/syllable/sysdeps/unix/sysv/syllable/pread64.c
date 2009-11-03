@@ -21,7 +21,7 @@
 
 #include <errno.h>
 #include <unistd.h>
-#include <atheos/filesystem.h>
+#include <syllable/filesystem.h>
 
 ssize_t
 __libc_pread64 (int fd, void *buf, size_t nbyte, off64_t offset)

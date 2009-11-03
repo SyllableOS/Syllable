@@ -20,7 +20,7 @@
 static char *rcsid = "$OpenBSD: strlcat.c,v 1.11 2003/06/17 21:56:24 millert Exp $";
 #endif /* LIBC_SCCS and not lint */
 
-#include <atheos/string.h>
+#include <kernel/string.h>
 
 /*
  * Appends src to string dst of size siz (unlike strncat, siz is the

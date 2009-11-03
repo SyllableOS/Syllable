@@ -1,4 +1,3 @@
-
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2000 Kurt Skauen
@@ -18,10 +17,10 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef __F_ATHEOS_SWAP_H__
-#define __F_ATHEOS_SWAP_H__
+#ifndef __F_SWAP_H__
+#define __F_SWAP_H__
 
-#include <atheos/types.h>
+#include <kernel/types.h>
 
 #ifdef __cplusplus
 extern "C"
@@ -60,4 +59,4 @@ int get_swap_info( SwapInfo_s * psInfo );
 }
 #endif
 
-#endif /* __F_ATHEOS_SWAP_H__ */
+#endif /* __F_SWAP_H__ */

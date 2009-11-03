@@ -13,32 +13,19 @@
 #ifndef __DL2K_H__
 #define __DL2K_H__
 
-#include <atheos/kernel.h>
-#include <atheos/bitops.h>
-#include <atheos/irq.h>
-#include <atheos/pci.h>
-#include <atheos/spinlock.h>
-#include <atheos/isa_io.h>
-#include <net/net_device.h>
-#include <net/if_ether.h>
-#include <net/packet.h>
+#include <kernel/malloc.h>
+//#include <kernel/string.h>
+//#include <kernel/stdlib.h>
+#include <kernel/bitops.h>
+#include <kernel/irq.h>
+#include <kernel/pci.h>
+#include <kernel/spinlock.h>
+#include <kernel/timer.h>
+#include <kernel/isa_io.h>
+#include <kernel/net_device.h>
+#include <kernel/if_ether.h>
+#include <kernel/packet.h>
 #include <posix/errno.h>
-
-#if 0
-#include <linux/string.h>
-#include <linux/timer.h>
-#include <linux/ioport.h>
-#include <linux/slab.h>
-#include <linux/init.h>
-#include <linux/crc32.h>
-#include <linux/ethtool.h>
-#include <asm/processor.h>	/* Processor type for cache alignment. */
-#include <asm/io.h>
-#include <asm/uaccess.h>
-#include <linux/delay.h>
-#include <linux/spinlock.h>
-#include <linux/time.h>
-#endif
 
 #define TX_RING_SIZE	256
 #define TX_QUEUE_LEN	(TX_RING_SIZE - 1) /* Limit ring entries actually used.*/

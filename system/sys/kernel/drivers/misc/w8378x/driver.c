@@ -1,6 +1,5 @@
 //-----------------------------------------------------------------------------
-#include <atheos/kernel.h>
-#include <atheos/device.h>
+#include <kernel/device.h>
 #include <posix/errno.h>
 
 #include "w8378x_driver.h"

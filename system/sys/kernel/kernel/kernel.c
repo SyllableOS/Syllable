@@ -18,32 +18,32 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <posix/resource.h>
+#include <kernel/types.h>
+#include <kernel/config.h>
+#include <kernel/spinlock.h>
+#include <kernel/isa_io.h>
+#include <kernel/bcache.h>
+#include <kernel/time.h>
+#include <kernel/device.h>
+#include <kernel/resource.h>
+#include <kernel/sysinfo.h>
+#include <kernel/syscall.h>
+#include <kernel/stdlib.h>
+#include <kernel/malloc.h>
+#include <kernel/kdebug.h>
+#include <syllable/v86.h>
 #include <posix/errno.h>
-#include <atheos/types.h>
-#include <atheos/isa_io.h>
-
-#include <atheos/kernel.h>
-#include <atheos/bcache.h>
-#include <atheos/spinlock.h>
-#include <atheos/time.h>
-#include <atheos/config.h>
-#include <atheos/device.h>
-
-#include <atheos/syscall.h>
-
-
-#include "version.h"
-
 #include <macros.h>
 
-#include "inc/scheduler.h"
-#include "inc/areas.h"
-#include "inc/mman.h"
-#include "inc/sysbase.h"
-#include "inc/global.h"
-#include "inc/smp.h"
-#include "inc/bcache.h"
+#include <inc/scheduler.h>
+#include <inc/areas.h>
+#include <inc/mman.h>
+#include <inc/sysbase.h>
+#include <inc/global.h>
+#include <inc/smp.h>
+#include <inc/bcache.h>
+
+#include <version.h>
 
 #define _ENABLE_PRINTK
 

@@ -1,7 +1,7 @@
 #ifndef __F_TCP_H__
 #define __F_TCP_H__
 
-#include <net/tcp.h>
+#include <kernel/tcp.h>
 
 extern sem_id g_hConnListMutex;
 extern thread_id g_hTCPTimerThread;

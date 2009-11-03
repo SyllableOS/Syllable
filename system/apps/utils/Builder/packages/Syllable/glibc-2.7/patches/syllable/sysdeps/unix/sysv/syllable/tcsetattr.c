@@ -22,7 +22,7 @@
 #include <sys/ioctl.h>
 #include <sys/types.h>
 #include <sys/debug.h>
-#include <atheos/types.h>
+#include <syllable/types.h>
 
 /* Set the state of FD to *TERMIOS_P.  */
 int

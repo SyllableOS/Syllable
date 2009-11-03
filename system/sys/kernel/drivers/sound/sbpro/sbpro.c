@@ -29,13 +29,14 @@
 #include <posix/fcntl.h>
 #include <posix/termios.h>
 
-#include <atheos/kernel.h>
-#include <atheos/device.h>
-#include <atheos/semaphore.h>
-#include <atheos/irq.h>
-#include <atheos/dma.h>
-#include <atheos/soundcard.h>
-#include <atheos/spinlock.h>
+#include <kernel/malloc.h>
+#include <kernel/string.h>
+#include <kernel/device.h>
+#include <kernel/semaphore.h>
+#include <kernel/irq.h>
+#include <kernel/dma.h>
+#include <kernel/spinlock.h>
+#include <syllable/soundcard.h>
 #include <macros.h>
 
 #include "sbpro.h"

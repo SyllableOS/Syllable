@@ -18,7 +18,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include "version.h"
+#include <version.h>
 
 #define MAJOR	0LL
 #define MINOR	6LL

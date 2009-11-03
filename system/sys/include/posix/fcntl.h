@@ -20,40 +20,32 @@
 #ifndef __F_POSIX_FCNTL_H__
 #define __F_POSIX_FCNTL_H__
 
+#include <posix/types.h>
+
 #ifdef __cplusplus
 extern "C"{
 #endif
 
-  
-#ifdef __KERNEL__    
-#include <atheos/types.h>
-    
-int	open(const char *_path, int _oflag, ...);
-int	close( int nFile );
-int	creat(const char *_path, mode_t _mode);
-int	fcntl(int _fildes, int _cmd, ...);
-#endif /* __KERNEL__  */
-
-#define O_ACCMODE	  0003
-#define O_RWMASK	  O_ACCMODE
-#define O_RDONLY	    00
-#define O_WRONLY	    01
-#define O_RDWR		    02
-#define O_CREAT		  0100	/* not fcntl */
-#define O_EXCL		  0200	/* Dont allow O_CREAT to overwrite existing file	*/
-#define O_NOCTTY	  0400	/* not fcntl */
-#define O_TRUNC		 01000	/* not fcntl */
-#define O_APPEND	 02000
-#define O_NONBLOCK	 04000
-#define O_NDELAY	O_NONBLOCK
-#define O_SYNC		010000
-#define O_FSYNC		O_SYNC
-#define O_ASYNC		020000
-#define FASYNC		O_ASYNC	/* fcntl, for BSD compatibility */
-#define O_DIRECTORY	040000	/* Only open if it's a directory			*/
-#define O_NOTRAVERSE   0100000	/* Don't resolv symlinks but open the link itself	*/
-#define O_NOFOLLOW      O_NOTRAVERSE
-#define O_DIRECT	0200000
+#define O_ACCMODE		  0003
+#define O_RWMASK		  O_ACCMODE
+#define O_RDONLY		    00
+#define O_WRONLY		    01
+#define O_RDWR			    02
+#define O_CREAT			  0100	/* not fcntl */
+#define O_EXCL			  0200	/* Dont allow O_CREAT to overwrite existing file	*/
+#define O_NOCTTY		  0400	/* not fcntl */
+#define O_TRUNC			 01000	/* not fcntl */
+#define O_APPEND		 02000
+#define O_NONBLOCK		 04000
+#define O_NDELAY		O_NONBLOCK
+#define O_SYNC			010000
+#define O_FSYNC			O_SYNC
+#define O_ASYNC			020000
+#define FASYNC			O_ASYNC	/* fcntl, for BSD compatibility */
+#define O_DIRECTORY		040000	/* Only open if it's a directory			*/
+#define O_NOTRAVERSE	0100000	/* Don't resolv symlinks but open the link itself	*/
+#define O_NOFOLLOW		O_NOTRAVERSE
+#define O_DIRECT		0200000
 
 #define F_DUPFD		0	/* dup						*/
 #define F_GETFD		1	/* get f_flags					*/

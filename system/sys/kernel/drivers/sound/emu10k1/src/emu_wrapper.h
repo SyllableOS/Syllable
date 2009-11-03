@@ -1,10 +1,12 @@
 #ifndef __EMU_WRAPPER_H
 #define __EMU_WRAPPER_H
 
-#include <atheos/kernel.h>
-#include <atheos/pci.h>
-#include <atheos/types.h>
-#include <atheos/soundcard.h>
+#include <kernel/malloc.h>
+//#include <kernel/string.h>
+//#include <kernel/stdlib.h>
+#include <kernel/pci.h>
+#include <kernel/types.h>
+#include <syllable/soundcard.h>
 #include <posix/errno.h>
 
 typedef uint8 u8;

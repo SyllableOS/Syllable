@@ -20,7 +20,7 @@
 
 #include <errno.h>
 #include <tls.h>
-#include <atheos/tld.h>
+#include <syllable/tld.h>
 
 #if ! USE___THREAD
 #undef errno

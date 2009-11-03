@@ -18,9 +18,11 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef __VIRT86_H__
-#define __VIRT86_H__
+#ifndef __F_VIRT86_H__
+#define __F_VIRT86_H__
 
+#include <kernel/types.h>
+#include <kernel/syscall.h>
 
 typedef struct
 {
@@ -86,5 +88,4 @@ typedef struct kernel_vm86_struct
 
 } Virtual86State_s;
 
-#endif
-
+#endif	/* __F_VIRT86_H__ */

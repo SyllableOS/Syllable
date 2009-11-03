@@ -32,15 +32,15 @@
 #ifndef __YMFPCI_H__
 #define __YMFPCI_H__ 1
 
-#include <atheos/types.h>
-#include <atheos/pci.h>
-#include <atheos/semaphore.h>
-#include <atheos/spinlock.h>
-#include <atheos/areas.h>
-#include <atheos/soundcard.h>
-#include <atheos/list.h>
+#include <kernel/types.h>
+#include <kernel/pci.h>
+#include <kernel/semaphore.h>
+#include <kernel/spinlock.h>
+#include <kernel/areas.h>
+#include <kernel/list.h>
 #define NO_DEBUG_STUBS 1
-#include <atheos/linux_compat.h>
+#include <kernel/linux_compat.h>
+#include <syllable/soundcard.h>
 
 #include "ac97_codec.h"
 

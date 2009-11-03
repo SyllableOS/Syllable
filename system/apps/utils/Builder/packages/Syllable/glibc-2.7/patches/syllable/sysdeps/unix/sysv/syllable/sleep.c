@@ -18,7 +18,7 @@
 
 #include <time.h>
 
-#include <atheos/time.h>
+#include <syllable/time.h>
 
 unsigned int __sleep( unsigned int seconds )
 {

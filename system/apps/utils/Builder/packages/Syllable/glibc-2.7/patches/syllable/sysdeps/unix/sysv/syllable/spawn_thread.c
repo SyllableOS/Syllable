@@ -23,8 +23,7 @@
 #include <sys/syscall.h>
 #include <bits/libc-tsd.h>
 
-#include <atheos/threads.h>
-#include <atheos/kernel.h>
+#include <syllable/threads.h>
 
 /* This is a bad hack but required by the way the LOCALE TLD is used. */
 #include "../../../../locale/localeinfo.h"

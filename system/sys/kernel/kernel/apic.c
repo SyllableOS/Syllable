@@ -18,15 +18,17 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <kernel/kdebug.h>
+#include <kernel/areas.h>
+#include <kernel/irq.h>
+#include <kernel/sysinfo.h>
+#include <kernel/stdlib.h>
+
 #include <inc/apic.h>
 #include <inc/scheduler.h>
 #include <inc/smp.h>
 #include <inc/mpc.h>
 #include <inc/acpi.h>
-
-#include <atheos/kernel.h>
-#include <atheos/kdebug.h>
-#include <atheos/irq.h>
 
 /* Ensure get_processor_id() works on non-smp machines.  Will be set to the virtual address of local APIC later
    if this is a SMP machine. */

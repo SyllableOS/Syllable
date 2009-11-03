@@ -23,7 +23,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <atheos/threads.h>
+#include <kernel/threads.h>
 #include <posix/signal.h>
 #include "ata.h"
 #include "ata_private.h"

@@ -23,7 +23,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <atheos/time.h>
+#include <kernel/time.h>
 #include "ata.h"
 #include "ata_private.h"
 #include "atapi.h"

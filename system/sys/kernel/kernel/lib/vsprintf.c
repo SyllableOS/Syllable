@@ -11,11 +11,9 @@
  * Wirzenius wrote this portably, Torvalds fucked it up :-)
  */
 
-#include <posix/types.h>
-#include <atheos/ctype.h>
-
-#include <atheos/stdlib.h>
-
+#include <kernel/types.h>
+#include <kernel/stdlib.h>
+#include <kernel/ctype.h>
 
 unsigned long simple_strtoul( const char *cp, char **endp, unsigned int base )
 {

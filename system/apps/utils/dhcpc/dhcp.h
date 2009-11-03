@@ -21,6 +21,7 @@
 #include <time.h>
 #include <stdio.h>
 #include <malloc.h>
+#include <stdint.h>
 #include <arpa/inet.h>
 #include <atheos/semaphore.h>
 

@@ -4,7 +4,8 @@
 #include <unistd.h>
 #include <assert.h>
 #include <errno.h>
-#include <atheos/fs_attribs.h>
+#include <syllable/fs_attribs.h>
+#include <syllable/types.h>
 
 int main( int argc, char** argv )
 {

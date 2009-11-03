@@ -12,8 +12,8 @@
 #include "BPlusTree.h"
 
 #include "kernel_cpp.h"
-#include <atheos/types.h>
-#include <atheos/time.h>
+#include <kernel/types.h>
+#include <kernel/time.h>
 
 // B_MIME_STRING_TYPE is defined in storage/Mime.h, but we
 // don't need the whole file here; the type can't change anyway

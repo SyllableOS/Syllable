@@ -18,20 +18,23 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <atheos/ctype.h>
+#include <kernel/types.h>
+#include <kernel/isa_io.h>
+#include <kernel/irq.h>
+#include <kernel/spinlock.h>
+#include <kernel/time.h>
+#include <kernel/stdlib.h>
+#include <kernel/malloc.h>
+#include <kernel/ctype.h>
+#include <kernel/kdebug.h>
+#include <syllable/power.h>
 #include <posix/errno.h>
-
-#include <atheos/types.h>
-#include <atheos/isa_io.h>
-#include <atheos/kernel.h>
-#include <atheos/irq.h>
-#include <atheos/spinlock.h>
 
 #include <macros.h>
 
-#include "inc/sysbase.h"
-#include "inc/intel.h"
-#include "inc/swap.h"
+#include <inc/sysbase.h>
+#include <inc/intel.h>
+#include <inc/swap.h>
 
 typedef struct _DbgCmd DbgCmd_s;
 

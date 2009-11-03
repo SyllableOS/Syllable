@@ -21,7 +21,6 @@
 #define __F_MEDIA_SOUNDPLAYER_H_
 
 #include <atheos/types.h>
-#include <atheos/kernel.h>
 #include <atheos/threads.h>
 #include <util/string.h>
 #include <media/packet.h>

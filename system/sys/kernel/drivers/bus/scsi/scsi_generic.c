@@ -21,13 +21,15 @@
  *
  */
 
-#include <atheos/types.h>
-#include <atheos/kernel.h>
-#include <atheos/device.h>
-#include <atheos/scsi.h>
-#include <atheos/cdrom.h>
-#include <atheos/bootmodules.h>
-#include <atheos/udelay.h>
+#include <kernel/types.h>
+#include <kernel/malloc.h>
+#include <kernel/string.h>
+#include <kernel/device.h>
+#include <kernel/scsi.h>
+#include <kernel/bootmodules.h>
+#include <kernel/udelay.h>
+#include <kernel/kdebug.h>
+#include <syllable/cdrom.h>
 #include <posix/errno.h>
 #include <macros.h>
 

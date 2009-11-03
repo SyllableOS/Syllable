@@ -18,20 +18,21 @@
  */
 
 #include <posix/fcntl.h>
-#include <posix/unistd.h>
 #include <posix/errno.h>
-#include <posix/stat.h>
 #include <posix/ioctl.h>
 #include <macros.h>
 
-#include <atheos/string.h>
-#include <atheos/types.h>
-#include <atheos/time.h>
-#include <atheos/filesystem.h>
-#include <atheos/kernel.h>
-#include <atheos/bcache.h>
-#include <atheos/device.h>
-#include <atheos/semaphore.h>
+#include <kernel/string.h>
+#include <kernel/types.h>
+#include <kernel/time.h>
+#include <kernel/filesystem.h>
+#include <kernel/malloc.h>
+#include <kernel/stdlib.h>
+#include <kernel/bcache.h>
+#include <kernel/device.h>
+#include <kernel/semaphore.h>
+#include <kernel/unistd.h>
+#include <kernel/stat.h>
 
 #include "afs.h"
 #include "btree.h"

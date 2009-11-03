@@ -27,7 +27,7 @@
 #include <sys/syscall.h>
 #include <sys/debug.h>
 
-#include <atheos/atomic.h>
+#include <syllable/atomic.h>
 
 #define MAX_OPEN_LIBS	1024
 

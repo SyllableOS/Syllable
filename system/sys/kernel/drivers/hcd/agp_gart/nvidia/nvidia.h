@@ -38,8 +38,8 @@ extern "C" {
 }
 #endif
 
-#include <atheos/pci.h>
-#include <atheos/agpgart.h>
+#include <kernel/pci.h>
+#include <kernel/agpgart.h>
 
 /*
  * NVIDIA nForce/nForce2 registers

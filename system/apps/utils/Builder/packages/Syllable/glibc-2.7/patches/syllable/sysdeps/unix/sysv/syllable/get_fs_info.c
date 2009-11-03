@@ -20,7 +20,7 @@
 #include <sysdep.h>
 #include <sys/syscall.h>
 #include <sys/types.h>
-#include <atheos/filesystem.h>
+#include <syllable/filesystem.h>
 
 int __get_fs_info( int fd, fs_info *buf )
 {

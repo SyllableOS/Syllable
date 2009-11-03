@@ -1,4 +1,3 @@
-
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2000 Kurt Skauen
@@ -21,13 +20,14 @@
 #ifndef __AREAS_H__
 #define __AREAS_H__
 
-#include <atheos/types.h>
-#include <atheos/semaphore.h>
+#include <kernel/types.h>
+#include <kernel/areas.h>
+#include <kernel/semaphore.h>
 
-#include "../vfs/vfs.h"
-#include "mman.h"
-#include "array.h"
-#include "intel.h"
+#include <vfs/vfs.h>
+#include <inc/mman.h>
+#include <inc/array.h>
+#include <inc/intel.h>
 
 #ifdef __cplusplus
 extern "C"

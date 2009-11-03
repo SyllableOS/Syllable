@@ -1,4 +1,3 @@
-
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2001 Kurt Skauen
@@ -18,11 +17,12 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef	__F_INC_SEMAPHORES_H__
-#define	__F_INC_SEMAPHORES_H__
+#ifndef	__F_SEMAPHORES_H__
+#define	__F_SEMAPHORES_H__
 
-#include <atheos/types.h>
-#include "typedefs.h"
+#include <kernel/types.h>
+
+#include <inc/typedefs.h>
 
 #ifdef __cplusplus
 extern "C"
@@ -104,4 +104,4 @@ static const uint32_t SEMTYPE_KERNEL	= 0x02000000;
 #endif
 
 
-#endif /* __F_INC_SEMAPHORES_H__ */
+#endif /* __F_SEMAPHORES_H__ */

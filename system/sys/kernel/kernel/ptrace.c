@@ -17,19 +17,20 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <atheos/types.h>
-#include <atheos/kernel.h>
-#include <atheos/areas.h>
-#include <atheos/irq.h>
-#include <atheos/ptrace.h>
+#include <kernel/types.h>
+#include <kernel/areas.h>
+#include <kernel/irq.h>
+#include <kernel/signal.h>
+#include <kernel/stdlib.h>
+#include <kernel/kdebug.h>
+#include <syllable/ptrace.h>
 #include <posix/errno.h>
-#include <posix/signal.h>
 #include <macros.h>
 
-#include "inc/intel.h"
-#include "inc/smp.h"
-#include "inc/areas.h"
-#include "inc/ptrace.h"
+#include <inc/intel.h>
+#include <inc/smp.h>
+#include <inc/areas.h>
+#include <inc/ptrace.h>
 
 
 static ptrace_func_t ptrace_traceme;

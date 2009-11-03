@@ -19,8 +19,9 @@
  */
 
 #include <posix/errno.h>
-#include <atheos/types.h>
-#include <atheos/kernel.h>
+#include <kernel/types.h>
+#include <kernel/malloc.h>
+#include <kernel/string.h>
 #include <macros.h>
 
 #include "afs.h"

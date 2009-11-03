@@ -24,8 +24,8 @@
 #ifndef SCSI_GENERIC_H_
 #define SCSI_GENERIC_H_
 
-#include <atheos/types.h>
-#include <atheos/scsi.h>
+#include <kernel/types.h>
+#include <kernel/scsi.h>
 
 int scsi_generic_open( void *pNode, uint32 nFlags, void **ppCookie );
 int scsi_generic_close( void *pNode, void *pCookie );

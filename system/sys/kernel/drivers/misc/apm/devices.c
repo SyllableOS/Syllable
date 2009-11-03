@@ -20,10 +20,11 @@
 
 #include <posix/errno.h>
 
-#include <atheos/kernel.h>
-#include <atheos/device.h>
-#include <atheos/semaphore.h>
-#include <atheos/spinlock.h>
+#include <kernel/string.h>
+#include <kernel/device.h>
+#include <kernel/semaphore.h>
+#include <kernel/spinlock.h>
+#include <syllable/v86.h>
 
 #include "apm.h"
 

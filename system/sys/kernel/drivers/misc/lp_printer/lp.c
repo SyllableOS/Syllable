@@ -117,28 +117,28 @@
 
 #include <posix/errno.h>
 #include <posix/ioctls.h>
-#include <posix/fcntl.h>
+#include <kernel/fcntl.h>
 #include <posix/termios.h>
 #include <posix/wait.h>
 #include <posix/signal.h>
 
-#include <atheos/kernel.h>
-#include <atheos/device.h>
-#include <atheos/semaphore.h>
-#include <atheos/schedule.h>
-#include <atheos/smp.h>
+#include <kernel/string.h>
+#include <kernel/device.h>
+#include <kernel/semaphore.h>
+#include <kernel/schedule.h>
+#include <kernel/smp.h>
 #include <posix/fcntl.h>
-#include <atheos/spinlock.h>
-#include <atheos/pci.h>
-#include <atheos/linux_compat.h>
-#include <atheos/udelay.h>
-#include <atheos/device.h>
-#include <atheos/irq.h>
-#include <atheos/bitops.h>
+#include <kernel/spinlock.h>
+#include <kernel/pci.h>
+#include <kernel/linux_compat.h>
+#include <kernel/udelay.h>
+#include <kernel/device.h>
+#include <kernel/irq.h>
+#include <kernel/bitops.h>
 #include <macros.h>
 
 #define LP_STATS
-#include <atheos/lp.h>
+#include <kernel/lp.h>
 
 #include "parport.h"
 

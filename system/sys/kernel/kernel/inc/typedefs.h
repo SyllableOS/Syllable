@@ -1,4 +1,3 @@
-
 /*
  *  The Syllable kernel
  *  Copyright (C) 1999 - 2000 Kurt Skauen
@@ -19,8 +18,8 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef __TYPEDEFS_H__
-#define __TYPEDEFS_H__
+#ifndef __F_TYPEDEFS_H__
+#define __F_TYPEDEFS_H__
 
 
 typedef struct _MemContext MemContext_s;
@@ -31,4 +30,4 @@ typedef struct _Process Process_s;
 typedef struct _Page Page_s;
 typedef struct _AIOContext AIOContext_s;
 
-#endif /* __TYPEDEFS_H__ */
+#endif	/* __F_TYPEDEFS_H__ */

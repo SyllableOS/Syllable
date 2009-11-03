@@ -9,10 +9,12 @@
 */
 
 
-#include <atheos/kernel.h>
-#include <atheos/semaphore.h>
-#include <atheos/atomic.h>
-#include <atheos/threads.h>
+#include <kernel/malloc.h>
+//#include <kernel/string.h>
+//#include <kernel/stdlib.h>
+#include <kernel/semaphore.h>
+#include <kernel/atomic.h>
+#include <kernel/threads.h>
 #include "Utility.h"
 #include "Debug.h"
 

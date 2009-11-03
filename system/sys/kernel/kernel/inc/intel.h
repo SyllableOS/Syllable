@@ -1,4 +1,3 @@
-
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2000 Kurt Skauen
@@ -21,8 +20,6 @@
 #ifndef	EXEC_INTEL_H
 #define	EXEC_INTEL_H
 
-#include "inc/virt86.h"
-
 #ifdef __cplusplus
 extern "C"
 {
@@ -31,7 +28,9 @@ extern "C"
 }				/* Make Emacs auto-indent work */
 #endif
 
-#include <atheos/types.h>
+#include <kernel/types.h>
+
+#include <inc/virt86.h>
 
 static const uint32_t EFLG_CARRY	= 0x00000001;
 static const uint32_t EFLG_PARITY	= 0x00000004;

@@ -22,6 +22,10 @@
 
 #include <atheos/types.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct
 {
   int	    me_nDeltaX;
@@ -29,6 +33,10 @@ typedef struct
   int	    me_nButton;
   bigtime_t me_nTimeStamp;
 } MouseEvent_s;
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif __ATHEOS_MOUSE_H_
 

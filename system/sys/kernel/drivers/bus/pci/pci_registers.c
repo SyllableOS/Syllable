@@ -22,13 +22,12 @@
  */
 
 #include <posix/errno.h>
-#include <atheos/device.h>
-#include <atheos/kernel.h>
-#include <atheos/types.h>
-#include <atheos/pci.h>
-#include <atheos/kernel.h>
-#include <atheos/spinlock.h>
-#include <atheos/pci.h>
+#include <kernel/device.h>
+#include <kernel/malloc.h>
+#include <kernel/types.h>
+#include <kernel/pci.h>
+#include <kernel/spinlock.h>
+#include <kernel/kdebug.h>
 
 #include <macros.h>
 

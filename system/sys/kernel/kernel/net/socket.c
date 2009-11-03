@@ -1,4 +1,3 @@
-
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2001 Kurt Skauen
@@ -22,32 +21,31 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <kernel/types.h>
+#include <kernel/filesystem.h>
+#include <kernel/socket.h>
+#include <kernel/semaphore.h>
+#include <kernel/fcntl.h>
+#include <kernel/uio.h>
+#include <kernel/stdlib.h>
+#include <kernel/malloc.h>
+#include <kernel/if.h>
+#include <kernel/if_arp.h>
+#include <kernel/if_ether.h>
+#include <kernel/in.h>
+#include <kernel/ip.h>
+#include <kernel/net.h>
+#include <kernel/raw.h>
+#include <kernel/route.h>
+#include <kernel/tcp.h>
+#include <kernel/udp.h>
+#include <kernel/icmp.h>
+#include <kernel/kdebug.h>
 #include <posix/errno.h>
-#include <posix/uio.h>
-#include <posix/fcntl.h>
-
-#include <atheos/kernel.h>
-#include <atheos/kdebug.h>
-#include <atheos/filesystem.h>
-#include <atheos/socket.h>
-#include <atheos/semaphore.h>
-
+#include <net/sockios.h>
 #include <macros.h>
 
-#include <net/net.h>
-#include <net/ip.h>
-#include <net/if.h>
-#include <net/if_ether.h>
-#include <net/if_arp.h>
-#include <net/icmp.h>
-#include <net/udp.h>
-#include <net/tcp.h>
-#include <net/raw.h>
-#include <net/in.h>
-#include <net/route.h>
-#include <net/sockios.h>
-
-#include "vfs/vfs.h"
+#include <vfs/vfs.h>
 
 /*****************************************************************************
  * NAME:

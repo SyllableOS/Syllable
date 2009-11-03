@@ -108,7 +108,7 @@ install-doc:
 deps: $(OBJDIR) $(DEPS)
 
 clean:
-	rm -f $(OBJS) $(DEPS) $(IF_OBJS) $(OBJDIR)/version.o $(OBJDIR)/kernel.so $(OBJDIR)/libkernel.so $(OBJDIR)/eth_if $(OBJDIR)/kernel.exports.c
+	rm -f $(OBJDIR)/*
 
--include $(OBJDIR)/*.d
+#-include $(OBJDIR)/*.d
 

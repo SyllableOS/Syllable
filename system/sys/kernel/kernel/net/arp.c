@@ -1,4 +1,3 @@
-
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999  Kurt Skauen
@@ -18,19 +17,19 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <kernel/types.h>
+#include <kernel/time.h>
+#include <kernel/semaphore.h>
+#include <kernel/socket.h>
+#include <kernel/stdlib.h>
+#include <kernel/malloc.h>
+#include <kernel/kdebug.h>
+#include <kernel/if_arp.h>
+#include <kernel/if_ether.h>
+#include <kernel/ip.h>
+#include <kernel/net.h>
 #include <posix/errno.h>
 #include <posix/unistd.h>
-
-#include <atheos/kernel.h>
-#include <atheos/time.h>
-#include <atheos/semaphore.h>
-
-#include <atheos/socket.h>
-#include <net/net.h>
-#include <net/ip.h>
-#include <net/if_ether.h>
-#include <net/if_arp.h>
-
 #include <macros.h>
 
 /* Selective debugging level overrides */

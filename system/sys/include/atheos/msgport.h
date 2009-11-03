@@ -30,32 +30,6 @@ extern "C" {
 
 #define	MSG_PORT_PUBLIC			1<<1
 
-#ifdef __KERNEL__
-
-port_id		sys_create_port( const char* const pzName, int nMaxCount );
-status_t	sys_delete_port( port_id hPort );
-
-status_t	send_msg_x( port_id hPort, uint32 nCode, const void* pBuffer, int nSize, bigtime_t nTimeOut );
-status_t	get_msg_x( port_id hPort, uint32* pnCode, void* pBuffer, int nSize, bigtime_t nTimeOut );
-
-status_t	sys_send_msg( port_id hPort, uint32 nCode, const void* pBuffer, int nSize );
-status_t	sys_get_msg( port_id hPort, uint32* pnCode, void* pBuffer, int nSize );
-status_t	sys_raw_send_msg_x( port_id hPort, uint32 nCode, const void* pBuffer,
-				    int nSize, const bigtime_t* pnTimeOut );
-status_t	sys_raw_get_msg_x( port_id hPort, uint32* pnCode, void* pBuffer,
-				   int nSize, const bigtime_t* pnTimeOut );
-
-status_t sys_make_port_public( port_id hPort );
-status_t sys_make_port_private( port_id hPort );
-
-port_id sys_find_port( const char* pzPortname );
-
-size_t sys_get_msg_size( port_id hPort );
-
-#endif /* __KERNEL__ */
-
-
-
 typedef struct
 {
     port_id	pi_port_id;
@@ -66,24 +40,20 @@ typedef struct
     char	pi_name[OS_NAME_LENGTH];
 } port_info;
 
+port_id	 create_port( const char* const pzName, int nMaxCount );
+status_t delete_port( port_id hPort );
 
-port_id		create_port( const char* const pzName, int nMaxCount );
-status_t	delete_port( port_id hPort );
+status_t get_port_info( port_id hPort, port_info* psInfo );
+status_t get_next_port_info( port_info* psInfo );
 
-status_t	get_port_info( port_id hPort, port_info* psInfo );
-status_t	get_next_port_info( port_info* psInfo );
+status_t send_msg( port_id hPort, uint32 nCode, const void* pBuffer, int nSize );
+status_t get_msg( port_id hPort, uint32* pnCode, void* pBuffer, int nSize );
 
+status_t send_msg_x( port_id hPort, uint32 nCode, const void* pBuffer, int nSize, bigtime_t nTimeOut );
+status_t get_msg_x( port_id hPort, uint32* pnCode, void* pBuffer, int nSize, bigtime_t nTimeOut );
 
-status_t	send_msg( port_id hPort, uint32 nCode, const void* pBuffer, int nSize );
-status_t	get_msg( port_id hPort, uint32* pnCode, void* pBuffer, int nSize );
-
-status_t	send_msg_x( port_id hPort, uint32 nCode, const void* pBuffer, int nSize, bigtime_t nTimeOut );
-status_t	get_msg_x( port_id hPort, uint32* pnCode, void* pBuffer, int nSize, bigtime_t nTimeOut );
-
-status_t	raw_send_msg_x( port_id hPort, uint32 nCode, const void* pBuffer,
-				int nSize, const bigtime_t* pnTimeOut );
-status_t	raw_get_msg_x( port_id hPort, uint32* pnCode, void* pBuffer,
-			       int nSize, const bigtime_t* pnTimeOut );
+status_t raw_send_msg_x( port_id hPort, uint32 nCode, const void* pBuffer, int nSize, const bigtime_t* pnTimeOut );
+status_t raw_get_msg_x( port_id hPort, uint32* pnCode, void* pBuffer, int nSize, const bigtime_t* pnTimeOut );
 
 status_t make_port_public( port_id hPort );
 status_t make_port_private( port_id hPort );
@@ -92,10 +62,17 @@ port_id find_port( const char* pzPortname );
 
 size_t get_msg_size( port_id hPort );
 
+int set_app_server_port( port_id hPort );
+port_id get_app_server_port( void );
+
+/* Simple message which is sent to the app server when a thread dies */
+typedef	struct
+{
+    thread_id	hThread;
+} DR_ThreadDied_s;
+
 #ifdef __cplusplus
 }
 #endif
 
-
 #endif	/* __F_ATHEOS_MSGPORTS_H__ */
-

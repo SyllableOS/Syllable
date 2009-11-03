@@ -20,17 +20,17 @@
 
 #include <posix/fcntl.h>
 #include <posix/errno.h>
-#include <posix/stat.h>
 #include <macros.h>
 
-#include <atheos/string.h>
-#include <atheos/types.h>
-#include <atheos/time.h>
-#include <atheos/kernel.h>
+#include <kernel/types.h>
+#include <kernel/time.h>
+#include <kernel/malloc.h>
+#include <kernel/string.h>
+#include <kernel/bcache.h>
+#include <kernel/stat.h>
 
 #include "afs.h"
 #include "btree.h"
-#include "atheos/bcache.h"
 
 /** Get the number of blocks referenced by an AFS Inode
  * \par Description:

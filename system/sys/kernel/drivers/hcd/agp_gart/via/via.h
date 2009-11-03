@@ -36,7 +36,7 @@ extern "C" {
 }
 #endif
 
-#include <atheos/agpgart.h>
+#include <kernel/agpgart.h>
 
 /*
  * Config offsets for VIA AGP 2.x chipsets.

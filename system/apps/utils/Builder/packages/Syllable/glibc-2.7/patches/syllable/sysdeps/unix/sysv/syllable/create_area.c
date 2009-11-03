@@ -24,7 +24,7 @@
 #include <sysdep.h>
 #include <sys/syscall.h>
 
-#include <atheos/areas.h>
+#include <syllable/types.h>
 
 /* create_area can not simply be included in syscalls.list as it causes the error
    "invalid symbol "-" in mnenomic" to be thrown.  I suspect it's caused by a macro

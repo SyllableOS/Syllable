@@ -29,12 +29,15 @@
 
 #include <posix/errno.h>
 
-#include <atheos/kernel.h>
-#include <atheos/device.h>
-#include <atheos/pci.h>
-#include <atheos/irq.h>
-#include <atheos/semaphore.h>
-#include <posix/signal.h>
+#include <kernel/malloc.h>
+#include <kernel/string.h>
+#include <kernel/stdlib.h>
+#include <kernel/device.h>
+#include <kernel/pci.h>
+#include <kernel/irq.h>
+#include <kernel/semaphore.h>
+#include <kernel/signal.h>
+#include <kernel/isa_io.h>
 #include <macros.h>
 
 #include "ac97audio.h"

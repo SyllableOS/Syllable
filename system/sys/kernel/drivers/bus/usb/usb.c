@@ -32,12 +32,14 @@
  
 
  
-#include <atheos/usb.h>
-#include <atheos/kernel.h>
-#include <atheos/kdebug.h>
-#include <atheos/time.h>
-#include <atheos/bootmodules.h>
-#include <atheos/device.h>
+#include <kernel/usb.h>
+#include <kernel/malloc.h>
+#include <kernel/string.h>
+#include <kernel/stdlib.h>
+#include <kernel/kdebug.h>
+#include <kernel/time.h>
+#include <kernel/bootmodules.h>
+#include <kernel/device.h>
 #include <posix/errno.h>
 #include <macros.h>
 

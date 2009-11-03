@@ -2,6 +2,8 @@ CFLAGS   += -kernel -D__LOADABLE__ -DUNSAFE_GET_VNODE -fno-PIC -c -fno-strict-al
 CXXFLAGS += -kernel -D__LOADABLE__ -DUNSAFE_GET_VNODE -fno-PIC -c -fno-strict-aliasing -Wno-multichar -fno-exceptions
 AFLAGS   = -c
 
+CPLUS_INCLUDE_PATH = $(ATHEOS_INCLUDE_PATH)
+
 OBJS := BlockAllocator.o BPlusTree.o BufferPool.o Debug.o Index.o Inode.o \
 		Journal.o Utility.o Volume.o kernel_interface.o
 

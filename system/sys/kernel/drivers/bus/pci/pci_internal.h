@@ -24,7 +24,7 @@
 #ifndef _PCI_INTERNAL_H_
 #define _PCI_INTERNAL_H_
 
-#include <atheos/pci.h>
+#include <kernel/pci.h>
 
 typedef struct
 {

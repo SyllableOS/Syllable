@@ -25,13 +25,15 @@
  */
 
 
-#include <atheos/kernel.h>
-#include <atheos/irq.h>
-#include <atheos/types.h>
-#include <atheos/list.h>
-#include <atheos/msgport.h>
-#include <atheos/device.h>
-#include <atheos/acpi.h>
+#include <kernel/malloc.h>
+#include <kernel/irq.h>
+#include <kernel/types.h>
+#include <kernel/list.h>
+#include <kernel/msgport.h>
+#include <kernel/device.h>
+#include <kernel/acpi.h>
+#include <kernel/isa_io.h>
+#include <kernel/kdebug.h>
 #include <posix/errno.h>
 #include <macros.h>
 

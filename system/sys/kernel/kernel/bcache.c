@@ -18,23 +18,22 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <atheos/types.h>
+#include <kernel/types.h>
+#include <kernel/bcache.h>
+#include <kernel/time.h>
+#include <kernel/semaphore.h>
+#include <kernel/pci.h>
+#include <kernel/kdebug.h>
+#include <kernel/areas.h>
+#include <kernel/stdlib.h>
 #include <posix/unistd.h>
 #include <posix/errno.h>
-
-#include <atheos/kernel.h>
-#include <atheos/bcache.h>
-#include <atheos/time.h>
-#include <atheos/semaphore.h>
-#include <atheos/pci.h>
-#include <atheos/kdebug.h>
-
 #include <macros.h>
 
-#include "inc/scheduler.h"
-#include "inc/sysbase.h"
-#include "inc/global.h"
-#include "inc/bcache.h"
+#include <inc/scheduler.h>
+#include <inc/sysbase.h>
+#include <inc/global.h>
+#include <inc/bcache.h>
 
 BlockCache_s g_sBlockCache;
 

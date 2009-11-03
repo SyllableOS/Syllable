@@ -95,10 +95,6 @@ extern "C"{
 #define IOCTL_KBD_CAPLOC		0x02	/* Toggle CapsLock LED */
 #define IOCTL_KBD_SCRLOC		0x03	/* Toggle ScrollLock LED */
 
-#ifdef __KERNEL__
-int ioctl( int fd, int cmd, ...);
-#endif
-		
 #ifdef __cplusplus
 }
 #endif

@@ -1,18 +1,20 @@
-#include <atheos/kernel.h>
-#include <atheos/irq.h>
-#include <atheos/isa_io.h>
-#include <atheos/udelay.h>
-#include <atheos/time.h>
-#include <atheos/pci.h>
-#include <atheos/semaphore.h>
-#include <atheos/spinlock.h>
-#include <atheos/ctype.h>
-#include <atheos/device.h>
+#include <kernel/malloc.h>
+#include <kernel/string.h>
+#include <kernel/stdlib.h>
+#include <kernel/irq.h>
+#include <kernel/isa_io.h>
+#include <kernel/udelay.h>
+#include <kernel/time.h>
+#include <kernel/pci.h>
+#include <kernel/semaphore.h>
+#include <kernel/spinlock.h>
+#include <kernel/ctype.h>
+#include <kernel/device.h>
+#include <kernel/signal.h>
+#include <kernel/net.h>
 
 #include <posix/unistd.h>
 #include <posix/errno.h>
-#include <posix/signal.h>
-#include <net/net.h>
 #include <net/sockios.h>
 
 #include "8390.h"

@@ -1,8 +1,6 @@
 #ifndef __ACPI_PROCESSOR_H
 #define __ACPI_PROCESSOR_H
 
-#include <atheos/kernel.h>
-
 #define ACPI_PROCESSOR_BUSY_METRIC	10
 
 #define ACPI_PROCESSOR_MAX_POWER	8

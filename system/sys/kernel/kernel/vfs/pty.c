@@ -1,4 +1,3 @@
-
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2001 Kurt Skauen
@@ -18,30 +17,30 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <kernel/types.h>
+#include <kernel/time.h>
+#include <kernel/filesystem.h>
+#include <kernel/semaphore.h>
+#include <kernel/schedule.h>
+#include <kernel/irq.h>
+#include <kernel/smp.h>
+#include <kernel/ctype.h>
+#include <kernel/dirent.h>
+#include <kernel/fcntl.h>
+#include <kernel/stat.h>
+#include <kernel/signal.h>
+#include <kernel/termios.h>
+#include <kernel/pgroups.h>
+#include <kernel/stdlib.h>
+#include <kernel/malloc.h>
+#include <kernel/kdebug.h>
 #include <posix/errno.h>
-#include <posix/termios.h>
-#include <posix/stat.h>
-#include <posix/fcntl.h>
-#include <posix/dirent.h>
-#include <posix/signal.h>
-
-#include <atheos/types.h>
-#include <atheos/time.h>
-
-#include <atheos/kernel.h>
-#include <atheos/smp.h>
-#include <atheos/filesystem.h>
-#include <atheos/schedule.h>
-#include <atheos/irq.h>
-
-#include <atheos/ctype.h>
-#include <atheos/semaphore.h>
-
+#include <posix/ioctls.h>
 #include <macros.h>
 
-#include "inc/scheduler.h"
-#include "inc/sysbase.h"
-#include "inc/smp.h"
+#include <inc/scheduler.h>
+#include <inc/sysbase.h>
+#include <inc/smp.h>
 
 typedef struct FileNode FileNode_s;
 typedef struct SuperInfo SuperInfo_s;

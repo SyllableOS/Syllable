@@ -1,4 +1,3 @@
-
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2001 Kurt Skauen
@@ -25,23 +24,22 @@
  * and per-CPU idle time.  All time values are returned in microseconds.
  */
 
-#include <atheos/types.h>
-#include <atheos/isa_io.h>
-#include <atheos/kernel.h>
-#include <atheos/time.h>
-#include <atheos/irq.h>
-#include <atheos/smp.h>
-#include <atheos/seqlock.h>
-
+#include <kernel/types.h>
+#include <kernel/time.h>
+#include <kernel/isa_io.h>
+#include <kernel/irq.h>
+#include <kernel/seqlock.h>
+#include <kernel/smp.h>
+#include <kernel/kdebug.h>
 #include <macros.h>
 
-#include "inc/scheduler.h"
-#include "inc/sysbase.h"
-#include "inc/io_ports.h"
-#include "inc/pit_timer.h"
-#include "inc/mc146818.h"
-#include "inc/global.h"
-#include "inc/smp.h"
+#include <inc/scheduler.h>
+#include <inc/sysbase.h>
+#include <inc/io_ports.h>
+#include <inc/pit_timer.h>
+#include <inc/mc146818.h>
+#include <inc/global.h>
+#include <inc/smp.h>
 
 /** If true, the scheduler will be called when returning from syscall. */
 int g_bNeedSchedule;
