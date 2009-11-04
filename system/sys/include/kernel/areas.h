@@ -48,7 +48,8 @@
 #define	AREA_SHARED		0x0040
 #define	AREA_GROWSDOWN	0x0080
 
-area_id	sys_create_area( const char* pzName, void** ppAddress, size_t nSize, flags_t nProtection, flags_t nLockMode );
+area_id create_area( const char* pzName, void** ppAddress, size_t nSize, size_t nMaxSize, flags_t nProtection, flags_t nLockMode );
+area_id sys_create_area( const char* pzName, void** ppAddress, size_t nSize, flags_t nProtection, flags_t nLockMode );
 
 status_t alloc_area_list( flags_t nProtection, flags_t nLockMode, uintptr_t nAddress, count_t nCount, const char *const *apzNames, size_t* panOffsets, size_t* panSizes, area_id* panAreas );
 
