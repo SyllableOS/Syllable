@@ -10,5 +10,7 @@ finish
 
 	rm -r resources/documentation
 	rm -r resources/documentation-DE
+	rm -r resources/documentation-ES
 	rm -r resources/documentation-NL
+	rm -r resources/documentation-RU
 	rm -r resources/documentation-SL
