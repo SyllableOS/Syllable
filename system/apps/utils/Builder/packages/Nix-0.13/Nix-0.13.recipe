@@ -42,7 +42,7 @@ configure-options
 ;	--with-docbook-rng=
 ;	--with-docbook-xsl=
 
-super-install
+;super-install
 install-tree		early-init
 move-files			etc/profile.d/nix.sh early-init/
 
@@ -51,3 +51,4 @@ documentation
 ;	Empty:
 ;	ChangeLog
 ;	doc/manual/*.html
+
