@@ -1,0 +1,69 @@
+authors				Kaj de Vos
+status				developing
+notes				Tested with Boron and M2 snapshots November 18, 2009
+
+headline			Scripting language similar to REBOL
+description
+	Boron is a scripting language similar to REBOL. It is the third iteration of the Urlan datatype system.
+
+	The Urlan Project is an exploration of language oriented programming using small run-time environments. The currently active sub-project is Boron, a dialect of REBOL. It is an interpreted, homoiconic language, which is well suited for embedding domain specific languages.
+
+	Boron closely emulates the REBOL language. The interpreter is a C library so that C/C++ applications can use Boron as an embedded scripting system.
+licenses
+;	Interpreter:
+	LGPL
+;	Programs:
+	GPL-3+
+;	M2:
+;	MIT
+
+home
+	urlan.sf.net
+;	sf.net/apps/trac/urlan/wiki/BoronProject
+;	wsrebol.sf.net
+packages
+	Boron-0.1.0-1.source
+;	M2-498.source Boron-0.1.0
+;locations			http://downloads.syllable.org/sources/resources/Boron/
+archives
+	git clone git://gitorious.org/boron/boron.git
+;	M2:
+;	svn co http://urlan.svn.sourceforge.net/svnroot/urlan/trunk/m2
+
+build-needs
+	which
+;	(m2 & (REBOL | Boron)) | cmake >= 2.6
+	bzip2
+
+_patch
+	mv m2-498/m2			configure &&
+	cp m2-498/m2_linux.r	m2_template.r &&
+;	Uncomment os_call in config.r, and possibly math3d and number_arrays and rebol
+	rebol 					boot_str.r
+
+;build-dir			.
+
+; REBOL or Boron needs to be in /usr/bin/ to run M2 from configure
+; Fix ORCA_LFLAGS in Makefile
+;configure			cmake .
+
+install-tree
+	bin
+	include
+	include/boron
+	lib
+install				true
+install-files
+	boron				bin/
+	boron.h				include/boron/
+	urlan/urlan.h		include/boron/
+	urlan/urlan_atoms.h	include/boron/
+	urlan/bignum.h		include/boron/
+	libboron.so.0		lib/
+
+links				libboron.so.0 lib/libboron.so
+
+documentation		LICENSE LICENSE.GPL
+develop-docs
+;	doc/html
+	examples

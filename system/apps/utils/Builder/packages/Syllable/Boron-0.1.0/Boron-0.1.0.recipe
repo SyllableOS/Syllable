@@ -1,0 +1,6 @@
+authors				Kaj de Vos
+status				testing
+
+links
+	libboron.so.0	lib/libboron.so
+	boron			bin/rebol
