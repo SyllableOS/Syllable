@@ -1,6 +1,6 @@
 #! /bin/sh
 
-if [ "$USER" != "root" ]
+if [ `id --user` != 0 ]
 then
 	echo "The installation is not being run by the administrative user."
 	echo "Installation aborted."
@@ -25,17 +25,11 @@ if [ -e "/system/development" ]
 then
 	for package in `ls /system/development/resources/`
 	do
-		if [ "$package" == "orca" ]
-		then
-			package unregister /system/development/resources/orca /system/indexes
+		for version in `ls /system/development/resources/$package/`
+		do
+			package unregister /system/development/resources/$package/$version /system/indexes
 			sync
-		else
-			for version in `ls /system/development/resources/$package/`
-			do
-				package unregister /system/development/resources/$package/$version /system/indexes
-				sync
-			done
-		fi
+		done
 	done
 
 	echo "Deleting existing development files"
@@ -55,18 +49,12 @@ sync
 
 for package in `ls /system/development/resources/`
 do
-	if [ "$package" == "orca" ]
-	then
-		package register /system/development/resources/orca /system/indexes
+	for version in `ls /system/development/resources/$package/`
+	do
+		echo ""
+		package register /system/development/resources/$package/$version /system/indexes
 		sync
-	else
-		for version in `ls /system/development/resources/$package/`
-		do
-			echo ""
-			package register /system/development/resources/$package/$version /system/indexes
-			sync
-		done
-	fi
+	done
 done
 
 echo ""
