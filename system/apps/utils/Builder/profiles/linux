@@ -371,6 +371,7 @@ modules
 	system apps/other/UnZip-6.0
 
 	apps/gnu/bzip2-1.0.5
+	system apps/other/Boron-0.1.0
 	system apps/other/ORCA--current
 
 	system linux/sysvinit-2.86
