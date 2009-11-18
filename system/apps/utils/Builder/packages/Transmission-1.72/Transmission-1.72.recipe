@@ -16,12 +16,14 @@ locations
 	http://mirrors.m0k.org/transmission/files/
 	http://download.m0k.org/transmission/files/
 
-needs				Syllable >= 0.6.3
+needs
+	Syllable >= 0.6.3
+	OpenSSL
 build-needs
-	pkg-config
+	pkg-config >= 0.9.0
 	IntlTool >= 0.40
 recommends
-	OpenSSL
+;	OpenSSL
 	cURL
 
 ;make-shared
