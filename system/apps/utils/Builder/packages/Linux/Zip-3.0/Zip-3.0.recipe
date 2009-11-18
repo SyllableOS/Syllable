@@ -5,7 +5,7 @@ make-file			unix/Makefile
 make-targets		generic_gcc
 
 documentation
-	README README.CR USexport.msg WHERE MANUAL LICENSE zip30.ann WHATSNEW CHANGES TODO
+	README README.CR USexport.msg WHERE LICENSE zip30.ann WHATSNEW CHANGES TODO
 ;	Currently applies only to BSD:
 ;	BUGS
 	zip*.txt
