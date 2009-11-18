@@ -8,6 +8,7 @@ notes
 headline			Relative Expression Based Object Language
 description
 	REBOL uses "relative expressions" (context dependent dialects) to create a powerful new dimension similar to that found in natural human languages.
+
 	REBOL provides a lightweight platform for Internet applications. REBOL's power makes applications small so they are less expensive to create, distribute, maintain, and upgrade. In the size of a typical web page, you can fit an entire REBOL application.
 licenses			freeware
 

@@ -6,6 +6,7 @@ status				testing
 headline			teTeX is a complete TeX typesetting distribution
 description
 	The TeX typesetting engine converts markup language to Postscript or PDF and allows powerful formatting options.
+
 	This distribution includes the classical plain and LaTeX macro packages as well as several more recent developments of TeX (and LaTeX).
 licenses			other
 

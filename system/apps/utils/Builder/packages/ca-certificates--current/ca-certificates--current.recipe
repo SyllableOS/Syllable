@@ -4,7 +4,9 @@ status				testing
 headline			Common CA certificates
 description
 	This package includes PEM files of CA certificates to allow SSL-based applications to check for the authenticity of SSL connections.
+
 	It includes, among others, certificate authorities used by the Debian infrastructure and those shipped with Mozilla's browsers.
+
 	Please note that certificate authorities whose certificates are included in this package are not in any way audited for trustworthiness and RFC 3647 compliance, and that full responsibility to assess them belongs to the local system administrator.
 licenses			GPL-2+ MPL-1.1 other
 
