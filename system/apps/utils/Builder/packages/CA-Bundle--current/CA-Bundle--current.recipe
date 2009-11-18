@@ -10,6 +10,9 @@ home				www.linuxfromscratch.org/blfs/view/svn/postlfs/openssl.html
 packages			BLFS-ca-bundle-20090409
 locations			http://anduin.linuxfromscratch.org/files/BLFS/
 
+; For installation in /etc/ssl/:
+build-needs			OpenSSL
+
 make				true
 
 install-tree
