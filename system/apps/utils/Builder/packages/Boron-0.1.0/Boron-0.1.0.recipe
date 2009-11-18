@@ -1,6 +1,5 @@
 authors				Kaj de Vos
 status				developing
-notes				Tested with Boron and M2 snapshots November 18, 2009
 
 headline			Scripting language similar to REBOL
 description
@@ -22,9 +21,9 @@ home
 ;	sf.net/apps/trac/urlan/wiki/BoronProject
 ;	wsrebol.sf.net
 packages
-	Boron-0.1.0-1.source
+	Boron-0.1.0-20091117.source
 ;	M2-498.source Boron-0.1.0
-;locations			http://downloads.syllable.org/sources/resources/Boron/
+locations			http://downloads.syllable.org/sources/resources/Boron/
 archives
 	git clone git://gitorious.org/boron/boron.git
 ;	M2:
