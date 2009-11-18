@@ -43,6 +43,8 @@ configure-options
 ;	--with-docbook-xsl=
 
 ;super-install
+system-prefix-var	DESTDIR
+
 install-tree		early-init
 move-files			etc/profile.d/nix.sh early-init/
 
@@ -51,4 +53,3 @@ documentation
 ;	Empty:
 ;	ChangeLog
 ;	doc/manual/*.html
-
