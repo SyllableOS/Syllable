@@ -25,7 +25,7 @@ recommends			kerberos5
 
 build-dir			.
 
-configure			perl Configure threads shared zlib-dynamic --openssldir=/etc/ssl
+;configure			perl Configure threads shared zlib-dynamic --openssldir=/etc/ssl
 ; Doesn't recognise Syllable:
 ;configure-cmd		config
 ; Doesn't work as advertised:
@@ -33,7 +33,6 @@ _configure-args
 ;	--prefix=/resources
 	--openssldir=/resources/OpenSSL
 configure-options
-;	linux-elf
 	threads
 ;	-D_REENTRANT
 ;	386
@@ -42,6 +41,7 @@ configure-options
 	--openssldir=/etc/ssl
 ;	no-rc5
 ;	no-idea
+;	linux-elf
 
 test-targets
 	test

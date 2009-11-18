@@ -1,4 +1,4 @@
 authors 			Kaj de Vos
 status				testing
 
-configure			perl Configure linux-elf threads shared zlib-dynamic --openssldir=/etc/ssl
+configure			perl Configure threads shared zlib-dynamic --openssldir=/etc/ssl gcc
