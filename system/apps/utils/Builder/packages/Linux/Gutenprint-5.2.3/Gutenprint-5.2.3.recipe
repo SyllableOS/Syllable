@@ -1,0 +1,3 @@
+authors				Kaj de Vos
+status				testing
+warnings			LibTool looks for LibJPEG in the host system!
