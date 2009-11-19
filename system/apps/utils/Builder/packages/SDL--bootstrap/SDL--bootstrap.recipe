@@ -5,6 +5,8 @@ inherits			sdl-1.2.13
 
 configure			true
 make				true
+
+install-tree
 install				true
 documentation
 develop-docs
