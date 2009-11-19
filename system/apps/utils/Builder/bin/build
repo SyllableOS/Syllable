@@ -1,7 +1,7 @@
 #! /usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.9.1
+# Version 0.9.2
 # Copyright (c) 2002-2009 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -628,7 +628,7 @@ def installModule staging, target
 						)
 							false
 						else
-							# make install may change the working directory:
+							# make install may have changed the working directory:
 							Dir.chdir @workDir
 							Dir.chdir target
 							if exists? dir = buildDir(target) then Dir.chdir dir end
@@ -1890,7 +1890,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.9.1',
+	puts 'Syllable Build System 0.9.2',
 		'Copyright (c) 2002-2009 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
