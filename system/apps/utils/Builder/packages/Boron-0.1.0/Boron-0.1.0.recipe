@@ -1,5 +1,5 @@
 authors				Kaj de Vos
-status				developing
+status				testing
 
 headline			Scripting language similar to REBOL
 description
@@ -40,7 +40,8 @@ _patch
 ;	Uncomment os_call in config.r, and possibly math3d and number_arrays and rebol
 	rebol 					boot_str.r
 
-;build-dir			.
+; When configuring:
+build-dir			.
 
 ; REBOL or Boron needs to be in /usr/bin/ to run M2 from configure
 ; Fix ORCA_LFLAGS in Makefile
@@ -58,7 +59,7 @@ install-files
 	urlan/urlan.h		include/boron/
 	urlan/urlan_atoms.h	include/boron/
 	urlan/bignum.h		include/boron/
-	libboron.so.0		lib/
+	libboron.so		lib/libboron.so.0
 
 links				libboron.so.0 lib/libboron.so
 
