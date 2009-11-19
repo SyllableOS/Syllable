@@ -6,3 +6,5 @@ inherits			sdl-1.2.13
 configure			true
 make				true
 install				true
+documentation
+develop-docs
