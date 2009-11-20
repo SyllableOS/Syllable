@@ -21,6 +21,7 @@
 #define __F_ATHEOS_SYSINFO_H__
 
 #include <syllable/types.h>
+#include <syllable/stddef.h>
 
 #ifdef __cplusplus
 extern "C" {
