@@ -22,7 +22,8 @@
 #include <util/datetime.h>
 #include <gui/image.h>
 #include <util/resources.h>
-#include <atheos/image.h>
+#include <syllable/image.h>
+#include <syllable/sysinfo.h>
 #include <gui/desktop.h>
 #include <gui/point.h>
 #include <gui/window.h>
