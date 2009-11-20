@@ -1,5 +1,6 @@
 authors				Kaj de Vos
 status				testing
+notes				Documentation can be built in doc/ directory
 
 headline			Scripting language similar to REBOL
 description
@@ -30,6 +31,7 @@ archives
 ;	svn co http://urlan.svn.sourceforge.net/svnroot/urlan/trunk/m2
 
 build-needs
+;	For configure:
 	which
 ;	(m2 & (REBOL | Boron)) | cmake >= 2.6
 	bzip2
@@ -40,11 +42,9 @@ _patch
 ;	Uncomment os_call in config.r, and possibly math3d and number_arrays and rebol
 	rebol 					boot_str.r
 
-; When configuring:
-build-dir			.
-
-; REBOL or Boron needs to be in /usr/bin/ to run M2 from configure
-; Fix ORCA_LFLAGS in Makefile
+; configure can't be called from a parent directory:
+configure			./configure
+; REBOL or Boron needs to be in /usr/bin/ to run M2 from configure:
 ;configure			cmake .
 
 install-tree
