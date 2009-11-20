@@ -22,6 +22,7 @@
 #include <time.h>
 #include <stdarg.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 struct _DHCPPacket{
 	uint8_t op;
