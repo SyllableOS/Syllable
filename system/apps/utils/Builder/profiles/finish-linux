@@ -21,6 +21,9 @@ modules
 	system linux/linux--cleanup
 
 finish
+	mv users/root users/administrator
+	chown -R administrator users/administrator
+
 	cp resources/grub/lib/grub/i386-pc/* boot/grub/
 
 	rm -r resources/documentation
