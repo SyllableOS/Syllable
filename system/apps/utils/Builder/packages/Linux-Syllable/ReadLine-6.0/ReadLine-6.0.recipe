@@ -1,0 +1,7 @@
+authors				Kaj de Vos
+status				testing
+
+; Linked into BASh, which is called before the loader path is set:
+links
+	lib/libreadline.so.6	/system/resources/glibc/2.7/lib/
+	lib/libhistory.so.6		/system/resources/glibc/2.7/lib/
