@@ -12,10 +12,11 @@ home				nixos.org
 packages			nix-0.13
 locations			http://hydra.nixos.org/build/118589/download/4/
 
-; Already included:
-_needs
-	bzip2
-	aterm
+needs
+;	Already included:
+;	bzip2
+;	aterm
+	perl
 _build-needs
 ;	For the documentation:
 	libxml2
