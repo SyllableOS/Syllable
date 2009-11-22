@@ -1,3 +1,6 @@
+# Remove global access on newly created files for higher security
+umask 027
+
 export PWD
 
 # Run paths
