@@ -11,7 +11,7 @@ description
 	Boron closely emulates the REBOL language. The interpreter is a C library so that C/C++ applications can use Boron as an embedded scripting system.
 licenses
 ;	Interpreter:
-	LGPL
+	LGPL-3+
 ;	Programs:
 	GPL-3+
 ;	M2:
