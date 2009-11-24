@@ -1,0 +1,34 @@
+authors				Kaj de Vos
+status				developing
+
+inherits			sourceforge
+
+headline			Zero Install Injector
+description
+	The zero-install system makes software installation unnecessary. Users run their applications directly from the internet. Caching makes this as fast as running a normal application after the first time, and allows for off-line use.
+
+	Zero Install is a cross-platform, decentralised installation system. Instead of having a central repository in which all software is placed under a naming scheme managed by some central authority, programs and libraries in Zero Install are identified by URIs. Anyone who can create a web-page can publish software.
+Anyone can install software (not just root).
+
+	Conceptually, you can imagine that the software is 'installed' only on a remote machine and that you are simply running it (on your own machine) using a network filesystem. Caching makes this fast and allows off-line use. The cache is indexed using a cryptographic hash, allowing it to be shared between mutually
+untrusting users automatically.
+
+	Zero Install resolves dependencies (such as libraries) on a per-program basis, which eliminates conflicts. You will never be told that installing one program requires first uninstalling another.
+licenses			LGPL-2.1+
+
+home				0install.net
+packages			zero-install/zeroinstall-injector-0.43
+;location			http://sourceforge.net/projects/zero-install/files/injector/0.43/
+
+needs
+	Python >= 2.5
+	GNU-PrivacyGuard
+	PyGTK >= 2.12
+build-needs			gettext
+
+;make				true
+
+;super-install
+;install				python setup.py install
+
+documentation		README COPYING
