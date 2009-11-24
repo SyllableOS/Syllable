@@ -46,7 +46,7 @@ configure-options
 ;super-install
 system-prefix-var	DESTDIR
 
-install-tree		early-init
+;install-tree		early-init
 move-files			etc/profile.d/nix.sh early-init/
 
 documentation
