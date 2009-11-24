@@ -28,12 +28,12 @@
 
 typedef struct irqaction IrqAction_s;
 
-#define IRQRET_CONTINUE  0x0000
-#define IRQRET_RUN_BH	 0x0001
-#define IRQRET_UNHANDLED 0x0002
+#define IRQRET_CONTINUE 0x0000
+#define IRQRET_RUN_BH	0x0001
+#define IRQRET_HANDLED  0x0002
 /* For backwards compatability */
-#define IRQRET_BREAK     IRQRET_UNHANDLED
-#define IRQRET_SCHEDULE  0x0004
+#define IRQRET_BREAK    IRQRET_HANDLED
+#define IRQRET_SCHEDULE 0x0004
 
 typedef int irq_top_handler( int nIrqNum, void* pdata, SysCallRegs_s* psRegs );
 typedef int irq_bottom_handler( int nIrqNum, void* pdata );
