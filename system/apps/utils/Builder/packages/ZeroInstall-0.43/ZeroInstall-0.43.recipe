@@ -1,5 +1,6 @@
 authors				Kaj de Vos
-status				developing
+status				testing
+warnings			Installs inside the Python package!
 
 inherits			sourceforge
 
@@ -22,8 +23,12 @@ packages			zero-install/zeroinstall-injector-0.43
 
 needs
 	Python >= 2.5
-	GNU-PrivacyGuard
+;	Yet can't currently verify signature key:
+	GNU-PrivacyGuard 1
+;	For the GUI:
 	PyGTK >= 2.12
+;	For just command line:
+	PyGObject
 build-needs			gettext
 
 ;make				true
@@ -31,4 +36,5 @@ build-needs			gettext
 ;super-install
 ;install				python setup.py install
 
-documentation		README COPYING
+; Installation location is not there:
+;documentation		README COPYING
