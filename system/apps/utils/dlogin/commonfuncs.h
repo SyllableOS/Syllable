@@ -24,6 +24,7 @@
 #include <util/resources.h>
 #include <syllable/image.h>
 #include <syllable/sysinfo.h>
+#include <syllable/power.h>
 #include <gui/desktop.h>
 #include <gui/point.h>
 #include <gui/window.h>
