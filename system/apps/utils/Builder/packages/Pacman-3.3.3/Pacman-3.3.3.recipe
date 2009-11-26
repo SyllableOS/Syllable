@@ -1,7 +1,7 @@
 authors				Kaj de Vos
 status				testing
 
-headline			A simple library-based package manager
+headline			A simple library-based package manager with dependency support
 description
 	Pacman is a utility which manages software packages in Linux. It uses simple compressed files as a package format, and maintains a text-based package database (more of a hierarchy), just in case some hand tweaking is necessary.
 
@@ -13,8 +13,8 @@ packages			pacman-3.3.3
 locations			ftp://ftp.archlinux.org/other/pacman/
 
 needs
-	LibArchive
-	LibFetch
+	LibArchive >= 2.7.1
+	LibFetch >= 2.25
 
 ;configure-options	--with-root-dir=
 
