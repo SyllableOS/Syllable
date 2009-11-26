@@ -640,7 +640,7 @@ modules
 	apps/other/links2-2.1pre36
 	apps/other/pengupop-2.1.12
 
-	apps/other/Nix-0.13
+	apps/other/Pacman-3.3.3
 
 ;	Needs GCC 3:
 ;	apps/other/qemu-0.9.1

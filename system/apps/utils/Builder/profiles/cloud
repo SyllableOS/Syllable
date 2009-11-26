@@ -397,7 +397,7 @@ modules
 ;	apps/other/rsync-2.6.9
 	apps/other/links2-2.1pre36
 
-	apps/other/Nix-0.13
+	apps/other/Pacman-3.3.3
 
 ;	Needs GCC 3:
 ;	apps/other/qemu-0.9.1
