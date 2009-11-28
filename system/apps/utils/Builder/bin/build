@@ -1,7 +1,7 @@
 #! /usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.9.2
+# Version 0.9.3
 # Copyright (c) 2002-2009 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -62,32 +62,42 @@ def prepare target
 	action 'sync'
 end
 
+def downloadFile file
+	# Let mirror systems such as SourceForge provide a mirror but not try all of them
+	if headers = action("curl --head --progress-bar --insecure --ftp-pasv --location --max-redirs 2 '#{file}'")
+		unless result = (parseMap headers)['HTTP/1.1'] and
+			# Last header was "Not Found" or "Forbidden"
+			['404', '403'].include?((toKeyValue result).first)
+		then
+			name = File.basename file
+			name[/\?.*/] = ''  # Cut possible HTTP request parameters
+
+#			if action "wget --passive-ftp --tries=5 '#{file}'"
+#			if action "curl --progress-bar --show-error --verbose --remote-name --ftp-pasv --retry 5 --connect-timeout <seconds> '#{file}'"
+
+			if action "curl --output '#{name}' --progress-bar --insecure --ftp-pasv --location --max-redirs 2 '#{file}'"
+				return exists?(name)  # Double check
+			end
+		end
+	end
+
+	false
+end
+
 def downloadModule target
 	unless
 		if locations = (recipe = getRecipe target)['locations']
-			if files = recipe['files']
-				@log.subheader 'Downloading source file(s)'
-
-				(exists? target or action 'mkdir --parents ' + target) and
-				begin  # We have a destination dir
-					Dir.chdir target
-
-					for file in toList files
-						break if for location in toList locations
-							@log.subheader 'Trying ' + f = File.join(location, file)
-							break if downloadFile f
-						end
-					end
-				end
-			else
+			(packages = (packages = recipe['packages']) ?
+				firstColumn(parseList(packages)) :
+				recipe['files'] ? [] : commonName(target)  # packages + files requires explicit packages specification
+			) == [] or
+			begin
 				@log.subheader 'Downloading source package(s)'
+
 				Dir.chdir File.join(@configPath, 'downloading')
 
-				for package in ((packages = recipe['packages']) ?
-					firstColumn(parseList(packages)) :
-					commonName(target)
-				)
-					unless sourcePackageAvailable? package
+				for package in packages
+					unless sourcePackageAvailable? package  # Already there
 						break if for location in toList locations
 							break unless for type in ['tar.bz2', 'tbz2', 'tar.gz', 'tgz', 'zip']
 								@log.subheader 'Trying ' + f = File.join(location, file = package + '.' + type)
@@ -109,9 +119,10 @@ def downloadModule target
 				end
 			end
 		else  # Get it from a repository
-			(exists? dir = File.dirname(target) or action 'mkdir --parents ' + dir) and
+			exists? target or  # Already there
+			action 'mkdir --parents ' + dir = File.dirname(target) and
 			begin  # We have a destination dir
-				Dir.chdir File.dirname(target)  # if target['/']
+				Dir.chdir dir  # if target['/']
 
 				@log.subheader 'Checking out sources from CVS repository'
 				action 'cvs -q checkout -d ' + File.basename(target) +
@@ -128,40 +139,54 @@ def downloadModule target
 	end
 end
 
-def downloadFile file
-	# Let mirror systems such as SourceForge provide a mirror but not try all of them
-	if headers = action("curl --head --progress-bar --insecure --ftp-pasv --location --max-redirs 2 '#{file}'")
-		unless result = (parseMap headers)['HTTP/1.1'] and
-			# Last header was "Not Found" or "Forbidden"
-			['404', '403'].include?((toKeyValue result).first)
-		then
-#			if action "wget --passive-ftp --tries=5 '#{file}'"
-#			if action "curl --progress-bar --show-error --verbose --remote-name --ftp-pasv --retry 5 --connect-timeout <seconds> '#{file}'"
+def getFiles target
+	not files = (recipe = getRecipe target)['files'] or
+	unless
+		unless locations = recipe['locations']
+			@log.error 'No download locations specified'
+			false
+		else
+			@log.subheader 'Downloading source file(s)'
 
-			if action "curl --remote-name --progress-bar --insecure --ftp-pasv --location --max-redirs 2 '#{file}'"
-				return exists?(File.basename(file))
+			(exists? target or action 'mkdir --parents ' + target) and
+			begin  # We have a destination dir
+				Dir.chdir target
+
+				for file in toList files
+					break if for location in toList locations
+						@log.subheader 'Trying ' + f = File.join(location, file)
+						break if downloadFile f
+					end
+				end
 			end
 		end
+	then
+		@log.error 'Failed to download files'
+		false
+	else
+		action 'sync'
 	end
-
-	false
 end
 
 def updateModule target
 	unless
-		unless exists? target
-			@log.error 'No source installed; unable to update'
-			false
-		else
-			Dir.chdir target
-
-			if exists? 'CVS'
+		if exists? target and (Dir.chdir target; exists? 'CVS') and not
+			begin
 				@log.subheader 'Updating sources from CVS repository'
-				action 'cvs -q update -dP' + (@revision ? ' -r ' + @revision : '')
-			else
-				@log.warning 'Unable to update: not a CVS repository'
-				true
+
+				action 'cvs -q update -dP' + (@revision ? ' -r ' + @revision : '') or
+				begin
+					@log.error 'Failed to update from CVS repository'
+					false
+				end
 			end
+		then
+			false
+		else getFiles(target)  # or
+#			begin
+#				@log.error 'No CVS repository or source files available; unable to update'
+#				false
+#			end
 		end
 	then
 		@log.failure target
@@ -172,19 +197,22 @@ def updateModule target
 end
 
 def unpackModule target
+	exists? target or  # Already there
+	(packages = (packages = (recipe = getRecipe target)['packages']) ?
+		parseList(packages) :
+		recipe['files'] ? [] : commonName(target)  # packages + files requires explicit packages specification
+	) == [] or
 	unless
-		unless exists? dir = File.dirname(target) or action 'mkdir --parents ' + dir
-			false
-		else  # We have a destination parent directory
+		(exists? dir = File.dirname(target) or action 'mkdir --parents ' + dir) and
+		begin  # We have a destination parent directory
+			@log.subheader 'Unpacking source package(s)'
+
 			Dir.chdir File.dirname(target)  # if target['/']
-		
+
 			files = []
-		
+
 			unless
-				for package in (packages = getRecipe(target)['packages']) ?
-					parseList(packages) :
-					[commonName(target)]
-		
+				for package in packages
 					package, dir = package.split
 					base = File.join @sourcesPath, File.basename(package)
 					option = dir ? ' --directory=' + dir : ''
@@ -192,10 +220,10 @@ def unpackModule target
 					if dir and not exists? dir
 						break unless action 'mkdir --parents ' + dir
 					end
-		
+
 #					file = Dir[File.join(@sourcesPath, fullName target) + '.*'] [0]
 #					case File.basename file
-		
+
 					if exists? file = base + '.zip'
 						type = :zip
 						break unless action 'unzip ' + file + (dir ? ' -d ' + dir : '')
@@ -209,7 +237,7 @@ def unpackModule target
 						@log.error "Source package #{base}.* not found"
 						break
 					end
-		
+
 					files << [file, type]
 					action 'sync'
 				end
@@ -220,7 +248,7 @@ def unpackModule target
 					true
 				else  # Source package content has a deviating subdirectory name
 					@log.subheader 'Renaming source'
-		
+
 					file, type = files.first
 					result = `#{case type
 						when :zip  then 'unzip -lqq ' + file
@@ -251,70 +279,76 @@ def unpackModule target
 		@log.failure target
 		false
 	else
+		Dir.chdir @workDir
 		action 'sync'
 	end
 end
 
 def patchModule target
+	not exists? target or  # No source
 	unless
-		unless
-			(lineage = lineage target).each_with_index {|kin, i|
-				if exists? file = File.join(recipePath(kin), fullName(kin) + '.patch')
-					@log.header 'Applying patch from ancestor ' + kin
-					break unless action 'patch --strip=1 < ' + file
-				end
+		begin
+			Dir.chdir target
 
-				if exists? dir = File.join(recipePath(kin), 'patches')
-					@log.header 'Overlaying extra source files from ancestor ' + kin
-					break unless action "cp -a #{File.join dir, '*'} ." and
-						# FIXME: crude way to remove possible CVS dirs from patches
-						deleteCruft ''
-				end
-			}
-		then
-			false
-		else
 			unless
-				if dirs = (recipe = getRecipe target)['patch-config']
-					@log.header 'Patching configuration'
-					files = File.join @configPath, 'config/config.*'
-
-					if dirs == ''
-						action "cp -a --force #{files} ."
-					else
-						for dir in toList dirs
-							break unless action "cp -a --force #{files} #{dir}/"
-						end
+				(lineage = lineage target).each_with_index {|kin, i|
+					if exists? file = File.join(recipePath(kin), fullName(kin) + '.patch')
+						@log.header 'Applying patch from ancestor ' + kin
+						break unless action 'patch --strip=1 < ' + file
 					end
-				elsif dir = recipe['patch-legacy-config']
-					@log.header 'Patching configuration'
 
-					action "cp -a #{File.join @configPath, 'config/legacy/*'} " +
-						(dir == '' ? '.' : dir)
-				else
-					true
-				end
+					if exists? dir = File.join(recipePath(kin), 'patches')
+						@log.header 'Overlaying extra source files from ancestor ' + kin
+						break unless action "cp -a #{File.join dir, '*'} ." and
+							# FIXME: crude way to remove possible CVS dirs from patches
+							deleteCruft ''
+					end
+				}
 			then
 				false
 			else
 				unless
-					not cmdLines = recipe['patch'] or
-					begin
-						@log.header 'Executing patch instructions'
-						action toCommands(cmdLines)
+					if dirs = (recipe = getRecipe target)['patch-config']
+						@log.header 'Patching configuration'
+						files = File.join @configPath, 'config/config.*'
+
+						if dirs == ''
+							action "cp -a --force #{files} ."
+						else
+							for dir in toList dirs
+								break unless action "cp -a --force #{files} #{dir}/"
+							end
+						end
+					elsif dir = recipe['patch-legacy-config']
+						@log.header 'Patching configuration'
+
+						action "cp -a #{File.join @configPath, 'config/legacy/*'} " +
+							(dir == '' ? '.' : dir)
+					else
+						true
 					end
 				then
 					false
 				else
-					not recipe['make-shared'] or
-					begin
-						@log.header 'Enabling shared libraries'
-						action 'cp /resources/libtool/share/libtool/ltmain.sh .' and
-#							action 'aclocal -I /resources/indexes/share/aclocal' and
-#							action 'libtoolize --force' and
-#							action 'automake' and
-#							action 'autoconf'
-							action 'autoreconf'
+					unless
+						not cmdLines = recipe['patch'] or
+						begin
+							@log.header 'Executing patch instructions'
+							action toCommands(cmdLines)
+						end
+					then
+						false
+					else
+						not recipe['make-shared'] or
+						begin
+							@log.header 'Enabling shared libraries'
+							action 'cp /resources/libtool/share/libtool/ltmain.sh .' and
+#								action 'aclocal -I /resources/indexes/share/aclocal' and
+#								action 'libtoolize --force' and
+#								action 'automake' and
+#								action 'autoconf'
+								action 'autoreconf'
+						end
 					end
 				end
 			end
@@ -323,13 +357,14 @@ def patchModule target
 		@log.failure target
 		false
 	else
+		Dir.chdir @workDir
 		action 'sync'
 	end
 end
 
 def deleteModule target
+	not exists? target or
 	unless
-		not exists? target or
 		begin
 			@log.header 'Deleting source'
 			action 'rm --recursive --force ' + target
@@ -344,25 +379,15 @@ def deleteModule target
 end
 
 def getModule target
+	exists? target or
 	begin
-		exists? target or
-		begin
-			@log.subheader 'Installing source'
+		@log.subheader 'Installing source'
 
-			(sourcePackagesAvailable? target or downloadModule target) and (
-				exists? target or  # It was a repository checkout
-				unpackModule target  # It was a package download
-			) and
-			begin
-				Dir.chdir @workDir
-				Dir.chdir target
-				patchModule target
-			end
-		end
+		downloadModule(target) and unpackModule(target) and patchModule(target) and getFiles(target)
 	end or
 	begin
-		# FIXME: cascading error reporting
 		@log.error 'Source not (completely) installed'
+		# FIXME: cascading error reporting
 		@log.failure target
 		false
 	end
@@ -1071,7 +1096,6 @@ def patch targets
 	for target in targets.modules
 		prepareModule target
 
-		Dir.chdir target
 		unless patchModule target
 			@log.error 'Source not patched'
 			@log.failure targets.to_s
@@ -1890,7 +1914,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.9.2',
+	puts 'Syllable Build System 0.9.3',
 		'Copyright (c) 2002-2009 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
