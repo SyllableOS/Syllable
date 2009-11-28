@@ -1,0 +1,56 @@
+authors				Kaj de Vos
+status				testing
+
+headline			URL based library to access HTTP/FTP servers
+description
+	Libfetch provides a high-level interface for retrieving and uploading files using Uniform Resource Locators (URLs).
+
+	The library implements:
+		* local file access (file://)
+		* FTP
+		* HTTP
+		* HTTPS (optional, using OpenSSL)
+
+	FTP and HTTP proxies can be used.
+licenses			BSD
+
+home				cvsweb.netbsd.org/bsdweb.cgi/pkgsrc/net/libfetch/
+locations
+	http://repos.archlinux.org/wsvn/packages/libfetch/repos/core-i686/
+	ftp://ftp.archlinux.org/other/libfetch/
+;	ftp://ftp.netbsd.org/pub/pkgsrc/current/pkgsrc/net/libfetch/
+packages			libfetch-2.26
+files
+;	We need the one from Arch:
+	Makefile?op=dl&rev=0
+;	README.html
+;	DESCR
+;	files/common.h
+;	files/common.c
+;	files/errlist.sh
+;	files/fetch.3
+;	files/fetch.h
+;	files/fetch.c
+;	files/fetch.cat3
+;	files/file.c
+;	files/ftp.c
+;	files/ftp.errors
+;	files/http.c
+;	files/http.errors
+
+needs				OpenSSL
+
+system-prefix-var	DESTDIR
+_install-tree
+	include
+	lib
+	man
+;	man/cat3
+	man/man3
+_install-files
+	fetch.h			include/
+	libfetch.a		lib/
+;	fetch.0			man/cat3/
+	fetch.3			man/man3/
+
+documentation		DESCR README.html
