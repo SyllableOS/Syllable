@@ -18,13 +18,13 @@ home				cvsweb.netbsd.org/bsdweb.cgi/pkgsrc/net/libfetch/
 locations
 	http://repos.archlinux.org/wsvn/packages/libfetch/repos/core-i686/
 	ftp://ftp.archlinux.org/other/libfetch/
-;	ftp://ftp.netbsd.org/pub/pkgsrc/current/pkgsrc/net/libfetch/
+	ftp://ftp.netbsd.org/pub/pkgsrc/current/pkgsrc/net/libfetch/
 packages			libfetch-2.26
 files
 ;	We need the one from Arch:
 	Makefile?op=dl&rev=0
-;	README.html
-;	DESCR
+	README.html
+	DESCR
 ;	files/common.h
 ;	files/common.c
 ;	files/errlist.sh
