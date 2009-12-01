@@ -15,6 +15,7 @@ locations			ftp://ftp.archlinux.org/other/pacman/
 needs
 	LibArchive >= 2.7.1
 	LibFetch >= 2.25
+run-recommends		Pyhon
 
 ;configure-options	--with-root-dir=
 

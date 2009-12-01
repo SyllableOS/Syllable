@@ -5,7 +5,9 @@ headline			Pacman mirror list
 description
 	Server mirror list for package downloads for the Pacman package manager.
 
-home				www.archlinux.org/mirrorlist/
+home
+	www.archlinux.org/mirrorlist/
+;	wiki.archlinux.org/index.php/Mirrors
 locations			http://www.archlinux.org/mirrorlist/i686/
 files				all
 
