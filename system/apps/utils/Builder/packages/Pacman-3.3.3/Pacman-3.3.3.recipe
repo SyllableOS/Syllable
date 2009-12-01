@@ -20,6 +20,9 @@ run-recommends		Pyhon
 ;configure-options	--with-root-dir=
 
 system-prefix-var	DESTDIR
+install-tree
+	var
+	var/log
 
 documentation
 	COPYING NEWS AUTHORS
