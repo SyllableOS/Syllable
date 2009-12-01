@@ -11,9 +11,12 @@ home
 locations			http://www.archlinux.org/mirrorlist/i686/
 files				all
 
+make				true
+
 merge-install
 install-tree
-	etc
+;	etc
 	etc/pacman.d
+install				true
 install-files		all etc/pacman.d/mirrorlist
 ;move-files			mirrorlist /etc/pacman.d/
