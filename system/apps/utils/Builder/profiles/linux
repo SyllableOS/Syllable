@@ -642,6 +642,7 @@ modules
 
 	apps/other/LibFetch-2.26
 	apps/other/Pacman-3.3.3
+	apps/other/Pacman--mirrorlist
 
 ;	Needs GCC 3:
 ;	apps/other/qemu-0.9.1

@@ -1,0 +1,17 @@
+authors				Kaj de Vos
+status				testing
+
+headline			Pacman mirror list
+description
+	Server mirror list for package downloads for the Pacman package manager.
+
+home				www.archlinux.org/mirrorlist/
+locations			http://www.archlinux.org/mirrorlist/i686/
+files				all
+
+merge-install
+install-tree
+	etc
+	etc/pacman.d
+install-files		all etc/pacman.d/mirrorlist
+;move-files			mirrorlist /etc/pacman.d/
