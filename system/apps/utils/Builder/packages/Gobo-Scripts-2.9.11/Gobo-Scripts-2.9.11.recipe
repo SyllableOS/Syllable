@@ -1,0 +1,70 @@
+authors				Kaj de Vos
+status				developing
+notes				Contrary to its name, this package also contains C source code, and precompiled Linux binaries
+
+headline			GoboLinux system and software management tools
+description
+	This is the fundamental suite of utilities used to manage a GoboLinux system.
+
+	These programs can be installed on Syllable in addition to the native Syllable system tools, to get access to software that is available for GoboLinux.
+licenses			GPL
+
+home				www.gobolinux.org
+locations
+	http://gobolinux.org/packages/official/
+;	Out of date:
+	http://kundor.org/gobo/packages/official/
+	http://gobolinux.midgard.liu.se/packages/official/
+	ftp://sunsite.icm.edu.pl/pub/Linux/dist/gobolinux/packages/official/
+packages			Scripts--2.9.11--i686
+
+run-needs
+	Python >= 2.5
+	Ruby
+	GNU-AWK
+	SuDo
+	Patch
+run-recommends
+	Perl
+;	Many others...
+
+; They have it backwards:
+;install-prefix-var	DESTDIR
+;system-prefix-var	PREFIX
+
+make				true
+
+install-tree
+install				true
+install-files
+	2.9.11/bin							.
+	2.9.11/Functions					.
+	2.9.11/lib							.
+;	2.9.11/Data							.
+	2.9.11/Shared/man					.
+	2.9.11/lib							.
+;	2.9.11/Resources/Defaults/Settings	etc
+
+documentation		doc/*
+
+; GoboLinux system tree:
+post-install
+	for dir in \
+		Programs \
+		System/Links/Environment \
+		System/Links/Executables \
+		System/Links/Headers \
+		System/Links/Libraries \
+		System/Links/Manuals/man{0,1,2,3,4,5,6,7,8} \
+		System/Links/Shared \
+		System/Links/Tasks \
+		System/Settings \
+		System/Variable \
+		Files/Compile/Archives \
+		Files/Compile/Sources
+	do
+		mkdir --parents $IMAGE/$dir
+	done
+links
+;	/usr/bin/install	bin/real_install
+	/tmp/				/System/Variable/
