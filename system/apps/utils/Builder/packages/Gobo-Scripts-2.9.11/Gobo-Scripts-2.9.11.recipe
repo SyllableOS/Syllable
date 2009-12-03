@@ -35,20 +35,8 @@ run-recommends
 make				true
 
 install-tree
-install				true
-install-files
-	2.9.11/bin							.
-	2.9.11/Functions					.
-	2.9.11/lib							.
-;	2.9.11/Data							.
-	2.9.11/Shared/man					.
-	2.9.11/lib							.
-;	2.9.11/Resources/Defaults/Settings	etc
-
-documentation		2.9.11/doc/*
-
-; GoboLinux system tree:
-post-install
+; Limited GoboLinux system tree:
+install
 	for dir in \
 		Programs \
 		System/Links/Environment \
@@ -65,6 +53,18 @@ post-install
 	do
 		mkdir --parents $IMAGE/$dir
 	done
+
+install-files
+	2.9.11/bin								.
+	2.9.11/Functions						.
+	2.9.11/lib								.
+;	2.9.11/Data								.
+	2.9.11/Shared/man						.
+	2.9.11/lib								.
+	2.9.11/Resources/Defaults/Settings/*	/System/Settings/
+
 links
-;	/usr/bin/install	bin/real_install
+	/usr/bin/install	bin/real_install
 	/tmp/				/System/Variable/
+
+documentation		2.9.11/doc/*
