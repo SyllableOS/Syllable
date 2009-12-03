@@ -9,7 +9,7 @@ export INFOPATH=$INFOPATH:/System/Links/Manuals/info
 while read dir
 do
 	PYTHONPATH=$PYTHONPATH:$dir/site-packages
-done < <(find /System/Links/Libraries -maxdepth 1 -name python* | sort --reverse)
+done < <(find /System/Links/Libraries -maxdepth 1 -name 'python*' | sort --reverse)
 export PYTHONPATH
 
 # Paths for software compilation

@@ -2,11 +2,13 @@
 
 #export DLL_PATH=~/.nix-profile/lib:$DLL_PATH
 export LD_LIBRARY_PATH=~/.nix-profile/lib:$LD_LIBRARY_PATH
+export MANPATH=~/.nix-profile/man:~/.nix-profile/share/man:$MANPATH
+export INFOPATH=~/.nix-profile/info:$INFOPATH
 
 while read dir
 do
 	PYTHONPATH=$dir/site-packages:$PYTHONPATH
-done < <(find ~/.nix-profile/lib -maxdepth 1 -name python* | sort)
+done < <(find ~/.nix-profile/lib -maxdepth 1 -name 'python*' | sort)
 export PYTHONPATH
 
 # Paths for software compilation
