@@ -25,6 +25,7 @@ run-needs
 	SuDo
 	Patch
 run-recommends
+	GNU-PrivacyGuard
 	Perl
 ;	Many others...
 
