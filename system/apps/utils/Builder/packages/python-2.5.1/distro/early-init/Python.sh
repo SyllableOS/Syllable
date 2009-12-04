@@ -1,2 +1,7 @@
-# Link in modules in other locations
-export PYTHONPATH=/resources/indexes/lib/python2.5/site-packages
+# Look up modules in other locations
+
+while read dir
+do
+	PYTHONPATH=$dir/site-packages:$PYTHONPATH
+done < <(find /resources/indexes/lib -maxdepth 1 -name 'python*' | sort)
+export PYTHONPATH
