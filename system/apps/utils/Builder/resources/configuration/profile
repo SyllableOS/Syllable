@@ -7,6 +7,9 @@ export PWD
 export PATH=/resources/indexes/sbin:/resources/indexes/bin:/usr/local/sbin:/usr/local/bin:/bin:/system/indexes/sbin:/system/indexes/bin:/system/bin
 export DLL_PATH=@bindir@/lib:/resources/indexes/lib:/usr/local/lib:/system/indexes/lib:/system/libraries:/system
 
+export MANPATH=/resources/indexes/man:/usr/local/man:/usr/local/share/man:/system/indexes/man
+export INFOPATH=/resources/indexes/info:/usr/local/info:/system/indexes/info
+
 # Paths for software compilation
 export LIBRARY_PATH=/resources/indexes/lib:/usr/local/lib:/system/indexes/lib:/system/libraries
 export C_INCLUDE_PATH=/resources/indexes/include:/usr/local/include:/system/indexes/include:/system/development/headers
