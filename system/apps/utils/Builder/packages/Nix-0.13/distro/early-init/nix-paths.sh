@@ -11,6 +11,8 @@ do
 done < <(find ~/.nix-profile/lib -maxdepth 1 -name 'python*' | sort)
 export PYTHONPATH
 
+export PERL5LIB=~/.nix-profile/lib/site_perl/5.10.0:~/.nix-profile/lib/5.10.0:$PERL5LIB
+
 # Paths for software compilation
 
 export LIBRARY_PATH=~/.nix-profile/lib:$LIBRARY_PATH

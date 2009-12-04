@@ -12,6 +12,8 @@ do
 done < <(find /System/Links/Libraries -maxdepth 1 -name 'python*' | sort --reverse)
 export PYTHONPATH
 
+export PERL5LIB=$PERL5LIB:/System/Links/Libraries/site_perl/5.10.0:/System/Links/Libraries/5.10.0
+
 # Paths for software compilation
 
 export LIBRARY_PATH=$LIBRARY_PATH:/System/Links/Libraries
