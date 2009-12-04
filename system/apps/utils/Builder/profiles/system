@@ -163,11 +163,7 @@ prepare
 ;	For OpenSSL?
 ;	ln -s /resources/indexes/bin/perl	usr/local/bin/perl &&
 ;	From BinUtils, for building OpenSSL:
-	ln -s /resources/indexes/bin/ranlib	usr/bin/ &&
-
-;	For sshd:
-	install -m700 -d	var/lib/sshd
-;	chown root:system	var/lib/sshd
+	ln -s /resources/indexes/bin/ranlib	usr/bin/
 
 resources
 	boot/grub				menu.lst							text/plain

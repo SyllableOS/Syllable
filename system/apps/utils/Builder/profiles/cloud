@@ -223,7 +223,10 @@ prepare
 	ln -s /resources/rsync/bin/rsync				usr/bin/ &&
 	ln -s /resources/samba/sbin/nmbd				usr/sbin/ &&
 	ln -s /resources/samba/sbin/smbd				usr/sbin/ &&
-	ln -s /resources/samba/sbin/winbindd			usr/sbin/
+	ln -s /resources/samba/sbin/winbindd			usr/sbin/ &&
+
+;	For Python:
+	ln -s /resources/indexes/bin/python usr/bin/python
 
 resources
 	boot/grub									menu.lst

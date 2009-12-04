@@ -1,5 +1,13 @@
 ; Syllable base distribution, in addition to core system
 
+prepare
+;	For sshd:
+	install -m700 -d	var/lib/sshd &&
+;	chown root:system	var/lib/sshd &&
+
+;	For Python:
+	ln -s /resources/indexes/bin/python usr/bin/python
+
 resources
 ;	addattrib can't handle wildcards:
 ;	system/fonts						fonts/URW/*.ttf				application/x-font-ttf
