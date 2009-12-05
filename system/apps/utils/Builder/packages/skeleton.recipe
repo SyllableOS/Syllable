@@ -173,7 +173,9 @@ install-targets		install
 
 post-install		<Commands after make install, in the build directory>
 
-; Extra files to install from the source tree:
+; Extra files to install from the source tree.
+; If the destination is an absolute path it will be relative to the root
+; of the system image.
 install-files
 	<Original> <Destination>
 
@@ -202,7 +204,7 @@ no-strip
 
 pre-register		<Commands before registration, in the installation directory>
 
-; Files to move within the installation
+; Files to move within the installation.
 ; If the destination is an absolute path it will be relative to the root
 ; of the system image.
 move-files
