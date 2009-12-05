@@ -39,7 +39,7 @@ install-tree
 ; Limited GoboLinux system tree:
 install
 	for dir in \
-		Programs \
+		Programs/Scripts/2.9.11 \
 		System/Links/Environment \
 		System/Links/Executables \
 		System/Links/Headers \
@@ -57,7 +57,7 @@ install
 
 install-files
 	2.9.11/bin								.
-	2.9.11/Functions						.
+	2.9.11/Functions						/Programs/Scripts/2.9.11/
 	2.9.11/lib								.
 ;	2.9.11/Data								.
 	2.9.11/Shared/man						.
@@ -65,7 +65,9 @@ install-files
 	2.9.11/Resources/Defaults/Settings/*	/System/Settings/
 
 links
-	/usr/bin/install	bin/real_install
-	/tmp/				/System/Variable/
+	/usr/bin/install			bin/real_install
+	/resources/Gobo-Scripts/bin	/Programs/Scripts/2.9.11/
+	2.9.11						/Programs/Scripts/Current
+	/tmp/						/System/Variable/
 
 documentation		2.9.11/doc/*
