@@ -60,14 +60,15 @@ install-files
 	2.9.11/bin								.
 	2.9.11/lib								.
 	2.9.11/Shared/man						.
-;	2.9.11/Data								.
+	2.9.11/Data								/Programs/Scripts/2.9.11/
+;	Compile needs it here:
 	2.9.11/Functions						/Programs/Scripts/2.9.11/
 	2.9.11/Resources						/Programs/Scripts/2.9.11/
 	2.9.11/Resources/Defaults/Settings/*	/System/Settings/
 
 links
 	/usr/bin/install					bin/real_install
-	/resources/Gobo-Scripts/bin			/Programs/Scripts/2.9.11/
+	/resources/Gobo-Scripts/bin/		/Programs/Scripts/2.9.11/
 	2.9.11								/Programs/Scripts/Current
 	/tmp/								/System/Variable/
 	/etc/passwd							/System/Settings/
@@ -75,5 +76,9 @@ links
 	/System/Links/Libraries/X11/fonts/	/Files/Fonts
 	/System/Settings/fonts/				/etc/
 	/System/Settings/X11/				/etc/
+;	For Compile:
+	/resources/indexes/bin/make			/usr/bin/
+
+move-files			etc/* /System/Settings/Scripts/
 
 documentation		2.9.11/doc/*
