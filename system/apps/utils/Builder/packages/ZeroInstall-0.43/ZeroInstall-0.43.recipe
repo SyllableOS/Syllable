@@ -34,7 +34,8 @@ build-needs			gettext
 ;make				true
 
 ;super-install
+; For documentation:
+install-tree
 ;install				python setup.py install
 
-; Installation location is not there:
-;documentation		README COPYING
+documentation		README COPYING
