@@ -50,6 +50,7 @@ install
 		System/Links/Tasks \
 		System/Settings \
 		System/Variable \
+		Files/Fonts \
 		Files/Compile/Archives \
 		Files/Compile/Sources
 	do
@@ -68,16 +69,33 @@ install-files
 	Settings/*								/System/Settings/
 
 links
-	/usr/bin/install					bin/real_install
-	/resources/Gobo-Scripts/bin/		/Programs/Scripts/2.9.11/
-	2.9.11								/Programs/Scripts/Current
-	/tmp/								/System/Variable/
-	/etc/passwd							/System/Settings/
-	/etc/group							/System/Settings/
-	/System/Links/Libraries/X11/fonts/	/Files/Fonts
-	/System/Settings/fonts/				/etc/
-	/System/Settings/X11/				/etc/
+	/usr/bin/install							bin/real_install
+	/resources/Gobo-Scripts/bin/				/Programs/Scripts/2.9.11/
+	2.9.11										/Programs/Scripts/Current
+	/tmp/										/System/Variable/
+	/etc/passwd									/System/Settings/
+	/etc/group									/System/Settings/
+;	Essential for X11:
+	/System/Links/Shared/fonts/misc/			/Files/Fonts/Misc
+	../../../lib/X11/fonts/misc/fonts.alias		/Programs/Xorg-Font/Current/Shared/fonts/misc/
+;	Essential for REBOL/View 2:
+	/System/Links/Shared/fonts/75dpi/			/Files/Fonts/
+	../../../lib/X11/fonts/75dpi/fonts.alias	/Programs/Xorg-Font/Current/Shared/fonts/75dpi/
+	/System/Links/Shared/fonts/100dpi/			/Files/Fonts/
+	../../../lib/X11/fonts/100dpi/fonts.alias	/Programs/Xorg-Font/Current/Shared/fonts/100dpi/
+	/System/Links/Shared/fonts/TTF/				/Files/Fonts/TrueType
+	../../../lib/X11/fonts/TTF/fonts.alias		/Programs/Xorg-Font/Current/Shared/fonts/TTF/
+	/System/Links/Shared/fonts/OTF/				/Files/Fonts/OpenType
+	../../../lib/X11/fonts/OTF/fonts.alias		/Programs/Xorg-Font/Current/Shared/fonts/OTF/
+;	/System/Links/Shared/fonts/Type1/			/Files/Fonts/
+;	../../../lib/X11/fonts/Type1/fonts.alias	/Programs/Xorg-Font/Current/Shared/fonts/Type1/
+	/System/Links/Shared/fonts/cyrillic/		/Files/Fonts/Cyrillic
+	../../../lib/X11/fonts/cyrillic/fonts.alias	/Programs/Xorg-Font/Current/Shared/fonts/cyrillic/
+;	/System/Links/Shared/fonts/Speedo/			/Files/Fonts/
+;	../../../lib/X11/fonts/Speedo/fonts.alias	/Programs/Xorg-Font/Current/Shared/fonts/Speedo/
+	/System/Settings/fonts/						/etc/
+	/System/Settings/X11/						/etc/
 ;	For Compile:
-	/resources/indexes/bin/make			/usr/bin/
+	/resources/indexes/bin/make					/usr/bin/
 
 documentation		2.9.11/doc/*
