@@ -25,11 +25,11 @@ needs
 	Python >= 2.5
 ;	Yet can't currently verify signature key:
 	GNU-PrivacyGuard 1
-;	For the GUI:
-	PyGTK >= 2.12
 ;	For just command line:
-	PyGObject
+	PythonGObject
 build-needs			gettext
+; For the GUI:
+recommends			PythonGTK >= 2.12
 
 ;make				true
 

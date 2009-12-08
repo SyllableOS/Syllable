@@ -1,0 +1,33 @@
+authors				Kaj de Vos
+status				testing
+
+headline			Python bindings for the GObject library
+description
+	GObject is a object system library used by GTK+ and GStreamer.
+
+	PyGObject provides a convenient wrapper for the GObject library for use in Python programs, and takes care of many of the boring details such as managing memory and type casting. When combined with PyGTK, PyORBit and gnome-python, it can be used to write full featured Gnome applications.
+
+	This archive contains bindings for the GLib, GObject and GIO, to be used in Python. It is a fairly complete set of bindings, it's already rather useful, and is usable to write moderately complex programs. (See the examples directory for some examples of the simpler programs you could write).
+licenses			LGPL 2.1+
+
+home				www.pygtk.org
+locations
+	ftp://ftp.gnome.org/pub/GNOME/sources/pygobject/2.20/
+	http://ftp.gnome.org/pub/GNOME/sources/pygobject/2.20/
+packages			pygobject-2.20.0
+
+needs
+;	For GIO bindings:
+	GLib >= 2.16.0
+;	GLib >= 2.14.0
+	Python >= 2.3.5
+recommends			LibFFI
+build-recommends	PackageConfig
+
+;configure-options	--disable-docs
+
+documentation
+	README COPYING NEWS ChangeLog AUTHORS
+;	ChangeLog.pre-2.18
+;	docs
+;develop-docs		examples
