@@ -632,7 +632,7 @@ def installModule staging, target
 							['image', 'system', 'libraries', 'compatibility'].include?(staging) and
 							not recipe['system-prefix-var']
 						then
-							@log.warning 'Doing an image installation without a system-prefix-var'
+							@log.warning 'Doing an image installation without a system-prefix-var.'
 						end
 
 						unless action(
