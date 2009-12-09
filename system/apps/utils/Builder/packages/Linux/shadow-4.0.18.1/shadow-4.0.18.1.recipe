@@ -1,5 +1,6 @@
 authors				Kaj de Vos
 status				testing
+warnings			Doesn't install headers.
 
 licenses			BSD | Artistic
 
