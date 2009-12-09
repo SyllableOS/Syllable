@@ -28,6 +28,8 @@ build-recommends
 	db
 	expat
 
+configure-options	--enable-shared
+
 test-targets
 	test
 ;	testall
