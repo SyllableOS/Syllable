@@ -1,7 +1,7 @@
 #! /usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.9.6
+# Version 0.9.7
 # Copyright (c) 2002-2009 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -440,7 +440,7 @@ def configureModule staging, target
 											' --prefix='
 										) + prefix(staging, target)
 									) +
-									(['system', 'libraries', 'compatibility'].include?(staging) && @systemBuild ?
+									(@systemBuild && ['system', 'libraries', 'compatibility'].include?(staging) && recipe['system-prefix-var'] ?
 										' --includedir=' + File.join('/system/development/resources', installName(target), version(target), 'include') :
 										''
 									) +
@@ -628,7 +628,7 @@ def installModule staging, target
 							exists?(File.join(sourcePath(target), configureCommand(target)))
 						if exists? dir = buildDir(target) then Dir.chdir dir end
 
-						if not action(
+						unless action(
 							if cmdLines = recipe['install']
 								toCommands cmdLines
 							else
@@ -1920,7 +1920,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.9.6',
+	puts 'Syllable Build System 0.9.7',
 		'Copyright (c) 2002-2009 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
