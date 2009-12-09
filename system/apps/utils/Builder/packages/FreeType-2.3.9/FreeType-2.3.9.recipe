@@ -23,6 +23,8 @@ _patch
 ; Needs Python:
 ;make-targets		refdoc
 
+system-prefix-var	DESTDIR
+
 documentation
 	README ChangeLog
 	docs/*

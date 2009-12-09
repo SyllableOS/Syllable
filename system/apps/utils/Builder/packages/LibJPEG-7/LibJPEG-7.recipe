@@ -26,6 +26,8 @@ _configure-options
 
 test-targets		test
 
+system-prefix-var	DESTDIR
+
 _install-tree
 	bin
 	include

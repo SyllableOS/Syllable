@@ -15,8 +15,10 @@ locations
 	ftp://ftp.remotesensing.org/pub/libtiff/
 	http://libtiff.maptools.org/dl/
 
-build-needs			libjpeg
+build-needs			LibJPEG
 build-recommends	diffutils
+
+system-prefix-var	DESTDIR
 
 documentation		README RELEASE-DATE VERSION COPYRIGHT ChangeLog TODO
 internal-docs		HOWTO-RELEASE
