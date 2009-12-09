@@ -1,7 +1,7 @@
 #! /usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.9.7
+# Version 0.9.8
 # Copyright (c) 2002-2009 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -738,7 +738,16 @@ def installModule staging, target
 									}
 								then
 									false
-								elsif links = recipe['links'] and links != '' and not
+								elsif links = recipe['links'] and links != '' and
+									(	@systemBuild and
+										['system', 'libraries', 'compatibility'].include?(staging) and
+										recipe['system-prefix-var'] and not
+										exists? 'include' ||
+										begin
+											@log.header 'Creating temporary headers directory'
+											action 'mkdir include'
+										end
+									) || !
 									begin
 										@log.header 'Creating links'
 
@@ -828,7 +837,7 @@ def installModule staging, target
 									end
 								then
 									false
-								elsif staging == 'libraries' and @systemBuild and not
+								elsif @systemBuild and staging == 'libraries' and not
 									begin
 										@log.header 'Cleaning up system libraries'
 
@@ -839,7 +848,7 @@ def installModule staging, target
 									end
 								then
 									false
-								elsif staging == 'compatibility' and @systemBuild and not
+								elsif @systemBuild and staging == 'compatibility' and not
 									begin
 										@log.header 'Cleaning up compatibility libraries'
 
@@ -850,7 +859,7 @@ def installModule staging, target
 									end
 								then
 									false
-								elsif ['system', 'libraries', 'compatibility'].include?(staging) and @systemBuild and not
+								elsif @systemBuild and ['system', 'libraries', 'compatibility'].include?(staging) and not
 									begin
 										@log.header 'Moving (remaining) development files'
 
@@ -1920,7 +1929,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.9.7',
+	puts 'Syllable Build System 0.9.8',
 		'Copyright (c) 2002-2009 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
