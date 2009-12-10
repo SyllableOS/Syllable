@@ -178,55 +178,61 @@ links
 
 ;	/Programs/DejaVu-Fonts--current
 ;	In Linux:
-	2.6.25			/Programs/Linux-Headers/Current
-	2.6.25			/Programs/Linux/Current
+	2.6.25									/Programs/Linux-Headers/Current
+	2.6.25									/Programs/Linux/Current
 ;	In Linux:
 ;	/Programs/Linux-Fusion-3.2.4
 ;	/Programs/KQEmu-1.3.0pre11
-	2.7				/Programs/Glibc/Current
-	1.2.3			/Programs/ZLib/Current
-	1.4.0			/Programs/Iptables/Current
-	4.2.3			/Programs/LibStdC++/Current
-	5.7				/Programs/Ncurses/Current
-	6.0				/Programs/Readline/Current
+
+	2.7										/Programs/Glibc/Current
+;	The loader needs to be available through this path:
+	/system/resources/glibc/2.7/lib/		/Programs/Glibc/2.7/
+	/Programs/Glibc/2.7/lib/ld-linux.so.2	/System/Links/Libraries/
+	/System/Links/Libraries/ld-linux.so.2	/lib/
+
+	1.2.3									/Programs/ZLib/Current
+	1.4.0									/Programs/Iptables/Current
+	4.2.3									/Programs/LibStdC++/Current
+	5.7										/Programs/Ncurses/Current
+	6.0										/Programs/Readline/Current
 ;	/Programs/BinUtils-2.19.1-objcopy
-	1.8.6			/Programs/Ruby/Current
-	0.97			/Programs/Grub/Current
-	6.9				/Programs/CoreUtils/Current
-	4.0				/Programs/Bash/Current
-	2.5.4			/Programs/Grep/Current
-	4.2.1			/Programs/Sed/Current
-	6.0				/Programs/Unzip/Current
-	1.0.5			/Programs/Bzip2/Current
+	1.8.6									/Programs/Ruby/Current
+	0.97									/Programs/Grub/Current
+	6.9										/Programs/CoreUtils/Current
+	4.0										/Programs/Bash/Current
+	2.5.4									/Programs/Grep/Current
+	4.2.1									/Programs/Sed/Current
+	6.0										/Programs/Unzip/Current
+	1.0.5									/Programs/Bzip2/Current
 ;	/Programs/Boron-0.1.0
 ;	/Programs/ORCA--current
-	2.86			/Programs/Sysvinit/Current
+	2.86									/Programs/Sysvinit/Current
 ;	/Programs/LFS-bootscripts-6.3
-	113				/Programs/Udev/Current
+	113										/Programs/Udev/Current
 ;	/Programs/UDev-config-6.3
-	3.2.2			/Programs/Module-Init-Tools/Current
-	1.40.2			/Programs/E2FSProgs/Current
-	2.12r			/Programs/Util-Linux/Current
-	1.4.1			/Programs/Sysklogd/Current
-	4.0.18.1		/Programs/Shadow/Current
+	3.2.2									/Programs/Module-Init-Tools/Current
+	1.40.2									/Programs/E2FSProgs/Current
+	2.12r									/Programs/Util-Linux/Current
+	1.4.1									/Programs/Sysklogd/Current
+	4.0.18.1								/Programs/Shadow/Current
 ;	Libraries:
-	4.6.21			/Programs/DB/Current
-	2.6.25			/Programs/IPRoute2/Current
-	1.12			/Programs/KBD/Current
-	3.6.19			/Programs/ReiserFSProgs/Current
-	4.4.2			/Programs/FindUtils/Current
-	2.3.9			/Programs/FreeType/Current
-	7				/Programs/JPEG/Current
-	1.2.37			/Programs/LibPNG/Current
-	4.1.6			/Programs/Giflib/Current
-	3.8.2			/Programs/TIFF/Current
-	1.1.4			/Programs/LibOGG/Current
-	1.2.1			/Programs/Flac/Current
-	1.2.2			/Programs/LibVorbis/Current
-	1.0				/Programs/LibTheora/Current
-	0.5				/Programs/FFmpeg/Current
-	2.7				/Programs/FAAD2/Current
-	1.0.0			/Programs/DirectFB/Current
+	4.6.21									/Programs/DB/Current
+	2.6.25									/Programs/IPRoute2/Current
+	1.12									/Programs/KBD/Current
+	3.6.19									/Programs/ReiserFSProgs/Current
+	4.4.2									/Programs/FindUtils/Current
+	2.3.9									/Programs/FreeType/Current
+	7										/Programs/JPEG/Current
+	1.2.37									/Programs/LibPNG/Current
+	4.1.6									/Programs/Giflib/Current
+	3.8.2									/Programs/TIFF/Current
+	1.1.4									/Programs/LibOGG/Current
+	1.2.1									/Programs/Flac/Current
+	1.2.2									/Programs/LibVorbis/Current
+	1.0										/Programs/LibTheora/Current
+	0.5										/Programs/FFmpeg/Current
+	2.7										/Programs/FAAD2/Current
+	1.0.0									/Programs/DirectFB/Current
 ;	/Programs/Man2HTML
 ;	/Programs/Packager
 ;	/Programs/Liberation-Fonts--current
@@ -235,45 +241,45 @@ links
 ;	/Programs/FreeFont--current
 ;	/Programs/MIME-Support--current
 ;	/Programs/BLFS-bootscripts-20070822
-	3.2.7			/Programs/Procps/Current
-	1.6.9p9			/Programs/Sudo/Current
-	1.6				/Programs/MkTemp/Current
-	0.9.8k			/Programs/OpenSSL/Current
+	3.2.7									/Programs/Procps/Current
+	1.6.9p9									/Programs/Sudo/Current
+	1.6										/Programs/MkTemp/Current
+	0.9.8k									/Programs/OpenSSL/Current
 ;	/Programs/CA-Bundle--current
-	0.1.12			/Programs/libUSB/Current
-	1.0.15			/Programs/ALSA-Lib/Current
-	1.0.15			/Programs/ALSA-Utils/Current
-	7.19.6			/Programs/Curl/Current
-	5.2p1			/Programs/OpenSSH/Current
-	3.0.5			/Programs/DHCP/Current
-	29				/Programs/Wireless-Tools/Current
+	0.1.12									/Programs/libUSB/Current
+	1.0.15									/Programs/ALSA-Lib/Current
+	1.0.15									/Programs/ALSA-Utils/Current
+	7.19.6									/Programs/Curl/Current
+	5.2p1									/Programs/OpenSSH/Current
+	3.0.5									/Programs/DHCP/Current
+	29										/Programs/Wireless-Tools/Current
 ;	/Programs/MSNTP-1.6
-	1.3.4			/Programs/CUPS/Current
-	8.64			/Programs/GhostScript/Current
+	1.3.4									/Programs/CUPS/Current
+	8.64									/Programs/GhostScript/Current
 ;	In CUPS:
-	5.2.3			/Programs/Gutenprint/Current
-	2.0				/Programs/JBIG-KIT/Current
+	5.2.3									/Programs/Gutenprint/Current
+	2.0										/Programs/JBIG-KIT/Current
 ;	In CUPS:
-	2.0.0			/Programs/Splix/Current
-	1.0.20			/Programs/Sane-Backends/Current
-	1.3.12			/Programs/Gzip/Current
-	1.6				/Programs/InetUtils/Current
-	429				/Programs/Less/Current
-	1.22			/Programs/Tar/Current
-	3.0				/Programs/Zip/Current
-	9.04			/Programs/P7Zip/Current
-	2.8.1			/Programs/DiffUtils/Current
+	2.0.0									/Programs/Splix/Current
+	1.0.20									/Programs/Sane-Backends/Current
+	1.3.12									/Programs/Gzip/Current
+	1.6										/Programs/InetUtils/Current
+	429										/Programs/Less/Current
+	1.22									/Programs/Tar/Current
+	3.0										/Programs/Zip/Current
+	9.04									/Programs/P7Zip/Current
+	2.8.1									/Programs/DiffUtils/Current
 ;	Gobo has the GNU version under this name:
 ;	/Programs/Netcat-1.10
-	1.72			/Programs/Transmission/Current
-	2.01.01a61		/Programs/CDRTools/Current
+	1.72									/Programs/Transmission/Current
+	2.01.01a61								/Programs/CDRTools/Current
 ;	/Programs/Man
-	1.2.13			/Programs/SDL/Current
-	1.2.7			/Programs/SDL_net/Current
-	1.2.9			/Programs/SDL_mixer/Current
-	1.0.3			/Programs/SDL_sound/Current
-	1.2.8			/Programs/SDL_image/Current
-	2.0.9			/Programs/SDL_ttf/Current
+	1.2.13									/Programs/SDL/Current
+	1.2.7									/Programs/SDL_net/Current
+	1.2.9									/Programs/SDL_mixer/Current
+	1.0.3									/Programs/SDL_sound/Current
+	1.2.8									/Programs/SDL_image/Current
+	2.0.9									/Programs/SDL_ttf/Current
 ;	/Programs/REBOL-Core--current
 ;	/Programs/TINY--current
 ;	/Programs/REBOL-services--current
@@ -285,13 +291,13 @@ links
 ;	/Programs/REBOL-MySQL-1.2.0
 ;	/Programs/S3Sync--current
 ;	/Programs/Genode-9.02
-	2.1.1			/Programs/Slang/Current
-	2.14.4			/Programs/GLib/Current
-	4.6.1			/Programs/MC/Current
+	2.1.1									/Programs/Slang/Current
+	2.14.4									/Programs/GLib/Current
+	4.6.1									/Programs/MC/Current
 ;	/Programs/Rsync-2.6.9
-	2.1pre36		/Programs/Links/Current
+	2.1pre36								/Programs/Links/Current
 ;	/Programs/Pengupop-2.1.12
 ;	/Programs/LibFetch-2.26
 ;	/Programs/Pacman-3.3.3
 
-	2.6.4			/Programs/Python/Current
+	2.6.4									/Programs/Python/Current
