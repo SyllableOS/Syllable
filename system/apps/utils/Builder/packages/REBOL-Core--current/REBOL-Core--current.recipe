@@ -1,6 +1,6 @@
 authors				Kaj de Vos
 status				developing
-notes				Alpha pre-release version at the moment
+notes				Alpha pre-release version
 
 headline			Relative Expression Based Object Language
 description
@@ -17,7 +17,7 @@ home
 	www.rebol.com/rebol3/
 ;	www.rebol.net
 locations			http://www.rebol.com/downloads/
-packages
+;packages
 
 ; For pre-built binary:
 ;make				true
@@ -34,4 +34,6 @@ install-files
 
 documentation		info.txt
 
-links				core bin/r3
+links
+	core			bin/rebol
+	core			bin/r3
