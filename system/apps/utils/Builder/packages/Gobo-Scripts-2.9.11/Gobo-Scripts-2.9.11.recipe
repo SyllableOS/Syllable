@@ -6,15 +6,15 @@ headline			GoboLinux system and software management tools
 description
 	This is the fundamental suite of utilities used to manage a GoboLinux system.
 
-	These programs can be installed on Syllable in addition to the native Syllable system tools, to get access to software that is available for GoboLinux.
+	With care, these programs can be installed on Syllable in addition to the native Syllable system tools, to get access to software that is available for GoboLinux.
 licenses			GPL
 
 home				www.gobolinux.org
 locations
 	http://gobolinux.org/packages/official/
 ;	Out of date:
-	http://kundor.org/gobo/packages/official/
 	http://gobolinux.midgard.liu.se/packages/official/
+	http://gobo.kundor.org/packages/official/
 	ftp://sunsite.icm.edu.pl/pub/Linux/dist/gobolinux/packages/official/
 packages			Scripts--2.9.11--i686
 
@@ -30,9 +30,15 @@ run-recommends
 	Perl
 ;	Many others...
 
+patch
+;	No other server has the package descriptions:
+	sed -i 's/gobo.calica.com/gobolinux.midgard.liu.se/' 2.9.11/Resources/Defaults/Settings/Scripts/DescribeProgram.conf
+;	Package sandboxes need more infrastructure:
+	sed -i 's/directoriesSandbox=yes/directoriesSandbox=no/' 2.9.11/Resources/Defaults/Settings/Scripts/Directories.conf
+
 ; They have it backwards:
-;install-prefix-var	DESTDIR
-;system-prefix-var	PREFIX
+install-prefix-var	DESTDIR
+system-prefix-var	PREFIX
 
 make				true
 
@@ -66,7 +72,6 @@ install-files
 	2.9.11/Functions						/Programs/Scripts/2.9.11/
 	2.9.11/Resources						/Programs/Scripts/2.9.11/
 	2.9.11/Resources/Defaults/Settings/*	/System/Settings/
-	Settings/*								/System/Settings/
 
 links
 	/usr/bin/install							bin/real_install
