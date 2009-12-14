@@ -8,6 +8,11 @@ export PATH=/resources/indexes/sbin:/resources/indexes/bin:/usr/local/sbin:/usr/
 #export DLL_PATH=@bindir@/lib:/resources/indexes/lib:/usr/local/lib:/system/indexes/lib:/system
 export LD_LIBRARY_PATH=/resources/indexes/lib:/usr/local/lib:/usr/lib:/lib:/system/indexes/lib:/system/libraries
 
+if [ -e /System/Links/Libraries ]  # Gobo packages are installed
+then
+	export LD_LIBRARY_PATH=/System/Links/Libraries:$LD_LIBRARY_PATH
+fi
+
 export MANPATH=/resources/indexes/man:/usr/local/man:/usr/local/share/man:/usr/man:/usr/share/man:/system/indexes/man
 export INFOPATH=/resources/indexes/info:/usr/local/info:/usr/info:/system/indexes/info
 
