@@ -29,6 +29,7 @@ install
 ;		Programs/Linux-Fusion-3.2.4 \
 ;		Programs/KQEmu-1.3.0pre11 \
 		Programs/Glibc/2.7 \
+		Programs/Glibc/Settings \
 		Programs/ZLib/1.2.3 \
 		Programs/Iptables/1.4.0 \
 		Programs/LibStdC++/4.2.3 \
@@ -143,6 +144,17 @@ install
 	do
 		mkdir --parents $IMAGE/$dir
 	done
+
+install-files
+	2.9.11/bin								.
+	2.9.11/lib								.
+	2.9.11/Shared/man						.
+	2.9.11/Data								/Programs/Scripts/2.9.11/
+;	Compile needs it here:
+	2.9.11/Functions						/Programs/Scripts/2.9.11/
+	2.9.11/Resources						/Programs/Scripts/2.9.11/
+	2.9.11/Resources/Defaults/Settings/*	/System/Settings/
+	ld.so.conf								/Programs/Glibc/Settings/
 
 links
 	/usr/bin/install							bin/real_install
