@@ -74,6 +74,11 @@ install-files
 	2.9.11/Resources/Defaults/Settings/*	/System/Settings/
 
 links
+;	This one is destructive!
+	/System/Links/Headers/						/usr/include
+;	Headers way off course:
+	/System/Links/Libraries/glib-2.0/			/usr/lib/
+	/System/Links/Libraries/gtk-2.0/			/usr/lib/
 	/usr/bin/install							bin/real_install
 	/resources/Gobo-Scripts/bin/				/Programs/Scripts/2.9.11/
 	2.9.11										/Programs/Scripts/Current

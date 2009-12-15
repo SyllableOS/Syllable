@@ -157,6 +157,11 @@ install-files
 	ld.so.conf								/Programs/Glibc/Settings/
 
 links
+;	This one is destructive!
+	/System/Links/Headers/						/usr/include
+;	Headers way off course:
+	/System/Links/Libraries/glib-2.0/			/usr/lib/
+	/System/Links/Libraries/gtk-2.0/			/usr/lib/
 	/usr/bin/install							bin/real_install
 	/tmp/										/System/Variable/
 	/etc/passwd									/System/Settings/
