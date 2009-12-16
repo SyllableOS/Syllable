@@ -15,5 +15,5 @@ links
 	core			bin/rebol
 	core			bin/r3
 ;	Linux binary compatibility hack:
-	libc.so.2		bin/lib/libc.so.6
-	libm.so.2		bin/lib/libm.so.6
+	libc.so.2		lib/libc.so.6
+	libm.so.2		lib/libm.so.6

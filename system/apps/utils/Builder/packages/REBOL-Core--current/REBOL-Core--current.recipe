@@ -20,7 +20,7 @@ locations			http://www.rebol.com/downloads/
 ;packages
 
 ; For pre-built binary:
-make				true
+;make				true
 
 install-tree
 	bin
@@ -35,5 +35,5 @@ install-files
 documentation		info.txt
 
 links
-	core			bin/rebol
+;	core			bin/rebol
 	core			bin/r3
