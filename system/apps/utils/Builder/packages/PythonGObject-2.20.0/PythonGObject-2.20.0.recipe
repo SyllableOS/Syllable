@@ -18,13 +18,15 @@ packages			pygobject-2.20.0
 
 needs
 ;	For GIO bindings:
-	GLib >= 2.16.0
-;	GLib >= 2.14.0
+	GLibrary >= 2.16.0
+;	GLibrary >= 2.14.0
 	Python >= 2.3.5
 recommends			LibFFI
 build-recommends	PackageConfig
 
 ;configure-options	--disable-docs
+
+system-prefix-var	DESTDIR
 
 documentation
 	README COPYING NEWS ChangeLog AUTHORS

@@ -17,6 +17,8 @@ build-recommends	bzip2
 ;	--enable-sha512
 ;	--with-capabilities
 
+system-prefix-var	DESTDIR
+
 documentation
 	README COPYING BUGS ABOUT-NLS NEWS ChangeLog TODO PROJECTS AUTHORS THANKS
 	doc/FAQ doc/OpenPGP

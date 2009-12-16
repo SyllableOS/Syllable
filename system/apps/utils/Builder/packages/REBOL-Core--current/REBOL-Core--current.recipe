@@ -20,7 +20,7 @@ locations			http://www.rebol.com/downloads/
 ;packages
 
 ; For pre-built binary:
-;make				true
+make				true
 
 install-tree
 	bin

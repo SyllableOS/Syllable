@@ -137,10 +137,13 @@ install
 ;		Programs/Rsync/2.6.9 \
 		Programs/Links/2.1pre36 \
 ;		Programs/Pengupop-2.1.12 \
-;		Programs/LibFetch-2.26 \
-;		Programs/Pacman-3.3.3 \
 
-		Programs/Python/2.6.4
+		Programs/GnuPG/1.4.9 \
+		Programs/Python/2.6.4 \
+		Programs/PyGObject/2.20.0
+;		Programs/LibFetch-2.26 \
+;		Programs/LibArchive- \
+;		Programs/Pacman-3.3.3
 	do
 		mkdir --parents $IMAGE/$dir
 	done
@@ -314,7 +317,10 @@ links
 ;	/Programs/Rsync-2.6.9
 	2.1pre36								/Programs/Links/Current
 ;	/Programs/Pengupop-2.1.12
-;	/Programs/LibFetch-2.26
-;	/Programs/Pacman-3.3.3
 
+	1.4.9									/Programs/GnuPG/Current
 	2.6.4									/Programs/Python/Current
+	2.20.0									/Programs/PyGObject/Current
+;	/Programs/LibFetch-2.26
+;	/Programs/LibArchive-
+;	/Programs/Pacman-3.3.3
