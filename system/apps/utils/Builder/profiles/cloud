@@ -400,6 +400,9 @@ modules
 ;	apps/other/rsync-2.6.9
 	apps/other/links2-2.1pre36
 
+	apps/gnu/gawk-3.1.6
+	apps/gnu/patch-2.5.4
+;	apps/other/file-
 	apps/gnu/gnupg-1.4.9
 	apps/other/Python-2.6.4
 	apps/other/PythonGObject-2.20.0
