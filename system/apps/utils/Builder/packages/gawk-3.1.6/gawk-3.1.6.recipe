@@ -17,6 +17,8 @@ packages			gawk/gawk-3.1.6
 ;	For printed documentation:
 ;	dvi
 ;	postscript
+
+system-prefix-var	DESTDIR
 documentation
 	README PROBLEMS LIMITATIONS POSIX.STD COPYING ABOUT-NLS NEWS ChangeLog FUTURES AUTHORS
 ;	doc

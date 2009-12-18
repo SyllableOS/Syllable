@@ -6,4 +6,5 @@ packages			patch/patch-2.5.4
 
 patch-config
 
+;system-prefix-var
 documentation		README COPYING NEWS ChangeLog AUTHORS
