@@ -1,3 +1,30 @@
+* December 18, 2009, Kaj de Vos *
+
+Gave the GCC libraries and headers installed in the system priority over those
+in the full GCC package, when installed in /resources/.
+
+There are several legitimate reasons for installing a GCC package that is not
+in sync with the system libraries. The GCC package may be newer than the system
+release. It may be older, or an old GCC may be required to compile some program.
+If the versions diverge too much, this can disrupt the working of the system.
+Originally, I removed the shared libraries from the GCC packages, but that may
+not be enough. Then I removed the complete lib/ subdirectory, but GCC does not
+appreciate that in all cases. Currently, the GCC packages have their include/
+and lib/ subdirectories linked to the versions in the system. However, that may
+not work when the GCC version is too different from the system. Also, it makes
+the complete /system/indexes/include/ and /system/indexes/lib/ structures appear
+in /resources/indexes/, where they may conflict with other versions of the same
+packages.
+
+What's really needed is to give the system libraries priority over GCC, while
+letting GCC keep its own versions for when it needs those internally. I chose
+to do that through the system paths. Other options are installing GCC in a
+separate package pool, or making an exception for it when symlinking in
+Packager.
+
+Note that other packages in /resources/ still have priority over /system/resources/,
+so apart from GCC, it's still possible to overrule system components.
+
 * November 3, 2009, Kristian Van Der Vliet *
 
 A massive overhaul of the system headers. The intention is to stop kernel only
