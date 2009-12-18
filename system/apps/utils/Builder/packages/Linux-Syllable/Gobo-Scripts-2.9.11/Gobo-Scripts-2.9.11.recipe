@@ -82,7 +82,7 @@ install
 ;		Programs/MIME-Support--current \
 ;		Programs/BLFS-bootscripts-20070822 \
 		Programs/Procps/3.2.7 \
-		Programs/Sudo/1.6.9p9 \
+		Programs/Sudo/1.7.2p2 \
 		Programs/MkTemp/1.6 \
 		Programs/OpenSSL/0.9.8k \
 ;		Programs/CA-Bundle--current \
@@ -266,7 +266,7 @@ links
 ;	/Programs/MIME-Support--current
 ;	/Programs/BLFS-bootscripts-20070822
 	3.2.7									/Programs/Procps/Current
-	1.6.9p9									/Programs/Sudo/Current
+	1.7.2p2									/Programs/Sudo/Current
 	1.6										/Programs/MkTemp/Current
 	0.9.8k									/Programs/OpenSSL/Current
 ;	/Programs/CA-Bundle--current

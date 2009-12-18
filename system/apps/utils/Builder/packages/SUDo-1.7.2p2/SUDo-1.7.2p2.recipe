@@ -1,0 +1,51 @@
+authors				Kaj de Vos
+status				testing
+
+headline			Provides limited super user privileges to specific users
+description
+	Sudo (su "do") allows a system administrator to delegate authority to give certain users (or groups of users) the ability to run some (or all) commands as root or another user while providing an audit trail of the commands and their arguments.
+licenses			ISC BSD
+
+home
+	www.sudo.ws/sudo/
+;	www.courtesan.com/sudo/
+;	www.gratisoft.us/sudo/
+locations
+	http://www.sudo.ws/sudo/dist/
+	http://www.sudo.ws/sudo/dist/OLD/
+	ftp://ftp.sudo.ws/pub/sudo/
+	http://www.courtesan.com/sudo/dist/
+	http://www.gratisoft.us/sudo/dist/
+packages			sudo-1.7.2p2
+
+configure-options
+;	--libexecdir=/usr/lib
+	--without-pam
+;	--without-lecture
+;	--with-all-insults
+;	Should help with Syllable filesystem layout:
+	--with-stow
+;	Allow changing name of root user:
+	--with-runas-default='#0'
+;	--with-sudoers-uid=
+;	--with-sudoers-gid=
+;	--without-umask
+;	--with-umask=027
+;	Disable mail by default to root:
+	--without-sendmail
+	--with-mailto=''
+;	Allow changing editor from VI for visudo:
+	--with-env-editor
+	--enable-noargs-shell
+	--enable-shell-sets-home
+	--with-ignore-dot
+;	--with-logpath='/var/log/sudo.log'
+;	--with-timedir='/var/run/sudo'
+
+;super-install
+system-prefix-var	DESTDIR
+;install-targets		install_binaries install_man
+
+documentation		README LICENSE README.LDAP TROUBLESHOOTING BUGS UPGRADE WHATSNEW ChangeLog HISTORY
+build-docs			INSTALL
+internal-docs		PORTING
