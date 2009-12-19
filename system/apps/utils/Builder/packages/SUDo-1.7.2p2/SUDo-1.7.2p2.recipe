@@ -19,6 +19,7 @@ locations
 packages			sudo-1.7.2p2
 
 configure-options
+	--sysconfdir=/etc
 ;	--libexecdir=/usr/lib
 	--without-pam
 ;	--without-lecture
@@ -42,10 +43,10 @@ configure-options
 ;	--with-logpath='/var/log/sudo.log'
 ;	--with-timedir='/var/run/sudo'
 
-;super-install
+super-install
 system-prefix-var	DESTDIR
 ;install-targets		install_binaries install_man
 
-documentation		README LICENSE README.LDAP TROUBLESHOOTING BUGS UPGRADE WHATSNEW ChangeLog HISTORY
+documentation		README LICENSE README.LDAP TROUBLESHOOTING UPGRADE WHATSNEW ChangeLog HISTORY
 build-docs			INSTALL
 internal-docs		PORTING
