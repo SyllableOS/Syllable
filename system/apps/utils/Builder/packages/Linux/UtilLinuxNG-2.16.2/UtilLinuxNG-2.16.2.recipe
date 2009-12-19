@@ -1,0 +1,41 @@
+authors				Kaj de Vos
+status				testing
+
+headline			Util-Linux is a random collection of Linux system utilities
+description
+	The Util-linux-ng package contains miscellaneous utility programs. Among them are utilities for handling file systems, consoles, partitions, and messages.
+
+	The util-linux-ng is a fork of the original util-linux project. The goal of the util-linux-ng is a transparent and reliable development that follows the Linux kernel and Linux distributions.
+licenses			GPL BSD PD
+
+home
+	kernel.org/~kzak/util-linux-ng/
+;	userweb.kernel.org/~kzak/util-linux-ng/
+locations			ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.16/
+packages			util-linux-ng-2.16.2
+
+needs				NCurses
+;recommends			pam
+;conflicts			e2fsprogs
+
+;build-dir			.
+
+configure-options
+	--build=i486-pc-linux-gnu
+	--enable-arch
+	--enable-partx
+	--enable-write
+;	For static linking:
+;	--enable-static-programs=
+
+super-install
+system-prefix-var	DESTDIR
+
+;install-tree
+
+documentation
+	README README.licensing COPYING ABOUT-NLS NEWS AUTHORS TODO
+;	docs example.files
+develop-docs		README.devel
+
+;links				agetty /sbin/getty

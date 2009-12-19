@@ -8,12 +8,19 @@ licenses			GPL BSD
 home				e2fsprogs.sourceforge.net
 packages			e2fsprogs/e2fsprogs-1.40.2
 
+;conflicts			UtilLinuxNG
+
 ;build-dir			build
 
 configure-options
 ;	--with-root-prefix=''
 	--enable-elf-shlibs
 	--disable-evms
+;	Delivered by UtilLinuxNG:
+	--disable-libblkid
+	--disable-libuuid
+	--disable-uuidd
+	--disable-fsck
 
 system-prefix-var	DESTDIR
 install-tree		etc
