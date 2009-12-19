@@ -309,11 +309,10 @@ modules
 	system linux/udev-config-6.3
 	stage libs/zlib-1.2.3-static
 	system linux/module-init-tools-3.2.2
-;	Incompatible with host ld from different GLibC!
-	system linux/e2fsprogs-1.40.2
 ;	Uses headers from /usr/include/!
 ;	system linux/util-linux-2.12r
 	system linux/UtilLinuxNG-2.16.2
+	system linux/E2FSPrograms-1.41.9
 	system linux/sysklogd-1.4.1
 	system linux/shadow-4.0.18.1
 	libraries libraries/db-4.6.21-libraries
