@@ -1,7 +1,7 @@
 #! /usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.9.9
+# Version 0.9.10
 # Copyright (c) 2002-2009 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -644,7 +644,7 @@ def installModule staging, target
 								(	! ['image', 'system', 'libraries'].include?(staging) && configured ?
 										'' :
 										((p = recipe['system-prefix-var']) ?
-											" #{p}=" + @systemRoot :
+											" #{p}=" + @image :
 											''
 										) +
 										(p && configured ?
@@ -1936,7 +1936,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.9.9',
+	puts 'Syllable Build System 0.9.10',
 		'Copyright (c) 2002-2009 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
