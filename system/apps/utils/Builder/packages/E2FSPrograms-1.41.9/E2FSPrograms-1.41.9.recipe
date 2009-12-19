@@ -3,10 +3,13 @@ status				testing
 
 inherits			sourceforge
 
+headline			Ext2/3/4 filesystem utilities
+description
+	The Ext2 Filesystem Utilities (e2fsprogs) contain all of the standard utilities for creating, fixing, configuring , and debugging ext2 filesystems. They also supports the ext3 and ext4 filesystems.
 licenses			GPL BSD
 
 home				e2fsprogs.sourceforge.net
-packages			e2fsprogs/e2fsprogs-1.40.2
+packages			e2fsprogs/e2fsprogs-1.41.9
 
 conflicts			UtilLinuxNG
 
@@ -15,12 +18,11 @@ conflicts			UtilLinuxNG
 configure-options
 ;	--with-root-prefix=''
 	--enable-elf-shlibs
-	--disable-evms
 ;	Delivered by UtilLinuxNG:
 	--disable-fsck
-;	--disable-libblkid
-;	--disable-libuuid
-;	--disable-uuidd
+	--disable-libblkid
+	--disable-libuuid
+	--disable-uuidd
 
 system-prefix-var	DESTDIR
 install-tree		etc
@@ -31,9 +33,8 @@ install-targets
 
 documentation
 	README COPYING ABOUT-NLS RELEASE-NOTES
-;	ChangeLog
 ;	doc
-build-docs			INSTALL
+build-docs			INSTALL*
 internal-docs		SUBMITTING-PATCHES SHLIBS
 
 ; Linked into mount, which is called before the loader path is set:
