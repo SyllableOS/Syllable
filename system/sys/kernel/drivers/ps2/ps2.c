@@ -28,7 +28,11 @@
 #include <kernel/irq.h>
 #include <kernel/udelay.h>
 #include <kernel/isa_io.h>
+#include <kernel/kdebug.h>
+#include <kernel/args.h>
+#include <kernel/bootmodules.h>
 #include <syllable/v86.h>
+#include <syllable/time.h>
 
 #include "ps2.h"
 
@@ -336,7 +340,6 @@ status_t ps2_open( void* pNode, uint32 nFlags, void **pCookie )
 }
 status_t ps2_close( void* pNode, void* pCookie )
 {
-    uint32 nFlg;
     PS2_Port_s* psPort = (PS2_Port_s*)pNode;
     
     if ( atomic_dec_and_test( &psPort->nOpenCount ) ) {
@@ -450,7 +453,6 @@ error:
 int ps2_write( void* pNode, void* pCookie, off_t nPosition, const void* pBuffer, size_t nSize )
 {
 	PS2_Port_s* psPort = (PS2_Port_s*)pNode;
-    uint32     nFlg;
     int	     i;
   
     for ( i = 0 ; i < nSize ; ++i ) {
@@ -659,7 +661,6 @@ status_t device_init( int nDeviceID )
 	const char *const *argv;
 	bool bDisableKeyboard = false;
 	bool bDisableAux = false;
-	uint32 nFlags;
 	
 	g_nDevNum = nDeviceID;
 
