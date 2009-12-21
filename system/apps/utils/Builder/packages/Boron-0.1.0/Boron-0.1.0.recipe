@@ -18,11 +18,12 @@ licenses
 ;	MIT
 
 home
-	urlan.sf.net
+	urlan.sf.net/boron/
+;	urlan.sf.net
 ;	sf.net/apps/trac/urlan/wiki/BoronProject
 ;	wsrebol.sf.net
 packages
-	Boron-0.1.0-20091117.source
+	Boron-0.1.0-20091221.source
 ;	M2-498.source Boron-0.1.0
 locations			http://downloads.syllable.org/sources/resources/Boron/
 archives
