@@ -3,7 +3,7 @@
 VERSION=0.6.7
 
 LOG_DIR=$HOME/Logs
-LOG=$LOG_DIR/std-out-err.log
+LOG=$LOG_DIR/stderr.log
 FINISH_FAILURES=$LOG_DIR/finish-failures.log
 FINISH_SUMMARY=$LOG_DIR/finish-summary.log
 

@@ -3,7 +3,7 @@
 if [ -z $LOG_DIR ]
 then
   LOG_DIR=$HOME/Logs
-  LOG=$LOG_DIR/std-out-err.log
+  LOG=$LOG_DIR/stderr.log
 fi
 if [ -z $SOURCE_DIR ]
 then

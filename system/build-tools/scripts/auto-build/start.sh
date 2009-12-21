@@ -1,7 +1,7 @@
 #!/bin/bash
 
 export LOG_DIR=$HOME/Logs
-export LOG=$LOG_DIR/std-out-err.log
+export LOG=$LOG_DIR/stderr.log
 export SOURCE_DIR=$HOME/Source/Anonymous
 export BUILD_DIR=$HOME/Build
 
