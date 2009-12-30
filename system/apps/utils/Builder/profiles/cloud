@@ -89,6 +89,7 @@ tree
 	usr/indexes/share
 	usr/indexes/early-init
 	usr/indexes/init
+	usr/indexes/applications
 
 ;	For env:
 	usr/bin

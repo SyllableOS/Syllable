@@ -1,3 +1,11 @@
+* December 30, 2009, Kaj de Vos *
+
+Implemented an extra symlinks index on an optional "applications" subdirectory
+in packages in /resources/. This was prompted by the port of the VICE emulator.
+This and other packages need to be in /resources/, but want to make entry points
+in the Syllable menu like /Applications/ do.
+Support in the menu needs to be implemented separately.
+
 * December 18, 2009, Kaj de Vos *
 
 Gave the GCC libraries and headers installed in the system priority over those
