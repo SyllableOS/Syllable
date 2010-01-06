@@ -12,7 +12,7 @@ home				www.foolabs.com/xpdf/
 locations
 	http://downloads.syllable.org/sources/resources/X-PDF/
 ;	Have only the last version:
-;	ftp://ftp.foolabs.com/pub/xpdf/
+	ftp://ftp.foolabs.com/pub/xpdf/
 packages			xpdf-3.00
 
 ;needs
