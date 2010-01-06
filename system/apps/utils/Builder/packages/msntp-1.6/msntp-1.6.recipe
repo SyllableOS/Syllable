@@ -9,9 +9,12 @@ description
 licenses			other
 
 home
+;	Pining for the fjords:
 ;	www.hpcf.cam.ac.uk/export/
-	packages.debian.org/unstable/net/msntp
-locations			ftp://ftp.openpkg.org/sources/DST/msntp/
+	packages.debian.org/msntp
+locations
+	ftp://ftp.freebsd.org/pub/FreeBSD/ports/distfiles/
+;	http://ftp.de.debian.org/debian/pool/main/m/msntp/msntp_1.6.dfsg.orig.tar.gz
 
 make-vars			LIBS '-lm'
 
