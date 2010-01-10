@@ -5,6 +5,5 @@ locations			http://web.syllable.org/
 
 documentation		README-SyllableServer.txt Changes.txt Syllable-logo.png Copyrights.html
 move-files
-	documentation/README-SyllableServer.txt	/documentation/README-SyllableServer-0.3.txt
+	documentation/README-SyllableServer.txt	/documentation/README-SyllableServer-0.4.txt
 	documentation/*							/documentation/
-
