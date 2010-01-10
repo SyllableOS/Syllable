@@ -236,7 +236,7 @@ GRUB=(	"color	cyan/blue white/blue"																	\
 		"module /boot/drivers/dev/disk/usb path=/system/drivers/dev/disk/usb"							\
 		"module /system/drivers/fs/iso9660"																\
 		""																								\
-		"title	Install Syllable in a Virtual Machine (VMware, Virtual PC, VirtualBox)"					\
+		"title	Install Syllable in a Virtual Machine (VMware, VirtualPC, VirtualBox)"					\
 		"configfile /boot/grub/virtual.lst"																\
 		""																								\
 		"title	Install Syllable in safe modes (hardware troubleshooting)"								\
@@ -382,7 +382,7 @@ TROUBLE=("title	Install Syllable (USB 1 only)"															\
 		"module /boot/drivers/dev/disk/usb path=/system/drivers/dev/disk/usb"							\
 		"module /system/drivers/fs/iso9660"																\
 		""																								\
-		"title	Install Syllable (failsafe / VESA video, no USB CD/SMP/ACPI/AGP/DMA)"					\
+		"title	Install Syllable (failsafe: VESA video, no USB CD/SMP/ACPI/AGP/DMA)"					\
 		"kernel /system/kernel.so rootfs=iso9660 root=@boot disable_config=true disable_acpi=true disable_smp=true enable_ata_dma=false disable_agp=true disable_gfx_drivers=true usb_2=false"	\
 		"module /boot/drivers/dev/bus/pci path=/system/drivers/dev/bus/pci"								\
 		"module /boot/drivers/dev/bus/ata path=/system/drivers/dev/bus/ata"								\
