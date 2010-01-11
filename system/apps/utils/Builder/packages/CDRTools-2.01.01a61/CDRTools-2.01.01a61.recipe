@@ -19,10 +19,11 @@ description
 licenses			CDDL GPL LGPL BSD
 
 home				cdrecord.berlios.de
-packages			cdrtools-2.01.01a61
 locations
 ;	ftp://ftp.berlios.de/pub/cdrecord/
 	ftp://ftp.berlios.de/pub/cdrecord/alpha/
+	http://downloads.syllable.org/sources/resources/CDRTools/
+packages			cdrtools-2.01.01a61
 
 ; Prevent configure - it's deliberately broken:
 configure			true

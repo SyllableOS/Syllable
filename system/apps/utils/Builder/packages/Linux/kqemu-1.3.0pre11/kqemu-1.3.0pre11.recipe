@@ -4,13 +4,13 @@ warnings
 	Patch is specific to linux-2.6.25 kernel.
 	Needs built kernel source within the build host system!
 
-headline			QEMU Accelerator driver
+headline			QEmu Accelerator driver
 description
 	QEMU Accelerator (KQEMU) is a driver allowing the QEMU PC emulator to run much faster when emulating a PC on an x86 host. KQEMU is supported on x86 or x86_64 Linux 2.4 or 2.6 hosts.
 licenses			GPL-2 BSD
 
-home				fabrice.bellard.free.fr/qemu/
-locations			http://fabrice.bellard.free.fr/qemu/
+home				www.qemu.org
+locations			http://www.qemu.org/
 
 needs
 	linux

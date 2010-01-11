@@ -4,13 +4,12 @@ status				testing
 ; GPL-2 with limiting modification:
 licenses			other
 
-home				namesys.com
-locations
-	http://ftp.namesys.com/pub/reiserfsprogs/
-	ftp://ftp.namesys.com/pub/reiserfsprogs/
+; Gone:
+;home				namesys.com
+locations			http://www.kernel.org/pub/linux/utils/fs/reiserfs/
 
 ; For libuuid:
-needs				e2fsprogs
+needs				E2FSPrograms
 
 build-dir			.
 

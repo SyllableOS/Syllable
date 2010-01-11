@@ -2,7 +2,7 @@ authors
 	Kaj de Vos
 	Jan Hauffa
 status				testing
-warnings			Oracle makes you download the source package manually.
+;warnings			Oracle makes you download the source package manually.
 notes				This version uses the source package with no encryption
 
 name				Berkeley DB
@@ -12,9 +12,12 @@ description
 licenses			OSI
 
 home				www.sleepycat.com
+locations
+;	Works only with the right file extension:
+	http://download-east.oracle.com/berkeley-db/
+	ftp://mirror.ovh.net/gentoo-distfiles/distfiles/
 packages			db-4.6.21.NC
-; Works only with the right file extension:
-;locations			http://download-east.oracle.com/berkeley-db/db-4.6.21.NC.tar.gz
+;.tar.gz
 
 build-dir			build_unix
 

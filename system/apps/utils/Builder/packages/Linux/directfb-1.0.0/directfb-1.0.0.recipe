@@ -4,8 +4,11 @@ status				testing
 licenses			LGPL-2+
 
 home				www.directfb.org
+locations
+	http://www.directfb.org/downloads/Core/
+	http://downloads.syllable.org/sources/resources/DirectFrameBuffer/
+	http://buildroot.net/downloads/sources/
 packages			DirectFB-1.0.0
-locations			http://www.directfb.org/downloads/Core/
 
 needs
 	linux >= 2.2
@@ -15,10 +18,10 @@ recommends
 ;	sdl
 	libvncserver
 	libsysfs
-	freetype >= 2.0.1
-	libjpeg
-	libpng
-	libgif
+	FreeType >= 2.0.1
+	LibJPEG
+	LibPNG
+	GIFLib
 	libmpeg3
 	tslib
 build-recommends	pkg-config >= 0.9.0

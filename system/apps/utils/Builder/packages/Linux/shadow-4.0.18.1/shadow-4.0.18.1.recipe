@@ -4,14 +4,12 @@ warnings			Doesn't install headers.
 
 licenses			BSD | Artistic
 
-; Restricted:
-home				shadow.pld.org.pl
-locations
-;	Restricted:
-;	ftp://ftp.pld.org.pl/software/shadow/
-;	Archived:
-;	ftp://ftp.pld.org.pl/software/shadow/old/
-	http://cross-lfs.org/files/packages/sysroot-0.0.1/
+_home
+;	No site for Shadow:
+	pld-linux.org
+;	Gone:
+	shadow.pld.org.pl
+locations			http://anduin.linuxfromscratch.org/sources/LFS/lfs-packages/development/
 
 recommends
 	cracklib
