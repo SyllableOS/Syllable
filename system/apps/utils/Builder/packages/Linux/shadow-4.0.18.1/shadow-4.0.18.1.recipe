@@ -2,14 +2,15 @@ authors				Kaj de Vos
 status				testing
 warnings			Doesn't install headers.
 
+headline			Password management suite
+description
+	Suite of system tools for managing user passwords.
 licenses			BSD | Artistic
 
-_home
-;	No site for Shadow:
-	pld-linux.org
-;	Gone:
-	shadow.pld.org.pl
-locations			http://anduin.linuxfromscratch.org/sources/LFS/lfs-packages/development/
+home				pkg-shadow.alioth.debian.org
+locations
+	ftp://pkg-shadow.alioth.debian.org/pub/pkg-shadow/old/
+	http://anduin.linuxfromscratch.org/sources/LFS/lfs-packages/development/
 
 recommends
 	cracklib
