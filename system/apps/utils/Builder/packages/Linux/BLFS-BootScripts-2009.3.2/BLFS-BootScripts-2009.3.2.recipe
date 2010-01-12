@@ -1,0 +1,47 @@
+authors				Kaj de Vos
+status				testing
+
+headline			Optional start-up programs
+description
+	The BLFS-Bootscripts package contains a set of scripts to start/stop additional services at bootup/shutdown.
+licenses			BSD
+
+home				www.linuxfromscratch.org/blfs/
+locations			http://www.linuxfromscratch.org/blfs/downloads/svn/
+packages			blfs-bootscripts-20090302
+
+make				true
+
+;super-install
+system-prefix-var	DESTDIR
+
+install-tree
+install-targets
+;	Sound:
+	install-alsa
+;	Firewall:
+	install-iptables
+;	Handled by CUPS package init script:
+;	CUPS server:
+	install-cups
+;	OpenSSH server:
+	install-sshd
+;	As root:
+	install-service-dhclient
+;	DHCP server:
+	install-dhcp
+;	BIND DNS server:
+	install-bind
+;	Apache web server:
+	install-apache
+;	SaMBa server:
+	install-samba
+	install-winbind
+;	VSFTPD FTP server:
+	install-vsftpd
+;	RSync server:
+	install-rsyncd
+
+documentation		README LICENSE ChangeLog MAINTAINERS
+; Outdated?
+;build-docs			lfs-bootscripts.version

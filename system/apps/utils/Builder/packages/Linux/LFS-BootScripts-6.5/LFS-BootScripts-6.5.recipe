@@ -1,0 +1,17 @@
+authors				Kaj de Vos
+status				testing
+
+headline			Start-up programs
+description
+	The LFS-Bootscripts package contains a set of scripts to start/stop the LFS system at bootup/shutdown.
+licenses			BSD
+
+home				www.linuxfromscratch.org
+locations			http://www.linuxfromscratch.org/lfs/downloads/6.5/
+packages			lfs-bootscripts-20090812
+
+make				true
+
+system-prefix-var	DESTDIR
+install-tree
+documentation		README LICENSE ChangeLog

@@ -1,0 +1,56 @@
+diff -ru LFS-BootScripts-6.5-original/lfs/init.d/functions LFS-BootScripts-6.5/lfs/init.d/functions
+--- LFS-BootScripts-6.5-original/lfs/init.d/functions	2009-08-12 21:55:56.000000000 +0200
++++ LFS-BootScripts-6.5/lfs/init.d/functions	2010-01-12 22:24:34.000000000 +0100
+@@ -16,7 +16,8 @@
+ ## Environmental setup
+ # Setup default values for environment
+ umask 022
+-export PATH="/bin:/usr/bin:/sbin:/usr/sbin"
++export PATH=/resources/indexes/sbin:/resources/indexes/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/system/indexes/sbin:/system/indexes/bin:/system/bin
++export LD_LIBRARY_PATH=/System/Links/Libraries:/system/resources/gcc/4.2.3/lib:/resources/indexes/lib:/usr/local/lib:/usr/lib:/lib:/system/indexes/lib:/system/libraries
+ 
+ # Signal sent to running processes to refresh their configuration
+ RELOADSIG="HUP"
+diff -ru LFS-BootScripts-6.5-original/lfs/init.d/network LFS-BootScripts-6.5/lfs/init.d/network
+--- LFS-BootScripts-6.5-original/lfs/init.d/network	2009-07-19 14:02:40.000000000 +0200
++++ LFS-BootScripts-6.5/lfs/init.d/network	2010-01-12 21:03:14.000000000 +0100
+@@ -33,6 +33,39 @@
+ 
+ 			IN_BOOT=1 ${network_devices}/ifup ${interface}
+ 		done
++
++
++		# inetd is a special case and is always started first if INetUtils is
++		# installed.
++
++		if [ -e /resources/indexes/libexec/inetd ]
++		then
++			/resources/indexes/libexec/inetd &
++		fi
++
++		# Packages that require initalisation can include init and early-init directories,
++		# which should contain the init script(s). E.g. Apache would have init/apache which
++		# would call apachectl, OpenSSH would have init/sshd which would start
++		# sshd etc.
++		# The package manager will collect all of these scripts together in
++		# /resources/indexes/early-init/ and /resources/indexes/init/; all we need to do is
++		# run each script in turn.
++
++		# Run the late init scripts
++
++		for pkg_init in `ls /system/indexes/init/`
++		do
++			source /system/indexes/init/$pkg_init
++		done
++
++		for pkg_init in `ls /resources/indexes/init/`
++		do
++			source /resources/indexes/init/$pkg_init
++		done
++
++		# Do user initialisation and exit
++		source /system/user-init.sh
++
+ 		;;
+ 
+ 	stop)

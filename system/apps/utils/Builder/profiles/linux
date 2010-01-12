@@ -379,7 +379,7 @@ modules
 	system apps/other/ORCA--current
 
 	system linux/sysvinit-2.86
-	system linux/lfs-bootscripts-6.3
+	system linux/LFS-BootScripts-6.5
 	bootstrap linux/udev--bootstrap
 	system linux/udev-113
 ;	Needs udevinfo:
@@ -500,7 +500,7 @@ modules
 
 	other/data/MIME-Support--current
 
-	linux/blfs-bootscripts-20070822
+	linux/BLFS-BootScripts-2009.3.2
 	linux/procps-3.2.7
 	apps/other/SUDo-1.7.2p2
 	apps/other/MkTemp-1.6
