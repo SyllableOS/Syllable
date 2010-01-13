@@ -184,7 +184,7 @@ prepare
 ;	mount -t proc	proc	proc &&
 ;	mount -t sysfs	sysfs	sys &&
 
-;	install -d -m 0750 root &&
+;	install -d -m 0750 system &&
 	install -d -m 1777 tmp var/tmp &&
 
 	touch var/run/utmp		var/log/{btmp,lastlog,wtmp} &&
@@ -212,7 +212,7 @@ prepare
 
 ;	For sshd:
 	install -m700 -d	var/lib/sshd &&
-	chown root:sys		var/lib/sshd &&
+	chown system:system	var/lib/sshd &&
 
 ;	For LFS bootscripts:
 	ln -s /system/resources/cups/1.3.4/sbin/cupsd	usr/sbin/ &&
