@@ -1,0 +1,14 @@
+authors				Kaj de Vos
+status				developing
+
+links
+;	Essential for X11:
+	../../../lib/X11/fonts/misc/fonts.alias		/Programs/Xorg-Font/Current/Shared/fonts/misc/
+;	Essential for REBOL/View 2:
+	../../../lib/X11/fonts/75dpi/fonts.alias	/Programs/Xorg-Font/Current/Shared/fonts/75dpi/
+	../../../lib/X11/fonts/100dpi/fonts.alias	/Programs/Xorg-Font/Current/Shared/fonts/100dpi/
+	../../../lib/X11/fonts/TTF/fonts.alias		/Programs/Xorg-Font/Current/Shared/fonts/TTF/
+	../../../lib/X11/fonts/OTF/fonts.alias		/Programs/Xorg-Font/Current/Shared/fonts/OTF/
+;	../../../lib/X11/fonts/Type1/fonts.alias	/Programs/Xorg-Font/Current/Shared/fonts/Type1/
+	../../../lib/X11/fonts/cyrillic/fonts.alias	/Programs/Xorg-Font/Current/Shared/fonts/cyrillic/
+;	../../../lib/X11/fonts/Speedo/fonts.alias	/Programs/Xorg-Font/Current/Shared/fonts/Speedo/
