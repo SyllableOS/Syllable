@@ -5,10 +5,10 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/.nix-profile/lib
 export MANPATH=$MANPATH:~/.nix-profile/man:~/.nix-profile/share/man
 export INFOPATH=$INFOPATH:~/.nix-profile/info
 
-while read dir
+for dir in `find ~/.nix-profile/lib -maxdepth 1 -name 'python*' | sort --reverse`
 do
 	PYTHONPATH=$PYTHONPATH:$dir/site-packages
-done < <(find ~/.nix-profile/lib -maxdepth 1 -name 'python*' | sort --reverse)
+done
 export PYTHONPATH
 
 export PERL5LIB=$PERL5LIB:~/.nix-profile/lib/site_perl/5.10.0:~/.nix-profile/lib/5.10.0
