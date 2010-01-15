@@ -3,6 +3,7 @@ status				testing
 warnings
 	Cleans up kernel modules area in the running system!
 	Is specific to linux-2.6.25-Syllable kernel!
+	Assumes the host system has this same kernel!
 
 ; Overwrites the built kernel source. We don't need it again, but at least
 ; it prevents the huge source tree from being unregistered:
@@ -15,9 +16,10 @@ make				true
 install				sudo rm /lib/modules/2.6.25-Syllable/build
 
 links
+;	Assume the host had this (same) kernel:
+	/system/resources/linux/2.6.25/lib/modules	/lib/
 ;	(Repair damage from Linux-Fusion:)
 ;	lib/modules									/lib/
-	/system/resources/linux/2.6.25/lib/modules	/lib/
 ;	Give the system access to modules of all kernel versions:
 ;	This, however, leads depmod to create module files within the symlink pool:
 ;	/system/indexes/lib/modules					/lib/

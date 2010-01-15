@@ -17,11 +17,12 @@ _build-needs
 	qt
 install-needs		module-init-tools
 
-patch
+configure
 ;	Make Linux build directory available from the host system for external kernel modules:
 	SOURCE=$PWD &&
 	sudo mkdir --parents /lib/modules/2.6.25-Syllable &&
 	cd /lib/modules/2.6.25-Syllable &&
+;	This probably ends up in the host kernel:
 	sudo ln -sf $SOURCE build &&
 ;	Make the kernel modules installation go into the system image:
 	ln -sf ../system/resources/linux/2.6.25/lib/modules $IMAGE/lib/
@@ -35,9 +36,9 @@ pre-make
 	make mrproper &&
 	cp config-2.6.25 .config
 ; $INSTALL_MOD_PATH must be empty:
-make				make -j3 ARCH=i386
+make				make -j2 ARCH=i386
 ; For optimal build speed, number of CPUs + 1:
-make-options		-j3
+make-options		-j2
 _make-targets
 ;	menuconfig
 ;	xconfig
