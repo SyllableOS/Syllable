@@ -1,0 +1,27 @@
+authors				Kaj de Vos
+status				testing
+
+headline			Interpreted, dynamic, object oriented programming language
+description
+	A programmer's best friend.
+
+	Ruby is a dynamic, open source programming language with a focus on simplicity and productivity. It has an elegant syntax that is natural to read and easy to write.
+licenses			GPL LGPL BSD Artistic other PD
+
+home				www.ruby-lang.org
+locations			ftp://ftp.ruby-lang.org/pub/ruby/1.9/
+packages			ruby-1.9.1-p376
+
+recommends
+	ZLibrary
+	NCurses
+	ReadLine
+	OpenSSL
+
+test-targets		test
+
+system-prefix-var	DESTDIR
+documentation
+	README README.ja COPYING LEGAL GPL LGPL NEWS ChangeLog ToDo
+;	doc
+develop-docs		README.EXT README.EXT.ja sample
