@@ -98,6 +98,8 @@ tree
 
 	var
 	var/log
+;	For inetd and such:
+	var/run
 
 	usr
 
@@ -174,7 +176,6 @@ tree
 	var/state
 	var/state/dhcp
 	var/mail
-	var/run
 ;	For DHCP:
 ;	var/db
 	var/spool

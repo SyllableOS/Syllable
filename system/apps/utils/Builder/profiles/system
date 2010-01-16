@@ -104,6 +104,8 @@ tree
 
 	var
 	var/log
+;	For inetd and such:
+	var/run
 
 	usr
 
