@@ -1,4 +1,4 @@
-#!/bin/sh
+#! /bin/sh
 
 if [ `uname` = "syllable" ]
 then
@@ -7,7 +7,7 @@ then
 else
 	manpath="/documentation/man"
 
-	if [ -e /system/resources/directfb -a "$USER" = "root" ]
+	if [ -e /system/resources/directfb -a `id --user` = 0 ]
 	then
 		browser="links -g"
 	else
