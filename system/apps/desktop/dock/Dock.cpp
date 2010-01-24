@@ -29,6 +29,8 @@
 #include "Dock.h"
 #include "resources/Dock.h"
 
+#include <vector>
+
 
 enum 
 {
@@ -83,13 +85,15 @@ static os::Color32_s BlendColours( const os::Color32_s& sColour1, const os::Colo
 DockView::DockView( DockWin* pcWin, os::Rect cFrame )
 		: os::View( cFrame, "dock_view", os::CF_FOLLOW_ALL )
 {
-	m_pcWin = pcWin;
-	m_nCurrentIcon = -1;
-	m_pcCurrentIcon = NULL;
-	m_pcCurrentInfo = NULL;
-	m_pcSyllableMenu = NULL;
-	m_bSyllableMenuOpened = false;
-	m_bSyllableMenuInvalid = true;
+	m_pcWin                = pcWin;
+	m_nCurrentIcon         = -1;
+	m_pcCurrentIcon        = NULL;
+	m_pcCurrentInfo        = NULL;
+	m_pcSyllableMenu       = NULL;
+	m_bSyllableMenuOpened  = false;
+	
+	/* Populate the app menu */
+	InvalidateSyllableMenu();
 }
 
 DockView::~DockView()
@@ -217,9 +221,9 @@ void DockView::MouseMove( const os::Point& cNewPos, int nCode, uint32 nButtons, 
 	bool bIconFound = false;
 	bool bHorizontal = m_pcWin->GetPosition() == os::ALIGN_TOP || m_pcWin->GetPosition() == os::ALIGN_BOTTOM;
 	os::Rect cLastIconFrame;
-	if( bHorizontal )
+	if( bHorizontal ) {
 		cLastIconFrame = os::Rect( 4 + m_nCurrentIcon * 30, 4, 4 + m_nCurrentIcon * 30 + 23, 4 + 23 );
-	else
+	} else
 		cLastIconFrame = os::Rect( 4, 4 + m_nCurrentIcon * 30, 4 + 23, 4 + m_nCurrentIcon * 30 + 23 );
 	uint32 nDesktopMask = 1 << m_pcWin->GetDesktop();
 
@@ -235,12 +239,10 @@ void DockView::MouseMove( const os::Point& cNewPos, int nCode, uint32 nButtons, 
 			if( !m_pcWin->GetIcons()[i]->GetVisible( nDesktopMask ) )
 				continue;
 			
-			if( bHorizontal )
-			{
+			if( bHorizontal ) {
 				cIconFrame = os::Rect( 4 + nIcon * 30, 4, 4 + nIcon * 30 + 23, 4 + 23 );
-			} else {
+			} else
 				cIconFrame = os::Rect( 4, 4 + nIcon * 30, 4 + 23, 4 + nIcon * 30 + 23 );
-			}
 			
 			if( cIconFrame.DoIntersect( cNewPos ) )
 			{
@@ -276,7 +278,7 @@ void DockView::MouseMove( const os::Point& cNewPos, int nCode, uint32 nButtons, 
 					} else if( m_pcWin->GetPosition() == os::ALIGN_LEFT )
 					{
 						cFrame.top = cIconFrame.top;
-						cFrame.left = 31;
+						cFrame.left = m_pcWin->GetFrame().right;
 					} else 
 					{
 						cFrame.top = cIconFrame.top;
@@ -289,6 +291,8 @@ void DockView::MouseMove( const os::Point& cNewPos, int nCode, uint32 nButtons, 
 					m_pcCurrentInfo = new os::Window( cFrame, "dock_info", "Dock", os::WND_NO_BORDER );
 					os::StringView* pcView = new os::StringView( m_pcCurrentInfo->GetBounds(), "dock_info", 
 																m_pcWin->GetIcons()[i]->GetTitle().c_str() );
+					
+					pcView->SetRenderBorder( true );
 					m_pcCurrentInfo->AddChild( pcView );
 					m_pcCurrentInfo->Show();
 				}
@@ -330,9 +334,9 @@ void DockView::MouseUp( const os::Point & cPosition, uint32 nButton, os::Message
 		if( !m_pcWin->GetIcons()[i]->GetVisible( nDesktopMask ) )
 			continue;
 		
-		if( bHorizontal )
+		if( bHorizontal ) {
 			cIconFrame = os::Rect( 4 + nIcon * 30, 4, 4 + nIcon * 30 + 23, 4 + 23 );
-		else
+		}  else
 			cIconFrame = os::Rect( 4, 4 + nIcon * 30, 4 + 23, 4 + nIcon * 30 + 23 );
 			
 		if( cIconFrame.DoIntersect( cPosition ) )
@@ -346,26 +350,6 @@ void DockView::MouseUp( const os::Point & cPosition, uint32 nButton, os::Message
 				
 			} else {
 				/* Open syllable menu */
-				if( m_bSyllableMenuInvalid )
-				{
-					if( m_pcSyllableMenu )
-					{
-						delete( m_pcSyllableMenu );
-						m_pcSyllableMenu = NULL;
-					}
-					
-					m_pcSyllableMenu = new DockMenu( this, os::Rect(), "dock_menu", os::ITEMS_IN_COLUMN );
-					m_pcSyllableMenu->SetCloseMessage( os::Message( DOCK_MENU_CLOSED ) );
-					m_pcSyllableMenu->SetCloseMsgTarget( m_pcWin );
-					m_pcSyllableMenu->AddItem( new os::MenuSeparator() );
-					m_pcSyllableMenu->AddItem( new os::MenuItem( MSG_MENU_ABOUT_MENU, new os::Message( DOCK_ABOUT ),
-					 "", new os::BitmapImage( *m_pcWin->GetAboutIcon() ) ) );
-					m_pcSyllableMenu->AddItem( new os::MenuItem( MSG_MENU_QUIT_MENU, new os::Message( DOCK_QUIT ),
-					 "", new os::BitmapImage( *m_pcWin->GetLogoutIcon() ) ) );
-					m_pcSyllableMenu->SetTargetForItems( m_pcWin );
-					m_bSyllableMenuInvalid = false;
-				}
-				
 				if( m_pcWin->GetPosition() == os::ALIGN_TOP )
 					m_pcSyllableMenu->Open( os::Point( 0, 31 ) );
 				else if( m_pcWin->GetPosition() == os::ALIGN_BOTTOM )
@@ -392,6 +376,29 @@ void DockView::MouseUp( const os::Point & cPosition, uint32 nButton, os::Message
 		}
 	}
 	os::View::MouseUp( cPosition, nButton, pcData );
+}
+
+
+void DockView::InvalidateSyllableMenu()
+{
+	/* TODO: We should launch a new thread to do this.
+	   Otherwise, there could be a significant delay while we wait for the registrar,
+	   during which time the Dock will be unresponsive. */
+	if( m_pcSyllableMenu )
+	{
+		delete( m_pcSyllableMenu );
+		m_pcSyllableMenu = NULL;
+	}
+
+	m_pcSyllableMenu = new DockMenu( this, os::Rect(), "dock_menu", os::ITEMS_IN_COLUMN );
+	m_pcSyllableMenu->SetCloseMessage( os::Message( DOCK_MENU_CLOSED ) );
+	m_pcSyllableMenu->SetCloseMsgTarget( m_pcWin );
+	m_pcSyllableMenu->AddItem( new os::MenuSeparator() );
+	m_pcSyllableMenu->AddItem( new os::MenuItem( MSG_MENU_ABOUT_MENU, new os::Message( DOCK_ABOUT ),
+		 "", new os::BitmapImage( *m_pcWin->GetAboutIcon() ) ) );
+	m_pcSyllableMenu->AddItem( new os::MenuItem( MSG_MENU_QUIT_MENU, new os::Message( DOCK_QUIT ),
+		 "", new os::BitmapImage( *m_pcWin->GetLogoutIcon() ) ) );
+	m_pcSyllableMenu->SetTargetForItems( m_pcWin );
 }
 
 DockWin::DockWin() : 
@@ -462,13 +469,15 @@ DockWin::DockWin() :
 	
 	/* Register calls */
 	m_pcGetPluginsEv = os::Event::Register( "os/Dock/GetPlugins", "Returns a list of enabled plugins",
-					os::Application::GetInstance(), os::DOCK_GET_PLUGINS );
+					this, os::DOCK_GET_PLUGINS );
 	m_pcSetPluginsEv = os::Event::Register( "os/Dock/SetPlugins", "Sets the list of enabled plugins",
-					os::Application::GetInstance(), os::DOCK_SET_PLUGINS );
+					this, os::DOCK_SET_PLUGINS );
 	m_pcGetPosEv = os::Event::Register( "os/Dock/GetPosition", "Returns the position of the dock",
-					os::Application::GetInstance(), os::DOCK_GET_POSITION );
+					this, os::DOCK_GET_POSITION );
 	m_pcSetPosEv = os::Event::Register( "os/Dock/SetPosition", "Set the position of the dock",
-					os::Application::GetInstance(), os::DOCK_SET_POSITION );
+					this, os::DOCK_SET_POSITION );
+	m_pcGetDockFrameEv = os::Event::Register( "os/Dock/GetFrame", "Get the frame of the dock",
+					this, os::DOCK_GET_FRAME );
 
 	/* Bind to window event */					
 	m_pcWindowEv = new os::Event();
@@ -489,7 +498,7 @@ DockWin::~DockWin()
 	delete( m_pcSetPluginsEv );
 	delete( m_pcGetPosEv );
 	delete( m_pcSetPosEv );
-	
+	delete( m_pcGetDockFrameEv );
 	delete( m_pcDesktop );
 }
 
@@ -689,7 +698,7 @@ void DockWin::HandleMessage( os::Message* pcMessage )
 		}
 		case os::DOCK_REMOVE_VIEW:
 		{
-			/* Add a view */
+			/* Remove a view */
 			os::DockPlugin* pcPlugin = NULL;
 			os::View* pcView = NULL;
 			if( pcMessage->FindPointer( "view", (void**)&pcView ) == 0 && pcMessage->FindPointer( "plugin", (void**)&pcPlugin ) == 0 )
@@ -726,14 +735,79 @@ void DockWin::HandleMessage( os::Message* pcMessage )
 			UpdatePlugins();
 			break;
 		}
-		case os::DOCK_REMOVE_PLUGIN:
+		case os::DOCK_GET_PLUGINS:
 		{
-			/* Called by a plugin to remove itself from the dock */
-			os::DockPlugin* pcPlugin;
-			if( pcMessage->FindPointer( "plugin", (void**)&pcPlugin ) == 0 )
+			/* Called by another application to get a list of plugins */
+			if( !pcMessage->IsSourceWaiting() )
+				break;
+			os::Message cMsg( os::DOCK_GET_PLUGINS );
+			for( uint i = 0; i < GetPlugins().size(); i++ )
+				cMsg.AddString( "plugin", GetPlugins()[i]->GetPath().GetPath() );
+			pcMessage->SendReply( &cMsg );
+			break;
+		}
+		case os::DOCK_SET_PLUGINS:
+		{
+			/* Called by another application to set a list of plugins */
+			os::String zPlugin;
+			os::String zMessage;
+			int j;
+			bool bFound;
+			/* Look what plugins have been removed */
+			std::vector< os::DockPlugin* > apcDeleteList;
+			for( uint i = 0; i < GetPlugins().size(); i++ )
 			{
-				DeletePlugin( pcPlugin );
+				zPlugin = GetPlugins()[i]->GetPath();
+				bFound = false;
+				j = 0;
+				while( pcMessage->FindString( "plugin", &zMessage.str(), j ) == 0 )
+				{
+					if( zPlugin == zMessage )
+						bFound = true;
+					j++;
+				}
+				if( !bFound ) {
+					/* Remove plugin */
+					apcDeleteList.push_back( GetPlugins()[i] );
+				}
 			}
+
+			while( !apcDeleteList.empty() )
+			{
+				DeletePlugin( apcDeleteList.back() );
+				apcDeleteList.pop_back();
+			}
+
+			/* Look what plugins have been added */
+			
+			j = 0;
+			while( pcMessage->FindString( "plugin", &zMessage.str(), j ) == 0 )
+			{
+				bFound = false;
+				for( uint i = 0; i < GetPlugins().size(); i++ )
+				{
+					zPlugin = GetPlugins()[i]->GetPath();
+			
+					if( zPlugin == zMessage )
+						bFound = true;	
+				}
+				if( !bFound ) {
+					/* Add plugin */
+					AddPlugin( zMessage );
+				}
+				j++;
+			}
+			break;
+		}
+		case os::DOCK_GET_POSITION:
+		{
+			
+			/* Called by another application to get the position of the dock */
+			if( !pcMessage->IsSourceWaiting() )
+				break;
+			os::Message cMsg( os::DOCK_GET_POSITION );		
+			cMsg.AddInt32( "position", GetPosition() );
+			pcMessage->SendReply( &cMsg );
 			break;
 		}
 		case os::DOCK_SET_POSITION:
@@ -745,6 +819,27 @@ void DockWin::HandleMessage( os::Message* pcMessage )
 				SetPosition( (os::alignment)nPos );
 			}
 			SaveSettings();
+		}
+		case os::DOCK_GET_FRAME:
+		{
+			/* Called by another application to get the frame of the dock */
+			if( !pcMessage->IsSourceWaiting() )
+				break;
+			os::Message cMsg( os::DOCK_GET_FRAME );		
+			cMsg.AddRect( "frame", GetDockFrame() );
+			pcMessage->SendReply( &cMsg );
+			break;
+		}
+
+		case os::DOCK_REMOVE_PLUGIN:
+		{
+			/* Called by a plugin to remove itself from the dock */
+			os::DockPlugin* pcPlugin;
+			if( pcMessage->FindPointer( "plugin", (void**)&pcPlugin ) == 0 )
+			{
+				DeletePlugin( pcPlugin );
+			}
+			break;
 		}
 		default:
 		{
@@ -814,23 +909,23 @@ void DockWin::UpdatePlugins()
 	
 	bool bHorizontal = GetPosition() == os::ALIGN_TOP || GetPosition() == os::ALIGN_BOTTOM;
 	
-	if( bHorizontal )
+	if( bHorizontal ) {
 		nCurrentPos = (int)GetBounds().right - 4;
-	else
+	} else
 		nCurrentPos = (int)GetBounds().bottom - 4;
 	
 	/* Update the positions of the plugins */
 	for( uint32 i = 0; i < m_pcPluginViews.size(); i++ )
 	{
-		if( bHorizontal )
+		if( bHorizontal ) {
 			m_pcPluginViews[i]->SetFrame( os::Rect( nCurrentPos - (int)m_pcPluginViews[i]->GetPreferredSize( false ).x, 3, nCurrentPos, 
 											3 + 23 ) );
-		else
-			m_pcPluginViews[i]->SetFrame( os::Rect( 3, nCurrentPos - (int)m_pcPluginViews[i]->GetPreferredSize( false ).y, 3 + 23, 
+		} else
+			m_pcPluginViews[i]->SetFrame( os::Rect( 3, nCurrentPos - (int)m_pcPluginViews[i]->GetPreferredSize( false ).y, (int)m_pcPluginViews[i]->GetPreferredSize( true ).x, 
 										nCurrentPos ) );
-		if( bHorizontal )
+		if( bHorizontal ) {
 			nCurrentPos -= (int)m_pcPluginViews[i]->GetPreferredSize( false ).x + 8;
-		else
+		} else
 			nCurrentPos -= (int)m_pcPluginViews[i]->GetPreferredSize( false ).y + 8;
 	} 
 }
@@ -843,7 +938,9 @@ void DockWin::DeletePlugin( os::DockPlugin* pcPlugin )
 		if( pcPlugin == m_pcPlugins[i] )
 		{
 			if( !pcPlugin->GetDeleted() )
+			{
 				pcPlugin->Delete();
+			}
 			if( pcPlugin->GetViewCount() > 0 )
 			{
 				/* Delete plugin later */
@@ -1168,86 +1265,17 @@ void DockApp::HandleMessage( os::Message* pcMessage )
 	switch( pcMessage->GetCode() )
 	{
 		case os::DOCK_GET_PLUGINS:
-		{
-			/* Called by another application to get a list of plugins */
-			if( !pcMessage->IsSourceWaiting() )
-				break;
-			os::Message cMsg( os::DOCK_GET_PLUGINS );
-			m_pcWindow->Lock();
-			for( uint i = 0; i < m_pcWindow->GetPlugins().size(); i++ )
-				cMsg.AddString( "plugin", m_pcWindow->GetPlugins()[i]->GetPath().GetPath() );
-			m_pcWindow->Unlock();
-			pcMessage->SendReply( &cMsg );
-			break;
-		}
 		case os::DOCK_SET_PLUGINS:
-		{
-			/* Called by another application to set a list of plugins */
-			os::String zPlugin;
-			os::String zMessage;
-			int j;
-			bool bFound;
-			m_pcWindow->Lock();
-			/* Look what plugins have been removed */
-			for( uint i = 0; i < m_pcWindow->GetPlugins().size(); i++ )
-			{
-				zPlugin = m_pcWindow->GetPlugins()[i]->GetPath();
-				bFound = false;
-				j = 0;
-				while( pcMessage->FindString( "plugin", &zMessage.str(), j ) == 0 )
-				{
-					if( zPlugin == zMessage )
-						bFound = true;
-					j++;
-				}
-				if( !bFound ) {
-					/* Remove plugin */
-					os::Message cMsg( os::DOCK_REMOVE_PLUGIN );
-					cMsg.AddPointer( "plugin", m_pcWindow->GetPlugins()[i] );
-					m_pcWindow->PostMessage( &cMsg, m_pcWindow );;
-					//m_pcWindow->DeletePlugin( m_pcWindow->GetPlugins()[i] );
-				}
-			}
-			/* Look what plugins have been added */
-			
-			j = 0;
-			while( pcMessage->FindString( "plugin", &zMessage.str(), j ) == 0 )
-			{
-				bFound = false;
-				for( uint i = 0; i < m_pcWindow->GetPlugins().size(); i++ )
-				{
-					zPlugin = m_pcWindow->GetPlugins()[i]->GetPath();
-			
-					if( zPlugin == zMessage )
-						bFound = true;	
-				}
-				if( !bFound ) {
-					/* Add plugin */
-					m_pcWindow->AddPlugin( zMessage );
-				}
-				j++;
-			}
-			m_pcWindow->Unlock();
-			break;
-		}
 		case os::DOCK_GET_POSITION:
-		{
-			
-			/* Called by another application to get the position of the dock */
-			if( !pcMessage->IsSourceWaiting() )
-				break;
-			os::Message cMsg( os::DOCK_GET_POSITION );		
-			cMsg.AddInt32( "position", m_pcWindow->GetPosition() );
-			pcMessage->SendReply( &cMsg );
-			break;
-		}
 		case os::DOCK_SET_POSITION:
 		{
 			m_pcWindow->PostMessage( pcMessage );
 			break;
 		}
 		default:
+		{
 			os::Application::HandleMessage( pcMessage );
+		}
 	}
 }
 
