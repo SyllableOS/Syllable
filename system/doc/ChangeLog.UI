@@ -1,3 +1,7 @@
+* January 25, 2010, Anthony Morphett *
+
+Implemented copy & paste in IconDirView context menu
+
 * May 29, 2009, Anthony Morphett *
 
 Keyboard navigation improvements for compound views such as os::Spinner, DropdownMenu

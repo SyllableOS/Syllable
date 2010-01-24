@@ -43,6 +43,7 @@
 #include <util/looper.h>
 #include <util/message.h>
 #include <util/event.h>
+#include <util/clipboard.h>
 #include <storage/registrar.h>
 #include <storage/directory.h>
 #include <storage/nodemonitor.h>
@@ -279,7 +280,7 @@ void DirKeeper::HandleMessage( Message * pcMessage )
 
 					if( nInode == int64 ( m_pcCurrentDir->GetInode() ) )
 					{
-						printf( "%Ld moved from %Ld to %Ld\n", nInode, nOldDir, nNewDir );
+//						printf( "%Ld moved from %Ld to %Ld\n", nInode, nOldDir, nNewDir );
 					}
 					else
 					{
@@ -599,6 +600,15 @@ class IconDirectoryView::Private
 public:
 	os::BitmapImage* GetDriveIcon( os::String zPath, fs_info* psInfo, bool bSmall ) const;
 	
+	typedef enum {
+		FILE_OP_MOVE,
+		FILE_OP_COPY,
+		FILE_OP_LINK,
+		FILE_OP_DUMMY
+	} file_op;
+	
+	int ProcessFileOps( os::Message* pcData, os::Path& cDestDir, file_op eAction, os::View* pcTarget );
+	
 	Message*	        m_pcDirChangeMsg;
 	Path	        	m_cPath;
 	os_priv::DirKeeper* m_pcDirKeeper;
@@ -686,6 +696,47 @@ os::BitmapImage* IconDirectoryView::Private::GetDriveIcon( os::String zPath, fs_
 	}
 	
 	return( pcItemIcon );
+}
+
+int IconDirectoryView::Private::ProcessFileOps( os::Message* pcData, os::Path& cDstDir, file_op eAction, os::View* pcTarget )
+{
+	std::vector < os::String > cSrcPaths;
+	std::vector < os::String > cDstPaths;
+	const char* pzPath;
+	
+	for( int i = 0; pcData->FindString( "file/path", &pzPath, i ) == 0; ++i )
+	{
+		/* Check that none of the source items is the same as our destination */
+		if( os::String( pzPath ) == cDstDir )
+			return( 1 );	/* TODO: better handling of this case. Might be other files to copy. Ask user what to do? */
+		Path cSrcPath( pzPath );
+		Path cDstPath = cDstDir;
+
+		cDstPath.Append( cSrcPath.GetLeaf() );
+		cSrcPaths.push_back( pzPath );
+		cDstPaths.push_back( cDstPath.GetPath() );
+	}
+	//std::cout<<"Copy!"<<std::endl;
+	if( eAction == FILE_OP_LINK )
+	{
+		/* Create links */
+		for( uint i = 0; i < cSrcPaths.size(); i++ )
+		{
+//			printf( "Create link %s to %s\n", cDstPaths[i].c_str(), cSrcPaths[i].c_str() );
+			symlink( cSrcPaths[i].c_str(), cDstPaths[i].c_str() );
+		}
+	} else if( eAction == FILE_OP_COPY )
+	{
+		/* Start file copy */
+		m_nJobsPending++;
+		copy_files( cDstPaths, cSrcPaths, Messenger( pcTarget ), new os::Message( M_JOB_END ) );
+	}
+	else {
+		/* Start file move */
+		m_nJobsPending++;
+		move_files( cDstPaths, cSrcPaths, Messenger( pcTarget ), new os::Message( M_JOB_END ) );
+	}
+	return( 0 );
 }
 
 
@@ -1189,8 +1240,22 @@ void IconDirectoryView::DragSelection( os::Point cStartPoint )
 
 void IconDirectoryView::OpenContextMenu( os::Point cPosition, bool bMouseOverIcon )
 {
-	/* Create context menu */
+	/* Check if there are pastable items on the clipboard */
+	/* An alternate way would be to monitor the clipboard using events, and keep track of when it contains pastable data */
+	bool bPastable = false;
+	{	/* Use a block so that we don't keep the Clipboard object around unnecessarily */
+		os::Clipboard cClipboard;
+		cClipboard.Lock();
+		os::Message* pcData = cClipboard.GetData();
+		const char* pzTmp = NULL;
+		if( pcData && pcData->FindString( "file/path", &pzTmp ) == 0 )
+		{
+			bPastable = true;
+		}
+		cClipboard.Unlock();
+	}
 	
+	/* Create context menu */
 	if( !bMouseOverIcon )
 	{
 		
@@ -1209,8 +1274,15 @@ void IconDirectoryView::OpenContextMenu( os::Point cPosition, bool bMouseOverIco
 			if( !m->m_pcDirMenu ) {
 				m->m_pcDirMenu = new os::Menu( os::Rect(), "dirmenu", os::ITEMS_IN_COLUMN );
 				m->m_pcDirMenu->AddItem( m->m_pcCatalog->GetString( ID_MSG_ICONDIRVIEW_MENU_NEW_DIRECTORY, "New directory..." ), new os::Message( M_NEW_DIR ) );
+				Menu* pcPasteMenu = new os::Menu( os::Rect(), m->m_pcCatalog->GetString( ID_MSG_ICONDIRVIEW_MENU_PASTE, "Paste" ), os::ITEMS_IN_COLUMN );
+				pcPasteMenu->AddItem( m->m_pcCatalog->GetString( ID_MSG_ICONDIRVIEW_MENU_PASTE_COPY, "Copy items here" ), new os::Message( M_PASTE_COPY ) );
+				pcPasteMenu->AddItem( m->m_pcCatalog->GetString( ID_MSG_ICONDIRVIEW_MENU_PASTE_MOVE, "Move items here" ), new os::Message( M_PASTE_MOVE ) );
+				pcPasteMenu->AddItem( m->m_pcCatalog->GetString( ID_MSG_ICONDIRVIEW_MENU_PASTE_LINK, "Create links to items here" ), new os::Message( M_PASTE_LINK ) );
+				m->m_pcDirMenu->AddItem( pcPasteMenu );
 				m->m_pcDirMenu->SetTargetForItems( this );
+				pcPasteMenu->SetTargetForItems( this );
 			}
+			m->m_pcDirMenu->GetItemAt( 1 )->SetEnable( bPastable );
 			m->m_pcDirMenu->Open( ConvertToScreen( cPosition ) );
 		}
 	} else if( !( m->m_cPath.GetPath() == "/" ) )
@@ -1263,6 +1335,7 @@ void IconDirectoryView::OpenContextMenu( os::Point cPosition, bool bMouseOverIco
 			m->m_pcFileMenu->AddItem( m->m_pcCatalog->GetString( ID_MSG_ICONDIRVIEW_MENU_RENAME, "Rename..." ), new os::Message( M_RENAME ) );
 			m->m_pcFileMenu->AddItem( m->m_pcCatalog->GetString( ID_MSG_ICONDIRVIEW_MENU_MOVE_TO_TRASH, "Move to Trash" ), new os::Message( M_MOVE_TO_TRASH ) );
 			m->m_pcFileMenu->AddItem( m->m_pcCatalog->GetString( ID_MSG_ICONDIRVIEW_MENU_DELETE, "Delete..." ), new os::Message( M_DELETE ) );
+			m->m_pcFileMenu->AddItem( m->m_pcCatalog->GetString( ID_MSG_ICONDIRVIEW_MENU_COPY, "Copy to clipboard" ), new os::Message( M_COPY ) );
 			m->m_pcFileMenu->SetTargetForItems( this );
 		}
 		
@@ -1780,6 +1853,66 @@ void IconDirectoryView::HandleMessage( Message * pcMessage )
 		}
 		break;
 	}
+	case M_COPY:
+	{
+		os::Clipboard cClipboard;
+		cClipboard.Lock();
+		cClipboard.Clear();
+		os::Message* pcMsg = cClipboard.GetData();
+
+		for( uint i = 0; i < GetIconCount(); ++i )
+		{
+			if( GetIconSelected( i ) )
+			{
+				os::Path cSrcPath = m->m_cPath;
+				DirectoryIconData *pcData = static_cast < DirectoryIconData * >( GetIconData( i ) );
+
+				cSrcPath.Append( pcData->m_zPath.c_str() );
+				
+				pcMsg->AddString( "file/path", cSrcPath.GetPath() );
+			}
+		}
+		
+		cClipboard.Commit();
+		cClipboard.Unlock();
+		break;
+	}
+	case M_PASTE_COPY:
+	case M_PASTE_MOVE:
+	case M_PASTE_LINK:
+	{
+		os::Clipboard cClipboard;
+		cClipboard.Lock();
+		os::Message* pcMsg = cClipboard.GetData();
+		if( pcMsg == NULL )
+		{
+			dbprintf( "IconDirView: Got PASTE message while clipboard empty!\n" );
+			cClipboard.Unlock();
+			break;
+		}
+
+		os::Message cMsg = *pcMsg;	/* Take a copy of the message so we can unlock the clipboard */
+
+		Private::file_op eAction;
+		switch( pcMessage->GetCode() ) {
+			case M_PASTE_COPY: eAction = Private::FILE_OP_COPY; break;
+			case M_PASTE_MOVE: eAction = Private::FILE_OP_MOVE; break;
+			case M_PASTE_LINK: eAction = Private::FILE_OP_LINK; break;
+			default: ;
+		}
+
+		if( eAction == Private::FILE_OP_MOVE )
+		{
+			/* Clear the clipboard after cut & paste (but not after copy) */
+			cClipboard.Clear();
+			cClipboard.GetData();	/* Need to call this to make Clear() have effect (see Clipboard docs) */
+			cClipboard.Commit();
+		}
+		cClipboard.Unlock();
+		
+		m->ProcessFileOps( &cMsg, m->m_cPath, eAction, this );
+		break;
+	}
 	case M_JOB_END:
 		m->m_nJobsPending--;
 		break;
@@ -1839,6 +1972,8 @@ void IconDirectoryView::MouseUp( const Point & cPosition, uint32 nButtons, Messa
 	
 	//std::cout<<pzPath<<" "<<cDstDir.GetPath().c_str()<<std::endl;
 	
+
+	/* Moving icons around within the view */
 	if( m->m_cPath == Path( pzPath ).GetDir() && ( ( cDstDir == m->m_cPath ) || ( cDstDir == Path( pzPath ) ) ) 
 		&& ( GetView() == VIEW_DETAILS || GetView() == VIEW_LIST ) )
 		return( IconView::MouseUp( cPosition, nButtons, NULL ) );
@@ -1876,41 +2011,21 @@ void IconDirectoryView::MouseUp( const Point & cPosition, uint32 nButtons, Messa
 		}
 		return( os::IconView::MouseUp( cPosition, nButtons, NULL ) );
 	} else
-	{
-		std::vector < os::String > cSrcPaths;
-		std::vector < os::String > cDstPaths;
-		for( int i = 0; pcData->FindString( "file/path", &pzPath, i ) == 0; ++i )
-		{
-			/* Check that none of the source items is the same as our destination */
-			if( os::String( pzPath ) == cDstDir )
-				return( IconView::MouseUp( cPosition, nButtons, NULL ) );
-			Path cSrcPath( pzPath );
-			Path cDstPath = cDstDir;
-
-			cDstPath.Append( cSrcPath.GetLeaf() );
-			cSrcPaths.push_back( pzPath );
-			cDstPaths.push_back( cDstPath.GetPath() );
-		}
-		//std::cout<<"Copy!"<<std::endl;
+	{	/* Copying/moving files */
+		Private::file_op eAction;
 		if( os::Application::GetInstance()->GetQualifiers() & os::QUAL_ALT )
 		{
-			/* Create links */
-			for( uint i = 0; i < cSrcPaths.size(); i++ )
-			{
-//				printf( "Create link %s to %s\n", cDstPaths[i].c_str(), cSrcPaths[i].c_str() );
-				symlink( cSrcPaths[i].c_str(), cDstPaths[i].c_str() );
-			}
+			eAction = Private::FILE_OP_LINK;
 		} else if( os::Application::GetInstance()->GetQualifiers() & os::QUAL_CTRL )
 		{
-			/* Start file copy */
-			m->m_nJobsPending++;
-			copy_files( cDstPaths, cSrcPaths, Messenger( this ), new os::Message( M_JOB_END ) );
+			eAction = Private::FILE_OP_COPY;
 		}
-		else {
-			/* Start file move */
-			m->m_nJobsPending++;
-			move_files( cDstPaths, cSrcPaths, Messenger( this ), new os::Message( M_JOB_END ) );
+		else
+		{
+			eAction = Private::FILE_OP_MOVE;
 		}
+		
+		m->ProcessFileOps( pcData, cDstDir, eAction, this );
 		return( os::IconView::MouseUp( cPosition, nButtons, NULL ) );
 	}
 }

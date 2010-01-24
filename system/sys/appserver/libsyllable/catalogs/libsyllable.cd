@@ -29,6 +29,12 @@ MSG_ICONDIRVIEW_MENU_MOVE_TO_TRASH						Move to Trash
 MSG_ICONDIRVIEW_MENU_DELETE								Delete...
 MSG_ICONDIRVIEW_PERCENT_FREE							%i%% free
 MSG_ICONDIRVIEW_VOLUMENAME_UNKNOWN						Unknown
+MSG_ICONDIRVIEW_MENU_PASTE								Paste
+MSG_ICONDIRVIEW_MENU_PASTE_COPY							Copy items here
+MSG_ICONDIRVIEW_MENU_PASTE_MOVE							Move items here
+MSG_ICONDIRVIEW_MENU_PASTE_LINK							Create links to items here
+MSG_ICONDIRVIEW_MENU_COPY								Copy to clipboard
+
 
 // File information window
 MSG_FILEINFO_WINDOW_TITLE=3000							Info

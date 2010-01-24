@@ -110,7 +110,8 @@ private:
     virtual void	__IDV_reserved5__();
 private:
 	enum { M_ADD_ENTRY, M_UPDATE_ENTRY, M_REMOVE_ENTRY, M_LAYOUT, M_REREAD, M_MOUNT = 100, M_UNMOUNT, 
-    		M_NEW_DIR, M_DELETE, M_RENAME, M_OPEN_WITH, M_INFO, M_MOVE_TO_TRASH, M_EMPTY_TRASH, M_JOB_END, M_JOB_END_REREAD };
+    		M_NEW_DIR, M_DELETE, M_RENAME, M_OPEN_WITH, M_INFO, M_MOVE_TO_TRASH, M_EMPTY_TRASH, M_JOB_END, M_JOB_END_REREAD,
+    		M_PASTE_COPY, M_PASTE_MOVE, M_PASTE_LINK, M_COPY };
 
     IconDirectoryView& operator=( const IconDirectoryView& );
     IconDirectoryView( const IconDirectoryView& );
