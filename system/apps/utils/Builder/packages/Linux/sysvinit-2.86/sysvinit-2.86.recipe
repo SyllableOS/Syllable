@@ -1,5 +1,6 @@
 authors				Kaj de Vos
 status				testing
+warnings			Assumes system installation!
 
 licenses			GPL-2+
 
@@ -7,9 +8,14 @@ locations			ftp://ftp.cistron.nl/pub/people/miquels/sysvinit/
 
 build-dir			src
 
-super-install
+;super-install
 system-prefix-var	ROOT
 install-tree
+install-vars
+	BIN_OWNER		'system'
+	BIN_GROUP		'system'
+	MANDIR			"$IMAGE/system/resources/sysvinit/2.86/man"
+
 documentation
 	README COPYRIGHT
-	doc
+	doc/*
