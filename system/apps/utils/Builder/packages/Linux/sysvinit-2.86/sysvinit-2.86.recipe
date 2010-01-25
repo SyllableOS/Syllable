@@ -10,7 +10,7 @@ build-dir			src
 
 ;super-install
 system-prefix-var	ROOT
-install-tree
+install-tree		man
 install-vars
 	BIN_OWNER		'system'
 	BIN_GROUP		'system'

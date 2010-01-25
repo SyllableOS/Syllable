@@ -1,5 +1,6 @@
 authors				Kaj de Vos
 status				testing
+warnings			Assumes system installation!
 
 licenses			GPL
 
@@ -7,9 +8,16 @@ home				www.infodrom.org/projects/sysklogd/
 locations			http://www.infodrom.org/projects/sysklogd/download/
 
 ;super-install
-;system-prefix-var	prefix
+system-prefix-var	prefix
 install-tree
-install				sudo make prefix=$IMAGE install
+;	bin
+	man
+install-vars
+	MAN_USER		'system'
+	MAN_GROUP		'system'
+;	BINDIR			"$IMAGE/system/resources/sysklogd/1.4.1/bin"
+	MANDIR			"$IMAGE/system/resources/sysklogd/1.4.1/man"
+;install				sudo make prefix=$IMAGE install
 
 documentation		README.1st README.linux ANNOUNCE COPYING NEWS CHANGES
 build-docs			INSTALL
