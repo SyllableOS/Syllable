@@ -16,5 +16,7 @@ modules
 ;	programming/autoconf-2.13
 ;	programming/automake-1.4-p6
 	programming/net-ssleay-1.30
+;	Linux links this dynamically into XML-Parser:
+;	file/expat-2.0.0
 	programming/xml-parser-2.36
 	programming/IntlTool-0.40.6
