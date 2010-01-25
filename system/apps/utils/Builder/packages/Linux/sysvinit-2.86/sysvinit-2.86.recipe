@@ -10,11 +10,15 @@ build-dir			src
 
 ;super-install
 system-prefix-var	ROOT
-install-tree		man
+install-tree
+	man
+	man/man1
+	man/man5
+	man/man8
 install-vars
 	BIN_OWNER		'system'
 	BIN_GROUP		'system'
-	MANDIR			"$IMAGE/system/resources/sysvinit/2.86/man"
+	MANDIR			'/system/resources/sysvinit/2.86/man'
 
 documentation
 	README COPYRIGHT

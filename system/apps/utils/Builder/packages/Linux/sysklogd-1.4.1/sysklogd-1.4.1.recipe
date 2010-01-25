@@ -12,6 +12,8 @@ system-prefix-var	prefix
 install-tree
 ;	bin
 	man
+	man/man5
+	man/man8
 install-vars
 	MAN_USER		'system'
 	MAN_GROUP		'system'
