@@ -405,6 +405,7 @@ modules
 	apps/gnu/patch-2.5.4
 ;	apps/other/file-
 	apps/gnu/gnupg-1.4.9
+;	Must already be installed to bootstrap PythonGObject:
 	apps/other/Python-2.6.4
 	apps/other/PythonGObject-2.20.0
 	apps/other/Gobo-Scripts-2.9.11
