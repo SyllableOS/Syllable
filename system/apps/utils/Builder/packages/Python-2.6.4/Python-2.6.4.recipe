@@ -21,7 +21,7 @@ licenses			OSI
 home				www.python.org
 locations			http://www.python.org/ftp/python/2.6.4/
 
-build-recommends
+recommends
 	ReadLine
 	bzip2
 	OpenSSL
