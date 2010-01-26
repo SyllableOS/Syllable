@@ -154,7 +154,7 @@ merge-install
 install-tree		<Extra subdirectories to create>
 
 ; Installing:
-; <install>
+; [<install-env>] <install>
 ; [<install-env>] make [<install-prefix-var>=<(Stage) installation path>] [<install-vars>] <install-targets>
 
 install				<Installation commands override>
