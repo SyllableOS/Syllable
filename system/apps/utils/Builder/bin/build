@@ -636,11 +636,11 @@ def installModule staging, target
 						end
 
 						unless action(
-							((vars = recipe['install-env']) ? toVariables(vars) + ' ' : '') +
-							superAccess +
-							(cmdLines = recipe['install'] ?
-								toCommands(cmdLines) :
-								makeCommand(target) +
+							if cmdLines = recipe['install']
+								toCommands cmdLines
+							else
+								((vars = recipe['install-env']) ? toVariables(vars) + ' ' : '') +
+								superAccess + makeCommand(target) +
 								(! ['image', 'system', 'libraries'].include?(staging) && configured ?
 									'' :
 									((p = recipe['system-prefix-var']) && configured ?
@@ -648,14 +648,11 @@ def installModule staging, target
 										" #{(var = recipe['install-prefix-var']) ? var : 'prefix'}=" +
 											(p ? prefix(staging, target) : root)
 									) +
-									(p ?
-										" #{p}=" + @image :
-										''
-									)
+									(p ? " #{p}=" + @image : '')
 								) +
 								((vars = recipe['install-vars']) ? ' ' + toVariables(vars) : '') +
 								' ' + ((targets = recipe['install-targets']) ? toString(targets) : 'install')
-							)
+							end
 						)
 							false
 						else
