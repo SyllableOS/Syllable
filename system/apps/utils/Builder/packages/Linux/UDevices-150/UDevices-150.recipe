@@ -1,0 +1,42 @@
+authors				Kaj de Vos
+status				testing
+
+headline			Userspace Device management
+description
+	UDev allows Linux users to have a dynamic /dev directory and it provides the ability to have persistent device names.
+licenses			GPL
+
+home				www.kernel.org/pub/linux/utils/kernel/hotplug/udev.html
+locations			http://www.kernel.org/pub/linux/utils/kernel/hotplug/
+packages			udev-150
+needs				Linux >= 2.6.27
+recommends
+	PCI-Utils
+	LibUSB
+	USB-Utils
+	LibACL
+	GLib
+	GPerf
+
+configure-args		--prefix=/usr
+configure-options
+	--sysconfdir=/etc
+	--sbindir=/sbin
+;	--with-rootlibdir=/lib
+	--libexecdir=/lib/udev
+;	--docdir=/usr/share/doc/udev-150
+	--disable-extras
+	--disable-introspection
+
+;super-install
+system-prefix-var	DESTDIR
+
+post-install
+	install -m644 ../UDevices-150/rules/packages/64-*.rules				$IMAGE/lib/udev/rules.d/ &&
+	install -m644 ../UDevices-150/rules/packages/40-pilot-links.rules	$IMAGE/lib/udev/rules.d/ &&
+	install -m644 ../UDevices-150/rules/packages/40-isdn.rules			$IMAGE/lib/udev/rules.d/
+
+documentation
+	README COPYING NEWS ChangeLog TODO
+	docs/*
+build-docs			INSTALL

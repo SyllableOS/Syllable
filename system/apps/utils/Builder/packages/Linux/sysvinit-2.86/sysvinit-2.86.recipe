@@ -16,9 +16,9 @@ install-tree
 	man/man5
 	man/man8
 install-vars
-	BIN_OWNER		'system'
-	BIN_GROUP		'system'
-	MANDIR			'/system/resources/sysvinit/2.86/man'
+	BIN_OWNER		system
+	BIN_GROUP		system
+	MANDIR			/system/resources/sysvinit/2.86/man
 
 documentation
 	README COPYRIGHT

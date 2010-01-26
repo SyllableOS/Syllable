@@ -15,10 +15,10 @@ install-tree
 	man/man5
 	man/man8
 install-vars
-	MAN_USER		'system'
-	MAN_GROUP		'system'
-;	BINDIR			"$IMAGE/system/resources/sysklogd/1.4.1/bin"
-	MANDIR			"$IMAGE/system/resources/sysklogd/1.4.1/man"
+	MAN_USER		system
+	MAN_GROUP		system
+;	BINDIR			$IMAGE/system/resources/sysklogd/1.4.1/bin
+	MANDIR			$IMAGE/system/resources/sysklogd/1.4.1/man
 ;install				sudo make prefix=$IMAGE install
 
 documentation		README.1st README.linux ANNOUNCE COPYING NEWS CHANGES

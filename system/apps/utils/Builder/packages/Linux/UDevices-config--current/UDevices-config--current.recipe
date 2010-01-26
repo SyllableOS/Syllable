@@ -1,0 +1,18 @@
+authors				Kaj de Vos
+status				testing
+
+locations			http://www.linuxfromscratch.org/lfs/downloads/development/
+packages			udev-config-20090925
+
+needs				UDevices
+
+; Because /etc/udev/ is already created as super user:
+super-install
+system-prefix-var	DESTDIR
+install-tree
+install-targets
+	install
+	install-doc
+	install-extra-doc
+
+documentation		ChangeLog
