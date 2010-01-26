@@ -267,10 +267,10 @@ modules
 	other/init
 ;	sys/include
 
-	system linux/linux-2.6.25-headers
+	system linux/Linux-2.6.32.6-headers
 ;	For bootstrapping from a depmod with a different kernel modules location:
 ;	bootstrap linux/module-init-tools--bootstrap
-	system linux/linux-2.6.25
+	system linux/Linux-2.6.32.6
 
 ;	Kernel modules
 

@@ -324,10 +324,10 @@ modules
 ;	other/keymaps
 ;	sys/include
 
-	system linux/linux-2.6.25-headers
+	system linux/Linux-2.6.32.6-headers
 ;	For bootstrapping from a depmod with a different kernel modules location:
 ;	bootstrap linux/module-init-tools--bootstrap
-	system linux/linux-2.6.25
+	system linux/Linux-2.6.32.6
 
 ;	Kernel modules
 
@@ -339,7 +339,7 @@ modules
 	system libs/zlib-1.2.3
 
 	linux/iptables-1.4.0
-;	system linux/linux--cleanup
+;	system linux/Linux--cleanup
 
 ;	stage libraries/gettext-0.17
 ;	stage libraries/flex-2.5.33

@@ -19,7 +19,7 @@ resources
 ;	usr/share/terminfo/x			binaries/xterm-atheos
 
 modules
-	system linux/linux--cleanup
+	system linux/Linux--cleanup
 
 finish
 	mv users/root users/administrator &&
