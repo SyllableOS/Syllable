@@ -1,7 +1,7 @@
 #! /usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.9.14
+# Version 0.9.15
 # Copyright (c) 2002-2010 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -85,40 +85,40 @@ end
 
 def downloadModule target
 	unless
-		if locations = (recipe = getRecipe target)['locations']
-			(packages = (packages = recipe['packages']) ?
-				firstColumn(parseList(packages)) :
-				recipe['files'] ? [] : commonName(target)  # packages + files requires explicit packages specification
-			) == [] or
-			begin
-				@log.subheader 'Downloading source package(s)'
+		if (packages = (recipe = getRecipe target)['packages']) ?
+			(packages = firstColumn parseList(packages)) :
+			! sourcePackageAvailable?(packages = commonName(target))
+		then
+			@log.subheader 'Downloading source package(s)'
 
-				Dir.chdir File.join(@configPath, 'downloading')
+			Dir.chdir File.join(@configPath, 'downloading')
 
-				for package in packages
-					unless sourcePackageAvailable? package  # Already there
-						break if for location in toList locations
-							break unless for type in ['tar.bz2', 'tbz2', 'tar.gz', 'tgz', 'zip']
-								@log.subheader 'Trying ' + f = File.join(location, file = package + '.' + type)
-								file = File.basename file
+			for package in packages
+				unless sourcePackageAvailable? package  # Already there
+					break if for location in toList recipe['locations']
+						break unless for type in ['tar.bz2', 'tbz2', 'tar.gz', 'tgz', 'zip']
+							@log.subheader 'Trying ' + f = File.join(location, file = package + '.' + type)
+							file = File.basename file
 
-								break if downloadFile f and
-									# Detect web error pages and corrupt archives
-									action case type
-									when 'tar.bz2', 'tbz2' then 'tar tjf ' + file
-									when 'tar.gz', 'tgz' then 'tar tzf ' + file
-									when 'zip' then 'unzip -t ' + file  # 'zip -T ' + file
-									end
-							end
+							break if downloadFile f and
+								# Detect web error pages and corrupt archives
+								action case type
+								when 'tar.bz2', 'tbz2' then 'tar tjf ' + file
+								when 'tar.gz', 'tgz' then 'tar tzf ' + file
+								when 'zip' then 'unzip -t ' + file  # 'zip -T ' + file
+								end
 						end
-
-						@log.subheader "Moving package #{file} to sources directory"
-						break unless action "mv #{file} " + @sourcesPath
 					end
+
+					@log.subheader "Moving package #{file} to sources directory"
+					break unless action "mv #{file} " + @sourcesPath
 				end
 			end
-		else  # Get it from a repository
-			exists? target or  # Already there
+		else
+			sourcePackageAvailable? packages or  # Already downloaded
+			recipe['files'] or  # Source consists of single files
+			exists? target or  # Already installed
+			# Get it from a repository
 			action('mkdir --parents ' + (dir = File.dirname target)) &&
 			begin  # We have a destination dir
 				Dir.chdir dir  # if target['/']
@@ -636,26 +636,26 @@ def installModule staging, target
 						end
 
 						unless action(
-							if cmdLines = recipe['install']
-								toCommands cmdLines
-							else
-								((vars = recipe['install-env']) ? toVariables(vars) + ' ' : '') +
-								superAccess + makeCommand(target) +
-								(	! ['image', 'system', 'libraries'].include?(staging) && configured ?
+							((vars = recipe['install-env']) ? toVariables(vars) + ' ' : '') +
+							superAccess +
+							(cmdLines = recipe['install'] ?
+								toCommands(cmdLines) :
+								makeCommand(target) +
+								(! ['image', 'system', 'libraries'].include?(staging) && configured ?
+									'' :
+									(p && configured ?
 										'' :
-										((p = recipe['system-prefix-var']) ?
-											" #{p}=" + @image :
-											''
-										) +
-										(p && configured ?
-											'' :
-											" #{(var = recipe['install-prefix-var']) ? var : 'prefix'}=" +
-												(p ? prefix(staging, target) : root)
-										)
+										" #{(var = recipe['install-prefix-var']) ? var : 'prefix'}=" +
+											(p ? prefix(staging, target) : root)
+									) +
+									((p = recipe['system-prefix-var']) ?
+										" #{p}=" + @image :
+										''
+									)
 								) +
 								((vars = recipe['install-vars']) ? ' ' + toVariables(vars) : '') +
 								' ' + ((targets = recipe['install-targets']) ? toString(targets) : 'install')
-							end
+							)
 						)
 							false
 						else
@@ -1940,7 +1940,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.9.14',
+	puts 'Syllable Build System 0.9.15',
 		'Copyright (c) 2002-2010 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
