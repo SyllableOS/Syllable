@@ -158,6 +158,7 @@ tree
 ;	var/lib/locate
 ;	var/local
 	lib
+	lib/modules
 	lib/firmware
 	lib/udev
 	lib/udev/devices
@@ -215,16 +216,16 @@ prepare
 	chown system:system	var/lib/sshd &&
 
 ;	For LFS bootscripts:
-	ln -s /system/resources/cups/1.3.4/sbin/cupsd	usr/sbin/ &&
-	ln -s /resources/bind/sbin/named				usr/sbin/ &&
-;	ln -s /resources/openssh/sbin/sshd				usr/sbin/ &&
-	ln -s /resources/apache/bin/apachectl			usr/sbin/ &&
-	ln -s /resources/apache/bin/httpd				usr/sbin/ &&
-	ln -s /resources/vsftpd/sbin/vsftpd				usr/sbin/ &&
-	ln -s /resources/rsync/bin/rsync				usr/bin/ &&
-	ln -s /resources/samba/sbin/nmbd				usr/sbin/ &&
-	ln -s /resources/samba/sbin/smbd				usr/sbin/ &&
-	ln -s /resources/samba/sbin/winbindd			usr/sbin/ &&
+	ln -s /system/indexes/sbin/cupsd		usr/sbin/ &&
+	ln -s /resources/indexes/sbin/named		usr/sbin/ &&
+;	ln -s /system/indexes/sbin/sshd			usr/sbin/ &&
+	ln -s /resources/indexes/bin/apachectl	usr/sbin/ &&
+	ln -s /resources/indexes/bin/httpd		usr/sbin/ &&
+	ln -s /resources/indexes/sbin/vsftpd	usr/sbin/ &&
+	ln -s /resources/indexes/bin/rsync		usr/bin/ &&
+	ln -s /resources/indexes/sbin/nmbd		usr/sbin/ &&
+	ln -s /resources/indexes/sbin/smbd		usr/sbin/ &&
+	ln -s /resources/indexes/sbin/winbindd	usr/sbin/ &&
 
 ;	For Python:
 	ln -s /resources/indexes/bin/python usr/bin/python
@@ -270,7 +271,7 @@ modules
 	system linux/Linux-2.6.32.6-headers
 ;	For bootstrapping from a depmod with a different kernel modules location:
 ;	bootstrap linux/module-init-tools--bootstrap
-	system linux/Linux-2.6.32.6
+	system linux/Linux-2.6.32.6-system
 
 ;	Kernel modules
 
