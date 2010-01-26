@@ -1,0 +1,24 @@
+diff -ru Linux-2.6.32.6-original/Makefile Linux-2.6.32.6/Makefile
+--- Linux-2.6.32.6-original/Makefile	2010-01-25 19:50:10.000000000 +0100
++++ Linux-2.6.32.6/Makefile	2010-01-26 14:33:44.000000000 +0100
+@@ -316,7 +316,7 @@
+ AWK		= awk
+ GENKSYMS	= scripts/genksyms/genksyms
+ INSTALLKERNEL  := installkernel
+-DEPMOD		= /sbin/depmod
++DEPMOD		= depmod
+ KALLSYMS	= scripts/kallsyms
+ PERL		= perl
+ CHECK		= sparse
+@@ -1552,9 +1552,9 @@
+ # Run depmod only if we have System.map and depmod is executable
+ quiet_cmd_depmod = DEPMOD  $(KERNELRELEASE)
+       cmd_depmod = \
+-	if [ -r System.map -a -x $(DEPMOD) ]; then                              \
++	if [ -r System.map -a -x /sbin/depmod ]; then                              \
+ 		$(DEPMOD) -ae -F System.map                                     \
+-		$(if $(strip $(INSTALL_MOD_PATH)), -b $(INSTALL_MOD_PATH) )     \
++		$(if $(strip $(INSTALL_MOD_PATH)), -b $(IMAGE) )     \
+ 		$(KERNELRELEASE);                                               \
+ 	fi
+ 

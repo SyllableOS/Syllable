@@ -1,7 +1,7 @@
 authors				Kaj de Vos
 status				testing
 warnings
-	Patch is specific to linux-2.6.25 kernel.
+	Patch is specific to linux-2.6.32.6 kernel.
 	Needs built kernel source within the build host system!
 
 headline			QEmu Accelerator driver
@@ -13,9 +13,9 @@ home				www.qemu.org
 locations			http://www.qemu.org/
 
 needs
-	linux
+	Linux 2.6.32.6
 	qemu >= 0.8.1
-build-needs			linux--headers
+build-needs			Linux--headers
 conflicts			xen
 
 build-dir			.

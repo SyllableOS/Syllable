@@ -27,14 +27,13 @@ recommends
 build-recommends	Jade
 
 configure
+;	Make the kernel modules installation go into the resource package:
+	ln -sf ../../resources/Linux/lib/modules/2.6.32.6-Syllable $IMAGE/lib/modules/ &&
 ;	Make Linux build directory available from the host system for external kernel modules:
 	SOURCE=$PWD &&
 	sudo mkdir --parents /lib/modules/2.6.32.6-Syllable &&
 	cd /lib/modules/2.6.32.6-Syllable &&
-;	This probably ends up in the host kernel:
-	sudo ln -sf $SOURCE build &&
-;	Make the kernel modules installation go into the system image:
-	ln -sf ../system/resources/linux/2.6.32.6/lib/modules $IMAGE/lib/
+	sudo ln -sf $SOURCE build
 
 ; depmod has a hard-coded path to the collected modules from different kernel versions,
 ; that it inserts into the installation path. To allow the kernel to install its modules
@@ -83,13 +82,13 @@ build-docs			Documentation/Changes
 internal-docs		MAINTAINERS
 
 _links
-;	include											/
+;	include													/
 ;	For linux-fusion:
-;	include/linux									/usr/include/
-;	lib/modules										/lib/
-;	../system/indexes/lib/modules					/lib/
+;	include/linux											/usr/include/
+;	lib/modules												/lib/
+;	../resources/indexes/lib/modules						/lib/
 ;	Get external kernel modules to install themselves among this kernel's modules:
-	../system/resources/linux/2.6.32.6/lib/modules	/lib/
+	../../resources/Linux/lib/modules/2.6.32.6-Syllable		/lib/modules/
 
 ;pre-register		mkinitrd /boot/initrd-2.6.32.6.img 2.6.32.6
 

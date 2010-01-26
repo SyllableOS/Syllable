@@ -19,12 +19,12 @@ install				rm /lib/modules/2.6.32.6-Syllable/build
 
 links
 ;	Assume the host had this (same) kernel:
-	/system/resources/linux/2.6.32.6/lib/modules	/lib/
+	/system/resources/Linux/2.6.32.6/lib/modules/2.6.32.6-Syllable	/lib/modules/
 ;	(Repair damage from Linux-Fusion:)
-;	lib/modules										/lib/
+;	lib/modules														/lib/
 ;	Give the system access to modules of all kernel versions:
 ;	This, however, leads depmod to create module files within the symlink pool:
-;	/system/indexes/lib/modules						/lib/
+;	/system/indexes/lib/modules										/lib/
 
 ; Source is not there any more because it's moved to Linux--cleanup, so it did not get unregistered:
 _delete-files

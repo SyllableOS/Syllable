@@ -1,6 +1,6 @@
 authors				Kaj de Vos
 status				testing
-warnings			Is specific to the 2.6.25 kernel!
+warnings			Is specific to the 2.6.32.6 kernel!
 
 headline			Firewall and NAT configuration tools
 description
@@ -12,14 +12,14 @@ locations
 	http://www.netfilter.org/projects/iptables/files/
 	ftp://ftp.netfilter.org/pub/iptables/
 
-build-needs			linux--headers
+build-needs			Linux--headers
 
 install-prefix-var	PREFIX
 
 make-env
 ;	Needs raw kernel headers in some cases.
 ;	Uses built kernel source on the host when not defined:
-	KERNEL_DIR		"$IMAGE/system/development/resources/linux/2.6.25"
+	KERNEL_DIR		"$IMAGE/system/development/resources/Linux/2.6.32.6"
 ;	LIBDIR			'/lib'
 ;	NO_SHARED_LIBS	'1'
 ;	DO_MULTI		'1'
