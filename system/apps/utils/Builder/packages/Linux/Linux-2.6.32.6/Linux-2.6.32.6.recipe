@@ -21,7 +21,7 @@ build-needs
 install-needs		ModuleInitTools
 recommends
 	ProcPS >= 3.2.0
-	IPTable >= 1.4.1
+	IPTables >= 1.4.1
 	E2FSPrograms >= 1.41.4
 ; For documentation:
 build-recommends	Jade
