@@ -1,0 +1,21 @@
+authors				Kaj de Vos
+status				testing
+
+headline			Linux kernel headers
+description
+	The Linux kernel needs to expose an Application Programming Interface (API) for the system's C library (GLibC) to utilize. This is done by way of sanitizing various C header files that are shipped in the Linux kernel source tarball.
+licenses			GPL-2
+
+home				www.kernel.org
+locations			http://www.kernel.org/pub/linux/kernel/v2.6/
+packages			linux-2.6.27.44
+
+install-prefix-var	INSTALL_HDR_PATH
+
+; install-prefix-var doesn't work here:
+make				make ARCH=i386 mrproper headers_check
+make-vars			ARCH i386
+
+install-tree
+install-vars		ARCH i386
+install-targets		headers_install

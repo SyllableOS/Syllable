@@ -1,0 +1,99 @@
+authors				Kaj de Vos
+status				testing
+warnings
+	Modifies the kernel modules area in the running system!
+	Installation only works on a host system where depmod was compiled for the same kernel modules location.
+
+inherits			Linux-2.6.27.44-headers
+
+headline			The Linux Kernel
+description
+	Linux is a clone of the Unix kernel, written from scratch by Linus Torvalds with assistance from a loosely-knit team of hackers across the Net. It aims towards POSIX and Single UNIX Specification compliance. It has all the features you would expect in a modern fully-fledged Unix kernel, including true multitasking, virtual memory, shared libraries, demand loading, shared copy-on-write executables, proper memory management, and TCP/IP networking.
+
+_build-needs
+	Make >= 3.80
+	GNU-CompilerCollection >= 3.2
+	Perl
+;	For make menuconfig:
+;	NCurses
+;	For make xconfig:
+;	qt
+install-needs		ModuleInitTools
+_recommends
+	ProcPS >= 3.2.0
+	IPTables >= 1.4.1
+	E2FSPrograms >= 1.41.4
+; For documentation:
+build-recommends	Jade
+
+configure
+;	Make the kernel modules installation go into the resource package:
+	ln -sf ../../resources/Linux/lib/modules/2.6.27.44-Syllable $IMAGE/lib/modules/ &&
+;	Make Linux build directory available from the host system for external kernel modules:
+	SOURCE=$PWD &&
+	sudo mkdir --parents /lib/modules/2.6.27.44-Syllable &&
+	cd /lib/modules/2.6.27.44-Syllable &&
+	sudo ln -sf $SOURCE build
+
+; depmod has a hard-coded path to the collected modules from different kernel versions,
+; that it inserts into the installation path. To allow the kernel to install its modules
+; into its own directory, we patch the extra path away in the Linux Makefile.
+install-prefix-var	INSTALL_MOD_PATH
+
+pre-make
+	make mrproper &&
+	cp config-2.6.27.44 .config
+; $INSTALL_MOD_PATH must be empty:
+make				make -j2 ARCH=i386
+; For optimal build speed, number of CPUs + 1:
+make-options		-j2
+_make-targets
+;	help
+;	config
+;	Curses:
+;	menuconfig
+;	Qt:
+;	xconfig
+;	GTK:
+;	gconfig
+;	Default:
+;	defconfig
+;	allmodconfig
+;	allyesconfig
+;	Updates configuration:
+;	oldconfig
+;	silentoldconfig
+;	all
+
+super-install
+
+install-tree
+install-targets		modules_install
+install-files
+	arch/x86/boot/bzImage	kernel
+	System.map				System.map
+	.config					config-2.6.27.44
+
+documentation
+	README COPYING REPORTING-BUGS CREDITS
+;	Huge:
+;	Documentation/*
+build-docs			Documentation/Changes
+internal-docs		MAINTAINERS
+
+_links
+;	include													/
+;	For linux-fusion:
+;	include/linux											/usr/include/
+;	lib/modules												/lib/
+;	../resources/indexes/lib/modules						/lib/
+;	Get external kernel modules to install themselves among this kernel's modules:
+	../../resources/Linux/lib/modules/2.6.27.44-Syllable	/lib/modules/
+
+;pre-register		mkinitrd /boot/initrd-2.6.27.44.img 2.6.27.44
+
+;move-files			Documentation/* /usr/share/doc/linux-2.6.27.44/
+delete-files
+;	Symlinks to the kernel source on the build host:
+	lib/modules/2.6.27.44-Syllable/build
+	lib/modules/2.6.27.44-Syllable/source
