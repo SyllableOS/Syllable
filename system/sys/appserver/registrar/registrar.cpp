@@ -1372,6 +1372,7 @@ void Registrar::UpdateAppList( RegistrarUser* psUser, bool bForce )
 	
 	/* Scan */
 	ScanAppPath( psUser, 0, os::Path( "/boot/Applications" ), cPrimaryLanguage );
+	ScanAppPath( psUser, 0, os::Path( "/resources/indexes/applications" ), cPrimaryLanguage );
 	
 	pcWindow->PostMessage( os::M_QUIT );
 	
