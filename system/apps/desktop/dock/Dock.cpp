@@ -287,7 +287,7 @@ void DockView::MouseMove( const os::Point& cNewPos, int nCode, uint32 nButtons, 
 					
 					cFrame.bottom = cFrame.top + GetFont()->GetSize() + 8;
 					
-					cFrame.right = cFrame.left + GetStringWidth( m_pcWin->GetIcons()[i]->GetTitle() );
+					cFrame.right = cFrame.left + GetStringWidth( m_pcWin->GetIcons()[i]->GetTitle() ) + 4;
 					m_pcCurrentInfo = new os::Window( cFrame, "dock_info", "Dock", os::WND_NO_BORDER );
 					os::StringView* pcView = new os::StringView( m_pcCurrentInfo->GetBounds(), "dock_info", 
 																m_pcWin->GetIcons()[i]->GetTitle().c_str() );
