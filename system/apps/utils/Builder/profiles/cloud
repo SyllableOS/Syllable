@@ -205,6 +205,8 @@ prepare
 
 ;	install -d				lib/{firmware,udev/devices/{pts,shm}} &&
 	mknod -m0666			lib/udev/devices/null c 1 3 &&
+;	? For UDevices 145:
+	mknod -m0600			lib/udev/devices/kmesg c 1 11 &&
 	ln -s /proc/self/fd		lib/udev/devices/fd &&
 	ln -s /proc/self/fd/0	lib/udev/devices/stdin &&
 	ln -s /proc/self/fd/1	lib/udev/devices/stdout &&
@@ -305,7 +307,7 @@ modules
 
 	system linux/sysvinit-2.86
 	system linux/LFS-BootScripts-6.5
-	system linux/UDevices-150
+	system linux/UDevices-145
 	system linux/UDevices-config--current
 	stage libs/zlib-1.2.3-static
 	system linux/module-init-tools-3.2.2
