@@ -137,6 +137,7 @@ AEditWindow::AEditWindow(const Rect& cFrame) : Window(cFrame, "main_window", AED
 	Rect cWinSize = cSettings.GetRect( "WindowPos", Rect( 101, 125, 700, 500 ) );
 	ResizeTo( cWinSize.Width(), cWinSize.Height() );
 	MoveTo( cWinSize.left, cWinSize.top );
+	_Layout();
 }
 
 AEditWindow::~AEditWindow()
