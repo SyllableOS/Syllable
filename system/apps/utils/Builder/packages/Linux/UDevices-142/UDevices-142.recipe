@@ -15,7 +15,7 @@ configure-args		--prefix=/usr
 configure-options
 	--sysconfdir=/etc
 	--sbindir=/sbin
-;	--with-rootlibdir=/lib
+	--with-rootlibdir=/lib
 	--libexecdir=/lib/udev
 ;	--docdir=/usr/share/doc/udev-142
 
