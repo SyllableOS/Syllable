@@ -1,10 +1,21 @@
 authors				Kaj de Vos
 status				testing
 
-locations			http://www.linuxfromscratch.org/lfs/downloads/development/
-packages			udev-config-20090925
+locations
+;	Stable LFS 6.5:
+	http://www.linuxfromscratch.org/lfs/downloads/6.5/
+;	Development:
+;	http://www.linuxfromscratch.org/lfs/downloads/development/
+packages
+;	Stable LFS 6.5:
+	udev-config-20090523
+;	Development:
+;	udev-config-20100126
 
-needs				UDevices
+needs
+;	UDevices
+;	Stable LFS 6.5:
+	UDevices 145
 
 ; Because /etc/udev/ is already created as super user:
 super-install
