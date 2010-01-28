@@ -22,8 +22,8 @@ super-install
 system-prefix-var	DESTDIR
 
 install-tree
-; For UDevices <= 142:
-install-vars		RULES_DIR '/lib/udev/rules.d'
+; Rules are split now between /etc/ and /lib/:
+;install-vars		RULES_DIR '/lib/udev/rules.d'
 install-targets
 	install
 	install-doc
