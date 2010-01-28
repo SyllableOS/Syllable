@@ -1,17 +1,17 @@
 authors				Kaj de Vos
 status				testing
 
-inherits			Linux-2.6.32.6
+inherits			Linux-2.6.27.44
 
 post-install
 ;	Make Linux build directory available from the host system for external kernel modules:
 	SOURCE=$PWD &&
-	sudo mkdir --parents /lib/modules/2.6.32.6-Syllable &&
-	cd /lib/modules/2.6.32.6-Syllable &&
+	sudo mkdir --parents /lib/modules/2.6.27.44-Syllable &&
+	cd /lib/modules/2.6.27.44-Syllable &&
 	sudo ln -sf $SOURCE build
 
 links
 ;	For linux-fusion:
-;	include/linux														/usr/include/
+;	include/linux															/usr/include/
 ;	Get external kernel modules to install themselves among this kernel's modules:
-	../../system/resources/Linux/2.6.32.6/lib/modules/2.6.32.6-Syllable	/lib/modules/
+	../../system/resources/Linux/2.6.27.44/lib/modules/2.6.27.44-Syllable	/lib/modules/

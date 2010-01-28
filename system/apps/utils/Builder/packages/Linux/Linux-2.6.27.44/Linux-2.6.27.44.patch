@@ -1,0 +1,14 @@
+diff -ru linux-2.6.25-original/Makefile linux-2.6.25/Makefile
+--- linux-2.6.25-original/Makefile	2008-04-17 02:49:44.000000000 +0000
++++ linux-2.6.25/Makefile	2008-04-17 14:39:57.000000000 +0000
+@@ -1543,8 +1543,8 @@
+ quiet_cmd_depmod = DEPMOD  $(KERNELRELEASE)
+       cmd_depmod = \
+ 	if [ -r System.map -a -x $(DEPMOD) ]; then                              \
+-		$(DEPMOD) -ae -F System.map                                     \
+-		$(if $(strip $(INSTALL_MOD_PATH)), -b $(INSTALL_MOD_PATH) -r)   \
++		depmod -ae -F System.map                                     \
++		$(if $(strip $(INSTALL_MOD_PATH)), -b $(IMAGE) -r)   \
+ 		$(KERNELRELEASE);                                               \
+ 	fi
+ 

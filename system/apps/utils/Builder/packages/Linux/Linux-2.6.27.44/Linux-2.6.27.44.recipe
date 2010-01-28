@@ -10,8 +10,8 @@ headline			The Linux Kernel
 description
 	Linux is a clone of the Unix kernel, written from scratch by Linus Torvalds with assistance from a loosely-knit team of hackers across the Net. It aims towards POSIX and Single UNIX Specification compliance. It has all the features you would expect in a modern fully-fledged Unix kernel, including true multitasking, virtual memory, shared libraries, demand loading, shared copy-on-write executables, proper memory management, and TCP/IP networking.
 
-_build-needs
-	Make >= 3.80
+build-needs
+	Make >= 3.79.1
 	GNU-CompilerCollection >= 3.2
 	Perl
 ;	For make menuconfig:
@@ -19,21 +19,12 @@ _build-needs
 ;	For make xconfig:
 ;	qt
 install-needs		ModuleInitTools
-_recommends
+recommends
 	ProcPS >= 3.2.0
-	IPTables >= 1.4.1
-	E2FSPrograms >= 1.41.4
+	IPTables
+	E2FSPrograms >= 1.29
 ; For documentation:
 build-recommends	Jade
-
-configure
-;	Make the kernel modules installation go into the resource package:
-	ln -sf ../../resources/Linux/lib/modules/2.6.27.44-Syllable $IMAGE/lib/modules/ &&
-;	Make Linux build directory available from the host system for external kernel modules:
-	SOURCE=$PWD &&
-	sudo mkdir --parents /lib/modules/2.6.27.44-Syllable &&
-	cd /lib/modules/2.6.27.44-Syllable &&
-	sudo ln -sf $SOURCE build
 
 ; depmod has a hard-coded path to the collected modules from different kernel versions,
 ; that it inserts into the installation path. To allow the kernel to install its modules
@@ -65,6 +56,7 @@ _make-targets
 ;	silentoldconfig
 ;	all
 
+;merge-install
 super-install
 
 install-tree
@@ -81,19 +73,15 @@ documentation
 build-docs			Documentation/Changes
 internal-docs		MAINTAINERS
 
-_links
-;	include													/
+links
 ;	For linux-fusion:
 ;	include/linux											/usr/include/
-;	lib/modules												/lib/
-;	../resources/indexes/lib/modules						/lib/
 ;	Get external kernel modules to install themselves among this kernel's modules:
 	../../resources/Linux/lib/modules/2.6.27.44-Syllable	/lib/modules/
 
 ;pre-register		mkinitrd /boot/initrd-2.6.27.44.img 2.6.27.44
 
-;move-files			Documentation/* /usr/share/doc/linux-2.6.27.44/
 delete-files
-;	Symlinks to the kernel source on the build host:
+;	Symlinks to the kernel source on the build host - prevent registration orgy:
 	lib/modules/2.6.27.44-Syllable/build
 	lib/modules/2.6.27.44-Syllable/source

@@ -1,7 +1,7 @@
 authors				Kaj de Vos
 status				testing
 warnings
-	Is specific to linux-2.6.32.6-Syllable kernel.
+	Is specific to linux-2.6.27.44-Syllable kernel.
 	Builds upon the running kernel!
 	Needs the kernel source in /lib/modules/<kernel>/build/.
 	Patches the kernel source (headers).
@@ -18,7 +18,7 @@ locations
 needs				Linux
 build-needs			Linux--headers
 
-patch				cp linux/include/linux/fusion.h /lib/modules/2.6.32.6-Syllable/build/include/linux/
+patch				cp linux/include/linux/fusion.h /lib/modules/2.6.27.44-Syllable/build/include/linux/
 
 system-prefix-var	DESTDIR
 
@@ -27,5 +27,5 @@ install-tree
 documentation		README ChangeLog TODO
 
 ; Not necessary due to the relative /lib/modules link:
-;move-files			/lib/modules/2.6.32.6-Syllable/drivers /system/resources/Linux/2.6.32.6/lib/modules/2.6.32.6-Syllable/
+;move-files			/lib/modules/2.6.27.44-Syllable/drivers /system/resources/Linux/2.6.27.44/lib/modules/2.6.27.44-Syllable/
 ;delete-files		/lib/modules
