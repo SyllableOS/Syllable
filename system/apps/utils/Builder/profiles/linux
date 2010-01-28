@@ -154,8 +154,6 @@ tree
 ;	For SysVInit and others:
 	bin
 	etc/default
-;	etc/udev
-;	etc/udev/rules.d
 ;	etc/opt
 	etc/profile.d
 	etc/sysconfig
@@ -189,11 +187,11 @@ tree
 	lib/modules
 	lib/firmware
 	lib/udev
+;	For UDevices <= 142:
+	lib/udev/rules.d
 	lib/udev/devices
 	lib/udev/devices/pts
 	lib/udev/devices/shm
-;	Node:
-;	lib/udev/devices/null
 ;	For SysVInit:
 	usr/share
 	usr/share/man
@@ -384,7 +382,7 @@ modules
 
 	system linux/sysvinit-2.86
 	system linux/LFS-BootScripts-6.5
-	system linux/UDevices-145
+	system linux/UDevices-142
 	system linux/UDevices-config--current
 	stage libs/zlib-1.2.3-static
 	system linux/module-init-tools-3.2.2
