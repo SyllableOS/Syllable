@@ -26,6 +26,10 @@ recommends
 ; For documentation:
 build-recommends	Jade
 
+; Make the kernel modules installation go into the package location:
+configure
+	ln -sf ../../resources/Linux/lib/modules/2.6.32.6-Syllable $IMAGE/lib/modules/
+
 ; depmod has a hard-coded path to the collected modules from different kernel versions,
 ; that it inserts into the installation path. To allow the kernel to install its modules
 ; into its own directory, we patch the extra path away in the Linux Makefile.
@@ -73,7 +77,7 @@ documentation
 build-docs			Documentation/Changes
 internal-docs		MAINTAINERS
 
-links
+_links
 ;	For linux-fusion:
 ;	include/linux											/usr/include/
 ;	Get external kernel modules to install themselves among this kernel's modules:

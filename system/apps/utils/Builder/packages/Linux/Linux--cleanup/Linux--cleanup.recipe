@@ -1,13 +1,13 @@
 authors				Kaj de Vos
 status				testing
 warnings
-	Cleans up kernel modules area in the running system!
-	Is specific to linux-2.6.32.6-Syllable kernel!
+	Cleans up kernel modules area in the running system after a system image installation!
+	Is specific to linux-2.6.27.44-Syllable kernel!
 	Assumes the host system has this same kernel!
 
 ; Overwrites the built kernel source. We don't need it again, but at least
 ; it prevents the huge source tree from being unregistered:
-packages			linux-2.6.32.6
+packages			linux-2.6.27.44
 
 make				true
 
@@ -15,18 +15,21 @@ super-install
 ; Kernel should already be there:
 merge-install
 
-install				rm /lib/modules/2.6.32.6-Syllable/build
+; Clean out kernel source link from the host system:
+install				rm /lib/modules/2.6.27.44-Syllable/build
 
-links
+_links
 ;	Assume the host had this (same) kernel:
-	/system/resources/Linux/2.6.32.6/lib/modules/2.6.32.6-Syllable	/lib/modules/
+	/system/resources/Linux/2.6.27.44/lib/modules/2.6.27.44-Syllable	/lib/modules/
 ;	(Repair damage from Linux-Fusion:)
-;	lib/modules														/lib/
+;	lib/modules															/lib/
 ;	Give the system access to modules of all kernel versions:
 ;	This, however, leads depmod to create module files within the symlink pool:
-;	/system/indexes/lib/modules										/lib/
+;	/system/indexes/lib/modules											/lib/
 
-; Source is not there any more because it's moved to Linux--cleanup, so it did not get unregistered:
 _delete-files
-	/system/indexes/lib/modules/2.6.32.6-Syllable/build
-	/system/indexes/lib/modules/2.6.32.6-Syllable/source
+;	Clean out kernel source link from the host system:
+	/lib/modules/2.6.27.44-Syllable/build
+;	Source is not there any more because it's moved to Linux--cleanup, so it did not get unregistered:
+	/system/indexes/lib/modules/2.6.27.44-Syllable/build
+	/system/indexes/lib/modules/2.6.27.44-Syllable/source

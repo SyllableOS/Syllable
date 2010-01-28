@@ -3,14 +3,16 @@ status				testing
 
 inherits			Linux-2.6.27.44
 
-post-install
+configure
 ;	Make Linux build directory available from the host system for external kernel modules:
 	SOURCE=$PWD &&
 	sudo mkdir --parents /lib/modules/2.6.27.44-Syllable &&
 	cd /lib/modules/2.6.27.44-Syllable &&
-	sudo ln -sf $SOURCE build
+	sudo ln -sf $SOURCE build &&
+;	Make the kernel modules installation go into the package location in the system image:
+	ln -sf ../../system/resources/Linux/2.6.27.44/lib/modules/2.6.27.44-Syllable $IMAGE/lib/modules/
 
-links
+_links
 ;	For linux-fusion:
 ;	include/linux															/usr/include/
 ;	Get external kernel modules to install themselves among this kernel's modules:
