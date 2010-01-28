@@ -1,6 +1,5 @@
 authors				Kaj de Vos
 status				testing
-warnings			Needs sys/signalfd.h which GLibC 2.7 should have, but doesn't.
 
 headline			Userspace Device management
 description
@@ -9,17 +8,8 @@ licenses			GPL
 
 home				www.kernel.org/pub/linux/utils/kernel/hotplug/udev.html
 locations			http://www.kernel.org/pub/linux/utils/kernel/hotplug/
-packages			udev-145
-needs
-	Linux >= 2.6.25
-	GNU-LibC >= 2.7
-recommends
-	PCI-Utils
-	LibUSB
-	USB-Utils
-	LibACL
-	GLib
-	GPerf
+packages			udev-142
+needs				Linux >= 2.6.22
 
 configure-args		--prefix=/usr
 configure-options
@@ -27,17 +17,16 @@ configure-options
 	--sbindir=/sbin
 ;	--with-rootlibdir=/lib
 	--libexecdir=/lib/udev
-;	--docdir=/usr/share/doc/udev-145
-	--disable-extras
-;	--disable-introspection
+;	--docdir=/usr/share/doc/udev-142
 
 ;super-install
 system-prefix-var	DESTDIR
 
+install-tree
 post-install
-	install -m644 ../UDevices-145/rules/packages/64-*.rules				$IMAGE/lib/udev/rules.d/ &&
-	install -m644 ../UDevices-145/rules/packages/40-pilot-links.rules	$IMAGE/lib/udev/rules.d/ &&
-	install -m644 ../UDevices-145/rules/packages/40-isdn.rules			$IMAGE/lib/udev/rules.d/
+	install -m644 ../UDevices-142/rules/packages/64-*.rules				$IMAGE/lib/udev/rules.d/ &&
+	install -m644 ../UDevices-142/rules/packages/40-pilot-links.rules	$IMAGE/lib/udev/rules.d/ &&
+	install -m644 ../UDevices-142/rules/packages/40-isdn.rules			$IMAGE/lib/udev/rules.d/
 
 documentation
 	README COPYING NEWS ChangeLog TODO

@@ -20,7 +20,10 @@ needs
 ; Because /etc/udev/ is already created as super user:
 super-install
 system-prefix-var	DESTDIR
+
 install-tree
+; For UDevices <= 142:
+install-vars		RULES_DIR '/lib/udev/rules.d'
 install-targets
 	install
 	install-doc
