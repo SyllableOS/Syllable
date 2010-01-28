@@ -325,10 +325,10 @@ modules
 ;	other/keymaps
 ;	sys/include
 
-	system linux/Linux-2.6.32.6-headers
+	system linux/Linux-2.6.27.44-headers
 ;	For bootstrapping from a depmod with a different kernel modules location:
 ;	bootstrap linux/module-init-tools--bootstrap
-	system linux/Linux-2.6.32.6-system
+	system linux/Linux-2.6.27.44-system
 
 ;	Kernel modules
 
@@ -635,7 +635,7 @@ modules
 
 ;	Extra goodies
 
-	apps/other/genode-9.02
+	apps/other/genode-8.08
 
 	apps/other/s-lang-2.1.1
 	apps/other/glib-2.14.4
