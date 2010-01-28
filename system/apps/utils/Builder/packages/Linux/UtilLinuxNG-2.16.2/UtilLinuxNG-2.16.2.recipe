@@ -38,4 +38,4 @@ documentation
 ;	docs example.files
 develop-docs		README.devel
 
-;links				agetty /sbin/getty
+links				/system/indexes/sbin/agetty /sbin/
