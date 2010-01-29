@@ -631,7 +631,7 @@ modules
 
 
 ;	Amazon tools
-	apps/other/Ruby-1.9.1p376
+	apps/other/ruby-1.8.6
 	apps/other/s3sync--current
 
 
