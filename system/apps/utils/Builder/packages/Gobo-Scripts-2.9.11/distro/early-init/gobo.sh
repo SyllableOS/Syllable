@@ -2,7 +2,7 @@
 
 export PATH=/System/Links/Executables:$PATH
 #export DLL_PATH=/System/Links/Libraries:$DLL_PATH
-export LD_LIBRARY_PATH=/System/Links/Libraries:$LD_LIBRARY_PATH
+# LD_LIBRARY_PATH is modified earlier in /etc/profile
 export MANPATH=/System/Links/Manuals:/System/Links/Shared/man:$MANPATH
 export INFOPATH=/System/Links/Manuals/info:$INFOPATH
 

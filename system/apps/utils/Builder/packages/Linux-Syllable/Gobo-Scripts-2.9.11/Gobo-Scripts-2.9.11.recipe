@@ -23,8 +23,8 @@ install
 
 ;		Programs/DejaVu-Fonts--current \
 ;		In Linux:
-		Programs/Linux-Headers/2.6.25 \
-		Programs/Linux/2.6.25 \
+		Programs/Linux-Headers/2.6.27.44 \
+		Programs/Linux/2.6.27.44 \
 ;		In Linux:
 ;		Programs/Linux-Fusion-3.2.4 \
 ;		Programs/KQEmu-1.3.0pre11 \
@@ -36,7 +36,7 @@ install
 		Programs/Ncurses/5.7 \
 		Programs/Readline/6.0 \
 ;		Programs/BinUtils-2.19.1-objcopy \
-		Programs/Ruby/1.8.6 \
+		Programs/Ruby/1.9.1p376 \
 		Programs/Grub/0.97 \
 		Programs/CoreUtils/6.9 \
 		Programs/Bash/4.0 \
@@ -47,12 +47,12 @@ install
 ;		Programs/Boron-0.1.0 \
 ;		Programs/ORCA--current \
 		Programs/Sysvinit/2.86 \
-;		Programs/LFS-bootscripts-6.3 \
-		Programs/Udev/113 \
-;		Programs/UDev-config-6.3 \
+;		Programs/LFS-bootscripts-6.5 \
+		Programs/Udev/142 \
+;		Programs/UDev-config-6.5 \
 		Programs/Module-Init-Tools/3.2.2 \
-		Programs/E2FSProgs/1.40.2 \
-		Programs/Util-Linux/2.12r \
+		Programs/E2FSProgs/1.41.9 \
+		Programs/Util-Linux/2.16.2 \
 		Programs/Sysklogd/1.4.1 \
 		Programs/Shadow/4.0.18.1 \
 ;		Libraries:
@@ -80,7 +80,7 @@ install
 ;		Programs/LCD-Fonts-1.1 \
 ;		Programs/FreeFont--current \
 ;		Programs/MIME-Support--current \
-;		Programs/BLFS-bootscripts-20070822 \
+;		Programs/BLFS-bootscripts-2009.3.2 \
 		Programs/Procps/3.2.7 \
 		Programs/Sudo/1.7.2p2 \
 		Programs/MkTemp/1.6 \
@@ -130,7 +130,7 @@ install
 ;		Programs/CAPTCHA--current \
 ;		Programs/REBOL-MySQL-1.2.0 \
 ;		Programs/S3Sync--current \
-;		Programs/Genode-9.02 \
+;		Programs/Genode-8.08 \
 		Programs/Slang/2.1.1 \
 		Programs/GLib/2.14.4 \
 		Programs/MC/4.6.1 \
@@ -194,8 +194,8 @@ links
 
 ;	/Programs/DejaVu-Fonts--current
 ;	In Linux:
-	2.6.25									/Programs/Linux-Headers/Current
-	2.6.25									/Programs/Linux/Current
+	2.6.27.44								/Programs/Linux-Headers/Current
+	2.6.27.44								/Programs/Linux/Current
 ;	In Linux:
 ;	/Programs/Linux-Fusion-3.2.4
 ;	/Programs/KQEmu-1.3.0pre11
@@ -212,7 +212,7 @@ links
 	5.7										/Programs/Ncurses/Current
 	6.0										/Programs/Readline/Current
 ;	/Programs/BinUtils-2.19.1-objcopy
-	1.8.6									/Programs/Ruby/Current
+	1.9.1p376								/Programs/Ruby/Current
 	0.97									/Programs/Grub/Current
 	6.9										/Programs/CoreUtils/Current
 	4.0										/Programs/Bash/Current
@@ -223,12 +223,12 @@ links
 ;	/Programs/Boron-0.1.0
 ;	/Programs/ORCA--current
 	2.86									/Programs/Sysvinit/Current
-;	/Programs/LFS-bootscripts-6.3
-	113										/Programs/Udev/Current
-;	/Programs/UDev-config-6.3
+;	/Programs/LFS-bootscripts-6.5
+	142										/Programs/Udev/Current
+;	/Programs/UDev-config-6.5
 	3.2.2									/Programs/Module-Init-Tools/Current
-	1.40.2									/Programs/E2FSProgs/Current
-	2.12r									/Programs/Util-Linux/Current
+	1.41.9									/Programs/E2FSProgs/Current
+	2.16.2									/Programs/Util-Linux/Current
 	1.4.1									/Programs/Sysklogd/Current
 	4.0.18.1								/Programs/Shadow/Current
 ;	Libraries:
@@ -256,7 +256,7 @@ links
 ;	/Programs/LCD-Fonts-1.1
 ;	/Programs/FreeFont--current
 ;	/Programs/MIME-Support--current
-;	/Programs/BLFS-bootscripts-20070822
+;	/Programs/BLFS-bootscripts-2009.3.2
 	3.2.7									/Programs/Procps/Current
 	1.7.2p2									/Programs/Sudo/Current
 	1.6										/Programs/MkTemp/Current
@@ -306,7 +306,7 @@ links
 ;	/Programs/CAPTCHA--current
 ;	/Programs/REBOL-MySQL-1.2.0
 ;	/Programs/S3Sync--current
-;	/Programs/Genode-9.02
+;	/Programs/Genode-8.08
 	2.1.1									/Programs/Slang/Current
 	2.14.4									/Programs/GLib/Current
 	4.6.1									/Programs/MC/Current
