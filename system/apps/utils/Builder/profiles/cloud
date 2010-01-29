@@ -233,6 +233,8 @@ prepare
 resources
 	boot/grub									menu.lst
 	etc											linux/ld.so.conf
+;	Needed by Genode:
+;	etc											binaries/ld.so.cache
 	etc											linux/inittab
 	etc/sysconfig								linux/clock
 	etc											linux/fstab

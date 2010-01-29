@@ -261,6 +261,8 @@ prepare
 resources
 	boot/grub									menu.lst
 	etc											linux/ld.so.conf
+;	Needed by Genode:
+;	etc											binaries/ld.so.cache
 	etc											linux/inittab
 	etc/sysconfig								linux/clock
 	etc											linux/fstab
@@ -653,6 +655,8 @@ modules
 	apps/other/Python-2.6.4
 	apps/other/PythonGObject-2.20.0
 	apps/other/Gobo-Scripts-2.9.11
+
+	apps/other/Nix-0.13
 
 ;	apps/other/LibFetch-2.26
 ;	apps/other/LibArchive-
