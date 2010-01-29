@@ -2,7 +2,7 @@ authors				Kaj de Vos
 status				testing
 notes				Documentation can be built in doc/ directory
 
-headline			Scripting language similar to REBOL
+headline			Interpreted, prototype-based language similar to REBOL
 description
 	Boron is a scripting language similar to REBOL. It is the third iteration of the Urlan datatype system.
 
@@ -44,9 +44,12 @@ _patch
 	rebol 					boot_str.r
 
 ; configure can't be called from a parent directory:
-configure			./configure
+build-dir			.
+;configure			./configure
 ; REBOL or Boron needs to be in /usr/bin/ to run M2 from configure:
 ;configure			cmake .
+
+post-make			sed -i 's~"urlan.h"~<boron/urlan.h>~' boron.h
 
 install-tree
 	bin
@@ -60,9 +63,11 @@ install-files
 	urlan/urlan.h		include/boron/
 	urlan/urlan_atoms.h	include/boron/
 	urlan/bignum.h		include/boron/
-	libboron.so		lib/libboron.so.0
+	libboron.so.0.1.0	lib/
 
-links				libboron.so.0 lib/libboron.so
+links
+	libboron.so.0.1.0	lib/libboron.so.0
+	libboron.so.0.1.0	lib/libboron.so
 
 documentation		LICENSE LICENSE.GPL
 develop-docs
