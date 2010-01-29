@@ -1,7 +1,7 @@
 #! /usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.9.18
+# Version 0.9.19
 # Copyright (c) 2002-2010 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -116,7 +116,8 @@ def downloadModule target
 				end
 			end
 		else
-			recipe['locations'] or  # Not supposed to be in a repository
+			recipe['locations'] or  # Allow location with files or without explicit package
+			recipe['packages'] or  # Allow package without locations
 			exists? target or  # Already installed
 			# Get it from a repository
 			action('mkdir --parents ' + (dir = File.dirname target)) &&
@@ -1938,7 +1939,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.9.18',
+	puts 'Syllable Build System 0.9.19',
 		'Copyright (c) 2002-2010 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
