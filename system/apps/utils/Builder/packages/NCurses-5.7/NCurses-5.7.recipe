@@ -1,5 +1,6 @@
 authors				Kaj de Vos
 status				testing
+warnings			System installation breaks headers due to includedir parameter.
 
 inherits			gnu
 

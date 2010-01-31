@@ -1,0 +1,7 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			NCurses-5.7
+
+; Prevent using includedir argument:
+configure-args		--prefix=/system/resources/NCurses/5.7
