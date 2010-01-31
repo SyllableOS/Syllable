@@ -4,7 +4,7 @@
 export PWD
 
 # Run paths
-export PATH=/resources/indexes/sbin:/resources/indexes/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/system/indexes/sbin:/system/indexes/bin:/system/bin
+
 #export DLL_PATH=@bindir@/libraries:/system/resources/gcc/4.2.3/lib:/resources/indexes/lib:/usr/local/lib:/system/indexes/lib:/system
 export LD_LIBRARY_PATH=/system/resources/gcc/4.2.3/lib:/system/development/resources/gcc/4.2.3/lib:/resources/indexes/lib:/usr/local/lib:/usr/lib:/lib:/system/indexes/lib:/system/libraries
 
@@ -13,10 +13,13 @@ then
 	export LD_LIBRARY_PATH=/System/Links/Libraries:$LD_LIBRARY_PATH
 fi
 
+export PATH=/resources/indexes/sbin:/resources/indexes/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/system/indexes/sbin:/system/indexes/bin:/system/bin
+
 export MANPATH=/resources/indexes/man:/usr/local/man:/usr/local/share/man:/usr/man:/usr/share/man:/system/indexes/man
 export INFOPATH=/resources/indexes/info:/usr/local/info:/usr/info:/system/indexes/info
 
 # Paths for software compilation
+
 export LIBRARY_PATH=/system/resources/gcc/4.2.3/lib:/system/development/resources/gcc/4.2.3/lib:/resources/indexes/lib:/usr/local/lib:/usr/lib:/lib:/system/indexes/lib
 export C_INCLUDE_PATH=/system/development/resources/gcc/4.2.3/include:/resources/indexes/include:/usr/local/include:/usr/include:/system/indexes/include:/system/development/headers
 export CPLUS_INCLUDE_PATH=$C_INCLUDE_PATH
