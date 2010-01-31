@@ -78,7 +78,7 @@ build-dir			<Directory>
 ; <configure>
 
 ; [<pre-configure>]
-; [<configure-env>] <configure-cmd> ([<configure-prefix>] | [<configure-args>]) [<configure-vars>] [<configure-options>]
+; [<configure-env>] <configure-cmd> [<configure-vars>] ([<configure-prefix>] | [<configure-args>]) [<configure-options>]
 
 configure			<Configuration commands override>
 
@@ -88,13 +88,13 @@ configure-env
 	VAR 'value'
 ; Configure command (sequence), if non-standard or in a non-standard location:
 configure-cmd		configure
-; Non-standard prefix option (with optional trailing whitespace):
-configure-prefix	"--prefix="
-; Arguments overriding prefix:
-configure-args		--prefix=/resources/foo
 ; Extra variables for configure:
 configure-vars
 	VAR value
+; Non-standard prefix option (with optional trailing whitespace):
+configure-prefix	"--prefix="
+; Arguments overriding prefixes:
+configure-args		--prefix=/resources/foo --includedir=/resources/foo/include
 ; Extra configure options:
 configure-options	--with-option
 
