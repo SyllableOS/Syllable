@@ -1,0 +1,10 @@
+authors				Kaj de Vos
+status				testing
+
+_configure-options
+	--with-search-path=
+;	--disable-ipv6
+;	--with-static-linked-ext
+;	--enable-shared
+;	--enable-pthread
+;	--enable-install-doc
