@@ -316,7 +316,7 @@ modules
 
 ;	apps/gnu/BinUtils-2.19.1
 ;	apps/gnu/make-3.81
-;	apps/other/Ruby-1.9.1p376
+;	apps/other/Ruby-1.8.7p248
 ;	apps/gnu/nano--curses
 
 

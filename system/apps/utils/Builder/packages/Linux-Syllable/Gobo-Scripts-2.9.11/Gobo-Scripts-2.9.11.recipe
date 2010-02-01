@@ -36,7 +36,7 @@ install
 		Programs/Ncurses/5.7 \
 		Programs/Readline/6.0 \
 ;		Programs/BinUtils-2.19.1-objcopy \
-		Programs/Ruby/1.8.6 \
+		Programs/Ruby/1.8.7p248 \
 		Programs/Grub/0.97 \
 		Programs/CoreUtils/6.9 \
 		Programs/Bash/4.0 \
@@ -214,7 +214,7 @@ links
 	5.7										/Programs/Ncurses/Current
 	6.0										/Programs/Readline/Current
 ;	/Programs/BinUtils-2.19.1-objcopy
-	1.8.6									/Programs/Ruby/Current
+	1.8.7p248								/Programs/Ruby/Current
 	0.97									/Programs/Grub/Current
 	6.9										/Programs/CoreUtils/Current
 	4.0										/Programs/Bash/Current

@@ -387,7 +387,7 @@ modules
 
 
 ;	Amazon tools
-	apps/other/ruby-1.8.6
+	apps/other/Ruby-1.8.7p248
 	apps/other/s3sync--current
 
 
