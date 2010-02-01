@@ -1,7 +1,7 @@
 #! /usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.9.22
+# Version 0.9.23
 # Copyright (c) 2002-2010 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -622,7 +622,25 @@ def installModule staging, target
 					else
 						@log.header 'Doing the installation'
 
-						superAccess = recipe['super-install'] ? 'sudo ' : ''
+						superAccess = recipe['super-install'] && ! @syllable ?  # Syllable has no sudo yet
+							'sudo ' +
+								# TODO: settings/environment
+								'CC=$CC ' +
+								'CXX=$CXX ' +
+								'AS=$AS ' +
+								'LD=$LD ' +
+								'CFLAGS=$CFLAGS ' +
+								'CXXFLAGS=$CXXFLAGS ' +
+								'LDFLAGS=$LDFLAGS ' +
+								'C_INCLUDE_PATH=$C_INCLUDE_PATH ' +
+								'CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH ' +
+								'LIBRARY_PATH=$LIBRARY_PATH ' +
+								'DLL_PATH=$DLL_PATH ' +
+								'LD_LIBRARY_PATH=$LD_LIBRARY_PATH ' +
+								'PKG_CONFIG_PATH=$PKG_CONFIG_PATH ' +
+								'IMAGE=$IMAGE ' +
+								'STAGE=$STAGE' :
+							''
 
 						Dir.chdir target
 						configured = recipe['configure'] || recipe['configure-cmd'] ||
@@ -1938,7 +1956,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.9.22',
+	puts 'Syllable Build System 0.9.23',
 		'Copyright (c) 2002-2010 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
