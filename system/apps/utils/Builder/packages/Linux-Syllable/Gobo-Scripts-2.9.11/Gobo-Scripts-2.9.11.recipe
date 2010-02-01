@@ -164,6 +164,8 @@ install-files
 	ld.so.conf								/Programs/Glibc/Settings/
 
 links
+;	For ldd:
+	/bin/bash									/System/Links/Executables/
 ;	This one is destructive!
 ;	/System/Links/Headers/						/usr/include
 ;	Headers way off course:

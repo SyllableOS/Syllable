@@ -74,6 +74,8 @@ install-files
 	2.9.11/Resources/Defaults/Settings/*	/System/Settings/
 
 links
+;	For ldd:
+	/bin/bash									/System/Links/Executables/
 ;	This one is destructive!
 ;	/System/Links/Headers/						/usr/include
 ;	Headers way off course:
