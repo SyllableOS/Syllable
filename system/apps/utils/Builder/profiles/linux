@@ -617,7 +617,9 @@ modules
 
 ;	Binaries
 
-	apps/other/rebol-core--current
+	apps/other/REBOL-Core-2-current
+	apps/other/REBOL-View-2-current
+	apps/other/AltME--current
 
 
 ;	REBOL stacks

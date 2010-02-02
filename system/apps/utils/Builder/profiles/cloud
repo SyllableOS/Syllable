@@ -373,7 +373,7 @@ modules
 
 ;	Binaries
 
-	apps/other/rebol-core--current
+	apps/other/REBOL-Core-2-current
 
 
 ;	REBOL stacks

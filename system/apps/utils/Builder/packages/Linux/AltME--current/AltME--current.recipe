@@ -1,0 +1,20 @@
+authors				Kaj de Vos
+status				testing
+notes				Tested with AltME 1.2.21
+
+headline			Alternative Messaging Environment
+description
+	AltME is a powerful, lightweight communication system. It has multi-user chat, file sharing, a calendar, checklists and access permissions for secure, worldwide collaboration.
+
+	An AltME safeworld is a private world of instant communication that can run from your own computer (rather than from AOL, MSN, or ICQ's computers). In a way, it's like having your own private AOL system. It runs on Linux, Mac OS X and Windows, so you can communicate with people using those systems.
+licenses			freeware
+
+home				www.altme.com
+locations			http://www.altme.com/download/
+packages			altme042 AltME--current
+
+make				true
+
+install-tree		bin
+install				true
+install-files		altme bin/
