@@ -120,7 +120,6 @@ class View::Private
 {
       public:
 	int m_hViewHandle;	// Our bridge to the server
-	port_id m_hReplyPort;	// Used as reply address when talking to server
 	View *m_pcTopChild;
 	View *m_pcBottomChild;
 
@@ -177,8 +176,6 @@ class View::Private
 View::View( const Rect & cFrame, const String & cTitle, uint32 nResizeMask, uint32 nFlags ):Handler( cTitle )	//, m_cFrame( cFrame ), m_cTitle( cTitle ), m_nResizeMask( nResizeMask ), m_nFlags( nFlags )
 {
 	m = new Private;
-
-	m->m_hReplyPort = create_port( "view_reply", DEFAULT_PORT_SIZE );
 
 	m->m_pcContextMenu = NULL;
 
@@ -271,7 +268,6 @@ View::~View()
 		m->m_pcParent->RemoveChild( this );
 	}
 	_ReleaseFont();
-	delete_port( m->m_hReplyPort );
 	delete m;
 }
 
