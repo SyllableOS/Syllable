@@ -25,6 +25,7 @@
 #include <gui/textview.h>
 #include <gui/bitmap.h>
 #include <gui/window.h>
+#include <gui/desktop.h>
 #include <util/message.h>
 #include <util/shortcutkey.h>
 
@@ -1195,8 +1196,17 @@ void DropdownMenu::DropdownView::_Layout()
 	cMenuRect.right = cMenuRect.left + m_cContentSize.x - 1;
 	m_cContentSize.y = ( m_pcParent->m_cStringList.size() > MAX_DD_HEIGHT ? MAX_DD_HEIGHT * m_vGlyphHeight : m_pcParent->m_cStringList.size(  ) * m_vGlyphHeight ) + 8;
 
-	cMenuRect.top = cMenuRect.bottom;
-	cMenuRect.bottom = cMenuRect.top + m_cContentSize.y - 1;
+	Desktop cDesktop = Desktop();
+	if( m_pcParent->ConvertToScreen( cMenuRect ).bottom + m_cContentSize.y - 1 > cDesktop.GetResolution().y )
+	{
+		/* Open menu above view */
+		cMenuRect.bottom = cMenuRect.top;
+		cMenuRect.top = cMenuRect.bottom - m_cContentSize.y + 1;
+	} else {
+		/* Open menu below view */
+		cMenuRect.top = cMenuRect.bottom;
+		cMenuRect.bottom = cMenuRect.top + m_cContentSize.y - 1;
+	}
 
 	pcWindow->SetFrame( m_pcParent->ConvertToScreen( cMenuRect ) );
 }
