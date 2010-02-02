@@ -26,5 +26,5 @@ install				true
 install-files		rebol bin/rebol-core
 
 links
-	rebol-core bin/rebol
-	rebol-core bin/r2
+	rebol-core		bin/rebol
+	rebol-core		bin/r2

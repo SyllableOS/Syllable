@@ -15,6 +15,10 @@ packages			altme042 AltME--current
 
 make				true
 
-install-tree		bin
+install-tree
+	bin
+	applications
 install				true
-install-files		altme bin/
+install-files
+	altme			bin/
+	../bin/altme	applications/AltME

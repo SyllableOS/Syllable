@@ -21,10 +21,14 @@ packages
 
 make				true
 
-install-tree		bin
+install-tree
+	bin
+	applications
 install				true
-install-files		rebol bin/rebol-view
+install-files
+	rebol				bin/rebol-view
+	../bin/rebol-view	applications/REBOL-View
 
 links
-	rebol-view bin/rebol
-	rebol-view bin/r2
+	rebol-view		bin/rebol
+	rebol-view		bin/r2
