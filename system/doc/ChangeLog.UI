@@ -1,3 +1,8 @@
+* February 2, 2010, Anthony Morphett *
+
+Made DropdownMenu open its menu above the view if near the bottom of screen.
+Removed obsolete view_reply port from os::View.
+
 * January 25, 2010, Anthony Morphett *
 
 Implemented copy & paste in IconDirView context menu
