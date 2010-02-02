@@ -10,7 +10,7 @@ export LD_LIBRARY_PATH=/system/resources/gcc/4.2.3/lib:/system/development/resou
 
 if [ -e /System/Links/Libraries ]  # Gobo packages are installed
 then
-	export LD_LIBRARY_PATH=/System/Links/Libraries:$LD_LIBRARY_PATH
+	export LD_LIBRARY_PATH=/System/Index/lib:/System/Links/Libraries:$LD_LIBRARY_PATH
 fi
 
 export PATH=/resources/indexes/sbin:/resources/indexes/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/system/indexes/sbin:/system/indexes/bin:/system/bin

@@ -5,6 +5,14 @@ install
 	for dir in \
 ;		Limited GoboLinux system tree
 
+		System/Index/etc \
+		System/Index/bin \
+		System/Index/include \
+		System/Index/lib \
+		System/Index/libexec \
+		System/Index/share/man \
+		System/Index/share/info \
+		Data/Variable \
 		System/Links/Environment \
 		System/Links/Executables \
 		System/Links/Headers \
@@ -164,6 +172,7 @@ install-files
 	ld.so.conf								/Programs/Glibc/Settings/
 
 links
+	bin/										/System/Index/sbin
 ;	For ldd:
 	/bin/bash									/System/Links/Executables/
 ;	This one is destructive!
