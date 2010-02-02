@@ -165,7 +165,7 @@ prepare
 	ln -s /resources/indexes/bin/perl	usr/bin/perl &&
 ;	For OpenSSL?
 ;	ln -s /resources/indexes/bin/perl	usr/local/bin/perl &&
-;	From BinUtils, for building OpenSSL:
+;	From BinaryUtils, for building OpenSSL:
 	ln -s /resources/indexes/bin/ranlib	usr/bin/
 
 resources
@@ -184,7 +184,7 @@ resources
 modules
 ;	Toolchain for bootstrapping
 
-;	bootstrap apps/gnu/BinUtils-2.19.1
+;	bootstrap apps/gnu/BinaryUtils-2.20
 ;	bootstrap apps/gnu/gcc-4.1.2
 
 
@@ -297,7 +297,7 @@ modules
 ;	stage libraries/gettext-0.17
 ;	stage libraries/flex-2.5.33
 ;	stage libraries/bison-2.3
-;	stage libraries/BinUtils-2.19.1
+;	stage libraries/BinaryUtils-2.20
 
 ;	libraries libraries/gcc-4.1.2-system
 ;	Needs to be in the root of the working directory:
@@ -309,12 +309,12 @@ modules
 	system libs/ReadLine-6.0
 
 ;	For rescopy:
-	apps/gnu/BinUtils-2.19.1-objcopy
+	apps/gnu/BinaryUtils-2.20-objcopy
 
 
 ;	Extra requirements for bootstrapping
 
-;	apps/gnu/BinUtils-2.19.1
+;	apps/gnu/BinaryUtils-2.20
 ;	apps/gnu/make-3.81
 ;	apps/other/Ruby-1.8.7p248
 ;	apps/gnu/nano--curses
@@ -354,7 +354,7 @@ modules
 
 ;	Requirements for bootstrapping
 
-;	Needs objcopy from BinUtils:
+;	Needs objcopy from BinaryUtils:
 	apps/utils/rescopy
 ;	For bootstrapping:
 	bootstrap apps/utils/rescopy

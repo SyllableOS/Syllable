@@ -196,7 +196,7 @@ prepare
 	ln -s /resources/indexes/bin/perl	usr/bin/perl &&
 ;	For OpenSSL?
 ;	ln -s /resources/indexes/bin/perl	usr/local/bin/perl &&
-;	From BinUtils, for building OpenSSL:
+;	From BinaryUtils, for building OpenSSL:
 	ln -s /resources/indexes/bin/ranlib	usr/bin/ &&
 
 ;	touch etc/mtab
@@ -348,7 +348,7 @@ modules
 	apps/other/msntp-1.6
 
 ;	For rescopy:
-;	apps/gnu/BinUtils-2.19.1-objcopy
+;	apps/gnu/BinaryUtils-2.20-objcopy
 	apps/gnu/gzip-1.3.12
 	apps/gnu/INetUtils-1.6
 	apps/gnu/Less-429

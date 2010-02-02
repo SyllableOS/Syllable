@@ -3,7 +3,7 @@ authors
 	Arno Klenke
 	Kristian Van Der Vliet
 status				testing
-warnings			LibIberty is both in BinUtils and in GCC.
+warnings			LibIberty is both in BinaryUtils and in GCC.
 
 inherits			gnu
 
@@ -13,16 +13,16 @@ description
 licenses			GPL LGPL
 
 home				www.gnu.org/software/binutils/
-packages			binutils/binutils-2.19.1
+packages			binutils/binutils-2.20
 
 build-needs
-	BinUtils
-	automake >= 1.5
-	autoconf 2.59
-install-needs		BinUtils
+	BinaryUtils
+	AutoMake >= 1.5
+	AutoConf >= 2.64
+install-needs		BinaryUtils
 conflicts
-;	Both BinUtils and AutoConf have info/standards.info:
-	autoconf
+;	Both BinaryUtils and AutoConf have info/standards.info:
+	AutoConf
 	gcc
 
 patch				autoreconf ld gas
@@ -36,10 +36,10 @@ patch				autoreconf ld gas
 ;	--with-lib-path=
 
 ; No cross-compiling support:
-;make-vars			tooldir '/resources/binutils'
+;make-vars			tooldir '/resources/BinaryUtils'
 
 ;install-prefix-var	tooldir
-;install-vars		tooldir '/resources/binutils'
+;install-vars		tooldir '/resources/BinaryUtils'
 
 documentation
 	README COPYING3 COPYING3.LIB COPYING COPYING.LIB

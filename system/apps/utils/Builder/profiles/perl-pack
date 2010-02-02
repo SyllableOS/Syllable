@@ -8,6 +8,7 @@ description
 modules
 	programming/languages/perl-5.10.0
 ;	BinUtils 2.19.1 insists on 2.59:
+;	BinaryUtils 2.20 insists on 2.64:
 ;	Versions higher than 2.61 cause warnings on SDL 1.2.13:
 	programming/autoconf-2.59
 ;	GrUB doesn't work with 1.10+:
