@@ -19,6 +19,6 @@ install-tree
 	bin
 	applications
 install				true
-install-files
-	altme			bin/
-	../bin/altme	applications/AltME
+install-files		altme bin/
+
+links				../bin/altme applications/AltME

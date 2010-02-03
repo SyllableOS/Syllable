@@ -25,10 +25,9 @@ install-tree
 	bin
 	applications
 install				true
-install-files
-	rebol				bin/rebol-view
-	../bin/rebol-view	applications/REBOL-View
+install-files		rebol bin/rebol-view
 
 links
-	rebol-view		bin/rebol
-	rebol-view		bin/r2
+	rebol-view			bin/rebol
+	rebol-view			bin/r2
+	../bin/rebol-view	applications/REBOL-View
