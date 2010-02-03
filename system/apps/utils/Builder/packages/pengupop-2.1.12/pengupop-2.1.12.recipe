@@ -12,7 +12,11 @@ locations			http://www.junoplay.com/files/
 
 needs				sdl >= 1.2
 
+install-tree		applications
+
 documentation
 	README COPYING ChangeLog AUTHORS
 ;	Currently empty:
 ;	NEWS
+
+links				../bin/pengupop applications/Pengupop
