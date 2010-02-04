@@ -22,7 +22,7 @@ run-needs
 	Python >= 2.5 < 3
 	Ruby
 	GNU-AWK
-	SuDo
+	SUDo
 	WGet
 	Patch
 run-recommends
@@ -86,6 +86,7 @@ install-files
 links
 	bin/										/System/Index/sbin
 ;	For ldd:
+	/bin/bash									/System/Index/bin/
 	/bin/bash									/System/Links/Executables/
 ;	This one is destructive!
 ;	/System/Links/Headers/						/usr/include

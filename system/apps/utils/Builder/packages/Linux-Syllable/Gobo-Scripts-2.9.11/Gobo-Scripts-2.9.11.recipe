@@ -118,7 +118,7 @@ install
 		Programs/P7Zip/9.04 \
 		Programs/DiffUtils/2.8.1 \
 ;		Gobo has the GNU version under this name:
-;		Programs/Netcat-1.10 \
+		Programs/Netcat-1.10 \
 		Programs/Transmission/1.72 \
 		Programs/CDRTools/2.01.01a61 \
 ;		Programs/Man \
@@ -174,6 +174,7 @@ install-files
 links
 	bin/										/System/Index/sbin
 ;	For ldd:
+	/bin/bash									/System/Index/bin/
 	/bin/bash									/System/Links/Executables/
 ;	This one is destructive!
 ;	/System/Links/Headers/						/usr/include
@@ -214,8 +215,8 @@ links
 	2.7										/Programs/Glibc/Current
 ;	The loader needs to be available through this path:
 	/system/resources/glibc/2.7/lib/		/Programs/Glibc/2.7/
-	/Programs/Glibc/2.7/lib/ld-linux.so.2	/System/Links/Libraries/
-	/System/Links/Libraries/ld-linux.so.2	/lib/
+	/Programs/Glibc/2.7/lib/ld-linux.so.2	/System/Index/lib/
+	/System/Index/lib/ld-linux.so.2			/lib/
 
 	1.2.3									/Programs/ZLib/Current
 	1.4.0									/Programs/Iptables/Current
@@ -297,7 +298,7 @@ links
 	9.04									/Programs/P7Zip/Current
 	2.8.1									/Programs/DiffUtils/Current
 ;	Gobo has the GNU version under this name:
-;	/Programs/Netcat-1.10
+	1.10									/Programs/Netcat/Current
 	1.72									/Programs/Transmission/Current
 	2.01.01a61								/Programs/CDRTools/Current
 ;	/Programs/Man
@@ -307,7 +308,9 @@ links
 	1.0.3									/Programs/SDL_sound/Current
 	1.2.8									/Programs/SDL_image/Current
 	2.0.9									/Programs/SDL_ttf/Current
-;	/Programs/REBOL-Core--current
+;	/Programs/REBOL-Core-2-current
+;	/Programs/REBOL-View-2-current
+;	/Programs/AltME--current
 ;	/Programs/TINY--current
 ;	/Programs/REBOL-services--current
 ;	/Programs/UniServe-0.9.33
