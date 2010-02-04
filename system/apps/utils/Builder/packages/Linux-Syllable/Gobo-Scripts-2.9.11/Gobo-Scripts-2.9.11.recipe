@@ -147,9 +147,10 @@ install
 ;		Programs/Pengupop-2.1.12 \
 
 		Programs/Gawk/3.1.6 \
+		Programs/Wget/1.9.1 \
 		Programs/Patch/2.5.4 \
 ;		Programs/File/ \
-		Programs/GnuPG/1.4.9
+;		Programs/GnuPG/1.4.9
 ;		Programs/Python/2.6.4 \
 ;		Programs/PyGObject/2.20.0
 
@@ -329,9 +330,10 @@ links
 ;	/Programs/Pengupop-2.1.12
 
 	3.1.6									/Programs/Gawk/Current
+	1.9.1									/Programs/Wget/Current
 	2.5.4									/Programs/Patch/Current
 ;	/Programs/File-
-	1.4.9									/Programs/GnuPG/Current
+;	1.4.9									/Programs/GnuPG/Current
 ;	2.6.4									/Programs/Python/Current
 ;	2.20.0									/Programs/PyGObject/Current
 

@@ -15,6 +15,7 @@ packages			autoconf/autoconf-2.64
 needs
 	M4 >= 1.4
 	Perl >= 5.005_03
+	AutoMake >= 1.11
 ; Both BinaryUtils and AutoConfigure have info/standards.info:
 conflicts			BinaryUtils
 

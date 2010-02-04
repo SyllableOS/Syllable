@@ -8,5 +8,5 @@ description
 modules
 ;	For Boron:
 	programming/cmake-2.4.8
-;	For Workstation:
+;	For PythonGObject when in Workstation:
 ;	programming/Python-2.6.4
