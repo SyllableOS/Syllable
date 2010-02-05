@@ -31,3 +31,6 @@ finish
 
 ;	Clean out Desktop stuff:
 	rm system/init.sh
+
+;	Location specific:
+;	ln -sf /resources/indexes/share/zoneinfo/Europe/Amsterdam etc/localtime
