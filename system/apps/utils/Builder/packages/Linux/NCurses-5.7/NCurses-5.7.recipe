@@ -1,12 +1,14 @@
 authors				Kaj de Vos
 status				testing
+warnings			Specific to GLibC 2.7!
 
 configure-options
 	--with-shared
 ;	--without-debug
 ;	--enable-reentrant
 ;	--with-pthread
-;	--with-termlib
+;	For XTerm?:
+	--with-termlib
 	--enable-widec
 	--enable-symlinks
 ;	--datadir=/usr/share
@@ -37,3 +39,5 @@ links
 ;	share/terminfo			/usr/share/
 ;	Linked into BASh, which is called before the loader path is set:
 	lib/libncursesw.so.5	/system/resources/glibc/2.7/lib/
+;	Gobo binary compatibility:
+	libncursesw.so.5		lib/libcurses.so.5
