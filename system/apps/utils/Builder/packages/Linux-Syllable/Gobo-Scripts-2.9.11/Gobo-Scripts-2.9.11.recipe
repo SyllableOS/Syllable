@@ -12,7 +12,7 @@ install
 		System/Index/libexec \
 		System/Index/share/man \
 		System/Index/share/info \
-		Data/Variable \
+		Data/Variable/log \
 		System/Links/Environment \
 		System/Links/Executables \
 		System/Links/Headers \
@@ -150,9 +150,9 @@ install
 
 		Programs/Gawk/3.1.6 \
 		Programs/Wget/1.9.1 \
-		Programs/Patch/2.5.4
+		Programs/Patch/2.5.4 \
 ;		Programs/File/. \
-;		Programs/GnuPG/1.4.9 \
+		Programs/GnuPG/1.4.9
 ;		Programs/Python/2.6.4 \
 ;		Programs/PyGObject/2.20.0 \
 
@@ -175,15 +175,17 @@ install-files
 	ld.so.conf								/Programs/Glibc/Settings/
 
 links
-	bin/										/System/Index/sbin
+	./bin/										/System/Index/sbin
 ;	For ldd:
 	/bin/bash									/System/Index/bin/
 	/bin/bash									/System/Links/Executables/
+;	For X:
+	/system/indexes/bin/mcookie					/System/Links/Executables/
 ;	This one is destructive!
 ;	/System/Links/Headers/						/usr/include
 ;	Headers way off course:
-	/System/Links/Libraries/glib-2.0/			/usr/lib/
-	/System/Links/Libraries/gtk-2.0/			/usr/lib/
+	/System/Index/lib/glib-2.0/					/usr/lib/
+	/System/Index/lib/gtk-2.0/					/usr/lib/
 	/usr/bin/install							bin/real_install
 	/tmp/										/System/Variable/
 	/etc/passwd									/System/Settings/
@@ -202,7 +204,7 @@ links
 	/System/Settings/X11/						/etc/
 ;	For Compile:
 	/resources/indexes/bin/make					/usr/bin/
-	/resources/Gobo-Scripts/bin					/Programs/Scripts/2.9.11/
+	bin/										/Programs/Scripts/2.9.11/
 	2.9.11										/Programs/Scripts/Current
 
 ;	Syllable Workstation base system
@@ -335,7 +337,7 @@ links
 	1.9.1									/Programs/Wget/Current
 	2.5.4									/Programs/Patch/Current
 ;	/Programs/File-
-;	1.4.9									/Programs/GnuPG/Current
+	1.4.9									/Programs/GnuPG/Current
 ;	2.6.4									/Programs/Python/Current
 ;	2.20.0									/Programs/PyGObject/Current
 
