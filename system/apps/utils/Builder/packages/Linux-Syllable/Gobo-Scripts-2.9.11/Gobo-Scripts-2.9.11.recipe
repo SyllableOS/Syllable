@@ -34,8 +34,8 @@ install
 		Programs/Linux-Headers/2.6.27.44 \
 		Programs/Linux/2.6.27.44 \
 ;		In Linux:
-;		Programs/Linux-Fusion-3.2.4 \
-;		Programs/KQEmu-1.3.0pre11 \
+;		Programs/Linux-Fusion/3.2.4 \
+;		Programs/KQEmu/1.3.0pre11 \
 		Programs/Glibc/2.7 \
 		Programs/Glibc/Settings \
 		Programs/ZLib/1.2.3 \
@@ -52,12 +52,12 @@ install
 		Programs/Sed/4.2.1 \
 		Programs/Unzip/6.0 \
 		Programs/Bzip2/1.0.5 \
-;		Programs/Boron-0.1.0 \
+;		Programs/Boron/0.1.0 \
 ;		Programs/ORCA--current \
 		Programs/Sysvinit/2.86 \
-;		Programs/LFS-bootscripts-6.5 \
+;		Programs/LFS-bootscripts/6.5 \
 		Programs/Udev/142 \
-;		Programs/UDev-config-6.5 \
+;		Programs/UDev-config/6.5 \
 		Programs/Module-Init-Tools/3.2.2 \
 		Programs/E2FSProgs/1.41.9 \
 		Programs/Util-Linux/2.16.2 \
@@ -85,10 +85,10 @@ install
 ;		Programs/Packager \
 ;		Programs/Liberation-Fonts--current \
 ;		Programs/Luxi-fonts \
-;		Programs/LCD-Fonts-1.1 \
+;		Programs/LCD-Fonts/1.1 \
 ;		Programs/FreeFont--current \
 ;		Programs/MIME-Support--current \
-;		Programs/BLFS-bootscripts-2009.3.2 \
+;		Programs/BLFS/bootscripts-2009.3.2 \
 		Programs/Procps/3.2.7 \
 		Programs/Sudo/1.7.2p2 \
 		Programs/MkTemp/1.6 \
@@ -101,7 +101,7 @@ install
 		Programs/OpenSSH/5.2p1 \
 		Programs/DHCP/3.0.5 \
 		Programs/Wireless-Tools/29 \
-;		Programs/MSNTP-1.6 \
+;		Programs/MSNTP/1.6 \
 		Programs/CUPS/1.3.4 \
 		Programs/GhostScript/8.64 \
 ;		In CUPS:
@@ -118,7 +118,7 @@ install
 		Programs/P7Zip/9.04 \
 		Programs/DiffUtils/2.8.1 \
 ;		Gobo has the GNU version under this name:
-		Programs/Netcat-1.10 \
+		Programs/Netcat/1.10 \
 		Programs/Transmission/1.72 \
 		Programs/CDRTools/2.01.01a61 \
 ;		Programs/Man \
@@ -128,35 +128,37 @@ install
 		Programs/SDL_sound/1.0.3 \
 		Programs/SDL_image/1.2.8 \
 		Programs/SDL_ttf/2.0.9 \
-;		Programs/REBOL-Core--current \
+;		Programs/REBOL-Core/2 \
+;		Programs/REBOL-View/2 \
+;		Programs/AltME--current \
 ;		Programs/TINY--current \
 ;		Programs/REBOL-services--current \
-;		Programs/UniServe-0.9.33 \
-;		Programs/Cheyenne-0.9.19 \
+;		Programs/UniServe/0.9.33 \
+;		Programs/Cheyenne/0.9.19 \
 ;		In Cheyenne:
 ;		Programs/Quartermaster-current \
 ;		Programs/CAPTCHA--current \
-;		Programs/REBOL-MySQL-1.2.0 \
+;		Programs/REBOL-MySQL/1.2.0 \
 ;		Programs/S3Sync--current \
-;		Programs/Genode-8.08 \
+;		Programs/Genode/8.08 \
 		Programs/Slang/2.1.1 \
 		Programs/GLib/2.14.4 \
 		Programs/MC/4.6.1 \
 ;		Programs/Rsync/2.6.9 \
 		Programs/Links/2.1pre36 \
-;		Programs/Pengupop-2.1.12 \
+;		Programs/Pengupop/2.1.12 \
 
 		Programs/Gawk/3.1.6 \
 		Programs/Wget/1.9.1 \
-		Programs/Patch/2.5.4 \
-;		Programs/File/ \
-;		Programs/GnuPG/1.4.9
+		Programs/Patch/2.5.4
+;		Programs/File/. \
+;		Programs/GnuPG/1.4.9 \
 ;		Programs/Python/2.6.4 \
-;		Programs/PyGObject/2.20.0
+;		Programs/PyGObject/2.20.0 \
 
-;		Programs/LibFetch-2.26 \
-;		Programs/LibArchive- \
-;		Programs/Pacman-3.3.3
+;		Programs/LibFetch/2.26 \
+;		Programs/LibArchive/. \
+;		Programs/Pacman/3.3.3
 	do
 		mkdir --parents $IMAGE/$dir
 	done
