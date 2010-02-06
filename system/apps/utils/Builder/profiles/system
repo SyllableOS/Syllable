@@ -101,7 +101,6 @@ tree
 	system/extensions/media
 
 	var
-	var/tmp
 	var/log
 ;	For inetd and such:
 	var/run
@@ -158,6 +157,8 @@ tree
 	bin
 
 prepare
+	install -d -m 1777 tmp var/tmp &&
+
 	ln -s usr/ resources &&
 
 ;	For OpenSSL and others:

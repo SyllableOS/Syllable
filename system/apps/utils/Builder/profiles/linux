@@ -95,7 +95,6 @@ tree
 	system/extensions/media
 
 	var
-	var/tmp
 	var/log
 ;	For inetd and such:
 	var/run

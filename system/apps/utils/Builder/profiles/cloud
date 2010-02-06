@@ -71,7 +71,6 @@ tree
 	system/indexes/init
 
 	var
-	var/tmp
 	var/log
 
 	usr
