@@ -33,4 +33,4 @@ finish
 	rm system/init.sh
 
 ;	Location specific:
-;	ln -sf /resources/indexes/share/zoneinfo/Europe/Amsterdam etc/localtime
+;	ln -sf /system/indexes/share/zoneinfo/Europe/Amsterdam etc/localtime
