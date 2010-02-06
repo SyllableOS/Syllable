@@ -22,9 +22,9 @@ links
 	libformw.a				lib/libform.a
 	libpanelw.a				lib/libpanel.a
 	libmenuw.a				lib/libmenu.a
-;	libncurses.so			lib/libcurses.so
+	libncurses.so			lib/libcurses.so
 	libncursesw.a			lib/libcursesw.a
-;	libncurses.a			lib/libcurses.a
+	libncurses.a			lib/libcurses.a
 	ncursesw/ncurses.h		include/
 	ncursesw/curses.h		include/
 ;	For ProcPS:

@@ -28,7 +28,7 @@ internal-docs		doc/hackguide.doc
 
 pre-register
 	echo 'INPUT(-lncursesw)'	> lib/libncurses.so	&&
-	echo 'INPUT(-lcursesw)'		> lib/libcurses.so	&&
+;	echo 'INPUT(-lcursesw)'		> lib/libcurses.so	&&
 	echo 'INPUT(-lformw)'		> lib/libform.so	&&
 	echo 'INPUT(-lpanelw)'		> lib/libpanel.so	&&
 	echo 'INPUT(-lmenuw)'		> lib/libmenu.so	&&
