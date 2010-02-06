@@ -12,7 +12,7 @@ packages			blfs-bootscripts-20090302
 
 make				true
 
-;super-install
+super-install
 system-prefix-var	DESTDIR
 
 install-tree
@@ -21,7 +21,6 @@ install-targets
 	install-alsa
 ;	Firewall:
 	install-iptables
-;	Handled by CUPS package init script:
 ;	CUPS server:
 	install-cups
 ;	OpenSSH server:
@@ -41,6 +40,10 @@ install-targets
 	install-vsftpd
 ;	RSync server:
 	install-rsyncd
+;	D-Bus:
+	install-dbus
+;	HAL:
+	install-haldaemon
 
 documentation		README LICENSE ChangeLog MAINTAINERS
 ; Outdated?
