@@ -13,12 +13,12 @@ home				www.gnu.org/software/gettext/
 packages			gettext/gettext-0.17
 
 recommends
-	ncurses
-	expat
-	libxml2
+	NCurses
+	Expat
+	LibXML 2
 	java
 	dotnet
-	glib2
+	GLib 2
 	libcroco
 	cvs
 ; ?:
@@ -29,7 +29,8 @@ recommends
 ;configure-env		LINGUAS 'de fr nl'
 ;configure-options	--with-included-gettext
 
+system-prefix-var	DESTDIR
+
 documentation		README COPYING NEWS ChangeLog AUTHORS THANKS
 build-docs			DEPENDENCIES PACKAGING
 internal-docs		HACKING
-
