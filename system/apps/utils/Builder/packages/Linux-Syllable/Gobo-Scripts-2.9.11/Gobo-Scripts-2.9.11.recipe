@@ -346,3 +346,7 @@ links
 ;	/Programs/LibFetch-2.26
 ;	/Programs/LibArchive-
 ;	/Programs/Pacman-3.3.3
+
+	/System/Index/bin/dbus-daemon			/usr/bin/
+	/System/Index/bin/dbus-uuidgen			/usr/bin/
+	/System/Index/sbin/hald					/usr/sbin/
