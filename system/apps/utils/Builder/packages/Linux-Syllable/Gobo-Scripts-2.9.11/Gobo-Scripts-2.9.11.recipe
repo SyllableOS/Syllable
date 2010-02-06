@@ -38,7 +38,7 @@ install
 		Programs/Glibc/2.7 \
 		Programs/Glibc/Settings \
 		Programs/ZLib/1.2.3 \
-		Programs/Iptables/1.4.0 \
+		Programs/Iptables/1.4.6 \
 		Programs/LibStdC++/4.2.3 \
 		Programs/Ncurses/5.7 \
 		Programs/Readline/6.0 \
@@ -225,7 +225,7 @@ links
 	/System/Index/lib/ld-linux.so.2			/lib/
 
 	1.2.3									/Programs/ZLib/Current
-	1.4.0									/Programs/Iptables/Current
+	1.4.6									/Programs/Iptables/Current
 	4.2.3									/Programs/LibStdC++/Current
 	5.7										/Programs/Ncurses/Current
 	6.0										/Programs/Readline/Current
