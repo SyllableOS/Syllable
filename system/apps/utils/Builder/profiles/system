@@ -100,9 +100,8 @@ tree
 	system/extensions/translators
 	system/extensions/media
 
-	tmp
-
 	var
+	var/tmp
 	var/log
 ;	For inetd and such:
 	var/run

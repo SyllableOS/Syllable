@@ -53,7 +53,6 @@ install
 		System/Index/libexec \
 		System/Index/share/man \
 		System/Index/share/info \
-		Data/Variable/log \
 		System/Links/Environment \
 		System/Links/Executables \
 		System/Links/Headers \
@@ -62,7 +61,7 @@ install
 		System/Links/Shared \
 		System/Links/Tasks \
 		System/Settings \
-		System/Variable \
+		Data \
 		Files/Fonts \
 		Files/Compile/Archives \
 		Files/Compile/Sources \
@@ -96,7 +95,8 @@ links
 	/usr/bin/install							bin/real_install
 	bin/										/Programs/Scripts/2.9.11/
 	2.9.11										/Programs/Scripts/Current
-	/tmp/										/System/Variable/
+	/var/										/Data/Variable
+	/var/										/System/Variable
 	/etc/passwd									/System/Settings/
 	/etc/group									/System/Settings/
 ;	Essential for X11:

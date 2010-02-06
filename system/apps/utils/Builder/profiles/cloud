@@ -70,9 +70,8 @@ tree
 	system/indexes/early-init
 	system/indexes/init
 
-	tmp
-
 	var
+	var/tmp
 	var/log
 
 	usr
@@ -409,8 +408,9 @@ modules
 ;	apps/gnu/gnupg-1.4.9
 ;	Must already be installed to bootstrap PythonGObject:
 	apps/other/Python-2.6.4
-;	apps/other/PythonGObject-2.20.0
+	apps/other/PythonGObject-2.20.0
 	apps/other/Gobo-Scripts-2.9.11
+	apps/gnu/gettext-0.17
 
 ;	apps/other/LibFetch-2.26
 ;	apps/other/LibArchive-
