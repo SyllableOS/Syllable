@@ -339,8 +339,11 @@ modules
 	system libs/glibc-2.7-system
 	system libs/zlib-1.2.3
 
-	linux/iptables-1.4.0
+	linux/IPTables-1.4.6
 ;	system linux/Linux--cleanup
+
+	system linux/LFS-BootScripts-6.5
+	linux/BLFS-BootScripts-2009.3.2
 
 ;	stage libraries/gettext-0.17
 ;	stage libraries/flex-2.5.33
@@ -381,7 +384,6 @@ modules
 	system apps/other/ORCA--current
 
 	system linux/sysvinit-2.86
-	system linux/LFS-BootScripts-6.5
 	system linux/UDevices-142
 	system linux/UDevices-config--current
 	stage libs/zlib-1.2.3-static
@@ -500,7 +502,6 @@ modules
 
 	other/data/MIME-Support--current
 
-	linux/BLFS-BootScripts-2009.3.2
 	linux/procps-3.2.7
 	apps/other/SUDo-1.7.2p2
 	apps/other/MkTemp-1.6
