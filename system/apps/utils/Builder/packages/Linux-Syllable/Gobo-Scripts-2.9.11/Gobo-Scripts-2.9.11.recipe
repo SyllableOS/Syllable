@@ -33,7 +33,7 @@ install
 		Programs/Linux-Headers/2.6.27.44 \
 		Programs/Linux/2.6.27.44 \
 ;		In Linux:
-;		Programs/Linux-Fusion/3.2.4 \
+;		Programs/LinuxFusion/8.1.1 \
 ;		Programs/KQEmu/1.3.0pre11 \
 		Programs/Glibc/2.7 \
 		Programs/Glibc/Settings \
@@ -79,7 +79,7 @@ install
 		Programs/LibTheora/1.0 \
 		Programs/FFmpeg/0.5 \
 		Programs/FAAD2/2.7 \
-		Programs/DirectFB/1.0.0 \
+		Programs/DirectFrameBuffer/1.4.3 \
 ;		Programs/Man2HTML \
 ;		Programs/Packager \
 ;		Programs/Liberation-Fonts--current \
@@ -215,7 +215,7 @@ links
 	2.6.27.44								/Programs/Linux-Headers/Current
 	2.6.27.44								/Programs/Linux/Current
 ;	In Linux:
-;	/Programs/Linux-Fusion-3.2.4
+;	/Programs/LinuxFusion-8.1.1
 ;	/Programs/KQEmu-1.3.0pre11
 
 	2.7										/Programs/Glibc/Current
@@ -266,7 +266,7 @@ links
 	1.0										/Programs/LibTheora/Current
 	0.5										/Programs/FFmpeg/Current
 	2.7										/Programs/FAAD2/Current
-	1.0.0									/Programs/DirectFB/Current
+	1.4.3									/Programs/DirectFrameBuffer/Current
 ;	/Programs/Man2HTML
 ;	/Programs/Packager
 ;	/Programs/Liberation-Fonts--current

@@ -1,0 +1,53 @@
+authors				Kaj de Vos
+status				testing
+notes				Hangs Links2 during start-up
+
+licenses			LGPL-2+
+
+home				www.directfb.org
+locations
+	http://directfb.org/downloads/Core/DirectFB-1.4/
+	http://downloads.syllable.org/sources/resources/DirectFrameBuffer/
+	http://buildroot.net/downloads/sources/
+packages			DirectFB-1.4.3
+
+needs
+	Linux >= 2.2
+	LinuxFusion
+	ZLibrary
+recommends
+;	SDL
+	libvncserver
+	libsysfs
+	FreeType >= 2.0.1
+	LibJPEG
+	LibPNG
+	GIFLib
+	libmpeg3
+	tslib
+build-recommends	PackageConfigure >= 0.9.0
+
+configure-options
+;	--with-sysroot=
+;	We want SDL on DirectFB, not the other way around:
+;	--disable-sdl
+;	Erroneously enables X11:
+;	--disable-x11
+;	--enable-debug
+;	--enable-trace
+;	--enable-multi
+	--enable-zlib
+	--enable-unique
+;	--with-tests
+;	--without-tools
+;	--with-smooth-scaling
+;	--with-dither-rgb16=
+;	--with-message-size=
+;	--enable-video4linux2
+
+system-prefix-var	DESTDIR
+
+documentation
+	README COPYING NEWS ChangeLog AUTHORS TODO
+;	docs
+build-docs			patches/README.*
