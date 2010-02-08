@@ -1,0 +1,18 @@
+authors				Kaj de Vos
+status				testing
+
+recommends
+	OpenSSL
+	ZLibrary
+	BZip2
+	GPM
+	LibJPEG
+	LibTIFF
+	X11
+
+configure-options
+	--enable-graphics
+;	--without-fb
+;	--without-directfb
+;	--with-ssl
+;	--with-x
