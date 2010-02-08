@@ -6,4 +6,4 @@ cd /var
 # Reload worker processes on each request:
 # -w 0
 # Uncomment the following to start the Cheyenne web server:
-#rebol-core -s /resources/indexes/lib/REBOL/Cheyenne/cheyenne.r &
+#r2-core -s /resources/indexes/lib/REBOL/Cheyenne/cheyenne.r &

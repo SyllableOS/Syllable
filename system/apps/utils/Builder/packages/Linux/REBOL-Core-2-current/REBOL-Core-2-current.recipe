@@ -23,8 +23,9 @@ make				true
 
 install-tree		bin
 install				true
-install-files		rebol bin/rebol-core
+install-files		rebol bin/r2-core
 
 links
-	rebol-core		bin/rebol
-	rebol-core		bin/r2
+	r2-core			bin/rebol
+	r2-core			bin/rebol-core
+	r2-core			bin/r2
