@@ -11,7 +11,8 @@ for dir in `find /System/Links/Libraries -maxdepth 1 -name 'python*' | sort` \
 do
 	PYTHONPATH=$dir/site-packages:$PYTHONPATH
 done
-export PYTHONPATH
+# For GObject:
+export PYTHONPATH=/System/Index/lib/python2.6/site-packages/gtk-2.0:$PYTHONPATH
 
 export PERL5LIB=/System/Index/lib/site_perl/5.10.0:/System/Index/lib/5.10.0:/System/Links/Libraries/site_perl/5.10.0:/System/Links/Libraries/5.10.0:$PERL5LIB
 
