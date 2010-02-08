@@ -645,19 +645,21 @@ modules
 	apps/gnu/mc-4.6.1
 
 ;	apps/other/rsync-2.6.9
-	apps/other/links2-2.1pre36
+	apps/other/Links-2.3pre1
 	apps/other/pengupop-2.1.12
 
 	apps/gnu/gawk-3.1.6
 	apps/gnu/wget-1.9.1
 	apps/gnu/patch-2.5.4
 ;	apps/other/file-
-;	apps/gnu/gnupg-1.4.9
+	apps/gnu/gnupg-1.4.9
 ;	Must already be installed to bootstrap PythonGObject:
 	apps/other/Python-2.6.4
-	apps/other/PythonGObject-2.20.0
+;	apps/other/PythonGObject-2.20.0
 	apps/other/Gobo-Scripts-2.9.11
 	apps/gnu/gettext-0.17
+;	For HAL and others:
+	apps/other/expat-2.0.0
 
 ;	apps/other/LibFetch-2.26
 ;	apps/other/LibArchive-
