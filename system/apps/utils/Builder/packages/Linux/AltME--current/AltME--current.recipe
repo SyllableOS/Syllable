@@ -22,3 +22,6 @@ install				true
 install-files		altme bin/
 
 links				../bin/altme applications/AltME
+
+; AltME is encapped REBOL:
+no-strip
