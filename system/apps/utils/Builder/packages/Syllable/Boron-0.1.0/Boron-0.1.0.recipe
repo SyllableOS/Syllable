@@ -5,3 +5,4 @@ links
 	libboron.so.0.1.0	lib/libboron.so.0
 	libboron.so.0.1.0	lib/libboron.so
 	boron				bin/rebol
+	boron				bin/rebol-core
