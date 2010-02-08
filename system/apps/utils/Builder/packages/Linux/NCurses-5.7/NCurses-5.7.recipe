@@ -39,6 +39,7 @@ links
 ;	share/terminfo			/usr/share/
 ;	Linked into BASh, which is called before the loader path is set:
 	lib/libncursesw.so.5	/system/resources/glibc/2.7/lib/
+	lib/libtinfow.so.5		/system/resources/glibc/2.7/lib/
 ;	Gobo binary compatibility:
 	libncursesw.so.5		lib/libncurses.so.5
 	libtinfow.so.5			lib/libtinfo.so.5
