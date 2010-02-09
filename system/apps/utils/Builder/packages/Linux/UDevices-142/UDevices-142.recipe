@@ -1,5 +1,6 @@
 authors				Kaj de Vos
 status				testing
+warnings			Assumes system installation!
 
 headline			Userspace Device management
 description
