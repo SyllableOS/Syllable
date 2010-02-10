@@ -1,6 +1,7 @@
 authors				Kaj de Vos
 status				developing
-notes				Contrary to its name, this package also contains C source code, and precompiled Linux binaries
+notes
+	Contrary to its name, this package also contains C source code, and precompiled Linux binaries
 
 headline			GoboLinux system and software management tools
 description
@@ -46,7 +47,7 @@ install-tree
 ; Limited GoboLinux system tree:
 install
 	for dir in \
-		System/Index/etc \
+;		System/Index/etc \
 		System/Index/bin \
 		System/Index/include \
 		System/Index/lib \
@@ -55,14 +56,12 @@ install
 		System/Index/share/info \
 		System/Links/Environment \
 		System/Links/Executables \
-		System/Links/Headers \
-		System/Links/Libraries \
-		System/Links/Manuals/man{0,1,2,3,4,5,6,7,8} \
+;		System/Links/Manuals/man{0,1,2,3,4,5,6,7,8} \
 		System/Links/Shared \
 		System/Links/Tasks \
 		System/Settings \
 		Data \
-		Files/Fonts \
+;		Files/Fonts \
 		Files/Compile/Archives \
 		Files/Compile/Sources \
 		Programs/Scripts/2.9.11
@@ -90,7 +89,7 @@ links
 	/bin/bash									/System/Index/bin/
 	/bin/bash									/System/Links/Executables/
 ;	This one is destructive!
-;	/System/Links/Headers/						/usr/include
+;	/System/Index/include/						/usr/include
 ;	Headers way off course:
 	/System/Index/lib/glib-2.0/					/usr/lib/
 	/System/Index/lib/gtk-2.0/					/usr/lib/
@@ -102,26 +101,27 @@ links
 	/etc/passwd									/System/Settings/
 	/etc/group									/System/Settings/
 ;	Essential for X11:
-	/System/Links/Shared/fonts/misc/			/Files/Fonts/Misc
-;	../../../lib/X11/fonts/misc/fonts.alias		/Programs/Xorg-Font/Current/Shared/fonts/misc/
+	/System/Index/share/fonts/misc/				/Files/Fonts/Misc
+;	../../../lib/X11/fonts/misc/fonts.alias		/Programs/Xorg-Font/Current/share/fonts/misc/
 ;	Essential for REBOL/View 2:
-	/System/Links/Shared/fonts/75dpi/			/Files/Fonts/
-;	../../../lib/X11/fonts/75dpi/fonts.alias	/Programs/Xorg-Font/Current/Shared/fonts/75dpi/
-	/System/Links/Shared/fonts/100dpi/			/Files/Fonts/
-;	../../../lib/X11/fonts/100dpi/fonts.alias	/Programs/Xorg-Font/Current/Shared/fonts/100dpi/
-	/System/Links/Shared/fonts/TTF/				/Files/Fonts/TrueType
-;	../../../lib/X11/fonts/TTF/fonts.alias		/Programs/Xorg-Font/Current/Shared/fonts/TTF/
-	/System/Links/Shared/fonts/OTF/				/Files/Fonts/OpenType
-;	../../../lib/X11/fonts/OTF/fonts.alias		/Programs/Xorg-Font/Current/Shared/fonts/OTF/
-;	/System/Links/Shared/fonts/Type1/			/Files/Fonts/
-;	../../../lib/X11/fonts/Type1/fonts.alias	/Programs/Xorg-Font/Current/Shared/fonts/Type1/
-	/System/Links/Shared/fonts/cyrillic/		/Files/Fonts/Cyrillic
-;	../../../lib/X11/fonts/cyrillic/fonts.alias	/Programs/Xorg-Font/Current/Shared/fonts/cyrillic/
-;	/System/Links/Shared/fonts/Speedo/			/Files/Fonts/
-;	../../../lib/X11/fonts/Speedo/fonts.alias	/Programs/Xorg-Font/Current/Shared/fonts/Speedo/
+	/System/Index/share/fonts/75dpi/			/Files/Fonts/
+;	../../../lib/X11/fonts/75dpi/fonts.alias	/Programs/Xorg-Font/Current/share/fonts/75dpi/
+	/System/Index/share/fonts/100dpi/			/Files/Fonts/
+;	../../../lib/X11/fonts/100dpi/fonts.alias	/Programs/Xorg-Font/Current/share/fonts/100dpi/
+	/System/Index/share/fonts/TTF/				/Files/Fonts/TrueType
+;	../../../lib/X11/fonts/TTF/fonts.alias		/Programs/Xorg-Font/Current/share/fonts/TTF/
+	/System/Index/share/fonts/OTF/				/Files/Fonts/OpenType
+;	../../../lib/X11/fonts/OTF/fonts.alias		/Programs/Xorg-Font/Current/share/fonts/OTF/
+;	/System/Index/share/fonts/Type1/			/Files/Fonts/
+;	../../../lib/X11/fonts/Type1/fonts.alias	/Programs/Xorg-Font/Current/share/fonts/Type1/
+	/System/Index/share/fonts/cyrillic/			/Files/Fonts/Cyrillic
+;	../../../lib/X11/fonts/cyrillic/fonts.alias	/Programs/Xorg-Font/Current/share/fonts/cyrillic/
+;	/System/Index/share/fonts/Speedo/			/Files/Fonts/
+;	../../../lib/X11/fonts/Speedo/fonts.alias	/Programs/Xorg-Font/Current/share/fonts/Speedo/
 	/System/Settings/fonts/						/etc/
 	/System/Settings/X11/						/etc/
 ;	For Compile:
 	/resources/indexes/bin/make					/usr/bin/
+;	/System/Index/bin/make						/usr/bin/
 
 documentation		2.9.11/doc/*
