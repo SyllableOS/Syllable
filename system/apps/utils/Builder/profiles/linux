@@ -334,7 +334,8 @@ modules
 
 ;	For DirectFB:
 	system linux/LinuxFusion-8.1.1
-	system linux/kqemu-1.3.0pre11
+;	Obsolete with QEmu >= 0.12:
+;	system linux/kqemu-1.3.0pre11
 
 	system libs/glibc-2.7-system
 	system libs/zlib-1.2.3
@@ -638,15 +639,17 @@ modules
 
 ;	Extra goodies
 
-	apps/other/genode-8.08
-
 	apps/other/s-lang-2.1.1
 	apps/other/glib-2.14.4
 	apps/gnu/mc-4.6.1
 
 ;	apps/other/rsync-2.6.9
 	apps/other/Links-2.3pre1
+	apps/other/QEmulator-0.12.2
+	apps/other/genode-8.08
 	apps/other/pengupop-2.1.12
+
+;	Extra package managers
 
 	apps/gnu/gawk-3.1.6
 	apps/gnu/wget-1.9.1
@@ -664,6 +667,3 @@ modules
 ;	apps/other/LibFetch-2.26
 ;	apps/other/LibArchive-
 ;	apps/other/Pacman-3.3.3
-
-;	Needs GCC 3:
-;	apps/other/qemu-0.9.1
