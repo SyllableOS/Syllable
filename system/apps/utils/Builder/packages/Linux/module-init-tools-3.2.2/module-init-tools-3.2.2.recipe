@@ -11,12 +11,13 @@ build-needs			zlib--static
 ; May be needed for tests:
 ;build-dir			.
 
+;configure-args		--prefix=/
 configure-options
-;	--prefix=/
-;	Static:
-	--enable-zlib
+	--sysconfdir=/etc
 	--with-moddir=/lib/modules
 ;	--with-moddir=/system/indexes/lib/modules
+;	Static:
+	--enable-zlib
 
 system-prefix-var	DESTDIR
 ; Force overwrite:
