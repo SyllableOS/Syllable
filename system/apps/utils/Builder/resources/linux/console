@@ -1,3 +1,10 @@
+# Level of kernel messages to the console, from 1 through 8.
+# "1": silent
+# "7": default
+# "8": maximum
+#LOGLEVEL="7"
+
+
 # UTF-8:
 #UNICODE="yes"
 

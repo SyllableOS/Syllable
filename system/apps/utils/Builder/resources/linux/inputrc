@@ -1,11 +1,11 @@
 # Allow the command prompt to wrap to the next line
 set horizontal-scroll-mode Off
 
-# Enable 8bit input
+# Enable 8-bit input
 set meta-flag On
 set input-meta On
 
-# Turns off 8th bit stripping
+# Turn off 8th bit stripping
 set convert-meta Off
 
 # Keep the 8th bit for display
@@ -15,13 +15,13 @@ set output-meta On
 set bell-style none
 
 # All of the following map the escape sequence of the
-# value contained inside the 1st argument to the
-# readline specific functions
+# value contained in the first argument to the
+# ReadLine specific functions
 
 "\eOd": backward-word
 "\eOc": forward-word
 
-# for linux console
+# For Linux console
 "\e[1~": beginning-of-line
 "\e[4~": end-of-line
 "\e[5~": beginning-of-history
@@ -29,10 +29,10 @@ set bell-style none
 "\e[3~": delete-char
 "\e[2~": quoted-insert
 
-# for xterm
+# For XTerm
 "\eOH": beginning-of-line
 "\eOF": end-of-line
 
-# for Konsole
+# For Konsole
 "\e[H": beginning-of-line
 "\e[F": end-of-line
