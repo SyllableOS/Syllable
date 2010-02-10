@@ -276,7 +276,7 @@ modules
 ;	Kernel modules
 
 ;	Obsolete with QEmu >= 0.12:
-;	system linux/kqemu-1.3.0pre11
+	system linux/KernelQEmulator-1.4.0pre1
 
 	system libs/glibc-2.7-system
 	system libs/zlib-1.2.3
@@ -399,7 +399,7 @@ modules
 
 ;	apps/other/rsync-2.6.9
 	apps/other/Links-2.3pre1
-	apps/other/QEmulator-0.12.2
+	apps/other/QEmulator-0.11.1
 	apps/other/genode-8.08
 
 ;	Extra package managers

@@ -4,8 +4,7 @@ authors
 	Rick Caudill
 	Kristian Van Der Vliet
 maintainers			Kaj de Vos
-status				incomplete
-warnings			Syllable patch from 0.11.1 needs to be updated.
+status				testing
 
 needs				Syllable >= 0.6.6
 
@@ -13,7 +12,7 @@ configure-options
 ;	--disable-system
 	--disable-linux-user
 	--disable-darwin-user
-;	--disable-kvm
+	--disable-kqemu
 ;	Syllable compiles executables as shared libraries. We must free up an extra CPU register:
 	--extra-cflags=-fno-pic
 	--target-list=i386-softmmu

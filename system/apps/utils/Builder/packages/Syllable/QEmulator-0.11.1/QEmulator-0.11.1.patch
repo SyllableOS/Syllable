@@ -1,0 +1,128 @@
+diff -ru QEmulator-0.11.1-original/audio/ossaudio.c QEmulator-0.11.1/audio/ossaudio.c
+--- QEmulator-0.11.1-original/audio/ossaudio.c	2009-12-02 21:27:02.000000000 +0100
++++ QEmulator-0.11.1/audio/ossaudio.c	2010-02-10 19:25:33.000000000 +0100
+@@ -25,11 +25,15 @@
+ #include <sys/mman.h>
+ #include <sys/types.h>
+ #include <sys/ioctl.h>
++
+ #ifdef __OpenBSD__
+-#include <soundcard.h>
++	#include <soundcard.h>
++#elif defined(__SYLLABLE__)
++	#include <atheos/soundcard.h>
+ #else
+-#include <sys/soundcard.h>
++	#include <sys/soundcard.h>
+ #endif
++
+ #include "qemu-common.h"
+ #include "audio.h"
+ 
+diff -ru QEmulator-0.11.1-original/configure QEmulator-0.11.1/configure
+--- QEmulator-0.11.1-original/configure	2009-12-02 21:27:02.000000000 +0100
++++ QEmulator-0.11.1/configure	2010-02-10 19:25:33.000000000 +0100
+@@ -327,6 +327,11 @@
+ aix="yes"
+ make="gmake"
+ ;;
++syllable)
++audio_drv_list="oss"
++audio_possible_drivers="oss sdl"
++linux="yes"
++;;
+ *)
+ audio_drv_list="oss"
+ audio_possible_drivers="oss alsa sdl esd pa"
+diff -ru QEmulator-0.11.1-original/fpu/softfloat.h QEmulator-0.11.1/fpu/softfloat.h
+--- QEmulator-0.11.1-original/fpu/softfloat.h	2009-12-02 21:27:02.000000000 +0100
++++ QEmulator-0.11.1/fpu/softfloat.h	2010-02-10 19:25:33.000000000 +0100
+@@ -47,6 +47,7 @@
+ | implementations of C, `flag', `uint8', and `int8' should all be `typedef'ed
+ | to the same as `int'.
+ *----------------------------------------------------------------------------*/
++#ifndef __SYLLABLE__
+ typedef uint8_t flag;
+ typedef uint8_t uint8;
+ typedef int8_t int8;
+@@ -58,7 +59,7 @@
+ typedef signed int int32;
+ typedef uint64_t uint64;
+ typedef int64_t int64;
+-
++#endif
+ /*----------------------------------------------------------------------------
+ | Each of the following `typedef's defines a type that holds integers
+ | of _exactly_ the number of bits specified.  For instance, for most
+diff -ru QEmulator-0.11.1-original/Makefile.target QEmulator-0.11.1/Makefile.target
+--- QEmulator-0.11.1-original/Makefile.target	2009-12-02 21:27:02.000000000 +0100
++++ QEmulator-0.11.1/Makefile.target	2010-02-10 19:25:33.000000000 +0100
+@@ -30,7 +30,7 @@
+ HELPER_CFLAGS=
+ 
+ ifeq ($(ARCH),i386)
+-HELPER_CFLAGS+=-fomit-frame-pointer
++HELPER_CFLAGS+=-fomit-frame-pointer -fno-pic
+ endif
+ 
+ ifeq ($(subst ppc64,ppc,$(ARCH))$(TARGET_BASE_ARCH),ppcppc)
+diff -ru QEmulator-0.11.1-original/net.c QEmulator-0.11.1/net.c
+--- QEmulator-0.11.1-original/net.c	2009-12-02 21:27:02.000000000 +0100
++++ QEmulator-0.11.1/net.c	2010-02-10 19:25:33.000000000 +0100
+@@ -1617,6 +1617,12 @@
+     fprintf (stderr, "no tap on AIX\n");
+     return -1;
+ }
++#elif defined (__SYLLABLE__)
++static int tap_open(char *ifname, int ifname_size)
++{
++    fprintf (stderr, "no tap on Syllable\n");
++    return -1;
++}
+ #else
+ static int tap_open(char *ifname, int ifname_size)
+ {
+@@ -2649,7 +2655,7 @@
+         vlan->nb_host_devs++;
+         ret = tap_win32_init(vlan, device, name, ifname);
+     } else
+-#elif defined (_AIX)
++#elif defined (_AIX) || defined(__SYLLABLE__)
+ #else
+     if (!strcmp(device, "tap")) {
+         char ifname[64], chkbuf[64];
+diff -ru QEmulator-0.11.1-original/posix-aio-compat.c QEmulator-0.11.1/posix-aio-compat.c
+--- QEmulator-0.11.1-original/posix-aio-compat.c	2009-12-02 21:27:02.000000000 +0100
++++ QEmulator-0.11.1/posix-aio-compat.c	2010-02-10 19:25:33.000000000 +0100
+@@ -26,7 +26,7 @@
+ 
+ static pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+ static pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
+-static pthread_t thread_id;
++static pthread_t my_thread_id;
+ static pthread_attr_t attr;
+ static int max_threads = 64;
+ static int cur_threads = 0;
+@@ -343,7 +343,7 @@
+ {
+     cur_threads++;
+     idle_threads++;
+-    thread_create(&thread_id, &attr, aio_thread, NULL);
++    thread_create(&my_thread_id, &attr, aio_thread, NULL);
+ }
+ 
+ int qemu_paio_init(struct qemu_paioinit *aioinit)
+diff -ru QEmulator-0.11.1-original/vl.c QEmulator-0.11.1/vl.c
+--- QEmulator-0.11.1-original/vl.c	2009-12-02 21:27:02.000000000 +0100
++++ QEmulator-0.11.1/vl.c	2010-02-10 19:25:33.000000000 +0100
+@@ -95,6 +95,10 @@
+ #include <syslog.h>
+ #include <stropts.h>
+ #endif
++#ifdef __SYLLABLE__
++#include <net/if.h>
++#include <net/if_tun.h>
++#endif
+ #endif
+ #endif
+ 
