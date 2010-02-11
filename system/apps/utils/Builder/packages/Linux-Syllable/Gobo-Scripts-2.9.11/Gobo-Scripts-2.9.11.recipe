@@ -154,7 +154,7 @@ install
 		Programs/Python/2.6.4 \
 ;		Programs/PyGObject/2.20.0 \
 		Programs/Gettext/0.17 \
-		Programs/Expat/2.0.0
+		Programs/Expat/2.0.0 \
 
 ;		Programs/LibFetch/2.26 \
 ;		Programs/LibArchive/. \
