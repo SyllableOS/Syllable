@@ -137,12 +137,13 @@ install
 ;		Programs/CAPTCHA--current \
 ;		Programs/REBOL-MySQL/1.2.0 \
 ;		Programs/S3Sync--current \
-;		Programs/Genode/8.08 \
 		Programs/Slang/2.1.1 \
 		Programs/GLib/2.14.4 \
 		Programs/MC/4.6.1 \
 ;		Programs/Rsync/2.6.9 \
 		Programs/Links/2.3pre1 \
+		Programs/QEMU/0.11.1 \
+;		Programs/Genode/8.08 \
 ;		Programs/Pengupop/2.1.12 \
 
 		Programs/Gawk/3.1.6 \
@@ -157,7 +158,9 @@ install
 
 ;		Programs/LibFetch/2.26 \
 ;		Programs/LibArchive/. \
-;		Programs/Pacman/3.3.3
+;		Programs/Pacman/3.3.3 \
+
+		Programs/Pango/Settings/pango
 	do
 		mkdir --parents $IMAGE/$dir
 	done
@@ -316,12 +319,13 @@ links
 ;	/Programs/CAPTCHA--current
 ;	/Programs/REBOL-MySQL-1.2.0
 ;	/Programs/S3Sync--current
-;	/Programs/Genode-8.08
 	2.1.1										/Programs/Slang/Current
 	2.14.4										/Programs/GLib/Current
 	4.6.1										/Programs/MC/Current
 ;	/Programs/Rsync-2.6.9
 	2.3pre1										/Programs/Links/Current
+	0.11.1										/Programs/QEMU/Current
+;	/Programs/Genode-8.08
 ;	/Programs/Pengupop-2.1.12
 
 	3.1.6										/Programs/Gawk/Current
