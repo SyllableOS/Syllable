@@ -3,4 +3,4 @@ status				testing
 
 configure-env		LDFLAGS "$LDFLAGS -lm"
 
-;move-files			bin/pengupop /Applications/Pengupop/
+;move-files			bin/pengupop /applications/Pengupop/

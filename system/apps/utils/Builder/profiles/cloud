@@ -115,8 +115,8 @@ tree
 	usr/local/sbin
 	usr/local/share
 
-	Applications				applications.png
-	Applications/Preferences	settings.png
+	applications				applications.png
+	applications/preferences	settings.png
 	documentation
 ;	documentation/images
 

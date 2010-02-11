@@ -7,7 +7,7 @@ status				testing
 
 inherits			xpdf-3.00pl3
 
-build-needs			autoconf >= 2.57
+build-needs			AutoConfigure >= 2.57
 
 ; Patched for GCC 4:
 patch				autoconf
@@ -20,4 +20,4 @@ install-files		xpdf/Xpdf bin/
 
 pre-register		addattrib bin/Xpdf os::Category Office
 
-move-files			bin/Xpdf /Applications/Xpdf/
+move-files			bin/Xpdf /applications/Xpdf/

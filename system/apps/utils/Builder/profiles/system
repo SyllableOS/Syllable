@@ -147,9 +147,9 @@ tree
 	usr/local/sbin
 	usr/local/share
 
-	Applications				applications.png
-	Applications/Preferences	settings.png
-	Applications/Xpdf
+	applications				applications.png
+	applications/preferences	settings.png
+	applications/Xpdf
 	documentation
 ;	documentation/images
 
