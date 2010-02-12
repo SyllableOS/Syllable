@@ -331,8 +331,8 @@ modules
 	system apps/other/UnZip-6.0
 
 	apps/gnu/bzip2-1.0.5
-	system apps/other/Boron-0.1.0
-	system apps/other/ORCA--current
+	system REBOL/Boron-0.1.0
+	system REBOL/ORCA--current
 
 ;	freetype-config needs to be in the path:
 	bootstrap libraries/FreeType-2.3.9

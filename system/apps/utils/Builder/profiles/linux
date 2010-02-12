@@ -381,8 +381,8 @@ modules
 	system apps/other/UnZip-6.0
 
 	apps/gnu/bzip2-1.0.5
-	system apps/other/Boron-0.1.0
-	system apps/other/ORCA--current
+	system REBOL/Boron-0.1.0
+	system REBOL/ORCA--current
 
 	system linux/sysvinit-2.86
 	system linux/UDevices-142
@@ -617,19 +617,19 @@ modules
 
 ;	Binaries
 
-	apps/other/REBOL-Core-2-current
-	apps/other/REBOL-View-2-current
-	apps/other/AltME--current
+	REBOL/REBOL-Core-2-current
+	REBOL/REBOL-View-2-current
+	REBOL/AltME--current
 
 
 ;	REBOL stacks
-	apps/other/tiny--current
-	apps/other/rebol-services--current
-	apps/other/UniServe--current
-	apps/other/Cheyenne--current
-	apps/other/Cheyenne--QuarterMaster-current
-	apps/other/captcha--current
-	apps/other/rebol-mysql-1.2.0
+	REBOL/tiny--current
+	REBOL/REBOL-Services--current
+	REBOL/UniServe--current
+	REBOL/Cheyenne--current
+	REBOL/Cheyenne--QuarterMaster-current
+	REBOL/captcha--current
+	REBOL/rebol-mysql-1.2.0
 
 
 ;	Amazon tools
