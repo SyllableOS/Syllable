@@ -18,6 +18,8 @@ packages			rebol-services-100
 files
 	tutorial.html
 	examples.html
+	security.html
+	faq.html
 	code/simple.html
 	code/basic.html
 	code/guestbook.html
