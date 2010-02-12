@@ -395,7 +395,7 @@ modules
 
 	apps/other/s-lang-2.1.1
 	apps/other/glib-2.14.4
-	apps/gnu/mc-4.6.1
+	apps/gnu/MidnightCommander-4.7.0.2
 
 ;	apps/other/rsync-2.6.9
 	apps/other/Links-2.3pre1

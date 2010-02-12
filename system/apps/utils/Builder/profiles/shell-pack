@@ -15,4 +15,6 @@ modules
 	shell/which-2.19
 	security/gnupg-1.4.9
 ;	file/file-4.07
-	file/mc-4.6.1
+;	libraries/s-lang-2.1.1
+;	libraries/glib-2.14.4
+	file/MidnightCommander-4.7.0.2

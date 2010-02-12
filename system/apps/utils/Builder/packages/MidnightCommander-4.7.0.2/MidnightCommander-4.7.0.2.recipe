@@ -1,0 +1,58 @@
+authors				Kaj de Vos
+status				testing
+
+headline			Text mode file manager, viewer and editor
+description
+	GNU Midnight Commander is a visual file manager. It's a feature rich full-screen text mode application that allows you to copy, move and delete files and whole directory trees, search for files and run commands in the subshell. Internal viewer and editor are included.
+
+	Midnight Commander is based on versatile text interfaces, such as Ncurses or S-Lang, which allows it to work on a regular console, inside an X Window terminal, over SSH connections and all kinds of remote shells.
+licenses			GPL
+
+home
+	http://www.midnight-commander.org/
+;	www.gnu.org/software/mc/
+locations
+	http://www.midnight-commander.org/downloads/
+	ftp://ftp.uni-koeln.de/util/shell/
+packages			mc-4.7.0.2
+
+needs
+	GLib >= 2.8
+	S-Lang 2 | NCurses
+build-recommends	PackageConfigure
+recommends
+	GetText
+	GMP >= 0.18
+	Zip
+	UnZip
+	SaMBa
+	X11
+	Gnome-Libs
+
+configure-options
+;	May be needed on Syllable:
+;	--without-subshell
+;	--with-glib-static
+;	Use included S-Lang:
+;	--with-screen=mcslang
+;	--with-termcap
+;	(Included) S-Lang will be used otherwise:
+;	--with-screen=ncurses
+;	Enable choosing and converting character sets:
+;	--enable-charset
+;	--with-openssl=
+;	Custom network file system:
+;	--with-vfs-mcfs
+;	--enable-mcserver
+;	Use included SaMBa (SaMBa still recommended):
+	--with-samba
+
+; To setuid root cons.saver, needed if the user's virtual console /dev/vcsaN is not accessible:
+;super-install
+system-prefix-var	DESTDIR
+
+documentation
+	README COPYING ABOUT-NLS NEWS ChangeLog AUTHORS
+	doc/FAQ doc/MAINTAINERS doc/TODO
+build-docs			doc/INSTALL.FAST doc/INSTALL
+internal-docs		doc/HACKING
