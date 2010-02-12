@@ -1,9 +1,10 @@
-#Makefile for Desktop
+# Makefile for Desktop
+
 COPTS = -c
 
 CATALOGS = da de el es fr hu lt nl pt-br ru sv
 
-APPBIN = /Applications/Preferences
+APPBIN = /applications/preferences
 OBJS = Prefs.o
 
 OBJDIR := objs
@@ -66,4 +67,3 @@ install: all
 	@cp Desktop $(IMAGE)/$(APPBIN)
 
 dist: install
-

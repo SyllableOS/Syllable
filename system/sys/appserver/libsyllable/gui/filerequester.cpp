@@ -329,7 +329,7 @@ FileRequester::FileRequester( file_req_mode_t nMode, Messenger * pcTarget, Strin
 	m->m_pcTypeDrop->AppendItem( cRootName );
 	m->m_pcTypeDrop->AppendItem( cRootName + "Documents/" );
 	m->m_pcTypeDrop->AppendItem( cRootName + "Trash/" );
-	m->m_pcTypeDrop->AppendItem( "/Applications/" );
+	m->m_pcTypeDrop->AppendItem( "/applications/" );
 	m->m_pcTypeDrop->AppendItem( "/system/" );
 
 	std::string cDropString = m->m_pcDirView->GetPath() + ( std::string ) "/";

@@ -1,7 +1,8 @@
-#Makefile for KeyboardEventViewer
+# Makefile for KeyboardEventViewer
+
 COPTS = -Wall -c -O2 -fexceptions
 
-APPBIN = /Applications/sIDE
+APPBIN = /applications/sIDE
 OBJS = main.o application.o mainwindow.o view.o common.o
 
 OBJDIR := objs
@@ -44,8 +45,7 @@ deps:
 
 install: all
 	@echo Installing...
-	@mkdir -p $(IMAGE)/Applications/sIDE
-	@cp "KeyboardEventViewer" "$(IMAGE)/Applications/sIDE/KeyboardEventViewer"
+	@mkdir -p $(IMAGE)$(APPBIN)
+	@cp "KeyboardEventViewer" "$(IMAGE)$(APPBIN)/KeyboardEventViewer"
 
 dist: install
-

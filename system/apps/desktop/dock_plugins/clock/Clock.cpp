@@ -227,7 +227,7 @@ void DockClock::HandleMessage(Message* pcMessage)
 		case M_DATE_TIME:
 		{
 			if (fork() == 0)
-				execlp("/Applications/Preferences/DateTime","/Applications/Preferences/DateTime",NULL);
+				execlp("/applications/preferences/DateTime", "/applications/preferences/DateTime",NULL);
 		}
 		break;
 		case M_CLOCK_ABOUT:
@@ -542,7 +542,7 @@ void DockClock::MouseDown( const os::Point& cPosition, uint32 nButtons )
 /*		if (m_nClickTime + 500000 >= get_system_time())
 		{
 			if (fork() == 0)
-				execlp("/Applications/Preferences/DateTime","/Applications/Preferences/DateTime",NULL);
+				execlp("/applications/preferences/DateTime", "/applications/preferences/DateTime",NULL);
 		}
 		else
 		{
@@ -594,7 +594,3 @@ DockPlugin* init_dock_plugin( os::Path cPluginFile, os::Looper* pcDock )
 	return( new DockClockPlugin() );
 }
 }
-
-
-
-

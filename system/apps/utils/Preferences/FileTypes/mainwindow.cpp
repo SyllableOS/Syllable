@@ -158,7 +158,7 @@ MainWindow::MainWindow() : os::Window( os::Rect( 0, 0, 500, 450 ), "main_wnd", M
 	m_pcHandlerFrame->SetRoot( pcVHandlers );
 	m_pcVType->AddChild( m_pcHandlerFrame );
 	
-	m_pcHandlerReq = new os::FileRequester( os::FileRequester::LOAD_REQ, new os::Messenger( this ), "/Applications",
+	m_pcHandlerReq = new os::FileRequester( os::FileRequester::LOAD_REQ, new os::Messenger( this ), "/applications",
 										os::FileRequester::NODE_FILE, false );
 	m_pcHandlerReq->Start();
 	
@@ -611,21 +611,3 @@ bool MainWindow::OkToQuit()
 	os::Application::GetInstance()->PostMessage( os::M_QUIT );
 	return( false );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

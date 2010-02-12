@@ -3,7 +3,7 @@
 <LinkerFlags>
 <Target>Sourcery
 <Category>Development
-<InstallPath>/Applications/sIDE
+<InstallPath>/applications/sIDE
 <Group>Source
 <FileName>main.cpp
 <FileType>

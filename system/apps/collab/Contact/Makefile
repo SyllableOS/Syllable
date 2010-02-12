@@ -1,4 +1,5 @@
-#Makefile for Contact
+# Makefile for Contact
+
 CXXFLAGS += -Wall -c -fexceptions
 
 EXE = Contact
@@ -56,6 +57,5 @@ dist: install
 
 install: all
 	@echo Installing...
-	@mkdir -p $(IMAGE)/Applications/Contact
-	@cp $(EXE) $(IMAGE)/Applications/Contact/$(EXE)
-
+	@mkdir -p $(IMAGE)/applications/Contact
+	@cp $(EXE) $(IMAGE)/applications/Contact/$(EXE)

@@ -3,7 +3,7 @@
 <LinkerFlags>
 <Target>App
 <Category>Other
-<InstallPath>/Applications/App
+<InstallPath>/applications/App
 <Group>Source
 <FileName>main.c
 <FileType>

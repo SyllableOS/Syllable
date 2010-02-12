@@ -39,8 +39,8 @@ tar:
 	tar -cpzvf Albert.tar.gz -C .. Albert
 
 install: $(EXE)
-	mkdir -p $(IMAGE)/Applications/Calculator
-	mv Calculator $(IMAGE)/Applications/Calculator/
+	mkdir -p $(IMAGE)/applications/Calculator
+	mv Calculator $(IMAGE)/applications/Calculator/
 
 dist: install
 
@@ -62,4 +62,3 @@ togglebutton.o:	togglebutton.cpp togglebutton.h
 base-n.o:			base-n.cpp base-n.h
 postoffice.o:		postoffice.cpp postoffice.h
 aboutwin.o:		aboutwin.cpp aboutwin.h
-

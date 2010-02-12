@@ -4,7 +4,7 @@ COPTS = -c
 
 CATALOGS = da de el es fr hu lt nl pt-br ru sv
 
-APPBIN = /Applications/Preferences
+APPBIN = /applications/preferences
 OBJS = Prefs.o
 
 OBJDIR := objs
@@ -67,4 +67,3 @@ install: all
 	@cp Dock $(IMAGE)/$(APPBIN)
 
 dist: install
-

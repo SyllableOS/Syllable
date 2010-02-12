@@ -351,7 +351,7 @@ void Address::ExecuteBrowser(const String& cUrl)
 	if (fork() == 0)
 	{
 		set_thread_priority( -1, 0 );
-		nError = execlp("/Applications/Webster/Webster","/Applications/Webster/Webster",cUrl.c_str(),NULL);	
+		nError = execlp("/applications/Webster/Webster", "/applications/Webster/Webster",cUrl.c_str(),NULL);	
 	}	
 	
 	if (nError == -1)

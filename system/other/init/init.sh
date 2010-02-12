@@ -17,8 +17,8 @@
 
 # Add a few additional symlinks which simplify navigation around the
 # filesystem
-ln -s boot/Applications /Applications
-ln -s boot/documentation /documentation
+ln -s boot/applications/ /applications
+ln -s boot/documentation/ /documentation
 #ln -s home/root /root
 
 # Configure basic environment.
@@ -50,7 +50,7 @@ fi
 /system/registrar > /dev/null &
 
 # Check for network changes & configure the network if required
-/Applications/Preferences/Network --detect
+/applications/preferences/Network --detect
 
 source /system/network-init.sh
 

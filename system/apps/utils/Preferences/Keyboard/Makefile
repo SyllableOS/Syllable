@@ -26,7 +26,7 @@ catalogs:
 	done;
 
 dist: $(EXE)
-	install -s $(EXE) $(IMAGE)/Applications/Preferences/$(EXE)
+	install -s $(EXE) $(IMAGE)/applications/preferences/$(EXE)
 
 clean: catalog-clean
 	-rm $(OBJS)
@@ -40,4 +40,3 @@ catalog-clean:
 
 .cpp.o:
 	$(CXX) $(COPTS) $< -o $@
-

@@ -139,7 +139,7 @@ loop {
 Packages.sort_by{|name, info| name}.each {|pkgname, info|
 	puts "Installing #{pkgname}"
 	pkg = sprintf(info[1], info[0])
-	system "unzip", "/boot/Packages/net/#{pkg}", "-d", "/inst/Applications/"
+	system "unzip", "/boot/Packages/net/#{pkg}", "-d", "/inst/applications/"
 }
 
 # Sync disks

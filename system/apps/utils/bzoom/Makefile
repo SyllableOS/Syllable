@@ -25,12 +25,12 @@ catalogs:
 	done;
 
 dist: $(EXE)
-	mkdir $(IMAGE)/Applications/BZoom
-	cp -f $(EXE) $(IMAGE)/Applications/BZoom/
-	strip --strip-all $(IMAGE)/Applications/BZoom/$(EXE)
+	mkdir $(IMAGE)/applications/BZoom
+	cp -f $(EXE) $(IMAGE)/applications/BZoom/
+	strip --strip-all $(IMAGE)/applications/BZoom/$(EXE)
 
 upgrade: $(EXE)
-	rfs $(EXE) /Applications/BZoom/$(EXE)
+	rfs $(EXE) /applications/BZoom/$(EXE)
 
 clean: catalog-clean
 	-rm $(OBJS)
@@ -46,4 +46,3 @@ catalog-clean:
 	done;
 
 main.o:		main.cpp mywindow.h gui/zoomview.h
-

@@ -65,15 +65,15 @@ deps:
 
 install: all
 	strip --strip-all $(EXE)
-	mkdir -p /Applications/AEdit
-	cp $(EXE) /Applications/AEdit/AEdit
-	ln -sf /Applications/AEdit/AEdit /system/bin/$(EXE)
+	mkdir -p /applications/AEdit
+	cp $(EXE) /applications/AEdit/AEdit
+	ln -sf /applications/AEdit/AEdit /system/bin/$(EXE)
 
 dist: all
 	strip --strip-all $(EXE)
-	mkdir -p $(IMAGE)/Applications/AEdit
-	install -s $(EXE) $(IMAGE)/Applications/AEdit/AEdit
-	ln -sf /Applications/AEdit/AEdit $(IMAGE)/system/bin/$(EXE)
+	mkdir -p $(IMAGE)/applications/AEdit
+	install -s $(EXE) $(IMAGE)/applications/AEdit/AEdit
+	ln -sf /applications/AEdit/AEdit $(IMAGE)/system/bin/$(EXE)
 
 clean: catalog-clean
 	-rm $(OBJS)
@@ -126,4 +126,3 @@ catalog-clean:
 	for CATALOG in $(CATALOGS);do \
 		rm resources/$$CATALOG/$(EXE).catalog; \
 	done;
-

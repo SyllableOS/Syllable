@@ -27,8 +27,9 @@ catalogs:
 	done;
 
 install: $(EXE)
-	mkdir -p "$(IMAGE)/Applications/System Tools/System Information"
-	cp -f $(EXE) "$(IMAGE)/Applications/System Tools//System Information/"
+	mkdir -p "$(IMAGE)/applications/system/information"
+	cp -f $(EXE) "$(IMAGE)/applications/system/information/"
+	ln -sf "/applications/system/information/$(EXE)" $(IMAGE)/system/bin/cpumon
 
 dist: install
 
@@ -51,4 +52,3 @@ barview.o : barview.cpp barview.h
 	$(CXX) $(COPTS) $< -o $@
 graphview.o : graphview.cpp graphview.h
 	$(CXX) $(COPTS) $< -o $@
-

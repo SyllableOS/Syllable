@@ -27,9 +27,9 @@ catalogs:
 	done;
 
 install: $(EXE)
-	mkdir -p "$(IMAGE)/Applications/System Tools/System Information"
-	cp -f $(EXE) "$(IMAGE)/Applications/System Tools/System Information/"
-	ln -sf "/Applications/System Tools/System Information" $(IMAGE)/system/bin/SlbMgr
+	mkdir -p "$(IMAGE)/applications/system/information"
+	cp -f $(EXE) "$(IMAGE)/applications/system/information/"
+	ln -sf "/applications/system/information/$(EXE)" $(IMAGE)/system/bin/SlbMgr
 
 dist: install
 
@@ -64,4 +64,3 @@ cpuview.o : cpuview.cpp
 
 devicespanel.o : devicespanel.cpp
 	$(CXX) $(COPTS) $< -o $@
-

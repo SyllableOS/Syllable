@@ -1,7 +1,8 @@
-#Makefile for SimpleBurn
+# Makefile for SimpleBurn
+
 COPTS = -Wall -c -fexceptions
 
-APPBIN = /Applications/SimpleBurn
+APPBIN = /applications/SimpleBurn
 OBJS = main.o application.o mainwindow.o splash.o erasewindow.o
 
 OBJDIR := objs
@@ -45,7 +46,7 @@ deps:
 
 install: all
 	@echo Installing...
-	@mkdir -p $(IMAGE)/Applications/SimpleBurn
-	@cp "SimpleBurn" "$(IMAGE)/Applications/SimpleBurn/SimpleBurn"
+	@mkdir -p $(IMAGE)$(APPBIN)
+	@cp "SimpleBurn" "$(IMAGE)$(APPBIN)/SimpleBurn"
 
 dist: install

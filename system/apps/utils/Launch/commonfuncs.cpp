@@ -82,7 +82,7 @@ bool LaunchFile(const String& cFile)
 
 	else if (IsWebsite(cFile))
 	{
-		cExecute.SetCommand("/Applications/Webster/Webster");
+		cExecute.SetCommand("/applications/Webster/Webster");
 		cExecute.SetArguments(cFile);
 		cExecute.Run();
 		return true;
@@ -115,5 +115,3 @@ bool LaunchFile(const String& cFile)
 		return Launch(cPath);
 	}
 }
-
-

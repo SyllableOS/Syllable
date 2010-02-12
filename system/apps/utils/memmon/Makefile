@@ -29,8 +29,9 @@ catalogs:
 deps:
 
 install: $(EXE)
-	mkdir -p "$(IMAGE)/Applications/System Tools/System Information"
-	cp -f $(EXE) "$(IMAGE)/Applications/System Tools//System Information/"
+	mkdir -p "$(IMAGE)/applications/system/information"
+	cp -f $(EXE) "$(IMAGE)/applications/system/information/"
+	ln -sf "/applications/system/information/$(EXE)" $(IMAGE)/system/bin/memmon
 
 dist: install
 
@@ -49,4 +50,3 @@ catalog-clean:
 
 main.o : main.cpp
 	$(CXX) $(COPTS) $< -o $@
-

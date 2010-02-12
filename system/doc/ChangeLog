@@ -1,3 +1,17 @@
+* February 11, 2010, Kaj de Vos *
+
+Moved /Applications/ to /applications/ as part of ongoing naming clarity and consistency work.
+The general idea is to have generic terms in lowercase (with hyphens when the terms consists
+of multiple words) and to have proper names uppercased to distinguish them as such (using
+CamelCase by default, and optionally hyphens when greater readability is desired).
+
+Note that this doesn't mean that generic terms always need to appear in lowercase. Lowercase
+is easier to use in a command shell and easier to read in long paths, but typographically,
+initial uppercase is usually appropriate in displays when a word is used as a title or similar.
+Such graphical displays usually use an indirection, anyway, which can be modified. For example,
+the /applications/ folder is displayed on the desktop through a symlink. This symlink remains
+named "Applications" and so will show typographically appropriately.
+
 * January 27, 2010, Anthony Morphett *
 
 Added /resources/indexes/applications/ to the registrar's search path,

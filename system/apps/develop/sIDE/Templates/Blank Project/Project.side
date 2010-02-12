@@ -3,7 +3,7 @@
 <LinkerFlags>
 <Target>App
 <Category>Other
-<InstallPath>/Applications/App
+<InstallPath>/applications/App
 <Group>Source
 <Group>Headers
 <Group>Resources

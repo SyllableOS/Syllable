@@ -4,7 +4,7 @@ AOPTS   = -c
 
 CATALOGS = da de es fr hu nl pl pt-br ru sv
 
-APPBIN = /Applications/Media
+APPBIN = /applications/media
 
 VPATH = ./
 
@@ -59,4 +59,3 @@ catalog-clean:
 	done;
 
 -include $(OBJDIR)/*.d
-

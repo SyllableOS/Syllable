@@ -5,7 +5,7 @@ EXE	= CharMap
 CATALOGS = bg da de el es fr hu nl pt-br ru sv
 
 OBJDIR	:= objs
-INSTALLDIR := /Applications/CharMap
+INSTALLDIR := /applications/CharMap
 
 $(OBJDIR)/%.o : %.c
 	$(CC) $(OPTS) $< -o $@
@@ -52,4 +52,3 @@ install: $(EXE)
 	cp $(EXE) $(IMAGE)/$(INSTALLDIR)
 
 dist: install
-

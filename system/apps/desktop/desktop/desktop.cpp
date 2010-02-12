@@ -100,9 +100,9 @@ Desktop::Desktop() : os::Window( os::Rect(), "desktop", MSG_DESKTOP_TITLE, os::W
 				cFileNode.ReadAttr( os::String( "DesktopLink::" ) + g_zLinks[i], ATTR_TYPE_STRING, zBuffer, 0, PATH_MAX );
 				unlink( (cPath + "/" + zBuffer).c_str() );
 			}
-			create_desktop_icon( "/Applications", MSG_DESKTOP_SYMLINKS_APPLICATIONS, "/system/icons/applications.png" );
+			create_desktop_icon( "/applications", MSG_DESKTOP_SYMLINKS_APPLICATIONS, "/system/icons/applications.png" );
 			create_desktop_icon( "/", MSG_DESKTOP_SYMLINKS_DISKS, "" );
-			create_desktop_icon( "/Applications/Preferences", MSG_DESKTOP_SYMLINKS_PREFERENCES, "/system/icons/settings.png" );
+			create_desktop_icon( "/applications/preferences", MSG_DESKTOP_SYMLINKS_PREFERENCES, "/system/icons/settings.png" );
 			create_desktop_icon( "/system/bin/aterm", MSG_DESKTOP_SYMLINKS_TERMINAL, "/system/icons/aterm.png" );
 			create_desktop_icon( pzHome, MSG_DESKTOP_SYMLINKS_HOME, "/system/icons/home.png" );
 			create_desktop_icon( os::String( pzHome ) + "/Trash", MSG_DESKTOP_SYMLINKS_TRASH, "/system/icons/trash.png" );
@@ -120,9 +120,9 @@ Desktop::Desktop() : os::Window( os::Rect(), "desktop", MSG_DESKTOP_TITLE, os::W
 			unlink( (cPath + "/" + zBuffer).c_str() );
 		}
 		/* Create default links */
-		create_desktop_icon( "/Applications", MSG_DESKTOP_SYMLINKS_APPLICATIONS, "/system/icons/applications.png" );
+		create_desktop_icon( "/applications", MSG_DESKTOP_SYMLINKS_APPLICATIONS, "/system/icons/applications.png" );
 		create_desktop_icon( "/", MSG_DESKTOP_SYMLINKS_DISKS, "" );
-		create_desktop_icon( "/Applications/Preferences", MSG_DESKTOP_SYMLINKS_PREFERENCES, "/system/icons/settings.png" );
+		create_desktop_icon( "/applications/preferences", MSG_DESKTOP_SYMLINKS_PREFERENCES, "/system/icons/settings.png" );
 		create_desktop_icon( "/system/bin/aterm", MSG_DESKTOP_SYMLINKS_TERMINAL, "/system/icons/aterm.png" );
 		create_desktop_icon( pzHome, MSG_DESKTOP_SYMLINKS_HOME, "/system/icons/home.png" );
 		create_desktop_icon( os::String( pzHome ) + "/Trash", MSG_DESKTOP_SYMLINKS_TRASH, "/system/icons/trash.png" );
@@ -371,4 +371,3 @@ void Desktop::LoadBackground()
 	}
 	m_pcView->SetBackground( m_pcBackground );
 }
-

@@ -2,7 +2,7 @@ CFLAGS   += -c -fexceptions -ffast-math
 CXXFLAGS += -c -fexceptions -ffast-math
 AOPTS   = -c
 
-APPBIN = /Applications/Media
+APPBIN = /applications/media
 
 VPATH = ./
 
@@ -35,4 +35,3 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*.d MediaConverter
 
 -include $(OBJDIR)/*.d
-

@@ -473,10 +473,10 @@ void CFApp::LoadPlugins()
 	os::String zFileName;
 //	os::String zPath;
 //	This is not relocatable, but works from the live CD:
-	os::String zPath = os::String( "/Applications/Media/Plugins" );
+	os::String zPath = os::String( "/applications/media/plug-ins" );
 
 	os::Directory *pcDirectory = new os::Directory();
-//	if( pcDirectory->SetTo( "^/Plugins" ) != 0 )
+//	if( pcDirectory->SetTo( "^/plug-ins" ) != 0 )
 	if( pcDirectory->SetTo( zPath.c_str() ) != 0 )
 		return;
 	
@@ -1945,4 +1945,3 @@ int main( int argc, char *argv[] )
 	pcApp->Run();
 	return ( 0 );
 }
-

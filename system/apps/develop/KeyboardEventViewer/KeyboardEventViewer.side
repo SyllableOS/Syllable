@@ -3,7 +3,7 @@
 <LinkerFlags>
 <Target>KeyboardEventViewer
 <Category>Development
-<InstallPath>/Applications/sIDE
+<InstallPath>/applications/sIDE
 <RunInTerminal>false
 <Group>Source
 <FileName>main.cpp

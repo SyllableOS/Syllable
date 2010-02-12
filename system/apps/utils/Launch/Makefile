@@ -2,7 +2,7 @@
 
 COPTS = -c -fexceptions -ffast-math
 
-APPBIN = /Applications/
+APPBIN = /applications/
 OBJS = main.o application.o commonfuncs.o execute.o mainwindow.o
 
 EXE = Launch
@@ -66,7 +66,6 @@ deps:
 
 install: all
 	@echo Installing...
-	@cp $(EXE) $(IMAGE)/Applications/
+	@cp $(EXE) $(IMAGE)$(APPBIN)
 
 dist: install
-

@@ -4,9 +4,7 @@ EXE	= ../objs/Archiver
 
 OBJDIR	:= ../objs
 
-
 OBJS := ../objs/main.o ../objs/toolbar.o ../objs/archiver.o ../objs/new.o ../objs/options.o ../objs/exe.o ../objs/extract.o ../objs/statusbar.o ../objs/loadbitmap.o ../objs/settings.o ../objs/flowlayout.o
-
 
 
 $(EXE): $(OBJS)
@@ -20,10 +18,10 @@ deps:
 	@mkdir $(OBJDIR)
 	
 dist:
-	@echo Making $(IMAGE)/Applications/Archiver/bin
-	@mkdir -p $(IMAGE)/Applications/Archiver/bin
-	@echo Coping $(EXE) to $(IMAGE)/Applications/Archiver/
-	@cp -f $(EXE) $(IMAGE)/Applications/Archiver/
+	@echo Making $(IMAGE)/applications/Archiver/bin
+	@mkdir -p $(IMAGE)/applications/Archiver/bin
+	@echo Coping $(EXE) to $(IMAGE)/applications/Archiver/
+	@cp -f $(EXE) $(IMAGE)/applications/Archiver/
 
 clean:
 	@echo Removing all objects and executable.
@@ -76,4 +74,3 @@ clean:
 ../objs/flowlayout.o : flowlayout.cpp
 	@echo Compiling : $<
 	@$(CXX) $(OPTS) $< -o $@
-

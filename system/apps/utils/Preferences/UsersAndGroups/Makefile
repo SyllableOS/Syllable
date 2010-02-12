@@ -29,7 +29,7 @@ catalogs:
 	done;
 
 install: $(EXE)
-	install -s $(EXE) $(IMAGE)/Applications/Preferences/$(TARGET_EXE)
+	install -s $(EXE) $(IMAGE)/applications/preferences/$(TARGET_EXE)
 
 dist: install
 
@@ -45,4 +45,3 @@ catalog-clean:
 
 .cpp.o:
 	$(CXX) $(CXXFLAGS) $< -o $@
-

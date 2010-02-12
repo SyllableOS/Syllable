@@ -1,9 +1,10 @@
-#Makefile for FileTypes
+# Makefile for FileTypes
+
 COPTS = -c
 
 CATALOGS = da de el es fr hu nl pt-br ru sv
 
-APPBIN = /Applications/Preferences/
+APPBIN = /applications/preferences/
 OBJS = main.o application.o mainwindow.o newtype.o
 
 OBJDIR := objs
@@ -66,4 +67,3 @@ install: all
 	@cp FileTypes $(IMAGE)/$(APPBIN)
 
 dist: install
-

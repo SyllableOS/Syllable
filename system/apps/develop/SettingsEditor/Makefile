@@ -34,8 +34,8 @@ catalogs:
 	done;
 
 install: all
-	mkdir $(IMAGE)/Applications/SettingsEditor/
-	install -s $(EXE) $(IMAGE)/Applications/SettingsEditor/$(EXE)
+	mkdir $(IMAGE)/applications/SettingsEditor/
+	install -s $(EXE) $(IMAGE)/applications/SettingsEditor/$(EXE)
 
 dist: install
 

@@ -48,7 +48,7 @@ The "hard" way:  =)
  make
  make install
 
-BZoom is installed by default into /Applications/BZoom.
+BZoom is installed by default into /applications/BZoom.
 
 Authors
 =======
@@ -78,4 +78,3 @@ Plans for the future:
   have been already. ;)
 
 * Fix the bugs. (low priority... ;) )
-

@@ -45,7 +45,7 @@ void project::New( os::Path cFilePath )
 	m_zTarget = os::String( "App" );
 	m_zCompilerFlags = os::String( "-Wall -c -O2 -fexceptions" );
 	m_zLinkerFlags = "";
-	m_zInstallPath = "/Applications/App";
+	m_zInstallPath = "/applications/App";
 	m_zCategory = "Other";
 	
 	m_bIsWorking = false;
@@ -858,7 +858,7 @@ void project::OpenFile( uint nGroup, uint nNumber, os::Window *pcWindow )
 		if( fork() == 0 )
 		{
 			set_thread_priority( -1, 0 );
-			execlp( "/Applications/sIDE/Sourcery",  "/Applications/sIDE/Sourcery", cPath.c_str(), (void*)NULL );
+			execlp( "/applications/sIDE/Sourcery", "/applications/sIDE/Sourcery", cPath.c_str(), (void*)NULL );
 			exit( 0 );
 		}
 	} else if( pcFile->m_nType == TYPE_CATALOG || pcFile->m_nType == TYPE_RESOURCE || pcFile->m_nType == TYPE_OTHER ) {
@@ -883,4 +883,3 @@ bool project::IsWorking()
 {
 	return( m_bIsWorking );
 }
-

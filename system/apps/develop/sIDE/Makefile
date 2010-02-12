@@ -1,6 +1,6 @@
 COPTS   = -I$(TOP)/src -c -Wall
 
-APPBIN = /Applications/sIDE
+APPBIN = /applications/sIDE
 OBJS = AddWindow.o AddLibrary.o ProjectPrefs.o GroupWindow.o ProjectWindow.o NewProject.o project.o main.o 
 
 CATALOGS = da de el fr hu nl pt-br ru sv
@@ -62,4 +62,3 @@ clean:
 	for CATALOG in $(CATALOGS);do \
 	rm resources/$$CATALOG/sIDE.catalog; \
 	done;
-

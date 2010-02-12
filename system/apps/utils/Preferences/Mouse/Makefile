@@ -58,6 +58,6 @@ catalog-clean:
 
 
 install: $(EXE)
-	install -s $(EXE) $(IMAGE)/Applications/Preferences/$(EXE)
+	install -s $(EXE) $(IMAGE)/applications/preferences/$(EXE)
 
 dist: install

@@ -3,7 +3,7 @@
 <LinkerFlags>
 <Target>LayoutEditor
 <Category>Development
-<InstallPath>/Applications/sIDE
+<InstallPath>/applications/sIDE
 <RunInTerminal>false
 <Group>Sources
 <FileName>AppWindow.cpp

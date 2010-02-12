@@ -35,8 +35,8 @@ $(OBJDIR):
 
 
 install: all
-	mkdir -p $(IMAGE)/Applications/sIDE/
-	install -s $(EXE) $(IMAGE)/Applications/sIDE/$(EXE)
+	mkdir -p $(IMAGE)/applications/sIDE/
+	install -s $(EXE) $(IMAGE)/applications/sIDE/$(EXE)
 
 dist: install
 

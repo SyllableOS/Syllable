@@ -72,7 +72,7 @@ void MainWindow::HandleMessage( os::Message* pcMessage )
 			if( fork() == 0 )
 			{
 				set_thread_priority( -1, 0 );
-				execlp( "/Applications/Webster/Webster","/Applications/Webster/Webster","http://www.syllable.org",NULL );
+				execlp( "/applications/Webster/Webster", "/applications/Webster/Webster","http://www.syllable.org",NULL );
 				exit(0);
 			}
 
@@ -421,7 +421,7 @@ void MainWindow::HandleMessage( os::Message* pcMessage )
 				if( fork() == 0 )
 				{
 					set_thread_priority( -1, 0 );
-					execlp( "/Applications/Webster/Webster","/Applications/Webster/Webster",cTempData.c_str(),NULL );
+					execlp( "/applications/Webster/Webster", "/applications/Webster/Webster",cTempData.c_str(),NULL );
 					exit(0);
 				}
 			}
@@ -1673,4 +1673,3 @@ bool MainWindow::OkToQuit()
 	os::Application::GetInstance()->PostMessage( os::M_QUIT );
 	return( true );
 }
-

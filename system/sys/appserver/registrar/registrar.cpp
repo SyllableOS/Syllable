@@ -1371,7 +1371,7 @@ void Registrar::UpdateAppList( RegistrarUser* psUser, bool bForce )
 	psUser->m_cApps.clear();
 	
 	/* Scan */
-	ScanAppPath( psUser, 0, os::Path( "/boot/Applications" ), cPrimaryLanguage );
+	ScanAppPath( psUser, 0, os::Path( "/applications" ), cPrimaryLanguage );
 	ScanAppPath( psUser, 0, os::Path( "/resources/indexes/applications" ), cPrimaryLanguage );
 	
 	pcWindow->PostMessage( os::M_QUIT );
@@ -1540,6 +1540,3 @@ int main()
 		pcServer->Start();
 	}
 }
-
-
-

@@ -31,14 +31,14 @@ $(OBJDIR):
 	mkdir -p $(OBJDIR)
 
 install: $(EXE)
-	-mkdir -p /Applications/AView
-	-cp -pf $(EXE) /Applications/AView/
-	-ln -sf /Applications/AView/$(EXE) /system/bin/aview
+	-mkdir -p /applications/AView
+	-cp -pf $(EXE) /applications/AView/
+	-ln -sf /applications/AView/$(EXE) /system/bin/aview
 
 dist: $(EXE)
-	-mkdir -p $(IMAGE)/Applications/AView
-	-cp -pf $(EXE) $(IMAGE)/Applications/AView/
-	-ln -sf /Applications/AView/$(EXE) $(IMAGE)/system/bin/aview
+	-mkdir -p $(IMAGE)/applications/AView
+	-cp -pf $(EXE) $(IMAGE)/applications/AView/
+	-ln -sf /applications/AView/$(EXE) $(IMAGE)/system/bin/aview
 
 clean: catalog-clean
 	-rm $(OBJS)
@@ -64,4 +64,3 @@ catalog-clean:
 	for CATALOG in $(CATALOGS);do \
 		rm resources/$$CATALOG/$(EXE).catalog; \
 	done;
-

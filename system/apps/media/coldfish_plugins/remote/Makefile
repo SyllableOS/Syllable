@@ -2,7 +2,7 @@ CFLAGS   += -c -fexceptions
 CXXFLAGS += -c -fexceptions
 AOPTS   = -c
 
-DRIVERBIN = /Applications/Media/Plugins/
+DRIVERBIN = /applications/media/plug-ins/
 
 VPATH = ./
 
@@ -34,4 +34,3 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*
 
 -include $(OBJDIR)/*.d
-

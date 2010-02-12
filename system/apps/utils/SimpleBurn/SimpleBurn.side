@@ -3,7 +3,7 @@
 <LinkerFlags>
 <Target>SimpleBurn
 <Category>Other
-<InstallPath>/Applications/SimpleBurn
+<InstallPath>/applications/SimpleBurn
 <RunInTerminal>false
 <Group>Source
 <FileName>main.cpp

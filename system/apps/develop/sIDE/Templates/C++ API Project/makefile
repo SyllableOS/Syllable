@@ -2,7 +2,7 @@
 
 COPTS = -Wall -c -O2 -fexceptions
 
-APPBIN = /Applications/App
+APPBIN = /applications/App
 OBJS = main.o application.o mainwindow.o
 
 OBJDIR	:= objs
@@ -46,8 +46,7 @@ deps:
 
 install: all
 	@echo Installing...
-	@mkdir -p $(IMAGE)/Applications/App
-	@cp "App" $(IMAGE)/Applications/App/"App"
+	@mkdir -p $(IMAGE)$(APPBIN)
+	@cp "App" $(IMAGE)$(APPBIN)/"App"
 
 dist: install
-

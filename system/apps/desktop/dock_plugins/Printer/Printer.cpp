@@ -126,7 +126,7 @@ void DockPrinter::HandleMessage(Message* pcMessage)
 		{
 			if( fork() == 0 )
 			{
-				system("/Applications/Preferences/Printers");
+				system("/applications/preferences/Printers");
 				exit(0);
 			}
 			break;
@@ -239,4 +239,3 @@ DockPlugin* init_dock_plugin()
 	return( new DockPrinterPlugin() );
 }
 }
-

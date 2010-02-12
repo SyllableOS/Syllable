@@ -2,7 +2,7 @@
 
 COPTS = -O2 -Wall -c 
 
-APPBIN = /Applications/sIDE
+APPBIN = /applications/sIDE
 OBJS = main.o file.o settings.o splash.o application.o editor.o mainwindow.o aboutbox.o statusbar.o formatset.o commonfuncs.o link.o convertdialog.o fileproperties.o finddialog.o replacedialog.o userinserts.o gotodialog.o browser.o settingsdialog.o execute.o toolsdialog.o colorbutton.o
 
 OBJDIR	:= objs
@@ -43,8 +43,7 @@ deps:
 
 install: all
 	@echo Installing...
-	@mkdir -p $(IMAGE)/Applications/sIDE
-	@cp Sourcery $(IMAGE)/Applications/sIDE/Sourcery
+	@mkdir -p $(IMAGE)$(APPBIN)
+	@cp Sourcery $(IMAGE)$(APPBIN)/Sourcery
 
 dist: install
-

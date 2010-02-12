@@ -2,7 +2,7 @@
 
 COPTS = -Wall -c -fexceptions -O2
 
-APPBIN = /Applications/sIDE
+APPBIN = /applications/sIDE
 OBJS = AppWindow.o EditList.o EditString.o PropertyRow.o WidgetsControls.o WidgetsImage.o WidgetsList.o WidgetsMenu.o WidgetsNodes.o WidgetsUtils.o application.o main.o mainwindow.o ccatalog.o
 
 OBJDIR	:= objs
@@ -46,8 +46,7 @@ deps:
 
 install: all
 	@echo Installing...
-	@mkdir -p $(IMAGE)/Applications/sIDE
-	@cp "LayoutEditor" $(IMAGE)/Applications/sIDE/"LayoutEditor"
+	@mkdir -p $(IMAGE)$(APPBIN)
+	@cp "LayoutEditor" $(IMAGE)$(APPBIN)/"LayoutEditor"
 
 dist: install
-

@@ -37,9 +37,9 @@ catalogs:
 	done;
 
 install: $(OBJDIR)/$(EXE)
-	mkdir -p "$(IMAGE)/Applications/System Tools"
-	cp -f $(OBJDIR)/$(EXE) "$(IMAGE)/Applications/System Tools/Disk Manager"
-	addattrib "$(IMAGE)/Applications/System Tools/Disk Manager" "os::Category" "System Tools"
+	mkdir -p "$(IMAGE)/applications/system"
+	cp -f $(OBJDIR)/$(EXE) "$(IMAGE)/applications/system/Disk Manager"
+	addattrib "$(IMAGE)/applications/system/Disk Manager" "os::Category" "System Tools"
 
 dist: install
 
@@ -55,4 +55,3 @@ catalog-clean:
 	done;
 
 -include $(OBJDIR)/*.d
-

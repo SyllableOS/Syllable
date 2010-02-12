@@ -76,7 +76,7 @@ FILES=(	"/etc/profile, /etc/profile" 															\
 		"/system/bin/df, /system/bin/df"													\
 		"/system/bin/sysinfo, /system/bin/sysinfo"													\
 																											\
-		"/Applications/AEdit/AEdit, /system/bin/aedit"											\
+		"/applications/AEdit/AEdit, /system/bin/aedit"											\
 																											\
 		"/system/resources/coreutils/6.4/bin/cat, /bin/cat"											\
 		"/system/resources/coreutils/6.4/bin/cp, /bin/cp"											\
@@ -683,8 +683,8 @@ function copy_files()
 
   # XXXKV: This has to be hacked in right now because the script can't handle paths with spaces!
   printf "Copying System Tools\n"
-  cp -f "$BASE_DIR/Applications/System Tools/Disk Manager" "$CD_DIR/system/bin/DiskManager"
-  cp -f "$BASE_DIR/Applications/System Tools/Terminal" "$CD_DIR/system/bin/aterm"
+  cp -f "$BASE_DIR/applications/system/Disk Manager" "$CD_DIR/system/bin/DiskManager"
+  cp -f "$BASE_DIR/applications/system/Terminal" "$CD_DIR/system/bin/aterm"
 
   # Install Ruby (Must be done before links)
   unzip $RUBY_PACKAGE -d $CD_DIR/usr/
