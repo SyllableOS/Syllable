@@ -139,7 +139,7 @@ install
 ;		Programs/S3Sync--current \
 		Programs/Slang/2.1.1 \
 		Programs/GLib/2.14.4 \
-		Programs/MC/4.6.1 \
+		Programs/MC/4.7.0.2 \
 ;		Programs/Rsync/2.6.9 \
 		Programs/Links/2.3pre1 \
 		Programs/QEMU/0.11.1 \
@@ -321,7 +321,7 @@ links
 ;	/Programs/S3Sync--current
 	2.1.1										/Programs/Slang/Current
 	2.14.4										/Programs/GLib/Current
-	4.6.1										/Programs/MC/Current
+	4.7.0.2										/Programs/MC/Current
 ;	/Programs/Rsync-2.6.9
 	2.3pre1										/Programs/Links/Current
 	0.11.1										/Programs/QEMU/Current
