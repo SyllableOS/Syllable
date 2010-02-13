@@ -16,7 +16,9 @@ needs				Linux >= 2.6.22
 configure-options
 	--sysconfdir=/etc
 ;	--sbindir=/sbin
+;	Doesn't work as advertised:
 	--libdir=/lib
+	--with-libdir-name=/lib
 	--libexecdir=/lib/udev
 ;	--docdir=/usr/share/doc/udev-142
 
