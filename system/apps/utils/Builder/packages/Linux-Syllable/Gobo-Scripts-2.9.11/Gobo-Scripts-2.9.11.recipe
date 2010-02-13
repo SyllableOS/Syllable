@@ -9,7 +9,6 @@ install
 		System/Index/bin \
 		System/Index/include \
 		System/Index/lib \
-		System/Index/libexec \
 		System/Index/share/man \
 		System/Index/share/info \
 		System/Links/Environment \

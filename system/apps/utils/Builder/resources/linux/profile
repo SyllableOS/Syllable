@@ -8,9 +8,9 @@ export PWD
 #export DLL_PATH=@bindir@/libraries:/system/resources/gcc/4.2.3/lib:/resources/indexes/lib:/usr/local/lib:/system/indexes/lib:/system
 export LD_LIBRARY_PATH=/system/resources/gcc/4.2.3/lib:/system/development/resources/gcc/4.2.3/lib:/resources/indexes/lib:/usr/local/lib:/usr/lib:/lib:/system/indexes/lib:/system/libraries
 
-if [ -e /System/Links/Libraries ]  # Gobo packages are installed
+if [ -e /System/Index/lib ]  # Gobo packages are installed
 then
-	export LD_LIBRARY_PATH=/System/Index/lib:/System/Links/Libraries:$LD_LIBRARY_PATH
+	export LD_LIBRARY_PATH=/System/Index/lib:$LD_LIBRARY_PATH
 fi
 
 export PATH=/resources/indexes/sbin:/resources/indexes/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/system/indexes/sbin:/system/indexes/bin:/system/bin
