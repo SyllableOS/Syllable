@@ -1,6 +1,6 @@
 ORCA [
 	Title:		"Package installation library"
-	Version:	0.6.0
+	Version:	0.6.1
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006-2010 Kaj de Vos
@@ -103,8 +103,8 @@ stage-proto: context [
 				action join "mkdir " target
 			]
 		][
-			either node = "info/dir" and exists? target [
-				log/warning "info/dir file not registered due to pre-existing file"
+			either node = "manuals/info/dir" and exists? target [
+				log/warning "manuals/info/dir file not registered due to pre-existing version"
 				yes
 			][
 				either exists? target [
@@ -141,8 +141,8 @@ stage-proto: context [
 ;			TODO: detect a symlink:
 ;			either file? file [
 			either image? or exists? index [
-				either node = "info/dir" [
-					log/warning "info/dir file left untouched"
+				either node = "manuals/info/dir" [
+					log/warning "manuals/info/dir file left untouched"
 					yes
 				][
 					action join "rm " index
@@ -200,9 +200,9 @@ package-image: context [
 		either all [
 			do-subdirs :index-subdir either stages [targets] [reduce [this-stage]]
 			any [
-				not exists? manuals: join path "/man"
+				not exists? manuals: join path "/manuals"  ; FIXME: detect info/ only
 				(
-					log/header "Generating manual pages"
+					log/header "Generating HTML manuals"
 ;					FIXME: staged manuals are linked into the host system:
 					action join "manmanager -a " manuals
 				)
@@ -225,9 +225,9 @@ package-image: context [
 			do-subdirs :remove-subdir either stages [targets] [reduce [this-stage]]
 			any [
 				root <> resources-stage/packages  ; Don't remove staged manuals from a host system
-				not exists? manuals: join path "/man"
+				not exists? manuals: join path "/manuals"
 				(
-					log/header "Deleting manual pages"
+					log/header "Deleting HTML manuals"
 ;					FIXME: manmanager fails on deleting non-existing manuals?
 					action join "manmanager -r " manuals
 				)
