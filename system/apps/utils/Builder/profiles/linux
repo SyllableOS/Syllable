@@ -73,10 +73,9 @@ tree
 	system/indexes/bin
 	system/indexes/etc
 	system/indexes/include
-	system/indexes/info
 	system/indexes/lib
 	system/indexes/libexec
-	system/indexes/man
+	system/indexes/manuals
 	system/indexes/sbin
 	system/indexes/share
 	system/indexes/early-init
@@ -105,10 +104,9 @@ tree
 	usr/indexes/bin
 	usr/indexes/etc
 	usr/indexes/include
-	usr/indexes/info
 	usr/indexes/lib
 	usr/indexes/libexec
-	usr/indexes/man
+	usr/indexes/manuals
 	usr/indexes/sbin
 	usr/indexes/share
 	usr/indexes/early-init

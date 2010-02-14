@@ -15,8 +15,8 @@ fi
 
 export PATH=/resources/indexes/sbin:/resources/indexes/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/system/indexes/sbin:/system/indexes/bin:/system/bin
 
-export MANPATH=/resources/indexes/man:/usr/local/man:/usr/local/share/man:/usr/man:/usr/share/man:/system/indexes/man
-export INFOPATH=/resources/indexes/info:/usr/local/info:/usr/info:/system/indexes/info
+export MANPATH=/resources/indexes/manuals:/usr/local/man:/usr/local/share/man:/usr/man:/usr/share/man:/system/indexes/manuals
+export INFOPATH=/resources/indexes/manuals/info:/usr/local/info:/usr/info:/system/indexes/manuals/info
 
 # Paths for software compilation
 

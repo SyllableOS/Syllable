@@ -8,8 +8,8 @@ export PWD
 export DLL_PATH=@bindir@/libraries:@bindir@/lib:/system/resources/gcc/4.1.2/lib:/resources/indexes/lib:/usr/local/lib:/system/indexes/lib:/system/libraries:/system
 export PATH=/resources/indexes/sbin:/resources/indexes/bin:/usr/local/sbin:/usr/local/bin:/bin:/system/indexes/sbin:/system/indexes/bin:/system/bin
 
-export MANPATH=/resources/indexes/man:/usr/local/man:/usr/local/share/man:/system/indexes/man
-export INFOPATH=/resources/indexes/info:/usr/local/info:/system/indexes/info
+export MANPATH=/resources/indexes/manuals:/usr/local/man:/usr/local/share/man:/system/indexes/manuals
+export INFOPATH=/resources/indexes/manuals/info:/usr/local/info:/system/indexes/manuals/info
 
 # Paths for software compilation
 

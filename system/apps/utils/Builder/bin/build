@@ -1,7 +1,7 @@
 #! /usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.9.25
+# Version 0.10.0
 # Copyright (c) 2002-2010 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -23,7 +23,7 @@ def prepare target
 	for indexes in ['indexes', 'bootstrap/indexes']
 		Dir.mkdir File.join(@stage, indexes)
 
-		for dir in ['etc', 'bin', 'sbin', 'include', 'lib', 'libexec', 'man', 'info', 'share', 'early-init', 'init', 'applications']
+		for dir in ['etc', 'bin', 'sbin', 'include', 'lib', 'libexec', 'manuals', 'share', 'early-init', 'init', 'applications']
 			Dir.mkdir File.join(@stage, indexes, dir)
 		end
 	end
@@ -440,7 +440,10 @@ def configureModule staging, target
 										((p = recipe['configure-prefix']) ?
 											' ' + p[1..-2] :  # FIXME: do some checking
 											' --prefix='
-										) + prefix(staging, target) +
+										) + (root = prefix staging, target) +
+										' --mandir=' + File.join(root, 'manuals') +
+										' --infodir=' + File.join(root, 'manuals/info') +
+										' --docdir=' + File.join(root, 'documentation') +
 										(@systemBuild && ['system', 'libraries', 'compatibility'].include?(staging) && recipe['system-prefix-var'] ?
 											' --includedir=' + File.join('/system/development/resources', installName(target), version(target), 'include') :
 											''
@@ -724,10 +727,10 @@ def installModule staging, target
 							else
 								Dir.chdir root
 
-								if exists? 'share/man' and not exists? 'man' and not
+								if exists? 'share/man' and not exists? 'manuals' and not
 									begin
-										@log.header 'Moving man directory to standard location'
-										action superAccess + 'mv share/man .'
+										@log.header 'Moving (remaining) manuals to standard location'
+										action superAccess + 'mv share/man manuals'
 									end && (
 										not empty? 'share' or
 										begin
@@ -737,10 +740,10 @@ def installModule staging, target
 									)
 								then
 									false
-								elsif exists? 'share/info' and not exists? 'info' and not
+								elsif exists? 'share/info' and not exists? 'manuals/info' and not
 									begin
 										@log.header 'Moving info directory to standard location'
-										action superAccess + 'mv share/info .'
+										action superAccess + 'mv share/info manuals/'
 									end && (
 										not empty? 'share' or
 										begin
@@ -1956,7 +1959,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.9.25',
+	puts 'Syllable Build System 0.10.0',
 		'Copyright (c) 2002-2010 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
