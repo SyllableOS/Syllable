@@ -1,9 +1,9 @@
 ORCA [
 	Title:		"Package installation library"
-	Version:	0.5.1
+	Version:	0.6.0
 	Author:		"Kaj de Vos"
 	Rights: {
-		Copyright (c) 2006-2008 Kaj de Vos
+		Copyright (c) 2006-2010 Kaj de Vos
 		License: LGPL
 	}
 	Purpose:	"Registers and unregisters (binary) packages by managing pools of symbolic links."
@@ -161,8 +161,8 @@ resources-stage: stage-proto/new none none
 package-image: context [
 	name: root: path: this-stage: none
 
-	flat-dirs:	 [etc bin sbin info early-init init applications]
-	nested-dirs: [lib libexec include share man]
+	flat-dirs:	 [etc bin sbin early-init init applications]
+	nested-dirs: [lib libexec include share manuals]
 
 	new: func ["Returns a new package image object."
 		package' [string! file!]  ; "Name or full path."
