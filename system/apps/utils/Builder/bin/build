@@ -1,7 +1,7 @@
 #! /usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.10.0
+# Version 0.10.1
 # Copyright (c) 2002-2010 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -443,7 +443,8 @@ def configureModule staging, target
 										) + (root = prefix staging, target) +
 										' --mandir=' + File.join(root, 'manuals') +
 										' --infodir=' + File.join(root, 'manuals/info') +
-										' --docdir=' + File.join(root, 'documentation') +
+										# Many packages don't have this:
+										#' --docdir=' + File.join(root, 'documentation') +
 										(@systemBuild && ['system', 'libraries', 'compatibility'].include?(staging) && recipe['system-prefix-var'] ?
 											' --includedir=' + File.join('/system/development/resources', installName(target), version(target), 'include') :
 											''
@@ -727,30 +728,95 @@ def installModule staging, target
 							else
 								Dir.chdir root
 
-								if exists? 'share/man' and not exists? 'manuals' and not
-									begin
-										@log.header 'Moving (remaining) manuals to standard location'
-										action superAccess + 'mv share/man manuals'
-									end && (
-										not empty? 'share' or
+								if exists? 'share/doc' and not
+									if exists? 'documentation'
+										@log.header 'Merging extra documentation into standard location'
+										action superAccess + 'mv share/doc/* documentation/' and
 										begin
-											@log.header 'Deleting empty share directory'
-											action superAccess + 'rm --recursive --force share'
+											@log.header 'Deleting empty share/doc directory'
+											action superAccess + 'rmdir share/doc'
 										end
-									)
+									else
+										@log.header 'Moving documentation to standard location'
+										action superAccess + 'mv share/doc documentation'
+									end
 								then
 									false
-								elsif exists? 'share/info' and not exists? 'manuals/info' and not
-									begin
-										@log.header 'Moving info directory to standard location'
-										action superAccess + 'mv share/info manuals/'
-									end && (
-										not empty? 'share' or
+								elsif exists? 'man' and not
+									if exists? 'manuals'
+										@log.header 'Merging extra manuals into standard location'
+										action superAccess + 'mv man/* manuals/' and
 										begin
-											@log.header 'Deleting empty share directory'
-											action superAccess + 'rm --recursive --force share'
+											@log.header 'Deleting empty man directory'
+											action superAccess + 'rmdir man'
 										end
-									)
+									else
+										@log.header 'Moving manuals to standard location'
+										action superAccess + 'mv man manuals'
+									end
+								then
+									false
+								elsif exists? 'share/man' and not
+									if exists? 'manuals'
+										@log.header 'Merging extra manuals into standard location'
+										action superAccess + 'mv share/man/* manuals/' and
+										begin
+											@log.header 'Deleting empty share/man directory'
+											action superAccess + 'rmdir share/man'
+										end
+									else
+										@log.header 'Moving manuals to standard location'
+										action superAccess + 'mv share/man manuals'
+									end
+								then
+									false
+								elsif exists? 'info' and not
+									if exists? 'manuals/info'
+										@log.header 'Merging extra info manuals into standard location'
+										action superAccess + 'mv info/* manuals/info/' and
+										begin
+											@log.header 'Deleting empty info directory'
+											action superAccess + 'rmdir info'
+										end
+									else
+										exists? 'manuals' ||
+										begin
+											@log.header 'Creating manuals directory'
+											action superAccess + 'mkdir manuals'
+										end and
+										begin
+											@log.header 'Moving info manuals to standard location'
+											action superAccess + 'mv info manuals/'
+										end
+									end
+								then
+									false
+								elsif exists? 'share/info' and not
+									if exists? 'manuals/info'
+										@log.header 'Merging extra info manuals into standard location'
+										action superAccess + 'mv share/info/* manuals/info/' and
+										begin
+											@log.header 'Deleting empty share/info directory'
+											action superAccess + 'rmdir share/info'
+										end
+									else
+										exists? 'manuals' ||
+										begin
+											@log.header 'Creating manuals directory'
+											action superAccess + 'mkdir manuals'
+										end and
+										begin
+											@log.header 'Moving info manuals to standard location'
+											action superAccess + 'mv share/info manuals/'
+										end
+									end
+								then
+									false
+								elsif exists? 'share' and empty? 'share' and not
+									begin
+										@log.header 'Deleting empty share directory'
+										action superAccess + 'rmdir share'
+									end
 								then
 									false
 								elsif not
@@ -1959,7 +2025,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.10.0',
+	puts 'Syllable Build System 0.10.1',
 		'Copyright (c) 2002-2010 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
