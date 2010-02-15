@@ -36,7 +36,7 @@ finish
 	rm -r resources/documentation &&
 
 ;	Clean out Desktop stuff:
-	rm system/init.sh
+	rm system/start.sh
 
 ;	Location specific:
 ;	ln -sf /system/indexes/share/zoneinfo/Europe/Amsterdam etc/localtime

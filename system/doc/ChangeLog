@@ -1,3 +1,29 @@
+* February 15, 2010, Kaj de Vos *
+
+Reorganised the init scripts.
+
+We've been porting more Unix server packages over time. They may need setup and teardown
+procedures that are usually categorised in five types: start, stop, reload, restart and
+status. We have init/ and early-init/ subdirectories within ported packages. init/
+corresponds to the start script in Unix systems, which is actually a better name, because
+common users have no idea what "init" means. There's no real equivalent to early-init/,
+and we use that mainly to set variables in users' shell environments. Eventually, we would
+have to support the other script types, as well. Having them each in a different subdirectory
+within a package would be a mess.
+
+Created a new (optional) subdirectory tasks/ within resource packages. Builder and Packager
+work together to symlink the content into /resources/indexes/ and other symlink pools.
+Moved the init/ subdirectory to tasks/start/.
+Moved early-init/, having no naming identification with init/ anymore, to tasks/setup/.
+This name also better reflects the fact that setup scripts are called at every shell start,
+not just at user login.
+Future scripts can be added under tasks/ as tasks/stop/, tasks/reload/, tasks/restart/ and
+tasks/status/.
+
+Renamed the global init scripts to match.
+Moved /system/init.sh to /system/start.sh, network-init-sh to network-start-sh,
+user-early-init.sh to user-setup.sh and user-init.sh to user-start.sh.
+
 * February 14, 2010, Kaj de Vos *
 
 Reorganised, unified and integrated the documentation in ported packages.
