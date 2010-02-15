@@ -1,3 +1,28 @@
+* February 14, 2010, Kaj de Vos *
+
+Reorganised, unified and integrated the documentation in ported packages.
+
+Third-party packages have at least six locations for documentation. We collect loose
+documentation files in a documentation/ subdirectory. Many packages also have freeform
+documentation in a share/doc/ subdirectory. Traditionally, man pages are in man/ but GNU
+has been moving them to share/man/ lately. They prefer info files, anyway, and have first
+defined those in info/ but are now moving them to share/info/.
+
+This is a mess for users. We want them to be able to go into a package directory just with
+a filer, and be able to make some sense out of the files there and find what they are looking
+for. We were already moving share/man/ and share/info/ back to man/ and info/ because the
+share/ subdirectory is not very meaningful in Syllable. We build a self-contained system
+that typically doesn't share system files over networks, and we symlink several subdirectories
+to make them globally available within the system, not just the share/ hierarchy.
+
+Any files in share/doc/ are now merged into documentation/. The man and info pages should not
+go in there, because they're structured databases that are meant to be read in their respective
+viewers. man/ and share/man/ are now moved to manuals/, a much clearer name. Because they have
+a structured content, it's possible to also move info/ and share/info/ to manuals/info/. The
+latter was pioneered by GoboLinux. Builder and Packager work together to accomplish this. As
+much as possible, Builder uses packages' configure options so they are aware of the moves.
+Remaining files are moved afterwards.
+
 * February 11, 2010, Kaj de Vos *
 
 Moved /Applications/ to /applications/ as part of ongoing naming clarity and consistency work.
