@@ -67,8 +67,7 @@ tree
 	system/indexes/manuals
 	system/indexes/sbin
 	system/indexes/share
-	system/indexes/early-init
-	system/indexes/init
+	system/indexes/tasks
 
 	system/drivers
 
@@ -115,8 +114,7 @@ tree
 	usr/indexes/manuals
 	usr/indexes/sbin
 	usr/indexes/share
-	usr/indexes/early-init
-	usr/indexes/init
+	usr/indexes/tasks
 	usr/indexes/applications
 
 ;	For env:
