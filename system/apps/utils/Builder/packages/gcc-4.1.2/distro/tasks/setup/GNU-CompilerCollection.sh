@@ -1,0 +1,5 @@
+#export CPP=
+export CC=gcc
+export CXX=g++
+# Trips up some packages, such as GCC itself:
+#export LD=gcc

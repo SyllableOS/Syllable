@@ -1,3 +1,0 @@
-# Look up modules in other locations
-
-export PERL5LIB=/resources/indexes/lib/site_perl/5.10.0:/resources/indexes/lib/5.10.0
