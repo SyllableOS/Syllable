@@ -26,7 +26,7 @@ Remaining files are moved afterwards.
 * February 11, 2010, Kaj de Vos *
 
 Moved /Applications/ to /applications/ as part of ongoing naming clarity and consistency work.
-The general idea is to have generic terms in lowercase (with hyphens when the terms consists
+The general idea is to have generic terms in lowercase (with hyphens when the terms consist
 of multiple words) and to have proper names uppercased to distinguish them as such (using
 CamelCase by default, and optionally hyphens when greater readability is desired).
 
