@@ -59,10 +59,10 @@ then
 	/resources/indexes/libexec/inetd &
 fi
 
-# Packages that require initalisation can include setup/ and start/ subdirectories,
-# which should contain the init script(s). E.g. Apache would have start/apache which
-# would call apachectl, OpenSSH would have start/sshd which would start sshd, etc.
-# The package manager will collect all of these scripts together in
+# Packages that require initalisation can include tasks/setup/ and tasks/start/
+# subdirectories, which should contain the init script(s). E.g. Apache would have
+# start/apache which would call apachectl, OpenSSH would have start/sshd which would
+# start sshd, etc. The package manager will collect all of these scripts together in
 # /resources/indexes/tasks/setup/ and /resources/indexes/tasks/start/; all we need to
 # do is run each script in turn.
 
