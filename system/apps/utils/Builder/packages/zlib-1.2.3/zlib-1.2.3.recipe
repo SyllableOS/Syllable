@@ -21,6 +21,8 @@ locations
 build-dir			.
 
 configure-env		CFLAGS "$CFLAGS -fPIC"
+no-mandir
+no-infodir
 configure-options	--shared
 
 documentation		README ChangeLog FAQ algorithm.txt

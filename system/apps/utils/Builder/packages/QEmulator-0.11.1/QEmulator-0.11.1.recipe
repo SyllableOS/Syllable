@@ -22,6 +22,8 @@ build-recommends
 	PackageConfigure
 	texi2html
 
+no-infodir
+
 system-prefix-var	DESTDIR
 
 documentation

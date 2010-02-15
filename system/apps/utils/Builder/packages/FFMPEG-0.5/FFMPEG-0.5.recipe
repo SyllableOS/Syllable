@@ -22,6 +22,8 @@ build-needs
 ; Documentation build fails:
 build-conflicts		tetex
 
+no-infodir
+
 system-prefix-var	DESTDIR
 ; Older versions still create this:
 install-tree

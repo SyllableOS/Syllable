@@ -78,6 +78,8 @@ build-dir			<Directory>
 ; <configure>
 
 ; [<pre-configure>]
+; no-mandir
+; no-infodir
 ; [<configure-env>] <configure-cmd> [<configure-vars>] ([<configure-prefix>] | [<configure-args>]) [<configure-options>]
 
 configure			<Configuration commands override>
@@ -95,6 +97,10 @@ configure-vars
 configure-prefix	"--prefix="
 ; Arguments overriding prefixes:
 configure-args		--prefix=/resources/foo --includedir=/resources/foo/include
+; configure doesn't take --mandir= option:
+; no-mandir
+; configure doesn't take --infodir= option:
+; no-infodir
 ; Extra configure options:
 configure-options	--with-option
 

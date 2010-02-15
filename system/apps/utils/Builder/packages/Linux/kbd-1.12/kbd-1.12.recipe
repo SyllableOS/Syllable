@@ -8,6 +8,7 @@ locations
 
 build-dir			.
 
+no-infodir
 ;configure-options	--datadir=/lib/kbd
 
 system-prefix-var	DESTDIR
