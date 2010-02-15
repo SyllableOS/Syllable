@@ -1,6 +1,6 @@
 ORCA [
 	Title:		"Package installation library"
-	Version:	0.6.1
+	Version:	0.6.2
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006-2010 Kaj de Vos
@@ -161,8 +161,8 @@ resources-stage: stage-proto/new none none
 package-image: context [
 	name: root: path: this-stage: none
 
-	flat-dirs:	 [etc bin sbin early-init init applications]
-	nested-dirs: [lib libexec include share manuals]
+	flat-dirs:	 [etc bin sbin applications]
+	nested-dirs: [lib libexec include share manuals tasks]
 
 	new: func ["Returns a new package image object."
 		package' [string! file!]  ; "Name or full path."

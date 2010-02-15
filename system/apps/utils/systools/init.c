@@ -57,8 +57,8 @@ int main( int argc, char **argv )
 		exit( EXIT_FAILURE );
 	}
 
-	execl( "/system/init.sh", "init.sh", pzBootMode, NULL );
-	printf( "Failed to run init script!\n" );
+	execl( "/system/start.sh", "start.sh", pzBootMode, NULL );
+	printf( "Failed to run /system/start.sh script!\n" );
 
 	return( EXIT_FAILURE );
 }
