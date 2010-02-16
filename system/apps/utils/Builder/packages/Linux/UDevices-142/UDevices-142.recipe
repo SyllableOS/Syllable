@@ -12,13 +12,14 @@ locations			http://www.kernel.org/pub/linux/utils/kernel/hotplug/
 packages			udev-142
 needs				Linux >= 2.6.22
 
-configure-args
+_configure-args
 ;	Doesn't seem to work otherwise:
 	--prefix=/
 	--includedir=/system/development/resources/UDevices/142/include
 	--mandir=/system/resources/UDevices/142/manuals
 configure-options
 	--sysconfdir=/etc
+	--exec-prefix=/
 	--sbindir=/system/resources/UDevices/142/sbin
 	--libexecdir=/lib/udev
 
