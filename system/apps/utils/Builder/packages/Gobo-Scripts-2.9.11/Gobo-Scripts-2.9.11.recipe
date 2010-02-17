@@ -97,9 +97,9 @@ links
 	2.9.11										/Programs/Scripts/Current
 	/var/										/Data/Variable
 	/var/										/System/Variable
-	/etc/localtime								/System/Settings/
 	/etc/passwd									/System/Settings/
 	/etc/group									/System/Settings/
+	/etc/localtime								/System/Settings/
 ;	Essential for X11:
 	/System/Index/share/fonts/misc/				/Files/Fonts/Misc
 ;	../../../lib/X11/fonts/misc/fonts.alias		/Programs/Xorg-Font/Current/share/fonts/misc/

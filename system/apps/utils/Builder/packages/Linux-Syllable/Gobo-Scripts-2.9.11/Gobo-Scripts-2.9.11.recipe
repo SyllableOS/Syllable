@@ -192,9 +192,10 @@ links
 	/usr/bin/install							bin/real_install
 	/var/										/Data/Variable
 	/var/										/System/Variable
-	/etc/localtime								/System/Settings/
+	/Programs/Glibc/Settings/ld.so.conf			/System/Settings/
 	/etc/passwd									/System/Settings/
 	/etc/group									/System/Settings/
+	/etc/localtime								/System/Settings/
 ;	For Compile:
 	/resources/indexes/bin/make					/usr/bin/
 ;	/System/Index/bin/make						/usr/bin/
