@@ -79,6 +79,8 @@ tree
 	system/indexes/sbin
 	system/indexes/share
 	system/indexes/tasks
+	system/indexes/tasks/setup
+	system/indexes/tasks/start
 
 	system/drivers
 
@@ -109,6 +111,8 @@ tree
 	usr/indexes/sbin
 	usr/indexes/share
 	usr/indexes/tasks
+	usr/indexes/tasks/setup
+	usr/indexes/tasks/start
 	usr/indexes/applications
 
 ;	For env:
