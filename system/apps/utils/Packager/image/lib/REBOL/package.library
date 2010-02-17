@@ -1,6 +1,6 @@
 ORCA [
 	Title:		"Package installation library"
-	Version:	0.6.3
+	Version:	0.6.4
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006-2010 Kaj de Vos
@@ -224,7 +224,7 @@ package-image: context [
 		log/header join "Registering " path
 
 		either all [
-			do-subdirs :index-subdir either stages [targets] [reduce [this-stage]]
+			do-subdirs :index-subdir stages: either stages [targets] [reduce [this-stage]]
 			any [
 				root <> resources-stage/packages  ; TODO: generate staged and system manuals
 				not exists? manuals: join path "/manuals"  ; FIXME: detect info/ only
@@ -237,7 +237,7 @@ package-image: context [
 			(
 				log/detail "Setting main package registration"
 
-				foreach stage targets [
+				foreach stage stages [
 					unless stage/select-package self
 						[break]
 				]
@@ -260,7 +260,7 @@ package-image: context [
 			(
 				log/detail "Removing main package registration"
 
-				foreach stage targets [
+				foreach stage stages: either stages [targets] [reduce [this-stage]] [
 					unless stage/deselect-package self
 						[break]
 				]
@@ -274,7 +274,7 @@ package-image: context [
 					action join "manmanager -r " manuals
 				)
 			]
-			do-subdirs :remove-subdir either stages [targets] [reduce [this-stage]]
+			do-subdirs :remove-subdir stages
 		][
 			action "sync"
 		][
