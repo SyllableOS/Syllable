@@ -1,6 +1,6 @@
 ORCA [
 	Title:		"Package installation library"
-	Version:	0.6.2
+	Version:	0.6.3
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006-2010 Kaj de Vos
@@ -71,7 +71,7 @@ stage-proto: context [
 	image?: none
 	packages: %/resources/
 	indexes: %/resources/indexes
-	
+
 	new: func ["Returns a new stage object; by default of the running system."
 		packages' [file! string! none!]  ; "Trailing slash required."
 		indexes' [file! string! none!]
@@ -79,11 +79,37 @@ stage-proto: context [
 		make self [
 			indexes: to-file any [indexes' indexes]
 			packages: to-string any [packages' packages]
+
 			if image?: to-logic find indexes "/stage/image/"
 ;				ORCA FIXME: FIND works in indexes but only in packages as string?
 ;				ORCA TODO: implement find/tail:
-				[packages: at find packages "/stage/image/" 13]
+				[packages: at  find packages "/stage/image/"  13]
+
 			packages: to-file packages
+		]
+	]
+
+	select-package: func [package
+		/local target
+	][
+		if exists? target: rejoin [indexes "/" package/name] [
+			log/warning join "conflict: replacing " target
+		]
+		action rejoin [
+			"ln --symbolic --force "
+			either image? [join packages package/name] [package/path]
+			" " target
+		]
+	]
+
+	deselect-package: func [package
+		/local target
+	][
+		either exists? target: rejoin [indexes "/" package/name] [
+			action join "rm " target
+		][
+			log/warning rejoin ["link " target " did not exist"]
+			yes
 		]
 	]
 
@@ -121,7 +147,7 @@ stage-proto: context [
 			]
 		]
 	]
-	
+
 	remove-node: func [subdir file
 		/local node index
 	][
@@ -193,13 +219,14 @@ package-image: context [
 
 	register: func ["Indexes the package into the staging areas."
 		/stages targets [block!]
-		/local manuals
+		/local stage manuals
 	][
 		log/header join "Registering " path
 
 		either all [
 			do-subdirs :index-subdir either stages [targets] [reduce [this-stage]]
 			any [
+				root <> resources-stage/packages  ; TODO: generate staged and system manuals
 				not exists? manuals: join path "/manuals"  ; FIXME: detect info/ only
 				(
 					log/header "Generating HTML manuals"
@@ -207,6 +234,14 @@ package-image: context [
 					action join "manmanager -a " manuals
 				)
 			]
+			(
+				log/detail "Setting main package registration"
+
+				foreach stage targets [
+					unless stage/select-package self
+						[break]
+				]
+			)
 		][
 			action "sync"
 		][
@@ -217,21 +252,29 @@ package-image: context [
 
 	unregister: func ["Unlinks the package from the staging areas."
 		/stages targets [block!]
-		/local manuals
+		/local stage manuals
 	][
 		log/header join "Unregistering " path
 
 		either all [
-			do-subdirs :remove-subdir either stages [targets] [reduce [this-stage]]
+			(
+				log/detail "Removing main package registration"
+
+				foreach stage targets [
+					unless stage/deselect-package self
+						[break]
+				]
+			)
 			any [
-				root <> resources-stage/packages  ; Don't remove staged manuals from a host system
-				not exists? manuals: join path "/manuals"
+				root <> resources-stage/packages  ; TODO: remove staged and system manuals
+				not exists? manuals: join path "/manuals"  ; FIXME: detect info/ only
 				(
 					log/header "Deleting HTML manuals"
 ;					FIXME: manmanager fails on deleting non-existing manuals?
 					action join "manmanager -r " manuals
 				)
 			]
+			do-subdirs :remove-subdir either stages [targets] [reduce [this-stage]]
 		][
 			action "sync"
 		][
@@ -242,22 +285,22 @@ package-image: context [
 
 
 	do-subdirs: func [task stages
-		/local subdir
+		/local dir
 	][
-		foreach subdir flat-dirs [
+		foreach dir flat-dirs [
 ;			FIXME: ORCA bug: errors don't propagate from 'task:
-			unless task stages subdir no
+			unless task stages dir no
 				[return no]
 		]
-		foreach subdir nested-dirs [
-			unless task stages subdir yes
+		foreach dir nested-dirs [
+			unless task stages dir yes
 				[return no]
 		]
 		yes
 	]
-	
+
 	index-subdir: func [stages subdir nesting?
-		/local dir entry node s
+		/local dir entry node stage
 	][
 		any [
 			not exists? dir: join path ["/" subdir]
@@ -268,8 +311,8 @@ package-image: context [
 				foreach entry read %. [
 					unless (last entry) = #"~" [  ; Skip backup files
 						node: join subdir ["/" entry]
-						foreach s stages [
-							unless s/index-node self node
+						foreach stage stages [
+							unless stage/index-node self node
 								[return no]
 						]
 						if all [nesting?  exists? entry  dir? entry] [
@@ -283,9 +326,9 @@ package-image: context [
 			)
 		]
 	]
-	
+
 	remove-subdir: func [stages subdir nesting?
-		/local dir entry s
+		/local dir entry stage
 	][
 		any [
 			not exists? dir: join path ["/" subdir]
@@ -299,8 +342,8 @@ package-image: context [
 							unless remove-subdir stages  join subdir ["/" entry]  yes
 								[return no]
 						]
-						foreach s stages [
-							unless s/remove-node subdir entry
+						foreach stage stages [
+							unless stage/remove-node subdir entry
 								[return no]
 						]
 						change-dir dir
