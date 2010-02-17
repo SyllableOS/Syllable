@@ -97,6 +97,7 @@ links
 	2.9.11										/Programs/Scripts/Current
 	/var/										/Data/Variable
 	/var/										/System/Variable
+	/etc/localtime								/System/Settings/
 	/etc/passwd									/System/Settings/
 	/etc/group									/System/Settings/
 ;	Essential for X11:

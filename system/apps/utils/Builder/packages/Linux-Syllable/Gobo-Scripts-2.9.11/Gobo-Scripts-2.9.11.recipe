@@ -192,6 +192,7 @@ links
 	/usr/bin/install							bin/real_install
 	/var/										/Data/Variable
 	/var/										/System/Variable
+	/etc/localtime								/System/Settings/
 	/etc/passwd									/System/Settings/
 	/etc/group									/System/Settings/
 ;	For Compile:
