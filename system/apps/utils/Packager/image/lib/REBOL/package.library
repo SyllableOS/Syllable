@@ -1,6 +1,6 @@
 ORCA [
 	Title:		"Package installation library"
-	Version:	0.6.4
+	Version:	0.6.5
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006-2010 Kaj de Vos
@@ -52,8 +52,8 @@ action: func ["Returns the output of a shell command, or false if unsuccessful."
 ][
 	log/action command
 
-	either (status: call/wait/output command stdout: "") = 0 [
-;		FIXME: ORCA call/output bug:
+	either 0 = status: call/wait/output command  stdout: copy "" [
+;		FIXME?: ORCA call/output bug:
 		log/output stdout
 		stdout
 	][
@@ -73,19 +73,19 @@ stage-proto: context [
 	indexes: %/resources/indexes
 
 	new: func ["Returns a new stage object; by default of the running system."
-		packages' [file! string! none!]  ; "Trailing slash required."
+		packages' [file! string! none!]
 		indexes' [file! string! none!]
 	][
 		make self [
 			indexes: to-file any [indexes' indexes]
 			packages: to-string any [packages' packages]
 
-			if image?: to-logic find indexes "/stage/image/"
+			if image?: to-logic find indexes "/stage/image/" [
 ;				ORCA FIXME: FIND works in indexes but only in packages as string?
 ;				ORCA TODO: implement find/tail:
-				[packages: at  find packages "/stage/image/"  13]
-
-			packages: to-file packages
+				packages: at  find packages "/stage/image/"  13
+			]
+			packages: dirize to-file packages
 		]
 	]
 
@@ -95,10 +95,10 @@ stage-proto: context [
 		if exists? target: rejoin [indexes "/" package/name] [
 			log/warning join "conflict: replacing " target
 		]
-		action rejoin [
-			"ln --symbolic --force "
-			either image? [join packages package/name] [package/path]
-			" " target
+		action reform [
+			"ln --symbolic --force"
+			either image? [join packages package/full-name] [package/path]
+			target
 		]
 	]
 
@@ -108,7 +108,7 @@ stage-proto: context [
 		either exists? target: rejoin [indexes "/" package/name] [
 			action join "rm " target
 		][
-			log/warning rejoin ["link " target " did not exist"]
+			log/warning reform ["link" target "did not exist."]
 			yes
 		]
 	]
@@ -116,21 +116,21 @@ stage-proto: context [
 	index-node: func [package node
 		/local source target index
 	][
-		source: join package/root index: join package/name ["/" node]
-		target: join indexes ["/" node]
+		source: join package/root index: rejoin [package/full-name "/" node]
+		target: rejoin [indexes "/" node]
 
 		either all [exists? source  dir? source] [
 			either exists? target [
 ;				TODO: detect a symlink:
-;				if symlink? target [log/warning join "directory " [target " is a link"]]
+;				if symlink? target [log/warning reform ["directory" target "is a link."]]
 				yes
 			][
 ;				if dir? target [log/warning join "replacing broken directory link " target]
 				action join "mkdir " target
 			]
 		][
-			either node = "manuals/info/dir" and exists? target [
-				log/warning "manuals/info/dir file not registered due to pre-existing version"
+			either all [node = "manuals/info/dir"  exists? target] [
+				log/warning "manuals/info/dir file not registered due to pre-existing version."
 				yes
 			][
 				either exists? target [
@@ -139,10 +139,11 @@ stage-proto: context [
 ;					TODO: detect a symlink:
 ;					if file? target [log/warning join "replacing broken link " target]
 				]
-;				change-dir join indexes ["/" subdir]
-				action join "ln --symbolic --force " [
+;				change-dir rejoin [indexes "/" subdir]
+				action reform [
+					"ln --symbolic --force"
 					either image? [join packages index] [source]
-					" " target
+					target
 				]
 			]
 		]
@@ -151,14 +152,14 @@ stage-proto: context [
 	remove-node: func [subdir file
 		/local node index
 	][
-		index: join indexes ["/"  node: join subdir ["/" file]]
+		index: rejoin [indexes "/"  node: rejoin [subdir "/" file]]
 
 ;		TODO: detect a symlink:
 		either all [exists? index  dir? index] [
 			any [
 ;				FIXME: bug in ORCA list comparison:
 ;				(read index) <> []  ; Indexes directory not empty?
-				(length? read index) > 0  ; Indexes directory not empty?
+				not empty? read index
 ;				action join "rmdir " index
 				; May be a symlink from old package manager:
 				action join "rm --recursive " index
@@ -168,14 +169,14 @@ stage-proto: context [
 ;			either file? file [
 			either image? or exists? index [
 				either node = "manuals/info/dir" [
-					log/warning "manuals/info/dir file left untouched"
+					log/warning "manuals/info/dir file left untouched."
 					yes
 				][
 					action join "rm " index
 					yes  ; Don't consider an error fatal for now
 				]
 			][
-				log/warning join "link " [index " did not exist"]
+				log/warning reform ["link" index "did not exist."]
 				yes
 			]
 		]
@@ -185,33 +186,48 @@ stage-proto: context [
 resources-stage: stage-proto/new none none
 
 package-image: context [
-	name: root: path: this-stage: none
+	path: root: full-name: name: version: this-stage: none
 
 	flat-dirs:	 [etc bin sbin applications]
 	nested-dirs: [lib libexec include share manuals tasks]
 
 	new: func ["Returns a new package image object."
-		package' [string! file!]  ; "Name or full path."
-		/stage stage' [object!]  ; "Defaults to the host system."
+		package' [string! file!]  "Name or full path."
+		/stage stage' [object!]  "Defaults to the host system."
 		/local where
 	][
 		unless stage [stage': resources-stage]
-		; Drop any trailing slash:
-		if (last package') = #"/" [package': copy/part package' back tail package']
 
-		either where: find/last package': to-file package'  #"/" [  ; Package path given?
-			make self [
-;				FIXME: ORCA bug?: 'where is cleaned up if not copied:
-				name: to-string next where
-				root: copy/part package' next where
+		if #"/" = last package': to-file package' [clear back tail package']  ; Chop any trailing slash
+
+		make self  either where: find/last package' #"/" [  ; Package path given?
+			[
 				path: package'
+				root: copy/part package' next where
+
+;				FIXME: ORCA bug?: WHERE is cleaned up if not copied:
+				if all [integer? first to-block first full-name: name: to-string next where  ; TODO: use PARSE
+					not find name #"-"  ; Filter out 7-Zip and such
+				][	; Versioned package
+					version: name
+					clear back tail root
+
+					either where: find/last root #"/" [
+						full-name: rejoin [name: to-string next where  "/" version]
+						clear next where
+					][
+						name: to-string root
+						path: join
+							root: resources-stage/packages
+							full-name: rejoin [name "/" version]
+					]
+				]
 				this-stage: stage'
 			]
 		][
-			make self [
-				name: to-string package'
-				root: resources-stage/packages
-				path: join root package'
+			[
+				full-name: name: to-string package'
+				path: join  root: resources-stage/packages  package'
 				this-stage: stage'
 			]
 		]
@@ -288,7 +304,7 @@ package-image: context [
 		/local dir
 	][
 		foreach dir flat-dirs [
-;			FIXME: ORCA bug: errors don't propagate from 'task:
+;			FIXME: ORCA bug: errors don't propagate from TASK:
 			unless task stages dir no
 				[return no]
 		]
@@ -303,14 +319,14 @@ package-image: context [
 		/local dir entry node stage
 	][
 		any [
-			not exists? dir: join path ["/" subdir]
+			not exists? dir: rejoin [path "/" subdir]
 			(
 				log/detail join "Processing subdirectory " subdir
 				change-dir dir
 
 				foreach entry read %. [
-					unless (last entry) = #"~" [  ; Skip backup files
-						node: join subdir ["/" entry]
+					unless #"~" = last entry [  ; Skip backup files
+						node: rejoin [subdir "/" entry]
 						foreach stage stages [
 							unless stage/index-node self node
 								[return no]
@@ -331,15 +347,15 @@ package-image: context [
 		/local dir entry stage
 	][
 		any [
-			not exists? dir: join path ["/" subdir]
+			not exists? dir: rejoin [path "/" subdir]
 			(
 				log/detail join "Processing subdirectory " subdir
 				change-dir dir
 
 				foreach entry read %. [
-					unless (last entry) = #"~" [  ; Skip backup files
+					unless #"~" = last entry [  ; Skip backup files
 						if all [nesting?  exists? entry  dir? entry] [
-							unless remove-subdir stages  join subdir ["/" entry]  yes
+							unless remove-subdir stages  rejoin [subdir "/" entry]  yes
 								[return no]
 						]
 						foreach stage stages [

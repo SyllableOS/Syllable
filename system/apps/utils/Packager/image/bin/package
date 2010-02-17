@@ -2,10 +2,10 @@
 
 ORCA [
 	Title:		"Package installation tool"
-	Version:	0.4.3
+	Version:	0.5.0
 	Author:		"Kaj de Vos"
 	Rights: {
-		Copyright (c) 2006-2008 Kaj de Vos
+		Copyright (c) 2006-2008,2010 Kaj de Vos
 		License: GPL 3 or any later version
 	}
 	Purpose:	"Registers and unregisters (binary) packages by managing pools of symbolic links."
@@ -26,7 +26,7 @@ either any [
 	not args: system/script/args
 	find ["help" "-h" "--help" "-help" "-?" "?"] command: args/1
 ][
-	print "Usage: package <command> [[<package path>]<package name> [<link pool> ...]]"
+	print "Usage: package <command> [[<package path>]<package name>[/<version>] [<link pool> ...]]"
 	print "<command>:"
 	print "  help, -h,     Show this help information"
 	print "    --help, -help, -?, (?)"
@@ -46,19 +46,18 @@ either any [
 		]
 		package: package-image/new args/2
 
-		stages: []
-		foreach stage next next args [
-			append stages stage-proto/new package/root stage
+		stages: copy []
+		foreach stage  next next args [
+			append stages  stage-proto/new package/root stage
 		]
 
 		switch/default command [
 			"register" [
-;				unless either stages = [] [package/register] [package/register/stages stages]
-				unless either (length? stages) = 0 [package/register] [package/register/stages stages]
+				unless either empty? stages [package/register] [package/register/stages stages]
 					[quit/return 10]
 			]
 			"unregister" [
-				unless either (length? stages) = 0 [package/unregister] [package/unregister/stages stages]
+				unless either empty? stages [package/unregister] [package/unregister/stages stages]
 					[quit/return 20]
 			]
 		][
