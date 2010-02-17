@@ -175,7 +175,7 @@ install-files
 	2.9.11/Functions						/Programs/Scripts/2.9.11/
 	2.9.11/Resources						/Programs/Scripts/2.9.11/
 	2.9.11/Resources/Defaults/Settings/*	/System/Settings/
-;	ld.so.conf								/Programs/Glibc/Settings/
+	ld.so.conf								/Programs/Glibc/Settings/
 
 links
 	./bin/										/System/Index/sbin
