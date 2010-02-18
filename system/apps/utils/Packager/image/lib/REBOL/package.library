@@ -1,6 +1,6 @@
 ORCA [
 	Title:		"Package installation library"
-	Version:	0.6.5
+	Version:	0.6.6
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006-2010 Kaj de Vos
@@ -47,7 +47,7 @@ log: context [  ; Singleton logger object
 ]
 
 action: func ["Returns the output of a shell command, or false if unsuccessful."
-	command "Shell command."
+	command "Shell command"
 	/local status stdout
 ][
 	log/action command
@@ -70,14 +70,14 @@ build: context [
 stage-proto: context [
 	image?: none
 	packages: %/resources/
-	indexes: %/resources/indexes
+	indexes: %/resources/indexes/
 
-	new: func ["Returns a new stage object; by default of the running system."
+	new: func ["Returns a new stage object; by default of the general resource packages in the running system."
 		packages' [file! string! none!]
 		indexes' [file! string! none!]
 	][
 		make self [
-			indexes: to-file any [indexes' indexes]
+			indexes: dirize to-file any [indexes' indexes]
 			packages: to-string any [packages' packages]
 
 			if image?: to-logic find indexes "/stage/image/" [
@@ -92,7 +92,7 @@ stage-proto: context [
 	select-package: func [package
 		/local target
 	][
-		if exists? target: rejoin [indexes "/" package/name] [
+		if exists? target: join indexes package/name [
 			log/warning join "conflict: replacing " target
 		]
 		action reform [
@@ -105,7 +105,7 @@ stage-proto: context [
 	deselect-package: func [package
 		/local target
 	][
-		either exists? target: rejoin [indexes "/" package/name] [
+		either exists? target: join indexes package/name [
 			action join "rm " target
 		][
 			log/warning reform ["link" target "did not exist."]
@@ -117,7 +117,7 @@ stage-proto: context [
 		/local source target index
 	][
 		source: join package/root index: rejoin [package/full-name "/" node]
-		target: rejoin [indexes "/" node]
+		target: join indexes node
 
 		either all [exists? source  dir? source] [
 			either exists? target [
@@ -139,7 +139,7 @@ stage-proto: context [
 ;					TODO: detect a symlink:
 ;					if file? target [log/warning join "replacing broken link " target]
 				]
-;				change-dir rejoin [indexes "/" subdir]
+;				change-dir join indexes subdir
 				action reform [
 					"ln --symbolic --force"
 					either image? [join packages index] [source]
@@ -152,7 +152,7 @@ stage-proto: context [
 	remove-node: func [subdir file
 		/local node index
 	][
-		index: rejoin [indexes "/"  node: rejoin [subdir "/" file]]
+		index: join indexes  node: rejoin [subdir "/" file]
 
 ;		TODO: detect a symlink:
 		either all [exists? index  dir? index] [
@@ -192,7 +192,7 @@ package-image: context [
 	nested-dirs: [lib libexec include share manuals tasks]
 
 	new: func ["Returns a new package image object."
-		package' [string! file!]  "Name or full path."
+		package' [string! file!]  "Name or full path"
 		/stage stage' [object!]  "Defaults to the host system."
 		/local where
 	][
@@ -205,8 +205,7 @@ package-image: context [
 				path: package'
 				root: copy/part package' next where
 
-;				FIXME: ORCA bug?: WHERE is cleaned up if not copied:
-				if all [integer? first to-block first full-name: name: to-string next where  ; TODO: use PARSE
+				if all [integer? first load to-string first full-name: name: to-string next where  ; TODO: use PARSE
 					not find name #"-"  ; Filter out 7-Zip and such
 				][	; Versioned package
 					version: name

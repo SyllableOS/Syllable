@@ -2,7 +2,7 @@
 
 ORCA [
 	Title:		"Package installation tool"
-	Version:	0.5.0
+	Version:	0.5.1
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006-2008,2010 Kaj de Vos
@@ -14,7 +14,15 @@ ORCA [
 	Tabs:		4
 ]
 
-recycle/off  ; FIXME: ORCA bug
+; FIXME: ORCA bugs
+
+recycle/off
+
+; to-* don't copy when same type:
+as-string: to-string
+to-string: func [value] [as-string copy value]
+as-file: to-file
+to-file: func [value] [as-file copy value]
 
 
 do %/system/indexes/lib/REBOL/package.library
@@ -26,7 +34,7 @@ either any [
 	not args: system/script/args
 	find ["help" "-h" "--help" "-help" "-?" "?"] command: args/1
 ][
-	print "Usage: package <command> [[<package path>]<package name>[/<version>] [<link pool> ...]]"
+	print "Usage: package <command> [[<package path>]<name>[/<version>] [<link pool> ...]]"
 	print "<command>:"
 	print "  help, -h,     Show this help information"
 	print "    --help, -help, -?, (?)"
