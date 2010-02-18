@@ -33,7 +33,6 @@ install
 ;		Programs/LinuxFusion/8.1.1 \
 ;		Programs/KQEmu/1.3.0pre11 \
 		Programs/Glibc/2.7 \
-		Programs/Glibc/Settings \
 		Programs/ZLib/1.2.3 \
 		Programs/Iptables/1.4.6 \
 		Programs/LibStdC++/4.2.3 \
