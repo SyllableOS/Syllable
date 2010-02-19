@@ -2,7 +2,7 @@
 
 ORCA [
 	Title:		"Package installation tool"
-	Version:	0.5.1
+	Version:	0.5.2
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006-2008,2010 Kaj de Vos
@@ -19,9 +19,9 @@ ORCA [
 recycle/off
 
 ; to-* don't copy when same type:
-as-string: to-string
-to-string: func [value] [as-string copy value]
-as-file: to-file
+as-string: :to-string  ; FIXME: can't convert char!
+to-string: :form
+as-file: :to-file
 to-file: func [value] [as-file copy value]
 
 
