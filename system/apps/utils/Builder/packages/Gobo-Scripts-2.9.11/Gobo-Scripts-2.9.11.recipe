@@ -56,7 +56,7 @@ install
 		System/Links/Environment \
 		System/Links/Executables \
 ;		System/Links/Manuals/man{0,1,2,3,4,5,6,7,8} \
-		System/Links/Shared \
+;		System/Links/Shared \
 		System/Links/Tasks \
 		System/Settings \
 		Data \
