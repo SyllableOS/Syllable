@@ -19,7 +19,7 @@ _configure-args
 	--mandir=/system/resources/UDevices/142/manuals
 configure-options
 	--sysconfdir=/etc
-;	--exec-prefix=/
+	--exec-prefix=/
 ;	--sbindir=/system/resources/UDevices/142/sbin
 	--libexecdir=/lib/udev
 
@@ -47,3 +47,5 @@ build-docs			INSTALL
 links
 	sbin/udevd		/sbin/
 	sbin/udevadm	/sbin/
+
+move-files			/lib/libudev.so* lib/

@@ -13,19 +13,21 @@ needs				NCurses
 
 ;super-install
 system-prefix-var	DESTDIR
-install-tree		bin sbin lib include man1 man5 man8
+install-tree
+;	bin sbin lib include
 install-vars
-	bin				$IMAGE/system/resources/procps/3.2.7/bin
-	usr/bin			$IMAGE/system/resources/procps/3.2.7/bin
-	usr/proc/bin	$IMAGE/system/resources/procps/3.2.7/bin
-	sbin			$IMAGE/system/resources/procps/3.2.7/sbin
-	lib				$IMAGE/system/resources/procps/3.2.7/lib
-	usr/lib			$IMAGE/system/resources/procps/3.2.7/lib
-;	usr/include		$IMAGE/system/development/resources/procps/3.2.7/include
-	usr/include		$IMAGE/system/resources/procps/3.2.7/include
-	man1			$IMAGE/system/resources/procps/3.2.7/manuals/man1
-	man5			$IMAGE/system/resources/procps/3.2.7/manuals/man5
-	man8			$IMAGE/system/resources/procps/3.2.7/manuals/man8
+	bin				$IMAGE/system/resources/procps/3.2.7/bin/
+	usr/bin			$IMAGE/system/resources/procps/3.2.7/bin/
+	usr/proc/bin	$IMAGE/system/resources/procps/3.2.7/bin/
+	sbin			$IMAGE/system/resources/procps/3.2.7/sbin/
+	lib				$IMAGE/system/resources/procps/3.2.7/lib/
+	usr/lib			$IMAGE/system/resources/procps/3.2.7/lib/
+;	There don't seem to be any:
+;	usr/include		$IMAGE/system/development/resources/procps/3.2.7/include/
+	usr/include		$IMAGE/system/resources/procps/3.2.7/include/
+	man1			$IMAGE/system/resources/procps/3.2.7/manuals/man1/
+	man5			$IMAGE/system/resources/procps/3.2.7/manuals/man5/
+	man8			$IMAGE/system/resources/procps/3.2.7/manuals/man8/
 
 documentation		README README.top COPYING COPYING.LIB NEWS BUGS TODO AUTHORS
 internal-docs		CodingStyle
