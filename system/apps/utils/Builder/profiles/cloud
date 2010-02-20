@@ -334,8 +334,8 @@ modules
 
 	other/data/MIME-Support--current
 
-	linux/procps-3.2.7
-	apps/other/SUDo-1.7.2p2
+	system linux/procps-3.2.7
+	system apps/other/SUDo-1.7.2p2
 	apps/other/MkTemp-1.6
 
 ;	Needs ranlib symlink in /usr/bin/!
