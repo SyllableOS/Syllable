@@ -19,8 +19,8 @@ _configure-args
 	--mandir=/system/resources/UDevices/142/manuals
 configure-options
 	--sysconfdir=/etc
-	--exec-prefix=/
-	--sbindir=/system/resources/UDevices/142/sbin
+;	--exec-prefix=/
+;	--sbindir=/system/resources/UDevices/142/sbin
 	--libexecdir=/lib/udev
 
 ;	Doesn't work as advertised:
