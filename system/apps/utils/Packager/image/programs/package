@@ -2,13 +2,13 @@
 
 ORCA [
 	Title:		"Package installation tool"
-	Version:	0.5.2
+	Version:	0.5.3
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006-2008,2010 Kaj de Vos
 		License: GPL 3 or any later version
 	}
-	Purpose:	"Registers and unregisters (binary) packages by managing pools of symbolic links."
+	Purpose:	"Registers and unregisters packages by managing pools of symbolic links."
 	Example:	"package register example"
 
 	Tabs:		4
@@ -25,7 +25,7 @@ as-file: :to-file
 to-file: func [value] [as-file copy value]
 
 
-do %/system/indexes/lib/REBOL/package.library
+do %/system/indexes/framework/REBOL/package.library
 
 
 header: system/script/header

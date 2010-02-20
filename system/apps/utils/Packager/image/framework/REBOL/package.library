@@ -1,13 +1,13 @@
 ORCA [
 	Title:		"Package installation library"
-	Version:	0.6.7
+	Version:	0.6.8
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006-2010 Kaj de Vos
 		License: LGPL
 	}
-	Purpose:	"Registers and unregisters (binary) packages by managing pools of symbolic links."
-	Example:	"do %/system/indexes/lib/REBOL/package.library"
+	Purpose:	"Registers and unregisters packages by managing pools of symbolic links."
+	Example:	"do %/system/indexes/framework/REBOL/package.library"
 
 	Tabs:		4
 ]
@@ -193,8 +193,8 @@ resources-stage: stage-proto/new none none
 package-image: context [
 	path: root: full-name: name: version: this-stage: none
 
-	flat-dirs:	 [etc bin sbin applications]
-	nested-dirs: [lib libexec include share manuals tasks]
+	flat-dirs:	 [settings programs bin system-programs sbin applications]
+	nested-dirs: [framework lib include shared tasks manuals]
 
 	new: func ["Returns a new package image object."
 		package' [string! file!]  "Name or full path"
@@ -210,7 +210,8 @@ package-image: context [
 				path: package'
 				root: copy/part package' next where
 
-				if all [integer? first load to-string first full-name: name: to-string next where  ; TODO: use PARSE
+;				TODO: use PARSE:
+				if all [integer? first load to-string first full-name: name: to-string next where
 					not find name #"-"  ; Filter out 7-Zip and such
 				][	; Versioned package
 					version: name
