@@ -20,7 +20,8 @@ _configure-args
 configure-options
 	--sysconfdir=/etc
 	--exec-prefix=/
-;	--sbindir=/system/resources/UDevices/142/sbin
+;	Not chained from exec-prefix:
+	--sbindir=/system/resources/UDevices/142/sbin
 	--libexecdir=/lib/udev
 
 ;	Doesn't work as advertised:
@@ -48,4 +49,5 @@ links
 	sbin/udevd		/sbin/
 	sbin/udevadm	/sbin/
 
+; Somehow leads to two installed versions:
 move-files			/lib/libudev.so* lib/
