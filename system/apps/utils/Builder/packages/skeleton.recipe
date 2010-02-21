@@ -78,6 +78,12 @@ build-dir			<Directory>
 ; <configure>
 
 ; [<pre-configure>]
+; no-bindir
+; no-sbindir
+; no-libdir
+; no-libexecdir
+; no-includedir
+; no-datarootdir
 ; no-mandir
 ; no-infodir
 ; [<configure-env>] <configure-cmd> [<configure-vars>] ([<configure-prefix>] | [<configure-args>]) [<configure-options>]
@@ -97,10 +103,22 @@ configure-vars
 configure-prefix	"--prefix="
 ; Arguments overriding prefixes:
 configure-args		--prefix=/resources/foo --includedir=/resources/foo/include
+; configure doesn't take --bindir= option:
+no-bindir
+; configure doesn't take --sbindir= option:
+no-sbindir
+; configure doesn't take --libdir= option:
+no-libdir
+; configure doesn't take --libexecdir= option:
+no-libexecdir
+; configure doesn't take --includedir= option:
+no-includedir
+; configure doesn't take --datarootdir= option:
+no-datarootdir
 ; configure doesn't take --mandir= option:
-; no-mandir
+no-mandir
 ; configure doesn't take --infodir= option:
-; no-infodir
+no-infodir
 ; Extra configure options:
 configure-options	--with-option
 
