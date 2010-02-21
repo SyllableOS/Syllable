@@ -40,7 +40,7 @@ tree
 	system/development/headers
 	system/development/resources
 
-	system/bin
+	system/programs
 	system/libraries
 
 	system/fonts
@@ -70,17 +70,15 @@ tree
 	system/resources/wallpapers
 
 	system/indexes
-	system/indexes/bin
-	system/indexes/etc
-	system/indexes/include
-	system/indexes/lib
-	system/indexes/libexec
-	system/indexes/manuals
-	system/indexes/sbin
-	system/indexes/share
+	system/indexes/settings
+	system/indexes/programs
+	system/indexes/system-programs
+	system/indexes/framework
+	system/indexes/data
 	system/indexes/tasks
 	system/indexes/tasks/setup
 	system/indexes/tasks/start
+	system/indexes/manuals
 
 	system/drivers
 
@@ -102,18 +100,20 @@ tree
 	usr
 
 	usr/indexes
+	usr/indexes/settings
+	usr/indexes/programs
 	usr/indexes/bin
-	usr/indexes/etc
-	usr/indexes/include
-	usr/indexes/lib
-	usr/indexes/libexec
-	usr/indexes/manuals
+	usr/indexes/applications
+	usr/indexes/system-programs
 	usr/indexes/sbin
-	usr/indexes/share
+	usr/indexes/framework
+	usr/indexes/lib
+	usr/indexes/include
+	usr/indexes/data
 	usr/indexes/tasks
 	usr/indexes/tasks/setup
 	usr/indexes/tasks/start
-	usr/indexes/applications
+	usr/indexes/manuals
 
 ;	For env:
 	usr/bin
@@ -219,11 +219,11 @@ prepare
 	ln -s usr/ resources &&
 
 ;	For OpenSSL and others:
-	ln -s /resources/indexes/bin/perl	usr/bin/perl &&
+	ln -s /resources/indexes/programs/perl		usr/bin/ &&
 ;	For OpenSSL?
-;	ln -s /resources/indexes/bin/perl	usr/local/bin/perl &&
+;	ln -s /resources/indexes/programs/perl		usr/local/bin/ &&
 ;	From BinaryUtils, for building OpenSSL:
-	ln -s /resources/indexes/bin/ranlib	usr/bin/ &&
+	ln -s /resources/indexes/programs/ranlib	usr/bin/ &&
 
 ;	touch etc/mtab &&
 
@@ -242,24 +242,24 @@ prepare
 	chown system:system	var/lib/sshd &&
 
 ;	For LFS bootscripts:
-	ln -s /system/indexes/sbin/cupsd		usr/sbin/ &&
-	ln -s /resources/indexes/sbin/named		usr/sbin/ &&
-;	ln -s /system/indexes/sbin/sshd			usr/sbin/ &&
-	ln -s /resources/indexes/bin/apachectl	usr/sbin/ &&
-	ln -s /resources/indexes/bin/httpd		usr/sbin/ &&
-	ln -s /resources/indexes/sbin/vsftpd	usr/sbin/ &&
-	ln -s /resources/indexes/bin/rsync		usr/bin/ &&
-	ln -s /resources/indexes/sbin/nmbd		usr/sbin/ &&
-	ln -s /resources/indexes/sbin/smbd		usr/sbin/ &&
-	ln -s /resources/indexes/sbin/winbindd	usr/sbin/ &&
+	ln -s /system/indexes/system-programs/cupsd			usr/sbin/ &&
+	ln -s /resources/indexes/system-programs/named		usr/sbin/ &&
+;	ln -s /system/indexes/system-programs/sshd			usr/sbin/ &&
+	ln -s /resources/indexes/programs/apachectl			usr/sbin/ &&
+	ln -s /resources/indexes/programs/httpd				usr/sbin/ &&
+	ln -s /resources/indexes/system-programs/vsftpd		usr/sbin/ &&
+	ln -s /resources/indexes/programs/rsync				usr/bin/ &&
+	ln -s /resources/indexes/system-programs/nmbd		usr/sbin/ &&
+	ln -s /resources/indexes/system-programs/smbd		usr/sbin/ &&
+	ln -s /resources/indexes/system-programs/winbindd	usr/sbin/ &&
 
 ;	For Python:
-	ln -s /resources/indexes/bin/python usr/bin/python
+	ln -s /resources/indexes/programs/python			usr/bin/
 
 resources
 	boot/grub									menu.lst
 	etc											linux/ld.so.conf
-;	Needed by Genode:
+;	Needed by Genode?:
 ;	etc											binaries/ld.so.cache
 	etc											linux/inittab
 	etc/sysconfig								linux/clock

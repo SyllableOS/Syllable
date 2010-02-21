@@ -6,7 +6,7 @@ prepare
 ;	chown root:system	var/lib/sshd &&
 
 ;	For Python:
-	ln -s /resources/indexes/bin/python usr/bin/python
+	ln -s /resources/indexes/programs/python usr/bin/
 
 resources
 ;	addattrib can't handle wildcards:

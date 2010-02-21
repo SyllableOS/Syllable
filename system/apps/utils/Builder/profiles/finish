@@ -3,10 +3,10 @@
 
 resources
 ;	Make GLibC suitable for running in an installed system:
-	system/resources/glibc/2.7/lib	libc.so
+	system/resources/glibc/2.7/framework/libraries	libc.so
 
 finish
-	cp resources/grub/lib/grub/i386-pc/* boot/grub/ &&
+	cp resources/grub/framework/libraries/grub/i386-pc/* boot/grub/ &&
 
 	rm -r resources/documentation &&
 	rm -r resources/documentation-DE &&
