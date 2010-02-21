@@ -1,6 +1,15 @@
 diff -ru SUDo-1.7.2p2-original/env.c SUDo-1.7.2p2/env.c
 --- SUDo-1.7.2p2-original/env.c	2009-06-23 20:24:42.000000000 +0200
-+++ SUDo-1.7.2p2/env.c	2010-02-20 05:19:13.000000000 +0100
++++ SUDo-1.7.2p2/env.c	2010-02-21 13:21:03.000000000 +0100
+@@ -125,7 +125,7 @@
+     "HOSTALIASES",
+     "NLSPATH",
+     "PATH_LOCALE",
+-    "LD_*",
++//    "LD_*",
+     "_RLD*",
+ #ifdef __hpux
+     "SHLIB_PATH",
 @@ -164,7 +164,7 @@
      "JAVA_TOOL_OPTIONS",	/* java, extra command line options */
      "PERLIO_DEBUG ",		/* perl, debugging output file */
