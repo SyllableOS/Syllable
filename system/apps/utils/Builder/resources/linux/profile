@@ -5,25 +5,25 @@ export PWD
 
 # Run paths
 
-#export DLL_PATH=@bindir@/libraries:/system/indexes/gcc/lib:/resources/indexes/lib:/usr/local/lib:/system/indexes/lib:/system
-export LD_LIBRARY_PATH=/system/indexes/gcc/lib:/system/development/resources/gcc/4.2.3/lib:/resources/indexes/lib:/usr/local/lib:/usr/lib:/lib:/system/indexes/lib:/system/libraries
+#export DLL_PATH=@bindir@/framework:/system/indexes/gcc/framework/libraries:/resources/indexes/framework/libraries:/resources/indexes/lib:/usr/local/lib:/system/indexes/framework/libraries:/system
+export LD_LIBRARY_PATH=/system/indexes/gcc/framework/libraries:/system/development/resources/gcc/4.2.3/framework/libraries:/resources/indexes/framework/libraries:/resources/indexes/lib:/usr/local/lib:/usr/lib:/lib:/system/indexes/framework/libraries:/system/libraries
 
 if [ -e /System/Index/lib ]  # Gobo packages are installed
 then
 	export LD_LIBRARY_PATH=/System/Index/lib:$LD_LIBRARY_PATH
 fi
 
-export PATH=/resources/indexes/sbin:/resources/indexes/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/system/indexes/sbin:/system/indexes/bin:/system/bin
+export PATH=/resources/indexes/system-programs:/resources/indexes/programs:/resources/indexes/sbin:/resources/indexes/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/system/indexes/system-programs:/system/indexes/programs:/system/programs
 
 export MANPATH=/resources/indexes/manuals:/usr/local/man:/usr/local/share/man:/usr/man:/usr/share/man:/system/indexes/manuals
 export INFOPATH=/resources/indexes/manuals/info:/usr/local/info:/usr/info:/system/indexes/manuals/info
 
 # Paths for software compilation
 
-export LIBRARY_PATH=/system/indexes/gcc/lib:/system/development/resources/gcc/4.2.3/lib:/resources/indexes/lib:/usr/local/lib:/usr/lib:/lib:/system/indexes/lib
-export C_INCLUDE_PATH=/system/development/resources/gcc/4.2.3/include:/resources/indexes/include:/usr/local/include:/usr/include:/system/indexes/include:/system/development/headers
+export LIBRARY_PATH=/system/indexes/gcc/framework/libraries:/system/development/resources/gcc/4.2.3/framework/libraries:/resources/indexes/framework/libraries:/resources/indexes/lib:/usr/local/lib:/usr/lib:/lib:/system/indexes/framework/libraries
+export C_INCLUDE_PATH=/system/development/resources/gcc/4.2.3/framework/headers:/resources/indexes/framework/headers:/resources/indexes/include:/usr/local/include:/usr/include:/system/indexes/framework/headers:/system/development/headers
 export CPLUS_INCLUDE_PATH=$C_INCLUDE_PATH
-export PKG_CONFIG_PATH=/resources/indexes/lib/pkgconfig:/resources/indexes/share/pkgconfig:/usr/local/lib/pkgconfig:/usr/local/share/pkgconfig:/usr/lib/pkgconfig:/usr/share/pkgconfig:/system/indexes/lib/pkgconfig
+export PKG_CONFIG_PATH=/resources/indexes/framework/libraries/pkgconfig:/resources/indexes/data/pkgconfig:/resources/indexes/lib/pkgconfig:/usr/local/lib/pkgconfig:/usr/local/share/pkgconfig:/usr/lib/pkgconfig:/usr/share/pkgconfig:/system/indexes/framework/libraries/pkgconfig
 
 # Set this right, or havoc may be wreaked in /system/init.sh
 export TEMP=/tmp

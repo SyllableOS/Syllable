@@ -1,6 +1,6 @@
 ORCA [
 	Title:		"Package installation library"
-	Version:	0.6.8
+	Version:	0.6.9
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006-2010 Kaj de Vos
@@ -194,7 +194,7 @@ package-image: context [
 	path: root: full-name: name: version: this-stage: none
 
 	flat-dirs:	 [settings programs bin system-programs sbin applications]
-	nested-dirs: [framework lib include shared tasks manuals]
+	nested-dirs: [framework lib include data tasks manuals]
 
 	new: func ["Returns a new package image object."
 		package' [string! file!]  "Name or full path"

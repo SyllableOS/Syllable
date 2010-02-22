@@ -14,9 +14,9 @@ ca:12345:ctrlaltdel:/sbin/shutdown -t1 -a -r now
 
 su:S016:once:/sbin/sulogin
 
-1:2345:respawn:/sbin/agetty tty1 9600
-2:2345:respawn:/sbin/agetty tty2 9600
-3:2345:respawn:/sbin/agetty tty3 9600
-4:2345:respawn:/sbin/agetty tty4 9600
-5:2345:respawn:/sbin/agetty tty5 9600
-6:2345:respawn:/sbin/agetty tty6 9600
+1:2345:respawn:/system/indexes/system-programs/agetty tty1 9600
+2:2345:respawn:/system/indexes/system-programs/agetty tty2 9600
+3:2345:respawn:/system/indexes/system-programs/agetty tty3 9600
+4:2345:respawn:/system/indexes/system-programs/agetty tty4 9600
+5:2345:respawn:/system/indexes/system-programs/agetty tty5 9600
+6:2345:respawn:/system/indexes/system-programs/agetty tty6 9600
