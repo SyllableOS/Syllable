@@ -12,16 +12,15 @@ locations			http://www.kernel.org/pub/linux/utils/kernel/hotplug/
 packages			udev-142
 needs				Linux >= 2.6.22
 
+no-libexecdir
 _configure-args
-;	Doesn't seem to work otherwise:
 	--prefix=/
-	--includedir=/system/development/resources/UDevices/142/include
+	--sbindir=/system/resources/UDevices/142/system-programs
+	--includedir=/system/development/resources/UDevices/142/framework/headers
 	--mandir=/system/resources/UDevices/142/manuals
 configure-options
 	--sysconfdir=/etc
 	--exec-prefix=/
-;	Not chained from exec-prefix:
-	--sbindir=/system/resources/UDevices/142/sbin
 	--libexecdir=/lib/udev
 
 ;	Doesn't work as advertised:
@@ -46,8 +45,8 @@ build-docs			INSTALL
 
 ; For LFS init scripts:
 links
-	sbin/udevd		/sbin/
-	sbin/udevadm	/sbin/
+	system-programs/udevd	/sbin/
+	system-programs/udevadm	/sbin/
 
 ; Somehow leads to two installed versions:
-move-files			/lib/libudev.so* lib/
+move-files			/lib/libudev.so* framework/libraries/

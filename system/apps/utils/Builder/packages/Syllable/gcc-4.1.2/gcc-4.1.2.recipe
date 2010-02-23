@@ -9,16 +9,16 @@ status				testing
 warnings
 	Compile breaks on an illegal instruction crash with GCC 4.1.x itself installed when building in a subdirectory.
 	GCC has a circular dependency on GLibC.
-	LibIberty is both in BinUtils and in GCC.
+	LibIberty is both in BinaryUtils and in GCC.
 
 needs
 ;	For -O3 with -fpic:
-	binutils >= 2.13.1
+	BinaryUtils >= 2.13.1
 ;	Syllable switched to the new GLibC ABI:
 	glibc >= 2.3.3
 build-needs
 	Syllable >= 0.6.4
-;	autoconf 2.57
+;	AutoConfigure 2.57
 ;	Without make bootstrap:
 	gcc >= 2.95 < 4
 ;	libtool
@@ -58,12 +58,12 @@ make-env
 
 ; Needs itself during installation:
 install-env
-	PATH		"$PATH:$STAGE/gcc/bin:$STAGE/bootstrap/gcc/bin:$IMAGE/gcc/bin:$IMAGE/usr/gcc/bin:$IMAGE/system/resources/gcc/4.1.2/bin:/usr/gcc/bin"
+	PATH			"$PATH:$STAGE/gcc/programs:$STAGE/bootstrap/gcc/programs:$IMAGE/resources/gcc/programs:/resources/gcc/programs"
 
 links
-	gcc				bin/cc
-	libgcc.a		lib/gcc/i586-pc-syllable/4.1.2/libgcc_static.a
+	gcc				programs/cc
+	libgcc.a		framework/libraries/gcc/i586-pc-syllable/4.1.2/libgcc_static.a
 ;	For some packages:
-;	bin/cpp			lib/
+;	programs/cpp	framework/libraries/
 ;	For WebKit:
-;	gcc				/usr/bin/
+	programs/gcc	/usr/bin/

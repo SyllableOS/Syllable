@@ -27,7 +27,7 @@ _locations
 	http://mirror.cs.wisc.edu/pub/mirrors/ghost/GPL/current/
 
 needs
-	zlib >= 1.2.1
+	ZLibrary >= 1.2.1
 	LibPNG
 	LibJPEG
 recommends
@@ -46,11 +46,11 @@ configure-options
 	--without-jbig2dec
 
 install-tree
-	share
-	share/ghostscript
-	share/ghostscript/8.64
-	share/ghostscript/8.64/Resource
-	share/ghostscript/8.64/Resource/Font
+	data
+	data/ghostscript
+	data/ghostscript/8.64
+	data/ghostscript/8.64/Resource
+	data/ghostscript/8.64/Resource/Font
 ;install-targets		soinstall
 
 documentation

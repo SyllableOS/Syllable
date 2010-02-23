@@ -12,10 +12,10 @@ locations			http://icculus.org/SDL_sound/downloads/
 
 needs				sdl >= 1.2
 recommends
-	libvorbis
+	LibVorbis
 ;	For AlephOne:
 	smpeg >= 0.4.3
-	libflac
+	flac
 	libmodplug
 	libmikmod >= 3.1.5
 	libspeex
@@ -25,12 +25,11 @@ configure-options
 ;	--disable-shared
 ;	--with-sdl-prefix=
 ;	--disable-sdltest
-	--with-vorbis-prefix=/resources/libvorbis
+	--with-vorbis-prefix=/resources/LibVorbis
 ;	--disable-vorbistest
 
 system-prefix-var	DESTDIR
 
 documentation
 	README COPYING CREDITS CHANGELOG TODO
-;	docs
-
+;	docs/*

@@ -2,7 +2,7 @@ authors				Kaj de Vos
 status				testing
 warnings
 	GCC has a circular dependency on GLibC.
-	LibIberty is both in BinUtils and in GCC.
+	LibIberty is both in BinaryUtils and in GCC.
 notes				GMP with MPFR support is required to build Fortran
 
 inherits			gnu
@@ -22,9 +22,9 @@ packages
 
 needs
 ;	For -O3 with -fpic:
-	binutils >= 2.13.1
+	BinaryUtils >= 2.13.1
 	glibc >= 2.3.3
-conflicts			binutils
+conflicts			BinaryUtils
 test-needs			dejagnu >= 1.4.1
 install-needs
 ;	gcc
@@ -46,8 +46,8 @@ make-targets
 ;	dvi
 
 ;test-env
-;	TCL_LIBRARY		'/usr/tcl'
-;	DEJAGNULIBS		'/usr/dejagnu'
+;	TCL_LIBRARY		'/resources/tcl'
+;	DEJAGNULIBS		'/resources/dejagnu'
 ; Don't stop at errors:
 test-options		-k
 
@@ -59,4 +59,4 @@ documentation
 build-docs			INSTALL
 
 ; LFS prefers the one from BinUtils:
-;delete-files		lib/libiberty.a
+;delete-files		framework/libraries/libiberty.a

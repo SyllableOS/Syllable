@@ -7,4 +7,4 @@ status				testing
 make-shared
 
 ; For compatibility (with version 1.0.1):
-links				libSDL_sound-1.0.so.1 lib/libSDL_sound-1.0.so
+links				libSDL_sound-1.0.so.1 framework/libraries/libSDL_sound-1.0.so

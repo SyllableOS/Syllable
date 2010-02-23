@@ -16,30 +16,30 @@ configure-options
 
 links
 ;	For older packages:
-	libncursesw.a			lib/libncurses.a
-	libncurses++w.a			lib/libncurses++.a
-	libcursesw.a			lib/libcurses.a
-	libformw.a				lib/libform.a
-	libpanelw.a				lib/libpanel.a
-	libmenuw.a				lib/libmenu.a
-	libncurses.so			lib/libcurses.so
-	libncursesw.a			lib/libcursesw.a
-	libncurses.a			lib/libcurses.a
-	ncursesw/ncurses.h		include/
-	ncursesw/curses.h		include/
+	libncursesw.a							framework/libraries/libncurses.a
+	libncurses++w.a							framework/libraries/libncurses++.a
+	libcursesw.a							framework/libraries/libcurses.a
+	libformw.a								framework/libraries/libform.a
+	libpanelw.a								framework/libraries/libpanel.a
+	libmenuw.a								framework/libraries/libmenu.a
+	libncurses.so							framework/libraries/libcurses.so
+	libncursesw.a							framework/libraries/libcursesw.a
+	libncurses.a							framework/libraries/libcurses.a
+	ncursesw/ncurses.h						framework/headers/
+	ncursesw/curses.h						framework/headers/
 ;	For ProcPS:
-	ncursesw/term.h			include/
+	ncursesw/term.h							framework/headers/
 ;	For Python:
-	ncursesw/panel.h		include/
+	ncursesw/panel.h						framework/headers/
 ;	For INetUtils:
-;	include/ncursesw		/usr/include/
+;	framework/headers/ncursesw/				/usr/include/
 ;	For LinuxTree:
-	bin/clear				/usr/bin/
+	programs/clear							/usr/bin/
 ;	For S-Lang:
-;	share/terminfo			/usr/share/
+;	data/terminfo/							/usr/share/
 ;	Linked into BASh, which is called before the loader path is set:
-	lib/libncursesw.so.5	/system/resources/glibc/2.7/lib/
-;;	lib/libtinfow.so.5		/system/resources/glibc/2.7/lib/
+	framework/libraries/libncursesw.so.5	/system/resources/glibc/2.7/framework/libraries/
+;;	framework/libraries/libtinfow.so.5		/system/resources/glibc/2.7/framework/libraries/
 ;	Gobo binary compatibility:
-	libncursesw.so.5		lib/libncurses.so.5
-;	libtinfow.so.5			lib/libtinfo.so.5
+	libncursesw.so.5						framework/libraries/libncurses.so.5
+;	libtinfow.so.5							framework/libraries/libtinfo.so.5

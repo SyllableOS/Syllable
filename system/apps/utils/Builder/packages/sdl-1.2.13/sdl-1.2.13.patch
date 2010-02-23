@@ -81,7 +81,7 @@ diff -ru sdl-1.2.13-original/configure.in sdl-1.2.13/configure.in
          ;;
 +    *-*-syllable*)
 +        ARCH=syllable
-+        ac_default_prefix=/resources/sdl
++        ac_default_prefix=/system/resources/sdl/1.2.13
 +        CheckDummyVideo
 +        CheckDiskAudio
 +        CheckNASM

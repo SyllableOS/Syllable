@@ -43,6 +43,6 @@ documentation
 ;	Misc Doc
 develop-docs		Demo
 
-;links				bin/python3 /usr/bin/python3
+;links				programs/python3 /usr/bin/python3
 
-delete-files		lib/python3.1/test
+delete-files		framework/libraries/python3.1/test

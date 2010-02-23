@@ -5,4 +5,3 @@ warnings			LibVorbis must be available in the stage.
 inherits			sdl-sound-1.0.3
 
 configure-options	--with-vorbis-prefix=$STAGE/indexes
-

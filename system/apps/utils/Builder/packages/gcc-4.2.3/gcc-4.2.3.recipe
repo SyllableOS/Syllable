@@ -2,7 +2,7 @@ authors				Kaj de Vos
 status				testing
 warnings
 	GCC has a circular dependency on GLibC.
-	LibIberty is both in BinUtils and in GCC.
+	LibIberty is both in BinaryUtils and in GCC.
 notes				GMP with MPFR support is required to build Fortran
 
 inherits			gnu
@@ -25,15 +25,15 @@ packages
 
 needs
 ;	For -O3 with -fpic:
-	binutils >= 2.13.1
+	BinaryUtils >= 2.13.1
 	glibc >= 2.3.3
-conflicts			binutils
+conflicts			BinaryUtils
 test-needs			dejagnu >= 1.4.1
 install-needs
 ;	gcc
 ;	For documentation (only really needed for TreeLang?):
 	texinfo
-recommends			mktemp
+recommends			MkTemp
 ;build-recommends	diffutils
 
 make-vars
@@ -55,12 +55,12 @@ test-options		-k
 system-prefix-var	DESTDIR
 ; Needs itself during installation:
 install-env
-	PATH			"$PATH:$STAGE/gcc/bin:$STAGE/bootstrap/gcc/bin:$IMAGE/gcc/bin:$IMAGE/resources/gcc/bin:$IMAGE/system/resources/gcc/4.2.3/bin:/resources/gcc/bin"
+	PATH			"$PATH:$STAGE/gcc/programs:$STAGE/bootstrap/gcc/programs:$IMAGE/resources/gcc/programs:/resources/gcc/programs"
 
 documentation
 	README FAQ faq.html BUGS bugs.html COPYING gcc/COPYING.LIB NEWS ChangeLog MAINTAINERS
 	ABOUT-NLS gcc/ABOUT-GCC-NLS
 build-docs			INSTALL
 
-; LFS prefers the one from BinUtils:
-;delete-files		lib/libiberty.a
+; LFS prefers the one from BinaryUtils:
+;delete-files		framework/libraries/libiberty.a

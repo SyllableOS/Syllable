@@ -1,6 +1,5 @@
 authors				Kaj de Vos
 status				testing
-warnings			System installation breaks headers due to includedir parameter.
 
 inherits			gnu
 
@@ -18,20 +17,22 @@ build-needs
 	diffutils
 conflicts			termcap
 
+no-includedir
+
 system-prefix-var	DESTDIR
 
 documentation
 	README INSTALL ANNOUNCE NEWS AUTHORS TO-DO
-	doc/html
+	doc/html/
 develop-docs		doc/ncurses-intro.doc
 internal-docs		doc/hackguide.doc
 
 pre-register
-	echo 'INPUT(-lncursesw)'	> lib/libncurses.so	&&
-;	echo 'INPUT(-lcursesw)'		> lib/libcurses.so	&&
-	echo 'INPUT(-lformw)'		> lib/libform.so	&&
-	echo 'INPUT(-lpanelw)'		> lib/libpanel.so	&&
-	echo 'INPUT(-lmenuw)'		> lib/libmenu.so	&&
-	echo 'INPUT(-lncursesw)'	> lib/libcursesw.so
+	echo 'INPUT(-lncursesw)'	> framework/libraries/libncurses.so	&&
+;	echo 'INPUT(-lcursesw)'		> framework/libraries/libcurses.so	&&
+	echo 'INPUT(-lformw)'		> framework/libraries/libform.so	&&
+	echo 'INPUT(-lpanelw)'		> framework/libraries/libpanel.so	&&
+	echo 'INPUT(-lmenuw)'		> framework/libraries/libmenu.so	&&
+	echo 'INPUT(-lncursesw)'	> framework/libraries/libcursesw.so
 
-;move-files			share/terminfo /usr/share/
+;move-files			data/terminfo/ /usr/share/

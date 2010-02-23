@@ -4,6 +4,7 @@ authors
 	Rui Caridade
 maintainers			Kaj de Vos
 status				testing
+warnings			Assumes system installation!
 
 headline			Cross-platform multimedia library
 description
@@ -15,15 +16,15 @@ packages			SDL-1.2.13
 locations			http://www.libsdl.org/release/
 
 build-needs
-;	automake < 1.10
-	automake
-	autoconf
+;	AutoMake < 1.10
+	AutoMake
+	AutoConfigure
 build-recommends
 ;	Warnings on newer versions:
-	autoconf <= 2.61
+	AutoConfigure <= 2.61
 ;	For DirectFB:
-	pkg-config
-recommends			directfb >= 0.9.15 < 1
+	PackageConfigure
+recommends			DirectFrameBuffer >= 0.9.15 < 1
 
 patch
 ;	autoreconf
@@ -38,6 +39,6 @@ documentation
 	docs.html
 build-docs			INSTALL README.SVN
 develop-docs
-	docs/index.html docs/html
-	test
+	docs/index.html docs/html/
+	test/
 internal-docs		README.Porting

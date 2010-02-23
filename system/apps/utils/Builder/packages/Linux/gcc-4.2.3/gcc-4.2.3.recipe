@@ -31,9 +31,9 @@ configure-options
 make-env			BOOT_CFLAGS '-O'
 
 links
-	gcc				bin/cc
-	libgcc.a		lib/gcc/i486-pc-linux-gnu/4.2.3/libgcc_static.a
+	gcc					programs/cc
+	libgcc.a			framework/libraries/gcc/i486-pc-linux-gnu/4.2.3/libgcc_static.a
 ;	For some packages:
-;	bin/cpp			lib/
+;	programs/cpp		framework/libraries/
 ;	For WebKit:
-;	gcc				/usr/bin/
+	programs/gcc		/usr/bin/

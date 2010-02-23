@@ -1,5 +1,5 @@
 authors				Kaj de Vos
-status				developing
+status				testing
 
 ;make-shared
 
@@ -16,24 +16,24 @@ configure-options
 
 links
 ;	For older packages:
-	libncursesw.a		lib/libncurses.a
+	libncursesw.a				framework/libraries/libncurses.a
 ;	No C++ at the moment:
-;	libncurses++w.a		lib/libncurses++.a
-	libcursesw.a		lib/libcurses.a
-	libformw.a			lib/libform.a
-	libpanelw.a			lib/libpanel.a
-	libmenuw.a			lib/libmenu.a
-	libncurses.so		lib/libcurses.so
-	libncursesw.a		lib/libcursesw.a
-	libncurses.a		lib/libcurses.a
-	ncursesw/ncurses.h	include/
-	ncursesw/curses.h	include/
-	ncursesw/term.h		include/
+;	libncurses++w.a				framework/libraries/libncurses++.a
+	libcursesw.a				framework/libraries/libcurses.a
+	libformw.a					framework/libraries/libform.a
+	libpanelw.a					framework/libraries/libpanel.a
+	libmenuw.a					framework/libraries/libmenu.a
+	libncurses.so				framework/libraries/libcurses.so
+	libncursesw.a				framework/libraries/libcursesw.a
+	libncurses.a				framework/libraries/libcurses.a
+	ncursesw/ncurses.h			framework/headers/
+	ncursesw/curses.h			framework/headers/
+	ncursesw/term.h				framework/headers/
 ;	For Python:
-	ncursesw/panel.h	include/
+	ncursesw/panel.h			framework/headers/
 ;	For INetUtils:
-;	include/ncursesw	/usr/include/
+;	framework/headers/ncursesw/	/usr/include/
 ;	For LinuxTree:
-	bin/clear			/usr/bin/
+	programs/clear				/usr/bin/
 ;	For S-Lang:
-;	share/terminfo		/usr/share/
+;	data/terminfo/				/usr/share/

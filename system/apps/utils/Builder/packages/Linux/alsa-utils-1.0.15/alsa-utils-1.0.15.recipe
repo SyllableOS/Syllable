@@ -13,7 +13,7 @@ locations
 
 needs
 	alsa-library
-	ncurses
+	NCurses
 
 system-prefix-var	DESTDIR
 
@@ -21,7 +21,7 @@ documentation		README COPYING ABOUT-NLS ChangeLog TODO
 build-docs			INSTALL
 
 ; For LFS shutdown scripts:
-links				sbin/alsactl /usr/sbin/
+links				system-programs/alsactl /usr/sbin/
 
 ; Incompatible with UDev:
-delete-files		bin/alsaconf
+delete-files		programs/alsaconf

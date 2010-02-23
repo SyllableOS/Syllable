@@ -16,7 +16,7 @@ packages			util-linux-ng-2.16.2
 
 needs				NCurses
 ;recommends			pam
-;conflicts			e2fsprogs
+;conflicts			E2FSPrograms
 
 ;build-dir			.
 
@@ -38,4 +38,4 @@ documentation
 ;	docs example.files
 develop-docs		README.devel
 
-links				/system/indexes/sbin/agetty /sbin/
+;links				/system/indexes/system-programs/agetty /sbin/

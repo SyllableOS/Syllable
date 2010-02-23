@@ -3,7 +3,7 @@ authors
 	Kaj de Vos
 status				testing
 
-title				Scanner Access Now Easy
+title				Scanner framework
 headline			Universal scanner interface
 description
 	SANE stands for "Scanner Access Now Easy" and is an application programming interface (API) that provides standardized access to any raster image scanner hardware (flatbed scanner, hand-held scanner, video- and still-cameras, frame-grabbers, etc.).
@@ -20,7 +20,7 @@ locations
 ;	http://alioth.debian.org/frs/download.php/1669/
 
 recommends
-	libusb >= 0.1.8
+	LibUSB >= 0.1.8
 	LibJPEG >= 6b
 ;	?:
 ;	LibTIFF

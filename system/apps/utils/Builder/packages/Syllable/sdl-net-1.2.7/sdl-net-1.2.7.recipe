@@ -9,6 +9,6 @@ make-shared
 
 links
 ;	For some packages:
-;	SDL/SDL_net.h		include/
+;	SDL/SDL_net.h		framework/headers/
 ;	For compatibility (with version 1.2.6):
-	libSDL_net-1.2.so.0	lib/libSDL_net-1.2.so
+	libSDL_net-1.2.so.0	framework/libraries/libSDL_net-1.2.so

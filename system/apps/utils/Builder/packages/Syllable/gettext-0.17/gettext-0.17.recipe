@@ -2,4 +2,3 @@ authors				Kaj de Vos
 status				incomplete
 warnings			Japanese locale doesn't work on the new GLibC 2.3.x for Syllable.
 notes				Doesn't generate libgnuintl.so
-

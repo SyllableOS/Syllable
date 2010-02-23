@@ -3,7 +3,7 @@
 prefix=/system/indexes
 exec_prefix=${prefix}
 exec_prefix_set=no
-libdir=${exec_prefix}/lib
+libdir=${exec_prefix}/framework/libraries
 
 #usage="\
 #Usage: sdl-config [--prefix[=DIR]] [--exec-prefix[=DIR]] [--version] [--cflags] [--libs]"
@@ -42,14 +42,14 @@ while test $# -gt 0; do
       echo 1.2.13
       ;;
     --cflags)
-      echo -I${exec_prefix}/include/SDL -D_GNU_SOURCE=1
+      echo -I${exec_prefix}/framework/headers/SDL -D_GNU_SOURCE=1
       ;;
     --libs)
-      echo -L${libdir}  -lSDL 
+      echo -L${libdir} -lSDL 
       ;;
     --static-libs)
 #    --libs|--static-libs)
-      echo -L${libdir}  -lSDL 
+      echo -L${libdir} -lSDL 
       ;;
     *)
       echo "${usage}" 1>&2

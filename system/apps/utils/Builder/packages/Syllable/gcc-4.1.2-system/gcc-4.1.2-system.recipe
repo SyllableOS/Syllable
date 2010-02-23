@@ -4,12 +4,11 @@ status				testing
 inherits			gcc-4.1.2
 
 links
-	gcc													bin/cc
-	libgcc.a											lib/gcc/i586-pc-syllable/4.1.2/libgcc_static.a
+	gcc																	programs/cc
+	libgcc.a															framework/libraries/gcc/i586-pc-syllable/4.1.2/libgcc_static.a
 ;	For init:
-	/boot/system/resources/gcc/4.1.2/lib/libgcc_s.so.3	/system/libraries
+	/boot/system/resources/gcc/4.1.2/framework/libraries/libgcc_s.so.3	/system/libraries
 ;	For some packages:
-;	bin/cpp												lib/
+;	programs/cpp														framework/libraries/
 ;	For WebKit:
-	gcc													/usr/bin/
-
+	/resources/indexes/programs/gcc										/usr/bin/

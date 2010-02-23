@@ -16,9 +16,9 @@ home				gutenprint.sourceforge.net
 packages			gimp-print/gutenprint-5.2.3
 
 needs
-	zlib	>= 1.1.3
-	LibPNG	>= 1.0.6
-	LibJPEG	>= 6b
+	ZLibrary	>= 1.1.3
+	LibPNG		>= 1.0.6
+	LibJPEG		>= 6b
 	cups
 
 build-dir			.
@@ -49,9 +49,9 @@ documentation
 build-docs			README.package
 
 ; Most users don't want all of the PPD files installed. Move them out of the way for later processing.
-;move-files			share/cups/model /tmp/
+;move-files			data/cups/model /tmp/
 
 _delete-files
-	sbin/cups-genppd.5.2
-	sbin/cups-genppdconfig.5.2
-	sbin/cups-genppdupdate.5.2
+	system-programs/cups-genppd.5.2
+	system-programs/cups-genppdconfig.5.2
+	system-programs/cups-genppdupdate.5.2
