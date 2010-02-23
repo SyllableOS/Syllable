@@ -47,10 +47,10 @@ FILES=(	"/etc/profile, /etc/profile" 															\
 		"/system/libraries/libdl.so*, /system/libraries/."											\
 		"/system/libraries/libpthread.so*, /system/libraries/."										\
 																									\
-		"/system/resources/gcc/4.1.2/lib/*.so*, /system/libraries/."								\
-		"/system/resources/glibc/2.7/lib/*.so*, /system/libraries/."								\
-		"/system/resources/zlib/1.2.3/lib/*.so*, /system/libraries/."								\
-		"/system/resources/ReadLine/6.0/lib/*.so*, /system/libraries/."								\
+		"/system/resources/gcc/4.1.2/framework/libraries/*.so*, /system/libraries/."				\
+		"/system/resources/glibc/2.7/framework/libraries/*.so*, /system/libraries/."				\
+		"/system/resources/zlib/1.2.3/framework/libraries/*.so*, /system/libraries/."				\
+		"/system/resources/ReadLine/6.0/framework/libraries/*.so*, /system/libraries/."				\
 																											\
 		"/system/appserver, /system/appserver"														\
 																											\
@@ -64,67 +64,67 @@ FILES=(	"/etc/profile, /etc/profile" 															\
 																											\
 		"/system/keymaps/American, /system/keymaps/American"										\
 																											\
-		"/system/bin/dbterm, /system/bin/dbterm"													\
-		"/system/bin/devstat, /system/bin/devstat"													\
-		"/system/bin/format, /system/bin/format"													\
-		"/system/bin/fsprobe, /system/bin/fsprobe"													\
-		"/system/bin/init, /system/bin/init"														\
-		"/system/bin/mount, /system/bin/mount"														\
-		"/system/bin/shutdown, /system/bin/shutdown"												\
-		"/system/bin/reboot, /system/bin/reboot"													\
-		"/system/bin/unmount, /system/bin/unmount"													\
-		"/system/bin/df, /system/bin/df"													\
-		"/system/bin/sysinfo, /system/bin/sysinfo"													\
+		"/system/programs/dbterm, /system/programs/dbterm"													\
+		"/system/programs/devstat, /system/programs/devstat"													\
+		"/system/programs/format, /system/programs/format"													\
+		"/system/programs/fsprobe, /system/programs/fsprobe"													\
+		"/system/programs/init, /system/programs/init"														\
+		"/system/programs/mount, /system/programs/mount"														\
+		"/system/programs/shutdown, /system/programs/shutdown"												\
+		"/system/programs/reboot, /system/programs/reboot"													\
+		"/system/programs/unmount, /system/programs/unmount"													\
+		"/system/programs/df, /system/programs/df"													\
+		"/system/programs/sysinfo, /system/programs/sysinfo"													\
 																											\
-		"/applications/AEdit/AEdit, /system/bin/aedit"											\
+		"/applications/AEdit/AEdit, /system/programs/aedit"											\
 																											\
-		"/system/resources/coreutils/6.4/bin/cat, /bin/cat"											\
-		"/system/resources/coreutils/6.4/bin/cp, /bin/cp"											\
-		"/system/resources/coreutils/6.4/bin/cut, /bin/cut"											\
-		"/system/resources/coreutils/6.4/bin/dd, /bin/dd"											\
-		"/system/resources/coreutils/6.4/bin/echo, /bin/echo"										\
-		"/system/resources/coreutils/6.4/bin/expr, /bin/expr"										\
-		"/system/resources/coreutils/6.4/bin/hostname, /bin/hostname"								\
-		"/system/resources/coreutils/6.4/bin/ln, /bin/ln"											\
-		"/system/resources/coreutils/6.4/bin/ls, /bin/ls"											\
-		"/system/resources/coreutils/6.4/bin/md5sum, /bin/md5sum"									\
-		"/system/resources/coreutils/6.4/bin/mkdir, /bin/mkdir"										\
-		"/system/resources/coreutils/6.4/bin/mv, /bin/mv"											\
-		"/system/resources/coreutils/6.4/bin/printf, /bin/printf"									\
-		"/system/resources/coreutils/6.4/bin/pwd, /bin/pwd"											\
-		"/system/resources/coreutils/6.4/bin/rm, /bin/rm"											\
-		"/system/resources/coreutils/6.4/bin/rmdir, /bin/rmdir"										\
-		"/system/resources/coreutils/6.4/bin/sleep, /bin/sleep"										\
-		"/system/resources/coreutils/6.4/bin/sort, /bin/sort"										\
-		"/system/resources/coreutils/6.4/bin/sync, /bin/sync"										\
-		"/system/resources/coreutils/6.4/bin/whoami, /bin/whoami"									\
-		"/system/resources/coreutils/6.4/bin/uname, /bin/uname"										\
-		"/system/resources/coreutils/6.4/bin/uniq, /bin/uniq"										\
-		"/system/resources/coreutils/6.4/bin/stty, /bin/stty"										\
-		"/system/resources/coreutils/6.4/bin/chmod, /bin/chmod"										\
+		"/system/resources/coreutils/6.4/programs/cat, /bin/cat"											\
+		"/system/resources/coreutils/6.4/programs/cp, /bin/cp"											\
+		"/system/resources/coreutils/6.4/programs/cut, /bin/cut"											\
+		"/system/resources/coreutils/6.4/programs/dd, /bin/dd"											\
+		"/system/resources/coreutils/6.4/programs/echo, /bin/echo"										\
+		"/system/resources/coreutils/6.4/programs/expr, /bin/expr"										\
+		"/system/resources/coreutils/6.4/programs/hostname, /bin/hostname"								\
+		"/system/resources/coreutils/6.4/programs/ln, /bin/ln"											\
+		"/system/resources/coreutils/6.4/programs/ls, /bin/ls"											\
+		"/system/resources/coreutils/6.4/programs/md5sum, /bin/md5sum"									\
+		"/system/resources/coreutils/6.4/programs/mkdir, /bin/mkdir"										\
+		"/system/resources/coreutils/6.4/programs/mv, /bin/mv"											\
+		"/system/resources/coreutils/6.4/programs/printf, /bin/printf"									\
+		"/system/resources/coreutils/6.4/programs/pwd, /bin/pwd"											\
+		"/system/resources/coreutils/6.4/programs/rm, /bin/rm"											\
+		"/system/resources/coreutils/6.4/programs/rmdir, /bin/rmdir"										\
+		"/system/resources/coreutils/6.4/programs/sleep, /bin/sleep"										\
+		"/system/resources/coreutils/6.4/programs/sort, /bin/sort"										\
+		"/system/resources/coreutils/6.4/programs/sync, /bin/sync"										\
+		"/system/resources/coreutils/6.4/programs/whoami, /bin/whoami"									\
+		"/system/resources/coreutils/6.4/programs/uname, /bin/uname"										\
+		"/system/resources/coreutils/6.4/programs/uniq, /bin/uniq"										\
+		"/system/resources/coreutils/6.4/programs/stty, /bin/stty"										\
+		"/system/resources/coreutils/6.4/programs/chmod, /bin/chmod"										\
 																											\
-		"/resources/FindUtils/bin/find, /bin/find"										\
-		"/resources/gzip/bin/gzip, /bin/gzip"												\
-		"/resources/SEd/bin/sed, /bin/sed"												\
-		"/resources/TAr/bin/tar, /bin/tar"												\
-		"/system/resources/NCurses/5.7/bin/clear, /bin/clear"										\
-		"/resources/Less/bin/less, /bin/less"												\
-		"/resources/diffutils/bin/cmp, /bin/cmp"												\
-		"/resources/GRep/bin/grep, /bin/grep"												\
+		"/resources/FindUtils/programs/find, /bin/find"										\
+		"/resources/gzip/programs/gzip, /bin/gzip"												\
+		"/resources/SEd/programs/sed, /bin/sed"												\
+		"/resources/TAr/programs/tar, /bin/tar"												\
+		"/system/resources/NCurses/5.7/programs/clear, /bin/clear"										\
+		"/resources/Less/programs/less, /bin/less"												\
+		"/resources/diffutils/programs/cmp, /bin/cmp"												\
+		"/resources/GRep/programs/grep, /bin/grep"												\
 																											\
-		"/system/resources/UnZip/6.0/bin/unzip, /bin/unzip"											\
-		"/system/resources/BASh/4.0/bin/bash, /bin/bash"												\
+		"/system/resources/UnZip/6.0/programs/unzip, /bin/unzip"											\
+		"/system/resources/BASh/4.0/programs/bash, /bin/bash"												\
 																											\
 		"/usr/share/terminfo/r/rxvt-16color, /usr/share/terminfo/r/rxvt-16color"				\
 		"/usr/share/terminfo/x/xterm, /usr/share/terminfo/x/xterm"							\
 																											\
 		"/resources/grub, /usr/grub"																\
 																											\
-		"/resources/grub/lib/grub/i386-pc/stage1, /boot/grub/stage1"								\
-		"/resources/grub/lib/grub/i386-pc/afs_stage1_5, /boot/grub/afs_stage1_5"					\
-		"/resources/grub/lib/grub/i386-pc/e2fs_stage1_5, /boot/grub/e2fs_stage1_5"					\
-		"/resources/grub/lib/grub/i386-pc/stage2, /boot/grub/stage2"								\
-		"/resources/grub/lib/grub/i386-pc/stage2_eltorito, /boot/grub/stage2_eltorito"				\
+		"/resources/grub/framework/libraries/grub/i386-pc/stage1, /boot/grub/stage1"					\
+		"/resources/grub/framework/libraries/grub/i386-pc/afs_stage1_5, /boot/grub/afs_stage1_5"		\
+		"/resources/grub/framework/libraries/grub/i386-pc/e2fs_stage1_5, /boot/grub/e2fs_stage1_5"		\
+		"/resources/grub/framework/libraries/grub/i386-pc/stage2, /boot/grub/stage2"					\
+		"/resources/grub/framework/libraries/grub/i386-pc/stage2_eltorito, /boot/grub/stage2_eltorito"	\
 )
 
 declare -a LINKS
@@ -132,13 +132,13 @@ declare -a LINKS
 # target, link
 LINKS=(	"/bin/gzip, /bin/gunzip"	\
 		"/bin/bash, /bin/sh"			\
-		"/usr/ruby/bin/ruby, /bin/ruby"	\
+		"/resources/ruby/programs/ruby, /bin/ruby"	\
 )
 
 declare -a ENV
 
-ENV=(	"PATH=/resources/grub/bin:/resources/grub/sbin:/bin:/boot/system/bin"		\
-		"DLL_PATH=@bindir@/lib:./:/boot/system/libraries:/boot/system"			\
+ENV=(	"PATH=/resources/grub/programs:/resources/grub/system-programs:/bin:/boot/system/programs"		\
+		"DLL_PATH=@bindir@/framework:./:/boot/system/libraries:/boot/system"			\
 		"TEMP=/tmp"																	\
 		"SYSTEM=Syllable"															\
 		"COLORTERM=rxvt-16color"													\
@@ -569,7 +569,7 @@ function initialise()
     mkdir $BASE_DIR
     mkdir $CD_DIR
 
-    # Unzip the base-syllable file into $BASE_DIR
+    # Unzip the base-Syllable file into $BASE_DIR
     unzip $1 -d $BASE_DIR
   elif [ -e $CD_DIR ]
   then
@@ -590,7 +590,7 @@ function initialise()
 
 function generate_init_script()
 {
-  printf "#!/bin/sh\n\n" >> $CD_DIR/system/init.sh
+  printf "#!/bin/sh\n\n" >> $CD_DIR/system/start.sh
 
   # Set environment variables
   COUNT=${#ENV[*]}
@@ -598,17 +598,17 @@ function generate_init_script()
 
   while [ "$INDEX" -lt "$COUNT" ]
   do
-    printf "export %s\n" "${ENV[$INDEX]}" >> $CD_DIR/system/init.sh
+    printf "export %s\n" "${ENV[$INDEX]}" >> $CD_DIR/system/start.sh
     let "INDEX = $INDEX + 1"
   done
 
   # Start the installer
-  printf "\naterm /usr/ruby/bin/ruby /boot/Install/install.rb &\n" >> $CD_DIR/system/init.sh
+  printf "\naterm /bin/ruby /boot/Install/install.rb &\n" >> $CD_DIR/system/start.sh
 
   # Enable this to get an extra shell when testing
-  # printf "aterm &\n" >> $CD_DIR/system/init.sh
+  # printf "aterm &\n" >> $CD_DIR/system/start.sh
 
-  chmod +x $CD_DIR/system/init.sh
+  chmod +x $CD_DIR/system/start.sh
 }
 
 # function generate_grub_script
@@ -674,7 +674,7 @@ function copy_files()
       mkdir -p "$DEST_DIR"
     fi
 
-    # Do not quote $SOURCE; we want globing to work here
+    # Do not quote $SOURCE; we want globbing to work here
     cp -af $SOURCE $DEST
 
     let "INDEX = $INDEX + 1"
@@ -683,8 +683,8 @@ function copy_files()
 
   # XXXKV: This has to be hacked in right now because the script can't handle paths with spaces!
   printf "Copying System Tools\n"
-  cp -f "$BASE_DIR/applications/system/Disk Manager" "$CD_DIR/system/bin/DiskManager"
-  cp -f "$BASE_DIR/applications/system/Terminal" "$CD_DIR/system/bin/aterm"
+  cp -f "$BASE_DIR/applications/system/Disk Manager" "$CD_DIR/system/programs/DiskManager"
+  cp -f "$BASE_DIR/applications/system/Terminal" "$CD_DIR/system/programs/aterm"
 
   # Install Ruby (Must be done before links)
   unzip $RUBY_PACKAGE -d $CD_DIR/usr/
@@ -724,7 +724,7 @@ function copy_files()
 #
 # Copy the installation package files to the CD
 #
-# $1 - path to base-syllable file
+# $1 - path to base-Syllable file
 # $2 - path to Sylable-net directory
 # $3 - path to CUPS PPDs
 
@@ -732,7 +732,7 @@ function copy_packages()
 {
   mkdir -p $CD_DIR/Packages/base
   printf "Copying base file: %s\n" "$1"
-  cp $1 $CD_DIR/Packages/base/base-syllable.zip
+  cp $1 $CD_DIR/Packages/base/base-Syllable.zip
 
   mkdir -p $CD_DIR/Packages/net
   printf "Copying Syllable-net files: %s\n" "$2"

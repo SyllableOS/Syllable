@@ -23,9 +23,9 @@ WORKING_COPY=$INSTALLER_DIR/system/stage
 echo "Cleaning up old files"
 
 # Clean up from any previous build
-if [ -e $INSTALLER_DIR/base-syllable.zip ]
+if [ -e $INSTALLER_DIR/base-Syllable.zip ]
 then
-  rm $INSTALLER_DIR/base-syllable.zip
+  rm $INSTALLER_DIR/base-Syllable.zip
 fi
 if [ -e $INSTALLER_DIR/files ]
 then
@@ -44,7 +44,7 @@ cp -a $BUILD_DIR/system/stage/image $WORKING_COPY
 
 # Finish the build and package it
 cd $INSTALLER_DIR/system/
-image finish 1>>$LOG 2>&1
+unbuffer image finish 1>>$LOG 2>&1
 build log failures > $FINISH_FAILURES
 build log summary > $FINISH_SUMMARY
 
@@ -57,14 +57,14 @@ then
 fi
 mkdir -p $INSTALLER_DIR/ppds
 
-cp -a $WORKING_COPY/image/system/resources/cups/1.3.4/share/cups/model/* $INSTALLER_DIR/ppds/
-for PPD in `find $WORKING_COPY/image/system/resources/cups/1.3.4/share/cups/model/ -name *.ppd*`
+cp -a $WORKING_COPY/image/system/resources/cups/1.3.4/data/cups/model/* $INSTALLER_DIR/ppds/
+for PPD in `find $WORKING_COPY/image/system/resources/cups/1.3.4/data/cups/model/ -name *.ppd*`
 do
   rm $PPD
 done
 
 # Generate the printers model list
-$SCRIPTS_DIR/printers.sh $INSTALLER_DIR/ppds/ $WORKING_COPY/image/system/resources/cups/1.3.4/share/cups/model/
+$SCRIPTS_DIR/printers.sh $INSTALLER_DIR/ppds/ $WORKING_COPY/image/system/resources/cups/1.3.4/data/cups/model/
 
 # Regenerate the symlinks for CUPS now we've removed the PPD files & added the models.list file
 package register $WORKING_COPY/image/system/resources/cups/1.3.4/ $WORKING_COPY/image/system/indexes/
@@ -75,7 +75,7 @@ NAME="SyllableDesktop-$FULL_VERSION"
 DEV_ARCHIVE="$NAME-development.i586"
 
 construct distro SyllableDesktop $FULL_VERSION i586
-mv $NAME.i586.zip ../base-syllable.zip
+mv $NAME.i586.zip ../base-Syllable.zip
 
 mv $DEV_ARCHIVE.zip.7z /resources/Builder/distributions/SyllableDesktop-$VERSION-development.i586.zip.7z
 build pack development
@@ -92,7 +92,7 @@ sync
 
 # Build the CD
 cd $INSTALLER_DIR
-./build-cd.sh "base-syllable.zip" "$BUILD_DIR/Net-Binaries" "$VERSION"
+./build-cd.sh "base-Syllable.zip" "$BUILD_DIR/Net-Binaries" "$VERSION"
 
 echo "Compressing the ISO"
 
@@ -106,13 +106,13 @@ fi
 
 # Generate md5's
 MD5S=md5sums
-md5sum base-syllable.zip $ISO $ISO.7z $DEV_ARCHIVE.zip > $MD5S
+md5sum base-Syllable.zip $ISO $ISO.7z $DEV_ARCHIVE.zip > $MD5S
 
 echo "Uploading"
 
 # Transfer the files
 FILES1=`printf "$LOG $FINISH_FAILURES $FINISH_SUMMARY\n"`
-FILES2=`printf "base-syllable.zip $ISO.7z $DEV_ARCHIVE.zip $MD5S\n"`
+FILES2=`printf "base-Syllable.zip $ISO.7z $DEV_ARCHIVE.zip $MD5S\n"`
 if [ -n "$FTP_USER" ]
 then
   ftp -n $FTP_SERVER << END

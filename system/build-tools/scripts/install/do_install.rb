@@ -1,7 +1,7 @@
-#!/resources/ruby/bin/ruby
+#!/resources/indexes/programs/ruby
 
 # 26 March 2005, Kaj de Vos
-#   Ask confirmation for both recognized and unrecognized partitions.
+#   Ask confirmation for both recognised and unrecognised partitions.
 #   Removed invalid hardcoded paths.
 # Modified by xsdg for installer version 0.1.11.6.
 
@@ -24,7 +24,7 @@ resp = $stdin.getuc
 
 if(resp == "\r" or resp.downcase == "y")
 	# run DiskManager
-	system "/system/bin/DiskManager"
+	system "DiskManager"
 end
 
 
@@ -48,18 +48,18 @@ loop {
 		unless info[0] == "unknown"
 			# Overwriting a recognized partition
 			puts "WARNING: formatting #{$part} will destroy the"
-			puts "#{info[1]} #{info[0]} partition that already exists there."
+			puts "#{info[1]} #{info[0]} partition that already exists there!"
 		else
 			# Overwriting an unrecognized partition
 			puts "WARNING: formatting #{$part} will destroy"
-			puts 'the unknown partition that already exists there.'
+			puts 'the unknown partition that already exists there!'
 		end
 
 		puts 'Are you sure? Type "yes" to continue:'
 		resp = $stdin.getsc
 		break if resp == "yes"
 		
-		puts "User entered #{resp.inspect} instead of \"yes\"."
+		puts "you entered #{resp.inspect} instead of \"yes\"."
 		puts 'Returning to partition selection.'
 	else
 		case resp
@@ -69,7 +69,7 @@ loop {
 			# time to leave
 			exit 1
 		else
-			puts "User entered #{resp.inspect}, which is not a valid partition."
+			puts "You entered #{resp.inspect}, which is not a valid partition."
 			puts 'Returning to partition selection. Type "ls" if you wish to see the list of'
 			puts 'valid partitions again.'
 		end
@@ -78,14 +78,14 @@ loop {
 
 print "Formatting #{$part} as afs... "
 $stderr.flush
-retval = system "/system/bin/format", $part, "afs", "Syllable"
+retval = system "format", $part, "afs", "Syllable"
 if(retval)
 	# success
 	puts "done.\n\n"
 else
 	# whoops!
 	puts
-	puts "ERROR: Failed to format #{$part}. Stopping"
+	puts "ERROR: Failed to format #{$part}. Stopping."
 	# take care of this in the caller
 	exit 2
 end
@@ -95,9 +95,9 @@ read_to_user "installation.txt"
 puts "\nPlease wait...\n\n"
 
 Dir.mkdir "/inst"
-system "/system/bin/mount", "-t", "afs", $part, "/inst"
+system "mount", "-t", "afs", $part, "/inst"
 
-retval = system "unzip", "-K", "-d", "/inst/", "/boot/Packages/base/base-syllable.zip"
+retval = system "unzip", "-K", "-d", "/inst/", "/boot/Packages/base/base-Syllable.zip"
 system "sync"
 
 if(retval)
@@ -125,7 +125,7 @@ loop {
 		read_to_user "/inst/boot/grub/menu.lst", true
 	
 	when "e"
-		system "/system/bin/aedit", "/inst/boot/grub/menu.lst"
+		system "aedit", "/inst/boot/grub/menu.lst"
 	
 	when "?"
 		read_to_user "configure.txt"
@@ -195,6 +195,6 @@ puts 'Please press "b" to reboot your computer.'
 print 'Press any other key to exit to the command line: '
 resp = $stdin.getuc
 
-system "/system/bin/reboot" if resp.downcase == "b"
+system "reboot" if resp.downcase == "b"
 
-exec "/bin/bash", "--login"
+exec "bash", "--login"

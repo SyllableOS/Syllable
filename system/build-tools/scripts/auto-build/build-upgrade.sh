@@ -361,8 +361,8 @@ fi
 
 if [[ $final_archive == true ]]
 then
-	rm SyllableDesktop-$new_version-Upgrade.i586.7z 2>>/dev/null
-	7z a SyllableDesktop-$new_version-Upgrade.i586.7z upgrade
+	rm SyllableDesktop-$new_version-upgrade.i586.7z 2>>/dev/null
+	7z a SyllableDesktop-$new_version-upgrade.i586.7z upgrade
 fi
 
 exit 0

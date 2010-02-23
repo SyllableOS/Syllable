@@ -6,9 +6,9 @@ function check_user()
 {
 	let RET=0
 
-	if [ "$(whoami)" != "root" ]
+	if [ "$(id --user)" != 0 ]
 	then
-		echo "This script must be run as the 'root' user."
+		echo 'This script must be run as the system ("root") user.'
 		let RET=1
 	fi
 

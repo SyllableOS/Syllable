@@ -1,4 +1,4 @@
-#!/resources/ruby/bin/ruby
+#!/resources/indexes/programs/ruby
 
 INSTALL_DIR="/boot/Install"
 
@@ -32,7 +32,7 @@ if(choice.downcase == 'i')	# choice should never be nil, but better safe than so
 		system "sync"		# make sure the data's stored before the user reboots
 		puts "Syllable has now been installed!  Press Ctrl+Alt+Del to restart your computer.\n\n"
 		$stdout.flush
-		exec "/bin/bash", "--login"
+		exec "bash", "--login"
 	else
 		# installation unsuccessful for some reason
 		case retval
@@ -41,12 +41,12 @@ if(choice.downcase == 'i')	# choice should never be nil, but better safe than so
 		else
 			puts "\n\nThe installation failed for an unknown reason. Please report this on the Syllable web forum or mailing list at:\n\thttp://www.syllable.org\n\n"
 			$stdout.flush
-			exec "/bin/bash", "--login"
+			exec "bash", "--login"
 		end
 	end
 else
 	# cancel installation
 	puts "Installation cancelled (user pressed #{choice.inspect} instead of \"i\" or \"I\"); starting a shell..."
 	$stdout.flush
-	exec "/bin/bash", "--login"
+	exec "bash", "--login"
 end

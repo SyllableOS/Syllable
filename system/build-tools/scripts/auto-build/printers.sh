@@ -1,11 +1,11 @@
 #!/bin/bash
 #
-# The resulting (sorted) file goes in /system/resources/cups/<version>/share/cups/model/models.list
-# and must be symlinked from /system/indexes/share/cups/model/models.list
+# The resulting (sorted) file goes in /system/resources/cups/<version>/data/cups/model/models.list
+# and must be symlinked from /system/indexes/data/cups/model/models.list
 
 if [ -z $1 ]
 then
-  PPD_PATH=/system/resources/cups/1.3.4/share/cups/model
+  PPD_PATH=/system/resources/cups/1.3.4/data/cups/model
 else
   PPD_PATH=$1
 fi
