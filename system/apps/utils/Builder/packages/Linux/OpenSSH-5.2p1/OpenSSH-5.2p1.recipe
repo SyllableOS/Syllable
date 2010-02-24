@@ -15,4 +15,4 @@ configure-options
 ;	--disable-libutil
 
 ; For LFS boot scripts:
-links				sbin/sshd /usr/sbin/
+links				system-programs/sshd /usr/sbin/

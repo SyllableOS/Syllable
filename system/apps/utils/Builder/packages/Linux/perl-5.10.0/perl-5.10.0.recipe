@@ -18,10 +18,9 @@ documentation
 ;	May be too huge:
 	Changes
 links
-	perl5.10.0							bin/perl
-	5.10.0/i686-linux/CORE/libperl.so	lib/
+	perl5.10.0							programs/perl
+	5.10.0/i686-linux/CORE/libperl.so	framework/libraries/
 ;	Handled by the system build:
-;	bin/perl							/usr/bin/perl
+;	programs/perl						/usr/bin/perl
 ;	For OpenSSL:
-;	bin/perl							/usr/local/bin/perl
-
+;	programs/perl						/usr/local/bin/perl

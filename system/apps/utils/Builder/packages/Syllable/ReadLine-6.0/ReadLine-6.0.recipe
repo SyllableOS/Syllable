@@ -12,5 +12,5 @@ configure-options
 
 ; Fix build bug:
 links
-	libreadline.so.6	lib/libreadline.so
-	libhistory.so.6		lib/libhistory.so
+	libreadline.so.6	framework/libraries/libreadline.so
+	libhistory.so.6		framework/libraries/libhistory.so

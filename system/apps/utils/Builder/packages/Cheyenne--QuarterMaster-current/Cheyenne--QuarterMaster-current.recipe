@@ -17,13 +17,13 @@ run-needs
 
 patch
 ;	Shebang:
-	sed -i 's/local\/bin\//bin\/env /'														qm.r &&
+	sed -i 's/local\/bin\//bin\/env /'															qm.r &&
 ;	UK time zone:
-	sed -i 's/-6:00/0:00/'																	qm.r &&
-	sed -i 's/Path\/To\/app\/application/resources\/Cheyenne\/lib\/REBOL\/QuarterMaster/'	qm.r &&
-	sed -i 's/Path\/To\/app\/space/resources\/Cheyenne\/lib\/REBOL\/QuarterMaster/'			qm.r &&
-	sed -i 's/Path\/To\/support/resources\/Cheyenne\/lib\/REBOL\/QuarterMaster/'			qm.r &&
-	sed -i 's/Path\/To\/HTTPD\/root/resources\/Cheyenne\/lib\/REBOL\/Cheyenne\/www/'		qm.r
+	sed -i 's/-6:00/0:00/'																		qm.r &&
+	sed -i 's/Path\/To\/app\/application/resources\/Cheyenne\/framework\/REBOL\/QuarterMaster/'	qm.r &&
+	sed -i 's/Path\/To\/app\/space/resources\/Cheyenne\/framework\/REBOL\/QuarterMaster/'		qm.r &&
+	sed -i 's/Path\/To\/support/resources\/Cheyenne\/framework\/REBOL\/QuarterMaster/'			qm.r &&
+	sed -i 's/Path\/To\/HTTPD\/root/resources\/Cheyenne\/framework\/REBOL\/Cheyenne\/www/'		qm.r
 
 make				true
 
@@ -31,13 +31,13 @@ merge-install
 
 ; Required empty directories:
 install-tree
-;	lib
-;	lib/REBOL
-	lib/REBOL/QuarterMaster
-;	lib/REBOL/QuarterMaster/controllers
-	lib/REBOL/QuarterMaster/models
-	lib/REBOL/QuarterMaster/views
+;	framework
+;	framework/REBOL
+	framework/REBOL/QuarterMaster
+;	framework/REBOL/QuarterMaster/controllers
+	framework/REBOL/QuarterMaster/models
+	framework/REBOL/QuarterMaster/views
 install				true
-install-files		qm.r lib/REBOL/Cheyenne/www/index.r
+install-files		qm.r framework/REBOL/Cheyenne/www/index.r
 
 documentation		introduction.html

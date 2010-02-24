@@ -10,10 +10,10 @@ configure
 	cd /lib/modules/2.6.27.44-Syllable &&
 	sudo ln -sf $SOURCE build &&
 ;	Make the kernel modules installation go into the package location in the system image:
-	ln -sf ../../system/resources/Linux/2.6.27.44/lib/modules/2.6.27.44-Syllable $IMAGE/lib/modules/
+	ln -sf ../../system/resources/Linux/2.6.27.44/framework/libraries/modules/2.6.27.44-Syllable $IMAGE/lib/modules/
 
 _links
 ;	For linux-fusion:
-;	include/linux															/usr/include/
+;	framework/headers/linux																	/usr/include/
 ;	Get external kernel modules to install themselves among this kernel's modules:
-	../../system/resources/Linux/2.6.27.44/lib/modules/2.6.27.44-Syllable	/lib/modules/
+	../../system/resources/Linux/2.6.27.44/framework/libraries/modules/2.6.27.44-Syllable	/lib/modules/

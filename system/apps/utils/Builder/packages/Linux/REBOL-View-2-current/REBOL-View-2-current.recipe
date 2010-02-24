@@ -22,13 +22,13 @@ packages
 make				true
 
 install-tree
-	bin
+	programs
 	applications
 install				true
-install-files		rebol bin/r2-view
+install-files		rebol programs/r2-view
 
 links
-	r2-view			bin/rebol
-	r2-view			bin/rebol-view
-	r2-view			bin/r2
-	../bin/r2-view	applications/REBOL-2
+	r2-view				programs/rebol
+	r2-view				programs/rebol-view
+	r2-view				programs/r2
+	../programs/r2-view	applications/REBOL-2

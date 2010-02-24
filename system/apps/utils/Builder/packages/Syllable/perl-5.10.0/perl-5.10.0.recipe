@@ -22,10 +22,10 @@ documentation
 ;	May be too huge:
 	Changes
 links
-	perl5.10.0								bin/perl
-	5.10.0/i586-syllable/CORE/libperl.so	lib/
+	perl5.10.0								programs/perl
+	5.10.0/i586-syllable/CORE/libperl.so	framework/libraries/
+;	Handled by the system build:
 ;	For OpenSSL and others:
-	bin/perl								/usr/bin/perl
-;	For OpenSSL?
-	bin/perl								/usr/local/bin/perl
-
+;	programs/perl							/usr/bin/perl
+;	For OpenSSL:
+;	programs/perl							/usr/local/bin/perl

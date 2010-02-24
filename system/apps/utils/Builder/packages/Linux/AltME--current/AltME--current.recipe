@@ -16,12 +16,12 @@ packages			altme042 AltME--current
 make				true
 
 install-tree
-	bin
+	programs
 	applications
 install				true
-install-files		altme bin/
+install-files		altme programs/
 
-links				../bin/altme applications/AltME
+links				../programs/altme applications/AltME
 
 ; AltME is encapped REBOL:
 no-strip

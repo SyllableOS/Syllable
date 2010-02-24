@@ -28,7 +28,7 @@ build-recommends	Jade
 
 ; Make the kernel modules installation go into the package location:
 configure
-	ln -sf ../../resources/Linux/lib/modules/2.6.27.44-Syllable $IMAGE/lib/modules/
+	ln -sf ../../resources/Linux/framework/libraries/modules/2.6.27.44-Syllable $IMAGE/lib/modules/
 
 ; depmod has a hard-coded path to the collected modules from different kernel versions,
 ; that it inserts into the installation path. To allow the kernel to install its modules
@@ -38,7 +38,7 @@ install-prefix-var	INSTALL_MOD_PATH
 pre-make
 	make mrproper &&
 	cp config-2.6.27.44 .config
-; $INSTALL_MOD_PATH must be empty:
+; $INSTALL_MOD_PATH must be empty here:
 make				make -j2 ARCH=i386
 ; For optimal build speed, number of CPUs + 1:
 make-options		-j2
@@ -79,13 +79,13 @@ internal-docs		MAINTAINERS
 
 _links
 ;	For linux-fusion:
-;	include/linux											/usr/include/
+;	framework/headers/linux													/usr/include/
 ;	Get external kernel modules to install themselves among this kernel's modules:
-	../../resources/Linux/lib/modules/2.6.27.44-Syllable	/lib/modules/
+	../../resources/Linux/framework/libraries/modules/2.6.27.44-Syllable	/lib/modules/
 
 ;pre-register		mkinitrd /boot/initrd-2.6.27.44.img 2.6.27.44
 
 delete-files
 ;	Symlinks to the kernel source on the build host - prevent registration orgy:
-	lib/modules/2.6.27.44-Syllable/build
-	lib/modules/2.6.27.44-Syllable/source
+	framework/libraries/modules/2.6.27.44-Syllable/build
+	framework/libraries/modules/2.6.27.44-Syllable/source

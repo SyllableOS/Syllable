@@ -43,7 +43,7 @@ system-prefix-var	PREFIX
 
 make				true
 
-install-tree
+install-tree		framework
 ; Limited GoboLinux system tree:
 install
 	for dir in \
@@ -71,9 +71,9 @@ install
 ;post-install		rm $IMAGE/usr/include
 
 install-files
-	2.9.11/bin								.
-	2.9.11/lib								.
-	2.9.11/Shared/man						.
+	2.9.11/bin								programs
+	2.9.11/lib								framework/libraries
+	2.9.11/Shared/man						manuals
 	2.9.11/Data								.
 ;	Doesn't work for GNU-PG signature verification:
 ;	2.9.11/Data								/Programs/Scripts/2.9.11/
@@ -92,8 +92,8 @@ links
 ;	Headers way off course:
 	/System/Index/lib/glib-2.0/					/usr/lib/
 	/System/Index/lib/gtk-2.0/					/usr/lib/
-	/usr/bin/install							bin/real_install
-	bin/										/Programs/Scripts/2.9.11/
+	/usr/bin/install							programs/real_install
+	programs/									/Programs/Scripts/2.9.11/bin
 	2.9.11										/Programs/Scripts/Current
 	/var/										/Data/Variable
 	/var/										/System/Variable

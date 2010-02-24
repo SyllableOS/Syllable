@@ -20,16 +20,16 @@ install				rm /lib/modules/2.6.27.44-Syllable/build
 
 _links
 ;	Assume the host had this (same) kernel:
-	/system/resources/Linux/2.6.27.44/lib/modules/2.6.27.44-Syllable	/lib/modules/
+	/system/resources/Linux/2.6.27.44/framework/libraries/modules/2.6.27.44-Syllable	/lib/modules/
 ;	(Repair damage from Linux-Fusion:)
-;	lib/modules															/lib/
+;	framework/libraries/modules															/lib/
 ;	Give the system access to modules of all kernel versions:
 ;	This, however, leads depmod to create module files within the symlink pool:
-;	/system/indexes/lib/modules											/lib/
+;	/system/indexes/framework/libraries/modules											/lib/
 
 _delete-files
 ;	Clean out kernel source link from the host system:
 	/lib/modules/2.6.27.44-Syllable/build
 ;	Source is not there any more because it's moved to Linux--cleanup, so it did not get unregistered:
-	/system/indexes/lib/modules/2.6.27.44-Syllable/build
-	/system/indexes/lib/modules/2.6.27.44-Syllable/source
+	/system/indexes/framework/libraries/modules/2.6.27.44-Syllable/build
+	/system/indexes/framework/libraries/modules/2.6.27.44-Syllable/source

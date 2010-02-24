@@ -26,5 +26,5 @@ install-tree
 documentation		README ChangeLog TODO
 
 ; Not necessary due to the relative /lib/modules link:
-;move-files			/lib/modules/2.6.27.44-Syllable/drivers /system/resources/Linux/2.6.27.44/lib/modules/2.6.27.44-Syllable/
+;move-files			/lib/modules/2.6.27.44-Syllable/drivers /system/resources/Linux/2.6.27.44/framework/libraries/modules/2.6.27.44-Syllable/
 ;delete-files		/lib/modules

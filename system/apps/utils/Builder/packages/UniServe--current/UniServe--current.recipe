@@ -18,15 +18,15 @@ run-needs			REBOL
 make				true
 
 install-tree
-	lib
-	lib/REBOL
-	lib/REBOL/UniServe
+	framework
+	framework/REBOL
+	framework/REBOL/UniServe
 install				true
 install-files
-	UniServe/*.r		lib/REBOL/UniServe/
-	UniServe/clients	lib/REBOL/UniServe/
-	UniServe/libs		lib/REBOL/UniServe/
-	UniServe/protocols	lib/REBOL/UniServe/
-	UniServe/services	lib/REBOL/UniServe/
+	UniServe/*.r		framework/REBOL/UniServe/
+	UniServe/clients	framework/REBOL/UniServe/
+	UniServe/libs		framework/REBOL/UniServe/
+	UniServe/protocols	framework/REBOL/UniServe/
+	UniServe/services	framework/REBOL/UniServe/
 
 documentation		UniServe/*.txt

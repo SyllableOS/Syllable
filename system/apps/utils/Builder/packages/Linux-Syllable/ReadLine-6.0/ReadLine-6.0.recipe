@@ -3,5 +3,5 @@ status				testing
 
 ; Linked into BASh, which is called before the loader path is set:
 links
-	lib/libreadline.so.6	/system/resources/glibc/2.7/lib/
-	lib/libhistory.so.6		/system/resources/glibc/2.7/lib/
+	framework/libraries/libreadline.so.6	/system/resources/glibc/2.7/framework/libraries/
+	framework/libraries/libhistory.so.6		/system/resources/glibc/2.7/framework/libraries/

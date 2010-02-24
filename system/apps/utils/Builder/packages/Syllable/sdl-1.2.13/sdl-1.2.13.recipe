@@ -2,4 +2,3 @@ authors				Kaj de Vos
 status				testing
 
 configure-env		LDFLAGS "$LDFLAGS -lsyllable -lmedia -lstdc++"
-

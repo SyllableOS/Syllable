@@ -19,25 +19,25 @@ run-needs
 
 patch
 ;	UniServe path:
-	sed -i 's/%..\/UniServe/%\/resources\/indexes\/lib\/REBOL\/UniServe/'								Cheyenne/cheyenne.r
+	sed -i 's/%..\/UniServe/%\/resources\/indexes\/framework\/REBOL\/UniServe/'							Cheyenne/cheyenne.r
 ;	For QuarterMaster:
 ;	sed -i 's/soc\/path-info:\sjoin\sdata\/in\/path\sdata\/in\/target/soc\/path-info: data\/in\/url/'	Cheyenne/handlers/CGI.r
 
 make				true
 
 install-tree
-	lib
-	lib/REBOL
-	lib/REBOL/Cheyenne
+	framework
+	framework/REBOL
+	framework/REBOL/Cheyenne
 install				true
 install-files
-	Cheyenne/*.r		lib/REBOL/Cheyenne/
-	Cheyenne/*.cfg		lib/REBOL/Cheyenne/
-	Cheyenne/handlers	lib/REBOL/Cheyenne/
-	Cheyenne/internal	lib/REBOL/Cheyenne/
-	Cheyenne/misc		lib/REBOL/Cheyenne/
-	Cheyenne/mods		lib/REBOL/Cheyenne/
-	Cheyenne/www		lib/REBOL/Cheyenne/
-	Cheyenne/tests		lib/REBOL/Cheyenne/
+	Cheyenne/*.r		framework/REBOL/Cheyenne/
+	Cheyenne/*.cfg		framework/REBOL/Cheyenne/
+	Cheyenne/handlers	framework/REBOL/Cheyenne/
+	Cheyenne/internal	framework/REBOL/Cheyenne/
+	Cheyenne/misc		framework/REBOL/Cheyenne/
+	Cheyenne/mods		framework/REBOL/Cheyenne/
+	Cheyenne/www		framework/REBOL/Cheyenne/
+	Cheyenne/tests		framework/REBOL/Cheyenne/
 
 documentation		Cheyenne/*.txt Cheyenne/docs/*

@@ -5,4 +5,3 @@ configure-options
 	--with-libxml-prefix=/resources/libxml2
 	--with-libxslt-prefix=/resources/libxslt
 ;	--disable-ipv6
-
