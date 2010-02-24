@@ -12,17 +12,17 @@ packages			glibc/glibc-2.7
 
 build-needs
 ;	glibc
-;	autoconf >= 2.53
-	make >= 3.79
-	binutils >= 2.15
+;	AutoConfigure >= 2.53
+	Make >= 3.79
+	BinaryUtils >= 2.15
 	gcc >= 3.4
-	sed >= 3.02
+	SEd >= 3.02
 	gawk >= 3
 ;	gettext >= 0.10.36
 ;	gperf
 build-recommends	texinfo >= 3.12f
 test-needs
-	bash <> 2.03
+	BASh <> 2.03
 	perl >= 5
 
 ; BASh is broken for this locale:
