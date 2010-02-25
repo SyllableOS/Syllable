@@ -15,7 +15,7 @@ build-needs			zlib--static
 configure-options
 	--sysconfdir=/etc
 	--with-moddir=/lib/modules
-;	--with-moddir=/system/indexes/lib/modules
+;	--with-moddir=/system/indexes/framework/libraries/modules
 ;	Static:
 	--enable-zlib
 
@@ -30,7 +30,7 @@ build-docs			README
 internal-docs		CODING
 
 links
-	sbin/depmod		/sbin/
-	sbin/modprobe	/sbin/
+	system-programs/depmod		/sbin/
+	system-programs/modprobe	/sbin/
 ;	For alsaconf:
-	sbin/modinfo	/sbin/
+	system-programs/modinfo		/sbin/

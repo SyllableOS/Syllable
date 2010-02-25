@@ -5,7 +5,7 @@ inherits			zlib-1.2.3
 
 configure-options
 	--shared
-	--includedir=$IMAGE/system/development/resources/zlib/1.2.3/include
+;	--includedir=$IMAGE/system/development/resources/zlib/1.2.3/framework/headers
 
 ; For sshd:
-links				lib/libz.so.1 /system/resources/glibc/2.7/lib/
+links				framework/libraries/libz.so.1 /system/resources/glibc/2.7/framework/libraries/

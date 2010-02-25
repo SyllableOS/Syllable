@@ -17,17 +17,19 @@ build-dir			.
 ; Doesn't support --prefix=
 configure-args
 
+system-prefix-var	DESTDIR
+
 install-tree
 install-vars
-	USERBINDIR		"$IMAGE/resources/dhcp/bin"
-	BINDIR			"$IMAGE/resources/dhcp/sbin"
-	CLIENTBINDIR	"$IMAGE/resources/dhcp/sbin"
-	INCDIR			"$IMAGE/resources/dhcp/include"
-	LIBDIR			"$IMAGE/resources/dhcp/lib"
-	ADMMANDIR		"$IMAGE/resources/dhcp/share/man/cat8"
-	FFMANDIR		"$IMAGE/resources/dhcp/share/man/cat5"
-	LIBMANDIR		"$IMAGE/resources/dhcp/share/man/cat3"
-	USRMANDIR		"$IMAGE/resources/dhcp/share/man/cat1"
+	USERBINDIR		"$IMAGE/resources/dhcp/programs"
+	BINDIR			"$IMAGE/resources/dhcp/system-programs"
+	CLIENTBINDIR	"$IMAGE/resources/dhcp/system-programs"
+	LIBDIR			"$IMAGE/resources/dhcp/framework/libraries"
+	INCDIR			"$IMAGE/resources/dhcp/framework/headers"
+	USRMANDIR		"$IMAGE/resources/dhcp/manuals/man1"
+	LIBMANDIR		"$IMAGE/resources/dhcp/manuals/man3"
+	FFMANDIR		"$IMAGE/resources/dhcp/manuals/man5"
+	ADMMANDIR		"$IMAGE/resources/dhcp/manuals/man8"
 
 documentation
 	README LICENSE RELNOTES

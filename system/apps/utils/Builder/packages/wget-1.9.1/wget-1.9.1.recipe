@@ -6,10 +6,15 @@ licenses			GPL
 home				www.gnu.org/software/wget/
 packages			wget/wget-1.9.1
 
-build-recommends	openssl
+recommends			OpenSSL
 
 patch-config
+
 ;configure-options
 ;	--with-ssl=
 ;	--disable-ipv6
-documentation		README INSTALL COPYING NEWS ChangeLog.README ChangeLog TODO AUTHORS MAILING-LIST PATCHES
+
+system-prefix-var	DESTDIR
+
+documentation		README INSTALL COPYING NEWS ChangeLog.README ChangeLog TODO AUTHORS MAILING-LIST
+internal-docs		PATCHES

@@ -3,7 +3,7 @@ notes				Thinks mmap works!
 
 ;inherits			sourceforge
 
-headline			Compression Library
+headline			Compression library
 description
 	A Massively Spiffy Yet Delicately Unobtrusive Compression Library.
 
@@ -21,6 +21,10 @@ locations
 build-dir			.
 
 configure-env		CFLAGS "$CFLAGS -fPIC"
+no-bindir
+no-sbindir
+no-libexecdir
+no-datarootdir
 no-mandir
 no-infodir
 configure-options	--shared

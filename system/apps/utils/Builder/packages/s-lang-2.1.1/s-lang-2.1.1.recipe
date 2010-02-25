@@ -18,14 +18,14 @@ locations
 	ftp://ftp.plig.org/pub/slang/v2.1/
 packages			slang-2.1.1
 
-needs				ncurses | termcap
+needs				NCurses | termcap
 build-needs			gawk
 ; Can't find any of them:
 build-recommends
 	pcre
 	oniguruma
-	libpng
-	readline
+	LibPNG
+	ReadLine
 
 build-dir			.
 
@@ -38,6 +38,8 @@ test-targets
 	check
 	runtests
 
+system-prefix-var	DESTDIR
+
 ;install-vars		install_doc_dir
 install-targets
 ;	install
@@ -49,6 +51,6 @@ install-targets
 
 documentation		README COPYING NEWS changes.txt
 develop-docs
-;	doc demo
-	examples
+;	doc/* demo/
+	examples/
 build-docs			INSTALL.unx UPGRADE.txt

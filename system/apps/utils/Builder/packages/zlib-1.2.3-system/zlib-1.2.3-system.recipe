@@ -5,4 +5,4 @@ inherits			zlib-1.2.3
 
 configure-options
 	--shared
-	--includedir=$IMAGE/system/development/resources/zlib/1.2.3/include
+;	--includedir=$IMAGE/system/development/resources/zlib/1.2.3/framework/headers

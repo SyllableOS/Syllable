@@ -43,10 +43,12 @@ documentation
 	docs/*
 build-docs			INSTALL
 
-; For LFS init scripts:
 links
+;	Broken link into system root:
+	libudev.so.0.3.0		framework/libraries/libudev.so
+;	For LFS init scripts:
 	system-programs/udevd	/sbin/
 	system-programs/udevadm	/sbin/
 
-; Somehow leads to two installed versions:
+; Somehow leads to two installed versions?
 move-files			/lib/libudev.so* framework/libraries/

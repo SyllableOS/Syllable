@@ -17,11 +17,11 @@ packages			binutils/binutils-2.19.1
 
 build-needs
 	BinaryUtils
-	automake >= 1.5
-	autoconf 2.59
+	AutoMake >= 1.5
+	AutoConfigure 2.59
 install-needs		BinaryUtils
 conflicts
-;	Both BinaryUtils and AutoConf have info/standards.info:
+;	Both BinaryUtils and AutoConfigure have info/standards.info:
 	autoconf
 	gcc
 
@@ -34,6 +34,8 @@ patch				autoreconf ld gas
 ;configure-options
 ;	--enable-shared
 ;	--with-lib-path=
+
+system-prefix-var	DESTDIR
 
 ; No cross-compiling support:
 ;make-vars			tooldir '/resources/BinaryUtils'

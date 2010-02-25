@@ -45,6 +45,8 @@ configure-options
 	--without-ijs
 	--without-jbig2dec
 
+system-prefix-var	DESTDIR
+
 install-tree
 	data
 	data/ghostscript

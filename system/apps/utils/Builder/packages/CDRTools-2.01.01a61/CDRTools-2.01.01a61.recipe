@@ -29,6 +29,7 @@ packages			cdrtools-2.01.01a61
 configure			true
 
 install-prefix-var	INS_BASE
+system-prefix-var	DESTDIR
 
 documentation
 	ABOUT README COPYING CDDL.Schily.txt GPL-2.0.txt LGPL-2.1.txt AN-2.01.01a61 AN-2.01.01a58 AN-2.01 AN-2.0 Changelog
@@ -36,7 +37,7 @@ documentation
 	READMEs/README.linux README.linux-shm
 ;	cdrecord/README mkisofs/README cdda2wav/README
 	cdrecord/README.* mkisofs/README.*
-;	doc
+;	doc/*
 build-docs
 	INSTALL
 ;	BUILD COMPILE README.compile

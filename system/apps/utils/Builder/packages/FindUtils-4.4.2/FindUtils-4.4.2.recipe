@@ -11,5 +11,7 @@ licenses			GPL
 home				www.gnu.org/software/findutils/
 packages			findutils/findutils-4.4.2
 
+system-prefix-var	DESTDIR
+
 documentation		README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS
 internal-docs		README-hacking tool-versions.txt

@@ -20,4 +20,6 @@ locations			http://www.greenwoodsoftware.com/
 ;	--with-secure
 ;	--with-editor=
 
+system-prefix-var	DESTDIR
+
 documentation		README LICENSE COPYING NEWS

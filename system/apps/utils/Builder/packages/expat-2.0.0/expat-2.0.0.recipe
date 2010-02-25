@@ -12,10 +12,13 @@ test-needs			check
 patch-config		conftools
 
 ;configure-env		CPPFLAGS '-DXML_UNICODE'
+
 ;make-targets		buildlib
+
+system-prefix-var	DESTDIR
 ;install-targets		installlib
+
 documentation
 	README COPYING Changes
-	doc
-develop-docs		examples
-
+	doc/*
+develop-docs		examples/

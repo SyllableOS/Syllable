@@ -10,4 +10,6 @@ packages			splix/splix-1.1.0
 build-needs			jbig2dec
 needs				cups
 
+system-prefix-var	DESTDIR
+
 documentation		README COPYING TODO ChangeLog AUTHORS

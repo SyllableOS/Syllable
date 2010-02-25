@@ -12,6 +12,7 @@ locations			http://www.junoplay.com/files/
 
 needs				sdl >= 1.2
 
+system-prefix-var	DESTDIR
 install-tree		applications
 
 documentation
@@ -19,4 +20,4 @@ documentation
 ;	Currently empty:
 ;	NEWS
 
-links				../bin/pengupop applications/Pengupop
+links				../programs/pengupop applications/Pengupop
