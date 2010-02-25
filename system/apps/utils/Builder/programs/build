@@ -1,7 +1,7 @@
 #! /usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.10.7
+# Version 0.10.8
 # Copyright (c) 2002-2010 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -733,9 +733,7 @@ def installModule staging, target
 										break unless action superAccess + "cp -a #{source} " + File.join(
 											destination[0, 1] != '/' ?
 												root :
-												staging && staging != 'image' ?
-													'/' :
-													@systemRoot,
+												staging ? @image : '/',
 											destination
 										)
 									end
@@ -989,7 +987,7 @@ def installModule staging, target
 										exists?('framework/headers') ||
 										begin
 											@log.header 'Creating temporary headers directory'
-											action 'mkdir --parents framework/headers'
+											action superAccess + 'mkdir --parents framework/headers'
 										end
 									) || !
 									begin
@@ -997,12 +995,10 @@ def installModule staging, target
 
 										for link in parseList links
 											original, destination = link.split
-											linkPath = File.dirname destination
-											linkFile = File.basename destination
 
-											if linkPath[0, 1] != '/'
+											if destination[0, 1] != '/'
 												# A link within the package
-												linkPath = File.join root, linkPath
+												destination = File.join root, destination
 											else
 												# A link into the system
 
@@ -1011,10 +1007,11 @@ def installModule staging, target
 												original = File.join prefix(staging, target), original if
 													original['/'] and not ['/', '.'].include? original[0, 1]
 
-												linkPath = File.join @systemRoot, linkPath if staging
+												destination = File.join @image, destination if staging
 											end
 
-											break unless action "cd #{linkPath} && #{superAccess}ln -sf #{original} " + linkFile
+											break unless action superAccess +
+												"ln --symbolic --force #{original} " + destination
 										end
 									end
 								then
@@ -1050,18 +1047,15 @@ def installModule staging, target
 
 										for line in parseList files
 											source, destination = line.split
-											break unless action superAccess + 'mv ' + (
-												staging && staging != 'image' ?
-													source + ' ' + destination :
-													(source[0, 1] == '/' ?
-														File.join(@systemRoot, source) :
-														source
-													) + ' ' +
-													(destination[0, 1] == '/' ?
-														File.join(@systemRoot, destination) :
-														destination
-													)
-											)
+											break unless action superAccess + 'mv ' +
+												(source[0, 1] == '/' ?
+													File.join(@image, source) :
+													source
+												) + ' ' +
+												(destination[0, 1] == '/' ?
+													File.join(@image, destination) :
+													destination
+												)
 										end
 									end
 								then
@@ -1072,9 +1066,9 @@ def installModule staging, target
 
 										for file in toList files
 											break unless action superAccess + 'rm --recursive --force ' + (
-												staging && staging != 'image' || file[0, 1] != '/' ?
-													file :
-													File.join(@systemRoot, file)
+												file[0, 1] = '/' ?
+													File.join(@image, file) :
+													file
 											)
 										end
 									end
@@ -1108,7 +1102,7 @@ def installModule staging, target
 									begin
 										@log.header 'Moving (remaining) development files'
 
-										devRoot = File.join @systemRoot, '/system/development/resources', installName(target), version(target)
+										devRoot = File.join @image, '/system/development/resources', installName(target), version(target)
 										action 'mkdir --parents ' + devRoot and
 
 										if Dir['framework/headers/*'] != []
@@ -1800,10 +1794,10 @@ end
 
 def installRoot staging
 	case staging
-	when 'system', 'libraries'
-		File.join @systemRoot, '/system/resources'
+	when 'system', 'libraries', 'compatibility'
+		File.join @image, '/system/resources'
 	when 'image'
-		File.join @systemBuild ? @systemRoot : @image, '/resources'
+		File.join @image, '/resources'
 	when 'stage'
 		@stage
 	when 'bootstrap'
@@ -2137,14 +2131,14 @@ end
 # Include version number on installed ports?
 @includeVersion = @settings['include-version']
 
-@image = File.join(@stage = File.join(@workDir, 'stage'), 'image')
+ENV['STAGE'] = @stage = File.join(@workDir, 'stage')
+ENV['IMAGE'] = @image = File.join(@stage, 'image')
 
 @systemIndexes = File.join @image, 'system/indexes'
 @resourcesIndexes = File.join @image, 'resources/indexes'
 
 unless @systemBuild = File.basename(@workDir) == 'system'
 	@crossCompile = false
-	@systemRoot = '/'
 else
 	if @crossCompile = @target = @settings['target']
 		ENV['CC']  = @target + '-gcc'
@@ -2156,16 +2150,11 @@ else
 		ENV['LDFLAGS']  = "-b #{@target} " + (var = ENV['LDFLAGS']  ? var : '')
 	end
 
-	@systemRoot = @image
-
 #	@buildTools = File.join @workDir, 'build-tools'
 
 	ENV['ATHEOS_SRC'] = @workDir
 	ENV['DIST_DIR'] = @image
 end
-
-ENV['STAGE'] = @stage
-ENV['IMAGE'] = @systemRoot
 
 # Isolate build in staging area from the build host?
 @isolateStage = @crossCompile || @settings['isolate-stage']
@@ -2179,7 +2168,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.10.7',
+	puts 'Syllable Build System 0.10.8',
 		'Copyright (c) 2002-2010 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
@@ -2400,7 +2389,7 @@ else
 				when 'make'			then make		target
 				when 'test'			then test		target
 				when 'install'
-					ENV['IMAGE'] = '/'
+					ENV['IMAGE'] = @image = '/'
 					install target
 				when 'stage', 'bootstrap', 'image'
 					build arg1, target if exists? @stage or prepare target
