@@ -155,7 +155,6 @@ modules
 
 ;	Still needs FreeType 2.1:
 	bootstrap libraries/freetype-2.1.10
-
 	apps/other/xpdf--image-syllable
 ;	apps/other/xpdf--image
 

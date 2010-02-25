@@ -16,5 +16,5 @@ modules
 	security/gnupg-1.4.9
 ;	file/file-4.07
 ;	libraries/s-lang-2.1.1
-;	libraries/glib-2.14.4
+;	libraries/glib-2.18.4
 	file/MidnightCommander-4.7.0.2
