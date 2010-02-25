@@ -1,7 +1,7 @@
 #! /usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.10.8
+# Version 0.10.9
 # Copyright (c) 2002-2010 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -1066,7 +1066,7 @@ def installModule staging, target
 
 										for file in toList files
 											break unless action superAccess + 'rm --recursive --force ' + (
-												file[0, 1] = '/' ?
+												file[0, 1] == '/' ?
 													File.join(@image, file) :
 													file
 											)
@@ -2168,7 +2168,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.10.8',
+	puts 'Syllable Build System 0.10.9',
 		'Copyright (c) 2002-2010 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
