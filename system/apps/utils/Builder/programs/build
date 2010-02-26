@@ -1,7 +1,7 @@
 #! /usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.10.10
+# Version 0.10.11
 # Copyright (c) 2002-2010 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -343,7 +343,7 @@ def patchModule target
 						begin
 							@log.header 'Enabling shared libraries'
 							action 'cp /resources/libtool/share/libtool/ltmain.sh .' and
-#								action 'aclocal -I /resources/indexes/share/aclocal' and
+#								action 'aclocal -I /resources/indexes/data/aclocal' and
 #								action 'libtoolize --force' and
 #								action 'automake' and
 #								action 'autoconf'
@@ -441,7 +441,7 @@ def configureModule staging, target
 											' ' + p[1..-2] :  # FIXME: do some checking
 											' --prefix='
 										) + (root = prefix staging, target) +
-										(imaging? (staging) && ! recipe['system-prefix-var'] ?
+										(imaging?(staging) && ! recipe['system-prefix-var'] ?
 											'' :
 											(recipe['no-bindir'] ? '' :
 												' --bindir=' + File.join(root, 'programs')
@@ -457,7 +457,7 @@ def configureModule staging, target
 											) +
 											(recipe['no-includedir'] ? '' :
 												' --includedir=' + File.join(
-													(['system', 'libraries', 'compatibility'].include?(staging) ?
+													(system?(staging) ?
 														File.join(
 															'/system/development/resources',
 															installName(target), version(target)
@@ -980,7 +980,7 @@ def installModule staging, target
 								then
 									false
 								elsif links = recipe['links'] and links != '' and
-									(	['system', 'libraries', 'compatibility'].include?(staging) and
+									(	system?(staging) and
 										recipe['system-prefix-var'] and not
 										exists?('framework/headers') ||
 										begin
@@ -1052,7 +1052,7 @@ def installModule staging, target
 											next if destination[0, 1] == '/' and staging and not imaging? staging
 
 											break unless action superAccess + 'mv ' +
-												(source[0, 1] == '/' and imaging?(staging) ?
+												(source[0, 1] == '/' && imaging?(staging) ?
 													File.join(@image, source) :
 													source
 												) + ' ' +
@@ -1104,7 +1104,7 @@ def installModule staging, target
 									end
 								then
 									false
-								elsif ['system', 'libraries', 'compatibility'].include?(staging) and not
+								elsif system?(staging) and not
 									begin
 										@log.header 'Moving (remaining) development files'
 
@@ -1164,16 +1164,14 @@ def registerModule staging, target, root
 	action 'package register ' + root + (staging ?
 		# Link module into the staging area
 		' ' + File.join(@stage, staging == 'bootstrap' ? 'bootstrap/indexes' : 'indexes') +
-		case staging
-		when 'system', 'libraries', 'compatibility'
+		(system?(staging) ?
 			# Link module into the system image core
-			' ' + @systemIndexes
-		when 'image'
-			# Link module into the system image resources
-			@systemBuild ? ' ' + @resourcesIndexes : ''
-		else
-			''
-		end :
+			' ' + @systemIndexes :
+			imaging?(staging) ?
+				# Link module into the system image resources
+				@systemBuild ? ' ' + @resourcesIndexes : '' :
+				''
+		) :
 		''
 	) and
 	(  # @bootstrap or (
@@ -1186,18 +1184,18 @@ end
 
 def unregisterModule staging, name, root
 	@log.header 'Unregistering ' + name
+
 	action 'package unregister ' + root + (staging ?
+		# Unlink module from the staging area
 		' ' + File.join(@stage, staging == 'bootstrap' ? 'bootstrap/indexes' : 'indexes') +
-		case staging
-		when 'system', 'libraries', 'compatibility'
+		(system?(staging) ?
 			# Unlink module from the system image core
-			' ' + @systemIndexes
-		when 'image'
-			# Unlink module from the system image resources
-			@systemBuild ? ' ' + @resourcesIndexes : ''
-		else
-			''
-		end :
+			' ' + @systemIndexes :
+			imaging?(staging) ?
+				# Unlink module from the system image resources
+				@systemBuild ? ' ' + @resourcesIndexes : '' :
+				''
+		) :
 		''
 	)
 end
@@ -1798,44 +1796,42 @@ def sourcePath target
 	target[0, 1] == '/' ? target : File.join(@workDir, target)
 end
 
+def system? staging
+	['system', 'libraries', 'compatibility'].include? staging
+end
+
 def imaging? staging
-	['image', 'system', 'libraries', 'compatibility'].include? staging
+	staging == 'image' or system? staging
 end
 
 def installRoot staging
-	case staging
-	when 'system', 'libraries', 'compatibility'
-		File.join @image, '/system/resources'
-	when 'image'
-		File.join @image, '/resources'
-	when 'stage'
-		@stage
-	when 'bootstrap'
-		File.join @stage, 'bootstrap'
-	else
-		'/resources'
-	end
+	File.join imaging?(staging) ?
+		@image :
+		case staging
+		when 'stage'
+			@stage
+		when 'bootstrap'
+			File.join @stage, 'bootstrap'
+		else
+			''
+		end,
+		system?(staging) ? '/system/resources' : imaging?(staging) || ! staging ? '/resources' : ''
 end
 
 def installPath staging, port
 	File.join installRoot(staging),
-		['system', 'libraries', 'compatibility'].include?(staging) ?
+		system?(staging) ?
 			File.join(installName(port), version(port)) :
 			installName(port)
 end
 
 def prefix staging, port
-	File.join case staging
-		when 'system', 'libraries', 'compatibility'
-			'/system/resources'
-		when 'image'
-			'/resources'
-		else
-			installRoot staging
-		end,
-		['system', 'libraries', 'compatibility'].include?(staging) ?
-			File.join(installName(port), version(port)) :
+	system?(staging) ?
+		File.join('/system/resources', installName(port), version(port)) :
+		File.join(
+			imaging?(staging) ? '/resources' : installRoot(staging),
 			installName(port)
+		)
 end
 
 def recipePath portPath
@@ -2178,7 +2174,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.10.10',
+	puts 'Syllable Build System 0.10.11',
 		'Copyright (c) 2002-2010 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
