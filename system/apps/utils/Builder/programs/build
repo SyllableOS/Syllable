@@ -1,7 +1,7 @@
 #! /usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.10.9
+# Version 0.10.10
 # Copyright (c) 2002-2010 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -441,7 +441,7 @@ def configureModule staging, target
 											' ' + p[1..-2] :  # FIXME: do some checking
 											' --prefix='
 										) + (root = prefix staging, target) +
-										(staging == 'image' && ! recipe['system-prefix-var'] ?
+										(imaging? (staging) && ! recipe['system-prefix-var'] ?
 											'' :
 											(recipe['no-bindir'] ? '' :
 												' --bindir=' + File.join(root, 'programs')
@@ -457,7 +457,7 @@ def configureModule staging, target
 											) +
 											(recipe['no-includedir'] ? '' :
 												' --includedir=' + File.join(
-													(@systemBuild && ['system', 'libraries', 'compatibility'].include?(staging) && recipe['system-prefix-var'] ?
+													(['system', 'libraries', 'compatibility'].include?(staging) ?
 														File.join(
 															'/system/development/resources',
 															installName(target), version(target)
@@ -684,9 +684,7 @@ def installModule staging, target
 							exists?(File.join(sourcePath(target), configureCommand(target)))
 						if exists? dir = buildDir(target) then Dir.chdir dir end
 
-						if	@systemBuild and
-							['image', 'system', 'libraries', 'compatibility'].include?(staging) and
-							not recipe['system-prefix-var']
+						if imaging? staging and not recipe['system-prefix-var']
 						then
 							@log.warning 'Doing an image installation without a system-prefix-var.'
 						end
@@ -697,7 +695,7 @@ def installModule staging, target
 							else
 								((vars = recipe['install-env']) ? toVariables(vars) + ' ' : '') +
 								superAccess + makeCommand(target) +
-								(! ['image', 'system', 'libraries'].include?(staging) && configured ?
+								(! imaging?(staging) && configured ?
 									'' :
 									((p = recipe['system-prefix-var']) && configured ?
 										'' :
@@ -730,10 +728,11 @@ def installModule staging, target
 	
 									for line in parseList files
 										source, destination = line.split
+
+										next if destination[0, 1] == '/' and staging and not imaging? staging
+
 										break unless action superAccess + "cp -a #{source} " + File.join(
-											destination[0, 1] != '/' ?
-												root :
-												staging ? @image : '/',
+											destination[0, 1] != '/' ? root : @image,
 											destination
 										)
 									end
@@ -981,8 +980,7 @@ def installModule staging, target
 								then
 									false
 								elsif links = recipe['links'] and links != '' and
-									(	@systemBuild and
-										['system', 'libraries', 'compatibility'].include?(staging) and
+									(	['system', 'libraries', 'compatibility'].include?(staging) and
 										recipe['system-prefix-var'] and not
 										exists?('framework/headers') ||
 										begin
@@ -1002,12 +1000,12 @@ def installModule staging, target
 											else
 												# A link into the system
 
-												next unless ['image', 'system', 'libraries'].include?(staging) or not staging
+												next if staging and not imaging? staging
 
 												original = File.join prefix(staging, target), original if
 													original['/'] and not ['/', '.'].include? original[0, 1]
 
-												destination = File.join @image, destination if staging
+												destination = File.join @image, destination
 											end
 
 											break unless action superAccess +
@@ -1017,7 +1015,7 @@ def installModule staging, target
 								then
 									false
 								elsif not @settings['no-strip'] || recipe['no-strip'] || (
-										(dirs = ['programs', 'system-programs', 'framework/executables'].collect {|dir|
+										(dirs = ['programs', 'system-programs'].collect {|dir|
 											exists?(dir = File.join(root, dir)) ? dir : nil
 										}.compact).empty? ||
 										begin
@@ -1026,10 +1024,13 @@ def installModule staging, target
 											action superAccess + 'strip --strip-all' + dirs.collect {|dir| ' ' + File.join(dir, '*')}.join or
 												$? >> 8 == 1  # File type not recognised
 										end and
-										! exists?(dir = File.join(root, 'framework/libraries')) ||
+										(dirs = ['framework/libraries', 'framework/executables'].collect {|dir|
+											exists?(dir = File.join(root, dir)) ? dir : nil
+										}.compact).empty? ||
 										begin
 											@log.header 'Stripping libraries'
-											action superAccess + 'strip --strip-debug ' + File.join(dir, '*') or $? >> 8 == 1
+											action superAccess + 'strip --strip-debug ' + dirs.collect {|dir| ' ' + File.join(dir, '*')}.join or
+												$? >> 8 == 1
 										end
 									)
 								then
@@ -1047,8 +1048,11 @@ def installModule staging, target
 
 										for line in parseList files
 											source, destination = line.split
+
+											next if destination[0, 1] == '/' and staging and not imaging? staging
+
 											break unless action superAccess + 'mv ' +
-												(source[0, 1] == '/' ?
+												(source[0, 1] == '/' and imaging?(staging) ?
 													File.join(@image, source) :
 													source
 												) + ' ' +
@@ -1065,6 +1069,8 @@ def installModule staging, target
 										@log.header 'Deleting files from installation'
 
 										for file in toList files
+											next if file[0, 1] == '/' and staging and not imaging? staging
+
 											break unless action superAccess + 'rm --recursive --force ' + (
 												file[0, 1] == '/' ?
 													File.join(@image, file) :
@@ -1076,7 +1082,7 @@ def installModule staging, target
 									false
 								elsif @systemBuild and staging == 'libraries' and not
 									begin
-										@log.header 'Cleaning up system libraries'
+										@log.header 'Cleansing system libraries'
 
 										for file in Dir['*']
 											break unless ['framework', 'documentation'].include?(file) or
@@ -1088,7 +1094,7 @@ def installModule staging, target
 									false
 								elsif @systemBuild and staging == 'compatibility' and not
 									begin
-										@log.header 'Cleaning up compatibility libraries'
+										@log.header 'Cleansing compatibility libraries'
 
 										for file in Dir['*']
 											break unless ['framework', 'documentation'].include?(file) or
@@ -1098,7 +1104,7 @@ def installModule staging, target
 									end
 								then
 									false
-								elsif @systemBuild and ['system', 'libraries', 'compatibility'].include?(staging) and not
+								elsif ['system', 'libraries', 'compatibility'].include?(staging) and not
 									begin
 										@log.header 'Moving (remaining) development files'
 
@@ -1159,7 +1165,7 @@ def registerModule staging, target, root
 		# Link module into the staging area
 		' ' + File.join(@stage, staging == 'bootstrap' ? 'bootstrap/indexes' : 'indexes') +
 		case staging
-		when 'system', 'libraries'
+		when 'system', 'libraries', 'compatibility'
 			# Link module into the system image core
 			' ' + @systemIndexes
 		when 'image'
@@ -1183,7 +1189,7 @@ def unregisterModule staging, name, root
 	action 'package unregister ' + root + (staging ?
 		' ' + File.join(@stage, staging == 'bootstrap' ? 'bootstrap/indexes' : 'indexes') +
 		case staging
-		when 'system', 'libraries'
+		when 'system', 'libraries', 'compatibility'
 			# Unlink module from the system image core
 			' ' + @systemIndexes
 		when 'image'
@@ -1792,6 +1798,10 @@ def sourcePath target
 	target[0, 1] == '/' ? target : File.join(@workDir, target)
 end
 
+def imaging? staging
+	['image', 'system', 'libraries', 'compatibility'].include? staging
+end
+
 def installRoot staging
 	case staging
 	when 'system', 'libraries', 'compatibility'
@@ -1809,21 +1819,21 @@ end
 
 def installPath staging, port
 	File.join installRoot(staging),
-		['system', 'libraries'].include?(staging) ?
+		['system', 'libraries', 'compatibility'].include?(staging) ?
 			File.join(installName(port), version(port)) :
 			installName(port)
 end
 
 def prefix staging, port
 	File.join case staging
-		when 'system', 'libraries'
+		when 'system', 'libraries', 'compatibility'
 			'/system/resources'
 		when 'image'
 			'/resources'
 		else
 			installRoot staging
 		end,
-		['system', 'libraries'].include?(staging) ?
+		['system', 'libraries', 'compatibility'].include?(staging) ?
 			File.join(installName(port), version(port)) :
 			installName(port)
 end
@@ -2168,7 +2178,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.10.9',
+	puts 'Syllable Build System 0.10.10',
 		'Copyright (c) 2002-2010 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
