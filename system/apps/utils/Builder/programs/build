@@ -1,7 +1,7 @@
 #! /usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.10.13
+# Version 0.10.14
 # Copyright (c) 2002-2010 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -767,7 +767,7 @@ def installModule staging, target
 											action superAccess + 'rmdir etc'
 										end
 									else
-										@log.header 'Moving settings to standard location'
+										@log.warning 'Moving settings to standard location'
 										action superAccess + 'mv etc/ settings'
 									end
 								then
@@ -815,7 +815,7 @@ def installModule staging, target
 											action superAccess + 'mkdir framework'
 										end and
 										begin
-											@log.header 'Moving libraries to standard location'
+											@log.warning 'Moving libraries to standard location'
 											action superAccess + 'mv lib/ framework/libraries'
 										end
 									end
@@ -836,7 +836,7 @@ def installModule staging, target
 											action superAccess + 'mkdir framework'
 										end and
 										begin
-											@log.header 'Moving executables to standard location'
+											@log.warning 'Moving executables to standard location'
 											action superAccess + 'mv libexec/ framework/executables'
 										end
 									end
@@ -872,7 +872,7 @@ def installModule staging, target
 											action superAccess + 'rmdir share'
 										end
 									else
-										@log.header 'Moving generic shared data to standard location'
+										@log.warning 'Moving generic shared data to standard location'
 										action superAccess + 'mv share/ data'
 									end
 								then
@@ -2174,7 +2174,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.10.13',
+	puts 'Syllable Build System 0.10.14',
 		'Copyright (c) 2002-2010 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
