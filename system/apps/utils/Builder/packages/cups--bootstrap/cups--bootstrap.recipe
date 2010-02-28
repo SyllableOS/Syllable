@@ -5,9 +5,8 @@ inherits			cups-1.3.4
 
 ; Fool third-party packages that execute cups-config during a system image installation:
 _configure-options
-	--datadir=$IMAGE/system/resources/cups/1.3.4/share
-;	CUPS is a system component and the configuration should be kept separate from the binaries:
-	--sysconfdir=$IMAGE/system/config
+	--datadir=$IMAGE/system/resources/cups/1.3.4/data
+	--sysconfdir=$IMAGE/etc
 ;	--enable-ssl
 	--without-rcdir
 
@@ -16,4 +15,3 @@ make				true
 install-tree
 install				true
 links
-

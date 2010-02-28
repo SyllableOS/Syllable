@@ -25,10 +25,10 @@ libdir=${exec_prefix}/framework/libraries
 staticlibdir=$IMAGE/system/development/resources/cups/1.3.4/framework/libraries
 datarootdir=$IMAGE/system/resources/cups/1.3.4/data
 datadir=$IMAGE/system/resources/cups/1.3.4/data
-sysconfdir=$IMAGE/system/config
+sysconfdir=$IMAGE/etc
 cups_datadir=$IMAGE/system/resources/cups/1.3.4/data/cups
 cups_serverbin=$IMAGE/system/resources/cups/1.3.4/framework/libraries/cups
-cups_serverroot=$IMAGE/system/config/cups
+cups_serverroot=$IMAGE/etc/cups
 INSTALLSTATIC=
 
 # flags for C++ compiler:
