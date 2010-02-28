@@ -24,7 +24,7 @@ configure-options
 ;	--enable-bounded
 
 links
-;	GLibC has broken internal relative links:
+;	Internal relative links are broken:
 	framework/libraries/											lib
 ;	For init:
 	/boot/system/resources/glibc/2.7/framework/libraries/libc.so.2	/system/libraries/

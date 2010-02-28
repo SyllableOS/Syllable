@@ -2,6 +2,7 @@ authors
 	Kristian Van Der Vliet
 	Kaj de Vos
 status				testing
+warnings			Links into the system.
 
 ;inherits			sourceforge
 
@@ -28,20 +29,28 @@ run-recommends		samba
 
 build-dir			.
 
+; Let other packages supply extensions:
+no-libdir
+no-datarootdir
 configure-options
-;	CUPS is a system component and the configuration should be kept separate from the binaries:
-	--sysconfdir=/system/config
+	--sysconfdir=/etc
+	--localstatedir=/var
 ;	--enable-ssl
+;	Still built as junk outside the system image:
 	--without-rcdir
 
 system-prefix-var	DSTROOT
 
 documentation
 	README*.txt LICENSE.* CHANGES.txt CREDITS.txt
-;	doc
+;	doc/*
 build-docs			INSTALL*.txt
 
-links /resources/indexes/programs/smbspool framework/libraries/cups/backend/smb
+links
+;	Let other packages supply extensions:
+	/system/indexes/framework/libraries	lib
+	/system/indexes/data				share
+	/system/indexes/programs/smbspool	framework/libraries/cups/backend/smb
 
 delete-files
 	data/doc/
