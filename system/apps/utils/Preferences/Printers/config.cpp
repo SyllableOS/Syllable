@@ -365,16 +365,16 @@ status_t PrintersWindow::InstallPPD( String cPPD, String cName )
 
 	fprintf( stderr, "This printer requires PPD: %s\n", cPPD.c_str() );
 
-	/* Check if the file is already in cups/share/cups/model/ */
-	cFromPath = String( "/system/indexes/share/cups/model/" ) + cPPD;
-	cToPath = String( "/system/config/cups/ppd/" ) + cName + String( ".ppd" );
+	/* Check if the file is already in cups/data/cups/model/ */
+	cFromPath = String( "/system/indexes/data/cups/model/" ) + cPPD;
+	cToPath = String( "/etc/cups/ppd/" ) + cName + String( ".ppd" );
 
 	/* If required, copy the PPD from CD first */
 	nError = stat( cFromPath.c_str(), &sStat );
 	if( nError != EOK )
 		nError = GetPPD( cPPD );
 
-	/* Copy from cups/share/cups/model/ to etc/cups/ppd/ */
+	/* Copy from cups/data/cups/model/ to etc/cups/ppd/ */
 	if( nError == EOK )
 		nError = CopyPPD( cFromPath, cToPath );
 
@@ -425,7 +425,7 @@ status_t PrintersWindow::GetPPD( String cPPD )
 	if( nError == EOK )
 	{
 		cFromPath += String( "/Packages/CUPS/PPD/" ) + cPPD;
-		cToPath = String( "/system/indexes/share/cups/model/" ) + cPPD;
+		cToPath = String( "/system/indexes/data/cups/model/" ) + cPPD;
 
 		nError = CopyPPD( cFromPath, cToPath );
 	}
@@ -438,8 +438,8 @@ status_t PrintersWindow::RenamePPD( String cOriginal, String cNew )
 	status_t nError = EOK;
 	String cFromPath, cToPath;
 
-	cFromPath = String( "/system/config/cups/ppd/" ) + cOriginal + String( ".ppd" );
-	cToPath = String( "/system/config/cups/ppd/" ) + cNew + String( ".ppd" );
+	cFromPath = String( "/etc/cups/ppd/" ) + cOriginal + String( ".ppd" );
+	cToPath = String( "/etc/cups/ppd/" ) + cNew + String( ".ppd" );
 
 	if( rename( cFromPath.c_str(), cToPath.c_str() ) != 0 )
 		nError = errno;

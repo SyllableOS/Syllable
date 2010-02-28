@@ -25,7 +25,7 @@
 #include <util/string.h>
 #include <vector>
 
-#define PRINTERS_CONF		"/system/config/cups/printers.conf"
+#define PRINTERS_CONF		"/etc/cups/printers.conf"
 #define SYLLABLE_CD_PREFIX	"Syllable "
 
 class CUPS_Printer
@@ -88,4 +88,3 @@ class CUPS_Printer
 };
 
 #endif	/* PRINTERS_CONFIG_H */
-
