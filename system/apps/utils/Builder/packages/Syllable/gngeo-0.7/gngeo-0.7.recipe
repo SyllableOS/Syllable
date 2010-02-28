@@ -13,6 +13,6 @@ needs
 
 patch-config
 
-configure-env		CPPFLAGS "$CPPFLAGS -I/system/indexes/include/SDL"
+;configure-env		CPPFLAGS "$CPPFLAGS -I/system/indexes/framework/headers/SDL"
 
-make-vars			CFLAGS '-DNO_OPENGL'
+make-vars			CFLAGS -DNO_OPENGL

@@ -16,24 +16,24 @@ build-needs			OpenSSL
 make				true
 
 install-tree
-	etc
-	etc/ssl
-	etc/ssl/certs
+	settings
+	settings/ssl
+	settings/ssl/certs
 install				true
-install-files		*.pem etc/ssl/certs/
+install-files		*.pem settings/ssl/certs/
 
-; certs directory already created by OpenSSL:
-;links				etc/ssl/certs /etc/ssl/
+; certs directory should already be created by OpenSSL:
+;links				settings/ssl/certs /etc/ssl/
 
 pre-register
-	for pem in etc/ssl/certs/*.pem
+	for certificate in settings/ssl/certs/*.pem
 	do
-		cat $pem &&
+		cat $certificate &&
 		echo ""
-	done > etc/ssl/ca-bundle.crt
+	done > settings/ssl/ca-bundle.crt
 ;	Ubuntu:
-;	done > etc/ssl/certs/ca-certificates.crt
+;	done > settings/ssl/certs/ca-certificates.crt
 
 move-files
-	etc/ssl/certs/*.pem		/etc/ssl/certs/
-	etc/ssl/ca-bundle.crt	/etc/ssl/
+	settings/ssl/certs/*.pem	/etc/ssl/certs/
+	settings/ssl/ca-bundle.crt	/etc/ssl/

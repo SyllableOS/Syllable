@@ -7,27 +7,27 @@ summary
 licenses			GPL-2
 
 home				www.cl.cam.ac.uk/~mgk25/jbigkit/
-packages			jbigkit-2.0
 locations			http://www.cl.cam.ac.uk/~mgk25/download/
+packages			jbigkit-2.0
 
 test-targets		test
 
 install-tree
-	include
-	lib
-	bin
-	man
-	man/man1
-	man/man5
+	programs
+	framework/libraries
+	framework/headers
+	manuals
+	manuals/man1
+	manuals/man5
 install				true
 install-files
-	libjbig/libjbig*.a	lib/
-	libjbig/jbig*.h		include/
-	pbmtools/jbgtopbm	bin/
-	pbmtools/pbmtojbg	bin/
-	pbmtools/jbgtopbm.1	man/man1/
-	pbmtools/pbmtojbg.1	man/man1/
-	pbmtools/pgm.5		man/man5/
+	pbmtools/jbgtopbm	programs/
+	pbmtools/pbmtojbg	programs/
+	libjbig/libjbig*.a	framework/libraries/
+	libjbig/jbig*.h		framework/headers/
+	pbmtools/jbgtopbm.1	manuals/man1/
+	pbmtools/pbmtojbg.1	manuals/man1/
+	pbmtools/pgm.5		manuals/man5/
 
 documentation
 	ANNOUNCE INSTALL COPYING CHANGES TODO

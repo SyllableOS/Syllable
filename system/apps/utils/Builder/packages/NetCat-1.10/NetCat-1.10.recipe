@@ -15,10 +15,10 @@ locations
 ;	Gone:
 ;	http://www.vulnwatch.org/netcat/
 
-install-tree		bin
+install-tree		programs
 install				true
 install-files
-	nc				bin/
+	nc				programs/
 	scripts			.
 
 documentation		README netcat.blurb Changelog

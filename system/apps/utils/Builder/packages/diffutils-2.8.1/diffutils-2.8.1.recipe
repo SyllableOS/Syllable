@@ -8,6 +8,8 @@ packages			diffutils/diffutils-2.8.1
 
 patch-config		config
 
+no-datarootdir
+
 system-prefix-var	DESTDIR
 
 documentation		README COPYING ABOUT-NLS NEWS ChangeLog AUTHORS THANKS

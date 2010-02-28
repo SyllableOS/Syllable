@@ -25,7 +25,7 @@ configure-options
 	--disable-uuidd
 
 system-prefix-var	DESTDIR
-install-tree		etc
+install-tree		settings
 install-targets
 	install
 ;	Static libraries and headers:
@@ -33,11 +33,11 @@ install-targets
 
 documentation
 	README COPYING ABOUT-NLS RELEASE-NOTES
-;	doc
+;	doc/*
 build-docs			INSTALL*
 internal-docs		SUBMITTING-PATCHES SHLIBS
 
 ; Linked into mount, which is called before the loader path is set:
 _links
-	lib/libblkid.so.1	/system/resources/glibc/2.7/lib/
-	lib/libuuid.so.1	/system/resources/glibc/2.7/lib/
+	framework/libraries/libblkid.so.1	/system/resources/glibc/2.7/framework/libraries/
+	framework/libraries/libuuid.so.1	/system/resources/glibc/2.7/framework/libraries/

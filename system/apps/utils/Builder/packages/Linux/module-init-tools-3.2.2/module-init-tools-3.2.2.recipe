@@ -12,6 +12,7 @@ build-needs			zlib--static
 ;build-dir			.
 
 ;configure-args		--prefix=/
+no-datarootdir
 configure-options
 	--sysconfdir=/etc
 	--with-moddir=/lib/modules

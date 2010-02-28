@@ -12,10 +12,9 @@ locations			http://search.cpan.org/CPAN/authors/id/M/MS/MSERGEANT/
 
 needs
 	perl
-	expat
+	Expat
 
-configure			perl Makefile.PL EXPATINCPATH=/usr/expat/include EXPATLIBPATH=/usr/expat/lib
+configure			perl Makefile.PL EXPATINCPATH=/resources/expat/framework/headers EXPATLIBPATH=/resources/expat/framework/libraries
 
 documentation		README Changes
 develop-docs		MANIFEST samples
-

@@ -17,13 +17,13 @@ run-needs
 
 patch
 ;	Shebang:
-	sed -i 's/local\/bin\//bin\/env /'															qm.r &&
+	sed -i 's~local/bin/~bin/env ~'														qm.r &&
 ;	UK time zone:
-	sed -i 's/-6:00/0:00/'																		qm.r &&
-	sed -i 's/Path\/To\/app\/application/resources\/Cheyenne\/framework\/REBOL\/QuarterMaster/'	qm.r &&
-	sed -i 's/Path\/To\/app\/space/resources\/Cheyenne\/framework\/REBOL\/QuarterMaster/'		qm.r &&
-	sed -i 's/Path\/To\/support/resources\/Cheyenne\/framework\/REBOL\/QuarterMaster/'			qm.r &&
-	sed -i 's/Path\/To\/HTTPD\/root/resources\/Cheyenne\/framework\/REBOL\/Cheyenne\/www/'		qm.r
+	sed -i s/-6:00/0:00/																qm.r &&
+	sed -i s~Path/To/app/application~resources/Cheyenne/framework/REBOL/QuarterMaster~	qm.r &&
+	sed -i s~Path/To/app/space~resources/Cheyenne/framework/REBOL/QuarterMaster~		qm.r &&
+	sed -i s~Path/To/support~resources/Cheyenne/framework/REBOL/QuarterMaster~			qm.r &&
+	sed -i s~Path/To/HTTPD/root~resources/Cheyenne/framework/REBOL/Cheyenne/www/		qm.r
 
 make				true
 

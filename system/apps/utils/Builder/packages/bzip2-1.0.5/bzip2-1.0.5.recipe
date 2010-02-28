@@ -27,7 +27,7 @@ internal-docs		README.XML.STUFF
 
 ; Replace links that are incorrect when installing in an image area:
 links
-	bzdiff	bin/bzcmp
-	bzgrep	bin/bzegrep
-	bzgrep	bin/bzfgrep
-	bzmore	bin/bzless
+	bzdiff			programs/bzcmp
+	bzgrep			programs/bzegrep
+	bzgrep			programs/bzfgrep
+	bzmore			programs/bzless

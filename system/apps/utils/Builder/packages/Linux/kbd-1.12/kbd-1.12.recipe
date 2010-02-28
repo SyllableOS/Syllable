@@ -1,5 +1,6 @@
 authors				Kaj de Vos
 status				testing
+warnings			Assumes system installation!
 
 licenses			GPL-2+ other
 locations
@@ -8,8 +9,16 @@ locations
 
 build-dir			.
 
+no-bindir
+no-sbindir
+no-libdir
+no-includedir
+no-libexecdir
+no-datarootdir
 no-infodir
-;configure-options	--datadir=/lib/kbd
+configure-options
+;	--datadir=/lib/kbd
+	--datadir=/system/resources/kbd/1.12/data
 
 system-prefix-var	DESTDIR
 ; $prefix must be empty:
@@ -18,8 +27,9 @@ system-prefix-var	DESTDIR
 documentation
 	README COPYING CHANGES CREDITS
 	doc/TODO
-;	doc
+;	doc/*
+
 _links
-	bin/kbd_mode	/bin/
-	bin/openvt		/bin/
-	bin/setfont		/bin/
+	programs/kbd_mode	/bin/
+	programs/openvt		/bin/
+	programs/setfont	/bin/

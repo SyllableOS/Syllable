@@ -11,10 +11,12 @@ description
 licenses			LGPL BSD
 
 home				libusb.sourceforge.net
-packages			libusb/libusb-0.1.12
 ;locations			ftp://ftp.libusb.sourceforge.net/pub/libusb/
+packages			libusb/libusb-0.1.12
 
 build-recommends	doxygen
+
+no-datarootdir
 
 system-prefix-var	DESTDIR
 

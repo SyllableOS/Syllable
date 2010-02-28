@@ -14,11 +14,11 @@ licenses
 home
 	urlan.sf.net
 ;	wsrebol.sf.net
+locations			http://downloads.syllable.org/sources/resources/ORCA/
 packages
 	ORCA-498.source
 ;	M2-498.source ORCA--current
-locations			http://downloads.syllable.org/sources/resources/ORCA/
-archives
+_archives
 	svn co http://urlan.svn.sourceforge.net/svnroot/urlan/trunk/orca
 ;	M2:
 ;	svn co http://urlan.svn.sourceforge.net/svnroot/urlan/trunk/m2
@@ -41,10 +41,14 @@ _configure
 	configure
 ;	Fix ORCA_LFLAGS in Makefile
 
-install-tree		bin lib include
+install-tree
+	programs
+	framework
+	framework/libraries
+	framework/headers
 install				true
 install-files
-	orca			bin
-	liborca0.a		lib
-	ovalue.h		include
+	orca			programs
+	liborca0.a		framework/libraries
+	ovalue.h		framework/headers
 documentation		README LICENSE ChangeLog TODO

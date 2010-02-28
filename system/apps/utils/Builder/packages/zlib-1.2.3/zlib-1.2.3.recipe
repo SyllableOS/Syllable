@@ -1,9 +1,9 @@
 authors				Kaj de Vos
-notes				Thinks mmap works!
+;notes				Thinks mmap works on Desktop!
 
 ;inherits			sourceforge
 
-headline			Compression library
+headline			Compression programming library
 description
 	A Massively Spiffy Yet Delicately Unobtrusive Compression Library.
 

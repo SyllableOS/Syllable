@@ -32,8 +32,8 @@ system-prefix-var	DESTDIR
 
 documentation
 	README ABOUT-NLS COPYING NEWS ChangeLog TODO
-;	doc
+;	doc/*
 
 links
-	bin/login	/bin/
-;	bin/su		/bin/
+	programs/login	/bin/
+;	programs/su		/bin/

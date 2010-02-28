@@ -28,10 +28,8 @@ configure-options
 
 system-prefix-var	DESTDIR
 
-;install-vars		docdir '/usr/share/doc/db-4.6.21'
-
 documentation		README LICENSE
 ; Optimise wasteful duplicates:
 links
-	libdb-4.6.a		lib/libdb.a
-	libdb_cxx-4.6.a	lib/libdb_cxx.a
+	libdb-4.6.a		framework/libraries/libdb.a
+	libdb_cxx-4.6.a	framework/libraries/libdb_cxx.a

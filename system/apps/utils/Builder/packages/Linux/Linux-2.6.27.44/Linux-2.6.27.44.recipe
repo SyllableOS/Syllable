@@ -61,8 +61,8 @@ _make-targets
 ;	silentoldconfig
 ;	all
 
-;merge-install
 super-install
+;merge-install
 
 install-tree
 install-targets		modules_install

@@ -36,9 +36,9 @@ test-targets
 
 system-prefix-var	DEST_DIR
 install-tree
-	bin
-	lib
-	man
+	programs
+	framework/libraries
+	manuals
 install
 	true
 ;	./install.sh

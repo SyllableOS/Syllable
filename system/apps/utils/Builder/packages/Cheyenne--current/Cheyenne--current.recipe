@@ -19,9 +19,9 @@ run-needs
 
 patch
 ;	UniServe path:
-	sed -i 's/%..\/UniServe/%\/resources\/indexes\/framework\/REBOL\/UniServe/'							Cheyenne/cheyenne.r
+	sed -i s~%../UniServe~%/resources/indexes/framework/REBOL/UniServe~							Cheyenne/cheyenne.r
 ;	For QuarterMaster:
-;	sed -i 's/soc\/path-info:\sjoin\sdata\/in\/path\sdata\/in\/target/soc\/path-info: data\/in\/url/'	Cheyenne/handlers/CGI.r
+;	sed -i 's~soc/path-info:\sjoin\sdata/in/path\sdata/in/target~soc/path-info: data/in/url~'	Cheyenne/handlers/CGI.r
 
 make				true
 

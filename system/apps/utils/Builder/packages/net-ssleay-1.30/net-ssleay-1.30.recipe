@@ -14,10 +14,10 @@ locations			http://search.cpan.org/CPAN/authors/id/F/FL/FLORA/
 
 needs
 	perl >= 5.003
-	openssl >= 0.9.6d
+	OpenSSL >= 0.9.6d
 ;install-needs		perldoc
 
-configure-cmd		perl Makefile.PL /resources/openssl
+configure-cmd		perl Makefile.PL /resources/OpenSSL
 configure-prefix	"PREFIX="
 
 test-targets		test

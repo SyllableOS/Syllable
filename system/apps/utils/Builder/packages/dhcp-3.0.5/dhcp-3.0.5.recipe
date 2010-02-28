@@ -33,4 +33,4 @@ install-vars
 
 documentation
 	README LICENSE RELNOTES
-;	doc
+;	doc/*

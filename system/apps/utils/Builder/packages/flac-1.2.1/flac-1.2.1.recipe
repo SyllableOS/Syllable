@@ -1,6 +1,7 @@
 authors
 	Rui Caridade
 	Kaj de Vos
+maintainers			Kaj de Vos
 status				testing
 
 inherits			sourceforge
@@ -18,12 +19,13 @@ packages			flac/flac-1.2.1
 build-needs			gawk
 build-recommends	nasm >= 0.98.30
 recommends
-	libogg >= 1.1.2
+	LibOgg >= 1.1.2
 	xmms >= 0.9.5.1
 
 ; Just for installation:
 build-dir			.
 
+no-datarootdir
 ;configure-options	--enable-sse
 
 system-prefix-var	DESTDIR

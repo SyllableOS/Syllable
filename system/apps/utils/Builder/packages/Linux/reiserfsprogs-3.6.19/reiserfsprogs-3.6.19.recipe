@@ -13,8 +13,9 @@ needs				E2FSPrograms
 
 build-dir			.
 
-; To find e2fsprogs:
-configure-env		CPPFLAGS "$CPPFLAGS -I/resources/indexes/include"
+; To find E2FSPrograms:
+configure-env		CPPFLAGS "$CPPFLAGS -I/resources/indexes/framework/headers"
+no-datarootdir
 ;configure-options	--sbindir=/sbin
 
 ;super-install
@@ -26,5 +27,5 @@ documentation
 ;	NEWS AUTHORS
 
 links
-	reiserfsck sbin/fsck.reiserfs
-	mkreiserfs sbin/mkfs.reiserfs
+	reiserfsck system-programs/fsck.reiserfs
+	mkreiserfs system-programs/mkfs.reiserfs

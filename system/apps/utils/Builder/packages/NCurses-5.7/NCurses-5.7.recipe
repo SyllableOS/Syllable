@@ -17,7 +17,9 @@ build-needs
 	diffutils
 conflicts			termcap
 
+; Broken:
 no-includedir
+no-datarootdir
 
 system-prefix-var	DESTDIR
 

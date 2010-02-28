@@ -1,7 +1,7 @@
 authors
 	Kristian Van Der Vliet
 	Kaj de Vos
-status				developing
+status				testing
 
 headline			CD/DVD/BluRay command line recording suite
 description
@@ -25,8 +25,8 @@ locations
 	http://downloads.syllable.org/sources/resources/CDRTools/
 packages			cdrtools-2.01.01a61
 
-; Prevent configure - it's deliberately broken:
-configure			true
+; Prevent configure - it's deliberately broken - and activate both install-prefix-var and system-prefix-var:
+patch				rm configure
 
 install-prefix-var	INS_BASE
 system-prefix-var	DESTDIR

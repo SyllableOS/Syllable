@@ -16,10 +16,13 @@ locations
 	ftp://ftp.freebsd.org/pub/FreeBSD/ports/distfiles/
 ;	http://ftp.de.debian.org/debian/pool/main/m/msntp/msntp_1.6.dfsg.orig.tar.gz
 
-make-vars			LIBS '-lm'
+make-vars			LIBS -lm
 
-install-tree		bin man man/man1
+install-tree
+	programs
+	manuals
+	manuals/man1
 install-files
-	msntp			bin/
-	msntp.1			man/man1/
+	msntp			programs/
+	msntp.1			manuals/man1/
 documentation		README Copyright RFC2030.TXT

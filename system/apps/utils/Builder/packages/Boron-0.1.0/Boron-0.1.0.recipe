@@ -22,11 +22,11 @@ home
 ;	urlan.sf.net
 ;	sf.net/apps/trac/urlan/wiki/BoronProject
 ;	wsrebol.sf.net
+locations			http://downloads.syllable.org/sources/resources/Boron/
 packages
 	Boron-0.1.0-20091221.source
 ;	M2-498.source Boron-0.1.0
-locations			http://downloads.syllable.org/sources/resources/Boron/
-archives
+_archives
 	git clone git://gitorious.org/boron/boron.git
 ;	M2:
 ;	svn co http://urlan.svn.sourceforge.net/svnroot/urlan/trunk/m2
@@ -49,25 +49,26 @@ build-dir			.
 ; REBOL or Boron needs to be in /usr/bin/ to run M2 from configure:
 ;configure			cmake .
 
-post-make			sed -i 's~"urlan.h"~<boron/urlan.h>~' boron.h
+post-make			sed -i s~"urlan.h"~<boron/urlan.h>~ boron.h
 
 install-tree
-	bin
-	include
-	include/boron
-	lib
+	programs
+	framework
+	framework/libraries
+	framework/headers
+	framework/headers/boron
 install				true
 install-files
-	boron				bin/
-	boron.h				include/boron/
-	urlan/urlan.h		include/boron/
-	urlan/urlan_atoms.h	include/boron/
-	urlan/bignum.h		include/boron/
-	libboron.so.0.1.0	lib/
+	boron				programs/
+	libboron.so.0.1.0	framework/libraries/
+	boron.h				framework/headers/boron/
+	urlan/urlan.h		framework/headers/boron/
+	urlan/urlan_atoms.h	framework/headers/boron/
+	urlan/bignum.h		framework/headers/boron/
 
 links
-	libboron.so.0.1.0	lib/libboron.so.0
-	libboron.so.0.1.0	lib/libboron.so
+	libboron.so.0.1.0	framework/libraries/libboron.so.0
+	libboron.so.0.1.0	framework/libraries/libboron.so
 
 documentation		LICENSE LICENSE.GPL
 develop-docs

@@ -4,15 +4,18 @@ status				testing
 inherits			Linux-2.6.27.44
 
 configure
-;	Make Linux build directory available from the host system for external kernel modules:
-	SOURCE=$PWD &&
+;	Make built Linux source available from the host system for external kernel modules:
 	sudo mkdir --parents /lib/modules/2.6.27.44-Syllable &&
-	cd /lib/modules/2.6.27.44-Syllable &&
-	sudo ln -sf $SOURCE build &&
-;	Make the kernel modules installation go into the package location in the system image:
-	ln -sf ../../system/resources/Linux/2.6.27.44/framework/libraries/modules/2.6.27.44-Syllable $IMAGE/lib/modules/
+	sudo ln -sf $PWD /lib/modules/2.6.27.44-Syllable/build &&
+;	Make the kernel modules installation go into the package location in the system image.
+;	At first the kernel modules will be in the traditional subdirectory,
+;	where depmod needs to find them.
+	ln -sf ../../system/resources/Linux/lib/modules/2.6.27.44-Syllable $IMAGE/lib/modules/
 
-_links
+; Only headers would be there in a full system build:
+;merge-install
+
+links
 ;	For linux-fusion:
 ;	framework/headers/linux																	/usr/include/
 ;	Get external kernel modules to install themselves among this kernel's modules:

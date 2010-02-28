@@ -23,7 +23,7 @@ configure-options
 ;super-install
 
 links
-;	GLibC has broken internal relative links:
+;	Internal relative links are broken:
 	framework/libraries/								lib
 	/system/indexes/framework/libraries/ld-linux.so.2	/lib/
 ;	For GCC. Sigh:

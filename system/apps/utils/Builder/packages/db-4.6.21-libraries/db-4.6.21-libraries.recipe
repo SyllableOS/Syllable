@@ -8,4 +8,4 @@ inherits			db-4.6.21
 configure-options	--enable-compat185
 
 ; Optimise wasteful duplicates:
-links				libdb-4.6.a lib/libdb.a
+links				libdb-4.6.a framework/libraries/libdb.a

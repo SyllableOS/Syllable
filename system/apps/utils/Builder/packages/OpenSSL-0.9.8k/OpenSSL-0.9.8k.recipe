@@ -53,7 +53,7 @@ system-prefix-var	INSTALL_PREFIX
 install-vars
 	OPENSSLDIR		'/etc/ssl'
 	INSTALLTOP		'/resources/OpenSSL'
-	MANDIR			'/resources/OpenSSL/man'
+	MANDIR			'/resources/OpenSSL/manuals'
 
 documentation		README README.ENGINE FAQ PROBLEMS LICENSE NEWS CHANGES doc
 develop-docs		INSTALL demos
