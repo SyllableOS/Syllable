@@ -294,6 +294,9 @@ modules
 	system libs/NCurses-5.7
 	system libs/ReadLine-6.0
 
+;	For rescopy:
+;	apps/gnu/BinaryUtils-2.19.1-objcopy
+
 ;	GrUB can use Curses:
 	sys/boot/grub-0.97
 
@@ -348,8 +351,6 @@ modules
 	apps/other/dhcp-3.0.5
 	apps/other/msntp-1.6
 
-;	For rescopy:
-;	apps/gnu/BinaryUtils-2.19.1-objcopy
 	apps/gnu/gzip-1.3.12
 	apps/gnu/INetUtils-1.6
 	apps/gnu/Less-429
