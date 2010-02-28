@@ -6,11 +6,12 @@ inherits			Linux-2.6.27.44
 configure
 ;	Make built Linux source available from the host system for external kernel modules:
 	sudo mkdir --parents /lib/modules/2.6.27.44-Syllable &&
+	sudo rm /lib/modules/2.6.27.44-Syllable/build &&
 	sudo ln -sf $PWD /lib/modules/2.6.27.44-Syllable/build &&
 ;	Make the kernel modules installation go into the package location in the system image.
 ;	At first the kernel modules will be in the traditional subdirectory,
 ;	where depmod needs to find them.
-	ln -sf ../../system/resources/Linux/lib/modules/2.6.27.44-Syllable $IMAGE/lib/modules/
+	ln -sf ../../system/resources/Linux/2.6.27.44/lib/modules/2.6.27.44-Syllable $IMAGE/lib/modules/
 
 ; Only headers would be there in a full system build:
 ;merge-install
