@@ -1,8 +1,12 @@
+* February 28, 2010, Kaj de Vos *
+
+Fixed two keys in the Dvorak keymap. Patch by D. O'Neill.
+
 * February 17, 2010, Kaj de Vos *
 
 Implemented, in Packager, extra symlinking in the symlink pools to point to the main version
 of installed resource packages. This allows to point to packages in versioned pools without
-mentioning the version. The package symlink points to the main / currently selected version.
+mentioning the version. The package symlink points to the main/currently selected version.
 
 The links are made in the symlink pools, not in the installed packages. This allows to have
 multiple symlink pools making different selections of the same packages.
