@@ -1,3 +1,3 @@
 export AS=as
-# Trips up some packages, such as OpenSSH:
+# Trips up the build of some packages, such as OpenSSH:
 #export LD=ld

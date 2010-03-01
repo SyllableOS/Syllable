@@ -45,10 +45,9 @@ build-docs			INSTALL
 
 links
 ;	Broken link into system root:
-	libudev.so.0.3.0		framework/libraries/libudev.so
+;	libudev.so.0.3.0		framework/libraries/libudev.so
 ;	For LFS init scripts:
 	system-programs/udevd	/sbin/
 	system-programs/udevadm	/sbin/
 
-; Somehow leads to two installed versions?
-move-files			/lib/libudev.so* framework/libraries/
+;move-files			/lib/libudev.so* framework/libraries/

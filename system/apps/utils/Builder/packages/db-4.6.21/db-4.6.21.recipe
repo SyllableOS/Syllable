@@ -33,3 +33,4 @@ documentation		README LICENSE
 links
 	libdb-4.6.a		framework/libraries/libdb.a
 	libdb_cxx-4.6.a	framework/libraries/libdb_cxx.a
+move-files			docs/* documentation/

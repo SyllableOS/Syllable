@@ -21,5 +21,6 @@ system-prefix-var	DESTDIR
 
 documentation		README COPYING COPYING.DOC ABOUT-NLS BUGS NEWS ChangeLog AUTHORS THANKS
 build-docs			README.boot
+
 ; For FindUtils:
-links				bin/sed /bin/
+links				programs/sed /bin/

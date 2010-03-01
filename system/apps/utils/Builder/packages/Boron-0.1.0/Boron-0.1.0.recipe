@@ -49,7 +49,7 @@ build-dir			.
 ; REBOL or Boron needs to be in /usr/bin/ to run M2 from configure:
 ;configure			cmake .
 
-post-make			sed -i s~"urlan.h"~<boron/urlan.h>~ boron.h
+post-make			sed -i 's~"urlan.h"~<boron/urlan.h>~' boron.h
 
 install-tree
 	programs

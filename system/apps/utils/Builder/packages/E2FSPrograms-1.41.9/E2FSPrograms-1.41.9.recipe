@@ -1,5 +1,6 @@
 authors				Kaj de Vos
 status				testing
+warnings			Assumes system installation!
 
 inherits			sourceforge
 
@@ -17,6 +18,7 @@ conflicts			UtilLinuxNG
 
 configure-options
 ;	--with-root-prefix=''
+	--sysconfdir=/system/resources/E2FSPrograms/1.41.9/settings
 	--enable-elf-shlibs
 ;	Delivered by UtilLinuxNG:
 	--disable-fsck
@@ -25,7 +27,7 @@ configure-options
 	--disable-uuidd
 
 system-prefix-var	DESTDIR
-install-tree		settings
+;install-tree		settings
 install-targets
 	install
 ;	Static libraries and headers:

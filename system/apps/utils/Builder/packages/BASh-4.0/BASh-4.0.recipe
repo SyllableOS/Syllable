@@ -28,5 +28,5 @@ documentation
 	README ABOUT-NLS POSIX RBASH COPYING NEWS CHANGES COMPAT NOTES Y2K AUTHORS
 	doc/FAQ doc/INTRO examples
 links
-	bin/bash		/bin/bash
-	bin/bash		/bin/sh
+	programs/bash	/bin/bash
+	programs/bash	/bin/sh

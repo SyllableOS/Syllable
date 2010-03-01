@@ -23,32 +23,32 @@ system-prefix-var	DESTDIR
 documentation		README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS THANKS-to-translators
 links
 ;	For she-bang lines:
-	bin/env			/usr/bin
+	programs/env		/usr/bin/
 ;	For GLibC:
-	bin/pwd			/bin
+	programs/pwd		/bin/
 ;	For JEd, S-Lang:
-	bin/cp			/bin
-	bin/rm			/bin
-	bin/ln			/bin
+	programs/cp			/bin/
+	programs/rm			/bin/
+	programs/ln			/bin/
 ;	For NcFTP:
-	bin/ls			/bin
+	programs/ls			/bin/
 ;	For SaMBa:
-	bin/echo		/bin
+	programs/echo		/bin/
 ;	For FindUtils:
-	bin/sort		/bin
-;	For general compatibility:
-	bin/cat			/bin
-	bin/chgrp		/bin
-	bin/chmod		/bin
-	bin/chown		/bin
-	bin/date		/bin
-	bin/dd			/bin
-	bin/false		/bin
-	bin/hostname	/bin
-	bin/mkdir		/bin
-	bin/mv			/bin
-	bin/rmdir		/bin
-	bin/su			/bin
-	bin/sync		/bin
-	bin/true		/bin
-	bin/uname		/bin
+	programs/sort		/bin/
+;	For general POSIX compatibility:
+	programs/cat		/bin/
+	programs/chgrp		/bin/
+	programs/chmod		/bin/
+	programs/chown		/bin/
+	programs/date		/bin/
+	programs/dd			/bin/
+	programs/false		/bin/
+	programs/hostname	/bin/
+	programs/mkdir		/bin/
+	programs/mv			/bin/
+	programs/rmdir		/bin/
+	programs/su			/bin/
+	programs/sync		/bin/
+	programs/true		/bin/
+	programs/uname		/bin/
