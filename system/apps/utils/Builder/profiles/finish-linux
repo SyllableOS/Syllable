@@ -28,7 +28,7 @@ finish
 ;	Clean out kernel source link from the host system:
 	sudo rm /lib/modules/2.6.27.44-Syllable/build
 
-	mv users/root users/administrator &&
+	mv users/root/ users/administrator &&
 	chown -R administrator:administrators users/administrator &&
 
 	cp resources/grub/framework/libraries/grub/i386-pc/* boot/grub/ &&
