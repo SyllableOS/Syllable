@@ -19,7 +19,7 @@ build-needs
 install-needs		coreutils
 
 ; For GLibC 2.7:
-patch				sed -i s/futimens/cu_&/ src/{copy,touch}.c lib/utimens.{c,h}
+patch				sed -i 's/futimens/cu_&/' src/{copy,touch}.c lib/utimens.{c,h}
 
 system-prefix-var	DESTDIR
 

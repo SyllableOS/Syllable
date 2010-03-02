@@ -63,7 +63,11 @@ install
 ;		Files/Fonts \
 		Files/Compile/Archives \
 		Files/Compile/Sources \
-		Programs/Scripts/2.9.11
+		Programs/Scripts/2.9.11 \
+
+;		Syllable Desktop base system
+
+		Programs/Glibc/2.7
 	do
 		mkdir --parents $IMAGE/$dir
 	done
@@ -123,5 +127,13 @@ links
 ;	For Compile:
 	/resources/indexes/bin/make					/usr/bin/
 ;	/System/Index/bin/make						/usr/bin/
+
+;	Syllable Desktop base system
+
+	2.7											/Programs/Glibc/Current
+;	The loader needs to be available through this path:
+	/system/indexes/glibc/framework/libraries/	/Programs/Glibc/2.7/lib
+	/Programs/Glibc/2.7/lib/ld-linux.so.2		/System/Index/lib/
+	/System/Index/lib/ld-linux.so.2				/lib/
 
 documentation		2.9.11/doc/*

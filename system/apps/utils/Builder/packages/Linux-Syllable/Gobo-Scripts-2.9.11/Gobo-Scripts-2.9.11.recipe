@@ -213,7 +213,7 @@ links
 
 	2.7													/Programs/Glibc/Current
 ;	The loader needs to be available through this path:
-	/system/resources/glibc/2.7/framework/libraries/	/Programs/Glibc/2.7/
+	/system/indexes/glibc/framework/libraries/			/Programs/Glibc/2.7/lib
 	/Programs/Glibc/2.7/lib/ld-linux.so.2				/System/Index/lib/
 	/System/Index/lib/ld-linux.so.2						/lib/
 

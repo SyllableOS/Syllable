@@ -8,8 +8,8 @@ needs
 
 ; For LFS boot scripts:
 links
-	sbin/dhclient			/sbin
-	sbin/dhclient-script	/sbin
+	system-programs/dhclient		/sbin/
+	system-programs/dhclient-script	/sbin/
 ;	Server:
-	sbin/dhcpd				/usr/sbin
-;	sbin/dhcrelay			/usr/sbin
+	system-programs/dhcpd			/usr/sbin/
+;	system-programs/dhcrelay		/usr/sbin/
