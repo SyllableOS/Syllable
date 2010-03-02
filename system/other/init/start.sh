@@ -13,7 +13,7 @@
 # process you should edit these files instead.
 
 # Log local kernel output into /var/log/kernel
-/system/bin/dbterm 8 >> /var/log/kernel &
+/system/programs/dbterm 8 >> /var/log/kernel &
 
 # Add a few additional symlinks which simplify navigation around the filesystem
 ln -s boot/applications/ /
@@ -32,14 +32,14 @@ fi
 
 # If the graphical login isn't available, failsafe to a standalone server and
 # abort further initialisation
-if [ ! -e /system/bin/dlogin ]
+if [ ! -e /system/programs/dlogin ]
 then
 	aterm &
 	exit 1
 fi
 
 # Start the graphical login and servers
-/system/bin/dlogin < /dev/null >> /var/log/desktop 2>&1 &
+/system/programs/dlogin < /dev/null >> /var/log/desktop 2>&1 &
 
 # No more environment variables can be defined for the user's environment
 # after DLogin has started
@@ -54,9 +54,9 @@ source /system/network-start.sh
 
 # inetd is a special case and is always started first if INetUtils is installed
 
-if [ -e /resources/indexes/libexec/inetd ]
+if [ -e /resources/indexes/framework/executables/inetd ]
 then
-	/resources/indexes/libexec/inetd &
+	/resources/indexes/framework/executables/inetd &
 fi
 
 # Packages that require initalisation can include tasks/setup/ and tasks/start/
