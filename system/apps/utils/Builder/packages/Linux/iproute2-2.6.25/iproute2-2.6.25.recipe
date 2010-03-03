@@ -35,20 +35,20 @@ _make-env
 ;	FHS compatibility:
 ;	SBINDIR '/sbin'
 ;	Doesn't work:
-;	KERNEL_INCLUDE "$IMAGE/system/development/resources/linux/2.6.25/include"
+;	KERNEL_INCLUDE $IMAGE/system/development/resources/linux/2.6.25/framework/headers
 
 system-prefix-var	DESTDIR
 install-tree
 ; FHS compatibility:
-;install-vars		SBINDIR '/sbin'
+;install-vars		SBINDIR /sbin
 
 documentation
 	README* COPYING ChangeLog
-;	doc
+;	doc/*
 ;	examples
 ;	Old:
 ;	RELNOTES
 internal-docs		RELNOTES
 
 ; FHS compatibility:
-;links				sbin/arpd /usr/sbin/
+;links				system-programs/arpd /usr/sbin/

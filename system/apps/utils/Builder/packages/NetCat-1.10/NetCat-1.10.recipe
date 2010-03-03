@@ -17,8 +17,8 @@ locations
 
 install-tree		programs
 install				true
-install-files
-	nc				programs/
-	scripts			.
+install-files		nc programs/
 
-documentation		README netcat.blurb Changelog
+documentation
+	README netcat.blurb Changelog
+	scripts/

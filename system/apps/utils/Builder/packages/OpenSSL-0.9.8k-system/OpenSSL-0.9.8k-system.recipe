@@ -1,9 +1,10 @@
 authors 			Kaj de Vos
 status				testing
+warnings
 
 inherits			OpenSSL-0.9.8k
 
 install-vars
-	OPENSSLDIR		'/etc/ssl'
-	INSTALLTOP		'/system/resources/OpenSSL/0.9.8k'
-	MANDIR			'/system/resources/OpenSSL/0.9.8k/manuals'
+	OPENSSLDIR		/etc/ssl
+	INSTALLTOP		/system/resources/OpenSSL/0.9.8k
+	MANDIR			/system/resources/OpenSSL/0.9.8k/manuals

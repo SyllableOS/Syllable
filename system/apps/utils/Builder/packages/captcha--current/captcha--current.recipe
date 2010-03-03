@@ -10,14 +10,14 @@ home				softinnov.org/rebol/captcha.shtml
 packages			Captcha captcha--current
 locations			http://softinnov.org/dl/
 
-run-needs			rebol
+run-needs			REBOL 2
 
 make				true
 
 install-tree
-	lib
-	lib/REBOL
+	framework
+	framework/REBOL
 install				true
 install-files
-	*.r				lib/REBOL/
-	Fonts			lib/REBOL/
+	*.r				framework/REBOL/
+	Fonts/			framework/REBOL/

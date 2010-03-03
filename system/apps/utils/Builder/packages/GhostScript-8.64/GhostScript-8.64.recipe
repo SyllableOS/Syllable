@@ -2,6 +2,7 @@ authors
 	Kristian Van Der Vliet
 	Kaj de Vos
 status				testing
+warnings			Installs extensions into CUPS!
 
 inherits			sourceforge
 

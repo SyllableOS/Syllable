@@ -14,6 +14,8 @@ packages			links-2.3pre1
 needs				LibPNG
 build-recommends	PackageConfigure
 
+no-datarootdir
+
 system-prefix-var	DESTDIR
 
 documentation

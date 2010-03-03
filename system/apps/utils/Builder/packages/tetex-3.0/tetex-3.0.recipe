@@ -29,13 +29,13 @@ build-needs
 ;	perl
 ;	tk
 recommends
-	ncurses
+	NCurses
 	texinfo
-	ghostscript
+	GhostScript
 ;conflicts			texinfo
 
 configure-options
-;	--datadir=/resources/tetex/share/texmf
+;	--datadir=/resources/tetex/data/texmf
 ;	Prevent conflict:
 	--without-texinfo
 ;	--disable-multiplatform
@@ -46,7 +46,7 @@ configure-options
 	--with-system-pnglib
 	--with-system-gd
 
-install-files		texmf share/
+install-files		texmf/ data/
 documentation
 	README LICENSE.src NEWS ChangeLog CREDITS
 	texmf/LICENSE.texmf

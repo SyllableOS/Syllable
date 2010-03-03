@@ -28,6 +28,7 @@ recommends
 	db
 	expat
 
+; Creates both framework/headers/ and include/ directories and can't merge:
 configure-options	--enable-shared
 
 test-targets
@@ -40,9 +41,10 @@ system-prefix-var	DESTDIR
 
 documentation
 	README LICENSE Misc/NEWS Misc/HISTORY Misc/ACKS
-;	Misc Doc
-develop-docs		Demo
+;	Misc/ Doc/*
+develop-docs		Demo/
 
 ;links				programs/python /usr/bin/python
 
-delete-files		framework/libraries/python2.6/test
+; Big:
+delete-files		framework/libraries/python2.6/test/

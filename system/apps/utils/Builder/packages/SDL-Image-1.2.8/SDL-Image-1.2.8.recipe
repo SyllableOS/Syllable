@@ -25,4 +25,4 @@ system-prefix-var	DESTDIR
 
 documentation		README COPYING CHANGES
 ; For some packages:
-;links				SDL/SDL_image.h include/
+;links				SDL/SDL_image.h framework/headers/

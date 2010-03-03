@@ -11,7 +11,8 @@ test-needs			check
 
 patch-config		conftools
 
-;configure-env		CPPFLAGS '-DXML_UNICODE'
+no-datarootdir
+;configure-env		CPPFLAGS -DXML_UNICODE
 
 ;make-targets		buildlib
 

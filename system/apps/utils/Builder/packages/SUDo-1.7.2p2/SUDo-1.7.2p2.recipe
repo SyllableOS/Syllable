@@ -27,7 +27,7 @@ configure-options
 ;	Should help with Syllable filesystem layout:
 	--with-stow
 ;	Allow changing name of root user:
-	--with-runas-default='#0'
+	--with-runas-default=#0
 ;	--with-sudoers-uid=
 ;	--with-sudoers-gid=
 ;	--without-umask
@@ -43,14 +43,14 @@ configure-options
 	--enable-noargs-shell
 	--enable-shell-sets-home
 	--with-ignore-dot
-;	--with-logpath='/var/log/sudo.log'
-;	--with-timedir='/var/run/sudo'
+;	--with-logpath=/var/log/sudo.log
+;	--with-timedir=/var/run/sudo
 
 super-install
 system-prefix-var	DESTDIR
 
 ;install-targets		install_binaries install_man
-post-install		sed -i s/root.ALL=\(ALL\)/%administrators\ ALL=\(ALL\)\ NOPASSWD:/ $IMAGE/etc/sudoers
+post-install		sed -i 's/root.ALL=\(ALL\)/%administrators ALL=\(ALL\) NOPASSWD:/' $IMAGE/etc/sudoers
 
 documentation		README LICENSE README.LDAP TROUBLESHOOTING UPGRADE WHATSNEW ChangeLog HISTORY
 build-docs			INSTALL

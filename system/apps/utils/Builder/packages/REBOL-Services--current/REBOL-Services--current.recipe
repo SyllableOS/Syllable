@@ -1,5 +1,5 @@
 authors				Kaj de Vos
-status				developing
+status				testing
 
 headline			Network services framework written in REBOL
 description
@@ -32,14 +32,14 @@ run-needs			REBOL >= 2.6 < 3
 make				true
 
 install-tree
-	lib
-	lib/REBOL
-	lib/REBOL/Services
+	framework
+	framework/REBOL
+	framework/REBOL/Services
 	documentation
 	documentation/code
 install				true
 install-files
-	*.r				lib/REBOL/Services/
+	*.r				framework/REBOL/Services/
 	simple.html		documentation/code/
 	basic.html		documentation/code/
 	guestbook.html	documentation/code/

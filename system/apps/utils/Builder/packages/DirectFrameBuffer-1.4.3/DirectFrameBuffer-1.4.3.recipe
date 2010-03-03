@@ -31,7 +31,6 @@ configure-options
 ;	--with-sysroot=
 ;	We want SDL on DirectFB, not the other way around:
 ;	--disable-sdl
-;	Erroneously enables X11:
 ;	--disable-x11
 ;	--enable-debug
 ;	--enable-trace
@@ -49,5 +48,5 @@ system-prefix-var	DESTDIR
 
 documentation
 	README COPYING NEWS ChangeLog AUTHORS TODO
-;	docs
+;	docs/*
 build-docs			patches/README.*

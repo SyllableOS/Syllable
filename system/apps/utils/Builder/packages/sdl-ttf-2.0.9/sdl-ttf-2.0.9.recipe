@@ -14,6 +14,8 @@ needs
 	sdl >= 1.2.4
 	FreeType 2 <> 2.1.3
 
+no-datarootdir
+
 system-prefix-var	DESTDIR
 
 documentation		README COPYING CHANGES

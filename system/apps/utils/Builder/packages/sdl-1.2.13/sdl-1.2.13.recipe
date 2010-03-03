@@ -4,7 +4,7 @@ authors
 	Rui Caridade
 maintainers			Kaj de Vos
 status				testing
-warnings			Assumes system installation!
+warnings			Patch assumes system installation!
 
 headline			Cross-platform multimedia library
 description
@@ -30,9 +30,10 @@ patch
 ;	autoreconf
 	./autogen.sh
 
-system-prefix-var	DESTDIR
-
+no-datarootdir
 ;configure-options	--disable-video-directfb
+
+system-prefix-var	DESTDIR
 
 documentation
 	README README-SDL.txt BUGS COPYING WhatsNew CREDITS TODO

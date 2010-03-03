@@ -10,14 +10,14 @@ home				softinnov.org/rebol/mysql.shtml
 packages			mysql-120
 locations			http://softinnov.org/sc/getfile.rsp?id=sc-mysql&url=/dl/
 
-run-needs			rebol
+run-needs			REBOL 2
 
 make				true
 
 install-tree
-	lib
-	lib/REBOL
+	framework
+	framework/REBOL
 install				true
-install-files		*.r lib/REBOL/
+install-files		*.r framework/REBOL/
 
 documentation		*.html

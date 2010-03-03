@@ -20,5 +20,7 @@ recommends
 	krb4
 	heimdal | kerberos
 
+system-prefix-var	DESTDIR
+
 documentation		README COPYING NEWS ChangeLog TODO AUTHORS THANKS
 internal-docs		README-alpha

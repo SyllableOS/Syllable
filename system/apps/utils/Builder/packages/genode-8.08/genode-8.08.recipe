@@ -28,27 +28,27 @@ configure
 
 install-tree		bin
 install-files
-	../os/config/linux_demo				programs/config
-	core/core							programs/
+	../os/config/linux_demo				bin/config
+	core/core							bin/
 
-	init/init							tasks/start
+	init/init							tasks/start/
 
-	drivers/timer/linux/timer			programs/
-	drivers/framebuffer/sdl/fb_sdl		programs/
+	drivers/timer/linux/timer			bin/
+	drivers/framebuffer/sdl/fb_sdl		bin/
 
-	server/nitlog/nitlog				programs/
-	server/liquid_framebuffer/liquid_fb	programs/
-	server/nitpicker/genode/nitpicker	programs/
+	server/nitlog/nitlog				bin/
+	server/liquid_framebuffer/liquid_fb	bin/
+	server/nitpicker/genode/nitpicker	bin/
 
-	lib/libz/test-libz					programs/
-	lib/libpng/test-libpng				programs/
+	lib/libz/test-libz					bin/
+	lib/libpng/test-libpng				bin/
 
-	app/launchpad/launchpad				programs/
-	app/scout/genode/scout				programs/
+	app/launchpad/launchpad				bin/
+	app/scout/genode/scout				bin/
 
-	test/pci/testpci					programs/
-	test/bomb/bomb						programs/
-	test/nitpicker/testnit				programs/
+	test/pci/testpci					bin/
+	test/bomb/bomb						bin/
+	test/nitpicker/testnit				bin/
 
 documentation		README LICENSE
 develop-docs

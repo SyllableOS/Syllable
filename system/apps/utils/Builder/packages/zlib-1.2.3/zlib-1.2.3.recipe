@@ -25,6 +25,7 @@ no-bindir
 no-sbindir
 no-libexecdir
 no-datarootdir
+no-datadir
 no-mandir
 no-infodir
 configure-options	--shared

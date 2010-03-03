@@ -1,6 +1,5 @@
 authors				Kaj de Vos
 status				testing
-warnings			Assumes system installation!
 
 licenses			GPL-2+ other
 locations
@@ -16,9 +15,7 @@ no-includedir
 no-libexecdir
 no-datarootdir
 no-infodir
-configure-options
-;	--datadir=/lib/kbd
-	--datadir=/system/resources/kbd/1.12/data
+;configure-options		--datadir=/lib/kbd
 
 system-prefix-var	DESTDIR
 ; $prefix must be empty:

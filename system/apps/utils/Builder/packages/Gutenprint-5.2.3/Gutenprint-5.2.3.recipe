@@ -38,18 +38,18 @@ configure-options
 	--disable-libgutenprintui2
 
 ; Double effect on Linux with tweaked cups-config:
-;system-prefix-var	DESTDIR
+system-prefix-var	DESTDIR
 
 documentation
 	README ABOUT-NLS COPYING NEWS AUTHORS
 ;	Big:
 ;	ChangeLog
-;	doc
-;	samples
+;	doc/*
+;	samples/
 build-docs			README.package
 
 ; Most users don't want all of the PPD files installed. Move them out of the way for later processing.
-;move-files			data/cups/model /tmp/
+;move-files			data/cups/model/ /tmp/
 
 _delete-files
 	system-programs/cups-genppd.5.2

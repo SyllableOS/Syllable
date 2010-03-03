@@ -1,7 +1,6 @@
 authors				Kaj de Vos
 status				testing
-warnings
-	Expects terminfo in /usr/share/ no matter what.
+warnings			Expects terminfo in /usr/share/ no matter what.
 
 headline			Text mode library and interpreter
 description
@@ -22,14 +21,15 @@ needs				NCurses | termcap
 build-needs			gawk
 ; Can't find any of them:
 build-recommends
+	ReadLine
+	LibPNG
 	pcre
 	oniguruma
-	LibPNG
-	ReadLine
 
 build-dir			.
 
-_configure-options
+; Creates both data/ and share/ directory and can't merge:
+configure-options
 	--sysconfdir=/etc
 ;	Instead of internal solution:
 	--with-readline=gnu

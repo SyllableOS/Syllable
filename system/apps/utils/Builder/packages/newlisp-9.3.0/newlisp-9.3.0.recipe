@@ -15,9 +15,9 @@ home				www.newlisp.org
 locations			http://newlisp.nfshost.com/downloads/
 
 recommends
-	ncurses
+	NCurses
 	termcap
-	readline
+	ReadLine
 
 build-dir			.
 
@@ -34,16 +34,16 @@ test-targets		test
 
 system-prefix-var	DESTDIR
 install-tree
-	bin
-	man
-	man/man1
+	programs
+	manuals
+	manuals/man1
 install-vars
-	bindir			"$IMAGE/resources/newlisp/bin"
-	datadir			"$IMAGE/resources/newlisp"
-	mandir			"$IMAGE/resources/newlisp/man"
+	bindir			$IMAGE/resources/newlisp/programs
+	datadir			$IMAGE/resources/newlisp
+	mandir			$IMAGE/resources/newlisp/manuals
 
 documentation
 	README
-;	doc
+;	doc/*
 build-docs			doc/INSTALL
 develop-docs		examples

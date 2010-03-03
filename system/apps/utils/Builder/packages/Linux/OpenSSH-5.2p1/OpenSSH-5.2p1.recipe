@@ -8,8 +8,8 @@ configure-options
 	--with-md5-passwords
 ;	--with-pam
 ;	--with-xauth=/usr/bin/xauth
-;	--with-ssl-dir=/resources/OpenSSL
-;	--with-zlib=/system/indexes
+;	--with-ssl-dir=/system/indexes/OpenSSL
+;	--with-zlib=/system/indexes/zlib
 ;	--with-libs='-lcrypt'
 ;	Doesn't work as advertised:
 ;	--disable-libutil

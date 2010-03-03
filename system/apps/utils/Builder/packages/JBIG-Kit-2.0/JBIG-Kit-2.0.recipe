@@ -14,6 +14,7 @@ test-targets		test
 
 install-tree
 	programs
+	framework
 	framework/libraries
 	framework/headers
 	manuals
@@ -32,4 +33,4 @@ install-files
 documentation
 	ANNOUNCE INSTALL COPYING CHANGES TODO
 	libjbig/*.txt pbmtools/*.txt
-develop-docs		examples
+develop-docs		examples/

@@ -6,8 +6,8 @@ configure-options
 ;	--datadir=/usr/share/sshd
 	--with-privsep-path=/var/lib/sshd
 ;	--with-md5-passwords
-;	--with-ssl-dir=/resources/OpenSSL
-;	--with-zlib=/system/indexes
+;	--with-ssl-dir=/system/indexes/OpenSSL
+;	--with-zlib=/system/indexes/zlib
 ;	Needed to build:
 	--with-libs='-lcrypt'
 ;	Doesn't work as advertised:

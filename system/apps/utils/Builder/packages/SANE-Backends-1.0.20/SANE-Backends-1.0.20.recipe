@@ -29,7 +29,8 @@ recommends
 
 build-dir			.
 
-;configure-options
+configure-options
+	--sysconfdir=/etc
 ;	--disable-shared
 ;	--enable-locking
 
@@ -37,5 +38,5 @@ system-prefix-var	DESTDIR
 
 documentation
 	README LICENSE COPYING PROBLEMS NEWS ChangeLog AUTHORS
-;	doc
+;	doc/*
 internal-docs		PROJECTS

@@ -33,9 +33,9 @@ run-recommends
 
 patch
 ;	No other server has the package descriptions:
-	sed -i 's/gobo.calica.com/gobolinux.midgard.liu.se/' 2.9.11/Resources/Defaults/Settings/Scripts/DescribeProgram.conf
+	sed -i s/gobo.calica.com/gobolinux.midgard.liu.se/ 2.9.11/Resources/Defaults/Settings/Scripts/DescribeProgram.conf
 ;	Package sandboxes need more infrastructure:
-	sed -i 's/directoriesSandbox=yes/directoriesSandbox=no/' 2.9.11/Resources/Defaults/Settings/Scripts/Directories.conf
+	sed -i s/directoriesSandbox=yes/directoriesSandbox=no/ 2.9.11/Resources/Defaults/Settings/Scripts/Directories.conf
 
 ; They have it backwards:
 install-prefix-var	DESTDIR

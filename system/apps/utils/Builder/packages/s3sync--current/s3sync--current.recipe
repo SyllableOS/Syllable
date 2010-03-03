@@ -14,14 +14,14 @@ home				s3sync.net
 locations			http://s3.amazonaws.com/ServEdge_pub/s3sync/
 
 ; With OpenSSL:
-run-needs			ruby >= 1.8.4
-run-recommends		mime-support
+run-needs			Ruby >= 1.8.4
+run-recommends		MIME-Support
 
 make				true
 
-install-tree		bin
+install-tree		programs
 install				true
-; TODO: modify to put support scripts in lib/:
-install-files		*.rb bin/
+; TODO: modify to put support scripts in framework/libraries/:
+install-files		*.rb programs/
 
 documentation		README* *.example

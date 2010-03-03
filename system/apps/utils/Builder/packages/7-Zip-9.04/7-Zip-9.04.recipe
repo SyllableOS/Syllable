@@ -37,6 +37,7 @@ test-targets
 system-prefix-var	DEST_DIR
 install-tree
 	programs
+	framework
 	framework/libraries
 	manuals
 install

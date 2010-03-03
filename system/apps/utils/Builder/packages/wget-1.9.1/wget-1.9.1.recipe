@@ -10,6 +10,7 @@ recommends			OpenSSL
 
 patch-config
 
+no-datarootdir
 ;configure-options
 ;	--with-ssl=
 ;	--disable-ipv6

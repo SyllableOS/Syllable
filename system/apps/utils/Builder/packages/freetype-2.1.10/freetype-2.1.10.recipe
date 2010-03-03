@@ -7,8 +7,11 @@ licenses			GPL other
 home				www.freetype.org
 locations			http://download.savannah.gnu.org/releases/freetype/
 
-;build-recommends	python
+build-recommends	Python
+
+no-datarootdir
 
 ; Needs Python:
 ;make-targets		refdoc
-documentation		README ChangeLog docs
+
+documentation		README ChangeLog docs/*

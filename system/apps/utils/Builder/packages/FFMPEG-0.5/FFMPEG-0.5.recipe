@@ -27,9 +27,7 @@ no-includedir
 no-libexecdir
 no-datarootdir
 no-infodir
-_configure-options
-	--incdir=/resources/FFMPEG/framework/headers
-	--datadir=/resources/FFMPEG/data
+;configure-options	--incdir=/resources/FFMPEG/framework/headers
 
 system-prefix-var	DESTDIR
 ; Older versions still create this:

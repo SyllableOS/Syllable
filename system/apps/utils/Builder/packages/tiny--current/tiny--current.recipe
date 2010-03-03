@@ -7,15 +7,15 @@ description
 licenses			BSD
 
 home				syllable.org
-files				TINY.library
 locations			http://downloads.frisianfox.com.s3.amazonaws.com/resources/
+files				TINY.library
 
-run-needs			rebol | orca
+run-needs			REBOL | ORCA
 
 make				true
 
 install-tree
-	lib
-	lib/REBOL
+	framework
+	framework/REBOL
 install				true
-install-files		TINY.library lib/REBOL/
+install-files		TINY.library framework/REBOL/

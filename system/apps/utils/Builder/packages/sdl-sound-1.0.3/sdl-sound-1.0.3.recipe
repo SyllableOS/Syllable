@@ -1,5 +1,6 @@
 authors				Kaj de Vos
 status				testing
+warnings			Builds upon SDL in the host system.
 
 headline			SDL library to decode popular audio formats
 description
