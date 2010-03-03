@@ -1,7 +1,7 @@
 #! /usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.10.15
+# Version 0.10.16
 # Copyright (c) 2002-2010 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -125,7 +125,7 @@ def downloadModule target
 				Dir.chdir dir  # if target['/']
 
 				@log.subheader 'Checking out sources from CVS repository'
-				action 'cvs -q checkout -d ' + File.basename(target) +
+				action 'cvs -q checkout -P -d ' + File.basename(target) +
 					(@revision ? " -r #{@revision} " : ' ') +
 					File.join(@cvsPath, target)
 			end
@@ -2177,7 +2177,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.10.15',
+	puts 'Syllable Build System 0.10.16',
 		'Copyright (c) 2002-2010 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
@@ -2191,8 +2191,8 @@ when 'help', '?', '-?', '-h', '-help', '--help'
 		'    -help, -?, (?)',
 		'  version,      Show version information',
 		'    -v, --version',
-		'  scrub         Delete CVS control files recursively from the current directory',
-		'  prepare       Initialize project image tree in staging area',
+		'  scrub         Delete backup and CVS control files recursively from the current directory',
+		'  prepare       Initialise project image tree in staging area',
 		'  get           Fetch and patch sources',
 		'  download      Download sources',
 		'  update        Update sources, or the build system itself, from repositories',
