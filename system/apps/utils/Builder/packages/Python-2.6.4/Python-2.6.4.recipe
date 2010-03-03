@@ -29,6 +29,7 @@ recommends
 	expat
 
 ; Creates both framework/headers/ and include/ directories and can't merge:
+no-includedir
 configure-options	--enable-shared
 
 test-targets
