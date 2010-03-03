@@ -5,7 +5,7 @@ status				testing
 
 inherits			GhostScript-8.64
 
-configure-options
+_configure-options
 ;	--datadir=$IMAGE/resources/GhostScript/data/
 	--with-fontpath=/system/fonts
 ;	cups is not an option any more:

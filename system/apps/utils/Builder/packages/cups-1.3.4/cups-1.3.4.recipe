@@ -32,6 +32,7 @@ build-dir			.
 ; Let other packages supply extensions:
 no-libdir
 no-datarootdir
+no-datadir
 configure-options
 	--sysconfdir=/etc
 	--localstatedir=/var
@@ -48,14 +49,15 @@ build-docs			INSTALL*.txt
 
 links
 ;	Let other packages supply extensions:
-	/system/indexes/framework/libraries	lib
-	/system/indexes/data				share
-	/system/indexes/programs/smbspool	framework/libraries/cups/backend/smb
+	/system/indexes/framework/libraries/	lib
+	/system/indexes/data/					share
+	/system/indexes/programs/smbspool		framework/libraries/cups/backend/smb
 
 delete-files
-	data/doc/
+;	4 MB web site:
+	documentation/cups/
 ;	data/cups/templates/
-;	Epson & HP printers are served by GutenPrint, but we'll leave the Dymo label printer driver:
+;	Epson & HP printers are served by Gutenprint, but we'll leave the Dymo label printer driver:
 	framework/libraries/cups/filter/rastertoepson
 	framework/libraries/cups/filter/rastertohp
 ;	Same with the PPDs for those printers; we'll leave the Dymo & Zebra label printers:

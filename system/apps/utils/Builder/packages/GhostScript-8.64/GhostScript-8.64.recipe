@@ -59,6 +59,6 @@ documentation
 	LICENSE
 ;	doc/README doc/COPYING
 	doc/*
-;	examples
+;	examples/
 ; Huge:
 delete-files			documentation/History*.htm

@@ -29,7 +29,7 @@ system-prefix-var	DESTDIR
 
 install-tree
 ; Rules are split now between /etc/ and /lib/:
-;install-vars		RULES_DIR '/lib/udev/rules.d'
+;install-vars		RULES_DIR /lib/udev/rules.d
 install-targets
 	install
 	install-doc

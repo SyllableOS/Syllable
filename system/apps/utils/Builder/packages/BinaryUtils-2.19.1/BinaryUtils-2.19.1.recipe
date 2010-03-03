@@ -39,10 +39,10 @@ no-datarootdir
 system-prefix-var	DESTDIR
 
 ; No cross-compiling support:
-;make-vars			tooldir '/resources/BinaryUtils'
+;make-vars			tooldir /resources/BinaryUtils
 
 ;install-prefix-var	tooldir
-;install-vars		tooldir '/resources/BinaryUtils'
+;install-vars		tooldir /resources/BinaryUtils
 
 documentation
 	README COPYING3 COPYING3.LIB COPYING COPYING.LIB

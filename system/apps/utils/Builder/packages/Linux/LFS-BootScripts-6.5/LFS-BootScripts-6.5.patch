@@ -4,10 +4,10 @@ diff -ru LFS-BootScripts-6.5-original/lfs/init.d/functions LFS-BootScripts-6.5/l
 @@ -16,7 +16,8 @@
  ## Environmental setup
  # Setup default values for environment
- umask 022
+ umask 027
 -export PATH="/bin:/usr/bin:/sbin:/usr/sbin"
-+export PATH=/resources/indexes/sbin:/resources/indexes/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/system/indexes/sbin:/system/indexes/bin:/system/bin
-+export LD_LIBRARY_PATH=/System/Index/lib:/system/indexes/gcc/lib:/resources/indexes/lib:/usr/local/lib:/usr/lib:/lib:/system/indexes/lib:/system/libraries
++export PATH=/resources/indexes/system-programs:/resources/indexes/programs:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/system/indexes/system-programs:/system/indexes/programs:/system/programs
++export LD_LIBRARY_PATH=/System/Index/lib:/system/indexes/gcc/framework/libraries:/resources/indexes/framework/libraries:/usr/local/lib:/usr/lib:/lib:/system/indexes/framework/libraries:/system/libraries
  
  # Signal sent to running processes to refresh their configuration
  RELOADSIG="HUP"
@@ -23,9 +23,9 @@ diff -ru LFS-BootScripts-6.5-original/lfs/init.d/network LFS-BootScripts-6.5/lfs
 +		# inetd is a special case and is always started first if INetUtils is
 +		# installed.
 +
-+		if [ -e /resources/indexes/libexec/inetd ]
++		if [ -e /resources/indexes/framework/executables/inetd ]
 +		then
-+			/resources/indexes/libexec/inetd &
++			/resources/indexes/framework/executables/inetd &
 +		fi
 +
 +		# Packages that require initalisation can include tasks/setup/ and tasks/start/
