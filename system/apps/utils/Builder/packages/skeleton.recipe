@@ -84,6 +84,7 @@ build-dir			<Directory>
 ; no-libexecdir
 ; no-includedir
 ; no-datarootdir
+; no-datadir
 ; no-mandir
 ; no-infodir
 ; [<configure-env>] <configure-cmd> [<configure-vars>] ([<configure-prefix>] | [<configure-args>]) [<configure-options>]
@@ -115,6 +116,8 @@ no-libexecdir
 no-includedir
 ; configure doesn't take --datarootdir= option:
 no-datarootdir
+; configure doesn't take --datadir= option:
+no-datadir
 ; configure doesn't take --mandir= option:
 no-mandir
 ; configure doesn't take --infodir= option:

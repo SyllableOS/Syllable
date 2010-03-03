@@ -1,7 +1,7 @@
 #! /usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.10.14
+# Version 0.10.15
 # Copyright (c) 2002-2010 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -469,6 +469,9 @@ def configureModule staging, target
 											) +
 											(recipe['no-datarootdir'] ? '' :
 												' --datarootdir=' + File.join(root, 'data')
+											) +
+											(recipe['no-datadir'] ? '' :
+												' --datadir=' + File.join(root, 'data')
 											) +
 											(recipe['no-mandir'] ? '' :
 												' --mandir=' + File.join(root, 'manuals')
@@ -2174,7 +2177,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.10.14',
+	puts 'Syllable Build System 0.10.15',
 		'Copyright (c) 2002-2010 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
