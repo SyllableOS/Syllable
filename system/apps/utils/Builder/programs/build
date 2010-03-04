@@ -1,7 +1,7 @@
 #! /usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.10.18
+# Version 0.10.19
 # Copyright (c) 2002-2010 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -1060,19 +1060,25 @@ def installModule staging, target
 										for link in parseList links
 											original, destination = link.split
 
-											if destination[0, 1] != '/'
-												# A link within the package
-												destination = File.join root, destination
-											else
-												# A link into the system
+											destination = File.join destination[0, 1] != '/' ?
+												# A link into the package
+												root :
+												begin
+													# A link into the system
 
-												next if staging and not imaging? staging
+													next if staging and not imaging? staging
 
-												original = File.join prefix(staging, target), original if
-													original['/'] and not ['/', '.'].include? original[0, 1]
+													if original['/'] and not ['/', '.'].include? original[0, 1]
+														original = File.join(
+															system?(staging) ? '/system' : '/resources',
+															'indexes',
+															original
+														)
+													end
 
-												destination = File.join @image, destination
-											end
+													@image
+												end,
+												destination
 
 											break unless action superAccess +
 												"ln --symbolic --force #{original} " + destination
@@ -2240,7 +2246,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.10.18',
+	puts 'Syllable Build System 0.10.19',
 		'Copyright (c) 2002-2010 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
