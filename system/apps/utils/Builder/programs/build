@@ -1,7 +1,7 @@
 #! /usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.10.16
+# Version 0.10.17
 # Copyright (c) 2002-2010 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -877,6 +877,27 @@ def installModule staging, target
 									else
 										@log.warning 'Moving generic shared data to standard location'
 										action superAccess + 'mv share/ data'
+									end
+								then
+									false
+								elsif exists? 'data/aclocal' and not
+									if exists? 'framework/AutoConfigure'
+										@log.header 'Merging extra AutoConfigure data into standard location'
+										action superAccess + 'mv data/aclocal/* framework/AutoConfigure/' and
+										begin
+											@log.header 'Deleting empty data/aclocal directory'
+											action superAccess + 'rmdir data/aclocal'
+										end
+									else
+										exists?('framework') ||
+										begin
+											@log.header 'Creating framework directory'
+											action superAccess + 'mkdir framework'
+										end and
+										begin
+											@log.header 'Moving AutoConfigure data to standard location'
+											action superAccess + 'mv data/aclocal/ framework/AutoConfigure'
+										end
 									end
 								then
 									false
@@ -2177,7 +2198,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.10.16',
+	puts 'Syllable Build System 0.10.17',
 		'Copyright (c) 2002-2010 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
