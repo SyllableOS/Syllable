@@ -1,6 +1,6 @@
 authors				Kaj de Vos
 status				testing
-warnings			Assumes system installation!
+;warnings			Assumes system installation!
 
 licenses			GPL-2+
 
@@ -9,7 +9,9 @@ locations			ftp://ftp.cistron.nl/pub/people/miquels/sysvinit/
 build-dir			src
 
 ;super-install
-system-prefix-var	ROOT
+; There are no component paths, so we must use a trick:
+install-prefix-var	ROOT
+;system-prefix-var	ROOT
 
 install-tree
 	manuals
@@ -19,8 +21,14 @@ install-tree
 install-vars
 	BIN_OWNER		system
 	BIN_GROUP		system
-	MANDIR			/system/resources/sysvinit/2.86/manuals
+;	There are no component paths, so we must use a trick:
+;	MANDIR			/system/resources/sysvinit/2.86/manuals
+	MANDIR			/manuals
 
 documentation
 	README COPYRIGHT
 	doc/*
+
+; There are no component paths, so we must use a trick:
+move-files			usr/bin/* programs/
+delete-files		usr/bin/
