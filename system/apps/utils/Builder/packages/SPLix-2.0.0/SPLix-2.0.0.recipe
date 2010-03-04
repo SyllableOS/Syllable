@@ -20,5 +20,8 @@ build-needs
 ;	jbig2dec
 needs				cups
 
+system-prefix-var	DESTDIR
+install-tree
+
 documentation		README INSTALL COPYING ChangeLog AUTHORS THANKS TODO
 ;build-docs			INSTALL

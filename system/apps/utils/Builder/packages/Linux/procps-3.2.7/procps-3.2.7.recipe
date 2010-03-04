@@ -13,6 +13,7 @@ needs				NCurses
 
 ;super-install
 system-prefix-var	DESTDIR
+
 install-tree
 install-vars
 	bin				$IMAGE/system/resources/procps/3.2.7/programs/
