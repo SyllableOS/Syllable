@@ -9,7 +9,7 @@ modules
 	programming/flex-2.5.33
 	programming/bison-2.3
 	programming/languages/BinaryUtils-2.19.1
-	programming/languages/gcc-4.1.2
+	programming/languages/GNU-CompilerCollection-4.1.2
 	programming/languages/nasm-0.98.39
 	programming/omake-0.9.8.5
 	programming/make-3.81

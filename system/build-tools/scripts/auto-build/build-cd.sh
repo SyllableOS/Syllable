@@ -47,7 +47,7 @@ FILES=(	"/etc/profile, /etc/profile" 															\
 		"/system/libraries/libdl.so*, /system/libraries/."											\
 		"/system/libraries/libpthread.so*, /system/libraries/."										\
 																									\
-		"/system/resources/gcc/4.1.2/framework/libraries/*.so*, /system/libraries/."				\
+		"/system/resources/GNU-CompilerCollection/4.1.2/framework/libraries/*.so*, /system/libraries/."				\
 		"/system/resources/glibc/2.7/framework/libraries/*.so*, /system/libraries/."				\
 		"/system/resources/zlib/1.2.3/framework/libraries/*.so*, /system/libraries/."				\
 		"/system/resources/ReadLine/6.0/framework/libraries/*.so*, /system/libraries/."				\

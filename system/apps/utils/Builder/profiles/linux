@@ -310,7 +310,7 @@ modules
 
 ;	bootstrap apps/gnu/BinaryUtils-2.19.1
 ;	Uses headers and runtime linker from the host!
-;	bootstrap apps/gnu/gcc-4.2.3-bootstrap
+;	bootstrap apps/gnu/GNU-CompilerCollection-4.1.2-bootstrap
 
 
 ;	Syllable Linux core system
@@ -351,9 +351,9 @@ modules
 ;	stage libraries/bison-2.3
 ;	stage libraries/BinaryUtils-2.19.1
 
-	libraries libraries/gcc-4.2.3-system
+	libraries libraries/GNU-CompilerCollection-4.1.2-system
 ;	For bootstrapping:
-;	system apps/gnu/gcc-4.2.3
+;	system apps/gnu/GNU-CompilerCollection-4.1.2
 
 	system libs/NCurses-5.7
 	system libs/ReadLine-6.0

@@ -185,7 +185,7 @@ modules
 ;	Toolchain for bootstrapping
 
 ;	bootstrap apps/gnu/BinaryUtils-2.19.1
-;	bootstrap apps/gnu/gcc-4.1.2
+;	bootstrap apps/gnu/GNU-CompilerCollection-4.1.2
 
 
 ;	Syllable core system
@@ -299,11 +299,11 @@ modules
 ;	stage libraries/bison-2.3
 ;	stage libraries/BinaryUtils-2.19.1
 
-;	libraries libraries/gcc-4.1.2-system
+;	libraries libraries/GNU-CompilerCollection-4.1.2-system
 ;	Needs to be in the root of the working directory:
-	libraries gcc-4.1.2-system
+	libraries GNU-CompilerCollection-4.1.2-system
 ;	For bootstrapping:
-;	system apps/gnu/gcc-4.1.2-system
+;	system apps/gnu/GNU-CompilerCollection-4.1.2-system
 
 	system libs/NCurses-5.7
 	system libs/ReadLine-6.0
