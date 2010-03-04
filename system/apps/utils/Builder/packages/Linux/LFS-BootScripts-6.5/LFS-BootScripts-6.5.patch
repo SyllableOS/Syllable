@@ -7,7 +7,7 @@ diff -ru LFS-BootScripts-6.5-original/lfs/init.d/functions LFS-BootScripts-6.5/l
  umask 022
 -export PATH="/bin:/usr/bin:/sbin:/usr/sbin"
 +export PATH=/resources/indexes/system-programs:/resources/indexes/programs:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/system/indexes/system-programs:/system/indexes/programs:/system/programs
-+export LD_LIBRARY_PATH=/System/Index/lib:/system/indexes/gcc/framework/libraries:/resources/indexes/framework/libraries:/usr/local/lib:/usr/lib:/lib:/system/indexes/framework/libraries:/system/libraries
++export LD_LIBRARY_PATH=/System/Index/lib:/system/indexes/GNU-CompilerCollection/framework/libraries:/resources/indexes/framework/libraries:/usr/local/lib:/usr/lib:/lib:/system/indexes/framework/libraries:/system/libraries
  
  # Signal sent to running processes to refresh their configuration
  RELOADSIG="HUP"
