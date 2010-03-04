@@ -1,3 +1,5 @@
+/resources/indexes/framework/AutoConfigure
 /resources/indexes/data/aclocal
 /usr/local/share/aclocal
+/system/indexes/framework/AutoConfigure
 /system/indexes/data/aclocal
