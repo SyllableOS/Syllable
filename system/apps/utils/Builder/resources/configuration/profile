@@ -22,7 +22,7 @@ export INFOPATH=/resources/indexes/manuals/info:/usr/local/info:/system/indexes/
 export LIBRARY_PATH=/system/indexes/GNU-CompilerCollection/framework/libraries:/system/development/resources/GNU-CompilerCollection/4.1.2/framework/libraries:/resources/indexes/framework/libraries:/resources/indexes/lib:/usr/local/lib:/system/indexes/framework/libraries:/system/libraries
 export C_INCLUDE_PATH=/system/development/resources/GNU-CompilerCollection/4.1.2/framework/headers:/resources/indexes/framework/headers:/resources/indexes/include:/usr/local/include:/system/indexes/framework/headers:/system/development/headers
 export CPLUS_INCLUDE_PATH=$C_INCLUDE_PATH
-export PKG_CONFIG_PATH=/resources/indexes/framework/libraries/pkgconfig:/resources/indexes/data/pkgconfig:/resources/indexes/lib/pkgconfig:/usr/local/lib/pkgconfig:/usr/local/share/pkgconfig:/system/indexes/framework/libraries/pkgconfig
+export PKG_CONFIG_PATH=/resources/indexes/framework/PackageConfigure:/resources/indexes/lib/pkgconfig:/usr/local/lib/pkgconfig:/usr/local/share/pkgconfig:/system/indexes/framework/PackageConfigure
 
 # Set this right, or havoc may be wreaked in /system/init.sh
 export TEMP=/tmp
