@@ -1,0 +1,64 @@
+authors				Kaj de Vos
+status				testing
+warnings
+	GCC has a circular dependency on GLibC.
+	LibIberty is both in BinaryUtils and in GCC.
+notes				GMP with MPFR support is required to build Fortran
+
+inherits			gnu
+
+licenses			GPL LGPL GFDL
+home				gcc.gnu.org
+;locations			ftp://gcc.gnu.org/pub/gcc/releases/gcc-4.1.2/
+packages
+	gcc/gcc-4.1.2/gcc-4.1.2
+;	gcc/gcc-4.1.2/gcc-core-4.1.2
+;	gcc/gcc-4.1.2/gcc-g++-4.1.2
+;	gcc/gcc-4.1.2/gcc-objc-4.1.2
+;	gcc/gcc-4.1.2/gcc-java-4.1.2
+;	gcc/gcc-4.1.2/gcc-g77-4.1.2
+;	gcc/gcc-4.1.2/gcc-ada-4.1.2
+;	gcc/gcc-4.1.2/gcc-testsuite-4.1.2
+
+needs
+;	For -O3 with -fpic:
+	BinaryUtils >= 2.13.1
+	glibc >= 2.3.3
+;	For Fortran:
+;	gmp
+conflicts			BinaryUtils
+test-needs			dejagnu >= 1.4.1
+install-needs
+;	gcc
+;	For documentation (only really needed for TreeLang?):
+	texinfo
+recommends			MkTemp
+;build-recommends	diffutils
+
+make-vars
+	CFLAGS			-O
+	LIBCFLAGS		-O2
+	LIBCXXFLAGS		-O2
+;					GCC seems to set this automatically:
+;					' -fno-implicit-templates'
+make-targets
+;	Safest when compiling natively:
+	bootstrap
+;	For printed documentation:
+;	dvi
+
+;test-env
+;	TCL_LIBRARY		/resources/tcl
+;	DEJAGNULIBS		/resources/dejagnu
+; Don't stop at errors:
+test-options		-k
+
+system-prefix-var	DESTDIR
+
+documentation
+	README FAQ faq.html BUGS bugs.html COPYING COPYING.LIB NEWS ChangeLog MAINTAINERS
+	ABOUT-NLS gcc/ABOUT-GCC-NLS
+build-docs			INSTALL
+
+; LFS prefers the one from BinaryUtils:
+;delete-files		framework/libraries/libiberty.a
