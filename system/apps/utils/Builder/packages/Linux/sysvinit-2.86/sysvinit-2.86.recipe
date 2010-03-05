@@ -8,12 +8,15 @@ locations			ftp://ftp.cistron.nl/pub/people/miquels/sysvinit/
 
 build-dir			src
 
-;super-install
+super-install
 ; There are no component paths, so we must use a trick:
 install-prefix-var	ROOT
 ;system-prefix-var	ROOT
 
 install-tree
+	bin
+	sbin
+	usr/bin
 	manuals
 	manuals/man1
 	manuals/man5
@@ -22,8 +25,8 @@ install-vars
 	BIN_OWNER		system
 	BIN_GROUP		system
 ;	There are no component paths, so we must use a trick:
-;	MANDIR			/system/resources/sysvinit/2.86/manuals
 	MANDIR			/manuals
+;	MANDIR			/system/resources/sysvinit/2.86/manuals
 
 documentation
 	README COPYRIGHT
