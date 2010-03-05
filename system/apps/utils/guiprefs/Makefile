@@ -11,10 +11,10 @@ $(EXE) : $(OBJS)
 deps:
 
 install: $(EXE)
-	cp -f $(EXE) /system/bin/$(EXE)
+	cp -f $(EXE) /system/programs/$(EXE)
 
 dist: $(EXE)
-	cp -f $(EXE) $(IMAGE)/system/bin/$(EXE)
+	cp -f $(EXE) $(IMAGE)/system/programs/$(EXE)
 
 clean:
 	-rm $(OBJS)
@@ -24,4 +24,3 @@ clean:
 
 main.o : main.cpp
 	$(CXX) $(COPTS) $< -o $@
-

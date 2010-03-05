@@ -4,7 +4,7 @@ COPTS = -c -fexceptions -ffast-math
 
 CATALOGS = da de el es fr hu nl ru sl sv
 
-APPBIN = /system/bin
+APPBIN = /system/programs
 OBJS = main.o application.o desktop.o
 
 OBJDIR	:= objs
@@ -62,8 +62,8 @@ deps:
 
 dist: all
 	@echo Distribution...
-	@cp desktop $(IMAGE)/system/bin/desktop
+	@cp desktop $(IMAGE)/system/programs/desktop
 
 install: all
 	@echo Installing...
-	@cp desktop /system/bin/desktop
+	@cp desktop /system/programs/desktop

@@ -18,7 +18,7 @@ $(OBJDIR)/$(EXE): $(OBJS) Makefile
 	$(CXX) $(OBJS) -o $(OBJDIR)/$(EXE) -lsyllable
 
 install: $(OBJDIR)/$(EXE)
-	cp -af $(OBJDIR)/$(EXE) $(IMAGE)/system/bin/$(EXE)
+	cp -af $(OBJDIR)/$(EXE) $(IMAGE)/system/programs/$(EXE)
 
 dist: install
 
@@ -28,4 +28,3 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*.d $(OBJDIR)/$(EXE)
 
 -include $(OBJDIR)/*.d
-

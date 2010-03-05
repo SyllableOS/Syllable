@@ -10,7 +10,7 @@ clean:
 	-rm $(OBJS)
 
 install: $(EXE)
-	cp -f $(EXE) $(IMAGE)/system/bin/
+	cp -f $(EXE) $(IMAGE)/system/programs/
 
 dist: install
 

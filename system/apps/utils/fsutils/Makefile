@@ -60,11 +60,10 @@ $(OBJDIR)/df: $(df_OBJS)
 deps:
 
 install: all
-	cp -f $(EXES) /system/bin/
+	cp -f $(EXES) /system/programs/
 
 dist: all
-	cp -f $(EXES) $(IMAGE)/system/bin/
+	cp -f $(EXES) $(IMAGE)/system/programs/
 
 clean:
 	-rm -Rv $(OBJDIR)
-

@@ -26,11 +26,10 @@ $(OBJDIR):
 	@mkdir objs
 	
 dist:
-	@echo Coping $(EXE) to $(IMAGE)/system/bin/
-	@cp -f objs/alert $(IMAGE)/system/bin/
+	@echo Coping $(EXE) to $(IMAGE)/system/programs/
+	@cp -f objs/alert $(IMAGE)/system/programs/
 
 clean:
 	@echo Removing all objects and executable.
 	@rm $(OBJS)
 	@rm $(EXE)
-

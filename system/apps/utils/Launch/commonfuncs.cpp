@@ -74,7 +74,7 @@ bool LaunchFile(const String& cFile)
 	
 	if (IsDirectory(cFile))
 	{
-		cExecute.SetCommand("/system/bin/FileBrowser");
+		cExecute.SetCommand("/system/programs/FileBrowser");
 		cExecute.SetArguments(cFile);
 		cExecute.Run();
 		return true;
@@ -96,16 +96,16 @@ bool LaunchFile(const String& cFile)
 		return true;
 	}
 
-	else if(IsExecutable( String("/bin/") + cFile.c_str())) 
+	else if(IsExecutable( String("/usr/bin/") + cFile.c_str())) 
 	{
-		cExecute.SetCommand(String("/bin/") + cFile.c_str());
+		cExecute.SetCommand(String("/usr/bin/") + cFile.c_str());
 		cExecute.Run();
 		return true;
 	}
 	
-	else if (IsExecutable( String("/usr/bin/") + cFile.c_str()))
+	else if (IsExecutable( String("/bin/") + cFile.c_str()))
 	{
-		cExecute.SetCommand(String("/usr/bin/") + cFile.c_str());
+		cExecute.SetCommand(String("/bin/") + cFile.c_str());
 		cExecute.Run();
 		return true;		
 	}

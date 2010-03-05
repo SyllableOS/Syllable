@@ -67,13 +67,13 @@ install: all
 	strip --strip-all $(EXE)
 	mkdir -p /applications/AEdit
 	cp $(EXE) /applications/AEdit/AEdit
-	ln -sf /applications/AEdit/AEdit /system/bin/$(EXE)
+	ln -sf /applications/AEdit/AEdit /system/programs/$(EXE)
 
 dist: all
 	strip --strip-all $(EXE)
 	mkdir -p $(IMAGE)/applications/AEdit
 	install -s $(EXE) $(IMAGE)/applications/AEdit/AEdit
-	ln -sf /applications/AEdit/AEdit $(IMAGE)/system/bin/$(EXE)
+	ln -sf /applications/AEdit/AEdit $(IMAGE)/system/programs/$(EXE)
 
 clean: catalog-clean
 	-rm $(OBJS)

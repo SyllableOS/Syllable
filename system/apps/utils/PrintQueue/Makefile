@@ -33,7 +33,7 @@ catalogs:
 deps:
 
 install: all
-	install -s $(EXE) $(IMAGE)/system/bin/$(EXE)
+	install -s $(EXE) $(IMAGE)/system/programs/$(EXE)
 
 dist: install
 

@@ -25,16 +25,16 @@ catalogs:
 	done;
 
 install: $(EXE)
-	cp -f $(EXE) /system/bin/$(EXE)
-	strip --strip-all /system/bin/$(EXE)
+	cp -f $(EXE) /system/programs/$(EXE)
+	strip --strip-all /system/programs/$(EXE)
 
 upgrade: $(EXE)
-	rfs $(EXE) /system/bin/$(EXE)
+	rfs $(EXE) /system/programs/$(EXE)
 deps:
 
 dist: $(EXE)
-	cp -f $(EXE) $(IMAGE)/system/bin/$(EXE)
-	strip --strip-all $(IMAGE)/system/bin/$(EXE)
+	cp -f $(EXE) $(IMAGE)/system/programs/$(EXE)
+	strip --strip-all $(IMAGE)/system/programs/$(EXE)
 
 clean: catalog-clean
 	-rm $(OBJS)
@@ -51,4 +51,3 @@ catalog-clean:
 
 main.o:	main.cpp gui/clockview.h mywindow.h
 gui/clockview.o: gui/clockview.cpp gui/clockview.h
-

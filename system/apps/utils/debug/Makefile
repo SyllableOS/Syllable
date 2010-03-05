@@ -17,10 +17,10 @@ ftp:	ftp.o
 	$(CC) $(COPTS) $< -o $@
 
 install:
-	cp -f $(EXE) /system/bin/$(EXE)
+	cp -f $(EXE) /system/programs/$(EXE)
 
 dist:
-	cp -f $(EXE) $(IMAGE)/system/bin/$(EXE)
+	cp -f $(EXE) $(IMAGE)/system/programs/$(EXE)
 
 deps:
 
@@ -28,4 +28,3 @@ term.o : term.c
 
 clean:
 	-rm $(OBJS) dbterm rfs
-

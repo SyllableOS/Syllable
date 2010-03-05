@@ -5,7 +5,7 @@ export PWD
 
 # Run paths
 
-export DLL_PATH=@bindir@/framework:@bindir@/lib:/system/indexes/GNU-CompilerCollection/framework/libraries:/resources/indexes/framework/libraries:/resources/indexes/lib:/usr/local/lib:/system/indexes/framework/libraries:/system/libraries:/system
+export DLL_PATH=@program-folder@/framework:@program-folder@/lib:/system/indexes/GNU-CompilerCollection/framework/libraries:/resources/indexes/framework/libraries:/resources/indexes/lib:/usr/local/lib:/system/indexes/framework/libraries:/system/libraries:/system
 
 if [ -e /System/Index/lib ]  # Gobo package manager is installed
 then

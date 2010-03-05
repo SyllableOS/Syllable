@@ -41,7 +41,7 @@ Installation
 
 The easy way:
 
- * Copy bzoom somewhere, your /system/bin/ directory, for example.
+ * Copy bzoom somewhere, your /system/programs/ directory, for example.
 
 The "hard" way:  =)
 

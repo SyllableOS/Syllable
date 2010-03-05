@@ -433,7 +433,7 @@ void ProjectWindow::HandleMessage( os::Message* pcMessage )
 			if( fork() == 0 )
 			{
 				set_thread_priority( -1, 0 );
-				execlp( "/system/bin/FileBrowser", "/system/bin/FileBrowser", zProject.c_str(), (void*)NULL );
+				execlp( "FileBrowser", "FileBrowser", zProject.c_str(), (void*)NULL );
 				exit( 0 );
 			}
 		}
@@ -661,54 +661,3 @@ void ProjectWindow::HandleMessage( os::Message* pcMessage )
 			os::Window::HandleMessage( pcMessage );
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

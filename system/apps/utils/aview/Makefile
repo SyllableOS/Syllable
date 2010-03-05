@@ -33,12 +33,12 @@ $(OBJDIR):
 install: $(EXE)
 	-mkdir -p /applications/AView
 	-cp -pf $(EXE) /applications/AView/
-	-ln -sf /applications/AView/$(EXE) /system/bin/aview
+	-ln -sf /applications/AView/$(EXE) /system/programs/aview
 
 dist: $(EXE)
 	-mkdir -p $(IMAGE)/applications/AView
 	-cp -pf $(EXE) $(IMAGE)/applications/AView/
-	-ln -sf /applications/AView/$(EXE) $(IMAGE)/system/bin/aview
+	-ln -sf /applications/AView/$(EXE) $(IMAGE)/system/programs/aview
 
 clean: catalog-clean
 	-rm $(OBJS)

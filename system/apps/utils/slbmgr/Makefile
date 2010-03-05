@@ -29,7 +29,7 @@ catalogs:
 install: $(EXE)
 	mkdir -p "$(IMAGE)/applications/system/information"
 	cp -f $(EXE) "$(IMAGE)/applications/system/information/"
-	ln -sf "/applications/system/information/$(EXE)" $(IMAGE)/system/bin/SlbMgr
+	ln -sf "/applications/system/information/$(EXE)" $(IMAGE)/system/programs/SlbMgr
 
 dist: install
 

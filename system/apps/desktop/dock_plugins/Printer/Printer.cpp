@@ -136,7 +136,7 @@ void DockPrinter::HandleMessage(Message* pcMessage)
 		{
 			if( fork() == 0 )
 			{
-				system("/system/bin/print-queue");
+				system("/system/programs/print-queue");
 				exit(0);
 			}
 			break;
@@ -188,7 +188,7 @@ void DockPrinter::MouseDown( const os::Point& cPosition, uint32 nButtons )
 		{
 			if( fork() == 0 )
 			{
-				system("/system/bin/print-queue");
+				system("/system/programs/print-queue");
 				exit(0);
 			}
 		}

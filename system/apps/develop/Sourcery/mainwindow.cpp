@@ -729,8 +729,8 @@ void MainWindow::HandleMessage( os::Message* pcMessage )
 				Directory* pcDir = new Directory(cDir);
 				if (pcDir->IsDir())
 				{
-					UpdateStatus("Opening diectory...",0);
-					Execute* pcExecute = new Execute("/system/bin/FileBrowser",cDir);
+					UpdateStatus("Opening directory...",0);
+					Execute* pcExecute = new Execute("FileBrowser",cDir);
 					
 					if (pcExecute->IsValid()) //just making sure that the FileBrowser is there
 						pcExecute->Run();
@@ -1799,7 +1799,7 @@ void MainWindow::LoadFormat()
 *************************************************************/
 void MainWindow::LaunchConvertor()
 {
-	String cPath = "^/bin/source-highlight";
+	String cPath = "^/programs/source-highlight";
 	
 	try
 	{
@@ -1826,7 +1826,7 @@ void MainWindow::LaunchConvertor()
 		delete pFile;  //don't forget to delete the file
 	}
 
-	catch(...) //source-highlight must not be in ^/bin
+	catch(...) //source-highlight must not be in ^/programs
 	{
 		ShowError(ERR_NO_HIGHLIGHTER);
 	}
@@ -2067,8 +2067,7 @@ bool MainWindow::Find(const String &pcString, bool bDown, bool bCaseSensitive, b
             }
         }
 	//not found
-	UpdateStatus("Search string not found!",0);
+	UpdateStatus("Search string not found.",0);
 	return false;
 	}
 }
-

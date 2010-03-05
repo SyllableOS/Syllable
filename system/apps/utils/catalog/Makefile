@@ -43,10 +43,10 @@ catalogs:
 deps:
 
 install:
-	cp -f $(EXES) /system/bin/
+	cp -f $(EXES) /system/programs/
 
 dist:
-	cp -f $(EXES) $(IMAGE)/system/bin/
+	cp -f $(EXES) $(IMAGE)/system/programs/
 
 clean:
 	-rm -Rv $(OBJDIR)
@@ -54,4 +54,3 @@ clean:
 	for CATALOG in $(CATALOGS);do \
 		rm resources/$$CATALOG/catcomp.catalog; \
 	done;
-

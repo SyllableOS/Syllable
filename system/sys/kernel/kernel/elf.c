@@ -223,7 +223,7 @@ static int open_library_file( const char *pzName, const char *pzSearchPath, char
 			zSysLibPath[nPathLen + 1] = '\0';
 		}
 
-		strcat( zSysLibPath, "system/libraries/:/system/indexes/lib/" );
+		strcat( zSysLibPath, "system/libraries/:/system/indexes/framework/libraries/" );
 		pzSearchPath = zSysLibPath;
 	}
 
@@ -254,10 +254,10 @@ static int open_library_file( const char *pzName, const char *pzSearchPath, char
 				{
 					nTotLen++;	// We must add a "/" to the path
 				}
-				if ( nLen > 8 && strncmp( pzStart, "@bindir@/", 9 ) == 0 )
+				if ( nLen > 16 && strncmp( pzStart, "@program-folder@/", 17 ) == 0 )
 				{
-					pzStart += 9;
-					nLen -= 9;
+					pzStart += 17;
+					nLen -= 17;
 					psParent = CURRENT_PROC->pr_psIoContext->ic_psBinDir;
 				}
 				if ( nTotLen > sizeof( zPath ) )
@@ -2658,4 +2658,3 @@ void init_elf_loader( void )
 	create_kernel_image();
 	init_boot_modules();
 }
-

@@ -23,7 +23,7 @@ all: $(OBJDIR) $(OBJS)
 	$(CC) $(OBJS) -o $(EXE)
 
 install: all
-	install -s $(EXE) $(IMAGE)/system/bin/$(EXE)
+	install -s $(EXE) $(IMAGE)/system/programs/$(EXE)
 
 dist: install
 
@@ -37,4 +37,3 @@ $(OBJDIR):
 $(OBJDIR)/%.o : %.c
 	@echo Compiling : $<
 	@$(CC) $(CFLAGS) $< -o $@
-

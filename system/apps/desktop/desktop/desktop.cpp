@@ -103,7 +103,7 @@ Desktop::Desktop() : os::Window( os::Rect(), "desktop", MSG_DESKTOP_TITLE, os::W
 			create_desktop_icon( "/applications", MSG_DESKTOP_SYMLINKS_APPLICATIONS, "/system/icons/applications.png" );
 			create_desktop_icon( "/", MSG_DESKTOP_SYMLINKS_DISKS, "" );
 			create_desktop_icon( "/applications/preferences", MSG_DESKTOP_SYMLINKS_PREFERENCES, "/system/icons/settings.png" );
-			create_desktop_icon( "/system/bin/aterm", MSG_DESKTOP_SYMLINKS_TERMINAL, "/system/icons/aterm.png" );
+			create_desktop_icon( "/system/programs/aterm", MSG_DESKTOP_SYMLINKS_TERMINAL, "/system/icons/aterm.png" );
 			create_desktop_icon( pzHome, MSG_DESKTOP_SYMLINKS_HOME, "/system/icons/home.png" );
 			create_desktop_icon( os::String( pzHome ) + "/Trash", MSG_DESKTOP_SYMLINKS_TRASH, "/system/icons/trash.png" );
 		}
@@ -123,7 +123,7 @@ Desktop::Desktop() : os::Window( os::Rect(), "desktop", MSG_DESKTOP_TITLE, os::W
 		create_desktop_icon( "/applications", MSG_DESKTOP_SYMLINKS_APPLICATIONS, "/system/icons/applications.png" );
 		create_desktop_icon( "/", MSG_DESKTOP_SYMLINKS_DISKS, "" );
 		create_desktop_icon( "/applications/preferences", MSG_DESKTOP_SYMLINKS_PREFERENCES, "/system/icons/settings.png" );
-		create_desktop_icon( "/system/bin/aterm", MSG_DESKTOP_SYMLINKS_TERMINAL, "/system/icons/aterm.png" );
+		create_desktop_icon( "/system/programs/aterm", MSG_DESKTOP_SYMLINKS_TERMINAL, "/system/icons/aterm.png" );
 		create_desktop_icon( pzHome, MSG_DESKTOP_SYMLINKS_HOME, "/system/icons/home.png" );
 		create_desktop_icon( os::String( pzHome ) + "/Trash", MSG_DESKTOP_SYMLINKS_TRASH, "/system/icons/trash.png" );
 	}
@@ -213,7 +213,7 @@ void Desktop::HandleMessage( os::Message* pcMessage )
 				if( fork() == 0 )
 				{
 					set_thread_priority( -1, 0 );
-					execlp( "/system/bin/FileBrowser", "/system/bin/FileBrowser", zPath.c_str(), NULL );
+					execlp( "/system/programs/FileBrowser", "/system/programs/FileBrowser", zPath.c_str(), NULL );
 				}
 			}
 			break;
@@ -266,7 +266,7 @@ void Desktop::LaunchFiles()
  	if ( fork() == 0 )
     {
 		set_thread_priority( -1, 0 );
-		execlp( "/system/bin/Dock", "/system/bin/Dock", NULL );
+		execlp( "/system/programs/Dock", "/system/programs/Dock", NULL );
 		exit( 1 );
 	}
 	

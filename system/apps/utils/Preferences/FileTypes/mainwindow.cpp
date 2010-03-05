@@ -193,7 +193,7 @@ MainWindow::MainWindow() : os::Window( os::Rect( 0, 0, 500, 450 ), "main_wnd", M
 	/* Register at least one type */
 	m_pcManager->RegisterType( "text/plain", MSG_MIMETYPE_TEXT_PLAIN );
 	m_pcManager->RegisterTypeIcon( "text/plain", os::Path( "/system/icons/file.png" ) );
-	m_pcManager->RegisterTypeHandler( "text/plain", os::Path( "/system/bin/aedit" ) );
+	m_pcManager->RegisterTypeHandler( "text/plain", os::Path( "/system/programs/aedit" ) );
 	
 	/* Set Icon */
 	os::File cFile( open_image_file( get_image_id() ) );

@@ -31,7 +31,7 @@ deps:
 install: $(EXE)
 	mkdir -p "$(IMAGE)/applications/system/information"
 	cp -f $(EXE) "$(IMAGE)/applications/system/information/"
-	ln -sf "/applications/system/information/$(EXE)" $(IMAGE)/system/bin/memmon
+	ln -sf "/applications/system/information/$(EXE)" $(IMAGE)/system/programs/memmon
 
 dist: install
 

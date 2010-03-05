@@ -19,10 +19,10 @@ clean:
 	@-rmdir ../objs
 
 dist: $(EXE)
-	cp -a $(EXE) $(IMAGE)/system/bin/
+	cp -a $(EXE) $(IMAGE)/system/programs/
 
 install: $(EXE)
-	cp -a $(EXE) /system/bin/
+	cp -a $(EXE) /system/programs/
 
 astyle:
 	@echo Running astyle on all source files.
@@ -50,4 +50,3 @@ astyle:
 ../objs/ImageItem: ImageItem.cpp ImageItem.h
 ../objs/LoadBitmap.o: LoadBitmap.cpp LoadBitmap.h
 ../objs/SettingsTab_Font.o:  SettingsTab_Font.h SettingsTab_Font.cpp App.h
-

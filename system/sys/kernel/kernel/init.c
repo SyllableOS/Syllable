@@ -550,7 +550,7 @@ void system_init( void )
 				zSysLibPath[nPathLen] = '/';
 				zSysLibPath[nPathLen + 1] = '\0';
 			}
-			strcat( zSysLibPath, "system/libraries/:/system/indexes/lib/" );
+			strcat( zSysLibPath, "system/libraries/:/system/indexes/framework/libraries/" );
 
 			for ( i = 0; i < 255; ++i )
 			{
@@ -562,8 +562,8 @@ void system_init( void )
 			}
 
 			printk( "Starting init...\n" );
-			execve( "/boot/system/bin/init", apzBootShellArgs, g_apzEnviron );
-			printk( "Failed to load boot-shell\n" );
+			execve( "/boot/system/programs/init", apzBootShellArgs, g_apzEnviron );
+			printk( "Failed to load boot shell\n" );
 		}
 		else
 		{
@@ -878,4 +878,3 @@ void init_kernel_mb( MultiBootHeader_s * psInfo )
 
 	init_kernel( ( char * )0x10000, nKernelSize );
 }
-

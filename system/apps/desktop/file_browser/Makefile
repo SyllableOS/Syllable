@@ -2,7 +2,7 @@
 
 COPTS = -c -fexceptions -ffast-math
 
-APPBIN = /system/bin
+APPBIN = /system/programs
 OBJS = main.o application.o mainwindow.o toolbar.o
 
 CATALOGS = da de el es fr hu nl ru sv
@@ -67,4 +67,3 @@ install: all
 dist: all
 	@echo Distribution...
 	@cp FileBrowser $(IMAGE)/$(APPBIN)/FileBrowser
-

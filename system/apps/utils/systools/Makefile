@@ -65,15 +65,14 @@ $(OBJDIR)/unbuffer: $(unbuffer_OBJS)
 deps:
 
 install:
-	cp -f $(EXES) /system/bin/
-	ln -s /system/bin/shutdown /system/bin/reboot
-	chmod +x /system/bin/$(EXES)
+	cp -f $(EXES) /system/programs/
+	ln -s /system/programs/shutdown /system/programs/reboot
+	chmod +x /system/programs/$(EXES)
 
 dist:
-	cp -f $(EXES) $(IMAGE)/system/bin/
-	ln -s /system/bin/shutdown $(IMAGE)/system/bin/reboot
-	chmod +x $(IMAGE)/system/bin/mkhome
+	cp -f $(EXES) $(IMAGE)/system/programs/
+	ln -s /system/programs/shutdown $(IMAGE)/system/programs/reboot
+	chmod +x $(IMAGE)/system/programs/mkhome
 
 clean:
 	-rm -Rv $(OBJDIR)
-

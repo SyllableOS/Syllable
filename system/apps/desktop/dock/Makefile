@@ -2,7 +2,7 @@
 
 COPTS = -c -fexceptions -ffast-math
 
-APPBIN = /system/bin
+APPBIN = /system/programs
 OBJS = Dock.o DockMenu.o
 
 OBJDIR := objs
@@ -64,6 +64,6 @@ deps:
 
 install: all
 	@echo Installing...
-	@cp Dock $(IMAGE)/system/bin/Dock
+	@cp Dock $(IMAGE)/system/programs/Dock
 
 dist: install

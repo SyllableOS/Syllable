@@ -137,9 +137,8 @@ int BecomeUser( struct passwd *psPwd )
         setenv( "USER", psPwd->pw_name,true );
         setenv( "SHELL", psPwd->pw_shell,true );
 //		Application::GetInstance()->PopCursor();
-        execl( "/system/bin/desktop", "desktop", NULL );
+        execl( "/system/programs/desktop", "desktop", NULL );
         break;
-
 
     default: /* parent process */
         int nDesktopPid, nExitStatus;
@@ -154,4 +153,3 @@ int BecomeUser( struct passwd *psPwd )
     }
     return -errno;
 }
-

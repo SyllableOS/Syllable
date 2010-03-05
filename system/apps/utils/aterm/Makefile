@@ -12,13 +12,13 @@ install: $(EXE)
 	-mkdir -p "/applications/system"
 	cp -f $(EXE) "/applications/system/Terminal"
 	addattrib "/applications/system/Terminal" "os::Category" "System Tools"
-	ln -sf "/applications/system/Terminal" /system/bin/aterm
+	ln -sf "/applications/system/Terminal" /system/programs/aterm
 
 dist: $(EXE)
 	-mkdir -p "$(IMAGE)/applications/system"
 	cp -f $(EXE) "$(IMAGE)/applications/system/Terminal"
 	addattrib "$(IMAGE)/applications/system/Terminal" "os::Category" "System Tools"
-	ln -sf "/applications/system/Terminal" $(IMAGE)/system/bin/aterm
+	ln -sf "/applications/system/Terminal" $(IMAGE)/system/programs/aterm
 
 clean:
 	-rm $(OBJS)
