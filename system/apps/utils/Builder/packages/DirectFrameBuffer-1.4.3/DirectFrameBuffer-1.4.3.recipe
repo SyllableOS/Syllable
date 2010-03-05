@@ -1,5 +1,6 @@
 authors				Kaj de Vos
 status				testing
+warnings			Builds upon FreeType and others in the host system.
 ;notes				Hangs Links2 during start-up
 
 licenses			LGPL-2+

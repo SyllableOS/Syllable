@@ -2,6 +2,7 @@ authors
 	Kaj de Vos
 	Michael Saunders
 status				testing
+warnings			Builds upon SDL in the host system.
 
 headline			SDL audio mixer library
 description

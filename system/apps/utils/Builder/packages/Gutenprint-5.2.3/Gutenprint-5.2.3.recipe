@@ -2,7 +2,9 @@ authors
 	Kristian Van Der Vliet
 	Kaj de Vos
 status				testing
-;warnings			The generated PPDs will be moved to /tmp/.
+warnings
+;	The generated PPDs will be moved to /tmp/.
+	Builds upon CUPS in the host system.
 notes				Prior to version 5.0 Gutenprint was known as Gimp-Print
 
 inherits			sourceforge

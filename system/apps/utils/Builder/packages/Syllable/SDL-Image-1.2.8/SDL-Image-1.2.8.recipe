@@ -3,6 +3,9 @@ authors
 	Kaj de Vos
 maintainers			Kaj de Vos
 status				testing
+warnings
+	Builds upon SDL and others in the host system.
+	LibPNG and LibTIFF are not detected in a stage!
 
 make-shared
 

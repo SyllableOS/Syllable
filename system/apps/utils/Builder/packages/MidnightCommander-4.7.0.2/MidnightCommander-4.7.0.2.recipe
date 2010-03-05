@@ -1,5 +1,6 @@
 authors				Kaj de Vos
 status				testing
+warnings			Builds upon GLib in the host system.
 
 headline			Text mode file manager, viewer and editor
 description

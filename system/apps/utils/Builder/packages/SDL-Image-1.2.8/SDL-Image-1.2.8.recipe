@@ -1,6 +1,7 @@
 authors				Kaj de Vos
 status				testing
-warnings			LibPNG and LibTIFF are not detected in a stage!
+warnings
+warnings			Builds upon SDL and others in the host system.
 
 headline			SDL picture file loading library
 description
