@@ -1,7 +1,7 @@
 #! /usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.10.19
+# Version 0.10.20
 # Copyright (c) 2002-2010 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -1178,29 +1178,74 @@ def installModule staging, target
 									false
 								elsif system?(staging) and not
 									begin
-										@log.header 'Moving (remaining) development files'
-
 										devRoot = File.join @image, '/system/development/resources', installName(target), version(target)
-										action 'mkdir --parents ' + devRoot and
 
+										if Dir['framework/libraries/*.a'] != []
+											@log.header 'Creating development libraries directory'
+											action superAccess + 'mkdir --parents ' + (dir = File.join(devRoot, 'framework/libraries')) and
+											begin
+												@log.header 'Moving static libraries to development pack'
+												action superAccess + 'mv framework/libraries/*.a ' + dir
+											end and
+											(Dir['framework/libraries/*'] != []) ||
+											begin
+												@log.header 'Deleting empty libraries directory'
+												action superAccess + 'rmdir framework/libraries'
+											end
+										else
+									    	true
+										end and
 										if Dir['framework/headers/*'] != []
-											action 'mkdir --parents ' + (dir = File.join(devRoot, 'framework/headers')) and
+											if exists?(dir = File.join(devRoot, 'framework/headers'))
+												@log.warning 'Merging extra headers into development pack'
 												action superAccess + 'mv framework/headers/* ' + dir and
-												# Linux kernel has hidden files:
-												action superAccess + 'rm -r framework/headers'
+												begin
+													@log.header 'Deleting empty headers directory'
+													# Linux kernel has hidden files:
+													action superAccess + 'rm -r framework/headers'
+												end
+											else
+												exists?(dir = File.join(devRoot, 'framework')) ||
+												begin
+													@log.header 'Creating development framework directory'
+													action superAccess + 'mkdir --parents ' + dir
+												end and
+												begin
+													@log.header 'Moving headers to development pack'
+													action superAccess + 'mv framework/headers/ ' + dir
+												end
+											end
 										else
 										    true
 										end and
-										if Dir['framework/libraries/*.a'] != []
-											action 'mkdir --parents ' + (dir = File.join(devRoot, 'framework/libraries')) and
-												action superAccess + 'mv framework/libraries/*.a ' + dir
+										if exists? 'framework/AutoConfigure'
+											exists?(dir = File.join(devRoot, 'framework')) ||
+											begin
+												@log.header 'Creating development framework directory'
+												action superAccess + 'mkdir --parents ' + dir
+											end and
+											begin
+												@log.header 'Moving AutoConfigure data to development pack'
+												action superAccess + 'mv framework/AutoConfigure/ ' + dir
+											end
+										else
+									    	true
+										end and
+										if exists? 'framework' and Dir['framework/*'] == []
+											@log.header 'Deleting empty framework directory'
+											action superAccess + 'rmdir framework'
 										else
 									    	true
 										end and
 										if docs = recipe['develop-docs']
-											action 'mkdir --parents ' + (dir = File.join devRoot, 'documentation') and
-											for file in toList docs
-												break unless action superAccess + "mv #{File.join 'documentation', File.basename(file)} " + dir
+											@log.header 'Creating development documentation directory'
+											action superAccess + 'mkdir --parents ' + (dir = File.join devRoot, 'documentation') and
+											begin
+												@log.header 'Moving development documentation to development pack'
+
+												for file in toList docs
+													break unless action superAccess + "mv #{File.join 'documentation', File.basename(file)} " + dir
+												end
 											end
 										else
 										    true
@@ -1209,13 +1254,13 @@ def installModule staging, target
 											@log.header 'Registering development files'
 
 											# Link files into the staging area
-											action "package register #{devRoot} " + File.join(@stage, 'indexes')
+											action superAccess + "package register #{devRoot} " + File.join(@stage, 'indexes')
 										end
 									end
 								then
 									false
 								else
-									registerModule staging, target, root
+									registerModule staging, target, root  # TODO: superAccess
 								end
 							end
 						end
@@ -2246,7 +2291,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.10.19',
+	puts 'Syllable Build System 0.10.20',
 		'Copyright (c) 2002-2010 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
