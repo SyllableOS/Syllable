@@ -110,6 +110,18 @@ Some of these changes still have the old counterparts in the system, so that mos
 resource packages and applications will still work on systems with the new structure, until
 they are obsolete.
 
+* March 4, 2010, Kaj de Vos *
+
+Symlinks that are made from the system into resource packages (usually for compatibility
+reasons) can be completed by Builder. So far, Builder added the complete path of the
+specific resource package, including the version for packages in the system area. This is
+not robust against upgrades of a versioned package or a change of the package name, because
+these symlinks are not included in single binary packages.
+
+Now, Builder completes incomplete paths in a recipe based on the symlink pool of the
+package. Thus, the symlink does not contain the package name and version anymore and remains
+valid when those change.
+
 * February 28, 2010, Kaj de Vos *
 
 Fixed two keys in the Dvorak keymap. Patch by Daniel O'Neill.
