@@ -14,21 +14,21 @@ licenses			GPL
 home				www.boa.org
 locations			http://www.boa.org/
 
-run-needs			mime-support
+run-needs			MIME-Support
 
 ; Set default server root directory:
-patch				sed -i 's/\/etc\/boa/\/resources\/boa/' src/defines.h
+patch				sed -i s~/etc/boa~/resources/boa~ src/defines.h
 
 configure-options	--localstatedir=/var
 
 install-tree
-	bin
+	programs
 	conf
 install-files
-	src/boa									bin/
-	src/boa_indexer							bin/
+	src/boa									programs/
+	src/boa_indexer							programs/
 	../boa-0.94.14rc21/examples/boa.conf	conf/
 
 documentation
 	README COPYING CHANGES CREDITS
-	examples
+	examples/

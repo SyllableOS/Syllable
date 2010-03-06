@@ -12,18 +12,18 @@ licenses			BSD
 home				nail.sourceforge.net
 packages			nail/nail-11.1
 
-;build-needs			openssl
+;build-needs			OpenSSL
 
 install-prefix-var	PREFIX
 
 make-vars
-	SYSCONFDIR		/resources/nail/etc
-;	INCLUDES		-I/resources/openssl/include/openssl
+	SYSCONFDIR		/resources/nail/settings
+;	INCLUDES		-I/resources/openssl/framework/headers/openssl
 
 system-prefix-var	DESTDIR
 
 install-vars
-	SYSCONFDIR		/resources/nail/etc
-	UCBINSTALL		/resources/indexes/bin/install
+	SYSCONFDIR		/resources/nail/settings
+	UCBINSTALL		/resources/indexes/programs/install
 
 documentation		README I18N INSTALL COPYING ChangeLog TODO AUTHORS nail.1.html

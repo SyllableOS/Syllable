@@ -1,7 +1,7 @@
 #! /usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.10.21
+# Version 0.10.22
 # Copyright (c) 2002-2010 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -443,6 +443,9 @@ def configureModule staging, target
 										) + (root = prefix staging, target) +
 										(imaging?(staging) && ! recipe['system-prefix-var'] ?
 											'' :
+											(recipe['no-sysconfdir'] ? '' :
+												' --sysconfdir=' + File.join(root, 'settings')
+											) +
 											(recipe['no-bindir'] ? '' :
 												' --bindir=' + File.join(root, 'programs')
 											) +
@@ -2291,7 +2294,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.10.21',
+	puts 'Syllable Build System 0.10.22',
 		'Copyright (c) 2002-2010 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'

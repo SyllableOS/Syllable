@@ -4,6 +4,7 @@ warnings
 	Needs super-user access to install correctly.
 	Will mess with /etc/ld.so.conf and /var/backups/ in the running system!
 
+no-sysconfdir
 configure-options
 	--with-arch=i486
 	--enable-kernel=2.6.0

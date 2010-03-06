@@ -28,9 +28,10 @@ build-recommends
 
 build-dir			.
 
+;no-sysconfdir
 ; Creates both data/ and share/ directory and can't merge:
 configure-options
-	--sysconfdir=/etc
+;	--sysconfdir=/etc
 ;	Instead of internal solution:
 	--with-readline=gnu
 

@@ -29,8 +29,9 @@ recommends
 
 build-dir			.
 
+;no-sysconfdir
 configure-options
-	--sysconfdir=/etc
+;	--sysconfdir=/etc
 ;	--disable-shared
 ;	--enable-locking
 

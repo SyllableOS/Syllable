@@ -29,6 +29,7 @@ run-recommends		samba
 
 build-dir			.
 
+no-sysconfdir
 ; Let other packages supply extensions:
 no-libdir
 no-datarootdir

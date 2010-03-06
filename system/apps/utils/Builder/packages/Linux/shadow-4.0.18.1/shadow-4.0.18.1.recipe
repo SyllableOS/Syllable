@@ -21,6 +21,7 @@ conflicts
 ;	Chinese and Korean:
 	man-db
 
+no-sysconfdir
 configure-options
 ;	--libdir=/lib
 	--sysconfdir=/etc

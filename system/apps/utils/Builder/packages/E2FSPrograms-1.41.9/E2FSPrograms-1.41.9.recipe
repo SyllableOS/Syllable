@@ -16,9 +16,10 @@ conflicts			UtilLinuxNG
 
 ;build-dir			build
 
+;no-sysconfdir
 configure-options
 ;	--with-root-prefix=''
-	--sysconfdir=/system/resources/E2FSPrograms/1.41.9/settings
+;	--sysconfdir=/etc
 	--enable-elf-shlibs
 ;	Delivered by UtilLinuxNG:
 	--disable-fsck

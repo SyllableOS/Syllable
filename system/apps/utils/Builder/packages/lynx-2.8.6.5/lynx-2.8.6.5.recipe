@@ -19,6 +19,7 @@ locations
 
 needs				ncurses | s-lang >= 0.99-38
 
+;no-sysconfdir
 configure-options
 ;	--sysconfdir=/etc
 	--enable-widec

@@ -11,8 +11,9 @@ build-needs			zlib--static
 ; May be needed for tests:
 ;build-dir			.
 
-;configure-args		--prefix=/
+no-sysconfdir
 no-datarootdir
+;configure-args		--prefix=/
 configure-options
 	--sysconfdir=/etc
 	--with-moddir=/lib/modules

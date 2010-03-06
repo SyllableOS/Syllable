@@ -12,6 +12,7 @@ locations			http://www.kernel.org/pub/linux/utils/kernel/hotplug/
 packages			udev-142
 needs				Linux >= 2.6.22
 
+no-sysconfdir
 no-libexecdir
 _configure-args
 	--prefix=/

@@ -21,6 +21,7 @@ locations
 build-dir			.
 
 configure-env		CFLAGS "$CFLAGS -fPIC"
+no-sysconfdir
 no-bindir
 no-sbindir
 no-libexecdir

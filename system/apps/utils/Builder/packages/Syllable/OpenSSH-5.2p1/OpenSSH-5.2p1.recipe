@@ -1,6 +1,7 @@
 authors				Kaj de Vos
 status				testing
 
+no-sysconfdir
 configure-options
 	--sysconfdir=/etc/ssh
 ;	--datadir=/usr/share/sshd
