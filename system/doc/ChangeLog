@@ -1,6 +1,118 @@
+* March 6, 2010, Kaj de Vos *
+
+Did a massive further restructuring of the subdirectories in resource packages in the past
+few weeks.
+
+Moved bin/ to programs/.
+Most common people would probably associate "bin" with a dustbin, and wonder why every
+package has its own trashcan. We'd have to explain that it means "binaries", then explain
+what binaries are and what a binary number system is, and then explain that bin/ directories
+don't just contain binaries, and that binaries can also be found elsewhere... bin/ has only
+been a fitting name for a short period in the earliest Unix history, before the advent of
+scripts. Since the invention of libraries, there are also binary files elsewhere.
+
+Moved sbin/ to system-programs/.
+The "root" super user in Syllable Server has already been renamed to "system". This is also
+planned for Desktop. system-programs/ will then be a matching name for programs that need
+to be executed by the super user.
+
+Moved share/ to data/.
+share/ originally meant files that can be shared over a network between multiple machines,
+because they're data instead of architecture dependent binaries. This name is not very
+meaningful on Syllable, because disk space is not an issue anymore for these files and we
+build self-contained systems that can be operated off-line from a network. share/ directories
+are symlinked to make them available as an aggregate within the system, but most resource
+subdirectories are shared that way.
+
+init/ and early-init/ were already consolidated into tasks/. The remaining subdirectories
+are not meaningful to common users, because they contain support files for programs/ and
+applications/, so I folded them into a new subdirectory framework/ to signify their function
+and move them out of sight.
+
+Moved lib/ to framework/libraries/.
+Libel? Liberation? Makes it clear what we're talking about. It's still not the same as a
+public library, but at least it's clear that it belongs to the framework of a resource
+package, and libraries is the term used everywhere in system and programming documentation,
+so it would be confusing for techies to change it more than this.
+
+Moved libexec/ to framework/executables/.
+libexec/ clearly has a confused personality, so this makes that explicit. It can contain
+both support programs that don't need to be in the search path and libraries, which are both
+executables, so it clearly belongs to the framework.
+
+Moved include/ to framework/headers/.
+Include which in what? We're talking about compiled language programming headers for the
+libraries, and that's still a very technical term, so we tuck it away in framework/.
+
+Moved share/aclocal/ to framework/AutoConfigure/.
+This contains M4 macros for the GNU AutoTools, AutoConfigure and AutoMake, that many packages
+use for source code configuration. Very technical and applies to the libraries, so it's part
+of the framework. Besides, M4 macros are scripts, so it's not even proper data/. Not even
+techies can know what aclocal/ means until they find the explanation. Having a directory
+named local inside the directory share/ is also pretty disingenious. This is not a
+universally used configuration system, so we name it after the clearest component, that
+also has a relation to the original name.
+
+Consolidated lib/pkgconfig/ and share/pkgconfig/ into framework/PackageConfigure/.
+This is for another software configuration system named pkg-config, and contains data files
+describing properties of the package. Again, this is mostly meant for other packages to use
+the libraries in this resource package, so it's part of the framework. We use the clear
+CamelCase version of the name of the configuration system. Packages in the wild are confused
+about whether this is data or belongs with the libraries. Consolidating those two locations
+into one simplifies our search path for PackageConfigure files.
+
+Moved lib/REBOL/ to framework/REBOL/.
+Programming languages tend to have their own hierarchy under lib/ for their support files.
+There is no standard place for REBOL and Boron libraries, so we are free to change this.
+Having it immediately under framework/ instead of under framework/libraries/ shortens paths.
+
+Moved etc/ to settings/.
+etc/ must be the dumbest computer term ever introduced. It seems the designers were
+completely out of inspiration. I imagine it was scribbled on a napkin over lunch at the end
+of the other brilliant ideas for the Unix filesystem layout, and later implemented without
+further thought. While it's understandable that these people didn't count on common people
+needing to understand their system in the early 1970's, the naming is even of exceptionally
+poor quality in a technical context. What's really stupefying, though, is that these design
+choices have been defended as high culture by Unix types ever since.
+Note that eventually, we shouldn't have changing data in program directories, so in most
+cases we direct this settings directory to the global and unfortunately standard /etc/.
+
+Unlike the previous restructurings, the locations of these directories are critical to the
+operation of the software packages. Many components have accompanying search paths, that
+I have adapted in different places in the system. However, packages don't always use these
+and may try to find components in fixed locations or relative to themselves. Many packages
+configured with the GNU AutoTools support build options to change these locations. As much
+as possible, Builder now uses those options to perform these moves, so the packages are
+aware of them. However, many package configurations are partly broken, especially regarding
+this because few systems are interested in changing these locations. Such packages may
+need to be repaired by adding compatibility symlinks from the traditional subdirectories
+to the new ones.
+
+This can actually be turned into an advantage. Quite a few resource packages act as
+platforms for other packages. Those other packages contain extensions in the same location
+as in the platform package. In other systems, these files would end up in the very same
+directories. In Syllable, the platform packages can't find those modules because packages
+are built into their own, separate directories. However, they are registered in our symlink
+pools to create the same view as in other systems. By using the traditional subdirectories
+in platform packages to symlink into the symlink pools, they can be pointed to the
+extensions in other packages.
+
+Moved /system/bin/ to /system/programs/.
+To match the renaming in resource packages. /system/libaries/ already matched.
+
+Moved ^/lib/ to ^/framework/.
+This is the subdirectory relative to a program executable, that can contain private dynamic
+libaries for the program. Changed it to match the other renaming. There probably won't be
+more than libraries in this directory, so it's not worth it to make it more complex, but
+I named it consistent with resource packages from the user's point of view.
+
+Some of these changes still have the old counterparts in the system, so that most old
+resource packages and applications will still work on systems with the new structure, until
+they are obsolete.
+
 * February 28, 2010, Kaj de Vos *
 
-Fixed two keys in the Dvorak keymap. Patch by D. O'Neill.
+Fixed two keys in the Dvorak keymap. Patch by Daniel O'Neill.
 
 * February 17, 2010, Kaj de Vos *
 

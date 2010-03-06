@@ -1,4 +1,12 @@
-* Junt 5, 2009, Kristian Van Der Vliet *
+* March 6, 2010, Kaj de Vos *
+
+Adapted init to the new structure of resource packages and the symlink pools.
+
+The ELF loader recognises a special code @bindir@ in the library search path to search
+relative to the location of the program executable. Renamed this to @program-folder@
+for more clarity and consistency with the system restructuring.
+
+* June 5, 2009, Kristian Van Der Vliet *
 
 Implemented O_DIRECT support in AFS
  o Added maybe_cached_read() & maybe_cached_write() to the block cache.
