@@ -35,6 +35,8 @@ install-needs
 recommends			MkTemp
 ;build-recommends	diffutils
 
+no-datarootdir
+
 make-vars
 	CFLAGS			-O
 	LIBCFLAGS		-O2
