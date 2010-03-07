@@ -50,8 +50,8 @@ make-targets
 ;	dvi
 
 ;test-env
-;	TCL_LIBRARY		/resources/tcl
-;	DEJAGNULIBS		/resources/dejagnu
+;	TCL_LIBRARY		'/resources/tcl'
+;	DEJAGNULIBS		'/resources/dejagnu'
 ; Don't stop at errors:
 test-options		-k
 
