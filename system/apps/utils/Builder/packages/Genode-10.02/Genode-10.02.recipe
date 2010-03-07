@@ -1,0 +1,59 @@
+authors				Kaj de Vos
+status				developing
+warnings			Needs Genode toolchain.
+
+inherits			sourceforge
+
+headline			Capabilities-based operating system framework
+description
+	Genode is a novel operating-system architecture that enables dynamic workload while retaining security and robustness. The fundamental difference of Genode compared to other OS architectures is its strict organizational structure, which allows the execution of sensitive applications with a trusted computing base of a few thousand lines of code beside high-complexity workload. With its organizational approach, the architecture facilitates a clean separation of policies and mechanisms, and enables the definition and application of system policies in a natural and distributed fashion. Genode's resource-management concept enables highly dynamic workload but still retains deterministic behaviour normally only found in statically configured systems.
+licenses			GPL-2
+
+home				genode.org
+packages			genode/genode-10.02
+
+needs				sdl
+build-needs
+	make >= 3.81
+;	Genode toolchain
+;	GNU-CompilerCollection >= 4
+
+build-dir			build
+
+configure
+;	ln -s ../Genode-10.02/tool/builddir/build.mk Makefile &&
+	mkdir -p build &&
+	cd build &&
+	ln -sf ../tool/builddir/build.mk Makefile &&
+	mkdir -p etc &&
+	echo 'REPOSITORIES = ../base-linux ../base ../os ../demo' > etc/build.conf
+;	echo 'SPECS += experimental' > etc/specs.conf
+
+install-tree		programs
+install-files
+	../os/config/linux_demo				programs/config
+	bin/core							programs/
+
+	bin/init							programs/
+
+	bin/timer							programs/
+	bin/fb_sdl							programs/
+
+;	server/nitlog/nitlog				programs/
+;	server/liquid_framebuffer/liquid_fb	programs/
+	bin/nitpicker						programs/
+
+;	lib/libz/test-libz					programs/
+;	lib/libpng/test-libpng				programs/
+
+;	app/launchpad/launchpad				programs/
+;	app/scout/genode/scout				programs/
+
+;	test/pci/testpci					programs/
+;	test/bomb/bomb						programs/
+;	test/nitpicker/testnit				programs/
+
+documentation		README LICENSE
+develop-docs
+	hello_tutorial/
+	doc/*

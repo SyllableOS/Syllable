@@ -1,0 +1,4 @@
+#! /bin/sh
+# Needs its configuration file in the same directory:
+cd /resources/Genode/programs
+./core
