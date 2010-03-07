@@ -14,43 +14,43 @@ packages			genode/genode-8.08
 needs				sdl
 build-needs
 	make >= 3.81
-	gcc >= 4
+	GNU-CompilerCollection >= 4
 
 build-dir			build
 
 configure
-;	ln -s ../genode-8.08/tool/builddir/build.mk Makefile
-	mkdir -p build
-	cd build
-	ln -sf ../tool/builddir/build.mk Makefile
-	mkdir -p etc
+;	ln -s ../genode-8.08/tool/builddir/build.mk Makefile &&
+	mkdir -p build &&
+	cd build &&
+	ln -sf ../tool/builddir/build.mk Makefile &&
+	mkdir -p etc &&
 	echo 'REPOSITORIES = ../base-linux ../base ../os ../demo' > etc/build.conf
 
-install-tree		bin
+install-tree		programs
 install-files
-	../os/config/linux_demo				bin/config
-	core/core							bin/
+	../os/config/linux_demo				programs/config
+	core/core							programs/
 
-	init/init							tasks/start/
+	init/init							programs/
 
-	drivers/timer/linux/timer			bin/
-	drivers/framebuffer/sdl/fb_sdl		bin/
+	drivers/timer/linux/timer			programs/
+	drivers/framebuffer/sdl/fb_sdl		programs/
 
-	server/nitlog/nitlog				bin/
-	server/liquid_framebuffer/liquid_fb	bin/
-	server/nitpicker/genode/nitpicker	bin/
+	server/nitlog/nitlog				programs/
+	server/liquid_framebuffer/liquid_fb	programs/
+	server/nitpicker/genode/nitpicker	programs/
 
-	lib/libz/test-libz					bin/
-	lib/libpng/test-libpng				bin/
+	lib/libz/test-libz					programs/
+	lib/libpng/test-libpng				programs/
 
-	app/launchpad/launchpad				bin/
-	app/scout/genode/scout				bin/
+	app/launchpad/launchpad				programs/
+	app/scout/genode/scout				programs/
 
-	test/pci/testpci					bin/
-	test/bomb/bomb						bin/
-	test/nitpicker/testnit				bin/
+	test/pci/testpci					programs/
+	test/bomb/bomb						programs/
+	test/nitpicker/testnit				programs/
 
 documentation		README LICENSE
 develop-docs
-	hello_tutorial
+	hello_tutorial/
 	doc/*
