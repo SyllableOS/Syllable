@@ -33,8 +33,15 @@ documentation
 	README COPYRIGHT
 	doc/*
 
+; Fix broken symlink:
+links				../system-programs/killall5 programs/pidof
+
 ; There are no component paths, so we must use a trick:
 move-files
 	usr/bin/*		programs/
 	usr/include/	framework/headers
-delete-files		usr/
+delete-files
+	usr/
+;	UtilLinuxNG has a maintained one:
+	programs/wall
+	manuals/man1/wall.1
