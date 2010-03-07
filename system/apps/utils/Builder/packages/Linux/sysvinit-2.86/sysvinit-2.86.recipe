@@ -17,7 +17,8 @@ install-tree
 	bin
 	sbin
 	usr/bin
-	manuals
+	usr/include
+	framework
 	manuals/man1
 	manuals/man5
 	manuals/man8
@@ -33,5 +34,7 @@ documentation
 	doc/*
 
 ; There are no component paths, so we must use a trick:
-move-files			usr/bin/* programs/
-delete-files		usr/bin/
+move-files
+	usr/bin/*		programs/
+	usr/include/	framework/headers
+delete-files		usr/

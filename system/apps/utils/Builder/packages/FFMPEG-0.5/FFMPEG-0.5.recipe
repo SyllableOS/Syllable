@@ -22,6 +22,7 @@ build-needs
 ; Documentation build fails:
 build-conflicts		tetex
 
+no-sysconfdir
 no-sbindir
 no-includedir
 no-libexecdir
