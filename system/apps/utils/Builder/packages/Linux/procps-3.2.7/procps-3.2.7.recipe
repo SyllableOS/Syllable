@@ -3,6 +3,7 @@ status				testing
 warnings
 	Assumes system installation!
 	Install messes with the permissions of /dev/null in the running system!
+	Tries to find NCurses in /usr/include/ncurses
 
 licenses			GPL LGPL
 
