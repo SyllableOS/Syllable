@@ -10,9 +10,9 @@ l4:4:wait:/etc/rc.d/init.d/rc 4
 l5:5:wait:/etc/rc.d/init.d/rc 5
 l6:6:wait:/etc/rc.d/init.d/rc 6
 
-ca:12345:ctrlaltdel:/sbin/shutdown -t1 -a -r now
+ca:12345:ctrlaltdel:/system/indexes/system-programs/shutdown -t1 -a -r now
 
-su:S016:once:/sbin/sulogin
+su:S016:once:/system/indexes/system-programs/sulogin
 
 1:2345:respawn:/system/indexes/system-programs/agetty tty1 9600
 2:2345:respawn:/system/indexes/system-programs/agetty tty2 9600
