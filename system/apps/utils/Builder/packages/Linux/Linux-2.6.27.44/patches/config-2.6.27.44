@@ -1064,7 +1064,7 @@ CONFIG_NET_9P_VIRTIO=m
 #
 # Generic Driver Options
 #
-CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
+CONFIG_UEVENT_HELPER_PATH="/system/indexes/system-programs/hotplug"
 CONFIG_STANDALONE=y
 CONFIG_PREVENT_FIRMWARE_BUILD=y
 CONFIG_FW_LOADER=y
