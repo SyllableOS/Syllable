@@ -33,8 +33,10 @@ documentation
 	README COPYRIGHT
 	doc/*
 
-; Fix broken symlink:
-links				../system-programs/killall5 programs/pidof
+links
+;	Fix broken symlink:
+	../system-programs/killall5	programs/pidof
+	system-programs/init		/sbin/
 
 ; There are no component paths, so we must use a trick:
 move-files
