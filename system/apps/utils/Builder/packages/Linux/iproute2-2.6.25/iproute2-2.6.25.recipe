@@ -1,5 +1,6 @@
 authors				Kaj de Vos
 status				testing
+warnings			Assumes system installation!
 
 name				Net:Iproute2
 headline			Modern network configuration replacement for ifconfig
@@ -18,17 +19,14 @@ locations			http://developer.osdl.org/dev/iproute2/download/
 needs				db 1.85
 build-needs
 ;	For headers:
-	linux
+	Linux
 	flex
 	bison
 
 build-dir			.
 
-;configure			true
-
-;make-env			CPPFLAGS "-I$IMAGE/include $CPPFLAGS"
 _make-env
-;	CPPFLAGS "-I$IMAGE/system/development/resources/linux/2.6.25/include $CPPFLAGS"
+;	CPPFLAGS "-I$IMAGE/system/development/resources/linux/2.6.25/framework/headers $CPPFLAGS"
 ;	Private libs conflict with system libs, and so need to be first when bootstrapping:
 	LDFLAGS "-L../lib $LDFLAGS"
 ;make-vars
@@ -39,8 +37,13 @@ _make-env
 
 system-prefix-var	DESTDIR
 install-tree
-; FHS compatibility:
-;install-vars		SBINDIR /sbin
+install-vars
+;	FHS compatibility:
+;	SBINDIR /sbin
+	SBINDIR /system/resources/iproute2/2.6.26/system-programs
+;	CONFDIR /etc/iproute2
+	MANDIR /system/resources/iproute2/2.6.26/manuals
+	DOCDIR /system/resources/iproute2/2.6.26/documentation
 
 documentation
 	README* COPYING ChangeLog
