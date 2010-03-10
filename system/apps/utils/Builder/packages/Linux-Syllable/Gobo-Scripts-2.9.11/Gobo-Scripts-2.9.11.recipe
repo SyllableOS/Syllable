@@ -178,6 +178,8 @@ install-files
 	ld.so.conf								/System/Settings/
 
 links
+;	Fix broken Python library links:
+	../programs/										framework/bin
 	./bin/												/System/Index/sbin
 ;	For ldd:
 	/bin/bash											/System/Index/bin/

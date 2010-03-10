@@ -87,6 +87,8 @@ install-files
 	2.9.11/Resources/Defaults/Settings/*	/System/Settings/
 
 links
+;	Fix broken Python library links:
+	../programs/								framework/bin
 	./bin/										/System/Index/sbin
 ;	For ldd:
 	/bin/bash									/System/Index/bin/
