@@ -1,12 +1,11 @@
 #! /bin/sh
 
+manpath="/documentation/manuals"
+
 if [ `uname` = "syllable" ]
 then
-	manpath="/documentation/man"
 	browser="/applications/Webster/Webster"
 else
-	manpath="/documentation/man"
-
 	if [ -e /system/resources/DirectFrameBuffer -a `id --user` = 0 ]
 	then
 		browser="links -g"
