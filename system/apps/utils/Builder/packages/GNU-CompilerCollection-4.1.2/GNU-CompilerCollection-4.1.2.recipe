@@ -29,7 +29,7 @@ needs
 conflicts			BinaryUtils
 test-needs			dejagnu >= 1.4.1
 install-needs
-;	gcc
+;	GNU-CompilerCollection
 ;	For documentation (only really needed for TreeLang?):
 	texinfo
 recommends			MkTemp

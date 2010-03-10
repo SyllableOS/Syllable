@@ -62,4 +62,4 @@ internal-docs		RELNOTES
 links
 	system-programs/ip		/usr/sbin/
 ;	FHS compatibility:
-	system-programs/arpd	/usr/sbin/
+;	system-programs/arpd	/usr/sbin/
