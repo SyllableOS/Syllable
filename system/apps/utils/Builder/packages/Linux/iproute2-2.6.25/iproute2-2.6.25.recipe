@@ -29,21 +29,27 @@ _make-env
 ;	CPPFLAGS "-I$IMAGE/system/development/resources/linux/2.6.25/framework/headers $CPPFLAGS"
 ;	Private libs conflict with system libs, and so need to be first when bootstrapping:
 	LDFLAGS "-L../lib $LDFLAGS"
-;make-vars
+make-vars
+;	CONFDIR /etc/iproute2
+	CONFDIR /system/resources/iproute2/2.6.25/settings
 ;	FHS compatibility:
-;	SBINDIR '/sbin'
+;	SBINDIR /sbin
+	SBINDIR /system/resources/iproute2/2.6.25/system-programs
+	MANDIR /system/resources/iproute2/2.6.25/manuals
+	DOCDIR /system/resources/iproute2/2.6.25/documentation
 ;	Doesn't work:
 ;	KERNEL_INCLUDE $IMAGE/system/development/resources/linux/2.6.25/framework/headers
 
 system-prefix-var	DESTDIR
 install-tree
 install-vars
+;	CONFDIR /etc/iproute2
+	CONFDIR /system/resources/iproute2/2.6.25/settings
 ;	FHS compatibility:
 ;	SBINDIR /sbin
-	SBINDIR /system/resources/iproute2/2.6.26/system-programs
-;	CONFDIR /etc/iproute2
-	MANDIR /system/resources/iproute2/2.6.26/manuals
-	DOCDIR /system/resources/iproute2/2.6.26/documentation
+	SBINDIR /system/resources/iproute2/2.6.25/system-programs
+	MANDIR /system/resources/iproute2/2.6.25/manuals
+	DOCDIR /system/resources/iproute2/2.6.25/documentation
 
 documentation
 	README* COPYING ChangeLog
@@ -53,5 +59,7 @@ documentation
 ;	RELNOTES
 internal-docs		RELNOTES
 
-; FHS compatibility:
-;links				system-programs/arpd /usr/sbin/
+links
+	system-programs/ip		/usr/sbin/
+;	FHS compatibility:
+	system-programs/arpd	/usr/sbin/
