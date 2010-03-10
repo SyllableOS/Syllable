@@ -18,7 +18,7 @@
 # Global variables.  These can be changed if you know what you're
 # doing.
 
-HTML_DIR=/documentation/man
+HTML_DIR=/documentation/manuals
 VERSION=0.1
 
 # function print_usage

@@ -12,8 +12,8 @@ copyright notice below for more information.
 The shell script which wraps man2html are originally written by Kristian Van Der Vliet, and
 are released under the GNU General Public Licence.
 
-The HTML manpages are placed in /documentation/man  The URL is
-file:///documentation/man/index.html
+The HTML manpages are placed in /documentation/manuals  The URL is
+file:///documentation/manuals/index.html
 
 ----man-1.5l/README----
 
