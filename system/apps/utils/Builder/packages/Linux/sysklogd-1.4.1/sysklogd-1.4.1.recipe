@@ -11,13 +11,13 @@ locations			http://www.infodrom.org/projects/sysklogd/download/
 system-prefix-var	prefix
 
 install-tree
-	programs
+	system-programs
 	manuals/man5
 	manuals/man8
 install-vars
 	MAN_USER		system
 	MAN_GROUP		system
-	BINDIR			$IMAGE/system/resources/sysklogd/1.4.1/programs
+	BINDIR			$IMAGE/system/resources/sysklogd/1.4.1/system-programs
 	MANDIR			$IMAGE/system/resources/sysklogd/1.4.1/manuals
 
 documentation		README.1st README.linux ANNOUNCE COPYING NEWS CHANGES
