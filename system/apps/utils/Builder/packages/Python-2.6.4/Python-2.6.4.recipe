@@ -45,7 +45,11 @@ documentation
 ;	Misc/ Doc/*
 develop-docs		Demo/
 
-;links				programs/python /usr/bin/python
+links
+;	Done in system build:
+;	programs/python			/usr/bin/python
+;	Can't find own modules:
+	framework/libraries/	lib
 
 ; Big:
 delete-files		framework/libraries/python2.6/test/
