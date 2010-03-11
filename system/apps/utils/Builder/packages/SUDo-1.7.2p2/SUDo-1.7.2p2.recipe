@@ -51,7 +51,10 @@ super-install
 system-prefix-var	DESTDIR
 
 ;install-targets		install_binaries install_man
-post-install		sed -i s/root.ALL=\(ALL\)/%administrators\ ALL=\(ALL\)\ NOPASSWD:/ $IMAGE/etc/sudoers
+post-install
+;	Needed for nested sudo'ing:
+	sed -i s/root/system/ $IMAGE/etc/sudoers &&
+	sed -i s/#\ %wheel/%administrators/ $IMAGE/etc/sudoers
 
 documentation		README LICENSE README.LDAP TROUBLESHOOTING UPGRADE WHATSNEW ChangeLog HISTORY
 build-docs			INSTALL
