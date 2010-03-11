@@ -146,6 +146,7 @@ tree
 	applications/Xpdf
 	documentation
 ;	documentation/images
+	documentation/manuals
 
 ;	LFS extras
 

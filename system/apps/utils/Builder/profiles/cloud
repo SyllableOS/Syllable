@@ -121,6 +121,7 @@ tree
 	applications/preferences	settings.png
 	documentation
 ;	documentation/images
+	documentation/manuals
 
 ;	LFS extras
 
