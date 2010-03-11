@@ -1,6 +1,6 @@
 ORCA [
 	Title:		"Package installation library"
-	Version:	0.6.10
+	Version:	0.6.11
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006-2010 Kaj de Vos
@@ -335,7 +335,8 @@ package-image: context [
 				change-dir dir
 
 				foreach entry read %. [
-					unless #"~" = last entry [  ; Skip backup files
+					; Skip backup files and CVS control files
+					unless any [#"~" = last entry  find [%CVS %.cvsignore] entry] [
 						node: rejoin [subdir "/" entry]
 
 						foreach stage stages [
@@ -364,7 +365,8 @@ package-image: context [
 				change-dir dir
 
 				foreach entry read %. [
-					unless #"~" = last entry [  ; Skip backup files
+					; Skip backup files and CVS control files
+					unless any [#"~" = last entry  find [%CVS %.cvsignore] entry] [
 						if all [nesting?  dir? entry] [
 							unless remove-subdir stages  rejoin [subdir "/" entry]  yes
 								[return no]
