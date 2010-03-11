@@ -40,3 +40,6 @@ finish
 
 ;	Location specific:
 ;	ln -sf /system/indexes/data/zoneinfo/Europe/Amsterdam etc/localtime
+
+;	Needed for suid programs:
+	ldconfig -r $IMAGE
