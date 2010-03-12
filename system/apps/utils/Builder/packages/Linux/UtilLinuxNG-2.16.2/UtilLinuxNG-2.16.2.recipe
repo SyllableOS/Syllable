@@ -36,7 +36,15 @@ system-prefix-var	DESTDIR
 
 documentation
 	README README.licensing COPYING ABOUT-NLS NEWS AUTHORS TODO
-;	docs example.files
+;	docs/ example.files/
 develop-docs		README.devel
 
-;links				/system/indexes/system-programs/agetty /sbin/
+links
+;	system-programs/agetty	/sbin/
+;	Fix split libraries:
+	libblkid.so.1.1.0		libraries/libblkid.so
+	libuuid.so.1.3.0		libraries/libuuid.so
+move-files
+	libraries/pkgconfig/	framework/PackageConfigure/
+	libraries/*				framework/libraries/
+delete-files		libraries/
