@@ -26,7 +26,7 @@ resources
 
 finish
 ;	Clean out kernel source link from the host system:
-	sudo rm /lib/modules/2.6.27.44-Syllable/build
+	sudo rm /lib/modules/2.6.27.44-Syllable/build &&
 
 	mv users/root/ users/administrator &&
 	chown -R administrator:administrators users/administrator &&
@@ -36,10 +36,10 @@ finish
 	rm -r resources/documentation &&
 
 ;	Clean out Desktop stuff:
-	rm system/start.sh
+	rm system/start.sh &&
 
 ;	Location specific:
-;	ln -sf /system/indexes/data/zoneinfo/Europe/Amsterdam etc/localtime
+;	ln -sf /system/indexes/data/zoneinfo/Europe/Amsterdam etc/localtime &&
 
 ;	Needed for suid programs:
 	ldconfig -r $IMAGE
