@@ -1,6 +1,6 @@
 ORCA [
 	Title:		"Package installation library"
-	Version:	0.6.12
+	Version:	0.6.13
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006-2010 Kaj de Vos
@@ -314,7 +314,7 @@ package-image: context [
 		/local dir legacy?
 	][
 		legacy?: all [1 = length? stages  ; Only support legacy dirs with single stage
-			find [resources-stage/packages %/usr/] select stage/1 'packages
+			find  reduce [resources-stage/packages %/usr/]  select stage/1 'packages
 		]
 		foreach dir  either legacy? [all-flat-dirs] [flat-dirs] [
 ;			FIXME: ORCA bug: errors don't propagate from TASK:
