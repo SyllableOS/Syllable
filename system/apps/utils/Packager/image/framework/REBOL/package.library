@@ -1,6 +1,6 @@
 ORCA [
 	Title:		"Package installation library"
-	Version:	0.6.11
+	Version:	0.6.12
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006-2010 Kaj de Vos
@@ -196,8 +196,8 @@ resources-stage: stage-proto/new none none
 package-image: context [
 	path: root: full-name: name: version: development?: this-stage: none
 
-	flat-dirs:	 [programs bin system-programs sbin applications]
-	nested-dirs: [settings framework lib include data tasks manuals]
+	all-flat-dirs:	 join flat-dirs:	[programs system-programs applications] ['bin 'sbin]
+	all-nested-dirs: join nested-dirs:	[settings framework data tasks manuals] ['lib 'include]
 
 	new: func ["Returns a new package image object."
 		package' [string! file!]  "Name or full path"
@@ -311,14 +311,17 @@ package-image: context [
 
 
 	do-subdirs: func [task stages
-		/local dir
+		/local dir legacy?
 	][
-		foreach dir flat-dirs [
+		legacy?: all [1 = length? stages  ; Only support legacy dirs with single stage
+			find [resources-stage/packages %/usr/] select stage/1 'packages
+		]
+		foreach dir  either legacy? [all-flat-dirs] [flat-dirs] [
 ;			FIXME: ORCA bug: errors don't propagate from TASK:
 			unless task stages dir no
 				[return no]
 		]
-		foreach dir nested-dirs [
+		foreach dir  either legacy? [all-nested-dirs] [nested-dirs] [
 			unless task stages dir yes
 				[return no]
 		]
