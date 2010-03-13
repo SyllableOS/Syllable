@@ -1,6 +1,6 @@
 ORCA [
 	Title:		"Package installation library"
-	Version:	0.6.15
+	Version:	0.7.0
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006-2010 Kaj de Vos
@@ -43,6 +43,15 @@ log: context [  ; Singleton logger object
 	failure: func [module] [
 		prin newline
 		print ["Package" module "failed!"]
+	]
+]
+
+symlink?: func ["Tests a file to be a symbolic link."
+	node [file! string!] "File or directory"
+	/local stdout
+][
+	all [0 = call/wait/output  join "stat --format %F " node  stdout: copy ""
+		stdout = "symbolic link^/"
 	]
 ]
 
@@ -346,7 +355,7 @@ package-image: context [
 							unless stage/index-node self node
 								[return no]
 						]
-						if all [nesting?  dir? entry] [
+						if all [nesting?  not symlink? entry  dir? entry] [
 							unless index-subdir stages node yes
 								[return no]
 							change-dir dir
@@ -370,7 +379,7 @@ package-image: context [
 				foreach entry read %. [
 					; Skip backup files and CVS control files
 					unless any [#"~" = last entry  find [%CVS %.cvsignore] entry] [
-						if all [nesting?  dir? entry] [
+						if all [nesting?  not symlink? entry  dir? entry] [
 							unless remove-subdir stages  rejoin [subdir "/" entry]  yes
 								[return no]
 						]
