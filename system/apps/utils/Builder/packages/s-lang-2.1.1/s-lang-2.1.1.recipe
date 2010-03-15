@@ -30,6 +30,8 @@ build-dir			.
 
 ;no-sysconfdir
 ; Creates both data/ and share/ directory and can't merge:
+no-datarootdir
+no-datadir
 configure-options
 ;	--sysconfdir=/etc
 ;	Instead of internal solution:
