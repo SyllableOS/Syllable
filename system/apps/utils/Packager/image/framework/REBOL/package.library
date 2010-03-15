@@ -1,6 +1,6 @@
 ORCA [
 	Title:		"Package installation library"
-	Version:	0.7.1
+	Version:	0.7.2
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006-2010 Kaj de Vos
@@ -258,7 +258,7 @@ package-image: context [
 		log/header join "Registering " path
 
 		either all [
-			do-subdirs :index-subdir stages: either stages [targets] [reduce [this-stage]]
+			do-subdirs :index-dir stages: either stages [targets] [reduce [this-stage]]
 			any [
 				root <> resources-stage/packages  ; TODO: generate staged and system manuals
 				not exists? manuals: join path "/manuals"  ; FIXME: detect info/ only
@@ -309,7 +309,7 @@ package-image: context [
 					action join "manmanager -r " manuals
 				)
 			]
-			do-subdirs :remove-subdir stages
+			do-subdirs :remove-dir stages
 		][
 			action "sync"
 		][
@@ -337,7 +337,7 @@ package-image: context [
 		yes
 	]
 
-	index-subdir: func [stages subdir nesting?
+	index-dir: func [stages subdir nesting?
 		/local dir entry node stage
 	][
 		any [not exists? dir: rejoin [path "/" subdir]  ; Skip non-existing (top level) directories
@@ -347,18 +347,28 @@ package-image: context [
 				change-dir dir
 
 				foreach entry read %. [
-					; Skip backup files and CVS control files
-					unless any [#"~" = last entry  find [%CVS %.cvsignore] entry] [
-						node: rejoin [subdir "/" entry]
+					node: rejoin [subdir "/" entry]
 
-						foreach stage stages [
-							unless stage/index-node self node
-								[return no]
+					either all [exists? entry  dir? entry] [
+						if all [nesting?  entry <> %CVS] [  ; Skip CVS directories
+							foreach stage stages [
+								unless stage/index-node self node
+									[return no]
+							]
+							unless symlink? entry [
+								unless index-dir stages node yes
+									[return no]
+								change-dir dir
+							]
 						]
-						if all [nesting?  not symlink? entry  dir? entry] [
-							unless index-subdir stages node yes
-								[return no]
-							change-dir dir
+					][	; File or dangling symlink
+						; Skip backup files and CVS control files
+;						ORCA FIXME: implement find/case
+						unless any [#"~" = last entry  find [%.cvsignore] entry] [
+							foreach stage stages [
+								unless stage/index-node self node
+									[return no]
+							]
 						]
 					]
 				]
@@ -367,7 +377,7 @@ package-image: context [
 		]
 	]
 
-	remove-subdir: func [stages subdir nesting?
+	remove-dir: func [stages subdir nesting?
 		/local dir entry stage
 	][
 		any [not exists? dir: rejoin [path "/" subdir]  ; Skip non-existing (top level) directories
@@ -377,17 +387,27 @@ package-image: context [
 				change-dir dir
 
 				foreach entry read %. [
-					; Skip backup files and CVS control files
-					unless any [#"~" = last entry  find [%CVS %.cvsignore] entry] [
-						if all [nesting?  not symlink? entry  dir? entry] [
-							unless remove-subdir stages  rejoin [subdir "/" entry]  yes
-								[return no]
+					either all [exists? entry  dir? entry] [
+						if all [nesting?  entry <> %CVS] [  ; Skip CVS directories
+							unless symlink? entry [
+								unless remove-dir stages  rejoin [subdir "/" entry]  yes
+									[return no]
+								change-dir dir
+							]
+							foreach stage stages [
+								unless stage/remove-node subdir entry
+									[return no]
+							]
 						]
-						foreach stage stages [
-							unless stage/remove-node subdir entry
-								[return no]
+					][	; File or dangling symlink
+						; Skip backup files and CVS control files
+;						ORCA FIXME: implement find/case
+						unless any [#"~" = last entry  find [%.cvsignore] entry] [
+							foreach stage stages [
+								unless stage/remove-node subdir entry
+									[return no]
+							]
 						]
-						change-dir dir
 					]
 				]
 				yes
