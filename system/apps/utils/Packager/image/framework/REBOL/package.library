@@ -1,6 +1,6 @@
 ORCA [
 	Title:		"Package installation library"
-	Version:	0.7.0
+	Version:	0.7.1
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006-2010 Kaj de Vos
@@ -272,7 +272,7 @@ package-image: context [
 				(	log/detail "Setting main package registration"
 
 					foreach stage stages [
-						unless stage/select-package self
+						unless stage/select-package self  ; TODO: detect conflict before registering files
 							[break]
 					]
 				)
@@ -323,7 +323,7 @@ package-image: context [
 		/local dir legacy?
 	][
 		legacy?: all [1 = length? stages  ; Only support legacy dirs with single stage
-			find  reduce [resources-stage/packages %/usr/]  in stages/1 'packages
+			find reduce [resources-stage/packages %/usr/] this-stage/packages
 		]
 		foreach dir  either legacy? [all-flat-dirs] [flat-dirs] [
 ;			FIXME: ORCA bug: errors don't propagate from TASK:
