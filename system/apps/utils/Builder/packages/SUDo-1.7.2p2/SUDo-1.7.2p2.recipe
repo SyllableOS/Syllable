@@ -54,7 +54,7 @@ system-prefix-var	DESTDIR
 post-install
 ;	Needed for nested sudo'ing:
 	sed -i s/root/system/ $IMAGE/etc/sudoers &&
-	sed -i s/#\ %wheel/%administrators/ $IMAGE/etc/sudoers
+	sed -i s/#\ wheel/administrators/ $IMAGE/etc/sudoers
 
 documentation		README LICENSE README.LDAP TROUBLESHOOTING UPGRADE WHATSNEW ChangeLog HISTORY
 build-docs			INSTALL
