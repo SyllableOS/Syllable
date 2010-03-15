@@ -1,6 +1,6 @@
 diff -ru SUDo-1.7.2p2-original/env.c SUDo-1.7.2p2/env.c
 --- SUDo-1.7.2p2-original/env.c	2009-06-23 20:24:42.000000000 +0200
-+++ SUDo-1.7.2p2/env.c	2010-02-21 13:21:03.000000000 +0100
++++ SUDo-1.7.2p2/env.c	2010-03-15 11:23:09.000000000 +0100
 @@ -125,7 +125,7 @@
      "HOSTALIASES",
      "NLSPATH",
@@ -10,6 +10,15 @@ diff -ru SUDo-1.7.2p2-original/env.c SUDo-1.7.2p2/env.c
      "_RLD*",
  #ifdef __hpux
      "SHLIB_PATH",
+@@ -152,7 +152,7 @@
+     "USR_ACE",
+     "DLC_ACE",
+ #endif /* HAVE_SECURID */
+-    "TERMINFO",			/* terminfo, exclusive path to terminfo files */
++//    "TERMINFO",			/* terminfo, exclusive path to terminfo files */
+     "TERMINFO_DIRS",		/* terminfo, path(s) to terminfo files */
+     "TERMPATH",			/* termcap, path(s) to termcap files */
+     "TERMCAP",			/* XXX - only if it starts with '/' */
 @@ -164,7 +164,7 @@
      "JAVA_TOOL_OPTIONS",	/* java, extra command line options */
      "PERLIO_DEBUG ",		/* perl, debugging output file */
@@ -31,11 +40,12 @@ diff -ru SUDo-1.7.2p2-original/env.c SUDo-1.7.2p2/env.c
      "RUBYOPT",			/* ruby, extra command line options */
      NULL
  };
-@@ -210,6 +210,26 @@
+@@ -210,6 +210,27 @@
      "TZ",
      "XAUTHORITY",
      "XAUTHORIZATION",
 +
++    "TERMINFO",			/* terminfo, exclusive path to terminfo files */
 +    "CC",
 +    "CXX",
 +    "AS",
