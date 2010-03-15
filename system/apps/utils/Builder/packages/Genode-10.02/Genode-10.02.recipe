@@ -28,7 +28,8 @@ configure
 	mkdir -p etc &&
 	echo 'REPOSITORIES = ../base-linux ../base ../os ../demo' > etc/build.conf &&
 ;	echo 'SPECS += experimental' > etc/specs.conf &&
-	echo 'CROSS_DEV_PREFIX = /resources/GNU-CompilerCollection/programs/' > etc/tools.conf
+;	Toolchain: BinaryUtils and GCC:
+	echo 'CROSS_DEV_PREFIX = /resources/indexes/programs/' > etc/tools.conf
 
 install-tree		programs
 install-files
