@@ -7,7 +7,7 @@ warnings			LibIberty is both in BinaryUtils and in GCC.
 
 inherits			gnu
 
-headline			Binary tools
+headline			Binary programming tools
 description
 	The GNU Binutils are a collection of binary tools. The main ones are ld, the GNU linker and as, the GNU assembler. Their main reason for existence is to give the GNU system the facility to compile and link programs.
 licenses			GPL LGPL
@@ -22,8 +22,8 @@ build-needs
 install-needs		BinaryUtils
 conflicts
 ;	Both BinaryUtils and AutoConfigure have info/standards.info:
-	autoconf
-	gcc
+	AutoConfigure
+	GNU-CompilerCollection
 
 patch				autoreconf ld gas
 ;	cd ld &&

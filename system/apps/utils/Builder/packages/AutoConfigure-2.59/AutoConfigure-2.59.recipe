@@ -1,0 +1,22 @@
+authors				Kaj de Vos
+warnings			Hardwires Perl location, so the primary Perl link should be a standard one.
+notes				Build: autom4te needs ftruncate()
+
+inherits			gnu
+
+headline			Generates build configure scripts
+description
+	Autoconf is an extensible package of M4 macros that produce shell scripts to automatically configure software source code packages. These scripts can adapt the packages to many kinds of UNIX-like systems without manual user intervention. Autoconf creates a configuration script for a package from a template file that lists the operating system features that the package can use, in the form of M4 macro calls.
+licenses			GPL
+
+home				www.gnu.org/software/autoconf/
+packages			autoconf/autoconf-2.59
+
+needs
+	Perl >= 5.005_03
+	M4 >= 1.4
+	AutoMake
+; Both BinaryUtils and AutoConfigure have info/standards.info:
+conflicts			BinaryUtils
+
+documentation		README BUGS COPYING NEWS ChangeLog TODO AUTHORS THANKS
