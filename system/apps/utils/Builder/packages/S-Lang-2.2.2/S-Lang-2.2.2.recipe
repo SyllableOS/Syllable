@@ -34,7 +34,8 @@ configure-options
 ;	--sysconfdir=/etc
 ;	Instead of internal solution:
 	--with-readline=gnu
-;	--with-png=
+	--with-z=/system/indexes/zlib
+	--with-png=/system/indexes/LibPNG
 ;	--with-pcre=
 
 ;make-targets		static
