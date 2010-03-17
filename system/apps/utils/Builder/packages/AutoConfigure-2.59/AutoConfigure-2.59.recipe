@@ -19,4 +19,6 @@ needs
 ; Both BinaryUtils and AutoConfigure have info/standards.info:
 conflicts			BinaryUtils
 
+no-datarootdir
+
 documentation		README BUGS COPYING NEWS ChangeLog TODO AUTHORS THANKS
