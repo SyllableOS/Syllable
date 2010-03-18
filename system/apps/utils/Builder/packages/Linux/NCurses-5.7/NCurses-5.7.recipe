@@ -44,3 +44,11 @@ links
 ;	Gobo binary compatibility:
 	libncursesw.so.5						framework/libraries/libncurses.so.5
 ;	libtinfow.so.5							framework/libraries/libtinfo.so.5
+
+pre-register
+	echo 'INPUT(-lncursesw)'	> framework/libraries/libncurses.so	&&
+;	echo 'INPUT(-lcursesw)'		> framework/libraries/libcurses.so	&&
+	echo 'INPUT(-lformw)'		> framework/libraries/libform.so	&&
+	echo 'INPUT(-lpanelw)'		> framework/libraries/libpanel.so	&&
+	echo 'INPUT(-lmenuw)'		> framework/libraries/libmenu.so	&&
+	echo 'INPUT(-lncursesw)'	> framework/libraries/libcursesw.so

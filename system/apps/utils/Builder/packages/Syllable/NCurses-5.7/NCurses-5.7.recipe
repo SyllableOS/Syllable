@@ -1,6 +1,7 @@
 authors				Kaj de Vos
 status				testing
 
+; autoreconf bombs out:
 ;make-shared
 
 configure-options
@@ -23,7 +24,7 @@ links
 	libformw.a					framework/libraries/libform.a
 	libpanelw.a					framework/libraries/libpanel.a
 	libmenuw.a					framework/libraries/libmenu.a
-	libncurses.so				framework/libraries/libcurses.so
+;	libncurses.so				framework/libraries/libcurses.so
 	libncursesw.a				framework/libraries/libcursesw.a
 	libncurses.a				framework/libraries/libcurses.a
 	ncursesw/ncurses.h			framework/headers/

@@ -18,9 +18,9 @@ build-needs
 	diffutils
 conflicts			termcap
 
-; Breaks if not using a subdirectory:
-no-includedir
 no-datarootdir
+; Breaks if not using an explicit subdirectory:
+no-includedir
 ;configure-options	--includedir=/resources/NCurses/framework/headers/ncursesw
 
 system-prefix-var	DESTDIR
@@ -30,13 +30,5 @@ documentation
 	doc/html/
 develop-docs		doc/ncurses-intro.doc
 internal-docs		doc/hackguide.doc
-
-pre-register
-	echo 'INPUT(-lncursesw)'	> framework/libraries/libncurses.so	&&
-;	echo 'INPUT(-lcursesw)'		> framework/libraries/libcurses.so	&&
-	echo 'INPUT(-lformw)'		> framework/libraries/libform.so	&&
-	echo 'INPUT(-lpanelw)'		> framework/libraries/libpanel.so	&&
-	echo 'INPUT(-lmenuw)'		> framework/libraries/libmenu.so	&&
-	echo 'INPUT(-lncursesw)'	> framework/libraries/libcursesw.so
 
 ;move-files			data/terminfo/ /usr/share/
