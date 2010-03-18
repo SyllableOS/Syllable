@@ -40,6 +40,7 @@ documentation
 develop-docs		README.devel
 
 links
+	programs/arch			/bin/
 ;	system-programs/agetty	/sbin/
 ;	Fix split libraries:
 	libblkid.so.1.1.0		libraries/libblkid.so
