@@ -2,7 +2,7 @@ authors				Kaj de Vos
 status				testing
 warnings
 	GCC has a circular dependency on GLibC.
-	LibIberty is both in BinaryUtils and in GCC.
+;	LibIberty is both in BinaryUtils and in GCC.
 notes				GMP with MPFR support is required to build Fortran
 
 inherits			gnu
@@ -26,7 +26,7 @@ needs
 	glibc >= 2.3.3
 ;	For Fortran:
 ;	gmp
-conflicts			BinaryUtils
+;conflicts			BinaryUtils
 test-needs			dejagnu >= 1.4.1
 install-needs
 ;	GNU-CompilerCollection
@@ -35,6 +35,8 @@ install-needs
 recommends			MkTemp
 ;build-recommends	diffutils
 
+; Vapourises its C headers:
+no-includedir
 no-datarootdir
 
 make-vars
@@ -63,4 +65,4 @@ documentation
 build-docs			INSTALL
 
 ; LFS prefers the one from BinaryUtils:
-;delete-files		framework/libraries/libiberty.a
+delete-files		framework/libraries/libiberty.a
