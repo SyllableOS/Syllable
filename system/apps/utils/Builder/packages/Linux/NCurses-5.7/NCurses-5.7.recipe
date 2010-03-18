@@ -37,6 +37,7 @@ links
 	programs/clear							/usr/bin/
 ;	For S-Lang:
 ;	data/terminfo/							/usr/share/
+	ncursesw5-config						programs/ncurses5-config
 ;	Linked into BASh, which is called before the loader path is set:
 	framework/libraries/libncursesw.so.5	/system/resources/glibc/2.7/framework/libraries/
 ;;	framework/libraries/libtinfow.so.5		/system/resources/glibc/2.7/framework/libraries/

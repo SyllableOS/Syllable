@@ -1,6 +1,8 @@
 authors				Kaj de Vos
 status				testing
-;warnings			Expects terminfo in /usr/share/ no matter what.
+warnings
+	Looks for ncurses5w-config instead of ncursesw5-config!
+;	Expects terminfo in /usr/share/ no matter what.
 
 headline			Text mode programming library and interpreter
 description
@@ -32,10 +34,13 @@ build-dir			.
 ;no-datadir
 configure-options
 ;	--sysconfdir=/etc
+;	--with-pkgconfigdir=/resources/S-Lang/framework/PackageConfigure
 ;	Instead of internal solution:
 	--with-readline=gnu
-	--with-z=/system/indexes/zlib
-	--with-png=/system/indexes/LibPNG
+	--with-zlib=/system/indexes/zlib/framework/libraries
+	--with-zinc=/system/indexes/zlib/framework/headers
+	--with-pnglib=/system/indexes/LibPNG/framework/libraries
+	--with-pnginc=/system/indexes/LibPNG/framework/headers
 ;	--with-pcre=
 
 ;make-targets		static
