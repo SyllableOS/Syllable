@@ -1,6 +1,6 @@
 ORCA [
 	Title:		"Package installation library"
-	Version:	0.7.2
+	Version:	0.7.3
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006-2010 Kaj de Vos
@@ -323,7 +323,7 @@ package-image: context [
 		/local dir legacy?
 	][
 		legacy?: all [1 = length? stages  ; Only support legacy dirs with single stage
-			find reduce [resources-stage/packages %/usr/] this-stage/packages
+			find reduce [resources-stage/packages %/usr/] get in stages/1 'packages
 		]
 		foreach dir  either legacy? [all-flat-dirs] [flat-dirs] [
 ;			FIXME: ORCA bug: errors don't propagate from TASK:
@@ -342,6 +342,7 @@ package-image: context [
 	][
 		any [not exists? dir: rejoin [path "/" subdir]  ; Skip non-existing (top level) directories
 			not dir? dir  ; Skip (top level) files instead of directories
+			symlink? dir  ; Skip symlinks
 			(
 				log/detail join "Processing subdirectory " subdir
 				change-dir dir
@@ -355,11 +356,9 @@ package-image: context [
 								unless stage/index-node self node
 									[return no]
 							]
-							unless symlink? entry [
-								unless index-dir stages node yes
-									[return no]
-								change-dir dir
-							]
+							unless index-dir stages node yes
+								[return no]
+							change-dir dir
 						]
 					][	; File or dangling symlink
 						; Skip backup files and CVS control files
@@ -382,6 +381,7 @@ package-image: context [
 	][
 		any [not exists? dir: rejoin [path "/" subdir]  ; Skip non-existing (top level) directories
 			not dir? dir  ; Skip (top level) files instead of directories
+			symlink? dir  ; Skip symlinks
 			(
 				log/detail join "Processing subdirectory " subdir
 				change-dir dir
@@ -389,11 +389,10 @@ package-image: context [
 				foreach entry read %. [
 					either all [exists? entry  dir? entry] [
 						if all [nesting?  entry <> %CVS] [  ; Skip CVS directories
-							unless symlink? entry [
-								unless remove-dir stages  rejoin [subdir "/" entry]  yes
-									[return no]
-								change-dir dir
-							]
+							unless remove-dir stages  rejoin [subdir "/" entry]  yes
+								[return no]
+							change-dir dir
+
 							foreach stage stages [
 								unless stage/remove-node subdir entry
 									[return no]
