@@ -57,6 +57,7 @@ alias ll='ls -l'
 alias dir='ls -l --color'
 alias more=less
 alias m=less
+alias s=sudo
 
 #export LANG=<ll>_<CC>.<charmap><@modifiers>
 #export LANG=en_GB.ISO-8859-1

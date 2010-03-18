@@ -51,6 +51,7 @@ alias ll='ls -l'
 alias dir='ls -l --color'
 alias more=less
 alias m=less
+alias s=sudo
 
 # Early init scripts run before user login and can include environment variables.
 
