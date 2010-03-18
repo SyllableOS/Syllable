@@ -18,11 +18,14 @@ _configure-options
 	--with-curses
 	--enable-multibyte
 
-;make-vars			SHLIB_LIBS -lncurses
+; For newer S-Lang:
+make-vars			SHLIB_LIBS -lncurses
 ;make-targets		everything shared
 
 system-prefix-var	DESTDIR
 ;install-targets		install install-static install-shared
 
-documentation		README USAGE COPYING NEWS CHANGES CHANGELOG
+documentation
+	README USAGE COPYING NEWS CHANGES CHANGELOG
+;	doc/*
 build-docs			INSTALL
