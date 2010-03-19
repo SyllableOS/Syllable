@@ -1,14 +1,14 @@
 authors				Kaj de Vos
-status				developing
+status				testing
 
-links
+_links
 ;	Optimise wasteful duplicates:
-	../../bin/ar					i686-pc-linux-gnu/bin/ar
-	../../bin/as					i686-pc-linux-gnu/bin/as
-	../../bin/ld					i686-pc-linux-gnu/bin/ld
-	../../bin/nm					i686-pc-linux-gnu/bin/nm
-	../../bin/objdump				i686-pc-linux-gnu/bin/objdump
-	../../bin/ranlib				i686-pc-linux-gnu/bin/ranlib
-	../../bin/strip					i686-pc-linux-gnu/bin/strip
+	../../programs/ar				i686-pc-linux-gnu/bin/ar
+	../../programs/as				i686-pc-linux-gnu/bin/as
+	../../programs/ld				i686-pc-linux-gnu/bin/ld
+	../../programs/nm				i686-pc-linux-gnu/bin/nm
+	../../programs/objdump			i686-pc-linux-gnu/bin/objdump
+	../../programs/ranlib			i686-pc-linux-gnu/bin/ranlib
+	../../programs/strip			i686-pc-linux-gnu/bin/strip
 ;	For some packages:
-;	include/libiberty.h				/usr/include/
+;	framework/headers/libiberty.h	/usr/include/

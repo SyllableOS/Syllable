@@ -36,10 +36,10 @@ no-datarootdir
 ;	--enable-shared
 ;	--with-lib-path=
 
-system-prefix-var	DESTDIR
-
 ; No cross-compiling support:
 ;make-vars			tooldir /resources/BinaryUtils
+
+system-prefix-var	DESTDIR
 
 ;install-prefix-var	tooldir
 ;install-vars		tooldir /resources/BinaryUtils

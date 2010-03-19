@@ -57,14 +57,10 @@ make-env
 	BOOT_CFLAGS		'-O'
 ;	DLL_PATH		"$DLL_PATH:$PWD/gcc"
 
-; Needs itself during installation, before registration:
-install-env
-	PATH			"$STAGE/GNU-CompilerCollection/programs:$STAGE/bootstrap/GNU-CompilerCollection/programs:$IMAGE/resources/GNU-CompilerCollection/programs:$IMAGE/system/resources/GNU-CompilerCollection/4.1.2/programs:$PATH"
-
 links
-	framework/headers/	include
+;	framework/headers/	include
 ;	Fix broken internal links:
-	headers/			framework/include
+;	headers/			framework/include
 ;	/system/development/resources/GNU-CompilerCollection/4.1.2/framework/headers/ framework/include
 	gcc					programs/cc
 	libgcc.a			framework/libraries/gcc/i586-pc-syllable/4.1.2/libgcc_static.a

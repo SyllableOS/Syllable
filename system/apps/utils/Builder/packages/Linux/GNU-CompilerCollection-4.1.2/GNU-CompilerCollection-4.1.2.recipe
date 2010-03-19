@@ -28,14 +28,10 @@ configure-options
 
 make-env			BOOT_CFLAGS '-O'
 
-; Needs itself during installation, before registration?
-install-env
-	PATH			"$STAGE/GNU-CompilerCollection/programs:$STAGE/bootstrap/GNU-CompilerCollection/programs:$IMAGE/resources/GNU-CompilerCollection/programs:$IMAGE/system/resources/GNU-CompilerCollection/4.1.2/programs:$PATH"
-
 links
-	framework/headers/	include
+;	framework/headers/	include
 ;	Fix broken internal links:
-	headers/			framework/include
+;	headers/			framework/include
 ;	/system/development/resources/GNU-CompilerCollection/4.1.2/framework/headers/ framework/include
 	gcc					programs/cc
 	libgcc.a			framework/libraries/gcc/i486-pc-linux-gnu/4.1.2/libgcc_static.a

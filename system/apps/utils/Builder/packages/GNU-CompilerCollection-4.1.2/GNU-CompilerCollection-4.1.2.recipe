@@ -35,8 +35,8 @@ install-needs
 recommends			MkTemp
 ;build-recommends	diffutils
 
-; Vapourises its C headers:
-no-includedir
+; Can't find some of its C headers:
+;no-includedir
 no-datarootdir
 
 make-vars
@@ -58,6 +58,10 @@ make-targets
 test-options		-k
 
 system-prefix-var	DESTDIR
+
+; Needs itself during installation, before registration:
+install-env
+	PATH			"$STAGE/indexes/programs:$STAGE/bootstrap/indexes/programs:$IMAGE/resources/GNU-CompilerCollection/programs:$IMAGE/system/resources/GNU-CompilerCollection/4.1.2/programs:$PATH"
 
 documentation
 	README FAQ faq.html BUGS bugs.html COPYING COPYING.LIB NEWS ChangeLog MAINTAINERS

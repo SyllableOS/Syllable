@@ -1,13 +1,14 @@
 authors				Kaj de Vos
+status				testing
 
 links
 ;	Optimise wasteful duplicates:
-	../../bin/ar					i586-pc-syllable/bin/ar
-	../../bin/as					i586-pc-syllable/bin/as
-	../../bin/ld					i586-pc-syllable/bin/ld
-	../../bin/nm					i586-pc-syllable/bin/nm
-	../../bin/objdump				i586-pc-syllable/bin/objdump
-	../../bin/ranlib				i586-pc-syllable/bin/ranlib
-	../../bin/strip					i586-pc-syllable/bin/strip
+	../../programs/ar				i586-pc-syllable/bin/ar
+	../../programs/as				i586-pc-syllable/bin/as
+	../../programs/ld				i586-pc-syllable/bin/ld
+	../../programs/nm				i586-pc-syllable/bin/nm
+	../../programs/objdump			i586-pc-syllable/bin/objdump
+	../../programs/ranlib			i586-pc-syllable/bin/ranlib
+	../../programs/strip			i586-pc-syllable/bin/strip
 ;	For some packages:
-;	include/libiberty.h				/usr/include/
+;	framework/headers/libiberty.h	/usr/include/
