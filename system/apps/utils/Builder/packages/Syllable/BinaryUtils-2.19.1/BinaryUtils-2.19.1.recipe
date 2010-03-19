@@ -3,12 +3,13 @@ status				testing
 
 links
 ;	Optimise wasteful duplicates:
-	../../programs/ar				i586-pc-syllable/bin/ar
-	../../programs/as				i586-pc-syllable/bin/as
-	../../programs/ld				i586-pc-syllable/bin/ld
-	../../programs/nm				i586-pc-syllable/bin/nm
-	../../programs/objdump			i586-pc-syllable/bin/objdump
-	../../programs/ranlib			i586-pc-syllable/bin/ranlib
-	../../programs/strip			i586-pc-syllable/bin/strip
+	../../programs/ar				i586-pc-syllable/bin/
+	../../programs/as				i586-pc-syllable/bin/
+	../../programs/ld				i586-pc-syllable/bin/
+	../../programs/nm				i586-pc-syllable/bin/
+	../../programs/objcopy			i586-pc-syllable/bin/
+	../../programs/objdump			i586-pc-syllable/bin/
+	../../programs/ranlib			i586-pc-syllable/bin/
+	../../programs/strip			i586-pc-syllable/bin/
 ;	For some packages:
 ;	framework/headers/libiberty.h	/usr/include/
