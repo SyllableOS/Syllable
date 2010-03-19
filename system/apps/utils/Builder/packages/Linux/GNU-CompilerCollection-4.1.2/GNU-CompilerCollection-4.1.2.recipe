@@ -29,7 +29,7 @@ configure-options
 make-env			BOOT_CFLAGS '-O'
 
 ; Needs itself during installation, before registration?
-_install-env
+install-env
 	PATH			"$STAGE/GNU-CompilerCollection/programs:$STAGE/bootstrap/GNU-CompilerCollection/programs:$IMAGE/resources/GNU-CompilerCollection/programs:$IMAGE/system/resources/GNU-CompilerCollection/4.1.2/programs:$PATH"
 
 links
