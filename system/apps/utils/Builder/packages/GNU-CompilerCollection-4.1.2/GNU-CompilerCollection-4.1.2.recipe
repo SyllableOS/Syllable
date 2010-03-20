@@ -2,7 +2,8 @@ authors				Kaj de Vos
 status				testing
 warnings
 	GCC has a circular dependency on GLibC.
-;	LibIberty is both in BinaryUtils and in GCC.
+;	LibIberty is both in BinaryUtilities and in GCC.
+	Smartly detects BinaryUtilities 2.19.1 as < 2.14 and disables symbol versioning!
 notes				GMP with MPFR support is required to build Fortran
 
 inherits			gnu
@@ -21,12 +22,13 @@ packages
 ;	gcc/gcc-4.1.2/gcc-testsuite-4.1.2
 
 needs
-;	For -O3 with -fpic:
-	BinaryUtils >= 2.13.1
+;	For -O3 with -fpic: >= 2.13.1
+;	For symbol versioning: >= 2.14
+	BinaryUtilities >= 2.13.1 <> 2.19.1
 	glibc >= 2.3.3
 ;	For Fortran:
 ;	gmp
-;conflicts			BinaryUtils
+;conflicts			BinaryUtilities
 test-needs			dejagnu >= 1.4.1
 install-needs
 ;	GNU-CompilerCollection
@@ -68,5 +70,5 @@ documentation
 	ABOUT-NLS gcc/ABOUT-GCC-NLS
 build-docs			INSTALL
 
-; LFS prefers the one from BinaryUtils:
+; LFS prefers the one from BinaryUtilities:
 delete-files		framework/libraries/libiberty.a

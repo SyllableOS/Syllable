@@ -196,7 +196,7 @@ prepare
 	ln -s /resources/indexes/programs/perl		usr/bin/ &&
 ;	For OpenSSL?
 ;	ln -s /resources/indexes/programs/perl		usr/local/bin/ &&
-;	From BinaryUtils, for building OpenSSL:
+;	From BinaryUtilities, for building OpenSSL:
 	ln -s /resources/indexes/programs/ranlib	usr/bin/ &&
 
 ;	touch etc/mtab
@@ -294,7 +294,7 @@ modules
 	system libs/ReadLine-6.0
 
 ;	For rescopy:
-;	apps/gnu/BinaryUtils-2.19.1-objcopy
+;	apps/gnu/BinaryUtilities-2.19-objcopy
 
 ;	GrUB can use Curses:
 	sys/boot/grub-0.97

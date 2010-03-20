@@ -1,0 +1,15 @@
+authors				Kaj de Vos
+status				testing
+
+links
+;	Optimise wasteful duplicates:
+	../../programs/ar				i586-pc-syllable/bin/
+	../../programs/as				i586-pc-syllable/bin/
+	../../programs/ld				i586-pc-syllable/bin/
+	../../programs/nm				i586-pc-syllable/bin/
+	../../programs/objcopy			i586-pc-syllable/bin/
+	../../programs/objdump			i586-pc-syllable/bin/
+	../../programs/ranlib			i586-pc-syllable/bin/
+	../../programs/strip			i586-pc-syllable/bin/
+;	For some packages:
+;	framework/headers/libiberty.h	/usr/include/
