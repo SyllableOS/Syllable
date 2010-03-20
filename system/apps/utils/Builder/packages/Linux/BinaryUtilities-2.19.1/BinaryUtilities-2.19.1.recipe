@@ -1,0 +1,15 @@
+authors				Kaj de Vos
+status				testing
+
+links
+;	Hard links, but Zip duplicates them:
+	../../programs/ar				i686-pc-linux-gnu/bin/
+	../../programs/as				i686-pc-linux-gnu/bin/
+	../../programs/ld				i686-pc-linux-gnu/bin/
+	../../programs/nm				i686-pc-linux-gnu/bin/
+	../../programs/objcopy			i686-pc-linux-gnu/bin/
+	../../programs/objdump			i686-pc-linux-gnu/bin/
+	../../programs/ranlib			i686-pc-linux-gnu/bin/
+	../../programs/strip			i686-pc-linux-gnu/bin/
+;	For some packages:
+;	framework/headers/libiberty.h	/usr/include/

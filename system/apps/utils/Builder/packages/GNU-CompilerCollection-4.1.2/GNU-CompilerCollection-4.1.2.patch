@@ -1,0 +1,35 @@
+diff -ru GNU-CompilerCollection-4.1.2-original/libstdc++-v3/configure GNU-CompilerCollection-4.1.2/libstdc++-v3/configure
+--- GNU-CompilerCollection-4.1.2-original/libstdc++-v3/configure	2007-01-29 11:51:01.000000000 +0100
++++ GNU-CompilerCollection-4.1.2/libstdc++-v3/configure	2010-03-20 22:36:11.000000000 +0100
+@@ -87437,19 +87437,19 @@
+     { echo "$as_me:$LINENO: WARNING: === Symbol versioning will be disabled." >&5
+ echo "$as_me: WARNING: === Symbol versioning will be disabled." >&2;}
+     enable_symvers=no
+-  elif test $glibcxx_gnu_ld_version -lt $glibcxx_min_gnu_ld_version ; then
++#  elif test $glibcxx_gnu_ld_version -lt $glibcxx_min_gnu_ld_version ; then
+     # The right tools, the right setup, but too old.  Fallbacks?
+-    { echo "$as_me:$LINENO: WARNING: === Linker version $glibcxx_gnu_ld_version is too old for" >&5
+-echo "$as_me: WARNING: === Linker version $glibcxx_gnu_ld_version is too old for" >&2;}
+-    { echo "$as_me:$LINENO: WARNING: === full symbol versioning support in this release of GCC." >&5
+-echo "$as_me: WARNING: === full symbol versioning support in this release of GCC." >&2;}
+-    { echo "$as_me:$LINENO: WARNING: === You would need to upgrade your binutils to version" >&5
+-echo "$as_me: WARNING: === You would need to upgrade your binutils to version" >&2;}
+-    { echo "$as_me:$LINENO: WARNING: === $glibcxx_min_gnu_ld_version or later and rebuild GCC." >&5
+-echo "$as_me: WARNING: === $glibcxx_min_gnu_ld_version or later and rebuild GCC." >&2;}
+-    { echo "$as_me:$LINENO: WARNING: === Symbol versioning will be disabled." >&5
+-echo "$as_me: WARNING: === Symbol versioning will be disabled." >&2;}
+-    enable_symvers=no
++#    { echo "$as_me:$LINENO: WARNING: === Linker version $glibcxx_gnu_ld_version is too old for" >&5
++#echo "$as_me: WARNING: === Linker version $glibcxx_gnu_ld_version is too old for" >&2;}
++#    { echo "$as_me:$LINENO: WARNING: === full symbol versioning support in this release of GCC." >&5
++#echo "$as_me: WARNING: === full symbol versioning support in this release of GCC." >&2;}
++#    { echo "$as_me:$LINENO: WARNING: === You would need to upgrade your binutils to version" >&5
++#echo "$as_me: WARNING: === You would need to upgrade your binutils to version" >&2;}
++#    { echo "$as_me:$LINENO: WARNING: === $glibcxx_min_gnu_ld_version or later and rebuild GCC." >&5
++#echo "$as_me: WARNING: === $glibcxx_min_gnu_ld_version or later and rebuild GCC." >&2;}
++#    { echo "$as_me:$LINENO: WARNING: === Symbol versioning will be disabled." >&5
++#echo "$as_me: WARNING: === Symbol versioning will be disabled." >&2;}
++#    enable_symvers=no
+   fi
+ fi
+ 

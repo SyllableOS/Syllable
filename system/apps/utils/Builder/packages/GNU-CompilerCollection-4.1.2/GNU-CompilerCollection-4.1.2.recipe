@@ -3,7 +3,7 @@ status				testing
 warnings
 	GCC has a circular dependency on GLibC.
 ;	LibIberty is both in BinaryUtilities and in GCC.
-	Smartly detects BinaryUtilities 2.19.1 as < 2.14 and disables symbol versioning!
+;	Smartly detects BinaryUtilities > 2.17 as < 2.14 and disables symbol versioning!
 notes				GMP with MPFR support is required to build Fortran
 
 inherits			gnu
@@ -24,7 +24,7 @@ packages
 needs
 ;	For -O3 with -fpic: >= 2.13.1
 ;	For symbol versioning: >= 2.14
-	BinaryUtilities >= 2.13.1 <> 2.19.1
+	BinaryUtilities >= 2.14
 	glibc >= 2.3.3
 ;	For Fortran:
 ;	gmp
