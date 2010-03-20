@@ -401,7 +401,6 @@ modules
 ;	apps/other/rsync-2.6.9
 	apps/other/Links-2.3pre1
 	apps/other/QEmulator-0.11.1
-	apps/other/Genode-10.02
 
 ;	Extra package managers
 

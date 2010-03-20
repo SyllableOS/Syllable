@@ -1,6 +1,8 @@
 authors				Kaj de Vos
 status				developing
-warnings			Needs Genode toolchain.
+warnings
+	Doesn't compile with Syllable's native toolchain.
+	Genode binary toolchain distribution needs GLibC >= 2.8, so it doesn't work on Server <= 0.4.
 
 inherits			sourceforge
 
