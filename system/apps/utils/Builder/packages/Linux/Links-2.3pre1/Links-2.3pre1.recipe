@@ -1,5 +1,8 @@
 authors				Kaj de Vos
 status				testing
+warnings
+	Builds on DirectFB and LibPNG in the host system.
+	DirectFB graphics mode may hang.
 
 recommends
 	OpenSSL

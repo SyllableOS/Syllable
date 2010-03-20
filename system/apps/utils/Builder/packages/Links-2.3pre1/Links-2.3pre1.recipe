@@ -1,6 +1,7 @@
 authors				Kaj de Vos
 status				testing
-                                                                                                                                                                                                        
+warnings			Builds on DirectFB and LibPNG in the host system.
+
 headline			Text and graphics mode web browser
 description
 	Links is a web browser running in both graphics and text mode.
