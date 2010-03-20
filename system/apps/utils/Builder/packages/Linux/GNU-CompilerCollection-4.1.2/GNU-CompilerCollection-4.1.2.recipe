@@ -30,8 +30,8 @@ make-env			BOOT_CFLAGS '-O'
 
 links
 ;	framework/headers/	include
-;	Fix broken internal links:
-;	headers/			framework/include
+;	Fix C++:
+	headers/			framework/include
 ;	/system/development/resources/GNU-CompilerCollection/4.1.2/framework/headers/ framework/include
 	gcc					programs/cc
 	libgcc.a			framework/libraries/gcc/i486-pc-linux-gnu/4.1.2/libgcc_static.a
