@@ -17,7 +17,7 @@ no-datarootdir
 configure-options
 	--sysconfdir=/etc
 	--with-moddir=/lib/modules
-;	--with-moddir=/system/indexes/framework/libraries/modules
+;	--with-moddir=/system/index/framework/libraries/modules
 ;	Static:
 	--enable-zlib
 

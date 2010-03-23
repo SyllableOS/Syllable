@@ -1,7 +1,6 @@
 authors				Kaj de Vos
 status				testing
 warnings
-	Needs super-user access to install correctly.
 	Will mess with /etc/ld.so.conf and /var/backups/ in the running system!
 
 no-sysconfdir
@@ -21,18 +20,18 @@ configure-options
 ;	Path of pt_chown:
 ;	--libexecdir=/usr/lib/glibc
 
-;super-install
+super-install
 
 links
 ;	Internal relative links are broken:
-	framework/libraries/								lib
-	/system/indexes/framework/libraries/ld-linux.so.2	/lib/
+	framework/libraries/				lib
+	framework/libraries/ld-linux.so.2	/lib/
 ;	For GCC. Sigh:
-	/system/indexes/framework/headers/limits.h			/usr/include/
+	framework/headers/limits.h			/usr/include/
 ;	For PERL. Double sigh:
-	/system/indexes/framework/headers/errno.h			/usr/include/
+	framework/headers/errno.h			/usr/include/
 ;	For SysVInit:
-	/system/indexes/framework/libraries/libcrypt.a		/usr/lib/
+	framework/libraries/libcrypt.a		/usr/lib/
 ;	For GhostScript. Triple sigh:
-	/system/indexes/framework/headers/sys/dir.h			/usr/include/sys/
-	/system/indexes/framework/headers/sys/time.h		/usr/include/sys/
+	framework/headers/sys/dir.h			/usr/include/sys/
+	framework/headers/sys/time.h		/usr/include/sys/

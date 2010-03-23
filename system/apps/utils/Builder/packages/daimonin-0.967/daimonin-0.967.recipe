@@ -16,15 +16,15 @@ packages			daimonin/daimonin_client-BETA3-0967
 
 needs
 	sdl
-	sdl-mixer
-	sdl-image
+	SDL-Mixer
+	SDL-Image
 
 patch-config		client/make/linux/make_utils/
 
 build-dir			client/make/linux/
 
 configure-cmd		client/make/linux/configure
-make-env			C_INCLUDE_PATH "$C_INCLUDE_PATH:/system/indexes/include/SDL"
+make-env			C_INCLUDE_PATH "$C_INCLUDE_PATH:/system/index/framework/headers/SDL"
 
 documentation
 	client/README.txt client/README_LINUX.txt client/License

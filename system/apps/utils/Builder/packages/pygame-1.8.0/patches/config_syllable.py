@@ -8,7 +8,7 @@ configcommand = os.environ.get('SDL_CONFIG', 'sdl-config',)
 configcommand = configcommand + ' --version --cflags --libs'
 localbase = os.environ.get('LOCALBASE', '')
 
-#these get prefixes with '/resources/indexes' and '/usr/local' or the $LOCALBASE
+#these get prefixes with '/resources/index' and '/usr/local' or the $LOCALBASE
 origincdirs = ['/include', '/include/SDL', '/include/SDL11',
                '/include/smpeg', '/sdl-ttf/include', '/sdl-image/include',
 		'/sdl-mixer/include']
@@ -156,8 +156,8 @@ def main():
     else:
         incdirs = []
         libdirs = []
-    incdirs += ["/resources/indexes"+d for d in origincdirs]
-    libdirs += ["/resources/indexes"+d for d in origlibdirs]
+    incdirs += ["/resources/index"+d for d in origincdirs]
+    libdirs += ["/resources/index"+d for d in origlibdirs]
     incdirs += ["/usr/local"+d for d in origincdirs]
     libdirs += ["/usr/local"+d for d in origlibdirs]
     for arg in string.split(DEPS[0].cflags):

@@ -33,10 +33,10 @@
 #define	_PATHS_H_
 
 /* Default search path. */
-#define	_PATH_DEFPATH	"/resources/indexes/bin:/usr/bin:/bin:/system/indexes/bin"
+#define	_PATH_DEFPATH	"/resources/index/programs:/usr/bin:/bin:/system/index/programs:/system/programs"
 /* All standard utilities path. */
 #define	_PATH_STDPATH \
-	"/usr/bin:/bin:/usr/sbin:/sbin"
+	"/usr/sbin:/usr/bin:/sbin:/bin"
 
 /* A lot of these don't apply on Syllable but we must have defs.. */
 
@@ -63,7 +63,7 @@
 #define	_PATH_UNIX	"/system/kernel.so"
 #define	_PATH_UTMP	"/var/run/utmp"
 #define	_PATH_UTMP_DB	"/var/run/utmp.db"
-#define	_PATH_VI	"/resources/indexes/bin/vi"
+#define	_PATH_VI	"/resources/index/programs/vi"
 #define	_PATH_WTMP	"/var/log/wtmp"
 
 /* Provide trailing slash, since mostly used for building pathnames. */

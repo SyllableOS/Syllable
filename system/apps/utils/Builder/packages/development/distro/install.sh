@@ -2,9 +2,9 @@
 
 if [ `id --user` != 0 ]
 then
-	echo "The installation is not being run by the administrative user."
+	echo "The installation is not being run through the system user."
 	echo "Installation aborted."
-	echo "You can log in as the \"root\" user and try again."
+	echo 'You can try again by using the "sudo" command.'
 	exit 1
 fi
 
@@ -27,7 +27,7 @@ then
 	do
 		for version in `ls /system/development/resources/$package/`
 		do
-			package unregister /system/development/resources/$package/$version /system/indexes
+			package unregister /system/development/resources/$package/$version /system/index
 			sync
 		done
 	done
@@ -52,7 +52,7 @@ do
 	for version in `ls /system/development/resources/$package/`
 	do
 		echo ""
-		package register /system/development/resources/$package/$version /system/indexes
+		package register /system/development/resources/$package/$version /system/index
 		sync
 	done
 done

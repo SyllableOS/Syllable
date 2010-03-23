@@ -32,7 +32,7 @@ configure
 	echo 'REPOSITORIES = ../base-linux ../base ../os ../demo' > etc/build.conf &&
 ;	echo 'SPECS += experimental' > etc/specs.conf &&
 ;	Toolchain: BinaryUtils and GCC:
-;	echo 'CROSS_DEV_PREFIX = /resources/indexes/programs/' > etc/tools.conf
+;	echo 'CROSS_DEV_PREFIX = /resources/index/programs/' > etc/tools.conf
 ;	Genode toolchain:
 	echo 'CROSS_DEV_PREFIX = /usr/local/genode-gcc/bin/genode-x86-' > etc/tools.conf
 

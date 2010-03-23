@@ -268,7 +268,7 @@ diff -ru Python-2.6.4-original/setup.py Python-2.6.4/setup.py
 -            lib_dirs += os.getenv('LIBRARY_PATH', '').split(os.pathsep)
 -            inc_dirs += ['/system/include', '/atheos/autolnk/include']
 +        # Check for Syllable which has libraries in non-standard locations
-+        if os.path.exists('/system/indexes'):
++        if os.path.exists('/system/resources'):
              inc_dirs += os.getenv('C_INCLUDE_PATH', '').split(os.pathsep)
 +            if platform == 'syllable':
 +                # Syllable Desktop
@@ -305,7 +305,7 @@ diff -ru Python-2.6.4-original/Tools/scripts/h2py.py Python-2.6.4/Tools/scripts/
              if  sys.platform.find("beos") == 0:
                  searchdirs=os.environ['BEINCLUDES'].split(';')
 -            elif sys.platform.startswith("atheos"):
-+            elif os.path.exists('/system/indexes'):
++            elif os.path.exists('/system/resources'):
 +                # Syllable Desktop or Syllable Server
                  searchdirs=os.environ['C_INCLUDE_PATH'].split(':')
              else:

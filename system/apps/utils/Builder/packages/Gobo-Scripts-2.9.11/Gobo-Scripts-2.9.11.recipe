@@ -127,14 +127,14 @@ links
 	/System/Settings/fonts/						/etc/
 	/System/Settings/X11/						/etc/
 ;	For Compile:
-	/resources/indexes/bin/make					/usr/bin/
+	/resources/index/programs/make				/usr/bin/
 ;	/System/Index/bin/make						/usr/bin/
 
 ;	Syllable Desktop base system
 
 	2.7											/Programs/Glibc/Current
 ;	The loader needs to be available through this path:
-	/system/indexes/glibc/framework/libraries/	/Programs/Glibc/2.7/lib
+	/system/index/glibc/framework/libraries/	/Programs/Glibc/2.7/lib
 	/Programs/Glibc/2.7/lib/ld-linux.so.2		/System/Index/lib/
 	/System/Index/lib/ld-linux.so.2				/lib/
 

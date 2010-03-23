@@ -17,20 +17,20 @@ needs
 	sdl >= 1.2
 build-needs			ocaml >= 3.08
 recommends
-	sdl-mixer >= 1.2
-	sdl-image >= 1.2
+	SDL-Mixer >= 1.2
+	SDL-Image >= 1.2
 	sdl-ttf >= 2
 	lablgl
 	findlib
 
 build-dir			.
 
-;configure-options	--with-sdl-prefix=/system/indexes
+;configure-options	--with-sdl-prefix=/system/index
 
 system-prefix-var	DESTDIR
 install-vars
-	OCAMLLIBDIR		/resources/ocamlsdl/lib/ocaml
-	OCAMLSDLDIR		/resources/ocamlsdl/lib/ocaml/sdl
+	OCAMLLIBDIR		/resources/ocamlsdl/framework/libraries/ocaml
+	OCAMLSDLDIR		/resources/ocamlsdl/framework/libraries/ocaml/sdl
 
 documentation
 	README COPYING NEWS AUTHORS

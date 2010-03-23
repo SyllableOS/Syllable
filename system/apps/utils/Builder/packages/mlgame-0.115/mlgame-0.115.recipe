@@ -17,13 +17,13 @@ packages			mlgame/MLG115
 needs
 	ocamlsdl
 	sdl
-	sdl-image
+	SDL-Image
 build-needs			ocaml
 
 build-dir			.
 
 _configure-options
-	--with-sdl-prefix=/system/indexes
+	--with-sdl-prefix=/system/index
 ;	--enable-gl-sdl
 
 make-targets
@@ -34,5 +34,4 @@ documentation
 	README
 	Docs/*
 ;build-docs			Docs/INSTALL
-;develop-docs		Examples
-
+;develop-docs		Examples/

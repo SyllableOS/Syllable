@@ -14,7 +14,7 @@ needs				E2FSPrograms
 build-dir			.
 
 ; To find E2FSPrograms:
-configure-env		CPPFLAGS "$CPPFLAGS -I/resources/indexes/framework/headers"
+configure-env		CPPFLAGS "$CPPFLAGS -I/resources/index/framework/headers"
 no-datarootdir
 ;configure-options	--sbindir=/sbin
 

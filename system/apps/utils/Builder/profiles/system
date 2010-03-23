@@ -160,7 +160,9 @@ tree
 prepare
 	install -d -m 1777 tmp var/tmp &&
 
+;	Compatibility links:
 	ln -s usr/ resources &&
+	ln -s index/ usr/indexes &&
 
 ;	For OpenSSL and others:
 	ln -s /resources/index/programs/perl	usr/bin/ &&

@@ -185,7 +185,7 @@ links
 	/bin/bash											/System/Index/bin/
 	/bin/bash											/System/Links/Executables/
 ;	For X:
-	/system/indexes/programs/mcookie					/System/Links/Executables/
+	/system/index/programs/mcookie						/System/Links/Executables/
 ;	This one is destructive!
 ;	/System/Index/include/								/usr/include
 ;	Headers way off course:
@@ -198,7 +198,7 @@ links
 	/etc/group											/System/Settings/
 	/etc/localtime										/System/Settings/
 ;	For Compile:
-	/resources/indexes/programs/make					/usr/bin/
+	/resources/index/programs/make						/usr/bin/
 ;	/System/Index/bin/make								/usr/bin/
 	programs/											/Programs/Scripts/2.9.11/bin
 	2.9.11												/Programs/Scripts/Current
@@ -215,7 +215,7 @@ links
 
 	2.7													/Programs/Glibc/Current
 ;	The loader needs to be available through this path:
-	/system/indexes/glibc/framework/libraries/			/Programs/Glibc/2.7/lib
+	/system/index/glibc/framework/libraries/			/Programs/Glibc/2.7/lib
 	/Programs/Glibc/2.7/lib/ld-linux.so.2				/System/Index/lib/
 	/System/Index/lib/ld-linux.so.2						/lib/
 

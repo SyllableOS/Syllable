@@ -37,10 +37,10 @@ configure-options
 ;	--with-pkgconfigdir=/resources/S-Lang/framework/PackageConfigure
 ;	Instead of internal solution:
 	--with-readline=gnu
-	--with-zlib=/system/indexes/zlib/framework/libraries
-	--with-zinc=/system/indexes/zlib/framework/headers
-	--with-pnglib=/system/indexes/LibPNG/framework/libraries
-	--with-pnginc=/system/indexes/LibPNG/framework/headers
+	--with-zlib=/system/index/zlib/framework/libraries
+	--with-zinc=/system/index/zlib/framework/headers
+	--with-pnglib=/system/index/LibPNG/framework/libraries
+	--with-pnginc=/system/index/LibPNG/framework/headers
 ;	--with-pcre=
 
 ;make-targets		static

@@ -18,19 +18,18 @@ home				lgames.sourceforge.net/index.php?project=LMarbles
 packages			lgames/lmarbles-1.0.7
 
 needs
-	Syllable >= 0.6.3
 	sdl
-	sdl-mixer
+	SDL-Mixer
 
 patch-config
 
 build-dir			.
 
-configure-env		CPPFLAGS '-I/system/indexes/include/SDL'
+configure-env		CPPFLAGS "$CPPFLAGS -I/system/index/framework/headers/SDL"
 
 documentation
 	README COPYING ChangeLog AUTHORS TODO
 ;	Currently empty:
 ;	NEWS
-;	src/manual
+;	src/manual/
 build-docs			README-SDL.txt

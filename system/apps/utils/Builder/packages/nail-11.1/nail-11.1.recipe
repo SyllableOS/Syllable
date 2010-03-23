@@ -18,12 +18,12 @@ install-prefix-var	PREFIX
 
 make-vars
 	SYSCONFDIR		/resources/nail/settings
-;	INCLUDES		-I/resources/openssl/framework/headers/openssl
+;	INCLUDES		-I/resources/OpenSSL/framework/headers/openssl
 
 system-prefix-var	DESTDIR
 
 install-vars
 	SYSCONFDIR		/resources/nail/settings
-	UCBINSTALL		/resources/indexes/programs/install
+	UCBINSTALL		/resources/index/programs/install
 
 documentation		README I18N INSTALL COPYING ChangeLog TODO AUTHORS nail.1.html

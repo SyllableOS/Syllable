@@ -31,5 +31,5 @@ links
 	/boot/system/resources/glibc/2.7/framework/libraries/libc.so.2	/system/libraries/
 ;	/boot/system/resources/glibc/2.7/framework/libraries/libm.so.2	/system/libraries/
 ;	For GhostScript:
-	/system/indexes/framework/headers/sys/dir.h						/usr/include/sys
-	/system/indexes/framework/headers/sys/time.h					/usr/include/sys
+	framework/headers/sys/dir.h										/usr/include/sys/
+	framework/headers/sys/time.h									/usr/include/sys/

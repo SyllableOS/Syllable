@@ -19,7 +19,7 @@ build-recommends
 	pkg-config
 recommends
 	pcre
-	openssl
+	OpenSSL
 	expat
 	neon
 	openldap
@@ -40,10 +40,10 @@ configure-options
 ;	--enable-dav-fs
 ;	--enable-ldap
 	--enable-example
-	--with-z=/system/indexes
+	--with-z=/system/index
 ;	--with-z=/resources/zlib
 ;	--with-pcre=/resources/pcre
-;	--with-ssl=/resources/openssl
+;	--with-ssl=/resources/OpenSSL
 
 documentation
 	README ABOUT_APACHE VERSIONING LICENSE NOTICE CHANGES ROADMAP

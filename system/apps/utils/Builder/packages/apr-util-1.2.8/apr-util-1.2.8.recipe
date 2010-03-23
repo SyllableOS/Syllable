@@ -30,12 +30,12 @@ configure-options
 	--with-apr=/resources/apr
 ;	--with-expat=/resources/expat
 	--with-berkeley-db=/resources/db
-;	--with-berkeley-db=/system/indexes
+;	--with-berkeley-db=/system/index
 ;	--with-dbm=db45
 ;	--with-ldap=ldap
 ;	Doesn't seem to work yet:
-	--with-ldap-include=/resources/openldap/include
-	--with-ldap-lib=/resources/openldap/lib
+	--with-ldap-include=/resources/openldap/framework/headers
+	--with-ldap-lib=/resources/openldap/framework/libraries
 
 documentation		CHANGES LICENSE NOTICE
 build-docs			INSTALL.MySQL

@@ -50,9 +50,9 @@ build-docs			INSTALL*.txt
 
 links
 ;	Let other packages supply extensions:
-	/system/indexes/framework/libraries/	lib
-	/system/indexes/data/					share
-	/system/indexes/programs/smbspool		framework/libraries/cups/backend/smb
+	/system/index/framework/libraries/	lib
+	/system/index/data/					share
+	/system/index/programs/smbspool		framework/libraries/cups/backend/smb
 
 delete-files
 ;	4 MB web site:

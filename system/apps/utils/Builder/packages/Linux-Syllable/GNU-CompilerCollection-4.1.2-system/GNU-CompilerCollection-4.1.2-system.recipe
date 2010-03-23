@@ -9,7 +9,7 @@ links
 ;	For some packages:
 ;	programs/cpp						framework/libraries/
 ;	For WebKit:
-	/resources/indexes/programs/gcc		/usr/bin/
+	/resources/index/programs/gcc		/usr/bin/
 ;	For Genode:
 ;	framework/libraries/libgcc_s.so.1	/system/resources/glibc/2.7/framework/libraries/
 ;	framework/libraries/libstdc++.so.6	/system/resources/glibc/2.7/framework/libraries/

@@ -37,8 +37,8 @@ configure-options
 ;	--with-store-dir=/nix/store
 ;	--localstatedir=/nix/var
 	--disable-old-db-compat
-;	--with-bzip2=/resources/indexes
-;	--with-aterm=/resources/indexes
+;	--with-bzip2=/resources/index
+;	--with-aterm=/resources/index
 ;	For the documentation:
 ;	--with-docbook-rng=
 ;	--with-docbook-xsl=
@@ -46,11 +46,10 @@ configure-options
 ;super-install
 system-prefix-var	DESTDIR
 
-;install-tree		early-init
-move-files			etc/profile.d/nix.sh early-init/
-
 documentation
 	README COPYING NEWS AUTHORS
 ;	Empty:
 ;	ChangeLog
 ;	doc/manual/*.html
+
+move-files			etc/profile.d/nix.sh tasks/setup/

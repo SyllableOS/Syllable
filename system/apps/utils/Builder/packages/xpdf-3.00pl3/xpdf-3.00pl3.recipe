@@ -18,21 +18,21 @@ packages			xpdf-3.00
 ;needs
 ;	On X11 systems:
 ;	lesstif
-build-needs			gcc < 4
+build-needs			GNU-CompilerCollection < 4
 recommends
 	t1lib
 ;	Uses internal headers:
-	freetype >= 2.0.5 < 2.2
+	FreeType >= 2.0.5 < 2.2
 
 build-dir			.
 
 configure-options
-	--with-freetype2-includes=/resources/freetype/include/freetype2
-;	--with-freetype2-includes=/system/indexes/include/freetype2
+	--with-freetype2-includes=/resources/FreeType/framework/headers/freetype2
+;	--with-freetype2-includes=/system/index/framework/headers/freetype2
 ;	--enable-multithreaded
 	--enable-a4-paper
 
 documentation
 	README COPYING ANNOUNCE CHANGES
-;	doc
+;	doc/*
 build-docs			INSTALL

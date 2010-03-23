@@ -2,4 +2,4 @@
 # (including the system (root) account).
 # Warning: not suitable for high security requirements!
 
-#/resources/indexes/framework/executables/ftpd -D
+#/resources/index/framework/executables/ftpd -D

@@ -53,16 +53,17 @@ documentation
 	README COPYING COPYING.LIB
 	binutils/NEWS binutils/ChangeLog binutils/MAINTAINERS
 links
-;	Optimize wasteful duplicates:
-	../../bin/ar					i586-pc-syllable/bin/ar
-	../../bin/as					i586-pc-syllable/bin/as
-	../../bin/ld					i586-pc-syllable/bin/ld
-	../../bin/nm					i586-pc-syllable/bin/nm
-	../../bin/objdump				i586-pc-syllable/bin/objdump
-	../../bin/ranlib				i586-pc-syllable/bin/ranlib
-	../../bin/strip					i586-pc-syllable/bin/strip
+;	Optimise wasteful duplicates:
+	../../programs/ar				i586-pc-syllable/bin/
+	../../programs/as				i586-pc-syllable/bin/
+	../../programs/ld				i586-pc-syllable/bin/
+	../../programs/nm				i586-pc-syllable/bin/
+	../../programs/objcopy			i586-pc-syllable/bin/
+	../../programs/objdump			i586-pc-syllable/bin/
+	../../programs/ranlib			i586-pc-syllable/bin/
+	../../programs/strip			i586-pc-syllable/bin/
+;	Handled by the system build:
 ;	For OpenSSL:
-	bin/ranlib				/usr/bin/ranlib
-;	/resources/indexes/bin/ranlib	/usr/bin/ranlib
+;	programs/ranlib					/usr/bin/
 ;	For some packages:
-;	include/libiberty.h				/usr/include/
+;	framework/headers/libiberty.h	/usr/include/
