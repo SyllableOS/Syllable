@@ -48,7 +48,7 @@ finish
 	rm system/start.sh &&
 
 ;	Location specific:
-;	ln -sf /system/indexes/data/zoneinfo/Europe/Amsterdam etc/localtime &&
+;	ln -sf /system/index/data/zoneinfo/Europe/Amsterdam etc/localtime &&
 
 ;	Needed for suid programs:
 	ldconfig -r $IMAGE

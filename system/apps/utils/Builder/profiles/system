@@ -58,16 +58,16 @@ tree
 	system/resources/catalogs/zh-cn
 	system/resources/wallpapers
 
-	system/indexes
-	system/indexes/settings
-	system/indexes/programs
-	system/indexes/system-programs
-	system/indexes/framework
-	system/indexes/data
-	system/indexes/tasks
-	system/indexes/tasks/setup
-	system/indexes/tasks/start
-	system/indexes/manuals
+	system/index
+	system/index/settings
+	system/index/programs
+	system/index/system-programs
+	system/index/framework
+	system/index/data
+	system/index/tasks
+	system/index/tasks/setup
+	system/index/tasks/start
+	system/index/manuals
 
 	system/drivers
 
@@ -105,21 +105,21 @@ tree
 
 	usr
 
-	usr/indexes
-	usr/indexes/settings
-	usr/indexes/programs
-	usr/indexes/bin
-	usr/indexes/applications
-	usr/indexes/system-programs
-	usr/indexes/sbin
-	usr/indexes/framework
-	usr/indexes/lib
-	usr/indexes/include
-	usr/indexes/data
-	usr/indexes/tasks
-	usr/indexes/tasks/setup
-	usr/indexes/tasks/start
-	usr/indexes/manuals
+	usr/index
+	usr/index/settings
+	usr/index/programs
+	usr/index/bin
+	usr/index/applications
+	usr/index/system-programs
+	usr/index/sbin
+	usr/index/framework
+	usr/index/lib
+	usr/index/include
+	usr/index/data
+	usr/index/tasks
+	usr/index/tasks/setup
+	usr/index/tasks/start
+	usr/index/manuals
 
 ;	For env:
 	usr/bin
@@ -163,11 +163,11 @@ prepare
 	ln -s usr/ resources &&
 
 ;	For OpenSSL and others:
-	ln -s /resources/indexes/programs/perl		usr/bin/ &&
+	ln -s /resources/index/programs/perl	usr/bin/ &&
 ;	For OpenSSL?
-;	ln -s /resources/indexes/programs/perl		usr/local/bin/ &&
+;	ln -s /resources/index/programs/perl	usr/local/bin/ &&
 ;	From BinaryUtilities, for building OpenSSL:
-	ln -s /resources/indexes/programs/ranlib	usr/bin/
+	ln -s /resources/index/programs/ranlib	usr/bin/
 
 resources
 	boot/grub				menu.lst							text/plain

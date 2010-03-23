@@ -57,16 +57,16 @@ tree
 	system/resources/catalogs/sv
 	system/resources/catalogs/zh-cn
 
-	system/indexes
-	system/indexes/settings
-	system/indexes/programs
-	system/indexes/system-programs
-	system/indexes/framework
-	system/indexes/data
-	system/indexes/tasks
-	system/indexes/tasks/setup
-	system/indexes/tasks/start
-	system/indexes/manuals
+	system/index
+	system/index/settings
+	system/index/programs
+	system/index/system-programs
+	system/index/framework
+	system/index/data
+	system/index/tasks
+	system/index/tasks/setup
+	system/index/tasks/start
+	system/index/manuals
 
 	var
 	var/log
@@ -75,21 +75,21 @@ tree
 
 	usr
 
-	usr/indexes
-	usr/indexes/settings
-	usr/indexes/programs
-	usr/indexes/bin
-	usr/indexes/applications
-	usr/indexes/system-programs
-	usr/indexes/sbin
-	usr/indexes/framework
-	usr/indexes/lib
-	usr/indexes/include
-	usr/indexes/data
-	usr/indexes/tasks
-	usr/indexes/tasks/setup
-	usr/indexes/tasks/start
-	usr/indexes/manuals
+	usr/index
+	usr/index/settings
+	usr/index/programs
+	usr/index/bin
+	usr/index/applications
+	usr/index/system-programs
+	usr/index/sbin
+	usr/index/framework
+	usr/index/lib
+	usr/index/include
+	usr/index/data
+	usr/index/tasks
+	usr/index/tasks/setup
+	usr/index/tasks/start
+	usr/index/manuals
 
 ;	For env:
 	usr/bin
@@ -193,11 +193,11 @@ prepare
 	ln -s usr/ resources &&
 
 ;	For OpenSSL and others:
-	ln -s /resources/indexes/programs/perl		usr/bin/ &&
+	ln -s /resources/index/programs/perl	usr/bin/ &&
 ;	For OpenSSL?
-;	ln -s /resources/indexes/programs/perl		usr/local/bin/ &&
+;	ln -s /resources/index/programs/perl	usr/local/bin/ &&
 ;	From BinaryUtilities, for building OpenSSL:
-	ln -s /resources/indexes/programs/ranlib	usr/bin/ &&
+	ln -s /resources/index/programs/ranlib	usr/bin/ &&
 
 ;	touch etc/mtab
 
@@ -216,19 +216,19 @@ prepare
 	chown system:system	var/lib/sshd &&
 
 ;	For LFS bootscripts:
-	ln -s /system/indexes/system-programs/cupsd			usr/sbin/ &&
-	ln -s /resources/indexes/system-programs/named		usr/sbin/ &&
-;	ln -s /system/indexes/system-programs/sshd			usr/sbin/ &&
-	ln -s /resources/indexes/programs/apachectl			usr/sbin/ &&
-	ln -s /resources/indexes/programs/httpd				usr/sbin/ &&
-	ln -s /resources/indexes/system-programs/vsftpd		usr/sbin/ &&
-	ln -s /resources/indexes/programs/rsync				usr/bin/ &&
-	ln -s /resources/indexes/system-programs/nmbd		usr/sbin/ &&
-	ln -s /resources/indexes/system-programs/smbd		usr/sbin/ &&
-	ln -s /resources/indexes/system-programs/winbindd	usr/sbin/ &&
+	ln -s /system/index/system-programs/cupsd		usr/sbin/ &&
+	ln -s /resources/index/system-programs/named	usr/sbin/ &&
+;	ln -s /system/index/system-programs/sshd		usr/sbin/ &&
+	ln -s /resources/index/programs/apachectl		usr/sbin/ &&
+	ln -s /resources/index/programs/httpd			usr/sbin/ &&
+	ln -s /resources/index/system-programs/vsftpd	usr/sbin/ &&
+	ln -s /resources/index/programs/rsync			usr/bin/ &&
+	ln -s /resources/index/system-programs/nmbd		usr/sbin/ &&
+	ln -s /resources/index/system-programs/smbd		usr/sbin/ &&
+	ln -s /resources/index/system-programs/winbindd	usr/sbin/ &&
 
 ;	For Python:
-	ln -s /resources/indexes/programs/python			usr/bin/
+	ln -s /resources/index/programs/python			usr/bin/
 
 resources
 	boot/grub									menu.lst
