@@ -1,5 +1,9 @@
 ; Parts to complete a system build
 
+tree
+	users/.template/.mc/
+	users/administrator/.mc/
+
 resources
 ;	Kernel modules:
 	etc/sysconfig									linux/modules
@@ -20,6 +24,10 @@ resources
 
 ;	May work better than the standard ones:
 ;	usr/share/terminfo/x/							binaries/xterm-atheos
+
+;	Midnight Commander configuration:
+	users/.template/.mc/							configuration/ini
+	users/administrator/.mc/						configuration/ini
 
 ;	For Gobo:
 	Programs/Pango/Settings/pango/					linux/pango.modules
