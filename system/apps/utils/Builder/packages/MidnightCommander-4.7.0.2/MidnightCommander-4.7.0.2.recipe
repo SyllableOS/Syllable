@@ -20,7 +20,10 @@ packages			mc-4.7.0.2
 needs
 	GLib >= 2.8
 	S-Lang 2 | NCurses
-build-recommends	PackageConfigure
+build-recommends
+	PackageConfigure
+;	For graphics in DoxyGen docs:
+;	dot
 recommends
 	GetText
 	GMP >= 0.18
