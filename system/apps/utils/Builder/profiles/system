@@ -433,3 +433,9 @@ modules
 	apps/utils/fsutils
 	apps/utils/nettools
 	apps/utils/systools
+
+finish
+	cp resources/grub/framework/libraries/grub/i386-pc/* boot/grub/ &&
+
+	rm -r resources/documentation &&
+	rm etc/Makefile
