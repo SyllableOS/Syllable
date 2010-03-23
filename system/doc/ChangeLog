@@ -1,3 +1,13 @@
+* March 23, 2010, Kaj de Vos *
+
+Moved all symlink pools from "indexes/" to "index/". This makes paths throughout the system
+a bit shorter.
+
+There's a compatibility symlink from resources/indexes/ to resources/index/ so that old
+packages that have this path built in can still be used on new systems.
+The Syllable branch in Builder/packages/ has not been changed yet, so that some packages
+can still be built on older systems.
+
 * March 6, 2010, Kaj de Vos *
 
 Did a massive further restructuring of the subdirectories in resource packages in the past

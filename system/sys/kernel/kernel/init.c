@@ -550,7 +550,7 @@ void system_init( void )
 				zSysLibPath[nPathLen] = '/';
 				zSysLibPath[nPathLen + 1] = '\0';
 			}
-			strcat( zSysLibPath, "system/libraries/:/system/indexes/framework/libraries/" );
+			strcat( zSysLibPath, "system/libraries/:/system/index/framework/libraries/" );
 
 			for ( i = 0; i < 255; ++i )
 			{

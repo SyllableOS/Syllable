@@ -278,7 +278,7 @@ void CMainWindow::Apply()
     	nTimeZone = 0;
 
   // Find out current file
-  std::string strFile = std::string("ln /system/indexes/share/zoneinfo");
+  std::string strFile = std::string("ln /system/index/data/zoneinfo");
   strFile += *m_pcstrFile[nTimeZone];
   strFile += std::string(" /etc/localtime -s");
   system(strFile.c_str());

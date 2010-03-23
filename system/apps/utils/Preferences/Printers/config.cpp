@@ -366,7 +366,7 @@ status_t PrintersWindow::InstallPPD( String cPPD, String cName )
 	fprintf( stderr, "This printer requires PPD: %s\n", cPPD.c_str() );
 
 	/* Check if the file is already in cups/data/cups/model/ */
-	cFromPath = String( "/system/indexes/data/cups/model/" ) + cPPD;
+	cFromPath = String( "/system/index/data/cups/model/" ) + cPPD;
 	cToPath = String( "/etc/cups/ppd/" ) + cName + String( ".ppd" );
 
 	/* If required, copy the PPD from CD first */
@@ -425,7 +425,7 @@ status_t PrintersWindow::GetPPD( String cPPD )
 	if( nError == EOK )
 	{
 		cFromPath += String( "/Packages/CUPS/PPD/" ) + cPPD;
-		cToPath = String( "/system/indexes/data/cups/model/" ) + cPPD;
+		cToPath = String( "/system/index/data/cups/model/" ) + cPPD;
 
 		nError = CopyPPD( cFromPath, cToPath );
 	}

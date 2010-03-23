@@ -54,28 +54,28 @@ source /system/network-start.sh
 
 # inetd is a special case and is always started first if INetUtils is installed
 
-if [ -e /resources/indexes/framework/executables/inetd ]
+if [ -e /resources/index/framework/executables/inetd ]
 then
-	/resources/indexes/framework/executables/inetd &
+	/resources/index/framework/executables/inetd &
 fi
 
 # Packages that require initalisation can include tasks/setup/ and tasks/start/
 # subdirectories, which should contain the init script(s). E.g. Apache would have
 # start/apache which would call apachectl, OpenSSH would have start/sshd which would
 # start sshd, etc. The package manager will collect all of these scripts together in
-# /resources/indexes/tasks/setup/ and /resources/indexes/tasks/start/; all we need to
+# /resources/index/tasks/setup/ and /resources/index/tasks/start/; all we need to
 # do is run each script in turn.
 
 # Run the late init scripts
 
-for start in `ls /system/indexes/tasks/start/`
+for start in `ls /system/index/tasks/start/`
 do
-	source /system/indexes/tasks/start/$start
+	source /system/index/tasks/start/$start
 done
 
-for start in `ls /resources/indexes/tasks/start/`
+for start in `ls /resources/index/tasks/start/`
 do
-	source /resources/indexes/tasks/start/$start
+	source /resources/index/tasks/start/$start
 done
 
 # Do user initialisation

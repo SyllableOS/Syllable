@@ -49,7 +49,7 @@ build log failures > $FINISH_FAILURES
 build log summary > $FINISH_SUMMARY
 
 # Move the CUPS PPDs
-package unregister $WORKING_COPY/image/system/resources/cups/1.3.4/ $WORKING_COPY/image/system/indexes/
+package unregister $WORKING_COPY/image/system/resources/cups/1.3.4/ $WORKING_COPY/image/system/index/
 
 if [ -e $INSTALLER_DIR/ppds ]
 then
@@ -67,7 +67,7 @@ done
 $SCRIPTS_DIR/printers.sh $INSTALLER_DIR/ppds/ $WORKING_COPY/image/system/resources/cups/1.3.4/data/cups/model/
 
 # Regenerate the symlinks for CUPS now we've removed the PPD files & added the models.list file
-package register $WORKING_COPY/image/system/resources/cups/1.3.4/ $WORKING_COPY/image/system/indexes/
+package register $WORKING_COPY/image/system/resources/cups/1.3.4/ $WORKING_COPY/image/system/index/
 
 # Package up and remove the development files
 FULL_VERSION="$VERSION-$(date +%Y%m%d)"

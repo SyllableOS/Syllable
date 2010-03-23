@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # The resulting (sorted) file goes in /system/resources/cups/<version>/data/cups/model/models.list
-# and must be symlinked from /system/indexes/data/cups/model/models.list
+# and must be symlinked from /system/index/data/cups/model/models.list
 
 if [ -z $1 ]
 then

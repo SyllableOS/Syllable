@@ -1,4 +1,4 @@
-#!/resources/indexes/programs/ruby
+#!/resources/index/programs/ruby
 
 INSTALL_DIR="/boot/Install"
 

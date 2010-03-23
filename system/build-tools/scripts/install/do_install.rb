@@ -1,4 +1,4 @@
-#!/resources/indexes/programs/ruby
+#!/resources/index/programs/ruby
 
 # 26 March 2005, Kaj de Vos
 #   Ask confirmation for both recognised and unrecognised partitions.

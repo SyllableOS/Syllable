@@ -27,7 +27,7 @@
 #include <gui/layoutview.h>
 #include <gui/button.h>
 
-#define MODELS_LIST	"/system/indexes/share/cups/model/models.list"
+#define MODELS_LIST	"/system/index/data/cups/model/models.list"
 
 enum model_window_messages
 {

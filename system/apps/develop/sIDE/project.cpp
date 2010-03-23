@@ -343,7 +343,7 @@ void project::Clean()
 	
 	/* Write script */
 	out<<"#!/bin/sh"<<std::endl;
-	out<<"export PATH=$PATH:/resources/indexes/programs:/usr/bin"<<std::endl;
+	out<<"export PATH=$PATH:/resources/index/programs:/usr/bin"<<std::endl;
 	out<<"cd '"<<m_cFilePath.GetDir().GetPath().c_str()<<"'"<<std::endl;
 	out<<"make -s clean"<<std::endl;
 	out<<"echo Finished - Press return to close this window"<<std::endl;
@@ -379,7 +379,7 @@ void project::Compile()
 	
 	/* Write script */
 	out<<"#!/bin/sh"<<std::endl;
-	out<<"export PATH=$PATH:/resources/indexes/programs:/usr/bin"<<std::endl;
+	out<<"export PATH=$PATH:/resources/index/programs:/usr/bin"<<std::endl;
 	out<<"cd '"<<m_cFilePath.GetDir().GetPath().c_str()<<"'"<<std::endl;
 	out<<"make"<<std::endl;
 	out<<"echo Finished - Press return to close this window"<<std::endl;
@@ -427,7 +427,7 @@ void project::Run()
 	
 	/* Write script */
 	out<<"#!/bin/sh"<<std::endl;
-	out<<"export PATH=$PATH:/resources/indexes/programs:/usr/bin"<<std::endl;
+	out<<"export PATH=$PATH:/resources/index/programs:/usr/bin"<<std::endl;
 	out<<"cd '"<<m_cFilePath.GetDir().GetPath().c_str()<<"'"<<std::endl;
 	out<<"\""<<cAppPath.c_str()<<"\""<<std::endl;
 	out.close();

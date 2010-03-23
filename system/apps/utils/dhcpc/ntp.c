@@ -22,13 +22,13 @@
 
 static pid_t ntpd = -1;
 
-#define MSNTP_PATH	"/usr/indexes/bin/msntp"
+#define MSNTP_PATH	"/resources/index/programs/msntp"
 
 int start_ntpd( DHCPSessionInfo_s* info )
 {
 	if( ntpd >= 0 )
 	{
-		debug( INFO, __FUNCTION__, "NTP deamon already running\n" );
+		debug( INFO, __FUNCTION__, "NTP daemon already running\n" );
 		return EINPROGRESS;
 	}
 
@@ -38,7 +38,7 @@ int start_ntpd( DHCPSessionInfo_s* info )
 		return EINVAL;
 	}
 
-	debug( INFO, __FUNCTION__, "starting NTP deamon\n" );
+	debug( INFO, __FUNCTION__, "starting NTP daemon\n" );
 
 	ntpd = fork();
 	if( ntpd == 0 )
@@ -51,7 +51,7 @@ int start_ntpd( DHCPSessionInfo_s* info )
 
 		if( execv( MSNTP_PATH, &ntp_argv ) < 0 )
 		{
-			debug( PANIC, __FUNCTION__, "failed to start NTP deamon\n" );
+			debug( PANIC, __FUNCTION__, "failed to start NTP daemon\n" );
 			free( ntp_server );
 			exit( EXIT_FAILURE );
 		}
@@ -59,4 +59,3 @@ int start_ntpd( DHCPSessionInfo_s* info )
 
 	return EOK;
 }
-
