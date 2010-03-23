@@ -29,9 +29,9 @@ build-recommends
 build-dir			.
 
 ;no-sysconfdir
-; Creates both data/ and share/ directory and can't merge:
-;no-datarootdir
-;no-datadir
+; Creates both data/ and share/ directories and can't merge:
+no-datarootdir
+no-datadir
 configure-options
 ;	--sysconfdir=/etc
 ;	--with-pkgconfigdir=/resources/S-Lang/framework/PackageConfigure
@@ -66,3 +66,6 @@ develop-docs
 ;	doc/* demo/
 	examples/
 build-docs			INSTALL.unx UPGRADE.txt
+
+; Creates both data/ and share/ directories and can't merge:
+links				data/ share
