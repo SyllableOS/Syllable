@@ -1,7 +1,7 @@
 #! /usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.10.23
+# Version 0.11.0
 # Copyright (c) 2002-2010 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -20,11 +20,11 @@ def prepare target
 
 	Dir.mkdir File.join(@stage, 'bootstrap')
 
-	for indexes in ['indexes', 'bootstrap/indexes']
-		Dir.mkdir File.join(@stage, indexes)
+	for index in ['index', 'bootstrap/index']
+		Dir.mkdir File.join(@stage, index)
 
 		for dir in ['settings', 'programs', 'system-programs', 'applications', 'framework', 'data', 'tasks', 'manuals']
-			Dir.mkdir File.join(@stage, indexes, dir)
+			Dir.mkdir File.join(@stage, index, dir)
 		end
 	end
 
@@ -343,7 +343,7 @@ def patchModule target
 						begin
 							@log.header 'Enabling shared libraries'
 							action 'cp /resources/libtool/share/libtool/ltmain.sh .' and
-#								action 'aclocal -I /resources/indexes/data/aclocal' and
+#								action 'aclocal -I /resources/index/data/aclocal' and
 #								action 'libtoolize --force' and
 #								action 'automake' and
 #								action 'autoconf'
@@ -1074,7 +1074,7 @@ def installModule staging, target
 													if original['/'] and not ['/', '.'].include? original[0, 1]
 														original = File.join(
 															system?(staging) ? '/system' : '/resources',
-															'indexes',
+															'index',
 															original
 														)
 													end
@@ -1259,7 +1259,7 @@ def installModule staging, target
 											@log.header 'Registering development files'
 
 											# Link files into the staging area
-											action superAccess + "package register #{devRoot} " + File.join(@stage, 'indexes')
+											action superAccess + "package register #{devRoot} " + File.join(@stage, 'index')
 										end
 									end
 								then
@@ -1285,13 +1285,13 @@ def registerModule staging, target, root
 
 	action 'package register ' + root + (staging ?
 		# Link module into the staging area
-		' ' + File.join(@stage, staging == 'bootstrap' ? 'bootstrap/indexes' : 'indexes') +
+		' ' + File.join(@stage, staging == 'bootstrap' ? 'bootstrap/index' : 'index') +
 		(system?(staging) ?
 			# Link module into the system image core
-			' ' + @systemIndexes :
+			' ' + @systemIndex :
 			imaging?(staging) ?
 				# Link module into the system image resources
-				@systemBuild ? ' ' + @resourcesIndexes : '' :
+				@systemBuild ? ' ' + @resourcesIndex : '' :
 				''
 		) :
 		''
@@ -1309,13 +1309,13 @@ def unregisterModule staging, name, root
 
 	action 'package unregister ' + root + (staging ?
 		# Unlink module from the staging area
-		' ' + File.join(@stage, staging == 'bootstrap' ? 'bootstrap/indexes' : 'indexes') +
+		' ' + File.join(@stage, staging == 'bootstrap' ? 'bootstrap/index' : 'index') +
 		(system?(staging) ?
 			# Unlink module from the system image core
-			' ' + @systemIndexes :
+			' ' + @systemIndex :
 			imaging?(staging) ?
 				# Unlink module from the system image resources
-				@systemBuild ? ' ' + @resourcesIndexes : '' :
+				@systemBuild ? ' ' + @resourcesIndex : '' :
 				''
 		) :
 		''
@@ -2262,8 +2262,8 @@ end
 ENV['STAGE'] = @stage = File.join(@workDir, 'stage')
 ENV['IMAGE'] = @image = File.join(@stage, 'image')
 
-@systemIndexes = File.join @image, 'system/indexes'
-@resourcesIndexes = File.join @image, 'resources/indexes'
+@systemIndex = File.join @image, 'system/index'
+@resourcesIndex = File.join @image, 'resources/index'
 
 unless @systemBuild = File.basename(@workDir) == 'system'
 	@crossCompile = false
@@ -2296,7 +2296,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.10.23',
+	puts 'Syllable Build System 0.11.0',
 		'Copyright (c) 2002-2010 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
@@ -2398,14 +2398,14 @@ else
 							''
 						end +
 
-						(File.join @stage, 'indexes', 'system-programs') + ':' +
-						(File.join @stage, 'indexes', 'programs') + ':'
+						(File.join @stage, 'index', 'system-programs') + ':' +
+						(File.join @stage, 'index', 'programs') + ':'
 					else
 						''
 					end +
 
-					(File.join @stage, 'bootstrap/indexes', 'system-programs') + ':' +
-					(File.join @stage, 'bootstrap/indexes', 'programs') + ':' +
+					(File.join @stage, 'bootstrap/index', 'system-programs') + ':' +
+					(File.join @stage, 'bootstrap/index', 'programs') + ':' +
 
 					ENV['PATH']
 
@@ -2415,7 +2415,7 @@ else
 
 				headers =
 					# Linked headers
-					(File.join @stage, 'indexes', 'framework/headers') + ':' +
+					(File.join @stage, 'index', 'framework/headers') + ':' +
 
 					if @systemBuild
 						# C library headers
@@ -2430,7 +2430,7 @@ else
 						''
 					end +
 
-					(File.join @stage, 'bootstrap/indexes', 'framework/headers')
+					(File.join @stage, 'bootstrap/index', 'framework/headers')
 
 				ENV['ATHEOS_INCLUDE_PATH'] = File.join @workDir, 'sys/include' if @systemBuild
 				ENV['C_INCLUDE_PATH'] = headers +
@@ -2449,7 +2449,7 @@ else
 					if @bootstrap
 						# Shared libraries may not be compatible with the build host:
 
-						(File.join @stage, 'indexes', 'framework/libraries') + ':' +
+						(File.join @stage, 'index', 'framework/libraries') + ':' +
 
 						if @systemBuild
 							(File.join @image, 'system/libraries') + ':' +
@@ -2461,7 +2461,7 @@ else
 						''
 					end +
 
-					File.join(@stage, 'bootstrap/indexes', 'framework/libraries') +
+					File.join(@stage, 'bootstrap/index', 'framework/libraries') +
 
 					((var = ENV[name]) ? ':' + var : '')
 
@@ -2469,9 +2469,9 @@ else
 
 				# Some packages find some shared libraries through the GCC path:
 				ENV['LIBRARY_PATH'] =
-					File.join(@stage, 'indexes', 'framework/libraries') + ':' +
+					File.join(@stage, 'index', 'framework/libraries') + ':' +
 					(@systemBuild ? File.join(@image, 'system/libraries') + ':' : '') +
-					File.join(@stage, 'bootstrap/indexes', 'framework/libraries') +
+					File.join(@stage, 'bootstrap/index', 'framework/libraries') +
 					((var = ENV['LIBRARY_PATH']) && !@isolateStage ? ':' + var : '')
 
 				@log.extra 'LIBRARY_PATH: ' + ENV['LIBRARY_PATH']
@@ -2479,9 +2479,9 @@ else
 				unless @syllable or @bootstrap
 					# Doesn't work for all ports, and trips up some:
 					ENV['LDFLAGS'] = ((var = ENV['LDFLAGS']) ? var : '') +
-						' -L' + File.join(@stage, 'indexes', 'framework/libraries') +
+						' -L' + File.join(@stage, 'index', 'framework/libraries') +
 						(@systemBuild ? ' -L' + File.join(@image, 'system/libraries') : '') +
-						' -L' + File.join(@stage, 'bootstrap/indexes', 'framework/libraries')
+						' -L' + File.join(@stage, 'bootstrap/index', 'framework/libraries')
 
 					@log.extra 'LDFLAGS: ' + ENV['LDFLAGS']
 				end
@@ -2490,7 +2490,7 @@ else
 
 				ENV['PKG_CONFIG_PATH'] =
 					# Linked configurations
-					(File.join @stage, 'indexes', 'framework/PackageConfigure') + ':' +
+					(File.join @stage, 'index', 'framework/PackageConfigure') + ':' +
 
 					# Linux sprawl:
 					(@systemBuild && ! @syllable ?
@@ -2499,7 +2499,7 @@ else
 						''
 					) +
 
-					(File.join @stage, 'bootstrap/indexes', 'framework/PackageConfigure') +
+					(File.join @stage, 'bootstrap/index', 'framework/PackageConfigure') +
 
 					((var = ENV['PKG_CONFIG_PATH']) && !@isolateStage ? ':' + var : '')
 
