@@ -19,4 +19,6 @@ needs
 ; Both BinaryUtils and AutoConfigure have info/standards.info:
 conflicts			BinaryUtils
 
+system-prefix-var	DESTDIR
+
 documentation		README BUGS COPYING COPYINGv3 NEWS ChangeLog TODO AUTHORS THANKS

@@ -21,4 +21,6 @@ conflicts			BinaryUtils
 
 no-datarootdir
 
+system-prefix-var	DESTDIR
+
 documentation		README BUGS COPYING NEWS ChangeLog TODO AUTHORS THANKS
