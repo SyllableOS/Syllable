@@ -2,7 +2,7 @@
 
 ORCA [
 	Title:		"Package installation tool"
-	Version:	0.5.3
+	Version:	0.6.0
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006-2008,2010 Kaj de Vos
@@ -25,7 +25,7 @@ as-file: :to-file
 to-file: func [value] [as-file copy value]
 
 
-do %/system/indexes/framework/REBOL/package.library
+do %/system/index/framework/REBOL/package.library
 
 
 header: system/script/header

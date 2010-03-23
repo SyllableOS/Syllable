@@ -1,13 +1,13 @@
 ORCA [
 	Title:		"Package installation library"
-	Version:	0.7.3
+	Version:	0.8.0
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006-2010 Kaj de Vos
 		License: LGPL
 	}
 	Purpose:	"Registers and unregisters packages by managing pools of symbolic links."
-	Example:	"do %/system/indexes/framework/REBOL/package.library"
+	Example:	"do %/system/index/framework/REBOL/package.library"
 
 	Tabs:		4
 ]
@@ -79,7 +79,7 @@ build: context [
 stage-proto: context [
 	image?: none
 	packages: %/resources/
-	indexes: %/resources/indexes/
+	indexes: %/resources/index/
 
 	new: func ["Returns a new stage object; by default of the general resource packages in the running system."
 		packages' [file! string! none!]
@@ -175,7 +175,7 @@ stage-proto: context [
 		either all [exists? index  dir? index] [
 			any [
 ;				FIXME: bug in ORCA list comparison:
-;				(read index) <> []  ; Indexes directory not empty?
+;				(read index) <> []  ; index directory not empty?
 				not empty? read index
 ;				action join "rmdir " index
 				; May be a symlink from old package manager:
