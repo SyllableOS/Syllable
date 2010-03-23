@@ -1,2 +1,2 @@
 # When a sound device is detected, restore the volume settings
-KERNEL=="controlC[0-9]*", ACTION=="add", RUN+="/resources/indexes/system-programs/alsactl restore %n"
+KERNEL=="controlC[0-9]*", ACTION=="add", RUN+="/resources/index/system-programs/alsactl restore %n"
