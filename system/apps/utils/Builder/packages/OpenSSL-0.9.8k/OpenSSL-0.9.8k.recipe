@@ -6,7 +6,7 @@ notes				Needs ranlib and perl in /usr/bin/ during building
 headline			Secure Sockets Layer library
 description
 	The OpenSSL Project is a collaborative effort to develop a robust, commercial-grade, full-featured, and Open Source toolkit implementing the Secure Sockets Layer (SSL v2/v3) and Transport Layer Security (TLS v1) protocols as well as a full-strength general purpose cryptography library.
-licenses			other
+licenses			BSD+advertising
 
 home				www.openssl.org
 packages			openssl-0.9.8k
@@ -51,9 +51,9 @@ test-targets
 system-prefix-var	INSTALL_PREFIX
 
 install-vars
-	OPENSSLDIR		'/etc/ssl'
-	INSTALLTOP		'/resources/OpenSSL'
-	MANDIR			'/resources/OpenSSL/manuals'
+	OPENSSLDIR		/etc/ssl
+	INSTALLTOP		/resources/OpenSSL
+	MANDIR			/resources/OpenSSL/manuals
 
 documentation		README README.ENGINE FAQ PROBLEMS LICENSE NEWS CHANGES doc
 develop-docs		INSTALL demos
