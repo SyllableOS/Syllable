@@ -299,7 +299,7 @@ modules
 ;	GrUB can use Curses:
 	sys/boot/grub-0.97
 
-	system apps/gnu/coreutils-6.9
+	system apps/gnu/CoreUtilities-6.7
 	system apps/gnu/BASh-4.0
 ;	For init scripts:
 	system apps/gnu/GRep-2.5.4
