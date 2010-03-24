@@ -1,0 +1,7 @@
+authors				Kaj de Vos
+status				testing
+
+configure-options
+	--build=i486-pc-linux-gnu
+;	ProcPS has others:
+	--enable-no-install-program=kill,uptime

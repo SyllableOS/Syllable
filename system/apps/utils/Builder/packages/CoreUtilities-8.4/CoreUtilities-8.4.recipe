@@ -1,11 +1,7 @@
 authors
-	Kurt Skauen
-	Sebastien Keim
 	Kaj de Vos
-	Kristian Van Der Vliet
-maintainers			Kaj de Vos
+	Jake Hamby
 status				testing
-warnings			Super-user access is needed to install su properly.
 
 inherits			gnu
 
@@ -15,12 +11,12 @@ description
 licenses			GPL
 
 home				www.gnu.org/software/coreutils/
-packages			coreutils/coreutils-6.4
+packages			coreutils/coreutils-8.4
 
 build-needs
-	coreutils
+	CoreUtilities
 	perl
-install-needs		coreutils
+install-needs		CoreUtilities
 
 ;super-install
 system-prefix-var	DESTDIR
@@ -50,15 +46,19 @@ links
 	programs/chown		/bin/
 	programs/date		/bin/
 	programs/dd			/bin/
-;	programs/df			/bin/
+	programs/df			/bin/
 	programs/false		/bin/
 	programs/hostname	/bin/
 	programs/mkdir		/bin/
 	programs/mknod		/bin/
 	programs/rmdir		/bin/
 	programs/stty		/bin/
-	programs/su			/bin/
+;	programs/su			/bin/
 	programs/sync		/bin/
 	programs/true		/bin/
 	programs/uname		/bin/
 	programs/chroot		/usr/sbin/
+;	For DHCP early initalisation:
+	programs/sleep		/bin/
+;	For SysKLogD:
+	programs/install	/usr/bin/
