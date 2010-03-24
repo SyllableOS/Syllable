@@ -101,6 +101,7 @@ tree
 ;	usr/info
 	usr/lib
 ;	usr/man
+;	For chroot:
 	usr/sbin
 ;	(For terminfo:)
 	usr/share

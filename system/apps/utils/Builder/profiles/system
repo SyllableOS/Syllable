@@ -131,7 +131,8 @@ tree
 ;	usr/info
 ;	usr/lib
 ;	usr/man
-;	usr/sbin
+;	For chroot:
+	usr/sbin
 ;	(For terminfo:)
 	usr/share
 ;	For manually compiled software:
