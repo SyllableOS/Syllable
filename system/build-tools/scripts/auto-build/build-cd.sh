@@ -47,7 +47,7 @@ FILES=(	"/etc/profile, /etc/profile" 															\
 		"/system/libraries/libdl.so*, /system/libraries/."											\
 		"/system/libraries/libpthread.so*, /system/libraries/."										\
 																									\
-		"/system/resources/GNU-CompilerCollection/4.1.2/framework/libraries/*.so*, /system/libraries/."				\
+		"/system/resources/GNU-CompilerCollection/4.1.2/framework/libraries/*.so*, /system/libraries/."		\
 		"/system/resources/glibc/2.7/framework/libraries/*.so*, /system/libraries/."				\
 		"/system/resources/zlib/1.2.3/framework/libraries/*.so*, /system/libraries/."				\
 		"/system/resources/ReadLine/6.0/framework/libraries/*.so*, /system/libraries/."				\
@@ -65,46 +65,46 @@ FILES=(	"/etc/profile, /etc/profile" 															\
 		"/system/keymaps/American, /system/keymaps/American"										\
 																											\
 		"/system/programs/dbterm, /system/programs/dbterm"													\
-		"/system/programs/devstat, /system/programs/devstat"													\
+		"/system/programs/devstat, /system/programs/devstat"												\
 		"/system/programs/format, /system/programs/format"													\
-		"/system/programs/fsprobe, /system/programs/fsprobe"													\
+		"/system/programs/fsprobe, /system/programs/fsprobe"												\
 		"/system/programs/init, /system/programs/init"														\
-		"/system/programs/mount, /system/programs/mount"														\
+		"/system/programs/mount, /system/programs/mount"													\
 		"/system/programs/shutdown, /system/programs/shutdown"												\
 		"/system/programs/reboot, /system/programs/reboot"													\
-		"/system/programs/unmount, /system/programs/unmount"													\
+		"/system/programs/unmount, /system/programs/unmount"												\
 		"/system/programs/df, /system/programs/df"													\
-		"/system/programs/sysinfo, /system/programs/sysinfo"													\
+		"/system/programs/sysinfo, /system/programs/sysinfo"												\
 																											\
 		"/applications/AEdit/AEdit, /system/programs/aedit"											\
 																											\
-		"/system/resources/coreutils/6.4/programs/cat, /bin/cat"											\
-		"/system/resources/coreutils/6.4/programs/cp, /bin/cp"											\
-		"/system/resources/coreutils/6.4/programs/cut, /bin/cut"											\
-		"/system/resources/coreutils/6.4/programs/dd, /bin/dd"											\
-		"/system/resources/coreutils/6.4/programs/echo, /bin/echo"										\
-		"/system/resources/coreutils/6.4/programs/expr, /bin/expr"										\
-		"/system/resources/coreutils/6.4/programs/hostname, /bin/hostname"								\
-		"/system/resources/coreutils/6.4/programs/ln, /bin/ln"											\
-		"/system/resources/coreutils/6.4/programs/ls, /bin/ls"											\
-		"/system/resources/coreutils/6.4/programs/md5sum, /bin/md5sum"									\
-		"/system/resources/coreutils/6.4/programs/mkdir, /bin/mkdir"										\
-		"/system/resources/coreutils/6.4/programs/mv, /bin/mv"											\
-		"/system/resources/coreutils/6.4/programs/printf, /bin/printf"									\
-		"/system/resources/coreutils/6.4/programs/pwd, /bin/pwd"											\
-		"/system/resources/coreutils/6.4/programs/rm, /bin/rm"											\
-		"/system/resources/coreutils/6.4/programs/rmdir, /bin/rmdir"										\
-		"/system/resources/coreutils/6.4/programs/sleep, /bin/sleep"										\
-		"/system/resources/coreutils/6.4/programs/sort, /bin/sort"										\
-		"/system/resources/coreutils/6.4/programs/sync, /bin/sync"										\
-		"/system/resources/coreutils/6.4/programs/whoami, /bin/whoami"									\
-		"/system/resources/coreutils/6.4/programs/uname, /bin/uname"										\
-		"/system/resources/coreutils/6.4/programs/uniq, /bin/uniq"										\
-		"/system/resources/coreutils/6.4/programs/stty, /bin/stty"										\
-		"/system/resources/coreutils/6.4/programs/chmod, /bin/chmod"										\
+		"/system/resources/CoreUtilities/6.7/programs/cat, /bin/cat"										\
+		"/system/resources/CoreUtilities/6.7/programs/cp, /bin/cp"											\
+		"/system/resources/CoreUtilities/6.7/programs/cut, /bin/cut"										\
+		"/system/resources/CoreUtilities/6.7/programs/dd, /bin/dd"											\
+		"/system/resources/CoreUtilities/6.7/programs/echo, /bin/echo"										\
+		"/system/resources/CoreUtilities/6.7/programs/expr, /bin/expr"										\
+		"/system/resources/CoreUtilities/6.7/programs/hostname, /bin/hostname"								\
+		"/system/resources/CoreUtilities/6.7/programs/ln, /bin/ln"											\
+		"/system/resources/CoreUtilities/6.7/programs/ls, /bin/ls"											\
+		"/system/resources/CoreUtilities/6.7/programs/md5sum, /bin/md5sum"									\
+		"/system/resources/CoreUtilities/6.7/programs/mkdir, /bin/mkdir"									\
+		"/system/resources/CoreUtilities/6.7/programs/mv, /bin/mv"											\
+		"/system/resources/CoreUtilities/6.7/programs/printf, /bin/printf"									\
+		"/system/resources/CoreUtilities/6.7/programs/pwd, /bin/pwd"										\
+		"/system/resources/CoreUtilities/6.7/programs/rm, /bin/rm"											\
+		"/system/resources/CoreUtilities/6.7/programs/rmdir, /bin/rmdir"									\
+		"/system/resources/CoreUtilities/6.7/programs/sleep, /bin/sleep"									\
+		"/system/resources/CoreUtilities/6.7/programs/sort, /bin/sort"										\
+		"/system/resources/CoreUtilities/6.7/programs/sync, /bin/sync"										\
+		"/system/resources/CoreUtilities/6.7/programs/whoami, /bin/whoami"									\
+		"/system/resources/CoreUtilities/6.7/programs/uname, /bin/uname"									\
+		"/system/resources/CoreUtilities/6.7/programs/uniq, /bin/uniq"										\
+		"/system/resources/CoreUtilities/6.7/programs/stty, /bin/stty"										\
+		"/system/resources/CoreUtilities/6.7/programs/chmod, /bin/chmod"									\
 																											\
 		"/resources/FindUtils/programs/find, /bin/find"										\
-		"/resources/gzip/programs/gzip, /bin/gzip"												\
+		"/resources/gzip/programs/gzip, /bin/gzip"											\
 		"/resources/SEd/programs/sed, /bin/sed"												\
 		"/resources/TAr/programs/tar, /bin/tar"												\
 		"/system/resources/NCurses/5.7/programs/clear, /bin/clear"										\
