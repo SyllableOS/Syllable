@@ -1,31 +1,12 @@
 authors
+	Kurt Skauen
+	Sebastien Keim
 	Kaj de Vos
-	Jake Hamby
+	Kristian Van Der Vliet
+maintainers			Kaj de Vos
 status				testing
+warnings			Super-user access is needed to install su properly.
 
-inherits			gnu
-
-headline			GNU core command-line utilities
-description
-	The GNU Core Utilities are the basic file, shell and text manipulation utilities of the GNU operating system. These are the core utilities which are expected to exist on every operating system.
-licenses			GPL
-
-home				www.gnu.org/software/coreutils/
-packages			coreutils/coreutils-8.4
-
-build-needs
-	CoreUtilities
-	perl
-install-needs		CoreUtilities
-recommends
-	libacl
-	libattr
-	libcap
-
-super-install
-system-prefix-var	DESTDIR
-
-documentation		README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS THANKS-to-translators
 links
 ;	For she-bang lines:
 	programs/env		/usr/bin/
@@ -50,7 +31,7 @@ links
 	programs/chown		/bin/
 	programs/date		/bin/
 	programs/dd			/bin/
-	programs/df			/bin/
+;	programs/df			/bin/
 	programs/false		/bin/
 	programs/hostname	/bin/
 	programs/mkdir		/bin/
@@ -62,7 +43,6 @@ links
 	programs/true		/bin/
 	programs/uname		/bin/
 	programs/chroot		/usr/sbin/
-;	For DHCP early initalisation:
-	programs/sleep		/bin/
-;	For SysKLogD:
-	programs/install	/usr/bin/
+
+; Syllable Desktop has its own:
+delete-files		programs/nice

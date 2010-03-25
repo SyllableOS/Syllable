@@ -4,11 +4,13 @@ authors
 	Kaj de Vos
 	Kristian Van Der Vliet
 maintainers			Kaj de Vos
-status				incomplete
+status				broken
 warnings
 	Super-user access is needed to install su properly.
 	Syllable patch is not ported yet.
-notes				SUS draft standard *at() functions not available on Desktop
+	Hangs on configure.
+	GnuLib seems to have no link implementation for Syllable.
+	SUS draft standard *at() functions not available on Desktop.
 
 ; Syllable Desktop has its own:
 configure-options	--enable-no-install-program=nice

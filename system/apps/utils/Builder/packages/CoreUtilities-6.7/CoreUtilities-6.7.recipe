@@ -1,0 +1,24 @@
+authors
+	Kaj de Vos
+	Jake Hamby
+status				testing
+
+inherits			gnu
+
+headline			GNU core command-line utilities
+description
+	The GNU Core Utilities are the basic file, shell and text manipulation utilities of the GNU operating system. These are the core utilities which are expected to exist on every operating system.
+licenses			GPL
+
+home				www.gnu.org/software/coreutils/
+packages			coreutils/coreutils-6.7
+
+build-needs
+	CoreUtilities
+	perl
+install-needs		CoreUtilities
+
+super-install
+system-prefix-var	DESTDIR
+
+documentation		README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS THANKS-to-translators
