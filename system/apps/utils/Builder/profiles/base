@@ -10,28 +10,28 @@ prepare
 
 resources
 ;	addattrib can't handle wildcards:
-;	system/fonts						fonts/URW/*.ttf				application/x-font-ttf
-;	home/.template/Documents/Pictures	wallpapers/*.png			image/png
-;	home/.template/Documents/Pictures	wallpapers/*.jpg			image/jpeg
-	system/fonts						fonts/URW/*.ttf
-	system/fonts						fonts/URW/Mandriva/*.ttf
-	system/icons/filetypes				icons/types/48x48/*.png
-	system/resources/wallpapers			wallpapers/*.png
-	system/resources/wallpapers			wallpapers/*.jpg
-	system/resources/wallpapers			wallpapers/Adrian/*.png
-	system/resources/wallpapers			wallpapers/Ruud/*.png
-	system/resources/wallpapers			wallpapers/Ruud/*.jpg
-	system/resources/wallpapers			wallpapers/YakkMeister/*.png
-	system/resources/wallpapers			wallpapers/ZeroNet/*.jpg
-	system/resources/wallpapers			wallpapers/LucasMurad/*.png
-	system/resources/wallpapers			wallpapers/LucasMurad/*.jpg
-	system/resources/wallpapers			wallpapers/LukasVeselovsky/*.png
-	system/resources/wallpapers			wallpapers/KenSaunders/*.jpg
-	system/resources/wallpapers			wallpapers/Dmitry/*.png
-	etc/s3conf							configuration/s3config.yml	text/plain
+;	system/fonts/						fonts/URW/*.ttf				application/x-font-ttf
+;	home/.template/Documents/Pictures/	wallpapers/*.png			image/png
+;	home/.template/Documents/Pictures/	wallpapers/*.jpg			image/jpeg
+	system/fonts/						fonts/URW/*.ttf
+	system/fonts/						fonts/URW/Mandriva/*.ttf
+	system/icons/filetypes/				icons/types/48x48/*.png
+	system/resources/wallpapers/		wallpapers/*.png
+	system/resources/wallpapers/		wallpapers/*.jpg
+	system/resources/wallpapers/		wallpapers/Adrian/*.png
+	system/resources/wallpapers/		wallpapers/Ruud/*.png
+	system/resources/wallpapers/		wallpapers/Ruud/*.jpg
+	system/resources/wallpapers/		wallpapers/YakkMeister/*.png
+	system/resources/wallpapers/		wallpapers/ZeroNet/*.jpg
+	system/resources/wallpapers/		wallpapers/LucasMurad/*.png
+	system/resources/wallpapers/		wallpapers/LucasMurad/*.jpg
+	system/resources/wallpapers/		wallpapers/LukasVeselovsky/*.png
+	system/resources/wallpapers/		wallpapers/KenSaunders/*.jpg
+	system/resources/wallpapers/		wallpapers/Dmitry/*.png
+	etc/s3conf/							configuration/s3config.yml	text/plain
 ;	Servers:
-	etc									configuration/vsftpd.conf	text/plain
-	etc									configuration/rsyncd.conf	text/plain
+	etc/								configuration/vsftpd.conf	text/plain
+	etc/								configuration/rsyncd.conf	text/plain
 
 modules
 	documentation-DE--current

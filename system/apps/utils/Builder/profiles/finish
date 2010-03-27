@@ -3,4 +3,4 @@
 
 resources
 ;	Make GLibC suitable for running in an installed system:
-	system/resources/glibc/2.7/framework/libraries	libc.so
+	system/resources/glibc/2.7/framework/libraries/ libc.so

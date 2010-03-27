@@ -166,24 +166,24 @@ prepare
 	ln -s index/ usr/indexes &&
 
 ;	For OpenSSL and others:
-	ln -s /resources/index/programs/perl	usr/bin/ &&
+	ln -s /resources/index/programs/perl	usr/bin/
 ;	For OpenSSL?
 ;	ln -s /resources/index/programs/perl	usr/local/bin/ &&
 ;	From BinaryUtilities, for building OpenSSL:
 	ln -s /resources/index/programs/ranlib	usr/bin/
 
 resources
-	boot/grub				menu.lst							text/plain
-	system/config			kernel.cfg							text/plain
-	system/config			net.cfg								text/plain
-	system/config			appserver							text/plain
-	etc						configuration/passwd				text/plain
-	etc						configuration/group					text/plain
-	etc						configuration/profile				text/plain
-	etc						configuration/hosts					text/plain
-	etc						configuration/hostname				text/plain
-	etc						configuration/resolv.conf			text/plain
-	home					binaries/home-directories
+	boot/grub/				menu.lst							text/plain
+	system/config/			kernel.cfg							text/plain
+	system/config/			net.cfg								text/plain
+	system/config/			appserver							text/plain
+	etc/					configuration/passwd				text/plain
+	etc/					configuration/group					text/plain
+	etc/					configuration/profile				text/plain
+	etc/					configuration/hosts					text/plain
+	etc/					configuration/hostname				text/plain
+	etc/					configuration/resolv.conf			text/plain
+	home/					binaries/home-directories
 
 modules
 ;	Toolchain for bootstrapping
@@ -441,4 +441,4 @@ finish
 	cp resources/grub/framework/libraries/grub/i386-pc/* boot/grub/ &&
 
 	rm -r resources/documentation &&
-	rm etc/Makefile
+	rm etc/Makefile system/icons/Makefile
