@@ -6,7 +6,7 @@ inherits			Linux-2.6.27.44
 configure
 ;	Make built Linux source available from the host system for external kernel modules:
 	sudo mkdir --parents /lib/modules/2.6.27.44-Syllable &&
-	sudo rm -f /lib/modules/2.6.27.44-Syllable/build &&
+	sudo rm --force /lib/modules/2.6.27.44-Syllable/build &&
 	sudo ln -s $PWD /lib/modules/2.6.27.44-Syllable/build &&
 ;	Make the kernel modules installation go into the package location in the system image.
 ;	At first the kernel modules will be in the traditional subdirectory,

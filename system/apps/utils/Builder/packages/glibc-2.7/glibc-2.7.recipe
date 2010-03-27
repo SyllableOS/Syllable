@@ -14,7 +14,7 @@ build-needs
 ;	glibc
 ;	AutoConfigure >= 2.53
 	Make >= 3.79
-	BinaryUtilities >= 2.15
+	BinaryUtilities >= 2.15 < 2.19
 	GNU-CompilerCollection >= 3.4
 	SEd >= 3.02
 	gawk >= 3
