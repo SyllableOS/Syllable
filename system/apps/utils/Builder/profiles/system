@@ -166,7 +166,7 @@ prepare
 	ln -s index/ usr/indexes &&
 
 ;	For OpenSSL and others:
-	ln -s /resources/index/programs/perl	usr/bin/
+	ln -s /resources/index/programs/perl	usr/bin/ &&
 ;	For OpenSSL?
 ;	ln -s /resources/index/programs/perl	usr/local/bin/ &&
 ;	From BinaryUtilities, for building OpenSSL:
