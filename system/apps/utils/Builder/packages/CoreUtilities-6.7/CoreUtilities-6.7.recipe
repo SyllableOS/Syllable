@@ -18,6 +18,9 @@ build-needs
 	perl
 install-needs		CoreUtilities
 
+; For GLibC 2.7:
+patch				sed -i 's/futimens/cu_&/' src/{copy,touch}.c lib/utimens.{c,h}
+
 super-install
 system-prefix-var	DESTDIR
 
