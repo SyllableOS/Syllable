@@ -1,5 +1,5 @@
 authors				Kaj de Vos
-status				developing
+status				testing
 
 headline			Full-featured web server written in REBOL
 description
@@ -25,10 +25,7 @@ patch
 
 make				true
 
-install-tree
-	framework
-	framework/REBOL
-	framework/REBOL/Cheyenne
+install-tree		framework/REBOL/Cheyenne
 install				true
 install-files
 	Cheyenne/*.r		framework/REBOL/Cheyenne/

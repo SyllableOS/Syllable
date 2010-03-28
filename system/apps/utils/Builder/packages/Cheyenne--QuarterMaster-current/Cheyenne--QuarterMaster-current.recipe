@@ -8,8 +8,8 @@ description
 licenses			CC-BY-SA-3
 
 home				www.ross-gill.com/QM/
-files				qm.r introduction.html
 locations			http://www.ross-gill.com/QM/
+files				qm.r introduction.html
 
 run-needs
 	REBOL
@@ -23,7 +23,7 @@ patch
 	sed -i s~Path/To/app/application~resources/Cheyenne/framework/REBOL/QuarterMaster~	qm.r &&
 	sed -i s~Path/To/app/space~resources/Cheyenne/framework/REBOL/QuarterMaster~		qm.r &&
 	sed -i s~Path/To/support~resources/Cheyenne/framework/REBOL/QuarterMaster~			qm.r &&
-	sed -i s~Path/To/HTTPD/root~resources/Cheyenne/framework/REBOL/Cheyenne/www/		qm.r
+	sed -i s~Path/To/HTTPD/root~resources/Cheyenne/framework/REBOL/Cheyenne/www~		qm.r
 
 make				true
 
@@ -31,9 +31,6 @@ merge-install
 
 ; Required empty directories:
 install-tree
-;	framework
-;	framework/REBOL
-	framework/REBOL/QuarterMaster
 ;	framework/REBOL/QuarterMaster/controllers
 	framework/REBOL/QuarterMaster/models
 	framework/REBOL/QuarterMaster/views

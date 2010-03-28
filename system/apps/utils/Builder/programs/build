@@ -1,7 +1,7 @@
 #! /usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.11.1
+# Version 0.11.2
 # Copyright (c) 2002-2010 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -164,6 +164,7 @@ def getFiles target
 		@log.error 'Failed to download files'
 		false
 	else
+		Dir.chdir @workDir
 		action 'sync'
 	end
 end
@@ -383,7 +384,7 @@ def getModule target
 	begin
 		@log.subheader 'Installing source'
 
-		downloadModule(target) and unpackModule(target) and patchModule(target) and getFiles(target)
+		downloadModule(target) and unpackModule(target) and getFiles(target) and patchModule(target)
 	end or
 	begin
 		@log.error 'Source not (completely) installed'
@@ -2296,7 +2297,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.11.1',
+	puts 'Syllable Build System 0.11.2',
 		'Copyright (c) 2002-2010 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'

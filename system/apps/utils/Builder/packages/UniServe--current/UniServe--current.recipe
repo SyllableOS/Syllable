@@ -1,5 +1,5 @@
 authors				Kaj de Vos
-status				developing
+status				testing
 
 headline			Client/server network programming framework for REBOL
 description
@@ -17,10 +17,7 @@ run-needs			REBOL
 
 make				true
 
-install-tree
-	framework
-	framework/REBOL
-	framework/REBOL/UniServe
+install-tree		framework/REBOL/UniServe
 install				true
 install-files
 	UniServe/*.r		framework/REBOL/UniServe/
