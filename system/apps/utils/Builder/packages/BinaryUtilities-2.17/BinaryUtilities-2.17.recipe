@@ -31,12 +31,7 @@ patch				autoreconf ld gas
 ;	cd ../gas &&
 ;	autoconf
 
-no-bindir
-no-libdir
-no-includedir
 no-datarootdir
-no-mandir
-no-infodir
 ;configure-options
 ;	--enable-shared
 ;	--with-lib-path=
