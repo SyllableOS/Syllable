@@ -1,17 +1,11 @@
 authors				Kristian Van Der Vliet
-status				broken
-warnings			Needs to be re-ported.
+status				testing
 
 build-needs			AutoConfigure
 
 ; Manually patch in LibTool support:
-_patch
-	cp /resources/libtool/data/libtool/ltmain.sh . &&
+patch
+	cp /resources/libtool/share/libtool/ltmain.sh . &&
 	autoconf
 ; The usual method of patching LibTool support does not work with SANE:
 ;make-shared
-
-_configure-options
-	--sysconfdir=/etc
-	--enable-shared
-;	--enable-locking

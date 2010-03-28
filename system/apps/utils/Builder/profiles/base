@@ -72,7 +72,7 @@ modules
 	apps/utils/Preferences/Printers
 	apps/utils/PrintQueue
 
-	system apps/other/SANE-Backends-1.0.20
+	system apps/other/SANE-Backends-1.0.18
 
 	apps/gnu/FindUtils-4.4.2
 	apps/gnu/gzip-1.3.12
