@@ -617,7 +617,7 @@ def installModule staging, target
 							action 'mkdir --parents ' + root and
 							for dir in toList dirs
 								@log.detail d = File.join(root, dir)
-								break unless action 'mkdir ' + d
+								break unless action 'mkdir --parents ' + d
 							end
 						end
 					then
