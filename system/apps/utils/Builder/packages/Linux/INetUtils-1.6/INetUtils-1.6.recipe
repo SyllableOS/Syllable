@@ -1,6 +1,5 @@
 authors				Kaj de Vos
 status				testing
-warnings			Super-user access is needed to install ping properly.
 
 ;no-sysconfdir
 configure-options
@@ -20,4 +19,5 @@ configure-options
 ;	For PAM:
 ;	--with-pam
 
+; For ping:
 super-install

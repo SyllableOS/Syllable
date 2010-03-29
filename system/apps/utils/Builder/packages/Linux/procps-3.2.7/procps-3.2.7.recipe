@@ -12,7 +12,7 @@ locations			http://procps.sourceforge.net
 
 needs				NCurses
 
-;super-install
+super-install
 system-prefix-var	DESTDIR
 
 install-tree

@@ -2,7 +2,9 @@ authors
 	Kristian Van Der Vliet
 	Kaj de Vos
 status				testing
-warnings			Links into the system.
+warnings
+	Assumes system installation.
+	Links into the system.
 
 ;inherits			sourceforge
 
@@ -50,9 +52,9 @@ build-docs			INSTALL*.txt
 
 links
 ;	Let other packages supply extensions:
-	/system/index/framework/libraries/	lib
-	/system/index/data/					share
-	/system/index/programs/smbspool		framework/libraries/cups/backend/smb
+	../../../../system/index/framework/libraries/	lib
+	../../../../system/index/data/					share
+	/system/index/programs/smbspool					framework/libraries/cups/backend/smb
 
 delete-files
 ;	4 MB web site:

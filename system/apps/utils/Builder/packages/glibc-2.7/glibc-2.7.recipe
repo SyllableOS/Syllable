@@ -25,8 +25,10 @@ test-needs
 	BASh <> 2.03
 	perl >= 5
 
-; BASh is broken for this locale:
-patch				sed -i '/vi_VN.TCVN/d' localedata/SUPPORTED
+; BASh (3?) breaks on this locale:
+patch				sed -i /vi_VN.TCVN/d localedata/SUPPORTED
+
+no-sysconfdir
 
 ;make-targets
 ;	all
@@ -36,6 +38,7 @@ patch				sed -i '/vi_VN.TCVN/d' localedata/SUPPORTED
 ; Non-interactive:
 test-options		-k
 
+;super-install
 system-prefix-var	install_root
 
 _install-env

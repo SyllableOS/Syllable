@@ -7,7 +7,7 @@ licenses			GPL
 home				www.infodrom.org/projects/sysklogd/
 locations			http://www.infodrom.org/projects/sysklogd/download/
 
-;super-install
+super-install
 system-prefix-var	prefix
 
 install-tree
