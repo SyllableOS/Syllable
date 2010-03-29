@@ -1,7 +1,7 @@
 #! /usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.11.2
+# Version 0.11.3
 # Copyright (c) 2002-2010 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -1190,7 +1190,7 @@ def installModule staging, target
 											@log.header 'Creating development libraries directory'
 											action superAccess + 'mkdir --parents ' + (dir = File.join(devRoot, 'framework/libraries')) and
 											begin
-												@log.header 'Moving static libraries to development pack'
+												@log.header 'Moving static libraries to development area'
 												action superAccess + 'mv framework/libraries/*.a ' + dir
 											end and
 											(Dir['framework/libraries/*'] != []) ||
@@ -1203,7 +1203,7 @@ def installModule staging, target
 										end and
 										if Dir['framework/headers/*'] != []
 											if exists?(dir = File.join(devRoot, 'framework/headers'))
-												@log.warning 'Merging extra headers into development pack'
+												@log.warning 'Merging extra headers into development area'
 												action superAccess + 'mv framework/headers/* ' + dir and
 												begin
 													@log.header 'Deleting empty headers directory'
@@ -1217,7 +1217,7 @@ def installModule staging, target
 													action superAccess + 'mkdir --parents ' + dir
 												end and
 												begin
-													@log.header 'Moving headers to development pack'
+													@log.header 'Moving headers to development area'
 													action superAccess + 'mv framework/headers/ ' + dir
 												end
 											end
@@ -1231,7 +1231,7 @@ def installModule staging, target
 												action superAccess + 'mkdir --parents ' + dir
 											end and
 											begin
-												@log.header 'Moving AutoConfigure data to development pack'
+												@log.header 'Moving AutoConfigure data to development area'
 												action superAccess + 'mv framework/AutoConfigure/ ' + dir
 											end
 										else
@@ -1247,7 +1247,7 @@ def installModule staging, target
 											@log.header 'Creating development documentation directory'
 											action superAccess + 'mkdir --parents ' + (dir = File.join devRoot, 'documentation') and
 											begin
-												@log.header 'Moving development documentation to development pack'
+												@log.header 'Moving development documentation to development area'
 
 												for file in toList docs
 													break unless action superAccess + "mv #{File.join 'documentation', File.basename(file)} " + dir
@@ -1712,7 +1712,7 @@ end
 
 # Helper functions
 
-def deleteCruft superAccess  # TODO: implement super user execution
+def deleteCruft superAccess
 	puts "\nWARNING! If this is a CVS repository, it will be clobbered!"
 
 	# Delete all CVS dirs
@@ -1721,27 +1721,28 @@ def deleteCruft superAccess  # TODO: implement super user execution
 
 	Dir['**/CVS'].each do |dir|
 		@log.detail dir
-
-		# Delete all files in the CVS dir first
-		for file in listFiles dir
-			File.delete file
-		end
-
-		Dir.delete dir
+		action superAccess + 'rm --recursive ' + dir
 	end
 
 	@log.header 'Cleaning out .cvsignore files'
 
 	Dir['**/.cvsignore'].each do |file|
 		@log.detail file
-		File.delete file
+		action superAccess + 'rm ' + file
+	end
+
+	@log.header 'Cleaning out Subversion directories'
+
+	Dir['**/.svn'].each do |dir|
+		@log.detail dir
+		action superAccess + 'rm --recursive ' + dir
 	end
 
 	@log.header 'Cleaning out backup files'
 
 	Dir['**/*~'].each do |file|
 		@log.detail file
-		File.delete file
+		action superAccess + 'rm ' + file
 	end
 end
 
@@ -2297,7 +2298,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.11.2',
+	puts 'Syllable Build System 0.11.3',
 		'Copyright (c) 2002-2010 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
