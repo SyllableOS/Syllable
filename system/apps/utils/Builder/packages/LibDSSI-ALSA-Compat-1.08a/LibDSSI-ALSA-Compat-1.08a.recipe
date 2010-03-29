@@ -1,0 +1,24 @@
+authors
+	Stefano D'Angelo
+	Kaj de Vos
+status				contributed
+
+headline			ALSA compatibility layer for DSSI on non-ALSA systems
+description
+	libdssialsacompat is intended to provide the snd_seq_event_t declarations and handling code necessary to compile and use DSSI on non-ALSA systems. It aims to allows compiling DSSI code with as little change as possible, while not presenting itself in such a way as to fool other autoconf-enabled code into thinking a system has ALSA.
+
+	libdssialsacompat is simply an extraction of the relevant snd_seq_event_t declarations, and raw MIDI stream to snd_seq_event_t encoder code, from alsa-lib version 1.0.8, packaged into a convenient library.
+
+	This library does NOT provide any sort of emulation of the ALSA audio, MIDI, or sequencer devices. The only part of ALSA that is required by the DSSI specification is the snd_seq_event_t definition
+and handling, and that is all libdssialsacompat is intended to replace.
+licenses			LGPL-2.1+
+
+home				www.smbolton.com/linux.html
+locations			http://www.smbolton.com/linux/
+packages			libdssialsacompat-1.0.8a
+
+no-datarootdir
+
+system-prefix-var	DESTDIR
+
+documentation		README COPYING

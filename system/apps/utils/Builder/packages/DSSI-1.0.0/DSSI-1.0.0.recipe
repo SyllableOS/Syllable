@@ -1,0 +1,43 @@
+authors
+	Stefano D'Angelo
+	Kaj de Vos
+status				contributed
+
+inherits			sourceforge
+
+headline			Sound synthesis plug-ins software development kit
+description
+	DSSI (pronounced "dizzy") is an API for audio processing plugins, particularly useful for software synthesis plugins with user interfaces.
+
+	DSSI is an open and well-documented specification developed for use in Linux audio applications, although portable to other platforms. It may be thought of as LADSPA-for-instruments, or something comparable to VSTi.
+
+	DSSI consists of a C language API for use by plugins and hosts, based on the LADSPA API, and an OSC (Open Sound Control) API for use in user interface to host communications. The DSSI specification consists of an RFC which describes the background for the proposal and defines the OSC part of the specification, and a documented header file which defines the C API.
+licenses			LGPL BSD PD other
+
+home				dssi.sf.net
+packages			dssi/dssi-1.0.0
+
+needs
+	ALSA >= 0.9 | LibDSSI-ALSA-Compat
+	LADSPA >= 1
+build-needs			PackageConfigure
+recommends
+	JACK
+	liblo >= 0.12
+	libsndfile
+	libsamplerate
+	Qt 3
+
+no-datarootdir
+
+system-prefix-var	DESTDIR
+post-install
+	mkdir --parents			$IMAGE/system/extensions/dssi &&
+	cp examples/.libs/*.so	$IMAGE/system/extensions/dssi
+documentation
+	README COPYING ChangeLog
+	doc/TODO doc/*.txt doc/*.html
+; For Syllable > 0.6.6:
+;move-files			framework/libraries/dssi/*.so /system/extensions/dssi/
+; Empty:
+delete-files		programs/

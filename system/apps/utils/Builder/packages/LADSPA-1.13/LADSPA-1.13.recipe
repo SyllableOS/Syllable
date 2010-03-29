@@ -1,0 +1,44 @@
+authors
+	Stefano D'Angelo
+	Kaj de Vos
+status				contributed
+
+headline			Linux Audio Developer's Simple Plugin API SDK
+description
+	Software development kit for the LADSPA sound processing plug-in API.
+
+	There is a large number of synthesis packages in use or development on the Linux platform at this time. The Linux Audio Developer's Simple Plugin API (LADSPA) attempts to give programmers the ability to write simple `plugin' audio processors in C/C++ and link them dynamically against a range of host applications.
+
+	LADSPA is a standard that allows software audio processors and effects to be plugged into a wide range of audio synthesis and recording packages.
+
+	For instance, it allows a developer to write a reverb program and bundle it into a LADSPA "plugin library." Ordinary users can then use this reverb within any LADSPA-friendly audio application. Most major audio applications on Linux support LADSPA.
+licenses			LGPL-2.1
+
+home
+	www.ladspa.org
+;	www.ladspa.org/ladspa_sdk/
+locations			http://www.ladspa.org/download/
+packages			ladspa_sdk_1.13
+
+build-dir			src
+
+make-targets		targets
+test-targets		test
+
+install-tree
+	programs
+	framework/headers
+install				mkdir --parents $IMAGE/system/extensions/ladspa
+install-files
+	../bin/*			programs/
+	../src/ladspa.h		framework/headers/
+	../plugins/*		/system/extensions/ladspa/
+	../snd/noise.wav	/system/sounds/
+
+documentation		README doc/*
+links
+	../framework/headers/ladspa.h	documentation/ladspa.h.txt
+;	For Syllable <= 0.6.6:
+	programs/						bin
+	framework/headers/				include
+	tasks/setup/					early-init

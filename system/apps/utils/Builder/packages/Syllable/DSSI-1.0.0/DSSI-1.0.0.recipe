@@ -1,0 +1,18 @@
+authors
+	Stefano D'Angelo
+	Kaj de Vos
+status				contributed
+
+build-needs
+	libtool
+	AutoConfigure
+	AutoMake
+	PackageConfigure
+
+; make-shared doesn't work.
+; Use autogen.sh?
+patch
+	libtoolize --force &&
+	aclocal &&
+	autoconf &&
+	automake --add-missing
