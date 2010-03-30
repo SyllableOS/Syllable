@@ -1,7 +1,7 @@
 #! /usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.11.3
+# Version 0.11.4
 # Copyright (c) 2002-2010 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -29,35 +29,7 @@ def prepare target
 	end
 
 	Dir.mkdir @image
-#	Dir.mkdir File.join(@image, 'resources')
-
-	if @systemBuild and target.profile
-		Dir.chdir @image
-
-		if tree = target.profile['tree']
-			@log.header 'Building distribution tree'
-
-			for line in parseList tree
-				dir, icon = line.split
-				@log.detail dir
-				Dir.mkdir dir unless exists? dir
-
-				if icon
-					@log.detail 'Setting icon ' + icon
-					action "addattrib #{dir} os::Icon " + File.join(@iconsPath, icon)
-				end
-			end
-		end
-
-		if cmdLines = target.profile['prepare']
-			@log.header 'Executing preparation instructions'
-			return false unless action toCommands(cmdLines)
-		end
-
-		Dir.chdir @workDir
-	else
-		Dir.mkdir File.join(@image, 'resources')
-	end
+	Dir.mkdir File.join(@image, 'resources')
 
 	action 'sync'
 end
@@ -84,7 +56,7 @@ def downloadFile file
 end
 
 def downloadModule target
-	unless
+	if
 		if (locations = (recipe = getRecipe target)['locations']) and
 			(packages = recipe['packages']) ?
 				(packages = firstColumn parseList(packages)) :
@@ -131,17 +103,17 @@ def downloadModule target
 			end
 		end
 	then
-		@log.failure target
-		false
-	else
 		Dir.chdir @workDir
 		action 'sync'
+	else
+		@log.failure target
+		false
 	end
 end
 
 def getFiles target
 	not files = (recipe = getRecipe target)['files'] or
-	unless
+	if
 		unless locations = recipe['locations']
 			@log.error 'No download locations specified'
 			false
@@ -161,16 +133,16 @@ def getFiles target
 			end
 		end
 	then
-		@log.error 'Failed to download files'
-		false
-	else
 		Dir.chdir @workDir
 		action 'sync'
+	else
+		@log.error 'Failed to download files'
+		false
 	end
 end
 
 def updateModule target
-	unless
+	if
 		if exists? target and (Dir.chdir target; exists? 'CVS') and not
 			begin
 				@log.subheader 'Updating sources from CVS repository'
@@ -190,10 +162,10 @@ def updateModule target
 #			end
 		end
 	then
+		action 'sync'
+	else
 		@log.failure target
 		false
-	else
-		action 'sync'
 	end
 end
 
@@ -203,7 +175,7 @@ def unpackModule target
 		parseList(packages) :
 		recipe['files'] ? [] : commonName(target)  # packages + files requires explicit packages specification
 	) == [] or
-	unless
+	if
 		(exists? dir = File.dirname(target) or action 'mkdir --parents ' + dir) and
 		begin  # We have a destination parent directory
 			@log.subheader 'Unpacking source package(s)'
@@ -277,17 +249,17 @@ def unpackModule target
 			end
 		end
 	then
-		@log.failure target
-		false
-	else
 		Dir.chdir @workDir
 		action 'sync'
+	else
+		@log.failure target
+		false
 	end
 end
 
 def patchModule target
 	not exists? target or  # No source
-	unless
+	if
 		begin
 			Dir.chdir target
 
@@ -355,27 +327,27 @@ def patchModule target
 			end
 		end
 	then
-		@log.failure target
-		false
-	else
 		Dir.chdir @workDir
 		action 'sync'
+	else
+		@log.failure target
+		false
 	end
 end
 
 def deleteModule target
 	not exists? target or
-	unless
+	if
 		begin
 			@log.header 'Deleting source'
 			action 'rm --recursive --force ' + target
 		end
 	then
+		action 'sync'
+	else
 		@log.error 'Failed to delete source'
 		@log.failure target
 		false
-	else
-		action 'sync'
 	end
 end
 
@@ -404,7 +376,7 @@ def configureModule staging, target
 		# Continue building even if dependencies failed
 		action 'sync'
 	else
-		unless
+		if
 			if cmdLines = (recipe = getRecipe target)['configure']
 				@log.header 'Configuring'
 				action toCommands(cmdLines)
@@ -497,16 +469,16 @@ def configureModule staging, target
 				end
 			end
 		then
+			action 'sync'
+		else
 			@log.failure target
 			false
-		else
-			action 'sync'
 		end
 	end
 end
 
 def cleanModule target
-	unless
+	if
 		not exists? dir = buildDir(target) or
 		if dir[0, 2] == '..'  # External build dir
 			@log.header 'Deleting build directory'
@@ -516,10 +488,10 @@ def cleanModule target
 			action makeCommand(target) + ' clean'
 		end
 	then
+		action 'sync'
+	else
 #		@log.failure target
 		false
-	else
-		action 'sync'
 	end
 end
 
@@ -531,7 +503,7 @@ def makeModule staging, target
 		exists?(File.join(sourcePath(target), configureCommand(target)))
 	if exists? dir = buildDir(target) then Dir.chdir dir end
 
-	unless
+	if
 		(not (cmdLines = recipe['pre-make']) or action toCommands(cmdLines)) and
 		action(if cmdLines = recipe['make']
 			toCommands cmdLines
@@ -548,10 +520,10 @@ def makeModule staging, target
 		end) and
 		(not (cmdLines = recipe['post-make']) or action toCommands(cmdLines))
 	then
+		action 'sync'
+	else
 		@log.failure target
 		false
-	else
-		action 'sync'
 	end
 end
 
@@ -560,14 +532,14 @@ def testModule target
 
 	if exists? dir = buildDir(target) then Dir.chdir dir end
 
-	unless action makeCommand(target) + ' ' +
+	if action makeCommand(target) + ' ' +
 		((options = (recipe = getRecipe(target))['test-options']) ? toString(options) + ' ' : '') +
 		((targets = recipe['test-targets']) ? toString(targets) : 'check')
 	then
+		action 'sync'
+	else
 		@log.failure target
 		false
-	else
-		action 'sync'
 	end
 end
 
@@ -575,7 +547,7 @@ def installModule staging, target
 	root = installPath staging, target
 	name = shortName target
 
-	unless
+	if
 		if target =~ /\.(resource|zip)$/ and exists? target  # A distribution package
 			# Packages are currently supposed to contain an unversioned directory
 			root = File.join(dir = File.dirname(root), name)
@@ -739,7 +711,7 @@ def installModule staging, target
 										next if destination[0, 1] == '/' and staging and not imaging? staging
 
 										break unless action superAccess + "cp -a #{source} " + File.join(
-											destination[0, 1] != '/' ? root : @image,
+											destination[0, 1] == '/' ? @image : root,
 											destination
 										)
 									end
@@ -1105,6 +1077,7 @@ def installModule staging, target
 										}.compact).empty? ||
 										begin
 											@log.header 'Stripping libraries'
+											# TODO: limit to .so files in framework/libraries/
 											action superAccess + 'strip --strip-debug ' + dirs.collect {|dir| ' ' + File.join(dir, '*')}.join or
 												$? >> 8 == 1
 										end
@@ -1275,9 +1248,9 @@ def installModule staging, target
 			end
 		end
 	then
-		@log.failure target
-	else
 		action 'sync'
+	else
+		@log.failure target
 	end
 end
 
@@ -1324,7 +1297,7 @@ def unregisterModule staging, name, root
 end
 
 def uninstallModule staging, target
-	unless
+	if
 		if dir? target and native? target and not exists? File.join(target, 'image')
 		then  # A native non-resource module
 			Dir.chdir target
@@ -1342,10 +1315,10 @@ def uninstallModule staging, target
 			end
 		end
 	then
+		action 'sync'
+	else
 		@log.failure target
 		false
-	else
-		action 'sync'
 	end
 end
 
@@ -1353,7 +1326,7 @@ def buildPackage target
 	# FIXME: not correct for FLAGS override and cross-compiling:
 	file = "#{name = fullName target}-0#{@kernel == 'Syllable' ? '' : '.' + @kernel}.#{@machine}.resource"
 
-	unless
+	if
 		if exists? file and not action 'rm ' + file
 			# Zip would add to the existing package
 			@log.error "Could not remove existing package " + file
@@ -1382,9 +1355,9 @@ def buildPackage target
 #				)
 		end
 	then
-		@log.failure target
-	else
 		action 'sync'
+	else
+		@log.failure target
 	end
 end
 
@@ -1600,7 +1573,7 @@ end
 def buildPack targets
 	@log.header 'Making compound package ' + name = targets.to_s
 
-	unless
+	if
 		unless (profile = targets.profile)
 			@log.error 'Not a valid compound package'
 			false
@@ -1646,66 +1619,89 @@ def buildPack targets
 			end
 		end
 	then
-		@log.failure name
-	else
 		action 'sync'
+	else
+		@log.failure name
 	end
 end
 
 def build staging, targets
 	@log.header 'Building ' + targets.to_s
 
-	if staging == 'image' and @systemBuild and targets.profile and resources = targets.profile['resources']
-		@log.header 'Installing resources'
+	if
+		! (targets.profile and imaging? staging) ||
+		begin
+			Dir.chdir @image
 
-		Dir.chdir @image
+			! (tree = targets.profile['tree']) ||
+			begin
+				@log.header 'Building distribution tree'
 
-		for line in parseList resources
-			dir, resource, type = line.split
-			files = File.join @resourcesPath, resource
-			@log.detail resource
+				for line in parseList tree
+					dir, icon = line.split
+					@log.detail dir
+					Dir.mkdir dir unless exists? dir
 
-			unless
-				if Dir[files] == []  # Not single files; look for a pack
-					action "unzip -o #{files}.zip -d " + dir
-				else
-					action "cp -a #{files} " + dir and (
-						not type or
-						begin
-							@log.detail 'Setting type ' + type
-							action "addattrib #{File.join dir, File.basename(files)} os::MimeType " + type
-						end
-					)
+					if icon and @syllable
+						@log.detail 'Setting icon ' + icon
+						break unless action "addattrib #{dir} os::Icon " + File.join(@iconsPath, icon)
+					end
 				end
-			then
-				@log.failure targets.to_s
-				return
+			end and
+			! (cmdLines = targets.profile['prepare']) ||
+			begin
+				@log.header 'Executing preparation instructions'
+
+				action toCommands(cmdLines)
+			end and
+			! (resources = targets.profile['resources']) ||
+			begin
+				@log.header 'Installing resources'
+				Dir.chdir @image
+
+				for line in parseList resources
+					dir, resource, type = line.split
+					files = File.join @resourcesPath, resource
+					@log.detail resource
+
+					if Dir[files] == []  # Not single files; should be a pack
+						break unless action "unzip -o #{files}.zip -d " + dir
+					else
+						break unless action "cp -a #{files} " + dir and
+							! (type and @syllable) ||
+							begin
+								@log.detail 'Setting type ' + type
+								action "addattrib #{File.join dir, File.basename(files)} os::MimeType " + type
+							end
+					end
+				end
+			end
+		end and
+		begin
+			# Build all directories
+			Dir.chdir @workDir
+
+			for target in targets.specs
+				prepareModule target
+
+				directive = false
+				directive, target = target.split if target[' ']
+
+				buildModule staging, directive, target
+			end
+
+			not (targets.profile and imaging? staging and cmdLines = targets.profile['finish']) or
+			begin
+				@log.header 'Executing finishing instructions'
+
+				Dir.chdir @image
+				action toCommands(cmdLines)
 			end
 		end
-
-		Dir.chdir @workDir
+	then
 		action 'sync'
-	end
-
-	# Build all directories
-
-	for target in targets.specs
-		prepareModule target
-
-		directive = false
-		directive, target = target.split if target[' ']
-
-		buildModule staging, directive, target
-	end
-
-	if @systemBuild and targets.profile and cmdLines = targets.profile['finish']
-		@log.header 'Executing finishing instructions'
-
-		Dir.chdir @image
-
-		unless action toCommands(cmdLines)
-			@log.failure targets.to_s
-		end
+	else
+		@log.failure targets.to_s
 	end
 end
 
@@ -1735,7 +1731,7 @@ def deleteCruft superAccess
 
 	Dir['**/.svn'].each do |dir|
 		@log.detail dir
-		action superAccess + 'rm --recursive ' + dir
+		action superAccess + 'rm --recursive --force ' + dir  # Has write-protected files
 	end
 
 	@log.header 'Cleaning out backup files'
@@ -2298,7 +2294,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.11.3',
+	puts 'Syllable Build System 0.11.4',
 		'Copyright (c) 2002-2010 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
