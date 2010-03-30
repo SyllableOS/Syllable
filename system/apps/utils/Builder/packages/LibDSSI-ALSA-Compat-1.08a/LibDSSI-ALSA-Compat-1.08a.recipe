@@ -17,6 +17,8 @@ home				www.smbolton.com/linux.html
 locations			http://www.smbolton.com/linux/
 packages			libdssialsacompat-1.0.8a
 
+patch-config
+
 no-datarootdir
 
 system-prefix-var	DESTDIR
