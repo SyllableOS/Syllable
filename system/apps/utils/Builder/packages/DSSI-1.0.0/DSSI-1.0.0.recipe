@@ -34,9 +34,13 @@ system-prefix-var	DESTDIR
 post-install
 	mkdir --parents			$IMAGE/system/extensions/dssi &&
 	cp examples/.libs/*.so	$IMAGE/system/extensions/dssi
+
 documentation
 	README COPYING ChangeLog
 	doc/TODO doc/*.txt doc/*.html
+
+; For Syllable <= 0.6.6:
+links				tasks/setup/ early-init
 ; For Syllable > 0.6.6:
 ;move-files			framework/libraries/dssi/*.so /system/extensions/dssi/
 ; Empty:
