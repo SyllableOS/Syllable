@@ -20,7 +20,7 @@ build-needs
 	AutoMake >= 1.5
 	AutoConfigure 2.59
 install-needs		BinaryUtilities
-conflicts
+_conflicts
 ;	Both BinaryUtilities and AutoConfigure have info/standards.info:
 	AutoConfigure
 ;	GNU-CompilerCollection
@@ -32,18 +32,20 @@ patch				autoreconf ld gas
 ;	autoconf
 
 no-datarootdir
-;configure-options
-;	--enable-shared
+configure-options
+	--enable-shared
 ;	--with-lib-path=
 
 ; No cross-compiling support:
+;install-prefix-var	tooldir
 ;make-vars			tooldir /resources/BinaryUtilities
 
 system-prefix-var	DESTDIR
-
-;install-prefix-var	tooldir
 ;install-vars		tooldir /resources/BinaryUtilities
 
 documentation
 	README COPYING3 COPYING3.LIB COPYING COPYING.LIB
 	binutils/NEWS binutils/ChangeLog binutils/MAINTAINERS
+
+; LFS says the AutoConfigure one is newer:
+delete-files		manuals/info/standards.info
