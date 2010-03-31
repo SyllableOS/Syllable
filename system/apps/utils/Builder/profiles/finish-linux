@@ -51,4 +51,4 @@ finish
 ;	ln -sf /system/index/data/zoneinfo/Europe/Amsterdam etc/localtime &&
 
 ;	Needed for suid programs:
-	ldconfig -r $IMAGE
+	sudo ldconfig -r $IMAGE
