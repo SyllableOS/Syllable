@@ -2,7 +2,7 @@
 
 tree
 	users/.template/.mc/
-	users/administrator/.mc/
+	users/root/.mc/
 
 resources
 ;	Kernel modules:
