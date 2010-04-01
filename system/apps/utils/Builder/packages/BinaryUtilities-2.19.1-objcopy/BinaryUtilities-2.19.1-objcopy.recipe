@@ -14,7 +14,7 @@ delete-files
 	framework/headers/
 	framework/libraries/*.a
 	framework/libraries/*.la
-	framework/libraries/libopcodes.*
+	framework/libraries/libopcodes*
 	i586-pc-syllable/
 	i686-pc-linux-gnu/
 	data/
