@@ -326,7 +326,7 @@ modules
 ;	linux/kbd-1.12
 	linux/reiserfsprogs-3.6.19
 
-;	Used by boot scripts:
+;	Used by boot scripts, but not essential:
 	apps/gnu/FindUtils-4.4.2
 
 	apps/utils/man2html
@@ -347,6 +347,7 @@ modules
 
 	system apps/other/cURL-7.18.2
 	system apps/other/OpenSSH-5.2p1
+;	May be considered essential:
 	apps/other/dhcp-3.0.5
 	apps/other/msntp-1.6
 
