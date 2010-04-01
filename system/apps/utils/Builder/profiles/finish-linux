@@ -41,7 +41,7 @@ finish
 
 	cp resources/grub/framework/libraries/grub/i386-pc/* boot/grub/ &&
 
-	rm -r resources/documentation &&
+	rm -r resources/documentation/ &&
 	rm etc/Makefile system/icons/Makefile &&
 
 ;	Clean out Desktop stuff:
