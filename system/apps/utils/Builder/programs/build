@@ -1,7 +1,7 @@
 #! /usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.11.5
+# Version 0.11.6
 # Copyright (c) 2002-2010 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -29,7 +29,7 @@ def prepare target
 	end
 
 	Dir.mkdir @image
-	unless @systemBuild Dir.mkdir File.join(@image, 'resources')  # Systems still have /usr/ link
+	Dir.mkdir File.join(@image, 'resources') unless @systemBuild  # Systems still have /usr/ link
 
 	action 'sync'
 end
@@ -2294,7 +2294,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.11.5',
+	puts 'Syllable Build System 0.11.6',
 		'Copyright (c) 2002-2010 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
