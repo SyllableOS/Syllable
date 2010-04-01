@@ -37,6 +37,7 @@ links
 ;	Fix broken symlink:
 	../system-programs/killall5	programs/pidof
 	system-programs/init		/sbin/
+	system-programs/shutdown	/sbin/
 
 ; There are no component paths, so we must use a trick:
 move-files
