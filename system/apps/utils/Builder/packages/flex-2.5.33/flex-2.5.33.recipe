@@ -10,7 +10,8 @@ build-needs			bison
 
 patch-config
 
+no-datarootdir
+
 documentation
 	README ABOUT-NLS COPYING NEWS ChangeLog AUTHORS THANKS TODO
 ;	ONEWS
-
