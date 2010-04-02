@@ -1,7 +1,7 @@
 #! /usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.11.7
+# Version 0.11.8
 # Copyright (c) 2002-2010 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -13,7 +13,7 @@ def prepare target
 
 	if exists? @stage
 		@log.header 'Deleting old staging area'
-		return false unless action 'rm --recursive --force ' + File.join(@stage, '*')
+		return false unless action @superInstall + 'rm --recursive --force ' + File.join(@stage, '*')
 	else
 		Dir.mkdir @stage
 	end
@@ -39,7 +39,7 @@ def downloadFile file
 	if headers = action("curl --head --progress-bar --insecure --ftp-pasv --location --max-redirs 2 '#{file}'")
 		unless result = (parseMap headers)['HTTP/1.1'] and
 			# Last header was "Not Found" or "Forbidden"
-			['404', '403'].include?((toKeyValue result).first)
+			['404', '403'].include?((toNameValue result).first)
 		then
 			name = File.basename(file)[/[^?]*/]  # Cut possible HTTP request parameters
 
@@ -546,6 +546,7 @@ end
 def installModule staging, target
 	root = installPath staging, target
 	name = shortName target
+	superAccess = @superAccess
 
 	if
 		if target =~ /\.(resource|zip)$/ and exists? target  # A distribution package
@@ -559,11 +560,14 @@ def installModule staging, target
 				end
 			then
 				false
-			else
+			else  # TODO?: evaluate staging, recipe for super access
 				@log.header 'Unpacking ' + target
-				action "unzip '#{target}' -d '#{dir}'" and registerModule staging, name, root
+				action superAccess + "unzip '#{target}' -d '#{dir}'" and
+					registerModule staging, superAccess, name, root
 			end
 		else
+			superAccess = '' if staging and not (@systemBuild and imaging? staging)
+
 			if native? target
 				Dir.chdir target
 
@@ -577,22 +581,22 @@ def installModule staging, target
 						false
 					else
 						@log.header 'Installing image files'
-						action "mkdir " + root and
-							copyFiles 'image', root, '' and
-							registerModule staging, target, root
+						action superAccess + "mkdir " + root and
+							copyFiles 'image', root, superAccess and
+							registerModule staging, superAccess, target, root
 					end
 				else
 					if exists? dir = buildDir(target) then Dir.chdir dir end
 
 					unless staging
-						action makeCommand(target) + ' install'
+						action superAccess + makeCommand(target) + ' install'
 					else
-						unless action makeCommand(target) + ' dist'
+						unless action superAccess + makeCommand(target) + ' dist'
 							false
 						else
 #							@log.header 'Installing documentation'
-#							if action makeCommand(target) + ' doc'
-#								action makeCommand(target) + ' install-doc'
+#							if action superAccess + makeCommand(target) + ' doc'
+#								action superAccess + makeCommand(target) + ' install-doc'
 #							end
 
 							true
@@ -600,36 +604,12 @@ def installModule staging, target
 					end
 				end
 			else
-				superAccess = (
-					(recipe = getRecipe target)['super-install'] ||
-					! staging ||
-					(@systemBuild and imaging? staging) and
-					not @syllable  # Syllable has no sudo yet
-				) ?
-					'sudo ' +
-						# TODO: settings/environment
-						'CC="$CC" ' +
-						'CXX="$CXX" ' +
-						'AS="$AS" ' +
-						'LD="$LD" ' +
-						'CFLAGS="$CFLAGS" ' +
-						'CXXFLAGS="$CXXFLAGS" ' +
-						'LDFLAGS="$LDFLAGS" ' +
-						'LIBS="$LIBS" ' +
-						'C_INCLUDE_PATH=$C_INCLUDE_PATH ' +
-						'CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH ' +
-						'LIBRARY_PATH=$LIBRARY_PATH ' +
-						'DLL_PATH=$DLL_PATH ' +
-						'LD_LIBRARY_PATH=$LD_LIBRARY_PATH ' +
-						'PKG_CONFIG_PATH=$PKG_CONFIG_PATH ' +
-						'IMAGE=$IMAGE ' +
-						'STAGE=$STAGE ' :
-					''
+				superAccess = @superAccess if (recipe = getRecipe target)['super-install']
 
 				if exists? root and not
 					begin
 						if recipe['merge-install']
-							unregisterModule staging, installName(target), root
+							unregisterModule staging, superAccess, installName(target), root
 						elsif staging or not firstColumn(parseList(recipe['install-needs'])).include? name
 							@log.header 'Uninstalling ' + name
 							uninstallModule staging, target  # FIXME: double failure logging!
@@ -1158,7 +1138,7 @@ def installModule staging, target
 									end
 								then
 									false
-								elsif system?(staging) and not
+								elsif system? staging and not
 									begin
 										devRoot = File.join @image, '/system/development/resources', installName(target), version(target)
 
@@ -1242,7 +1222,7 @@ def installModule staging, target
 								then
 									false
 								else
-									registerModule staging, target, root  # TODO?: superAccess
+									registerModule staging, superAccess, target, root  # TODO?: superAccess
 								end
 							end
 						end
@@ -1257,10 +1237,10 @@ def installModule staging, target
 	end
 end
 
-def registerModule staging, target, root
+def registerModule staging, superAccess, target, root
 	@log.header 'Registering ' + target
 
-	action 'package register ' + root + (staging ?
+	action superAccess + 'package register ' + root + (staging ?
 		# Link module into the staging area
 		' ' + File.join(@stage, staging == 'bootstrap' ? 'bootstrap/index' : 'index') +
 		(system?(staging) ?
@@ -1276,15 +1256,15 @@ def registerModule staging, target, root
 	(  # @bootstrap or (
 		not exists? dir = File.join(root, 'tasks/setup') or
 		for file in listFiles dir
-			# FIXME: break unless action 'source ' + file
+			# FIXME: break unless action superAccess + 'source ' + file
 		end
 	)  # )
 end
 
-def unregisterModule staging, name, root
+def unregisterModule staging, superAccess, name, root
 	@log.header 'Unregistering ' + name
 
-	action 'package unregister ' + root + (staging ?
+	action superAccess + 'package unregister ' + root + (staging ?
 		# Unlink module from the staging area
 		' ' + File.join(@stage, staging == 'bootstrap' ? 'bootstrap/index' : 'index') +
 		(system?(staging) ?
@@ -1300,21 +1280,25 @@ def unregisterModule staging, name, root
 end
 
 def uninstallModule staging, target
+	superAccess = staging && ! (@systemBuild and imaging? staging) ? '' : @superAccess
+
 	if
 		if dir? target and native? target and not exists? File.join(target, 'image')
 		then  # A native non-resource module
 			Dir.chdir target
 			if exists? dir = buildDir(target) then Dir.chdir dir end
 
-			action makeCommand(target) + ' uninstall'
+			action superAccess + makeCommand(target) + ' uninstall'
 		else
+			superAccess = @superAccess if getRecipe(target)['super-install']
+
 			dir = installPath staging, target
 			name = shortName target
 
-			unregisterModule staging, name, dir and
+			unregisterModule staging, superAccess, name, dir and
 			begin
 				@log.header 'Deleting ' + name
-				action 'rm --recursive --force ' + dir
+				action superAccess + 'rm --recursive --force ' + dir
 			end
 		end
 	then
@@ -1400,7 +1384,7 @@ def prepareModule target
 	end
 
 	for line in parseList @settings[native?(target) ? 'native-env' : 'ports-env']
-		var, value = toKeyValue line
+		var, value = toNameValue line
 		ENV[var] = value
 	end
 
@@ -1642,12 +1626,13 @@ def build staging, targets
 
 				for line in parseList tree
 					dir, icon = line.split
+
 					@log.detail dir
-					Dir.mkdir dir unless exists? dir
+					break unless action @superInstall + "mkdir " + dir
 
 					if icon and @syllable
 						@log.detail 'Setting icon ' + icon
-						break unless action "addattrib #{dir} os::Icon " + File.join(@iconsPath, icon)
+						break unless action @superInstall + "addattrib #{dir} os::Icon " + File.join(@iconsPath, icon)
 					end
 				end
 			end and
@@ -1668,13 +1653,13 @@ def build staging, targets
 					@log.detail resource
 
 					if Dir[files] == []  # Not single files; should be a pack
-						break unless action "unzip -o #{files}.zip -d " + dir
+						break unless action @superInstall + "unzip -o #{files}.zip -d " + dir
 					else
-						break unless action "cp -a #{files} " + dir and
+						break unless action @superInstall + "cp -a #{files} " + dir and
 							! (type and @syllable) ||
 							begin
 								@log.detail 'Setting type ' + type
-								action "addattrib #{File.join dir, File.basename(files)} os::MimeType " + type
+								action @superInstall + "addattrib #{File.join dir, File.basename(files)} os::MimeType " + type
 							end
 					end
 				end
@@ -1771,10 +1756,7 @@ end
 
 def dereference file
 	symlink?(file) ?
-		(file[0, 1] == '/' ?
-			('/' + dereference(File.readlink(file))) :
-			dereference(File.readlink(file))
-		) :
+		(file[0, 1] == '/' ? '/' : '') + dereference(File.readlink(file)) :
 		file
 end
 
@@ -1808,7 +1790,7 @@ def saveFile data, file  # Write an array to a text file
 	end
 end
 
-def toKeyValue line  # Splits a line on the first whitespace
+def toNameValue line  # Splits a line on the first whitespace
 	i = line.index(/\s/)  # First whitespace
 	[line[0, i], line[i + 1 .. line.length - 1].strip]
 end
@@ -1829,7 +1811,7 @@ def parseMap text  # Load key/value pairs into a hash table
 			unless (line = line.strip)[/\s/]  # A single key
 				hash[lastKey = line] = ''
 			else  # A key with a value
-				lastKey, value = toKeyValue line
+				lastKey, value = toNameValue line
 				hash[lastKey] = value
 			end
 		else  # Starts with whitespace, so it's a list value
@@ -1877,7 +1859,7 @@ end
 
 def toVariables value  # Join an array of environment variables into shell syntax
 	toString((parseList value).collect do |line|
-		var, value = toKeyValue line
+		var, value = toNameValue line
 		var + '=' + value
 	end)
 end
@@ -2233,7 +2215,7 @@ end
 # Set environment variables
 
 for line in parseList @settings['environment']
-	var, value = toKeyValue line
+	var, value = toNameValue line
 	ENV[var] = value
 end
 
@@ -2290,6 +2272,28 @@ end
 # Or run newly built binaries and libraries on the build host to bootstrap?
 @bootstrap = !@crossCompile && @bootstrapLevel = @settings['bootstrap']
 
+@superAccess = @syllable ?
+	'' :  # Syllable has no sudo yet
+	'sudo ' +
+		# TODO: settings/environment
+		'CC="$CC" ' +
+		'CXX="$CXX" ' +
+		'AS="$AS" ' +
+		'LD="$LD" ' +
+		'CFLAGS="$CFLAGS" ' +
+		'CXXFLAGS="$CXXFLAGS" ' +
+		'LDFLAGS="$LDFLAGS" ' +
+		'LIBS="$LIBS" ' +
+		'C_INCLUDE_PATH=$C_INCLUDE_PATH ' +
+		'CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH ' +
+		'LIBRARY_PATH=$LIBRARY_PATH ' +
+		'DLL_PATH=$DLL_PATH ' +
+		'LD_LIBRARY_PATH=$LD_LIBRARY_PATH ' +
+		'PKG_CONFIG_PATH=$PKG_CONFIG_PATH ' +
+		'IMAGE=$IMAGE ' +
+		'STAGE=$STAGE '
+@superInstall = @systemBuild ? @superAccess : ''
+
 
 # Main function
 
@@ -2297,7 +2301,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.11.7',
+	puts 'Syllable Build System 0.11.8',
 		'Copyright (c) 2002-2010 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
