@@ -23,7 +23,7 @@ build-dir			.
 
 ;super-install
 install-tree
-post-install		depmod -a -b $IMAGE/
+post-install		sudo depmod -a -b $IMAGE/
 
 documentation		README LICENSE COPYING Changelog kqemu-doc.html
 develop-docs		kqemu-tech.html

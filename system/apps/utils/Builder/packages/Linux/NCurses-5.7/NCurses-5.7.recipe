@@ -46,9 +46,9 @@ links
 ;	libtinfow.so.5							framework/libraries/libtinfo.so.5
 
 pre-register
-	sudo echo 'INPUT(-lncursesw)'	> framework/libraries/libncurses.so	&&
-;	sudo echo 'INPUT(-lcursesw)'	> framework/libraries/libcurses.so	&&
-	sudo echo 'INPUT(-lformw)'		> framework/libraries/libform.so	&&
-	sudo echo 'INPUT(-lpanelw)'		> framework/libraries/libpanel.so	&&
-	sudo echo 'INPUT(-lmenuw)'		> framework/libraries/libmenu.so	&&
-	sudo echo 'INPUT(-lncursesw)'	> framework/libraries/libcursesw.so
+	echo 'INPUT(-lncursesw)'	| sudo dd of=framework/libraries/libncurses.so	&&
+;	echo 'INPUT(-lcursesw)'		| sudo dd of=framework/libraries/libcurses.so	&&
+	echo 'INPUT(-lformw)'		| sudo dd of=framework/libraries/libform.so	&&
+	echo 'INPUT(-lpanelw)'		| sudo dd of=framework/libraries/libpanel.so	&&
+	echo 'INPUT(-lmenuw)'		| sudo dd of=framework/libraries/libmenu.so	&&
+	echo 'INPUT(-lncursesw)'	| sudo dd of=framework/libraries/libcursesw.so

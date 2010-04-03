@@ -35,9 +35,9 @@ system-prefix-var	DESTDIR
 
 install-tree
 post-install
-	install -m644 ../UDevices-142/rules/packages/64-*.rules				$IMAGE/lib/udev/rules.d/ &&
-	install -m644 ../UDevices-142/rules/packages/40-pilot-links.rules	$IMAGE/lib/udev/rules.d/ &&
-	install -m644 ../UDevices-142/rules/packages/40-isdn.rules			$IMAGE/lib/udev/rules.d/
+	sudo install -m644 ../UDevices-142/rules/packages/64-*.rules			$IMAGE/lib/udev/rules.d/ &&
+	sudo install -m644 ../UDevices-142/rules/packages/40-pilot-links.rules	$IMAGE/lib/udev/rules.d/ &&
+	sudo install -m644 ../UDevices-142/rules/packages/40-isdn.rules			$IMAGE/lib/udev/rules.d/
 
 documentation
 	README COPYING NEWS ChangeLog TODO

@@ -28,9 +28,9 @@ install-files		*.pem settings/ssl/certs/
 pre-register
 	for certificate in settings/ssl/certs/*.pem
 	do
-		sudo cat $certificate &&
+		cat $certificate &&
 		echo ""
-	done > settings/ssl/ca-bundle.crt
+	done | sudo dd of=settings/ssl/ca-bundle.crt
 ;	Ubuntu:
 ;	done > settings/ssl/certs/ca-certificates.crt
 
