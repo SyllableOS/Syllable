@@ -165,12 +165,6 @@ tree
 	lib/udev/devices
 	lib/udev/devices/pts
 	lib/udev/devices/shm
-;	For SysVInit:
-	usr/share
-	usr/share/man
-	usr/share/man/man1
-	usr/share/man/man5
-	usr/share/man/man8
 
 prepare
 	sudo mknod -m 600 dev/console c 5 1 &&
