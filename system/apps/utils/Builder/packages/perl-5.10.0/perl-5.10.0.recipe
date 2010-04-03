@@ -36,6 +36,16 @@ configure-cmd
 ;	configure.gnu
 	Configure
 configure-prefix	"-Dprefix="
+no-sysconfdir
+no-bindir
+no-sbindir
+no-libdir
+no-libexecdir
+no-includedir
+no-datarootdir
+no-datadir
+no-mandir
+no-infodir
 
 test-targets
 	test
