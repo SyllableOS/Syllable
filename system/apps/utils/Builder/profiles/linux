@@ -205,51 +205,51 @@ prepare
 ;	mount -t sysfs	sysfs	sys &&
 
 ;	install -d -m 0750 system &&
-	install -d -m 1777 tmp var/tmp &&
+	sudo install -d -m 1777 tmp var/tmp &&
 
-	touch			var/run/utmp var/log/{btmp,lastlog,wtmp} &&
+	sudo touch		var/run/utmp var/log/{btmp,lastlog,wtmp} &&
 	sudo chgrp utmp	var/run/utmp var/log/lastlog &&
-	chmod 664		var/run/utmp var/log/lastlog &&
+	sudo chmod 664	var/run/utmp var/log/lastlog &&
 
-	ln -s usr/ resources &&
+	sudo ln -s usr/ resources &&
 
 ;	For OpenSSL and others:
-	ln -s /resources/index/programs/perl	usr/bin/ &&
+	sudo ln -s /resources/index/programs/perl	usr/bin/ &&
 ;	For OpenSSL?
-;	ln -s /resources/index/programs/perl	usr/local/bin/ &&
+;	ln -s /resources/index/programs/perl		usr/local/bin/ &&
 ;	From BinaryUtilities, for building OpenSSL:
-	ln -s /resources/index/programs/ranlib	usr/bin/ &&
+	sudo ln -s /resources/index/programs/ranlib	usr/bin/ &&
 
 ;	touch etc/mtab &&
 
-;	install -d				lib/{firmware,udev/devices/{pts,shm}} &&
-	sudo mknod -m0666		lib/udev/devices/null c 1 3 &&
+;	install -d					lib/{firmware,udev/devices/{pts,shm}} &&
+	sudo mknod -m0666			lib/udev/devices/null c 1 3 &&
 ;	? For UDevices 145:
-	sudo mknod -m0600		lib/udev/devices/kmesg c 1 11 &&
-	ln -s /proc/self/fd		lib/udev/devices/fd &&
-	ln -s /proc/self/fd/0	lib/udev/devices/stdin &&
-	ln -s /proc/self/fd/1	lib/udev/devices/stdout &&
-	ln -s /proc/self/fd/2	lib/udev/devices/stderr &&
-	ln -s /proc/kcore		lib/udev/devices/core &&
+	sudo mknod -m0600			lib/udev/devices/kmesg c 1 11 &&
+	sudo ln -s /proc/self/fd	lib/udev/devices/fd &&
+	sudo ln -s /proc/self/fd/0	lib/udev/devices/stdin &&
+	sudo ln -s /proc/self/fd/1	lib/udev/devices/stdout &&
+	sudo ln -s /proc/self/fd/2	lib/udev/devices/stderr &&
+	sudo ln -s /proc/kcore		lib/udev/devices/core &&
 
 ;	For sshd:
-	install -m700 -d			var/lib/sshd &&
+	sudo install -m700 -d		var/lib/sshd &&
 	sudo chown system:system	var/lib/sshd &&
 
 ;	For LFS bootscripts:
-	ln -s /system/index/system-programs/cupsd		usr/sbin/ &&
-	ln -s /resources/index/system-programs/named	usr/sbin/ &&
-;	ln -s /system/index/system-programs/sshd		usr/sbin/ &&
-	ln -s /resources/index/programs/apachectl		usr/sbin/ &&
-	ln -s /resources/index/programs/httpd			usr/sbin/ &&
-	ln -s /resources/index/system-programs/vsftpd	usr/sbin/ &&
-	ln -s /resources/index/programs/rsync			usr/bin/ &&
-	ln -s /resources/index/system-programs/nmbd		usr/sbin/ &&
-	ln -s /resources/index/system-programs/smbd		usr/sbin/ &&
-	ln -s /resources/index/system-programs/winbindd	usr/sbin/ &&
+	sudo ln -s /system/index/system-programs/cupsd			usr/sbin/ &&
+	sudo ln -s /resources/index/system-programs/named		usr/sbin/ &&
+;	ln -s /system/index/system-programs/sshd				usr/sbin/ &&
+	sudo ln -s /resources/index/programs/apachectl			usr/sbin/ &&
+	sudo ln -s /resources/index/programs/httpd				usr/sbin/ &&
+	sudo ln -s /resources/index/system-programs/vsftpd		usr/sbin/ &&
+	sudo ln -s /resources/index/programs/rsync				usr/bin/ &&
+	sudo ln -s /resources/index/system-programs/nmbd		usr/sbin/ &&
+	sudo ln -s /resources/index/system-programs/smbd		usr/sbin/ &&
+	sudo ln -s /resources/index/system-programs/winbindd	usr/sbin/ &&
 
 ;	For Python:
-	ln -s /resources/index/programs/python			usr/bin/
+	sudo ln -s /resources/index/programs/python				usr/bin/
 
 resources
 	boot/grub/										menu.lst
