@@ -52,3 +52,6 @@ test-targets
 ;	minitest
 
 build-docs			INSTALL
+
+; Fix internal links:
+links				programs/ bin
