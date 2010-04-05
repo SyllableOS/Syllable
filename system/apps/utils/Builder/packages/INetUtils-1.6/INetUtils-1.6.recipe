@@ -20,7 +20,9 @@ recommends
 	krb4
 	heimdal | kerberos
 
+super-install
 system-prefix-var	DESTDIR
+install-vars		SUIDMODE '-o system -m 4775'
 
 documentation		README COPYING NEWS ChangeLog TODO AUTHORS THANKS
 internal-docs		README-alpha

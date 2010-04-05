@@ -18,6 +18,3 @@ configure-options
 ;	--with-wrap
 ;	For PAM:
 ;	--with-pam
-
-; For ping:
-super-install
