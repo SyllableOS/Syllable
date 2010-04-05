@@ -1,7 +1,6 @@
 authors				Kaj de Vos
 status				developing
 
-install-tree		framework
 install
 	for dir in \
 ;		Limited GoboLinux system tree
@@ -161,7 +160,7 @@ install
 
 		Programs/Pango/Settings/pango
 	do
-		mkdir --parents $IMAGE/$dir
+		sudo mkdir --parents $IMAGE/$dir
 	done
 
 install-files
