@@ -29,9 +29,6 @@ resources
 	users/.template/.mc/							configuration/ini
 	users/root/.mc/									configuration/ini
 
-;	For Gobo:
-	Programs/Pango/Settings/pango/					linux/pango.modules
-
 finish
 ;	Clean out kernel source link from the host system:
 	sudo rm /lib/modules/2.6.27.44-Syllable/build &&
@@ -42,7 +39,7 @@ finish
 	cp resources/grub/framework/libraries/grub/i386-pc/* boot/grub/ &&
 
 	rm -r resources/documentation/ &&
-	rm etc/Makefile system/icons/Makefile &&
+	rm resources/index/documentation etc/Makefile system/icons/Makefile &&
 
 ;	Clean out Desktop stuff:
 	rm system/start.sh &&

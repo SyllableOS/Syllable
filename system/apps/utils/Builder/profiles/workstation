@@ -1,0 +1,20 @@
+; Syllable Workstation, in addition to Server
+
+modules
+;	Extra package managers
+
+;	Gobo
+
+	apps/gnu/gawk-3.1.6
+	apps/gnu/wget-1.9.1
+	apps/gnu/patch-2.5.4
+;	apps/other/file-
+	apps/gnu/gnupg-1.4.9
+	apps/other/Gobo-Scripts-2.9.11
+	apps/gnu/gettext-0.17
+
+;	Pacman
+
+;	apps/other/LibFetch-2.26
+;	apps/other/LibArchive-
+;	apps/other/Pacman-3.3.3
