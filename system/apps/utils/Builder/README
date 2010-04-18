@@ -1,7 +1,8 @@
 The Syllable Build System
 =========================
 
-23 February 2007
+Kaj de Vos
+18 April 2010
 
 Contents
 ========
@@ -9,7 +10,8 @@ Contents
 1 Introduction
 2 How to install the build system on Syllable
     2.1 
-    2.2 Uninstalling & upgrading the build system
+    2.2 Configuring the build system
+    2.3 Uninstalling & upgrading the build system
 3 Getting started with the build system
     3.1 Command line syntax
     3.2 Modes of operation
@@ -20,7 +22,6 @@ Contents
         3.5.2 Installing the source
             3.5.2.1 
             3.5.2.2 Patching the source
-            3.5.2.3 Sources from a CVS repository
         3.5.3 Building it
     3.6 Building a single system module
         3.6.1 
@@ -39,8 +40,8 @@ Contents
 1 Introduction
 ==============
 
-This documentation applies to version 0.6.x of the build system for
-the Syllable operating system. If you encounter problems or have any
+This documentation applies to version 0.11.x of the build system for
+the Syllable operating systems. If you encounter problems or have any
 other interesting observations, I would be interested to hear about
 them (see contact information).
 
@@ -54,10 +55,15 @@ Please note that the build system is written in the Ruby language,
 hence you need to have the Ruby interpreter installed. Refer to the
 Ruby package for Syllable for instructions on installing Ruby.
 
-Now for the installation of the build system. If you received this
-software in a Zip package, you should have unpacked this file with
+Now for the installation of the build system. You need to install a
+version that matches your system. There are different download packages
+for Syllable Desktop and Syllable Server. In the case of Builder, there
+is not a big difference between them, but they are configured differently.
 
-    unzip Builder-0.6.66.bin.1.zip
+If you downloaded this software as a single Syllable resource package, you
+should have unpacked this file with
+
+    unzip Builder-0.7.63.i586.resource
 
 or something equivalent. This package contains an anonymous CVS
 checkout, so you can update it over the Internet. This will ensure
@@ -65,47 +71,65 @@ that you have the latest version, with the latest package definitions.
 It is also possible to get the build system from the Syllable CVS
 repository manually. The location of the build system in Syllable CVS is
 
-    /syllable/system/apps/utils/Builder
+    /syllable/system/apps/utils/Builder/
 
-The software is contained in the subdirectory Builder. This can be
-installed anywhere. In Syllable, it is usually installed under /usr/.
+The software is contained in the subdirectory "Builder". This can be
+installed anywhere. In Syllable, it is usually installed under /resources/.
 If you unpacked or copied it somewhere else, do:
 
-    mv Builder /usr
+    mv Builder /resources/
+
+You may have to become the super user first:
+
+    su
 
 Then run:
 
-    package register /usr/Builder
+    package register Builder
 
-This creates links in Syllable to enable it to find the build
-system's files.
+This creates links in Syllable to enable it to find the build system's
+files.
 
-You can also use Builder on Linux (and possibly on other POSIX-like
-systems, but this has not been tested yet). An easy way to do so is
-to install it in your home directory and add the Builder/bin directory
-to your $PATH environment variable. This way you don't need super-user
-access.
+2.2 Configuring the build system
+--------------------------------
+
+If you installed manually from the Syllable CVS repository, you should be
+aware that the default configuration is for Syllable Desktop. If you
+install Builder on Syllable Server from CVS, you must adapt the
+configuration accordingly in the file
+
+    Builder/settings
+
+There are also other settings options in there that you may want to
+change. This file is a plain text file with a structured content. You
+can edit it with any text editor, but you should be careful to adhere
+to the structure. All files that Builder uses to store its own Builder
+specific data have this same basic structure.
+
+You can also use Builder on Linux systems other than Syllable Server (and
+probably on other POSIX-like systems, but this has not been tested yet).
+An easy way to do so is to install it in your home directory and add the
+Builder/programs directory to your $PATH environment variable. This way
+you don't need super-user access. You should also adapt the settings file
+to your situation.
 
 You should now be able to use the build system.
 
-2.2 Uninstalling & upgrading the build system
+2.3 Uninstalling & upgrading the build system
 ---------------------------------------------
 
-If you ever want to remove the build system, follow these steps. For
-example, you should do this before you install a new version of the
-build system. Again, you may have to become root first:
+If you ever want to remove the build system, follow these steps. Again,
+you may have to become the super user first:
 
     su
 
 Then you should remove the links to the build system from Syllable.
-You should even do this when you want to upgrade the build system,
-because the links may have changed for the new version.
 
-    package unregister /usr/Builder
+    package unregister Builder
 
 To delete the files belonging to the build system, run:
 
-    rm -r /usr/Builder
+    rm -r /resources/Builder
 
 Keeping the build system up to date is easy if you have an Internet
 connection. Just do
@@ -126,7 +150,7 @@ always check the log for conflicts and resolve them if there are any.
 The build system is called with one command: build. To see all
 possible uses of this command, run
 
-    build --help
+    build help
 
 The various options to the build command provide a toolbox for
 building several kinds of software packages. Some of the options will
@@ -171,8 +195,8 @@ operations, but those that do are logged in several forms. During
 building, only progress information and error messages are sent to
 the screen, in order to provide a better overview of the process
 (that is, stderr is sent to the screen as normal, but stdout is not).
-The rest of the output (stdout) is captured in a log file. To see the
-log of the last build operation performed, do
+The rest of the output (stdout) is captured in a log file. To see this
+log of the last build operation that was performed, do
 
     build log | less
 
@@ -276,7 +300,7 @@ have to unpack in the place where you want to build it. However, the
 build system can do this job for you. Just drop the source package
 into the build system in the directory
 
-    /usr/Builder/sources/
+    /resources/Builder/sources/
 
 When you ask the build system to build a package for which the source
 is not installed, it will look for it in this location and unpack it
@@ -285,9 +309,11 @@ sources to clean up. As long as the source package is in the build
 system, the sources will be restored when needed.
 
 Even better, if the package has a build recipe that defines a download
-location, and you have the WGet program installed, the build system
-will download the source package and place it in /usr/Builder/sources
-automatically.
+location, and you have the cURL program installed, the build system
+will download the source package and place it in Builder/sources/
+automatically. cURL is included in the Syllable operating systems, so
+you don't have to do anything extra unless you're using Builder on
+another system.
 
 3.5.2.2 Patching the source
 ---------------------------
@@ -302,30 +328,6 @@ explicitly tell the build system to apply any patches it has, like
 this:
 
     build patch example
-
-3.5.2.3 Sources from a CVS repository
--------------------------------------
-
-Source code from a CVS repository is treated specially. If you build
-a package that was checked out from a CVS repository, and the build
-system has a tarball for that package, it will replace the CVS source
-with the contents of that tarball. This is done because several
-third-party packages won't build successfully after having made the
-trip through CVS. Their internal build systems get confused by the
-changing of time stamps on their files.
-
-The build system recognizes a package from CVS by the presence of a
-directory named "CVS" in each subdirectory. These directories no
-longer exist after the source is replaced from a tarball. If no
-tarball is available, the build system removes each of these CVS
-directories, because some third-party packages detect them by
-themselves and get confused by them.
-
-Please take note that the removal of these CVS directories means that
-your CVS repository will be broken! Therefore, you should never build
-a third-party package that comes from CVS in your working copy of the
-repository, but instead in a copy that you will not use for
-subsequent CVS operations (like updating).
 
 3.5.3 Building it
 -----------------
@@ -354,8 +356,8 @@ The installion is done with
     build install example-1.2
 
 Third-party packages will be installed into their own subdirectories
-in the /usr directory. The Syllable package manager will be run to
-register the package with Syllable.
+in the /resources/ directory. The Syllable package manager will be run
+to register the package with Syllable.
 
 The installation and registration can be undone with
 
@@ -400,7 +402,7 @@ and libraries. Those tend to change when Syllable evolves, which can
 break the build if different versions are not compatible. By default,
 when compiling software in the "system" directory, headers from the
 Syllable source tree are used. These things can be tricky, and there
-is no easy recipe for them.
+is no easy instruction for them.
 
 3.6.2 Installing the source
 ---------------------------
@@ -429,10 +431,10 @@ be built and installed in one go into a staging area.
 
     image example
 
-will install the module in the staging area where a directory tree is
-built for a Syllable distribution. The staging area is located in the
-subdirectory "stage/image" within the "system" directory. From there,
-you can inspect the results of the build and move files into your
+will install the module in the staging area where a partial directory
+tree is built for a Syllable distribution. The staging area is located
+in the subdirectory "stage/image/" within the "system" directory. From
+there, you can inspect the results of the build and move files into your
 running system selectively.
 
 3.7 Building multiple modules
@@ -448,9 +450,9 @@ modules, enter:
 
     build example-profile
 
-The build system recognizes a profile name because it doesn't contain
-a slash ('/'), as opposed to a module path. A profile simply contains
-a list of modules. All the modules in the profile will be acted on
+The build system recognises a profile name because it doesn't contain
+a slash ('/'), as opposed to a module path. A profile contains a
+list of modules. All the modules in the profile will be acted on
 sequentially. The logs will contain all the actions on all modules,
 even if one or more of the modules failed.
 
@@ -485,11 +487,11 @@ part of the Syllable base system.
 
 Profiles are stored in the build system at this location:
 
-    /usr/Builder/profiles/
+    /resources/Builder/profiles/
 
-A profile is simply a text file that you can write yourself. Each
-line should contain a module path. Comment lines are allowed; they
-should start with a semicolon (';') in the first position.
+A profile is simply a text file that you can write yourself. Please
+refer to the existing profiles as examples. Comment lines are allowed;
+they should start with a semicolon (';') in the first position.
 
 3.7.3 Predefined profiles
 -------------------------
@@ -518,14 +520,14 @@ Another auto-generated profile that you can use is named "last". This
 profile always contains the last profile that the build command was
 used with.
 
-3.8 Building a compound package
--------------------------------
+3.8 Building a collection pack
+------------------------------
 
 The build system is capable of producing distribution packages
 consisting of multiple third-party packages. For example, the build
-system contains a profile named "dev-pack", for the Developer Pack.
-This is a collection of third-party packages commonly used by
-developers. You can build all those packages with:
+system contains a profile named "dev-pack", for the Developer's
+Delight pack. This is a collection of third-party packages commonly
+used by developers. You can build all those packages with:
 
     build dev-pack
 
@@ -533,55 +535,65 @@ To install such a list of packages, you would normally do:
 
     build install dev-pack
 
-(In this case, it's more complicated than that, because the Developer
-Pack contains several packages that need themselves to build and
-sometimes even to install themselves, like Make, Binutils and GCC.
+(In this case, it's more complicated than that, because the developer
+pack contains several packages that need themselves to build and
+sometimes even to install themselves, such as Make, BinUtils and GCC.
 You would have to replace these packages carefully and individually.)
 
-When the packages are installed,
+When you are satisfied with single distribution packages. you should
+move them to
+
+    /resources/Builder/distributions/
+
+Then,
 
     build pack dev-pack
 
-will create one distribution package in your working directory that
+will create one distribution pack in your working directory that
 contains all the packages from the profile, and optionally extra
-files like documentation.
+files such as documentation.
 
 3.9 Building the Syllable base system
 -------------------------------------
 
 At the time of writing, it is not possible to give a definitive
 instruction for building the entire Syllable base system. Although
-the build system basically is capable of doing this, this is a work
-in progress that evolves with the development of Syllable. Furthermore,
-if you try to build from CVS sources, you will most likely encounter
-build failures that exist along the way to the next Syllable release.
+the build system is capable of doing this and evolves over time with
+the development of Syllable, the Syllable system is a work in progress.
+Furthermore, if you try to build from CVS sources, you will most likely
+encounter build failures that exist along the way to the next Syllable
+release.
 
 That said, here is a basic description of how the system is built. For
-starters, there is a huge number of prerequisites that you have to
+starters, there is a large number of prerequisites that you have to
 fulfill before this makes any sense. Here is a - subject to change,
-and probably incomplete - list of packages you need to install. Some
-of them are available as binary packages, others you wil have to build
+and probably incomplete - list of packages you need to install. Most
+of them are available as binary packages, but some you may have to build
 from source with the build system.
 
-- The Syllable source code
-- Developer's Delight
-- PERL Pit
-- WGet
-- DiffUtils
-- GAWK
-- TexInfo
+Source packs
+  - For Syllable Desktop, the Syllable source code
+Collection packs
+  - Shell Essentials
+  - Network Necessities
+  - Developer's Delight
+  - The Perl Pit
+Single packages
+  - CMake
 
 There are several profiles that define a list of all the modules of
-the base system. The process goes like this:
+the Syllable Desktop base system. The process goes like this:
 
     cd system
-
-    build prepare system
 
     image system
     build log failures
 
     image base
+    build log failures
+
+    su
+    image finish-su
     build log failures
 
     image finish
@@ -590,6 +602,29 @@ the base system. The process goes like this:
     cd stage/image
     build scrub
 
+    cd ../..
+    construct distro SyllableDesktop 1.0 i586
+
+The last command, "construct", is an extra tool included with Builder
+that will split the system into the base distribution and the special
+development files pack, and create distribution packages of them.
+
+It is basically similar for Syllable Server:
+
+    cd system
+
+    image linux
+    build log failures
+
+    image linux-finish
+    build log failures
+
+    cd stage/image
+    build scrub
+
+    cd ../..
+    construct distro SyllableServer 1.0 i486
+
 Along the way you will have to fix build failures, using techniques
 from this manual. Please have patience, and use at your own risk. Or,
 in the words of our enlightened project leader:
@@ -597,6 +632,16 @@ in the words of our enlightened project leader:
 "Attempts to build Syllable from source may cause temporary blindness,
 paranoia, madness, rudeness and athlete's foot. Do not use Builder if
 pregnant or stupid. If in doubt, consult a trained arborist."
+
+Especially for Syllable Desktop, more than the above procedure is needed
+to arrive at a complete system. We use extra scripts to set up a build
+environment and drive Builder. They are here in Syllable's CVS repository:
+
+    /syllable/system/build-tools/scripts/auto-build/
+
+Although these scripts automate the process, they are also a work in
+progress, developing together with Syllable. At any point in time, they
+are aimed at helping us produce the next Syllable development build.
 
 4 Developing your own packages
 ==============================
@@ -608,7 +653,7 @@ specification for the syntax of recipes, in the file
 
     Builder/packages/skeleton.recipe
 
-For examples of recipes, please study the existing ports in
+For examples of recipes, please study the many existing ports in
 Builder/packages/.
 
 5 Known problems and limitations
@@ -623,10 +668,10 @@ that matches the software you are building.
 =====================
 
 The Syllable build system was created by Kaj de Vos, and started from
-the work of Kristian Van Der Vliet. You can send me problem reports,
-fixes and the like at
+the work of Kristian Van Der Vliet. You can send problem reports,
+fixes and the like on our forum:
 
-    builder@syllable.info
+    http://forum.syllable.org
 
 The latest version of this software can be found through the download
 section of the Syllable web site, or in the CVS repository:
