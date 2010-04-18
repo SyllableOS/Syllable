@@ -4,7 +4,7 @@ modules
 ;	Gobo
 
 ;	For HAL and others:
-	apps/other/expat-2.0.0
+;	apps/other/expat-2.0.0
 ;	Must already be installed to bootstrap PythonGObject:
 	apps/other/Python-2.6.4
 ;	apps/other/PythonGObject-2.20.0

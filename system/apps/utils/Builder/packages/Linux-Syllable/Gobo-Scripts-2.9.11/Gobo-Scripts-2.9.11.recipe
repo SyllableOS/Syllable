@@ -1,168 +1,6 @@
 authors				Kaj de Vos
 status				developing
 
-install
-	for dir in \
-;		Limited GoboLinux system tree
-
-;		System/Index/etc \
-		System/Index/bin \
-		System/Index/include \
-		System/Index/lib \
-		System/Index/share/man \
-		System/Index/share/info \
-		System/Links/Environment \
-		System/Links/Executables \
-;		System/Links/Manuals/man{0,1,2,3,4,5,6,7,8} \
-;		System/Links/Shared \
-		System/Links/Tasks \
-		System/Settings \
-		Data \
-;		Files/Fonts \
-		Files/Compile/Archives \
-		Files/Compile/Sources \
-		Programs/Scripts/2.9.11 \
-
-;		Syllable Workstation base system
-
-;		Programs/DejaVu-Fonts--current \
-;		In Linux:
-		Programs/Linux-Headers/2.6.27.44 \
-		Programs/Linux/2.6.27.44 \
-;		In Linux:
-;		Programs/LinuxFusion/8.1.1 \
-;		Programs/KQEmu/1.3.0pre11 \
-		Programs/Glibc/2.7/lib \
-		Programs/ZLib/1.2.3 \
-		Programs/Iptables/1.4.6 \
-		Programs/LibStdC++/4.2.3 \
-		Programs/Ncurses/5.7/lib \
-		Programs/Readline/6.0 \
-;		Programs/BinUtils-2.19.1-objcopy \
-		Programs/Ruby/1.8.7p248 \
-		Programs/Grub/0.97 \
-		Programs/CoreUtils/6.9 \
-		Programs/Bash/4.0 \
-		Programs/Grep/2.5.4 \
-		Programs/Sed/4.2.1 \
-		Programs/Unzip/6.0 \
-		Programs/Bzip2/1.0.5 \
-;		Programs/Boron/0.1.0 \
-;		Programs/ORCA--current \
-		Programs/Sysvinit/2.86 \
-;		Programs/LFS-bootscripts/6.5 \
-		Programs/Udev/142 \
-;		Programs/UDev-config/6.5 \
-		Programs/Module-Init-Tools/3.2.2 \
-		Programs/E2FSProgs/1.41.9 \
-		Programs/Util-Linux/2.16.2 \
-		Programs/Sysklogd/1.4.1 \
-		Programs/Shadow/4.0.18.1 \
-;		Libraries:
-		Programs/DB/4.6.21 \
-		Programs/IPRoute2/2.6.25 \
-		Programs/KBD/1.12 \
-		Programs/ReiserFSProgs/3.6.19 \
-		Programs/FindUtils/4.4.2 \
-		Programs/FreeType/2.3.9 \
-		Programs/JPEG/7 \
-		Programs/LibPNG/1.2.37 \
-		Programs/Giflib/4.1.6 \
-		Programs/TIFF/3.8.2 \
-		Programs/LibOGG/1.1.4 \
-		Programs/Flac/1.2.1 \
-		Programs/LibVorbis/1.2.2 \
-		Programs/LibTheora/1.0 \
-		Programs/FFmpeg/0.5 \
-		Programs/FAAD2/2.7 \
-		Programs/DirectFrameBuffer/1.4.3 \
-;		Programs/Man2HTML \
-;		Programs/Packager \
-;		Programs/Liberation-Fonts--current \
-;		Programs/Luxi-fonts \
-;		Programs/LCD-Fonts/1.1 \
-;		Programs/FreeFont--current \
-;		Programs/MIME-Support--current \
-;		Programs/BLFS/bootscripts-2009.3.2 \
-		Programs/Procps/3.2.7 \
-		Programs/Sudo/1.7.2p2 \
-		Programs/MkTemp/1.6 \
-		Programs/OpenSSL/0.9.8k \
-;		Programs/CA-Bundle--current \
-		Programs/libUSB/0.1.12 \
-		Programs/ALSA-Lib/1.0.15 \
-		Programs/ALSA-Utils/1.0.15 \
-		Programs/Curl/7.19.6 \
-		Programs/OpenSSH/5.2p1 \
-		Programs/DHCP/3.0.5 \
-		Programs/Wireless-Tools/29 \
-;		Programs/MSNTP/1.6 \
-		Programs/CUPS/1.3.4 \
-		Programs/GhostScript/8.64 \
-;		In CUPS:
-		Programs/Gutenprint/5.2.3 \
-		Programs/JBIG-KIT/2.0 \
-;		In CUPS:
-		Programs/Splix/2.0.0 \
-		Programs/Sane-Backends/1.0.20 \
-		Programs/Gzip/1.3.12 \
-		Programs/InetUtils/1.6 \
-		Programs/Less/429 \
-		Programs/Tar/1.22 \
-		Programs/Zip/3.0 \
-		Programs/P7Zip/9.04 \
-		Programs/DiffUtils/2.8.1 \
-;		Gobo has the GNU version under this name:
-		Programs/Netcat/1.10 \
-		Programs/Transmission/1.72 \
-		Programs/CDRTools/2.01.01a61 \
-;		Programs/Man \
-		Programs/SDL/1.2.13 \
-		Programs/SDL_net/1.2.7 \
-		Programs/SDL_mixer/1.2.9 \
-		Programs/SDL_sound/1.0.3 \
-		Programs/SDL_image/1.2.8 \
-		Programs/SDL_ttf/2.0.9 \
-;		Programs/REBOL-Core/2 \
-;		Programs/REBOL-View/2 \
-;		Programs/AltME--current \
-;		Programs/TINY--current \
-;		Programs/REBOL-services--current \
-;		Programs/UniServe/0.9.33 \
-;		Programs/Cheyenne/0.9.19 \
-;		In Cheyenne:
-;		Programs/Quartermaster-current \
-;		Programs/CAPTCHA--current \
-;		Programs/REBOL-MySQL/1.2.0 \
-;		Programs/S3Sync--current \
-		Programs/Slang/2.1.1 \
-		Programs/GLib/2.18.4 \
-		Programs/MC/4.7.0.2 \
-;		Programs/Rsync/2.6.9 \
-		Programs/Links/2.3pre1 \
-		Programs/QEMU/0.11.1 \
-;		Programs/Genode/8.08 \
-;		Programs/Pengupop/2.1.12 \
-
-		Programs/Gawk/3.1.6 \
-		Programs/Wget/1.9.1 \
-		Programs/Patch/2.5.4 \
-;		Programs/File/. \
-		Programs/GnuPG/1.4.9 \
-		Programs/Python/2.6.4 \
-;		Programs/PyGObject/2.20.0 \
-		Programs/Gettext/0.17 \
-		Programs/Expat/2.0.0 \
-
-;		Programs/LibFetch/2.26 \
-;		Programs/LibArchive/. \
-;		Programs/Pacman/3.3.3 \
-
-		Programs/Pango/Settings/pango
-	do
-		sudo mkdir --parents $IMAGE/$dir
-	done
-
 install-files
 	2.9.11/bin								programs
 	2.9.11/lib								framework/libraries
@@ -174,12 +12,11 @@ install-files
 	2.9.11/Functions						/Programs/Scripts/2.9.11/
 	2.9.11/Resources						/Programs/Scripts/2.9.11/
 	2.9.11/Resources/Defaults/Settings/*	/System/Settings/
-	ld.so.conf								/System/Settings/
 
 links
 ;	Fix broken Python library links:
 	../programs/										framework/bin
-	./bin/												/System/Index/sbin
+	bin												/System/Index/sbin
 ;	For older Gobo binaries:
 	/System/Index/share/								/System/Links/Shared
 ;	For ldd:
@@ -187,7 +24,8 @@ links
 	/bin/bash											/System/Links/Executables/
 ;	For X:
 	/system/index/programs/mcookie						/System/Links/Executables/
-;	This one is destructive!
+;	These are destructive!
+;	/System/Index/share/								/usr/share
 ;	/System/Index/include/								/usr/include
 ;	Headers way off course:
 	/System/Index/lib/glib-2.0/							/usr/lib/
@@ -222,16 +60,16 @@ links
 
 	1.2.3												/Programs/ZLib/Current
 	1.4.6												/Programs/Iptables/Current
-	4.2.3												/Programs/LibStdC++/Current
+	4.1.2												/Programs/LibStdC++/Current
 	5.7													/Programs/Ncurses/Current
 ;	For early init:
 	/system/index/framework/libraries/libncurses.so.5	/Programs/Ncurses/5.7/lib/
 	/Programs/Ncurses/5.7/lib/libncurses.so.5			/System/Index/lib/
 	6.0													/Programs/Readline/Current
-;	/Programs/BinUtils-2.19.1-objcopy
+;	/Programs/BinaryUtilities-2.19.1-objcopy
 	1.8.7p248											/Programs/Ruby/Current
 	0.97												/Programs/Grub/Current
-	6.9													/Programs/CoreUtils/Current
+	6.7													/Programs/CoreUtils/Current
 	4.0													/Programs/Bash/Current
 	2.5.4												/Programs/Grep/Current
 	4.2.1												/Programs/Sed/Current
@@ -265,7 +103,7 @@ links
 	1.0													/Programs/LibTheora/Current
 	0.5													/Programs/FFmpeg/Current
 	2.7													/Programs/FAAD2/Current
-	1.4.3												/Programs/DirectFrameBuffer/Current
+	1.4.3												/Programs/DirectFB/Current
 ;	/Programs/Man2HTML
 ;	/Programs/Packager
 ;	/Programs/Liberation-Fonts--current
@@ -279,22 +117,20 @@ links
 	1.6													/Programs/MkTemp/Current
 	0.9.8k												/Programs/OpenSSL/Current
 ;	/Programs/CA-Bundle--current
-	0.1.12												/Programs/libUSB/Current
+	0.1.12												/Programs/LibUSB/Current
 	1.0.15												/Programs/ALSA-Lib/Current
 	1.0.15												/Programs/ALSA-Utils/Current
-	7.19.6												/Programs/Curl/Current
+	7.18.2												/Programs/Curl/Current
 	5.2p1												/Programs/OpenSSH/Current
 	3.0.5												/Programs/DHCP/Current
 	29													/Programs/Wireless-Tools/Current
 ;	/Programs/MSNTP-1.6
 	1.3.4												/Programs/CUPS/Current
 	8.64												/Programs/GhostScript/Current
-;	In CUPS:
 	5.2.3												/Programs/Gutenprint/Current
 	2.0													/Programs/JBIG-KIT/Current
-;	In CUPS:
 	2.0.0												/Programs/Splix/Current
-	1.0.20												/Programs/Sane-Backends/Current
+	1.0.18												/Programs/Sane-Backends/Current
 	1.3.12												/Programs/Gzip/Current
 	1.6													/Programs/InetUtils/Current
 	429													/Programs/Less/Current
@@ -339,7 +175,7 @@ links
 	2.5.4												/Programs/Patch/Current
 ;	/Programs/File-
 	1.4.9												/Programs/GnuPG/Current
-	2.6.4												/Programs/Python/Current
+;	2.6.4												/Programs/Python/Current
 ;	2.20.0												/Programs/PyGObject/Current
 	0.17												/Programs/Gettext/Current
 	2.0.0												/Programs/Expat/Current

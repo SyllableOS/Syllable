@@ -609,10 +609,7 @@ modules
 
 
 ;	Binaries
-
 	REBOL/REBOL-Core-2-current
-	REBOL/REBOL-View-2-current
-	REBOL/AltME--current
 
 
 ;	REBOL stacks

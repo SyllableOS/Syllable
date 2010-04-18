@@ -45,7 +45,8 @@ make				true
 
 install-tree		framework
 ; Limited GoboLinux system tree:
-install
+install				true
+_install
 	for dir in \
 ;		System/Index/etc \
 		System/Index/bin \
