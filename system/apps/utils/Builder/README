@@ -663,10 +663,10 @@ Builder/packages/.
 5 Known problems and limitations
 ================================
 
-The Syllable build system is a work in progress. It will develop with
-Syllable, so changes and improvements will be made regularly.
-Therefore, it is best to use a recent version, or at least a version
-that matches the software you are building.
+The Syllable build system is a work in progress. It develops with
+Syllable, so changes and improvements are made continuously. Therefore,
+it is best to use a recent version, or at least a version that matches
+the software you are building.
 
 6 Contact information
 =====================
