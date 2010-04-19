@@ -15,7 +15,6 @@ tree
 
 ;	Boot directory structure
 
-	boot
 	boot/grub
 
 ;	Main directory structure
@@ -27,30 +26,14 @@ tree
 
 	users home.png
 
-	system
-
 	system/config
-	system/config/drivers
-	system/config/drivers/appserver
-	system/config/drivers/appserver/video
-	system/config/appearance
-	system/config/appearance/colour-schemes
 
-	system/development
 	system/development/headers
 	system/development/resources
 
 	system/programs
 	system/libraries
 
-	system/fonts
-	system/icons
-	system/icons/filetypes
-	system/keymaps
-	system/sounds
-
-	system/resources
-	system/resources/catalogs
 	system/resources/catalogs/bg
 	system/resources/catalogs/da
 	system/resources/catalogs/de
@@ -67,39 +50,20 @@ tree
 	system/resources/catalogs/ru
 	system/resources/catalogs/sv
 	system/resources/catalogs/zh-cn
-	system/resources/wallpapers
 
-	system/index
 	system/index/settings
 	system/index/programs
 	system/index/system-programs
 	system/index/framework
 	system/index/data
-	system/index/tasks
 	system/index/tasks/setup
 	system/index/tasks/start
 	system/index/manuals
 
-	system/drivers
-
-	system/drivers/appserver
-	system/drivers/appserver/decorators
-	system/drivers/appserver/input
-	system/drivers/appserver/video
-
-	system/extensions
-	system/extensions/dock
-	system/extensions/translators
-	system/extensions/media
-
-	var
 	var/log
 ;	For inetd and such:
 	var/run
 
-	usr
-
-	usr/index
 	usr/index/settings
 	usr/index/programs
 	usr/index/bin
@@ -110,7 +74,6 @@ tree
 	usr/index/lib
 	usr/index/include
 	usr/index/data
-	usr/index/tasks
 	usr/index/tasks/setup
 	usr/index/tasks/start
 	usr/index/manuals
@@ -129,9 +92,9 @@ tree
 	usr/sbin
 ;	(For terminfo:)
 	usr/share
+
 ;	For manually compiled software:
-	usr/local
-;	For Perl:
+;	For Perl?:
 	usr/local/bin
 	usr/local/etc
 	usr/local/include
@@ -142,28 +105,19 @@ tree
 	usr/local/sbin
 	usr/local/share
 
-	applications				applications.png
-	applications/preferences	settings.png
-	applications/Xpdf
-	documentation
 ;	documentation/images
 	documentation/manuals
 
-;	LFS extras
+;	From LFS
 
 ;	For SysVInit and others:
 	bin
 	etc/default
 ;	etc/opt
 	etc/profile.d
-	etc/sysconfig
-	etc/sysconfig/network-devices
 	etc/sysconfig/network-devices/ifconfig.eth0
 ;	mnt
 ;	opt
-	media
-	media/floppy
-	media/cdrom1
 	media/data
 ;	media/test
 ;	For SysVInit and others:
@@ -171,7 +125,6 @@ tree
 ;	srv
 	var/lock
 ;	Server:
-	var/state
 	var/state/dhcp
 	var/mail
 ;	For DHCP:
@@ -179,14 +132,11 @@ tree
 	var/spool
 ;	var/opt
 	var/cache
-;	var/lib
 ;	var/lib/misc
 ;	var/lib/locate
 ;	var/local
-	lib
 	lib/modules
 	lib/firmware
-	lib/udev
 ;	For UDevices <= 142:
 	lib/udev/rules.d
 	lib/udev/devices
@@ -274,27 +224,7 @@ resources
 	var/state/dhcp/									linux/dhcpd.leases
 	etc/											configuration/vsftpd.conf
 	etc/											configuration/rsyncd.conf
-	system/config/									net.cfg
-	system/config/									appserver
-	etc/											linux/asound.state
-;	etc/udev/rules.d/								linux/40-alsa.rules
 	users/											binaries/home-directories
-
-	system/fonts/									fonts/URW/*.ttf
-	system/fonts/									fonts/URW/Mandriva/*.ttf
-	system/icons/filetypes/							icons/types/48x48/*.png
-	system/resources/wallpapers/					wallpapers/*.png
-	system/resources/wallpapers/					wallpapers/*.jpg
-	system/resources/wallpapers/					wallpapers/Adrian/*.png
-	system/resources/wallpapers/					wallpapers/Ruud/*.png
-	system/resources/wallpapers/					wallpapers/Ruud/*.jpg
-	system/resources/wallpapers/					wallpapers/YakkMeister/*.png
-	system/resources/wallpapers/					wallpapers/ZeroNet/*.jpg
-	system/resources/wallpapers/					wallpapers/LucasMurad/*.png
-	system/resources/wallpapers/					wallpapers/LucasMurad/*.jpg
-	system/resources/wallpapers/					wallpapers/LukasVeselovsky/*.png
-	system/resources/wallpapers/					wallpapers/KenSaunders/*.jpg
-	system/resources/wallpapers/					wallpapers/Dmitry/*.png
 
 	etc/profile.d/									linux/glib2-locale.sh
 
@@ -312,29 +242,26 @@ modules
 	other/config/default
 ;	Overwrites profile:
 	other/config/etc
-	other/fonts/DejaVu-Fonts--current
-	other/icons
 	other/init
-;	other/keymaps
-;	sys/include
 
 	system linux/Linux-2.6.27.44-headers
 ;	For bootstrapping from a depmod with a different kernel modules location:
 ;	bootstrap linux/module-init-tools--bootstrap
 	system linux/Linux-2.6.27.44-system
 
+
 ;	Kernel modules
 
-;	For DirectFB:
-	system linux/LinuxFusion-8.1.1
 ;	Obsolete with QEmu >= 0.12:
 	system linux/KernelQEmulator-1.4.0pre1
+
 
 	system libs/glibc-2.7-system
 	system libs/zlib-1.2.3
 
 	linux/IPTables-1.4.6
 ;	system linux/Linux--cleanup
+
 
 	system linux/LFS-BootScripts-6.5
 	linux/BLFS-BootScripts-2009.3.2
@@ -350,9 +277,6 @@ modules
 
 	system libs/NCurses-5.7
 	system libs/ReadLine-6.0
-
-;	For rescopy:
-	apps/gnu/BinaryUtilities-2.19.1-objcopy
 
 
 ;	Extra requirements for bootstrapping
@@ -390,109 +314,16 @@ modules
 	system linux/shadow-4.0.18.1
 	libraries libraries/db-4.6.21-libraries
 	system linux/iproute2-2.6.25
-	linux/kbd-1.12
 	linux/reiserfsprogs-3.6.19
 
 ;	Used by boot scripts, but not essential:
 	apps/gnu/FindUtils-4.4.2
 
-;	freetype-config needs to be in the path:
-	bootstrap bootstrap/FreeType-2.3.9
-;	For SDL-TTF:
-	system libraries/FreeType-2.3.9
-
-	system libraries/LibJPEG-7
-	system libraries/LibPNG-1.2.37
-	system libraries/GIFLib-4.1.6
-	system libraries/libtiff-3.8.2
-	system libraries/LibOgg-1.1.4
-	system libraries/flac-1.2.1
-	system libraries/LibVorbis-1.2.2
-	system libraries/LibTheora-1.0
-	stage libraries/FFMPEG-0.5
-	stage libraries/FAAD-2.7
-
-	system apps/other/DirectFrameBuffer-1.4.3
-
-;	sys/appserver/libsyllable
-
-
-;	Requirements for bootstrapping
-
-;	Needs objcopy from BinaryUtilities:
-;	apps/utils/rescopy
-;	For bootstrapping:
-;	bootstrap apps/utils/rescopy
-
-
-;	sys/appserver/appserver/server
-;	sys/appserver/appserver/drivers/decorators/photon
-;	sys/appserver/appserver/drivers/input/keyboard
-;	sys/appserver/appserver/drivers/input/ps2mouse
-;	sys/appserver/appserver/drivers/input/sermouse
-;	sys/appserver/appserver/drivers/input/usbmouse
-;	sys/appserver/appserver/drivers/input/usbkeyboard
-;	sys/appserver/appserver/drivers/video/directfb
-;	sys/appserver/registrar
-;	sys/translators/bmp
-;	sys/translators/gif
-;	sys/translators/ico
-;	sys/translators/jpeg
-;	sys/translators/pcx
-;	sys/translators/png
-;	sys/translators/tga
-;	sys/translators/tiff
-;	sys/translators/xbm
-;	sys/translators/xpm
-;	sys/media/libmedia
-;	sys/media/mediaserver
-;	sys/media/drivers/aac
-;	sys/media/drivers/ac97_audio
-;	sys/media/drivers/cdda
-;	sys/media/drivers/cdrom
-;	sys/media/drivers/ffmpeg
-;	sys/media/drivers/hd_audio
-;	sys/media/drivers/oss
-;	sys/media/drivers/raw
-;	sys/media/drivers/screen
-;	sys/media/drivers/serveraudio
-;	sys/media/drivers/vorbis
-;	apps/utils/dlogin
-;	apps/desktop/desktop
-;	apps/desktop/dock
-;	apps/desktop/dock_plugins/mixer
-;	apps/desktop/file_browser
-
 	apps/utils/man2html
 	system apps/utils/Packager
-;	apps/utils/Preferences/Appearance
-;	apps/utils/Preferences/DateTime
-;	apps/utils/Preferences/Desktop
-;	apps/utils/Preferences/Dock
-;	apps/utils/Preferences/FileTypes
-;	apps/utils/Preferences/Font
-;	apps/utils/Preferences/Keyboard
-;	apps/utils/Preferences/Locale
-;	apps/utils/Preferences/Login
-;	apps/utils/Preferences/Media
-;	apps/utils/Preferences/NetworkNG
-;	apps/utils/Preferences/Screen
-;	apps/utils/Preferences/UsersAndGroups
-;	apps/utils/aterm
-;	apps/utils/debug
-;	apps/utils/dhcpc
-;	apps/utils/fsutils
-;	apps/utils/nettools
-;	apps/utils/systools
 
 
 ;	Syllable Linux base distribution, in addition to core system
-
-	other/fonts/liberation-fonts--current
-	other/fonts/Luxi-fonts
-;	For AClock:
-	other/fonts/LCD-Fonts-1.1
-	other/fonts/FreeFont--current
 
 	other/data/MIME-Support--current
 
@@ -504,27 +335,11 @@ modules
 	system libraries/OpenSSL-0.9.8k-system
 	other/data/CA-Bundle--current
 
-	system apps/other/libusb-0.1.12
-	system linux/alsa-library-1.0.15
-	linux/alsa-utils-1.0.15
 	system apps/other/cURL-7.18.2
 	system apps/other/OpenSSH-5.2p1
 ;	May be considered essential:
 	apps/other/dhcp-3.0.5
-	linux/wirelesstools-29
 	apps/other/msntp-1.6
-
-	system apps/other/cups-1.3.4
-;	Fool subsequent packages into adding files to CUPS in the image area:
-;	bootstrap apps/other/cups--bootstrap
-	apps/other/GhostScript-8.64
-	system apps/other/Gutenprint-5.2.3
-	stage libraries/JBIG-Kit-2.0
-	system apps/other/SPLix-2.0.0
-;	apps/utils/Preferences/Printers
-;	apps/utils/PrintQueue
-
-	system apps/other/SANE-Backends-1.0.18
 
 	apps/gnu/gzip-1.3.12
 	apps/gnu/INetUtils-1.6
@@ -538,74 +353,7 @@ modules
 	apps/other/Transmission-1.72
 	apps/other/CDRTools-2.01.01a61
 
-;	sys/appserver/appserver/drivers/decorators/amiga
-;	sys/appserver/appserver/drivers/decorators/beish
-;	sys/appserver/appserver/drivers/decorators/Blue
-;	sys/appserver/appserver/drivers/decorators/drow
-;	sys/appserver/appserver/drivers/decorators/mulvane
-;	sys/appserver/appserver/drivers/decorators/next
-;	sys/appserver/appserver/drivers/decorators/red
-;	Locks up and makes the system inaccessible:
-;	sys/appserver/appserver/drivers/decorators/warpspeed
-;	sys/appserver/appserver/drivers/decorators/win98
-;	sys/appserver/appserver/drivers/decorators/Winter
-;	apps/desktop/dock_plugins/battery
-;	apps/desktop/dock_plugins/clock
-;	apps/desktop/dock_plugins/Address
-;	apps/desktop/dock_plugins/Camera
-;	apps/desktop/dock_plugins/ColdFishRemote
-;	apps/desktop/dock_plugins/CpuSpeed
-;	apps/desktop/dock_plugins/Meter
-;	apps/desktop/dock_plugins/Switcher
-;	apps/desktop/dock_plugins/WallpaperChanger
-;	apps/desktop/dock_plugins/Eyes
-;	apps/desktop/dock_plugins/Clipper
-;	apps/desktop/dock_plugins/Printer
-;	apps/media/coldfish
-;	apps/media/coldfish_plugins/blursk
-;	apps/media/coldfish_plugins/remote
-;	apps/media/mediaconverter
-;	apps/media/mediaplayer
-;	apps/utils/mixer
-;	apps/utils/Albert
-;	apps/utils/aclock
-;	apps/utils/aedit
-;	Too broken to include:
-;;	apps/utils/archiver
-;	apps/utils/aview
-;	apps/utils/Builder
-;	apps/utils/bzoom
-;	apps/utils/catalog
-;	apps/utils/charmap
-;	apps/utils/cpumon
-;	apps/utils/crypt
-;	apps/utils/DiskManager
-;	apps/utils/keymapconv
-;	apps/utils/Launch
 	apps/utils/Man
-;	apps/utils/memmon
-;	apps/utils/nfs
-;	apps/utils/shelltools
-;	apps/utils/slbmgr
-;	apps/develop/SettingsEditor
-;	apps/collab/Contact
-
-	system libs/sdl-1.2.13
-;	sdl-config needs to be in the path:
-	bootstrap libs/SDL--bootstrap
-
-	system libs/sdl-net-1.2.7
-	system libs/SDL-Mixer-1.2.9
-	system libs/sdl-sound-1.0.3-image
-	system libs/SDL-Image-1.2.8
-	system libs/sdl-ttf-2.0.9
-
-
-;	Still needs FreeType 2.1:
-	bootstrap libraries/freetype-2.1.10
-;	apps/other/xpdf--image-syllable
-;	Needs GCC < 4:
-;	apps/other/xpdf--image
 
 
 ;	Binaries
@@ -634,6 +382,3 @@ modules
 	apps/gnu/MidnightCommander-4.7.0.2
 
 ;	apps/other/rsync-2.6.9
-	apps/other/Links-2.3pre1
-	apps/other/QEmulator-0.11.1
-	apps/other/pengupop-2.1.12
