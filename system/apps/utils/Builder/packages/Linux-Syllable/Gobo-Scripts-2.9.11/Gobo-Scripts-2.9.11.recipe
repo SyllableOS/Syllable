@@ -101,8 +101,8 @@ links
 	1.2.1												/Programs/Flac/Current
 	1.2.2												/Programs/LibVorbis/Current
 	1.0													/Programs/LibTheora/Current
-	0.5													/Programs/FFmpeg/Current
-	2.7													/Programs/FAAD2/Current
+;	0.5													/Programs/FFmpeg/Current
+;	2.7													/Programs/FAAD2/Current
 	1.4.3												/Programs/DirectFB/Current
 ;	/Programs/Man2HTML
 ;	/Programs/Packager
@@ -128,7 +128,7 @@ links
 	1.3.4												/Programs/CUPS/Current
 	8.64												/Programs/GhostScript/Current
 	5.2.3												/Programs/Gutenprint/Current
-	2.0													/Programs/JBIG-KIT/Current
+;	2.0													/Programs/JBIG-KIT/Current
 	2.0.0												/Programs/Splix/Current
 	1.0.18												/Programs/Sane-Backends/Current
 	1.3.12												/Programs/Gzip/Current
