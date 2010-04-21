@@ -1,4 +1,4 @@
-; Syllable Workstation, in addition to Server
+; Syllable Workstation, in addition to linux/base/gui-linux/gui-base/server profiles
 
 tree
 ;	Limited GoboLinux system tree
@@ -74,8 +74,8 @@ tree
 	Programs/Flac/1.2.1
 	Programs/LibVorbis/1.2.2
 	Programs/LibTheora/1.0
-	Programs/FFmpeg/0.5
-	Programs/FAAD2/2.7
+;	Programs/FFmpeg/0.5
+;	Programs/FAAD2/2.7
 	Programs/DirectFB/1.4.3
 ;	Programs/Man2HTML
 ;	Programs/Packager
@@ -101,7 +101,7 @@ tree
 	Programs/CUPS/1.3.4
 	Programs/GhostScript/8.64
 	Programs/Gutenprint/5.2.3
-	Programs/JBIG-KIT/2.0
+;	Programs/JBIG-KIT/2.0
 	Programs/Splix/2.0.0
 	Programs/Sane-Backends/1.0.18
 	Programs/Gzip/1.3.12

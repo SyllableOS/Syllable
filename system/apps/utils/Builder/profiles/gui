@@ -1,0 +1,159 @@
+; Syllable native GUI, in addition to gui-base profile
+
+tree
+	system/config/drivers/appserver/video
+	system/config/appearance/colour-schemes
+
+	system/drivers/appserver/decorators
+	system/drivers/appserver/input
+	system/drivers/appserver/video
+
+	system/extensions/dock
+	system/extensions/translators
+	system/extensions/media
+
+	system/keymaps
+
+	applications/Xpdf
+
+resources
+	system/config/		net.cfg		text/plain
+	system/config/		appserver	text/plain
+
+modules
+	other/keymaps
+	other/config/default
+
+	sys/appserver/libsyllable
+
+
+;	Requirements for bootstrapping
+
+;	Needs objcopy from BinaryUtilities:
+	apps/utils/rescopy
+;	For bootstrapping:
+	bootstrap apps/utils/rescopy
+
+
+	sys/appserver/appserver/server
+	sys/appserver/appserver/drivers/decorators/photon
+	sys/appserver/appserver/drivers/input/keyboard
+	sys/appserver/appserver/drivers/input/ps2mouse
+	sys/appserver/appserver/drivers/input/sermouse
+	sys/appserver/appserver/drivers/input/usbmouse
+	sys/appserver/appserver/drivers/input/usbkeyboard
+
+	sys/appserver/registrar
+
+	sys/translators/bmp
+	sys/translators/gif
+	sys/translators/ico
+	sys/translators/jpeg
+	sys/translators/pcx
+	sys/translators/png
+	sys/translators/tga
+	sys/translators/tiff
+	sys/translators/xbm
+	sys/translators/xpm
+
+	sys/media/libmedia
+	sys/media/mediaserver
+	sys/media/drivers/aac
+	sys/media/drivers/ac97_audio
+	sys/media/drivers/cdda
+	sys/media/drivers/cdrom
+	sys/media/drivers/ffmpeg
+	sys/media/drivers/hd_audio
+	sys/media/drivers/oss
+	sys/media/drivers/raw
+	sys/media/drivers/screen
+	sys/media/drivers/serveraudio
+	sys/media/drivers/vorbis
+
+	apps/utils/dlogin
+	apps/desktop/desktop
+	apps/desktop/dock
+	apps/desktop/dock_plugins/mixer
+	apps/desktop/file_browser
+
+	apps/utils/aterm
+
+	apps/utils/Preferences/Appearance
+	apps/utils/Preferences/DateTime
+	apps/utils/Preferences/Desktop
+	apps/utils/Preferences/Dock
+	apps/utils/Preferences/FileTypes
+	apps/utils/Preferences/Font
+	apps/utils/Preferences/Keyboard
+	apps/utils/Preferences/Locale
+	apps/utils/Preferences/Login
+	apps/utils/Preferences/Media
+	apps/utils/Preferences/Mouse
+	apps/utils/Preferences/NetworkNG
+	apps/utils/Preferences/Screen
+	apps/utils/Preferences/UsersAndGroups
+
+
+;	Syllable base distribution, in addition to core system
+
+	apps/utils/Preferences/Printers
+	apps/utils/PrintQueue
+
+	sys/appserver/appserver/drivers/decorators/amiga
+	sys/appserver/appserver/drivers/decorators/beish
+	sys/appserver/appserver/drivers/decorators/Blue
+	sys/appserver/appserver/drivers/decorators/drow
+	sys/appserver/appserver/drivers/decorators/mulvane
+	sys/appserver/appserver/drivers/decorators/next
+	sys/appserver/appserver/drivers/decorators/red
+	sys/appserver/appserver/drivers/decorators/warpspeed
+	sys/appserver/appserver/drivers/decorators/win98
+	sys/appserver/appserver/drivers/decorators/Winter
+
+	apps/desktop/dock_plugins/battery
+	apps/desktop/dock_plugins/clock
+	apps/desktop/dock_plugins/Address
+	apps/desktop/dock_plugins/Camera
+	apps/desktop/dock_plugins/ColdFishRemote
+	apps/desktop/dock_plugins/CpuSpeed
+	apps/desktop/dock_plugins/Meter
+	apps/desktop/dock_plugins/Switcher
+	apps/desktop/dock_plugins/WallpaperChanger
+	apps/desktop/dock_plugins/Eyes
+	apps/desktop/dock_plugins/Clipper
+	apps/desktop/dock_plugins/Printer
+
+	apps/media/coldfish
+	apps/media/coldfish_plugins/blursk
+	apps/media/coldfish_plugins/remote
+	apps/media/mediaconverter
+	apps/media/mediaplayer
+	apps/utils/mixer
+
+	apps/utils/Albert
+	apps/utils/aclock
+	apps/utils/aedit
+;	Too broken to include:
+;	apps/utils/archiver
+	apps/utils/aview
+	apps/utils/bzoom
+	apps/utils/catalog
+	apps/utils/charmap
+	apps/utils/cpumon
+;	apps/utils/crypt
+	apps/utils/DiskManager
+	apps/utils/keymapconv
+	apps/utils/Launch
+	apps/utils/memmon
+	apps/utils/nfs
+	apps/utils/shelltools
+	apps/utils/slbmgr
+	apps/develop/SettingsEditor
+	apps/collab/Contact
+	apps/utils/SimpleBurn
+
+;	Still needs FreeType 2.1:
+	bootstrap libraries/freetype-2.1.10
+	apps/other/xpdf--image-syllable
+;	Needs GCC < 4 ?
+;	apps/other/xpdf--image

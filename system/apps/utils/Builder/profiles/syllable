@@ -1,0 +1,204 @@
+; Syllable core system
+
+tree
+	etc
+	system/config/drivers/dev
+
+	system/drivers/dev/audio
+	system/drivers/dev/bus
+	system/drivers/dev/disk
+	system/drivers/dev/graphics
+	system/drivers/dev/hcd
+	system/drivers/dev/input
+	system/drivers/dev/misc
+	system/drivers/dev/net/eth
+	system/drivers/dev/printer
+
+	system/drivers/fs
+
+	system/drivers/net/if
+
+	home home.png
+
+	usr
+
+prepare
+	install -d -m 1777 tmp var/tmp &&
+
+;	Compatibility links:
+	ln -s usr/ resources &&
+	ln -s index/ usr/indexes &&
+
+;	For sshd:
+	install -m700 -d	var/lib/sshd &&
+;	chown root:system	var/lib/sshd &&
+
+;	For OpenSSL and others:
+	ln -s /resources/index/programs/perl	usr/bin/ &&
+;	For OpenSSL?
+;	ln -s /resources/index/programs/perl	usr/local/bin/ &&
+;	From BinaryUtilities, for building OpenSSL:
+	ln -s /resources/index/programs/ranlib	usr/bin/ &&
+
+;	For Python:
+	ln -s /resources/index/programs/python	usr/bin/
+
+resources
+	system/config/		kernel.cfg					text/plain
+
+	etc/					configuration/passwd		text/plain
+	etc/					configuration/group			text/plain
+	etc/					configuration/profile		text/plain
+	etc/					configuration/hosts			text/plain
+	etc/					configuration/hostname		text/plain
+	etc/					configuration/resolv.conf	text/plain
+
+	home/					binaries/home-directories
+
+modules
+;	Toolchain for bootstrapping
+
+;	bootstrap apps/gnu/BinaryUtilities-2.19.1
+;	bootstrap apps/gnu/GNU-CompilerCollection-4.1.2
+
+
+;	Syllable core system
+
+	sys/include
+
+	sys/kernel/kernel
+	sys/kernel/drivers/bus/acpi
+	sys/kernel/drivers/bus/ata
+	sys/kernel/drivers/bus/pci
+	sys/kernel/drivers/bus/agp
+	sys/kernel/drivers/bus/scsi
+	sys/kernel/drivers/bus/usb
+	sys/kernel/drivers/cpu/acpi
+	sys/kernel/drivers/hcd/ata_pci
+	sys/kernel/drivers/hcd/usb_ehci
+	sys/kernel/drivers/hcd/usb_ohci
+	sys/kernel/drivers/hcd/usb_uhci
+
+;	Not reliable yet:
+
+	sys/kernel/drivers/hcd/agp_gart/ali
+	sys/kernel/drivers/hcd/agp_gart/nvidia
+	sys/kernel/drivers/hcd/agp_gart/sis
+;	Broken:
+;	sys/kernel/drivers/hcd/agp_gart/via
+
+	sys/kernel/drivers/ps2
+	sys/kernel/drivers/input/usb_hid
+	sys/kernel/drivers/disk/bios
+;	Used on the Live CD:
+;	sys/kernel/drivers/disk/ram
+	sys/kernel/drivers/disk/usb
+	sys/kernel/drivers/graphics/geforcefx
+	sys/kernel/drivers/graphics/i855
+	sys/kernel/drivers/graphics/mach64
+	sys/kernel/drivers/graphics/mga
+	sys/kernel/drivers/graphics/radeon
+	sys/kernel/drivers/graphics/riva
+	sys/kernel/drivers/graphics/s3_chrome
+	sys/kernel/drivers/graphics/s3_virge
+	sys/kernel/drivers/graphics/savage
+	sys/kernel/drivers/graphics/sis3xx
+	sys/kernel/drivers/graphics/tdfx
+	sys/kernel/drivers/graphics/trident
+	sys/kernel/drivers/graphics/vmware
+	sys/kernel/drivers/misc/apm
+	sys/kernel/drivers/misc/battery
+	sys/kernel/drivers/misc/devices
+	sys/kernel/drivers/misc/random
+	sys/kernel/drivers/misc/serial
+	sys/kernel/drivers/misc/usb_printer
+	sys/kernel/drivers/misc/lp_printer
+	sys/kernel/drivers/misc/w8378x
+	sys/kernel/drivers/net/3c509
+	sys/kernel/drivers/net/3c59x
+	sys/kernel/drivers/net/dp83815
+	sys/kernel/drivers/net/dl2k
+	sys/kernel/drivers/net/eepro100
+	sys/kernel/drivers/net/ne2000
+	sys/kernel/drivers/net/nvidia
+	sys/kernel/drivers/net/pcnet32
+	sys/kernel/drivers/net/rtl8139
+	sys/kernel/drivers/net/rtl8169
+	sys/kernel/drivers/net/sis
+	sys/kernel/drivers/net/skge
+	sys/kernel/drivers/net/tg3
+	sys/kernel/drivers/net/tulip
+	sys/kernel/drivers/net/tun
+	sys/kernel/drivers/net/via
+	sys/kernel/drivers/audio/i8xx
+	sys/kernel/drivers/audio/vt82xx
+	sys/kernel/drivers/audio/hda
+	sys/kernel/drivers/sound/emu10k1
+	sys/kernel/drivers/sound/es1370
+	sys/kernel/drivers/sound/es1371
+;	sys/kernel/drivers/sound/i810
+	sys/kernel/drivers/sound/maestro
+	sys/kernel/drivers/sound/sbpro
+	sys/kernel/drivers/sound/trident
+	sys/kernel/drivers/sound/via686a
+;	sys/kernel/drivers/sound/vt82xx
+	sys/kernel/drivers/sound/ymfpci
+	sys/kernel/fs/afs
+	sys/kernel/fs/bfs
+	sys/kernel/fs/ext2
+	sys/kernel/fs/fatfs
+	sys/kernel/fs/iso9660
+	sys/kernel/fs/nfs
+	sys/kernel/fs/ntfs
+	sys/kernel/fs/ramfs
+;	Not thread-safe:
+	sys/kernel/fs/tmpfs
+
+	system libs/glibc-2.7-system
+	system libs/zlib-1.2.3
+
+	libs/libdl
+	libs/libpthread
+
+;	stage libraries/gettext-0.17
+;	stage libraries/flex-2.5.33
+;	stage libraries/bison-2.3
+;	stage libraries/BinaryUtilities-2.19.1
+
+;	libraries libraries/GNU-CompilerCollection-4.1.2-system
+;	Needs to be in the root of the working directory:
+	libraries GNU-CompilerCollection-4.1.2-system
+;	For bootstrapping:
+;	system apps/gnu/GNU-CompilerCollection-4.1.2-system
+
+
+;	Extra requirements for bootstrapping
+
+;	apps/gnu/BinaryUtilities-2.19.1
+;	apps/gnu/make-3.81
+;	apps/other/Ruby-1.8.7p248
+;	apps/gnu/nano--curses
+
+
+;	freetype-config needs to be in the path:
+	bootstrap libraries/FreeType-2.3.9
+
+;	stage libraries/libjpeg-6b-static
+	stage libraries/LibJPEG-7
+	stage libraries/LibPNG-1.2.37
+	stage libraries/GIFLib-4.1.6
+	stage libraries/libtiff-3.8.2
+	stage libraries/LibOgg-1.1.4
+	stage libraries/flac-1.2.1
+	stage libraries/LibVorbis-1.2.2
+	stage libraries/LibTheora-1.0
+	stage libraries/FFMPEG-0.5
+	stage libraries/FAAD-2.7
+
+;	Needs ranlib and perl symlinks in /usr/bin/!
+	system libraries/OpenSSL-0.9.8k-system
+
+;	For cURL:
+	stage libraries/c-ares-1.4.0
+;	Seems to cause extremely slow cURL:
+;	stage libraries/c-ares-1.5.2

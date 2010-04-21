@@ -1,0 +1,45 @@
+; Syllable Server, in addition to linux/base profiles
+
+tree
+;	From LFS
+	media/floppy
+	media/cdrom1
+
+resources
+	etc/				linux/asound.state
+;	etc/udev/rules.d/	linux/40-alsa.rules
+
+modules
+;	sys/include
+
+
+;	Kernel modules
+
+;	For DirectFB:
+	system linux/LinuxFusion-8.1.1
+
+
+	linux/kbd-1.12
+
+;	freetype-config needs to be in the path:
+	bootstrap bootstrap/FreeType-2.3.9
+;	For SDL-TTF:
+	system libraries/FreeType-2.3.9
+
+	system libraries/LibJPEG-7
+	system libraries/LibPNG-1.2.37
+	system libraries/GIFLib-4.1.6
+	system libraries/libtiff-3.8.2
+	system libraries/LibOgg-1.1.4
+	system libraries/flac-1.2.1
+	system libraries/LibVorbis-1.2.2
+	system libraries/LibTheora-1.0
+	stage libraries/FFMPEG-0.5
+	stage libraries/FAAD-2.7
+
+	system apps/other/DirectFrameBuffer-1.4.3
+
+	system linux/alsa-library-1.0.15
+	linux/alsa-utils-1.0.15
+
+	linux/wirelesstools-29

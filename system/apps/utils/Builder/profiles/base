@@ -1,171 +1,163 @@
-; Syllable base distribution, in addition to core system
+; Syllable base platform, in addition to syllable or linux profiles
 
-prepare
-;	For sshd:
-	install -m700 -d	var/lib/sshd &&
-;	chown root:system	var/lib/sshd &&
+; Root tree structure to build the distribution in
 
-;	For Python:
-	ln -s /resources/index/programs/python usr/bin/
+tree
+;	Boot directory structure
+
+	boot/grub
+
+;	Main directory structure
+
+;	documentation/images
+	documentation/manuals
+
+;	FHS:
+;	etc/grub
+	etc/s3conf
+
+	system/resources/catalogs/bg
+	system/resources/catalogs/da
+	system/resources/catalogs/de
+	system/resources/catalogs/el
+	system/resources/catalogs/en-gb
+	system/resources/catalogs/es
+	system/resources/catalogs/fr
+	system/resources/catalogs/fy
+	system/resources/catalogs/hu
+	system/resources/catalogs/nl
+	system/resources/catalogs/pl
+	system/resources/catalogs/pt-br
+	system/resources/catalogs/ro
+	system/resources/catalogs/ru
+	system/resources/catalogs/sv
+	system/resources/catalogs/zh-cn
+
+	system/programs
+	system/libraries
+
+	system/index/settings
+	system/index/programs
+	system/index/system-programs
+	system/index/framework
+	system/index/data
+	system/index/tasks/setup
+	system/index/tasks/start
+	system/index/manuals
+
+	system/development/headers
+	system/development/resources
+
+	usr/index/settings
+	usr/index/programs
+	usr/index/bin
+	usr/index/applications
+	usr/index/system-programs
+	usr/index/sbin
+	usr/index/framework
+	usr/index/lib
+	usr/index/include
+	usr/index/data
+	usr/index/tasks/setup
+	usr/index/tasks/start
+	usr/index/manuals
+
+;	For compatibility:
+
+	bin
+
+;	For env:
+	usr/bin
+;	usr/etc
+;	For NCurses:
+	usr/include
+;	For GhostScript:
+	usr/include/sys
+;	usr/info
+	usr/lib
+;	usr/man
+;	For chroot:
+	usr/sbin
+;	(For terminfo:)
+	usr/share
+
+;	For manually compiled software:
+;	For Perl?
+	usr/local/bin
+	usr/local/etc
+	usr/local/include
+	usr/local/info
+	usr/local/lib
+	usr/local/libexec
+	usr/local/man
+	usr/local/sbin
+	usr/local/share
+
+	var/log
+;	For inetd and such:
+	var/run
 
 resources
-;	addattrib can't handle wildcards:
-;	system/fonts/						fonts/URW/*.ttf				application/x-font-ttf
-;	home/.template/Documents/Pictures/	wallpapers/*.png			image/png
-;	home/.template/Documents/Pictures/	wallpapers/*.jpg			image/jpeg
-	system/fonts/						fonts/URW/*.ttf
-	system/fonts/						fonts/URW/Mandriva/*.ttf
-	system/icons/filetypes/				icons/types/48x48/*.png
-	system/resources/wallpapers/		wallpapers/*.png
-	system/resources/wallpapers/		wallpapers/*.jpg
-	system/resources/wallpapers/		wallpapers/Adrian/*.png
-	system/resources/wallpapers/		wallpapers/Ruud/*.png
-	system/resources/wallpapers/		wallpapers/Ruud/*.jpg
-	system/resources/wallpapers/		wallpapers/YakkMeister/*.png
-	system/resources/wallpapers/		wallpapers/ZeroNet/*.jpg
-	system/resources/wallpapers/		wallpapers/LucasMurad/*.png
-	system/resources/wallpapers/		wallpapers/LucasMurad/*.jpg
-	system/resources/wallpapers/		wallpapers/LukasVeselovsky/*.png
-	system/resources/wallpapers/		wallpapers/KenSaunders/*.jpg
-	system/resources/wallpapers/		wallpapers/Dmitry/*.png
-	etc/s3conf/							configuration/s3config.yml	text/plain
+	boot/grub/	menu.lst				text/plain
+	etc/s3conf/	configuration/s3config.yml	text/plain
 ;	Servers:
-	etc/								configuration/vsftpd.conf	text/plain
-	etc/								configuration/rsyncd.conf	text/plain
+	etc/			configuration/vsftpd.conf	text/plain
+	etc/			configuration/rsyncd.conf	text/plain
 
 modules
-	documentation-DE--current
-	documentation-ES--current
-	documentation-NL--current
-	documentation-RU--current
-	documentation-SL--current
+	documentation--current
 
-	other/fonts/liberation-fonts--current
-	other/fonts/Luxi-fonts
-;	For AClock:
-	other/fonts/LCD-Fonts-1.1
-	other/fonts/FreeFont--current
+;	Overwrites profile:
+	other/config/etc
+	other/init
 
-	other/data/MIME-Support--current
+;	For rescopy:
+	apps/gnu/BinaryUtilities-2.19.1-objcopy
 
-	apps/other/MkTemp-1.6
+	system libs/NCurses-5.7
+	system libs/ReadLine-6.0
 
-;	Needs ranlib and perl symlinks in /usr/bin/!
-;	For cURL:
-	stage libraries/c-ares-1.4.0
-;	Seems to cause extremely slow cURL:
-;	stage libraries/c-ares-1.5.2
-	system libraries/OpenSSL-0.9.8k-system
-	other/data/CA-Bundle--current
+	system apps/gnu/CoreUtilities-6.7
+	system apps/gnu/BASh-4.0
+	apps/gnu/SEd-4.2.1
+	system apps/other/UnZip-6.0
 
-	system apps/other/libusb-0.1.12
-	system apps/other/cURL-7.18.2
-	apps/other/msntp-1.6
+	apps/gnu/bzip2-1.0.5
+	system REBOL/Boron-0.1.0
+	system REBOL/ORCA--current
 
-	system apps/other/cups-1.3.4
-;	Fool subsequent packages into adding files to CUPS in the image area:
-	bootstrap apps/other/cups--bootstrap
-	apps/other/GhostScript--image
-	system apps/other/Gutenprint-5.2.3
-	stage libraries/JBIG-Kit-2.0
-	system apps/other/SPLix-2.0.0
-	apps/utils/Preferences/Printers
-	apps/utils/PrintQueue
+	apps/utils/man2html
+	system apps/utils/Packager
 
-	system apps/other/SANE-Backends-1.0.18
-
+;	Used by LFS boot scripts, but not essential:
 	apps/gnu/FindUtils-4.4.2
-	apps/gnu/gzip-1.3.12
-	apps/gnu/INetUtils-1.6
-	apps/gnu/Less-429
-	apps/gnu/TAr-1.22
-	apps/other/Zip-3.0
-	apps/other/7-Zip-9.04
+
 ;	For grub-install:
 	apps/gnu/diffutils-2.8.1
+
+
+;	Syllable base distribution, in addition to core system
+
+	other/data/MIME-Support--current
+	other/data/CA-Bundle--current
+
+	system apps/other/cURL-7.18.2
+	apps/gnu/INetUtils-1.6
+	apps/other/msntp-1.6
 	apps/other/NetCat-1.10
 	apps/other/Transmission-1.72
-	apps/other/CDRTools-2.01.01a61
 
-	sys/appserver/appserver/drivers/decorators/amiga
-	sys/appserver/appserver/drivers/decorators/beish
-	sys/appserver/appserver/drivers/decorators/Blue
-	sys/appserver/appserver/drivers/decorators/drow
-	sys/appserver/appserver/drivers/decorators/mulvane
-	sys/appserver/appserver/drivers/decorators/next
-	sys/appserver/appserver/drivers/decorators/red
-	sys/appserver/appserver/drivers/decorators/warpspeed
-	sys/appserver/appserver/drivers/decorators/win98
-	sys/appserver/appserver/drivers/decorators/Winter
-	apps/desktop/dock_plugins/battery
-	apps/desktop/dock_plugins/clock
-	apps/desktop/dock_plugins/Address
-	apps/desktop/dock_plugins/Camera
-	apps/desktop/dock_plugins/ColdFishRemote
-	apps/desktop/dock_plugins/CpuSpeed
-	apps/desktop/dock_plugins/Meter
-	apps/desktop/dock_plugins/Switcher
-	apps/desktop/dock_plugins/WallpaperChanger
-	apps/desktop/dock_plugins/Eyes
-	apps/desktop/dock_plugins/Clipper
-	apps/desktop/dock_plugins/Printer
-	apps/media/coldfish
-	apps/media/coldfish_plugins/blursk
-	apps/media/coldfish_plugins/remote
-	apps/media/mediaconverter
-	apps/media/mediaplayer
-	apps/utils/mixer
-	apps/utils/Albert
-	apps/utils/aclock
-	apps/utils/aedit
-;	Too broken to include:
-;	apps/utils/archiver
-	apps/utils/aview
-	apps/utils/bzoom
-	apps/utils/catalog
-	apps/utils/charmap
-	apps/utils/cpumon
-;	apps/utils/crypt
-	apps/utils/DiskManager
-	apps/utils/keymapconv
-	apps/utils/Launch
 	apps/utils/Man
-	apps/utils/memmon
-	apps/utils/nfs
-	apps/utils/shelltools
-	apps/utils/slbmgr
-	apps/develop/SettingsEditor
-	apps/collab/Contact
-	apps/utils/SimpleBurn
+	apps/other/MkTemp-1.6
+	apps/gnu/Less-429
 
-	system libs/sdl-1.2.13
-;	sdl-config needs to be in the path:
-	bootstrap libs/SDL--bootstrap
+	apps/gnu/TAr-1.22
+	apps/gnu/gzip-1.3.12
+	apps/other/Zip-3.0
+	apps/other/7-Zip-9.04
 
-	system libs/sdl-net-1.2.7
-;	system libs/sdl-mixer-1.2.6
-	system libs/SDL-Mixer-1.2.9
-	system libs/sdl-sound-1.0.3-image
-	system libs/SDL-Image-1.2.8
-	system libs/sdl-ttf-2.0.9
+	apps/other/CDRTools-2.01.01a61
 
 
 ;	ORCA/REBOL library
 	apps/other/tiny--current
-
-;	Still needs FreeType 2.1:
-	bootstrap libraries/freetype-2.1.10
-	apps/other/xpdf--image-syllable
-;	apps/other/xpdf--image
-
-
-;	Extra goodies
-
-	apps/other/OpenSSH-5.2p1
-
-finish
-	rm -r resources/documentation-DE &&
-	rm -r resources/documentation-ES &&
-	rm -r resources/documentation-NL &&
-	rm -r resources/documentation-RU &&
-	rm -r resources/documentation-SL

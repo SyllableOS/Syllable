@@ -1,4 +1,4 @@
-; Syllable Cloud Server, in addition to linux profile
+; Syllable Cloud Server, in addition to linux/base profiles
 
 modules
 	system libs/sdl-1.2.13
@@ -6,7 +6,7 @@ modules
 	bootstrap libs/SDL--bootstrap
 
 	system libs/sdl-net-1.2.7
-	system libs/SDL-Image-1.2.8
+;	system libs/SDL-Image-1.2.8
 
 
 ;	Extra goodies

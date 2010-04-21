@@ -1,0 +1,39 @@
+; Syllable Desktop, in addition to syllable/base/gui-base/gui profiles
+
+modules
+	documentation-DE--current
+	documentation-ES--current
+	documentation-NL--current
+	documentation-RU--current
+	documentation-SL--current
+
+	apps/gnu/GRep-2.5.4
+
+;	GrUB can use Curses:
+;	Currently requires GCC 3:
+;	sys/boot/grub-0.97
+
+	apps/utils/debug
+	apps/utils/dhcpc
+	apps/utils/fsutils
+	apps/utils/nettools
+	apps/utils/systools
+
+	sys/appserver/appserver/drivers/video/geforcefx
+	sys/appserver/appserver/drivers/video/i855
+	sys/appserver/appserver/drivers/video/mach64
+	sys/appserver/appserver/drivers/video/mga
+	sys/appserver/appserver/drivers/video/radeon
+	sys/appserver/appserver/drivers/video/riva
+	sys/appserver/appserver/drivers/video/s3
+	sys/appserver/appserver/drivers/video/s3_chrome
+	sys/appserver/appserver/drivers/video/savage
+	sys/appserver/appserver/drivers/video/sis3xx
+	sys/appserver/appserver/drivers/video/tdfx
+	sys/appserver/appserver/drivers/video/trident
+	sys/appserver/appserver/drivers/video/vmware
+
+
+;	Extra goodies
+
+	apps/other/OpenSSH-5.2p1
