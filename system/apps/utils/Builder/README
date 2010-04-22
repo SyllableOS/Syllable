@@ -3,7 +3,7 @@ The Syllable Build System, Manual
 
 Copyright (c) 2003,2006-2008,2010 Kaj de Vos
 
-19 April 2010
+22 April 2010
 
 http://syllable.org
 
@@ -590,10 +590,19 @@ the Syllable Desktop base system. The process goes like this:
 
     cd system
 
-    image system
+    image syllable
     build log failures
 
     image base
+    build log failures
+
+    image gui-base
+    build log failures
+
+    image gui
+    build log failures
+
+    image desktop
     build log failures
 
     su
@@ -618,6 +627,15 @@ It is basically similar for Syllable Server:
     cd system
 
     image linux
+    build log failures
+
+    image base
+    build log failures
+
+    image gui-linux
+    build log failures
+
+    image gui-base
     build log failures
 
     image server
