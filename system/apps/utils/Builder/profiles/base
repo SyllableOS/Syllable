@@ -106,6 +106,7 @@ resources
 
 modules
 	documentation--current
+	documentation-ES--current
 
 ;	Overwrites profile:
 	other/config/etc
