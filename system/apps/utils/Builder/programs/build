@@ -1,7 +1,7 @@
 #! /usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.11.10
+# Version 0.11.11
 # Copyright (c) 2002-2010 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -553,17 +553,17 @@ def installModule staging, target
 			# Packages are currently supposed to contain an unversioned directory
 			root = File.join(dir = File.dirname(root), name)
 
-			if exists? root and not
-				begin
-					@log.header 'Uninstalling ' + name
-					uninstallModule staging, target  # FIXME: double failure logging!
-				end
-			then
-				false
-			else  # TODO?: evaluate staging, recipe for super access
+			! exists?(root) ||
+			begin
+				@log.header 'Uninstalling ' + name
+
+				uninstallModule staging, target  # FIXME: double failure logging!
+			end and
+			begin  # TODO?: evaluate staging, recipe for super access
 				@log.header 'Unpacking ' + target
+
 				action superAccess + "unzip '#{target}' -d '#{dir}'" and
-					registerModule staging, superAccess, name, root
+				registerModule staging, superAccess, name, root
 			end
 		else
 			superAccess = '' if staging and not @systemBuild
@@ -572,18 +572,18 @@ def installModule staging, target
 				Dir.chdir target
 
 				if exists? 'image'  # Command-line resource module without makefile
-					if exists? root and not
-						begin
-							@log.header 'Uninstalling ' + name
-							uninstallModule staging, target  # FIXME: double failure logging!
-						end
-					then
-						false
-					else
+					! exists?(root) ||
+					begin
+						@log.header 'Uninstalling ' + name
+
+						uninstallModule staging, target  # FIXME: double failure logging!
+					end and
+					begin
 						@log.header 'Installing image files'
+
 						action superAccess + "mkdir " + root and
-							copyFiles 'image', root, superAccess and
-							registerModule staging, superAccess, target, root
+						copyFiles 'image', root, superAccess and
+						registerModule staging, superAccess, target, root
 					end
 				else
 					if exists? dir = buildDir(target) then Dir.chdir dir end
@@ -591,10 +591,10 @@ def installModule staging, target
 					unless staging
 						action superAccess + makeCommand(target) + ' install'
 					else
-						unless action superAccess + makeCommand(target) + ' dist'
-							false
-						else
+						action superAccess + makeCommand(target) + ' dist' and
+						begin
 #							@log.header 'Installing documentation'
+
 #							if action superAccess + makeCommand(target) + ' doc'
 #								action superAccess + makeCommand(target) + ' install-doc'
 #							end
@@ -606,35 +606,32 @@ def installModule staging, target
 			else
 				superAccess = @superAccess if (recipe = getRecipe target)['super-install']
 
-				if exists? root and not
-					begin
-						if recipe['merge-install']
-							unregisterModule staging, superAccess, installName(target), root
-						elsif staging or not firstColumn(parseList(recipe['install-needs'])).include? name
-							@log.header 'Uninstalling ' + name
-							uninstallModule staging, target  # FIXME: double failure logging!
-						else
-							@log.error "Won't uninstall current version because package needs itself to install"
-							false
-						end
-					end
-				then
-					false
-				else
-					if dirs = recipe['install-tree'] and not
-						begin
-							@log.header 'Creating subdirectories'
-							@log.detail root
+				! exists?(root) ||
+				begin
+					if recipe['merge-install']
+						unregisterModule staging, superAccess, installName(target), root
+					elsif staging or not firstColumn(parseList(recipe['install-needs'])).include? name
+						@log.header 'Uninstalling ' + name
 
-							action superAccess + 'mkdir --parents ' + root and
-							for dir in toList dirs
-								@log.detail d = File.join(root, dir)
-								break unless action superAccess + 'mkdir --parents ' + d
-							end
-						end
-					then
+						uninstallModule staging, target  # FIXME: double failure logging!
+					else
+						@log.error "Won't uninstall current version because package needs itself to install"
 						false
-					elsif not exists? target
+					end
+				end and
+				begin
+					! (dirs = recipe['install-tree']) ||
+					begin
+						@log.header 'Creating subdirectories'
+						@log.detail root
+
+						action superAccess + 'mkdir --parents ' + root and
+						for dir in toList dirs
+							@log.detail d = File.join(root, dir)
+							break unless action superAccess + 'mkdir --parents ' + d
+						end
+					end and
+					if not exists? target
 						# Some modules live exclusively in Builder, without a source package
 						@log.header 'No source available'
 						true
@@ -647,11 +644,10 @@ def installModule staging, target
 						if exists? dir = buildDir(target) then Dir.chdir dir end
 
 						if imaging? staging and not recipe['system-prefix-var']
-						then
 							@log.warning 'Doing an image installation without a system-prefix-var.'
 						end
 
-						unless action(
+						action(
 							if cmdLines = recipe['install']
 								toCommands cmdLines
 							else
@@ -669,561 +665,516 @@ def installModule staging, target
 								((vars = recipe['install-vars']) ? ' ' + toVariables(vars) : '') +
 								' ' + ((targets = recipe['install-targets']) ? toString(targets) : 'install')
 							end
-						)
-							false
-						else
+						) and
+						begin
 							# make install may have changed the working directory:
 							Dir.chdir @workDir
 							Dir.chdir target
 							if exists? dir = buildDir(target) then Dir.chdir dir end
 
-							if cmdLines = recipe['post-install'] and not
-								begin
-									@log.header 'Executing post-installation instructions'
-									action toCommands(cmdLines)
+							! (cmdLines = recipe['post-install']) ||
+							begin
+								@log.header 'Executing post-installation instructions'
+								action toCommands(cmdLines)
+							end and
+							! (files = recipe['install-files']) ||
+							begin
+								@log.header 'Installing files'
+
+								for line in parseList files
+									source, destination = line.split
+
+									next if destination[0, 1] == '/' and staging and not imaging? staging
+
+									break unless action superAccess + "cp -a #{source} " + File.join(
+										destination[0, 1] == '/' ? @image : root,
+										destination
+									)
 								end
-							then
-								false
-							elsif files = recipe['install-files'] and not
+							end and
+							(docs = "#{toString recipe['documentation']} #{toString recipe['develop-docs']}") == ' ' ||
+							begin
+								@log.header 'Installing documentation'
+
+								exists?(dir = File.join(root, 'documentation')) ||
 								begin
-									@log.header 'Installing files'
-	
+									@log.detail dir
+									action superAccess + 'mkdir ' + dir
+								end and
+								begin
+									Dir.chdir @workDir
+									Dir.chdir target
+									action superAccess + "cp -a #{docs} " + dir
+								end
+							end and
+							begin
+								Dir.chdir root
+
+								! exists?('etc') ||
+								if exists? 'settings'
+									@log.warning 'Merging extra settings into standard location'
+
+									action superAccess + 'mv etc/* settings/' and
+									begin
+										@log.header 'Deleting empty etc directory'
+										action superAccess + 'rmdir etc'
+									end
+								else
+									@log.warning 'Moving settings to standard location'
+									action superAccess + 'mv etc/ settings'
+								end and
+								! exists?('bin') ||
+								if exists? 'programs'
+									@log.warning 'Merging extra programs into standard location'
+
+									action superAccess + 'mv bin/* programs/' and
+									begin
+										@log.header 'Deleting empty bin directory'
+										action superAccess + 'rmdir bin'
+									end
+								else
+									@log.header 'Moving programs to standard location'
+									action superAccess + 'mv bin/ programs'
+								end and
+								! exists?('sbin') ||
+								if exists? 'system-programs'
+									@log.warning 'Merging extra system programs into standard location'
+
+									action superAccess + 'mv sbin/* system-programs/' and
+									begin
+										@log.header 'Deleting empty sbin directory'
+										action superAccess + 'rmdir sbin'
+									end
+								else
+									@log.header 'Moving system programs to standard location'
+									action superAccess + 'mv sbin/ system-programs'
+								end and
+								! exists?('lib') ||
+								if exists? 'framework/libraries'
+									@log.warning 'Merging extra libraries into standard location'
+
+									action superAccess + 'mv lib/* framework/libraries/' and
+									begin
+										@log.header 'Deleting empty lib directory'
+										action superAccess + 'rmdir lib'
+									end
+								else
+									exists?('framework') ||
+									begin
+										@log.header 'Creating framework directory'
+										action superAccess + 'mkdir framework'
+									end and
+									begin
+										@log.warning 'Moving libraries to standard location'
+										action superAccess + 'mv lib/ framework/libraries'
+									end
+								end and
+								! exists?('libexec') ||
+								if exists? 'framework/executables'
+									@log.warning 'Merging extra executables into standard location'
+
+									action superAccess + 'mv libexec/* framework/executables/' and
+									begin
+										@log.header 'Deleting empty libexec directory'
+										action superAccess + 'rmdir libexec'
+									end
+								else
+									exists?('framework') ||
+									begin
+										@log.header 'Creating framework directory'
+										action superAccess + 'mkdir framework'
+									end and
+									begin
+										@log.warning 'Moving executables to standard location'
+										action superAccess + 'mv libexec/ framework/executables'
+									end
+								end and
+								! exists?('include') ||
+								if exists? 'framework/headers'
+									@log.warning 'Merging extra headers into standard location'
+
+									action superAccess + 'mv include/* framework/headers/' and
+									begin
+										@log.header 'Deleting empty include directory'
+										action superAccess + 'rmdir include'
+									end
+								else
+									exists?('framework') ||
+									begin
+										@log.header 'Creating framework directory'
+										action superAccess + 'mkdir framework'
+									end and
+									begin
+										@log.header 'Moving headers to standard location'
+										action superAccess + 'mv include/ framework/headers'
+									end
+								end and
+								! exists?('share') ||
+								if exists? 'data'
+									@log.warning 'Merging extra data into standard location'
+
+									action superAccess + 'mv share/* data/' and
+									begin
+										@log.header 'Deleting empty share directory'
+										action superAccess + 'rmdir share'
+									end
+								else
+									@log.warning 'Moving generic shared data to standard location'
+									action superAccess + 'mv share/ data'
+								end and
+								! exists?('data/aclocal') ||
+								if exists? 'framework/AutoConfigure'
+									@log.header 'Merging extra AutoConfigure data into standard location'
+
+									action superAccess + 'mv data/aclocal/* framework/AutoConfigure/' and
+									begin
+										@log.header 'Deleting empty data/aclocal directory'
+										action superAccess + 'rmdir data/aclocal'
+									end
+								else
+									exists?('framework') ||
+									begin
+										@log.header 'Creating framework directory'
+										action superAccess + 'mkdir framework'
+									end and
+									begin
+										@log.header 'Moving AutoConfigure data to standard location'
+										action superAccess + 'mv data/aclocal/ framework/AutoConfigure'
+									end
+								end and
+								! exists?('data/pkgconfig') ||
+								if exists? 'framework/PackageConfigure'
+									@log.header 'Merging extra PackageConfigure data into standard location'
+
+									action superAccess + 'mv data/pkgconfig/* framework/PackageConfigure/' and
+									begin
+										@log.header 'Deleting empty data/pkgconfig directory'
+										action superAccess + 'rmdir data/pkgconfig'
+									end
+								else
+									exists?('framework') ||
+									begin
+										@log.header 'Creating framework directory'
+										action superAccess + 'mkdir framework'
+									end and
+									begin
+										@log.header 'Moving PackageConfigure data to standard location'
+										action superAccess + 'mv data/pkgconfig/ framework/PackageConfigure'
+									end
+								end and
+								! exists?('framework/libraries/pkgconfig') ||
+								if exists? 'framework/PackageConfigure'
+									@log.header 'Merging extra PackageConfigure data into standard location'
+
+									action superAccess + 'mv framework/libraries/pkgconfig/* framework/PackageConfigure/' and
+									begin
+										@log.header 'Deleting empty framework/libraries/pkgconfig directory'
+										action superAccess + 'rmdir framework/libraries/pkgconfig'
+									end
+								else
+									exists?('framework') ||
+									begin
+										@log.header 'Creating framework directory'
+										action superAccess + 'mkdir framework'
+									end and
+									begin
+										@log.header 'Moving PackageConfigure data to standard location'
+										action superAccess + 'mv framework/libraries/pkgconfig/ framework/PackageConfigure'
+									end
+								end and
+								! exists?('data/doc') ||
+								if exists? 'documentation'
+									@log.header 'Merging extra documentation into standard location'
+
+									action superAccess + 'mv data/doc/* documentation/' and
+									begin
+										@log.header 'Deleting empty data/doc directory'
+										action superAccess + 'rmdir data/doc'
+									end
+								else
+									@log.header 'Moving documentation to standard location'
+									action superAccess + 'mv data/doc/ documentation'
+								end and
+								! exists?('man') ||
+								if exists? 'manuals'
+									@log.warning 'Merging extra manuals into standard location'
+
+									action superAccess + 'mv man/* manuals/' and
+									begin
+										@log.header 'Deleting empty man directory'
+										action superAccess + 'rmdir man'
+									end
+								else
+									@log.header 'Moving manuals to standard location'
+									action superAccess + 'mv man/ manuals'
+								end and
+								! exists?('data/man') ||
+								if exists? 'manuals'
+									@log.warning 'Merging extra manuals into standard location'
+
+									action superAccess + 'mv data/man/* manuals/' and
+									begin
+										@log.header 'Deleting empty data/man directory'
+										action superAccess + 'rmdir data/man'
+									end
+								else
+									@log.header 'Moving manuals to standard location'
+									action superAccess + 'mv data/man/ manuals'
+								end and
+								! exists?('info') ||
+								if exists? 'manuals/info'
+									@log.warning 'Merging extra info manuals into standard location'
+
+									action superAccess + 'mv info/* manuals/info/' and
+									begin
+										@log.header 'Deleting empty info directory'
+										action superAccess + 'rmdir info'
+									end
+								else
+									exists?('manuals') ||
+									begin
+										@log.header 'Creating manuals directory'
+										action superAccess + 'mkdir manuals'
+									end and
+									begin
+										@log.header 'Moving info manuals to standard location'
+										action superAccess + 'mv info/ manuals/'
+									end
+								end and
+								! exists?('data/info') ||
+								if exists? 'manuals/info'
+									@log.warning 'Merging extra info manuals into standard location'
+
+									action superAccess + 'mv data/info/* manuals/info/' and
+									begin
+										@log.header 'Deleting empty data/info directory'
+										action superAccess + 'rmdir data/info'
+									end
+								else
+									exists?('manuals') ||
+									begin
+										@log.header 'Creating manuals directory'
+										action superAccess + 'mkdir manuals'
+									end and
+									begin
+										@log.header 'Moving info manuals to standard location'
+										action superAccess + 'mv data/info/ manuals/'
+									end
+								end and
+								! (exists? 'data' and empty? 'data') ||
+								begin
+									@log.header 'Deleting empty data directory'
+									action superAccess + 'rmdir data'
+								end and
+								(lineage = lineage target).each_with_index {|kin, i|
+									ancestor = i < lineage.size - 1
+
+									if exists? dir = File.join(recipePath(kin), 'distro')
+										@log.header 'Overlaying extra files' + (ancestor ? ' from ancestor ' + kin : '')
+
+										break unless copyFiles dir, root, superAccess
+									end
+								} and
+								! (links = recipe['links'] and links != '') ||
+								(	system?(staging) and
+									recipe['system-prefix-var'] and not
+									exists?('framework/headers') ||
+									begin
+										@log.header 'Creating temporary headers directory'
+										action superAccess + 'mkdir --parents framework/headers'
+									end
+								) &&
+								begin
+									@log.header 'Creating links'
+
+									for link in parseList links
+										original, destination = link.split
+
+										destination = File.join destination[0, 1] != '/' ?
+											# A link into the package
+											root :
+											begin
+												# A link into the system
+
+												next if staging and not imaging? staging
+
+												if original['/'] and not ['/', '.'].include? original[0, 1]
+													original = File.join(
+														system?(staging) ? '/system' : '/resources',
+														'index',
+														original
+													)
+												end
+
+												@image
+											end,
+											destination
+
+										break unless action superAccess +
+											"ln --symbolic --force #{original} " + destination
+									end
+								end and
+								@settings['no-strip'] || recipe['no-strip'] || (
+									(dirs = ['programs', 'system-programs'].collect {|dir|
+										exists?(dir = File.join(root, dir)) ? dir : nil
+									}.compact).empty? ||
+									begin
+										@log.header 'Stripping executables'
+										#--strip-unneeded
+										action superAccess + 'strip --strip-all' + dirs.collect {|dir| ' ' + File.join(dir, '*')}.join or
+											$? >> 8 == 1  # File type not recognised
+									end and
+									(dirs = ['framework/libraries', 'framework/executables'].collect {|dir|
+										exists?(dir = File.join(root, dir)) ? dir : nil
+									}.compact).empty? ||
+									begin
+										@log.header 'Stripping libraries'
+										# TODO: limit to .so files in framework/libraries/
+										action superAccess + 'strip --strip-debug ' + dirs.collect {|dir| ' ' + File.join(dir, '*')}.join or
+											$? >> 8 == 1
+									end
+								) and
+								! (cmdLines = recipe['pre-register']) ||
+								begin
+									@log.header 'Executing pre-registration instructions'
+									action toCommands(cmdLines)
+								end and
+								! (files = recipe['move-files']) ||
+								begin
+									@log.header 'Moving files'
+
 									for line in parseList files
 										source, destination = line.split
 
 										next if destination[0, 1] == '/' and staging and not imaging? staging
 
-										break unless action superAccess + "cp -a #{source} " + File.join(
-											destination[0, 1] == '/' ? @image : root,
-											destination
+										break unless action superAccess + 'mv ' +
+											(source[0, 1] == '/' && imaging?(staging) ?
+												File.join(@image, source) :
+												source
+											) + ' ' +
+											(destination[0, 1] == '/' ?
+												File.join(@image, destination) :
+												destination
+											)
+									end
+								end and
+								! (files = recipe['delete-files']) ||
+								begin
+									@log.header 'Deleting files from installation'
+
+									for file in toList files
+										next if file[0, 1] == '/' and staging and not imaging? staging
+
+										break unless action superAccess + 'rm --recursive --force ' + (
+											file[0, 1] == '/' ?
+												File.join(@image, file) :
+												file
 										)
 									end
-								end
-							then
-								false
-							elsif
-								(docs = "#{toString recipe['documentation']} #{toString recipe['develop-docs']}") != ' ' and not
+								end and
+								! @systemBuild || staging != 'libraries' ||
 								begin
-									@log.header 'Installing documentation'
+									@log.header 'Cleansing system libraries'
 
-									unless exists? dir = File.join(root, 'documentation')
-										@log.detail dir
-										action superAccess + 'mkdir ' + dir
-									end
+									for file in Dir['*']
+										break unless ['framework', 'documentation'].include?(file) or
+											action superAccess + 'rm --recursive --force ' + file
+									end and
+									# TODO?: may need to be kept in some cases:
+									action superAccess + 'rm --recursive --force framework/executables/'
+								end and
+								! @systemBuild || staging != 'compatibility' ||
+								begin
+									@log.header 'Cleansing compatibility libraries'
 
-									Dir.chdir @workDir
-									Dir.chdir target
-									action superAccess + "cp -a #{docs} " + dir
-								end
-							then
-								false
-							else
-								Dir.chdir root
+									for file in Dir['*']
+										break unless ['framework', 'documentation'].include?(file) or
+											action superAccess + 'rm --recursive --force ' + file
+									end and
+									action superAccess + 'rm --recursive --force framework/headers/' and
+									action superAccess + 'rm --recursive --force framework/executables/'
+								end and
+								! system?(staging) ||
+								begin
+									devRoot = File.join @image, '/system/development/resources', installName(target), version(target)
 
-								if exists? 'etc' and not
-									if exists? 'settings'
-										@log.warning 'Merging extra settings into standard location'
-										action superAccess + 'mv etc/* settings/' and
-										begin
-											@log.header 'Deleting empty etc directory'
-											action superAccess + 'rmdir etc'
-										end
-									else
-										@log.warning 'Moving settings to standard location'
-										action superAccess + 'mv etc/ settings'
-									end
-								then
-									false
-								elsif exists? 'bin' and not
-									if exists? 'programs'
-										@log.warning 'Merging extra programs into standard location'
-										action superAccess + 'mv bin/* programs/' and
-										begin
-											@log.header 'Deleting empty bin directory'
-											action superAccess + 'rmdir bin'
-										end
-									else
-										@log.header 'Moving programs to standard location'
-										action superAccess + 'mv bin/ programs'
-									end
-								then
-									false
-								elsif exists? 'sbin' and not
-									if exists? 'system-programs'
-										@log.warning 'Merging extra system programs into standard location'
-										action superAccess + 'mv sbin/* system-programs/' and
-										begin
-											@log.header 'Deleting empty sbin directory'
-											action superAccess + 'rmdir sbin'
-										end
-									else
-										@log.header 'Moving system programs to standard location'
-										action superAccess + 'mv sbin/ system-programs'
-									end
-								then
-									false
-								elsif exists? 'lib' and not
-									if exists? 'framework/libraries'
-										@log.warning 'Merging extra libraries into standard location'
-										action superAccess + 'mv lib/* framework/libraries/' and
-										begin
-											@log.header 'Deleting empty lib directory'
-											action superAccess + 'rmdir lib'
-										end
-									else
-										exists?('framework') ||
-										begin
-											@log.header 'Creating framework directory'
-											action superAccess + 'mkdir framework'
-										end and
-										begin
-											@log.warning 'Moving libraries to standard location'
-											action superAccess + 'mv lib/ framework/libraries'
-										end
-									end
-								then
-									false
-								elsif exists? 'libexec' and not
-									if exists? 'framework/executables'
-										@log.warning 'Merging extra executables into standard location'
-										action superAccess + 'mv libexec/* framework/executables/' and
-										begin
-											@log.header 'Deleting empty libexec directory'
-											action superAccess + 'rmdir libexec'
-										end
-									else
-										exists?('framework') ||
-										begin
-											@log.header 'Creating framework directory'
-											action superAccess + 'mkdir framework'
-										end and
-										begin
-											@log.warning 'Moving executables to standard location'
-											action superAccess + 'mv libexec/ framework/executables'
-										end
-									end
-								then
-									false
-								elsif exists? 'include' and not
-									if exists? 'framework/headers'
-										@log.warning 'Merging extra headers into standard location'
-										action superAccess + 'mv include/* framework/headers/' and
-										begin
-											@log.header 'Deleting empty include directory'
-											action superAccess + 'rmdir include'
-										end
-									else
-										exists?('framework') ||
-										begin
-											@log.header 'Creating framework directory'
-											action superAccess + 'mkdir framework'
-										end and
-										begin
-											@log.header 'Moving headers to standard location'
-											action superAccess + 'mv include/ framework/headers'
-										end
-									end
-								then
-									false
-								elsif exists? 'share' and not
-									if exists? 'data'
-										@log.warning 'Merging extra data into standard location'
-										action superAccess + 'mv share/* data/' and
-										begin
-											@log.header 'Deleting empty share directory'
-											action superAccess + 'rmdir share'
-										end
-									else
-										@log.warning 'Moving generic shared data to standard location'
-										action superAccess + 'mv share/ data'
-									end
-								then
-									false
-								elsif exists? 'data/aclocal' and not
-									if exists? 'framework/AutoConfigure'
-										@log.header 'Merging extra AutoConfigure data into standard location'
-										action superAccess + 'mv data/aclocal/* framework/AutoConfigure/' and
-										begin
-											@log.header 'Deleting empty data/aclocal directory'
-											action superAccess + 'rmdir data/aclocal'
-										end
-									else
-										exists?('framework') ||
-										begin
-											@log.header 'Creating framework directory'
-											action superAccess + 'mkdir framework'
-										end and
-										begin
-											@log.header 'Moving AutoConfigure data to standard location'
-											action superAccess + 'mv data/aclocal/ framework/AutoConfigure'
-										end
-									end
-								then
-									false
-								elsif exists? 'data/pkgconfig' and not
-									if exists? 'framework/PackageConfigure'
-										@log.header 'Merging extra PackageConfigure data into standard location'
-										action superAccess + 'mv data/pkgconfig/* framework/PackageConfigure/' and
-										begin
-											@log.header 'Deleting empty data/pkgconfig directory'
-											action superAccess + 'rmdir data/pkgconfig'
-										end
-									else
-										exists?('framework') ||
-										begin
-											@log.header 'Creating framework directory'
-											action superAccess + 'mkdir framework'
-										end and
-										begin
-											@log.header 'Moving PackageConfigure data to standard location'
-											action superAccess + 'mv data/pkgconfig/ framework/PackageConfigure'
-										end
-									end
-								then
-									false
-								elsif exists? 'framework/libraries/pkgconfig' and not
-									if exists? 'framework/PackageConfigure'
-										@log.header 'Merging extra PackageConfigure data into standard location'
-										action superAccess + 'mv framework/libraries/pkgconfig/* framework/PackageConfigure/' and
-										begin
-											@log.header 'Deleting empty framework/libraries/pkgconfig directory'
-											action superAccess + 'rmdir framework/libraries/pkgconfig'
-										end
-									else
-										exists?('framework') ||
-										begin
-											@log.header 'Creating framework directory'
-											action superAccess + 'mkdir framework'
-										end and
-										begin
-											@log.header 'Moving PackageConfigure data to standard location'
-											action superAccess + 'mv framework/libraries/pkgconfig/ framework/PackageConfigure'
-										end
-									end
-								then
-									false
-								elsif exists? 'data/doc' and not
-									if exists? 'documentation'
-										@log.header 'Merging extra documentation into standard location'
-										action superAccess + 'mv data/doc/* documentation/' and
-										begin
-											@log.header 'Deleting empty data/doc directory'
-											action superAccess + 'rmdir data/doc'
-										end
-									else
-										@log.header 'Moving documentation to standard location'
-										action superAccess + 'mv data/doc/ documentation'
-									end
-								then
-									false
-								elsif exists? 'man' and not
-									if exists? 'manuals'
-										@log.warning 'Merging extra manuals into standard location'
-										action superAccess + 'mv man/* manuals/' and
-										begin
-											@log.header 'Deleting empty man directory'
-											action superAccess + 'rmdir man'
-										end
-									else
-										@log.header 'Moving manuals to standard location'
-										action superAccess + 'mv man/ manuals'
-									end
-								then
-									false
-								elsif exists? 'data/man' and not
-									if exists? 'manuals'
-										@log.warning 'Merging extra manuals into standard location'
-										action superAccess + 'mv data/man/* manuals/' and
-										begin
-											@log.header 'Deleting empty data/man directory'
-											action superAccess + 'rmdir data/man'
-										end
-									else
-										@log.header 'Moving manuals to standard location'
-										action superAccess + 'mv data/man/ manuals'
-									end
-								then
-									false
-								elsif exists? 'info' and not
-									if exists? 'manuals/info'
-										@log.warning 'Merging extra info manuals into standard location'
-										action superAccess + 'mv info/* manuals/info/' and
-										begin
-											@log.header 'Deleting empty info directory'
-											action superAccess + 'rmdir info'
-										end
-									else
-										exists?('manuals') ||
-										begin
-											@log.header 'Creating manuals directory'
-											action superAccess + 'mkdir manuals'
-										end and
-										begin
-											@log.header 'Moving info manuals to standard location'
-											action superAccess + 'mv info/ manuals/'
-										end
-									end
-								then
-									false
-								elsif exists? 'data/info' and not
-									if exists? 'manuals/info'
-										@log.warning 'Merging extra info manuals into standard location'
-										action superAccess + 'mv data/info/* manuals/info/' and
-										begin
-											@log.header 'Deleting empty data/info directory'
-											action superAccess + 'rmdir data/info'
-										end
-									else
-										exists?('manuals') ||
-										begin
-											@log.header 'Creating manuals directory'
-											action superAccess + 'mkdir manuals'
-										end and
-										begin
-											@log.header 'Moving info manuals to standard location'
-											action superAccess + 'mv data/info/ manuals/'
-										end
-									end
-								then
-									false
-								elsif exists? 'data' and empty? 'data' and not
+									Dir['framework/libraries/*.a'] == [] ||
 									begin
-										@log.header 'Deleting empty data directory'
-										action superAccess + 'rmdir data'
-									end
-								then
-									false
-								elsif not
-									(lineage = lineage target).each_with_index {|kin, i|
-										ancestor = i < lineage.size - 1
+										@log.header 'Creating development libraries directory'
 
-										if exists? dir = File.join(recipePath(kin), 'distro')
-											@log.header 'Overlaying extra files' + (ancestor ? ' from ancestor ' + kin : '')
-											break unless copyFiles dir, root, superAccess
-										end
-									}
-								then
-									false
-								elsif links = recipe['links'] and links != '' and
-									(	system?(staging) and
-										recipe['system-prefix-var'] and not
-										exists?('framework/headers') ||
+										action superAccess + 'mkdir --parents ' + (dir = File.join(devRoot, 'framework/libraries')) and
 										begin
-											@log.header 'Creating temporary headers directory'
-											action superAccess + 'mkdir --parents framework/headers'
-										end
-									) || !
-									begin
-										@log.header 'Creating links'
-
-										for link in parseList links
-											original, destination = link.split
-
-											destination = File.join destination[0, 1] != '/' ?
-												# A link into the package
-												root :
-												begin
-													# A link into the system
-
-													next if staging and not imaging? staging
-
-													if original['/'] and not ['/', '.'].include? original[0, 1]
-														original = File.join(
-															system?(staging) ? '/system' : '/resources',
-															'index',
-															original
-														)
-													end
-
-													@image
-												end,
-												destination
-
-											break unless action superAccess +
-												"ln --symbolic --force #{original} " + destination
-										end
-									end
-								then
-									false
-								elsif not @settings['no-strip'] || recipe['no-strip'] || (
-										(dirs = ['programs', 'system-programs'].collect {|dir|
-											exists?(dir = File.join(root, dir)) ? dir : nil
-										}.compact).empty? ||
+											@log.header 'Moving static libraries to development area'
+											action superAccess + 'mv framework/libraries/*.a ' + dir
+										end and
+										(Dir['framework/libraries/*'] != []) ||
 										begin
-											@log.header 'Stripping executables'
-											#--strip-unneeded
-											action superAccess + 'strip --strip-all' + dirs.collect {|dir| ' ' + File.join(dir, '*')}.join or
-												$? >> 8 == 1  # File type not recognised
-										end and
-										(dirs = ['framework/libraries', 'framework/executables'].collect {|dir|
-											exists?(dir = File.join(root, dir)) ? dir : nil
-										}.compact).empty? ||
-										begin
-											@log.header 'Stripping libraries'
-											# TODO: limit to .so files in framework/libraries/
-											action superAccess + 'strip --strip-debug ' + dirs.collect {|dir| ' ' + File.join(dir, '*')}.join or
-												$? >> 8 == 1
+											@log.header 'Deleting empty libraries directory'
+											action superAccess + 'rmdir framework/libraries'
 										end
-									)
-								then
-									false
-								elsif cmdLines = recipe['pre-register'] and not
+									end and
+									Dir['framework/headers/*'] == [] ||
 									begin
-										@log.header 'Executing pre-registration instructions'
-										action toCommands(cmdLines)
-									end
-								then
-									false
-								elsif files = recipe['move-files'] and not
-									begin
-										@log.header 'Moving files'
+										if exists?(dir = File.join(devRoot, 'framework/headers'))
+											@log.warning 'Merging extra headers into development area'
 
-										for line in parseList files
-											source, destination = line.split
-
-											next if destination[0, 1] == '/' and staging and not imaging? staging
-
-											break unless action superAccess + 'mv ' +
-												(source[0, 1] == '/' && imaging?(staging) ?
-													File.join(@image, source) :
-													source
-												) + ' ' +
-												(destination[0, 1] == '/' ?
-													File.join(@image, destination) :
-													destination
-												)
-										end
-									end
-								then
-									false
-								elsif files = recipe['delete-files'] and not
-									begin
-										@log.header 'Deleting files from installation'
-
-										for file in toList files
-											next if file[0, 1] == '/' and staging and not imaging? staging
-
-											break unless action superAccess + 'rm --recursive --force ' + (
-												file[0, 1] == '/' ?
-													File.join(@image, file) :
-													file
-											)
-										end
-									end
-								then
-									false
-								elsif @systemBuild and staging == 'libraries' and not
-									begin
-										@log.header 'Cleansing system libraries'
-
-										for file in Dir['*']
-											break unless ['framework', 'documentation'].include?(file) or
-												action superAccess + 'rm --recursive --force ' + file
-										end and
-										# TODO?: may need to be kept in some cases:
-										action superAccess + 'rm --recursive --force framework/executables/'
-									end
-								then
-									false
-								elsif @systemBuild and staging == 'compatibility' and not
-									begin
-										@log.header 'Cleansing compatibility libraries'
-
-										for file in Dir['*']
-											break unless ['framework', 'documentation'].include?(file) or
-												action superAccess + 'rm --recursive --force ' + file
-										end and
-										action superAccess + 'rm --recursive --force framework/headers/' and
-										action superAccess + 'rm --recursive --force framework/executables/'
-									end
-								then
-									false
-								elsif system? staging and not
-									begin
-										devRoot = File.join @image, '/system/development/resources', installName(target), version(target)
-
-										if Dir['framework/libraries/*.a'] != []
-											@log.header 'Creating development libraries directory'
-											action superAccess + 'mkdir --parents ' + (dir = File.join(devRoot, 'framework/libraries')) and
+											action superAccess + 'mv framework/headers/* ' + dir and
 											begin
-												@log.header 'Moving static libraries to development area'
-												action superAccess + 'mv framework/libraries/*.a ' + dir
-											end and
-											(Dir['framework/libraries/*'] != []) ||
-											begin
-												@log.header 'Deleting empty libraries directory'
-												action superAccess + 'rmdir framework/libraries'
+												@log.header 'Deleting empty headers directory'
+												# Linux kernel has hidden files:
+												action superAccess + 'rm -r framework/headers'
 											end
 										else
-									    	true
-										end and
-										if Dir['framework/headers/*'] != []
-											if exists?(dir = File.join(devRoot, 'framework/headers'))
-												@log.warning 'Merging extra headers into development area'
-												action superAccess + 'mv framework/headers/* ' + dir and
-												begin
-													@log.header 'Deleting empty headers directory'
-													# Linux kernel has hidden files:
-													action superAccess + 'rm -r framework/headers'
-												end
-											else
-												exists?(dir = File.join(devRoot, 'framework')) ||
-												begin
-													@log.header 'Creating development framework directory'
-													action superAccess + 'mkdir --parents ' + dir
-												end and
-												begin
-													@log.header 'Moving headers to development area'
-													action superAccess + 'mv framework/headers/ ' + dir
-												end
-											end
-										else
-										    true
-										end and
-										if exists? 'framework/AutoConfigure'
 											exists?(dir = File.join(devRoot, 'framework')) ||
 											begin
 												@log.header 'Creating development framework directory'
 												action superAccess + 'mkdir --parents ' + dir
 											end and
 											begin
-												@log.header 'Moving AutoConfigure data to development area'
-												action superAccess + 'mv framework/AutoConfigure/ ' + dir
+												@log.header 'Moving headers to development area'
+												action superAccess + 'mv framework/headers/ ' + dir
 											end
-										else
-									    	true
-										end and
-										if exists? 'framework' and Dir['framework/*'] == []
-											@log.header 'Deleting empty framework directory'
-											action superAccess + 'rmdir framework'
-										else
-									    	true
-										end and
-										if docs = recipe['develop-docs']
-											@log.header 'Creating development documentation directory'
-											action superAccess + 'mkdir --parents ' + (dir = File.join devRoot, 'documentation') and
-											begin
-												@log.header 'Moving development documentation to development area'
-
-												for file in toList docs
-													break unless action superAccess + "mv #{File.join 'documentation', File.basename(file)} " + dir
-												end
-											end
-										else
-										    true
+										end
+									end and
+									! exists?('framework/AutoConfigure') ||
+									begin
+										exists?(dir = File.join(devRoot, 'framework')) ||
+										begin
+											@log.header 'Creating development framework directory'
+											action superAccess + 'mkdir --parents ' + dir
 										end and
 										begin
-											@log.header 'Registering development files'
-
-											# Link files into the staging area
-											action superAccess + "package register #{devRoot} " + File.join(@stage, 'index')
+											@log.header 'Moving AutoConfigure data to development area'
+											action superAccess + 'mv framework/AutoConfigure/ ' + dir
 										end
+									end and
+									! (exists? 'framework' and Dir['framework/*'] == []) ||
+									begin
+										@log.header 'Deleting empty framework directory'
+										action superAccess + 'rmdir framework'
+									end and
+									! (docs = recipe['develop-docs']) ||
+									begin
+										@log.header 'Creating development documentation directory'
+
+										action superAccess + 'mkdir --parents ' + (dir = File.join devRoot, 'documentation') and
+										begin
+											@log.header 'Moving development documentation to development area'
+
+											for file in toList docs
+												break unless action superAccess + "mv #{File.join 'documentation', File.basename(file)} " + dir
+											end
+										end
+									end and
+									begin
+										@log.header 'Registering development files'
+
+										# Link files into the staging area
+										action superAccess + "package register #{devRoot} " + File.join(@stage, 'index')
 									end
-								then
-									false
-								else
-									registerModule staging, superAccess, target, root  # TODO?: superAccess
-								end
+								end and
+								registerModule staging, superAccess, target, root
 							end
 						end
 					end
@@ -1880,11 +1831,13 @@ def shortName port
 end
 
 def version port
-	# Extract version
-	/^\d+(\.\d+)*\w*/.match(
-		# Version + flavour:
-		/^(--|-|)/.match(fullName(port)[shortName(port).length .. -1]).post_match
-	).to_s
+	(version = getRecipe(port)['version']) ?
+		version :
+		# Extract version
+		/^\d+(\.\d+)*\w*/.match(
+			# Version + flavour:
+			/^(--|-|)/.match(fullName(port)[shortName(port).length .. -1]).post_match
+		).to_s
 end
 
 def commonName port
@@ -2302,7 +2255,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.11.10',
+	puts 'Syllable Build System 0.11.11',
 		'Copyright (c) 2002-2010 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
