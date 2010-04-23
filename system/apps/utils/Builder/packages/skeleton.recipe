@@ -18,6 +18,7 @@ inherits			<Modules this recipe inherits from>
 ; Module information
 
 name				<Display name of the package, if different from the file name>
+version				<Version of the package, if not included in the file name>
 headline			<Brief description>
 description			<Full description>
 licenses			GPL GPL-2 GPL-3 GPL-3+ LGPL GFDL GPL+exception BSD MIT ISC Apache Artistic Python MPL QPL OSI other PD freeware commercial

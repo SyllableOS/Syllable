@@ -2,6 +2,7 @@ authors				Kaj de Vos
 status				testing
 notes				Tested with ORCA and M2 SVN snapshot December 4, 2007
 
+version				0.0.24
 headline			Open source REBOL Can be Achieved
 description
 	The Urlan Project is an exploration of language oriented programming using small run-time environments. There are currently two related sub-projects: Orca & Thune. These are interpreted, homoiconic languages, which are well suited for embedding domain specific languages.
