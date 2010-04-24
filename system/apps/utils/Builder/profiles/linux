@@ -6,10 +6,6 @@ tree
 ;	Virtual file system mount points
 
 	dev
-;	Nodes:
-;	dev/console
-;	dev/null
-
 	proc
 	sys
 
@@ -17,7 +13,13 @@ tree
 
 	system/config
 
+	sbin
+	usr/bin
+	usr/sbin
+
 	users home.png
+
+	media/data
 
 ;	From LFS
 
@@ -26,14 +28,10 @@ tree
 	etc/profile.d
 	etc/sysconfig/network-devices/ifconfig.eth0
 
-;	mnt
-;	opt
-	media/data
-;	media/test
+	var/log
+;	For inetd and such:
+	var/run
 
-;	For SysVInit and others:
-	sbin
-;	srv
 	var/lock
 ;	Server:
 	var/state/dhcp
@@ -48,6 +46,7 @@ tree
 ;	var/local
 
 	lib/modules
+
 	lib/firmware
 ;	For UDevices <= 142:
 	lib/udev/rules.d
@@ -78,7 +77,6 @@ prepare
 
 ;	touch etc/mtab &&
 
-;	install -d					lib/{firmware,udev/devices/{pts,shm}} &&
 	sudo mknod -m0666			lib/udev/devices/null c 1 3 &&
 ;	For UDevices 145 ?
 	sudo mknod -m0600			lib/udev/devices/kmesg c 1 11 &&

@@ -20,7 +20,13 @@ tree
 
 	home home.png
 
-	usr
+	usr/bin
+;	For chroot:
+	usr/sbin
+
+	var/log
+;	For inetd and such:
+	var/run
 
 prepare
 	install -d -m 1777 tmp var/tmp &&

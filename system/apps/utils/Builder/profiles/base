@@ -66,8 +66,6 @@ tree
 
 	bin
 
-;	For env:
-	usr/bin
 ;	usr/etc
 ;	For NCurses:
 	usr/include
@@ -76,8 +74,6 @@ tree
 ;	usr/info
 	usr/lib
 ;	usr/man
-;	For chroot:
-	usr/sbin
 ;	(For terminfo:)
 	usr/share
 
@@ -92,10 +88,6 @@ tree
 	usr/local/man
 	usr/local/sbin
 	usr/local/share
-
-	var/log
-;	For inetd and such:
-	var/run
 
 resources
 	boot/grub/	menu.lst				text/plain
