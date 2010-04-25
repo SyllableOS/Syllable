@@ -1,0 +1,60 @@
+authors 			Kaj de Vos
+status				testing
+warnings			Does not support stage'ing!
+notes				Needs ranlib and perl in /usr/bin/ during building
+
+headline			Secure Sockets Layer library
+description
+	The OpenSSL Project is a collaborative effort to develop a robust, commercial-grade, full-featured, and Open Source toolkit implementing the Secure Sockets Layer (SSL v2/v3) and Transport Layer Security (TLS v1) protocols as well as a full-strength general purpose cryptography library.
+licenses			BSD+advertising
+
+home				www.openssl.org
+packages			openssl-1.0.0
+locations
+	ftp://ftp.openssl.org/source/
+	http://www.openssl.org/source/
+
+build-needs
+;	Probably:
+	Syllable >= 0.6.4
+	gawk
+	perl >= 5
+build-recommends	pod2man
+test-recommends		bc
+recommends			kerberos5
+
+build-dir			.
+
+configure			perl Configure threads shared zlib-dynamic --openssldir=/etc/ssl linux-elf
+; Doesn't recognise Syllable:
+;configure-cmd		config
+; Doesn't work as advertised:
+_configure-args
+;	--prefix=/resources
+	--openssldir=/resources/OpenSSL
+configure-options
+	threads
+;	-D_REENTRANT
+;	386
+	shared
+	zlib-dynamic
+	--openssldir=/etc/ssl
+;	no-rc5
+;	no-idea
+;	linux-elf
+
+test-targets
+	test
+;	report
+
+;super-install
+system-prefix-var	INSTALL_PREFIX
+
+install-vars
+	OPENSSLDIR		/etc/ssl
+	INSTALLTOP		/resources/OpenSSL
+	MANDIR			/resources/OpenSSL/manuals
+
+documentation		README README.ENGINE FAQ PROBLEMS LICENSE NEWS CHANGES doc/
+develop-docs		INSTALL demos
+internal-docs		README.ASN1

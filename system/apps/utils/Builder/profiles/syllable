@@ -202,7 +202,7 @@ modules
 	stage libraries/FAAD-2.7
 
 ;	Needs ranlib and perl symlinks in /usr/bin/!
-	system libraries/OpenSSL-0.9.8k-system
+	system libraries/OpenSSL--system
 
 ;	For cURL:
 	stage libraries/c-ares-1.4.0

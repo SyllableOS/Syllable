@@ -1,0 +1,11 @@
+authors 			Kaj de Vos
+status				testing
+warnings
+
+inherits			OpenSSL-1.0.0
+version				1.0.0
+
+install-vars
+	OPENSSLDIR		/etc/ssl
+	INSTALLTOP		/system/resources/OpenSSL/1.0.0
+	MANDIR			/system/resources/OpenSSL/1.0.0/manuals

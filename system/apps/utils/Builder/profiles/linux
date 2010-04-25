@@ -211,7 +211,7 @@ modules
 	system apps/other/SUDo-1.7.2p2
 
 ;	Needs ranlib and perl symlinks in /usr/bin/!
-	system libraries/OpenSSL-0.9.8k-system
+	system libraries/OpenSSL--system
 
 
 ;	May be considered essential:
