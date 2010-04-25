@@ -1,5 +1,12 @@
-# File system	Mount point		Type		Options													Dump	FsCk
-#																											order
+# File system	Mount point		Type		Options													Dump	fsck order
+
+# ReiserFS3-formatted root partition:
+/dev/hda1		/				reiserfs	notail													0		1
+# Example Ext3FS-formatted root partition:
+#/dev/hda1		/				ext3		defaults												1		1
+# Example optional swap partition:
+#/dev/hda2		swap			swap		pri=1													0		0
+#/dev/hda2		none			swap		sw														0		0
 
 # Virtual file systems:
 proc			/proc			proc		defaults												0		0
@@ -10,18 +17,16 @@ shm				/dev/shm		tmpfs		defaults												0		0
 # 60% of host memory is advised for QEmu:
 #shm				/dev/shm		tmpfs		defaults,size=300m										0		0
 
-# ReiserFS3-formatted root partition:
-/dev/hda1		/				reiserfs	notail													0		1
-# Example Ext3FS-formatted root partition:
-#/dev/hda1		/				ext3		defaults												1		1
-# Example optional swap partition:
-#/dev/hda2		swap			swap		pri=1													0		0
-#/dev/hda2		none			swap		sw														0		0
 # Example optional separate home partition, ReiserFS3-formatted:
-#/dev/hda2		/users			reiserfs	notail													0		1
+#/dev/hda3		/users			reiserfs	notail													0		1
 # Example optional FAT partition for data exchange:
-#/dev/hda3		/media/data		vfat		defaults,utf8,umask=007,gid=100							0		1
-#/dev/hda3		/media/data		vfat		user,noauto,quiet,showexec,iocharset=utf8,codepage=		0		1
+#/dev/hda4		/media/data		vfat		defaults,utf8,umask=007,gid=100							0		1
+#/dev/hda4		/media/data		vfat		noauto,user,quiet,showexec,iocharset=utf8,codepage=		0		1
 
 # Example optional CD drive:
-#/dev/hdc		/media/cdrom1	udf,iso9660	user,noauto												0		0
+#/dev/hdc		/media/cdrom-1	udf,iso9660	noauto,user												0		0
+
+# Example optional USB storage device without partition:
+#/dev/sda		/media/data		auto		defaults,utf8,umask=007,gid=100							0		1
+# Example optional USB storage device, first partition:
+#/dev/sda1		/media/data		auto		defaults,utf8,umask=007,gid=100							0		1
