@@ -3,7 +3,7 @@
 tree
 ;	From LFS
 	media/floppy
-	media/cdrom-1
+	media/cdrom
 
 resources
 	etc/				linux/asound.state
