@@ -10,7 +10,7 @@ home				softinnov.org/rebol/uniserve.shtml
 locations
 ;	http://cheyenne-server.org/dl/
 	http://downloads.syllable.org/sources/resources/Cheyenne/
-packages			Cheyenne-2010.2.2.source
+packages			Cheyenne-2010.4.25.source
 ;archives			svn checkout http://cheyenne-server.googlecode.com/svn/trunk/ UniServe
 
 run-needs			REBOL
