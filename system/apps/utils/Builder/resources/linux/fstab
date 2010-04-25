@@ -24,7 +24,7 @@ shm				/dev/shm		tmpfs		defaults												0		0
 #/dev/hda4		/media/data		vfat		noauto,user,quiet,showexec,iocharset=utf8,codepage=		0		1
 
 # Example optional CD drive:
-#/dev/hdc		/media/cdrom-1	udf,iso9660	noauto,user												0		0
+#/dev/hdc		/media/cdrom	udf,iso9660	noauto,user												0		0
 
 # Example optional USB storage device without partition:
 #/dev/sda		/media/data		auto		defaults,utf8,umask=007,gid=100							0		1
