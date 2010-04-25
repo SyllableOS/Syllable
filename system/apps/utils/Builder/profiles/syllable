@@ -18,7 +18,31 @@ tree
 
 	system/drivers/net/if
 
-	home home.png
+	system/index/settings
+	system/index/programs
+	system/index/system-programs
+	system/index/framework
+	system/index/data
+	system/index/tasks/setup
+	system/index/tasks/start
+	system/index/manuals
+
+	system/development/headers
+	system/development/resources
+
+	usr/index/settings
+	usr/index/programs
+	usr/index/bin
+	usr/index/applications
+	usr/index/system-programs
+	usr/index/sbin
+	usr/index/framework
+	usr/index/lib
+	usr/index/include
+	usr/index/data
+	usr/index/tasks/setup
+	usr/index/tasks/start
+	usr/index/manuals
 
 	usr/bin
 ;	For chroot:
@@ -27,6 +51,8 @@ tree
 	var/log
 ;	For inetd and such:
 	var/run
+
+	home home.png
 
 prepare
 	install -d -m 1777 tmp var/tmp &&
