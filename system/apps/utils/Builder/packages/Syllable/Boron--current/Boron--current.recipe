@@ -1,0 +1,8 @@
+authors				Kaj de Vos
+status				testing
+
+links
+	libboron.so.0.1.5	framework/libraries/libboron.so.0
+	libboron.so.0.1.5	framework/libraries/libboron.so
+	boron				programs/rebol
+	boron				programs/rebol-core

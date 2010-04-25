@@ -116,7 +116,7 @@ modules
 	system apps/other/UnZip-6.0
 
 	apps/gnu/bzip2-1.0.5
-	system REBOL/Boron-0.1.0
+	system REBOL/Boron--current
 	system REBOL/ORCA--current
 
 	apps/utils/man2html
