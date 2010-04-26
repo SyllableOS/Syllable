@@ -1,7 +1,7 @@
 #! /usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.11.12
+# Version 0.11.13
 # Copyright (c) 2002-2010 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -976,9 +976,9 @@ def installModule staging, target
 									end
 								} and
 								! (links = recipe['links'] and links != '') ||
-								(	system?(staging) and
-									recipe['system-prefix-var'] and not
-									exists?('framework/headers') ||
+								(	not system? staging or
+									recipe['system-prefix-var'] or  # --includedir was configured
+									exists? 'framework/headers' or
 									begin
 										@log.header 'Creating temporary headers directory'
 										action superAccess + 'mkdir --parents framework/headers'
@@ -2255,7 +2255,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.11.12',
+	puts 'Syllable Build System 0.11.13',
 		'Copyright (c) 2002-2010 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
