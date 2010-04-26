@@ -14,4 +14,10 @@ make				true
 
 system-prefix-var	DESTDIR
 install-tree
+
 documentation		README LICENSE ChangeLog
+
+; Sync hardware clock to software clock on shutdown:
+links
+					../init.d/setclock /etc/rc.d/rc0.d/K45setclock
+					../init.d/setclock /etc/rc.d/rc6.d/K45setclock
