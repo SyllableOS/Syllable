@@ -8,18 +8,22 @@ then
 else
 	if [ -e /system/resources/DirectFrameBuffer -a `id --user` = 0 ]
 	then
-		browser="links -g"
+#		Wouldn't work with a remote Syllable Server, and DirectFB hangs on some video chips:
+#		browser="links -g"
+		browser="links"
 	else
 		browser="links"
 	fi
 fi
 
-if [ "$1" = "" ]; then
+if [ "$1" = "" ]
+then
 	echo "Usage: man [section] title"
 	exit;
 fi
 
-if [ "$2" = "" ]; then
+if [ "$2" = "" ]
+then
 	section="?"
 	cmd=$1
 else
@@ -29,12 +33,14 @@ fi
 
 file=`find $manpath -name "$cmd.$section.html" -print | head -n1`
 
-if [ "$file" != "" ]; then
+if [ "$file" != "" ]
+then
 	$browser $file 2>&1 >/dev/null &
 #	Text mode:
 #	$browser $file &
 else
-	if [ "$2" = "" ]; then
+	if [ "$2" = "" ]
+	then
 		echo "No manual entry for $cmd"
 	else
 		echo "No entry for $cmd in section $section of the manual"
