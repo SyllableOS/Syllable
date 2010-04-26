@@ -17,7 +17,8 @@ install-tree
 
 documentation		README LICENSE ChangeLog
 
-; Sync hardware clock to software clock on shutdown:
+; Sync hardware clock and software clock on startup and shutdown:
 links
-					../init.d/setclock /etc/rc.d/rc0.d/K45setclock
-					../init.d/setclock /etc/rc.d/rc6.d/K45setclock
+	../init.d/setclock /etc/rc.d/rcsysinit.d/S42setclock
+	../init.d/setclock /etc/rc.d/rc0.d/K45setclock
+	../init.d/setclock /etc/rc.d/rc6.d/K45setclock
