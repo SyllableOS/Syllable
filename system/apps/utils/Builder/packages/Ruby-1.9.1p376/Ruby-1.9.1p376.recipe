@@ -16,7 +16,7 @@ recommends
 	ZLibrary
 	NCurses
 	ReadLine
-	OpenSSL
+	OpenSSL < 1
 
 test-targets		test
 
