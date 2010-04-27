@@ -36,32 +36,25 @@ tree
 	system/programs
 	system/libraries
 
-;	For compatibility:
-
-	bin
-
-;	usr/etc
-;	For NCurses:
-	usr/include
-;	For GhostScript:
-	usr/include/sys
-;	usr/info
-	usr/lib
-;	usr/man
+;	For third-party software managers:
+	usr/etc
+	usr/libexec
 ;	(For terminfo:)
 	usr/share
+	usr/man
+	usr/info
 
 ;	For manually compiled software:
+	usr/local/etc
 ;	For Perl?
 	usr/local/bin
-	usr/local/etc
-	usr/local/include
-	usr/local/info
-	usr/local/lib
-	usr/local/libexec
-	usr/local/man
 	usr/local/sbin
+	usr/local/libexec
+	usr/local/lib
+	usr/local/include
 	usr/local/share
+	usr/local/man
+	usr/local/info
 
 resources
 	boot/grub/	menu.lst				text/plain

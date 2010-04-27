@@ -39,9 +39,17 @@ tree
 	usr/index/tasks/start
 	usr/index/manuals
 
+;	For compatibility:
+
+	bin
 	sbin
+
 	usr/bin
 	usr/sbin
+	usr/lib
+	usr/include
+;	For GhostScript:
+	usr/include/sys
 
 	users home.png
 
