@@ -39,7 +39,7 @@ finish
 	sudo rm resources/index/documentation etc/Makefile system/icons/Makefile &&
 
 ;	Clean out Desktop stuff:
-	sudo rm system/start.sh &&
+	sudo rm system/start.sh system/network-start.sh &&
 
 ;	Location specific:
 ;	sudo ln -sf /system/index/data/zoneinfo/Europe/Amsterdam etc/localtime &&
