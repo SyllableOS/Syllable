@@ -59,15 +59,15 @@ install-tree
 install				true
 install-files
 	boron				programs/
-	libboron.so.0.1.5	framework/libraries/
+	libboron.so.0.1.4	framework/libraries/
 	boron.h				framework/headers/boron/
 	urlan/urlan.h		framework/headers/boron/
 	urlan/urlan_atoms.h	framework/headers/boron/
 	urlan/bignum.h		framework/headers/boron/
 
 links
-	libboron.so.0.1.5	framework/libraries/libboron.so.0
-	libboron.so.0.1.5	framework/libraries/libboron.so
+	libboron.so.0.1.4	framework/libraries/libboron.so.0
+	libboron.so.0.1.4	framework/libraries/libboron.so
 
 documentation		LICENSE LICENSE.GPL
 develop-docs
