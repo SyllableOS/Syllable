@@ -69,7 +69,6 @@ modules
 
 ;	Overwrites profile:
 	other/config/etc
-	other/init
 
 ;	For rescopy:
 	apps/gnu/BinaryUtilities-2.19.1-objcopy

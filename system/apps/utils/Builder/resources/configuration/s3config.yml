@@ -1,4 +1,7 @@
 #aws_access_key_id: 11111111111111111111111
 #aws_secret_access_key: 222222222222222222222
+
 ssl_cert_dir: /etc/ssl/certs
+
+# Needed for S3 Europe:
 #aws_calling_format: SUBDOMAIN

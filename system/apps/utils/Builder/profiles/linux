@@ -147,6 +147,8 @@ prepare
 	sudo ln -s /resources/index/programs/python				usr/bin/
 
 resources
+	system/											scripts/user-*.sh
+
 	etc/											linux/ld.so.conf
 	etc/											linux/inittab
 	etc/sysconfig/									linux/clock

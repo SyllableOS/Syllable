@@ -1,11 +1,6 @@
 # Time zone
 #export TZ=Europe/Amsterdam
 
-# Language
-#export LANG=<ll>_<CC>.<charmap><@modifiers>
-#export LANG=nl_NL.UTF-8@euro
-#export LANG=en_GB.ISO-8859-1
-
 # Remove global access on newly created files for higher security
 #umask 027
 

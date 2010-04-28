@@ -85,6 +85,7 @@ prepare
 
 resources
 	system/config/		kernel.cfg					text/plain
+	system/				scripts/*.sh
 
 	etc/					configuration/passwd		text/plain
 	etc/					configuration/group			text/plain
