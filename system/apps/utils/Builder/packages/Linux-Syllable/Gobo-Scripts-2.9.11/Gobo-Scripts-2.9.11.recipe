@@ -24,6 +24,8 @@ links
 	/bin/bash											/System/Links/Executables/
 ;	For X:
 	/system/index/programs/mcookie						/System/Links/Executables/
+	/System/Index/bin/python							/system/index/programs/
+	/System/Index/bin/perl								/system/index/programs/
 ;	These are destructive!
 ;	/System/Index/share/								/usr/share
 ;	/System/Index/include/								/usr/include
