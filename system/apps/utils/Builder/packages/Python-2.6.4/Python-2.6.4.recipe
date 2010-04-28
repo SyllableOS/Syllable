@@ -47,7 +47,9 @@ develop-docs		Demo/
 
 links
 ;	Done in system build:
-;	programs/python			/usr/bin/python
+;	programs/python			/usr/bin/
+;	Can't find own programs:
+	programs/				bin
 ;	Can't find own modules:
 	framework/libraries/	lib
 
