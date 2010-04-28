@@ -15,7 +15,7 @@ configure-options
 ;	Doesn't work as advertised:
 ;	--disable-libutil
 
-post-install		sudo sed -i s/#PermitRootLogin yes/PermitRootLogin no/ $IMAGE/etc/ssh/sshd_config
+post-install		sudo sed -i 's/#PermitRootLogin yes/PermitRootLogin no/' $IMAGE/etc/ssh/sshd_config
 
 ; For LFS boot scripts:
 links				system-programs/sshd /usr/sbin/
