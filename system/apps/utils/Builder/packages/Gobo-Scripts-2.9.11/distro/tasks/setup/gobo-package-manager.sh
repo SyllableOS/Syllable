@@ -21,3 +21,7 @@ export LIBRARY_PATH=/System/Index/lib:$LIBRARY_PATH
 export C_INCLUDE_PATH=/System/Index/include:$C_INCLUDE_PATH
 export CPLUS_INCLUDE_PATH=/System/Index/include:$CPLUS_INCLUDE_PATH
 export PKG_CONFIG_PATH=/System/Index/lib/pkgconfig:/System/Index/share/pkgconfig:$PKG_CONFIG_PATH
+
+# Gobo packages environments
+
+. /System/Links/Environment/Cache
