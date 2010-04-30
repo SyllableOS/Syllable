@@ -7,13 +7,15 @@ description
 licenses			LGPL
 
 home				alsa-project.org
-packages			alsa-lib-1.0.15
 locations
 	http://gd.tuwien.ac.at/opsys/linux/alsa/lib/
 	ftp://ftp.alsa-project.org/pub/lib/
+packages			alsa-lib-1.0.15
 
-build-recommends	doxygen
 recommends			resmgr
+build-recommends
+	doxygen
+	Python
 
 configure-options	--enable-static
 
