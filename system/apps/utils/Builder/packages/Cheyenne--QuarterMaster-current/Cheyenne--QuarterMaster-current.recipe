@@ -12,10 +12,12 @@ locations			http://www.ross-gill.com/QM/
 files				qm.r introduction.html
 
 run-needs
-	REBOL
+	REBOL 2
 	Cheyenne | Apache
 
 patch
+;	Fix for newer Cheyenne/REBOL 2.7.7:
+	sed -i s/debug/qm-debug/																qm.r &&
 ;	Shebang:
 	sed -i 's~local/bin/~bin/env ~'														qm.r &&
 ;	UK time zone:

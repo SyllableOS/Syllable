@@ -14,10 +14,12 @@ packages			Cheyenne-2010.4.25.source
 ;archives			svn checkout http://cheyenne-server.googlecode.com/svn/trunk/ Cheyenne
 
 run-needs
-	REBOL
+	REBOL 2
 	UniServe
 
 patch
+;	Bug fix:
+	sed -i s~incoming-dir/out~incoming-dir/:out~												Cheyenne/HTTPd.r &&
 ;	UniServe path:
 	sed -i s~%../UniServe~%/resources/index/framework/REBOL/UniServe~							Cheyenne/cheyenne.r
 ;	For QuarterMaster:
