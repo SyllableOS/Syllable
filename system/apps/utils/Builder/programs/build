@@ -1,7 +1,7 @@
 #! /usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.11.13
+# Version 0.11.14
 # Copyright (c) 2002-2010 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -582,7 +582,7 @@ def installModule staging, target
 						@log.header 'Installing image files'
 
 						action superAccess + "mkdir " + root and
-						copyFiles 'image', root, superAccess and
+						copyDir 'image', root, superAccess and
 						registerModule staging, superAccess, target, root
 					end
 				else
@@ -686,10 +686,10 @@ def installModule staging, target
 
 									next if destination[0, 1] == '/' and staging and not imaging? staging
 
-									break unless action superAccess + "cp -a #{source} " + File.join(
+									break unless copyFiles source, File.join(
 										destination[0, 1] == '/' ? @image : root,
 										destination
-									)
+									), superAccess
 								end
 							end and
 							(docs = "#{toString recipe['documentation']} #{toString recipe['develop-docs']}") == ' ' ||
@@ -704,7 +704,7 @@ def installModule staging, target
 								begin
 									Dir.chdir @workDir
 									Dir.chdir target
-									action superAccess + "cp -a #{docs} " + dir
+									copyFiles docs, dir, superAccess
 								end
 							end and
 							begin
@@ -972,7 +972,7 @@ def installModule staging, target
 									if exists? dir = File.join(recipePath(kin), 'distro')
 										@log.header 'Overlaying extra files' + (ancestor ? ' from ancestor ' + kin : '')
 
-										break unless copyFiles dir, root, superAccess
+										break unless copyDir dir, root, superAccess
 									end
 								} and
 								! (links = recipe['links'] and links != '') ||
@@ -1712,11 +1712,15 @@ def dereference file
 		file
 end
 
-def copyFiles sourceDir, destinationDir, superAccess
-	action superAccess + "cp -a #{File.join sourceDir, '*'} " + destinationDir and
+def copyFiles source, destination, superAccess
+	action superAccess + "cp --recursive --no-dereference --preserve=link,mode,timestamps #{source} " + destination
+end
+
+def copyDir source, destination, superAccess
+	copyFiles File.join(source, '*'), destination, superAccess and
 	begin
 		# FIXME: crude way to remove possible CVS dirs from files
-		Dir.chdir destinationDir
+		Dir.chdir destination
 		deleteCruft superAccess
 	end
 end
@@ -2255,7 +2259,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.11.13',
+	puts 'Syllable Build System 0.11.14',
 		'Copyright (c) 2002-2010 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
