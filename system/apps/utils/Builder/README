@@ -3,7 +3,7 @@ The Syllable Build System, Manual
 
 Copyright (c) 2003,2006-2008,2010 Kaj de Vos
 
-22 April 2010
+2 May 2010
 
 http://syllable.org
 
@@ -645,10 +645,10 @@ It is basically similar for Syllable Server:
     build log failures
 
     cd stage/image
-    build scrub
+    sudo build scrub
 
     cd ../..
-    construct distro SyllableServer 1.0 i486
+    sudo construct distro SyllableServer 1.0 i486
 
 Along the way you will have to fix build failures, using techniques
 from this manual. Please have patience, and use at your own risk. Or,
