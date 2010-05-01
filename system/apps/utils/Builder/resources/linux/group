@@ -18,7 +18,9 @@ messagebus:x:18:
 haldaemon:x:19:
 named:x:20:named
 apache:x:25:apache
+www:x:30:www
 mail:x:34:mail
+news:x:36:news
 ftp:x:45:ftp
 vsftpd:x:47:vsftpd
 rsyncd:x:48:rsyncd

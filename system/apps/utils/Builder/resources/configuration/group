@@ -1,10 +1,11 @@
 system:x:0:root
 administrators:x:1:administrator
 bin:x:2:bin
-man:x:3:man
-network:x:4:www
 named:x:20:named
 apache:x:25:apache
+www:x:30:www
+mail:x:34:mail
+news:x:36:news
 ftp:x:45:ftp
 vsftpd:x:47:vsftpd
 rsyncd:x:48:rsyncd
