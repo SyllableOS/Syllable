@@ -2,6 +2,7 @@ authors				Kaj de Vos
 status				developing
 notes				Alpha pre-release version
 
+version				3alpha98
 headline			Relative Expression Based Object Language
 description
 	An entirely new version of REBOL.
@@ -13,27 +14,40 @@ description
 	REBOL 3.0 is an entirely new design built from the ground up using the insights gained over years of REBOL development and usage. In addition, REBOL 3.0 is more open to enable greater contribution from the development community.
 licenses			freeware
 
-home
-	www.rebol.com/rebol3/
-;	www.rebol.net
-locations			http://www.rebol.com/downloads/
+home					www.rebol.com/rebol3/
+locations
+;	For host kit:
+;	http://www.rebol.com/downloads/
+;	For binary:
+	http://www.rebol.com/r3/downloads/
 ;packages
+; Binary:
+files
+;	Ubuntu:
+	r3-a98-4-2
+;	Fedora:
+;	r3-a98-4-3
 
 ; For pre-built binary:
-;make				true
+make				true
 
 install-tree
-	bin
-;	include
-	lib
-install				true
+	programs
+	framework/headers
+	framework/libraries
+install				chmod +x r3-a98-4-2
+;install				true
 install-files
-	core			bin/
-	src/include/	.
-	libr3.so		lib/
+;	For binary:
+	r3-a98-4-2		programs/r3-core
+;	For host kit:
+;	core			programs/r3-core
+;	src/include/*	framework/headers
+;	libr3.so		framework/libraries/
 
-documentation		info.txt
+;documentation		info.txt
 
 links
-;	core			bin/rebol
-	core			bin/r3
+;	r3-core			programs/rebol
+;	r2-core			programs/rebol-core
+	r3-core			programs/r3

@@ -1,7 +1,7 @@
 authors				Kaj de Vos
 status				testing
-notes				Tested with REBOL 2.7.7
 
+version				2.7.7
 headline			Relative Expression Based Object Language - command line edition
 description
 	REBOL uses "relative expressions" (context dependent dialects) to create a powerful new dimension similar to that found in natural human languages.
