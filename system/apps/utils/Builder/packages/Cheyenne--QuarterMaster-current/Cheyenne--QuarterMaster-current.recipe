@@ -16,8 +16,9 @@ run-needs
 	Cheyenne | Apache
 
 patch
-;	Fix for newer Cheyenne/REBOL 2.7.7:
+;	Fixes for newer Cheyenne:
 	sed -i s/debug/qm-debug/																qm.r &&
+	sed -i 's/interpolate replace sanitize/interpolate sanitize/'						qm.r &&
 ;	Shebang:
 	sed -i 's~local/bin/~bin/env ~'														qm.r &&
 ;	UK time zone:
