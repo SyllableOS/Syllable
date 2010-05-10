@@ -1,6 +1,6 @@
 authors				Kaj de Vos
 status				testing
-notes				Tested with 0.3.11
+notes				Tested with 0.3.12
 
 headline			Model-View-Controller based web framework written in REBOL
 description
@@ -16,9 +16,6 @@ run-needs
 	Cheyenne | Apache
 
 patch
-;	Fixes for newer Cheyenne:
-	sed -i s/debug/qm-debug/																qm.r &&
-	sed -i 's/interpolate replace sanitize/interpolate sanitize/'						qm.r &&
 ;	Shebang:
 	sed -i 's~local/bin/~bin/env ~'														qm.r &&
 ;	UK time zone:
