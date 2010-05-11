@@ -225,7 +225,7 @@ modules
 	bootstrap libraries/FreeType-2.3.9
 
 ;	stage libraries/libjpeg-6b-static
-	stage libraries/LibJPEG-7
+	stage libraries/LibJPEG-8a
 	stage libraries/LibPNG-1.2.37
 	stage libraries/GIFLib-4.1.6
 	stage libraries/libtiff-3.8.2

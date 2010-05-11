@@ -26,7 +26,7 @@ modules
 ;	For SDL-TTF:
 	system libraries/FreeType-2.3.9
 
-	system libraries/LibJPEG-7
+	system libraries/LibJPEG-8a
 	system libraries/LibPNG-1.2.37
 	system libraries/GIFLib-4.1.6
 	system libraries/libtiff-3.8.2

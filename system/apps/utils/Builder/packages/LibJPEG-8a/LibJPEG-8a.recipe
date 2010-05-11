@@ -1,0 +1,34 @@
+authors				Kaj de Vos
+status				testing
+
+headline			JPEG image compression programming library
+description
+	Widely used free library for JPEG image compression.
+
+	This package contains C software to implement JPEG image encoding, decoding, and transcoding. JPEG (pronounced "jay-peg") is a standardized compression method for full-color and gray-scale images.
+
+	This software implements JPEG baseline, extended-sequential, and progressive compression processes. Provision is made for supporting all variants of these processes, although some uncommon parameter settings aren't implemented yet. We have made no provision for supporting the hierarchical or lossless processes defined in the standard.
+licenses			other
+
+home				www.ijg.org
+locations
+	http://www.ijg.org/files/
+;	ftp://ftp.uu.net/graphics/jpeg/
+packages			jpegsrc.v8a
+
+_configure-options
+;	Somehow, on GLibC 2.3.x, --enable-shared is needed to also get it to build a static library. However, not having the patch for a shared library on Syllable in this recipe, the shared version is not built. :-)
+	--enable-shared
+	--enable-static
+;	MBs:
+	--enable-maxmem=
+
+test-targets		test
+
+system-prefix-var	DESTDIR
+;install-targets		install install-lib
+
+documentation		README usage.txt wizard.txt change.log
+build-docs			install.txt
+develop-docs		filelist.txt libjpeg.txt example.c
+internal-docs		structure.txt coderules.txt jconfig.txt
