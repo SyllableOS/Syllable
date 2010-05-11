@@ -1,0 +1,31 @@
+authors				Kaj de Vos
+status				testing
+
+version				2.7.7
+headline			Relative Expression Based Object Language - command line edition
+description
+	REBOL uses "relative expressions" (context dependent dialects) to create a powerful new dimension similar to that found in natural human languages.
+
+	REBOL provides a lightweight platform for Internet applications. REBOL's power makes applications small so they are less expensive to create, distribute, maintain, and upgrade. In the size of a typical web page, you can fit an entire REBOL application.
+
+	REBOL/Core is the kernel of the REBOL distributed computing platform. Designed for the semantic exchange and interpretation of information REBOL/Core is the engine that powers all REBOL products. REBOL/Core provides system-independent code, a common data model, compression, and more than a dozen Internet protocols built-in.
+licenses			freeware
+
+home				www.rebol.com
+locations			http://www.rebol.com/downloads/v277/
+packages
+;	Ubuntu build; segfaults on rebol.com Demos:
+	rebol-core-277-4-2 REBOL2-Core--current
+;	Fedora build; bails on old Ubuntu with floating point exception:
+;	rebol-core-277-4-3 REBOL2-Core--current
+
+make				true
+
+install-tree		programs
+install				true
+install-files		rebol programs/r2-core
+
+links
+	r2-core			programs/rebol
+	r2-core			programs/rebol-core
+	r2-core			programs/r2

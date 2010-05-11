@@ -189,5 +189,5 @@ modules
 
 ;	Binaries
 
-	REBOL/REBOL-View-2-current
+	REBOL/REBOL2-View--current
 	REBOL/AltME--current

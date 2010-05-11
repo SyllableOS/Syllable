@@ -262,7 +262,7 @@ modules
 
 
 ;	Binaries
-	REBOL/REBOL-Core-2-current
+	REBOL/REBOL2-Core--current
 
 
 ;	REBOL stacks
