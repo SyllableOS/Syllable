@@ -289,5 +289,9 @@ modules
 
 finish
 	sudo mv users/root/ users/administrator &&
+
+;	Prevent anonymous CVS warning:
+	sudo touch users/.template/.cvspass users/administrator/.cvspass &&
+
 ;	Clean out Desktop stuff for now:
 	sudo rm -r users/.template/Settings/ users/administrator/Settings/ users/.template/Desktop/ users/administrator/Desktop/ users/.template/Bookmarks/ users/administrator/Bookmarks/
