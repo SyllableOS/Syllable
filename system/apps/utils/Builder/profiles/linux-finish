@@ -2,7 +2,7 @@
 
 tree
 	users/.template/.mc/
-	users/root/.mc/
+	users/administrator/.mc/
 
 resources
 ;	Kernel modules:
@@ -24,13 +24,12 @@ resources
 
 ;	Midnight Commander configuration:
 	users/.template/.mc/							configuration/ini
-	users/root/.mc/									configuration/ini
+	users/administrator/.mc/							configuration/ini
 
 finish
 ;	Clean out kernel source link from the host system:
 	sudo rm /lib/modules/2.6.27.44-Syllable/build &&
 
-	sudo mv users/root/ users/administrator &&
 	sudo chown -R administrator:administrators users/administrator &&
 
 	sudo cp resources/grub/framework/libraries/grub/i386-pc/* boot/grub/ &&

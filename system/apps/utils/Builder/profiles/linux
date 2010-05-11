@@ -286,3 +286,8 @@ modules
 	apps/gnu/MidnightCommander-4.7.0.2
 
 ;	apps/other/rsync-2.6.9
+
+finish
+	sudo mv users/root/ users/administrator &&
+;	Clean out Desktop stuff for now:
+	sudo rm -r users/.template/Settings/ users/administrator/Settings/ users/.template/Desktop/ users/administrator/Desktop/ users/.template/Bookmarks/ users/administrator/Bookmarks/
