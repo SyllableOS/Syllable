@@ -47,6 +47,8 @@
 		Gracefully handle the case where init_etherdev() returns NULL
 	2003 Aug 18  Michael Krueger <invenies@web.de>
 		Ported the driver to Syllable/AtheOS
+	2009 Nov 11 Carlos Pizarro <kr105@kr105.com>
+		Added product id for HP laptop's card
 */
 
 #include <kernel/malloc.h>
@@ -416,6 +418,11 @@ struct pci_id_info {
 	{ "Intel Pro/100 VE",
 	  PCI_VENDOR_ID_INTEL, 0x1092,
 	  0 
+	},
+	// HP laptops too ;)
+	{ "Intel Pro/100 VE",
+	  PCI_VENDOR_ID_INTEL, 0x1068,
+	  0
 	},
 	{ "Intel Pro/100 VM (LOM)",
 	  PCI_VENDOR_ID_INTEL, 0x1033,
