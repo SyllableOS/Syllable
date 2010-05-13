@@ -430,6 +430,7 @@ AGP_Gatt_s *alloc_gatt(void)
 {
 	uint32 nApSize = AGP_GET_APERTURE(g_psBridge);
 	uint32 nEntries = nApSize >> AGP_PAGE_SHIFT;
+	AreaInfo_s sAreaInfo;
 	AGP_Gatt_s *psGatt;
 	
 	kerndbg(KERN_DEBUG, "AGP: allocating GATT for aperture of size %dMB\n", nApSize /(1024*1024));
@@ -443,17 +444,22 @@ AGP_Gatt_s *alloc_gatt(void)
 	psGatt = kmalloc(sizeof(AGP_Gatt_s), MEMF_KERNEL | MEMF_CLEAR);
 	if(!psGatt)
 		return NULL;
+	
+	void *pVirtual = (void *)psGatt->pVirtual;
 
 	psGatt->nEntries = nEntries;
 	kerndbg(KERN_DEBUG, "AGP: Creating area for GATT\n");
-	psGatt->nId = create_area("agp_gatt",(void **)&psGatt->pVirtual, nEntries * sizeof(uint32),
-							  nEntries * sizeof(uint32), AREA_KERNEL | AREA_FULL_ACCESS, AREA_CONTIGUOUS);
+	psGatt->nId = create_area("agp_gatt",&pVirtual, nEntries * sizeof(uint32),
+							  nEntries * sizeof(uint32), AREA_ANY_ADDRESS | AREA_SHARED |
+							  AREA_WRCOMB | AREA_FULL_ACCESS, AREA_CONTIGUOUS);
 	if(psGatt->nId < 0) {
 		kerndbg(KERN_WARNING, "AGP: gatt area creation failed\n");
 		return NULL;
 	}
 	
-	if(!psGatt->pVirtual) {
+	get_area_info(psGatt->nId, &sAreaInfo);
+	
+	if(!(psGatt->pVirtual = sAreaInfo.pAddress)) {
 		kerndbg(KERN_WARNING, "AGP: contiguous allocation failed\n");
 		delete_area(psGatt->nId);
 		kfree(psGatt);
@@ -478,26 +484,28 @@ void free_gatt(AGP_Gatt_s *psGatt)
 status_t map_aperture(int nReg)
 {
 	PCI_Entry_s *psDev = g_psBridge->psDev;
-	
+		
 	kerndbg(KERN_DEBUG, "AGP: map_aperture: calling pci->get_bar_info\n");
 	
 	if(g_psBus->get_bar_info(psDev, (uintptr_t *)&g_psBridge->nApBase, (uintptr_t *)&g_psBridge->nApSize,
-							nReg, PCI_BAR_TYPE_MEM) != 0) {
+							 nReg, PCI_BAR_TYPE_MEM) != 0) {
 		kerndbg(KERN_WARNING, "AGP: map_aperture: could not get register info for register 0x%x\n", nReg);
 		return -ENXIO;
 	}
 	
-	kerndbg(KERN_DEBUG, "AGP: map_aperture: aperture should be create at %p\n", g_psBridge->nApBase);
+	void *pApBase = (void *)g_psBridge->nApBase;
 	
-	if(g_psBridge->nApAreaId = create_area("agp_aperture", (void **)&g_psBridge->nApBase, PAGE_ALIGN(g_psBridge->nApSize),
-									  PAGE_ALIGN(g_psBridge->nApSize), AREA_BASE_ADDRESS | AREA_KERNEL | AREA_SHARED |
-									  AREA_WRCOMB | AREA_FULL_ACCESS, AREA_FULL_LOCK) < 0)
+	kerndbg(KERN_DEBUG, "AGP: map_aperture: aperture should be create at %p\n", pApBase);
+	
+	if((g_psBridge->nApAreaId = create_area("agp_aperture", &pApBase, PAGE_ALIGN(g_psBridge->nApSize),
+									  PAGE_ALIGN(g_psBridge->nApSize), AREA_EXACT_ADDRESS | AREA_SHARED |
+									  AREA_WRCOMB | AREA_FULL_ACCESS, AREA_FULL_LOCK)) < 0)
 	{
 		kerndbg(KERN_WARNING, "AGP: map_aperture: could not create area for aperture map\n");
 		return -ENXIO;
 	}
 	
-	kerndbg(KERN_DEBUG, "AGP: map_aperture: aperture created at %p\n", g_psBridge->nApBase);
+	kerndbg(KERN_DEBUG, "AGP: map_aperture: aperture created at %p\n", pApBase);
 	
 	return 0;
 }
@@ -616,8 +624,7 @@ AGP_bus_s sBus = {
 	alloc_memory,
 	free_memory,
 	bind_memory,
-	unbind_memory,
-	memory_info
+	unbind_memory
 };
 
 void *agp_bus_get_hooks(int nVersion)
@@ -658,13 +665,3 @@ status_t device_uninit(int nDeviceID)
 {
 	return 0;
 }
-
-
-
-
-
-
-
-
-
-
