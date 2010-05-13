@@ -1,3 +1,8 @@
+* May 13, 2010, Kaj de Vos *
+
+Added an extra PCI ID to the eepro100 network driver for HP laptops. Patch from
+Carlos Pizarro.
+
 * March 6, 2010, Kaj de Vos *
 
 Adapted init to the new structure of resource packages and the symlink pools.
