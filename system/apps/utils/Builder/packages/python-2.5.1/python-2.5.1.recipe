@@ -1,27 +1,54 @@
 authors				Kaj de Vos
 status				testing
 
-licenses			OSI
-home				www.python.org
-packages			Python-2.5.1
-locations			http://www.python.org/ftp/python/2.5.1/
+headline			Object oriented dynamic programming language
+description
+	Python is a programming language that lets you work more quickly and integrate your systems more effectively. You can learn to use Python and see almost immediate gains in productivity and lower maintenance costs.
 
-build-recommends
-	readline
-	openssl
+	Python is a remarkably powerful dynamic programming language that is used in a wide variety of application domains. Python is often compared to Tcl, Perl, Ruby, Scheme or Java. Some of its key distinguishing features include:
+		* very clear, readable syntax
+		* strong introspection capabilities
+		* intuitive object orientation
+		* natural expression of procedural code
+		* full modularity, supporting hierarchical packages
+		* exception-based error handling
+		* very high level dynamic data types
+		* extensive standard libraries and third party modules for virtually every task
+		* extensions and modules easily written in C, C++ (or Java for Jython, or .NET languages for IronPython)
+		* embeddable within applications as a scripting interface
+licenses			OSI
+
+home				www.python.org
+locations			http://www.python.org/ftp/python/2.5.1/
+packages			Python-2.5.1
+
+recommends
+	ReadLine
+	OpenSSL
 	expat
 	db
 
+; Creates both framework/headers/ and include/ directories and can't merge:
+no-includedir
+configure-options	--enable-shared
+
 test-targets		test
 
-;install-prefix-var	DESTDIR
+system-prefix-var	DESTDIR
 ;install-targets		altinstall
 
 documentation
 	README LICENSE Misc/NEWS Misc/HISTORY
-;	Misc Doc
-develop-docs		Demo
+;	Misc/ Doc/*
+develop-docs		Demo/
 
-;links				bin/python /usr/bin/python
+links
+;	Done in system build:
+;	programs/python			/usr/bin/
+;	Can't find own programs:
+	programs/				bin
+;	Can't find own modules:
+	framework/libraries/	lib
 
-;delete-files		lib/python2.5/test
+; Big:
+;delete-files		framework/libraries/python2.5/test/

@@ -43,7 +43,7 @@ diff -ru python-2.5.1-original/configure.in python-2.5.1/configure.in
  	  LDLIBRARY='libpython$(VERSION).so'
  	  BLDLIBRARY='-L. -lpython$(VERSION)'
 -	  RUNSHARED=DLL_PATH=`pwd`:${DLL_PATH:-/atheos/sys/libs:/atheos/autolnk/lib}
-+	  RUNSHARED=DLL_PATH=`pwd`:${DLL_PATH:-/system/libraries:/resources/indexes/lib}
++	  RUNSHARED=DLL_PATH=`pwd`:${DLL_PATH:-/resources/indexes/lib:/system/libraries}
  	  ;;
    esac
  else # shared is disabled
@@ -163,7 +163,6 @@ diff -ru python-2.5.1-original/Lib/distutils/command/build_ext.py python-2.5.1/L
              from distutils import sysconfig
  
              template = "python%d.%d"
-Only in python-2.5.1-original/Lib: plat-atheos
 diff -ru python-2.5.1-original/Lib/test/regrtest.py python-2.5.1/Lib/test/regrtest.py
 --- python-2.5.1-original/Lib/test/regrtest.py	2007-03-08 20:58:46.000000000 +0100
 +++ python-2.5.1/Lib/test/regrtest.py	2007-08-18 06:51:41.000000000 +0200
@@ -238,8 +237,6 @@ diff -ru python-2.5.1-original/pyconfig.h.in python-2.5.1/pyconfig.h.in
  
  /* Define this if you have BeOS threads. */
  #undef BEOS_THREADS
-Only in python-2.5.1-original/Python: dynload_atheos.c
-Only in python-2.5.1-original/Python: thread_atheos.h
 diff -ru python-2.5.1-original/Python/thread.c python-2.5.1/Python/thread.c
 --- python-2.5.1-original/Python/thread.c	2006-07-21 09:59:47.000000000 +0200
 +++ python-2.5.1/Python/thread.c	2007-08-18 06:36:22.000000000 +0200
@@ -290,10 +287,10 @@ diff -ru python-2.5.1-original/setup.py python-2.5.1/setup.py
 -            lib_dirs += ['/system/libs', '/atheos/autolnk/lib']
 +        # Check for Syllable which has libraries in non-standard locations
 +        if platform == 'syllable':
-+            lib_dirs += ['/system/libraries', '/resources/indexes/lib']
++            lib_dirs += ['/resources/indexes/lib', '/system/libraries']
              lib_dirs += os.getenv('LIBRARY_PATH', '').split(os.pathsep)
 -            inc_dirs += ['/system/include', '/atheos/autolnk/include']
-+            inc_dirs += ['/system/development/headers', '/resources/indexes/include']
++            inc_dirs += ['/resources/indexes/include', '/system/development/headers']
              inc_dirs += os.getenv('C_INCLUDE_PATH', '').split(os.pathsep)
  
          # OSF/1 and Unixware have some stuff in /usr/ccs/lib (like -ldb)

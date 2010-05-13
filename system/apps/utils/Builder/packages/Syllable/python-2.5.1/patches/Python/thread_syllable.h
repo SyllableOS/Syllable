@@ -163,7 +163,7 @@ static void do_PyThread_exit_prog(int status, int no_cleanup)
 {
 	dprintf(("PyThread_exit_prog(%d) called\n", status));
 
-	/* No need to do anything, the threads get torn down if main()exits. */
+	/* No need to do anything, the threads get torn down if main() exits. */
 	if (no_cleanup)
 		_exit(status);
 	else
