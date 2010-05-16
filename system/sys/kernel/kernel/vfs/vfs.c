@@ -525,7 +525,7 @@ static int lookup_parent_inode( Inode_s *psParent, const char *pzPath, const cha
 		{
 			if ( '/' == c )
 			{
-				if ( 0 != nLen || ( 1 == nLen && c == '.' ) )
+				if ( 0 != nLen )
 				{
 					nError = cfs_locate_inode( psParent, pzCurName, nLen, &psInode, true );
 
@@ -544,15 +544,20 @@ static int lookup_parent_inode( Inode_s *psParent, const char *pzPath, const cha
 						psInode = NULL;
 						break;
 					}
-
-					nLen = 0;
-					psParent = psInode;
+					if ( pzPath[i + 1] !=0 )
+					/* looking forward to see if after "/" is another element,
+					*  if not we leave our values as they are */
+					{
+						nLen = 0;
+						psParent = psInode;
+						pzCurName = &pzPath[i + 1];
+					}
 				}
 				else
 				{
 					psInode = psParent;
+					pzCurName = &pzPath[i + 1];
 				}
-				pzCurName = &pzPath[i + 1];
 			}
 			else
 			{
