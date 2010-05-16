@@ -1,9 +1,16 @@
+* May 17, 2010, Kaj de Vos *
+
+Fixed the VFS to allow creating a directory specified with a trailing slash.
+Found by Stefano D'Angelo in Python code, researched by Anthony and patched by
+"Chamel".
+
 * May 13, 2010, Kaj de Vos *
 
 Added an extra PCI ID to the eepro100 network driver for HP laptops. Patch from
 Carlos Pizarro.
 
-Patch from Dee to fix the AGP bus manager. Re-enabled the VIA AGP driver.
+Patch from Dee to fix memory management in the AGP bus manager.
+Re-enabled the VIA AGP driver.
 
 * March 6, 2010, Kaj de Vos *
 
