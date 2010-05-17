@@ -1,3 +1,8 @@
+* May 17, 2010, Kaj de Vos *
+
+Sourcery: Fixed the surplus extra blank line added at the end of files when saving.
+Fixed compilation with the reorganised system headers. Patches by "Chamel".
+
 * January 28, 2010, Anthony Morphett *
 
 Bugfix for aedit: window blank when size is exactly 600x375.

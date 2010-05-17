@@ -1637,10 +1637,14 @@ void MainWindow::Save(const String& cFile)
 		String cEditorString;
 		uint nLines=pcEditor->GetLineCount();
 
-		for (uint i=0;i<=nLines;i++)
+		for (uint i=0;i<nLines;i++)
 		{
-			cEditorString += pcEditor->GetLine(i); 
+			cEditorString += pcEditor->GetLine(i);
 			cEditorString += "\n";
+		}
+		if( nLines != 0 )
+		{
+			cEditorString += pcEditor->GetLine(nLines);
 		}
 		pcFile->Write(cEditorString.c_str(),cEditorString.size());
 		pcFile->Flush();

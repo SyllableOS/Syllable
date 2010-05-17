@@ -23,6 +23,7 @@
 #include <gui/image.h>
 #include <util/resources.h>
 #include <atheos/image.h>
+#include <kernel/sysinfo.h>
 
 //codeview specific
 #include <codeview/format.h>

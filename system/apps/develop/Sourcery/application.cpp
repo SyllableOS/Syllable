@@ -18,6 +18,7 @@
 #include "mainwindow.h"
 #include <util/string.h>
 #include <storage/registrar.h>
+#include <atheos/time.h>
 
 using namespace os;
 
@@ -86,34 +87,3 @@ void App::HandleMessage( os::Message* pcMsg )
 {
 	os::Application::HandleMessage( pcMsg );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
