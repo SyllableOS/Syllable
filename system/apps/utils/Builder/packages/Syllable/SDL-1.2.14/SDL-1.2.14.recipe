@@ -1,0 +1,7 @@
+authors
+	Kaj de Vos
+	Rui Caridade
+maintainers			Kaj de Vos
+status				testing
+
+configure-env		LDFLAGS "$LDFLAGS -lstdc++ -lsyllable -lmedia"

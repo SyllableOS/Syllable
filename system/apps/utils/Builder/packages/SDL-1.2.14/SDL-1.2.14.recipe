@@ -1,0 +1,43 @@
+authors
+	Arno Klenke
+	Kaj de Vos
+	Rui Caridade
+maintainers			Kaj de Vos
+status				testing
+warnings			Patch assumes system installation!
+
+headline			Cross-platform multimedia library
+description
+	Simple DirectMedia Layer is a cross-platform multimedia library designed to provide low level access to audio, keyboard, mouse, joystick, 3D hardware via OpenGL, and 2D video framebuffer. It is used by MPEG playback software, emulators, and many popular games.
+licenses			LGPL-2 PD
+
+home				www.libsdl.org
+locations			http://www.libsdl.org/release/
+
+build-needs
+;	AutoMake < 1.10
+	AutoMake
+	AutoConfigure
+build-recommends
+;	Warnings on newer versions?:
+	AutoConfigure <= 2.61
+;	For DirectFrameBuffer:
+	PackageConfigure
+recommends			DirectFrameBuffer >= 0.9.15 < 1
+
+patch
+;	autoreconf
+	./autogen.sh
+
+;configure-options	--disable-video-directfb
+
+system-prefix-var	DESTDIR
+
+documentation
+	README README-SDL.txt BUGS COPYING WhatsNew CREDITS TODO
+	docs.html
+build-docs			INSTALL README.SVN
+develop-docs
+	docs/index.html docs/html/
+	test/
+internal-docs		README.Porting

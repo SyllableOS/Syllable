@@ -1,0 +1,10 @@
+authors				Kaj de Vos
+status				testing
+
+recommends
+	alsa-library >= 0.9.0
+	DirectFrameBuffer >= 0.9.15 < 1
+
+_configure-options
+;	--disable-video-fbcon
+	--disable-video-directfb

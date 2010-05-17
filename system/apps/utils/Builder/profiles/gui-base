@@ -54,7 +54,7 @@ modules
 	system apps/other/SANE-Backends-1.0.18
 
 
-	system libs/sdl-1.2.13
+	system libs/SDL-1.2.14
 ;	sdl-config needs to be in the path:
 	bootstrap libs/SDL--bootstrap
 
