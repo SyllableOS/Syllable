@@ -110,10 +110,11 @@ modules
 	apps/other/MkTemp-1.6
 	apps/gnu/Less-429
 
-	apps/gnu/TAr-1.22
 	apps/gnu/gzip-1.3.12
 	apps/other/Zip-3.0
 	apps/other/7-Zip-9.04
+	apps/other/XZ-Utilities-4.999.9beta
+	apps/gnu/TAr-1.22
 
 	apps/other/CDRTools-2.01.01a61
 
