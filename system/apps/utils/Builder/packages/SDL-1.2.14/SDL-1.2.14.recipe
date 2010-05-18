@@ -29,6 +29,7 @@ patch
 ;	autoreconf
 	./autogen.sh
 
+no-datarootdir
 ;configure-options	--disable-video-directfb
 
 system-prefix-var	DESTDIR

@@ -1,7 +1,7 @@
 authors				Kaj de Vos
 status				testing
 
-headline			Utilities for managing LZMA and XZ compressed files
+headline			Utilities for LZMA and XZ compressed files
 description
 	XZ Utils is free general-purpose data compression software with high compression ratio. XZ Utils were written for POSIX-like systems (GNU/Linux, *BSDs, etc.), but also work on some not-so-POSIX systems like Windows. XZ Utils are the successor to LZMA Utils.
 
