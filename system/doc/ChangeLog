@@ -1,3 +1,7 @@
+* May 18, 2010, Kaj de Vos *
+
+Added XZ-Utils.
+
 * March 23, 2010, Kaj de Vos *
 
 Moved all symlink pools from "indexes/" to "index/". This makes paths throughout the system
