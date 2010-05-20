@@ -1,6 +1,6 @@
 ORCA [
 	Title:		"Package installation library"
-	Version:	0.8.0
+	Version:	0.8.1
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006-2010 Kaj de Vos
@@ -148,7 +148,7 @@ stage-proto: context [
 				yes
 			][
 				all [
-					either exists? target [
+					either any [exists? target  symlink? target] [
 						log/warning join "conflict: replacing " target
 						action join "rm " target
 					][
