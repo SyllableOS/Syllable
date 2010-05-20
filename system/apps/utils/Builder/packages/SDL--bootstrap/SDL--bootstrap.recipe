@@ -4,15 +4,7 @@ status				testing
 inherits			SDL-1.2.14
 packages			SDL-1.2.14
 
-configure			true
-make				true
-
-install-tree
-install				true
-documentation
-develop-docs
-
-; TODO: static-libs:
+; FIXME: static-libs:
 pre-register
 	sed -i s~-I/system/~\$IMAGE/system/development/~		programs/sdl-config &&
 	sed -i s~/system/resources/~\$IMAGE/system/resources/~	programs/sdl-config
