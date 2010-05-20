@@ -10,5 +10,6 @@ _configure-options
 	--disable-video-directfb
 
 pre-register
-	sudo sed -i s~/system/resources/SDL/1.2.14~/system/index~	programs/sdl-config &&
-	sudo sed -i s~/resources/SDL~/resources/index~			programs/sdl-config
+	sudo sed -i s~/system/resources/SDL/1.2.14~/system/index~		programs/sdl-config &&
+	sudo sed -i s~/system/development/resources/SDL/1.2.14~/system/index~	programs/sdl-config &&
+	sudo sed -i s~/resources/SDL~/resources/index~						programs/sdl-config
