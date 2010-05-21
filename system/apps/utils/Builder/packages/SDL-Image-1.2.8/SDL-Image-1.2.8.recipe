@@ -1,6 +1,5 @@
 authors				Kaj de Vos
 status				testing
-warnings
 warnings			Builds upon SDL and LibPNG in the host system.
 
 headline			SDL picture file loading library

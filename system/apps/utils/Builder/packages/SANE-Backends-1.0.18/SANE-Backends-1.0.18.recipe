@@ -2,6 +2,7 @@ authors
 	Kristian Van Der Vliet
 	Kaj de Vos
 status				testing
+warnings			Builds upon at least LibJPEG in the host system.
 
 title				Scanner framework
 headline			Universal scanner interface
