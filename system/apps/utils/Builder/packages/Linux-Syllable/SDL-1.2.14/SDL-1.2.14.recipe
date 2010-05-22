@@ -3,9 +3,9 @@ status				testing
 
 recommends
 	alsa-library >= 0.9.0
-	DirectFrameBuffer >= 0.9.15 < 1
+	DirectFrameBuffer >= 0.9.15
 
-_configure-options
+configure-options
 ;	--disable-video-fbcon
 	--disable-video-directfb
 
