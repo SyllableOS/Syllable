@@ -242,8 +242,5 @@ modules
 ;	stage libraries/c-ares-1.5.2
 
 finish
-;	For Transmission:
-	mkdir home/.template/Downloads home/root/Downloads &&
-
 ;	Prevent anonymous CVS warning:
 	touch home/.template/.cvspass home/root/.cvspass

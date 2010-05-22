@@ -1,6 +1,11 @@
 ; Parts to complete a system build
 
 tree
+;	For Transmission:
+	users/.template/Downloads/
+	users/administrator/Downloads/
+
+;	For Midnight Commander:
 	users/.template/.mc/
 	users/administrator/.mc/
 

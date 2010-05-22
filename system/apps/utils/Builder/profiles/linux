@@ -290,9 +290,6 @@ modules
 finish
 	sudo mv users/root/ users/administrator &&
 
-;	For Transmission:
-	sudo mkdir users/.template/Downloads users/administrator/Downloads &&
-
 ;	Prevent anonymous CVS warning:
 	sudo touch users/.template/.cvspass users/administrator/.cvspass &&
 

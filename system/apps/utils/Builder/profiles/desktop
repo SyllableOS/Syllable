@@ -1,5 +1,10 @@
 ; Syllable Desktop, in addition to syllable/base/gui-base/gui profiles
 
+tree
+;	For Transmission:
+	home/.template/Downloads/
+	home/root/Downloads/
+
 modules
 	documentation-DE--current
 	documentation-NL--current
