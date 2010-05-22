@@ -3,17 +3,6 @@ authors
 	Anthony Morphett
 status				testing
 
-install-files
-	bin/7z.so		framework/libraries/
-;	Doesn't work on Syllable 0.6.6:
-	bin/7z			programs/7zs
-	bin/7za			programs/
-	bin/7zr			programs/
-;	bin/Formats		programs/
-	bin/Codecs		programs/
-	bin/7zCon.sfx	programs/
-	man1/			manuals/
-
-links
-	../framework/libraries/7z.so	programs/
-	7za								programs/7z
+pre-register
+	chmod -x framework/libraries/7z.so programs/Codecs/* &&
+	chmod -R a+r documentation/*

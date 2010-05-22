@@ -43,9 +43,26 @@ install-tree
 install
 	true
 ;	./install.sh
+install-files
+	bin/7z.so		framework/libraries/
+;	Can't load plug-in in framework/libraries/, but seems to be a caching problem:
+;	bin/7z.so		programs/
+;	Doesn't work on Syllable 0.6.6:
+;	bin/7z			programs/
+	bin/7z			programs/7zs
+	bin/7za			programs/
+	bin/7zr			programs/
+;	bin/Formats		programs/
+	bin/Codecs		programs/
+	bin/7zCon.sfx	programs/
+	man1/			manuals/
 
 documentation
 	README DOCS/readme.txt DOCS/7zC.txt DOCS/License.txt DOCS/copying.txt DOCS/unRarLicense.txt DOCS/history.txt ChangeLog TODO
 	DOCS/MANUAL
 develop-docs		DOCS/lzma.txt
 internal-docs		DOCS/7zFormat.txt DOCS/Methods.txt
+
+links
+	../framework/libraries/7z.so	programs/
+	7za								programs/7z
