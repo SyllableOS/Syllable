@@ -1,6 +1,6 @@
 ORCA [
 	Title:		"Package installation library"
-	Version:	0.8.1
+	Version:	0.8.2
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006-2010 Kaj de Vos
@@ -50,6 +50,7 @@ symlink?: func ["Tests a file to be a symbolic link."
 	node [file! string!] "File or directory"
 	/local stdout
 ][
+;	FIXME: stderr on non-existing files is too intrusive but can't be caught:
 	all [0 = call/wait/output  join "stat --format %F " node  stdout: copy ""
 		stdout = "symbolic link^/"
 	]
@@ -148,7 +149,8 @@ stage-proto: context [
 				yes
 			][
 				all [
-					either any [exists? target  symlink? target] [
+;					either any [exists? target  symlink? target] [
+					either exists? target [
 						log/warning join "conflict: replacing " target
 						action join "rm " target
 					][
