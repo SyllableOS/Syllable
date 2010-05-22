@@ -290,11 +290,11 @@ modules
 finish
 	sudo mv users/root/ users/administrator &&
 
+;	For Transmission:
+	sudo mkdir users/.template/Downloads users/administrator/Downloads &&
+
 ;	Prevent anonymous CVS warning:
 	sudo touch users/.template/.cvspass users/administrator/.cvspass &&
-
-;	Make home directories private:
-	sudo chmod -R o-rwx users/.template users/administrator &&
 
 ;	Clean out Desktop stuff for now:
 	sudo rm -r users/.template/Settings/ users/administrator/Settings/ users/.template/Desktop/ users/administrator/Desktop/ users/.template/Bookmarks/ users/administrator/Bookmarks/

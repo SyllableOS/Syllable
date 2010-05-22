@@ -242,8 +242,8 @@ modules
 ;	stage libraries/c-ares-1.5.2
 
 finish
-;	Prevent anonymous CVS warning:
-	touch home/.template/.cvspass home/root/.cvspass &&
+;	For Transmission:
+	mkdir home/.template/Downloads home/root/Downloads &&
 
-;	Make home directories private:
-	chmod -R o-rwx home/.template home/root
+;	Prevent anonymous CVS warning:
+	touch home/.template/.cvspass home/root/.cvspass

@@ -30,7 +30,9 @@ finish
 ;	Clean out kernel source link from the host system:
 	sudo rm /lib/modules/2.6.27.44-Syllable/build &&
 
-	sudo chown -R administrator:administrators users/administrator &&
+;	Make home directories private:
+	sudo chmod -R o-rwx users/.template		users/administrator &&
+	sudo chown -R administrator:administrators	users/administrator &&
 
 	sudo cp resources/grub/framework/libraries/grub/i386-pc/* boot/grub/ &&
 

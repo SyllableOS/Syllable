@@ -6,6 +6,9 @@ resources
 	system/resources/glibc/2.7/framework/libraries/ libc.so
 
 finish
+;	Make home directories private:
+	chmod -R o-rwx home/.template home/root &&
+
 	cp resources/grub/framework/libraries/grub/i386-pc/* boot/grub/ &&
 
 	rm -r resources/documentation/ resources/documentation-* &&
