@@ -243,4 +243,7 @@ modules
 
 finish
 ;	Prevent anonymous CVS warning:
-	touch home/.template/.cvspass home/root/.cvspass
+	touch home/.template/.cvspass home/root/.cvspass &&
+
+;	Make home directories private:
+	chmod -R o-rwx home/.template home/root
