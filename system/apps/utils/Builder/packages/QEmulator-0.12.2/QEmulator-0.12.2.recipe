@@ -39,3 +39,5 @@ documentation
 	README LICENSE COPYING COPYING.LIB Changelog MAINTAINERS TODO
 ;	qemu-doc.html
 internal-docs		CODING_STYLE
+
+links				data/ share
