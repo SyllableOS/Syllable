@@ -1,4 +1,4 @@
 authors				Kaj de Vos
 status				testing
 
-recommends			kqemu
+recommends			KernelQEmulator
