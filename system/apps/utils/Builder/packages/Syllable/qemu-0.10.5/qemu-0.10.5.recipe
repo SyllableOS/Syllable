@@ -14,4 +14,3 @@ configure-options
 ;	Syllable compiles executables as shared libraries. Free up an extra CPU register:
 	--extra-cflags=-fno-pic
 	--target-list=i386-softmmu
-
