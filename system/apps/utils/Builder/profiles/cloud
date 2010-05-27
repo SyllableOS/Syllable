@@ -12,4 +12,6 @@ modules
 ;	Extra goodies
 
 	apps/other/Links-2.3pre1
-	apps/other/QEmulator-0.11.1
+
+;	Needs GCC 3:
+;	apps/other/QEmulator-0.9.1
