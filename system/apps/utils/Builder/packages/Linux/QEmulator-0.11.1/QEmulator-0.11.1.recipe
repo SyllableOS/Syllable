@@ -1,4 +1,5 @@
 authors				Kaj de Vos
-status				testing
+status				broken
+warnings			Doesn't take mouse control in the console.
 
-recommends			KernelQEmulator
+recommends			KernelQEmulator 1.4
