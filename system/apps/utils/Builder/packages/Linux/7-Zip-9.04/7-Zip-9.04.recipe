@@ -5,4 +5,5 @@ status				testing
 
 pre-register
 	sudo chmod a-x framework/libraries/7z.so programs/Codecs/* &&
+	sudo chmod a+x documentation/MANUAL &&
 	sudo chmod -R a+r documentation/*

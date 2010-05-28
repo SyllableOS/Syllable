@@ -5,4 +5,5 @@ status				testing
 
 pre-register
 	chmod -x framework/libraries/7z.so programs/Codecs/* &&
+	chmod a+x documentation/MANUAL &&
 	chmod -R a+r documentation/*
