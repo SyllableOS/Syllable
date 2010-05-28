@@ -6,5 +6,5 @@ packages			SDL-1.2.14
 
 ; FIXME: static-libs:
 pre-register
-	sed -i s~-I$STAGE/bootstrap/~\$IMAGE/system/development/resources/~	programs/sdl-config &&
-	sed -i s~$STAGE/bootstrap/~\$IMAGE/system/resources/~				programs/sdl-config
+	sed -i s~-I$STAGE/bootstrap/SDL~\$IMAGE/system/development/resources/SDL/1.2.14~	programs/sdl-config &&
+	sed -i s~$STAGE/bootstrap/SDL~\$IMAGE/system/resources/SDL/1.2.14~				programs/sdl-config
