@@ -55,8 +55,6 @@ modules
 
 
 	system libs/SDL-1.2.14
-;	sdl-config needs to be in the path:
-	bootstrap libs/SDL--bootstrap
 
 	system libs/sdl-net-1.2.7
 ;	system libs/sdl-mixer-1.2.6
