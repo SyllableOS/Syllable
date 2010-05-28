@@ -42,3 +42,6 @@ develop-docs
 	docs/index.html docs/html/
 	test/
 internal-docs		README.Porting
+
+; Fix sdl-config reference from AutoConfigure:
+links				programs/ bin

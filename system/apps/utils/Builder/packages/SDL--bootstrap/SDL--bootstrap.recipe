@@ -4,7 +4,8 @@ status				testing
 inherits			SDL-1.2.14
 packages			SDL-1.2.14
 
+; AutoConfigure, PackageConfigure and LibTool also need to be modified:
 ; FIXME: static-libs:
 pre-register
-	sed -i s~-I$STAGE/bootstrap/SDL~\$IMAGE/system/development/resources/SDL/1.2.14~	programs/sdl-config &&
-	sed -i s~$STAGE/bootstrap/SDL~\$IMAGE/system/resources/SDL/1.2.14~				programs/sdl-config
+;	sed -i s~-I$STAGE/bootstrap/SDL~\$IMAGE/system/development/resources/SDL/1.2.14~	programs/sdl-config &&
+;	sed -i s~$STAGE/bootstrap/SDL~\$IMAGE/system/resources/SDL/1.2.14~				programs/sdl-config
