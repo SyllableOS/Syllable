@@ -2,7 +2,7 @@
 
 ORCA [
 	Title:		"Consonant build system"
-	Version:	0.1.7
+	Version:	0.2.0
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006-2008,2010 Kaj de Vos
@@ -117,12 +117,7 @@ either any [
 							; Pack but don't compress
 							action rejoin [
 								"zip -rqy0 ../../../"
-								file: rejoin [
-									name "-development."
-									either Linux? ["Linux."] [""]
-									args/4
-									".zip"
-								]
+								file: rejoin [name "-development." args/4 ".zip"]
 								" development"
 							]
 							action "sync"
@@ -130,13 +125,13 @@ either any [
 							change-dir %../../..
 
 							; Compress
-							action rejoin ["7za a " file ".7z " file]
+							action join "xz -e9 " file
 							action "sync"
 
 							change-dir %stage/image
 
 							log/header "Removing development files"
-							action "rm -r system/development/"
+							action "rm --recursive system/development/"
 						]
 					]
 
@@ -144,20 +139,18 @@ either any [
 
 					; Pack
 					action join either Linux?
-							[join "tar -cf ../../" file: rejoin [name "." args/4 ".tar"]]
 							; Zip doesn't restore character devices:
+							[join "tar -cf ../../" file: rejoin [name "." args/4 ".tar"]]
+							; TAr doesn't store extended attributes:
 							[join "zip -rqy0 ../../" file: rejoin [name "." args/4 ".zip"]]
 ;						Wildcard doesn't work:
 						" ."
 
+					; Compress
 					any [not Linux?
 						all [
-							action "sync"
-
 							change-dir %../..
-
-							; Compress
-							action rejoin ["7za a " file ".7z "  file  " README-" name ".txt"]
+							action join "xz -e9 " file
 						]
 					]
 				][
