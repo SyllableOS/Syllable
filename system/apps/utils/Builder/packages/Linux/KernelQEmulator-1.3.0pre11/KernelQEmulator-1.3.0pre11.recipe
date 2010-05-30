@@ -11,7 +11,7 @@ licenses			GPL-2 BSD
 
 home				www.qemu.org
 locations			http://wiki.qemu.org/download/
-packages			kqemu-1.4.0pre1
+packages			kqemu-1.3.0pre11
 
 needs
 	Linux 2.6.27.44
