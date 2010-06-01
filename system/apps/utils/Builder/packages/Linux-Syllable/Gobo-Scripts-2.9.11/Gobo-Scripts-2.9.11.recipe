@@ -95,7 +95,7 @@ links
 	3.6.19												/Programs/ReiserFSProgs/Current
 	4.4.2												/Programs/FindUtils/Current
 	2.3.9												/Programs/FreeType/Current
-	7													/Programs/JPEG/Current
+	8a													/Programs/JPEG/Current
 	1.2.37												/Programs/LibPNG/Current
 	4.1.6												/Programs/Giflib/Current
 	3.8.2												/Programs/TIFF/Current
@@ -145,7 +145,7 @@ links
 	1.72												/Programs/Transmission/Current
 	2.01.01a61											/Programs/CDRTools/Current
 ;	/Programs/Man
-	1.2.13												/Programs/SDL/Current
+	1.2.14												/Programs/SDL/Current
 	1.2.7												/Programs/SDL_net/Current
 	1.2.9												/Programs/SDL_mixer/Current
 	1.0.3												/Programs/SDL_sound/Current
@@ -168,7 +168,7 @@ links
 	4.7.0.2												/Programs/MC/Current
 ;	/Programs/Rsync-2.6.9
 	2.3pre1												/Programs/Links/Current
-	0.11.1												/Programs/QEMU/Current
+	0.9.1												/Programs/QEMU/Current
 ;	/Programs/Genode-8.08
 ;	/Programs/Pengupop-2.1.12
 
