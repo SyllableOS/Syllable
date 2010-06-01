@@ -18,6 +18,7 @@ links
 	../programs/										framework/bin
 	bin												/System/Index/sbin
 ;	For older Gobo binaries:
+	/System/Index/lib/								/System/Links/Libraries
 	/System/Index/share/								/System/Links/Shared
 ;	For ldd:
 	/bin/bash											/System/Index/bin/
