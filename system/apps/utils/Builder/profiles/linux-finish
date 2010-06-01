@@ -33,7 +33,7 @@ resources
 
 finish
 ;	Clean out kernel source link from the host system:
-	sudo rm /lib/modules/2.6.27.44-Syllable/build &&
+	sudo rm -f /lib/modules/2.6.27.44-Syllable/build &&
 
 ;	Make home directories private:
 	sudo chmod -R o-rwx							users/administrator users/system users/.template &&
