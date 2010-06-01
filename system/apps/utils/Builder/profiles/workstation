@@ -116,7 +116,7 @@ tree
 	Programs/Transmission/1.72
 	Programs/CDRTools/2.01.01a61
 ;	Programs/Man
-	Programs/SDL/1.2.13
+	Programs/SDL/1.2.14
 	Programs/SDL_net/1.2.7
 	Programs/SDL_mixer/1.2.9
 	Programs/SDL_sound/1.0.3
@@ -139,7 +139,7 @@ tree
 	Programs/MC/4.7.0.2
 ;	Programs/Rsync/2.6.9
 	Programs/Links/2.3pre1
-	Programs/QEMU/0.11.1
+	Programs/QEMU/0.9.1
 ;	Programs/Genode/8.08
 ;	Programs/Pengupop/2.1.12
 
