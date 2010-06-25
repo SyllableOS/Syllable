@@ -1,6 +1,6 @@
 * June 25, 2010, Anthony Morphett *
 
-Added AttribIO libsyllable class, derived from os::SeekableIO, which provides access to
+Added Attribute libsyllable class, derived from os::SeekableIO, which provides access to
 filesystem attributes via the SeekableIO interface.  This is particularly useful
 when combined with os::Settings for storing settings in attributes.
 

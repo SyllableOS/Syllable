@@ -17,17 +17,17 @@
  *  MA 02111-1307, USA
  */
 
-#include <storage/attribio.h>
+#include <storage/attribute.h>
 #include <storage/fsnode.h>
 #include <util/locker.h>
 #include <util/string.h>
 
 using namespace os;
 
-class AttribIO::Private
+class Attribute::Private
 {
 public:
-	Private() : m_cMutex( "os::AttribIO" )
+	Private() : m_cMutex( "os::Attribute" )
 	{
 		m_pcFSNode = NULL;
 		m_cAttrName = "";
@@ -46,9 +46,9 @@ public:
 };
 
 
-/** Construct an AttribIO object from a filename and attribute name.
+/** Construct an Attribute object from a filename and attribute name.
  * \par Description:
- *  Creates an AttribIO object for reading and writing to the specified attribute of the specified file.
+ *  Creates an Attribute object for reading and writing to the specified attribute of the specified file.
  *
  * \param cPath
  *	The file possessing the attribute to open. The path can either be absolute (starting
@@ -68,7 +68,7 @@ public:
  * \author	Anthony Morphett (anthony@syllable.org)
  *****************************************************************************/
 
-AttribIO::AttribIO( const String& cPath, const String& cAttrName, fsattr_type nType, int nFlags )
+Attribute::Attribute( const String& cPath, const String& cAttrName, fsattr_type nType, int nFlags )
 {
 	_Init();
 	m->m_pcFSNode = new FSNode( cPath );
@@ -79,9 +79,9 @@ AttribIO::AttribIO( const String& cPath, const String& cAttrName, fsattr_type nT
 }
 
 
-/** Construct an AttribIO object from a file given as an FSNode and an attribute name.
+/** Construct an Attribute object from a file given as an FSNode and an attribute name.
  * \par Description:
- *  Creates an AttribIO object for reading and writing to the specified attribute of the specified file.
+ *  Creates an Attribute object for reading and writing to the specified attribute of the specified file.
  *
  * \param cFSNode
  *	An FSNode object representing the file with the attribute to open.  The FSNode will be copied, so the
@@ -100,7 +100,7 @@ AttribIO::AttribIO( const String& cPath, const String& cAttrName, fsattr_type nT
  * \author	Anthony Morphett (anthony@syllable.org)
  *****************************************************************************/
 
-AttribIO::AttribIO( const FSNode& cFSNode, const String& cAttrName, fsattr_type nType, int nFlags )
+Attribute::Attribute( const FSNode& cFSNode, const String& cAttrName, fsattr_type nType, int nFlags )
 {
 	_Init();
 	m->m_pcFSNode = new FSNode( cFSNode );
@@ -112,32 +112,32 @@ AttribIO::AttribIO( const FSNode& cFSNode, const String& cAttrName, fsattr_type 
 
 /** Copy constructor.
  * \par Description:
- *	This constructor will make an independent copy of \p cAttribIO.
+ *	This constructor will make an independent copy of \p cAttribute.
  *	The flags, attribute type and current seek position of the old object will be copied.
  *
- * \param cAttribIO
- *	The AttribIO object to copy.
+ * \param cAttribute
+ *	The Attribute object to copy.
  *
  * \author	Anthony Morphett (anthony@syllable.org)
  *****************************************************************************/
 
-AttribIO::AttribIO( const AttribIO& cAttribIO )
+Attribute::Attribute( const Attribute& cAttribute )
 {
 	_Init();
-	if( cAttribIO.m->m_pcFSNode ) m->m_pcFSNode = new FSNode( *cAttribIO.m->m_pcFSNode );
-	m->m_cAttrName = cAttribIO.m->m_cAttrName;
-	m->m_nType = cAttribIO.m->m_nType;
-	m->m_nOffset = cAttribIO.m->m_nOffset;
-	m->m_nFlags = cAttribIO.m->m_nFlags;
+	if( cAttribute.m->m_pcFSNode ) m->m_pcFSNode = new FSNode( *cAttribute.m->m_pcFSNode );
+	m->m_cAttrName = cAttribute.m->m_cAttrName;
+	m->m_nType = cAttribute.m->m_nType;
+	m->m_nOffset = cAttribute.m->m_nOffset;
+	m->m_nFlags = cAttribute.m->m_nFlags;
 }
 
-AttribIO::~AttribIO()
+Attribute::~Attribute()
 {
 	if( m->m_pcFSNode ) { delete( m->m_pcFSNode ); }
 	delete( m );
 }
 
-void AttribIO::_Init()
+void Attribute::_Init()
 {
 	m = new Private();
 }
@@ -161,11 +161,11 @@ void AttribIO::_Init()
  * \author	Anthony Morphett (anthony@syllable.org)
  *****************************************************************************/
 
-ssize_t AttribIO::ReadPos( off_t nPos, void* pBuffer, ssize_t nSize )
+ssize_t Attribute::ReadPos( off_t nPos, void* pBuffer, ssize_t nSize )
 {
 	AutoLocker cLock( &m->m_cMutex );
 	if( !m->m_pcFSNode ) {
-//		printf( "AttribIO: ReadPos() with invalid File!\n" );
+//		printf( "Attribute: ReadPos() with invalid File!\n" );
 		return( -EINVAL );
 	}
 	
@@ -191,11 +191,11 @@ ssize_t AttribIO::ReadPos( off_t nPos, void* pBuffer, ssize_t nSize )
  * \author	Anthony Morphett (anthony@syllable.org)
  *****************************************************************************/
 
-ssize_t AttribIO::WritePos( off_t nPos, const void* pBuffer, ssize_t nSize )
+ssize_t Attribute::WritePos( off_t nPos, const void* pBuffer, ssize_t nSize )
 {
 	AutoLocker cLock( &m->m_cMutex );
 	if( !m->m_pcFSNode ) {
-//		printf( "AttribIO: WritePos() with invalid File!\n" );
+//		printf( "Attribute: WritePos() with invalid File!\n" );
 		return( -EINVAL );
 	}
 
@@ -222,18 +222,18 @@ ssize_t AttribIO::WritePos( off_t nPos, const void* pBuffer, ssize_t nSize )
  * \author	Anthony Morphett (anthony@syllable.org)
  *****************************************************************************/
 
-off_t AttribIO::Seek( off_t nPos, int nMode )
+off_t Attribute::Seek( off_t nPos, int nMode )
 {
 	AutoLocker cLock( &m->m_cMutex );
 	
-//	printf( "AttribIO::Seek( %i, %i %s)\n", (int)nPos, nMode, (nMode == SEEK_SET ? "SEEK_SET" : (nMode == SEEK_END ? "SEEK_END" : (nMode == SEEK_CUR ? "SEEK_CUR" : "UNKNOWN mode!"))) );
+//	printf( "Attribute::Seek( %i, %i %s)\n", (int)nPos, nMode, (nMode == SEEK_SET ? "SEEK_SET" : (nMode == SEEK_END ? "SEEK_END" : (nMode == SEEK_CUR ? "SEEK_CUR" : "UNKNOWN mode!"))) );
 	if( nMode == SEEK_SET ) { m->m_nOffset = nPos; }
 	if( nMode == SEEK_CUR ) { m->m_nOffset += nPos; }
 	if( nMode == SEEK_END ) { m->m_nOffset = GetSize() + nPos; }
 	return( m->m_nOffset );
 }
 
-ssize_t AttribIO::Read( void *pBuffer, ssize_t nSize )
+ssize_t Attribute::Read( void *pBuffer, ssize_t nSize )
 {
 	AutoLocker cLock( &m->m_cMutex );
 	
@@ -243,7 +243,7 @@ ssize_t AttribIO::Read( void *pBuffer, ssize_t nSize )
 	return( nTemp );
 }
 
-ssize_t AttribIO::Write( const void *pBuffer, ssize_t nSize )
+ssize_t Attribute::Write( const void *pBuffer, ssize_t nSize )
 {
 	AutoLocker cLock( &m->m_cMutex );
 	
@@ -264,7 +264,7 @@ ssize_t AttribIO::Write( const void *pBuffer, ssize_t nSize )
  * \author	Anthony Morphett (anthony@syllable.org)
  *****************************************************************************/
 
-fsattr_type AttribIO::GetType() const
+fsattr_type Attribute::GetType() const
 {
 	return( m->m_nType );
 }
@@ -277,7 +277,7 @@ fsattr_type AttribIO::GetType() const
  * \author	Anthony Morphett (anthony@syllable.org)
  *****************************************************************************/
 
-off_t AttribIO::GetSize()
+off_t Attribute::GetSize()
 {
 	AutoLocker cLock( &m->m_cMutex );
 	if( !m->m_pcFSNode )

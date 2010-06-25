@@ -17,8 +17,8 @@
  *  MA 02111-1307, USA
  */
 
-#ifndef __F_STORAGE_ATTRIBIO_H_
-#define __F_STORAGE_ATTRIBIO_H_
+#ifndef __F_STORAGE_ATTRIBUTE_H_
+#define __F_STORAGE_ATTRIBUTE_H_
 
 #include <atheos/fs_attribs.h>
 
@@ -41,14 +41,14 @@ class String;
  * \author	Anthony Morphett (anthony@syllable.org)
  *****************************************************************************/
 
-class AttribIO : public SeekableIO
+class Attribute : public SeekableIO
 {
 public:
-	AttribIO();
-	AttribIO( const String& cPath, const String& cAttrName, fsattr_type nType, int nFlags );
-	AttribIO( const FSNode& cFSNode, const String& cAttrName, fsattr_type nType, int nFlags );
-	AttribIO( const AttribIO& cAttribIO );
-	virtual ~AttribIO();
+	Attribute();
+	Attribute( const String& cPath, const String& cAttrName, fsattr_type nType, int nFlags );
+	Attribute( const FSNode& cFSNode, const String& cAttrName, fsattr_type nType, int nFlags );
+	Attribute( const Attribute& cAttribute );
+	virtual ~Attribute();
 	
 	/* From StreamableIO */
 	virtual ssize_t Read( void *pBuffer, ssize_t nSize );
@@ -59,7 +59,7 @@ public:
 	virtual ssize_t WritePos( off_t nPos, const void* pBuffer, ssize_t nSize );
 	virtual off_t   Seek( off_t nPos, int nMode );
 	
-	/* From AttribIO */
+	/* From Attribute */
 	off_t GetSize();
 	fsattr_type GetType() const;
 	
@@ -72,4 +72,4 @@ private:
 
 }	/* namespace os */
 
-#endif /* __F_STORAGE_ATTRIBIO_H_ */
+#endif /* __F_STORAGE_ATTRIBUTE_H_ */

@@ -29,7 +29,7 @@ OBJS += appserverconfig.o looper.o handler.o application.o message.o messenger.o
 OBJS += filereference.o filereference_info.o filereference_rename.o operation_copy.o operation_move.o operation_delete.o fsnode.o streamableio.o \
 	seekableio.o file.o tempfile.o directory.o directory_create.o symlink.o nodemonitor.o path.o memfile.o registrar.o volumes.o \
 	datetime.o shortcutkey.o catalog.o keymap.o \
-	locale.o attribio.o
+	locale.o attribute.o
 OBJS += translator.o
 OBJS += vstubs.o
 
