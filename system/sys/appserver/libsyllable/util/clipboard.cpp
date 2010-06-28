@@ -1,4 +1,3 @@
-
 /*  libsyllable.so - the GUI API/appserver interface for AtheOS
  *	Copyright (C) 2007	Rick Caudill
  *  Copyright (C) 1999 - 2000 Kurt Skauen
@@ -181,6 +180,7 @@ void Clipboard::Clear()
  *****************************************************************************/
 Message *Clipboard::GetData()
 {
+	uint8* pBuffer = NULL;
 	//if we are clear then
 	if( m->m_bCleared == true )
 	{
@@ -189,15 +189,14 @@ Message *Clipboard::GetData()
 		m->m_cBuffer.MakeEmpty();
 		m->m_bCleared = false;
 	}
-	
-	
 	else
 	{
 		
 		//these are defined in include/appserver
 		DR_GetClipboardData_s sReq( m->m_cName.c_str(), m->m_hReplyPort );
 		DR_GetClipboardDataReply_s sReply;
-
+		size_t nTotalSize;
+        size_t nTotalTransferred = 0;
 
 		//send to the appserver that we want to get the clipboard data, if we don't get the data then we flag an error and exit
 		if( send_msg( m->m_hServerPort, DR_GET_CLIPBOARD_DATA, &sReq, sizeof( sReq ) ) != 0 )
@@ -213,16 +212,48 @@ Message *Clipboard::GetData()
 			goto error;
 		}
 		
-		//if the size of the message isn't 0
-		if( sReply.m_nTotalSize > 0 )
+		nTotalSize = sReply.m_nTotalSize;
+		if( nTotalSize > 0 && sReply.m_nTotalSize > sReply.m_nFragmentSize )
 		{
-			//if we can unflatten the reply buffer then we can return it
-			//else flag an error stating that we cannot unpack the message
-			//empty out the buffer and head to the error
-			if( m->m_cBuffer.Unflatten( sReply.m_anBuffer ) != 0 )
+		    pBuffer = new uint8[nTotalSize];
+		    while( nTotalTransferred < nTotalSize )
+		    {
+		    	/* Sanity check - appserver should send the fragments in order */
+		    	if( sReply.m_nOffset != nTotalTransferred )
+		    	{
+		    		dbprintf( "Error: Clipboard::GetData() received out-of-order fragments!\n" );
+		    		goto error;
+		    	}
+		    	
+				/* Get fragments from the appserver until we have all the data */
+                memcpy( &pBuffer[nTotalTransferred], sReply.m_anBuffer, sReply.m_nFragmentSize );
+                nTotalTransferred += sReply.m_nFragmentSize;
+
+                if( nTotalTransferred < nTotalSize )
+                {
+                    if( get_msg_x( m->m_hReplyPort, NULL, &sReply, sizeof( sReply ), 500000 ) < 0 )
+                    {
+                        dbprintf( "Error: Clipboard::GetData() failed to read reply from server: %s\n", strerror( errno ) );
+                        goto error;
+                    }
+                }
+                else break;
+		    }
+            if( m->m_cBuffer.Unflatten( pBuffer ) != 0 )
 			{
 				dbprintf( "Error: Clipboard::GetData() failed to unpack the message\n" );
-				m->m_cBuffer.MakeEmpty();
+//				m->m_cBuffer.MakeEmpty();
+				goto error;
+			}
+			delete[] pBuffer;
+		}
+		else if( nTotalSize > 0 /* && sReply.m_nTotalSize == sReply.m_nFragmentSize */ )
+		{
+			/* If there is just one fragment, unflatten it straight away */
+			if( m->m_cBuffer.Unflatten( sReply.m_anBuffer ) )
+			{
+				dbprintf( "Error: Clipboard::GetData() failed to unpack the message\n" );
+//				m->m_cBuffer.MakeEmpty();
 				goto error;
 			}
 		}
@@ -235,7 +266,8 @@ Message *Clipboard::GetData()
 	return ( &m->m_cBuffer );
 	
 	error:
-		return ( NULL );
+	if( pBuffer ) delete[] pBuffer;
+	return ( NULL );
 }
 
 /** Adds the data to the clipboard
@@ -268,7 +300,7 @@ void Clipboard::Commit()
 	int nSize = m->m_cBuffer.GetFlattenedSize();
 
 	//copy the name of the the clipboard to the name of the reply
-	strcpy( sReq.m_zName, m->m_cName.c_str() );
+	strncpy( sReq.m_zName, m->m_cName.c_str(), sizeof( sReq.m_zName ) );
 	
 	//set the reply port
 	sReq.m_hReply = m->m_hReplyPort;	// Just used as an source ID so the server wont interleave multiple commits
@@ -279,8 +311,8 @@ void Clipboard::Commit()
 	//if the size <= the frament size(defined in include/appserver/protocol.h as 1024*32)
 	if( nSize <= CLIPBOARD_FRAGMENT_SIZE )
 	{
-		//change the fragment size
 		sReq.m_nFragmentSize = nSize;
+		sReq.m_nOffset = 0;
 		
 		//flatten the buffer with the new fragment size
 		m->m_cBuffer.Flatten( sReq.m_anBuffer, nSize );
@@ -303,11 +335,15 @@ void Clipboard::Commit()
 		//declare an offset
 		int nOffset = 0;
 
-		//while their is more to come
+		//while there is more to come
 		while( nSize > 0 )
 		{
 			//the current size is the minimum of the fragment size or the current size
 			int nCurSize = std::min( CLIPBOARD_FRAGMENT_SIZE, nSize );
+
+            //set the fragment size
+            sReq.m_nFragmentSize = nCurSize;
+            sReq.m_nOffset = nOffset;
 
 			//copy the 
 			memcpy( sReq.m_anBuffer, pBuffer + nOffset, nCurSize );
@@ -326,15 +362,4 @@ void Clipboard::Commit()
 		delete[]pBuffer;
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
 

@@ -661,7 +661,7 @@ void AppServer::DispatchMessage( Message * pcReq )
 				However, bBringWindow needs to be false here, as if it were true, clicking a 'change desktop' button in an app would always
 				have the side-effect of bringing that app to the new desktop. In the case of the Dock & switcher, the dock would be moved
 				off the old desktop to only the new desktop.
-				  -- AWM  awmorp@gmail.com
+				  -- AWM  anthony@syllable.orgg
 				*/
 			break;
 		}
@@ -931,9 +931,16 @@ void AppServer::Run( void )
 				}
 			case DR_SET_CLIPBOARD_DATA:
 				{
+					/* Note: When data is fragmented, clipboard write operations are not atomic.
+					   If an app thread tries to read the clipboard data while another thread
+					   is writing to the same clipboard, the reader may be sent invalid data.
+					   This should be fixed (eventually).
+					   -- AWM  anthony@syllable.org
+					 */
 					DR_SetClipboardData_s *psReq = ( DR_SetClipboardData_s * ) pBuffer;
 
-					SrvClipboard::SetData( psReq->m_zName, psReq->m_anBuffer, psReq->m_nTotalSize );
+					psReq->m_zName[sizeof(psReq->m_zName)-1] = 0;	/* Make sure the name is 0-terminated */
+					SrvClipboard::SetData( psReq->m_zName, psReq->m_anBuffer, psReq->m_nOffset, psReq->m_nFragmentSize, psReq->m_nTotalSize );
 					os::Message cMsg;
 					g_pcEvents->PostEvent( m_pcClipboardEvent, &cMsg );
 					break;
@@ -943,6 +950,7 @@ void AppServer::Run( void )
 					DR_GetClipboardData_s *psReq = ( DR_GetClipboardData_s * ) pBuffer;
 					DR_GetClipboardDataReply_s sReply;
 					int nSize;
+					psReq->m_zName[sizeof(psReq->m_zName)-1] = 0;	/* Make sure the name is 0-terminated */
 					uint8 *pData = SrvClipboard::GetData( psReq->m_zName, &nSize );
 
 
@@ -950,6 +958,7 @@ void AppServer::Run( void )
 					{
 						sReply.m_nTotalSize = 0;
 						sReply.m_nFragmentSize = 0;
+						sReply.m_nOffset = 0;
 						send_msg( psReq->m_hReply, 0, &sReply, sizeof( sReply ) - CLIPBOARD_FRAGMENT_SIZE );
 					}
 					else
@@ -963,6 +972,7 @@ void AppServer::Run( void )
 
 							memcpy( sReply.m_anBuffer, pData + nOffset, nCurSize );
 							sReply.m_nFragmentSize = nCurSize;
+							sReply.m_nOffset = nOffset;
 							send_msg( psReq->m_hReply, 0, &sReply, sizeof( sReply ) - CLIPBOARD_FRAGMENT_SIZE + nCurSize );
 							nSize -= nCurSize;
 							nOffset += nCurSize;

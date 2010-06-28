@@ -1,3 +1,7 @@
+* June 28, 2010, Anthony Morphett *
+
+Fixed copying & pasting large chunks of data (>32k). Thanks to Rui Caridade for contributions.
+
 * June 25, 2010, Anthony Morphett *
 
 Added Attribute libsyllable class, derived from os::SeekableIO, which provides access to

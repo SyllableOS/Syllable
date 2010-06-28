@@ -27,11 +27,11 @@
 class SrvClipboard
 {
 public:
-    static void	SetData( const char* pzName, uint8* pzData, int nSize );
+    static void	SetData( const char* pzName, uint8* pzData, int nOffset, int nFragmentSize, int nTotalSize );
     static uint8*	GetData( const char* pzName, int* pnSize );
   
 private:
-    SrvClipboard() { m_pData = NULL; }
+    SrvClipboard() { m_pData = NULL; m_nSize = 0; }
   
     typedef std::map<std::string,SrvClipboard*> ClipboardMap;
   

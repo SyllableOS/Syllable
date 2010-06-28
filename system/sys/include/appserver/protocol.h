@@ -332,6 +332,7 @@ struct DR_GetClipboardDataReply_s
 {
     int		m_nTotalSize;
     int		m_nFragmentSize;
+    int		m_nOffset;
     uint8	m_anBuffer[CLIPBOARD_FRAGMENT_SIZE];
 };
 
@@ -341,8 +342,9 @@ struct DR_SetClipboardData_s
     char    m_zName[64];
     int     m_nTotalSize;
     int	    m_nFragmentSize;
+    int		m_nOffset;
     port_id m_hReply;		// Just used as an source ID so the server wont interleave multi-package commits
-    uint8	  m_anBuffer[CLIPBOARD_FRAGMENT_SIZE];
+    uint8	m_anBuffer[CLIPBOARD_FRAGMENT_SIZE];
 };
 
 struct DR_SetWindowDecorator_s

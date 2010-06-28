@@ -1,3 +1,7 @@
+* June 28, 2010, Anthony Morphett *
+
+Fixed copying & pasting large chunks of data (>32k). Thanks to Rui Caridade for contributions.
+
 * February 2, 2010, Anthony Morphett *
 
 Made DropdownMenu open its menu above the view if near the bottom of screen.

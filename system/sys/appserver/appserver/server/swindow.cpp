@@ -768,7 +768,7 @@ void SrvWindow::R_Render( WR_Render_s * psPkt )
 				uint8 *pBuffer = new uint8[nSize];
 				cClipData.Flatten( pBuffer, nSize );
 
-				SrvClipboard::SetData( psMsg->m_zName, pBuffer, nSize );
+				SrvClipboard::SetData( psMsg->m_zName, pBuffer, 0, nSize, nSize );
 				delete[] pBuffer;
 
 				break;

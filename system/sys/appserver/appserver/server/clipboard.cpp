@@ -20,6 +20,8 @@
 
 #include "clipboard.h"
 
+#include <atheos/kdebug.h>
+
 #include <util/message.h>
 
 using namespace os;
@@ -27,8 +29,14 @@ using namespace os;
 SrvClipboard::ClipboardMap SrvClipboard::s_cClipboardMap;
 
 
-void SrvClipboard::SetData( const char *pzName, uint8 *pData, int nSize )
+void SrvClipboard::SetData( const char *pzName, uint8 *pData, int nOffset, int nFragmentSize, int nTotalSize )
 {
+	if( nOffset + nFragmentSize > nTotalSize || nOffset < 0 || nFragmentSize < 0 || nTotalSize < 0 )
+	{
+		dbprintf( "Error: invalid parameters in clipboard SetData request!\n" );
+		return;
+	}
+	
 	SrvClipboard *pcClipboard;
 	ClipboardMap::iterator i = s_cClipboardMap.find( pzName );
 
@@ -42,11 +50,15 @@ void SrvClipboard::SetData( const char *pzName, uint8 *pData, int nSize )
 		pcClipboard = ( *i ).second;
 	}
 
-	delete[]pcClipboard->m_pData;
-	pcClipboard->m_pData = new uint8[nSize];
+	if( pcClipboard->m_nSize != nTotalSize || pcClipboard->m_pData == NULL )
+	{
+		delete[]pcClipboard->m_pData;
+		pcClipboard->m_pData = new uint8[nTotalSize];
 
-	pcClipboard->m_nSize = nSize;
-	memcpy( pcClipboard->m_pData, pData, nSize );
+		pcClipboard->m_nSize = nTotalSize;
+	}
+
+	memcpy( pcClipboard->m_pData + nOffset, pData, nFragmentSize );
 }
 
 uint8 *SrvClipboard::GetData( const char *pzName, int *pnSize )
