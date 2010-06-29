@@ -232,7 +232,7 @@ void DockBattery::MouseUp( const os::Point & cPosition, uint32 nButtons, os::Mes
 void DockBattery::MouseDown( const os::Point& cPosition, uint32 nButtons )
 {
 	MakeFocus( true );
-	if( nButtons == os::MOUSE_BUT_LEFT )
+	if( nButtons == 1 ) /* left button */
 		m_bCanDrag = true;
 
 	os::View::MouseDown( cPosition, nButtons );

@@ -279,7 +279,7 @@ void DockWallpaperChanger::MouseUp( const os::Point & cPosition, uint32 nButtons
 		m_pcDock->PostMessage( &cMsg, m_pcDock );
 		Paint(GetBounds());
 		return;
-	} /*else if ( nButtons == MOUSE_BUT_LEFT ) {
+	} /*else if ( nButtons == 1 ) { // left button
 		// Check to see if the coordinates passed match when the left mouse button was pressed
 		// if so, then it was a single click and not a drag
 		if ( abs( (int)(m_cPos.x - cPosition.x) ) < DRAG_THRESHOLD && abs( (int)(m_cPos.y - cPosition.y) ) < DRAG_THRESHOLD )
@@ -303,7 +303,7 @@ void DockWallpaperChanger::MouseDown( const os::Point& cPosition, uint32 nButton
 		MakeFocus( false );
 		pcContextMenu->Open(ConvertToScreen(cPosition));
 	}
-	else if ( nButtons == MOUSE_BUT_LEFT ) {
+	else if ( nButtons == 1 ) { /* left button */
 		MakeFocus( true );
 		m_bCanDrag = true;
 		// Store these coordinates for later use in the MouseUp procedure

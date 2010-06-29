@@ -254,7 +254,7 @@ void DockPrinter::MouseUp( const os::Point & cPosition, uint32 nButtons, os::Mes
 		cMsg.AddPointer( "plugin", m_pcPlugin );
 		m_pcDock->PostMessage( &cMsg, m_pcDock );
 		return;
-	} /*else if ( nButtons == MOUSE_BUT_LEFT ) {
+	} /*else if ( nButtons == 1 ) { // left button
 		// Check to see if the coordinates passed match when the left mouse button was pressed
 		// if so, then it was a single click and not a drag
 		if ( abs( (int)(m_cPos.x - cPosition.x) ) < DRAG_THRESHOLD && abs( (int)(m_cPos.y - cPosition.y) ) < DRAG_THRESHOLD )
@@ -272,7 +272,7 @@ void DockPrinter::MouseUp( const os::Point & cPosition, uint32 nButtons, os::Mes
 void DockPrinter::MouseDown( const os::Point& cPosition, uint32 nButtons )
 {
 
-	if( nButtons == os::MOUSE_BUT_LEFT )
+	if( nButtons == 1 ) /* left button */
 	{
 		MakeFocus( true );
 		if ( m_nHitTime + 500000 >= get_system_time() )
@@ -293,7 +293,7 @@ void DockPrinter::MouseDown( const os::Point& cPosition, uint32 nButtons )
 		m_nHitTime = get_system_time();
 	}
 
-	if( nButtons == MOUSE_BUT_RIGHT ) {
+	if( nButtons == 2 ) { /* right button */
 		MakeFocus( false );
 		pcContextMenu->Open(ConvertToScreen(cPosition));
 	}

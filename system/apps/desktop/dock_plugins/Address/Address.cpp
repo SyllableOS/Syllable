@@ -464,7 +464,7 @@ void Address::MouseDown( const os::Point& cPosition, uint32 nButtons )
 {
 	os:: Point cPos;
 
-	if ( nButtons == MOUSE_BUT_LEFT )
+	if ( nButtons == 1 ) /* left button */
 	{
 		MakeFocus ( true );
 		m_bCanDrag = true;
@@ -472,7 +472,7 @@ void Address::MouseDown( const os::Point& cPosition, uint32 nButtons )
 		// Store these coordinates for later use in the MouseUp procedure
 		m_cPos.x = cPosition.x;
 		m_cPos.y = cPosition.y;
-	} else if ( nButtons == MOUSE_BUT_RIGHT ) {
+	} else if ( nButtons == 2 ) { /* right button */
 		MakeFocus ( false );
 	}
 

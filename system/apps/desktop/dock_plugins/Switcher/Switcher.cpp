@@ -378,7 +378,7 @@ void Switcher::MouseMove( const Point& cNewPos, int nCode, uint32 nButtons, Mess
 
 void Switcher::MouseDown( const Point& cPosition, uint32 nButtons )
 {
-	if( nButtons == os::MOUSE_BUT_LEFT )
+	if( nButtons == 1 ) /* left button */
 	{
 		MakeFocus( true );
 		m_bCanDrag = true;
@@ -386,7 +386,7 @@ void Switcher::MouseDown( const Point& cPosition, uint32 nButtons )
 		// Store these coordinates for later use in the MouseUp procedure
 		m_cPos.x = cPosition.x;
 		m_cPos.y = cPosition.y;
-	} else if ( nButtons == os::MOUSE_BUT_RIGHT )
+	} else if ( nButtons == 2 ) /* right button */
 		m_pcContextMenu->Open(ConvertToScreen(cPosition));	
 
 	os::View::MouseDown( cPosition, nButtons );
@@ -407,7 +407,7 @@ void Switcher::MouseUp( const Point& cPosition, uint32 nButtons, Message* pcData
 		cMsg.AddPointer( "plugin", m_pcPlugin );
 		m_pcDock->PostMessage( &cMsg, m_pcDock );
 		return;
-	} else if ( nButtons == os::MOUSE_BUT_LEFT ) {
+	} else if ( nButtons == 1 ) { /* left button */
 		// Check to see if the coordinates passed match when the left mouse button was pressed
 		// if so, then it was a single click and not a drag
 		if ( abs( (int)(m_cPos.x - cPosition.x) ) < DRAG_THRESHOLD && abs( (int)(m_cPos.y - cPosition.y) ) < DRAG_THRESHOLD )
