@@ -29,6 +29,9 @@ public:
 	virtual void AttachedToWindow();
 	virtual void DetachedFromWindow();
 	virtual void HandleMessage(Message* pcMessage);
+	virtual void MouseMove( const os::Point& cNewPos, int nCode, uint32 nButtons, os::Message* pcData );
+	virtual void MouseUp( const os::Point & cPosition, uint32 nButton, os::Message * pcData );
+	virtual void MouseDown( const os::Point& cPosition, uint32 nButtons );
 private:
 	void DisplayAbout();
 	
@@ -40,8 +43,15 @@ private:
 	
 	os::DockPlugin* m_pcPlugin;
 	BitmapImage* m_pcIcon;
+	os::BitmapImage* m_pcDragIcon;
 	os::Looper* m_pcDock;  
+
+	bool m_bCanDrag;
+	bool m_bDragging;
+  
 	int32 nDefault;
+
+	os::Point m_cPos;
 
 	os::String m_cDeviceFileName;
 	int m_nFd;

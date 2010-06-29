@@ -39,7 +39,7 @@
 #include <storage/file.h>
 #include <vector>
 #include <appserver/dockplugin.h>
-
+#include <signal.h>
 struct DockPluginFile
 {
 	os::String zPath;
@@ -53,14 +53,20 @@ public:
 	~PrefsDockWin();
 	bool CheckPlugin( os::String zPath, os::String* pzName );
 	void UpdatePluginsList();
+	void SetupEvents();
+	void UpdateActivePlugins( os::Message* pcMessage );
+	void UpdateActivePosition( os::Message* pcMessage );
 	virtual bool OkToQuit();
 	virtual void HandleMessage( os::Message* pcMessage );
+	
+	void RestartDock();
 private:
 	os::LayoutView* m_pcRoot;
 	os::VLayoutNode* m_pcVLayout;
 	os::FrameView* m_pcPosition;
 	os::HLayoutNode* m_pcHPos;
 	os::DropdownMenu* m_pcPos;
+	os::StringView* m_pcPositionNote;
 	
 	os::FrameView* m_pcPlugins;
 	os::VLayoutNode* m_pcVPlugins;
@@ -75,6 +81,9 @@ private:
 	std::vector<os::String> m_cEnabledPlugins;
 	std::vector<os::String> m_cDefaultEnabledPlugins;
 	std::vector<os::String> m_cSavedEnabledPlugins;
+	
+	os::Event* m_pcDockPositionEv;
+	os::Event* m_pcDockPluginsEv;
 };
 
 class PrefsDockApp : public os::Application

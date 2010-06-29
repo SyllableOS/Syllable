@@ -78,7 +78,7 @@ DockBattery::DockBattery( DockPlugin* pcPlugin, os::Looper* pcDock ) : View( os:
 	/* Load drag icon */
 	pcFile = new os::File( m_pcPlugin->GetPath() );
 	os::Resources cDragCol( pcFile );
-	pcStream = cDragCol.GetResourceStream( "icon48x48.png" );
+	pcStream = cDragCol.GetResourceStream( "icon32x32.png" );
 	
 	m_pcDragIcon = new os::BitmapImage( pcStream );
 	delete( pcStream );

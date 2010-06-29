@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <unistd.h>
 
-AddressDrop::AddressDrop(View* pcParent) : DropdownMenu(Rect(0,3,150,20),"address_drop")
+AddressDrop::AddressDrop(View* pcParent) : DropdownMenu(Rect(0,0,150,20),"address_drop")
 {
 	pcParentView = pcParent; 
 }
@@ -33,6 +33,7 @@ Address::Address(os::DockPlugin* pcPlugin, os::Looper* pcDock) : os::View( os::R
 {
 	m_pcDock = pcDock;
 	m_pcPlugin = pcPlugin;
+	m_bCanDrag = m_bDragging = false;
 	
 	pcAddressDrop = new AddressDrop(this);
 	AddChild( pcAddressDrop );
@@ -199,10 +200,14 @@ void Address::SaveSettings()
 	
 void Address::AttachedToWindow()
 {
+	
 	os::File* pcFile = new os::File( m_pcPlugin->GetPath() );
 	os::Resources cCol( pcFile );
 	os::ResStream* pcStream = cCol.GetResourceStream( "icon48x48.png" );
 	m_pcIcon = new os::BitmapImage( pcStream );
+	delete pcStream;
+	pcStream = cCol.GetResourceStream( "icon48x48.png" );
+	m_pcDragIcon = new os::BitmapImage( pcStream );
 	delete pcStream;
 	delete pcFile;
 		
@@ -320,7 +325,7 @@ void Address::DisplayAbout()
 	String cTitle = (String)"About " + (String)PLUGIN_NAME + (String)"...";
 	String cInfo = (String)"Version:  " +  (String)PLUGIN_VERSION + (String)"\n\nAuthor:   " + (String)PLUGIN_AUTHOR + (String)"\n\nDesc:      " + (String)PLUGIN_DESC;	
 	
-	Alert* pcAlert = new Alert(cTitle.c_str(),cInfo.c_str(),m_pcIcon->LockBitmap(),0,"_OK",NULL);
+	Alert* pcAlert = new Alert(cTitle.c_str(),cInfo.c_str(),m_pcIcon->LockBitmap(),0,"Close",NULL);
 	m_pcIcon->UnlockBitmap();
 	pcAlert->Go(new Invoker());
 	pcAlert->MakeFocus();
@@ -376,6 +381,10 @@ void Address::ExecuteBrowser(const String& cUrl)
 
 void Address::AddToBuffer(String cUrl)
 {
+	for (int i = 0; i < pcAddressDrop->GetItemCount(); i++)
+	{
+		if (pcAddressDrop->GetItem(i) == cUrl) return;
+	}
 	pcAddressDrop->AppendItem(cUrl);
 	m_cBuffer.push_back(cUrl);
 }
@@ -411,6 +420,63 @@ void Address::ExportHelpFile()
 			printf( "Address dock plug-in: Could not export help file.\n" );
 		}
 	}
+}
+
+void Address::MouseMove( const os::Point& cNewPos, int nCode, uint32 nButtons, os::Message* pcData )
+{
+	if( nCode != MOUSE_ENTERED && nCode != MOUSE_EXITED )
+	{
+		/* Create dragging operation */
+		if( m_bCanDrag )
+		{
+			m_bDragging = true;
+			os::Message cMsg;
+			BeginDrag( &cMsg, os::Point( m_pcDragIcon->GetBounds().Width() / 2,
+											m_pcDragIcon->GetBounds().Height() / 2 ), m_pcDragIcon->LockBitmap() );
+			m_bCanDrag = false;
+		}
+	}
+	os::View::MouseMove( cNewPos, nCode, nButtons, pcData );
+}
+
+void Address::MouseUp( const os::Point & cPosition, uint32 nButtons, os::Message * pcData )
+{
+	// Get the frame of the dock
+	// If the plugin is dragged outside of the dock;s frame
+	// then remove the plugin
+	Rect cRect = ConvertFromScreen( GetWindow()->GetFrame() );
+
+	if( ( m_bDragging && ( cPosition.x < cRect.left ) ) || ( m_bDragging && ( cPosition.x > cRect.right ) ) || ( m_bDragging && ( cPosition.y < cRect.top ) ) || ( m_bDragging && ( cPosition.y > cRect.bottom ) ) ) 
+	{
+		/* Remove ourself from the dock */
+		os::Message cMsg( os::DOCK_REMOVE_PLUGIN );
+		cMsg.AddPointer( "plugin", m_pcPlugin );
+		m_pcDock->PostMessage( &cMsg, m_pcDock );
+		return;
+	} 
+
+	m_bDragging = false;
+	m_bCanDrag = false;
+	os::View::MouseUp( cPosition, nButtons, pcData );
+}
+
+void Address::MouseDown( const os::Point& cPosition, uint32 nButtons )
+{
+	os:: Point cPos;
+
+	if ( nButtons == MOUSE_BUT_LEFT )
+	{
+		MakeFocus ( true );
+		m_bCanDrag = true;
+
+		// Store these coordinates for later use in the MouseUp procedure
+		m_cPos.x = cPosition.x;
+		m_cPos.y = cPosition.y;
+	} else if ( nButtons == MOUSE_BUT_RIGHT ) {
+		MakeFocus ( false );
+	}
+
+	os::View::MouseDown( cPosition, nButtons );
 }
 
 //*************************************************************************************
@@ -450,3 +516,4 @@ DockPlugin* init_dock_plugin( os::Path cPluginFile, os::Looper* pcDock )
 	return( new AdressPlugin() );
 }
 }
+

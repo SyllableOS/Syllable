@@ -33,6 +33,9 @@ public:
 	virtual void AttachedToWindow();
 	virtual void DetachedFromWindow();
 	virtual void HandleMessage(Message* pcMessage);
+	virtual void MouseMove( const os::Point& cNewPos, int nCode, uint32 nButtons, os::Message* pcData );
+	virtual void MouseUp( const os::Point & cPosition, uint32 nButton, os::Message * pcData );
+	virtual void MouseDown( const os::Point& cPosition, uint32 nButtons );
 private:
 	void DisplayAbout();
 	void DisplaySettings();
@@ -58,34 +61,20 @@ private:
 	
 	os::DockPlugin* m_pcPlugin;
 	BitmapImage* m_pcIcon;
+	BitmapImage* m_pcDragIcon;
 	os::Looper* m_pcDock;  
 	bool bExportHelpFile;
 	int32 nDefault;
 	
+	os::File*		pcFile;
+	os::ResStream*	pcStream;		
+		
+	bool m_bCanDrag;
+	bool m_bDragging;
+	
 	std::vector< std::pair<String,String> > cSites;
 	std::vector< String > m_cBuffer;
 	
+	os::Point m_cPos;
 	SettingsWindow* pcSettingsWindow;
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

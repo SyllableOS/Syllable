@@ -13,6 +13,8 @@ $(OBJDIR):
 
 $(OBJDIR)/CpuSpeed.so: $(OBJS)
 	$(CXX) -shared -Xlinker "-soname=CpuSpeed.so" $(OBJS) -lsyllable -o $(OBJDIR)/CpuSpeed.so
+	@echo Adding resources...
+	rescopy $(OBJDIR)/CpuSpeed.so -r images/*.png
 
 install:  $(OBJDIR)/CpuSpeed.so
 	install -s $(OBJDIR)/CpuSpeed.so $(APPBIN)/CpuSpeed.so

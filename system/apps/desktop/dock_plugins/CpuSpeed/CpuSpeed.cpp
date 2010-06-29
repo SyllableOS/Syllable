@@ -21,13 +21,15 @@
 #define PLUGIN_DESC       "A plugin that lets the user select a processor frequency from all available frequencies."
 #define PLUGIN_AUTHOR     "Tim ter Laak (based on code by Rick Caudill)"
 
+#define DRAG_THRESHOLD 4
+
 enum
 {
 	M_SELECTION, 
 };
 
 
-CpuSpeedDrop::CpuSpeedDrop(View* pcParent) : DropdownMenu(Rect(0,3,85,20),"cpuspeed_drop")
+CpuSpeedDrop::CpuSpeedDrop(View* pcParent) : DropdownMenu(Rect(0,0,85,20),"cpuspeed_drop")
 {
 	pcParentView = pcParent; 
 	this->SetReadOnly(true);
@@ -42,7 +44,7 @@ CpuSpeed::CpuSpeed(os::DockPlugin* pcPlugin, os::Looper* pcDock) : os::View( os:
 {
 	m_pcDock = pcDock;
 	m_pcPlugin = pcPlugin;
-	m_pcIcon = NULL;
+	m_bCanDrag = m_bDragging = false;
 	
 	m_cDeviceFileName = "";	
 	m_nFd = -1;
@@ -61,6 +63,7 @@ CpuSpeed::~CpuSpeed()
 void CpuSpeed::DetachedFromWindow()
 {	
 	delete( m_pcIcon );	
+//	delete( m_pcDragIcon );		/* currently, m_pcIcon == m_pcDragIcon */
 }
 
 void CpuSpeed::LoadCpuSpeeds()
@@ -124,15 +127,15 @@ void CpuSpeed::LoadCpuSpeeds()
 
 void CpuSpeed::AttachedToWindow()
 {
-	
-#if 0
 	os::File* pcFile = new os::File( m_pcPlugin->GetPath() );
 	os::Resources cCol( pcFile );
 	os::ResStream* pcStream = cCol.GetResourceStream( "icon48x48.png" );
 	m_pcIcon = new os::BitmapImage( pcStream );
 	delete pcStream;
 	delete pcFile;
-#endif
+	
+	m_pcDragIcon = m_pcIcon;
+
 	LoadCpuSpeeds();
 	GetSpeed();
 
@@ -173,6 +176,68 @@ void CpuSpeed::HandleMessage(Message* pcMessage)
 			default:
 				break;
 	}
+}
+
+void CpuSpeed::MouseMove( const os::Point& cNewPos, int nCode, uint32 nButtons, os::Message* pcData )
+{
+	if( nCode != MOUSE_ENTERED && nCode != MOUSE_EXITED )
+	{
+		/* Create dragging operation */
+		if( m_bCanDrag )
+		{
+			m_bDragging = true;
+			os::Message cMsg;
+			BeginDrag( &cMsg, os::Point( m_pcDragIcon->GetBounds().Width() / 2,
+											m_pcDragIcon->GetBounds().Height() / 2 ), m_pcDragIcon->LockBitmap() );
+			m_bCanDrag = false;
+		}
+	}
+	os::View::MouseMove( cNewPos, nCode, nButtons, pcData );
+}
+
+
+void CpuSpeed::MouseUp( const os::Point & cPosition, uint32 nButtons, os::Message * pcData )
+{
+	// Get the frame of the dock
+	// If the plugin is dragged outside of the dock;s frame
+	// then remove the plugin
+	Rect cRect = ConvertFromScreen( GetWindow()->GetFrame() );
+
+	if( ( m_bDragging && ( cPosition.x < cRect.left ) ) || ( m_bDragging && ( cPosition.x > cRect.right ) ) || ( m_bDragging && ( cPosition.y < cRect.top ) ) || ( m_bDragging && ( cPosition.y > cRect.bottom ) ) ) 
+	{
+		/* Remove ourself from the dock */
+		os::Message cMsg( os::DOCK_REMOVE_PLUGIN );
+		cMsg.AddPointer( "plugin", m_pcPlugin );
+		m_pcDock->PostMessage( &cMsg, m_pcDock );
+		return;
+	} /* else if ( nButtons == os::MOUSE_BUT_LEFT ) {
+		// Check to see if the coordinates passed match when the left mouse button was pressed
+		// if so, then it was a single click and not a drag
+		if ( abs( (int)(m_cPos.x - cPosition.x) ) < DRAG_THRESHOLD && abs( (int)(m_cPos.y - cPosition.y) ) < DRAG_THRESHOLD )
+		{
+			// Just eat it for the time being.
+		}
+	}*/
+
+	m_bDragging = false;
+	m_bCanDrag = false;
+	os::View::MouseUp( cPosition, nButtons, pcData );
+}
+
+void CpuSpeed::MouseDown( const os::Point& cPosition, uint32 nButtons )
+{
+	if( nButtons == os::MOUSE_BUT_LEFT )
+	{
+		MakeFocus( true );
+		m_bCanDrag = true;
+		// Store these coordinates for later use in the MouseUp procedure
+		m_cPos.x = cPosition.x;
+		m_cPos.y = cPosition.y;
+	} else if ( nButtons == MOUSE_BUT_RIGHT ) {
+		MakeFocus( false );
+	}
+
+	os::View::MouseDown( cPosition, nButtons );
 }
 
 void CpuSpeed::SetSpeed(int nIndex)
@@ -260,17 +325,4 @@ DockPlugin* init_dock_plugin( os::Path cPluginFile, os::Looper* pcDock )
 	return( new CpuSpeedPlugin() );
 }
 } // of extern "C"
-
-
-
-
-
-
-
-
-
-
-
-
-
 

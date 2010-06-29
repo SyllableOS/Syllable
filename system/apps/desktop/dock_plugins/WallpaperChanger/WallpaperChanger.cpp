@@ -2,6 +2,9 @@
 #include "messages.h"                                                                                                                                                                                                   
 #include <util/event.h>
 
+#define DRAG_THRESHOLD 4
+
+
 static os::Color32_s BlendColours( const os::Color32_s& sColour1, const os::Color32_s& sColour2, float vBlend )
 {
 	int r = int( (float(sColour1.red)   * vBlend + float(sColour2.red)   * (1.0f - vBlend)) );
@@ -35,15 +38,17 @@ static os::Color32_s Tint( const os::Color32_s & sColor, float vTint )
 	return ( os::Color32_s( r, g, b, sColor.alpha ) );
 }
 
+
 /*************************************************
 * Description: Plugin for wallpaper changing
 * Author: Rick Caudill
 * Date: Wed Mar  9 17:59:59 2005
 **************************************************/
-DockWallpaperChanger::DockWallpaperChanger( os::Path cPath, os::Looper* pcDock ) : View(Rect(0,0,1,1),"wallpaper_view")
+DockWallpaperChanger::DockWallpaperChanger( os::Path cPath, DockPlugin* pcPlugin, os::Looper* pcDock ) : View(Rect(0,0,1,1),"wallpaper_view")
 {
 	m_pcDock = pcDock;
 	m_cPath = cPath;	
+	m_pcPlugin  = pcPlugin;	
 	m_bCanDrag = m_bDragging = false;
 	m_bHover = false;
 	pcPaint = NULL;
@@ -73,8 +78,13 @@ void DockWallpaperChanger::AttachedToWindow()
 	/* Load default icons */
 	pcFile = new os::File( m_cPath );
 	os::Resources cCol( pcFile );
-	pcStream = cCol.GetResourceStream( "wallpaper.png" );
+	pcStream = cCol.GetResourceStream( "icon24x24.png" );
 	m_pcIcon = new os::BitmapImage( pcStream );
+	delete pcStream;
+
+	pcStream = cCol.GetResourceStream( "icon48x48.png" );
+	m_pcDragIcon = new os::BitmapImage( pcStream );
+	delete pcStream;
 	delete pcFile;
 		
 	pcChangeLooper = new DockWallpaperChangerLooper(this);
@@ -84,8 +94,6 @@ void DockWallpaperChanger::AttachedToWindow()
 	
 	pcContextMenu = new Menu(Rect(0,0,10,10),"",ITEMS_IN_COLUMN);
 	pcContextMenu->AddItem("Preferences...",new Message(M_PREFS));
-	pcContextMenu->AddItem(new MenuSeparator());	
-	pcContextMenu->AddItem("Help...", new Message(M_HELP));
 	pcContextMenu->AddItem(new MenuSeparator());	
 	pcContextMenu->AddItem("About WallpaperChanger...",new Message(M_WALLPAPERCHANGER_ABOUT));
 	pcContextMenu->SetTargetForItems(this);
@@ -97,7 +105,10 @@ void DockWallpaperChanger::DetachedFromWindow()
 {
 	SaveSettings();  //make sure to save the settings :)
 	if (m_pcIcon) delete m_pcIcon;
+	if (m_pcDragIcon) delete m_pcDragIcon;
+	if (pcContextMenu) delete pcContextMenu;
 	if (pcPaint)delete pcPaint;
+	pcChangeLooper->Terminate();
 }
 
 
@@ -109,7 +120,6 @@ void DockWallpaperChanger::DetachedFromWindow()
 **************************************************/
 void DockWallpaperChanger::Paint( const Rect &cUpdateRect )
 {
-	/*design colors*/
 	os::Color32_s sCurrentColor = BlendColours(get_default_color(os::COL_SHINE),  get_default_color(os::COL_NORMAL_WND_BORDER), 0.5f);
 	SetFgColor( Tint( get_default_color( os::COL_SHADOW ), 0.5f ) );
 	os::Color32_s sBottomColor = BlendColours(get_default_color(os::COL_SHADOW), get_default_color(os::COL_NORMAL_WND_BORDER), 0.5f);
@@ -118,7 +128,6 @@ void DockWallpaperChanger::Paint( const Rect &cUpdateRect )
 											( sCurrentColor.green-sBottomColor.green ) / 30, 
 											( sCurrentColor.blue-sBottomColor.blue ) / 30, 0 );
 	
-	/*draw*/
 	if( cUpdateRect.DoIntersect( os::Rect( 0, 0, GetBounds().right, 29 ) ) )
 	{
 		sCurrentColor.red -= (int)cUpdateRect.top * sColorStep.red;
@@ -135,14 +144,8 @@ void DockWallpaperChanger::Paint( const Rect &cUpdateRect )
 	}
 
 	SetDrawingMode( os::DM_BLEND );
-	if (pcPaint && !m_bHover)	
-		pcPaint->Draw( Point(0,0), this );
-	else
-	{
 		m_pcIcon->Draw(Point(0,0),this);
-	}
-
-	SetDrawingMode(DM_COPY);
+	SetDrawingMode( os::DM_COPY );
 }
 
 /*************************************************
@@ -168,7 +171,8 @@ void DockWallpaperChanger::HandleMessage(Message* pcMessage)
 		{
 			String cTitle = (String)"About " + (String)PLUGIN_NAME + (String)"...";
 			String cInfo = (String)"Version:  " +  (String)PLUGIN_VERSION + (String)"\n\nAuthor:   " + (String)PLUGIN_AUTHOR + (String)"\n\nDesc:      " + (String)PLUGIN_DESC;	
-			Alert* pcAlert = new Alert(cTitle.c_str(),cInfo.c_str(),m_pcIcon->LockBitmap(),0,"OK",NULL);
+			Alert* pcAlert = new Alert(cTitle.c_str(),cInfo.c_str(),m_pcDragIcon->LockBitmap(),0,"Close",NULL);
+			m_pcDragIcon->UnlockBitmap();
 			pcAlert->Go(new Invoker());
 			pcAlert->MakeFocus();
 			break;
@@ -215,7 +219,7 @@ void DockWallpaperChanger::HandleMessage(Message* pcMessage)
 **************************************************/
 void DockWallpaperChanger::MouseMove( const os::Point& cNewPos, int nCode, uint32 nButtons, os::Message* pcData )
 {
-	if (nCode == MOUSE_INSIDE)
+	/*if (nCode == MOUSE_INSIDE)
 	{
 		if (m_bHover)
 		{
@@ -235,20 +239,20 @@ void DockWallpaperChanger::MouseMove( const os::Point& cNewPos, int nCode, uint3
 		m_bHover = true;
 		Invalidate(GetBounds());
 		Flush();
-	}
+	} */
 
 	if( nCode != MOUSE_ENTERED && nCode != MOUSE_EXITED )
 	{
 		/* Create dragging operation */
 		if( m_bCanDrag )
 		{
-			BitmapImage* pcIcon = m_pcIcon;
+			BitmapImage* pcIcon = m_pcDragIcon;
 			m_bDragging = true;
 			os::Message* pcMsg = new os::Message();
 			BeginDrag( pcMsg, os::Point( pcIcon->GetBounds().Width() / 2,
 											pcIcon->GetBounds().Height() / 2 ),pcIcon->LockBitmap() );
 			m_bCanDrag = false;
-			Paint(GetBounds());
+			//Paint(GetBounds());
 		}
 	}
 
@@ -262,15 +266,27 @@ void DockWallpaperChanger::MouseMove( const os::Point& cNewPos, int nCode, uint3
 **************************************************/
 void DockWallpaperChanger::MouseUp( const os::Point & cPosition, uint32 nButtons, os::Message * pcData )
 {
-	if( m_bDragging && ( cPosition.y > 30 ) )
+	// Get the frame of the dock
+	// If the plugin is dragged outside of the dock;s frame
+	// then remove the plugin
+	Rect cRect = ConvertFromScreen( GetWindow()->GetFrame() );
+
+	if( ( m_bDragging && ( cPosition.x < cRect.left ) ) || ( m_bDragging && ( cPosition.x > cRect.right ) ) || ( m_bDragging && ( cPosition.y < cRect.top ) ) || ( m_bDragging && ( cPosition.y > cRect.bottom ) ) ) 
 	{
 		/* Remove ourself from the dock */
 		os::Message cMsg( os::DOCK_REMOVE_PLUGIN );
-		cMsg.AddPointer( "plugin", this );
+		cMsg.AddPointer( "plugin", m_pcPlugin );
 		m_pcDock->PostMessage( &cMsg, m_pcDock );
 		Paint(GetBounds());
 		return;
+	} /*else if ( nButtons == MOUSE_BUT_LEFT ) {
+		// Check to see if the coordinates passed match when the left mouse button was pressed
+		// if so, then it was a single click and not a drag
+		if ( abs( (int)(m_cPos.x - cPosition.x) ) < DRAG_THRESHOLD && abs( (int)(m_cPos.y - cPosition.y) ) < DRAG_THRESHOLD )
+		{
+			// Just eat it for the time being.
 	}
+	}*/
 	m_bDragging = false;
 	m_bCanDrag = false;
 	os::View::MouseUp( cPosition, nButtons, pcData );
@@ -283,13 +299,17 @@ void DockWallpaperChanger::MouseUp( const os::Point & cPosition, uint32 nButtons
 **************************************************/
 void DockWallpaperChanger::MouseDown( const os::Point& cPosition, uint32 nButtons )
 {
-	MakeFocus( true );
-		
-	if( nButtons == 0x02) {
+	if( nButtons == 2 ) {
+		MakeFocus( false );
 		pcContextMenu->Open(ConvertToScreen(cPosition));
 	}
-	else
+	else if ( nButtons == MOUSE_BUT_LEFT ) {
+		MakeFocus( true );
 		m_bCanDrag = true;
+		// Store these coordinates for later use in the MouseUp procedure
+		m_cPos.x = cPosition.x;
+		m_cPos.y = cPosition.y;
+	}
 		
 	os::View::MouseDown( cPosition, nButtons );
 }
@@ -388,7 +408,7 @@ void DockWallpaperChanger::ConvertTime()
 			break;
 			
 		case 6:
-			nTimerTime = 60000000*60;  //1 hour
+			nTimerTime =  60000000*60UL;	// 1 hour
 			break;
 						
 		default:
@@ -510,7 +530,7 @@ public:
 
 	status_t Initialize()
 	{
-		m_pcView = new DockWallpaperChanger(GetPath(),GetApp());
+		m_pcView = new DockWallpaperChanger(GetPath(),this,GetApp());
 		AddView(m_pcView);
 		return 0;
 	}

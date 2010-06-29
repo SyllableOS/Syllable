@@ -17,29 +17,70 @@
 
 #include "meter.h"
 
+#define DRAG_THRESHOLD 4
+
+static os::Color32_s BlendColours( const os::Color32_s& sColour1, const os::Color32_s& sColour2, float vBlend )
+{
+	int r = int( (float(sColour1.red)   * vBlend + float(sColour2.red)   * (1.0f - vBlend)) );
+ 	int g = int( (float(sColour1.green) * vBlend + float(sColour2.green) * (1.0f - vBlend)) );
+ 	int b = int( (float(sColour1.blue)  * vBlend + float(sColour2.blue)  * (1.0f - vBlend)) );
+ 	if ( r < 0 ) r = 0; else if (r > 255) r = 255;
+ 	if ( g < 0 ) g = 0; else if (g > 255) g = 255;
+ 	if ( b < 0 ) b = 0; else if (b > 255) b = 255;
+ 	return os::Color32_s(r, g, b, sColour1.alpha);
+}
+
+/* From the Photon Decorator */
+static os::Color32_s Tint( const os::Color32_s & sColor, float vTint )
+{
+	int r = int ( ( float ( sColor.red ) * vTint + 127.0f * ( 1.0f - vTint ) ) );
+	int g = int ( ( float ( sColor.green ) * vTint + 127.0f * ( 1.0f - vTint ) ) );
+	int b = int ( ( float ( sColor.blue ) * vTint + 127.0f * ( 1.0f - vTint ) ) );
+ 
+ 	if( r < 0 )
+ 		r = 0;
+ 	else if( r > 255 )
+ 		r = 255;
+ 	if( g < 0 )
+ 		g = 0;
+ 	else if( g > 255 )
+ 		g = 255;
+ 	if( b < 0 )
+ 		b = 0;
+ 	else if( b > 255 )
+ 		b = 255;
+ 	return ( os::Color32_s( r, g, b, sColor.alpha ) );
+}
+
 Meter::Meter(DockPlugin* pcPlugin, os::Looper* pcDock) : os::View( os::Rect(), "meter" )
 {
+	os::File* pcFile;
+	os::ResStream *pcResStream;
+
 	//store dock data
 	m_pcPlugin = pcPlugin;
 	m_pcDock = pcDock;
+	m_bCanDrag = m_bDragging = false;
 
 	//load in bitmaps
-
-	File cFile(m_pcPlugin->GetPath());
-	Resources cResources(&cFile);
-	ResStream* pcResStream;
+	pcFile = new os::File( m_pcPlugin->GetPath() );
+	os::Resources cResources( pcFile );
+	pcResStream = cResources.GetResourceStream( "icon48x48.png" );
+	m_pcDragIcon = new os::BitmapImage( pcResStream );
+	delete( pcResStream );
 
 	pcResStream = cResources.GetResourceStream("cpu.png");
 	m_pcCPUImage = new os::BitmapImage(pcResStream );
-	delete pcResStream;
+	delete( pcResStream );
 
 	pcResStream = cResources.GetResourceStream("disk.png");
 	m_pcDiskImage = new os::BitmapImage(pcResStream );
-	delete pcResStream;
+	delete( pcResStream );
 
 	pcResStream = cResources.GetResourceStream("memory.png");
 	m_pcMemoryImage = new os::BitmapImage(pcResStream );
-	delete pcResStream;
+	delete( pcResStream );
+	delete( pcFile );
 	
 	//create background bitmaps
 	m_pcHorizontalBackground = new os::BitmapImage( Bitmap::SHARE_FRAMEBUFFER | Bitmap::ACCEPT_VIEWS );
@@ -76,7 +117,6 @@ Meter::Meter(DockPlugin* pcPlugin, os::Looper* pcDock) : os::View( os::Rect(), "
 	delete( m_pcCPUImage );
 	delete( m_pcDiskImage );
 	delete( m_pcMemoryImage );
-
 }
 
 Meter::~Meter()
@@ -122,8 +162,64 @@ void Meter::FrameSized(const Point& cDelta)
 	pcView->Sync();
 }
 
+void Meter::MouseMove( const os::Point& cNewPos, int nCode, uint32 nButtons, os::Message* pcData )
+{
+	if( nCode != MOUSE_ENTERED && nCode != MOUSE_EXITED )
+	{
+		/* Create dragging operation */
+		if( m_bCanDrag )
+		{
+			m_bDragging = true;
+			os::Message cMsg;
+			BeginDrag( &cMsg, os::Point( m_pcDragIcon->GetBounds().Width() / 2,
+											m_pcDragIcon->GetBounds().Height() / 2 ), m_pcDragIcon->LockBitmap() );
+			m_bCanDrag = false;
+		}
+	}
+	os::View::MouseMove( cNewPos, nCode, nButtons, pcData );
+}
+
+void Meter::MouseUp( const os::Point & cPosition, uint32 nButtons, os::Message * pcData )
+{
+	// Get the frame of the dock
+	// If the plugin is dragged outside of the dock;s frame
+	// then remove the plugin
+	Rect cRect = ConvertFromScreen( GetWindow()->GetFrame() );
+
+	if( ( m_bDragging && ( cPosition.x < cRect.left ) ) || ( m_bDragging && ( cPosition.x > cRect.right ) ) || ( m_bDragging && ( cPosition.y < cRect.top ) ) || ( m_bDragging && ( cPosition.y > cRect.bottom ) ) ) 
+	{
+		/* Remove ourself from the dock */
+		os::Message cMsg( os::DOCK_REMOVE_PLUGIN );
+		cMsg.AddPointer( "plugin", m_pcPlugin );
+		m_pcDock->PostMessage( &cMsg, m_pcDock );
+		return;
+	} /*else if ( nButtons == MOUSE_BUT_LEFT ) {
+		// Check to see if the coordinates passed match when the left mouse button was pressed
+		// if so, then it was a single click and not a drag
+		if ( abs( (int)(m_cPos.x - cPosition.x) ) < DRAG_THRESHOLD && abs( (int)(m_cPos.y - cPosition.y) ) < DRAG_THRESHOLD )
+		{ 
+			// Just eat it at this time.
+		}
+	} */
+
+	m_bDragging = false;
+	m_bCanDrag = false;
+	os::View::MouseUp( cPosition, nButtons, pcData );
+}
+
 void Meter::MouseDown(const Point& cPosition, uint32 nButtons)
 {
+	if ( nButtons == MOUSE_BUT_LEFT )
+	{
+		MakeFocus ( true );
+		m_bCanDrag = true;
+
+		// Store these coordinates for later use in the MouseUp procedure
+		m_cPos.x = cPosition.x;
+		m_cPos.y = cPosition.y;
+	} else if ( nButtons == MOUSE_BUT_RIGHT )
+	{
+		MakeFocus ( false );
 	//Display copyright notice
 	Alert *pcAlert = new Alert("Copyright Notice",
 		"Meter 1.0\n"
@@ -132,8 +228,10 @@ void Meter::MouseDown(const Point& cPosition, uint32 nButtons)
 		"This is free software, and is distributed under the\n"
 		"GNU General Public License.\n\n"
 		"See http://www.gnu.org for details.",
-		Alert::ALERT_INFO, 0, "Ok", NULL );
+		m_pcDragIcon->LockBitmap(), 0, "Close", NULL );
+		m_pcDragIcon->UnlockBitmap();
 	pcAlert->Go(new Invoker());
+}
 }
 
 void Meter::Paint(const Rect& cUpdateRect)

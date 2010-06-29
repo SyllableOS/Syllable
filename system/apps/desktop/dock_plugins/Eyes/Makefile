@@ -29,6 +29,7 @@ objs:
 Eyes.so: $(OBJS)
 	@echo Linking...
 	@$(CXX) -shared -Xlinker -soname=Eyes.so $(OBJS) -o Eyes.so -lsyllable
+	@rescopy Eyes.so -r images/*.png
 
 clean:
 	@echo Cleaning...

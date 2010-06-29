@@ -23,11 +23,16 @@
 #include <gui/rect.h>
 #include <gui/desktop.h>
 #include <gui/menu.h>
+#include <gui/image.h>
+#include <util/resources.h>
+#include <storage/file.h>
+
+#include <appserver/dockplugin.h>
 
 class EyeWidget : public os::View
 {
 	public:
-		EyeWidget( const os::String& cName,
+		EyeWidget(os::DockPlugin* pcPlugin,os::Looper* pcDock,const os::String& cName,
 				uint32 nResizeMask = os::CF_FOLLOW_LEFT | os::CF_FOLLOW_TOP,
 				uint32 nFlags = os::WID_WILL_DRAW | os::WID_CLEAR_BACKGROUND );
 
@@ -35,16 +40,30 @@ class EyeWidget : public os::View
 
 		void Paint( const os::Rect& cUpdateRect );
 		void FrameSized( const os::Point& cDelta );
-		void MouseDown(const os::Point& cPosition, uint32 nButtons );
+		virtual void MouseMove( const os::Point& cNewPos, int nCode, uint32 nButtons, os::Message* pcData );
+		virtual void MouseUp( const os::Point & cPosition, uint32 nButton, os::Message * pcData );
+		virtual void MouseDown( const os::Point& cPosition, uint32 nButtons );
+		//void MouseDown(const os::Point& cPosition, uint32 nButtons );
 		void HandleMessage(os::Message* pcMessage);
-		void AttachedToWindow(void);
+		virtual void AttachedToWindow(void);
+		virtual void DetachedFromWindow(void);
 		os::Point GetPreferredSize(bool bLargest=false) const;
 		void UpdateEyes();
 
 	private:
+		os::DockPlugin* m_pcPlugin;
+		os::Looper* m_pcDock;
+
+		os::BitmapImage* m_pcIcon;
+		
+		bool m_bAttachedToWindow;
 
 		os::Menu* pcContextMenu;
 
+		bool m_bCanDrag;
+		bool m_bDragging;
+
+		os::Point m_cPos;
 		os::Point m_Mouse;
 		os::Point m_MouseOld;
 

@@ -11,6 +11,7 @@ MSG_MAINWND_POSITION_TOP						Top
 MSG_MAINWND_POSITION_BOTTOM						Bottom
 MSG_MAINWND_POSITION_LEFT						Left
 MSG_MAINWND_POSITION_RIGHT						Right
+MSG_MAINWND_POSITION_NOTE						Note: some plugins may not work\nwhen the dock is vertical.
 
 MSG_MAINWND_PLUGINS=200							Plugins
 MSG_MAINWND_PLUGINS_PLUGIN						Plugin

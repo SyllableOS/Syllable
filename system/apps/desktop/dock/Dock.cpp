@@ -344,7 +344,7 @@ void DockView::MouseUp( const os::Point & cPosition, uint32 nButton, os::Message
 			if( m_pcWin->GetIcons()[i]->GetID() != ICON_SYLLABLE )
 			{
 				/* Activate this window */
-				printf( "Activate %i\n", m_pcWin->GetIcons()[i]->GetMsgPort() );
+//				printf( "Activate %i\n", m_pcWin->GetIcons()[i]->GetMsgPort() );
 				os::Messenger cMessenger( m_pcWin->GetIcons()[i]->GetMsgPort() );
 				cMessenger.SendMessage( os::WR_ACTIVATE );
 				
@@ -405,6 +405,9 @@ DockWin::DockWin() :
 			os::Window( os::Rect(), "dock_win", "Dock", 
 				os::WND_NO_BORDER, os::ALL_DESKTOPS )
 {
+	m_pcGetPluginsEv = NULL;
+	m_pcGetPosEv = NULL;
+
 	/* Get the registrar manager */
 	m_pcManager = NULL;
 	try
@@ -463,10 +466,6 @@ DockWin::DockWin() :
 	AddChild( m_pcView );
 	
 	
-	/* Load settings */
-	LoadSettings();
-	
-	
 	/* Register calls */
 	m_pcGetPluginsEv = os::Event::Register( "os/Dock/GetPlugins", "Returns a list of enabled plugins",
 					this, os::DOCK_GET_PLUGINS );
@@ -476,8 +475,16 @@ DockWin::DockWin() :
 					this, os::DOCK_GET_POSITION );
 	m_pcSetPosEv = os::Event::Register( "os/Dock/SetPosition", "Set the position of the dock",
 					this, os::DOCK_SET_POSITION );
-	m_pcGetDockFrameEv = os::Event::Register( "os/Dock/GetFrame", "Get the frame of the dock",
-					this, os::DOCK_GET_FRAME );
+
+
+	/* Load settings */
+	LoadSettings();
+
+
+	/* Send some events so that apps can access them via os::Event::GetLastEventMessage() */
+	UpdatePluginsEvent();
+	UpdatePositionEvent();
+
 
 	/* Bind to window event */					
 	m_pcWindowEv = new os::Event();
@@ -498,7 +505,6 @@ DockWin::~DockWin()
 	delete( m_pcSetPluginsEv );
 	delete( m_pcGetPosEv );
 	delete( m_pcSetPosEv );
-	delete( m_pcGetDockFrameEv );
 	delete( m_pcDesktop );
 }
 
@@ -819,18 +825,8 @@ void DockWin::HandleMessage( os::Message* pcMessage )
 				SetPosition( (os::alignment)nPos );
 			}
 			SaveSettings();
+			UpdatePositionEvent();
 		}
-		case os::DOCK_GET_FRAME:
-		{
-			/* Called by another application to get the frame of the dock */
-			if( !pcMessage->IsSourceWaiting() )
-				break;
-			os::Message cMsg( os::DOCK_GET_FRAME );		
-			cMsg.AddRect( "frame", GetDockFrame() );
-			pcMessage->SendReply( &cMsg );
-			break;
-		}
-
 		case os::DOCK_REMOVE_PLUGIN:
 		{
 			/* Called by a plugin to remove itself from the dock */
@@ -900,6 +896,7 @@ void DockWin::AddPlugin( os::String zPath )
 			}
 		}
 	}
+	UpdatePluginsEvent();
 }
 
 
@@ -953,6 +950,7 @@ void DockWin::DeletePlugin( os::DockPlugin* pcPlugin )
 			//dbprintf("Unload %i\n", nPlugin );
 			unload_library( nPlugin );
 			SaveSettings();
+			UpdatePluginsEvent();
 			return;
 		}
 	} 
@@ -1025,7 +1023,6 @@ void DockWin::UpdateWindows( os::Message* pcMessage )
 		{
 			if( m_pcIcons[i]->GetID() == zID )
 			{
-				//printf("Delete icon!\n" );
 				delete( m_pcIcons[i] );
 
 				m_pcIcons.erase( m_pcIcons.begin() + i );
@@ -1035,7 +1032,7 @@ void DockWin::UpdateWindows( os::Message* pcMessage )
 				return;
 			}
 		}
-		printf( "Error: Cannot remove entry %s\n", zID.c_str() );
+		dbprintf( "Error: Cannot remove entry %s\n", zID.c_str() );
 		g_cWindowLock.Unlock();
 		return;
 	}
@@ -1074,7 +1071,7 @@ void DockWin::UpdateWindows( os::Message* pcMessage )
 		}
 		if( i == m_pcIcons.size() )
 		{
-			printf( "Error: Cannot find entry %s\n", zID.c_str() );
+			dbprintf( "Error: Cannot find entry %s\n", zID.c_str() );
 			g_cWindowLock.Unlock();
 			return;
 		}
@@ -1105,7 +1102,7 @@ void DockWin::UpdateWindows( os::Message* pcMessage )
 			} catch( ... )
 			{
 				bDefaultIcon = true;
-				printf( "Exception!\n" );
+				dbprintf( "Exception when creating bitmap!\n" );
 			}
 		}
 	}
@@ -1225,6 +1222,7 @@ void DockWin::DesktopActivated( int nDesktop, bool bActive )
 	Flush();
 }
 
+
 void DockWin::SetPosition( os::alignment eAlign )
 {
 	/* Set the position */
@@ -1239,6 +1237,28 @@ void DockWin::SetPosition( os::alignment eAlign )
 	UpdateWindowArea();
 	
 }
+
+void DockWin::UpdatePluginsEvent()
+{
+	if( m_pcGetPluginsEv != NULL )
+	{
+		os::Message cMsg( os::DOCK_GET_PLUGINS );
+		for( uint i = 0; i < GetPlugins().size(); i++ )
+			cMsg.AddString( "plugin", GetPlugins()[i]->GetPath().GetPath() );
+		m_pcGetPluginsEv->PostEvent( &cMsg );
+	}
+}
+
+void DockWin::UpdatePositionEvent()
+{
+	if( m_pcGetPosEv != NULL )
+	{
+		os::Message cMsg( os::DOCK_GET_POSITION );		
+		cMsg.AddInt32( "position", GetPosition() );
+		m_pcGetPosEv->PostEvent( &cMsg );
+	}
+}
+
 
 DockApp::DockApp( const char *pzMimeType ):os::Application( pzMimeType )
 {

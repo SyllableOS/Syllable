@@ -46,7 +46,7 @@ using namespace std;
 class DockWallpaperChanger : public View
 {
 	public:
-		DockWallpaperChanger( os::Path cPath, os::Looper* pcDock );
+		DockWallpaperChanger( os::Path cPath, os::DockPlugin* pcPlugin, os::Looper* pcDock );
 		~DockWallpaperChanger();
 		
 		Point GetPreferredSize( bool bLargest ) const;
@@ -73,6 +73,7 @@ class DockWallpaperChanger : public View
 		
 		os::Path m_cPath;
 		os::Looper* m_pcDock;
+		os::DockPlugin* m_pcPlugin;
 		bool m_bCanDrag;
 		bool m_bDragging;
 		bool bRandom;
@@ -82,6 +83,8 @@ class DockWallpaperChanger : public View
 		bool m_bHover;
 		BitmapImage* m_pcIcon;
 		BitmapImage* m_pcHoverIcon;
+		BitmapImage* m_pcDragIcon;
+		os::Point m_cPos;
 		os::File* pcFile;
 		os::ResStream *pcStream;
 		void RefreshIcons();

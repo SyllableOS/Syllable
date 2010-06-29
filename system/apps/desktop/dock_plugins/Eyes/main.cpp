@@ -58,7 +58,7 @@ public:
 	
 	status_t Initialize()
 	{
-		pcEyeWidget = new EyeWidget("eye",CF_FOLLOW_NONE);
+		pcEyeWidget = new EyeWidget(this,GetApp(),"eye",CF_FOLLOW_NONE);
 		pcLooper = new EyeLooper(pcEyeWidget);
 		AddView(pcEyeWidget);
 		pcLooper->Run();

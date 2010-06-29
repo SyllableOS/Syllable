@@ -26,36 +26,115 @@
 
 using namespace os;
 
+#define DRAG_THRESHOLD 4
+
+static os::Color32_s BlendColours( const os::Color32_s& sColour1, const os::Color32_s& sColour2, float vBlend )
+{
+	int r = int( (float(sColour1.red)   * vBlend + float(sColour2.red)   * (1.0f - vBlend)) );
+ 	int g = int( (float(sColour1.green) * vBlend + float(sColour2.green) * (1.0f - vBlend)) );
+ 	int b = int( (float(sColour1.blue)  * vBlend + float(sColour2.blue)  * (1.0f - vBlend)) );
+ 	if ( r < 0 ) r = 0; else if (r > 255) r = 255;
+ 	if ( g < 0 ) g = 0; else if (g > 255) g = 255;
+ 	if ( b < 0 ) b = 0; else if (b > 255) b = 255;
+ 	return os::Color32_s(r, g, b, sColour1.alpha);
+}
+
+/* From the Photon Decorator */
+static os::Color32_s Tint( const os::Color32_s & sColor, float vTint )
+{
+	int r = int ( ( float ( sColor.red ) * vTint + 127.0f * ( 1.0f - vTint ) ) );
+	int g = int ( ( float ( sColor.green ) * vTint + 127.0f * ( 1.0f - vTint ) ) );
+	int b = int ( ( float ( sColor.blue ) * vTint + 127.0f * ( 1.0f - vTint ) ) );
+ 
+ 	if( r < 0 )
+ 		r = 0;
+ 	else if( r > 255 )
+ 		r = 255;
+ 	if( g < 0 )
+ 		g = 0;
+ 	else if( g > 255 )
+ 		g = 255;
+ 	if( b < 0 )
+ 		b = 0;
+ 	else if( b > 255 )
+ 		b = 255;
+ 	return ( os::Color32_s( r, g, b, sColor.alpha ) );
+}
+
 #define ROUND(a) ((int)(a+0.5f))
 
 #define BALL_SIZE 3
 #define BALL_DIST 0.75
 
-EyeWidget::EyeWidget(const String& cName, uint32 nResizeMask, uint32 nFlags ) : View(Rect(0,0,60,40), cName, nResizeMask, nFlags)
+EyeWidget::EyeWidget(os::DockPlugin* pcPlugin, os::Looper* pcDock, const String& cName, uint32 nResizeMask, uint32 nFlags ) : View(Rect(0,0,60,40), cName, nResizeMask, nFlags)
 {
+	os::File* pcFile;
+	os::ResStream *pcStream;
+
+	m_pcPlugin = pcPlugin;
+	m_pcDock = pcDock;
+	m_bCanDrag = m_bDragging = false;
+
+	/* Load default icons */
+	pcFile = new os::File( m_pcPlugin->GetPath() );
+	os::Resources cCol( pcFile );
+	pcStream = cCol.GetResourceStream( "icon48x48.png" );
+	m_pcIcon = new os::BitmapImage( pcStream );
+	delete( pcStream );
+	delete( pcFile );
+
 	// Create pop up menu
 	pcContextMenu=new Menu(Rect(0,0,10,10),"",ITEMS_IN_COLUMN);
 
-	pcContextMenu->AddItem("About Eyes", new Message(M_MENU_ABOUT));
-	pcContextMenu->AddItem(new MenuSeparator());
-	pcContextMenu->AddItem("Remove",new Message(M_MENU_REMOVE));
+	pcContextMenu->AddItem("About Eyes...", new Message(M_MENU_ABOUT));
 
+	m_bAttachedToWindow = false;
 	UpdateEyes();
 }
 
 EyeWidget::~EyeWidget()
 {
 	delete( pcContextMenu );
+	delete( m_pcIcon );
 }
 
 void EyeWidget::AttachedToWindow(void)
 {
+	m_bAttachedToWindow = true;
 	pcContextMenu->SetTargetForItems(this);
+}
+
+void EyeWidget::DetachedFromWindow(void)
+{
+	m_bAttachedToWindow = false;
 }
 
 void EyeWidget::Paint( const Rect& cUpdateRect )
 {
-	FillRect(GetBounds(),get_default_color(COL_NORMAL));
+	//FillRect(GetBounds(),get_default_color(COL_NORMAL));
+	
+	os::Color32_s sCurrentColor = BlendColours(get_default_color(os::COL_SHINE),  get_default_color(os::COL_NORMAL_WND_BORDER), 0.5f);
+	SetFgColor( Tint( get_default_color( os::COL_SHADOW ), 0.5f ) );
+   	os::Color32_s sBottomColor = BlendColours(get_default_color(os::COL_SHADOW), get_default_color(os::COL_NORMAL_WND_BORDER), 0.5f);
+   
+   	os::Color32_s sColorStep = os::Color32_s( ( sCurrentColor.red-sBottomColor.red ) / 30,
+   											( sCurrentColor.green-sBottomColor.green ) / 30,
+   											( sCurrentColor.blue-sBottomColor.blue ) / 30, 0 );
+   
+   	if( cUpdateRect.DoIntersect( os::Rect( 0, 0, GetBounds().right, 29 ) ) )
+   	{
+   		sCurrentColor.red -= (int)cUpdateRect.top * sColorStep.red;
+   		sCurrentColor.green -= (int)cUpdateRect.top * sColorStep.green;
+   		sCurrentColor.blue -= (int)cUpdateRect.top * sColorStep.blue;
+   		for( int i = (int)cUpdateRect.top; i < ( (int)cUpdateRect.bottom < 30 ? (int)cUpdateRect.bottom + 1 : 30 ); i++ )
+   		{
+   			SetFgColor( sCurrentColor );
+   			DrawLine( os::Point( cUpdateRect.left, i ), os::Point( cUpdateRect.right, i ) );
+   			sCurrentColor.red -= sColorStep.red;
+   			sCurrentColor.green -= sColorStep.green;
+   			sCurrentColor.blue -= sColorStep.blue;
+   		}
+   	}
 
 	// Calculate each eye
 	float width=Width()/4;
@@ -65,16 +144,76 @@ void EyeWidget::Paint( const Rect& cUpdateRect )
 	SetFgColor( 255,255,255 );
 	DrawFillEllipse( width, height, width/*-5*/, height/*-5*/ );
 	DrawFillEllipse( width*3, height, width, height/*-5*/ );
+}
 
+void EyeWidget::MouseUp( const os::Point & cPosition, uint32 nButtons, os::Message * pcData )
+{
+	// Get the frame of the dock
+	// If the plugin is dragged outside of the dock's frame
+	// then remove the plugin
+	Rect cRect = ConvertFromScreen( GetWindow()->GetFrame() );
 
+	if( ( m_bDragging && ( cPosition.x < cRect.left ) ) || ( m_bDragging && ( cPosition.x > cRect.right ) ) || ( m_bDragging && ( cPosition.y < cRect.top ) ) || ( m_bDragging && ( cPosition.y > cRect.bottom ) ) ) 
+	{
+		/* Remove ourself from the dock */
+		os::Message cMsg( os::DOCK_REMOVE_PLUGIN );
+		cMsg.AddPointer( "plugin", m_pcPlugin );
+		m_pcDock->PostMessage( &cMsg, m_pcDock );
+		return;
+	} /*else if ( nButtons == MOUSE_BUT_LEFT ) {
+		// Check to see if the coordinates passed match when the left mouse button was pressed
+		// if so, then it was a single click and not a drag
+		if ( abs( (int)(m_cPos.x - cPosition.x) ) < DRAG_THRESHOLD && abs( (int)(m_cPos.y - cPosition.y) ) < DRAG_THRESHOLD )
+		{ 
+			// Just eat the message for right now.	
+		}
+	} */
+
+	m_bDragging = false;
+	m_bCanDrag = false;
+	os::View::MouseUp( cPosition, nButtons, pcData );
+}
+
+void EyeWidget::MouseMove( const os::Point& cNewPos, int nCode, uint32 nButtons, os::Message* pcData )
+{
+	if( nCode != MOUSE_ENTERED && nCode != MOUSE_EXITED )
+	{
+		/* Create dragging operation */
+		if( m_bCanDrag )
+		{
+			m_bDragging = true;
+			os::Message cMsg;
+			BeginDrag( &cMsg, os::Point( m_pcIcon->GetBounds().Width() / 2,
+											m_pcIcon->GetBounds().Height() / 2 ), m_pcIcon->LockBitmap() );
+			m_bCanDrag = false;
+		}
+	}
+	os::View::MouseMove( cNewPos, nCode, nButtons, pcData );
 }
 
 void EyeWidget::MouseDown(const Point& cPosition, uint32 nButtons )
 {
-	if( nButtons == 2 )
+	os:: Point cPos;
+	
+	if ( nButtons == MOUSE_BUT_LEFT )
+	{
+		MakeFocus ( true );
+		m_bCanDrag = true;
+
+		// Store these coordinates for later use in the MouseUp procedure
+		m_cPos.x = cPosition.x;
+		m_cPos.y = cPosition.y;
+	} else if ( nButtons == 0x02 ) { //MOUSE_BUT_RIGHT ) {
+		//MakeFocus ( false );
+		pcContextMenu->Open(ConvertToScreen(cPosition));	// Open the menu where the mouse is
+	}
+
+	os::View::MouseDown( cPosition, nButtons );
+
+	/*if( nButtons == 0x02 )
 		pcContextMenu->Open(ConvertToScreen(cPosition));	// Open the menu where the mouse is
 	else
-		View::MouseDown(cPosition, nButtons);
+		View::MouseDown(cPosition, nButtons); */
 		
 }
 
@@ -84,13 +223,12 @@ void EyeWidget::HandleMessage(Message* pcMessage)
 	{
 		case M_MENU_ABOUT:
 		{
-			Alert* pcAboutAlert = new Alert( "About Eyes","Eyes is clone of the famous XEyes but for Syllable OS.\n\nCopyright (C) 2005 Jonas Jarvoll.\n\nEyes are released under the license GPL.", (Alert::alert_icon) Alert::ALERT_INFO, "OK", NULL );
+			Alert* pcAboutAlert = new Alert( "About Eyes...",
+				"Eyes is a clone of the famous\nXEyes but for Syllable OS.\n\nCopyright (C) 2005 Jonas Jarvoll.\n\nEyes is released under the license GPL.", 
+				m_pcIcon->LockBitmap(), 0, "Close", NULL );
+			m_pcIcon->UnlockBitmap();
 			pcAboutAlert->Go( new Invoker() );
-			break;
-		}
-
-		case M_MENU_REMOVE:
-		{
+			pcAboutAlert->MakeFocus();
 			break;
 		}
 
@@ -165,7 +303,10 @@ void EyeWidget::UpdateEyes()
 	Point pos;
 	uint32 buttons;
 
-	// Get mous position and convert to screen coordinates
+	if(!m_bAttachedToWindow)
+		return;
+
+	// Get mouse position and convert to screen coordinates
 	GetMouse(&m_Mouse, &buttons);
 
 	// Only redraw if the mouse has moved

@@ -47,6 +47,8 @@
 using namespace os;
 using namespace std;                                                                                                                                                                                                     
                                                                                                                                                                                                         
+#define DRAG_THRESHOLD 4
+                                                                                                                                                                                                        
 enum
 {
 	M_PREFS,
@@ -63,7 +65,6 @@ enum
 	M_HELP,
 	CAMERA_ID = 0x0167
 };
-
 
 static os::Color32_s BlendColours( const os::Color32_s& sColour1, const os::Color32_s& sColour2, float vBlend )
 {
@@ -210,6 +211,7 @@ class DockCamera : public View
 
 	private:
 		BitmapImage*	m_pcIcon;
+		BitmapImage*	m_pcDragIcon;
 		BitmapImage*	m_pcHoverIcon;
 		BitmapImage*	pcPaint;
 		Bitmap*			cm_pcBitmap;
@@ -219,8 +221,10 @@ class DockCamera : public View
 		
 		bool			m_bCanDrag;
 		bool			m_bDragging;
-		bool			m_bHover;
 		bool			bFirst;
+		//bool			m_bHover;
+
+		os::Point		m_cPos;
 		
 		bigtime_t		m_nHitTime;
 		float			vDelayTime;
@@ -513,7 +517,7 @@ DockCamera::DockCamera( os::DockPlugin* pcPlugin, os::Looper* pcDock ) : View( o
 	m_pcDock = pcDock;
 	m_pcPlugin = pcPlugin;
 	m_bCanDrag = m_bDragging = false;
-	m_bHover = false;
+	//m_bHover = false;
 	pcPaint = NULL;
 	pcPrefsWin = NULL;
 	cm_pcBitmap = 0;
@@ -523,10 +527,9 @@ DockCamera::DockCamera( os::DockPlugin* pcPlugin, os::Looper* pcDock ) : View( o
 	pcContextMenu = new Menu(Rect(0,0,10,10),"",ITEMS_IN_COLUMN);
 	pcContextMenu->AddItem("Preferences...",new Message(M_PREFS));
 	pcContextMenu->AddItem(new MenuSeparator());	
-	pcContextMenu->AddItem("Help...", new Message(M_HELP));
-	pcContextMenu->AddItem(new MenuSeparator());	
+	//pcContextMenu->AddItem("Help...", new Message(M_HELP));
+	//pcContextMenu->AddItem(new MenuSeparator());	
 	pcContextMenu->AddItem("About Camera...",new Message(M_CAMERA_ABOUT));
-	
 }
 
 
@@ -559,10 +562,14 @@ void DockCamera::AttachedToWindow()
 	
 	/* Load default icons */
 	pcFile = new os::File( m_pcPlugin->GetPath() );
-	os::Resources cCol( pcFile );
-	pcStream = cCol.GetResourceStream( "camera.png" );
+	os::Resources cDockCol( pcFile );
+	pcStream = cDockCol.GetResourceStream( "icon24x24.png" );
 	m_pcIcon = new os::BitmapImage( pcStream );
 	delete( pcStream );
+/*	pcStream = cDockCol.GetResourceStream( "icon48x48.png" );
+	m_pcDragIcon = new os::BitmapImage( pcStream );
+	delete( pcStream );*/
+	m_pcDragIcon = m_pcIcon;
 	delete pcFile;
 	
 	/* Load settings */
@@ -580,6 +587,7 @@ void DockCamera::DetachedFromWindow()
 	SaveSettings();
 		
 	if (m_pcIcon) delete m_pcIcon;
+//	if (m_pcDragIcon) delete m_pcDragIcon;	/* Currently m_pcDragIcon == m_pcIcon */
 	if (pcPaint)delete pcPaint;
 	if (m_pcPrintKeyEvent) delete m_pcPrintKeyEvent;
 }
@@ -663,14 +671,8 @@ void DockCamera::Paint( const Rect &cUpdateRect )
 	}
 
 	SetDrawingMode( os::DM_BLEND );
-	if (pcPaint && !m_bHover)	
-		pcPaint->Draw( Point(0,0), this );
-	else
-	{
 		m_pcIcon->Draw(Point(0,0),this);
-	}
-
-	SetDrawingMode(DM_COPY);
+	SetDrawingMode( os::DM_COPY );
 }
 
 Point DockCamera::GetPreferredSize( bool bLargest ) const
@@ -686,7 +688,8 @@ void DockCamera::HandleMessage(Message* pcMessage)
 		{
 			String cTitle = (String)"About " + (String)PLUGIN_NAME + (String)"...";
 			String cInfo = (String)"Version:  " +  (String)PLUGIN_VERSION + (String)"\n\nAuthor:   " + (String)PLUGIN_AUTHOR + (String)"\n\nDesc:      " + (String)PLUGIN_DESC;	
-			Alert* pcAlert = new Alert(cTitle.c_str(),cInfo.c_str(),m_pcIcon->LockBitmap(),0,"OK",NULL);
+			Alert* pcAlert = new Alert(cTitle.c_str(),cInfo.c_str(),m_pcDragIcon->LockBitmap(),0,"Close",NULL);
+			m_pcDragIcon->UnlockBitmap();
 			pcAlert->Go(new Invoker());
 			pcAlert->MakeFocus();
 			break;
@@ -727,44 +730,19 @@ void DockCamera::HandleMessage(Message* pcMessage)
 }
 void DockCamera::MouseMove( const os::Point& cNewPos, int nCode, uint32 nButtons, os::Message* pcData )
 {
-	if (nCode == MOUSE_INSIDE)
-	{
-		if (m_bHover)
-		{
-			Bitmap* pcBitmap = m_pcIcon->LockBitmap();
-			m_bHover = false;
-			if( pcPaint == NULL )
-			{
-				pcPaint = new BitmapImage(pcBitmap->LockRaster(),IPoint((int)m_pcIcon->GetSize().x,(int)m_pcIcon->GetSize().y),pcBitmap->GetColorSpace());;
-				pcPaint->ApplyFilter(BitmapImage::F_HIGHLIGHT);
-				pcBitmap->UnlockRaster();
-				pcPaint->UnlockBitmap();
-			}
-			Invalidate(GetBounds());
-			Flush();
-		}
-	}
-
-	else
-	{
-		m_bHover = true;
-		Invalidate(GetBounds());
-		Flush();
-	}
-
 	if( nCode != MOUSE_ENTERED && nCode != MOUSE_EXITED )
 	{
 		/* Create dragging operation */
 		if( m_bCanDrag )
 		{
-			BitmapImage* pcIcon = m_pcIcon;
+			BitmapImage* pcIcon = m_pcDragIcon;
 			m_bDragging = true;
 			os::Message* pcMsg = new os::Message();
 			BeginDrag( pcMsg, os::Point( pcIcon->GetBounds().Width() / 2,
 											pcIcon->GetBounds().Height() / 2 ),pcIcon->LockBitmap() );
 			delete( pcMsg );
 			m_bCanDrag = false;
-			Paint(GetBounds());
+			//Paint(GetBounds());
 		}
 	}
 
@@ -774,15 +752,26 @@ void DockCamera::MouseMove( const os::Point& cNewPos, int nCode, uint32 nButtons
 
 void DockCamera::MouseUp( const os::Point & cPosition, uint32 nButtons, os::Message * pcData )
 {
-	if( m_bDragging && ( cPosition.y > 30 ) )
+	// Get the frame of the dock
+	// If the plugin is dragged outside of the dock;s frame
+	// then remove the plugin
+	Rect cRect = ConvertFromScreen( GetWindow()->GetFrame() );
+
+	if( ( m_bDragging && ( cPosition.x < cRect.left ) ) || ( m_bDragging && ( cPosition.x > cRect.right ) ) || ( m_bDragging && ( cPosition.y < cRect.top ) ) || ( m_bDragging && ( cPosition.y > cRect.bottom ) ) ) 
 	{
 		/* Remove ourself from the dock */
 		os::Message cMsg( os::DOCK_REMOVE_PLUGIN );
 		cMsg.AddPointer( "plugin", m_pcPlugin );
 		m_pcDock->PostMessage( &cMsg, m_pcDock );
-		Paint(GetBounds());
+		//Paint(GetBounds());
 		return;
+	} else if ( nButtons == MOUSE_BUT_LEFT ) {
+		// Check to see if the coordinates passed match when the left mouse button was pressed
+		// if so, then it was a single click and not a drag
+		if ( abs( (int)(m_cPos.x - cPosition.x) ) < DRAG_THRESHOLD && abs( (int)(m_cPos.y - cPosition.y) ) < DRAG_THRESHOLD )
+			OnSingleClick();
 	}
+	
 	m_bDragging = false;
 	m_bCanDrag = false;
 	os::View::MouseUp( cPosition, nButtons, pcData );
@@ -790,12 +779,17 @@ void DockCamera::MouseUp( const os::Point & cPosition, uint32 nButtons, os::Mess
 
 void DockCamera::MouseDown( const os::Point& cPosition, uint32 nButtons )
 {
-	MakeFocus( true );
+
 	if( nButtons == os::MOUSE_BUT_LEFT )
 	{
-		OnSingleClick();
+		MakeFocus( true );
 		m_bCanDrag = true;
-	} else if( nButtons == 2 ) {
+
+		// Store these coordinates for later use in the MouseUp procedure
+		m_cPos.x = cPosition.x;
+		m_cPos.y = cPosition.y;
+	} else if( nButtons == MOUSE_BUT_RIGHT ) {
+		MakeFocus( false );
 		pcContextMenu->Open(ConvertToScreen(cPosition));
 	}
 	os::View::MouseDown( cPosition, nButtons );
@@ -859,65 +853,5 @@ DockPlugin* init_dock_plugin( os::Path cPluginFile, os::Looper* pcDock )
 	return( new CameraPlugin() );
 }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

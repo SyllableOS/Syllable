@@ -17,7 +17,7 @@
 
 #include <unistd.h>
 #include <atheos/filesystem.h>
-#include <atheos/kernel.h>
+#include <atheos/sysinfo.h>
 #include <atheos/time.h>
 #include <gui/image.h>
 #include <gui/requesters.h>
@@ -47,7 +47,9 @@ class Meter : public os::View
 		void AttachedToWindow();
 		void DetachedFromWindow();
 		void FrameSized(const Point &cDelta);
-		void MouseDown(const Point& cPosition, uint32 nButtons);
+		virtual void MouseMove( const os::Point& cNewPos, int nCode, uint32 nButtons, os::Message* pcData );
+		virtual void MouseUp( const os::Point & cPosition, uint32 nButton, os::Message * pcData );
+		virtual void MouseDown(const Point& cPosition, uint32 nButtons);
 		void Paint(const Rect& cUpdateRect);
 		void TimerTick(int nID);
 	private:
@@ -66,6 +68,7 @@ class Meter : public os::View
 		BitmapImage* m_pcHorizontalBackground;
 		BitmapImage* m_pcVerticalBackground;
 		BitmapImage* m_pcBuffer;
+		BitmapImage* m_pcDragIcon;
 
 		//meter data
 		float vCPU;
@@ -75,4 +78,9 @@ class Meter : public os::View
 		bigtime_t m_nOldRealtime;
 		bigtime_t m_nOldIdletime;
 		int m_nCounter;
+
+		bool		m_bCanDrag;
+		bool		m_bDragging;
+
+		os::Point	m_cPos;
 };

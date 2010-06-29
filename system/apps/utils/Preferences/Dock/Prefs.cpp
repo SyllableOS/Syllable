@@ -16,55 +16,21 @@
  *  Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
  *  MA 02111-1307, USA
  */
- 
+
 #include "Prefs.h" 
 #include "resources/Dock.h"
-#include <syllable/time.h>
 
 enum {
 	DP_APPLY,
 	DP_UNDO,
 	DP_DEFAULT,
 	DP_ENABLE,
-	DP_PLUGIN_CHANGED
+	DP_PLUGIN_CHANGED,
+	DP_POSITION_SEL_CHANGED,
+	DP_DOCK_PLUGINS_EV,
+	DP_DOCK_POSITION_EV
 };
 
-
-class EventReceiver : public os::Looper
-{
-public:
-	EventReceiver() : os::Looper( "event_receiver" )
-	{
-		m_bReceived = false;
-	}
-	
-	void HandleMessage( os::Message* pcMsg )
-	{
-		if( m_bReceived )
-			return;
-		m_cMsg = *pcMsg;
-		m_bReceived = true;
-	}
-	
-	os::Message GetMessage()
-	{
-		Lock();
-		while( !m_bReceived )
-		{
-			Unlock();
-			snooze( 1000 );
-			Lock();
-		}
-		m_bReceived = false;
-		os::Message cMsg = m_cMsg;
-		Unlock();
-		return( cMsg );
-	}
-	
-private:
-	bool m_bReceived;
-	os::Message m_cMsg;
-};
 
 PrefsDockWin::PrefsDockWin( os::Rect cFrame )
 			: os::Window( cFrame, "dock_prefs_win", MSG_MAINWND_TITLE, 0/*os::WND_NOT_RESIZABLE*/ )
@@ -87,8 +53,14 @@ PrefsDockWin::PrefsDockWin( os::Rect cFrame )
 	m_pcPos->AppendItem( MSG_MAINWND_POSITION_BOTTOM );
 	m_pcPos->AppendItem( MSG_MAINWND_POSITION_LEFT );
 	m_pcPos->AppendItem( MSG_MAINWND_POSITION_RIGHT );
+	m_pcPos->SetSelectionMessage( new os::Message( DP_POSITION_SEL_CHANGED ) );
+	m_pcPos->SetTarget( this );
 	m_pcHPos->AddChild( m_pcPos );
-	m_pcHPos->AddChild( new os::HLayoutSpacer( "" ) );
+	m_pcHPos->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f ) );
+	m_pcPositionNote = new os::StringView( os::Rect(), "dock_prefs_pos_note", "" );
+	m_pcHPos->AddChild( m_pcPositionNote );
+	m_pcHPos->SameHeight( "dock_prefs_pos", "dock_prefs_pos_note", NULL );
+	m_pcPosition->SetRoot( m_pcHPos );
 	
 	/* Create plugins frame */
 	m_pcVPlugins = new os::VLayoutNode( "dock_prefs_vplugins" );
@@ -117,7 +89,7 @@ PrefsDockWin::PrefsDockWin( os::Rect cFrame )
 	m_pcHButtons = new os::HLayoutNode( "dock_prefs_buttons" );
 	m_pcHButtons->AddChild( new os::HLayoutSpacer( "" ) );
 	
-	/* Create Apply Button */
+	/* Create buttons */
 	m_pcApply = new os::Button( os::Rect(), "dock_prefs_apply", MSG_MAINWND_BUTTON_APPLY, new os::Message( DP_APPLY ) );
 	m_pcHButtons->AddChild( m_pcApply );
 	m_pcHButtons->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f ) );
@@ -135,7 +107,6 @@ PrefsDockWin::PrefsDockWin( os::Rect cFrame )
 	m_pcVLayout->AddChild( m_pcPlugins );
 	m_pcVLayout->AddChild( new os::VLayoutSpacer( "", 5.0f, 5.0f ) );
 	m_pcVLayout->AddChild( m_pcHButtons );
-	m_pcPosition->SetRoot( m_pcHPos );
 	m_pcPlugins->SetRoot( m_pcVPlugins );
 	m_pcRoot->SetRoot( m_pcVLayout );
 	AddChild( m_pcRoot );
@@ -163,63 +134,16 @@ PrefsDockWin::PrefsDockWin( os::Rect cFrame )
 	m_cDefaultEnabledPlugins.clear();
 	m_cSavedEnabledPlugins.clear();
 	
-	try
-	{
-	os::Message cReply;
-	os::Message cDummy;
-	
-	os::Event cEvent;
-	os::Message cMsg;
-	EventReceiver* pcReceiver = new EventReceiver();
-	pcReceiver->Run();
-	
-	/* Get enabled plugins */
-	if( cEvent.SetToRemote( "os/Dock/GetPlugins", 0 ) == 0 )
-	{
-		if( cEvent.PostEvent( &cMsg, pcReceiver, 0 ) == 0 )
-		{
-			cReply = pcReceiver->GetMessage();
-			int i = 0;
-			os::String zEnabledPlugin;
-			while( cReply.FindString( "plugin", &zEnabledPlugin.str(), i ) == 0 )
-			{
-				m_cEnabledPlugins.push_back( zEnabledPlugin );
-				i++;
-			}
-		}
-	}
-	/* Get the position */
-	if( cEvent.SetToRemote( "os/Dock/GetPosition", 0 ) == 0 )
-	{
-		if( cEvent.PostEvent( &cMsg, pcReceiver, 0 ) == 0 )
-		{
-			cReply = pcReceiver->GetMessage();
-			int32 nPosition;
-			cReply.FindInt32( "position", &nPosition );
-		
-			if( nPosition == os::ALIGN_TOP )
-				m_pcPos->SetSelection( 0 );
-			else if( nPosition == os::ALIGN_BOTTOM )
-				m_pcPos->SetSelection( 1 );
-			else if( nPosition == os::ALIGN_LEFT )
-				m_pcPos->SetSelection( 2 );
-			else if( nPosition == os::ALIGN_RIGHT )
-				m_pcPos->SetSelection( 3 );
-		}
-	}
-	pcReceiver->Quit();
-	} catch(...) {
-	}
+	SetupEvents();
 	
 	/* Create a backup of the list */
 	m_cSavedEnabledPlugins = m_cEnabledPlugins;
-	
-	/* Update plugins list */
-	UpdatePluginsList();
 }
 
 PrefsDockWin::~PrefsDockWin()
 {
+	delete( m_pcDockPositionEv );
+	delete( m_pcDockPluginsEv );
 }
 
 bool PrefsDockWin::CheckPlugin( os::String zPath, os::String* pzName )
@@ -253,6 +177,8 @@ bool PrefsDockWin::CheckPlugin( os::String zPath, os::String* pzName )
 void PrefsDockWin::UpdatePluginsList()
 {
 	/* Clear list */
+	int nSelected = m_pcPluginsList->GetFirstSelected();
+	m_pcPluginsList->Hide();	/* To avoid flicker while updating */
 	m_cPluginFiles.clear();
 	m_cDefaultEnabledPlugins.clear();
 	m_pcPluginsList->Clear();
@@ -270,7 +196,8 @@ void PrefsDockWin::UpdatePluginsList()
 		return;
 	}
 	pcDir->Rewind();
-	
+
+
 	/* Iterate through the directory */
 	os::String zFile;
 	while( pcDir->GetNextEntry( &zFile ) == 1 )
@@ -329,6 +256,63 @@ void PrefsDockWin::UpdatePluginsList()
 		delete( pcNode );
 	}
 	delete( pcDir );
+	if( nSelected >= 0 ) m_pcPluginsList->Select( nSelected );
+	m_pcPluginsList->Show();
+}
+
+void PrefsDockWin::SetupEvents()
+{
+	m_pcDockPositionEv = NULL;
+	m_pcDockPluginsEv = NULL;
+	try {
+		m_pcDockPositionEv = new os::Event();
+		if( m_pcDockPositionEv->SetToRemote( "os/Dock/GetPosition", 0 ) ) {
+			printf( "Dock prefs: could not access Dock/GetPosition event!\n" );
+		} else {
+			os::Message cMsg;
+			int nResult;
+			nResult = m_pcDockPositionEv->GetLastEventMessage( &cMsg );
+			UpdateActivePosition( &cMsg );
+		}
+		m_pcDockPositionEv->SetMonitorEnabled( true, this, DP_DOCK_POSITION_EV );
+		
+		m_pcDockPluginsEv = new os::Event();
+		if( m_pcDockPluginsEv->SetToRemote( "os/Dock/GetPlugins", 0 ) ) {
+			printf( "Dock prefs: could not access Dock/GetPlugins event!\n" );
+		} else   {
+			os::Message cMsg;
+			int nResult = m_pcDockPluginsEv->GetLastEventMessage( &cMsg );
+			UpdateActivePlugins( &cMsg );
+		}
+		m_pcDockPluginsEv->SetMonitorEnabled( true, this, DP_DOCK_PLUGINS_EV );
+	} catch( ... ) { printf( "Dock prefs: caught exception while creating dock events!\n" ); }
+}
+
+void PrefsDockWin::UpdateActivePlugins( os::Message* pcMsg )
+{
+	int i = 0;
+	os::String zEnabledPlugin;
+	m_cEnabledPlugins.clear();
+	while( pcMsg->FindString( "plugin", &zEnabledPlugin, i ) == 0 )
+	{
+		m_cEnabledPlugins.push_back( zEnabledPlugin );
+		i++;
+	}
+	UpdatePluginsList();
+}
+
+void PrefsDockWin::UpdateActivePosition( os::Message* pcMsg )
+{
+	int32 nPosition;
+	pcMsg->FindInt32( "position", &nPosition );
+	if( nPosition == os::ALIGN_TOP )
+		m_pcPos->SetSelection( 0 );
+	else if( nPosition == os::ALIGN_BOTTOM )
+		m_pcPos->SetSelection( 1 );
+	else if( nPosition == os::ALIGN_LEFT )
+		m_pcPos->SetSelection( 2 );
+	else if( nPosition == os::ALIGN_RIGHT )
+		m_pcPos->SetSelection( 3 );
 }
 
 bool PrefsDockWin::OkToQuit()
@@ -451,6 +435,26 @@ void PrefsDockWin::HandleMessage( os::Message* pcMessage )
 					m_pcEnable->SetLabel( MSG_MAINWND_PLUGINS_BUTTON_ENABLE );
 				m_pcEnable->SetEnable( true );
 			}
+			break;
+		}
+		case DP_POSITION_SEL_CHANGED:
+		{
+			int nPos = m_pcPos->GetSelection();
+			if( nPos == 2 || nPos == 3 ) {
+				m_pcPositionNote->SetString( MSG_MAINWND_POSITION_NOTE );
+			} else {
+				m_pcPositionNote->SetString( "" );
+			}
+			break;
+		}
+		case DP_DOCK_PLUGINS_EV:
+		{
+			UpdateActivePlugins( pcMessage );
+			break;
+		}
+		case DP_DOCK_POSITION_EV:
+		{
+			UpdateActivePosition( pcMessage );
 			break;
 		}
 		default:

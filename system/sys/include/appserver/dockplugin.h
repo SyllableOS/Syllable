@@ -42,7 +42,6 @@ enum {
 	DOCK_SET_PLUGINS,
 	DOCK_GET_POSITION,
 	DOCK_SET_POSITION,
-	DOCK_GET_FRAME,
 	
 	/* Plugin messages */
 	DOCK_ADD_VIEW = 100,

@@ -53,6 +53,8 @@ using namespace std;
 
 class ClipperSettingsWindow;
 
+#define DRAG_THRESHOLD 4
+
 /*message ids*/                                                                                                                                                                                                        
 enum
 {
@@ -72,6 +74,38 @@ enum
 
 typedef std::pair<std::string,std::vector<std::string> >  ClipperData;
 
+static os::Color32_s BlendColours( const os::Color32_s& sColour1, const os::Color32_s& sColour2, float vBlend )
+{
+	int r = int( (float(sColour1.red)   * vBlend + float(sColour2.red)   * (1.0f - vBlend)) );
+ 	int g = int( (float(sColour1.green) * vBlend + float(sColour2.green) * (1.0f - vBlend)) );
+ 	int b = int( (float(sColour1.blue)  * vBlend + float(sColour2.blue)  * (1.0f - vBlend)) );
+ 	if ( r < 0 ) r = 0; else if (r > 255) r = 255;
+ 	if ( g < 0 ) g = 0; else if (g > 255) g = 255;
+ 	if ( b < 0 ) b = 0; else if (b > 255) b = 255;
+ 	return os::Color32_s(r, g, b, sColour1.alpha);
+}
+
+/* From the Photon Decorator */
+static os::Color32_s Tint( const os::Color32_s & sColor, float vTint )
+{
+	int r = int ( ( float ( sColor.red ) * vTint + 127.0f * ( 1.0f - vTint ) ) );
+	int g = int ( ( float ( sColor.green ) * vTint + 127.0f * ( 1.0f - vTint ) ) );
+	int b = int ( ( float ( sColor.blue ) * vTint + 127.0f * ( 1.0f - vTint ) ) );
+ 
+ 	if( r < 0 )
+ 		r = 0;
+ 	else if( r > 255 )
+ 		r = 255;
+ 	if( g < 0 )
+ 		g = 0;
+ 	else if( g > 255 )
+ 		g = 255;
+ 	if( b < 0 )
+ 		b = 0;
+ 	else if( b > 255 )
+ 		b = 255;
+ 	return ( os::Color32_s( r, g, b, sColor.alpha ) );
+}
 
 /*looper*/
 class ClipperLooper : public os::Looper
@@ -98,17 +132,23 @@ private:
 class DockClipper : public View
 {
 	public:
-		DockClipper( os::Path cPath, os::Looper* pcDock );
+		DockClipper( os::Path cPath, os::DockPlugin* pcPlugin, os::Looper* pcDock );
 		~DockClipper();
 		
 		os::String GetIdentifier() ;
 		Point GetPreferredSize( bool bLargest ) const;
 		os::Path GetPath() { return( m_cPath ); }
 		
+		virtual void Paint( const Rect &cUpdateRect );
 		virtual void AttachedToWindow();
+		virtual void DetachedFromWindow();
 		void InitializeMenu();
 		virtual void HandleMessage(Message* pcMessage);  
 	
+		virtual void MouseMove( const os::Point& cNewPos, int nCode, uint32 nButtons, os::Message* pcData );
+		virtual void MouseUp( const os::Point & cPosition, uint32 nButton, os::Message * pcData );
+		virtual void MouseDown( const os::Point& cPosition, uint32 nButtons );
+
 	public:
 		void RefreshMenu();	
 		os::Menu* GetMenu(ClipperData data);
@@ -143,7 +183,11 @@ class DockClipper : public View
 		vector<ClipperData> m_cCopiedTextVector;
 		
 		os::Path m_cPath;
+		os::DockPlugin* m_pcPlugin;
+		os::BitmapImage* m_pcDragIcon;
 		os::Looper* m_pcDock;
+		bool m_bCanDrag;
+		bool m_bDragging;
 		
 		int m_nCount;
 	
@@ -156,6 +200,8 @@ class DockClipper : public View
 		os::ResStream *pcStream;
 		os::PopupMenu* pcPopup;
 		ClipperLooper* pcClipperLooper;
+
+		os::Point m_cPos;
 };
 
 /*settings window*/
@@ -176,10 +222,10 @@ private:
 	class ClipperWindow : public Window
 	{
 	public:
-	ClipperWindow(os::Looper* pcParent) : Window(Rect(0,0,200,200),"view_window","Viewing Clip...",WND_NO_DEPTH_BUT | WND_NOT_RESIZABLE | WND_NO_ZOOM_BUT)
+	ClipperWindow(os::Looper* pcParent) : Window(Rect(0,0,300,200),"view_window","Viewing Clip...",WND_NO_DEPTH_BUT | WND_NOT_RESIZABLE | WND_NO_ZOOM_BUT)
 	{
 		pcParentLooper = pcParent;
-		AddChild(pcViewTextView = new TextView(Rect(5,5,195,195),"text",""));
+		AddChild(pcViewTextView = new TextView(Rect(5,5,295,195),"text",""));
 		pcViewTextView->SetReadOnly(true);
 		pcViewTextView->SetMultiLine(true);
 	}
@@ -292,7 +338,7 @@ void ClipperSettingsWindow::Layout()
 
   	HLayoutNode* pcHLButton = new os::HLayoutNode("");
     pcHLButton->AddChild(new os::HLayoutSpacer("",5.0f,5.0f));	
-  	pcHLButton->AddChild(pcOkButton=new Button(Rect(0,0,2,2),"BTApply","_Okay",new Message(M_PREFS_APPLY)));
+  	pcHLButton->AddChild(pcOkButton=new Button(Rect(0,0,2,2),"BTApply","Close",new Message(M_PREFS_APPLY)));
   	pcHLButton->AddChild(new os::HLayoutSpacer("",5.0f,5.0f));
   	
   	pcRoot->AddChild(pcTreeViewLayout);
@@ -407,10 +453,12 @@ void ClipperSettingsWindow::UpdateTreeView()
 }
 
 //*************************************************************************************
-DockClipper::DockClipper( os::Path cPath, os::Looper* pcDock ) : View(Rect(0,0,0,0),"DockClipperView")
+DockClipper::DockClipper( os::Path cPath, os::DockPlugin* pcPlugin, os::Looper* pcDock ) : View(Rect(0,0,0,0),"DockClipperView")
 {
 	m_pcDock = pcDock;
+	m_pcPlugin = pcPlugin;
 	m_cPath = cPath;	
+	m_bCanDrag = m_bDragging = false;
 
 	pcContextMenu = NULL;
 	pcWindow = NULL;
@@ -420,12 +468,15 @@ DockClipper::DockClipper( os::Path cPath, os::Looper* pcDock ) : View(Rect(0,0,0
 	os::Resources cCol( pcFile );
 	pcStream = cCol.GetResourceStream( "icon24x24.png" );
 	m_pcIcon = new os::BitmapImage( pcStream );
+	delete pcStream;
+	pcStream = cCol.GetResourceStream( "icon48x48.png" );
+	m_pcDragIcon = new os::BitmapImage( pcStream );
+	delete pcStream;
 	delete pcFile;
 	
 	InitializeMenu();
 	LoadSettings();
 
-	
 	pcPopup = new PopupMenu(Rect(0,0,1,1),"clipper_popup","",pcContextMenu,m_pcIcon);
 	pcPopup->SetFrame(Rect(0,0,pcPopup->GetPreferredSize(false).x, pcPopup->GetPreferredSize(false).y));
 	AddChild(pcPopup);
@@ -434,6 +485,7 @@ DockClipper::DockClipper( os::Path cPath, os::Looper* pcDock ) : View(Rect(0,0,0
 DockClipper::~DockClipper( )
 {
 	SaveSettings();
+	delete m_pcDragIcon;
 }
 
 void DockClipper::AttachedToWindow()
@@ -445,12 +497,45 @@ void DockClipper::AttachedToWindow()
 	View::AttachedToWindow();
 }
 
+void DockClipper::DetachedFromWindow()
+{
+	pcClipperLooper->Terminate();
+}
+
 String DockClipper::GetIdentifier()
 {
 	return( PLUGIN_NAME );
 }
 
 
+void DockClipper::Paint( const Rect &cUpdateRect )
+{
+	os::Color32_s sCurrentColor = BlendColours(get_default_color(os::COL_SHINE),  get_default_color(os::COL_NORMAL_WND_BORDER), 0.5f);
+	SetFgColor( Tint( get_default_color( os::COL_SHADOW ), 0.5f ) );
+   	os::Color32_s sBottomColor = BlendColours(get_default_color(os::COL_SHADOW), get_default_color(os::COL_NORMAL_WND_BORDER), 0.5f);
+   
+   	os::Color32_s sColorStep = os::Color32_s( ( sCurrentColor.red-sBottomColor.red ) / 30,
+   											( sCurrentColor.green-sBottomColor.green ) / 30,
+   											( sCurrentColor.blue-sBottomColor.blue ) / 30, 0 );
+   
+   	if( cUpdateRect.DoIntersect( os::Rect( 0, 0, GetBounds().right, 29 ) ) )
+   	{
+   		sCurrentColor.red -= (int)cUpdateRect.top * sColorStep.red;
+   		sCurrentColor.green -= (int)cUpdateRect.top * sColorStep.green;
+   		sCurrentColor.blue -= (int)cUpdateRect.top * sColorStep.blue;
+   		for( int i = (int)cUpdateRect.top; i < ( (int)cUpdateRect.bottom < 30 ? (int)cUpdateRect.bottom + 1 : 30 ); i++ )
+   		{
+   			SetFgColor( sCurrentColor );
+   			DrawLine( os::Point( cUpdateRect.left, i ), os::Point( cUpdateRect.right, i ) );
+   			sCurrentColor.red -= sColorStep.red;
+   			sCurrentColor.green -= sColorStep.green;
+   			sCurrentColor.blue -= sColorStep.blue;
+   		}
+   	}
+
+	SetDrawingMode( os::DM_BLEND );
+	m_pcIcon->Draw(Point(0,0),this);
+}
 
 void DockClipper::LoadSettings()
 {
@@ -487,9 +572,6 @@ void DockClipper::LoadSettings()
 	{
 	}
 }
-
-
-
 
 void DockClipper::SaveSettings()
 {
@@ -540,8 +622,8 @@ void DockClipper::HandleMessage(Message* pcMessage)
 		{
 			String cTitle = (String)"About " + (String)PLUGIN_NAME + (String)"...";
 			String cInfo = (String)"Version:  " +  (String)PLUGIN_VERSION + (String)"\n\nAuthor:   " + (String)PLUGIN_AUTHOR + (String)"\n\nDesc:      " + (String)PLUGIN_DESC;	
-			Alert* pcAlert = new Alert(cTitle.c_str(),cInfo.c_str(),m_pcIcon->LockBitmap(),0,"OK",NULL);
-			m_pcIcon->UnlockBitmap();
+			Alert* pcAlert = new Alert(cTitle.c_str(),cInfo.c_str(),m_pcDragIcon->LockBitmap(),0,"Close",NULL);
+			m_pcDragIcon->UnlockBitmap();
 			pcAlert->Go(new Invoker());
 			pcAlert->MakeFocus();
 			break;
@@ -613,6 +695,67 @@ void DockClipper::HandleMessage(Message* pcMessage)
 	}
 }
 
+void DockClipper::MouseMove( const os::Point& cNewPos, int nCode, uint32 nButtons, os::Message* pcData )
+{
+	if( nCode != MOUSE_ENTERED && nCode != MOUSE_EXITED )
+	{
+		/* Create dragging operation */
+		if( m_bCanDrag )
+		{
+			m_bDragging = true;
+			os::Message cMsg;
+			BeginDrag( &cMsg, os::Point( m_pcDragIcon->GetBounds().Width() / 2,
+											m_pcDragIcon->GetBounds().Height() / 2 ), m_pcDragIcon->LockBitmap() );
+			m_bCanDrag = false;
+		}
+	}
+	os::View::MouseMove( cNewPos, nCode, nButtons, pcData );
+}
+
+
+void DockClipper::MouseUp( const os::Point & cPosition, uint32 nButtons, os::Message * pcData )
+{
+	// Get the frame of the dock
+	// If the plugin is dragged outside of the dock;s frame
+	// then remove the plugin
+	Rect cRect = ConvertFromScreen( GetWindow()->GetFrame() );
+
+	if( ( m_bDragging && ( cPosition.x < cRect.left ) ) || ( m_bDragging && ( cPosition.x > cRect.right ) ) || ( m_bDragging && ( cPosition.y < cRect.top ) ) || ( m_bDragging && ( cPosition.y > cRect.bottom ) ) ) 
+	{
+		/* Remove ourself from the dock */
+		os::Message cMsg( os::DOCK_REMOVE_PLUGIN );
+		cMsg.AddPointer( "plugin", m_pcPlugin );
+		m_pcDock->PostMessage( &cMsg, m_pcDock );
+		return;
+	} /*else if ( nButtons == os::MOUSE_BUT_LEFT ) {
+		// Check to see if the coordinates passed match when the left mouse button was pressed
+		// if so, then it was a single click and not a drag
+		if ( abs( (int)(m_cPos.x - cPosition.x) ) < DRAG_THRESHOLD && abs( (int)(m_cPos.y - cPosition.y) ) < DRAG_THRESHOLD )
+		{
+			// Just eat it for the time being.
+		}
+	}*/
+
+	m_bDragging = false;
+	m_bCanDrag = false;
+	os::View::MouseUp( cPosition, nButtons, pcData );
+}
+
+void DockClipper::MouseDown( const os::Point& cPosition, uint32 nButtons )
+{
+	if( nButtons == os::MOUSE_BUT_LEFT )
+	{
+		MakeFocus( true );
+		m_bCanDrag = true;
+		// Store these coordinates for later use in the MouseUp procedure
+		m_cPos.x = cPosition.x;
+		m_cPos.y = cPosition.y;
+	} else if ( nButtons == MOUSE_BUT_RIGHT ) {
+		MakeFocus( false );
+	}
+
+	os::View::MouseDown( cPosition, nButtons );
+}
 
 void DockClipper::ClearContent()
 {
@@ -636,6 +779,8 @@ void DockClipper::RefreshMenu()
 
 void DockClipper::InitializeMenu()
 {
+	os::MenuItem* pcClearItem;
+	os::MenuItem* pcViewItem;
 	
 	if (pcContextMenu == NULL)
 		pcContextMenu = new Menu(Rect(0,0,1,1),"menu",ITEMS_IN_COLUMN);
@@ -658,13 +803,21 @@ void DockClipper::InitializeMenu()
 		}
 	}
 
-	pcContextMenu->AddItem(new os::MenuSeparator());
+	if (pcContextMenu->GetItemCount() > 0) pcContextMenu->AddItem(new os::MenuSeparator());
 
-	pcContextMenu->AddItem("View Clips",new Message(M_CLIPPER_SETTINGS));
-	pcContextMenu->AddItem("Clear Clips",new Message(M_CLIPPER_CLEAR));
+	pcViewItem = new MenuItem("View Clips", new Message(M_CLIPPER_SETTINGS));
+	pcContextMenu->AddItem(pcViewItem);
+	pcClearItem = new MenuItem("Clear Clips", new Message(M_CLIPPER_CLEAR));
+	pcContextMenu->AddItem(pcClearItem);
+
+	if (pcContextMenu->GetItemCount() == 2) 
+	{
+		pcViewItem->SetEnable(false);
+		pcClearItem->SetEnable(false); 
+	}
 
 	pcContextMenu->AddItem(new os::MenuSeparator());
-	pcContextMenu->AddItem("About",new Message(M_CLIPPER_ABOUT));	
+	pcContextMenu->AddItem("About Clipper...",new Message(M_CLIPPER_ABOUT));	
 	pcContextMenu->SetTargetForItems(this);
 }
 
@@ -758,7 +911,7 @@ public:
 	
 	status_t Initialize()
 	{
-		AddView(pcView = new DockClipper(GetPath(),GetApp()));
+		AddView(pcView = new DockClipper(GetPath(),this,GetApp()));
 		return 0;
 	}
 	void Delete()
@@ -780,6 +933,7 @@ DockPlugin* init_dock_plugin()
 	return(new DockPluginClipper());
 }
 }
+
 
 
 

@@ -159,6 +159,8 @@ public:
 	std::vector<os::DockPlugin*> GetPlugins() { return( m_pcPlugins ); }
 	os::alignment GetPosition() { return( m_eAlign ); }
 	void SetPosition( os::alignment eAlign );
+	void UpdatePluginsEvent();
+	void UpdatePositionEvent();
 private:
 	os::alignment m_eAlign;
 	DockView* m_pcView;
@@ -178,7 +180,6 @@ private:
 	os::Event* m_pcSetPluginsEv;
 	os::Event* m_pcGetPosEv;
 	os::Event* m_pcSetPosEv;
-	os::Event* m_pcGetDockFrameEv;
 	os::Event* m_pcAppListEv;
 };
 
