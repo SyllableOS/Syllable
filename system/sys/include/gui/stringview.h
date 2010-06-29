@@ -21,7 +21,7 @@
 #ifndef	__F_GUI_STRINGVIEW_H__
 #define	__F_GUI_STRINGVIEW_H__
 
-#include <atheos/types.h>
+#include <syllable/types.h>
 #include <gui/view.h>
 
 namespace os
@@ -70,6 +70,7 @@ public:
 
     bool HasBorder() const;
     void SetRenderBorder( bool bRender );
+    void SetRenderBorder( bool bRender, uint32 nBorder );
 
     virtual void AttachedToWindow();
 

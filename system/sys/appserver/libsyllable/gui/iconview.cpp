@@ -617,55 +617,146 @@ public:
 			else
 			{  /* search for the closest icon in the appropriate neighbouring region */
 			   /* If an icon isn't found in the neighbouring region, we will try to wrap around to the next row/column. */
-				bool bKeepSearching = false, bWrapped = false;
 				Point cSearchOrigin = m_cIcons[m_nLastActiveIcon]->m_cPosition;
-				do
+				Point cLeftTop = cSearchOrigin, cRightBottom = cSearchOrigin, cDelta;
+				float vDistance;
+				float vBestDistanceSoFar = -1;
+
+				cLeftTop.x = cLeftTop.x - m_vIconWidth/2;
+				cLeftTop.y = cLeftTop.y - m_vIconHeight/2;
+				cRightBottom.x = cRightBottom.x + m_vIconWidth/2;
+				cRightBottom.y = cRightBottom.y + m_vIconHeight/2;
+				for( int i = 0; i < nIconCount ; i++)
 				{
-					Point cDelta;
-					float vDistance;
-					float vBestDistanceSoFar = -1;
-
-					bKeepSearching = false;
-
+					if( ( eDirection == ADJ_LEFT && m_cIcons[i]->m_cPosition.x < cSearchOrigin.x && 
+						m_cIcons[i]->m_cPosition.y > cLeftTop.y && m_cIcons[i]->m_cPosition.y < cRightBottom.y) ||
+			    		( eDirection == ADJ_RIGHT && m_cIcons[i]->m_cPosition.x > cSearchOrigin.x && 
+						m_cIcons[i]->m_cPosition.y > cLeftTop.y && m_cIcons[i]->m_cPosition.y < cRightBottom.y ) ||
+				    	( eDirection == ADJ_DOWN && m_cIcons[i]->m_cPosition.y > cSearchOrigin.y && 
+						m_cIcons[i]->m_cPosition.x > cLeftTop.x && m_cIcons[i]->m_cPosition.x < cRightBottom.x ) ||
+					    ( eDirection == ADJ_UP && m_cIcons[i]->m_cPosition.y < cSearchOrigin.y && 
+						m_cIcons[i]->m_cPosition.x > cLeftTop.x && m_cIcons[i]->m_cPosition.x < cRightBottom.x ) )
+					{
+						/* ok, icon is in the correct region of the view - check if it is closest */
+						cDelta = m_cIcons[i]->m_cPosition - cSearchOrigin;
+						vDistance = (cDelta.x*cDelta.x) + (cDelta.y*cDelta.y);
+						if( vDistance > 0 && (vDistance < vBestDistanceSoFar || vBestDistanceSoFar < 0) )
+						{
+							nBestIconSoFar = i;
+							vBestDistanceSoFar = vDistance;
+						}
+					}
+				}
+				/* If we didn't find an icon on the first pass, try to wrap to the next row/column */
+				if( nBestIconSoFar == -1 )
+				{
 					for( int i = 0; i < nIconCount ; i++)
 					{
-						cDelta = m_cIcons[i]->m_cPosition - cSearchOrigin;
-						/* Check if icon is in the correct region (boundaries y=+-2x or y=+-(1/2)x) seem to give good results) */
-						if( ( eDirection == ADJ_LEFT && cDelta.y <= -2*cDelta.x && cDelta.y >= 2*cDelta.x ) ||
-				    		( eDirection == ADJ_RIGHT && cDelta.y <= 2*cDelta.x && cDelta.y >= -2*cDelta.x ) ||
-					    	( eDirection == ADJ_DOWN && 2*cDelta.y >= -cDelta.x && 2*cDelta.y >= cDelta.x ) ||
-						    ( eDirection == ADJ_UP && 2*cDelta.y <= -cDelta.x && 2*cDelta.y <= cDelta.x ) )
+					/* To make wrap for next row(column) it is necessary to find closest item
+					* for navigation left(right) it is item above(below) row closest by Y
+					* for down(up) item closest by X, they must be closest to the border of icon
+					*/
+						if( ( eDirection == ADJ_LEFT &&  m_cIcons[i]->m_cPosition.y <= (cSearchOrigin.y - m_vIconHeight/4) ) ||
+			    			( eDirection == ADJ_RIGHT &&  m_cIcons[i]->m_cPosition.y >= (cSearchOrigin.y + m_vIconHeight/4) ) ||
+				    		( eDirection == ADJ_DOWN && m_cIcons[i]->m_cPosition.x >= (cSearchOrigin.x + m_vIconWidth/4) ) ||
+					    	( eDirection == ADJ_UP && m_cIcons[i]->m_cPosition.x <= (cSearchOrigin.x - m_vIconWidth/4) ) )
 						{
-							/* ok, icon is in the correct region of the view - check if it is closest */
-							vDistance = (cDelta.x*cDelta.x) + (cDelta.y*cDelta.y);
-							if( vDistance > 0 && (vDistance < vBestDistanceSoFar || vBestDistanceSoFar < 0) )
+							if( nBestIconSoFar == -1)
 							{
 								nBestIconSoFar = i;
-								vBestDistanceSoFar = vDistance;
+							}
+							else
+							{
+								if( ( eDirection == ADJ_LEFT &&  m_cIcons[i]->m_cPosition.y > m_cIcons[nBestIconSoFar]->m_cPosition.y ) ||
+			    				( eDirection == ADJ_RIGHT &&  m_cIcons[i]->m_cPosition.y < m_cIcons[nBestIconSoFar]->m_cPosition.y ) ||
+				    			( eDirection == ADJ_DOWN && m_cIcons[i]->m_cPosition.x < m_cIcons[nBestIconSoFar]->m_cPosition.x ) ||
+					    		( eDirection == ADJ_UP && m_cIcons[i]->m_cPosition.x > m_cIcons[nBestIconSoFar]->m_cPosition.x) )
+								{
+									nBestIconSoFar = i;
+								}
 							}
 						}
 					}
-					/* If we didn't find an icon on the first pass, try to wrap to the next row/column */
-					if( !bWrapped && nBestIconSoFar == -1 ) {
-						bWrapped = true;
-						bKeepSearching = true;
-						if( eDirection == ADJ_RIGHT ) {
-							cSearchOrigin.x = -m_vIconWidth; cSearchOrigin.y += m_vIconHeight;
-							if( cSearchOrigin.y > m_vLastYPos ) cSearchOrigin.y = -m_vIconHeight;
-						} else if( eDirection == ADJ_LEFT ) {
-							cSearchOrigin.x = m_vLastXPos + m_vIconWidth; cSearchOrigin.y -= m_vIconHeight;
-							if( cSearchOrigin.y < 0 ) cSearchOrigin.y = m_vLastYPos;
-						} else if( eDirection == ADJ_DOWN ) {
-							cSearchOrigin.x += m_vIconWidth; cSearchOrigin.y = -m_vIconHeight;
-							if( cSearchOrigin.x > m_vLastXPos ) cSearchOrigin.x = 0;
-						} else if( eDirection == ADJ_UP ) {
-							cSearchOrigin.x -= m_vIconWidth; cSearchOrigin.y = m_vLastYPos + m_vIconHeight;
-							if( cSearchOrigin.x < 0 ) cSearchOrigin.x = m_vLastXPos;
+					if( nBestIconSoFar == -1 ) {
+						/* As there is no closest item found we choose corner icon as selection */
+						float vBestXSoFar, vBestYSoFar;
+
+						if( eDirection == ADJ_RIGHT )
+						{  /* select left-top-most */
+							for( int i = 0; i < nIconCount ; i++)
+							{
+								if( nBestIconSoFar < 0 || m_cIcons[i]->m_cPosition.x < vBestXSoFar || (m_cIcons[i]->m_cPosition.x == vBestXSoFar && m_cIcons[i]->m_cPosition.y < vBestYSoFar) )
+								{
+									nBestIconSoFar = i; vBestXSoFar = m_cIcons[i]->m_cPosition.x; vBestYSoFar = m_cIcons[i]->m_cPosition.y;
+								}
+							}
+						}
+						if( eDirection == ADJ_LEFT )
+						{  /* select right-bottom-most */
+							for( int i = 0; i < nIconCount ; i++ )
+							{
+								if( nBestIconSoFar < 0 || m_cIcons[i]->m_cPosition.x > vBestXSoFar || (m_cIcons[i]->m_cPosition.x == vBestXSoFar && m_cIcons[i]->m_cPosition.y > vBestYSoFar) )
+								{
+									nBestIconSoFar = i; vBestXSoFar = m_cIcons[i]->m_cPosition.x; vBestYSoFar = m_cIcons[i]->m_cPosition.y;
+								}
+							}
+						}
+						if( eDirection == ADJ_DOWN )
+						{  /* select top-left-most */
+							for( int i = 0; i < nIconCount ; i++)
+							{
+								if( nBestIconSoFar < 0 || m_cIcons[i]->m_cPosition.y < vBestYSoFar || (m_cIcons[i]->m_cPosition.y == vBestYSoFar && m_cIcons[i]->m_cPosition.x < vBestXSoFar) )
+								{
+									nBestIconSoFar = i; vBestXSoFar = m_cIcons[i]->m_cPosition.x; vBestYSoFar = m_cIcons[i]->m_cPosition.y;
+								}
+							}
+						}
+						if( eDirection == ADJ_UP )
+						{  /* select bottom-right-most */
+							for( int i = 0; i < nIconCount ; i++)
+							{
+								if( nBestIconSoFar < 0 || m_cIcons[i]->m_cPosition.y > vBestYSoFar || (m_cIcons[i]->m_cPosition.y == vBestYSoFar && m_cIcons[i]->m_cPosition.x > vBestXSoFar) )
+								{
+									nBestIconSoFar = i; vBestXSoFar = m_cIcons[i]->m_cPosition.x; vBestYSoFar = m_cIcons[i]->m_cPosition.y;
+								}
+							}
 						}
 					}
-				} while( bKeepSearching );
-			}
-			
+					else
+					{
+						/* As closest item is found it is presumed to create virtual row(column)
+						* within its borders: for navigation "left" - next icon has biggest X
+						* coord compared to all icons of virtual row; for right - smallest X;
+						* for down - smallest Y; for up - biggest Y
+						*/
+						cSearchOrigin = m_cIcons[nBestIconSoFar]->m_cPosition;
+						nBestIconSoFar = -1;
+						for( int i = 0; i < nIconCount ; i++)
+						{
+							if( ( eDirection == ADJ_LEFT && m_cIcons[i]->m_cPosition.y >= ( cSearchOrigin.y - m_vIconHeight/2 ) && m_cIcons[i]->m_cPosition.y <= cSearchOrigin.y) ||
+				    			( eDirection == ADJ_RIGHT && m_cIcons[i]->m_cPosition.y >= cSearchOrigin.y && m_cIcons[i]->m_cPosition.y <= ( cSearchOrigin.y + m_vIconHeight/2 ) ) ||
+					    		( eDirection == ADJ_DOWN && m_cIcons[i]->m_cPosition.x <= ( cSearchOrigin.x + m_vIconWidth/2 ) && m_cIcons[i]->m_cPosition.x >= cSearchOrigin.x ) ||
+						    	( eDirection == ADJ_UP && m_cIcons[i]->m_cPosition.x <= cSearchOrigin.x && m_cIcons[i]->m_cPosition.x >= ( cSearchOrigin.x - m_vIconWidth/2 ) ) )
+							{
+								if( nBestIconSoFar == -1)
+								{
+									nBestIconSoFar = i;
+								}
+								else
+								{
+									if( ( eDirection == ADJ_LEFT &&  m_cIcons[i]->m_cPosition.x > m_cIcons[nBestIconSoFar]->m_cPosition.x ) ||
+			    						( eDirection == ADJ_RIGHT &&  m_cIcons[i]->m_cPosition.x < m_cIcons[nBestIconSoFar]->m_cPosition.x ) ||
+					    				( eDirection == ADJ_DOWN && m_cIcons[i]->m_cPosition.y < m_cIcons[nBestIconSoFar]->m_cPosition.y ) ||
+						    			( eDirection == ADJ_UP && m_cIcons[i]->m_cPosition.y > m_cIcons[nBestIconSoFar]->m_cPosition.y) )
+									{
+										nBestIconSoFar = i;
+									}
+								}
+							}
+						}
+					}
+				}
+			}			
 			nSelectedIcon = nBestIconSoFar;
 		}
 		

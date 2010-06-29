@@ -18,7 +18,6 @@
  *  MA 02111-1307, USA
  */
 
-#include <atheos/types.h>
 #include <gui/stringview.h>
 #include <gui/font.h>
 
