@@ -1,3 +1,9 @@
+* June 29, 2010, Anthony Morphett *
+
+Improvements and updates to the dock and dock plugins, including patches from Adam Ritchie.
+Changes to navigation in IconViews, patch from chamel
+Patch to StringView from Adam Ritchie
+
 * June 28, 2010, Anthony Morphett *
 
 Fixed copying & pasting large chunks of data (>32k). Thanks to Rui Caridade for contributions.
