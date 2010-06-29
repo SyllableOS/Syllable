@@ -145,6 +145,9 @@ PrefsDesktopWin::PrefsDesktopWin( os::Rect cFrame )
 	
 	/* Set Tab order and default button */
 	int nTabOrder = 0;
+	m_pcPopupWindows->SetTabOrder( nTabOrder++ );
+	m_pcSingleClick->SetTabOrder( nTabOrder++ );
+	m_pcFontShadow->SetTabOrder( nTabOrder++ );
 	m_pcApply->SetTabOrder( nTabOrder++ );
 	m_pcUndo->SetTabOrder( nTabOrder++ );
 	m_pcDefault->SetTabOrder( nTabOrder++ );
@@ -222,6 +225,7 @@ PrefsDesktopWin::PrefsDesktopWin( os::Rect cFrame )
 
 PrefsDesktopWin::~PrefsDesktopWin()
 {
+
 }
 void PrefsDesktopWin::UpdateBackgroundList()
 {

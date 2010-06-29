@@ -15,7 +15,7 @@ MSG_MAINWND_WINDOWS_TEXT_POPUP				Kiválasztott ablak felugrása
 MSG_MAINWND_WINDOWS_TEXT_SINGLECLICK		Egy kattintás használata
 MSG_MAINWND_WINDOWS_TEXT_SHADOWTEXT			Ikonszövegek megjelenítése árnyékkal
 
-MSG_MAINWND_BUTTON_APPLY=300				Alkalmaz
-MSG_MAINWND_BUTTON_UNDO						Visszavonás
-MSG_MAINWND_BUTTON_DEFAULT					Alapértelmezett
+MSG_MAINWND_BUTTON_APPLY=300				_Alkalmaz
+MSG_MAINWND_BUTTON_UNDO						_Visszavonás
+MSG_MAINWND_BUTTON_DEFAULT					A_lapértelmezett
 

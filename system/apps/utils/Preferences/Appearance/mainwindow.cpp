@@ -16,8 +16,7 @@
 
 #include <dirent.h>
 #include <fstream>
-#include <util/application.h>
-#include <util/message.h>
+#include <appserver/protocol.h>
 #include <util/resources.h>
 #include <util/event.h>
 #include <gui/desktop.h>
@@ -105,7 +104,6 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   pcDDMItem->AppendItem(MSG_MAINWND_THEMEDROPDOWN_ICONSELECTION);
   pcDDMItem->AppendItem(MSG_MAINWND_THEMEDROPDOWN_ICONBACKGROUND);
   pcDDMItem->AppendItem(MSG_MAINWND_THEMEDROPDOWN_FOCUSEDITEM);
-  pcDDMItem->SetSelection(1);
   pcDDMItem->SetSelection(0);
   
   // Get initial values for all pens
@@ -240,10 +238,21 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
 
   // Set tab order
   int iTabOrder = 0;
-  pcDDMDecor->SetTabOrder(iTabOrder++);
+
+  pcSLRed->SetTabOrder(iTabOrder++);
+  pcTVRed->SetTabOrder(iTabOrder++);
+  pcTVRedHex->SetTabOrder(iTabOrder++);
+  pcSLGreen->SetTabOrder(iTabOrder++);
+  pcTVGreen->SetTabOrder(iTabOrder++);
+  pcTVGreenHex->SetTabOrder(iTabOrder++);
+  pcSLBlue->SetTabOrder(iTabOrder++);
+  pcTVBlue->SetTabOrder(iTabOrder++);
+  pcTVBlueHex->SetTabOrder(iTabOrder++);
+  pcBSave->SetTabOrder(iTabOrder++);
+  pcBDelete->SetTabOrder(iTabOrder++);
   if (bRoot) {
-    pcBDefault->SetTabOrder(iTabOrder++);
     pcBApply->SetTabOrder(iTabOrder++);
+    pcBDefault->SetTabOrder(iTabOrder++);
   }
   
   
@@ -253,6 +262,7 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   os::BitmapImage *pcIcon = new os::BitmapImage( pcStream );
   SetIcon( pcIcon->LockBitmap() );
   delete( pcIcon );
+  delete( pcStream );
 
   // Show data
   ShowData();
@@ -279,13 +289,32 @@ void MainWindow::ShowData()
       }
       pcDDMDecor->AppendItem( psEntry->d_name );
     }
+
+	// Get the current window decor, find it in the list and set it
+	os::Message cMessage;
+  	os::String sWindowDecor;
+
+  	os::Messenger( os::Application::GetInstance()->GetServerPort() ).SendMessage( os::DR_GET_APPSERVER_CONFIG, &cMessage );
+  	cMessage.FindString("window_decorator", &sWindowDecor);
+  	size_t nIndex = sWindowDecor.str().find_last_of( '/' );
+  	if( nIndex == std::string::npos ) nIndex = 0;
+  	sWindowDecor = sWindowDecor.substr(nIndex + 1);
+	
+	int iItemCount = pcDDMDecor->GetItemCount(); 
+  	for (int i = 0; i < iItemCount; i++)
+  	{
+		if (sWindowDecor == pcDDMDecor->GetItem(i))
+		{
+			pcDDMDecor->SetSelection(i);
+			break;
+		}
+  	}
+
   } else {
     os::Alert *pcAlert = new os::Alert(MSG_ALERT_NODECORDIR_TITLE, MSG_ALERT_NODECORDIR_TEXT, os::Alert::ALERT_WARNING, os::WND_NOT_RESIZABLE, MSG_ALERT_NODECORDIR_OK.c_str(), NULL);
     pcAlert->Go();
   }
   closedir( pDir );
-  pcDDMDecor->SetSelection(1);
-  pcDDMDecor->SetSelection(0);
 
   // Fill the colour scheme list
   pcDDMTheme->Clear();
@@ -307,7 +336,6 @@ void MainWindow::ShowData()
     pcAlert->Go();
   }
   closedir( pDir );
-  pcDDMTheme->SetSelection(1);
   pcDDMTheme->SetSelection(0);
 }
 
@@ -553,11 +581,4 @@ void ColourPreview::SetValue(int iRed, int iGreen, int iBlue)
   // And update control
   Paint(GetBounds());
 }
-
-
-
-
-
-
-
 

@@ -15,7 +15,7 @@ MSG_MAINWND_WINDOWS_TEXT_POPUP				Framhäv valt fönster
 MSG_MAINWND_WINDOWS_TEXT_SINGLECLICK		Använd enkel-klicks gränssnitt
 MSG_MAINWND_WINDOWS_TEXT_SHADOWTEXT			Visa ikontext med skugga
 
-MSG_MAINWND_BUTTON_APPLY=300				Verkställ
-MSG_MAINWND_BUTTON_UNDO						Ångra
-MSG_MAINWND_BUTTON_DEFAULT					Grundinställningar
+MSG_MAINWND_BUTTON_APPLY=300				_Verkställ
+MSG_MAINWND_BUTTON_UNDO						_Ångra
+MSG_MAINWND_BUTTON_DEFAULT					_Grundinställningar
 

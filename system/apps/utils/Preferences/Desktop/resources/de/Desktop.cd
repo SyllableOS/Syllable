@@ -15,7 +15,7 @@ MSG_MAINWND_WINDOWS_TEXT_POPUP				Gewähltes Fenster nach vorne holen
 MSG_MAINWND_WINDOWS_TEXT_SINGLECLICK		Kein Doppelklick verwenden
 MSG_MAINWND_WINDOWS_TEXT_SHADOWTEXT			Symboltexte mit Schatten unterlegen
 
-MSG_MAINWND_BUTTON_APPLY=300				Anwenden
-MSG_MAINWND_BUTTON_UNDO						Rückgängig
-MSG_MAINWND_BUTTON_DEFAULT					Standard
+MSG_MAINWND_BUTTON_APPLY=300				_Anwenden
+MSG_MAINWND_BUTTON_UNDO						_Rückgängig
+MSG_MAINWND_BUTTON_DEFAULT					_Standard
 

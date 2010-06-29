@@ -15,7 +15,7 @@ MSG_MAINWND_WINDOWS_TEXT_POPUP				Поднять выбранное окно
 MSG_MAINWND_WINDOWS_TEXT_SINGLECLICK		Использовать одно нажатие мыши
 MSG_MAINWND_WINDOWS_TEXT_SHADOWTEXT			Показывать тень от подписей к значкам
 
-MSG_MAINWND_BUTTON_APPLY=300				Применить
-MSG_MAINWND_BUTTON_UNDO						Отменить
-MSG_MAINWND_BUTTON_DEFAULT					По умолчанию
+MSG_MAINWND_BUTTON_APPLY=300				_Применить
+MSG_MAINWND_BUTTON_UNDO						_Отменить
+MSG_MAINWND_BUTTON_DEFAULT					По _умолчанию
 

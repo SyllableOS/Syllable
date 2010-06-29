@@ -74,13 +74,3 @@ private:
 
 #endif /* __MAINWINDOW_H_ */
 
-
-
-
-
-
-
-
-
-
-

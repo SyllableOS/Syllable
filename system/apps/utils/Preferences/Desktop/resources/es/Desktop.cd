@@ -15,7 +15,7 @@ MSG_MAINWND_WINDOWS_TEXT_POPUP				Elevar ventana seleccionada
 MSG_MAINWND_WINDOWS_TEXT_SINGLECLICK		Usar interfaz de un sólo click
 MSG_MAINWND_WINDOWS_TEXT_SHADOWTEXT			Mostrar con sombra texto de íconos
 
-MSG_MAINWND_BUTTON_APPLY=300				Aplicar
-MSG_MAINWND_BUTTON_UNDO						Deshacer
-MSG_MAINWND_BUTTON_DEFAULT					Predeterminado
+MSG_MAINWND_BUTTON_APPLY=300				_Aplicar
+MSG_MAINWND_BUTTON_UNDO						_Deshacer
+MSG_MAINWND_BUTTON_DEFAULT					_Predeterminado
 

@@ -18,8 +18,8 @@ MSG_MAINWND_DROPDOWN_COLOUR_BIT				Bit
 MSG_MAINWND_DROPDOWN_COLOUR_UNKNOWN			Unknown
 MSG_MAINWND_DROPDOWN_HERTZ					%i Hz
 
-MSG_MAINWND_BUTTON_APPLY=300				Apply
-MSG_MAINWND_BUTTON_CLOSE					Close
+MSG_MAINWND_BUTTON_APPLY=300				_Apply
+MSG_MAINWND_BUTTON_CLOSE					_Close
 
 MSG_ALERTWND_CHANGERES=1000					Display Settings Test
 MSG_ALERTWND_CHANGERES_TEXT					You are about to change your display settings.\n\nThe screen may become blank or garbled if the new settings prove incompatible with your\nmonitor or display devices. If so, please wait 15 seconds for the display to restore.

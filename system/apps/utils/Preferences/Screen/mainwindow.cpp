@@ -29,7 +29,7 @@
 #include "messages.h"
 #include "resources/Screen.h"
 
-MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow", MSG_MAINWND_TITLE/*, os::WND_NOT_RESIZABLE*/)
+MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow", MSG_MAINWND_TITLE, os::WND_NO_ZOOM_BUT | os::WND_NOT_RESIZABLE)
 {
   os::Rect cBounds = GetBounds();
   os::Rect cRect = os::Rect(0,0,0,0);
@@ -107,10 +107,11 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   pcVLRoot->AddChild( new os::VLayoutSpacer("", 10.0f, 10.0f));
   pcHLButtons = new os::HLayoutNode("HLButtons", 0.0f);
   pcHLButtons->AddChild( new os::HLayoutSpacer(""));
-  pcHLButtons->AddChild( pcBApply = new os::Button(cRect, "BApply", MSG_MAINWND_BUTTON_APPLY, new os::Message(M_MW_APPLY)) );
-  pcHLButtons->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
   pcHLButtons->AddChild( pcBClose = new os::Button(cRect, "BClose", MSG_MAINWND_BUTTON_CLOSE, new os::Message(M_MW_CLOSE)) );
-  pcHLButtons->SameWidth( "BApply", "BClose", NULL );
+  pcHLButtons->AddChild( new os::HLayoutSpacer("", 50.0f, 50.0f) );
+  pcHLButtons->AddChild( pcBApply = new os::Button(cRect, "BApply", MSG_MAINWND_BUTTON_APPLY, new os::Message(M_MW_APPLY)) );
+  
+  pcHLButtons->SameWidth( "BClose", "BApply", NULL );
   pcVLRoot->AddChild(pcHLButtons);
 
   // Set root and add to window
@@ -135,8 +136,8 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   pcDDMWorkspace->SetTabOrder(iTabOrder++);
   pcDDMResolution->SetTabOrder(iTabOrder++);
   pcDDMColour->SetTabOrder(iTabOrder++);
-  pcBApply->SetTabOrder(iTabOrder++);
   pcBClose->SetTabOrder(iTabOrder++);
+  pcBApply->SetTabOrder(iTabOrder++);
   
   // Query all screenmodes
   m_nModeCount = os::Application::GetInstance()->GetScreenModeCount();

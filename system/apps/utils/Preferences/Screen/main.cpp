@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
   if(!bRoot)
   {
 	std::string cRootOnlyText="Only root is allowed to change the screen resolution.\n";
-	os::Alert* pcRootOnlyAlert=new os::Alert("Not allowed", cRootOnlyText, os::Alert::ALERT_INFO, "OK", NULL);
+	os::Alert* pcRootOnlyAlert=new os::Alert("Not allowed", cRootOnlyText, os::WND_NO_ZOOM_BUT | os::WND_NOT_RESIZABLE | os::Alert::ALERT_INFO, "Close", NULL);
   	pcRootOnlyAlert->Go(new os::Invoker());
   }
 
