@@ -15,9 +15,9 @@ home				www.rebol.com
 locations			http://www.rebol.com/downloads/v277/
 packages
 ;	Ubuntu build; segfaults on rebol.com Demos:
-	rebol-view-277-4-2 REBOL-View-2-current
+;	rebol-view-277-4-2 REBOL-View-2-current
 ;	Fedora build; bails on old Ubuntu with floating point exception:
-;	rebol-view-277-4-3 REBOL-View-2-current
+	rebol-view-277-4-3 REBOL-View-2-current
 
 make				true
 
