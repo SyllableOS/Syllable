@@ -25,7 +25,7 @@ _files
 ;	Fedora binary:
 ;	r3-core-a107-43.gz
 
-patch				sed -i 's~LIBS= \./~LIBS= ~' make-gcc/makefile
+patch				sed -i 's~LIBS= \./~LIBS= -ldl ~' make-gcc/makefile
 
 build-dir			make-gcc
 
