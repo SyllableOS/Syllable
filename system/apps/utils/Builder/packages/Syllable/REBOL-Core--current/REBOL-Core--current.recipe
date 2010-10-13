@@ -5,15 +5,10 @@ notes				Syllable Desktop currently uses the Linux binary of the shared library
 ; Ubuntu build works, Fedora build doesn't:
 ;packages
 
-install-tree
-	bin
-	bin/lib
-;	include
-	lib
-
 links
-	core			bin/rebol
-	core			bin/r3
+	r3-core			programs/rebol
+	r3-core			programs/rebol-core
+	r3-core			programs/r3
 ;	Linux binary compatibility hack:
-	libc.so.2		lib/libc.so.6
-	libm.so.2		lib/libm.so.6
+	libc.so.2		framework/libraries/libc.so.6
+	libm.so.2		framework/libraries/libm.so.6
