@@ -2,10 +2,10 @@ authors				Kaj de Vos
 status				developing
 notes				Alpha pre-release version
 
-version				3alpha107
+version				3alpha110
 headline			Relative Expression Based Object Language
 description
-	An entirely new version of REBOL.
+	An entirely new version of the innovative REBOL programming language.
 
 	REBOL uses "relative expressions" (context dependent dialects) to create a powerful new dimension similar to that found in natural human languages.
 
@@ -15,17 +15,25 @@ description
 licenses			freeware
 
 home					www.rebol.com/rebol3/
-locations			http://www.rebol.com/r3/downloads/
-packages
+locations
+;	http://www.rebol.com/r3/downloads/
+	https://github.com/carls/R3A110/
+_packages
 ;	tar.gz defies automated downloading:
 	r3-host-kit-a107-42
-_files
+files
+;	Github:
+	tarball/master
 ;	Ubuntu binary:
-	r3-core-a107-42.gz
+;	r3-core-a107-42.gz
 ;	Fedora binary:
-;	r3-core-a107-43.gz
+;;	r3-core-a107-43.gz
 
-patch				sed -i 's~LIBS= \./~LIBS= -ldl ~' make-gcc/makefile
+patch
+	tar xf master &&
+	rm master &&
+	mv */* . &&
+	sed -i 's~LIBS= \./~LIBS= -ldl ~' make-gcc/makefile
 
 build-dir			make-gcc
 
@@ -46,7 +54,7 @@ install-files
 	../src/include/*	framework/headers
 	libr3.so			framework/libraries/
 
-;documentation		about.txt
+documentation		about.txt
 
 links
 ;	r3-core			programs/rebol
