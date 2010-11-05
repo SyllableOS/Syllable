@@ -1,5 +1,5 @@
 authors				Kaj de Vos
-status				developing
+status				testing
 notes				Alpha pre-release version
 
 version				3alpha110
@@ -51,7 +51,7 @@ install-files
 ;	r3-core-a107-42		programs/r3-core
 ;	For host kit:
 	r3core				programs/r3-core
-	../src/include/*	framework/headers
+	../src/include/*	framework/headers/
 	libr3.so			framework/libraries/
 
 documentation		about.txt
