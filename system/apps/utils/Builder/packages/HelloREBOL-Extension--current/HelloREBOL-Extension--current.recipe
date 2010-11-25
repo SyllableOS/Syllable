@@ -1,0 +1,11 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			REBOL-HostKit--current
+
+headline			Example REBOL 3 Extension
+description
+	REBOL 3 supports extension modules written in other languages. This is an example extension written in C.
+licenses			PD
+
+home					www.rebol.com/r3/docs/concepts/extensions.html

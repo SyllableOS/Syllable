@@ -1,0 +1,35 @@
+authors				Kaj de Vos
+status				testing
+notes				Alpha pre-release version
+
+headline			Relative Expression Based Object Language
+description
+	An entirely new version of the innovative REBOL programming language.
+
+	REBOL uses "relative expressions" (context dependent dialects) to create a powerful new dimension similar to that found in natural human languages.
+
+	REBOL provides a lightweight platform for Internet applications. REBOL's power makes applications small so they are less expensive to create, distribute, maintain, and upgrade. In the size of a typical web page, you can fit an entire REBOL application.
+
+	REBOL 3.0 is an entirely new design built from the ground up using the insights gained over years of REBOL development and usage. In addition, REBOL 3.0 is more open to enable greater contribution from the development community.
+licenses			freeware
+
+home					www.rebol.com/rebol3/
+locations
+;	http://www.rebol.com/r3/downloads/
+	https://github.com/carls/R3A110/
+_packages
+;	tar.gz defies automated downloading:
+	r3-host-kit-a107-42
+files
+;	Github:
+	tarball/master
+;	Ubuntu binary:
+;	r3-core-a107-42.gz
+;	Fedora binary:
+;;	r3-core-a107-43.gz
+
+patch
+	tar xf master &&
+	rm master &&
+	mv */* . &&
+	sed -i 's~LIBS= \./~LIBS= -ldl ~' make-gcc/makefile
