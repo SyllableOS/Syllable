@@ -1,3 +1,7 @@
+* Dec 11, 2010, Kaj de Vos *
+
+Added another OEM PCI ID to the eepro100 network driver. From Andy Shissler.
+
 * May 17, 2010, Kaj de Vos *
 
 Fixed the VFS to allow creating a directory specified with a trailing slash.

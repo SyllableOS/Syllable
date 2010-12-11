@@ -49,6 +49,8 @@
 		Ported the driver to Syllable/AtheOS
 	2009 Nov 11 Carlos Pizarro <kr105@kr105.com>
 		Added product id for HP laptop's card
+	2010 Dec 11 From Andy Shissler
+		Added product id for OEM E-Machine PC model W3623
 */
 
 #include <kernel/malloc.h>
@@ -422,6 +424,11 @@ struct pci_id_info {
 	// HP laptops too ;)
 	{ "Intel Pro/100 VE",
 	  PCI_VENDOR_ID_INTEL, 0x1068,
+	  0
+	},
+	// OEM i82557/i82558 10/100 Ethernet, E-Machine PC model W3623
+	{ "Intel Pro/100 VE",
+	  PCI_VENDOR_ID_INTEL, 0x1094,
 	  0
 	},
 	{ "Intel Pro/100 VM (LOM)",
