@@ -1,13 +1,17 @@
 EXT = hello-extension
 
-#CC = gcc
+#I = path/to/your/rebol3/hostkit/src/include
 I = src/include
 
+# POSIX (Linux, Syllable, ...)
+#CC = gcc
 LIB = $(EXT).so
+#CFLAGS += -DTO_LINUX -I $I
 CFLAGS += -I $I
 LDFLAGS += -shared -Xlinker "-soname=$(LIB)"
 
-# Windows (MinGW):
+# Windows (MinGW)
+#CC = gcc
 #LIB = $(EXT).dll
 #CFLAGS += -DTO_WIN32 -I $I
 #LDFLAGS += -mdll

@@ -6,30 +6,30 @@ const char *init_block =
 		"Name: hello-extension\n"
 		"Type: extension\n"
 	"]\n"
-	"export hello-once: command [{Prints hello from a REBOL extension.}]\n"
-	"export hello-twice: command [{Prints hello again from a REBOL extension.}]\n"
+	"export hello: command [{Prints hello from a REBOL extension.}]\n"
+	"export goodbye: command [{Prints goodbye from a REBOL extension.}]\n"
 ;
 
 RL_LIB *RL;
 
-RXIEXT const char *RX_Init(int opts, RL_LIB *lib) {
-	RL = lib;
+RXIEXT const char *RX_Init(int options, RL_LIB *library) {
+	RL = library;
 	if (!CHECK_STRUCT_ALIGN) return 0;
 	return init_block;
 }
 
-RXIEXT int RX_Quit(int opts) {
+RXIEXT int RX_Quit(int options) {
 	return 0;
 }
 
-RXIEXT int RX_Call(int cmd, RXIFRM *frm, void *data) {
-	switch (cmd) {
+RXIEXT int RX_Call(int command, RXIFRM *arguments, void *data) {
+	switch (command) {
 	case 0: {
-		RL_Print("%s\n", "Hello REBOL extension!");
+		RL_PRINT("%s\n", "Hello REBOL extension!");
 		break;
 	}
 	case 1: {
-		RL_Print("%s\n", "Hello again!");
+		RL_PRINT("%s\n", "I say hello!");
 		break;
 	}
 	default:
