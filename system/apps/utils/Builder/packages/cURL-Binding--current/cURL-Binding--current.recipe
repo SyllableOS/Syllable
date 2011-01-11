@@ -1,0 +1,10 @@
+authors				Kaj de Vos
+
+inherits			REBOL-HostKit--current
+
+headline			REBOL extension for the cURL network library
+description
+	This is a programming language binding that gives REBOL 3 access to the networking functionality of the cURL library. cURL provides network protocols and features that REBOL 3 doesn't have yet, such as FTP, SFTP, SCP, SSL encryption in HTTPS and FTPS, proxy support, and custom headers, commands and cookies.
+licenses			MIT
+
+home					rebol.esperconsultancy.nl/extensions/cURL
