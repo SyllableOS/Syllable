@@ -44,7 +44,7 @@ const char *init_block =
 
 		"new-session: command [{Return session handle.}]\n"
 		"end-session: command [{Clean up session.} session [handle!]]\n"
-		"reset: command [{Clear session settings.} session [handle!]]\n"
+		"clear: command [{Clear session settings.} session [handle!]]\n"
 
 		"read: command [{Prepare read action.} session [handle!] buffer [binary!]]\n"
 		"write: command [{Prepare write action.} session [handle!] data [binary!]]\n"
