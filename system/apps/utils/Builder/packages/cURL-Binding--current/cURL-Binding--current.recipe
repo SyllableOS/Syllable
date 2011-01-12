@@ -8,3 +8,5 @@ description
 licenses			MIT
 
 home					rebol.esperconsultancy.nl/extensions/cURL
+
+needs				cURL >= 7.17
