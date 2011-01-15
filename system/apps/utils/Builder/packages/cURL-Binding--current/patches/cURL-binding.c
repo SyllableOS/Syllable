@@ -261,7 +261,7 @@ RXIEXT int RX_Call(int command, RXIFRM *arguments, void *dummy) {
 
 		return RXR_UNSET;
 	}
-	case 5: {  // reset
+	case 5: {  // clear
 		session = RXA_HANDLE(arguments, 1);
 		curl_easy_reset(session->handle);
 
