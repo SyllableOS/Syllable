@@ -1,0 +1,13 @@
+authors				Kaj de Vos
+status				developing
+
+inherits			REBOL-HostKit--current
+
+headline			REBOL extension for the 0MQ messaging library
+description
+	This is a programming language binding that gives REBOL 3 access to the message queue functionality of the 0MQ library.
+licenses			BSD
+
+home					rebol.esperconsultancy.nl/extensions/0MQ
+
+needs				ZeroMessageQueue 2.0
