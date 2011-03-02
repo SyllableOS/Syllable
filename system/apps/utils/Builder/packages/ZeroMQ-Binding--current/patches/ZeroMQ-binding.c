@@ -59,7 +59,7 @@ const char *init_block =
 			"extended-reply: 6\n"
 			"push: 7\n"
 			"pull: 8\n"
-		"close: command [{Clean up a socket from a context.} pool [handle!] socket [handle!]]\n"
+		"close: command [{Clean up a socket from a context.} socket [handle!]]\n"
 
 		"serve: command [{Set up server socket binding.} socket [handle!] end-point [url! string!]]\n"
 		"connect: command [{Connect to a server socket.} socket [handle!] destination [url! string!]]\n"
@@ -144,7 +144,7 @@ RXIEXT int RX_Call(int command, RXIFRM *arguments, void *dummy) {
 		length = RL_SERIES (series, RXI_SER_TAIL);
 
 		if ((data = malloc (length - index + 1)) == NULL) {
-			// FIXME: ENOMEM
+			// FIXME: report ENOMEM
 			break;
 		}
 		for (i = 0; index < length; ) {
@@ -202,7 +202,7 @@ RXIEXT int RX_Call(int command, RXIFRM *arguments, void *dummy) {
 	case 8: {  // receive
 		if (zmq_msg_init (&message)) break;
 
-		if (zmq_receive (RXA_HANDLE (arguments, 1), &message, RXA_INT64 (arguments, 3))) {
+		if (zmq_recv (RXA_HANDLE (arguments, 1), &message, RXA_INT64 (arguments, 3))) {
 			zmq_msg_close (&message);
 			break;
 		}
