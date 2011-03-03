@@ -10,4 +10,4 @@ licenses			BSD
 
 home					rebol.esperconsultancy.nl/extensions/0MQ
 
-needs				ZeroMessageQueue 2.0
+needs				ZeroMessageQueue >= 2.0.7

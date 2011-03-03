@@ -22,7 +22,8 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-Needs 0MQ 2.0.x (for zmq_init)
+Needs 0MQ >= 2.0.7
+Switch the zmq_init call in the new-pool command for 0MQ <= 2.0.6
 */
 
 
@@ -45,7 +46,9 @@ const char *init_block =
 
 		"version: command [{Return 0MQ version.}]\n"
 
-		"new-pool: command [{Return context handle.} app-threads [integer!] io-threads [integer!] flags [integer!]]\n"
+		// For 0MQ <= 2.0.6:
+//		"new-pool: command [{Return context handle.} app-threads [integer!] io-threads [integer!] flags [integer!]]\n"
+		"new-pool: command [{Return context handle.} io-threads [integer!]]\n"
 			"poll: 1\n"
 		"end-pool: command [{Clean up context.} pool [handle!]]\n"
 
@@ -64,8 +67,8 @@ const char *init_block =
 		"serve: command [{Set up server socket binding.} socket [handle!] end-point [url! string!]]\n"
 		"connect: command [{Connect to a server socket.} socket [handle!] destination [url! string!]]\n"
 
-		"no-block: 1\n"
 		"send: command [{Send message.} socket [handle!] message [binary!] flags [integer!]]\n"
+			"no-block: 1\n"
 //			"send-more: \n"
 		"receive: command [{Receive message.} socket [handle!] message [binary!] flags [integer!]]\n"
 
@@ -113,7 +116,9 @@ RXIEXT int RX_Call(int command, RXIFRM *arguments, void *dummy) {
 		return RXR_VALUE;
 	}
 	case 1: {  // new-pool
-		if ((handle = zmq_init (RXA_INT64 (arguments, 1), RXA_INT64 (arguments, 2), RXA_INT64 (arguments, 3))) == NULL) break;
+		// For 0MQ <= 2.0.6:
+//		if ((handle = zmq_init (RXA_INT64 (arguments, 1), RXA_INT64 (arguments, 2), RXA_INT64 (arguments, 3))) == NULL) break;
+		if ((handle = zmq_init (RXA_INT64 (arguments, 1))) == NULL) break;
 
 		RXA_HANDLE (arguments, 1) = handle;
 		RXA_TYPE (arguments, 1) = RXT_HANDLE;
