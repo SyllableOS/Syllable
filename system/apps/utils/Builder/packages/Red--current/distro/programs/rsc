@@ -1,6 +1,6 @@
 #! /bin/sh
 
-$PLACE=$PWD
+PLACE=$PWD
 cd /resources/Red/framework/REBOL
 r2-view -s rsc.r $1 $2
 cd $PLACE
