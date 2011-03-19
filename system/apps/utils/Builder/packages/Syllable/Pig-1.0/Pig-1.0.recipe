@@ -2,3 +2,9 @@ authors				Kaj de Vos
 status				testing
 
 patch-config
+
+; For Syllable 0.6.6:
+configure-env
+	IMAGE			''
+	CFLAGS			"$CFLAGS -I/system/indexes/include/SDL"
+	LDFLAGS			"$LDFLAGS -lm"

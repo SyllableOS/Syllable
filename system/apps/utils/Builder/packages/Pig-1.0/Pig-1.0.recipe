@@ -20,5 +20,5 @@ no-datarootdir
 ; Broken:
 configure-options	--disable-sdltest
 
-documentation		README INSTRUCTIONS COPYING Changelog AUTHORS
+documentation		README INSTRUCTIONS COPYING ChangeLog AUTHORS
 internal-docs		dirtyrects.txt
