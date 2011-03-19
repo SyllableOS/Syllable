@@ -3,9 +3,10 @@ status				testing
 
 inherits			REBOL-HostKit--current
 
-version				3alpha110
+version				3alpha111
 
-build-dir			make-gcc
+build-dir			make
+;build-dir			make-gcc
 
 ; For pre-built binary:
 ;make				true
@@ -24,7 +25,8 @@ install-files
 	../src/include/*	framework/headers/
 	libr3.so			framework/libraries/
 
-documentation		about.txt
+documentation		README.txt
+;documentation		about.txt
 
 links
 ;	r3-core			programs/rebol

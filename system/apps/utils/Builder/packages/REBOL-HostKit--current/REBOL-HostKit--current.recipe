@@ -13,14 +13,18 @@ description
 	REBOL 3.0 is an entirely new design built from the ground up using the insights gained over years of REBOL development and usage. In addition, REBOL 3.0 is more open to enable greater contribution from the development community.
 licenses			freeware
 
-home					www.rebol.com/rebol3/
+home
+;	www.rebol.com/rebol3/
+	www.rm-asset.com/code/downloads/
 locations
+;	https://github.com/carls/R3A110/
 ;	http://www.rebol.com/r3/downloads/
-	https://github.com/carls/R3A110/
-_packages
+	http://www.rm-asset.com/code/downloads/files/
+packages
 ;	tar.gz defies automated downloading:
-	r3-host-kit-a107-42
-files
+;	r3-host-kit-a107-42
+	rma-host-kit
+_files
 ;	Github:
 	tarball/master
 ;	Ubuntu binary:
@@ -29,7 +33,9 @@ files
 ;;	r3-core-a107-43.gz
 
 patch
-	tar xf master &&
-	rm master &&
-	mv */* . &&
-	sed -i 's~LIBS= \./~LIBS= -ldl ~' make-gcc/makefile
+;	Github:
+;	tar xf master &&
+;	rm master &&
+;	mv */* . &&
+;	sed -i 's~LIBS= \./~LIBS= -ldl ~' make-gcc/makefile
+	sed -i 's~LIBS= \./~LIBS= -ldl ~' make/makefile
