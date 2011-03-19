@@ -1,0 +1,24 @@
+authors				Kaj de Vos
+status				testing
+
+headline			Pig game
+description
+	Fixed Rate Pig was intended as an SDL programming example, to demonstrate the use of a fixed virtual logic frame rate together with interpolation, also known as "tweening". However, it turned into a (sort of) playable platform game, so it's more of a how-it-all-fits-together example. (No sound, though.)
+
+	Apart from fixed rate game logic, this game also demonstrates sprite animation and partial/smart display updating techniques, suitable for games and applications that need high frame rates but can do without updating the whole screen every frame.
+licenses			GPL-2
+
+home				olofson.net/mixed.html
+locations			http://olofson.net/download/
+packages			pig-1.0
+
+needs
+	SDL >= 1.2
+	SDL-Image
+
+no-datarootdir
+; Broken:
+configure-options	--disable-sdltest
+
+documentation		README INSTRUCTIONS COPYING Changelog AUTHORS
+internal-docs		dirtyrects.txt
