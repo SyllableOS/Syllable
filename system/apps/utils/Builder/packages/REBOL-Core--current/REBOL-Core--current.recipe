@@ -29,6 +29,6 @@ documentation		README.txt
 ;documentation		about.txt
 
 links
-;	r3-core			programs/rebol
-;	r3-core			programs/rebol-core
+	r3-core			programs/rebol
+	r3-core			programs/rebol-core
 	r3-core			programs/r3
