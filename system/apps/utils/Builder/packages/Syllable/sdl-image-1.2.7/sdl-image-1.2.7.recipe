@@ -6,6 +6,12 @@ status				testing
 
 make-shared
 
+configure-env
+;	For Syllable 0.6.6:
+	IMAGE			''
+;	For LibPNG and LibTIFF configure tests:
+	LDFLAGS			"$LDFLAGS -lz -lm"
+
 links
 ;	For some packages:
 	SDL/SDL_image.h			include/
