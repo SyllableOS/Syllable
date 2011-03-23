@@ -20,5 +20,7 @@ no-datarootdir
 ; Broken:
 configure-options	--disable-sdltest
 
+install-files		*.png bin/
+
 documentation		README INSTRUCTIONS COPYING ChangeLog AUTHORS
 internal-docs		dirtyrects.txt
