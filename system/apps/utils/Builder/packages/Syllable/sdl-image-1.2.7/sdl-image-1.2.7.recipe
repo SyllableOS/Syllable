@@ -10,7 +10,7 @@ configure-env
 ;	For Syllable 0.6.6:
 	IMAGE			''
 ;	For LibPNG and LibTIFF configure tests:
-	LDFLAGS			"$LDFLAGS -lz -lm"
+	LDFLAGS			"$LDFLAGS -lz -lm -ljpeg"
 
 links
 ;	For some packages:
