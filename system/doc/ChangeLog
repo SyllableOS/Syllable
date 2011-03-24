@@ -1,3 +1,14 @@
+* March 24, 2011, Kaj de Vos *
+
+SDL-Image configure didn't detect LibPNG and LibTIFF, so it didn't have support for PNG and
+TIFF images. The configuration has been extended to fix this. The only way I got the new
+combination to work was by making the LibJPEG library dynamic. There are some combinations
+left that could be tested, for example in case the problem is with LibTIFF, that is now
+being used and uses LibJPEG itself. However, this debugging takes a lot of time, and I have
+always thought that forcing the popular image libraries in the system to be static libraries
+may be a bridge too far. LibJPEG is used in several places in the base system, so making it
+dynamic is the most straigthforward solution, and also makes the system more efficient.
+
 * February 18, 2011, Kaj de Vos *
 
 Changed terminal type to xterm-old, which works somewhat less badly. Tested by Rui.
