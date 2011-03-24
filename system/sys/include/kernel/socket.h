@@ -167,6 +167,7 @@ struct _Socket
 	bool sk_bDontRoute;
 	bool sk_bKeep;      /* Send keep-alive messages */
 	bool sk_bBroadcast;	/* Allow broadcast messages */
+	bool sk_bListening;
 
 	ipaddr_t sk_anSrcAddr;
 	ipaddr_t sk_anDstAddr;

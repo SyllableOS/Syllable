@@ -1,3 +1,7 @@
+* March 25, 2011, Kaj de Vos *
+
+Network stack: getsockopt() SO_ACCEPTCONN implementation from Daniel O'Neill.
+
 * Dec 11, 2010, Kaj de Vos *
 
 Added another OEM PCI ID to the eepro100 network driver. From Andy Shissler.

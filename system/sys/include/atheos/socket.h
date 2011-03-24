@@ -109,6 +109,8 @@ extern "C" {
 #define SO_SNDTIMEO		21
 #define SO_BINDTODEVICE	25
 
+#define SO_ACCEPTCONN	30
+
 /* Setsockoptions(2) level. Thanks to BSD these must match IPPROTO_xxx */
 #define SOL_IP		0
 #define SOL_IPX		256

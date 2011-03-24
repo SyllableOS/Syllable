@@ -514,6 +514,13 @@ int do_getsockopt( bool bKernel, int nFile, int nLevel, int nOptName, void *pOpt
 					break;
 				}
 
+				case SO_ACCEPTCONN:
+				{
+					sockopt_setboolval( bKernel, pOptVal, psSocket->sk_bListening );
+					nError = 0;
+					break;
+				}
+
 				case SO_KEEPALIVE:
 				{
 					sockopt_setboolval( bKernel, pOptVal, psSocket->sk_bKeep );
@@ -925,6 +932,7 @@ static int do_listen( bool bKernel, int nFile, int nQueueSize )
 	if ( psSocket->sk_psOps->listen != NULL )
 	{
 		nError = psSocket->sk_psOps->listen( psSocket, nQueueSize );
+		psSocket->sk_bListening = true;
 	}
 	else
 	{
