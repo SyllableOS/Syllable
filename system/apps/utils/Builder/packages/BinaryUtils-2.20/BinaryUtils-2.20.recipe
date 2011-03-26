@@ -17,7 +17,7 @@ packages			binutils/binutils-2.20
 
 build-needs
 	BinaryUtils
-	AutoMake >= 1.5
+	AutoMake 1.11
 	AutoConfigure 2.64
 install-needs		BinaryUtils
 conflicts
