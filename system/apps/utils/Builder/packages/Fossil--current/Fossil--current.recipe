@@ -1,5 +1,5 @@
 authors				Kaj de Vos
-status				developing
+status				testing
 
 version				2011.3.16
 headline			Simple, high-reliability, distributed software configuration management
@@ -15,6 +15,9 @@ needs				ZLibrary
 build-needs			AWK
 test-needs			tcl
 recommends			OpenSSL
+
+install-tree		programs
+install-files		fossil programs/
 
 documentation		COPYRIGHT-BSD2.txt www/
 build-docs			BUILD.txt
