@@ -1,0 +1,31 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			sourceforge
+
+headline			Ext2/3/4 filesystem utilities
+description
+	The Ext2 Filesystem Utilities (e2fsprogs) contain all of the standard utilities for creating, fixing, configuring, and debugging ext2 filesystems. They also supports the ext3 and ext4 filesystems.
+licenses			GPL BSD
+
+home				e2fsprogs.sourceforge.net
+packages			e2fsprogs/e2fsprogs-1.41.12
+
+conflicts			UtilLinuxNG
+
+;build-dir			build
+
+;no-sysconfdir
+
+system-prefix-var	DESTDIR
+;install-tree		settings
+install-targets
+	install
+;	Static libraries and headers:
+	install-libs
+
+documentation
+	README COPYING ABOUT-NLS RELEASE-NOTES
+;	doc/*
+build-docs			INSTALL*
+internal-docs		SUBMITTING-PATCHES SHLIBS
