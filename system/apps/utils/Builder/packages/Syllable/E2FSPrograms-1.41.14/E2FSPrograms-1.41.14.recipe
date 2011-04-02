@@ -1,9 +1,11 @@
 authors				Kaj de Vos
-status				testing
+status				broken
+warnings			Wants O_DIRECT.
 
 configure-options
-	--disable-symlink-build
-	--disable-symlink-install
 ;	--with-root-prefix=''
 ;	--sysconfdir=/etc
+	--enable-symlink-build
+	--enable-symlink-install
+	--disable-tls
 	--enable-elf-shlibs
