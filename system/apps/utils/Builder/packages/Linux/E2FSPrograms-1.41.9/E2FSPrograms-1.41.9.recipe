@@ -1,0 +1,17 @@
+authors				Kaj de Vos
+status				testing
+
+configure-options
+;	--with-root-prefix=''
+;	--sysconfdir=/etc
+	--enable-elf-shlibs
+;	Delivered by UtilLinuxNG:
+	--disable-fsck
+	--disable-libblkid
+	--disable-libuuid
+	--disable-uuidd
+
+; Linked into mount, which is called before the loader path is set:
+_links
+	framework/libraries/libblkid.so.1	/system/resources/glibc/2.7/framework/libraries/
+	framework/libraries/libuuid.so.1	/system/resources/glibc/2.7/framework/libraries/
