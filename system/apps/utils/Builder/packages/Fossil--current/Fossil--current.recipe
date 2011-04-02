@@ -17,6 +17,7 @@ test-needs			tcl
 recommends			OpenSSL
 
 install-tree		programs
+install				true
 install-files		fossil programs/
 
 documentation		COPYRIGHT-BSD2.txt www/
