@@ -1,0 +1,9 @@
+authors				Kaj de Vos
+status				testing
+
+configure-options
+	--disable-symlink-build
+	--disable-symlink-install
+;	--with-root-prefix=''
+;	--sysconfdir=/etc
+	--enable-elf-shlibs
