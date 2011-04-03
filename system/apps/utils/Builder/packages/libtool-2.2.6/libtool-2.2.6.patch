@@ -1,45 +1,46 @@
-diff -Naur libtool-2.2.6-orig/libltdl/m4/libtool.m4 libtool-2.2.6/libltdl/m4/libtool.m4
---- libtool-2.2.6-orig/libltdl/m4/libtool.m4 2009-03-23 23:07:43.000000000 +0000
-+++ libtool-2.2.6/libltdl/m4/libtool.m4 2009-03-24 01:09:19.000000000 +0000
-@@ -2585,6 +2585,17 @@
-postinstall_cmds='chmod +x $lib'
-;;
-
+diff -ru libtool-2.2.6a-original/libltdl/m4/libtool.m4 libtool-2.2.6a/libltdl/m4/libtool.m4
+--- libtool-2.2.6a-original/libltdl/m4/libtool.m4	2008-09-05 13:54:41.000000000 +0200
++++ libtool-2.2.6a/libltdl/m4/libtool.m4	2011-04-04 00:12:20.000000000 +0200
+@@ -2597,6 +2597,18 @@
+   need_version=yes
+   ;;
+ 
 +syllable*)
-+ library_names_spec='${libname}${release}${shared_ext}$versuffix ${libname}${release}${shared_ext}$major $libname${shared_ext}'
-+ soname_spec='${libname}${release}${shared_ext}$major'
-+ shlibpath_var=DLL_PATH
-+ shlibpath_overrides_runpath=yes
-+ version_type=linux
-+ dynamic_linker="Syllable"
-+ need_lib_prefix=no
-+ need_version=no
-+ ;;
++  version_type=linux
++  need_lib_prefix=no
++  need_version=no
++  library_names_spec='${libname}${release}${shared_ext}$versuffix ${libname}${release}${shared_ext}${major} ${libname}${shared_ext}'
++  soname_spec='${libname}${release}${shared_ext}$major'
++  shlibpath_var=LIBRARY_PATH
++  runpath_var=DLL_PATH
++  shlibpath_overrides_runpath=no
++  dynamic_linker="Syllable"
++  ;;
 +
-sunos4*)
-version_type=sunos
-library_names_spec='${libname}${release}${shared_ext}$versuffix ${libname}${shared_ext}$versuffix'
-@@ -3114,6 +3125,10 @@
-lt_cv_deplibs_check_method=pass_all
-;;
-
+ sysv4 | sysv4.3*)
+   version_type=linux
+   library_names_spec='${libname}${release}${shared_ext}$versuffix ${libname}${release}${shared_ext}$major $libname${shared_ext}'
+@@ -3114,6 +3126,10 @@
+   lt_cv_deplibs_check_method=pass_all
+   ;;
+ 
 +syllable*)
-+ lt_cv_deplibs_check_method=pass_all
-+ ;;
++  lt_cv_deplibs_check_method=pass_all
++  ;;
 +
-sysv5* | sco3.2v5* | sco5v6* | unixware* | OpenUNIX* | sysv4*uw2*)
-lt_cv_deplibs_check_method=pass_all
-;;
-diff -Naur libtool-2.2.6-orig/libltdl/m4/ltdl.m4 libtool-2.2.6/libltdl/m4/ltdl.m4
---- libtool-2.2.6-orig/libltdl/m4/ltdl.m4 2009-03-23 23:07:43.000000000 +0000
-+++ libtool-2.2.6/libltdl/m4/ltdl.m4 2009-03-24 01:10:00.000000000 +0000
+ sysv5* | sco3.2v5* | sco5v6* | unixware* | OpenUNIX* | sysv4*uw2*)
+   lt_cv_deplibs_check_method=pass_all
+   ;;
+diff -ru libtool-2.2.6a-original/libltdl/m4/ltdl.m4 libtool-2.2.6a/libltdl/m4/ltdl.m4
+--- libtool-2.2.6a-original/libltdl/m4/ltdl.m4	2008-09-05 14:11:53.000000000 +0200
++++ libtool-2.2.6a/libltdl/m4/ltdl.m4	2011-04-04 00:14:12.000000000 +0200
 @@ -521,6 +521,9 @@
-solaris*)
-lt_cv_sys_dlopen_deplibs=yes
-;;
-+ syllable*)
-+ lt_cv_sys_dlopen_deplibs=yes
-+ ;;
-sysv5* | sco3.2v5* | sco5v6* | unixware* | OpenUNIX* | sysv4*uw2*)
-libltdl_cv_sys_dlopen_deplibs=yes
-;;
+   solaris*)
+     lt_cv_sys_dlopen_deplibs=yes
+     ;;
++  syllable*)
++    lt_cv_sys_dlopen_deplibs=yes
++    ;;
+   sysv5* | sco3.2v5* | sco5v6* | unixware* | OpenUNIX* | sysv4*uw2*)
+     libltdl_cv_sys_dlopen_deplibs=yes
+     ;;
