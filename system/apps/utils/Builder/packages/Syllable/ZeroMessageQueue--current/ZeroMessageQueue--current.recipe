@@ -1,6 +1,9 @@
 authors				Kaj de Vos
 status				testing
 
-make-shared
+;make-shared
+patch
+	cp /resources/libtool/share/libtool/ltmain.sh config/ &&
+	autoreconf
 
 configure-env		LDFLAGS "$LDFLAGS -lcrypto"
