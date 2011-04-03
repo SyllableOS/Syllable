@@ -1,0 +1,26 @@
+diff -ru E2FSPrograms-1.41.14-original/e2fsck/e2fsck.h E2FSPrograms-1.41.14/e2fsck/e2fsck.h
+--- E2FSPrograms-1.41.14-original/e2fsck/e2fsck.h	2010-12-22 16:49:20.000000000 +0100
++++ E2FSPrograms-1.41.14/e2fsck/e2fsck.h	2011-04-03 01:25:06.000000000 +0200
+@@ -441,7 +441,7 @@
+ /* pass1.c */
+ extern void e2fsck_setup_tdb_icount(e2fsck_t ctx, int flags,
+ 				    ext2_icount_t *ret);
+-extern void e2fsck_use_inode_shortcuts(e2fsck_t ctx, int bool);
++extern void e2fsck_use_inode_shortcuts(e2fsck_t ctx, int logic);
+ extern int e2fsck_pass1_check_device_inode(ext2_filsys fs,
+ 					   struct ext2_inode *inode);
+ extern int e2fsck_pass1_check_symlink(ext2_filsys fs, ext2_ino_t ino,
+diff -ru E2FSPrograms-1.41.14-original/e2fsck/util.c E2FSPrograms-1.41.14/e2fsck/util.c
+--- E2FSPrograms-1.41.14-original/e2fsck/util.c	2010-12-22 16:49:20.000000000 +0100
++++ E2FSPrograms-1.41.14/e2fsck/util.c	2011-04-03 01:32:29.000000000 +0200
+@@ -284,8 +284,8 @@
+ 	memset(&r, 0, sizeof(struct rusage));
+ #endif
+ 	getrusage(RUSAGE_SELF, &r);
+-	track->user_start = r.ru_utime;
+-	track->system_start = r.ru_stime;
++//	track->user_start = r.ru_utime;
++//	track->system_start = r.ru_stime;
+ #else
+ 	track->user_start.tv_sec = track->user_start.tv_usec = 0;
+ 	track->system_start.tv_sec = track->system_start.tv_usec = 0;

@@ -1,5 +1,5 @@
 authors				Kaj de Vos
-status				broken
+status				incomplete
 
 ; For O_DIRECT:
 needs				Syllable >= 0.6.7

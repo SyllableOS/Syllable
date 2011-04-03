@@ -11,6 +11,8 @@ licenses			GPL BSD
 home				e2fsprogs.sourceforge.net
 packages			e2fsprogs/e2fsprogs-1.41.14
 
+; libcrypto for libuuid?
+;needs				OpenSSL
 conflicts			UtilLinuxNG
 
 ;build-dir			build
