@@ -1,0 +1,6 @@
+authors				Kaj de Vos
+status				testing
+
+make-shared
+
+configure-env		LDFLAGS "$LDFLAGS -lcrypto"

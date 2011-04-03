@@ -11,6 +11,10 @@ home				www.zeromq.org
 locations			http://download.zeromq.org
 packages			zeromq-2.1.4
 
+build-needs
+	LibraryTool
+	AutoConfigure
+	AutoMake
 ; For UUID:
 needs				E2FSPrograms | UtilLinuxNG
 
