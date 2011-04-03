@@ -1,0 +1,40 @@
+diff -ru ZeroMessageQueue--current-original/configure.in ZeroMessageQueue--current/configure.in
+--- ZeroMessageQueue--current-original/configure.in	2011-03-24 22:47:04.000000000 +0100
++++ ZeroMessageQueue--current/configure.in	2011-04-03 04:15:48.000000000 +0200
+@@ -209,6 +209,15 @@
+             AC_MSG_ERROR([Building static libraries is not supported under Cygwin])
+         fi
+         ;;
++    *syllable*)
++        # Define on Syllable to enable all library features
++        CPPFLAGS="-D_GNU_SOURCE $CPPFLAGS"
++        AC_DEFINE(ZMQ_HAVE_SYLLABLE, 1, [Have Syllable OS])
++        AC_DEFINE(ZMQ_FORCE_SELECT, 1, [Force to use select()])
++        AC_CHECK_LIB(rt, sem_init)
++        AC_CHECK_LIB(uuid, uuid_generate, , 
++            [AC_MSG_ERROR([cannot link with -luuid, install the e2fsprogs package.])])
++        ;;
+     *)
+         AC_MSG_ERROR([unsupported system: ${host_os}.])
+         ;;
+diff -ru ZeroMessageQueue--current-original/src/semaphore.hpp ZeroMessageQueue--current/src/semaphore.hpp
+--- ZeroMessageQueue--current-original/src/semaphore.hpp	2011-03-09 18:58:01.000000000 +0100
++++ ZeroMessageQueue--current/src/semaphore.hpp	2011-04-03 04:17:38.000000000 +0200
+@@ -28,6 +28,8 @@
+ #include "windows.hpp"
+ #elif defined ZMQ_HAVE_OPENVMS
+ #include <pthread.h>
++#elif defined ZMQ_HAVE_SYLLABLE
++#include <pthread.h>
+ #else
+ #include <semaphore.h>
+ #endif
+@@ -83,7 +85,7 @@
+         const semaphore_t &operator = (const semaphore_t&);
+     };
+ 
+-#elif defined ZMQ_HAVE_LINUX || defined ZMQ_HAVE_OSX || defined ZMQ_HAVE_OPENVMS
++#elif defined ZMQ_HAVE_LINUX || defined ZMQ_HAVE_OSX || defined ZMQ_HAVE_OPENVMS || defined ZMQ_HAVE_SYLLABLE
+ 
+     //  On platforms that allow for double locking of a mutex from the same
+     //  thread, simple semaphore is implemented using mutex, as it is more
