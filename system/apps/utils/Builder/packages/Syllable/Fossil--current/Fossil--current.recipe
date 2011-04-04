@@ -1,0 +1,7 @@
+authors				Kaj de Vos
+status				testing
+
+needs
+;	For SQLite:
+	Syllable >= 0.6.7
+	ZLibrary
