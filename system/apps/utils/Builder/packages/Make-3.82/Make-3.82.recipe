@@ -1,0 +1,22 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			gnu
+
+headline			Software build tool
+description
+	Make is a tool which controls the generation of executables and other non-source files of a program from the program's source files.
+licenses			GPL
+
+home				www.gnu.org/software/make/
+packages			make/make-3.82
+
+install-needs		Make
+test-needs			Perl
+
+;test-targets
+;	check-loadavg
+;	check
+
+documentation		README COPYING ABOUT-NLS NEWS ChangeLog AUTHORS
+build-docs			README.customs
