@@ -17,7 +17,7 @@ packages			binutils/binutils-2.21
 
 build-needs
 	BinaryUtilities
-	AutoMake 1.11
+	AutoMake >= 1.11
 	AutoConfigure 2.64
 install-needs		BinaryUtilities
 _conflicts
@@ -31,7 +31,6 @@ patch				autoreconf ld gas
 ;	cd ../gas &&
 ;	autoconf
 
-no-datarootdir
 configure-options
 	--enable-shared
 ;	--with-lib-path=
