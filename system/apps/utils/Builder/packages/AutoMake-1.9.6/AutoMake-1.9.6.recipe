@@ -15,8 +15,8 @@ packages			automake/automake-1.9.6
 
 build-needs			AutoConfigure >= 2.54
 run-needs
-	Perl
 	M4
+	Perl
 
 system-prefix-var	DESTDIR
 

@@ -1,6 +1,5 @@
 authors				Kaj de Vos
 warnings			Hardwires Perl location, so the primary Perl link should be a standard one.
-notes				Build: autom4te needs ftruncate()
 
 inherits			gnu
 
@@ -13,11 +12,11 @@ home				www.gnu.org/software/autoconf/
 packages			autoconf/autoconf-2.59
 
 needs
-	Perl >= 5.005_03
 	M4 >= 1.4
+	Perl >= 5.005_03
 	AutoMake
-; Both BinaryUtils and AutoConfigure have info/standards.info:
-conflicts			BinaryUtils
+; Both BinaryUtilities and AutoConfigure have info/standards.info:
+conflicts			BinaryUtilities
 
 no-datarootdir
 

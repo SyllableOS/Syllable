@@ -1,6 +1,6 @@
 authors				Kaj de Vos
 status				testing
-warnings			Hardwires Perl location, so the primary Perl installation should be a standard one.
+warnings			Hardwires Perl location, so the primary Perl link should be a standard one.
 
 inherits			gnu
 
@@ -16,8 +16,8 @@ needs
 	M4 >= 1.4
 	Perl >= 5.005_03
 	AutoMake >= 1.11
-; Both BinaryUtils and AutoConfigure have info/standards.info:
-conflicts			BinaryUtils
+; Both BinaryUtilities and AutoConfigure have info/standards.info:
+conflicts			BinaryUtilities
 
 system-prefix-var	DESTDIR
 
