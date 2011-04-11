@@ -1,0 +1,47 @@
+authors				Kaj de Vos
+status				testing
+
+headline			Event-driven web server and web/mail proxy server
+description
+	Nginx [engine x] is a HTTP and reverse proxy server, as well as a mail proxy server.
+
+	Nginx is known for its high performance, stability, rich feature set, simple configuration, and low resource consumption.
+licenses			BSD
+
+home				nginx.org
+locations			http://nginx.org/download/
+packages			nginx-0.9.7
+
+recommends
+	ZLibrary
+	PCRE
+	OpenSSL
+
+build-dir			.
+
+no-sysconfdir
+no-bindir
+no-sbindir
+no-libdir
+no-libexecdir
+no-includedir
+no-datarootdir
+no-datadir
+no-mandir
+no-infodir
+configure-options
+;	--sbin-path=/resources/NginX/system-programs/nginx
+	--conf-path=/etc/nginx.conf
+	--pid-path=/var/run/nginx.pid
+	--lock-path=/var/lock/nginx.lock
+	--error-log-path=/var/log/nginx/error.log
+	--http-log-path=/var/log/nginx/access.log
+	--http-client-body-temp-path=/var/tmp/nginx/body
+	--http-proxy-temp-path=/var/tmp/nginx/proxy
+	--http-fastcgi-temp-path=/var/tmp/nginx/fastcgi
+;	--user=system
+;	--group=system
+;	--with-debug
+	--with-http_ssl_module
+
+documentation		README LICENSE CHANGES CHANGES.ru
