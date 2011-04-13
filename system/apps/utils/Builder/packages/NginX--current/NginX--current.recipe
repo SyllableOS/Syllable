@@ -31,7 +31,7 @@ no-mandir
 no-infodir
 configure-options
 ;	--sbin-path=/resources/NginX/system-programs/nginx
-	--conf-path=/etc/nginx.conf
+	--conf-path=/etc/nginx/nginx.conf
 	--pid-path=/var/run/nginx.pid
 	--lock-path=/var/lock/nginx.lock
 	--error-log-path=/var/log/nginx/error.log
@@ -39,8 +39,8 @@ configure-options
 	--http-client-body-temp-path=/var/tmp/nginx/body
 	--http-proxy-temp-path=/var/tmp/nginx/proxy
 	--http-fastcgi-temp-path=/var/tmp/nginx/fastcgi
-;	--user=system
-;	--group=system
+	--user=system
+	--group=system
 ;	--with-debug
 	--with-http_ssl_module
 
