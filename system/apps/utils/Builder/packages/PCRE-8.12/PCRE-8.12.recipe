@@ -1,0 +1,21 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			sourceforge
+
+headline			Perl Compatible Regular Expressions library
+description
+	The PCRE library is a set of functions that implement regular expression pattern matching using the same syntax and semantics as Perl 5. PCRE has its own native API, as well as a set of wrapper functions that correspond to the POSIX regular expression API.
+licenses			BSD
+
+home				www.pcre.org
+packages			pcre/pcre-8.12
+;locations			ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/
+
+configure-options
+;	--disable-shared
+;	--enable-utf8
+	--enable-unicode-properties
+
+documentation		README COPYING LICENCE NEWS ChangeLog AUTHORS
+internal-docs		HACKING
