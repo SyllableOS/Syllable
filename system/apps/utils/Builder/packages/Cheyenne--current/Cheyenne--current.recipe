@@ -7,36 +7,36 @@ description
 licenses			BSD
 
 home				cheyenne-server.org
-locations
-;	http://cheyenne-server.org/dl/
-	http://downloads.syllable.org/sources/resources/Cheyenne/
-packages			Cheyenne-2010.5.20.source
-;archives			svn checkout http://cheyenne-server.googlecode.com/svn/trunk/ Cheyenne
+locations			http://cheyenne-server.org/dl/
+packages			cheyenne-r0920 Cheyenne--current
+;archives			svn checkout http://cheyenne-server.googlecode.com/svn/trunk/ cheyenne-server-read-only
+files				0920/cheyenne-r0920-pro.gz
 
-run-needs
+_run-needs
 	REBOL 2
 	UniServe
 
 patch
-;	Bug fix:
-	sed -i s~incoming-dir/out~incoming-dir/:out~												Cheyenne/HTTPd.r &&
+	gunzip cheyenne-r0920-pro.gz &&
+	chmod +x cheyenne-r0920-pro
 ;	UniServe path:
-	sed -i s~%../UniServe~%/resources/index/framework/REBOL/UniServe~							Cheyenne/cheyenne.r
-;	For QuarterMaster:
-;	sed -i 's~soc/path-info:\sjoin\sdata/in/path\sdata/in/target~soc/path-info: data/in/url~'	Cheyenne/handlers/CGI.r
+;	sed -i s~%../UniServe~%/resources/index/framework/REBOL/UniServe~ Cheyenne/cheyenne.r
 
 make				true
 
-install-tree		framework/REBOL/Cheyenne
+install-tree
+	programs
+	framework/REBOL/Cheyenne
 install				true
 install-files
-	Cheyenne/*.r		framework/REBOL/Cheyenne/
-	Cheyenne/*.cfg		framework/REBOL/Cheyenne/
-	Cheyenne/handlers	framework/REBOL/Cheyenne/
-	Cheyenne/internal	framework/REBOL/Cheyenne/
-	Cheyenne/misc		framework/REBOL/Cheyenne/
-	Cheyenne/mods		framework/REBOL/Cheyenne/
+	cheyenne-r0920-pro	programs/cheyenne
+;	Cheyenne/*.r		framework/REBOL/Cheyenne/
+;	Cheyenne/*.cfg		framework/REBOL/Cheyenne/
+;	Cheyenne/handlers	framework/REBOL/Cheyenne/
+;	Cheyenne/internal	framework/REBOL/Cheyenne/
+;	Cheyenne/misc		framework/REBOL/Cheyenne/
+;	Cheyenne/mods		framework/REBOL/Cheyenne/
 	Cheyenne/www		framework/REBOL/Cheyenne/
-	Cheyenne/tests		framework/REBOL/Cheyenne/
+;	Cheyenne/tests		framework/REBOL/Cheyenne/
 
 documentation		Cheyenne/*.txt Cheyenne/docs/*
