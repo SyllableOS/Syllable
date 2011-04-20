@@ -40,3 +40,5 @@ install-files
 ;	Cheyenne/tests		framework/REBOL/Cheyenne/
 
 documentation		Cheyenne/*.txt Cheyenne/docs/*
+
+no-strip
