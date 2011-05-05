@@ -1,0 +1,5 @@
+authors				Kaj de Vos
+status				testing
+
+; For testing:
+configure-env		DLL_PATH "@bindir@/.:@bindir@/../lib:$DLL_PATH"

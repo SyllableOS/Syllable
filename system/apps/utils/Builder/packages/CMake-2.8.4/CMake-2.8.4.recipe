@@ -1,6 +1,6 @@
 authors				Kaj de Vos
 status				testing
-notes				Can't find Curses and external BZip2 and cURL
+notes				Can't find Curses and other external libraries
 
 headline			Cross-platform Make
 description
@@ -27,7 +27,7 @@ configure-options
 	--datadir=/data
 	--docdir=/documentation
 	--mandir=/manuals
-	--system-zlib
+;	--system-zlib
 ;	--system-bzip2
 ;	--system-curl
 
