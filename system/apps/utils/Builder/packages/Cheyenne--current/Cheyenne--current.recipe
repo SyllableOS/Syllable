@@ -10,15 +10,19 @@ home				cheyenne-server.org
 locations			http://cheyenne-server.org/dl/
 packages			cheyenne-r0920 Cheyenne--current
 ;archives			svn checkout http://cheyenne-server.googlecode.com/svn/trunk/ cheyenne-server-read-only
-files				0920/cheyenne-r0920-pro.gz
+files
+;	0920/cheyenne-r0920-pro.gz
+	auto/cheyenne-auto-linux-r137-pro.gz
 
 _run-needs
 	REBOL 2
 	UniServe
 
 patch
-	gunzip cheyenne-r0920-pro.gz &&
-	chmod +x cheyenne-r0920-pro
+;	gunzip cheyenne-r0920-pro.gz &&
+;	chmod +x cheyenne-r0920-pro
+	gunzip cheyenne-auto-linux-r137-pro.gz &&
+	chmod +x cheyenne-auto-linux-r137-pro
 ;	UniServe path:
 ;	sed -i s~%../UniServe~%/resources/index/framework/REBOL/UniServe~ Cheyenne/cheyenne.r
 
@@ -29,15 +33,16 @@ install-tree
 	framework/REBOL/Cheyenne
 install				true
 install-files
-	cheyenne-r0920-pro	programs/cheyenne
-;	Cheyenne/*.r		framework/REBOL/Cheyenne/
-;	Cheyenne/*.cfg		framework/REBOL/Cheyenne/
-;	Cheyenne/handlers	framework/REBOL/Cheyenne/
-;	Cheyenne/internal	framework/REBOL/Cheyenne/
-;	Cheyenne/misc		framework/REBOL/Cheyenne/
-;	Cheyenne/mods		framework/REBOL/Cheyenne/
-	Cheyenne/www		framework/REBOL/Cheyenne/
-;	Cheyenne/tests		framework/REBOL/Cheyenne/
+;	cheyenne-r0920-pro				programs/cheyenne
+	cheyenne-auto-linux-r137-pro	programs/cheyenne
+;	Cheyenne/*.r					framework/REBOL/Cheyenne/
+;	Cheyenne/*.cfg					framework/REBOL/Cheyenne/
+;	Cheyenne/handlers				framework/REBOL/Cheyenne/
+;	Cheyenne/internal				framework/REBOL/Cheyenne/
+;	Cheyenne/misc					framework/REBOL/Cheyenne/
+;	Cheyenne/mods					framework/REBOL/Cheyenne/
+	Cheyenne/www					framework/REBOL/Cheyenne/
+;	Cheyenne/tests					framework/REBOL/Cheyenne/
 
 documentation		Cheyenne/*.txt Cheyenne/docs/*
 
