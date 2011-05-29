@@ -54,6 +54,7 @@ using namespace os;
 #define PCI_DEVICE_ID_MATROX_PAR			0x0527		// Parhelia
 
 static struct MGAChip_s gs_sChips[MAXCHIPS] = {
+	{ 0, "Unknown", NONE },
 	{ PCI_DEVICE_ID_MATROX_MGA, "MGA-I [Impression]", TVP3026 },
 	{ PCI_DEVICE_ID_MATROX_MGA_2, "MGA-II [Athena]", TVP3026 },
 	{ PCI_DEVICE_ID_MATROX_MIL, "2064W [Millennium]", TVP3026 },
@@ -71,8 +72,7 @@ static struct MGAChip_s gs_sChips[MAXCHIPS] = {
 	{ PCI_DEVICE_ID_MATROX_MIS, "Mistral", MGAGx00 },
 	{ PCI_DEVICE_ID_MATROX_G550, "G550", MGAGx50 },
 	{ PCI_DEVICE_ID_MATROX_G550_2, "G550", MGAGx50 },
-	{ PCI_DEVICE_ID_MATROX_PAR, "Parhelia", MGAGx50 },
-	{ 0, "Unknown", NONE }
+	{ PCI_DEVICE_ID_MATROX_PAR, "Parhelia", MGAGx50 }
 };
 
 Matrox::Matrox( int nFd ) : m_cGELock( "matrox_ge_lock" ), m_cCursorHotSpot(0,0)
@@ -95,9 +95,9 @@ Matrox::Matrox( int nFd ) : m_cGELock( "matrox_ge_lock" ), m_cCursorHotSpot(0,0)
 	}
 
 	// Poison the chip info
-	m_sChip.nDeviceID = gs_sChips[MAXCHIPS].nDeviceID;
-	m_sChip.zName = gs_sChips[MAXCHIPS].zName;
-	m_sChip.eDAC = gs_sChips[MAXCHIPS].eDAC;
+	m_sChip.nDeviceID = gs_sChips[0].nDeviceID;
+	m_sChip.zName = gs_sChips[0].zName;
+	m_sChip.eDAC = gs_sChips[0].eDAC;
 
 	// Match the card to our list and ensure it is a supported card
 	for( i = 0; i < MAXCHIPS; i++ )

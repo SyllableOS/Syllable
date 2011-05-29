@@ -879,7 +879,7 @@ static int iso_open_dir( void *_volume, void *_node, void **cookie )
 //      nspace*                                 volume = (nspace*)_volume;
 	vnode *node = ( vnode * )_node;
 	int result = -EOK;
-	dircookie *dirCookie = ( dircookie * )malloc( sizeof( dircookie ) );
+	dircookie *dirCookie;
 
 	kerndbg( KERN_DEBUG, "iso_opendir - ENTER, node is %p\n", node );
 	if( !( node->flags & ISO_ISDIR ) )
@@ -888,6 +888,7 @@ static int iso_open_dir( void *_volume, void *_node, void **cookie )
 		return ( -EMFILE );
 	}
 
+	dirCookie = ( dircookie * )malloc( sizeof( dircookie ) );
 	if( NULL != dirCookie )
 	{
 		kerndbg( KERN_DEBUG_LOW, "iso_opendir - filling in the dircookie...\n" );

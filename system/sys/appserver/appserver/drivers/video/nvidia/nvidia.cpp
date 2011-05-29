@@ -185,7 +185,7 @@ NVidia::NVidia( int nFd )
 	uint16 anModes[1024];
 	uint32 nFBPhysAddr = 0;
 	
-	strcpy(sVesaInfo.VesaSignature, "VBE2");
+	strncpy(sVesaInfo.VesaSignature, "VBE2", sizeof(sVesaInfo.VesaSignature));
 	int nModeCount = get_vesa_info(&sVesaInfo, anModes, 1024);
 	
 	for (int i = 0; i < nModeCount; i++) {

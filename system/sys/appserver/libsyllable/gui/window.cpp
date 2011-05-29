@@ -154,8 +154,8 @@ void Window::_Cleanup()
 		if( ( (*i).second.m_nFlags & SDF_DELETE ) && ( (*i).second.m_pcMessage ) ) {
 			delete (*i).second.m_pcMessage;
 		}
-		m->m_cShortcuts.erase(i);
 	}
+	m->m_cShortcuts.clear();
 	if( m->m_pcTopView != NULL )
 	{
 		Message cReq( AR_CLOSE_WINDOW );

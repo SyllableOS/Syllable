@@ -51,32 +51,41 @@ void Keymap::_Init(const os::String& cKeymap)
 	
 	if (fin != NULL)
 	{
-		keymap_header sHeader;
+		try
+		{
+			keymap_header sHeader;
 
-		if( fread( &sHeader, sizeof( sHeader ), 1, fin ) != 1 )
-		{
-			throw GeneralFailure("Error: Failed to read keymap header\n",-1 );
+			if( fread( &sHeader, sizeof( sHeader ), 1, fin ) != 1 )
+			{
+				throw GeneralFailure("Error: Failed to read keymap header\n",-1 );
+			}
+			if( sHeader.m_nMagic != KEYMAP_MAGIC )
+			{
+				throw GeneralFailure( os::String().Format("Error: Keymap have bad magic number (%08x) should have been %08x\n", sHeader.m_nMagic, KEYMAP_MAGIC).c_str(),-1);
+			}
+			
+			if( sHeader.m_nVersion != CURRENT_KEYMAP_VERSION )
+			{
+				throw GeneralFailure( os::String().Format("Error: Unknown keymap version %d\n", sHeader.m_nVersion).c_str(),-1);
+			}
+	
+			m_pcMap = ( keymap* ) malloc( sHeader.m_nSize );
+	
+			if( !m_pcMap )
+			{
+				throw GeneralFailure( os::String().Format("Error: Could not allocate memory for keymap (Size: %d)\n", sHeader.m_nSize).c_str(),-1);
+			}
+	
+			if( fread( m_pcMap, sHeader.m_nSize, 1, fin ) != 1 )
+			{
+				throw GeneralFailure("Error: Failed to read keymap\n",-1 );
+			}
 		}
-		if( sHeader.m_nMagic != KEYMAP_MAGIC )
+		catch( std::exception& e )
 		{
-			throw GeneralFailure( os::String().Format("Error: Keymap have bad magic number (%08x) should have been %08x\n", sHeader.m_nMagic, KEYMAP_MAGIC).c_str(),-1);
-		}
-		
-		if( sHeader.m_nVersion != CURRENT_KEYMAP_VERSION )
-		{
-			throw GeneralFailure( os::String().Format("Error: Unknown keymap version %d\n", sHeader.m_nVersion).c_str(),-1);
-		}
-
-		m_pcMap = ( keymap* ) malloc( sHeader.m_nSize );
-
-		if( !m_pcMap )
-		{
-			throw GeneralFailure( os::String().Format("Error: Could not allocate memory for keymap (Size: %d)\n", sHeader.m_nSize).c_str(),-1);
-		}
-
-		if( fread( m_pcMap, sHeader.m_nSize, 1, fin ) != 1 )
-		{
-			throw GeneralFailure("Error: Failed to read keymap\n",-1 );
+			/* Close the file and throw the exception upwards */
+			fclose( fin );
+			throw( e );
 		}
 	}
 	else

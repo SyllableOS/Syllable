@@ -863,6 +863,7 @@ bool init_desktops()
 			unload_library( nLib );
 		}
 	}
+	closedir( pKernelDriverDir );
 
 	if( g_pcDispDrv == NULL )
 	{

@@ -702,8 +702,10 @@ status_t DateTime::Flatten( uint8* pBuffer, size_t nSize ) const
 
 status_t DateTime::Unflatten( const uint8* pBuffer )
 {
-	FlattenStruct* psProps;
-	memcpy(psProps,pBuffer,GetFlattenedSize());
+	/* WARNING: this code unsafely assumes that sizeof(pBuffer) >= sizeof(FlattenStruct)! */
+	/* This method should be deprecated or removed in a future libsyllable version */
+	/* and replaced with a safe Unflatten( pBuffer, nSize ) method. */
+	FlattenStruct* psProps = (FlattenStruct*)pBuffer;
 	m->SetFromFlattenStruct(psProps);
 	return 0;
 }

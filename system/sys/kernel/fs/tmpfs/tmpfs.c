@@ -161,7 +161,7 @@ typedef struct
 {
 	int			 tc_nMode;	///< Open mode
 	TmpFSWalk_s		*tc_psWalk;	///< Directory walk
-	TmpFSCookieState_e	 tc_nState;	///< State; 
+	TmpFSCookieState_e	 tc_nState;	///< State;
 } TmpFSCookie_s;
 
 /*
@@ -636,7 +636,7 @@ static void tfs_delete_node( TmpFSInode_s *psNode )
 /** Lookup a name on a tmpfs volume
  * \par Description:
  * Lookup the given name in the given directory.  On success, <pnResInode> contains the Inode number of
- * the correct Inode. 
+ * the correct Inode.
  * \par Note:
  * \par Locks:
  * \par Warning:
@@ -924,7 +924,7 @@ static int tfs_rstat( void *pVolume, void *pNode, struct stat *psStat )
 
 /** Write Stat on a tmpfs file
  * \par Description:
- * Save info from the given stat structure into the given file. 
+ * Save info from the given stat structure into the given file.
  * \par Note:
  * Atime is not currently saved
  * \par Locks:
@@ -1526,7 +1526,9 @@ static int tfs_mount( kdev_t nDevNum, const char *pzDevPath, uint32 nFlags, void
 	psIndexDir = kmalloc( sizeof( TmpFSInode_s ), MEMF_KERNEL | MEMF_CLEAR | MEMF_OKTOFAILHACK );
 	if( psIndexDir == NULL )
 	{
+		delete_semaphore( psRootNode->ti_hLock );
 		delete_semaphore( psVolume->tv_hLock );
+		kfree( psRootNode );
 		kfree( psVolume );
 		return ( -ENOMEM );
 	}

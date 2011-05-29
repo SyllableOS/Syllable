@@ -255,9 +255,9 @@ void ata_init_controllers( void )
 	/* Probe for & reset ATA controller(s) */
 	int controller;
 	uint8 count, sector, cyl_lo, cyl_hi, status;
-	char master_type[6];
-	char slave_type[6];
-	char info_string[48];
+	char master_type[7];
+	char slave_type[7];
+	char info_string[60];
 
 	kerndbg( KERN_DEBUG, "Checking for ATA / ATAPI devices\n");
 

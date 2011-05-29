@@ -63,7 +63,7 @@ class DacTVP3026 : public MgaDac
 		inline uint8 inb( uint32 nAddress ) const { return( *((vuint8*)(m_pRegisterBase + nAddress)) ); }
 
 		vuint8 *m_pRegisterBase;
-		unsigned short m_nDacClk[7];	// 0 - 6 are Clock registers
+		unsigned short m_nDacClk[8];	// 0 - 6 are Clock registers
 											// 7 is the Q post divider clock register
 };
 

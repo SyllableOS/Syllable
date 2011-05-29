@@ -429,7 +429,7 @@ dbprintf( "*** Read 8 BPP image.\n" );
 		}
 	}
 
-	delete tmp_image;
+	delete[] tmp_image;
 
 	return ret;
 }

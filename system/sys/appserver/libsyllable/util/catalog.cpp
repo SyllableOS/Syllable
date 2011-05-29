@@ -119,7 +119,7 @@ status_t Catalog::Load( StreamableIO* pcSource )
 
 	pcSource->Read( &m->m_sHdr, 3 * sizeof( uint32 ) );
 	pcSource->Read( &m->m_sHdr.m_nNumStrings, std::min( (uint32)(sizeof( m->m_sHdr ) ), m->m_sHdr.m_nHeaderSize ) - 3 * sizeof( uint32 ) );
-	
+
 	if(	m->m_sHdr.m_nMagic == CATALOG_MAGIC &&
 		m->m_sHdr.m_nVersion <= CURRENT_CATALOG_VERSION )
 	{
@@ -139,18 +139,18 @@ status_t Catalog::Load( StreamableIO* pcSource )
 			pcSource->Read( &nLen, sizeof( nLen ) );
 			if( nLen > nBufSize ) {
 				nBufSize = nLen + 100;
-				delete pzBfr;
+				delete[] pzBfr;
 				pzBfr = new char[ nBufSize ];
 			}
 			pcSource->Read( pzBfr, nLen );
 			m->m_cStrings[ nID ] = os::String( pzBfr );
 		}
-	
-		delete pzBfr;
+
+		delete[] pzBfr;
 	} else {
 		retval = -1;
 	}
-	
+
 	Unlock();
 
 	return retval;
@@ -169,21 +169,21 @@ status_t Catalog::Save( StreamableIO* pcDest )
 	pcDest->Write( &m->m_sHdr, sizeof( m->m_sHdr ) );
 
 	StringMap::iterator i;
-	
+
 	for(i = m->m_cStrings.begin(); i != m->m_cStrings.end(); i++) {
 		uint32	nID;
 		uint32	nLen;
-		
+
 		nID = (*i).first;
 		nLen = (*i).second.size() + 1;
-		
+
 		pcDest->Write( &nID, sizeof( nID ) );
 		pcDest->Write( &nLen, sizeof( nLen ) );
 		pcDest->Write( (*i).second.c_str(), nLen );
 	}
-	
+
 	Unlock();
-	
+
 	return 0;
 }
 

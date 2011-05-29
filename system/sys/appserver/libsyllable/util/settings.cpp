@@ -30,17 +30,17 @@ class Settings::Private
 		{
 			const char *pzAppSig = pApp->GetName().c_str(  );
  			const char *pzAppName = strrchr( pzAppSig, '-' );
- 
+
  			// First check for a '-'
  			if( pzAppName != NULL )
  				pzAppName++;
- 
+
  			// If not found, check for '/'
  			else if( strrchr( pzAppSig, '/' ) != NULL )
  			{
  				pzAppName = strrchr( pzAppSig, '/' ) + 1;
  			}
- 
+
  			// Simply use the name directly
  			else
  				pzAppName = pzAppSig;
@@ -236,7 +236,7 @@ status_t Settings::Load( void )
 						Unflatten( bfr );
 						ret = 0;
 					}
-					delete bfr;
+					delete[] bfr;
 				}
 			}
 		}
@@ -266,7 +266,7 @@ status_t Settings::Save( void ) const
 
 		Flatten( bfr, fh.nSize );
 		m->m_pcIO->Write( bfr, fh.nSize );
-		delete bfr;
+		delete[] bfr;
 
 		m->FreeStream();
 		return 0;

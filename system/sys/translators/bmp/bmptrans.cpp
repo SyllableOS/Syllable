@@ -917,10 +917,10 @@ dbprintf( "**********Image size %d %d Bitperpixel %d Compression %d\n", msheader
 		if( m_cInBuffer.Read( tmp, nskip ) != nskip )
 		{
 			dbprintf( "Unable to skip %d bytes\n", nskip );
-			delete tmp;
+			delete[] tmp;
 			return ERR_INVALID_DATA;
 		}
-		delete tmp;
+		delete[] tmp;
 	}
 
 	// Temporary place to store image
@@ -951,7 +951,7 @@ dbprintf( "**********Image size %d %d Bitperpixel %d Compression %d\n", msheader
 			// Unsupported
 			else
 			{
-				delete image;
+				delete[] image;
 				dbprintf( "Unsupported 8 BPP format\n" );
 				return ERR_INVALID_DATA;
 			}
@@ -968,7 +968,7 @@ dbprintf( "**********Image size %d %d Bitperpixel %d Compression %d\n", msheader
             // Unsupported
 			else
 			{
-				delete image;
+				delete[] image;
 				dbprintf( "Unsupported 4 BPP format\n" );
 				return ERR_INVALID_DATA;
 			}  
@@ -979,7 +979,7 @@ dbprintf( "**********Image size %d %d Bitperpixel %d Compression %d\n", msheader
                        
 		default:
 		{
-			delete image;
+			delete[] image;
 			dbprintf( "Unsupported bits per pixel format\n" );
 			return ERR_INVALID_DATA;
 		
@@ -988,7 +988,7 @@ dbprintf( "**********Image size %d %d Bitperpixel %d Compression %d\n", msheader
 
 	if( ret != ERR_OK )
 	{
-		delete image;
+		delete[] image;
 		return ret;
 	}
 
@@ -999,7 +999,7 @@ dbprintf( "**********Image size %d %d Bitperpixel %d Compression %d\n", msheader
 		m_cOutBuffer.Write( tmp, m_sCurrentFrame.bf_bytes_per_row );
 
 	// Clean up
-	delete image;
+	delete[] image;
 
 	// Wow, we have sucessfully parsed a BMP!
 	return ERR_OK;

@@ -79,7 +79,7 @@ bool VesaDriver::InitModes( void )
 
 	int i = 0;
 
-	strcpy( sVesaInfo.VesaSignature, "VBE2" );
+	strncpy( sVesaInfo.VesaSignature, "VBE2", sizeof(sVesaInfo.VesaSignature) );
 
 	nModeCount = get_vesa_info( &sVesaInfo, anModes, 1024 );
 
