@@ -1,3 +1,7 @@
+* May 29, 2011, Anthony Morphett *
+
+Patches for errors detected by cppcheck. Thanks to Rui Caridade for contributions.
+
 * March 24, 2011, Kaj de Vos *
 
 SDL-Image configure didn't detect LibPNG and LibTIFF, so it didn't have support for PNG and
