@@ -24,6 +24,6 @@ install-tree		framework/REBOL
 install				true
 install-files		red-system/* framework/REBOL/
 
-documentation		README BSD-3-License.txt docs/*
+documentation		README.md BSD-3-License.txt docs/*
 
 move-files			framework/REBOL/tests/ .
