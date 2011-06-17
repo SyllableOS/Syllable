@@ -47,6 +47,12 @@ int main( int argc, char **argv )
 	symlink( "boot/bin", "/bin" );
 	symlink( "boot/usr", "/usr" );
 	symlink( "boot/usr", "/resources" );
+
+	if( system( "/system/early-start.sh" ) ) {
+		printf( "Failed to run /system/early-start.sh script!\n" );
+		exit( EXIT_FAILURE );
+	}
+
 	symlink( "boot/etc", "/etc" );
 	symlink( "boot/home", "/home" );
 	symlink( "boot/var", "/var" );
