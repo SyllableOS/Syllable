@@ -1,3 +1,8 @@
+* June 17, 2011, Kaj de Vos *
+
+Implemented execution of an extra boot script /system/early-start.sh that completes before
+the AppServer is started.
+
 * May 29, 2011, Anthony Morphett *
 
 Patches for errors detected by cppcheck. Thanks to Rui Caridade for contributions.
