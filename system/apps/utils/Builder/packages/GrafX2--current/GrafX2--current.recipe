@@ -27,8 +27,9 @@ recommends
 build-dir			src
 
 make-vars
-	OPTIM=3
-	NOLUA 1
+;	OPTIM			3
+	X11LOPT			''
+	NOLUA			1
 
 documentation		doc/README.txt doc/gpl-2.0.txt doc/PF_fonts.txt
 build-docs			doc/COMPILING.txt
