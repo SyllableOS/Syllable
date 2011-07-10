@@ -1,5 +1,5 @@
 authors				Kaj de Vos
-status				developing
+status				testing
 warnings			Automatic download doesn't work due to Google Code not allowing HEAD requests.
 
 version				2.3
@@ -27,9 +27,14 @@ recommends
 build-dir			src
 
 make-vars
+;	Maximum optimisation:
 ;	OPTIM			3
+;	Disable X11 dependency:
 	X11LOPT			''
+;	Disable Lua dependency:
 	NOLUA			1
 
 documentation		doc/README.txt doc/gpl-2.0.txt doc/PF_fonts.txt
 build-docs			doc/COMPILING.txt
+
+links				data/ share

@@ -1,0 +1,12 @@
+authors
+	Kaj de Vos
+	"Bogomips"
+status				testing
+
+make-vars
+;	Maximum optimisation:
+;	OPTIM			3
+;	Misuse this to inject missing ZLib dependency:
+	X11LOPT			-lz
+;	Disable Lua dependency:
+	NOLUA			1
