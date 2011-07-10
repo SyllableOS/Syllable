@@ -1,0 +1,34 @@
+authors				Kaj de Vos
+status				developing
+warnings			Automatic download doesn't work due to Google Code not allowing HEAD requests.
+
+version				2.3
+headline			A pixelart-oriented painting program
+description
+	GrafX2 is a bitmap paint program inspired by the Amiga programs Deluxe Paint and Brilliance. Specialized in 256-color drawing, it includes a very large number of tools and effects that make it particularly suitable for pixel art, game graphics, and generally any detailed graphics painted with a mouse.
+licenses			GPL-2 PD
+
+home				code.google.com/p/grafx2/
+locations			http://grafx2.googlecode.com/files/
+packages			grafx2-2.3.1781-src
+
+needs
+	SDL >= 1.2
+	SDL-Image >= 1.2.10
+	LibPNG
+build-recommends
+	PackageConfigure
+	X11
+recommends
+	SDL-TTF
+	FreeType
+	Lua >= 5.1
+
+build-dir			src
+
+make-vars
+	OPTIM=3
+	NOLUA 1
+
+documentation		doc/README.txt doc/gpl-2.0.txt doc/PF_fonts.txt
+build-docs			doc/COMPILING.txt
