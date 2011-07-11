@@ -10,6 +10,19 @@ diff -ru SDL-TinyGL-0.4alpha3-original/config.mk SDL-TinyGL-0.4alpha3/config.mk
  #CFLAGS += -DSLL_DEBUG -Wall
  
  #####################################################################
+diff -ru SDL-TinyGL-0.4alpha3-original/examples/Makefile SDL-TinyGL-0.4alpha3/examples/Makefile
+--- SDL-TinyGL-0.4alpha3-original/examples/Makefile	2003-10-11 21:13:08.000000000 +0200
++++ SDL-TinyGL-0.4alpha3/examples/Makefile	2011-07-11 20:53:43.000000000 +0200
+@@ -1,7 +1,7 @@
+ include ../config.mk
+ 
+-#PROGS = mech texobj gears spin cube
+-PROGS = texobj spin cube
++PROGS = mech texobj gears spin cube
++#PROGS = texobj spin cube
+ 
+ all: $(PROGS)
+ 
 diff -ru SDL-TinyGL-0.4alpha3-original/examples/cube.c SDL-TinyGL-0.4alpha3/examples/cube.c
 --- SDL-TinyGL-0.4alpha3-original/examples/cube.c	2004-02-18 20:58:18.000000000 +0100
 +++ SDL-TinyGL-0.4alpha3/examples/cube.c	2011-07-11 17:50:39.000000000 +0200
