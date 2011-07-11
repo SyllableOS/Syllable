@@ -1,3 +1,8 @@
+* July 11, 2011, Kaj de Vos *
+
+Fixed stack misalignment to 16 bytes for SSE instructions in the GLibC startup code assembled
+into every program.
+
 * June 17, 2011, Kaj de Vos *
 
 Implemented execution of an extra boot script /system/early-start.sh that completes before
