@@ -90,8 +90,8 @@ _start:
 	misaligned accesses.  Thanks to Edward Seidl <seidl@janed.com>
 	for pointing this out.  */
 	andl $0xfffffff0, %esp
-	pushl %eax		/* Push garbage because we allocate
-				   28 more bytes.  */
+	pushl %eax		/* Push garbage because we allocate  */
+	pushl %eax		/* 24 more bytes before the call.  */
 
 	/* Provide the highest stack address to the user code (for stacks
 	   which grow downwards).  */
