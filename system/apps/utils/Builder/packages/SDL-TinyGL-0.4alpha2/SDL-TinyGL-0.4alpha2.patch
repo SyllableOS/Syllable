@@ -1,3 +1,51 @@
+diff -ru SDL-TinyGL-0.4alpha2-original/examples/cube.c SDL-TinyGL-0.4alpha2/examples/cube.c
+--- SDL-TinyGL-0.4alpha2-original/examples/cube.c	2003-10-03 14:24:11.000000000 +0200
++++ SDL-TinyGL-0.4alpha2/examples/cube.c	2011-07-11 17:40:45.000000000 +0200
+@@ -7,7 +7,7 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <GL/gl.h>
+-#include <GL/glx.h>
++//#include <GL/glx.h>
+ #include "ui.h"
+ #include "glu.h"
+ #include <SDL/SDL.h>
+diff -ru SDL-TinyGL-0.4alpha2-original/examples/mech.c SDL-TinyGL-0.4alpha2/examples/mech.c
+--- SDL-TinyGL-0.4alpha2-original/examples/mech.c	2000-10-15 17:55:28.000000000 +0200
++++ SDL-TinyGL-0.4alpha2/examples/mech.c	2011-07-11 17:41:22.000000000 +0200
+@@ -61,7 +61,7 @@
+ #define GLUT_KEY
+ #define GLUT_SPEC
+ #include <GL/gl.h>
+-#include <GL/glx.h>
++//#include <GL/glx.h>
+ #include "glu.h"
+ #include "ui.h"
+ 
+diff -ru SDL-TinyGL-0.4alpha2-original/examples/spin.c SDL-TinyGL-0.4alpha2/examples/spin.c
+--- SDL-TinyGL-0.4alpha2-original/examples/spin.c	2003-10-01 16:22:37.000000000 +0200
++++ SDL-TinyGL-0.4alpha2/examples/spin.c	2011-07-11 17:42:28.000000000 +0200
+@@ -11,7 +11,7 @@
+ #include <math.h>
+ #include <stdio.h>
+ 
+-#include <GL/glx.h> 
++//#include <GL/glx.h> 
+ #include <GL/gl.h> 
+ #include "ui.h"
+ 
+diff -ru SDL-TinyGL-0.4alpha2-original/examples/texobj.c SDL-TinyGL-0.4alpha2/examples/texobj.c
+--- SDL-TinyGL-0.4alpha2-original/examples/texobj.c	2000-10-15 17:52:30.000000000 +0200
++++ SDL-TinyGL-0.4alpha2/examples/texobj.c	2011-07-11 17:42:42.000000000 +0200
+@@ -10,7 +10,7 @@
+ #include <stdio.h>
+ #include <string.h>
+ 
+-#include <GL/glx.h> 
++//#include <GL/glx.h> 
+ #include <GL/gl.h> 
+ #include "ui.h"
+ 
 diff -ru SDL-TinyGL-0.4alpha2-original/src/zbuffer.c SDL-TinyGL-0.4alpha2/src/zbuffer.c
 --- SDL-TinyGL-0.4alpha2-original/src/zbuffer.c	2003-10-01 16:20:30.000000000 +0200
 +++ SDL-TinyGL-0.4alpha2/src/zbuffer.c	2011-07-11 15:22:24.000000000 +0200

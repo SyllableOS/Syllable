@@ -1,0 +1,72 @@
+diff -ru SDL-TinyGL-0.4alpha3-original/config.mk SDL-TinyGL-0.4alpha3/config.mk
+--- SDL-TinyGL-0.4alpha3-original/config.mk	2004-02-18 20:56:31.000000000 +0100
++++ SDL-TinyGL-0.4alpha3/config.mk	2011-07-11 18:05:05.000000000 +0200
+@@ -17,7 +17,7 @@
+ # Fixed Point 
+ 
+ #####################################################################
+-CFLAGS += -DUSE_FIXED_POINT -Wall
++#CFLAGS += -DUSE_FIXED_POINT -Wall -fno-pic
+ #CFLAGS += -DSLL_DEBUG -Wall
+ 
+ #####################################################################
+diff -ru SDL-TinyGL-0.4alpha3-original/examples/cube.c SDL-TinyGL-0.4alpha3/examples/cube.c
+--- SDL-TinyGL-0.4alpha3-original/examples/cube.c	2004-02-18 20:58:18.000000000 +0100
++++ SDL-TinyGL-0.4alpha3/examples/cube.c	2011-07-11 17:50:39.000000000 +0200
+@@ -7,7 +7,7 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <GL/gl.h>
+-#include <GL/glx.h>
++//#include <GL/glx.h>
+ #include <GL/glu.h>
+ #include <GL/math-sll.h>
+ #include "ui.h"
+diff -ru SDL-TinyGL-0.4alpha3-original/examples/mech.c SDL-TinyGL-0.4alpha3/examples/mech.c
+--- SDL-TinyGL-0.4alpha3-original/examples/mech.c	2003-10-06 10:42:41.000000000 +0200
++++ SDL-TinyGL-0.4alpha3/examples/mech.c	2011-07-11 17:51:29.000000000 +0200
+@@ -61,7 +61,7 @@
+ #define GLUT_KEY
+ #define GLUT_SPEC
+ #include <GL/gl.h>
+-#include <GL/glx.h>
++//#include <GL/glx.h>
+ #include <GL/glu.h>
+ #include "ui.h"
+ 
+diff -ru SDL-TinyGL-0.4alpha3-original/examples/spin.c SDL-TinyGL-0.4alpha3/examples/spin.c
+--- SDL-TinyGL-0.4alpha3-original/examples/spin.c	2003-10-12 02:13:26.000000000 +0200
++++ SDL-TinyGL-0.4alpha3/examples/spin.c	2011-07-11 17:49:41.000000000 +0200
+@@ -11,7 +11,7 @@
+ #include <math.h>
+ #include <stdio.h>
+ 
+-#include <GL/glx.h> 
++//#include <GL/glx.h> 
+ #include <GL/gl.h> 
+ #include "ui.h"
+ 
+diff -ru SDL-TinyGL-0.4alpha3-original/include/GL/math-sll.h SDL-TinyGL-0.4alpha3/include/GL/math-sll.h
+--- SDL-TinyGL-0.4alpha3-original/include/GL/math-sll.h	2004-02-17 17:10:14.000000000 +0100
++++ SDL-TinyGL-0.4alpha3/include/GL/math-sll.h	2011-07-11 17:53:13.000000000 +0200
+@@ -508,7 +508,7 @@
+ 	}
+ 
+ 	/* An approximation - must be larger than the actual value */
+-	for (u = v; u; ((ull)u) >>= 1)
++	for (u = v; u; u = ((ull)u) >> 1)
+ 		s >>= 1;
+ 
+ 	/* Newton's Method */
+diff -ru SDL-TinyGL-0.4alpha3-original/src/zbuffer.c SDL-TinyGL-0.4alpha3/src/zbuffer.c
+--- SDL-TinyGL-0.4alpha3-original/src/zbuffer.c	2003-10-11 14:36:59.000000000 +0200
++++ SDL-TinyGL-0.4alpha3/src/zbuffer.c	2011-07-11 17:49:41.000000000 +0200
+@@ -263,7 +263,7 @@
+ 	    p += 3;
+ 	} while (--n > 0);
+ 
+-	(char *) p1 += linesize;
++	p1 = (char *) p1 + linesize;
+     }
+ }
+ 
