@@ -1,0 +1,12 @@
+diff -ru SDL-TinyGL-0.4alpha2-original/src/zbuffer.c SDL-TinyGL-0.4alpha2/src/zbuffer.c
+--- SDL-TinyGL-0.4alpha2-original/src/zbuffer.c	2003-10-01 16:20:30.000000000 +0200
++++ SDL-TinyGL-0.4alpha2/src/zbuffer.c	2011-07-11 15:22:24.000000000 +0200
+@@ -264,7 +264,7 @@
+ 	    p += 3;
+ 	} while (--n > 0);
+ 
+-	(char *) p1 += linesize;
++	p1 = (char *) p1 + linesize;
+     }
+ }
+ 
