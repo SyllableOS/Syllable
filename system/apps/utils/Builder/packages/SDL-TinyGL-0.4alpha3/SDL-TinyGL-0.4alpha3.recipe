@@ -1,5 +1,8 @@
 authors				Kaj de Vos
-status				developing
+status				broken
+notes
+	Fixed point implementation is broken.
+	Original floating point implementation works only half.
 
 inherits			sourceforge
 
@@ -11,7 +14,10 @@ licenses			ZLib LGPL-2
 home				sourceforge.net/projects/sdl-tinygl/
 packages			sdl-tinygl/TinyGL-alpha3
 
+build-needs			GNU-CompilerCollection 3.2
+
 make-vars			CC gcc
 
 documentation		README LICENSE LIMITATIONS Changelog
+build-docs		INSTALL
 internal-docs		README.BEOS

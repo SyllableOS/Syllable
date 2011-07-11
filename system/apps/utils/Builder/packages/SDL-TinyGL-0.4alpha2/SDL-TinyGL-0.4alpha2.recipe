@@ -1,0 +1,20 @@
+authors
+	Kaj de Vos
+	"Bogomips"
+status				developing
+
+inherits			sourceforge
+
+headline			Basic OpenGL 3D library for SDL
+description
+	TinyGL on SDL is a free implementation of the TinyGL library (mini-openGL) under the multiplatform SDL library.
+licenses			ZLib LGPL-2
+
+home				sourceforge.net/projects/sdl-tinygl/
+packages			sdl-tinygl/sdl-tinygl-alpha2
+
+make-file			Makefile.pc
+
+documentation		README LICENSE LIMITATIONS Changelog
+build-docs		INSTALL
+internal-docs		README.BEOS
