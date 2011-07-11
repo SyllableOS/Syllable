@@ -2,13 +2,14 @@ authors				Kaj de Vos
 status				incomplete
 notes
 	Fixed point implementation is broken.
-	Original floating point implementation is buggy.
+	With original floating point implementation, the Texobj example doesn't work.
 
 inherits			sourceforge
 
 headline			Basic OpenGL 3D library for SDL
 description
-	TinyGL on SDL is a free implementation of the TinyGL library (mini-openGL) under the multiplatform SDL library. Also, it is a fixed-point fast implementation.
+	TinyGL on SDL is a free implementation of the TinyGL library (mini-openGL) under the multiplatform SDL library.
+;	Also, it is a fixed-point fast implementation.
 licenses			ZLib LGPL-2
 
 home				sourceforge.net/projects/sdl-tinygl/
@@ -30,12 +31,13 @@ install-files
 	examples/mech	bin/
 	examples/gears	bin/
 	examples/spin	bin/
-	examples/texobj	bin/
+;	examples/texobj	bin/
 
 documentation		README LICENCE LIMITATIONS Changelog
 build-docs			INSTALL
 internal-docs		README.BEOS
 
+; Try to make it a drop-in replacement for OpenGL (1.1):
 links
 	libTinyGL.a		lib/libGL.a
 	libTinyGLU.a	lib/libGLU.a
