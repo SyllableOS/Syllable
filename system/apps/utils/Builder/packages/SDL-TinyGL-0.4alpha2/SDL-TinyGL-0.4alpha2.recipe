@@ -5,7 +5,7 @@ status				testing
 
 inherits			sourceforge
 
-headline			Basic OpenGL 3D library for SDL
+headline			Basic OpenGL 3D software rendering library for SDL
 description
 	TinyGL on SDL is a port of the TinyGL library (mini-openGL) to the multiplatform SDL library.
 licenses			ZLib LGPL-2
@@ -33,4 +33,5 @@ documentation		README LICENCE LIMITATIONS Changelog
 build-docs			INSTALL
 internal-docs		README.BEOS
 
+; Try to make it a drop-in replacement for OpenGL (1.1):
 links				libTinyGL.a lib/libGL.a
