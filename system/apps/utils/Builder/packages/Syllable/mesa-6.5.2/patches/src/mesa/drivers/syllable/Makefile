@@ -135,7 +135,7 @@ INCLUDES = \
 	-I$(TOP)/src/mesa/tnl_dd \
 	-I$(TOP)/src/mesa/x86 \
 	-I. \
-	-I- \
+#	-I- \
 	-I$(TOP)/include
 
 DRIVER_SOURCES = \
@@ -157,7 +157,7 @@ OBJECTS := $(DRIVER_OBJECTS:.cpp=.o)
 	$(CC) $(INCLUDES) $(CFLAGS) -c $< -o $@
 
 .cpp.o:
-	$(CC) $(INCLUDES) $(CFLAGS) -c $< -o $@
+	$(CXX) $(INCLUDES) $(CXXFLAGS) -c $< -o $@
 
 .S.o:
 	$(CC) $(INCLUDES) $(CFLAGS) -c $< -o $@

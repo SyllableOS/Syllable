@@ -1,2 +1,2 @@
 all:
-	g++ GLTest.cpp -o gltest -lsyllable -lGL -lGLU
+	$(CXX) GLTest.cpp -o gltest -lsyllable -lGL -lGLU

@@ -1,5 +1,19 @@
 authors
 	Jamie Clarkson
 	Kaj de Vos
-status				testing
+status				broken
+notes				Glut is not implemented
 
+build-needs
+;	GNU-CompilerCollection < 3.5
+	makedepend
+
+make-targets		syllable
+
+install-tree
+	include
+	include/gui
+install-files
+	lib/									.
+	include/GL/							include/
+	src/mesa/drivers/syllable/GLView.h	include/gui/

@@ -47,27 +47,6 @@ diff -urN mesa-6.5.2_orig/bin/mklib mesa-6.5.2/bin/mklib
  	# we assume gcc
  
  	if [ "x$LINK" = "x" ] ; then
-diff -urN mesa-6.5.2_orig/bin/mklib.rej mesa-6.5.2/bin/mklib.rej
---- mesa-6.5.2_orig/bin/mklib.rej	1970-01-01 00:00:00.000000000 +0000
-+++ mesa-6.5.2/bin/mklib.rej	2009-05-29 14:57:21.000000000 +0000
-@@ -0,0 +1,17 @@
-+***************
-+*** 109,115 ****
-+  #
-+  case $ARCH in
-+  
-+-     'Linux' | 'OpenBSD')
-+  	# GCC-based environment
-+  	LIBNAME="lib${LIBNAME}"     # prefix with "lib"
-+  
-+--- 109,115 ----
-+  #
-+  case $ARCH in
-+  
-++     'Linux' | 'OpenBSD' | 'syllable')
-+  	# GCC-based environment
-+  	LIBNAME="lib${LIBNAME}"     # prefix with "lib"
-+  
 diff -urN mesa-6.5.2_orig/src/mesa/Makefile mesa-6.5.2/src/mesa/Makefile
 --- mesa-6.5.2_orig/src/mesa/Makefile	2006-12-02 18:14:16.000000000 +0000
 +++ mesa-6.5.2/src/mesa/Makefile	2009-05-29 15:28:32.000000000 +0000

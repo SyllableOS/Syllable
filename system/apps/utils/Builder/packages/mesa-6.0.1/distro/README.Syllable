@@ -44,8 +44,3 @@ You can install it with
 build install mesa-6.0.1/
 
 but the distribution cannot currently be made with builder.
-
-
-
-
-

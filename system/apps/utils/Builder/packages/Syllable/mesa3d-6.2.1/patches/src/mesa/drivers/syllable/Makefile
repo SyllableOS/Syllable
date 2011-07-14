@@ -136,13 +136,13 @@ INCLUDES = \
 	-I$(TOP)/src/mesa/x86 \
 	-I. \
 	-I$(TOP)/include \
-	-I/usr/indexes/include \
+	-I/resources/indexes/include \
 	-I/system/indexes/include \
 	-I/system/development/headers
-#	-I/usr/gcc/include/c++/3.4.3 \
-#	-I/usr/gcc/include/c++/3.4.3/bits \
-#	-I/usr/gcc/include/c++/3.4.3/i586-pc-syllable/bits \
-#	-I/usr/gcc/lib/gcc/i586-pc-syllable/3.4.3/include
+#	-I/resources/gcc/include/c++/3.4.3 \
+#	-I/resources/gcc/include/c++/3.4.3/bits \
+#	-I/resources/gcc/include/c++/3.4.3/i586-pc-syllable/bits \
+#	-I/resources/gcc/lib/gcc/i586-pc-syllable/3.4.3/include
 
 DRIVER_SOURCES = \
 	GLView.cpp \
@@ -164,7 +164,7 @@ OBJECTS := $(DRIVER_OBJECTS:.cpp=.o)
 	$(CC) $(INCLUDES) $(CFLAGS) -c $< -o $@
 
 .cpp.o:
-	$(CC) $(INCLUDES) $(CFLAGS) -c $< -o $@
+	$(CXX) $(INCLUDES) $(CXXFLAGS) -c $< -o $@
 
 .S.o:
 	$(CC) $(INCLUDES) $(CFLAGS) -c $< -o $@

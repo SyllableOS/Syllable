@@ -1,8 +1,8 @@
 authors
 	Jamie Clarkson
 	Kaj de Vos
+maintainers			Kaj de Vos
 status				testing
-notes				Glut is not implemented
 
 inherits			sourceforge
 
@@ -16,22 +16,12 @@ packages			mesa3d/MesaLib-6.5.2
 
 build-needs			makedepend
 
-make-targets		syllable
+install-prefix-var	INSTALL_DIR
 
-install-tree
-	include
-	include/gui
+install-tree		include
 install				true
 install-files
-	lib									.
-	include/*							include/
-	src/mesa/drivers/syllable/GLView.h	include/gui/
+	lib/									.
+	include/GL/							include/
 
 documentation		docs/*
-
-_links
-	lib/libGL.so		/system/libraries/
-	lib/libGLU.so		/system/libraries/
-	lib/libOSMesa.so	/system/libraries/
-	include/GL			/system/development/headers/
-

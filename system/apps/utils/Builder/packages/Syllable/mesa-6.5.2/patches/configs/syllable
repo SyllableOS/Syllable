@@ -52,4 +52,3 @@ OSMESA_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB) -lstdc++ -lsyllable
 GLU_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB) -lstdc++ -lsyllable -lm
 GLUT_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB) --l$(GLU_LIB) -lstdc++ -lsyllable -lm
 APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB) -l$(GLUT_LIB) -lstdc++ -lsyllable -lm
-

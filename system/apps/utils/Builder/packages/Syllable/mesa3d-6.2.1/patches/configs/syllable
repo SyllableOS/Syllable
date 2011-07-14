@@ -14,7 +14,7 @@ MAKE = make
 DEFINES = -DGNU_ASSEMBLER -DUSE_X86_ASM -DUSE_MMX_ASM -DUSE_3DNOW_ASM \
 		  -DUSE_SSE_ASM -D_GNU_SOURCE -DSYLLABLE -DDEBUG
 
-INCLUDES = -I/usr/indexes/include -I/system/indexes/include \
+INCLUDES = -I/resources/indexes/include -I/system/indexes/include \
            -I/system/development/headers/gui -I/system/development/headers
 
 CFLAGS = -Wall -O3 -fPIC -Wno-multichar -ffast-math \
@@ -28,8 +28,9 @@ GLUT_CFLAGS = -fexceptions
 
 ASM_SOURCES = $(X86_SOURCES)
 
-INSTALL_PREFIX = /usr/mesa3d
-SRC_DIRS = mesa glu glut/syllable
+INSTALL_PREFIX = /resources/mesa3d
+#SRC_DIRS = mesa glu glut/syllable
+SRC_DIRS = mesa glu
 GLU_DIRS = sgi
 DRIVER_DIRS = syllable
 
