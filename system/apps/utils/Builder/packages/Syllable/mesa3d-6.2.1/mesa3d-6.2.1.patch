@@ -70,7 +70,7 @@ diff -ru mesa3d-6.2.1-original/src/mesa/Makefile mesa3d-6.2.1/src/mesa/Makefile
  	cd drivers/beos; $(MAKE)
  
 +# Syllable driver target
-+syllable: depend subdirs mesa.a
++syllable: depend subdirs mesa.a $(LIB_DIR)/$(OSMESA_LIB_NAME)
 +	cd drivers/syllable; $(MAKE)
  
  ######################################################################

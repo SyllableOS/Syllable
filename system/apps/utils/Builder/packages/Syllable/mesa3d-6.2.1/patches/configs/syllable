@@ -30,10 +30,11 @@ ASM_SOURCES = $(X86_SOURCES)
 #SRC_DIRS = mesa glu glut/syllable
 SRC_DIRS = mesa glu
 GLU_DIRS = sgi
-DRIVER_DIRS = syllable osmesa
+DRIVER_DIRS = syllable
 
 # Which subdirs under $(TOP)/progs/ to enter:
 #PROGRAM_DIRS = demos osdemos redbook samples tests
+PROGRAM_DIRS =
 
 GL_LIB_DEPS = -lsyllable -lm
 OSMESA_LIB_DEPS = -L$(TOP)/lib -lGL -lsyllable

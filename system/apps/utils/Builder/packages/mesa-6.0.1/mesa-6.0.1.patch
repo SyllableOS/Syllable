@@ -60,10 +60,10 @@ diff -ru mesa-6.0.1.original/Makefile mesa-6.0.1/Makefile
 +#		$(MAKE) -f Makefile.Syllable $@ ; \
 +#		cp obj*/libglut.so ../../../lib ; \
 +#	fi
-+	if [ -d progs/syllable ] ; then \
-+		cd progs/syllable/test1 ; \
-+		$(MAKE) ; \
-+	fi
++#	if [ -d progs/syllable ] ; then \
++#		cd progs/syllable/test1 ; \
++#		$(MAKE) ; \
++#	fi
 +	if [ -d progs/demos ] ; then \
 +		cd progs/demos ; \
 +		$(MAKE) -f Makefile.Syllable $@ ; \

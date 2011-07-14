@@ -43,12 +43,13 @@ GLUT_CFLAGS = -fexceptions
 # Directories
 SRC_DIRS = mesa glu
 GLU_DIRS = sgi
-DRIVER_DIRS = osmesa syllable
-PROGRAM_DIRS = syllable
+DRIVER_DIRS = syllable
+#PROGRAM_DIRS = syllable
+PROGRAM_DIRS =
 
 # Library/program dependencies
 GL_LIB_DEPS = -lsyllable -lm
 OSMESA_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB) -lsyllable
 GLU_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB) -lsyllable -lm
-GLUT_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB) --l$(GLU_LIB) -lsyllable -lm
+GLUT_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB) -l$(GLU_LIB) -lsyllable -lm
 APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB) -l$(GLUT_LIB) -lsyllable -lm
