@@ -138,11 +138,10 @@ INCLUDES = \
 	-I$(TOP)/include \
 	-I/resources/indexes/include \
 	-I/system/indexes/include \
-	-I/system/development/headers
-#	-I/resources/gcc/include/c++/3.4.3 \
-#	-I/resources/gcc/include/c++/3.4.3/bits \
-#	-I/resources/gcc/include/c++/3.4.3/i586-pc-syllable/bits \
-#	-I/resources/gcc/lib/gcc/i586-pc-syllable/3.4.3/include
+	-I/system/development/headers \
+	-I/system/indexes/lib/gcc/i586-pc-syllable/4.1.2/include \
+	-I/system/indexes/include/c++/4.1.2 \
+	-I/system/indexes/include/c++/4.1.2/i586-pc-syllable/bits
 
 DRIVER_SOURCES = \
 	GLView.cpp \

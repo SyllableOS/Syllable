@@ -15,14 +15,13 @@ home				www.mesa3d.org
 packages
 	mesa3d/MesaLib-6.2.1
 ;	mesa3d/MesaGlut-6.2.1
-	mesa3d/MesaDemos-6.2.1
+;	mesa3d/MesaDemos-6.2.1
 
 build-needs			makedepend
 
 install-tree
 	include
 	include/gui
-; make install is interactive?
 install				true
 install-files
 	lib									.

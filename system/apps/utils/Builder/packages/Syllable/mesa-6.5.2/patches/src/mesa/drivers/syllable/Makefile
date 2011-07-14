@@ -135,8 +135,13 @@ INCLUDES = \
 	-I$(TOP)/src/mesa/tnl_dd \
 	-I$(TOP)/src/mesa/x86 \
 	-I. \
-#	-I- \
-	-I$(TOP)/include
+	-I$(TOP)/include \
+	-I/resources/indexes/include \
+	-I/system/indexes/include \
+	-I/system/development/headers \
+	-I/system/indexes/lib/gcc/i586-pc-syllable/4.1.2/include \
+	-I/system/indexes/include/c++/4.1.2 \
+	-I/system/indexes/include/c++/4.1.2/i586-pc-syllable/bits
 
 DRIVER_SOURCES = \
 	GLView.cpp \

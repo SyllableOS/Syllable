@@ -20,6 +20,7 @@ make-targets		syllable
 install-tree
 	include
 	include/gui
+; make install is interactive
 install				true
 install-files
 	lib									.

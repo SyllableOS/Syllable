@@ -16,11 +16,11 @@ diff -ru mesa-6.0.1.original/Make-config mesa-6.0.1/Make-config
 +	"CXX = g++" \
 +	"CFLAGS = -O3 -ffast-math -fPIC -pedantic  -DUSE_X86_ASM -DSYLLABLE" \
 +	"CXXFLAGS = -O3 -ffast-math -fPIC -pedantic -DSYLLABLE" \
-+	"GL_LIB_DEPS = -lstdc++ -lsyllable -lm" \
-+	"OSMESA_LIB_DEPS = -L$(TOP)/lib -lGL -lstdc++ -lsyllable " \
-+	"GLU_LIB_DEPS = -L$(TOP)/lib -lGL -lstdc++ -lsyllable  -lm" \
-+	"GLUT_LIB_DEPS = -L$(TOP)/lib -lGLU -lGL -lstdc++ -lsyllable  -lm" \
-+	"APP_LIB_DEPS = -lglut -lGLU -lGL -lstdc++ -lsyllable  -lm" \
++	"GL_LIB_DEPS = -lsyllable -lm" \
++	"OSMESA_LIB_DEPS = -L$(TOP)/lib -lGL -lsyllable " \
++	"GLU_LIB_DEPS = -L$(TOP)/lib -lGL -lsyllable -lm" \
++	"GLUT_LIB_DEPS = -L$(TOP)/lib -lGLU -lGL -lsyllable -lm" \
++	"APP_LIB_DEPS = -lglut -lGLU -lGL -lsyllable -lm" \
 +	"ASM_SOURCES = $(X86_SOURCES)"
 +
  cygnus:
@@ -55,11 +55,11 @@ diff -ru mesa-6.0.1.original/Makefile mesa-6.0.1/Makefile
 +		touch depend ; \
 +		$(MAKE) -f Makefile.Syllable $@ ; \
 +	fi
-+	if [ -d src/glut/syllable ] ; then \
-+		cd src/glut/syllable ; \
-+		$(MAKE) -f Makefile.Syllable $@ ; \
-+		cp obj*/libglut.so ../../../lib ; \
-+	fi
++#	if [ -d src/glut/syllable ] ; then \
++#		cd src/glut/syllable ; \
++#		$(MAKE) -f Makefile.Syllable $@ ; \
++#		cp obj*/libglut.so ../../../lib ; \
++#	fi
 +	if [ -d progs/syllable ] ; then \
 +		cd progs/syllable ; \
 +		$(MAKE) ; \

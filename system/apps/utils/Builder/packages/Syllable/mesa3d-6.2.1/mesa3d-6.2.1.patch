@@ -1,26 +1,15 @@
-diff -ru mesa3d-6.2.1-original/bin/mklib mesa3d-6.2.1/bin/mklib
---- mesa3d-6.2.1-original/bin/mklib	2004-10-16 17:05:43.000000000 +0200
-+++ mesa3d-6.2.1/bin/mklib	2005-08-16 14:24:24.000000000 +0200
-@@ -477,6 +477,19 @@
- 	FINAL_LIBS=${LIBNAME}
- 	;;
+diff -ru mesa-6.0.1.original/bin/mklib mesa-6.0.1/bin/mklib
+--- mesa-6.0.1.original/bin/mklib	2004-03-30 14:48:04.000000000 +0000
++++ mesa-6.0.1/bin/mklib	2004-05-01 13:00:55.000000000 +0000
+@@ -109,7 +109,7 @@
+ #
+ case $ARCH in
  
-+    'syllable')
-+        if [ $STATIC = 1 ] ; then
-+            LIBNAME="lib${LIBNAME}.a"
-+            echo "mklib: Making Syllable static library: " ${LIBNAME}
-+            ar -cru "${LIBNAME}" ${OBJECTS}
-+        else
-+	    LIBNAME="lib${LIBNAME}.so"
-+	    echo "mklib: Making Syllable shared library: " ${LIBNAME}
-+	    gcc -shared -W1 -Xlinker "-soname=${LIBNAME}" -L/system/libraries -lsyllable ${DEPS} ${OBJECTS} -o "${LIBNAME}"
-+	fi
-+	FINAL_LIBS=${LIBNAME}
-+	;;
-+
-     'QNX')
- 	LIBNAME="lib${LIBNAME}.a"
- 	echo "mklib: Making QNX library: " ${LIBNAME}
+-    'Linux' | 'OpenBSD')
++    'Linux' | 'OpenBSD' | 'syllable')
+ 	# GCC-based environment
+ 	LIBNAME="lib${LIBNAME}"     # prefix with "lib"
+ 
 diff -ru mesa3d-6.2.1-original/Makefile mesa3d-6.2.1/Makefile
 --- mesa3d-6.2.1-original/Makefile	2004-12-05 19:25:19.000000000 +0100
 +++ mesa3d-6.2.1/Makefile	2005-08-20 12:24:10.000000000 +0200
