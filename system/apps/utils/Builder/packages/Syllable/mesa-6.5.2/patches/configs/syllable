@@ -43,7 +43,7 @@ GLUT_CFLAGS = -fexceptions
 # Directories
 SRC_DIRS = mesa glu
 GLU_DIRS = sgi
-DRIVER_DIRS = syllable
+DRIVER_DIRS = osmesa syllable
 PROGRAM_DIRS = syllable
 
 # Library/program dependencies

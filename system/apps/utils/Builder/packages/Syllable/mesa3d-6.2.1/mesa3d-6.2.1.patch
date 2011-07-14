@@ -50,19 +50,6 @@ diff -ru mesa3d-6.2.1-original/Makefile mesa3d-6.2.1/Makefile
  	$(DIRECTORY)/progs/images/*.rgb			\
  	$(DIRECTORY)/progs/images/*.rgba		\
  	$(DIRECTORY)/progs/demos/Makefile*		\
-diff -ru mesa3d-6.2.1-original/src/glu/sgi/Makefile mesa3d-6.2.1/src/glu/sgi/Makefile
---- mesa3d-6.2.1-original/src/glu/sgi/Makefile	2004-08-16 09:46:28.000000000 +0200
-+++ mesa3d-6.2.1/src/glu/sgi/Makefile	2005-08-16 14:28:00.000000000 +0200
-@@ -127,6 +127,9 @@
- 	@if [ "${CONFIG_NAME}" = "beos" ] ; then \
- 		echo "$(GLU_LIB_NAME) not build under BeOS, but integrated into ${GL_LIB_NAME}." ; \
- 		exit 0 ; \
-+	elif [ "${CONFIG_NAME}" = "syllable" ] ; then \
-+		echo "$(GLU_LIB_NAME) not built under Syllable, but integrated into ${GL_LIB_NAME}." ; \
-+		exit 0 ; \
- 	else \
- 		$(MAKE) "${LIB_DIR}/${GLU_LIB_NAME}" ; \
- 	fi
 diff -ru mesa3d-6.2.1-original/src/mesa/Makefile mesa3d-6.2.1/src/mesa/Makefile
 --- mesa3d-6.2.1-original/src/mesa/Makefile	2004-10-04 16:44:50.000000000 +0200
 +++ mesa3d-6.2.1/src/mesa/Makefile	2005-08-09 13:56:15.000000000 +0200

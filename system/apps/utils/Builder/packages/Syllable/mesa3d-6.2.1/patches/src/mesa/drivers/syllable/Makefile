@@ -141,7 +141,7 @@ INCLUDES = \
 	-I/system/development/headers \
 	-I/system/indexes/lib/gcc/i586-pc-syllable/4.1.2/include \
 	-I/system/indexes/include/c++/4.1.2 \
-	-I/system/indexes/include/c++/4.1.2/i586-pc-syllable/bits
+	-I/system/indexes/include/c++/4.1.2/i586-pc-syllable
 
 DRIVER_SOURCES = \
 	GLView.cpp \

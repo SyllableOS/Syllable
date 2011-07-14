@@ -3,6 +3,7 @@ authors
 	Kaj de Vos
 maintainers			Kaj de Vos
 status				broken
+warnings			Can compile only once. make realclean destroys the configuration.
 notes				Glut doesn't build
 
 inherits			sourceforge

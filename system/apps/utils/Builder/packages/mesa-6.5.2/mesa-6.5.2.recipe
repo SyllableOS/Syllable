@@ -3,6 +3,7 @@ authors
 	Kaj de Vos
 maintainers			Kaj de Vos
 status				testing
+warnings			Can compile only once. make realclean destroys the configuration.
 
 inherits			sourceforge
 
