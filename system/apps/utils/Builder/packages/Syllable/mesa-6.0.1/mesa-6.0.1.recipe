@@ -1,5 +1,4 @@
 authors
 	Jamie Clarkson
 	Kaj de Vos
-status				broken
-notes				beos_x11.cpp:47: error: 'strlen' was not declared in this scope
+status				testing

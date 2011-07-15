@@ -65,7 +65,7 @@ diff -urN mesa-6.5.2_orig/src/mesa/Makefile mesa-6.5.2/src/mesa/Makefile
  ######################################################################
 +# Syllable driver target
 +
-+syllable: depend subdirs libmesa.a $(TOP)/$(LIB_DIR)/$(OSMESA_LIB_NAME)
++syllable: depend subdirs libmesa.a
 +	cd drivers/syllable; $(MAKE)
 +
 +

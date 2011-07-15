@@ -2,7 +2,7 @@ authors
 	Jamie Clarkson
 	Kaj de Vos
 status				broken
-notes				Glut is not implemented
+notes				Doesn't build OSMesa; Glut is not ported
 
 build-needs
 ;	GNU-CompilerCollection < 3.5

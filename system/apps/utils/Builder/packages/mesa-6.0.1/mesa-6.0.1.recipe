@@ -2,9 +2,9 @@ authors
 	Jamie Clarkson
 	Kaj de Vos
 maintainers			Kaj de Vos
-status				broken
+status				testing
 warnings			Can compile only once. make realclean destroys the configuration.
-notes				Glut doesn't build
+notes				Glut is not ported
 
 inherits			sourceforge
 

@@ -3,6 +3,6 @@ authors
 	Kaj de Vos
 	Dee Sharpe
 status				broken
-notes				Port incomplete
+notes				Doesn't build OSMesa and Glut
 
 make-targets		syllable
