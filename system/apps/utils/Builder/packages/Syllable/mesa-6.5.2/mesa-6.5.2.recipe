@@ -2,11 +2,9 @@ authors
 	Jamie Clarkson
 	Kaj de Vos
 status				broken
-notes				Doesn't build OSMesa; Glut is not ported
-
-build-needs
-;	GNU-CompilerCollection < 3.5
-	makedepend
+notes
+	Doesn't build OSMesa; Glut is not ported.
+	Syllable driver isn't ported to this Mesa version.
 
 make-targets		syllable
 

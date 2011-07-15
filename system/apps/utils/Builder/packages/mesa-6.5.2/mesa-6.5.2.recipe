@@ -13,7 +13,10 @@ description
 licenses			MIT LGPL other
 
 home				www.mesa3d.org
-packages			mesa3d/MesaLib-6.5.2
+packages
+	mesa3d/MesaLib-6.5.2
+;	mesa3d/MesaGlut-6.5.2
+	mesa3d/MesaDemos-6.5.2
 
 build-needs			makedepend
 
@@ -22,7 +25,7 @@ install-prefix-var	INSTALL_DIR
 install-tree		include
 install				true
 install-files
-	lib/									.
-	include/GL/							include/
+	lib/			.
+	include/GL/		include/
 
 documentation		docs/*

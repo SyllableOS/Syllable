@@ -14,7 +14,10 @@ description
 licenses			MIT LGPL other
 
 home				www.mesa3d.org
-packages			mesa3d/MesaLib-6.0.1
+packages
+	mesa3d/MesaLib-6.0.1
+;	mesa3d/MesaGlut-6.0.1
+	mesa3d/MesaDemos-6.0.1
 
 make-targets		syllable
 
