@@ -22,11 +22,12 @@ packages
 build-needs			makedepend
 build-recommends	PackageConfigure
 
-_configure-options
-	--with-driver=osmesa
-	--with-driver=xlib
-	--with-driver=dri
-	--enable-gl-osmesa
+configure-options
+	--without-x
+;	--with-driver=osmesa
+;	--with-driver=xlib
+;	--with-driver=dri
+;	--enable-gl-osmesa
 
 ;install-prefix-var	INSTALL_DIR
 
