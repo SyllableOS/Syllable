@@ -1,0 +1,12 @@
+diff -ru Mesa3D-7.10.3-original/bin/mklib Mesa3D-7.10.3/bin/mklib
+--- Mesa3D-7.10.3-original/bin/mklib	2011-05-20 10:33:22.000000000 +0200
++++ Mesa3D-7.10.3/bin/mklib	2011-07-16 22:00:48.000000000 +0200
+@@ -307,7 +307,7 @@
+ #
+ case $ARCH in
+ 
+-    'Linux' | 'OpenBSD' | 'DragonFly' | 'GNU' | GNU/*)
++    'Linux' | 'OpenBSD' | 'DragonFly' | 'GNU' | GNU/* | 'syllable' )
+ 	# we assume gcc
+ 
+ 	if [ "x$LINK" = "x" ] ; then

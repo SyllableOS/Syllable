@@ -3,7 +3,6 @@ authors
 	Kaj de Vos
 maintainers			Kaj de Vos
 status				developing
-;warnings			Can compile only once. make realclean destroys the configuration.
 
 headline			3D Graphics Library
 description
@@ -22,9 +21,12 @@ packages
 build-needs			makedepend
 build-recommends	PackageConfigure
 
+build-dir			.
+
 configure-options
-	--without-x
-;	--with-driver=osmesa
+;	Not enough:
+;	--without-x
+	--with-driver=osmesa
 ;	--with-driver=xlib
 ;	--with-driver=dri
 ;	--enable-gl-osmesa
