@@ -1,12 +1,13 @@
 authors
 	Jamie Clarkson
 	Kaj de Vos
-status				broken
+status				incomplete
 notes
-	Doesn't build OSMesa; Glut is not ported.
+	Builds only OSMesa; Glut is not ported.
+;	Doesn't build OSMesa; Glut is not ported.
 	Syllable driver isn't ported to this Mesa version.
 
-make-targets		syllable
+;make-targets		syllable
 
 install-tree
 	include
