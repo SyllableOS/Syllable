@@ -26,6 +26,8 @@ build-dir			.
 configure-options
 ;	Not enough:
 ;	--without-x
+;	Needs X:
+;	--disable-egl
 	--with-driver=osmesa
 ;	--with-driver=xlib
 ;	--with-driver=dri
