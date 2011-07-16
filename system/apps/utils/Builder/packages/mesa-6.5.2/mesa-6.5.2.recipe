@@ -15,7 +15,7 @@ licenses			MIT LGPL other
 home				www.mesa3d.org
 packages
 	mesa3d/MesaLib-6.5.2
-;	mesa3d/MesaGlut-6.5.2
+;	mesa3d/MesaGLUT-6.5.2
 ;	mesa3d/MesaDemos-6.5.2
 
 build-needs			makedepend

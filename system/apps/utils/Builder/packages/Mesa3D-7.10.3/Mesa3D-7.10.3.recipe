@@ -5,18 +5,17 @@ maintainers			Kaj de Vos
 status				developing
 ;warnings			Can compile only once. make realclean destroys the configuration.
 
-inherits			sourceforge
-
 headline			3D Graphics Library
 description
 	Mesa is an open-source implementation of the OpenGL specification - a system for rendering interactive 3D graphics. A variety of device drivers allows Mesa to be used in many different environments ranging from software emulation to complete hardware acceleration for modern GPUs.
 licenses			MIT LGPL other
 
 home				www.mesa3d.org
+locations			ftp://ftp.freedesktop.org/pub/mesa/
 packages
-	mesa3d/MesaLib-7.10.3
-;	mesa3d/MesaGlut-7.10.3
-;	mesa3d/MesaDemos-7.10.3
+	7.10.3/MesaLib-7.10.3
+;	7.10.3/MesaGLUT-7.10.3
+;	demos/8.0.1/mesa-demos-8.0.1
 
 ; For DRI:
 ;needs				Expat
