@@ -1,0 +1,42 @@
+authors
+	Jamie Clarkson
+	Kaj de Vos
+maintainers			Kaj de Vos
+status				developing
+;warnings			Can compile only once. make realclean destroys the configuration.
+
+inherits			sourceforge
+
+headline			3D Graphics Library
+description
+	Mesa is an open-source implementation of the OpenGL specification - a system for rendering interactive 3D graphics. A variety of device drivers allows Mesa to be used in many different environments ranging from software emulation to complete hardware acceleration for modern GPUs.
+licenses			MIT LGPL other
+
+home				www.mesa3d.org
+packages
+	mesa3d/MesaLib-7.10.3
+;	mesa3d/MesaGlut-7.10.3
+;	mesa3d/MesaDemos-7.10.3
+
+; For DRI:
+;needs				Expat
+build-needs			makedepend
+build-recommends	PackageConfigure
+
+_configure-options
+	--with-driver=osmesa
+	--with-driver=xlib
+	--with-driver=dri
+	--enable-gl-osmesa
+
+;install-prefix-var	INSTALL_DIR
+
+;make-targets		linux-osmesa
+
+;install-tree		include
+;install				true
+_install-files
+	lib/			.
+	include/GL/		include/
+
+documentation		docs/*
