@@ -1,0 +1,4 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			python-2.5.1

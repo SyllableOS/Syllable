@@ -52,6 +52,8 @@ links
 	programs/				bin
 ;	Can't find own modules:
 	framework/libraries/	lib
+;	For modules, such as LibraryXML2:
+	framework/headers/	include
 
 ; Big:
 delete-files		framework/libraries/python2.6/test/

@@ -1,0 +1,12 @@
+authors				Kaj de Vos
+status				testing
+notes				Only static libraries and Python module are built
+
+configure-options
+;	For WebCore. PThreads don't seem to be sufficient:
+	--without-threads
+;	--disable-ipv6
+	--with-python=/resources/Python
+
+; For WebCore:
+links				libxml2/libxml/ include/

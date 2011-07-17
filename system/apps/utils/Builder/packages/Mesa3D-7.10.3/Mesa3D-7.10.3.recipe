@@ -28,6 +28,7 @@ build-recommends
 	SEd
 	FLex
 	Bison
+;	For 32 bits build on 64 bits system:
 	File
 
 build-dir			.
