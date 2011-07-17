@@ -18,7 +18,10 @@ packages
 
 ; For DRI:
 ;needs				Expat
-build-needs			Python
+build-needs
+	Python
+;	With Python module:
+	LibraryXML2
 build-recommends
 	PackageConfigure
 	makedepend

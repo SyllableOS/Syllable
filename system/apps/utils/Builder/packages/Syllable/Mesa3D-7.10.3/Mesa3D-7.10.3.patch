@@ -22,15 +22,6 @@ diff -ru Mesa3D-7.10.3-original/src/gallium/auxiliary/os/os_thread.h Mesa3D-7.10
  
  #include <pthread.h> /* POSIX threads headers */
  #include <stdio.h> /* for perror() */
-@@ -306,7 +306,7 @@
-  * pipe_barrier
-  */
- 
--#if defined(PIPE_OS_LINUX) || defined(PIPE_OS_BSD) || defined(PIPE_OS_SOLARIS) || defined(PIPE_OS_HAIKU) || defined(PIPE_OS_EMBEDDED)
-+#if defined(PIPE_OS_LINUX) || defined(PIPE_OS_BSD) || defined(PIPE_OS_SOLARIS) || defined(PIPE_OS_HAIKU) || defined(PIPE_OS_EMBEDDED) || defined(PIPE_OS_SYLLABLE)
- 
- typedef pthread_barrier_t pipe_barrier;
- 
 @@ -434,7 +434,7 @@
   */
  
