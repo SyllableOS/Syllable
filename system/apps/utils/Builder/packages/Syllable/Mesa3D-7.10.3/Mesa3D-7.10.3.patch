@@ -10,6 +10,132 @@ diff -ru Mesa3D-7.10.3-original/bin/mklib Mesa3D-7.10.3/bin/mklib
  	# we assume gcc
  
  	if [ "x$LINK" = "x" ] ; then
+diff -ru Mesa3D-7.10.3-original/src/gallium/auxiliary/os/os_thread.h Mesa3D-7.10.3/src/gallium/auxiliary/os/os_thread.h
+--- Mesa3D-7.10.3-original/src/gallium/auxiliary/os/os_thread.h	2011-05-20 10:33:22.000000000 +0200
++++ Mesa3D-7.10.3/src/gallium/auxiliary/os/os_thread.h	2011-07-17 02:57:40.000000000 +0200
+@@ -40,7 +40,7 @@
+ #include "util/u_debug.h" /* for assert */
+ 
+ 
+-#if defined(PIPE_OS_LINUX) || defined(PIPE_OS_BSD) || defined(PIPE_OS_SOLARIS) || defined(PIPE_OS_APPLE) || defined(PIPE_OS_HAIKU) || defined(PIPE_OS_EMBEDDED) || defined(PIPE_OS_CYGWIN)
++#if defined(PIPE_OS_LINUX) || defined(PIPE_OS_BSD) || defined(PIPE_OS_SOLARIS) || defined(PIPE_OS_APPLE) || defined(PIPE_OS_HAIKU) || defined(PIPE_OS_EMBEDDED) || defined(PIPE_OS_CYGWIN) || defined(PIPE_OS_SYLLABLE)
+ 
+ #include <pthread.h> /* POSIX threads headers */
+ #include <stdio.h> /* for perror() */
+@@ -306,7 +306,7 @@
+  * pipe_barrier
+  */
+ 
+-#if defined(PIPE_OS_LINUX) || defined(PIPE_OS_BSD) || defined(PIPE_OS_SOLARIS) || defined(PIPE_OS_HAIKU) || defined(PIPE_OS_EMBEDDED)
++#if defined(PIPE_OS_LINUX) || defined(PIPE_OS_BSD) || defined(PIPE_OS_SOLARIS) || defined(PIPE_OS_HAIKU) || defined(PIPE_OS_EMBEDDED) || defined(PIPE_OS_SYLLABLE)
+ 
+ typedef pthread_barrier_t pipe_barrier;
+ 
+@@ -434,7 +434,7 @@
+  */
+ 
+ typedef struct {
+-#if defined(PIPE_OS_LINUX) || defined(PIPE_OS_BSD) || defined(PIPE_OS_SOLARIS) || defined(PIPE_OS_APPLE) || defined(PIPE_OS_HAIKU) || defined(PIPE_OS_EMBEDDED) || defined(PIPE_OS_CYGWIN)
++#if defined(PIPE_OS_LINUX) || defined(PIPE_OS_BSD) || defined(PIPE_OS_SOLARIS) || defined(PIPE_OS_APPLE) || defined(PIPE_OS_HAIKU) || defined(PIPE_OS_EMBEDDED) || defined(PIPE_OS_CYGWIN) || defined(PIPE_OS_SYLLABLE)
+    pthread_key_t key;
+ #elif defined(PIPE_SUBSYSTEM_WINDOWS_USER)
+    DWORD key;
+@@ -449,7 +449,7 @@
+ static INLINE void
+ pipe_tsd_init(pipe_tsd *tsd)
+ {
+-#if defined(PIPE_OS_LINUX) || defined(PIPE_OS_BSD) || defined(PIPE_OS_SOLARIS) || defined(PIPE_OS_APPLE) || defined(PIPE_OS_HAIKU) || defined(PIPE_OS_EMBEDDED) || defined(PIPE_OS_CYGWIN)
++#if defined(PIPE_OS_LINUX) || defined(PIPE_OS_BSD) || defined(PIPE_OS_SOLARIS) || defined(PIPE_OS_APPLE) || defined(PIPE_OS_HAIKU) || defined(PIPE_OS_EMBEDDED) || defined(PIPE_OS_CYGWIN) || defined(PIPE_OS_SYLLABLE)
+    if (pthread_key_create(&tsd->key, NULL/*free*/) != 0) {
+       perror("pthread_key_create(): failed to allocate key for thread specific data");
+       exit(-1);
+@@ -466,7 +466,7 @@
+    if (tsd->initMagic != (int) PIPE_TSD_INIT_MAGIC) {
+       pipe_tsd_init(tsd);
+    }
+-#if defined(PIPE_OS_LINUX) || defined(PIPE_OS_BSD) || defined(PIPE_OS_SOLARIS) || defined(PIPE_OS_APPLE) || defined(PIPE_OS_HAIKU) || defined(PIPE_OS_EMBEDDED) || defined(PIPE_OS_CYGWIN)
++#if defined(PIPE_OS_LINUX) || defined(PIPE_OS_BSD) || defined(PIPE_OS_SOLARIS) || defined(PIPE_OS_APPLE) || defined(PIPE_OS_HAIKU) || defined(PIPE_OS_EMBEDDED) || defined(PIPE_OS_CYGWIN) || defined(PIPE_OS_SYLLABLE)
+    return pthread_getspecific(tsd->key);
+ #elif defined(PIPE_SUBSYSTEM_WINDOWS_USER)
+    assert(0);
+@@ -483,7 +483,7 @@
+    if (tsd->initMagic != (int) PIPE_TSD_INIT_MAGIC) {
+       pipe_tsd_init(tsd);
+    }
+-#if defined(PIPE_OS_LINUX) || defined(PIPE_OS_BSD) || defined(PIPE_OS_SOLARIS) || defined(PIPE_OS_APPLE) || defined(PIPE_OS_HAIKU) || defined(PIPE_OS_EMBEDDED) || defined(PIPE_OS_CYGWIN)
++#if defined(PIPE_OS_LINUX) || defined(PIPE_OS_BSD) || defined(PIPE_OS_SOLARIS) || defined(PIPE_OS_APPLE) || defined(PIPE_OS_HAIKU) || defined(PIPE_OS_EMBEDDED) || defined(PIPE_OS_CYGWIN) || defined(PIPE_OS_SYLLABLE)
+    if (pthread_setspecific(tsd->key, value) != 0) {
+       perror("pthread_set_specific() failed");
+       exit(-1);
+diff -ru Mesa3D-7.10.3-original/src/gallium/auxiliary/os/os_time.c Mesa3D-7.10.3/src/gallium/auxiliary/os/os_time.c
+--- Mesa3D-7.10.3-original/src/gallium/auxiliary/os/os_time.c	2011-05-20 10:33:22.000000000 +0200
++++ Mesa3D-7.10.3/src/gallium/auxiliary/os/os_time.c	2011-07-17 02:48:47.000000000 +0200
+@@ -37,7 +37,7 @@
+ 
+ #if !defined(PIPE_OS_EMBEDDED)
+ 
+-#if defined(PIPE_OS_LINUX) || defined(PIPE_OS_BSD) || defined(PIPE_OS_SOLARIS) || defined(PIPE_OS_APPLE) || defined(PIPE_OS_HAIKU) || defined(PIPE_OS_CYGWIN)
++#if defined(PIPE_OS_LINUX) || defined(PIPE_OS_BSD) || defined(PIPE_OS_SOLARIS) || defined(PIPE_OS_APPLE) || defined(PIPE_OS_HAIKU) || defined(PIPE_OS_CYGWIN) || defined(PIPE_OS_SYLLABLE)
+ #  include <sys/time.h> /* timeval */
+ #elif defined(PIPE_SUBSYSTEM_WINDOWS_DISPLAY)
+ #  include <windows.h>
+diff -ru Mesa3D-7.10.3-original/src/gallium/auxiliary/util/u_network.c Mesa3D-7.10.3/src/gallium/auxiliary/util/u_network.c
+--- Mesa3D-7.10.3-original/src/gallium/auxiliary/util/u_network.c	2010-10-05 18:56:51.000000000 +0200
++++ Mesa3D-7.10.3/src/gallium/auxiliary/util/u_network.c	2011-07-17 03:10:28.000000000 +0200
+@@ -6,7 +6,7 @@
+ #if defined(PIPE_SUBSYSTEM_WINDOWS_USER)
+ #  include <winsock2.h>
+ #  include <windows.h>
+-#elif defined(PIPE_OS_LINUX) || defined(PIPE_OS_HAIKU) || defined(PIPE_OS_APPLE) || defined(PIPE_OS_CYGWIN)
++#elif defined(PIPE_OS_LINUX) || defined(PIPE_OS_HAIKU) || defined(PIPE_OS_APPLE) || defined(PIPE_OS_CYGWIN) || defined(PIPE_OS_SYLLABLE)
+ #  include <sys/socket.h>
+ #  include <netinet/in.h>
+ #  include <unistd.h>
+@@ -54,7 +54,7 @@
+    if (s < 0)
+       return;
+ 
+-#if defined(PIPE_OS_LINUX) || defined(PIPE_OS_HAIKU) || defined(PIPE_OS_APPLE)
++#if defined(PIPE_OS_LINUX) || defined(PIPE_OS_HAIKU) || defined(PIPE_OS_APPLE) || defined(PIPE_OS_SYLLABLE)
+    shutdown(s, SHUT_RDWR);
+    close(s);
+ #elif defined(PIPE_SUBSYSTEM_WINDOWS_USER)
+@@ -169,7 +169,7 @@
+ void
+ u_socket_block(int s, boolean block)
+ {
+-#if defined(PIPE_OS_LINUX) || defined(PIPE_OS_HAIKU) || defined(PIPE_OS_APPLE)
++#if defined(PIPE_OS_LINUX) || defined(PIPE_OS_HAIKU) || defined(PIPE_OS_APPLE) || defined(PIPE_OS_SYLLABLE)
+    int old = fcntl(s, F_GETFL, 0);
+    if (old == -1)
+       return;
+diff -ru Mesa3D-7.10.3-original/src/gallium/auxiliary/util/u_network.h Mesa3D-7.10.3/src/gallium/auxiliary/util/u_network.h
+--- Mesa3D-7.10.3-original/src/gallium/auxiliary/util/u_network.h	2010-03-31 00:40:34.000000000 +0200
++++ Mesa3D-7.10.3/src/gallium/auxiliary/util/u_network.h	2011-07-17 03:06:40.000000000 +0200
+@@ -6,7 +6,7 @@
+ 
+ #if defined(PIPE_SUBSYSTEM_WINDOWS_USER)
+ #  define PIPE_HAVE_SOCKETS
+-#elif defined(PIPE_OS_LINUX) || defined(PIPE_OS_HAIKU) || defined(PIPE_OS_APPLE)
++#elif defined(PIPE_OS_LINUX) || defined(PIPE_OS_HAIKU) || defined(PIPE_OS_APPLE) || defined(PIPE_OS_SYLLABLE)
+ #  define PIPE_HAVE_SOCKETS
+ #endif
+ 
+diff -ru Mesa3D-7.10.3-original/src/gallium/include/pipe/p_config.h Mesa3D-7.10.3/src/gallium/include/pipe/p_config.h
+--- Mesa3D-7.10.3-original/src/gallium/include/pipe/p_config.h	2011-05-20 10:33:22.000000000 +0200
++++ Mesa3D-7.10.3/src/gallium/include/pipe/p_config.h	2011-07-17 02:47:32.000000000 +0200
+@@ -180,6 +180,11 @@
+ #define PIPE_OS_UNIX
+ #endif
+ 
++#if defined(__SYLLABLE__)
++#define PIPE_OS_SYLLABLE
++#define PIPE_OS_UNIX
++#endif
++
+ /*
+  * Try to auto-detect the subsystem.
+  * 
 diff -ru Mesa3D-7.10.3-original/src/mesa/main/querymatrix.c Mesa3D-7.10.3/src/mesa/main/querymatrix.c
 --- Mesa3D-7.10.3-original/src/mesa/main/querymatrix.c	2010-12-14 22:43:15.000000000 +0100
 +++ Mesa3D-7.10.3/src/mesa/main/querymatrix.c	2011-07-16 23:17:21.000000000 +0200

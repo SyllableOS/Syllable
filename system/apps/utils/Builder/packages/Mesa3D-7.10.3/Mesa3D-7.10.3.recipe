@@ -2,7 +2,7 @@ authors
 	Jamie Clarkson
 	Kaj de Vos
 maintainers			Kaj de Vos
-status				developing
+status				testing
 
 headline			3D Graphics Library
 description
@@ -18,8 +18,14 @@ packages
 
 ; For DRI:
 ;needs				Expat
-build-needs			makedepend
-build-recommends	PackageConfigure
+build-needs			Python
+build-recommends
+	PackageConfigure
+	makedepend
+	SEd
+	FLex
+	Bison
+	File
 
 build-dir			.
 
@@ -27,20 +33,10 @@ configure-options
 ;	Not enough:
 ;	--without-x
 ;	Needs X:
-;	--disable-egl
+	--disable-egl
 	--with-driver=osmesa
 ;	--with-driver=xlib
 ;	--with-driver=dri
 ;	--enable-gl-osmesa
-
-;install-prefix-var	INSTALL_DIR
-
-;make-targets		linux-osmesa
-
-;install-tree		include
-;install				true
-_install-files
-	lib/			.
-	include/GL/		include/
 
 documentation		docs/*
