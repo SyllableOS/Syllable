@@ -24,11 +24,13 @@ make-targets		syllable
 install-tree
 	include
 	include/gui
+	examples
 ; make install is interactive
 install				true
 install-files
 	lib									.
 	include/*							include/
 	src/mesa/drivers/syllable/GLView.h	include/gui/
+	progs/syllable/test1/				examples/
 
 documentation		docs/*

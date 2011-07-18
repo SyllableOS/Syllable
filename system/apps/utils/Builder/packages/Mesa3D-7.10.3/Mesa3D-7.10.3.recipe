@@ -43,4 +43,6 @@ configure-options
 ;	--with-driver=dri
 ;	--enable-gl-osmesa
 
+system-prefix-var	DESTDIR
+
 documentation		docs/*
