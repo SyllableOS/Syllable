@@ -11,14 +11,11 @@ supported.
 Installation
 ============
 
-Unpack the mesa-6.0.1-1-bin.tgz file into /usr/
+Unpack the mesa-6.0.1-1-bin.tgz file into /resources/
 
-Run pkgmanager -a /usr/mesa
+Run
 
-Then change to the /usr/mesa directory and execute install.sh:
-
-cd /usr/mesa
-./install.sh
+package register mesa
 
 You might need to be root for some of these commands.
 
@@ -30,17 +27,17 @@ and patches for the MesaLib-6.0.1.tar.gz package.
 
 Get the Mesa3D source download from www.mesa3d.org.
 
-Put the MesaLib-6.0.1.tar.gz into /Applications/Builder/sources/
+Put the MesaLib-6.0.1.tar.gz into /resources/Builder/sources/
 
 and run 
 
-build mesa-6.0.1/
+build mesa-6.0.1
 
 This will build the port (don't worry that it fails, the core libraries
 are built correctly but GLUT isn't supported yet).
 
 You can install it with
 
-build install mesa-6.0.1/
+build install mesa-6.0.1
 
 but the distribution cannot currently be made with builder.
