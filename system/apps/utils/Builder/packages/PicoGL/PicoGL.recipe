@@ -17,9 +17,10 @@ licenses			ZLib LGPL-2
 home				motoezx.at.ua/load/picogl_port/8-1-0-63
 ;home				svn.csie.net/listing.php?repname=picogl&
 ;home				www.motorolafans.com/forums/a1600-general-chat/30293-opengl-libaray-for-18bpp-phones.html
-packages
-	http://motoezx.at.ua/motomagx/PicoGL.tar.gz
-;	http://www.motorolafans.com/forums/attachments/a1600-general-chat/25450d1280114488-opengl-libaray-for-18bpp-phones-picogl-src-20051108.tar.bz2.zip
+locations
+	http://motoezx.at.ua/motomagx/
+;	http://www.motorolafans.com/forums/attachments/a1600-general-chat/
+;packages			25450d1280114488-opengl-libaray-for-18bpp-phones-picogl-src-20051108.tar.bz2.zip
 
 configure-options
 	--with-backend=sdl
