@@ -1,0 +1,39 @@
+authors
+	Kaj de Vos
+	"Bogomips"
+status				testing
+notes
+	Fixed point implementation is broken.
+	With original floating point implementation, GLfloat is double instead of float.
+	Support for other than 16 bits rendering is stripped out.
+
+version				2005.11.8
+headline			Basic OpenGL 3D software rendering library for SDL
+description
+	PicoGL is a free implementation of the TinyGL library (mini-OpenGL) under the multiplatform SDL library.
+;	Also, it has a fixed-point fast implementation.
+licenses			ZLib LGPL-2
+
+home				motoezx.at.ua/load/picogl_port/8-1-0-63
+;home				svn.csie.net/listing.php?repname=picogl&
+;home				www.motorolafans.com/forums/a1600-general-chat/30293-opengl-libaray-for-18bpp-phones.html
+packages
+	http://motoezx.at.ua/motomagx/PicoGL.tar.gz
+;	http://www.motorolafans.com/forums/attachments/a1600-general-chat/25450d1280114488-opengl-libaray-for-18bpp-phones-picogl-src-20051108.tar.bz2.zip
+
+configure-options
+	--with-backend=sdl
+;	--enable-fixed-point
+
+system-prefix-var	DESTDIR
+
+documentation
+	README README.TinyGL COPYING LICENCE LIMITATIONS ChangeLog AUTHORS TODO
+;	Empty:
+;	NEWS
+build-docs			INSTALL
+
+; Try to make it a drop-in replacement for OpenGL (1.1):
+links
+	libPicoGL.a		lib/libGL.a
+	libPicoGLU.a	lib/libGLU.a

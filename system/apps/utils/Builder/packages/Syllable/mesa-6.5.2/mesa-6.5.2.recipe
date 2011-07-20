@@ -11,8 +11,8 @@ notes
 
 install-tree
 	include
-	include/gui
+;	include/gui
 install-files
 	lib/									.
 	include/GL/							include/
-	src/mesa/drivers/syllable/GLView.h	include/gui/
+;	src/mesa/drivers/syllable/GLView.h	include/gui/
