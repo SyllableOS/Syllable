@@ -1,0 +1,28 @@
+diff -ru PicoGL-original/backends/sdl/tk.c PicoGL/backends/sdl/tk.c
+--- PicoGL-original/backends/sdl/tk.c	2007-07-29 12:28:48.000000000 +0200
++++ PicoGL/backends/sdl/tk.c	2011-07-20 19:44:30.000000000 +0200
+@@ -25,7 +25,7 @@
+ 
+ 	SDL_Init(SDL_INIT_VIDEO);
+ 
+-	screen = SDL_SetVideoMode(320, 240, 8, SDL_HWSURFACE | SDL_DOUBLEBUF);
++	screen = SDL_SetVideoMode(320, 240, 16, SDL_HWSURFACE | SDL_DOUBLEBUF);
+ 	sdl_glXMakeCurrent(screen,ctx);
+ 
+ 	init();
+diff -ru PicoGL-original/include/GL/gl.h PicoGL/include/GL/gl.h
+--- PicoGL-original/include/GL/gl.h	2007-07-29 12:28:46.000000000 +0200
++++ PicoGL/include/GL/gl.h	2011-07-20 19:49:27.000000000 +0200
+@@ -671,7 +671,12 @@
+ typedef unsigned char	GLubyte;	/* 1-byte unsigned */
+ typedef unsigned short	GLushort;	/* 2-byte unsigned */
+ typedef unsigned int	GLuint;		/* 4-byte unsigned */
++
++#ifdef USE_FIXED_POINT
+ typedef sll		GLfloat;	/* single precision GLfloat */
++#else
++typedef float		GLfloat;	/* single precision GLfloat */
++#endif
+ typedef sll		GLdouble;	/* GLdouble precision GLfloat */
+ typedef int GLsizei;
+ 
