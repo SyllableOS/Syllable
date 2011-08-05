@@ -14,7 +14,7 @@ packages			fossil-src-20110713230341
 needs
 	ZLibrary
 ;	For external SQLite:
-	SQLite
+	SQLite >= 3.7
 ;	For SQLite:
 	ReadLine
 	OpenSSL
@@ -26,7 +26,7 @@ no-sbindir
 no-libdir
 no-datarootdir
 no-datadir
-_configure-options
+configure-options
 ;	--static
 	--disable-internal-sqlite
 
