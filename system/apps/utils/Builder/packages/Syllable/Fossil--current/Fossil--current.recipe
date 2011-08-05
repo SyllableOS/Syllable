@@ -5,3 +5,8 @@ needs
 ;	For SQLite:
 	Syllable >= 0.6.7
 	ZLibrary
+;	For external SQLite:
+	SQLite
+;	For SQLite:
+	ReadLine
+	OpenSSL

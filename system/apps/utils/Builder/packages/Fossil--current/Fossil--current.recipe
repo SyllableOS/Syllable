@@ -11,21 +11,22 @@ home				www.fossil-scm.org
 locations			http://www.fossil-scm.org/download/
 packages			fossil-src-20110713230341
 
-needs				ZLibrary
-build-needs			AWK
-test-needs			tcl
-recommends
+needs
+	ZLibrary
+;	For external SQLite:
 	SQLite
-	OpenSSL
 ;	For SQLite:
 	ReadLine
+	OpenSSL
+build-needs			AWK
+test-needs			tcl
 
 no-bindir
 no-sbindir
 no-libdir
 no-datarootdir
 no-datadir
-configure-options
+_configure-options
 ;	--static
 	--disable-internal-sqlite
 
