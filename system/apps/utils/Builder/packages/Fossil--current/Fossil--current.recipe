@@ -17,6 +17,8 @@ test-needs			tcl
 recommends
 	SQLite
 	OpenSSL
+;	For SQLite:
+	ReadLine
 
 no-bindir
 no-sbindir
