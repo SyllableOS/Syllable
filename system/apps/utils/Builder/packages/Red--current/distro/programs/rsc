@@ -2,6 +2,6 @@
 
 PLACE=$PWD
 cd /resources/Red/framework/REBOL
-r2-view -s rsc.r $1 $2 $3 $4
+r2 -s rsc.r $1 $2 $3 $4
 cd $PLACE
 echo 'Any compilation results are in /resources/Red/framework/REBOL/builds'
