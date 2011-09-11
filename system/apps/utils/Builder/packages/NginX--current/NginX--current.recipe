@@ -10,7 +10,7 @@ licenses			BSD
 
 home				nginx.org
 locations			http://nginx.org/download/
-packages			nginx-0.9.7
+packages			nginx-1.1.2
 
 recommends
 	ZLibrary
