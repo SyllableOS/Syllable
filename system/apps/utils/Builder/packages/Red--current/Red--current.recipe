@@ -2,6 +2,7 @@ authors				Kaj de Vos
 status				testing
 notes				Beta version
 
+version				0.2.3current
 headline			Red[uced] REBOL programming language dialect
 description
 	Red is a new programming language strongly inspired by REBOL. It is open source and compiled. It will have a JIT compiler in addition to static compilation, modern parallel programming support through native threading, and a built-in web server. Red's goal is to be a general-purpose language with a broad usage field, from system programming to high-level scripting, parallel programming, network programming and embedding in applications.

@@ -3,7 +3,7 @@ status				testing
 warnings			Gitorious fails at first attempt to download daily source to wait for package generation.
 notes				Documentation can be built in doc/ directory
 
-version				0.2.3
+version				0.2.3current
 headline			Interpreted, prototype-based language similar to REBOL
 description
 	Boron is an interpreted, prototype-based, scripting language similar to Rebol. The interpreter and datatype system is a C library useful for building domain specific languages embedded in C/C++ applications.
