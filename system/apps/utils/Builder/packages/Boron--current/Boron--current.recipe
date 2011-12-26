@@ -19,25 +19,17 @@ licenses
 ;	MIT
 
 home				urlan.sf.net/boron/
-locations
-	http://gitorious.org/boron/boron/
-;	http://downloads.syllable.org/sources/resources/Boron/
-_packages
-;	Boron-0.1.5-20100425.source
-;	M2-498.source Boron--current
-files
-;	First attempt fails to wait for generation!
-	archive-tarball/master
-_archives
-	git clone git://gitorious.org/boron/boron.git
-;	M2:
-;	svn co http://urlan.svn.sourceforge.net/svnroot/urlan/trunk/m2
+locations			http://gitorious.org/boron/boron/
+; First attempt fails to wait for generation!
+files				archive-tarball/master
+;archives			git clone git://gitorious.org/boron/boron.git
 
-;needs				ZLib | BZip2
+_needs
+;	For eventfd:
+	GLibC >= 2.8
+	ZLib | BZip2
 build-needs
-;	For configure:
-;	Which
-;	m2 & (REBOL | Boron) | CMake >= 2.6
+;	M2 & Boron | CMake >= 2.6
 	DoxyGen
 recommends
 	ReadLine
@@ -66,10 +58,11 @@ build-dir			.
 ; configure doesn't take --prefix:
 configure-args
 configure-options
-;	REBOL or Boron needs to be in /usr/bin/ to run M2 from configure:
-;	make doesn't create shared library:
-;	--make
-	--cmake
+;	Boron needs to be in /usr/bin/ to run M2 from configure
+;	Doesn't create shared library:
+	--make
+;	Requires eventfd:
+;	--cmake
 ;	--gnu-readline
 	--thread
 ;	--bzip2
@@ -84,18 +77,18 @@ post-make			sed -i 's~"urlan.h"~<boron/urlan.h>~' boron.h
 
 install-tree
 	programs
-	framework/libraries
-	framework/headers/boron
+;	framework/libraries
+;	framework/headers/boron
 install				true
 install-files
 	boron				programs/
-	libboron.so.0.2.3	framework/libraries/
-	boron.h				framework/headers/boron/
-	urlan/urlan.h		framework/headers/boron/
-	urlan/urlan_atoms.h	framework/headers/boron/
-	urlan/bignum.h		framework/headers/boron/
+;	libboron.so.0.2.3	framework/libraries/
+;	boron.h				framework/headers/boron/
+;	urlan/urlan.h		framework/headers/boron/
+;	urlan/urlan_atoms.h	framework/headers/boron/
+;	urlan/bignum.h		framework/headers/boron/
 
-links
+_links
 	libboron.so.0.2.3	framework/libraries/libboron.so.0
 	libboron.so.0.2.3	framework/libraries/libboron.so
 
@@ -105,5 +98,5 @@ develop-docs
 	doc/dev_manual
 	doc/html/
 ;	doc/latex/
-	examples/
+;	examples/
 	doc/boron.vim
