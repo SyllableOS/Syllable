@@ -21,7 +21,7 @@ licenses
 home				urlan.sf.net/boron/
 locations			http://gitorious.org/boron/boron/
 ; First attempt fails to wait for generation!
-files				archive-tarball/master
+packages			archive-tarball/master
 ;archives			git clone git://gitorious.org/boron/boron.git
 
 _needs
@@ -42,11 +42,7 @@ build-recommends
 	Python-DocUtils
 	LaTeX
 
-patch
-;	Gitorious:
-	tar xf master &&
-	rm master &&
-	mv */* .
+_patch
 ;	mv m2-498/m2			configure &&
 ;	cp m2-498/m2_linux.r	m2_template.r &&
 ;	Uncomment os_call in config.r, and possibly math3d and number_arrays and rebol
@@ -73,7 +69,6 @@ pre-make
 	cd doc &&
 	make
 ;	make dox html pdf
-post-make			sed -i 's~"urlan.h"~<boron/urlan.h>~' boron.h
 
 install-tree
 	programs
@@ -100,3 +95,5 @@ develop-docs
 ;	doc/latex/
 ;	examples/
 	doc/boron.vim
+
+;pre-register		sed -i 's~"urlan.h"~<boron/urlan.h>~' framework/headers/boron/boron.h

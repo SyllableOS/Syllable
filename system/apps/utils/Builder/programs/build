@@ -1,8 +1,8 @@
 #! /usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.11.18
-# Copyright (c) 2002-2010 Kaj de Vos
+# Version 0.11.19
+# Copyright (c) 2002-2011 Kaj de Vos
 # License: GPL 3 or any later version
 
 
@@ -56,11 +56,13 @@ def downloadFile file
 end
 
 def downloadModule target
+	name = commonName target
+
 	if
 		if (locations = (recipe = getRecipe target)['locations']) and
 			(packages = recipe['packages']) ?
 				(packages = firstColumn parseList(packages)) :
-				! (recipe['files'] or sourcePackageAvailable?(packages = commonName(target)))
+				! (recipe['files'] or sourcePackageAvailable?(packages = name))
 		then
 			@log.subheader 'Downloading source package(s)'
 
@@ -69,22 +71,23 @@ def downloadModule target
 			for package in packages
 				unless sourcePackageAvailable? package  # Already there
 					break if for location in toList locations
-						break unless for type in ['tar.bz2', 'tbz2', 'tar.gz', 'tgz', 'zip']
-							@log.subheader 'Trying ' + f = File.join(location, file = package + '.' + type)
+						break unless for type in ['.tar.bz2', '.tbz2', '.tar.gz', '.tgz', '.zip', '']
+							@log.subheader 'Trying ' + f = File.join(location, file = package + type)
 							file = File.basename file
 
 							break if downloadFile f and
 								# Detect web error pages and corrupt archives
 								action case type
-								when 'tar.bz2', 'tbz2' then 'tar tjf ' + file
-								when 'tar.gz', 'tgz' then 'tar tzf ' + file
-								when 'zip' then 'unzip -t ' + file  # 'zip -T ' + file
+								when '.tar.bz2', '.tbz2' then 'tar tjf ' + file
+								when '.tar.gz', '.tgz' then 'tar tzf ' + file
+								when '' then 'tar tf ' + file
+								when '.zip' then 'unzip -t ' + file  # 'zip -T ' + file
 								end
 						end
 					end
 
 					@log.subheader "Moving package #{file} to sources directory"
-					break unless action "mv #{file} " + @sourcesPath
+					break unless action "mv #{file} " + (file == 'master' ? File.join(@sourcesPath, name) : @sourcesPath)
 				end
 			end
 		else
@@ -170,10 +173,12 @@ def updateModule target
 end
 
 def unpackModule target
+	name = commonName target
+
 	exists? target or  # Already there
 	(packages = (packages = (recipe = getRecipe target)['packages']) ?
 		parseList(packages) :
-		recipe['files'] ? [] : commonName(target)  # packages + files requires explicit packages specification
+		recipe['files'] ? [] : name  # packages + files requires explicit packages specification
 	) == [] or
 	if
 		(exists? dir = File.dirname(target) or action 'mkdir --parents ' + dir) and
@@ -187,7 +192,8 @@ def unpackModule target
 			unless
 				for package in packages
 					package, dir = package.split
-					base = File.join @sourcesPath, File.basename(package)
+					base = File.basename package
+					base = File.join @sourcesPath, base == 'master' ? name : base  # Version control checkout?
 					option = dir ? ' --directory=' + dir : ''
 
 					if dir and not exists? dir
@@ -206,6 +212,9 @@ def unpackModule target
 					elsif exists? file = base + '.tar.gz' or exists? file = base + '.tgz'
 						type = :gzip
 						break unless action "tar#{option} -xzf " + file
+					elsif exists? file = base
+						type = :tar
+						break unless action "tar#{option} -xf " + file
 					else
 						@log.error "Source package #{base}.* not found"
 						break
@@ -227,6 +236,7 @@ def unpackModule target
 						when :zip  then 'unzip -lqq ' + file
 						when :bzip then 'tar tjf ' + file
 						when :gzip then 'tar tzf ' + file
+						when :tar  then 'tar tf ' + file
 						end
 					}`
 					unless (status = $? >> 8) == 0
@@ -2247,8 +2257,8 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.11.18',
-		'Copyright (c) 2002-2010 Kaj de Vos',
+	puts 'Syllable Build System 0.11.19',
+		'Copyright (c) 2002-2011 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
 	puts 'Usage:',
