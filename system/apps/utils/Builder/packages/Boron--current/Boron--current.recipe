@@ -1,55 +1,85 @@
 authors				Kaj de Vos
 status				testing
+warnings			Gitorious fails at first attempt to download daily source to wait for package generation.
 notes				Documentation can be built in doc/ directory
 
-version				0.1.5
+version				0.2.3
 headline			Interpreted, prototype-based language similar to REBOL
 description
-	Boron is a scripting language similar to REBOL. It is the third iteration of the Urlan datatype system.
-
-	The Urlan Project is an exploration of language oriented programming using small run-time environments. The currently active sub-project is Boron, a dialect of REBOL. It is an interpreted, homoiconic language, which is well suited for embedding domain specific languages.
-
-	Boron closely emulates the REBOL language. The interpreter is a C library so that C/C++ applications can use Boron as an embedded scripting system.
+	Boron is an interpreted, prototype-based, scripting language similar to Rebol. The interpreter and datatype system is a C library useful for building domain specific languages embedded in C/C++ applications.
 licenses
 ;	Interpreter:
 	LGPL-3+
+;	Some support libraries:
+	BSD
+	PD
 ;	Programs:
 	GPL-3+
 ;	M2:
 ;	MIT
 
-home
-	urlan.sf.net/boron/
-;	urlan.sf.net
-;	sf.net/apps/trac/urlan/wiki/BoronProject
-;	wsrebol.sf.net
-locations			http://downloads.syllable.org/sources/resources/Boron/
-packages
-	Boron-0.1.5-20100425.source
+home				urlan.sf.net/boron/
+locations
+	http://gitorious.org/boron/boron/
+;	http://downloads.syllable.org/sources/resources/Boron/
+_packages
+;	Boron-0.1.5-20100425.source
 ;	M2-498.source Boron--current
+files
+;	First attempt fails to wait for generation!
+	archive-tarball/master
 _archives
 	git clone git://gitorious.org/boron/boron.git
 ;	M2:
 ;	svn co http://urlan.svn.sourceforge.net/svnroot/urlan/trunk/m2
 
+;needs				ZLib | BZip2
 build-needs
 ;	For configure:
-	which
-;	m2 & (REBOL | Boron) | cmake >= 2.6
-	bzip2
+;	Which
+;	m2 & (REBOL | Boron) | CMake >= 2.6
+	DoxyGen
+recommends
+	ReadLine
+	LibJIT
+	Qt
+	OpenGL
+	OpenAL
+	Vorbis
+build-recommends
+	Python-DocUtils
+	LaTeX
 
-_patch
-	mv m2-498/m2			configure &&
-	cp m2-498/m2_linux.r	m2_template.r &&
+patch
+;	Gitorious:
+	tar xf master &&
+	rm master &&
+	mv */* .
+;	mv m2-498/m2			configure &&
+;	cp m2-498/m2_linux.r	m2_template.r &&
 ;	Uncomment os_call in config.r, and possibly math3d and number_arrays and rebol
-	rebol 					boot_str.r
+;	rebol 					boot_str.r
 
-; configure can't be called from a parent directory:
+; For generated makefiles:
 build-dir			.
-;configure			./configure
-; REBOL or Boron needs to be in /usr/bin/ to run M2 from configure:
-;configure			cmake .
 
+; configure doesn't take --prefix:
+configure-args
+configure-options
+;	REBOL or Boron needs to be in /usr/bin/ to run M2 from configure:
+;	make doesn't create shared library:
+;	--make
+	--cmake
+;	--gnu-readline
+	--thread
+;	--bzip2
+;	--assemble
+	--timecode
+
+pre-make
+	cd doc &&
+	make
+;	make dox html pdf
 post-make			sed -i 's~"urlan.h"~<boron/urlan.h>~' boron.h
 
 install-tree
@@ -59,17 +89,21 @@ install-tree
 install				true
 install-files
 	boron				programs/
-	libboron.so.0.1.4	framework/libraries/
+	libboron.so.0.2.3	framework/libraries/
 	boron.h				framework/headers/boron/
 	urlan/urlan.h		framework/headers/boron/
 	urlan/urlan_atoms.h	framework/headers/boron/
 	urlan/bignum.h		framework/headers/boron/
 
 links
-	libboron.so.0.1.4	framework/libraries/libboron.so.0
-	libboron.so.0.1.4	framework/libraries/libboron.so
+	libboron.so.0.2.3	framework/libraries/libboron.so.0
+	libboron.so.0.2.3	framework/libraries/libboron.so
 
 documentation		LICENSE LICENSE.GPL
 develop-docs
-;	doc/html
-	examples
+	doc/*.rst
+	doc/dev_manual
+	doc/html/
+;	doc/latex/
+	examples/
+	doc/boron.vim
