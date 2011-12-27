@@ -19,10 +19,17 @@ licenses
 ;	MIT
 
 home				urlan.sf.net/boron/
-locations			http://gitorious.org/boron/boron/
+locations
+	http://urlan.sourceforge.net/boron/doc/
+	http://gitorious.org/boron/boron/
+;archives			git clone git://gitorious.org/boron/boron.git
 ; First attempt fails to wait for generation!
 packages			archive-tarball/master
-;archives			git clone git://gitorious.org/boron/boron.git
+files
+	UserManual.html
+	func_ref.html
+	UserManualGL.html
+	func_ref_gl.html
 
 _needs
 ;	For eventfd:
@@ -89,7 +96,7 @@ _links
 
 documentation		LICENSE LICENSE.GPL
 develop-docs
-	doc/*.rst
+	*.html doc/*.rst
 	doc/dev_manual
 	doc/html/
 ;	doc/latex/
