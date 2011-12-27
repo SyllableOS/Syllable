@@ -3,10 +3,16 @@ status				testing
 
 inherits			REBOL-HostKit--current
 
-version				3alpha111
+version				3alpha110
 
-build-dir			make
-;build-dir			make-gcc
+;version				3alpha111
+; tar.gz defies automated downloading:
+;locations			http://www.rebol.com/r3/downloads/
+; For Linux GLibC >= 2.5:
+;packages			r3-a111-4-3
+
+;build-dir			make
+build-dir			make-gcc
 
 ; For pre-built binary:
 ;make				true
@@ -18,15 +24,15 @@ install-tree
 ;install				chmod +x r3-core-a107-42
 install				true
 install-files
-;	For binary:
-;	r3-core-a107-42		programs/r3-core
 ;	For host kit:
 	r3core				programs/r3-core
 	../src/include/*	framework/headers/
 	libr3.so			framework/libraries/
+;	For binary:
+;	r3					programs/r3-core
 
-documentation		README.txt
-;documentation		about.txt
+;documentation		README.txt
+documentation		about.txt
 
 links
 	r3-core			programs/rebol

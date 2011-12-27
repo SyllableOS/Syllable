@@ -1,6 +1,6 @@
 authors				Kaj de Vos
 status				testing
-notes				Alpha pre-release version
+notes				Alpha version
 
 headline			Relative Expression Based Object Language
 description
@@ -14,28 +14,24 @@ description
 licenses			freeware
 
 home
-;	www.rebol.com/rebol3/
-	www.rm-asset.com/code/downloads/
+	www.rebol.com/rebol3/
+;	Gone:
+;	www.rm-asset.com/code/downloads/
 locations
-;	https://github.com/carls/R3A110/
-;	http://www.rebol.com/r3/downloads/
-	http://www.rm-asset.com/code/downloads/files/
-packages
+	https://github.com/carls/R3A110/
 ;	tar.gz defies automated downloading:
-;	r3-host-kit-a107-42
-	rma-host-kit
-_files
+;	http://www.rebol.com/r3/downloads/
+;	http://www.rm-asset.com/code/downloads/files/
+packages
 ;	Github:
 	tarball/master
+;	rma-host-kit
+_files
 ;	Ubuntu binary:
 ;	r3-core-a107-42.gz
 ;	Fedora binary:
 ;;	r3-core-a107-43.gz
 
 patch
-;	Github:
-;	tar xf master &&
-;	rm master &&
-;	mv */* . &&
-;	sed -i 's~LIBS= \./~LIBS= -ldl ~' make-gcc/makefile
-	sed -i 's~LIBS= \./~LIBS= -ldl ~' make/makefile
+	sed -i 's~LIBS= \./~LIBS= -ldl ~' make-gcc/makefile
+;	sed -i 's~LIBS= \./~LIBS= -ldl ~' make/makefile

@@ -10,9 +10,6 @@ install-tree
 	include
 	lib
 install-files
-;	For binary:
-;	r3-core-a107-42		bin/r3-core
-;	For host kit:
 	r3core				bin/r3-core
 	../src/include/*	include/
 	libr3.so			lib/
