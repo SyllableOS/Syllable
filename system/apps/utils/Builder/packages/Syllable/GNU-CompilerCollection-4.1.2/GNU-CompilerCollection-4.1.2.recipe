@@ -49,6 +49,7 @@ configure-options
 	--enable-sjlj-exceptions
 	--enable-shared
 	--enable-threads
+	--enable-__cxa_atexit
 	--with-system-zlib
 	--disable-libstdcxx-pch
 ;	--with-local-prefix=/usr/local
