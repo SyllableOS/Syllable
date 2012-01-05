@@ -1260,7 +1260,8 @@ def uninstallModule staging, target
 end
 
 def buildPackage target
-	# FIXME: not correct for FLAGS override and cross-compiling:
+	# FIXME: not correct for FLAGS override and cross-compiling
+	# TODO: include version from recipe
 	file = "#{name = fullName target}-0#{@kernel == 'Syllable' ? '' : '.' + @kernel}.#{@machine}.resource"
 
 	if
