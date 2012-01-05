@@ -1,8 +1,8 @@
 ; List of all resources released as binaries
-; Generated on 18-Mar-2011/21:05:45+1:00
+; Generated on 15-Dec-2011/0:20:04+1:00
 
 modules
-	p7zip-4.58
+	7-Zip-9.04
 	alsa-library-1.0.15
 	alsa-utils-1.0.15
 	apache-2.2.4
@@ -11,130 +11,131 @@ modules
 	autoconf-2.61
 	automake-1.9.6
 	automake-1.10
-	bash-3.2
+	BASh-4.0
 	db-4.6.21
 	binutils-2.17
 	bison-2.3
-	blfs-bootscripts-20070822
+	BLFS-BootScripts-2009.3.2
+	Boron--current
 	bzip2-1.0.5
-	ca-certificates--current
+	CA-Bundle--current
 	captcha--current
-	cdrtools-2.01
-	cheyenne-0.9.18
-	coreutils-6.9
+	CDRTools-2.01.01a61
+	Cheyenne--current
+	CoreUtilities-6.7
 	cscope-15.6
 	cups-1.3.4
-	curl-7.18.2
+	cURL-7.18.2
 	cvs-1.12.11
-	dejavu-fonts--current
+	DejaVu-Fonts--current
 	dhcp-3.0.5
 	diffutils-2.8.1
-	directfb-1.0.0
+	DirectFrameBuffer-1.4.3
 	doxygen-1.5.1
-	e2fsprogs-1.40.2
+	E2FSPrograms-1.41.9
 	expat-2.0.0
-	findutils-4.2.33
+	FindUtils-4.4.2
 	flac-1.2.1
 	flex-2.5.33
-	freefont-20060126
-	freetype-2.3.6
-	genode-8.08
+	FreeFont--current
+	FreeType-2.3.9
 	gettext-0.16.1
-	ghostscript-8.60
-	glib-2.14.4
+	GhostScript-8.64
+	GIFLib-4.1.6
+	glib-2.18.4
 	glibc-2.7
 	gawk-3.1.5
-	gcc-4.2.3
+	gcc-4.1.2
 	gcc-3.4.6
 	gdb-6.4
-	grep-2.5.3
+	GRep-2.5.4
 	groff-1.19.2
 	grub-0.97
-	gutenprint-5.0.1
+	Gutenprint-5.2.3
 	gzip-1.3.12
-	inetutils-1.5
+	INetUtils-1.6
 	iproute2-2.6.25
-	iptables-1.4.0
+	IPTables-1.4.6
 	kbd-1.12
-	kqemu-1.3.0pre11
-	lcd-fonts-1.1
-	less-418
-	lfs-bootscripts-6.3
+	KernelQEmulator-1.3.0pre11
+	LCD-Fonts-1.1
+	Less-429
+	LFS-BootScripts-6.5
 	liberation-fonts--current
-	libjpeg-6b
-	libogg-1.1.3
-	libpng-1.2.29
-	libtheora-1.0beta3
+	LibJPEG-8a
+	LibOgg-1.1.4
+	LibPNG-1.2.37
+	LibTheora-1.0
 	libtiff-3.8.2
 	libtool-1.5.22
-	libungif-4.1.4
 	libusb-0.1.12
-	libvorbis-1.2.0
-	links2-2.1pre36
-	linux-2.6.25
-	linux-fusion-3.2.4
-	luxi-fonts
+	LibVorbis-1.2.2
+	Links-2.3pre1
+	Linux-2.6.27.44
+	LinuxFusion-8.1.1
+	Luxi-fonts
 	m4-1.4.8
 	make-3.81
-	mc-4.6.1
-	mime-support--current
-	mktemp-1.5
+	MidnightCommander-4.7.0.2
+	MIME-Support--current
+	MkTemp-1.6
 	module-init-tools-3.2.2
 	msntp-1.6
 	nano-2.0.3-curses
 	nasm-0.98.39
 	ncftp-3.2.0
-	ncurses-5.6
-	netcat-1.10
-	openssh-5.0p1
-	openssl-0.9.8e
-	orca-498
+	NCurses-5.7
+	NetCat-1.10
+	OpenSSH-5.2p1
+	OpenSSL-0.9.8n
+	ORCA--current
 	patch-2.5.4
 	pcre-7.0
 	pengupop-2.1.12
 	perl-5.8.8
 	pkg-config-0.22
 	procps-3.2.7
-	qemu-0.9.1
-	cheyenne--quartermaster-current
-	readline-5.2
-	rebol-core--current
+	QEmulator-0.9.1
+	Cheyenne--QuarterMaster-current
+	ReadLine-6.0
+	REBOL2-Core--current
 	rebol-mysql-1.2.0
-	rebol-services--current
+	REBOL-Services--current
 	reiserfsprogs-3.6.19
 	rsync-2.6.9
-	ruby-1.8.6
-	s-lang-2.1.1
+	Ruby-1.8.7p248
+	S-Lang-2.2.2
 	s3sync--current
 	samba-3.0.23d
-	sane-backends-1.0.18
-	sdl-1.2.13
-	sdl-image-1.2.4
-	sdl-mixer-1.2.6
-	sdl-net-1.2.6
-	sdl-sound-1.0.1
+	SANE-Backends-1.0.18
+	SDL-1.2.14
+	SDL-Image-1.2.8
+	SDL-Mixer-1.2.9
+	sdl-net-1.2.7
+	sdl-sound-1.0.3
 	sdl-ttf-2.0.9
-	sed-4.1.5
+	SEd-4.2.1
 	shadow-4.0.18.1
 	splint-3.1.1
-	splix-1.1.0
-	sudo-1.6.9p9
+	SPLix-2.0.0
+	SUDo-1.7.2p2
 	sysklogd-1.4.1
 	sysvinit-2.86
-	tar-1.20
+	TAr-1.22
 	termcap-1.3.1
 	texinfo-4.8a
 	tiny--current
-	transmission-1.06
-	udev-113
-	udev-config-6.3
-	uniserve-0.9.28
-	unzip-5.52
+	Transmission-1.72
+	UDevices-142
+	UDevices-config--current
+	UniServe--current
+	UnZip-6.0
 	urw-fonts-cyrillic-1.07pre41
-	util-linux-2.12r
+	UtilLinuxNG-2.16.2
 	vim-7.0
 	wget-1.9.1
 	which-2.16
 	wirelesstools-29
-	zip-2.32
+	XZ-Utilities-4.999.9beta
+	Zip-3.0
 	zlib-1.2.3

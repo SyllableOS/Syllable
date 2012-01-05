@@ -87,14 +87,14 @@ resources
 	system/config/		kernel.cfg					text/plain
 	system/				scripts/*.sh
 
-	etc/					configuration/passwd		text/plain
-	etc/					configuration/group			text/plain
-	etc/					configuration/profile		text/plain
-	etc/					configuration/hosts			text/plain
-	etc/					configuration/hostname		text/plain
-	etc/					configuration/resolv.conf	text/plain
+	etc/				configuration/passwd		text/plain
+	etc/				configuration/group			text/plain
+	etc/				configuration/profile		text/plain
+	etc/				configuration/hosts			text/plain
+	etc/				configuration/hostname		text/plain
+	etc/				configuration/resolv.conf	text/plain
 
-	home/					binaries/home-directories
+	home/				binaries/home-directories
 
 modules
 ;	Toolchain for bootstrapping

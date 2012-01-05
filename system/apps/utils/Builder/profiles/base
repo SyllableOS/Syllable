@@ -57,8 +57,8 @@ tree
 	usr/local/info
 
 resources
-	boot/grub/	menu.lst				text/plain
-	etc/s3conf/	configuration/s3config.yml	text/plain
+	boot/grub/		menu.lst					text/plain
+	etc/s3conf/		configuration/s3config.yml	text/plain
 ;	Servers:
 	etc/			configuration/vsftpd.conf	text/plain
 	etc/			configuration/rsyncd.conf	text/plain

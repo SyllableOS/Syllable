@@ -137,14 +137,14 @@ prepare
 	sudo ln -s /resources/index/system-programs/winbindd	usr/sbin/ &&
 
 ;	For OpenSSL and others:
-	sudo ln -s /resources/index/programs/perl	usr/bin/ &&
+	sudo ln -s /resources/index/programs/perl		usr/bin/ &&
 ;	For OpenSSL?
-;	ln -s /resources/index/programs/perl		usr/local/bin/ &&
+;	ln -s /resources/index/programs/perl			usr/local/bin/ &&
 ;	From BinaryUtilities, for building OpenSSL:
-	sudo ln -s /resources/index/programs/ranlib	usr/bin/ &&
+	sudo ln -s /resources/index/programs/ranlib		usr/bin/ &&
 
 ;	For Python:
-	sudo ln -s /resources/index/programs/python				usr/bin/
+	sudo ln -s /resources/index/programs/python		usr/bin/
 
 resources
 	system/											scripts/user-*.sh

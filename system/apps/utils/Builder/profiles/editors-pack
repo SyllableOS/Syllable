@@ -14,4 +14,3 @@ modules
 	text/editors/nano-1.2.2
 ;	Uses Ruby:
 	text/editors/vim-7.0
-

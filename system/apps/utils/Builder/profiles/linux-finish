@@ -29,7 +29,7 @@ resources
 
 ;	Midnight Commander configuration:
 	users/.template/.mc/							configuration/ini
-	users/administrator/.mc/							configuration/ini
+	users/administrator/.mc/						configuration/ini
 
 finish
 ;	Clean out kernel source link from the host system:

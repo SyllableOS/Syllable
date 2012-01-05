@@ -161,7 +161,7 @@ tree
 
 resources
 	Programs/Pango/Settings/pango/	linux/pango.modules
-	System/Settings/			Workstation/ld.so.conf
+	System/Settings/				Workstation/ld.so.conf
 
 modules
 ;	Extra package managers
