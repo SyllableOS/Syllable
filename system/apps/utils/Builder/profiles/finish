@@ -12,4 +12,9 @@ finish
 	cp resources/grub/framework/libraries/grub/i386-pc/* boot/grub/ &&
 
 	rm -r resources/documentation/ resources/documentation-* &&
-	rm resources/index/documentation resources/index/documentation-* etc/Makefile system/icons/Makefile
+	rm resources/index/documentation resources/index/documentation-* etc/Makefile system/icons/Makefile &&
+
+;	Linux binary compatibility hack allows running some binary Linux libraries:
+	ln -s /system/index/lib/libc.so.2	system/libraries/libc.so.6 &&
+	ln -s /system/index/lib/libm.so.2	system/libraries/libm.so.6 &&
+	ln -s libdl.so.3					system/libraries/libdl.so.2
