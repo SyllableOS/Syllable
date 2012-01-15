@@ -1,4 +1,4 @@
-This is an (Almost certainly incomplete!) list of people who have contributed to Syllable:
+This is a (very incomplete!) list of people who have contributed to Syllable:
 
 Graphics Drivers
 
@@ -35,6 +35,8 @@ Arno Klenke <arno_klenke@yahoo.de>
 Anthony Morphett <awmorp@gmail.com>
 Jack Tonkin <lists@tonkin.org.uk>
 Kristian Van Der Vliet <vanders@liqwyd.com>
+Evgeniy Philippov <egphilippov@gmail.com>
+	Fixed Intellipoint mice support by completing the switching to IMPS2 protocol.
 
 Ports
 

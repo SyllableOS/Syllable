@@ -409,6 +409,7 @@ extern "C" bool init_input_node()
 	static unsigned char basic_init[] = { GPM_AUX_ENABLE_DEV, GPM_AUX_SET_SAMPLE, 100 };
 	static unsigned char imps2_init[] = { GPM_AUX_SET_SAMPLE, 200, GPM_AUX_SET_SAMPLE, 100, GPM_AUX_SET_SAMPLE, 80, };
 	static unsigned char ps2_init[] = { GPM_AUX_SET_SCALE11, GPM_AUX_ENABLE_DEV, GPM_AUX_SET_SAMPLE, 100, GPM_AUX_SET_RES, 3, };
+	static unsigned char enable[] = { GPM_AUX_ENABLE_DEV, };
 
 	g_nSerialDevice = open( "/dev/misc/ps2aux", O_RDWR );
 	if( g_nSerialDevice < 0 ) {
@@ -447,12 +448,17 @@ extern "C" bool init_input_node()
 	if( id == GPM_AUX_ID_IMPS2 ) {
 		/* Really an intellipoint, so initialise 3 button mode (4 byte packets) */
 		dbprintf( "IMPS2 mouse detected.\n" );
+		g_nProtocol = IMPS2_PROTOCOL;
 	} else {
 		if( id != GPM_AUX_ID_PS2 ) {
 			dbprintf( "PS2 mouse detected with unknown id (%d).\n", id );
 		} else {
 			dbprintf( "PS2 mouse detected.\n" );
 		}
+	}
+	if( write_to_mouse( g_nSerialDevice, enable, sizeof( enable ) ) != 0 ) {
+		dbprintf( "PS2 mouse: enabling failed !\n" );
+		return ( false );
 	}
 	return ( true );
 }

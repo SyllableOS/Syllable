@@ -1,3 +1,8 @@
+* January 15, 2012, Kaj de Vos *
+
+Fixed support for Intellipoint mice by completing the switching to IMPS2 protocol.
+Patch by Evgeniy Philippov for Defender PS/2 mouse.
+
 * July 11, 2011, Kaj de Vos *
 
 Fixed stack misalignment to 16 bytes for SSE instructions in the GLibC startup code assembled
