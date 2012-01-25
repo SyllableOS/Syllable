@@ -100,9 +100,11 @@ modules
 	other/data/MIME-Support--current
 	other/data/CA-Bundle--current
 
-	system apps/other/cURL-7.18.2
+	system apps/other/cURL--current
 	apps/gnu/INetUtils-1.6
 	apps/other/msntp-1.6
+	apps/other/SQLite--current
+	apps/other/Fossil--current
 	apps/other/NetCat-1.10
 	apps/other/Transmission-1.72
 
@@ -119,5 +121,9 @@ modules
 	apps/other/CDRTools-2.01.01a61
 
 
+;	Binaries
+	REBOL/REBOL-Core--current
+
+
 ;	ORCA/REBOL library
-	apps/other/tiny--current
+;	REBOL/tiny--current
