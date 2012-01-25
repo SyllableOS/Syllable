@@ -1,7 +1,7 @@
 authors				Kaj de Vos
 status				testing
 
-version				3.7.7.1
+version				3.7.10
 headline			SQL database engine library
 description
 	SQLite is a software library that implements a self-contained, serverless, zero-configuration, transactional SQL database engine.
@@ -10,8 +10,8 @@ licenses			PD other
 home				sqlite.org
 locations			http://sqlite.org
 packages
-	sqlite-autoconf-3070701
-;	sqlite-doc-3070701
+	sqlite-autoconf-3071000
+;	sqlite-doc-3071000
 
 test-needs			tcl
 recommends			ReadLine
