@@ -62,3 +62,6 @@ modules
 	system libs/sdl-sound-1.0.3-image
 	system libs/SDL-Image-1.2.8
 	system libs/sdl-ttf-2.0.9
+
+	apps/other/PicoGL
+	apps/other/Mesa3D-7.10.3
