@@ -125,5 +125,8 @@ modules
 	REBOL/REBOL-Core--current
 
 
+;	REBOL library
+	REBOL/cURL-Binding--current
+
 ;	ORCA/REBOL library
 ;	REBOL/tiny--current
