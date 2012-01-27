@@ -6,4 +6,3 @@ locations			http://nl.syllable.org/
 
 documentation		Welcome.html
 move-files			documentation/Welcome.html /documentation/Welcome-NL.html
-

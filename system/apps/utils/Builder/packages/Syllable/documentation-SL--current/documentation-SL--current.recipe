@@ -6,4 +6,3 @@ locations			http://sl.syllable.org/
 
 documentation		FAQ.html
 move-files			documentation/FAQ.html /documentation/FAQ-SL.html
-
