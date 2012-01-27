@@ -6,8 +6,8 @@ description
 	C-ARes is a C library that performs DNS requests and name resolves asynchronously. C-ARes is a fork of the library named ARes.
 licenses			MIT
 
-home				daniel.haxx.se/projects/c-ares/
-locations			http://daniel.haxx.se/projects/c-ares/
+home				c-ares.haxx.se
+locations			http://c-ares.haxx.se/download/
 
 ;build-needs			libtool
 
