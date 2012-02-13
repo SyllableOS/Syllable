@@ -1,6 +1,6 @@
 ORCA [
 	Title:		"Package installation library"
-	Version:	0.8.2
+	Version:	0.8.3
 	Author:		"Kaj de Vos"
 	Rights: {
 		Copyright (c) 2006-2010 Kaj de Vos
@@ -293,11 +293,13 @@ package-image: context [
 	][
 		log/header join "Unregistering " path
 
+		stages: either stages [targets] [reduce [this-stage]]
+
 		either all [
 			any [development?
 				(	log/detail "Removing main package registration"
 
-					foreach stage stages: either stages [targets] [reduce [this-stage]] [
+					foreach stage stages [
 						unless stage/deselect-package self
 							[break]
 					]
