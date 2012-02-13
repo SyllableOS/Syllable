@@ -2,9 +2,9 @@
 
 if [ `id --user` != 0 ]
 then
-	echo "The installation is not being run through the system user."
+	echo "The installation is not being run through the system (root) user."
 	echo "Installation aborted."
-	echo 'You can try again by using the "sudo" command.'
+	echo 'You can try again by using the "su" command.'
 	exit 1
 fi
 
@@ -39,7 +39,7 @@ fi
 
 echo ""
 echo "Unpacking files"
-7za x Syllable*-development*.7z
+unxz Syllable*-development*.xz
 sync
 
 echo ""
