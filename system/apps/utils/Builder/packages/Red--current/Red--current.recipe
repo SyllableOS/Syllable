@@ -14,8 +14,7 @@ home				www.red-lang.org
 locations
 	http://static.red-lang.org/
 	https://github.com/dockimbel/Red/
-;packages			tarball/master
-packages			tarball/float-partial
+packages			tarball/master
 files
 	red-system-specs.html
 	red-system-specs-light.html
