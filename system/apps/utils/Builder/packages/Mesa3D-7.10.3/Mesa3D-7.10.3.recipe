@@ -19,12 +19,12 @@ packages
 ; For DRI:
 ;needs				Expat
 build-needs
+	makedepend
 	Python
 ;	With Python module:
 	LibraryXML2
 build-recommends
 	PackageConfigure
-	makedepend
 	SEd
 	FLex
 	Bison
