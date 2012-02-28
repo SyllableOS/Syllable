@@ -5,10 +5,14 @@ needs
 	Eina >= 1.1.0
 	FreeType >= 2.3.9
 	SDL
+;	For examples:
+	ECore
 
-make-shared
+;make-shared
 
 configure-options
 ;	Needs new GCC:
 	--disable-cpu-sse3
-	--enable-sdl
+	--enable-software-sdl
+	--disable-evas-cserve
+	--enable-build-examples
