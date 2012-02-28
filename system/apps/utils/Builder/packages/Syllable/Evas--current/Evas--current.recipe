@@ -13,6 +13,6 @@ needs
 configure-options
 ;	Needs new GCC:
 	--disable-cpu-sse3
-	--enable-software-sdl
 	--disable-evas-cserve
+	--enable-software-sdl
 	--enable-build-examples
