@@ -18,6 +18,9 @@ needs
 recommends
 	EET >= 1.5.0
 
+; Needs new GCC:
+configure-options	--disable-cpu-sse3
+
 documentation
 	README COPYING NEWS ChangeLog AUTHORS
 ;	doc/
