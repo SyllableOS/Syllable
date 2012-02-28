@@ -1,0 +1,25 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			Enlightenment--current
+
+version				1.1.0
+headline			Enlightenment's hardware-accelerated retained canvas API
+description
+	Evas is a clean display canvas API that implements a scene graph, not an immediate-mode rendering target, is cross-platform, for several target display systems that can draw anti-aliased text, smooth super and sub-sampled scaled images, alpha-blend objects and much more.
+licenses			BSD
+
+home				trac.enlightenment.org/e/wiki/Evas
+packages			evas-1.1.0
+
+needs
+	Eina >= 1.1.0
+	FreeType >= 2.3.9
+recommends
+	EET >= 1.5.0
+
+documentation
+	README COPYING NEWS ChangeLog AUTHORS
+;	doc/
+;	Empty:
+;	ABOUT-NLS

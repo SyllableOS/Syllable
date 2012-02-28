@@ -1,0 +1,8 @@
+authors				Kaj de Vos
+status				testing
+
+locations			http://download.enlightenment.org/releases/
+
+_configure-env
+	CFLAGS "$CFLAGS -fvisibility=hidden"
+	LDFLAGS "$LDFLAGS -fvisibility=hidden"
