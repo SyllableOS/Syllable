@@ -1,0 +1,34 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			Enlightenment--current
+
+version				1.1.0
+headline			Enlightenment's core event abstraction layer and OS abstraction layer
+description
+	Ecore is a clean and tiny event loop library with many modules to do lots of convenient things for a programmer, to save time and effort.
+
+	It's small and lean, designed to work on embedded systems all the way to large and powerful multi-cpu workstations. It serialises all system signals, events etc. into a single event queue, that is easily processed without needing to worry about concurrency. A properly written, event-driven program using this kind of programming doesn't need threads, nor has to worry about concurrency. It turns a program into a state machine, and makes it very robust and easy to follow.
+
+	Ecore gives you other handy primitives, such as timers to tick over for you and call specified functions at particular times so the programmer can use this to do things, like animate, or time out on connections or tasks that take too long etc.
+licenses			BSD
+
+home				trac.enlightenment.org/e/wiki/Ecore
+packages			ecore-1.1.0
+
+needs
+	Eina
+	EET
+recommends
+	SDL
+	Evas
+
+_configure-options
+;	--enable-thread-safety
+	--enable-ecore-sdl
+;	--enable-ecore-evas
+;	--enable-ecore-evas-software-sdl
+
+documentation
+	README ABOUT-NLS COPYING NEWS ChangeLog AUTHORS TODO
+;	doc/

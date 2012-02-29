@@ -1,0 +1,39 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			Enlightenment--current
+
+version				1.1.0
+headline			Enlightenment's graphical layout and animation library
+description
+	Edje is a complex graphical design & layout library based on Evas that provides an abstraction layer between the application code and the interface, while allowing extremely flexible dynamic layouts and animations.
+
+	In more popular terms, Edje makes every application that uses it "skinable".
+
+	Edje supports the creation of visual elements (borders of windows, scrollbars, etc.) allowing the designer to control the layout, look and feel and gui animation of any program using Edje as its basic GUI constructor. This library allows for multiple collections of Layouts in one file, sharing the same image database and thus allowing a whole theme to be conveniently packaged into one file for ease of distribution.
+licenses			BSD
+
+home				trac.enlightenment.org/e/wiki/Edje
+packages			edje-1.1.0
+
+needs
+	Eina
+	Evas
+	LibraryJPEG
+	LibraryPNG
+	EET
+	ECore
+	Embryo
+	Lua 5.1
+
+configure-env
+	LUA_CFLAGS "$LUA_CFLAGS -I/resources/lua/framework/headers"
+	LUA_LIBS "$LUA_LIBS -L/resources/lua/framework/libraries"
+	LIBS "$LIBS -llua"
+;configure-options	--enable-fixed-point
+
+documentation
+	README COPYING NEWS ChangeLog AUTHORS
+;	doc/
+;	Empty:
+;	ABOUT-NLS
