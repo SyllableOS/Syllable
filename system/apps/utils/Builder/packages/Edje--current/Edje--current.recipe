@@ -25,8 +25,10 @@ needs
 	ECore
 	Embryo
 	Lua 5.1
+; For examples!
+build-needs			Edje
 
-configure-options
+_configure-options
 ;	--enable-fixed-point
 	--enable-build-examples
 
