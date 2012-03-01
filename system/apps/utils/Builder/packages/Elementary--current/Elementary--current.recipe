@@ -26,10 +26,12 @@ recommends
 
 ;build-dir			.
 
-_configure-options
-	--disable-elementary-config
-	--disable-doc
-	--disable-elementary-test
+configure-options
+	--disable-edbus
+	--disable-ethumb
+;	--disable-elementary-config
+;	--disable-doc
+;	--disable-elementary-test
 ;	--enable-build-examples
 
 documentation
