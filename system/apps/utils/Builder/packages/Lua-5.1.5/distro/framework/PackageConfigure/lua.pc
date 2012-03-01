@@ -1,0 +1,31 @@
+# lua.pc -- pkg-config data for Lua
+
+# vars from install Makefile
+
+# grep '^V=' ../Makefile
+V= 5.1
+# grep '^R=' ../Makefile
+R= 5.1.5
+
+# grep '^INSTALL_.*=' ../Makefile | sed 's/INSTALL_TOP/prefix/'
+prefix= /resources/Lua
+INSTALL_BIN= ${prefix}/programs
+INSTALL_INC= ${prefix}/framework/headers
+INSTALL_LIB= ${prefix}/framework/libraries
+INSTALL_MAN= ${prefix}/manuals/man1
+INSTALL_LMOD= ${prefix}/data/lua/${V}
+INSTALL_CMOD= ${prefix}/framework/libraries/lua/${V}
+
+# canonical vars
+exec_prefix=${prefix}
+libdir=${exec_prefix}/framework/libraries
+includedir=${prefix}/framework/headers
+
+Name: Lua
+Description: An Extensible Extension Language
+Version: ${R}
+Requires: 
+Libs: -L${libdir} -llua -lm
+Cflags: -I${includedir}
+
+# (end of lua.pc)
