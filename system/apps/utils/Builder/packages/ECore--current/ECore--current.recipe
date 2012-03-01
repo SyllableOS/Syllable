@@ -24,6 +24,8 @@ recommends
 	Evas
 
 configure-options
+;	Allow switching libraries:
+	--disable-rpath
 ;	--enable-thread-safety
 	--disable-ecore-fb
 ;	--enable-ecore-directfb

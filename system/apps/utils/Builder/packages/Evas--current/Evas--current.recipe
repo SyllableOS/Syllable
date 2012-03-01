@@ -24,6 +24,8 @@ build-recommends
 configure-options
 ;	Needs new GCC:
 	--disable-cpu-sse3
+;	Allow switching libraries:
+	--disable-rpath
 ;	--enable-buffer
 	--disable-fb
 ;	--enable-directfb
