@@ -15,14 +15,18 @@ packages			evas-1.1.0
 needs
 	Eina >= 1.1.0
 	FreeType >= 2.3.9
-;	For examples:
-	ECore
 recommends
 	EET >= 1.5.0
+; For examples:
+build-recommends
+	Edje
 
 configure-options
 ;	Needs new GCC:
 	--disable-cpu-sse3
+;	--enable-buffer
+	--disable-fb
+;	--enable-directfb
 	--enable-software-sdl
 	--enable-build-examples
 

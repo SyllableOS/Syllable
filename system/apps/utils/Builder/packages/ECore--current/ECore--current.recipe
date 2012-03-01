@@ -25,6 +25,8 @@ recommends
 
 configure-options
 ;	--enable-thread-safety
+	--disable-ecore-fb
+;	--enable-ecore-directfb
 	--enable-ecore-sdl
 ;	--enable-ecore-evas
 	--enable-ecore-evas-software-sdl

@@ -2,3 +2,6 @@ authors				Kaj de Vos
 status				testing
 
 ;make-shared
+
+; Circumvents unimplemented CPU count:
+configure-options	--disable-posix-threads
