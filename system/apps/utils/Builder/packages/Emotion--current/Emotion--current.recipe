@@ -1,5 +1,5 @@
 authors				Kaj de Vos
-status				developing
+status				testing
 
 inherits			Enlightenment--current
 
@@ -20,16 +20,14 @@ needs
 ;	For test application:
 	Edje >= 1.0.0
 
-configure-env
-;	EDJE_EXTERNAL_CFLAGS "$EDJE_EXTERNAL_CFLAGS -I/resources/Edje/framework/headers/edje-1"
-	EMOTION_BIN_CFLAGS "$EMOTION_BIN_CFLAGS -I/resources/Edje/framework/headers/edje-1 -I/resources/lua/framework/headers"
-;	EDJE_EXTERNAL_LIBS "$EDJE_EXTERNAL_LIBS -L/resources/index/framework/libraries"
-	EMOTION_BIN_LIBS "$EMOTION_BIN_LIBS -L/resources/index/framework/libraries"
-;	EMOTION_BIN_LIBS "$EMOTION_BIN_LIBS -llua"
-_configure-options
-	--enable-xine
-	--enable-gstreamer
-	--enable-vlc
+;build-dir			.
+
+configure-options
+;	--enable-xine
+;	--enable-gstreamer
+;	--enable-vlc
+;	edje_cc bombs out:
+	--disable-emotion-test
 
 documentation
 	COPYING COPYING-PLAIN ChangeLog AUTHORS TODO

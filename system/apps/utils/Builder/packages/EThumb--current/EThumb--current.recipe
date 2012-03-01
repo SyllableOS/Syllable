@@ -1,5 +1,5 @@
 authors				Kaj de Vos
-status				developing
+status				testing
 
 inherits			Enlightenment--current
 
@@ -11,7 +11,7 @@ description
 	- Create thumbnails with a predefined frame (possibly an edje frame);
 	- Have an option to create fdo-like thumbnails;
 	- Have a client/server utility.
-licenses			LGPL-3
+licenses			LGPL-2.1
 
 home				trac.enlightenment.org/e/wiki/Ethumb
 locations			http://download.enlightenment.org/snapshots/
@@ -21,7 +21,7 @@ needs
 	Eina
 	ECore
 	Evas
-	Edje
+	Edje >= 1.0.0
 recommends
 	E-DBus
 	Emotion
@@ -29,7 +29,7 @@ recommends
 ;configure-options	--enable-emotion
 
 documentation
-	README COPYING NEWS ChangeLog AUTHORS
+	README ABOUT-NLS COPYING AUTHORS TODO
 ;	doc/
 ;	Empty:
-;	ABOUT-NLS
+;	NEWS ChangeLog

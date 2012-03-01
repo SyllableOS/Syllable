@@ -24,8 +24,17 @@ recommends
 	E-DBus
 	EFreet
 
+;build-dir			.
+
+_configure-options
+	--disable-elementary-config
+	--disable-doc
+	--disable-elementary-test
+;	--enable-build-examples
+
 documentation
-	README COPYING NEWS ChangeLog AUTHORS
+	README ABOUT-NLS COPYING AUTHORS TODO
 ;	doc/
 ;	Empty:
-;	ABOUT-NLS
+;	NEWS ChangeLog
+build-docs			INSTALL

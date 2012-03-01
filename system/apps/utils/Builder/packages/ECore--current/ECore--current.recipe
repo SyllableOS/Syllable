@@ -23,11 +23,11 @@ recommends
 	SDL
 	Evas
 
-_configure-options
+configure-options
 ;	--enable-thread-safety
 	--enable-ecore-sdl
 ;	--enable-ecore-evas
-;	--enable-ecore-evas-software-sdl
+	--enable-ecore-evas-software-sdl
 
 documentation
 	README ABOUT-NLS COPYING NEWS ChangeLog AUTHORS TODO

@@ -27,3 +27,5 @@ documentation
 ;	doc/
 ;	Empty:
 ;	ABOUT-NLS
+
+links				programs/ bin

@@ -17,21 +17,31 @@ packages			2011-11-28/enlightenment-0.16.999.65643
 
 needs
 	Eina
+	EET
 	ECore
 	Evas
+	Embryo
 	Edje
 	E-DBus
+	EFreet
+	FreeType > 2.1.7
 recommends
 	PM-Utilities
 	ALSA
 	ConnMan
+
+;build-dir			.
 
 _configure-options
 	--enable-mixer
 	--enable-connman
 
 documentation
-	README COPYING NEWS ChangeLog AUTHORS
+	README ABOUT-NLS COPYING AUTHORS TODO
 ;	doc/
 ;	Empty:
-;	ABOUT-NLS
+;	NEWS ChangeLog
+
+links
+	programs/	bin
+	data/		share

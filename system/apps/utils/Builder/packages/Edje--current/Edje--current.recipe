@@ -26,14 +26,14 @@ needs
 	Embryo
 	Lua 5.1
 
-configure-env
-	LUA_CFLAGS "$LUA_CFLAGS -I/resources/lua/framework/headers"
-	LUA_LIBS "$LUA_LIBS -L/resources/lua/framework/libraries"
-	LIBS "$LIBS -llua"
-;configure-options	--enable-fixed-point
+configure-options
+;	--enable-fixed-point
+	--enable-build-examples
 
 documentation
 	README COPYING NEWS ChangeLog AUTHORS
 ;	doc/
 ;	Empty:
 ;	ABOUT-NLS
+
+links				programs/ bin
