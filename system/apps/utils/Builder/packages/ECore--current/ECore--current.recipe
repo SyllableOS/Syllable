@@ -25,7 +25,7 @@ recommends
 
 configure-options
 ;	Allow switching libraries:
-	--disable-rpath
+;	--disable-rpath
 ;	--enable-thread-safety
 	--disable-ecore-fb
 ;	--enable-ecore-directfb
