@@ -24,9 +24,8 @@ recommends
 	E-DBus
 	EFreet
 
-;build-dir			.
-
 configure-options
+;	Don't work as advertised:
 	--disable-edbus
 	--disable-ethumb
 ;	--disable-elementary-config

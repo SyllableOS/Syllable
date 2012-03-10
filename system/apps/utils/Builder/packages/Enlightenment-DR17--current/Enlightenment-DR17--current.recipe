@@ -1,5 +1,8 @@
 authors				Kaj de Vos
-status				developing
+status				testing
+warnings
+	Hardcoded for installation in /resources/
+	Installation tries to set "root" permissions.
 
 inherits			Enlightenment--current
 
@@ -30,11 +33,14 @@ recommends
 	ALSA
 	ConnMan
 
-;build-dir			.
-
 _configure-options
 	--enable-mixer
 	--enable-connman
+
+post-install
+	mv /resources/Enlightenment-DR17/include/enlightenment/* /resources/Enlightenment-DR17/framework/headers/enlightenment/ &&
+	rmdir /resources/Enlightenment-DR17/include/enlightenment/ &&
+	rmdir /resources/Enlightenment-DR17/include/
 
 documentation
 	README ABOUT-NLS COPYING AUTHORS TODO
