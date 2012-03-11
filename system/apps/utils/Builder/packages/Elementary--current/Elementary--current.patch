@@ -1,0 +1,15 @@
+diff -ur Elementary-0.8.0.65643-original/src/lib/Elementary.h Elementary-0.8.0.65643/src/lib/Elementary.h
+--- Elementary-0.8.0.65643-original/src/lib/Elementary.h	2011-11-28 12:06:32.000000000 +0100
++++ Elementary-0.8.0.65643/src/lib/Elementary.h	2012-03-11 23:51:56.000000000 +0100
+@@ -312,9 +312,9 @@
+ #define ELM_UNIX
+ #undef ELM_WIN32
+ #undef ELM_WINCE
+-#define ELM_EDBUS
++#undef ELM_EDBUS
+ #define ELM_EFREET
+-#define ELM_ETHUMB
++#undef ELM_ETHUMB
+ #undef ELM_WEB
+ #undef ELM_EMAP
+ #undef ELM_DEBUG
