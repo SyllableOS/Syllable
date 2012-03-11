@@ -1,0 +1,12 @@
+diff -ur Eina-1.1.0-original/src/lib/eina_cpu.c Eina-1.1.0/src/lib/eina_cpu.c
+--- Eina-1.1.0-original/src/lib/eina_cpu.c	2011-04-05 10:41:54.000000000 +0200
++++ Eina-1.1.0/src/lib/eina_cpu.c	2012-03-11 23:38:06.000000000 +0100
+@@ -132,7 +132,7 @@
+ 
+ EAPI int eina_cpu_count(void)
+ {
+-#ifdef EFL_HAVE_THREADS
++#if defined (EFL_HAVE_THREADS) && ! defined (__SYLLABLE__)
+ 
+ # if   defined (_WIN32)
+    SYSTEM_INFO sysinfo;
