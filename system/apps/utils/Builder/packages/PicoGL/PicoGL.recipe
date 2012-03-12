@@ -21,6 +21,8 @@ locations
 ;	http://www.motorolafans.com/forums/attachments/a1600-general-chat/
 ;packages			25450d1280114488-opengl-libaray-for-18bpp-phones-picogl-src-20051108.tar.bz2.zip
 
+conflicts			Mesa3D
+
 build-dir			.
 
 configure-options
@@ -40,7 +42,9 @@ build-docs			INSTALL
 
 ; Try to make it a drop-in replacement for OpenGL (1.1):
 links
-	libPicoGL.so		lib/libGL.so
-	libPicoGLU.so	lib/libGLU.so
+	libPicoGL.so.0	lib/libGL.so.1
+	libPicoGLU.so.0	lib/libGLU.so.1
+	libGL.so.1		lib/libGL.so
+	libGLU.so.1		lib/libGLU.so
 	libPicoGL.a		lib/libGL.a
 	libPicoGLU.a	lib/libGLU.a

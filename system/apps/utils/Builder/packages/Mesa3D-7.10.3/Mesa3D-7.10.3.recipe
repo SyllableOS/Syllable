@@ -30,6 +30,7 @@ build-recommends
 	Bison
 ;	For 32 bits build on 64 bits system:
 	File
+conflicts			PicoGL
 
 build-dir			.
 
