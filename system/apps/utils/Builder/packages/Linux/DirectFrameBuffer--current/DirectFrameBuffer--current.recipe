@@ -1,0 +1,35 @@
+authors				Kaj de Vos
+status				testing
+
+needs
+	Linux >= 2.2
+	LinuxFusion
+	ZLib
+recommends
+;	SDL
+	LibraryVNCServer
+	LibrarySystemFS
+	FreeType >= 2.0.1
+	LibraryJPEG
+	LibraryPNG
+	GIFLibrary
+	LibraryMPEG3
+	TSLibrary
+
+configure-options
+;	--with-sysroot=
+;	--disable-fbdev
+;	We want SDL on DirectFB, not the other way around:
+;	--disable-sdl
+;	--disable-x11
+;	--enable-debug
+;	--enable-trace
+	--enable-multi
+	--enable-zlib
+	--enable-unique
+;	--with-tests
+;	--without-tools
+;	--with-smooth-scaling
+;	--with-dither-rgb16=
+;	--with-message-size=
+;	--enable-video4linux2

@@ -1,0 +1,30 @@
+authors				Kaj de Vos
+status				developing
+
+needs
+	ZLib
+	SDL
+recommends
+	LibraryVNCServer
+	LibrarySystemFS
+	FreeType >= 2.0.1
+	LibraryJPEG
+	LibraryPNG
+	GIFLibrary
+	LibraryMPEG3
+	TSLibrary
+
+configure-options
+;	--with-sysroot=
+	--enable-sdl
+;	--disable-x11
+;	--enable-debug
+;	--enable-trace
+;	--enable-multi
+	--enable-zlib
+	--enable-unique
+;	--with-tests
+;	--without-tools
+;	--with-smooth-scaling
+;	--with-dither-rgb16=
+;	--with-message-size=
