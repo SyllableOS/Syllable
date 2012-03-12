@@ -7,11 +7,15 @@ description
 
 modules
 	programming/languages/perl-5.10.0
+;	Enlightenment needs at least 2.67:
+;	programming/AutoConfigure-2.68
 ;	BinaryUtils 2.20 insists on 2.64:
-;	BinaryUtils 2.19.1 insists on 2.59:
-;	Versions higher than 2.61 cause warnings on SDL 1.2.13:
 ;	programming/AutoConfigure-2.64
+;	Versions higher than 2.61 cause warnings on SDL 1.2.13:
+;	BinaryUtils 2.19.1 insists on 2.59:
 	programming/AutoConfigure-2.59
+;	Enlightenment needs at least 1.11.1:
+;	programming/AutoMake-1.11.3
 ;	GrUB doesn't work with 1.10+:
 	programming/AutoMake-1.9.6
 ;	For ancient packages:
