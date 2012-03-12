@@ -27,7 +27,7 @@ configure-options
 	--enable-multi
 	--enable-zlib
 	--enable-unique
-;	--with-tests
+	--with-tests
 ;	--without-tools
 ;	--with-smooth-scaling
 ;	--with-dither-rgb16=

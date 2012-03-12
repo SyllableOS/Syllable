@@ -1,12 +1,15 @@
 authors				Kaj de Vos
 status				developing
 
+version				1.2.1
+locations			http://directfb.org/downloads/Core/DirectFB-1.2/
+packages			DirectFB-1.2.1
+
 needs
 	ZLib
 	SDL
 recommends
 	LibraryVNCServer
-	LibrarySystemFS
 	FreeType >= 2.0.1
 	LibraryJPEG
 	LibraryPNG
@@ -23,7 +26,7 @@ configure-options
 ;	--enable-multi
 	--enable-zlib
 	--enable-unique
-;	--with-tests
+	--with-tests
 ;	--without-tools
 ;	--with-smooth-scaling
 ;	--with-dither-rgb16=
