@@ -1,0 +1,39 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			GTK
+
+version				2.30.2
+headline			GTK+ low-level core library
+description
+	Provides data structure handling for C, portability wrappers and interfaces for such runtime functionality as an event loop, threads, dynamic loading, and an object system.
+
+; 2.30.3 is .tar.xz only!
+packages			glib/2.30/glib-2.30.2
+
+needs				LibraryFFI
+recommends
+;	Instead of included one:
+	PCRE
+	LibraryAttributes
+run-recommends
+	Shared-MIME-Info
+	DesktopFileUtilities
+build-needs			PackageConfigure >= 0.16
+build-recommends
+;	?:
+	GetText
+	GTK-Doc
+test-needs
+	D-Bus
+	DesktopFileUtilities
+
+_configure-options
+	--with-pcre=system
+	--enable-gtk-doc
+
+system-prefix-var	DESTDIR
+
+documentation		README COPYING NEWS ChangeLog AUTHORS
+build-docs			INSTALL
+internal-docs		HACKING README.commits
