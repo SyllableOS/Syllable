@@ -49,18 +49,22 @@ test-recommends
 ;	For SVG:
 	LibraryRSVG >= 2.15.0
 
-_configure-options
-	--disable-pthread
+configure-options
+;	--disable-valgrind
+;	--disable-pthread
+;	--disable-some-floating-point
 	--enable-directfb
-	--enable-gl
-	--enable-vg
+;	--enable-gl
+;	--enable-drm
+;	--enable-gallium
+;	--enable-vg
 ;	For Firefox:
-	--enable-tee
-	--disable-xlib
-	--disable-win32
-	--disable-png
-	--disable-svg
-	--enable-gtk-doc
+;	--enable-tee
+;	--disable-xlib
+;	--disable-win32
+;	--disable-png
+;	--disable-svg
+;	--enable-gtk-doc
 
 documentation
 	README COPYING COPYING-LGPL-2.1 COPYING-MPL-1.1 BUGS KNOWN_ISSUES NEWS ChangeLog AUTHORS BIBLIOGRAPHY TODO
