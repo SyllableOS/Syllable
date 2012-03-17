@@ -17,12 +17,9 @@ home				cairographics.org
 locations
 	http://cairographics.org/releases/
 	http://cairographics.org/snapshots/
-packages
-	cairo-1.11.4
-;	pixman-0.24.4
-;	pixman-0.25.2
+packages			cairo-1.11.4
 
-needs				PixMan >= 0.22.0
+needs				PixelManipulation >= 0.22.0
 build-needs			PackageConfigure >= 0.16
 recommends
 	LibraryPNG
@@ -30,13 +27,12 @@ recommends
 	ZLib
 	FreeType >= 2.1.9
 ;	With FreeType:
-	FontConfiguration
+	FontConfiguration >= 2.2.95
 	DirectFrameBuffer
 	Mesa3D
 	Skia
-	Glitz >= 0.4.4
-	XCB
 	XRender >= 0.6
+	XCB
 	Valgrind
 build-recommends	GTK-Doc
 test-recommends
