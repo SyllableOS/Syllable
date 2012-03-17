@@ -22,5 +22,5 @@ packages
 documentation
 	README COPYING TODO
 ;	Empty:
-	NEWS ChangeLog AUTHORS
+;	NEWS ChangeLog AUTHORS
 ;develop-docs		demos/
