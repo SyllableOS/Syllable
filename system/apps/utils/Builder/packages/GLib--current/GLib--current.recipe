@@ -3,13 +3,12 @@ status				testing
 
 inherits			GTK
 
-version				2.31.2
+version				2.31.22
 headline			GTK+ low-level core library
 description
 	Provides data structure handling for C, portability wrappers and interfaces for such runtime functionality as an event loop, threads, dynamic loading, and an object system.
 
-; Newer are .tar.xz only!
-packages			glib/2.31/glib-2.31.2
+packages			glib/2.31/glib-2.31.22
 
 needs				LibraryFFI
 recommends
