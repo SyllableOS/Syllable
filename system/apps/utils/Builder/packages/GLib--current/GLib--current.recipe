@@ -32,8 +32,6 @@ _configure-options
 	--with-pcre=system
 	--enable-gtk-doc
 
-system-prefix-var	DESTDIR
-
 documentation		README COPYING NEWS ChangeLog AUTHORS
 build-docs			INSTALL
 internal-docs		HACKING README.commits
