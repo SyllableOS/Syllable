@@ -1,0 +1,21 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			sourceforge
+
+version				2.1.0beta3
+headline			Stream-oriented XML parser library
+description
+	Expat is an XML parser library written in C. It is a stream-oriented parser in which an application registers handlers for things the parser might find in the XML document (like start tags).
+licenses			MIT
+
+home				www.libexpat.org
+packages			expat/expat-2.1.0-beta3
+
+system-prefix-var	DESTDIR
+
+documentation
+	README COPYING Changes
+	doc/*
+build-docs			CMake.README
+develop-docs		examples/
