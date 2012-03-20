@@ -1,0 +1,31 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			GTK
+
+version				1.29.5
+headline			GTK+ multilingual text rendering library
+description
+	Pango is a library for layout and rendering of text, with an emphasis on internationalization. Pango can be used anywhere that text layout is needed; however, most of the work on Pango so far has been done using the GTK+ widget toolkit as a test platform. Pango forms the core of text and font handling for GTK+-2.x.
+
+	Pango is designed to be modular; the core Pango layout can be used with different font backends. There are three basic backends, with multiple options for rendering with each.
+
+	As well as the low level layout rendering routines, Pango includes PangoLayout, a high level driver for laying out entire blocks of text, and routines to assist in editing internationalized text.
+licenses			LGPL other
+
+home				www.pango.org
+packages			pango/1.29/pango-1.29.5
+
+needs
+	GLib >= 2.31
+	(FreeType >= 2.0.9 & FontConfiguration) | Cairo | XFT >= 2
+recommends			LibraryThai
+build-needs			PackageConfigure
+build-recommends	GTK-Doc
+
+;configure-options	--enable-gtk-doc
+
+documentation
+	README README.win32 COPYING NEWS ChangeLog AUTHORS MAINTAINERS THANKS
+;	docs/
+internal-docs		HACKING
