@@ -3,39 +3,31 @@ status				testing
 
 inherits			GTK
 
-version				3.2.4
+version				2.24.10
 headline			Multi-platform Graphical User Interface toolkit
 description
 	GTK+ is a multi-platform toolkit for creating graphical user interfaces. Offering a complete set of widgets, GTK+ is suitable for projects ranging from small one-off projects to complete application suites.
 
-packages			gtk+/3.2/gtk+-3.2.4
+packages			gtk+/2.24/gtk+-2.24.10
 
 needs
-	GLib >= 2.29.14
-	AccessibilityToolKit >= 2.1.5
-	Pango >= 1.29
-	Cairo >= 1.10
-	GDK-PixelBuffer >= 2.23.5
-;	For GTK >= 3.3.20:
-;	GLib >= 2.31.20
-;	GDK-PixelBuffer >= 2.52.2
+	GLib >= 2.27.3
+	AccessibilityToolKit >= 1.29.2
+	Pango >= 1.20
+	Cairo >= 1.6
+	GDK-PixelBuffer >= 2.21
 recommends
-	GObject-Introspection >= 0.10.1
-	ColorDaemon
+	GObject-Introspection >= 0.9.3
 	CUPS
 build-needs			PackageConfigure
 build-recommends	GTK-Doc
 
 _configure-options
+	--with-gdktarget=directfb
 	--sysconfdir=/etc
-;	--disable-packagekit
 ;	--enable-gtk-doc
 
-documentation
-	README COPYING NEWS AUTHORS
-;	docs/
-;	Empty:
-	ChangeLog
+documentation		README COPYING NEWS ChangeLog AUTHORS
 build-docs			INSTALL README.win32
 ;develop-docs		examples/ demos/
 internal-docs		HACKING README.commits
