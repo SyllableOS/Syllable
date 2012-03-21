@@ -1,0 +1,32 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			GTK
+
+version				2.24.1
+headline			GTK+ image loading and pixel buffer library
+description
+	The gdk-pixbuf library is a toolkit for image loading and pixel buffer manipulation. It is used by gtk+-2 and gtk+-3 to load and manipulate images.
+
+packages			gdk-pixbuf/2.24/gdk-pixbuf-2.24.1
+
+needs
+	GLib >= 2.27.2
+;	For gdk-pixbuf >= 2.25:
+;	GLib >= 2.31
+recommends
+	LibraryPNG
+	LibraryJPEG
+	JasPer
+	LibraryTIFF
+build-needs			PackageConfigure
+build-recommends	GTK-Doc
+
+_configure-options
+	--with-libjasper
+;	--enable-gtk-doc
+
+documentation
+	ABOUT-NLS COPYING NEWS AUTHORS
+;	Empty:
+	README
