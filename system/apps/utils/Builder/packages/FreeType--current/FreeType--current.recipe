@@ -1,0 +1,32 @@
+authors				Kaj de Vos
+status				testing
+
+;inherits			sourceforge
+
+version				2.4.9
+headline			A free, high-quality, and portable font engine
+description
+	FreeType 2 is a software font engine that is designed to be small, efficient, highly customizable, and portable while capable of producing high-quality output (glyph images). It can be used in graphics libraries, display servers, font conversion tools, text image generation tools, and many other products as well.
+
+	Note that FreeType 2 is a font service and doesn't provide APIs to perform higher-level features like text layout or graphics processing (e.g., colored text rendering, ‘hollowing’, etc.). However, it greatly simplifies these tasks by providing a simple, easy to use, and uniform interface to access the content of font files.
+licenses			GPL-2 other
+
+home				www.freetype.org
+packages			freetype/freetype-2.4.9
+locations			http://download.savannah.gnu.org/releases/
+
+;build-recommends	Python
+
+_patch
+;	Enable patented LCD-optimised rendering (subpixel hinting):
+	sed -i -r -e 's:.*(#.*SUBPIX.*) .*:\1:' include/freetype/config/ftoption.h
+
+; Needs Python:
+;make-targets		refdoc
+
+system-prefix-var	DESTDIR
+
+documentation
+	README ChangeLog
+	docs/*
+internal-docs		README.git
