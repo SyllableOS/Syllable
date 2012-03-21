@@ -22,9 +22,9 @@ recommends
 build-needs			PackageConfigure
 build-recommends	GTK-Doc
 
-_configure-options
+configure-options
 	--with-gdktarget=directfb
-	--sysconfdir=/etc
+;	--sysconfdir=/etc
 ;	--enable-gtk-doc
 
 documentation		README COPYING NEWS ChangeLog AUTHORS
