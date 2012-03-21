@@ -2,8 +2,9 @@ authors
 	Andrew Kennan
 	Kaj de Vos
 status				testing
+notes				Unstable 1.11.4 doesn't build on Desktop
 
-version				1.11.4
+version				1.10.2
 headline			Multi-platform 2D graphics library
 description
 	Cairo is a 2D graphics library with support for multiple output devices. Currently supported output targets include the X Window System, Quartz, Win32, image buffers, PostScript, PDF, and SVG file output. Experimental backends include OpenGL, XCB, BeOS, OS/2, and DirectFB.
@@ -17,7 +18,7 @@ home				cairographics.org
 locations
 	http://cairographics.org/releases/
 	http://cairographics.org/snapshots/
-packages			cairo-1.11.4
+packages			cairo-1.10.2
 
 needs				PixelManipulation >= 0.22.0
 build-needs			PackageConfigure >= 0.16
@@ -63,7 +64,9 @@ configure-options
 ;	--enable-gtk-doc
 
 documentation
-	README COPYING COPYING-LGPL-2.1 COPYING-MPL-1.1 BUGS KNOWN_ISSUES NEWS ChangeLog AUTHORS BIBLIOGRAPHY TODO
+	README COPYING COPYING-LGPL-2.1 COPYING-MPL-1.1 BUGS KNOWN_ISSUES NEWS ChangeLog AUTHORS BIBLIOGRAPHY
+;	For Cairo 1.11.4:
+;	TODO
 ;	doc/
 develop-docs		PORTING_GUIDE
 build-docs			INSTALL README.win32
