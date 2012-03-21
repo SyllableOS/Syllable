@@ -1,14 +1,15 @@
 authors				Kaj de Vos
 status				testing
+notes				2.31 series doesn't build on Desktop
 
 inherits			GTK
 
-version				2.31.22
+version				2.30.3
 headline			GTK+ low-level core library
 description
 	Provides data structure handling for C, portability wrappers and interfaces for such runtime functionality as an event loop, threads, dynamic loading, and an object system.
 
-packages			glib/2.31/glib-2.31.22
+packages			glib/2.30/glib-2.30.3
 
 needs				LibraryFFI
 recommends
