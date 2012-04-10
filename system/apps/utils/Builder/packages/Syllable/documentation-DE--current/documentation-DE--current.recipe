@@ -4,8 +4,8 @@ inherits			documentation--current
 
 locations			http://de.syllable.org/
 
-documentation		Install.txt Welcome.html FAQ.html
+documentation		Installation.html Welcome.html FAQ.html
 move-files
-	documentation/Install.txt	/documentation/Install-DE.txt
-	documentation/Welcome.html	/documentation/Welcome-DE.html
-	documentation/FAQ.html		/documentation/FAQ-DE.html
+	documentation/Installation.html	/documentation/Installation-DE.html
+	documentation/Welcome.html		/documentation/Welcome-DE.html
+	documentation/FAQ.html			/documentation/FAQ-DE.html

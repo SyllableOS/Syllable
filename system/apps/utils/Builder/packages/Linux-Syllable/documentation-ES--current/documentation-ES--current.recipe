@@ -4,7 +4,7 @@ inherits			documentation--current
 
 locations			http://ar.syllable.org/
 
-documentation		Changes.txt Copyrights.html
+documentation		Changes.html Copyrights.html
 move-files
-	documentation/Changes.txt		/documentation/Changes-ES.txt
+	documentation/Changes.html		/documentation/Changes-ES.html
 	documentation/Copyrights.html	/documentation/Copyrights-ES.html
