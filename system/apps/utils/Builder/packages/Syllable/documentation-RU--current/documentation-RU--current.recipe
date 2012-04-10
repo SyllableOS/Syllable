@@ -6,6 +6,6 @@ locations			http://ru.syllable.org/
 
 documentation		Installation.html Welcome.html FAQ.html
 move-files
-	documentation/Installation.html	/documentation/Installation-RU.txt
+	documentation/Installation.html	/documentation/Installation-RU.html
 	documentation/Welcome.html		/documentation/Welcome-RU.html
 	documentation/FAQ.html			/documentation/FAQ-RU.html
