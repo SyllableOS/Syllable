@@ -17,6 +17,8 @@ Removed obsolete view_reply port from os::View.
 
 Implemented copy & paste in IconDirView context menu
 
+---- 0.6.7 Built -------------------------------------------------------------------
+
 * May 29, 2009, Anthony Morphett *
 
 Keyboard navigation improvements for compound views such as os::Spinner, DropdownMenu

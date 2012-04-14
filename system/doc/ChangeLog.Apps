@@ -7,6 +7,8 @@ Fixed compilation with the reorganised system headers. Patches by "Chamel".
 
 Bugfix for aedit: window blank when size is exactly 600x375.
 
+---- 0.6.7 Built -------------------------------------------------------------------
+
 * October 29, 2009, Kaj de Vos *
 
 Got the OpenSSH server to work, after only seven years or so.

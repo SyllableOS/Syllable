@@ -28,6 +28,8 @@ The ELF loader recognises a special code @bindir@ in the library search path to 
 relative to the location of the program executable. Renamed this to @program-folder@
 for more clarity and consistency with the system restructuring.
 
+---- 0.6.7 Built -------------------------------------------------------------------
+
 * June 5, 2009, Kristian Van Der Vliet *
 
 Implemented O_DIRECT support in AFS

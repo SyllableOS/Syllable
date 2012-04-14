@@ -270,6 +270,8 @@ named "Applications" and so will show typographically appropriately.
 Added /resources/indexes/applications/ to the registrar's search path,
 so apps from there will appear in the Dock menu.
 
+---- 0.6.7 Built -------------------------------------------------------------------
+
 * December 30, 2009, Kaj de Vos *
 
 Implemented an extra symlinks index on an optional "applications" subdirectory
