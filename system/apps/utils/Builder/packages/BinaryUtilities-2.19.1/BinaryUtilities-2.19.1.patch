@@ -69,7 +69,7 @@ diff -ru BinUtils-2.19.1-original/ld/Makefile.am BinUtils-2.19.1/ld/Makefile.am
    $(ELF_DEPS) $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
  	${GENSCRIPTS} elf_i386_be "$(tdir_elf_i386_be)"
 +eelf_i386_syllable.c: $(srcdir)/emulparams/elf_i386_syllable.sh \
-+  $(ELF_DEPS) $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
++  $(srcdir)/emultempl/elf32.em $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
 +	${GENSCRIPTS} elf_i386_syllable "$(tdir_elf_i386_syllable)"
  eelf_i386_chaos.c: $(srcdir)/emulparams/elf_i386_chaos.sh \
    $(ELF_DEPS) $(srcdir)/scripttempl/elf_chaos.sc ${GEN_DEPENDS}
