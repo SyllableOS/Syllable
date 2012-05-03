@@ -71,7 +71,7 @@ modules
 	other/config/etc
 
 ;	For rescopy:
-	apps/gnu/BinaryUtilities-2.19.1-objcopy
+	apps/gnu/BinaryUtilities-2.19-objcopy
 
 	system libs/NCurses-5.7
 	system libs/ReadLine-6.0
