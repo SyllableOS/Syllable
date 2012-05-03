@@ -1,5 +1,6 @@
 authors				Kaj de Vos
 status				broken
+warnings			Builds but reboots machine at runtime.
 
 links
 ;	Optimise wasteful duplicates:

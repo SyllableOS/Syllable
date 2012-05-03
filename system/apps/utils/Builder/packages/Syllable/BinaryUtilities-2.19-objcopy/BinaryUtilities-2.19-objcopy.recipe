@@ -1,0 +1,20 @@
+authors				Kaj de Vos
+status				testing
+
+delete-files
+	programs/a*
+	programs/c*
+	programs/g*
+	programs/l*
+	programs/n*
+	programs/objdump
+	programs/r*
+	programs/s*
+	framework/headers/
+	framework/libraries/*.a
+	framework/libraries/*.la
+	framework/libraries/libopcodes*
+	i586-pc-syllable/
+	data/
+	tasks/
+	manuals/

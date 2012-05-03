@@ -1,8 +1,9 @@
 authors				Kaj de Vos
+status				testing
 
 inherits			BinaryUtilities-2.19
 
-install-tree		programs
-install				true
-install-files		binutils/objcopy programs/
+;install-tree		programs
+;install				true
+;install-files		binutils/objcopy programs/
 links
