@@ -13,7 +13,9 @@ licenses			GPL
 home				www.gnu.org/software/libtool/
 packages			libtool/libtool-1.5.22
 
+build-needs			libtool
 patch				autoreconf
+no-datarootdir
 
 build-dir			.
 

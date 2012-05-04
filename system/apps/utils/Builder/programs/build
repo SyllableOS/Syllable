@@ -1,7 +1,7 @@
 #! /usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.11.20
+# Version 0.11.21
 # Copyright (c) 2002-2012 Kaj de Vos
 # License: GPL 3 or any later version
 
@@ -330,8 +330,8 @@ def patchModule target
 						not recipe['make-shared'] or
 						begin
 							@log.header 'Enabling shared libraries'
-							action 'cp /resources/libtool/share/libtool/ltmain.sh .' and
-#								action 'aclocal -I /resources/index/data/aclocal' and
+							action 'cp /resources/index/data/libtool/ltmain.sh .' and
+#								action 'aclocal -I /resources/index/framework/AutoConfigure' and
 #								action 'libtoolize --force' and
 #								action 'automake' and
 #								action 'autoconf'
@@ -2263,7 +2263,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when 'version', '-v', '--version'
-	puts 'Syllable Build System 0.11.20',
+	puts 'Syllable Build System 0.11.21',
 		'Copyright (c) 2002-2012 Kaj de Vos',
 		'License: GPL 3 or any later version'
 when 'help', '?', '-?', '-h', '-help', '--help'
