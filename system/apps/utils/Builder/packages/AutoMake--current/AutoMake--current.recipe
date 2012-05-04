@@ -1,8 +1,10 @@
 authors				Kaj de Vos
+status				testing
 warnings			Hardwires Perl location, so the primary Perl link should be a standard one.
 
 inherits			gnu
 
+version				1.12
 headline			Generates Makefiles for AutoConfigure
 description
 	Automake is a tool for automatically generating `Makefile.in' files compliant with the GNU Coding Standards. Automake requires the use of Autoconf.
@@ -11,7 +13,7 @@ licenses			GPL
 home
 	www.gnu.org/software/automake/
 ;	sources.redhat.com/automake/
-packages			automake/automake-1.9.6
+packages			automake/automake-1.12
 
 build-needs			AutoConfigure >= 2.54
 run-needs
