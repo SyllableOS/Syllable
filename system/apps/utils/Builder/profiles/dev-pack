@@ -12,7 +12,7 @@ modules
 	programming/languages/GNU-CompilerCollection-4.1.2
 	programming/languages/nasm-0.98.39
 	programming/omake-0.9.8.5
-	programming/make-3.81
+	programming/Make-3.82
 	programming/M4-1.4.16
 	programming/libtool-1.5.22
 	programming/gdb-6.4
