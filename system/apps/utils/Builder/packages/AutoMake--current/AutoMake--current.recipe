@@ -22,6 +22,7 @@ run-needs
 
 system-prefix-var	DESTDIR
 
-documentation		README COPYING NEWS ChangeLog TODO AUTHORS THANKS
+documentation		README COPYING NEWS ChangeLog AUTHORS THANKS
+internal-docs		HACKING
 
 links				../framework/AutoConfigure/ data/aclocal
