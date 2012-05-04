@@ -1,7 +1,7 @@
 authors				Kaj de Vos
 status				testing
 
-;make-shared
+make-shared
 
 ; Circumvents unimplemented CPU count, but doesn't support rest of Enlightenment stack:
 ;configure-options	--disable-posix-threads

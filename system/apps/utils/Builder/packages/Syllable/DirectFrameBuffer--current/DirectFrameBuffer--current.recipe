@@ -1,5 +1,5 @@
 authors				Kaj de Vos
-status				developing
+status				testing
 
 version				1.2.1
 locations			http://directfb.org/downloads/Core/DirectFB-1.2/
@@ -16,6 +16,8 @@ recommends
 	GIFLibrary
 	LibraryMPEG3
 	TSLibrary
+
+make-shared
 
 configure-options
 ;	--with-sysroot=

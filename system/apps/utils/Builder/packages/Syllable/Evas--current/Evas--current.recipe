@@ -8,7 +8,7 @@ needs
 ;	For examples:
 	ECore
 
-;make-shared
+make-shared
 
 configure-options
 ;	Needs new GCC:
