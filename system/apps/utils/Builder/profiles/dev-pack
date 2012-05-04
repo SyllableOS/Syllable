@@ -14,7 +14,6 @@ modules
 	programming/omake-0.9.8.5
 	programming/Make-3.82
 	programming/M4-1.4.16
-	programming/libtool-1.5.22
 	programming/gdb-6.4
 	file/versioning/cvs-1.12.11
 	programming/Builder-0.7.63
