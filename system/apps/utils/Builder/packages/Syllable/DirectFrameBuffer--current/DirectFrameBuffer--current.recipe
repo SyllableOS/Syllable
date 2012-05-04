@@ -8,6 +8,9 @@ packages			DirectFB-1.2.1
 needs
 	ZLib
 	SDL
+build-needs
+;	AutoConfigure >= 2.52
+	AutoConfigure 2.61
 recommends
 	LibraryVNCServer
 	FreeType >= 2.0.1
