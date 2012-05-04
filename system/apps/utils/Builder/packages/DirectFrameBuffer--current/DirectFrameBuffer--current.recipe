@@ -2,7 +2,7 @@ authors				Kaj de Vos
 status				testing
 warnings			Builds upon FreeType and others in the host system.
 
-version				1.4.15
+version				1.4.16
 headline			Frame buffer graphics library
 description
 	DirectFB is a graphics library which was designed with embedded systems in mind. It offers maximum hardware accelerated performance at a minimum of resource usage and overhead.
@@ -12,7 +12,7 @@ licenses			LGPL-2+
 
 home				www.directfb.org
 locations			http://directfb.org/downloads/Core/DirectFB-1.4/
-packages			DirectFB-1.4.15
+packages			DirectFB-1.4.16
 
 build-recommends	PackageConfigure >= 0.9.0
 
