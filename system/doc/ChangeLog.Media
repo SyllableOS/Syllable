@@ -1,6 +1,7 @@
 * May 5 2012 Anthony Morphett *
 
 Save the master volume setting between reboots
+Implemented basic automatic selection of default input/output devices
 
 ---- 0.6.7 Built -------------------------------------------------------------------
 

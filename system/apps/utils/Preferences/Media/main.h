@@ -28,13 +28,22 @@
 class PrefsMediaApp:public os::Application
 {
       public:
-	PrefsMediaApp();
+	PrefsMediaApp( int argc, char* argv[] );
 	~PrefsMediaApp();
 	bool OkToQuit();
+	
+	thread_id Run( void );
+	
+	void SetupDefaultDevices();
+	
       private:
 	MainWindow * pcWindow;
 	// Media manager
 	os::MediaManager * m_pcManager;
+	
+	bool m_bConsoleMode;
+	bool m_bShowHelp;
+	bool m_bSetDefaultDevices;
 };
 
 #endif
