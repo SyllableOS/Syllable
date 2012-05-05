@@ -39,6 +39,8 @@ MediaServer::MediaServer()
 	m_zDefaultVideoOutput = "Screen Video Output";
 	m_zStartupSound = "startup.wav";
 	
+	m_nMasterVolume = 100;
+	
 	
 	/* Load Settings */
 	try
@@ -52,6 +54,7 @@ MediaServer::MediaServer()
 			m_zDefaultVideoOutput = pcSettings->GetString( "default_video_output", "Video Overlay Output" );
 			m_zStartupSound = pcSettings->GetString( "startup_sound", "startup.wav" );
 			m_nDefaultDsp = pcSettings->GetInt32( "default_dsp", 0 );
+			m_nMasterVolume = pcSettings->GetInt32( "master_volume", 100 );
 		}
 		delete( pcSettings );
 	} catch( ... )
@@ -81,8 +84,6 @@ MediaServer::MediaServer()
 	/* Spawn flush thread */
 	m_hThread = spawn_thread( "media_server_flush", (void*)media_flush_entry, DISPLAY_PRIORITY, 0, this );
 	resume_thread( m_hThread );
-	
-	m_nMasterVolume = 100;
 	
 	/* Set defaults for controls window */
 	m_cControlsFrame = os::Rect( 50, 50, 500, 350 );
@@ -124,6 +125,7 @@ void MediaServer::SaveSettings()
 	pcSettings->SetString( "default_video_output", m_zDefaultVideoOutput );
 	pcSettings->SetString( "startup_sound", m_zStartupSound );
 	pcSettings->SetInt32( "default_dsp", m_nDefaultDsp );
+	pcSettings->SetInt32( "master_volume", m_nMasterVolume );
 	pcSettings->Save();
 	delete( pcSettings );
 }

@@ -219,26 +219,11 @@ void BarView::SetStreamLabel( int nNum, String zLabel )
 void BarView::SetStreamVolume( int nNum, int nVolume )
 {
 	m_anSliderPos[nNum] = nVolume;
-	m_anNumLighted[nNum] = int((float)m_anSliderPos[nNum] * float(NUM_SQUARES) + 0.5f);
+	m_anNumLighted[nNum] = int(((float)m_anSliderPos[nNum] * float(NUM_SQUARES) + 0.5f)/100);
 	os::Rect cRect = GetBarRect( NUM_SQUARES, nNum );
 	cRect.left = 0;
 	cRect.right = GetBounds().right;
 	Invalidate( cRect );
 	Flush();
 } 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
