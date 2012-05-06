@@ -17,7 +17,7 @@ modules
 	programming/gdb-6.4
 	file/versioning/cvs-1.12.11
 	programming/Builder-0.7.63
-	programming/pkg-config-0.22
+	programming/PackageConfigure--current
 	programming/indent-2.2.9
 
 ;	From Syllable CVS:
