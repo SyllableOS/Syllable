@@ -21,7 +21,7 @@ modules
 ;	For ancient packages:
 ;	programming/autoconf-2.13
 ;	programming/automake-1.4-p6
-	programming/libtool-1.5.22
+	programming/LibraryTool-2.2.6
 	programming/net-ssleay-1.30
 ;	Linux links this dynamically into XML-Parser:
 ;	file/expat-2.0.0
