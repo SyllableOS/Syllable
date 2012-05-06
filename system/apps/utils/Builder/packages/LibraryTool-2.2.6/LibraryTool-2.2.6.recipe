@@ -11,14 +11,13 @@ description
 licenses			GPL
 
 home				www.gnu.org/software/libtool/
-packages			libtool/libtool-1.5.22
-
-build-needs			libtool
-patch				autoreconf
-no-datarootdir
+; Sigh, 2.2.6 has disappeared:
+packages			libtool/libtool-2.2.6a
 
 build-dir			.
 
-documentation		README COPYING NEWS ChangeLog AUTHORS THANKS TODO
+documentation
+	README COPYING NEWS ChangeLog AUTHORS THANKS TODO
+;	doc/
 
 links				../framework/AutoConfigure/ data/aclocal

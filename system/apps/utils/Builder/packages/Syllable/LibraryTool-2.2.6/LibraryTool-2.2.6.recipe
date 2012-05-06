@@ -1,0 +1,8 @@
+authors
+	Kristian Van Der Vliet
+	Kaj de Vos
+	Stefano D'Angelo
+status				testing
+
+build-needs			LibraryTool
+patch				autoreconf

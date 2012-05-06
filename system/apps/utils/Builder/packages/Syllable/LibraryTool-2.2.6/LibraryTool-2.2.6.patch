@@ -1,0 +1,46 @@
+diff -ru libtool-2.2.6a-original/libltdl/m4/libtool.m4 libtool-2.2.6a/libltdl/m4/libtool.m4
+--- libtool-2.2.6a-original/libltdl/m4/libtool.m4	2008-09-05 13:54:41.000000000 +0200
++++ libtool-2.2.6a/libltdl/m4/libtool.m4	2011-04-04 00:12:20.000000000 +0200
+@@ -2597,6 +2597,18 @@
+   need_version=yes
+   ;;
+ 
++syllable*)
++  version_type=linux
++  need_lib_prefix=no
++  need_version=no
++  library_names_spec='${libname}${release}${shared_ext}$versuffix ${libname}${release}${shared_ext}${major} ${libname}${shared_ext}'
++  soname_spec='${libname}${release}${shared_ext}$major'
++  shlibpath_var=LIBRARY_PATH
++  runpath_var=DLL_PATH
++  shlibpath_overrides_runpath=no
++  dynamic_linker="Syllable"
++  ;;
++
+ sysv4 | sysv4.3*)
+   version_type=linux
+   library_names_spec='${libname}${release}${shared_ext}$versuffix ${libname}${release}${shared_ext}$major $libname${shared_ext}'
+@@ -3114,6 +3126,10 @@
+   lt_cv_deplibs_check_method=pass_all
+   ;;
+ 
++syllable*)
++  lt_cv_deplibs_check_method=pass_all
++  ;;
++
+ sysv5* | sco3.2v5* | sco5v6* | unixware* | OpenUNIX* | sysv4*uw2*)
+   lt_cv_deplibs_check_method=pass_all
+   ;;
+diff -ru libtool-2.2.6a-original/libltdl/m4/ltdl.m4 libtool-2.2.6a/libltdl/m4/ltdl.m4
+--- libtool-2.2.6a-original/libltdl/m4/ltdl.m4	2008-09-05 14:11:53.000000000 +0200
++++ libtool-2.2.6a/libltdl/m4/ltdl.m4	2011-04-04 00:14:12.000000000 +0200
+@@ -521,6 +521,9 @@
+   solaris*)
+     lt_cv_sys_dlopen_deplibs=yes
+     ;;
++  syllable*)
++    lt_cv_sys_dlopen_deplibs=yes
++    ;;
+   sysv5* | sco3.2v5* | sco5v6* | unixware* | OpenUNIX* | sysv4*uw2*)
+     libltdl_cv_sys_dlopen_deplibs=yes
+     ;;
