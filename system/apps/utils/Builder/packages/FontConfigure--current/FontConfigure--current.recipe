@@ -1,0 +1,38 @@
+authors
+	Andrew Kennan
+	Kaj de Vos
+status				testing
+
+version				2.9.0
+headline			Font configuration and customization library
+description
+	Fontconfig is a library designed to provide system-wide font configuration, customisation and application access. Fontconfig is designed to locate fonts within the system and select them according to requirements specified by applications.
+
+	Fontconfig is not a rasterization library, nor does it impose a particular rasterization library on the application. This is left to FreeType or other rendering mechanisms. Fontconfig does not depend on the X Window System in any fashion, so that printer only applications do not have such dependencies.
+licenses			MIT
+
+home				fontconfig.org
+locations			http://fontconfig.org/release/
+packages			fontconfig-2.9.0
+
+needs
+	Expat | LibraryXML2
+	FreeType
+
+no-sysconfdir
+configure-options
+;	--enable-libxml2
+	--sysconfdir=/etc
+;	--with-confdir=/etc/fonts
+	--with-default-fonts=/system/fonts
+;	--without-add-fonts
+;	--localstatedir=/var
+;	--with-cache-dir=/var/cache/fontconfig
+	--disable-docs
+
+documentation
+	README COPYING ChangeLog AUTHORS
+;	doc/
+;	Empty:
+	NEWS
+build-docs			INSTALL

@@ -1,0 +1,16 @@
+authors
+	Andrew Kennan
+	Kaj de Vos
+status				developing
+notes				Unstable 1.11.4 doesn't build
+
+build-needs
+;	AutoConfigure >= 2.59
+	AutoConfigure 2.67
+;	AutoMake
+	AutoMake 1.11.1
+	LibraryTool
+;	LibraryTool 2.2.6b
+	PackageConfigure >= 0.16
+; ltmain.sh is in build/!
+make-shared

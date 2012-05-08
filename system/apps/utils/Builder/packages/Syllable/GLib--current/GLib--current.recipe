@@ -1,0 +1,13 @@
+authors				Kaj de Vos
+status				developing
+notes				2.31 series doesn't build
+
+build-needs
+;	AutoConfigure >= 2.62
+	AutoConfigure 2.68
+;	AutoMake
+	AutoMake 1.11.3
+	LibraryTool
+;	LibraryTool 2.4.2
+	PackageConfigure >= 0.16
+make-shared

@@ -1,0 +1,12 @@
+authors				Kaj de Vos
+status				developing
+
+build-needs
+;	AutoConfigure >= 2.62
+	AutoConfigure 2.68
+;	AutoMake
+	AutoMake 1.11.3
+	LibraryTool
+;	LibraryTool 2.4.2
+	PackageConfigure
+make-shared

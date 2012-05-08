@@ -1,0 +1,14 @@
+authors
+	Andrew Kennan
+	Kaj de Vos
+status				developing
+
+build-needs
+;	AutoConfigure
+	AutoConfigure 2.68
+;	AutoMake
+	AutoMake 1.11.1
+	LibraryTool
+;	LibraryTool 2.4
+	PackageConfigure
+make-shared

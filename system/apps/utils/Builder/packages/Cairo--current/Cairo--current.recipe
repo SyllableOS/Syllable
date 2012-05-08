@@ -2,7 +2,6 @@ authors
 	Andrew Kennan
 	Kaj de Vos
 status				testing
-notes				Unstable 1.11.4 doesn't build on Desktop
 
 version				1.10.2
 headline			Multi-platform 2D graphics library
@@ -46,11 +45,11 @@ test-recommends
 ;	For SVG:
 	LibraryRSVG >= 2.15.0
 
-configure-options
+_configure-options
 ;	--disable-valgrind
 ;	--disable-pthread
 ;	--disable-some-floating-point
-	--enable-directfb
+;	--enable-directfb
 ;	--enable-gl
 ;	--enable-drm
 ;	--enable-gallium
