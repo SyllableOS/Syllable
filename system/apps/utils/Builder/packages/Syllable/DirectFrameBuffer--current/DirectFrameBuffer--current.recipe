@@ -1,6 +1,8 @@
 authors				Kaj de Vos
-status				testing
+status				broken
+notes				Compiles but doesn't run
 
+; Last version that compiles:
 version				1.2.1
 locations			http://directfb.org/downloads/Core/DirectFB-1.2/
 packages			DirectFB-1.2.1
@@ -11,6 +13,10 @@ needs
 build-needs
 ;	AutoConfigure >= 2.52
 	AutoConfigure 2.61
+;	AutoMake
+	AutoMake 1.10.1
+	LibraryTool
+	PackageConfigure
 recommends
 	LibraryVNCServer
 	FreeType >= 2.0.1
