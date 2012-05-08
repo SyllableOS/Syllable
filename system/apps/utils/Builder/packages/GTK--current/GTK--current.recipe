@@ -26,8 +26,12 @@ recommends
 build-needs			PackageConfigure
 build-recommends	GTK-Doc
 
-_configure-options
+no-sysconfdir
+configure-options
 	--sysconfdir=/etc
+;	--enable-gtk2-dependency
+;	--enable-wayland-backend
+;	--enable-broadway-backend
 ;	--disable-packagekit
 ;	--enable-gtk-doc
 
