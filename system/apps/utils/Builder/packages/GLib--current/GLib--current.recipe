@@ -1,6 +1,5 @@
 authors				Kaj de Vos
 status				testing
-notes				2.31 series doesn't build on Desktop
 
 inherits			GTK
 
