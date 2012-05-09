@@ -58,6 +58,13 @@ then
 	/resources/index/framework/executables/inetd &
 fi
 
+# Set default media devices, if no settings exist yet
+if [ ! -e /system/config/mediaserver ]
+then
+	echo Setting default media devices
+	"/applications/preferences/Audio & Video" --setupdefaults &
+fi
+
 # Packages that require initalisation can include tasks/setup/ and tasks/start/
 # subdirectories, which should contain the init script(s). E.g. Apache would have
 # start/apache which would call apachectl, OpenSSH would have start/sshd which would
