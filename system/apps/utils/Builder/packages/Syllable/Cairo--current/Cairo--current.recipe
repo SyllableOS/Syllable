@@ -13,3 +13,20 @@ build-needs
 ;	LibraryTool 2.2.6b
 	PackageConfigure >= 0.16
 make-shared
+
+configure-options
+;	--disable-valgrind
+;	--disable-pthread
+;	--disable-some-floating-point
+	--enable-directfb
+;	--enable-gl
+;	--enable-drm
+;	--enable-gallium
+;	--enable-vg
+;	For Firefox:
+;	--enable-tee
+;	--disable-xlib
+;	--disable-win32
+;	--disable-png
+;	--disable-svg
+;	--enable-gtk-doc
