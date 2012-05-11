@@ -1,5 +1,5 @@
 authors				Kaj de Vos
-status				developing
+status				testing
 notes
 	Doesn't support thread priorities yet.
 	2.31 series doesn't build.
@@ -19,3 +19,5 @@ _configure-options
 	--with-threads=posix
 ;	--with-pcre=system
 ;	--enable-gtk-doc
+
+make-env			DLL_PATH "$DLL_PATH:$PWD/gthread/.libs:$PWD/glib/.libs"
