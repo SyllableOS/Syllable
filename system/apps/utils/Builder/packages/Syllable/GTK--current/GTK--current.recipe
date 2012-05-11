@@ -9,7 +9,6 @@ build-needs
 	LibraryTool
 ;	LibraryTool 2.4.2
 	PackageConfigure
-; ltmain.sh is in build-aux/!
 make-shared
 
 configure-options

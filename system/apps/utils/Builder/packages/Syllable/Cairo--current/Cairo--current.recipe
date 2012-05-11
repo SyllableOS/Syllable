@@ -12,5 +12,4 @@ build-needs
 	LibraryTool
 ;	LibraryTool 2.2.6b
 	PackageConfigure >= 0.16
-; ltmain.sh is in build/!
 make-shared
