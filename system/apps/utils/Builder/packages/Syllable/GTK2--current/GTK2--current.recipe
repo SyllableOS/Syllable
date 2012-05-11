@@ -12,6 +12,6 @@ build-needs
 make-shared
 
 configure-options
-	--sysconfdir=/etc
+;	--sysconfdir=/etc
 	--with-gdktarget=directfb
 ;	--enable-gtk-doc

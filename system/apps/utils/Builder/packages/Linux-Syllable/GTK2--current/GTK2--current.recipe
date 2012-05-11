@@ -2,6 +2,6 @@ authors				Kaj de Vos
 status				testing
 
 configure-options
-	--sysconfdir=/etc
+;	--sysconfdir=/etc
 	--with-gdktarget=directfb
 ;	--enable-gtk-doc

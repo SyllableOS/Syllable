@@ -19,10 +19,10 @@ needs
 	Expat | LibraryXML2
 	FreeType
 
-no-sysconfdir
+;no-sysconfdir
 configure-options
 ;	--enable-libxml2
-	--sysconfdir=/etc
+;	--sysconfdir=/etc
 ;	--with-confdir=/etc/fonts
 	--with-default-fonts=/system/fonts
 ;	--without-add-fonts

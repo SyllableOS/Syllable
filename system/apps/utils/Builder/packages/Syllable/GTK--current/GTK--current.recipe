@@ -13,7 +13,7 @@ build-needs
 make-shared
 
 configure-options
-	--sysconfdir=/etc
+;	--sysconfdir=/etc
 	--enable-broadway-backend
 ;	--disable-packagekit
 ;	--enable-gtk-doc

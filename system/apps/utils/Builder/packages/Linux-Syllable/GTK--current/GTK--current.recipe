@@ -2,7 +2,7 @@ authors				Kaj de Vos
 status				testing
 
 configure-options
-	--sysconfdir=/etc
+;	--sysconfdir=/etc
 ;	--enable-wayland-backend
 	--enable-broadway-backend
 ;	--disable-packagekit
