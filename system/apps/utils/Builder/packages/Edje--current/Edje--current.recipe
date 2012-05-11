@@ -28,7 +28,10 @@ needs
 ; For examples!
 build-needs			Edje
 
-_configure-options
+; Examples can't find Vera.ttf otherwise:
+build-dir			.
+
+configure-options
 ;	--enable-fixed-point
 	--enable-build-examples
 
