@@ -1,7 +1,7 @@
 authors
 	Andrew Kennan
 	Kaj de Vos
-status				developing
+status				testing
 
 build-needs
 ;	AutoConfigure
@@ -11,4 +11,7 @@ build-needs
 	LibraryTool
 ;	LibraryTool 2.4
 	PackageConfigure
+
 make-shared
+
+install-env			DLL_PATH "$DLL_PATH:$PWD/src/.libs"
