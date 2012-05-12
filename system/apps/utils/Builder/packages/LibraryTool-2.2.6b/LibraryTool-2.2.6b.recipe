@@ -13,8 +13,6 @@ licenses			GPL
 home				www.gnu.org/software/libtool/
 packages			libtool/libtool-2.2.6b
 
-build-dir			.
-
 documentation
 	README COPYING NEWS ChangeLog AUTHORS THANKS TODO
 ;	doc/

@@ -1,0 +1,46 @@
+diff -ru LibraryTool-2.4.2-original/libltdl/m4/libtool.m4 LibraryTool-2.4.2/libltdl/m4/libtool.m4
+--- LibraryTool-2.4.2-original/libltdl/m4/libtool.m4	2011-10-17 12:17:05.000000000 +0200
++++ LibraryTool-2.4.2/libltdl/m4/libtool.m4	2012-05-12 17:20:49.000000000 +0200
+@@ -2796,6 +2796,18 @@
+   need_version=yes
+   ;;
+ 
++syllable*)
++  version_type=linux
++  need_lib_prefix=no
++  need_version=no
++  library_names_spec='${libname}${release}${shared_ext}$versuffix ${libname}${release}${shared_ext}${major} ${libname}${shared_ext}'
++  soname_spec='${libname}${release}${shared_ext}$major'
++  shlibpath_var=LIBRARY_PATH
++  runpath_var=DLL_PATH
++  shlibpath_overrides_runpath=no
++  dynamic_linker="Syllable"
++  ;;
++
+ sysv4 | sysv4.3*)
+   version_type=linux # correct to gnu/linux during the next big refactor
+   library_names_spec='${libname}${release}${shared_ext}$versuffix ${libname}${release}${shared_ext}$major $libname${shared_ext}'
+@@ -3327,6 +3339,10 @@
+   lt_cv_deplibs_check_method=pass_all
+   ;;
+ 
++syllable*)
++  lt_cv_deplibs_check_method=pass_all
++  ;;
++
+ sysv5* | sco3.2v5* | sco5v6* | unixware* | OpenUNIX* | sysv4*uw2*)
+   lt_cv_deplibs_check_method=pass_all
+   ;;
+diff -ru LibraryTool-2.4.2-original/libltdl/m4/ltdl.m4 LibraryTool-2.4.2/libltdl/m4/ltdl.m4
+--- LibraryTool-2.4.2-original/libltdl/m4/ltdl.m4	2011-10-17 12:17:05.000000000 +0200
++++ LibraryTool-2.4.2/libltdl/m4/ltdl.m4	2012-05-12 17:20:49.000000000 +0200
+@@ -527,6 +527,9 @@
+   solaris*)
+     lt_cv_sys_dlopen_deplibs=yes
+     ;;
++  syllable*)
++    lt_cv_sys_dlopen_deplibs=yes
++    ;;
+   sysv5* | sco3.2v5* | sco5v6* | unixware* | OpenUNIX* | sysv4*uw2*)
+     libltdl_cv_sys_dlopen_deplibs=yes
+     ;;

@@ -11,8 +11,7 @@ description
 licenses			GPL
 
 home				www.gnu.org/software/libtool/
-; Sigh, 2.2.6 has disappeared:
-packages			libtool/libtool-2.2.6a
+packages			libtool/libtool-2.4.2
 
 documentation
 	README COPYING NEWS ChangeLog AUTHORS THANKS TODO
