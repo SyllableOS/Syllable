@@ -1,7 +1,7 @@
 authors
 	Andrew Kennan
 	Kaj de Vos
-status				developing
+status				testing
 notes				Unstable 1.11.4 doesn't build
 
 build-needs
