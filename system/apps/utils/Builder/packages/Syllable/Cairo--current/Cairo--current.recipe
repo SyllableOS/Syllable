@@ -14,10 +14,11 @@ build-needs
 	PackageConfigure >= 0.16
 make-shared
 
-configure-options
+_configure-options
 ;	--disable-valgrind
 ;	--disable-pthread
 ;	--disable-some-floating-point
+;	Doesn't build with DirectFB 1.0.0:
 	--enable-directfb
 ;	--enable-gl
 ;	--enable-drm
