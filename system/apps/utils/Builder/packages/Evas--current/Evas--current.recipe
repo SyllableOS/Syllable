@@ -3,34 +3,45 @@ status				testing
 
 inherits			Enlightenment--current
 
-version				1.1.0
+version				1.2.0
 headline			Enlightenment's hardware-accelerated retained canvas API
 description
 	Evas is a clean display canvas API that implements a scene graph, not an immediate-mode rendering target, is cross-platform, for several target display systems that can draw anti-aliased text, smooth super and sub-sampled scaled images, alpha-blend objects and much more.
 licenses			BSD
 
 home				trac.enlightenment.org/e/wiki/Evas
-packages			evas-1.1.0
+packages			evas-1.2.0
 
 needs
 	Eina >= 1.1.0
 	FreeType >= 2.3.9
 recommends
 	EET >= 1.5.0
+	Wayland
+	SDL
+	DirectFrameBuffer
+	X11
+	LibraryPNG
+	LibraryJPEG >= 6
+	FontConfigure
+	FriBiDi
+	Harfbuzz
+	LibraryLineBreak
 ; For examples:
 build-recommends
 	Edje
 
 configure-options
 ;	Needs new GCC:
-	--disable-cpu-sse3
-;	Not supported:
-;	--disable-rpath
+;	--disable-cpu-sse3
 ;	--enable-buffer
 	--disable-fb
 ;	--enable-directfb
-	--enable-software-sdl
+;	--enable-wayland-shm
+;	--enable-wayland-egl
+;	--enable-tests
 	--enable-build-examples
+;	--disable-fontconfig
 
 documentation
 	README COPYING NEWS ChangeLog AUTHORS

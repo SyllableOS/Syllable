@@ -12,7 +12,14 @@ make-shared
 
 configure-options
 ;	Needs new GCC:
-	--disable-cpu-sse3
+;	--disable-cpu-sse3
 	--disable-evas-cserve
-	--enable-software-sdl
+;	--enable-buffer
+;	--enable-software-sdl
+;	--disable-fb
+;	--enable-directfb
+;	--enable-wayland-shm
+;	--enable-wayland-egl
+;	--enable-tests
 	--enable-build-examples
+;	--disable-fontconfig

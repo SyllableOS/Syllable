@@ -3,7 +3,7 @@ status				testing
 
 inherits			Enlightenment--current
 
-version				1.1.0
+version				1.2.0
 headline			Enlightenment's library for handling of freedesktop.org specs
 description
 	Efreet is a library designed to help apps work several of the Freedesktop.org standards regarding Icons, Desktop files and Menus. To that end it implements the following specifications:
@@ -18,12 +18,14 @@ description
 licenses			BSD
 
 home				trac.enlightenment.org/e/wiki/Efreet
-packages			efreet-1.1.0
+packages			efreet-1.2.0
 
 needs
 	Eina >= 1.1.0
 	EET >= 1.5.0
 	ECore >= 1.1.0
+
+;configure-options	--enable-tests
 
 documentation
 	README COPYING NEWS ChangeLog AUTHORS TODO

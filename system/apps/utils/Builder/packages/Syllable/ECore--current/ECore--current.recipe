@@ -2,3 +2,17 @@ authors				Kaj de Vos
 status				testing
 
 make-shared
+
+configure-options
+;	Allow switching libraries:
+;	--disable-rpath
+;	--enable-thread-safety
+;	--disable-glib
+;	--disable-ecore-fb
+;	--enable-ecore-directfb
+	--enable-ecore-sdl
+;	--enable-ecore-evas
+	--enable-ecore-evas-software-sdl
+;	--enable-ecore-wayland
+;	--enable-tests
+;	--enable-build-examples

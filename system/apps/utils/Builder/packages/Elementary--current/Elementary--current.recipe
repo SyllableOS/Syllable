@@ -3,7 +3,7 @@ status				testing
 
 inherits			Enlightenment--current
 
-version				0.8.0.65643
+version				1.0.0
 headline			Enlightenment's basic widget set
 description
 	Enlightenment's basic widget set, based on EFL with focus mobile touch-screen devices.
@@ -12,30 +12,30 @@ description
 licenses			LGPL-2.1
 
 home				trac.enlightenment.org/e/wiki/Elementary
-locations			http://download.enlightenment.org/snapshots/
-packages			2011-11-28/elementary-0.8.0.65643
+packages			elementary-1.0.0
 
 needs
 	Eina
-	ECore
 	Evas
+	ECore
 	Edje
 recommends
-	E-DBus
 	EFreet
+	E-DBus
 
 configure-options
+;	--disable-ecore-fb
+;	--disable-ecore-sdl
 ;	Don't work as advertised:
-	--disable-edbus
-	--disable-ethumb
+;	--disable-edbus
+;	--disable-ethumb
 ;	--disable-elementary-config
 ;	--disable-doc
 ;	--disable-elementary-test
-;	--enable-build-examples
+	--enable-build-examples
 
 documentation
 	README ABOUT-NLS COPYING AUTHORS TODO
 ;	doc/
 ;	Empty:
 ;	NEWS ChangeLog
-build-docs			INSTALL

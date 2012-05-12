@@ -3,7 +3,7 @@ status				testing
 
 inherits			Enlightenment--current
 
-version				1.1.0
+version				1.2.0
 headline			Enlightenment's core event abstraction layer and OS abstraction layer
 description
 	Ecore is a clean and tiny event loop library with many modules to do lots of convenient things for a programmer, to save time and effort.
@@ -11,27 +11,43 @@ description
 	It's small and lean, designed to work on embedded systems all the way to large and powerful multi-cpu workstations. It serialises all system signals, events etc. into a single event queue, that is easily processed without needing to worry about concurrency. A properly written, event-driven program using this kind of programming doesn't need threads, nor has to worry about concurrency. It turns a program into a state machine, and makes it very robust and easy to follow.
 
 	Ecore gives you other handy primitives, such as timers to tick over for you and call specified functions at particular times so the programmer can use this to do things, like animate, or time out on connections or tasks that take too long etc.
+
+	Ecore also helps you work in a multi threaded environment and setup a thread pool that help you use the EFL on multi-cpu system. It helps split the part that can't be called outside of the ecore main loop from the computation heavy function that could run on another CPU. Be aware that Evas and most of Ecore API is not thread safe and should only be called in the main loop. Eina and Eet could be used, if done carefully, in any heavy function on another cpu.
 licenses			BSD
 
 home				trac.enlightenment.org/e/wiki/Ecore
-packages			ecore-1.1.0
+packages			ecore-1.2.0
 
 needs
-	Eina
-	EET
+	Eina >= 1.1.0
+;	EET
+;	For windows:
+;	Evil
 recommends
+	Evas >= 1.1.0
+	OpenSSL | GNU-TLS
+	C-ARes
+	cURL
+	Wayland
 	SDL
-	Evas
+	DirectFrameBuffer
+	X11
+	GLib
+	TSLibrary
 
 configure-options
 ;	Allow switching libraries:
 ;	--disable-rpath
 ;	--enable-thread-safety
+;	--disable-glib
 	--disable-ecore-fb
 ;	--enable-ecore-directfb
 	--enable-ecore-sdl
 ;	--enable-ecore-evas
 	--enable-ecore-evas-software-sdl
+;	--enable-ecore-wayland
+;	--enable-tests
+;	--enable-build-examples
 
 documentation
 	README ABOUT-NLS COPYING NEWS ChangeLog AUTHORS TODO

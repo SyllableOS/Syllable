@@ -1,12 +1,12 @@
 authors				Kaj de Vos
-status				testing
+status				developing
 warnings
 	Hardcoded for installation in /resources/
 	Installation tries to set "root" permissions.
 
 inherits			Enlightenment--current
 
-version				0.16.999.65643
+version				0.16.999.70492
 headline			Enlightenment DR17 Window Manager and Desktop Shell
 description
 	Enlightenment is not just a window manager for Linux/X11 and others, but also a whole suite of libraries to help you create beautiful user interfaces with much less work than doing it the old fashioned way and fighting with traditional toolkits, not to mention a traditional window manager. It covers uses from small mobile devices like phones all the way to powerful multi-core desktops (which are the primary development environment).
@@ -16,24 +16,25 @@ licenses			BSD
 
 home				www.enlightenment.org
 locations			http://download.enlightenment.org/snapshots/
-packages			2011-11-28/enlightenment-0.16.999.65643
+packages			2012-04-26/enlightenment-0.16.999.70492
 
 needs
 	Eina
 	EET
-	ECore
 	Evas
+	FreeType > 2.1.7
+	ECore
 	Embryo
 	Edje
-	E-DBus
 	EFreet
-	FreeType > 2.1.7
+	E-DBus
 recommends
 	PM-Utilities
 	ALSA
 	ConnMan
 
 _configure-options
+	--enable-wayland-clients
 	--enable-mixer
 	--enable-connman
 
@@ -47,7 +48,8 @@ documentation
 ;	doc/
 ;	Empty:
 ;	NEWS ChangeLog
+build-docs			INSTALL
 
 links
-	programs/	bin
-	data/		share
+	programs/		bin
+	data/			share

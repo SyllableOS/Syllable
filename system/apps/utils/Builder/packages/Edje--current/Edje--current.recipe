@@ -3,7 +3,7 @@ status				testing
 
 inherits			Enlightenment--current
 
-version				1.1.0
+version				1.2.0
 headline			Enlightenment's graphical layout and animation library
 description
 	Edje is a complex graphical design & layout library based on Evas that provides an abstraction layer between the application code and the interface, while allowing extremely flexible dynamic layouts and animations.
@@ -14,25 +14,27 @@ description
 licenses			BSD
 
 home				trac.enlightenment.org/e/wiki/Edje
-packages			edje-1.1.0
+packages			edje-1.2.0
 
 needs
-	Eina
-	Evas
+;	Eina
+	EET >= 1.5.0
+	Evas >= 1.1.0
 	LibraryJPEG
 	LibraryPNG
-	EET
-	ECore
-	Embryo
+	ECore >= 1.1.0
+	Embryo >= 1.1.0
 	Lua 5.1
 ; For examples!
 build-needs			Edje
 
 ; Examples can't find Vera.ttf otherwise:
-build-dir			.
+;build-dir			.
 
 configure-options
 ;	--enable-fixed-point
+;	--enable-multisense
+;	--enable-tests
 	--enable-build-examples
 
 documentation

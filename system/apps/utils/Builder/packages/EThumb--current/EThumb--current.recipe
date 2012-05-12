@@ -3,7 +3,7 @@ status				testing
 
 inherits			Enlightenment--current
 
-version				0.1.1.65643
+version				1.0.0
 headline			Enlightenment's thumbnailing library and DBus service
 description
 	Thumbnail generation library:
@@ -14,13 +14,12 @@ description
 licenses			LGPL-2.1
 
 home				trac.enlightenment.org/e/wiki/Ethumb
-locations			http://download.enlightenment.org/snapshots/
-packages			2011-11-28/ethumb-0.1.1.65643
+packages			ethumb-1.0.0
 
 needs
 	Eina
-	ECore
 	Evas
+	ECore
 	Edje >= 1.0.0
 recommends
 	E-DBus
