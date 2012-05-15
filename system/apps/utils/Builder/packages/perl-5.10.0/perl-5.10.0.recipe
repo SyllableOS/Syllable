@@ -1,15 +1,13 @@
 authors
-	Kurt Skauen
 	Kaj de Vos
 	Kristian Van Der Vliet
-maintainers			Kaj de Vos
 status				testing
 notes				Doesn't build the documentation yet
 
-title				Practical Extraction and Reporting Language
+title				The Perl programming language
 headline			The 800 pound gorilla of scripting languages
 description
-	Perl is a stable, cross-platform programming language.
+	Perl 5 is a highly capable, feature-rich programming language with over 23 years of development. Perl 5 runs on over 100 platforms from portables to mainframes and is suitable for both rapid prototyping and large scale development projects.
 licenses			Artistic GPL
 
 home				www.perl.org
@@ -23,7 +21,7 @@ locations
 	ftp://ftp.funet.fi/pub/CPAN/src/5.0/
 	http://ftp.funet.fi/pub/CPAN/src/5.0/
 
-build-needs			gawk
+build-needs			GAWK
 recommends
 	db
 ;	To build the documentation:
@@ -51,7 +49,13 @@ test-targets
 	test
 ;	minitest
 
+documentation
+	README Artistic Copying AUTHORS
+;	Too huge:
+;	Changes
 build-docs			INSTALL
 
 ; Fix internal links:
-links				programs/ bin
+links
+;	programs/				bin
+	framework/libraries/	lib

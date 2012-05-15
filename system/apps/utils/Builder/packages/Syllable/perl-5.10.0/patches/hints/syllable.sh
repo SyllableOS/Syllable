@@ -6,10 +6,10 @@
 ignore_versioned_solibs='y'
 #libc=/system/index/framework/libraries/libc.so.2
 
-libpth='/resources/index/framework/libraries /system/index/framework/libraries /system/libraries ./'
+libpth='/resources/index/framework/libraries /resources/index/lib /system/index/framework/libraries /system/index/lib /system/libraries ./'
 #usrinc='/system/index/framework/headers'
 
-#libs=' '
+#libs='-lm'
 libswanted='nsl ndbm db dl m c crypt util'
 
 d_htonl='define'
