@@ -1,6 +1,17 @@
 authors				Kaj de Vos
 status				testing
 
+build-needs
+	BinaryUtilities
+	AutoMake >= 1.5
+	AutoConfigure 2.59
+
+patch				autoreconf ld gas
+;	cd ld &&
+;	automake &&
+;	cd ../gas &&
+;	autoconf
+
 links
 ;	Optimise wasteful duplicates:
 	../../programs/ar				i586-pc-syllable/bin/

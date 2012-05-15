@@ -16,21 +16,12 @@ home				www.gnu.org/software/binutils/
 ; Gone!
 packages			binutils/binutils-2.19
 
-build-needs
-	BinaryUtilities
-	AutoMake >= 1.5
-	AutoConfigure 2.59
+build-needs			BinaryUtilities
 install-needs		BinaryUtilities
 _conflicts
 ;	Both BinaryUtilities and AutoConfigure have info/standards.info:
 	AutoConfigure
 	GNU-CompilerCollection
-
-patch				autoreconf ld gas
-;	cd ld &&
-;	automake &&
-;	cd ../gas &&
-;	autoconf
 
 no-datarootdir
 configure-options
