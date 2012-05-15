@@ -18,10 +18,10 @@ documentation
 ;	Too huge:
 ;	Changes
 links
-	framework/libraries/				lib
-	perl5.10.0							programs/perl
-	5.10.0/i686-linux/CORE/libperl.so	framework/libraries/
+	framework/libraries/					lib
+	perl5.10.0								programs/perl
+	perl5/5.10.0/i686-linux/CORE/libperl.so	framework/libraries/
 ;	Handled by the system build:
-;	programs/perl						/usr/bin/perl
+;	programs/perl							/usr/bin/perl
 ;	For OpenSSL:
-;	programs/perl						/usr/local/bin/perl
+;	programs/perl							/usr/local/bin/perl
