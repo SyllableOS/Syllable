@@ -4,10 +4,10 @@
 
 #d_suidsafe='undef'
 ignore_versioned_solibs='y'
-#libc=/system/indexes/framework/libraries/libc.so.2
+#libc=/system/index/framework/libraries/libc.so.2
 
-libpth='/resources/indexes/framework/libraries /system/indexes/framework/libraries /system/libraries ./'
-#usrinc='/system/indexes/framework/headers'
+libpth='/resources/index/framework/libraries /system/index/framework/libraries /system/libraries ./'
+#usrinc='/system/index/framework/headers'
 
 #libs=' '
 libswanted='nsl ndbm db dl m c crypt util'

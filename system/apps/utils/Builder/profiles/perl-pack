@@ -6,7 +6,7 @@ description
 	The Perl Pit collection of Perl packages. This pack contains Perl 5.10.0, AutoConf 2.61, AutoMake 1.9.6, Net::SSLeay 1.30, XML::Parser 2.36 and IntlTool 0.37.1. They are needed for building Syllable from source code and for some other packages and uses.
 
 modules
-	programming/languages/perl-5.10.0
+	programming/languages/Perl-5.10.0
 ;	Enlightenment needs at least 2.67:
 ;	programming/AutoConfigure-2.68
 ;	BinaryUtilities 2.20 insists on 2.64:

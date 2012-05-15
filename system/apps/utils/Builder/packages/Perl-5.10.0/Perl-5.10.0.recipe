@@ -1,0 +1,5 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			perl-5.10.0
+packages			perl-5.10.0
