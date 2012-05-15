@@ -4,5 +4,10 @@ authors
 	Stefano D'Angelo
 status				testing
 
-build-needs			LibraryTool
+build-needs
+;	AutoConfigure >= 2.62
+	AutoConfigure 2.68
+;	AutoMake
+	AutoMake 1.11.1
+	LibraryTool
 patch				autoreconf
