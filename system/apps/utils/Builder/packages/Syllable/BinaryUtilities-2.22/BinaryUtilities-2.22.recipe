@@ -6,23 +6,24 @@ build-needs
 	AutoConfigure 2.64
 ;	AutoMake
 	AutoMake 1.11.1
-	LibraryTool
+;	LibraryTool
 ;	LibraryTool 2.2.7a
 	Make >= 3.80
 	BinaryUtilities
 
-make-shared
-_patch				autoreconf ld gas
+;make-shared
+patch				autoreconf ld gas
 ;	cd ld &&
 ;	automake &&
 ;	cd ../gas &&
 ;	autoconf
 
-_links
+links
 ;	Optimise wasteful duplicates:
 	../../programs/ar				i586-pc-syllable/bin/
 	../../programs/as				i586-pc-syllable/bin/
 	../../programs/ld				i586-pc-syllable/bin/
+	../../programs/ld.bfd			i586-pc-syllable/bin/
 	../../programs/nm				i586-pc-syllable/bin/
 	../../programs/objcopy			i586-pc-syllable/bin/
 	../../programs/objdump			i586-pc-syllable/bin/
