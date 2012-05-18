@@ -13,17 +13,17 @@ description
 licenses			GPL LGPL
 
 home				www.gnu.org/software/binutils/
-; Gone!
-packages			binutils/binutils-2.19
+packages			binutils/binutils-2.22
 
-build-needs			BinaryUtilities
+build-needs
+	Make >= 3.80
+	BinaryUtilities
 install-needs		BinaryUtilities
 _conflicts
 ;	Both BinaryUtilities and AutoConfigure have info/standards.info:
 	AutoConfigure
 	GNU-CompilerCollection
 
-no-datarootdir
 configure-options
 	--enable-shared
 ;	--with-lib-path=
