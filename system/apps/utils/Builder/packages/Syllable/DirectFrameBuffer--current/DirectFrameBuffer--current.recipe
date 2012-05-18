@@ -6,10 +6,15 @@ notes				Compiles but doesn't run
 version				1.2.1
 locations			http://directfb.org/downloads/Core/DirectFB-1.2/
 packages			DirectFB-1.2.1
+; Last version that runs somewhat:
+;version				1.0.0
+;locations			http://directfb.org/downloads/Old/
+;packages			DirectFB-1.0.0
 
 needs
 	ZLib
 	SDL
+	LibraryPNG
 build-needs
 ;	AutoConfigure >= 2.52
 	AutoConfigure 2.61
@@ -18,11 +23,10 @@ build-needs
 	LibraryTool
 	PackageConfigure
 recommends
-	LibraryVNCServer
 	FreeType >= 2.0.1
 	LibraryJPEG
-	LibraryPNG
 	GIFLibrary
+	LibraryVNCServer
 	LibraryMPEG3
 	TSLibrary
 

@@ -6,13 +6,13 @@ needs
 	LinuxFusion
 	ZLib
 recommends
+	FreeType >= 2.0.1
+	LibraryPNG
+	LibraryJPEG
+	GIFLibrary
 ;	SDL
 	LibraryVNCServer
 	LibrarySystemFS
-	FreeType >= 2.0.1
-	LibraryJPEG
-	LibraryPNG
-	GIFLibrary
 	LibraryMPEG3
 	TSLibrary
 
