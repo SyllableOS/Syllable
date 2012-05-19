@@ -49,11 +49,12 @@ configure-options
 ;		,objc
 ;		,java,ada
 	--with-arch=i586
-	--enable-sjlj-exceptions
 	--enable-shared
 	--enable-threads
-	--enable-clocale=gnu
+	--enable-sjlj-exceptions
 	--enable-__cxa_atexit
+;	Breaks compile in the last phase:
+;	--enable-clocale=gnu
 	--with-system-zlib
 	--disable-libstdcxx-pch
 ;	--with-local-prefix=/usr/local
