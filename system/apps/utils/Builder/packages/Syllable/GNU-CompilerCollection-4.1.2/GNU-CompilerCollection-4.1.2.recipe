@@ -9,32 +9,33 @@ status				testing
 warnings
 	Compile breaks on an illegal instruction crash with GCC 4.1.x itself installed when building in a subdirectory.
 	GCC has a circular dependency on GLibC.
-	LibIberty is both in BinaryUtils and in GCC.
 
 needs
-;	For -O3 with -fpic:
-	BinaryUtils >= 2.13.1
+;	For -O3 with -fpic: >= 2.13.1
+;	For symbol versioning: >= 2.14
+	BinaryUtilities >= 2.14
 ;	Syllable switched to the new GLibC ABI:
 	glibc >= 2.3.3
 ;	For Fortran:
-;	gmp
+;	GMP
 build-needs
 	Syllable >= 0.6.4
 ;	AutoConfigure 2.57
+;	AutoMake
+;	LibraryTool
 ;	Without make bootstrap:
-	gcc >= 2.95 < 4
-;	libtool
+	GNU-CompilerCollection >= 2.95 < 4
 ;	For Ada:
-;	gnat >= 3.13 | gcc >= 3.1
-	gawk
-;	bison
+;	Gnat >= 3.13 | GNU-CompilerCollection >= 3.1
+	GAWK
+;	Bison
 
-; Patch is already in configured form:
-;patch
-;	cd gcc &&
-;	autoconf
 ; Doesn't work:
 ;make-shared
+; Patch is already in configured form:
+_patch
+	cd gcc &&
+	autoconf
 
 configure-options
 	--enable-languages=c,c++
@@ -49,6 +50,7 @@ configure-options
 	--enable-sjlj-exceptions
 	--enable-shared
 	--enable-threads
+	--enable-clocale=gnu
 	--enable-__cxa_atexit
 	--with-system-zlib
 	--disable-libstdcxx-pch
@@ -68,4 +70,4 @@ links
 ;	For some packages:
 ;	programs/cpp		framework/libraries/
 ;	For WebKit:
-	programs/gcc		/usr/bin/
+;	programs/gcc		/usr/bin/

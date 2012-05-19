@@ -8,7 +8,11 @@ notes				GMP with MPFR support is required to build Fortran
 
 inherits			gnu
 
+headline			The GNU Compiler Collection
+description
+	The GNU Compiler Collection includes front ends for C, C++, Objective-C, Fortran, Java, and Ada, as well as libraries for these languages (libstdc++, libgcj,...).
 licenses			GPL LGPL GFDL
+
 home				gcc.gnu.org
 ;locations			ftp://gcc.gnu.org/pub/gcc/releases/gcc-4.1.2/
 packages
@@ -25,15 +29,15 @@ needs
 ;	For -O3 with -fpic: >= 2.13.1
 ;	For symbol versioning: >= 2.14
 	BinaryUtilities >= 2.14
-	glibc >= 2.3.3
+	glibc
 ;	For Fortran:
-;	gmp
+;	GMP
 ;conflicts			BinaryUtilities
 test-needs			dejagnu >= 1.4.1
 install-needs
 ;	GNU-CompilerCollection
 ;	For documentation (only really needed for TreeLang?):
-	texinfo
+	TexInfo
 recommends			MkTemp
 ;build-recommends	diffutils
 
@@ -54,8 +58,8 @@ make-targets
 ;	dvi
 
 ;test-env
-;	TCL_LIBRARY		'/resources/tcl'
-;	DEJAGNULIBS		'/resources/dejagnu'
+;	TCL_LIBRARY		'/resources/TCL'
+;	DEJAGNULIBS		'/resources/GejaGNU'
 ; Don't stop at errors:
 test-options		-k
 

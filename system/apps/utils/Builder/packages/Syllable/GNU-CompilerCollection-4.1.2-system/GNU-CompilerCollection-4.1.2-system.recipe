@@ -11,4 +11,4 @@ links
 ;	For some packages:
 ;	programs/cpp																			framework/libraries/
 ;	For WebKit:
-	/resources/indexes/programs/gcc															/usr/bin/
+	/resources/index/programs/gcc															/usr/bin/

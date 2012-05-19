@@ -55,6 +55,7 @@ _make-targets
 test-options		-k
 
 system-prefix-var	DESTDIR
+
 ; Needs itself during installation:
 install-env
 	PATH			"$PATH:$STAGE/gcc/programs:$STAGE/bootstrap/gcc/programs:$IMAGE/resources/gcc/programs:/resources/gcc/programs"
