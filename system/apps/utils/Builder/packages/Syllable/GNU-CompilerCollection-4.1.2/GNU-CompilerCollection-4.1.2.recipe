@@ -20,9 +20,11 @@ needs
 ;	GMP
 build-needs
 	Syllable >= 0.6.4
-;	AutoConfigure 2.57
+;	AutoConfigure >= 2.13
+;	AutoConfigure 2.13
 ;	AutoMake
 ;	LibraryTool
+;	LibraryTool 1.4a-GCC3.0
 ;	Without make bootstrap:
 	GNU-CompilerCollection >= 2.95 < 4
 ;	For Ada:
