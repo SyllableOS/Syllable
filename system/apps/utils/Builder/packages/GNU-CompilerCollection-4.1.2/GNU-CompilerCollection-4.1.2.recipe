@@ -33,10 +33,11 @@ needs
 ;	For Fortran:
 ;	GMP
 ;conflicts			BinaryUtilities
-test-needs			dejagnu >= 1.4.1
+test-needs			DejaGNU >= 1.4.1
 install-needs
 ;	GNU-CompilerCollection
 ;	For documentation (only really needed for TreeLang?):
+;	libiberty can't find makeinfo:
 	TexInfo
 recommends			MkTemp
 ;build-recommends	diffutils
