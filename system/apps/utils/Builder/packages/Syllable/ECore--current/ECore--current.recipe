@@ -1,6 +1,12 @@
 authors				Kaj de Vos
 status				testing
 
+version				1.1.0
+packages			ecore-1.1.0
+needs
+	Eina >= 1.1.0
+;	EET
+
 make-shared
 
 configure-options
@@ -12,6 +18,7 @@ configure-options
 ;	--enable-ecore-directfb
 	--enable-ecore-sdl
 ;	--enable-ecore-evas
+;	For 1.1.0:
 	--enable-ecore-evas-software-sdl
 ;	--enable-ecore-wayland
 ;	--enable-tests

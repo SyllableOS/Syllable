@@ -19,7 +19,7 @@ home				trac.enlightenment.org/e/wiki/Ecore
 packages			ecore-1.2.0
 
 needs
-	Eina >= 1.1.0
+	Eina >= 1.2.0
 ;	EET
 ;	For windows:
 ;	Evil
@@ -44,7 +44,6 @@ configure-options
 ;	--enable-ecore-directfb
 	--enable-ecore-sdl
 ;	--enable-ecore-evas
-	--enable-ecore-evas-software-sdl
 ;	--enable-ecore-wayland
 ;	--enable-tests
 ;	--enable-build-examples
