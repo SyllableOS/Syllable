@@ -12,7 +12,7 @@ licenses			BSD
 home				trac.enlightenment.org/e/wiki/Embryo
 packages			embryo-1.2.0
 
-needs				Eina
+needs				Eina >= 1.2.0
 
 documentation
 	README COPYING NEWS ChangeLog AUTHORS
