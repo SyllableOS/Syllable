@@ -31,7 +31,7 @@ build-needs			Edje
 ; Examples can't find Vera.ttf otherwise:
 ;build-dir			.
 
-configure-options
+_configure-options
 ;	--enable-fixed-point
 ;	--enable-multisense
 ;	--enable-tests
