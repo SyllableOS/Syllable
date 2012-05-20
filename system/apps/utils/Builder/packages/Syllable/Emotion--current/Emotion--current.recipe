@@ -1,4 +1,14 @@
 authors				Kaj de Vos
 status				developing
 
+version				1.0.0
+locations			http://download.enlightenment.org/snapshots/
+packages			2011-11-28/emotion-0.2.0.65643
+needs
+	Eina >= 1.0.0
+	Evas >= 1.0.0
+	ECore >= 1.0.0
+;	For test application:
+	Edje >= 1.0.0
+
 make-shared

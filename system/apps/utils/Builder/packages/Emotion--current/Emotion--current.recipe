@@ -13,9 +13,10 @@ home				trac.enlightenment.org/e/wiki/Emotion
 packages			emotion-1.0.0
 
 needs
-	Eina >= 1.0.0
-	Evas >= 1.0.0
-	ECore >= 1.0.0
+	Eina >= 1.2.0
+	EET >= 1.6.0
+	Evas >= 1.2.0
+	ECore >= 1.2.0
 ;	For test application:
 	Edje >= 1.0.0
 
