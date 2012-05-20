@@ -21,9 +21,9 @@ home				trac.enlightenment.org/e/wiki/Efreet
 packages			efreet-1.2.0
 
 needs
-	Eina >= 1.1.0
-	EET >= 1.5.0
-	ECore >= 1.1.0
+	Eina >= 1.2.0
+	EET >= 1.6.0
+	ECore >= 1.2.0
 
 ;configure-options	--enable-tests
 
