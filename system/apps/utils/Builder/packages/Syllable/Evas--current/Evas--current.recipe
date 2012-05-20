@@ -1,5 +1,6 @@
 authors				Kaj de Vos
 status				testing
+notes				Doesn't find LibTIFF
 
 version				1.1.0
 packages			evas-1.1.0
@@ -14,11 +15,13 @@ needs
 make-shared
 
 configure-options
+;	For 1.1.0:
 ;	Needs new GCC:
-;	--disable-cpu-sse3
+	--disable-cpu-sse3
 	--disable-evas-cserve
 ;	--enable-buffer
-;	--enable-software-sdl
+;	For 1.1.0:
+	--enable-software-sdl
 ;	--disable-fb
 ;	--enable-directfb
 ;	--enable-wayland-shm
