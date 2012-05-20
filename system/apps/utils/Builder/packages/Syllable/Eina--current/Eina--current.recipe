@@ -1,10 +1,22 @@
 authors				Kaj de Vos
 status				testing
+notes				1.2.0 needs POSIX semaphores
 
+version				1.1.0
+packages			eina-1.1.0
+
+build-needs
+;	AutoConfigure >= 2.59
+	AutoConfigure 2.67
+;	AutoMake
+	AutoMake 1.11.1
+	LibraryTool
+;	LibraryTool 2.2.6b
+	PackageConfigure
 make-shared
 
 _configure-options
-;	Circumvents unimplemented CPU count, but doesn't support rest of Enlightenment stack:
+;	Circumvents unimplemented CPU count and POSIX semaphores, but doesn't support rest of Enlightenment stack:
 ;	--disable-posix-threads
 ;	--enable-tests
 	--enable-build-examples

@@ -17,7 +17,7 @@ packages			eet-1.6.0
 needs
 	ZLib
 	LibraryJPEG
-	Eina >= 1.1.0
+	Eina >= 1.2.0
 ;	For windows:
 ;	Evil
 recommends			OpenSSL | GNU-TLS >= 1.7.6
