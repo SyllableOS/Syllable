@@ -17,8 +17,8 @@ home				trac.enlightenment.org/e/wiki/Edje
 packages			edje-1.2.0
 
 needs
-;	Eina
-	EET >= 1.5.0
+	Eina >= 1.2.0
+	EET >= 1.6.0
 	Evas >= 1.1.0
 	LibraryJPEG
 	LibraryPNG
