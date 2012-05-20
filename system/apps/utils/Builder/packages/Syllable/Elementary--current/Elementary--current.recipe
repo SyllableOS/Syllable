@@ -1,4 +1,13 @@
 authors				Kaj de Vos
-status				testing
+status				broken
+
+version				0.8.0.65643
+locations			http://download.enlightenment.org/snapshots/
+packages			2011-11-28/elementary-0.8.0.65643
+needs
+	Eina
+	Evas
+	ECore
+	Edje
 
 make-shared

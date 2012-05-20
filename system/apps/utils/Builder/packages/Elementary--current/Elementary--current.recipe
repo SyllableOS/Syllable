@@ -15,10 +15,11 @@ home				trac.enlightenment.org/e/wiki/Elementary
 packages			elementary-1.0.0
 
 needs
-	Eina
-	Evas
-	ECore
-	Edje
+	Eina >= 1.2.0
+	EET >= 1.6.0
+	Evas >= 1.2.0
+	ECore >= 1.2.0
+	Edje >= 1.2.0
 recommends
 	EFreet
 	E-DBus
