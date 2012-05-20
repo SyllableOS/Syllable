@@ -24,7 +24,7 @@ recommends
 	EFreet
 	E-DBus
 
-configure-options
+_configure-options
 ;	--disable-ecore-fb
 ;	--disable-ecore-sdl
 ;	Don't work as advertised:
@@ -33,6 +33,7 @@ configure-options
 ;	--disable-elementary-config
 ;	--disable-doc
 ;	--disable-elementary-test
+;	dict.txt missing from src/examples/index_example_01.c
 	--enable-build-examples
 
 documentation
