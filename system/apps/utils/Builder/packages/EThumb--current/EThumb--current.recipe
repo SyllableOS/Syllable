@@ -17,7 +17,7 @@ home				trac.enlightenment.org/e/wiki/Ethumb
 packages			ethumb-1.0.0
 
 needs
-	Eina
+	Eina >= 1.2.0
 	Evas
 	ECore
 	Edje >= 1.0.0
