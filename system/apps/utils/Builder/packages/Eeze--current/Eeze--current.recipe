@@ -13,8 +13,8 @@ home				trac.enlightenment.org/e/wiki/Eeze
 packages			eeze-1.2.0
 
 needs
-;	Eina >= 1.1.0
-	ECore >= 1.0.0
+	Eina >= 1.2.0
+	ECore >= 1.2.0
 	UDevices
 recommends
 	LibraryMount

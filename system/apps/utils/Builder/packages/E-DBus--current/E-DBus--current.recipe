@@ -15,7 +15,7 @@ packages			e_dbus-1.2.0
 needs
 	Eina >= 1.1.0
 	ECore >= 1.1.0
-	DBus
+	DBus >= 0.62
 recommends
 	Evas >= 1.1.0
 
