@@ -35,6 +35,7 @@ _configure-options
 ;	--disable-elementary-test
 ;	dict.txt missing from src/examples/index_example_01.c
 	--enable-build-examples
+	--enable-install-examples
 
 documentation
 	README ABOUT-NLS COPYING AUTHORS TODO
