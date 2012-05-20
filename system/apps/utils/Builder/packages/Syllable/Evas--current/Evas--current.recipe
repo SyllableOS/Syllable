@@ -1,6 +1,9 @@
 authors				Kaj de Vos
 status				testing
 
+version				1.2.0
+packages			evas-1.2.0
+
 needs
 	Eina >= 1.1.0
 	FreeType >= 2.3.9

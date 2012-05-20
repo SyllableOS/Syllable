@@ -13,7 +13,7 @@ home				trac.enlightenment.org/e/wiki/Evas
 packages			evas-1.2.0
 
 needs
-	Eina >= 1.1.0
+	Eina >= 1.2.0
 	FreeType >= 2.3.9
 recommends
 	EET >= 1.5.0
