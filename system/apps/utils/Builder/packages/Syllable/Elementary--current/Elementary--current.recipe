@@ -1,6 +1,9 @@
 authors				Kaj de Vos
 status				broken
-notes				Bombs out on invalid free in Edje in data/objects/
+notes
+	Widgets crash.
+	Bombs out on invalid free in Edje in data/objects/test.
+	Examples incomplete.
 
 version				0.8.0.65643
 locations			http://download.enlightenment.org/snapshots/
@@ -19,9 +22,9 @@ configure-options
 ;	Don't work as advertised:
 	--disable-edbus
 ;	--disable-ethumb
-	--disable-elementary-config
+;	--disable-elementary-config
 ;	--disable-doc
-	--disable-elementary-test
+;	--disable-elementary-test
 ;	dict.txt missing from src/examples/index_example_01.c
 ;	--enable-build-examples
 ;	--enable-install-examples
