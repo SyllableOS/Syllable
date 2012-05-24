@@ -18,7 +18,7 @@ _configure-options
 ;	--enable-buffer
 ;	--disable-fb
 ;	--enable-directfb
-;	--enable-wayland-shm
+	--disable-wayland-shm
 ;	--enable-wayland-egl
 ;	--enable-tests
 	--enable-build-examples

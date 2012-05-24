@@ -29,6 +29,7 @@ recommends
 	FriBiDi
 	Harfbuzz
 	LibraryLineBreak
+	PixelManipulation
 ; For examples:
 build-recommends
 	Edje
