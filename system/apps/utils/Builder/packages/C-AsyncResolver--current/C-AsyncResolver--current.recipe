@@ -1,0 +1,19 @@
+authors				Kaj de Vos
+status				testing
+
+version				1.8.0
+headline			Asynchronous DNS resolver library
+description
+	C-ARes is a C library that performs DNS requests and name resolves asynchronously. It is intended for applications which need to perform DNS queries without blocking, or need to perform multiple DNS queries in parallel. The primary examples of such applications are servers which communicate with multiple clients and programs with graphical user interfaces.
+
+	C-ARes is a fork of the library named ARes.
+licenses			MIT
+
+home				c-ares.haxx.se
+packages			c-ares-1.8.0
+locations			http://c-ares.haxx.se/download/
+
+system-prefix-var	DESTDIR
+
+documentation		README README.cares RELEASE-NOTES NEWS CHANGES AUTHORS
+build-docs			INSTALL

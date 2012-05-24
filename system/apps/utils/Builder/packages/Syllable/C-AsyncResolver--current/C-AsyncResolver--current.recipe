@@ -1,0 +1,6 @@
+authors				Kaj de Vos
+status				testing
+
+;build-needs			LibraryTool
+;make-shared
+;configure-options	--enable-shared
