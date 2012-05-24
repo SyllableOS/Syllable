@@ -1,9 +1,9 @@
 authors				Kaj de Vos
 status				testing
 
-version				1.1.0
-packages			efreet-1.1.0
-needs
+;version				1.1.0
+;packages			efreet-1.1.0
+_needs
 	Eina >= 1.1.0
 	EET >= 1.5.0
 	ECore >= 1.1.0

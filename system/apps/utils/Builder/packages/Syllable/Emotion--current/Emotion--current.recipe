@@ -1,11 +1,11 @@
 authors				Kaj de Vos
 status				broken
-notes				Needs POSIX semaphores
+notes				Needs (POSIX) semaphores
 
-version				0.2.0.65643
-locations			http://download.enlightenment.org/snapshots/
-packages			2011-11-28/emotion-0.2.0.65643
-needs
+;version				0.2.0.65643
+;locations			http://download.enlightenment.org/snapshots/
+;packages			2011-11-28/emotion-0.2.0.65643
+_needs
 	Eina >= 1.0.0
 	Evas >= 1.0.0
 	ECore >= 1.0.0

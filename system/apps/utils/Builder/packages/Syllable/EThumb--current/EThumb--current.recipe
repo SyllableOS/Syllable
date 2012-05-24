@@ -1,10 +1,10 @@
 authors				Kaj de Vos
 status				testing
 
-version				0.1.1.65643
-locations			http://download.enlightenment.org/snapshots/
-packages			2011-11-28/ethumb-0.1.1.65643
-needs
+;version				0.1.1.65643
+;locations			http://download.enlightenment.org/snapshots/
+;packages			2011-11-28/ethumb-0.1.1.65643
+_needs
 	Eina >= 1.1.0
 	Evas
 	ECore

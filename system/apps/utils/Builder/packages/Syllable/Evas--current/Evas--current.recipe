@@ -2,10 +2,10 @@ authors				Kaj de Vos
 status				testing
 notes				Doesn't find LibTIFF
 
-version				1.1.0
-packages			evas-1.1.0
+;version				1.1.0
+;packages			evas-1.1.0
 
-needs
+_needs
 	Eina >= 1.1.0
 	FreeType >= 2.3.9
 	SDL
@@ -14,14 +14,8 @@ needs
 
 make-shared
 
-configure-options
-;	For 1.1.0:
-;	Needs new GCC:
-	--disable-cpu-sse3
-	--disable-evas-cserve
+_configure-options
 ;	--enable-buffer
-;	For 1.1.0:
-	--enable-software-sdl
 ;	--disable-fb
 ;	--enable-directfb
 ;	--enable-wayland-shm
@@ -29,3 +23,9 @@ configure-options
 ;	--enable-tests
 	--enable-build-examples
 ;	--disable-fontconfig
+
+;	For 1.1.0:
+;	--enable-software-sdl
+;	--disable-evas-cserve
+;	Needs new GCC:
+;	--disable-cpu-sse3

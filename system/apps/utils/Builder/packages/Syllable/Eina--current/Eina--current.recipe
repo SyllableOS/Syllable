@@ -2,8 +2,8 @@ authors				Kaj de Vos
 status				testing
 notes				1.2.0 needs POSIX semaphores
 
-version				1.1.0
-packages			eina-1.1.0
+;version				1.1.0
+;packages			eina-1.1.0
 
 build-needs
 ;	AutoConfigure >= 2.59

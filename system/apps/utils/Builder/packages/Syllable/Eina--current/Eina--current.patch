@@ -1,9 +1,67 @@
-diff -ur Eina-1.1.0-original/src/lib/eina_cpu.c Eina-1.1.0/src/lib/eina_cpu.c
---- Eina-1.1.0-original/src/lib/eina_cpu.c	2011-04-05 10:41:54.000000000 +0200
-+++ Eina-1.1.0/src/lib/eina_cpu.c	2012-03-11 23:38:06.000000000 +0100
-@@ -132,7 +132,7 @@
+diff -ru Eina-1.2.0-original/src/include/eina_inline_lock_posix.x Eina-1.2.0/src/include/eina_inline_lock_posix.x
+--- Eina-1.2.0-original/src/include/eina_inline_lock_posix.x	2012-03-31 12:55:05.000000000 +0000
++++ Eina-1.2.0/src/include/eina_inline_lock_posix.x	2012-05-24 00:58:47.000000000 +0000
+@@ -37,7 +37,9 @@
+ # include <pthread.h>
+ #endif
  
- EAPI int eina_cpu_count(void)
++#ifndef __SYLLABLE__
+ #include <semaphore.h>
++#endif
+ 
+ #include <sys/time.h>
+ #include <stdio.h>
+@@ -57,7 +59,9 @@
+ typedef struct _Eina_RWLock Eina_RWLock;
+ typedef struct _Eina_Condition Eina_Condition;
+ typedef pthread_key_t Eina_TLS;
++#ifndef __SYLLABLE__
+ typedef sem_t Eina_Semaphore;
++#endif
+ 
+ struct _Eina_Lock
+ {
+@@ -517,6 +521,8 @@
+    return EINA_TRUE;
+ }
+ 
++#ifndef __SYLLABLE__
++
+ static inline Eina_Bool
+ eina_semaphore_new(Eina_Semaphore *sem, int count_init)
+ {
+@@ -554,3 +560,5 @@
+ }
+ 
+ #endif
++
++#endif
+diff -ru Eina-1.2.0-original/src/include/eina_lock.h Eina-1.2.0/src/include/eina_lock.h
+--- Eina-1.2.0-original/src/include/eina_lock.h	2012-04-13 02:10:09.000000000 +0000
++++ Eina-1.2.0/src/include/eina_lock.h	2012-05-24 00:58:24.000000000 +0000
+@@ -101,6 +101,8 @@
+ static inline void *eina_tls_get(Eina_TLS key);
+ /** @relates static Eina_Bool eina_tls_set(pthread_key_t key, const void *data) */
+ static inline Eina_Bool eina_tls_set(Eina_TLS key, const void *data);
++
++#ifndef __SYLLABLE__
+ /** @relates static Eina_Bool eina_semaphore_new(sem_t *sem, int count_init) */
+ static inline Eina_Bool eina_semaphore_new(Eina_Semaphore *sem, int count_init);
+ /** @relates static Eina_Bool eina_semaphore_free(sem_t *sem) */
+@@ -109,6 +111,7 @@
+ static inline Eina_Bool eina_semaphore_lock(Eina_Semaphore *sem);
+ /** @relates static Eina_Bool eina_semaphore_release(sem_t *sem, int count_release) */
+ static inline Eina_Bool eina_semaphore_release(Eina_Semaphore *sem, int count_release);
++#endif
+ 
+ #ifdef EINA_HAVE_DEBUG_THREADS
+ # define EINA_MAIN_LOOP_CHECK_RETURN_VAL(val)				\
+diff -ru Eina-1.2.0-original/src/lib/eina_cpu.c Eina-1.2.0/src/lib/eina_cpu.c
+--- Eina-1.2.0-original/src/lib/eina_cpu.c	2012-04-20 10:34:15.000000000 +0000
++++ Eina-1.2.0/src/lib/eina_cpu.c	2012-05-24 00:56:58.000000000 +0000
+@@ -136,7 +136,7 @@
+ static int
+ _eina_cpu_count_internal(void)
  {
 -#ifdef EFL_HAVE_THREADS
 +#if defined (EFL_HAVE_THREADS) && ! defined (__SYLLABLE__)
