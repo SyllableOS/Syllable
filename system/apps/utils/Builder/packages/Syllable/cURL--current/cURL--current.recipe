@@ -1,7 +1,8 @@
 authors				Kaj de Vos
 status				testing
 
-needs				c-ares >= 1.4 < 1.5
+needs				C-AsyncResolver >= 1.6
+;needs				C-AsyncResolver >= 1.4 < 1.5
 recommends
 	zlib
 	OpenSSL | gnutls | yassl

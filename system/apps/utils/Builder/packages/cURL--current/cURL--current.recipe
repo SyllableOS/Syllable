@@ -1,7 +1,7 @@
 authors				Kaj de Vos
 status				testing
 
-version				7.24.0
+version				7.25.0
 headline			URL network protocol tool and library
 description
 	cURL groks URLs.
@@ -10,8 +10,30 @@ description
 licenses			MIT
 
 home				curl.haxx.se
-packages			curl-7.24.0
+packages			curl-7.25.0
 locations			http://curl.haxx.se/download/
+
+recommends
+	zlib
+	OpenSSL | gnutls | yassl
+	openldap
+	kerberos4
+	heimdal
+	fbopenssl
+	C-AsyncResolver >= 1.6
+	libidn
+	libssh2 >= 0.16
+
+configure-options
+;	--with-random=/dev/random
+	--with-ca-path=/etc/ssl/certs
+;	--with-ca-bundle=/etc/ssl/ca-bundle.crt
+;	--without-ssl
+;	--with-gnutls
+;	--with-libssh2
+	--enable-ldap
+;	Doesn't seem to help:
+	--enable-manual
 
 test-targets		test
 
