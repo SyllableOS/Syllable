@@ -1,5 +1,6 @@
 authors				Kaj de Vos
 status				testing
+warnings			Looks for libOSMesa.so version 1.
 
 inherits			Enlightenment--current
 

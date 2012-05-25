@@ -47,3 +47,6 @@ configure-options
 system-prefix-var	DESTDIR
 
 documentation		docs/*
+
+; For Evas:
+links				libOSMesa.so.7 framework/libraries/libOSMesa.so.1
