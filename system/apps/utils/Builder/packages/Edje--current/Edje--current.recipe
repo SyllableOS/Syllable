@@ -1,5 +1,6 @@
 authors				Kaj de Vos
 status				testing
+warnings			Hardcoded to find Elementary in /resources/
 
 inherits			Enlightenment--current
 
