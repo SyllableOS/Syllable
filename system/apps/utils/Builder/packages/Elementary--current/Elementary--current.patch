@@ -1,0 +1,62 @@
+diff -ru Elementary-1.0.0-original/data/objects/Makefile.am Elementary-1.0.0/data/objects/Makefile.am
+--- Elementary-1.0.0-original/data/objects/Makefile.am	2012-04-23 16:02:28.000000000 +0200
++++ Elementary-1.0.0/data/objects/Makefile.am	2012-05-25 19:10:51.000000000 +0200
+@@ -9,10 +9,9 @@
+ 
+ filesdir = $(datadir)/elementary/objects
+ 
+-files_DATA = test.edj multip.edj cursors.edj font_preview.edj postit_ent.edj multibuttonentry.edj
++files_DATA = multip.edj cursors.edj font_preview.edj postit_ent.edj multibuttonentry.edj
+ 
+ EXTRA_DIST = \
+-test.edc \
+ multip.edc \
+ cursors.edc \
+ font_preview.edc \
+diff -ru Elementary-1.0.0-original/src/examples/Makefile.am Elementary-1.0.0/src/examples/Makefile.am
+--- Elementary-1.0.0-original/src/examples/Makefile.am	2012-04-23 16:01:51.000000000 +0200
++++ Elementary-1.0.0/src/examples/Makefile.am	2012-05-25 19:10:51.000000000 +0200
+@@ -86,11 +86,9 @@
+ hoversel_example_01.c \
+ icon_example_01.c \
+ image_example_01.c \
+-index_example_01.c \
+ index_example_02.c \
+ inwin_example.c \
+ label_example_01.c \
+-layout_example.edc \
+ layout_example_01.c \
+ layout_example_02.c \
+ layout_example_03.c \
+@@ -119,7 +117,6 @@
+ scroller_example_01.c \
+ table_example_01.c \
+ table_example_02.c \
+-theme_example.edc \
+ theme_example_01.c \
+ theme_example_02.c \
+ thumb_example_01.c \
+@@ -137,14 +134,10 @@
+ 	$(EDJE_CC) $(EDJE_FLAGS) $< $@
+ 
+ if EFL_INSTALL_EXAMPLES
+-files_DATA += $(SRCS) \
+-	dict.txt
++files_DATA += $(SRCS)
+ endif
+ 
+ if EFL_BUILD_EXAMPLES
+-files_DATA += \
+-	theme_example.edj \
+-	layout_example.edj
+ 
+ clean-local:
+ 	rm -f *.edj
+@@ -198,7 +191,6 @@
+ hoversel_example_01 \
+ icon_example_01 \
+ image_example_01 \
+-index_example_01 \
+ index_example_02 \
+ inwin_example \
+ label_example_01 \

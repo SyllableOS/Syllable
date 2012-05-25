@@ -1,8 +1,8 @@
 authors				Kaj de Vos
 status				broken
 notes
-	Widgets crash.
-	Bombs out on invalid free in Edje in data/objects/test.
+	Windows resize to void.
+	Unpatched, bombs out on invalid free in Edje in data/objects/test.
 	Examples incomplete.
 
 ;version				0.8.0.65643
@@ -17,14 +17,15 @@ _needs
 make-shared
 
 _configure-options
+;	--disable-ecore-x
 ;	--disable-ecore-fb
 ;	--disable-ecore-sdl
 ;	Don't work as advertised:
 	--disable-edbus
-;	--disable-ethumb
+;	No client header:
+	--disable-ethumb
 ;	--disable-elementary-config
 ;	--disable-doc
 ;	--disable-elementary-test
-;	dict.txt missing from src/examples/index_example_01.c
 	--enable-build-examples
 	--enable-install-examples
