@@ -7,10 +7,11 @@ maintainers			Kaj de Vos
 status				broken
 notes
 	See README for GLibC issues.
-	LibraryFFI hasn't been ported yet.
+;	LibraryFFI hasn't been ported yet.
 	Since Syllable 0.6.6 configure says getaddrinfo() is buggy.
 	Build fails with locking errors after a process fork.
 
+needs				LibraryFFI
 build-needs			AutoConfigure >= 2.53
 
 patch				autoconf
@@ -18,6 +19,7 @@ patch				autoconf
 configure-options
 	--enable-shared
 ;	--with-threads=syllable
+	--with-system-ffi
 ;	--with-libs=
 ;	Needed on Syllable 0.6.6:
 	--disable-ipv6

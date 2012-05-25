@@ -7,8 +7,9 @@ maintainers			Kaj de Vos
 status				testing
 notes
 	See README for GLibC issues.
-	LibraryFFI hasn't been ported yet.
+;	LibraryFFI hasn't been ported yet.
 
+needs				LibraryFFI
 build-needs			AutoConfigure >= 2.53
 
 patch				autoconf
@@ -16,6 +17,7 @@ patch				autoconf
 configure-options
 	--enable-shared
 ;	--with-threads=syllable
+	--with-system-ffi
 ;	--with-libs=
 ;	Needed on Syllable 0.6.6:
 	--disable-ipv6
