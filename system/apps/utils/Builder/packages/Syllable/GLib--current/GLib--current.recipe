@@ -12,6 +12,7 @@ build-needs
 	LibraryTool
 ;	LibraryTool 2.4.2
 	PackageConfigure >= 0.16
+	Python >= 2.5
 
 make-shared
 

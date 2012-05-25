@@ -18,7 +18,9 @@ recommends
 run-recommends
 	Shared-MIME-Info
 	DesktopFileUtilities
-build-needs			PackageConfigure >= 0.16
+build-needs
+	PackageConfigure >= 0.16
+	Python >= 2.5
 build-recommends
 ;	?:
 	GetText
