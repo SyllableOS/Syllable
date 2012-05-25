@@ -43,7 +43,7 @@ diff -ru python-2.5.1-original/configure.in python-2.5.1/configure.in
  	  LDLIBRARY='libpython$(VERSION).so'
  	  BLDLIBRARY='-L. -lpython$(VERSION)'
 -	  RUNSHARED=DLL_PATH=`pwd`:${DLL_PATH:-/atheos/sys/libs:/atheos/autolnk/lib}
-+	  RUNSHARED=DLL_PATH=`pwd`:${DLL_PATH:-/resources/indexes/lib:/system/libraries}
++	  RUNSHARED=DLL_PATH=`pwd`:${DLL_PATH}
  	  ;;
    esac
  else # shared is disabled
@@ -93,7 +93,7 @@ diff -ru python-2.5.1-original/configure.in python-2.5.1/configure.in
      THREADOBJ="Python/thread.o"    
 -elif test "$ac_cv_kpthread" = "yes"
 +else
-+    AC_CHECK_HEADER(atheos/threads.h, [
++    AC_CHECK_HEADER(syllable/threads.h, [
 +    AC_DEFINE(WITH_THREAD)
 +    AC_DEFINE(SYLLABLE_THREADS, 1,
 +    [Define this if you have Syllable threads.])
@@ -187,18 +187,6 @@ diff -ru python-2.5.1-original/Lib/test/test_fcntl.py python-2.5.1/Lib/test/test
      start_len = "qq"
  
  if sys.platform in ('netbsd1', 'netbsd2', 'netbsd3',
-diff -ru python-2.5.1-original/Lib/test/test_file.py python-2.5.1/Lib/test/test_file.py
---- python-2.5.1-original/Lib/test/test_file.py	2006-06-09 20:29:52.000000000 +0200
-+++ python-2.5.1/Lib/test/test_file.py	2007-08-18 06:53:01.000000000 +0200
-@@ -95,7 +95,7 @@
-         methods = ['fileno', 'flush', 'isatty', 'next', 'read', 'readinto',
-                    'readline', 'readlines', 'seek', 'tell', 'truncate',
-                    'write', 'xreadlines', '__iter__']
--        if sys.platform.startswith('atheos'):
-+        if sys.platform.startswith('syllable'):
-             methods.remove('truncate')
- 
-         # __exit__ should close the file
 diff -ru python-2.5.1-original/Lib/test/test_mhlib.py python-2.5.1/Lib/test/test_mhlib.py
 --- python-2.5.1-original/Lib/test/test_mhlib.py	2002-08-05 00:55:35.000000000 +0200
 +++ python-2.5.1/Lib/test/test_mhlib.py	2007-08-18 06:53:30.000000000 +0200
@@ -287,10 +275,10 @@ diff -ru python-2.5.1-original/setup.py python-2.5.1/setup.py
 -            lib_dirs += ['/system/libs', '/atheos/autolnk/lib']
 +        # Check for Syllable which has libraries in non-standard locations
 +        if platform == 'syllable':
-+            lib_dirs += ['/resources/indexes/lib', '/system/libraries']
++            lib_dirs += ['/resources/index/framework/libraries', '/system/libraries']
              lib_dirs += os.getenv('LIBRARY_PATH', '').split(os.pathsep)
 -            inc_dirs += ['/system/include', '/atheos/autolnk/include']
-+            inc_dirs += ['/resources/indexes/include', '/system/development/headers']
++            inc_dirs += ['/resources/index/framework/headers', '/system/development/headers']
              inc_dirs += os.getenv('C_INCLUDE_PATH', '').split(os.pathsep)
  
          # OSF/1 and Unixware have some stuff in /usr/ccs/lib (like -ldb)
@@ -299,7 +287,7 @@ diff -ru python-2.5.1-original/setup.py python-2.5.1/setup.py
  
          # Memory-mapped files (also works on Win32).
 -        if platform not in ['atheos', 'mac']:
-+        if platform not in ['syllable', 'mac']:
++        if platform not in ['mac']:
              exts.append( Extension('mmap', ['mmapmodule.c']) )
  
          # Lance Ellinghaus's syslog module
@@ -313,19 +301,10 @@ diff -ru python-2.5.1-original/setup.py python-2.5.1/setup.py
  
              # Sun yellow pages. Some systems have the functions in libc.
 -            if platform not in ['cygwin', 'atheos']:
-+            if platform not in ['cygwin', 'syllable']:
++            if platform not in ['cygwin']:
                  if (self.compiler.find_library_file(lib_dirs, 'nsl')):
                      libs = ['nsl']
                  else:
-@@ -1029,7 +1029,7 @@
-         if sys.maxint == 0x7fffffff:
-             # This requires sizeof(int) == sizeof(long) == sizeof(char*)
-             dl_inc = find_file('dlfcn.h', [], inc_dirs)
--            if (dl_inc is not None) and (platform not in ['atheos']):
-+            if (dl_inc is not None) and (platform not in ['syllable']):
-                 exts.append( Extension('dl', ['dlmodule.c']) )
- 
-         # Thomas Heller's _ctypes module
 diff -ru python-2.5.1-original/Tools/scripts/h2py.py python-2.5.1/Tools/scripts/h2py.py
 --- python-2.5.1-original/Tools/scripts/h2py.py	2004-08-09 19:27:55.000000000 +0200
 +++ python-2.5.1/Tools/scripts/h2py.py	2007-08-18 06:37:22.000000000 +0200

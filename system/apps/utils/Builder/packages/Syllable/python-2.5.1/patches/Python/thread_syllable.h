@@ -1,9 +1,9 @@
 /* Threading for Syllable.
    Based on thread_beos.h. */
 
-#include <atheos/threads.h>
-#include <atheos/semaphore.h>
-#include <atheos/atomic.h>
+#include <syllable/threads.h>
+#include <syllable/semaphore.h>
+#include <syllable/atomic.h>
 #include <errno.h>
 #include <string.h>
 

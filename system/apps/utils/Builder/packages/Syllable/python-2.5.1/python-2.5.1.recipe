@@ -7,7 +7,7 @@ maintainers			Kaj de Vos
 status				testing
 notes
 	See README for GLibC issues.
-	LibFFI hasn't been ported yet.
+	LibraryFFI hasn't been ported yet.
 
 build-needs			AutoConfigure >= 2.53
 
