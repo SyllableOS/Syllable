@@ -43,4 +43,7 @@ documentation
 ;	Empty:
 ;	ABOUT-NLS
 
-links				programs/ bin
+links
+	programs/												bin
+;	For Elementary:
+	/resources/index/framework/libraries/edje/modules/elm/	framework/libraries/edje/modules/
