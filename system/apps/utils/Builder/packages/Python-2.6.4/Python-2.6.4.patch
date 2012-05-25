@@ -88,7 +88,7 @@ diff -ru Python-2.6.4-original/configure.in Python-2.6.4/configure.in
      THREADOBJ="Python/thread.o"
 -elif test "$ac_cv_pthread" = "yes"
 +else
-+    AC_CHECK_HEADER(atheos/threads.h, [AC_DEFINE(WITH_THREAD)
++    AC_CHECK_HEADER(syllable/threads.h, [AC_DEFINE(WITH_THREAD)
 +    AC_DEFINE(SYLLABLE_THREADS, 1,
 +    [Define this if you have Syllable threads.])
 +    THREADOBJ="Python/thread.o"],[
@@ -174,7 +174,7 @@ diff -ru Python-2.6.4-original/Lib/test/regrtest.py Python-2.6.4/Lib/test/regrte
          test_kqueue
          test_mhlib
 -        test_mmap
-+#        test_mmap
++        test_mmap
          test_poll
          test_popen2
 -        test_resource

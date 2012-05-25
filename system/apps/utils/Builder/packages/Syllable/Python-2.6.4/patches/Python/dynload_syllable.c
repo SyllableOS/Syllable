@@ -1,10 +1,9 @@
-
 /* Support for dynamic loading of extension modules */
 
 #include "Python.h"
 #include "importdl.h"
 
-#include <atheos/image.h>
+#include <syllable/image.h>
 #include <errno.h>
 
 
