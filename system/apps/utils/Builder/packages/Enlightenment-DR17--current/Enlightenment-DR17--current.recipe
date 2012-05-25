@@ -19,24 +19,21 @@ locations			http://download.enlightenment.org/snapshots/
 packages			2012-04-26/enlightenment-0.16.999.70492
 
 needs
-	Eina
-	EET
+	Eina >= 1.2.0
+	EET >= 1.6.0
 	Evas
 	FreeType > 2.1.7
-	ECore
+	ECore >= 1.2.0
 	Embryo
 	Edje
-	EFreet
-	E-DBus
+	EFreet >= 1.2.0
+	E-DBus >= 1.2.0
 recommends
 	PM-Utilities
 	ALSA
 	ConnMan
 
-_configure-options
-	--enable-wayland-clients
-	--enable-mixer
-	--enable-connman
+;configure-options	--enable-wayland-clients
 
 post-install
 	mv /resources/Enlightenment-DR17/include/enlightenment/* /resources/Enlightenment-DR17/framework/headers/enlightenment/ &&
