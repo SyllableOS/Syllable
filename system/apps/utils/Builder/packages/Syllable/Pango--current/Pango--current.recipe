@@ -9,5 +9,7 @@ _build-needs
 	LibraryTool
 ;	LibraryTool 2.4
 	PackageConfigure
+;	For reconfiguring?
+;	GTK-Doc
 ; Won't reconfigure:
 ;make-shared
