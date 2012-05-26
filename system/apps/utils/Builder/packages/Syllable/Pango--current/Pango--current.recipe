@@ -1,7 +1,7 @@
 authors				Kaj de Vos
 status				testing
 
-build-needs
+_build-needs
 ;	AutoConfigure >= 2.56
 	AutoConfigure 2.68
 ;	AutoMake

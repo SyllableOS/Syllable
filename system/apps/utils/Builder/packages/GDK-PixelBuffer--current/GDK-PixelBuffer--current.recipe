@@ -16,7 +16,7 @@ needs
 ;	GLib >= 2.31
 recommends
 	LibraryPNG
-	LibraryJPEG
+	LibraryJPEG > 6b
 	JasPer
 	LibraryTIFF
 build-needs			PackageConfigure
