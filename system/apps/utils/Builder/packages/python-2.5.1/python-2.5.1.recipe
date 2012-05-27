@@ -44,8 +44,9 @@ documentation
 ;	Misc/ Doc/*
 develop-docs		Demo/
 
+move-files
+	framework/libraries/python2.5/site-packages/README				framework/libraries/python2.5/
 delete-files
-;	Looses included README!
 	framework/libraries/python2.5/site-packages/
 ;	Big:
 	framework/libraries/python2.5/test/
