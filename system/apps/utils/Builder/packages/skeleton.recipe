@@ -219,7 +219,15 @@ develop-docs		[docs]
 ; Internal documentation for developers of the package itself:
 ;internal-docs		docs
 
+
 ; Remaining installation works in the installation directory.
+
+; Files to move within the installation.
+; If the destination is an absolute path it will be relative to the root
+; of the system image.
+move-files
+	<Source> <Destination>
+delete-files		<Files to delete from the installation>
 
 ; Links to create
 ; The destination link is relative to the package root unless it's an absolute path.
@@ -234,10 +242,3 @@ links
 no-strip
 
 pre-register		<Commands before registration, in the installation directory>
-
-; Files to move within the installation.
-; If the destination is an absolute path it will be relative to the root
-; of the system image.
-move-files
-	<Source> <Destination>
-delete-files		<Files to delete from the installation>
