@@ -14,12 +14,12 @@ licenses			GPL-3 GFDL-1.1
 home				www.gtk.org/gtk-doc/
 packages			gtk-doc/1.18/gtk-doc-1.18
 
-needs				Perl 5
-recommends
-	DocBook-XML
-	DocBook-XSL
+needs
+	Perl >= 5.6
 	LibraryXML >= 2.3.6
 	LibraryXSLT
+	DocBook-XML
+	DocBook-XSL
 build-recommends	PackageConfigure
 
 documentation		README COPYING COPYING-DOCS NEWS ChangeLog AUTHORS MAINTAINERS TODO
