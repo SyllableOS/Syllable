@@ -1,5 +1,6 @@
 authors				Kaj de Vos
 status				testing
+warnings			Hardcoded to find external modules in /resources/
 
 headline			Object oriented dynamic programming language
 description
@@ -43,15 +44,20 @@ documentation
 ;	Misc/ Doc/*
 develop-docs		Demo/
 
-links
-;	Done in system build:
-;	programs/python			/usr/bin/
-;	Can't find own programs:
-	programs/				bin
-;	Can't find own modules:
-	framework/libraries/	lib
-;	For modules, such as LibraryXML2:
-	framework/headers/		include
+delete-files
+;	Looses included README!
+	framework/libraries/python2.5/site-packages/
+;	Big:
+	framework/libraries/python2.5/test/
 
-; Big:
-delete-files		framework/libraries/python2.5/test/
+links
+;	Can't find own programs:
+	programs/														bin
+;	Can't find own modules:
+	framework/libraries/											lib
+;	For modules, such as LibraryXML:
+	framework/headers/												include
+;	Modules such as ZeroInstall may install themselves into the index tree!
+	/resources/index/framework/libraries/python2.5/site-packages/	framework/libraries/python2.5/
+;	Done in system build:
+;	programs/python													/usr/bin/
