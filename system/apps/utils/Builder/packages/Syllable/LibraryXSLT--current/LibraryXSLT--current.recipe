@@ -1,0 +1,7 @@
+authors				Kaj de Vos
+status				testing
+notes				Doesn't build plug-ins when no shared libraries
+
+;make-shared
+
+build-dir			.
