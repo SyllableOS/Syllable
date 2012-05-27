@@ -4,7 +4,7 @@ authors
 maintainers			Kaj de Vos
 status				testing
 
-version				3.0.10
+version				3.0.11
 headline			A portable foreign function interface library
 description
 	The libffi library provides a portable, high level programming interface to various calling conventions. This allows a programmer to call any function specified by a call interface description at run-time.
@@ -16,7 +16,7 @@ home				sourceware.org/libffi/
 locations
 	ftp://sourceware.org/pub/libffi/
 	ftp://sources.redhat.com/pub/libffi/
-packages			libffi-3.0.10
+packages			libffi-3.0.11
 
 documentation
 	README LICENSE ChangeLog ChangeLog.libffi
