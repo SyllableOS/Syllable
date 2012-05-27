@@ -7,7 +7,7 @@ maintainers			Kaj de Vos
 status				broken
 notes
 	See README for GLibC issues.
-;	LibraryFFI hasn't been ported yet.
+	Still complains that internal LibraryFFI hasn't been ported yet.
 	Since Syllable 0.6.6 configure says getaddrinfo() is buggy.
 	Build fails with locking errors after a process fork.
 
