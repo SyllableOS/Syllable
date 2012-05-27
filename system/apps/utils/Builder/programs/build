@@ -983,6 +983,40 @@ def installModule staging, target
 									break unless copyDir dir, root, superAccess
 								end
 							} and
+							! (files = recipe['move-files']) ||
+							begin
+								@log.header 'Moving files'
+
+								for line in parseList files
+									source, destination = line.split
+
+									next if destination[0, 1] == '/' and staging and not imaging? staging
+
+									break unless action superAccess + 'mv ' +
+										(source[0, 1] == '/' && imaging?(staging) ?
+											File.join(@image, source) :
+											source
+										) + ' ' +
+										(destination[0, 1] == '/' ?
+											File.join(@image, destination) :
+											destination
+										)
+								end
+							end and
+							! (files = recipe['delete-files']) ||
+							begin
+								@log.header 'Deleting files from installation'
+
+								for file in toList files
+									next if file[0, 1] == '/' and staging and not imaging? staging
+
+									break unless action superAccess + 'rm --recursive --force ' + (
+										file[0, 1] == '/' ?
+											File.join(@image, file) :
+											file
+									)
+								end
+							end and
 							! (links = recipe['links'] and links != '') ||
 							(	not system? staging or
 								recipe['system-prefix-var'] or  # --includedir was configured
@@ -1046,40 +1080,6 @@ def installModule staging, target
 							begin
 								@log.header 'Executing pre-registration instructions'
 								action toCommands(cmdLines)
-							end and
-							! (files = recipe['move-files']) ||
-							begin
-								@log.header 'Moving files'
-
-								for line in parseList files
-									source, destination = line.split
-
-									next if destination[0, 1] == '/' and staging and not imaging? staging
-
-									break unless action superAccess + 'mv ' +
-										(source[0, 1] == '/' && imaging?(staging) ?
-											File.join(@image, source) :
-											source
-										) + ' ' +
-										(destination[0, 1] == '/' ?
-											File.join(@image, destination) :
-											destination
-										)
-								end
-							end and
-							! (files = recipe['delete-files']) ||
-							begin
-								@log.header 'Deleting files from installation'
-
-								for file in toList files
-									next if file[0, 1] == '/' and staging and not imaging? staging
-
-									break unless action superAccess + 'rm --recursive --force ' + (
-										file[0, 1] == '/' ?
-											File.join(@image, file) :
-											file
-									)
-								end
 							end and
 							! @systemBuild || staging != 'libraries' ||
 							begin
