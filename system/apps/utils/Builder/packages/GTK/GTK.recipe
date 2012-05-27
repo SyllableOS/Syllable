@@ -5,6 +5,7 @@ licenses			LGPL
 home				www.gtk.org
 locations
 	http://ftp.gnome.org/pub/gnome/sources/
+	ftp://ftp.gnome.org/pub/gnome/sources/
 	ftp://ftp.gtk.org/pub/
 
 system-prefix-var	DESTDIR

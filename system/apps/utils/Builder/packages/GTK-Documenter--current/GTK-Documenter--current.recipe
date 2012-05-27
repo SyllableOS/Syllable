@@ -1,0 +1,26 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			GTK
+
+version				1.18
+headline			GTK+ DocBook documentation generator
+description
+	GTK-Doc is used to document C code. It is typically used to document the public API of libraries, such as the GTK+ and GNOME libraries, but it can also be used to document application code.
+
+	Note that GTK-Doc wasn't originally intended to be a general-purpose documentation tool, so it can be a bit awkward to setup and use. For a more polished general-purpose documentation tool you may want to look at Doxygen (http://www.doxygen.org/). However GTK-Doc has some special code to document the signals and properties of GTK+ widgets and GObject classes which other tools may not have.
+licenses			GPL-3 GFDL-1.1
+
+home				www.gtk.org/gtk-doc/
+packages			gtk-doc/1.18/gtk-doc-1.18
+
+needs				Perl 5
+recommends
+	DocBook-XML
+	DocBook-XSL
+	LibraryXML >= 2.3.6
+	LibraryXSLT
+build-recommends	PackageConfigure
+
+documentation		README COPYING COPYING-DOCS NEWS ChangeLog AUTHORS MAINTAINERS TODO
+;develop-docs		doc/ examples/
