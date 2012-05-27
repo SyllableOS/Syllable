@@ -1,0 +1,26 @@
+authors				Kaj de Vos
+status				testing
+
+version				1.1.26
+headline			XSLT C programming library
+description
+	Libxslt is the XSLT C library developed for the GNOME project. XSLT itself is a an XML language to define transformation for XML. Libxslt is based on libxml2 the XML C library developed for the GNOME project. It also implements most of the EXSLT set of processor-portable extensions functions and some of Saxon's evaluate and expressions extensions.
+
+	People can either embed the library in their application or use xsltproc the command line processing tool.
+licenses			MIT
+
+home				xmlsoft.org/XSLT/
+locations
+	ftp://xmlsoft.org/libxslt/
+	http://xmlsoft.org/sources/
+	ftp://xmlsoft.org/libxslt/old/
+packages			libxslt-1.1.26
+
+needs				LibraryXML
+recommends			Python
+
+documentation
+	README Copyright NEWS ChangeLog FEATURES TODO AUTHORS
+;	Double:
+;	COPYING
+build-docs			INSTALL
