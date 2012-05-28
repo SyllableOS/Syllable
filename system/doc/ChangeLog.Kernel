@@ -1439,7 +1439,6 @@ For more information, you should refer to the online documentation.
 Removed both set_tld() and get_tld() in process.c  These syscalls were not
 required; they are implemented in user space as part of libc.
 
-
 * Sep 15 2002, Kristian Van Der Vliet *
 
 Applied a fix to sys/kernel/kernel/vfs/vfs.c  The fcntl() F_GETLK command

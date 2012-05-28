@@ -1,3 +1,12 @@
+* May 28, 2012, Kaj de Vos *
+
+PThreads:
+- Fixed mutex and conditional static initialisers. They hadn't been updated in previous
+modifications that changed their type definitions. This was a regression in Syllable 0.6.6.
+- Implemented PTHREAD_RECURSIVE_MUTEX_INITIALIZER and PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP
+static initialisers. The latter is a Linux version from before it was standardised. Other
+systems implemented it and some software expects it. Makes DirectFB compile.
+
 * January 15, 2012, Kaj de Vos *
 
 Fixed support for Intellipoint mice by completing the switching to IMPS2 protocol.
