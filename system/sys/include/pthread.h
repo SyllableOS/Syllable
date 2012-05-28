@@ -20,16 +20,17 @@
 extern "C"{
 #endif
 
-#include <atheos/types.h>
-#include <atheos/tld.h>
+#include <syllable/types.h>
+#include <syllable/tld.h>
 
 #include <sched.h>
 #include <time.h>
 
 /* The following definitions are required by the XSI/Open Group specification
    although we currently do not guarantee that we support the entire API, nor
-   do we guarentee that the parts of the API that we do support are 100%
-   compliant. */
+   do we guarantee that the parts of the API that we do support are 100%
+   compliant.
+*/
 #define	_POSIX_THREADS
 #define	_POSIX_THREAD_PROCESS_SHARED
 
@@ -42,8 +43,8 @@ extern "C"{
 */
 
 /* We DO NOT support the following, and the associated functions will return
-   ENOSYS when called.  Well behaved code should be checking for the presence 
-   (Or lack thereof) of these defines!
+   ENOSYS when called. Well behaved code should be checking for the presence 
+   (or lack thereof) of these defines!
 
    _POSIX_THREAD_PRIORITY_SCHEDULING
    _POSIX_THREAD_PRIO_PROTECT
@@ -114,12 +115,20 @@ enum
 	PTHREAD_MUTEX_RECURSIVE
 };
 
-/* Mutex initiliasers */
+/* Mutex initialisers */
+
 #define	PTHREAD_MUTEX_INITIALIZER	\
-	{ 0, 0, 0, NULL }
+	{ 0, NULL, 0, NULL, PTHREAD_MUTEX_DEFAULT, PTHREAD_PROCESS_PRIVATE }
+#define	PTHREAD_RECURSIVE_MUTEX_INITIALIZER	\
+	{ 0, NULL, 0, NULL, PTHREAD_MUTEX_RECURSIVE, PTHREAD_PROCESS_PRIVATE }
+
+/* Non-standard Linux version that has leaked into other systems,
+   and is used by software such as DirectFB and Cairo.
+*/
+#define	PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP PTHREAD_RECURSIVE_MUTEX_INITIALIZER
 
 #define	PTHREAD_COND_INITIALIZER		\
-	{ 0, 0, 0, NULL, 0 }
+	{ NULL, 0, NULL, PTHREAD_PROCESS_PRIVATE, NULL, 0 }
 
 #define	PTHREAD_RWLOCK_INITIALIZER	\
 	{ 0 }
@@ -222,7 +231,3 @@ void	pthread_testcancel(void);
 #endif
 
 #endif	/* __F_SYLLABLE_PTHREAD_H_ */
-
-
-
-
