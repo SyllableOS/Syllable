@@ -13,7 +13,7 @@ packages			DirectFB-1.0.0
 
 needs
 ;	For PThreads enhancements and fixes:
-	Syllable 0.7
+	Syllable >= 0.7
 	ZLib
 	SDL
 	LibraryPNG
