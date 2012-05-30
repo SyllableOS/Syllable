@@ -9,13 +9,13 @@ description
 licenses			MIT GPL-2+exception
 
 home
-	transmission.m0k.org
-;	www.transmissionbt.com
+	www.transmissionbt.com
+;	transmission.m0k.org
 locations			http://download.m0k.org/transmission/files/
 
-needs				Syllable >= 0.6.3
-build-needs			pkg-config
-;recommends			openssl
+needs				Syllable >= 0.6.3 <= 0.6.5
+build-needs			PackageConfigure
+recommends			OpenSSL
 
 ;make-shared
 
