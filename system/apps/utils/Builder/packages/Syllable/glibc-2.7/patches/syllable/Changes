@@ -1,5 +1,12 @@
 Glibc Syllable Changelog
 
+* May 30 2012, Kaj de Vos *
+
+The OSS interface is defined in syllable/soundcard.h. On Linux, it's in linux/soundcard.h, but
+GLibC has a sys/soundcard.h wrapper that allows software to find it in a system independent
+place.
+Implemented sys/soundcard.h for Syllable.
+
 * October 24 2009 *
 
 Updated all of the sources to match the changes that have been made to the system headers.

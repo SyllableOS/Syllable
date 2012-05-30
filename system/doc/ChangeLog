@@ -1,3 +1,10 @@
+* May 30, 2012, Kaj de Vos *
+
+The OSS interface is defined in syllable/soundcard.h. On Linux, it's in linux/soundcard.h, but
+GLibC has a sys/soundcard.h wrapper that allows software to find it in a system independent
+place.
+Implemented sys/soundcard.h for Syllable. Obsoletes one patch for QEmu.
+
 * May 28, 2012, Kaj de Vos *
 
 PThreads:
