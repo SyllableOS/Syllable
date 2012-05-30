@@ -15,17 +15,18 @@ packages			XML-Parser-2.36
 locations			http://search.cpan.org/CPAN/authors/id/M/MS/MSERGEANT/
 
 needs
-	perl >= 5.004
-	expat >= 1.95
+	Perl >= 5.004
+	Expat >= 1.95
 ;	?:
-;	LWP 0
+recommends
+	LWP 0
 
 configure-cmd		perl Makefile.PL
 configure-prefix	"PREFIX="
-configure-vars
+_configure-vars
 ;	INSTALLDIRS		perl
-	EXPATINCPATH	/resources/expat/framework/headers
-	EXPATLIBPATH	/resources/expat/framework/libraries
+	EXPATINCPATH	/resources/Expat/framework/headers
+	EXPATLIBPATH	/resources/Expat/framework/libraries
 
 test-targets		test
 
