@@ -1,0 +1,33 @@
+authors				Kaj de Vos
+status				testing
+
+version				2.0.19
+headline			Event notification programming library
+description
+	The libevent API provides a mechanism to execute a callback function when a specific event occurs on a file descriptor or after a timeout has been reached. Furthermore, libevent also support callbacks due to signals or regular timeouts.
+
+	libevent is meant to replace the event loop found in event driven network servers. An application just needs to call event_dispatch() and then add or remove events dynamically without having to change the event loop.
+
+	Currently, libevent supports /dev/poll, kqueue(2), event ports, POSIX select(2), Windows select(), poll(2), and epoll(4). The internal event mechanism is completely independent of the exposed event API, and a simple update of libevent can provide new functionality without having to redesign the applications.
+licenses			BSD
+
+home				libevent.org
+locations
+	https://github.com/downloads/libevent/libevent/
+	http://github.com/downloads/libevent/libevent/
+packages			libevent-2.0.19-stable
+
+recommends			OpenSSL
+
+_configure-options
+	--disable-openssl
+	--disable-thread-support
+	--disable-malloc-replacement
+
+test-targets		verify
+
+system-prefix-var	DESTDIR
+
+documentation
+	README LICENSE ChangeLog
+;	sample/
