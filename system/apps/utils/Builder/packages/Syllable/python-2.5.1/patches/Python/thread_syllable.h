@@ -7,9 +7,6 @@
 #include <errno.h>
 #include <string.h>
 
-/* Missing decl from threads.h */
-extern int exit_thread(int);
-
 
 /* Undefine FASTLOCK to play with simple semaphores. */
 #define FASTLOCK

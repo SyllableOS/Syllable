@@ -11,7 +11,10 @@ notes
 	Since Syllable 0.6.6 configure says getaddrinfo() is buggy.
 	Build fails with locking errors after a process fork.
 
-needs				LibraryFFI
+needs
+;	For exit_thread() in syllable/threads.h:
+	Syllable >= 0.6.7
+	LibraryFFI
 build-needs			AutoConfigure >= 2.53
 
 patch				autoconf
