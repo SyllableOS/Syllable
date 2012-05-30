@@ -200,4 +200,3 @@ Updated all of the sources to match the changes that have been made to the syste
 	o i386/syllable-start.S: Move to add-on sysdeps/i386/elf directory & rename to start.S, which neatly overides
 	  the standard ELF32 version.
 	o Makefile: Remove special rules for syllable-start.S
-

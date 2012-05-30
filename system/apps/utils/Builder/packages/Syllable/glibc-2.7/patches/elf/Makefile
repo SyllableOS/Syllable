@@ -65,4 +65,3 @@ ifeq (yes,$(build-shared))
 .PHONY: ldso_install
 ldso_install:
 endif
-

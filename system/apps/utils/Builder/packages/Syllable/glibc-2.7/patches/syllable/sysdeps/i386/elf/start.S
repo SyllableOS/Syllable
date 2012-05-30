@@ -39,28 +39,28 @@
    segment.  The SVR4/i386 ABI (pages 3-31, 3-32) says that when the entry
    point runs, most registers' values are unspecified, except for:
 
-   %edx		Contains a function pointer to be registered with `atexit'.
+   %edx	Contains a function pointer to be registered with `atexit'.
 		This is how the dynamic linker arranges to have DT_FINI
 		functions called for shared libraries that have been loaded
 		before this code runs.
 
-   %esp		The stack contains the arguments and environment:
-		0(%esp)			argc
-		4(%esp)			argv[0]
+   %esp	The stack contains the arguments and environment:
+		0(%esp)				argc
+		4(%esp)				argv[0]
 		...
 		(4*argc)(%esp)		NULL
 		(4*(argc+1))(%esp)	envp[0]
 		...
-					NULL
+		NULL
 
    On Syllable %edx is unused, so there is no shared library exit point. 
    argc is not passed on the stack; it is determined in __libc_start_main
    instead.
    argv and envv are passed instead, but the stack is laid out as follows:
 
-   %esp
-		4(%esp)			&argv
-		8(%esp)			&envp
+		%esp
+		4(%esp)				&argv
+		8(%esp)				&envp
 
    argv & envp themselves are stored on the heap.
 

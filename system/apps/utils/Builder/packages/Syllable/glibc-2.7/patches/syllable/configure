@@ -11,4 +11,3 @@ case "$host_os" in
     libc_config_ok=yes
   ;;
 esac
-
