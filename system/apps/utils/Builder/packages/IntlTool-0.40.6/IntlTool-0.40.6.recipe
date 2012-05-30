@@ -2,6 +2,7 @@ authors
 	Kristian Van Der Vliet
 	Kaj de Vos
 status				testing
+warnings			Hardwires Perl location, so the primary Perl link should be a standard one.
 
 headline			Internationalisation tools
 description
