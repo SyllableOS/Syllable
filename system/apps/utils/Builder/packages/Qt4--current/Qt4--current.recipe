@@ -1,0 +1,43 @@
+authors				Kaj de Vos
+status				testing
+
+version				4.8.2
+headline			Cross-platform application and UI framework
+description
+	Qt is a cross-platform application and UI framework for developers using C++ or QML, a CSS & JavaScript like language.
+licenses			LGPL-2.1 GPL-3
+
+home
+	qt-project.org
+;	qt.nokia.com
+locations
+;	Release:
+	http://releases.qt-project.org/qt4/source/
+;	Older:
+	ftp://ftp.qt.nokia.com/qt/source/
+	ftp://ftp.trolltech.com/qt/source/
+	http://get.qt.nokia.com/qt/source/
+packages			qt-everywhere-opensource-src-4.8.2
+
+recommends
+	OpenSSL
+	D-Bus
+	LibraryPNG
+	LibraryJPEG
+	LibraryTIFF
+	CUPS
+	SQLite
+	GLib
+build-recommends	PackageConfigure
+
+configure-prefix	"-prefix "
+configure-options
+	-opensource
+	-confirm-license
+	-release
+	-system-sqlite
+	-no-nis
+	-nomake examples
+	-nomake demos
+;	For KDE:
+;	-no-phonon
