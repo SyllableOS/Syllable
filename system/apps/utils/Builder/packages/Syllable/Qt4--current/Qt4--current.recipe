@@ -1,14 +1,18 @@
 authors				Kaj de Vos
 status				developing
 
+needs				DirectFB >= 0.9
 configure-options
 	-platform linux-g++
+;	-embedded
+	-qt-gfx-directfb
+;	-plugin-gfx-directfb
 	-opensource
 	-confirm-license
-	-release
+;	-release
+;	-no-gui
+;	-no-mitshm
 	-system-sqlite
 	-no-nis
 	-nomake examples
 	-nomake demos
-;	For KDE:
-;	-no-phonon

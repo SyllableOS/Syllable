@@ -20,6 +20,7 @@ locations
 packages			qt-everywhere-opensource-src-4.8.2
 
 recommends
+	ZLib
 	OpenSSL
 	D-Bus
 	LibraryPNG
@@ -38,15 +39,21 @@ no-datarootdir
 no-mandir
 no-infodir
 configure-options
+;	-embedded
 	-opensource
 	-confirm-license
-	-release
+;	-release
+;	-no-gui
+;	-no-mitshm
+;	-no-glib
 	-system-sqlite
 	-no-nis
 	-nomake examples
 	-nomake demos
 ;	For KDE:
 ;	-no-phonon
+
+;system-prefix-var	INSTALL_ROOT
 
 documentation
 	README LICENSE.LGPL LGPL_EXCEPTION.txt LICENSE.GPL3 LICENSE.FDL changes-4.8.2
