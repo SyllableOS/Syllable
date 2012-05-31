@@ -40,10 +40,10 @@ no-mandir
 no-infodir
 configure-options
 ;	-embedded
+;	-no-gui
 	-opensource
 	-confirm-license
 ;	-release
-;	-no-gui
 ;	-no-mitshm
 ;	-no-glib
 	-system-sqlite

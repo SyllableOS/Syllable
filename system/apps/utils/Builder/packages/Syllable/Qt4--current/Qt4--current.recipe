@@ -1,16 +1,19 @@
 authors				Kaj de Vos
-status				developing
+status				broken
+notes				Crashes during make of MOC
 
-needs				DirectFB >= 0.9
+;needs				DirectFB >= 0.9
 configure-options
 	-platform linux-g++
+;	Not supported:
 ;	-embedded
-	-qt-gfx-directfb
+;	Wants to target X otherwise:
+	-no-gui
+;	-qt-gfx-directfb
 ;	-plugin-gfx-directfb
 	-opensource
 	-confirm-license
 ;	-release
-;	-no-gui
 ;	-no-mitshm
 	-system-sqlite
 	-no-nis

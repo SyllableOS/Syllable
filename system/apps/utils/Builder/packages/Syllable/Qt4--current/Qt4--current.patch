@@ -1,0 +1,12 @@
+diff -ru Qt4-4.8.2-original/src/corelib/global/qglobal.h Qt4-4.8.2/src/corelib/global/qglobal.h
+--- Qt4-4.8.2-original/src/corelib/global/qglobal.h	2012-04-26 19:46:08.000000000 +0000
++++ Qt4-4.8.2/src/corelib/global/qglobal.h	2012-05-31 18:08:01.000000000 +0000
+@@ -261,6 +261,8 @@
+ #  define Q_OS_INTEGRITY
+ #elif defined(VXWORKS) /* there is no "real" VxWorks define - this has to be set in the mkspec! */
+ #  define Q_OS_VXWORKS
++#elif defined(__SYLLABLE__)
++#  define Q_OS_UNIX
+ #elif defined(__MAKEDEPEND__)
+ #else
+ #  error "Qt has not been ported to this OS - talk to qt-bugs@trolltech.com"
