@@ -1,0 +1,14 @@
+diff -ru Transmission-2.52-original/third-party/libnatpmp/getgateway.c Transmission-2.52/third-party/libnatpmp/getgateway.c
+--- Transmission-2.52-original/third-party/libnatpmp/getgateway.c	2012-05-19 15:51:14.000000000 +0200
++++ Transmission-2.52/third-party/libnatpmp/getgateway.c	2012-05-31 14:52:16.000000000 +0200
+@@ -566,3 +566,10 @@
+ #endif /* #ifdef USE_HAIKU_CODE */
+ 
+ 
++#ifdef __SYLLABLE__
++int getdefaultgateway(in_addr_t *addr)
++{
++  /* Not implemented */
++  return 0;
++}
++#endif
