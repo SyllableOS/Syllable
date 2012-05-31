@@ -1,0 +1,7 @@
+authors				Kaj de Vos
+status				broken
+notes
+	In Transmission:
+	evsig_init: socketpair: address family not supported by protocol
+
+;make-shared
