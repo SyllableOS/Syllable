@@ -1,0 +1,14 @@
+authors				Kaj de Vos
+status				developing
+
+configure-options
+	-platform linux-g++
+	-opensource
+	-confirm-license
+	-release
+	-system-sqlite
+	-no-nis
+	-nomake examples
+	-nomake demos
+;	For KDE:
+;	-no-phonon

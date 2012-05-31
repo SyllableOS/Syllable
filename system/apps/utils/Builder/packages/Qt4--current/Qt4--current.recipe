@@ -5,7 +5,7 @@ version				4.8.2
 headline			Cross-platform application and UI framework
 description
 	Qt is a cross-platform application and UI framework for developers using C++ or QML, a CSS & JavaScript like language.
-licenses			LGPL-2.1 GPL-3
+licenses			LGPL-2.1 GPL-3 FDL
 
 home
 	qt-project.org
@@ -30,7 +30,7 @@ recommends
 	GLib
 build-recommends	PackageConfigure
 
-configure-prefix	"-prefix "
+;configure-prefix	"-prefix "
 no-sbindir
 no-libexecdir
 no-includedir
@@ -47,3 +47,8 @@ configure-options
 	-nomake demos
 ;	For KDE:
 ;	-no-phonon
+
+documentation
+	README LICENSE.LGPL LGPL_EXCEPTION.txt LICENSE.GPL3 LICENSE.FDL changes-4.8.2
+;	doc/ examples/ demos/
+build-docs			INSTALL
