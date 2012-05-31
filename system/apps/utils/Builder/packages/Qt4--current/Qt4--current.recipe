@@ -31,6 +31,12 @@ recommends
 build-recommends	PackageConfigure
 
 configure-prefix	"-prefix "
+no-sbindir
+no-libexecdir
+no-includedir
+no-datarootdir
+no-mandir
+no-infodir
 configure-options
 	-opensource
 	-confirm-license
