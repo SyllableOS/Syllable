@@ -39,7 +39,7 @@ _configure-options
 ;	Allow switching libraries:
 ;	--disable-rpath
 ;	--enable-thread-safety
-;	--disable-glib
+	--disable-glib
 	--disable-ecore-fb
 ;	--enable-ecore-directfb
 ;	--enable-ecore-sdl
@@ -49,5 +49,5 @@ _configure-options
 ;	--enable-build-examples
 
 documentation
-	README ABOUT-NLS COPYING NEWS ChangeLog AUTHORS TODO
+	README ABOUT-NLS COPYING NEWS ChangeLog AUTHORS
 ;	doc/
