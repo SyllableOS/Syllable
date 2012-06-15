@@ -4,14 +4,14 @@ warnings			Looks for libOSMesa.so version 1.
 
 inherits			Enlightenment--current
 
-version				1.2.0
+version				1.2.1
 headline			Enlightenment's hardware-accelerated retained canvas API
 description
 	Evas is a clean display canvas API that implements a scene graph, not an immediate-mode rendering target, is cross-platform, for several target display systems that can draw anti-aliased text, smooth super and sub-sampled scaled images, alpha-blend objects and much more.
 licenses			BSD
 
 home				trac.enlightenment.org/e/wiki/Evas
-packages			evas-1.2.0
+packages			evas-1.2.1
 
 needs
 	Eina >= 1.2.0

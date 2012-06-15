@@ -6,7 +6,7 @@ notes
 
 inherits			Enlightenment--current
 
-version				1.0.0
+version				1.0.1
 headline			Enlightenment's basic widget set
 description
 	Enlightenment's basic widget set, based on EFL with focus mobile touch-screen devices.
@@ -15,7 +15,7 @@ description
 licenses			LGPL-2.1
 
 home				trac.enlightenment.org/e/wiki/Elementary
-packages			elementary-1.0.0
+packages			elementary-1.0.1
 
 needs
 	Eina >= 1.2.0

@@ -3,7 +3,7 @@ status				testing
 
 inherits			Enlightenment--current
 
-version				1.0.0
+version				1.0.1
 headline			Enlightenment's thumbnailing library and DBus service
 description
 	Thumbnail generation library:
@@ -14,7 +14,7 @@ description
 licenses			LGPL-2.1
 
 home				trac.enlightenment.org/e/wiki/Ethumb
-packages			ethumb-1.0.0
+packages			ethumb-1.0.1
 
 needs
 	Eina >= 1.2.0

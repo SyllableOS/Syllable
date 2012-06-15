@@ -3,7 +3,7 @@ status				testing
 
 inherits			Enlightenment--current
 
-version				1.2.0
+version				1.2.1
 headline			Enlightenment's core event abstraction layer and OS abstraction layer
 description
 	Ecore is a clean and tiny event loop library with many modules to do lots of convenient things for a programmer, to save time and effort.
@@ -16,7 +16,7 @@ description
 licenses			BSD
 
 home				trac.enlightenment.org/e/wiki/Ecore
-packages			ecore-1.2.0
+packages			ecore-1.2.1
 
 needs
 	Eina >= 1.2.0
