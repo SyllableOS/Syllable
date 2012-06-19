@@ -1,15 +1,10 @@
 authors				Kaj de Vos
-status				broken
-notes				Compiles but doesn't run
+status				testing
 
-; Last version that compiles on Syllable 0.6.7:
-;version				1.2.1
-;locations			http://directfb.org/downloads/Core/DirectFB-1.2/
-;packages			DirectFB-1.2.1
-; Last version that runs somewhat:
-version				1.0.0
-locations			http://directfb.org/downloads/Old/
-packages			DirectFB-1.0.0
+; Last version that runs without errors:
+version				1.2.0
+locations			http://directfb.org/downloads/Core/DirectFB-1.2/
+packages			DirectFB-1.2.0
 
 needs
 ;	For PThreads enhancements and fixes:
