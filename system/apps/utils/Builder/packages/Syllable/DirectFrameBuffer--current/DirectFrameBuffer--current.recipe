@@ -28,6 +28,8 @@ recommends
 	TSLibrary
 
 make-shared
+; For 1.6.0:
+;patch				./autogen.sh --version
 
 configure-options
 ;	--with-sysroot=

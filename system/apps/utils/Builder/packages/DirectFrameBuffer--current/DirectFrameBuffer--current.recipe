@@ -14,7 +14,7 @@ home				www.directfb.org
 locations			http://directfb.org/downloads/Core/DirectFB-1.6/
 packages			DirectFB-1.6.0
 
-build-needs			FluxCompiler
+build-needs			Flux
 build-recommends	PackageConfigure >= 0.9.0
 
 system-prefix-var	DESTDIR
