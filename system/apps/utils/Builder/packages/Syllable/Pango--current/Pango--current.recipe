@@ -1,6 +1,10 @@
 authors				Kaj de Vos
 status				testing
 
+; Last version that builds with Cairo 1.6.4:
+version				1.21.3
+packages			pango/1.21/pango-1.21.3
+
 _build-needs
 ;	AutoConfigure >= 2.56
 	AutoConfigure 2.68
