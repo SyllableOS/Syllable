@@ -1,10 +1,10 @@
 authors				Kaj de Vos
 status				testing
 
-; Last version that runs without errors:
-version				1.2.0
+; Last version that runs without serious errors:
+version				1.2.10
 locations			http://directfb.org/downloads/Core/DirectFB-1.2/
-packages			DirectFB-1.2.0
+packages			DirectFB-1.2.10
 
 needs
 ;	For PThreads enhancements and fixes:
