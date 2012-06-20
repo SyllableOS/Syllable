@@ -13,13 +13,17 @@ needs
 	PixelManipulation >= 0.22.0
 build-needs
 ;	AutoConfigure >= 2.59
-	AutoConfigure 2.67
+	AutoConfigure 2.61
+;	AutoConfigure 2.67
 ;	AutoMake
-	AutoMake 1.11.1
+	AutoMake 1.10.1
+;	AutoMake 1.11.1
 	LibraryTool
+;	LibraryTool 1.5.24
 ;	LibraryTool 2.2.6b
 	PackageConfigure >= 0.16
-make-shared
+; 1.6.4 won't reconfigure:
+;make-shared
 
 configure-options
 ;	--disable-valgrind
