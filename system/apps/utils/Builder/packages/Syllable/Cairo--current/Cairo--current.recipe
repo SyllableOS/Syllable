@@ -4,6 +4,13 @@ authors
 status				testing
 notes				Unstable 1.11.4 doesn't build
 
+; Last version that builds with DirectFB 1(.2.10):
+version				1.6.4
+packages			cairo-1.6.4
+
+needs
+	DirectFrameBuffer
+	PixelManipulation >= 0.22.0
 build-needs
 ;	AutoConfigure >= 2.59
 	AutoConfigure 2.67
@@ -14,11 +21,10 @@ build-needs
 	PackageConfigure >= 0.16
 make-shared
 
-_configure-options
+configure-options
 ;	--disable-valgrind
 ;	--disable-pthread
 ;	--disable-some-floating-point
-;	Doesn't build with DirectFB 1.0.0:
 	--enable-directfb
 ;	--enable-gl
 ;	--enable-drm
