@@ -1,5 +1,6 @@
 authors				Kaj de Vos
 status				testing
+warnings			Installs plugins/webkit/ directory during configuring!
 
 version				4.8.2
 headline			Cross-platform application and UI framework
@@ -39,23 +40,30 @@ no-datarootdir
 no-mandir
 no-infodir
 configure-options
+;	-no-mitshm
+	-no-exceptions
 ;	-embedded
+;	-qpa
 ;	-no-gui
+;	-qt-gfx-directfb
+;	-plugin-gfx-directfb
 	-opensource
 	-confirm-license
 ;	-release
-;	-no-mitshm
-;	-no-glib
+	-no-glib
 	-system-sqlite
-	-no-nis
-	-nomake examples
-	-nomake demos
+;	-no-nis
+;	-nomake examples
+;	-nomake demos
 ;	For KDE:
 ;	-no-phonon
 
 ;system-prefix-var	INSTALL_ROOT
 
-documentation
-	README LICENSE.LGPL LGPL_EXCEPTION.txt LICENSE.GPL3 LICENSE.FDL changes-4.8.2
-;	doc/ examples/ demos/
+documentation		README LICENSE.LGPL LGPL_EXCEPTION.txt LICENSE.GPL3 LICENSE.FDL changes-4.8.2
 build-docs			INSTALL
+
+delete-files
+;	Huge:
+	doc/
+	examples/ demos/

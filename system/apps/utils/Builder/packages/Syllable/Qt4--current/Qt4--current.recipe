@@ -1,21 +1,29 @@
 authors				Kaj de Vos
-status				broken
-notes				Crashes during make of MOC
+status				testing
 
-;needs				DirectFB >= 0.9
+needs
+;	For PThreads enhancements and fixes:
+	Syllable > 0.6.7
+	DirectFB >= 0.9
 configure-options
 	-platform linux-g++
+	-no-pch
+	-D QT_NO_FILESYSTEMWATCHER
+;	-no-mitshm
+;	-no-ipv6
+	-no-exceptions
 ;	Not supported:
 ;	-embedded
+	-qpa
 ;	Wants to target X otherwise:
 	-no-gui
-;	-qt-gfx-directfb
+	-qt-gfx-directfb
 ;	-plugin-gfx-directfb
 	-opensource
 	-confirm-license
 ;	-release
-;	-no-mitshm
+	-no-glib
 	-system-sqlite
-	-no-nis
-	-nomake examples
-	-nomake demos
+;	-no-nis
+;	-nomake examples
+;	-nomake demos

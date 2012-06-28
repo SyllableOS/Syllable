@@ -8,7 +8,7 @@ packages			DirectFB-1.4.13
 
 needs
 ;	For PThreads enhancements and fixes:
-	Syllable >= 0.7
+	Syllable > 0.6.7
 	ZLib
 	SDL
 	LibraryPNG
