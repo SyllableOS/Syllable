@@ -3,7 +3,7 @@ authors
 	Kaj de Vos
 status				testing
 
-version				2.9.0
+version				2.9.92
 headline			Font configuration and customization library
 description
 	Fontconfig is a library designed to provide system-wide font configuration, customisation and application access. Fontconfig is designed to locate fonts within the system and select them according to requirements specified by applications.
@@ -13,7 +13,7 @@ licenses			MIT
 
 home				fontconfig.org
 locations			http://fontconfig.org/release/
-packages			fontconfig-2.9.0
+packages			fontconfig-2.9.92
 
 needs
 	Expat | LibraryXML2
