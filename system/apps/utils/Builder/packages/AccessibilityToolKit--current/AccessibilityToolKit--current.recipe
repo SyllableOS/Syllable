@@ -3,18 +3,17 @@ status				testing
 
 inherits			GTK
 
-version				2.2.0
+version				2.3.93
 headline			GTK+ accessibility library
 description
 	The accessibility tool kit contains the atk library. This is useful for allowing accessibility solutions to be available for all gtk+-2 and gtk+-3 applications.
 
 home				projects.gnome.org/accessibility
-; 2.3.93 is .tar.xz only!
-packages			atk/2.2/atk-2.2.0
+packages			atk/2.3/atk-2.3.93
 
 needs				GLib >= 2
 build-needs			PackageConfigure
-build-recommends	GTK-Doc
+build-recommends	GTK-Documenter
 
 ;configure-options	--enable-gtk-doc
 
