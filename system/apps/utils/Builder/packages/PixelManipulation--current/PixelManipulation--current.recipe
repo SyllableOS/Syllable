@@ -1,7 +1,7 @@
 authors				Kaj de Vos
 status				testing
 
-version				0.24.4
+version				0.26.2
 headline			Low-level pixel manipulation library
 description
 	Pixman is a library that provides low-level pixel manipulation features such as image compositing and trapezoid rasterization.
@@ -11,9 +11,7 @@ home				cairographics.org
 locations
 	http://cairographics.org/releases/
 	http://cairographics.org/snapshots/
-packages
-	pixman-0.24.4
-;	pixman-0.25.2
+packages			pixman-0.26.2
 
 ;test-recommends		GTK+
 
