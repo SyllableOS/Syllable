@@ -35,5 +35,7 @@ system-prefix-var	DESTDIR
 documentation		README ANNOUNCE LICENSE CHANGES TODO
 build-docs			INSTALL
 develop-docs
-	libpng-manual.txt example.c
-	contrib/gregbook
+;	1.5 series:
+;	libpng-manual.txt
+	libpng-1.4.11.txt
+	example.c contrib/gregbook
