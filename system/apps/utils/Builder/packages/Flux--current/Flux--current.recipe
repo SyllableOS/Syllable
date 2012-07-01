@@ -1,0 +1,19 @@
+authors				Kaj de Vos
+status				testing
+
+version				1.4.1
+headline			Interface Description Language for DirectFB
+description
+	Flux is an interface description language used by DirectFB. fluxcomp compiles .flux files to .cpp or .c files.
+licenses			GPL-3
+
+home				www.directfb.org
+locations			http://directfb.org/downloads/Core/flux/
+packages			flux-1.4.1
+
+system-prefix-var	DESTDIR
+
+documentation
+	README COPYING ChangeLog AUTHORS TODO
+;	Empty:
+;	NEWS
