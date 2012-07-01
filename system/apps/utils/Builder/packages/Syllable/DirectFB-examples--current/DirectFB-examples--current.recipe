@@ -1,0 +1,7 @@
+authors				Kaj de Vos
+status				testing
+
+version				1.5.3
+packages			DirectFB-examples-1.5.3
+
+needs				DirectFrameBuffer
