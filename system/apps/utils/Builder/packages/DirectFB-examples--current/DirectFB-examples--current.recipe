@@ -1,0 +1,21 @@
+authors				Kaj de Vos
+status				testing
+
+version				1.6.0
+headline			Examples for DirectFrameBuffer
+description
+	The DirectFB-examples package contains a set of simple DirectFB applications that can be used to test and demonstrate various DirectFB features.
+licenses			MIT
+
+home				www.directfb.org
+locations			http://directfb.org/downloads/Extras/
+packages			DirectFB-examples-1.6.0
+
+needs				DirectFrameBuffer
+
+system-prefix-var	DESTDIR
+
+documentation
+	README COPYING ChangeLog AUTHORS
+;	Empty:
+;	NEWS
