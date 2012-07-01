@@ -11,7 +11,7 @@ needs
 	Syllable > 0.6.7
 	ZLib
 	SDL
-	LibraryPNG
+	LibraryPNG < 1.5
 build-needs
 ;	AutoConfigure >= 2.52
 	AutoConfigure 2.61

@@ -1,10 +1,13 @@
 authors				Kaj de Vos
 status				testing
-notes				See contrib/gregbook/ to build examples
+notes
+	See contrib/gregbook/ to build examples.
+	1.5 series hides internal interfaces; breaks old software.
 
 inherits			sourceforge
 
-version				1.5.11
+;version				1.5.11
+version				1.4.11
 headline			An open, extensible image format with lossless compression
 description
 	This is an open source project to develop and maintain the reference library for use in applications that read, create, and manipulate PNG (Portable Network Graphics) raster image files.
@@ -13,7 +16,8 @@ licenses			OS
 home
 	www.libpng.org
 ;	www.libpng.org/pub/png/
-packages			libpng/libpng-1.5.11
+;packages			libpng/libpng-1.5.11
+packages			libpng/libpng-1.4.11
 _locations
 	ftp://ftp.simplesystems.org/pub/png/src
 	ftp://ftp.simplesystems.org/pub/png/src/history/
