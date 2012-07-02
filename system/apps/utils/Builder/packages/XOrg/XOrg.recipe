@@ -1,0 +1,10 @@
+authors				Kaj de Vos
+
+licenses			X11
+
+home				xorg.freedesktop.org
+locations			http://www.x.org/releases/X11R7.5/src/
+
+build-recommends	PackageConfigure >= 0.9.0
+
+system-prefix-var	DESTDIR

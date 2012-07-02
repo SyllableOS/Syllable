@@ -1,0 +1,13 @@
+authors				Kaj de Vos
+status				developing
+
+inherits			XOrg
+
+version				1.3.2
+headline			Core X11 protocol client library
+description
+	X11 protocol client library of the X Window System.
+
+packages			lib/libX11-1.3.2
+
+documentation		README COPYING NEWS ChangeLog AUTHORS
