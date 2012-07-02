@@ -1,0 +1,12 @@
+authors				Kaj de Vos
+
+inherits			XOrg
+
+version				7.1.1
+headline			X11 extensions protocol headers
+description
+	Programming headers for extensions of the X Window System.
+
+packages			proto/xextproto-7.1.1
+
+documentation		COPYING ChangeLog

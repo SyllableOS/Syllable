@@ -9,6 +9,12 @@ description
 
 packages			lib/libX11-1.3.2
 
-needs				XPrototypes >= 7.0.13
+;needs				XCB
+build-needs
+	XProtocol >= 7.0.13
+	XExtensionsProtocol
+	XTransport
+
+configure-options	--without-xcb
 
 documentation		README COPYING NEWS ChangeLog AUTHORS

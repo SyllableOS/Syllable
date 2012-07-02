@@ -1,0 +1,15 @@
+authors				Kaj de Vos
+
+inherits			XOrg
+
+version				1.2.5
+headline			X11 transport library
+description
+	xtrans is a library of code that is shared among various X packages to handle network protocol transport in a modular fashion, allowing a single place to add new transport types. It is used by the X server, libX11, libICE, the X font server, and related components.
+
+	It is however, *NOT* a shared library, but code which each consumer includes and builds its own copy of with various #ifdef flags to make each copy slightly different.
+packages			lib/xtrans-1.2.5
+
+documentation		README COPYING ChangeLog AUTHORS
+;	Empty:
+;	NEWS
