@@ -1,0 +1,19 @@
+authors				Kaj de Vos
+status				developing
+
+; Last one with SDL:
+version				1.7.1
+headline			X11 Window System display server
+description
+	The X.Org project provides an open source implementation of the X Window System.
+licenses			X11
+
+home				xorg.freedesktop.org
+locations			http://www.x.org/releases/X11R7.5/src/
+packages			xserver/xorg-server-1.7.1
+
+build-recommends	PackageConfigure >= 0.9.0
+
+system-prefix-var	DESTDIR
+
+documentation		COPYING ChangeLog
