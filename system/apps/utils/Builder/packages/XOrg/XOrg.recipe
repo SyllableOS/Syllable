@@ -1,9 +1,14 @@
 authors				Kaj de Vos
+status				testing
 
 licenses			X11
 
-home				xorg.freedesktop.org
-locations			http://www.x.org/releases/X11R7.5/src/
+home
+	x.org
+;	xorg.freedesktop.org
+locations
+	http://www.x.org/releases/X11R7.5/src/
+	ftp://ftp.x.org/pub/X11R7.5/src/
 
 build-recommends	PackageConfigure >= 0.9.0
 
