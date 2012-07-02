@@ -1,0 +1,17 @@
+authors				Kaj de Vos
+
+inherits			XOrg
+
+version				1.0.5
+headline			X11 authorization library
+description
+	X11 authorization library of the X Window System.
+
+	A very simple mechanism for providing individual access to an X Window System display. It uses existing core protocol and library hooks for specifying authorization data in the connection setup block to restrict use of the display to only those clients that show that they know a server-specific key called a "magic cookie".
+
+packages			lib/libXau-1.0.5
+
+documentation
+	README COPYING ChangeLog AUTHORS
+;	Empty:
+;	NEWS

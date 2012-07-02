@@ -1,0 +1,12 @@
+authors				Kaj de Vos
+
+inherits			XOrg
+
+version				1.2.0
+headline			X11 miscellaneous protocol headers
+description
+	Miscellaneous programming headers for the X Window System.
+
+packages			proto/xcmiscproto-1.2.0
+
+documentation		COPYING ChangeLog

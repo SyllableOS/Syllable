@@ -1,0 +1,12 @@
+authors				Kaj de Vos
+
+inherits			XOrg
+
+version				1.1.0
+headline			X11 big requests protocol headers
+description
+	Programming headers for big requests in the X Window System.
+
+packages			proto/bigreqsproto-1.1.0
+
+documentation		COPYING ChangeLog

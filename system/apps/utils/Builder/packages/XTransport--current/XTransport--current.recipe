@@ -10,6 +10,7 @@ description
 	It is however, *NOT* a shared library, but code which each consumer includes and builds its own copy of with various #ifdef flags to make each copy slightly different.
 packages			lib/xtrans-1.2.5
 
-documentation		README COPYING ChangeLog AUTHORS
+documentation
+	README COPYING ChangeLog AUTHORS
 ;	Empty:
 ;	NEWS
