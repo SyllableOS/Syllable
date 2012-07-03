@@ -1,0 +1,12 @@
+authors				Kaj de Vos
+
+inherits			XOrg
+
+version				0.11
+headline			X11 rendering protocol headers
+description
+	Rendering programming headers for the X Window System.
+
+packages			proto/renderproto-0.11
+
+documentation		COPYING ChangeLog

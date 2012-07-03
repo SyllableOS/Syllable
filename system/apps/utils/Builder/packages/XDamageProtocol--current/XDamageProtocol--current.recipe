@@ -1,0 +1,13 @@
+authors				Kaj de Vos
+
+inherits			XOrg
+
+version				1.2.0
+headline			X11 XDamage extension protocol headers
+description
+	This package contains header files and documentation for the X Damage extension.  Library and server implementations are separate.
+
+packages			proto/damageproto-1.2.0
+
+documentation		README COPYING NEWS ChangeLog AUTHORS
+build-docs			INSTALL

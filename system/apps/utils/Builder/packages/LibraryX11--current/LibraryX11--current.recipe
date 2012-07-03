@@ -9,10 +9,14 @@ description
 
 packages			lib/libX11-1.3.2
 
-;needs				XCB
+needs
+	LibraryXAuthorization
+;	XCBinding
 build-needs
 	XProtocol >= 7.0.13
 	XExtensionsProtocol
+	XBigRequestsProtocol
+	XCMiscProtocol
 	XTransport
 
 configure-options	--without-xcb

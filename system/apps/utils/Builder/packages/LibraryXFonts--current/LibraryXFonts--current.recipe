@@ -1,0 +1,12 @@
+authors				Kaj de Vos
+
+inherits			XOrg
+
+version				1.4.1
+headline			Legacy X11 fonts library
+description
+	libXfont provides the core of the legacy X11 font system, handling the index files (fonts.dir, fonts.alias, fonts.scale), the various font file formats, and rasterizing them. It is used by the X servers, the X Font Server (xfs), and some font utilities (bdftopcf for instance), but should not be used by normal X11 clients. X11 clients access fonts via either the new API's in libXft, or the legacy API's in libX11.
+
+packages			lib/libXfont-1.4.1
+
+documentation		README COPYING ChangeLog AUTHORS

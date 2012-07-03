@@ -10,6 +10,19 @@ description
 
 packages			xserver/xorg-server-1.7.1
 
-needs				LibraryX11
+needs
+	OpenSSL
+	PixelManipulation
+	LibraryX11
+	LibraryXKeyboardFile
+	LibraryXFonts
+build-needs
+	XInputProtocol
+	XKeyboardProtocol
+	XRAndRProtocol
+	XFixesProtocol
+	XDamageProtocol
+	XFontsProtocol
+	XRenderProtocol
 
 documentation		COPYING ChangeLog

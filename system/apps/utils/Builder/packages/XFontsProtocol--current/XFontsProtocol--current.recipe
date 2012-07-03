@@ -1,0 +1,12 @@
+authors				Kaj de Vos
+
+inherits			XOrg
+
+version				2.1.0
+headline			X11 fonts protocol headers
+description
+	Fonts programming headers for the X Window System.
+
+packages			proto/fontsproto-2.1.0
+
+documentation		COPYING ChangeLog

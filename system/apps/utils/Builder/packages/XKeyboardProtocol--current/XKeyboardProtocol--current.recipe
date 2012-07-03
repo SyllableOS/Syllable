@@ -1,0 +1,12 @@
+authors				Kaj de Vos
+
+inherits			XOrg
+
+version				1.0.4
+headline			X11 keyboard protocol headers
+description
+	Keyboard programming headers for the X Window System.
+
+packages			proto/kbproto-1.0.4
+
+documentation		COPYING ChangeLog

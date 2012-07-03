@@ -1,0 +1,12 @@
+authors				Kaj de Vos
+
+inherits			XOrg
+
+version				2.0
+headline			X11 input protocol headers
+description
+	Input programming headers for the X Window System.
+
+packages			proto/inputproto-2.0
+
+documentation		COPYING ChangeLog

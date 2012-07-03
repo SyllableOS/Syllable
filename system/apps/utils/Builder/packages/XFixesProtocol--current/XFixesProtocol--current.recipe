@@ -1,0 +1,16 @@
+authors				Kaj de Vos
+
+inherits			XOrg
+
+version				4.1.1
+headline			X11 XFixes extension protocol headers
+description
+	This package contains header files and documentation for the XFIXES extension.  Library and server implementations are separate.
+
+packages			proto/fixesproto-4.1.1
+
+documentation
+	README COPYING ChangeLog AUTHORS
+;	Empty:
+;	NEWS
+build-docs			INSTALL

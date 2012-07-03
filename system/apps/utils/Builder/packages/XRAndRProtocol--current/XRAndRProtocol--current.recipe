@@ -1,0 +1,12 @@
+authors				Kaj de Vos
+
+inherits			XOrg
+
+version				1.3.1
+headline			X11 R & R protocol headers
+description
+	R & R programming headers for the X Window System.
+
+packages			proto/randrproto-1.3.1
+
+documentation		COPYING ChangeLog

@@ -1,0 +1,15 @@
+authors				Kaj de Vos
+
+inherits			XOrg
+
+version				1.0.6
+headline			X11 keyboard library
+description
+	Keyboard programming library for the X Window System.
+
+packages			lib/libxkbfile-1.0.6
+
+documentation
+	README COPYING ChangeLog
+;	Empty:
+;	NEWS AUTHORS
