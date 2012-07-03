@@ -9,4 +9,10 @@ description
 
 packages			lib/libXfont-1.4.1
 
+needs				LibraryXFontEncoding
+build-needs
+	XProtocol
+	XFontsProtocol
+	XTransport
+
 documentation		README COPYING ChangeLog AUTHORS

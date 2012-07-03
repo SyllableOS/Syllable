@@ -1,0 +1,15 @@
+authors				Kaj de Vos
+
+inherits			XOrg
+
+version				1.0.5
+headline			X11 font encoding library
+description
+	X11 font encoding library of the X Window System.
+
+packages			lib/libfontenc-1.0.5
+
+documentation
+	README COPYING ChangeLog
+;	Empty:
+;	NEWS AUTHORS

@@ -9,6 +9,9 @@ description
 
 packages			lib/libxkbfile-1.0.6
 
+needs				LibraryX11
+build-needs			XKeyboardProtocol
+
 documentation
 	README COPYING ChangeLog
 ;	Empty:

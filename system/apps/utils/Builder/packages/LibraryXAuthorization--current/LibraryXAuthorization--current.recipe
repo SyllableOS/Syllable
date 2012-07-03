@@ -11,6 +11,8 @@ description
 
 packages			lib/libXau-1.0.5
 
+build-needs			XProtocol
+
 documentation
 	README COPYING ChangeLog AUTHORS
 ;	Empty:

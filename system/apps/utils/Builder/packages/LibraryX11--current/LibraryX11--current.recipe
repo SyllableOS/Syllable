@@ -17,6 +17,8 @@ build-needs
 	XExtensionsProtocol
 	XBigRequestsProtocol
 	XCMiscProtocol
+	XInputProtocol
+	XKeyboardProtocol
 	XTransport
 
 configure-options	--without-xcb
