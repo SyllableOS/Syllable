@@ -9,6 +9,8 @@ description
 
 packages			lib/libfontenc-1.0.5
 
+build-needs			XProtocol
+
 documentation
 	README COPYING ChangeLog
 ;	Empty:

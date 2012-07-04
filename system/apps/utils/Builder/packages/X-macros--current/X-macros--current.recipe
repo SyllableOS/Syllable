@@ -1,0 +1,12 @@
+authors				Kaj de Vos
+
+inherits			XOrg
+
+version				1.3.0
+headline			X11 AutoTools macros
+description
+	This is a set of autoconf macros used by the configure.ac scripts in other Xorg modular packages, and is needed to generate new versions of their configure scripts with autoconf.
+
+packages			util/util-macros-1.3.0
+
+documentation		README COPYING ChangeLog
