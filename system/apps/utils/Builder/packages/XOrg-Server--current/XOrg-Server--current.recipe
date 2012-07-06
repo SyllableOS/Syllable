@@ -32,6 +32,7 @@ build-needs
 	XRenderProtocol
 	XTransport
 run-needs
+	XKeyboardConfigure
 	XKeymapCompiler
 recommends
 	GLib
