@@ -1,0 +1,22 @@
+authors				Kaj de Vos
+
+inherits			XOrg
+
+version				1.0.2
+headline			X11 keyboard utilities
+description
+	xkbutils is a collection of small utilities utilizing the XKeyboard (XKB) extension to the X11 protocol.
+
+packages			app/xkbutils-1.0.2
+
+needs
+	LibraryX11
+	LibraryXKeyboardFile
+	LibraryXAW 7
+build-needs
+	XInputProtocol
+
+documentation
+	README COPYING ChangeLog
+;	Empty:
+;	NEWS AUTHORS
