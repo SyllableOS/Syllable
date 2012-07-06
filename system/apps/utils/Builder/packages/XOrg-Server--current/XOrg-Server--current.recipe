@@ -11,13 +11,18 @@ description
 packages			xserver/xorg-server-1.7.1
 
 needs
-	SDL
 	OpenSSL
 	PixelManipulation
+;	Doesn't link to it:
 	LibraryX11
+	LibraryXAuthorization
 	LibraryXKeyboardFile
 	LibraryXFonts
 build-needs
+	XProtocol >= 7.0.13
+	XExtensionsProtocol
+	XBigRequestsProtocol
+	XCMiscProtocol
 	XInputProtocol
 	XKeyboardProtocol
 	XRAndRProtocol
@@ -25,5 +30,12 @@ build-needs
 	XDamageProtocol
 	XFontsProtocol
 	XRenderProtocol
+	XTransport
+run-needs
+	XKeyboardConfigure
+recommends
+	GLib
+	Mesa3D
+	SDL
 
 documentation		COPYING ChangeLog

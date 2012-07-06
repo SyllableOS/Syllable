@@ -27,12 +27,12 @@ recommends
 	ZLib
 	FreeType >= 2.1.9
 ;	With FreeType:
-	FontConfiguration >= 2.2.95
+	FontConfigure >= 2.2.95
 	DirectFrameBuffer
 	Mesa3D
 	Skia
 	XRender >= 0.6
-	XCB
+	XCBinding
 	Valgrind
 build-recommends	GTK-Doc
 test-recommends
