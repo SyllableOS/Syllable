@@ -17,6 +17,10 @@ packages			data/xkeyboard-config/xkeyboard-config-1.9
 needs				LibraryX11
 build-needs			XProtocol
 
+configure-options
+	--enable-compat-rules
+	--with-xkb-rules-symlink=xorg
+
 documentation
 	README ABOUT-NLS COPYING NEWS AUTHORS CREDITS TODO
 ;	Unused:
