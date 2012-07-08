@@ -19,7 +19,7 @@ build-needs			XProtocol
 
 configure-options
 	--enable-compat-rules
-	--with-xkb-rules-symlink=xorg
+	--with-xkb-rules-symlink=xfree86,xorg
 
 documentation
 	README ABOUT-NLS COPYING NEWS AUTHORS CREDITS TODO

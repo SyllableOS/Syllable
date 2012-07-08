@@ -1,4 +1,5 @@
 authors				Kaj de Vos
+warnings			Hardwired to run in /resources/!
 
 inherits			XOrg
 
@@ -39,4 +40,11 @@ recommends
 	Mesa3D
 	SDL
 
+no-bindir
+no-datarootdir
+
 documentation		COPYING ChangeLog
+
+links
+	/resources/index/programs/	bin
+	/resources/index/data/		share
