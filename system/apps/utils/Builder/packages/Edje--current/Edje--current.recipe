@@ -1,6 +1,6 @@
 authors				Kaj de Vos
 status				testing
-warnings			Hardcoded to find Elementary in /resources/
+warnings			Hardwired to run in /resources/!
 
 inherits			Enlightenment--current
 
@@ -32,6 +32,7 @@ build-needs			Edje
 ; Examples can't find Vera.ttf otherwise:
 ;build-dir			.
 
+no-libdir
 configure-options
 ;	--enable-fixed-point
 ;	--enable-multisense
@@ -45,6 +46,6 @@ documentation
 ;	ABOUT-NLS
 
 links
-	programs/												bin
+	programs/								bin
 ;	For Elementary:
-	/resources/index/framework/libraries/edje/modules/elm/	framework/libraries/edje/modules/
+	/resources/index/framework/libraries/	lib
