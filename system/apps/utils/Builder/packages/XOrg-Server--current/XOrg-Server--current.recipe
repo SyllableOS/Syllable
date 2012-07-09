@@ -43,6 +43,7 @@ recommends
 no-bindir
 no-libdir
 no-datarootdir
+no-datadir
 
 documentation		COPYING ChangeLog
 

@@ -1,4 +1,5 @@
 authors				Kaj de Vos
+warnings			Hardwired to run in /resources/!
 
 inherits			XOrg
 
@@ -13,7 +14,12 @@ needs
 	LibraryX11
 	LibraryXKeyboardFile
 
+no-datarootdir
+no-datadir
+
 documentation
 	README README.config README.enhancing COPYING ChangeLog
 ;	Empty:
 ;	NEWS AUTHORS
+
+links				/resources/index/data/ share
