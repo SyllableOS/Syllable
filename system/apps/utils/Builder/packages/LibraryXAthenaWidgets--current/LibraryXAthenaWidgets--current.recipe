@@ -1,0 +1,26 @@
+authors				Kaj de Vos
+
+inherits			XOrg
+
+version				1.0.7
+headline			X11 Athena Widget set
+description
+	Xaw is the X Athena Widget Set.
+
+	Xaw is a widget set based on the X Toolkit Intrinsics (Xt) Library.
+
+packages			lib/libXaw-1.0.7
+
+needs
+	LibraryX11
+	LibraryXExtensions
+	LibraryXToolkit
+	LibraryXMiscUtilities
+build-needs
+	XProtocol
+	XExtensionsProtocol
+
+documentation
+	README COPYING ChangeLog
+;	Empty:
+;	NEWS AUTHORS

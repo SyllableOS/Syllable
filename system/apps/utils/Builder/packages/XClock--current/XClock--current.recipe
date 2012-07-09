@@ -12,7 +12,7 @@ packages			app/xclock-1.0.6
 
 needs
 	LibraryX11
-	LibraryXMU
-	LibraryXAW 7
+	LibraryXAthenaWidgets 7
+	LibraryXMiscUtilities
 
 documentation		README COPYING ChangeLog

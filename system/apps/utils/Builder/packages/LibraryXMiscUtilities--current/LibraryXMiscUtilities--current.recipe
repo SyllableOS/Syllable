@@ -1,0 +1,24 @@
+authors				Kaj de Vos
+
+inherits			XOrg
+
+version				1.0.5
+headline			X11 miscellaneous utilities library
+description
+	This library contains miscellaneous utilities and is not part of the Xlib standard. It contains routines which only use public interfaces so that it may be layered on top of any proprietary implementation of Xlib or Xt.
+
+	It is intended to support clients in the X.Org distribution; vendors may choose not to distribute this library if they wish. Therefore, applications developers who depend on this library should be prepared to treat it as part of their software base when porting.
+
+packages			lib/libXmu-1.0.5
+
+needs
+	LibraryX11
+	LibraryXExtensions
+	LibraryXToolkit
+build-needs
+	XExtensionsProtocol
+
+documentation
+	README COPYING ChangeLog
+;	Empty:
+;	NEWS AUTHORS
