@@ -41,10 +41,12 @@ recommends
 	SDL
 
 no-bindir
+no-libdir
 no-datarootdir
 
 documentation		COPYING ChangeLog
 
 links
-	/resources/index/programs/	bin
-	/resources/index/data/		share
+	/resources/index/programs/				bin
+	/resources/index/framework/libraries/	lib
+	/resources/index/data/					share
