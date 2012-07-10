@@ -11,8 +11,8 @@ packages			lib/libXt-1.0.7
 
 needs
 	LibraryX11
-	LibraryXICE
-	LibraryXSM
+	LibraryXICExchange
+	LibraryXSessionManager
 build-needs
 	XProtocol
 	XKeyboardProtocol

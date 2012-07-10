@@ -1,0 +1,21 @@
+authors				Kaj de Vos
+
+inherits			XOrg
+
+version				1.1.1
+headline			X11 Session Management library
+description
+	libSM - X Session Management Library.
+
+packages			lib/libSM-1.1.1
+
+needs
+	LibraryXICExchange
+build-needs
+	XProtocol
+	XTransport
+
+documentation
+	README COPYING ChangeLog AUTHORS
+;	Empty:
+;	NEWS

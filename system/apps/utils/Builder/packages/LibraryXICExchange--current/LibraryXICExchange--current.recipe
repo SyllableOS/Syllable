@@ -1,0 +1,19 @@
+authors				Kaj de Vos
+
+inherits			XOrg
+
+version				1.0.6
+headline			X11 Inter-Client Exchange library
+description
+	libICE - Inter-Client Exchange Library.
+
+packages			lib/libICE-1.0.6
+
+build-needs
+	XProtocol
+	XTransport
+
+documentation
+	README COPYING ChangeLog AUTHORS
+;	Empty:
+;	NEWS
