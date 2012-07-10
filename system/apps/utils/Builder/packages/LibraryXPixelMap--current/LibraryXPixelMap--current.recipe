@@ -1,0 +1,21 @@
+authors				Kaj de Vos
+
+inherits			XOrg
+
+version				3.5.8
+headline			X11 XPM image file library
+description
+	libXpm - X Pixmap (XPM) image file format library.
+
+	XPM is a format for storing/retrieving X pixmaps to/from files. Here is provided a library containing a set of four functions, similar to the X bitmap functions as defined in the Xlib.
+
+packages			lib/libXpm-3.5.8
+
+needs				LibraryX11
+build-needs			XProtocol
+
+documentation
+	README README.html FAQ.html COPYING ChangeLog CHANGES AUTHORS
+;	README.AMIGA README.MSW FILES
+;	Empty:
+;	NEWS

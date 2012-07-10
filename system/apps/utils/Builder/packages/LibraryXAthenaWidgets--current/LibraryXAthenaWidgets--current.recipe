@@ -16,6 +16,7 @@ needs
 	LibraryXExtensions
 	LibraryXToolkit
 	LibraryXMiscUtilities
+	LibraryXPM
 build-needs
 	XProtocol
 	XExtensionsProtocol
