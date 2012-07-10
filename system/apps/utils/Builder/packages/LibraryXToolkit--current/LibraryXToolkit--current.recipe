@@ -1,0 +1,23 @@
+authors				Kaj de Vos
+
+inherits			XOrg
+
+version				1.0.7
+headline			X11 Toolkit Intrinsics library
+description
+	libXt - X Toolkit Intrinsics library.
+
+packages			lib/libXt-1.0.7
+
+needs
+	LibraryX11
+	LibraryXICE
+	LibraryXSM
+build-needs
+	XProtocol
+	XKeyboardProtocol
+
+documentation
+	README COPYING ChangeLog
+;	Empty:
+;	NEWS AUTHORS
