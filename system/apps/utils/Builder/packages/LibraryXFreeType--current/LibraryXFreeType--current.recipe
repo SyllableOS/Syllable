@@ -1,0 +1,20 @@
+authors				Kaj de Vos
+
+inherits			XOrg
+
+version				2.1.14
+headline			X11 FreeType library
+description
+	Xft version 2.1 is the first stand alone release of Xft, a library that connects X applications with the FreeType font rasterization library. Xft uses fontconfig to locate fonts so it has no configuration files.
+
+packages			lib/libXft-2.1.14
+
+needs
+	FreeType
+	FontConfigure
+	LibraryX11
+	LibraryXExtensions
+	LibraryXRender
+
+documentation		README COPYING NEWS ChangeLog AUTHORS
+build-docs			INSTALL

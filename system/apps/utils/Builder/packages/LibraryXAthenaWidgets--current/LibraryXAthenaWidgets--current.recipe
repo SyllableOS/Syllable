@@ -16,7 +16,7 @@ needs
 	LibraryXExtensions
 	LibraryXToolkit
 	LibraryXMiscUtilities
-	LibraryXPM
+	LibraryXPixelMap
 build-needs
 	XProtocol
 	XExtensionsProtocol

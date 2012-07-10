@@ -1,0 +1,19 @@
+authors				Kaj de Vos
+
+inherits			XOrg
+
+version				0.9.5
+headline			X11 Render Extension library
+description
+	libXrender - library for the Render Extension to the X11 protocol.
+
+packages			lib/libXrender-0.9.5
+
+needs				LibraryX11
+build-needs			XRenderProtocol
+
+documentation
+	README COPYING ChangeLog AUTHORS
+;	Empty:
+;	NEWS
+build-docs			INSTALL
