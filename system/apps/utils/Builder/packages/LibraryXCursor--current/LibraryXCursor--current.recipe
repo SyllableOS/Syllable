@@ -9,6 +9,13 @@ description
 
 packages			lib/libXcursor-1.1.10
 
+needs
+	LibraryX11
+	LibraryXFixes
+	LibraryXRender
+build-needs
+	XFixesProtocol
+
 documentation
 	README COPYING ChangeLog AUTHORS
 ;	Empty:
