@@ -33,6 +33,7 @@ recommends
 	ALSA
 	ConnMan
 
+; To run Wayland programs on Enlightenment:
 ;configure-options	--enable-wayland-clients
 
 post-install
