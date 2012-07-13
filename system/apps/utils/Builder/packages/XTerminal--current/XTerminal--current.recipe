@@ -19,6 +19,8 @@ needs
 	LibraryX11
 	LibraryXExtensions
 	LibraryXToolkit
+run-needs
+	XOrg-Server
 recommends
 	LibraryXFreeType
 	LibraryXMiscUtilities

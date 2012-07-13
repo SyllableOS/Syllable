@@ -7,7 +7,9 @@ headline			X11 clock
 description
 	xclock is the classic X Window System clock utility. It displays the time in analog or digital form, continuously updated at a frequency which may be specified by the user.
 
-locations			http://xorg.freedesktop.org/releases/individual/
+locations
+	http://xorg.freedesktop.org/releases/individual/
+	ftp://ftp.x.org/pub/individual/
 packages			app/xclock-1.0.6
 
 needs
@@ -16,5 +18,7 @@ needs
 	LibraryXRender
 	LibraryXFreeType
 	LibraryXAthenaWidgets 7
+run-needs
+	XOrg-Server
 
 documentation		README COPYING ChangeLog

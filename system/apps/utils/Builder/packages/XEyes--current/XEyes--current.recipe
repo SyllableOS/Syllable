@@ -1,0 +1,23 @@
+authors				Kaj de Vos
+
+inherits			XOrg
+
+version				1.1.1
+headline			X11 follow the mouse demo
+description
+	xeyes - a follow the mouse X demo, using the X SHAPE extension.
+
+locations
+	http://xorg.freedesktop.org/releases/individual/
+	ftp://ftp.x.org/pub/individual/
+packages			app/xeyes-1.1.1
+
+needs
+	LibraryX11
+	LibraryXMiscUtilities
+	LibraryXExtensions
+	LibraryXToolkit
+run-needs
+	XOrg-Server
+
+documentation		README COPYING ChangeLog
