@@ -2,22 +2,25 @@ authors				Kaj de Vos
 
 inherits			XOrg
 
-version				1.1.1
-headline			X11 follow the mouse demo
+version				1.0.4
+headline			X Window System logo
 description
-	xeyes - a follow the mouse X demo, using the X SHAPE extension.
+	The xlogo program simply displays the X Window System logo.
 
 locations
 	http://xorg.freedesktop.org/releases/individual/
 	ftp://ftp.x.org/pub/individual/
-packages			app/xeyes-1.1.1
+packages			app/xlogo-1.0.4
 
 needs
 	LibraryX11
 	LibraryXMiscUtilities
+	LibraryXSessionManager
 	LibraryXExtensions
 	LibraryXRender
+	LibraryXFreeType
 	LibraryXToolkit
+	LibraryXAthenaWidgets 7
 run-needs
 	XOrg-Server
 

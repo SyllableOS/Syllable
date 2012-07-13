@@ -19,6 +19,8 @@ needs
 	LibraryXICExchange
 	LibraryXSessionManager
 	LibraryXToolkit
+build-needs
+	XProtocol >= 7.0.17
 run-needs
 	XOrg-Server
 
