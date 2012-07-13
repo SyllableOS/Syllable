@@ -1,0 +1,40 @@
+authors				Kaj de Vos
+status				testing
+
+;version				281
+headline			X11 protocol headers
+description
+	The xterm program is a terminal emulator for the X Window System. It provides DEC VT102 and Tektronix 4014 compatible terminals for programs that can't use the window system directly.
+
+	This version implements ISO/ANSI colors using the "new" color model (i.e., background color erase). It also implements most of the control sequences for VT220, as well as selected features from other DEC terminals such as VT320, VT420 and VT520.
+licenses			X11
+
+home				invisible-island.net/xterm/
+locations
+	http://invisible-island.net/datafiles/release/
+	ftp://invisible-island.net/xterm/
+packages			xterm
+
+needs				LibraryXAthenaWidgets
+
+no-datarootdir
+configure-options
+;	--enable-luit
+;	Implied by above:
+	--enable-wide-chars
+;	--with-app-defaults=/etc/X11/app-defaults
+;	--with-app-defaults=/resources/LibraryXToolkit/data/X11/app-defaults
+;	--enable-readline-mouse
+;	--enable-toolbar
+
+; Install corrected terminfo description files:
+;install-targets		install install-ti
+
+documentation		README README.i18n xterm.log.html THANKS
+build-docs
+	INSTALL
+;	README.os390
+develop-docs		ctlseqs.txt
+internal-docs
+	MANIFEST
+;	AAA_README_VMS.txt
