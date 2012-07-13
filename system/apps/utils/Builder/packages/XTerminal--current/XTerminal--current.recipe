@@ -15,7 +15,15 @@ locations
 	ftp://invisible-island.net/xterm/
 packages			xterm
 
-needs				LibraryXAthenaWidgets
+needs
+	LibraryX11
+	LibraryXExtensions
+	LibraryXToolkit
+recommends
+	LibraryXFreeType
+	LibraryXMiscUtilities
+	LibraryXAthenaWidgets
+build-recommends	PackageConfigure >= 0.9.0
 
 no-datarootdir
 configure-options

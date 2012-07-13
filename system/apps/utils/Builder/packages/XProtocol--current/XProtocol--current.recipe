@@ -1,0 +1,12 @@
+authors				Kaj de Vos
+
+inherits			XOrg
+
+version				7.0.16
+headline			Core X11 protocol headers
+description
+	Base programming headers for the X Window System.
+
+packages			proto/xproto-7.0.16
+
+documentation		COPYING ChangeLog AUTHORS
