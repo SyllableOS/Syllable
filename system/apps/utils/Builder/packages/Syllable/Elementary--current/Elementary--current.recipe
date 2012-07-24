@@ -14,6 +14,7 @@ _needs
 	ECore
 	Edje
 
+patch
 make-shared
 
 _configure-options
