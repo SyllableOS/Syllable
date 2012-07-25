@@ -40,23 +40,45 @@ no-datarootdir
 no-mandir
 no-infodir
 configure-options
-;	-no-mitshm
-	-no-exceptions
-;	-embedded
-;	-qpa
-;	-no-gui
-;	-qt-gfx-directfb
-;	-plugin-gfx-directfb
+;	-bindir			/resources/Qt4/programs
+	-plugindir		/resources/Qt4/framework/plugins
+	-headerdir		/resources/Qt4/framework/headers
+	-importdir		/resources/Qt4/framework/imports
+	-translationdir	/resources/Qt4/data/translations
+	-docdir			/resources/Qt4/documentation
 	-opensource
 	-confirm-license
 ;	-release
-	-no-glib
-	-system-sqlite
+	-fast
+;	-optimized-qmake
+;	-platform linux-g++
+;	Embedded lite:
+;	-qpa
+	-embedded
+;	Wants to target X otherwise in the non-embedded build:
+;	-no-gui
+;	-qt-gfx-directfb
+;	-plugin-gfx-directfb
+;	-graphicssystem raster
+;	-no-gfx-linuxfb
+;	-no-kbd-tty
+;	-no-mouse-linuxtp
+;	-D QT_NO_QWS_MULTIPROCESS
+;	-D QT_NO_SXE
+;	-no-feature-filesystemwatcher
+	-no-pch
+;	-no-mitshm
+;	-no-exceptions
+;	-no-glib
 ;	-no-nis
-;	-nomake examples
-;	-nomake demos
+	-no-opengl
+	-no-webkit
+	-system-sqlite
 ;	For KDE:
 ;	-no-phonon
+;	-nomake tools
+;	-nomake examples
+;	-nomake demos
 
 ;system-prefix-var	INSTALL_ROOT
 
