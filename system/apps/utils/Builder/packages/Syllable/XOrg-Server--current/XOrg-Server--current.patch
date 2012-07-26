@@ -1,0 +1,64 @@
+diff -ru XOrg-Server-1.7.1-original/dix/dixutils.c XOrg-Server-1.7.1/dix/dixutils.c
+--- XOrg-Server-1.7.1-original/dix/dixutils.c	2009-10-21 21:52:55.000000000 +0000
++++ XOrg-Server-1.7.1/dix/dixutils.c	2012-07-10 13:37:37.000000000 +0000
+@@ -165,6 +165,7 @@
+ }
+ 
+ 
++/*
+ void
+ CopyISOLatin1Lowered(unsigned char *dest, unsigned char *source, int length)
+ {
+@@ -174,6 +175,7 @@
+ 	*dest = ISOLatin1ToLower (*source);
+     *dest = '\0';
+ }
++*/
+ 
+ int
+ CompareISOLatin1Lowered(unsigned char *s1, int s1len, 
+diff -ru XOrg-Server-1.7.1-original/os/backtrace.c XOrg-Server-1.7.1/os/backtrace.c
+--- XOrg-Server-1.7.1-original/os/backtrace.c	2009-10-21 21:52:56.000000000 +0000
++++ XOrg-Server-1.7.1/os/backtrace.c	2012-07-10 13:37:37.000000000 +0000
+@@ -28,7 +28,7 @@
+ #include "os.h"
+ #include "misc.h"
+ 
+-#ifdef HAVE_BACKTRACE
++#if defined (HAVE_BACKTRACE) && ! defined (__SYLLABLE__)
+ #ifndef _GNU_SOURCE
+ #define _GNU_SOURCE
+ #endif
+diff -ru XOrg-Server-1.7.1-original/os/osinit.c XOrg-Server-1.7.1/os/osinit.c
+--- XOrg-Server-1.7.1-original/os/osinit.c	2009-09-08 06:04:53.000000000 +0000
++++ XOrg-Server-1.7.1/os/osinit.c	2012-07-10 17:09:13.000000000 +0000
+@@ -196,7 +196,7 @@
+ 		       siglist[i], strerror(errno));
+ 	    }
+ 	}
+-#ifdef HAVE_BACKTRACE
++#if defined (HAVE_BACKTRACE) && ! defined (__SYLLABLE__)
+ 	/*
+ 	 * initialize the backtracer, since the ctor calls dlopen(), which
+ 	 * calls malloc(), which isn't signal-safe.
+@@ -216,7 +216,7 @@
+ 	dlinfo(RTLD_SELF, RTLD_DI_SETSIGNAL, &failure_signal);
+ #endif
+ 
+-#if !defined(__SCO__) && !defined(__CYGWIN__) && !defined(__UNIXWARE__)
++#if !defined(__SCO__) && !defined(__CYGWIN__) && !defined(__UNIXWARE__) && !defined(DEBUG)
+ 	fclose(stdin);
+ 	fclose(stdout);
+ #endif
+diff -ru XOrg-Server-1.7.1-original/os/utils.c XOrg-Server-1.7.1/os/utils.c
+--- XOrg-Server-1.7.1-original/os/utils.c	2009-09-08 06:04:53.000000000 +0000
++++ XOrg-Server-1.7.1/os/utils.c	2012-07-10 13:37:37.000000000 +0000
+@@ -325,7 +325,7 @@
+   i = 0;
+   haslock = 0;
+   while ((!haslock) && (i++ < 3)) {
+-    haslock = (link(tmp,LockFile) == 0);
++    haslock = (symlink(tmp,LockFile) == 0);
+     if (haslock) {
+       /*
+        * We're done.

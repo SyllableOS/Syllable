@@ -1,0 +1,23 @@
+authors				Kaj de Vos
+status				testing
+
+configure-env
+	CPPFLAGS "$CPPFLAGS -D SERVER_LOCK"
+;	CPPFLAGS "$CPPFLAGS -D DEBUG -D SERVER_LOCK"
+configure-options
+;	--with-os-name=
+	--enable-install-setuid
+	--disable-ipv6
+	--disable-unix-transport
+	--enable-kdrive
+;	--enable-xsdl
+	--disable-xorg
+;	--disable-xvfb
+	--disable-glx
+	--disable-mitshm
+	--disable-xres
+;	--disable-xf86bigfont
+	--disable-composite
+	--disable-screensaver
+	--disable-xinerama
+	--disable-xv

@@ -44,6 +44,23 @@ no-bindir
 no-libdir
 no-datarootdir
 no-datadir
+configure-options
+;	--with-os-name=
+	--enable-install-setuid
+;	--disable-ipv6
+;	--disable-unix-transport
+	--enable-kdrive
+;	--enable-xsdl
+	--disable-xorg
+;	--disable-xvfb
+	--disable-glx
+;	--disable-mitshm
+	--disable-xres
+;	--disable-xf86bigfont
+	--disable-composite
+	--disable-screensaver
+	--disable-xinerama
+	--disable-xv
 
 documentation		COPYING ChangeLog
 
