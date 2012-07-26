@@ -1,5 +1,6 @@
 authors				Kaj de Vos
 status				testing
+warnings			Installs links into system!
 
 headline			Util-Linux is a random collection of Linux system utilities
 description
@@ -39,13 +40,15 @@ documentation
 ;	docs/ example.files/
 develop-docs		README.devel
 
-links
-	programs/arch			/bin/
-;	system-programs/agetty	/sbin/
-;	Fix split libraries:
-	libblkid.so.1.1.0		libraries/libblkid.so
-	libuuid.so.1.3.0		libraries/libuuid.so
 move-files
 	libraries/pkgconfig/	framework/PackageConfigure/
 	libraries/*				framework/libraries/
-delete-files		libraries/
+delete-files				libraries/
+links
+;	LibTool files are left broken:
+	framework/libraries/	.
+;	Fix split libraries:
+	libblkid.so.1.1.0		libraries/libblkid.so
+	libuuid.so.1.3.0		libraries/libuuid.so
+	programs/arch			/bin/
+;	system-programs/agetty	/sbin/
