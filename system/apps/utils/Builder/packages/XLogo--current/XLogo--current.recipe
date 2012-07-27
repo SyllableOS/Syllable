@@ -14,12 +14,12 @@ packages			app/xlogo-1.0.4
 
 needs
 	LibraryX11
-	LibraryXMiscUtilities
 	LibraryXSessionManager
 	LibraryXExtensions
 	LibraryXRender
 	LibraryXFreeType
 	LibraryXToolkit
+	LibraryXMiscUtilities
 	LibraryXAthenaWidgets 7
 run-needs
 	XOrg-Server

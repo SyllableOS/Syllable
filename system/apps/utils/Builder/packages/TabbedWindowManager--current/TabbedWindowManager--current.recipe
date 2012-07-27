@@ -14,11 +14,11 @@ packages			app/twm-1.0.7
 
 needs
 	LibraryX11
-	LibraryXMiscUtilities
 	LibraryXExtensions
 	LibraryXICExchange
 	LibraryXSessionManager
 	LibraryXToolkit
+	LibraryXMiscUtilities
 build-needs
 	XProtocol >= 7.0.17
 run-needs

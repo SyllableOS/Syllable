@@ -14,9 +14,9 @@ packages			app/xclock-1.0.6
 
 needs
 	LibraryX11
-	LibraryXMiscUtilities
 	LibraryXRender
 	LibraryXFreeType
+	LibraryXMiscUtilities
 	LibraryXAthenaWidgets 7
 run-needs
 	XOrg-Server

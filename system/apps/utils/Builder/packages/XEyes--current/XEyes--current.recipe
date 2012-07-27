@@ -14,10 +14,10 @@ packages			app/xeyes-1.1.1
 
 needs
 	LibraryX11
-	LibraryXMiscUtilities
 	LibraryXExtensions
 	LibraryXRender
 	LibraryXToolkit
+	LibraryXMiscUtilities
 run-needs
 	XOrg-Server
 
