@@ -1,0 +1,20 @@
+authors				Kaj de Vos
+
+inherits			XOrg
+
+version				1.3
+headline			X11 input extension library
+description
+	libXi - library for the X Input Extension.
+
+packages			lib/libXi-1.3
+
+needs
+	LibraryX11
+	LibraryXExtensions
+build-needs
+	XProtocol
+	XExtensionsProtocol
+	XInputProtocol
+
+documentation		README COPYING ChangeLog
