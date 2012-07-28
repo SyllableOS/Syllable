@@ -1,0 +1,17 @@
+authors				Kaj de Vos
+
+configure-options
+;	--with-os-name=
+	--enable-install-setuid
+	--enable-kdrive
+;	--enable-xsdl
+;	--disable-xorg
+;	--disable-xvfb
+	--disable-dri
+;	--disable-dri2
+	--disable-glx
+	--disable-xres
+	--disable-composite
+	--disable-screensaver
+	--disable-xinerama
+	--disable-xv

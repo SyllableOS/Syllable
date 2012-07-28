@@ -51,7 +51,7 @@ configure-options
 ;	--disable-unix-transport
 	--enable-kdrive
 ;	--enable-xsdl
-	--disable-xorg
+;	--disable-xorg
 ;	--disable-xvfb
 	--disable-dri
 ;	--disable-dri2
