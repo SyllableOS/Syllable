@@ -19,6 +19,8 @@ needs
 	LibraryXAuthorization
 	LibraryXKeyboardFile
 	LibraryXFonts
+;	For XOrg server:
+	LibraryX-PCI-Access
 build-needs
 	XProtocol >= 7.0.13
 	XExtensionsProtocol

@@ -1,0 +1,15 @@
+authors				Kaj de Vos
+
+inherits			XOrg
+
+version				0.10.9
+headline			X11 PCI bus access library
+description
+	Generic PCI access programming library for the X Window System.
+
+packages			lib/libpciaccess-0.10.9
+
+documentation
+	README COPYING ChangeLog AUTHORS
+;	Empty:
+;	NEWS
