@@ -53,8 +53,8 @@ configure-options
 ;	--enable-xsdl
 	--disable-xorg
 ;	--disable-xvfb
-	--disable-drm
-;	--disable-drm2
+	--disable-dri
+;	--disable-dri2
 	--disable-glx
 ;	--disable-mitshm
 	--disable-xres
