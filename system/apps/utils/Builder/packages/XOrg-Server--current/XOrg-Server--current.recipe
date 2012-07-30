@@ -3,7 +3,7 @@ warnings			Hardwired to run in /resources/!
 
 inherits			XOrg
 
-; Last one with SDL:
+; Last one with KDrive SDL backend:
 version				1.7.1
 headline			X11 Window System display server
 description
@@ -34,6 +34,8 @@ build-needs
 	XFontsProtocol
 	XRenderProtocol
 	XTransport
+;	For XOrg server:
+	XVideoProtocol
 run-needs
 	XKeyboardConfigure
 	XKeymapCompiler
@@ -64,6 +66,7 @@ configure-options
 	--disable-composite
 	--disable-screensaver
 	--disable-xinerama
+;	Broken for XOrg server:
 	--disable-xv
 
 documentation		COPYING ChangeLog

@@ -1,0 +1,12 @@
+authors				Kaj de Vos
+
+inherits			XOrg
+
+version				2.3.0
+headline			X11 video protocol headers
+description
+	Video programming headers for the X Window System.
+
+packages			proto/videoproto-2.3.0
+
+documentation		COPYING ChangeLog
