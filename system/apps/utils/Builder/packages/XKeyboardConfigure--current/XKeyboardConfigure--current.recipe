@@ -11,7 +11,6 @@ description
 
 	There are five types of components in the server database corresponing to five xkb symbolic names: symbols, geometry, keycodes, compat and types which determine the keyboard behaviour. These five components can combined together into a resulting keyboard mapping using the 'rules' component.
 
-locations			http://xorg.freedesktop.org/archive/individual/
 packages			data/xkeyboard-config/xkeyboard-config-1.9
 
 needs				LibraryX11

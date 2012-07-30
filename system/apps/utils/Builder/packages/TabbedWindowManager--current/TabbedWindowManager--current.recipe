@@ -8,9 +8,6 @@ headline			X11 Tab Window Manager
 description
 	twm is a window manager for the X Window System. It provides titlebars, shaped windows, several forms of icon management, user-defined macro functions, click-to-type and pointer-driven keyboard focus, and user-specified key and pointer button bindings.
 
-locations
-	http://xorg.freedesktop.org/releases/individual/
-	ftp://ftp.x.org/pub/individual/
 ;packages			app/twm-1.0.7
 packages			app/twm-1.0.6
 

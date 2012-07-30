@@ -7,9 +7,6 @@ headline			X Window System logo
 description
 	The xlogo program simply displays the X Window System logo.
 
-locations
-	http://xorg.freedesktop.org/releases/individual/
-	ftp://ftp.x.org/pub/individual/
 packages			app/xlogo-1.0.4
 
 needs

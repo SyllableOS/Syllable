@@ -7,9 +7,6 @@ headline			X11 follow the mouse demo
 description
 	xeyes - a follow the mouse X demo, using the X SHAPE extension.
 
-locations
-	http://xorg.freedesktop.org/releases/individual/
-	ftp://ftp.x.org/pub/individual/
 packages			app/xeyes-1.1.1
 
 needs
