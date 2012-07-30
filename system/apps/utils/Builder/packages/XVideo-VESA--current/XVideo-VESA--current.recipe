@@ -1,0 +1,23 @@
+authors				Kaj de Vos
+
+inherits			XOrg
+
+version				2.2.1
+headline			X11 VESA video driver
+description
+	xf86-video-vesa - Generic VESA video driver for the Xorg X server.
+
+packages			driver/xf86-video-vesa-2.2.1
+
+needs
+	LibraryX-PCI-Access
+build-needs
+	XProtocol
+	XExtensionsProtocol
+	XRAndRProtocol
+	XFontsProtocol
+	XRenderProtocol
+run-needs
+	XOrg-Server
+
+documentation		README COPYING ChangeLog

@@ -1,0 +1,15 @@
+authors				Kaj de Vos
+
+inherits			XOrg
+
+version				2.3.0
+headline			X11 Linux input events device driver
+description
+	xf86-input-evdev - Generic Linux input driver for the Xorg X server.
+
+packages			driver/xf86-input-evdev-2.3.0
+
+build-needs			XProtocol
+run-needs			XOrg-Server
+
+documentation		README COPYING ChangeLog

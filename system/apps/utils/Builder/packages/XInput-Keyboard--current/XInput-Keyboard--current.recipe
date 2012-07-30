@@ -1,0 +1,20 @@
+authors				Kaj de Vos
+
+inherits			XOrg
+
+version				1.4.0
+headline			X11 keyboard input driver
+description
+	kbd - Keyboard input driver for the Xorg X server.
+
+packages			driver/xf86-input-keyboard-1.4.0
+
+build-needs
+	XProtocol
+	XInputProtocol
+	XKeyboardProtocol
+	XRAndRProtocol
+run-needs
+	XOrg-Server
+
+documentation		README COPYING ChangeLog
