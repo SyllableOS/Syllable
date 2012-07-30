@@ -1,0 +1,17 @@
+authors				Kaj de Vos
+
+inherits			XOrg
+
+version				1.0.5
+headline			X11 fonts list creator
+description
+	mkfontdir creates the fonts.dir files needed by the legacy X server core font system. The current implementation is a simple wrapper script around the mkfontscale program, which must be built and installed first.
+
+packages			app/mkfontdir-1.0.5
+
+needs				XMakeFontScale
+
+documentation
+	README COPYING ChangeLog
+;	Empty:
+;	NEWS AUTHORS

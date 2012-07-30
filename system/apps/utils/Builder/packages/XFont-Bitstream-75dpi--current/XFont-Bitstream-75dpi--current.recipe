@@ -11,6 +11,8 @@ description
 packages			font/font-bitstream-75dpi-1.0.3
 ;packages			font/font-bitstream-75dpi-1.0.1
 
+build-needs			XMakeFontDirectory
+
 documentation
 	README COPYING ChangeLog
 ;	Empty:

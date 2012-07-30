@@ -1,0 +1,21 @@
+authors				Kaj de Vos
+
+inherits			XOrg
+
+version				1.0.7
+headline			X11 fonts bookkeeping
+description
+	mkfontscale creates the fonts.scale and fonts.dir index files used by the legacy X11 font system.
+
+packages			app/mkfontscale-1.0.7
+
+needs
+	FreeType
+	LibraryXFontEncoding
+build-needs
+	XProtocol
+
+documentation
+	README COPYING ChangeLog
+;	Empty:
+;	NEWS AUTHORS

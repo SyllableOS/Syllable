@@ -14,4 +14,5 @@ configure-options
 	--disable-composite
 	--disable-screensaver
 	--disable-xinerama
-	--disable-xv
+;	--disable-xv
+;	--disable-xvmc

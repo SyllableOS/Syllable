@@ -67,7 +67,8 @@ configure-options
 	--disable-screensaver
 	--disable-xinerama
 ;	Broken for XOrg server:
-	--disable-xv
+;	--disable-xv
+;	--disable-xvmc
 
 documentation		COPYING ChangeLog
 
