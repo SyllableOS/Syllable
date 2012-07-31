@@ -15,7 +15,10 @@ build-needs
 	XFontUtilities
 	XMakeFontDirectory
 
-install-tree
+configure-options
+	--with-fontrootdir=/resources/XFont75dpi-Bitstream/data/fonts/X11
+;	--with-fontdir=/resources/index/data/fonts/X11/75dpi
+
 documentation
 	README COPYING ChangeLog
 ;	Empty:

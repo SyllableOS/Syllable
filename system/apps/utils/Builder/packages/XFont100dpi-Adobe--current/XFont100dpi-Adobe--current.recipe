@@ -1,4 +1,5 @@
 authors				Kaj de Vos
+warnings			Hardwired to install into /resources/!
 
 inherits			XOrg
 
@@ -15,5 +16,10 @@ build-needs
 	XFontUtilities
 	XMakeFontDirectory
 
-install-tree
+configure-options
+	--with-fontrootdir=/resources/XFont100dpi-Adobe/data/fonts/X11
+;	--with-fontdir=/resources/index/data/fonts/X11/100dpi
+;	--with-compression= no|compress|gzip|bzip2
+;	--disable-all-encodings
+
 documentation		README COPYING ChangeLog

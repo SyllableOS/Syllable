@@ -10,7 +10,7 @@ description
 
 packages			font/font-util-1.1.1
 
-_configure-options
+configure-options
 	--with-fontrootdir=/resources/index/data/fonts/X11
 ;	--with-mapdir= /util
 
