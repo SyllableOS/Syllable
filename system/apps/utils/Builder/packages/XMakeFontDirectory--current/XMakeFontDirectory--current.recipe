@@ -1,15 +1,19 @@
 authors				Kaj de Vos
+warnings			Hardwired to find XMakeFontScale in /resources/!
 
 inherits			XOrg
 
 version				1.0.5
 headline			X11 fonts list creator
 description
-	mkfontdir creates the fonts.dir files needed by the legacy X server core font system. The current implementation is a simple wrapper script around the mkfontscale program, which must be built and installed first.
+	mkfontdir creates the fonts.dir files needed by the legacy X server core font system. The current implementation is a simple wrapper script around the mkfontscale program.
 
 packages			app/mkfontdir-1.0.5
 
 needs				XMakeFontScale
+
+no-bindir
+links				/resources/index/programs/ bin
 
 documentation
 	README COPYING ChangeLog
