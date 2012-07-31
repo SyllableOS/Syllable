@@ -4,14 +4,16 @@ inherits			XOrg
 
 version				1.0.3
 ;version				1.0.1
-headline			X11 font Bitstream 75dpi
+headline			X11 fonts Bitstream 75dpi
 description
-	Bitstream 75dpi font for the X Window System.
+	Bitstream 75dpi fonts for the X Window System.
 
 packages			font/font-bitstream-75dpi-1.0.3
 ;packages			font/font-bitstream-75dpi-1.0.1
 
-build-needs			XMakeFontDirectory
+build-needs
+	XFontUtilities
+	XMakeFontDirectory
 
 documentation
 	README COPYING ChangeLog
