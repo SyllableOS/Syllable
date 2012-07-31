@@ -1,0 +1,19 @@
+authors				Kaj de Vos
+
+inherits			XOrg
+
+version				1.0.3
+;version				1.0.1
+headline			X11 font Adobe 100dpi
+description
+	Adobe 100dpi font for the X Window System.
+
+packages			font/font-adobe-100dpi-1.0.3
+;packages			font/font-adobe-100dpi-1.0.1
+
+build-needs			XMakeFontDirectory
+
+documentation
+	README COPYING ChangeLog
+;	Empty:
+;	NEWS AUTHORS
