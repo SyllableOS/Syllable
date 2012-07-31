@@ -44,6 +44,8 @@ recommends
 	Mesa3D
 	SDL
 
+patch				sed -i 's/chown root /chown system /' hw/xfree86/Makefile.in
+
 no-bindir
 no-libdir
 no-datarootdir
