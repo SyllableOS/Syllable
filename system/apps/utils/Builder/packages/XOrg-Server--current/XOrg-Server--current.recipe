@@ -46,13 +46,18 @@ recommends
 
 patch				sed -i 's/chown root /chown system /' hw/xfree86/Makefile.in
 
-no-bindir
+;no-bindir
 no-libdir
 no-datarootdir
 no-datadir
 configure-options
 ;	--with-os-name=
 	--enable-install-setuid
+;	--with-module-dir= /xorg/modules
+	--with-xkb-bin-directory=/resources/index/programs
+	--with-xkb-output=/var/lib/xkb
+	--with-fontdir=/resources/index/data/fonts/X11
+;	--with-default-font-path=
 ;	--disable-ipv6
 ;	--disable-unix-transport
 	--enable-kdrive
@@ -75,6 +80,7 @@ configure-options
 documentation		COPYING ChangeLog
 
 links
-	/resources/index/programs/				bin
+;	For xkbcomp:
+;	/resources/index/programs/				bin
 	/resources/index/framework/libraries/	lib
 	/resources/index/data/					share

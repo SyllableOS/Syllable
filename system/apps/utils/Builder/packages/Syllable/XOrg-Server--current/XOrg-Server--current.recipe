@@ -1,5 +1,5 @@
 authors				Kaj de Vos
-status				testing
+status				incomplete
 
 configure-env
 	CPPFLAGS "$CPPFLAGS -D SERVER_LOCK"
@@ -7,6 +7,9 @@ configure-env
 configure-options
 ;	--with-os-name=
 	--enable-install-setuid
+	--with-xkb-bin-directory=/resources/index/programs
+	--with-xkb-output=/var/lib/xkb
+	--with-fontdir=/resources/index/data/fonts/X11
 	--disable-ipv6
 	--disable-unix-transport
 	--enable-kdrive
