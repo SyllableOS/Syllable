@@ -13,6 +13,7 @@ packages			font/font-adobe-75dpi-1.0.1
 
 build-needs
 	XFontUtilities
+	XFontBDF-to-PCF
 	XMakeFontDirectory
 
 configure-options

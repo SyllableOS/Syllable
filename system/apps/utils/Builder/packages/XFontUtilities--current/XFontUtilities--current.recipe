@@ -1,5 +1,5 @@
 authors				Kaj de Vos
-warnings			Makes font packages install fonts in fontrootdir instead of into themselves!
+;warnings			Makes font packages install fonts in fontrootdir instead of into themselves!
 
 inherits			XOrg
 
@@ -10,9 +10,11 @@ description
 
 packages			font/font-util-1.1.1
 
+needs				XFontBDF-to-PCF
+
 configure-options
 	--with-fontrootdir=/resources/index/data/fonts/X11
-;	--with-mapdir= /util
+	--with-mapdir=/resources/XFontUtilities/data/fonts/X11/util
 
 documentation
 	README COPYING ChangeLog
