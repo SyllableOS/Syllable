@@ -39,7 +39,7 @@ test-recommends
 ;	For PDF:
 	Poppler >= 0.17.4
 	LibrarySpectre
-;	GTK+
+;	GToolKit
 ;	For PostScript:
 	GhostScript
 ;	For SVG:

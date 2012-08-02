@@ -1,5 +1,7 @@
 authors				Kaj de Vos
-;warnings			Makes font packages install fonts in fontrootdir instead of into themselves!
+warnings
+	Hardwired to install into /resources/!
+;	Makes font packages install fonts in fontrootdir instead of into themselves!
 
 inherits			XOrg
 

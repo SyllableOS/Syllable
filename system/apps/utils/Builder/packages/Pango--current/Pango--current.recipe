@@ -22,10 +22,11 @@ needs
 ;	GLib >= 2.31
 	(FreeType >= 2.0.9 & FontConfigure) | Cairo | XFT >= 2
 recommends
+	LibraryX11
 	LibraryXFreeType
 	LibraryThai
 build-needs			PackageConfigure
-build-recommends	GTK-Doc
+build-recommends	GTK-Documenter
 
 _configure-options
 	--with-x

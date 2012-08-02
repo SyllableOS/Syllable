@@ -24,7 +24,7 @@ recommends
 	ColorDaemon
 	CUPS
 build-needs			PackageConfigure
-build-recommends	GTK-Doc
+build-recommends	GTK-Documenter
 
 ;no-sysconfdir
 _configure-options

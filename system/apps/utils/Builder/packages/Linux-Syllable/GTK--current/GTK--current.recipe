@@ -6,5 +6,5 @@ configure-options
 ;	--enable-wayland-backend
 	--enable-x11-backend
 	--enable-broadway-backend
-;	--disable-packagekit
+	--disable-packagekit
 ;	--enable-gtk-doc
