@@ -15,6 +15,7 @@ needs
 ;	For gdk-pixbuf >= 2.25:
 ;	GLib >= 2.31
 recommends
+	LibraryX11
 	LibraryPNG
 	LibraryJPEG > 6b
 	JasPer
@@ -22,7 +23,8 @@ recommends
 build-needs			PackageConfigure
 build-recommends	GTK-Doc
 
-_configure-options
+configure-options
+	--with-x11
 	--with-libjasper
 ;	--enable-gtk-doc
 

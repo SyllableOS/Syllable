@@ -16,6 +16,7 @@ _build-needs
 
 configure-options
 ;	--sysconfdir=/etc
+;	--enable-x11-backend
 	--enable-broadway-backend
 ;	--disable-packagekit
 ;	--enable-gtk-doc

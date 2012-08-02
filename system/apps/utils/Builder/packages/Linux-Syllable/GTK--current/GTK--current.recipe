@@ -4,6 +4,7 @@ status				testing
 configure-options
 ;	--sysconfdir=/etc
 ;	--enable-wayland-backend
+	--enable-x11-backend
 	--enable-broadway-backend
 ;	--disable-packagekit
 ;	--enable-gtk-doc

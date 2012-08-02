@@ -28,11 +28,11 @@ recommends
 	FreeType >= 2.1.9
 ;	With FreeType:
 	FontConfigure >= 2.2.95
+	XCBinding
+	XRender >= 0.6
 	DirectFrameBuffer
 	Mesa3D
 	Skia
-	XRender >= 0.6
-	XCBinding
 	Valgrind
 build-recommends	GTK-Doc
 test-recommends
@@ -49,14 +49,15 @@ _configure-options
 ;	--disable-valgrind
 ;	--disable-pthread
 ;	--disable-some-floating-point
-;	--enable-directfb
+;	--disable-xlib
+;	--enable-xcb
+	--enable-directfb
 ;	--enable-gl
 ;	--enable-drm
 ;	--enable-gallium
 ;	--enable-vg
 ;	For Firefox:
-;	--enable-tee
-;	--disable-xlib
+	--enable-tee
 ;	--disable-win32
 ;	--disable-png
 ;	--disable-svg

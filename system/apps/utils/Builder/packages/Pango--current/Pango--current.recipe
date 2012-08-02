@@ -20,12 +20,16 @@ needs
 	GLib
 ;	For Pango 1.29.5:
 ;	GLib >= 2.31
-	(FreeType >= 2.0.9 & FontConfiguration) | Cairo | XFT >= 2
-recommends			LibraryThai
+	(FreeType >= 2.0.9 & FontConfigure) | Cairo | XFT >= 2
+recommends
+	LibraryXFreeType
+	LibraryThai
 build-needs			PackageConfigure
 build-recommends	GTK-Doc
 
-;configure-options	--enable-gtk-doc
+_configure-options
+	--with-x
+	--enable-gtk-doc
 
 documentation
 	README README.win32 COPYING NEWS ChangeLog AUTHORS MAINTAINERS THANKS

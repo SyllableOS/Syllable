@@ -30,6 +30,7 @@ build-recommends	GTK-Doc
 _configure-options
 	--sysconfdir=/etc
 ;	--enable-gtk2-dependency
+;	--enable-x11-backend
 ;	--enable-wayland-backend
 ;	--enable-broadway-backend
 ;	--disable-packagekit

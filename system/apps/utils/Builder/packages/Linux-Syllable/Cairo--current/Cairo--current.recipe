@@ -9,14 +9,15 @@ configure-options
 ;	--disable-valgrind
 ;	--disable-pthread
 ;	--disable-some-floating-point
+;	--disable-xlib
+;	--enable-xcb
 	--enable-directfb
 ;	--enable-gl
 ;	--enable-drm
 ;	--enable-gallium
 ;	--enable-vg
 ;	For Firefox:
-;	--enable-tee
-;	--disable-xlib
+	--enable-tee
 ;	--disable-win32
 ;	--disable-png
 ;	--disable-svg
