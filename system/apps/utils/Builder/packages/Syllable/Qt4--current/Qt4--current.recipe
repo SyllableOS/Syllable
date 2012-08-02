@@ -1,5 +1,8 @@
 authors				Kaj de Vos
 status				testing
+warnings
+	Hardwired to install into /resources/!
+	Installs plugins/webkit/ directory during configuring!
 
 needs
 ;	For PThreads enhancements and fixes:
@@ -9,7 +12,6 @@ needs
 configure-options
 ;	-no-ipv6
 
-;	-bindir			/resources/Qt4/programs
 	-plugindir		/resources/Qt4/framework/plugins
 	-headerdir		/resources/Qt4/framework/headers
 	-importdir		/resources/Qt4/framework/imports
@@ -17,18 +19,16 @@ configure-options
 	-docdir			/resources/Qt4/documentation
 	-opensource
 	-confirm-license
-;	-release
 	-fast
 ;	-optimized-qmake
 	-platform linux-g++
+	-embedded
 ;	Embedded lite:
 ;	-qpa
-	-embedded
 ;	Wants to target X otherwise in the non-embedded build:
 ;	-no-gui
 ;	-qt-gfx-directfb
 	-plugin-gfx-directfb
-;	-graphicssystem raster
 	-no-gfx-linuxfb
 	-no-kbd-tty
 	-no-mouse-linuxtp

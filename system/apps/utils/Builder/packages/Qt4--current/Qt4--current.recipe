@@ -1,6 +1,6 @@
 authors				Kaj de Vos
 status				testing
-warnings			Installs plugins/webkit/ directory during configuring!
+warnings			Hardwired to install into /resources/!
 
 version				4.8.2
 headline			Cross-platform application and UI framework
@@ -20,6 +20,7 @@ locations
 	http://get.qt.nokia.com/qt/source/
 packages			qt-everywhere-opensource-src-4.8.2
 
+needs				X11
 recommends
 	ZLib
 	OpenSSL
@@ -52,9 +53,9 @@ configure-options
 	-fast
 ;	-optimized-qmake
 ;	-platform linux-g++
+;	-embedded
 ;	Embedded lite:
 ;	-qpa
-	-embedded
 ;	Wants to target X otherwise in the non-embedded build:
 ;	-no-gui
 ;	-qt-gfx-directfb
@@ -85,7 +86,7 @@ configure-options
 documentation		README LICENSE.LGPL LGPL_EXCEPTION.txt LICENSE.GPL3 LICENSE.FDL changes-4.8.2
 build-docs			INSTALL
 
-delete-files
-;	Huge:
-	doc/
-	examples/ demos/
+; Huge:
+_delete-files
+;	doc/
+;	documentation/
