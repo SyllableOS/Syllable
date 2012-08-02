@@ -1,0 +1,21 @@
+authors				Kaj de Vos
+status				developing
+
+_build-needs
+;	AutoConfigure >= 2.62
+	AutoConfigure 2.68
+;	AutoMake
+	AutoMake 1.11.3
+	LibraryTool
+;	LibraryTool 2.4.2
+	PackageConfigure
+;	For reconfiguring?
+;	GTK-Documenter
+; Won't reconfigure:
+;make-shared
+
+configure-options
+;	--sysconfdir=/etc
+;	Needs Cairo with DirectFB:
+	--with-gdktarget=directfb
+;	--enable-gtk-doc
