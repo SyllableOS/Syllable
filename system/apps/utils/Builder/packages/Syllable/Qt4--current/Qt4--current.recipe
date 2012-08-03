@@ -44,5 +44,7 @@ configure-options
 	-no-webkit
 	-system-sqlite
 ;	-nomake tools
-;	-nomake examples
-;	-nomake demos
+	-nomake examples
+	-nomake demos
+;	Huge:
+	-nomake docs

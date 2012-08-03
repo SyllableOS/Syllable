@@ -78,15 +78,12 @@ configure-options
 ;	For KDE:
 ;	-no-phonon
 ;	-nomake tools
-;	-nomake examples
-;	-nomake demos
+	-nomake examples
+	-nomake demos
+;	Huge:
+	-nomake docs
 
 ;system-prefix-var	INSTALL_ROOT
 
 documentation		README LICENSE.LGPL LGPL_EXCEPTION.txt LICENSE.GPL3 LICENSE.FDL changes-4.8.2
 build-docs			INSTALL
-
-; Huge:
-_delete-files
-;	doc/
-;	documentation/
