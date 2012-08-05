@@ -34,7 +34,7 @@ recommends
 	Mesa3D
 	Skia
 	Valgrind
-build-recommends	GTK-Doc
+build-recommends	GTK-Documenter
 test-recommends
 ;	For PDF:
 	Poppler >= 0.17.4

@@ -24,7 +24,7 @@ needs				X11
 recommends
 	ZLib
 	OpenSSL
-	D-Bus
+	DesktopBus
 	LibraryPNG
 	LibraryJPEG
 	LibraryTIFF

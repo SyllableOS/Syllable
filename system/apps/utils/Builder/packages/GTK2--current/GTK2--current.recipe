@@ -20,7 +20,7 @@ recommends
 	GObject-Introspection >= 0.9.3
 	CUPS
 build-needs			PackageConfigure
-build-recommends	GTK-DocDocumenter
+build-recommends	GTK-Documenter
 
 ;no-sysconfdir
 _configure-options

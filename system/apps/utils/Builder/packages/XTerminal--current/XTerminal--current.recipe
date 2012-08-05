@@ -25,7 +25,8 @@ recommends
 	LibraryXFreeType
 	LibraryXMiscUtilities
 	LibraryXAthenaWidgets
-build-recommends	PackageConfigure >= 0.9.0
+build-recommends
+	PackageConfigure >= 0.9.0
 
 no-datarootdir
 configure-options
