@@ -21,6 +21,10 @@ install-targets
 	install-alsa
 ;	Firewall:
 	install-iptables
+;	DesktopBus:
+	install-dbus
+;	HAL:
+	install-haldaemon
 ;	CUPS server:
 	install-cups
 ;	OpenSSH server:
@@ -40,10 +44,6 @@ install-targets
 	install-vsftpd
 ;	RSync server:
 	install-rsyncd
-;	D-Bus:
-	install-dbus
-;	HAL:
-	install-haldaemon
 
 documentation		README LICENSE ChangeLog MAINTAINERS
 ; Outdated?
