@@ -1,0 +1,25 @@
+authors				Kaj de Vos
+status				developing
+
+version				1.8.0
+headline			The Language Agnostic Web Server
+description
+	Mongrel2 is an application, language, and network architecture agnostic web server that focuses on web applications using modern browser technologies.
+licenses			BSD-3 GPL-2++exception
+
+home				mongrel2.org
+locations			https://github.com/zedshaw/mongrel2/
+packages			tarball/v1.8.0
+
+needs
+	ZeroMessageQueue >= 2.1.4
+	SQLite 3
+
+;install-prefix-var	PREFIX
+;make-targets		freebsd
+
+system-prefix-var	DESTDIR
+
+documentation
+	README.md README LICENSE
+;	docs/ examples/
