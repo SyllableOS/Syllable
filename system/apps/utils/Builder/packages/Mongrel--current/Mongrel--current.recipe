@@ -15,7 +15,7 @@ needs
 	ZeroMessageQueue >= 2.1.4
 	SQLite 3
 
-;install-prefix-var	PREFIX
+install-prefix-var	PREFIX
 ;make-targets		freebsd
 
 system-prefix-var	DESTDIR
