@@ -1,5 +1,5 @@
 authors				Kaj de Vos
-status				developing
+status				testing
 
 version				1.8.0
 headline			The Language Agnostic Web Server
@@ -16,10 +16,16 @@ needs
 	SQLite 3
 
 install-prefix-var	PREFIX
+
 ;make-targets		freebsd
 
+install-tree
+	state/static
+	state/run
+	state/logs
+	state/tmp
 system-prefix-var	DESTDIR
 
 documentation
 	README.md README LICENSE
-;	docs/ examples/
+	docs/ examples/

@@ -15,6 +15,7 @@ locations
 	http://static.red-lang.org/
 	https://github.com/dockimbel/Red/
 packages			tarball/master
+;packages			tarball/dyn-lib-emitter
 files
 	red-system-specs.html
 	red-system-specs-light.html
