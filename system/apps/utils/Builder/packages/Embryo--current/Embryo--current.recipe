@@ -3,16 +3,15 @@ status				testing
 
 inherits			Enlightenment--current
 
-version				1.2.0
 headline			Enlightenment's virtual machine engine and bytecode compiler used in Edje
 description
 	Embryo is a tiny library designed to interpret limited Small programs compiled by the included compiler, embryo_cc. It is mostly a cleaned up and smaller version of the original Small abstract machine. The compiler is mostly untouched.
 licenses			BSD
 
 home				trac.enlightenment.org/e/wiki/Embryo
-packages			embryo-1.2.0
+packages			embryo-1.7.0
 
-needs				Eina >= 1.2.0
+needs				Eina
 
 documentation
 	README COPYING NEWS ChangeLog AUTHORS

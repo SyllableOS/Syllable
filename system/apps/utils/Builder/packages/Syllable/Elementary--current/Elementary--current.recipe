@@ -5,15 +5,6 @@ notes
 	Unpatched, bombs out on invalid free in Edje in data/objects/test.
 	Examples incomplete.
 
-;version				0.8.0.65643
-;locations			http://download.enlightenment.org/snapshots/
-;packages			2011-11-28/elementary-0.8.0.65643
-_needs
-	Eina
-	Evas
-	ECore
-	Edje
-
 patch
 make-shared
 

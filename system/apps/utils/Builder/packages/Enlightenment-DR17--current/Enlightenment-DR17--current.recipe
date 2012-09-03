@@ -6,7 +6,7 @@ warnings
 
 inherits			Enlightenment--current
 
-version				0.16.999.70492
+version				0.16.999.76015
 headline			Enlightenment DR17 Window Manager and Desktop Shell
 description
 	Enlightenment is not just a window manager for Linux/X11 and others, but also a whole suite of libraries to help you create beautiful user interfaces with much less work than doing it the old fashioned way and fighting with traditional toolkits, not to mention a traditional window manager. It covers uses from small mobile devices like phones all the way to powerful multi-core desktops (which are the primary development environment).
@@ -16,18 +16,18 @@ licenses			BSD
 
 home				www.enlightenment.org
 locations			http://download.enlightenment.org/snapshots/
-packages			2012-04-26/enlightenment-0.16.999.70492
+packages			2012-09-03/enlightenment-0.16.999.76015
 
 needs
-	Eina >= 1.2.0
-	EET >= 1.6.0
+	Eina
+	EET
 	Evas
 	FreeType > 2.1.7
-	ECore >= 1.2.0
+	ECore
 	Embryo
 	Edje
-	EFreet >= 1.2.0
-	E-DBus >= 1.2.0
+	EFreet
+	E-DBus
 recommends
 	PM-Utilities
 	ALSA

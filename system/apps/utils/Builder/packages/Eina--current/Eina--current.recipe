@@ -3,14 +3,13 @@ status				testing
 
 inherits			Enlightenment--current
 
-version				1.2.1
 headline			Enlightenment's core data structure and common utility library
 description
 	Eina is a core data structure and common utility library.
 licenses			LGPL-2.1
 
 home				trac.enlightenment.org/e/wiki/Eina
-packages			eina-1.2.1
+packages			eina-1.7.0
 
 _configure-options
 ;	--enable-tests

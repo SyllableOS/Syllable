@@ -3,21 +3,20 @@ status				testing
 
 inherits			Enlightenment--current
 
-version				1.2.0
 headline			Enlightenment's (Ecore) integration to DBus
 description
 	E_Dbus is a set of wrappers around DBus APIs by third party, so they can be easily used by EFL applications, automatically providing Ecore/main loop integration, as well as Eina data types.
 licenses			BSD
 
 home				trac.enlightenment.org/e/wiki/E_Dbus
-packages			e_dbus-1.2.0
+packages			e_dbus-1.7.0
 
 needs
-	Eina >= 1.1.0
-	ECore >= 1.1.0
-	DBus >= 0.62
+	Eina
+	ECore
+	DesktopBus >= 0.62
 recommends
-	Evas >= 1.1.0
+	Evas
 
 documentation
 	README COPYING NEWS ChangeLog AUTHORS
