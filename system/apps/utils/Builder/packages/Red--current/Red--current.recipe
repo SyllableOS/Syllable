@@ -1,20 +1,20 @@
 authors				Kaj de Vos
 status				testing
-notes				Beta version
 
-version				0.2.6current
-headline			Red[uced] REBOL programming language dialect
+version				0.3.0current
+headline			Red[uced] REBOL programming language dialects
 description
 	Red is a new programming language strongly inspired by REBOL. It is open source and compiled. It will have a JIT compiler in addition to static compilation, modern parallel programming support through native threading, and a built-in web server. Red's goal is to be a general-purpose language with a broad usage field, from system programming to high-level scripting, parallel programming, network programming and embedding in applications.
 
-	The current state provides the lower level Red/System language, on which the higher level Red language will be built.
+	The current state provides a beta version of the lower level Red/System language, on which the alpha version of the higher level Red language is being built.
 licenses			BSD BSL
 
 home				www.red-lang.org
 locations
 	http://static.red-lang.org/
 	https://github.com/dockimbel/Red/
-packages			tarball/master
+;packages			tarball/master
+packages			tarball/v0.3.0
 ;packages			tarball/dyn-lib-emitter
 files
 	red-system-specs.html
@@ -27,9 +27,13 @@ make				true
 
 install-tree		framework/REBOL
 install				true
-install-files		red-system/* framework/REBOL/
+install-files
+	red-system/		framework/REBOL/
+	red/			framework/REBOL/
+	red.r			framework/REBOL/
+;	quick-test/		framework/REBOL/
 
 documentation
 	README.md BSD-3-License.txt docs/*
 	red-system-specs.html red-system-specs-light.html A_BNF_grammar_of_Red_System.pdf
-move-files			framework/REBOL/tests/ .
+move-files			framework/REBOL/red/tests/ .
