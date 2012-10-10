@@ -37,12 +37,12 @@ install-files
 	cheyenne-auto-linux-r142-pro	programs/cheyenne
 ;	Cheyenne/*.r					framework/REBOL/Cheyenne/
 ;	Cheyenne/*.cfg					framework/REBOL/Cheyenne/
-;	Cheyenne/handlers				framework/REBOL/Cheyenne/
-;	Cheyenne/internal				framework/REBOL/Cheyenne/
-;	Cheyenne/misc					framework/REBOL/Cheyenne/
-;	Cheyenne/mods					framework/REBOL/Cheyenne/
-	Cheyenne/www					framework/REBOL/Cheyenne/
-;	Cheyenne/tests					framework/REBOL/Cheyenne/
+;	Cheyenne/handlers/				framework/REBOL/Cheyenne/
+;	Cheyenne/internal/				framework/REBOL/Cheyenne/
+;	Cheyenne/misc/					framework/REBOL/Cheyenne/
+;	Cheyenne/mods/					framework/REBOL/Cheyenne/
+	Cheyenne/www/					framework/REBOL/Cheyenne/
+;	Cheyenne/tests/					framework/REBOL/Cheyenne/
 
 documentation		Cheyenne/*.txt Cheyenne/docs/*
 

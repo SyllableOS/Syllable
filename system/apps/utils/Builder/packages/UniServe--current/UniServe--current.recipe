@@ -21,9 +21,11 @@ install-tree		framework/REBOL/UniServe
 install				true
 install-files
 	UniServe/*.r		framework/REBOL/UniServe/
-	UniServe/clients	framework/REBOL/UniServe/
-	UniServe/libs		framework/REBOL/UniServe/
-	UniServe/protocols	framework/REBOL/UniServe/
-	UniServe/services	framework/REBOL/UniServe/
+	UniServe/clients/	framework/REBOL/UniServe/
+	UniServe/libs/		framework/REBOL/UniServe/
+	UniServe/protocols/	framework/REBOL/UniServe/
+	UniServe/services/	framework/REBOL/UniServe/
+;	For standalone:
+;	Cheyenne/handlers/	framework/REBOL/UniServe/
 
 documentation		UniServe/*.txt
