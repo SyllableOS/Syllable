@@ -13,8 +13,8 @@ home				www.red-lang.org
 locations
 	http://static.red-lang.org/
 	https://github.com/dockimbel/Red/
-packages			tarball/master
-;packages			tarball/v0.3.0
+packages			archive/v0.3.0
+;packages			tarball/master
 ;packages			tarball/dyn-lib-emitter
 files
 	red-system-specs.html
