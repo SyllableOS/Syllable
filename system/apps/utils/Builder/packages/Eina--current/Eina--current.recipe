@@ -9,7 +9,7 @@ description
 licenses			LGPL-2.1
 
 home				trac.enlightenment.org/e/wiki/Eina
-packages			eina-1.7.0
+packages			eina-1.7.1
 
 _configure-options
 ;	--enable-tests

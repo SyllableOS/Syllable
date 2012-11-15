@@ -9,7 +9,7 @@ description
 licenses			BSD
 
 home				trac.enlightenment.org/e/wiki/Embryo
-packages			embryo-1.7.0
+packages			embryo-1.7.1
 
 needs				Eina
 

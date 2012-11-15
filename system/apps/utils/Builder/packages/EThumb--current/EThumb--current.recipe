@@ -13,7 +13,7 @@ description
 licenses			LGPL-2.1
 
 home				trac.enlightenment.org/e/wiki/Ethumb
-packages			ethumb-1.7.0
+packages			ethumb-1.7.1
 
 needs
 	Eina
