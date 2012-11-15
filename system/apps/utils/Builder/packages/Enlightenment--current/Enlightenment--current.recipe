@@ -1,10 +1,10 @@
 authors				Kaj de Vos
 status				testing
 
-version				1.7.0
+version				1.7.1
 locations			http://download.enlightenment.org/releases/
 
-_configure-env
+configure-env
 	CFLAGS "$CFLAGS -fvisibility=hidden"
 	LDFLAGS "$LDFLAGS -fvisibility=hidden"
 
