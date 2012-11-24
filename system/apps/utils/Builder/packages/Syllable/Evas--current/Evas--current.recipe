@@ -1,6 +1,6 @@
 authors				Kaj de Vos
 status				testing
-notes				Doesn't find LibTIFF
+notes				Doesn't find LibraryTIFF
 
 needs
 	Eina

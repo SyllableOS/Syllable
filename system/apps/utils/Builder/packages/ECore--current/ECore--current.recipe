@@ -15,7 +15,7 @@ description
 licenses			BSD
 
 home				trac.enlightenment.org/e/wiki/Ecore
-packages			ecore-1.7.1
+packages			ecore-1.7.2
 
 needs
 	Eina

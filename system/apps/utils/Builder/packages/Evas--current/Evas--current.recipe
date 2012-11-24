@@ -10,7 +10,7 @@ description
 licenses			BSD
 
 home				trac.enlightenment.org/e/wiki/Evas
-packages			evas-1.7.1
+packages			evas-1.7.2
 
 needs
 	Eina

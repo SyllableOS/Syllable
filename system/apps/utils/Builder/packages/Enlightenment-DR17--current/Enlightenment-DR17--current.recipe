@@ -6,7 +6,7 @@ warnings
 
 inherits			Enlightenment--current
 
-version				0.17.0-alpha2
+version				0.17.0-alpha5
 headline			Enlightenment DR17 Window Manager and Desktop Shell
 description
 	Enlightenment is not just a window manager for Linux/X11 and others, but also a whole suite of libraries to help you create beautiful user interfaces with much less work than doing it the old fashioned way and fighting with traditional toolkits, not to mention a traditional window manager. It covers uses from small mobile devices like phones all the way to powerful multi-core desktops (which are the primary development environment).
@@ -15,7 +15,7 @@ description
 licenses			BSD
 
 home				www.enlightenment.org
-packages			enlightenment-0.17.0-alpha2
+packages			enlightenment-0.17.0-alpha5
 
 needs
 	Eina
