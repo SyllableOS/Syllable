@@ -1,7 +1,8 @@
 authors				Kaj de Vos
 status				testing
 
-version				3beta101
+; 2.101.0
+version				3current
 headline			Relative Expression Based Object Language
 description
 	An entirely new version of the innovative REBOL programming language.
@@ -27,10 +28,7 @@ patch
 
 build-dir			make
 
-pre-make			mkdir objs
-make-targets
-	prep
-	all
+make-targets		all
 
 install-tree
 	programs

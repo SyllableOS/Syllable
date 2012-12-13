@@ -9,17 +9,17 @@ _make-vars
 	TO_OS TO_SYLLABLE
 	OS_ID 0.4.4
 
-install-tree
+_install-tree
 	bin
 	include
 	lib
-install-files
+_install-files
 	r3					bin/r3-static
 	host				bin/r3
 	../src/include/*	include/
 	libr3.so			lib/
 
-links
+_links
 	r3				bin/r3-core
 	r3				bin/rebol
 	r3				bin/rebol-core
