@@ -1,40 +1,51 @@
 authors				Kaj de Vos
 status				testing
 
-inherits			REBOL-HostKit--current
+version				3beta101
+headline			Relative Expression Based Object Language
+description
+	An entirely new version of the innovative REBOL programming language.
 
-version				3alpha110
+	REBOL uses "relative expressions" (context dependent dialects) to create a powerful new dimension similar to that found in natural human languages.
 
-;version				3alpha111
-; tar.gz defies automated downloading:
-;locations			http://www.rebol.com/r3/downloads/
-; For Linux GLibC >= 2.5:
-;packages			r3-a111-4-3
+	REBOL provides a lightweight platform for Internet applications. REBOL's power makes applications small so they are less expensive to create, distribute, maintain, and upgrade. In the size of a typical web page, you can fit an entire REBOL application.
 
-;build-dir			make
-build-dir			make-gcc
+	REBOL 3.0 is an entirely new design built from the ground up using the insights gained over years of REBOL development and usage. In addition, REBOL 3.0 is more open to enable greater contribution from the development community.
+licenses			Apache-2
 
-; For pre-built binary:
-;make				true
+home
+	www.rebol.com
+;	www.rebol.com/rebol3/
+locations			https://github.com/rebol/r3/
+packages			tarball/master
+
+build-needs			REBOL-Core 3
+
+patch
+	sed -i s/libr3.lib/libr3.so/ make/makefile &&
+	ln -s /resources/index/programs/r3-core make/r3-make
+
+build-dir			make
+
+pre-make			mkdir objs
+make-targets
+	prep
+	all
 
 install-tree
 	programs
 	framework/headers
 	framework/libraries
-;install				chmod +x r3-core-a107-42
 install				true
 install-files
-;	For host kit:
-	r3core				programs/r3-core
+	r3					programs/r3-static
+	host				programs/r3
 	../src/include/*	framework/headers/
 	libr3.so			framework/libraries/
-;	For binary:
-;	r3					programs/r3-core
 
-;documentation		README.txt
-documentation		about.txt
+documentation		README NOTICE LICENSE
 
 links
-	r3-core			programs/rebol
-	r3-core			programs/rebol-core
-	r3-core			programs/r3
+	r3				programs/r3-core
+	r3				programs/rebol
+	r3				programs/rebol-core

@@ -1,20 +1,25 @@
 authors				Kaj de Vos
 status				testing
-notes				Syllable Desktop currently uses the Linux binary of the shared interpreter library
 
-; Ubuntu build works, Fedora build doesn't:
-;packages
+patch
+	sed -i s/libr3.lib/libr3.so/ make/makefile &&
+	ln -s /resources/index/bin/r3-core make/r3-make
+
+_make-vars
+	TO_OS TO_SYLLABLE
+	OS_ID 0.4.4
 
 install-tree
 	bin
 	include
 	lib
 install-files
-	r3core				bin/r3-core
+	r3					bin/r3-static
+	host				bin/r3
 	../src/include/*	include/
 	libr3.so			lib/
 
 links
-	r3-core			bin/rebol
-	r3-core			bin/rebol-core
-	r3-core			bin/r3
+	r3				bin/r3-core
+	r3				bin/rebol
+	r3				bin/rebol-core
