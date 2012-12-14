@@ -1,0 +1,53 @@
+authors				Kaj de Vos
+status				testing
+
+headline			Messaging library
+description
+	Nanomsg is a project to help with building scalable and high performance distributed applications.
+
+	nanomsg library extends the standard socket interfaces with features traditionally provided by specialised messaging middleware products, providing multiple messaging patterns, seamless access to multiple transport protocols, message filtering (subscriptions) and more.
+
+	nanomsg library provides a native C API for applications.
+licenses			MIT
+
+home				github.com/250bpm/nanomsg
+locations			https://github.com/250bpm/nanomsg/
+packages			tarball/master
+
+build-needs			CMake
+
+;build-dir			build
+
+;make				cmake --build ..
+make				cmake --build .
+
+test-targets		test
+
+;system-prefix-var	DESTDIR
+install-tree
+	programs
+	framework/headers
+	framework/libraries
+install				true
+install-files
+	libnanomsg.so	framework/libraries/
+	src/*.h			framework/headers/
+	block			programs/
+	fanin			programs/
+	fanout			programs/
+	inproc			programs/
+	inproc_lat		programs/
+	inproc_thr		programs/
+	local_lat		programs/
+	local_thr		programs/
+	pair			programs/
+	perf			programs/
+	pubsub			programs/
+	remote_lat		programs/
+	remote_thr		programs/
+	reqrep			programs/
+	shutdown		programs/
+	survey			programs/
+	tcp				programs/
+
+documentation		README COPYING AUTHORS
