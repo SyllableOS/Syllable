@@ -18,8 +18,8 @@ build-needs			CMake
 
 ;build-dir			build
 
-;make				cmake --build ..
-make				cmake --build .
+;configure			cmake ..
+configure			cmake .
 
 test-targets		test
 
