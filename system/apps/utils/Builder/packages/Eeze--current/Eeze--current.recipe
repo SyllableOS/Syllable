@@ -9,7 +9,7 @@ description
 licenses			BSD
 
 home				trac.enlightenment.org/e/wiki/Eeze
-packages			eeze-1.7.2
+packages			eeze-1.7.3
 
 needs
 	Eina

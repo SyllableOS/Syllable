@@ -1,7 +1,7 @@
 authors				Kaj de Vos
 status				testing
 
-version				1.7.2
+version				1.7.3
 locations			http://download.enlightenment.org/releases/
 
 configure-env

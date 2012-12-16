@@ -11,7 +11,7 @@ description
 licenses			BSD
 
 home				trac.enlightenment.org/e/wiki/Eet
-packages			eet-1.7.2
+packages			eet-1.7.3
 
 needs
 	ZLib

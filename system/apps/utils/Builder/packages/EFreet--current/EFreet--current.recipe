@@ -17,7 +17,7 @@ description
 licenses			BSD
 
 home				trac.enlightenment.org/e/wiki/Efreet
-packages			efreet-1.7.2
+packages			efreet-1.7.3
 
 needs
 	Eina
