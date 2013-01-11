@@ -9,7 +9,7 @@ description
 licenses			BSD
 
 home				trac.enlightenment.org/e/wiki/E_Dbus
-packages			e_dbus-1.7.3
+packages			e_dbus-1.7.5
 
 needs
 	Eina

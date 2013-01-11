@@ -15,7 +15,7 @@ description
 licenses			BSD
 
 home				www.enlightenment.org
-packages			enlightenment-0.17.0-lucky
+packages			enlightenment-0.17.0
 
 needs
 	Eina

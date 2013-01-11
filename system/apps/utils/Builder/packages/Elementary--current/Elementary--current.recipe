@@ -14,7 +14,7 @@ description
 licenses			LGPL-2.1
 
 home				trac.enlightenment.org/e/wiki/Elementary
-packages			elementary-1.7.3
+packages			elementary-1.7.5
 
 needs
 	Eina

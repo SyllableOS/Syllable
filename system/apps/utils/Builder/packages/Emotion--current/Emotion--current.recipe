@@ -9,7 +9,7 @@ description
 licenses			BSD
 
 home				trac.enlightenment.org/e/wiki/Emotion
-packages			emotion-1.7.3
+packages			emotion-1.7.5
 
 needs
 	Eina
