@@ -1,33 +1,35 @@
 authors				Kaj de Vos
 status				testing
 
-version				0.3.0current
+version				0.3.1current
 headline			Red[uced] REBOL programming language dialects
 description
-	Red is a new programming language strongly inspired by REBOL. It is open source and compiled. It will have a JIT compiler in addition to static compilation, modern parallel programming support through native threading, and a built-in web server. Red's goal is to be a general-purpose language with a broad usage field, from system programming to high-level scripting, parallel programming, network programming and embedding in applications.
+	Red is a new programming language strongly inspired by REBOL. It is open source and both compiled and interpreted. It will also have a JIT compiler in addition to static compilation, modern parallel programming support through native threading, and a built-in web server. Red's goal is to be a general-purpose language with a broad usage field, from system programming to high-level scripting, parallel programming, network programming and embedding in applications.
 
-	The current state provides a beta version of the lower level Red/System language, on which the alpha version of the higher level Red language is being built.
+	The current state provides a beta version of the lower level Red/System dialect, on which the alpha version of the higher level Red language is being built. Red/System is a compiled language. Red has both a compiler and an interpreter, that complement each other. In the same program, some parts of the code can be compiled, while other pieces are executed by the interpreter. The interpreter currently has some limitations compared to the compiler, but can execute some dynamic code that the compiler cannot.
 licenses			BSD BSL
 
 home				www.red-lang.org
 locations
 	http://static.red-lang.org/
 	https://github.com/dockimbel/Red/
-packages			archive/v0.3.1
-;packages			tarball/master
+	http://red.esperconsultancy.nl/Red-test/doc/trunk/
+;packages			archive/v0.3.1
+packages			tarball/master
 ;packages			tarball/dyn-lib-emitter
-files
-	red-system-specs.html
-	red-system-specs-light.html
-	A_BNF_grammar_of_Red_System.pdf
 
 run-needs			REBOL2-Core | REBOL2-View
 
+patch				chmod +x console-pro
+
 make				true
 
-install-tree		framework/REBOL
+install-tree
+	programs
+	framework/REBOL
 install				true
 install-files
+	console-pro		programs/red
 	red-system/		framework/REBOL/
 	red/			framework/REBOL/
 	red.r			framework/REBOL/
