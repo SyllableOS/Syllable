@@ -1,7 +1,4 @@
 #! /bin/sh
 
-PLACE=$PWD
-cd /resources/Red/framework/REBOL/red-system
-r2 -sw rsc.r $1 $2 $3 $4 $5 $6
-cd $PLACE
-echo 'Any compilation results are in /resources/Red/framework/REBOL/red-system/builds'
+r2 -sw /resources/Red/framework/REBOL/red-system/rsc.r $1 $2 $3 $4 $5 $6
+echo 'Any compilation results are in /resources/Red/framework/REBOL/red-system/builds/'
