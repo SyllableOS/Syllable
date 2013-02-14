@@ -1,7 +1,8 @@
 authors				Kaj de Vos
 status				testing
+warnings			Download server blocks automatic downloads.
 
-version				2.7.7
+version				2.7.8
 headline			Relative Expression Based Object Language - graphical edition
 description
 	REBOL uses "relative expressions" (context dependent dialects) to create a powerful new dimension similar to that found in natural human languages.
@@ -12,12 +13,12 @@ description
 licenses			freeware
 
 home				www.rebol.com
-locations			http://www.rebol.com/downloads/v277/
+locations			http://www.rebol.com/downloads/v278/
 packages
-;	Ubuntu build; segfaults on rebol.com Demos:
-;	rebol-view-277-4-2 REBOL2-View--current
-;	Fedora build; bails on old Ubuntu with floating point exception:
-	rebol-view-277-4-3 REBOL2-View--current
+;	Ubuntu build; 2.7.7 segfaults on rebol.com Demos:
+;	rebol-view-278-4-2 REBOL2-View--current
+;	Fedora build; 2.7.7 bails on old Ubuntu with floating point exception:
+	rebol-view-278-4-3 REBOL2-View--current
 
 make				true
 
@@ -25,10 +26,11 @@ install-tree
 	programs
 	applications
 install				true
-install-files		rebol programs/r2-view
+install-files		releases/rebol-view/rebol programs/r2-view
+
+documentation		releases/rebol-view/about.txt
 
 links
-	r2-view				programs/rebol
 	r2-view				programs/rebol-view
 	r2-view				programs/r2
 	../programs/r2-view	applications/REBOL-2

@@ -1,7 +1,8 @@
 authors				Kaj de Vos
 status				testing
+warnings			Download server blocks automatic downloads.
 
-version				2.7.7
+version				2.7.8
 headline			Relative Expression Based Object Language - command line edition
 description
 	REBOL uses "relative expressions" (context dependent dialects) to create a powerful new dimension similar to that found in natural human languages.
@@ -12,20 +13,19 @@ description
 licenses			freeware
 
 home				www.rebol.com
-locations			http://www.rebol.com/downloads/v277/
+locations			http://www.rebol.com/downloads/v278/
 packages
-;	Ubuntu build; segfaults on rebol.com Demos:
-	rebol-core-277-4-2 REBOL2-Core--current
-;	Fedora build; bails on old Ubuntu with floating point exception:
-;	rebol-core-277-4-3 REBOL2-Core--current
+;	Ubuntu build:
+	rebol-core-278-4-2 REBOL2-Core--current
+;	Fedora build; 2.7.7 bails on old Ubuntu with floating point exception:
+;	rebol-core-278-4-3 REBOL2-Core--current
 
 make				true
 
 install-tree		programs
 install				true
-install-files		rebol programs/r2-core
+install-files		releases/rebol-core/rebol programs/r2-core
 
-links
-	r2-core			programs/rebol
-	r2-core			programs/rebol-core
-	r2-core			programs/r2
+documentation		releases/rebol-core/about.txt
+
+links				r2-core programs/r2
