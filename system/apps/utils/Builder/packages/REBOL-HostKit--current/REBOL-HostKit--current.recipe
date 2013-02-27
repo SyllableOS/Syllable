@@ -24,7 +24,7 @@ locations
 ;	http://www.rm-asset.com/code/downloads/files/
 packages
 ;	Github:
-	tarball/master
+	archive/master
 ;	rma-host-kit
 _files
 ;	Ubuntu binary:

@@ -12,7 +12,7 @@ licenses			MIT
 
 home				github.com/250bpm/nanomsg
 locations			https://github.com/250bpm/nanomsg/
-packages			tarball/master
+packages			archive/master
 
 build-needs			CMake
 

@@ -15,8 +15,8 @@ locations
 	https://github.com/dockimbel/Red/
 	http://red.esperconsultancy.nl/Red-test/doc/trunk/
 ;packages			archive/v0.3.1
-packages			tarball/master
-;packages			tarball/dyn-lib-emitter
+packages			archive/master
+;packages			archive/dyn-lib-emitter
 
 run-needs			REBOL2-Core | REBOL2-View
 

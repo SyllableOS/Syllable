@@ -18,7 +18,7 @@ home
 	www.rebol.com
 ;	www.rebol.com/rebol3/
 locations			https://github.com/rebol/r3/
-packages			tarball/master
+packages			archive/master
 
 build-needs			REBOL-Core 3
 

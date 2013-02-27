@@ -1,8 +1,8 @@
 #! /usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.12.2
-# Copyright (c) 2002-2012 Kaj de Vos
+# Version 0.12.3
+# Copyright (c) 2002-2013 Kaj de Vos
 # License: GPL 3 or any later version
 
 
@@ -36,7 +36,9 @@ end
 
 def downloadFile file
 	# Let mirror systems such as SourceForge provide a mirror but not try all of them
-	if headers = action("curl --head --progress-bar --insecure --ftp-pasv --location --max-redirs 2 '#{file}'")
+#	if headers = action("curl --head --progress-bar --insecure --ftp-pasv --location --max-redirs 2 '#{file}'")
+	#GitHub now redirects to S3 which breaks head requests
+	if headers = action("curl --head --progress-bar --insecure --ftp-pasv '#{file}'")
 		unless result = (parseMap headers)['HTTP/1.1'] and
 			# Last header was "Not Found" or "Forbidden"
 			['404', '403'].include?((toNameValue result).first)
@@ -69,7 +71,7 @@ def downloadModule target
 			Dir.chdir File.join(@configPath, 'downloading')
 
 			for package in packages
-				unless sourcePackageAvailable? package  # Already there
+				if package == 'archive/master' or ! sourcePackageAvailable? package  # Need to download
 					break if for location in toList locations
 						break unless for type in ['.tar.xz', '.txz', '.tar.bz2', '.tbz2', '.tar.gz', '.tgz', '.zip', '']
 							@log.subheader 'Trying ' + f = File.join(location, file = package + type)
@@ -88,7 +90,7 @@ def downloadModule target
 					end
 
 					@log.subheader "Moving package #{file} to sources directory"
-					break unless action "mv #{file} " + (file == 'master' ? File.join(@sourcesPath, name) : @sourcesPath)
+					break unless action "mv #{file} " + (package == 'archive/master' ? File.join(@sourcesPath, name) : @sourcesPath)
 				end
 			end
 		else
@@ -193,8 +195,7 @@ def unpackModule target
 			unless
 				for package in packages
 					package, dir = package.split
-					base = File.basename package
-					base = File.join @sourcesPath, base == 'master' ? name : base  # Version control checkout?
+					base = File.join @sourcesPath, package == 'archive/master' ? name : File.basename(package)  # Version control checkout?
 					option = dir ? ' --directory=' + dir : ''
 
 					if dir and not exists? dir
