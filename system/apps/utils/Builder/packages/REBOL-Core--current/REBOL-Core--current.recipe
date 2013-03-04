@@ -17,8 +17,15 @@ licenses			Apache-2
 home
 	www.rebol.com
 ;	www.rebol.com/rebol3/
-locations			https://github.com/rebol/r3/
-packages			archive/master
+;	development.saphirion.com
+locations
+	https://github.com/rebol/r3/
+;	Saphirion:
+;	http://development.saphirion.com/resources/
+packages
+	archive/master
+;	Saphirion. Their distribution is Windows specific:
+;	saphir-r3 REBOL-Core--current
 
 build-needs			REBOL-Core 3
 
