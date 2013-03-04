@@ -14,11 +14,18 @@ locations
 	http://static.red-lang.org/
 	https://github.com/dockimbel/Red/
 	http://red.esperconsultancy.nl/Red-test/doc/trunk/
+;	R3 port:
+	https://github.com/hostilefork/Red/
 ;packages			archive/v0.3.1
 packages			archive/master
 ;packages			archive/dyn-lib-emitter
+; R3 port:
+;packages			archive/r3-elf-buildable
 
-run-needs			REBOL2-Core | REBOL2-View
+run-needs
+	REBOL2-Core | REBOL2-View
+;	R3 port:
+;	REBOL-Core > 2.101 | REBOL2-Core | REBOL2-View
 
 patch				chmod +x console-pro
 

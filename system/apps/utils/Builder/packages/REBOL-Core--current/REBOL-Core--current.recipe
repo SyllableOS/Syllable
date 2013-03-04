@@ -17,7 +17,7 @@ licenses			Apache-2
 home
 	www.rebol.com
 ;	www.rebol.com/rebol3/
-;	development.saphirion.com
+;	development.saphirion.com/rebol/saphir/
 locations
 	https://github.com/rebol/r3/
 ;	Saphirion:

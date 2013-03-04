@@ -1,8 +1,15 @@
 authors				Kaj de Vos
-status				testing
+status				incomplete
 
+locations
+	http://static.red-lang.org/
+	https://github.com/hostilefork/Red/
+	http://red.esperconsultancy.nl/Red-test/doc/trunk/
+packages			archive/r3-elf-buildable
 files
 	red-system-specs.html
 	red-system-specs-light.html
 	A_BNF_grammar_of_Red_System.pdf
 	Syllable/Red/console-pro
+
+run-needs			REBOL-Core > 2.101

@@ -15,7 +15,7 @@ licenses			freeware
 
 home
 	www.rebol.com
-;	development.saphirion.com
+;	development.saphirion.com/rebol/saphir/
 locations
 	https://github.com/carls/R3A110/
 ;	Saphirion:
