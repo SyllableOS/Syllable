@@ -40,6 +40,7 @@ install-files
 	red-system/		framework/REBOL/
 	red/			framework/REBOL/
 	red.r			framework/REBOL/
+	version.r		framework/REBOL/
 ;	quick-test/		framework/REBOL/
 
 documentation
