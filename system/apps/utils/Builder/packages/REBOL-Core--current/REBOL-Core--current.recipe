@@ -20,10 +20,9 @@ home
 ;	development.saphirion.com/rebol/saphir/
 locations
 ;	Official:
-	https://github.com/rebol/r3
-;	undefined reference to `dtoa':
+;	https://github.com/rebol/r3
 ;	Community:
-;	https://github.com/rebolsource/r3
+	https://github.com/rebolsource/r3
 ;	Saphirion:
 ;	http://development.saphirion.com/resources/
 packages
