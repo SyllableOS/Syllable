@@ -3,23 +3,9 @@ status				testing
 
 patch
 	sed -i s/libr3.lib/libr3.so/ make/makefile &&
-	ln -s /resources/index/bin/r3-core make/r3-make
+;	ln -s /resources/index/bin/r3 make/r3-make
+	ln -s /system/bin/r3 make/r3-make
 
 _make-vars
 	TO_OS TO_SYLLABLE
 	OS_ID 0.4.4
-
-_install-tree
-	bin
-	include
-	lib
-_install-files
-	r3					bin/r3-static
-	host				bin/r3
-	../src/include/*	include/
-	libr3.so			lib/
-
-_links
-	r3				bin/r3-core
-	r3				bin/rebol
-	r3				bin/rebol-core
