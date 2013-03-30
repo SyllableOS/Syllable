@@ -33,7 +33,8 @@ packages
 build-needs			REBOL-Core 3
 
 patch
-	sed -i s/libr3.lib/libr3.so/ make/makefile &&
+;	For official source:
+;	sed -i s/libr3.lib/libr3.so/ make/makefile &&
 ;	ln -s /resources/index/programs/r3 make/r3-make
 	ln -s /system/programs/r3 make/r3-make
 
