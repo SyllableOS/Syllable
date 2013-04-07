@@ -27,7 +27,7 @@ run-needs
 ;	R3 port:
 ;	REBOL-Core > 2.101 | REBOL2-Core | REBOL2-View
 
-patch				chmod +x console-pro
+patch				chmod +x red-core
 
 make				true
 
