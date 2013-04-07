@@ -10,6 +10,6 @@ files
 	red-system-specs.html
 	red-system-specs-light.html
 	A_BNF_grammar_of_Red_System.pdf
-	Syllable/Red/console-pro
+	Syllable/Red/red-core
 
 run-needs			REBOL-Core > 2.101

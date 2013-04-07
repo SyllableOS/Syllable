@@ -36,7 +36,7 @@ install-tree
 	framework/REBOL
 install				true
 install-files
-	console-pro		programs/red
+	red-core		programs/red
 	red-system/		framework/REBOL/
 	red/			framework/REBOL/
 	red.r			framework/REBOL/
