@@ -1,0 +1,3 @@
+# Syllable
+
+**Syllable Desktop** is an original, modern operating system design, in the tradition of the Amiga and BeOS, but built using many parts from the GNU project and Linux. It is designed and optimised for your desktop PC, making it exceptionally fast and responsive and easy to use. It is under development, so it is interesting and even exciting to try out, but you have to decide for yourself whether it fits your needs already. Syllable Desktop runs on industry-standard Personal Computers with a minimum of a Pentium compatible processor and 32 MB of memory. It can make a new computer extremely fast and an old computer usable again.
